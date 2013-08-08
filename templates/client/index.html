@@ -1,0 +1,44 @@
+{% extends "client/base.html" %}
+{% load i18n %}
+
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}nxt_box/nxt-box.css" rel="stylesheet"/>
+    <link href="{{ STATIC_URL }}vendor/nvd3/source/nv.d3.css" rel="stylesheet"/>
+{% endblock css %}
+
+{% block javascript_body %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}nxt_box/nxt-box.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3js/d3.v3.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/nvd3/nv.d3.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}nxt_graph/nxt-graph.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/twitter-bootstrap-hover-dropdon.min.js?{{ random_string }}"></script>
+{% endblock javascript_body %}
+
+{% block box_awesome %}
+<div id="box-awesome-wrapper" ng-controller="BoxAwesome">
+  <div id="box-awesome" class="hide" ng-class="{hide: box.disabled}">
+    <div id="box-awesome-inner" class="options">
+      <button type="button" ng-click="close_box()" class="pull-right" title="{% trans "Close" %}">×</button>
+
+      <div ng-switch on="box.content.type">
+      <!-- TODO: Generate these with Django Templates -->
+        <div ng-switch-when="infopoint" ng-controller="InfoPoint">
+          <h2>{% trans "Water height" %}</h2>
+          <nxt-carsten-timeseries url="{[{ infourl }]}" height="300px"></nxt-timeseries>
+        </div>
+        <div ng-switch-when="test">
+          <h2>{[{ box.content.extra }]}</h2>
+        </div> 
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block site_actions %}
+{% endblock site_actions %}
+

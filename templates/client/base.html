@@ -1,0 +1,114 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html ng-app="lizard-nxt">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Lizard</title>
+    
+    {% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}vendor/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}vendor/leaflet/leaflet.css" />
+
+    <!-- CSS for jqueryui: "smoothness" theme -->
+    <link type="text/css"
+          href="{{ STATIC_URL }}vendor/jquery-ui-1.10.1.custom/themes/smoothness/jquery-ui.min.css"
+          rel="stylesheet"
+          media="screen, projection" />
+    <link href="{{ STATIC_URL }}vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}css/nxt_base.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}css/lizard5.css" rel="stylesheet" />
+    {% endblock css %}
+
+    <script>
+     var debug = true;
+    </script>
+  </head>
+
+  <body>
+    <header>
+      <div id="logo-row" class="navbar">
+        <div id="logo">
+          <a href="/" title="{% trans 'Back to homepage' %}"><img src="{{ STATIC_URL }}images/logo.png" alt="Lizard"></a>
+        </div>
+        <div id="site-actions">
+          <ul class="nav" id="leftbar-actions">
+            <li class="site">
+              <a href="http://test.live.3di.lizard.net/">3di</a>
+            </li>
+            <li class="site">
+              <a href="http://test.regenradar.lizard.net/">Rain</a>
+            </li>
+            <li class="site">
+              <a href="http://uploadserver.lizard.net/">Upload</a>
+            </li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-hover="dropdown"
+                  href="#" data-delay=200>More
+                  <b class="caret"></b>
+                </a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a href="http://www.google.com/">Google</a>
+                    </li>
+                    <li>
+                      <a href="http://www.duckduckgo.com">Duckduck</a>
+                    </li>
+                  </ul>
+              </li>
+          </ul>
+          <ul class="nav" id="rightbar-actions">
+            {% if user.is_authenticated %}
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-content="Toon loginopties" data-title="" href="#" data-hover="dropdown" 
+                data-delay=200 ng-controller="loginCtrl">
+                  <i class="icon-user"></i> {[{ user }]}
+                  <b class="caret"></b>
+                </a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a href="{% url 'lizard_auth_client.sso_logout' %}?next=/"> {% trans "Logout" %}
+                      </a>
+                    </li>
+                    <li>
+                      <a href="http://dev.sso.lizard.net/edit_profile/"> {% trans "Edit profile" %}
+                      </a>
+                    </li>
+                  </ul>
+              </li>
+            {% else %}
+              <li>
+                <a href="{% url 'login' %}?next=/"><i class="icon-user"></i> {% trans "Login" %}</a>
+              </li>
+            {% endif %}
+          </ul>
+
+
+          {% block site_actions %}{% endblock site_actions %}
+        </div>
+      </div>
+    </header>
+
+    {% block content %}
+    <div id="map">
+        <div id="alert_placeholder"></div>
+    </div>
+
+     {% block box_awesome %}{% endblock %}
+    <div class="container-fluid">
+        {% block toolbar_controllers %}
+        {% endblock %}
+    {% endblock content %}
+
+    {% block javascript_body %}
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery-ui-1.10.1.custom/js/jquery-ui-1.10.1.custom.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet/leaflet-src.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/leaflet-nxt.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js?{{ random_string }}"></script>
+    {% endblock %}
+
+  </body>
+</html>
