@@ -68,7 +68,7 @@
                 </a>
                   <ul class="dropdown-menu">
                     <li>
-                      <a href="{% url lizard_auth_client.sso_logout %}?next=/"> {% trans "Logout" %}
+                      <a href="{% url "lizard_auth_client.sso_logout" %}?next=/"> {% trans "Logout" %}
                       </a>
                     </li>
                     <li>
@@ -79,7 +79,7 @@
               </li>
             {% else %}
               <li>
-                <a href="{% url login %}?next=/"><i class="icon-user"></i> {% trans "Login" %}</a>
+                <a href="{% url "login" %}?next=/"><i class="icon-user"></i> {% trans "Login" %}</a>
               </li>
             {% endif %}
           </ul>
