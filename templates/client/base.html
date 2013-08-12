@@ -63,12 +63,12 @@
               <li class="dropdown">
                 <a class="dropdown-toggle" data-content="Toon loginopties" data-title="" href="#" data-hover="dropdown" 
                 data-delay=200 ng-controller="loginCtrl">
-                  <i class="icon-user"></i> {[{ user }]}
+                  <i class="icon-user"></i> <span ng-bind="user"></span>
                   <b class="caret"></b>
                 </a>
                   <ul class="dropdown-menu">
                     <li>
-                      <a href="{% url 'lizard_auth_client.sso_logout' %}?next=/"> {% trans "Logout" %}
+                      <a href="{% url lizard_auth_client.sso_logout %}?next=/"> {% trans "Logout" %}
                       </a>
                     </li>
                     <li>
@@ -79,19 +79,17 @@
               </li>
             {% else %}
               <li>
-                <a href="{% url 'login' %}?next=/"><i class="icon-user"></i> {% trans "Login" %}</a>
+                <a href="{% url login %}?next=/"><i class="icon-user"></i> {% trans "Login" %}</a>
               </li>
             {% endif %}
           </ul>
-
-
           {% block site_actions %}{% endblock site_actions %}
         </div>
       </div>
     </header>
 
     {% block content %}
-    <div id="map">
+    <div id="map" ng-controller="MapCtrl">
         <div id="alert_placeholder"></div>
     </div>
 
@@ -107,6 +105,8 @@
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet/leaflet-src.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/leaflet-nxt.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular-resource.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/ui-utils/ui-utils.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js?{{ random_string }}"></script>
     {% endblock %}
 

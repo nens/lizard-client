@@ -3,38 +3,56 @@
 
 {% block css %}
     {{ block.super }}
-    <link href="{{ STATIC_URL }}nxt_box/nxt-box.css" rel="stylesheet"/>
+    <link href="{{ STATIC_URL }}lib/nxt_box/nxt-box.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL }}vendor/nvd3/source/nv.d3.css" rel="stylesheet"/>
 {% endblock css %}
 
 {% block javascript_body %}
     {{ block.super }}
     <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}nxt_box/nxt-box.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_box/nxt-box.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_map/nxt-map.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3js/d3.v3.min.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/nvd3/nv.d3.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}nxt_graph/nxt-graph.js?{{ random_string }}"></script>
+    <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/twitter-bootstrap-hover-dropdon.min.js?{{ random_string }}"></script>
 {% endblock javascript_body %}
 
 {% block box_awesome %}
-<div id="box-awesome-wrapper" ng-controller="BoxAwesome">
-  <div id="box-awesome" class="hide" ng-class="{hide: box.disabled}">
-    <div id="box-awesome-inner" class="options">
-      <button type="button" ng-click="close_box()" class="pull-right" title="{% trans "Close" %}">×</button>
-
-      <div ng-switch on="box.content.type">
-      <!-- TODO: Generate these with Django Templates -->
-        <div ng-switch-when="infopoint" ng-controller="InfoPoint">
-          <h2>{% trans "Water height" %}</h2>
-          <nxt-carsten-timeseries url="{[{ infourl }]}" height="300px"></nxt-timeseries>
-        </div>
-        <div ng-switch-when="test">
-          <h2>{[{ box.content.extra }]}</h2>
-        </div> 
-      </div>
+<div id="omnibox" ng-controller="OmniboxCtrl" ng-mouseenter="$broadcast('open_box')" ng-mouseleave="$broadcast('_close_box')">
+    <div class="searchbox searchbox-shadow " id="searchbox" tabindex="-1" role="search" style="">
+        <form id="searchbox_form"> 
+            <table cellspacing="0" cellpadding="0" id="" class="searchboxinput" style="width: 375px; padding: 0px;">
+                <tbody>
+                    <tr>
+                        <td>
+                            <input ui-keydown="{esc: 'close_box($event)'}" ui-keyup="{'enter':'filter($event)'}" ng-model="box.query" ng-focus class="tactile-searchbox-input" aria-label="Search" id="searchboxinput" name="q" tabindex="1" autocomplete="off" dir="ltr" spellcheck="false" style="border: none; padding: 0px; margin: -0.0625em 0px 0px; height: 1.25em; width: 100%; outline: none;">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form> 
+        <button class="searchbutton" aria-label="Search" tabindex="3"></button>
     </div>
-  </div>
+
+    <div id="cards" class="" ng-cloak ng-class="{hide: !box.showCards}" ng-show="box.query.length>1">
+      <div class="card" style="padding-bottom: 10px;">
+        <div ng-show="box.query.length>1">Zoeken naar <span style="border-bottom:1px dotted #999;" ng-bind="box.query"></span></div>
+      </div>
+
+      <div ng-cloak ng-repeat="(key, value) in searchData" style="width:350px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+        <i class="icon-table"></i>&nbsp;<a href="#"><span class="card searchresult" ng-cloak ng-repeat="(k,v) in value">
+          <span ng-bind="k"></span>: <span ng-bind="v"></span></a>
+        </span>       
+      </div>
+      
+      <div class="card location" ng-cloak ng-repeat="g in geocodeData | orderBy:'display_name'" style="width:350px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+        <i class="icon-map-marker"></i>&nbsp;<a href="#" title="{[{ g.display_name }]}" data-latitude="{[{ g.lat }]}" data-longitude="{[{ g.lon }]}"><span ng-bind="g.display_name"></span></a>
+      </div>
+                        
+    </div> 
+
 </div>
 {% endblock %}
 
