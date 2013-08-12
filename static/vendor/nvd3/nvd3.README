@@ -1,0 +1,22 @@
+nvd3 beta from:
+
+nvd3.org
+
+https://github.com/novus/nvd3/commit/683eb18ce196a7eb494f060656098ac12d604b65
+
+Renamed 'src' to 'source' (else it is ignored by git)
+
+in nv.d3.css, in "svg", comment out (this will clash with leaflet layers):
+
+svg {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Trying to get SVG to act like a greedy block in all browsers */
+  /* display: block;
+  width:100%;
+  height:100%; */
+}

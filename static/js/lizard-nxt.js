@@ -1,16 +1,15 @@
-'use strict';
-
-
-var app = angular.module("lizard-nxt", []);
+var app = angular.module("lizard-nxt", ['ngResource', 'ui.utils']);
 
 app.config(function($interpolateProvider) {
   $interpolateProvider.startSymbol('{[{');
   $interpolateProvider.endSymbol('}]}');
  });
 
+
+
 app.controller("loginCtrl", function($scope){
     $scope.user = "Ernst";
-})
+});
 
 app.controller("InfoPoint", ["$scope", function($scope) {
     $scope.content = null;
@@ -22,29 +21,54 @@ app.controller("InfoPoint", ["$scope", function($scope) {
         //var $layer = document.getElementsByClassName("workspace-wms-layer")[0];  // there is only one
         //$scope.infourl = 'http://dev2.nxt.lizard.net:8080/hbase-api/api/v1/events/186c77bb-0030-48e3-8044-ea90028c9114/';
         $scope.infourl = '/static/carsten.json';
-    }
+    };
 
     $scope.$on("infopoint", function(message, content) {
         $scope.content = content;
         $scope.$apply(function() {
-            console.log("open box infopoint");
+            // console.log("open box infopoint");
             infoPoint(content);
             // var lonlat = content.point;
             // var $layer = document.getElementsByClassName("workspace-wms-layer")[0];  // there is only one
             // $scope.infourl = $layer.dataset['workspaceWmsUrl'].split('/wms')[0] + '/data?' + "REQUEST=gettimeseries&LAYERS=" + content.loaded_model + "&SRS=EPSG:4326&POINT="+lonlat.lng.toString() + ',' + lonlat.lat.toString();
-        });        
+        });
     });
-
-
 }]);
 
 /* Controller to initiate leaflet factory */
-app.controller("Leaflet", ["$scope", "leaflet", function($scope, leaflet) { 
+app.controller("Leaflet", ["$scope", "leaflet", function($scope, leaflet) {
 }]);
 
 
 
 /* Directives */
+
+app.directive('ngFocus', function(){
+  // focus()es on the element you put this directive on
+  return function($scope, element){
+    element[0].focus();
+  };
+});
+
+app.directive('ngEnter', function() {
+    return function(scope, element, attrs) {
+        console.log('scope', scope);
+        console.log('element', element);
+        console.log('attrs', attrs);
+
+        element.bind("keydown keypress", function(event) {
+            console.log('keydown/keypress!');
+            if(event.which === 13) {
+                console.log('ENTER!');
+                scope.$apply(function(){
+                    scope.$eval(attrs.onEnter);
+                });
+                event.preventDefault();
+            }
+        });
+    };
+});
+
 
 // app.factory('leaflet', function ($rootScope) {
 //     if (debug) {
