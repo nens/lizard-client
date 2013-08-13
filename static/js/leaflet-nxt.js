@@ -5,11 +5,11 @@
 $(document).on('ready', function () {
 
     var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png'),
-        blanco = L.tileLayer.wms('http://geoserver6.lizard.net/geoserver/deltaportaal/wms', {'layers': 'basiskaart'}),
-        transport = L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png'),
+        transport = L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png');
         bestuurlijke_grenzen = L.tileLayer('http://dev1.nxt.lizard.net:9000/bestuurlijke_grenzen/{z}/{x}/{y}.png');
 
-    var layers = {'geslotenleiding': 'http://dev1.nxt.lizard.net:9000/geslotenleiding/{z}/{x}/{y}.png'};
+    var layers = {'geslotenleiding': 'http://dev1.nxt.lizard.net:9000/geslotenleiding/{z}/{x}/{y}.png',
+                  'bestuurlijke_grenzen': 'http://dev1.nxt.lizard.net:9000/bestuurlijke_grenzen/{z}/{x}/{y}.png'};
                  
 
     var map = L.map('map', {
@@ -21,7 +21,6 @@ $(document).on('ready', function () {
     });
 
     var baseMaps = {
-        "Blanco": blanco,
         "Openstreetmap": osm,
         "Transport": transport,
         "Bestuurlijke grenzen": bestuurlijke_grenzen
@@ -49,22 +48,22 @@ $(document).on('ready', function () {
     var utfGrid = new L.UtfGrid('http://dev1.nxt.lizard.net:9000/bestuurlijke_grenzen_utfgrid/{z}/{x}/{y}.json?callback={cb}', {resolution: 4});
 
     map.addLayer(utfGrid);
+    function hovering(e) {
+        var popup = L.popup()
+            .setLatLng(e.latlng)
+            .setContent('Naam: ' + e.data.gemeentenaam + '<br/>' +
+                        'Mannen: ' + e.data.mannen + '<br/>' +
+                        '% Verweduwd: ' + e.data.percentage_verweduwd + '<br/>' +
+                        'Vrouwen: ' + e.data.vrouwen)
+            .openOn(map);
+    }
 
-    utfGrid.on('click', function (e) {
+    utfGrid.on('mouseover', function (e) {
         if (e.data) {
-            alert('click:' + e.data.gemeentenaam + ', vrouwen: ' + e.data.vrouwen + ',mannen: ' + e.data.mannen);
+            hovering(e);
         } else {
             alert('click: nothing');
         }
     });
 
-    utfGrid.on('mouseover', function (e) {
-        console.log('mouseover: ' + e.data.gemeentenaam);
-    });
-    utfGrid.on('mousemove', function (e) {
-        console.log('mousemove: ' + e.data.gemeentenaam);
-    });
-    utfGrid.on('mouseout', function (e) {
-        console.log('mouseout: ' + e.data.gemeentenaam);
-    });
 });
