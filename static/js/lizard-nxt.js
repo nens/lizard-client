@@ -6,11 +6,6 @@ app.config(function($interpolateProvider) {
  });
 
 
-
-app.controller("loginCtrl", function($scope){
-    $scope.user = "Ernst";
-});
-
 app.controller("InfoPoint", ["$scope", function($scope) {
     $scope.content = null;
     $scope.counter = 0;
