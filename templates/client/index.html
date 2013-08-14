@@ -20,7 +20,7 @@
 {% endblock javascript_body %}
 
 {% block box_awesome %}
-<div id="omnibox" ng-controller="OmniboxCtrl" ng-mouseenter="$broadcast('open_box')" ng-mouseleave="$broadcast('_close_box')">
+<div id="omnibox" ng-controller="OmniboxCtrl">
     <div class="searchbox searchbox-shadow " id="searchbox" tabindex="-1" role="search" style="">
         <form id="searchbox_form"> 
             <table cellspacing="0" cellpadding="0" id="" class="searchboxinput" style="width: 375px; padding: 0px;">
@@ -36,19 +36,25 @@
         <button class="searchbutton" aria-label="Search" tabindex="3"></button>
     </div>
 
-    <div id="cards" class="" ng-cloak ng-class="{hide: !box.showCards}" ng-show="box.query.length>1">
-      <div class="card" style="padding-bottom: 10px;">
-        <div ng-show="box.query.length>1">Zoeken naar <span style="border-bottom:1px dotted #999;" ng-bind="box.query"></span></div>
+    <div id="cards">
+      <div class="card" style="padding-bottom: 10px;" ng-show="box.query.length>0">
+        <div>Zoeken naar <span style="border-bottom:1px dotted #999;" ng-bind="box.query"></span></div>
       </div>
 
-      <div ng-cloak ng-repeat="(key, value) in searchData" style="width:350px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-        <i class="icon-table"></i>&nbsp;<a href="#"><span class="card searchresult" ng-cloak ng-repeat="(k,v) in value">
+      <div ng-show="box.query.length>0" ng-cloak ng-repeat="(key, value) in searchData" class="card location" style="width:378px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+        <i class="icon-table"></i>&nbsp;<a href="#"><span ng-cloak ng-repeat="(k,v) in value">
           <span ng-bind="k"></span>: <span ng-bind="v"></span></a>
         </span>       
       </div>
       
-      <div class="card location" ng-cloak ng-repeat="g in geocodeData | orderBy:'display_name'" style="width:350px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+      <div ng-show="box.query.length>0" class="card location" ng-cloak ng-repeat="g in geocodeData | orderBy:'display_name'" style="width:378px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
         <i class="icon-map-marker"></i>&nbsp;<a ng-click="panzoom(g.lat,g.lon)" title="{[{ g.display_name }]}" data-latitude="{[{ g.lat }]}" data-longitude="{[{ g.lon }]}" style="cursor:pointer;"><span ng-bind="g.display_name"></span></a>
+      </div>
+      
+      <div class="card location" style="width:378px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" ng-hide="!featureData">
+        <ul>
+            <li ng-repeat="(key, value) in featureData"><span ng-bind="key"></span>: <span ng-bind="value"></span></li>
+        </ul>
       </div>
                         
     </div> 

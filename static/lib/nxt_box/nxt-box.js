@@ -6,9 +6,9 @@ app.controller("OmniboxCtrl",
         Search: $resource('/api/v1/search/'),
         Geocode: $resource('/api/v1/geocode/'),
         ReverseGeocode: $resource('/api/v1/reversegeocode/'),
-        query: ' ',
+        query: null,
         disabled: false,
-        showCards: true,
+        showCards: false,
         content: 'empty'
 	};
 
@@ -31,8 +31,6 @@ app.controller("OmniboxCtrl",
     };
 
     $scope.close_box = function(){
-        // $scope.box.showCards = false;
-        console.log('close_box');
         $scope.box.showCards = false;
     };
 
@@ -51,7 +49,11 @@ app.controller("OmniboxCtrl",
         $scope.open_box();
     });
 
-
+    $scope.$on('featureclick', function(message, content) {
+        console.log('feature was clicked!', content);
+        $scope.featureData = content;
+        $scope.$apply();
+    });
 
 
     $scope.$on('mapclick', function(message, content) {
