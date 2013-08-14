@@ -27,7 +27,7 @@
                 <tbody>
                     <tr>
                         <td>
-                            <input ui-keydown="{esc: 'close_box($event)'}" ui-keyup="{'enter':'filter($event)'}" ng-model="box.query" ng-focus class="tactile-searchbox-input" aria-label="Search" id="searchboxinput" name="q" tabindex="1" autocomplete="off" dir="ltr" spellcheck="false" style="border: none; padding: 0px; margin: -0.0625em 0px 0px; height: 1.25em; width: 100%; outline: none;">
+                            <input ui-keydown="{esc: 'close_box($event)'}" ui-keyup="{'enter':'filter($event)'}" ng-model="box.query" ng-focus class="tactile-searchbox-input" aria-label="Search" id="searchboxinput" name="q" tabindex="1" autocomplete="off" dir="ltr" spellcheck="false" style="border: none; padding: 0px; margin: -0.0625em 0px 0px; height: 1.25em; width: 100%; outline: none;"><a href="#" ng-click="reset_query()" id="clear"></a>
                         </td>
                     </tr>
                 </tbody>

@@ -46,6 +46,18 @@ div#omnibox {
     width: 100%;
 }
 
+#clear {
+    text-indent: -1000em;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background-image: url('/static/images/clear-input.png');
+    background-repeat: no-repeat;
+    position: relative;
+    left: 360px;
+    top: -28px;
+}
+
 .searchbutton {
     background-color: #4d90fe;
     background-image: -webkit-linear-gradient(top,#177d89,#115e67);

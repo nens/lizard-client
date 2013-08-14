@@ -30,6 +30,10 @@ app.controller("OmniboxCtrl",
         });
     };
 
+    $scope.reset_query = function() {
+        $scope.box.query = null;
+    };
+
     $scope.close_box = function(){
         $scope.box.showCards = false;
     };
