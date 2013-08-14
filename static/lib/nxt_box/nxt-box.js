@@ -1,10 +1,11 @@
 app.controller("OmniboxCtrl",
-    ["$scope", "$resource",
-        function($scope, $resource){
+    ["$scope", "$resource", "$rootScope",
+        function($scope, $resource, $rootScope){
 
     $scope.box = {
         Search: $resource('/api/v1/search/'),
         Geocode: $resource('/api/v1/geocode/'),
+        ReverseGeocode: $resource('/api/v1/reversegeocode/'),
         query: ' ',
         disabled: false,
         showCards: true,
@@ -39,9 +40,32 @@ app.controller("OmniboxCtrl",
         $scope.box.showCards = true;
     };
 
+    $scope.panzoom = function(lat,lon) {
+        // getting pan/zoom request, tell map to pan zoom to location
+        $rootScope.$broadcast('panzoom', lat, lon);
+    };
+
+
     $scope.$on('open_box', function(message, content) {
         console.log('entering');
         $scope.open_box();
+    });
+
+
+
+
+    $scope.$on('mapclick', function(message, content) {
+        console.log('map was clicked!!!', content.lat);
+
+        var reversegeocode = $scope.box.ReverseGeocode.get({
+            lat:content.lat,
+            lon:content.lng
+        }, function(data) {
+            console.log(data);
+
+            // show card for data!
+        });
+
     });
 
 
