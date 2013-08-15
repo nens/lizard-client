@@ -7,8 +7,7 @@ app.controller("MapCtrl",
         osm: L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png'),
         blanco: L.tileLayer.wms('http://geoserver6.lizard.net/geoserver/deltaportaal/wms', {'layers': 'basiskaart'}),
         transport: L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png'),
-        bestuurlijke_grenzen: L.tileLayer('http://dev1.nxt.lizard.net:9000/bestuurlijke_grenzen/{z}/{x}/{y}.png'),
-        gesloten_leiding: {'geslotenleiding': 'http://dev1.nxt.lizard.net:9000/geslotenleiding/{z}/{x}/{y}.png'}
+        bestuurlijke_grenzen: L.tileLayer('http://dev1.nxt.lizard.net:9000/bestuurlijke_grenzen/{z}/{x}/{y}.png')
     };
 
     $scope.map = L.map('map', {
@@ -63,13 +62,6 @@ app.controller("MapCtrl",
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
         maxZoom: 18
     }).addTo($scope.map);
-
-
-
-
-
-
-
 
 
     parks = L.tileLayer.geoJson('http://{s}.tile.openstreetmap.us/vectiles-land-usages/{z}/{x}/{y}.json', {'minZoom': 16}, {
@@ -157,6 +149,27 @@ app.controller("MapCtrl",
       }
     });
 
+
+    leidingen = L.tileLayer.geoJson('http://dev1.nxt.lizard.net:9000/geslotenleiding_json/{z}/{x}/{y}.geojson', {'tms': true,'minZoom': 16}, {
+      onEachFeature: function(feature, l) {
+        // Put a click handler on the element
+        var retval = l.on('click', function() {
+            $rootScope.$broadcast('featureclick', feature.properties);
+        });
+
+        // Unbind the popup handler for the element and return.
+        l.unbindPopup();
+        return retval;
+      },
+      style: {
+        fillColor: 'rgb(255,32,0)',
+        fillOpacity: 0.5,
+        weight: 5,
+        color: 'rgb(255,32,0)'
+      }
+    });
+
+
     roads = L.tileLayer.geoJson('http://{s}.tile.openstreetmap.us/vectiles-highroad/{z}/{x}/{y}.json', {'minZoom': 16}, {
       onEachFeature: function(feature, l) {
         // Put a click handler on the element
@@ -170,7 +183,7 @@ app.controller("MapCtrl",
       },
       style: {
         fillColor: 'rgb(0,0,0)',
-        fillOpacity: 1,
+        fillOpacity: 0.5,
         weight: 5,
         color: 'rgb(0,0,0)'
       }
@@ -179,7 +192,7 @@ app.controller("MapCtrl",
     // parks.addTo($scope.map);
     water.addTo($scope.map);
     roads.addTo($scope.map);
-
+    leidingen.addTo($scope.map);
     roads.bringToFront();
     // parks.bringToBack();
 

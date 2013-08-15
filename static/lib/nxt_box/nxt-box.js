@@ -13,22 +13,34 @@ app.controller("OmniboxCtrl",
 	};
 
     $scope.filter = function ($event) {
-      $scope.box.showCards = true;
-      if ($scope.box.query.length > 1)
-        var search = $scope.box.Search.get({q:$scope.box.query}, function(data) {
-            console.log(data.hits.hits);
-            var sources = [];
-            for(var i in data.hits.hits) {
-                sources.push(data.hits.hits[i]._source);
-            }
-            $scope.searchData = sources;
-        });
+        $scope.box.showCards = true;
+        if ($scope.box.query.length > 1) {
+            var search = $scope.box.Search.get({q:$scope.box.query}, function(data) {
+                console.log(data.hits.hits);
+                var sources = [];
+                for(var i in data.hits.hits) {
+                    sources.push(data.hits.hits[i]._source);
+                }
+                $scope.searchData = sources;
+            });
 
-        var geocode = $scope.box.Geocode.query({q:$scope.box.query}, function(data) {
-            console.log(data);
-            $scope.geocodeData = data;
-        });
+            var geocode = $scope.box.Geocode.query({q:$scope.box.query}, function(data) {
+                console.log(data);
+                $scope.geocodeData = data;
+            });
+        }
     };
+
+    $scope.saveAsFavorite = function(data) {
+        console.log("debug:", data);
+        alert('Opslaan kan nog niet...');
+    };
+
+    $scope.shareFeature = function(data) {
+        console.log("debug:", data);
+        alert('Delen kan nog niet...');
+    };
+
 
     $scope.reset_query = function() {
         $scope.box.query = null;
@@ -68,7 +80,6 @@ app.controller("OmniboxCtrl",
             lon:content.lng
         }, function(data) {
             console.log(data);
-
             // show card for data!
         });
 

@@ -17,6 +17,7 @@
           rel="stylesheet"
           media="screen, projection" />
     <link href="{{ STATIC_URL }}vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}vendor/ng-grid/ng-grid.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}css/nxt_base.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}css/lizard5.css" rel="stylesheet" />
     {% endblock css %}
@@ -109,7 +110,10 @@
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-hash/leaflet-hash.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/catiline/catiline.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/leaflet-nxt.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.min.js"></script>
+    <!-- <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.min.js"></script> -->
+    <!-- <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular-unstable.js"></script> -->
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular-stable.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/ng-grid/ng-grid.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular-resource.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/ui-utils/ui-utils.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js?{{ random_string }}"></script>
