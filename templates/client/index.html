@@ -1,23 +1,4 @@
-{% extends "client/base.html" %}
-{% load i18n %}
-
-{% block css %}
-    {{ block.super }}
-    <link href="{{ STATIC_URL }}lib/nxt_box/nxt-box.css" rel="stylesheet"/>
-    <link href="{{ STATIC_URL }}vendor/nvd3/source/nv.d3.css" rel="stylesheet"/>
-{% endblock css %}
-
-{% block javascript_body %}
-    {{ block.super }}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt-directives.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_box/nxt-box.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_map/nxt-map.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3js/d3.v3.min.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/nvd3/nv.d3.js?{{ random_string }}"></script>
-    <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/twitter-bootstrap-hover-dropdon.min.js?{{ random_string }}"></script>
-{% endblock javascript_body %}
+{% extends "client/base.html" %}{% load i18n %}
 
 {% block box_awesome %}
 <div id="omnibox" ng-controller="OmniboxCtrl">
@@ -91,7 +72,5 @@
 </div>
 {% endblock %}
 
-
 {% block site_actions %}
 {% endblock site_actions %}
-

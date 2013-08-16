@@ -1,4 +1,4 @@
-var app = angular.module("lizard-nxt", ['ngResource', 'ui.utils', 'ngGrid']);
+var app = angular.module("lizard-nxt", ['ngResource', 'ui.utils', 'ngGrid', 'ngRoute']);
 
 app.config(function($interpolateProvider) {
   $interpolateProvider.startSymbol('{[{');
@@ -39,6 +39,17 @@ app.controller("Leaflet", ["$scope", "leaflet", function($scope, leaflet) {
 
 /* Directives */
 
+app.directive('ngHistogram', function(){
+  // turns the <historgram/> element into an interactive crossfilter
+  // depends on crossfilter.js
+  return function($scope, element){
+    element[0].focus();
+  };
+});
+
+
+
+
 app.directive('ngFocus', function(){
   // focus()es on the element you put this directive on
   return function($scope, element){
@@ -48,14 +59,8 @@ app.directive('ngFocus', function(){
 
 app.directive('ngEnter', function() {
     return function(scope, element, attrs) {
-        console.log('scope', scope);
-        console.log('element', element);
-        console.log('attrs', attrs);
-
         element.bind("keydown keypress", function(event) {
-            console.log('keydown/keypress!');
             if(event.which === 13) {
-                console.log('ENTER!');
                 scope.$apply(function(){
                     scope.$eval(attrs.onEnter);
                 });
