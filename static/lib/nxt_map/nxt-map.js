@@ -4,12 +4,13 @@ app.controller("MapCtrl",
 
 
     $scope.layers = {
-        osm: L.tileLayer('http://dev1.nxt.lizard.net:9000/osm_nens/{z}/{x}/{y}.png', {
+        // osm: L.tileLayer('http://dev1.nxt.lizard.net:9000/osm_nens/{z}/{x}/{y}.png'),
+        osm: L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
           attribution: 'Map data &copy; 2011 OpenStreetMap contributors'
           }),
-        blanco: L.tileLayer.wms('http://geoserver6.lizard.net/geoserver/deltaportaal/wms', {'layers': 'basiskaart'}),
-        transport: L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png'),
-        bestuurlijke_grenzen: L.tileLayer('http://dev1.nxt.lizard.net:9000/bestuurlijke_grenzen/{z}/{x}/{y}.png')
+        sewerage: L.tileLayer('http://dev1.nxt.lizard.net:9000/sewerage/{z}/{x}/{y}.png', {
+          attribution: 'Nelen & Schuurmans &copy; 2013'
+          }),
     };
 
     $scope.map = L.map('map', {
@@ -22,7 +23,6 @@ app.controller("MapCtrl",
 
     $scope.baseMaps = {
         "Open Street Map": $scope.layers.osm,
-        "Bestuurlijke grenzen": $scope.layers.bestuurlijke_grenzen
     };
 
    var utfGrid = new L.UtfGrid('http://dev1.nxt.lizard.net:9000/bestuurlijke_grenzen_utfgrid/{z}/{x}/{y}.json?callback={cb}', {resolution: 4});
@@ -134,7 +134,7 @@ app.controller("MapCtrl",
     });
 
 
-    var leidingen = L.tileLayer.geoJson('http://dev1.nxt.lizard.net:9000/sewerage/{z}/{x}/{y}.geojson', {'tms': true,'minZoom': 16}, {
+    var sewerage = L.tileLayer.geoJson('http://dev1.nxt.lizard.net:9000/sewerage_json/{z}/{x}/{y}.geojson', {'tms': true,'minZoom': 16}, {
       onEachFeature: function(feature, l) {
         // Put a click handler on the element
         var retval = l.on('click', function() {
@@ -173,10 +173,13 @@ app.controller("MapCtrl",
       }
     });
 
-
-    var stedelijkwaterLayers = L.layerGroup([water, leidingen]);
-    var stedelijkwater = { "Watersysteem": stedelijkwaterLayers};
-    L.control.layers($scope.baseMaps, stedelijkwater).addTo($scope.map);
+    var stedelijkwater = { 
+      "Watersysteem": {
+        "Water": water,
+        "Sewerage": $scope.layers.sewerage
+            }
+      };
+    L.control.groupedLayers($scope.baseMaps, stedelijkwater).addTo($scope.map);
 
 
 
