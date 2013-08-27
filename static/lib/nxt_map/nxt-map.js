@@ -25,157 +25,157 @@ app.controller("MapCtrl",
         "Open Street Map": $scope.layers.osm,
     };
 
-   var utfGrid = new L.UtfGrid('http://dev1.nxt.lizard.net:9000/bestuurlijke_grenzen_utfgrid/{z}/{x}/{y}.json?callback={cb}', {resolution: 4});
+   //var utfGrid = new L.UtfGrid('http://dev1.nxt.lizard.net:9000/bestuurlijke_grenzen_utfgrid/{z}/{x}/{y}.json?callback={cb}', {resolution: 4});
 
     // $scope.map.addLayer(utfGrid);
 
-    utfGrid.on('click', function (e) {
-        if (e.data) {
-            // alert('click:' + e.data.gemeentenaam + ', vrouwen: ' + e.data.vrouwen + ',mannen: ' + e.data.mannen);
-        } else {
-            // alert('click: nothing');
-        }
-    });
+    //utfGrid.on('click', function (e) {
+        //if (e.data) {
+             //alert('click:' + e.data.gemeentenaam + ', vrouwen: ' + e.data.vrouwen + ',mannen: ' + e.data.mannen);
+        //} else {
+             //alert('click: nothing');
+        //}
+    //});
 
-    utfGrid.on('mouseover', function (e) {
-        console.log('mouseover: ' + e.data.gemeentenaam);
-    });
-    utfGrid.on('mousemove', function (e) {
-        console.log('mousemove: ' + e.data.gemeentenaam);
-    });
-    utfGrid.on('mouseout', function (e) {
-        console.log('mouseout: ' + e.data.gemeentenaam);
-    });
-
-
-    var parks = L.tileLayer.geoJson('http://{s}.tile.openstreetmap.us/vectiles-land-usages/{z}/{x}/{y}.json', {'minZoom': 16}, {
-      onEachFeature: function(f, l) {
-        var array, key, value;
-        array = (function() {
-          var _ref, _results;
-          _ref = f.properties;
-          _results = [];
-          for (var key in _ref) {
-            value = _ref[key];
-            _results.push("" + key + ": " + value);
-          }
-          return _results;
-        })();
-        return l.bindPopup(array.join('<br/>'));
-      },
-      style: function(f) {
-        var out;
-        out = {
-          fillOpacity: 1,
-          stroke: false
-        };
-        switch (f.properties.kind) {
-          case 'park':
-          case 'common':
-          case 'grass':
-            out.fillColor = 'rgb(115,178,115)';
-            break;
-          case 'golf_course':
-          case 'recreation_ground':
-          case 'pitch':
-          case 'playground':
-            out.fillColor = 'rgb(110,183,110)';
-            break;
-          case 'conservation':
-          case 'farm':
-          case 'farmland':
-            out.fillColor = 'rgb(143,219,143)';
-            break;
-          case 'cemetery':
-            out.fillColor = 'rgb(78,120,78)';
-            break;
-          case 'university':
-          case 'college':
-            out.fillColor = 'rgb(77,50,230)';
-            break;
-          case 'school':
-            out.fillColor = 'rgb(125,106,235)';
-            break;
-          case 'forest':
-            out.fillColor = 'rgb(26,112,26)';
-            break;
-          case 'parking':
-          case 'industrial':
-          case 'fuel':
-            out.fillColor = 'rgb(0,0,0)';
-            break;
-          case 'commercial':
-          case 'retail':
-          case 'hospital':
-            out.fillColor = 'rgb(255,193,69)';
-            break;
-          case 'residential':
-            out.fillColor = 'rgb(212,47,58)';
-            break;
-          case 'railway':
-          case 'pedestrian':
-          case 'parking':
-            out.fillColor = 'rgb(204,204,204)';
-            break;
-          default:
-            out.fillColor = 'rgb(224,224,224)';
-        }
-        return out;
-      }
-    });
-
-    var water = L.tileLayer.geoJson('http://{s}.tile.openstreetmap.us/vectiles-water-areas/{z}/{x}/{y}.json', {'minZoom': 16}, {
-      style: {
-        fillColor: 'rgb(151,219,242)',
-        fillOpacity: 1,
-        stroke: false,
-        clickable: false
-      }
-    });
+    //utfGrid.on('mouseover', function (e) {
+        //console.log('mouseover: ' + e.data.gemeentenaam);
+    //});
+    //utfGrid.on('mousemove', function (e) {
+        //console.log('mousemove: ' + e.data.gemeentenaam);
+    //});
+    //utfGrid.on('mouseout', function (e) {
+        //console.log('mouseout: ' + e.data.gemeentenaam);
+    //});
 
 
-    var sewerage = L.tileLayer.geoJson('http://dev1.nxt.lizard.net:9000/sewerage_json/{z}/{x}/{y}.geojson', {'tms': true,'minZoom': 16}, {
-      onEachFeature: function(feature, l) {
-        // Put a click handler on the element
-        var retval = l.on('click', function() {
-            $rootScope.$broadcast('featureclick', feature.properties);
-        });
+    //var parks = L.tileLayer.geoJson('http://{s}.tile.openstreetmap.us/vectiles-land-usages/{z}/{x}/{y}.json', {'minZoom': 16}, {
+      //onEachFeature: function(f, l) {
+        //var array, key, value;
+        //array = (function() {
+          //var _ref, _results;
+          //_ref = f.properties;
+          //_results = [];
+          //for (var key in _ref) {
+            //value = _ref[key];
+            //_results.push("" + key + ": " + value);
+          //}
+          //return _results;
+        //})();
+        //return l.bindPopup(array.join('<br/>'));
+      //},
+      //style: function(f) {
+        //var out;
+        //out = {
+          //fillOpacity: 1,
+          //stroke: false
+        //};
+        //switch (f.properties.kind) {
+          //case 'park':
+          //case 'common':
+          //case 'grass':
+            //out.fillColor = 'rgb(115,178,115)';
+            //break;
+          //case 'golf_course':
+          //case 'recreation_ground':
+          //case 'pitch':
+          //case 'playground':
+            //out.fillColor = 'rgb(110,183,110)';
+            //break;
+          //case 'conservation':
+          //case 'farm':
+          //case 'farmland':
+            //out.fillColor = 'rgb(143,219,143)';
+            //break;
+          //case 'cemetery':
+            //out.fillColor = 'rgb(78,120,78)';
+            //break;
+          //case 'university':
+          //case 'college':
+            //out.fillColor = 'rgb(77,50,230)';
+            //break;
+          //case 'school':
+            //out.fillColor = 'rgb(125,106,235)';
+            //break;
+          //case 'forest':
+            //out.fillColor = 'rgb(26,112,26)';
+            //break;
+          //case 'parking':
+          //case 'industrial':
+          //case 'fuel':
+            //out.fillColor = 'rgb(0,0,0)';
+            //break;
+          //case 'commercial':
+          //case 'retail':
+          //case 'hospital':
+            //out.fillColor = 'rgb(255,193,69)';
+            //break;
+          //case 'residential':
+            //out.fillColor = 'rgb(212,47,58)';
+            //break;
+          //case 'railway':
+          //case 'pedestrian':
+          //case 'parking':
+            //out.fillColor = 'rgb(204,204,204)';
+            //break;
+          //default:
+            //out.fillColor = 'rgb(224,224,224)';
+        //}
+        //return out;
+      //}
+    //});
 
-        // Unbind the popup handler for the element and return.
-        l.unbindPopup();
-        return retval;
-      },
-      style: {
-        fillColor: 'rgb(255,32,0)',
-        fillOpacity: 0.5,
-        weight: 5,
-        color: 'rgb(255,32,0)'
-      }
-    });
+    //var water = L.tileLayer.geoJson('http://{s}.tile.openstreetmap.us/vectiles-water-areas/{z}/{x}/{y}.json', {'minZoom': 16}, {
+      //style: {
+        //fillColor: 'rgb(151,219,242)',
+        //fillOpacity: 1,
+        //stroke: false,
+        //clickable: false
+      //}
+    //});
 
 
-    var roads = L.tileLayer.geoJson('http://{s}.tile.openstreetmap.us/vectiles-highroad/{z}/{x}/{y}.json', {'minZoom': 16}, {
-      onEachFeature: function(feature, l) {
-        // Put a click handler on the element
-        var retval = l.on('click', function() {
-            $rootScope.$broadcast('featureclick', feature.properties);
-        });
+    //var sewerage = L.tileLayer.geoJson('http://dev1.nxt.lizard.net:9000/sewerage_json/{z}/{x}/{y}.geojson', {'tms': true,'minZoom': 16}, {
+      //onEachFeature: function(feature, l) {
+         //Put a click handler on the element
+        //var retval = l.on('click', function() {
+            //$rootScope.$broadcast('featureclick', feature.properties);
+        //});
 
-        // Unbind the popup handler for the element and return.
-        l.unbindPopup();
-        return retval;
-      },
-      style: {
-        fillColor: 'rgb(0,0,0)',
-        fillOpacity: 0.5,
-        weight: 5,
-        color: 'rgb(0,0,0)'
-      }
-    });
+         //Unbind the popup handler for the element and return.
+        //l.unbindPopup();
+        //return retval;
+      //},
+      //style: {
+        //fillColor: 'rgb(255,32,0)',
+        //fillOpacity: 0.5,
+        //weight: 5,
+        //color: 'rgb(255,32,0)'
+      //}
+    //});
+
+
+    //var roads = L.tileLayer.geoJson('http://{s}.tile.openstreetmap.us/vectiles-highroad/{z}/{x}/{y}.json', {'minZoom': 16}, {
+      //onEachFeature: function(feature, l) {
+         //Put a click handler on the element
+        //var retval = l.on('click', function() {
+            //$rootScope.$broadcast('featureclick', feature.properties);
+        //});
+
+         //Unbind the popup handler for the element and return.
+        //l.unbindPopup();
+        //return retval;
+      //},
+      //style: {
+        //fillColor: 'rgb(0,0,0)',
+        //fillOpacity: 0.5,
+        //weight: 5,
+        //color: 'rgb(0,0,0)'
+      //}
+    //});
 
     var stedelijkwater = { 
       "Watersysteem": {
-        "Water": water,
+        //"Water": water,
         "Sewerage": $scope.layers.sewerage
             }
       };
