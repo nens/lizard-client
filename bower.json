@@ -23,10 +23,10 @@
     "tests"
   ],
   "dependencies": {
-    "leaflet": "~0.6.4",
+    // "leaflet-stable": "git://github.com/Leaflet/Leaflet.git#02ef5df3395ee4a2ec195abe08e475da70ec17ec",
     "Leaflet.utfgrid": "git://github.com/danzel/Leaflet.utfgrid",
-    "Leaflet.groupedlayercontrol" : "https://github.com/ismyrnow/Leaflet.groupedlayercontrol",
-    "vector-layers" : "https://github.com/calvinmetcalf/vector-layers",
+    "Leaflet.groupedlayercontrol" : "git://github.com/ismyrnow/Leaflet.groupedlayercontrol.git",
+    "vector-layers" : "git://github.com/calvinmetcalf/vector-layers.git#f8df885d8322c06ed1ecad2d0b4361464a03aec6",
     "angular": "~1.0.8",
     "angular-resource": "~1.0.8",
     "jquery": "~2.0.3",
