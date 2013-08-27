@@ -1,4 +1,4 @@
-var app = angular.module("lizard-nxt", ['ngResource', 'ui.utils', 'ngGrid', 'ngRoute']);
+var app = angular.module("lizard-nxt", ['ngResource']);
 
 app.config(function($interpolateProvider) {
   $interpolateProvider.startSymbol('{[{');
