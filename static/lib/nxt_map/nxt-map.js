@@ -4,10 +4,10 @@ app.controller("MapCtrl",
 
 
     $scope.layers = {
-        // osm: L.tileLayer('http://dev1.nxt.lizard.net:9000/osm_nens/{z}/{x}/{y}.png'),
-        osm: L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-          attribution: 'Map data &copy; 2011 OpenStreetMap contributors'
-          }),
+        osm: L.tileLayer('http://dev1.nxt.lizard.net:9000/osm_nens/{z}/{x}/{y}.png'),
+        // osm: L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        //   attribution: 'Map data &copy; 2011 OpenStreetMap contributors'
+        //   }),
         sewerage: L.tileLayer('http://dev1.nxt.lizard.net:9000/sewerage/{z}/{x}/{y}.png', {
           attribution: 'Nelen & Schuurmans &copy; 2013'
           }),

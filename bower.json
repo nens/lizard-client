@@ -1,0 +1,38 @@
+{
+  "name": "lizard-nxt-client",
+  "version": "0.0.0",
+  "homepage": "https://github.com/nens/lizard-nxt",
+  "authors": [
+    "fritzvd <fritz.vandeventer@nelen-schuurmans.nl>"
+  ],
+  "description": "Client for Lizard-NxT",
+  "main": "./static/js/nxt-map.js",
+  "keywords": [
+    "map",
+    "geographic",
+    "gis",
+    "hydrology"
+  ],
+  "license": "GPLv3",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "leaflet": "~0.6.4",
+    "Leaflet.utfgrid": "git://github.com/danzel/Leaflet.utfgrid",
+    "Leaflet.groupedlayercontrol" : "https://github.com/ismyrnow/Leaflet.groupedlayercontrol",
+    "vector-layers" : "https://github.com/calvinmetcalf/vector-layers",
+    "angular": "~1.0.8",
+    "angular-resource": "~1.0.8",
+    "jquery": "~2.0.3",
+    "jquery-ui": "~1.10.3",
+    "catiline": "~2.7.1",
+    "bootstrap": "~3.0.0",
+    "font-awesome": "~3.2.1"
+  }
+}

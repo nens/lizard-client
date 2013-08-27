@@ -103,23 +103,25 @@
     {% endblock content %}
 
     {% block javascript_body %}
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bower_components/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery-ui-1.10.1.custom/js/jquery-ui-1.10.1.custom.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet/leaflet-src.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet.utfgrid/leaflet.utfgrid.js"></script>
+    
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bower_components/leaflet/src/Leaflet.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bower_components/Leaflet.utfgrid/leaflet.utfgrid.js"></script>
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-tilelayer-geojson/TileLayer.GeoJSON.js"></script> -->
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-vectortile/vectorTile.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-hash/leaflet-hash.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/catiline/catiline.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bower_components/vector-layers/vectorTile.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bower_components/vector-layers/leaflet-hash.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bower_components/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bower_components/catiline/dist/catiline.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/crossfilter/crossfilter.js"></script>
+
     <script type="text/javascript" src="{{ STATIC_URL }}js/leaflet-nxt.js?{{ random_string }}"></script>
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.min.js"></script> -->
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular-unstable.js"></script> -->
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular-stable.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular-route.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bower_components/angular/angular-min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bower_components/angular-resource/angular-resource.min.js"></script>
+
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/ng-grid/ng-grid.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular-resource.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/ui-utils/ui-utils.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js?{{ random_string }}"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt.js?{{ random_string }}"></script>
@@ -129,6 +131,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3js/d3.v3.min.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/nvd3/nv.d3.js?{{ random_string }}"></script>
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->
+    
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/twitter-bootstrap-hover-dropdon.min.js?{{ random_string }}"></script>
     {% endblock %}
 
