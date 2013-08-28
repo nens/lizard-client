@@ -1,23 +1,4 @@
-{% extends "client/base.html" %}
-{% load i18n %}
-
-{% block css %}
-    {{ block.super }}
-    <link href="{{ STATIC_URL }}lib/nxt_box/nxt-box.css" rel="stylesheet"/>
-    <link href="{{ STATIC_URL }}vendor/nvd3/source/nv.d3.css" rel="stylesheet"/>
-{% endblock css %}
-
-{% block javascript_body %}
-    {{ block.super }}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt-directives.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_box/nxt-box.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_map/nxt-map.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3js/d3.v3.min.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/nvd3/nv.d3.js?{{ random_string }}"></script>
-    <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/twitter-bootstrap-hover-dropdon.min.js?{{ random_string }}"></script>
-{% endblock javascript_body %}
+{% extends "client/base.html" %}{% load i18n %}
 
 {% block box_awesome %}
 <div id="omnibox" ng-controller="OmniboxCtrl">
@@ -37,24 +18,53 @@
     </div>
 
     <div id="cards">
-      <div class="card" style="padding-bottom: 10px;" ng-show="box.query.length>0">
+      <!-- <div class="card" style="padding-bottom: 10px;" ng-show="box.query.length>0">
         <div>Zoeken naar <span style="border-bottom:1px dotted #999;" ng-bind="box.query"></span></div>
-      </div>
+      </div> -->
 
       <div ng-show="box.query.length>0" ng-cloak ng-repeat="(key, value) in searchData" class="card location" style="width:378px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
         <i class="icon-table"></i>&nbsp;<a href="#"><span ng-cloak ng-repeat="(k,v) in value">
-          <span ng-bind="k"></span>: <span ng-bind="v"></span></a>
+          <span ng-bind-html-unsafe="k | highlight:box.query"></span>: <span ng-bind-html-unsafe="v | highlight:box.query"></span></a>
         </span>       
       </div>
       
       <div ng-show="box.query.length>0" class="card location" ng-cloak ng-repeat="g in geocodeData | orderBy:'display_name'" style="width:378px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-        <i class="icon-map-marker"></i>&nbsp;<a ng-click="panzoom(g.lat,g.lon)" title="{[{ g.display_name }]}" data-latitude="{[{ g.lat }]}" data-longitude="{[{ g.lon }]}" style="cursor:pointer;"><span ng-bind="g.display_name"></span></a>
+        <i class="icon-map-marker"></i>&nbsp;<a ng-click="panzoom(g.lat,g.lon)" title="{[{ g.display_name }]}" data-latitude="{[{ g.lat }]}" data-longitude="{[{ g.lon }]}" style="cursor:pointer;"><span ng-bind-html-unsafe="g.display_name | highlight:box.query"></span></a>
       </div>
       
-      <div class="card location" style="width:378px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" ng-hide="!featureData">
-        <ul>
-            <li ng-repeat="(key, value) in featureData"><span ng-bind="key"></span>: <span ng-bind="value"></span></li>
+      <div class="card location" style="width:378px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-bottom:25px;" ng-hide="!featureData">
+      <!-- MAKE THIS A TABLE OR DL! -->
+        <ul style="list-style:none;padding:0;margin:0;">
+            <li style="border-bottom:1px solid #eee;padding:0;margin:0;" ng-repeat="(key, value) in featureData">
+                <ul style="list-style:none;padding:0;margin:0;">
+                    <li style="display:inline;"><span ng-bind="key"></span></li>
+                    <li class="pull-right" style="display:inline;"><span ng-bind="value"></span></li>
+                </ul>
+                
+            </li>
         </ul>
+        <table width="100%" style="margin:8px 0px 0px 0px;">
+            <tr>
+                <td width="20%" style="padding-left:20px;">
+                    <a ng-click="saveAsFavorite(featureData)" href="#" title="Opslaan als favoriet" style="text-decoration:none;">
+                    <i class="icon-star icon-large" style="color:#619CE5;"></i>
+                    <span style="position:relative;top:17px;left:-35px;color:#619CE5;">
+                        <small>Bewaren</small>
+                    </span></a>
+                </td>
+                <td width="20%">
+                    <a ng-click="shareFeature(featureData)" href="#" title="Delen met anderen" style="text-decoration:none;">
+                    <i class="icon-share icon-large" style="color:#619CE5;"></i>
+                    <span style="position:relative;top:17px;left:-30px;color:#619CE5;">
+                        <small>Delen</small>
+                    </span></a>                    
+                </td>
+                <td width="60%">
+                    &nbsp;
+                </td>
+            </tr>
+        </table>
+                
       </div>
                         
     </div> 
@@ -62,7 +72,5 @@
 </div>
 {% endblock %}
 
-
 {% block site_actions %}
 {% endblock site_actions %}
-

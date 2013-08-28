@@ -9,16 +9,15 @@
     
     {% block css %}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}vendor/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="{{ STATIC_URL }}vendor/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}vendor/leaflet/dist/leaflet.css" />
 
     <!-- CSS for jqueryui: "smoothness" theme -->
-    <link type="text/css"
-          href="{{ STATIC_URL }}vendor/jquery-ui-1.10.1.custom/themes/smoothness/jquery-ui.min.css"
-          rel="stylesheet"
-          media="screen, projection" />
+    <!--<link href="{{ STATIC_URL }}vendor/jquery-ui-1.10.1.custom/themes/smoothness/jquery-ui.min.css" rel="stylesheet" />-->
     <link href="{{ STATIC_URL }}vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}css/nxt_base.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}css/lizard5.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}lib/nxt_box/nxt-box.css" rel="stylesheet"/>
+    <!--<link href="{{ STATIC_URL }}vendor/nvd3/source/nv.d3.css" rel="stylesheet"/>-->
     {% endblock css %}
 
     <script>
@@ -33,6 +32,7 @@
           <a href="/" title="{% trans 'Back to homepage' %}"><img src="{{ STATIC_URL }}images/logo.png" alt="Lizard"></a>
         </div>
         <div id="site-actions">
+        <!-- COMMENTED TO PREVENT DISCUSSION
           <ul class="nav" id="leftbar-actions">
             <li class="site">
               <a href="http://test.live.3di.lizard.net/">3di</a>
@@ -58,10 +58,12 @@
                   </ul>
               </li>
           </ul>
-          <ul class="nav" id="rightbar-actions">
+          -->
+
+          <ul class="nav pull-right" id="rightbar-actions">
             {% if user.is_authenticated %}
               <li class="dropdown">
-                <a class="dropdown-toggle" data-content="Toon loginopties" data-title="" href="#" data-hover="dropdown" 
+                <a class="dropdown-toggle" data-content="Toon loginopties" data-title="" href="#" data-toggle="dropdown" 
                 data-delay=200>
                   <i class="icon-user"></i> {{ user.first_name }}
                   <b class="caret"></b>
@@ -100,19 +102,34 @@
     {% endblock content %}
 
     {% block javascript_body %}
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/jquery-1.9.0.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery-ui-1.10.1.custom/js/jquery-ui-1.10.1.custom.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet/leaflet-src.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet.utfgrid/leaflet.utfgrid.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/jquery.min.js"></script>
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery-ui-1.10.1.custom/js/jquery-ui-1.10.1.custom.min.js"></script>-->
+    
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet/dist/leaflet.js"></script>
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.utfgrid/dist/leaflet.utfgrid.js"></script>-->
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-tilelayer-geojson/TileLayer.GeoJSON.js"></script> -->
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-vectortile/vectorTile.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-hash/leaflet-hash.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/catiline/catiline.js"></script>
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/vector-layers/vectorTile.js"></script>-->
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/vector-layers/leaflet-hash.js"></script>-->
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.groupedlayercontrol/src/leaflet.groupedlayercontrol.js"></script>
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/catiline/dist/catiline.js"></script>-->
+
     <script type="text/javascript" src="{{ STATIC_URL }}js/leaflet-nxt.js?{{ random_string }}"></script>
+    <!-- <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.min.js"></script> -->
+    <!-- <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular-unstable.js"></script> -->
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular-resource.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/ui-utils/ui-utils.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-resource/angular-resource.min.js"></script>
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-route/angular-route.js"></script>-->
+
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js?{{ random_string }}"></script>-->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_box/nxt-box.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_map/nxt-map.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3js/d3.v3.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/nvd3/nv.d3.js?{{ random_string }}"></script>
+    <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->
+    
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/twitter-bootstrap-hover-dropdon.min.js?{{ random_string }}"></script>-->
     {% endblock %}
 
   </body>

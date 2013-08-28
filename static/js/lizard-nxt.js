@@ -1,4 +1,4 @@
-var app = angular.module("lizard-nxt", ['ngResource', 'ui.utils']);
+var app = angular.module("lizard-nxt", ['ngResource']);
 
 app.config(function($interpolateProvider) {
   $interpolateProvider.startSymbol('{[{');
@@ -39,6 +39,17 @@ app.controller("Leaflet", ["$scope", "leaflet", function($scope, leaflet) {
 
 /* Directives */
 
+app.directive('ngHistogram', function(){
+  // turns the <historgram/> element into an interactive crossfilter
+  // depends on crossfilter.js
+  return function($scope, element){
+    element[0].focus();
+  };
+});
+
+
+
+
 app.directive('ngFocus', function(){
   // focus()es on the element you put this directive on
   return function($scope, element){
@@ -48,14 +59,8 @@ app.directive('ngFocus', function(){
 
 app.directive('ngEnter', function() {
     return function(scope, element, attrs) {
-        console.log('scope', scope);
-        console.log('element', element);
-        console.log('attrs', attrs);
-
         element.bind("keydown keypress", function(event) {
-            console.log('keydown/keypress!');
             if(event.which === 13) {
-                console.log('ENTER!');
                 scope.$apply(function(){
                     scope.$eval(attrs.onEnter);
                 });
@@ -64,51 +69,3 @@ app.directive('ngEnter', function() {
         });
     };
 });
-
-
-// app.factory('leaflet', function ($rootScope) {
-//     if (debug) {
-//         console.log('initializing leaflet...');
-//     }
-//     map.on('click', function onMapClick(e) {
-//             if (debug){
-//                 console.log("click in navigate mode: ", e.latlng);
-//                     };
-//         var content = {
-//             type: 'infopoint',
-//             point: e.latlng
-//         };
-//         $rootScope.$broadcast('open_box', content);
-//         } else if (clientstate.program_mode === MODE_INFO_POINT){
-//             $rootScope.$broadcast('open_box', {
-//                 type: 'infopoint', 
-//                 point: e.latlng,
-//                 loaded_model: state.loaded_model
-//             });
-//         } else {
-//             if (debug) {
-//                 console.log("click in unhandled mode: " + clientstate.program_mode);
-//             }
-//         } 
-
-//     });
-
-//     /*return {
-//         emitExtent: function () {
-//             var bounds = map.getBounds();
-//             var extent_list = [
-//                 bounds._southWest.lat, bounds._southWest.lng,
-//                 bounds._northEast.lat, bounds._northEast.lng
-//                 ];
-//             socket.emit(
-//                 'set_map_location', extent_list,
-//                 function() {
-//                     if (debug){
-//                         console.log('emit map location', extent_list);
-//                     }
-//                 });
-//         }
-
-
-//     }*/
-// });
