@@ -1,6 +1,7 @@
 {% extends "client/base.html" %}{% load i18n %}
 
 {% block box_awesome %}
+
 <div id="omnibox" ng-controller="OmniboxCtrl">
     <div class="searchbox searchbox-shadow " id="searchbox" tabindex="-1" role="search" style="">
         <form id="searchbox_form"> 
@@ -18,10 +19,20 @@
     </div>
 
     <div id="cards">
+
+        <div ng-show="box.showCards" class="card location">
+            <svg id="graph" height="500"></svg>
+
+        </div>
       <!-- <div class="card" style="padding-bottom: 10px;" ng-show="box.query.length>0">
         <div>Zoeken naar <span style="border-bottom:1px dotted #999;" ng-bind="box.query"></span></div>
       </div> -->
 
+
+
+{% comment %}
+
+<!-- Ik moet hier een beetje van huilen, wat een onleesbare shit. Ik snap wat er gebeurt, maar kunnen er niet in ieder geval wat styles in een CSS ofzo? -->
       <div ng-show="box.query.length>0" ng-cloak ng-repeat="(key, value) in searchData" class="card location" style="width:378px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
         <i class="icon-table"></i>&nbsp;<a href="#"><span ng-cloak ng-repeat="(k,v) in value">
           <span ng-bind-html-unsafe="k | highlight:box.query"></span>: <span ng-bind-html-unsafe="v | highlight:box.query"></span></a>
@@ -32,7 +43,7 @@
         <i class="icon-map-marker"></i>&nbsp;<a ng-click="panzoom(g.lat,g.lon)" title="{[{ g.display_name }]}" data-latitude="{[{ g.lat }]}" data-longitude="{[{ g.lon }]}" style="cursor:pointer;"><span ng-bind-html-unsafe="g.display_name | highlight:box.query"></span></a>
       </div>
       
-      <div class="card location" style="width:378px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-bottom:25px;" ng-hide="!featureData">
+      <div class="card location" ng-hide="!featureData">
       <!-- MAKE THIS A TABLE OR DL! -->
         <ul style="list-style:none;padding:0;margin:0;">
             <li style="border-bottom:1px solid #eee;padding:0;margin:0;" ng-repeat="(key, value) in featureData">
@@ -66,10 +77,12 @@
         </table>
                 
       </div>
+{% endcomment %}
                         
     </div> 
 
 </div>
+
 {% endblock %}
 
 {% block site_actions %}

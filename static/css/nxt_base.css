@@ -9,6 +9,17 @@ html, body, #map {
     z-index: 0;
 }
 
+.layer-switcher{
+    height: 200px;
+    z-index: 2000; /* this should be above leaflet. */
+    width: 200px;
+    top: 80px;
+    right: 20px;
+    position: absolute;
+    background: white;
+    list-style: none;
+}
+
 #content{
     position: absolute;
     top: 40px;
@@ -181,3 +192,41 @@ html, body, #map {
     -moz-border-radius: 4px;
     border-radius: 4px;
 }
+
+.card .location{
+    width:378px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    padding-bottom:25px;
+}
+
+/* d3 */
+
+            /* tell the SVG path to be a thin blue line without any area fill */
+            path {
+                stroke: steelblue;
+                stroke-width: 1;
+                fill: none;
+            }
+            
+            .axis {
+              shape-rendering: crispEdges;
+            }
+
+            .x.axis line {
+              stroke: lightgrey;
+            }
+
+            .x.axis .minor {
+              stroke-opacity: .5;
+            }
+
+            .x.axis path {
+              display: none;
+            }
+
+            .y.axis line, .y.axis path {
+              fill: none;
+              stroke: #000;
+            }

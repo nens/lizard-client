@@ -95,6 +95,21 @@
         <div id="alert_placeholder"></div>
     </div>
 
+      <div class="layer-switcher" ng-controller="MapLayerCtrl">
+         <ul>
+          <li ng-repeat="layergroup in layergroups" class="layer-group">
+            {[{ layergroup.name }]}
+            <ul class="layergroup-layers">
+              <li ng-repeat="layer in layergroup.layers">
+               <a class="layer" ng-class="{ 'map-selected': layer.name == active_layer.name }" ng-click="switch(layer)">
+                <i ng-class="{'icon-checkbox': layer.active, 'icon-checkbox-empty': !layer.active}"></i>{[{ layer.name }]}</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+      </div>
+
      {% block box_awesome %}{% endblock %}
     <div class="container-fluid">
         {% block toolbar_controllers %}
@@ -106,7 +121,7 @@
     <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery-ui-1.10.1.custom/js/jquery-ui-1.10.1.custom.min.js"></script>-->
     
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet/dist/leaflet.js"></script>
-    <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.utfgrid/dist/leaflet.utfgrid.js"></script>-->
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.utfgrid/dist/leaflet.utfgrid.js"></script>
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-tilelayer-geojson/TileLayer.GeoJSON.js"></script> -->
     <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/vector-layers/vectorTile.js"></script>-->
     <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/vector-layers/leaflet-hash.js"></script>-->
@@ -120,16 +135,14 @@
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-resource/angular-resource.min.js"></script>
     <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-route/angular-route.js"></script>-->
 
-    <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js?{{ random_string }}"></script>-->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_box/nxt-box.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_map/nxt-map.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3js/d3.v3.min.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/nvd3/nv.d3.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.min.js?{{ random_string }}"></script>
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->
     
-    <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/twitter-bootstrap-hover-dropdon.min.js?{{ random_string }}"></script>-->
     {% endblock %}
 
   </body>
