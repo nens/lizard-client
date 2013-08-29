@@ -222,12 +222,11 @@ app.controller("MapLayerCtrl", ["$scope", "$resource", "$rootScope","leaflet",
         // layer.leafletLayer = L.jsonLayer(layer.url);
       } else {
         layer.leafletLayer = L.tileLayer(layer.url);
-        console.log(layer);
       }
         leaflet.addFgLayer(layer);
 
       if (layer.name == 'Sewerage'){
-        console.log(layer.name)
+        // console.log(layer.name)
         // var utfLayer = {
         //   name: "Sewerage Utf",
         //   url: "http://dev1.nxt.lizard.net:9000/sewerage_grid/{z}/{x}/{y}.json",
