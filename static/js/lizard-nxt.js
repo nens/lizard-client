@@ -1,6 +1,8 @@
 var app = angular.module("lizard-nxt", ['ngResource']);
 
 app.config(function($interpolateProvider) {
+  //To prevent Django and Angular Template hell
+  //
   $interpolateProvider.startSymbol('{[{');
   $interpolateProvider.endSymbol('}]}');
  });
@@ -30,9 +32,7 @@ app.controller("InfoPoint", ["$scope", function($scope) {
     });
 }]);
 
-/* Controller to initiate leaflet factory */
-app.controller("Leaflet", ["$scope", "leaflet", function($scope, leaflet) {
-}]);
+
 
 
 
@@ -40,7 +40,7 @@ app.controller("Leaflet", ["$scope", "leaflet", function($scope, leaflet) {
 /* Directives */
 
 app.directive('ngHistogram', function(){
-  // turns the <historgram/> element into an interactive crossfilter
+  // turns the <histogram/> element into an interactive crossfilter
   // depends on crossfilter.js
   return function($scope, element){
     element[0].focus();
