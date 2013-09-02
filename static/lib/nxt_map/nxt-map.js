@@ -197,62 +197,62 @@ app.controller("MapCtrl",
 }]);
 
 
-app.controller("MapLayerCtrl", ["$scope", "$resource", "$rootScope","leaflet", 
-  function($scope, $resource, $rootScope, leaflet){
+// app.controller("MapLayerCtrl", ["$scope", "$resource", "$rootScope","leaflet", 
+//   function($scope, $resource, $rootScope, leaflet){
 
-    $scope.apiLayerGroups = $resource('/api/v1/layergroups//:id/', 
-      {
-        id:'@id'
-      }, {
-        'query': {method: "GET", isArray:false}
-      })
+//     $scope.apiLayerGroups = $resource('/api/v1/layergroups//:id/', 
+//       {
+//         id:'@id'
+//       }, {
+//         'query': {method: "GET", isArray:false}
+//       })
 
-    $scope.apiLayerGroups.query(function(response){
-      $scope.layergroups = response.results;
-    });
+//     $scope.apiLayerGroups.query(function(response){
+//       $scope.layergroups = response.results;
+//     });
 
 
-    $scope.switch = function(layer) {
-      if (layer.active){
-        layer.active = false;
-        leaflet.removeFgLayer(layer);
-        } else {
-        layer.active = true;
-        leaflet.addFgLayer(layer);
-      };
-      if (layer.type === 'json'){
-        // layer.leafletLayer = L.jsonLayer(layer.url);
-      } else {
-        console.log(layer.leafletLayer)
-        if (layer.leafletLayer === undefined){
-          layer.leafletLayer = L.tileLayer(layer.url);
-        }
-      }
+//     $scope.switch = function(layer) {
+//       if (layer.active){
+//         layer.active = false;
+//         leaflet.removeFgLayer(layer);
+//         } else {
+//         layer.active = true;
+//         leaflet.addFgLayer(layer);
+//       };
+//       if (layer.type === 'json'){
+//         // layer.leafletLayer = L.jsonLayer(layer.url);
+//       } else {
+//         console.log(layer.leafletLayer)
+//         if (layer.leafletLayer === undefined){
+//           layer.leafletLayer = L.tileLayer(layer.url);
+//         }
+//       }
 
-      if (layer.name == 'Sewerage'){
-        // console.log(layer.name)
-        // var utfLayer = {
-        //   name: "Sewerage Utf",
-        //   url: "http://dev1.nxt.lizard.net:9000/sewerage_grid/{z}/{x}/{y}.json",
-        //   leafletLayer: new L.UtfGrid(this.url)
-        // }
-        utfLayer = new L.UtfGrid("http://dev1.nxt.lizard.net:9000/sewerage_grid/{z}/{x}/{y}.json?callback={cb}", 
-        {
-          resolution: 4
-        });
-        leaflet.map.addLayer(utfLayer);
-        utfLayer.on('click', function(e){
-          if (e.data){
-            $rootScope.$broadcast('open_box', e.data);
-          } else {
-            console.log(e)
-          }
-        })
-      }
-    };
+//       if (layer.name == 'Sewerage'){
+//         // console.log(layer.name)
+//         // var utfLayer = {
+//         //   name: "Sewerage Utf",
+//         //   url: "http://dev1.nxt.lizard.net:9000/sewerage_grid/{z}/{x}/{y}.json",
+//         //   leafletLayer: new L.UtfGrid(this.url)
+//         // }
+//         utfLayer = new L.UtfGrid("http://dev1.nxt.lizard.net:9000/sewerage_grid/{z}/{x}/{y}.json?callback={cb}", 
+//         {
+//           resolution: 4
+//         });
+//         leaflet.map.addLayer(utfLayer);
+//         utfLayer.on('click', function(e){
+//           if (e.data){
+//             $rootScope.$broadcast('open_box', e.data);
+//           } else {
+//             console.log(e)
+//           }
+//         })
+//       }
+//     };
 
     
-}]);
+// }]);
 
 
 app.service("leaflet", function(){

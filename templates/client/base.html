@@ -101,7 +101,7 @@
             {[{ layergroup.name }]}
             <ul class="layergroup-layers">
               <li ng-repeat="layer in layergroup.layers">
-              <input type="checkbox" ng-model="layer.active">
+              <input type="radio" ng-model="layer.active">
                <a class="layer" 
                ng-class="{ 'map-selected': layer.name == active_layer.name }" 
                ng-click="switch(layer)">
