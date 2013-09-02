@@ -17,7 +17,11 @@ html, body, #map {
     right: 20px;
     position: absolute;
     background: white;
-    list-style: none;
+    list-style-type: none;
+}
+
+.layer-switcher ul li{
+    list-style-type: none;
 }
 
 #content{

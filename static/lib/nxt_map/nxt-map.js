@@ -215,15 +215,19 @@ app.controller("MapLayerCtrl", ["$scope", "$resource", "$rootScope","leaflet",
     $scope.switch = function(layer) {
       if (layer.active){
         layer.active = false;
-      } else {
+        leaflet.removeFgLayer(layer);
+        } else {
         layer.active = true;
+        leaflet.addFgLayer(layer);
       };
       if (layer.type === 'json'){
         // layer.leafletLayer = L.jsonLayer(layer.url);
       } else {
-        layer.leafletLayer = L.tileLayer(layer.url);
+        console.log(layer.leafletLayer)
+        if (layer.leafletLayer === undefined){
+          layer.leafletLayer = L.tileLayer(layer.url);
+        }
       }
-        leaflet.addFgLayer(layer);
 
       if (layer.name == 'Sewerage'){
         // console.log(layer.name)
@@ -280,10 +284,17 @@ app.service("leaflet", function(){
     layer.active = true;
     layer.order = 1;
     if (layer.leafletLayer === undefined){
-      layer.leafletLayer = L.tileLayer(layer.url)    
+      layer.leafletLayer = L.tileLayer(layer.url);
     }
     map.addLayer(layer.leafletLayer);
     foregroundLayers.push(layer);
+  };
+
+  var removeFgLayer = function(layer){
+    layer.active = false;
+    map.removeLayer(layer.leafletLayer);
+    var index = foregroundLayers.indexOf(layer);
+    foregroundLayers.splice(index, 1);
   };
 
   var switchBgLayer = function(id){
@@ -310,6 +321,7 @@ app.service("leaflet", function(){
     getBgLayer: getBgLayer,
     switchBgLayer: switchBgLayer,
     foregroundLayers: foregroundLayers,
-    addFgLayer: addFgLayer
+    addFgLayer: addFgLayer,
+    removeFgLayer: removeFgLayer
   }
 });
