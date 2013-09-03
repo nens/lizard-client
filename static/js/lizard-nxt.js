@@ -20,9 +20,7 @@ app.service("Cabinet", ["$resource", "$rootScope",
         name: "Open Street Map",
         url: "http://dev1.nxt.lizard.net:9000/osm_nens/{z}/{x}/{y}.png",
         leafletLayer: L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png')
-      }],
-      activeLayers = [],
-      inActiveLayers = [];
+      }];
 
   apiLayerGroups = $resource('/api/v1/layergroups//:id/', 
     {
@@ -35,18 +33,17 @@ app.service("Cabinet", ["$resource", "$rootScope",
      layergroups = response.results;
      $rootScope.$broadcast('layergroups', layergroups);
 
+  // Default to inactive
   for (var i = 0; i < layergroups.length; i ++) {
     var layergroup = layergroups[i];
     for (var j = 0; j < layergroup.layers.length; j ++) {
       var layer = layergroup.layers[j];
-      if (layer.active) {
-        activeLayers.push(layer);
-      }
-      if (!layer.active) {
-        inActiveLayers.push(layer);
+      if (layer.active === null) {
+        layer.active = false;
       }
     };
   };
+
   });
   return {
     layergroups: layergroups,

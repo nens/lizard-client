@@ -96,28 +96,32 @@
     </div>
 
       <div class="layer-switcher" ng-controller="MapLayerCtrl">
-         <ul>
-         <li>Achtergrondkaarten</li>
-          <ul>
-            <li ng-repeat="baselayer in baselayers">
-              <input type="radio" ng-model="$parent.baselayer.active" ng-click="switch(layer)">
-              <span class="layer" ng-class="{ 'map-selected': layer.name == active_layer.name }"> {[{ baselayer.name }]}  </span>
-          </ul>
+        <ul>
+          <li>
+            <span>Achtergrondkaarten</span>
+            <ul>
+              <li ng-repeat="baselayer in baselayers">
+                <input type="radio" ng-model="$parent.baselayer.active" ng-click="switch(layer)">
+                <span class="layer" ng-class="{ 'map-selected': layer.name == active_layer.name }" ng-bind="baselayer.name"></span>
+              </li>
+            </ul>
+          </li>
           <li ng-repeat="layergroup in layergroups" class="layer-group">
-            <br>{[{ layergroup.name }]}
+            <span ng-bind="layergroup.name"></span>
             <ul class="layergroup-layers">
               <li ng-repeat="layer in layergroup.layers">
-              <input type="checkbox" ng-model="layer.active">
-               <span class="layer" 
-               ng-class="{ 'map-selected': layer.name == active_layer.name }" 
-               ng-click="switch(layer)">
-                <i ng-class="{'icon-checkbox': layer.active, 'icon-checkbox-empty': !layer.active}"></i>{[{ layer.name }]}</span></br>
+                <input type="checkbox" ng-model="layer.active">
+                <span class="layer" 
+                ng-class="{ 'map-selected': layer.name == active_layer.name }" 
+                ng-click="switch(layer)" ng-bind="layer.name"></span>
               </li>
             </ul>
           </li>
         </ul>
 
       </div>
+
+
 
      {% block box_awesome %}{% endblock %}
     <div class="container-fluid">
