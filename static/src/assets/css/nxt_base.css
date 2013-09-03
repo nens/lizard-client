@@ -2,7 +2,6 @@ html, body, #map {
     margin: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
 }
 
 #map {
@@ -17,7 +16,11 @@ html, body, #map {
     right: 20px;
     position: absolute;
     background: white;
-    list-style: none;
+    list-style-type: none;
+}
+
+.layer-switcher ul li{
+    list-style-type: none;
 }
 
 #content{

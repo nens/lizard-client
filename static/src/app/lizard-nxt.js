@@ -8,64 +8,34 @@ app.config(function($interpolateProvider) {
  });
 
 
-app.controller("InfoPoint", ["$scope", function($scope) {
-    $scope.content = null;
-    $scope.counter = 0;
+app.service("Cabinet", ["$resource", "$rootScope", 
+  function($resource, $rootScope) {
 
-    var infoPoint = function(content) {
-        // content must have properties .loaded_model and .point.
-        var lonlat = content.point;
-        //var $layer = document.getElementsByClassName("workspace-wms-layer")[0];  // there is only one
-        //$scope.infourl = 'http://dev2.nxt.lizard.net:8080/hbase-api/api/v1/events/186c77bb-0030-48e3-8044-ea90028c9114/';
-        $scope.infourl = '/static/carsten.json';
-    };
+  var layergroups,
+      apiLayerGroups;
 
-    $scope.$on("infopoint", function(message, content) {
-        $scope.content = content;
-        $scope.$apply(function() {
-            // console.log("open box infopoint");
-            infoPoint(content);
-            // var lonlat = content.point;
-            // var $layer = document.getElementsByClassName("workspace-wms-layer")[0];  // there is only one
-            // $scope.infourl = $layer.dataset['workspaceWmsUrl'].split('/wms')[0] + '/data?' + "REQUEST=gettimeseries&LAYERS=" + content.loaded_model + "&SRS=EPSG:4326&POINT="+lonlat.lng.toString() + ',' + lonlat.lat.toString();
-        });
-    });
+  apiLayerGroups = $resource('/api/v1/layergroups//:id/', 
+    {
+      id:'@id'
+    }, {
+      'query': {method: "GET", isArray:false}
+    })
+
+  apiLayerGroups.query(function(response) {
+     layergroups = response.results;
+     $rootScope.$broadcast('layergroups', layergroups);
+  });
+  return {
+    layergroups: apiLayerGroups
+  }
+}])
+
+
+app.controller("MapLayerCtrl", ["$scope", "Cabinet", function($scope, Cabinet) {
+  $scope.layergroups = Cabinet.layergroups;
+
+  $scope.$on('layergroups', function(message, content) {
+    $scope.layergroups = content;
+  })
+
 }]);
-
-
-
-
-
-
-/* Directives */
-
-app.directive('ngHistogram', function(){
-  // turns the <histogram/> element into an interactive crossfilter
-  // depends on crossfilter.js
-  return function($scope, element){
-    element[0].focus();
-  };
-});
-
-
-
-
-app.directive('ngFocus', function(){
-  // focus()es on the element you put this directive on
-  return function($scope, element){
-    element[0].focus();
-  };
-});
-
-app.directive('ngEnter', function() {
-    return function(scope, element, attrs) {
-        element.bind("keydown keypress", function(event) {
-            if(event.which === 13) {
-                scope.$apply(function(){
-                    scope.$eval(attrs.onEnter);
-                });
-                event.preventDefault();
-            }
-        });
-    };
-});
