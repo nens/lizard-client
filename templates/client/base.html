@@ -27,7 +27,7 @@
 
   <body>
     <header>
-      <div id="logo-row" class="navbar">
+      <div id="logo-row" class="navbar" ng-controller="Dummy">
         <div id="logo">
           <a href="/" title="{% trans 'Back to homepage' %}"><img src="{{ STATIC_URL }}images/logo.png" alt="Lizard"></a>
         </div>
@@ -110,7 +110,7 @@
             <span ng-bind="layergroup.name"></span>
             <ul class="layergroup-layers">
               <li ng-repeat="layer in layergroup.layers">
-                <input type="checkbox" ng-model="layer.active" ng-change="switch">
+                <input type="checkbox" ng-model="layer.active" ng-change="switch(layer)">
                 <span class="layer" 
                 ng-class="{ 'map-selected': layer.name == active_layer.name }" 
                 ng-click="switch(layer)" ng-bind="layer.name"></span>

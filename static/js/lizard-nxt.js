@@ -11,8 +11,9 @@ app.config(function($interpolateProvider) {
 app.service("Cabinet", ["$resource", "$rootScope", 
   function($resource, $rootScope) {
 
-  var layergroups,
-      apiLayerGroups,
+  var layergroups = [];
+
+  var apiLayerGroups,
       baselayers = [
       {
         active: true,
@@ -30,21 +31,21 @@ app.service("Cabinet", ["$resource", "$rootScope",
     })
 
   apiLayerGroups.query(function(response) {
-     layergroups = response.results;
-     $rootScope.$broadcast('layergroups', layergroups);
-
+    angular.copy(response.results, layergroups);
+     
   // Default to inactive
-  for (var i = 0; i < layergroups.length; i ++) {
-    var layergroup = layergroups[i];
-    for (var j = 0; j < layergroup.layers.length; j ++) {
-      var layer = layergroup.layers[j];
-      if (layer.active != true) {
-        layer.active = false;
-      }
+    for (var i = 0; i < layergroups.length; i ++) {
+      var layergroup = layergroups[i];
+      for (var j = 0; j < layergroup.layers.length; j ++) {
+        var layer = layergroup.layers[j];
+        if (layer.active != true) {
+          layer.active = false;
+        }
+      };
     };
-  };
 
   });
+
   return {
     layergroups: layergroups,
     baselayers: baselayers
@@ -56,15 +57,13 @@ app.service("Cabinet", ["$resource", "$rootScope",
 app.controller("MapLayerCtrl", ["$scope", "Cabinet", function($scope, Cabinet) {
   $scope.layergroups = Cabinet.layergroups;
   $scope.baselayers = Cabinet.baselayers;
+}]);
 
-  $scope.$on('layergroups', function(message, content) {
-    $scope.layergroups = content;
-  });
-
-  $scope.switch = function(layer) {
-    debugger
-  };
-
+app.controller("Dummy", ["$scope", "Cabinet", function($scope, Cabinet) {
+  $scope.layergroups = Cabinet.layergroups;
+  $scope.$watch('layergroups', function() {
+    console.log($scope.layergroups)
+    }, true);
 }]);
 
 
