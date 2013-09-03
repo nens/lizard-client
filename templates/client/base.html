@@ -97,15 +97,21 @@
 
       <div class="layer-switcher" ng-controller="MapLayerCtrl">
          <ul>
+         <li>Achtergrondkaarten</li>
+          <ul>
+            <li ng-repeat="baselayer in baselayers">
+              <input type="radio" ng-model="$parent.baselayer.active" ng-click="switch(layer)">
+              <span class="layer" ng-class="{ 'map-selected': layer.name == active_layer.name }"> {[{ baselayer.name }]}  </span>
+          </ul>
           <li ng-repeat="layergroup in layergroups" class="layer-group">
-            {[{ layergroup.name }]}
+            <br>{[{ layergroup.name }]}
             <ul class="layergroup-layers">
               <li ng-repeat="layer in layergroup.layers">
-              <input type="radio" ng-model="layer.active">
-               <a class="layer" 
+              <input type="checkbox" ng-model="layer.active">
+               <span class="layer" 
                ng-class="{ 'map-selected': layer.name == active_layer.name }" 
                ng-click="switch(layer)">
-                <i ng-class="{'icon-checkbox': layer.active, 'icon-checkbox-empty': !layer.active}"></i>{[{ layer.name }]}</a>
+                <i ng-class="{'icon-checkbox': layer.active, 'icon-checkbox-empty': !layer.active}"></i>{[{ layer.name }]}</span></br>
               </li>
             </ul>
           </li>
