@@ -38,7 +38,7 @@ app.service("Cabinet", ["$resource", "$rootScope",
     var layergroup = layergroups[i];
     for (var j = 0; j < layergroup.layers.length; j ++) {
       var layer = layergroup.layers[j];
-      if (layer.active === null) {
+      if (layer.active != true) {
         layer.active = false;
       }
     };
@@ -47,7 +47,7 @@ app.service("Cabinet", ["$resource", "$rootScope",
   });
   return {
     layergroups: layergroups,
-    baselayers: baselayers,
+    baselayers: baselayers
   }
 
 }]);
@@ -61,16 +61,9 @@ app.controller("MapLayerCtrl", ["$scope", "Cabinet", function($scope, Cabinet) {
     $scope.layergroups = content;
   });
 
-  // $scope.switch = function(layer) {
-  //   if (layer.active) {
-  //     layer.active = false;
-  //     //leaflet.removeFgLayer(layer);
-  //     }
-  //   else {
-  //     layer.active = true;
-  //     //leaflet.addFgLayer(layer);
-  //     }
-  // };
+  $scope.switch = function(layer) {
+    debugger
+  };
 
 }]);
 
