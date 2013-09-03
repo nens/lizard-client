@@ -71,8 +71,8 @@ app.controller("OmniboxCtrl",
             timeseries.get({
                 entityName: content.entity_name,
                 dataId: content.id
-            })
-            console.log(timeseries)
+            });
+            console.log(timeseries);
                     /* implementation heavily influenced by http://bl.ocks.org/1166403 */
         
         // define dimensions of graph
@@ -81,9 +81,9 @@ app.controller("OmniboxCtrl",
         var h = 400 - m[0] - m[2]; // height
         
         // create a simple data array that we'll plot with a line (this array represents only the Y values, X will just be the index location)
-        var data = [3, 6, 2, 7, 5, 2, 0, 3, 8, 9, 2, 5, 9, 3, 6, 3, 6, 2, 7, 5, 2, 1, 3, 8, 9, 2, 5, 9, 2, 7].map(function(x) { return  x * Math.random() *10; });;
+        var data = [3, 6, 2, 7, 5, 2, 0, 3, 8, 9, 2, 5, 9, 3, 6, 3, 6, 2, 7, 5, 2, 1, 3, 8, 9, 2, 5, 9, 2, 7].map(function(x) { return  x * Math.random() *10; });
         
-        console.log(data)
+        console.log(data);
 
         // X scale will fit all values from data[] within pixels 0-w
         var x = d3.scale.linear().domain([0, data.length]).range([0, w]);
@@ -149,35 +149,35 @@ app.controller("OmniboxCtrl",
 
 
     $scope.$on('mapclick', function(message, content) {
-        // console.log('map was clicked!!!', content.lat);
+        console.log('map was clicked!!!', content.lat);
 
-        // var reversegeocode = $scope.box.ReverseGeocode.get({
-        //     lat:content.lat,
-        //     lon:content.lng
-        // }, function(data) {
-        //     console.log(data);
-        //     // show card for data!
-        // });
+        var reversegeocode = $scope.box.ReverseGeocode.get({
+            lat:content.lat,
+            lon:content.lng
+        }, function(data) {
+            console.log(data);
+            // show card for data!
+        });
 
     });
 
 
-    // $scope.$on('open_box', function(message, content) {
-    //     // Somewhat hacky: selected icon lights up
+    $scope.$on('open_box', function(message, content) {
+        // Somewhat hacky: selected icon lights up
 
-    //     if ($scope.box.content.marker !== undefined){
-    //         $scope.box.content.marker._icon.classList.remove('selected-icon');
-    //     }
-    //     if ($scope.box.content !== 'empty') {
-    //         $scope.close_box();  // close box and clean stuff up.
-    //     }
-    //     $scope.$apply(function() {
-    //         $scope.box.content = content;
-    //         $scope.box.disabled = false;
-    //     });
-    //     // If you have dynamic content, you should listen to this broadcast.
-    //     $scope.$broadcast(content.type, content);
-    // });
+        if ($scope.box.content.marker !== undefined){
+            $scope.box.content.marker._icon.classList.remove('selected-icon');
+        }
+        if ($scope.box.content !== 'empty') {
+            $scope.close_box();  // close box and clean stuff up.
+        }
+        $scope.$apply(function() {
+            $scope.box.content = content;
+            $scope.box.disabled = false;
+        });
+        // If you have dynamic content, you should listen to this broadcast.
+        $scope.$broadcast(content.type, content);
+    });
 
     // Close the box from another scope using $rootScope.$broadcast
     $scope.$on('close_box', function(message, content) {

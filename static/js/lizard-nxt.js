@@ -1,4 +1,4 @@
-var app = angular.module("lizard-nxt", ['ngResource']);
+var app = angular.module("lizard-nxt", ['ngResource', 'ui.event', 'ui.highlight', 'ui.keypress']);
 
 app.config(function($interpolateProvider) {
   //To prevent Django and Angular Template hell
@@ -8,18 +8,18 @@ app.config(function($interpolateProvider) {
  });
 
 
-app.service("Cabinet", ["$resource", "$rootScope", 
+app.service("Cabinet", ["$resource", "$rootScope",
   function($resource, $rootScope) {
 
   var layergroups,
       apiLayerGroups;
 
-  apiLayerGroups = $resource('/api/v1/layergroups//:id/', 
+  apiLayerGroups = $resource('/api/v1/layergroups//:id/',
     {
       id:'@id'
     }, {
       'query': {method: "GET", isArray:false}
-    })
+    });
 
   apiLayerGroups.query(function(response) {
      layergroups = response.results;
@@ -27,8 +27,8 @@ app.service("Cabinet", ["$resource", "$rootScope",
   });
   return {
     layergroups: apiLayerGroups
-  }
-}])
+  };
+}]);
 
 
 app.controller("MapLayerCtrl", ["$scope", "Cabinet", function($scope, Cabinet) {
@@ -36,6 +36,6 @@ app.controller("MapLayerCtrl", ["$scope", "Cabinet", function($scope, Cabinet) {
 
   $scope.$on('layergroups', function(message, content) {
     $scope.layergroups = content;
-  })
+  });
 
 }]);
