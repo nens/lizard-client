@@ -24,8 +24,6 @@ angular.module('omnibox', [])
               element.html(html);
           }).then(function (response) {
               element.replaceWith($compile(element.html())(scope));
-          }).error(function(html){
-            element.html('');
           });
       }
 
