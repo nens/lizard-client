@@ -31,13 +31,16 @@ app.service("Cabinet", ["$resource", "$rootScope",
   this.apiLayerGroups.query(function(response) {
     angular.copy(response.results, layergroups);
      
-  // Default to inactive
+  // Default to inactive and ensure it has a leaflet layer
     for (var i = 0; i < layergroups.length; i ++) {
       var layergroup = layergroups[i];
       for (var j = 0; j < layergroup.layers.length; j ++) {
         var layer = layergroup.layers[j];
         if (layer.active != true) {
           layer.active = false;
+        }
+        if (layer.leafletLayer === undefined) {
+          layer.leafletLayer = L.tileLayer(layer.url);
         }
       };
     };
@@ -77,40 +80,27 @@ app.service("leaflet", ["$rootScope", "Cabinet", function($rootScope, Cabinet) {
     zoom: 8,
   });
 
-  for (var i = 0; i < Cabinet.baselayers.length; i ++) {
-    var baselayer = Cabinet.baselayers[i];
-    if (baselayer.leafletLayer === undefined) {
-        layer.leafletLayer = L.tileLayer(layer.url);
+  function addDefaultLayers(layers) {
+    for (var i = 0; i < layers.length; i ++) {
+    var layer = layers[i];
+    if (layer.active === true) {
+      map.addLayer(layer.leafletLayer);
       }
-    if (baselayer.active === true) {
-      map.addLayer(baselayer.leafletLayer);
-      console.log("baselayers drawn");
-      }
-    };
+    }
+  };
+
+  addDefaultLayers(Cabinet.baselayers);
 
   var scope = $rootScope.$new();
-
   scope.$on('LayersRetrieved', function(event, layer) {
     console.log("layers retrieved");
     for (var i = 0; i < Cabinet.layergroups.length; i ++) {
-      var layergroup = Cabinet.layergroups[i];
-      for (var j = 0; j < layergroup.layers.length; j ++) {
-        var layer = layergroup.layers[j];
-        if (layer.leafletLayer === undefined) {
-          layer.leafletLayer = L.tileLayer(layer.url);
-        }
-        if (layer.active === true) {
-          map.addLayer(layer.leafletLayer);
-        }
-      };
-    };
+      addDefaultLayers(Cabinet.layergroups[i]);
+    }
   });
 
   scope.$on('LayerSwitched', function(event, layer) {
     console.log("layer switched");
-    if (layer.leafletLayer === undefined) {
-      layer.leafletLayer = L.tileLayer(layer.url);
-    }
     if (layer.active === true) {
       map.addLayer(layer.leafletLayer);
     }
