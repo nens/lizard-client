@@ -1,4 +1,9 @@
-var app = angular.module("lizard-nxt", ['ngResource', 'ui.event', 'ui.highlight', 'ui.keypress']);
+var app = angular.module("lizard-nxt", [
+  'ngResource', 
+  'ui.event', 
+  'ui.highlight', 
+  'ui.keypress',
+  'omnibox']);
 
 app.config(function($interpolateProvider) {
   //To prevent Django and Angular Template hell

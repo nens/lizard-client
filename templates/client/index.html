@@ -20,14 +20,9 @@
 
     <div id="cards">
 
-        <div ng-show="box.showCards" class="card location">
-            <h3><span ng-bind="content.entity_name"></span> - <span ng-bind="content.id"></span></h3>
-            <svg id="graph" height="500"></svg>
-
+        <div ng-show="box.showCards" class="card">
+            <box-content type="box.type"></box-content>            
         </div>
-      <!-- <div class="card" style="padding-bottom: 10px;" ng-show="box.query.length>0">
-        <div>Zoeken naar <span style="border-bottom:1px dotted #999;" ng-bind="box.query"></span></div>
-      </div> -->
 
       <div ng-show="box.query.length>0" ng-cloak ng-repeat="(key, value) in searchData" class="card location">
         <i class="icon-table"></i>&nbsp;<a href="#"><span ng-cloak ng-repeat="(k,v) in value">

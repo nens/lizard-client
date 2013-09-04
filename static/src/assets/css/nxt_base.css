@@ -196,7 +196,15 @@ html, body, #map {
     border-radius: 4px;
 }
 
-.card .location{
+.card {
+    width:378px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    padding-bottom:25px;
+}
+
+.location{
     width:378px;
     white-space:nowrap;
     overflow:hidden;
@@ -206,30 +214,30 @@ html, body, #map {
 
 /* d3 */
 
-            /* tell the SVG path to be a thin blue line without any area fill */
-            path {
-                stroke: steelblue;
-                stroke-width: 1;
-                fill: none;
-            }
-            
-            .axis {
-              shape-rendering: crispEdges;
-            }
+/* tell the SVG path to be a thin blue line without any area fill */
+path {
+    stroke: steelblue;
+    stroke-width: 1;
+    fill: none;
+}
 
-            .x.axis line {
-              stroke: lightgrey;
-            }
+.axis {
+  shape-rendering: crispEdges;
+}
 
-            .x.axis .minor {
-              stroke-opacity: .5;
-            }
+.x.axis line {
+  stroke: lightgrey;
+}
 
-            .x.axis path {
-              display: none;
-            }
+.x.axis .minor {
+  stroke-opacity: .5;
+}
 
-            .y.axis line, .y.axis path {
-              fill: none;
-              stroke: #000;
-            }
+.x.axis path {
+  display: none;
+}
+
+.y.axis line, .y.axis path {
+  fill: none;
+  stroke: #000;
+}
