@@ -14,9 +14,9 @@
     <!-- CSS for jqueryui: "smoothness" theme -->
     <!--<link href="{{ STATIC_URL }}vendor/jquery-ui-1.10.1.custom/themes/smoothness/jquery-ui.min.css" rel="stylesheet" />-->
     <link href="{{ STATIC_URL }}vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="{{ STATIC_URL }}css/nxt_base.css" rel="stylesheet" />
-    <link href="{{ STATIC_URL }}css/lizard5.css" rel="stylesheet" />
-    <link href="{{ STATIC_URL }}lib/nxt_box/nxt-box.css" rel="stylesheet"/>
+    <link href="{{ STATIC_URL }}src/assets/css/nxt_base.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}src/assets/css/lizard5.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}src/common/nxt_box/nxt-box.css" rel="stylesheet"/>
     <!--<link href="{{ STATIC_URL }}vendor/nvd3/source/nv.d3.css" rel="stylesheet"/>-->
     {% endblock css %}
 
@@ -29,7 +29,7 @@
     <header>
       <div id="logo-row" class="navbar" ng-controller="Dummy">
         <div id="logo">
-          <a href="/" title="{% trans 'Back to homepage' %}"><img src="{{ STATIC_URL }}images/logo.png" alt="Lizard"></a>
+          <a href="/" title="{% trans 'Back to homepage' %}"><img src="{{ STATIC_URL }}src/assets/images/logo.png" alt="Lizard"></a>
         </div>
         <div id="site-actions">
         <!-- COMMENTED TO PREVENT DISCUSSION
@@ -141,7 +141,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.groupedlayercontrol/src/leaflet.groupedlayercontrol.js"></script>
     <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/catiline/dist/catiline.js"></script>-->
 
-    <script type="text/javascript" src="{{ STATIC_URL }}js/leaflet-nxt.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}src/app/leaflet-nxt.js?{{ random_string }}"></script>
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.min.js"></script> -->
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular-unstable.js"></script> -->
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.min.js"></script>
@@ -149,10 +149,10 @@
     <!--<script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-route/angular-route.js"></script>-->
 
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/lizard-nxt-directives.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_box/nxt-box.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_map/nxt-map.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}src/app/lizard-nxt.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}src/app/lizard-nxt-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}src/common/nxt_box/nxt-box.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}src/common/nxt_map/nxt-map.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.min.js?{{ random_string }}"></script>
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->
     
