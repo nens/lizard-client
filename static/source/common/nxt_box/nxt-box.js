@@ -8,8 +8,10 @@ app.controller("OmniboxCtrl",
         ReverseGeocode: $resource('/api/v1/reversegeocode/'),
         query: null,
         disabled: false,
-        showCards: false
-    	};
+        showCards: false,
+        type: 'empty',
+        content: 'empty'
+	};
 
     $scope.filter = function ($event) {
         $scope.box.showCards = true;

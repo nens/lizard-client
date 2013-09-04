@@ -4,33 +4,39 @@ describe('Testing lizard-nxt directive', function() {
       directive,
       compiled,
       html,
-      httpBackend;
+      httpBackend,
+      template,
+      type;
       
   beforeEach(function (){
     //load the module
     module('omnibox', 'templates-main');
 
     //set our view html.
-    html = '<box-content type="egg"></box-content>';
+    html = '<box-content type="graph"></box-content>';
     
-    inject(function($compile, $rootScope, $templateCache) {
+    inject(function($compile, $rootScope, $httpBackend, $templateCache) {
       //create a scope (you could just use $rootScope, I suppose)
       scope = $rootScope.$new();
 
-      var templateLocus = 'lizard_nxt/client/static/templates/egg.html'
-      template = $templateCache.get(templateLocus);
-      $templateCache.put('/static/source/app/templates/empty.html', template);
-
-      
       //get the jqLite or jQuery element
       elem = angular.element(html);
-      
+
+      httpBackend = $httpBackend;
+      httpBackend.when("GET", "/static/source/app/templates/empty.html")
+        .respond('');
+      type = elem.attr('type')
+      var templateLocus = '../lizard_nxt/client/static/source/app/templates/' + type + '.html'
+      template = $templateCache.get(templateLocus);
+      console.log(template)
+      $templateCache.put('/static/source/app/templates/empty.html', template);
+            
       //compile the element into a function to 
       // process the view.
-      compiled = $compile(elem);
+      compiled = $compile(elem)(scope);
       
       //run the compiled view.
-      compiled(scope);
+      // compiled(scope)(scope);
       
       //call digest on the scope!
       scope.$digest();
@@ -39,9 +45,9 @@ describe('Testing lizard-nxt directive', function() {
 
   it('Should retrieve and draw an empty template', function() {
     //set a value (the same one we had in the html)
-    scope.foo = 'bar';
+    // scope.type = 'egg';
     //check to see if it's blank first
-    expect(elem[0].getAttribute('type')).toBe('egg');
+    expect(elem.attr('type')).toBe(type);
     
     //click the element.
     // elem[0].click();
