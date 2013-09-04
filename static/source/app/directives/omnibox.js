@@ -2,33 +2,32 @@ angular.module('omnibox', [])
 	.directive('boxContent', ["$compile", "$http", "$templateCache",
 		function($compile, $http, $templateCache) {
 
-      var baseUrl = '/static/source/app/templates/',
-      // var getTemplate = function(contentType) {
-      //     if (contentType === undefined){
-      //       contentType = 'empty'
-      //     }
-      //     var templateLoader,
-      //     baseUrl = '/static/source/app/templates/',
-      //     templateUrl = baseUrl + contentType + '.html';
+      var getTemplate = function(contentType) {
+          if (contentType === undefined){
+            contentType = 'empty'
+          }
+          var templateLoader,
+          baseUrl = '/static/source/app/templates/',
+          templateUrl = baseUrl + contentType + '.html';
 
-      //     templateLoader = $http.get(templateUrl, {cache: $templateCache});
+          templateLoader = $http.get(templateUrl, {cache: $templateCache});
 
-      //     return templateLoader;
+          return templateLoader;
 
-      // }
+      }
 
-      // var linker = function(scope, element, attrs) {
+      var linker = function(scope, element, attrs) {
 
-      //     var loader = getTemplate(scope.type);
+          var loader = getTemplate(scope.type);
 
-      //     var promise = loader.success(function(html) {
-      //         element.html(html);
-      //     }).error(function(html){
-      //       element.html('');
-      //     }).then(function (response) {
-      //         element.replaceWith($compile(element.html())(scope));
-      //     });
-      // }
+          var promise = loader.success(function(html) {
+              element.html(html);
+          }).then(function (response) {
+              element.replaceWith($compile(element.html())(scope));
+          }).error(function(html){
+            element.html('');
+          });
+      }
 
       return {
           restrict: 'E',
@@ -36,7 +35,6 @@ angular.module('omnibox', [])
               type:'='
           },
           link: linker,
-          replace: true,
-          templateUrl: 
+          replace: true
       };
   }]);
