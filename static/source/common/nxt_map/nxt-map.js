@@ -1,6 +1,6 @@
 app.controller("MapCtrl",
 	["$scope", "$rootScope", "leaflet",
-		function($scope, $rootScope, leaflet){
+		function($scope, $rootScope, leaflet) {
 
     // $scope.layers = {
     //     osm: L.tileLayer('http://dev1.nxt.lizard.net:9000/osm_nens/{z}/{x}/{y}.png'),

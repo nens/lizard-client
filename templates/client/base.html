@@ -96,22 +96,32 @@
     </div>
 
       <div class="layer-switcher" ng-controller="MapLayerCtrl">
-         <ul>
+        <ul>
+          <li>
+            <span>Achtergrondkaarten</span>
+            <ul>
+              <li ng-repeat="baselayer in baselayers">
+                <input type="radio" ng-model="$parent.baselayer.active" ng-click="switch(layer)">
+                <span class="layer" ng-class="{ 'map-selected': layer.name == active_layer.name }" ng-bind="baselayer.name"></span>
+              </li>
+            </ul>
+          </li>
           <li ng-repeat="layergroup in layergroups" class="layer-group">
-            {[{ layergroup.name }]}
+            <span ng-bind="layergroup.name"></span>
             <ul class="layergroup-layers">
               <li ng-repeat="layer in layergroup.layers">
-              <input type="radio" ng-model="layer.active">
-               <a class="layer" 
-               ng-class="{ 'map-selected': layer.name == active_layer.name }" 
-               ng-click="switch(layer)">
-                <i ng-class="{'icon-checkbox': layer.active, 'icon-checkbox-empty': !layer.active}"></i>{[{ layer.name }]}</a>
+                <input type="checkbox" ng-model="layer.active" ng-change="switch(layer)">
+                <span class="layer" 
+                ng-class="{ 'map-selected': layer.name == active_layer.name }" 
+                ng-click="switch(layer)" ng-bind="layer.name"></span>
               </li>
             </ul>
           </li>
         </ul>
 
       </div>
+
+
 
      {% block box_awesome %}{% endblock %}
     <div class="container-fluid">
@@ -131,11 +141,10 @@
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/highlight/highlight.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/keypress/keypress.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js?{{ random_string }}"></script>
-
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt-services.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/omnibox.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/common/nxt_box/nxt-box.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/common/nxt_map/nxt-map.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.min.js?{{ random_string }}"></script>
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->
     
