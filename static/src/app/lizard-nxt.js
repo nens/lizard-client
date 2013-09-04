@@ -2,7 +2,6 @@ var app = angular.module("lizard-nxt", ['ngResource']);
 
 app.config(function($interpolateProvider) {
   //To prevent Django and Angular Template hell
-  //
   $interpolateProvider.startSymbol('{[{');
   $interpolateProvider.endSymbol('}]}');
  });
@@ -13,8 +12,7 @@ app.service("Cabinet", ["$resource", "$rootScope",
 
   var layergroups = [];
 
-  var apiLayerGroups,
-      baselayers = [
+  var baselayers = [
       {
         active: true,
         id: 1,
@@ -23,14 +21,14 @@ app.service("Cabinet", ["$resource", "$rootScope",
         leafletLayer: L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png')
       }];
 
-  apiLayerGroups = $resource('/api/v1/layergroups//:id/', 
+  this.apiLayerGroups = $resource('/api/v1/layergroups//:id/', 
     {
       id:'@id'
     }, {
       'query': {method: "GET", isArray:false}
-    })
+    });
 
-  apiLayerGroups.query(function(response) {
+  this.apiLayerGroups.query(function(response) {
     angular.copy(response.results, layergroups);
      
   // Default to inactive
@@ -43,7 +41,7 @@ app.service("Cabinet", ["$resource", "$rootScope",
         }
       };
     };
-
+    $rootScope.$broadcast('LayersRetrieved');
   });
 
   return {
@@ -54,85 +52,74 @@ app.service("Cabinet", ["$resource", "$rootScope",
 }]);
 
 
-app.controller("MapLayerCtrl", ["$scope", "Cabinet", function($scope, Cabinet) {
+app.controller("MapLayerCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScope, $scope, Cabinet) {
   $scope.layergroups = Cabinet.layergroups;
   $scope.baselayers = Cabinet.baselayers;
+
+  $scope.switch = function(layer) {
+    $rootScope.$broadcast('LayerSwitched', layer);
+  };
+  }]);
+
+app.controller("MapCtrl",
+  ["$scope", "$rootScope", "leaflet", function($scope, $rootScope, leaflet) {
+
+    leaflet.map.on('click', function(e) {
+        $rootScope.$broadcast('mapclick', e.latlng);
+    });
+
 }]);
 
-app.controller("Dummy", ["$scope", "Cabinet", function($scope, Cabinet) {
-  $scope.layergroups = Cabinet.layergroups;
-  $scope.$watch('layergroups', function() {
-    console.log($scope.layergroups)
-    }, true);
-}]);
-
-
-app.service("leaflet", function(){
+app.service("leaflet", ["$rootScope", "Cabinet", function($rootScope, Cabinet) {
   var map = L.map('map', {
     center: new L.LatLng(52.0992287, 5.5698782),
     zoomControl: false,
     zoom: 8,
   });
 
-  var foregroundLayers = [];
+  for (var i = 0; i < Cabinet.baselayers.length; i ++) {
+    var baselayer = Cabinet.baselayers[i];
+    if (baselayer.leafletLayer === undefined) {
+        layer.leafletLayer = L.tileLayer(layer.url);
+      }
+    if (baselayer.active === true) {
+      map.addLayer(baselayer.leafletLayer);
+      console.log("baselayers drawn");
+      }
+    };
 
-  var backgroundLayers = [
-  {
-    active: true,
-    id: 1,
-    name: "Open Street Map",
-    url: "http://dev1.nxt.lizard.net:9000/osm_nens/{z}/{x}/{y}.png",
-    leafletLayer: L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png')
-  }];
+  var scope = $rootScope.$new();
 
-  var activeBgLayer = null;
+  scope.$on('LayersRetrieved', function(event, layer) {
+    console.log("layers retrieved");
+    for (var i = 0; i < Cabinet.layergroups.length; i ++) {
+      var layergroup = Cabinet.layergroups[i];
+      for (var j = 0; j < layergroup.layers.length; j ++) {
+        var layer = layergroup.layers[j];
+        if (layer.leafletLayer === undefined) {
+          layer.leafletLayer = L.tileLayer(layer.url);
+        }
+        if (layer.active === true) {
+          map.addLayer(layer.leafletLayer);
+        }
+      };
+    };
+  });
 
-  var getBgLayer = function(){
-    return activeBgLayer;
-  };
-
-  var addFgLayer = function(layer){
-    layer.active = true;
-    layer.order = 1;
-    if (layer.leafletLayer === undefined){
+  scope.$on('LayerSwitched', function(event, layer) {
+    console.log("layer switched");
+    if (layer.leafletLayer === undefined) {
       layer.leafletLayer = L.tileLayer(layer.url);
     }
-    map.addLayer(layer.leafletLayer);
-    foregroundLayers.push(layer);
-  };
+    if (layer.active === true) {
+      map.addLayer(layer.leafletLayer);
+    }
+    if (layer.active === false) {
+      map.removeLayer(layer.leafletLayer);
+    }
+  });
 
-  var removeFgLayer = function(layer){
-    layer.active = false;
-    map.removeLayer(layer.leafletLayer);
-    var index = foregroundLayers.indexOf(layer);
-    foregroundLayers.splice(index, 1);
-  };
-
-  var switchBgLayer = function(id){
-      if (activeBgLayer !== null){
-        map.removeLayer(activeBgLayer);    
-      }
-      backgroundLayers.forEach(function(layer){
-        if ((layer.active) && (layer.id != id)){
-          layer.active = false;
-        }
-        if (layer.id == id){
-          layer.active = true;
-          activeBgLayer = layer.leafletLayer;
-        }
-        });
-      map.addLayer(activeBgLayer, true);
-      activeBgLayer.bringToBack();
-  };
-  switchBgLayer(1);
   return{
-    map: map,
-    backgroundLayers: backgroundLayers,
-    activeBgLayer: activeBgLayer,
-    getBgLayer: getBgLayer,
-    switchBgLayer: switchBgLayer,
-    foregroundLayers: foregroundLayers,
-    addFgLayer: addFgLayer,
-    removeFgLayer: removeFgLayer
+    map: map
   }
-});
+}]);

@@ -27,7 +27,7 @@
 
   <body>
     <header>
-      <div id="logo-row" class="navbar" ng-controller="Dummy">
+      <div id="logo-row" class="navbar">
         <div id="logo">
           <a href="/" title="{% trans 'Back to homepage' %}"><img src="{{ STATIC_URL }}src/assets/images/logo.png" alt="Lizard"></a>
         </div>
@@ -152,7 +152,6 @@
     <script type="text/javascript" src="{{ STATIC_URL }}src/app/lizard-nxt.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}src/app/lizard-nxt-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}src/common/nxt_box/nxt-box.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}src/common/nxt_map/nxt-map.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.min.js?{{ random_string }}"></script>
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->
     
