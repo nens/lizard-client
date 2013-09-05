@@ -31,8 +31,6 @@ app.controller("SearchCtrl",
         $scope.box.close();
     };
 
-
-
 }]);
 
 
@@ -42,11 +40,7 @@ app.controller("CardsCtrl",
     ["$scope", "$resource", "$rootScope", "Cabinet", "Omnibox",
         function($scope, $resource, $rootScope, Cabinet, Omnibox) {
 
-
     $scope.box = Omnibox;
-
-
-
 
 }]);
 
@@ -56,4 +50,9 @@ app.controller("ResultsCtrl", ["$scope","Omnibox",
     function($scope, Omnibox){
         $scope.box = Omnibox;
 
-    }])
+
+        $scope.setOmnibox = function(obj) {
+            console.log('obj:', obj);
+        };
+
+    }]);

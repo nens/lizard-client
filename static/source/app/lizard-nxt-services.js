@@ -74,7 +74,7 @@ services.service("leaflet", ["$rootScope", "Cabinet", function($rootScope, Cabin
       map.addLayer(layer.leafletLayer);
       }
     }
-  };
+  }
 
   addDefaultLayers(Cabinet.baselayers);
 
@@ -107,8 +107,8 @@ services.service("Omnibox", [function() {
     query: null,
     disabled: false,
     showCards: false,
-    type: 'empty', // <-- mocking so Gijs can build a template...
-    content: 'empty',
+    type: 'empty',
+    content: 'empty'
   };
 
   box.open = function(type){
@@ -121,5 +121,5 @@ services.service("Omnibox", [function() {
     box.showCards = false;
   };
 
-  return box
+  return box;
 }]);
