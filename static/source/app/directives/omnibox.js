@@ -3,9 +3,8 @@ angular.module('omnibox', [])
 		function($compile, $http, $templateCache) {
 
       var getTemplate = function(contentType) {
-          if (contentType === undefined){
-            contentType = 'empty';
-          }
+          if (contentType === undefined) contentType = 'empty';
+
           var templateLoader,
           baseUrl = '/static/source/app/templates/',
           templateUrl = baseUrl + contentType + '.html';
@@ -18,12 +17,13 @@ angular.module('omnibox', [])
 
       var linker = function(scope, element, attrs) {
 
+        console.log(attrs);
           var loader = getTemplate(scope.type);
 
           var promise = loader.success(function(html) {
               element.html(html);
           }).then(function (response) {
-              element.replaceWith($compile(element.html())(scope));
+              $compile(element.contents())(scope);
           });
       };
 
@@ -32,7 +32,6 @@ angular.module('omnibox', [])
           scope: {
               type:'='
           },
-          link: linker,
-          replace: true
+          link: linker
       };
   }]);
