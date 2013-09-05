@@ -107,7 +107,7 @@ services.service("Omnibox", [function() {
     query: null,
     disabled: false,
     showCards: false,
-    type: 'location', // <-- mocking so Gijs can build a template...
+    type: 'empty', // <-- mocking so Gijs can build a template...
     content: 'empty',
   };
 

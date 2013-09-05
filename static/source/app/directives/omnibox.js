@@ -16,19 +16,28 @@ angular.module('omnibox', [])
       };
 
       var linker = function(scope, element, attrs) {
+        // because this is not a standard directive.
+        scope.$watch('type', function(){
+          replaceTemplate();
+        })
 
-        console.log(attrs);
+        var replaceTemplate = function(){
           var loader = getTemplate(scope.type);
 
           var promise = loader.success(function(html) {
               element.html(html);
           }).then(function (response) {
+              console.log(element);
               $compile(element.contents())(scope);
-          });
+
+              console.log(element);
+          });          
+        };
+        replaceTemplate();
       };
 
       return {
-          restrict: 'E',
+          restrict: 'A',
           scope: {
               type:'='
           },

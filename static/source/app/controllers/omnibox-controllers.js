@@ -4,7 +4,6 @@ app.controller("SearchCtrl",
 
     $scope.box = Omnibox;
 
-
     $scope.filter = function ($event) {
         if ($scope.box.query.length > 1) {
 
@@ -19,11 +18,12 @@ app.controller("SearchCtrl",
 
             var geocode = Cabinet.geocode.query({q:$scope.box.query}, function(data) {
                 console.log(data);
-                $scope.geocodeData = data;
+                $scope.box.content = data;
             });
             $scope.box.open("location");
             
         }
+
     };
 
     $scope.reset_query = function() {
@@ -50,3 +50,10 @@ app.controller("CardsCtrl",
 
 }]);
 
+
+
+app.controller("ResultsCtrl", ["$scope","Omnibox",
+    function($scope, Omnibox){
+        $scope.box = Omnibox;
+
+    }])
