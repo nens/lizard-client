@@ -3,53 +3,31 @@ var app = angular.module("lizard-nxt", [
   'ui.event', 
   'ui.highlight', 
   'ui.keypress',
-  'omnibox']);
+  'omnibox',
+  'lizard-nxt.services']);
 
 app.config(function($interpolateProvider) {
   //To prevent Django and Angular Template hell
-  //
   $interpolateProvider.startSymbol('{[{');
   $interpolateProvider.endSymbol('}]}');
  });
 
 
-app.service("Cabinet", ["$resource", "$rootScope",
-  function($resource, $rootScope) {
+app.controller("MapLayerCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScope, $scope, Cabinet) {
+  $scope.layergroups = Cabinet.layergroups;
+  $scope.baselayers = Cabinet.baselayers;
 
-  var layergroups,
-      apiLayerGroups,
-      searchResource,
-      geocodeResource,
-      reverseGeocodeResource;
-
-  apiLayerGroups = $resource('/api/v1/layergroups//:id/',
-    {
-      id:'@id'
-    }, {
-      'query': {method: "GET", isArray:false}
-    });
-
-  searchResource = $resource('/api/v1/search/');
-  geocodeResource = $resource('/api/v1/geocode/');
-  reverseGeocodeResource = $resource('/api/v1/reversegeocode/');
-
-  apiLayerGroups.query(function(response) {
-     layergroups = response.results;
-     $rootScope.$broadcast('layergroups', layergroups);
-  });
-  return {
-    layergroups: apiLayerGroups
+  $scope.switch = function(layer) {
+    $rootScope.$broadcast('LayerSwitched', layer);
   };
 }]);
 
+app.controller("MapCtrl",
+  ["$scope", "$rootScope", "leaflet", function($scope, $rootScope, leaflet) {
 
-app.controller("MapLayerCtrl", ["$scope", "Cabinet", function($scope, Cabinet) {
-  $scope.layergroups = Cabinet.layergroups;
-
-  $scope.$on('layergroups', function(message, content) {
-    $scope.layergroups = content;
-  });
-
+    leaflet.map.on('click', function(e) {
+        $rootScope.$broadcast('mapclick', e.latlng);
+    });
 }]);
 
 
