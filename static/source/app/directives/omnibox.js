@@ -4,7 +4,7 @@ angular.module('omnibox', [])
 
       var getTemplate = function(contentType) {
           if (contentType === undefined){
-            contentType = 'empty'
+            contentType = 'empty';
           }
           var templateLoader,
           baseUrl = '/static/source/app/templates/',
@@ -14,7 +14,7 @@ angular.module('omnibox', [])
 
           return templateLoader;
 
-      }
+      };
 
       var linker = function(scope, element, attrs) {
 
@@ -24,10 +24,8 @@ angular.module('omnibox', [])
               element.html(html);
           }).then(function (response) {
               element.replaceWith($compile(element.html())(scope));
-          }).error(function(html){
-            element.html('');
           });
-      }
+      };
 
       return {
           restrict: 'E',
