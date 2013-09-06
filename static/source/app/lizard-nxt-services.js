@@ -40,15 +40,17 @@ services.service("leaflet", ["$rootScope", "Cabinet", function($rootScope, Cabin
         }
         if (layer.active) {
           map.addLayer(layer.leafletLayer);
-        if (layer.baselayer) {
-          layer.leafletLayer.bringToBack();
-        }
+          if (layer.baselayer) {
+            layer.leafletLayer.bringToBack();
+            $rootScope.$broadcast('baselayerActive', layer.id);
+          }
         }
       }
     }
   };
 
   var scope = $rootScope.$new();
+
   scope.$on('LayersRetrieved', function(event, layer) {
     addDefaultLayers(Cabinet.layergroups);
   });
@@ -65,6 +67,9 @@ services.service("leaflet", ["$rootScope", "Cabinet", function($rootScope, Cabin
 
   scope.$on('LayerOn', function(event, layer) {
     map.addLayer(layer.leafletLayer);
+    if (layer.baselayer) {
+      layer.leafletLayer.bringToBack();
+    }
   });
 
   scope.$on('LayerOff', function(event, layer) {
