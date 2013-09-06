@@ -15,12 +15,31 @@ app.config(function($interpolateProvider) {
 
 app.controller("MapLayerCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScope, $scope, Cabinet) {
   $scope.layergroups = Cabinet.layergroups;
-  $scope.baselayers = Cabinet.baselayers;
+  $scope.activeBaselayer = 3;
 
   $scope.switch = function(layer) {
     $rootScope.$broadcast('LayerSwitched', layer);
+    console.log("switching layer", layer.name);
   };
-  }]);
+
+  $scope.$watch('activeBaselayer', function() {
+    // TODO: Refactor this 
+    // possibly include a different layertype in database
+     for (var i = 0; i < $scope.layergroups.length; i ++) {
+      var layergroup = $scope.layergroups[i]
+      for (var j = 0; j < layergroup.layers.length; j ++) {
+        var layer = layergroup.layers[j];
+        if (layer.baselayer && layer.id == $scope.activeBaselayer) {
+          $rootScope.$broadcast('LayerOn', layer);
+        } else if (layer.baselayer && layer.id != $scope.activeBaselayer) {
+          $rootScope.$broadcast('LayerOff', layer);
+
+        }
+      }
+    }
+  });
+
+}]);
 
 app.controller("MapCtrl",
   ["$scope", "$rootScope", "leaflet", function($scope, $rootScope, leaflet) {
