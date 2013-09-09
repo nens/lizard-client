@@ -81,9 +81,6 @@ angular.module('leaflet', [])
 			restrict: 'E',
 			replace: true,
 			template: '<div id="map"></div>',
-			// scope: {
-			// 	layergroups: '='
-			// },
 			link: link,
 			controller: Ctrl
 		}

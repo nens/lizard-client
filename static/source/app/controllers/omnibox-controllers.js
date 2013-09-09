@@ -88,7 +88,7 @@ app.controller("GraphCtrl", ["$scope",
                   unit: "hr:min"
                 }];
 
-      $scope.format_data = function() {
+      $scope.format_data = function(data) {
         $scope.formatted_data = [];
         for (var i=0; i<data[0].values.length; i++){
           xyobject = {
