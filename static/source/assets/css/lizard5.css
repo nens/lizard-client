@@ -183,3 +183,10 @@ header {
 	border: none; padding: 0px; margin: -0.0625em 0px 0px; height: 1.25em; width: 100%; outline: none;
 }
 
+.card h5 {
+	white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+.truncateme {
+	white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}

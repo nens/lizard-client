@@ -23,7 +23,6 @@ app.controller("SearchCtrl",
             $scope.box.open("location");
             
         }
-
     };
 
     $scope.reset_query = function() {
@@ -32,8 +31,6 @@ app.controller("SearchCtrl",
     };
 
 }]);
-
-
 
 
 app.controller("CardsCtrl",
@@ -45,14 +42,20 @@ app.controller("CardsCtrl",
 }]);
 
 
+app.controller("ResultsCtrl",
+    ["$scope", "Omnibox",
+        function($scope, Omnibox){
 
-app.controller("ResultsCtrl", ["$scope","Omnibox",
-    function($scope, Omnibox){
-        $scope.box = Omnibox;
+    $scope.box = Omnibox;
+    $scope.currentObject = false;
 
+    $scope.showDetails = function(obj) {
+        $scope.currentObject = obj;
+        if($scope.currentObject.lat && $scope.currentObject.lon) {
+            // A lat and lon are present, instruct the map to pan/zoom to it
+            console.log('Location given, take us there');
+            
+        }
+    };
 
-        $scope.setOmnibox = function(obj) {
-            console.log('obj:', obj);
-        };
-
-    }]);
+}]);
