@@ -73,7 +73,7 @@ services.service("leaflet", ["$rootScope", "Cabinet", function($rootScope, Cabin
         }
       }
     }
-  };
+  }
 
   var scope = $rootScope.$new();
 
@@ -114,8 +114,8 @@ services.service("Omnibox", [function() {
     query: null,
     disabled: false,
     showCards: false,
-    type: 'empty', // <-- mocking so Gijs can build a template...
-    content: 'empty',
+    type: 'empty',
+    content: 'empty'
   };
 
   box.open = function(type){

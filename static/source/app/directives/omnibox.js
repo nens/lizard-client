@@ -16,10 +16,10 @@ angular.module('omnibox', [])
       };
 
       var linker = function(scope, element, attrs) {
-        // because this is not a standard directive.
+
         scope.$watch('type', function(){
           replaceTemplate();
-        })
+        });
 
         var replaceTemplate = function(){
           var loader = getTemplate(scope.type);

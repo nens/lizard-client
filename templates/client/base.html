@@ -61,6 +61,9 @@
           -->
 
           <ul class="nav pull-right" id="rightbar-actions">
+            <li class="site">
+              <a href="#" ng-click="show()" ng-controller="KpiCtrl"><i class="icon-dashboard"></i>&nbsp;KPI</a>
+            </li>
             {% if user.is_authenticated %}
               <li class="dropdown">
                 <a class="dropdown-toggle" data-content="Toon loginopties" data-title="" href="#" data-toggle="dropdown" 
@@ -134,6 +137,8 @@
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/omnibox.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/omnibox-controllers.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/kpi-controllers.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/filters/truncate.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/common/nxt_box/nxt-box.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/common/nxt_graph/nxt-graph.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.min.js?{{ random_string }}"></script>

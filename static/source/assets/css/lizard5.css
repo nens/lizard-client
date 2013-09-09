@@ -148,11 +148,12 @@ header {
 
 
 .card .location {
-	width:378px;
+	width:357px;
 	white-space:nowrap;
 	overflow:hidden;
 	text-overflow:ellipsis;
 }
+
 
 .card .location ul {
 	list-style:none;padding:0;margin:0;
@@ -180,4 +181,12 @@ header {
 
 .tactile-searchbox-input {
 	border: none; padding: 0px; margin: -0.0625em 0px 0px; height: 1.25em; width: 100%; outline: none;
+}
+
+.card h5 {
+	white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+.truncateme {
+	white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
