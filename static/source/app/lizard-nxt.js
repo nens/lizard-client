@@ -4,7 +4,8 @@ var app = angular.module("lizard-nxt", [
   'ui.highlight', 
   'ui.keypress',
   'omnibox',
-  'lizard-nxt.services']);
+  'lizard-nxt.services',
+  'leaflet']);
 
 app.config(function($interpolateProvider) {
   //To prevent Django and Angular Template hell
@@ -13,7 +14,7 @@ app.config(function($interpolateProvider) {
  });
 
 
-app.controller("MapLayerCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScope, $scope, Cabinet) {
+app.controller("MapCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScope, $scope, Cabinet) {
   $scope.layergroups = Cabinet.layergroups;
   $scope.activeBaselayer;
 
@@ -43,12 +44,7 @@ app.controller("MapLayerCtrl", ["$rootScope", "$scope", "Cabinet", function($roo
     }
   });
 
-}]);
-
-app.controller("MapCtrl",
-  ["$scope", "$rootScope", "leaflet", function($scope, $rootScope, leaflet) {
-
-    leaflet.map.on('click', function(e) {
-        $rootScope.$broadcast('mapclick', e.latlng);
-    });
+    // leaflet.map.on('click', function(e) {
+    //     $rootScope.$broadcast('mapclick', e.latlng);
+    // });
 }]);
