@@ -5,25 +5,17 @@ services.service("Cabinet", ["$resource", "$rootScope",
 
   var layergroups = [];
 
-  var baselayers = [
-      {
-        active: true,
-        id: 1,
-        name: "Open Street Map",
-        url: "http://dev1.nxt.lizard.net:9000/osm_nens/{z}/{x}/{y}.png",
-        leafletLayer: L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png')
-      }];
-
   var searchResource,
       geocodeResource,
-      reverseGeocodeResource;
+      reverseGeocodeResource,
+      apiLayerGroups;
   
   searchResource = $resource('/api/v1/search/');
   geocodeResource = $resource('/api/v1/geocode/');
   reverseGeocodeResource = $resource('/api/v1/reversegeocode/');
 
 
-  apiLayerGroups = $resource('/api/v1/layergroups//:id/',
+  apiLayerGroups = $resource('/api/v1/layergroups//:id/', 
     {
       id:'@id'
     }, {
@@ -32,31 +24,15 @@ services.service("Cabinet", ["$resource", "$rootScope",
 
   apiLayerGroups.query(function(response) {
     angular.copy(response.results, layergroups);
-     
-  // Default to inactive and ensure it has a leaflet layer
-    for (var i = 0; i < layergroups.length; i ++) {
-      var layergroup = layergroups[i];
-      for (var j = 0; j < layergroup.layers.length; j ++) {
-        var layer = layergroup.layers[j];
-        if (layer.active !== true) {
-          layer.active = false;
-        }
-        if (layer.leafletLayer === undefined) {
-          layer.leafletLayer = L.tileLayer(layer.url);
-        }
-      }
-    }
     $rootScope.$broadcast('LayersRetrieved');
   });
 
   return {
     layergroups: layergroups,
-    baselayers: baselayers,
     search: searchResource,
     geocode: geocodeResource,
     reverseGeocode: reverseGeocodeResource
   };
-
 }]);
 
 
@@ -67,23 +43,42 @@ services.service("leaflet", ["$rootScope", "Cabinet", function($rootScope, Cabin
     zoom: 8
   });
 
-  function addDefaultLayers(layers) {
-    for (var i = 0; i < layers.length; i ++) {
-    var layer = layers[i];
-    if (layer.active === true) {
-      map.addLayer(layer.leafletLayer);
+  function addDefaultLayers(layergroups) {
+    for (var i = 0; i < layergroups.length; i ++) {
+      var layergroup = layergroups[i]
+      for (var j = 0; j < layergroup.layers.length; j ++) {
+        var layer = layergroup.layers[j];
+        if (layer.leafletLayer === undefined) {
+          if (layer.type == "WMS") {
+            // TODO: fix something more robust for WMS layers. 
+            // It works when the layer.url defines the layer name
+            // and the wms server is hardcoded
+            console.log(layer.type, layer);
+            wms = 'http://geoserver1-3di.lizard.net/geoserver/gwc/service/wms';
+            layer.leafletLayer = L.tileLayer.wms(wms, {
+              layers: layer.url,
+              format: 'image/png',
+              version: '1.1.1' });
+          }
+          else {
+            layer.leafletLayer = L.tileLayer(layer.url);
+          }
+        }
+        if (layer.active) {
+          map.addLayer(layer.leafletLayer);
+          if (layer.baselayer) {
+            layer.leafletLayer.bringToBack();
+            $rootScope.$broadcast('baselayerActive', layer.id);
+          }
+        }
       }
     }
   }
 
-  addDefaultLayers(Cabinet.baselayers);
-
   var scope = $rootScope.$new();
+
   scope.$on('LayersRetrieved', function(event, layer) {
-    console.log("layers retrieved");
-    for (var i = 0; i < Cabinet.layergroups.length; i ++) {
-      addDefaultLayers(Cabinet.layergroups[i]);
-    }
+    addDefaultLayers(Cabinet.layergroups);
   });
 
   scope.$on('LayerSwitched', function(event, layer) {
@@ -95,6 +90,18 @@ services.service("leaflet", ["$rootScope", "Cabinet", function($rootScope, Cabin
       map.removeLayer(layer.leafletLayer);
     }
   });
+
+  scope.$on('LayerOn', function(event, layer) {
+    map.addLayer(layer.leafletLayer);
+    if (layer.baselayer) {
+      layer.leafletLayer.bringToBack();
+    }
+  });
+
+  scope.$on('LayerOff', function(event, layer) {
+    map.removeLayer(layer.leafletLayer);
+  });
+
 
   return{
     map: map
@@ -121,5 +128,5 @@ services.service("Omnibox", [function() {
     box.showCards = false;
   };
 
-  return box;
+  return box
 }]);

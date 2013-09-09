@@ -17,8 +17,6 @@ angular.module('omnibox', [])
 
       var linker = function(scope, element, attrs) {
 
-        console.log('linker');
-        // because this is not a standard directive.
         scope.$watch('type', function(){
           replaceTemplate();
         });
@@ -29,10 +27,8 @@ angular.module('omnibox', [])
           var promise = loader.success(function(html) {
               element.html(html);
           }).then(function (response) {
-              console.log('element:', element);
-              console.log('response:', response);
               $compile(element.contents())(scope);
-          });
+          });          
         };
         replaceTemplate();
       };
