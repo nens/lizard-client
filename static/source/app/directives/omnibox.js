@@ -27,10 +27,7 @@ angular.module('omnibox', [])
           var promise = loader.success(function(html) {
               element.html(html);
           }).then(function (response) {
-              console.log(element);
               $compile(element.contents())(scope);
-
-              console.log(element);
           });          
         };
         replaceTemplate();

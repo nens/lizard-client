@@ -118,105 +118,144 @@ app
 
 
 app
-    .directive('nxtCarstenTimeseries', function($http) {
-        var busy = false;
-        var readyForNext = null;
-        return {
-            restrict: 'E',
-            replace: true,
-            scope: {
-                'url': '@'
-            },
-            template: '<svg></svg>',
-            link: function(scope, element, attrs) {
-                var getData = function(url, fn){
-                    console.log(url);
-                    $.ajax({
-                            url: url,
-                            type: 'GET',
-                            dataType: 'json',
-                            success: function(data) {
-                                console.log('data!!!', data);
-                                var formatted = [{
-                                            "key": "timeseries", 
-                                            "values": data  //['timeseries']
-                                        }];
-                                console.log('formatted 1', formatted, data);
-                                fn(formatted);
-                                // TODO: possibly a user does not see the very
-                                // latest graph...
+.directive('nxtLineGraph', function(Cabinet, $timeout) {  
+  return {
+    restrict: 'E',
+    template: '<div id="chart"></div>',
+    link: function(scope, element, attrs) {
+      var data = scope.format_data(),
+      margin = {
+          top: 20,
+          right: 20,
+          bottom: 20,
+          left: 45
+      }, 
+      width = 400 - margin.left - margin.right, 
+      height = 200 - margin.top - margin.bottom,
+      chart = function(){
+            var x = d3.time.scale()
+                .domain(d3.extent(data, function (d) {
+                return d.date;
+            }))
+                .range([0, width]);
 
-                                // if (readyForNext !== null) {
-                                //     console.log("ReadyForNext!!");
-                                //     getData(readyForNext, addGraph);
-                                //     readyForNext = null;
-                                // } 
-                                setTimeout(function() {
-                                    busy = false;
-                                }, 600);  // wait a while before accepting new
-                            },
-                            error: function (data) {
-                                console.log('error!!!', data);
-                                var empty = [{"key": "timeseries",
-                                            "values": [[0, 0]]}];
-                                fn(empty);
-                                setTimeout(function() {
-                                    busy = false;
-                                }, 600);  // wait a while before accepting new
-                            }
-                    });  // $.ajax
-                }
-                var addGraph = function(formatted) {
-                    nv.addGraph(function() {
-                        var chart = nv.models.lineChart()
-                                      .x(function(d) { return Date.parse(d['date']) })
-                                      .y(function(d) { return d['value'] })
-                                      .clipEdge(true);
+            var y = d3.scale.linear()
+                .domain(d3.extent(data, function (d) {
+                return d.value;
+            }))
+            .range([height, 0]);
 
-                        chart.xAxis
-                            .axisLabel('Time (date)')
-                            .tickFormat(function(d) {
 
-                             return d3.time.format('%x')(new Date(d)) 
-                           });
+        var line = d3.svg.line()
+            .x(function (d) {
+            return x(d.date);
+        })
+            .y(function (d) {
+            return y(d.value);
+        });
 
-                        chart.yAxis
-                             .axisLabel('Value')
-                             .tickFormat(d3.format(',.2f'));
+        var zoom = d3.behavior.zoom()
+          .x(x)
+          .y(y)
+          .on("zoom", zoomed);
+        
+          // Make sure your context as an id or so...
+          console.log(element.context)
+          var svg = d3.select(element.context)
+            .append("svg:svg")
+            .attr('width', 500)
+            .attr('height', 300)
+            .append("svg:g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .call(zoom);
 
-                        // Make sure your context as an id or so...
-                        d3.select(element.context)
-                          .datum(formatted)
-                            .transition().duration(500).call(chart);
+            svg.append("svg:rect")
+              .attr("width", width)
+              .attr("height", height)
+              .attr("class", "plot");
 
-                        nv.utils.windowResize(chart.update);
-                        //console.log('busy? ', busy);
-                        return chart;
+          var make_x_axis = function () {
+              return d3.svg.axis()
+                  .scale(x)
+                  .orient("bottom")
+                  .ticks(5);
+          };
 
-                    });  // nv.addGraph
-                };
+          var make_y_axis = function () {
+              return d3.svg.axis()
+                  .scale(y)
+                  .orient("left")
+                  .ticks(5);
+          };
 
-                scope.$watch('url', function (url) {
-                    //if ((url !== '') && (!busy)) {
-                    if ((url !== '') ) {
-                        //console.log("time series whahaha", url);
-                        if (busy) {
-                            // We don't have time for it now, but later you want
-                            // the latest available graph.
-                            //console.log("timeseries: busy!!"); 
-                            readyForNext = url;
-                            //showalert("Skipped ", url);
-                            return;
-                        }
-                        // console.log('Get ready for the graph update');
-                        busy = true;
-                        //console.log('busy', busy);
-                        getData(url, addGraph);
-                    }
-                });  // scope.watch
-            }
-        }
-    });
+          var xAxis = d3.svg.axis()
+              .scale(x)
+              .orient("bottom")
+              .ticks(5);
+
+          svg.append("svg:g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(0, " + height + ")")
+              .call(xAxis);
+
+          var yAxis = d3.svg.axis()
+              .scale(y)
+              .orient("left")
+              .ticks(5);
+
+          svg.append("g")
+              .attr("class", "y axis")
+              .call(yAxis);
+
+          svg.append("g")
+              .attr("class", "x grid")
+              .attr("transform", "translate(0," + height + ")")
+              .call(make_x_axis()
+              .tickSize(-height, 0, 0)
+              .tickFormat(""));
+
+          svg.append("g")
+              .attr("class", "y grid")
+              .call(make_y_axis()
+              .tickSize(-width, 0, 0)
+              .tickFormat(""));
+
+          var clip = svg.append("svg:clipPath")
+              .attr("id", "clip")
+              .append("svg:rect")
+              .attr("x", 0)
+              .attr("y", 0)
+              .attr("width", width)
+              .attr("height", height);
+
+          var chartBody = svg.append("g")
+              .attr("clip-path", "url(#clip)");
+
+          chartBody.append("svg:path")
+              .datum(data)
+              .attr("class", "line")
+              .attr("d", line);
+
+          function zoomed() {
+              svg.select(".x.axis").call(xAxis);
+              svg.select(".y.axis").call(yAxis);
+              svg.select(".x.grid")
+                  .call(make_x_axis()
+                  .tickSize(-height, 0, 0)
+                  .tickFormat(""));
+              svg.select(".y.grid")
+                  .call(make_y_axis()
+                  .tickSize(-width, 0, 0)
+                  .tickFormat(""));
+              svg.select(".line")
+                  .attr("class", "line")
+                  .attr("d", line);
+          }
+      };
+      chart()
+    }
+  }
+});
 
 app
     .directive('nxtCrossSection', function($http) {
