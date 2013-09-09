@@ -36,7 +36,20 @@ services.service("leaflet", ["$rootScope", "Cabinet", function($rootScope, Cabin
       for (var j = 0; j < layergroup.layers.length; j ++) {
         var layer = layergroup.layers[j];
         if (layer.leafletLayer === undefined) {
-          layer.leafletLayer = L.tileLayer(layer.url);
+          if (layer.type == "WMS") {
+            // TODO: fix something more robust for WMS layers. 
+            // It works when the layer.url defines the layer name
+            // and the wms server is hardcoded
+            console.log(layer.type, layer);
+            wms = 'http://geoserver1-3di.lizard.net/geoserver/gwc/service/wms';
+            layer.leafletLayer = L.tileLayer.wms(wms, {
+              layers: layer.url,
+              format: 'image/png',
+              version: '1.1.1' });
+          }
+          else {
+            layer.leafletLayer = L.tileLayer(layer.url);
+          }
         }
         if (layer.active) {
           map.addLayer(layer.leafletLayer);
