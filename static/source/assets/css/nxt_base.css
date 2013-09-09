@@ -12,7 +12,7 @@ html, body, #map {
     height: 200px;
     z-index: 2000; /* this should be above leaflet. */
     width: 200px;
-    top: 80px;
+    top: 60px;
     right: 20px;
     position: absolute;
     background: white;
@@ -21,6 +21,16 @@ html, body, #map {
 
 .layer-switcher ul li{
     list-style-type: none;
+}
+
+.layer-switcher label {
+    color: #177d89;
+}
+
+.layer-switcher label.active {
+    color: #115e67;
+    font: bolder;
+    font-size: 20px;
 }
 
 #content{
