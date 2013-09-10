@@ -1,5 +1,5 @@
 // leaflet.js
-angular.module('leaflet', ["lizard-nxt.services"])
+app
 	.directive('map', ['Omnibox', function(Omnibox){
 	  function addDefaultLayers(map, layergroups) {
 	    for (var i = 0; i < layergroups.length; i ++) {

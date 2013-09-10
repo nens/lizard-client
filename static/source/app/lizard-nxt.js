@@ -4,8 +4,7 @@ var app = angular.module("lizard-nxt", [
   'ui.highlight', 
   'ui.keypress',
   'omnibox',
-  'lizard-nxt.services',
-  'leaflet']);
+  'lizard-nxt.services']);
 
 app.config(function($interpolateProvider) {
   //To prevent Django and Angular Template hell

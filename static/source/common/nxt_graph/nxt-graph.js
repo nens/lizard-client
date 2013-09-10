@@ -261,8 +261,6 @@ app
       scope.$watch('data', function(){
         if (data !== undefined){
           data = scope.data;
-
-          console.log(data)
           chart(data, element);         
         }
       })
