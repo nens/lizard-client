@@ -122,8 +122,11 @@ app
   return {
     restrict: 'E',
     template: '<div id="chart"></div>',
+    scope: {
+      data: '='
+    }
     link: function(scope, element, attrs) {
-      var data = scope.format_data(),
+      var data = scope.data,
       margin = {
           top: 20,
           right: 20,

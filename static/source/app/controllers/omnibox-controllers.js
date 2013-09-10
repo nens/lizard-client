@@ -75,7 +75,7 @@ app.controller("ResultsCtrl",
 
 app.controller("GraphCtrl", ["$scope",
     function($scope){
-      var data = [{
+      var unformat_data = [{
                   type: 'x',
                   name: 'Debiet',
                   values: [0.13, 0.3, 0.5],
@@ -88,7 +88,7 @@ app.controller("GraphCtrl", ["$scope",
                   unit: "hr:min"
                 }];
 
-      $scope.format_data = function() {
+      $scope.format_data = function(data) {
         $scope.formatted_data = [];
         for (var i=0; i<data[0].values.length; i++){
           xyobject = {
@@ -99,6 +99,8 @@ app.controller("GraphCtrl", ["$scope",
         };
         return $scope.formatted_data
       };
+
+      $scope.formatted_data = $scope.format_data(unformat_data);
 
 }]);
 
