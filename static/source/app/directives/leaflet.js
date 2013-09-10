@@ -3,7 +3,8 @@ app
 	.directive('map', ['Omnibox', function(Omnibox){
 	  function addDefaultLayers(map, layergroups) {
 	    for (var i = 0; i < layergroups.length; i ++) {
-	      var layergroup = layergroups[i]
+	      var layergroup = layergroups[i];
+	      console.log(layergroup)
 	      for (var j = 0; j < layergroup.layers.length; j ++) {
 	        var layer = layergroup.layers[j];
 	        if (layer.leafletLayer === undefined) {
@@ -45,10 +46,9 @@ app
 				})
 			})
 
-			// scope.$watch('layergroups', function(){
-			// 	console.log(scope.layergroups)
-			// 	addDefaultLayers(map, scope.layergroups)
-			// })
+			scope.$watch('layergroups', function(){
+				addDefaultLayers(map, scope.layergroups);
+			})
 
 		  scope.$on('LayerSwitched', function(event, layer) {
 		    console.log("layer switched");
@@ -72,9 +72,10 @@ app
 		  });
 
 
-		  scope.$on('LayersRetrieved', function(event, layer) {
-		    addDefaultLayers(map, scope.layergroups);
-		  });
+		  // scope.$on('LayersRetrieved', function(event, layer) {
+		  // 	console.log(scope.layergroups);
+		  //   addDefaultLayers(map, scope.layergroups);
+		  // });
 		};
 
 		var Ctrl = function($scope){

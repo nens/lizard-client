@@ -5,6 +5,7 @@ services.service("Cabinet", ["$resource", "$rootScope",
 
   var layergroups = [];
 
+
   var searchResource,
       geocodeResource,
       reverseGeocodeResource,
@@ -22,10 +23,21 @@ services.service("Cabinet", ["$resource", "$rootScope",
       'query': {method: "GET", isArray:false}
     });
 
-  apiLayerGroups.query(function(response) {
-    angular.copy(response.results, layergroups);
-    $rootScope.$broadcast('LayersRetrieved');
-  });
+  for(var i in layerGroups){
+    var new_layerGroup = new apiLayerGroups(layerGroups[i]);
+     var grouplayers =[];
+    for (var j in layers){
+      layerGroups[i].layers.map(function(id){
+        if (id === layers[j].id){
+          grouplayers.push(layers[j]);      
+        }
+      })
+    }
+    new_layerGroup.layers = grouplayers;
+    layergroups.push(new_layerGroup);
+  };
+
+  $rootScope.$broadcast('LayersRetrieved');
 
   return {
     layergroups: layergroups,
