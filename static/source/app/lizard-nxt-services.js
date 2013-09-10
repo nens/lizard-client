@@ -35,7 +35,7 @@ services.service("Cabinet", ["$resource", "$rootScope",
   };
 }]);
 
-services.service("Omnibox", [function() {
+services.service("Omnibox", ["$rootScope", function($rootScope) {
   var box = {
     query: null,
     disabled: false,
@@ -47,6 +47,7 @@ services.service("Omnibox", [function() {
   box.open = function(type){
     box.type = type;
     box.showCards = true;
+    $rootScope.$broadcast('Omnibox_change')
   };
 
   box.close = function(){

@@ -73,20 +73,23 @@ app.controller("ResultsCtrl",
 
 }]);
 
-app.controller("GraphCtrl", ["$scope",
-    function($scope){
-      var unformat_data = [{
-                  type: 'x',
-                  name: 'Debiet',
-                  values: [0.13, 0.3, 0.5],
-                  unit: "m/s"
-                },
-                {
-                  type: 'y',
-                  name: 'Time',
-                  values: [1357714800000, 1357914800000, 1358014800000],
-                  unit: "hr:min"
-                }];
+app.controller("GraphCtrl", ["$scope", "Omnibox",
+    function($scope, Omnibox){
+      var unformat_data = function () {
+        var array_data =  [{
+          type: 'x',
+          name: 'Debiet',
+          values: [0.13 * Math.random() * 100, 0.3 * Math.random() * 100, 0.5 * Math.random() * 100],
+          unit: "m/s"
+        },
+        {
+          type: 'y',
+          name: 'Time',
+          values: [1357714800000, 1357914800000, 1358014800000],
+          unit: "hr:min"
+        }];
+        return array_data
+      };
 
       $scope.format_data = function(data) {
         $scope.formatted_data = [];
@@ -100,7 +103,12 @@ app.controller("GraphCtrl", ["$scope",
         return $scope.formatted_data
       };
 
-      $scope.formatted_data = $scope.format_data(unformat_data);
+      $scope.data = $scope.format_data(unformat_data());        
+
+      $scope.$on('Omnibox_change', function(){
+        new_data = unformat_data(); 
+        $scope.data = $scope.format_data(new_data);
+      })
 
 }]);
 

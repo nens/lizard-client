@@ -1,7 +1,6 @@
 // leaflet.js
-angular.module('leaflet', [])
-	.directive('map', [function(){
-
+angular.module('leaflet', ["lizard-nxt.services"])
+	.directive('map', ['Omnibox', function(Omnibox){
 	  function addDefaultLayers(map, layergroups) {
 	    for (var i = 0; i < layergroups.length; i ++) {
 	      var layergroup = layergroups[i]
@@ -39,6 +38,12 @@ angular.module('leaflet', [])
 		    zoomControl: false,
 		    zoom: 8
 		  });
+
+			map.on('click', function(e){
+				scope.$apply(function(){
+					Omnibox.open('graph');				
+				})
+			})
 
 			// scope.$watch('layergroups', function(){
 			// 	console.log(scope.layergroups)
