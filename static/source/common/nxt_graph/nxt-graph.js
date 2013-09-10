@@ -118,24 +118,8 @@ app
 
 
 app
-.directive('nxtLineGraph', function(Cabinet, $timeout) {  
-  return {
-    restrict: 'E',
-    template: '<div id="chart"></div>',
-    scope: {
-      data: '='
-    }
-    link: function(scope, element, attrs) {
-      var data = scope.data,
-      margin = {
-          top: 20,
-          right: 20,
-          bottom: 20,
-          left: 45
-      }, 
-      width = 400 - margin.left - margin.right, 
-      height = 200 - margin.top - margin.bottom,
-      chart = function(){
+.directive('nxtLineGraph', function() {  
+  var chart = function(){
             var x = d3.time.scale()
                 .domain(d3.extent(data, function (d) {
                 return d.date;
@@ -255,7 +239,20 @@ app
                   .attr("d", line);
           }
       };
-      chart()
+  return {
+    restrict: 'E',
+    template: '<div id="chart"></div>',
+    link: function(scope, element, attrs) {
+      var data = scope.format_data(),
+      margin = {
+          top: 20,
+          right: 20,
+          bottom: 20,
+          left: 45
+      }, 
+      width = 400 - margin.left - margin.right, 
+      height = 200 - margin.top - margin.bottom;
+      chart();
     }
   }
 });

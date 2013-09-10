@@ -95,11 +95,10 @@
     </header>
 
     {% block content %}
-    <div id="map" ng-controller="MapCtrl">
-        <div id="alert_placeholder"></div>
-    </div>
-
-      <div class="layer-switcher well" ng-controller="MapLayerCtrl">
+    
+    <div ng-controller="MapCtrl">
+      <map layergroups="layergroups"></map>
+      <div class="layer-switcher well" >
         <ul class="nav nav-list">
           <li ng-repeat="layergroup in layergroups | orderBy:'order':true " class="nav-header">
             <span ng-bind="layergroup.name"></span>
@@ -114,6 +113,9 @@
         </ul>
 
       </div>
+    </div>
+
+
 
 
 
@@ -137,6 +139,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt-services.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/omnibox.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/leaflet.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/omnibox-controllers.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/kpi-controllers.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/filters/truncate.js?{{ random_string }}"></script>
