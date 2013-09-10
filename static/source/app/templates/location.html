@@ -1,6 +1,6 @@
 <div ng-controller="ResultsCtrl">
 
-<div id="detail" class="card location" ng-show="currentObject">
+<div id="detail" class="card location" ng-class="{'pullDown': currentObject}" ng-show="currentObject">
 	<h5><i class="icon-map-marker icon-large"></i>&nbsp;<span ng-bind="currentObject.display_name"></span></h5>
 	<ul style="list-style:none;padding:0;margin:0;">
 	    <li ng-repeat="(key, value) in currentObject" class="truncateme">
