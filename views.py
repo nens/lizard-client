@@ -13,11 +13,25 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponse
+from django.utils.safestring import mark_safe
+from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
+
+from lizard_nxt.server.models import Layer, LayerGroup
+from lizard_nxt.server.serializers import spatial
+
+
+def _bootstrap(objects):
+    return mark_safe(JSONRenderer().render(objects))
+
 
 def index(request):
+    layers = spatial.LayerSerializer(Layer.objects.all()).data
+    layer_groups = spatial.LayerGroupSerializer(LayerGroup.objects.all()).data
 
     context = {
         'random_string': md5(str(random.random())).hexdigest(),
+        'strap_layers': _bootstrap(layers),
+        'strap_layer_groups': _bootstrap(layer_groups),
         # 'extent': extent,
     }
     return render_to_response('client/index.html', context,
