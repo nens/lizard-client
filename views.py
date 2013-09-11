@@ -25,11 +25,13 @@ def _bootstrap(objects):
 
 
 def index(request):
-    layers = spatial.LayerSerializer(Layer.objects.all()).data
+    base_layers = spatial.LayerSerializer(Layer.objects.filter(baselayer=True)).data
+    layers = spatial.LayerSerializer(Layer.objects.filter(baselayer=False)).data
     layer_groups = spatial.LayerGroupSerializer(LayerGroup.objects.all()).data
 
     context = {
         'random_string': md5(str(random.random())).hexdigest(),
+        'strap_base_layers': _bootstrap(base_layers),
         'strap_layers': _bootstrap(layers),
         'strap_layer_groups': _bootstrap(layer_groups),
         # 'extent': extent,
