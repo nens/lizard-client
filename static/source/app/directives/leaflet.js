@@ -126,6 +126,9 @@ app
             replace: true,
             template: '<div id="map"></div>',
             link: link,
+            scope: {
+            	layers: '='
+            },
             controller: Ctrl
         };
     }]);
