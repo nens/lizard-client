@@ -16,7 +16,7 @@ app.config(function($interpolateProvider) {
 app.controller("MapCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScope, $scope, Cabinet) {
   $scope.layergroups = Cabinet.layergroups;
   $scope.layers = Cabinet.layers;
-  $scope.activeBaselayer;
+  $scope.activeBaselayer = 1;
 
   $scope.$on('baselayerActive', function(event, activeBaselayer) {
     $scope.activeBaselayer = activeBaselayer;
@@ -24,6 +24,10 @@ app.controller("MapCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScop
 
   $scope.$watch('layers', function(){
     console.log("veranderde shiz", $scope.layers)
+  }, true);
+
+  $scope.$watch('layergroups', function(){
+    console.log(" shiz", $scope.layers)
   });
 
   $scope.switch = function(layer) {
@@ -32,6 +36,7 @@ app.controller("MapCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScop
   };
 
   // $scope.switchgroup = function(layergroup) {
+  //   console.log(layergroup)
   //   $rootScope.$broadcast('LayerGroupSwitched', layergroup, $scope.layers);
   // };
 
