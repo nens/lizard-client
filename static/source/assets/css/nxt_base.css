@@ -12,7 +12,7 @@ html, body, #map {
 }
 
 .layer-switcher{
-    height: 200px;
+    min-height: 200px;
     z-index: 2000; /* this should be above leaflet. */
     width: 200px;
     top: 60px;
