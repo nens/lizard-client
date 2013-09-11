@@ -5,7 +5,6 @@ services.service("Cabinet", ["$resource", "$rootScope",
 
   var layergroups = [];
 
-
   var searchResource,
       geocodeResource,
       reverseGeocodeResource,

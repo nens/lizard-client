@@ -1,6 +1,6 @@
 // leaflet.js
 app
-    .directive('map', ['Omnibox', function(Omnibox){
+    .directive('map', ['$rootScope', 'Omnibox', function(Omnibox){
       function addDefaultLayers(map, layergroups) {
         for (var i = 0; i < layergroups.length; i ++) {
           var layergroup = layergroups[i];
@@ -70,6 +70,10 @@ app
             map.removeLayer(layer.leafletLayer);
           });
 
+          scope.$on('PanAndZoomTo', function(event, latlng) {
+            map.setView(new L.LatLng(latlng.lat, latlng.lon), 14);
+            console.log('PanAndZoomTo', latlng);
+          });
 
         };
 

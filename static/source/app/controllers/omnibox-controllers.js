@@ -59,8 +59,8 @@ app.controller("CardsCtrl",
 
 
 app.controller("ResultsCtrl",
-    ["$scope", "Omnibox",
-        function($scope, Omnibox){
+    ["$scope", "$rootScope", "Omnibox",
+        function($scope, $rootScope, Omnibox){
 
     $scope.box = Omnibox;
     $scope.currentObject = false;
@@ -70,7 +70,8 @@ app.controller("ResultsCtrl",
         if($scope.currentObject.lat && $scope.currentObject.lon) {
             // A lat and lon are present, instruct the map to pan/zoom to it
             console.log('Location given, take us there');
-            
+            var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
+            $rootScope.$broadcast('PanAndZoomTo', latlng);
         }
     };
 
