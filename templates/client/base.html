@@ -78,7 +78,7 @@
         <ul class="nav nav-list">
           <li class="nav-header">
             {% trans "Basiskaarten" %}
-            <ul>
+            <ul class="unstyled">
               <li ng-repeat="layer in layers | orderBy:'order':true" ng-switch on="layer.baselayer">
                 <input id="{[{ layer.id }]}" class="hide" type="checkbox" ng-model="layer.active" ng-change="switch(layer)" ng-switch-when="false">
                 <input id="{[{ layer.id }]}" class="hide" type="radio" ng-model="$parent.$parent.$parent.activeBaselayer" ng-value="layer.id" name="baselayer" ng-switch-when="true"> 
@@ -88,10 +88,13 @@
           </li>  
           <li class="nav-header">
             {% trans "Themakaarten" %}
-            <ul>
-              <li></li>
-              
-            </ul>
+            <ul class="unstyled">
+              <li ng-repeat="layer in layergroups | orderBy:'order':true">
+                <input id="{[{ layer.id }]}" class="hide" type="checkbox" ng-model="layer.active" ng-change="switch(layer)" ng-switch-when="false">
+                <input id="{[{ layer.id }]}" class="hide" type="radio" ng-model="$parent.$parent.$parent.activeBaselayer" ng-value="layer.id" name="baselayer" ng-switch-when="true"> 
+                <label class="ng-class: {active: layer.active};" for="{[{ layer.id }]}" ng-bind="layer.name"></label>
+              </li>            
+            </ul>            
           </li>        
         </ul>
       </div>
