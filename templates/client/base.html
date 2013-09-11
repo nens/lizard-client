@@ -73,7 +73,7 @@
     {% block content %}
     
     <div ng-controller="MapCtrl">
-      <map layergroups="layergroups"></map>
+      <map layers="layers"></map>
       <div class="layer-switcher well" >
         <ul class="nav nav-list">
           <li ng-repeat="layergroup in layergroups | orderBy:'order':true " class="nav-header">
