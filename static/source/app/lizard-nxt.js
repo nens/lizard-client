@@ -15,6 +15,7 @@ app.config(function($interpolateProvider) {
 
 app.controller("MapCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScope, $scope, Cabinet) {
   $scope.layergroups = Cabinet.layergroups;
+  $scope.layers = Cabinet.layers;
   $scope.activeBaselayer;
 
   $scope.$on('baselayerActive', function(event, activeBaselayer) {
