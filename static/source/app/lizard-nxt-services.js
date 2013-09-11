@@ -15,7 +15,7 @@ services.service("Cabinet", ["$resource", "$rootScope",
   reverseGeocodeResource = $resource('/api/v1/reversegeocode/');
 
 
-  apiLayerGroups = $resource('/api/v1/layergroups//:id/', 
+  apiLayerGroups = $resource('/api/v1/layergroups//:id/',
     {
       id:'@id'
     }, {
@@ -45,12 +45,12 @@ services.service("leaflet", ["$rootScope", "Cabinet", function($rootScope, Cabin
 
   function addDefaultLayers(layergroups) {
     for (var i = 0; i < layergroups.length; i ++) {
-      var layergroup = layergroups[i]
+      var layergroup = layergroups[i];
       for (var j = 0; j < layergroup.layers.length; j ++) {
         var layer = layergroup.layers[j];
         if (layer.leafletLayer === undefined) {
           if (layer.type == "WMS") {
-            // TODO: fix something more robust for WMS layers. 
+            // TODO: fix something more robust for WMS layers.
             // It works when the layer.url defines the layer name
             // and the wms server is hardcoded
             console.log(layer.type, layer);
@@ -128,5 +128,5 @@ services.service("Omnibox", [function() {
     box.showCards = false;
   };
 
-  return box
+  return box;
 }]);

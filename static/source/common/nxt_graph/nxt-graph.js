@@ -163,8 +163,8 @@ app
           console.log(element.context)
           var svg = d3.select(element.context)
             .append("svg:svg")
-            .attr('width', 500)
-            .attr('height', 300)
+            .attr('width', 400)
+            .attr('height', 230)
             .append("svg:g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             .call(zoom);

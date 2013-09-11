@@ -28,7 +28,7 @@ angular.module('omnibox', [])
               element.html(html);
           }).then(function (response) {
               $compile(element.contents())(scope);
-          });          
+          });
         };
         replaceTemplate();
       };

@@ -10,9 +10,12 @@ app.controller("KpiCtrl",
 		console.log('response:', data);
 		$scope.kpiData = data;
 	});
+
+
 	
 	$scope.show = function() {
 		console.log('Showing KPI layer...', $scope.kpiData);
+		$rootScope.$broadcast('kpiclick', $scope.kpiData);
 	};
 
 }]);

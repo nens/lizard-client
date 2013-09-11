@@ -31,40 +31,12 @@
   </head>
 
   <body>
-    <header class="pullDown">
+    <header>
       <div id="logo-row" class="navbar">
         <div id="logo">
           <a href="/" title="{% trans 'Back to homepage' %}"><img src="{{ STATIC_URL }}source/assets/images/logo.png" alt="Lizard"></a>
         </div>
         <div id="site-actions">
-        <!-- COMMENTED TO PREVENT DISCUSSION
-          <ul class="nav" id="leftbar-actions">
-            <li class="site">
-              <a href="http://test.live.3di.lizard.net/">3di</a>
-            </li>
-            <li class="site">
-              <a href="http://test.regenradar.lizard.net/">Rain</a>
-            </li>
-            <li class="site">
-              <a href="http://uploadserver.lizard.net/">Upload</a>
-            </li>
-            <li class="dropdown">
-                <a class="dropdown-toggle" data-hover="dropdown"
-                  href="#" data-delay=200>More
-                  <b class="caret"></b>
-                </a>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <a href="http://www.google.com/">Google</a>
-                    </li>
-                    <li>
-                      <a href="http://www.duckduckgo.com">Duckduck</a>
-                    </li>
-                  </ul>
-              </li>
-          </ul>
-          -->
-
           <ul class="nav pull-right" id="rightbar-actions">
             <li class="site">
               <a href="#" ng-click="show()" ng-controller="KpiCtrl"><i class="icon-dashboard"></i>&nbsp;KPI</a>
