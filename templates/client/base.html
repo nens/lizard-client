@@ -24,8 +24,8 @@
     <script>
       var debug = true;
 
-      var layers = {{ strap_layers }};
-      var layerGroups = {{ strap_layer_groups }};
+      window.layers = {{ strap_layers }};
+      window.layerGroups = {{ strap_layer_groups }};
 
     </script>
   </head>
@@ -76,18 +76,24 @@
       <map layers="layers"></map>
       <div class="layer-switcher well" >
         <ul class="nav nav-list">
-          <li ng-repeat="layergroup in layergroups | orderBy:'order':true " class="nav-header">
-            <span ng-bind="layergroup.name"></span>
-            <ul class="nav nav-list">
-              <li ng-repeat="layer in layergroup.layers  | orderBy:'order':true " ng-switch on="layer.baselayer">
+          <li class="nav-header">
+            {% trans "Basiskaarten" %}
+            <ul>
+              <li ng-repeat="layer in layers | orderBy:'order':true" ng-switch on="layer.baselayer">
                 <input id="{[{ layer.id }]}" class="hide" type="checkbox" ng-model="layer.active" ng-change="switch(layer)" ng-switch-when="false">
                 <input id="{[{ layer.id }]}" class="hide" type="radio" ng-model="$parent.$parent.$parent.activeBaselayer" ng-value="layer.id" name="baselayer" ng-switch-when="true"> 
                 <label class="ng-class: {active: layer.active};" for="{[{ layer.id }]}" ng-bind="layer.name"></label>
-              </li>
+              </li>            
             </ul>
-          </li>
+          </li>  
+          <li class="nav-header">
+            {% trans "Themakaarten" %}
+            <ul>
+              <li></li>
+              
+            </ul>
+          </li>        
         </ul>
-
       </div>
     </div>
 

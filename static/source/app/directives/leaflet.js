@@ -34,7 +34,8 @@ app
 
       var addLayers = function (map, layers){
       	for (var i in layers){
-      		if (layer[i].active){
+      		var layer = layers[i];
+      		if (layer.active){
       			if (layer.type === "TMS"){
       				layer.leafletLayer = L.tileLayer(layer.url);
       			} else if (layer.type === "UTFGrid"){
@@ -45,7 +46,6 @@ app
 	            // TODO: fix something more robust for WMS layers.
               // It works when the layer.url defines the layer name
               // and the wms server is hardcoded
-              console.log(layer.type, layer);
               wms = 'http://geoserver1-3di.lizard.net/geoserver/gwc/service/wms';
               layer.leafletLayer = L.tileLayer.wms(wms, {
                 layers: layer.url,
@@ -54,10 +54,12 @@ app
       			} else {
       				console.log(layer.type);
       			}
-      			map.addLayer(layer.leafletLayer)
+      			if (layer.leafletLayer){
+	      			map.addLayer(layer.leafletLayer);      				
+      			}
       		}
       	}
-      }
+			}
 
         var link = function (scope, element, attrs, controller) {
             var map = new L.map(element[0], {
@@ -68,18 +70,21 @@ app
 
             map.on('click', function(e){
                 scope.$apply(function(){
+                    console.log(Omnibox);
                     Omnibox.open('graph');
                 });
             });
 
-            scope.$watchCollection('layers', function(){
-            		addLayers(map, scope.layers)
+            scope.$watch('layers', function(){
+            		addLayers(map, scope.layers);
+            		console.log(scope.layers);
                 // addDefaultLayers(map, scope.layergroups);
 
             });
 
           scope.$on('LayerSwitched', function(event, layer) {
             console.log("layer switched");
+            console.log(layer.leafletLayer);
             if (layer.active === true) {
               map.addLayer(layer.leafletLayer);
             }
@@ -107,7 +112,7 @@ app
         };
 
         var Ctrl = function($scope){
-            $scope.addDefaultLayers = addDefaultLayers;
+            // $scope.addDefaultLayers = addDefaultLayers;
             $scope.map = map;
         };
 
