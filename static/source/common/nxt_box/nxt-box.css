@@ -195,20 +195,12 @@ div#omnibox {
     list-style-image:url('img/globe-icon.png');
     
 }
-
-
 .nav a{
     color: #115e67;
 }
-
-
 .tab-content {
     margin: 20px;
 }
-
-
-
-
 
 .gridStyle {
     border: 1px solid rgb(212,212,212);
@@ -216,16 +208,9 @@ div#omnibox {
     height: 300px
 }
 
-
-
-
-
-  .ui-match {
+.ui-match {
     background: yellow;
-  }
-
-
-
+}
 
 
 
