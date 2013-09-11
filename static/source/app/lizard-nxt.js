@@ -1,7 +1,7 @@
 var app = angular.module("lizard-nxt", [
-  'ngResource', 
-  'ui.event', 
-  'ui.highlight', 
+  'ngResource',
+  'ui.event',
+  'ui.highlight',
   'ui.keypress',
   'omnibox',
   'lizard-nxt.services']);
@@ -25,23 +25,23 @@ app.controller("MapCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScop
     $rootScope.$broadcast('LayerSwitched', layer);
   };
 
-  // $scope.$watch('activeBaselayer', function() {
-  //   // TODO: Refactor this 
-  //   // possibly include a baselayer layertype in database
-  //    for (var i = 0; i < $scope.layergroups.length; i ++) {
-  //     var layergroup = $scope.layergroups[i]
-  //     for (var j = 0; j < layergroup.layers.length; j ++) {
-  //       var layer = layergroup.layers[j];
-  //       if (layer.baselayer && layer.id == $scope.activeBaselayer) {
-  //         $rootScope.$broadcast('LayerOn', layer);
-  //         layer.active = true;
-  //       } else if (layer.baselayer && layer.id != $scope.activeBaselayer) {
-  //         $rootScope.$broadcast('LayerOff', layer);
-  //         layer.active = false;
-  //       }
-  //     }
-  //   }
-  // });
+  $scope.$watch('activeBaselayer', function() {
+    // TODO: Refactor this
+    // possibly include a baselayer layertype in database
+     for (var i = 0; i < $scope.layergroups.length; i ++) {
+      var layergroup = $scope.layergroups[i];
+      for (var j = 0; j < layergroup.layers.length; j ++) {
+        var layer = layergroup.layers[j];
+        if (layer.baselayer && layer.id == $scope.activeBaselayer) {
+          $rootScope.$broadcast('LayerOn', layer);
+          layer.active = true;
+        } else if (layer.baselayer && layer.id != $scope.activeBaselayer) {
+          $rootScope.$broadcast('LayerOff', layer);
+          layer.active = false;
+        }
+      }
+    }
+  });
 
     // leaflet.map.on('click', function(e) {
     //     $rootScope.$broadcast('mapclick', e.latlng);
