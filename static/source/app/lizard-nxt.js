@@ -13,7 +13,7 @@ app.config(function($interpolateProvider) {
  });
 
 
-app.controller("MapLayerCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScope, $scope, Cabinet) {
+app.controller("MapCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScope, $scope, Cabinet) {
   $scope.layergroups = Cabinet.layergroups;
   $scope.activeBaselayer;
 
@@ -25,30 +25,25 @@ app.controller("MapLayerCtrl", ["$rootScope", "$scope", "Cabinet", function($roo
     $rootScope.$broadcast('LayerSwitched', layer);
   };
 
-  $scope.$watch('activeBaselayer', function() {
-    // TODO: Refactor this 
-    // possibly include a baselayer layertype in database
-     for (var i = 0; i < $scope.layergroups.length; i ++) {
-      var layergroup = $scope.layergroups[i]
-      for (var j = 0; j < layergroup.layers.length; j ++) {
-        var layer = layergroup.layers[j];
-        if (layer.baselayer && layer.id == $scope.activeBaselayer) {
-          $rootScope.$broadcast('LayerOn', layer);
-          layer.active = true;
-        } else if (layer.baselayer && layer.id != $scope.activeBaselayer) {
-          $rootScope.$broadcast('LayerOff', layer);
-          layer.active = false;
-        }
-      }
-    }
-  });
+  // $scope.$watch('activeBaselayer', function() {
+  //   // TODO: Refactor this 
+  //   // possibly include a baselayer layertype in database
+  //    for (var i = 0; i < $scope.layergroups.length; i ++) {
+  //     var layergroup = $scope.layergroups[i]
+  //     for (var j = 0; j < layergroup.layers.length; j ++) {
+  //       var layer = layergroup.layers[j];
+  //       if (layer.baselayer && layer.id == $scope.activeBaselayer) {
+  //         $rootScope.$broadcast('LayerOn', layer);
+  //         layer.active = true;
+  //       } else if (layer.baselayer && layer.id != $scope.activeBaselayer) {
+  //         $rootScope.$broadcast('LayerOff', layer);
+  //         layer.active = false;
+  //       }
+  //     }
+  //   }
+  // });
 
-}]);
-
-app.controller("MapCtrl",
-  ["$scope", "$rootScope", "leaflet", function($scope, $rootScope, leaflet) {
-
-    leaflet.map.on('click', function(e) {
-        $rootScope.$broadcast('mapclick', e.latlng);
-    });
+    // leaflet.map.on('click', function(e) {
+    //     $rootScope.$broadcast('mapclick', e.latlng);
+    // });
 }]);

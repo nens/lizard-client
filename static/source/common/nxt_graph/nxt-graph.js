@@ -118,13 +118,9 @@ app
 
 
 app
-.directive('nxtLineGraph', function(Cabinet, $timeout) {  
-  return {
-    restrict: 'E',
-    template: '<div id="chart"></div>',
-    link: function(scope, element, attrs) {
-      var data = scope.format_data(),
-      margin = {
+.directive('nxtLineGraph', function() {  
+  var chart = function (data, element) {
+      var margin = {
           top: 20,
           right: 20,
           bottom: 20,
@@ -252,7 +248,22 @@ app
                   .attr("d", line);
           }
       };
-      chart()
+  return {
+    restrict: 'E',
+    template: '<div id="chart"></div>',
+    scope: {
+      // TODO: add extra options (e.g. width)? 
+      data: '='
+    },
+    link: function(scope, element, attrs) {
+      var data = scope.data;
+
+      scope.$watch('data', function(){
+        if (data !== undefined){
+          data = scope.data;
+          chart(data, element);         
+        }
+      })
     }
   }
 });
