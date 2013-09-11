@@ -18,6 +18,27 @@ app
                   format: 'image/png',
                   version: '1.1.1' });
               }
+              else if(layer.type === "grid") {
+                layer.leafletLayer = new L.UtfGrid('//dev1.nxt.lizard.net/api/v1/tiles/{z}/{x}/{y}/.grid?object_types=geslotenleiding', {
+                    useJsonP: false
+                });
+                layer.leafletLayer.on('click', function (e) {
+                    if (e.data) {
+                        console.log('click: ' + e);
+                    }
+                });
+                layer.leafletLayer.on('mouseover', function (e) {
+                    console.log('mouseover: ' + e);
+                });
+              }
+              else if(layer.type === 'geojson') {
+                layer.geoJsonLayer = new L.TileLayer.GeoJSON('//dev1.nxt.lizard.net/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=geslotenleiding', {
+                    clipTiles: true,
+                    unique: function (feature) {
+                        return feature.id;
+                    }
+                });
+              }
               else {
                 layer.leafletLayer = L.tileLayer(layer.url);
               }
@@ -41,6 +62,7 @@ app
 
             map.on('click', function(e){
                 scope.$apply(function(){
+                    console.log(Omnibox);
                     Omnibox.open('graph');
                 });
             });
