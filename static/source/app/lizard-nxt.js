@@ -27,8 +27,13 @@ app.controller("MapCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScop
   });
 
   $scope.switch = function(layer) {
+    console.log(layer)
     $rootScope.$broadcast('LayerSwitched', layer);
   };
+
+  // $scope.switchgroup = function(layergroup) {
+  //   $rootScope.$broadcast('LayerGroupSwitched', layergroup, $scope.layers);
+  // };
 
   // $scope.$watch('activeBaselayer', function() {
   //   // TODO: Refactor this
