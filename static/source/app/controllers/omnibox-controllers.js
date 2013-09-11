@@ -31,8 +31,6 @@ app.controller("SearchCtrl",
         $scope.box.close();
     };
 
-
-
 }]);
 
 
@@ -44,11 +42,16 @@ app.controller("CardsCtrl",
 
     $scope.box = Omnibox;
 
+    $scope.$on('kpiclick', function(data) {
+        $scope.box.open("kpi");
+    });
+
+
     $scope.$on('mapclick', function(){
         // why this needs to go into an apply.. beats me
             $scope.$apply(function(){
                 $scope.box.open("graph");
-            })
+            });
         });
 
 }]);
@@ -92,12 +95,12 @@ app.controller("GraphCtrl", ["$scope",
         $scope.formatted_data = [];
         for (var i=0; i<data[0].values.length; i++){
           xyobject = {
-            date: data[1].values[i], 
-            value: data[0].values[i] 
+            date: data[1].values[i],
+            value: data[0].values[i]
           };
           $scope.formatted_data.push(xyobject);
-        };
-        return $scope.formatted_data
+        }
+        return $scope.formatted_data;
       };
 
 }]);
