@@ -76,7 +76,7 @@
     <div ng-controller="MapCtrl">
       <map layergroups="layergroups"></map>
       <div class="layer-switcher well" >
-        <ul class="nav nav-list">
+        <ul class="nav nav-list searchbox-shadow">
           <li ng-repeat="layergroup in layergroups | orderBy:'order':true " class="nav-header">
             <span ng-bind="layergroup.name"></span>
             <ul class="nav nav-list">
