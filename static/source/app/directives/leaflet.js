@@ -2,6 +2,69 @@
 app
     .directive('map', ['$rootScope', 'Omnibox', function(Omnibox){
       function addDefaultLayers(map, layergroups) {
+
+
+        var backgroundLayer_png = new L.tileLayer('http://c.tiles.mapbox.com/v3/examples.map-szwdot65/{z}/{x}/{y}.png');
+        var geslotenleidingen_png = new L.tileLayer('//dev1.nxt.lizard.net/api/v1/tiles/{z}/{x}/{y}/.png?object_types=geslotenleiding');
+        var knopen_png = new L.tileLayer('//dev1.nxt.lizard.net/api/v1/tiles/{z}/{x}/{y}/.png?object_types=knoop');
+
+        var style = {
+            "clickable": true,
+            "color": "red",
+            "fillColor": "red",
+            "weight": 1.0,
+            "opacity": 0.3,
+            "fillOpacity": 0.2
+        };
+        var hoverStyle = {
+            "fillOpacity": 0.5
+        };
+
+        var knopen_geojson = new L.TileLayer.GeoJSON('//dev1.nxt.lizard.net/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=knoop', {
+                clipTiles: true,
+                unique: function (feature) {
+                    return feature.id;
+                }
+            }, {
+                style: style,
+                onEachFeature: function (feature, layer) {
+                    if (feature.properties) {
+                        var popupString = '<div class="popup">';
+                        for (var k in feature.properties) {
+                            var v = feature.properties[k];
+                            popupString += k + ': ' + v + '<br />';
+                        }
+                        popupString += '</div>';
+                        layer.bindPopup(popupString);
+                    }
+                    if (!(layer instanceof L.Point)) {
+                        layer.on('mouseover', function () {
+                            layer.setStyle(hoverStyle);
+                        });
+                        layer.on('mouseout', function () {
+                            layer.setStyle(style);
+                        });
+                    }
+                }
+            }
+        );
+
+
+        var geslotenleidingen_utfgrid = new L.UtfGrid('//dev1.nxt.lizard.net/api/v1/tiles/{z}/{x}/{y}/.grid?object_types=geslotenleiding&callback={cb}', {
+            useJsonP: true
+        });
+        
+        map.addLayer(backgroundLayer_png);
+        map.addLayer(geslotenleidingen_png);
+        map.addLayer(knopen_png);
+        map.addLayer(knopen_geojson);
+        // map.addLayer(geslotenleidingen_utfgrid);
+
+        geslotenleidingen_utfgrid.on('mouseover', function (e) {
+          console.log('hover: ' + e);
+        });
+
+        console.log('map:', map);
         for (var i = 0; i < layergroups.length; i ++) {
           var layergroup = layergroups[i];
           for (var j = 0; j < layergroup.layers.length; j ++) {
