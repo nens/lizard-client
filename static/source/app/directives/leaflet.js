@@ -49,37 +49,38 @@ app
                 addDefaultLayers(map, scope.layergroups);
             });
 
-          scope.$on('LayerSwitched', function(event, layer) {
-            console.log("layer switched");
-            if (layer.active === true) {
-              map.addLayer(layer.leafletLayer);
-            }
-            if (layer.active === false) {
-              map.removeLayer(layer.leafletLayer);
-            }
-          });
+          // scope.$on('LayerSwitched', function(event, layer) {
+          //   console.log("layer switched");
+          //   if (layer.active === true) {
+          //     map.addLayer(layer.leafletLayer);
+          //   }
+          //   if (layer.active === false) {
+          //     map.removeLayer(layer.leafletLayer);
+          //   }
+          // });
 
-          scope.$on('LayerOn', function(event, layer) {
-            map.addLayer(layer.leafletLayer);
-            if (layer.baselayer) {
-              layer.leafletLayer.bringToBack();
-            }
-          });
+          // scope.$on('LayerOn', function(event, layer) {
+          //   map.addLayer(layer.leafletLayer);
+          //   if (layer.baselayer) {
+          //     layer.leafletLayer.bringToBack();
+          //   }
+          // });
 
-          scope.$on('LayerOff', function(event, layer) {
-            map.removeLayer(layer.leafletLayer);
-          });
+          // scope.$on('LayerOff', function(event, layer) {
+          //   map.removeLayer(layer.leafletLayer);
+          // });
 
-          scope.$on('PanAndZoomTo', function(event, latlng) {
-            map.setView(new L.LatLng(latlng.lat, latlng.lon), 14);
-            console.log('PanAndZoomTo', latlng);
-          });
+          // scope.$on('PanAndZoomTo', function(event, latlng) {
+          //   map.setView(new L.LatLng(latlng.lat, latlng.lon), 14);
+          //   console.log('PanAndZoomTo', latlng);
+          // });
 
         };
 
         var Ctrl = function($scope){
-            $scope.addDefaultLayers = addDefaultLayers;
             $scope.map = map;
+
+            $scope.layers
         };
 
         return {
@@ -87,6 +88,9 @@ app
             replace: true,
             template: '<div id="map"></div>',
             link: link,
+            scope: {
+            	layers: '='
+            },
             controller: Ctrl
         };
     }]);
