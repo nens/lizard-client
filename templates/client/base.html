@@ -73,44 +73,42 @@
     {% block content %}
     
     <div ng-controller="MapCtrl">
-      <map layers="layers"></map>
-      <div class="layer-switcher well searchbox-shadow" >
-        <ul class="nav nav-list">
-          <li class="nav-header">
-            {% trans "Basiskaarten" %}
-            <ul class="unstyled">
-              <li ng-repeat="layer in layers | orderBy:'order':true" ng-switch on="layer.baselayer">
-              {[{ activeBaselayer }]}
-
-              {[{layer}]}
-                <input id="{[{ layer.id }]}" class="hide" type="radio" ng-model="activeBaselayer" ng-value="layer.id" ng-click="switch(layer)" name="baselayer" ng-switch-when="true"> 
-                <label class="ng-class: {active: layer.active};" for="{[{ layer.id }]}" ng-bind="layer.name"></label>
-              </li>            
-            </ul>
-          </li>  
-          <li class="nav-header">
-            {% trans "Themakaarten" %}
-            <ul class="unstyled">
-              <li ng-repeat="layergroup in layergroups | orderBy:'order':true" >
-                <input id="{[{ layergroup.id }]}" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="switchgroup(layergroup)">
-                <label class="ng-class: {active: layergroup.active};" for="{[{ layergroup.id }]}" ng-bind="layergroup.name"></label>
-              </li>            
-            </ul>            
-          </li>        
-        </ul>
-
-      <map-leaflet layers="layers"></map-leaflet>
-      <div class="layer-switcher well" >
-            <ul class="nav nav-list">
-              <li ng-repeat="layer in layers  | orderBy:'order':true " ng-switch on="layer.baselayer">
-                <input id="{[{ layer.id }]}" class="hide" type="checkbox" ng-model="layer.active" ng-change="switch(layer)" ng-switch-when="false" layer-switch layer="layer">
-                <input id="{[{ layer.id }]}" class="hide" type="radio" ng-model="$parent.$parent.$parent.activeBaselayer" ng-value="layer.id" name="baselayer" ng-switch-when="true" layer-switch layer="layer"> 
-                <label class="ng-class: {active: layer.active};" for="{[{ layer.id }]}" ng-bind="layer.name"></label>
-              </li>
-            </ul>
-
-      </div>
+      <leaflet map layers="layers"></leaflet>
+        <div class="layer-switcher well searchbox-shadow" >
+          <ul class="nav nav-list">
+            <li class="nav-header">
+              {% trans "Basiskaarten" %}
+              <ul class="unstyled">
+                <li ng-repeat="layer in baselayers | orderBy:'order':true">
+                  <input id="{[{layer.id}]}-baselayer" class="hide" type="radio" ng-model="$parent.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
+                  <label class="ng-class: {active: layer.active};" for="{[{ layer.id }]}-baselayer" ng-bind="layer.name"></label>
+                  <leaflet layer-switch layer="layer"></leaflet>
+                </li>            
+              </ul>
+            </li>  
+            <li class="nav-header">
+              {% trans "Themakaarten" %}
+              <ul class="unstyled">
+                <li ng-repeat="layergroup in layergroups | orderBy:'order':true" >
+                  <input id="{[{layergroup.id}]}-layergroup" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="toggleLayerGroup(layergroup)">
+                  <label class="ng-class: {active: layergroup.active};" for="{[{ layergroup.id }]}-layergroup" ng-bind="layergroup.name"></label>
+                </li>            
+              </ul>            
+            </li>
+            <li class="nav-header">
+              {% trans "Specifieke Kaarten" %}
+              <ul class="unstyled">
+                <li ng-repeat="layer in layers | orderBy:'order':true">
+                  <input id="{[{layer.id}]}-layer" class="hide" type="checkbox" ng-model="layer.active">
+                  <label class="ng-class: {active: layer.active};" for="{[{ layer.id }]}-layer" ng-bind="layer.name"></label>
+                  <leaflet layer-switch layer="layer"></leaflet>
+                </li>            
+              </ul>
+            </li>    
+          </ul>
+        </div>
     </div>
+      
 
 
 

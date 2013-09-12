@@ -13,52 +13,35 @@ app.config(function($interpolateProvider) {
  });
 
 
-app.controller("MapCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScope, $scope, Cabinet) {
+app.controller("MapCtrl", ["$rootScope", "$scope", "Cabinet", 
+  function($rootScope, $scope, Cabinet) {
   $scope.layergroups = Cabinet.layergroups;
   $scope.layers = Cabinet.layers;
-  $scope.activeBaselayer = 1;
+  $scope.baselayers = Cabinet.baselayers;
+  $scope.activeBaselayer = 3;
 
-  $scope.$on('baselayerActive', function(event, activeBaselayer) {
-    $scope.activeBaselayer = activeBaselayer;
-  });
-
-  $scope.$watch('layers', function(){
-    console.log("veranderde shiz", $scope.layers)
-  }, true);
-
-  $scope.$watch('layergroups', function(){
-    console.log(" shiz", $scope.layers)
-  });
-
-  $scope.switch = function(layer) {
-    console.log(layer)
-    $rootScope.$broadcast('LayerSwitched', layer);
+  $scope.switchBaseLayer = function(){
+    // $scope.activeBaselayer = 
+    for (var i in $scope.baselayers){
+      if ($scope.baselayers[i].id == $scope.activeBaselayer){
+        $scope.baselayers[i].active = true;
+      } else {
+        $scope.baselayers[i].active = false;
+      }
+    }
   };
 
-  // $scope.switchgroup = function(layergroup) {
-  //   console.log(layergroup)
-  //   $rootScope.$broadcast('LayerGroupSwitched', layergroup, $scope.layers);
-  // };
+  $scope.toggleLayerGroup = function(layergroup){
+    var grouplayers = layergroup.layers;
+    for (var i in grouplayers){
+      for (var j in $scope.layers){
+        if ($scope.layers[j].id == grouplayers[i]){
+          $scope.layers[j].active = layergroup.active;
 
-  // $scope.$watch('activeBaselayer', function() {
-  //   // TODO: Refactor this
-  //   // possibly include a baselayer layertype in database
-  //    for (var i = 0; i < $scope.layergroups.length; i ++) {
-  //     var layergroup = $scope.layergroups[i];
-  //     for (var j = 0; j < layergroup.layers.length; j ++) {
-  //       var layer = layergroup.layers[j];
-  //       if (layer.baselayer && layer.id == $scope.activeBaselayer) {
-  //         $rootScope.$broadcast('LayerOn', layer);
-  //         layer.active = true;
-  //       } else if (layer.baselayer && layer.id != $scope.activeBaselayer) {
-  //         $rootScope.$broadcast('LayerOff', layer);
-  //         layer.active = false;
-  //       }
-  //     }
-  //   }
-  // });
+          // layers.active = layergroup.active;
+        }
+      }
+    }
+  };
 
-    // leaflet.map.on('click', function(e) {
-    //     $rootScope.$broadcast('mapclick', e.latlng);
-    // });
 }]);

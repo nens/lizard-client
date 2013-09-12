@@ -5,6 +5,7 @@ services.service("Cabinet", ["$resource", "$rootScope",
 
   var layergroups = window.layerGroups;
   var layers = window.layers;
+  var baselayers = window.baseLayers;
 
   var searchResource,
       geocodeResource,
@@ -20,6 +21,7 @@ services.service("Cabinet", ["$resource", "$rootScope",
   return {
     layergroups: layergroups,
     layers: layers,
+    baselayers: baselayers,
     search: searchResource,
     geocode: geocodeResource,
     reverseGeocode: reverseGeocodeResource
