@@ -1,6 +1,6 @@
 // leaflet.js
 app
-    .directive('map', ['$rootScope', 'Omnibox', function(Omnibox){
+    .directive('mapLeaflet', ['$rootScope', 'Omnibox', function(Omnibox){
 
       var addLayers = function (map, layers){
       	for (var i in layers){
@@ -127,3 +127,17 @@ app
             controller: Ctrl
         };
     }]);
+
+app.directive('layerSwitch', [function(){
+	return {
+		// require: 'mapLeaflet',
+		link: function(scope, elements, attrs, Ctrl) {
+			console.log('from layer switch', Ctrl.layers)
+			console.log(scope.layer)
+		},
+		restrict: 'A',
+		scope: {
+			layer: '='
+		}
+	}
+}])
