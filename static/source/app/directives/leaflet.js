@@ -14,10 +14,11 @@ app
 
         var geslotenleiding = new L.TileLayer.GeoJSON('/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=geslotenleiding').addTo(map);
         var knoop = new L.TileLayer.GeoJSON('/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=knoop').addTo(map);
-
+        var watervlakken = new L.TileLayer.GeoJSON('http://tile.openstreetmap.us/vectiles-water-areas/{z}/{x}/{y}.json');
 
         // adding png layers
         map.addLayer(backgroundLayer_png);
+        map.addLayer(watervlakken);
         // map.addLayer(geslotenleidingen_png);
         
         // adding utfgrid layers
