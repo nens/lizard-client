@@ -55,6 +55,8 @@ app
             layers: layer.url,
             format: 'image/png',
             version: '1.1.1' });
+  			} else if (layer.type === "GeoJSON"){
+					layer.leafletLayer = new L.TileLayer.GeoJSON(layer.url);
   			} else {
   				console.log(layer.type);
   			}
