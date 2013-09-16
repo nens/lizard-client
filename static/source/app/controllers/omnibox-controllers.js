@@ -46,7 +46,6 @@ app.controller("CardsCtrl",
         $scope.box.open("kpi");
     });
 
-
     $scope.$on('mapclick', function(){
         // why this needs to go into an apply.. beats me
             $scope.$apply(function(){

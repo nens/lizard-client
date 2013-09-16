@@ -3,36 +3,76 @@ app
     .directive('map', ['$rootScope', 'Omnibox', function(Omnibox){
       function addDefaultLayers(map, layergroups) {
 
-        // definition of png layers
-        var backgroundLayer_png   = new L.tileLayer('http://c.tiles.mapbox.com/v3/examples.map-szwdot65/{z}/{x}/{y}.png');
-        // var geslotenleidingen_png = new L.tileLayer('//dev1.nxt.lizard.net/api/v1/tiles/{z}/{x}/{y}/.png?object_types=geslotenleiding');
-        // var knopen_png            = new L.tileLayer('//dev1.nxt.lizard.net/api/v1/tiles/{z}/{x}/{y}/.png?object_types=knoop');
+        var backgroundLayer_png   = new L.tileLayer('http://c.tiles.mapbox.com/v3/examples.map-szwdot65/{z}/{x}/{y}.png').addTo(map);
 
-        // definition of utfgrid layers
-        // var knopen_utfgrid            = new L.UtfGrid('/api/v1/tiles/{z}/{x}/{y}/.grid?object_types=knoop&callback={cb}', { useJsonP: true });
-        // var geslotenleidingen_utfgrid = new L.UtfGrid('/api/v1/tiles/{z}/{x}/{y}/.grid?object_types=geslotenleiding&callback={cb}', { useJsonP: true });
+        // var geslotenleiding = new L.TileLayer.GeoJSON('/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=geslotenleiding').addTo(map);
+        // var knoop = new L.TileLayer.GeoJSON('/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=knoop').addTo(map);
+        // var watervlakken = new L.TileLayer.GeoJSON('http://tile.openstreetmap.us/vectiles-water-areas/{z}/{x}/{y}.json').addTo(map);
 
-        var geslotenleiding = new L.TileLayer.GeoJSON('/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=geslotenleiding').addTo(map);
-        var knoop = new L.TileLayer.GeoJSON('/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=knoop').addTo(map);
-        var watervlakken = new L.TileLayer.GeoJSON('http://tile.openstreetmap.us/vectiles-water-areas/{z}/{x}/{y}.json');
 
-        // adding png layers
-        map.addLayer(backgroundLayer_png);
-        map.addLayer(watervlakken);
-        // map.addLayer(geslotenleidingen_png);
-        
-        // adding utfgrid layers
-        // map.addLayer(knopen_utfgrid);
+        var style = {
+        "clickable": true,
+        "color": "#00D",
+        "fillColor": "#00D",
+        "weight": 1.0,
+        "opacity": 0.7,
+        "fillOpacity": 0.8
+        };
+        var hoverStyle = {
+        "fillOpacity": 0.8
+        };
 
-        // interactivity on geslotenleidingen grid
-        // geslotenleidingen_utfgrid.on('mouseover', function (e) {
-        //   console.log('hover: ' + e);
-        // });
+        var knopenLayer = new L.TileLayer.GeoJSON('/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=knoop', {}, {
+                  style: style,
+                  onEachFeature: function (feature, layer) {
+                      if (feature.properties) {
+                          var popupString = '<div class="">';
+                          for (var k in feature.properties) {
+                              var v = feature.properties[k];
+                              popupString += k + ': ' + v + '<br />';
+                          }
+                          popupString += '</div>';
+                          layer.bindPopup(popupString);
+                      }
+                      if (!(layer instanceof L.Point)) {
+                          layer.on('click', function (e) {
+                              
+                              $rootScope.$broadcast('mapclick', e.target.feature.properties.id);
+                              console.log('clicked on:', e.target.feature.properties.id);
+                          });
+                      }
+                  }
+              }
+          ).addTo(map);
 
-        // knopen_utfgrid.on('mouseover', function (e) {
-        //   console.log('hover: ' + e);
-        // });
+        var leidingenLayer = new L.TileLayer.GeoJSON('/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=geslotenleiding', {}, {
+                  style: style,
+                  onEachFeature: function (feature, layer) {
+                      if (feature.properties) {
+                          var popupString = '<div class="popup">';
+                          for (var k in feature.properties) {
+                              var v = feature.properties[k];
+                              popupString += k + ': ' + v + '<br />';
+                          }
+                          popupString += '</div>';
+                          layer.bindPopup(popupString);
+                      }
+                      if (!(layer instanceof L.Point)) {
+                          layer.on('mouseover', function (e) {
+                            console.log('feature id:', e.target.feature.properties.id);
+                          });
+                          layer.on('mouseout', function (e) {
+                              // ...
+                          });
+                      }
+                  }
+              }
+          ).addTo(map);
 
+
+        knoop.on('click', function(e) {
+          console.log('click:', e);
+        });
 
         // console.log('map:', map);
         for (var i = 0; i < layergroups.length; i ++) {

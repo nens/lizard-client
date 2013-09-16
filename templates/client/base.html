@@ -8,7 +8,7 @@
     <title>Lizard</title>
     
     {% block css %}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}vendor/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}vendor/bootstrap/css/bootstrap.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}vendor/leaflet/dist/leaflet.css" />
 
     <!-- CSS for jqueryui: "smoothness" theme -->
@@ -116,12 +116,12 @@
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.utfgrid/dist/leaflet.utfgrid.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-tilelayer-geojson/TileLayer.GeoJSON.js"></script>
 
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-resource/angular-resource.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/event/event.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/highlight/highlight.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/keypress/keypress.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt-services.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/omnibox.js?{{ random_string }}"></script>
