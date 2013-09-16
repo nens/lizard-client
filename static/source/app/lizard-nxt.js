@@ -13,8 +13,8 @@ app.config(function($interpolateProvider) {
  });
 
 
-app.controller("MapCtrl", ["$rootScope", "$scope", "CabinetService", 
-  function($rootScope, $scope, CabinetService) {
+app.controller("MapCtrl", ["$scope", "CabinetService", 
+  function($scope, CabinetService) {
   $scope.data = {
     layergroups: CabinetService.layergroups,
     layers: CabinetService.layers,
