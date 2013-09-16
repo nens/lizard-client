@@ -5,34 +5,37 @@ app
 
     function MapCtrl ($scope){
 
-			// this.addLayers = function (map, layers){
-   //    	for (var i in layers){
-   //    		var layer = layers[i];
-   //  			if (layer.type === "TMS" && layer.baselayer){
-   //  				layer.leafletLayer = L.tileLayer(layer.url, {name:"Background"});
-   //  			} else if (layer.type === "TMS" && !layer.baselayer){
-   //  				layer.leafletLayer = L.tileLayer(layer.url);
-   //  			} else if (layer.type === "UTFGrid"){
-   //  				layer.leafletLayer = L.UtfGrid(layer.url, {
-   //  					JsonP: false
-   //  				})
-   //  			} else if (layer.type === "WMS"){
-   //          // TODO: fix something more robust for WMS layers.
-   //          // It works when the layer.url defines the layer name
-   //          // and the wms server is hardcoded
-   //          wms = 'http://geoserver1-3di.lizard.net/geoserver/gwc/service/wms';
-   //          layer.leafletLayer = L.tileLayer.wms(wms, {
-   //            layers: layer.url,
-   //            format: 'image/png',
-   //            version: '1.1.1' });
-   //  			} else {
-   //  				console.log(layer.type);
-   //  			}
-   //  			// if (layer.leafletLayer && layer.active){
-   //    	// 		// map.addLayer(layer.leafletLayer);      				
-   //  			// }
-   //    	}
-			// };
+/* @Gijs: dit kan je nu in de baseLayers of layers pushen naar ik meen..
+        // definition of png layers
+        var backgroundLayer_png   = new L.tileLayer('http://c.tiles.mapbox.com/v3/examples.map-szwdot65/{z}/{x}/{y}.png');
+        // var geslotenleidingen_png = new L.tileLayer('//dev1.nxt.lizard.net/api/v1/tiles/{z}/{x}/{y}/.png?object_types=geslotenleiding');
+        // var knopen_png            = new L.tileLayer('//dev1.nxt.lizard.net/api/v1/tiles/{z}/{x}/{y}/.png?object_types=knoop');
+
+        // definition of utfgrid layers
+        // var knopen_utfgrid            = new L.UtfGrid('/api/v1/tiles/{z}/{x}/{y}/.grid?object_types=knoop&callback={cb}', { useJsonP: true });
+        // var geslotenleidingen_utfgrid = new L.UtfGrid('/api/v1/tiles/{z}/{x}/{y}/.grid?object_types=geslotenleiding&callback={cb}', { useJsonP: true });
+
+        var geslotenleiding = new L.TileLayer.GeoJSON('/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=geslotenleiding').addTo(map);
+        var knoop = new L.TileLayer.GeoJSON('/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=knoop').addTo(map);
+        var watervlakken = new L.TileLayer.GeoJSON('http://tile.openstreetmap.us/vectiles-water-areas/{z}/{x}/{y}.json');
+
+        // adding png layers
+        map.addLayer(backgroundLayer_png);
+        map.addLayer(watervlakken);
+        // map.addLayer(geslotenleidingen_png);
+        
+        // adding utfgrid layers
+        // map.addLayer(knopen_utfgrid);
+
+        // interactivity on geslotenleidingen grid
+        // geslotenleidingen_utfgrid.on('mouseover', function (e) {
+        //   console.log('hover: ' + e);
+        // });
+
+        // knopen_utfgrid.on('mouseover', function (e) {
+        //   console.log('hover: ' + e);
+        // });
+*/
 
 			this.initiateLayer = function (layer) {
 				if (layer.type === "TMS" && layer.baselayer){

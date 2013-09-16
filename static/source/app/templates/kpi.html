@@ -1,4 +1,31 @@
-<div class="card" ng-controller="KpiCtrl">
-	<h5>KPI</h5>
+<div class="card" ng-controller="KpiCtrl" ng-animate=" 'animate' ">
+	
+	<div id="treshold">
+	      <label for="low">Ondergrens: </label>
+	      <input id="time" type="range" min="0" max="100">
+
+	      <label for="high">Bovengrens: </label>
+	      <input id="date" type="range" min="0" max="100">
+	
+	</div>
+	
+	<div id="indicators" style="width:200px;">
+		<dl class="dl-horizontal">
+			<dt><abbr title="Tevredenheid">Tevredenheid</abbr></dt>
+			<dd><span class="label label-success">Goed</span></dd>
+			<dt><abbr title="Functioneren zoals bedoeld?">Functioneren</abbr></dt>
+			<dd><span class="label label-success">Goed</span></dd>
+			<dt><abbr title="Omgevingseffect">Omgevingseffect</abbr></dt>
+			<dd><span class="label label-warning">Matig</span></dd>
+			<dt><abbr title="Infrastructuur">Infrastructuur</abbr></dt>
+			<dd><span class="label label-important">Slecht</span></dd>
+			<dt><abbr title="Uitvoering zoals gepland?">Uitvoering</abbr></dt>
+			<dd><span class="label label-important">Slecht</span></dd>
+		</dl>
+	</div>
+	
+	<div id="graph">
+
+	</div>	
 
 </div>
