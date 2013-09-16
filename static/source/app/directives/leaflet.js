@@ -101,7 +101,8 @@ app
     };
 
     var link = function (scope, element, attrs){
-    	var map = new L.map('map', {
+    	// instead of 'map' element here for testability
+    	var map = new L.map(element[0], {
           center: new L.LatLng(52.0992287, 5.5698782),
           zoomControl: false,
           zoom: 8
