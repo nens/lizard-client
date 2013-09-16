@@ -21,7 +21,8 @@ app.controller("MapCtrl", ["$scope", "CabinetService",
     baselayers: CabinetService.baselayers,
     activeBaselayer: 3,
     changed: Date.now(),
-    baselayerChanged: Date.now()
+    baselayerChanged: Date.now(),
+    enabled: false
   };
 
   $scope.switchBaseLayer = function(){
@@ -47,6 +48,14 @@ app.controller("MapCtrl", ["$scope", "CabinetService",
       }
     }
     $scope.data.changed = Date.now()
+  };
+
+  $scope.enableLayerSwitcher = function () {
+    $scope.data.enabled = true;
+  };
+
+  $scope.disableLayerSwitcher = function () {
+    $scope.data.enabled = false;
   };
 
 }]);
