@@ -73,23 +73,23 @@
     {% block content %}
     
     <div ng-controller="MapCtrl">
-      <leaflet map layers="layers"></leaflet>
+      <map layer-switch layers="data.layers"></map>
         <div class="layer-switcher well searchbox-shadow" >
           <ul class="nav nav-list">
             <li class="nav-header">
               {% trans "Basiskaarten" %}
               <ul class="unstyled">
-                <li ng-repeat="layer in baselayers | orderBy:'order':true">
-                  <input id="{[{layer.id}]}-baselayer" class="hide" type="radio" ng-model="$parent.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
+                <li ng-repeat="layer in data.baselayers | orderBy:'order':true">
+                  <input id="{[{layer.id}]}-baselayer" class="hide" type="radio" ng-model="data.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
                   <label class="ng-class: {active: layer.active};" for="{[{ layer.id }]}-baselayer" ng-bind="layer.name"></label>
-                  <leaflet layer-switch layer="layer"></leaflet>
+                  <!-- <leaflet layer-switch layer="layer"></leaflet> -->
                 </li>            
               </ul>
             </li>  
             <li class="nav-header">
               {% trans "Themakaarten" %}
               <ul class="unstyled">
-                <li ng-repeat="layergroup in layergroups | orderBy:'order':true" >
+                <li ng-repeat="layergroup in data.layergroups | orderBy:'order':true" >
                   <input id="{[{layergroup.id}]}-layergroup" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="toggleLayerGroup(layergroup)">
                   <label class="ng-class: {active: layergroup.active};" for="{[{ layergroup.id }]}-layergroup" ng-bind="layergroup.name"></label>
                 </li>            
@@ -98,10 +98,10 @@
             <li class="nav-header">
               {% trans "Specifieke Kaarten" %}
               <ul class="unstyled">
-                <li ng-repeat="layer in layers | orderBy:'order':true">
+                <li ng-repeat="layer in data.layers | orderBy:'order':true">
                   <input id="{[{layer.id}]}-layer" class="hide" type="checkbox" ng-model="layer.active">
                   <label class="ng-class: {active: layer.active};" for="{[{ layer.id }]}-layer" ng-bind="layer.name"></label>
-                  <leaflet layer-switch layer="layer"></leaflet>
+                  <!-- <leaflet layer-switch layer="layer"></leaflet> -->
                 </li>            
               </ul>
             </li>    

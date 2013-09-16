@@ -1,6 +1,6 @@
 var services = angular.module("lizard-nxt.services", ['ngResource']);
 
-services.service("Cabinet", ["$resource", "$rootScope",
+services.service("CabinetService", ["$resource", "$rootScope",
   function($resource, $rootScope) {
 
   var layergroups = window.layerGroups;
