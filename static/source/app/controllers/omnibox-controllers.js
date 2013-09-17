@@ -75,7 +75,7 @@ app.controller("ResultsCtrl",
               lng: $scope.currentObject.lon,
               zoom: 14
             };
-            $rootScope.$broadcast('PanZoomeroom', $scope.panZoom)
+            $rootScope.$broadcast('PanZoomeroom', $scope.panZoom);
         }
     };
 
