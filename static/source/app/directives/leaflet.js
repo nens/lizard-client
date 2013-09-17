@@ -18,7 +18,7 @@ app
           });
           layer.leafletLayer.on('click', function (e) {
               //click events are fired with e.data==null if an area with no hit is clicked
-              if (e) {
+              if (e.data.id) {
                   CabinetService.timeseries.get({id: e.data.id}, function(data) {
                     console.log('CabinetService.timeseries.get() called', data);
                     $scope.graph = data.results;
@@ -59,7 +59,7 @@ app
               .on('click', function(e) {
                 console.log(e.target.feature.properties.id);
                 // CabinetService.timeseries.get({object_type:'knoop', id: e.target.feature.properties.id}, function(data) {
-                CabinetService.timeseries.get({id: 5}, function(data) {
+                CabinetService.timeseries.get({id: e.target.feature.properties.id}, function(data) {
                   console.log('CabinetService.timeseries.get() called', data);
                   $scope.graph = data.results;
                   console.log($scope);
