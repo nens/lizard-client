@@ -45,7 +45,7 @@ app.directive('kpilayer', function () {
                 }
                 return results;
               })();
-              return layer.bindPopup(array.join('<br/>'));
+              scope.$apply(attrs.kpilayer);
             },
             style: styler
           });
