@@ -43,6 +43,12 @@ app.controller("KpiCtrl",
         });
   };
 
+  $scope.$watch('kpi.slct_area', function(){
+  	if ($scope.kpi.slct_area !== undefined){
+			$scope.activate($scope.kpi.slct_date, $scope.kpi.slct_area, $scope.kpi.slct_cat);
+  	}
+  })
+
 	$scope.activate = function (date, area, category) {
       $scope.kpi.slct_cat = category;
       $scope.kpi.slct_area = area;
