@@ -11,12 +11,28 @@
 	
 	</div>
 	
-	<div style="width:200px;">
-		<dl class="dl-horizontal">
-			<div ng-repeat="category in kpi.categories" ng-click="activate(kpi.slct_date, kpi.slct_area, category)" class="clickable">
-				<dt><span title="category">{[{category}]}</span></dt>
-				<dd><span class="label" ng-class="{'label-success': value > kpi.threshold.warning}">{[value....]}</span></dd>
-			</div>
+	<div>
+      <dl class="dl-horizontal">
+        <div class="btn-group btn-group-vertical">
+          <div ng-repeat="category in kpi.categories">
+          <dt>
+            <button 
+              type="button"
+              ng-class="{'btn-primary': category == kpi.slct_cat}"
+              ng-click="activate(kpi.slct_date, kpi.slct_area, category)"
+              class="btn btn-mini btn-block">
+              {[{category}]}
+			</button>
+          </dt>
+          <dd>
+            <span class="badge" ng-class="{'badge-success': value > kpi.threshold.warning}">
+              <!--ugly crap, make nicer data model for this -->
+              {[{ d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] }]}
+            </span>
+          </dd>
+          </div>
+      </div>
+
 			<div ng-repeat="date in kpi.dates" ng-click="activate(date, kpi.slct_area, kpi.slct_cat)" class="clickable">
 				<dt><span title="date">{[{date}]}</span></dt>
 				<!-- <dd><span class="label" >{[date]}</span></dd> -->

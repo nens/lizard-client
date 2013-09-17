@@ -53,19 +53,23 @@ app.controller("KpiCtrl",
       $scope.kpi.kpichanged = !$scope.kpi.kpichanged;
     };
 
-  // prepare data for graph
+  // prepare data for graph and badge values
   $scope.d3formatted = function (area, category) {
     $scope.d3kpi.kpis.name = category;
+    $scope.badgevalues = {};
     $scope.d3kpi.kpis.values = [];
     $scope.d3kpi.dates.values = $scope.kpi.dates;
     for (var i in $scope.kpi.kpiData.features) {
       var feature = $scope.kpi.kpiData.features[i];
+      // skip this if, just put it in the cat
       if (feature.properties.name === area) {
-        //$scope.d3kpi.dates.values.push(feature.properties.datum);
         $scope.d3kpi.kpis.values = feature.properties[category].values;
         $scope.formatted_data = $scope.format_data($scope.d3kpi);
+        // ugly crap, make nicer data model for this
+        $scope.d3kpi.kpis[category] = feature.properties[category].values;
       }
     }
+    return $scope.d3kpi;
   };
 
 
