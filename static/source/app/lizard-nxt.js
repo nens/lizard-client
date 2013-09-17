@@ -65,7 +65,7 @@ app.controller("MapCtrl", ["$scope", "CabinetService", "KpiService" ,
 
   $scope.changed = function() {
     $scope.data.changed = Date.now();
-  }
+  };
 
   $scope.onAreaClick = function(area){
     $scope.$apply(function(){

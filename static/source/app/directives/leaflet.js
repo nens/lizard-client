@@ -1,7 +1,7 @@
 // leaflet.js
 app
   .directive('map', [function(){
-    function MapCtrl ($scope, CabinetService){
+    function MapCtrl ($scope, CabinetService, Omnibox){
 
       this.initiateLayer = function (layer) {
         if (layer.type === "TMS" && layer.baselayer){
@@ -9,7 +9,27 @@ app
         } else if (layer.type === "TMS" && !layer.baselayer){
           layer.leafletLayer = L.tileLayer(layer.url);
         } else if (layer.type === "UTFGrid"){
-          layer.leafletLayer =  new L.UtfGrid(layer.url + '&callback={cb}');
+          layer.leafletLayer = new L.UtfGrid(layer.url,
+            {
+              useJsonP: false
+            });
+          layer.leafletLayer.on('mouseover', function (e) {
+            console.log('mouseover', e);
+          });
+          layer.leafletLayer.on('click', function (e) {
+              //click events are fired with e.data==null if an area with no hit is clicked
+              if (e.data.id) {
+                  CabinetService.timeseries.get({id: e.data.id}, function(data) {
+                    console.log('CabinetService.timeseries.get() called', data);
+                    $scope.graph = data.results;
+                    console.log($scope);
+                    Omnibox.open('graph');
+                  });
+                  console.log('click: ' + e.data.id);
+              } else {
+                  console.log('click: nothing');
+              }
+          });
         } else if (layer.type === "WMS"){
           // TODO: fix something more robust for WMS layers.
           // It works when the layer.url defines the layer name
@@ -21,12 +41,12 @@ app
             version: '1.1.1' });
         } else if (layer.type === "GeoJSON"){
           var style = {
-          radius: 8,
-          fillColor: "#1CA9C9",
-          color: "#fff",
-          weight: 1,
-          opacity: 1,
-          fillOpacity: 0.8
+            radius: 10,
+            fillColor: "#1CA9C9",
+            color: "#fff",
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 1
           };
           layer.leafletLayer = new L.TileLayer.GeoJSON(layer.url,{},{
             style: style,
@@ -39,7 +59,7 @@ app
               .on('click', function(e) {
                 console.log(e.target.feature.properties.id);
                 // CabinetService.timeseries.get({object_type:'knoop', id: e.target.feature.properties.id}, function(data) {
-                CabinetService.timeseries.get({id: 5}, function(data) {
+                CabinetService.timeseries.get({id: e.target.feature.properties.id}, function(data) {
                   console.log('CabinetService.timeseries.get() called', data);
                   $scope.graph = data.results;
                   console.log($scope);
@@ -49,7 +69,7 @@ app
             }
           })
           .on('featureparse', function(e) {
-            // console.log('e', e);
+            console.log('e', e);
           });
 
         } else {
