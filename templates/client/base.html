@@ -81,7 +81,7 @@
           <i class="icon-globe"></i>
           <span class="info-text">{% trans "Kaarten" %}</span>
         </div>
-        <div class="layer-switcher well searchbox-shadow" ng-show="data.enabled">
+        <div class="layer-switcher well searchbox-shadow" ng-show="data.enabled" style="visibility:hidden;" ng-style="{visibility:'visible'}">
           <a class="close" ng-click="disableLayerSwitcher()">&times;</a>
           <ul class="nav nav-list">
             <li class="nav-header">
