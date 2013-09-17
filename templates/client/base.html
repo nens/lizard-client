@@ -117,23 +117,22 @@
 
 
 
-     {% block box_awesome %}{% endblock %}
+    {% block box_awesome %}{% endblock %}
     <div class="container-fluid">
         {% block toolbar_controllers %}
         {% endblock %}
     {% endblock content %}
 
     {% block javascript_body %}
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet/dist/leaflet.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.utfgrid/dist/leaflet.utfgrid.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-tilelayer-geojson/TileLayer.GeoJSON.js"></script>
-
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-resource/angular-resource.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/event/event.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/highlight/highlight.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/keypress/keypress.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/jquery.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet/dist/leaflet.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.utfgrid/dist/leaflet.utfgrid.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-tilelayer-geojson/TileLayer.GeoJSON.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-resource/angular-resource.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/event/event.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/highlight/highlight.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/keypress/keypress.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt-services.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt.js?{{ random_string }}"></script>
@@ -146,7 +145,6 @@
     <script type="text/javascript" src="{{ STATIC_URL }}source/common/nxt_graph/nxt-graph.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.min.js?{{ random_string }}"></script>
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->
-    
     {% endblock %}
 
   </body>

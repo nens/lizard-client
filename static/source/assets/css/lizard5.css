@@ -1,3 +1,14 @@
+/*#logo-row {
+	height: 40px;
+	margin-bottom: 0px;
+	overflow: visible;
+	background-color: rgb(-13, 166, 215);
+	background-image: linear-gradient(to bottom, rgb(106, 194, 227), rgb(17, 124, 163));
+	background-repeat: repeat-x;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.3),0 4px 15px -5px rgba(0,0,0,0.0);
+}*/
+
+
 #logo-row {
     height: 40px;
     margin-bottom: 0px;
@@ -6,6 +17,7 @@
     background-image: linear-gradient(to bottom, rgb(24, 134, 147), rgb(17, 94, 103));
     background-repeat: repeat-x;
 }
+
 
 header {
     position: absolute;

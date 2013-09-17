@@ -22,9 +22,13 @@ services.service("CabinetService", ["$resource", "$rootScope",
     id: '@id',
     object_id: 1
   });
-  timeseriesResource = $resource('/api/v1/timeseries/:id/', {
+  // timeseriesResource = $resource('/api/v1/timeseries/:id/', {
+  //   id: '@id'
+  // });
+  timeseriesResource = $resource('/static/data/tijdserie.json', {
     id: '@id'
   });
+
 
   $rootScope.$broadcast('LayersRetrieved');
 

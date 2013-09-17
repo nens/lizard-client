@@ -22,8 +22,8 @@ app
         } else if (layer.type === "GeoJSON"){
           var style = {
           radius: 8,
-          fillColor: "#ff7800",
-          color: "#000",
+          fillColor: "#1CA9C9",
+          color: "#fff",
           weight: 1,
           opacity: 1,
           fillOpacity: 0.8
@@ -35,19 +35,14 @@ app
               // console.log(layer);
             },
             pointToLayer: function (feature, latlng) {
-              return L.circleMarker(latlng, {
-                radius: 8,
-                fillColor: "#ff7800",
-                color: "#000",
-                weight: 1,
-                opacity: 1,
-                fillOpacity: 0.8
-              }).on('click', function(e) {
+              return L.circleMarker(latlng, {})
+              .on('click', function(e) {
                 console.log(e.target.feature.properties.id);
                 // CabinetService.timeseries.get({object_type:'knoop', id: e.target.feature.properties.id}, function(data) {
                 CabinetService.timeseries.get({id: 5}, function(data) {
                   console.log('CabinetService.timeseries.get() called', data);
-                  scope.graph = data.results;
+                  $scope.graph = data.results;
+                  console.log($scope);
                   Omnibox.open('graph');
                 });
               });
