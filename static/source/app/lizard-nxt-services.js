@@ -1,12 +1,11 @@
 var services = angular.module("lizard-nxt.services", ['ngResource']);
 
-services.service("Cabinet", ["$resource", "$rootScope",
+services.service("CabinetService", ["$resource", "$rootScope",
   function($resource, $rootScope) {
 
   var layergroups = window.layerGroups;
   var layers = window.layers;
-
-
+  var baselayers = window.baseLayers;
 
   var searchResource,
       geocodeResource,
@@ -16,15 +15,30 @@ services.service("Cabinet", ["$resource", "$rootScope",
   searchResource = $resource('/api/v1/search/');
   geocodeResource = $resource('/api/v1/geocode/');
   reverseGeocodeResource = $resource('/api/v1/reversegeocode/');
+  timeseriesLocationObjectResource = $resource('http://dev1.nxt.lizard.net/api/v1/timeseries/:id/?location__object_type__name=:object_type&location__object_id=:object_id',
+    {
+      object_type: '@object_type',
+      id: '@id',
+      object_id: 1
+    });
+
+  timeseriesResource = $resource('http://dev1.nxt.lizard.net/api/v1/timeseries/:id/',
+    {
+      id: '@id',
+    });
 
   $rootScope.$broadcast('LayersRetrieved');
 
   return {
     layergroups: layergroups,
     layers: layers,
+    baselayers: baselayers,
     search: searchResource,
     geocode: geocodeResource,
-    reverseGeocode: reverseGeocodeResource
+    reverseGeocode: reverseGeocodeResource,
+    timeseries: timeseriesResource,
+    timeseriesLocationObject: timeseriesLocationObjectResource,
+    panZoom: null
   };
 }]);
 
@@ -41,7 +55,6 @@ services.service("Omnibox", [function() {
   box.open = function(type){
     box.type = type;
     box.showCards = true;
-    $rootScope.$broadcast('Omnibox_change');
   };
 
   box.close = function(){

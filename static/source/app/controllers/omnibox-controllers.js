@@ -1,13 +1,13 @@
 app.controller("SearchCtrl",
-    ["$scope", "$resource", "$rootScope", "Cabinet", "Omnibox",
-        function($scope, $resource, $rootScope, Cabinet, Omnibox) {
+    ["$scope", "$resource", "$rootScope", "CabinetService", "Omnibox",
+        function($scope, $resource, $rootScope, CabinetService, Omnibox) {
 
     $scope.box = Omnibox;
 
     $scope.filter = function ($event) {
         if ($scope.box.query.length > 1) {
 
-            var search = Cabinet.search.get({q:$scope.box.query}, function(data) {
+            var search = CabinetService.search.get({q:$scope.box.query}, function(data) {
                 console.log(data.hits.hits);
                 var sources = [];
                 for(var i in data.hits.hits) {
@@ -16,7 +16,7 @@ app.controller("SearchCtrl",
                 $scope.searchData = sources;
             });
 
-            var geocode = Cabinet.geocode.query({q:$scope.box.query}, function(data) {
+            var geocode = CabinetService.geocode.query({q:$scope.box.query}, function(data) {
                 console.log(data);
                 $scope.box.content = data;
             });
@@ -37,8 +37,8 @@ app.controller("SearchCtrl",
 
 
 app.controller("CardsCtrl",
-    ["$scope", "$resource", "$rootScope", "Cabinet", "Omnibox",
-        function($scope, $resource, $rootScope, Cabinet, Omnibox) {
+    ["$scope", "$resource", "$rootScope", "CabinetService", "Omnibox",
+        function($scope, $resource, $rootScope, CabinetService, Omnibox) {
 
     $scope.box = Omnibox;
 
@@ -70,7 +70,12 @@ app.controller("ResultsCtrl",
             // A lat and lon are present, instruct the map to pan/zoom to it
             console.log('Location given, take us there');
             var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
-            $rootScope.$broadcast('PanAndZoomTo', latlng);
+            $scope.panZoom = {
+              lat: $scope.currentObject.lat,
+              lng: $scope.currentObject.lon,
+              zoom: 14
+            };
+            $rootScope.$broadcast('PanZoomeroom', $scope.panZoom)
         }
     };
 

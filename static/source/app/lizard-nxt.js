@@ -13,38 +13,42 @@ app.config(function($interpolateProvider) {
  });
 
 
-app.controller("MapCtrl", ["$rootScope", "$scope", "Cabinet", function($rootScope, $scope, Cabinet) {
-  $scope.layergroups = Cabinet.layergroups;
-  $scope.layers = Cabinet.layers;
-  $scope.activeBaselayer;
-
-  $scope.$on('baselayerActive', function(event, activeBaselayer) {
-    $scope.activeBaselayer = activeBaselayer;
-  });
-
-  $scope.switch = function(layer) {
-    $rootScope.$broadcast('LayerSwitched', layer);
+app.controller("MapCtrl", ["$rootScope", "$scope", "CabinetService",
+  function($rootScope, $scope, CabinetService) {
+  $scope.data = {
+    layergroups: CabinetService.layergroups,
+    layers: CabinetService.layers,
+    baselayers: CabinetService.baselayers,
+    activeBaselayer: 3,
+    changed: Date.now(),
+    baselayerChanged: Date.now()
   };
 
-  $scope.$watch('activeBaselayer', function() {
-    // TODO: Refactor this
-    // possibly include a baselayer layertype in database
-     for (var i = 0; i < $scope.layergroups.length; i ++) {
-      var layergroup = $scope.layergroups[i];
-      for (var j = 0; j < layergroup.layers.length; j ++) {
-        var layer = layergroup.layers[j];
-        if (layer.baselayer && layer.id == $scope.activeBaselayer) {
-          $rootScope.$broadcast('LayerOn', layer);
-          layer.active = true;
-        } else if (layer.baselayer && layer.id != $scope.activeBaselayer) {
-          $rootScope.$broadcast('LayerOff', layer);
-          layer.active = false;
+  $scope.$on('PanZoomeroom', function(message, value){
+    $scope.panZoom = value;
+  });
+
+  $scope.switchBaseLayer = function(){
+    for (var i in $scope.data.baselayers){
+      if ($scope.data.baselayers[i].id == $scope.data.activeBaselayer){
+        $scope.data.baselayers[i].active = true;
+      } else {
+        $scope.data.baselayers[i].active = false;
+      }
+    }
+    $scope.data.baselayerChanged = Date.now();
+  };
+
+  $scope.toggleLayerGroup = function(layergroup){
+    var grouplayers = layergroup.layers;
+    for (var i in grouplayers){
+      for (var j in $scope.data.layers){
+        if ($scope.data.layers[j].id == grouplayers[i]){
+          $scope.data.layers[j].active = layergroup.active;
         }
       }
     }
-  });
+    $scope.data.changed = Date.now();
+  };
 
-    // leaflet.map.on('click', function(e) {
-    //     $rootScope.$broadcast('mapclick', e.latlng);
-    // });
 }]);

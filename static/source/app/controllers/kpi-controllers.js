@@ -1,6 +1,6 @@
 app.controller("KpiCtrl",
-    ["$scope", "$resource", "$rootScope", "$http", "Cabinet", "Omnibox",
-        function($scope, $resource, $rootScope, $http, Cabinet, Omnibox) {
+    ["$scope", "$resource", "$rootScope", "$http", "CabinetService", "Omnibox",
+        function($scope, $resource, $rootScope, $http, CabinetService, Omnibox) {
 
 	console.log('kpi controllers');
 

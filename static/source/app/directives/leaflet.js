@@ -1,187 +1,171 @@
 // leaflet.js
 app
-    .directive('map', ['$rootScope', 'Omnibox', function(Omnibox){
-      function addDefaultLayers(map, layergroups) {
+  .directive('map', [function(){
+    function MapCtrl ($scope, CabinetService){
 
-        var backgroundLayer_png   = new L.tileLayer('http://c.tiles.mapbox.com/v3/examples.map-szwdot65/{z}/{x}/{y}.png').addTo(map);
-
-        // var geslotenleiding = new L.TileLayer.GeoJSON('/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=geslotenleiding').addTo(map);
-        // var knoop = new L.TileLayer.GeoJSON('/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=knoop').addTo(map);
-        // var watervlakken = new L.TileLayer.GeoJSON('http://tile.openstreetmap.us/vectiles-water-areas/{z}/{x}/{y}.json').addTo(map);
-
-
-        var style = {
-        "clickable": true,
-        "color": "#00D",
-        "fillColor": "#00D",
-        "weight": 1.0,
-        "opacity": 0.7,
-        "fillOpacity": 0.8
-        };
-        var hoverStyle = {
-        "fillOpacity": 0.8
-        };
-
-        var knopenLayer = new L.TileLayer.GeoJSON('/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=knoop', {}, {
-                  style: style,
-                  onEachFeature: function (feature, layer) {
-                      if (feature.properties) {
-                          var popupString = '<div class="">';
-                          for (var k in feature.properties) {
-                              var v = feature.properties[k];
-                              popupString += k + ': ' + v + '<br />';
-                          }
-                          popupString += '</div>';
-                          layer.bindPopup(popupString);
-                      }
-                      if (!(layer instanceof L.Point)) {
-                          layer.on('click', function (e) {
-                              
-                              $rootScope.$broadcast('mapclick', e.target.feature.properties.id);
-                              console.log('clicked on:', e.target.feature.properties.id);
-                          });
-                      }
-                  }
-              }
-          ).addTo(map);
-
-        var leidingenLayer = new L.TileLayer.GeoJSON('/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=geslotenleiding', {}, {
-                  style: style,
-                  onEachFeature: function (feature, layer) {
-                      if (feature.properties) {
-                          var popupString = '<div class="popup">';
-                          for (var k in feature.properties) {
-                              var v = feature.properties[k];
-                              popupString += k + ': ' + v + '<br />';
-                          }
-                          popupString += '</div>';
-                          layer.bindPopup(popupString);
-                      }
-                      if (!(layer instanceof L.Point)) {
-                          layer.on('mouseover', function (e) {
-                            console.log('feature id:', e.target.feature.properties.id);
-                          });
-                          layer.on('mouseout', function (e) {
-                              // ...
-                          });
-                      }
-                  }
-              }
-          ).addTo(map);
-
-
-        knoop.on('click', function(e) {
-          console.log('click:', e);
-        });
-
-        // console.log('map:', map);
-        for (var i = 0; i < layergroups.length; i ++) {
-          var layergroup = layergroups[i];
-          for (var j = 0; j < layergroup.layers.length; j ++) {
-            var layer = layergroup.layers[j];
-            if (layer.leafletLayer === undefined) {
-              if (layer.type == "WMS") {
-                // TODO: fix something more robust for WMS layers.
-                // It works when the layer.url defines the layer name
-                // and the wms server is hardcoded
-                console.log(layer.type, layer);
-                wms = 'http://geoserver1-3di.lizard.net/geoserver/gwc/service/wms';
-                layer.leafletLayer = L.tileLayer.wms(wms, {
-                  layers: layer.url,
-                  format: 'image/png',
-                  version: '1.1.1' });
-              }
-              else if(layer.type === "grid") {
-                layer.leafletLayer = new L.UtfGrid('//dev1.nxt.lizard.net/api/v1/tiles/{z}/{x}/{y}/.grid?object_types=geslotenleiding', {
-                    useJsonP: false
+      this.initiateLayer = function (layer) {
+        if (layer.type === "TMS" && layer.baselayer){
+          layer.leafletLayer = L.tileLayer(layer.url, {name:"Background"});
+        } else if (layer.type === "TMS" && !layer.baselayer){
+          layer.leafletLayer = L.tileLayer(layer.url);
+        } else if (layer.type === "UTFGrid"){
+          layer.leafletLayer =  new L.UtfGrid(layer.url + '&callback={cb}');
+        } else if (layer.type === "WMS"){
+          // TODO: fix something more robust for WMS layers.
+          // It works when the layer.url defines the layer name
+          // and the wms server is hardcoded
+          wms = 'http://geoserver1-3di.lizard.net/geoserver/gwc/service/wms';
+          layer.leafletLayer = L.tileLayer.wms(wms, {
+            layers: layer.url,
+            format: 'image/png',
+            version: '1.1.1' });
+        } else if (layer.type === "GeoJSON"){
+          var style = {
+          radius: 8,
+          fillColor: "#ff7800",
+          color: "#000",
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8
+          };
+          layer.leafletLayer = new L.TileLayer.GeoJSON(layer.url,{},{
+            style: style,
+            onEachFeature: function(feature, layer) {
+              // console.log(feature);
+              // console.log(layer);
+            },
+            pointToLayer: function (feature, latlng) {
+              return L.circleMarker(latlng, {
+                radius: 8,
+                fillColor: "#ff7800",
+                color: "#000",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+              }).on('click', function(e) {
+                console.log(e.target.feature.properties.id);
+                // CabinetService.timeseries.get({object_type:'knoop', id: e.target.feature.properties.id}, function(data) {
+                CabinetService.timeseries.get({id: 5}, function(data) {
+                  console.log('CabinetService.timeseries.get() called', data);
+                  scope.graph = data.results;
+                  Omnibox.open('graph');
                 });
-                layer.leafletLayer.on('click', function (e) {
-                    if (e.data) {
-                        console.log('click: ' + e);
-                    }
-                });
-                layer.leafletLayer.on('mouseover', function (e) {
-                    console.log('mouseover: ' + e);
-                });
-              }
-              else if(layer.type === 'geojson') {
-                layer.geoJsonLayer = new L.TileLayer.GeoJSON('//dev1.nxt.lizard.net/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=geslotenleiding', {
-                    clipTiles: true,
-                    unique: function (feature) {
-                        return feature.id;
-                    }
-                });
-              }
-              else {
-                layer.leafletLayer = L.tileLayer(layer.url);
-              }
+              });
             }
-            if (layer.active) {
-              map.addLayer(layer.leafletLayer);
-              if (layer.baselayer) {
-                layer.leafletLayer.bringToBack();
-              }
+          })
+          .on('featureparse', function(e) {
+            // console.log('e', e);
+          });
+
+        } else {
+          // console.log(layer.type);
+        }
+        layer.initiated = true;
+      };
+
+
+        this.toggleLayer = function(layer){
+          if (!layer.active){
+            if (layer.leafletLayer){
+              $scope.map.removeLayer(layer.leafletLayer);
+            } else {
+              console.log('leaflet layer not defined', layer.name);
+            }
+          } else {
+            if (layer.leafletLayer){
+              $scope.map.addLayer(layer.leafletLayer);
+            } else {
+              console.log('leaflet layer not defined', layer.name);
             }
           }
-        }
-      }
+        };
 
-        var link = function (scope, element, attrs, controller) {
-            var map = new L.map(element[0], {
-            center: new L.LatLng(52.0992287, 5.5698782),
-            zoomControl: false,
-            zoom: 8
-          });
-
-            map.on('click', function(e){
-                scope.$apply(function(){
-                    console.log(Omnibox);
-                    Omnibox.open('graph');
-                });
-            });
-
-            scope.$watch('layergroups', function(){
-                addDefaultLayers(map, scope.layergroups);
-            });
-
-          scope.$on('LayerSwitched', function(event, layer) {
-            console.log("layer switched");
-            if (layer.active === true) {
-              map.addLayer(layer.leafletLayer);
+        this.toggleBaseLayer = function(layer){
+          var layers = $scope.map._layers;
+          if (!layer.active){
+            if (layer.leafletLayer){
+              $scope.map.removeLayer(layer.leafletLayer);
+            } else {
+              console.log('leaflet layer not defined', layer.name);
             }
-            if (layer.active === false) {
-              map.removeLayer(layer.leafletLayer);
-            }
-          });
-
-          scope.$on('LayerOn', function(event, layer) {
-            map.addLayer(layer.leafletLayer);
-            if (layer.baselayer) {
+          } else if (layer.active){
+            if (layer.leafletLayer){
+              $scope.map.addLayer(layer.leafletLayer);
               layer.leafletLayer.bringToBack();
+            } else {
+              console.log('leaflet layer not defined', layer.name);
             }
-          });
-
-          scope.$on('LayerOff', function(event, layer) {
-            map.removeLayer(layer.leafletLayer);
-          });
-
-          scope.$on('PanAndZoomTo', function(event, latlng) {
-            map.setView(new L.LatLng(latlng.lat, latlng.lon), 14);
-            console.log('PanAndZoomTo', latlng);
-          });
-
+          }
         };
 
-        var Ctrl = function($scope){
-            $scope.addDefaultLayers = addDefaultLayers;
-            $scope.map = map;
+        this.panZoomTo = function (panZoom) {
+          $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
         };
+    }
 
-        return {
-            restrict: 'E',
-            replace: true,
-            template: '<div id="map"></div>',
-            link: link,
-            controller: Ctrl
-        };
-    }]);
+    var link = function (scope, element, attrs){
+      var map = new L.map('map', {
+          center: new L.LatLng(52.0992287, 5.5698782),
+          zoomControl: false,
+          zoom: 8
+        });
+      scope.map = map;
+    };
+
+  return {
+      restrict: 'E',
+      replace: true,
+      template: '<div id="map"></div>',
+      controller: MapCtrl,
+      link: link
+  };
+}]);
+
+
+
+
+
+app.directive('layerSwitch', [function(){
+  return {
+    require: 'map',
+    link: function(scope, elements, attrs, MapCtrl) {
+      scope.$watch('data.changed', function (){
+        for (var i in layers){
+          var layer = layers[i];
+          if (!layer.initiated){
+            MapCtrl.initiateLayer(layer);
+          }
+          MapCtrl.toggleLayer(layer);
+        }
+      });
+      scope.$watch('data.baselayerChanged', function (){
+        for (var i in scope.data.baselayers){
+          var layer = scope.data.baselayers[i];
+          if (!layer.initiated){
+            MapCtrl.initiateLayer(layer);
+          }
+          MapCtrl.toggleBaseLayer(layer);
+        }
+      });
+    }
+  };
+}]);
+
+app.directive('panZoom', [function(){
+  return {
+    require: 'map',
+    link: function(scope, elements, attrs, MapCtrl) {
+        console.log('panZoom', scope.panZoom, scope)
+      scope.$watch('panZoom', function (){
+        if (scope.panZoom !== null){
+          console.log('hoi')
+          if (scope.panZoom.hasOwnProperty('lat') && 
+            scope.panZoom.hasOwnProperty('lng') &&
+            scope.panZoom.hasOwnProperty('zoom') ){
+           MapCtrl.panZoomTo(scope.panZoom);
+          }
+        }
+      });
+    }
+  };
+}]);
