@@ -62,6 +62,6 @@ app.controller("MapCtrl", ["$scope", "CabinetService",
 
   $scope.changed = function() {
     $scope.data.changed = Date.now();
-  }
+  };
 
 }]);
