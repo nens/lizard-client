@@ -102,44 +102,6 @@ html, body, #map {
     float:left;
 }
 
-[class^="threedi-icon-"],
-[class*=" threedi-icon-"] {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  margin-top: 1px;
-  *margin-right: .3em;
-  line-height: 14px;
-  vertical-align: text-top;
-}
-
-
-.threedi-icon-rain{
-    background: url("../images/icon_rain_black.png") center right no-repeat;
-    background-size: 15px;
-}
-
-.threedi-icon-flood{
-    background: url("../images/icon_flood.png") center right no-repeat;
-    background-size: 15px;
-}
-
-
-.threedi-icon-manhole{
-    background: url("../images/icon_manhole_black.png") center right no-repeat;
-    background-size: 18px;
-}
-
-.threedi-icon-line-info{
-    background: url("../images/icon_line_black.png") center right no-repeat;
-    background-size: 14px;
-}
-
-.threedi-icon-info{
-    background: url("../images/icon_info_black.png") center right no-repeat;
-    background-size: 14px;
-}
-
 #flood-size {
     width: 80%;
     margin: 0 auto;
@@ -240,6 +202,16 @@ html, body, #map {
     text-overflow:ellipsis;
     padding-bottom:25px;
 }
+
+.card .omnibox-overflow {
+    overflow: auto;
+}
+
+
+.clickable{
+    cursor: pointer;
+}
+
 
 .location{
     width:378px;

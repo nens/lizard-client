@@ -67,3 +67,32 @@ services.service("Omnibox", [function() {
 
   return box;
 }]);
+
+services.service("KpiService", function(){
+
+
+   // helper var for watch expressions
+  var kpichanged = true;
+  var mapzoom = 13;
+  // later read this dynamically from source (database)
+  var thresholds = {'warning': 8, 'error': 6};
+  var categories = ['tevredenheid_burger',
+                       'toestand_infrastructuur',
+                       'omgevingseffect',
+                       'goed_gebruik',
+                       'planrealisatie'];
+
+
+
+  var kpiData = {};
+  var areadata = {};
+
+  return {
+    kpichanged: kpichanged,
+    mapzoom: mapzoom,
+    thresholds: thresholds,
+    categories: categories,
+    kpiData: kpiData,
+    areadata: areadata
+  };
+})

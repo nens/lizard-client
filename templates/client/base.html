@@ -39,7 +39,7 @@
         <div id="site-actions">
           <ul class="nav pull-right" id="rightbar-actions">
             <li class="site">
-              <a href="#" ng-click="show()" ng-controller="KpiCtrl"><i class="icon-dashboard"></i>&nbsp;KPI</a>
+              <a href="#" ng-click="show()" ng-controller="ImpeachCandidate"><i class="icon-dashboard"></i>&nbsp;KPI</a>
             </li>
             {% if user.is_authenticated %}
               <li class="dropdown">
@@ -71,46 +71,49 @@
     </header>
 
     {% block content %}
-    
-    <div ng-controller="MapCtrl">
-      <map layer-switch layers="data.layers"></map>
-      <div class="layer-switcher-enabler" ng-mouseover="" ng-hide="data.enabled" ng-click="enableLayerSwitcher()">
-        <i class="icon-globe"></i>
-        <span class="info-text">{% trans "Kaarten" %}</span>
+
+
+        
+      
+      <div ng-controller="MapCtrl">
+        <map layer-switch kpilayer layers="data.layers"></map>
+        <div class="layer-switcher-enabler" ng-mouseover="" ng-hide="data.enabled" ng-click="enableLayerSwitcher()">
+          <i class="icon-globe"></i>
+          <span class="info-text">{% trans "Kaarten" %}</span>
+        </div>
+        <div class="layer-switcher well searchbox-shadow" ng-show="data.enabled">
+          <a class="close" ng-click="disableLayerSwitcher()">&times;</a>
+          <ul class="nav nav-list">
+            <li class="nav-header">
+              {% trans "Basiskaarten" %}
+              <ul class="unstyled">
+                <li ng-repeat="layer in data.baselayers | orderBy:'order':true">
+                  <input id="{[{layer.id}]}-baselayer" class="hide" type="radio" ng-model="data.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
+                  <label class="ng-class: {active: layer.active};" for="{[{ layer.id }]}-baselayer" ng-bind="layer.name"></label>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-header">
+              {% trans "Themakaarten" %}
+              <ul class="unstyled">
+                <li ng-repeat="layergroup in data.layergroups | orderBy:'order':true" >
+                  <input id="{[{layergroup.id}]}-layergroup" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="toggleLayerGroup(layergroup)">
+                  <label class="ng-class: {active: layergroup.active};" for="{[{ layergroup.id }]}-layergroup" ng-bind="layergroup.name"></label>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-header">
+              {% trans "Specifieke Kaarten" %}
+              <ul class="unstyled">
+                <li ng-repeat="layer in data.layers | orderBy:'order':true">
+                  <input id="{[{layer.id}]}-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
+                  <label class="ng-class: {active: layer.active};" for="{[{ layer.id }]}-layer" ng-bind="layer.name"></label>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="layer-switcher well searchbox-shadow" ng-show="data.enabled">
-        <a class="close" ng-click="disableLayerSwitcher()">&times;</a>
-        <ul class="nav nav-list">
-          <li class="nav-header">
-            {% trans "Basiskaarten" %}
-            <ul class="unstyled">
-              <li ng-repeat="layer in data.baselayers | orderBy:'order':true">
-                <input id="{[{layer.id}]}-baselayer" class="hide" type="radio" ng-model="data.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
-                <label class="ng-class: {active: layer.active};" for="{[{ layer.id }]}-baselayer" ng-bind="layer.name"></label>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-header">
-            {% trans "Themakaarten" %}
-            <ul class="unstyled">
-              <li ng-repeat="layergroup in data.layergroups | orderBy:'order':true" >
-                <input id="{[{layergroup.id}]}-layergroup" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="toggleLayerGroup(layergroup)">
-                <label class="ng-class: {active: layergroup.active};" for="{[{ layergroup.id }]}-layergroup" ng-bind="layergroup.name"></label>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-header">
-            {% trans "Specifieke Kaarten" %}
-            <ul class="unstyled">
-              <li ng-repeat="layer in data.layers | orderBy:'order':true">
-                <input id="{[{layer.id}]}-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
-                <label class="ng-class: {active: layer.active};" for="{[{ layer.id }]}-layer" ng-bind="layer.name"></label>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
       
 
 
@@ -136,8 +139,9 @@
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt-services.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/omnibox.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/leaflet.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/omnibox-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/map-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/kpi-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/omnibox-controllers.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/kpi-controllers.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/filters/truncate.js?{{ random_string }}"></script>
