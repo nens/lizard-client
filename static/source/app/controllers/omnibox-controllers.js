@@ -46,7 +46,6 @@ app.controller("CardsCtrl",
         $scope.box.open("kpi");
     });
 
-
     $scope.$on('mapclick', function(){
         // why this needs to go into an apply.. beats me
             $scope.$apply(function(){
@@ -71,7 +70,12 @@ app.controller("ResultsCtrl",
             // A lat and lon are present, instruct the map to pan/zoom to it
             console.log('Location given, take us there');
             var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
-            $rootScope.$broadcast('PanAndZoomTo', latlng);
+            $scope.panZoom = {
+              lat: $scope.currentObject.lat,
+              lng: $scope.currentObject.lon,
+              zoom: 14
+            };
+            $rootScope.$broadcast('PanZoomeroom', $scope.panZoom);
         }
     };
 

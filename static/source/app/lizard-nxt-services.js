@@ -10,11 +10,25 @@ services.service("CabinetService", ["$resource", "$rootScope",
   var searchResource,
       geocodeResource,
       reverseGeocodeResource,
-      apiLayerGroups;
+      apiLayerGroups,
+      timeseriesLocationObjectResource,
+      timeseriesResource;
   
   searchResource = $resource('/api/v1/search/');
   geocodeResource = $resource('/api/v1/geocode/');
   reverseGeocodeResource = $resource('/api/v1/reversegeocode/');
+  timeseriesLocationObjectResource = $resource('/api/v1/timeseries/:id/?location__object_type__name=:object_type&location__object_id=:object_id', {
+    object_type: '@object_type',
+    id: '@id',
+    object_id: 1
+  });
+  // timeseriesResource = $resource('/api/v1/timeseries/:id/', {
+  //   id: '@id'
+  // });
+  timeseriesResource = $resource('/static/data/tijdserie.json', {
+    id: '@id'
+  });
+
 
   $rootScope.$broadcast('LayersRetrieved');
 
@@ -24,7 +38,10 @@ services.service("CabinetService", ["$resource", "$rootScope",
     baselayers: baselayers,
     search: searchResource,
     geocode: geocodeResource,
-    reverseGeocode: reverseGeocodeResource
+    reverseGeocode: reverseGeocodeResource,
+    timeseries: timeseriesResource,
+    timeseriesLocationObject: timeseriesLocationObjectResource,
+    panZoom: null
   };
 }]);
 

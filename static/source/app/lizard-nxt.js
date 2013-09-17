@@ -27,6 +27,10 @@ app.controller("MapCtrl", ["$scope", "CabinetService", "KpiService" ,
 
   $scope.kpi = KpiService;
 
+  $scope.$on('PanZoomeroom', function(message, value){
+    $scope.panZoom = value;
+  });
+
   $scope.switchBaseLayer = function(){
     for (var i in $scope.data.baselayers){
       if ($scope.data.baselayers[i].id == $scope.data.activeBaselayer){
@@ -35,7 +39,7 @@ app.controller("MapCtrl", ["$scope", "CabinetService", "KpiService" ,
         $scope.data.baselayers[i].active = false;
       }
     }
-    $scope.data.baselayerChanged = Date.now()
+    $scope.data.baselayerChanged = Date.now();
   };
 
   $scope.toggleLayerGroup = function(layergroup){
@@ -44,12 +48,10 @@ app.controller("MapCtrl", ["$scope", "CabinetService", "KpiService" ,
       for (var j in $scope.data.layers){
         if ($scope.data.layers[j].id == grouplayers[i]){
           $scope.data.layers[j].active = layergroup.active;
-
-          // layers.active = layergroup.active;
         }
       }
     }
-    $scope.data.changed = Date.now()
+    $scope.data.changed = Date.now();
   };
 
   $scope.enableLayerSwitcher = function () {
