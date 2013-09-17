@@ -60,4 +60,8 @@ app.controller("MapCtrl", ["$scope", "CabinetService",
     $scope.data.enabled = false;
   };
 
+  $scope.changed = function() {
+    $scope.data.changed = Date.now();
+  }
+
 }]);
