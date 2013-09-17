@@ -13,8 +13,8 @@ app.config(function($interpolateProvider) {
  });
 
 
-app.controller("MapCtrl", ["$scope", "CabinetService", 
-  function($scope, CabinetService) {
+app.controller("MapCtrl", ["$scope", "CabinetService", "KpiService" , 
+  function($scope, CabinetService, KpiService) {
   $scope.data = {
     layergroups: CabinetService.layergroups,
     layers: CabinetService.layers,
@@ -24,6 +24,8 @@ app.controller("MapCtrl", ["$scope", "CabinetService",
     baselayerChanged: Date.now(),
     enabled: false
   };
+
+  $scope.kpi = KpiService;
 
   $scope.switchBaseLayer = function(){
     for (var i in $scope.data.baselayers){

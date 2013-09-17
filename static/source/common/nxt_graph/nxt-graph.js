@@ -156,7 +156,7 @@ app
         .on("zoom", zoomed);
       
         // Make sure your context as an id or so...
-        var svg = d3.select(element.context)
+        var svg = d3.select("#chart")
           .html("")
           .append("svg:svg")
           .attr('width', 500)
@@ -256,12 +256,9 @@ app
       data: '='
     },
     link: function(scope, element, attrs) {
-      var data = scope.data;
-
       scope.$watch('data', function(){
-        if (data !== undefined){
-          data = scope.data;
-          chart(data, element);         
+        if (scope.data !== undefined){
+          chart(scope.data, element);         
         }
       })
     }
