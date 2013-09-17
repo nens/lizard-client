@@ -1,4 +1,4 @@
-describe('Testing lizard-nxt directive', function() {
+describe('Testing lizard-nxt omnibox directive', function() {
   var scope,
       elem,
       directive,
@@ -56,3 +56,36 @@ describe('Testing lizard-nxt directive', function() {
     // expect(elem.text()).toBe('bar');
   });
 });
+
+describe('Testing leaflet directive', function() {
+
+  var $compile, $rootScope;
+
+  beforeEach(module('lizard-nxt'));
+  beforeEach(inject(function(_$compile_, _$rootScope_){
+      $compile = _$compile_;
+      $rootScope = _$rootScope_;
+  }));
+
+  it('should have loaded leaflet library inside the directive', function() {
+    var element = angular.element('<map></map>');
+    element = $compile(element)($rootScope);
+    expect(element.text()).toEqual('Leaflet');
+  });
+
+  it('should have no layers', function() {
+    var element = angular.element('<map></map>');
+    element = $compile(element)($rootScope);
+    var map = element.scope().map;
+    expect(map._layers).toEqual({});
+  });
+
+  it('should be tested thoroughly', function() {
+    var element = angular.element('<map></map>');
+    element = $compile(element)($rootScope);
+    var map = element.scope().map;
+    expect(true).toEqual(false);
+  });
+
+});
+

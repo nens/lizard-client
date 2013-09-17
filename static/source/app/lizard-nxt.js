@@ -13,15 +13,16 @@ app.config(function($interpolateProvider) {
  });
 
 
-app.controller("MapCtrl", ["$rootScope", "$scope", "CabinetService",
-  function($rootScope, $scope, CabinetService) {
+app.controller("MapCtrl", ["$scope", "CabinetService",
+  function($scope, CabinetService) {
   $scope.data = {
     layergroups: CabinetService.layergroups,
     layers: CabinetService.layers,
     baselayers: CabinetService.baselayers,
     activeBaselayer: 3,
     changed: Date.now(),
-    baselayerChanged: Date.now()
+    baselayerChanged: Date.now(),
+    enabled: false
   };
 
   $scope.$on('PanZoomeroom', function(message, value){
@@ -49,6 +50,14 @@ app.controller("MapCtrl", ["$rootScope", "$scope", "CabinetService",
       }
     }
     $scope.data.changed = Date.now();
+  };
+
+  $scope.enableLayerSwitcher = function () {
+    $scope.data.enabled = true;
+  };
+
+  $scope.disableLayerSwitcher = function () {
+    $scope.data.enabled = false;
   };
 
 }]);
