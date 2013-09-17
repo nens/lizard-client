@@ -10,22 +10,21 @@ services.service("CabinetService", ["$resource", "$rootScope",
   var searchResource,
       geocodeResource,
       reverseGeocodeResource,
-      apiLayerGroups;
+      apiLayerGroups,
+      timeseriesLocationObjectResource,
+      timeseriesResource;
   
   searchResource = $resource('/api/v1/search/');
   geocodeResource = $resource('/api/v1/geocode/');
   reverseGeocodeResource = $resource('/api/v1/reversegeocode/');
-  timeseriesLocationObjectResource = $resource('http://dev1.nxt.lizard.net/api/v1/timeseries/:id/?location__object_type__name=:object_type&location__object_id=:object_id',
-    {
-      object_type: '@object_type',
-      id: '@id',
-      object_id: 1
-    });
-
-  timeseriesResource = $resource('http://dev1.nxt.lizard.net/api/v1/timeseries/:id/',
-    {
-      id: '@id',
-    });
+  timeseriesLocationObjectResource = $resource('/api/v1/timeseries/:id/?location__object_type__name=:object_type&location__object_id=:object_id', {
+    object_type: '@object_type',
+    id: '@id',
+    object_id: 1
+  });
+  timeseriesResource = $resource('/api/v1/timeseries/:id/', {
+    id: '@id'
+  });
 
   $rootScope.$broadcast('LayersRetrieved');
 
