@@ -47,9 +47,16 @@ app.controller("KpiCtrl",
   	if ($scope.kpi.slct_area !== undefined){
 			$scope.activate($scope.kpi.slct_date, $scope.kpi.slct_area, $scope.kpi.slct_cat);
   	}
-  })
+  });
+
+  $scope.$watch('kpi.slct_date', function(){
+  	if ($scope.kpi.slct_date !== undefined){
+			$scope.activate($scope.kpi.slct_date, $scope.kpi.slct_area, $scope.kpi.slct_cat);
+  	}
+  });
 
 	$scope.activate = function (date, area, category) {
+      console.log(date);
       $scope.kpi.slct_cat = category;
       $scope.kpi.slct_area = area;
       $scope.kpi.slct_date = date;
