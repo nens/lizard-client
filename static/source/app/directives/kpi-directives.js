@@ -78,10 +78,7 @@ app.directive('kpilayer', function () {
       });
 
       scope.$watch('kpi.clean', function(){
-        if (scope.kpi.clean){
-          mapCtrl.removeLayer(areas);
-
-        }
+        mapCtrl.removeLayer(areas);
       })
     }
   };

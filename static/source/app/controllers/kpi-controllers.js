@@ -107,7 +107,7 @@ app.controller("KpiCtrl",
     };
 
   $scope.$on('clean', function (){
-  	KpiService.clean = true;
+  	KpiService.clean = Date.now();
   });
   $scope.kpiLoader(areadata);
 }]);
