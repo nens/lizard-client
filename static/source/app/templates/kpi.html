@@ -1,19 +1,9 @@
 <div class="card" ng-controller="KpiCtrl" ng-animate=" 'animate' ">
 
 
-
-  <div id="treshold">
-    <label for="low">Bovengrens: </label>
-    <input type='range' ng-model='kpi.thresholds.warning' min='1' max='10'>
-
-    <label for="high">Ondergrens: </label>
-    <input type='range' ng-model='kpi.thresholds.error' min='1' max='10'>
-
-  </div>
-	
   <div>
-	    <label for="area-selector">Gebied: </label>
-	    <select id="area-selector" ng-model="kpi.slct_area" ng-options="area for area in kpi.areas"></select>
+    Gebied: 
+    <select ng-model="kpi.slct_area" ng-options="area for area in kpi.areas"></select>
     <dl class="dl-horizontal">
       <div class="btn-group btn-group-vertical">
         <div ng-repeat="category in kpi.categories">
@@ -52,6 +42,16 @@
       </button>
       </div>
 	  <nxt-line-graph data="formatted_data" title="" ylabel="KPIs" xlabel="Date"></nxt-line-graph>
+  </div>
+
+  
+  <div id="treshold">
+    <label for="low">Bovengrens: </label>
+    <input type='range' ng-model='kpi.thresholds.warning' min='1' max='10'>
+
+    <label for="high">Ondergrens: </label>
+    <input type='range' ng-model='kpi.thresholds.error' min='1' max='10'>
+
   </div>
 
 </div>
