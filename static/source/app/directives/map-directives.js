@@ -11,9 +11,9 @@ app
   			} else if (layer.type === "TMS" && !layer.baselayer){
   				layer.leafletLayer = L.tileLayer(layer.url);
   			} else if (layer.type === "UTFGrid"){
-  				layer.leafletLayer = L.UtfGrid(layer.url, {
+  				layer.leafletLayer = new L.UtfGrid(layer.url, {
   					useJsonP: false
-  				})
+  				});
   			} else if (layer.type === "WMS"){
           // TODO: fix something more robust for WMS layers.
           // It works when the layer.url defines the layer name
@@ -38,13 +38,13 @@ app
         		if (layer.leafletLayer){
             	$scope.map.removeLayer(layer.leafletLayer);       		
           	} else {
-          		console.log('leaflet layer not defined');
+          		console.log('leaflet layer not defined', layer.type);
           	}
         	} else {
          		if (layer.leafletLayer){
             	$scope.map.addLayer(layer.leafletLayer);       		
           	} else {
-          		console.log('leaflet layer not defined');
+          		console.log('leaflet layer not defined', layer.type);
           	}
         	}
         };
