@@ -12,10 +12,10 @@
   </div>
 	
   <div>
+	    <label for="area-selector">Gebied: </label>
+	    <select id="area-selector" ng-model="kpi.slct_area" ng-options="area for area in kpi.areas"></select>
     <dl class="dl-horizontal">
       <div class="btn-group btn-group-vertical">
-	    <select ng-model="kpi.slct_area" ng-options="area for area in kpi.areas"></select>
-
         <div ng-repeat="category in kpi.categories">
           <dt>
             <button 

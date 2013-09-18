@@ -78,7 +78,7 @@ app.directive('kpilayer', function () {
       });
 
       scope.$watch('kpi.clean', function(){
-        if (areas !== {} && scope.kpi.clean){
+        if (scope.kpi.clean){
           mapCtrl.removeLayer(areas);
 
         }
