@@ -57,6 +57,7 @@ app.directive('kpilayer', function () {
 
       scope.$watch('kpi.kpichanged', function () {
         // set style
+        console.log(scope)
         if (scope.kpi.kpiData.features !== undefined) {
           areas.setStyle(styler);
         }
@@ -75,52 +76,13 @@ app.directive('kpilayer', function () {
           areas.setStyle(styler);
         }
       });
+
+      scope.$watch('kpi.clean', function(){
+        if (areas !== {} && scope.kpi.clean){
+          mapCtrl.removeLayer(areas);
+
+        }
+      })
     }
-  };
-});
-
-
-app.directive('kpipanel', function () {
-  return {
-    restrict: 'E',
-    controller: function ($scope) {
-      $scope.activate = function (date, area, category) {
-        $scope.kpi.slct_cat = category;
-        $scope.kpi.slct_area = area;
-        $scope.kpi.slct_date = date;
-        // doesn't have to be updated when date changes
-        $scope.d3formatted(area, category);
-        // flip the changed var
-        $scope.kpi.kpichanged = !$scope.kpi.kpichanged;
-      };
-    },
-    template: "<div class='row'>" +
-              "<button type='button' class='btn' " +
-              "ng-class='{active: category == slct_cat}'" +
-              "ng-repeat='category in categories'" +
-              "ng-click='activate(slct_date, slct_area, category)'>{{category}}" +
-              "</button>" +
-              "<br />" +
-              "<button type='button' class='btn' " +
-              "ng-class='{active: area == slct_area}'" +
-              "ng-repeat='area in areas'" +
-              "ng-click='activate(slct_date, area, slct_cat)'>{{area}}" +
-              "</button>" +
-              "<br />" +
-              "<button type='button' class='btn' " +
-              "ng-class='{active: date == slct_date}'" +
-              "ng-repeat='date in dates'" +
-              "ng-click='activate(date, slct_area, slct_cat)'>{{date}}" +
-              "</button>" +
-              "<br/>" +
-              "<br/>" +
-              "<div class='well'>" +
-              "<h4>Matig: {{thresholds.warning}} </h4>" +
-              "<input type='range' ng-model='thresholds.warning' min='1' max='10'/>" +
-              "<h4>Slecht: {{thresholds.error}} </h4>" +
-              "<input type='range' ng-model='thresholds.error' min='1' max='10'/>" +
-              "</div>" +
-              "</div>"
-
   };
 });

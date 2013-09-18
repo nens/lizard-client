@@ -99,5 +99,9 @@ app.controller("KpiCtrl",
     };
 
   $scope.kpiLoader();
+
+  $scope.$on('clean', function (){
+  	KpiService.clean = true;
+  });
 }]);
 

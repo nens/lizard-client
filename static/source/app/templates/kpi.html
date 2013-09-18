@@ -45,29 +45,19 @@
         ng-click='activate(date, kpi.slct_area, kpi.slct_cat)'>{[{date}]}
       </button>
       </div>
+	  <nxt-line-graph data="formatted_data" title="kpi.slct_area" ylabel="KeyPerformanceIndicators" xlabel="Date"></nxt-line-graph>
 
-      <div ng-repeat="area in kpi.areas" ng-click="activate(kpi.slct_date, area, kpi.slct_cat)" class="clickable">
-        <dt><span title="area">{[{area}]}</span></dt>
+	  <div class="overflowing">
+	      <button type='button' class='btn'
+	        ng-class='{active: area == kpi.slct_area}'
+	        ng-repeat='area in kpi.areas'
+	        ng-click='activate(kpi.slct_date, area, kpi.slct_cat)'>{[{area}]}
+	      </button>
+	   </div>
         <!-- <dd><span class="label" >{[date]}</span></dd> -->
       </div>
     </dl>
   </div>
-  <nxt-line-graph data="formatted_data"></nxt-line-graph>
-=======
-	<div style="width:200px;">
-		<dl class="dl-horizontal">
-			<div ng-repeat="date in kpi.dates" ng-click="activate(date, kpi.slct_area, kpi.slct_cat)" class="clickable">
-				<dt><span title="date">{[{date}]}</span></dt>
-				<!-- <dd><span class="label" >{[date]}</span></dd> -->
-			</div>
 
-		</dl>
-	</div>
-	<nxt-line-graph data="formatted_data" graph-title="{[{kpi.slct_area}]}" y-label="KeyPerformanceIndicators" x-label="Date"></nxt-line-graph>
-
-				<div ng-repeat="area in kpi.areas" ng-click="activate(kpi.slct_date, area, kpi.slct_cat)" class="clickable">
-				<dt><span title="area">{[{area}]}</span></dt>
-				<!-- <dd><span class="label" >{[date]}</span></dd> -->
-			</div>
 </div>
 

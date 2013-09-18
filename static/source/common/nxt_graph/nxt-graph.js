@@ -278,18 +278,18 @@ app
     template: '<div id="chart"></div>',
     scope: {
       // TODO: add extra options (e.g. width)? 
-      data: '=',
       title: '=',
-      xLabel: '=',
-      yLabel: '='
+      xlabel: '=',
+      data: '=',
+      ylabel: '='
     },
     link: function(scope, element, attrs) {
       scope.$watch('data', function(){
         if (scope.data !== undefined){
           legend = {
             title: scope.title,
-            xLabel: scope.xLabel,
-            yLabel: scope.yLabel
+            xLabel: attrs.xlabel,
+            yLabel: attrs.ylabel
           };
           chart(scope.data, element, legend);         
         }

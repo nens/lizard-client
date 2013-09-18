@@ -2,16 +2,16 @@
 
 {% block box_awesome %}
 
-<div id="omnibox" ng-class="{'stretchRight': !box.query}" style="visibility:hidden;" ng-style="{visibility:'visible'}">
+<div id="omnibox" ng-class="{'stretchRight': !box.query}" style="visibility:hidden;" ng-style="{visibility:'visible'}" ng-controller="SearchCtrl">
     
     
-    <div ng-controller="SearchCtrl" class="searchbox searchbox-shadow " id="searchbox" tabindex="-1" role="search" style="">
+    <div class="searchbox searchbox-shadow " id="searchbox" tabindex="-1" role="search" style="">
         <form id="searchbox_form"> 
             <table cellspacing="0" cellpadding="0" id="" class="searchboxinput" style="width: 375px; padding: 0px;">
                 <tbody>
                     <tr>
                         <td>
-                            <input ui-keydown="{esc: 'close_box($event)'}" ui-keyup="{'enter':'filter($event)'}" ng-model="box.query" ng-focus id="searchboxinput" name="q" tabindex="1" autocomplete="off" dir="ltr" spellcheck="false"><a href="" ng-click="reset_query()" id="clear"></a>
+                            <input ui-keydown="{esc: 'reset_query()'}" ui-keyup="{'enter':'filter($event)'}" ng-model="box.query" ng-focus id="searchboxinput" name="q" tabindex="1" autocomplete="off" dir="ltr" spellcheck="false"><a href="" ng-click="reset_query()" id="clear"></a>
                         </td>
                     </tr>
                 </tbody>
