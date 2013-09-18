@@ -14,13 +14,15 @@ app.controller("KpiCtrl",
   $scope.d3kpi = {'dates': {name: 'Date', values: [], units: 'Year'},
                   'kpis': {name: '', values: [], units: ''}};
 	 
-  $scope.kpiLoader = function () {
+  var areadata = '';
+  if ($scope.kpi.mapzoom > 12) {
+    areadata = '/static/data/wijken.geojson';
+  } else {
+    areadata = '/static/data/wijken.geojson';
+  }
+
+  $scope.kpiLoader = function (areadata) {
     
-    if ($scope.kpi.mapzoom > 12) {
-      areadata = '/static/data/wijken.geojson';
-    } else {
-      areadata = '/static/data/wijken.geojson';
-    }
     //NOTE: write a failure function
     $http.get(areadata)
         .success(function (data) {
@@ -104,10 +106,9 @@ app.controller("KpiCtrl",
       return formatted_data;
     };
 
-  $scope.kpiLoader();
-
   $scope.$on('clean', function (){
   	KpiService.clean = true;
   });
+  $scope.kpiLoader(areadata);
 }]);
 
