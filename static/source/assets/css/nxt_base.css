@@ -13,7 +13,7 @@ html, body, #map {
 }
 
 .layer-switcher-enabler {
-    top: 60px;
+    top: 56px;
     right: -5em;
     position: absolute;
     background: white;
@@ -39,7 +39,7 @@ html, body, #map {
     min-height: 200px;
     z-index: 2000; /* this should be above leaflet. */
     width: 200px;
-    top: 60px;
+    top: 56px;
     right: 0px;
     position: absolute;
     background: white;

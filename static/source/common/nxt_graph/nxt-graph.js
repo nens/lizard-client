@@ -119,7 +119,7 @@ app
 
 app
 .directive('nxtLineGraph', function() {  
-  var chart = function (data, element) {
+  var chart = function (data, element, legend) {
       var margin = {
           top: 20,
           right: 20,
@@ -215,6 +215,31 @@ app
             .call(make_y_axis()
             .tickSize(-width, 0, 0)
             .tickFormat(""));
+            
+       //Create title
+        svg.append("text")
+        .attr("x", width / 2 )
+            .attr("y", -20/2 + 10)
+            .attr("class", "title")
+            .style("text-anchor", "middle")
+            .text(legend.title);
+           
+        //Create X axis label   
+        svg.append("text")
+        .attr("x", width / 2 )
+            .attr("y",  height + margin.bottom)
+            .style("text-anchor", "middle")
+            .text(legend.xLabel);
+              
+        //Create Y axis label
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0-margin.left)
+            .attr("x",0 - (height / 2))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .text(legend.yLabel);
+
 
         var clip = svg.append("svg:clipPath")
             .attr("id", "clip")
@@ -253,12 +278,20 @@ app
     template: '<div id="chart"></div>',
     scope: {
       // TODO: add extra options (e.g. width)? 
-      data: '='
+      data: '=',
+      title: '=',
+      xLabel: '=',
+      yLabel: '='
     },
     link: function(scope, element, attrs) {
       scope.$watch('data', function(){
         if (scope.data !== undefined){
-          chart(scope.data, element);         
+          legend = {
+            title: scope.title,
+            xLabel: scope.xLabel,
+            yLabel: scope.yLabel
+          };
+          chart(scope.data, element, legend);         
         }
       })
     }
