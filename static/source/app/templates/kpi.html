@@ -3,10 +3,10 @@
 
 
   <div id="treshold">
-    <label for="low">Ondergrens: </label>
+    <label for="low">Bovengrens: </label>
     <input type='range' ng-model='kpi.thresholds.warning' min='1' max='10'>
 
-    <label for="high">Bovengrens: </label>
+    <label for="high">Ondergrens: </label>
     <input type='range' ng-model='kpi.thresholds.error' min='1' max='10'>
 
   </div>
@@ -14,6 +14,7 @@
   <div>
     <dl class="dl-horizontal">
       <div class="btn-group btn-group-vertical">
+        <h4>Gebied: {[{ kpi.slct_area }]}</h4>
         <div ng-repeat="category in kpi.categories">
           <dt>
             <button 
@@ -25,8 +26,12 @@
             </button>
           </dt>
           <dd>
-            <span class="badge" ng-class="{'badge-success': value > kpi.threshold.warning}">
-              <!--ugly crap, make nicer data model for this -->
+            <!--ugly crap, make nicer data model for this -->
+            <span class="badge" ng-class="{
+              'badge-success': d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] >= kpi.thresholds.warning,
+              'badge-warning': d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] < kpi.thresholds.warning && d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] > kpi.thresholds.error,
+              'badge-important': d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] <= kpi.thresholds.error 
+              }">
               {[{ d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] }]}
             </span>
           </dd>
