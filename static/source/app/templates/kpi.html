@@ -21,12 +21,14 @@
 				<dt><span title="date">{[{date}]}</span></dt>
 				<!-- <dd><span class="label" >{[date]}</span></dd> -->
 			</div>
-			<div ng-repeat="area in kpi.areas" ng-click="activate(kpi.slct_date, area, kpi.slct_cat)" class="clickable">
+
+		</dl>
+	</div>
+	<nxt-line-graph data="formatted_data" graph-title="{[{kpi.slct_area}]}" y-label="KeyPerformanceIndicators" x-label="Date"></nxt-line-graph>
+
+				<div ng-repeat="area in kpi.areas" ng-click="activate(kpi.slct_date, area, kpi.slct_cat)" class="clickable">
 				<dt><span title="area">{[{area}]}</span></dt>
 				<!-- <dd><span class="label" >{[date]}</span></dd> -->
 			</div>
-		</dl>
-	</div>
-	<nxt-line-graph data="formatted_data"></nxt-line-graph>
 </div>
 
