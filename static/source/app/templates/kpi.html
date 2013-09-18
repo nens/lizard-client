@@ -14,7 +14,8 @@
   <div>
     <dl class="dl-horizontal">
       <div class="btn-group btn-group-vertical">
-        <h4>Gebied: {[{ kpi.slct_area }]}</h4>
+	    <select ng-model="kpi.slct_area" ng-options="area for area in kpi.areas"></select>
+
         <div ng-repeat="category in kpi.categories">
           <dt>
             <button 
@@ -38,7 +39,7 @@
         </div>
         <br / >
       </div>
-
+    </dl>
       <!--<div>-->
         <!--<label for="date">Datum: </label>-->
         <!--<input type="range" ng-model='kpi.slct_date' min="{[{ kpi.dates[0] }]}" max="{[{ kpi.dates[kpi.dates.length - 1] }]}">-->
@@ -51,17 +52,6 @@
       </button>
       </div>
 	  <nxt-line-graph data="formatted_data" title="" ylabel="KPIs" xlabel="Date"></nxt-line-graph>
-
-	  <div class="overflowing">
-	      <button type='button' class='btn'
-	        ng-class='{active: area == kpi.slct_area}'
-	        ng-repeat='area in kpi.areas'
-	        ng-click='activate(kpi.slct_date, area, kpi.slct_cat)'>{[{area}]}
-	      </button>
-	   </div>
-        <!-- <dd><span class="label" >{[date]}</span></dd> -->
-      </div>
-    </dl>
   </div>
 
 </div>
