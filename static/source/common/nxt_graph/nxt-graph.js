@@ -219,7 +219,7 @@ app
        //Create title
         svg.append("text")
         .attr("x", width / 2 )
-            .attr("y", -20/2 + 10)
+            .attr("y", -50/2 + margin.top)
             .attr("class", "title")
             .style("text-anchor", "middle")
             .text(legend.title);
