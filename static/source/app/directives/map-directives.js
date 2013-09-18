@@ -12,7 +12,7 @@ app
   				layer.leafletLayer = L.tileLayer(layer.url);
   			} else if (layer.type === "UTFGrid"){
   				layer.leafletLayer = L.UtfGrid(layer.url, {
-  					JsonP: false
+  					useJsonP: false
   				})
   			} else if (layer.type === "WMS"){
           // TODO: fix something more robust for WMS layers.
