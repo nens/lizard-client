@@ -1,20 +1,11 @@
 <div class="card" ng-controller="KpiCtrl" ng-animate=" 'animate' ">
 
 
-
-  <div id="treshold">
-    <label for="low">Bovengrens: </label>
-    <input type='range' ng-model='kpi.thresholds.warning' min='1' max='10'>
-
-    <label for="high">Ondergrens: </label>
-    <input type='range' ng-model='kpi.thresholds.error' min='1' max='10'>
-
-  </div>
-	
   <div>
+    Gebied: 
+    <select ng-model="kpi.slct_area" ng-options="area for area in kpi.areas"></select>
     <dl class="dl-horizontal">
       <div class="btn-group btn-group-vertical">
-        <h4>Gebied: {[{ kpi.slct_area }]}</h4>
         <div ng-repeat="category in kpi.categories">
           <dt>
             <button 
@@ -38,7 +29,7 @@
         </div>
         <br / >
       </div>
-
+    </dl>
       <!--<div>-->
         <!--<label for="date">Datum: </label>-->
         <!--<input type="range" ng-model='kpi.slct_date' min="{[{ kpi.dates[0] }]}" max="{[{ kpi.dates[kpi.dates.length - 1] }]}">-->
@@ -50,13 +41,18 @@
         ng-click='activate(date, kpi.slct_area, kpi.slct_cat)'>{[{date}]}
       </button>
       </div>
-
-      <div ng-repeat="area in kpi.areas" ng-click="activate(kpi.slct_date, area, kpi.slct_cat)" class="clickable">
-        <dt><span title="area">{[{area}]}</span></dt>
-        <!-- <dd><span class="label" >{[date]}</span></dd> -->
-      </div>
-    </dl>
+	  <nxt-line-graph data="formatted_data" title="" ylabel="KPIs" xlabel="Date"></nxt-line-graph>
   </div>
-  <nxt-line-graph data="formatted_data"></nxt-line-graph>
+
+  
+  <div id="treshold">
+    <label for="low">Bovengrens: </label>
+    <input type='range' ng-model='kpi.thresholds.warning' min='1' max='10'>
+
+    <label for="high">Ondergrens: </label>
+    <input type='range' ng-model='kpi.thresholds.error' min='1' max='10'>
+
+  </div>
+
 </div>
 

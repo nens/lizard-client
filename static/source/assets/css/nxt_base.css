@@ -249,13 +249,18 @@ html, body, #map {
     stroke-width: 1.5px;
 }
 
-
-.animate-enter {
-    -webkit-transition: 1s linear all; /* Chrome */
-    transition: 1s linear all;
-    opacity: 0;
+.title {
+    font-size: 2em;
 }
- 
-.animate-enter.animate-enter-active {
-    opacity: 1;
+
+.axis {
+  fill: none;
+  stroke: black;
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  fill: black;
+  stroke: none;
 }

@@ -27,6 +27,10 @@ app.controller("MapCtrl", ["$scope", "CabinetService", "KpiService" ,
 
   $scope.kpi = KpiService;
 
+  $scope.$watch('kpi.panZoom', function(){
+    $scope.panZoom = $scope.kpi.panZoom;
+  });
+
   $scope.$on('PanZoomeroom', function(message, value){
     $scope.panZoom = value;
     console.log('PanZoomeroom', value);
