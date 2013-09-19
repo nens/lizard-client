@@ -131,27 +131,43 @@ app
       width = maxwidth - margin.left - margin.right, 
       height = maxheight - margin.top - margin.bottom;
       
+
       var x = d3.time.scale()
           .domain(d3.extent(data, function (d) {
-          return Date.parse(d.date);
-      }))
+            if (legend.timestring === "year"){
+              return Date.parse(d.date)
+            } else {
+              return d.date
+            }
+          }))
           .range([0, width]);
 
-      var maxY = d3.max(data, function(d){
-            return d.value
-          });
+      if (legend.ymax == undefined){
+        legend.ymax = d3.max(data, function(d){
+              return d.value
+            });
+      }
+      if (legend.ymin == undefined){
+        legend.ymin = d3.min(data, function(d){
+              return d.value
+            });
+      }
 
       var y = d3.scale.linear()
-          .domain([0, 10])
+          .domain([legend.ymin, legend.ymax])
           .range([height, 0]);
 
 
       var line = d3.svg.line()
           .x(function (d) {
-          return x( Date.parse(d.date));
+            if (legend.timestring === "year"){
+              return x(Date.parse(d.date))
+            } else {
+              return x(d.date)
+            }
       })
           .y(function (d) {
-          return y(d.value);
+           return y(d.value);
       });
 
       var zoom = d3.behavior.zoom()
@@ -186,7 +202,7 @@ app
             return d3.svg.axis()
                 .scale(y)
                 .orient("left")
-                .ticks(10);
+                .ticks(5);
         };
 
         var xAxis = d3.svg.axis()
@@ -284,17 +300,40 @@ app
     scope: {
       // TODO: add extra options (e.g. width)? 
       title: '=',
-      xlabel: '=',
       data: '=',
-      ylabel: '='
+      xlabel: '=',
+      ylabel: '=',
+      title: '=',
+      xmin: '=',
+      xmax: '=',
+      ymin: '=',
+      ymax: '=',
+      timestring: '='
     },
     link: function(scope, element, attrs) {
       scope.$watch('data', function(){
         if (scope.data !== undefined){
+          if (attrs.ymax){
+            var ymax = parseFloat(attrs.ymax);
+          } 
+          if (attrs.ymin){
+            var ymin = parseFloat(attrs.ymin);
+          };
+          if (attrs.xmax){
+            var xmax = parseFloat(attrs.xmax);
+          } 
+          if (attrs.xmin){
+            var xmin = parseFloat(attrs.xmin);
+          };
           legend = {
             title: scope.title,
             xLabel: attrs.xlabel,
-            yLabel: attrs.ylabel
+            yLabel: attrs.ylabel,
+            ymin: ymin,
+            ymax: ymax,
+            xmin: xmin,
+            xmax: xmax,
+            timestring: attrs.timestring
           };
           chart(scope.data, element, legend);         
         }

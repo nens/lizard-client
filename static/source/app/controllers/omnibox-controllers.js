@@ -1,8 +1,8 @@
 app.controller("SearchCtrl",
-    ["$scope", "$resource", "$rootScope", "CabinetService", "Omnibox",
-        function($scope, $resource, $rootScope, CabinetService, Omnibox) {
+    ["$scope", "$resource", "CabinetService", "OmniboxService",
+        function($scope, $resource, CabinetService, OmniboxService) {
 
-    $scope.box = Omnibox;
+    $scope.box = OmniboxService;
 
     $scope.filter = function ($event) {
         if ($scope.box.query.length > 1) {
@@ -27,12 +27,9 @@ app.controller("SearchCtrl",
     };
 
     $scope.reset_query = function() {
-        //clean stuff.. 
-        // Search Ctrl is the parent of omnibox cards
-        // therefore no need to call $rootScope. 
-        $scope.$broadcast('clean');
+      console.log($scope)
         $scope.box.query = null;
-        $scope.box.close();
+        $scope.box.type= 'empty';
     };
 
 }]);
@@ -41,10 +38,10 @@ app.controller("SearchCtrl",
 
 
 app.controller("CardsCtrl",
-    ["$scope", "$resource", "$rootScope", "CabinetService", "Omnibox",
-        function($scope, $resource, $rootScope, CabinetService, Omnibox) {
+    ["$scope", "$resource", "CabinetService", "OmniboxService",
+        function($scope, $resource, CabinetService, OmniboxService) {
 
-    $scope.box = Omnibox;
+    $scope.box = OmniboxService;
 
     $scope.$on('kpiclick', function(data) {
         $scope.box.open("kpi");
@@ -62,10 +59,10 @@ app.controller("CardsCtrl",
 
 
 app.controller("ResultsCtrl",
-    ["$scope", "$rootScope", "Omnibox",
-        function($scope, $rootScope, Omnibox){
+    ["$scope", "$rootScope", "OmniboxService",
+        function($scope, $rootScope, OmniboxService){
 
-    $scope.box = Omnibox;
+    $scope.box = OmniboxService;
     $scope.currentObject = false;
 
     $scope.showDetails = function(obj) {
@@ -85,8 +82,8 @@ app.controller("ResultsCtrl",
 
 }]);
 
-app.controller("GraphCtrl", ["$scope", "Omnibox",
-    function($scope, Omnibox){
+app.controller("GraphCtrl", ["$scope", "OmniboxService",
+    function($scope, OmniboxService){
       var unformat_data = function () {
         var array_data =  [{
           type: 'x',
@@ -121,6 +118,34 @@ app.controller("GraphCtrl", ["$scope", "Omnibox",
         new_data = unformat_data();
         $scope.data = $scope.format_data(new_data);
       });
-
 }]);
 
+
+app.controller("ObjectIdGraphCtrl", ["$scope", "OmniboxService", "CabinetService",
+    function($scope, OmniboxService, CabinetService){
+      $scope.box = OmniboxService;
+
+      $scope.$watch('box.content', function(){
+        var new_data,
+        new_data_get = CabinetService.timeseriesLocationObject.get({
+          object_type: $scope.box.content.object_type,
+          id: $scope.box.content.id,
+        }, function(response){
+          new_data = response.results;
+          $scope.data = $scope.format_data(new_data[0].events);
+        });
+      });
+
+      $scope.format_data = function(data) {
+        $scope.formatted_data = [];
+        for (var i=0; i<data[0].values.length; i++){
+          xyobject = {
+            date: data[1].values[i],
+            value: data[0].values[i]
+          };
+          $scope.formatted_data.push(xyobject);
+        }
+        return $scope.formatted_data;
+      };
+
+    }]);

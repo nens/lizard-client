@@ -1,9 +1,9 @@
 app.controller("ImpeachCandidate",
-    ["$scope", "Omnibox",
-        function($scope, Omnibox) {
+    ["$scope", "OmniboxService",
+        function($scope, OmniboxService) {
 
 	$scope.show = function() {
-		Omnibox.open('kpi');
+		OmniboxService.open('kpi');
 	};
 
 }]);

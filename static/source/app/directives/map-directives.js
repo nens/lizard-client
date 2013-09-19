@@ -3,7 +3,7 @@ app
   .directive('map', [function(){
 
 
-    function MapCtrl ($scope){
+    function MapCtrl ($scope, OmniboxService){
 
 			this.initiateLayer = function (layer) {
 				if (layer.type === "TMS" && layer.baselayer){
@@ -15,8 +15,16 @@ app
   					useJsonP: false
   				});
           layer.leafletLayer.on('click', function (e) {
-            console.log('click', e);
-            
+            $scope.$apply(function(){
+              OmniboxService.type = 'object_id';
+              OmniboxService.showCards = true;
+              OmniboxService.content = {
+                object_type: e.data.entity_name,
+                id: e.data.id
+              }
+            });
+            console.log(e);
+
           });
   			} else if (layer.type === "WMS"){
           // TODO: fix something more robust for WMS layers.
@@ -144,7 +152,7 @@ app.directive('panZoom', [function(){
     link: function(scope, elements, attrs, MapCtrl) {
 
       scope.$watch('panZoom', function (){
-        if (scope.panZoom !== undefined){
+        if (scope.panZoom !== null){
           if (scope.panZoom.hasOwnProperty('lat') && 
             scope.panZoom.hasOwnProperty('lng') &&
             scope.panZoom.hasOwnProperty('zoom') ){
