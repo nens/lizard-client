@@ -14,6 +14,10 @@ app
   				layer.leafletLayer = new L.UtfGrid(layer.url, {
   					useJsonP: false
   				});
+          layer.leafletLayer.on('click', function (e) {
+            console.log('click', e);
+            
+          });
   			} else if (layer.type === "WMS"){
           // TODO: fix something more robust for WMS layers.
           // It works when the layer.url defines the layer name

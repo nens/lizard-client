@@ -17,7 +17,7 @@ services.service("CabinetService", ["$resource", "$rootScope",
   searchResource = $resource('/api/v1/search/');
   geocodeResource = $resource('/api/v1/geocode/');
   reverseGeocodeResource = $resource('/api/v1/reversegeocode/');
-  timeseriesLocationObjectResource = $resource('/api/v1/timeseries/:id/?location__object_type__name=:object_type&location__object_id=:object_id', {
+  timeseriesLocationObjectResource = $resource('/api/v1/timeseries/?object_type=:object_type$:object_id', {
     object_type: '@object_type',
     id: '@id',
     object_id: 1
@@ -47,6 +47,7 @@ services.service("CabinetService", ["$resource", "$rootScope",
 
 
 services.service("Omnibox", [function() {
+  // Soon to be removed
   var box = {
     query: null,
     disabled: false,
@@ -55,6 +56,7 @@ services.service("Omnibox", [function() {
     content: 'empty'
   };
 
+  // TODO: These functions should go to the directive
   box.open = function(type){
     box.type = type;
     box.showCards = true;

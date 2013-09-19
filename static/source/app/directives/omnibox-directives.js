@@ -1,4 +1,4 @@
-angular.module('omnibox', [])
+app
 	.directive('boxContent', ["$compile", "$http", "$templateCache",
 		function($compile, $http, $templateCache) {
 
@@ -33,6 +33,20 @@ angular.module('omnibox', [])
         replaceTemplate();
       };
 
+      // TODO: this is going to handle the opening. Not yet
+      function BoxCtrl ($scope){
+
+          this.open = function(type){
+            $scope.box.type = type;
+            $scope.box.showCards = true;
+          };
+
+          this.close = function(){
+            $scope.box.type = 'empty';
+            $scope.box.showCards = false;
+          };
+      };
+
       return {
           restrict: 'A',
           scope: {
@@ -41,3 +55,19 @@ angular.module('omnibox', [])
           link: linker
       };
   }]);
+
+app
+  .directive('boxToggle', function(){
+    return {
+      require: 'boxContent',
+      link: function(scope, element, attrs, BoxCtrl){
+        element.bind("click", function(){
+          console.log(scope.boxtype, attrs.boxtype)
+          BoxCtrl.open(scope.type);
+        });
+      },
+      scope: {
+        boxToggle: '@'
+      }
+    }
+  });
