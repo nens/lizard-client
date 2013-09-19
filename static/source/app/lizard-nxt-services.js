@@ -86,6 +86,8 @@ services.service("KpiService", function(){
 
   var kpiData = {};
   var areadata = {};
+  // this is for the geojson selector
+  var slct_area = null;
 
   return {
     kpichanged: kpichanged,
@@ -93,6 +95,7 @@ services.service("KpiService", function(){
     thresholds: thresholds,
     categories: categories,
     kpiData: kpiData,
-    areadata: areadata
+    areadata: areadata,
+    slct_area: slct_area
   };
 })

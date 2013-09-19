@@ -14,13 +14,15 @@ app.controller("KpiCtrl",
   $scope.d3kpi = {'dates': {name: 'Date', values: [], units: 'Year'},
                   'kpis': {name: '', values: [], units: ''}};
 	 
-  $scope.kpiLoader = function () {
+  var areadata = '';
+  if ($scope.kpi.mapzoom > 12) {
+    areadata = '/static/data/wijken.geojson';
+  } else {
+    areadata = '/static/data/wijken.geojson';
+  }
+
+  $scope.kpiLoader = function (areadata) {
     
-    if ($scope.kpi.mapzoom > 12) {
-      areadata = '/static/data/wijken.geojson';
-    } else {
-      areadata = '/static/data/wijken.geojson';
-    }
     //NOTE: write a failure function
     $http.get(areadata)
         .success(function (data) {
@@ -43,7 +45,20 @@ app.controller("KpiCtrl",
         });
   };
 
+  $scope.$watch('kpi.slct_area', function(){
+  	if ($scope.kpi.slct_area !== undefined){
+			$scope.activate($scope.kpi.slct_date, $scope.kpi.slct_area, $scope.kpi.slct_cat);
+  	}
+  });
+
+  $scope.$watch('kpi.slct_date', function(){
+  	if ($scope.kpi.slct_date !== undefined){
+			$scope.activate($scope.kpi.slct_date, $scope.kpi.slct_area, $scope.kpi.slct_cat);
+  	}
+  });
+
 	$scope.activate = function (date, area, category) {
+      console.log(date);
       $scope.kpi.slct_cat = category;
       $scope.kpi.slct_area = area;
       $scope.kpi.slct_date = date;
@@ -53,19 +68,23 @@ app.controller("KpiCtrl",
       $scope.kpi.kpichanged = !$scope.kpi.kpichanged;
     };
 
-  // prepare data for graph
+  // prepare data for graph and badge values
   $scope.d3formatted = function (area, category) {
     $scope.d3kpi.kpis.name = category;
+    $scope.badgevalues = {};
     $scope.d3kpi.kpis.values = [];
     $scope.d3kpi.dates.values = $scope.kpi.dates;
     for (var i in $scope.kpi.kpiData.features) {
       var feature = $scope.kpi.kpiData.features[i];
+      // skip this if, just put it in the cat
       if (feature.properties.name === area) {
-        //$scope.d3kpi.dates.values.push(feature.properties.datum);
         $scope.d3kpi.kpis.values = feature.properties[category].values;
         $scope.formatted_data = $scope.format_data($scope.d3kpi);
+        // ugly crap, make nicer data model for this
+        $scope.d3kpi.kpis[category] = feature.properties[category].values;
       }
     }
+    return $scope.d3kpi;
   };
 
 
@@ -81,6 +100,6 @@ app.controller("KpiCtrl",
       return formatted_data;
     };
 
-  $scope.kpiLoader();
+  $scope.kpiLoader(areadata);
 }]);
 

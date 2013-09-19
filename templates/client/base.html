@@ -76,8 +76,8 @@
         
       
       <div ng-controller="MapCtrl">
-        <map layer-switch kpilayer layers="data.layers"></map>
-        <div class="layer-switcher-enabler searchbox-shadow" ng-mouseover="" ng-hide="data.enabled" ng-click="enableLayerSwitcher()">
+        <map layer-switch kpilayer="onAreaClick()" pan-zoom="panZoom" layers="data.layers"></map>
+        <div class="layer-switcher-enabler" ng-mouseover="" ng-hide="data.enabled" ng-click="enableLayerSwitcher()">
           <i class="icon-globe"></i>
           <span class="info-text">{% trans "Kaarten" %}</span>
         </div>
