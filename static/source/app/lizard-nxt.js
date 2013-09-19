@@ -29,6 +29,7 @@ app.controller("MapCtrl", ["$scope", "CabinetService", "KpiService" ,
 
   $scope.$on('PanZoomeroom', function(message, value){
     $scope.panZoom = value;
+    console.log('PanZoomeroom', value);
   });
 
   $scope.switchBaseLayer = function(){
@@ -65,5 +66,12 @@ app.controller("MapCtrl", ["$scope", "CabinetService", "KpiService" ,
   $scope.changed = function() {
     $scope.data.changed = Date.now();
   };
+
+  $scope.onAreaClick = function(area){
+    $scope.$apply(function(){
+      $scope.kpi.slct_area = area;
+      $scope.kpi.kpichanged = !$scope.kpi.kpichanged;  
+    });
+  }
 
 }]);

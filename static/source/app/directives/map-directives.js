@@ -77,6 +77,10 @@ app
 	      this.removeLayer = function (layer) {
 	        $scope.map.removeLayer(layer);
 	      };
+
+	      this.panZoomTo = function (panZoom) {
+          $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
+        };
     };
 
     var link = function (scope, element, attrs){
@@ -127,4 +131,23 @@ app.directive('layerSwitch', [function(){
 		},
 		restrict: 'A',
 	}
+}]);
+
+
+app.directive('panZoom', [function(){
+  return {
+    require: 'map',
+    link: function(scope, elements, attrs, MapCtrl) {
+
+      scope.$watch('panZoom', function (){
+        if (scope.panZoom !== null){
+          if (scope.panZoom.hasOwnProperty('lat') && 
+            scope.panZoom.hasOwnProperty('lng') &&
+            scope.panZoom.hasOwnProperty('zoom') ){
+           MapCtrl.panZoomTo(scope.panZoom);
+          }
+        }
+      });
+    }
+  };
 }]);
