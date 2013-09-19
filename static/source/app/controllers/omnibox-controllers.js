@@ -27,6 +27,10 @@ app.controller("SearchCtrl",
     };
 
     $scope.reset_query = function() {
+        //clean stuff.. 
+        // Search Ctrl is the parent of omnibox cards
+        // therefore no need to call $rootScope. 
+        $scope.$broadcast('clean');
         $scope.box.query = null;
         $scope.box.close();
     };
