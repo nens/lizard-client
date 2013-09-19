@@ -119,32 +119,36 @@ app
 
 app
 .directive('nxtLineGraph', function() {  
-  var chart = function (data, element) {
+  var chart = function (data, element, legend) {
       var margin = {
           top: 20,
           right: 20,
           bottom: 20,
           left: 45
       }, 
-      width = 400 - margin.left - margin.right, 
-      height = 200 - margin.top - margin.bottom
+      maxwidth = 350,
+      maxheight = 200,
+      width = maxwidth - margin.left - margin.right, 
+      height = maxheight - margin.top - margin.bottom;
       
       var x = d3.time.scale()
           .domain(d3.extent(data, function (d) {
-          return d.date;
+          return Date.parse(d.date);
       }))
           .range([0, width]);
 
+      var maxY = d3.max(data, function(d){
+            return d.value
+          });
+
       var y = d3.scale.linear()
-          .domain(d3.extent(data, function (d) {
-          return d.value;
-      }))
-      .range([height, 0]);
+          .domain([0, 10])
+          .range([height, 0]);
 
 
       var line = d3.svg.line()
           .x(function (d) {
-          return x(d.date);
+          return x( Date.parse(d.date));
       })
           .y(function (d) {
           return y(d.value);
@@ -159,8 +163,8 @@ app
         var svg = d3.select("#chart")
           .html("")
           .append("svg:svg")
-          .attr('width', 500)
-          .attr('height', 300)
+          .attr('width', maxwidth)
+          .attr('height', maxheight + 25)
           .append("svg:g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
           .call(zoom);
@@ -177,11 +181,12 @@ app
                 .ticks(5);
         };
 
+        // TODO: Ticks hardcoded, make variable
         var make_y_axis = function () {
             return d3.svg.axis()
                 .scale(y)
                 .orient("left")
-                .ticks(5);
+                .ticks(10);
         };
 
         var xAxis = d3.svg.axis()
@@ -197,7 +202,7 @@ app
         var yAxis = d3.svg.axis()
             .scale(y)
             .orient("left")
-            .ticks(5);
+            .ticks(10);
 
         svg.append("g")
             .attr("class", "y axis")
@@ -215,6 +220,31 @@ app
             .call(make_y_axis()
             .tickSize(-width, 0, 0)
             .tickFormat(""));
+            
+       //Create title
+        svg.append("text")
+        .attr("x", width / 2 )
+            .attr("y", -50/2 + margin.top)
+            .attr("class", "title")
+            .style("text-anchor", "middle")
+            .text(legend.title);
+           
+        //Create X axis label   
+        svg.append("text")
+        .attr("x", width / 2 )
+            .attr("y",  height + margin.bottom * 2)
+            .style("text-anchor", "middle")
+            .text(legend.xLabel);
+              
+        //Create Y axis label
+        svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0-margin.left)
+            .attr("x",0 - (height / 2))
+            .attr("dy", "0.9em")
+            .style("text-anchor", "middle")
+            .text(legend.yLabel);
+
 
         var clip = svg.append("svg:clipPath")
             .attr("id", "clip")
@@ -253,12 +283,20 @@ app
     template: '<div id="chart"></div>',
     scope: {
       // TODO: add extra options (e.g. width)? 
-      data: '='
+      title: '=',
+      xlabel: '=',
+      data: '=',
+      ylabel: '='
     },
     link: function(scope, element, attrs) {
       scope.$watch('data', function(){
         if (scope.data !== undefined){
-          chart(scope.data, element);         
+          legend = {
+            title: scope.title,
+            xLabel: attrs.xlabel,
+            yLabel: attrs.ylabel
+          };
+          chart(scope.data, element, legend);         
         }
       })
     }

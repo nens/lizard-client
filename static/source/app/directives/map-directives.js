@@ -140,7 +140,7 @@ app.directive('panZoom', [function(){
     link: function(scope, elements, attrs, MapCtrl) {
 
       scope.$watch('panZoom', function (){
-        if (scope.panZoom !== null){
+        if (scope.panZoom !== undefined){
           if (scope.panZoom.hasOwnProperty('lat') && 
             scope.panZoom.hasOwnProperty('lng') &&
             scope.panZoom.hasOwnProperty('zoom') ){
