@@ -68,20 +68,25 @@ services.service("Omnibox", [function() {
   return box;
 }]);
 
-services.service("KpiService", function(){
-
+services.service("KpiService", function () {
 
    // helper var for watch expressions
   var kpichanged = true;
   var mapzoom = 13;
   // later read this dynamically from source (database)
-  var thresholds = {'warning': 8, 'error': 6};
+  var thresholds = {'warning': 7, 'error': 5};
   var categories = ['tevredenheid_burger',
                        'toestand_infrastructuur',
                        'omgevingseffect',
                        'goed_gebruik',
                        'planrealisatie'];
 
+  // temporary lookup table for display names
+  var cat_dict = { 'tevredenheid_burger': 'Tevredenheid',
+                   'toestand_infrastructuur': 'Toestand',
+                   'omgevingseffect': 'Omgevingseffect',
+                   'goed_gebruik': 'Gebruik',
+                   'planrealisatie': 'Planrealisatie'};
 
 
   var kpiData = {};
@@ -94,6 +99,7 @@ services.service("KpiService", function(){
     mapzoom: mapzoom,
     thresholds: thresholds,
     categories: categories,
+    cat_dict: cat_dict,
     kpiData: kpiData,
     areadata: areadata,
     slct_area: slct_area

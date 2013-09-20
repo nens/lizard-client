@@ -16,10 +16,10 @@ app.directive('kpilayer', function () {
         var val_index = kpi_cat.dates.indexOf(scope.kpi.slct_date);
         var test_val = kpi_cat.values[val_index];
         if (test_val < scope.kpi.thresholds.warning &&
-            test_val >= scope.kpi.thresholds.error) {
+            test_val > scope.kpi.thresholds.error) {
           style.fillColor = '#F87217';
           style.color = '#F87217';
-        } else if (test_val < scope.kpi.thresholds.error) {
+        } else if (test_val <= scope.kpi.thresholds.error) {
           style.fillColor = '#d73027';
           style.color = '#d73027';
         }

@@ -2,56 +2,67 @@
 
 
   <div>
-    Gebied: 
-    <select ng-model="kpi.slct_area" ng-options="area for area in kpi.areas"></select>
-    <dl class="dl-horizontal">
-      <div class="btn-group btn-group-vertical">
-        <div ng-repeat="category in kpi.categories">
-          <dt>
-            <button 
-              type="button"
-              ng-class="{'btn-primary': category == kpi.slct_cat}"
-              ng-click="activate(kpi.slct_date, kpi.slct_area, category)"
-              class="btn btn-mini btn-block">
-              {[{category}]}
-            </button>
-          </dt>
-          <dd>
-            <!--ugly crap, make nicer data model for this -->
-            <span class="badge" ng-class="{
-              'badge-success': d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] >= kpi.thresholds.warning,
-              'badge-warning': d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] < kpi.thresholds.warning && d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] > kpi.thresholds.error,
-              'badge-important': d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] <= kpi.thresholds.error 
-              }">
-              {[{ d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] }]}
-            </span>
-          </dd>
+    <h2> {[{ kpi.cat_dict[kpi.slct_cat]  }]} - {[{ kpi.slct_date }]} </h2>
+    <h4> {[{ kpi.slct_area }]} </h4>
+    <div>
+      <dl class="dl-horizontal">
+        <div class="btn-group btn-group-vertical">
+          <div ng-repeat="category in kpi.categories">
+            <dt>
+              <button 
+                type="button"
+                ng-class="{'btn-primary': category == kpi.slct_cat}"
+                ng-click="activate(kpi.slct_date, kpi.slct_area, category)"
+                class="btn btn-mini btn-block">
+                {[{ kpi.cat_dict[category]  }]}
+              </button>
+            </dt>
+            <dd>
+              <!--ugly crap, make nicer data model for this -->
+              <span class="badge" ng-class="{
+                'badge-success': d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] >= kpi.thresholds.warning,
+                'badge-warning': d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] < kpi.thresholds.warning && d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] > kpi.thresholds.error,
+                'badge-important': d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] <= kpi.thresholds.error 
+                }">
+                {[{ d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] }]}
+              </span>
+            </dd>
+          </div>
         </div>
-        <br / >
-      </div>
-    </dl>
-      <!--<div>-->
-        <!--<label for="date">Datum: </label>-->
-        <!--<input type="range" ng-model='kpi.slct_date' min="{[{ kpi.dates[0] }]}" max="{[{ kpi.dates[kpi.dates.length - 1] }]}">-->
+      </dl>
+    </div>
+    <!--<div>-->
+      <!--<label for="date">Datum: </label>-->
+      <!--<input type="range" ng-model='kpi.slct_date' min="{[{ kpi.dates[0] }]}" max="{[{ kpi.dates[kpi.dates.length - 1] }]}">-->
       <!--</div>-->
-      <div>
-      <button type='button' class='btn'
-        ng-class='{active: date == kpi.slct_date}'
-        ng-repeat='date in kpi.dates'
-        ng-click='activate(date, kpi.slct_area, kpi.slct_cat)'>{[{date}]}
+    <nxt-line-graph data="formatted_data" title="" ylabel="KPIs" xlabel="Date"></nxt-line-graph>
+    <div>
+      <button type="button" class="btn btn-small"
+        ng-class="{'btn-primary': date == kpi.slct_date}"
+        ng-repeat="date in kpi.dates"
+        ng-click="activate(date, kpi.slct_area, kpi.slct_cat)">{[{date}]}
       </button>
-      </div>
-	  <nxt-line-graph data="formatted_data" title="" ylabel="KPIs" xlabel="Date"></nxt-line-graph>
+    </div>
+    <br />
+    <div class="input-prepend">
+      <span class="add-on">Wijk</span>
+      <select ng-model="kpi.slct_area" ng-options="area for area in kpi.areas"></select>
+    </div>
   </div>
 
-  
-  <div id="treshold">
-    <label for="low">Bovengrens: </label>
-    <input type='range' ng-model='kpi.thresholds.warning' min='1' max='10'>
 
-    <label for="high">Ondergrens: </label>
-    <input type='range' ng-model='kpi.thresholds.error' min='1' max='10'>
+  <div>
+    <label class="checkbox">
+      <input type="checkbox" ng-model="checked" ng-init="checked=false" /> Instellen grenzen
+    </label>
+    <div ng-show="checked" id="threshold" class="well">
+      <label for="low">Bovengrens: </label>
+      <input type='range' ng-model='kpi.thresholds.warning' min='1' max='10'>
 
+      <label for="high">Ondergrens: </label>
+      <input type='range' ng-model='kpi.thresholds.error' min='1' max='10'>
+
+    </div>
   </div>
 
 </div>

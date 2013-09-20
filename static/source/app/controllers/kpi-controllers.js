@@ -41,7 +41,7 @@ app.controller("KpiCtrl",
           }
           $scope.kpi.slct_cat = $scope.kpi.categories[0];
           $scope.kpi.slct_area = $scope.kpi.areas[0];
-          $scope.kpi.slct_date = $scope.kpi.dates[1];
+          $scope.kpi.slct_date = $scope.kpi.dates[4];
           // also ugly
 	        $scope.kpi.panZoom = {
 				    lat: data.features[0].geometry.coordinates[0][0][1],
@@ -109,6 +109,15 @@ app.controller("KpiCtrl",
   $scope.$on('clean', function (){
   	KpiService.clean = Date.now();
   });
+
   $scope.kpiLoader(areadata);
+
+
 }]);
 
+app.filter('catlookup', function () {
+  return function (category) {
+    return "ok";
+    //return $scope.kpi.cat_dict[category];
+  };
+});
