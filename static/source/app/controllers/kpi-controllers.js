@@ -1,11 +1,8 @@
 app.controller("ImpeachCandidate",
-    ["$scope", "Omnibox",
-        function($scope, Omnibox) {
-
-	$scope.show = function() {
+    ["$scope", "Omnibox", function ($scope, Omnibox) {
+	$scope.show = function () {
 		Omnibox.open('kpi');
 	};
-
 }]);
 
 app.controller("KpiCtrl",
@@ -17,9 +14,9 @@ app.controller("KpiCtrl",
   var areadata = '';
   if ($scope.kpi.mapzoom > 12) {
     //areadata = '/static/data/wijken.geojson';
-    areadata = '/static/data/wijken_apeldoorn.geojson';
+    areadata = '/static/data/gemeenten_apeldoorn.geojson';
   } else {
-    areadata = '/static/data/wijken.geojson';
+    areadata = '/static/data/gemeenten_apeldoorn.geojson';
   }
 
   $scope.kpiLoader = function (areadata) {
@@ -44,15 +41,15 @@ app.controller("KpiCtrl",
           $scope.kpi.slct_area = $scope.kpi.areas[0];
           $scope.kpi.slct_date = $scope.kpi.dates[4];
           // also ugly
-	        $scope.kpi.panZoom = {
-				    lat: data.features[0].geometry.coordinates[0][0][1],
-				    lng: data.features[0].geometry.coordinates[0][0][0],
-				    zoom: 13
-				  };
+          $scope.kpi.panZoom = {
+            lat: data.features[0].geometry.coordinates[0][0][1],
+            lng: data.features[0].geometry.coordinates[0][0][0],
+            zoom: 13
+          };
         });
   };
 
-  $scope.$watch('kpi.slct_area', function(){
+  $scope.$watch('kpi.slct_area', function (){
   	if ($scope.kpi.slct_area !== undefined){
 			$scope.activate($scope.kpi.slct_date, $scope.kpi.slct_area, $scope.kpi.slct_cat);
   	}
@@ -107,18 +104,11 @@ app.controller("KpiCtrl",
       return formatted_data;
     };
 
-  $scope.$on('clean', function (){
-  	KpiService.clean = Date.now();
+  $scope.$on('clean', function () {
+    KpiService.clean = Date.now();
   });
 
   $scope.kpiLoader(areadata);
 
-
 }]);
 
-app.filter('catlookup', function () {
-  return function (category) {
-    return "ok";
-    //return $scope.kpi.cat_dict[category];
-  };
-});
