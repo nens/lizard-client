@@ -15,7 +15,10 @@ app.directive('kpilayer', function () {
         var kpi_cat = feature.properties[scope.kpi.slct_cat];
         var val_index = kpi_cat.dates.indexOf(scope.kpi.slct_date);
         var test_val = kpi_cat.values[val_index];
-        if (test_val < scope.kpi.thresholds.warning &&
+        if (test_val === 0) {
+          style.fillColor = '#EEE';
+          style.color = '#EEE';
+        } else if (test_val < scope.kpi.thresholds.warning &&
             test_val > scope.kpi.thresholds.error) {
           style.fillColor = '#F87217';
           style.color = '#F87217';
@@ -45,7 +48,7 @@ app.directive('kpilayer', function () {
                 }
                 return results;
               })();
-              layer.on('click', function(e){
+              layer.on('click', function (e) {
                 scope.onAreaClick(value);
               });
             },
@@ -76,9 +79,9 @@ app.directive('kpilayer', function () {
         }
       });
 
-      scope.$watch('kpi.clean', function(){
+      scope.$watch('kpi.clean', function () {
         mapCtrl.removeLayer(areas);
-      })
+      });
     }
   };
 });

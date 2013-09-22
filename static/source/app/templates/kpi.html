@@ -22,7 +22,7 @@
               <span class="badge" ng-class="{
                 'badge-success': d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] >= kpi.thresholds.warning,
                 'badge-warning': d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] < kpi.thresholds.warning && d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] > kpi.thresholds.error,
-                'badge-important': d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] <= kpi.thresholds.error 
+                'badge-important': d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] <= kpi.thresholds.error && d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] > 0
                 }">
                 {[{ d3kpi.kpis[category][kpi.dates.indexOf(kpi.slct_date)] }]}
               </span>

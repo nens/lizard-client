@@ -14,9 +14,12 @@ app.controller("KpiCtrl",
   var areadata = '';
   if ($scope.kpi.mapzoom > 12) {
     //areadata = '/static/data/wijken.geojson';
-    areadata = '/static/data/gemeenten_apeldoorn.geojson';
+    areadata = '/static/data/wijken_apeldoorn.geojson';
+    //areadata = '/static/data/gemeenten_apeldoorn.geojson';
   } else {
-    areadata = '/static/data/gemeenten_apeldoorn.geojson';
+    areadata = '/static/data/wijken_apeldoorn.geojson';
+    //areadata = '/static/data/gemeenten_apeldoorn.geojson';
+    //areadata = '/static/data/gemeenten_apeldoorn.geojson';
   }
 
   $scope.kpiLoader = function (areadata) {
