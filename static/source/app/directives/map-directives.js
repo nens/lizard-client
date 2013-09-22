@@ -102,10 +102,6 @@ app
   };
 }]);
 
-
-
-
-
 app.directive('layerSwitch', [function(){
 	return {
 		require: 'map',
@@ -132,7 +128,6 @@ app.directive('layerSwitch', [function(){
 		restrict: 'A',
 	}
 }]);
-
 
 app.directive('panZoom', [function(){
   return {

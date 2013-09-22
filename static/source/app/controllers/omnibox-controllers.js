@@ -1,32 +1,29 @@
 app.controller("SearchCtrl",
-    ["$scope", "$resource", "$rootScope", "CabinetService", "Omnibox",
-        function($scope, $resource, $rootScope, CabinetService, Omnibox) {
+  ["$scope", "$resource", "CabinetService", "Omnibox",
+        function ($scope, $resource, CabinetService, Omnibox) {
 
     $scope.box = Omnibox;
 
     $scope.filter = function ($event) {
-        if ($scope.box.query.length > 1) {
+      if ($scope.box.query.length > 1) {
+        var search = CabinetService.search.get({q: $scope.box.query}, function (data) {
+            console.log(data.hits.hits);
+            var sources = [];
+            for (var i in data.hits.hits) {
+              sources.push(data.hits.hits[i]._source);
+            }
+            $scope.searchData = sources;
+          });
 
-            var search = CabinetService.search.get({q:$scope.box.query}, function(data) {
-                console.log(data.hits.hits);
-                var sources = [];
-                for(var i in data.hits.hits) {
-                    sources.push(data.hits.hits[i]._source);
-                }
-                $scope.searchData = sources;
-            });
-
-            var geocode = CabinetService.geocode.query({q:$scope.box.query}, function(data) {
+        var geocode = CabinetService.geocode.query({q: $scope.box.query}, function (data) {
                 console.log(data);
                 $scope.box.content = data;
-            });
-            $scope.box.open("location");
-            
-        }
-
+              });
+        $scope.box.open("location");
+      }
     };
 
-    $scope.reset_query = function() {
+    $scope.reset_query = function () {
         //clean stuff.. 
         // Search Ctrl is the parent of omnibox cards
         // therefore no need to call $rootScope. 
@@ -34,43 +31,39 @@ app.controller("SearchCtrl",
         $scope.box.query = null;
         $scope.box.close();
     };
-
 }]);
 
-
-
-
 app.controller("CardsCtrl",
-    ["$scope", "$resource", "$rootScope", "CabinetService", "Omnibox",
-        function($scope, $resource, $rootScope, CabinetService, Omnibox) {
+    ["$scope", "$resource", "CabinetService", "Omnibox",
+        function ($scope, $resource, CabinetService, Omnibox) {
 
     $scope.box = Omnibox;
 
-    $scope.$on('kpiclick', function(data) {
+    // NOTE: behaviour should go in the directive, not in a controller
+    // don't manipulate the DOM with a controller
+    $scope.$on('kpiclick', function (data) {
         $scope.box.open("kpi");
     });
 
-    $scope.$on('mapclick', function(){
+    $scope.$on('mapclick', function () {
         // why this needs to go into an apply.. beats me
-            $scope.$apply(function(){
+            $scope.$apply(function () {
                 $scope.box.open("graph");
             });
         });
 
 }]);
 
-
-
 app.controller("ResultsCtrl",
     ["$scope", "$rootScope", "Omnibox",
-        function($scope, $rootScope, Omnibox){
+        function ($scope, $rootScope, Omnibox) {
 
     $scope.box = Omnibox;
     $scope.currentObject = false;
 
-    $scope.showDetails = function(obj) {
+    $scope.showDetails = function (obj) {
         $scope.currentObject = obj;
-        if($scope.currentObject.lat && $scope.currentObject.lon) {
+        if ($scope.currentObject.lat && $scope.currentObject.lon) {
             // A lat and lon are present, instruct the map to pan/zoom to it
             console.log('Location given, take us there');
             var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
@@ -79,6 +72,7 @@ app.controller("ResultsCtrl",
               lng: $scope.currentObject.lon,
               zoom: 14
             };
+            // NOTE: get rid of rootScope
             $rootScope.$broadcast('PanZoomeroom', $scope.panZoom);
         }
     };
@@ -86,7 +80,7 @@ app.controller("ResultsCtrl",
 }]);
 
 app.controller("GraphCtrl", ["$scope", "Omnibox",
-    function($scope, Omnibox){
+    function ($scope, Omnibox) {
       var unformat_data = function () {
         var array_data =  [{
           type: 'x',
@@ -103,10 +97,10 @@ app.controller("GraphCtrl", ["$scope", "Omnibox",
         return array_data;
       };
 
-      $scope.format_data = function(data) {
+      $scope.format_data = function (data) {
         $scope.formatted_data = [];
-        for (var i=0; i<data[0].values.length; i++){
-          xyobject = {
+        for (var i = 0; i < data[0].values.length; i++) {
+          var xyobject = {
             date: data[1].values[i],
             value: data[0].values[i]
           };
@@ -117,8 +111,8 @@ app.controller("GraphCtrl", ["$scope", "Omnibox",
 
       $scope.data = $scope.format_data(unformat_data());
 
-      $scope.$on('Omnibox_change', function(){
-        new_data = unformat_data();
+      $scope.$on('Omnibox_change', function () {
+        var new_data = unformat_data();
         $scope.data = $scope.format_data(new_data);
       });
 

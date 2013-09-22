@@ -34,6 +34,10 @@ app.directive('kpilayer', function () {
       };
 
       scope.$watch('kpi.kpiData', function () {
+        // remove previous layer if available
+        if (areas !== undefined) {
+          mapCtrl.removeLayer(areas);
+        }
         if (scope.kpi.kpiData.features !== undefined) {
           areas = L.geoJson(scope.kpi.kpiData, {
             onEachFeature: function (feature, layer) {
