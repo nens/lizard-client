@@ -89,7 +89,6 @@ app.controller("KpiCtrl",
     $scope.kpi.slct_date = date;
     // doesn't have to be updated when date changes
     $scope.d3formatted(area, category);
-    // flip the changed var
     $scope.kpi.kpichanged = !$scope.kpi.kpichanged;
   };
 
@@ -107,17 +106,9 @@ app.controller("KpiCtrl",
         $scope.d3kpi.kpis.values = feature.properties[category].values;
         $scope.formatted_data = $scope.format_data($scope.d3kpi);
         // ugly crap, make nicer data model for this
-        //$scope.d3kpi.kpis[category] = feature.properties[category].values[$scope.kpi.dates.indexOf($scope.kpi.slct_date)];
         $scope.d3kpi.kpis[category] = feature.properties[category].values;
       }
     }
-    return $scope.d3kpi;
-  };
-
-  $scope.labelValues = function (date, area, category) {
-    $scope.d3formatted(area, category);
-    var value = $scope.d3kpi.kpis[category][$scope.kpi.dates.indexOf($scope.kpi.slct_date)];
-    return value;
   };
 
   //NOTE: refactor so this is included in d3formatted function
@@ -131,6 +122,11 @@ app.controller("KpiCtrl",
       formatted_data.push(xyobject);
     }
     return formatted_data;
+  };
+
+  $scope.labelValues = function (date, area, category) {
+    var value = $scope.d3kpi.kpis[category][$scope.kpi.dates.indexOf($scope.kpi.slct_date)];
+    return value;
   };
 
   // Load KPI data
