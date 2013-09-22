@@ -1,6 +1,4 @@
 <div class="card" ng-controller="KpiCtrl" ng-animate=" 'animate' ">
-
-
   <div>
     <h2> {[{ kpi.cat_dict[kpi.slct_cat]  }]} - {[{ kpi.slct_date }]} </h2>
     <h4> {[{ kpi.slct_area }]} </h4>
@@ -31,11 +29,7 @@
         </div>
       </dl>
     </div>
-    <!--<div>-->
-      <!--<label for="date">Datum: </label>-->
-      <!--<input type="range" ng-model='kpi.slct_date' min="{[{ kpi.dates[0] }]}" max="{[{ kpi.dates[kpi.dates.length - 1] }]}">-->
-      <!--</div>-->
-    <nxt-line-graph data="formatted_data" title="" ylabel="KPIs" xlabel="Date"></nxt-line-graph>
+    <nxt-line-graph data="formatted_data" title="" ylabel="" xlabel=""></nxt-line-graph>
     <div>
       <button type="button" class="btn btn-small"
         ng-class="{'btn-primary': date == kpi.slct_date}"
@@ -49,7 +43,6 @@
       <select ng-model="kpi.slct_area" ng-options="area for area in kpi.areas"></select>
     </div>
   </div>
-
 
   <div>
     <label class="checkbox">

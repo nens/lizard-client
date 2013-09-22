@@ -11,61 +11,64 @@ app.controller("KpiCtrl",
   $scope.d3kpi = {'dates': {name: 'Date', values: [], units: 'Year'},
                   'kpis': {name: '', values: [], units: ''}};
 	 
-  var areadata = '';
-  if ($scope.kpi.mapzoom > 12) {
-    //areadata = '/static/data/wijken.geojson';
-    areadata = '/static/data/wijken_apeldoorn.geojson';
-    //areadata = '/static/data/gemeenten_apeldoorn.geojson';
-  } else {
-    areadata = '/static/data/wijken_apeldoorn.geojson';
-    //areadata = '/static/data/gemeenten_apeldoorn.geojson';
-    //areadata = '/static/data/gemeenten_apeldoorn.geojson';
-  }
-
   $scope.kpiLoader = function (areadata) {
+    var wijkdata = '/static/data/wijken_apeldoorn.geojson';
+    var gemeentedata = '/static/data/gemeenten_apeldoorn.geojson';
+    $scope.kpi.areaData = {'wijken': {}, 'gemeenten': {}};
     
     //NOTE: write a failure function
-    $http.get(areadata)
+    $http.get(wijkdata)
         .success(function (data) {
-          $scope.kpi.kpiData = data;
-          // later als get categories from kpi source
-          //$scope.categories = [];
-          //NOTE: buttugly crap
-          $scope.kpi.dates = $scope.kpi.kpiData.features[0].properties.planrealisatie.dates;
-          $scope.kpi.areas = [];
-          // get unique areas
-          for (var j in $scope.kpi.kpiData.features) {
-            var feature = $scope.kpi.kpiData.features[j];
-            if ($scope.kpi.areas.join(" ").indexOf(feature.properties.name) === -1) {
-              $scope.kpi.areas.push(feature.properties.name);
-            }
-          }
-          $scope.kpi.slct_cat = $scope.kpi.categories[0];
-          $scope.kpi.slct_area = $scope.kpi.areas[0];
-          $scope.kpi.slct_date = $scope.kpi.dates[4];
-          // also ugly
-          $scope.kpi.panZoom = {
-            lat: data.features[0].geometry.coordinates[0][0][1],
-            lng: data.features[0].geometry.coordinates[0][0][0],
-            zoom: 13
-          };
+          $scope.kpi.areaData.wijken = data;
+          // initialise wijken as first view
+          $scope.kpiFormatter(data);
+        });
+
+    $http.get(gemeentedata)
+        .success(function (data) {
+          $scope.kpi.areaData.gemeenten = data;
         });
   };
 
-  $scope.$watch('kpi.slct_area', function (){
-  	if ($scope.kpi.slct_area !== undefined){
-			$scope.activate($scope.kpi.slct_date, $scope.kpi.slct_area, $scope.kpi.slct_cat);
-  	}
+  $scope.kpiFormatter = function (data) {
+
+    $scope.kpi.kpiData = data;
+    // later als get categories from kpi source
+    //$scope.categories = [];
+    //NOTE: buttugly crap
+    $scope.kpi.dates = $scope.kpi.kpiData.features[0].properties.planrealisatie.dates;
+    $scope.kpi.areas = [];
+    // get unique areas
+    for (var j in $scope.kpi.kpiData.features) {
+      var feature = $scope.kpi.kpiData.features[j];
+      if ($scope.kpi.areas.join(" ").indexOf(feature.properties.name) === -1) {
+        $scope.kpi.areas.push(feature.properties.name);
+      }
+    }
+    $scope.kpi.slct_cat = $scope.kpi.categories[0];
+    $scope.kpi.slct_area = $scope.kpi.areas[0];
+    $scope.kpi.slct_date = $scope.kpi.dates[4];
+    // also ugly
+    $scope.kpi.panZoom = {
+      lat: data.features[0].geometry.coordinates[0][0][1],
+      lng: data.features[0].geometry.coordinates[0][0][0],
+      zoom: 12
+    };
+  };
+
+  $scope.$watch('kpi.slct_area', function () {
+    if ($scope.kpi.slct_area !== undefined) {
+      $scope.activate($scope.kpi.slct_date, $scope.kpi.slct_area, $scope.kpi.slct_cat);
+    }
   });
 
-  $scope.$watch('kpi.slct_date', function(){
-  	if ($scope.kpi.slct_date !== undefined){
-			$scope.activate($scope.kpi.slct_date, $scope.kpi.slct_area, $scope.kpi.slct_cat);
-  	}
+  $scope.$watch('kpi.slct_date', function () {
+    if ($scope.kpi.slct_date !== undefined) {
+      $scope.activate($scope.kpi.slct_date, $scope.kpi.slct_area, $scope.kpi.slct_cat);
+    }
   });
 
 	$scope.activate = function (date, area, category) {
-      console.log(date);
       $scope.kpi.slct_cat = category;
       $scope.kpi.slct_area = area;
       $scope.kpi.slct_date = date;
@@ -95,23 +98,22 @@ app.controller("KpiCtrl",
   };
 
 
-    $scope.format_data = function(d3kpi) {
-      var formatted_data = [];
-      for (var i=0; i< d3kpi.dates.values.length; i++){
-        xyobject = {
-          date: d3kpi.dates.values[i],
-          value: d3kpi.kpis.values[i]
-        };
-        formatted_data.push(xyobject);
-      }
-      return formatted_data;
-    };
+  $scope.format_data = function (d3kpi) {
+    var formatted_data = [];
+    for (var i = 0; i < d3kpi.dates.values.length; i++) {
+      var xyobject = {
+        date: d3kpi.dates.values[i],
+        value: d3kpi.kpis.values[i]
+      };
+      formatted_data.push(xyobject);
+    }
+    return formatted_data;
+  };
 
   $scope.$on('clean', function () {
     KpiService.clean = Date.now();
   });
 
-  $scope.kpiLoader(areadata);
+  $scope.kpiLoader();
 
 }]);
-
