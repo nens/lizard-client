@@ -1,7 +1,7 @@
 var services = angular.module("lizard-nxt.services", ['ngResource']);
 
 services.service("CabinetService", ["$resource", "$rootScope",
-  function($resource, $rootScope) {
+  function ($resource, $rootScope) {
 
   var layergroups = window.layerGroups;
   var layers = window.layers;
@@ -28,7 +28,7 @@ services.service("CabinetService", ["$resource", "$rootScope",
     id: '@id'
   });
 
-
+  //NOTE: what does this do? Try to get rid of it
   $rootScope.$broadcast('LayersRetrieved');
 
   return {
@@ -45,8 +45,9 @@ services.service("CabinetService", ["$resource", "$rootScope",
 }]);
 
 
-services.service("OmniboxService", [function() {
-  // Soon to be removed
+
+//NOTE this seems like a superfluous service; let's try to get rid of it
+services.service("Omnibox", [function () {
   var box = {
     query: null,
     disabled: false,
@@ -57,12 +58,12 @@ services.service("OmniboxService", [function() {
   };
 
   // TODO: These functions should go to the directive
-  box.open = function(type){
+  box.open = function (type) {
     box.type = type;
     box.showCards = true;
   };
 
-  box.close = function(){
+  box.close = function () {
     box.type = 'empty';
     box.showCards = false;
   };
@@ -70,20 +71,24 @@ services.service("OmniboxService", [function() {
   return box;
 }]);
 
-services.service("KpiService", function(){
-
+services.service("KpiService", function () {
 
    // helper var for watch expressions
   var kpichanged = true;
-  var mapzoom = 13;
   // later read this dynamically from source (database)
-  var thresholds = {'warning': 8, 'error': 6};
+  var thresholds = {'warning': 7, 'error': 5};
   var categories = ['tevredenheid_burger',
-                       'toestand_infrastructuur',
-                       'omgevingseffect',
-                       'goed_gebruik',
-                       'planrealisatie'];
+                    'toestand_infrastructuur',
+                    'omgevingseffect',
+                    'goed_gebruik',
+                    'planrealisatie'];
 
+  // temporary lookup table for display names
+  var cat_dict = { 'tevredenheid_burger': 'Tevredenheid',
+                   'toestand_infrastructuur': 'Toestand',
+                   'omgevingseffect': 'Omgevingseffect',
+                   'goed_gebruik': 'Gebruik',
+                   'planrealisatie': 'Planrealisatie'};
 
 
   var kpiData = {};
@@ -93,11 +98,11 @@ services.service("KpiService", function(){
 
   return {
     kpichanged: kpichanged,
-    mapzoom: mapzoom,
     thresholds: thresholds,
     categories: categories,
+    cat_dict: cat_dict,
     kpiData: kpiData,
     areadata: areadata,
     slct_area: slct_area
   };
-})
+});

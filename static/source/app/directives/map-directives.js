@@ -3,7 +3,7 @@ app
   .directive('map', [function(){
 
 
-    function MapCtrl ($scope, OmniboxService){
+    function MapCtrl ($scope, Omnibox){
 
 			this.initiateLayer = function (layer) {
 				if (layer.type === "TMS" && layer.baselayer){
@@ -16,9 +16,9 @@ app
   				});
           layer.leafletLayer.on('click', function (e) {
             $scope.$apply(function(){
-              OmniboxService.type = 'object_id';
-              OmniboxService.showCards = true;
-              OmniboxService.content = {
+              Omnibox.type = 'object_id';
+              Omnibox.showCards = true;
+              Omnibox.content = {
                 object_type: e.data.entity_name,
                 id: e.data.id
               }
@@ -114,10 +114,6 @@ app
   };
 }]);
 
-
-
-
-
 app.directive('layerSwitch', [function(){
 	return {
 		require: 'map',
@@ -144,7 +140,6 @@ app.directive('layerSwitch', [function(){
 		restrict: 'A',
 	}
 }]);
-
 
 app.directive('panZoom', [function(){
   return {

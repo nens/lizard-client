@@ -15,11 +15,14 @@ app.directive('kpilayer', function () {
         var kpi_cat = feature.properties[scope.kpi.slct_cat];
         var val_index = kpi_cat.dates.indexOf(scope.kpi.slct_date);
         var test_val = kpi_cat.values[val_index];
-        if (test_val < scope.kpi.thresholds.warning &&
-            test_val >= scope.kpi.thresholds.error) {
+        if (test_val === 0) {
+          style.fillColor = '#EEE';
+          style.color = '#EEE';
+        } else if (test_val < scope.kpi.thresholds.warning &&
+            test_val > scope.kpi.thresholds.error) {
           style.fillColor = '#F87217';
           style.color = '#F87217';
-        } else if (test_val < scope.kpi.thresholds.error) {
+        } else if (test_val <= scope.kpi.thresholds.error) {
           style.fillColor = '#d73027';
           style.color = '#d73027';
         }
@@ -31,6 +34,10 @@ app.directive('kpilayer', function () {
       };
 
       scope.$watch('kpi.kpiData', function () {
+        // remove previous layer if available
+        if (areas !== undefined) {
+          mapCtrl.removeLayer(areas);
+        }
         if (scope.kpi.kpiData.features !== undefined) {
           areas = L.geoJson(scope.kpi.kpiData, {
             onEachFeature: function (feature, layer) {
@@ -45,7 +52,7 @@ app.directive('kpilayer', function () {
                 }
                 return results;
               })();
-              layer.on('click', function(e){
+              layer.on('click', function (e) {
                 scope.onAreaClick(value);
               });
             },
@@ -56,8 +63,7 @@ app.directive('kpilayer', function () {
       });
 
       scope.$watch('kpi.kpichanged', function () {
-        // set style
-        console.log(scope)
+        console.log(scope);
         if (scope.kpi.kpiData.features !== undefined) {
           areas.setStyle(styler);
         }
@@ -77,9 +83,9 @@ app.directive('kpilayer', function () {
         }
       });
 
-      scope.$watch('kpi.clean', function(){
+      scope.$watch('kpi.clean', function () {
         mapCtrl.removeLayer(areas);
-      })
+      });
     }
   };
 });

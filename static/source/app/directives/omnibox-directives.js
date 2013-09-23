@@ -1,6 +1,6 @@
 app
-	.directive('boxContent', ["$compile", "$http", "$templateCache", "OmniboxService",
-		function($compile, $http, $templateCache, OmniboxService) {
+	.directive('boxContent', ["$compile", "$http", "$templateCache", "Omnibox",
+		function($compile, $http, $templateCache, Omnibox) {
 
       var getTemplate = function(contentType) {
           if (contentType === undefined) contentType = 'empty';
@@ -35,7 +35,7 @@ app
 
       // TODO: this is going to handle the opening. Not yet
       function BoxCtrl ($scope){
-        $scope.box = OmniboxService;
+        $scope.box = Omnibox;
         this.open = function(){
           $scope.box.type = type;
           $scope.box.showCards = true;
@@ -59,19 +59,3 @@ app
           controller: BoxCtrl
       };
   }]);
-
-app
-  .directive('boxToggle', function(){
-    return {
-      require: 'boxContent',
-      link: function(scope, element, attrs, BoxCtrl){
-        element.bind("click", function(){
-          console.log(scope.boxtype, attrs.boxtype)
-          BoxCtrl.open(scope.type);
-        });
-      },
-      scope: {
-        boxToggle: '@'
-      }
-    }
-  });
