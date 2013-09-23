@@ -105,8 +105,6 @@ app.controller("KpiCtrl",
       if (feature.properties.name === area) {
         $scope.d3kpi.kpis.values = feature.properties[category].values;
         $scope.formatted_data = $scope.format_data($scope.d3kpi);
-        // ugly crap, make nicer data model for this
-        $scope.d3kpi.kpis[category] = feature.properties[category].values;
       }
     }
   };
@@ -124,8 +122,16 @@ app.controller("KpiCtrl",
     return formatted_data;
   };
 
-  $scope.labelValues = function (date, area, category) {
-    var value = $scope.d3kpi.kpis[category][$scope.kpi.dates.indexOf($scope.kpi.slct_date)];
+  $scope.labelValue = function (date, area, category) {
+    $scope.labelValues = {};
+    for (var i in $scope.kpi.kpiData.features) {
+      var feature = $scope.kpi.kpiData.features[i];
+      if (feature.properties.name === area) {
+        // ugly crap, make nicer data model for this
+        $scope.labelValues[category] = feature.properties[category].values;
+      }
+    }
+    var value = $scope.labelValues[category][$scope.kpi.dates.indexOf($scope.kpi.slct_date)];
     return value;
   };
 
