@@ -18,11 +18,11 @@
             <dd>
               <!--ugly crap, make nicer data model for this -->
               <span class="badge" ng-class="{
-                'badge-success': labelValues(kpi.slct_date, kpi.slct_area, category) >= kpi.thresholds.warning,
-                'badge-warning': labelValues(kpi.slct_date, kpi.slct_area, category) <  kpi.thresholds.warning && labelValues(kpi.slct_date, kpi.slct_area, category) > kpi.thresholds.error,
-                'badge-important': labelValues(kpi.slct_date, kpi.slct_area, category) <= kpi.thresholds.error && labelValues(kpi.slct_date, kpi.slct_area, category) > 0
+                'badge-success': labelValue(kpi.slct_date, kpi.slct_area, category) >= kpi.thresholds.warning,
+                'badge-warning': labelValue(kpi.slct_date, kpi.slct_area, category) <  kpi.thresholds.warning && labelValue(kpi.slct_date, kpi.slct_area, category) > kpi.thresholds.error,
+                'badge-important': labelValue(kpi.slct_date, kpi.slct_area, category) <= kpi.thresholds.error && labelValue(kpi.slct_date, kpi.slct_area, category) > 0
                 }">
-                {[{ labelValues(kpi.slct_date, kpi.slct_area, category) }]}
+                {[{ labelValue(kpi.slct_date, kpi.slct_area, category) }]}
               </span>
             </dd>
           </div>
