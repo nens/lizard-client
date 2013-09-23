@@ -134,7 +134,7 @@ app
 
       var x = d3.time.scale()
           .domain(d3.extent(data, function (d) {
-            if (legend.timestring === "year"){
+            if (legend.type === "kpi"){
               return Date.parse(d.date)
             } else {
               return d.date
@@ -160,7 +160,7 @@ app
 
       var line = d3.svg.line()
           .x(function (d) {
-            if (legend.timestring === "year"){
+            if (legend.type === "kpi"){
               return x(Date.parse(d.date))
             } else {
               return x(d.date)
@@ -218,7 +218,7 @@ app
         var yAxis = d3.svg.axis()
             .scale(y)
             .orient("left")
-            .ticks(10);
+            .ticks(5);
 
         svg.append("g")
             .attr("class", "y axis")
@@ -308,7 +308,7 @@ app
       xmax: '=',
       ymin: '=',
       ymax: '=',
-      timestring: '='
+      type: '='
     },
     link: function(scope, element, attrs) {
       scope.$watch('data', function(){
@@ -333,7 +333,7 @@ app
             ymax: ymax,
             xmin: xmin,
             xmax: xmax,
-            timestring: attrs.timestring
+            type: attrs.type
           };
           chart(scope.data, element, legend);         
         }

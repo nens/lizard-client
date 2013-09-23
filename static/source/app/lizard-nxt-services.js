@@ -17,7 +17,7 @@ services.service("CabinetService", ["$resource", "$rootScope",
   searchResource = $resource('/api/v1/search/');
   geocodeResource = $resource('/api/v1/geocode/');
   reverseGeocodeResource = $resource('/api/v1/reversegeocode/');
-  timeseriesLocationObjectResource = $resource('/api/v1/timeseries/?object_type=:object_type$:id', {
+  timeseriesLocationObjectResource = $resource('/api/v1/timeseries/?object=:object_type$:id', {
     object_type: '@object_type',
     id: '@id',
   });

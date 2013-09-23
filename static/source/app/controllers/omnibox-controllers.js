@@ -121,19 +121,44 @@ app.controller("GraphCtrl", ["$scope", "Omnibox",
 app.controller("ObjectIdGraphCtrl", ["$scope", "Omnibox", "CabinetService",
     function($scope, Omnibox, CabinetService){
       $scope.box = Omnibox;
+      $scope.metadata = {
+        title: null,
+        leidinglengte: $scope.box.content.data.lei_len,
+        profiel_hoogte: $scope.box.content.data.pro_hgt,
+        profiel_breedte: $scope.box.content.data.pro_bre,
+        type: $scope.box.content.data.entity_type
+      };
 
-      $scope.$watch('box.content', function(){
-        var new_data,
-        new_data_get = CabinetService.timeseriesLocationObject.get({
+      $scope.$watch('box.content', function () {
+        var new_data_get = CabinetService.timeseriesLocationObject.get({
           object_type: $scope.box.content.object_type,
           id: $scope.box.content.id,
         }, function(response){
-          new_data = response.results;
-          $scope.data = $scope.format_data(new_data[0].events);
+          $scope.timeseries = response.results;
+          if ($scope.timeseries.length > 0){
+            $scope.selected_timeseries = response.results[0];      
+          } else {
+            $scope.selected_timeseries = undefined;
+          }
         });
       });
 
-      $scope.format_data = function(data) {
+      $scope.$watch('selected_timeseries', function () {
+        if ($scope.selected_timeseries !== undefined){
+          $scope.timeseries_metadata = {
+            name: $scope.selected_timeseries.name,
+            parameter: $scope.selected_timeseries.parameter,
+            unit: $scope.selected_timeseries.unit
+          };
+          $scope.data = $scope.format_data($scope.selected_timeseries.events);
+          // dit kan zeker nog mooier
+          $scope.metadata.title = $scope.selected_timeseries.location.name;
+        } else {
+          $scope.data = null;
+        }
+      });
+
+      $scope.format_data = function (data) {
         $scope.formatted_data = [];
         for (var i=0; i<data[0].values.length; i++){
           xyobject = {

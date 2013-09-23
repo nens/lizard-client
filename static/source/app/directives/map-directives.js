@@ -15,16 +15,17 @@ app
   					useJsonP: false
   				});
           layer.leafletLayer.on('click', function (e) {
-            $scope.$apply(function(){
-              Omnibox.type = 'object_id';
-              Omnibox.showCards = true;
-              Omnibox.content = {
-                object_type: e.data.entity_name,
-                id: e.data.id
-              }
-            });
-            console.log(e);
-
+            if (e.data){
+              $scope.$apply(function(){
+                Omnibox.type = 'object_id';
+                Omnibox.showCards = true;
+                Omnibox.content = {
+                  object_type: e.data.entity_name,
+                  id: e.data.id,
+                  data: e.data
+                }
+              });
+            }
           });
   			} else if (layer.type === "WMS"){
           // TODO: fix something more robust for WMS layers.

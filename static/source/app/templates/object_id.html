@@ -1,3 +1,15 @@
 <div class="card" ng-controller="ObjectIdGraphCtrl">
-	<nxt-line-graph data="data"></nxt-line-graph>
+	<h3><% metadata.title %></h3>
+	<h4><% metadata.type %></h4>
+	<dl class="dl-horizontal">
+		<dt>Lengte </dt><dd><% metadata.leidinglengte %></dd>
+		<dt>Hoogte </dt><dd><% metadata.profiel_hoogte %></dd>
+		<dt>Breedte </dt><dd><% metadata.profiel_breedte %></dd>
+	</dl>
+  <div class="input-prepend">
+  	<span class="add-on"> Tijdreeks</span> 
+  	<select ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
+  </div>
+
+	<nxt-line-graph data="data" title="metadata.name" xlabel="Tijd (maanden)" ylabel="metadata.parameter.description + ' - ' + metadata.unit.code"></nxt-line-graph>
 </div>

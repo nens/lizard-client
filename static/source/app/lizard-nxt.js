@@ -8,8 +8,8 @@ var app = angular.module("lizard-nxt", [
 
 app.config(function($interpolateProvider) {
   //To prevent Django and Angular Template hell
-  $interpolateProvider.startSymbol('{[{');
-  $interpolateProvider.endSymbol('}]}');
+  $interpolateProvider.startSymbol('<%');
+  $interpolateProvider.endSymbol('%>');
  });
 
 
