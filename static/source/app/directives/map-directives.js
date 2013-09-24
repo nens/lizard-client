@@ -78,7 +78,6 @@ app
         this.toggleLayer = function(layer){
         	if (!layer.active){
         		if (layer.leafletLayer){
-              debugger
             	$scope.map.removeLayer(layer.leafletLayer);       		
           	} else {
           		console.log('leaflet layer not defined', layer.type);
