@@ -7,9 +7,9 @@ app
 
 			this.initiateLayer = function (layer) {
 				if (layer.type === "TMS" && layer.baselayer){
-  				layer.leafletLayer = L.tileLayer(layer.url, {name:"Background", maxZoom: 22});
+  				layer.leafletLayer = L.tileLayer(layer.url, {name:"Background", maxZoom: 20});
   			} else if (layer.type === "TMS" && !layer.baselayer){
-  				layer.leafletLayer = L.tileLayer(layer.url, {maxZoom: 22});
+  				layer.leafletLayer = L.tileLayer(layer.url, {maxZoom: 20, zIndex: layer.z_index});
   			} else if (layer.type === "UTFGrid"){
   				layer.leafletLayer = new L.UtfGrid(layer.url, {
   					useJsonP: false
@@ -35,7 +35,8 @@ app
           layer.leafletLayer = L.tileLayer.wms(wms, {
             layers: layer.url,
             format: 'image/png',
-            version: '1.1.1' });
+            version: '1.1.1',
+            maxZoom: 20 });
   			} else if (layer.type === "GeoJSON"){
 					layer.leafletLayer = new L.TileLayer.GeoJSON(layer.url);
   			} else {
@@ -49,6 +50,7 @@ app
         this.toggleLayer = function(layer){
         	if (!layer.active){
         		if (layer.leafletLayer){
+              debugger
             	$scope.map.removeLayer(layer.leafletLayer);       		
           	} else {
           		console.log('leaflet layer not defined', layer.type);
