@@ -7,15 +7,14 @@ app
 
 			this.initiateLayer = function (layer) {
 				if (layer.type === "TMS" && layer.baselayer){
-  				layer.leafletLayer = L.tileLayer(layer.url, {name:"Background", maxZoom: 20});
+  				layer.leafletLayer = L.tileLayer(layer.url + '.png', {name:"Background", maxZoom: 20});
   			} else if (layer.type === "TMS" && !layer.baselayer){
           // TODO: Make this not suck. OMG.
           if (layer.url.split('/api/v1/').length > 0){
-              var base = layer.url.split('=');
-              var layer_types = base[1].split(',');
+              var layer_types = layer.content.split(',');
               for (var i in layer_types){
                 if (layer_types[i] == 'knoop' || layer_types[i] == 'geslotenleiding'){
-                  var url = base[0].replace('png', 'grid') + '=' + layer_types[i];
+                  var url = layer.url + '.grid?object_types=' + layer_types[i];
                   var leafletLayer = new L.UtfGrid(url, {
                     useJsonP: false
                   });
@@ -37,36 +36,13 @@ app
                 }
               }
             }
-  				layer.leafletLayer = L.tileLayer(layer.url, {maxZoom: 20, zIndex: layer.z_index});
-  			} else if (layer.type === "UTFGrid"){
-  				layer.leafletLayer = new L.UtfGrid(layer.url, {
-  					useJsonP: false
-  				});
-          layer.leafletLayer.on('click', function (e) {
-            if (e.data){
-              $scope.$apply(function(){
-                Omnibox.type = 'object_id';
-                Omnibox.showCards = true;
-                Omnibox.content = {
-                  object_type: e.data.entity_name,
-                  id: e.data.id,
-                  data: e.data
-                }
-              });
-            }
-          });
+  				layer.leafletLayer = L.tileLayer(layer.url + '.png?object_types=' + layer.content, {maxZoom: 20, zIndex: layer.z_index});
   			} else if (layer.type === "WMS"){
-          // TODO: fix something more robust for WMS layers.
-          // It works when the layer.url defines the layer name
-          // and the wms server is hardcoded
-          wms = 'http://geoserver1-3di.lizard.net/geoserver/gwc/service/wms';
-          layer.leafletLayer = L.tileLayer.wms(wms, {
-            layers: layer.url,
+          layer.leafletLayer = L.tileLayer.wms(layer.url, {
+            layers: layer.content,
             format: 'image/png',
             version: '1.1.1',
             maxZoom: 20 });
-  			} else if (layer.type === "GeoJSON"){
-					layer.leafletLayer = new L.TileLayer.GeoJSON(layer.url);
   			} else {
   				console.log(layer.type);
   			}
