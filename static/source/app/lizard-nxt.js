@@ -3,6 +3,7 @@ var app = angular.module("lizard-nxt", [
   'ui.event',
   'ui.highlight',
   'ui.keypress',
+  'ngProgress',
   // 'omnibox',
   'lizard-nxt.services']);
 
@@ -13,8 +14,9 @@ app.config(function($interpolateProvider) {
  });
 
 
-app.controller("MapCtrl", ["$scope", "CabinetService", "KpiService" , 
-  function($scope, CabinetService, KpiService) {
+app.controller("MapCtrl", ["$scope", "ngProgress", "CabinetService", "KpiService" ,
+  function($scope, ngProgress, CabinetService, KpiService) {
+    
   $scope.data = {
     layergroups: CabinetService.layergroups,
     layers: CabinetService.layers,
@@ -74,8 +76,8 @@ app.controller("MapCtrl", ["$scope", "CabinetService", "KpiService" ,
   $scope.onAreaClick = function(area){
     $scope.$apply(function(){
       $scope.kpi.slct_area = area;
-      $scope.kpi.kpichanged = !$scope.kpi.kpichanged;  
+      $scope.kpi.kpichanged = !$scope.kpi.kpichanged;
     });
-  }
+  };
 
 }]);
