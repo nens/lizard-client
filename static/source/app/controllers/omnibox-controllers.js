@@ -1,10 +1,12 @@
 app.controller("SearchCtrl",
-  ["$scope", "$resource", "CabinetService", "Omnibox",
-        function ($scope, $resource, CabinetService, Omnibox) {
+  ["$scope", "ngProgress", "$resource", "CabinetService", "Omnibox",
+        function ($scope, ngProgress, $resource, CabinetService, Omnibox) {
 
     $scope.box = Omnibox;
 
     $scope.filter = function ($event) {
+      ngProgress.start(); // Start to indicate we're doing something...
+
       if ($scope.box.query.length > 1) {
         var search = CabinetService.search.get({q: $scope.box.query}, function (data) {
             console.log(data.hits.hits);
@@ -15,7 +17,9 @@ app.controller("SearchCtrl",
             $scope.searchData = sources;
           });
 
+        
         var geocode = CabinetService.geocode.query({q: $scope.box.query}, function (data) {
+                ngProgress.complete(); // Finish the loading indicator
                 console.log(data);
                 $scope.box.content = data;
               });
@@ -24,9 +28,9 @@ app.controller("SearchCtrl",
     };
 
     $scope.reset_query = function () {
-        // clean stuff.. 
+        // clean stuff..
         // Search Ctrl is the parent of omnibox cards
-        // therefore no need to call $rootScope. 
+        // therefore no need to call $rootScope.
         $scope.$broadcast('clean');
         $scope.box.query = null;
         $scope.box.type= 'empty';
@@ -64,7 +68,6 @@ app.controller("ResultsCtrl",
         $scope.currentObject = obj;
         if ($scope.currentObject.lat && $scope.currentObject.lon) {
             // A lat and lon are present, instruct the map to pan/zoom to it
-            console.log('Location given, take us there');
             var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
             $scope.panZoom = {
               lat: $scope.currentObject.lat,
@@ -118,8 +121,8 @@ app.controller("GraphCtrl", ["$scope", "Omnibox",
 }]);
 
 
-app.controller("ObjectIdGraphCtrl", ["$scope", "Omnibox", "CabinetService",
-    function($scope, Omnibox, CabinetService){
+app.controller("ObjectIdGraphCtrl", ["$scope", "ngProgress", "Omnibox", "CabinetService",
+    function($scope, ngProgress, Omnibox, CabinetService){
       $scope.box = Omnibox;
       $scope.metadata = {
         title: null,
@@ -130,13 +133,15 @@ app.controller("ObjectIdGraphCtrl", ["$scope", "Omnibox", "CabinetService",
       };
 
       $scope.$watch('box.content', function () {
+        ngProgress.start(); // Show progress bar to indicate we're doing something for the user
         var new_data_get = CabinetService.timeseriesLocationObject.get({
           object_type: $scope.box.content.object_type,
-          id: $scope.box.content.id,
+          id: $scope.box.content.id
         }, function(response){
+          ngProgress.complete(); // Complete the progress bar
           $scope.timeseries = response.results;
           if ($scope.timeseries.length > 0){
-            $scope.selected_timeseries = response.results[0];      
+            $scope.selected_timeseries = response.results[0];
           } else {
             $scope.selected_timeseries = undefined;
           }
@@ -153,7 +158,7 @@ app.controller("ObjectIdGraphCtrl", ["$scope", "Omnibox", "CabinetService",
           $scope.data = $scope.format_data($scope.selected_timeseries.events);
           // dit kan zeker nog mooier
           $scope.metadata.title = $scope.selected_timeseries.location.name;
-          $scope.metadata.ylabel = $scope.selected_timeseries.parameter.description + ' (' + 
+          $scope.metadata.ylabel = $scope.selected_timeseries.parameter.description + ' (' +
           $scope.selected_timeseries.unit.code +')' ;
           $scope.metadata.xlabel = "Tijd";
         } else {
