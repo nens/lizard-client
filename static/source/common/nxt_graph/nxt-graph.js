@@ -327,8 +327,8 @@ app
           };
           legend = {
             title: scope.title,
-            xLabel: attrs.xlabel,
-            yLabel: attrs.ylabel,
+            xLabel: scope.xlabel,
+            yLabel: scope.ylabel,
             ymin: ymin,
             ymax: ymax,
             xmin: xmin,

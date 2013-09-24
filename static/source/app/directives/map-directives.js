@@ -7,9 +7,9 @@ app
 
 			this.initiateLayer = function (layer) {
 				if (layer.type === "TMS" && layer.baselayer){
-  				layer.leafletLayer = L.tileLayer(layer.url, {name:"Background"});
+  				layer.leafletLayer = L.tileLayer(layer.url, {name:"Background", maxZoom: 22});
   			} else if (layer.type === "TMS" && !layer.baselayer){
-  				layer.leafletLayer = L.tileLayer(layer.url);
+  				layer.leafletLayer = L.tileLayer(layer.url, {maxZoom: 22});
   			} else if (layer.type === "UTFGrid"){
   				layer.leafletLayer = new L.UtfGrid(layer.url, {
   					useJsonP: false

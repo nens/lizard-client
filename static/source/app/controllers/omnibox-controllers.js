@@ -145,14 +145,17 @@ app.controller("ObjectIdGraphCtrl", ["$scope", "Omnibox", "CabinetService",
 
       $scope.$watch('selected_timeseries', function () {
         if ($scope.selected_timeseries !== undefined){
-          $scope.timeseries_metadata = {
-            name: $scope.selected_timeseries.name,
-            parameter: $scope.selected_timeseries.parameter,
-            unit: $scope.selected_timeseries.unit
-          };
+          // $scope.timeseries_metadata = {
+          //   name: $scope.selected_timeseries.name,
+          //   parameter: $scope.selected_timeseries.parameter,
+          //   unit: $scope.selected_timeseries.unit
+          // };
           $scope.data = $scope.format_data($scope.selected_timeseries.events);
           // dit kan zeker nog mooier
           $scope.metadata.title = $scope.selected_timeseries.location.name;
+          $scope.metadata.ylabel = $scope.selected_timeseries.parameter.description + ' (' + 
+          $scope.selected_timeseries.unit.code +')' ;
+          $scope.metadata.xlabel = "Tijd";
         } else {
           $scope.data = null;
         }
