@@ -202,7 +202,6 @@ app
           .orient("bottom")
           .tickFormat(d3.format(".2"))
           .ticks(5);
-
       }
 
       var zoomed = function () {
@@ -326,17 +325,28 @@ app
     scope: {
       // TODO: add extra options (e.g. width)? 
       title: '=',
-      xlabel: '=',
       data: '=',
-      ylabel: '='
+      xlabel: '=',
+      ylabel: '=',
+      title: '=',
+      xmin: '=',
+      xmax: '=',
+      ymin: '=',
+      ymax: '=',
+      type: '='
     },
     link: function (scope, element, attrs) {
       scope.$watch('data', function () {
         if (scope.data !== undefined) {
           legend = {
             title: scope.title,
-            xLabel: attrs.xlabel,
-            yLabel: attrs.ylabel
+            xLabel: scope.xlabel,
+            yLabel: scope.ylabel,
+            ymin: ymin,
+            ymax: ymax,
+            xmin: xmin,
+            xmax: xmax,
+            type: attrs.type
           };
           chart(scope.data, element, legend);
         }

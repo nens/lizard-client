@@ -17,10 +17,9 @@ services.service("CabinetService", ["$resource", "$rootScope",
   searchResource = $resource('/api/v1/search/');
   geocodeResource = $resource('/api/v1/geocode/');
   reverseGeocodeResource = $resource('/api/v1/reversegeocode/');
-  timeseriesLocationObjectResource = $resource('/api/v1/timeseries/:id/?location__object_type__name=:object_type&location__object_id=:object_id', {
+  timeseriesLocationObjectResource = $resource('/api/v1/timeseries/?object=:object_type$:id', {
     object_type: '@object_type',
     id: '@id',
-    object_id: 1
   });
   // timeseriesResource = $resource('/api/v1/timeseries/:id/', {
   //   id: '@id'
@@ -46,6 +45,7 @@ services.service("CabinetService", ["$resource", "$rootScope",
 }]);
 
 
+
 //NOTE this seems like a superfluous service; let's try to get rid of it
 services.service("Omnibox", [function () {
   var box = {
@@ -53,9 +53,11 @@ services.service("Omnibox", [function () {
     disabled: false,
     showCards: false,
     type: 'empty',
-    content: 'empty'
+    content: 'empty',
+    changed: Date.now()
   };
 
+  // TODO: These functions should go to the directive
   box.open = function (type) {
     box.type = type;
     box.showCards = true;

@@ -1,6 +1,6 @@
-angular.module('omnibox', [])
-	.directive('boxContent', ["$compile", "$http", "$templateCache",
-		function($compile, $http, $templateCache) {
+app
+	.directive('boxContent', ["$compile", "$http", "$templateCache", "Omnibox",
+		function($compile, $http, $templateCache, Omnibox) {
 
       var getTemplate = function(contentType) {
           if (contentType === undefined) contentType = 'empty';
@@ -31,6 +31,23 @@ angular.module('omnibox', [])
           });
         };
         replaceTemplate();
+      };
+
+      // TODO: this is going to handle the opening. Not yet
+      function BoxCtrl ($scope){
+        $scope.box = Omnibox;
+        this.open = function(){
+          $scope.box.type = type;
+          $scope.box.showCards = true;
+        };
+
+        this.close = function(){
+          $scope.box.type = 'empty';
+          $scope.box.showCards = false;
+        };
+        $scope.$watch('box.changed', function(){
+          // this.open($scope.box.type);
+        });
       };
 
       return {

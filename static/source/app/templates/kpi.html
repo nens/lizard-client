@@ -1,7 +1,7 @@
 <div class="card" ng-controller="KpiCtrl" ng-animate=" 'animate' ">
   <div>
-    <h2> {[{ kpi.cat_dict[kpi.slct_cat]  }]} - {[{ kpi.slct_date }]} </h2>
-    <h4> {[{ kpi.slct_area }]} </h4>
+    <h2> <% kpi.cat_dict[kpi.slct_cat]  %> - <% kpi.slct_date %> </h2>
+    <h4> <% kpi.slct_area %> </h4>
     <div>
       <dl class="dl-horizontal">
         <div class="btn-group btn-group-vertical">
@@ -12,7 +12,7 @@
                 ng-class="{'btn-primary': category == kpi.slct_cat}"
                 ng-click="activate(kpi.slct_date, kpi.slct_area, category)"
                 class="btn btn-mini btn-block">
-                {[{ kpi.cat_dict[category]  }]}
+                <% kpi.cat_dict[category]  %>
               </button>
             </dt>
             <dd>
@@ -22,19 +22,19 @@
                 'badge-warning': labelValue(kpi.slct_date, kpi.slct_area, category) <  kpi.thresholds.warning && labelValue(kpi.slct_date, kpi.slct_area, category) > kpi.thresholds.error,
                 'badge-important': labelValue(kpi.slct_date, kpi.slct_area, category) <= kpi.thresholds.error && labelValue(kpi.slct_date, kpi.slct_area, category) > 0
                 }">
-                {[{ labelValue(kpi.slct_date, kpi.slct_area, category) }]}
+                <% labelValue(kpi.slct_date, kpi.slct_area, category) %>
               </span>
             </dd>
           </div>
         </div>
       </dl>
     </div>
-    <nxt-line-graph data="formatted_data" title="" ylabel="" xlabel=""></nxt-line-graph>
+    <nxt-line-graph data="formatted_data" title="" ylabel="" xlabel="" ymin="0" ymax="10" type="kpi"></nxt-line-graph>
     <div>
       <button type="button" class="btn btn-small"
         ng-class="{'btn-primary': date == kpi.slct_date}"
         ng-repeat="date in kpi.dates"
-        ng-click="activate(date, kpi.slct_area, kpi.slct_cat)">{[{date}]}
+        ng-click="activate(date, kpi.slct_area, kpi.slct_cat)"><%date%>
       </button>
     </div>
     <br />

@@ -5,13 +5,13 @@ var app = angular.module("lizard-nxt", [
   'ui.event',
   'ui.highlight',
   'ui.keypress',
-  'omnibox',
+  // 'omnibox',
   'lizard-nxt.services']);
 
 app.config(function($interpolateProvider) {
   //To prevent Django and Angular Template hell
-  $interpolateProvider.startSymbol('{[{');
-  $interpolateProvider.endSymbol('}]}');
+  $interpolateProvider.startSymbol('<%');
+  $interpolateProvider.endSymbol('%>');
  });
 
 
