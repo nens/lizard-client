@@ -53,7 +53,7 @@ services.service("Omnibox", [function () {
     disabled: false,
     showCards: false,
     type: 'empty',
-    content: 'empty',
+    content: {},
     changed: Date.now()
   };
 

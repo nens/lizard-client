@@ -16,19 +16,23 @@ app
                   if (layer_types[i] == 'knoop' || layer_types[i] == 'geslotenleiding'){
                     var url = layer.url + '.grid?object_types=' + layer_types[i];
                     var leafletLayer = new L.UtfGrid(url, {
-                      useJsonP: false
+                      useJsonP: false,
+                      maxZoom: 20
                     });
                     leafletLayer.on('click', function (e) {
                       if (e.data){
                         $scope.$apply(function(){
-                          Omnibox.type = 'object_id';
+                          Omnibox.type =  e.data.entity_name;
                           Omnibox.showCards = true;
-                          Omnibox.content = {
-                            object_type: e.data.entity_name,
-                            id: e.data.id,
-                            data: e.data
+                          Omnibox.content.object_type = e.data.entity_name;
+                          Omnibox.content.id = e.data.id;
+                          Omnibox.content.data = e.data;
+                          // Otherwise changes are watched and called to often.
+                          if (Omnibox.content.changed === undefined){
+                            Omnibox.content.changed = true;
+                          } else {
+                            Omnibox.content.changed = !Omnibox.content.changed;                          
                           }
-                          console.log(e.data)
                         });
                       }
                     });

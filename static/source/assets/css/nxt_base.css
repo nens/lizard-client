@@ -217,6 +217,10 @@ html, body, #map {
     overflow: auto;
 }
 
+.card.objectidgraph{
+    /*margin-left: 1em;*/
+}
+
 
 .clickable{
     cursor: pointer;

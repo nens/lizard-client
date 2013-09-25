@@ -124,15 +124,8 @@ app.controller("GraphCtrl", ["$scope", "Omnibox",
 app.controller("ObjectIdGraphCtrl", ["$scope", "ngProgress", "Omnibox", "CabinetService",
     function($scope, ngProgress, Omnibox, CabinetService){
       $scope.box = Omnibox;
-      $scope.metadata = {
-        title: null,
-        leidinglengte: $scope.box.content.data.lei_len,
-        profiel_hoogte: $scope.box.content.data.pro_hgt,
-        profiel_breedte: $scope.box.content.data.pro_bre,
-        type: $scope.box.content.data.entity_type
-      };
 
-      $scope.$watch('box.content', function () {
+      $scope.$watch('box.content.changed', function () {
         ngProgress.start(); // Show progress bar to indicate we're doing something for the user
         var new_data_get = CabinetService.timeseriesLocationObject.get({
           object_type: $scope.box.content.object_type,
@@ -146,10 +139,16 @@ app.controller("ObjectIdGraphCtrl", ["$scope", "ngProgress", "Omnibox", "Cabinet
             $scope.selected_timeseries = undefined;
           }
         });
-      });
+        $scope.metadata = {
+            title: null,
+            fromgrid: $scope.box.content.data,
+            type: $scope.box.content.data.entity_name
+          };
+      }, true);
 
       $scope.$watch('selected_timeseries', function () {
         if ($scope.selected_timeseries !== undefined){
+
           $scope.data = $scope.format_data($scope.selected_timeseries.events);
           // dit kan zeker nog mooier
           $scope.metadata.title = $scope.selected_timeseries.location.name;
@@ -157,11 +156,12 @@ app.controller("ObjectIdGraphCtrl", ["$scope", "ngProgress", "Omnibox", "Cabinet
           $scope.selected_timeseries.unit.code +')' ;
           $scope.metadata.xlabel = "Tijd";
         } else {
-          $scope.data = null;
+          $scope.data = undefined;
         }
       });
 
       $scope.format_data = function (data) {
+        console.log(data)
         if (data[0]){
         $scope.formatted_data = [];
           for (var i=0; i<data[0].values.length; i++){

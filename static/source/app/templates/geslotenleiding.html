@@ -1,0 +1,14 @@
+<div class="card objectidgraph" ng-controller="ObjectIdGraphCtrl">
+	<strong>Geslotenleiding - <% metadata.fromgrid.id %></strong>
+	<dl class="dl-horizontal">
+		<dt>Lengte </dt><dd ng-bind="metadata.fromgrid.lei_len"></dd>
+		<dt>Hoogte </dt><dd ng-bind="metadata.fromgrid.pro_hgt"></dd>
+		<dt>Breedte </dt><dd ng-bind="metadata.fromgrid.pro_bre"></dd>
+	</dl>
+  <div class="input-prepend">
+  	<span class="add-on"> Tijdreeks</span> 
+  	<select ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
+  </div>
+
+	<nxt-line-graph data="data" title="metadata.name" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>
+</div>
