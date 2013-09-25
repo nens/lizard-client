@@ -128,12 +128,15 @@ app
         },
         maxwidth = 350,
         maxheight = 200;
+
       if (legend.yLabel) {
         margin.left = 45;
       }
+
       if (legend.xLabel) {
         margin.bottom = 15;
       }
+
       var width = maxwidth - margin.left - margin.right,
         height = maxheight - margin.top - margin.bottom;
 
@@ -183,7 +186,6 @@ app
             return d.distance;
           }))
           .range([0, width]);
-
 
         line.x(function (d) {
           return x(d.distance);
@@ -295,8 +297,8 @@ app
       //Create Y axis label
       svg.append("text")
         .attr("transform", "rotate(-90)")
-        .attr("y", 0-margin.left)
-        .attr("x",0 - (height / 2))
+        .attr("y", 0 - margin.left)
+        .attr("x", 0 - (height / 2))
         .attr("dy", "0.9em")
         .style("text-anchor", "middle")
         .text(legend.yLabel);
@@ -328,7 +330,6 @@ app
       data: '=',
       xlabel: '=',
       ylabel: '=',
-      title: '=',
       xmin: '=',
       xmax: '=',
       ymin: '=',
@@ -342,10 +343,10 @@ app
             title: scope.title,
             xLabel: scope.xlabel,
             yLabel: scope.ylabel,
-            ymin: ymin,
-            ymax: ymax,
-            xmin: xmin,
-            xmax: xmax,
+            ymin: attrs.ymin,
+            ymax: attrs.ymax,
+            xmin: attrs.xmin,
+            xmax: attrs.xmax,
             type: attrs.type
           };
           chart(scope.data, element, legend);
