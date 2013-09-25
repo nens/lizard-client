@@ -36,7 +36,8 @@ app
                 }
               }
             }
-  				layer.leafletLayer = L.tileLayer(layer.url + '.png?object_types=' + layer.content, {maxZoom: 20, zIndex: layer.z_index});
+            	var params = layer.content == '' ? '' : '?object_types=' + layer.content;
+  				layer.leafletLayer = L.tileLayer(layer.url + '.png' + params, {maxZoom: 20, zIndex: layer.z_index});
   			} else if (layer.type === "WMS"){
           layer.leafletLayer = L.tileLayer.wms(layer.url, {
             layers: layer.content,
