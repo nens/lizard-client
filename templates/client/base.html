@@ -30,7 +30,7 @@
     </script>
   </head>
 
-  <body>
+  <body ng-controller="MasterCtrl">
     <header>
       <div id="logo-row" class="navbar">
         <div id="logo">
@@ -39,7 +39,10 @@
         <div id="site-actions">
           <ul class="nav pull-right" id="rightbar-actions">
             <li class="site">
-              <a href="#" ng-click="show()" ng-controller="ImpeachCandidate"><i class="icon-dashboard"></i>&nbsp;KPI</a>
+              <a href="#" ng-click="toggle_profile()"><i class="icon-resize-full"></i></a>
+            </li>
+            <li>
+              <a href="#" ng-click="show()" ng-controller="ImpeachCandidate"><i class="icon-dashboard"></i></a>
             </li>
             {% if user.is_authenticated %}
               <li class="dropdown">
@@ -72,11 +75,8 @@
 
     {% block content %}
 
-
-        
-      
-      <div ng-controller="MapCtrl">
-        <map layer-switch kpilayer="onAreaClick()" pan-zoom="panZoom" layers="data.layers"></map>
+      <div ng-controller="MapCtrl" >
+        <map layer-switch kpilayer="onAreaClick()" pan-zoom="panZoom" layers="data.layers" rasterprofile="disabled" ng-controller="ProfileCtrl"></map>
         <div class="layer-switcher-enabler searchbox-shadow" ng-mouseover="" ng-hide="data.enabled" ng-click="enableLayerSwitcher()">
           <i class="icon-globe"></i>
           <span class="info-text">{% trans "Kaarten" %}</span>
@@ -142,8 +142,10 @@
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/omnibox-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/map-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/kpi-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/profile-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/omnibox-controllers.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/kpi-controllers.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/profile-controllers.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/filters/truncate.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/common/nxt_box/nxt-box.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/common/nxt_graph/nxt-graph.js?{{ random_string }}"></script>

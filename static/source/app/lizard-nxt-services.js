@@ -66,6 +66,10 @@ services.service("Omnibox", [function () {
     box.showCards = false;
   };
 
+  box.get_profile = function () {
+    return "ok";
+  };
+
   return box;
 }]);
 

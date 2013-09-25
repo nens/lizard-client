@@ -63,7 +63,6 @@ app.directive('kpilayer', function () {
       });
 
       scope.$watch('kpi.kpichanged', function () {
-        console.log(scope);
         if (scope.kpi.kpiData.features !== undefined) {
           areas.setStyle(styler);
         }
