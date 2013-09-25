@@ -145,11 +145,6 @@ app.controller("ObjectIdGraphCtrl", ["$scope", "Omnibox", "CabinetService",
 
       $scope.$watch('selected_timeseries', function () {
         if ($scope.selected_timeseries !== undefined){
-          // $scope.timeseries_metadata = {
-          //   name: $scope.selected_timeseries.name,
-          //   parameter: $scope.selected_timeseries.parameter,
-          //   unit: $scope.selected_timeseries.unit
-          // };
           $scope.data = $scope.format_data($scope.selected_timeseries.events);
           // dit kan zeker nog mooier
           $scope.metadata.title = $scope.selected_timeseries.location.name;
@@ -162,13 +157,17 @@ app.controller("ObjectIdGraphCtrl", ["$scope", "Omnibox", "CabinetService",
       });
 
       $scope.format_data = function (data) {
+        if (data[0]){
         $scope.formatted_data = [];
-        for (var i=0; i<data[0].values.length; i++){
-          xyobject = {
-            date: data[1].values[i],
-            value: data[0].values[i]
-          };
-          $scope.formatted_data.push(xyobject);
+          for (var i=0; i<data[0].values.length; i++){
+            xyobject = {
+              date: data[1].values[i],
+              value: data[0].values[i]
+            };
+            $scope.formatted_data.push(xyobject);
+          }
+        } else {
+          $scope.formatted_data = undefined;
         }
         return $scope.formatted_data;
       };

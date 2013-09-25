@@ -9,30 +9,32 @@ app
 				if (layer.type === "TMS" && layer.baselayer){
   				layer.leafletLayer = L.tileLayer(layer.url + '.png', {name:"Background", maxZoom: 20});
   			} else if (layer.type === "TMS" && !layer.baselayer){
-          // TODO: Make this not suck. OMG.
+          // TODO: Make this not suck. 
           if (layer.url.split('/api/v1/').length > 0){
-              var layer_types = layer.content.split(',');
-              for (var i in layer_types){
-                if (layer_types[i] == 'knoop' || layer_types[i] == 'geslotenleiding'){
-                  var url = layer.url + '.grid?object_types=' + layer_types[i];
-                  var leafletLayer = new L.UtfGrid(url, {
-                    useJsonP: false
-                  });
-                  leafletLayer.on('click', function (e) {
-                    if (e.data){
-                      $scope.$apply(function(){
-                        Omnibox.type = 'object_id';
-                        Omnibox.showCards = true;
-                        Omnibox.content = {
-                          object_type: e.data.entity_name,
-                          id: e.data.id,
-                          data: e.data
-                        }
-                        console.log(e.data)
-                      });
-                    }
-                  });
-                  $scope.map.addLayer(leafletLayer);
+            if (layer.content !== null) {
+                var layer_types = layer.content.split(',');
+                for (var i in layer_types){
+                  if (layer_types[i] == 'knoop' || layer_types[i] == 'geslotenleiding'){
+                    var url = layer.url + '.grid?object_types=' + layer_types[i];
+                    var leafletLayer = new L.UtfGrid(url, {
+                      useJsonP: false
+                    });
+                    leafletLayer.on('click', function (e) {
+                      if (e.data){
+                        $scope.$apply(function(){
+                          Omnibox.type = 'object_id';
+                          Omnibox.showCards = true;
+                          Omnibox.content = {
+                            object_type: e.data.entity_name,
+                            id: e.data.id,
+                            data: e.data
+                          }
+                          console.log(e.data)
+                        });
+                      }
+                    });
+                    $scope.map.addLayer(leafletLayer);
+                  }
                 }
               }
             }
