@@ -145,7 +145,7 @@ app
           });
 
       var y = d3.scale.linear()
-          .domain([0, maxY + 1])
+          .domain([legend.ymin, maxY + 1])
           .range([height, 0]);
 
       var line = d3.svg.line()
