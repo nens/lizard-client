@@ -40,10 +40,14 @@ html, body, #map {
     z-index: 2000; /* this should be above leaflet. */
     width: 200px;
     top: 56px;
-    right: 0px;
+    right: 16px;
     position: absolute;
     background: white;
     list-style-type: none;
+}
+.layer-switcher .nav {
+    margin: -17px;
+    border:1px dashed #ccc;
 }
 
 .layer-switcher ul li{
