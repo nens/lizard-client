@@ -1,10 +1,12 @@
 app.controller("SearchCtrl",
-  ["$scope", "$resource", "CabinetService", "Omnibox",
-        function ($scope, $resource, CabinetService, Omnibox) {
+  ["$scope", "ngProgress", "$resource", "CabinetService", "Omnibox",
+        function ($scope, ngProgress, $resource, CabinetService, Omnibox) {
 
     $scope.box = Omnibox;
 
     $scope.filter = function ($event) {
+      ngProgress.start(); // Start to indicate we're doing something...
+
       if ($scope.box.query.length > 1) {
         var search = CabinetService.search.get({q: $scope.box.query}, function (data) {
             console.log(data.hits.hits);
@@ -15,7 +17,9 @@ app.controller("SearchCtrl",
             $scope.searchData = sources;
           });
 
+        
         var geocode = CabinetService.geocode.query({q: $scope.box.query}, function (data) {
+                ngProgress.complete(); // Finish the loading indicator
                 console.log(data);
                 $scope.box.content = data;
               });
@@ -24,9 +28,9 @@ app.controller("SearchCtrl",
     };
 
     $scope.reset_query = function () {
-        // clean stuff.. 
+        // clean stuff..
         // Search Ctrl is the parent of omnibox cards
-        // therefore no need to call $rootScope. 
+        // therefore no need to call $rootScope.
         $scope.$broadcast('clean');
         $scope.box.query = null;
         $scope.box.type= 'empty';
@@ -64,7 +68,6 @@ app.controller("ResultsCtrl",
         $scope.currentObject = obj;
         if ($scope.currentObject.lat && $scope.currentObject.lon) {
             // A lat and lon are present, instruct the map to pan/zoom to it
-            console.log('Location given, take us there');
             var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
             $scope.panZoom = {
               lat: $scope.currentObject.lat,
@@ -118,57 +121,56 @@ app.controller("GraphCtrl", ["$scope", "Omnibox",
 }]);
 
 
-app.controller("ObjectIdGraphCtrl", ["$scope", "Omnibox", "CabinetService",
-    function($scope, Omnibox, CabinetService){
+app.controller("ObjectIdGraphCtrl", ["$scope", "ngProgress", "Omnibox", "CabinetService",
+    function($scope, ngProgress, Omnibox, CabinetService){
       $scope.box = Omnibox;
-      $scope.metadata = {
-        title: null,
-        leidinglengte: $scope.box.content.data.lei_len,
-        profiel_hoogte: $scope.box.content.data.pro_hgt,
-        profiel_breedte: $scope.box.content.data.pro_bre,
-        type: $scope.box.content.data.entity_type
-      };
 
-      $scope.$watch('box.content', function () {
+      $scope.$watch('box.content.changed', function () {
+        ngProgress.start(); // Show progress bar to indicate we're doing something for the user
         var new_data_get = CabinetService.timeseriesLocationObject.get({
           object_type: $scope.box.content.object_type,
-          id: $scope.box.content.id,
+          id: $scope.box.content.id
         }, function(response){
+          ngProgress.complete(); // Complete the progress bar
           $scope.timeseries = response.results;
           if ($scope.timeseries.length > 0){
-            $scope.selected_timeseries = response.results[0];      
+            $scope.selected_timeseries = response.results[0];
           } else {
             $scope.selected_timeseries = undefined;
           }
         });
-      });
+        $scope.metadata = {
+            title: null,
+            fromgrid: $scope.box.content.data,
+            type: $scope.box.content.data.entity_name
+          };
+      }, true);
 
       $scope.$watch('selected_timeseries', function () {
         if ($scope.selected_timeseries !== undefined){
-          // $scope.timeseries_metadata = {
-          //   name: $scope.selected_timeseries.name,
-          //   parameter: $scope.selected_timeseries.parameter,
-          //   unit: $scope.selected_timeseries.unit
-          // };
+
           $scope.data = $scope.format_data($scope.selected_timeseries.events);
           // dit kan zeker nog mooier
           $scope.metadata.title = $scope.selected_timeseries.location.name;
-          $scope.metadata.ylabel = $scope.selected_timeseries.parameter.description + ' (' + 
-          $scope.selected_timeseries.unit.code +')' ;
+          $scope.metadata.ylabel = 'Aciditeit (%)' ; //$scope.selected_timeseries.parameter + $scope.selected_timeseries.unit.code
           $scope.metadata.xlabel = "Tijd";
         } else {
-          $scope.data = null;
+          $scope.data = undefined;
         }
       });
 
       $scope.format_data = function (data) {
+        if (data[0]){
         $scope.formatted_data = [];
-        for (var i=0; i<data[0].values.length; i++){
-          xyobject = {
-            date: data[1].values[i],
-            value: data[0].values[i]
-          };
-          $scope.formatted_data.push(xyobject);
+          for (var i=0; i<data[0].values.length; i++){
+            xyobject = {
+              date: data[1].values[i],
+              value: data[0].values[i]
+            };
+            $scope.formatted_data.push(xyobject);
+          }
+        } else {
+          $scope.formatted_data = undefined;
         }
         return $scope.formatted_data;
       };

@@ -3,35 +3,40 @@ app
   .directive('map', [function () {
 
     function MapCtrl ($scope, Omnibox){
-
 			this.initiateLayer = function (layer) {
 				if (layer.type === "TMS" && layer.baselayer){
   				layer.leafletLayer = L.tileLayer(layer.url + '.png', {name:"Background", maxZoom: 20});
   			} else if (layer.type === "TMS" && !layer.baselayer){
-          // TODO: Make this not suck. OMG.
+          // TODO: Make this not suck. 
           if (layer.url.split('/api/v1/').length > 0){
-              var layer_types = layer.content.split(',');
-              for (var i in layer_types){
-                if (layer_types[i] == 'knoop' || layer_types[i] == 'geslotenleiding' || layer_types[i] == 'pumpstation'){
-                  var url = layer.url + '.grid?object_types=' + layer_types[i];
-                  var leafletLayer = new L.UtfGrid(url, {
-                    useJsonP: false
-                  });
-                  leafletLayer.on('click', function (e) {
-                    if (e.data){
-                      $scope.$apply(function(){
-                        Omnibox.type = 'object_id';
-                        Omnibox.showCards = true;
-                        Omnibox.content = {
-                          object_type: e.data.entity_name,
-                          id: e.data.id,
-                          data: e.data
-                        }
-                        console.log(e.data)
-                      });
-                    }
-                  });
-                  $scope.map.addLayer(leafletLayer);
+            if (layer.content !== null) {
+                var layer_types = layer.content.split(',');
+                for (var i in layer_types){
+                  if (layer_types[i] == 'knoop' || layer_types[i] == 'geslotenleiding' || layer_types[i] == 'pumpstation'){
+                    var url = layer.url + '.grid?object_types=' + layer_types[i];
+                    var leafletLayer = new L.UtfGrid(url, {
+                      useJsonP: false,
+                      maxZoom: 20
+                    });
+                    leafletLayer.on('click', function (e) {
+                      if (e.data){
+                        $scope.$apply(function(){
+                          Omnibox.type =  e.data.entity_name;
+                          Omnibox.showCards = true;
+                          Omnibox.content.object_type = e.data.entity_name;
+                          Omnibox.content.id = e.data.id;
+                          Omnibox.content.data = e.data;
+                          // Otherwise changes are watched and called to often.
+                          if (Omnibox.content.changed === undefined){
+                            Omnibox.content.changed = true;
+                          } else {
+                            Omnibox.content.changed = !Omnibox.content.changed;                          
+                          }
+                        });
+                      }
+                    });
+                    $scope.map.addLayer(leafletLayer);
+                  }
                 }
               }
             }
@@ -87,19 +92,19 @@ app
         };
 
         // Expects a leafletLayer as an argument
-	      this.addLayer = function (layer) {
-	        $scope.map.addLayer(layer);
-	      };
+        this.addLayer = function (layer) {
+          $scope.map.addLayer(layer);
+        };
 
         // Expects a leafletLayer as an argument
-	      this.removeLayer = function (layer) {
-	        $scope.map.removeLayer(layer);
-	      };
+        this.removeLayer = function (layer) {
+          $scope.map.removeLayer(layer);
+        };
 
-	      this.panZoomTo = function (panZoom) {
+        this.panZoomTo = function (panZoom) {
           $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
         };
-    };
+    }
 
     var link = function (scope, element, attrs) {
     	// instead of 'map' element here for testability
@@ -108,18 +113,18 @@ app
           zoomControl: false,
           zoom: 8
         });
-
-    	scope.map = map;
+      scope.map = map;
     };
 
   return {
       restrict: 'E',
-  		replace: true,
-		  template: '<div id="map"></div>',
+      replace: true,
+      template: '<div id="map"></div>',
       controller: MapCtrl,
       link: link
   };
 }]);
+
 
 app.directive('layerSwitch', [function () {
 	return {
@@ -154,7 +159,7 @@ app.directive('panZoom', [function () {
     link: function (scope, elements, attrs, MapCtrl) {
       scope.$watch('panZoom', function (){
         if (scope.panZoom !== null){
-          if (scope.panZoom.hasOwnProperty('lat') && 
+          if (scope.panZoom.hasOwnProperty('lat') &&
             scope.panZoom.hasOwnProperty('lng') &&
             scope.panZoom.hasOwnProperty('zoom') ) {
            MapCtrl.panZoomTo(scope.panZoom);

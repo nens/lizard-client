@@ -48,7 +48,7 @@ app
         $scope.$watch('box.changed', function(){
           // this.open($scope.box.type);
         });
-      };
+      }
 
       return {
           restrict: 'A',

@@ -201,10 +201,31 @@ html, body, #map {
     overflow:hidden;
     text-overflow:ellipsis;
     padding-bottom:25px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 300;
+    margin: 0;    
+}
+
+.card h1, .card h2, .card h3{
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    margin: 0;
+}
+
+.card h4, .card h5 {
+    font-family: "Helvetica Neue", Roboto, Arial, sans-serif;
+    font-size: 1em;
+    font-weight: 00;
+    margin: 0;
 }
 
 .card .omnibox-overflow {
     overflow: auto;
+}
+
+.card.objectidgraph{
+    /*margin-left: 1em;*/
 }
 
 
@@ -246,7 +267,7 @@ html, body, #map {
 .line {
     fill: none;
     stroke: darkcyan;
-    stroke-width: 2.5px;
+    stroke-width: 2px;
 }
 
 .title {

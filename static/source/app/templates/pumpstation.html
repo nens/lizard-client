@@ -1,0 +1,14 @@
+<div class="card objectidgraph" ng-controller="ObjectIdGraphCtrl">
+	<strong>Gemaal - <% metadata.fromgrid.code %></strong>
+	<dl class="dl-horizontal">
+		<dt>Start niveau </dt><dd ng-bind="metadata.fromgrid.start_level"></dd>
+		<dt>Stop niveau </dt><dd ng-bind="metadata.fromgrid.stop_level"></dd>
+		<dt>Capaciteit </dt><dd ng-bind="metadata.fromgrid.capacity"></dd>
+	</dl>
+  <div class="input-prepend">
+  	<span class="add-on"> Tijdreeks</span> 
+  	<select ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.code for tijdseries in timeseries"></select>
+  </div>
+
+	<nxt-line-graph data="data" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>
+</div>
