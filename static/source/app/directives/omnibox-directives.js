@@ -17,12 +17,12 @@ app
 
       var linker = function(scope, element, attrs) {
 
-        scope.$watch('type', function(){
+        scope.$watch('box.type', function(){
           replaceTemplate();
         });
 
         var replaceTemplate = function(){
-          var loader = getTemplate(scope.type);
+          var loader = getTemplate(scope.box.type);
 
           var promise = loader.success(function(html) {
               element.html(html);
@@ -52,10 +52,6 @@ app
 
       return {
           restrict: 'A',
-          scope: {
-              type:'='
-          },
-          link: linker,
-          controller: BoxCtrl
+          link: linker
       };
   }]);

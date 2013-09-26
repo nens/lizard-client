@@ -1,7 +1,6 @@
 // leaflet.js
 app
-  .directive('map', [function(){
-
+  .directive('map', [function () {
 
     function MapCtrl ($scope, Omnibox){
 			this.initiateLayer = function (layer) {
@@ -57,39 +56,39 @@ app
 
 
         // expects a layer hashtable with a leafletlayer object
-        this.toggleLayer = function(layer){
-          if (!layer.active){
-            if (layer.leafletLayer){
-              $scope.map.removeLayer(layer.leafletLayer);
-            } else {
-              console.log('leaflet layer not defined', layer.type);
-            }
-          } else {
-            if (layer.leafletLayer){
-              $scope.map.addLayer(layer.leafletLayer);
-            } else {
-              console.log('leaflet layer not defined', layer.type);
-            }
-          }
+        this.toggleLayer = function (layer) {
+        	if (!layer.active) {
+        		if (layer.leafletLayer) {
+            	$scope.map.removeLayer(layer.leafletLayer);       		
+          	} else {
+          		console.log('leaflet layer not defined', layer.type);
+          	}
+        	} else {
+         		if (layer.leafletLayer) {
+            	$scope.map.addLayer(layer.leafletLayer);       		
+          	} else {
+          		console.log('leaflet layer not defined', layer.type);
+          	}
+        	}
         };
 
         // expects a layer hashtable with a leafletlayer object
-        this.toggleBaseLayer = function(layer){
-          var layers = $scope.map._layers;
-          if (!layer.active){
-            if (layer.leafletLayer){
-              $scope.map.removeLayer(layer.leafletLayer);
-            } else {
-              console.log('leaflet layer not defined');
-            }
-          } else if (layer.active){
-            if (layer.leafletLayer){
-              $scope.map.addLayer(layer.leafletLayer);
-              layer.leafletLayer.bringToBack();
-            } else {
-              console.log('leaflet layer not defined');
-            }
-          }
+        this.toggleBaseLayer = function (layer) {
+        	var layers = $scope.map._layers
+        	if (!layer.active) {
+        		if (layer.leafletLayer) {
+            	$scope.map.removeLayer(layer.leafletLayer);       		
+          	} else {
+          		console.log('leaflet layer not defined');
+          	}
+        	} else if (layer.active) {
+         		if (layer.leafletLayer) {
+            	$scope.map.addLayer(layer.leafletLayer);
+            	layer.leafletLayer.bringToBack()
+          	} else {
+          		console.log('leaflet layer not defined');
+          	}
+        	}
         };
 
         // Expects a leafletLayer as an argument
@@ -107,9 +106,9 @@ app
         };
     }
 
-    var link = function (scope, element, attrs){
-      // instead of 'map' element here for testability
-      var map = new L.map(element[0], {
+    var link = function (scope, element, attrs) {
+    	// instead of 'map' element here for testability
+    	var map = new L.map(element[0], {
           center: new L.LatLng(52.0992287, 5.5698782),
           zoomControl: false,
           zoom: 8
@@ -126,43 +125,43 @@ app
   };
 }]);
 
-app.directive('layerSwitch', [function(){
-  return {
-    require: 'map',
-    link: function(scope, elements, attrs, MapCtrl) {
-      scope.$watch('data.changed', function (){
-        for (var i in layers){
-          var layer = layers[i];
-          if (!layer.initiated){
-            MapCtrl.initiateLayer(layer);
-          }
-          MapCtrl.toggleLayer(layer);
-        }
-      });
-      scope.$watch('data.baselayerChanged', function (){
-        for (var i in scope.data.baselayers){
-          var layer = scope.data.baselayers[i];
-          if (!layer.initiated){
-            MapCtrl.initiateLayer(layer);
-          }
-          MapCtrl.toggleBaseLayer(layer);
-        }
-      });
-    },
-    restrict: 'A'
-  };
+
+app.directive('layerSwitch', [function () {
+	return {
+		require: 'map',
+		link: function (scope, elements, attrs, MapCtrl) {
+    	scope.$watch('data.changed', function () {
+    		for (var i in layers) {
+    			var layer = layers[i];
+    			if (!layer.initiated) {
+	    			MapCtrl.initiateLayer(layer)  				
+    			}
+    			MapCtrl.toggleLayer(layer);
+     		}
+    	});
+    	scope.$watch('data.baselayerChanged', function () {
+    	  for (var i in scope.data.baselayers) {
+    			var layer = scope.data.baselayers[i];
+    			if (!layer.initiated) {
+	    			MapCtrl.initiateLayer(layer)  				
+    			}
+   				MapCtrl.toggleBaseLayer(layer);
+    		}
+    	});
+		},
+		restrict: 'A',
+	}
 }]);
 
-app.directive('panZoom', [function(){
+app.directive('panZoom', [function () {
   return {
     require: 'map',
-    link: function(scope, elements, attrs, MapCtrl) {
-
+    link: function (scope, elements, attrs, MapCtrl) {
       scope.$watch('panZoom', function (){
         if (scope.panZoom !== null){
           if (scope.panZoom.hasOwnProperty('lat') &&
             scope.panZoom.hasOwnProperty('lng') &&
-            scope.panZoom.hasOwnProperty('zoom') ){
+            scope.panZoom.hasOwnProperty('zoom') ) {
            MapCtrl.panZoomTo(scope.panZoom);
           }
         }

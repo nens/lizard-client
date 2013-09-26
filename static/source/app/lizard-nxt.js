@@ -1,3 +1,5 @@
+'use strict';
+
 var app = angular.module("lizard-nxt", [
   'ngResource',
   'ui.event',
