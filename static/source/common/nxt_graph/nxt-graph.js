@@ -159,7 +159,8 @@ app
       if (data[0].hasOwnProperty('date')) {
         x = d3.time.scale()
           .domain(d3.extent(data, function (d) {
-            if (legend.type === "kpi"){
+            console.log(legend.type)
+            if (legend.type == "kpi"){
               return Date.parse(d.date);            
             } else {
               return d.date;
@@ -168,7 +169,7 @@ app
           .range([0, width]);
 
         line.x(function (d) {
-            if (legend.type === "kpi"){
+            if (legend.type == "kpi"){
               return Date.parse(d.date);            
             } else {
               return d.date;
