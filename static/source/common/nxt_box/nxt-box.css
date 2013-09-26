@@ -137,13 +137,99 @@ div#omnibox {
 
 
 .card {
-    padding: 10px;
-    width: 378px;
+    padding: 15px;
+    width: 370px;
     margin: 5px 0px 0px 0px;
     position: relative;
     background: white;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3),0 4px 15px -5px rgba(0,0,0,0.0);
 }
+
+.card-head {
+    
+/*    display:none;*/
+}
+
+.card-head img { 
+    width: 20px;
+    height: 20px;
+}
+
+/*.card {
+    width:378px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    padding-bottom:25px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 300;
+    margin: 0;    
+}
+*/
+.card h1, .card h2, .card h3{
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    margin: 0;
+}
+
+.card h4, .card h5 {
+    font-family: "Helvetica Neue", Roboto, Arial, sans-serif;
+    font-size: 1em;
+    font-weight: 00;
+    margin: 0;
+}
+
+.card .omnibox-overflow {
+    overflow: auto;
+}
+
+
+.card .location {
+    width:357px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+
+.card .location ul {
+    list-style:none;padding:0;margin:0;
+}
+
+.card .location ul li {
+    border-bottom:1px solid #eee;padding:0;margin:0;
+}
+
+.card .location ul li ul {
+    list-style:none;padding:0;margin:0;
+}
+
+.card .location ul li ul li {
+    display:inline; 
+}
+
+.card .location table {
+    margin:8px 0px 0px 0px;
+}
+
+.card .location table tr td{
+    padding-left:20px;
+}
+
+.clickable{
+    cursor: pointer;
+}
+
+
+.location{
+    width:378px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    padding-bottom:25px;
+}
+
 
 #cards {
     padding: 0px;
