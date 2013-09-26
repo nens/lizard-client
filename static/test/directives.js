@@ -2,59 +2,53 @@ describe('Testing lizard-nxt omnibox directive', function() {
   var scope,
       elem,
       directive,
-      compiled,
+      compile,
       html,
       httpBackend,
-      template,
+      template, 
       type;
       
   beforeEach(function (){
     //load the module
-    module('omnibox', 'templates-main');
+     module('lizard-nxt', 
+      'templates-main');
 
-    //set our view html.
-    html = '<box-content type="graph"></box-content>';
     
     inject(function($compile, $rootScope, $httpBackend, $templateCache) {
       //create a scope (you could just use $rootScope, I suppose)
       scope = $rootScope.$new();
-
+      compile = $compile;
       //get the jqLite or jQuery element
-      elem = angular.element(html);
 
       httpBackend = $httpBackend;
       httpBackend.when("GET", "/static/source/app/templates/empty.html")
         .respond('');
-      type = elem.attr('type')
       var templateLocus = '../lizard_nxt/client/static/source/app/templates/' + type + '.html'
       template = $templateCache.get(templateLocus);
-      console.log(template)
-      $templateCache.put('/static/source/app/templates/empty.html', template);
+      $templateCache.put('/static/source/app/templates/'+ type + '.html', template);
             
       //compile the element into a function to 
       // process the view.
-      compiled = $compile(elem)(scope);
       
       //run the compiled view.
       // compiled(scope)(scope);
       
       //call digest on the scope!
-      scope.$digest();
     });
   });
 
-  it('Should retrieve and draw an empty template', function() {
+  it('Should retrieve and draw a template of the type graph', function() {
     //set a value (the same one we had in the html)
-    // scope.type = 'egg';
-    //check to see if it's blank first
+
+    // TODO: OMnibox needs refactoring. Test will follow
+    elem = angular.element('<box-content type="graph"></box-content>');
+    compiled = compile(elem)(scope);
+    scope.$digest();
+    type = elem.attr('type');
     expect(elem.attr('type')).toBe(type);
-    
-    //click the element.
-    // elem[0].click();
-    
-    // //test to see if it was updated.
-    // expect(elem.text()).toBe('bar');
   });
+
+
 });
 
 describe('Testing leaflet directive', function() {
@@ -88,4 +82,5 @@ describe('Testing leaflet directive', function() {
   });
 
 });
+
 

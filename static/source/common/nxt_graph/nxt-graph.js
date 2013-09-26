@@ -140,12 +140,19 @@ app
       var width = maxwidth - margin.left - margin.right,
         height = maxheight - margin.top - margin.bottom;
 
-      var maxY = d3.max(data, function (d) {
-            return d.value;
-          });
+      if (legend.ymax == undefined){
+        legend.ymax = d3.max(data, function(d){
+              return d.value
+            });
+      }
+      if (legend.ymin == undefined){
+        legend.ymin = d3.min(data, function(d){
+              return d.value
+            });
+      }
 
       var y = d3.scale.linear()
-          .domain([legend.ymin, maxY + 1])
+          .domain([legend.ymin, legend.ymax + 1])
           .range([height, 0]);
 
       var line = d3.svg.line()
@@ -159,12 +166,20 @@ app
       if (data[0].hasOwnProperty('date')) {
         x = d3.time.scale()
           .domain(d3.extent(data, function (d) {
-            return Date.parse(d.date);
+            if (legend.type === "kpi"){
+              return Date.parse(d.date);            
+            } else {
+              return d.date;
+            }
           }))
           .range([0, width]);
 
         line.x(function (d) {
-          return x(Date.parse(d.date));
+            if (legend.type === "kpi"){
+              return x(Date.parse(d.date));
+            } else {
+              return x(d.date);
+            }
         });
 
         var make_x_axis = function () {
@@ -339,14 +354,27 @@ app
     link: function (scope, element, attrs) {
       scope.$watch('data', function () {
         if (scope.data !== undefined) {
+          if (attrs.ymax){
+            var ymax = parseFloat(attrs.ymax);
+          } 
+          if (attrs.ymin){
+            var ymin = parseFloat(attrs.ymin);
+          };
+          if (attrs.xmax){
+            var xmax = parseFloat(attrs.xmax);
+          } 
+          if (attrs.xmin){
+            var xmin = parseFloat(attrs.xmin);
+          };
           legend = {
             title: scope.title,
             xLabel: scope.xlabel,
             yLabel: scope.ylabel,
-            ymin: attrs.ymin,
-            ymax: attrs.ymax,
-            xmin: attrs.xmin,
-            xmax: attrs.xmax,
+            // maybe from scope so controller determines labels
+            ymin: ymin,
+            ymax: ymax,
+            xmin: xmin,
+            xmax: xmax,
             type: attrs.type
           };
           chart(scope.data, element, legend);

@@ -1,9 +1,9 @@
 <div class="card objectidgraph" ng-controller="ObjectIdGraphCtrl">
-	<strong>Geslotenleiding - <% metadata.fromgrid.id %></strong>
+	<strong>Gemaal - <% metadata.fromgrid.code %></strong>
 	<dl class="dl-horizontal">
-		<dt>Lengte </dt><dd ng-bind="metadata.fromgrid.lei_len"></dd>
-		<dt>Hoogte </dt><dd ng-bind="metadata.fromgrid.pro_hgt"></dd>
-		<dt>Breedte </dt><dd ng-bind="metadata.fromgrid.pro_bre"></dd>
+		<dt>Start niveau </dt><dd ng-bind="metadata.fromgrid.start_level"></dd>
+		<dt>Stop niveau </dt><dd ng-bind="metadata.fromgrid.stop_level"></dd>
+		<dt>Capaciteit </dt><dd ng-bind="metadata.fromgrid.capacity"></dd>
 	</dl>
   <div class="input-prepend">
   	<span class="add-on"> Tijdreeks</span> 
