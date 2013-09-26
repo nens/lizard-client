@@ -14,8 +14,6 @@ app.controller("SearchCtrl",
             for (var i in data.hits.hits) {
               sources.push(data.hits.hits[i]._source);
             }
-            $scope.box.content = data;
-            $scope.box.open("search");
             $scope.searchData = sources;
           });
 
