@@ -126,12 +126,10 @@ app.controller("ObjectIdGraphCtrl", ["$scope", "ngProgress", "Omnibox", "Cabinet
       $scope.box = Omnibox;
 
       $scope.$watch('box.content.changed', function () {
-        ngProgress.start(); // Show progress bar to indicate we're doing something for the user
         var new_data_get = CabinetService.timeseriesLocationObject.get({
           object_type: $scope.box.content.object_type,
           id: $scope.box.content.id
         }, function(response){
-          ngProgress.complete(); // Complete the progress bar
           $scope.timeseries = response.results;
           if ($scope.timeseries.length > 0){
             $scope.selected_timeseries = response.results[0];

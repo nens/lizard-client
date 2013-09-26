@@ -141,8 +141,15 @@ div#omnibox {
     width: 370px;
     margin: 5px 0px 0px 0px;
     position: relative;
+    overflow:hidden;
+    white-space: nowrap;
+    text-overflow:ellipsis;
     background: white;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3),0 4px 15px -5px rgba(0,0,0,0.0);
+}
+
+.card:hover {
+    
 }
 
 .card-head {
@@ -221,7 +228,7 @@ div#omnibox {
     cursor: pointer;
 }
 
-
+/*
 .location{
     width:378px;
     white-space:nowrap;
@@ -229,7 +236,7 @@ div#omnibox {
     text-overflow:ellipsis;
     padding-bottom:25px;
 }
-
+*/
 
 #cards {
     padding: 0px;
