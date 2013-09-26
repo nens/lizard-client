@@ -267,7 +267,7 @@ html, body, #map {
 .line {
     fill: none;
     stroke: darkcyan;
-    stroke-width: 2.5px;
+    stroke-width: 2px;
 }
 
 .title {

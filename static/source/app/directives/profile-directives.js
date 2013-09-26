@@ -52,6 +52,7 @@ app.directive('rasterprofile', function () {
           }
 
           mapCtrl.addLayer(firstpolyline);
+          scope.first_click = undefined;
           scope.line_marker = firstpolyline;  // Remember what we've added
           return firstpolyline;
         };
@@ -66,11 +67,10 @@ app.directive('rasterprofile', function () {
 
           var profile_line = drawLine(scope.first_click, e.latlng);
           var profile_line_wkt = toWKT(profile_line);
+          
           // Aargh, FCK leaflet, why can't I get a proper CRS from a MAPPING
           // library
-          //var srs = scope.map.crs();
           var srs = L.CRS.EPSG3857.code;
-          scope.first_click = e.latlng;
           
           // call get_profile controller function on scope
           scope.get_profile(profile_line_wkt, srs);
