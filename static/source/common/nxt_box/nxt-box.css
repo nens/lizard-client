@@ -59,8 +59,9 @@ div#omnibox {
 }
 
 .searchbutton {
-    background-color: #177d89;
-    background-image: -webkit-linear-gradient(top,#177d89,#115e67);
+    background-color: lightseagreen; /*#20b2aa*/
+    /*background-color: #177d89;*/
+    /*background-image: -webkit-linear-gradient(top,#177d89,#115e67);*/
     /*background-color: rgb(-13, 166, 215);*/
     border: 0;
     border-radius: 0 2px 2px 0;
@@ -76,8 +77,8 @@ div#omnibox {
 }
 
 .searchbutton:hover {
-    background-color: #4d90fe;
-    background-image: -webkit-linear-gradient(top,#177d89,#115e67);
+    background-color: #19a199;
+    /*background-image: -webkit-linear-gradient(top,#177d89,#115e67);*/
 }
 
 .searchbutton:focus {
