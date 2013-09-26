@@ -5,7 +5,7 @@ describe('Testing lizard-nxt omnibox directive', function() {
       compile,
       html,
       httpBackend,
-      template,
+      template, 
       type;
       
   beforeEach(function (){
@@ -39,6 +39,8 @@ describe('Testing lizard-nxt omnibox directive', function() {
 
   it('Should retrieve and draw a template of the type graph', function() {
     //set a value (the same one we had in the html)
+
+    // TODO: OMnibox needs refactoring. Test will follow
     elem = angular.element('<box-content type="graph"></box-content>');
     compiled = compile(elem)(scope);
     scope.$digest();
@@ -46,15 +48,7 @@ describe('Testing lizard-nxt omnibox directive', function() {
     expect(elem.attr('type')).toBe(type);
   });
 
-  it('Should retrieve and draw a template of the type graph', function() {
-    //set a value (the same one we had in the html)
-    elem = angular.element('<div box-content type="graph"></div>');
-    compiled = compile(elem)(scope);
-    scope.$digest();
-    type = elem.attr('type');
-    console.log(elem.attr('data'))
-    expect(elem.attr('type')).toBe(type);
-  });
+
 });
 
 describe('Testing leaflet directive', function() {
@@ -88,4 +82,5 @@ describe('Testing leaflet directive', function() {
   });
 
 });
+
 
