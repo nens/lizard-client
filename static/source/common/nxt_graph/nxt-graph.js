@@ -159,12 +159,20 @@ app
       if (data[0].hasOwnProperty('date')) {
         x = d3.time.scale()
           .domain(d3.extent(data, function (d) {
-            return Date.parse(d.date);
+            if (legend.type === "kpi"){
+              return Date.parse(d.date);            
+            } else {
+              return d.date;
+            }
           }))
           .range([0, width]);
 
         line.x(function (d) {
-          return x(Date.parse(d.date));
+            if (legend.type === "kpi"){
+              return Date.parse(d.date);            
+            } else {
+              return d.date;
+            }
         });
 
         var make_x_axis = function () {
@@ -343,6 +351,7 @@ app
             title: scope.title,
             xLabel: scope.xlabel,
             yLabel: scope.ylabel,
+            // maybe from scope so controller determines labels
             ymin: attrs.ymin,
             ymax: attrs.ymax,
             xmin: attrs.xmin,

@@ -152,8 +152,7 @@ app.controller("ObjectIdGraphCtrl", ["$scope", "ngProgress", "Omnibox", "Cabinet
           $scope.data = $scope.format_data($scope.selected_timeseries.events);
           // dit kan zeker nog mooier
           $scope.metadata.title = $scope.selected_timeseries.location.name;
-          $scope.metadata.ylabel = $scope.selected_timeseries.parameter.description + ' (' +
-          $scope.selected_timeseries.unit.code +')' ;
+          $scope.metadata.ylabel = ' (' +   +')' ; //$scope.selected_timeseries.parameter + $scope.selected_timeseries.unit.code
           $scope.metadata.xlabel = "Tijd";
         } else {
           $scope.data = undefined;
@@ -161,7 +160,6 @@ app.controller("ObjectIdGraphCtrl", ["$scope", "ngProgress", "Omnibox", "Cabinet
       });
 
       $scope.format_data = function (data) {
-        console.log(data)
         if (data[0]){
         $scope.formatted_data = [];
           for (var i=0; i<data[0].values.length; i++){
