@@ -145,15 +145,43 @@ div#omnibox {
     box-shadow: 0 2px 6px rgba(0,0,0,0.3),0 4px 15px -5px rgba(0,0,0,0.0);
 }
 
-.card-head {
-    
-/*    display:none;*/
+.card-head span {
+    margin-bottom: 1em;
 }
 
 .card-head img { 
     width: 20px;
     height: 20px;
+    margin-right: 1em;
 }
+
+.card table.left{
+    float: left;
+    line-height: 15px;
+    font-size: 0.9em;
+    list-style: none;
+    width: 120px;
+    margin-left: 120px;
+/*    text-align: right;*/
+    color: #777;
+}
+
+
+.card table.right{
+    line-height: 15px;
+    font-size: 0.9em;
+    list-style: none;
+    width: 120px;
+    margin-left: 225px;
+/*    text-align: right;*/
+    color: #777;
+}
+
+
+.card select{
+    width: 300px;
+}
+
 
 /*.card {
     width:378px;
