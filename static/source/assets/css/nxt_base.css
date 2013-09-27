@@ -12,14 +12,74 @@ html, body, #map {
     position: absolute;
 }
 
+.layer-switcher-wrapper {
+    position: relative;
+    top: 120px;
+    z-index: 15000;
+    width: 200px;
+    right: -180px;
+}
+
+.leaflet-container a {
+    color: #1abc9c;
+}
+
+.navbar .nav li.dropdown.open > .dropdown-toggle, .navbar .nav li.dropdown.active > .dropdown-toggle, .navbar .nav li.dropdown.open.active > .dropdown-toggle {
+    background-color: transparent;
+    color: grey;
+}
+
+.slide-left {
+    animation-name: slide-left;
+    -webkit-animation-name: slide-left;  
+
+    animation-duration: 1s; 
+    -webkit-animation-duration: 1s;
+
+    animation-timing-function: ease-in-out; 
+    -webkit-animation-timing-function: ease-in-out;     
+
+    visibility: visible !important;
+    right: 0px;
+
+}
+
+@keyframes slide-left {
+    0% {
+        transform: translateX(90%);
+    }           
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+@-webkit-keyframes slide-left {
+    0% {
+        -webkit-transform: translateX(90%);
+    }           
+    100% {
+        -webkit-transform: translateX(0%);
+    }
+}
+
+.slide-right{
+    transition: 1s;
+    right: -180;
+}
+
+.nav-list {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
 .layer-switcher-enabler {
-    top: 130px;
-    right: -8px;
+    top: 120px;
+    right: 178px;
+    width: 30px;
     position: absolute;
     background: #e74c3c;
-    padding: 20px;
-    font-size: 20px;
-    line-height: 0px;
+    padding: 13px;
+    font-size: 22px;
     cursor: pointer;
     z-index: 1;
 }
@@ -28,9 +88,37 @@ html, body, #map {
     color: #c0392b;
 }
 
+.nav-header {
+    font-family: 'Roboto Slab', serif;
+    font-style: oblique;
+    font-weight: normal;
+    text-transform: none;
+    font-size: 22px;
+    color: #2c3e50;
+}
+
+.layer-switcher label {
+    color: #2c3e50;
+    font-style: normal;
+    font-size: 18;
+}
+
+.layer-switcher label:hover {
+    color: #34495e;
+    font-style: normal;
+    font-size: 18;
+    text-shadow: none;
+}
+
+.layer-switcher label.active {
+    color: #34495e;
+    font-style: italic;
+    font-size: 22;
+    text-shadow: none;
+}
 .arrow-up {
-    top: 150px;
-    right: 40px;
+    top: 128px;
+    right: 220px;
     position: absolute;
     width: 0; 
     height: 0; 
@@ -40,12 +128,11 @@ html, body, #map {
     
     border-bottom: 40px solid #e74c3c;
     z-index: 0;
-    text-shadow: 0 1px 0 #FFFFFF
 }
 
 .arrow-down {
-    top: 130px;
-    right: 40px;
+    top: 120px;
+    right: 220px;
     position: absolute;
     width: 0; 
     height: 0; 
@@ -54,49 +141,32 @@ html, body, #map {
     border-right: 0px solid transparent;
     border-top: 40px solid #e74c3c;
     z-index: 0;
-    text-shadow: 0 1px 0 #FFFFFF
 }
 
 .info-text{
     margin-left: 0.5em;
 }
 
-.layer-switcher{
+.layer-switcher {
     min-height: 200px;
-    z-index: 2000; /* this should be above leaflet. */
     width: 150px;
-    top: 86px;
+    top: 0px;
     right: 0px;
     position: absolute;
-    background: white;
+    background: #95a5a6;
     list-style-type: none;
+    z-index: 2;
+    padding: 20px;
 }
 .layer-switcher .nav {
     margin: -17px;
-    border:1px dashed #ccc;
+    border: 2px dashed #2c3e50;
 }
 
 .layer-switcher ul li{
     list-style-type: none;
 }
 
-.layer-switcher label {
-    color: #177d89;
-}
-
-.layer-switcher label.active {
-    color: #115e67;
-    font: bolder;
-    font-size: 20px;
-}
-
-.enabler-switch-left {
-    right: 190px;
-}
-
-.arrow-switch-left {
-    right: 238px;
-}
 
 #content{
     position: absolute;
@@ -391,7 +461,7 @@ header {
 }
 
 #logo-row div, #logo-row ul {
-    height: 40px;
+    height: 55px;
 }
 #logo, #breadcrumbs, #sidebar-actions {
     float: left;
