@@ -76,7 +76,7 @@
     {% block content %}
 
       <div ng-controller="MapCtrl" >
-        <map layer-switch kpilayer="onAreaClick()" pan-zoom="panZoom" layers="data.layers" rasterprofile="disabled" ng-controller="ProfileCtrl"></map>
+        <map layer-switch kpilayer="onAreaClick()" move-end pan-zoom="panZoom" layers="data.layers" rasterprofile="disabled" ng-controller="ProfileCtrl"></map>
         <div class="layer-switcher-enabler searchbox-shadow" ng-mouseover="" ng-hide="data.enabled" ng-click="enableLayerSwitcher()">
           <i class="icon-globe"></i>
           <span class="info-text">{% trans "Kaarten" %}</span>
@@ -115,10 +115,6 @@
         </div>
       </div>
       
-
-
-
-
 
     {% block box_awesome %}{% endblock %}
     <div class="container-fluid">

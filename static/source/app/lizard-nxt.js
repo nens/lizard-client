@@ -1,5 +1,17 @@
 'use strict';
 
+document.ondblclick = function(e) {
+    var clickObj = document.createElement("div"),
+        inner = document.createElement("div");
+    inner.className = "clickObj";
+    clickObj.style.position = "absolute";
+    clickObj.style.top = e.clientY + "px";
+    clickObj.style.left = e.clientX + "px";
+    this.body.appendChild(clickObj);
+    clickObj.appendChild(inner);
+    setTimeout(function() { clickObj.remove(); }, 1000);
+};
+
 var app = angular.module("lizard-nxt", [
   'ngResource',
   'ui.event',
