@@ -361,7 +361,7 @@ Stolen from lizard 5
     height: 40px;
     margin-bottom: 0px;
     overflow: visible;
-    background-color: lightseagreen;
+    background-color: #16a085;
 /*    background-image: linear-gradient(to bottom, rgb(24, 134, 147), rgb(17, 94, 103));
     background-repeat: repeat-x;*/
 }
@@ -411,7 +411,7 @@ header {
 
     width: 72px;
     height: 27px;
-    background-color: lightseagreen;
+    background-color: #1abc9c;
 /*  background-image: linear-gradient(to bottom, #177d89, #115e67);
     background-image: -webkit-linear-gradient(top, #177d89, #115e67);*/
     border: 0;
