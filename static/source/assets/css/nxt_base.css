@@ -143,34 +143,60 @@ html, body, #map {
 }
 
 .layer-switcher-enabler {
-    top: 56px;
-    right: -5em;
+    top: 130px;
+    right: -8px;
     position: absolute;
-    background: white;
-    padding: 1em;
+    background: #e74c3c;
+    padding: 20px;
     font-size: 20px;
-    line-height: 20px;
-    text-shadow: 0 1px 0 #FFFFFF;
+    line-height: 0px;
     cursor: pointer;
-    color: #115E67;
+    z-index: 1;
+}
+
+.icon-globe {
+    color: #c0392b;
+}
+
+.arrow-up {
+    top: 150px;
+    right: 40px;
+    position: absolute;
+    width: 0; 
+    height: 0; 
+    cursor: pointer;
+    border-left: 40px solid transparent;
+    border-right: 0px solid transparent;
+    
+    border-bottom: 40px solid #e74c3c;
+    z-index: 0;
+    text-shadow: 0 1px 0 #FFFFFF
+}
+
+.arrow-down {
+    top: 130px;
+    right: 40px;
+    position: absolute;
+    width: 0; 
+    height: 0; 
+    cursor: pointer;
+    border-left: 40px solid transparent;
+    border-right: 0px solid transparent;
+    border-top: 40px solid #e74c3c;
+    z-index: 0;
+    text-shadow: 0 1px 0 #FFFFFF
 }
 
 .info-text{
     margin-left: 0.5em;
 }
 
-.layer-switcher-enabler:hover{
-    right:0;
-    transition: right 0.2s;
-    -webkit-transition: right 0.2s; /* Safari */
-}
-
 .layer-switcher{
     min-height: 200px;
     z-index: 2000; /* this should be above leaflet. */
-    width: 200px;
-    top: 56px;
-    right: 16px;
+    width: 150px;
+    top: 86px;
+    right: 0px;
     position: absolute;
     background: white;
     list-style-type: none;
@@ -192,6 +218,14 @@ html, body, #map {
     color: #115e67;
     font: bolder;
     font-size: 20px;
+}
+
+.enabler-switch-left {
+    right: 190px;
+}
+
+.arrow-switch-left {
+    right: 238px;
 }
 
 #content{

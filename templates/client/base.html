@@ -77,12 +77,10 @@
 
       <div ng-controller="MapCtrl" >
         <map layer-switch kpilayer="onAreaClick()" move-end pan-zoom="panZoom" layers="data.layers" rasterprofile="disabled" ng-controller="ProfileCtrl"></map>
-        <div class="layer-switcher-enabler searchbox-shadow" ng-mouseover="" ng-hide="data.enabled" ng-click="enableLayerSwitcher()">
-          <i class="icon-globe"></i>
-          <span class="info-text">{% trans "Kaarten" %}</span>
-        </div>
+        <div class="layer-switcher-enabler"  ng-class="{'enabler-switch-left': data.enabled}" ng-mouseover="" ng-click="toggleLayerSwitcher()"><i class="icon-globe"></i></div>
+        <div class="arrow-up" ng-class="{'arrow-switch-left': data.enabled}" ng-click="toggleLayerSwitcher()"></div>
+        <div class="arrow-down" ng-class="{'arrow-switch-left': data.enabled}" ng-click="toggleLayerSwitcher()"></div>
         <div class="layer-switcher well searchbox-shadow" ng-show="data.enabled" style="visibility:hidden;" ng-style="{visibility:'visible'}">
-          <a class="close" ng-click="disableLayerSwitcher()">&times;</a>
           <ul class="nav nav-list">
             <li class="nav-header">
               {% trans "Basiskaarten" %}
