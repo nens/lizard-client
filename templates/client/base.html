@@ -18,6 +18,7 @@
     <link href="{{ STATIC_URL }}source/common/nxt_box/nxt-box.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL }}source/assets/css/animations.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}vendor/ngprogress/ngProgress.css" rel="stylesheet" />
+    <link href='http://fonts.googleapis.com/css?family=Petit+Formal+Script|Kite+One' rel='stylesheet' type='text/css'>
     <!--<link href="{{ STATIC_URL }}vendor/nvd3/source/nv.d3.css" rel="stylesheet"/>-->
     {% endblock css %}
 
@@ -77,39 +78,41 @@
 
       <div ng-controller="MapCtrl" >
         <map layer-switch kpilayer="onAreaClick()" move-end pan-zoom="panZoom" layers="data.layers" rasterprofile="disabled" ng-controller="ProfileCtrl"></map>
-        <div class="layer-switcher-enabler"  ng-class="{'enabler-switch-left': data.enabled}" ng-mouseover="" ng-click="toggleLayerSwitcher()"><i class="icon-globe"></i></div>
-        <div class="arrow-up" ng-class="{'arrow-switch-left': data.enabled}" ng-click="toggleLayerSwitcher()"></div>
-        <div class="arrow-down" ng-class="{'arrow-switch-left': data.enabled}" ng-click="toggleLayerSwitcher()"></div>
-        <div class="layer-switcher well searchbox-shadow" ng-show="data.enabled" style="visibility:hidden;" ng-style="{visibility:'visible'}">
-          <ul class="nav nav-list">
-            <li class="nav-header">
-              {% trans "Basiskaarten" %}
-              <ul class="unstyled">
-                <li ng-repeat="layer in data.baselayers | orderBy:'order':true">
-                  <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="data.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
-                  <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-header">
-              {% trans "Themakaarten" %}
-              <ul class="unstyled">
-                <li ng-repeat="layergroup in data.layergroups | orderBy:'order':true" >
-                  <input id="<%layergroup.id%>-layergroup" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="toggleLayerGroup(layergroup)">
-                  <label class="ng-class: {active: layergroup.active};" for="<% layergroup.id %>-layergroup" ng-bind="layergroup.name"></label>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-header">
-              {% trans "Specifieke Kaarten" %}
-              <ul class="unstyled">
-                <li ng-repeat="layer in data.layers | orderBy:'order':true">
-                  <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
-                  <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
-                </li>
-              </ul>
-            </li>
-          </ul>
+        <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': data.enabled, 'slide-right': data.disabled}">
+          <div class="layer-switcher-enabler" ng-mouseover="" ng-click="toggleLayerSwitcher()"><i class="icon-globe"></i></div>
+          <div class="arrow-up" ng-click="toggleLayerSwitcher()"></div>
+          <div class="arrow-down" ng-click="toggleLayerSwitcher()"></div>
+          <div class="layer-switcher">
+            <ul class="nav nav-list">
+              <li class="nav-header">
+                {% trans "Basiskaarten" %}
+                <ul class="unstyled">
+                  <li ng-repeat="layer in data.baselayers | orderBy:'order':true">
+                    <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="data.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
+                    <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-header">
+                {% trans "Themakaarten" %}
+                <ul class="unstyled">
+                  <li ng-repeat="layergroup in data.layergroups | orderBy:'order':true" >
+                    <input id="<%layergroup.id%>-layergroup" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="toggleLayerGroup(layergroup)">
+                    <label class="ng-class: {active: layergroup.active};" for="<% layergroup.id %>-layergroup" ng-bind="layergroup.name"></label>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-header">
+                {% trans "Specifieke Kaarten" %}
+                <ul class="unstyled">
+                  <li ng-repeat="layer in data.layers | orderBy:'order':true">
+                    <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
+                    <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
       

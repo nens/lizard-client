@@ -77,10 +77,12 @@ app.controller("MapCtrl", ["$scope", "ngProgress", "CabinetService", "KpiService
 
   $scope.toggleLayerSwitcher = function () {
     if ($scope.data.enabled) {
-      $scope.data.enabled = false;  
-    }
+      $scope.data.enabled = false;
+      $scope.data.disabled = true;
+      }
     else {
-      $scope.data.enabled = true;  
+      $scope.data.enabled = true;
+      $scope.data.disabled = false;
     }
   };
 
