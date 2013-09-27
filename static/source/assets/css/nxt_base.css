@@ -13,7 +13,7 @@ html, body, #map {
 }
 
 .layer-switcher-enabler {
-    top: 100px;
+    top: 130px;
     right: -8px;
     position: absolute;
     background: #e74c3c;
@@ -29,11 +29,12 @@ html, body, #map {
 }
 
 .arrow-up {
-    top: 120px;
+    top: 150px;
     right: 40px;
     position: absolute;
     width: 0; 
     height: 0; 
+    cursor: pointer;
     border-left: 40px solid transparent;
     border-right: 0px solid transparent;
     
@@ -43,11 +44,12 @@ html, body, #map {
 }
 
 .arrow-down {
-    top: 100px;
+    top: 130px;
     right: 40px;
     position: absolute;
     width: 0; 
     height: 0; 
+    cursor: pointer;
     border-left: 40px solid transparent;
     border-right: 0px solid transparent;
     border-top: 40px solid #e74c3c;
@@ -59,16 +61,19 @@ html, body, #map {
     margin-left: 0.5em;
 }
 
-
 .layer-switcher{
     min-height: 200px;
     z-index: 2000; /* this should be above leaflet. */
-    width: 200px;
-    top: 56px;
+    width: 150px;
+    top: 86px;
     right: 0px;
     position: absolute;
     background: white;
     list-style-type: none;
+}
+.layer-switcher .nav {
+    margin: -17px;
+    border:1px dashed #ccc;
 }
 
 .layer-switcher ul li{
@@ -83,6 +88,14 @@ html, body, #map {
     color: #115e67;
     font: bolder;
     font-size: 20px;
+}
+
+.enabler-switch-left {
+    right: 190px;
+}
+
+.arrow-switch-left {
+    right: 238px;
 }
 
 #content{
