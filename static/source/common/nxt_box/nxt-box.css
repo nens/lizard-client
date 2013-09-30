@@ -148,7 +148,7 @@ div#omnibox {
 }
 
 .card-head span {
-    margin-bottom: 1em;
+    margin-bottom: 3em;
 }
 
 .card-head img { 
@@ -157,14 +157,17 @@ div#omnibox {
     margin-right: 1em;
 }
 
+.card table{
+    margin-top: 0.5em;
+}
+
 .card table.left{
     float: left;
     line-height: 15px;
     font-size: 0.9em;
     list-style: none;
-    width: 120px;
-    margin-left: 120px;
-/*    text-align: right;*/
+    width: 150px;
+    margin-left: 37px;
     color: #777;
 }
 
@@ -173,9 +176,8 @@ div#omnibox {
     line-height: 15px;
     font-size: 0.9em;
     list-style: none;
-    width: 120px;
-    margin-left: 225px;
-/*    text-align: right;*/
+    width: 150px;
+    margin-left: 185px;
     color: #777;
 }
 

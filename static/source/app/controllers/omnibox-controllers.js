@@ -141,8 +141,8 @@ app.controller("ObjectIdGraphCtrl", ["$scope", "ngProgress", "Omnibox", "Cabinet
             title: null,
             fromgrid: $scope.box.content.data,
             type: $scope.box.content.data.entity_name
-          };
-      }, true);
+         };
+      });
 
       $scope.$watch('selected_timeseries', function () {
         if ($scope.selected_timeseries !== undefined){

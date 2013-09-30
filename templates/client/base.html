@@ -18,7 +18,7 @@
     <link href="{{ STATIC_URL }}source/common/nxt_box/nxt-box.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL }}source/assets/css/animations.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}vendor/ngprogress/ngProgress.css" rel="stylesheet" />
-    <link href='http://fonts.googleapis.com/css?family=Petit+Formal+Script|Kite+One' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Petit+Formal+Script|Kite+One|Roboto+Slab' rel='stylesheet' type='text/css'>
     <!--<link href="{{ STATIC_URL }}vendor/nvd3/source/nv.d3.css" rel="stylesheet"/>-->
     {% endblock css %}
 
@@ -40,32 +40,26 @@
         <div id="site-actions">
           <ul class="nav pull-right" id="rightbar-actions">
             <li class="site">
-              <a href="#" ng-click="toggle_profile()"><i class="icon-resize-full"></i></a>
+              <a href="#" ng-click="toggle_profile()" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full"></i></a>
             </li>
             <li>
-              <a href="#" ng-click="show()" ng-controller="ImpeachCandidate"><i class="icon-dashboard"></i></a>
+              <a href="#" ng-click="show()" ng-controller="ImpeachCandidate" title="Key Performance Indicator"><i class="icon-dashboard"></i></a>
             </li>
+            <li class="divider-vertical"></li>
             {% if user.is_authenticated %}
-              <li class="dropdown">
-                <a class="dropdown-toggle" data-content="Toon loginopties" data-title="" href="#" data-toggle="dropdown" 
-                data-delay=200>
-                  <i class="icon-user"></i> {{ user.first_name }}
-                  <b class="caret"></b>
+              <li>
+                <a href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}">
+                  <i class="icon-user"></i> {{ user.first_name }} </a>
                 </a>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <a href="{% url "lizard_auth_client.sso_logout" %}?next=/"> {% trans "Logout" %}
-                      </a>
-                    </li>
-                    <li>
-                      <a href="http://sso.lizard.net/edit_profile/"> {% trans "Edit profile" %}
-                      </a>
-                    </li>
-                  </ul>
+              </li>
+              <li>
+                <a href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}">
+                  <i class="icon-gear"></i></a>
               </li>
             {% else %}
               <li>
-                <a href="{% url "login" %}?next=/"><i class="icon-user"></i> {% trans "Login" %}</a>
+                <a href="{% url "login" %}?next=/" title="{% trans 'Login' %}">
+                  <i class="icon-user"></i></a>
               </li>
             {% endif %}
           </ul>
@@ -79,40 +73,44 @@
       <div ng-controller="MapCtrl" >
 
         <map layer-switch kpilayer="onAreaClick()" move-end pan-zoom="panZoom" layers="data.layers" rasterprofile="disabled" ng-controller="ProfileCtrl"></map>
-        <div class="layer-switcher-enabler"  ng-class="{'enabler-switch-left': data.enabled}" ng-mouseover="" ng-click="toggleLayerSwitcher()"><i class="icon-globe"></i></div>
-        <div class="arrow-up" ng-class="{'arrow-switch-left': data.enabled}" ng-click="toggleLayerSwitcher()"></div>
-        <div class="arrow-down" ng-class="{'arrow-switch-left': data.enabled}" ng-click="toggleLayerSwitcher()"></div>
-        <div class="layer-switcher well searchbox-shadow" ng-show="data.enabled" style="visibility:hidden;" ng-style="{visibility:'visible'}">
-          <ul class="nav nav-list">
-            <li class="nav-header">
-              {% trans "Basiskaarten" %}
-              <ul class="unstyled">
-                <li ng-repeat="layer in data.baselayers | orderBy:'order':true">
-                  <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="data.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
-                  <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-header">
-              {% trans "Themakaarten" %}
-              <ul class="unstyled">
-                <li ng-repeat="layergroup in data.layergroups | orderBy:'order':true" >
-                  <input id="<%layergroup.id%>-layergroup" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="toggleLayerGroup(layergroup)">
-                  <label class="ng-class: {active: layergroup.active};" for="<% layergroup.id %>-layergroup" ng-bind="layergroup.name"></label>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-header">
-              {% trans "Specifieke Kaarten" %}
-              <ul class="unstyled">
-                <li ng-repeat="layer in data.layers | orderBy:'order':true">
-                  <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
-                  <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
-                </li>
-              </ul>
-            </li>
-          </ul>
-
+        <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': data.enabled, 'slide-right': data.disabled}">
+          <div class="layer-switcher-enabler" title="{% trans 'Map layers' %}" ng-mouseover="" ng-click="toggleLayerSwitcher()"><i class="icon-globe"></i></div>
+          <div class="arrow-up" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}"></div>
+          <div class="arrow-down" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}"></div>
+          <div class="layer-switcher">
+            <ul class="nav nav-list">
+              <li class="nav-header">
+                {% trans "Achtergrond" %}
+                <hr>
+                <ul class="unstyled">
+                  <li ng-repeat="layer in data.baselayers | orderBy:'order':true">
+                    <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="data.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
+                    <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-header">
+                {% trans "Themakaart" %}
+                <hr>
+                <ul class="unstyled">
+                  <li ng-repeat="layergroup in data.layergroups | orderBy:'order':true" >
+                    <input id="<%layergroup.id%>-layergroup" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="toggleLayerGroup(layergroup)">
+                    <label class="ng-class: {active: layergroup.active};" for="<% layergroup.id %>-layergroup" ng-bind="layergroup.name"></label>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-header">
+                {% trans "Kaartlagen" %}
+                <hr>
+                <ul class="unstyled">
+                  <li ng-repeat="layer in data.layers | orderBy:'order':true">
+                    <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
+                    <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
       
