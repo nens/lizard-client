@@ -17,7 +17,7 @@ html, body, #map {
     top: 120px;
     z-index: 15000;
     width: 200px;
-    right: -180px;
+    right: -170px;
 }
 
 .leaflet-container a {
@@ -64,7 +64,6 @@ html, body, #map {
 
 .slide-right{
     transition: 0.5s;
-    right: -180;
 }
 
 .nav-list {
@@ -82,16 +81,20 @@ html, body, #map {
     font-size: 22px;
     cursor: pointer;
     z-index: 1;
+    height: 22px;
 }
 
 .icon-globe {
-    color: #c0392b;
+    color: #C0392B;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: -11px;
+    position: absolute;
+    top: 50%;
 }
 
 .nav-header {
     font-family: 'Roboto Slab', serif;
-    font-style: oblique;
-    font-weight: normal;
     text-transform: none;
     font-size: 22px;
     color: #2c3e50;
@@ -101,22 +104,23 @@ html, body, #map {
 .layer-switcher label {
     color: #2c3e50;
     font-style: normal;
-    font-size: 18;
+    font-size: 18px;
     text-shadow: none;
 }
 
 .layer-switcher label:hover {
     color: #34495e;
-    font-style: normal;
-    font-size: 18;
+    font-style: italic;
+    font-size: 18px;
     text-shadow: none;
 }
 
 .layer-switcher label.active {
     color: #34495e;
     font-style: italic;
-    font-size: 22;
+    font-size: 18px;
     text-shadow: none;
+    margin-left: 5px;
 }
 .arrow-up {
     top: 128px;
@@ -153,12 +157,12 @@ html, body, #map {
     min-height: 200px;
     width: 150px;
     top: 0px;
-    right: 0px;
+    right: -7px;
     position: absolute;
-    background: #95a5a6;
+    background: rgba(255,255,255,0.9);
     list-style-type: none;
     z-index: 2;
-    padding: 20px;
+    padding: 19px;
 }
 .layer-switcher .nav {
     margin: -17px;
@@ -484,7 +488,11 @@ header {
 }
 
 
-
+hr {
+    margin: 6px 0 4px;
+    border-top: 1px;
+    border-color: #2c3e50;
+}
 
 
 .tactile-searchbox-input {
