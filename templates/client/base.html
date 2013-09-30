@@ -28,6 +28,16 @@
       var baseLayers = {{ strap_base_layers }};
       var layers = {{ strap_layers }};
       var layerGroups = {{ strap_layer_groups }};
+
+      function logOut() {
+        var r=confirm("Weet u zeker dat u wilt uitloggen?");
+        if (r==true) {
+          window.location = "{% url "login" %}?next=/";
+          }
+        else {
+          return false;
+        }
+        }
     </script>
   </head>
 
@@ -48,13 +58,11 @@
             <li class="divider-vertical"></li>
             {% if user.is_authenticated %}
               <li>
-                <a href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}">
-                  <i class="icon-user"></i> {{ user.first_name }} </a>
-                </a>
+                <a href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><i class="icon-user"></i><div id="username"> {{ user.first_name }}</div></a>
               </li>
               <li>
-                <a href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}">
-                  <i class="icon-gear"></i></a>
+                <a id="logout" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"> 
+                  <i class="icon-off"></i></a>
               </li>
             {% else %}
               <li>
