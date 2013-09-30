@@ -1,5 +1,4 @@
-from django.conf.urls import url, patterns
-from django.conf.urls.defaults import include
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('',
     url(r'^$', 'lizard_nxt.client.views.index', name='index'),

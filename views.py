@@ -1,20 +1,18 @@
 # (c) Nelen & Schuurmans.  GPL licensed, see LICENSE.rst.
 # -*- coding: utf-8 -*-
+
 from __future__ import print_function
 from __future__ import unicode_literals
+
 from hashlib import md5
 import json
-import logging
 import random
 
-from django.conf import settings
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.http import HttpResponse
 from django.utils.safestring import mark_safe
-from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
+from rest_framework.renderers import JSONRenderer
 
 from lizard_nxt.server.models import Layer, LayerGroup
 from lizard_nxt.server.serializers import spatial
@@ -25,8 +23,10 @@ def _bootstrap(objects):
 
 
 def index(request):
-    base_layers = spatial.LayerSerializer(Layer.objects.filter(baselayer=True)).data
-    layers = spatial.LayerSerializer(Layer.objects.filter(baselayer=False)).data
+    base_layers = spatial.LayerSerializer(
+        Layer.objects.filter(baselayer=True)).data
+    layers = spatial.LayerSerializer(
+        Layer.objects.filter(baselayer=False)).data
     layer_groups = spatial.LayerGroupSerializer(LayerGroup.objects.all()).data
 
     context = {
