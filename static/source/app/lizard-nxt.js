@@ -30,8 +30,8 @@ app.config(function($interpolateProvider) {
 
 
 app.controller("MasterCtrl",
-  ["$scope", "Omnibox", "CabinetService", "KpiService", 
-  function ($scope, Omnibox, CabinetService, KpiService)  {
+  ["$scope", "$http" ,"CabinetService", "KpiService", 
+  function ($scope, $http, CabinetService, KpiService)  {
 
   $scope.box = {
     query: null,
@@ -104,7 +104,7 @@ app.controller("MasterCtrl",
 // SEARCH-END
 
 
-  $scope.data = {
+  $scope.layerData = {
     layergroups: CabinetService.layergroups,
     layers: CabinetService.layers,
     baselayers: CabinetService.baselayers,
@@ -126,41 +126,41 @@ app.controller("MasterCtrl",
   });
 
   $scope.switchBaseLayer = function(){
-    for (var i in $scope.data.baselayers){
-      if ($scope.data.baselayers[i].id == $scope.data.activeBaselayer){
-        $scope.data.baselayers[i].active = true;
+    for (var i in $scope.layerData.baselayers){
+      if ($scope.layerData.baselayers[i].id == $scope.layerData.activeBaselayer){
+        $scope.layerData.baselayers[i].active = true;
       } else {
-        $scope.data.baselayers[i].active = false;
+        $scope.layerData.baselayers[i].active = false;
       }
     }
-    $scope.data.baselayerChanged = Date.now();
+    $scope.layerData.baselayerChanged = Date.now();
   };
 
   $scope.toggleLayerGroup = function(layergroup){
     var grouplayers = layergroup.layers;
     for (var i in grouplayers){
-      for (var j in $scope.data.layers){
-        if ($scope.data.layers[j].id == grouplayers[i]){
-          $scope.data.layers[j].active = layergroup.active;
+      for (var j in $scope.layerData.layers){
+        if ($scope.layerData.layers[j].id == grouplayers[i]){
+          $scope.layerData.layers[j].active = layergroup.active;
         }
       }
     }
-    $scope.data.changed = Date.now();
+    $scope.layerData.changed = Date.now();
   };
 
   $scope.toggleLayerSwitcher = function () {
-    if ($scope.data.enabled) {
-      $scope.data.enabled = false;
-      $scope.data.disabled = true;
+    if ($scope.layerData.enabled) {
+      $scope.layerData.enabled = false;
+      $scope.layerData.disabled = true;
       }
     else {
-      $scope.data.enabled = true;
-      $scope.data.disabled = false;
+      $scope.layerData.enabled = true;
+      $scope.layerData.disabled = false;
     }
   };
 
   $scope.changed = function() {
-    $scope.data.changed = Date.now();
+    $scope.layerData.changed = Date.now();
   };
 
   $scope.onAreaClick = function(area){
@@ -186,5 +186,78 @@ app.controller("MasterCtrl",
     }
     return $scope.formatted_data;
   };
+
+
+  $scope.getTimeseries = function (data) {
+
+    $scope.box.type =  data.entity_name;
+    $scope.box.showCards = true;
+    $scope.box.content.object_type = data.entity_name;
+    $scope.box.content.id = data.id;
+    $scope.box.content.data = data;
+
+
+    var new_data_get = CabinetService.timeseriesLocationObject.get({
+      object_type: $scope.box.content.object_type,
+      id: $scope.box.content.id
+    }, function(response){
+      $scope.timeseries = response.results;
+      if ($scope.timeseries.length > 0){
+        $scope.selected_timeseries = response.results[0];
+      } else {
+        $scope.selected_timeseries = undefined;
+      }
+    });
+    $scope.metadata = {
+        title: null,
+        fromgrid: $scope.box.content.data,
+        type: $scope.box.content.data.entity_name
+     };
+
+
+    // Otherwise changes are watched and called to often.
+    if ($scope.box.content.timeseries_changed === undefined){
+      $scope.box.content.timeseries_changed = true;
+    } else {
+      $scope.box.content.timeseries_changed = !$scope.box.content.timeseries_changed;
+    }
+  };
+
+  // rewrite data to make d3 parseable
+  var format_data = function (data) {
+    var formatted_data = [];
+    for (var i = 0; i < data.length; i++) {
+      //NOTE: think of fix for nodata in d3
+      var value = data[i][1] === null ? 0 : data[i][1];
+      var xyobject = {
+        distance: data[i][0],
+        value: value
+      };
+      formatted_data.push(xyobject);
+    }
+    return formatted_data;
+  };
+
+  // define function to get profile data from server
+  $scope.get_profile = function (linestring_wkt, srs) {
+    // build url
+    // NOTE: first part hardcoded
+    var url = "api/v1/rasters/";
+    url += "?raster_names=ahn2";
+    url += "&geom=" + linestring_wkt;
+    url += "&srs=" + srs;
+    // get profile from server
+    $http.get(url)
+      .success(function (data) {
+        var d3data = format_data(data);
+        Omnibox.content = d3data;
+        Omnibox.open("profile");
+      })
+      .error(function (data) {
+        //TODO: implement error function to return no data + message
+        console.log("failed getting profile data from server");
+      });
+  };
+
 
 }]);

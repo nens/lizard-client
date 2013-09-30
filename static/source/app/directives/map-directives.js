@@ -3,12 +3,11 @@ app
   .directive('map', [function () {
 
     function MapCtrl ($scope, $location){   
-
+    // TODO: Make this not suck.
       this.initiateLayer = function (layer) {
         if (layer.type === "TMS" && layer.baselayer){
           layer.leafletLayer = L.tileLayer(layer.url + '.png', {name:"Background", maxZoom: 20});
         } else if (layer.type === "TMS" && !layer.baselayer){
-          // TODO: Make this not suck.
           if (layer.url.split('/api/v1/').length > 0){
             if (layer.content !== null) {
                 var layer_types = layer.content.split(',');
@@ -21,19 +20,7 @@ app
                     });
                     leafletLayer.on('click', function (e) {
                       if (e.data){
-                        $scope.$apply(function(){
-                          $scope.box.type =  e.data.entity_name;
-                          $scope.box.showCards = true;
-                          $scope.box.content.object_type = e.data.entity_name;
-                          $scope.box.content.id = e.data.id;
-                          $scope.box.content.data = e.data;
-                          // Otherwise changes are watched and called to often.
-                          if ($scope.box.content.timeseries_changed === undefined){
-                            $scope.box.content.timeseries_changed = true;
-                          } else {
-                            $scope.box.content.timeseries_changed = !$scope.box.content.timeseries_changed;
-                          }
-                        });
+                        $scope.getTimeseries(e.data);
                       }
                     });
                     $scope.map.addLayer(leafletLayer);
@@ -150,7 +137,7 @@ app.directive('layerSwitch', [function () {
   return {
     require: 'map',
     link: function (scope, elements, attrs, MapCtrl) {
-      scope.$watch('data.changed', function () {
+      scope.$watch('layerData.changed', function () {
         for (var i in layers) {
           var layer = layers[i];
           if (!layer.initiated) {
@@ -159,9 +146,9 @@ app.directive('layerSwitch', [function () {
           MapCtrl.toggleLayer(layer);
         }
       });
-      scope.$watch('data.baselayerChanged', function () {
-        for (var i in scope.data.baselayers) {
-          var layer = scope.data.baselayers[i];
+      scope.$watch('layerData.baselayerChanged', function () {
+        for (var i in scope.layerData.baselayers) {
+          var layer = scope.layerData.baselayers[i];
           if (!layer.initiated) {
             MapCtrl.initiateLayer(layer);
           }

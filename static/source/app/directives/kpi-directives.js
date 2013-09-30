@@ -36,6 +36,8 @@ app.directive('kpilayer', function () {
       scope.$watch('tools.kpi.enabled', function () {
         if (scope.tools.kpi.enabled){
           scope.box.type = 'kpi';      
+        } else {
+          mapCtrl.removeLayer(areas);
         }
       });
 
