@@ -55,13 +55,12 @@
             <li>
               <a href="#" ng-click="toggle_tool('kpi')" ng-class="{'icon-large': tools.kpi.enabled}" title="Key Performance Indicator"><i class="icon-dashboard"></i></a>
             </li>
-            <li class="divider-vertical"></li>
             {% if user.is_authenticated %}
               <li>
-                <a href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><i class="icon-user"></i><div id="username"> {{ user.first_name }}</div></a>
+                <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><i class="icon-user"></i><div id="username"> {{ user.first_name }}</div></a>
               </li>
               <li>
-                <a id="logout" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"> 
+                <a class="user" id="logout" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"> 
                   <i class="icon-off"></i></a>
               </li>
             {% else %}

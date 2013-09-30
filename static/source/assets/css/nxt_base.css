@@ -592,9 +592,6 @@ header {
     margin-left: 20px;
 }
 
-#logo-row div, #logo-row ul {
-    height: 55px;
-}
 #logo, #breadcrumbs, #sidebar-actions {
     float: left;
     padding-right: 13px;
@@ -602,7 +599,6 @@ header {
 }
 
 #site-actions, #content-actions{
-    padding-right: 13px;
     padding-left: 13px;
 }
 
@@ -610,7 +606,6 @@ header {
 .navbar .nav > li > a:hover {
     color: #34495e;
     text-decoration: none;
-    background-color: transparent;
 }
 
 /*.navbar .nav > li > a:focus{
@@ -634,12 +629,16 @@ header {
 
 #rightbar-actions {
     float: right;
+    height: 40px;
 }
 
 #leftbar-actions {
     float: left;
 }
 
+.user, .user:hover {
+    background-color: #1abc9c !important;
+}
 
 hr {
     margin: 6px 0 4px;
@@ -657,7 +656,6 @@ hr {
     position:relative;
     float: right;
     margin-left: 7px;
-    font-weight: bold;
 }
 
 .tactile-searchbox-input {
