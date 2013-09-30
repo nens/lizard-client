@@ -1,36 +1,34 @@
-<div ng-controller="ObjectIdGraphCtrl">
-	<div class="card">
-		<div class="card-head">
-			<img src="/static/source/assets/images/geslotenleiding.png" class="img-circle"/>
-			<span>Geslotenleiding</span>	
-			<table class="left">
-				<tr>
-					<td>Lengte (m) </td>
-					<td ng-bind="metadata.fromgrid.lei_len"></td>
-				</tr>
-				<tr>
-					<td>Breedte (m) </td>
-					<td ng-bind="metadata.fromgrid.pro_bre"></td>
-				</tr>
-			</table>
-			<table class="right">
-				<tr>
-					<td>Hoogte (m) </td>
-					<td ng-bind="metadata.fromgrid.pro_hgt"></td>
-				</tr>
+<div class="card">
+	<div class="card-head">
+		<img src="/static/source/assets/images/geslotenleiding.png" class="img-circle"/>
+		<span>Geslotenleiding</span>	
+		<table class="left">
+			<tr>
+				<td>Lengte (m) </td>
+				<td ng-bind="metadata.fromgrid.lei_len"></td>
+			</tr>
+			<tr>
+				<td>Breedte (m) </td>
+				<td ng-bind="metadata.fromgrid.pro_bre"></td>
+			</tr>
+		</table>
+		<table class="right">
+			<tr>
+				<td>Hoogte (m) </td>
+				<td ng-bind="metadata.fromgrid.pro_hgt"></td>
+			</tr>
 <!-- 				<tr>
-					<td>Verhang (%) </td>
-					<td ng-bind="metadata.fromgrid">{[{ metadata.fromgrid }]}</td>
-				</tr> -->
-			</table>
-		</div>
+				<td>Verhang (%) </td>
+				<td ng-bind="metadata.fromgrid">{[{ metadata.fromgrid }]}</td>
+			</tr> -->
+		</table>
 	</div>
-	<div class="card">
-	  <div class="input-prepend">
-	  	<span class="add-on"> Tijdreeks</span> 
-	  	<select ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.code for tijdseries in timeseries"></select>
-	  </div>
+</div>
+<div class="card">
+  <div class="input-prepend">
+  	<span class="add-on"> Tijdreeks</span> 
+  	<select ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.code for tijdseries in timeseries"></select>
+  </div>
 
-		<nxt-line-graph data="data" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>
-	</div>
+	<nxt-line-graph data="data" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>
 </div>

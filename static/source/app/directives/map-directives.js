@@ -2,13 +2,12 @@
 app
   .directive('map', [function () {
 
-    function MapCtrl ($scope, Omnibox, $location){   
-
+    function MapCtrl ($scope, $location){   
+    // TODO: Make this not suck.
       this.initiateLayer = function (layer) {
         if (layer.type === "TMS" && layer.baselayer){
           layer.leafletLayer = L.tileLayer(layer.url + '.png', {name:"Background", maxZoom: 20});
         } else if (layer.type === "TMS" && !layer.baselayer){
-          // TODO: Make this not suck.
           if (layer.url.split('/api/v1/').length > 0){
             if (layer.content !== null) {
                 var layer_types = layer.content.split(',');
@@ -21,19 +20,7 @@ app
                     });
                     leafletLayer.on('click', function (e) {
                       if (e.data){
-                        $scope.$apply(function(){
-                          Omnibox.type =  e.data.entity_name;
-                          Omnibox.showCards = true;
-                          Omnibox.content.object_type = e.data.entity_name;
-                          Omnibox.content.id = e.data.id;
-                          Omnibox.content.data = e.data;
-                          // Otherwise changes are watched and called to often.
-                          if (Omnibox.content.changed === undefined){
-                            Omnibox.content.changed = true;
-                          } else {
-                            Omnibox.content.changed = !Omnibox.content.changed;
-                          }
-                        });
+                        $scope.getTimeseries(e.data);
                       }
                     });
                     $scope.map.addLayer(leafletLayer);
@@ -138,7 +125,6 @@ app.directive('moveEnd', [function () {
     link: function(scope, elements, attrs, MapCtrl) {
       
       scope.$watch('moveend', function() {
-        console.log('moved to an end');
         MapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
       });
     },
@@ -150,7 +136,7 @@ app.directive('layerSwitch', [function () {
   return {
     require: 'map',
     link: function (scope, elements, attrs, MapCtrl) {
-      scope.$watch('data.changed', function () {
+      scope.$watch('layerData.changed', function () {
         for (var i in layers) {
           var layer = layers[i];
           if (!layer.initiated) {
@@ -159,9 +145,9 @@ app.directive('layerSwitch', [function () {
           MapCtrl.toggleLayer(layer);
         }
       });
-      scope.$watch('data.baselayerChanged', function () {
-        for (var i in scope.data.baselayers) {
-          var layer = scope.data.baselayers[i];
+      scope.$watch('layerData.baselayerChanged', function () {
+        for (var i in scope.layerData.baselayers) {
+          var layer = scope.layerData.baselayers[i];
           if (!layer.initiated) {
             MapCtrl.initiateLayer(layer);
           }
@@ -178,7 +164,7 @@ app.directive('panZoom', [function () {
     require: 'map',
     link: function (scope, elements, attrs, MapCtrl) {
       scope.$watch('panZoom', function (){
-        if (scope.panZoom !== null){
+        if (scope.panZoom !== undefined){
           if (scope.panZoom.hasOwnProperty('lat') &&
             scope.panZoom.hasOwnProperty('lng') &&
             scope.panZoom.hasOwnProperty('zoom') ) {

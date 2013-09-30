@@ -1,18 +1,11 @@
-app.controller("ImpeachCandidate",
-  ["$scope", "Omnibox", function ($scope, Omnibox) {
-	$scope.show = function () {
-		Omnibox.open('kpi');
-	};
-}]);
-
 app.controller("KpiCtrl",
-  ["$scope", "$http", "KpiService", function ($scope, $http, KpiService)  {
+  ["$scope", "$http", function ($scope, $http)  {
 
   /**
    * Setup scope variables
    *
    */
-  $scope.kpi = KpiService;
+
   $scope.d3kpi = {'dates': {name: 'Date', values: [], units: 'Year'},
                   'kpis': {name: '', values: [], units: ''}};
   /**
@@ -138,9 +131,11 @@ app.controller("KpiCtrl",
   // Load KPI data
   $scope.kpiLoader();
 
+
+
   //NOTE: watches and event handlers that I intuitively say don't belong here
   $scope.$on('clean', function () {
-    KpiService.clean = Date.now();
+    $scope.kpi.clean = Date.now();
   });
 
   $scope.$watch('kpi.slct_area', function () {
