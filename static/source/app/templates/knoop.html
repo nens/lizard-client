@@ -1,17 +1,38 @@
-<div class="card objectidgraph" ng-controller="ObjectIdGraphCtrl">
-	<strong>Knoop - <% metadata.fromgrid.id %></strong>
-	<dl class="dl-horizontal">
-		<dt>BOK (m)</dt><dd ng-bind="metadata.fromgrid.knp_bok"></dd>
-		<dt>Breedte (m)</dt><dd ng-bind="metadata.fromgrid.knp_bre"></dd>
-		<dt>Water op straat (m<sup>2</sup>)</dt><dd ng-bind="metadata.fromgrid.wos_opp"></dd>
-	</dl>
-  <div class="input-prepend">
-  	<span class="add-on"> Tijdreeks</span> 
-  	<!-- TODO: should be back to name. Name should be enterd in database. -->
-  	<select ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.code for tijdseries in timeseries"></select>
-  </div>
+<div ng-controller="ObjectIdGraphCtrl">
+	<div class="card">
+		<div class="card-head">
+			<img src="/static/source/assets/images/knoop.png" class="img-circle"/>
+			<span>Knoop</span>	
+			<table class="left">
+				<tr>
+					<td>BOK (m) </td>
+					<td ng-bind="metadata.fromgrid.knp_bok"></td>
+				</tr>
+				<tr>
+					<td>Breedte (m) </td>
+					<td ng-bind="metadata.fromgrid.knp_bre"></td>
+				</tr>
+			</table>
+			<table class="right">
+				<tr>
+					<td>WOS opp. (m<sup>2</sup>) </td>
+					<td ng-bind="metadata.fromgrid.wos_opp"></td>
+				</tr>
+				<tr>
+					<td>Maaiveld (m NAP) </td>
+					<td ng-bind="metadadata.fromgrid.mvd_niv"></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="card">
+	  <div class="input-prepend">
+	  	<span class="add-on"> Tijdreeks</span> 
+	  	<select ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.code for tijdseries in timeseries"></select>
+	  </div>
 
-	<nxt-line-graph data="data" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>
+		<nxt-line-graph data="data" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>
+	</div>
 </div>
 
 <!-- <div class="card objectidgraph" ng-controller="ObjectIdGraphCtrl">
