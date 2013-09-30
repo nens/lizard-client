@@ -40,32 +40,26 @@
         <div id="site-actions">
           <ul class="nav pull-right" id="rightbar-actions">
             <li class="site">
-              <a href="#" ng-click="toggle_profile()"><i class="icon-resize-full"></i></a>
+              <a href="#" ng-click="toggle_profile()" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full"></i></a>
             </li>
             <li>
-              <a href="#" ng-click="show()" ng-controller="ImpeachCandidate"><i class="icon-dashboard"></i></a>
+              <a href="#" ng-click="show()" ng-controller="ImpeachCandidate" title="Key Performance Indicator"><i class="icon-dashboard"></i></a>
             </li>
+            <li class="divider-vertical"></li>
             {% if user.is_authenticated %}
-              <li class="dropdown">
-                <a class="dropdown-toggle" data-content="Toon loginopties" data-title="" href="#" data-toggle="dropdown" 
-                data-delay=200>
-                  <i class="icon-user"></i> {{ user.first_name }}
-                  <b class="caret"></b>
+              <li>
+                <a href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}">
+                  <i class="icon-user"></i> {{ user.first_name }} </a>
                 </a>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <a href="{% url "lizard_auth_client.sso_logout" %}?next=/"> {% trans "Logout" %}
-                      </a>
-                    </li>
-                    <li>
-                      <a href="http://sso.lizard.net/edit_profile/"> {% trans "Edit profile" %}
-                      </a>
-                    </li>
-                  </ul>
+              </li>
+              <li>
+                <a href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}">
+                  <i class="icon-gear"></i></a>
               </li>
             {% else %}
               <li>
-                <a href="{% url "login" %}?next=/"><i class="icon-user"></i> {% trans "Login" %}</a>
+                <a href="{% url "login" %}?next=/" title="{% trans 'Login' %}">
+                  <i class="icon-user"></i></a>
               </li>
             {% endif %}
           </ul>
@@ -79,9 +73,9 @@
       <div ng-controller="MapCtrl" >
         <map layer-switch kpilayer="onAreaClick()" move-end pan-zoom="panZoom" layers="data.layers" rasterprofile="disabled" ng-controller="ProfileCtrl"></map>
         <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': data.enabled, 'slide-right': data.disabled}">
-          <div class="layer-switcher-enabler" ng-mouseover="" ng-click="toggleLayerSwitcher()"><i class="icon-globe"></i></div>
-          <div class="arrow-up" ng-click="toggleLayerSwitcher()"></div>
-          <div class="arrow-down" ng-click="toggleLayerSwitcher()"></div>
+          <div class="layer-switcher-enabler" title="{% trans 'Map layers' %}" ng-mouseover="" ng-click="toggleLayerSwitcher()"><i class="icon-globe"></i></div>
+          <div class="arrow-up" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}"></div>
+          <div class="arrow-down" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}"></div>
           <div class="layer-switcher">
             <ul class="nav nav-list">
               <li class="nav-header">

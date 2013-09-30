@@ -3,6 +3,7 @@ html, body, #map {
     width: 100%;
     height: 100%;
     overflow:hidden;
+    font-size: 18px;
 }
 
 #map {
@@ -144,14 +145,15 @@ html, body, #map {
 
 .layer-switcher-wrapper {
     position: relative;
-    top: 120px;
+    top: 40px;
+    margin-top: 16px;
     z-index: 15000;
     width: 200px;
     right: -170px;
 }
 
 .leaflet-container a {
-    color: #1abc9c;
+    color: #16a085;
 }
 
 .navbar .nav li.dropdown.open > .dropdown-toggle, .navbar .nav li.dropdown.active > .dropdown-toggle, .navbar .nav li.dropdown.open.active > .dropdown-toggle {
@@ -193,7 +195,11 @@ html, body, #map {
 }
 
 .slide-right{
-    transition: 0.5s;
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition: .5s;
 }
 
 .nav-list {
@@ -202,7 +208,7 @@ html, body, #map {
 }
 
 .layer-switcher-enabler {
-    top: 120px;
+    top: 14px;
     right: 178px;
     width: 30px;
     position: absolute;
@@ -236,24 +242,28 @@ html, body, #map {
     font-style: normal;
     font-size: 18px;
     text-shadow: none;
+    -o-transition:.3s;
+    -ms-transition:.3s;
+    -moz-transition:.3s;
+    -webkit-transition:.3s;
+    transition:.3s;
 }
 
 .layer-switcher label:hover {
-    color: #34495e;
-    font-style: italic;
+    color: #c0392b;
     font-size: 18px;
     text-shadow: none;
 }
 
 .layer-switcher label.active {
-    color: #34495e;
+    color: #c0392b;
     font-style: italic;
     font-size: 18px;
     text-shadow: none;
     margin-left: 5px;
 }
 .arrow-up {
-    top: 128px;
+    top: 22px;
     right: 220px;
     position: absolute;
     width: 0; 
@@ -267,7 +277,7 @@ html, body, #map {
 }
 
 .arrow-down {
-    top: 120px;
+    top: 14px;
     right: 220px;
     position: absolute;
     width: 0; 
@@ -293,10 +303,12 @@ html, body, #map {
     list-style-type: none;
     z-index: 2;
     padding: 19px;
+    border-radius: 2px;
 }
 .layer-switcher .nav {
     margin: -17px;
     border: 2px dashed #2c3e50;
+    border-radius: 2px;   
 }
 
 .layer-switcher ul li{
@@ -413,7 +425,13 @@ html, body, #map {
 /* whole path is needed to make this work */
 .navbar .nav > li > a.active {
    cursor: default;
-   color: #FFFFFF;
+   color: #34495e;
+}
+
+.navbar .divider-vertical {
+    height: 40px;
+    border-right: 1px solid #138a72;
+    border-left: 1px solid #138a72;
 }
 
 #alertdiv {
@@ -597,7 +615,7 @@ header {
 }
 
 .navbar .nav > li > a:focus, .navbar .nav > li > a:hover {
-    color: rgb(217, 217, 214);
+    color: #34495e;
     text-decoration: none;
     background-color: transparent;
 }
@@ -607,6 +625,7 @@ header {
     padding: 10px 15px;
     color: rgb(255, 255, 255);
     text-decoration: none;
+    text-shadow: none;
 }
 
 #rightbar-actions {
