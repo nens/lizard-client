@@ -266,8 +266,8 @@ app.controller("MasterCtrl",
     $http.get(url)
       .success(function (data) {
         var d3data = format_data(data);
-        Omnibox.content = d3data;
-        Omnibox.open("profile");
+        $scope.box.content = d3data;
+        $scope.box.type = "profile";
       })
       .error(function (data) {
         //TODO: implement error function to return no data + message
