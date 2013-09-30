@@ -12,6 +12,136 @@ html, body, #map {
     position: absolute;
 }
 
+
+.clickObj {
+    width:25px;
+    height:25px;
+    background: white;
+    border-radius: 50%;
+    margin-top: -2.5px;
+    margin-left: -2.5px;
+    -webkit-transform-origin: 0 0;
+    -moz-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    transform-origin: 0 0;
+    animation: grow .6s linear  forwards;
+    -webkit-animation: grow .6s linear forwards;
+    -moz-animation: grow .6s linear  forwards;
+    -ms-animation: grow .6s linear  forwards;
+    -o-animation: grow .6s linear  forwards;
+}
+@keyframes grow {
+    0% {
+        width: 5px;
+        height: 5px;
+        margin-top: -2.5px;
+        margin-left: -2.5px;
+    }
+    50% {
+        margin-top:-7.5px;
+        margin-left: -7.5px;
+        width: 15px;
+        height: 15px;
+        opacity: 1;
+    }
+    100% {
+        margin-top:-25px;
+        margin-left: -25px;
+        width: 50px;
+        height: 50px;
+        opacity: 0;
+    }
+}
+@-webkit-keyframes grow {
+    0% {
+        width: 5px;
+        height: 5px;
+        margin-top: -2.5px;
+        margin-left: -2.5px;
+    }
+    50% {
+        margin-top:-7.5px;
+        margin-left: -7.5px;
+        width: 15px;
+        height: 15px;
+        opacity: 1;
+    }
+    100% {
+        margin-top:-25px;
+        margin-left: -25px;
+        width: 50px;
+        height: 50px;
+        opacity: 0;
+    }
+}
+@-moz-keyframes grow {
+    0% {
+        width: 5px;
+        height: 5px;
+        margin-top: -2.5px;
+        margin-left: -2.5px;
+    }
+    50% {
+        margin-top:-7.5px;
+        margin-left: -7.5px;
+        width: 15px;
+        height: 15px;
+        opacity: 1;
+    }
+    100% {
+        margin-top:-25px;
+        margin-left: -25px;
+        width: 50px;
+        height: 50px;
+        opacity: 0;
+    }
+}
+@-ms-keyframes grow {
+    0% {
+        width: 5px;
+        height: 5px;
+        margin-top: -2.5px;
+        margin-left: -2.5px;
+    }
+    50% {
+        margin-top:-7.5px;
+        margin-left: -7.5px;
+        width: 15px;
+        height: 15px;
+        opacity: 1;
+    }
+    100% {
+        margin-top:-25px;
+        margin-left: -25px;
+        width: 50px;
+        height: 50px;
+        opacity: 0;
+    }
+}
+@-o-keyframes grow {
+    0% {
+        width: 5px;
+        height: 5px;
+        margin-top: -2.5px;
+        margin-left: -2.5px;
+    }
+    50% {
+        margin-top:-7.5px;
+        margin-left: -7.5px;
+        width: 15px;
+        height: 15px;
+        opacity: 1;
+    }
+    100% {
+        margin-top:-25px;
+        margin-left: -25px;
+        width: 50px;
+        height: 50px;
+        opacity: 0;
+    }
+}
+
 .layer-switcher-wrapper {
     position: relative;
     top: 120px;
