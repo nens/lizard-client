@@ -1,5 +1,6 @@
 'use strict';
 
+// wtf.
 document.ondblclick = function(e) {
     var clickObj = document.createElement("div"),
         inner = document.createElement("div");
@@ -28,9 +29,15 @@ app.config(function($interpolateProvider) {
  });
 
 
-app.controller("MapCtrl", ["$scope", "ngProgress", "CabinetService", "KpiService" ,
-  function($scope, ngProgress, CabinetService, KpiService) {
-    
+app.controller("MasterCtrl",
+  ["$scope", "Omnibox", "CabinetService", "KpiService", function ($scope, Omnibox)  {
+
+  $scope.profile_enabled = false;
+
+  $scope.toggle_profile = function () {
+    $scope.profile_enabled = !$scope.profile_enabled;
+  };
+
   $scope.data = {
     layergroups: CabinetService.layergroups,
     layers: CabinetService.layers,

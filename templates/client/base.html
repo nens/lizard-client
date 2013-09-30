@@ -1,6 +1,6 @@
 {% load i18n %}
 <!DOCTYPE html>
-<html ng-app="lizard-nxt">
+<html ng-app="lizard-nxt" ng-controller="MasterCtrl">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -76,7 +76,7 @@
 
     {% block content %}
 
-      <div ng-controller="MapCtrl" >
+      <div >
         <map layer-switch kpilayer="onAreaClick()" move-end pan-zoom="panZoom" layers="data.layers" rasterprofile="disabled" ng-controller="ProfileCtrl"></map>
         <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': data.enabled, 'slide-right': data.disabled}">
           <div class="layer-switcher-enabler" ng-mouseover="" ng-click="toggleLayerSwitcher()"><i class="icon-globe"></i></div>
