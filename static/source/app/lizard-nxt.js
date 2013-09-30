@@ -52,6 +52,24 @@ app.controller("MasterCtrl",
     }
   };
 
+  $scope.kpi = {
+    kpichanged: true,
+    thresholds: {'warning': 7, 'error': 5},
+    categories: ['tevredenheid_burger',
+                    'toestand_infrastructuur',
+                    'omgevingseffect',
+                    'goed_gebruik',
+                    'planrealisatie'],
+    cat_dict: { 'tevredenheid_burger': 'Tevredenheid',
+                   'toestand_infrastructuur': 'Toestand',
+                   'omgevingseffect': 'Omgevingseffect',
+                   'goed_gebruik': 'Gebruik',
+                   'planrealisatie': 'Planrealisatie'},
+    kpiData: {},
+    areadata: {},
+    slct_area: null
+  };
+
   $scope.toggle_tool = function (name) {
     if ($scope.tools.hasOwnProperty(name)){
       $scope.tools[name].enabled = !$scope.tools[name].enabled;
@@ -113,8 +131,6 @@ app.controller("MasterCtrl",
     baselayerChanged: Date.now(),
     enabled: false
   };
-
-  $scope.kpi = KpiService;
 
   $scope.$watch('kpi.panZoom', function(){
     $scope.panZoom = $scope.kpi.panZoom;

@@ -125,7 +125,6 @@ app.directive('moveEnd', [function () {
     link: function(scope, elements, attrs, MapCtrl) {
       
       scope.$watch('moveend', function() {
-        console.log('moved to an end');
         MapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
       });
     },
@@ -165,7 +164,7 @@ app.directive('panZoom', [function () {
     require: 'map',
     link: function (scope, elements, attrs, MapCtrl) {
       scope.$watch('panZoom', function (){
-        if (scope.panZoom !== null){
+        if (scope.panZoom !== undefined){
           if (scope.panZoom.hasOwnProperty('lat') &&
             scope.panZoom.hasOwnProperty('lng') &&
             scope.panZoom.hasOwnProperty('zoom') ) {
