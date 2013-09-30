@@ -40,13 +40,3 @@ app.controller("ProfileCtrl",
   };
 }]);
 
-app.controller("MasterCtrl",
-  ["$scope", "Omnibox", function ($scope, Omnibox)  {
-
-  $scope.profile_enabled = false;
-
-  $scope.toggle_profile = function () {
-    $scope.profile_enabled = !$scope.profile_enabled;
-  };
-
-}]);

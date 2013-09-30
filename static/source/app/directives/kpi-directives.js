@@ -33,6 +33,12 @@ app.directive('kpilayer', function () {
         return style;
       };
 
+      scope.$watch('tools.kpi.enabled', function () {
+        if (scope.tools.kpi.enabled){
+          scope.box.type = 'kpi';      
+        }
+      });
+
       scope.$watch('kpi.kpiData', function () {
         // remove previous layer if available
         if (areas !== undefined) {

@@ -30,13 +30,79 @@ app.config(function($interpolateProvider) {
 
 
 app.controller("MasterCtrl",
-  ["$scope", "Omnibox", "CabinetService", "KpiService", function ($scope, Omnibox)  {
+  ["$scope", "Omnibox", "CabinetService", "KpiService", 
+  function ($scope, Omnibox, CabinetService, KpiService)  {
 
-  $scope.profile_enabled = false;
-
-  $scope.toggle_profile = function () {
-    $scope.profile_enabled = !$scope.profile_enabled;
+  $scope.box = {
+    query: null,
+    disabled: false,
+    showCards: false,
+    type: 'empty',
+    content: {},
+    changed: Date.now()
   };
+
+  // NOTE: DRY idiot.
+  $scope.tools = {
+    kpi: {
+      enabled: false
+    },
+    profile: {
+      enabled: false
+    }
+  };
+
+  $scope.toggle_tool = function (name) {
+    if ($scope.tools.hasOwnProperty(name)){
+      $scope.tools[name].enabled = !$scope.tools[name].enabled;
+    }
+  };
+
+// SEARCH-START
+  $scope.search = function ($event) {
+
+    if ($scope.box.query.length > 1) {
+      var search = CabinetService.search.get({q: $scope.box.query}, function (data) {
+          console.log(data.hits.hits);
+          var sources = [];
+          for (var i in data.hits.hits) {
+            sources.push(data.hits.hits[i]._source);
+          }
+          $scope.searchData = sources;
+        });
+
+      
+      var geocode = CabinetService.geocode.query({q: $scope.box.query}, function (data) {
+              console.log(data);
+              $scope.box.content = data;
+            });
+      $scope.box.type = "location";
+    }
+  };
+
+  $scope.reset_query = function () {
+      // clean stuff..
+      // Search Ctrl is the parent of omnibox cards
+      // therefore no need to call $rootScope.
+      $scope.$broadcast('clean');
+      $scope.box.query = null;
+      $scope.box.type= 'empty';
+  };
+
+  $scope.showDetails = function (obj) {
+      $scope.currentObject = obj;
+      if ($scope.currentObject.lat && $scope.currentObject.lon) {
+          // A lat and lon are present, instruct the map to pan/zoom to it
+          var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
+          $scope.panZoom = {
+            lat: $scope.currentObject.lat,
+            lng: $scope.currentObject.lon,
+            zoom: 14
+          };
+      }
+  };
+// SEARCH-END
+
 
   $scope.data = {
     layergroups: CabinetService.layergroups,
@@ -102,6 +168,23 @@ app.controller("MasterCtrl",
       $scope.kpi.slct_area = area;
       $scope.kpi.kpichanged = !$scope.kpi.kpichanged;
     });
+  };
+
+
+  $scope.format_data = function (data) {
+    if (data[0]){
+    $scope.formatted_data = [];
+      for (var i=0; i<data[0].values.length; i++){
+        xyobject = {
+          date: data[1].values[i],
+          value: data[0].values[i]
+        };
+        $scope.formatted_data.push(xyobject);
+      }
+    } else {
+      $scope.formatted_data = undefined;
+    }
+    return $scope.formatted_data;
   };
 
 }]);

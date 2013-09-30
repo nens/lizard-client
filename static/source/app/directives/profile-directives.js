@@ -77,9 +77,9 @@ app.directive('rasterprofile', function () {
         };
 
         // enable and disable click handler
-        // 'profile_enabled' is set by the MasterCtrl on <body> scope
-        scope.$watch('profile_enabled', function () {
-          if (scope.profile_enabled) {
+        // 'tools.profile.enabled' is set by the MasterCtrl on <html> scope
+        scope.$watch('tools.profile.enabled', function () {
+          if (scope.tools.profile.enabled) {
             scope.map.on('click',  drawLineCLickHandler);
             angular.element(".icon-resize-full").toggleClass("icon-large");
           } else {

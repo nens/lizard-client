@@ -1,10 +1,3 @@
-app.controller("ImpeachCandidate",
-  ["$scope", "Omnibox", function ($scope, Omnibox) {
-	$scope.show = function () {
-		Omnibox.open('kpi');
-	};
-}]);
-
 app.controller("KpiCtrl",
   ["$scope", "$http", "KpiService", function ($scope, $http, KpiService)  {
 

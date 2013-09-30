@@ -31,7 +31,7 @@
     </script>
   </head>
 
-  <body ng-controller="MasterCtrl">
+  <body ng-controller="ProfileCtrl">
     <header>
       <div id="logo-row" class="navbar">
         <div id="logo">
@@ -40,10 +40,10 @@
         <div id="site-actions">
           <ul class="nav pull-right" id="rightbar-actions">
             <li class="site">
-              <a href="#" ng-click="toggle_profile()"><i class="icon-resize-full"></i></a>
+              <a href="#" ng-click="toggle_tool('profile')"><i class="icon-resize-full"></i></a>
             </li>
             <li>
-              <a href="#" ng-click="show()" ng-controller="ImpeachCandidate"><i class="icon-dashboard"></i></a>
+              <a href="#" ng-click="toggle_tool('kpi')"><i class="icon-dashboard"></i></a>
             </li>
             {% if user.is_authenticated %}
               <li class="dropdown">
@@ -77,7 +77,7 @@
     {% block content %}
 
       <div >
-        <map layer-switch kpilayer="onAreaClick()" move-end pan-zoom="panZoom" layers="data.layers" rasterprofile="disabled" ng-controller="ProfileCtrl"></map>
+        <map layer-switch kpilayer="onAreaClick()" move-end pan-zoom="panZoom" layers="data.layers" rasterprofile="disabled"></map>
         <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': data.enabled, 'slide-right': data.disabled}">
           <div class="layer-switcher-enabler" ng-mouseover="" ng-click="toggleLayerSwitcher()"><i class="icon-globe"></i></div>
           <div class="arrow-up" ng-click="toggleLayerSwitcher()"></div>
@@ -119,6 +119,10 @@
 
     {% block box_awesome %}{% endblock %}
     <div class="container-fluid">
+      <omnibox id="omnibox" ng-class="{'stretchRight': !box.query.$dirty }" style="visibility:hidden;" ng-style="{visibility:'visible'}">
+  
+      </omnibox>
+    </div>
         {% block toolbar_controllers %}
         {% endblock %}
     {% endblock content %}

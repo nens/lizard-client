@@ -2,7 +2,7 @@
 app
   .directive('map', [function () {
 
-    function MapCtrl ($scope, Omnibox, $location){   
+    function MapCtrl ($scope, $location){   
 
       this.initiateLayer = function (layer) {
         if (layer.type === "TMS" && layer.baselayer){
@@ -22,16 +22,16 @@ app
                     leafletLayer.on('click', function (e) {
                       if (e.data){
                         $scope.$apply(function(){
-                          Omnibox.type =  e.data.entity_name;
-                          Omnibox.showCards = true;
-                          Omnibox.content.object_type = e.data.entity_name;
-                          Omnibox.content.id = e.data.id;
-                          Omnibox.content.data = e.data;
+                          $scope.box.type =  e.data.entity_name;
+                          $scope.box.showCards = true;
+                          $scope.box.content.object_type = e.data.entity_name;
+                          $scope.box.content.id = e.data.id;
+                          $scope.box.content.data = e.data;
                           // Otherwise changes are watched and called to often.
-                          if (Omnibox.content.changed === undefined){
-                            Omnibox.content.changed = true;
+                          if ($scope.box.content.timeseries_changed === undefined){
+                            $scope.box.content.timeseries_changed = true;
                           } else {
-                            Omnibox.content.changed = !Omnibox.content.changed;
+                            $scope.box.content.timeseries_changed = !$scope.box.content.timeseries_changed;
                           }
                         });
                       }
