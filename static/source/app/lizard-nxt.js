@@ -19,7 +19,7 @@ var app = angular.module("lizard-nxt", [
   'ui.highlight',
   'ui.keypress',
   'ngProgress',
-  // 'omnibox',
+  'omnibox',
   'lizard-nxt.services']);
 
 app.config(function($interpolateProvider) {

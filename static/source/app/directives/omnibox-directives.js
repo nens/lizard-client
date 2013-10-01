@@ -1,4 +1,6 @@
-app
+'use strict';
+
+angular.module('omnibox', [])
 	.directive('omnibox', ["$compile", "$http", "$templateCache",
 		function($compile, $http, $templateCache) {
 
