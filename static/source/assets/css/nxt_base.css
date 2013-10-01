@@ -198,7 +198,7 @@ html, body{
     -moz-transition:.3s;
     -webkit-transition:.3s;
     transition:.3s;
-    margin-left: 5px;
+    margin-left: 0px;
 }
 
 .layer-switcher label:hover {
@@ -260,12 +260,12 @@ html, body{
     list-style-type: none;
     z-index: 2;
     padding: 15px 15px 0px 15px;
-    border-radius: 2px;
+    border-bottom-left-radius: 2px;
     overflow: hidden;
 }
+
 .layer-switcher .nav {
 /*    margin: -10px 0 -10px 0px;*/
-    border-radius: 2px;   
 }
 
 .layer-switcher ul li{
@@ -610,11 +610,6 @@ header {
     background-color: #1abc9c !important;
 }
 
-hr {
-    margin: 6px 0 4px;
-    border-top: 1px;
-    border-color: #2c3e50;
-}
 
 #logout:hover {
     color: #e74c3c;
