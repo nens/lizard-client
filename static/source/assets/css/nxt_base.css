@@ -1,9 +1,8 @@
-html, body, #map {
+html, body{
     margin: 0;
     width: 100%;
     height: 100%;
     overflow:hidden;
-    font-size: 18px;
 }
 
 #map {
@@ -32,6 +31,7 @@ html, body, #map {
     -ms-animation: grow .6s linear  forwards;
     -o-animation: grow .6s linear  forwards;
 }
+
 @keyframes grow {
     0% {
         width: 5px;
@@ -156,10 +156,6 @@ html, body, #map {
     color: #16a085;
 }
 
-.navbar .nav li.dropdown.open > .dropdown-toggle, .navbar .nav li.dropdown.active > .dropdown-toggle, .navbar .nav li.dropdown.open.active > .dropdown-toggle {
-    background-color: transparent;
-    color: grey;
-}
 
 .slide-left {
     animation-name: slide-left;
@@ -368,12 +364,6 @@ html, body, #map {
     background-color: #8e8d8d;
 }
 
-.selected-icon{
-
-    -moz-box-shadow: 0 0 5px #fff;
-    -webkit-box-shadow: 0 0 5px #fff;
-    box-shadow: 10px 10px 15px #fff;
-}
 
 .map-crosshair {
     cursor: crosshair;
@@ -432,6 +422,7 @@ html, body, #map {
     height: 40px;
     border-right: 1px solid #138a72;
     border-left: 1px solid #138a72;
+    margin: 0px;
 }
 
 #alertdiv {
@@ -527,6 +518,7 @@ header {
     z-index: 2000;
     height: 40px;
     color: rgb(255,255,255);
+    font-size: 18px;
 }
 
 
@@ -600,9 +592,6 @@ header {
     margin-left: 20px;
 }
 
-#logo-row div, #logo-row ul {
-    height: 55px;
-}
 #logo, #breadcrumbs, #sidebar-actions {
     float: left;
     padding-right: 13px;
@@ -610,15 +599,20 @@ header {
 }
 
 #site-actions, #content-actions{
-    padding-right: 13px;
     padding-left: 13px;
 }
 
-.navbar .nav > li > a:focus, .navbar .nav > li > a:hover {
+/*.navbar .nav > li > a:focus,*/
+.navbar .nav > li > a:hover {
     color: #34495e;
     text-decoration: none;
-    background-color: transparent;
 }
+
+/*.navbar .nav > li > a:focus{
+    outline: 0;
+    color: white;
+}*/
+
 
 .navbar .nav > li > a {
     float: none;
@@ -626,16 +620,25 @@ header {
     color: rgb(255, 255, 255);
     text-decoration: none;
     text-shadow: none;
+    -o-transition:.3s;
+    -ms-transition:.3s;
+    -moz-transition:.3s;
+    -webkit-transition:.3s;
+    transition:.3s;
 }
 
 #rightbar-actions {
     float: right;
+    height: 40px;
 }
 
 #leftbar-actions {
     float: left;
 }
 
+.user, .user:hover {
+    background-color: #1abc9c !important;
+}
 
 hr {
     margin: 6px 0 4px;
@@ -643,6 +646,17 @@ hr {
     border-color: #2c3e50;
 }
 
+#logout:hover {
+    color: #e74c3c;
+}
+
+#username {
+    font-family: 'Roboto Slab', sans-serif !important;
+    font-size: 14px;
+    position:relative;
+    float: right;
+    margin-left: 7px;
+}
 
 .tactile-searchbox-input {
     border: none; padding: 0px; margin: -0.0625em 0px 0px; height: 1.25em; width: 100%; outline: none;

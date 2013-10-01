@@ -1,6 +1,6 @@
 {% load i18n %}
 <!DOCTYPE html>
-<html ng-app="lizard-nxt">
+<html ng-app="lizard-nxt" ng-controller="MasterCtrl">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -15,7 +15,7 @@
     <!--<link href="{{ STATIC_URL }}vendor/jquery-ui-1.10.1.custom/themes/smoothness/jquery-ui.min.css" rel="stylesheet" />-->
     <link href="{{ STATIC_URL }}vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}source/assets/css/nxt_base.css" rel="stylesheet" />
-    <link href="{{ STATIC_URL }}source/common/nxt_box/nxt-box.css" rel="stylesheet"/>
+    <link href="{{ STATIC_URL }}vendor/nxt-box/nxt-box.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL }}source/assets/css/animations.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}vendor/ngprogress/ngProgress.css" rel="stylesheet" />
     <link href='http://fonts.googleapis.com/css?family=Petit+Formal+Script|Kite+One|Roboto+Slab' rel='stylesheet' type='text/css'>
@@ -28,10 +28,20 @@
       var baseLayers = {{ strap_base_layers }};
       var layers = {{ strap_layers }};
       var layerGroups = {{ strap_layer_groups }};
+
+      function logOut() {
+        var r=confirm("Weet u zeker dat u wilt uitloggen?");
+        if (r==true) {
+          window.location = "{% url "login" %}?next=/";
+          }
+        else {
+          return false;
+        }
+        }
     </script>
   </head>
 
-  <body ng-controller="MasterCtrl">
+  <body>
     <header>
       <div id="logo-row" class="navbar">
         <div id="logo">
@@ -40,21 +50,18 @@
         <div id="site-actions">
           <ul class="nav pull-right" id="rightbar-actions">
             <li class="site">
-              <a href="#" ng-click="toggle_profile()" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full"></i></a>
+              <a href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.profile.enabled}"></i></a>
             </li>
             <li>
-              <a href="#" ng-click="show()" ng-controller="ImpeachCandidate" title="Key Performance Indicator"><i class="icon-dashboard"></i></a>
+              <a href="#" ng-click="toggle_tool('kpi')" ng-class="{'icon-large': tools.kpi.enabled}" title="Key Performance Indicator"><i class="icon-dashboard"></i></a>
             </li>
-            <li class="divider-vertical"></li>
             {% if user.is_authenticated %}
               <li>
-                <a href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}">
-                  <i class="icon-user"></i> {{ user.first_name }} </a>
-                </a>
+                <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><i class="icon-user"></i><div id="username"> {{ user.first_name }}</div></a>
               </li>
               <li>
-                <a href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}">
-                  <i class="icon-gear"></i></a>
+                <a class="user" id="logout" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"> 
+                  <i class="icon-off"></i></a>
               </li>
             {% else %}
               <li>
@@ -70,10 +77,16 @@
 
     {% block content %}
 
+<<<<<<< HEAD
       <div ng-controller="MapCtrl" >
 
         <map layer-switch kpilayer="onAreaClick()" move-end pan-zoom="panZoom" layers="data.layers" rasterprofile="disabled" ng-controller="ProfileCtrl"></map>
         <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': data.enabled, 'slide-right': data.disabled}">
+=======
+      <div >
+        <map layer-switch kpilayer="onAreaClick()" move-end pan-zoom="panZoom" layers="layerData.layers" rasterprofile="disabled"></map>
+        <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': layerData.enabled, 'slide-right': layerData.disabled}">
+>>>>>>> c6b65f3904f5f606b5fe3ef220d4d800a936c1bf
           <div class="layer-switcher-enabler" title="{% trans 'Map layers' %}" ng-mouseover="" ng-click="toggleLayerSwitcher()"><i class="icon-globe"></i></div>
           <div class="arrow-up" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}"></div>
           <div class="arrow-down" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}"></div>
@@ -83,8 +96,8 @@
                 {% trans "Achtergrond" %}
                 <hr>
                 <ul class="unstyled">
-                  <li ng-repeat="layer in data.baselayers | orderBy:'order':true">
-                    <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="data.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
+                  <li ng-repeat="layer in layerData.baselayers | orderBy:'order':true">
+                    <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="layerData.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
                     <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
                   </li>
                 </ul>
@@ -93,7 +106,7 @@
                 {% trans "Themakaart" %}
                 <hr>
                 <ul class="unstyled">
-                  <li ng-repeat="layergroup in data.layergroups | orderBy:'order':true" >
+                  <li ng-repeat="layergroup in layerData.layergroups | orderBy:'order':true" >
                     <input id="<%layergroup.id%>-layergroup" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="toggleLayerGroup(layergroup)">
                     <label class="ng-class: {active: layergroup.active};" for="<% layergroup.id %>-layergroup" ng-bind="layergroup.name"></label>
                   </li>
@@ -103,7 +116,7 @@
                 {% trans "Kaartlagen" %}
                 <hr>
                 <ul class="unstyled">
-                  <li ng-repeat="layer in data.layers | orderBy:'order':true">
+                  <li ng-repeat="layer in layerData.layers | orderBy:'order':true">
                     <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
                     <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
                   </li>
@@ -117,6 +130,10 @@
 
     {% block box_awesome %}{% endblock %}
     <div class="container-fluid">
+      <omnibox id="omnibox" ng-class="{'stretchRight': !box.query.$dirty }" style="visibility:hidden;" ng-style="{visibility:'visible'}">
+  
+      </omnibox>
+    </div>
         {% block toolbar_controllers %}
         {% endblock %}
     {% endblock content %}
@@ -139,11 +156,9 @@
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/map-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/kpi-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/profile-directives.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/omnibox-controllers.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/kpi-controllers.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/profile-controllers.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/filters/truncate.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/common/nxt_box/nxt-box.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/nxt-box/nxt-box.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/common/nxt_graph/nxt-graph.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.min.js?{{ random_string }}"></script>
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->

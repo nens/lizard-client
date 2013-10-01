@@ -41,7 +41,7 @@ app.directive('rasterprofile', function () {
         var drawLine = function (startpoint, endpoint) {
           var pointList = [startpoint, endpoint];
           var firstpolyline = L.polyline(pointList, {
-            color: 'deeppink',
+            color: 'lightseagreen',
             weight: 2,
             opacity: 1,
             smoothFactor: 1
@@ -77,16 +77,14 @@ app.directive('rasterprofile', function () {
         };
 
         // enable and disable click handler
-        // 'profile_enabled' is set by the MasterCtrl on <body> scope
-        scope.$watch('profile_enabled', function () {
-          if (scope.profile_enabled) {
+        // 'tools.profile.enabled' is set by the MasterCtrl on <html> scope
+        scope.$watch('tools.profile.enabled', function () {
+          if (scope.tools.profile.enabled) {
             scope.map.on('click',  drawLineCLickHandler);
-            angular.element(".icon-resize-full").toggleClass("icon-large");
           } else {
             //clean up map
             if (scope.line_marker) {
               mapCtrl.removeLayer(scope.line_marker);
-              angular.element(".icon-resize-full").toggleClass("icon-large");
             }
             scope.map.off('click', drawLineCLickHandler);
           }

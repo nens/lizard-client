@@ -2,31 +2,6 @@
 
 {% block box_awesome %}
 
-<div id="omnibox" ng-class="{'stretchRight': !box.query.$dirty }" style="visibility:hidden;" ng-style="{visibility:'visible'}" ng-controller="SearchCtrl">
-    
-    <div class="searchbox" id="searchbox" tabindex="-1" role="search" style="">
-        <form id="searchbox_form"> 
-            <table cellspacing="0" cellpadding="0" id="" class="searchboxinput" style="width: 375px; padding: 0px;">
-                <tbody>
-                    <tr>
-                        <td>
-                            <input ui-keydown="{esc: 'reset_query()'}" ui-keyup="{'enter':'filter($event)'}" ng-model="box.query" ng-focus id="searchboxinput" name="q" tabindex="1" autocomplete="off" dir="ltr" spellcheck="false"><a href="" ng-click="reset_query()" id="clear"></a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </form> 
-        <button class="searchbutton" ng-click="filter($event)" aria-label="Search" tabindex="3"></button>
-    </div>
-
-    <div id="cards" ng-controller="CardsCtrl">
-        <div ng-show="box.showCards" class="card-box" ng-model="box">
-            <div box-content="" type="box.type"><%box.type%></div>        
-        </div>
-
-    </div> 
-</div>
-
 {% endblock %}
 
 {% block site_actions %}

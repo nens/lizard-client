@@ -1,6 +1,8 @@
-app
-	.directive('boxContent', ["$compile", "$http", "$templateCache", "Omnibox",
-		function($compile, $http, $templateCache, Omnibox) {
+'use strict';
+
+angular.module('omnibox', [])
+	.directive('omnibox', ["$compile", "$http", "$templateCache",
+		function($compile, $http, $templateCache) {
 
       var getTemplate = function(contentType) {
           if (contentType === undefined) contentType = 'empty';
@@ -17,41 +19,46 @@ app
 
       var linker = function(scope, element, attrs) {
 
-        scope.$watch('box.type', function(){
-          replaceTemplate();
-        });
-
         var replaceTemplate = function(){
           var loader = getTemplate(scope.box.type);
 
           var promise = loader.success(function(html) {
-              element.html(html);
+            // we don't want the dynamic template to overwrite the search box.
+              element.find("#cards").html(html);
           }).then(function (response) {
               $compile(element.contents())(scope);
           });
         };
+
+        scope.$watch('box.type', function(){
+          replaceTemplate();
+          if ('scope.box.type' !== 'empty'){
+            scope.box.showCards = true;
+          } else {
+            scope.box.showCards = false;
+          }
+        });
+
         replaceTemplate();
+
+        scope.$watch('selected_timeseries', function () {
+          if (scope.selected_timeseries !== undefined){
+
+            scope.data = scope.format_data(scope.selected_timeseries.events);
+            // dit kan zeker nog mooier
+            scope.metadata.title = scope.selected_timeseries.location.name;
+            scope.metadata.ylabel = 'Aciditeit (%)' ; //scope.selected_timeseries.parameter + scope.selected_timeseries.unit.code
+            scope.metadata.xlabel = "Tijd";
+          } else {
+            scope.data = undefined;
+          }
+        });
+
       };
 
-      // TODO: this is going to handle the opening. Not yet
-      function BoxCtrl ($scope){
-        $scope.box = Omnibox;
-        this.open = function(){
-          $scope.box.type = type;
-          $scope.box.showCards = true;
-        };
-
-        this.close = function(){
-          $scope.box.type = 'empty';
-          $scope.box.showCards = false;
-        };
-        $scope.$watch('box.changed', function(){
-          // this.open($scope.box.type);
-        });
-      }
-
       return {
-          restrict: 'A',
-          link: linker
+          restrict: 'E',
+          link: linker,
+          templateUrl: '/static/source/app/templates/omnibox-search.html'
       };
   }]);
