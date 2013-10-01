@@ -206,14 +206,14 @@ html, body{
 .layer-switcher-enabler {
     top: 14px;
     right: 178px;
-    width: 30px;
+    width: 42px;
     position: absolute;
     background: #e74c3c;
     padding: 13px;
     font-size: 22px;
     cursor: pointer;
     z-index: 1;
-    height: 22px;
+    height: 48px;
 }
 
 .icon-globe {
@@ -291,7 +291,7 @@ html, body{
 
 .layer-switcher {
     min-height: 200px;
-    width: 150px;
+    width: 180px;
     top: 0px;
     right: -7px;
     position: absolute;
@@ -501,12 +501,11 @@ Stolen from lizard 5
 
 
 #logo-row {
-    height: 40px;
+    height: 50px;
     margin-bottom: 0px;
     overflow: visible;
     background-color: #16a085;
-/*    background-image: linear-gradient(to bottom, rgb(24, 134, 147), rgb(17, 94, 103));
-    background-repeat: repeat-x;*/
+    background-repeat: repeat-x;
 }
 
 
@@ -516,7 +515,7 @@ header {
     right: 0px;
     left: 0px;
     z-index: 2000;
-    height: 40px;
+    height: 50px;
     color: rgb(255,255,255);
     font-size: 18px;
 }
@@ -616,7 +615,7 @@ header {
 
 .navbar .nav > li > a {
     float: none;
-    padding: 10px 15px;
+    /*padding: 10px 15px;*/
     color: rgb(255, 255, 255);
     text-decoration: none;
     text-shadow: none;

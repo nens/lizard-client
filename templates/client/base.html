@@ -8,18 +8,15 @@
     <title>Lizard</title>
     
     {% block css %}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}vendor/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}vendor/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}vendor/leaflet/dist/leaflet.css" />
 
-    <!-- CSS for jqueryui: "smoothness" theme -->
-    <!--<link href="{{ STATIC_URL }}vendor/jquery-ui-1.10.1.custom/themes/smoothness/jquery-ui.min.css" rel="stylesheet" />-->
     <link href="{{ STATIC_URL }}vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}source/assets/css/nxt_base.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}vendor/nxt-box/nxt-box.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL }}source/assets/css/animations.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}vendor/ngprogress/ngProgress.css" rel="stylesheet" />
     <link href='http://fonts.googleapis.com/css?family=Petit+Formal+Script|Kite+One|Roboto+Slab' rel='stylesheet' type='text/css'>
-    <!--<link href="{{ STATIC_URL }}vendor/nvd3/source/nv.d3.css" rel="stylesheet"/>-->
     {% endblock css %}
 
     <script>
@@ -42,13 +39,13 @@
   </head>
 
   <body>
-    <header>
-      <div id="logo-row" class="navbar">
+    <header class="navbar navbar-inverse navbar-fixed-top">
+      <div id="logo-row" class="">
         <div id="logo">
           <a href="/" title="{% trans 'Back to homepage' %}"><img src="{{ STATIC_URL }}source/assets/images/logo_text.png" alt="Lizard"></a>
         </div>
-        <div id="site-actions">
-          <ul class="nav pull-right" id="rightbar-actions">
+        <!-- <div id="site-actions">                  id="rightbar-actions"-->
+          <ul class="nav navbar-nav navbar-right" >
             <li class="site">
               <a href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.profile.enabled}"></i></a>
             </li>
@@ -71,7 +68,7 @@
             {% endif %}
           </ul>
           {% block site_actions %}{% endblock site_actions %}
-        </div>
+        <!-- </div> -->
       </div>
     </header>
 
@@ -122,7 +119,7 @@
       
 
     {% block box_awesome %}{% endblock %}
-    <div class="container-fluid">
+    <div class="container">
       <omnibox id="omnibox" ng-class="{'stretchRight': !box.query.$dirty }" style="visibility:hidden;" ng-style="{visibility:'visible'}">
   
       </omnibox>
@@ -142,7 +139,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/highlight/highlight.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/keypress/keypress.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/ngprogress/build/ngProgress.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/dist/js/bootstrap.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt-services.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/omnibox-directives.js?{{ random_string }}"></script>
