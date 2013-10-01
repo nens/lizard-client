@@ -6,6 +6,7 @@ html, body{
 }
 
 #map {
+    top:50px;
     z-index: 0;
     width: 100%;
     height: 100%;
@@ -144,67 +145,29 @@ html, body{
 }
 
 .layer-switcher-wrapper {
-    width: 140px;
+    width: 200px;
     position: absolute;
-    top: 0px;
     z-index: 15000;
-    top: 40px;
-    right: -140px;
+    top: 50px;
+    right: -200px;
+    -o-transition:.5s ease-out;
+    -ms-transition:.5s ease-out;
+    -moz-transition:.5s ease-out;
+    -webkit-transition:.5s ease-out;
+    transition: .5s ease-out;
 }
 
 .leaflet-container a {
     color: #16a085;
 }
 
-
-.slide-left {
-    display: block;
-    animation-name: slide-left;
-    -webkit-animation-name: slide-left;  
-
-    animation-duration: 0.5s; 
-    -webkit-animation-duration: 0.5s;
-
-    animation-timing-function: ease-in-out; 
-    -webkit-animation-timing-function: ease-in-out;     
-
-    visibility: visible !important;
-
-
-}
-
-@keyframes slide-left {
-    0% {
-        transform: translateX(90%);
-    }           
-    100% {
-        transform: translateX(0%);
-    }
-}
-
-@-webkit-keyframes slide-left {
-    0% {
-        -webkit-transform: translateX(90%);
-    }           
-    100% {
-        -webkit-transform: translateX(0%);
-    }
-}
-
-.slide-right{
-    -o-transition:.5s;
-    -ms-transition:.5s;
-    -moz-transition:.5s;
-    -webkit-transition:.5s;
-    transition: .5s;
+.slide-left{
     right: 0px;
 }
 
-.nav-list {
-    padding-top: 5px;
-    padding-bottom: 5px;
+.list-group label{
+    font-weight: normal;
 }
-
 
 .icon-globe {
     position: relative;
@@ -213,7 +176,7 @@ html, body{
     margin-right: auto;
     margin-top: auto;
     margin-bottom: auto;
-    top: -62%;
+    top: -21px;
     z-index: 10;
 }
 
@@ -263,7 +226,7 @@ html, body{
 }
 
 .arrow-up {
-    width: 36px;
+    width: 76px;
     position: relative;
     top: 13px;
     height: 0; 
@@ -276,12 +239,12 @@ html, body{
 }
 
 .arrow-down {
-    width: 36px;
+    width: 76px;
     position: relative;
     top: -30px;
     height: 0; 
     cursor: pointer;
-    border-left: 40px solid transparent;
+    border-left: 40px solid rgba(231, 76, 60,0);
     border-right: 0px solid transparent;
     border-top: 30px solid #e74c3c;
     z-index: 0;
@@ -296,12 +259,12 @@ html, body{
     background: rgba(255,255,255,0.9);
     list-style-type: none;
     z-index: 2;
-    padding: 19px;
+    padding: 15px 15px 0px 15px;
     border-radius: 2px;
     overflow: hidden;
 }
 .layer-switcher .nav {
-    margin: -20px;
+/*    margin: -10px 0 -10px 0px;*/
     border-radius: 2px;   
 }
 
@@ -312,18 +275,18 @@ html, body{
 
 #content{
     position: absolute;
-    top: 40px;
+    top: 50px;
     width: 100%;
     height: 100%;
 }
 
-#right-panel {
+/*#right-panel {
     position: relative;
-    min-width: 130px;
+    min-width: 150px;
     border-width: 2px;
     border-color: red;
     float: right;
-}
+}*/
 
 .spacer {
     margin-bottom: 1em;
@@ -507,12 +470,11 @@ Stolen from lizard 5
 
 
 #logo-row {
-    height: 40px;
+    height: 50px;
     margin-bottom: 0px;
     overflow: visible;
     background-color: #16a085;
-/*    background-image: linear-gradient(to bottom, rgb(24, 134, 147), rgb(17, 94, 103));
-    background-repeat: repeat-x;*/
+    background-repeat: repeat-x;
 }
 
 
@@ -521,7 +483,7 @@ header {
     right: 0px;
     left: 0px;
     z-index: 2000;
-    height: 40px;
+    height: 50px;
     color: rgb(255,255,255);
     font-size: 18px;
 }
@@ -623,7 +585,7 @@ header {
 
 .navbar .nav > li > a {
     float: none;
-    padding: 10px 15px;
+    /*padding: 10px 15px;*/
     color: rgb(255, 255, 255);
     text-decoration: none;
     text-shadow: none;
@@ -663,6 +625,11 @@ hr {
     font-size: 14px;
     float: right;
     margin-left: 7px;
+    width: 104px;
+    text-overflow: clip '...';
+    white-space: nowrap;
+    overflow: hidden;
+    
 }
 
 .tactile-searchbox-input {
