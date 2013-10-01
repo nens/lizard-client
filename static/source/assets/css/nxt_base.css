@@ -144,12 +144,12 @@ html, body{
 }
 
 .layer-switcher-wrapper {
-    position: relative;
-    top: 40px;
-    margin-top: 16px;
+    width: 140px;
+    position: absolute;
+    top: 0px;
     z-index: 15000;
-    width: 200px;
-    right: -170px;
+    top: 40px;
+    right: -140px;
 }
 
 .leaflet-container a {
@@ -158,6 +158,7 @@ html, body{
 
 
 .slide-left {
+    display: block;
     animation-name: slide-left;
     -webkit-animation-name: slide-left;  
 
@@ -168,7 +169,7 @@ html, body{
     -webkit-animation-timing-function: ease-in-out;     
 
     visibility: visible !important;
-    right: 0px;
+
 
 }
 
@@ -196,6 +197,7 @@ html, body{
     -moz-transition:.5s;
     -webkit-transition:.5s;
     transition: .5s;
+    right: 0px;
 }
 
 .nav-list {
@@ -203,32 +205,22 @@ html, body{
     padding-bottom: 5px;
 }
 
-.layer-switcher-enabler {
-    top: 14px;
-    right: 178px;
-    width: 30px;
-    position: absolute;
-    background: #e74c3c;
-    padding: 13px;
-    font-size: 22px;
-    cursor: pointer;
-    z-index: 1;
-    height: 22px;
-}
 
 .icon-globe {
+    position: relative;
     color: #C0392B;
     margin-left: auto;
     margin-right: auto;
-    margin-top: -11px;
-    position: absolute;
-    top: 50%;
+    margin-top: auto;
+    margin-bottom: auto;
+    top: -62%;
+    z-index: 10;
 }
 
 .nav-header {
     font-family: 'Roboto Slab', serif;
     text-transform: none;
-    font-size: 22px;
+    font-size: 17px;
     color: #2c3e50;
     text-shadow: none;
 }
@@ -236,52 +228,62 @@ html, body{
 .layer-switcher label {
     color: #2c3e50;
     font-style: normal;
-    font-size: 18px;
+    font-size: 14px;
     text-shadow: none;
     -o-transition:.3s;
     -ms-transition:.3s;
     -moz-transition:.3s;
     -webkit-transition:.3s;
     transition:.3s;
+    margin-left: 5px;
 }
 
 .layer-switcher label:hover {
     color: #c0392b;
-    font-size: 18px;
+    font-size: 14px;
     text-shadow: none;
+    margin-left: 5px;
 }
 
 .layer-switcher label.active {
     color: #c0392b;
     font-style: italic;
-    font-size: 18px;
+    font-size: 14px;
     text-shadow: none;
-    margin-left: 5px;
+    margin-left: 0px;
 }
-.arrow-up {
-    top: 22px;
-    right: 220px;
+
+#ribbon {
     position: absolute;
-    width: 0; 
+    top: 14px;
+    left: -76px;
+    float: right;
+    overflow: hidden;
+    z-index: 10;
+}
+
+.arrow-up {
+    width: 36px;
+    position: relative;
+    top: 13px;
     height: 0; 
     cursor: pointer;
     border-left: 40px solid transparent;
     border-right: 0px solid transparent;
     
-    border-bottom: 40px solid #e74c3c;
+    border-bottom: 30px solid #e74c3c;
     z-index: 0;
 }
 
 .arrow-down {
-    top: 14px;
-    right: 220px;
-    position: absolute;
-    width: 0; 
+    width: 36px;
+    position: relative;
+    top: -30px;
     height: 0; 
     cursor: pointer;
     border-left: 40px solid transparent;
     border-right: 0px solid transparent;
-    border-top: 40px solid #e74c3c;
+    border-top: 30px solid #e74c3c;
     z-index: 0;
 }
 
@@ -290,20 +292,16 @@ html, body{
 }
 
 .layer-switcher {
-    min-height: 200px;
-    width: 150px;
     top: 0px;
-    right: -7px;
-    position: absolute;
     background: rgba(255,255,255,0.9);
     list-style-type: none;
     z-index: 2;
     padding: 19px;
     border-radius: 2px;
+    overflow: hidden;
 }
 .layer-switcher .nav {
-    margin: -17px;
-    border: 2px dashed #2c3e50;
+    margin: -20px;
     border-radius: 2px;   
 }
 
@@ -317,6 +315,14 @@ html, body{
     top: 40px;
     width: 100%;
     height: 100%;
+}
+
+#right-panel {
+    position: relative;
+    min-width: 130px;
+    border-width: 2px;
+    border-color: red;
+    float: right;
 }
 
 .spacer {
@@ -511,7 +517,6 @@ Stolen from lizard 5
 
 
 header {
-    position: absolute;
     top: 0px;
     right: 0px;
     left: 0px;
@@ -599,7 +604,9 @@ header {
 }
 
 #site-actions, #content-actions{
-    padding-left: 13px;
+    height: 40px;
+    width: 140px;
+    background: #1abc9c;
 }
 
 /*.navbar .nav > li > a:focus,*/
@@ -630,6 +637,7 @@ header {
 #rightbar-actions {
     float: right;
     height: 40px;
+    height: auto;
 }
 
 #leftbar-actions {
@@ -653,7 +661,6 @@ hr {
 #username {
     font-family: 'Roboto Slab', sans-serif !important;
     font-size: 14px;
-    position:relative;
     float: right;
     margin-left: 7px;
 }
