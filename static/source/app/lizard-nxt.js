@@ -13,6 +13,9 @@ document.ondblclick = function(e) {
     setTimeout(function() { clickObj.remove(); }, 1000);
 };
 
+
+var templatesUrl = '/static/source/app/templates/';
+
 var app = angular.module("lizard-nxt", [
   'ngResource',
   'ui.event',
