@@ -462,6 +462,15 @@ text, axis text {
 }
 
 
+.kpi .label {
+    font-size: 14px;
+    line-height: 2;
+}
+
+.kpi select {
+    width: 180px;
+}
+
 /*
 
 Stolen from lizard 5

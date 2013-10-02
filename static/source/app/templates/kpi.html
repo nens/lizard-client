@@ -1,4 +1,4 @@
-<div class="card" ng-controller="KpiCtrl" ng-animate=" 'animate' ">
+<div class="card kpi" ng-controller="KpiCtrl" ng-animate=" 'animate' ">
   <div>
     <h2> <% kpi.cat_dict[kpi.slct_cat]  %> - <% kpi.slct_date %> </h2>
     <h4> <% kpi.slct_area %> </h4>
@@ -17,10 +17,10 @@
             </dt>
             <dd>
               <!--ugly crap, make nicer data model for this -->
-              <span class="badge" ng-class="{
-                'badge-success': labelValue(kpi.slct_date, kpi.slct_area, category) >= kpi.thresholds.warning,
-                'badge-warning': labelValue(kpi.slct_date, kpi.slct_area, category) <  kpi.thresholds.warning && labelValue(kpi.slct_date, kpi.slct_area, category) > kpi.thresholds.error,
-                'badge-important': labelValue(kpi.slct_date, kpi.slct_area, category) <= kpi.thresholds.error && labelValue(kpi.slct_date, kpi.slct_area, category) > 0
+              <span class="label" ng-class="{
+                'label-success': labelValue(kpi.slct_date, kpi.slct_area, category) >= kpi.thresholds.warning,
+                'label-warning': labelValue(kpi.slct_date, kpi.slct_area, category) <  kpi.thresholds.warning && labelValue(kpi.slct_date, kpi.slct_area, category) > kpi.thresholds.error,
+                'label-danger': labelValue(kpi.slct_date, kpi.slct_area, category) <= kpi.thresholds.error && labelValue(kpi.slct_date, kpi.slct_area, category) > 0
                 }">
                 <% labelValue(kpi.slct_date, kpi.slct_area, category) %>
               </span>
