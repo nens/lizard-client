@@ -638,3 +638,52 @@ header {
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 
+.vertical-divider {
+    height: 80px;
+    float: right;
+    background: linear-gradient(top,#fbfbfb,#CCC,#fbfbfb);
+    background: -o-linear-gradient(top,#fbfbfb,#CCC,#fbfbfb);
+    background: -ms-linear-gradient(top,#fbfbfb,#CCC,#fbfbfb);
+    background: -moz-linear-gradient(top,#fbfbfb,#CCC,#fbfbfb);
+    background: -webkit-linear-gradient(top,#fbfbfb,#CCC,#fbfbfb);
+    width: 1px;
+    min-width: 1px;
+    vertical-align: top;
+}
+
+.recommendation {
+    float: right;
+    text-align:center;
+    list-style: none;
+    cursor: pointer;
+    font-size: 40px;
+    font-family: 'Roboto Slab';
+    color: #34495e;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+li.recommendation > i {
+    font-size: 30px;
+}
+
+li.recommendation > a {
+    font-size: 17px; 
+    display:block;
+    color: #34495e;
+
+}
+
+.no-right-padding {
+    padding-right: 0px !important;
+}
+
+#right-text {
+    margin-right: 20px;
+    max-width: 171px;
+    float: left;
+    padding: 20px;
+    font-family: 'Roboto Slab';
+    color: #7f8c8d;
+    overflow: hidden;
+}
