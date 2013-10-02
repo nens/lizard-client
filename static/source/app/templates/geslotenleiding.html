@@ -1,5 +1,5 @@
 <div class="card">
-  <div class="title">
+  <div class="card-title">
     <img src="/static/source/assets/images/geslotenleiding.png" class="img-circle"/>
     <span>Geslotenleiding</span>
   </div>
@@ -18,16 +18,12 @@
         <td>Hoogte (m) </td>
         <td ng-bind="metadata.fromgrid.pro_hgt"></td>
     </tr>
-<!--                <tr>
-          <td>Verhang (%) </td>
-          <td ng-bind="metadata.fromgrid">{[{ metadata.fromgrid }]}</td>
-      </tr> -->
-  </table>
+   </table>
 </div>
 <div class="card">
   <div class="input-prepend">
     <span class="add-on"> Tijdreeks</span> 
-    <select ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.code for tijdseries in timeseries"></select>
+    <select class="timeseries" ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.code for tijdseries in timeseries"></select>
   </div>
 
     <nxt-line-graph data="data" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>
