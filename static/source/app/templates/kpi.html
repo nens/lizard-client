@@ -11,7 +11,7 @@
                 type="button"
                 ng-class="{'btn-primary': category == kpi.slct_cat}"
                 ng-click="activate(kpi.slct_date, kpi.slct_area, category)"
-                class="btn btn-mini btn-block">
+                class="btn btn-xs btn-block">
                 <% kpi.cat_dict[category]  %>
               </button>
             </dt>
@@ -31,7 +31,7 @@
     </div>
     <nxt-line-graph data="formatted_data" title="" ylabel="" xlabel="" ymin="0" ymax="10" type="kpi"></nxt-line-graph>
     <div>
-      <button type="button" class="btn btn-small"
+      <button type="button" class="btn btn-sm"
         ng-class="{'btn-primary': date == kpi.slct_date}"
         ng-repeat="date in kpi.dates"
         ng-click="activate(date, kpi.slct_area, kpi.slct_cat)"><%date%>
@@ -57,7 +57,7 @@
     </label>
     <div ng-show="checked" id="threshold" class="well">
       <label for="low">Bovengrens: </label>
-      <input type='range' ng-model='kpi.thresholds.warning' min='1' max='10'>
+      <input type='range' ng-model='kpi.thresholds.warning' min='1' max='10'><br>
 
       <label for="high">Ondergrens: </label>
       <input type='range' ng-model='kpi.thresholds.error' min='1' max='10'>

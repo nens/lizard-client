@@ -464,7 +464,7 @@ text, axis text {
 
 .kpi .label {
     font-size: 14px;
-    line-height: 2;
+    line-height: 1;
 }
 
 .kpi select {
