@@ -1,16 +1,16 @@
 <div class="card">
-	<div id="right-text">
+	<div id="right-text" class="no-right-padding">
 		<h1>Uw functies verkennen</h1>
 		<a href="#" class="hiden-lg hiden-md" ng-click="geoLocate()"><i class="icon-bullseye"></i>&nbsp;Ga naar uw locatie</a>
 	</div>
-	<li class="recommendation no-right-padding" href="#" ng-click="toggle_tool('kpi')" ng-class="{'icon-large': tools.kpi.enabled}" title="Key Performance Indicator">
-    	<i class="icon-dashboard"></i>
-    	<a class="recommendations">kpi</a>
-	</li>
-	<div class="vertical-divider"></div>
-    <li class="recommendation" href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}">
+
+    <li class="recommendation no-right-padding" href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}">
 		<i class="icon-resize-full" ng-class="{'icon-large': tools.profile.enabled}"></i>
 	  	<a>intersect</a>
 	</li>
-
+	<div class="vertical-divider"></div>
+	<li class="recommendation" href="#" ng-click="toggle_tool('kpi')" ng-class="{'icon-large': tools.kpi.enabled}" title="Key Performance Indicator">
+    	<i class="icon-dashboard"></i>
+    	<a class="recommendations">kpi</a>
+	</li>
 </div>

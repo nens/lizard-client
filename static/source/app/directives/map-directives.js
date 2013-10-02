@@ -100,7 +100,25 @@ app
       };
 
       this.locateMe = function () {
-        $scope.map.locate({ setView: true });
+        // $scope.map.locate({ setView: true });
+        function onLocationFound(e) {
+          var radius = e.accuracy / 2;
+
+          L.marker(e.latlng).addTo(map)
+            .bindPopup("You are within " + radius + " meters from this point").openPopup();
+
+          L.circle(e.latlng, radius).addTo(map);
+        }
+
+        function onLocationError(e) {
+          alert(e.message);
+        }
+
+        $scope.map.on('locationfound', onLocationFound);
+        $scope.map.on('locationerror', onLocationError);
+
+        $scope.map.locate({setView: true, maxZoom: 16});
+
         };
 
     }
@@ -118,10 +136,10 @@ app
         
           if (scope.box.type === 'default') {
 
-            scope.box.type = 'empty';
-            // scope.$apply(function () {
-            //   scope.box.close();
-            // });
+            // scope.box.type = 'empty';
+            scope.$apply(function () {
+              scope.box.close();
+            });
             console.debug(scope);
             console.debug(scope.box.type);
           }
