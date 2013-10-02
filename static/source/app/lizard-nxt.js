@@ -40,9 +40,14 @@ app.controller("MasterCtrl",
     query: null,
     disabled: false,
     showCards: false,
-    type: 'empty',
+    type: 'default',
     content: {},
     changed: Date.now()
+  };
+
+  $scope.box.close = function () {
+    $scope.box.type = 'empty';
+    $scope.box.showCards = false;
   };
 
   // NOTE: DRY idiot.
@@ -77,6 +82,10 @@ app.controller("MasterCtrl",
     if ($scope.tools.hasOwnProperty(name)){
       $scope.tools[name].enabled = !$scope.tools[name].enabled;
     }
+  };
+
+  $scope.geoLocate = function () {
+    $scope.locate = !$scope.locate;
   };
 
 // SEARCH-START
@@ -209,7 +218,7 @@ app.controller("MasterCtrl",
 
   $scope.getTimeseries = function (data) {
 
-    $scope.box.type =  data.entity_name;
+    $scope.box.type = data.entity_name;
     $scope.box.showCards = true;
     $scope.box.content.object_type = data.entity_name;
     $scope.box.content.id = data.id;

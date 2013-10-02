@@ -199,6 +199,7 @@ html, body{
     -webkit-transition:.3s;
     transition:.3s;
     margin-left: 0px;
+    cursor: pointer;
 }
 
 .layer-switcher label:hover {

@@ -43,64 +43,69 @@ app
       };
 
 
-        // expects a layer hashtable with a leafletlayer object
-        this.toggleLayer = function (layer) {
-          if (!layer.active) {
-            if (layer.leafletLayer) {
-              $scope.map.removeLayer(layer.leafletLayer);
-            } else {
-              console.log('leaflet layer not defined', layer.type);
-            }
+      // expects a layer hashtable with a leafletlayer object
+      this.toggleLayer = function (layer) {
+        if (!layer.active) {
+          if (layer.leafletLayer) {
+            $scope.map.removeLayer(layer.leafletLayer);
           } else {
-            if (layer.leafletLayer) {
-              $scope.map.addLayer(layer.leafletLayer);
-            } else {
-              console.log('leaflet layer not defined', layer.type);
-            }
+            console.log('leaflet layer not defined', layer.type);
           }
-        };
-
-        // expects a layer hashtable with a leafletlayer object
-        this.toggleBaseLayer = function (layer) {
-          var layers = $scope.map._layers;
-          if (!layer.active) {
-            if (layer.leafletLayer) {
-              $scope.map.removeLayer(layer.leafletLayer);
-            } else {
-              console.log('leaflet layer not defined');
-            }
-          } else if (layer.active) {
-            if (layer.leafletLayer) {
-              $scope.map.addLayer(layer.leafletLayer);
-              layer.leafletLayer.bringToBack();
-            } else {
-              console.log('leaflet layer not defined');
-            }
+        } else {
+          if (layer.leafletLayer) {
+            $scope.map.addLayer(layer.leafletLayer);
+          } else {
+            console.log('leaflet layer not defined', layer.type);
           }
+        }
+      };
+
+      // expects a layer hashtable with a leafletlayer object
+      this.toggleBaseLayer = function (layer) {
+        var layers = $scope.map._layers;
+        if (!layer.active) {
+          if (layer.leafletLayer) {
+            $scope.map.removeLayer(layer.leafletLayer);
+          } else {
+            console.log('leaflet layer not defined');
+          }
+        } else if (layer.active) {
+          if (layer.leafletLayer) {
+            $scope.map.addLayer(layer.leafletLayer);
+            layer.leafletLayer.bringToBack();
+          } else {
+            console.log('leaflet layer not defined');
+          }
+        }
+      };
+
+      // Expects a leafletLayer as an argument
+      this.addLayer = function (layer) {
+        $scope.map.addLayer(layer);
+      };
+
+      // Expects a leafletLayer as an argument
+      this.removeLayer = function (layer) {
+        $scope.map.removeLayer(layer);
+      };
+
+      this.panZoomTo = function (panZoom) {
+        $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
+      };
+
+      this.moveEnd = function(lat,lng,zoom) {
+        // console.log('moveEnd!', $location.path());
+        $location.path(lat + ',' + lng + ',' + zoom);
+        // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
+      };
+
+      this.locateMe = function () {
+        $scope.map.locate({ setView: true });
         };
 
-        // Expects a leafletLayer as an argument
-        this.addLayer = function (layer) {
-          $scope.map.addLayer(layer);
-        };
-
-        // Expects a leafletLayer as an argument
-        this.removeLayer = function (layer) {
-          $scope.map.removeLayer(layer);
-        };
-
-        this.panZoomTo = function (panZoom) {
-          $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
-        };
-
-        this.moveEnd = function(lat,lng,zoom) {
-          // console.log('moveEnd!', $location.path());
-          $location.path(lat + ',' + lng + ',' + zoom);
-          // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
-        };
     }
 
-    var link = function (scope, element, attrs) {
+    var link = function (scope, element, attrs, mapCtrl) {
       // instead of 'map' element here for testability
       var map = new L.map(element[0], {
           center: new L.LatLng(52.0992287, 5.5698782),
@@ -108,6 +113,21 @@ app
           zoom: 8
         });
       scope.map = map;
+
+      scope.map.on('dragend', function() {
+        
+          if (scope.box.type === 'default') {
+
+            scope.box.type = 'empty';
+            // scope.$apply(function () {
+            //   scope.box.close();
+            // });
+            console.debug(scope);
+            console.debug(scope.box.type);
+          }
+          mapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
+      });
+
     };
 
   return {
@@ -119,18 +139,7 @@ app
   };
 }]);
 
-app.directive('moveEnd', [function () {
-  return {
-    require: 'map',
-    link: function(scope, elements, attrs, MapCtrl) {
-      
-      scope.$watch('moveend', function() {
-        MapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
-      });
-    },
-    restrict: 'A'
-  };
-}]);
+
 
 app.directive('layerSwitch', [function () {
   return {
@@ -162,16 +171,29 @@ app.directive('layerSwitch', [function () {
 app.directive('panZoom', [function () {
   return {
     require: 'map',
-    link: function (scope, elements, attrs, MapCtrl) {
+    link: function (scope, element, attrs, mapCtrl) {
       scope.$watch('panZoom', function (){
         if (scope.panZoom !== undefined){
           if (scope.panZoom.hasOwnProperty('lat') &&
             scope.panZoom.hasOwnProperty('lng') &&
             scope.panZoom.hasOwnProperty('zoom') ) {
-           MapCtrl.panZoomTo(scope.panZoom);
+           mapCtrl.panZoomTo(scope.panZoom);
           }
         }
       });
     }
   };
 }]);
+
+app.directive('locate', function(){
+  return {
+    require: 'map',
+    link: function(scope, element, attrs, mapCtrl){
+      scope.$watch('locate', function () {
+        if (scope.locate !== undefined) {
+          mapCtrl.locateMe();
+        }
+      });
+    }
+  }
+});

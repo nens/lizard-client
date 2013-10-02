@@ -30,7 +30,8 @@ angular.module('omnibox', [])
           });
         };
 
-        scope.$watch('box.type', function(){
+        scope.$watch('box.type', function () {
+          console.debug(scope);
           replaceTemplate();
           if ('scope.box.type' !== 'empty'){
             scope.box.showCards = true;
