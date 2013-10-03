@@ -10,9 +10,12 @@
 
 
   <div ng-show="box.query.length > 0" ng-cloak ng-repeat="(key, value) in searchData" class="card location">
-    <i class="icon-table"></i>&nbsp;<a href="#"><span ng-cloak ng-repeat="(k,v) in value">
-      <span ng-bind-html-unsafe="k"></span>: <span ng-bind-html-unsafe="v "></span></a>
-    </span>       
+    <span ng-if="value.pin">
+      <i class="icon-table"></i>&nbsp;
+      <a ng-click="showDetails(value)" data-latitude="<% value.pin.lat %>" data-longitude="<% value.pin.lon %>" style="cursor:pointer;">
+        <span ng-bind-html-unsafe="value.name"></span>
+      </a>
+    </span>
   </div>
 
   

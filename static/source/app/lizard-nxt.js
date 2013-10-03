@@ -80,6 +80,7 @@ app.controller("MasterCtrl",
   };
 
 // SEARCH-START
+  $scope.searchMarkers = [];
   $scope.search = function ($event) {
 
     if ($scope.box.query.length > 1) {
@@ -89,6 +90,12 @@ app.controller("MasterCtrl",
           for (var i in data.hits.hits) {
             sources.push(data.hits.hits[i]._source);
           }
+          for (var j in sources) {
+            if(sources[j].pin) {
+              $scope.searchMarkers.push(sources[j]);
+            }
+          }
+
           $scope.searchData = sources;
         });
 
@@ -112,12 +119,20 @@ app.controller("MasterCtrl",
 
   $scope.showDetails = function (obj) {
       $scope.currentObject = obj;
+      console.log('obj:', obj);
       if ($scope.currentObject.lat && $scope.currentObject.lon) {
           // A lat and lon are present, instruct the map to pan/zoom to it
           var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
           $scope.panZoom = {
             lat: $scope.currentObject.lat,
             lng: $scope.currentObject.lon,
+            zoom: 14
+          };
+      }
+      else if ($scope.currentObject.pin.lat && $scope.currentObject.pin.lon) {
+          $scope.panZoom = {
+            lat: $scope.currentObject.pin.lon,
+            lng: $scope.currentObject.pin.lat,
             zoom: 14
           };
       }

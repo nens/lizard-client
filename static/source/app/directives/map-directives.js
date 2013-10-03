@@ -107,6 +107,25 @@ app
           zoomControl: false,
           zoom: 8
         });
+      console.log('scope', scope);
+      scope.$watch('searchMarkers', function(newValue, oldValue) {
+        if(newValue)
+          console.log('hey they changed!', scope.searchMarkers);
+          for(var i in scope.searchMarkers) {
+              var cm = new L.CircleMarker(
+                new L.LatLng(
+                  scope.searchMarkers[i].pin.lon,
+                  scope.searchMarkers[i].pin.lat
+                ),
+                {
+                  color: '#fff',
+                  fillColor: '#3186cc',
+                  fillOpacity: 0.6
+                }
+              ).addTo(scope.map);
+              cm.bindPopup(scope.searchMarkers[i].name);
+          }
+      }, true);
       scope.map = map;
     };
 
