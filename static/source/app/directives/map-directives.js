@@ -2,18 +2,18 @@
 app
   .directive('map', [function () {
 
-    function MapCtrl ($scope, $location){   
-    // TODO: Make this not suck.
+    function MapCtrl ($scope, $location){
+      // TODO: Make this not suck.
       this.initiateLayer = function (layer) {
-        if (layer.type === "TMS" && layer.baselayer){
-          layer.leafletLayer = L.tileLayer(layer.url + '.png', {name:"Background", maxZoom: 20});
-        } else if (layer.type === "TMS" && !layer.baselayer){
-          if (layer.url.split('/api/v1/').length > 0){
-            if (layer.content !== null) {
-                var layer_types = layer.content.split(',');
-                for (var i in layer_types){
-                  if (layer_types[i] == 'knoop' || layer_types[i] == 'geslotenleiding' || layer_types[i] == 'pumpstation'){
-                    var url = layer.url + '.grid?object_types=' + layer_types[i];
+          if (layer.type === 'TMS' && layer.baselayer){
+            layer.leafletLayer = L.tileLayer(layer.url + '.png', {name:'Background', maxZoom: 20});
+          } else if (layer.type === 'TMS' && !layer.baselayer){
+            if (layer.url.split('/api/v1/').length > 0){
+              if (layer.content !== null) {
+                var layerTypes = layer.content.split(',');
+                for (var i in layerTypes){
+                  if (layerTypes[i] == 'knoop' || layerTypes[i] == 'geslotenleiding' || layerTypes[i] == 'pumpstation'){
+                    var url = layer.url + '.grid?object_types=' + layerTypes[i];
                     var leafletLayer = new L.UtfGrid(url, {
                       useJsonP: false,
                       maxZoom: 20
@@ -28,96 +28,115 @@ app
                 }
               }
             }
-              var params = layer.content === '' ? '' : '?object_types=' + layer.content;
-          layer.leafletLayer = L.tileLayer(layer.url + '.png' + params, {maxZoom: 20, zIndex: layer.z_index});
-        } else if (layer.type === "WMS"){
-          layer.leafletLayer = L.tileLayer.wms(layer.url, {
-            layers: layer.content,
-            format: 'image/png',
-            version: '1.1.1',
-            maxZoom: 20 });
-        } else {
-          console.log(layer.type);
-        }
-        layer.initiated = true;
+            var params = layer.content === '' ? '' : '?object_types=' + layer.content;
+            layer.leafletLayer = L.tileLayer(layer.url + '.png' + params, {maxZoom: 20, zIndex: layer.z_index});
+          } else if (layer.type === 'WMS'){
+            layer.leafletLayer = L.tileLayer.wms(layer.url, {
+              layers: layer.content,
+              format: 'image/png',
+              version: '1.1.1',
+              maxZoom: 20 });
+          } else {
+            console.log(layer.type);
+          }
+          layer.initiated = true;
       };
 
 
-        // expects a layer hashtable with a leafletlayer object
-        this.toggleLayer = function (layer) {
-          if (!layer.active) {
-            if (layer.leafletLayer) {
-              $scope.map.removeLayer(layer.leafletLayer);
-            } else {
-              console.log('leaflet layer not defined', layer.type);
-            }
+      // expects a layer hashtable with a leafletlayer object
+      this.toggleLayer = function (layer) {
+        if (!layer.active) {
+          if (layer.leafletLayer) {
+            $scope.map.removeLayer(layer.leafletLayer);
           } else {
-            if (layer.leafletLayer) {
-              $scope.map.addLayer(layer.leafletLayer);
-            } else {
-              console.log('leaflet layer not defined', layer.type);
-            }
+            console.log('leaflet layer not defined', layer.type);
           }
-        };
-
-        // expects a layer hashtable with a leafletlayer object
-        this.toggleBaseLayer = function (layer) {
-          var layers = $scope.map._layers;
-          if (!layer.active) {
-            if (layer.leafletLayer) {
-              $scope.map.removeLayer(layer.leafletLayer);
-            } else {
-              console.log('leaflet layer not defined');
-            }
-          } else if (layer.active) {
-            if (layer.leafletLayer) {
-              $scope.map.addLayer(layer.leafletLayer);
-              layer.leafletLayer.bringToBack();
-            } else {
-              console.log('leaflet layer not defined');
-            }
+        } else {
+          if (layer.leafletLayer) {
+            $scope.map.addLayer(layer.leafletLayer);
+          } else {
+            console.log('leaflet layer not defined', layer.type);
           }
-        };
+        }
+      };
 
-        // Expects a leafletLayer as an argument
-        this.addLayer = function (layer) {
-          $scope.map.addLayer(layer);
-        };
+      // expects a layer hashtable with a leafletlayer object
+      this.toggleBaseLayer = function (layer) {
+        var layers = $scope.map._layers;
+        if (!layer.active) {
+          if (layer.leafletLayer) {
+            $scope.map.removeLayer(layer.leafletLayer);
+          } else {
+            console.log('leaflet layer not defined');
+          }
+        } else if (layer.active) {
+          if (layer.leafletLayer) {
+            $scope.map.addLayer(layer.leafletLayer);
+            layer.leafletLayer.bringToBack();
+          } else {
+            console.log('leaflet layer not defined');
+          }
+        }
+      };
 
-        // Expects a leafletLayer as an argument
-        this.removeLayer = function (layer) {
-          $scope.map.removeLayer(layer);
-        };
+      // Expects a leafletLayer as an argument
+      this.addLayer = function (layer) {
+        $scope.map.addLayer(layer);
+      };
 
-        this.panZoomTo = function (panZoom) {
-          $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
-        };
+      // Expects a leafletLayer as an argument
+      this.removeLayer = function (layer) {
+        $scope.map.removeLayer(layer);
+      };
 
-        this.moveEnd = function(lat,lng,zoom) {
-          // console.log('moveEnd!', $location.path());
-          $location.path(lat + ',' + lng + ',' + zoom);
-          // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
-        };
+      this.panZoomTo = function (panZoom) {
+        $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
+      };
+
+      this.moveEnd = function(lat,lng,zoom) {
+        // console.log('moveEnd!', $location.path());
+        $location.path(lat + ',' + lng + ',' + zoom);
+        // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
+      };
     }
 
-    var link = function (scope, element, attrs) {
+    var link = function (scope, element) {
       // instead of 'map' element here for testability
       var map = new L.map(element[0], {
           center: new L.LatLng(52.0992287, 5.5698782),
           zoomControl: false,
           zoom: 8
         });
+      scope.$watch('searchMarkers', function(newValue, oldValue) {
+        if(newValue)
+          console.log('hey they changed!', scope.searchMarkers);
+          for(var i in scope.searchMarkers) {
+              var cm = new L.CircleMarker(
+                new L.LatLng(
+                  scope.searchMarkers[i].pin.lon,
+                  scope.searchMarkers[i].pin.lat
+                ),
+                {
+                  color: '#fff',
+                  fillColor: '#3186cc',
+                  fillOpacity: 0.6
+                }
+              ).addTo(scope.map);
+              cm.bindPopup(scope.searchMarkers[i].name);
+          }
+      }, true);
       scope.map = map;
     };
 
-  return {
+    return {
       restrict: 'E',
       replace: true,
       template: '<div id="map"></div>',
       controller: MapCtrl,
       link: link
-  };
-}]);
+    };
+  }
+]);
 
 app.directive('moveEnd', [function () {
   return {
