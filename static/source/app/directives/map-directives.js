@@ -155,7 +155,7 @@ app.directive('layerSwitch', [function () {
   return {
     require: 'map',
     link: function (scope, elements, attrs, MapCtrl) {
-      scope.$watch('layerData.changed', function () {
+      scope.$watch('mapState.changed', function () {
         for (var i in layers) {
           var layer = layers[i];
           if (!layer.initiated) {
@@ -164,9 +164,9 @@ app.directive('layerSwitch', [function () {
           MapCtrl.toggleLayer(layer);
         }
       });
-      scope.$watch('layerData.baselayerChanged', function () {
-        for (var i in scope.layerData.baselayers) {
-          var layer = scope.layerData.baselayers[i];
+      scope.$watch('mapState.baselayerChanged', function () {
+        for (var i in scope.mapState.baselayers) {
+          var layer = scope.mapState.baselayers[i];
           if (!layer.initiated) {
             MapCtrl.initiateLayer(layer);
           }
