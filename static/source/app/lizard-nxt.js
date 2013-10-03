@@ -21,7 +21,7 @@ var app = angular.module("lizard-nxt", [
   'ui.event',
   'ui.highlight',
   'ui.keypress',
-  'ngProgress',
+  // 'ngProgress',
   'omnibox',
   'lizard-nxt.services']);
 
