@@ -1,0 +1,33 @@
+<div class="card">
+  <div class="card-title">
+    <img src="/static/source/assets/images/culvert.png" class="img-circle"/>
+    <span>Culvert</span>
+  </div>
+  <table class="left">
+    <tr>
+      <td>BOB Bovenstrooms (m NAP) </td>
+      <td ng-bind="metadata.fromgrid.ground_level_upstream"></td>
+    </tr>
+    <tr>
+      <td>BOB Benedenstrooms (m NAP) </td>
+      <td ng-bind="metadata.fromgrid.ground_level_downstream"></td>
+    </tr>
+  </table>
+  <table class="right">
+    <tr>
+        <td>Breedte (m) </td>
+        <td ng-bind="metadata.fromgrid.width"></td>
+    </tr>
+    <tr>
+        <td>Lengte (m) </td>
+        <td ng-bind="metadata.fromgrid.length"></td>
+    </tr>
+   </table>
+</div>
+<div class="card">
+  <div class="input-prepend">
+    <span class="add-on"> Tijdreeks</span> 
+    <select class="timeseries" ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.code for tijdseries in timeseries"></select>
+  </div>
+    <nxt-line-graph data="data" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>
+</div>

@@ -1,26 +1,22 @@
 <div class="card">
   <div class="card-title">
-    <img src="/static/source/assets/images/geslotenleiding.png" class="img-circle"/>
-    <span>Gemaal - <% metadata.fromgrid.code %></span>
+    <img src="/static/source/assets/images/weir.png" class="img-circle"/>
+    <span>Stuw</span>
   </div>
   <table class="left">
     <tr>
-      <td>Type </td>
-      <td ng-bind="metadata.fromgrid.type"></td>
+      <td>Kruinbreedte (m) </td>
+      <td ng-bind="metadata.fromgrid.ground_level_upstream"></td>
     </tr>
     <tr>
-      <td>Start niveau (m) </td>
-      <td ng-bind="metadata.fromgrid.start_level"></td>
-    </tr>
-    <tr>
-      <td>Stop niveau (m) </td>
-      <td ng-bind="metadata.fromgrid.stop_level"></td>
+      <td>Kruinhoogte (m) </td>
+      <td ng-bind="metadata.fromgrid.ground_level_downstream"></td>
     </tr>
   </table>
   <table class="right">
     <tr>
-        <td>Capaciteit </td>
-        <td ng-bind="metadata.fromgrid.capacity"></td>
+        <td>Debiet coefficient</td>
+        <td ng-bind="metadata.fromgrid.discharge_coef"></td>
     </tr>
    </table>
 </div>
@@ -29,6 +25,5 @@
     <span class="add-on"> Tijdreeks</span> 
     <select class="timeseries" ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.code for tijdseries in timeseries"></select>
   </div>
-
     <nxt-line-graph data="data" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>
 </div>
