@@ -17,6 +17,7 @@ app
                     var leafletLayer = new L.UtfGrid(url, {
                       useJsonP: false,
                       maxZoom: 20
+                      // resolution: 2
                     });
                     leafletLayer.on('click', function (e) {
                       if (e.data){
