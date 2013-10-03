@@ -206,7 +206,7 @@ html, body{
     color: #c0392b;
     font-size: 14px;
     text-shadow: none;
-    margin-left: 10px;
+    margin-left: 5px;
 }
 
 .layer-switcher label.active {
@@ -671,19 +671,68 @@ li.recommendation > a {
     font-size: 17px; 
     display:block;
     color: #34495e;
-
 }
 
 .no-right-padding {
     padding-right: 0px !important;
 }
 
-#right-text {
-    margin-right: 20px;
-    max-width: 171px;
-    float: left;
-    padding: 20px;
+.no-left-padding {
+    padding-left: 0px !important;
+}
+
+#left-text {
+    font-size: 14px;
+
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    clear: both;
+    overflow: hidden;
+    display: inline; 
+}
+
+.left-text {
+    vertical-align: middle;
+    max-width: 317px;
+    list-style: none;
+    font-size: 14px;
     font-family: 'Roboto Slab';
     color: #7f8c8d;
-    overflow: hidden;
+    padding-right: 20px;
+}
+
+.card {
+    vertical-align: middle;
+    transition
+    -webkit-transition: all 200ms cubic-bezier(0.52,0,0.48,1);
+    -moz-transition: all 200ms cubic-bezier(0.52,0,0.48,1);
+    -ms-transition: all 200ms cubic-bezier(0.52,0,0.48,1);
+    -o-transition: all 200ms cubic-bezier(0.52,0,0.48,1);
+    transition: all 200ms cubic-bezier(0.52,0,0.48,1);
+    
+}
+
+.cards {
+    transition
+    -webkit-transition: all 200ms cubic-bezier(0.52,0,0.48,1);
+    -moz-transition: all 200ms cubic-bezier(0.52,0,0.48,1);
+    -ms-transition: all 200ms cubic-bezier(0.52,0,0.48,1);
+    -o-transition: all 200ms cubic-bezier(0.52,0,0.48,1);
+    transition: all 200ms cubic-bezier(0.52,0,0.48,1); 
+}
+
+.searchbox input {
+    vertical-align: middle;
+    background-color: transparent;
+    border: 0;
+    font-size: 14px;
+    font-weight: 300;
+    margin: 0;
+    outline: 0;
+    padding: 0;
+    width: 100%;
+    box-shadow: none;
+    height: auto !important;
+    color: #7f8c8d;
 }

@@ -132,6 +132,19 @@ app
         });
       scope.map = map;
 
+      scope.map.on('moveend', function (e) {
+        console.debug("Got: ", scope.map._layers);
+      });
+
+
+      scope.map.on('zoomend', function () {
+        if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
+            scope.$apply(function () {
+              scope.box.type = 'intersecttool';
+            });
+        }
+      });
+
       scope.map.on('dragend', function() {
         
           if (scope.box.type === 'default') {
@@ -143,6 +156,12 @@ app
             console.debug(scope);
             console.debug(scope.box.type);
           }
+          if (scope.box.type === 'intersecttool') {
+            scope.$apply(function () {
+              scope.box.type = 'empty';
+            });  
+          }
+
           mapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
       });
 
