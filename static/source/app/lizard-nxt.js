@@ -152,8 +152,6 @@ app.controller("MasterCtrl",
         }
       }
       console.log('bbox_update:', data);
-      $scope.box.bbox_content = data;
-      $scope.box.type = "location";
     });
   };
 

@@ -183,7 +183,7 @@ app
           if (scope.box.type === 'intersecttool') {
             scope.$apply(function () {
               scope.box.type = 'empty';
-            });  
+            });
           }
 
           mapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
