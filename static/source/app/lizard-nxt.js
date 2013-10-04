@@ -79,6 +79,15 @@ app.controller("MasterCtrl",
     }
   };
 
+
+  $scope.expandCards = function() {
+    console.log('expand cards');
+    
+  };
+  $scope.stackCards = function() {
+    console.log('stack cards');
+  };
+
 // SEARCH-START
   $scope.searchMarkers = [];
   $scope.search = function ($event) {
