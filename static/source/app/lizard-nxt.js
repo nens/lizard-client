@@ -212,7 +212,7 @@ app.controller("MasterCtrl",
     if (data[0]){
     $scope.formatted_data = [];
       for (var i=0; i<data[0].values.length; i++){
-        xyobject = {
+        var xyobject = {
           date: data[1].values[i],
           value: data[0].values[i]
         };
