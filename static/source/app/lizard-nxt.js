@@ -50,6 +50,15 @@ app.controller("MasterCtrl",
     $scope.box.showCards = false;
   };
 
+  $scope.geoLocate = function () {
+    $scope.locate = !$scope.locate;
+  };
+
+  $scope.simulateSearch = function (keyword) {
+    $scope.box.query = keyword;
+    $scope.search();
+  };
+
   // NOTE: DRY idiot.
   $scope.tools = {
     kpi: {
@@ -60,6 +69,7 @@ app.controller("MasterCtrl",
     }
   };
 
+// KPI START
   $scope.kpi = {
     kpichanged: true,
     thresholds: {'warning': 7, 'error': 5},
@@ -78,22 +88,26 @@ app.controller("MasterCtrl",
     slct_area: null
   };
 
+  $scope.$watch('kpi.panZoom', function(){
+    $scope.panZoom = $scope.kpi.panZoom;
+  });
+
   $scope.toggle_tool = function (name) {
     if ($scope.tools.hasOwnProperty(name)){
       $scope.tools[name].enabled = !$scope.tools[name].enabled;
     }
   };
 
-  $scope.geoLocate = function () {
-    $scope.locate = !$scope.locate;
+  $scope.onAreaClick = function(area){
+    $scope.$apply(function(){
+      $scope.kpi.slct_area = area;
+      $scope.kpi.kpichanged = !$scope.kpi.kpichanged;
+    });
   };
-
-  $scope.simulateSearch = function (keyword) {
-    $scope.box.query = keyword;
-    $scope.search();
-  };
+// KPI END
 
 // SEARCH-START
+  $scope.searchMarkers = [];
   $scope.search = function ($event) {
 
     if ($scope.box.query.length > 1) {
@@ -103,6 +117,12 @@ app.controller("MasterCtrl",
           for (var i in data.hits.hits) {
             sources.push(data.hits.hits[i]._source);
           }
+          for (var j in sources) {
+            if(sources[j].pin) {
+              $scope.searchMarkers.push(sources[j]);
+            }
+          }
+
           $scope.searchData = sources;
         });
 
@@ -126,6 +146,7 @@ app.controller("MasterCtrl",
 
   $scope.showDetails = function (obj) {
       $scope.currentObject = obj;
+      console.log('obj:', obj);
       if ($scope.currentObject.lat && $scope.currentObject.lon) {
           // A lat and lon are present, instruct the map to pan/zoom to it
           var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
@@ -135,11 +156,18 @@ app.controller("MasterCtrl",
             zoom: 14
           };
       }
+      else if ($scope.currentObject.pin.lat && $scope.currentObject.pin.lon) {
+          $scope.panZoom = {
+            lat: $scope.currentObject.pin.lon,
+            lng: $scope.currentObject.pin.lat,
+            zoom: 14
+          };
+      }
   };
 // SEARCH-END
 
 
-  $scope.layerData = {
+  $scope.mapState = {
     layergroups: CabinetService.layergroups,
     layers: CabinetService.layers,
     baselayers: CabinetService.baselayers,
@@ -149,66 +177,56 @@ app.controller("MasterCtrl",
     enabled: false
   };
 
-  $scope.$watch('kpi.panZoom', function(){
-    $scope.panZoom = $scope.kpi.panZoom;
-  });
-
   $scope.$on('PanZoomeroom', function(message, value){
     $scope.panZoom = value;
     console.log('PanZoomeroom', value);
   });
 
   $scope.switchBaseLayer = function(){
-    for (var i in $scope.layerData.baselayers){
-      if ($scope.layerData.baselayers[i].id == $scope.layerData.activeBaselayer){
-        $scope.layerData.baselayers[i].active = true;
+    for (var i in $scope.mapState.baselayers){
+      if ($scope.mapState.baselayers[i].id == $scope.mapState.activeBaselayer){
+        $scope.mapState.baselayers[i].active = true;
       } else {
-        $scope.layerData.baselayers[i].active = false;
+        $scope.mapState.baselayers[i].active = false;
       }
     }
-    $scope.layerData.baselayerChanged = Date.now();
+    $scope.mapState.baselayerChanged = Date.now();
   };
 
   $scope.toggleLayerGroup = function(layergroup){
     var grouplayers = layergroup.layers;
     for (var i in grouplayers){
-      for (var j in $scope.layerData.layers){
-        if ($scope.layerData.layers[j].id == grouplayers[i]){
-          $scope.layerData.layers[j].active = layergroup.active;
+      for (var j in $scope.mapState.layers){
+        if ($scope.mapState.layers[j].id == grouplayers[i]){
+          $scope.mapState.layers[j].active = layergroup.active;
         }
       }
     }
-    $scope.layerData.changed = Date.now();
+    $scope.mapState.changed = Date.now();
   };
 
   $scope.toggleLayerSwitcher = function () {
-    if ($scope.layerData.enabled) {
-      $scope.layerData.enabled = false;
-      $scope.layerData.disabled = true;
+    if ($scope.mapState.enabled) {
+      $scope.mapState.enabled = false;
+      $scope.mapState.disabled = true;
       }
     else {
-      $scope.layerData.enabled = true;
-      $scope.layerData.disabled = false;
+      $scope.mapState.enabled = true;
+      $scope.mapState.disabled = false;
     }
   };
 
   $scope.changed = function() {
-    $scope.layerData.changed = Date.now();
+    $scope.mapState.changed = Date.now();
   };
 
-  $scope.onAreaClick = function(area){
-    $scope.$apply(function(){
-      $scope.kpi.slct_area = area;
-      $scope.kpi.kpichanged = !$scope.kpi.kpichanged;
-    });
-  };
 
 
   $scope.format_data = function (data) {
     if (data[0]){
     $scope.formatted_data = [];
       for (var i=0; i<data[0].values.length; i++){
-        xyobject = {
+        var xyobject = {
           date: data[1].values[i],
           value: data[0].values[i]
         };
