@@ -1,22 +1,22 @@
 <div class="card">
   <div class="card-title">
-    <img src="/static/source/assets/images/gemaal.png" class="img-circle"/>
-    <span>Gemaal</span>
+    <img src="/static/source/assets/images/weir.png" class="img-circle"/>
+    <span>Stuw</span>
   </div>
   <table class="left">
     <tr>
-      <td>Aanslagpeil (m NAP) </td>
-      <td ng-bind="metadata.fromgrid.start_level"></td>
+      <td>Kruinbreedte (m) </td>
+      <td ng-bind="metadata.fromgrid.ground_level_upstream"></td>
     </tr>
     <tr>
-      <td>Afslagpeil (m NAP) </td>
-      <td ng-bind="metadata.fromgrid.stop_level"></td>
+      <td>Kruinhoogte (m) </td>
+      <td ng-bind="metadata.fromgrid.ground_level_downstream"></td>
     </tr>
   </table>
   <table class="right">
     <tr>
-        <td>Capaciteit (l/s) </td>
-        <td ng-bind="metadata.fromgrid.capacity"></td>
+        <td>Debiet coefficient</td>
+        <td ng-bind="metadata.fromgrid.discharge_coef"></td>
     </tr>
    </table>
 </div>
