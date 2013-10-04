@@ -10,8 +10,7 @@
             </tbody>
         </table>
     </form> 
-    <button class="searchbutton" ng-click="filter($event)" aria-label="Search" tabindex="3"></button>
+    <button id="search-button" class="searchbutton" ng-click="search($event)" aria-label="Search" tabindex="3"></button>
 </div>
 
-<div id="cards" class="cardbox" ng-show="box.showCards" style="overflow:auto;height:740px;">
-</div> 
+<div id="cards" class="pullDown cardbox" ng-show="box.showCards" style="overflow:auto;height:740px;"></div> 
