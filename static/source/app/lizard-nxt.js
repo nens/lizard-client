@@ -88,6 +88,11 @@ app.controller("MasterCtrl",
     $scope.locate = !$scope.locate;
   };
 
+  $scope.simulateSearch = function (keyword) {
+    $scope.box.query = keyword;
+    $scope.search();
+  };
+
 // SEARCH-START
   $scope.search = function ($event) {
 

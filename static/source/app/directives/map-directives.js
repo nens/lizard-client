@@ -132,16 +132,15 @@ app
         });
       scope.map = map;
 
-      scope.map.on('moveend', function (e) {
-        console.debug("Got: ", scope.map._layers);
-      });
-
-
+      scope.beenThreDoneIntersectSuggestion = false
       scope.map.on('zoomend', function () {
         if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
+          if (!scope.beenThreDoneIntersectSuggestion) {
+            scope.beenThreDoneIntersectSuggestion = true;
             scope.$apply(function () {
-              scope.box.type = 'intersecttool';
+            scope.box.type = 'intersecttool';
             });
+          }
         }
       });
 

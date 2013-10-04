@@ -1,25 +1,10 @@
-<div class="card">
-
-<script>
-function simulateSearch (keyword) {
-	document.getElementById('searchboxinput').value=keyword;
-	document.forms[0].submit();
-	document.getElementById('search-button').click();
-	}
-</script>
-
-    <!--<li class="recommendation no-right-padding" href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}">
-		<i class="icon-resize-full" ng-class="{'icon-large': tools.profile.enabled}"></i>
-	  	<a>intersect</a>
-	</li>-->
+<div class="card" >
 	<li class="recommendation no-right-padding" href="#" ng-click="toggle_tool('kpi')" ng-class="{'icon-large': tools.kpi.enabled}" title="Key Performance Indicator">
     	<i class="icon-dashboard"></i>
     	<a class="recommendations">kpi</a>
 	</li>
 	<div class="vertical-divider"></div>
 	<li class="left-text no-left-padding">
-		<div id="left-text" class="no-right-padding">
-			<h2>Uw functies verkennen</h2><a href="#" class="hiden-lg hiden-md" ng-click="geoLocate()"><i class="icon-bullseye"></i>&nbsp;Ga naar uw locatie</a>, of probeer te zoeken naar: <a href="" onclick="simulateSearch('Purmerend')">Purmerend</a>
-		</div>
+		<a href="#" ng-click="geoLocate()"><i class="icon-bullseye"></i>&nbsp;Ga naar uw locatie</a>, of probeer te zoeken naar <a href="" ng-click="simulateSearch('Purmerend')">Purmerend</a> <i class="icon-circle very-small-icon"></i> <a href="" ng-click="simulateSearch('Apeldoorn')">Apeldoorn</a> <i class="icon-circle very-small-icon"></i> <a href="" ng-click="simulateSearch('Riolering')">Riolering</a>
 	</li>
 </div>
