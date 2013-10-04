@@ -107,20 +107,25 @@ app
           zoomControl: false,
           zoom: 8
         });
-      console.log('scope', scope);
+      
+      map.on('moveend', function(e) {
+        console.log('bbox', map.getBounds());
+        scope.bbox_update(scope.map.getBounds()._northEast.lng,scope.map.getBounds()._northEast.lat,scope.map.getBounds()._southWest.lng,scope.map.getBounds()._southWest.lat);
+      });
+
       scope.$watch('searchMarkers', function(newValue, oldValue) {
         if(newValue)
-          console.log('hey they changed!', scope.searchMarkers);
           for(var i in scope.searchMarkers) {
               var cm = new L.CircleMarker(
                 new L.LatLng(
-                  scope.searchMarkers[i].pin.lon,
-                  scope.searchMarkers[i].pin.lat
+                  scope.searchMarkers[i].geometry[1],
+                  scope.searchMarkers[i].geometry[0]
                 ),
                 {
                   color: '#fff',
                   fillColor: '#3186cc',
-                  fillOpacity: 0.6
+                  fillOpacity: 0.0,
+                  radius: 5
                 }
               ).addTo(scope.map);
               cm.bindPopup(scope.searchMarkers[i].name);
@@ -143,8 +148,9 @@ app.directive('moveEnd', [function () {
     require: 'map',
     link: function(scope, elements, attrs, MapCtrl) {
       
-      scope.$watch('moveend', function() {
-        MapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
+      scope.$watch('moveend', function(newValue, oldValue) {
+        if(newValue)
+          MapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
       });
     },
     restrict: 'A'

@@ -24,3 +24,8 @@
     <!-- | highlight:box.query -->
   </div>
     
+    
+  <div ng-show="box.type == 'location'" class="card cluster location" ng-repeat="g in box.bbox_content">
+    <i class="icon-map-marker"></i>&nbsp;<a ng-click="showDetails(g)" title="<% g.name %>" data-latitude="<% g.geometry[0] %>" data-longitude="<% g.geometry[1] %>" style="cursor:pointer;"><span ng-bind-html-unsafe="g.name "></span></a> 
+    <!-- | highlight:box.query -->
+  </div>    
