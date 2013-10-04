@@ -8,9 +8,9 @@
     <title>Lizard</title>
     
     {% block css %}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}build/css/vendor.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}dist/css/vendor.css" />
     <link href='http://fonts.googleapis.com/css?family=Petit+Formal+Script|Kite+One|Roboto+Slab' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}build/css/nxt.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}dist/css/nxt.css" />
     {% endblock css %}
 
     <script>
@@ -36,7 +36,7 @@
     <header class="navbar navbar-inverse navbar-fixed-top">
       <div id="logo-row" class="">
         <div id="logo">
-          <a href="/"><img src="{{ STATIC_URL }}source/assets/images/logo_text.png" alt="Lizard"></a>
+          <a href="/"><img src="{{ STATIC_URL }}dist/images/logo_text.png" alt="Lizard"></a>
         </div>
         <!-- <div id="site-actions">                  id="rightbar-actions"-->
           <ul class="nav navbar-nav navbar-right" >
@@ -125,9 +125,9 @@
 
     {% block javascript_body %}
 
-    <script type="text/javascript" src="{{ STATIC_URL }}build/js/ng.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}build/js/vendor.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}build/js/nxt.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}dist/js/ng.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}dist/js/vendor.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}dist/js/nxt.js?{{ random_string }}"></script>
 
     {% endblock %}
 
