@@ -1,8 +1,10 @@
 // leaflet.js
 app
-  .directive('map', [function () {
+  .directive('map', ['$location', function () {
 
-    function MapCtrl ($scope, $location){   
+    function MapCtrl ($scope, $location){  
+
+    console.log($location);
     // TODO: Make this not suck.
       this.initiateLayer = function (layer) {
         if (layer.type === "TMS" && layer.baselayer){
@@ -132,6 +134,11 @@ app
           zoom: 8
         });
 
+      map.on('moveend', function(e) {
+        console.log('bbox', map.getBounds());
+        scope.bbox_update(scope.map.getBounds()._northEast.lng,scope.map.getBounds()._northEast.lat,scope.map.getBounds()._southWest.lng,scope.map.getBounds()._southWest.lat);
+      });
+
       scope.$watch('searchMarkers', function(newValue, oldValue) {
         if(newValue)
           for(var i in scope.searchMarkers) {
@@ -166,7 +173,6 @@ app
       });
 
       scope.map.on('dragend', function() {
-        
           if (scope.box.type === 'default') {
 
             // scope.box.type = 'empty';
