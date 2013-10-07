@@ -1034,7 +1034,15 @@ app.controller("KpiCtrl",
 
 }]);
 
-angular.module('templates-main', ['templates/culvert.html', 'templates/default.html', 'templates/egg.html', 'templates/empty.html', 'templates/geslotenleiding.html', 'templates/intersecttool.html', 'templates/knoop.html', 'templates/kpi.html', 'templates/location.html', 'templates/object_id.html', 'templates/omnibox-search.html', 'templates/profile.html', 'templates/pumpstation.html', 'templates/weir.html']);
+angular.module('templates-main', ['templates/bbox.html', 'templates/culvert.html', 'templates/default.html', 'templates/egg.html', 'templates/empty.html', 'templates/geslotenleiding.html', 'templates/intersecttool.html', 'templates/knoop.html', 'templates/kpi.html', 'templates/location.html', 'templates/object_id.html', 'templates/omnibox-search.html', 'templates/profile.html', 'templates/pumpstation.html', 'templates/weir.html']);
+
+angular.module("templates/bbox.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/bbox.html",
+    "<div class=\"card\" >\n" +
+    "bbox: <span ng-bind=\"bbox_content\"></span>\n" +
+    "<% bbox_content %>\n" +
+    "</div>");
+}]);
 
 angular.module("templates/culvert.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/culvert.html",
@@ -1666,13 +1674,13 @@ angular.module('graph')
           return d3.svg.axis()
             .scale(x)
             .orient("bottom")
+            .tickFormat("")
             .ticks(5);
         };
 
         var xAxis = d3.svg.axis()
           .scale(x)
           .orient("bottom")
-          .tickFormat("")
           .ticks(5);
 
       } else if (data[0].hasOwnProperty('distance')) {
@@ -1697,20 +1705,14 @@ angular.module('graph')
         var xAxis = d3.svg.axis()
           .scale(x)
           .orient("bottom")
-          .tickFormat(d3.format(".2"))
           .ticks(5);
       }
 
       var zoomed = function () {
         svg.select(".x.axis").call(xAxis);
-        svg.select(".y.axis").call(yAxis);
         svg.select(".x.grid")
             .call(make_x_axis()
             .tickSize(-height, 0, 0)
-            .tickFormat(""));
-        svg.select(".y.grid")
-            .call(make_y_axis()
-            .tickSize(-width, 0, 0)
             .tickFormat(""));
         svg.select(".line")
             .attr("class", "line")
@@ -1719,7 +1721,6 @@ angular.module('graph')
 
       var zoom = d3.behavior.zoom()
         .x(x)
-        .y(y)
         .on("zoom", zoomed);
       
       // Make sure your context as an id or so...
