@@ -95,9 +95,9 @@ app
         };
 
         this.moveEnd = function(lat,lng,zoom) {
-          // console.log('moveEnd!', $location.path());
+          console.log('moveEnd!', $location.path());
           $location.path(lat + ',' + lng + ',' + zoom);
-          // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
+          $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
         };
 
     this.locateMe = function () {
@@ -181,7 +181,6 @@ app
               scope.box.type = 'empty';
             });
           }
-
       });
 
     };
