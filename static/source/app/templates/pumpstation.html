@@ -6,17 +6,17 @@
   <table class="left">
     <tr>
       <td>Aanslagpeil (m NAP) </td>
-      <td ng-bind="metadata.fromgrid.start_level"></td>
+      <td ng-bind="metadata.fromgrid.start_level | number: 2"></td>
     </tr>
     <tr>
       <td>Afslagpeil (m NAP) </td>
-      <td ng-bind="metadata.fromgrid.stop_level"></td>
+      <td ng-bind="metadata.fromgrid.stop_level | number: 2"></td>
     </tr>
   </table>
   <table class="right">
     <tr>
         <td>Capaciteit (l/s) </td>
-        <td ng-bind="metadata.fromgrid.capacity"></td>
+        <td ng-bind="metadata.fromgrid.capacity | number: 2"></td>
     </tr>
    </table>
 </div>

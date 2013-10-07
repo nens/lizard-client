@@ -6,21 +6,21 @@
   <table class="left">
     <tr>
       <td>BOB Bovenstrooms (m NAP) </td>
-      <td ng-bind="metadata.fromgrid.ground_level_upstream"></td>
+      <td ng-bind="metadata.fromgrid.ground_level_upstream | number: 2"></td>
     </tr>
     <tr>
       <td>BOB Benedenstrooms (m NAP) </td>
-      <td ng-bind="metadata.fromgrid.ground_level_downstream"></td>
+      <td ng-bind="metadata.fromgrid.ground_level_downstream | number: 2"></td>
     </tr>
   </table>
   <table class="right">
     <tr>
         <td>Breedte (m) </td>
-        <td ng-bind="metadata.fromgrid.width"></td>
+        <td ng-bind="metadata.fromgrid.width | number: 2"></td>
     </tr>
     <tr>
         <td>Lengte (m) </td>
-        <td ng-bind="metadata.fromgrid.length"></td>
+        <td ng-bind="metadata.fromgrid.length | number: 2"></td>
     </tr>
    </table>
 </div>
