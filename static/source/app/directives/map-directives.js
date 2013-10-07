@@ -135,19 +135,20 @@ app
       scope.$watch('searchMarkers', function(newValue, oldValue) {
         if(newValue)
           for(var i in scope.searchMarkers) {
-              var cm = new L.CircleMarker(
-                new L.LatLng(
-                  scope.searchMarkers[i].geometry[1],
-                  scope.searchMarkers[i].geometry[0]
-                ),
-                {
-                  color: '#fff',
-                  fillColor: '#3186cc',
-                  fillOpacity: 0.0,
-                  radius: 5
-                }
-              ).addTo(scope.map);
-              cm.bindPopup(scope.searchMarkers[i].name);
+              return;
+              // var cm = new L.CircleMarker(
+              //   new L.LatLng(
+              //     scope.searchMarkers[i].geometry[1],
+              //     scope.searchMarkers[i].geometry[0]
+              //   ),
+              //   {
+              //     color: '#fff',
+              //     fillColor: '#3186cc',
+              //     fillOpacity: 0.0,
+              //     radius: 5
+              //   }
+              // ).addTo(scope.map);
+              // cm.bindPopup(scope.searchMarkers[i].name);
           }
       }, true);
       scope.map = map;
