@@ -29,9 +29,10 @@ app.controller("KpiCtrl",
           // initialise gemeente as first view
           $scope.kpiFormatter('gemeente');
           // ugly
+          console.debug(data.features)
           $scope.kpi.panZoom = {
-            lat: data.features[0].geometry.coordinates[0][0][1],
-            lng: data.features[0].geometry.coordinates[0][0][0],
+            lat: 52.2114246,
+            lng: 5.8998043,
             zoom: 11
           };
         });
