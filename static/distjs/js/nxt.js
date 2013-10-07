@@ -1415,38 +1415,31 @@ angular.module("templates/weir.html", []).run(["$templateCache", function($templ
 
 'use strict';
 
-angular.module('omnibox', [])
-  .directive('omnibox', ["$compile", "$http", "$templateCache",
-    function($compile, $http, $templateCache) {
+angular.module('omnibox', ["templates-main"])
+  .directive('omnibox', ["$compile", "$templateCache",
+    function($compile, $templateCache) {
 
-    // NOTE: this could probably something else
-    var baseUrl = templatesUrl;
-
-    var getTemplateLoader = function(contentType) {
+    var getTemplate = function(contentType) {
       if (contentType === undefined) contentType = 'empty';
 
-      var templateLoader,
-      templateUrl = baseUrl + contentType + '.html';
+      var template,
+      templateUrl = 'templates/' + contentType + '.html';
 
-      templateLoader = $http.get(templateUrl, {cache: $templateCache});
+      template = $templateCache.get(templateUrl);
 
-      return templateLoader;
+      return template;
 
     };
 
     var linker = function(scope, element, attrs) {
 
       var replaceTemplate = function(){
-        var loader = getTemplateLoader(scope.box.type);
-
-        var promise = loader.success(function(html) {
+        var template = getTemplate(scope.box.type);
           // we don't want the dynamic template to overwrite the search box.
           // NOTE: the reason for selecting the specific child is jqLite does not
           // support selectors.
-          angular.element(element.children()[1]).html(html);
-        }).then(function (response) {
+          angular.element(element.children()[1]).html(template);
             $compile(element.contents())(scope);
-        });
       };
 
       scope.$watch('box.type', function(){
@@ -1479,7 +1472,7 @@ angular.module('omnibox', [])
   return {
     restrict: 'E',
     link: linker,
-    templateUrl: baseUrl + 'omnibox-search.html'
+    templateUrl: 'templates/omnibox-search.html'
   };
 }]);
 //graph.js
@@ -1670,13 +1663,13 @@ angular.module('graph')
           return d3.svg.axis()
             .scale(x)
             .orient("bottom")
+            .tickFormat("")
             .ticks(5);
         };
 
         var xAxis = d3.svg.axis()
           .scale(x)
           .orient("bottom")
-          .tickFormat("")
           .ticks(5);
 
       } else if (data[0].hasOwnProperty('distance')) {
@@ -1701,20 +1694,14 @@ angular.module('graph')
         var xAxis = d3.svg.axis()
           .scale(x)
           .orient("bottom")
-          .tickFormat(d3.format(".2"))
           .ticks(5);
       }
 
       var zoomed = function () {
         svg.select(".x.axis").call(xAxis);
-        svg.select(".y.axis").call(yAxis);
         svg.select(".x.grid")
             .call(make_x_axis()
             .tickSize(-height, 0, 0)
-            .tickFormat(""));
-        svg.select(".y.grid")
-            .call(make_y_axis()
-            .tickSize(-width, 0, 0)
             .tickFormat(""));
         svg.select(".line")
             .attr("class", "line")
@@ -1723,7 +1710,6 @@ angular.module('graph')
 
       var zoom = d3.behavior.zoom()
         .x(x)
-        .y(y)
         .on("zoom", zoomed);
       
       // Make sure your context as an id or so...
