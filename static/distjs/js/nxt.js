@@ -1034,13 +1034,13 @@ app.controller("KpiCtrl",
 
 }]);
 
-angular.module('templates-main', ['../lizard_nxt/client/static/source/app/templates/culvert.html', '../lizard_nxt/client/static/source/app/templates/egg.html', '../lizard_nxt/client/static/source/app/templates/empty.html', '../lizard_nxt/client/static/source/app/templates/geslotenleiding.html', '../lizard_nxt/client/static/source/app/templates/knoop.html', '../lizard_nxt/client/static/source/app/templates/kpi.html', '../lizard_nxt/client/static/source/app/templates/location.html', '../lizard_nxt/client/static/source/app/templates/object_id.html', '../lizard_nxt/client/static/source/app/templates/omnibox-search.html', '../lizard_nxt/client/static/source/app/templates/profile.html', '../lizard_nxt/client/static/source/app/templates/pumpstation.html', '../lizard_nxt/client/static/source/app/templates/weir.html']);
+angular.module('templates-main', ['templates/culvert.html', 'templates/default.html', 'templates/egg.html', 'templates/empty.html', 'templates/geslotenleiding.html', 'templates/intersecttool.html', 'templates/knoop.html', 'templates/kpi.html', 'templates/location.html', 'templates/object_id.html', 'templates/omnibox-search.html', 'templates/profile.html', 'templates/pumpstation.html', 'templates/weir.html']);
 
-angular.module("../lizard_nxt/client/static/source/app/templates/culvert.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("../lizard_nxt/client/static/source/app/templates/culvert.html",
+angular.module("templates/culvert.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/culvert.html",
     "<div class=\"card\">\n" +
     "  <div class=\"card-title\">\n" +
-    "    <img src=\"/static/source/assets/images/culvert.png\" class=\"img-circle\"/>\n" +
+    "    <img src=\"/static/distjs/images/culvert.png\" class=\"img-circle\"/>\n" +
     "    <span>Culvert</span>\n" +
     "  </div>\n" +
     "  <table class=\"left\">\n" +
@@ -1073,22 +1073,36 @@ angular.module("../lizard_nxt/client/static/source/app/templates/culvert.html", 
     "</div>");
 }]);
 
-angular.module("../lizard_nxt/client/static/source/app/templates/egg.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("../lizard_nxt/client/static/source/app/templates/egg.html",
+angular.module("templates/default.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/default.html",
+    "<div class=\"card\" >\n" +
+    "	<li class=\"recommendation no-right-padding\" href=\"#\" ng-click=\"toggle_tool('kpi')\" ng-class=\"{'icon-large': tools.kpi.enabled}\" title=\"Key Performance Indicator\">\n" +
+    "    	<i class=\"icon-dashboard\"></i>\n" +
+    "    	<a class=\"recommendations\">kpi</a>\n" +
+    "	</li>\n" +
+    "	<div class=\"vertical-divider\"></div>\n" +
+    "	<li class=\"left-text no-left-padding\">\n" +
+    "		<a href=\"#\" ng-click=\"geoLocate()\"><i class=\"icon-bullseye\"></i>&nbsp;Ga naar uw locatie</a>, of probeer te zoeken naar <a href=\"\" ng-click=\"simulateSearch('Purmerend')\">Purmerend</a> <i class=\"icon-circle very-small-icon\"></i> <a href=\"\" ng-click=\"simulateSearch('Apeldoorn')\">Apeldoorn</a> <i class=\"icon-circle very-small-icon\"></i> <a href=\"\" ng-click=\"simulateSearch('Riolering')\">Riolering</a>\n" +
+    "	</li>\n" +
+    "</div>");
+}]);
+
+angular.module("templates/egg.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/egg.html",
     "<h1>Easter</h1>\n" +
     "<img src=\"http://media.tumblr.com/tumblr_lnfmwz0gbq1qgllay.gif\"/>");
 }]);
 
-angular.module("../lizard_nxt/client/static/source/app/templates/empty.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("../lizard_nxt/client/static/source/app/templates/empty.html",
+angular.module("templates/empty.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/empty.html",
     "");
 }]);
 
-angular.module("../lizard_nxt/client/static/source/app/templates/geslotenleiding.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("../lizard_nxt/client/static/source/app/templates/geslotenleiding.html",
+angular.module("templates/geslotenleiding.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/geslotenleiding.html",
     "<div class=\"card\">\n" +
     "  <div class=\"card-title\">\n" +
-    "    <img src=\"/static/source/assets/images/geslotenleiding.png\" class=\"img-circle\"/>\n" +
+    "    <img src=\"/static/distjs/images/geslotenleiding.png\" class=\"img-circle\"/>\n" +
     "    <span>Geslotenleiding</span>\n" +
     "  </div>\n" +
     "  <table class=\"left\">\n" +
@@ -1118,11 +1132,25 @@ angular.module("../lizard_nxt/client/static/source/app/templates/geslotenleiding
     "</div>");
 }]);
 
-angular.module("../lizard_nxt/client/static/source/app/templates/knoop.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("../lizard_nxt/client/static/source/app/templates/knoop.html",
+angular.module("templates/intersecttool.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/intersecttool.html",
+    "<div class=\"card\">\n" +
+    "    <li class=\"recommendation no-right-padding\" href=\"#\" ng-click=\"toggle_tool('profile')\" title=\"Intersect tool\">\n" +
+    "		<i class=\"icon-resize-full\"></i>\n" +
+    "	  	<a class=\"recommendations\">intersect</a>\n" +
+    "	</li>\n" +
+    "	<div class=\"vertical-divider\"></div>\n" +
+    "	<li class=\"left-text no-left-padding\">\n" +
+    "		Trek een lijn met de intersectietool om een hoogteprofiel te krijgen\n" +
+    "	</li>\n" +
+    "</div>");
+}]);
+
+angular.module("templates/knoop.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/knoop.html",
     "<div class=\"card\">\n" +
     "	<div class=\"card-title\">\n" +
-    "		<img src=\"/static/source/assets/images/knoop.png\" class=\"img-circle\"/>\n" +
+    "		<img src=\"/static/distjs/images/knoop.png\" class=\"img-circle\"/>\n" +
     "		<span>Knoop</span>\n" +
     "	</div>\n" +
     "	<table class=\"left\">\n" +
@@ -1157,8 +1185,8 @@ angular.module("../lizard_nxt/client/static/source/app/templates/knoop.html", []
     "");
 }]);
 
-angular.module("../lizard_nxt/client/static/source/app/templates/kpi.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("../lizard_nxt/client/static/source/app/templates/kpi.html",
+angular.module("templates/kpi.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/kpi.html",
     "<div class=\"card kpi\" ng-controller=\"KpiCtrl\" ng-animate=\" 'animate' \">\n" +
     "  <div>\n" +
     "    <h2> <% kpi.cat_dict[kpi.slct_cat]  %> - <% kpi.slct_date %> </h2>\n" +
@@ -1231,8 +1259,8 @@ angular.module("../lizard_nxt/client/static/source/app/templates/kpi.html", []).
     "");
 }]);
 
-angular.module("../lizard_nxt/client/static/source/app/templates/location.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("../lizard_nxt/client/static/source/app/templates/location.html",
+angular.module("templates/location.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/location.html",
     "\n" +
     "<div id=\"detail\" class=\"card location\" ng-class=\"{'pullDown': currentObject}\" ng-show=\"currentObject\">\n" +
     "	<h5><i class=\"icon-map-marker icon-large\"></i>&nbsp;<span ng-bind=\"currentObject.display_name\"></span></h5>\n" +
@@ -1244,10 +1272,10 @@ angular.module("../lizard_nxt/client/static/source/app/templates/location.html",
     "</div>\n" +
     "\n" +
     "\n" +
-    "  <div ng-show=\"box.query.length > 0\" ng-cloak ng-repeat=\"(key, value) in searchData\" class=\"card location\">\n" +
+    "  <div ng-show=\"box.query.length > 0\" ng-cloak ng-repeat=\"(key, value) in searchData\" class=\"card cluster location\">\n" +
     "    <span ng-if=\"value.pin\">\n" +
     "      <i class=\"icon-table\"></i>&nbsp;\n" +
-    "      <a ng-click=\"showDetails(value)\" data-latitude=\"<% value.pin.lat %>\" data-longitude=\"<% value.pin.lon %>\" style=\"cursor:pointer;\">\n" +
+    "      <a ng-click=\"showDetails(value)\" data-latitude=\"<% value.geometry[0] %>\" data-longitude=\"<% value.geometry[1] %>\" style=\"cursor:pointer;\">\n" +
     "        <span ng-bind-html-unsafe=\"value.name\"></span>\n" +
     "      </a>\n" +
     "    </span>\n" +
@@ -1259,11 +1287,16 @@ angular.module("../lizard_nxt/client/static/source/app/templates/location.html",
     "    <!-- | highlight:box.query -->\n" +
     "  </div>\n" +
     "    \n" +
+    "    \n" +
+    "  <div ng-show=\"box.type == 'location'\" class=\"card cluster location\" ng-repeat=\"g in box.bbox_content\">\n" +
+    "    <i class=\"icon-map-marker\"></i>&nbsp;<a ng-click=\"showDetails(g)\" title=\"<% g.name %>\" data-latitude=\"<% g.geometry[0] %>\" data-longitude=\"<% g.geometry[1] %>\" style=\"cursor:pointer;\"><span ng-bind-html-unsafe=\"g.name \"></span></a> \n" +
+    "    <!-- | highlight:box.query -->\n" +
+    "  </div>    \n" +
     "");
 }]);
 
-angular.module("../lizard_nxt/client/static/source/app/templates/object_id.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("../lizard_nxt/client/static/source/app/templates/object_id.html",
+angular.module("templates/object_id.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/object_id.html",
     "<div class=\"card\">\n" +
     "	<h3 ng-bind=\"metadata.title\"></h3>\n" +
     "	<h4 ng-show=\"metadata.type\" ng-bind=\"metadata.type\"></h4>\n" +
@@ -1281,8 +1314,8 @@ angular.module("../lizard_nxt/client/static/source/app/templates/object_id.html"
     "</div>");
 }]);
 
-angular.module("../lizard_nxt/client/static/source/app/templates/omnibox-search.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("../lizard_nxt/client/static/source/app/templates/omnibox-search.html",
+angular.module("templates/omnibox-search.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/omnibox-search.html",
     "<div class=\"searchbox\" id=\"searchbox\" tabindex=\"-1\" role=\"search\" style=\"\">\n" +
     "    <form id=\"searchbox_form\"> \n" +
     "        <table cellspacing=\"0\" cellpadding=\"0\" id=\"\" class=\"searchboxinput\" style=\"width: 375px; padding: 0px;\">\n" +
@@ -1295,15 +1328,14 @@ angular.module("../lizard_nxt/client/static/source/app/templates/omnibox-search.
     "            </tbody>\n" +
     "        </table>\n" +
     "    </form> \n" +
-    "    <button class=\"searchbutton\" ng-click=\"filter($event)\" aria-label=\"Search\" tabindex=\"3\"></button>\n" +
+    "    <button id=\"search-button\" class=\"searchbutton\" ng-click=\"search($event)\" aria-label=\"Search\" tabindex=\"3\"></button>\n" +
     "</div>\n" +
     "\n" +
-    "<div id=\"cards\" class=\"cardbox\" ng-show=\"box.showCards\">\n" +
-    "</div> ");
+    "<div id=\"cards\" class=\"pullDown cardbox\" ng-show=\"box.showCards\" style=\"overflow:auto;display:block;\"></div> ");
 }]);
 
-angular.module("../lizard_nxt/client/static/source/app/templates/profile.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("../lizard_nxt/client/static/source/app/templates/profile.html",
+angular.module("templates/profile.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/profile.html",
     "<div class=\"card\">\n" +
     "    <nxt-line-graph data=\"box.content\" ylabel=\"hoogte [mnap]\" xlabel=\"afstand [m]\" ymin=\"-10\" ymax=\"10\"></nxt-line-graph>\n" +
     "    <!--<nxt-line-graph data=\"box.content\" ylabel=\"\" xlabel=\"\"></nxt-line-graph>-->\n" +
@@ -1311,11 +1343,11 @@ angular.module("../lizard_nxt/client/static/source/app/templates/profile.html", 
     "");
 }]);
 
-angular.module("../lizard_nxt/client/static/source/app/templates/pumpstation.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("../lizard_nxt/client/static/source/app/templates/pumpstation.html",
+angular.module("templates/pumpstation.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/pumpstation.html",
     "<div class=\"card\">\n" +
     "  <div class=\"card-title\">\n" +
-    "    <img src=\"/static/source/assets/images/gemaal.png\" class=\"img-circle\"/>\n" +
+    "    <img src=\"/static/distjs/images/gemaal.png\" class=\"img-circle\"/>\n" +
     "    <span>Gemaal</span>\n" +
     "  </div>\n" +
     "  <table class=\"left\">\n" +
@@ -1344,11 +1376,11 @@ angular.module("../lizard_nxt/client/static/source/app/templates/pumpstation.htm
     "</div>");
 }]);
 
-angular.module("../lizard_nxt/client/static/source/app/templates/weir.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("../lizard_nxt/client/static/source/app/templates/weir.html",
+angular.module("templates/weir.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("templates/weir.html",
     "<div class=\"card\">\n" +
     "  <div class=\"card-title\">\n" +
-    "    <img src=\"/static/source/assets/images/weir.png\" class=\"img-circle\"/>\n" +
+    "    <img src=\"/static/distjs/images/weir.png\" class=\"img-circle\"/>\n" +
     "    <span>Stuw</span>\n" +
     "  </div>\n" +
     "  <table class=\"left\">\n" +
@@ -1376,9 +1408,6 @@ angular.module("../lizard_nxt/client/static/source/app/templates/weir.html", [])
     "    <nxt-line-graph data=\"data\" title=\"metadata.title\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
     "</div>");
 }]);
-
-angular.module('templates-main', []);
-
 
 'use strict';
 
