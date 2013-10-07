@@ -40,9 +40,23 @@ app.controller("MasterCtrl",
     query: null,
     disabled: false,
     showCards: false,
-    type: 'empty',
+    type: 'default',
     content: {},
     changed: Date.now()
+  };
+
+  $scope.box.close = function () {
+    $scope.box.type = 'empty';
+    $scope.box.showCards = false;
+  };
+
+  $scope.geoLocate = function () {
+    $scope.locate = !$scope.locate;
+  };
+
+  $scope.simulateSearch = function (keyword) {
+    $scope.box.query = keyword;
+    $scope.search();
   };
 
   // NOTE: DRY idiot.
@@ -92,19 +106,23 @@ app.controller("MasterCtrl",
   };
 // KPI END
 
+
 // SEARCH-START
   $scope.searchMarkers = [];
   $scope.search = function ($event) {
 
     if ($scope.box.query.length > 1) {
-      var search = CabinetService.search.get({q: $scope.box.query}, function (data) {
-          console.log(data.hits.hits);
+      var search = CabinetService.termSearch.query({q: $scope.box.query}, function (data) {
+          console.log(data);
           var sources = [];
-          for (var i in data.hits.hits) {
-            sources.push(data.hits.hits[i]._source);
+          for (var i in data) {
+            sources.push(data[i]);
           }
+          $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
           for (var j in sources) {
-            if(sources[j].pin) {
+            console.log('sources:',sources);
+            $scope.searchMarkers = [];
+            if(sources[j].geometry) {
               $scope.searchMarkers.push(sources[j]);
             }
           }
@@ -119,6 +137,22 @@ app.controller("MasterCtrl",
             });
       $scope.box.type = "location";
     }
+  };
+
+  $scope.bbox_update = function(bl_lat, bl_lon, tr_lat, tr_lon) {
+    $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
+    var search = CabinetService.bboxSearch.query({
+      bottom_left: bl_lat+','+bl_lon,
+      top_right: tr_lat+','+tr_lon
+    }, function (data) {
+      $scope.searchMarkers = [];
+      for(var i in data) {
+        if(data[i].geometry) {
+          $scope.searchMarkers.push(data[i]);
+        }
+      }
+      console.log('bbox_update:', data);
+    });
   };
 
   $scope.reset_query = function () {
@@ -142,10 +176,10 @@ app.controller("MasterCtrl",
             zoom: 14
           };
       }
-      else if ($scope.currentObject.pin.lat && $scope.currentObject.pin.lon) {
+      else if ($scope.currentObject.geometry[0] && $scope.currentObject.geometry[1]) {
           $scope.panZoom = {
-            lat: $scope.currentObject.pin.lon,
-            lng: $scope.currentObject.pin.lat,
+            lat: $scope.currentObject.geometry[1],
+            lng: $scope.currentObject.geometry[0],
             zoom: 14
           };
       }
@@ -227,7 +261,7 @@ app.controller("MasterCtrl",
 
   $scope.getTimeseries = function (data) {
 
-    $scope.box.type =  data.entity_name;
+    $scope.box.type = data.entity_name;
     $scope.box.showCards = true;
     $scope.box.content.object_type = data.entity_name;
     $scope.box.content.id = data.id;
