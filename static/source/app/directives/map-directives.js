@@ -99,7 +99,6 @@ app
           $location.path(lat + ',' + lng + ',' + zoom);
           // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
         };
-    };
 
     this.locateMe = function () {
         // $scope.map.locate({ setView: true });
@@ -123,7 +122,7 @@ app
 
         };
 
-    }
+    };
 
     var link = function (scope, element, attrs) {
       // instead of 'map' element here for testability
