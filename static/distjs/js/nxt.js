@@ -1050,21 +1050,21 @@ angular.module("templates/culvert.html", []).run(["$templateCache", function($te
     "  <table class=\"left\">\n" +
     "    <tr>\n" +
     "      <td>BOB Bovenstrooms (m NAP) </td>\n" +
-    "      <td ng-bind=\"metadata.fromgrid.ground_level_upstream\"></td>\n" +
+    "      <td ng-bind=\"metadata.fromgrid.ground_level_upstream | number: 2\"></td>\n" +
     "    </tr>\n" +
     "    <tr>\n" +
     "      <td>BOB Benedenstrooms (m NAP) </td>\n" +
-    "      <td ng-bind=\"metadata.fromgrid.ground_level_downstream\"></td>\n" +
+    "      <td ng-bind=\"metadata.fromgrid.ground_level_downstream | number: 2\"></td>\n" +
     "    </tr>\n" +
     "  </table>\n" +
     "  <table class=\"right\">\n" +
     "    <tr>\n" +
     "        <td>Breedte (m) </td>\n" +
-    "        <td ng-bind=\"metadata.fromgrid.width\"></td>\n" +
+    "        <td ng-bind=\"metadata.fromgrid.width | number: 2\"></td>\n" +
     "    </tr>\n" +
     "    <tr>\n" +
     "        <td>Lengte (m) </td>\n" +
-    "        <td ng-bind=\"metadata.fromgrid.length\"></td>\n" +
+    "        <td ng-bind=\"metadata.fromgrid.length | number: 2\"></td>\n" +
     "    </tr>\n" +
     "   </table>\n" +
     "</div>\n" +
@@ -1112,17 +1112,17 @@ angular.module("templates/geslotenleiding.html", []).run(["$templateCache", func
     "  <table class=\"left\">\n" +
     "    <tr>\n" +
     "      <td>Lengte (m) </td>\n" +
-    "      <td ng-bind=\"metadata.fromgrid.lei_len\"></td>\n" +
+    "      <td ng-bind=\"metadata.fromgrid.lei_len | number: 2\"></td>\n" +
     "    </tr>\n" +
     "    <tr>\n" +
     "      <td>Breedte (m) </td>\n" +
-    "      <td ng-bind=\"metadata.fromgrid.pro_bre\"></td>\n" +
+    "      <td ng-bind=\"metadata.fromgrid.pro_bre | number: 2\"></td>\n" +
     "    </tr>\n" +
     "  </table>\n" +
     "  <table class=\"right\">\n" +
     "    <tr>\n" +
     "        <td>Hoogte (m) </td>\n" +
-    "        <td ng-bind=\"metadata.fromgrid.pro_hgt\"></td>\n" +
+    "        <td ng-bind=\"metadata.fromgrid.pro_hgt | number: 2\"></td>\n" +
     "    </tr>\n" +
     "   </table>\n" +
     "</div>\n" +
@@ -1160,21 +1160,21 @@ angular.module("templates/knoop.html", []).run(["$templateCache", function($temp
     "	<table class=\"left\">\n" +
     "		<tr>\n" +
     "			<td>BOK (m) </td>\n" +
-    "			<td ng-bind=\"metadata.fromgrid.knp_bok\"></td>\n" +
+    "			<td ng-bind=\"metadata.fromgrid.knp_bok | number: 2\"></td>\n" +
     "		</tr>\n" +
     "		<tr>\n" +
     "			<td>Breedte (m) </td>\n" +
-    "			<td ng-bind=\"metadata.fromgrid.knp_bre\"></td>\n" +
+    "			<td ng-bind=\"metadata.fromgrid.knp_bre | number: 2\"></td>\n" +
     "		</tr>\n" +
     "	</table>\n" +
     "	<table class=\"right\">\n" +
     "		<tr>\n" +
     "			<td>WOS opp. (m<sup>2</sup>) </td>\n" +
-    "			<td ng-bind=\"metadata.fromgrid.wos_opp\"></td>\n" +
+    "			<td ng-bind=\"metadata.fromgrid.wos_opp | number: 2\"></td>\n" +
     "		</tr>\n" +
     "		<tr>\n" +
     "			<td>Maaiveld (m NAP) </td>\n" +
-    "			<td ng-bind=\"metadadata.fromgrid.mvd_niv\"></td>\n" +
+    "			<td ng-bind=\"metadadata.fromgrid.mvd_niv | number: 2\"></td>\n" +
     "		</tr>\n" +
     "	</table>\n" +
     "</div>\n" +
@@ -1357,17 +1357,17 @@ angular.module("templates/pumpstation.html", []).run(["$templateCache", function
     "  <table class=\"left\">\n" +
     "    <tr>\n" +
     "      <td>Aanslagpeil (m NAP) </td>\n" +
-    "      <td ng-bind=\"metadata.fromgrid.start_level\"></td>\n" +
+    "      <td ng-bind=\"metadata.fromgrid.start_level | number: 2\"></td>\n" +
     "    </tr>\n" +
     "    <tr>\n" +
     "      <td>Afslagpeil (m NAP) </td>\n" +
-    "      <td ng-bind=\"metadata.fromgrid.stop_level\"></td>\n" +
+    "      <td ng-bind=\"metadata.fromgrid.stop_level | number: 2\"></td>\n" +
     "    </tr>\n" +
     "  </table>\n" +
     "  <table class=\"right\">\n" +
     "    <tr>\n" +
     "        <td>Capaciteit (l/s) </td>\n" +
-    "        <td ng-bind=\"metadata.fromgrid.capacity\"></td>\n" +
+    "        <td ng-bind=\"metadata.fromgrid.capacity | number: 2\"></td>\n" +
     "    </tr>\n" +
     "   </table>\n" +
     "</div>\n" +
@@ -1390,17 +1390,17 @@ angular.module("templates/weir.html", []).run(["$templateCache", function($templ
     "  <table class=\"left\">\n" +
     "    <tr>\n" +
     "      <td>Kruinbreedte (m) </td>\n" +
-    "      <td ng-bind=\"metadata.fromgrid.ground_level_upstream\"></td>\n" +
+    "      <td ng-bind=\"metadata.fromgrid.ground_level_upstream | number: 2\"></td>\n" +
     "    </tr>\n" +
     "    <tr>\n" +
     "      <td>Kruinhoogte (m) </td>\n" +
-    "      <td ng-bind=\"metadata.fromgrid.ground_level_downstream\"></td>\n" +
+    "      <td ng-bind=\"metadata.fromgrid.ground_level_downstream | number: 2\"></td>\n" +
     "    </tr>\n" +
     "  </table>\n" +
     "  <table class=\"right\">\n" +
     "    <tr>\n" +
     "        <td>Debiet coefficient</td>\n" +
-    "        <td ng-bind=\"metadata.fromgrid.discharge_coef\"></td>\n" +
+    "        <td ng-bind=\"metadata.fromgrid.discharge_coef | number: 2\"></td>\n" +
     "    </tr>\n" +
     "   </table>\n" +
     "</div>\n" +
