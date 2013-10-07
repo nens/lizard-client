@@ -697,7 +697,6 @@ app
             });
           }
 
-          mapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
       });
 
     };
