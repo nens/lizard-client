@@ -321,8 +321,12 @@ app.controller("MasterCtrl",
     $http.get(url)
       .success(function (data) {
         var d3data = format_data(data);
-        $scope.box.content = d3data;
         $scope.box.type = "profile";
+        $scope.box.content = {
+          data: d3data,
+          xLabel: 'hoogte [mNAP]',
+          yLabel: 'afstand [m]'
+        }
       })
       .error(function (data) {
         //TODO: implement error function to return no data + message
@@ -1337,7 +1341,7 @@ angular.module("templates/omnibox-search.html", []).run(["$templateCache", funct
 angular.module("templates/profile.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/profile.html",
     "<div class=\"card\">\n" +
-    "    <nxt-line-graph data=\"box.content\" ylabel=\"hoogte [mnap]\" xlabel=\"afstand [m]\" ymin=\"-10\" ymax=\"10\"></nxt-line-graph>\n" +
+    "    <nxt-line-graph data=\"box.content.data\" ylabel=\"box.content.yLabel\" xlabel=\"box.content.xLabel\" ymin=\"-10\" ymax=\"10\"></nxt-line-graph>\n" +
     "    <!--<nxt-line-graph data=\"box.content\" ylabel=\"\" xlabel=\"\"></nxt-line-graph>-->\n" +
     "</div>\n" +
     "");

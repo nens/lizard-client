@@ -321,8 +321,12 @@ app.controller("MasterCtrl",
     $http.get(url)
       .success(function (data) {
         var d3data = format_data(data);
-        $scope.box.content = d3data;
         $scope.box.type = "profile";
+        $scope.box.content = {
+          data: d3data,
+          xLabel: 'hoogte [mNAP]',
+          yLabel: 'afstand [m]'
+        }
       })
       .error(function (data) {
         //TODO: implement error function to return no data + message
