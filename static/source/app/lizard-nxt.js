@@ -118,7 +118,7 @@ app.controller("MasterCtrl",
           for (var i in data) {
             sources.push(data[i]);
           }
-          $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) === i; });
+          $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
           for (var j in sources) {
             console.log('sources:',sources);
             $scope.searchMarkers = [];
@@ -140,7 +140,7 @@ app.controller("MasterCtrl",
   };
 
   $scope.bbox_update = function(bl_lat, bl_lon, tr_lat, tr_lon) {
-    $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) === i; });
+    $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
     var search = CabinetService.bboxSearch.query({
       bottom_left: bl_lat+','+bl_lon,
       top_right: tr_lat+','+tr_lon

@@ -1,10 +1,8 @@
 // leaflet.js
 app
-  .directive('map', ['$location', function () {
+  .directive('map', [function () {
 
-    function MapCtrl ($scope, $location){  
-
-    console.log($location);
+    function MapCtrl ($scope, $location){   
     // TODO: Make this not suck.
       this.initiateLayer = function (layer) {
         if (layer.type === "TMS" && layer.baselayer){
@@ -97,9 +95,9 @@ app
         };
 
         this.moveEnd = function(lat,lng,zoom) {
-          console.log('moveEnd!', $location.path());
+          // console.log('moveEnd!', $location.path());
           $location.path(lat + ',' + lng + ',' + zoom);
-          $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
+          // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
         };
 
     this.locateMe = function () {
@@ -133,11 +131,6 @@ app
           zoomControl: false,
           zoom: 8
         });
-
-      map.on('moveend', function(e) {
-        console.log('bbox', map.getBounds());
-        scope.bbox_update(scope.map.getBounds()._northEast.lng,scope.map.getBounds()._northEast.lat,scope.map.getBounds()._southWest.lng,scope.map.getBounds()._southWest.lat);
-      });
 
       scope.$watch('searchMarkers', function(newValue, oldValue) {
         if(newValue)
@@ -173,6 +166,7 @@ app
       });
 
       scope.map.on('dragend', function() {
+        
           if (scope.box.type === 'default') {
 
             // scope.box.type = 'empty';
@@ -187,6 +181,7 @@ app
               scope.box.type = 'empty';
             });
           }
+
       });
 
     };

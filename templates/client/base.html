@@ -8,15 +8,9 @@
     <title>Lizard</title>
     
     {% block css %}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}vendor/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="{{ STATIC_URL }}vendor/leaflet/dist/leaflet.css" />
-
-    <link href="{{ STATIC_URL }}vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="{{ STATIC_URL }}source/assets/css/nxt_base.css" rel="stylesheet" />
-    <link href="{{ STATIC_URL }}vendor/omnibox/omnibox.css" rel="stylesheet"/>
-    <link href="{{ STATIC_URL }}source/assets/css/animations.css" rel="stylesheet" />
-    <link href="{{ STATIC_URL }}vendor/ngprogress/ngProgress.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}distjs/css/vendor.css" />
     <link href='http://fonts.googleapis.com/css?family=Petit+Formal+Script|Kite+One|Roboto+Slab' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}distjs/css/nxt.css" />
     {% endblock css %}
 
     <script>
@@ -42,7 +36,7 @@
     <header class="navbar navbar-inverse navbar-fixed-top">
       <div id="logo-row" class="">
         <div id="logo">
-          <a href="/"><img src="{{ STATIC_URL }}source/assets/images/logo_text.png" alt="Lizard"></a>
+          <a href="/"><img src="{{ STATIC_URL }}distjs/images/logo_text.png" alt="Lizard"></a>
         </div>
         <!-- <div id="site-actions">                  id="rightbar-actions"-->
           <ul class="nav navbar-nav navbar-right" >
@@ -130,29 +124,11 @@
     {% endblock content %}
 
     {% block javascript_body %}
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/jquery.min.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet/dist/leaflet.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.utfgrid/src/leaflet.utfgrid.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-tilelayer-geojson/TileLayer.GeoJSON.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-resource/angular-resource.min.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/event/event.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/highlight/highlight.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/keypress/keypress.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/ngprogress/build/ngProgress.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/dist/js/bootstrap.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/graph/graph.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt-services.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/map-directives.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/kpi-directives.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/profile-directives.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/kpi-controllers.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/filters/truncate.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/omnibox/omnibox.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/common/nxt_graph/nxt-graph.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.min.js?{{ random_string }}"></script>
-    <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->
+
+    <script type="text/javascript" src="{{ STATIC_URL }}distjs/js/ng.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}distjs/js/vendor.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}distjs/js/nxt.js?{{ random_string }}"></script>
+
     {% endblock %}
 
   </body>
