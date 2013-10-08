@@ -95,7 +95,7 @@
                     <li ng-repeat="layer in mapState.layers | orderBy:'order':true">
                       <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
                       <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
-                      <i class="icon-screenshot pull-right zoomto-icon" ng-click="zoomToTheMagic(layer)"></i>
+                      <i class="icon-screenshot pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="zoomToTheMagic(layer)"></i>
                     </li>
                   </ul>
                 </li>

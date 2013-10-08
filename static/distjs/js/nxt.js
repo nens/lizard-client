@@ -244,7 +244,6 @@ app.controller("MasterCtrl",
   $scope.zoomToTheMagic = function (layer) {
     $scope.layerToZoomTo = layer;
     $scope.zoomToLayer = !$scope.zoomToLayer;
-    console.debug("zoom to the magic", $scope.zoomToLayer);
   };
 
   $scope.format_data = function (data) {
