@@ -301,7 +301,7 @@ angular.module("templates/omnibox-search.html", []).run(["$templateCache", funct
 angular.module("templates/profile.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/profile.html",
     "<div class=\"card\">\n" +
-    "    <nxt-line-graph data=\"box.content.d3data\" ylabel=\"box.content.yLabel\" xlabel=\"box.content.xLabel\" ymin=\"-10\" ymax=\"10\"></nxt-line-graph>\n" +
+    "    <nxt-line-graph data=\"box.content.data\" ylabel=\"box.content.yLabel\" xlabel=\"box.content.xLabel\" ymin=\"-10\" ymax=\"10\"></nxt-line-graph>\n" +
     "    <!--<nxt-line-graph data=\"box.content\" ylabel=\"\" xlabel=\"\"></nxt-line-graph>-->\n" +
     "</div>\n" +
     "");
