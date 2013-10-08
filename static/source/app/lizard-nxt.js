@@ -241,6 +241,10 @@ app.controller("MasterCtrl",
   };
 
 
+  $scope.zoomToTheMagic = function (layer) {
+    $scope.layerToZoomTo = layer;
+    $scope.zoomToLayer = !$scope.zoomToLayer;
+  };
 
   $scope.format_data = function (data) {
     if (data[0]){
