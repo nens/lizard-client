@@ -13,6 +13,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.safestring import mark_safe
 from rest_framework.renderers import JSONRenderer
+from django.conf import settings
 
 from lizard_nxt.server.models import Layer, LayerGroup
 from lizard_nxt.server.serializers import spatial
@@ -36,7 +37,11 @@ def index(request):
         'strap_layer_groups': _bootstrap(layer_groups),
         # 'extent': extent,
     }
-    return render_to_response('client/index.html', context,
+    if getattr(settings, "DEV_TEMPLATE", False):
+        return render_to_response('client/base-debug.html', context,
+                              context_instance=RequestContext(request))
+    else:
+        return render_to_response('client/base.html', context,
                               context_instance=RequestContext(request))
 
 

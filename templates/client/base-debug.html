@@ -1,0 +1,160 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html ng-app="lizard-nxt" ng-controller="MasterCtrl">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Lizard</title>
+    
+    {% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}vendor/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}vendor/leaflet/dist/leaflet.css" />
+
+    <link href="{{ STATIC_URL }}vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}source/assets/css/nxt_base.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}vendor/omnibox/omnibox.css" rel="stylesheet"/>
+    <link href="{{ STATIC_URL }}vendor/graph/graph.css" rel="stylesheet"/>
+    <link href="{{ STATIC_URL }}source/assets/css/animations.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}vendor/ngprogress/ngProgress.css" rel="stylesheet" />
+    <link href='http://fonts.googleapis.com/css?family=Petit+Formal+Script|Kite+One|Roboto+Slab' rel='stylesheet' type='text/css'>
+    {% endblock css %}
+
+    <script>
+      var debug = true;
+
+      var baseLayers = {{ strap_base_layers }};
+      var layers = {{ strap_layers }};
+      var layerGroups = {{ strap_layer_groups }};
+
+      function logOut() {
+        var r=confirm("Weet u zeker dat u wilt uitloggen?");
+        if (r==true) {
+          window.location = "{% url "login" %}?next=/";
+          }
+        else {
+          return false;
+        }
+        }
+    </script>
+  </head>
+
+  <body>
+    <header class="navbar navbar-inverse navbar-fixed-top">
+      <div id="logo-row" class="">
+        <div id="logo">
+          <a href="/"><img src="{{ STATIC_URL }}source/assets/images/logo_text.png" alt="Lizard"></a>
+        </div>
+        <!-- <div id="site-actions">                  id="rightbar-actions"-->
+          <ul class="nav navbar-nav navbar-right" >
+            <li class="site">
+              <a href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.profile.enabled}"></i></a>
+            </li>
+            <li>
+              <a href="#" ng-click="toggle_tool('kpi')" ng-class="{'icon-large': tools.kpi.enabled}" title="Key Performance Indicator"><i class="icon-dashboard"></i></a>
+            </li>
+            {% if user.is_authenticated %}
+              <li>
+                <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="pull-right" id="username"> {{ user.first_name }}</div><i id="user-icon" class="icon-user pull-right"></i></a>
+              </li>
+              <li>
+                <a class="user" id="logout" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"> 
+                  <i class="icon-off"></i></a>
+              </li>
+            {% else %}
+              <li>
+                <a href="{% url "login" %}?next=/" title="{% trans 'Login' %}">
+                  <i class="icon-user pull-right"></i></a>
+              </li>
+              {% endif %}
+            </ul>
+            {% block site_actions %}{% endblock site_actions %}
+          </div>
+            <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': layerData.enabled}">
+            <div class="layer-switcher slide-left">
+              <ul class="nav">
+                <li class="nav-header">
+                  {% trans "Achtergrond" %}
+                  <ul class="list-group">
+                    <li ng-repeat="layer in layerData.baselayers | orderBy:'order':true">
+                      <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="layerData.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
+                      <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
+                    </li>
+                  </ul>
+                </li>
+                <li class="nav-header">
+                  {% trans "Themakaart" %}
+                  <ul class="list-group">
+                    <li ng-repeat="layergroup in layerData.layergroups | orderBy:'order':true" >
+                      <input id="<%layergroup.id%>-layergroup" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="toggleLayerGroup(layergroup)">
+                      <label class="ng-class: {active: layergroup.active};" for="<% layergroup.id %>-layergroup" ng-bind="layergroup.name"></label>
+                    </li>
+                  </ul>
+                </li>
+                <li class="nav-header">
+                  {% trans "Kaartlagen" %}
+                  <ul class="list-group">
+                    <li ng-repeat="layer in layerData.layers | orderBy:'order':true">
+                      <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
+                      <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            <div id="ribbon">
+              <div class="arrow-up" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}">
+                </div>
+              <div class="arrow-down" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}"><i class="icon-globe"></i>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    {% block content %}
+
+      <div >
+        <map layer-switch kpilayer="onAreaClick()" move-end pan-zoom="panZoom" layers="layerData.layers" rasterprofile="disabled" locate="locate"></map>
+      </div>
+      
+
+    {% block box_awesome %}{% endblock %}
+    <div class="container">
+      <omnibox id="omnibox" ng-class="{'stretchRight': !box.query.$dirty }" style="visibility:hidden;" ng-style="{visibility:'visible'}">
+  
+      </omnibox>
+    </div>
+        {% block toolbar_controllers %}
+        {% endblock %}
+    {% endblock content %}
+
+    {% block javascript_body %}
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/jquery.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet/dist/leaflet.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.utfgrid/src/leaflet.utfgrid.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-tilelayer-geojson/TileLayer.GeoJSON.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-resource/angular-resource.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/event/event.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/highlight/highlight.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-utils/modules/keypress/keypress.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/ngprogress/build/ngProgress.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/dist/js/bootstrap.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt-services.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/map-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/kpi-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/profile-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/kpi-controllers.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/filters/truncate.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/templates/templates.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/omnibox/omnibox.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/graph/graph.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.min.js?{{ random_string }}"></script>
+    <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->
+    {% endblock %}
+
+  </body>
+</html>
