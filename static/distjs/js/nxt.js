@@ -241,6 +241,11 @@ app.controller("MasterCtrl",
   };
 
 
+  $scope.zoomToTheMagic = function (layer) {
+    $scope.layerToZoomTo = layer;
+    $scope.zoomToLayer = !$scope.zoomToLayer;
+    console.debug("zoom to the magic", $scope.zoomToLayer);
+  };
 
   $scope.format_data = function (data) {
     if (data[0]){
@@ -618,6 +623,19 @@ app
           $location.path(lat + ',' + lng + ',' + zoom);
           // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
         };
+      
+        this.zoomToTheMagic = function (layer) {
+          // TODO: make this not hardcoded. And make this a nice UX instead of a brutal one
+          if (layer.name == 'Riolering') {
+            $scope.map.setView([52.503265633642194, 4.968782196044922], 14, {animate: true});
+          }
+          if (layer.name == 'Kunstwerken') {
+            $scope.map.setView([52.60763454517434, 4.794158935546875], 12, {animate: true});
+          }
+          if (layer.name == 'Watergangen') {
+            $scope.map.setView([52.60763454517434, 4.794158935546875], 11, { animate: true });
+          }
+        };
 
     this.locateMe = function () {
         // $scope.map.locate({ setView: true });
@@ -786,6 +804,19 @@ app.directive('locate', function(){
   }
 });
 
+app.directive('zoomToLayer', function () {
+  return {
+    require: 'map',
+    link: function(scope, element, attrs, mapCtrl){
+      scope.$watch('zoomToLayer', function () {
+        if (scope.zoomToLayer !== undefined) {
+          mapCtrl.zoomToTheMagic(scope.layerToZoomTo);
+          console.debug("zoomzoomzoom");
+        }
+      });
+    }
+  };
+});
 'use strict';
 
 // this directive is implemented with the idea that we will switch to OL
