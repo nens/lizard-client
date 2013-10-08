@@ -180,6 +180,36 @@ html, body{
     z-index: 10;
 }
 
+.zoomto-icon {
+    color: #c0392b;
+    font-size: 16px;
+    cursor: pointer;
+    -o-transition: .2s;
+    -ms-transition: .2s;
+    -moz-transition: .2s;
+    -webkit-transition: .2s;
+    transition: .2s;
+    opacity: 0;
+    visibility: hidden;
+    font-size: 18px;
+    margin-top: 6px;
+    margin-right: 40px;
+}
+
+.visible {
+    opacity: 1;
+    visibility: visible;
+    -webkit-transition-delay: .8s;
+    -o-transition-delay: .8s;
+    -ms-transition-delay: .8s;
+    -moz-transition-delay: .8s;
+    transition-delay: .8s;
+    
+}
+
+
+
+
 .nav-header {
     font-family: 'Roboto Slab', serif;
     text-transform: none;
@@ -206,7 +236,8 @@ html, body{
     color: #c0392b;
     font-size: 14px;
     text-shadow: none;
-    margin-left: 5px;
+    margin-left: 0px;
+    font-style: italic;
 }
 
 .layer-switcher label.active {
@@ -214,8 +245,8 @@ html, body{
     font-style: italic;
     font-size: 14px;
     text-shadow: none;
-    margin-left: 5px;
     -webkit-transition-delay: .2s;
+    margin-left: 5px;
 }
 
 #ribbon {
