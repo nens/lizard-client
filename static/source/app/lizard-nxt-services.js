@@ -7,14 +7,16 @@ services.service("CabinetService", ["$resource",
   var layers = window.layers;
   var baselayers = window.baseLayers;
 
-  var searchResource,
+  var termSearchResource,
+      bboxSearchResource,
       geocodeResource,
       reverseGeocodeResource,
       apiLayerGroups,
       timeseriesLocationObjectResource,
       timeseriesResource;
   
-  searchResource = $resource('/api/v1/search/');
+  termSearchResource = $resource('/api/v1/search/',{isArray: true});
+  bboxSearchResource = $resource('/api/v1/search/',{isArray: true});
   geocodeResource = $resource('/api/v1/geocode/');
   reverseGeocodeResource = $resource('/api/v1/reversegeocode/');
   timeseriesLocationObjectResource = $resource('/api/v1/timeseries/?object=:object_type$:id', {
@@ -33,7 +35,8 @@ services.service("CabinetService", ["$resource",
     layergroups: layergroups,
     layers: layers,
     baselayers: baselayers,
-    search: searchResource,
+    termSearch: termSearchResource,
+    bboxSearch: bboxSearchResource,
     geocode: geocodeResource,
     reverseGeocode: reverseGeocodeResource,
     timeseries: timeseriesResource,

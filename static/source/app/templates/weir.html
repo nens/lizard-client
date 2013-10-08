@@ -1,22 +1,22 @@
 <div class="card">
   <div class="card-title">
-    <img src="/static/source/assets/images/weir.png" class="img-circle"/>
+    <img src="/static/distjs/images/weir.png" class="img-circle"/>
     <span>Stuw</span>
   </div>
   <table class="left">
     <tr>
       <td>Kruinbreedte (m) </td>
-      <td ng-bind="metadata.fromgrid.ground_level_upstream"></td>
+      <td ng-bind="metadata.fromgrid.ground_level_upstream | number: 2"></td>
     </tr>
     <tr>
       <td>Kruinhoogte (m) </td>
-      <td ng-bind="metadata.fromgrid.ground_level_downstream"></td>
+      <td ng-bind="metadata.fromgrid.ground_level_downstream | number: 2"></td>
     </tr>
   </table>
   <table class="right">
     <tr>
         <td>Debiet coefficient</td>
-        <td ng-bind="metadata.fromgrid.discharge_coef"></td>
+        <td ng-bind="metadata.fromgrid.discharge_coef | number: 2"></td>
     </tr>
    </table>
 </div>

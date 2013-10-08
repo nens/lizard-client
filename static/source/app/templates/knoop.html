@@ -1,26 +1,26 @@
 <div class="card">
 	<div class="card-title">
-		<img src="/static/source/assets/images/knoop.png" class="img-circle"/>
+		<img src="/static/distjs/images/knoop.png" class="img-circle"/>
 		<span>Knoop</span>
 	</div>
 	<table class="left">
 		<tr>
 			<td>BOK (m) </td>
-			<td ng-bind="metadata.fromgrid.knp_bok"></td>
+			<td ng-bind="metadata.fromgrid.knp_bok | number: 2"></td>
 		</tr>
 		<tr>
 			<td>Breedte (m) </td>
-			<td ng-bind="metadata.fromgrid.knp_bre"></td>
+			<td ng-bind="metadata.fromgrid.knp_bre | number: 2"></td>
 		</tr>
 	</table>
 	<table class="right">
 		<tr>
 			<td>WOS opp. (m<sup>2</sup>) </td>
-			<td ng-bind="metadata.fromgrid.wos_opp"></td>
+			<td ng-bind="metadata.fromgrid.wos_opp | number: 2"></td>
 		</tr>
 		<tr>
 			<td>Maaiveld (m NAP) </td>
-			<td ng-bind="metadadata.fromgrid.mvd_niv"></td>
+			<td ng-bind="metadadata.fromgrid.mvd_niv | number: 2"></td>
 		</tr>
 	</table>
 </div>

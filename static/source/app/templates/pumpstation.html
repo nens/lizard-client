@@ -1,26 +1,22 @@
 <div class="card">
   <div class="card-title">
-    <img src="/static/distjs/images/culvert.png" class="img-circle"/>
-    <span>Culvert</span>
+    <img src="/static/distjs/images/gemaal.png" class="img-circle"/>
+    <span>Gemaal</span>
   </div>
   <table class="left">
     <tr>
-      <td>BOB Bovenstrooms (m NAP) </td>
-      <td ng-bind="metadata.fromgrid.ground_level_upstream | number: 2"></td>
+      <td>Aanslagpeil (m NAP) </td>
+      <td ng-bind="metadata.fromgrid.start_level | number: 2"></td>
     </tr>
     <tr>
-      <td>BOB Benedenstrooms (m NAP) </td>
-      <td ng-bind="metadata.fromgrid.ground_level_downstream | number: 2"></td>
+      <td>Afslagpeil (m NAP) </td>
+      <td ng-bind="metadata.fromgrid.stop_level | number: 2"></td>
     </tr>
   </table>
   <table class="right">
     <tr>
-        <td>Breedte (m) </td>
-        <td ng-bind="metadata.fromgrid.width | number: 2"></td>
-    </tr>
-    <tr>
-        <td>Lengte (m) </td>
-        <td ng-bind="metadata.fromgrid.length | number: 2"></td>
+        <td>Capaciteit (l/s) </td>
+        <td ng-bind="metadata.fromgrid.capacity | number: 2"></td>
     </tr>
    </table>
 </div>

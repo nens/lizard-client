@@ -99,7 +99,30 @@ app
           $location.path(lat + ',' + lng + ',' + zoom);
           // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
         };
-    }
+
+    this.locateMe = function () {
+        // $scope.map.locate({ setView: true });
+        function onLocationFound(e) {
+          var radius = e.accuracy / 2;
+
+          L.marker(e.latlng).addTo(map)
+            .bindPopup("You are within " + radius + " meters from this point").openPopup();
+
+          L.circle(e.latlng, radius).addTo(map);
+        }
+
+        function onLocationError(e) {
+          alert(e.message);
+        }
+
+        $scope.map.on('locationfound', onLocationFound);
+        $scope.map.on('locationerror', onLocationError);
+
+        $scope.map.locate({setView: true, maxZoom: 16});
+
+        };
+
+    };
 
     var link = function (scope, element, attrs) {
       // instead of 'map' element here for testability
@@ -108,27 +131,61 @@ app
           zoomControl: false,
           zoom: 8
         });
-      console.log('scope', scope);
+
       scope.$watch('searchMarkers', function(newValue, oldValue) {
         if(newValue)
-          console.log('hey they changed!', scope.searchMarkers);
           for(var i in scope.searchMarkers) {
-              var cm = new L.CircleMarker(
-                new L.LatLng(
-                  scope.searchMarkers[i].pin.lon,
-                  scope.searchMarkers[i].pin.lat
-                ),
-                {
-                  color: '#fff',
-                  fillColor: '#3186cc',
-                  fillOpacity: 0.6
-                }
-              ).addTo(scope.map);
-              cm.bindPopup(scope.searchMarkers[i].name);
+              return;
+              // var cm = new L.CircleMarker(
+              //   new L.LatLng(
+              //     scope.searchMarkers[i].geometry[1],
+              //     scope.searchMarkers[i].geometry[0]
+              //   ),
+              //   {
+              //     color: '#fff',
+              //     fillColor: '#3186cc',
+              //     fillOpacity: 0.0,
+              //     radius: 5
+              //   }
+              // ).addTo(scope.map);
+              // cm.bindPopup(scope.searchMarkers[i].name);
           }
       }, true);
       scope.map = map;
+
+      scope.beenThreDoneIntersectSuggestion = false
+      scope.map.on('zoomend', function () {
+        if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
+          if (!scope.beenThreDoneIntersectSuggestion) {
+            scope.beenThreDoneIntersectSuggestion = true;
+            scope.$apply(function () {
+            scope.box.type = 'intersecttool';
+            });
+          }
+        }
+      });
+
+      scope.map.on('dragend', function() {
+        
+          if (scope.box.type === 'default') {
+
+            // scope.box.type = 'empty';
+            scope.$apply(function () {
+              scope.box.close();
+            });
+            console.debug(scope);
+            console.debug(scope.box.type);
+          }
+          if (scope.box.type === 'intersecttool') {
+            scope.$apply(function () {
+              scope.box.type = 'empty';
+            });
+          }
+
+      });
+
     };
+
 
   return {
       restrict: 'E',
@@ -144,8 +201,9 @@ app.directive('moveEnd', [function () {
     require: 'map',
     link: function(scope, elements, attrs, MapCtrl) {
       
-      scope.$watch('moveend', function() {
-        MapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
+      scope.$watch('moveend', function(newValue, oldValue) {
+        if(newValue)
+          MapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
       });
     },
     restrict: 'A'
@@ -195,3 +253,16 @@ app.directive('panZoom', [function () {
     }
   };
 }]);
+
+app.directive('locate', function(){
+  return {
+    require: 'map',
+    link: function(scope, element, attrs, mapCtrl){
+      scope.$watch('locate', function () {
+        if (scope.locate !== undefined) {
+          mapCtrl.locateMe();
+        }
+      });
+    }
+  }
+});
