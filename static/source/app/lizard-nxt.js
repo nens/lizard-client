@@ -276,9 +276,9 @@ app.controller("MasterCtrl",
       object_type: $scope.box.content.object_type,
       id: $scope.box.content.id
     }, function(response){
-      $scope.timeseries = response.results;
+      $scope.timeseries = response;
       if ($scope.timeseries.length > 0){
-        $scope.selected_timeseries = response.results[0];
+        $scope.selected_timeseries = response[0];
       } else {
         $scope.selected_timeseries = undefined;
       }

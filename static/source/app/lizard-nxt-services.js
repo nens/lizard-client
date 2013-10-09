@@ -22,6 +22,8 @@ services.service("CabinetService", ["$resource",
   timeseriesLocationObjectResource = $resource('/api/v1/timeseries/?object=:object_type$:id&page_size=0', {
     object_type: '@object_type',
     id: '@id'
+  }, {
+    isArray: true;
   });
   // timeseriesResource = $resource('/api/v1/timeseries/:id/', {
   //   id: '@id'
