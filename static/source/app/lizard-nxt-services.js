@@ -25,7 +25,7 @@ services.service("CabinetService", ["$resource",
   }, {
     get: {
       method: 'GET',
-      params: {isArray: true}
+      isArray: true
     }
   });
   // timeseriesResource = $resource('/api/v1/timeseries/:id/', {
