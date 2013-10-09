@@ -28,7 +28,7 @@ angular.module("templates/culvert.html", []).run(["$templateCache", function($te
     "    </tr>\n" +
     "   </table>\n" +
     "</div>\n" +
-    "<div class=\"card\">\n" +
+    "<div class=\"card\" ng-class=\"{hidden: selected_timeseries == undefined}\">\n" +
     "  <div class=\"input-prepend\">\n" +
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
     "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
@@ -86,7 +86,7 @@ angular.module("templates/geslotenleiding.html", []).run(["$templateCache", func
     "    </tr>\n" +
     "   </table>\n" +
     "</div>\n" +
-    "<div class=\"card\">\n" +
+    "<div class=\"card\" ng-class=\"{hidden: selected_timeseries == undefined}\">\n" +
     "  <div class=\"input-prepend\">\n" +
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
     "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
@@ -138,7 +138,7 @@ angular.module("templates/knoop.html", []).run(["$templateCache", function($temp
     "		</tr>\n" +
     "	</table>\n" +
     "</div>\n" +
-    "<div class=\"card\">\n" +
+    "<div class=\"card\" ng-class=\"{hidden: selected_timeseries == undefined}\">\n" +
     "  <div class=\"input-prepend\">\n" +
     "  	<span class=\"add-on\"> Tijdreeks</span> \n" +
     "  	<select ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
@@ -312,7 +312,7 @@ angular.module("templates/pumpstation.html", []).run(["$templateCache", function
     "<div class=\"card\">\n" +
     "  <div class=\"card-title\">\n" +
     "    <img src=\"/static/distjs/images/gemaal.png\" class=\"img-circle\"/>\n" +
-    "    <span>Gemaal</span>\n" +
+    "    <span ng-bind=\"metadata.fromgrid.type\"></span>\n" +
     "  </div>\n" +
     "  <table class=\"left\">\n" +
     "    <tr>\n" +
@@ -331,7 +331,7 @@ angular.module("templates/pumpstation.html", []).run(["$templateCache", function
     "    </tr>\n" +
     "   </table>\n" +
     "</div>\n" +
-    "<div class=\"card\">\n" +
+    "<div class=\"card\" ng-class=\"{hidden: selected_timeseries == undefined}\">\n" +
     "  <div class=\"input-prepend\">\n" +
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
     "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
@@ -364,7 +364,7 @@ angular.module("templates/weir.html", []).run(["$templateCache", function($templ
     "    </tr>\n" +
     "   </table>\n" +
     "</div>\n" +
-    "<div class=\"card\">\n" +
+    "<div class=\"card\" ng-class=\"{hidden: selected_timeseries == undefined}\">\n" +
     "  <div class=\"input-prepend\">\n" +
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
     "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +

@@ -1,7 +1,7 @@
 <div class="card">
   <div class="card-title">
     <img src="/static/distjs/images/gemaal.png" class="img-circle"/>
-    <span>Gemaal</span>
+    <span ng-bind="metadata.fromgrid.type"></span>
   </div>
   <table class="left">
     <tr>
@@ -20,7 +20,7 @@
     </tr>
    </table>
 </div>
-<div class="card">
+<div class="card" ng-class="{hidden: selected_timeseries == undefined}">
   <div class="input-prepend">
     <span class="add-on"> Tijdreeks</span> 
     <select class="timeseries" ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
