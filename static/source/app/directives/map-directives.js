@@ -11,6 +11,7 @@ app
           if (layer.url.split('/api/v1/').length > 0){
             if (layer.content !== null) {
                 var layer_types = layer.content.split(',');
+                layer.grid_layers = [];
                 for (var i in layer_types){
                   if (layer_types[i] == 'knoop' || layer_types[i] == 'geslotenleiding' || layer_types[i] == 'pumpstation'){
                     var url = layer.url + '.grid?object_types=' + layer_types[i];
@@ -24,7 +25,7 @@ app
                         $scope.getTimeseries(e.data);
                       }
                     });
-                    $scope.map.addLayer(leafletLayer);
+                    layer.grid_layers.push(leafletLayer);
                   }
                 }
               }
@@ -49,12 +50,22 @@ app
           if (!layer.active) {
             if (layer.leafletLayer) {
               $scope.map.removeLayer(layer.leafletLayer);
+              if (layer.grid_layers) {
+                for (var i in layer.grid_layers){
+                  $scope.map.removeLayer(layer.grid_layers[i])
+                }
+              }
             } else {
               console.log('leaflet layer not defined', layer.type);
             }
           } else {
             if (layer.leafletLayer) {
               $scope.map.addLayer(layer.leafletLayer);
+              if (layer.grid_layers) {
+                for (var i in layer.grid_layers){
+                  $scope.map.addLayer(layer.grid_layers[i])
+                }
+              }
             } else {
               console.log('leaflet layer not defined', layer.type);
             }

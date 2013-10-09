@@ -33,7 +33,7 @@ angular.module("templates/culvert.html", []).run(["$templateCache", function($te
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
     "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
-    "    <nxt-line-graph data=\"data\" title=\"metadata.title\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
+    "    <nxt-line-graph data=\"data\" title=\"\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
     "</div>");
 }]);
 
@@ -92,7 +92,7 @@ angular.module("templates/geslotenleiding.html", []).run(["$templateCache", func
     "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
     "\n" +
-    "    <nxt-line-graph data=\"data\" title=\"metadata.title\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
+    "    <nxt-line-graph data=\"data\" title=\"\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
     "</div>");
 }]);
 
@@ -144,7 +144,7 @@ angular.module("templates/knoop.html", []).run(["$templateCache", function($temp
     "  	<select ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
     "\n" +
-    "	<nxt-line-graph data=\"timeseriesdata\" title=\"metadata.title\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
+    "	<nxt-line-graph data=\"timeseriesdata\" title=\"\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
     "</div>\n" +
     "");
 }]);
@@ -336,7 +336,7 @@ angular.module("templates/pumpstation.html", []).run(["$templateCache", function
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
     "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
-    "    <nxt-line-graph data=\"data\" title=\"metadata.title\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
+    "    <nxt-line-graph data=\"data\" title=\"\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
     "</div>");
 }]);
 
@@ -369,6 +369,6 @@ angular.module("templates/weir.html", []).run(["$templateCache", function($templ
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
     "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
-    "    <nxt-line-graph data=\"data\" title=\"metadata.title\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
+    "    <nxt-line-graph data=\"data\" title=\"\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
     "</div>");
 }]);
