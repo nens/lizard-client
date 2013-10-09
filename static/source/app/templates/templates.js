@@ -31,7 +31,7 @@ angular.module("templates/culvert.html", []).run(["$templateCache", function($te
     "<div class=\"card\">\n" +
     "  <div class=\"input-prepend\">\n" +
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
-    "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.code for tijdseries in timeseries\"></select>\n" +
+    "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
     "    <nxt-line-graph data=\"data\" title=\"metadata.title\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
     "</div>");
@@ -89,7 +89,7 @@ angular.module("templates/geslotenleiding.html", []).run(["$templateCache", func
     "<div class=\"card\">\n" +
     "  <div class=\"input-prepend\">\n" +
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
-    "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.code for tijdseries in timeseries\"></select>\n" +
+    "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
     "\n" +
     "    <nxt-line-graph data=\"data\" title=\"metadata.title\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
@@ -141,7 +141,7 @@ angular.module("templates/knoop.html", []).run(["$templateCache", function($temp
     "<div class=\"card\">\n" +
     "  <div class=\"input-prepend\">\n" +
     "  	<span class=\"add-on\"> Tijdreeks</span> \n" +
-    "  	<select ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.code for tijdseries in timeseries\"></select>\n" +
+    "  	<select ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
     "\n" +
     "	<nxt-line-graph data=\"timeseriesdata\" title=\"metadata.title\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
@@ -334,7 +334,7 @@ angular.module("templates/pumpstation.html", []).run(["$templateCache", function
     "<div class=\"card\">\n" +
     "  <div class=\"input-prepend\">\n" +
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
-    "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.code for tijdseries in timeseries\"></select>\n" +
+    "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
     "    <nxt-line-graph data=\"data\" title=\"metadata.title\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
     "</div>");
@@ -367,7 +367,7 @@ angular.module("templates/weir.html", []).run(["$templateCache", function($templ
     "<div class=\"card\">\n" +
     "  <div class=\"input-prepend\">\n" +
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
-    "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.code for tijdseries in timeseries\"></select>\n" +
+    "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
     "    <nxt-line-graph data=\"data\" title=\"metadata.title\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
     "</div>");

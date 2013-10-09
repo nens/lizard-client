@@ -27,7 +27,7 @@
 <div class="card">
   <div class="input-prepend">
   	<span class="add-on"> Tijdreeks</span> 
-  	<select ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.code for tijdseries in timeseries"></select>
+  	<select ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
   </div>
 
 	<nxt-line-graph data="timeseriesdata" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>
