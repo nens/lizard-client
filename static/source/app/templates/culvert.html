@@ -25,7 +25,7 @@
    </table>
 </div>
 <div class="card" ng-class="{hidden: selected_timeseries == undefined}">
-  <span ng-bind="metadata.title"></span>
+  <h4 ng-bind="metadata.title"></h4>
   <div class="input-prepend">
     <span class="add-on"> Tijdreeks</span> 
     <select class="timeseries" ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
