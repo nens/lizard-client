@@ -29,12 +29,14 @@ angular.module("templates/culvert.html", []).run(["$templateCache", function($te
     "   </table>\n" +
     "</div>\n" +
     "<div class=\"card\" ng-class=\"{hidden: selected_timeseries == undefined}\">\n" +
+    "  <span ng-bind=\"metadata.title\"></span>\n" +
     "  <div class=\"input-prepend\">\n" +
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
     "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
     "    <nxt-line-graph data=\"data\" title=\"\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
-    "</div>");
+    "</div>\n" +
+    "");
 }]);
 
 angular.module("templates/default.html", []).run(["$templateCache", function($templateCache) {
@@ -87,13 +89,15 @@ angular.module("templates/geslotenleiding.html", []).run(["$templateCache", func
     "   </table>\n" +
     "</div>\n" +
     "<div class=\"card\" ng-class=\"{hidden: selected_timeseries == undefined}\">\n" +
+    "  <span ng-bind=\"metadata.title\"></span>\n" +
     "  <div class=\"input-prepend\">\n" +
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
     "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
     "\n" +
     "    <nxt-line-graph data=\"data\" title=\"\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
-    "</div>");
+    "</div>\n" +
+    "");
 }]);
 
 angular.module("templates/intersecttool.html", []).run(["$templateCache", function($templateCache) {
@@ -113,38 +117,39 @@ angular.module("templates/intersecttool.html", []).run(["$templateCache", functi
 angular.module("templates/knoop.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("templates/knoop.html",
     "<div class=\"card\">\n" +
-    "	<div class=\"card-title\">\n" +
-    "		<img src=\"/static/distjs/images/knoop.png\" class=\"img-circle\"/>\n" +
-    "		<span>Knoop</span>\n" +
-    "	</div>\n" +
-    "	<table class=\"left\">\n" +
-    "		<tr>\n" +
-    "			<td>BOK (m) </td>\n" +
-    "			<td ng-bind=\"metadata.fromgrid.knp_bok | number: 2\"></td>\n" +
-    "		</tr>\n" +
-    "		<tr>\n" +
-    "			<td>Breedte (m) </td>\n" +
-    "			<td ng-bind=\"metadata.fromgrid.knp_bre | number: 2\"></td>\n" +
-    "		</tr>\n" +
-    "	</table>\n" +
-    "	<table class=\"right\">\n" +
-    "		<tr>\n" +
-    "			<td>WOS opp. (m<sup>2</sup>) </td>\n" +
-    "			<td ng-bind=\"metadata.fromgrid.wos_opp | number: 2\"></td>\n" +
-    "		</tr>\n" +
-    "		<tr>\n" +
-    "			<td>Maaiveld (m NAP) </td>\n" +
-    "			<td ng-bind=\"metadadata.fromgrid.mvd_niv | number: 2\"></td>\n" +
-    "		</tr>\n" +
-    "	</table>\n" +
+    "  <div class=\"card-title\">\n" +
+    "    <img src=\"/static/distjs/images/knoop.png\" class=\"img-circle\"/>\n" +
+    "    <span>Knoop</span>\n" +
+    "  </div>\n" +
+    "  <table class=\"left\">\n" +
+    "    <tr>\n" +
+    "      <td>BOK (m) </td>\n" +
+    "      <td ng-bind=\"metadata.fromgrid.knp_bok | number: 2\"></td>\n" +
+    "    </tr>\n" +
+    "    <tr>\n" +
+    "      <td>Breedte (m) </td>\n" +
+    "      <td ng-bind=\"metadata.fromgrid.knp_bre | number: 2\"></td>\n" +
+    "    </tr>\n" +
+    "  </table>\n" +
+    "  <table class=\"right\">\n" +
+    "    <tr>\n" +
+    "      <td>WOS opp. (m<sup>2</sup>) </td>\n" +
+    "      <td ng-bind=\"metadata.fromgrid.wos_opp | number: 2\"></td>\n" +
+    "    </tr>\n" +
+    "    <tr>\n" +
+    "      <td>Maaiveld (m NAP) </td>\n" +
+    "      <td ng-bind=\"metadadata.fromgrid.mvd_niv | number: 2\"></td>\n" +
+    "    </tr>\n" +
+    "  </table>\n" +
     "</div>\n" +
     "<div class=\"card\" ng-class=\"{hidden: selected_timeseries == undefined}\">\n" +
+    "  <span ng-bind=\"metadata.title\"></span>\n" +
     "  <div class=\"input-prepend\">\n" +
-    "  	<span class=\"add-on\"> Tijdreeks</span> \n" +
-    "  	<select ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
+    "    <span class=\"add-on\"> Tijdreeks</span> \n" +
+    "    <select ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
     "\n" +
-    "	<nxt-line-graph data=\"timeseriesdata\" title=\"\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
+    "  <nxt-line-graph data=\"timeseriesdata\" title=\"\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
     "</div>\n" +
     "");
 }]);
@@ -270,12 +275,14 @@ angular.module("templates/object_id.html", []).run(["$templateCache", function($
     "		<dt>Breedte </dt><dd ng-bind=\"metadata.profiel_breedte\"></dd>\n" +
     "	</dl>\n" +
     "  <div class=\"input-prepend\">\n" +
+    "        <span ng-bind=\"metadata.title\"></span><br/>\n" +
     "  	<span class=\"add-on\"> Tijdreeks</span> \n" +
     "  	<select ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
     "\n" +
     "	<nxt-line-graph data=\"data\" title=\"metadata.name\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
-    "</div>");
+    "</div>\n" +
+    "");
 }]);
 
 angular.module("templates/omnibox-search.html", []).run(["$templateCache", function($templateCache) {
@@ -332,12 +339,14 @@ angular.module("templates/pumpstation.html", []).run(["$templateCache", function
     "   </table>\n" +
     "</div>\n" +
     "<div class=\"card\" ng-class=\"{hidden: selected_timeseries == undefined}\">\n" +
+    "  <span ng-bind=\"metadata.title\"></span>\n" +
     "  <div class=\"input-prepend\">\n" +
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
     "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
     "    <nxt-line-graph data=\"data\" title=\"\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
-    "</div>");
+    "</div>\n" +
+    "");
 }]);
 
 angular.module("templates/weir.html", []).run(["$templateCache", function($templateCache) {
@@ -365,10 +374,12 @@ angular.module("templates/weir.html", []).run(["$templateCache", function($templ
     "   </table>\n" +
     "</div>\n" +
     "<div class=\"card\" ng-class=\"{hidden: selected_timeseries == undefined}\">\n" +
+    "  <span ng-bind=\"metadata.title\"></span>\n" +
     "  <div class=\"input-prepend\">\n" +
     "    <span class=\"add-on\"> Tijdreeks</span> \n" +
     "    <select class=\"timeseries\" ng-model=\"selected_timeseries\" ng-options=\"tijdseries as tijdseries.name for tijdseries in timeseries\"></select>\n" +
     "  </div>\n" +
     "    <nxt-line-graph data=\"data\" title=\"\" xlabel=\"metadata.xlabel\" ylabel=\"metadata.ylabel\"></nxt-line-graph>\n" +
-    "</div>");
+    "</div>\n" +
+    "");
 }]);
