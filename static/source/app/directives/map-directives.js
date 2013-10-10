@@ -11,6 +11,7 @@ app
           if (layer.url.split('/api/v1/').length > 0){
             if (layer.content !== null) {
                 var layer_types = layer.content.split(',');
+                layer.grid_layers = [];
                 for (var i in layer_types){
                   if (layer_types[i] == 'knoop' || layer_types[i] == 'geslotenleiding' || layer_types[i] == 'pumpstation'){
                     var url = layer.url + '.grid?object_types=' + layer_types[i];
@@ -24,7 +25,7 @@ app
                         $scope.getTimeseries(e.data);
                       }
                     });
-                    $scope.map.addLayer(leafletLayer);
+                    layer.grid_layers.push(leafletLayer);
                   }
                 }
               }
@@ -49,12 +50,22 @@ app
           if (!layer.active) {
             if (layer.leafletLayer) {
               $scope.map.removeLayer(layer.leafletLayer);
+              if (layer.grid_layers) {
+                for (var i in layer.grid_layers){
+                  $scope.map.removeLayer(layer.grid_layers[i])
+                }
+              }
             } else {
               console.log('leaflet layer not defined', layer.type);
             }
           } else {
             if (layer.leafletLayer) {
               $scope.map.addLayer(layer.leafletLayer);
+              if (layer.grid_layers) {
+                for (var i in layer.grid_layers){
+                  $scope.map.addLayer(layer.grid_layers[i])
+                }
+              }
             } else {
               console.log('leaflet layer not defined', layer.type);
             }
@@ -98,6 +109,19 @@ app
           // console.log('moveEnd!', $location.path());
           $location.path(lat + ',' + lng + ',' + zoom);
           // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
+        };
+      
+        this.zoomToTheMagic = function (layer) {
+          // TODO: make this not hardcoded. And make this a nice UX instead of a brutal one
+          if (layer.name == 'Riolering') {
+            $scope.map.setView([52.503265633642194, 4.968782196044922], 14, {animate: true});
+          }
+          if (layer.name == 'Kunstwerken') {
+            $scope.map.setView([52.60763454517434, 4.794158935546875], 12, {animate: true});
+          }
+          if (layer.name == 'Watergangen') {
+            $scope.map.setView([52.60763454517434, 4.794158935546875], 11, { animate: true });
+          }
         };
 
     this.locateMe = function () {
@@ -265,4 +289,18 @@ app.directive('locate', function(){
       });
     }
   }
+});
+
+app.directive('zoomToLayer', function () {
+  return {
+    require: 'map',
+    link: function(scope, element, attrs, mapCtrl){
+      scope.$watch('zoomToLayer', function () {
+        if (scope.zoomToLayer !== undefined) {
+          mapCtrl.zoomToTheMagic(scope.layerToZoomTo);
+          console.debug("zoomzoomzoom");
+        }
+      });
+    }
+  };
 });

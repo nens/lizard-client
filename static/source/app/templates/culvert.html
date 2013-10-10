@@ -24,10 +24,11 @@
     </tr>
    </table>
 </div>
-<div class="card">
+<div class="card" ng-class="{hidden: selected_timeseries == undefined}">
+  <h4 ng-bind="metadata.title"></h4>
   <div class="input-prepend">
     <span class="add-on"> Tijdreeks</span> 
-    <select class="timeseries" ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.code for tijdseries in timeseries"></select>
+    <select class="timeseries" ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
   </div>
-    <nxt-line-graph data="data" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>
+    <nxt-line-graph data="data" title="" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>
 </div>

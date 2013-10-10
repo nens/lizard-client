@@ -1,34 +1,35 @@
 <div class="card">
-	<div class="card-title">
-		<img src="/static/distjs/images/knoop.png" class="img-circle"/>
-		<span>Knoop</span>
-	</div>
-	<table class="left">
-		<tr>
-			<td>BOK (m) </td>
-			<td ng-bind="metadata.fromgrid.knp_bok | number: 2"></td>
-		</tr>
-		<tr>
-			<td>Breedte (m) </td>
-			<td ng-bind="metadata.fromgrid.knp_bre | number: 2"></td>
-		</tr>
-	</table>
-	<table class="right">
-		<tr>
-			<td>WOS opp. (m<sup>2</sup>) </td>
-			<td ng-bind="metadata.fromgrid.wos_opp | number: 2"></td>
-		</tr>
-		<tr>
-			<td>Maaiveld (m NAP) </td>
-			<td ng-bind="metadadata.fromgrid.mvd_niv | number: 2"></td>
-		</tr>
-	</table>
+  <div class="card-title">
+    <img src="/static/distjs/images/knoop.png" class="img-circle"/>
+    <span>Knoop</span>
+  </div>
+  <table class="left">
+    <tr>
+      <td>BOK (m) </td>
+      <td ng-bind="metadata.fromgrid.knp_bok | number: 2"></td>
+    </tr>
+    <tr>
+      <td>Breedte (m) </td>
+      <td ng-bind="metadata.fromgrid.knp_bre | number: 2"></td>
+    </tr>
+  </table>
+  <table class="right">
+    <tr>
+      <td>WOS opp. (m<sup>2</sup>) </td>
+      <td ng-bind="metadata.fromgrid.wos_opp | number: 2"></td>
+    </tr>
+    <tr>
+      <td>Maaiveld (m NAP) </td>
+      <td ng-bind="metadadata.fromgrid.mvd_niv | number: 2"></td>
+    </tr>
+  </table>
 </div>
-<div class="card">
+<div class="card" ng-class="{hidden: selected_timeseries == undefined}">
+  <h4 ng-bind="metadata.title"></h4>
   <div class="input-prepend">
-  	<span class="add-on"> Tijdreeks</span> 
-  	<select ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.code for tijdseries in timeseries"></select>
+    <span class="add-on"> Tijdreeks</span> 
+    <select ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
   </div>
 
-	<nxt-line-graph data="timeseriesdata" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>
+  <nxt-line-graph data="timeseriesdata" title="" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>
 </div>
