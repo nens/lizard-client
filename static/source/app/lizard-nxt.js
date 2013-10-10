@@ -116,7 +116,9 @@ app.controller("MasterCtrl",
           console.log(data);
           var sources = [];
           for (var i in data) {
-            sources.push(data[i]);
+            if(data[i].geometry !== null) {
+              sources.push(data[i]);
+            }
           }
           $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
           for (var j in sources) {
