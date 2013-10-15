@@ -116,7 +116,9 @@ app.controller("MasterCtrl",
           console.log(data);
           var sources = [];
           for (var i in data) {
-            sources.push(data[i]);
+            if(data[i].geometry !== null) {
+              sources.push(data[i]);
+            }
           }
           $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
           for (var j in sources) {
@@ -288,6 +290,19 @@ app.controller("MasterCtrl",
         fromgrid: $scope.box.content.data,
         type: $scope.box.content.data.entity_name
      };
+
+    $scope.$watch('selected_timeseries', function () {
+      if ($scope.selected_timeseries !== undefined){
+
+        $scope.data = $scope.format_data($scope.selected_timeseries.events);
+        // dit kan zeker nog mooier
+        $scope.metadata.title = " - " + $scope.selected_timeseries.location.name;
+        $scope.metadata.ylabel = 'Aciditeit (%)' ; //scope.selected_timeseries.parameter + scope.selected_timeseries.unit.code
+        $scope.metadata.xlabel = "Tijd";
+      } else {
+        $scope.data = undefined;
+      }
+    });
 
 
     // Otherwise changes are watched and called to often.

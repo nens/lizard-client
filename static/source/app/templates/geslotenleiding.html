@@ -1,7 +1,7 @@
 <div class="card">
   <div class="card-title">
     <img src="/static/distjs/images/geslotenleiding.png" class="img-circle"/>
-    <span>Geslotenleiding</span>
+    <span>Geslotenleiding</span><span class="truncateme" ng-bind="metadata.title"></span>
   </div>
   <table class="left">
     <tr>
@@ -21,7 +21,6 @@
    </table>
 </div>
 <div class="card" ng-class="{hidden: selected_timeseries == undefined}">
-  <h4 ng-bind="metadata.title"></h4>
   <div class="input-prepend">
     <span class="add-on"> Tijdreeks</span> 
     <select class="timeseries" ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
