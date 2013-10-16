@@ -13,7 +13,7 @@ app
                 var layer_types = layer.content.split(',');
                 layer.grid_layers = [];
                 for (var i in layer_types){
-                  if (layer_types[i] == 'knoop' || layer_types[i] == 'geslotenleiding' || layer_types[i] == 'pumpstation'){
+                  if (layer_types[i] == 'manhole' || layer_types[i] == 'pipe' || layer_types[i] == 'pumpstation'){
                     var url = layer.url + '.grid?object_types=' + layer_types[i];
                     var leafletLayer = new L.UtfGrid(url, {
                       useJsonP: false,
