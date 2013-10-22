@@ -33,8 +33,8 @@ app.config(function($interpolateProvider) {
 
 
 app.controller("MasterCtrl",
-  ["$scope", "$http" ,"CabinetService", "KpiService", 
-  function ($scope, $http, CabinetService, KpiService)  {
+  ["$scope", "$http", "$resource","$q","CabinetService", "KpiService", 
+  function ($scope, $http, $resource, $q, CabinetService, KpiService)  {
 
   $scope.box = {
     query: null,
@@ -43,16 +43,6 @@ app.controller("MasterCtrl",
     type: 'default',
     content: {},
     changed: Date.now()
-  };
-
-  $scope.timeExtent = {
-    start: 1382359037278,
-    stop: Date.now(),
-    open: false
-  };
-
-  $scope.toggleTimeline = function () {
-    $scope.timeExtent.open = !$scope.timeExtent.open;
   };
 
   $scope.box.close = function () {
@@ -361,6 +351,45 @@ app.controller("MasterCtrl",
         //TODO: implement error function to return no data + message
         console.log("failed getting profile data from server");
       });
+  };
+
+// Temporal extent stuf
+  $scope.timeline = {
+    temporalExtent: {
+      start: 1382359037278,
+      end: Date.now(),
+      changedZoom: Date.now(),
+    },
+    canceler: $q.defer(),
+    open: false
+  };
+
+  $scope.$watch('timeline.temporalExtent.changedZoom', function (newVal, oldVal) {
+    $scope.timeline.canceler.resolve();
+    $scope.timeline.canceler = $q.defer();
+    var timeseries = $resource('/api/v1/timeseries/:id/', {
+      id: '@id',
+      start: '@start',
+      end: '@end'
+    },
+    {get: {method: 'GET', timeout: $scope.timeline.canceler.promise}});
+    var new_data_get = timeseries.get({
+      id: 3,
+      start: $scope.timeline.temporalExtent.start,
+      end: $scope.timeline.temporalExtent.end
+    }, function(response){
+      $scope.timeseries = response;
+      if ($scope.timeseries.length > 0){
+        $scope.selected_timeseries = response[0];
+      } else {
+        $scope.selected_timeseries = undefined;
+      }
+    });
+
+  });
+
+  $scope.toggleTimeline = function () {
+    $scope.timeline.open = !$scope.timeline.open;
   };
 
 

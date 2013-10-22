@@ -455,12 +455,12 @@ html, body{
 
 /*timeline stuff*/
 .timeline {
-    background-color: rgba(240,240,240, 1.0);
+    background-color: #fff;
     color: #222;
 }
 
 .timeline.closed{
-    height: 50px;
+    height: 70px;
 }
 
 .timeline.open{
