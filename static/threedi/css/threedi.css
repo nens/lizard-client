@@ -1,0 +1,266 @@
+html, body, #map {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#map {
+    z-index: 0;
+}
+
+#content{
+    position: absolute;
+    top: 40px;
+    width: 100%;
+    height: 100%;
+}
+
+.spacer {
+    margin-bottom: 1em;
+}
+
+.control{
+    margin: 0 15px;
+}
+
+.btn-load {
+    width: 90%;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.btn-box{
+    width: 60px;
+}
+
+/* For single buttons under the double box buttons. Somehow there is
+ already a margin of 25... 60+25=85 */
+.btn-60 {
+    margin-left: 85px;
+}
+
+#progress {
+    width: 75%;
+    height: 25px;
+    /*margin: 5px 0 0 15px;*/
+}
+
+#progress-bar{
+    display: inline-block;
+    width: 70%;
+    float:left;
+}
+
+[class^="icon-threedi-"],
+[class*=" icon-threedi-"] {
+  display: inline-block !important;
+  width: 1em;
+  height: 1em;
+  margin-top: 1px;
+  *margin-right: .3em;
+  line-height: 14px;
+  vertical-align: text-top;
+}
+
+
+.icon-threedi-rain{
+    background: url("../images/icon_rain_black.png") center right no-repeat;
+    background-size: 15px;
+}
+
+.icon-threedi-flood{
+    background: url("../images/icon_flood.png") center right no-repeat;
+    background-size: 15px;
+}
+
+
+/* Is actually a discharge */
+.icon-threedi-manhole{
+    background: url("../images/icon_manhole_black.png") center right no-repeat;
+    background-size: 18px;
+}
+
+.icon-threedi-pump{
+    background: url("../images/icon_pump_black.png") center right no-repeat;
+    background-size: 13px;
+    margin: 0px 0px 0px 0px;
+}
+
+.icon-threedi-line-info{
+    background: url("../images/icon_line_black.png") center right no-repeat;
+    background-size: 14px;
+}
+
+.icon-threedi-info{
+    background: url("../images/icon_info_black.png") center right no-repeat;
+    background-size: 14px;
+}
+
+/* Is actually a discharge */
+.icon-white.icon-threedi-manhole{
+    background: url("../images/icon_manhole.png") center right no-repeat;
+    background-size: 1em;
+}
+
+.icon-white.icon-threedi-rain{
+    background: url("../images/icon_rain.png") center right no-repeat;
+    background-size: 1em;
+}
+
+#flood-size {
+    width: 80%;
+    margin: 0 auto;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #333 #333 #777 #333;
+    border-radius: 25px;
+    background-color: #8e8d8d;
+    box-shadow: inset 0 1px 5px 0px rgba(0, 0, 0, .5),
+                 0 1px 0 0px rgba(250, 250, 250, .5);
+}
+
+@-webkit-keyframes shakeit {
+  0% {
+    left: 3px;
+
+    }
+
+  50%  {
+    left: -3px;
+  }
+  
+  100% {
+    left: 0;
+  }
+}
+
+@keyframes shakeit{
+  0% {
+    left: 3px;
+
+    }
+
+  50%  {
+    left: -3px;
+  }
+  
+  100% {
+    left: 0;
+  }
+}
+
+.selected-icon{
+    -webkit-animation-name: 'shakeit';
+    -webkit-animation-duration: 1s;
+    -webkit-transform-origin:50% 50%;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+
+    animation: shakeit 800ms linear 0s infinite;
+}
+
+
+.map-crosshair {
+    cursor: crosshair;
+}
+
+
+/* server progress lower left screen */
+.state-sim {
+    color: orange;
+    text-decoration: blink;
+}
+
+.state-wait {
+    color: green;
+}
+
+.state-standby,
+.state-prepare-wms,
+.state-load-model,
+.state-loaded-model,
+.state-stopping {
+    color: red;
+    text-decoration: blink;
+}
+
+.non-btn{
+    height: 20px;
+    padding: 1em;
+}
+
+
+.non-btn-group{
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: 3px;
+}
+
+.timeline{
+    padding: 0;
+}
+
+.right {
+    display: block;
+    float: right;
+    padding: 0.5em;
+}
+
+/* whole path is needed to make this work */
+.navbar .nav > li > a.inactive {
+    color: #D9D9D6;
+}
+
+/* whole path is needed to make this work */
+.navbar .nav > li > a.active {
+   cursor: default;
+   color: #FFFFFF;
+}
+
+#alertdiv {
+    position: absolute;
+    right: 10px;
+    bottom: 90px;
+    z-index: 10000;
+    width: 250px;
+    height: 30px;
+}
+
+.dropdown-menu li > a.selected {
+    font-weight: bold;
+}
+
+
+.background-selector{
+    width: 100px;
+}
+
+h3 {
+    font-size: 150%;
+    color: #555555;
+    padding-left: 0.5em;
+}
+
+.green {
+    color: #141;
+}
+
+
+/* Leaflet stuff */
+/* cancel out leaflet zoom and fade animations */
+
+.leaflet-fade-anim .leaflet-tile,
+.leaflet-fade-anim .leaflet-popup {
+    opacity: 1;
+    }
+.leaflet-fade-anim .leaflet-tile-loaded,
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+    opacity: 1;
+    }
+
+.leaflet-top .leaflet-control {
+    margin-top: 50px;
+}
+
+/* Forms and stuff */
