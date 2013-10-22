@@ -50,11 +50,11 @@ app.factory('AnimatedLayer', [function(){
 
       layer.on('load', function(e) {
           console.log('finished loading layer ', this.options.time);
-          if (this.options.time !== parseInt(me.most_recent_loading)) {
+          if (this.options.time !== me.most_recent_loading) {
               if (debug){
                   console.log(
                     'this ('+this.options.time+
-                    ' ) != most recent loading ('+me.most_recent_loading+
+                    ') != most recent loading ('+me.most_recent_loading+
                     ')-> do nothing');
               }
               return;
@@ -85,7 +85,7 @@ app.factory('AnimatedLayer', [function(){
                   //   'Remove layer ts='+ts+
                   //   ' time='+this.options.time+
                   //   ' curr_timestep='+current_timestep);
-                  map.removeLayer(layer);
+                  this.map.removeLayer(layer);
                   delete me.current_in_map[ts];
               }
               // raise marker above anything, not necessary?
@@ -121,7 +121,7 @@ app.factory('AnimatedLayer', [function(){
         // 5 seconds timeout
         var now = Date.now();
         if ((this.readyForNext !== null) && (now < this.startedLoading + 5000)) {
-            if (debug){ console.log('not ready for next timestep... still busy ', timestep);}
+            console.log('not ready for next timestep... still busy ', timestep);
             // is the first next thing
             // Can be overwritten, which is ok.
             this.readyForNext = timestep;
@@ -150,7 +150,7 @@ app.factory('AnimatedLayer', [function(){
             this.startedLoading = Date.now();
             //console.log(this.options);
             var new_layer = this.layerFromTs(ts, extra_options);
-            map.addLayer(new_layer);
+            this.map.addLayer(new_layer);
             this.current_in_map[ts] = new_layer;
             this.readyForNext = ts;
         }
@@ -160,14 +160,18 @@ app.factory('AnimatedLayer', [function(){
 
     var animated_layer = function(options){
     name = options.name;
-    url = options.url,
+    url = options.url;
+    map_object = options.map;
     options = options.options;
+    console.log('created animated layer');
+    console.log(options.map);
     console.log(options);
     current_timestep = 0;  // to be altered from outside
     return { 
       options: options,
       name: name,
       url: url,
+      map: map_object,
       layerFromTs: layerFromTs,
       setTimestep: setTimestep,
       startedLoading: startedLoading,
@@ -205,10 +209,8 @@ app.factory('AnimatedLayer', [function(){
     };
     /* Initialize animation object. We must provide model_slug to correctly
      calculate the complete wms url.*/
-    var animation_init = function(model_slug, url) {
-      if (debug){
-          console.log('initialize new model wms ani');
-      }
+    var animation_init = function(map_object, model_slug, url) {
+      console.log('initialize new model wms ani');
       if (model_slug === undefined) {
           if (debug){
               console.log('no animation to be initialized');
@@ -231,7 +233,8 @@ app.factory('AnimatedLayer', [function(){
       var ani_layer = animated_layer({
           name: name,
           url: url,
-          options: options
+          options: options,
+          map: map_object
       });
 
       return ani_layer

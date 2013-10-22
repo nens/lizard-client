@@ -63,7 +63,7 @@ app.directive('threedi', function () {
 	}
 });
 
-app.directive('threediMap', function() {
+app.directive('threediMap', function(AnimatedLayer) {
 	return {
 		require: ['^threedi', 'map'],
 		link: function(scope, element, attrs, ctrl){            
@@ -170,6 +170,7 @@ app.directive('threediMap', function() {
             var update_scenario_events = function(scenario_events) {
                 // Uses directive's
                 //console.log('scenario events!!', scenario_events.length);
+                var scenario_events = scope.state.scenario_events;
                 var map = ctrl[1];
                 if (scenario_events.length === 0) {
                     for (var hash in scenario.events) {
@@ -306,10 +307,55 @@ app.directive('threediMap', function() {
                 clearTempObjects();
             };
 
+            var setExtent = function() {
+                var extent = $.parseJSON(scope.state.player_extent);
+                var map = ctrl[1];
+                console.log(map);
+                map.fitBounds([
+                    [extent[0], extent[1]],
+                    [extent[2], extent[3]]]);
+            }
+
+
+            var wms_ani_initialized = null;  // will be set to model_slug
+            var wms_ani_layer = null;
+
+            /* shut down the animation layer so it can be used for another model */
+            var animation_shutdown = function() {
+                console.log('shutting down existing wms ani layer');
+                if ((wms_ani_layer !== null) && (wms_ani_layer !== undefined)) {
+                    wms_ani_layer.shutdown();
+                }
+                wms_ani_initialized = null;
+            };
+
+            // TODO: make the url not hard-coded
+            var wms_server_url = 'http://10.90.20.55:5000/3di/wms'
+
+            var setAnimation = function() {
+                if (!(wms_ani_initialized == scope.state.loaded_model)) {
+                    if (wms_ani_initialized !== null) {
+                        animation_shutdown();
+                    }
+
+                    // Only call to a global function.
+                    wms_ani_layer = AnimatedLayer.animation_init(
+                        ctrl[1], scope.state.loaded_model, wms_server_url);
+                    // wms_ani_layer = animation_init(value.model_slug, url);
+                    wms_ani_initialized = scope.state.loaded_model;
+                }
+                if (wms_ani_layer !== undefined) {
+                    wms_ani_layer.setTimestep(
+                        scope.state.timestep, 
+                        {hmax: 2.0});
+                }
+            }
+
             scope.$on('stateChange', function() {
-                console.log('state-change');
-                console.log(scope.state);
-                update_scenario_events(scope.state.scenario_events);
+                // React on scope.state change.
+                update_scenario_events();
+                setExtent();
+                setAnimation();
             });
 	    }
 	}

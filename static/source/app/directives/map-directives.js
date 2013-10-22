@@ -124,6 +124,11 @@ app
           }
         };
 
+        this.fitBounds = function (extent) {
+          // extent is in format [[extent[0], extent[1]], [extent[2], extent[3]]]
+          $scope.map.fitBounds(extent);
+        };
+
     this.locateMe = function () {
         // $scope.map.locate({ setView: true });
         function onLocationFound(e) {
