@@ -200,7 +200,7 @@ app.factory('AnimatedLayer', [function(){
               if (debug){
                   console.log('removing layer ', this.current_in_map[ts].options.time);
               }
-              map.removeLayer(this.current_in_map[ts]);
+              this.map.removeLayer(this.current_in_map[ts]);
           }
           this.current_in_map = {};
           this.current_visible = null;
