@@ -5,7 +5,10 @@ app
     function MapCtrl ($scope, $location){   
     // TODO: Make this not suck.
       this.initiateLayer = function (layer) {
-        if (layer.type === "TMS" && layer.baselayer){
+        if (layer.name === "Simulatie") {
+          // Hack for 3Di.
+          console.log("Initiate 3Di");
+        } else if (layer.type === "TMS" && layer.baselayer){
           layer.leafletLayer = L.tileLayer(layer.url + '.png', {name:"Background", maxZoom: 20});
         } else if (layer.type === "TMS" && !layer.baselayer){
           if (layer.url.split('/api/v1/').length > 0){
@@ -47,6 +50,16 @@ app
 
         // expects a layer hashtable with a leafletlayer object
         this.toggleLayer = function (layer) {
+          // 3Di hack
+          if (layer.name === "Simulatie") {
+            console.log("Toggle 3Di layer " + layer.active);
+            if (layer.active) {
+              $scope.threediCtrl.connect();
+            } else {
+              $scope.threediCtrl.disconnect();
+            }
+            return
+          }
           if (!layer.active) {
             if (layer.leafletLayer) {
               $scope.map.removeLayer(layer.leafletLayer);
@@ -153,7 +166,8 @@ app
 
     };
 
-    var link = function (scope, element, attrs) {
+    var link = function (scope, element, attrs, ctrl) {
+      scope.threediCtrl = ctrl[0];
       // instead of 'map' element here for testability
       var map = new L.map(element[0], {
           center: new L.LatLng(52.0992287, 5.5698782),
@@ -217,6 +231,7 @@ app
 
 
   return {
+      require: ['^threedi'],
       restrict: 'E',
       replace: true,
       template: '<div id="map"></div>',

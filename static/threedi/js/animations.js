@@ -164,8 +164,8 @@ app.factory('AnimatedLayer', [function(){
     map_object = options.map;
     options = options.options;
     console.log('created animated layer');
-    console.log(options.map);
-    console.log(options);
+    //console.log(options.map);
+    //console.log(options);
     current_timestep = 0;  // to be altered from outside
     return { 
       options: options,

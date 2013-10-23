@@ -4,30 +4,57 @@ app.directive('threedi', function () {
 		    // var socket = io.connect(
 		    // 	"http://localhost:9000/subgrid", 
 		    // 	{'transports': ['xhr-polling', 'websocket']});
-		    var socket = io.connect("http://localhost:9000/subgrid");
-		    $scope.state = null;
-		    $scope.scenarios = null;
-            $scope.state_counter = 0;
+            //var socket = null;
 
-			console.log('threediNxt controller');
+            // TODO: how to connect to another server? Re-creating the socket
+            // object does not work fine...
+            
+            var socket = io.connect("http://localhost:9000/subgrid");
 
-		    socket.on('state', function(sender_sessid, your_sessid, state) {
-                console.log('processing state from server: ', state);
-                $scope.state = state;
-                // scope.state_counter += 1;
-                $scope.$broadcast('stateChange', '');
-		    });
+            this.connect = function() {
 
-		    socket.on('scenarios', function(scenarios) {
-	            console.log('processing scenario list from server: ', scenarios);
-	            $scope.scenarios = scenarios;
-		        //$scope.state.setAvailableScenarios(scenarios);
-		    });
+    		    $scope.state = null;
+    		    $scope.scenarios = null;
+                //$scope.state_counter = 0;
 
-		    socket.on('message', function(msg, msg_class) {
-	            console.log('Got a user message from server: ', msg);
-		        //showalert(msg, msg_class);
-		    });
+    			console.log('threedi connect');
+
+                socket.socket.reconnect();
+
+    		    socket.on('state', function(sender_sessid, your_sessid, state) {
+                    console.log('processing state from server: ', state);
+                    $scope.state = state;
+                    // scope.state_counter += 1;
+                    // TODO: $watch instead of $broadcast
+                    $scope.$broadcast('stateChange', '');
+    		    });
+
+    		    socket.on('scenarios', function(scenarios) {
+    	            console.log('processing scenario list from server: ', scenarios);
+    	            $scope.scenarios = scenarios;
+    		        //$scope.state.setAvailableScenarios(scenarios);
+    		    });
+
+    		    socket.on('message', function(msg, msg_class) {
+    	            console.log('Got a user message from server: ', msg);
+    		        //showalert(msg, msg_class);
+    		    });
+
+            }
+
+            this.disconnect = function() {
+                // TODO: $watch instead of $broadcast
+                $scope.$broadcast('shutdown', '');
+                if (socket !== null) {
+                    console.log('Disconnecting socket...');
+                    socket.removeAllListeners();
+                    socket.disconnect();
+
+                    $scope.state = null;
+                    $scope.scenarios = null;
+                    //socket = null;
+                }
+            }
 
 		},
 		link: function(scope, element, attrs) {
@@ -167,19 +194,31 @@ app.directive('threediMap', function(AnimatedLayer) {
                 }, 5000);
             }
 
+            var clearScenarioEvents = function() {
+                var map = ctrl[1];
+                for (var hash in scenario.events) {
+                     map.removeLayer(scenario.events[hash].mapmarker);
+                     if (scenario.events[hash].mapmarker2 !== null) {
+                         map.removeLayer(scenario.events[hash].mapmarker2);
+                     }
+                }
+                scenario.events = {};
+            }
+
             var update_scenario_events = function(scenario_events) {
                 // Uses directive's
                 //console.log('scenario events!!', scenario_events.length);
                 var scenario_events = scope.state.scenario_events;
                 var map = ctrl[1];
                 if (scenario_events.length === 0) {
-                    for (var hash in scenario.events) {
-                         map.removeLayer(scenario.events[hash].mapmarker);
-                         if (scenario.events[hash].mapmarker2 !== null) {
-                             map.removeLayer(scenario.events[hash].mapmarker2);
-                         }
-                    }
-                    scenario.events = {};
+                    // for (var hash in scenario.events) {
+                    //      map.removeLayer(scenario.events[hash].mapmarker);
+                    //      if (scenario.events[hash].mapmarker2 !== null) {
+                    //          map.removeLayer(scenario.events[hash].mapmarker2);
+                    //      }
+                    // }
+                    // scenario.events = {};
+                    clearScenarioEvents();
                 } else {
                     scenario_events.forEach(function(scenario_event){
                         // only show a marker once based on rain_cloud.hash
@@ -310,7 +349,7 @@ app.directive('threediMap', function(AnimatedLayer) {
             var setExtent = function() {
                 var extent = $.parseJSON(scope.state.player_extent);
                 var map = ctrl[1];
-                console.log(map);
+                //console.log(map);
                 map.fitBounds([
                     [extent[0], extent[1]],
                     [extent[2], extent[3]]]);
@@ -327,6 +366,7 @@ app.directive('threediMap', function(AnimatedLayer) {
                     wms_ani_layer.shutdown();
                 }
                 wms_ani_initialized = null;
+                wms_ani_layer = null;
             };
 
             // TODO: make the url not hard-coded
@@ -356,6 +396,13 @@ app.directive('threediMap', function(AnimatedLayer) {
                 update_scenario_events();
                 setExtent();
                 setAnimation();
+            });
+
+            scope.$on('shutdown', function() {
+                // Remove all elements that are in the GUI.
+                animation_shutdown();
+                clearTempObjects();
+                clearScenarioEvents();
             });
 	    }
 	}
