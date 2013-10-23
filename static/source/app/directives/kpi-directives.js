@@ -1,6 +1,6 @@
 app.directive('kpilayer', function () {
   return {
-    restrict: "A",
+    restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
@@ -93,6 +93,89 @@ app.directive('kpilayer', function () {
       scope.$watch('kpi.clean', function () {
         mapCtrl.removeLayer(areas);
       });
+    }
+  };
+});
+
+/*
+ * Directive to add d3 vector layers as a leaflet
+ *
+ */
+app.directive('vectorlayer', function () {
+  return {
+
+
+    restrict: 'A',
+    require: 'map',
+    link: function (scope, element, attrs, mapCtrl) {
+      data = d3.json('/static/data/klachten_purmerend_min.geojson',
+        function(collection) {
+
+          var extent, scale;
+
+          function circle_style(circles) {
+            if (!(extent && scale)) {
+                //extent = d3.extent(circles.data(), function (d) {
+                   //return d.properties.depth;
+                //});
+                extent = [0, 5],
+                scale = d3.scale.category20()
+                  .domain(["GRONDWATER", "PUT STUK"])
+            }
+
+            circles.attr('opacity', 0.6)
+              .attr('stroke', "#e")
+              .attr('stroke-width', 1)
+              .attr('fill', function (d) {
+                return scale(d.properties.CATEGORIE);
+              });
+
+            circles.on('click', function (d, i) {
+              L.DomEvent.stopPropagation(d3.event);
+
+              var data = {
+                //id: d.id,
+                klacht: d.properties.KLACHT,
+                category: d.properties.CATEGORIE,
+                intakestatus: d.properties.INTAKESTAT
+              };
+
+              var t = "<h3>" + data.category + "</h3>" +
+                "<ul>" +
+                  "<li>Klacht:" + data.klacht + "</li>" +
+                  "<li>Intakestatus:" + data.intakestatus + "</li>" +
+                "</ul>";
+
+              var popup = L.popup()
+                .setLatLng([d.geometry.coordinates[1], d.geometry.coordinates[0]])
+                .setContent(t)
+                .openOn(scope.map)
+            });
+          }
+
+          var eventLayer = L.pointsLayer(collection, {
+            applyStyle: circle_style
+          });
+          mapCtrl.addLayer(eventLayer);
+          //scope.map.setView(new L.LatLng(52.5185894148, 4.9557002060), 13);
+          scope.map.setView(new L.LatLng(52.5185894148, 4.9557002060), 16);
+
+          function get_time(d) {
+            return d3.time.format.iso.parse(d.properties.INTAKEDATU);
+          }
+
+          var klachten = d3.selectAll(".circle")
+            .classed("selected", function (d) {
+              var format = d3.time.format("%Y-%m-%d");
+              var s = [format.parse("2011-01-04"),
+                       format.parse("2012-01-12")];
+              var time = get_time(d);
+              return s[0] <= time && time <= s[1];
+            });
+          console.log(d3.selectAll(".circle.selected").size());
+
+        }
+      );
     }
   };
 });

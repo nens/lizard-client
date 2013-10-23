@@ -736,3 +736,12 @@ li.recommendation > a {
 a {
     color: #2980b9;
 }
+
+.circle {
+  cursor: pointer;
+  visibility: hidden;
+}
+
+.circle.selected {
+  visibility: visible;
+}
