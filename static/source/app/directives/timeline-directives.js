@@ -76,16 +76,29 @@ app.directive('timeline', [ function ($timeout) {
       //   );
     };
     this.drawBars = function (svg, x, y, data, options) {
+        if (options.xKey === "INTAKEDATU") {
+          var xfunction = function(d) { 
+            return x.scale(d3.time.format.iso.parse(d.properties[options.key])) - .5; };
+          var yfunction = function(d) { 
+            // console.log(y.scale(d.properties[options.yKey]) )
+            return y.scale(d.properties[options.yKey]) };
+          var heightfunction = function(d) { return y.scale(d.properties[options.yKey]); };
+        } else {
+          var xfunction = function(d) { return x.scale(d[options.xKey]) - .5; };
+          var yfunction = function(d) { return options.height - y.scale(d[options.yKey]) - .5; };
+          var heightfunction = function(d) { return y.scale(d[options.yKey]); };
+        }
         // Bar Chart specific stuff
         // Draws bars
         svg.selectAll(".bar")
           .data(data)
           .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", function(d) { return x.scale(d.date) - .5; })
-            .attr("y", function(d) { return options.height - y.scale(d.value) - .5; })
+            .attr("class", "barpiet")
+            .attr("x", xfunction)
+            .attr("y", 5)
             .attr("width", 10)
-            .attr("height", function(d) { return y.scale(d.value); });
+            .attr("height", heightfunction)
+            .attr("fill", yfunction);
         svg.append("line")
           .attr("x1", 0)
           .attr("x2", options.width * data.length)
@@ -113,14 +126,25 @@ app.directive('timeline', [ function ($timeout) {
       };
     };
 
-    this.maxMin = function (data, key) {
-      var max = d3.max(data, function(d){
-              return Number(d[key]);
-            });
+    this.maxMin = function (data, options) {
+      if (options.dateparser === 'isodate'){
+        var domain = d3.extent(data, function (d) {
+                return d3.time.format.iso.parse(d.properties[options.key])
+              });
+        var min = domain[0].getTime();
+        var max = domain[1].getTime();
+      } else if (options.key === 'CATEGORIE') {
+        var min = "GRONDWATER";
+        var max = "PUT STUK";
+      } else {
+        var max = d3.max(data, function(d){
+                return Number(d[options.key]);
+              });
 
-      var min = d3.min(data, function(d){
-              return Number(d[key]);
-            });
+        var min = d3.min(data, function(d){
+                return Number(d[options.key]);
+              });
+      }
       return {
         max: max, 
         min: min
@@ -149,6 +173,7 @@ app.directive('timeline', [ function ($timeout) {
         var scale = d3.time.scale()
             .domain([min, max])
             .range([options.range[0], options.range[1]]);
+            console.log(min, max, scale)
       } else if (options.type === 'kpi') {
           var scale = d3.time.scale()
             .domain(d3.extent(options.data, function (d) {
@@ -157,7 +182,11 @@ app.directive('timeline', [ function ($timeout) {
             .range([options.range[0], options.range[1]]);
       } else if (options.scale === 'ordinal') {
         var scale = d3.scale.category20()
-          .domain(["GRONDWATER", "PUT STUK"])
+          .domain(["GRONDWATER", "PUT STUK"]);
+      } else if (options.scale === 'isodate'){
+        var scale = d3.time.scale()
+            .domain([min, max])
+            .range([options.range[0], options.range[1]]);
       } else {
         var scale = d3.scale.linear()
             .domain([min, max])
@@ -257,35 +286,48 @@ app.directive('timeline', [ function ($timeout) {
       } else {
         scope.timeline.height = 70;
       }
-      drawChart('date', 'value');
+      drawChart('date', 'value', {});
 
     });
 
-    var thedataz
-    scope.timeline.data = d3.json('/static/data/klachten_purmerend_min.geojson',
-        function(collection) {
-          return collection.features
-        });
+    scope.$watch('kpi.events', function (newVal, oldVal) {
+      if (newVal !== oldVal){
+        scope.timeline.data = scope.kpi.events.features;
+        drawChart("INTAKEDATU", "CATEGORIE", {
+          scale: "ordinal",
+          chart: "circles",
+          dateparser: 'isodate'
+        })
+      };
+    });
 
-debugger
-
-    var drawChart = function (xKey, yKey) {
+    var drawChart = function (xKey, yKey, options) {
       var graph = timelineCtrl.createCanvas(element, {
         start: scope.timeline.temporalExtent.start,
         stop: scope.timeline.temporalExtent.end,
         height: scope.timeline.height,
         width: scope.timeline.width
       });
-      var x = timelineCtrl.maxMin(scope.timeline.data, 'xKey');
-      var y = timelineCtrl.maxMin(scope.timeline.data, 'yKey');
+      var x = timelineCtrl.maxMin(scope.timeline.data, {
+        key: xKey,
+        dateparser: options.dateparser
+      });
+      var y = timelineCtrl.maxMin(scope.timeline.data, {
+        key: yKey
+      });
       x.scale = timelineCtrl.scale(x.min, x.max, {
         type: 'time',
-        range: [0, graph.width]
+        range: [0, graph.width],
       });
-      y.scale = timelineCtrl.scale(y.min, y.max, {range: [graph.height, 0]});
+      y.scale = timelineCtrl.scale(y.min, y.max, {
+        range: [graph.height, 0],
+        scale: (options.scale == 'ordinal') ? 'ordinal' : null
+      });
       timelineCtrl.drawBars(graph.svg, x, y, scope.timeline.data, {
         height: graph.height,
-        width: graph.width
+        width: graph.width,
+        xKey: xKey,
+        yKey: yKey
       });
       timelineCtrl.drawAxes(graph.svg, x, y, {
         height: graph.height, 
@@ -297,7 +339,7 @@ debugger
           svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {orientation:"bottom"}));
           svg.select(".y.axis").call(timelineCtrl.makeAxis(y.scale, {orientation:"left"}));
           svg.selectAll(".bar")
-              .attr("x", function(d) { return x.scale(d.date) - .5; });
+              .attr("x", function(d) { return x.scale(d[xKey]) - .5; });
           scope.$apply(function () {
             scope.timeline.temporalExtent.start = x.scale.domain()[0].getTime();
             scope.timeline.temporalExtent.end = x.scale.domain()[1].getTime();
