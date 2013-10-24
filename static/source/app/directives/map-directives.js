@@ -105,7 +105,7 @@ app
           $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
         };
 
-        this.moveEnd = function(lat,lng,zoom) {
+        this.moveEnd = function(lat, lng, zoom) {
           // console.log('moveEnd!', $location.path());
           $location.path(lat + ',' + lng + ',' + zoom);
           // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());

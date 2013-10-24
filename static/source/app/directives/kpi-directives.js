@@ -35,7 +35,7 @@ app.directive('kpilayer', function () {
 
       scope.$watch('tools.kpi.enabled', function () {
         if (scope.tools.kpi.enabled){
-          scope.box.type = 'kpi';      
+          //scope.box.type = 'kpi';      
         } else {
           mapCtrl.removeLayer(areas);
         }
@@ -108,7 +108,12 @@ app.directive('vectorlayer', function () {
     restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
-      data = d3.json('/static/data/klachten_purmerend_min.geojson',
+
+      scope.$watch('kpi.events', function () {
+        console.log(scope.kpi.events)
+      });
+
+      d3.json('/static/data/klachten_purmerend_min.geojson',
         function(collection) {
 
           var extent, scale;
@@ -157,8 +162,7 @@ app.directive('vectorlayer', function () {
             applyStyle: circle_style
           });
           mapCtrl.addLayer(eventLayer);
-          //scope.map.setView(new L.LatLng(52.5185894148, 4.9557002060), 13);
-          scope.map.setView(new L.LatLng(52.5185894148, 4.9557002060), 16);
+          //scope.map.setView(new L.LatLng(52.5185894148, 4.9557002060), 16);
 
           function get_time(d) {
             return d3.time.format.iso.parse(d.properties.INTAKEDATU);
@@ -173,7 +177,6 @@ app.directive('vectorlayer', function () {
               return s[0] <= time && time <= s[1];
             });
           console.log(d3.selectAll(".circle.selected").size());
-
         }
       );
     }
