@@ -358,10 +358,31 @@ app.controller("MasterCtrl",
     temporalExtent: {
       start: 1382359037278,
       end: Date.now(),
-      changedZoom: Date.now(),
+      changedZoom: true,
+      at: Date.now() - this.start
     },
     canceler: $q.defer(),
-    open: false
+    open: false,
+    data: [
+      { date: 1357714800000, value: Math.random()},
+      { date: 1357714800000 + 100000, value: Math.random()},
+      { date: 1357714800000 + 200000, value: Math.random()},
+      { date: 1357714800000 + 300000, value: Math.random()},
+      { date: 1357714800000 + 400000, value: Math.random()},
+      { date: 1357714800000 + 500000, value: Math.random()},
+      { date: 1357714800000 + 600000, value: Math.random()},
+      { date: 1357714800000 + 700000, value: Math.random()},
+      { date: 1357714800000 + 800000, value: Math.random()},
+      { date: 1357714800000 + 900000, value: Math.random()},
+      { date: 1357714800000 + 1000000, value: Math.random()},
+      { date: 1357714800000 + 1100000, value: Math.random()},
+      { date: 1357714800000 + 1200000, value: Math.random()},
+      { date: 1357714800000 + 1300000, value: Math.random()},
+      { date: 1357714800000 + 1400000, value: Math.random()},
+      { date: 1357714800000 + 1500000, value: Math.random()},
+      { date: 1357714800000 + 1600000, value: Math.random()},
+      { date: 1357714800000 + 1700000, value: Math.random()},
+    ]
   };
 
   $scope.$watch('timeline.temporalExtent.changedZoom', function (newVal, oldVal) {
@@ -385,6 +406,7 @@ app.controller("MasterCtrl",
         $scope.selected_timeseries = undefined;
       }
     });
+
 
   });
 

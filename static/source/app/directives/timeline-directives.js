@@ -1,31 +1,10 @@
-var data = [
-  { date: 1357714800000, value: Math.random()},
-  { date: 1357714800000 + 100000, value: Math.random()},
-  { date: 1357714800000 + 200000, value: Math.random()},
-  { date: 1357714800000 + 300000, value: Math.random()},
-  { date: 1357714800000 + 400000, value: Math.random()},
-  { date: 1357714800000 + 500000, value: Math.random()},
-  { date: 1357714800000 + 600000, value: Math.random()},
-  { date: 1357714800000 + 700000, value: Math.random()},
-  { date: 1357714800000 + 800000, value: Math.random()},
-  { date: 1357714800000 + 900000, value: Math.random()},
-  { date: 1357714800000 + 1000000, value: Math.random()},
-  { date: 1357714800000 + 1100000, value: Math.random()},
-  { date: 1357714800000 + 1200000, value: Math.random()},
-  { date: 1357714800000 + 1300000, value: Math.random()},
-  { date: 1357714800000 + 1400000, value: Math.random()},
-  { date: 1357714800000 + 1500000, value: Math.random()},
-  { date: 1357714800000 + 1600000, value: Math.random()},
-  { date: 1357714800000 + 1700000, value: Math.random()},
-];
-
 // Timeline for lizard.
 app.directive('timeline', [ function ($timeout) {
 
   var controller = function ($scope){
     this.createCanvas = function (element, options) {
       var margin = {
-        top: 20,
+        top: 3,
         right: 20,
         bottom: 20,
         left: 30
@@ -37,17 +16,44 @@ app.directive('timeline', [ function ($timeout) {
       var width = maxwidth - margin.left - margin.right,
         height = maxheight - margin.top - margin.bottom;
   
-      var svg = d3.select(element[0])
+
+      d3.select(element[0])
         .html("")
+        .append("html:div")
+        .classed("bovenbalk", true)
+
+
+      var svg = d3.select(element[0])
         .append("svg:svg")
         .attr('width', maxwidth)
         .attr('height', maxheight)
         .append("svg:g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); 
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      
+        // filters are not working.. obviously I'm doing somehting wrong
+      // svg.append("svg:defs")
+      //   .append("svg:filter")
+      //     .attr("id", "dropshadow")
+      //     .attr("height", "130%");
+      // svg.select("filter")
+      //     .append("svg:fegaussianblur")
+      //     .attr("in", "SourceAlpha")
+      //     .attr("stdDeviation", "3");
+      // svg.select("filter")
+      //   .append("svg:feoffset")
+      //     .attr("dx", "2")
+      //     .attr("dy", "2")
+      //     .attr("result", "offsetblur");
+      // svg.select("filter")
+      //   .append("svg:femerge")
+      //     .append("svg:femergenode")
+      //     .attr("in", "SourceGraphic");
+      // svg.select("femerge")
+      //     .append("svg:femergenode");
       svg.append("svg:rect")
         .attr("width", width)
         .attr("height", height)
-        .attr("class", "plot");
+        .attr("class", "plot-temporal");
       return {
         svg: svg,
         height: height,
@@ -149,6 +155,105 @@ app.directive('timeline', [ function ($timeout) {
       }
       return scale;
     };
+    this.verticalReference = function (options) {
+      // add a 'hover' line that we'll show as a user moves their mouse (or finger)
+      // so we can use it to show detailed values of each line
+      var hoverLineGroup = options.svg.append("svg:g")
+                .attr("class", "hover-line");
+      // add the line to the group
+      var hoverLine = hoverLineGroup
+        .append("svg:line")
+          .attr("x1", 10).attr("x2", 10) // vertical line so same value on each
+          .attr("y1", 0).attr("y2", options.height); // top to bottom  
+          
+      // hide it by default
+      hoverLine.classed("hide", true);
+      return hoverLine;
+    };
+
+    this.drawReferenceAt = function (options) {
+      if (options.mouseX){
+        options.svg.select(".reference-line")
+              .select("line")
+                   .attr("x1", options.mouseX).attr("x2", options.mouseX) 
+                   // .attr("filter", "url(#dropshadow)");
+         d3.select(".reference-line")
+            .select("polygon")
+             .attr("points", " " + (options.mouseX - 5).toString() + 
+               " " + (0).toString() + " " + (options.mouseX + 5).toString() + 
+               " " + (0).toString() + 
+               " " + (options.mouseX).toString() + " " + (10).toString())
+      } else {     
+        options.svg.append("svg:g")
+             .attr("class", "reference-line")
+                 .append("svg:line")
+                   .attr("x1", options.width/2).attr("x2", options.width/2) 
+                   .attr("y1", 0).attr("y2", options.height)
+                   // .attr("filter", "url(#dropshadow)");
+         d3.select(".reference-line")
+           .append("svg:polygon")
+             .attr("points", " " + (options.width/2 - 5).toString() + 
+               " " + (0).toString() + " " + (options.width/2 + 5).toString() + 
+               " " + (0).toString() + 
+               " " + (options.width/2).toString() + " " + (10).toString())
+      }
+    };
+        /**
+       * Called when a user mouses over the graph.
+       */
+    this.handleMouseOverGraph = function(e, hoverLine, options) {
+      //debug("MouseOver graph [" + containerId + "] => x: " + mouseX + " y: " + mouseY + "  height: " + h + " event.clientY: " + event.clientY + " offsetY: " + event.offsetY + " pageY: " + event.pageY + " hoverLineYOffset: " + hoverLineYOffset)
+      if(options.mouseX >= 0 && options.mouseX <= options.w && options.mouseY >= 0 && options.mouseY <= options.h) {
+        // show the hover line
+        hoverLine.classed("hide", false);
+
+        // set position of hoverLine
+        hoverLine.attr("x1", options.mouseX).attr("x2", options.mouseX)
+        
+      } else {
+        // proactively act as if we've left the area since we're out of the bounds we want
+        this.handleMouseOutGraph(e, hoverLine)
+      }
+    };
+    
+    this.displayValueLabelsForPositionX = function (mouseX, x) {
+      // NOTE: tooltippie
+
+
+      // var xValue = x.scale.invert(mouseX);
+      // debugger
+      // // Calculate the value from this date by determining the 'index'
+      // // within the data array that applies to this value
+      // var index = (xValue.getTime() - data.startTime) / data.step;
+
+
+      // if(index >= d.length) {
+      //   index = d.length-1;
+      // }
+      // // The date we're given is interpolated so we have to round off to get the nearest
+      // // index in the data array for the xValue we're given.
+      // // Once we have the index, we then retrieve the data from the d[] array
+      // index = Math.round(index);
+
+      // // bucketDate is the date rounded to the correct 'step' instead of interpolated
+      // var bucketDate = new Date(data.startTime.getTime() + data.step * (index+1)); // index+1 as it is 0 based but we need 1-based for this math
+          
+      // var v = d[index];
+
+      // var roundToNumDecimals = data.rounding[dataSeriesIndex];
+
+      // return {value: roundNumber(v, roundToNumDecimals), date: bucketDate};
+
+    };
+      
+    this.handleMouseOutGraph = function(event, hoverLine) { 
+      // hide the hover-line
+      hoverLine.classed("hide", true);
+
+    };
+    this.halfwayTime = function (scale, width) {
+      return scale.invert(width / 2).getTime();
+    }
   };
   
   var link = function (scope, element, attrs, timelineCtrl) {
@@ -171,14 +276,14 @@ app.directive('timeline', [ function ($timeout) {
         height: scope.timeline.height,
         width: scope.timeline.width
       });
-      var x = timelineCtrl.maxMin(data, 'date');
-      var y = timelineCtrl.maxMin(data, 'value');
+      var x = timelineCtrl.maxMin(scope.timeline.data, 'date');
+      var y = timelineCtrl.maxMin(scope.timeline.data, 'value');
       x.scale = timelineCtrl.scale(x.min, x.max, {
         type: 'time',
         range: [0, graph.width]
       });
       y.scale = timelineCtrl.scale(y.min, y.max, {range: [graph.height, 0]});
-      timelineCtrl.drawBars(graph.svg, x, y, data, {
+      timelineCtrl.drawBars(graph.svg, x, y, scope.timeline.data, {
         height: graph.height,
         width: graph.width
       });
@@ -196,9 +301,8 @@ app.directive('timeline', [ function ($timeout) {
           scope.$apply(function () {
             scope.timeline.temporalExtent.start = x.scale.domain()[0].getTime();
             scope.timeline.temporalExtent.end = x.scale.domain()[1].getTime();
-            scope.timeline.temporalExtent.changedZoom = Date.now();
+            scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
           });
-
         };
 
         var zoom = d3.behavior.zoom()
@@ -206,10 +310,47 @@ app.directive('timeline', [ function ($timeout) {
           .on("zoom", zoomed);
 
         svg.call(zoom);
+        var hoverLine = timelineCtrl.verticalReference({
+          width: graph.width,
+          height: graph.height,
+          svg: graph.svg
+        });
+        angular.element(".plot-temporal")
+        // .on("mousemove", function (e) {
+        //   var offset = angular.element('.plot-temporal').offset(); 
+        //   var mouseX = e.pageX-offset.left;
+        //   var mouseY = e.pageY-offset.top;
+        //   timelineCtrl.handleMouseOverGraph(e, hoverLine, {
+        //     mouseX: mouseX,
+        //     mouseY: mouseY,
+        //     w: graph.width,
+        //     h: graph.height
+        //   });
+        //   timelineCtrl.displayValueLabelsForPositionX(mouseX, x);
+        // })
+        // .on("mouseout", function (e) {
+        //  timelineCtrl.handleMouseOutGraph(e, hoverLine); 
+        // })
+        .on("mousemove", function(e){
+          var offset = angular.element('.plot-temporal').offset(); 
+          var mouseX = e.pageX-offset.left;
+          timelineCtrl.drawReferenceAt({
+            svg: graph.svg,
+            mouseX: mouseX
+          });
+          scope.$apply(function () {
+            scope.timeline.temporalExtent.at = x.scale.invert(mouseX).getTime();            
+          })
+        });
+
+
+        scope.timeline.temporalExtent.at = timelineCtrl.halfwayTime(x.scale, graph.width);
+        timelineCtrl.drawReferenceAt({
+          width: graph.width,
+          height: graph.height,
+          svg: graph.svg
+        });
     };
-    scope.$watch('timeline.temporalExtent.changed', function () {
-      drawChart();
-    });
   };
 
   return {
@@ -217,6 +358,6 @@ app.directive('timeline', [ function ($timeout) {
     restrict: 'E',
     link: link,
     controller: controller,
-    template: '<div id="timeline"><svg></svg>  </div>'
+    template: '<div id="timeline"></div>'
   }
 }]);
