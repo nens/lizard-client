@@ -11,11 +11,14 @@ app.directive('threedi', function () {
 
             var socket = io.connect("http://localhost:9000/subgrid");
 
+            $scope.threedi_active = false;
+
             this.connect = function() {
 
     		    $scope.state = null;
     		    $scope.scenarios = null;
                 //$scope.state_counter = 0;
+                $scope.threedi_active = true;
 
     			console.log('threedi connect');
 
@@ -45,6 +48,7 @@ app.directive('threedi', function () {
             this.disconnect = function() {
                 // TODO: $watch instead of $broadcast
                 $scope.$broadcast('shutdown', '');
+                $scope.threedi_active = false;
                 if (socket !== null) {
                     console.log('Disconnecting socket...');
                     socket.removeAllListeners();
