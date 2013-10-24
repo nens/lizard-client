@@ -33,8 +33,8 @@ app.config(function($interpolateProvider) {
 
 
 app.controller("MasterCtrl",
-  ["$scope", "$http" ,"CabinetService", "KpiService", 
-  function ($scope, $http, CabinetService, KpiService)  {
+  ["$scope", "$http", "$resource","$q","CabinetService", "KpiService", 
+  function ($scope, $http, $resource, $q, CabinetService, KpiService)  {
 
   $scope.box = {
     query: null,
@@ -355,14 +355,75 @@ app.controller("MasterCtrl",
         $scope.box.type = "profile";
         $scope.box.content = {
           data: d3data,
-          xLabel: 'hoogte [mNAP]',
-          yLabel: 'afstand [m]'
+          yLabel: 'hoogte [mNAP]',
+          xLabel: 'afstand [m]'
         }
       })
       .error(function (data) {
         //TODO: implement error function to return no data + message
         console.log("failed getting profile data from server");
       });
+  };
+
+// Temporal extent stuf
+  $scope.timeline = {
+    temporalExtent: {
+      start: 1382359037278,
+      end: Date.now(),
+      changedZoom: true,
+      at: Date.now() - this.start
+    },
+    canceler: $q.defer(),
+    open: false,
+    data: [
+      { date: 1357714800000, value: Math.random()},
+      { date: 1357714800000 + 100000, value: Math.random()},
+      { date: 1357714800000 + 200000, value: Math.random()},
+      { date: 1357714800000 + 300000, value: Math.random()},
+      { date: 1357714800000 + 400000, value: Math.random()},
+      { date: 1357714800000 + 500000, value: Math.random()},
+      { date: 1357714800000 + 600000, value: Math.random()},
+      { date: 1357714800000 + 700000, value: Math.random()},
+      { date: 1357714800000 + 800000, value: Math.random()},
+      { date: 1357714800000 + 900000, value: Math.random()},
+      { date: 1357714800000 + 1000000, value: Math.random()},
+      { date: 1357714800000 + 1100000, value: Math.random()},
+      { date: 1357714800000 + 1200000, value: Math.random()},
+      { date: 1357714800000 + 1300000, value: Math.random()},
+      { date: 1357714800000 + 1400000, value: Math.random()},
+      { date: 1357714800000 + 1500000, value: Math.random()},
+      { date: 1357714800000 + 1600000, value: Math.random()},
+      { date: 1357714800000 + 1700000, value: Math.random()},
+    ]
+  };
+
+  $scope.$watch('timeline.temporalExtent.changedZoom', function (newVal, oldVal) {
+    $scope.timeline.canceler.resolve();
+    $scope.timeline.canceler = $q.defer();
+    var timeseries = $resource('/api/v1/timeseries/:id/', {
+      id: '@id',
+      start: '@start',
+      end: '@end'
+    },
+    {get: {method: 'GET', timeout: $scope.timeline.canceler.promise}});
+    var new_data_get = timeseries.get({
+      id: 3,
+      start: $scope.timeline.temporalExtent.start,
+      end: $scope.timeline.temporalExtent.end
+    }, function(response){
+      $scope.timeseries = response;
+      if ($scope.timeseries.length > 0){
+        $scope.selected_timeseries = response[0];
+      } else {
+        $scope.selected_timeseries = undefined;
+      }
+    });
+
+
+  });
+
+  $scope.toggleTimeline = function () {
+    $scope.timeline.open = !$scope.timeline.open;
   };
 
 

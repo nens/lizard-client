@@ -28,11 +28,10 @@ services.service("CabinetService", ["$resource",
       isArray: true
     }
   });
-  // timeseriesResource = $resource('/api/v1/timeseries/:id/', {
-  //   id: '@id'
-  // });
-  timeseriesResource = $resource('/static/data/tijdserie.json', {
-    id: '@id'
+  timeseriesResource = $resource('/api/v1/timeseries/:id/', {
+    id: '@id',
+    start: '@start',
+    end: '@end'
   });
 
 
