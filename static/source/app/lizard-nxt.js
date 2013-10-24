@@ -285,6 +285,7 @@ app.controller("MasterCtrl",
         $scope.selected_timeseries = undefined;
       }
     });
+
     $scope.metadata = {
         title: null,
         fromgrid: $scope.box.content.data,

@@ -1,0 +1,14 @@
+<div class="card">
+  <div class="card-title">
+    <h1><% box.content %> klachten</h1>
+    <p>
+      <span class="label" ng-class="{'label-danger': box.content_agg >= 25,
+                                     'label-success': box.content_agg < 25}">
+        <% box.content_agg | number:2 %> / maand
+      </span>
+    </p>
+    <p>
+      <% timeline.temporalExtent.start | date:'d MMM y' %> - <% timeline.temporalExtent.end | date:'d MMM y' %>
+    </p>
+  </div>
+</div>

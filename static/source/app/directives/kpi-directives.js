@@ -174,35 +174,45 @@ app.directive('vectorlayer', function () {
           return d3.time.format.iso.parse(d.properties.INTAKEDATU);
         }
 
-        
         scope.$watch('timeline.temporalExtent.start', function () {
           d3.selectAll(".circle")
             .classed("selected", function (d) {
-              var format = d3.time.format("%Y-%m-%d");
               var s = [scope.timeline.temporalExtent.start,
                        scope.timeline.temporalExtent.end];
-              var time = get_time(d).getTime();
-              // count objects
+              // + is a d3 operator to convert time objects to ms
+              var time = +get_time(d);
               return s[0] <= time && time <= s[1];
             });
+          //count selected elements in boundingbox
+          d3.selectAll(".circle.selected").call(countEvents);
         });
 
-        var countEvents = function (object) {
-          console.log(mapBounds);
-          console.log(object.geometry.centroid);
+        var countEvents = function (selection) {
+          var ctr = 0;
+          var num_citizens = 1;
+          var mapBounds = scope.map.getBounds();
+          // timeInterval in months
+          var timeInterval = ((scope.timeline.temporalExtent.end -
+                               scope.timeline.temporalExtent.start)
+                               / (1000 * 60 * 60 * 24 * 30));
+          console.log(timeInterval);
+          selection.each(function (d) {
+            var point = new L.LatLng(d.geometry.coordinates[1],
+                                     d.geometry.coordinates[0]);
+            if (mapBounds.contains(point)) {
+              ctr += 1;    
+            }
+            scope.$apply(function () {
+              scope.box.content = ctr;
+              //NOTE: ugly hack
+              scope.box.content_agg = ctr / num_citizens / timeInterval; 
+            });
+          });
         }
 
+        scope.box.type = "aggregate";
         scope.map.on('moveend', function() {
-          var ctr = 0;
-          var mapBounds = scope.map.getBounds();
-          d3.selectAll(".circle.selected")
-            .each(function (d) {
-                var point = new L.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
-                if (mapBounds.contains(point)) 
-                  ctr += 1;    
-                console.log(ctr);
-              }
-            );
+          d3.selectAll(".circle.selected").call(countEvents);
         });
 
       });
