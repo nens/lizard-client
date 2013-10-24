@@ -15,7 +15,19 @@ app.controller("KpiCtrl",
   $scope.kpiLoader = function () {
     var wijkdata = '/static/data/wijken_apeldoorn.geojson';
     var gemeentedata = '/static/data/gemeenten_apeldoorn.geojson';
+    var events = '/static/data/klachten_purmerend_min.geojson';
     $scope.kpi.areaData = {'wijk': {}, 'gemeente': {}};
+
+    //$http.get(events)
+      //.success(function (data) {
+        //$scope.kpi.events = data;  
+        //console.log($scope.kpi.events);
+        //$scope.kpi.panZoom = {
+          //lat: 52.5185894148, 
+          //lng: 4.9557002060,
+          //zoom: 16
+        //}
+      //});
     
     //NOTE: write a failure function
     $http.get(wijkdata)
@@ -28,13 +40,11 @@ app.controller("KpiCtrl",
           $scope.kpi.areaData.gemeente = data;
           // initialise gemeente as first view
           $scope.kpiFormatter('gemeente');
-          // ugly
-          console.debug(data.features)
-          $scope.kpi.panZoom = {
-            lat: 52.2114246,
-            lng: 5.8998043,
-            zoom: 11
-          };
+          //$scope.kpi.panZoom = {
+            //lat: 52.2114246,
+            //lng: 5.8998043,
+            //zoom: 11
+          //};
         });
   };
 

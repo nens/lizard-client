@@ -6,21 +6,21 @@
   <table class="left">
     <tr>
       <td>BOK (m) </td>
-      <td ng-bind="metadata.fromgrid.knp_bok | number: 2"></td>
+      <td ng-bind="metadata.fromgrid.bottom_level | number: 2"></td>
     </tr>
     <tr>
       <td>Breedte (m) </td>
-      <td ng-bind="metadata.fromgrid.knp_bre | number: 2"></td>
+      <td ng-bind="metadata.fromgrid.width | number: 2"></td>
     </tr>
   </table>
   <table class="right">
     <tr>
       <td>WOS opp. (m<sup>2</sup>) </td>
-      <td ng-bind="metadata.fromgrid.wos_opp | number: 2"></td>
+      <td ng-bind="metadata.fromgrid.drainage_area | number: 2"></td>
     </tr>
     <tr>
       <td>Maaiveld (m NAP) </td>
-      <td ng-bind="metadadata.fromgrid.mvd_niv | number: 2"></td>
+      <td ng-bind="metadadata.fromgrid.surface_level | number: 2"></td>
     </tr>
   </table>
 </div>
