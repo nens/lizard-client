@@ -49,7 +49,7 @@
         <!-- <div id="site-actions">                  id="rightbar-actions"-->
           <ul class="nav navbar-nav navbar-right" >
             <li>
-              <a href="#" class="hide" ng-click="toggle_tool('3di')" ng-class="{'hide': !threedi_active}" title="3Di"><i class="icon-asterisk"></i></a>
+              <a href="#" class="hide" ng-click="threediTool()" ng-class="{'hide': !threedi_active, 'icon-large': tools.threedi.enabled}" title="3Di"><i class="icon-asterisk"></i></a>
             </li>
             <li class="site">
               <a href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.profile.enabled}"></i></a>

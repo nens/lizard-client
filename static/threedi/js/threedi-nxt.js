@@ -27,6 +27,7 @@ app.directive('threedi', function () {
     		    socket.on('state', function(sender_sessid, your_sessid, state) {
                     console.log('processing state from server: ', state);
                     $scope.state = state;
+                    $scope.your_sessid = your_sessid;
                     // scope.state_counter += 1;
                     // TODO: $watch instead of $broadcast
                     $scope.$broadcast('stateChange', '');
@@ -65,6 +66,12 @@ app.directive('threedi', function () {
                 $scope.toExtent = !$scope.toExtent; 
             }
 
+            this.requestMaster = function() {
+                console.log('Request master');
+                socket.emit('set_master', !$scope.isMaster, function() {});
+            }
+
+
 		},
 		link: function(scope, element, attrs) {
 			console.log('threediNxt');
@@ -97,6 +104,47 @@ app.directive('threedi', function () {
 
 		}
 	}
+});
+
+app.directive('threediBox', function() {
+    return {
+        require: ['^threedi'],
+        controller: function($scope) {
+            $scope.bladibla = 'bladiblabla';
+        },
+        link: function(scope, element, attrs, ctrl) {
+            var text = 'textually';
+            //console.log('Activated box');
+            //console.log(scope.state);
+
+            var threedi = ctrl[0];
+
+            scope.requestMasterBox = function() {
+                threedi.requestMaster();
+            }
+
+            scope.$on('stateChange', function() {
+                // React on scope.state change.
+                console.log('state change from 3di omnibox');
+                if (scope.state.player_master_sessid !== undefined) {
+                    scope.have_master = true;
+                } else {
+                    scope.have_master = false;
+                }
+                if (scope.state.your_sessid == scope.state.player_master_sessid) {
+                    scope.isMaster = true;
+                } else {
+                    scope.isMaster = false;
+                }
+                //scope.master_name = scope.state.player_master_name;
+            });
+
+            scope.$on('shutdown', function() {
+                // Remove all elements that are in the GUI.
+                console.log('shutdown from 3di omnibox');
+            });
+        }
+    }
 });
 
 app.directive('threediMap', function(AnimatedLayer) {

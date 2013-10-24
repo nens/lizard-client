@@ -66,6 +66,9 @@ app.controller("MasterCtrl",
     },
     profile: {
       enabled: false
+    },
+    threedi: {
+      enabled: false
     }
   };
 
@@ -95,6 +98,8 @@ app.controller("MasterCtrl",
   $scope.toggle_tool = function (name) {
     if ($scope.tools.hasOwnProperty(name)){
       $scope.tools[name].enabled = !$scope.tools[name].enabled;
+    } else {
+      console.log('Unknown tool called: ' + name);
     }
   };
 
@@ -259,6 +264,13 @@ app.controller("MasterCtrl",
       $scope.zoomToLayer = !$scope.zoomToLayer;    
     }
   };
+
+  $scope.threediTool = function() {
+      console.log($scope.box.type);
+      $scope.box.type = 'threedi';
+      $scope.box.content = 'bladiblabla';
+      $scope.tools.threedi.enabled = !$scope.tools.threedi.enabled;
+  }  
 
   $scope.format_data = function (data) {
     if (data[0]){
