@@ -93,6 +93,26 @@ app.directive('timeline', [ function ($timeout) {
           .attr("y2", options.height - .5)
           .style("stroke", "#ccc");
     };
+    this.drawCircles = function(svg, x, y, data, options){
+      function circle_style(circles) {
+        if (!(extent && scale)) {
+            //extent = d3.extent(circles.data(), function (d) {
+               //return d.properties.depth;
+            //});
+            extent = [0, 5],
+            scale = d3.scale.category20()
+              .domain(["GRONDWATER", "PUT STUK"])
+        }
+
+        circles.attr('opacity', 0.6)
+          .attr('stroke', "#e")
+          .attr('stroke-width', 1)
+          .attr('fill', function (d) {
+            return scale(d.properties.CATEGORIE);
+          });
+      };
+    };
+
     this.maxMin = function (data, key) {
       var max = d3.max(data, function(d){
               return Number(d[key]);
@@ -135,6 +155,9 @@ app.directive('timeline', [ function ($timeout) {
                 return Date.parse(d.date)
               }))
             .range([options.range[0], options.range[1]]);
+      } else if (options.scale === 'ordinal') {
+        var scale = d3.scale.category20()
+          .domain(["GRONDWATER", "PUT STUK"])
       } else {
         var scale = d3.scale.linear()
             .domain([min, max])
@@ -233,19 +256,27 @@ app.directive('timeline', [ function ($timeout) {
       } else {
         scope.timeline.height = 70;
       }
-      drawChart();
+      drawChart('date', 'value');
 
     });
 
-    var drawChart = function () {
+    var thedataz
+    scope.timeline.data = d3.json('/static/data/klachten_purmerend_min.geojson',
+        function(collection) {
+          return collection.features
+        });
+
+debugger
+
+    var drawChart = function (xKey, yKey) {
       var graph = timelineCtrl.createCanvas(element, {
         start: scope.timeline.temporalExtent.start,
         stop: scope.timeline.temporalExtent.end,
         height: scope.timeline.height,
         width: scope.timeline.width
       });
-      var x = timelineCtrl.maxMin(scope.timeline.data, 'date');
-      var y = timelineCtrl.maxMin(scope.timeline.data, 'value');
+      var x = timelineCtrl.maxMin(scope.timeline.data, 'xKey');
+      var y = timelineCtrl.maxMin(scope.timeline.data, 'yKey');
       x.scale = timelineCtrl.scale(x.min, x.max, {
         type: 'time',
         range: [0, graph.width]
