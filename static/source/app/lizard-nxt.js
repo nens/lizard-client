@@ -333,11 +333,11 @@ app.controller("MasterCtrl",
   $http.get(events)
     .success(function (data) {
       $scope.kpi.events = data;  
-      //$scope.kpi.panZoom = {
-        //lat: 52.5185894148, 
-        //lng: 4.9557002060,
-        //zoom: 16
-      //}
+      $scope.kpi.panZoom = {
+        lat: 52.5185894148, 
+        lng: 4.9557002060,
+        zoom: 16
+      }
     });
 
   // define function to get profile data from server
