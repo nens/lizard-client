@@ -174,16 +174,19 @@ app.directive('vectorlayer', function () {
           return d3.time.format.iso.parse(d.properties.INTAKEDATU);
         }
 
-        d3.selectAll(".circle")
-          .classed("selected", function (d) {
-            var format = d3.time.format("%Y-%m-%d");
-            var s = [format.parse("2011-01-04"),
-                     format.parse("2012-01-12")];
-            var time = get_time(d);
-            // count objects
-            return s[0] <= time && time <= s[1];
-          });
         
+        scope.$watch('timeline.temporalExtent.start', function () {
+          d3.selectAll(".circle")
+            .classed("selected", function (d) {
+              var format = d3.time.format("%Y-%m-%d");
+              var s = [scope.timeline.temporalExtent.start,
+                       scope.timeline.temporalExtent.end];
+              var time = get_time(d).getTime();
+              // count objects
+              return s[0] <= time && time <= s[1];
+            });
+        });
+
         var countEvents = function (object) {
           console.log(mapBounds);
           console.log(object.geometry.centroid);
