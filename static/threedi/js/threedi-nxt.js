@@ -56,6 +56,11 @@ app.directive('threedi', function () {
                 }
             }
 
+            this.toExtent = function() {
+                // make the watch work. ugly
+                $scope.toExtent = !$scope.toExtent; 
+            }
+
 		},
 		link: function(scope, element, attrs) {
 			console.log('threediNxt');
@@ -394,7 +399,9 @@ app.directive('threediMap', function(AnimatedLayer) {
             scope.$on('stateChange', function() {
                 // React on scope.state change.
                 update_scenario_events();
-                setExtent();
+                if (scope.follow_3di) {
+                    setExtent();
+                }
                 setAnimation();
             });
 
@@ -403,6 +410,13 @@ app.directive('threediMap', function(AnimatedLayer) {
                 animation_shutdown();
                 clearTempObjects();
                 clearScenarioEvents();
+            });
+
+            // react on function call toExtent
+            scope.$watch('toExtent', function() {
+                if (scope.toExtent !== undefined) {
+                    setExtent();
+                }
             });
 	    }
 	}

@@ -248,6 +248,18 @@ app.controller("MasterCtrl",
     $scope.zoomToLayer = !$scope.zoomToLayer;
   };
 
+  // For 3Di
+  $scope.setFollow = function(layer, follow_3di) {
+    layer.follow_3di = follow_3di;  // for GUI
+    $scope.follow_3di = follow_3di;
+
+    if (follow_3di) {
+      // ugly way to make it zoom to 3Di layer when activated
+      $scope.layerToZoomTo = layer;
+      $scope.zoomToLayer = !$scope.zoomToLayer;    
+    }
+  };
+
   $scope.format_data = function (data) {
     if (data[0]){
     $scope.formatted_data = [];

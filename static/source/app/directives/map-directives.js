@@ -8,6 +8,7 @@ app
         if (layer.name === "Simulatie") {
           // Hack for 3Di.
           console.log("Initiate 3Di");
+          layer.follow_3di = false;
         } else if (layer.type === "TMS" && layer.baselayer){
           layer.leafletLayer = L.tileLayer(layer.url + '.png', {name:"Background", maxZoom: 20});
         } else if (layer.type === "TMS" && !layer.baselayer){
@@ -125,6 +126,7 @@ app
         };
       
         this.zoomToTheMagic = function (layer) {
+          console.log('zoomToTheMagic');
           // TODO: make this not hardcoded. And make this a nice UX instead of a brutal one
           if (layer.name == 'Riolering') {
             $scope.map.setView([52.503265633642194, 4.968782196044922], 14, {animate: true});
@@ -134,6 +136,11 @@ app
           }
           if (layer.name == 'Watergangen') {
             $scope.map.setView([52.60763454517434, 4.794158935546875], 11, { animate: true });
+          }
+          if (layer.name == 'Simulatie') {
+            //layer.follow_3di = !layer.follow_3di;
+            //$scope.threediCtrl.follow(layer.follow_3di);
+            $scope.threediCtrl.toExtent();
           }
         };
 
