@@ -777,6 +777,9 @@ a {
     color: #2980b9;
 }
 
+/*
+ * d3 vector layer css
+ */
 .circle {
   cursor: pointer;
   visibility: hidden;

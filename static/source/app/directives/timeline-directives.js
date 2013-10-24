@@ -213,10 +213,11 @@ app.directive('timeline', [ function ($timeout) {
                " " + (options.width/2).toString() + " " + (10).toString())
       }
     };
-        /**
-       * Called when a user mouses over the graph.
-       * Not used anymore
-       */
+
+    /**
+   * Called when a user mouses over the graph.
+   * Not used anymore
+   */
     this.handleMouseOverGraph = function(e, hoverLine, options) {
 
       if(options.mouseX >= 0 && options.mouseX <= options.w && options.mouseY >= 0 && options.mouseY <= options.h) {
