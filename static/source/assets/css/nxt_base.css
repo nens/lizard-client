@@ -454,6 +454,7 @@ html, body{
 }
 
 /*timeline stuff*/
+
 .timeline {
     background-color: #fff;
     color: #222;
@@ -469,7 +470,7 @@ html, body{
 }
 
 .bovenbalk{
-    height: 5px;
+    height: 10px;
     
 /*    -moz-box-shadow: inset -5px -5px #888;
     -webkit-box-shadow: inset -5px -5px #888;*/

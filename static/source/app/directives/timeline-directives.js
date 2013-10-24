@@ -3,6 +3,7 @@ app.directive('timeline', [ function ($timeout) {
 
   var controller = function ($scope){
     this.createCanvas = function (element, options) {
+      // Draws a blank canvas based on viewport
       var margin = {
         top: 3,
         right: 20,
@@ -29,27 +30,7 @@ app.directive('timeline', [ function ($timeout) {
         .attr('height', maxheight)
         .append("svg:g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-      
-        // filters are not working.. obviously I'm doing somehting wrong
-      // svg.append("svg:defs")
-      //   .append("svg:filter")
-      //     .attr("id", "dropshadow")
-      //     .attr("height", "130%");
-      // svg.select("filter")
-      //     .append("svg:fegaussianblur")
-      //     .attr("in", "SourceAlpha")
-      //     .attr("stdDeviation", "3");
-      // svg.select("filter")
-      //   .append("svg:feoffset")
-      //     .attr("dx", "2")
-      //     .attr("dy", "2")
-      //     .attr("result", "offsetblur");
-      // svg.select("filter")
-      //   .append("svg:femerge")
-      //     .append("svg:femergenode")
-      //     .attr("in", "SourceGraphic");
-      // svg.select("femerge")
-      //     .append("svg:femergenode");
+
       svg.append("svg:rect")
         .attr("width", width)
         .attr("height", height)
@@ -62,6 +43,7 @@ app.directive('timeline', [ function ($timeout) {
       }
     };
     this.drawAxes = function (svg, x, y, options){
+      // Draws the axes, expects axes or 2 objects with scales
       if (options.axes) {
         var xAxis = options.axes.x;
         var yAxis = options.axes.y;
@@ -78,6 +60,7 @@ app.directive('timeline', [ function ($timeout) {
         .attr("class", "y axis")
         .call(yAxis);
 
+      // Not sure if we want grid
       // svg.append("g")
       //   .attr("class", "x grid")
       //   .attr("transform", "translate(0, " + (options.height + 6) + ")")
@@ -94,6 +77,7 @@ app.directive('timeline', [ function ($timeout) {
     };
     this.drawBars = function (svg, x, y, data, options) {
         // Bar Chart specific stuff
+        // Draws bars
         svg.selectAll(".bar")
           .data(data)
           .enter().append("rect")
@@ -123,6 +107,7 @@ app.directive('timeline', [ function ($timeout) {
       };
     };
     this.makeAxis = function (scale, options) {
+      // Make an axis for d3 based on a scale
       if (options.tickFormat){
         var axis = d3.svg.axis()
                 .scale(scale)
@@ -138,6 +123,8 @@ app.directive('timeline', [ function ($timeout) {
       return axis
       };
     this.scale = function (min, max, options) {
+      // Instantiate a d3 scale based on min max and 
+      // width and height of plot
       if (options.type === 'time'){
         var scale = d3.time.scale()
             .domain([min, max])
@@ -156,6 +143,7 @@ app.directive('timeline', [ function ($timeout) {
       return scale;
     };
     this.verticalReference = function (options) {
+      // NOTE: Not used anymore..
       // add a 'hover' line that we'll show as a user moves their mouse (or finger)
       // so we can use it to show detailed values of each line
       var hoverLineGroup = options.svg.append("svg:g")
@@ -172,6 +160,10 @@ app.directive('timeline', [ function ($timeout) {
     };
 
     this.drawReferenceAt = function (options) {
+      /* 
+      * Reference line. This could be improved
+      * Draws line and arrow either on Mouse Position or width
+      */
       if (options.mouseX){
         options.svg.select(".reference-line")
               .select("line")
@@ -200,9 +192,10 @@ app.directive('timeline', [ function ($timeout) {
     };
         /**
        * Called when a user mouses over the graph.
+       * Not used anymore
        */
     this.handleMouseOverGraph = function(e, hoverLine, options) {
-      //debug("MouseOver graph [" + containerId + "] => x: " + mouseX + " y: " + mouseY + "  height: " + h + " event.clientY: " + event.clientY + " offsetY: " + event.offsetY + " pageY: " + event.pageY + " hoverLineYOffset: " + hoverLineYOffset)
+
       if(options.mouseX >= 0 && options.mouseX <= options.w && options.mouseY >= 0 && options.mouseY <= options.h) {
         // show the hover line
         hoverLine.classed("hide", false);
@@ -218,31 +211,6 @@ app.directive('timeline', [ function ($timeout) {
     
     this.displayValueLabelsForPositionX = function (mouseX, x) {
       // NOTE: tooltippie
-
-
-      // var xValue = x.scale.invert(mouseX);
-      // debugger
-      // // Calculate the value from this date by determining the 'index'
-      // // within the data array that applies to this value
-      // var index = (xValue.getTime() - data.startTime) / data.step;
-
-
-      // if(index >= d.length) {
-      //   index = d.length-1;
-      // }
-      // // The date we're given is interpolated so we have to round off to get the nearest
-      // // index in the data array for the xValue we're given.
-      // // Once we have the index, we then retrieve the data from the d[] array
-      // index = Math.round(index);
-
-      // // bucketDate is the date rounded to the correct 'step' instead of interpolated
-      // var bucketDate = new Date(data.startTime.getTime() + data.step * (index+1)); // index+1 as it is 0 based but we need 1-based for this math
-          
-      // var v = d[index];
-
-      // var roundToNumDecimals = data.rounding[dataSeriesIndex];
-
-      // return {value: roundNumber(v, roundToNumDecimals), date: bucketDate};
 
     };
       
