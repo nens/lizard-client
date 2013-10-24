@@ -78,9 +78,8 @@ app.directive('timeline', [ function ($timeout) {
     this.drawBars = function (svg, x, y, data, options) {
         if (options.xKey === "INTAKEDATU") {
           var xfunction = function(d) { 
-            return x.scale(d3.time.format.iso.parse(d.properties[options.key])) - .5; };
+            return x.scale(d3.time.format.iso.parse(d.properties[options.xKey])) - .5; };
           var yfunction = function(d) { 
-            // console.log(y.scale(d.properties[options.yKey]) )
             return y.scale(d.properties[options.yKey]) };
           var heightfunction = function(d) { return y.scale(d.properties[options.yKey]); };
         } else {
@@ -93,11 +92,11 @@ app.directive('timeline', [ function ($timeout) {
         svg.selectAll(".bar")
           .data(data)
           .enter().append("rect")
-            .attr("class", "barpiet")
+            .attr("class", "bar")
             .attr("x", xfunction)
             .attr("y", 5)
             .attr("width", 10)
-            .attr("height", heightfunction)
+            .attr("height", 10)
             .attr("fill", yfunction);
         svg.append("line")
           .attr("x1", 0)
@@ -131,6 +130,7 @@ app.directive('timeline', [ function ($timeout) {
         var domain = d3.extent(data, function (d) {
                 return d3.time.format.iso.parse(d.properties[options.key])
               });
+        console.log(domain);
         var min = domain[0].getTime();
         var max = domain[1].getTime();
       } else if (options.key === 'CATEGORIE') {
@@ -173,7 +173,6 @@ app.directive('timeline', [ function ($timeout) {
         var scale = d3.time.scale()
             .domain([min, max])
             .range([options.range[0], options.range[1]]);
-            console.log(min, max, scale)
       } else if (options.type === 'kpi') {
           var scale = d3.time.scale()
             .domain(d3.extent(options.data, function (d) {
@@ -336,10 +335,16 @@ app.directive('timeline', [ function ($timeout) {
 
       var svg = graph.svg;
         var zoomed = function () {
+           if (xKey === "INTAKEDATU") {
+          var xfunction = function(d) { 
+            return x.scale(d3.time.format.iso.parse(d.properties[xKey])) - .5; };
+          } else{
+            xfunction = function(d) {return x.scale(d[xKey])};
+          }
           svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {orientation:"bottom"}));
           svg.select(".y.axis").call(timelineCtrl.makeAxis(y.scale, {orientation:"left"}));
           svg.selectAll(".bar")
-              .attr("x", function(d) { return x.scale(d[xKey]) - .5; });
+              .attr("x", xfunction);
           scope.$apply(function () {
             scope.timeline.temporalExtent.start = x.scale.domain()[0].getTime();
             scope.timeline.temporalExtent.end = x.scale.domain()[1].getTime();
