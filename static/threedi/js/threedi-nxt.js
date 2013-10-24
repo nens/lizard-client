@@ -8,7 +8,7 @@ app.directive('threedi', function () {
 
             // TODO: how to connect to another server? Re-creating the socket
             // object does not work fine...
-            
+
             var socket = io.connect("http://localhost:9000/subgrid");
 
             this.connect = function() {
@@ -176,8 +176,8 @@ app.directive('threediMap', function(AnimatedLayer) {
                     [lat-size*0.6, lng-size],
                     [lat+size*0.6, lng-size],
                     [lat+size*0.6, lng+size]];
-                console.log('draw temp poly');
-                console.log(poly);
+                // console.log('draw temp poly');
+                // console.log(poly);
                 var marker = L.polygon(poly, {
                     stroke: false, fillColor: color, 
                     fillOpacity: 0.5, clickable: false});

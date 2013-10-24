@@ -9,7 +9,6 @@ app.factory('AnimatedLayer', [function(){
       name,
       options,
       current_timestep;
-    var current_in_map = {};  // indices if layers that are in OL.map
     var to_delete_from_map = null;
     var readyForNext = null;  // This is the layer that should be shown after stopping simulation
     var startedLoading = Date.now();  // date that the last layer started loading; for timeout construction.
@@ -20,6 +19,7 @@ app.factory('AnimatedLayer', [function(){
     var min_time_between_loads = 0; // testing with max update rate
 
     var layers = {}; // it will automatically be updated by setTimestep when needed
+
     var layerFromTs = function(timestep, extra_options) {
       // extra_options is a hashmap {option: value, ...}
       // Create layer from given timestep.
@@ -99,9 +99,7 @@ app.factory('AnimatedLayer', [function(){
           setTimeout(function() {
               me.readyForNext = null;
               if ((nextTimestep !== null) && (parseInt(nextTimestep) !== parseInt(me.options.time))) {
-                  if (debug){
-                      console.log('nextTimestep: ', nextTimestep);
-                  }
+                  //console.log('nextTimestep: ', nextTimestep);
                   me.setTimestep(parseInt(nextTimestep));
               }
           }, 50);
@@ -117,7 +115,6 @@ app.factory('AnimatedLayer', [function(){
     };
 
     var setTimestep = function(timestep, extra_options) {
-
         // 5 seconds timeout
         var now = Date.now();
         if ((this.readyForNext !== null) && (now < this.startedLoading + 5000)) {
@@ -134,19 +131,14 @@ app.factory('AnimatedLayer', [function(){
         }
         //if (debug){ console.log('set timestep ' + timestep);
         this.current_timestep = timestep;
-        if (debug){
-            console.log('in setTimestep: ', timestep);
-        }
+        //console.log('in setTimestep: ', timestep);
         if (timestep < 0) { return; }
 
         var ts = timestep;
         //if (debug){ console.log('we want timestep ', ts);
-
         if (this.current_in_map[ts] === undefined) {
             // new layer
-            if (debug){
-                console.log('adding to map ', ts);
-            }
+            console.log('adding to map ', ts);
             this.startedLoading = Date.now();
             //console.log(this.options);
             var new_layer = this.layerFromTs(ts, extra_options);
@@ -159,53 +151,48 @@ app.factory('AnimatedLayer', [function(){
     };
 
     var animated_layer = function(options){
-    name = options.name;
-    url = options.url;
-    map_object = options.map;
-    options = options.options;
-    console.log('created animated layer');
-    //console.log(options.map);
-    //console.log(options);
-    current_timestep = 0;  // to be altered from outside
-    return { 
-      options: options,
-      name: name,
-      url: url,
-      map: map_object,
-      layerFromTs: layerFromTs,
-      setTimestep: setTimestep,
-      startedLoading: startedLoading,
-      current_in_map: current_in_map,
-      to_delete_from_map: to_delete_from_map,
-      readyForNext: readyForNext,
-      max_timesteps: max_timesteps,
-      min_time_between_loads: min_time_between_loads,
-      layers: layers,
-      layerName: function(timestep) {
-          return name + ' (' + timestep + ')';
-      },    
-      updateMap: function() {
-          // update visible layer
-          // add/remove layers
-          if (debug){
-              console.log('updating map');
-          }
-      },
-      shutdown: function() {
-          // make sure to remove all objects that are in memory/OL
-          if (debug){
-              console.log('ani layer shutting down...');
-          }
-          for (ts in this.current_in_map) {
-              if (debug){
-                  console.log('removing layer ', this.current_in_map[ts].options.time);
+        name = options.name;
+        url = options.url;
+        map_object = options.map;
+        options = options.options;
+        console.log('created animated layer');
+        //console.log(options.map);
+        //console.log(options);
+        current_timestep = 0;  // to be altered from outside
+        return { 
+            options: options,
+            name: name,
+            url: url,
+            map: map_object,
+            layerFromTs: layerFromTs,
+            setTimestep: setTimestep,
+            startedLoading: startedLoading,
+            current_in_map: {},
+            to_delete_from_map: to_delete_from_map,
+            readyForNext: readyForNext,
+            max_timesteps: max_timesteps,
+            min_time_between_loads: min_time_between_loads,
+            layers: layers,
+            layerName: function(timestep) {
+                return name + ' (' + timestep + ')';
+            },    
+            updateMap: function() {
+                // update visible layer
+                // add/remove layers
+                if (debug){
+                    console.log('updating map');
+                }
+            },
+            shutdown: function() {
+                // make sure to remove all objects that are in memory/OL
+                console.log('ani layer shutting down...');
+                for (ts in this.current_in_map) {
+                    console.log('removing layer ', this.current_in_map[ts].options.time);
+                    this.map.removeLayer(this.current_in_map[ts]);
+                }
+                this.current_in_map = {};
               }
-              this.map.removeLayer(this.current_in_map[ts]);
-          }
-          this.current_in_map = {};
-          this.current_visible = null;
         }
-    }
     };
     /* Initialize animation object. We must provide model_slug to correctly
      calculate the complete wms url.*/
