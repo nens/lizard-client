@@ -1,143 +1,92 @@
-app.directive('threedi', function () {
-	return {
-		controller: function($scope) {
-		    // var socket = io.connect(
-		    // 	"http://localhost:9000/subgrid", 
-		    // 	{'transports': ['xhr-polling', 'websocket']});
-            //var socket = null;
+app.controller('Threedi', ['$scope', function($scope) {
+    var socket = io.connect("http://localhost:9000/subgrid");
 
-            // TODO: how to connect to another server? Re-creating the socket
-            // object does not work fine...
+    $scope.threedi_active = false;
+    $scope.stateCounter = 0;
 
-            var socket = io.connect("http://localhost:9000/subgrid");
+    $scope.connect = function() {
+	    $scope.state = null;
+	    $scope.scenarios = null;
+        //$scope.state_counter = 0;
+        $scope.threedi_active = true;
 
-            $scope.threedi_active = false;
+		console.log('threedi connect');
 
-            this.connect = function() {
+        socket.socket.reconnect();
 
-    		    $scope.state = null;
-    		    $scope.scenarios = null;
-                //$scope.state_counter = 0;
-                $scope.threedi_active = true;
+	    socket.on('state', function(sender_sessid, your_sessid, state) {
+            console.log('processing state from server: ', state);
+            $scope.$apply(function() {
+                $scope.state = state;
+                $scope.state.counter = $scope.stateCounter;
+                $scope.stateCounter += 1;  // for $watch
+            });
+            $scope.your_sessid = your_sessid;
+	    });
 
-    			console.log('threedi connect');
+	    socket.on('scenarios', function(scenarios) {
+            console.log('processing scenario list from server: ', scenarios);
+            $scope.scenarios = scenarios;
+	    });
 
-                socket.socket.reconnect();
+	    socket.on('message', function(msg, msg_class) {
+            console.log('Got a user message from server: ', msg);
+	    });
+    }
 
-    		    socket.on('state', function(sender_sessid, your_sessid, state) {
-                    console.log('processing state from server: ', state);
-                    $scope.state = state;
-                    $scope.your_sessid = your_sessid;
-                    // scope.state_counter += 1;
-                    // TODO: $watch instead of $broadcast
-                    $scope.$broadcast('stateChange', '');
-    		    });
+    $scope.disconnect = function() {
+        // TODO: $watch instead of $broadcast
+        $scope.threedi_active = false;
+        if (socket !== null) {
+            console.log('Disconnecting socket...');
+            socket.removeAllListeners();
+            socket.disconnect();
 
-    		    socket.on('scenarios', function(scenarios) {
-    	            console.log('processing scenario list from server: ', scenarios);
-    	            $scope.scenarios = scenarios;
-    		        //$scope.state.setAvailableScenarios(scenarios);
-    		    });
+            $scope.state = null;
+            $scope.scenarios = null;
+        }
+    }
 
-    		    socket.on('message', function(msg, msg_class) {
-    	            console.log('Got a user message from server: ', msg);
-    		        //showalert(msg, msg_class);
-    		    });
+    $scope.requestMaster = function() {
+        console.log('Request master');
+        socket.emit('set_master', !$scope.isMaster, function() {});
+    }
 
-            }
+}]);
 
-            this.disconnect = function() {
-                // TODO: $watch instead of $broadcast
-                $scope.$broadcast('shutdown', '');
-                $scope.threedi_active = false;
-                if (socket !== null) {
-                    console.log('Disconnecting socket...');
-                    socket.removeAllListeners();
-                    socket.disconnect();
-
-                    $scope.state = null;
-                    $scope.scenarios = null;
-                    //socket = null;
-                }
-            }
-
-            this.toExtent = function() {
-                // make the watch work. ugly
-                $scope.toExtent = !$scope.toExtent; 
-            }
-
-            this.requestMaster = function() {
-                console.log('Request master');
-                socket.emit('set_master', !$scope.isMaster, function() {});
-            }
-
-
-		},
-		link: function(scope, element, attrs) {
-			console.log('threediNxt');
-
-            // var socket = io.connect("http://localhost:9000/subgrid");
-            // scope.state = null;
-            // scope.scenarios = null;
-            // // scope.state_counter = 0;
-
-            // console.log('threediNxt controller');
-
-            // socket.on('state', function(sender_sessid, your_sessid, state) {
-            //     console.log('processing state from server: ', state);
-            //     scope.state = state;
-            //     // scope.state_counter += 1;
-            //     scope.$broadcast('stateChange', '');
-            //     //$scope.state.setState(state, your_sessid);
-            // });
-
-            // socket.on('scenarios', function(scenarios) {
-            //     console.log('processing scenario list from server: ', scenarios);
-            //     scope.scenarios = scenarios;
-            //     //$scope.state.setAvailableScenarios(scenarios);
-            // });
-
-            // socket.on('message', function(msg, msg_class) {
-            //     console.log('Got a user message from server: ', msg);
-            //     //showalert(msg, msg_class);
-            // });
-
-		}
-	}
-});
 
 app.directive('threediBox', function() {
     return {
-        require: ['^threedi'],
+        //require: ['^threedi'],
         controller: function($scope) {
-            $scope.bladibla = 'bladiblabla';
+            this.bladibla = 'bladiblablazzZZZ';
         },
         link: function(scope, element, attrs, ctrl) {
             var text = 'textually';
             //console.log('Activated box');
             //console.log(scope.state);
 
-            var threedi = ctrl[0];
+            //var threedi = ctrl[0];
 
             scope.requestMasterBox = function() {
-                threedi.requestMaster();
+                //threedi.requestMaster();
             }
 
-            scope.$on('stateChange', function() {
-                // React on scope.state change.
-                console.log('state change from 3di omnibox');
-                if (scope.state.player_master_sessid !== undefined) {
-                    scope.have_master = true;
-                } else {
-                    scope.have_master = false;
-                }
-                if (scope.state.your_sessid == scope.state.player_master_sessid) {
-                    scope.isMaster = true;
-                } else {
-                    scope.isMaster = false;
-                }
-                //scope.master_name = scope.state.player_master_name;
-            });
+            // scope.$on('stateChange', function() {
+            //     // React on scope.state change.
+            //     console.log('state change from 3di omnibox');
+            //     if (scope.state.player_master_sessid !== undefined) {
+            //         //ctrl.have_master = true;
+            //     } else {
+            //         //ctrl.have_master = false;
+            //     }
+            //     if (scope.state.your_sessid == scope.state.player_master_sessid) {
+            //         //ctrl.isMaster = true;
+            //     } else {
+            //         //ctrl.isMaster = false;
+            //     }
+            //     //scope.master_name = scope.state.player_master_name;
+            // });
 
             scope.$on('shutdown', function() {
                 // Remove all elements that are in the GUI.
@@ -149,7 +98,7 @@ app.directive('threediBox', function() {
 
 app.directive('threediMap', function(AnimatedLayer) {
 	return {
-		require: ['^threedi', 'map'],
+		require: ['map'],
 		link: function(scope, element, attrs, ctrl){            
 			// scope.$watch('state_counter', function () {
 			// 	console.log('Detected state change');
@@ -252,7 +201,7 @@ app.directive('threediMap', function(AnimatedLayer) {
             }
 
             var clearScenarioEvents = function() {
-                var map = ctrl[1];
+                var map = ctrl[0];
                 for (var hash in scenario.events) {
                      map.removeLayer(scenario.events[hash].mapmarker);
                      if (scenario.events[hash].mapmarker2 !== null) {
@@ -266,7 +215,7 @@ app.directive('threediMap', function(AnimatedLayer) {
                 // Uses directive's
                 //console.log('scenario events!!', scenario_events.length);
                 var scenario_events = scope.state.scenario_events;
-                var map = ctrl[1];
+                var map = ctrl[0];
                 if (scenario_events.length === 0) {
                     // for (var hash in scenario.events) {
                     //      map.removeLayer(scenario.events[hash].mapmarker);
@@ -404,8 +353,13 @@ app.directive('threediMap', function(AnimatedLayer) {
             };
 
             var setExtent = function() {
+                //console.log('setExtent scope is:');
+                //console.log(scope);
+                // if (scope.state === null) {
+                //     return;
+                // } 
                 var extent = $.parseJSON(scope.state.player_extent);
-                var map = ctrl[1];
+                var map = ctrl[0];
                 //console.log(map);
                 map.fitBounds([
                     [extent[0], extent[1]],
@@ -437,7 +391,7 @@ app.directive('threediMap', function(AnimatedLayer) {
 
                     // Only call to a global function.
                     wms_ani_layer = AnimatedLayer.animation_init(
-                        ctrl[1], scope.state.loaded_model, wms_server_url);
+                        ctrl[0], scope.state.loaded_model, wms_server_url);
                     // wms_ani_layer = animation_init(value.model_slug, url);
                     wms_ani_initialized = scope.state.loaded_model;
                 }
@@ -448,28 +402,35 @@ app.directive('threediMap', function(AnimatedLayer) {
                 }
             }
 
-            scope.$on('stateChange', function() {
-                // React on scope.state change.
-                update_scenario_events();
+            scope.$watch('follow_3di', function() {
+                console.log('Watch follow_3di');
                 if (scope.follow_3di) {
                     setExtent();
                 }
-                setAnimation();
             });
 
-            scope.$on('shutdown', function() {
-                // Remove all elements that are in the GUI.
-                animation_shutdown();
-                clearTempObjects();
-                clearScenarioEvents();
-            });
-
-            // react on function call toExtent
-            scope.$watch('toExtent', function() {
-                if (scope.toExtent !== undefined) {
-                    setExtent();
+            scope.$watch('state', function() {
+                // React on scope.state change.
+                console.log('state change');
+                if (scope.threedi_active) {
+                    update_scenario_events();
+                    if (scope.follow_3di) {
+                        setExtent();
+                    }
+                    setAnimation();
                 }
             });
+
+            scope.$watch('threedi_active', function() {
+                if (!scope.threedi_active) {
+                    // Remove all elements that are in the GUI.
+                    animation_shutdown();
+                    clearTempObjects();
+                    clearScenarioEvents();
+                }
+            });
+
+
 	    }
 	}
 });

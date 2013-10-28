@@ -55,9 +55,9 @@ app
           if (layer.name === "Simulatie") {
             console.log("Toggle 3Di layer " + layer.active);
             if (layer.active) {
-              $scope.threediCtrl.connect();
+              $scope.connect();
             } else {
-              $scope.threediCtrl.disconnect();
+              $scope.disconnect();
             }
             return
           }
@@ -140,7 +140,9 @@ app
           if (layer.name == 'Simulatie') {
             //layer.follow_3di = !layer.follow_3di;
             //$scope.threediCtrl.follow(layer.follow_3di);
-            $scope.threediCtrl.toExtent();
+            //console.log('Calling toExtent');
+            //$scope.threediCtrl.toExtent();
+            //$scope.toExtent();
           }
         };
 
@@ -238,7 +240,6 @@ app
 
 
   return {
-      require: ['^threedi'],
       restrict: 'E',
       replace: true,
       template: '<div id="map"></div>',
