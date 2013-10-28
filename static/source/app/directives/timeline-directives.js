@@ -356,12 +356,26 @@ app.directive('timeline', [ function ($timeout) {
           .x(x.scale)
           .on("zoom", zoomed);
 
-        svg.call(zoom);
+        var brushmove = function () {
+          console.log(arguments, brush().extent)
+        };
+
+        var brush = d3.svg.brush().x(x.scale).on("brush", brushmove);
+
+        // svg.call(brush.events);
+        // svg.call(zoom);
         var hoverLine = timelineCtrl.verticalReference({
           width: graph.width,
           height: graph.height,
           svg: graph.svg
         });
+
+        svg.select(".plot-temporal")
+          .call(brush)
+          .attr("height", graph.height)
+          .style("stroke-width", 1)
+          .attr("opacity", 0.4);
+
         angular.element(".plot-temporal")
         // .on("mousemove", function (e) {
         //   var offset = angular.element('.plot-temporal').offset(); 
