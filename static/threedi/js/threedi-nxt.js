@@ -1,13 +1,13 @@
 app.controller('Threedi', ['$scope', function($scope) {
+    // TODO: make the urls not hard-coded
     var socket = io.connect("http://localhost:9000/subgrid");
+    $scope.wms_server_url = 'http://10.90.20.55:5000/3di/wms';
 
     $scope.threedi_active = false;
-    $scope.stateCounter = 0;
 
     $scope.connect = function() {
 	    $scope.state = null;
 	    $scope.scenarios = null;
-        //$scope.state_counter = 0;
         $scope.threedi_active = true;
 
 		console.log('threedi connect');
@@ -18,8 +18,6 @@ app.controller('Threedi', ['$scope', function($scope) {
             console.log('processing state from server: ', state);
             $scope.$apply(function() {
                 $scope.state = state;
-                $scope.state.counter = $scope.stateCounter;
-                $scope.stateCounter += 1;  // for $watch
             });
             $scope.your_sessid = your_sessid;
 	    });
@@ -380,9 +378,6 @@ app.directive('threediMap', function(AnimatedLayer) {
                 wms_ani_layer = null;
             };
 
-            // TODO: make the url not hard-coded
-            var wms_server_url = 'http://10.90.20.55:5000/3di/wms'
-
             var setAnimation = function() {
                 if (!(wms_ani_initialized == scope.state.loaded_model)) {
                     if (wms_ani_initialized !== null) {
@@ -391,7 +386,7 @@ app.directive('threediMap', function(AnimatedLayer) {
 
                     // Only call to a global function.
                     wms_ani_layer = AnimatedLayer.animation_init(
-                        ctrl[0], scope.state.loaded_model, wms_server_url);
+                        ctrl[0], scope.state.loaded_model, scope.wms_server_url);
                     // wms_ani_layer = animation_init(value.model_slug, url);
                     wms_ani_initialized = scope.state.loaded_model;
                 }
