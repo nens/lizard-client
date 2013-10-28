@@ -1,0 +1,30 @@
+<div class="card" threedi-box>
+    <a class="btn" 
+       ng-click="requestMaster()" 
+       ng-class="{disabled: have_master && !is_master}"
+       title="<% state.player_master_name %>">
+        <i ng-class="{'icon-star-empty': !is_master, 'icon-star': is_master}"> </i>
+    </a>
+
+    <div class="btn-group control-edit-buttons hide" 
+       ng-class="{hide: !is_master}">
+
+        <a href="#" class="btn btn-replay" ng-class="{disabled:!is_master || wait_for_server_response}"
+        ng-click="!is_master || reset()">
+          <i class="icon-repeat"></i>
+        </a>
+        <a id="btn-play" class="btn" ng-class="{active: isPlaying, disabled:!is_master || wait_for_server_response}" ng-click="!is_master || play()">
+          <i class="icon-play" ng-class="{green: has_future_events}"></i>
+        </a>
+        <a id="btn-stop" class="btn" ng-class="{active: !isPlaying, disabled: !is_master || wait_for_server_response}" ng-click="!is_master || stop()">
+          <i class="icon-stop"></i>
+        </a>
+    </div>
+
+    <div>
+    master name<% state.player_master_name %><br>
+    have master<% have_master %><br>
+    is_master<% is_master %><br>
+    </div>
+
+</div>

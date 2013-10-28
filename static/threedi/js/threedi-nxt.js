@@ -1,7 +1,11 @@
 app.controller('Threedi', ['$scope', function($scope) {
     // TODO: make the urls not hard-coded
-    var socket = io.connect("http://localhost:9000/subgrid");
-    $scope.wms_server_url = 'http://10.90.20.55:5000/3di/wms';
+    var socket = io.connect(window.threedi_subgrid_url);  //"http://localhost:9000/subgrid"
+    $scope.wms_server_url = window.threedi_wms_server_url; //'http://10.90.20.55:5000/3di/wms';
+
+    $scope.have_master = false;
+    $scope.is_master = false;
+    $scope.wait_for_server_response = false;  // you can disable buttons after pressing
 
     $scope.threedi_active = false;
 
@@ -16,10 +20,23 @@ app.controller('Threedi', ['$scope', function($scope) {
 
 	    socket.on('state', function(sender_sessid, your_sessid, state) {
             console.log('processing state from server: ', state);
+            $scope.your_sessid = your_sessid;
+
+            if (state.player_master_sessid !== undefined) {
+                $scope.have_master = true;
+            } else {
+                $scope.have_master = false;
+            }
+            if ($scope.your_sessid == state.player_master_sessid) {
+                $scope.is_master = true;
+            } else {
+                $scope.is_master = false;
+            }
+
             $scope.$apply(function() {
                 $scope.state = state;
             });
-            $scope.your_sessid = your_sessid;
+
 	    });
 
 	    socket.on('scenarios', function(scenarios) {
@@ -47,7 +64,19 @@ app.controller('Threedi', ['$scope', function($scope) {
 
     $scope.requestMaster = function() {
         console.log('Request master');
-        socket.emit('set_master', !$scope.isMaster, function() {});
+        socket.emit('set_master', !$scope.is_master, function() {});
+    }
+
+    $scope.reset = function() {
+        console.log('Reset');
+    }
+
+    $scope.play = function() {
+        console.log('Play');
+    }
+
+    $scope.stop = function() {
+        console.log('Stop');
     }
 
 }]);
@@ -55,41 +84,15 @@ app.controller('Threedi', ['$scope', function($scope) {
 
 app.directive('threediBox', function() {
     return {
-        //require: ['^threedi'],
-        controller: function($scope) {
-            this.bladibla = 'bladiblablazzZZZ';
-        },
         link: function(scope, element, attrs, ctrl) {
-            var text = 'textually';
-            //console.log('Activated box');
-            //console.log(scope.state);
-
-            //var threedi = ctrl[0];
-
-            scope.requestMasterBox = function() {
-                //threedi.requestMaster();
-            }
-
-            // scope.$on('stateChange', function() {
-            //     // React on scope.state change.
-            //     console.log('state change from 3di omnibox');
-            //     if (scope.state.player_master_sessid !== undefined) {
-            //         //ctrl.have_master = true;
-            //     } else {
-            //         //ctrl.have_master = false;
-            //     }
-            //     if (scope.state.your_sessid == scope.state.player_master_sessid) {
-            //         //ctrl.isMaster = true;
-            //     } else {
-            //         //ctrl.isMaster = false;
-            //     }
-            //     //scope.master_name = scope.state.player_master_name;
-            // });
-
-            scope.$on('shutdown', function() {
-                // Remove all elements that are in the GUI.
-                console.log('shutdown from 3di omnibox');
+            scope.$watch('state', function() {
+                console.log('state change from 3di omnibox');
             });
+
+            // scope.$on('shutdown', function() {
+            //     // Remove all elements that are in the GUI.
+            //     console.log('shutdown from 3di omnibox');
+            // });
         }
     }
 });

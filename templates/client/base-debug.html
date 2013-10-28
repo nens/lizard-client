@@ -28,6 +28,9 @@
       var layers = {{ strap_layers }};
       var layerGroups = {{ strap_layer_groups }};
 
+      var threedi_subgrid_url = "http://localhost:9000/subgrid";
+      var threedi_wms_server_url = "http://10.90.20.55:5000/3di/wms";
+
       function logOut() {
         var r=confirm("Weet u zeker dat u wilt uitloggen?");
         if (r==true) {
@@ -103,13 +106,13 @@
                       <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
                       <div ng-switch="layer.follow_3di" style="float: right;">
                       <div ng-switch-when="undefined">
-                      <i class="icon-screenshot pull-right zoomto-icon" ng-class="{visible: layer.active && layer.follow_3di==undefined}" ng-click="zoomToTheMagic(layer)"></i>
+                      <i class="icon-screenshot pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="zoomToTheMagic(layer)"></i>
                       </div>
                       <div ng-switch-when="true">
-                      <i class="icon-eye-close pull-right zoomto-icon" ng-class="{visible: layer.active && layer.follow_3di==true}" ng-click="setFollow(layer, false)"></i>
+                      <i class="icon-eye-close pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="setFollow(layer, false)"></i>
                       </div>
                       <div ng-switch-when="false">
-                      <i class="icon-eye-open pull-right zoomto-icon" ng-class="{visible: layer.active && layer.follow_3di==false}" ng-click="setFollow(layer, true)"></i>
+                      <i class="icon-eye-open pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="setFollow(layer, true)"></i>
                       </div>
                       </div>
                     </li>
