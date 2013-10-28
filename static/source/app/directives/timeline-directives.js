@@ -356,11 +356,12 @@ app.directive('timeline', [ function ($timeout) {
           .x(x.scale)
           .on("zoom", zoomed);
 
+        var brush;
         var brushmove = function () {
-          console.log(arguments, brush().extent)
+          console.log(arguments, brush.extent());
         };
 
-        var brush = d3.svg.brush().x(x.scale).on("brush", brushmove);
+        brush = d3.svg.brush().x(x.scale).on("brush", brushmove);
 
         // svg.call(brush.events);
         // svg.call(zoom);
@@ -370,7 +371,7 @@ app.directive('timeline', [ function ($timeout) {
           svg: graph.svg
         });
 
-        svg.select(".plot-temporal")
+        svg.select (".plot-temporal")
           .call(brush)
           .attr("height", graph.height)
           .style("stroke-width", 1)
