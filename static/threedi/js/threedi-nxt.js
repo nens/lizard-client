@@ -109,6 +109,7 @@ app.controller('Threedi', ['$scope', function($scope) {
     }
 
     $scope.setMode = function(mode) {
+        // One of the 3Di tools: raincloud, discharge, pump, edit 2D.
         console.log('Set mode :' + mode);
         if (mode == $scope.program_mode) {
             $scope.program_mode = null;  // Disable specific program mode

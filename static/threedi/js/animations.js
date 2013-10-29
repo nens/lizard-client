@@ -85,7 +85,7 @@ app.factory('AnimatedLayer', [function(){
                   //   'Remove layer ts='+ts+
                   //   ' time='+this.options.time+
                   //   ' curr_timestep='+current_timestep);
-                  this.map.removeLayer(layer);
+                  me.map.removeLayer(layer);
                   delete me.current_in_map[ts];
               }
               // raise marker above anything, not necessary?
