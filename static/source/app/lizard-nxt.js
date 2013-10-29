@@ -373,6 +373,7 @@ app.controller("MasterCtrl",
       changedZoom: true,
       at: Date.now() - this.start
     },
+    tool: 'zoom',
     canceler: $q.defer(),
     open: false,
     data: [
@@ -424,6 +425,14 @@ app.controller("MasterCtrl",
 
   $scope.toggleTimeline = function () {
     $scope.timeline.open = !$scope.timeline.open;
+  };
+
+  $scope.toggleTool = function () {
+    if ($scope.timeline.tool === 'zoom'){
+      $scope.timeline.tool = 'brush';
+    } else {
+      $scope.timeline.tool = 'zoom';
+    }
   };
 
 
