@@ -1,10 +1,32 @@
 <div class="card" threedi-box>
+    <div>
     <a class="btn" 
        ng-click="requestMaster()" 
        ng-class="{disabled: have_master && !is_master}"
        title="<% state.player_master_name %>">
         <i ng-class="{'icon-star-empty': !is_master, 'icon-star': is_master}"> </i>
     </a>
+
+    <div class="non-btn-group right">
+        <i class="icon-circle non-btn"
+         ng-class="{
+         'state-wait': state.state == 'wait',
+         'state-sim': state.state == 'sim',
+         'state-standby': state.state == 'standby',
+         'state-prepare-wms': state.state == 'prepare-wms',
+         'state-load-model': state.state == 'load-model',
+         'state-loaded-model': state.state == 'loaded-model',
+         'state-stopping': state.state == 'stopping'
+        }"
+        title="<% label %>"></i>
+    </div>
+
+    <div class="non-btn-group right">
+        <span class="non-btn" title="Time (HH:MM)">
+          <% time %>
+        </span>
+    </div>
+    </div>
 
     <div class="btn-group control-edit-buttons" 
        ng-class="{hide: !is_master}">
@@ -20,7 +42,6 @@
 
     <div class="btn-group control-edit-buttons" 
        ng-class="{hide: !is_master}">
-
         <a class="btn btn-rain" ng-class="{disabled: !is_master, 'btn-primary': program_mode == 'rain'}" ng-click="!is_master || setMode('rain')">
             <i class="icon-threedi-rain"></i></a>
         <a class="btn btn-discharge" ng-class="{disabled: !is_master,
@@ -36,5 +57,4 @@
         ng-click="!is_master || setMode('edit')">
             <i class="icon-pencil"></i></a>
     </div>
-
 </div>

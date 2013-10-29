@@ -1,3 +1,13 @@
+var MODE_DISCHARGE = 'discharge',
+    MODE_MANHOLE = 'manhole',
+    MODE_RAIN = 'rain',
+    MODE_EDIT = 'edit';
+
+// In MODE_EDIT we use these subdivisions
+var EDIT_MODE_DEFAULT = 'edit-bathy',
+    EDIT_MODE_BATHY = 'edit-bathy',  // bathymetry
+    EDIT_MODE_LAND_USE = 'edit-land-use';  // landgebruik, testing
+
 app.controller('Threedi', ['$scope', function($scope) {
     // TODO: make the urls not hard-coded
     var socket = io.connect(window.threedi_subgrid_url);  //"http://localhost:9000/subgrid"
@@ -127,15 +137,76 @@ app.controller('Threedi', ['$scope', function($scope) {
             });
     }
 
+    $scope.addRain = function(lng, lat, amount, diameter) {
+        socket.emit('add_rain', lng, lat, 
+            diameter,
+            amount,
+            function() {
+                console.log('emit rain');
+            });
+    }
+
+    $scope.addDischarge = function(lng, lat, amount) {
+        // Naming of server-side function is incorrect.
+        socket.emit('add_manhole', lng, lat, 
+            amount,
+            function() {
+                console.log('emit manhole/discharge placement');
+            });
+    }
+
+    $scope.addEdit = function(lng, lat, edit_mode, size, value, bathy_mode, color_value) {
+        socket.emit('edit', edit_mode,
+            lng, lat, size, 
+            value, //15.0, 
+            bathy_mode, //1,
+            color_value,
+            function() {
+                console.log('emit edit');
+            });
+    }
+
 }]);
 
 
 app.directive('threediBox', function() {
     return {
         link: function(scope, element, attrs, ctrl) {
+            var time = '--:--';
+            var label = '-';
+
+            var timeFormat = function(seconds) {
+                // format time in HH:MM from seconds
+                var hours = Math.floor(seconds / 3600);
+                var minutes = Math.floor((seconds - (hours * 3600)) / 60);
+
+                if (hours < 10) {hours = "0"+hours;}
+                if (minutes < 10) {minutes = "0"+minutes;}
+                var time = hours + ':' + minutes;
+                return time;
+            };
+
             scope.$watch('state', function() {
                 console.log('state change from 3di omnibox');
+                scope.time = timeFormat(parseInt(scope.state.time_seconds));
+                var value = scope.state.state;
+                if (value === 'standby'){
+                    label = 'Standby (no model loaded)';
+                } else if (value === 'wait') {
+                    label = 'Wait for instructions';
+                } else if (value === 'sim') {
+                    label = 'Simulation running';
+                } else if (value === 'prepare-wms') {
+                    label = 'Preparing wms before loading model';
+                } else if (value === 'load-model') {
+                    label = 'Loading model';
+                } else if (value === 'loaded-model') {
+                    label = 'Inspecting model';
+                } else if (value === 'stopping') {
+                    label = 'Stopping simulation';
+                }
             });
+
 
             // scope.$on('shutdown', function() {
             //     // Remove all elements that are in the GUI.
@@ -421,6 +492,17 @@ app.directive('threediMap', function(AnimatedLayer) {
                 scope.emitExtent(extent_list);
             }
 
+            var extentSize = function() {
+                // A guess of the size in meters.
+                var bounds = MapCtrl.map().getBounds();
+                // 2 * pi * r / 360 = 111 km per degrees, approximately
+                var size = Math.max(
+                Math.abs(bounds._southWest.lat - bounds._northEast.lat), 
+                Math.abs(bounds._southWest.lng - bounds._northEast.lng)
+                ) * 111000;
+                return size;
+            }
+
             var wms_ani_initialized = null;  // will be set to model_slug
             var wms_ani_layer = null;
 
@@ -477,7 +559,7 @@ app.directive('threediMap', function(AnimatedLayer) {
                 console.log('state change');
                 if (scope.threedi_active) {
                     update_scenario_events();
-                    if (scope.follow_3di) {
+                    if (scope.follow_3di && !scope.is_master) {
                         setExtent();
                     }
                     setAnimation();
@@ -502,9 +584,50 @@ app.directive('threediMap', function(AnimatedLayer) {
                 }
             });
 
-            MapCtrl.map().on('moveend', function() {
+            var map = MapCtrl.map();
+
+            map.on('moveend', function() {
                 if (scope.threedi_active && scope.is_master) {
                     emitExtent();
+                }
+            });
+
+            map.on('click', function(e) {
+                if (scope.threedi_active) {
+                    console.log('click 3Di!');
+                    if (scope.program_mode == null) {
+                        console.log('info box');
+                    } else if (scope.program_mode == MODE_RAIN) {
+                        var amount = 0.010;  // in meters!
+                        var diameter = extentSize() * 0.15;
+                        scope.addRain(e.latlng.lng, e.latlng.lat, amount, diameter);
+                    } else if (scope.program_mode == MODE_DISCHARGE) {
+                        var amount = 50;
+                        scope.addDischarge(e.latlng.lng, e.latlng.lat, amount);
+                    } else if (scope.program_mode == MODE_MANHOLE) {
+                        var amount = -5;
+                        scope.addDischarge(e.latlng.lng, e.latlng.lat, amount);                        
+                    } else if (scope.program_mode == MODE_EDIT) {
+                        // generic 2D edit
+                        var size = extentSize() * 0.02 * 0.8; //clientstate.scenario_event_defaults.twodee_edit_size;
+                        var value = 0;
+                        var color_value = null;
+                        var bathy_mode = 1;  // absolute mode
+                        var edit_mode = EDIT_MODE_DEFAULT;
+                        if (edit_mode === 'edit-bathy') {
+                            value = 15;
+                            if (value >= 0) {
+                                color_value = "#995522";  // default color
+                            } else {
+                                color_value = "#663311";
+                            }
+                        } else if (edit_mode === 'edit-land-use') {
+                            color_value = "#ff0000";
+                        }
+                        scope.addEdit(
+                            e.latlng.lng, e.latlng.lat, edit_mode, size, value, 
+                            bathy_mode, color_value);
+                    }
                 }
             });
 
