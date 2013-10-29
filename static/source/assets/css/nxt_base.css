@@ -161,6 +161,13 @@ html, body{
     color: #16a085;
 }
 
+.leaflet-layer.faded-gray {
+    filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"); /* Firefox 10+ */
+    filter: gray alpha(opacity=50); /* IE6-9 */
+    -webkit-filter: grayscale(100%); /* Chrome 19+ & Safari 6+ */
+    opacity: 0.50;
+}
+
 .slide-left{
     right: 0px;
 }
@@ -399,11 +406,6 @@ html, body{
     margin-top: 3px;
 }
 
-/*.timeline{
-    border: 1px;
-    border-radius: 3px;
-}*/
-
 /* whole path is needed to make this work */
 .navbar .nav > li > a.inactive {
     color: #D9D9D6;
@@ -453,21 +455,26 @@ html, body{
     width: 180px;
 }
 
-/*
-
-Stolen from lizard 5
-
-}*/
-
-
-#logo-row {
-    height: 50px;
-    margin-bottom: 0px;
-    overflow: visible;
-    background-color: #16a085;
-    background-repeat: repeat-x;
+.navbar-inverse {
+    background-color: rgba(22, 160, 133,1.0);
+    border-color: rgba(26, 188, 156, 0.6);
 }
 
+/*timeline stuff*/
+.timeline {
+    background-color: rgba(240,240,240, 1.0);
+    color: #222;
+}
+
+.timeline.closed{
+    height: 50px;
+}
+
+.timeline.open{
+    height: 200px;
+    resize: vertical;
+}
+/* end timeline stuff*/
 
 header {
     top: 0px;

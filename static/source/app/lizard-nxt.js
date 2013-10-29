@@ -45,6 +45,16 @@ app.controller("MasterCtrl",
     changed: Date.now()
   };
 
+  $scope.timeExtent = {
+    start: 1382359037278,
+    stop: Date.now(),
+    open: false
+  };
+
+  $scope.toggleTimeline = function () {
+    $scope.timeExtent.open = !$scope.timeExtent.open;
+  };
+
   $scope.box.close = function () {
     $scope.box.type = 'empty';
     $scope.box.showCards = false;
@@ -367,8 +377,8 @@ app.controller("MasterCtrl",
         $scope.box.type = "profile";
         $scope.box.content = {
           data: d3data,
-          xLabel: 'hoogte [mNAP]',
-          yLabel: 'afstand [m]'
+          yLabel: 'hoogte [mNAP]',
+          xLabel: 'afstand [m]'
         }
       })
       .error(function (data) {

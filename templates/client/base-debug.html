@@ -45,7 +45,7 @@
 
   <body ng-controller="Threedi">
     <header class="navbar navbar-inverse navbar-fixed-top">
-      <div id="logo-row" class="">
+      <!-- <div id="logo-row" class=""> -->
         <div id="logo">
           <a href="/"><img src="{{ STATIC_URL }}source/assets/images/logo_text.png" alt="Lizard"></a>
         </div>
@@ -56,6 +56,9 @@
             </li>
             <li class="site">
               <a href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.profile.enabled}"></i></a>
+            </li>
+            <li>
+              <a ng-click="toggleTimeline()"><i class="icon-collapse icon-large"></i></a>
             </li>
             <li>
               <a href="#" ng-click="toggle_tool('kpi')" ng-class="{'icon-large': tools.kpi.enabled}" title="Key Performance Indicator"><i class="icon-dashboard"></i></a>
@@ -128,7 +131,7 @@
             </div>
           </div>
         </div>
-      </div>
+      <!-- </div> -->
     </header>
 
     {% block content %}
@@ -136,7 +139,7 @@
       <div>
         <map layer-switch kpilayer="onAreaClick()" move-end pan-zoom="panZoom" layers="mapState.layers" rasterprofile="disabled" locate="locate" zoom-to-layer="zoomToLayer" threedi-map></map>
       </div>
-      
+    <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
 
     {% block box_awesome %}{% endblock %}
     <div class="container">
@@ -244,6 +247,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/map-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/kpi-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/profile-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/timeline-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/kpi-controllers.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/filters/truncate.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/templates/templates.js?{{ random_string }}"></script>
