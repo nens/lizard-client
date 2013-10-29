@@ -8,6 +8,7 @@ app.controller('Threedi', ['$scope', function($scope) {
     $scope.wait_for_server_response = false;  // you can disable buttons after pressing
 
     $scope.threedi_active = false;
+    $scope.program_mode = null;
 
     $scope.connect = function() {
 	    $scope.state = null;
@@ -20,22 +21,30 @@ app.controller('Threedi', ['$scope', function($scope) {
 
 	    socket.on('state', function(sender_sessid, your_sessid, state) {
             console.log('processing state from server: ', state);
-            $scope.your_sessid = your_sessid;
-
-            if (state.player_master_sessid !== undefined) {
-                $scope.have_master = true;
-            } else {
-                $scope.have_master = false;
-            }
-            if ($scope.your_sessid == state.player_master_sessid) {
-                $scope.is_master = true;
-            } else {
-                $scope.is_master = false;
-            }
 
             $scope.$apply(function() {
+                $scope.your_sessid = your_sessid;
+
+                if (state.player_master_sessid !== undefined) {
+                    $scope.have_master = true;
+                } else {
+                    $scope.have_master = false;
+                }
+                if ($scope.your_sessid == state.player_master_sessid) {
+                    $scope.is_master = true;
+                } else {
+                    $scope.is_master = false;
+                }
+                // $scope.$apply(function() {
+                //     $scope.state = state;
+                // });
+
+                // the broadcast is received instantaneous, the watch is slower
                 $scope.state = state;
+                // (re)enable all affected buttons
+                $scope.wait_for_server_response = false;
             });
+            $scope.$broadcast('state', '');  
 
 	    });
 
@@ -52,6 +61,7 @@ app.controller('Threedi', ['$scope', function($scope) {
     $scope.disconnect = function() {
         // TODO: $watch instead of $broadcast
         $scope.threedi_active = false;
+        $scope.$broadcast('threedi_active_shutdown', '');  // is received instantaneous
         if (socket !== null) {
             console.log('Disconnecting socket...');
             socket.removeAllListeners();
@@ -69,14 +79,42 @@ app.controller('Threedi', ['$scope', function($scope) {
 
     $scope.reset = function() {
         console.log('Reset');
+        $scope.wait_for_server_response = true;
+        socket.emit(
+            'reset_simulation',
+            function() {
+                if (debug){
+                    console.log('emit simulation reset');
+                }
+            });
     }
 
-    $scope.play = function() {
-        console.log('Play');
+    $scope.play_stop = function() {
+        $scope.wait_for_server_response = true;
+        if ($scope.state.running_sim === "1"){
+            console.log('Stop');
+            socket.emit(
+                'stop_simulation',
+                function() {
+                    console.log('emit simulation stop');
+                });
+        } else{
+            console.log('Play');
+            socket.emit(
+                'run_simulation',
+                function() {
+                    console.log('emit simulation run');
+                });
+        }
     }
 
-    $scope.stop = function() {
-        console.log('Stop');
+    $scope.setMode = function(mode) {
+        console.log('Set mode :' + mode);
+        if (mode == $scope.program_mode) {
+            $scope.program_mode = null;  // Disable specific program mode
+        } else {
+            $scope.program_mode = mode;
+        }
     }
 
 }]);
@@ -407,7 +445,19 @@ app.directive('threediMap', function(AnimatedLayer) {
                 }
             });
 
-            scope.$watch('state', function() {
+            // scope.$watch('state', function() {
+            //     // React on scope.state change.
+            //     console.log('state change');
+            //     if (scope.threedi_active) {
+            //         update_scenario_events();
+            //         if (scope.follow_3di) {
+            //             setExtent();
+            //         }
+            //         setAnimation();
+            //     }
+            // });
+
+            scope.$on('state', function() {
                 // React on scope.state change.
                 console.log('state change');
                 if (scope.threedi_active) {
@@ -419,7 +469,16 @@ app.directive('threediMap', function(AnimatedLayer) {
                 }
             });
 
-            scope.$watch('threedi_active', function() {
+            // scope.$watch('threedi_active', function() {
+            //     if (!scope.threedi_active) {
+            //         // Remove all elements that are in the GUI.
+            //         animation_shutdown();
+            //         clearTempObjects();
+            //         clearScenarioEvents();
+            //     }
+            // });
+
+            scope.$on('threedi_active_shutdown', function() {
                 if (!scope.threedi_active) {
                     // Remove all elements that are in the GUI.
                     animation_shutdown();

@@ -6,25 +6,35 @@
         <i ng-class="{'icon-star-empty': !is_master, 'icon-star': is_master}"> </i>
     </a>
 
-    <div class="btn-group control-edit-buttons hide" 
+    <div class="btn-group control-edit-buttons" 
        ng-class="{hide: !is_master}">
 
         <a href="#" class="btn btn-replay" ng-class="{disabled:!is_master || wait_for_server_response}"
         ng-click="!is_master || reset()">
           <i class="icon-repeat"></i>
         </a>
-        <a id="btn-play" class="btn" ng-class="{active: isPlaying, disabled:!is_master || wait_for_server_response}" ng-click="!is_master || play()">
-          <i class="icon-play" ng-class="{green: has_future_events}"></i>
-        </a>
-        <a id="btn-stop" class="btn" ng-class="{active: !isPlaying, disabled: !is_master || wait_for_server_response}" ng-click="!is_master || stop()">
-          <i class="icon-stop"></i>
+        <a href="#" id="btn-play" class="btn" ng-class="{disabled:!is_master || wait_for_server_response}" ng-click="!is_master || play_stop()">
+          <i ng-class="{'green': state.has_future_events, 'icon-play': state.running_sim == '0', 'icon-pause': state.running_sim == '1'}"></i>
         </a>
     </div>
 
-    <div>
-    master name<% state.player_master_name %><br>
-    have master<% have_master %><br>
-    is_master<% is_master %><br>
+    <div class="btn-group control-edit-buttons" 
+       ng-class="{hide: !is_master}">
+
+        <a class="btn btn-rain" ng-class="{disabled: !is_master, 'btn-primary': program_mode == 'rain'}" ng-click="!is_master || setMode('rain')">
+            <i class="icon-threedi-rain"></i></a>
+        <a class="btn btn-discharge" ng-class="{disabled: !is_master,
+        'btn-primary': program_mode == 'discharge'}"
+        ng-click="!is_master || setMode('discharge')">
+            <i class="icon-threedi-manhole"></i></a>
+        <a class="btn btn-manhole" ng-class="{disabled: !is_master,
+        'btn-primary': program_mode == 'manhole'}"
+        ng-click="!is_master || setMode('manhole')">
+            <i class="icon-threedi-pump"></i></a>
+        <a class="btn btn-edit-bathy" ng-class="{disabled: !is_master,
+        'btn-primary': program_mode == 'edit'}"
+        ng-click="!is_master || setMode('edit')">
+            <i class="icon-pencil"></i></a>
     </div>
 
 </div>

@@ -39,6 +39,16 @@ html, body, #map {
     margin-left: 85px;
 }
 
+.btn {
+    color: #000;
+    }
+
+.btn-primary,
+.btn-primary:hover {
+    border-color: #149075;
+    background-color: #16a085;
+    }
+
 #progress {
     width: 75%;
     height: 25px;
@@ -83,6 +93,7 @@ html, body, #map {
 .icon-threedi-pump{
     background: url("../images/icon_pump_black.png") center right no-repeat;
     background-size: 13px;
+    color: #fff;
     margin: 0px 0px 0px 0px;
 }
 
