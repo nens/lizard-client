@@ -15,7 +15,7 @@ from django.utils.safestring import mark_safe
 from rest_framework.renderers import JSONRenderer
 from django.conf import settings
 
-from lizard_nxt.server.models import Layer, LayerGroup
+from hydra_core.models import Layer, LayerGroup
 from lizard_nxt.server.serializers import spatial
 
 
