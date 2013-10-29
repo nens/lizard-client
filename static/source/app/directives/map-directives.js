@@ -127,6 +127,8 @@ app
           $location.path(lat + ',' + lng + ',' + zoom);
           // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
         };
+
+        this.map = function() {return $scope.map;}; // make map object available to outside world.
       
         this.zoomToTheMagic = function (layer) {
           console.log('zoomToTheMagic');

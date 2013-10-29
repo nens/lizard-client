@@ -118,6 +118,15 @@ app.controller('Threedi', ['$scope', function($scope) {
         }
     }
 
+    $scope.emitExtent = function(extent) {
+        // Emit this extent to the server
+        socket.emit(
+            'set_map_location', extent,
+            function() {
+                console.log('emit extent', extent);
+            });
+    }
+
 }]);
 
 
@@ -138,8 +147,8 @@ app.directive('threediBox', function() {
 
 app.directive('threediMap', function(AnimatedLayer) {
 	return {
-		require: ['map'],
-		link: function(scope, element, attrs, ctrl){            
+		require: 'map',
+		link: function(scope, element, attrs, MapCtrl){            
 			// scope.$watch('state_counter', function () {
 			// 	console.log('Detected state change');
 			// });
@@ -202,8 +211,8 @@ app.directive('threediMap', function(AnimatedLayer) {
                     opacity: 1,
                     smoothFactor: 1
                 });        
-                if (line_marker) {map.removeLayer(line_marker);}
-                map.addLayer(firstpolyline);
+                if (line_marker) {MapCtrl.removeLayer(line_marker);}
+                MapCtrl.addLayer(firstpolyline);
                 line_marker = firstpolyline;  // Remember what we've added
             }
 
@@ -212,7 +221,7 @@ app.directive('threediMap', function(AnimatedLayer) {
                     [lat, lng],
                     {icon: icon, opacity: 0.5});
                 scenario.temp_objects.push(marker);
-                map.addLayer(marker);
+                MapCtrl.addLayer(marker);
             }
 
             var drawTempRect = function(lat, lng, size_m, color) {
@@ -228,24 +237,23 @@ app.directive('threediMap', function(AnimatedLayer) {
                     stroke: false, fillColor: color, 
                     fillOpacity: 0.5, clickable: false});
                 scenario.temp_objects.push(marker);
-                map.addLayer(marker);
+                MapCtrl.addLayer(marker);
             }
 
             var clearTempObjects = function() {
                 setTimeout(function() {
                     for (var i in scenario.temp_objects) {
-                        map.removeLayer(scenario.temp_objects[i]);
+                        MapCtrl.removeLayer(scenario.temp_objects[i]);
                     }
                     scenario.temp_objects = []; 
                 }, 5000);
             }
 
             var clearScenarioEvents = function() {
-                var map = ctrl[0];
                 for (var hash in scenario.events) {
                      map.removeLayer(scenario.events[hash].mapmarker);
                      if (scenario.events[hash].mapmarker2 !== null) {
-                         map.removeLayer(scenario.events[hash].mapmarker2);
+                         MapCtrl.removeLayer(scenario.events[hash].mapmarker2);
                      }
                 }
                 scenario.events = {};
@@ -255,7 +263,6 @@ app.directive('threediMap', function(AnimatedLayer) {
                 // Uses directive's
                 //console.log('scenario events!!', scenario_events.length);
                 var scenario_events = scope.state.scenario_events;
-                var map = ctrl[0];
                 if (scenario_events.length === 0) {
                     // for (var hash in scenario.events) {
                     //      map.removeLayer(scenario.events[hash].mapmarker);
@@ -294,9 +301,9 @@ app.directive('threediMap', function(AnimatedLayer) {
                                                 {color: '#8888ff', stroke: false, 
                                                 fillOpacity: 0.3, 
                                                 clickable: false} );
-                                            map.addLayer(temp_rain_dia);
+                                            MapCtrl.addLayer(temp_rain_dia);
                                             setTimeout(function() {
-                                                map.removeLayer(temp_rain_dia);
+                                                MapCtrl.removeLayer(temp_rain_dia);
                                             }, 2000);
 
                                             // Box
@@ -361,9 +368,9 @@ app.directive('threediMap', function(AnimatedLayer) {
                                     console.log('Error: scenario_event type unknown [' + scenario_event.type + ']');
                                 }
                                 if (map_marker2 !== null) {
-                                    map.addLayer(map_marker2);
+                                    MapCtrl.addLayer(map_marker2);
                                     setTimeout(function() {
-                                        map.removeLayer(map_marker2);
+                                        MapCtrl.removeLayer(map_marker2);
                                     }, 2000);
                                 }
                                 scenario.events[scenario_event.hash] = {
@@ -371,7 +378,7 @@ app.directive('threediMap', function(AnimatedLayer) {
                                     'mapmarker2': null,  //map_marker2,
                                     'properties': scenario_event
                                 };
-                                map.addLayer(map_marker);
+                                MapCtrl.addLayer(map_marker);
                             }
                         } else {
                             // Remove an old scenario event.
@@ -379,9 +386,9 @@ app.directive('threediMap', function(AnimatedLayer) {
                                 (scope.state.timestep >= scenario_event.timestep_end)) {
 
                                 if (scenario.events[scenario_event.hash] !== undefined) {
-                                    map.removeLayer(scenario.events[scenario_event.hash].mapmarker);
+                                    MapCtrl.removeLayer(scenario.events[scenario_event.hash].mapmarker);
                                     if (scenario.events[scenario_event.hash].mapmarker2 !== null) {
-                                        map.removeLayer(scenario.events[scenario_event.hash].mapmarker2);
+                                        MapCtrl.removeLayer(scenario.events[scenario_event.hash].mapmarker2);
                                     }
                                 }
                             }
@@ -399,13 +406,20 @@ app.directive('threediMap', function(AnimatedLayer) {
                 //     return;
                 // } 
                 var extent = $.parseJSON(scope.state.player_extent);
-                var map = ctrl[0];
                 //console.log(map);
-                map.fitBounds([
+                MapCtrl.fitBounds([
                     [extent[0], extent[1]],
                     [extent[2], extent[3]]]);
             }
 
+            var emitExtent = function () {
+                var bounds = MapCtrl.map().getBounds();
+                var extent_list = [
+                    bounds._southWest.lat, bounds._southWest.lng,
+                    bounds._northEast.lat, bounds._northEast.lng
+                    ];
+                scope.emitExtent(extent_list);
+            }
 
             var wms_ani_initialized = null;  // will be set to model_slug
             var wms_ani_layer = null;
@@ -428,7 +442,7 @@ app.directive('threediMap', function(AnimatedLayer) {
 
                     // Only call to a global function.
                     wms_ani_layer = AnimatedLayer.animation_init(
-                        ctrl[0], scope.state.loaded_model, scope.wms_server_url);
+                        MapCtrl.map(), scope.state.loaded_model, scope.wms_server_url);
                     // wms_ani_layer = animation_init(value.model_slug, url);
                     wms_ani_initialized = scope.state.loaded_model;
                 }
@@ -488,7 +502,15 @@ app.directive('threediMap', function(AnimatedLayer) {
                 }
             });
 
+            MapCtrl.map().on('moveend', function() {
+                if (scope.threedi_active && scope.is_master) {
+                    emitExtent();
+                }
+            });
 
+            // console.log(map);
+            // map.on('moveend', function(e) {
+            // });
 	    }
 	}
 });
