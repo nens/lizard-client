@@ -168,7 +168,6 @@ app.controller('Threedi', ['$scope', function($scope) {
 
 }]);
 
-
 app.directive('threediBox', function() {
     return {
         link: function(scope, element, attrs, ctrl) {
@@ -596,7 +595,19 @@ app.directive('threediMap', function(AnimatedLayer) {
                 if (scope.threedi_active) {
                     console.log('click 3Di!');
                     if (scope.program_mode == null) {
+                        // TODO: make this working/new style
                         console.log('info box');
+                        var infourl = 'http://10.90.20.55:5000/3di' + 
+            '/data?' + "REQUEST=gettimeseries&LAYERS=" + scope.state.loaded_model + ':' + 's1' + 
+            "&SRS=EPSG:4326&POINT=" + e.latlng.lng.toString() + ',' + e.latlng.lat.toString() + 
+            '&random=' + 1;
+
+                        scope.$apply(function () {
+                            scope.box.type = 'threedi-info';
+                            scope.box.content = {
+                                title: 'infoooo', infourl: infourl};
+                        });
+
                     } else if (scope.program_mode == MODE_RAIN) {
                         var amount = 0.010;  // in meters!
                         var diameter = extentSize() * 0.15;
