@@ -285,7 +285,8 @@ app.directive('timeline', [ function ($timeout) {
     this.createBrush = function (scope, svg, x, height, xKey) {
       var brush = null;    
 
-      var brushmove = function () {
+      var brushmove = function (pietje) {
+        console.log(d3.event)
         var s = brush.extent();
           scope.$apply(function () {
             scope.timeline.temporalExtent.start = s[0].getTime();
@@ -313,6 +314,13 @@ app.directive('timeline', [ function ($timeout) {
         svg.classed("selecting", true);
       };
       var brushend = function () {
+          //       var s = brush.extent();
+          // scope.$apply(function () {
+          //   scope.timeline.temporalExtent.start = s[0].getTime();
+          //   scope.timeline.temporalExtent.end = s[1].getTime();
+          //   scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
+          // });
+
        svg.classed("selecting", !d3.event.target.empty());
       };    
       var brush = d3.svg.brush().x(x.scale)
@@ -325,10 +333,12 @@ app.directive('timeline', [ function ($timeout) {
       this.brushg.selectAll("rect")
         .attr("height", height);    
     };
-    this.removeBrush = function () {
+    this.removeBrush = function (svg) {
       if (this.brushg){
-        this.brushg.remove();      
+        this.brushg.remove();
       }
+       svg.classed("selecting", false);
+       d3.selectAll('.bar').classed("selected", false)
     };
   };
   
@@ -412,15 +422,22 @@ app.directive('timeline', [ function ($timeout) {
 
       var svg = graph.svg;
         timelineCtrl.zoomed = function () {
-          svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {orientation:"bottom"}));
-          svg.select(".y.axis").call(timelineCtrl.makeAxis(y.scale, {orientation:"left"}));
-          svg.selectAll("circle")
-              .attr("cx", xfunction);
-          scope.$apply(function () {
-            scope.timeline.temporalExtent.start = x.scale.domain()[0].getTime();
-            scope.timeline.temporalExtent.end = x.scale.domain()[1].getTime();
-            scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
-          });
+          console.log(d3.event)
+          if (scope.timeline.tool === 'zoom'){
+            svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {orientation:"bottom"}));
+            svg.select(".y.axis").call(timelineCtrl.makeAxis(y.scale, {orientation:"left"}));
+            svg.selectAll("circle")
+                .attr("cx", xfunction);
+            scope.$apply(function () {
+              scope.timeline.temporalExtent.start = x.scale.domain()[0].getTime();
+              scope.timeline.temporalExtent.end = x.scale.domain()[1].getTime();
+              scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
+            });            
+          } else {
+            console.log(d3.event.translate);
+            console.log(d3.event.scale);
+          }
+
         };
 
         timelineCtrl.zoom = d3.behavior.zoom()
@@ -428,7 +445,7 @@ app.directive('timeline', [ function ($timeout) {
           .on("zoom", timelineCtrl.zoomed);
 
 
-        svg.call(timelineCtrl.zoom);
+        svg.call(timelineCtrl.zoom)
 
         // angular.element(".plot-temporal")
         // .on("mousemove", function (e) {
@@ -475,11 +492,17 @@ app.directive('timeline', [ function ($timeout) {
       scope.$watch('timeline.tool', function (newVal, oldVal) {
           console.log(newVal)
            if (newVal === 'zoom') {
-            timelineCtrl.zoom.on("zoom", timelineCtrl.zoomed);
-            timelineCtrl.removeBrush();
+            timelineCtrl.removeBrush(chart.svg);
+            timelineCtrl.zoom = d3.behavior.zoom()
+              .x(chart.x.scale)
+              .on("zoom", timelineCtrl.zoomed);
+            chart.svg.call(timelineCtrl.zoom);
           } else if (newVal === 'brush') {
-            timelineCtrl.zoom.on("zoom", null);
             // chart.svg.call(timelineCtrl.zoom);
+            timelineCtrl.zoom = d3.behavior.zoom()
+              .x(chart.x.scale)
+              .on("zoom", null);
+            chart.svg.on('.zoom', null);
             timelineCtrl.createBrush(scope, chart.svg, chart.x, chart.height, chart.xKey);
           }
         });
