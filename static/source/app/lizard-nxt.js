@@ -423,17 +423,29 @@ app.controller("MasterCtrl",
 
   });
 
-  $scope.toggleTimeline = function () {
+  $scope.timeline.toggleTimeline = function () {
     $scope.timeline.open = !$scope.timeline.open;
   };
 
-  $scope.toggleTool = function () {
+  $scope.timeline.toggleTool = function () {
     if ($scope.timeline.tool === 'zoom'){
       $scope.timeline.tool = 'brush';
     } else {
       $scope.timeline.tool = 'zoom';
     }
   };
+
+  $scope.timeline.zoom = {
+    in: function () {
+      $scope.timeline.zoom.changed = 'in';
+    },
+    out: function () {
+      $scope.timeline.zoom.changed = 'out';
+    },
+    week: function () {
+      $scope.timeline.zoom.interval = 'week';
+    },
+  }
 
 
 }]);

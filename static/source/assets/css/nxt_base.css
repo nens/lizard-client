@@ -477,7 +477,7 @@ html, body{
 }
 
 .bovenbalk{
-    height: 10px;
+    text-transform: uppercase;
     
 /*    -moz-box-shadow: inset -5px -5px #888;
     -webkit-box-shadow: inset -5px -5px #888;*/
@@ -558,7 +558,7 @@ rect.extent{
 
 .axis path, .axis line {
   fill: none;
-  stroke: #000;
+  /*stroke: #000;*/
   shape-rendering: crispEdges;
 }
 

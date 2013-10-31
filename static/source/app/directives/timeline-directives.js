@@ -18,14 +18,14 @@ app.directive('timeline', [ function ($timeout) {
         height = maxheight - margin.top - margin.bottom;
   
 
-      d3.select(element[0])
-        .html("")
-        .append("html:div")
-        .classed("bovenbalk", true)
+      // d3.select(element[0])
+      //   .html("")
+      //   .append("html:div")
+      //   .classed("bovenbalk", true)
 
 
       var svg = d3.select(element[0])
-        .append("svg:svg")
+        .select("svg")
         .attr('width', maxwidth)
         .attr('height', maxheight)
         .append("svg:g")
@@ -124,9 +124,9 @@ app.directive('timeline', [ function ($timeout) {
           .enter().append("circle")
             .attr("class", "bar")
             .attr("cx", xfunction)
-            .attr("cy", heightfunction)
+            .attr("cy", 20)
             .attr("r", 4)
-            .attr("opacity", 8)
+            .attr("opacity", 0.8)
             .attr("fill", yfunction);
     };
 
@@ -286,7 +286,6 @@ app.directive('timeline', [ function ($timeout) {
       var brush = null;    
 
       var brushmove = function (pietje) {
-        console.log(d3.event)
         var s = brush.extent();
           scope.$apply(function () {
             scope.timeline.temporalExtent.start = s[0].getTime();
@@ -348,7 +347,6 @@ app.directive('timeline', [ function ($timeout) {
     scope.$watch('timeline.open', function () {
       if (scope.timeline.open){
         scope.timeline.height = 200;
-        console.log(scope.timeline.data)
         // start the shazazzz.
       } else {
         scope.timeline.height = 70;
@@ -422,7 +420,6 @@ app.directive('timeline', [ function ($timeout) {
 
       var svg = graph.svg;
         timelineCtrl.zoomed = function () {
-          console.log(d3.event)
           if (scope.timeline.tool === 'zoom'){
             svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {orientation:"bottom"}));
             svg.select(".y.axis").call(timelineCtrl.makeAxis(y.scale, {orientation:"left"}));
@@ -433,11 +430,7 @@ app.directive('timeline', [ function ($timeout) {
               scope.timeline.temporalExtent.end = x.scale.domain()[1].getTime();
               scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
             });            
-          } else {
-            console.log(d3.event.translate);
-            console.log(d3.event.scale);
-          }
-
+          } 
         };
 
         timelineCtrl.zoom = d3.behavior.zoom()
@@ -490,8 +483,8 @@ app.directive('timeline', [ function ($timeout) {
         }
     };
       scope.$watch('timeline.tool', function (newVal, oldVal) {
-          console.log(newVal)
            if (newVal === 'zoom') {
+            console.log(chart.svg)
             timelineCtrl.removeBrush(chart.svg);
             timelineCtrl.zoom = d3.behavior.zoom()
               .x(chart.x.scale)
@@ -506,6 +499,14 @@ app.directive('timeline', [ function ($timeout) {
             timelineCtrl.createBrush(scope, chart.svg, chart.x, chart.height, chart.xKey);
           }
         });
+
+      scope.$watch('timeline.zoom.changed', function (newVal) {
+        if (newVal === 'in') {
+          // d3
+          // debugger
+          timelineCtrl.zoom
+        }
+      });
   };
 
   return {
@@ -513,6 +514,6 @@ app.directive('timeline', [ function ($timeout) {
     restrict: 'E',
     link: link,
     controller: controller,
-    template: '<div id="timeline"></div>'
+    templateUrl: 'templates/timeline.html'
   }
 }]);
