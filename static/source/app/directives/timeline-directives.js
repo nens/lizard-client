@@ -511,7 +511,9 @@ app.directive('timeline', [ function ($timeout) {
         }
     };
       scope.$watch('timeline.tool', function (newVal, oldVal) {
-           if (newVal === 'zoom') {
+          if (newVal === oldVal{
+            // do nothing
+          } else if (newVal === 'zoom') {
             console.log(chart.svg)
             timelineCtrl.removeBrush(chart.svg);
             timelineCtrl.zoom = d3.behavior.zoom()
