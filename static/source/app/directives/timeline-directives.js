@@ -196,7 +196,7 @@ app.directive('timeline', [ function ($timeout) {
       } else if (options.scale === 'ordinal') {
         var scale = d3.scale.ordinal()
           .range([options.range[0], options.range[1]])
-          .domain(["GRONDWATER", "WATEROVERLAST", "PUT STUK"]);
+          .domain(["GRONDWATER", "PUT STUK"]);
       } else if (options.scale === 'isodate'){
         var scale = d3.time.scale()
             .domain([min, max])
@@ -438,7 +438,13 @@ app.directive('timeline', [ function ($timeout) {
 
         if (xKey === "INTAKEDATU") {
         var xfunction = function(d) { 
-          return x.scale(d3.time.format.iso.parse(d.properties[xKey])) - .5; };
+          var value = x.scale(d3.time.format.iso.parse(d.properties[xKey]));
+          if (value < 0){
+            value = -300;
+          } else if (value > graph.width){
+            value = -300;
+          }
+          return value; };
         } else{
         var xfunction = function(d) {return x.scale(d[xKey])};
         }
