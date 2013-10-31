@@ -511,7 +511,7 @@ app.directive('timeline', [ function ($timeout) {
         }
     };
       scope.$watch('timeline.tool', function (newVal, oldVal) {
-          if (newVal === oldVal{
+          if (newVal === oldVal) {
             // do nothing
           } else if (newVal === 'zoom') {
             console.log(chart.svg)
