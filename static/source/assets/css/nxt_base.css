@@ -562,6 +562,12 @@ rect.extent{
   shape-rendering: crispEdges;
 }
 
+.axis text{
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
 .brush .extent {
   fill-opacity: .125;
   shape-rendering: crispEdges;
