@@ -173,6 +173,8 @@ app.directive('threediBox', function() {
         link: function(scope, element, attrs, ctrl) {
             var time = '--:--';
             var label = '-';
+            scope.message = '';
+            scope.request_master_title = '';
 
             var timeFormat = function(seconds) {
                 // format time in HH:MM from seconds
@@ -187,6 +189,21 @@ app.directive('threediBox', function() {
 
             scope.$watch('state', function() {
                 console.log('state change from 3di omnibox');
+                if (!scope.have_master) {
+                    scope.request_master_title = 'Click to become Director.'
+                } else if (scope.is_master) {
+                    scope.request_master_title = 'You are the Director.';
+                } else if (scope.have_master && !scope.is_master) {
+                    // TODO: compare master levels.
+                    scope.request_master_title = scope.state.player_master_name + 
+                        ' is already Director.';
+                    console.log(scope.request_master_title);
+                }
+                if (scope.state === null) {
+                    scope.message = 'There is no connection with the 3Di server. Try again later.';
+                    console.log('There is no connection with the 3Di server. Try again later.');
+                    return;
+                }
                 scope.time = timeFormat(parseInt(scope.state.time_seconds));
                 var value = scope.state.state;
                 if (value === 'standby'){
@@ -597,17 +614,17 @@ app.directive('threediMap', function(AnimatedLayer) {
                     if (scope.program_mode == null) {
                         // TODO: make this working/new style
                         console.log('info box');
-                        var infourl = 'http://10.90.20.55:5000/3di' + 
-            '/data?' + "REQUEST=gettimeseries&LAYERS=" + scope.state.loaded_model + ':' + 's1' + 
-            "&SRS=EPSG:4326&POINT=" + e.latlng.lng.toString() + ',' + e.latlng.lat.toString() + 
-            '&random=' + 1;
+            //             var infourl = 'http://10.90.20.55:5000/3di' + 
+            // '/data?' + "REQUEST=gettimeseries&LAYERS=" + scope.state.loaded_model + ':' + 's1' + 
+            // "&SRS=EPSG:4326&POINT=" + e.latlng.lng.toString() + ',' + e.latlng.lat.toString() + 
+            // '&random=' + 1;
 
-                        scope.$apply(function () {
-                            scope.box.type = 'threedi-info';
-                            scope.box.content = {
-                                title: 'infoooo', infourl: infourl};
-                        });
-
+            //             scope.$apply(function () {
+            //                 scope.box.type = 'threedi-info';
+            //                 scope.box.content = {
+            //                     title: 'infoooo', infourl: infourl};
+            //             });
+                    
                     } else if (scope.program_mode == MODE_RAIN) {
                         var amount = 0.010;  // in meters!
                         var diameter = extentSize() * 0.15;

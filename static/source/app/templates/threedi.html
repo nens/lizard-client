@@ -1,9 +1,11 @@
 <div class="card" threedi-box>
     <div>
+
+    <% message %>
+
     <a class="btn" 
        ng-click="requestMaster()" 
-       ng-class="{disabled: have_master && !is_master}"
-       title="<% state.player_master_name %>">
+       title="<% request_master_title %>">
         <i ng-class="{'icon-star-empty': !is_master, 'icon-star': is_master}"> </i>
     </a>
 
