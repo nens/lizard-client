@@ -442,9 +442,10 @@ app.controller("MasterCtrl",
     out: function () {
       $scope.timeline.zoom.changed = 'out';
     },
-    week: function () {
-      $scope.timeline.zoom.interval = 'week';
-    },
+    interval: function (interval) {
+      $scope.timeline.interval = interval;
+      $scope.timeline.zoom.changed = interval;
+    }
   }
 
 

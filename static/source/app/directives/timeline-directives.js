@@ -25,7 +25,9 @@ app.directive('timeline', [ function ($timeout) {
 
 
       var svg = d3.select(element[0])
-        .select("svg")
+        .select("#timeline-svg-wrapper")
+        .html("")
+        .append("svg:svg")
         .attr('width', maxwidth)
         .attr('height', maxheight)
         .append("svg:g")
@@ -162,6 +164,11 @@ app.directive('timeline', [ function ($timeout) {
                 .orient(options.orientation)
                 .tickFormat(options.tickFormat)
                 .ticks(5); 
+      } else if (options.ticks){
+        var axis = d3.svg.axis()
+                .scale(scale)
+                .orient(options.orientation)
+                .ticks(options.ticks); 
       } else {
         var axis = d3.svg.axis()
               .scale(scale)
@@ -339,6 +346,13 @@ app.directive('timeline', [ function ($timeout) {
        svg.classed("selecting", false);
        d3.selectAll('.bar').classed("selected", false)
     };
+    this.determineInterval = function (interval) {
+       if (interval === 'week') {
+          return (d3.time.week)
+       } else if (interval === 'month') {
+          return (d3.time.month)
+       }
+    };
   };
   
   var link = function (scope, element, attrs, timelineCtrl) {
@@ -359,7 +373,6 @@ app.directive('timeline', [ function ($timeout) {
         });
       } else {
         chart = drawChart('date', 'value', {});
-
       }
     });
 
@@ -406,9 +419,21 @@ app.directive('timeline', [ function ($timeout) {
         xKey: xKey,
         yKey: yKey
       });
+      timelineCtrl.ticksInterval = timelineCtrl.determineInterval(scope.timeline.interval);
+      var yAxis = timelineCtrl.makeAxis(y.scale, {
+        orientation: "left"
+      });
+      var xAxis = timelineCtrl.makeAxis(x.scale, {
+        orientation: "bottom",
+        ticks: timelineCtrl.ticksInterval
+      });
       timelineCtrl.drawAxes(graph.svg, x, y, {
         height: graph.height, 
-        width: graph.width
+        width: graph.width,
+        axes: {
+          x: xAxis,
+          y: yAxis
+        }
       });
 
         if (xKey === "INTAKEDATU") {
@@ -421,7 +446,10 @@ app.directive('timeline', [ function ($timeout) {
       var svg = graph.svg;
         timelineCtrl.zoomed = function () {
           if (scope.timeline.tool === 'zoom'){
-            svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {orientation:"bottom"}));
+            svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {
+              orientation: "bottom",
+              ticks: timelineCtrl.ticksInterval
+            }));
             svg.select(".y.axis").call(timelineCtrl.makeAxis(y.scale, {orientation:"left"}));
             svg.selectAll("circle")
                 .attr("cx", xfunction);
@@ -500,13 +528,25 @@ app.directive('timeline', [ function ($timeout) {
           }
         });
 
-      scope.$watch('timeline.zoom.changed', function (newVal) {
-        if (newVal === 'in') {
+      scope.$watch('timeline.zoom.changed', function (newVal, oldVal) {
+        if (newVal !== oldVal) {
           // d3
-          // debugger
-          timelineCtrl.zoom
+          timelineCtrl.ticksInterval = timelineCtrl.determineInterval(newVal);
         }
       });
+
+    window.onresize = function () {
+      scope.timeline.width = element.width();
+      if (scope.timeline.data === scope.kpi.events.features){
+        chart = drawChart("INTAKEDATU", "CATEGORIE", {
+          scale: "ordinal",
+          chart: "circles",
+          dateparser: 'isodate'
+        });
+      } else {
+        chart = drawChart('date', 'value', {});
+      }
+    };
   };
 
   return {
