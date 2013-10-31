@@ -1,0 +1,22 @@
+<div id="timeline">
+  <div class="bovenbalk">
+    <div class="btn-group">
+      <button type="button" class="btn btn-default" ng-click="timeline.toggleTool()">
+        <% timeline.tool %>
+      </button>
+      <button type="button" class="btn btn-default" ng-click="timeline.toggleTimeline()">
+        <i class="icon-collapse"></i>
+      </button>
+      <button type="button" class="btn btn-default" ng-click="timeline.zoom.in()">
+        <i class="icon-zoom-in"></i>
+      </button>
+      <button type="button" class="btn btn-default" ng-click="timeline.zoom.out()">
+        <i class="icon-zoom-out"></i>
+      </button>
+      <button type="button" class="btn btn-default" ng-click="timeline.zoom.week()">
+        Week
+      </button>
+    </div>
+  </div>
+  <svg></svg>
+</div>
