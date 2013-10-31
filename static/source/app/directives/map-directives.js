@@ -142,13 +142,7 @@ app
           if (layer.name == 'Watergangen') {
             $scope.map.setView([52.60763454517434, 4.794158935546875], 11, { animate: true });
           }
-          if (layer.name == 'Simulatie') {
-            //layer.follow_3di = !layer.follow_3di;
-            //$scope.threediCtrl.follow(layer.follow_3di);
-            //console.log('Calling toExtent');
-            //$scope.threediCtrl.toExtent();
-            //$scope.toExtent();
-          }
+          // This button is not available for 3Di
         };
 
         this.fitBounds = function (extent) {
@@ -181,7 +175,6 @@ app
     };
 
     var link = function (scope, element, attrs, ctrl) {
-      scope.threediCtrl = ctrl[0];
       // instead of 'map' element here for testability
       var map = new L.map(element[0], {
           center: new L.LatLng(52.0992287, 5.5698782),
