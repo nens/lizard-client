@@ -113,7 +113,6 @@ app.controller("MasterCtrl",
 
     if ($scope.box.query.length > 1) {
       var search = CabinetService.termSearch.query({q: $scope.box.query}, function (data) {
-          console.log(data);
           var sources = [];
           for (var i in data) {
             if(data[i].geometry !== null) {
@@ -195,6 +194,7 @@ app.controller("MasterCtrl",
     baselayers: CabinetService.baselayers,
     activeBaselayer: 3,
     changed: Date.now(),
+    moved: Date.now(),
     baselayerChanged: Date.now(),
     enabled: false
   };
@@ -355,12 +355,14 @@ app.controller("MasterCtrl",
     $http.get(url)
       .success(function (data) {
         var d3data = format_data(data);
-        $scope.box.type = "profile";
-        $scope.box.content = {
-          data: d3data,
-          yLabel: 'hoogte [mNAP]',
-          xLabel: 'afstand [m]'
-        }
+        //NOTE: hack to try pop_density
+        //$scope.box.type = "profile";
+        $scope.box.pop_density = data;
+        //$scope.box.content = {
+          //data: d3data,
+          //yLabel: 'hoogte [mNAP]',
+          //xLabel: 'afstand [m]'
+        //}
       })
       .error(function (data) {
         //TODO: implement error function to return no data + message
@@ -410,18 +412,19 @@ app.controller("MasterCtrl",
       end: '@end'
     },
     {get: {method: 'GET', timeout: $scope.timeline.canceler.promise}});
-    var new_data_get = timeseries.get({
-      id: 3,
-      start: $scope.timeline.temporalExtent.start,
-      end: $scope.timeline.temporalExtent.end
-    }, function(response){
-      $scope.timeseries = response;
-      if ($scope.timeseries.length > 0){
-        $scope.selected_timeseries = response[0];
-      } else {
-        $scope.selected_timeseries = undefined;
-      }
-    });
+    // commented by arjen to prevent 404s in dev
+    //var new_data_get = timeseries.get({
+      //id: 3,
+      //start: $scope.timeline.temporalExtent.start,
+      //end: $scope.timeline.temporalExtent.end
+    //}, function(response){
+      //$scope.timeseries = response;
+      //if ($scope.timeseries.length > 0){
+        //$scope.selected_timeseries = response[0];
+      //} else {
+        //$scope.selected_timeseries = undefined;
+      //}
+    //});
 
 
   });

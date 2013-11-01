@@ -186,14 +186,20 @@ app
           if (!scope.beenThreDoneIntersectSuggestion) {
             scope.beenThreDoneIntersectSuggestion = true;
             scope.$apply(function () {
-            scope.box.type = 'intersecttool';
+              scope.box.type = 'intersecttool';
             });
           }
         }
       });
 
+      scope.map.on('moveend', function () {
+        scope.$apply(function () {
+          scope.mapState.moved = Date.now();
+        });
+      });
+
       scope.map.on('dragend', function() {
-        
+
           if (scope.box.type === 'default') {
 
             // scope.box.type = 'empty';
