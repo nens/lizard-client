@@ -35,9 +35,11 @@ app.directive('rasterprofile', function () {
           }
         };
 
-        // Draw a line and remove existing line (if exists).
-        // borrow from 3di:
-        // https://github.com/nens/threedi-server/blob/master/threedi_server/static/js/threedi-ng.js
+        /* 
+         * Draw a line and remove existing line (if exists).
+         * borrow from 3di:
+         * https://github.com/nens/threedi-server/blob/master/threedi_server/static/js/threedi-ng.js
+         */ 
         var drawLine = function (startpoint, endpoint) {
           var pointList = [startpoint, endpoint];
           var firstpolyline = L.polyline(pointList, {
@@ -73,7 +75,7 @@ app.directive('rasterprofile', function () {
           var srs = L.CRS.EPSG3857.code;
           
           // call get_profile controller function on scope
-          scope.get_profile(profile_line_wkt, srs);
+          scope.get_profile("ahn2", profile_line_wkt, srs);
         };
 
         // enable and disable click handler

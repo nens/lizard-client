@@ -342,11 +342,14 @@ app.controller("MasterCtrl",
     });
 
   // define function to get profile data from server
-  $scope.get_profile = function (linestring_wkt, srs) {
+  /*
+   * Get profile from server
+   */
+  $scope.get_profile = function (raster_names, linestring_wkt, srs) {
     // build url
     // NOTE: first part hardcoded
     var url = "api/v1/rasters/";
-    url += "?raster_names=ahn2";
+    url += "?raster_names=" + raster_names;
     url += "&geom=" + linestring_wkt;
     url += "&srs=" + srs;
     // get profile from server

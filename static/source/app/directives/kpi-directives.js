@@ -211,7 +211,13 @@ app.directive('vectorlayer', function () {
         };
 
         scope.box.type = "aggregate";
-        scope.map.on('moveend', function () {
+        scope.map.on("moveend", function () {
+          // get population density
+          bounds = scope.map.getBounds();
+          geom_wkt = bounds;
+          console.log(geom_wkt);
+          var srs = L.CRS.EPSG3857.code;
+          scope.get_profile("pop_density", geom_wkt, srs);
           d3.selectAll(".circle.selected").call(countEvents);
         });
       });
