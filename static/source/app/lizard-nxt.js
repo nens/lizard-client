@@ -1,7 +1,7 @@
 'use strict';
 
 // wtf.
-document.ondblclick = function (e) {
+document.ondblclick = function(e) {
     var clickObj = document.createElement("div"),
         inner = document.createElement("div");
     inner.className = "clickObj";
@@ -10,8 +10,8 @@ document.ondblclick = function (e) {
     clickObj.style.left = e.clientX + "px";
     this.body.appendChild(clickObj);
     clickObj.appendChild(inner);
-    setTimeout(function () { clickObj.remove(); }, 1000);
-  };
+    setTimeout(function() { clickObj.remove(); }, 1000);
+};
 
 
 var templatesUrl = '/static/source/app/templates/';
@@ -23,18 +23,17 @@ var app = angular.module("lizard-nxt", [
   'ui.keypress',
   'graph',
   'omnibox',
-  'lizard-nxt.services'
-]);
+  'lizard-nxt.services']);
 
-app.config(function ($interpolateProvider) {
+app.config(function($interpolateProvider) {
   //To prevent Django and Angular Template hell
   $interpolateProvider.startSymbol('<%');
   $interpolateProvider.endSymbol('%>');
-});
+ });
 
 
 app.controller("MasterCtrl",
-  ["$scope", "$http", "$resource", "$q", "CabinetService", "KpiService",
+  ["$scope", "$http", "$resource","$q","CabinetService", "KpiService", 
   function ($scope, $http, $resource, $q, CabinetService, KpiService)  {
 
   $scope.box = {
@@ -89,18 +88,18 @@ app.controller("MasterCtrl",
     slct_area: null
   };
 
-  $scope.$watch('kpi.panZoom', function () {
+  $scope.$watch('kpi.panZoom', function(){
     $scope.panZoom = $scope.kpi.panZoom;
   });
 
   $scope.toggle_tool = function (name) {
-    if ($scope.tools.hasOwnProperty(name)) {
+    if ($scope.tools.hasOwnProperty(name)){
       $scope.tools[name].enabled = !$scope.tools[name].enabled;
     }
   };
 
-  $scope.onAreaClick = function (area) {
-    $scope.$apply(function () {
+  $scope.onAreaClick = function(area){
+    $scope.$apply(function(){
       $scope.kpi.slct_area = area;
       $scope.kpi.kpichanged = !$scope.kpi.kpichanged;
     });
@@ -117,14 +116,15 @@ app.controller("MasterCtrl",
           console.log(data);
           var sources = [];
           for (var i in data) {
-            if (data[i].geometry !== null) {
+            if(data[i].geometry !== null) {
               sources.push(data[i]);
             }
           }
-          $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf(v) === i; });
+          $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
           for (var j in sources) {
+            console.log('sources:',sources);
             $scope.searchMarkers = [];
-            if (sources[j].geometry) {
+            if(sources[j].geometry) {
               $scope.searchMarkers.push(sources[j]);
             }
           }
@@ -141,15 +141,15 @@ app.controller("MasterCtrl",
     }
   };
 
-  $scope.bbox_update = function (bl_lat, bl_lon, tr_lat, tr_lon) {
-    $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf(v) === i; });
+  $scope.bbox_update = function(bl_lat, bl_lon, tr_lat, tr_lon) {
+    $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
     var search = CabinetService.bboxSearch.query({
-      bottom_left: bl_lat + ',' + bl_lon,
-      top_right: tr_lat + ',' + tr_lon
+      bottom_left: bl_lat+','+bl_lon,
+      top_right: tr_lat+','+tr_lon
     }, function (data) {
       $scope.searchMarkers = [];
-      for (var i in data) {
-        if (data[i].geometry) {
+      for(var i in data) {
+        if(data[i].geometry) {
           $scope.searchMarkers.push(data[i]);
         }
       }
@@ -163,29 +163,29 @@ app.controller("MasterCtrl",
       // therefore no need to call $rootScope.
       $scope.$broadcast('clean');
       $scope.box.query = null;
-      $scope.box.type = 'empty';
-    };
+      $scope.box.type= 'empty';
+  };
 
   $scope.showDetails = function (obj) {
       $scope.currentObject = obj;
       console.log('obj:', obj);
       if ($scope.currentObject.lat && $scope.currentObject.lon) {
-        // A lat and lon are present, instruct the map to pan/zoom to it
-        var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
-        $scope.panZoom = {
-          lat: $scope.currentObject.lat,
-          lng: $scope.currentObject.lon,
-          zoom: 14
-        };
+          // A lat and lon are present, instruct the map to pan/zoom to it
+          var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
+          $scope.panZoom = {
+            lat: $scope.currentObject.lat,
+            lng: $scope.currentObject.lon,
+            zoom: 14
+          };
       }
       else if ($scope.currentObject.geometry[0] && $scope.currentObject.geometry[1]) {
-        $scope.panZoom = {
-          lat: $scope.currentObject.geometry[1],
-          lng: $scope.currentObject.geometry[0],
-          zoom: 14
-        };
+          $scope.panZoom = {
+            lat: $scope.currentObject.geometry[1],
+            lng: $scope.currentObject.geometry[0],
+            zoom: 14
+          };
       }
-    };
+  };
 // SEARCH-END
 
 
@@ -199,14 +199,14 @@ app.controller("MasterCtrl",
     enabled: false
   };
 
-  $scope.$on('PanZoomeroom', function (message, value) {
+  $scope.$on('PanZoomeroom', function(message, value){
     $scope.panZoom = value;
     console.log('PanZoomeroom', value);
   });
 
-  $scope.switchBaseLayer = function () {
-    for (var i in $scope.mapState.baselayers) {
-      if ($scope.mapState.baselayers[i].id === $scope.mapState.activeBaselayer) {
+  $scope.switchBaseLayer = function(){
+    for (var i in $scope.mapState.baselayers){
+      if ($scope.mapState.baselayers[i].id == $scope.mapState.activeBaselayer){
         $scope.mapState.baselayers[i].active = true;
       } else {
         $scope.mapState.baselayers[i].active = false;
@@ -215,11 +215,11 @@ app.controller("MasterCtrl",
     $scope.mapState.baselayerChanged = Date.now();
   };
 
-  $scope.toggleLayerGroup = function (layergroup) {
+  $scope.toggleLayerGroup = function(layergroup){
     var grouplayers = layergroup.layers;
-    for (var i in grouplayers) {
-      for (var j in $scope.mapState.layers) {
-        if ($scope.mapState.layers[j].id === grouplayers[i]) {
+    for (var i in grouplayers){
+      for (var j in $scope.mapState.layers){
+        if ($scope.mapState.layers[j].id == grouplayers[i]){
           $scope.mapState.layers[j].active = layergroup.active;
         }
       }
@@ -231,14 +231,14 @@ app.controller("MasterCtrl",
     if ($scope.mapState.enabled) {
       $scope.mapState.enabled = false;
       $scope.mapState.disabled = true;
-    }
+      }
     else {
       $scope.mapState.enabled = true;
       $scope.mapState.disabled = false;
     }
   };
 
-  $scope.changed = function () {
+  $scope.changed = function() {
     $scope.mapState.changed = Date.now();
   };
 
@@ -249,9 +249,9 @@ app.controller("MasterCtrl",
   };
 
   $scope.format_data = function (data) {
-    if (data[0]) {
-      $scope.formatted_data = [];
-      for (var i = 0; i < data[0].values.length; i++) {
+    if (data[0]){
+    $scope.formatted_data = [];
+      for (var i=0; i<data[0].values.length; i++){
         var xyobject = {
           date: data[1].values[i],
           value: data[0].values[i]
@@ -277,28 +277,27 @@ app.controller("MasterCtrl",
     var new_data_get = CabinetService.timeseriesLocationObject.get({
       object_type: $scope.box.content.object_type,
       id: $scope.box.content.id
-    }, function (response) {
+    }, function(response){
       $scope.timeseries = response;
-      if ($scope.timeseries.length > 0) {
+      if ($scope.timeseries.length > 0){
         $scope.selected_timeseries = response[0];
       } else {
         $scope.selected_timeseries = undefined;
       }
     });
-
     $scope.metadata = {
         title: null,
         fromgrid: $scope.box.content.data,
         type: $scope.box.content.data.entity_name
-      };
+     };
 
     $scope.$watch('selected_timeseries', function () {
-      if ($scope.selected_timeseries !== undefined) {
+      if ($scope.selected_timeseries !== undefined){
 
         $scope.data = $scope.format_data($scope.selected_timeseries.events);
         // dit kan zeker nog mooier
         $scope.metadata.title = " - " + $scope.selected_timeseries.location.name;
-        $scope.metadata.ylabel = 'Aciditeit (%)'; //scope.selected_timeseries.parameter + scope.selected_timeseries.unit.code
+        $scope.metadata.ylabel = 'Aciditeit (%)' ; //scope.selected_timeseries.parameter + scope.selected_timeseries.unit.code
         $scope.metadata.xlabel = "Tijd";
       } else {
         $scope.data = undefined;
@@ -307,7 +306,7 @@ app.controller("MasterCtrl",
 
 
     // Otherwise changes are watched and called to often.
-    if ($scope.box.content.timeseries_changed === undefined) {
+    if ($scope.box.content.timeseries_changed === undefined){
       $scope.box.content.timeseries_changed = true;
     } else {
       $scope.box.content.timeseries_changed = !$scope.box.content.timeseries_changed;
@@ -333,12 +332,12 @@ app.controller("MasterCtrl",
   var events = '/static/data/klachten_purmerend_min.geojson';
   $http.get(events)
     .success(function (data) {
-      $scope.kpi.events = data;
+      $scope.kpi.events = data;  
       $scope.kpi.panZoom = {
-        lat: 52.5185894148,
+        lat: 52.5185894148, 
         lng: 4.9557002060,
         zoom: 16
-      };
+      }
     });
 
   // define function to get profile data from server
@@ -361,7 +360,7 @@ app.controller("MasterCtrl",
           data: d3data,
           yLabel: 'hoogte [mNAP]',
           xLabel: 'afstand [m]'
-        };
+        }
       })
       .error(function (data) {
         //TODO: implement error function to return no data + message
@@ -377,6 +376,7 @@ app.controller("MasterCtrl",
       changedZoom: true,
       at: Date.now() - this.start
     },
+    tool: 'zoom',
     canceler: $q.defer(),
     open: false,
     data: [
@@ -414,9 +414,9 @@ app.controller("MasterCtrl",
       id: 3,
       start: $scope.timeline.temporalExtent.start,
       end: $scope.timeline.temporalExtent.end
-    }, function (response) {
+    }, function(response){
       $scope.timeseries = response;
-      if ($scope.timeseries.length > 0) {
+      if ($scope.timeseries.length > 0){
         $scope.selected_timeseries = response[0];
       } else {
         $scope.selected_timeseries = undefined;
@@ -426,9 +426,30 @@ app.controller("MasterCtrl",
 
   });
 
-  $scope.toggleTimeline = function () {
+  $scope.timeline.toggleTimeline = function () {
     $scope.timeline.open = !$scope.timeline.open;
   };
+
+  $scope.timeline.toggleTool = function () {
+    if ($scope.timeline.tool === 'zoom'){
+      $scope.timeline.tool = 'brush';
+    } else {
+      $scope.timeline.tool = 'zoom';
+    }
+  };
+
+  $scope.timeline.zoom = {
+    in: function () {
+      $scope.timeline.zoom.changed = 'in';
+    },
+    out: function () {
+      $scope.timeline.zoom.changed = 'out';
+    },
+    interval: function (interval) {
+      $scope.timeline.interval = interval;
+      $scope.timeline.zoom.changed = interval;
+    }
+  }
 
 
 }]);

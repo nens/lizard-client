@@ -477,7 +477,7 @@ html, body{
 }
 
 .bovenbalk{
-    height: 10px;
+    text-transform: uppercase;
     
 /*    -moz-box-shadow: inset -5px -5px #888;
     -webkit-box-shadow: inset -5px -5px #888;*/
@@ -511,6 +511,66 @@ html, body{
     stroke: rgba(130,130,130, 1);
 /*    -webkit-filter: drop-shadow( -5px -5px 5px #000 );
             filter: drop-shadow( -5px -5px 5px #000 );*/
+}
+
+rect.bar{
+    opacity: 0.1;
+}
+
+rect.selected{
+    opacity:1;
+    /*stroke: black;
+    stroke-width: 10px;
+    opacity: 0.4;*/
+}
+
+rect.extent{
+    fill: rgba(30,30,30,0.2);
+}
+
+.resize path {
+  fill: #666;
+  fill-opacity: .8;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.brush .extent {
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+
+.selecting circle {
+  fill-opacity: .2;
+}
+
+.selecting circle.selected {
+  fill-opacity: 0.8;
+  stroke: rgba(240,50,60,0.6);
+}
+
+.resize path {
+  fill: #666;
+  fill-opacity: .8;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.axis path, .axis line {
+  fill: none;
+  /*stroke: #000;*/
+  shape-rendering: crispEdges;
+}
+
+.axis text{
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.brush .extent {
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
 }
 
 

@@ -34,7 +34,7 @@ app.directive('kpilayer', function () {
       };
 
       scope.$watch('tools.kpi.enabled', function () {
-        if (scope.tools.kpi.enabled) {
+        if (scope.tools.kpi.enabled){
           //scope.box.type = 'kpi';      
         } else {
           mapCtrl.removeLayer(areas);
@@ -124,7 +124,7 @@ app.directive('vectorlayer', function () {
           //});
           extent = [0, 5],
           scale = d3.scale.category20()
-            .domain(["GRONDWATER", "PUT STUK"]);
+            .domain(["GRONDWATER", "PUT STUK"])
         }
 
         circles.attr('opacity', 0.6)
@@ -156,7 +156,7 @@ app.directive('vectorlayer', function () {
           var popup = L.popup()
             .setLatLng([d.geometry.coordinates[1], d.geometry.coordinates[0]])
             .setContent(t)
-            .openOn(scope.map);
+            .openOn(scope.map)
         });
       }
 
@@ -181,7 +181,7 @@ app.directive('vectorlayer', function () {
           }
         });
 
-        //console.log(ctr);
+        console.log(ctr);
         scope.box.content = ctr;
         //NOTE: ugly hack
         scope.box.content_agg = ctr / num_citizens / timeInterval;

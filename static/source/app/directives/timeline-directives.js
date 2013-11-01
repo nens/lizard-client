@@ -18,13 +18,15 @@ app.directive('timeline', [ function ($timeout) {
         height = maxheight - margin.top - margin.bottom;
   
 
-      d3.select(element[0])
-        .html("")
-        .append("html:div")
-        .classed("bovenbalk", true)
+      // d3.select(element[0])
+      //   .html("")
+      //   .append("html:div")
+      //   .classed("bovenbalk", true)
 
 
       var svg = d3.select(element[0])
+        .select("#timeline-svg-wrapper")
+        .html("")
         .append("svg:svg")
         .attr('width', maxwidth)
         .attr('height', maxheight)
@@ -81,7 +83,8 @@ app.directive('timeline', [ function ($timeout) {
             return x.scale(d3.time.format.iso.parse(d.properties[options.xKey])) - .5; };
           var yfunction = function(d) { 
             return y.scale(d.properties[options.yKey]) };
-          var heightfunction = function(d) { return y.scale(d.properties[options.yKey]); };
+          var heightfunction = function(d) { 
+            return y.scale(d.properties[options.yKey]); };
         } else {
           var xfunction = function(d) { return x.scale(d[options.xKey]) - .5; };
           var yfunction = function(d) { return options.height - y.scale(d[options.yKey]) - .5; };
@@ -106,23 +109,27 @@ app.directive('timeline', [ function ($timeout) {
           .style("stroke", "#ccc");
     };
     this.drawCircles = function(svg, x, y, data, options){
-      function circle_style(circles) {
-        if (!(extent && scale)) {
-            //extent = d3.extent(circles.data(), function (d) {
-               //return d.properties.depth;
-            //});
-            extent = [0, 5],
-            scale = d3.scale.category20()
-              .domain(["GRONDWATER", "PUT STUK"])
+      // circle stuff
+      if (options.xKey === "INTAKEDATU") {
+          var xfunction = function(d) { 
+            return x.scale(d3.time.format.iso.parse(d.properties[options.xKey]));};
+          var yfunction = function(d) { 
+            return y.colorscale(d.properties[options.yKey]) };
+          var heightfunction = function(d) { return y.scale(d.properties[options.yKey]); };
+        } else {
+          var xfunction = function(d) { return x.scale(d[options.xKey]); };
+          var yfunction = function(d) { return options.height - y.scale(d[options.yKey]) - .5; };
+          var heightfunction = function(d) { return y.scale(d[options.yKey]); };
         }
-
-        circles.attr('opacity', 0.6)
-          .attr('stroke', "#e")
-          .attr('stroke-width', 1)
-          .attr('fill', function (d) {
-            return scale(d.properties.CATEGORIE);
-          });
-      };
+        svg.selectAll("circle")
+          .data(data)
+          .enter().append("circle")
+            .attr("class", "bar")
+            .attr("cx", xfunction)
+            .attr("cy", 20)
+            .attr("r", 4)
+            .attr("opacity", 0.8)
+            .attr("fill", yfunction);
     };
 
     this.maxMin = function (data, options) {
@@ -130,7 +137,6 @@ app.directive('timeline', [ function ($timeout) {
         var domain = d3.extent(data, function (d) {
                 return d3.time.format.iso.parse(d.properties[options.key])
               });
-        console.log(domain);
         var min = domain[0].getTime();
         var max = domain[1].getTime();
       } else if (options.key === 'CATEGORIE') {
@@ -158,6 +164,11 @@ app.directive('timeline', [ function ($timeout) {
                 .orient(options.orientation)
                 .tickFormat(options.tickFormat)
                 .ticks(5); 
+      } else if (options.ticks){
+        var axis = d3.svg.axis()
+                .scale(scale)
+                .orient(options.orientation)
+                .ticks(options.ticks); 
       } else {
         var axis = d3.svg.axis()
               .scale(scale)
@@ -179,8 +190,12 @@ app.directive('timeline', [ function ($timeout) {
                 return Date.parse(d.date)
               }))
             .range([options.range[0], options.range[1]]);
-      } else if (options.scale === 'ordinal') {
+      } else if (options.scale === 'color') {
         var scale = d3.scale.category20()
+          .domain(["GRONDWATER", "PUT STUK"]);
+      } else if (options.scale === 'ordinal') {
+        var scale = d3.scale.ordinal()
+          .range([options.range[0], options.range[1]])
           .domain(["GRONDWATER", "PUT STUK"]);
       } else if (options.scale === 'isodate'){
         var scale = d3.time.scale()
@@ -273,10 +288,75 @@ app.directive('timeline', [ function ($timeout) {
     };
     this.halfwayTime = function (scale, width) {
       return scale.invert(width / 2).getTime();
-    }
+    };
+    this.createBrush = function (scope, svg, x, height, xKey) {
+      var brush = null;    
+
+      var brushmove = function (pietje) {
+        var s = brush.extent();
+          scope.$apply(function () {
+            scope.timeline.temporalExtent.start = s[0].getTime();
+            scope.timeline.temporalExtent.end = s[1].getTime();
+            scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
+          });
+
+            d3.selectAll(".bar")
+              .classed("selected", function(d) { 
+                var value = Date.parse(d.properties[xKey]);
+                // console.log(s[0], value)?
+                return s[0] <= value && value <= s[1]; 
+              });
+
+           if (brush.extent()[0].getTime() === brush.extent()[1].getTime()) {
+            scope.$apply(function () {
+              scope.timeline.temporalExtent.start = x.scale.domain()[0].getTime();
+              scope.timeline.temporalExtent.end = x.scale.domain()[1].getTime();
+              scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
+            });
+          }
+
+        };
+       var brushstart = function () {
+        svg.classed("selecting", true);
+      };
+      var brushend = function () {
+          //       var s = brush.extent();
+          // scope.$apply(function () {
+          //   scope.timeline.temporalExtent.start = s[0].getTime();
+          //   scope.timeline.temporalExtent.end = s[1].getTime();
+          //   scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
+          // });
+
+       svg.classed("selecting", !d3.event.target.empty());
+      };    
+      var brush = d3.svg.brush().x(x.scale)
+        .on("brush", brushmove)
+        .on("brushstart", brushstart)
+        .on("brushend", brushend);
+      this.brushg = svg.append("g")
+        .attr("class", "brushed")
+        .call(brush);
+      this.brushg.selectAll("rect")
+        .attr("height", height);    
+    };
+    this.removeBrush = function (svg) {
+      if (this.brushg){
+        this.brushg.remove();
+      }
+       svg.classed("selecting", false);
+       d3.selectAll('.bar').classed("selected", false)
+    };
+    this.determineInterval = function (interval) {
+       if (interval === 'week') {
+          return (d3.time.week)
+       } else if (interval === 'month') {
+          return (d3.time.month)
+       }
+    };
   };
   
   var link = function (scope, element, attrs, timelineCtrl) {
+    var chart;
     scope.timeline.width = element.width();
     scope.$watch('timeline.open', function () {
       if (scope.timeline.open){
@@ -285,18 +365,25 @@ app.directive('timeline', [ function ($timeout) {
       } else {
         scope.timeline.height = 70;
       }
-      drawChart('date', 'value', {});
-
+      if (scope.timeline.data === scope.kpi.events.features){
+        chart = drawChart("INTAKEDATU", "CATEGORIE", {
+          scale: "ordinal",
+          chart: "circles",
+          dateparser: 'isodate'
+        });
+      } else {
+        chart = drawChart('date', 'value', {});
+      }
     });
 
     scope.$watch('kpi.events', function (newVal, oldVal) {
       if (newVal !== oldVal){
         scope.timeline.data = scope.kpi.events.features;
-        drawChart("INTAKEDATU", "CATEGORIE", {
+        chart = drawChart("INTAKEDATU", "CATEGORIE", {
           scale: "ordinal",
           chart: "circles",
           dateparser: 'isodate'
-        })
+        });
       };
     });
 
@@ -318,51 +405,76 @@ app.directive('timeline', [ function ($timeout) {
         type: 'time',
         range: [0, graph.width],
       });
+      y.colorscale = timelineCtrl.scale(y.min, y.max, {
+        range: [graph.height, 0],
+        scale: (options.scale == 'ordinal') ? 'color' : null
+      });
       y.scale = timelineCtrl.scale(y.min, y.max, {
         range: [graph.height, 0],
         scale: (options.scale == 'ordinal') ? 'ordinal' : null
       });
-      timelineCtrl.drawBars(graph.svg, x, y, scope.timeline.data, {
+      timelineCtrl.drawCircles(graph.svg, x, y, scope.timeline.data, {
         height: graph.height,
         width: graph.width,
         xKey: xKey,
         yKey: yKey
       });
+      timelineCtrl.ticksInterval = timelineCtrl.determineInterval(scope.timeline.interval);
+      var yAxis = timelineCtrl.makeAxis(y.scale, {
+        orientation: "left"
+      });
+      var xAxis = timelineCtrl.makeAxis(x.scale, {
+        orientation: "bottom",
+        ticks: timelineCtrl.ticksInterval
+      });
       timelineCtrl.drawAxes(graph.svg, x, y, {
         height: graph.height, 
-        width: graph.width
+        width: graph.width,
+        axes: {
+          x: xAxis,
+          y: yAxis
+        }
       });
 
-      var svg = graph.svg;
-        var zoomed = function () {
-           if (xKey === "INTAKEDATU") {
-          var xfunction = function(d) { 
-            return x.scale(d3.time.format.iso.parse(d.properties[xKey])) - .5; };
-          } else{
-            xfunction = function(d) {return x.scale(d[xKey])};
+        if (xKey === "INTAKEDATU") {
+        var xfunction = function(d) { 
+          var value = x.scale(d3.time.format.iso.parse(d.properties[xKey]));
+          if (value < 0){
+            value = -300;
+          } else if (value > graph.width){
+            value = -300;
           }
-          svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {orientation:"bottom"}));
-          svg.select(".y.axis").call(timelineCtrl.makeAxis(y.scale, {orientation:"left"}));
-          svg.selectAll(".bar")
-              .attr("x", xfunction);
-          scope.$apply(function () {
-            scope.timeline.temporalExtent.start = x.scale.domain()[0].getTime();
-            scope.timeline.temporalExtent.end = x.scale.domain()[1].getTime();
-            scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
-          });
+          return value; };
+        } else{
+        var xfunction = function(d) {return x.scale(d[xKey])};
+        }
+
+      var svg = graph.svg;
+        timelineCtrl.zoomed = function () {
+          if (scope.timeline.tool === 'zoom'){
+            svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {
+              orientation: "bottom",
+              ticks: timelineCtrl.ticksInterval
+            }));
+            svg.select(".y.axis").call(timelineCtrl.makeAxis(y.scale, {orientation:"left"}));
+            svg.selectAll("circle")
+                .attr("cx", xfunction);
+            scope.$apply(function () {
+              scope.timeline.temporalExtent.start = x.scale.domain()[0].getTime();
+              scope.timeline.temporalExtent.end = x.scale.domain()[1].getTime();
+              scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
+            });            
+          } 
         };
 
-        var zoom = d3.behavior.zoom()
+        timelineCtrl.zoom = d3.behavior.zoom()
           .x(x.scale)
-          .on("zoom", zoomed);
+          .on("zoom", timelineCtrl.zoomed);
 
-        svg.call(zoom);
-        var hoverLine = timelineCtrl.verticalReference({
-          width: graph.width,
-          height: graph.height,
-          svg: graph.svg
-        });
-        angular.element(".plot-temporal")
+
+        svg.call(timelineCtrl.zoom)
+
+        // angular.element(".plot-temporal")
         // .on("mousemove", function (e) {
         //   var offset = angular.element('.plot-temporal').offset(); 
         //   var mouseX = e.pageX-offset.left;
@@ -378,17 +490,17 @@ app.directive('timeline', [ function ($timeout) {
         // .on("mouseout", function (e) {
         //  timelineCtrl.handleMouseOutGraph(e, hoverLine); 
         // })
-        .on("mousemove", function(e){
-          var offset = angular.element('.plot-temporal').offset(); 
-          var mouseX = e.pageX-offset.left;
-          timelineCtrl.drawReferenceAt({
-            svg: graph.svg,
-            mouseX: mouseX
-          });
-          scope.$apply(function () {
-            scope.timeline.temporalExtent.at = x.scale.invert(mouseX).getTime();            
-          })
-        });
+        // .on("mousemove", function(e){
+        //   var offset = angular.element('.plot-temporal').offset(); 
+        //   var mouseX = e.pageX-offset.left;
+        //   timelineCtrl.drawReferenceAt({
+        //     svg: graph.svg,
+        //     mouseX: mouseX
+        //   });
+        //   scope.$apply(function () {
+        //     scope.timeline.temporalExtent.at = x.scale.invert(mouseX).getTime();            
+        //   })
+        // });
 
 
         scope.timeline.temporalExtent.at = timelineCtrl.halfwayTime(x.scale, graph.width);
@@ -397,6 +509,51 @@ app.directive('timeline', [ function ($timeout) {
           height: graph.height,
           svg: graph.svg
         });
+        return {
+          x: x,
+          height: graph.height,
+          svg: svg,
+          xKey: xKey
+        }
+    };
+      scope.$watch('timeline.tool', function (newVal, oldVal) {
+          if (newVal === oldVal) {
+            // do nothing
+          } else if (newVal === 'zoom') {
+            console.log(chart.svg)
+            timelineCtrl.removeBrush(chart.svg);
+            timelineCtrl.zoom = d3.behavior.zoom()
+              .x(chart.x.scale)
+              .on("zoom", timelineCtrl.zoomed);
+            chart.svg.call(timelineCtrl.zoom);
+          } else if (newVal === 'brush') {
+            // chart.svg.call(timelineCtrl.zoom);
+            timelineCtrl.zoom = d3.behavior.zoom()
+              .x(chart.x.scale)
+              .on("zoom", null);
+            chart.svg.on('.zoom', null);
+            timelineCtrl.createBrush(scope, chart.svg, chart.x, chart.height, chart.xKey);
+          }
+        });
+
+      scope.$watch('timeline.zoom.changed', function (newVal, oldVal) {
+        if (newVal !== oldVal) {
+          // d3
+          timelineCtrl.ticksInterval = timelineCtrl.determineInterval(newVal);
+        }
+      });
+
+    window.onresize = function () {
+      scope.timeline.width = element.width();
+      if (scope.timeline.data === scope.kpi.events.features){
+        chart = drawChart("INTAKEDATU", "CATEGORIE", {
+          scale: "ordinal",
+          chart: "circles",
+          dateparser: 'isodate'
+        });
+      } else {
+        chart = drawChart('date', 'value', {});
+      }
     };
   };
 
@@ -405,6 +562,6 @@ app.directive('timeline', [ function ($timeout) {
     restrict: 'E',
     link: link,
     controller: controller,
-    template: '<div id="timeline"></div>'
+    templateUrl: 'templates/timeline.html'
   }
 }]);

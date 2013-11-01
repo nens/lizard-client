@@ -1,0 +1,32 @@
+<div id="timeline">
+  <div class="bovenbalk">
+    <div class="btn-group">
+      <button type="button" title="Zoom" class="btn btn-default" ng-class="{active: timeline.tool === 'zoom'}" ng-click="timeline.toggleTool()">
+        <i class="icon-search"></i>
+      </button>
+      <button type="button" title="Select" class="btn btn-default" ng-class="{active: timeline.tool === 'brush'}" ng-click="timeline.toggleTool()">
+        <i class="icon-screenshot"></i>
+      </button>
+        <!-- TODO add zoom with intervals.. -->
+
+<!--       <button type="button" class="btn btn-default" ng-click="timeline.toggleTimeline()">
+        <i class="icon-collapse"></i>
+      </button>
+      <button type="button" class="btn btn-default" ng-click="timeline.zoom.in()">
+        <i class="icon-zoom-in"></i>
+      </button>
+      <button type="button" class="btn btn-default" ng-click="timeline.zoom.out()">
+        <i class="icon-zoom-out"></i>
+      </button>
+      <button type="button" class="btn btn-default" ng-class="{active: timeline.interval === 'week'}" ng-click="timeline.zoom.interval('week')">
+        Week
+      </button>
+      <button type="button" class="btn btn-default" ng-class="{active: timeline.interval === 'month'}" ng-click="timeline.zoom.interval('month')">
+        Month
+      </button> -->
+    </div>
+  </div>
+  <div id="timeline-svg-wrapper">
+    <svg></svg>
+  </div>
+</div>  
