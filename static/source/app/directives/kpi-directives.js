@@ -160,64 +160,67 @@ app.directive('vectorlayer', function () {
         });
       }
 
+      function get_time(d) {
+        return d3.time.format.iso.parse(d.properties.INTAKEDATU);
+      }
+
+      var countEvents = function (selection) {
+        var ctr = 0;
+        var num_citizens = 1;
+        var mapBounds = scope.map.getBounds();
+        // timeInterval in months
+        var timeInterval = ((scope.timeline.temporalExtent.end -
+                             scope.timeline.temporalExtent.start)
+                             / (1000 * 60 * 60 * 24 * 30));
+        //console.log(timeInterval);
+        selection.each(function (d) {
+          var point = new L.LatLng(d.geometry.coordinates[1],
+                                   d.geometry.coordinates[0]);
+          if (mapBounds.contains(point)) {
+            ctr += 1;
+          }
+        });
+
+        //console.log(ctr);
+        scope.box.content = ctr;
+        //NOTE: ugly hack
+        scope.box.content_agg = ctr / num_citizens / timeInterval;
+      };
+
+      scope.$watch('timeline.temporalExtent.start', function () {
+        d3.selectAll(".circle")
+          .classed("selected", function (d) {
+            var s = [scope.timeline.temporalExtent.start,
+                     scope.timeline.temporalExtent.end];
+            // + is a d3 operator to convert time objects to ms
+            var time = +get_time(d);
+            return s[0] <= time && time <= s[1];
+          });
+        //count selected elements in boundingbox
+        d3.selectAll(".circle.selected").call(countEvents);
+      });
+
       /*
        * Watch for event data; display as point vector layer
        */
       scope.$watch('kpi.events', function () {
 
-        var eventLayer = L.pointsLayer(scope.kpi.events, {
-          applyStyle: circle_style
-        });
-        mapCtrl.addLayer(eventLayer);
-
-        function get_time(d) {
-          return d3.time.format.iso.parse(d.properties.INTAKEDATU);
+        if (scope.kpi.events !== undefined) {
+          var eventLayer = L.pointsLayer(scope.kpi.events, {
+            applyStyle: circle_style
+          });
+          mapCtrl.addLayer(eventLayer);
         }
 
-        scope.$watch('timeline.temporalExtent.start', function () {
-          d3.selectAll(".circle")
-            .classed("selected", function (d) {
-              var s = [scope.timeline.temporalExtent.start,
-                       scope.timeline.temporalExtent.end];
-              // + is a d3 operator to convert time objects to ms
-              var time = +get_time(d);
-              return s[0] <= time && time <= s[1];
-            });
-          //count selected elements in boundingbox
-          d3.selectAll(".circle.selected").call(countEvents);
-        });
-
-        var countEvents = function (selection) {
-          var ctr = 0;
-          var num_citizens = 1;
-          var mapBounds = scope.map.getBounds();
-          // timeInterval in months
-          var timeInterval = ((scope.timeline.temporalExtent.end -
-                               scope.timeline.temporalExtent.start)
-                               / (1000 * 60 * 60 * 24 * 30));
-          console.log(timeInterval);
-          selection.each(function (d) {
-            var point = new L.LatLng(d.geometry.coordinates[1],
-                                     d.geometry.coordinates[0]);
-            if (mapBounds.contains(point)) {
-              ctr += 1;
-            }
-            scope.$apply(function () {
-              scope.box.content = ctr;
-              //NOTE: ugly hack
-              scope.box.content_agg = ctr / num_citizens / timeInterval;
-            });
-          });
-        };
-
         scope.box.type = "aggregate";
+        console.log(scope.box.type);
         scope.map.on("moveend", function () {
           // get population density
-          bounds = scope.map.getBounds();
-          geom_wkt = bounds;
-          console.log(geom_wkt);
-          var srs = L.CRS.EPSG3857.code;
-          scope.get_profile("pop_density", geom_wkt, srs);
+          //bounds = scope.map.getBounds();
+          //geom_wkt = bounds;
+          //console.log(geom_wkt);
+          //var srs = L.CRS.EPSG3857.code;
+          //scope.get_profile("pop_density", geom_wkt, srs);
           d3.selectAll(".circle.selected").call(countEvents);
         });
       });
