@@ -215,7 +215,6 @@ html, body, #map {
 .right {
     display: block;
     float: right;
-    padding: 0.5em;
 }
 
 /* whole path is needed to make this work */
@@ -274,4 +273,29 @@ h3 {
     margin-top: 50px;
 }
 
+.threedi ul
+{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.threedi button.btn-load-model 
+{
+    margin: 0.5em 0 0 0;
+    width: 100%;
+}
+
+.threedi-status
+{
+    width: 100%;
+    margin: 0.5em 0 0.5em 0;
+    }
+
+.threedi .full
+{
+    width: 100%;
+    }
+
 /* Forms and stuff */
+

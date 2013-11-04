@@ -8,17 +8,24 @@ var EDIT_MODE_DEFAULT = 'edit-bathy',
     EDIT_MODE_BATHY = 'edit-bathy',  // bathymetry
     EDIT_MODE_LAND_USE = 'edit-land-use';  // landgebruik, testing
 
-app.controller('Threedi', ['$scope', function($scope) {
-    // TODO: make the urls not hard-coded
-    var socket = io.connect(window.threedi_subgrid_url);  //"http://localhost:9000/subgrid"
+app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
+    $scope.threedi_api_url = window.threedi_api_url;
+    $scope.threedi_subgrid_url = window.threedi_subgrid_url;
     $scope.wms_server_url = window.threedi_wms_server_url; //'http://10.90.20.55:5000/3di/wms';
+    var socket = io.connect($scope.threedi_subgrid_url);  //"http://localhost:9000/subgrid"
 
     $scope.have_master = false;
     $scope.is_master = false;
     $scope.wait_for_server_response = false;  // you can disable buttons after pressing
+    $scope.is_loading = false;
 
     $scope.threedi_active = false;
     $scope.program_mode = null;
+
+    $scope.models = [];
+    $scope.show_models = false;
+    $scope.initial_extent = false;
+    $scope.loaded_model = null;
 
     $scope.connect = function() {
 	    $scope.state = null;
@@ -49,13 +56,22 @@ app.controller('Threedi', ['$scope', function($scope) {
                 //     $scope.state = state;
                 // });
 
+                // detect model change
+                if ((state.loaded_model !== 'None') && 
+                    ($scope.loaded_model !== state.loaded_model)) {
+                    console.log('New model detected');
+                    $scope.loaded_model = state.loaded_model;
+                    $scope.initial_extent = true;
+                    $scope.is_loading = false;
+                }
+
                 // the broadcast is received instantaneous, the watch is slower
                 $scope.state = state;
                 // (re)enable all affected buttons
                 $scope.wait_for_server_response = false;
             });
             $scope.$broadcast('state', '');  
-
+            $scope.initial_extent = false;
 	    });
 
 	    socket.on('scenarios', function(scenarios) {
@@ -164,6 +180,44 @@ app.controller('Threedi', ['$scope', function($scope) {
             function() {
                 console.log('emit edit');
             });
+    }
+
+    $scope.showHideModels = function() {
+        // toggle display all models in box.
+        console.log('Toggle models' + $scope.show_models);
+        if (!$scope.show_models) {
+            // load available models from API and display
+            $http({method: 'GET', url: $scope.threedi_api_url}).
+              success(function(data, status, headers, config) {
+                // this callback will be called asynchronously
+                // when the response is available
+                $scope.models = data.models;
+                $scope.show_models = true;
+              }).
+              error(function(data, status, headers, config) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+                console.log('boo');
+                console.log(data);
+              });
+        } else {
+            $scope.show_models = false;
+        }
+        
+    }
+
+    $scope.loadModel = function(model_slug_index) {
+        console.log('start load model');
+        socket.emit('change_model', 
+            $scope.models[model_slug_index].slug, 
+            function() {
+                $scope.wait_for_server_response = true;
+                $scope.load_text = 'Loading ' + 
+                    $scope.models[model_slug_index].display_name + ' ...';
+                $scope.is_loading = true;
+                $scope.show_models = false;
+
+        });
     }
 
 }]);
@@ -553,7 +607,7 @@ app.directive('threediMap', function(AnimatedLayer) {
 
             scope.$watch('follow_3di', function() {
                 console.log('Watch follow_3di');
-                if (scope.follow_3di) {
+                if (scope.follow_3di && !scope.is_master) {
                     setExtent();
                 }
             });
@@ -575,7 +629,9 @@ app.directive('threediMap', function(AnimatedLayer) {
                 console.log('state change');
                 if (scope.threedi_active) {
                     update_scenario_events();
-                    if (scope.follow_3di && !scope.is_master) {
+                    if ((scope.follow_3di && !scope.is_master) || 
+                        (scope.initial_extent && scope.is_master)) {
+
                         setExtent();
                     }
                     setAnimation();
