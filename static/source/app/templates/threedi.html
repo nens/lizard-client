@@ -9,7 +9,7 @@
             <i ng-class="{'icon-star-empty': !is_master, 'icon-star': is_master}"> </i>
         </button>
 
-        <div class="non-btn-group right">
+        <div class="non-btn-group pull-right">
             <i class="icon-circle non-btn"
              ng-class="{
              'state-wait': state.state == 'wait',
@@ -23,7 +23,7 @@
             title="<% label %>"></i>
         </div>
 
-        <div class="non-btn-group right">
+        <div class="non-btn-group pull-right">
             <span class="non-btn" title="Time (HH:MM)">
               <% time %>
             </span>
@@ -49,7 +49,7 @@
                 <i class="icon-pencil"></i></button>
         </div>
 
-        <div class="btn-group control-edit-buttons right" 
+        <div class="btn-group control-edit-buttons pull-right" 
            ng-class="{hide: !is_master || is_loading}">
             <button
                class="btn btn-default"  

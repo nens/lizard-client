@@ -273,6 +273,10 @@ h3 {
     margin-top: 50px;
 }
 
+.threedi {
+    white-space: normal !important; 
+}
+
 .threedi ul
 {
     list-style-type: none;
