@@ -20,11 +20,11 @@ app
                       maxZoom: 20
                       // resolution: 2
                     });
-                    leafletLayer.on('click', function (e) {
-                      if (e.data){
-                        $scope.getTimeseries(e.data);
-                      }
-                    });
+                    // leafletLayer.on('click', function (e) {
+                    //   if (e.data){
+                    //     $scope.getTimeseries(e.data);
+                    //   }
+                    // });
                     layer.grid_layers.push(leafletLayer);
                   }
                 }
@@ -301,9 +301,26 @@ app.directive('zoomToLayer', function () {
       scope.$watch('zoomToLayer', function () {
         if (scope.zoomToLayer !== undefined) {
           mapCtrl.zoomToTheMagic(scope.layerToZoomTo);
-          console.debug("zoomzoomzoom");
         }
       });
     }
   };
 });
+
+app.directive('geoJsonLayer', function () {
+  return {
+    require: 'map',
+    link: function (scope, element, attrs, mapCtrl) {
+      var geojsonLayer = new L.TileLayer.GeoJSON(
+        '/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=pipe',
+          {
+          unique: function (feature) {
+              return feature.properties.id;
+              }
+          }
+        });
+      scope.map.addLayer(geojsonLayer) ;
+    }
+  }
+});
+

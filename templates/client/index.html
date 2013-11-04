@@ -1,8 +1,105 @@
-{% extends "client/base.html" %}{% load i18n %}
+{% load i18n %}
 
-{% block box_awesome %}
+    <header class="navbar navbar-inverse navbar-fixed-top">
+      <!-- <div id="logo-row" class=""> -->
+        <div id="logo">
+          <a href="/"><img src="{{ STATIC_URL }}source/assets/images/logo_text.png" alt="Lizard"></a>
+        </div>
+        <!-- <div id="site-actions">                  id="rightbar-actions"-->
+          <ul class="nav navbar-nav navbar-right" >
+            <li class="site">
+              <a href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.profile.enabled}"></i></a>
+            </li>
+            <li>
+              <a ng-click="toggleTimeline()"><i class="icon-collapse icon-large"></i></a>
+            </li>
+            <li>
+              <a href="#" ng-click="toggle_tool('kpi')" ng-class="{'icon-large': tools.kpi.enabled}" title="Key Performance Indicator"><i class="icon-dashboard"></i></a>
+            </li>
+            {% if user.is_authenticated %}
+              <li>
+                <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="pull-right" id="username"> {{ user.first_name }}</div><i id="user-icon" class="icon-user pull-right"></i></a>
+              </li>
+              <li>
+                <a class="user" id="logout" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"> 
+                  <i class="icon-off"></i></a>
+              </li>
+            {% else %}
+              <li>
+                <a href="{% url "login" %}?next=/" title="{% trans 'Login' %}">
+                  <i class="icon-user pull-right"></i></a>
+              </li>
+              {% endif %}
+            </ul>
+            {% block site_actions %}{% endblock site_actions %}
+          </div>
+            <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': mapState.enabled}">
+            <div class="layer-switcher slide-left">
+              <ul class="nav">
+                <li class="nav-header">
+                  {% trans "Achtergrond" %}
+                  <ul class="list-group">
+                    <li ng-repeat="layer in mapState.baselayers | orderBy:'order':true">
+                      <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
+                      <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
+                    </li>
+                  </ul>
+                </li>
+                <li class="nav-header">
+                  {% trans "Themakaart" %}
+                  <ul class="list-group">
+                    <li ng-repeat="layergroup in mapState.layergroups | orderBy:'order':true" >
+                      <input id="<%layergroup.id%>-layergroup" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="toggleLayerGroup(layergroup)">
+                      <label class="ng-class: {active: layergroup.active};" for="<% layergroup.id %>-layergroup" ng-bind="layergroup.name"></label>
+                    </li>
+                  </ul>
+                </li>
+                <li class="nav-header">
+                  {% trans "Kaartlagen" %}
+                  <ul class="list-group">
+                    <li ng-repeat="layer in mapState.layers | orderBy:'order':true">
+                      <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
+                      <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
+                      <i class="icon-screenshot pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="zoomToTheMagic(layer)"></i>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            <div id="ribbon">
+              <div class="arrow-up" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}">
+                </div>
+              <div class="arrow-down" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}"><i class="icon-globe"></i>
+                </div>
+            </div>
+          </div>
+        </div>
+      <!-- </div> -->
+    </header>
 
-{% endblock %}
+    {% block content %}
 
-{% block site_actions %}
-{% endblock site_actions %}
+      <div >
+        <map layer-switch
+             kpilayer="onAreaClick()"
+             vectorlayer
+             move-end
+             pan-zoom="panZoom"
+             layers="mapState.layers"
+             rasterprofile="disabled"
+             locate="locate"
+             zoom-to-layer="zoomToLayer"
+             geo-json-layer>
+        </map>
+      </div>
+    <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
+
+    {% block box_awesome %}{% endblock %}
+    <div class="container">
+      <omnibox id="omnibox">
+  
+      </omnibox>
+    </div>
+        {% block toolbar_controllers %}
+        {% endblock %}
+    {% endblock content %}
