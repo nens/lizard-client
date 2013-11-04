@@ -175,7 +175,7 @@ app.directive('vectorlayer', function () {
         }
 
         
-        scope.$watch('timeline.temporalExtent.start', function () {
+        scope.$watch('timeline.temporalExtent.changedZoom', function () {
           d3.selectAll(".circle")
             .classed("selected", function (d) {
               var format = d3.time.format("%Y-%m-%d");

@@ -292,14 +292,8 @@ app.directive('timeline', [ function ($timeout) {
     this.createBrush = function (scope, svg, x, height, xKey) {
       var brush = null;    
 
-      var brushmove = function (pietje) {
+      var brushmove = function () {
         var s = brush.extent();
-          scope.$apply(function () {
-            scope.timeline.temporalExtent.start = s[0].getTime();
-            scope.timeline.temporalExtent.end = s[1].getTime();
-            scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
-          });
-
             d3.selectAll(".bar")
               .classed("selected", function(d) { 
                 var value = Date.parse(d.properties[xKey]);
@@ -313,6 +307,13 @@ app.directive('timeline', [ function ($timeout) {
               scope.timeline.temporalExtent.end = x.scale.domain()[1].getTime();
               scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
             });
+          } else {
+            scope.$apply(function () {
+              s_sorted = [s[0].getTime(), s[1].getTime()].sort();
+              scope.timeline.temporalExtent.start = s_sorted[0];
+              scope.timeline.temporalExtent.end = s_sorted[1];
+              scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
+            });
           }
 
         };
@@ -320,12 +321,6 @@ app.directive('timeline', [ function ($timeout) {
         svg.classed("selecting", true);
       };
       var brushend = function () {
-          //       var s = brush.extent();
-          // scope.$apply(function () {
-          //   scope.timeline.temporalExtent.start = s[0].getTime();
-          //   scope.timeline.temporalExtent.end = s[1].getTime();
-          //   scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
-          // });
 
        svg.classed("selecting", !d3.event.target.empty());
       };    
