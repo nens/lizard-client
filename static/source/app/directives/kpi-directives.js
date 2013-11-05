@@ -115,16 +115,15 @@ app.directive('vectorlayer', function () {
        * add click event handling
        *
        */
+      var scale;
 
-      var extent, scale;
       function circle_style(circles) {
-        if (!(extent && scale)) {
-          //extent = d3.extent(circles.data(), function (d) {
-             //return d.properties.depth;
-          //});
-          extent = [0, 5],
-          scale = d3.scale.category20()
-            .domain(["GRONDWATER", "PUT STUK"])
+        if (!scale) {
+          scale = d3.scale.ordinal()
+            .domain(function (d) {
+              return d3.set(d.properties.CATEGORIE).values();
+            })
+            .range(colorbrewer.Set2[6]);
         }
 
         circles.attr('opacity', 0.6)
@@ -141,7 +140,6 @@ app.directive('vectorlayer', function () {
           L.DomEvent.stopPropagation(d3.event);
 
           var data = {
-            //id: d.id,
             klacht: d.properties.KLACHT,
             category: d.properties.CATEGORIE,
             intakestatus: d.properties.INTAKESTAT
@@ -161,50 +159,81 @@ app.directive('vectorlayer', function () {
       }
 
       /*
+       * Parse time properties
+       *
+       * returns d3 time formatted object
+       */
+      function get_time(d) {
+        return d3.time.format.iso.parse(d.properties.INTAKEDATU);
+      }
+
+      /*
+       * Count events in viewport; update scope with count
+       */
+      var countEvents = function (selection) {
+        scope.box.type = "aggregate";
+        var ctr = 0;
+        var mapBounds = scope.map.getBounds();
+        geom_wkt = "POLYGON(("
+                  + mapBounds.getWest() + " " + mapBounds.getSouth() + ", "
+                  + mapBounds.getEast() + " " + mapBounds.getSouth() + ", "
+                  + mapBounds.getEast() + " " + mapBounds.getNorth() + ", "
+                  + mapBounds.getWest() + " " + mapBounds.getNorth() + ", "
+                  + mapBounds.getWest() + " " + mapBounds.getSouth()
+                  + "))";
+        var srs = "EPSG:4326" // L.CRS.EPSG3857.code;
+        scope.get_profile("pop_density", geom_wkt, srs);
+        var num_citizens = scope.box.pop_density / 100000000;
+        console.log(num_citizens);
+        // timeInterval in months
+        var timeInterval = ((scope.timeline.temporalExtent.end -
+                             scope.timeline.temporalExtent.start)
+                             / (1000 * 60 * 60 * 24 * 30)
+                             );
+        selection.each(function (d) {
+          var point = new L.LatLng(d.geometry.coordinates[1],
+                                   d.geometry.coordinates[0]);
+          if (mapBounds.contains(point)) {
+            ctr += 1;
+          }
+        });
+
+
+        scope.box.content = ctr;
+        //NOTE: ugly hack
+        scope.box.content_agg = ctr / num_citizens / timeInterval;
+      };
+
+      /*
        * Watch for event data; display as point vector layer
        */
       scope.$watch('kpi.events', function () {
-
-        var eventLayer = L.pointsLayer(scope.kpi.events, {
-          applyStyle: circle_style
-        });
-        mapCtrl.addLayer(eventLayer);
-
-        function get_time(d) {
-          return d3.time.format.iso.parse(d.properties.INTAKEDATU);
+        //NOTE: find a way to prevent this if
+        if (scope.kpi.events !== undefined) {
+          var eventLayer = L.pointsLayer(scope.kpi.events, {
+            applyStyle: circle_style
+          });
+          mapCtrl.addLayer(eventLayer);
         }
+      });
+      
+      // watch for change in temporalExtent, change visibility of
+      // complaints accordingly
+      scope.$watch('timeline.temporalExtent.changedZoom', function () {
+        d3.selectAll(".circle")
+          .classed("selected", function (d) {
+            var s = [scope.timeline.temporalExtent.start,
+                     scope.timeline.temporalExtent.end];
+            // + is a d3 operator to convert time objects to ms
+            var time = +get_time(d);
+            return s[0] <= time && time <= s[1];
+          });
+        d3.selectAll(".circle.selected").call(countEvents);
+      });
 
-        
-        scope.$watch('timeline.temporalExtent.changedZoom', function () {
-          d3.selectAll(".circle")
-            .classed("selected", function (d) {
-              var format = d3.time.format("%Y-%m-%d");
-              var s = [scope.timeline.temporalExtent.start,
-                       scope.timeline.temporalExtent.end];
-              var time = get_time(d).getTime();
-              // count objects
-              return s[0] <= time && time <= s[1];
-            });
-        });
-
-        var countEvents = function (object) {
-          console.log(mapBounds);
-          console.log(object.geometry.centroid);
-        }
-
-        scope.map.on('moveend', function() {
-          var ctr = 0;
-          var mapBounds = scope.map.getBounds();
-          d3.selectAll(".circle.selected")
-            .each(function (d) {
-                var point = new L.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
-                if (mapBounds.contains(point)) 
-                  ctr += 1;    
-                console.log(ctr);
-              }
-            );
-        });
-
+      // Count events on map move
+      scope.$watch('mapState.moved', function () {
+        d3.selectAll(".circle.selected").call(countEvents);
       });
     }
   };

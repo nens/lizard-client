@@ -139,9 +139,9 @@ app.directive('timeline', [ function ($timeout) {
               });
         var min = domain[0].getTime();
         var max = domain[1].getTime();
-      } else if (options.key === 'CATEGORIE') {
-        var min = "GRONDWATER";
-        var max = "PUT STUK";
+      //} else if (options.key === 'CATEGORIE') {
+        //var min = "GRONDWATER";
+        //var max = "PUT STUK";
       } else {
         var max = d3.max(data, function(d){
                 return Number(d[options.key]);
@@ -190,13 +190,18 @@ app.directive('timeline', [ function ($timeout) {
                 return Date.parse(d.date)
               }))
             .range([options.range[0], options.range[1]]);
-      } else if (options.scale === 'color') {
+      } else if (options.scale === "color") {
         var scale = d3.scale.category20()
-          .domain(["GRONDWATER", "PUT STUK"]);
-      } else if (options.scale === 'ordinal') {
+          .domain(function (d) {
+            return d3.set(d.properties.CATEGORIE).values();
+          });
+      } else if (options.scale === "ordinal") {
         var scale = d3.scale.ordinal()
-          .range([options.range[0], options.range[1]])
-          .domain(["GRONDWATER", "PUT STUK"]);
+          //.range([options.range[0], options.range[1]])
+          .range(colorbrewer.Set2[6])
+          .domain(function (d) {
+            return d3.set(d.properties.CATEGORIE).values();
+          });
       } else if (options.scale === 'isodate'){
         var scale = d3.time.scale()
             .domain([min, max])
@@ -360,12 +365,14 @@ app.directive('timeline', [ function ($timeout) {
       } else {
         scope.timeline.height = 70;
       }
-      if (scope.timeline.data === scope.kpi.events.features){
-        chart = drawChart("INTAKEDATU", "CATEGORIE", {
-          scale: "ordinal",
-          chart: "circles",
-          dateparser: 'isodate'
-        });
+      if (scope.kpi.events){
+        if (scope.timeline.data === scope.kpi.events.features){
+          chart = drawChart("INTAKEDATU", "CATEGORIE", {
+            scale: "ordinal",
+            chart: "circles",
+            dateparser: 'isodate'
+          });
+        }
       } else {
         chart = drawChart('date', 'value', {});
       }
@@ -402,7 +409,7 @@ app.directive('timeline', [ function ($timeout) {
       });
       y.colorscale = timelineCtrl.scale(y.min, y.max, {
         range: [graph.height, 0],
-        scale: (options.scale == 'ordinal') ? 'color' : null
+        scale: (options.scale == 'ordinal') ? 'ordinal' : null
       });
       y.scale = timelineCtrl.scale(y.min, y.max, {
         range: [graph.height, 0],
