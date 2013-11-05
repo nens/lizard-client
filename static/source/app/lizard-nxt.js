@@ -329,6 +329,7 @@ app.controller("MasterCtrl",
   };
 
   // get complaint data from geojson
+  // NOTE: this should come from events in HBASE
   var events = '/static/data/klachten_purmerend_min.geojson';
   $http.get(events)
     .success(function (data) {
@@ -340,9 +341,9 @@ app.controller("MasterCtrl",
       }
     });
 
-  // define function to get profile data from server
   /*
    * Get profile from server
+   * NOTE: refactor to get_data()
    */
   $scope.get_profile = function (raster_names, linestring_wkt, srs) {
     // build url

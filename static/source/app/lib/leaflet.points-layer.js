@@ -35,7 +35,10 @@ L.PointsLayer = L.Class.extend({
     },
 
     onRemove: function (map) {
-        this._container.parentNode.removeChild(this._container);
+        // hack to fix bug in commented line below 
+        var overlayPane = this._map.getPanes().overlayPane;
+        d3.select(overlayPane).select("svg").remove();
+        //this._container[0].parentNode.removeChild(this._container);
 
         map.off({
             'moveend': this._update
@@ -52,10 +55,12 @@ L.PointsLayer = L.Class.extend({
 
     _initContainer: function () {
         var overlayPane = this._map.getPanes().overlayPane;
+        console.log(this._container);
         if (!this._container || overlayPane.empty) {
             this._container = d3.select(overlayPane)
                 .append('svg').attr('class', 'leaflet-layer leaflet-zoom-hide');
 
+            console.log(this._data.features);
             this._layer = this._container.append("g");
 
             var circles = this._layer.selectAll(".circle")
