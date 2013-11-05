@@ -1,0 +1,83 @@
+<div class="card threedi" threedi-box>
+    <div class="threedi-status">
+
+        <% message %>
+
+        <button class="btn btn-default" 
+           ng-click="requestMaster()" 
+           title="<% request_master_title %>">
+            <i ng-class="{'icon-star-empty': !is_master, 'icon-star': is_master}"> </i>
+        </button>
+
+        <div class="non-btn-group pull-right">
+            <i class="icon-circle non-btn"
+             ng-class="{
+             'state-wait': state.state == 'wait',
+             'state-sim': state.state == 'sim',
+             'state-standby': state.state == 'standby',
+             'state-prepare-wms': state.state == 'prepare-wms',
+             'state-load-model': state.state == 'load-model',
+             'state-loaded-model': state.state == 'loaded-model',
+             'state-stopping': state.state == 'stopping'
+            }"
+            title="<% label %>"></i>
+        </div>
+
+        <div class="non-btn-group pull-right">
+            <span class="non-btn" title="Time (HH:MM)">
+              <% time %>
+            </span>
+        </div>
+    </div>
+
+    <div class="full">
+        <div class="btn-group control-edit-buttons" 
+           ng-class="{hide: !is_master || is_loading}">
+            <button class="btn btn-rain btn-default" ng-class="{disabled: !is_master, 'btn-primary': program_mode == 'rain'}" ng-click="!is_master || setMode('rain')">
+                <i class="icon-threedi-rain"></i></button>
+            <button class="btn btn-discharge btn-default" ng-class="{disabled: !is_master,
+            'btn-primary': program_mode == 'discharge'}"
+            ng-click="!is_master || setMode('discharge')">
+                <i class="icon-threedi-manhole"></i></button>
+            <button class="btn btn-manhole btn-default" ng-class="{disabled: !is_master,
+            'btn-primary': program_mode == 'manhole'}"
+            ng-click="!is_master || setMode('manhole')">
+                <i class="icon-threedi-pump"></i></button>
+            <button class="btn btn-edit-bathy btn-default" ng-class="{disabled: !is_master,
+            'btn-primary': program_mode == 'edit'}"
+            ng-click="!is_master || setMode('edit')">
+                <i class="icon-pencil"></i></button>
+        </div>
+
+        <div class="btn-group control-edit-buttons pull-right" 
+           ng-class="{hide: !is_master || is_loading}">
+            <button
+               class="btn btn-default"  
+               ng-class="{disabled:!is_master || wait_for_server_response}" 
+               ng-click="showHideModels()" 
+               title="<% state.loaded_model %>">
+                <i class="icon-map-marker" ></i>
+            </button>
+            <button class="btn btn-default btn-replay" ng-class="{disabled:!is_master || wait_for_server_response}"
+            ng-click="!is_master || reset()">
+              <i class="icon-repeat"></i>
+            </button>
+            <button id="btn-play" class="btn btn-default" ng-class="{disabled:!is_master || wait_for_server_response}" ng-click="!is_master || play_stop()">
+              <i ng-class="{'green': state.has_future_events, 'icon-play': state.running_sim == '0', 'icon-pause': state.running_sim == '1'}"></i>
+            </button>
+        </div>
+    </div>
+
+    <button class="btn btn-default full" ng-class="{hide: !is_loading}">&nbsp;&nbsp;<i class="icon-spinner icon-spin icon-large" ></i> <% load_text %></button>
+
+    <div ng-class="{hide: !show_models}">
+        <ul>
+            <li ng-repeat="model in models">
+                <button class="btn btn-default btn-load-model" ng-click='$parent.loadModel($index)'>
+                <% model.display_name %>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+</div>

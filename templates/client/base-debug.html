@@ -16,6 +16,9 @@
     <link href="{{ STATIC_URL }}vendor/graph/graph.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL }}source/assets/css/nxt_base.css" rel="stylesheet" />
     <!--<link href="{{ STATIC_URL }}vendor/ngprogress/ngProgress.css" rel="stylesheet" />-->
+    <link rel="stylesheet" href="{{ STATIC_URL }}vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css">
+    <link href="{{ STATIC_URL }}threedi/css/threedi.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}vendor/ngprogress/ngProgress.css" rel="stylesheet" />
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
     {% endblock css %}
 
@@ -25,6 +28,10 @@
       var baseLayers = {{ strap_base_layers }};
       var layers = {{ strap_layers }};
       var layerGroups = {{ strap_layer_groups }};
+
+      var threedi_api_url = "{{ threedi_instance.api_url }}";
+      var threedi_subgrid_url = "{{ threedi_instance.socket_url }}"; //"http://localhost:9000/subgrid";
+      var threedi_wms_server_url = "{{ threedi_instance.wms_url }}"; //"http://10.90.20.55:5000/3di/wms";
 
       function logOut() {
         var r=confirm("Weet u zeker dat u wilt uitloggen?");
@@ -38,7 +45,7 @@
     </script>
   </head>
 
-  <body>
+  <body ng-controller="Threedi">
     <header class="navbar navbar-inverse navbar-fixed-top">
       <!-- <div id="logo-row" class=""> -->
         <div id="logo">
@@ -46,6 +53,9 @@
         </div>
         <!-- <div id="site-actions">                  id="rightbar-actions"-->
           <ul class="nav navbar-nav navbar-right" >
+            <li>
+              <a href="#" class="hide" ng-click="threediTool()" ng-class="{'hide': !threedi_active, 'icon-large': tools.threedi.enabled}" title="3Di"><i class="icon-asterisk"></i></a>
+            </li>
             <li class="site">
               <a href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.profile.enabled}"></i></a>
             </li>
@@ -99,7 +109,17 @@
                     <li ng-repeat="layer in mapState.layers | orderBy:'order':true">
                       <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
                       <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
+                      <div ng-switch="layer.follow_3di" style="float: right;">
+                      <div ng-switch-when="undefined">
                       <i class="icon-screenshot pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="zoomToTheMagic(layer)"></i>
+                      </div>
+                      <div ng-switch-when="true">
+                      <i class="icon-eye-close pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="setFollow(layer, false)"></i>
+                      </div>
+                      <div ng-switch-when="false">
+                      <i class="icon-eye-open pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="setFollow(layer, true)"></i>
+                      </div>
+                      </div>
                     </li>
                   </ul>
                 </li>
@@ -118,17 +138,15 @@
 
     {% block content %}
 
-      <div >
-        <map layer-switch
-             kpilayer="onAreaClick()"
-             vectorlayer
-             move-end
-             pan-zoom="panZoom"
+      <div>
+        <map layer-switch kpilayer="onAreaClick()"
+             move-end pan-zoom="panZoom"
              layers="mapState.layers"
              rasterprofile="disabled"
              locate="locate"
-             zoom-to-layer="zoomToLayer">
-        </map>
+             zoom-to-layer="zoomToLayer"
+             threedi-map>
+         </map>
       </div>
     <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
 
@@ -138,8 +156,87 @@
   
       </omnibox>
     </div>
-        {% block toolbar_controllers %}
-        {% endblock %}
+
+    {% block toolbar_controllers %}
+    <!--div class="container-fluid">
+<div class="navbar navbar-fixed-bottom" ng-controller="ClientState">
+  <div class="navbar-inner">
+    <div class="control">
+      <div class="btn-group bar-buttons">
+        <a class="btn btn-info-line" ng-class="{'btn-primary': clientstate.program_mode == 'infoline'}" ng-click="setMode('infoline')">
+          <i class="icon-threedi-line-info"></i></a>
+        <a class="btn btn-info-point" ng-class="{'btn-primary': clientstate.program_mode == 'infopoint'}" ng-click="setMode('infopoint')">
+          <i class="icon-threedi-info"></i></a>
+      </div>
+
+      <div class="btn-group control-edit-buttons hide" 
+           ng-controller="RemoteControl" 
+           ng-class="{hide: !isMaster}">
+
+        <a href="#" class="btn btn-replay" ng-class="{disabled:!isMaster || wait_for_server_response}"
+        ng-click="!isMaster || reset()">
+          <i class="icon-repeat"></i>
+        </a>
+        <a id="btn-play" class="btn" ng-class="{active: isPlaying, disabled:!isMaster || wait_for_server_response}" ng-click="!isMaster || play()">
+          <i class="icon-play" ng-class="{green: has_future_events}"></i>
+        </a>
+        <a id="btn-stop" class="btn" ng-class="{active: !isPlaying, disabled: !isMaster || wait_for_server_response}" ng-click="!isMaster || stop()">
+          <i class="icon-stop"></i>
+        </a>
+      </div>
+
+      <div class="btn-group control-edit-buttons hide" 
+           ng-controller="Simulator" 
+           ng-class="{hide: !isMaster}">
+
+        <a class="btn btn-rain" ng-class="{disabled: !isMaster, 'btn-primary': clientstate.program_mode == 'rain'}" ng-click="!isMaster || setMode('rain')">
+          <i class="icon-threedi-rain"></i></a>
+        <a class="btn btn-discharge" ng-class="{disabled: !isMaster,
+        'btn-primary': clientstate.program_mode == 'discharge'}"
+        ng-click="!isMaster || setMode('discharge')">
+          <i class="icon-threedi-manhole"></i></a>
+        <a class="btn btn-manhole" ng-class="{disabled: !isMaster,
+        'btn-primary': clientstate.program_mode == 'manhole'}"
+        ng-click="!isMaster || setMode('manhole')">
+          <i class="icon-threedi-pump"></i></a>
+        <a class="btn btn-edit-bathy" ng-class="{disabled: !isMaster,
+        'btn-primary': clientstate.program_mode == 'edit'}"
+        ng-click="!isMaster || setMode('edit')">
+          <i class="icon-circle-arrow-up"></i></a>
+      </div>
+
+      <div class="btn-group pull-right" ng-controller="Director">
+        <a class="btn" ng-click="requestMaster()" ng-class="{disabled: have_master && !isMaster}" title="{[{ master_name }]}">
+          <i ng-class="{'icon-star-empty': !isMaster, 'icon-star': isMaster}"> </i>
+        </a>
+      </div>
+
+      <div class="timeline non-btn-group right" ng-controller="Timeline">
+        <span class="timeline non-btn" title="Time (HH:MM)">
+          {[{ slider.human_at }]}
+        </span>
+      </div>
+
+      <div ng-controller="Status" class="non-btn-group right">
+          <i class="icon-circle non-btn"
+             ng-class="{
+             'state-wait': serverState == 'wait',
+             'state-sim': serverState == 'sim',
+             'state-standby': serverState == 'standby',
+             'state-prepare-wms': serverState == 'prepare-wms',
+             'state-load-model': serverState == 'load-model',
+             'state-loaded-model': serverState == 'loaded-model',
+             'state-stopping': serverState == 'stopping'
+            }"
+          title="{[{ label }]}"></i>
+      </div>
+
+   </div>
+  </div>
+</div>
+    </div-->
+        {% endblock toolbar_controllers %}
+
     {% endblock content %}
 
     {% block javascript_body %}
@@ -161,14 +258,23 @@
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/map-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/kpi-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/profile-directives.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/timeline-directives.js?{{ random_string }}"></script>
+    <!--script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/timeline-directives.js?{{ random_string }}"></script-->
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/kpi-controllers.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/filters/truncate.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/templates/templates.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/omnibox/omnibox.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/graph/graph.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.min.js?{{ random_string }}"></script>
-    <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/socket.io-client/dist/socket.io.min.js"></script>
+    <script src="{{ STATIC_URL }}vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.bouncemarker/bouncemarker.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/leaflet-plugins/TileLayer.WMS.incrementalSingleTile.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/animations.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-nxt.js?{{ random_string }}"></script>
+    <!--script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-ng.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-leaflet.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/animations.js?{{ random_string }}"></script-->
+    <!--script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script-->
     {% endblock %}
 
   </body>
