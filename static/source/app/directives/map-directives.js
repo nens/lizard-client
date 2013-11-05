@@ -313,13 +313,21 @@ app.directive('geoJsonLayer', function () {
     link: function (scope, element, attrs, mapCtrl) {
       var geojsonLayer = new L.TileLayer.GeoJSON(
         '/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=pipe',
-          {
-          unique: function (feature) {
-              return feature.properties.id;
-              }
-          }
+        {
+        class: 'pipes'
         });
-      scope.map.addLayer(geojsonLayer) ;
+      scope.map.addLayer(geojsonLayer);
+      var pipesd3 = d3.selectAll('.pipes');
+      pipesd3.on('click', function(){
+        console.log(this);
+        scope.box.type = 'pumpstation';
+        d3.select(this)
+       .transition()
+       .style("stroke", "deeppink")
+       .duration(1000)
+       .transition()
+       .style("stroke", "gainsboro")
+      })
     }
   }
 });
