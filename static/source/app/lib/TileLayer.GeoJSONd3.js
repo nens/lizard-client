@@ -23,10 +23,16 @@ L.TileLayer.GeoJSONd3 =  L.TileLayer.extend({
       tile.nodes = d3.select();
       tile.xhr = d3.json(this.getTileUrl(tilePoint), function(d) {
         tile.xhr = null;
-        tile.nodes = self.g.append("path")
-          .datum(d)
-          .attr("d", self._path)
-          .attr("class", self.options.class);
+        if (options.type === 'circle') {
+          tile.nodes = self.g.append("circle")
+            .attr("d", self._path)
+            .attr("class", self.options.class);  
+        } else {
+          tile.nodes = self.g.append("path")
+            .datum(d)
+            .attr("d", self._path)
+            .attr("class", self.options.class);  
+        }
       });
     }
   }
