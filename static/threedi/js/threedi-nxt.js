@@ -12,7 +12,10 @@ app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
     $scope.threedi_api_url = window.threedi_api_url;
     $scope.threedi_subgrid_url = window.threedi_subgrid_url;
     $scope.wms_server_url = window.threedi_wms_server_url; //'http://10.90.20.55:5000/3di/wms';
-    var socket = io.connect($scope.threedi_subgrid_url);  //"http://localhost:9000/subgrid"
+    // Unfortunately, we still have to use xhr polling
+    var socket = io.connect(
+        $scope.threedi_subgrid_url,
+        {'transports': ['xhr-polling', 'websocket']});  //"http://localhost:9000/subgrid"
 
     $scope.have_master = false;
     $scope.is_master = false;
