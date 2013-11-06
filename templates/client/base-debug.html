@@ -16,6 +16,9 @@
     <link href="{{ STATIC_URL }}vendor/graph/graph.css" rel="stylesheet"/>
     <link href="{{ STATIC_URL }}source/assets/css/nxt_base.css" rel="stylesheet" />
     <!--<link href="{{ STATIC_URL }}vendor/ngprogress/ngProgress.css" rel="stylesheet" />-->
+    <link rel="stylesheet" href="{{ STATIC_URL }}vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css">
+    <link href="{{ STATIC_URL }}threedi/css/threedi.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}vendor/ngprogress/ngProgress.css" rel="stylesheet" />
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
     {% endblock css %}
 
@@ -25,6 +28,10 @@
       var baseLayers = {{ strap_base_layers }};
       var layers = {{ strap_layers }};
       var layerGroups = {{ strap_layer_groups }};
+
+      var threedi_api_url = "{{ threedi_instance.api_url }}";
+      var threedi_subgrid_url = "{{ threedi_instance.socket_url }}"; //"http://localhost:9000/subgrid";
+      var threedi_wms_server_url = "{{ threedi_instance.wms_url }}"; //"http://10.90.20.55:5000/3di/wms";
 
       function logOut() {
         var r=confirm("Weet u zeker dat u wilt uitloggen?");
@@ -38,8 +45,9 @@
     </script>
   </head>
 
-  <body>
+  <body ng-controller="Threedi">
 {% include "client/index.html" %}
+
 
 
     {% block javascript_body %}
@@ -62,14 +70,23 @@
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/map-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/kpi-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/profile-directives.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/timeline-directives.js?{{ random_string }}"></script>
+    <!--script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/timeline-directives.js?{{ random_string }}"></script-->
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/kpi-controllers.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/filters/truncate.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/templates/templates.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/omnibox/omnibox.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/graph/graph.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.min.js?{{ random_string }}"></script>
-    <!-- <script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script> -->
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/socket.io-client/dist/socket.io.min.js"></script>
+    <script src="{{ STATIC_URL }}vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.bouncemarker/bouncemarker.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/leaflet-plugins/TileLayer.WMS.incrementalSingleTile.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/animations.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-nxt.js?{{ random_string }}"></script>
+    <!--script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-ng.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-leaflet.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/animations.js?{{ random_string }}"></script-->
+    <!--script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script-->
     {% endblock %}
 
   </body>
