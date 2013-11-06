@@ -16,6 +16,9 @@ app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
     var socket = io.connect(
         $scope.threedi_subgrid_url,
         {'transports': ['xhr-polling', 'websocket']});  //"http://localhost:9000/subgrid"
+    // var socket = io.connect(
+    //     $scope.threedi_subgrid_url, {resource: 'test.live.3di.lizard.net/socket.io'});
+    //var socket = io.connect("http://socket.lizard.net:80/test.live.3di.lizard.net/subgrid");
 
     $scope.have_master = false;
     $scope.is_master = false;
