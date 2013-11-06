@@ -33,13 +33,14 @@ app.directive('kpilayer', function () {
         return style;
       };
 
-      scope.$watch('tools.kpi.enabled', function () {
-        if (scope.tools.kpi.enabled){
+      // NOTE: commented out to abuse button for vector layer
+      //scope.$watch('tools.kpi.enabled', function () {
+        //if (scope.tools.kpi.enabled){
           //scope.box.type = 'kpi';      
-        } else {
-          mapCtrl.removeLayer(areas);
-        }
-      });
+        //} else {
+          //mapCtrl.removeLayer(areas);
+        //}
+      //});
 
       scope.$watch('kpi.kpiData', function () {
         // remove previous layer if available
@@ -100,68 +101,65 @@ app.directive('kpilayer', function () {
 /*
  * Directive to add d3 vector layers as a leaflet
  *
+ * This is implemented as a layer to display point events. Events
+ * are aggregated based on viewport (spatial extent) and
+ * time-interval (temporal extent, from timeline)
+ *
  */
 app.directive('vectorlayer', function () {
   return {
-
-
     restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
+      var scale,
+          eventLayer;
 
       /*
-       * Style complaint circles on category
+       * Style event circles based on category and
        * add click event handling
-       *
        */
-      var scale;
-
       function circle_style(circles) {
         if (!scale) {
           scale = d3.scale.ordinal()
             .domain(function (d) {
+              //NOTE: kill hard coded dependency
               return d3.set(d.properties.CATEGORIE).values();
             })
             .range(colorbrewer.Set2[6]);
         }
 
-        circles.attr('opacity', 0.6)
+        circles.attr('opacity', 0.8)
           .attr('stroke', "#e")
           .attr('stroke-width', 1)
           .attr('fill', function (d) {
             return scale(d.properties.CATEGORIE);
           });
 
-        /*
-         * Click handler: catch clicks on d3 elements and show popup in leaflet
-         */
-        circles.on('click', function (d, i) {
+        // click handler
+        circles.on("mouseenter", function (d, i) {
           L.DomEvent.stopPropagation(d3.event);
 
+          // NOTE: kill hard coded dependencies
+          // do we actually want a popup?
           var data = {
             klacht: d.properties.KLACHT,
             category: d.properties.CATEGORIE,
             intakestatus: d.properties.INTAKESTAT
           };
 
-          var t = "<h3>" + data.category + "</h3>" +
-            "<ul>" +
-              "<li>Klacht:" + data.klacht + "</li>" +
-              "<li>Intakestatus:" + data.intakestatus + "</li>" +
-            "</ul>";
+          var t = "<h3>" + data.category + "</h3>";
 
           var popup = L.popup()
             .setLatLng([d.geometry.coordinates[1], d.geometry.coordinates[0]])
             .setContent(t)
-            .openOn(scope.map)
+            .openOn(scope.map);
+          window.setTimeout(function () {scope.map.closePopup();}, 1500);
         });
       }
 
       /*
-       * Parse time properties
-       *
-       * returns d3 time formatted object
+       * Reformat time to d3 time formatted object
        */
       function get_time(d) {
         return d3.time.format.iso.parse(d.properties.INTAKEDATU);
@@ -181,7 +179,10 @@ app.directive('vectorlayer', function () {
                   + mapBounds.getWest() + " " + mapBounds.getNorth() + ", "
                   + mapBounds.getWest() + " " + mapBounds.getSouth()
                   + "))";
+        //NOTE: hard coded SRS
         var srs = "EPSG:4326" // L.CRS.EPSG3857.code;
+        // NOTE: in progress, this should be get_data
+        // for rasters, also send needed statistic
         scope.get_profile("pop_density", geom_wkt, srs);
         var num_citizens = scope.box.pop_density / 100000000;
         console.log(num_citizens);
@@ -193,33 +194,22 @@ app.directive('vectorlayer', function () {
         selection.each(function (d) {
           var point = new L.LatLng(d.geometry.coordinates[1],
                                    d.geometry.coordinates[0]);
+          // NOTE: check if we can optimise this function
           if (mapBounds.contains(point)) {
             ctr += 1;
           }
         });
 
-
+        // pass newly calculated data to scope
         scope.box.content = ctr;
         //NOTE: ugly hack
         scope.box.content_agg = ctr / num_citizens / timeInterval;
       };
-
-      /*
-       * Watch for event data; display as point vector layer
-       */
-      scope.$watch('kpi.events', function () {
-        //NOTE: find a way to prevent this if
-        if (scope.kpi.events !== undefined) {
-          var eventLayer = L.pointsLayer(scope.kpi.events, {
-            applyStyle: circle_style
-          });
-          mapCtrl.addLayer(eventLayer);
-        }
-      });
       
-      // watch for change in temporalExtent, change visibility of
-      // complaints accordingly
-      scope.$watch('timeline.temporalExtent.changedZoom', function () {
+      /*
+       * Draw events based on current temporal extent
+       */
+      var drawTimeEvents = function () {
         d3.selectAll(".circle")
           .classed("selected", function (d) {
             var s = [scope.timeline.temporalExtent.start,
@@ -229,11 +219,37 @@ app.directive('vectorlayer', function () {
             return s[0] <= time && time <= s[1];
           });
         d3.selectAll(".circle.selected").call(countEvents);
+      }
+
+      // watch for change in temporalExtent, change visibility of
+      // complaints accordingly
+      scope.$watch('timeline.temporalExtent.changedZoom', function () {
+        // NOTE: there's three functions now that do a check on 
+        // scope.tools.kpi.enabled; fix
+        if (scope.tools.kpi.enabled) {
+          drawTimeEvents();
+        }
       });
 
       // Count events on map move
       scope.$watch('mapState.moved', function () {
-        d3.selectAll(".circle.selected").call(countEvents);
+        if (scope.tools.kpi.enabled) {
+          d3.selectAll(".circle.selected").call(countEvents);
+        }
+      });
+      
+      // Watch button click, toggle event layer
+      scope.$watch('tools.kpi.enabled', function () {
+        if (scope.tools.kpi.enabled) {
+          eventLayer = L.pointsLayer(scope.kpi.events, {
+            applyStyle: circle_style
+          });
+          mapCtrl.addLayer(eventLayer);
+          drawTimeEvents();
+        } else {
+          mapCtrl.removeLayer(eventLayer);
+          scope.box.type = undefined;
+        }
       });
     }
   };
