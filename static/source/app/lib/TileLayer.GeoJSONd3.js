@@ -1,9 +1,22 @@
-// code from https://gist.github.com/ZJONSSON/5529395
+/* 
+ * Leaflet Tilelayer for d3 vectors
+ * from https://gist.github.com/ZJONSSON/5529395
+ * plus code copied from http://bl.ocks.org/tnightingale/4718717
+ * a little help from @jsmits and @fritzvd
+ * 
+ */
 // this GeoJSOND3 generates one linestring per tile
 L.TileLayer.GeoJSONd3 =  L.TileLayer.extend({
   onAdd : function(map) {
-    L.TileLayer.prototype.onAdd.call(this,map);
-    this.g = d3.select(map._container).select("svg").append("g");
+    // L.TileLayer.prototype.onAdd.call(this,map);
+     var overlayPane = this._map.getPanes().overlayPane;
+    // if (d3.select("svg.geojsontiles")[0].length == 0){
+    //   d3.select(map._container).select("svg.geojsontiles").select("g").remove();    
+    //   this.g = d3.select(map._container).select("svg.geojsontiles").append("g");    
+    // } else {
+
+      this.g = d3.select(overlayPane).append("svg").classed("geojsontiles", true).append("g");    
+    // }
     this._path = d3.geo.path().projection(function(d) {
       var point = map.latLngToLayerPoint(new L.LatLng(d[1],d[0]));
       return [point.x,point.y];
@@ -23,20 +36,29 @@ L.TileLayer.GeoJSONd3 =  L.TileLayer.extend({
       tile.nodes = d3.select();
       tile.xhr = d3.json(this.getTileUrl(tilePoint), function(d) {
         tile.xhr = null;
-        if (options.type === 'circle') {
-          tile.nodes = self.g.append("circle")
-            .attr("d", self._path)
-            .attr("class", self.options.class);  
-        } else {
+        // if (self.options.type === 'circle') {
+        //   tile.nodes = self.g.append("path")
+        //     .datum(d)
+        //     .attr("d", self._path)
+        //     .style("stroke", "#222")
+        //     .style("stroke-width", "6px")
+        //     .attr("class", "circle");  
+        // } else {
           tile.nodes = self.g.append("path")
             .datum(d)
             .attr("d", self._path)
-            .attr("class", self.options.class);  
-        }
+            .style("stroke", "#222")
+            .style("stroke-width", "6px")
+            .attr("class", self.options.class);
+         // }
       });
     }
+  },
+  onRemove: function (map) {
+    d3.select(".geojsontiles").remove();
   }
 });
+
 
 // this GeoJSOND3 does show all line elements separately, which results in
 // a large number (>10000) of linestrings. Animating these slows down
