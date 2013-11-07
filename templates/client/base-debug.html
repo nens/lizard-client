@@ -46,8 +46,8 @@
   </head>
 
   <body ng-controller="Threedi">
-{% include "client/index.html" %}
 
+{% include "client/index.html" %}
 
 
     {% block javascript_body %}
@@ -70,7 +70,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/map-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/kpi-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/profile-directives.js?{{ random_string }}"></script>
-    <!--script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/timeline-directives.js?{{ random_string }}"></script-->
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/timeline-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/kpi-controllers.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/filters/truncate.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/templates/templates.js?{{ random_string }}"></script>
@@ -78,7 +78,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/graph/graph.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.min.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/socket.io-client/dist/socket.io.min.js"></script>
-    <script src="{{ STATIC_URL }}vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></script>
+    <!--script src="{{ STATIC_URL }}vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></scrip-->
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.bouncemarker/bouncemarker.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}threedi/leaflet-plugins/TileLayer.WMS.incrementalSingleTile.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/animations.js?{{ random_string }}"></script>

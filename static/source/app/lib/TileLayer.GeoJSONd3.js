@@ -6,21 +6,28 @@
  * 
  */
 // this GeoJSOND3 generates one linestring per tile
-L.TileLayer.GeoJSONd3 =  L.TileLayer.extend({
+L.TileLayer.GeoJSONd3 = L.TileLayer.extend({
   onAdd : function(map) {
-    // L.TileLayer.prototype.onAdd.call(this,map);
-     var overlayPane = this._map.getPanes().overlayPane;
-    // if (d3.select("svg.geojsontiles")[0].length == 0){
-    //   d3.select(map._container).select("svg.geojsontiles").select("g").remove();    
-    //   this.g = d3.select(map._container).select("svg.geojsontiles").append("g");    
-    // } else {
+    // debugger
+    L.TileLayer.prototype.onAdd.call(this,map);
+    // var overlayPane = this._map.getPanes().overlayPane;
+    if (d3.select("svg.geojsontiles")[0].length == 0){
+      d3.select(this._container).select("svg.geojsontiles").select("g").remove();    
+      this.g = d3.select(this._container).select("svg.geojsontiles")
+        .append("g")
+    } else {
 
-      this.g = d3.select(overlayPane).append("svg").classed("geojsontiles", true).append("g");    
-    // }
+      this.g = d3.select(this._container).append("svg")
+        .attr("class", "geojsontiles")
+        .append("g")
+          // .attr("class", "leaflet-layer leaflet-zoom-hide")
+    }
+
     this._path = d3.geo.path().projection(function(d) {
       var point = map.latLngToLayerPoint(new L.LatLng(d[1],d[0]));
       return [point.x,point.y];
     });
+    
     this.on("tileunload",function(d) {
       if (d.tile.xhr) d.tile.xhr.abort();
       if (d.tile.nodes) d.tile.nodes.remove();
@@ -36,20 +43,15 @@ L.TileLayer.GeoJSONd3 =  L.TileLayer.extend({
       tile.nodes = d3.select();
       tile.xhr = d3.json(this.getTileUrl(tilePoint), function(d) {
         tile.xhr = null;
-        // if (self.options.type === 'circle') {
-        //   tile.nodes = self.g.append("path")
-        //     .datum(d)
-        //     .attr("d", self._path)
-        //     .style("stroke", "#222")
-        //     .style("stroke-width", "6px")
-        //     .attr("class", "circle");  
-        // } else {
-          tile.nodes = self.g.append("path")
-            .datum(d)
-            .attr("d", self._path)
-            .style("stroke", "#222")
-            .style("stroke-width", "6px")
-            .attr("class", self.options.class);
+          tile.nodes 
+          self.g.selectAll("path")
+            .data(d.features).enter()
+              .append("path")
+                .attr("d", self._path)
+                .style("stroke", "#222")
+                .style("stroke-width", "6px")
+                .style("fill", "#222")
+                .attr("class", self.options.class);
          // }
       });
     }

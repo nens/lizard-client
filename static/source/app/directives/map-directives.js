@@ -339,7 +339,7 @@ app.directive('geoJsonLayer', function () {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
       var geojsonLayer = new L.TileLayer.GeoJSONd3(
-        '/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=pumpstation_sewerage',
+        '/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=pipe',
         {
         class: 'channel',
         type: 'jan'
