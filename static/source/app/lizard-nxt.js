@@ -300,6 +300,7 @@ app.controller("MasterCtrl",
 
 
   $scope.getTimeseries = function (data) {
+    /* data must have properties entity_name, id */
     $scope.box.type = data.entity_name;
     $scope.box.showCards = true;
     $scope.box.content.object_type = data.entity_name;

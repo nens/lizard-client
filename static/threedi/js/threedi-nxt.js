@@ -258,6 +258,10 @@ app.directive('threediBox', function() {
             };
 
             scope.$watch('state', function() {
+                if (scope.state === null) {
+                    console.log('3Di: state is null');
+                    return
+                }
                 console.log('state change from 3di omnibox');
                 if (!scope.have_master) {
                     scope.request_master_title = 'Click to become Director.'
@@ -266,7 +270,7 @@ app.directive('threediBox', function() {
                 } else if (scope.have_master && !scope.is_master) {
                     // TODO: compare master levels.
                     scope.request_master_title = scope.state.player_master_name + 
-                        ' is already Director.';
+                        ' is Director.';
                     console.log(scope.request_master_title);
                 }
                 if (scope.state === null) {
