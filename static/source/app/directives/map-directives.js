@@ -334,17 +334,23 @@ app.directive('zoomToLayer', function () {
   };
 });
 
-app.directive('geoJsonLayer', function () {
+app.directive('geoJsonLayer', function ($http) {
   return {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
-      var geojsonLayer = new L.TileLayer.GeoJSONd3(
-        '/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=pipe',
-        {
-        class: 'channel',
-        type: 'jan'
-        });
-      mapCtrl.addLayer(geojsonLayer);
+      var pumpIcon = new L.DivIcon({
+        html: '<svg width="48" height="48" class="pumpstation_sewerage"><defs id="defs3064"/><metadata id="metadata3067"><rdf:RDF><cc:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/><dc:title></dc:title></cc:Work></rdf:RDF></metadata><g id="layer1"><g id="text3091" style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Kunstwerk;-inkscape-font-specification:Kunstwerk"><path d="m 31.461905,37.742857 -20.966667,0 0,-2.233334 20.966667,0 -6.033333,-3.9 1.466666,-1.566666 10.1,6.566666 -10.1,6.5 -1.466666,-1.466666 6.033333,-3.9 m -13.6,-32.7333337 11.2,0 0,7.0999997 7.933333,0 0,13.1 -26.7,0 0,-13.1 7.566667,0 0,-7.0999997" id="path3143" style="font-size:30px"/></g></g></svg>',
+        // iconSize: '',
+        iconAnchor: new L.Point(20, 20)
+      });
+      // var geojsonLayer = new L.TileLayer.GeoJSON(
+      //   '/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=pumpstation_sewerage',
+      //   {
+      //   class: 'channel',
+      //   type: 'jan',
+      //   icon: d3Icon
+      //   });
+      // mapCtrl.addLayer(geojsonLayer);
       // var pipesd3 = d3.selectAll('.pumps');
       // pipesd3.on('click', function(){
       //   console.log(this);
@@ -356,6 +362,41 @@ app.directive('geoJsonLayer', function () {
       //  .transition()
       //  .style("stroke", "gainsboro")
       // })
+
+      function circle_style(circles) {
+        if (!scale) {
+          scale = d3.scale.ordinal()
+            .domain(function (d) {
+              //NOTE: kill hard coded dependency
+              return d3.set(d.properties.CATEGORIE).values();
+            })
+            .range(colorbrewer.Set2[6]);
+        }
+      };
+  
+        var events = '/static/data/pumpstation_sewerage.geojson';
+        $http.get(events)
+          .success(function (data) {
+            scope.pumpstation_sewerage = data;  
+            // var pumpstationLayer = L.pointsLayer(scope.pumpstation_sewerage, {
+            //   cssclass: "pumpstations"
+            // });
+            //   mapCtrl.addLayer(pumpstationLayer);
+            //  d3.selectAll(".pumpstations")
+            //   .append("svg:image")
+            //     .attr("xlink:href", "/static/source/assets/images/gemaal.svg");
+
+
+            var geojsonLayer = new L.GeoJSON(data, {
+              pointToLayer: function(geojson, latlng) {
+                return new L.Marker(latlng, {icon: pumpIcon});
+              }
+            });
+            mapCtrl.addLayer(geojsonLayer);
+
+          });
+
+        
     }
   }
 });

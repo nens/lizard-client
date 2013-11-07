@@ -1,0 +1,254 @@
+{
+"type": "FeatureCollection",
+                                                                                
+"features": [
+{ "type": "Feature", "id": 1, "properties": { "id": 1, "organisation_id": 4, "created": "2013-11-06 14:47:11.464163+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12753, "end_point_id": 0, "connection_serial": 0, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.955077176805584, 52.517181127289199 ] } }
+,
+{ "type": "Feature", "id": 2, "properties": { "id": 2, "organisation_id": 4, "created": "2013-11-06 14:47:11.542159+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12754, "end_point_id": 0, "connection_serial": 0, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.936246807916579, 52.511348344277216 ] } }
+,
+{ "type": "Feature", "id": 3, "properties": { "id": 3, "organisation_id": 4, "created": "2013-11-06 14:47:11.570759+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12755, "end_point_id": 0, "connection_serial": 0, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.986041633858481, 52.510867437134678 ] } }
+,
+{ "type": "Feature", "id": 4, "properties": { "id": 4, "organisation_id": 4, "created": "2013-11-06 14:47:11.612112+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12756, "end_point_id": 0, "connection_serial": 0, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.971549382895661, 52.499030571981045 ] } }
+,
+{ "type": "Feature", "id": 5, "properties": { "id": 5, "organisation_id": 4, "created": "2013-11-06 14:47:12.354518+01", "code": "", "type": "Rioolgemaal", "start_point_id": 221, "end_point_id": 12753, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.96438267681792, 52.5146658174422 ] } }
+,
+{ "type": "Feature", "id": 6, "properties": { "id": 6, "organisation_id": 4, "created": "2013-11-06 14:47:12.42979+01", "code": "", "type": "Rioolgemaal", "start_point_id": 718, "end_point_id": 12753, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.951941581203622, 52.511105867374518 ] } }
+,
+{ "type": "Feature", "id": 7, "properties": { "id": 7, "organisation_id": 4, "created": "2013-11-06 14:47:12.464629+01", "code": "", "type": "Rioolgemaal", "start_point_id": 1339, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.936334549118786, 52.511266892145919 ] } }
+,
+{ "type": "Feature", "id": 8, "properties": { "id": 8, "organisation_id": 4, "created": "2013-11-06 14:47:12.494471+01", "code": "", "type": "Rioolgemaal", "start_point_id": 1395, "end_point_id": 12753, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.973721518379671, 52.517445266766707 ] } }
+,
+{ "type": "Feature", "id": 9, "properties": { "id": 9, "organisation_id": 4, "created": "2013-11-06 14:47:12.559505+01", "code": "", "type": "Rioolgemaal", "start_point_id": 1916, "end_point_id": 12753, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.96396920337375, 52.519842879220782 ] } }
+,
+{ "type": "Feature", "id": 10, "properties": { "id": 10, "organisation_id": 4, "created": "2013-11-06 14:47:12.601623+01", "code": "", "type": "Rioolgemaal", "start_point_id": 2424, "end_point_id": 12753, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.950243130855675, 52.506492676112401 ] } }
+,
+{ "type": "Feature", "id": 11, "properties": { "id": 11, "organisation_id": 4, "created": "2013-11-06 14:47:12.662061+01", "code": "", "type": "Rioolgemaal", "start_point_id": 2879, "end_point_id": 1718, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.971417766608861, 52.522566318336537 ] } }
+,
+{ "type": "Feature", "id": 12, "properties": { "id": 12, "organisation_id": 4, "created": "2013-11-06 14:47:12.697209+01", "code": "", "type": "Rioolgemaal", "start_point_id": 3012, "end_point_id": 2909, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.973241100938585, 52.521232673075509 ] } }
+,
+{ "type": "Feature", "id": 13, "properties": { "id": 13, "organisation_id": 4, "created": "2013-11-06 14:47:12.730953+01", "code": "", "type": "Rioolgemaal", "start_point_id": 3509, "end_point_id": 4155, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.954417309577256, 52.494310231560597 ] } }
+,
+{ "type": "Feature", "id": 14, "properties": { "id": 14, "organisation_id": 4, "created": "2013-11-06 14:47:12.770771+01", "code": "", "type": "Rioolgemaal", "start_point_id": 3789, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.950937076843371, 52.497221999023253 ] } }
+,
+{ "type": "Feature", "id": 15, "properties": { "id": 15, "organisation_id": 4, "created": "2013-11-06 14:47:12.812581+01", "code": "", "type": "Rioolgemaal", "start_point_id": 4485, "end_point_id": 4386, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.961862915473136, 52.504024708405574 ] } }
+,
+{ "type": "Feature", "id": 16, "properties": { "id": 16, "organisation_id": 4, "created": "2013-11-06 14:47:12.854244+01", "code": "", "type": "Rioolgemaal", "start_point_id": 4670, "end_point_id": 5064, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.959484243870432, 52.497187510411685 ] } }
+,
+{ "type": "Feature", "id": 17, "properties": { "id": 17, "organisation_id": 4, "created": "2013-11-06 14:47:12.90468+01", "code": "", "type": "Rioolgemaal", "start_point_id": 5064, "end_point_id": 3788, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.958396787659288, 52.499839371667392 ] } }
+,
+{ "type": "Feature", "id": 18, "properties": { "id": 18, "organisation_id": 4, "created": "2013-11-06 14:47:12.95546+01", "code": "", "type": "Rioolgemaal", "start_point_id": 5142, "end_point_id": 4903, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.954546249614348, 52.501294838569116 ] } }
+,
+{ "type": "Feature", "id": 19, "properties": { "id": 19, "organisation_id": 4, "created": "2013-11-06 14:47:12.997714+01", "code": "", "type": "Rioolgemaal", "start_point_id": 5289, "end_point_id": 5064, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.962742442402917, 52.499397536784741 ] } }
+,
+{ "type": "Feature", "id": 20, "properties": { "id": 20, "organisation_id": 4, "created": "2013-11-06 14:47:13.038982+01", "code": "", "type": "Rioolgemaal", "start_point_id": 5332, "end_point_id": 1111, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.968422675147932, 52.504035457773369 ] } }
+,
+{ "type": "Feature", "id": 21, "properties": { "id": 21, "organisation_id": 4, "created": "2013-11-06 14:47:13.080754+01", "code": "", "type": "Rioolgemaal", "start_point_id": 5890, "end_point_id": 12755, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.984869008921935, 52.502790083434455 ] } }
+,
+{ "type": "Feature", "id": 22, "properties": { "id": 22, "organisation_id": 4, "created": "2013-11-06 14:47:13.125956+01", "code": "", "type": "Rioolgemaal", "start_point_id": 6620, "end_point_id": 12753, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.992308619595233, 52.512269817318611 ] } }
+,
+{ "type": "Feature", "id": 23, "properties": { "id": 23, "organisation_id": 4, "created": "2013-11-06 14:47:13.153524+01", "code": "", "type": "Rioolgemaal", "start_point_id": 6741, "end_point_id": 12755, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.989386856906786, 52.506289732522667 ] } }
+,
+{ "type": "Feature", "id": 24, "properties": { "id": 24, "organisation_id": 4, "created": "2013-11-06 14:47:13.188921+01", "code": "", "type": "Rioolgemaal", "start_point_id": 7190, "end_point_id": 12755, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.983077588759329, 52.508163857589849 ] } }
+,
+{ "type": "Feature", "id": 25, "properties": { "id": 25, "organisation_id": 4, "created": "2013-11-06 14:47:13.229479+01", "code": "", "type": "Rioolgemaal", "start_point_id": 7720, "end_point_id": 12755, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.977795250277675, 52.501687398597511 ] } }
+,
+{ "type": "Feature", "id": 26, "properties": { "id": 26, "organisation_id": 4, "created": "2013-11-06 14:47:13.267958+01", "code": "", "type": "Rioolgemaal", "start_point_id": 8192, "end_point_id": 12755, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.982693576640161, 52.498625108748008 ] } }
+,
+{ "type": "Feature", "id": 27, "properties": { "id": 27, "organisation_id": 4, "created": "2013-11-06 14:47:13.305439+01", "code": "", "type": "Rioolgemaal", "start_point_id": 8341, "end_point_id": 12753, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.998474423443081, 52.514166738480206 ] } }
+,
+{ "type": "Feature", "id": 28, "properties": { "id": 28, "organisation_id": 4, "created": "2013-11-06 14:47:13.347032+01", "code": "", "type": "Rioolgemaal", "start_point_id": 8865, "end_point_id": 12756, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.968765361677731, 52.496775726966021 ] } }
+,
+{ "type": "Feature", "id": 29, "properties": { "id": 29, "organisation_id": 4, "created": "2013-11-06 14:47:13.38887+01", "code": "", "type": "Rioolgemaal", "start_point_id": 9542, "end_point_id": 12756, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.975967207798424, 52.494766152816403 ] } }
+,
+{ "type": "Feature", "id": 30, "properties": { "id": 30, "organisation_id": 4, "created": "2013-11-06 14:47:13.429064+01", "code": "", "type": "Rioolgemaal", "start_point_id": 9829, "end_point_id": 12756, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.970034761648403, 52.48865735004032 ] } }
+,
+{ "type": "Feature", "id": 31, "properties": { "id": 31, "organisation_id": 4, "created": "2013-11-06 14:47:13.465756+01", "code": "", "type": "Rioolgemaal", "start_point_id": 10639, "end_point_id": 12756, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.961658949728239, 52.489723171427791 ] } }
+,
+{ "type": "Feature", "id": 32, "properties": { "id": 32, "organisation_id": 4, "created": "2013-11-06 14:47:13.503899+01", "code": "", "type": "Rioolgemaal", "start_point_id": 10650, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.950661870527655, 52.486023522105903 ] } }
+,
+{ "type": "Feature", "id": 33, "properties": { "id": 33, "organisation_id": 4, "created": "2013-11-06 14:47:13.547962+01", "code": "", "type": "Rioolgemaal", "start_point_id": 10705, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.944455713678207, 52.495954127905044 ] } }
+,
+{ "type": "Feature", "id": 34, "properties": { "id": 34, "organisation_id": 4, "created": "2013-11-06 14:47:13.589376+01", "code": "", "type": "Rioolgemaal", "start_point_id": 10710, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.944471973976434, 52.495947897370655 ] } }
+,
+{ "type": "Feature", "id": 35, "properties": { "id": 35, "organisation_id": 4, "created": "2013-11-06 14:47:13.629426+01", "code": "", "type": "Rioolgemaal", "start_point_id": 10838, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.945667042069934, 52.491146761620222 ] } }
+,
+{ "type": "Feature", "id": 36, "properties": { "id": 36, "organisation_id": 4, "created": "2013-11-06 14:47:13.683627+01", "code": "", "type": "Rioolgemaal", "start_point_id": 10842, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.945658324853789, 52.49113504548604 ] } }
+,
+{ "type": "Feature", "id": 37, "properties": { "id": 37, "organisation_id": 4, "created": "2013-11-06 14:47:13.733448+01", "code": "", "type": "Rioolgemaal", "start_point_id": 10983, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.93884297817252, 52.495027115206078 ] } }
+,
+{ "type": "Feature", "id": 38, "properties": { "id": 38, "organisation_id": 4, "created": "2013-11-06 14:47:13.78239+01", "code": "", "type": "Rioolgemaal", "start_point_id": 11057, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.938831307992312, 52.495016286162858 ] } }
+,
+{ "type": "Feature", "id": 39, "properties": { "id": 39, "organisation_id": 4, "created": "2013-11-06 14:47:13.814192+01", "code": "", "type": "Rioolgemaal", "start_point_id": 11186, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.935826905631174, 52.494920411901511 ] } }
+,
+{ "type": "Feature", "id": 40, "properties": { "id": 40, "organisation_id": 4, "created": "2013-11-06 14:47:13.850052+01", "code": "", "type": "Rioolgemaal", "start_point_id": 11292, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.939090524977383, 52.502417525773829 ] } }
+,
+{ "type": "Feature", "id": 41, "properties": { "id": 41, "organisation_id": 4, "created": "2013-11-06 14:47:13.883542+01", "code": "", "type": "Rioolgemaal", "start_point_id": 11372, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.939072898213455, 52.502412965486727 ] } }
+,
+{ "type": "Feature", "id": 42, "properties": { "id": 42, "organisation_id": 4, "created": "2013-11-06 14:47:13.9231+01", "code": "", "type": "Rioolgemaal", "start_point_id": 11605, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.937953649751024, 52.508058231810111 ] } }
+,
+{ "type": "Feature", "id": 43, "properties": { "id": 43, "organisation_id": 4, "created": "2013-11-06 14:47:13.974801+01", "code": "", "type": "Rioolgemaal", "start_point_id": 11579, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.937941967216956, 52.508048301414945 ] } }
+,
+{ "type": "Feature", "id": 44, "properties": { "id": 44, "organisation_id": 4, "created": "2013-11-06 14:47:14.006721+01", "code": "", "type": "Rioolgemaal", "start_point_id": 11667, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.938350891355494, 52.48997879835224 ] } }
+,
+{ "type": "Feature", "id": 45, "properties": { "id": 45, "organisation_id": 4, "created": "2013-11-06 14:47:14.041593+01", "code": "", "type": "Rioolgemaal", "start_point_id": 11651, "end_point_id": 11649, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.933752518085385, 52.490148250333341 ] } }
+,
+{ "type": "Feature", "id": 46, "properties": { "id": 46, "organisation_id": 4, "created": "2013-11-06 14:47:14.076936+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12091, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.932497935975225, 52.491736925264057 ] } }
+,
+{ "type": "Feature", "id": 47, "properties": { "id": 47, "organisation_id": 4, "created": "2013-11-06 14:47:14.116096+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12067, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.932491926438177, 52.491748585928761 ] } }
+,
+{ "type": "Feature", "id": 48, "properties": { "id": 48, "organisation_id": 4, "created": "2013-11-06 14:47:14.157031+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12237, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.929621420568857, 52.497515584445956 ] } }
+,
+{ "type": "Feature", "id": 49, "properties": { "id": 49, "organisation_id": 4, "created": "2013-11-06 14:47:14.199199+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12239, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.929611001197682, 52.497526329201591 ] } }
+,
+{ "type": "Feature", "id": 50, "properties": { "id": 50, "organisation_id": 4, "created": "2013-11-06 14:47:14.234391+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12384, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.934035287400033, 52.499331811842687 ] } }
+,
+{ "type": "Feature", "id": 51, "properties": { "id": 51, "organisation_id": 4, "created": "2013-11-06 14:47:14.275563+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12382, "end_point_id": 12754, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.934014625046679, 52.499336226646236 ] } }
+,
+{ "type": "Feature", "id": 52, "properties": { "id": 52, "organisation_id": 4, "created": "2013-11-06 14:47:14.318168+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12706, "end_point_id": 12753, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 5.004105180517518, 52.512079303585331 ] } }
+,
+{ "type": "Feature", "id": 53, "properties": { "id": 53, "organisation_id": 4, "created": "2013-11-06 14:47:14.379608+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12704, "end_point_id": 12753, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 5.004105102584671, 52.512088290717195 ] } }
+,
+{ "type": "Feature", "id": 54, "properties": { "id": 54, "organisation_id": 4, "created": "2013-11-06 14:47:14.413977+01", "code": "", "type": "Rioolgemaal", "start_point_id": 4249, "end_point_id": 2294, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.959009675363387, 52.504372146149827 ] } }
+,
+{ "type": "Feature", "id": 55, "properties": { "id": 55, "organisation_id": 4, "created": "2013-11-06 14:47:14.474472+01", "code": "", "type": "Rioolgemaal", "start_point_id": 861, "end_point_id": 1432, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.970693825750051, 52.50980707717779 ] } }
+,
+{ "type": "Feature", "id": 56, "properties": { "id": 56, "organisation_id": 4, "created": "2013-11-06 14:47:14.525057+01", "code": "", "type": "Rioolgemaal", "start_point_id": 1369, "end_point_id": 1329, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.941383617678433, 52.5089842893764 ] } }
+,
+{ "type": "Feature", "id": 57, "properties": { "id": 57, "organisation_id": 4, "created": "2013-11-06 14:47:14.576742+01", "code": "", "type": "Rioolgemaal", "start_point_id": 3323, "end_point_id": 4155, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.953683008561948, 52.490359364980414 ] } }
+,
+{ "type": "Feature", "id": 58, "properties": { "id": 58, "organisation_id": 4, "created": "2013-11-06 14:47:14.604071+01", "code": "", "type": "Rioolgemaal", "start_point_id": 644, "end_point_id": 499, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.950811085883315, 52.514007344936502 ] } }
+,
+{ "type": "Feature", "id": 59, "properties": { "id": 59, "organisation_id": 4, "created": "2013-11-06 14:47:14.634736+01", "code": "", "type": "Rioolgemaal", "start_point_id": 8280, "end_point_id": 6026, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.986942382411195, 52.500055934296341 ] } }
+,
+{ "type": "Feature", "id": 60, "properties": { "id": 60, "organisation_id": 4, "created": "2013-11-06 14:47:14.682239+01", "code": "", "type": "Rioolgemaal", "start_point_id": 6959, "end_point_id": 6979, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.992393601560121, 52.505232969309851 ] } }
+,
+{ "type": "Feature", "id": 61, "properties": { "id": 61, "organisation_id": 4, "created": "2013-11-06 14:47:14.725628+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12756, "end_point_id": 12755, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.971549382895661, 52.499030571981045 ] } }
+,
+{ "type": "Feature", "id": 62, "properties": { "id": 62, "organisation_id": 4, "created": "2013-11-06 14:47:14.760088+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12755, "end_point_id": 12753, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.986041633858481, 52.510867437134678 ] } }
+,
+{ "type": "Feature", "id": 63, "properties": { "id": 63, "organisation_id": 2, "created": "2013-11-06 15:07:18.400617+01", "code": "", "type": "Rioolgemaal", "start_point_id": 25509, "end_point_id": 0, "connection_serial": 0, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.955077176805584, 52.517181127289199 ] } }
+,
+{ "type": "Feature", "id": 64, "properties": { "id": 64, "organisation_id": 2, "created": "2013-11-06 15:07:18.456383+01", "code": "", "type": "Rioolgemaal", "start_point_id": 25510, "end_point_id": 0, "connection_serial": 0, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.936246807916579, 52.511348344277216 ] } }
+,
+{ "type": "Feature", "id": 65, "properties": { "id": 65, "organisation_id": 2, "created": "2013-11-06 15:07:18.489961+01", "code": "", "type": "Rioolgemaal", "start_point_id": 25511, "end_point_id": 0, "connection_serial": 0, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.986041633858481, 52.510867437134678 ] } }
+,
+{ "type": "Feature", "id": 66, "properties": { "id": 66, "organisation_id": 2, "created": "2013-11-06 15:07:18.524718+01", "code": "", "type": "Rioolgemaal", "start_point_id": 25512, "end_point_id": 0, "connection_serial": 0, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.971549382895661, 52.499030571981045 ] } }
+,
+{ "type": "Feature", "id": 67, "properties": { "id": 67, "organisation_id": 2, "created": "2013-11-06 15:07:19.257945+01", "code": "", "type": "Rioolgemaal", "start_point_id": 12977, "end_point_id": 25509, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.96438267681792, 52.5146658174422 ] } }
+,
+{ "type": "Feature", "id": 68, "properties": { "id": 68, "organisation_id": 2, "created": "2013-11-06 15:07:19.307219+01", "code": "", "type": "Rioolgemaal", "start_point_id": 13474, "end_point_id": 25509, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.951941581203622, 52.511105867374518 ] } }
+,
+{ "type": "Feature", "id": 69, "properties": { "id": 69, "organisation_id": 2, "created": "2013-11-06 15:07:19.348617+01", "code": "", "type": "Rioolgemaal", "start_point_id": 14095, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.936334549118786, 52.511266892145919 ] } }
+,
+{ "type": "Feature", "id": 70, "properties": { "id": 70, "organisation_id": 2, "created": "2013-11-06 15:07:19.399021+01", "code": "", "type": "Rioolgemaal", "start_point_id": 14151, "end_point_id": 25509, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.973721518379671, 52.517445266766707 ] } }
+,
+{ "type": "Feature", "id": 71, "properties": { "id": 71, "organisation_id": 2, "created": "2013-11-06 15:07:19.446301+01", "code": "", "type": "Rioolgemaal", "start_point_id": 14672, "end_point_id": 25509, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.96396920337375, 52.519842879220782 ] } }
+,
+{ "type": "Feature", "id": 72, "properties": { "id": 72, "organisation_id": 2, "created": "2013-11-06 15:07:19.490655+01", "code": "", "type": "Rioolgemaal", "start_point_id": 15180, "end_point_id": 25509, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.950243130855675, 52.506492676112401 ] } }
+,
+{ "type": "Feature", "id": 73, "properties": { "id": 73, "organisation_id": 2, "created": "2013-11-06 15:07:19.549978+01", "code": "", "type": "Rioolgemaal", "start_point_id": 15635, "end_point_id": 14474, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.971417766608861, 52.522566318336537 ] } }
+,
+{ "type": "Feature", "id": 74, "properties": { "id": 74, "organisation_id": 2, "created": "2013-11-06 15:07:19.582951+01", "code": "", "type": "Rioolgemaal", "start_point_id": 15768, "end_point_id": 15665, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.973241100938585, 52.521232673075509 ] } }
+,
+{ "type": "Feature", "id": 75, "properties": { "id": 75, "organisation_id": 2, "created": "2013-11-06 15:07:19.617467+01", "code": "", "type": "Rioolgemaal", "start_point_id": 16265, "end_point_id": 16911, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.954417309577256, 52.494310231560597 ] } }
+,
+{ "type": "Feature", "id": 76, "properties": { "id": 76, "organisation_id": 2, "created": "2013-11-06 15:07:19.651875+01", "code": "", "type": "Rioolgemaal", "start_point_id": 16545, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.950937076843371, 52.497221999023253 ] } }
+,
+{ "type": "Feature", "id": 77, "properties": { "id": 77, "organisation_id": 2, "created": "2013-11-06 15:07:19.681915+01", "code": "", "type": "Rioolgemaal", "start_point_id": 17241, "end_point_id": 17142, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.961862915473136, 52.504024708405574 ] } }
+,
+{ "type": "Feature", "id": 78, "properties": { "id": 78, "organisation_id": 2, "created": "2013-11-06 15:07:19.732216+01", "code": "", "type": "Rioolgemaal", "start_point_id": 17426, "end_point_id": 17820, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.959484243870432, 52.497187510411685 ] } }
+,
+{ "type": "Feature", "id": 79, "properties": { "id": 79, "organisation_id": 2, "created": "2013-11-06 15:07:19.766058+01", "code": "", "type": "Rioolgemaal", "start_point_id": 17820, "end_point_id": 16544, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.958396787659288, 52.499839371667392 ] } }
+,
+{ "type": "Feature", "id": 80, "properties": { "id": 80, "organisation_id": 2, "created": "2013-11-06 15:07:19.798257+01", "code": "", "type": "Rioolgemaal", "start_point_id": 17898, "end_point_id": 17659, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.954546249614348, 52.501294838569116 ] } }
+,
+{ "type": "Feature", "id": 81, "properties": { "id": 81, "organisation_id": 2, "created": "2013-11-06 15:07:19.839682+01", "code": "", "type": "Rioolgemaal", "start_point_id": 18045, "end_point_id": 17820, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.962742442402917, 52.499397536784741 ] } }
+,
+{ "type": "Feature", "id": 82, "properties": { "id": 82, "organisation_id": 2, "created": "2013-11-06 15:07:19.885699+01", "code": "", "type": "Rioolgemaal", "start_point_id": 18088, "end_point_id": 13867, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.968422675147932, 52.504035457773369 ] } }
+,
+{ "type": "Feature", "id": 83, "properties": { "id": 83, "organisation_id": 2, "created": "2013-11-06 15:07:19.925425+01", "code": "", "type": "Rioolgemaal", "start_point_id": 18646, "end_point_id": 25511, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.984869008921935, 52.502790083434455 ] } }
+,
+{ "type": "Feature", "id": 84, "properties": { "id": 84, "organisation_id": 2, "created": "2013-11-06 15:07:19.975232+01", "code": "", "type": "Rioolgemaal", "start_point_id": 19376, "end_point_id": 25509, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.992308619595233, 52.512269817318611 ] } }
+,
+{ "type": "Feature", "id": 85, "properties": { "id": 85, "organisation_id": 2, "created": "2013-11-06 15:07:20.018035+01", "code": "", "type": "Rioolgemaal", "start_point_id": 19497, "end_point_id": 25511, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.989386856906786, 52.506289732522667 ] } }
+,
+{ "type": "Feature", "id": 86, "properties": { "id": 86, "organisation_id": 2, "created": "2013-11-06 15:07:20.051724+01", "code": "", "type": "Rioolgemaal", "start_point_id": 19946, "end_point_id": 25511, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.983077588759329, 52.508163857589849 ] } }
+,
+{ "type": "Feature", "id": 87, "properties": { "id": 87, "organisation_id": 2, "created": "2013-11-06 15:07:20.09099+01", "code": "", "type": "Rioolgemaal", "start_point_id": 20476, "end_point_id": 25511, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.977795250277675, 52.501687398597511 ] } }
+,
+{ "type": "Feature", "id": 88, "properties": { "id": 88, "organisation_id": 2, "created": "2013-11-06 15:07:20.137259+01", "code": "", "type": "Rioolgemaal", "start_point_id": 20948, "end_point_id": 25511, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.982693576640161, 52.498625108748008 ] } }
+,
+{ "type": "Feature", "id": 89, "properties": { "id": 89, "organisation_id": 2, "created": "2013-11-06 15:07:20.235358+01", "code": "", "type": "Rioolgemaal", "start_point_id": 21097, "end_point_id": 25509, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.998474423443081, 52.514166738480206 ] } }
+,
+{ "type": "Feature", "id": 90, "properties": { "id": 90, "organisation_id": 2, "created": "2013-11-06 15:07:20.268035+01", "code": "", "type": "Rioolgemaal", "start_point_id": 21621, "end_point_id": 25512, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.968765361677731, 52.496775726966021 ] } }
+,
+{ "type": "Feature", "id": 91, "properties": { "id": 91, "organisation_id": 2, "created": "2013-11-06 15:07:20.308216+01", "code": "", "type": "Rioolgemaal", "start_point_id": 22298, "end_point_id": 25512, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.975967207798424, 52.494766152816403 ] } }
+,
+{ "type": "Feature", "id": 92, "properties": { "id": 92, "organisation_id": 2, "created": "2013-11-06 15:07:20.359483+01", "code": "", "type": "Rioolgemaal", "start_point_id": 22585, "end_point_id": 25512, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.970034761648403, 52.48865735004032 ] } }
+,
+{ "type": "Feature", "id": 93, "properties": { "id": 93, "organisation_id": 2, "created": "2013-11-06 15:07:20.389344+01", "code": "", "type": "Rioolgemaal", "start_point_id": 23395, "end_point_id": 25512, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.961658949728239, 52.489723171427791 ] } }
+,
+{ "type": "Feature", "id": 94, "properties": { "id": 94, "organisation_id": 2, "created": "2013-11-06 15:07:20.427977+01", "code": "", "type": "Rioolgemaal", "start_point_id": 23406, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.950661870527655, 52.486023522105903 ] } }
+,
+{ "type": "Feature", "id": 95, "properties": { "id": 95, "organisation_id": 2, "created": "2013-11-06 15:07:20.468671+01", "code": "", "type": "Rioolgemaal", "start_point_id": 23461, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.944455713678207, 52.495954127905044 ] } }
+,
+{ "type": "Feature", "id": 96, "properties": { "id": 96, "organisation_id": 2, "created": "2013-11-06 15:07:20.509263+01", "code": "", "type": "Rioolgemaal", "start_point_id": 23466, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.944471973976434, 52.495947897370655 ] } }
+,
+{ "type": "Feature", "id": 97, "properties": { "id": 97, "organisation_id": 2, "created": "2013-11-06 15:07:20.556344+01", "code": "", "type": "Rioolgemaal", "start_point_id": 23594, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.945667042069934, 52.491146761620222 ] } }
+,
+{ "type": "Feature", "id": 98, "properties": { "id": 98, "organisation_id": 2, "created": "2013-11-06 15:07:20.618301+01", "code": "", "type": "Rioolgemaal", "start_point_id": 23598, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.945658324853789, 52.49113504548604 ] } }
+,
+{ "type": "Feature", "id": 99, "properties": { "id": 99, "organisation_id": 2, "created": "2013-11-06 15:07:20.658262+01", "code": "", "type": "Rioolgemaal", "start_point_id": 23739, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.93884297817252, 52.495027115206078 ] } }
+,
+{ "type": "Feature", "id": 100, "properties": { "id": 100, "organisation_id": 2, "created": "2013-11-06 15:07:20.702799+01", "code": "", "type": "Rioolgemaal", "start_point_id": 23813, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.938831307992312, 52.495016286162858 ] } }
+,
+{ "type": "Feature", "id": 101, "properties": { "id": 101, "organisation_id": 2, "created": "2013-11-06 15:07:20.741145+01", "code": "", "type": "Rioolgemaal", "start_point_id": 23942, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.935826905631174, 52.494920411901511 ] } }
+,
+{ "type": "Feature", "id": 102, "properties": { "id": 102, "organisation_id": 2, "created": "2013-11-06 15:07:20.78521+01", "code": "", "type": "Rioolgemaal", "start_point_id": 24048, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.939090524977383, 52.502417525773829 ] } }
+,
+{ "type": "Feature", "id": 103, "properties": { "id": 103, "organisation_id": 2, "created": "2013-11-06 15:07:20.833116+01", "code": "", "type": "Rioolgemaal", "start_point_id": 24128, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.939072898213455, 52.502412965486727 ] } }
+,
+{ "type": "Feature", "id": 104, "properties": { "id": 104, "organisation_id": 2, "created": "2013-11-06 15:07:20.883551+01", "code": "", "type": "Rioolgemaal", "start_point_id": 24361, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.937953649751024, 52.508058231810111 ] } }
+,
+{ "type": "Feature", "id": 105, "properties": { "id": 105, "organisation_id": 2, "created": "2013-11-06 15:07:20.918141+01", "code": "", "type": "Rioolgemaal", "start_point_id": 24335, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.937941967216956, 52.508048301414945 ] } }
+,
+{ "type": "Feature", "id": 106, "properties": { "id": 106, "organisation_id": 2, "created": "2013-11-06 15:07:20.959799+01", "code": "", "type": "Rioolgemaal", "start_point_id": 24423, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.938350891355494, 52.48997879835224 ] } }
+,
+{ "type": "Feature", "id": 107, "properties": { "id": 107, "organisation_id": 2, "created": "2013-11-06 15:07:21.004011+01", "code": "", "type": "Rioolgemaal", "start_point_id": 24407, "end_point_id": 24405, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.933752518085385, 52.490148250333341 ] } }
+,
+{ "type": "Feature", "id": 108, "properties": { "id": 108, "organisation_id": 2, "created": "2013-11-06 15:07:21.042216+01", "code": "", "type": "Rioolgemaal", "start_point_id": 24847, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.932497935975225, 52.491736925264057 ] } }
+,
+{ "type": "Feature", "id": 109, "properties": { "id": 109, "organisation_id": 2, "created": "2013-11-06 15:07:21.086134+01", "code": "", "type": "Rioolgemaal", "start_point_id": 24823, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.932491926438177, 52.491748585928761 ] } }
+,
+{ "type": "Feature", "id": 110, "properties": { "id": 110, "organisation_id": 2, "created": "2013-11-06 15:07:21.125592+01", "code": "", "type": "Rioolgemaal", "start_point_id": 24993, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.929621420568857, 52.497515584445956 ] } }
+,
+{ "type": "Feature", "id": 111, "properties": { "id": 111, "organisation_id": 2, "created": "2013-11-06 15:07:21.166146+01", "code": "", "type": "Rioolgemaal", "start_point_id": 24995, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.929611001197682, 52.497526329201591 ] } }
+,
+{ "type": "Feature", "id": 112, "properties": { "id": 112, "organisation_id": 2, "created": "2013-11-06 15:07:21.216121+01", "code": "", "type": "Rioolgemaal", "start_point_id": 25140, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.934035287400033, 52.499331811842687 ] } }
+,
+{ "type": "Feature", "id": 113, "properties": { "id": 113, "organisation_id": 2, "created": "2013-11-06 15:07:21.267896+01", "code": "", "type": "Rioolgemaal", "start_point_id": 25138, "end_point_id": 25510, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.934014625046679, 52.499336226646236 ] } }
+,
+{ "type": "Feature", "id": 114, "properties": { "id": 114, "organisation_id": 2, "created": "2013-11-06 15:07:21.315192+01", "code": "", "type": "Rioolgemaal", "start_point_id": 25462, "end_point_id": 25509, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 5.004105180517518, 52.512079303585331 ] } }
+,
+{ "type": "Feature", "id": 115, "properties": { "id": 115, "organisation_id": 2, "created": "2013-11-06 15:07:21.356085+01", "code": "", "type": "Rioolgemaal", "start_point_id": 25460, "end_point_id": 25509, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 5.004105102584671, 52.512088290717195 ] } }
+,
+{ "type": "Feature", "id": 116, "properties": { "id": 116, "organisation_id": 2, "created": "2013-11-06 15:07:21.404226+01", "code": "", "type": "Rioolgemaal", "start_point_id": 17005, "end_point_id": 15050, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.959009675363387, 52.504372146149827 ] } }
+,
+{ "type": "Feature", "id": 117, "properties": { "id": 117, "organisation_id": 2, "created": "2013-11-06 15:07:21.454465+01", "code": "", "type": "Rioolgemaal", "start_point_id": 13617, "end_point_id": 14188, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.970693825750051, 52.50980707717779 ] } }
+,
+{ "type": "Feature", "id": 118, "properties": { "id": 118, "organisation_id": 2, "created": "2013-11-06 15:07:21.494841+01", "code": "", "type": "Rioolgemaal", "start_point_id": 14125, "end_point_id": 14085, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.941383617678433, 52.5089842893764 ] } }
+,
+{ "type": "Feature", "id": 119, "properties": { "id": 119, "organisation_id": 2, "created": "2013-11-06 15:07:21.534299+01", "code": "", "type": "Rioolgemaal", "start_point_id": 16079, "end_point_id": 16911, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.953683008561948, 52.490359364980414 ] } }
+,
+{ "type": "Feature", "id": 120, "properties": { "id": 120, "organisation_id": 2, "created": "2013-11-06 15:07:21.579146+01", "code": "", "type": "Rioolgemaal", "start_point_id": 13400, "end_point_id": 13255, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.950811085883315, 52.514007344936502 ] } }
+,
+{ "type": "Feature", "id": 121, "properties": { "id": 121, "organisation_id": 2, "created": "2013-11-06 15:07:21.617321+01", "code": "", "type": "Rioolgemaal", "start_point_id": 21036, "end_point_id": 18782, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.986942382411195, 52.500055934296341 ] } }
+,
+{ "type": "Feature", "id": 122, "properties": { "id": 122, "organisation_id": 2, "created": "2013-11-06 15:07:21.656991+01", "code": "", "type": "Rioolgemaal", "start_point_id": 19715, "end_point_id": 19735, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.992393601560121, 52.505232969309851 ] } }
+,
+{ "type": "Feature", "id": 123, "properties": { "id": 123, "organisation_id": 2, "created": "2013-11-06 15:07:21.71195+01", "code": "", "type": "Rioolgemaal", "start_point_id": 25512, "end_point_id": 25511, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.971549382895661, 52.499030571981045 ] } }
+,
+{ "type": "Feature", "id": 124, "properties": { "id": 124, "organisation_id": 2, "created": "2013-11-06 15:07:21.759674+01", "code": "", "type": "Rioolgemaal", "start_point_id": 25511, "end_point_id": 25509, "connection_serial": 1, "direction": 0.0, "capacity": 0.0, "start_level": 0.0, "stop_level": 0.0 }, "geometry": { "type": "Point", "coordinates": [ 4.986041633858481, 52.510867437134678 ] } }
+
+]
+}

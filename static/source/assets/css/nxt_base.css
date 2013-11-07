@@ -855,3 +855,12 @@ a {
 .circle.selected {
   visibility: visible;
 }
+
+.leaflet-div-icon{
+    background: none;
+    border: none;
+}
+
+.pumpstations{
+    fill: redbrick;
+}
