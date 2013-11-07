@@ -6,15 +6,18 @@
         </div>
         <!-- <div id="site-actions">                  id="rightbar-actions"-->
           <ul class="nav navbar-nav navbar-right" >
+            <li>
+              <a href="#" class="hide" ng-click="threediTool()" ng-class="{'hide': !threedi_active, 'icon-large': tools.threedi.enabled}" title="3Di"><i class="icon-asterisk"></i></a>
+            </li>
             <li class="site">
               <a href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.profile.enabled}"></i></a>
             </li>
-            <li>
+<!--             <li>
               <a ng-click="toggleTimeline()"><i class="icon-collapse icon-large"></i></a>
-            </li>
-            <li>
+            </li> -->
+<!--             <li>
               <a href="#" ng-click="toggle_tool('kpi')" ng-class="{'icon-large': tools.kpi.enabled}" title="Key Performance Indicator"><i class="icon-dashboard"></i></a>
-            </li>
+            </li> -->
             {% if user.is_authenticated %}
               <li>
                 <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="pull-right" id="username"> {{ user.first_name }}</div><i id="user-icon" class="icon-user pull-right"></i></a>
@@ -87,6 +90,7 @@
              rasterprofile="disabled"
              locate="locate"
              zoom-to-layer="zoomToLayer"
+             vectorlayer
              geo-json-layer>
         </map>
       </div>
@@ -98,6 +102,86 @@
   
       </omnibox>
     </div>
-        {% block toolbar_controllers %}
-        {% endblock %}
+{% block toolbar_controllers %}
+    <!--div class="container-fluid">
+<div class="navbar navbar-fixed-bottom" ng-controller="ClientState">
+  <div class="navbar-inner">
+    <div class="control">
+      <div class="btn-group bar-buttons">
+        <a class="btn btn-info-line" ng-class="{'btn-primary': clientstate.program_mode == 'infoline'}" ng-click="setMode('infoline')">
+          <i class="icon-threedi-line-info"></i></a>
+        <a class="btn btn-info-point" ng-class="{'btn-primary': clientstate.program_mode == 'infopoint'}" ng-click="setMode('infopoint')">
+          <i class="icon-threedi-info"></i></a>
+      </div>
+
+      <div class="btn-group control-edit-buttons hide" 
+           ng-controller="RemoteControl" 
+           ng-class="{hide: !isMaster}">
+
+        <a href="#" class="btn btn-replay" ng-class="{disabled:!isMaster || wait_for_server_response}"
+        ng-click="!isMaster || reset()">
+          <i class="icon-repeat"></i>
+        </a>
+        <a id="btn-play" class="btn" ng-class="{active: isPlaying, disabled:!isMaster || wait_for_server_response}" ng-click="!isMaster || play()">
+          <i class="icon-play" ng-class="{green: has_future_events}"></i>
+        </a>
+        <a id="btn-stop" class="btn" ng-class="{active: !isPlaying, disabled: !isMaster || wait_for_server_response}" ng-click="!isMaster || stop()">
+          <i class="icon-stop"></i>
+        </a>
+      </div>
+
+      <div class="btn-group control-edit-buttons hide" 
+           ng-controller="Simulator" 
+           ng-class="{hide: !isMaster}">
+
+        <a class="btn btn-rain" ng-class="{disabled: !isMaster, 'btn-primary': clientstate.program_mode == 'rain'}" ng-click="!isMaster || setMode('rain')">
+          <i class="icon-threedi-rain"></i></a>
+        <a class="btn btn-discharge" ng-class="{disabled: !isMaster,
+        'btn-primary': clientstate.program_mode == 'discharge'}"
+        ng-click="!isMaster || setMode('discharge')">
+          <i class="icon-threedi-manhole"></i></a>
+        <a class="btn btn-manhole" ng-class="{disabled: !isMaster,
+        'btn-primary': clientstate.program_mode == 'manhole'}"
+        ng-click="!isMaster || setMode('manhole')">
+          <i class="icon-threedi-pump"></i></a>
+        <a class="btn btn-edit-bathy" ng-class="{disabled: !isMaster,
+        'btn-primary': clientstate.program_mode == 'edit'}"
+        ng-click="!isMaster || setMode('edit')">
+          <i class="icon-circle-arrow-up"></i></a>
+      </div>
+
+      <div class="btn-group pull-right" ng-controller="Director">
+        <a class="btn" ng-click="requestMaster()" ng-class="{disabled: have_master && !isMaster}" title="{[{ master_name }]}">
+          <i ng-class="{'icon-star-empty': !isMaster, 'icon-star': isMaster}"> </i>
+        </a>
+      </div>
+
+      <div class="timeline non-btn-group right" ng-controller="Timeline">
+        <span class="timeline non-btn" title="Time (HH:MM)">
+          {[{ slider.human_at }]}
+        </span>
+      </div>
+
+      <div ng-controller="Status" class="non-btn-group right">
+          <i class="icon-circle non-btn"
+             ng-class="{
+             'state-wait': serverState == 'wait',
+             'state-sim': serverState == 'sim',
+             'state-standby': serverState == 'standby',
+             'state-prepare-wms': serverState == 'prepare-wms',
+             'state-load-model': serverState == 'load-model',
+             'state-loaded-model': serverState == 'loaded-model',
+             'state-stopping': serverState == 'stopping'
+            }"
+          title="{[{ label }]}"></i>
+      </div>
+
+   </div>
+  </div>
+</div>
+    </div-->
+        {% endblock toolbar_controllers %}
+
     {% endblock content %}
+
+

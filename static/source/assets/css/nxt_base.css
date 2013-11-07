@@ -861,6 +861,27 @@ a {
     border: none;
 }
 
-.pumpstations{
-    fill: redbrick;
+@keyframes shakeit{
+  0% {
+    left: 3px;
+
+    }
+
+  50% {
+    left: -3px;
+  }
+
+  100% {
+    left: 0;
+  }
 }
+
+.pumpstation_sewerage{
+    -moz-animation: shakeit 1s infinite linear;
+    -webkit-animation: shakeit 1s infinite linear;
+
+    animation: shakeit 800ms linear 0s infinite;
+    fill: maroon;
+}
+
+

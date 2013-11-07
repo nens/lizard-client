@@ -338,11 +338,6 @@ app.directive('geoJsonLayer', function ($http) {
   return {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
-      var pumpIcon = new L.DivIcon({
-        html: '<svg width="48" height="48" class="pumpstation_sewerage"><defs id="defs3064"/><metadata id="metadata3067"><rdf:RDF><cc:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/><dc:title></dc:title></cc:Work></rdf:RDF></metadata><g id="layer1"><g id="text3091" style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Kunstwerk;-inkscape-font-specification:Kunstwerk"><path d="m 31.461905,37.742857 -20.966667,0 0,-2.233334 20.966667,0 -6.033333,-3.9 1.466666,-1.566666 10.1,6.566666 -10.1,6.5 -1.466666,-1.466666 6.033333,-3.9 m -13.6,-32.7333337 11.2,0 0,7.0999997 7.933333,0 0,13.1 -26.7,0 0,-13.1 7.566667,0 0,-7.0999997" id="path3143" style="font-size:30px"/></g></g></svg>',
-        // iconSize: '',
-        iconAnchor: new L.Point(20, 20)
-      });
       // var geojsonLayer = new L.TileLayer.GeoJSON(
       //   '/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=pumpstation_sewerage',
       //   {
@@ -389,6 +384,11 @@ app.directive('geoJsonLayer', function ($http) {
 
             var geojsonLayer = new L.GeoJSON(data, {
               pointToLayer: function(geojson, latlng) {
+                var pumpid = geojson.properties.id;
+                var pumpIcon = new L.DivIcon({
+                  html: '<svg width="48" height="48" id=pumpstation'+pumpid+' class="pumpstation_sewerage"><g ><path d="m 31.461905,37.742857 -20.966667,0 0,-2.233334 20.966667,0 -6.033333,-3.9 1.466666,-1.566666 10.1,6.566666 -10.1,6.5 -1.466666,-1.466666 6.033333,-3.9 m -13.6,-32.7333337 11.2,0 0,7.0999997 7.933333,0 0,13.1 -26.7,0 0,-13.1 7.566667,0 0,-7.0999997" class="pumpstation" style="font-size:30px"/></g></svg>',
+                  iconAnchor: new L.Point(20, 20)
+                });
                 return new L.Marker(latlng, {icon: pumpIcon});
               }
             });
