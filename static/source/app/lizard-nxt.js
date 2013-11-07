@@ -40,7 +40,7 @@ app.controller("MasterCtrl",
     query: null,
     disabled: false,
     showCards: false,
-    type: 'default',
+    type: 'aggregate', // NOTE: default, box type is aggregate
     content: {},
     changed: Date.now()
   };
@@ -359,6 +359,9 @@ app.controller("MasterCtrl",
     .success(function (data) {
       $scope.kpi.events = data;  
       $scope.kpi.panZoom = {
+        //lat: 52.2114246,
+        //lng: 5.8998043,
+        //zoom: 11
         lat: 52.5185894148, 
         lng: 4.9557002060,
         zoom: 16

@@ -169,7 +169,6 @@ app.directive('vectorlayer', function () {
        * Count events in viewport; update scope with count
        */
       var countEvents = function (selection) {
-        scope.box.type = "aggregate";
         var ctr = 0;
         var mapBounds = scope.map.getBounds();
         geom_wkt = "POLYGON(("
@@ -239,15 +238,18 @@ app.directive('vectorlayer', function () {
       
       // Watch button click, toggle event layer
       scope.$watch('tools.kpi.enabled', function () {
+        scope.box.type = "aggregate";
         if (scope.tools.kpi.enabled) {
           eventLayer = L.pointsLayer(scope.kpi.events, {
             applyStyle: circle_style
           });
           mapCtrl.addLayer(eventLayer);
           drawTimeEvents();
+          console.log(d3.select("#timeline"));
+          d3.select("#timeline").classed("hidden", false);
         } else {
           mapCtrl.removeLayer(eventLayer);
-          scope.box.type = undefined;
+          d3.select("#timeline").classed("hidden", true);
         }
       });
     }
