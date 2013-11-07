@@ -300,7 +300,6 @@ app.controller("MasterCtrl",
 
 
   $scope.getTimeseries = function (data) {
-
     $scope.box.type = data.entity_name;
     $scope.box.showCards = true;
     $scope.box.content.object_type = data.entity_name;
@@ -322,7 +321,8 @@ app.controller("MasterCtrl",
     $scope.metadata = {
         title: null,
         fromgrid: $scope.box.content.data,
-        type: $scope.box.content.data.entity_name
+        //type: $scope.box.content.data.entity_name
+        type: data.entity_name
      };
 
     $scope.$watch('selected_timeseries', function () {
