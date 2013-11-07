@@ -27,6 +27,8 @@ app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
     $scope.initial_extent = false;
     $scope.loaded_model = null;
 
+    $scope.messages = [];
+
     $scope.connect = function() {
 	    $scope.state = null;
 	    $scope.scenarios = null;
@@ -81,6 +83,14 @@ app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
 
 	    socket.on('message', function(msg, msg_class) {
             console.log('Got a user message from server: ', msg);
+            $scope.$apply(function () {
+                $scope.messages.push(msg);
+            });
+            setTimeout(function() {
+                $scope.$apply(function () {
+                    $scope.messages.shift();
+                });
+            }, 3000);
 	    });
     }
 

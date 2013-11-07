@@ -275,6 +275,7 @@ h3 {
 
 .threedi {
     white-space: normal !important; 
+    overflow: auto;
 }
 
 .threedi ul
