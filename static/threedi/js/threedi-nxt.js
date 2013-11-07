@@ -40,12 +40,12 @@ app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
 	    $scope.scenarios = null;
         $scope.threedi_active = true;
 
-		console.log('threedi connect');
+		//console.log('threedi connect');
 
         socket.socket.reconnect();
 
 	    socket.on('state', function(sender_sessid, your_sessid, state) {
-            console.log('processing state from server: ', state);
+            //console.log('processing state from server: ', state);
 
             $scope.$apply(function() {
                 $scope.your_sessid = your_sessid;
@@ -67,7 +67,7 @@ app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
                 // detect model change
                 if ((state.loaded_model !== 'None') && 
                     ($scope.loaded_model !== state.loaded_model)) {
-                    console.log('New model detected');
+                    //console.log('New model detected');
                     $scope.loaded_model = state.loaded_model;
                     $scope.initial_extent = true;
                     $scope.is_loading = false;
@@ -105,7 +105,7 @@ app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
         $scope.threedi_active = false;
         $scope.$broadcast('threedi_active_shutdown', '');  // is received instantaneous
         if (socket !== null) {
-            console.log('Disconnecting socket...');
+            //console.log('Disconnecting socket...');
             socket.removeAllListeners();
             socket.disconnect();
 
@@ -598,7 +598,7 @@ app.directive('threediMap', function(AnimatedLayer) {
 
             /* shut down the animation layer so it can be used for another model */
             var animation_shutdown = function() {
-                console.log('shutting down existing wms ani layer');
+                //console.log('shutting down existing wms ani layer');
                 if ((wms_ani_layer !== null) && (wms_ani_layer !== undefined)) {
                     wms_ani_layer.shutdown();
                 }
@@ -626,7 +626,7 @@ app.directive('threediMap', function(AnimatedLayer) {
             }
 
             scope.$watch('follow_3di', function() {
-                console.log('Watch follow_3di');
+                //console.log('Watch follow_3di');
                 if (scope.follow_3di && !scope.is_master) {
                     setExtent();
                 }

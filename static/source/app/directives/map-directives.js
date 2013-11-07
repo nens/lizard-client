@@ -7,7 +7,7 @@ app
       this.initiateLayer = function (layer) {
         if (layer.name === "Simulatie") {
           // Hack for 3Di.
-          console.log("Initiate 3Di");
+          //console.log("Initiate 3Di");
           layer.follow_3di = false;
         } else if (layer.type === "TMS" && layer.baselayer){
           layer.leafletLayer = L.tileLayer(layer.url + '.png', {name:"Background", maxZoom: 20});
@@ -53,7 +53,7 @@ app
         this.toggleLayer = function (layer) {
           // 3Di hack
           if (layer.name === "Simulatie") {
-            console.log("Toggle 3Di layer " + layer.active);
+            //console.log("Toggle 3Di layer " + layer.active);
             if (layer.active) {
               $scope.connect();
             } else {
@@ -131,7 +131,7 @@ app
         this.map = function() {return $scope.map;}; // make map object available to outside world.
       
         this.zoomToTheMagic = function (layer) {
-          console.log('zoomToTheMagic');
+          //console.log('zoomToTheMagic');
           // TODO: make this not hardcoded. And make this a nice UX instead of a brutal one
           if (layer.name == 'Riolering') {
             $scope.map.setView([52.503265633642194, 4.968782196044922], 14, {animate: true});
@@ -324,7 +324,7 @@ app.directive('zoomToLayer', function () {
       scope.$watch('zoomToLayer', function () {
         if (scope.zoomToLayer !== undefined) {
           mapCtrl.zoomToTheMagic(scope.layerToZoomTo);
-          console.debug("zoomzoomzoom");
+          //console.debug("zoomzoomzoom");
         }
       });
     }
