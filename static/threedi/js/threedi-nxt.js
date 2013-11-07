@@ -700,6 +700,21 @@ app.directive('threediMap', function(AnimatedLayer) {
             //                 scope.box.content = {
             //                     title: 'infoooo', infourl: infourl};
             //             });
+                        //scope.wms_server_url
+                        //scope.data = [{date: 0, value: 0},{date: 1, value: 1},{date: 2, value: 2},{date: 3, value: 1}];
+                        scope.xlabel = 'Timeeee';
+                        scope.ylabel = 'Value';
+                        $.get('http://10.90.20.55:5000/3di/data?REQUEST=gettimeseries&LAYERS=hhnkipad-HHNKiPad:s1&SRS=EPSG:4326&POINT=4.808921813964844,52.64071976379423&random=0', 
+                            function(data) {
+                                scope.$apply(function() {
+                                    console.log('finally got 3Di data');
+                                    scope.data = [{date: 0, value: 0},{date: 1, value: 1},{date: 2, value: 2},{date: 3, value: 1}];
+                                    scope.threedi_timeseries = 'blabla';
+
+                            });
+                        });
+                        // http://10.90.20.55:5000/3di/data?REQUEST=gettimeseries&LAYERS=hhnkipad-HHNKiPad:s1&SRS=EPSG:4326&POINT=4.8105525970458975,52.64181349342545&random=0
+                        // http://10.90.20.55:5000/3di/data?REQUEST=gettimeseries&LAYERS=hhnkipad-HHNKiPad:s1&SRS=EPSG:4326&POINT=4.808921813964844,52.64071976379423&random=0
                     
                     } else if (scope.program_mode == MODE_RAIN) {
                         var amount = 0.010;  // in meters!
