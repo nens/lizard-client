@@ -2,7 +2,7 @@
   <div class="card-title">
     <!--<h1><% box.content %> Meldingen</h1>-->
     <p>Meldingen:
-      <a href="#" ng-click="toggle_tool('kpi')" title="Toggle Meldingen">
+      <a href="#" ng-click="toggle_tool('alerts')" title="Toggle Meldingen">
       <span class="label" ng-class="{'label-danger': box.content_agg >= 5,
                                      'label-success': box.content_agg < 5}">
         <% box.content_agg | number:0 %>

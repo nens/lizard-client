@@ -1,5 +1,5 @@
 {% load i18n %}
-<header class="navbar navbar-inverse navbar-fixed-top">
+    <header class="navbar navbar-inverse navbar-fixed-top">
       <!-- <div id="logo-row" class=""> -->
         <div id="logo">
           <a href="/"><img src="{{ STATIC_URL }}source/assets/images/logo_text.png" alt="Lizard"></a>
@@ -12,12 +12,6 @@
             <li class="site">
               <a href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.profile.enabled}"></i></a>
             </li>
-<!--             <li>
-              <a ng-click="toggleTimeline()"><i class="icon-collapse icon-large"></i></a>
-            </li> -->
-<!--             <li>
-              <a href="#" ng-click="toggle_tool('kpi')" ng-class="{'icon-large': tools.kpi.enabled}" title="Key Performance Indicator"><i class="icon-dashboard"></i></a>
-            </li> -->
             {% if user.is_authenticated %}
               <li>
                 <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="pull-right" id="username"> {{ user.first_name }}</div><i id="user-icon" class="icon-user pull-right"></i></a>
@@ -48,7 +42,7 @@
                   </ul>
                 </li>
                 <li class="nav-header">
-                  {% trans "Themakaart" %}
+                  {% trans "Thema" %}
                   <ul class="list-group">
                     <li ng-repeat="layergroup in mapState.layergroups | orderBy:'order':true" >
                       <input id="<%layergroup.id%>-layergroup" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="toggleLayerGroup(layergroup)">
@@ -62,7 +56,17 @@
                     <li ng-repeat="layer in mapState.layers | orderBy:'order':true">
                       <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
                       <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
+                      <div ng-switch="layer.follow_3di" style="float: right;">
+                      <div ng-switch-when="undefined">
                       <i class="icon-screenshot pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="zoomToTheMagic(layer)"></i>
+                      </div>
+                      <div ng-switch-when="true">
+                      <i class="icon-eye-close pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="setFollow(layer, false)"></i>
+                      </div>
+                      <div ng-switch-when="false">
+                      <i class="icon-eye-open pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="setFollow(layer, true)"></i>
+                      </div>
+                      </div>
                     </li>
                   </ul>
                 </li>
@@ -78,23 +82,22 @@
         </div>
       <!-- </div> -->
     </header>
-
     {% block content %}
 
       <div>
-        <map layer-switch
-             kpilayer="onAreaClick()"
-             move-end
-             pan-zoom="panZoom"
+        <map layer-switch 
+             move-end pan-zoom="panZoom"
              layers="mapState.layers"
              rasterprofile="disabled"
              locate="locate"
              zoom-to-layer="zoomToLayer"
              vectorlayer
+             threedi-map
              geo-json-layer>
-        </map>
+         </map>
       </div>
-    <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
+    <timeline class="hidden navbar timeline navbar-fixed-bottom"></timeline>
+
 
     {% block box_awesome %}{% endblock %}
     <div class="container">

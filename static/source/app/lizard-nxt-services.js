@@ -34,7 +34,6 @@ services.service("CabinetService", ["$resource",
     end: '@end'
   });
 
-
   return {
     layergroups: layergroups,
     layers: layers,
@@ -48,38 +47,3 @@ services.service("CabinetService", ["$resource",
     panZoom: null
   };
 }]);
-
-
-
-//NOTE this seems like a superfluous service; let's try to get rid of it
-services.service("Omnibox", [function () {
-  var box = {
-    query: null,
-    disabled: false,
-    showCards: false,
-    type: 'empty',
-    content: {},
-    changed: Date.now()
-  };
-
-  // TODO: These functions should go to the directive
-  box.open = function (type) {
-    box.type = type;
-    box.showCards = true;
-  };
-
-  box.close = function () {
-    box.type = 'empty';
-    box.showCards = false;
-  };
-
-  box.get_profile = function () {
-    return "ok";
-  };
-
-  return box;
-}]);
-
-services.service("KpiService", function () {
-
-});

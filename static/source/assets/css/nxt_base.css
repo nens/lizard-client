@@ -13,7 +13,6 @@ html, body{
     position: absolute;
 }
 
-
 .clickObj {
     width:25px;
     height:25px;
@@ -849,11 +848,7 @@ a {
  */
 .circle {
   cursor: pointer;
-  visibility: hidden;
-}
-
-.circle.selected {
-  visibility: visible;
+  /*visibility: hidden;*/
 }
 
 .leaflet-div-icon{
@@ -883,5 +878,3 @@ a {
     animation: shakeit 800ms linear 0s infinite;
     fill: maroon;
 }
-
-
