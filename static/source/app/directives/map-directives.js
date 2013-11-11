@@ -62,7 +62,7 @@ app
             return
           }
           if (!layer.active) {
-            if (layer.leafletLayer) {
+            if (layer.leafletLayergetTimes) {
               $scope.map.removeLayer(layer.leafletLayer);
               if (layer.grid_layers) {
                 for (var i in layer.grid_layers){
@@ -386,10 +386,26 @@ app.directive('geoJsonLayer', function ($http) {
               pointToLayer: function(geojson, latlng) {
                 var pumpid = geojson.properties.id;
                 var pumpIcon = new L.DivIcon({
-                  html: '<svg width="48" height="48" id=pumpstation'+pumpid+' class="pumpstation_sewerage"><g ><path d="m 31.461905,37.742857 -20.966667,0 0,-2.233334 20.966667,0 -6.033333,-3.9 1.466666,-1.566666 10.1,6.566666 -10.1,6.5 -1.466666,-1.466666 6.033333,-3.9 m -13.6,-32.7333337 11.2,0 0,7.0999997 7.933333,0 0,13.1 -26.7,0 0,-13.1 7.566667,0 0,-7.0999997" class="pumpstation" style="font-size:30px"/></g></svg>',
+                  html: '<svg width="48" height="48" id=pumpstation_'+pumpid+' class="pumpstation_sewerage">' +
+                  '<g >' +
+                  '<path d="m 31.461905,37.742857 -20.966667,0 0,-2.233334 20.966667,0 -6.033333,-3.9 1.466666,-1.566666 10.1,6.566666 -10.1,6.5 -1.466666,-1.466666 6.033333,-3.9 m -13.6,-32.7333337 11.2,0 0,7.0999997 7.933333,0 0,13.1 -26.7,0 0,-13.1 7.566667,0 0,-7.0999997" class="pumpstation" style="font-size:30px"/>' +
+                  '</g>' +
+                  '</svg>',
                   iconAnchor: new L.Point(20, 20)
                 });
-                return new L.Marker(latlng, {icon: pumpIcon});
+                var pumpMarker = new L.Marker(latlng, {icon: pumpIcon});
+
+                pumpMarker.on('click', function (e) {
+                  this.feature.properties.entity_name = 'pumpstation_sewerage';
+                  scope.getTimeseries(this.feature.properties);
+                  // scope.$apply(function () {
+                  //   // scope.box.content.data = geojson;
+                  //   // scope.box.content.id = pumpid;
+                  //   scope.box.type = 'pumpstation_sewerage';
+                  // });
+
+                })
+                return pumpMarker;
               }
             });
             mapCtrl.addLayer(geojsonLayer);
