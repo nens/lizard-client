@@ -358,6 +358,9 @@ app.directive('timeline', [ function ($timeout) {
   var link = function (scope, element, attrs, timelineCtrl) {
     var chart;
     scope.timeline.width = element.width();
+    if (scope.timeline.width < 10){
+      scope.timeline.width = window.outerWidth;    
+    }
     scope.$watch('timeline.open', function () {
       if (scope.timeline.open){
         scope.timeline.height = 200;
@@ -504,11 +507,6 @@ app.directive('timeline', [ function ($timeout) {
 
 
         scope.timeline.temporalExtent.at = timelineCtrl.halfwayTime(x.scale, graph.width);
-        timelineCtrl.drawReferenceAt({
-          width: graph.width,
-          height: graph.height,
-          svg: graph.svg
-        });
         return {
           x: x,
           height: graph.height,
