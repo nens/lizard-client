@@ -1,30 +1,17 @@
 'use strict';
 
-// wtf.
-document.ondblclick = function(e) {
-    var clickObj = document.createElement("div"),
-        inner = document.createElement("div");
-    inner.className = "clickObj";
-    clickObj.style.position = "absolute";
-    clickObj.style.top = e.clientY + "px";
-    clickObj.style.left = e.clientX + "px";
-    this.body.appendChild(clickObj);
-    clickObj.appendChild(inner);
-    setTimeout(function() { clickObj.remove(); }, 1000);
-};
-
-
 var templatesUrl = '/static/source/app/templates/';
 
+// Initialise app
 var app = angular.module("lizard-nxt", [
   'ngResource',
-  'ui.event',
-  'ui.highlight',
-  'ui.keypress',
   'graph',
   'omnibox',
   'lizard-nxt.services']);
 
+/**
+ * Change default angular tags to prevent collision with Django tags
+ */
 app.config(function($interpolateProvider) {
   //To prevent Django and Angular Template hell
   $interpolateProvider.startSymbol('<%');
@@ -32,10 +19,17 @@ app.config(function($interpolateProvider) {
  });
 
 
+/**
+ * Master controller
+ *
+ * Defines general models and gets data from server; functions that are not
+ * relevant for rootscope live in their own controller
+ */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "$resource","$q","CabinetService", "KpiService", 
-  function ($scope, $http, $resource, $q, CabinetService, KpiService)  {
+  ["$scope", "$http", "$resource", "$q", "CabinetService",
+  function ($scope, $http, $resource, $q, CabinetService)  {
 
+  // BOX MODEL
   $scope.box = {
     query: null,
     disabled: false,
@@ -44,7 +38,9 @@ app.controller("MasterCtrl",
     content: {},
     changed: Date.now()
   };
+  // BOX MODEL
 
+  // BOX FUNCTIONS
   $scope.box.close = function () {
     $scope.box.type = 'empty';
     $scope.box.showCards = false;
@@ -58,10 +54,11 @@ app.controller("MasterCtrl",
     $scope.box.query = keyword;
     $scope.search();
   };
+  // BOX FUNCTIONS
 
-  // NOTE: DRY idiot.
+  // TOOLS
   $scope.tools = {
-    kpi: {
+    alerts: {
       enabled: false
     },
     profile: {
@@ -72,29 +69,6 @@ app.controller("MasterCtrl",
     }
   };
 
-// KPI START
-  $scope.kpi = {
-    kpichanged: true,
-    thresholds: {'warning': 7, 'error': 5},
-    categories: ['tevredenheid_burger',
-                    'toestand_infrastructuur',
-                    'omgevingseffect',
-                    'goed_gebruik',
-                    'planrealisatie'],
-    cat_dict: { 'tevredenheid_burger': 'Tevredenheid',
-                   'toestand_infrastructuur': 'Toestand',
-                   'omgevingseffect': 'Omgevingseffect',
-                   'goed_gebruik': 'Gebruik',
-                   'planrealisatie': 'Planrealisatie'},
-    kpiData: {},
-    areadata: {},
-    slct_area: null
-  };
-
-  $scope.$watch('kpi.panZoom', function(){
-    $scope.panZoom = $scope.kpi.panZoom;
-  });
-
   $scope.toggle_tool = function (name) {
     if ($scope.tools.hasOwnProperty(name)){
       $scope.tools[name].enabled = !$scope.tools[name].enabled;
@@ -102,97 +76,9 @@ app.controller("MasterCtrl",
       console.log('Unknown tool called: ' + name);
     }
   };
+  // TOOLS
 
-  $scope.onAreaClick = function(area){
-    $scope.$apply(function(){
-      $scope.kpi.slct_area = area;
-      $scope.kpi.kpichanged = !$scope.kpi.kpichanged;
-    });
-  };
-// KPI END
-
-
-// SEARCH-START
-  $scope.searchMarkers = [];
-  $scope.search = function ($event) {
-
-    if ($scope.box.query.length > 1) {
-      var search = CabinetService.termSearch.query({q: $scope.box.query}, function (data) {
-          var sources = [];
-          for (var i in data) {
-            if(data[i].geometry !== null) {
-              sources.push(data[i]);
-            }
-          }
-          $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
-          for (var j in sources) {
-            console.log('sources:',sources);
-            $scope.searchMarkers = [];
-            if(sources[j].geometry) {
-              $scope.searchMarkers.push(sources[j]);
-            }
-          }
-
-          $scope.searchData = sources;
-        });
-
-      
-      var geocode = CabinetService.geocode.query({q: $scope.box.query}, function (data) {
-              console.log(data);
-              $scope.box.content = data;
-            });
-      $scope.box.type = "location";
-    }
-  };
-
-  $scope.bbox_update = function(bl_lat, bl_lon, tr_lat, tr_lon) {
-    $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
-    var search = CabinetService.bboxSearch.query({
-      bottom_left: bl_lat+','+bl_lon,
-      top_right: tr_lat+','+tr_lon
-    }, function (data) {
-      $scope.searchMarkers = [];
-      for(var i in data) {
-        if(data[i].geometry) {
-          $scope.searchMarkers.push(data[i]);
-        }
-      }
-      console.log('bbox_update:', data);
-    });
-  };
-
-  $scope.reset_query = function () {
-      // clean stuff..
-      // Search Ctrl is the parent of omnibox cards
-      // therefore no need to call $rootScope.
-      $scope.$broadcast('clean');
-      $scope.box.query = null;
-      $scope.box.type= 'empty';
-  };
-
-  $scope.showDetails = function (obj) {
-      $scope.currentObject = obj;
-      console.log('obj:', obj);
-      if ($scope.currentObject.lat && $scope.currentObject.lon) {
-          // A lat and lon are present, instruct the map to pan/zoom to it
-          var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
-          $scope.panZoom = {
-            lat: $scope.currentObject.lat,
-            lng: $scope.currentObject.lon,
-            zoom: 14
-          };
-      }
-      else if ($scope.currentObject.geometry[0] && $scope.currentObject.geometry[1]) {
-          $scope.panZoom = {
-            lat: $scope.currentObject.geometry[1],
-            lng: $scope.currentObject.geometry[0],
-            zoom: 14
-          };
-      }
-  };
-// SEARCH-END
-
-
+  // MAP MODEL
   $scope.mapState = {
     layergroups: CabinetService.layergroups,
     layers: CabinetService.layers,
@@ -203,7 +89,10 @@ app.controller("MasterCtrl",
     baselayerChanged: Date.now(),
     enabled: false
   };
+  // MAP MODEL
 
+  // NOTE: move map functions to map controller
+  // MAP FUNCTIONS
   $scope.$on('PanZoomeroom', function(message, value){
     $scope.panZoom = value;
     console.log('PanZoomeroom', value);
@@ -247,13 +136,13 @@ app.controller("MasterCtrl",
     $scope.mapState.changed = Date.now();
   };
 
-
   $scope.zoomToTheMagic = function (layer) {
     $scope.layerToZoomTo = layer;
     $scope.zoomToLayer = !$scope.zoomToLayer;
   };
+  // MAP FUNCTIONS
 
-  // For 3Di
+  // 3Di START
   $scope.setFollow = function(layer, follow_3di) {
     layer.follow_3di = follow_3di;  // for GUI
     $scope.follow_3di = follow_3di;
@@ -271,7 +160,9 @@ app.controller("MasterCtrl",
       $scope.box.content = 'bladiblabla';
       $scope.tools.threedi.enabled = !$scope.tools.threedi.enabled;
   }  
+  // 3Di END
 
+  // Legacy formatter for KPI: remove?
   $scope.format_data = function (data) {
     if (data[0]){
     $scope.formatted_data = [];
@@ -287,8 +178,11 @@ app.controller("MasterCtrl",
     }
     return $scope.formatted_data;
   };
+  // end legacy formatter
 
-
+  /**
+   * Get data for timeseries
+   */
   $scope.getTimeseries = function (data) {
 
     $scope.box.type = data.entity_name;
@@ -309,6 +203,7 @@ app.controller("MasterCtrl",
         $scope.selected_timeseries = undefined;
       }
     });
+
     $scope.metadata = {
         title: null,
         fromgrid: $scope.box.content.data,
@@ -338,6 +233,7 @@ app.controller("MasterCtrl",
   };
 
   // rewrite data to make d3 parseable
+  // NOTE: refactor?
   var format_data = function (data) {
     var formatted_data = [];
     for (var i = 0; i < data.length; i++) {
@@ -352,27 +248,38 @@ app.controller("MasterCtrl",
     return formatted_data;
   };
 
-  // get complaint data from geojson
+  /**
+   * KPI model
+   *
+   * KPI is a list of KPI's, every KPI has a name, value, threshold and
+   * a list of PI's
+   *
+   * A PI has a name, data and a threshold
+   */
+  $scope.kpi = [{"name": "general",
+                 "value": 7,
+                 "threshold": 6,
+                 "pi": [{
+                  "name": "Meldingen",
+                  "threshold": 8,
+                  "data": {}
+                 }]
+                }];
+  // END KPI MODEL
+  
+  // HACK: get alert (meldingen) data from geojson
   // NOTE: this should come from events in HBASE
-  var events = '/static/data/klachten_purmerend_min.geojson';
-  $http.get(events)
+  var alerts = '/static/data/klachten_purmerend_min.geojson';
+  $http.get(alerts)
     .success(function (data) {
-      $scope.kpi.events = data;  
-      $scope.kpi.panZoom = {
-        //lat: 52.2114246,
-        //lng: 5.8998043,
-        //zoom: 11
-        lat: 52.5185894148, 
-        lng: 4.9557002060,
-        zoom: 16
-      }
+      $scope.kpi[0].pi[0].data = data;  
+      console.log("event data", data);
     });
 
   /*
-   * Get profile from server
-   * NOTE: refactor to get_data()
+   * Get raster data from server
    */
-  $scope.get_profile = function (raster_names, linestring_wkt, srs) {
+  $scope.getRasterData = function (raster_names, linestring_wkt, srs) {
     // build url
     // NOTE: first part hardcoded
     var url = "api/v1/rasters/";
@@ -398,7 +305,9 @@ app.controller("MasterCtrl",
       });
   };
 
-// Temporal extent stuf
+  // TIMELINE START
+  // NOTE: refactor timeline stuff in it's own controller, most stuff is local
+  // to timeline scope; only temporalextent should be exposed to master / root
   $scope.timeline = {
     temporalExtent: {
       start: 1382359037278,
@@ -481,6 +390,87 @@ app.controller("MasterCtrl",
       $scope.timeline.zoom.changed = interval;
     }
   }
+  // TIMELINE END 
 
+// NOTE: REFACTOR 
+// SEARCH-START
+  $scope.searchMarkers = [];
+  $scope.search = function ($event) {
+
+    if ($scope.box.query.length > 1) {
+      var search = CabinetService.termSearch.query({q: $scope.box.query}, function (data) {
+          var sources = [];
+          for (var i in data) {
+          if(data[i].geometry !== null) {
+          sources.push(data[i]);
+          }
+          }
+          $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
+          for (var j in sources) {
+          console.log('sources:',sources);
+          $scope.searchMarkers = [];
+          if(sources[j].geometry) {
+          $scope.searchMarkers.push(sources[j]);
+          }
+          }
+
+          $scope.searchData = sources;
+          });
+
+
+      var geocode = CabinetService.geocode.query({q: $scope.box.query}, function (data) {
+          console.log(data);
+          $scope.box.content = data;
+          });
+      $scope.box.type = "location";
+    }
+  };
+
+  $scope.bbox_update = function(bl_lat, bl_lon, tr_lat, tr_lon) {
+    $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
+    var search = CabinetService.bboxSearch.query({
+      bottom_left: bl_lat+','+bl_lon,
+      top_right: tr_lat+','+tr_lon
+    }, function (data) {
+      $scope.searchMarkers = [];
+      for(var i in data) {
+        if(data[i].geometry) {
+          $scope.searchMarkers.push(data[i]);
+        }
+      }
+      console.log('bbox_update:', data);
+    });
+  };
+
+  $scope.reset_query = function () {
+      // clean stuff..
+      // Search Ctrl is the parent of omnibox cards
+      // therefore no need to call $rootScope.
+      $scope.$broadcast('clean');
+      $scope.box.query = null;
+      $scope.box.type= 'empty';
+  };
+
+  $scope.showDetails = function (obj) {
+      $scope.currentObject = obj;
+      console.log('obj:', obj);
+      if ($scope.currentObject.lat && $scope.currentObject.lon) {
+          // A lat and lon are present, instruct the map to pan/zoom to it
+          var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
+          $scope.panZoom = {
+            lat: $scope.currentObject.lat,
+            lng: $scope.currentObject.lon,
+            zoom: 14
+          };
+      }
+      else if ($scope.currentObject.geometry[0] && $scope.currentObject.geometry[1]) {
+          $scope.panZoom = {
+            lat: $scope.currentObject.geometry[1],
+            lng: $scope.currentObject.geometry[0],
+            zoom: 14
+          };
+      }
+  };
+// SEARCH-END
 
 }]);

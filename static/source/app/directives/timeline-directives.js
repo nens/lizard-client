@@ -370,7 +370,7 @@ app.directive('timeline', [ function ($timeout) {
       } else {
         scope.timeline.height = 70;
       }
-      if (scope.timeline.data === scope.kpi.events.features){
+      if (scope.timeline.data === scope.kpi[0].pi[0].data.features){
         chart = drawChart("INTAKEDATU", "CATEGORIE", {
           scale: "ordinal",
           chart: "circles",
@@ -381,9 +381,9 @@ app.directive('timeline', [ function ($timeout) {
       }
     });
 
-    scope.$watch('kpi.events', function (newVal, oldVal) {
+    scope.$watch('kpi[0].pi[0].data', function (newVal, oldVal) {
       if (newVal !== oldVal){
-        scope.timeline.data = scope.kpi.events.features;
+        scope.timeline.data = scope.kpi[0].pi[0].data.features;
         chart = drawChart("INTAKEDATU", "CATEGORIE", {
           scale: "ordinal",
           chart: "circles",
@@ -550,7 +550,7 @@ app.directive('timeline', [ function ($timeout) {
 
     window.onresize = function () {
       scope.timeline.width = element.width();
-      if (scope.timeline.data === scope.kpi.events.features){
+      if (scope.timeline.data === scope.kpi[0].pi[0].data.features){
         chart = drawChart("INTAKEDATU", "CATEGORIE", {
           scale: "ordinal",
           chart: "circles",

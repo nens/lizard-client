@@ -13,7 +13,6 @@ html, body{
     position: absolute;
 }
 
-
 .clickObj {
     width:25px;
     height:25px;
@@ -849,9 +848,9 @@ a {
  */
 .circle {
   cursor: pointer;
-  visibility: hidden;
+  /*visibility: hidden;*/
 }
 
-.circle.selected {
-  visibility: visible;
-}
+/*.circle .selected {*/
+  /*visibility: visible;*/
+/*}*/
