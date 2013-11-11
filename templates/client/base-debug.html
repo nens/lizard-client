@@ -29,8 +29,9 @@
       var layerGroups = {{ strap_layer_groups }};
 
       var threedi_api_url = "{{ threedi_instance.api_url }}";
-      var threedi_subgrid_url = "{{ threedi_instance.socket_url }}"; //"http://localhost:9000/subgrid";
-      var threedi_wms_server_url = "{{ threedi_instance.wms_url }}"; //"http://10.90.20.55:5000/3di/wms";
+      var threedi_subgrid_url = "{{ threedi_instance.socket_url }}";
+      var threedi_wms_server_url = "{{ threedi_instance.wms_url }}";
+      var threedi_data_url = "{{ threedi_instance.data_url }}";
 
       function logOut() {
         var r=confirm("Weet u zeker dat u wilt uitloggen?");
