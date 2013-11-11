@@ -338,80 +338,42 @@ app.directive('geoJsonLayer', function ($http) {
   return {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
-      // var geojsonLayer = new L.TileLayer.GeoJSON(
-      //   '/api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=pumpstation_sewerage',
-      //   {
-      //   class: 'channel',
-      //   type: 'jan',
-      //   icon: d3Icon
-      //   });
-      // mapCtrl.addLayer(geojsonLayer);
-      // var pipesd3 = d3.selectAll('.pumps');
-      // pipesd3.on('click', function(){
-      //   console.log(this);
-      //   scope.box.type = 'pumpstation';
-      //   d3.select(this)
-      //  .transition()
-      //  .style("stroke", "deeppink")
-      //  .duration(1000)
-      //  .transition()
-      //  .style("stroke", "gainsboro")
-      // })
-
-      function circle_style(circles) {
-        if (!scale) {
-          scale = d3.scale.ordinal()
-            .domain(function (d) {
-              //NOTE: kill hard coded dependency
-              return d3.set(d.properties.CATEGORIE).values();
-            })
-            .range(colorbrewer.Set2[6]);
-        }
-      };
-  
-        var events = '/static/data/pumpstation_sewerage.geojson';
-        $http.get(events)
-          .success(function (data) {
-            scope.pumpstation_sewerage = data;  
-            // var pumpstationLayer = L.pointsLayer(scope.pumpstation_sewerage, {
-            //   cssclass: "pumpstations"
-            // });
-            //   mapCtrl.addLayer(pumpstationLayer);
-            //  d3.selectAll(".pumpstations")
-            //   .append("svg:image")
-            //     .attr("xlink:href", "/static/source/assets/images/gemaal.svg");
-
-
-            var geojsonLayer = new L.GeoJSON(data, {
-              pointToLayer: function(geojson, latlng) {
-                var pumpid = geojson.properties.id;
-                var pumpIcon = new L.DivIcon({
-                  html: '<svg width="48" height="48" id=pumpstation_'+pumpid+' class="pumpstation_sewerage">' +
-                  '<g >' +
-                  '<path d="m 31.461905,37.742857 -20.966667,0 0,-2.233334 20.966667,0 -6.033333,-3.9 1.466666,-1.566666 10.1,6.566666 -10.1,6.5 -1.466666,-1.466666 6.033333,-3.9 m -13.6,-32.7333337 11.2,0 0,7.0999997 7.933333,0 0,13.1 -26.7,0 0,-13.1 7.566667,0 0,-7.0999997" class="pumpstation" style="font-size:30px"/>' +
-                  '</g>' +
-                  '</svg>',
-                  iconAnchor: new L.Point(20, 20)
-                });
-                var pumpMarker = new L.Marker(latlng, {icon: pumpIcon});
-
-                pumpMarker.on('click', function (e) {
-                  this.feature.properties.entity_name = 'pumpstation_sewerage';
-                  scope.getTimeseries(this.feature.properties);
-                  // scope.$apply(function () {
-                  //   // scope.box.content.data = geojson;
-                  //   // scope.box.content.id = pumpid;
-                  //   scope.box.type = 'pumpstation_sewerage';
-                  // });
-
-                })
-                return pumpMarker;
-              }
-            });
-            mapCtrl.addLayer(geojsonLayer);
-
+      var data,
+          geojsonLayer;
+      
+      var events = '/static/data/pumpstation_sewerage.geojson';
+      $http.get(events)
+        .success(function (data) {
+          data = data;  
           });
+        geojsonLayer = new L.GeoJSON(data, {
+          pointToLayer: function(geojson, latlng) {
+            var pumpid = geojson.properties.id;
+            var pumpIcon = new L.DivIcon({
+              html: '<svg width="48" height="48" id=pumpstation_'+pumpid+' class="pumpstation_sewerage">' +
+              '<g >' +
+              '<path d="m 31.461905,37.742857 -20.966667,0 0,-2.233334 20.966667,0 -6.033333,-3.9 1.466666,-1.566666 10.1,6.566666 -10.1,6.5 -1.466666,-1.466666 6.033333,-3.9 m -13.6,-32.7333337 11.2,0 0,7.0999997 7.933333,0 0,13.1 -26.7,0 0,-13.1 7.566667,0 0,-7.0999997" class="pumpstation" style="font-size:30px"/>' +
+              '</g>' +
+              '</svg>',
+              iconAnchor: new L.Point(20, 20)
+            });
+            var pumpMarker = new L.Marker(latlng, {icon: pumpIcon});
 
+            pumpMarker.on('click', function (e) {
+              this.feature.properties.entity_name = 'pumpstation_sewerage';
+              scope.getTimeseries(this.feature.properties);
+              // scope.$apply(function () {
+              //   // scope.box.content.data = geojson;
+              //   // scope.box.content.id = pumpid;
+              //   scope.box.type = 'pumpstation_sewerage';
+              // });
+
+            })
+            return pumpMarker;
+          }
+        });
+
+        mapCtrl.addLayer(geojsonLayer);
         
     }
   }
