@@ -82,7 +82,7 @@ app.directive('vectorlayer', function () {
         var srs = "EPSG:4326" // L.CRS.EPSG3857.code;
         // NOTE: in progress, this should be get_data
         // for rasters, also send needed statistic
-        scope.getRasterData("pop_density", geom_wkt, srs);
+        scope.getRasterData("pop_density", geom_wkt, srs, 'sum');
         var num_citizens = scope.box.pop_density / 100000000;
         console.log(num_citizens);
         // timeInterval in months

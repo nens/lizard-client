@@ -281,25 +281,31 @@ app.controller("MasterCtrl",
   /*
    * Get raster data from server
    */
-  $scope.getRasterData = function (raster_names, linestring_wkt, srs) {
+  $scope.getRasterData = function (raster_names, linestring_wkt, srs, agg) {
     // build url
     // NOTE: first part hardcoded
     var url = "api/v1/rasters/";
     url += "?raster_names=" + raster_names;
     url += "&geom=" + linestring_wkt;
     url += "&srs=" + srs;
+    if (agg !== undefined) {
+      url += "&agg=" + agg;  
+    }
     // get profile from server
     $http.get(url)
       .success(function (data) {
-        var d3data = format_data(data);
         //NOTE: hack to try pop_density
-        //$scope.box.type = "profile";
-        $scope.box.pop_density = data;
-        //$scope.box.content = {
-          //data: d3data,
-          //yLabel: 'hoogte [mNAP]',
-          //xLabel: 'afstand [m]'
-        //}
+        if (raster_names === 'pop_density') {
+          $scope.box.pop_density = data;
+        } else {
+          var d3data = format_data(data);
+          $scope.box.type = "profile";
+          $scope.box.content = {
+            data: d3data,
+            yLabel: 'hoogte [mNAP]',
+            xLabel: 'afstand [m]'
+          }
+        }
       })
       .error(function (data) {
         //TODO: implement error function to return no data + message
