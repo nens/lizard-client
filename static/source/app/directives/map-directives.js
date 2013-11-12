@@ -339,12 +339,23 @@ app.directive('sewerage', function ($http) {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
+      scope.$watch('tools.sewerage.enabled', function () {
+        if (scope.tools.sewerage.enabled) {
+          for (mapLayer in scope.mapState.layers) {
+             var layer = scope.mapState.layers[mapLayer];
+            if (layer.name === 'Riolering') {
+              // NOTE: disable alerts
+              layer.active = true;
+            }
+          }
+        }
+      });
+
       var pumpstationLayer,
            formatted_geojsondata;
       scope.$watch('mapState.changed', function () {
-        var layer;
-        for (mapLayer in scope.mapState.layers) {
-          layer = scope.mapState.layers[mapLayer];
+        for (var mapLayer in scope.mapState.layers) {
+          var layer = scope.mapState.layers[mapLayer];
           if (layer.name === 'Riolering' && layer.active) {
             // NOTE: disable alerts
             // NOTE: this should not be here.

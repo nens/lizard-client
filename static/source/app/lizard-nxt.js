@@ -76,7 +76,7 @@ app.controller("MasterCtrl",
     if ($scope.tools.hasOwnProperty(name)){
       $scope.tools[name].enabled = !$scope.tools[name].enabled;
       for (var toolName in $scope.tools) {
-        if (toolName != name && $scope.tools[name].enabled) {
+        if (toolName != name && $scope.tools[name].enabled && toolName != undefined) {
           $scope.tools[toolName].enabled = false;
         }
       }
