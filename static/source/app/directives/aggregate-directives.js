@@ -100,7 +100,7 @@ app.directive('vectorlayer', function () {
         });
 
         // pass newly calculated data to scope
-        scope.box.content = ctr;
+        // scope.box.content = ctr;
         //NOTE: ugly hack
         scope.box.content_agg = ctr / num_citizens / timeInterval;
       };

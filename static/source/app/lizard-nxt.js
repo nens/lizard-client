@@ -207,7 +207,7 @@ app.controller("MasterCtrl",
     $scope.metadata = {
         title: null,
         fromgrid: $scope.box.content.data,
-        type: $scope.box.content.data.entity_name
+        type: $scope.box.type
      };
 
     $scope.$watch('selected_timeseries', function () {
