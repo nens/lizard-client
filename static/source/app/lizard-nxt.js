@@ -68,7 +68,7 @@ app.controller("MasterCtrl",
       enabled: false
     },
     sewerage: {
-      enabled: false;
+      enabled: false
     }
   };
 
