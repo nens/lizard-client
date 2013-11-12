@@ -66,6 +66,9 @@ app.controller("MasterCtrl",
     },
     threedi: {
       enabled: false
+    },
+    sewerage: {
+      enabled: false;
     }
   };
 
@@ -185,11 +188,15 @@ app.controller("MasterCtrl",
    */
   $scope.getTimeseries = function (data) {
     /* data must have properties entity_name, id */
-    $scope.box.type = data.entity_name;
-    $scope.box.showCards = true;
-    $scope.box.content.object_type = data.entity_name;
-    $scope.box.content.id = data.id;
-    $scope.box.content.data = data;
+    // NOTE: this is an aggregation demo HACK
+    if (!arguments[1] && arguments[1] != "nochange") {
+      $scope.box.type = data.entity_name;
+      $scope.box.showCards = true;
+    }
+      $scope.box.content.object_type = data.entity_name;
+      $scope.box.content.id = data.id;
+      $scope.box.content.data = data;  
+    
 
 
     var new_data_get = CabinetService.timeseriesLocationObject.get({
@@ -206,7 +213,7 @@ app.controller("MasterCtrl",
 
     $scope.metadata = {
         title: null,
-        fromgrid: $scope.box.content.data,
+        fromgrid: data.entity_name,
         // type: $scope.box.type
         //type: $scope.box.content.data.entity_name
         type: data.entity_name
@@ -325,7 +332,7 @@ app.controller("MasterCtrl",
     },
     tool: 'zoom',
     canceler: $q.defer(),
-    open: false,
+    enabled: false,
     data: [
       { date: 1357714800000, value: Math.random()},
       { date: 1357714800000 + 100000, value: Math.random()},

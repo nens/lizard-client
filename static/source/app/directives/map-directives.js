@@ -62,7 +62,7 @@ app
             return
           }
           if (!layer.active) {
-            if (layer.leafletLayergetTimes) {
+            if (layer.leafletLayer) {
               $scope.map.removeLayer(layer.leafletLayer);
               if (layer.grid_layers) {
                 for (var i in layer.grid_layers){
@@ -339,14 +339,24 @@ app.directive('sewerage', function ($http) {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
+      var pumpstationLayer,
+           formatted_geojsondata;
       scope.$watch('mapState.changed', function () {
         var layer;
         for (mapLayer in scope.mapState.layers) {
           layer = scope.mapState.layers[mapLayer];
           if (layer.name === 'Riolering' && layer.active) {
+            // NOTE: disable alerts
+            // NOTE: this should not be here.
+            scope.tools.alerts.enabled = false;
             mapCtrl.addLayer(pumpstationLayer);
+            scope.timeline.data = formatted_geojsondata;
+            scope.timeline.changed = !scope.timeline.changed;
+            scope.timeline.enabled = true;
           } else if (layer.name === 'Riolering' && !layer.active) {
-            mapCtrl.removeLayer(pumpstationLayer);
+            if (pumpstationLayer) {
+              mapCtrl.removeLayer(pumpstationLayer);            
+            }
           }
         }
       });
@@ -355,6 +365,18 @@ app.directive('sewerage', function ($http) {
       $http.get(events)
         .success(function (data) {
           createGeoJsonLayer(data);  
+          function format(data) {
+            var formatted = [];
+            for (single in data.features ) {
+              var feature = data.features[single];
+              formatted.push({
+                date: Date.parse(feature.properties.created),
+                value: feature.properties.id
+              });
+            }
+            return formatted;
+          };
+          formatted_geojsondata = format(data);
           });
 
         var createGeoJsonLayer = function (data) {
@@ -373,13 +395,13 @@ app.directive('sewerage', function ($http) {
 
               pumpMarker.on('click', function (e) {
                 this.feature.properties.entity_name = 'pumpstation_sewerage';
-                scope.getTimeseries(this.feature.properties);
-                // scope.$apply(function () {
-                //   // scope.box.content.data = geojson;
-                //   // scope.box.content.id = pumpid;
-                //   scope.box.type = 'pumpstation_sewerage';
-                // });
-
+                scope.getTimeseries(this.feature.properties, 'nochange');
+                scope.box.content.sewerage = {
+                  start_level: this.feature.properties.start_level,
+                  stop_level: this.feature.properties.stop_level,
+                  capacity: this.feature.properties.capacity,
+                  type: this.feature.properties.type
+                }
               })
               return pumpMarker;
             },

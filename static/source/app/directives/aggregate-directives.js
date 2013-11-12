@@ -100,7 +100,7 @@ app.directive('vectorlayer', function () {
         });
 
         // pass newly calculated data to scope
-        // scope.box.content = ctr;
+        scope.box.content.count = ctr;
         //NOTE: ugly hack
         scope.box.content_agg = ctr / num_citizens / timeInterval;
       };
@@ -137,24 +137,44 @@ app.directive('vectorlayer', function () {
       
       // Watch button click, toggle event layer
       scope.$watch('tools.alerts.enabled', function () {
-        scope.box.type = "aggregate";
-
-        if (scope.kpi[0].pi[0].loaded === undefined || scope.kpi[0].pi[0].loaded === false) {
-          eventLayer = L.pointsLayer(scope.kpi[0].pi[0].data, {
-            applyStyle: circle_style
-          });
-          mapCtrl.addLayer(eventLayer);
-          drawTimeEvents();
-          scope.kpi[0].pi[0].loaded = true;
-        }
-
         if (scope.tools.alerts.enabled) {
+          scope.box.type = "aggregate";
+          // NOTE: remove this and make generic
+          // removing sewerage things ..
+          scope.box.sewerage = undefined;
+          for (mapLayer in scope.mapState.layers) {
+            layer = scope.mapState.layers[mapLayer];
+            if (layer.name === 'Riolering') {
+              layer.active = false;
+              scope.mapState.changed = Date.now();
+            }
+          }
+
+          if (scope.kpi[0].pi[0].loaded === undefined || scope.kpi[0].pi[0].loaded === false) {
+            if (scope.kpi[0].pi[0].data){
+            }
+            eventLayer = L.pointsLayer(scope.kpi[0].pi[0].data, {
+                applyStyle: circle_style
+              });  
+            mapCtrl.addLayer(eventLayer);
+            drawTimeEvents();
+            scope.kpi[0].pi[0].loaded = true;
+          }
+
+
           d3.selectAll(".circle.selected").classed("hidden", false);
-          d3.select("#timeline").classed("hidden", false);
+          // NOTE: do this somewhere else
+          // set timeline data 
+          scope.timeline.data = scope.kpi[0].pi[0].data.features;
+
+          scope.timeline.changed = !scope.timeline.changed;
+          scope.timeline.enabled = true;
+
+          // d3.select("#timeline").classed("hidden", false);
         } else {
           //mapCtrl.removeLayer(eventLayer);
           d3.selectAll(".circle").classed("hidden", true);
-          d3.select("#timeline").classed("hidden", true);
+          // d3.select("#timeline").classed("hidden", true);
         }
       });
     }

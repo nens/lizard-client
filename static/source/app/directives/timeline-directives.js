@@ -361,14 +361,10 @@ app.directive('timeline', [ function ($timeout) {
     if (scope.timeline.width < 10){
       scope.timeline.width = window.outerWidth;    
     }
-    scope.$watch('timeline.open', function () {
-      if (scope.timeline.open){
-        scope.timeline.height = 200;
-        // start the shazazzz.
-      } else {
-        scope.timeline.height = 70;
-      }
-      if (scope.timeline.data === scope.kpi[0].pi[0].data.features){
+    scope.timeline.height = 70;
+
+    scope.$watch('timeline.changed', function () {
+      if (scope.timeline.data == scope.kpi[0].pi[0].data.features){
         chart = drawChart("INTAKEDATU", "CATEGORIE", {
           scale: "ordinal",
           chart: "circles",
@@ -379,16 +375,16 @@ app.directive('timeline', [ function ($timeout) {
       }
     });
 
-    scope.$watch('kpi[0].pi[0].data', function (newVal, oldVal) {
-      if (newVal !== oldVal){
-        scope.timeline.data = scope.kpi[0].pi[0].data.features;
-        chart = drawChart("INTAKEDATU", "CATEGORIE", {
-          scale: "ordinal",
-          chart: "circles",
-          dateparser: 'isodate'
-        });
-      };
-    });
+    // scope.$watch('tools.alerts.enabled', function (newVal, oldVal) {
+    //   if (newVal){
+    //     scope.timeline.data = scope.kpi[0].pi[0].data.features;
+    //     chart = drawChart("INTAKEDATU", "CATEGORIE", {
+    //       scale: "ordinal",
+    //       chart: "circles",
+    //       dateparser: 'isodate'
+    //     });
+    //   };
+    // });
 
     var drawChart = function (xKey, yKey, options) {
       var graph = timelineCtrl.createCanvas(element, {
