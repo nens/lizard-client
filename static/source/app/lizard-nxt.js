@@ -66,6 +66,9 @@ app.controller("MasterCtrl",
     },
     threedi: {
       enabled: false
+    },
+    sewerage: {
+      enabled: false;
     }
   };
 
@@ -323,7 +326,7 @@ app.controller("MasterCtrl",
     },
     tool: 'zoom',
     canceler: $q.defer(),
-    open: false,
+    enabled: false,
     data: [
       { date: 1357714800000, value: Math.random()},
       { date: 1357714800000 + 100000, value: Math.random()},

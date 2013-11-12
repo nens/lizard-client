@@ -1,8 +1,8 @@
 <div class="card">
   <div class="card-title">
     <!--<h1><% box.content %> Meldingen</h1>-->
-    <p>Meldingen:
-      <a href="#" ng-click="toggle_tool('alerts')" title="Toggle Meldingen">
+    <p> <a ng-click="toggle_tool('alerts')" class="clickable" title="Toggle Meldingen">
+    Meldingen:
       <span class="label" ng-class="{'label-danger': box.content_agg >= 5,
                                      'label-success': box.content_agg < 5}">
         <% box.content_agg | number:0 %>
@@ -10,7 +10,14 @@
       </a>
       <small>&nbsp;<% box.content.count %></small>
     </p>
-    <p>Gemalen: 0</p>
+    <p><a ng-click="toggle_tool('sewerage')" class="clickable" title="Toggle Meldingen">
+      Gemalen: 
+      <span class="label" ng-class="{'label-danger': box.content_agg >= 5,
+                                     'label-success': box.content_agg < 5}">
+        <% box.content_agg | number:0 %>
+      </span>
+      </a>
+    </p>
     <p>
 
     </p>

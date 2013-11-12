@@ -339,7 +339,8 @@ app.directive('sewerage', function ($http) {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
-      var pumpstationLayer;
+      var pumpstationLayer,
+           formatted_geojsondata;
       scope.$watch('mapState.changed', function () {
         var layer;
         for (mapLayer in scope.mapState.layers) {
@@ -349,6 +350,9 @@ app.directive('sewerage', function ($http) {
             // NOTE: this should not be here.
             scope.tools.alerts.enabled = false;
             mapCtrl.addLayer(pumpstationLayer);
+            scope.timeline.data = formatted_geojsondata;
+            scope.timeline.changed = !scope.timeline.changed;
+            scope.timeline.enabled = true;
           } else if (layer.name === 'Riolering' && !layer.active) {
             if (pumpstationLayer) {
               mapCtrl.removeLayer(pumpstationLayer);            
@@ -361,6 +365,18 @@ app.directive('sewerage', function ($http) {
       $http.get(events)
         .success(function (data) {
           createGeoJsonLayer(data);  
+          function format(data) {
+            var formatted = [];
+            for (single in data.features ) {
+              var feature = data.features[single];
+              formatted.push({
+                date: Date.parse(feature.properties.created),
+                value: feature.properties.id
+              });
+            }
+            return formatted;
+          };
+          formatted_geojsondata = format(data);
           });
 
         var createGeoJsonLayer = function (data) {
