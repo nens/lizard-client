@@ -12,7 +12,14 @@ app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
     $scope.threedi_api_url = window.threedi_api_url;
     $scope.threedi_subgrid_url = window.threedi_subgrid_url;
     $scope.wms_server_url = window.threedi_wms_server_url; //'http://10.90.20.55:5000/3di/wms';
-    var socket = io.connect($scope.threedi_subgrid_url);  //"http://localhost:9000/subgrid"
+    $scope.data_url = window.threedi_data_url;
+    // Unfortunately, we still have to use xhr polling
+    var socket = io.connect(
+        $scope.threedi_subgrid_url,
+        {'transports': ['xhr-polling', 'websocket']});  //"http://localhost:9000/subgrid"
+    // var socket = io.connect(
+    //     $scope.threedi_subgrid_url, {resource: 'test.live.3di.lizard.net/socket.io'});
+    //var socket = io.connect("http://socket.lizard.net:80/test.live.3di.lizard.net/subgrid");
 
     $scope.have_master = false;
     $scope.is_master = false;
@@ -27,17 +34,28 @@ app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
     $scope.initial_extent = false;
     $scope.loaded_model = null;
 
+    $scope.infobox = {
+        open: false,
+        url: null,
+        wanted_url: null,
+        update_me: true,
+        lng: null,
+        lat: null
+    };
+
+    $scope.messages = [];
+
     $scope.connect = function() {
 	    $scope.state = null;
 	    $scope.scenarios = null;
         $scope.threedi_active = true;
 
-		console.log('threedi connect');
+		//console.log('threedi connect');
 
         socket.socket.reconnect();
 
 	    socket.on('state', function(sender_sessid, your_sessid, state) {
-            console.log('processing state from server: ', state);
+            //console.log('processing state from server: ', state);
 
             $scope.$apply(function() {
                 $scope.your_sessid = your_sessid;
@@ -59,7 +77,7 @@ app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
                 // detect model change
                 if ((state.loaded_model !== 'None') && 
                     ($scope.loaded_model !== state.loaded_model)) {
-                    console.log('New model detected');
+                    //console.log('New model detected');
                     $scope.loaded_model = state.loaded_model;
                     $scope.initial_extent = true;
                     $scope.is_loading = false;
@@ -81,6 +99,14 @@ app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
 
 	    socket.on('message', function(msg, msg_class) {
             console.log('Got a user message from server: ', msg);
+            $scope.$apply(function () {
+                $scope.messages.push(msg);
+            });
+            setTimeout(function() {
+                $scope.$apply(function () {
+                    $scope.messages.shift();
+                });
+            }, 3000);
 	    });
     }
 
@@ -89,7 +115,7 @@ app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
         $scope.threedi_active = false;
         $scope.$broadcast('threedi_active_shutdown', '');  // is received instantaneous
         if (socket !== null) {
-            console.log('Disconnecting socket...');
+            //console.log('Disconnecting socket...');
             socket.removeAllListeners();
             socket.disconnect();
 
@@ -242,6 +268,10 @@ app.directive('threediBox', function() {
             };
 
             scope.$watch('state', function() {
+                if (scope.state === null) {
+                    console.log('3Di: state is null');
+                    return
+                }
                 console.log('state change from 3di omnibox');
                 if (!scope.have_master) {
                     scope.request_master_title = 'Click to become Director.'
@@ -250,7 +280,7 @@ app.directive('threediBox', function() {
                 } else if (scope.have_master && !scope.is_master) {
                     // TODO: compare master levels.
                     scope.request_master_title = scope.state.player_master_name + 
-                        ' is already Director.';
+                        ' is Director.';
                     console.log(scope.request_master_title);
                 }
                 if (scope.state === null) {
@@ -275,7 +305,47 @@ app.directive('threediBox', function() {
                 } else if (value === 'stopping') {
                     label = 'Stopping simulation';
                 }
+
+                // infobox
+                date_entries = function (n){var t=[];for(var e in n)t.push({date:n[e][0],value:n[e][1]});return t}
+                url = scope.data_url + '?REQUEST=gettimeseries&LAYERS=' + 
+                    scope.state.loaded_model + ':s1&SRS=EPSG:4326&POINT=' + 
+                    scope.infobox.lng + ',' + scope.infobox.lat + ' &random=' + 
+                    scope.state.timestep + '&timeformat=epoch';
+                scope.infobox.wanted_url = url;
+                scope.update_infobox();
             });
+
+            scope.update_infobox = function() {
+                // Update the infobox.
+                if (scope.infobox.open && scope.infobox.update_me &&
+                    scope.infobox.wanted_url != scope.infobox.url) {
+
+                    scope.infobox.update_me = false;
+                    $.get(scope.infobox.wanted_url, 
+                        function(data) {
+                            scope.$apply(function() {
+                                console.log('finally got 3Di timeseries');
+                                //console.log(date_entries(data.timeseries));
+                                scope.infobox.url = scope.infobox.wanted_url;
+                                scope.xlabel = 'Time';
+                                scope.ylabel = 'Depth';
+                                scope.data = date_entries(data.timeseries);
+                                //scope.data = [{date: 0, value: 0},{date: 1, value: 1},{date: 2, value: 2},{date: 3, value: 1}];
+                                scope.threedi_timeseries = 'blabla';
+                                setTimeout(function() {
+                                    scope.$apply(function() {
+                                        scope.infobox.update_me = true;
+                                        if (scope.infobox.url != scope.infobox.wanted_url) {
+                                            scope.update_infobox();
+                                        }
+                                    });
+                                }, 1000);
+                                //scope.infobox.update_me = true;
+                        });
+                    });
+                }
+            };
 
 
             // scope.$on('shutdown', function() {
@@ -578,7 +648,7 @@ app.directive('threediMap', function(AnimatedLayer) {
 
             /* shut down the animation layer so it can be used for another model */
             var animation_shutdown = function() {
-                console.log('shutting down existing wms ani layer');
+                //console.log('shutting down existing wms ani layer');
                 if ((wms_ani_layer !== null) && (wms_ani_layer !== undefined)) {
                     wms_ani_layer.shutdown();
                 }
@@ -606,7 +676,7 @@ app.directive('threediMap', function(AnimatedLayer) {
             }
 
             scope.$watch('follow_3di', function() {
-                console.log('Watch follow_3di');
+                //console.log('Watch follow_3di');
                 if (scope.follow_3di && !scope.is_master) {
                     setExtent();
                 }
@@ -668,19 +738,21 @@ app.directive('threediMap', function(AnimatedLayer) {
                 if (scope.threedi_active) {
                     console.log('click 3Di!');
                     if (scope.program_mode == null) {
-                        // TODO: make this working/new style
                         console.log('info box');
-            //             var infourl = 'http://10.90.20.55:5000/3di' + 
-            // '/data?' + "REQUEST=gettimeseries&LAYERS=" + scope.state.loaded_model + ':' + 's1' + 
-            // "&SRS=EPSG:4326&POINT=" + e.latlng.lng.toString() + ',' + e.latlng.lat.toString() + 
-            // '&random=' + 1;
-
-            //             scope.$apply(function () {
-            //                 scope.box.type = 'threedi-info';
-            //                 scope.box.content = {
-            //                     title: 'infoooo', infourl: infourl};
-            //             });
-                    
+                        //date_entries = function (n){var t=[];for(var e in n)t.push({date:n[e][0],value:n[e][1]});return t}
+                        url = scope.data_url + '?REQUEST=gettimeseries&LAYERS=' + 
+                            scope.state.loaded_model + ':s1&SRS=EPSG:4326&POINT=' + 
+                            e.latlng.lng + ',' + e.latlng.lat + ' &random=' + 
+                            scope.state.timestep + '&timeformat=epoch';
+                        scope.infobox.wanted_url = url;
+                        scope.infobox.open = true;
+                        scope.infobox.lng = e.latlng.lng;
+                        scope.infobox.lat = e.latlng.lat;
+                        // If the 3Di box is not activated (with *), there
+                        // will be no update_infobox.
+                        if (scope.hasOwnProperty('update_infobox')) {
+                            scope.update_infobox();
+                        };
                     } else if (scope.program_mode == MODE_RAIN) {
                         var amount = 0.010;  // in meters!
                         var diameter = extentSize() * 0.15;

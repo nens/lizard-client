@@ -79,5 +79,16 @@
             </li>
         </ul>
     </div>
+</div>
 
+<div class="card" ng-class="{hidden: threedi_timeseries == undefined}">
+<!--   <div class="input-prepend">
+    <span class="add-on"> Tijdreeks</span> 
+    <select class="timeseries" ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
+  </div>
+ -->    <graph line data="data" xlabel="xlabel" ylabel="ylabel"></graph>
+</div>
+
+<div ng-repeat="message in messages" class="card threedi">
+Message: <% message %>
 </div>
