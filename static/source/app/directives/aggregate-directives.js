@@ -150,9 +150,12 @@ app.directive('vectorlayer', function () {
         }
 
         if (scope.kpi[0].pi[0].loaded === undefined || scope.kpi[0].pi[0].loaded === false) {
+          if (scope.kpi[0].pi[0].data){
+            return
+          }
           eventLayer = L.pointsLayer(scope.kpi[0].pi[0].data, {
-            applyStyle: circle_style
-          });
+              applyStyle: circle_style
+            });  
           mapCtrl.addLayer(eventLayer);
           drawTimeEvents();
           scope.kpi[0].pi[0].loaded = true;

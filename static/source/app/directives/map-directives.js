@@ -339,6 +339,7 @@ app.directive('sewerage', function ($http) {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
+      var pumpstationLayer;
       scope.$watch('mapState.changed', function () {
         var layer;
         for (mapLayer in scope.mapState.layers) {
@@ -349,7 +350,7 @@ app.directive('sewerage', function ($http) {
             scope.tools.alerts.enabled = false;
             mapCtrl.addLayer(pumpstationLayer);
           } else if (layer.name === 'Riolering' && !layer.active) {
-            if (pumpstationLayer != undefined) {
+            if (pumpstationLayer) {
               mapCtrl.removeLayer(pumpstationLayer);            
             }
           }
