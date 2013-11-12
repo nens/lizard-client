@@ -62,7 +62,7 @@ app
             return
           }
           if (!layer.active) {
-            if (layer.leafletLayergetTimes) {
+            if (layer.leafletLayer) {
               $scope.map.removeLayer(layer.leafletLayer);
               if (layer.grid_layers) {
                 for (var i in layer.grid_layers){
@@ -344,9 +344,14 @@ app.directive('sewerage', function ($http) {
         for (mapLayer in scope.mapState.layers) {
           layer = scope.mapState.layers[mapLayer];
           if (layer.name === 'Riolering' && layer.active) {
+            // NOTE: disable alerts
+            // NOTE: this should not be here.
+            scope.tools.alerts.enabled = false;
             mapCtrl.addLayer(pumpstationLayer);
           } else if (layer.name === 'Riolering' && !layer.active) {
-            mapCtrl.removeLayer(pumpstationLayer);
+            if (pumpstationLayer != undefined) {
+              mapCtrl.removeLayer(pumpstationLayer);            
+            }
           }
         }
       });
@@ -373,13 +378,13 @@ app.directive('sewerage', function ($http) {
 
               pumpMarker.on('click', function (e) {
                 this.feature.properties.entity_name = 'pumpstation_sewerage';
-                scope.getTimeseries(this.feature.properties);
-                // scope.$apply(function () {
-                //   // scope.box.content.data = geojson;
-                //   // scope.box.content.id = pumpid;
-                //   scope.box.type = 'pumpstation_sewerage';
-                // });
-
+                scope.getTimeseries(this.feature.properties, 'nochange');
+                scope.box.content.sewerage = {
+                  start_level: this.feature.properties.start_level,
+                  stop_level: this.feature.properties.stop_level,
+                  capacity: this.feature.properties.capacity,
+                  type: this.feature.properties.type
+                }
               })
               return pumpMarker;
             },

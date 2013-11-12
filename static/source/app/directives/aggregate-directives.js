@@ -100,7 +100,7 @@ app.directive('vectorlayer', function () {
         });
 
         // pass newly calculated data to scope
-        // scope.box.content = ctr;
+        scope.box.content.count = ctr;
         //NOTE: ugly hack
         scope.box.content_agg = ctr / num_citizens / timeInterval;
       };
@@ -138,6 +138,16 @@ app.directive('vectorlayer', function () {
       // Watch button click, toggle event layer
       scope.$watch('tools.alerts.enabled', function () {
         scope.box.type = "aggregate";
+        // NOTE: remove this and make generic
+        // NOTE: removing sewerage things ..
+        scope.box.sewerage = undefined;
+        for (mapLayer in scope.mapState.layers) {
+          layer = scope.mapState.layers[mapLayer];
+          if (layer.name === 'Riolering') {
+            layer.active = false;
+            scope.mapState.changed = Date.now();
+          }
+        }
 
         if (scope.kpi[0].pi[0].loaded === undefined || scope.kpi[0].pi[0].loaded === false) {
           eventLayer = L.pointsLayer(scope.kpi[0].pi[0].data, {
