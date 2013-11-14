@@ -397,10 +397,15 @@ app.directive('sewerage', function ($http) {
             var formatted = [];
             for (single in data.features ) {
               var feature = data.features[single];
-              formatted.push({
-                date: Date.parse(feature.properties.created),
-                value: feature.properties.id
-              });
+              if (feature.properties.events) {
+                for (var i in feature.properties.events) {
+                  var date = Date.parse(feature.properties.events[i].timestamp);
+                  formatted.push({
+                    date: date,
+                    value: feature.properties.id
+                  });
+                }
+              }
             }
             return formatted;
           };
