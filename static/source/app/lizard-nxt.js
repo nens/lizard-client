@@ -221,8 +221,7 @@ app.controller("MasterCtrl",
 
     $scope.metadata = {
         title: null,
-        fromgrid: data.entity_name,
-        // type: $scope.box.type
+        fromgrid: $scope.box.content.data,
         //type: $scope.box.content.data.entity_name
         type: data.entity_name
      };
