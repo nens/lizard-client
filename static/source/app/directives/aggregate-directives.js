@@ -96,7 +96,7 @@ app.directive('vectorlayer', function () {
       var countEvents = function (selection, type) {
         var ctr = 0;
         var mapBounds = scope.map.getBounds();
-        geom_wkt = "POLYGON(("
+        var geom_wkt = "POLYGON(("
                   + mapBounds.getWest() + " " + mapBounds.getSouth() + ", "
                   + mapBounds.getEast() + " " + mapBounds.getSouth() + ", "
                   + mapBounds.getEast() + " " + mapBounds.getNorth() + ", "
@@ -134,13 +134,6 @@ app.directive('vectorlayer', function () {
       var countEventsISW = function (selection, type) {
         var ctr = 0;
         var mapBounds = scope.map.getBounds();
-        geom_wkt = "POLYGON(("
-                  + mapBounds.getWest() + " " + mapBounds.getSouth() + ", "
-                  + mapBounds.getEast() + " " + mapBounds.getSouth() + ", "
-                  + mapBounds.getEast() + " " + mapBounds.getNorth() + ", "
-                  + mapBounds.getWest() + " " + mapBounds.getNorth() + ", "
-                  + mapBounds.getWest() + " " + mapBounds.getSouth()
-                  + "))";
 
         var features = scope.events.rawGeojsondata.features;
         var length = features.length;
@@ -171,7 +164,7 @@ app.directive('vectorlayer', function () {
           // NOTE: remove this and make generic
           // removing sewerage things ..
           scope.box.sewerage = undefined;
-          for (mapLayer in scope.mapState.layers) {
+          for (var mapLayer in scope.mapState.layers) {
             layer = scope.mapState.layers[mapLayer];
             if (layer.name === 'Riolering') {
               layer.active = false;
