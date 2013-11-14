@@ -190,7 +190,6 @@ app.directive('vectorlayer', function () {
           scope.timeline.data = scope.kpi[0].pi[0].data.features;
 
           scope.timeline.changed = !scope.timeline.changed;
-          debugger
 
         } else {
           scope.timeline.changed = !scope.timeline.changed;
