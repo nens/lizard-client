@@ -369,6 +369,11 @@ app.directive('sewerage', function ($http) {
         }
       });
    
+      /* 
+      * Geojson file is for prototype. 
+      * Scenario can be found here:
+      * https://docs.google.com/a/nelen-schuurmans.nl/document/d/1boSACo_vV4vljMBrdN22-FTckJh0lRtqaZoq88Oj6H4/edit
+      */
       var events = '/static/data/pumpstation_sewerage.geojson';
       $http.get(events)
         .success(function (data) {
@@ -377,14 +382,21 @@ app.directive('sewerage', function ($http) {
             var formatted = [];
             for (single in data.features ) {
               var feature = data.features[single];
-              formatted.push({
-                date: Date.parse(feature.properties.created),
-                value: feature.properties.id
-              });
+              if (feature.properties.events) {
+                for (var i in feature.properties.events) {
+                  var date = Date.parse(feature.properties.events[i].timestamp);
+                  formatted.push({
+                    date: date,
+                    value: feature.properties.id
+                  });               
+                }
+              }
             }
             return formatted;
           };
           formatted_geojsondata = format(data);
+          }).error(function (xhr) {
+            console.log(arguments, "errors man");
           });
 
         var createGeoJsonLayer = function (data) {

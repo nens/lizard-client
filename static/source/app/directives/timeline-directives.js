@@ -129,7 +129,19 @@ app.directive('timeline', [ function ($timeout) {
             .attr("cy", 20)
             .attr("r", 4)
             .attr("opacity", 0.8)
-            .attr("fill", yfunction);
+            .attr("fill", yfunction)
+            .on('click', function (d) {
+              var elclicked = $('#pumpstation_'+ d.value);
+              var y = elclicked.offset().top;
+              var x = elclicked.offset().left;
+              var ev = document.createEvent("MouseEvent");
+              ev.initMouseEvent("click", true, true, window, null, 
+                0,0,0,0,
+                false,false,false,false,
+                0, 
+                null);
+              elclicked[0].dispatchEvent(ev);
+            });
     };
 
     this.maxMin = function (data, options) {
@@ -406,11 +418,11 @@ app.directive('timeline', [ function ($timeout) {
       });
       y.colorscale = timelineCtrl.scale(y.min, y.max, {
         range: [graph.height, 0],
-        scale: (options.scale == 'ordinal') ? 'ordinal' : null
+        scale: (options.scale == 'ordinal') ? 'ordinal' : 'ordinal'
       });
       y.scale = timelineCtrl.scale(y.min, y.max, {
         range: [graph.height, 0],
-        scale: (options.scale == 'ordinal') ? 'ordinal' : null
+        scale: (options.scale == 'ordinal') ? 'ordinal' : 'ordinal'
       });
       timelineCtrl.drawCircles(graph.svg, x, y, scope.timeline.data, {
         height: graph.height,
