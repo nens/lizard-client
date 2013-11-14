@@ -395,7 +395,7 @@ app.directive('sewerage', function ($http) {
           createGeoJsonLayer(data);  
           function format(data) {
             var formatted = [];
-            for (single in data.features ) {
+            for (var single in data.features ) {
               var feature = data.features[single];
               formatted.push({
                 date: Date.parse(feature.properties.created),
