@@ -385,8 +385,10 @@ app.directive('sewerage', function ($http) {
       });
 
       scope.$watch('box.content.sewerage.id', function () {
-        $('.pumpstation_sewerage').removeClass('selected');
-        $('#pumpstation_' + scope.box.content.sewerage.id).addClass('selected');
+        if (scope.box.content.sewerage) {
+            $('.pumpstation_sewerage').removeClass('selected');
+            $('#pumpstation_' + scope.box.content.sewerage.id).addClass('selected');
+          }
       })
    
       var events = '/static/data/pumpstation_sewerage.geojson';
@@ -397,10 +399,15 @@ app.directive('sewerage', function ($http) {
             var formatted = [];
             for (var single in data.features ) {
               var feature = data.features[single];
-              formatted.push({
-                date: Date.parse(feature.properties.created),
-                value: feature.properties.id
-              });
+              if (feature.properties.events) {
+                for (var i in feature.properties.events) {
+                  var date = Date.parse(feature.properties.events[i].timestamp);
+                  formatted.push({
+                    date: date,
+                    value: feature.properties.id
+                  });
+                }
+              }
             }
             return formatted;
           };
