@@ -253,8 +253,9 @@ app.directive('moveEnd', [function () {
     link: function(scope, elements, attrs, MapCtrl) {
       
       scope.$watch('moveend', function(newValue, oldValue) {
-        if(newValue)
+        if (newValue) {
           MapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
+        }
       });
     },
     restrict: 'A'
@@ -336,7 +337,7 @@ app.directive('sewerage', function ($http) {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
-      scope.$watch('tools.sewerage.enabled', function () {
+      scope.$watch('tools.changed', function () {
         if (scope.tools.sewerage.enabled) {
           for (var mapLayer in scope.mapState.layers) {
              var layer = scope.mapState.layers[mapLayer];
@@ -346,11 +347,12 @@ app.directive('sewerage', function ($http) {
               scope.mapState.changed = Date.now();
             }
           }
-              scope.timeline.data = formatted_geojsondata;
-              scope.timeline.changed = !scope.timeline.changed;
+          scope.timeline.data = scope.formatted_geojsondata;
+          scope.timeline.changed = !scope.timeline.changed;
+          scope.timeline.enabled = true;
 
-              console.log(formatted_geojsondata);
-            console.log('sewerage', scope.timeline.data)
+          //console.log(formatted_geojsondata);
+          //console.log('sewerage', scope.timeline.data)
         } else {
           for (var mapLayer in scope.mapState.layers) {
              var layer = scope.mapState.layers[mapLayer];
@@ -411,8 +413,8 @@ app.directive('sewerage', function ($http) {
             }
             return formatted;
           };
-          formatted_geojsondata = format(data);
-          rawGeojsondata = data;
+          scope.formatted_geojsondata = format(data);
+          scope.rawGeojsondata = data;
           });
 
         var createGeoJsonLayer = function (data) {
@@ -423,10 +425,8 @@ app.directive('sewerage', function ($http) {
               if (geojson.properties.events) {
                 cssclass = "exceeded";
               };
-              // doesn't work of course since this is fired only once
-              var fontSize = (14 / scope.map.getZoom()) * 32;
               var pumpIcon = new L.DivIcon({
-                html: '<span style="font-size:' + fontSize + 'px;" class="pumpstation_sewerage ' + cssclass  + '" id="pumpstation_'+ pumpid + '">&</span>',
+                html: '<span class="pumpstation_sewerage ' + cssclass  + '" id="pumpstation_'+ pumpid + '">&</span>',
                 iconAnchor: new L.Point(20, 20)
               });
               var pumpMarker = new L.Marker(latlng, {icon: pumpIcon});

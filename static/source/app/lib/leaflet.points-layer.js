@@ -55,12 +55,12 @@ L.PointsLayer = L.Class.extend({
 
     _initContainer: function () {
         var overlayPane = this._map.getPanes().overlayPane;
-        console.log(this._container);
+        //console.log(this._container);
         if (!this._container || overlayPane.empty) {
             this._container = d3.select(overlayPane)
                 .append('svg').attr('class', 'leaflet-layer leaflet-zoom-hide');
 
-            console.log(this._data.features);
+            //console.log(this._data.features);
             this._layer = this._container.append("g");
 
             if (!this.options.cssclass) {

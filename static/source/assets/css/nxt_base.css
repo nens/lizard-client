@@ -867,16 +867,22 @@ a {
     width: 40px;
     height: 40px;
     opacity: 0.6;
+    -webkit-text-fill-color: white; /* Will override color (regardless of order) */
+    -webkit-text-stroke-width: 1.5px;
+    -webkit-text-stroke-color: #c0392b;
 }
 
 .pumpstation_sewerage.selected {
-    margin-left: -3px;
     -webkit-transition: all 0.4s; 
-     /*border-radius: 40px;
-     border: 6px solid #333;*/
      opacity: 1;
+    -webkit-text-fill-color: #c0392b; /* Will override color (regardless of order) */
+    -webkit-text-stroke-width: 2.5px;
+    -webkit-text-stroke-color: #c0392b;
 }
 
 .exceeded {
-    color: firebrick;
+    -webkit-text-fill-color: black; /* Will override color (regardless of order) */
+    -webkit-text-stroke-width: 1.5px;
+    -webkit-text-stroke-color: black;
+    opacity: 1;
 }

@@ -61,6 +61,7 @@ app.controller("MasterCtrl",
 
   // TOOLS
   $scope.tools = {
+    changed: false,
     alerts: {
       enabled: false
     },
@@ -83,6 +84,7 @@ app.controller("MasterCtrl",
           $scope.tools[toolName].enabled = false;
         }
       }
+      $scope.tools.changed = !$scope.tools.changed
     } else {
       console.log('Unknown tool called: ' + name);
     }
@@ -106,7 +108,7 @@ app.controller("MasterCtrl",
   // MAP FUNCTIONS
   $scope.$on('PanZoomeroom', function(message, value){
     $scope.panZoom = value;
-    console.log('PanZoomeroom', value);
+    //console.log('PanZoomeroom', value);
   });
 
   $scope.switchBaseLayer = function(){
@@ -166,7 +168,7 @@ app.controller("MasterCtrl",
   };
 
   $scope.threediTool = function() {
-      console.log($scope.box.type);
+      //console.log($scope.box.type);
       $scope.box.type = 'threedi';
       $scope.box.content = 'bladiblabla';
       $scope.tools.threedi.enabled = !$scope.tools.threedi.enabled;
@@ -289,16 +291,8 @@ app.controller("MasterCtrl",
   $http.get(alerts)
     .success(function (data) {
       $scope.kpi[0].pi[0].data = data;  
-      console.log("event data", data);
+      //console.log("event data", data);
     });
-
-  var events = '/static/data/pumpstation_sewerage.geojson';
-  $http.get(events)
-    .success(function (data) {
-      $scope.events = {};
-      $scope.events.rawGeojsondata = data;
-    });
-
   // END HACK
 
   /*
@@ -438,7 +432,7 @@ app.controller("MasterCtrl",
           }
           $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
           for (var j in sources) {
-          console.log('sources:',sources);
+          //console.log('sources:',sources);
           $scope.searchMarkers = [];
           if(sources[j].geometry) {
           $scope.searchMarkers.push(sources[j]);
@@ -450,7 +444,7 @@ app.controller("MasterCtrl",
 
 
       var geocode = CabinetService.geocode.query({q: $scope.box.query}, function (data) {
-          console.log(data);
+          //console.log(data);
           $scope.box.content = data;
           });
       $scope.box.type = "location";
@@ -469,7 +463,7 @@ app.controller("MasterCtrl",
           $scope.searchMarkers.push(data[i]);
         }
       }
-      console.log('bbox_update:', data);
+      //console.log('bbox_update:', data);
     });
   };
 
@@ -484,7 +478,7 @@ app.controller("MasterCtrl",
 
   $scope.showDetails = function (obj) {
       $scope.currentObject = obj;
-      console.log('obj:', obj);
+      //console.log('obj:', obj);
       if ($scope.currentObject.lat && $scope.currentObject.lon) {
           // A lat and lon are present, instruct the map to pan/zoom to it
           var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};

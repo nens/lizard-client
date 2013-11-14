@@ -84,10 +84,32 @@ app.directive('vectorlayer', function () {
         selected.call(countEvents, 'alerts');
       }
 
+      /**
+       * Update sewerage classes based on current temporal extent
+       * NOTE: temporary function until we have a dedicated 
+       * events mechanism
+       */
+      var updateSewerage = function () {
+        // loop over sewerages to get id of sewerage over threshold
+        d3.selectAll(".pumpstation_sewerage")
+          .classed("exceeded", false);
+        var s = [scope.timeline.temporalExtent.start,
+                 scope.timeline.temporalExtent.end];
+        for (i = 0; i < scope.formatted_geojsondata.length; i++) {
+          var sewerage = scope.formatted_geojsondata[i];
+          var time = +sewerage.date;
+          if (s[0] <= time && time <= s[1]) {
+            d3.select("#pumpstation_" + sewerage.value)
+              .classed("exceeded", true);
+          }
+        }
+      }
+
       // watch for change in temporalExtent, change visibility of
       // alerts accordingly
       scope.$watch('timeline.temporalExtent.changedZoom', function () {
         drawTimeEvents();
+        updateSewerage();
       });
 
       /*
@@ -106,9 +128,10 @@ app.directive('vectorlayer', function () {
         //NOTE: hard coded SRS
         var srs = "EPSG:4326" // L.CRS.EPSG3857.code;
         // for rasters, also send needed statistic
-        scope.getRasterData("pop_density", geom_wkt, srs, 'sum');
+        //scope.getRasterData("pop_density", geom_wkt, srs, 'sum');
+        scope.box.pop_density = 1000;
         var num_citizens = scope.box.pop_density / 100000000;
-        console.log(num_citizens);
+        //console.log(num_citizens);
         // timeInterval in months
         var timeInterval = ((scope.timeline.temporalExtent.end -
                              scope.timeline.temporalExtent.start)
@@ -135,7 +158,7 @@ app.directive('vectorlayer', function () {
         var ctr = 0;
         var mapBounds = scope.map.getBounds();
 
-        var features = scope.events.rawGeojsondata.features;
+        var features = scope.rawGeojsondata.features;
         var length = features.length;
         for (var i = 0; i < length; i++) {
           d = features[i]
@@ -154,11 +177,15 @@ app.directive('vectorlayer', function () {
       // Count events on map move
       scope.$watch('mapState.moved', function () {
         d3.selectAll(".circle.selected").call(countEvents, 'alerts');
-        d3.selectAll(".pumpstation_sewerage").call(countEventsISW, 'isw');
+        var select = d3.selectAll(".pumpstation_sewerage").call(countEventsISW, 'isw');
+        //NOTE: ugly hack to resize sewerages
+        var fontSize = scope.map.getZoom() / 16 * 54 + "px";
+        console.log(fontSize);
+        select.style("font-size", fontSize);
       });
       
       // Watch button click, toggle event layer
-      scope.$watch('tools.alerts.enabled', function () {
+      scope.$watch('tools.changed', function () {
         if (scope.tools.alerts.enabled) {
           scope.box.type = "aggregate";
           // NOTE: remove this and make generic
@@ -183,16 +210,16 @@ app.directive('vectorlayer', function () {
             scope.kpi[0].pi[0].loaded = true;
           }
 
-
           d3.selectAll(".circle.selected").classed("hidden", false);
           // NOTE: do this somewhere else
           // set timeline data 
           scope.timeline.data = scope.kpi[0].pi[0].data.features;
-
           scope.timeline.changed = !scope.timeline.changed;
+          scope.timeline.enabled = true;
 
         } else {
-          scope.timeline.changed = !scope.timeline.changed;
+          //scope.timeline.changed = !scope.timeline.changed;
+          //scope.timeline.enabled = false;
 
           d3.selectAll(".circle").classed("hidden", true);
         }

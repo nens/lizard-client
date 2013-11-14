@@ -311,12 +311,14 @@ app.directive('timeline', [ function ($timeout) {
 
       var brushmove = function () {
         var s = brush.extent();
-            d3.selectAll(".bar")
-              .classed("selected", function(d) { 
-                var value = Date.parse(d.properties[xKey]);
-                // console.log(s[0], value)?
-                return s[0] <= value && value <= s[1]; 
-              });
+            //NOTE: repair!
+            //d3.selectAll(".bar")
+              //.classed("selected", function(d) { 
+                //console.log(d);
+                //var value = Date.parse(d.properties[xKey]);
+                 //console.log(s[0], value)?
+                //return s[0] <= value && value <= s[1]; 
+              //});
 
            if (brush.extent()[0].getTime() === brush.extent()[1].getTime()) {
             scope.$apply(function () {
@@ -376,7 +378,7 @@ app.directive('timeline', [ function ($timeout) {
     scope.timeline.height = 70;
 
     scope.$watch('timeline.changed', function () {
-      if (scope.timeline.data == scope.kpi[0].pi[0].data.features){
+      if (scope.tools.alerts.enabled){
         chart = drawChart("INTAKEDATU", "CATEGORIE", {
           scale: "ordinal",
           chart: "circles",
@@ -385,9 +387,8 @@ app.directive('timeline', [ function ($timeout) {
       } else {
         chart = drawChart('date', 'value', {});
       }
-      if (scope.tools.alerts.enabled || scope.tools.sewerage.enabled) {
-        scope.timeline.enabled = true;
-      } else {
+      //console.log(scope.tools.alerts.enabled, scope.tools.sewerage.enabled);
+      if (!scope.tools.alerts.enabled && !scope.tools.sewerage.enabled) {
         scope.timeline.enabled = false;
       }
     });
@@ -531,7 +532,7 @@ app.directive('timeline', [ function ($timeout) {
           if (newVal === oldVal) {
             // do nothing
           } else if (newVal === 'zoom') {
-            console.log(chart.svg)
+            //console.log(chart.svg)
             timelineCtrl.removeBrush(chart.svg);
             timelineCtrl.zoom = d3.behavior.zoom()
               .x(chart.x.scale)
