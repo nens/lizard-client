@@ -15,7 +15,7 @@ from django.utils.safestring import mark_safe
 from rest_framework.renderers import JSONRenderer
 from django.conf import settings
 
-from hydra_core.models import Layer, LayerGroup
+from hydra_core.models import Layer, LayerGroup, ThreediInstance
 from lizard_nxt.server.serializers import spatial
 
 
@@ -35,6 +35,7 @@ def index(request):
         'strap_base_layers': _bootstrap(base_layers),
         'strap_layers': _bootstrap(layers),
         'strap_layer_groups': _bootstrap(layer_groups),
+        'threedi_instance': ThreediInstance.objects.all()[0],  # For now, just assign a server 
         # 'extent': extent,
     }
     if getattr(settings, "DEV_TEMPLATE", False):

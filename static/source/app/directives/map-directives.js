@@ -5,7 +5,11 @@ app
     function MapCtrl ($scope, $location){   
     // TODO: Make this not suck.
       this.initiateLayer = function (layer) {
-        if (layer.type === "TMS" && layer.baselayer){
+        if (layer.name === "Simulatie") {
+          // Hack for 3Di.
+          //console.log("Initiate 3Di");
+          layer.follow_3di = false;
+        } else if (layer.type === "TMS" && layer.baselayer){
           layer.leafletLayer = L.tileLayer(layer.url + '.png', {name:"Background", maxZoom: 20});
         } else if (layer.type === "TMS" && !layer.baselayer){
           if (layer.url.split('/api/v1/').length > 0){
@@ -47,6 +51,16 @@ app
 
         // expects a layer hashtable with a leafletlayer object
         this.toggleLayer = function (layer) {
+          // 3Di hack
+          if (layer.name === "Simulatie") {
+            //console.log("Toggle 3Di layer " + layer.active);
+            if (layer.active) {
+              $scope.connect();
+            } else {
+              $scope.disconnect();
+            }
+            return
+          }
           if (!layer.active) {
             if (layer.leafletLayer) {
               $scope.map.removeLayer(layer.leafletLayer);
@@ -113,8 +127,11 @@ app
           $location.path(lat + ',' + lng + ',' + zoom);
           // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
         };
+
+        this.map = function() {return $scope.map;}; // make map object available to outside world.
       
         this.zoomToTheMagic = function (layer) {
+          //console.log('zoomToTheMagic');
           // TODO: make this not hardcoded. And make this a nice UX instead of a brutal one
           if (layer.name == 'Riolering') {
             $scope.map.setView([52.503265633642194, 4.968782196044922], 14, {animate: true});
@@ -125,6 +142,12 @@ app
           if (layer.name == 'Watergangen') {
             $scope.map.setView([52.60763454517434, 4.794158935546875], 11, { animate: true });
           }
+          // This button is not available for 3Di
+        };
+
+        this.fitBounds = function (extent) {
+          // extent is in format [[extent[0], extent[1]], [extent[2], extent[3]]]
+          $scope.map.fitBounds(extent);
         };
 
     this.locateMe = function () {
@@ -151,7 +174,7 @@ app
 
     };
 
-    var link = function (scope, element, attrs) {
+    var link = function (scope, element, attrs, ctrl) {
       // instead of 'map' element here for testability
       var map = new L.map(element[0], {
           center: new L.LatLng(52.0992287, 5.5698782),
@@ -301,7 +324,7 @@ app.directive('zoomToLayer', function () {
       scope.$watch('zoomToLayer', function () {
         if (scope.zoomToLayer !== undefined) {
           mapCtrl.zoomToTheMagic(scope.layerToZoomTo);
-          console.debug("zoomzoomzoom");
+          //console.debug("zoomzoomzoom");
         }
       });
     }

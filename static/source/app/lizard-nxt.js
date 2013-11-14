@@ -67,6 +67,9 @@ app.controller("MasterCtrl",
     },
     profile: {
       enabled: false
+    },
+    threedi: {
+      enabled: false
     }
   };
 
@@ -96,6 +99,8 @@ app.controller("MasterCtrl",
   $scope.toggle_tool = function (name) {
     if ($scope.tools.hasOwnProperty(name)) {
       $scope.tools[name].enabled = !$scope.tools[name].enabled;
+    } else {
+      console.log('Unknown tool called: ' + name);
     }
   };
 
@@ -248,6 +253,25 @@ app.controller("MasterCtrl",
     $scope.zoomToLayer = !$scope.zoomToLayer;
   };
 
+  // For 3Di
+  $scope.setFollow = function(layer, follow_3di) {
+    layer.follow_3di = follow_3di;  // for GUI
+    $scope.follow_3di = follow_3di;
+
+    if (follow_3di) {
+      // ugly way to make it zoom to 3Di layer when activated
+      $scope.layerToZoomTo = layer;
+      $scope.zoomToLayer = !$scope.zoomToLayer;    
+    }
+  };
+
+  $scope.threediTool = function() {
+      console.log($scope.box.type);
+      $scope.box.type = 'threedi';
+      $scope.box.content = 'bladiblabla';
+      $scope.tools.threedi.enabled = !$scope.tools.threedi.enabled;
+  }  
+
   $scope.format_data = function (data) {
     if (data[0]) {
       $scope.formatted_data = [];
@@ -266,7 +290,7 @@ app.controller("MasterCtrl",
 
 
   $scope.getTimeseries = function (data) {
-
+    /* data must have properties entity_name, id */
     $scope.box.type = data.entity_name;
     $scope.box.showCards = true;
     $scope.box.content.object_type = data.entity_name;
@@ -289,8 +313,9 @@ app.controller("MasterCtrl",
     $scope.metadata = {
         title: null,
         fromgrid: $scope.box.content.data,
-        type: $scope.box.content.data.entity_name
-      };
+        //type: $scope.box.content.data.entity_name
+        type: data.entity_name
+     };
 
     $scope.$watch('selected_timeseries', function () {
       if ($scope.selected_timeseries !== undefined) {
