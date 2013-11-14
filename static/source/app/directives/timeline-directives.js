@@ -385,6 +385,12 @@ app.directive('timeline', [ function ($timeout) {
       } else {
         chart = drawChart('date', 'value', {});
       }
+      if (scope.tools.alerts.enabled || scope.tools.sewerage.enabled) {
+        scope.timeline.enabled = true;
+        console.log('hoi')
+      } else {
+        scope.timeline.enabled = false;
+      }
     });
 
     // scope.$watch('tools.alerts.enabled', function (newVal, oldVal) {

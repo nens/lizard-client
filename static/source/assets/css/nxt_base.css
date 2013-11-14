@@ -860,28 +860,21 @@ a {
     border: none;
 }
 
-@keyframes shakeit{
-  0% {
-    left: 3px;
-
-    }
-
-  50% {
-    left: -3px;
-  }
-
-  100% {
-    left: 0;
-  }
-}
-
 .pumpstation_sewerage {
     font-family: Kunstwerk;
     font-size: 60px;
-    -moz-animation: shakeit 1s infinite linear;
-    -webkit-animation: shakeit 1s infinite linear;
+    margin-left: 0;
+    width: 40px;
+    height: 40px;
+    opacity: 0.6;
+}
 
-    animation: shakeit 800ms linear 0s infinite;
+.pumpstation_sewerage.selected {
+    margin-left: -3px;
+    -webkit-transition: all 0.4s; 
+     /*border-radius: 40px;
+     border: 6px solid #333;*/
+     opacity: 1;
 }
 
 .exceeded {
