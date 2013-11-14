@@ -340,6 +340,21 @@ app.directive('sewerage', function ($http) {
             if (layer.name === 'Riolering') {
               // NOTE: disable alerts
               layer.active = true;
+              scope.mapState.changed = Date.now();
+            }
+          }
+              scope.timeline.data = formatted_geojsondata;
+              scope.timeline.changed = !scope.timeline.changed;
+
+              console.log(formatted_geojsondata);
+            console.log('sewerage', scope.timeline.data)
+        } else {
+          for (mapLayer in scope.mapState.layers) {
+             var layer = scope.mapState.layers[mapLayer];
+            if (layer.name === 'Riolering') {
+              // NOTE: disable alerts
+              layer.active = false;
+              scope.mapState.changed = Date.now();
             }
           }
         }
@@ -353,18 +368,20 @@ app.directive('sewerage', function ($http) {
           if (layer.name === 'Riolering' && layer.active) {
             // NOTE: disable alerts
             // NOTE: this should not be here.
-            scope.tools.alerts.enabled = false;
             mapCtrl.addLayer(pumpstationLayer);
-            scope.timeline.data = formatted_geojsondata;
-            scope.timeline.changed = !scope.timeline.changed;
-            scope.timeline.enabled = true;
           } else if (layer.name === 'Riolering' && !layer.active) {
             if (pumpstationLayer) {
-              mapCtrl.removeLayer(pumpstationLayer);            
+              mapCtrl.removeLayer(pumpstationLayer);     
+
             }
           }
         }
       });
+
+      scope.$watch('box.content.sewerage.id', function () {
+        $('.pumpstation_sewerage').removeClass('selected');
+        $('#pumpstation_' + scope.box.content.sewerage.id).addClass('selected');
+      })
    
       /* 
       * Geojson file is for prototype. 
@@ -417,8 +434,9 @@ app.directive('sewerage', function ($http) {
                   start_level: this.feature.properties.start_level,
                   stop_level: this.feature.properties.stop_level,
                   capacity: this.feature.properties.capacity,
-                  type: this.feature.properties.type
-                }
+                  type: this.feature.properties.type,
+                  id: this.feature.properties.id
+                };
               })
               return pumpMarker;
             },

@@ -167,12 +167,12 @@ app.directive('vectorlayer', function () {
           scope.timeline.data = scope.kpi[0].pi[0].data.features;
 
           scope.timeline.changed = !scope.timeline.changed;
-          scope.timeline.enabled = true;
 
-          d3.select("#timeline").classed("hidden", false);
         } else {
+          scope.timeline.changed = !scope.timeline.changed;
+          console.log('alerts')
+
           d3.selectAll(".circle").classed("hidden", true);
-          d3.select("#timeline").classed("hidden", true);
         }
       });
     }
