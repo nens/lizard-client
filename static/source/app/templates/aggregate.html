@@ -1,27 +1,24 @@
 <div class="card">
   <div class="card-title">
-    <!--<h1><% box.content %> Meldingen</h1>-->
-    <p> <a ng-click="toggle_tool('alerts')" class="clickable" title="Toggle Meldingen">
-    Meldingen:
-      <span class="label" ng-class="{'label-danger': box.content_agg >= 5,
-                                     'label-success': box.content_agg < 5}">
-        <% box.content_agg | number:0 %>
-      </span>
-      </a>
-      <small>&nbsp;<% box.content.count %></small>
-    </p>
-    <p><a ng-click="toggle_tool('sewerage')" class="clickable" title="Toggle Meldingen">
-      Gemalen: 
-      <span class="label" ng-class="{'label-danger': box.content_agg >= 5,
-                                     'label-success': box.content_agg < 5}">
-        <% box.content_agg | number:0 %>
-      </span>
-      </a>
-    </p>
-    <p>
-
-    </p>
+    <i class="fa fa-certificate"></i>
+    <span>Performance indicators</span>
   </div>
+  <table class="left">
+    <tr>
+      <td><a ng-click="toggle_tool('alerts')" class="clickable" title="Toggle meldingen">Meldingen</a></td>
+      <td>&nbsp;<% box.content.alerts.count %></td>
+      <td>
+        <span class="label" ng-class="{'label-danger': box.content_agg >= 5,
+                                       'label-success': box.content_agg < 5}">
+          &nbsp;<% box.content.alerts.content_agg | number:0 %>
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <td><a ng-click="toggle_tool('sewerage')" class="clickable" title="Toggle rioolvreemd water">Rioolvreemd water</a></td>
+      <td>&nbsp;<% box.content.isw.count %></td>
+    </tr>
+  </table>
 </div>
 
 <div class="card" ng-class="{hidden: box.content.sewerage == undefined}">
@@ -46,9 +43,9 @@
     </tr>
    </table>
 </div>
+
 <div class="card" ng-class="{hidden: selected_timeseries == undefined}">
   <div class="input-prepend">
-    <span class="add-on"> Tijdreeks</span> 
     <select class="timeseries" ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
   </div>
     <graph line data="data" title="" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></nxt-line-graph>

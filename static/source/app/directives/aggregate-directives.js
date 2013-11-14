@@ -64,11 +64,36 @@ app.directive('vectorlayer', function () {
       function get_time(d) {
         return d3.time.format.iso.parse(d.properties.INTAKEDATU);
       }
+      
+      /*
+       * Draw events based on current temporal extent
+       */
+      var drawTimeEvents = function () {
+        //NOTE: not optimal class switching
+        d3.selectAll(".circle").classed("hidden", true);
+        d3.selectAll(".circle")
+          .classed("selected", function (d) {
+            var s = [scope.timeline.temporalExtent.start,
+                     scope.timeline.temporalExtent.end];
+            // + is a d3 operator to convert time objects to ms
+            var time = +get_time(d);
+            return s[0] <= time && time <= s[1];
+          });
+        var selected = d3.selectAll(".circle.selected");
+        selected.classed("hidden", false);
+        selected.call(countEvents, 'alerts');
+      }
+
+      // watch for change in temporalExtent, change visibility of
+      // alerts accordingly
+      scope.$watch('timeline.temporalExtent.changedZoom', function () {
+        drawTimeEvents();
+      });
 
       /*
        * Count events in viewport; update scope with count
        */
-      var countEvents = function (selection) {
+      var countEvents = function (selection, type) {
         var ctr = 0;
         var mapBounds = scope.map.getBounds();
         geom_wkt = "POLYGON(("
@@ -80,7 +105,6 @@ app.directive('vectorlayer', function () {
                   + "))";
         //NOTE: hard coded SRS
         var srs = "EPSG:4326" // L.CRS.EPSG3857.code;
-        // NOTE: in progress, this should be get_data
         // for rasters, also send needed statistic
         scope.getRasterData("pop_density", geom_wkt, srs, 'sum');
         var num_citizens = scope.box.pop_density / 100000000;
@@ -100,39 +124,14 @@ app.directive('vectorlayer', function () {
         });
 
         // pass newly calculated data to scope
-        scope.box.content.count = ctr;
+        scope.box.content[type].count = ctr;
         //NOTE: ugly hack
-        scope.box.content_agg = ctr / num_citizens / timeInterval;
+        scope.box.content[type].content_agg = ctr / num_citizens / timeInterval;
       };
-      
-      /*
-       * Draw events based on current temporal extent
-       */
-      var drawTimeEvents = function () {
-        //NOTE: not optimal class switching
-        d3.selectAll(".circle").classed("hidden", true);
-        d3.selectAll(".circle")
-          .classed("selected", function (d) {
-            var s = [scope.timeline.temporalExtent.start,
-                     scope.timeline.temporalExtent.end];
-            // + is a d3 operator to convert time objects to ms
-            var time = +get_time(d);
-            return s[0] <= time && time <= s[1];
-          });
-        var selected = d3.selectAll(".circle.selected");
-        selected.classed("hidden", false);
-        selected.call(countEvents);
-      }
-
-      // watch for change in temporalExtent, change visibility of
-      // alerts accordingly
-      scope.$watch('timeline.temporalExtent.changedZoom', function () {
-        drawTimeEvents();
-      });
-
       // Count events on map move
       scope.$watch('mapState.moved', function () {
-        d3.selectAll(".circle.selected").call(countEvents);
+        d3.selectAll(".circle.selected").call(countEvents, 'alerts');
+        d3.selectAll(".pumpstation_sewerage").call(countEvents, 'isw');
       });
       
       // Watch button click, toggle event layer
@@ -170,11 +169,10 @@ app.directive('vectorlayer', function () {
           scope.timeline.changed = !scope.timeline.changed;
           scope.timeline.enabled = true;
 
-          // d3.select("#timeline").classed("hidden", false);
+          d3.select("#timeline").classed("hidden", false);
         } else {
-          //mapCtrl.removeLayer(eventLayer);
           d3.selectAll(".circle").classed("hidden", true);
-          // d3.select("#timeline").classed("hidden", true);
+          d3.select("#timeline").classed("hidden", true);
         }
       });
     }

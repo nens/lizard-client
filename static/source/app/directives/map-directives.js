@@ -213,26 +213,23 @@ app
       });
 
       scope.map.on('moveend', function () {
-        scope.mapState.moved = Date.now();
+        scope.$apply(function () {
+          scope.mapState.moved = Date.now();
+        });
       });
 
       scope.map.on('dragend', function() {
-
-          if (scope.box.type === 'default') {
-
-            // scope.box.type = 'empty';
-            scope.$apply(function () {
-              scope.box.close();
-            });
-            console.debug(scope);
-            console.debug(scope.box.type);
-          }
-          if (scope.box.type === 'intersecttool') {
-            scope.$apply(function () {
-              scope.box.type = 'empty';
+        if (scope.box.type === 'default') {
+        // scope.box.type = 'empty';
+          scope.$apply(function () {
+            scope.box.close();
             });
           }
-
+        if (scope.box.type === 'intersecttool') {
+        scope.$apply(function () {
+          scope.box.type = 'empty';
+          });
+        }
       });
 
     };
