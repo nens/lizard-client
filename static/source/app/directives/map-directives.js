@@ -385,8 +385,10 @@ app.directive('sewerage', function ($http) {
       });
 
       scope.$watch('box.content.sewerage.id', function () {
-        $('.pumpstation_sewerage').removeClass('selected');
-        $('#pumpstation_' + scope.box.content.sewerage.id).addClass('selected');
+        if (scope.box.content.sewerage) {
+            $('.pumpstation_sewerage').removeClass('selected');
+            $('#pumpstation_' + scope.box.content.sewerage.id).addClass('selected');
+          }
       })
    
       var events = '/static/data/pumpstation_sewerage.geojson';
