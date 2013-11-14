@@ -122,16 +122,46 @@ app.directive('vectorlayer', function () {
             ctr += 1;
           }
         });
-
         // pass newly calculated data to scope
         scope.box.content[type].count = ctr;
         //NOTE: ugly hack
         scope.box.content[type].content_agg = ctr / num_citizens / timeInterval;
       };
+
+      /*
+       * Count events in viewport; update scope with count
+       */
+      var countEventsISW = function (selection, type) {
+        var ctr = 0;
+        var mapBounds = scope.map.getBounds();
+        geom_wkt = "POLYGON(("
+                  + mapBounds.getWest() + " " + mapBounds.getSouth() + ", "
+                  + mapBounds.getEast() + " " + mapBounds.getSouth() + ", "
+                  + mapBounds.getEast() + " " + mapBounds.getNorth() + ", "
+                  + mapBounds.getWest() + " " + mapBounds.getNorth() + ", "
+                  + mapBounds.getWest() + " " + mapBounds.getSouth()
+                  + "))";
+
+        var features = scope.events.rawGeojsondata.features;
+        var length = features.length;
+        for (var i = 0; i < length; i++) {
+          d = features[i]
+          if (d.properties.events) {
+            var point = new L.LatLng(d.geometry.coordinates[1],
+                                     d.geometry.coordinates[0]);
+            if (mapBounds.contains(point)) {
+              ctr += 1;
+            }
+          }
+        };
+        // pass newly calculated data to scope
+        scope.box.content[type].count = ctr;
+      };
+
       // Count events on map move
       scope.$watch('mapState.moved', function () {
         d3.selectAll(".circle.selected").call(countEvents, 'alerts');
-        d3.selectAll(".pumpstation_sewerage").call(countEvents, 'isw');
+        d3.selectAll(".pumpstation_sewerage").call(countEventsISW, 'isw');
       });
       
       // Watch button click, toggle event layer

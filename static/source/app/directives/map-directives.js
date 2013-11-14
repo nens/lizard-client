@@ -99,6 +99,9 @@ app
             if (layer.leafletLayer) {
               $scope.map.addLayer(layer.leafletLayer);
               layer.leafletLayer.bringToBack();
+              if (layer.name == 'Satellite') {
+                layer.leafletLayer.getContainer().classList.add('faded-gray');
+              }
             } else {
               console.log('leaflet layer not defined');
             }
@@ -333,23 +336,14 @@ app.directive('sewerage', function ($http) {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
-      scope.$watch('tools.sewerage.enabled', function () {
-        if (scope.tools.sewerage.enabled) {
-          for (mapLayer in scope.mapState.layers) {
-             var layer = scope.mapState.layers[mapLayer];
-            if (layer.name === 'Riolering') {
-              // NOTE: disable alerts
-              layer.active = true;
-            }
-          }
-        }
-      });
-
       var pumpstationLayer,
-           formatted_geojsondata;
+          rawGeojsondata,
+          formatted_geojsondata;
+
       scope.$watch('mapState.changed', function () {
-        for (var mapLayer in scope.mapState.layers) {
-          var layer = scope.mapState.layers[mapLayer];
+        var layer;
+        for (mapLayer in scope.mapState.layers) {
+          layer = scope.mapState.layers[mapLayer];
           if (layer.name === 'Riolering' && layer.active) {
             // NOTE: disable alerts
             // NOTE: this should not be here.
@@ -366,11 +360,6 @@ app.directive('sewerage', function ($http) {
         }
       });
    
-      /* 
-      * Geojson file is for prototype. 
-      * Scenario can be found here:
-      * https://docs.google.com/a/nelen-schuurmans.nl/document/d/1boSACo_vV4vljMBrdN22-FTckJh0lRtqaZoq88Oj6H4/edit
-      */
       var events = '/static/data/pumpstation_sewerage.geojson';
       $http.get(events)
         .success(function (data) {
@@ -379,21 +368,15 @@ app.directive('sewerage', function ($http) {
             var formatted = [];
             for (single in data.features ) {
               var feature = data.features[single];
-              if (feature.properties.events) {
-                for (var i in feature.properties.events) {
-                  var date = Date.parse(feature.properties.events[i].timestamp);
-                  formatted.push({
-                    date: date,
-                    value: feature.properties.id
-                  });               
-                }
-              }
+              formatted.push({
+                date: Date.parse(feature.properties.created),
+                value: feature.properties.id
+              });
             }
             return formatted;
           };
           formatted_geojsondata = format(data);
-          }).error(function (xhr) {
-            console.log(arguments, "errors man");
+          rawGeojsondata = data;
           });
 
         var createGeoJsonLayer = function (data) {
@@ -404,8 +387,10 @@ app.directive('sewerage', function ($http) {
               if (geojson.properties.events) {
                 cssclass = "exceeded";
               };
+              // doesn't work of course since this is fired only once
+              var fontSize = (14 / scope.map.getZoom()) * 32;
               var pumpIcon = new L.DivIcon({
-                html: '<span class="pumpstation_sewerage ' + cssclass  + ' " id="pumpstation_'+ pumpid + '">&</span>',
+                html: '<span style="font-size:' + fontSize + 'px;" class="pumpstation_sewerage ' + cssclass  + '" id="pumpstation_'+ pumpid + '">&</span>',
                 iconAnchor: new L.Point(20, 20)
               });
               var pumpMarker = new L.Marker(latlng, {icon: pumpIcon});

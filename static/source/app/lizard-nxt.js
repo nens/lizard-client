@@ -40,7 +40,7 @@ app.controller("MasterCtrl",
   };
 
   $scope.box.content.alerts = {};
-  $scope.box.content.swi = {};
+  $scope.box.content.isw = {};
   // BOX MODEL
 
   // BOX FUNCTIONS
@@ -292,6 +292,15 @@ app.controller("MasterCtrl",
       $scope.kpi[0].pi[0].data = data;  
       console.log("event data", data);
     });
+
+  var events = '/static/data/pumpstation_sewerage.geojson';
+  $http.get(events)
+    .success(function (data) {
+      $scope.events = {};
+      $scope.events.rawGeojsondata = data;
+    });
+
+  // END HACK
 
   /*
    * Get raster data from server
