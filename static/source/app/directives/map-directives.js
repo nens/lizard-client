@@ -99,9 +99,6 @@ app
             if (layer.leafletLayer) {
               $scope.map.addLayer(layer.leafletLayer);
               layer.leafletLayer.bringToBack();
-              if (layer.name == 'Satellite') {
-                layer.leafletLayer.getContainer().classList.add('faded-gray');
-              }
             } else {
               console.log('leaflet layer not defined');
             }
