@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "Kunstwerk";
+    src: url(../fonts/Kunstwerk Regular.ttf.ttf);
+}
+
 html, body{
     margin: 0;
     width: 100%;
@@ -870,10 +875,15 @@ a {
   }
 }
 
-.pumpstation_sewerage{
+.pumpstation_sewerage {
+    font-family: Kunstwerk;
+    font-size: 60px;
     -moz-animation: shakeit 1s infinite linear;
     -webkit-animation: shakeit 1s infinite linear;
 
     animation: shakeit 800ms linear 0s infinite;
-    fill: maroon;
+}
+
+.exceeded {
+    color: firebrick;
 }

@@ -403,12 +403,12 @@ app.directive('sewerage', function ($http) {
           pumpstationLayer = new L.GeoJSON(data, {
             pointToLayer: function(geojson, latlng) {
               var pumpid = geojson.properties.id;
+              var cssclass = '';
+              if (geojson.properties.events) {
+                cssclass = "exceeded";
+              };
               var pumpIcon = new L.DivIcon({
-                html: '<svg width="48" height="48" id=pumpstation_'+pumpid+' class="pumpstation_sewerage">' +
-                '<g >' +
-                '<path d="m 31.461905,37.742857 -20.966667,0 0,-2.233334 20.966667,0 -6.033333,-3.9 1.466666,-1.566666 10.1,6.566666 -10.1,6.5 -1.466666,-1.466666 6.033333,-3.9 m -13.6,-32.7333337 11.2,0 0,7.0999997 7.933333,0 0,13.1 -26.7,0 0,-13.1 7.566667,0 0,-7.0999997" class="pumpstation" style="font-size:30px"/>' +
-                '</g>' +
-                '</svg>',
+                html: '<span class="pumpstation_sewerage ' + cssclass  + ' " id="pumpstation_'+ pumpid + '">&</span>',
                 iconAnchor: new L.Point(20, 20)
               });
               var pumpMarker = new L.Marker(latlng, {icon: pumpIcon});
