@@ -38,6 +38,9 @@ app.controller("MasterCtrl",
     content: {},
     changed: Date.now()
   };
+
+  $scope.box.content.alerts = {};
+  $scope.box.content.swi = {};
   // BOX MODEL
 
   // BOX FUNCTIONS
