@@ -95,7 +95,7 @@ app.directive('vectorlayer', function () {
           .classed("exceeded", false);
         var s = [scope.timeline.temporalExtent.start,
                  scope.timeline.temporalExtent.end];
-        for (i = 0; i < scope.formatted_geojsondata.length; i++) {
+        for (var i = 0; i < scope.formatted_geojsondata.length; i++) {
           var sewerage = scope.formatted_geojsondata[i];
           var time = +sewerage.date;
           if (s[0] <= time && time <= s[1]) {

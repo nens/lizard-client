@@ -340,7 +340,7 @@ app.directive('sewerage', function ($http) {
       scope.$watch('tools.changed', function () {
         if (scope.tools.sewerage.enabled) {
           for (var mapLayer in scope.mapState.layers) {
-             var layer = scope.mapState.layers[mapLayer];
+            var layer = scope.mapState.layers[mapLayer];
             if (layer.name === 'Riolering') {
               // NOTE: disable alerts
               layer.active = true;
@@ -355,7 +355,7 @@ app.directive('sewerage', function ($http) {
           //console.log('sewerage', scope.timeline.data)
         } else {
           for (var mapLayer in scope.mapState.layers) {
-             var layer = scope.mapState.layers[mapLayer];
+            var layer = scope.mapState.layers[mapLayer];
             if (layer.name === 'Riolering') {
               // NOTE: disable alerts
               layer.active = false;
@@ -372,7 +372,7 @@ app.directive('sewerage', function ($http) {
       scope.$watch('mapState.changed', function () {
         var layer;
         for (var mapLayer in scope.mapState.layers) {
-          layer = scope.mapState.layers[mapLayer];
+          var layer = scope.mapState.layers[mapLayer];
           if (layer.name === 'Riolering' && layer.active) {
             // NOTE: disable alerts
             // NOTE: this should not be here.
