@@ -192,7 +192,7 @@ app.directive('vectorlayer', function () {
           // removing sewerage things ..
           scope.box.sewerage = undefined;
           for (var mapLayer in scope.mapState.layers) {
-            layer = scope.mapState.layers[mapLayer];
+            var layer = scope.mapState.layers[mapLayer];
             if (layer.name === 'Riolering') {
               layer.active = false;
               scope.mapState.changed = Date.now();
