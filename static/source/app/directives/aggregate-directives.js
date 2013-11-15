@@ -179,14 +179,21 @@ app.directive('vectorlayer', function () {
         d3.selectAll(".circle.selected").call(countEvents, 'alerts');
         var select = d3.selectAll(".pumpstation_sewerage").call(countEventsISW, 'isw');
         //NOTE: ugly hack to resize sewerages
-        var fontSize = scope.map.getZoom() / 16 * 54 + "px";
-        console.log(fontSize);
-        select.style("font-size", fontSize);
+        var zoom = scope.map.getZoom();
+        var fontSize = zoom / 16 * 54 + "px";
+        //console.log(fontSize);
+        if (zoom >= 13) {
+          select
+            .classed("hidden", false)
+            .style("font-size", fontSize);
+        } else {
+          select.classed("hidden", true);
+        }
       });
       
       // Watch button click, toggle event layer
-      scope.$watch('tools.changed', function () {
-        if (scope.tools.alerts.enabled) {
+      scope.$watch('tools.active', function () {
+        if (scope.tools.active === "alerts") {
           scope.box.type = "aggregate";
           // NOTE: remove this and make generic
           // removing sewerage things ..
@@ -211,16 +218,10 @@ app.directive('vectorlayer', function () {
           }
 
           d3.selectAll(".circle.selected").classed("hidden", false);
-          // NOTE: do this somewhere else
           // set timeline data 
           scope.timeline.data = scope.kpi[0].pi[0].data.features;
-          scope.timeline.changed = !scope.timeline.changed;
-          scope.timeline.enabled = true;
 
         } else {
-          //scope.timeline.changed = !scope.timeline.changed;
-          //scope.timeline.enabled = false;
-
           d3.selectAll(".circle").classed("hidden", true);
         }
       });

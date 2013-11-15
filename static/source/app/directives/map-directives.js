@@ -334,11 +334,12 @@ app.directive('zoomToLayer', function () {
 
 app.directive('sewerage', function ($http) {
   return {
+    restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
-      scope.$watch('tools.changed', function () {
-        if (scope.tools.sewerage.enabled) {
+      scope.$watch('tools.active', function () {
+        if (scope.tools.active === "sewerage") {
           for (var mapLayer in scope.mapState.layers) {
             var layer = scope.mapState.layers[mapLayer];
             if (layer.name === 'Riolering') {
@@ -348,11 +349,6 @@ app.directive('sewerage', function ($http) {
             }
           }
           scope.timeline.data = scope.formatted_geojsondata;
-          scope.timeline.changed = !scope.timeline.changed;
-          //scope.timeline.enabled = true;
-
-          //console.log(formatted_geojsondata);
-          //console.log('sewerage', scope.timeline.data)
         } else {
           for (var mapLayer in scope.mapState.layers) {
             var layer = scope.mapState.layers[mapLayer];
@@ -393,7 +389,7 @@ app.directive('sewerage', function ($http) {
           }
       })
    
-      var events = '/static/data/pumpstation_sewerage.geojson';
+      var events = '/static/data/pumpstation_sewerage_integration.geojson';
       $http.get(events)
         .success(function (data) {
           createGeoJsonLayer(data);  
@@ -415,7 +411,7 @@ app.directive('sewerage', function ($http) {
           };
           scope.formatted_geojsondata = format(data);
           scope.rawGeojsondata = data;
-          });
+        });
 
         var createGeoJsonLayer = function (data) {
           pumpstationLayer = new L.GeoJSON(data, {
@@ -443,10 +439,8 @@ app.directive('sewerage', function ($http) {
                 };
               })
               return pumpMarker;
-            },
-            minZoom: 12
+            }
           });
-          
         } 
         
     }

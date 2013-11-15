@@ -17,12 +17,10 @@ app.directive('timeline', [ function ($timeout) {
       var width = maxwidth - margin.left - margin.right,
         height = maxheight - margin.top - margin.bottom;
   
-
       // d3.select(element[0])
       //   .html("")
       //   .append("html:div")
       //   .classed("bovenbalk", true)
-
 
       var svg = d3.select(element[0])
         .select("#timeline-svg-wrapper")
@@ -378,20 +376,22 @@ app.directive('timeline', [ function ($timeout) {
     scope.timeline.height = 70;
 
     scope.$watch('timeline.changed', function () {
-      if (scope.tools.alerts.enabled){
+      if (scope.tools.active === "alerts"){
         chart = drawChart("INTAKEDATU", "CATEGORIE", {
           scale: "ordinal",
           chart: "circles",
           dateparser: 'isodate'
         });
-      } else {
+      } else if (scope.tools.active === "sewerage") {
         chart = drawChart('date', 'value', {});
       }
-      //console.log(scope.tools.alerts.enabled, scope.tools.sewerage.enabled);
-      if (!scope.tools.alerts.enabled && !scope.tools.sewerage.enabled) {
+
+      if (scope.tools.active === "none") {
         scope.timeline.enabled = false;
+      } else {
+        scope.timeline.enabled = true;  
       }
-    });
+    }, true);
 
     // scope.$watch('tools.alerts.enabled', function (newVal, oldVal) {
     //   if (newVal){

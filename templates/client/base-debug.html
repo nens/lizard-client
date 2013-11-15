@@ -49,19 +49,6 @@
     {% include "client/index.html" %}
     {% block content %}
 
-      <div>
-        <map layer-switch 
-             move-end pan-zoom="panZoom"
-             layers="mapState.layers"
-             rasterprofile="disabled"
-             locate="locate"
-             zoom-to-layer="zoomToLayer"
-             vectorlayer
-             threedi-map>
-         </map>
-      </div>
-    <timeline class="hidden navbar timeline navbar-fixed-bottom"></timeline>
-
     {% block box_awesome %}{% endblock %}
     <div class="container">
       <omnibox id="omnibox"></omnibox>

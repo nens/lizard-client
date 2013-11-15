@@ -61,32 +61,23 @@ app.controller("MasterCtrl",
 
   // TOOLS
   $scope.tools = {
-    changed: false,
-    alerts: {
-      enabled: false
-    },
-    profile: {
-      enabled: false
-    },
+    active: "none",
     threedi: {
-      enabled: false
-    },
-    sewerage: {
       enabled: false
     }
   };
 
   $scope.toggle_tool = function (name) {
-    if ($scope.tools.hasOwnProperty(name)){
-      $scope.tools[name].enabled = !$scope.tools[name].enabled;
-      for (var toolName in $scope.tools) {
-        if (toolName != name && $scope.tools[name].enabled && toolName != undefined) {
-          $scope.tools[toolName].enabled = false;
-        }
-      }
-      $scope.tools.changed = !$scope.tools.changed
+    if ($scope.tools.active === name) {
+      $scope.tools.active = "none";
     } else {
-      console.log('Unknown tool called: ' + name);
+      $scope.tools.active = name;
+    }
+    console.log($scope.tools.active);
+    // NOTE: ugly hack, record if tool is tim
+    if ($scope.tools.active === "alerts" ||
+        $scope.tools.active === "sewerage") {
+      $scope.timeline.changed = !$scope.timeline.changed;
     }
   };
   // TOOLS

@@ -80,8 +80,8 @@ app.directive('rasterprofile', function () {
 
         // enable and disable click handler
         // 'tools.profile.enabled' is set by the MasterCtrl on <html> scope
-        scope.$watch('tools.profile.enabled', function () {
-          if (scope.tools.profile.enabled) {
+        scope.$watch('tools.active', function () {
+          if (scope.tools.active === "profile") {
             scope.map.on('click',  drawLineCLickHandler);
           } else {
             //clean up map

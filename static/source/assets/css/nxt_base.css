@@ -866,7 +866,7 @@ a {
     margin-left: 0;
     width: 40px;
     height: 40px;
-    opacity: 0.6;
+    opacity: 0.8;
     -webkit-text-fill-color: white; /* Will override color (regardless of order) */
     -webkit-text-stroke-width: 1.5px;
     -webkit-text-stroke-color: #c0392b;
