@@ -161,7 +161,7 @@ app.directive('vectorlayer', function () {
         var features = scope.rawGeojsondata.features;
         var length = features.length;
         for (var i = 0; i < length; i++) {
-          d = features[i]
+          var d = features[i];
           if (d.properties.events) {
             var point = new L.LatLng(d.geometry.coordinates[1],
                                      d.geometry.coordinates[0]);

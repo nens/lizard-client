@@ -349,7 +349,7 @@ app.directive('sewerage', function ($http) {
           }
           scope.timeline.data = scope.formatted_geojsondata;
           scope.timeline.changed = !scope.timeline.changed;
-          scope.timeline.enabled = true;
+          //scope.timeline.enabled = true;
 
           //console.log(formatted_geojsondata);
           //console.log('sewerage', scope.timeline.data)
