@@ -37,11 +37,21 @@ app
               var params = layer.content === '' ? '' : '?object_types=' + layer.content;
           layer.leafletLayer = L.tileLayer(layer.url + '.png' + params, {maxZoom: 20, zIndex: layer.z_index});
         } else if (layer.type === "WMS"){
-          layer.leafletLayer = L.tileLayer.wms(layer.url, {
+          var options = {
             layers: layer.content,
             format: 'image/png',
             version: '1.1.1',
-            maxZoom: 20 });
+            maxZoom: 20
+          };
+          //NOTE ugly hack
+          if (layer.content === 'landuse') {
+            options.styles = 'landuse';
+          } else if (layer.content === 'elevation') {
+            // dynamically set min/max?
+            options.effects = 'shade:0:3';
+            options.styles = 'hot:-5:15';
+          }
+          layer.leafletLayer = L.tileLayer.wms(layer.url, options);
         } else {
           console.log(layer.type);
         }
@@ -99,9 +109,9 @@ app
             if (layer.leafletLayer) {
               $scope.map.addLayer(layer.leafletLayer);
               layer.leafletLayer.bringToBack();
-              if (layer.name == 'Satellite') {
-                layer.leafletLayer.getContainer().classList.add('faded-gray');
-              }
+              //if (layer.name == 'Satellite') {
+                //layer.leafletLayer.getContainer().classList.add('faded-gray');
+              //}
             } else {
               console.log('leaflet layer not defined');
             }
