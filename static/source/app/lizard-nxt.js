@@ -187,6 +187,8 @@ app.controller("MasterCtrl",
   /**
    * Get data for timeseries
    */
+  $scope.selected_timeseries = undefined;
+
   $scope.getTimeseries = function (data) {
     /* data must have properties entity_name, id */
     // NOTE: this is an aggregation demo HACK
@@ -199,13 +201,12 @@ app.controller("MasterCtrl",
       $scope.box.content.data = data;  
     
 
-
     var new_data_get = CabinetService.timeseriesLocationObject.get({
       object_type: $scope.box.content.object_type,
       id: $scope.box.content.id
     }, function(response){
       $scope.timeseries = response;
-      if ($scope.timeseries.length > 0){
+      if ($scope.timeseries.length > 0){  
         $scope.selected_timeseries = response[0];
       } else {
         $scope.selected_timeseries = undefined;
@@ -219,20 +220,6 @@ app.controller("MasterCtrl",
         type: data.entity_name
      };
 
-    $scope.$watch('selected_timeseries', function () {
-      if ($scope.selected_timeseries !== undefined){
-
-        $scope.data = $scope.format_data($scope.selected_timeseries.events);
-        // dit kan zeker nog mooier
-        $scope.metadata.title = " - " + $scope.selected_timeseries.location.name;
-        $scope.metadata.ylabel = 'Aciditeit (%)' ; //scope.selected_timeseries.parameter + scope.selected_timeseries.unit.code
-        $scope.metadata.xlabel = "Tijd";
-      } else {
-        $scope.data = undefined;
-      }
-    });
-
-
     // Otherwise changes are watched and called to often.
     if ($scope.box.content.timeseries_changed === undefined){
       $scope.box.content.timeseries_changed = true;
@@ -240,6 +227,20 @@ app.controller("MasterCtrl",
       $scope.box.content.timeseries_changed = !$scope.box.content.timeseries_changed;
     }
   };
+
+  $scope.$watch('selected_timeseries.id', function () {
+    console.log($scope.selected_timeseries);
+    if ($scope.selected_timeseries !== undefined){
+      $scope.data = $scope.format_data($scope.selected_timeseries.events);
+      // dit kan zeker nog mooier
+      $scope.metadata.title = " - " + $scope.selected_timeseries.location.name;
+      $scope.metadata.ylabel = "";//$scope.selected_timeseries.parameter + $scope.selected_timeseries.unit.code
+      $scope.metadata.xlabel = "Tijd";
+    } else {
+      $scope.data = undefined;
+    }
+  });
+
 
   // rewrite data to make d3 parseable
   // NOTE: refactor?
