@@ -50,6 +50,12 @@ app.controller('DemoCtrl', function ($scope, $http){
     }
   });
 
+  $scope.mapState = {
+
+    moved: Date.now(),
+
+  };
+
   $scope.openTemplate = function (boxType) {
     $scope.box.type = boxType;
   };

@@ -3,17 +3,24 @@
 app.directive('rasterAggregate', function () {
   var link = function (scope, element, attrs) {
 
-    var mapBounds = scope.map.getBounds();
-    var srs = "EPGS:4326";
-    var geom_wkt = "POLYGON(("
-            + mapBounds.getWest() + " " + mapBounds.getSouth() + ", "
-            + mapBounds.getEast() + " " + mapBounds.getSouth() + ", "
-            + mapBounds.getEast() + " " + mapBounds.getNorth() + ", "
-            + mapBounds.getWest() + " " + mapBounds.getNorth() + ", "
-            + mapBounds.getWest() + " " + mapBounds.getSouth()
-            + "))";
+    var srs = "EPSG:4326";
+    scope.mapBounds = {};
+    scope.map.on('moveend', function () {
+      scope.mapBounds = scope.map.getBounds();
+    });
 
-    scope.getRasterData('landuse', geom_wkt, srs);
+    scope.$watch('mapBounds', function () {
+      var geom_wkt = "POLYGON(("
+              + scope.mapBounds.getWest() + " " + scope.mapBounds.getSouth() + ", "
+              + scope.mapBounds.getEast() + " " + scope.mapBounds.getSouth() + ", "
+              + scope.mapBounds.getEast() + " " + scope.mapBounds.getNorth() + ", "
+              + scope.mapBounds.getWest() + " " + scope.mapBounds.getNorth() + ", "
+              + scope.mapBounds.getWest() + " " + scope.mapBounds.getSouth()
+              + "))";
+
+      scope.getRasterData('ahn2', geom_wkt, srs, 'sum');      
+    });
+
     console.log('haha', scope.box.content);
   };
 
