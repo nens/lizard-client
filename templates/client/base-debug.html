@@ -50,9 +50,6 @@
     {% block content %}
 
     {% block box_awesome %}{% endblock %}
-    <div class="container">
-      <omnibox id="omnibox"></omnibox>
-    </div>
 
     {% block toolbar_controllers %}
     <!--div class="container-fluid">
@@ -150,6 +147,9 @@
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lib/leaflet.points-layer.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt-services.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/search-controller.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/map-controller.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/timeline-controller.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/map-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/aggregate-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/omnibox-directives.js?{{ random_string }}"></script>
