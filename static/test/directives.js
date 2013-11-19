@@ -96,7 +96,7 @@ describe('Testing raster requests directive', function() {
 
   it('should instantiate a content type for the omnibox', function() {
     var element = angular.element('<raster-aggregation></raster-aggregation>');
-    element = $compile(element).($rootScope);
+    element = $compile(element)($rootScope);
     var scope = element.scope();
     expect(scope.box.type).toEqual('raster-aggregation');
   });
@@ -120,4 +120,9 @@ describe('Testing raster requests directive', function() {
 
 });
 
+describe('Graph directive', function () {
 
+  it('DUMMY: should have data in a format readible for d3', function () {
+    expect(true).toEqual(true);
+  })
+});
