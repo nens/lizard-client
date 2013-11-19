@@ -1,8 +1,8 @@
 'use strict';
 
-var templatesUrl = '/static/source/app/templates/';
-
-// Initialise app
+/**
+ * Initialise app
+ */
 var app = angular.module("lizard-nxt", [
   'ngResource',
   'graph',
@@ -22,8 +22,52 @@ app.config(function($interpolateProvider) {
 /**
  * Master controller
  *
+ * Overview
+ * ========
+ *
  * Defines general models and gets data from server; functions that are not
  * relevant for rootscope live in their own controller
+ *
+ * Directives watch models in MasterCtrl and respond to changes in those models
+ * for example, a user zooms in on the timeline, the timeline directive sets 
+ * the temporal.extent on the state.temporal; a map directive watches state.temporal
+ * and updates map objects accordingly.
+ * 
+ * Models
+ * ======
+ *
+ * Application state
+ * -----------------
+ * state.spatial 
+ * state.temporal
+ * state.animate ?
+ * state.tools
+ * user.profile
+ *
+ * Data
+ * ----
+ * data.active
+ * data.objects
+ * data.events
+ * data.timeseries
+ * data.aggregates
+ *
+ * TODO / Refactor
+ * ---------------
+ * 
+ * Stuff to reconsider, rethink, refactor:
+ *
+ * * [ ] Refactor master controller (states, data!)
+ * * [ ] Refactor index.html and base-debug.html
+ * * [ ] Fix + document Gruntfile.js / workflow
+ * * [ ] Refactor css (csslint, -moz and -webkit)
+ * * [ ] Integrate 3di into this paradigm (move from threedi to source/app)
+ * * [ ] Refactor map controller and directives
+ * * [ ] Refactor timeline controller and directive
+ * * [ ] Refactor search controller (including search design with ES / Haystack)
+ * * [ ] There still is a box model on the scope that is now being **abused** to display
+ * data in the box. That should be possible with data and state.tools models
+ *
  */
 app.controller("MasterCtrl",
   ["$scope", "$http", "$resource", "$q", "CabinetService",
@@ -44,11 +88,8 @@ app.controller("MasterCtrl",
   // BOX MODEL
 
   // BOX FUNCTIONS
-  $scope.box.close = function () {
-    $scope.box.type = 'empty';
-    $scope.box.showCards = false;
-  };
-
+  
+  // REFACTOR CANDIDATE
   $scope.geoLocate = function () {
     $scope.locate = !$scope.locate;
   };
@@ -57,11 +98,13 @@ app.controller("MasterCtrl",
     $scope.box.query = keyword;
     $scope.search();
   };
+  // END REFACTOR CANDIDATE
+  //
   // BOX FUNCTIONS
 
   // TOOLS
   $scope.tools = {
-    active: "none",
+    active: "none", //NOTE: make list?
     threedi: {
       enabled: false
     }
@@ -74,7 +117,7 @@ app.controller("MasterCtrl",
       $scope.tools.active = name;
     }
     console.log($scope.tools.active);
-    // NOTE: ugly hack, record if tool is tim
+    // NOTE: ugly hack, record if tool is time aware
     if ($scope.tools.active === "alerts" ||
         $scope.tools.active === "sewerage") {
       $scope.timeline.changed = !$scope.timeline.changed;
@@ -83,6 +126,7 @@ app.controller("MasterCtrl",
   // TOOLS
 
   // MAP MODEL
+  // MOVE TO MAP CONTROL ?
   $scope.mapState = {
     layergroups: CabinetService.layergroups,
     layers: CabinetService.layers,
@@ -93,58 +137,8 @@ app.controller("MasterCtrl",
     baselayerChanged: Date.now(),
     enabled: false
   };
+  // /END MOVE TO MAP CONTROL
   // MAP MODEL
-
-  // NOTE: move map functions to map controller
-  // MAP FUNCTIONS
-  $scope.$on('PanZoomeroom', function(message, value){
-    $scope.panZoom = value;
-    //console.log('PanZoomeroom', value);
-  });
-
-  $scope.switchBaseLayer = function(){
-    for (var i in $scope.mapState.baselayers){
-      if ($scope.mapState.baselayers[i].id == $scope.mapState.activeBaselayer){
-        $scope.mapState.baselayers[i].active = true;
-      } else {
-        $scope.mapState.baselayers[i].active = false;
-      }
-    }
-    $scope.mapState.baselayerChanged = Date.now();
-  };
-
-  $scope.toggleLayerGroup = function(layergroup){
-    var grouplayers = layergroup.layers;
-    for (var i in grouplayers){
-      for (var j in $scope.mapState.layers){
-        if ($scope.mapState.layers[j].id == grouplayers[i]){
-          $scope.mapState.layers[j].active = layergroup.active;
-        }
-      }
-    }
-    $scope.mapState.changed = Date.now();
-  };
-
-  $scope.toggleLayerSwitcher = function () {
-    if ($scope.mapState.enabled) {
-      $scope.mapState.enabled = false;
-      $scope.mapState.disabled = true;
-      }
-    else {
-      $scope.mapState.enabled = true;
-      $scope.mapState.disabled = false;
-    }
-  };
-
-  $scope.changed = function() {
-    $scope.mapState.changed = Date.now();
-  };
-
-  $scope.zoomToTheMagic = function (layer) {
-    $scope.layerToZoomTo = layer;
-    $scope.zoomToLayer = !$scope.zoomToLayer;
-  };
-  // MAP FUNCTIONS
 
   // 3Di START
   $scope.setFollow = function(layer, follow_3di) {
@@ -158,7 +152,7 @@ app.controller("MasterCtrl",
     }
   };
 
-  $scope.threediTool = function() {
+  $scope.threediTool = function () {
       //console.log($scope.box.type);
       $scope.box.type = 'threedi';
       $scope.box.content = 'bladiblabla';
@@ -167,6 +161,7 @@ app.controller("MasterCtrl",
   // 3Di END
 
   // Legacy formatter for KPI: remove?
+  // check how data comes from server? discuss with Jack / Carsten
   $scope.format_data = function (data) {
     if (data[0]){
     $scope.formatted_data = [];
@@ -241,6 +236,8 @@ app.controller("MasterCtrl",
     }
   };
 
+// END Timeseries
+
   // rewrite data to make d3 parseable
   // NOTE: refactor?
   var format_data = function (data) {
@@ -256,7 +253,6 @@ app.controller("MasterCtrl",
     }
     return formatted_data;
   };
-
   /**
    * KPI model
    *
@@ -321,9 +317,10 @@ app.controller("MasterCtrl",
       });
   };
 
-  // TIMELINE START
-  // NOTE: refactor timeline stuff in it's own controller, most stuff is local
-  // to timeline scope; only temporalextent should be exposed to master / root
+
+  /**
+   * Temporal extent model
+   */
   $scope.timeline = {
     temporalExtent: {
       start: 1382359037278,
@@ -333,160 +330,7 @@ app.controller("MasterCtrl",
     },
     tool: 'zoom',
     canceler: $q.defer(),
-    enabled: false,
-    data: [
-      { date: 1357714800000, value: Math.random()},
-      { date: 1357714800000 + 100000, value: Math.random()},
-      { date: 1357714800000 + 200000, value: Math.random()},
-      { date: 1357714800000 + 300000, value: Math.random()},
-      { date: 1357714800000 + 400000, value: Math.random()},
-      { date: 1357714800000 + 500000, value: Math.random()},
-      { date: 1357714800000 + 600000, value: Math.random()},
-      { date: 1357714800000 + 700000, value: Math.random()},
-      { date: 1357714800000 + 800000, value: Math.random()},
-      { date: 1357714800000 + 900000, value: Math.random()},
-      { date: 1357714800000 + 1000000, value: Math.random()},
-      { date: 1357714800000 + 1100000, value: Math.random()},
-      { date: 1357714800000 + 1200000, value: Math.random()},
-      { date: 1357714800000 + 1300000, value: Math.random()},
-      { date: 1357714800000 + 1400000, value: Math.random()},
-      { date: 1357714800000 + 1500000, value: Math.random()},
-      { date: 1357714800000 + 1600000, value: Math.random()},
-      { date: 1357714800000 + 1700000, value: Math.random()},
-    ]
+    enabled: false
   };
-
-  $scope.$watch('timeline.temporalExtent.changedZoom', function (newVal, oldVal) {
-    $scope.timeline.canceler.resolve();
-    $scope.timeline.canceler = $q.defer();
-    var timeseries = $resource('/api/v1/timeseries/:id/', {
-      id: '@id',
-      start: '@start',
-      end: '@end'
-    },
-    {get: {method: 'GET', timeout: $scope.timeline.canceler.promise}});
-    // commented by arjen to prevent 404s in dev
-    //var new_data_get = timeseries.get({
-      //id: 3,
-      //start: $scope.timeline.temporalExtent.start,
-      //end: $scope.timeline.temporalExtent.end
-    //}, function(response){
-      //$scope.timeseries = response;
-      //if ($scope.timeseries.length > 0){
-        //$scope.selected_timeseries = response[0];
-      //} else {
-        //$scope.selected_timeseries = undefined;
-      //}
-    //});
-
-
-  });
-
-  $scope.timeline.toggleTimeline = function () {
-    $scope.timeline.open = !$scope.timeline.open;
-  };
-
-  $scope.timeline.toggleTool = function () {
-    if ($scope.timeline.tool === 'zoom'){
-      $scope.timeline.tool = 'brush';
-    } else {
-      $scope.timeline.tool = 'zoom';
-    }
-  };
-
-  $scope.timeline.zoom = {
-    in: function () {
-      $scope.timeline.zoom.changed = 'in';
-    },
-    out: function () {
-      $scope.timeline.zoom.changed = 'out';
-    },
-    interval: function (interval) {
-      $scope.timeline.interval = interval;
-      $scope.timeline.zoom.changed = interval;
-    }
-  }
-  // TIMELINE END 
-
-// NOTE: REFACTOR 
-// SEARCH-START
-  $scope.searchMarkers = [];
-  $scope.search = function ($event) {
-
-    if ($scope.box.query.length > 1) {
-      var search = CabinetService.termSearch.query({q: $scope.box.query}, function (data) {
-          var sources = [];
-          for (var i in data) {
-          if(data[i].geometry !== null) {
-          sources.push(data[i]);
-          }
-          }
-          $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
-          for (var j in sources) {
-          //console.log('sources:',sources);
-          $scope.searchMarkers = [];
-          if(sources[j].geometry) {
-          $scope.searchMarkers.push(sources[j]);
-          }
-          }
-
-          $scope.searchData = sources;
-          });
-
-
-      var geocode = CabinetService.geocode.query({q: $scope.box.query}, function (data) {
-          //console.log(data);
-          $scope.box.content = data;
-          });
-      $scope.box.type = "location";
-    }
-  };
-
-  $scope.bbox_update = function(bl_lat, bl_lon, tr_lat, tr_lon) {
-    $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
-    var search = CabinetService.bboxSearch.query({
-      bottom_left: bl_lat+','+bl_lon,
-      top_right: tr_lat+','+tr_lon
-    }, function (data) {
-      $scope.searchMarkers = [];
-      for(var i in data) {
-        if(data[i].geometry) {
-          $scope.searchMarkers.push(data[i]);
-        }
-      }
-      //console.log('bbox_update:', data);
-    });
-  };
-
-  $scope.reset_query = function () {
-      // clean stuff..
-      // Search Ctrl is the parent of omnibox cards
-      // therefore no need to call $rootScope.
-      $scope.$broadcast('clean');
-      $scope.box.query = null;
-      $scope.box.type= 'empty';
-  };
-
-  $scope.showDetails = function (obj) {
-      $scope.currentObject = obj;
-      //console.log('obj:', obj);
-      if ($scope.currentObject.lat && $scope.currentObject.lon) {
-          // A lat and lon are present, instruct the map to pan/zoom to it
-          var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
-          $scope.panZoom = {
-            lat: $scope.currentObject.lat,
-            lng: $scope.currentObject.lon,
-            zoom: 14
-          };
-      }
-      else if ($scope.currentObject.geometry[0] && $scope.currentObject.geometry[1]) {
-          $scope.panZoom = {
-            lat: $scope.currentObject.geometry[1],
-            lng: $scope.currentObject.geometry[0],
-            zoom: 14
-          };
-      }
-  };
-// SEARCH-END
-
+// END Temporal extent model
 }]);
