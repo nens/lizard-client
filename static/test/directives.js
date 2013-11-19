@@ -84,3 +84,45 @@ describe('Testing leaflet directive', function() {
 });
 
 
+describe('Testing raster requests directive', function() {
+
+  var $compile, $rootScope;
+
+  beforeEach(module('lizard-nxt'));
+  beforeEach(inject(function(_$compile_, _$rootScope_){
+      $compile = _$compile_;
+      $rootScope = _$rootScope_;
+  }));
+
+  it('should instantiate a content type for the omnibox', function() {
+    var element = angular.element('<raster-aggregation></raster-aggregation>');
+    element = $compile(element)($rootScope);
+    var scope = element.scope();
+    expect(scope.box.type).toEqual('raster-aggregation');
+  });
+
+  // it('should look for data based on the layername', function() {
+    
+  // });
+
+  // it('should have a place in the omnibox', function() {
+    
+  // });
+
+  // it('should request data based on viewport', function() {
+
+  // });
+
+  // it('should draw data based on request', function() {
+
+  // });
+
+
+});
+
+describe('Graph directive', function () {
+
+  it('DUMMY: should have data in a format readible for d3', function () {
+    expect(true).toEqual(true);
+  })
+});
