@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html ng-app="demo-omnibox">
+<html ng-app="demo-raster-aggregates">
   <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
       <meta name="apple-mobile-web-app-capable" content="yes">
 
-      <title>Omnibox Demo</title>
+      <title>Raster Aggregates Demo</title>
+  
 
+      <link rel="stylesheet" href="../../vendor/leaflet/dist/leaflet.css" />
       <link href="../../source/assets/css/omnibox.css" rel="stylesheet"/>
       <link href="../../vendor/bootstrap/dist/css/bootstrap.css" rel="stylesheet"/>
       <link href="demo.css" rel="stylesheet"/>
@@ -16,18 +18,27 @@
 
       <div class="row">
         <div class="col-md-8">
-        <omnibox id="omnibox"></omnibox>
+          <omnibox id="omnibox"></omnibox>
           
         </div>
         <div class="col-md-4">
-        <button type="button" class="btn btn-default" ng-click="openTemplate('landuse')">Open Template</button>
+          <button type="button" class="btn btn-default" ng-click="openTemplate('landuse')">Open Template</button>
         </div>
       </div>
       
+      <div class="row">
+        <div class="col-md-12">
+          <map style="width: 100%; height:300px"></map>
+        </div>
+      </div>
+
     </div>
       <script type="text/javascript" src="../../vendor/angular/angular.js"></script>
+      <script type="text/javascript" src="../../vendor/leaflet/dist/leaflet.js"></script>
       <script type="text/javascript" src="demo.js"></script>
       <script type="text/javascript" src="../../source/app/templates/templates.js"></script>
       <script type="text/javascript" src="../../source/app/directives/omnibox-directives.js"></script>
+      <script type="text/javascript" src="../../source/app/directives/map-directives.js"></script>
+      <script type="text/javascript" src="../../source/app/directives/raster-aggregate-directives.js"></script>
   </body>
 </html>
