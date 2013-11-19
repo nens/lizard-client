@@ -18,7 +18,7 @@ app.directive('rasterAggregate', function () {
               + scope.mapBounds.getWest() + " " + scope.mapBounds.getSouth()
               + "))";
 
-      scope.getRasterData('ahn2', geom_wkt, srs, 'sum');      
+      scope.getRasterData('landuse', geom_wkt, srs);      
     });
 
     console.log('haha', scope.box.content);
