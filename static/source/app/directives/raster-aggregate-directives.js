@@ -1,5 +1,11 @@
 // raster-aggregate-directives.js
 
+/* *
+*
+*
+* Directive to show aggregation of raster files in omnibox.
+*
+*/
 app.directive('rasterAggregate', function () {
   var link = function (scope, element, attrs) {
 
@@ -18,7 +24,7 @@ app.directive('rasterAggregate', function () {
               + scope.mapBounds.getWest() + " " + scope.mapBounds.getSouth()
               + "))";
 
-      scope.getRasterData('landuse', geom_wkt, srs);      
+      scope.getRasterData(scope.box.type, geom_wkt, srs);      
     });
 
     console.log('haha', scope.box.content);
