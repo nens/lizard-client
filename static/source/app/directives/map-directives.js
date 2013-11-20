@@ -55,6 +55,7 @@ app
           if (layer.name === "Simulatie") {
             //console.log("Toggle 3Di layer " + layer.active);
             if (layer.active) {
+              // $scope.threediTool();
               $scope.connect();
             } else {
               $scope.disconnect();

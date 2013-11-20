@@ -10,7 +10,7 @@ app.directive('rasterAggregate', function () {
   var link = function (scope, element, attrs) {
 
     var srs = "EPSG:4326";
-    scope.mapBounds = {};
+    scope.mapBounds = scope.map.getBounds();
     scope.map.on('moveend', function () {
       scope.mapBounds = scope.map.getBounds();
     });
@@ -24,10 +24,10 @@ app.directive('rasterAggregate', function () {
               + scope.mapBounds.getWest() + " " + scope.mapBounds.getSouth()
               + "))";
 
-      scope.getRasterData(scope.box.type, geom_wkt, srs);      
+      scope.getRasterData(scope.box.type, geom_wkt, srs, 'landuse_counts');   
     });
 
-    console.log('haha', scope.box.content);
+
   };
 
   return {

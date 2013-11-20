@@ -34,17 +34,20 @@ angular.module('graph')
         .append("svg:g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-      svg.append("svg:rect")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("class", "plot");
-      //Create title
-      svg.append("text")
-        .attr("x", width / 2)
-        .attr("y", -50 / 2 + margin.top)
-        .attr("class", "title")
-        .style("text-anchor", "middle")
-        .text(legend.title);
+      if (!legend.pie) {
+        svg.append("svg:rect")
+          .attr("width", width)
+          .attr("height", height)
+          .attr("class", "plot");
+        //Create title
+        svg.append("text")
+          .attr("x", width / 2)
+          .attr("y", -50 / 2 + margin.top)
+          .attr("class", "title")
+          .style("text-anchor", "middle")
+          .text(legend.title);
+          
+      }
               
       if (legend.xLabel ){
          //Create X axis label   
@@ -265,6 +268,68 @@ angular.module('graph')
     require: 'graph'
   }
 });
+
+
+angular.module('graph')
+  .directive('pie', function () {
+    var link =  function (scope, element, attrs, graphCtrl) {
+      graphCtrl.callChart = function (data, element, legend) {
+        legend.pie = true;
+        var graph = graphCtrl.createCanvas(legend, element);
+        var svg = graph.svg,
+            height = graph.height,
+            width = graph.width,
+            margin = graph.margin,
+            radius = Math.min(width, height) / 1.4;
+
+        var pie = d3.layout.pie()
+          .value(function (d) { return d.data})
+          .sort(null);
+        var arc = d3.svg.arc()
+            .innerRadius(radius - 80)
+            .outerRadius(radius - 20);
+
+        var path = svg.datum(data).selectAll("path")
+            .data(pie)
+          .enter().append("path")
+            .attr("fill", function(d, i) { console.log(d); return d.data.color; })
+            .attr("d", arc)
+            .attr("transform", "translate(" + width / 2 + ", " + height / 2 + ")")
+            .each(function(d) { this._current = d; }); // store the initial angles
+
+
+
+        // d3.selectAll("input")
+        //     .on("change", change);
+
+        //TODO: make watch do change.
+        // function change() {
+        //   var value = this.value;
+        //   clearTimeout(timeout);
+        //   pie.value(function(d) { return d[value]; }); // change the value function
+        //   path = path.data(pie); // compute the new angles
+        //   path.transition().duration(750).attrTween("d", arcTween); // redraw the arcs
+        // };
+
+        // function arcTween(a) {
+        //   var i = d3.interpolate(this._current, a);
+        //   this._current = i(0);
+        //   return function(t) {
+        //     return arc(i(t));
+        //   };
+
+
+
+      };
+
+    };
+
+    return {
+      link: link,
+      require: 'graph'
+    }
+
+  });
 
 
 angular.module('graph')
