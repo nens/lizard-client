@@ -28,7 +28,7 @@ app.controller('MapCtrl', function ($scope) {
   };
 
   // NOTE REFACTOR CANDIDATE
-  // use toggle_tool() in ng-click in index.html
+  // use toggleTool() in ng-click in index.html
   $scope.toggleLayerSwitcher = function () {
     if ($scope.mapState.enabled) {
       $scope.mapState.enabled = false;

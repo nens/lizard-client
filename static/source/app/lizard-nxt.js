@@ -110,7 +110,7 @@ app.controller("MasterCtrl",
     }
   };
 
-  $scope.toggle_tool = function (name) {
+  $scope.toggleTool = function (name) {
     if ($scope.tools.active === name) {
       $scope.tools.active = "none";
     } else {
@@ -121,6 +121,8 @@ app.controller("MasterCtrl",
     if ($scope.tools.active === "alerts" ||
         $scope.tools.active === "sewerage") {
       $scope.timeline.changed = !$scope.timeline.changed;
+    } else if ($scope.tools.active === 'landuse') {
+      $scope.box.type = 'landuse';
     }
   };
   // TOOLS

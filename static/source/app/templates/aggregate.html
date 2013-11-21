@@ -5,7 +5,7 @@
   </div>
   <table class="left">
     <tr>
-      <td><a ng-click="toggle_tool('alerts')" class="clickable" title="Toggle meldingen">Meldingen</a></td>
+      <td><a ng-click="toggleTool('alerts')" class="clickable" title="Toggle meldingen">Meldingen</a></td>
       <td>&nbsp;<% box.content.alerts.count %></td>
       <td>
         <!--<span class="label" ng-class="{'label-danger': box.content_agg >= 5,-->
@@ -15,7 +15,7 @@
       </td>
     </tr>
     <tr>
-      <td><a ng-click="toggle_tool('sewerage')" class="clickable" title="Toggle rioolvreemd water">Rioolvreemd water</a></td>
+      <td><a ng-click="toggleTool('sewerage')" class="clickable" title="Toggle rioolvreemd water">Rioolvreemd water</a></td>
       <td>&nbsp;<% box.content.isw.count %></td>
     </tr>
   </table>

@@ -48,7 +48,9 @@
                 <li ng-repeat="layer in mapState.baselayers | orderBy:'order':true">
                 <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
                 <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
-                </li>
+                <i class="icon-info pull-right zoomto-icon " ng-class="{visible: layer.active};" ng-click="toggleTool('piet')"></i>
+                </li> 
+                <!--  ng-class="{active: tools.active == layer.name}; {visible: layer.active};"  -->
               </ul>
               </li>
               <li class="nav-header">
@@ -66,6 +68,7 @@
                 <li ng-repeat="layer in mapState.layers | orderBy:'order':true">
                 <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
                 <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
+
                 <div ng-switch="layer.follow_3di" style="float: right;">
                   <div ng-switch-when="undefined">
                     <i class="icon-screenshot pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="zoomToTheMagic(layer)"></i>
