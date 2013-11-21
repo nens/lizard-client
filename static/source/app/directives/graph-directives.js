@@ -282,6 +282,8 @@ angular.module('graph')
             margin = graph.margin,
             radius = Math.min(width, height) / 1.4;
 
+
+
         var pie = d3.layout.pie()
           .value(function (d) { return d.data})
           .sort(null);
@@ -289,14 +291,28 @@ angular.module('graph')
             .innerRadius(radius - 80)
             .outerRadius(radius - 20);
 
+        var text;
         var path = svg.datum(data).selectAll("path")
             .data(pie)
           .enter().append("path")
             .attr("fill", function(d, i) { console.log(d); return d.data.color; })
             .attr("d", arc)
-            .attr("transform", "translate(" + width / 2 + ", " + height / 2 + ")")
-            .each(function(d) { this._current = d; }); // store the initial angles
+            .attr("transform", "translate(" + width / 2  + ", " + height / 2 + ")")
+            .on("mouseenter", function(d) {
+              console.log("mousein")
+              text = svg.append("text")
+                  .attr("transform", arc.centroid(d.data))
+                  .attr("dy", ".5em")
+                  .style("text-anchor", "middle")
+                  .style("fill", "blue")
+                  .attr("class", "on")
+                  .text(d.data.label);
+              })
 
+              .on("mouseout", function(d) {
+                       text.remove();
+              })
+            .each(function(d) { this._current = d; }); // store the initial angles
 
 
         // d3.selectAll("input")

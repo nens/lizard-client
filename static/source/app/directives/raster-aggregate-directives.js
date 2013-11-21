@@ -2,9 +2,8 @@
 
 /* *
 *
-*
 * Directive to show aggregation of raster files in omnibox.
-*
+* Depends on graph-directives to draw pie chart
 */
 app.directive('rasterAggregate', function () {
   var link = function (scope, element, attrs) {
@@ -24,7 +23,7 @@ app.directive('rasterAggregate', function () {
               + scope.mapBounds.getWest() + " " + scope.mapBounds.getSouth()
               + "))";
 
-      scope.getRasterData(scope.box.type, geom_wkt, srs, 'landuse_counts');   
+      scope.getRasterData(scope.box.type, geom_wkt, srs, 'counts');   
     });
 
     // Labels.
