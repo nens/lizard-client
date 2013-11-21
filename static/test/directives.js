@@ -105,6 +105,10 @@ describe('Testing raster requests directive', function() {
     
   // });
 
+  // it('should have labels', function() {
+    
+  // });
+
   // it('should have a place in the omnibox', function() {
     
   // });

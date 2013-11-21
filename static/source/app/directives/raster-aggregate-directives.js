@@ -27,6 +27,12 @@ app.directive('rasterAggregate', function () {
       scope.getRasterData(scope.box.type, geom_wkt, srs, 'landuse_counts');   
     });
 
+    // Labels.
+    scope.$watch('data', function () {
+      if (scope.box.content == 'donut'){
+
+      }
+    })
 
   };
 

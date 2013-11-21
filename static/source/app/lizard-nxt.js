@@ -121,7 +121,7 @@ app.controller("MasterCtrl",
     if ($scope.tools.active === "alerts" ||
         $scope.tools.active === "sewerage") {
       $scope.timeline.changed = !$scope.timeline.changed;
-    } else if ($scope.tools.active === 'landuse') {
+    } else if ($scope.tools.active === 'donut') {
       $scope.box.type = 'landuse';
     }
   };
@@ -345,7 +345,7 @@ app.controller("MasterCtrl",
 */
   
   $scope.$watch('tools.active', function () {
-    if ($scope.tools.active === 'landuse') {
+    if ($scope.tools.active === 'donut') {
       $scope.box.type = 'landuse';
     }
   })

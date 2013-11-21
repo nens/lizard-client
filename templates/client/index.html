@@ -48,9 +48,8 @@
                 <li ng-repeat="layer in mapState.baselayers | orderBy:'order':true">
                 <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
                 <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
-                <i class="icon-info pull-right zoomto-icon " ng-class="{visible: layer.active};" ng-click="toggleTool('piet')"></i>
+                <i class="icon-info pull-right zoomto-icon " ng-class="{visible: layer.active};" ng-click="toggleTool(layer.aggregation_type)"></i>
                 </li> 
-                <!--  ng-class="{active: tools.active == layer.name}; {visible: layer.active};"  -->
               </ul>
               </li>
               <li class="nav-header">
