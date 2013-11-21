@@ -121,8 +121,6 @@ app.controller("MasterCtrl",
     if ($scope.tools.active === "alerts" ||
         $scope.tools.active === "sewerage") {
       $scope.timeline.changed = !$scope.timeline.changed;
-    } else if ($scope.tools.active === 'donut') {
-      $scope.box.type = 'landuse';
     }
   };
   // TOOLS
@@ -305,7 +303,7 @@ app.controller("MasterCtrl",
         // instead of setting variables.
         if (raster_names === 'pop_density') {
           $scope.box.pop_density = data;
-        } else if (raster_names === 'landuse') {
+        } else if (agg === 'curve' || agg === 'counts') {
           $scope.data = data;
         } else {
           var d3data = format_data(data);
@@ -344,11 +342,11 @@ app.controller("MasterCtrl",
 * Raster Aggregate stuff.
 */
   
-  $scope.$watch('tools.active', function () {
-    if ($scope.tools.active === 'donut') {
-      $scope.box.type = 'landuse';
-    }
-  })
+  // $scope.$watch('tools.active', function () {
+  //   if ($scope.tools.active === 'donut') {
+  //     $scope.box.type = 'landuse';
+  //   }
+  // })
 
 // END Raster Aggregate stuff.
 }]);

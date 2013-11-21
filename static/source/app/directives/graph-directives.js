@@ -291,7 +291,7 @@ angular.module('graph')
             .innerRadius(radius - 80)
             .outerRadius(radius - 20);
 
-        var text;
+        var text = svg.append("text");
         var path = svg.datum(data).selectAll("path")
             .data(pie)
           .enter().append("path")
@@ -299,18 +299,13 @@ angular.module('graph')
             .attr("d", arc)
             .attr("transform", "translate(" + width / 2  + ", " + height / 2 + ")")
             .on("mouseenter", function(d) {
-              console.log("mousein")
-              text = svg.append("text")
-                  .attr("transform", arc.centroid(d.data))
+              text = svg.select("text")
+                  .attr("transform", "translate("+ width /2 + ", " + (20 + height) +")")
                   .attr("dy", ".5em")
                   .style("text-anchor", "middle")
-                  .style("fill", "blue")
+                  .style("fill", "#222")
                   .attr("class", "on")
                   .text(d.data.label);
-              })
-
-              .on("mouseout", function(d) {
-                       text.remove();
               })
             .each(function(d) { this._current = d; }); // store the initial angles
 
