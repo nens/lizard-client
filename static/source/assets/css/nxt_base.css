@@ -1,6 +1,6 @@
 @font-face {
     font-family: "Kunstwerk";
-    src: url("../fonts/Kunstwerk Regular.ttf");
+    src: url("../fonts/Kunstwerk Regular.ttf") format('truetype');
 }
 
 html, body{
@@ -165,15 +165,15 @@ html, body{
     color: #16a085;
 }
 
-.leaflet-layer.faded-gray {
-    filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"); /* Firefox 10+ */
-    filter: gray alpha(opacity=50); /* IE6-9 */
-    -webkit-filter: grayscale(100%); /* Chrome 19+ & Safari 6+ */
-    opacity: 0.50;
-}
+/*.leaflet-layer.faded-gray {*/
+    /*filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"); [> Firefox 10+ <]*/
+    /*filter: gray alpha(opacity=50); [> IE6-9 <]*/
+    /*-webkit-filter: grayscale(100%); [> Chrome 19+ & Safari 6+ <]*/
+    /*opacity: 0.50;*/
+/*}*/
 
 .slide-left{
-    right: 0px;
+    right: 0;
 }
 
 .list-group label{
@@ -183,10 +183,7 @@ html, body{
 .icon-globe {
     position: relative;
     color: #C0392B;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: auto;
-    margin-bottom: auto;
+    margin: auto;
     top: -21px;
     z-index: 10;
 }
@@ -236,7 +233,7 @@ html, body{
     -moz-transition:.6s;
     -webkit-transition:.6s;
     transition:.6s;
-    margin-left: 0px;
+    margin-left: 0;
     cursor: pointer;
 }
 
@@ -244,7 +241,7 @@ html, body{
     color: #c0392b;
     font-size: 14px;
     text-shadow: none;
-    margin-left: 0px;
+    margin-left: 0;
 }
 
 .layer-switcher label.active {
@@ -264,6 +261,7 @@ html, body{
     z-index: 10;
 }
 
+/*combine this class with next to DRY*/
 .arrow-up {
     width: 76px;
     position: relative;
@@ -271,8 +269,7 @@ html, body{
     height: 0; 
     cursor: pointer;
     border-left: 40px solid transparent;
-    border-right: 0px solid transparent;
-    
+    border-right: 0 solid transparent;
     border-bottom: 30px solid #e74c3c;
     z-index: 0;
 }
@@ -283,8 +280,9 @@ html, body{
     top: -30px;
     height: 0; 
     cursor: pointer;
-    border-left: 40px solid rgba(231, 76, 60,0);
-    border-right: 0px solid transparent;
+    border-left: 40px solid rgb(231, 76, 60);
+    border-left: 40px solid rgba(231, 76, 60, 0);
+    border-right: 0 solid transparent;
     border-top: 30px solid #e74c3c;
     z-index: 0;
 }
@@ -294,18 +292,19 @@ html, body{
 }
 
 .layer-switcher {
-    top: 0px;
-    background: rgba(255,255,255,0.9);
+    top: 0;
+    background: #FFF;
+    background: rgba(255, 255, 255, 0.9);
     list-style-type: none;
     z-index: 2;
-    padding: 15px 15px 0px 15px;
+    padding: 15px 15px 0 15px;
     border-bottom-left-radius: 2px;
     overflow: hidden;
 }
 
-.layer-switcher .nav {
+/*.layer-switcher .nav {*/
 /*    margin: -10px 0 -10px 0px;*/
-}
+/*}*/
 
 .layer-switcher ul li{
     list-style-type: none;
@@ -350,18 +349,6 @@ html, body{
     width: 60px;
 }
 
-#progress {
-    width: 75%;
-    height: 25px;
-    /*margin: 5px 0 0 15px;*/
-}
-
-#progress-bar{
-    display: inline-block;
-    width: 70%;
-    float:left;
-}
-
 #flood-size {
     width: 80%;
     margin: 0 auto;
@@ -372,11 +359,9 @@ html, body{
     background-color: #8e8d8d;
 }
 
-
 .map-crosshair {
     cursor: crosshair;
 }
-
 
 /* server progress lower left screen */
 .state-sim {
@@ -411,7 +396,7 @@ html, body{
 }
 
 /* whole path is needed to make this work */
-.navbar .nav > li > a.inactive {
+.navbar .nav > li > .inactive {
     color: #D9D9D6;
 }
 
@@ -425,7 +410,7 @@ html, body{
     height: 40px;
     border-right: 1px solid #138a72;
     border-left: 1px solid #138a72;
-    margin: 0px;
+    margin: 0;
 }
 
 #alertdiv {
@@ -460,12 +445,13 @@ html, body{
 }
 
 .navbar-inverse {
-    background-color: rgba(22, 160, 133,1.0);
+    background-color: rgb(22, 160, 133);
+    background-color: rgba(22, 160, 133, 1.0);
+    border-color: rgb(26, 188, 156);
     border-color: rgba(26, 188, 156, 0.6);
 }
 
 /*timeline stuff*/
-
 .timeline {
     background-color: #fff;
     color: #222;
@@ -482,10 +468,7 @@ html, body{
 
 .bovenbalk{
     text-transform: uppercase;
-    
-/*    -moz-box-shadow: inset -5px -5px #888;
-    -webkit-box-shadow: inset -5px -5px #888;*/
-    box-shadow: 0px 4px 5px #888;
+    box-shadow: 0 4px 5px #888;
 }
 
 .indicator {
@@ -497,11 +480,13 @@ html, body{
       height: 0;
       border-width: 10px;
       border-style: solid;
-      border-color: rgba(130,130,130, 1) transparent transparent transparent;
+      border-color: rgb(130, 130, 130) transparent transparent transparent;
+      border-color: rgba(130, 130, 130, 1) transparent transparent transparent;
 }
 
 .plot-temporal {
-    fill: rgba(255,255,255,0.0);
+    fill: rgb(255, 255, 255);
+    fill: rgba(255, 255, 255, 0.0);
     stroke: none;
 }
 
@@ -510,25 +495,24 @@ html, body{
 }
 
 .reference-line {
-    fill: rgba(130,130,130, 1);
+    fill: rgb(130, 130, 130);
+    fill: rgba(130, 130, 130, 1);
     stroke-width: 5px;
-    stroke: rgba(130,130,130, 1);
+    stroke: rgb(130, 130, 130);
+    stroke: rgba(130, 130, 130, 1);
 /*    -webkit-filter: drop-shadow( -5px -5px 5px #000 );
             filter: drop-shadow( -5px -5px 5px #000 );*/
 }
 
-rect.bar{
+.bar{
     opacity: 0.1;
 }
 
-rect.selected{
+.selected{
     opacity:1;
-    /*stroke: black;
-    stroke-width: 10px;
-    opacity: 0.4;*/
 }
 
-rect.extent{
+.extent{
     fill: rgba(30,30,30,0.2);
 }
 
@@ -550,7 +534,8 @@ rect.extent{
 
 .selecting circle.selected {
   fill-opacity: 0.8;
-  stroke: rgba(240,50,60,0.6);
+  stroke: rgb(240, 50, 60);
+  stroke: rgba(240, 50, 60, 0.6);
 }
 
 .resize path {
@@ -567,6 +552,7 @@ rect.extent{
 }
 
 .axis text{
+  -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
@@ -576,20 +562,17 @@ rect.extent{
   fill-opacity: .125;
   shape-rendering: crispEdges;
 }
-
-
 /* end timeline stuff*/
 
 header {
-    top: 0px;
-    right: 0px;
-    left: 0px;
+    top: 0;
+    right: 0;
+    left: 0;
     z-index: 2000;
     height: 50px;
     color: rgb(255,255,255);
     font-size: 18px;
 }
-
 
 #box-awesome {
     position: fixed;
@@ -602,7 +585,6 @@ header {
     position: relative;
     width: 400px;
     height: 28px;
-
 }
 
 #box-awesome-search input {
@@ -611,7 +593,6 @@ header {
     font-family: 'Roboto', sans-serif !important;
     padding-right: 0;
     width: 100%;
-
     outline: 0;
     border: 0;
     border-radius: 0;
@@ -621,12 +602,9 @@ header {
     position: relative;
     top: -35px;
     left: 400px;
-
     width: 72px;
     height: 27px;
     background-color: #1abc9c;
-/*  background-image: linear-gradient(to bottom, #177d89, #115e67);
-    background-image: -webkit-linear-gradient(top, #177d89, #115e67);*/
     border: 0;
     border-radius: 0 2px 2px 0;
     color: white;
@@ -644,11 +622,9 @@ header {
 #box-awesome-results {
     position: relative;
     top: 15px;
-
     width: 400px;
     height: 150px;
     overflow-x: hidden;
-
     background-color: #FFF;
 }
 
@@ -707,7 +683,6 @@ header {
     height: 50px;
 }
 
-
 #logout:hover {
     color: #e74c3c;
 }
@@ -730,13 +705,12 @@ header {
 
 .tactile-searchbox-input {
     border: none; 
-    padding: 0px; 
-    margin: -0.0625em 0px 0px; 
+    padding: 0; 
+    margin: -0.0625em 0 0; 
     height: 1.25em; 
     width: 100%; 
     outline: none;
 }
-
 
 .truncateme {
     white-space:nowrap;
@@ -747,11 +721,11 @@ header {
 .vertical-divider {
     height: 56px;
     float: right;
-    background: linear-gradient(top,#fbfbfb,#CCC,#fbfbfb);
-    background: -o-linear-gradient(top,#fbfbfb,#CCC,#fbfbfb);
-    background: -ms-linear-gradient(top,#fbfbfb,#CCC,#fbfbfb);
-    background: -moz-linear-gradient(top,#fbfbfb,#CCC,#fbfbfb);
-    background: -webkit-linear-gradient(top,#fbfbfb,#CCC,#fbfbfb);
+    background: linear-gradient(top, #fbfbfb, #CCC, #fbfbfb);
+    background: -o-linear-gradient(top, #fbfbfb, #CCC, #fbfbfb);
+    background: -ms-linear-gradient(top, #fbfbfb, #CCC, #fbfbfb);
+    background: -moz-linear-gradient(top, #fbfbfb, #CCC, #fbfbfb);
+    background: -webkit-linear-gradient(top, #fbfbfb, #CCC, #fbfbfb);
     width: 1px;
     min-width: 1px;
     vertical-align: top;
@@ -779,11 +753,11 @@ li.recommendation > a {
 }
 
 .no-right-padding {
-    padding-right: 0px !important;
+    padding-right: 0 !important;
 }
 
 .no-left-padding {
-    padding-left: 0px !important;
+    padding-left: 0 !important;
 }
 
 #left-text {
@@ -792,7 +766,6 @@ li.recommendation > a {
     text-wrap: normal;
     text-align: left;
     clear: both;
-    overflow: hidden;
     display: inline; 
 }
 
@@ -803,7 +776,6 @@ li.recommendation > a {
     white-space: -o-pre-wrap;    /* Opera 7 */
     white-space: pre-wrap;       /* css-3 */
     word-wrap: break-word;       /* Internet Explorer 5.5+ */
-    white-space: normal;
     overflow: hidden;
     display: inline-block;
     vertical-align: middle;
@@ -841,7 +813,7 @@ li.recommendation > a {
 }
 
 #cards {
-    margin-top: 0px;
+    margin-top: 0;
 }
 
 a {
@@ -867,20 +839,40 @@ a {
     width: 40px;
     height: 40px;
     opacity: 0.8;
+    -o-text-fill-color: white; /* Will override color (regardless of order) */
+    -o-text-stroke-width: 1.5px;
+    -o-text-stroke-color: #c0392b;
+    -moz-text-fill-color: white; /* Will override color (regardless of order) */
+    -moz-text-stroke-width: 1.5px;
+    -moz-text-stroke-color: #c0392b;
     -webkit-text-fill-color: white; /* Will override color (regardless of order) */
     -webkit-text-stroke-width: 1.5px;
     -webkit-text-stroke-color: #c0392b;
 }
 
 .pumpstation_sewerage.selected {
+    -o-transition: all 0.4s; 
+    -moz-transition: all 0.4s; 
     -webkit-transition: all 0.4s; 
      opacity: 1;
+    -o-text-fill-color: white; /* Will override color (regardless of order) */
+    -o-text-stroke-width: 2.5px;
+    -o-text-stroke-color: #c0392b;
+    -moz-text-fill-color: white; /* Will override color (regardless of order) */
+    -moz-text-stroke-width: 2.5px;
+    -moz-text-stroke-color: #c0392b;
     -webkit-text-fill-color: #c0392b; /* Will override color (regardless of order) */
     -webkit-text-stroke-width: 2.5px;
     -webkit-text-stroke-color: #c0392b;
 }
 
 .exceeded {
+    -o-text-fill-color: black; /* Will override color (regardless of order) */
+    -o-text-stroke-width: 1.5px;
+    -o-text-stroke-color: black;
+    -moz-text-fill-color: black; /* Will override color (regardless of order) */
+    -moz-text-stroke-width: 1.5px;
+    -moz-text-stroke-color: black;
     -webkit-text-fill-color: black; /* Will override color (regardless of order) */
     -webkit-text-stroke-width: 1.5px;
     -webkit-text-stroke-color: black;
