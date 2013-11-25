@@ -4,24 +4,6 @@ app.controller('MapCtrl', function ($scope) {
     //console.log('PanZoomeroom', value);
   });
 
-  $scope.$watch('mapState.activeBaselayer', function () {
-    for (var i in $scope.mapState.baselayers) {
-      if ($scope.mapState.baselayers[i].id === $scope.mapState.activeBaselayer) {
-        var layer = $scope.mapState.baselayers[i]
-      }
-    }
-      if (layer.name === 'Landgebruik' && layer.active) {
-        $scope.box.type = 'landuse';
-      } else if (layer.name === 'Landgebruik' && !layer.active) {
-        $scope.box.type = 'empty';
-      } else if (layer.name === 'Hoogtekaart' && layer.active) {
-        $scope.box.type = 'elevation';
-      } else if (layer.name === 'Hoogtekaart' && !layer.active) {
-        $scope.box.type = 'empty';
-      }
-
-  });
-
   $scope.switchBaseLayer = function () {
     for (var i in $scope.mapState.baselayers) {
       if ($scope.mapState.baselayers[i].id === $scope.mapState.activeBaselayer) {
@@ -30,7 +12,31 @@ app.controller('MapCtrl', function ($scope) {
         $scope.mapState.baselayers[i].active = false;
       }
     }
-    $scope.mapState.baselayerChanged = Date.now();
+    if ($scope.box.type === 'landuse' || $scope.box.type === 'elevation') {
+      $scope.box.type = 'empty';
+    }
+    $scope.mapState.baselayerChanged = Date.now(); 
+  };
+
+  // Capture keypress. Maybe a features. Now for dev
+  $scope.keyPress = function ($event) {
+    // Capture both capital and lower case letters
+    if ($event.which === 51) {
+      $scope.mapState.activeBaselayer = 3;
+      $scope.switchBaseLayer();
+      $scope.box.type = 'elevation';
+    } else if ($event.which === 52) {
+      $scope.mapState.activeBaselayer = 4;
+      $scope.switchBaseLayer();
+      $scope.box.type = 'landuse';
+    } else if ($event.which === 49) {
+      $scope.mapState.activeBaselayer = 1;
+      $scope.switchBaseLayer();
+    } else if ($event.which === 50) {
+      $scope.mapState.activeBaselayer = 2;
+      $scope.switchBaseLayer();
+    }
+
   };
 
   $scope.toggleLayerGroup = function (layergroup) {

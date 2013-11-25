@@ -303,7 +303,17 @@ app.controller("MasterCtrl",
         // instead of setting variables.
         if (raster_names === 'pop_density') {
           $scope.box.pop_density = data;
-        } else if (agg === 'curve' || agg === 'counts') {
+        } else if (agg === 'curve') {
+          // console.log($scope.data, data);
+
+          $scope.data = $scope.format_rastercurve(data);
+          $scope.box.content = {
+            yLabel: 'hoogte [mNAP]',
+            xLabel: '[%]'
+          };
+          // $scope.metadata.ylabel = "hoogte [mNAP]";
+          // $scope.metadata.xlabel = "cumulatief [%]";
+        } else if (agg === 'counts') {
           $scope.data = data;
         } else {
           var d3data = format_data(data);
@@ -321,6 +331,17 @@ app.controller("MasterCtrl",
       });
   };
 
+  $scope.format_rastercurve = function (data) {
+    var formatted = [];
+    for (var i in data[0]) {
+      var datarow = {
+        distance: data[0][i],
+        value: data[1][i]
+      };
+      formatted.push(datarow);
+    }
+    return formatted;
+  };
 
   /**
    * Temporal extent model
@@ -338,15 +359,5 @@ app.controller("MasterCtrl",
   };
 // END Temporal extent model
 
-/**
-* Raster Aggregate stuff.
-*/
-  
-  // $scope.$watch('tools.active', function () {
-  //   if ($scope.tools.active === 'donut') {
-  //     $scope.box.type = 'landuse';
-  //   }
-  // })
 
-// END Raster Aggregate stuff.
 }]);

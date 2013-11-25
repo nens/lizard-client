@@ -283,9 +283,11 @@ angular.module('graph')
             radius = Math.min(width, height) / 1.4;
 
 
-
+        var total=0;
         var pie = d3.layout.pie()
-          .value(function (d) { return d.data})
+          .value(function (d) { 
+              total += d.data
+            return d.data})
           .sort(null);
         var arc = d3.svg.arc()
             .innerRadius(radius - 80)
@@ -295,7 +297,7 @@ angular.module('graph')
         var path = svg.datum(data).selectAll("path")
             .data(pie)
           .enter().append("path")
-            .attr("fill", function(d, i) { console.log(d); return d.data.color; })
+            .attr("fill", function(d, i) {return d.data.color; })
             .attr("d", arc)
             .attr("transform", "translate(" + width / 2  + ", " + height / 2 + ")")
             .on("mouseenter", function(d) {
@@ -305,7 +307,19 @@ angular.module('graph')
                   .style("text-anchor", "middle")
                   .style("fill", "#222")
                   .attr("class", "on")
-                  .text(d.data.label);
+                  .text(function() {
+                    try {
+                      var text = d.data.label.split('-')[2];
+                    } catch (e) {
+                      if (d.data.label === 0){
+                        var text = 'Geen data';                      
+                      } else {
+                        var text = 'Overig';
+                      }
+                    }
+                    text += " - " + Math.round(d.data.data/total * 10000)/100 + " %";
+                    return text;
+                  });
               })
             .each(function(d) { this._current = d; }); // store the initial angles
 

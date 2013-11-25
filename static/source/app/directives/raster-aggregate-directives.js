@@ -8,13 +8,6 @@
 app.directive('rasterAggregate', function () {
   var link = function (scope, element, attrs) {
     var agg, raster;
-    if (scope.box.type === 'landuse') {
-      agg = 'counts';
-      raster = 'landuse';
-    } else if (scope.box.type  === 'elevation') {
-      agg = 'curve';
-      raster = 'ahn2';
-    }
 
     var srs = 'EPSG:4326';
     scope.mapBounds = scope.map.getBounds();
@@ -23,6 +16,17 @@ app.directive('rasterAggregate', function () {
     });
 
     scope.$watch('mapBounds', function () {
+      if (scope.box.type === 'landuse') {
+        agg = 'counts';
+        scope.box.content.agg = agg;
+
+        raster = 'landuse';
+      } else if (scope.box.type  === 'elevation') {
+        agg = 'curve';
+        scope.box.content.agg = agg;
+        raster = 'ahn2';
+      }
+
       var geom_wkt = "POLYGON(("
               + scope.mapBounds.getWest() + " " + scope.mapBounds.getSouth() + ", "
               + scope.mapBounds.getEast() + " " + scope.mapBounds.getSouth() + ", "
@@ -30,10 +34,8 @@ app.directive('rasterAggregate', function () {
               + scope.mapBounds.getWest() + " " + scope.mapBounds.getNorth() + ", "
               + scope.mapBounds.getWest() + " " + scope.mapBounds.getSouth()
               + "))";
-
       scope.getRasterData(raster, geom_wkt, srs, agg);   
     });
-    scope.box.content.agg = agg;
   };
 
   return {
