@@ -56,8 +56,8 @@ app
             options.styles = 'landuse';
           } else if (layer.content === 'elevation') {
             // dynamically set min/max?
-            options.effects = 'shade:0:3';
-            options.styles = 'hot:-5:15';
+            // options.effects = 'shade:0:3';
+            options.styles = 'jet:-5:20';
           }
           layer.leafletLayer = L.tileLayer.wms(layer.url, options);
         } else {

@@ -610,6 +610,11 @@ header {
     color: white;
 }
 
+.close-button {
+    padding: 1em;
+    margin-right: 10px;
+}
+
 #box-awesome-inner {
     position: relative;
     top: -5px;

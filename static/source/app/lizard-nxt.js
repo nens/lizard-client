@@ -360,4 +360,20 @@ app.controller("MasterCtrl",
 // END Temporal extent model
 
 
+/**
+* keypress stuff
+*/
+
+  // If escape is pressed close box
+  $scope.keyPress = function ($event) {
+    // watches can be placed in corresponding ctrls.
+    $scope.keyPressed = $event.which;
+    if ($event.which === 27) {
+      $scope.box.type = 'empty';
+    }
+
+  };
+
+//END keypress
+
 }]);

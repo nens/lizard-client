@@ -15,28 +15,39 @@ app.controller('MapCtrl', function ($scope) {
     if ($scope.box.type === 'landuse' || $scope.box.type === 'elevation') {
       $scope.box.type = 'empty';
     }
-    $scope.mapState.baselayerChanged = Date.now(); 
+    if ($scope.mapState.activeBaselayer === 3) {
+      $scope.box.type = 'elevation';
+    } else if ($scope.mapState.activeBaselayer === 4) {
+      $scope.box.type = 'landuse';
+    }
+    $scope.mapState.baselayerChanged = Date.now();
   };
 
-  // Capture keypress. Maybe a features. Now for dev
-  $scope.keyPress = function ($event) {
-    // Capture both capital and lower case letters
-    if ($event.which === 51) {
-      $scope.mapState.activeBaselayer = 3;
-      $scope.switchBaseLayer();
-      $scope.box.type = 'elevation';
-    } else if ($event.which === 52) {
-      $scope.mapState.activeBaselayer = 4;
-      $scope.switchBaseLayer();
-      $scope.box.type = 'landuse';
-    } else if ($event.which === 49) {
-      $scope.mapState.activeBaselayer = 1;
-      $scope.switchBaseLayer();
-    } else if ($event.which === 50) {
-      $scope.mapState.activeBaselayer = 2;
-      $scope.switchBaseLayer();
-    }
+  $scope.$watch('keyPressed', function (newVal, oldVal) {
+    if (newVal !== oldVal) {
+      if (newVal === 51) {
+        $scope.mapState.activeBaselayer = 3;
+        $scope.switchBaseLayer();
+      } else if (newVal === 52) {
+        $scope.mapState.activeBaselayer = 4;
+        $scope.switchBaseLayer();
+      } else if (newVal === 49) {
+        $scope.mapState.activeBaselayer = 1;
+        $scope.switchBaseLayer();
+      } else if (newVal === 50) {
+        $scope.mapState.activeBaselayer = 2;
+        $scope.switchBaseLayer();
+      }
 
+    }
+  });
+
+  $scope.toggleLayerInfo = function (layername) {
+    if (layername === 'Hoogtekaart') {
+      $scope.keyPressed = 51;
+    } else if (layername === 'Landgebruik') {
+      $scope.keyPressed = 52;
+    }
   };
 
   $scope.toggleLayerGroup = function (layergroup) {
