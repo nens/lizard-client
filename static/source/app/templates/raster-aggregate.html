@@ -1,3 +1,6 @@
 <div id="raster-aggregate">
-    Yoo-hoo!
+    <div ng-switch on="box.type">
+        <!-- <graph ng-switch-when="landuse" pie data="data"></graph> -->
+        <graph ng-switch-when="elevation" line data="data"></graph>
+    </div>
 </div>

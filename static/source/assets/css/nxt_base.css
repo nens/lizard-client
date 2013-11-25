@@ -189,7 +189,8 @@ html, body{
 }
 
 .zoomto-icon {
-    color: #c0392b;
+    /*color: #c0392b;*/
+    font-size: 16px;
     cursor: pointer;
     -o-transition: .2s;
     -ms-transition: .2s;

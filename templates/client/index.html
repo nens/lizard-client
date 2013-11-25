@@ -12,6 +12,9 @@
             <li class="site">
               <a href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.active === 'profile'}"></i></a>
             </li>
+            <li class="site">
+              <a href="#" ng-click="toggle_tool('landuse')" title="{% trans 'Landuse aggregation' %}"><i class="icon-bar-chart" ng-class="{'icon-large': tools.active === 'profile'}"></i></a>
+            </li>
             {% if user.is_authenticated %}
               <li>
                 <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="pull-right" id="username"> {{ user.first_name }}</div><i id="user-icon" class="icon-user pull-right"></i></a>
@@ -34,7 +37,8 @@
     </header>
     {% block content %}
 
-      <div ng-controller='MapCtrl'>
+    <div ng-controller='MapCtrl'>
+      <div class="layer-menu-container">
         <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': mapState.enabled}">
           <div class="layer-switcher slide-left">
             <ul class="nav">
@@ -44,7 +48,8 @@
                 <li ng-repeat="layer in mapState.baselayers | orderBy:'order':true">
                 <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
                 <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
-                </li>
+                <i class="icon-info pull-right zoomto-icon " ng-class="{visible: layer.active};" ng-click="toggleTool(layer.aggregation_type)"></i>
+                </li> 
               </ul>
               </li>
               <li class="nav-header">
@@ -62,6 +67,7 @@
                 <li ng-repeat="layer in mapState.layers | orderBy:'order':true">
                 <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
                 <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
+
                 <div ng-switch="layer.follow_3di" style="float: right;">
                   <div ng-switch-when="undefined">
                     <i class="icon-screenshot pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="zoomToTheMagic(layer)"></i>
@@ -101,91 +107,16 @@
 
 
     {% block box_awesome %}{% endblock %}
-    <div ng-controller="SearchCtrl" class="container">
+    <div class="container">
       <omnibox id="omnibox">
   
       </omnibox>
     </div>
+  </div> <!-- MapCtrl Closed.-->
+
 {% block toolbar_controllers %}
-    <!--div class="container-fluid">
-<div class="navbar navbar-fixed-bottom" ng-controller="ClientState">
-  <div class="navbar-inner">
-    <div class="control">
-      <div class="btn-group bar-buttons">
-        <a class="btn btn-info-line" ng-class="{'btn-primary': clientstate.program_mode == 'infoline'}" ng-click="setMode('infoline')">
-          <i class="icon-threedi-line-info"></i></a>
-        <a class="btn btn-info-point" ng-class="{'btn-primary': clientstate.program_mode == 'infopoint'}" ng-click="setMode('infopoint')">
-          <i class="icon-threedi-info"></i></a>
-      </div>
 
-      <div class="btn-group control-edit-buttons hide" 
-           ng-controller="RemoteControl" 
-           ng-class="{hide: !isMaster}">
-
-        <a href="#" class="btn btn-replay" ng-class="{disabled:!isMaster || wait_for_server_response}"
-        ng-click="!isMaster || reset()">
-          <i class="icon-repeat"></i>
-        </a>
-        <a id="btn-play" class="btn" ng-class="{active: isPlaying, disabled:!isMaster || wait_for_server_response}" ng-click="!isMaster || play()">
-          <i class="icon-play" ng-class="{green: has_future_events}"></i>
-        </a>
-        <a id="btn-stop" class="btn" ng-class="{active: !isPlaying, disabled: !isMaster || wait_for_server_response}" ng-click="!isMaster || stop()">
-          <i class="icon-stop"></i>
-        </a>
-      </div>
-
-      <div class="btn-group control-edit-buttons hide" 
-           ng-controller="Simulator" 
-           ng-class="{hide: !isMaster}">
-
-        <a class="btn btn-rain" ng-class="{disabled: !isMaster, 'btn-primary': clientstate.program_mode == 'rain'}" ng-click="!isMaster || setMode('rain')">
-          <i class="icon-threedi-rain"></i></a>
-        <a class="btn btn-discharge" ng-class="{disabled: !isMaster,
-        'btn-primary': clientstate.program_mode == 'discharge'}"
-        ng-click="!isMaster || setMode('discharge')">
-          <i class="icon-threedi-manhole"></i></a>
-        <a class="btn btn-manhole" ng-class="{disabled: !isMaster,
-        'btn-primary': clientstate.program_mode == 'manhole'}"
-        ng-click="!isMaster || setMode('manhole')">
-          <i class="icon-threedi-pump"></i></a>
-        <a class="btn btn-edit-bathy" ng-class="{disabled: !isMaster,
-        'btn-primary': clientstate.program_mode == 'edit'}"
-        ng-click="!isMaster || setMode('edit')">
-          <i class="icon-circle-arrow-up"></i></a>
-      </div>
-
-      <div class="btn-group pull-right" ng-controller="Director">
-        <a class="btn" ng-click="requestMaster()" ng-class="{disabled: have_master && !isMaster}" title="{[{ master_name }]}">
-          <i ng-class="{'icon-star-empty': !isMaster, 'icon-star': isMaster}"> </i>
-        </a>
-      </div>
-
-      <div class="timeline non-btn-group right" ng-controller="Timeline">
-        <span class="timeline non-btn" title="Time (HH:MM)">
-          {[{ slider.human_at }]}
-        </span>
-      </div>
-
-      <div ng-controller="Status" class="non-btn-group right">
-          <i class="icon-circle non-btn"
-             ng-class="{
-             'state-wait': serverState == 'wait',
-             'state-sim': serverState == 'sim',
-             'state-standby': serverState == 'standby',
-             'state-prepare-wms': serverState == 'prepare-wms',
-             'state-load-model': serverState == 'load-model',
-             'state-loaded-model': serverState == 'loaded-model',
-             'state-stopping': serverState == 'stopping'
-            }"
-          title="{[{ label }]}"></i>
-      </div>
-
-   </div>
-  </div>
-</div>
-    </div-->
         {% endblock toolbar_controllers %}
-
     {% endblock content %}
 
 

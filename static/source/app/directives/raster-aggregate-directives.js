@@ -1,10 +1,23 @@
 // raster-aggregate-directives.js
 
+/* *
+*
+* Directive to show aggregation of raster files in omnibox.
+* Depends on graph-directives to draw pie chart
+*/
 app.directive('rasterAggregate', function () {
   var link = function (scope, element, attrs) {
+    var agg, raster;
+    if (scope.box.type === 'landuse') {
+      agg = 'counts';
+      raster = 'landuse';
+    } else if (scope.box.type  === 'elevation') {
+      agg = 'curve';
+      raster = 'ahn2';
+    }
 
-    var srs = "EPSG:4326";
-    scope.mapBounds = {};
+    var srs = 'EPSG:4326';
+    scope.mapBounds = scope.map.getBounds();
     scope.map.on('moveend', function () {
       scope.mapBounds = scope.map.getBounds();
     });
@@ -18,10 +31,9 @@ app.directive('rasterAggregate', function () {
               + scope.mapBounds.getWest() + " " + scope.mapBounds.getSouth()
               + "))";
 
-      scope.getRasterData('ahn2', geom_wkt, srs, 'sum');      
+      scope.getRasterData(raster, geom_wkt, srs, agg);   
     });
-
-    console.log('haha', scope.box.content);
+    scope.box.content.agg = agg;
   };
 
   return {
@@ -29,5 +41,5 @@ app.directive('rasterAggregate', function () {
     replace: true,
     link: link,
     templateUrl: 'templates/raster-aggregate.html'
-  }
+  };
 });

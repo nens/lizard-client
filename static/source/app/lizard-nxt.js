@@ -110,7 +110,7 @@ app.controller("MasterCtrl",
     }
   };
 
-  $scope.toggle_tool = function (name) {
+  $scope.toggleTool = function (name) {
     if ($scope.tools.active === name) {
       $scope.tools.active = "none";
     } else {
@@ -236,6 +236,7 @@ app.controller("MasterCtrl",
     }
   });
 
+// END Timeseries
 
   // rewrite data to make d3 parseable
   // NOTE: refactor?
@@ -294,12 +295,16 @@ app.controller("MasterCtrl",
     if (agg !== undefined) {
       url += "&agg=" + agg;  
     }
-    // get profile from server
+    // get profile9 from server
     $http.get(url)
       .success(function (data) {
-        //NOTE: hack to try pop_density
+        // NOTE: hack to try pop_density
+        // NOTE: maybe this function should return something
+        // instead of setting variables.
         if (raster_names === 'pop_density') {
           $scope.box.pop_density = data;
+        } else if (agg === 'curve' || agg === 'counts') {
+          $scope.data = data;
         } else {
           var d3data = format_data(data);
           $scope.box.type = "profile";
@@ -307,7 +312,7 @@ app.controller("MasterCtrl",
             data: d3data,
             yLabel: 'hoogte [mNAP]',
             xLabel: 'afstand [m]'
-          }
+          };
         }
       })
       .error(function (data) {
@@ -332,4 +337,16 @@ app.controller("MasterCtrl",
     enabled: false
   };
 // END Temporal extent model
+
+/**
+* Raster Aggregate stuff.
+*/
+  
+  // $scope.$watch('tools.active', function () {
+  //   if ($scope.tools.active === 'donut') {
+  //     $scope.box.type = 'landuse';
+  //   }
+  // })
+
+// END Raster Aggregate stuff.
 }]);

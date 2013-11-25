@@ -68,14 +68,17 @@ app
 
 
         // expects a layer hashtable with a leafletlayer object
-      this.toggleLayer = function (layer) {
-        // 3Di hack
-        if (layer.name === "Simulatie") {
-          //console.log("Toggle 3Di layer " + layer.active);
-          if (layer.active) {
-            $scope.connect();
-          } else {
-            $scope.disconnect();
+        this.toggleLayer = function (layer) {
+          // 3Di hack
+          if (layer.name === "Simulatie") {
+            //console.log("Toggle 3Di layer " + layer.active);
+            if (layer.active) {
+              // $scope.threediTool();
+              $scope.connect();
+            } else {
+              $scope.disconnect();
+            }
+            return
           }
           return;
         }
@@ -105,6 +108,7 @@ app
       };
 
         // expects a layer hashtable with a leafletlayer object
+<<<<<<< HEAD
       this.toggleBaseLayer = function (layer) {
         var layers = $scope.map._layers;
         if (!layer.active) {
@@ -122,6 +126,27 @@ app
             //}
           } else {
             console.log('leaflet layer not defined');
+=======
+        this.toggleBaseLayer = function (layer) {
+          var layers = $scope.map._layers;
+          if (!layer.active) {
+            if (layer.leafletLayer) {
+              $scope.map.removeLayer(layer.leafletLayer);
+            } else {
+              console.log('leaflet layer not defined');
+            }
+          } else if (layer.active) {
+            if (layer.leafletLayer) {
+              $scope.map.addLayer(layer.leafletLayer);
+              layer.leafletLayer.bringToBack();
+              // Turned off. for Fred
+              // if (layer.name == 'Satellite') {
+              //   layer.leafletLayer.getContainer().classList.add('faded-gray');
+              // }
+            } else {
+              console.log('leaflet layer not defined');
+            }
+>>>>>>> 5cab3a63ce1322f36890ccf35f3df21bfa8b0ec9
           }
         }
       };
