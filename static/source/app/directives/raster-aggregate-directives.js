@@ -10,7 +10,6 @@ app.directive('rasterAggregate', function () {
     var agg, raster;
 
     var srs = 'EPSG:4326';
-    scope.mapBounds = scope.map.getBounds();
     scope.map.on('moveend', function () {
       scope.mapBounds = scope.map.getBounds();
     });
@@ -34,7 +33,7 @@ app.directive('rasterAggregate', function () {
               + scope.mapBounds.getWest() + " " + scope.mapBounds.getNorth() + ", "
               + scope.mapBounds.getWest() + " " + scope.mapBounds.getSouth()
               + "))";
-      scope.getRasterData(raster, geom_wkt, srs, agg);   
+      scope.getRasterData(raster, geom_wkt, srs, agg);
     });
   };
 

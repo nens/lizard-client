@@ -215,7 +215,7 @@ angular.module('graph')
     },
     restrict: 'E',
     replace: true,
-    template: '<div class="shabooya"></div>'
+    template: '<div class="graph-directive"></div>'
   }
 });
 

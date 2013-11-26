@@ -327,7 +327,7 @@ app.controller("MasterCtrl",
       })
       .error(function (data) {
         //TODO: implement error function to return no data + message
-        console.log("failed getting profile data from server");
+        console.info("failed getting profile data from server");
       });
   };
 
