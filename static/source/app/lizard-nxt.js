@@ -62,7 +62,7 @@ app.config(function($interpolateProvider) {
  * * [ ] Fix + document Gruntfile.js / workflow
  * * [ ] Refactor css (csslint, -moz and -webkit)
  * * [ ] Integrate 3di into this paradigm (move from threedi to source/app)
- * * [ ] Refactor map controller and directives
+ * * [ ] Refactor map controller and directives (e.g. layers come from djangotemplates)
  * * [ ] Refactor timeline controller and directive
  * * [ ] Refactor search controller (including search design with ES / Haystack)
  * * [ ] There still is a box model on the scope that is now being **abused** to display

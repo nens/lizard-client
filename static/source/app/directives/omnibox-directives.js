@@ -27,10 +27,10 @@ angular.module("omnibox", ["templates-main"])
         // support selectors.
         angular.element(element.children()[1]).html(template);
         $compile(element.contents())(scope);
-        angular.element(angular.element('.card')[0]).prepend( '' 
-          + '<span class="close-button pull-right clickable" ng-click="reset_query()">'
-          + '<i class="icon-remove"></i></span>');
-        scope.$apply();
+        // angular.element(angular.element('.card')[0]).prepend( '' 
+        //   + '<span class="close-button pull-right clickable" ng-click="reset_query()">'
+        //   + '<i class="icon-remove"></i></span>');
+        // scope.$apply();
       };
 
       scope.$watch('box.type', function () {

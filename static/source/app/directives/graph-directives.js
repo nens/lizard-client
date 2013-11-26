@@ -484,6 +484,10 @@ angular.module('graph')
           });
 
         }
+
+        // prevent errors
+        if (x === undefined) { return; }
+
         var xAxis = graphCtrl.makeAxis(x.scale, {
           orientation:"bottom",
           tickFormat: x.tickFormat
