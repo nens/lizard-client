@@ -8,7 +8,7 @@ describe('Testing raster requests directive', function() {
   var $compile, $rootScope, $httpBackend;
 
   beforeEach(module('lizard-nxt',
-    'templates/landuse.html',
+    'templates-main',
     'graph',
     'lizard-nxt.services'));
   beforeEach(inject(function (_$compile_, _$rootScope_, _$httpBackend_) {
@@ -16,40 +16,6 @@ describe('Testing raster requests directive', function() {
     $rootScope = _$rootScope_;
     $httpBackend = _$httpBackend_;
   }));
-
-  // copied from templates.js this prevents the directive from doing a GET
-  // draws the template from 'cache'
-  angular.module("templates/raster-aggregate.html", []).run(["$templateCache", function($templateCache) {
-        $templateCache.put("templates/raster-aggregate.html",
-          "<div id=\"raster-aggregate\">\n" +
-          "    <div ng-switch on=\"box.type\">\n" +
-          "        <graph ng-switch-when=\"landuse\" pie data=\"data\"></graph>\n" +
-          "        <graph ng-switch-when=\"elevation\" line data=\"data\" title=\"\" xlabel=\"box.content.xLabel\" ylabel=\"box.content.yLabel\"></graph>\n" +
-          "    </div>\n" +
-          "</div>");
-      }]);
-
-  angular.module("templates/omnibox-search.html", []).run(["$templateCache", function($templateCache) {
-    $templateCache.put("templates/omnibox-search.html",
-      "<div class=\"searchbox\" id=\"searchbox\" tabindex=\"-1\" role=\"search\" style=\"\" ng-controller=\"SearchCtrl\">\n" +
-      "    <form id=\"searchbox_form\"> \n" +
-      "        <table cellspacing=\"0\" cellpadding=\"0\" id=\"\" class=\"searchboxinput\" style=\"width: 375px; padding: 0px;\">\n" +
-      "            <tbody>\n" +
-      "                <tr>\n" +
-      "                    <td>\n" +
-      "                        <input ui-keydown=\"{esc: 'reset_query()'}\" ui-keyup=\"{'enter':'search($event)'}\" ng-model=\"box.query\" ng-focus id=\"searchboxinput\" name=\"q\" tabindex=\"1\" autocomplete=\"off\" dir=\"ltr\" spellcheck=\"false\"><a href=\"\" ng-click=\"reset_query()\" id=\"clear\"></a>\n" +
-      "                    </td>\n" +
-      "                </tr>\n" +
-      "            </tbody>\n" +
-      "        </table>\n" +
-      "    </form> \n" +
-      "    <button id=\"search-button\" class=\"searchbutton\" ng-click=\"search($event)\" aria-label=\"Search\" tabindex=\"3\"></button>\n" +
-      "</div>\n" +
-      "\n" +
-      "<div id=\"cards\" class=\"pullDown cardbox\" ng-show=\"box.showCards\" style=\"overflow:auto;display:block;\">\n" +
-      "   \n" +
-      "</div> ");
-  }]);
 
   /**
   *
