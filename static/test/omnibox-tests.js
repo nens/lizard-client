@@ -14,7 +14,7 @@ describe('Testing lizard-nxt omnibox directive', function() {
       
   beforeEach(function (){
     //load the module
-     module('lizard-nxt', 
+     module('lizard-nxt',
       'templates-main');
 
     

@@ -8,6 +8,7 @@ describe('Testing raster requests directive', function() {
   var $compile, $rootScope, $httpBackend;
 
   beforeEach(module('lizard-nxt',
+    'templates/landuse.html',
     'graph',
     'lizard-nxt.services'));
   beforeEach(inject(function (_$compile_, _$rootScope_, _$httpBackend_) {
@@ -27,6 +28,28 @@ describe('Testing raster requests directive', function() {
           "    </div>\n" +
           "</div>");
       }]);
+
+  angular.module("templates/omnibox-search.html", []).run(["$templateCache", function($templateCache) {
+    $templateCache.put("templates/omnibox-search.html",
+      "<div class=\"searchbox\" id=\"searchbox\" tabindex=\"-1\" role=\"search\" style=\"\" ng-controller=\"SearchCtrl\">\n" +
+      "    <form id=\"searchbox_form\"> \n" +
+      "        <table cellspacing=\"0\" cellpadding=\"0\" id=\"\" class=\"searchboxinput\" style=\"width: 375px; padding: 0px;\">\n" +
+      "            <tbody>\n" +
+      "                <tr>\n" +
+      "                    <td>\n" +
+      "                        <input ui-keydown=\"{esc: 'reset_query()'}\" ui-keyup=\"{'enter':'search($event)'}\" ng-model=\"box.query\" ng-focus id=\"searchboxinput\" name=\"q\" tabindex=\"1\" autocomplete=\"off\" dir=\"ltr\" spellcheck=\"false\"><a href=\"\" ng-click=\"reset_query()\" id=\"clear\"></a>\n" +
+      "                    </td>\n" +
+      "                </tr>\n" +
+      "            </tbody>\n" +
+      "        </table>\n" +
+      "    </form> \n" +
+      "    <button id=\"search-button\" class=\"searchbutton\" ng-click=\"search($event)\" aria-label=\"Search\" tabindex=\"3\"></button>\n" +
+      "</div>\n" +
+      "\n" +
+      "<div id=\"cards\" class=\"pullDown cardbox\" ng-show=\"box.showCards\" style=\"overflow:auto;display:block;\">\n" +
+      "   \n" +
+      "</div> ");
+  }]);
 
   /**
   *
@@ -53,6 +76,8 @@ describe('Testing raster requests directive', function() {
         agg: ''
       }
     };
+
+    // This should seriously be removed from the lizard-nxt.js file.
     $httpBackend.when("GET", "/static/data/klachten_purmerend_min.geojson").respond('');
     $httpBackend.when("GET", "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725))&srs=EPSG:4326&agg=counts").respond('');
 
@@ -63,24 +88,43 @@ describe('Testing raster requests directive', function() {
     expect('counts').toEqual(scope.box.content.agg);
   });
 
-  // it('should look for data based on the layername', function() {
-  //   var element = angular.element('<body ng-controller="MasterCtrl"><map></map>'
-  //     + '<omnibox></omnibox></body>');
-  //   element = $compile(element)($rootScope);
-  //   var scope = element.scope();
 
-            
+  /*
+  * Another difficult one to test. At the moment the layers come
+  * from a django template and are not available in the "pure" JS.
+  */        
+  it('should look for data based on the layername', function() {
+    var element = angular.element('<body ng-controller="MasterCtrl"><map></map>'
+      + '<omnibox></omnibox></body>');
+    element = $compile(element)($rootScope);
+    var scope = element.scope();
+    scope.$digest();
+    // NOTE: this could be done differently :)
+    scope.keyPressed = 4;
+    scope.$digest();
+    expect(scope.activeBaselayer).toEqual(4);
+  });
 
-  //   scope.$digest();
-  //   scope.keyPressed = 4;
-  //   scope.$digest();
-  //   expect(scope).toEqual(4);
-  // });
 
+  it('should have a place in the omnibox', function() {
+    var element = angular.element('<div ng-controller="MasterCtrl"><omnibox></omnibox><map></map></div>');
+    element = $compile(element)($rootScope);
+    var scope = element.scope();
+    // This should seriously be removed from the lizard-nxt.js file.
+    scope.box = {
+      type: 'landuse',
+      content: {
+        agg: ''
+      }
+    }; 
+    scope.mapBounds = scope.map.getBounds();  
 
-  // it('should have a place in the omnibox', function() {
-    
-  // });
+    $httpBackend.when("GET", "/static/data/klachten_purmerend_min.geojson").respond('');
+    $httpBackend.when("GET", "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725))&srs=EPSG:4326&agg=counts").respond('');
+    scope.$digest();
+    var cardtitle = $(element.html()).find('h3').html();
+    expect(cardtitle).toEqual('Landgebruik');
+  });
 
   // TODO: maybe strip the request string to check coordinates with WKT
   it('should request data based on viewport', function() {
@@ -137,18 +181,16 @@ describe('Testing raster requests directive', function() {
      + '{"color": "#f7385a", "data": 11, "label": "65 - CBS - Bedrijventerrein"},'
      + '{"color": "#ffffff", "data": 77.0, "label": "Overig"}]');
 
-    // scope.data = [{"color": "#000000", "data": 256786, "label": 0}, {"color": "#e7e3e7", "data": 5089, "label": 241}, {"color": "#a5ff73", "data": 73, "label": "41 - LGN - Agrarisch Gras"}, {"color": "#0071ff", "data": 39, "label": "21 - Top10 - Water"}, {"color": "#c65d63", "data": 27, "label": "63 - CBS - Woongebied"}, {"color": "#734d00", "data": 17, "label": "46 - LGN - Overige akkerbouw"}, {"color": "#6b696b", "data": 13, "label": "23 - Top10 - Secundaire wegen"}, {"color": "#00714a", "data": 12, "label": "25 - Top10 - Bos/Natuur"}, {"color": "#f7385a", "data": 11, "label": "65 - CBS - Bedrijventerrein"}, {"color": "#ffffff", "data": 77.0, "label": "Overig"}];
-    // // scope.data = scope.format_rastercurve(response);
-    // console.info(scope.data);
-    // scope.$digest();
-    // console.info(scope.data);
+    var response = [{"color": "#000000", "data": 256786, "label": 0}, {"color": "#e7e3e7", "data": 5089, "label": 241}, {"color": "#a5ff73", "data": 73, "label": "41 - LGN - Agrarisch Gras"}, {"color": "#0071ff", "data": 39, "label": "21 - Top10 - Water"}, {"color": "#c65d63", "data": 27, "label": "63 - CBS - Woongebied"}, {"color": "#734d00", "data": 17, "label": "46 - LGN - Overige akkerbouw"}, {"color": "#6b696b", "data": 13, "label": "23 - Top10 - Secundaire wegen"}, {"color": "#00714a", "data": 12, "label": "25 - Top10 - Bos/Natuur"}, {"color": "#f7385a", "data": 11, "label": "65 - CBS - Bedrijventerrein"}, {"color": "#ffffff", "data": 77.0, "label": "Overig"}];
+
+    scope.$digest();
 
     /*
     * Not sure how to test this.. the data is not compiled
     * and the graph directive does not seem to be draw a svg..
     */
 
-    expect(scope.data).toEqual(element[0]);
+    expect(scope.data).toEqual(response);
   });
 
 
