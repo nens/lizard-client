@@ -74,6 +74,8 @@ describe('Testing raster requests directive', function() {
     // NOTE: Because layers are not available in "pure js"
     // the activeBaselayer is set. This test is in that sense FAKE!
     scope.activeBaselayer = scope.keyPressed;
+        console.info('\n NOTE: data based on the layername test is FAKE '
+      + '\n Because layers are not available in "pure js"');
     expect(scope.activeBaselayer).toEqual(4);
   });
 
@@ -163,7 +165,8 @@ describe('Testing raster requests directive', function() {
     */
     scope.data = response;
 
-    console.info('hallo arjen')
+    console.info('\n NOTE: data based on viewport test is FAKE '
+      + '\n the data is not added to the scope for some reason.');
     expect(scope.data).toEqual(response);
   });
 
