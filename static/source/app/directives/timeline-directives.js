@@ -1,7 +1,5 @@
 // Timeline for lizard.
-app.directive('timeline', [ function ($timeout) {
-
-  var controller = function ($scope){
+app.controller('TimelineDirCtrl', function ($scope){
     this.createCanvas = function (element, options) {
       // Draws a blank canvas based on viewport
       var margin = {
@@ -365,7 +363,10 @@ app.directive('timeline', [ function ($timeout) {
           return (d3.time.month)
        }
     };
-  };
+
+  return $scope.TimelineDirCtrl = this;
+})
+.directive('timeline', [ function ($timeout) {
   
   var link = function (scope, element, attrs, timelineCtrl) {
     var chart;
@@ -476,7 +477,7 @@ app.directive('timeline', [ function ($timeout) {
             svg.select(".y.axis").call(timelineCtrl.makeAxis(y.scale, {orientation:"left"}));
             svg.selectAll("circle")
                 .attr("cx", xfunction);
-            scope.$apply(function () {
+            scope.$apply(function () {timelineCtrl
               scope.timeline.temporalExtent.start = x.scale.domain()[0].getTime();
               scope.timeline.temporalExtent.end = x.scale.domain()[1].getTime();
               scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
@@ -573,7 +574,7 @@ app.directive('timeline', [ function ($timeout) {
     replace: true,
     restrict: 'E',
     link: link,
-    controller: controller,
+    controller: 'TimelineDirCtrl',
     templateUrl: 'templates/timeline.html'
   }
 }]);
