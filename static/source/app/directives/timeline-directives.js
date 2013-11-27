@@ -15,11 +15,6 @@ app.controller('TimelineDirCtrl', function ($scope){
       var width = maxwidth - margin.left - margin.right,
         height = maxheight - margin.top - margin.bottom;
   
-      // d3.select(element[0])
-      //   .html("")
-      //   .append("html:div")
-      //   .classed("bovenbalk", true)
-
       var svg = d3.select(element[0])
         .select("#timeline-svg-wrapper")
         .html("")
@@ -40,8 +35,105 @@ app.controller('TimelineDirCtrl', function ($scope){
         margin: margin
       }
     };
+
+    this._numericalMinMax = function (data, options) {
+      var max = d3.max(data, function(d){
+              return Number(d[options.key]);
+            });
+
+      var min = d3.min(data, function(d){
+              return Number(d[options.key]);
+            });
+      return {
+        min: min,
+        max: max
+      };
+    };
+
+    this._dateStringMinMax = function (data, options) {
+      var domain = d3.extent(data, function (d) {
+              return d3.time.format.iso.parse(d.properties[options.key])
+            });
+      var min = domain[0].getTime();
+      var max = domain[1].getTime();
+      return {
+        min: min,
+        max: max
+      };
+    };
+
+    this.maxMin = function (data, options) {
+      if (options.dateparser === 'isodate'){
+        return this._dateStringMinMax(data, options);
+      } else {
+        return this._numericalMinMax(data, options);
+      }
+    };
+
+
+    this.scale = function (min, max, options) {
+      // Instantiate a d3 scale based on min max and 
+      // width and height of plot
+      if (options.type === 'time'){
+        var scale = d3.time.scale()
+            .domain([min, max])
+            .range([options.range[0], options.range[1]]);
+      } else if (options.type === 'kpi') {
+          var scale = d3.time.scale()
+            .domain(d3.extent(options.data, function (d) {
+                return Date.parse(d.date)
+              }))
+            .range([options.range[0], options.range[1]]);
+      } else if (options.scale === "color") {
+        var scale = d3.scale.category20()
+          .domain(function (d) {
+            return d3.set(d.properties.CATEGORIE).values();
+          });
+      } else if (options.scale === "ordinal") {
+        var scale = d3.scale.ordinal()
+          //.range([options.range[0], options.range[1]])
+          .range(colorbrewer.Set2[6])
+          .domain(function (d) {
+            return d3.set(d.properties.CATEGORIE).values();
+          });
+      } else if (options.scale === 'isodate'){
+        var scale = d3.time.scale()
+            .domain([min, max])
+            .range([options.range[0], options.range[1]]);
+      } else {
+        var scale = d3.scale.linear()
+            .domain([min, max])
+            .range([options.range[0], options.range[1]]);
+      }
+      return scale;
+    };
+
+    this.makeAxis = function (scale, options) {
+      // Make an axis for d3 based on a scale
+      if (options.tickFormat){
+        var axis = d3.svg.axis()
+                .scale(scale)
+                .orient(options.orientation)
+                .tickFormat(options.tickFormat)
+                .ticks(5); 
+      } else if (options.ticks){
+        var axis = d3.svg.axis()
+                .scale(scale)
+                .orient(options.orientation)
+                .ticks(options.ticks); 
+      } else {
+        var axis = d3.svg.axis()
+              .scale(scale)
+              .orient(options.orientation)
+              .ticks(5);        
+      }
+      return axis;
+    };
+    /*
+    * Draws the axes, expects axes or 2 objects with scales
+    * Options can contain axes, not mandatory.
+    */
     this.drawAxes = function (svg, x, y, options){
-      // Draws the axes, expects axes or 2 objects with scales
       if (options.axes) {
         var xAxis = options.axes.x;
         var yAxis = options.axes.y;
@@ -140,87 +232,7 @@ app.controller('TimelineDirCtrl', function ($scope){
             });
     };
 
-    this.maxMin = function (data, options) {
-      if (options.dateparser === 'isodate'){
-        var domain = d3.extent(data, function (d) {
-                return d3.time.format.iso.parse(d.properties[options.key])
-              });
-        var min = domain[0].getTime();
-        var max = domain[1].getTime();
-      //} else if (options.key === 'CATEGORIE') {
-        //var min = "GRONDWATER";
-        //var max = "PUT STUK";
-      } else {
-        var max = d3.max(data, function(d){
-                return Number(d[options.key]);
-              });
 
-        var min = d3.min(data, function(d){
-                return Number(d[options.key]);
-              });
-      }
-      return {
-        max: max, 
-        min: min
-      };
-    };
-    this.makeAxis = function (scale, options) {
-      // Make an axis for d3 based on a scale
-      if (options.tickFormat){
-        var axis = d3.svg.axis()
-                .scale(scale)
-                .orient(options.orientation)
-                .tickFormat(options.tickFormat)
-                .ticks(5); 
-      } else if (options.ticks){
-        var axis = d3.svg.axis()
-                .scale(scale)
-                .orient(options.orientation)
-                .ticks(options.ticks); 
-      } else {
-        var axis = d3.svg.axis()
-              .scale(scale)
-              .orient(options.orientation)
-              .ticks(5);        
-      }
-      return axis
-      };
-    this.scale = function (min, max, options) {
-      // Instantiate a d3 scale based on min max and 
-      // width and height of plot
-      if (options.type === 'time'){
-        var scale = d3.time.scale()
-            .domain([min, max])
-            .range([options.range[0], options.range[1]]);
-      } else if (options.type === 'kpi') {
-          var scale = d3.time.scale()
-            .domain(d3.extent(options.data, function (d) {
-                return Date.parse(d.date)
-              }))
-            .range([options.range[0], options.range[1]]);
-      } else if (options.scale === "color") {
-        var scale = d3.scale.category20()
-          .domain(function (d) {
-            return d3.set(d.properties.CATEGORIE).values();
-          });
-      } else if (options.scale === "ordinal") {
-        var scale = d3.scale.ordinal()
-          //.range([options.range[0], options.range[1]])
-          .range(colorbrewer.Set2[6])
-          .domain(function (d) {
-            return d3.set(d.properties.CATEGORIE).values();
-          });
-      } else if (options.scale === 'isodate'){
-        var scale = d3.time.scale()
-            .domain([min, max])
-            .range([options.range[0], options.range[1]]);
-      } else {
-        var scale = d3.scale.linear()
-            .domain([min, max])
-            .range([options.range[0], options.range[1]]);
-      }
-      return scale;
-    };
     this.verticalReference = function (options) {
       // NOTE: Not used anymore..
       // add a 'hover' line that we'll show as a user moves their mouse (or finger)
@@ -394,17 +406,6 @@ app.controller('TimelineDirCtrl', function ($scope){
       }
     }, true);
 
-    // scope.$watch('tools.alerts.enabled', function (newVal, oldVal) {
-    //   if (newVal){
-    //     scope.timeline.data = scope.kpi[0].pi[0].data.features;
-    //     chart = drawChart("INTAKEDATU", "CATEGORIE", {
-    //       scale: "ordinal",
-    //       chart: "circles",
-    //       dateparser: 'isodate'
-    //     });
-    //   };
-    // });
-
     var drawChart = function (xKey, yKey, options) {
       var graph = timelineCtrl.createCanvas(element, {
         start: scope.timeline.temporalExtent.start,
@@ -474,7 +475,6 @@ app.controller('TimelineDirCtrl', function ($scope){
               orientation: "bottom",
               ticks: timelineCtrl.ticksInterval
             }));
-            svg.select(".y.axis").call(timelineCtrl.makeAxis(y.scale, {orientation:"left"}));
             svg.selectAll("circle")
                 .attr("cx", xfunction);
             scope.$apply(function () {timelineCtrl
@@ -491,35 +491,6 @@ app.controller('TimelineDirCtrl', function ($scope){
 
 
         svg.call(timelineCtrl.zoom)
-
-        // angular.element(".plot-temporal")
-        // .on("mousemove", function (e) {
-        //   var offset = angular.element('.plot-temporal').offset(); 
-        //   var mouseX = e.pageX-offset.left;
-        //   var mouseY = e.pageY-offset.top;
-        //   timelineCtrl.handleMouseOverGraph(e, hoverLine, {
-        //     mouseX: mouseX,
-        //     mouseY: mouseY,
-        //     w: graph.width,
-        //     h: graph.height
-        //   });
-        //   timelineCtrl.displayValueLabelsForPositionX(mouseX, x);
-        // })
-        // .on("mouseout", function (e) {
-        //  timelineCtrl.handleMouseOutGraph(e, hoverLine); 
-        // })
-        // .on("mousemove", function(e){
-        //   var offset = angular.element('.plot-temporal').offset(); 
-        //   var mouseX = e.pageX-offset.left;
-        //   timelineCtrl.drawReferenceAt({
-        //     svg: graph.svg,
-        //     mouseX: mouseX
-        //   });
-        //   scope.$apply(function () {
-        //     scope.timeline.temporalExtent.at = x.scale.invert(mouseX).getTime();            
-        //   })
-        // });
-
 
         scope.timeline.temporalExtent.at = timelineCtrl.halfwayTime(x.scale, graph.width);
         return {
