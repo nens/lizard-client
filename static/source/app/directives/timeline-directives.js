@@ -563,7 +563,7 @@ app.directive('timeline', [ function ($timeout) {
           chart: "circles",
           dateparser: 'isodate'
         });
-      } else {
+      } else if (scope.timeline.data !== undefined){
         chart = drawChart('date', 'value', {});
       }
     };
