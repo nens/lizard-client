@@ -10,13 +10,8 @@ app.directive('rasterAggregate', function () {
     var agg, raster;
 
     var srs = 'EPSG:4326';
-    scope.map.on('moveend', function () {
-      scope.mapBounds = scope.map.getBounds();
-    });
 
-    scope.mapBounds = scope.map.getBounds();
-
-    scope.$watch('mapBounds', function () {
+    scope.$watch('mapState.bounds', function () {
       if (scope.box.type === 'landuse') {
         agg = 'counts';
         scope.box.content.agg = agg;
@@ -27,15 +22,8 @@ app.directive('rasterAggregate', function () {
         scope.box.content.agg = agg;
         raster = 'ahn2';
       }
-
-      var geom_wkt = "POLYGON(("
-              + scope.mapBounds.getWest() + " " + scope.mapBounds.getSouth() + ", "
-              + scope.mapBounds.getEast() + " " + scope.mapBounds.getSouth() + ", "
-              + scope.mapBounds.getEast() + " " + scope.mapBounds.getNorth() + ", "
-              + scope.mapBounds.getWest() + " " + scope.mapBounds.getNorth() + ", "
-              + scope.mapBounds.getWest() + " " + scope.mapBounds.getSouth()
-              + "))";
-      scope.getRasterData(raster, geom_wkt, srs, agg);
+     
+      scope.getRasterData(raster, scope.mapState.geom_wkt, srs, agg);
     });
   };
 

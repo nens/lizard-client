@@ -117,18 +117,10 @@ app.directive('vectorlayer', function () {
        */
       var countEvents = function (selection, type) {
         var ctr = 0;
-        var mapBounds = scope.map.getBounds();
-        var geom_wkt = "POLYGON(("
-                  + mapBounds.getWest() + " " + mapBounds.getSouth() + ", "
-                  + mapBounds.getEast() + " " + mapBounds.getSouth() + ", "
-                  + mapBounds.getEast() + " " + mapBounds.getNorth() + ", "
-                  + mapBounds.getWest() + " " + mapBounds.getNorth() + ", "
-                  + mapBounds.getWest() + " " + mapBounds.getSouth()
-                  + "))";
         //NOTE: hard coded SRS
         var srs = "EPSG:4326" // L.CRS.EPSG3857.code;
         // for rasters, also send needed statistic
-        scope.getRasterData("pop_density", geom_wkt, srs, 'sum');
+        scope.getRasterData("pop_density", scope.mapState.geom_wkt, srs, 'sum');
         scope.box.pop_density = 1000;
         var num_citizens = scope.box.pop_density / 100000000;
         //console.log(num_citizens);

@@ -135,7 +135,9 @@ app.controller("MasterCtrl",
     changed: Date.now(),
     moved: Date.now(),
     baselayerChanged: Date.now(),
-    enabled: false
+    enabled: false,
+    bounds: null,
+    geom_wkt: ''
   };
   // /END MOVE TO MAP CONTROL
   // MAP MODEL
@@ -295,7 +297,7 @@ app.controller("MasterCtrl",
     if (agg !== undefined) {
       url += "&agg=" + agg;  
     }
-    // get profile9 from server
+    // get profile from server
     $http.get(url)
       .success(function (data) {
         // NOTE: hack to try pop_density
@@ -304,15 +306,11 @@ app.controller("MasterCtrl",
         if (raster_names === 'pop_density') {
           $scope.box.pop_density = data;
         } else if (agg === 'curve') {
-          // console.log($scope.data, data);
-
           $scope.data = $scope.format_rastercurve(data);
           $scope.box.content = {
             yLabel: 'hoogte [mNAP]',
             xLabel: '[%]'
           };
-          // $scope.metadata.ylabel = "hoogte [mNAP]";
-          // $scope.metadata.xlabel = "cumulatief [%]";
         } else if (agg === 'counts') {
           $scope.data = data;
         } else {

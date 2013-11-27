@@ -35,7 +35,17 @@ describe('Testing raster requests directive', function() {
     var mapscope = element.scope();
 
     var map = mapscope.map;
-    scope.mapBounds = map.getBounds();
+
+    // this normally registers on map move and on initiating map
+    // mocked here.
+    scope.mapState.bounds = map.getBounds();
+    scope.mapState.geom_wkt = "POLYGON(("
+              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
+              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
+              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
+              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
+              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
+              + "))";
     scope.box = {
       type: 'landuse',
       content: {
@@ -91,7 +101,7 @@ describe('Testing raster requests directive', function() {
         agg: ''
       }
     }; 
-    scope.mapBounds = scope.map.getBounds();  
+    scope.mapState.bounds = scope.map.getBounds();  
 
     $httpBackend.when("GET", "/static/data/klachten_purmerend_min.geojson").respond('');
     $httpBackend.when("GET", "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725))&srs=EPSG:4326&agg=counts").respond('');
@@ -111,7 +121,16 @@ describe('Testing raster requests directive', function() {
     var mapscope = element.scope();
 
     var map = mapscope.map;
-    scope.mapBounds = map.getBounds();
+    // this normally registers on map move and on initiating map
+    // mocked here.
+    scope.mapState.bounds = map.getBounds();
+    scope.mapState.geom_wkt = "POLYGON(("
+              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
+              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
+              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
+              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
+              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
+              + "))";
     scope.box = {
       type: 'landuse',
       content: {
@@ -122,7 +141,7 @@ describe('Testing raster requests directive', function() {
     $httpBackend.when("GET", "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725))&srs=EPSG:4326&agg=counts").respond('');
 
     scope.$digest();
-    expect(map.getBounds()).toEqual(scope.mapBounds);
+    expect(map.getBounds()).toEqual(scope.mapState.bounds);
   });
 
   it('should draw data based on request', function() {
@@ -135,7 +154,16 @@ describe('Testing raster requests directive', function() {
     var mapscope = element.scope();
 
     var map = mapscope.map;
-    scope.mapBounds = map.getBounds();
+    // this normally registers on map move and on initiating map
+    // mocked here.
+    scope.mapState.bounds = map.getBounds();
+    scope.mapState.geom_wkt = "POLYGON(("
+              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
+              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
+              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
+              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
+              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
+              + "))";
     scope.box = {
       type: 'landuse',
       content: {
