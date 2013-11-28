@@ -69,6 +69,12 @@ describe('Testing timeline directive', function() {
     expect(minMax.max).toBe(1355785200000);
   });
 
+  it('Should make a scale when input is categorical', function () {
+    var minMax = ctrl._dateStringMinMax(data, {key: "INTAKEDATU"});
+    var options = { scale: 'ordinal'};
+    var scale = ctrl.scale(minMax, options);
+    expect(scale("GRONDWATER")).toBe('#fc8d62');
+  });
 
   // it('Should draw axes', function () {
   //   var canvas = ctrl.createCanvas(directiveElement, options);

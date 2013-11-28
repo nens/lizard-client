@@ -71,39 +71,27 @@ app.controller('TimelineDirCtrl', function ($scope){
     };
 
 
-    this.scale = function (min, max, options) {
+    this.scale = function (minMax, options) {
       // Instantiate a d3 scale based on min max and 
       // width and height of plot
-      if (options.type === 'time'){
+      if (options.type === 'time' || options.scale === 'isodate') {
         var scale = d3.time.scale()
-            .domain([min, max])
+            .domain([minMax.min, minMax.max])
             .range([options.range[0], options.range[1]]);
-      } else if (options.type === 'kpi') {
-          var scale = d3.time.scale()
-            .domain(d3.extent(options.data, function (d) {
-                return Date.parse(d.date)
-              }))
-            .range([options.range[0], options.range[1]]);
-      } else if (options.scale === "color") {
-        var scale = d3.scale.category20()
-          .domain(function (d) {
-            return d3.set(d.properties.CATEGORIE).values();
-          });
-      } else if (options.scale === "ordinal") {
+      }
+      else {
+        if (options.scale === "ordinal") {
         var scale = d3.scale.ordinal()
-          //.range([options.range[0], options.range[1]])
           .range(colorbrewer.Set2[6])
           .domain(function (d) {
             return d3.set(d.properties.CATEGORIE).values();
           });
-      } else if (options.scale === 'isodate'){
-        var scale = d3.time.scale()
-            .domain([min, max])
-            .range([options.range[0], options.range[1]]);
-      } else {
+        }
+        else {
         var scale = d3.scale.linear()
-            .domain([min, max])
+            .domain([minMax.min, minMax.max])
             .range([options.range[0], options.range[1]]);
+        }
       }
       return scale;
     };
@@ -420,15 +408,15 @@ app.controller('TimelineDirCtrl', function ($scope){
       var y = timelineCtrl.maxMin(scope.timeline.data, {
         key: yKey
       });
-      x.scale = timelineCtrl.scale(x.min, x.max, {
+      x.scale = timelineCtrl.scale(x, {
         type: 'time',
         range: [0, graph.width],
       });
-      y.colorscale = timelineCtrl.scale(y.min, y.max, {
+      y.colorscale = timelineCtrl.scale(y, {
         range: [graph.height, 0],
         scale: (options.scale == 'ordinal') ? 'ordinal' : 'ordinal'
       });
-      y.scale = timelineCtrl.scale(y.min, y.max, {
+      y.scale = timelineCtrl.scale(y, {
         range: [graph.height, 0],
         scale: (options.scale == 'ordinal') ? 'ordinal' : 'ordinal'
       });
