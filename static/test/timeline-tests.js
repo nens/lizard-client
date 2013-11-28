@@ -76,6 +76,37 @@ describe('Testing timeline directive', function() {
     expect(scale("GRONDWATER")).toBe('#fc8d62');
   });
 
+  it('Should make an axis function', function () {
+    var minMax = ctrl._dateStringMinMax(data, {key: "INTAKEDATU"});
+    var options = { scale: 'isodate',
+                    range: [0, 300]};
+    var scale = ctrl.scale(minMax, options);
+    var axis = ctrl.makeAxis(scale, {orientation: 'bottom'});
+        var directiveElement = angular.element(''
+      +'<div><div id="timeline-svg-wrapper">'
+      + '<svg></svg>'
+      + '</div></div>');
+    var canvas = ctrl.createCanvas(directiveElement, {
+      width: 100,
+      height: 200 
+    });
+    expect(typeof(axis)).toBe('function');
+  });
+
+  it('INTEGRATION:: Should draw a timeline', function () {
+    var timelinelement = angular.element('<div ng-controller="TimelineCtrl">'
+      + '<timeline></timeline></div>');
+    scope.timeline.data = data;
+    timelinelement = $compile(timelinelement)(scope);
+    // timelinescope= timelinelement().scope;
+    $httpBackend.when("GET", "/static/data/klachten_purmerend_min.geojson").respond('');
+    scope.tools.active = 'alerts';
+    window.outerWidth = 1000;
+    scope.$digest();
+    expect(timelinelement[0].getElementsByTagName('circle').length > 0).toBe(true);
+  });
+
+
   // it('Should draw axes', function () {
   //   var canvas = ctrl.createCanvas(directiveElement, options);
   //   var svg = canvas.svg;

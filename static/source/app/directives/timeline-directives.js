@@ -137,22 +137,8 @@ app.controller('TimelineDirCtrl', function ($scope){
       svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
-
-      // Not sure if we want grid
-      // svg.append("g")
-      //   .attr("class", "x grid")
-      //   .attr("transform", "translate(0, " + (options.height + 6) + ")")
-      //   .call(xAxis
-      //     .tickSize(-options.height, 0, 0)
-      //   );
-
-      // svg.append("g")
-      //   .attr("class", "y grid")
-      //   .call(yAxis
-      //     .tickSize(-options.width, 0, 0)
-      //     .tickFormat("")
-      //   );
     };
+
     this.drawBars = function (svg, x, y, data, options) {
         if (options.xKey === "INTAKEDATU") {
           var xfunction = function(d) { 
@@ -173,10 +159,10 @@ app.controller('TimelineDirCtrl', function ($scope){
           .enter().append("rect")
             .attr("class", "bar")
             .attr("x", xfunction)
-            .attr("y", 5)
+            .attr("y", yfunction)
             .attr("width", 10)
             .attr("height", 10)
-            .attr("fill", yfunction);
+            .attr("fill", "steelblue");
         svg.append("line")
           .attr("x1", 0)
           .attr("x2", options.width * data.length)
@@ -210,6 +196,8 @@ app.controller('TimelineDirCtrl', function ($scope){
               var elclicked = $('#pumpstation_'+ d.value);
               var y = elclicked.offset().top;
               var x = elclicked.offset().left;
+              // TODO: this triggers a 'selected' item
+              // and omnibox picks up change of selected item.
               var ev = document.createEvent("MouseEvent");
               ev.initMouseEvent("click", true, true, window, null, 
                 0,0,0,0,
@@ -370,7 +358,7 @@ app.controller('TimelineDirCtrl', function ($scope){
   
   var link = function (scope, element, attrs, timelineCtrl) {
     var chart;
-    scope.timeline.width = element.width();
+    scope.timeline.width = element[0].offsetWidth;
     if (scope.timeline.width < 10){
       scope.timeline.width = window.outerWidth;    
     }
@@ -387,10 +375,10 @@ app.controller('TimelineDirCtrl', function ($scope){
         chart = drawChart('date', 'value', {});
       }
 
-      if (scope.tools.active === "none") {
-        scope.timeline.enabled = false;
-      } else {
+      if (scope.tools.active === "sewerage" || scope.tools.active === "alerts") {
         scope.timeline.enabled = true;  
+      } else {
+        scope.timeline.enabled = false;
       }
     }, true);
 
@@ -414,11 +402,11 @@ app.controller('TimelineDirCtrl', function ($scope){
       });
       y.colorscale = timelineCtrl.scale(y, {
         range: [graph.height, 0],
-        scale: (options.scale == 'ordinal') ? 'ordinal' : 'ordinal'
+        scale: (options.scale == 'ordinal') ? 'ordinal' : 'linear'
       });
       y.scale = timelineCtrl.scale(y, {
         range: [graph.height, 0],
-        scale: (options.scale == 'ordinal') ? 'ordinal' : 'ordinal'
+        scale: (options.scale == 'ordinal') ? 'ordinal' : 'linear'
       });
       timelineCtrl.drawCircles(graph.svg, x, y, scope.timeline.data, {
         height: graph.height,
@@ -427,9 +415,13 @@ app.controller('TimelineDirCtrl', function ($scope){
         yKey: yKey
       });
       timelineCtrl.ticksInterval = timelineCtrl.determineInterval(scope.timeline.interval);
-      var yAxis = timelineCtrl.makeAxis(y.scale, {
+      if (options.scale === 'ordinal'){
+        var yAxis = function (d) {return d};
+      } else {
+        var yAxis = timelineCtrl.makeAxis(y.scale, {
         orientation: "left"
-      });
+        });
+      }
       var xAxis = timelineCtrl.makeAxis(x.scale, {
         orientation: "bottom",
         ticks: timelineCtrl.ticksInterval
