@@ -117,6 +117,7 @@ app.directive('vectorlayer', function () {
        */
       var countEvents = function (selection, type) {
         var ctr = 0;
+        var mapBounds = scope.map.getBounds();
         //NOTE: hard coded SRS
         var srs = "EPSG:4326" // L.CRS.EPSG3857.code;
         // for rasters, also send needed statistic

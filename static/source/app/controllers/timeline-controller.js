@@ -1,4 +1,4 @@
-app.controller('TimelineCtrl', function ($scope) {
+app.controller('TimelineCtrl', function ($scope, $q, $resource) {
   // TIMELINE START
   // NOTE: refactor timeline stuff in it's own controller, most stuff is local
   // to timeline scope; only temporalextent should be exposed to master / root
@@ -34,7 +34,7 @@ app.controller('TimelineCtrl', function ($scope) {
   };
 
   $scope.timeline.toggleTool = function () {
-    if ($scope.timeline.tool === 'zoom'){
+    if ($scope.timeline.tool === 'zoom') {
       $scope.timeline.tool = 'brush';
     } else {
       $scope.timeline.tool = 'zoom';
@@ -52,6 +52,6 @@ app.controller('TimelineCtrl', function ($scope) {
       $scope.timeline.interval = interval;
       $scope.timeline.zoom.changed = interval;
     }
-  }
+  };
   // TIMELINE END 
 });
