@@ -212,8 +212,8 @@ app.directive('vectorlayer', function () {
 
           d3.selectAll(".circle.selected").classed("hidden", false);
           // set timeline data 
-          scope.timeline.data = scope.kpi[0].pi[0].data.features;
-
+          scope.timeline.data.kpi = scope.kpi[0].pi[0].data.features;
+          scope.timeline.data.other = scope.kpi[0].pi[0].data.features;
         } else {
           d3.selectAll(".circle").classed("hidden", true);
         }

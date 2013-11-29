@@ -389,11 +389,11 @@ app.controller('TimelineDirCtrl', function ($scope){
         height: scope.timeline.height,
         width: scope.timeline.width
       });
-      var x = timelineCtrl.maxMin(scope.timeline.data, {
+      var x = timelineCtrl.maxMin(scope.timeline.data.kpi, {
         key: xKey,
         dateparser: options.dateparser
       });
-      var y = timelineCtrl.maxMin(scope.timeline.data, {
+      var y = timelineCtrl.maxMin(scope.timeline.data.kpi, {
         key: yKey
       });
       x.scale = timelineCtrl.scale(x, {

@@ -122,6 +122,7 @@ app.controller("MasterCtrl",
         $scope.tools.active === "sewerage") {
       $scope.timeline.changed = !$scope.timeline.changed;
     }
+    console.log($scope.timeline);
   };
   // TOOLS
 
@@ -357,6 +358,11 @@ app.controller("MasterCtrl",
   };
 // END Temporal extent model
 
+  /**
+   * Timeline data model
+   */
+  $scope.timeline.data = {} //Set dynamically
+  // END timeline data model
 
 /**
 * keypress stuff
