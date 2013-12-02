@@ -128,7 +128,7 @@ app.directive('vectorlayer', function () {
         // timeInterval in months
         var timeInterval = ((scope.timeline.temporalExtent.end -
                              scope.timeline.temporalExtent.start)
-                             / (1000 * 60 * 60 * 24 * 30)
+                             // (1000 * 60 * 60 * 24 * 30)
                              );
         selection.each(function (d) {
           var point = new L.LatLng(d.geometry.coordinates[1],
@@ -213,7 +213,6 @@ app.directive('vectorlayer', function () {
           d3.selectAll(".circle.selected").classed("hidden", false);
           // set timeline data 
           scope.timeline.data.kpi = scope.kpi[0].pi[0].data.features;
-          scope.timeline.data.other = scope.kpi[0].pi[0].data.features;
         } else {
           d3.selectAll(".circle").classed("hidden", true);
         }

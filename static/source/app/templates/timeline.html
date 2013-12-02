@@ -1,4 +1,4 @@
-<div id="timeline" ng-controller="TimelineCtrl">
+<div id="timeline" ng-controller="TimelineCtrl" style="top: 500px;">
   <div class="bovenbalk">
     <div class="btn-group">
       <button type="button" title="Zoom" class="btn btn-default" ng-class="{'active': timeline.tool == 'zoom'}" ng-click="timeline.toggleTool()">
@@ -28,7 +28,7 @@
     </div>
                 <small><% timeline.temporalExtent.start | date:'d MMM y' %> - <% timeline.temporalExtent.end | date:'d MMM y' %></small>
   </div>
-  <div id="timeline-svg-wrapper">
+  <div class="timeline-svg-wrapper" ng-repeat="(key, value) in timeline.data" id="<% key + '-svg-wrapper'%>">
     <svg></svg>
   </div>
 </div>  

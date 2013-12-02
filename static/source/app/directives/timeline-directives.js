@@ -1,6 +1,6 @@
 // Timeline for lizard.
 app.controller('TimelineDirCtrl', function ($scope){
-    this.createCanvas = function (element, options) {
+    this.createCanvas = function (id, element, options) {
       // Draws a blank canvas based on viewport
       var margin = {
         top: 3,
@@ -16,7 +16,7 @@ app.controller('TimelineDirCtrl', function ($scope){
         height = maxheight - margin.top - margin.bottom;
   
       var svg = d3.select(element[0])
-        .select("#timeline-svg-wrapper")
+        .select("#" + id + '-svg-wrapper')
         .html("")
         .append("svg:svg")
         .attr('width', maxwidth)
@@ -365,16 +365,22 @@ app.controller('TimelineDirCtrl', function ($scope){
     scope.timeline.height = 70;
 
     scope.$watch('timeline.changed', function () {
-      if (scope.tools.active === "alerts"){
-        chart = drawChart("INTAKEDATU", "CATEGORIE", {
-          scale: "ordinal",
-          chart: "circles",
-          dateparser: 'isodate'
-        });
-      } else if (scope.tools.active === "sewerage") {
-        chart = drawChart('date', 'value', {});
+      var timelineKeys = [];
+      for(var key in scope.timeline.data) timelineKeys.push(key);
+      console.log(timelineKeys);
+      for (var i = 0; i < timelineKeys.length; i++) {
+          var id = timelineKeys[i];
+        if (scope.tools.active === "alerts"){
+          console.debug("drawing kpi timeline" + id);
+          chart = drawChart(id, "INTAKEDATU", "CATEGORIE", {
+            scale: "ordinal",
+            chart: "circles",
+            dateparser: 'isodate'
+          });
+        } else if (scope.tools.active === "sewerage") {
+          chart = drawChart(id, 'date', 'value', {});
+        }
       }
-
       if (scope.tools.active === "sewerage" || scope.tools.active === "alerts") {
         scope.timeline.enabled = true;  
       } else {
@@ -382,18 +388,19 @@ app.controller('TimelineDirCtrl', function ($scope){
       }
     }, true);
 
-    var drawChart = function (xKey, yKey, options) {
-      var graph = timelineCtrl.createCanvas(element, {
+    var drawChart = function (id, xKey, yKey, options) {
+      var data = scope.timeline.data[id];
+      var graph = timelineCtrl.createCanvas(id, element, {
         start: scope.timeline.temporalExtent.start,
         stop: scope.timeline.temporalExtent.end,
         height: scope.timeline.height,
         width: scope.timeline.width
       });
-      var x = timelineCtrl.maxMin(scope.timeline.data.kpi, {
+      var x = timelineCtrl.maxMin(data, {
         key: xKey,
         dateparser: options.dateparser
       });
-      var y = timelineCtrl.maxMin(scope.timeline.data.kpi, {
+      var y = timelineCtrl.maxMin(data, {
         key: yKey
       });
       x.scale = timelineCtrl.scale(x, {
@@ -408,7 +415,7 @@ app.controller('TimelineDirCtrl', function ($scope){
         range: [graph.height, 0],
         scale: (options.scale == 'ordinal') ? 'ordinal' : 'linear'
       });
-      timelineCtrl.drawCircles(graph.svg, x, y, scope.timeline.data, {
+      timelineCtrl.drawCircles(graph.svg, x, y, data, {
         height: graph.height,
         width: graph.width,
         xKey: xKey,

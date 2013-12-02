@@ -33,6 +33,19 @@ services.service("CabinetService", ["$resource",
     start: '@start',
     end: '@end'
   });
+  eventTypesResource = $resource('/api/v1/events/types', {isArray: true});
+  eventsResource = $resource('api/v1/events/', {
+    type: '@event_type',
+    sub_type: '@event_subtype',
+    start: '@start',
+    end: '@end',
+    extent: '@extent'
+  }, {
+    get: {
+      method: 'GET',
+      isArray: true
+    }
+  });
 
   return {
     layergroups: layergroups,
@@ -44,6 +57,8 @@ services.service("CabinetService", ["$resource",
     reverseGeocode: reverseGeocodeResource,
     timeseries: timeseriesResource,
     timeseriesLocationObject: timeseriesLocationObjectResource,
+    eventTypes: eventTypesResource,
+    events: eventsResource,
     panZoom: null
   };
 }]);

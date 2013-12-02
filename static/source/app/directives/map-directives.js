@@ -384,7 +384,7 @@ app.directive('sewerage', function ($http) {
               scope.mapState.changed = Date.now();
             }
           }
-          scope.timeline.data = scope.formatted_geojsondata;
+          scope.timeline.data.sewerage = scope.formatted_geojsondata;
         } else {
           for (var mapLayer in scope.mapState.layers) {
             var layer = scope.mapState.layers[mapLayer];
