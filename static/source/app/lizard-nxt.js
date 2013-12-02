@@ -373,7 +373,7 @@ app.controller("MasterCtrl",
     //Temporary mock it till the api is implemented
 /*    CabinetService.eventTypes.get({},
       function (response) {
-        $scope.box.events = response;
+        $scope.box.eventTypes = response;
       }
     );*/
     $scope.box.content.eventTypes = {
