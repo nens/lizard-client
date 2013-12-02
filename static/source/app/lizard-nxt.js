@@ -151,7 +151,7 @@ app.controller("MasterCtrl",
     if (follow_3di) {
       // ugly way to make it zoom to 3Di layer when activated
       $scope.layerToZoomTo = layer;
-      $scope.zoomToLayer = !$scope.zoomToLayer;    
+      $scope.zoomToLayer = !$scope.zoomToLayer;
     }
   };
 
@@ -361,8 +361,34 @@ app.controller("MasterCtrl",
   /**
    * Timeline data model
    */
-  $scope.timeline.data = {} //Set dynamically
+  $scope.timeline.data = {}; //Set dynamically
   // END timeline data model
+
+
+  /**
+  * Event enabler
+  */
+  $scope.toggleEvents = function () {
+    $scope.box.content.eventTypes = [];
+    //Temporary mock it till the api is implemented
+/*    CabinetService.eventTypes.get({},
+      function (response) {
+        $scope.box.events = response;
+      }
+    );*/
+    $scope.box.content.eventTypes = {
+        "Twitter": {
+          "event_count": 322
+        },
+        "Meldingen": {
+          "event_count": 1243
+        },
+        "Rioolvreemdwater": {
+          "event_count": 8
+        }
+      };
+    console.log($scope.box.content.eventTypes);
+    };
 
 /**
 * keypress stuff
