@@ -12,9 +12,6 @@
             <li class="site">
               <a href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.active === 'profile'}"></i></a>
             </li>
-            <li class="site">
-              <a href="#" ng-click="toggle_tool('landuse')" title="{% trans 'Landuse aggregation' %}"><i class="icon-bar-chart" ng-class="{'icon-large': tools.active === 'profile'}"></i></a>
-            </li>
             {% if user.is_authenticated %}
               <li>
                 <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="pull-right" id="username"> {{ user.first_name }}</div><i id="user-icon" class="icon-user pull-right"></i></a>
@@ -48,7 +45,7 @@
                 <li ng-repeat="layer in mapState.baselayers | orderBy:'order':true">
                 <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
                 <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
-                <i class="icon-info pull-right zoomto-icon " ng-class="{visible: layer.active};" ng-click="toggleLayerInfo(layer.name)"></i>
+                <i class="icon-info pull-right zoomto-icon " ng-class="{visible: layer.active && (layer.name == 'Hoogtekaart' || layer.name == 'Landgebruik')};" ng-click="toggleLayerInfo(layer.name)"></i>
                 </li> 
               </ul>
               </li>

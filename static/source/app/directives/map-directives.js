@@ -446,6 +446,8 @@ app.directive('sewerage', function ($http) {
             return formatted;
           }
           scope.formatted_geojsondata = format(data);
+          scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
+          scope.box.content.isw.count = 0;
           scope.rawGeojsondata = data;
         });
 

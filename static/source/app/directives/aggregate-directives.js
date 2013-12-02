@@ -99,7 +99,7 @@ app.directive('vectorlayer', function () {
           var sewerage = scope.formatted_geojsondata[i];
           var time = +sewerage.date;
           if (s[0] <= time && time <= s[1]) {
-            d3.select("#pumpstation_" + sewerage.value)
+            d3.select("#pumpstation" + sewerage.value)
               .classed("exceeded", true);
           }
         }
@@ -108,8 +108,13 @@ app.directive('vectorlayer', function () {
       // watch for change in temporalExtent, change visibility of
       // alerts accordingly
       scope.$watch('timeline.temporalExtent.changedZoom', function () {
-        drawTimeEvents();
-        updateSewerage();
+        if (scope.tools.active === 'alerts') {
+          drawTimeEvents();
+        } else if (scope.tools.active === 'sewerage') {
+          if (scope.formatted_geojsondata !== undefined) {
+            updateSewerage();
+          }          
+        }
       });
 
       /*
@@ -148,6 +153,8 @@ app.directive('vectorlayer', function () {
        * Count events in viewport; update scope with count
        */
       var countEventsISW = function (selection, type) {
+        // NOTE: built this to prevent errors
+        if (scope.rawGeojsondata === undefined) { return; }
         var ctr = 0;
         var mapBounds = scope.map.getBounds();
 
@@ -159,7 +166,7 @@ app.directive('vectorlayer', function () {
             var point = new L.LatLng(d.geometry.coordinates[1],
                                      d.geometry.coordinates[0]);
             if (mapBounds.contains(point)) {
-              ctr += 1;
+              ctr += d.properties.events.length;
             }
           }
         };
