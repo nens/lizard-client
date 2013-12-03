@@ -122,7 +122,6 @@ app.controller("MasterCtrl",
         $scope.tools.active === "sewerage") {
       $scope.timeline.changed = !$scope.timeline.changed;
     }
-    console.log($scope.timeline);
   };
   // TOOLS
 
@@ -359,17 +358,10 @@ app.controller("MasterCtrl",
 // END Temporal extent model
 
   /**
-   * Timeline data model
-   */
-  $scope.timeline.data = {}; //Set dynamically
-  // END timeline data model
-
-
-  /**
   * Event enabler
   */
-  $scope.toggleEvents = function () {
-    $scope.box.content.eventTypes = [];
+  $scope.toggleTimelineEvents = function () {
+    $scope.box.content.eventTypes = {};
     //Temporary mock it till the api is implemented
 /*    CabinetService.eventTypes.get({},
       function (response) {
@@ -377,18 +369,59 @@ app.controller("MasterCtrl",
       }
     );*/
     $scope.box.content.eventTypes = {
-        "Twitter": {
+        "twitter": {
+          "name": "Twitter",
           "event_count": 322
         },
-        "Meldingen": {
+        "alerts": {
+          "name": "Meldingen",
           "event_count": 1243
         },
-        "Rioolvreemdwater": {
+        "sewerage": {
+          "name" : "Rioolvreemdwater",
           "event_count": 8
         }
       };
     console.log($scope.box.content.eventTypes);
     };
+
+  $scope.timeline.toggleEvents = function (name) {
+    if ($scope.timeline[name]) {
+      if ($scope.timeline[name].active) {
+        $scope.timeline[name].active = false;
+      } else { $scope.timeline[name].active = true; }
+    } else {
+      getEvents(name);
+    }
+  };
+
+  var getEvents = function (name) {
+    $scope.timeline[name] = {};
+    $scope.timeline[name].active = true;
+    CabinetService.events.get({
+      type: name,
+      start: $scope.timeline.temporalExtent.start,
+      end: $scope.timeline.temporalExtent.end,
+      extent: $scope.mapState.bounds
+      }, function (response) {
+        $scope.timeline[name].data = response;
+      }
+      );
+    console.log($scope);
+  };
+/*
+if ($scope.tools.active === name) {
+      $scope.tools.active = "none";
+    } else {
+      $scope.tools.active = name;
+    }
+    console.log($scope.tools.active);
+    // NOTE: ugly hack, record if tool is time aware
+    if ($scope.tools.active === "alerts" ||
+        $scope.tools.active === "sewerage") {
+      $scope.timeline.changed = !$scope.timeline.changed;
+    }
+*/
 
 /**
 * keypress stuff

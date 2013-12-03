@@ -1,22 +1,12 @@
-<div class="card" ng-class="{hidden: box.content.events == undefined}">
+<div class="card" ng-class="{hidden: box.content.eventTypes == undefined}">
   <div class="card-title">
     <i class="fa fa-certificate"></i>
     <span>Performance indicators</span>
   </div>
   <table class="left">
-    <tr>
-      <td><a ng-click="toggleTool('alerts')" class="clickable" title="Toggle meldingen">Meldingen</a></td>
-      <td>&nbsp;<% box.content.alerts.count %></td>
-      <td>
-        <!--<span class="label" ng-class="{'label-danger': box.content_agg >= 5,-->
-                                       <!--'label-success': box.content_agg < 5}">-->
-          <!--&nbsp;<% box.content.alerts.content_agg | number:0 %>-->
-        </span>
-      </td>
-    </tr>
-    <tr>
-      <td><a ng-click="toggleTool('sewerage')" class="clickable" title="Toggle rioolvreemd water">Lozingen</a></td>
-      <td>&nbsp;<% box.content.isw.count %></td>
+    <tr ng-repeat="(key, value) in box.content.eventTypes">
+      <td><a ng-click="timeline.toggleEvents(key)" class="clickable" title="<%'Toggle ' + value.name %>"><% value.name %></a></td>
+      <td>&nbsp;<% value.event_count %></td>
     </tr>
   </table>
 </div>
