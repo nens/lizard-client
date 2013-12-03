@@ -1,9 +1,16 @@
 app.controller('MapCtrl', function ($scope) {
+
   $scope.$on('PanZoomeroom', function (message, value) {
     $scope.panZoom = value;
     //console.log('PanZoomeroom', value);
   });
 
+  //NOTE: rewrite baseLayers to same concept as toggleTool so you don't have to
+  // keep active state per layer, only check the active layer, the rest is not
+  // active per definition
+  //
+  // pass layername / id as argument to function
+  // switchBaseLayer can be called from ng-click event
   $scope.switchBaseLayer = function () {
     for (var i in $scope.mapState.baselayers) {
       if ($scope.mapState.baselayers[i].id === $scope.mapState.activeBaselayer) {
@@ -23,6 +30,7 @@ app.controller('MapCtrl', function ($scope) {
     $scope.mapState.baselayerChanged = Date.now();
   };
 
+  // document this function
   $scope.$watch('keyPressed', function (newVal, oldVal) {
     if (newVal !== oldVal) {
       if (newVal === 51) {
@@ -38,7 +46,6 @@ app.controller('MapCtrl', function ($scope) {
         $scope.mapState.activeBaselayer = 2;
         $scope.switchBaseLayer();
       }
-
     }
   });
 
@@ -76,6 +83,7 @@ app.controller('MapCtrl', function ($scope) {
   };
   // END REFACTOR CANDIDATE
 
+  //NOTE prevent meaningless 'changed' states, move this to relevant model
   $scope.changed = function () {
     $scope.mapState.changed = Date.now();
   };
