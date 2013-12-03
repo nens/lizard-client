@@ -4,9 +4,9 @@
     <span>Performance indicators</span>
   </div>
   <table class="left">
-    <tr ng-repeat="(key, value) in box.content.eventTypes">
-      <td><a ng-click="timeline.toggleEvents(key)" class="clickable" title="<%'Toggle ' + value.name %>"><% value.name %></a></td>
-      <td>&nbsp;<% value.event_count %></td>
+    <tr ng-repeat="type in box.content.eventTypes">
+      <td><a ng-click="timeline.toggleEvents(type.name)" class="clickable" title="<%'Toggle ' + type.name %>"><% type.name %></a></td>
+      <td>&nbsp;<% type.event_count %></td>
     </tr>
   </table>
 </div>

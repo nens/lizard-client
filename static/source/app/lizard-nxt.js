@@ -353,7 +353,8 @@ app.controller("MasterCtrl",
     },
     tool: 'zoom',
     canceler: $q.defer(),
-    enabled: false
+    enabled: false,
+    data: {}
   };
 // END Temporal extent model
 
@@ -361,53 +362,61 @@ app.controller("MasterCtrl",
   * Event enabler
   */
   $scope.toggleTimelineEvents = function () {
-    $scope.box.content.eventTypes = {};
+    $scope.box.content.eventTypes = [];
+    $scope.timeline.enabled = true;
     //Temporary mock it till the api is implemented
 /*    CabinetService.eventTypes.get({},
       function (response) {
         $scope.box.eventTypes = response;
       }
     );*/
-    $scope.box.content.eventTypes = {
-        "twitter": {
-          "name": "Twitter",
-          "event_count": 322
+    var response = {
+      "count": 2,
+      "next": null, 
+      "previous": null,
+      "results": [
+        {
+        "name": "Twitter",
+        "event_count": 4
         },
-        "alerts": {
-          "name": "Meldingen",
-          "event_count": 1243
-        },
-        "sewerage": {
-          "name" : "Rioolvreemdwater",
-          "event_count": 8
+        {
+        "name": "Meldingen",
+        "event_count": 4
         }
-      };
-    console.log($scope.box.content.eventTypes);
+      ]
     };
+    $scope.box.content.eventTypes = response.results;
+    console.log($scope.box.content.eventTypes);
+  };
 
   $scope.timeline.toggleEvents = function (name) {
-    if ($scope.timeline[name]) {
-      if ($scope.timeline[name].active) {
-        $scope.timeline[name].active = false;
-      } else { $scope.timeline[name].active = true; }
+    console.log($scope.timeline);
+    if ($scope.timeline.data[name]) {
+      if ($scope.timeline.data[name].active) {
+        $scope.timeline.data[name].active = false;
+      } else { $scope.timeline.data[name].active = true; }
     } else {
       getEvents(name);
     }
   };
-
+  
   var getEvents = function (name) {
-    $scope.timeline[name] = {};
-    $scope.timeline[name].active = true;
-    CabinetService.events.get({
+    $scope.timeline.data[name] = [];
+    $scope.timeline.data[name].active = true;
+/*    CabinetService.events.get({
       type: name,
       start: $scope.timeline.temporalExtent.start,
       end: $scope.timeline.temporalExtent.end,
       extent: $scope.mapState.bounds
       }, function (response) {
-        $scope.timeline[name].data = response;
+        $scope.timeline.data[name] = response.results;
       }
-      );
-    console.log($scope);
+    );*/
+    var url = (name=='Twitter') ? '/static/data/twitter.json': 'static/data/meldingen.json';
+    $http.get(url)
+    .success(function (response) {
+      $scope.timeline.data[name] = response.results;
+    });
   };
 /*
 if ($scope.tools.active === name) {
