@@ -286,6 +286,7 @@ app.controller("MasterCtrl",
 
   /*
    * Get raster data from server
+   * NOTE: maybe add a callback as argument?
    */
   $scope.getRasterData = function (raster_names, linestring_wkt, srs, agg) {
     // build url
@@ -364,7 +365,7 @@ app.controller("MasterCtrl",
 
   // If escape is pressed close box
   $scope.keyPress = function ($event) {
-    // watches can be placed in corresponding ctrls.
+    // watches can be placed in corresponding ctrls. as in MapCtrl
     $scope.keyPressed = $event.which;
     if ($event.which === 27) {
       $scope.box.type = 'empty';
