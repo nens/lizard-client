@@ -36,11 +36,11 @@ app
                     maxZoom: 20
                     // resolution: 2
                   });
-                  // leafletLayer.on('click', function (e) {
-                  //   if (e.data){
-                  //     $scope.getTimeseries(e.data);
-                  //   }
-                  // });
+                  leafletLayer.on('click', function (e) {
+                    if (e.data){
+                      $scope.getTimeseries(e.data);
+                    }
+                  });
                   layer.grid_layers.push(leafletLayer);
                 }
               }
