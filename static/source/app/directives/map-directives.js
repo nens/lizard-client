@@ -2,11 +2,15 @@
 app
   .directive('map', [function () {
 
+    // WTF?
     var newValue = function () {
       var variable = 1;
     };
 
-    function MapCtrl($scope, $location) {
+    /**
+     * Control function for this directive
+     */
+    var MapCtrl  = function ($scope, $location) {
     // TODO: Make this not suck.
       this.initiateLayer = function (layer) {
         if (layer.name === "Simulatie") {
@@ -32,11 +36,11 @@ app
                     maxZoom: 20
                     // resolution: 2
                   });
-                  // leafletLayer.on('click', function (e) {
-                  //   if (e.data){
-                  //     $scope.getTimeseries(e.data);
-                  //   }
-                  // });
+                  leafletLayer.on('click', function (e) {
+                    if (e.data){
+                      $scope.getTimeseries(e.data);
+                    }
+                  });
                   layer.grid_layers.push(leafletLayer);
                 }
               }
@@ -68,18 +72,18 @@ app
 
 
         // expects a layer hashtable with a leafletlayer object
-        this.toggleLayer = function (layer) {
-          // 3Di hack
-          if (layer.name === "Simulatie") {
-            //console.log("Toggle 3Di layer " + layer.active);
-            if (layer.active) {
-              // $scope.threediTool();
-              $scope.connect();
-            } else {
-              $scope.disconnect();
-            }
-            return;
+      this.toggleLayer = function (layer) {
+        // 3Di hack
+        if (layer.name === "Simulatie") {
+          //console.log("Toggle 3Di layer " + layer.active);
+          if (layer.active) {
+            // $scope.threediTool();
+            $scope.connect();
+          } else {
+            $scope.disconnect();
           }
+          return;
+        }
         if (!layer.active) {
           if (layer.leafletLayer) {
             $scope.map.removeLayer(layer.leafletLayer);
@@ -105,9 +109,9 @@ app
         }
       };
 
-        // expects a layer hashtable with a leafletlayer object
+      // expects a layer hashtable with a leafletlayer object
       this.toggleBaseLayer = function (layer) {
-        var layers = $scope.map._layers;
+        //var layers = $scope.map._layers;
         if (!layer.active) {
           if (layer.leafletLayer) {
             $scope.map.removeLayer(layer.leafletLayer);
@@ -127,7 +131,7 @@ app
         }
       };
 
-        // Expects a leafletLayer as an argument
+      // Expects a leafletLayer as an argument
       this.addLayer = function (layer) {
         $scope.map.addLayer(layer);
       };
@@ -189,9 +193,14 @@ app
 
         $scope.map.locate({setView: true, maxZoom: 16});
       };
-    }
+    };
 
+
+    /**
+     * Link function for this directive
+     */
     var link = function (scope, element, attrs, ctrl) {
+
       // instead of 'map' element here for testability
       var map = new L.map(element[0], {
           center: new L.LatLng(52.0992287, 5.5698782),
@@ -219,7 +228,10 @@ app
           }
         }
       }, true);
+
+      // NOTE check if this is necessary
       scope.map = map;
+
       // first time is not triggered until move.
       if (scope.mapState) {
         scope.mapState.bounds = scope.map.getBounds();
@@ -298,6 +310,8 @@ app.directive('moveEnd', [function () {
   };
 }]);
 
+// NOTE this whole directive should go; fix with ng-click and map-controller
+// functions
 app.directive('layerSwitch', [function () {
   return {
     require: 'map',
@@ -325,6 +339,8 @@ app.directive('layerSwitch', [function () {
   };
 }]);
 
+// NOTE: this whole directive should go; fix with ng-click and map-controller
+// functions
 app.directive('panZoom', [function () {
   return {
     require: 'map',
@@ -342,6 +358,7 @@ app.directive('panZoom', [function () {
   };
 }]);
 
+// NOTE: what does this layer do?
 app.directive('locate', function () {
   return {
     require: 'map',
@@ -355,6 +372,7 @@ app.directive('locate', function () {
   };
 });
 
+// NOTE: this should probably go to main directive
 app.directive('zoomToLayer', function () {
   return {
     require: 'map',
@@ -368,6 +386,8 @@ app.directive('zoomToLayer', function () {
   };
 });
 
+// NOTE: read geojson layer, geojson support should be in main map directive
+//
 app.directive('sewerage', function ($http) {
   return {
     restrict: 'A',
@@ -483,4 +503,3 @@ app.directive('sewerage', function ($http) {
     }
   };
 });
-
