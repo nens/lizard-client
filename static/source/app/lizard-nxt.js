@@ -395,6 +395,7 @@ app.controller("MasterCtrl",
       if ($scope.timeline.data[name].active) {
         $scope.timeline.data[name].active = false;
       } else { $scope.timeline.data[name].active = true; }
+      $scope.timeline.changed = !$scope.timeline.changed;      
     } else {
       getEvents(name);
     }
@@ -416,6 +417,8 @@ app.controller("MasterCtrl",
     $http.get(url)
     .success(function (response) {
       $scope.timeline.data[name] = response.results;
+      console.log($scope.timeline.data);
+      $scope.timeline.changed = !$scope.timeline.changed;
     });
   };
 /*

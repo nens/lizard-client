@@ -8,7 +8,7 @@
          "sub_type": "Grondwater",
          "value_type": "ordinal",
          "value": "Grondwateroverlast",
-         "timestamp": "2012/12/18",
+         "timestamp": "1355785200",
          "geometry":{
             "type":"Point",
             "coordinates":[
@@ -27,7 +27,7 @@
          "sub_type": "Grondwater",
          "value_type": "ordinal",
          "value": "Grondwateroverlast",
-         "timestamp": "2012/04/12",
+         "timestamp": "1334181600",
          "geometry":{
             "type":"Point",
             "coordinates":[
@@ -46,7 +46,7 @@
          "sub_type": "Grondwater",
          "value_type": "ordinal",
          "value": "Grondwateroverlast",
-         "timestamp": "2012/06/11",         
+         "timestamp": "1339365600",         
          "geometry":{
             "type":"Point",
             "coordinates":[
@@ -65,7 +65,7 @@
          "sub_type": "Put boven/onder bestrating",
          "value_type": "ordinal",
          "value": "Rioolverzakking",
-         "timestamp": "2011/11/16", 
+         "timestamp": "1321398000", 
          "geometry":{
             "type":"Point",
             "coordinates":[

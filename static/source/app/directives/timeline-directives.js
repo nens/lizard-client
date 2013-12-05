@@ -37,13 +37,14 @@ app.controller('TimelineDirCtrl', function ($scope){
     };
 
     this._numericalMinMax = function (data, options) {
-      var max = d3.max(data, function(d){
+      var max = d3.max(data, function (d) {
               return Number(d[options.key]);
             });
-
-      var min = d3.min(data, function(d){
+      var min = d3.min(data, function (d) {
               return Number(d[options.key]);
             });
+      console.log(data, max, min);
+      window.data = data;
       return {
         min: min,
         max: max
@@ -63,6 +64,7 @@ app.controller('TimelineDirCtrl', function ($scope){
     };
 
     this.maxMin = function (data, options) {
+      console.log("maxMin data: ", data);
       if (options.dateparser === 'isodate'){
         return this._dateStringMinMax(data, options);
       } else {
@@ -78,6 +80,7 @@ app.controller('TimelineDirCtrl', function ($scope){
         var scale = d3.time.scale()
             .domain([minMax.min, minMax.max])
             .range([options.range[0], options.range[1]]);
+        console.log("scale: ", scale);
       }
       else {
         if (options.scale === "ordinal") {
@@ -98,13 +101,13 @@ app.controller('TimelineDirCtrl', function ($scope){
 
     this.makeAxis = function (scale, options) {
       // Make an axis for d3 based on a scale
-      if (options.tickFormat){
+      if (options.tickFormat) {
         var axis = d3.svg.axis()
                 .scale(scale)
                 .orient(options.orientation)
                 .tickFormat(options.tickFormat)
                 .ticks(5); 
-      } else if (options.ticks){
+      } else if (options.ticks) {
         var axis = d3.svg.axis()
                 .scale(scale)
                 .orient(options.orientation)
@@ -369,8 +372,16 @@ app.controller('TimelineDirCtrl', function ($scope){
       for(var key in scope.timeline.data) timelineKeys.push(key);
       console.log(timelineKeys);
       for (var i = 0; i < timelineKeys.length; i++) {
-          var id = timelineKeys[i];
-        if (scope.tools.active === "alerts"){
+        var id = timelineKeys[i];
+        chart = drawChart(id, 'timestamp', 'value', {
+          scale: 'ordinal',
+          chart: 'circles',
+          dateparser: 'epoch'
+        });
+        console.log(chart);
+      }
+      scope.timeline.enabled = (timelineKeys.length > 0) ? true: false; 
+        /*if (scope.tools.active === "alerts"){
           console.debug("drawing kpi timeline" + id);
           chart = drawChart(id, "INTAKEDATU", "CATEGORIE", {
             scale: "ordinal",
@@ -385,7 +396,7 @@ app.controller('TimelineDirCtrl', function ($scope){
         scope.timeline.enabled = true;  
       } else {
         scope.timeline.enabled = false;
-      }
+      }*/
     }, true);
 
     var drawChart = function (id, xKey, yKey, options) {
