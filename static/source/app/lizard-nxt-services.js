@@ -33,9 +33,9 @@ services.service("CabinetService", ["$resource",
     start: '@start',
     end: '@end'
   });
-  eventTypesResource = $resource('/api/v1/events/types', {isArray: true});
-  eventsResource = $resource('api/v1/events/', {
-    type: '@event_type',
+  eventTypesResource = $resource('/api/v1/event_types', {isArray: true});
+  eventsResource = $resource('api/v1/:event_types/events/', {
+    type: '@event_types',
     sub_type: '@event_subtype',
     start: '@start',
     end: '@end',
