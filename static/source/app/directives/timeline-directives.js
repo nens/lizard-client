@@ -84,7 +84,11 @@ app.controller('TimelineDirCtrl', function ($scope){
       else {
         if (options.scale === "ordinal") {
         var scale = d3.scale.ordinal()
-          .range(colorbrewer.Set2[6]);
+            .domain(function (d) {
+              //NOTE: kill hard coded dependency
+              return d3.set(d.sub_type).values();
+            })
+            .range(colorbrewer.Set2[6]);
         }
         else {
         var scale = d3.scale.linear()
@@ -179,7 +183,10 @@ app.controller('TimelineDirCtrl', function ($scope){
           var heightfunction = function(d) { return y.scale(d.properties[options.yKey]); };
         } else {
           var xfunction = function(d) { return x.scale(d[options.xKey]); };
-          var yfunction = function(d) { return options.height - y.scale(d[options.yKey]) - .5; };
+          var yfunction = function(d) { 
+            return y.colorscale(d.sub_type);
+            };
+          //var yfunction = function(d) { return options.height - y.scale(d[options.yKey]) - .5; };
           var heightfunction = function(d) { return y.scale(d[options.yKey]); };
         }
         svg.selectAll("circle")
@@ -190,7 +197,7 @@ app.controller('TimelineDirCtrl', function ($scope){
             .attr("cy", 20)
             .attr("r", 5)
             .attr("opacity", 0.8)
-            .attr("fill", "black")
+            .attr("fill", yfunction)
             .on('click', function (d) {
               var elclicked = $('#pumpstation_'+ d.value);
               var y = elclicked.offset().top;

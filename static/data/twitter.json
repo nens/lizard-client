@@ -7,11 +7,11 @@
          "type":"FeatureCollection",
          "features":[
          {
-         "type": "twitter",
+         "type": "Feature",
          "sub_type":"regen",
          "value_type": "ordinal",
          "value":"Cheap\nOnbeperkt SMS+Internet 5,00\n+ 90   min 10,00\n+ 150 minuten 11,00\n+ Onbeperkt bellen 24,00\nCheapsimonly.nl \n#amsterdam #utrecht #regen",
-         "timestamp":"1381845388",
+         "timestamp":"1381845388000",
          "geometry":{
             "type":"Point",
             "coordinates":[
@@ -21,11 +21,11 @@
          }
       },
       {
-         "type": "twitter",
+         "type": "Feature",
          "sub_type":"regen",
          "value_type": "ordinal",
          "value":"De wolken boven Nederland zijn zwart, maar het regent niet.\nDe wind waait hard, maar het is niet koud.\nEen echte herfstdag in ons mooie land",
-         "timestamp":"1381997088",
+         "timestamp":"1381997088000",
          "geometry":{
             "type":"Point",
             "coordinates":[
@@ -35,11 +35,11 @@
          }
       },
       {
-         "type": "twitter",
+         "type": "Feature",
          "sub_type":"regen",
          "value_type": "ordinal",
          "value":"HV1 WATEROVERLAST (+Inc,net: reg.inmeld+) Sticht Philadelphia Zorg Adam , Anfieldroad 246 AMSTERDAM Verplee... http:\/\/t.co\/55hntJsUWI #p2000",
-         "timestamp":"1384560587",
+         "timestamp":"1384560587000",
          "geometry":{
             "type":"Point",
             "coordinates":[
@@ -49,11 +49,11 @@
          }
       },
       {
-         "type": "twitter",
+         "type": "Feature",
          "sub_type":"regen",
          "value_type": "ordinal",
          "value": "Regent het nou",
-         "timestamp":"1381603600",
+         "timestamp":"1381603600000",
          "geometry":{
             "type":"Point",
             "coordinates":[

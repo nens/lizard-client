@@ -276,12 +276,12 @@ app.controller("MasterCtrl",
   
   // HACK: get alert (meldingen) data from geojson
   // NOTE: this should come from events in HBASE
-  var alerts = '/static/data/klachten_purmerend_min.geojson';
-  $http.get(alerts)
-    .success(function (data) {
-      $scope.kpi[0].pi[0].data = data;  
-      //console.log("event data", data);
-    });
+  // var alerts = '/static/data/klachten_purmerend_min.geojson';
+  // $http.get(alerts)
+  //   .success(function (data) {
+  //     $scope.kpi[0].pi[0].data = data;  
+  //     //console.log("event data", data);
+  //   });
   // END HACK
 
   /*
@@ -346,7 +346,7 @@ app.controller("MasterCtrl",
    */
   $scope.timeline = {
     temporalExtent: {
-      start: 1382359037278,
+      start: 0,
       end: Date.now(),
       changedZoom: true,
       at: Date.now() - this.start
