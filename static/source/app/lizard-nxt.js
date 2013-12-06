@@ -354,7 +354,8 @@ app.controller("MasterCtrl",
     tool: 'zoom',
     canceler: $q.defer(),
     enabled: false,
-    data: {}
+    data: {},
+    graphs: []
   };
 // END Temporal extent model
 
@@ -387,15 +388,16 @@ app.controller("MasterCtrl",
     };
     $scope.box.content.eventTypes = response.results;
     console.log($scope.box.content.eventTypes);
+    $scope.tools.active = 'events';
   };
 
   $scope.timeline.toggleEvents = function (name) {
-    console.log($scope.timeline);
     if ($scope.timeline.data[name]) {
       if ($scope.timeline.data[name].active) {
         $scope.timeline.data[name].active = false;
       } else { $scope.timeline.data[name].active = true; }
-      $scope.timeline.changed = !$scope.timeline.changed;      
+      $scope.timeline.changed = !$scope.timeline.changed;
+      console.log("Timeline changed");
     } else {
       getEvents(name);
     }
@@ -413,12 +415,13 @@ app.controller("MasterCtrl",
         $scope.timeline.data[name] = response.results;
       }
     );*/
-    var url = (name=='Twitter') ? '/static/data/twitter.json': 'static/data/meldingen.json';
+    var url = (name == 'Twitter') ? '/static/data/twitter.json': 'static/data/meldingen.json';
     $http.get(url)
     .success(function (response) {
-      $scope.timeline.data[name] = response.results;
-      console.log($scope.timeline.data);
+      $scope.timeline.data[name] = response.results[0];
+      console.log($scope.timeline.data, response.results[0].features);
       $scope.timeline.changed = !$scope.timeline.changed;
+      console.log("Timeline changed", $scope.timeline.changed);
     });
   };
 /*

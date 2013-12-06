@@ -4,6 +4,9 @@
    "previous": null,
    "results": [
       {
+         "type":"FeatureCollection",
+         "features":[
+         {
          "type": "twitter",
          "sub_type":"regen",
          "value_type": "ordinal",
@@ -57,7 +60,10 @@
                4.89283061,
                52.36183085
             ]
+            }
          }
-      }
+      ]
+   }
+   
    ]
 }

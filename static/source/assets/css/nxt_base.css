@@ -453,6 +453,7 @@ html, body{
 
 /*timeline stuff*/
 .timeline {
+    min-height: 0;
     background-color: #fff;
     color: #222;
 }

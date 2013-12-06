@@ -43,17 +43,17 @@ app.controller('TimelineDirCtrl', function ($scope){
       var min = d3.min(data, function (d) {
               return Number(d[options.key]);
             });
-      console.log(data, max, min);
-      window.data = data;
+      var maxDate = new Date(max); // The 0 there is the key, which sets the date to the epoch
+      var minDate = new Date(min); // The 0 there is the key, which sets the date to the epoch
       return {
-        min: min,
-        max: max
+        min: minDate,
+        max: maxDate
       };
     };
 
     this._dateStringMinMax = function (data, options) {
       var domain = d3.extent(data, function (d) {
-              return d3.time.format.iso.parse(d.properties[options.key])
+              return d3.time.format.iso.parse(d.properties[options.key]);
             });
       var min = domain[0].getTime();
       var max = domain[1].getTime();
@@ -64,8 +64,7 @@ app.controller('TimelineDirCtrl', function ($scope){
     };
 
     this.maxMin = function (data, options) {
-      console.log("maxMin data: ", data);
-      if (options.dateparser === 'isodate'){
+      if (options.dateparser === 'isodate') {
         return this._dateStringMinMax(data, options);
       } else {
         return this._numericalMinMax(data, options);
@@ -80,15 +79,12 @@ app.controller('TimelineDirCtrl', function ($scope){
         var scale = d3.time.scale()
             .domain([minMax.min, minMax.max])
             .range([options.range[0], options.range[1]]);
-        console.log("scale: ", scale);
+        console.log("scale: ", minMax.min, minMax.max);
       }
       else {
         if (options.scale === "ordinal") {
         var scale = d3.scale.ordinal()
-          .range(colorbrewer.Set2[6])
-          .domain(function (d) {
-            return d3.set(d.properties.CATEGORIE).values();
-          });
+          .range(colorbrewer.Set2[6]);
         }
         else {
         var scale = d3.scale.linear()
@@ -192,9 +188,9 @@ app.controller('TimelineDirCtrl', function ($scope){
             .attr("class", "bar")
             .attr("cx", xfunction)
             .attr("cy", 20)
-            .attr("r", 4)
+            .attr("r", 5)
             .attr("opacity", 0.8)
-            .attr("fill", yfunction)
+            .attr("fill", "black")
             .on('click', function (d) {
               var elclicked = $('#pumpstation_'+ d.value);
               var y = elclicked.offset().top;
@@ -378,7 +374,6 @@ app.controller('TimelineDirCtrl', function ($scope){
           chart: 'circles',
           dateparser: 'epoch'
         });
-        console.log(chart);
       }
       scope.timeline.enabled = (timelineKeys.length > 0) ? true: false; 
         /*if (scope.tools.active === "alerts"){
@@ -400,7 +395,8 @@ app.controller('TimelineDirCtrl', function ($scope){
     }, true);
 
     var drawChart = function (id, xKey, yKey, options) {
-      var data = scope.timeline.data[id];
+      var data = scope.timeline.data[id].features;
+      console.log("data: ", data);
       var graph = timelineCtrl.createCanvas(id, element, {
         start: scope.timeline.temporalExtent.start,
         stop: scope.timeline.temporalExtent.end,
@@ -414,10 +410,17 @@ app.controller('TimelineDirCtrl', function ($scope){
       var y = timelineCtrl.maxMin(data, {
         key: yKey
       });
-      x.scale = timelineCtrl.scale(x, {
-        type: 'time',
-        range: [0, graph.width],
-      });
+      if (scope.timeline.xScale) {
+        console.log("getting scale from scope.timeline: ", scope.timeline.xScale);
+        x.scale = scope.timeline.xScale;  
+      } else {
+        x.scale = timelineCtrl.scale(x, {
+          type: 'time',
+          range: [0, graph.width],
+          });
+        scope.timeline.xScale = x.scale;
+        console.log("Made new scale: ", scope.timeline.scale);
+      }
       y.colorscale = timelineCtrl.scale(y, {
         range: [graph.height, 0],
         scale: (options.scale == 'ordinal') ? 'ordinal' : 'linear'
@@ -467,19 +470,23 @@ app.controller('TimelineDirCtrl', function ($scope){
         }
 
       var svg = graph.svg;
+      scope.timeline.graphs.push(svg);
         timelineCtrl.zoomed = function () {
           if (scope.timeline.tool === 'zoom'){
-            svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {
-              orientation: "bottom",
-              ticks: timelineCtrl.ticksInterval
-            }));
-            svg.selectAll("circle")
+            for (var i = 0; i < scope.timeline.graphs.length; i++) {
+              svg = scope.timeline.graphs[i];
+              svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {
+                orientation: "bottom",
+                ticks: timelineCtrl.ticksInterval
+                }));
+              svg.selectAll("circle")
                 .attr("cx", xfunction);
+            }
             scope.$apply(function () {timelineCtrl
               scope.timeline.temporalExtent.start = x.scale.domain()[0].getTime();
               scope.timeline.temporalExtent.end = x.scale.domain()[1].getTime();
               scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
-            });            
+            });          
           } 
         };
 

@@ -24,7 +24,7 @@ app.directive('vectorlayer', function () {
           scale = d3.scale.ordinal()
             .domain(function (d) {
               //NOTE: kill hard coded dependency
-              return d3.set(d.properties.CATEGORIE).values();
+              return d3.set(d.sub_type).values();
             })
             .range(colorbrewer.Set2[6]);
         }
@@ -33,7 +33,7 @@ app.directive('vectorlayer', function () {
           .attr('stroke', "#e")
           .attr('stroke-width', 1)
           .attr('fill', function (d) {
-            return scale(d.properties.CATEGORIE);
+            return scale(d.sub_type);
           });
 
         // click handler
@@ -62,7 +62,7 @@ app.directive('vectorlayer', function () {
        * Reformat time to d3 time formatted object
        */
       function get_time(d) {
-        return d3.time.format.iso.parse(d.properties.INTAKEDATU);
+        return d3.time(d.timestamp);
       }
       
       /*
@@ -185,11 +185,25 @@ app.directive('vectorlayer', function () {
       });
       
       // Watch button click, toggle event layer
-      scope.$watch('tools.active', function () {
-        if (scope.tools.active === "alerts") {
-          scope.box.type = "aggregate";
+      scope.$watch('timeline.changed', function () {
+        for (var eventType in scope.timeline.data) {
+          eventLayer = L.pointsLayer(scope.timeline.data[eventType], {
+                applyStyle: circle_style
+              });
+          mapCtrl.addLayer(eventLayer);
+          //drawTimeEvents();
+        }
+      });
+
+      /*
+        if (scope.tools.active === "events") {
+          
+
           // NOTE: remove this and make generic
           // removing sewerage things ..
+
+
+
           scope.box.sewerage = undefined;
           for (var mapLayer in scope.mapState.layers) {
             var layer = scope.mapState.layers[mapLayer];
@@ -216,7 +230,7 @@ app.directive('vectorlayer', function () {
         } else {
           d3.selectAll(".circle").classed("hidden", true);
         }
-      });
+      });*/
     }
   };
 });
