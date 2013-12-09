@@ -76,7 +76,6 @@ app.directive('vectorlayer', function () {
           .classed("selected", function (d) {
             var s = [scope.timeline.temporalExtent.start,
                      scope.timeline.temporalExtent.end];
-            // + is a d3 operator to convert time objects to ms
             var time = d.timestamp;
             return s[0] <= time && time <= s[1];
           });
@@ -193,7 +192,7 @@ app.directive('vectorlayer', function () {
               });
           mapCtrl.addLayer(eventLayer);
           console.log("Adding event layer: ", eventType, ": ", eventLayer);
-          //drawTimeEvents();
+          drawTimeEvents();
         }
       });
 

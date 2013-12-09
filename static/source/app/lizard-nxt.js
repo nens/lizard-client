@@ -346,7 +346,7 @@ app.controller("MasterCtrl",
    */
   $scope.timeline = {
     temporalExtent: {
-      start: 0,
+      start: Date.now() - 31556900000, // 1 year in ms
       end: Date.now(),
       changedZoom: true,
       at: Date.now() - this.start

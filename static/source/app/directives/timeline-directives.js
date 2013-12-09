@@ -33,7 +33,7 @@ app.controller('TimelineDirCtrl', function ($scope){
         height: height,
         width: width,
         margin: margin
-      }
+      };
     };
 
     this._numericalMinMax = function (data, options) {
@@ -191,7 +191,8 @@ app.controller('TimelineDirCtrl', function ($scope){
         svg.selectAll("circle")
           .data(data)
           .enter().append("circle")
-            .attr("class", "bar")
+            // Initially hide all elements and unhide them when within bounds
+            .attr("class", "bar hidden")
             .attr("cx", xfunction)
             .attr("cy", 20)
             .attr("r", 5)
@@ -262,6 +263,23 @@ app.controller('TimelineDirCtrl', function ($scope){
                " " + (options.width/2).toString() + " " + (10).toString())
       }
     };
+
+    this.drawEventsContainedInBounds = function (bounds) {
+      //NOTE: not optimal class switching
+      var bounds = bounds;
+      d3.selectAll("circle").classed("hidden", true);
+      d3.selectAll("circle")
+        .classed("selected", function (d) {
+          var latLng = [];
+          latLng[0] = d.geometry.coordinates[1];
+          latLng[1] = d.geometry.coordinates[0];
+          return bounds.contains(latLng);
+        });
+      var selected = d3.selectAll("circle.selected");
+      selected.classed("hidden", false);
+      //selected.call(countEvents, 'alerts');
+    };
+
 
     /**
    * Called when a user mouses over the graph.
@@ -380,6 +398,7 @@ app.controller('TimelineDirCtrl', function ($scope){
           chart: 'circles',
           dateparser: 'epoch'
         });
+       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
       }
       scope.timeline.enabled = (timelineKeys.length > 0) ? true: false; 
         /*if (scope.tools.active === "alerts"){
@@ -400,6 +419,11 @@ app.controller('TimelineDirCtrl', function ($scope){
       }*/
     }, true);
 
+    scope.$watch('mapState.moved', function () {
+      console.log("Bounds: ", scope.mapState.bounds);
+      timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
+    })
+
     var drawChart = function (id, xKey, yKey, options) {
       var data = scope.timeline.data[id].features;
       console.log("data: ", data);
@@ -409,10 +433,15 @@ app.controller('TimelineDirCtrl', function ($scope){
         height: scope.timeline.height,
         width: scope.timeline.width
       });
-      var x = timelineCtrl.maxMin(data, {
-        key: xKey,
-        dateparser: options.dateparser
-      });
+      // var x = timelineCtrl.maxMin(data, {
+      //   key: xKey,
+      //   dateparser: options.dateparser
+      // });
+      // Use temporalExtent to make scale:
+      var x = {};
+      x.min = new Date(scope.timeline.temporalExtent.start);
+      x.max = new Date(scope.timeline.temporalExtent.end);
+      console.log(x, scope.timeline.end, scope.timeline.start);
       var y = timelineCtrl.maxMin(data, {
         key: yKey
       });
@@ -442,7 +471,7 @@ app.controller('TimelineDirCtrl', function ($scope){
         yKey: yKey
       });
       timelineCtrl.ticksInterval = timelineCtrl.determineInterval(scope.timeline.interval);
-      if (options.scale === 'ordinal'){
+      if (options.scale === 'ordinal') {
         var yAxis = function (d) {return d};
       } else {
         var yAxis = timelineCtrl.makeAxis(y.scale, {
