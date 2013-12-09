@@ -421,6 +421,8 @@ app.controller("MasterCtrl",
       $scope.timeline.data[name] = response.results[0];
       console.log($scope.timeline.data, response.results[0].features);
       $scope.timeline.changed = !$scope.timeline.changed;
+      $scope.timeline.data[name].order = $scope.timeline.data.length;
+      console.log("Order: ", $scope.timeline.data.length);
       console.log("Timeline changed", $scope.timeline.changed);
     });
   };

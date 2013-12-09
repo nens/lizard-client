@@ -456,6 +456,7 @@ html, body{
     min-height: 0;
     background-color: #fff;
     color: #222;
+    opacity: 0.9;
 }
 
 .timeline.closed {
@@ -469,7 +470,7 @@ html, body{
 
 .bovenbalk{
     text-transform: uppercase;
-    box-shadow: 0 4px 5px #888;
+    box-shadow: 0 3px 10px #888;
 }
 
 .indicator {
@@ -506,7 +507,7 @@ html, body{
 }
 
 .bar{
-    opacity: 0.1;
+    opacity: 0.5;
 }
 
 .selected{

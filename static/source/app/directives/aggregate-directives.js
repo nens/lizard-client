@@ -58,32 +58,32 @@ app.directive('vectorlayer', function () {
         });*/
       }
 
-      // /*
-      //  * Reformat time to d3 time formatted object
-      //  */
-      // function get_time(d) {
-      //   console.log("Time ", d3.time(d.timestamp));
-      //   return d3.time(d.timestamp);
-      // }
+      /*
+       * Reformat time to d3 time formatted object 
+       * NOTE: not used because API returns epoch ms.
+       */
+      function get_time(d) {
+        return d3.time(d.timestamp);
+      }
       
-      // /*
-      //  * Draw events based on current temporal extent
-      //  */
-      // var drawTimeEvents = function () {
-      //   //NOTE: not optimal class switching
-      //   d3.selectAll(".circle").classed("hidden", true);
-      //   d3.selectAll(".circle")
-      //     .classed("selected", function (d) {
-      //       var s = [scope.timeline.temporalExtent.start,
-      //                scope.timeline.temporalExtent.end];
-      //       // + is a d3 operator to convert time objects to ms
-      //       var time = +get_time(d);
-      //       return s[0] <= time && time <= s[1];
-      //     });
-      //   var selected = d3.selectAll(".circle.selected");
-      //   selected.classed("hidden", false);
-      //   selected.call(countEvents, 'alerts');
-      // }
+      /*
+       * Draw events based on current temporal extent
+       */
+      var drawTimeEvents = function () {
+        //NOTE: not optimal class switching
+        d3.selectAll(".circle").classed("hidden", true);
+        d3.selectAll(".circle")
+          .classed("selected", function (d) {
+            var s = [scope.timeline.temporalExtent.start,
+                     scope.timeline.temporalExtent.end];
+            // + is a d3 operator to convert time objects to ms
+            var time = d.timestamp;
+            return s[0] <= time && time <= s[1];
+          });
+        var selected = d3.selectAll(".circle.selected");
+        selected.classed("hidden", false);
+        selected.call(countEvents, 'alerts');
+      };
 
       // /**
       //  * Update sewerage classes based on current temporal extent
@@ -106,44 +106,44 @@ app.directive('vectorlayer', function () {
       //   }
       // }
 
-      // // watch for change in temporalExtent, change visibility of
-      // // alerts accordingly
-      // scope.$watch('timeline.temporalExtent.changedZoom', function () {
-      //   drawTimeEvents();
-      //   updateSewerage();
-      // });
+      // watch for change in temporalExtent, change visibility of
+      // alerts accordingly
+      scope.$watch('timeline.temporalExtent.changedZoom', function () {
+        drawTimeEvents();
+      });
 
-      // /*
-      //  * Count events in viewport; update scope with count
-      //  */
-      // var countEvents = function (selection, type) {
-      //   var ctr = 0;
-      //   var mapBounds = scope.map.getBounds();
-      //   //NOTE: hard coded SRS
-      //   var srs = "EPSG:4326" // L.CRS.EPSG3857.code;
-      //   // for rasters, also send needed statistic
-      //   scope.getRasterData("pop_density", scope.mapState.geom_wkt, srs, 'sum');
-      //   scope.box.pop_density = 1000;
-      //   var num_citizens = scope.box.pop_density / 100000000;
-      //   //console.log(num_citizens);
-      //   // timeInterval in months
-      //   var timeInterval = ((scope.timeline.temporalExtent.end -
-      //                        scope.timeline.temporalExtent.start)
-      //                        // (1000 * 60 * 60 * 24 * 30)
-      //                        );
-      //   selection.each(function (d) {
-      //     var point = new L.LatLng(d.geometry.coordinates[1],
-      //                              d.geometry.coordinates[0]);
-      //     // NOTE: check if we can optimise this function
-      //     if (mapBounds.contains(point)) {
-      //       ctr += 1;
-      //     }
-      //   });
-      //   // pass newly calculated data to scope
-      //   scope.box.content[type].count = ctr;
-      //   //NOTE: ugly hack
-      //   scope.box.content[type].content_agg = ctr / num_citizens / timeInterval;
-      // };
+      /*
+       * Count events in viewport; update scope with count
+       */
+      var countEvents = function (selection, type) {
+        var ctr = 0;
+        var mapBounds = scope.map.getBounds();
+        //NOTE: hard coded SRS
+        var srs = "EPSG:4326" // L.CRS.EPSG3857.code;
+        // // for rasters, also send needed statistic
+        // scope.getRasterData("pop_density", scope.mapState.geom_wkt, srs, 'sum');
+        // scope.box.pop_density = 1000;
+        // var num_citizens = scope.box.pop_density / 100000000;
+        //console.log(num_citizens);
+        // timeInterval in months
+        var timeInterval = ((scope.timeline.temporalExtent.end -
+                             scope.timeline.temporalExtent.start)
+                             // (1000 * 60 * 60 * 24 * 30)
+                             );
+        selection.each(function (d) {
+          var point = new L.LatLng(d.geometry.coordinates[1],
+                                   d.geometry.coordinates[0]);
+          // NOTE: check if we can optimise this function
+          if (mapBounds.contains(point)) {
+            ctr += 1;
+          }
+        });
+        // pass newly calculated data to scope
+        scope.box.content[type].count = ctr;
+        //NOTE: ugly hack
+        //scope.box.content[type].content_agg = ctr / num_citizens / timeInterval;
+        console.log(scope.box.content);
+      };
 
       // /*
       //  * Count events in viewport; update scope with count
@@ -168,7 +168,7 @@ app.directive('vectorlayer', function () {
       //   scope.box.content[type].count = ctr;
       // };
 
-      // // Count events on map move
+      // Count events on map move
       // scope.$watch('mapState.moved', function () {
       //   d3.selectAll(".circle.selected").call(countEvents, 'alerts');
       //   var select = d3.selectAll(".pumpstation_sewerage").call(countEventsISW, 'isw');

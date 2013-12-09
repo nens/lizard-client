@@ -184,8 +184,7 @@ app.controller('TimelineDirCtrl', function ($scope){
         } else {
           var xfunction = function(d) { return x.scale(d[options.xKey]); };
           var yfunction = function(d) { 
-            return y.colorscale(d.sub_type);
-            };
+            return y.colorscale(d[options.yKey]) };
           //var yfunction = function(d) { return options.height - y.scale(d[options.yKey]) - .5; };
           var heightfunction = function(d) { return y.scale(d[options.yKey]); };
         }
@@ -196,7 +195,7 @@ app.controller('TimelineDirCtrl', function ($scope){
             .attr("cx", xfunction)
             .attr("cy", 20)
             .attr("r", 5)
-            .attr("opacity", 0.8)
+            .attr("opacity", 1)
             .attr("fill", yfunction)
             .on('click', function (d) {
               var elclicked = $('#pumpstation_'+ d.value);
@@ -376,7 +375,7 @@ app.controller('TimelineDirCtrl', function ($scope){
       console.log(timelineKeys);
       for (var i = 0; i < timelineKeys.length; i++) {
         var id = timelineKeys[i];
-        chart = drawChart(id, 'timestamp', 'value', {
+        chart = drawChart(id, 'timestamp', 'sub_type', {
           scale: 'ordinal',
           chart: 'circles',
           dateparser: 'epoch'
