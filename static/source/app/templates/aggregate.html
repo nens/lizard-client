@@ -6,7 +6,8 @@
   <table class="left">
     <tr ng-repeat="type in box.content.eventTypes">
       <td><a ng-click="timeline.toggleEvents(type.name)" class="clickable" title="<%'Toggle ' + type.name %>"><% type.name %></a></td>
-      <td>&nbsp;<% box.content.alerts.count %></td>
+      <td ng-bind="timeline.data[type.name].currentCount"></td>
+      <td ng-if="timeline.data[type.name]">&nbsp;van&nbsp;de&nbsp;<% timeline.data[type.name].count %> </td>
     </tr>
   </table>
 </div>

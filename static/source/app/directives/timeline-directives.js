@@ -14,20 +14,21 @@ app.controller('TimelineDirCtrl', function ($scope){
   
       var width = maxwidth - margin.left - margin.right,
         height = maxheight - margin.top - margin.bottom;
-  
+
+      var svgContainer = "#" + id + "-svg-wrapper";
       var svg = d3.select(element[0])
-        .select("#" + id + '-svg-wrapper')
+        .select(svgContainer)
         .html("")
         .append("svg:svg")
         .attr('width', maxwidth)
         .attr('height', maxheight)
         .append("svg:g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
       svg.append("svg:rect")
         .attr("width", width)
         .attr("height", height)
         .attr("class", "plot-temporal");
+      console.log("container ", svgContainer, "svg: ", svg);
       return {
         svg: svg,
         height: height,
@@ -86,7 +87,7 @@ app.controller('TimelineDirCtrl', function ($scope){
         var scale = d3.scale.ordinal()
             .domain(function (d) {
               //NOTE: kill hard coded dependency
-              return d3.set(d.sub_type).values();
+              return d3.set(d.event_sub_type).values();
             })
             .range(colorbrewer.Set2[6]);
         }
@@ -264,16 +265,19 @@ app.controller('TimelineDirCtrl', function ($scope){
       }
     };
 
+    //NOTE: not optimal class switching 
     this.drawEventsContainedInBounds = function (bounds) {
-      //NOTE: not optimal class switching
       var bounds = bounds;
+      var latLng = [];
       d3.selectAll("circle").classed("hidden", true);
       d3.selectAll("circle")
         .classed("selected", function (d) {
-          var latLng = [];
           latLng[0] = d.geometry.coordinates[1];
           latLng[1] = d.geometry.coordinates[0];
-          return bounds.contains(latLng);
+          contained = bounds.contains(latLng);
+          // Some book keeping to count
+          d.inSpatExtent = contained;
+          return contained;
         });
       var selected = d3.selectAll("circle.selected");
       selected.classed("hidden", false);
@@ -387,18 +391,21 @@ app.controller('TimelineDirCtrl', function ($scope){
     }
     scope.timeline.height = 70;
 
+    var timelineKeys = [];
+
     scope.$watch('timeline.changed', function () {
-      var timelineKeys = [];
+      timelineKeys = [];
       for(var key in scope.timeline.data) timelineKeys.push(key);
       console.log(timelineKeys);
       for (var i = 0; i < timelineKeys.length; i++) {
         var id = timelineKeys[i];
-        chart = drawChart(id, 'timestamp', 'sub_type', {
+        chart = drawChart(id, 'timestamp', 'event_sub_type', {
           scale: 'ordinal',
           chart: 'circles',
           dateparser: 'epoch'
         });
        timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
+       scope.timeline.countCurrentEvents();
       }
       scope.timeline.enabled = (timelineKeys.length > 0) ? true: false; 
         /*if (scope.tools.active === "alerts"){
@@ -420,13 +427,13 @@ app.controller('TimelineDirCtrl', function ($scope){
     }, true);
 
     scope.$watch('mapState.moved', function () {
-      console.log("Bounds: ", scope.mapState.bounds);
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
+      scope.timeline.countCurrentEvents();
     })
 
     var drawChart = function (id, xKey, yKey, options) {
       var data = scope.timeline.data[id].features;
-      console.log("data: ", data);
+      console.log("Data: ", data)
       var graph = timelineCtrl.createCanvas(id, element, {
         start: scope.timeline.temporalExtent.start,
         stop: scope.timeline.temporalExtent.end,
@@ -446,7 +453,6 @@ app.controller('TimelineDirCtrl', function ($scope){
         key: yKey
       });
       if (scope.timeline.xScale) {
-        console.log("getting scale from scope.timeline: ", scope.timeline.xScale);
         x.scale = scope.timeline.xScale;  
       } else {
         x.scale = timelineCtrl.scale(x, {

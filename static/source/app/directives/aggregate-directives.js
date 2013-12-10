@@ -77,10 +77,14 @@ app.directive('vectorlayer', function () {
             var s = [scope.timeline.temporalExtent.start,
                      scope.timeline.temporalExtent.end];
             var time = d.timestamp;
-            return s[0] <= time && time <= s[1];
+            var contained = s[0] <= time && time <= s[1];
+            // Some book keeping to count
+            d.inTempExtent = contained;
+            return contained;
           });
         var selected = d3.selectAll(".circle.selected");
         selected.classed("hidden", false);
+        console.log(selected);
         selected.call(countEvents, 'alerts');
       };
 
@@ -109,6 +113,7 @@ app.directive('vectorlayer', function () {
       // alerts accordingly
       scope.$watch('timeline.temporalExtent.changedZoom', function () {
         drawTimeEvents();
+        scope.timeline.countCurrentEvents();
       });
 
       /*

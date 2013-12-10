@@ -4,11 +4,12 @@
    "previous": null,
    "results": [
       {
+         "event_type": "Meldingen",
          "type":"FeatureCollection",
          "features":[
          {
             "type": "Feature",
-            "sub_type": "Grondwater",
+            "event_sub_type": "Grondwater",
             "value_type": "ordinal",
             "value": "Grondwateroverlast",
             "timestamp": "1355785200000",
@@ -27,7 +28,7 @@
          },
          {
             "type": "Feature",
-            "sub_type": "Grondwater",
+            "event_sub_type": "Grondwater",
             "value_type": "ordinal",
             "value": "Grondwateroverlast",
             "timestamp": "1334181600000",
@@ -46,7 +47,7 @@
          },
          {
             "type": "Feature",
-            "sub_type": "Grondwater",
+            "event_sub_type": "Grondwater",
             "value_type": "ordinal",
             "value": "Grondwateroverlast",
             "timestamp": "1339365600000",         
@@ -65,7 +66,7 @@
          },
          {
             "type": "Feature",
-            "sub_type": "Put boven/onder bestrating",
+            "event_sub_type": "Put boven/onder bestrating",
             "value_type": "ordinal",
             "value": "Rioolverzakking",
             "timestamp": "1321398000000", 

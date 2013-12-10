@@ -25,9 +25,20 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource) {
         //$scope.selected_timeseries = undefined;
       //}
     //});
-
-
   });
+
+  $scope.timeline.countCurrentEvents = function () {
+    for (var key in $scope.timeline.data) {
+      $scope.timeline.data[key].currentCount = 0;
+      for (var j = 0; j < $scope.timeline.data[key].features.length; j++) {
+        var feature = $scope.timeline.data[key].features[j];
+        if (feature.inTempExtent && feature.inSpatExtent) {
+          $scope.timeline.data[key].currentCount++;
+        }
+      }
+      console.log("Count: ", $scope.timeline.data[key].count, $scope.timeline.data[key].currentCount);
+    }
+  };
 
   $scope.timeline.toggleTimeline = function () {
     $scope.timeline.open = !$scope.timeline.open;

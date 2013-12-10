@@ -413,17 +413,16 @@ app.controller("MasterCtrl",
       extent: $scope.mapState.bounds
       }, function (response) {
         $scope.timeline.data[name] = response.results;
+        $scope.timeline.data[name].count = response.count;
       }
     );*/
     var url = (name == 'Twitter') ? '/static/data/twitter.json': 'static/data/meldingen.json';
     $http.get(url)
     .success(function (response) {
       $scope.timeline.data[name] = response.results[0];
-      console.log($scope.timeline.data, response.results[0].features);
+      $scope.timeline.data[name].count = response.count;
+      $scope.timeline.data[name].order = Object.keys($scope.timeline.data).length;
       $scope.timeline.changed = !$scope.timeline.changed;
-      $scope.timeline.data[name].order = $scope.timeline.data.length;
-      console.log("Order: ", $scope.timeline.data.length);
-      console.log("Timeline changed", $scope.timeline.changed);
     });
   };
 /*
@@ -457,3 +456,19 @@ if ($scope.tools.active === name) {
 //END keypress
 
 }]);
+
+app.filter('orderObjectBy', function () {
+  return function (items, field, reverse) {
+    var filtered = [];
+    angular.forEach(items, function (item) {
+      filtered.push(item);
+    });
+    filtered.sort(function (a, b) {
+      return (a[field] > b[field]);
+    });
+    if (reverse) {
+      filtered.reverse();
+    }
+    return filtered;
+  };
+});

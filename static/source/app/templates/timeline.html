@@ -28,7 +28,8 @@
     </div>
                 <small><% timeline.temporalExtent.start | date:'d MMM y' %> - <% timeline.temporalExtent.end | date:'d MMM y' %></small>
   </div>
-  <div class="timeline-svg-wrapper" ng-repeat="(key, value) in timeline.data | orderBy:order" id="<% key + '-svg-wrapper'%>">
+  <div class="timeline-svg-wrapper" ng-repeat="(key, value) in timeline.data" id="<% key + '-svg-wrapper'%>">
     <svg></svg>
   </div>
 </div>  
+
