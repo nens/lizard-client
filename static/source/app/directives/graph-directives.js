@@ -452,6 +452,7 @@ angular.module('graph')
           .y(function (d) {
             return y.scale(d.value);
           });
+        line.defined(function(d) { return !isNaN(d.value); });
 
         if (data[0].hasOwnProperty('date')) {
           var x = graphCtrl.maxMin(data, 'date');
@@ -654,6 +655,7 @@ angular.module('graph')
                 return x(d.date2);
               }
           });
+          line2.defined(function(d) { return !isNaN(d.value2); });
 
           chartType.d3graph.x(function (d) {
               if (legend.type === "kpi"){
@@ -897,6 +899,7 @@ angular.module('graph')
                 return x(d.date);
               }
           });
+        line.defined(function(d) { return !isNaN(d.value); });
 
         var line2 = d3.svg.line()
               .y(function (d) {
@@ -909,6 +912,7 @@ angular.module('graph')
                 return x(d.date2);
               }
           });
+        line2.defined(function(d) { return !isNaN(d.value2); });
 
           var make_x_axis = function () {
             return d3.svg.axis()
@@ -1145,6 +1149,7 @@ angular.module('graph')
           .y(function (d) {
             return y(d.value);
           });
+      line.defined(function(d) { return !isNaN(d.value); });
 
       var x = {};
       
