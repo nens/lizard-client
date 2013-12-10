@@ -484,3 +484,33 @@ app.directive('sewerage', function ($http) {
   };
 });
 
+app.directive('animation', function () {
+  return {
+    require: 'map',
+    link: function (scope, element, attrs, mapCtrl) {
+      var contourslayer;
+
+      scope.$watch('animation.enabled', function (newVal, oldVal) {
+        console.info(newVal)
+        if (newVal !== oldVal) {
+          if (contourslayer === undefined) {
+            contourslayer = L.contoursLayer(scope.animation.frame[scope.animation.currentFrame]);
+          }
+          if (newVal) {
+            mapCtrl.addLayer(contourslayer);
+          } else {
+            console.info('i is removing', contourslayer);
+            // mapCtrl.removeLayer(contourslayer);
+          }
+        }
+      });
+
+      scope.$watch('animation.currentFrame', function () {
+        // if (contourslayer !== undefined) {
+          contourslayer._updateData(scope.animation.frame[scope.animation.currentFrame]);
+          // contourslayer._update();
+        // }
+      });
+    }
+  };
+});

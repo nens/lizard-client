@@ -10,7 +10,7 @@
               <a href="#" class="hide" ng-click="threediTool()" ng-class="{'hide': !threedi_active, 'icon-large': tools.active === 'threedi'}" title="3Di"><i class="icon-asterisk"></i></a>
             </li>
             <li class="site">
-              <a href="#" ng-click="toggle_tool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.active === 'profile'}"></i></a>
+              <a href="#" ng-click="toggleTool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.active === 'profile'}"></i></a>
             </li>
             {% if user.is_authenticated %}
               <li>
@@ -77,6 +77,7 @@
                   </div>
                 </div>
                 </li>
+                <li ng-click="toggleRain()" class="clickable">Regen </li>
               </ul>
               </li>
             </ul>
@@ -96,6 +97,7 @@
              zoom-to-layer="zoomToLayer"
              vectorlayer
              threedi-map
+             animation
              sewerage>
          </map>
       </div>
