@@ -460,9 +460,11 @@ if ($scope.tools.active === name) {
 app.filter('orderObjectBy', function () {
   return function (items, field, reverse) {
     var filtered = [];
+    console.log("ITEMS before: ", items);
     angular.forEach(items, function (item) {
       filtered.push(item);
     });
+    console.log("ITEMS after: ", items);
     filtered.sort(function (a, b) {
       return (a[field] > b[field]);
     });

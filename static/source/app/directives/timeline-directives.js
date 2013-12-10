@@ -15,10 +15,12 @@ app.controller('TimelineDirCtrl', function ($scope){
       var width = maxwidth - margin.left - margin.right,
         height = maxheight - margin.top - margin.bottom;
 
-      var svgContainer = "#" + id + "-svg-wrapper";
+      var svgContainer = id + "-svg-wrapper";
       var svg = d3.select(element[0])
-        .select(svgContainer)
+        .append("xhtml:div")
         .html("")
+        .attr("class", "timeline-svg-wrapper")
+        .attr("id", svgContainer)
         .append("svg:svg")
         .attr('width', maxwidth)
         .attr('height', maxheight)
@@ -397,6 +399,8 @@ app.controller('TimelineDirCtrl', function ($scope){
       timelineKeys = [];
       for(var key in scope.timeline.data) timelineKeys.push(key);
       console.log(timelineKeys);
+      //Empty the current timelines
+      d3.selectAll(".timeline-svg-wrapper").remove()
       for (var i = 0; i < timelineKeys.length; i++) {
         var id = timelineKeys[i];
         chart = drawChart(id, 'timestamp', 'event_sub_type', {
