@@ -223,6 +223,7 @@ app.directive('vectorlayer', function () {
 
         } else {
           d3.selectAll(".circle").classed("hidden", true);
+          scope.timeline.enabled = false;
         }
       });
     }
