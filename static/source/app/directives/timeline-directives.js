@@ -88,7 +88,6 @@ app.controller('TimelineDirCtrl', function ($scope){
         if (options.scale === "ordinal") {
         var scale = d3.scale.ordinal()
             .domain(function (d) {
-              //NOTE: kill hard coded dependency
               return d3.set(d.event_sub_type).values();
             })
             .range(colorbrewer.Set2[6]);
@@ -461,7 +460,6 @@ app.controller('TimelineDirCtrl', function ($scope){
       var x = {};
       x.min = new Date(scope.timeline.temporalExtent.start);
       x.max = new Date(scope.timeline.temporalExtent.end);
-      console.log(x, scope.timeline.end, scope.timeline.start);
       var y = timelineCtrl.maxMin(data, {
         key: yKey
       });
@@ -473,7 +471,6 @@ app.controller('TimelineDirCtrl', function ($scope){
           range: [0, graph.width],
           });
         scope.timeline.xScale = x.scale;
-        console.log("Made new scale: ", scope.timeline.scale);
       }
       y.colorscale = timelineCtrl.scale(y, {
         range: [graph.height, 0],
@@ -511,19 +508,6 @@ app.controller('TimelineDirCtrl', function ($scope){
         drawXAxis: options.drawXAxis
       });
 
-        if (xKey === "INTAKEDATU") {
-        var xfunction = function(d) { 
-          var value = x.scale(d3.time.format.iso.parse(d.properties[xKey]));
-          if (value < 0){
-            value = -300;
-          } else if (value > graph.width){
-            value = -300;
-          }
-          return value; };
-        } else{
-        var xfunction = function(d) {return x.scale(d[xKey])};
-        }
-
       var svg = graph.svg;
       scope.timeline.graphs.push(svg);
         timelineCtrl.zoomed = function () {
@@ -535,7 +519,7 @@ app.controller('TimelineDirCtrl', function ($scope){
                 ticks: timelineCtrl.ticksInterval
                 }));
               svg.selectAll("circle")
-                .attr("cx", xfunction);
+                .attr("cx", function(d) {return scope.timeline.xScale(d[xKey]);});
             }
             scope.$apply(function () {timelineCtrl
               scope.timeline.temporalExtent.start = x.scale.domain()[0].getTime();
