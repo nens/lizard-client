@@ -505,7 +505,7 @@ html, body{
 }
 
 .bar{
-    opacity: 0.1;
+    opacity: 0.4;
 }
 
 .selected{
@@ -826,7 +826,7 @@ a {
 }
 
 /*
- * d3 vector layer css
+ * d3 vector layers css
  */
 .circle {
   cursor: pointer;
@@ -853,6 +853,9 @@ a {
     -webkit-text-fill-color: white; /* Will override color (regardless of order) */
     -webkit-text-stroke-width: 1.5px;
     -webkit-text-stroke-color: #c0392b;
+    text-fill-color: white;
+    text-stroke-width: 1.5px;
+    text-stroke-color: #c0392b;
 }
 
 .pumpstation_sewerage.selected {
@@ -869,6 +872,9 @@ a {
     -webkit-text-fill-color: #c0392b; /* Will override color (regardless of order) */
     -webkit-text-stroke-width: 2.5px;
     -webkit-text-stroke-color: #c0392b;
+    text-fill-color: white;
+    text-stroke-width: 1.5px;
+    text-stroke-color: #c0392b;
 }
 
 .exceeded {
@@ -882,4 +888,11 @@ a {
     -webkit-text-stroke-width: 1.5px;
     -webkit-text-stroke-color: black;
     opacity: 1;
+    text-fill-color: black;
 }
+/*
+.contours {
+    fill: rgba(255,160,122, 0.4);
+    stroke-width: 1.5px;
+    stroke-color: firebrick;
+}*/

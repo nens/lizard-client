@@ -79,4 +79,8 @@ app.controller('SearchCtrl', ['$scope', 'CabinetService', function ($scope, Cabi
           };
       }
   };
-}]);
+
+  $scope.$watch('selected', function () {
+    $scope.selected_timeseries = $scope.selected;
+  });
+}]);;
