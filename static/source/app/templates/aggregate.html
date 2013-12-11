@@ -12,6 +12,14 @@
   </table>
 </div>
 
+<div class="card" ng-class="{hidden: box.content.event == undefined}">
+  <div class="card-title">
+    <i class="fa fa-certificate"></i>
+    <span><% box.content.event.value %></span>
+  </div>
+</div>
+
+
 <div class="card" ng-class="{hidden: box.content.sewerage == undefined}">
   <div class="card-title">
     <img src="/static/distjs/images/gemaal.png" class="img-circle"/>

@@ -201,18 +201,9 @@ app.controller('TimelineDirCtrl', function ($scope){
             .attr("r", 5)
             .attr("opacity", 1)
             .on('click', function (d) {
-              var elclicked = $('#pumpstation_'+ d.value);
-              var y = elclicked.offset().top;
-              var x = elclicked.offset().left;
-              // TODO: this triggers a 'selected' item
-              // and omnibox picks up change of selected item.
-              var ev = document.createEvent("MouseEvent");
-              ev.initMouseEvent("click", true, true, window, null, 
-                0,0,0,0,
-                false,false,false,false,
-                0, 
-                null);
-              elclicked[0].dispatchEvent(ev);
+              console.log("clicked: ", d, "Box content: ", $scope.box.content.event);
+              $scope.box.content.event = d;
+              $scope.$digest();
             });
     };
 

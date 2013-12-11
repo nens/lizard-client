@@ -33,6 +33,11 @@ app.directive('vectorlayer', function () {
           .attr('stroke-width', 1)
           .attr('fill', function (d) {
             return scale(d.event_sub_type);
+          })
+          .on('click', function (d) {
+            console.log("clicked: ", d, "Box content: ", scope.box.content.event);
+            scope.box.content.event = d;
+            scope.$digest();
           });
 /*
         // click handler
