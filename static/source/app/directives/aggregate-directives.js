@@ -23,8 +23,7 @@ app.directive('vectorlayer', function () {
         if (!scale) {
           scale = d3.scale.ordinal()
             .domain(function (d) {
-              //NOTE: kill hard coded dependency
-              return d3.set(d.sub_type).values();
+              return d3.set(d.event_sub_type).values();
             })
             .range(colorbrewer.Set2[6]);
         }
@@ -33,7 +32,7 @@ app.directive('vectorlayer', function () {
           .attr('stroke', "#e")
           .attr('stroke-width', 1)
           .attr('fill', function (d) {
-            return scale(d.sub_type);
+            return scale(d.event_sub_type);
           });
 /*
         // click handler

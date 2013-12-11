@@ -200,7 +200,6 @@ app.controller('TimelineDirCtrl', function ($scope){
             .attr("cy", 20)
             .attr("r", 5)
             .attr("opacity", 1)
-            .attr("fill", yfunction)
             .on('click', function (d) {
               var elclicked = $('#pumpstation_'+ d.value);
               var y = elclicked.offset().top;
@@ -418,6 +417,18 @@ app.controller('TimelineDirCtrl', function ($scope){
         });
        timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
        scope.timeline.countCurrentEvents();
+
+       var scale = d3.scale.ordinal()
+            .domain(function (d) {
+              return d3.set(d.event_sub_type).values();
+            })
+            .range(colorbrewer.Set2[6]);
+
+       d3.selectAll("circle")
+            .attr('fill', function (d) {
+            return scale(d.event_sub_type);
+          });
+        
       }
       scope.timeline.enabled = (timelineKeys.length > 0) ? true: false; 
         /*if (scope.tools.active === "alerts"){
