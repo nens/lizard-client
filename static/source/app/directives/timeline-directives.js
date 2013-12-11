@@ -135,11 +135,12 @@ app.controller('TimelineDirCtrl', function ($scope){
         var xAxis = this.makeAxis(x.scale, {orientation: "bottom"});
         var yAxis = this.makeAxis(y.scale, {orientation: "left"});
       }
-      svg.append("svg:g")
+      if (options.drawXAxis) {
+        svg.append("svg:g")
         .attr("class", "x axis")
         .attr("transform", "translate(0, " + options.height + ")")
         .call(xAxis);
-
+      }
       svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
@@ -391,7 +392,6 @@ app.controller('TimelineDirCtrl', function ($scope){
     if (scope.timeline.width < 10){
       scope.timeline.width = window.outerWidth;    
     }
-    scope.timeline.height = 70;
 
     var timelineKeys = [];
 
@@ -403,10 +403,19 @@ app.controller('TimelineDirCtrl', function ($scope){
       d3.selectAll(".timeline-svg-wrapper").remove()
       for (var i = 0; i < timelineKeys.length; i++) {
         var id = timelineKeys[i];
+        if (i == timelineKeys.length-1){
+          var drawXAxis = true;
+          scope.timeline.height = 60;
+        } else {
+          var drawXAxis = false;
+          scope.timeline.height = 40;
+        }
+        console.log("Drawing XAxis?: ", drawXAxis);
         chart = drawChart(id, 'timestamp', 'event_sub_type', {
           scale: 'ordinal',
           chart: 'circles',
-          dateparser: 'epoch'
+          dateparser: 'epoch',
+          drawXAxis: drawXAxis
         });
        timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
        scope.timeline.countCurrentEvents();
@@ -498,7 +507,8 @@ app.controller('TimelineDirCtrl', function ($scope){
         axes: {
           x: xAxis,
           y: yAxis
-        }
+        },
+        drawXAxis: options.drawXAxis
       });
 
         if (xKey === "INTAKEDATU") {
