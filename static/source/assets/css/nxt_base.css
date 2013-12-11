@@ -1,6 +1,6 @@
 @font-face {
     font-family: "Kunstwerk";
-    src: url("../fonts/Kunstwerk Regular.ttf") format('truetype');
+    src: url("../font/Kunstwerk Regular.ttf") format('truetype');
 }
 
 html, body{

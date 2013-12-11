@@ -727,6 +727,8 @@ app.directive('threediMap', function(AnimatedLayer) {
             });
 
             var map = MapCtrl.map();
+            // NOTE: skip initial errors
+            if (map === undefined) { return;}
 
             map.on('moveend', function() {
                 if (scope.threedi_active && scope.is_master) {

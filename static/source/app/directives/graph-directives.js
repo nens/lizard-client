@@ -310,6 +310,7 @@ angular.module('graph')
                   .text(function() {
                     try {
                       var text = d.data.label.split('-')[2];
+                      text = (text !== undefined) ? text : d.data.label;
                     } catch (e) {
                       if (d.data.label === 0){
                         var text = 'Geen data';                      

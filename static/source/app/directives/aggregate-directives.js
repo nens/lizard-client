@@ -88,26 +88,26 @@ app.directive('vectorlayer', function () {
         selected.call(countEvents, 'alerts');
       };
 
-      // /**
-      //  * Update sewerage classes based on current temporal extent
-      //  * NOTE: temporary function until we have a dedicated 
-      //  * events mechanism
-      //  */
-      // var updateSewerage = function () {
-      //   // loop over sewerages to get id of sewerage over threshold
-      //   d3.selectAll(".pumpstation_sewerage")
-      //     .classed("exceeded", false);
-      //   var s = [scope.timeline.temporalExtent.start,
-      //            scope.timeline.temporalExtent.end];
-      //   for (var i = 0; i < scope.formatted_geojsondata.length; i++) {
-      //     var sewerage = scope.formatted_geojsondata[i];
-      //     var time = +sewerage.date;
-      //     if (s[0] <= time && time <= s[1]) {
-      //       d3.select("#pumpstation_" + sewerage.value)
-      //         .classed("exceeded", true);
-      //     }
-      //   }
-      // }
+      /**
+       * Update sewerage classes based on current temporal extent
+       * NOTE: temporary function until we have a dedicated 
+       * events mechanism
+       */
+      var updateSewerage = function () {
+        // loop over sewerages to get id of sewerage over threshold
+        d3.selectAll(".pumpstation_sewerage")
+          .classed("exceeded", false);
+        var s = [scope.timeline.temporalExtent.start,
+                 scope.timeline.temporalExtent.end];
+        for (var i = 0; i < scope.formatted_geojsondata.length; i++) {
+          var sewerage = scope.formatted_geojsondata[i];
+          var time = +sewerage.date;
+          if (s[0] <= time && time <= s[1]) {
+            d3.select("#pumpstation" + sewerage.value)
+              .classed("exceeded", true);
+          }
+        }
+      }
 
       // watch for change in temporalExtent, change visibility of
       // alerts accordingly
@@ -148,46 +148,6 @@ app.directive('vectorlayer', function () {
         //scope.box.content[type].content_agg = ctr / num_citizens / timeInterval;
         console.log(scope.box.content);
       };
-
-      // /*
-      //  * Count events in viewport; update scope with count
-      //  */
-      // var countEventsISW = function (selection, type) {
-      //   var ctr = 0;
-      //   var mapBounds = scope.map.getBounds();
-
-      //   var features = scope.rawGeojsondata.features;
-      //   var length = features.length;
-      //   for (var i = 0; i < length; i++) {
-      //     var d = features[i];
-      //     if (d.properties.events) {
-      //       var point = new L.LatLng(d.geometry.coordinates[1],
-      //                                d.geometry.coordinates[0]);
-      //       if (mapBounds.contains(point)) {
-      //         ctr += 1;
-      //       }
-      //     }
-      //   };
-      //   // pass newly calculated data to scope
-      //   scope.box.content[type].count = ctr;
-      // };
-
-      // Count events on map move
-      // scope.$watch('mapState.moved', function () {
-      //   d3.selectAll(".circle.selected").call(countEvents, 'alerts');
-      //   var select = d3.selectAll(".pumpstation_sewerage").call(countEventsISW, 'isw');
-      //   //NOTE: ugly hack to resize sewerages
-      //   var zoom = scope.map.getZoom();
-      //   var fontSize = zoom / 16 * 54 + "px";
-      //   //console.log(fontSize);
-      //   if (zoom >= 13) {
-      //     select
-      //       .classed("hidden", false)
-      //       .style("font-size", fontSize);
-      //   } else {
-      //     select.classed("hidden", true);
-      //   }
-      // });
       
       // Watch button click, toggle event layer
       scope.$watch('timeline.changed', function () {
@@ -235,6 +195,7 @@ app.directive('vectorlayer', function () {
           scope.timeline.data.kpi = scope.kpi[0].pi[0].data.features;
         } else {
           d3.selectAll(".circle").classed("hidden", true);
+          scope.timeline.enabled = false;
         }
       });*/
     }
