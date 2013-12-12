@@ -522,12 +522,14 @@ app.controller('TimelineDirCtrl', function ($scope){
                 }));
               svg.selectAll("circle")
                 .attr("cx", function(d) {return scope.timeline.xScale(d[xKey]);});
+              svg.call(timelineCtrl.zoom)  
             }
             scope.$apply(function () {timelineCtrl
               scope.timeline.temporalExtent.start = x.scale.domain()[0].getTime();
               scope.timeline.temporalExtent.end = x.scale.domain()[1].getTime();
               scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
-            });          
+            });
+            svg.call(timelineCtrl.zoom)       
           } 
         };
 
