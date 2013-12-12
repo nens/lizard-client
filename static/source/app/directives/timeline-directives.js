@@ -386,7 +386,7 @@ app.controller('TimelineDirCtrl', function ($scope){
       }
       //Empty the current timeline
       d3.select(element[0]).select("#timeline-svg-wrapper").select("svg").remove()
-      scope.timeline.height = (timelineKeys.length > 0) ? 30 + timelineKeys.length * 30: 0;
+      scope.timeline.height = 30 + timelineKeys.length * 30;
       console.log("Heigh:", scope.timeline.height, "length: ", timelineKeys.length);
       var data = [];
       for (var i = 0; i < timelineKeys.length; i++) {
@@ -419,7 +419,6 @@ app.controller('TimelineDirCtrl', function ($scope){
             .attr('fill', function (d) {
             return scale(d.event_sub_type);
           });
-      scope.timeline.enabled = (timelineKeys.length > 0) ? true: false; 
     });
 
     scope.$watch('mapState.moved', function () {
