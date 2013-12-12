@@ -1,6 +1,6 @@
 // Timeline for lizard.
 app.controller('TimelineDirCtrl', function ($scope){
-    this.createCanvas = function (id, element, options) {
+    this.createCanvas = function (element, options) {
       // Draws a blank canvas based on viewport
       var margin = {
         top: 3,
@@ -15,12 +15,9 @@ app.controller('TimelineDirCtrl', function ($scope){
       var width = maxwidth - margin.left - margin.right,
         height = maxheight - margin.top - margin.bottom;
 
-      var svgContainer = id + "-svg-wrapper";
       var svg = d3.select(element[0])
-        .append("xhtml:div")
+        .select("#timeline-svg-wrapper")
         .html("")
-        .attr("class", "timeline-svg-wrapper")
-        .attr("id", svgContainer)
         .append("svg:svg")
         .attr('width', maxwidth)
         .attr('height', maxheight)
@@ -30,7 +27,6 @@ app.controller('TimelineDirCtrl', function ($scope){
         .attr("width", width)
         .attr("height", height)
         .attr("class", "plot-temporal");
-      console.log("container ", svgContainer, "svg: ", svg);
       return {
         svg: svg,
         height: height,
@@ -134,12 +130,10 @@ app.controller('TimelineDirCtrl', function ($scope){
         var xAxis = this.makeAxis(x.scale, {orientation: "bottom"});
         var yAxis = this.makeAxis(y.scale, {orientation: "left"});
       }
-      if (options.drawXAxis) {
-        svg.append("svg:g")
+      svg.append("svg:g")
         .attr("class", "x axis")
         .attr("transform", "translate(0, " + options.height + ")")
         .call(xAxis);
-      }
       svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
@@ -273,7 +267,6 @@ app.controller('TimelineDirCtrl', function ($scope){
         });
       var selected = d3.selectAll("circle.selected");
       selected.classed("hidden", false);
-      //selected.call(countEvents, 'alerts');
     };
 
 
@@ -387,9 +380,8 @@ app.controller('TimelineDirCtrl', function ($scope){
     scope.$watch('timeline.changed', function () {
       timelineKeys = [];
       for(var key in scope.timeline.data) timelineKeys.push(key);
-      console.log(timelineKeys);
-      //Empty the current timelines
-      d3.selectAll(".timeline-svg-wrapper").remove()
+      //Empty the current timeline
+      d3.select("svg-wrapper").remove()
       scope.timeline.height = 30 + timelineKeys.length * 30;
       var data = [];
       for (var i = 0; i < timelineKeys.length; i++) {
@@ -401,17 +393,13 @@ app.controller('TimelineDirCtrl', function ($scope){
           data.push(feature);
         });
       }
-
-      var drawXAxis = true;
-
-      console.log("Drawing XAxis?: ", drawXAxis);
-      var id = 'wrapper';
-      chart = drawChart(id, data, 'timestamp', 'event_sub_type', {
-        scale: 'ordinal',
-        chart: 'circles',
-        dateparser: 'epoch',
-        drawXAxis: drawXAxis
-      });
+      if (timelineKeys.length > 0) {
+        chart = drawChart(data, 'timestamp', 'event_sub_type', {
+          scale: 'ordinal',
+          chart: 'circles',
+          dateparser: 'epoch'
+        });        
+      }
      timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
      scope.timeline.countCurrentEvents();
 
@@ -426,32 +414,25 @@ app.controller('TimelineDirCtrl', function ($scope){
             return scale(d.event_sub_type);
           });
       scope.timeline.enabled = (timelineKeys.length > 0) ? true: false; 
-    }, true);
+    });
 
     scope.$watch('mapState.moved', function () {
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
       scope.timeline.countCurrentEvents();
     })
 
-    var drawChart = function (id, data, xKey, yKey, options) {
-      console.log("Data: ", data)
-      var graph = timelineCtrl.createCanvas(id, element, {
+    var drawChart = function (data, xKey, yKey, options) {
+      var graph = timelineCtrl.createCanvas(element, {
         start: scope.timeline.temporalExtent.start,
         stop: scope.timeline.temporalExtent.end,
         height: scope.timeline.height,
         width: scope.timeline.width
       });
-      // var x = timelineCtrl.maxMin(data, {
-      //   key: xKey,
-      //   dateparser: options.dateparser
-      // });
-      // Use temporalExtent to make scale:
       var x = {};
       x.min = new Date(scope.timeline.temporalExtent.start);
       x.max = new Date(scope.timeline.temporalExtent.end);
       var y = {max: timelineKeys.length -1,
        min: 0};
-      console.log("y: ", y);
       if (scope.timeline.xScale) {
         x.scale = scope.timeline.xScale;  
       } else {
@@ -493,25 +474,19 @@ app.controller('TimelineDirCtrl', function ($scope){
         axes: {
           x: xAxis,
           y: yAxis
-        },
-        drawXAxis: options.drawXAxis
+        }
       });
 
       var svg = graph.svg;
-      scope.timeline.graphs.push(svg);
         timelineCtrl.zoomed = function () {
           if (scope.timeline.tool === 'zoom'){
-            for (var i = 0; i < scope.timeline.graphs.length; i++) {
-              svg = scope.timeline.graphs[i];
-              svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {
-                orientation: "bottom",
-                ticks: timelineCtrl.ticksInterval
-                }));
-              svg.selectAll("circle")
-                .attr("cx", function(d) {return scope.timeline.xScale(d[xKey]);});
-              svg.call(timelineCtrl.zoom)  
-            }
-            scope.$apply(function () {timelineCtrl
+            svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {
+              orientation: "bottom",
+              ticks: timelineCtrl.ticksInterval
+              }));
+            svg.selectAll("circle")
+              .attr("cx", function(d) {return scope.timeline.xScale(d[xKey]);});
+            scope.$apply(function () {
               scope.timeline.temporalExtent.start = x.scale.domain()[0].getTime();
               scope.timeline.temporalExtent.end = x.scale.domain()[1].getTime();
               scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
@@ -523,7 +498,6 @@ app.controller('TimelineDirCtrl', function ($scope){
         timelineCtrl.zoom = d3.behavior.zoom()
           .x(x.scale)
           .on("zoom", timelineCtrl.zoomed);
-
 
         svg.call(timelineCtrl.zoom)
 

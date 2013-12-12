@@ -457,6 +457,7 @@ html, body{
     background-color: #fff;
     color: #222;
     opacity: 0.9;
+    transition: 3s;
 }
 
 .timeline.closed {

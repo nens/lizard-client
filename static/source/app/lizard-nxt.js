@@ -354,8 +354,7 @@ app.controller("MasterCtrl",
     tool: 'zoom',
     canceler: $q.defer(),
     enabled: false,
-    data: {},
-    graphs: []
+    data: {}
   };
 // END Temporal extent model
 
