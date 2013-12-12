@@ -363,7 +363,6 @@ app.controller("MasterCtrl",
   */
   $scope.toggleTimelineEvents = function () {
     $scope.box.content.eventTypes = [];
-    $scope.timeline.enabled = true;
     //Temporary mock it till the api is implemented
 /*    CabinetService.eventTypes.get({},
       function (response) {
@@ -385,9 +384,16 @@ app.controller("MasterCtrl",
         }
       ]
     };
-    $scope.box.content.eventTypes = response.results;
-    console.log($scope.box.content.eventTypes);
-    $scope.tools.active = 'events';
+    $scope.timeline.enabled = !$scope.timeline.enabled;
+    if ($scope.timeline.enabled) {
+      $scope.tools.active =  'events';
+      $scope.box.content.eventTypes = response.results;
+    } else {
+      console.log("timeline is not enabled", $scope.timeline.enabled);
+      $scope.tools.active =  'none';
+      $scope.box.content.eventTypes = undefined;
+    }
+        
   };
 
   $scope.timeline.toggleEvents = function (name) {
@@ -404,7 +410,6 @@ app.controller("MasterCtrl",
   
   var getEvents = function (name) {
     $scope.timeline.data[name] = [];
-    $scope.timeline.data[name].active = true;
 /*    CabinetService.events.get({
       type: name,
       start: $scope.timeline.temporalExtent.start,
@@ -420,23 +425,10 @@ app.controller("MasterCtrl",
     .success(function (response) {
       $scope.timeline.data[name] = response.results[0];
       $scope.timeline.data[name].count = response.count;
-      $scope.timeline.data[name].order = Object.keys($scope.timeline.data).length;
+      $scope.timeline.data[name].active = true;
       $scope.timeline.changed = !$scope.timeline.changed;
     });
   };
-/*
-if ($scope.tools.active === name) {
-      $scope.tools.active = "none";
-    } else {
-      $scope.tools.active = name;
-    }
-    console.log($scope.tools.active);
-    // NOTE: ugly hack, record if tool is time aware
-    if ($scope.tools.active === "alerts" ||
-        $scope.tools.active === "sewerage") {
-      $scope.timeline.changed = !$scope.timeline.changed;
-    }
-*/
 
 /**
 * keypress stuff
@@ -455,21 +447,3 @@ if ($scope.tools.active === name) {
 //END keypress
 
 }]);
-
-app.filter('orderObjectBy', function () {
-  return function (items, field, reverse) {
-    var filtered = [];
-    console.log("ITEMS before: ", items);
-    angular.forEach(items, function (item) {
-      filtered.push(item);
-    });
-    console.log("ITEMS after: ", items);
-    filtered.sort(function (a, b) {
-      return (a[field] > b[field]);
-    });
-    if (reverse) {
-      filtered.reverse();
-    }
-    return filtered;
-  };
-});

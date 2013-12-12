@@ -379,19 +379,25 @@ app.controller('TimelineDirCtrl', function ($scope){
 
     scope.$watch('timeline.changed', function () {
       timelineKeys = [];
-      for(var key in scope.timeline.data) timelineKeys.push(key);
+      for (var key in scope.timeline.data) {
+        if (scope.timeline.data[key].active) {
+          timelineKeys.push(key);
+        }
+      }
       //Empty the current timeline
-      d3.select("svg-wrapper").remove()
-      scope.timeline.height = 30 + timelineKeys.length * 30;
+      d3.select(element[0]).select("#timeline-svg-wrapper").select("svg").remove()
+      scope.timeline.height = (timelineKeys.length > 0) ? 30 + timelineKeys.length * 30: 0;
+      console.log("Heigh:", scope.timeline.height, "length: ", timelineKeys.length);
       var data = [];
       for (var i = 0; i < timelineKeys.length; i++) {
         var id = timelineKeys[i];
-
-        var iData = scope.timeline.data[id].features;
-        angular.forEach(iData, function (feature) {
-          feature.event_type = i;
-          data.push(feature);
-        });
+        if (scope.timeline.data[id].active) {
+          var iData = scope.timeline.data[id].features;
+          angular.forEach(iData, function (feature) {
+            feature.event_type = i;
+            data.push(feature);
+          });  
+        }
       }
       if (timelineKeys.length > 0) {
         chart = drawChart(data, 'timestamp', 'event_sub_type', {
