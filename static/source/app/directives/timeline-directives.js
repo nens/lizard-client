@@ -384,6 +384,10 @@ app.controller('TimelineDirCtrl', function ($scope){
           timelineKeys.push(key);
         }
       }
+      drawTimeline(timelineKeys);
+    });
+
+    var drawTimeline = function (timelineKeys) {
       //Empty the current timeline
       d3.select(element[0]).select("#timeline-svg-wrapper").select("svg").remove()
       scope.timeline.height = 30 + timelineKeys.length * 30;
@@ -419,7 +423,7 @@ app.controller('TimelineDirCtrl', function ($scope){
             .attr('fill', function (d) {
             return scale(d.event_sub_type);
           });
-    });
+    };
 
     scope.$watch('mapState.moved', function () {
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
@@ -543,15 +547,7 @@ app.controller('TimelineDirCtrl', function ($scope){
 
     window.onresize = function () {
       scope.timeline.width = element.width();
-      if (scope.timeline.data === scope.kpi[0].pi[0].data.features){
-        chart = drawChart("INTAKEDATU", "CATEGORIE", {
-          scale: "ordinal",
-          chart: "circles",
-          dateparser: 'isodate'
-        });
-      } else if (scope.timeline.data !== undefined){
-        chart = drawChart('date', 'value', {});
-      }
+      scope.timeline.changed = !scope.timeline.changed;
     };
   };
 

@@ -423,9 +423,10 @@ app.controller("MasterCtrl",
         $scope.timeline.data[name].count = response.count;
       }
     );*/
-    var url = (name == 'Twitter') ? '/static/data/twitter.json': 'static/data/meldingen.json';
+    var url = (name == 'Twitter') ? '/static/data/twit.json': 'static/data/meldingen.json';
     $http.get(url)
     .success(function (response) {
+      console.log(response);
       $scope.timeline.data[name] = response.results[0];
       $scope.timeline.data[name].count = response.count;
       $scope.timeline.data[name].active = true;
