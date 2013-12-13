@@ -389,9 +389,12 @@ app.controller("MasterCtrl",
       $scope.tools.active =  'events';
       $scope.box.content.eventTypes = response.results;
     } else {
-      console.log("timeline is not enabled", $scope.timeline.enabled);
       $scope.tools.active =  'none';
       $scope.box.content.eventTypes = undefined;
+      angular.forEach($scope.timeline.data, function (timeline) {
+        timeline.active = false;
+      });
+      $scope.timeline.changed = !$scope.timeline.changed;
     }
         
   };
