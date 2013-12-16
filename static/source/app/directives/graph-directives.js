@@ -211,7 +211,8 @@ angular.module('graph')
       ymin: '=',
       ymax: '=',
       type: '=',
-      size: '='
+      size: '=',
+      changeFunction: '&'
     },
     restrict: 'E',
     replace: true,
@@ -442,7 +443,7 @@ angular.module('graph')
             width = graph.width,
             margin = graph.margin;
 
-        var y = graphCtrl.maxMin(data, 'value');
+        var y = graphCtrl.maxMin(data, 0);
 
         y.scale = graphCtrl.scale(y.min, y.max, {
           range: [height, 0]
@@ -450,12 +451,12 @@ angular.module('graph')
 
         var line = d3.svg.line()
           .y(function (d) {
-            return y.scale(d.value);
+            return y.scale(d[0]);
           });
-        line.defined(function(d) { return !isNaN(d.value); });
+        line.defined(function(d) { return !isNaN(d[0]); });
 
-        if (data[0].hasOwnProperty('date')) {
-          var x = graphCtrl.maxMin(data, 'date');
+        // if (data[0].hasOwnProperty('date')) {
+          var x = graphCtrl.maxMin(data, 1);
           if (legend.type === "kpi") {
             x.scale = graphCtrl.scale(x.min, x.max, {
               range: [0, width],
@@ -463,7 +464,7 @@ angular.module('graph')
               data: data
             });
             line.x(function (d) {
-              return x.scale(Date.parse(d.date));
+              return x.scale(Date.parse(d[1]));
             }); 
           } else {
             x.scale = graphCtrl.scale(x.min, x.max, {
@@ -472,20 +473,21 @@ angular.module('graph')
             });
             x.tickFormat = "";
             line.x(function (d) {
-              return x.scale(d.date);
+              return x.scale(d[1]);
             });            
           }
-        } else if (data[0].hasOwnProperty('distance')) {
-          var x = graphCtrl.maxMin(data, 'distance');
-          x.scale = graphCtrl.scale(x.min, x.max, {
-            range: [0, width],
-          });
-          x.tickFormat = d3.format(".2");
-          line.x(function (d) {
-            return x.scale(d.distance);
-          });
+        // } else if (data[0].hasOwnProperty('distance')) {
+        //   var x = graphCtrl.maxMin(data, 'distance');
+        //   x.scale = graphCtrl.scale(x.min, x.max, {
+        //     range: [0, width],
+        //   });
+        //   x.tickFormat = d3.format(".2");
+        //   line.x(function (d) {
+        //     // NOTE: change api
+        //     return x.scale(d.distance);
+        //   });
 
-        }
+        // }
 
         // prevent errors
         if (x === undefined) { return; }
@@ -519,6 +521,13 @@ angular.module('graph')
           svg.select(".line")
               .attr("class", "line")
               .attr("d", line);
+            scope.$apply(function () {
+              console.log(x.scale.domain()[1].getTime());
+              // scope.changeFunction(x.scale.domain()[0].getTime(), x.scale.domain()[1].getTime());
+              scope.$parent.box.content.temporalExtent.start = x.scale.domain()[0].getTime();
+              scope.$parent.box.content.temporalExtent.end = x.scale.domain()[1].getTime();
+              scope.$parent.box.content.temporalExtent.changedZoom = !scope.$parent.box.content.temporalExtent.changedZoom;
+            }); 
         };
 
         var zoom = d3.behavior.zoom()

@@ -157,7 +157,7 @@ app.controller("MasterCtrl",
   $scope.threediTool = function () {
       //console.log($scope.box.type);
       $scope.box.type = 'threedi';
-      $scope.box.content = 'bladiblabla';
+      $scope.box.content = 'bladiblabla'; // maybe his should change ? :)
       $scope.tools.threedi.enabled = !$scope.tools.threedi.enabled;
   }  
   // 3Di END
@@ -195,7 +195,20 @@ app.controller("MasterCtrl",
     }
       $scope.box.content.object_type = data.entity_name;
       $scope.box.content.id = data.id;
-      $scope.box.content.data = data;  
+      $scope.box.content.data = data;
+      // NOTE: will temporalExtent also control timeiline temporalExtent?
+      $scope.box.content.temporalExtent = {
+        start: null,
+        end: null,
+        changedZoom: false,
+      };
+      $scope.box.content.changeFunction = function (start, stop) {
+        console.info('start', start);
+        $scope.box.content.temporalExtent.start = start;
+        $scope.box.content.temporalExtent.stop = stop;
+        $scope.box.content.temporalExtent.changedZoom = !$scope.box.content.temporalExtent.changedZoom;
+      };
+      $scope.box.content.canceler = $q.defer();
     
 
     var new_data_get = CabinetService.timeseriesLocationObject.get({
@@ -225,10 +238,42 @@ app.controller("MasterCtrl",
     }
   };
 
+  $scope.$watch('box.content.temporalExtent.changedZoom', function (newVal, oldVal) {
+    if (newVal == oldVal) { return; }
+    $scope.box.content.canceler.resolve();
+    $scope.box.content.canceler = $q.defer();
+    var timeseries = $resource('/api/v1/timeseries/:id/?start=:start&end=:end', {
+      id: '@id',
+      start: '@start',
+      end: '@end'
+      },
+      {get: 
+        {method: 'GET', timeout: $scope.box.content.canceler.promise}
+      });
+    if ($scope.selected_timeseries) {
+      timeseries.get({
+        id: $scope.selected_timeseries.id,
+        start: $scope.box.content.temporalExtent.start,
+        end: $scope.box.content.temporalExtent.end
+      }, function(response){
+        $scope.data = response.events.instants;
+        $scope.selected_timeseries.events = response.events;
+        // var response;
+        // if ($scope.timeseries.length > 0){
+        //   $scope.selected_timeseries = response[0];
+        // } else {
+        //   $scope.selected_timeseries = undefined;
+        // }
+      });      
+    }
+  });
+
   $scope.$watch('selected_timeseries.id', function () {
-    console.log($scope.selected_timeseries);
     if ($scope.selected_timeseries !== undefined){
-      $scope.data = $scope.format_data($scope.selected_timeseries.events);
+    console.log($scope.selected_timeseries);
+      // NOTE: this will change to $scope.selected_timeseries.instants
+      $scope.data = $scope.selected_timeseries.events.instants;
+      console.log($scope.data);
       // dit kan zeker nog mooier
       $scope.metadata.title = " - " + $scope.selected_timeseries.location.name;
       $scope.metadata.ylabel = "";//$scope.selected_timeseries.parameter + $scope.selected_timeseries.unit.code
@@ -416,7 +461,6 @@ app.controller("MasterCtrl",
   var start = null;
   var keys = Object.keys($scope.animation.frame);
   var finalFrame = keys[keys.length - 1];
-  console.log(finalFrame)
   var progress;
 
   $scope.step =  function (timestamp) {
