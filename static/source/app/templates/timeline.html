@@ -1,8 +1,9 @@
 <div id="timeline" ng-controller="TimelineCtrl">
   <div class="bovenbalk">
-    <div class="btn-group">
-      <button type="button" title="Select" class="btn btn-default" ng-click="timeline.toggleHideTimeline()">
-          <i class="icon-minus-sign-alt"></i>
+    <div class="btn-group" >
+      <button ng-switch on="timeline.hidden" type="button" title="Select" class="btn btn-default" ng-click="timeline.toggleHideTimeline()">
+          <i ng-switch-when="false" class="icon-minus-sign-alt"></i>
+          <i ng-switch-when="true" class="icon-plus-sign-alt"></i>
       </button>
       <button type="button" title="Select" class="btn btn-default" ng-class="{'active': timeline.tool == 'brush'}" ng-click="timeline.toggleTool()">
         <i class="icon-crop"></i>

@@ -44,7 +44,9 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource) {
       document.getElementById('timeline').style.bottom = '0';
       $scope.timeline.hidden = false;
     } else {
-      document.getElementById('timeline').style.bottom = '-' + $scope.timeline.height + 'px';
+      console.log('-' + $scope.timeline.height + 'px');
+      var lower = ($scope.timeline.height > 30) ? $scope.timeline.height + 5: 0;
+      document.getElementById('timeline').style.bottom = '-' + lower + 'px';
       $scope.timeline.hidden = true;
     }        
   };
