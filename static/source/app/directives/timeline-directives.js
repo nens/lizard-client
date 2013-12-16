@@ -308,13 +308,14 @@ app.controller('TimelineDirCtrl', function ($scope){
       var brushmove = function () {
         var s = brush.extent();
             //NOTE: repair!
-            //d3.selectAll(".bar")
-              //.classed("selected", function(d) { 
-                //console.log(d);
-                //var value = Date.parse(d.properties[xKey]);
-                 //console.log(s[0], value)?
-                //return s[0] <= value && value <= s[1]; 
-              //});
+            d3.selectAll(".bar")
+              .classed("selecting", function (d) {
+                var s = [scope.timeline.temporalExtent.start,
+                     scope.timeline.temporalExtent.end];
+                var time = d.timestamp;
+                var contained = s[0] <= time && time <= s[1];
+                return contained;
+              });
 
            if (brush.extent()[0].getTime() === brush.extent()[1].getTime()) {
             scope.$apply(function () {
@@ -333,11 +334,11 @@ app.controller('TimelineDirCtrl', function ($scope){
 
         };
        var brushstart = function () {
-        svg.classed("selecting", true);
+        //svg.classed("selecting", true);
       };
       var brushend = function () {
 
-       svg.classed("selecting", !d3.event.target.empty());
+    //    svg.classed("selecting", !d3.event.target.empty());
       };    
       var brush = d3.svg.brush().x(x.scale)
         .on("brush", brushmove)
@@ -348,7 +349,7 @@ app.controller('TimelineDirCtrl', function ($scope){
         .call(brush);
       this.brushg.selectAll("rect")
         .attr("height", height);    
-    };
+      };
     this.removeBrush = function (svg) {
       if (this.brushg){
         this.brushg.remove();

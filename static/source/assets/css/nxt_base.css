@@ -520,10 +520,6 @@ html, body{
     opacity: 0.5;
 }
 
-.selected{
-    opacity:1;
-}
-
 .extent{
     fill: rgba(30,30,30,0.2);
 }
@@ -541,14 +537,11 @@ html, body{
 }
 
 .selecting circle {
-  fill-opacity: .2;
-}
-
-.selecting circle.selected {
   fill-opacity: 0.8;
-  stroke: rgb(240, 50, 60);
+  stroke-width: 10px;
   stroke: rgba(240, 50, 60, 0.6);
 }
+
 
 .resize path {
   fill: #666;
