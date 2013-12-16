@@ -392,8 +392,8 @@ app.controller("MasterCtrl",
         timeline.active = false;
       });
       $scope.timeline.changed = !$scope.timeline.changed;
-    }
-        
+      document.getElementById('timeline').removeAttribute('style');
+    }      
   };
 
   $scope.timeline.toggleEvents = function (name) {

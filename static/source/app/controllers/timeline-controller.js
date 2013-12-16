@@ -41,7 +41,7 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource) {
 
   $scope.timeline.toggleHideTimeline = function () {
     if ($scope.timeline.hidden) {
-      document.getElementById('timeline').style.bottom = '0';
+      delete document.getElementById('timeline').style
       $scope.timeline.hidden = false;
     } else {
       console.log('-' + $scope.timeline.height + 'px');
