@@ -377,6 +377,9 @@ app.controller('TimelineDirCtrl', function ($scope){
     var timelineKeys = [];
 
     scope.$watch('timeline.changed', function () {
+      if (scope.timeline.hidden) {
+        scope.timeline.toggleHideTimeline();
+      }
       timelineKeys = [];
       for (var key in scope.timeline.data) {
         if (scope.timeline.data[key].active) {

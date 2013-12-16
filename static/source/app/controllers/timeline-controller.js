@@ -39,8 +39,14 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource) {
     }
   };
 
-  $scope.timeline.toggleTimeline = function () {
-    $scope.timeline.open = !$scope.timeline.open;
+  $scope.timeline.toggleHideTimeline = function () {
+    if ($scope.timeline.hidden) {
+      document.getElementById('timeline').style.bottom = '0';
+      $scope.timeline.hidden = false;
+    } else {
+      document.getElementById('timeline').style.bottom = '-' + $scope.timeline.height + 'px';
+      $scope.timeline.hidden = true;
+    }        
   };
 
   $scope.timeline.toggleTool = function () {

@@ -116,7 +116,6 @@ app.directive('vectorlayer', function () {
           mapCtrl.removeLayer(layer);
         });
         for (var eventType in scope.timeline.data) {
-          console.log(eventType, scope.timeline.data);
           if (scope.timeline.data[eventType].active) {
             eventLayer = L.pointsLayer(scope.timeline.data[eventType], {
                 applyStyle: circle_style
