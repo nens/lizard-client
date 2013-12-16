@@ -256,7 +256,10 @@ app.controller("MasterCtrl",
         start: $scope.box.content.temporalExtent.start,
         end: $scope.box.content.temporalExtent.end
       }, function(response){
-        $scope.data = response.events.instants;
+        $scope.data = {
+          series: response.events.series,
+          instants: response.events.instants
+        };
         $scope.selected_timeseries.events = response.events;
         // var response;
         // if ($scope.timeseries.length > 0){
@@ -270,10 +273,11 @@ app.controller("MasterCtrl",
 
   $scope.$watch('selected_timeseries.id', function () {
     if ($scope.selected_timeseries !== undefined){
-    console.log($scope.selected_timeseries);
       // NOTE: this will change to $scope.selected_timeseries.instants
-      $scope.data = $scope.selected_timeseries.events.instants;
-      console.log($scope.data);
+      $scope.data = {
+          series: $scope.selected_timeseries.events.series,
+          instants: $scope.selected_timeseries.events.instants
+        };
       // dit kan zeker nog mooier
       $scope.metadata.title = " - " + $scope.selected_timeseries.location.name;
       $scope.metadata.ylabel = "";//$scope.selected_timeseries.parameter + $scope.selected_timeseries.unit.code
@@ -360,10 +364,10 @@ app.controller("MasterCtrl",
         } else if (agg === 'counts') {
           $scope.data = data;
         } else {
-          var d3data = format_data(data);
+          // var d3data = format_data(data);
           $scope.box.type = "profile";
           $scope.box.content = {
-            data: d3data,
+            data: data,
             yLabel: 'hoogte [mNAP]',
             xLabel: 'afstand [m]'
           };

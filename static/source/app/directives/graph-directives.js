@@ -211,8 +211,7 @@ angular.module('graph')
       ymin: '=',
       ymax: '=',
       type: '=',
-      size: '=',
-      changeFunction: '&'
+      size: '='
     },
     restrict: 'E',
     replace: true,
@@ -436,58 +435,77 @@ angular.module('graph')
   .directive('line', function () {
     var link  = function (scope, element, attrs, graphCtrl) {
 
-       graphCtrl.callChart = function (data, element, legend) {
+       graphCtrl.callChart = function (timeseries, element, legend) {
         var graph = graphCtrl.createCanvas(legend, element);
         var svg = graph.svg,
             height = graph.height,
             width = graph.width,
             margin = graph.margin;
 
-        var y = graphCtrl.maxMin(data, 0);
+        if (timeseries.hasOwnProperty('instants')){
+          // This to not break profiles etc
+          var data = timeseries.instants;
+          var header = timeseries.series;
+          var keys = {x:1, y:0};
+        } else {
+          var data = timeseries;
+          var keys = {x:0, y:1};
+          var header = [{
+            name: "distance",
+            quantity: null,
+            type: "float",
+            unit: "m"
+          }, {
+            name: "height",
+            quantity: null,
+            type: "float",
+            unit: "m"
+          }]
+        }
 
+        var y = graphCtrl.maxMin(data, keys.y);
         y.scale = graphCtrl.scale(y.min, y.max, {
           range: [height, 0]
         });
 
         var line = d3.svg.line()
           .y(function (d) {
-            return y.scale(d[0]);
+            return y.scale(d[keys.y]);
           });
-        line.defined(function(d) { return !isNaN(d[0]); });
+        line.defined(function(d) { return !isNaN(parseFloat(d[keys.y])); });
 
-        // if (data[0].hasOwnProperty('date')) {
-          var x = graphCtrl.maxMin(data, 1);
-          if (legend.type === "kpi") {
-            x.scale = graphCtrl.scale(x.min, x.max, {
-              range: [0, width],
-              type: 'kpi',
-              data: data
-            });
-            line.x(function (d) {
-              return x.scale(Date.parse(d[1]));
-            }); 
-          } else {
+        if (header[keys.x].quantity == 'time') {
+          var x = graphCtrl.maxMin(data, keys.x);
+          // if (legend.type === "kpi") {
+          //   x.scale = graphCtrl.scale(x.min, x.max, {
+          //     range: [0, width],
+          //     type: 'kpi',
+          //     data: data
+          //   });
+          //   line.x(function (d) {
+          //     return x.scale(Date.parse(d[keys.x]));
+          //   }); 
+          // } else {
             x.scale = graphCtrl.scale(x.min, x.max, {
               range: [0, width],
               type: 'time'
             });
             x.tickFormat = "";
             line.x(function (d) {
-              return x.scale(d[1]);
+              return x.scale(d[keys.x]);
             });            
-          }
-        // } else if (data[0].hasOwnProperty('distance')) {
-        //   var x = graphCtrl.maxMin(data, 'distance');
-        //   x.scale = graphCtrl.scale(x.min, x.max, {
-        //     range: [0, width],
-        //   });
-        //   x.tickFormat = d3.format(".2");
-        //   line.x(function (d) {
-        //     // NOTE: change api
-        //     return x.scale(d.distance);
-        //   });
+          // }
+        } else {
+          var x = graphCtrl.maxMin(data, keys.x);
+            x.scale = graphCtrl.scale(x.min, x.max, {
+              range: [0, width]
+            });
+            x.tickFormat = "";
+            line.x(function (d) {
+              return x.scale(d[keys.x]);
+            });   
 
-        // }
+        }
 
         // prevent errors
         if (x === undefined) { return; }
@@ -521,13 +539,14 @@ angular.module('graph')
           svg.select(".line")
               .attr("class", "line")
               .attr("d", line);
+          if (header[keys.x].quantity == 'time') {
             scope.$apply(function () {
-              console.log(x.scale.domain()[1].getTime());
-              // scope.changeFunction(x.scale.domain()[0].getTime(), x.scale.domain()[1].getTime());
               scope.$parent.box.content.temporalExtent.start = x.scale.domain()[0].getTime();
               scope.$parent.box.content.temporalExtent.end = x.scale.domain()[1].getTime();
               scope.$parent.box.content.temporalExtent.changedZoom = !scope.$parent.box.content.temporalExtent.changedZoom;
             }); 
+          }
+            
         };
 
         var zoom = d3.behavior.zoom()
@@ -560,37 +579,8 @@ angular.module('graph')
         chartBody.append("svg:path")
           .datum(data)
           .attr("class","line")
-          .attr("d", line)
-
-
-      // var circleTooltip = function () {
-      //   svg.selectAll("circle").remove();
-      //   svg.selectAll("text.d3tooltip").remove();
-      //   svg.selectAll("circle")
-      //     .data(data)
-      //     .enter()
-      //     .append("circle")
-      //       .attr("class","tipcircle")
-      //       .attr("cx", function(d,i){return x(d.date)})
-      //       .attr("cy",function(d,i){return y(d.value)})
-      //       .attr("r",12)
-      //       .style("stroke", "rgba(255,255,255,0)")//1e-6
-      //       .style("fill", "rgba(255,255,255,0)")//1e-6
-      //       .on("mouseenter", function(d){
-      //         var format = d3.format(".2f")
-      //         d3.select(this.parentElement)
-      //           .append("text")
-      //           .attr("x", x(d.date))
-      //           .attr("y", y(d.value))
-      //           .attr("class", "d3tooltip")
-      //           .text(format(d.value))
-      //       })
-      //       .on("mouseout", function (d) {
-      //         d3.select(this.parentElement).select("text.d3tooltip").remove();
-      //       });
-      // };
-      // circleTooltip();
-            
+          .attr("d", line);
+         
       };
 
     };
