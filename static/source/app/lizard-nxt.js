@@ -116,7 +116,6 @@ app.controller("MasterCtrl",
     } else {
       $scope.tools.active = name;
     }
-    console.log($scope.tools.active);
     // NOTE: ugly hack, record if tool is time aware
     if ($scope.tools.active === "alerts" ||
         $scope.tools.active === "sewerage") {
@@ -155,7 +154,6 @@ app.controller("MasterCtrl",
   };
 
   $scope.threediTool = function () {
-      //console.log($scope.box.type);
       $scope.box.type = 'threedi';
       $scope.box.content = 'bladiblabla';
       $scope.tools.threedi.enabled = !$scope.tools.threedi.enabled;
@@ -226,7 +224,6 @@ app.controller("MasterCtrl",
   };
 
   $scope.$watch('selected_timeseries.id', function () {
-    console.log($scope.selected_timeseries);
     if ($scope.selected_timeseries !== undefined){
       $scope.data = $scope.format_data($scope.selected_timeseries.events);
       // dit kan zeker nog mooier
@@ -405,7 +402,6 @@ app.controller("MasterCtrl",
         $scope.timeline.data[name].active = false;
       } else { $scope.timeline.data[name].active = true; }
       $scope.timeline.changed = !$scope.timeline.changed;
-      console.log("Timeline changed");
     } else {
       getEvents(name);
     }
@@ -426,7 +422,6 @@ app.controller("MasterCtrl",
     var url = (name == 'Twitter') ? '/static/data/twit.json': 'static/data/melding.json';
     $http.get(url)
     .success(function (response) {
-      console.log(response);
       $scope.timeline.data[name] = response.results[0];
       $scope.timeline.data[name].count = response.count;
       $scope.timeline.data[name].active = true;

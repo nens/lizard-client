@@ -35,31 +35,9 @@ app.directive('vectorlayer', function () {
             return scale(d.event_sub_type);
           })
           .on('click', function (d) {
-            console.log("clicked: ", d, "Box content: ", scope.box.content.event);
             scope.box.content.event = d;
             scope.$digest();
           });
-/*
-        // click handler
-        circles.on("mouseenter", function (d, i) {
-          L.DomEvent.stopPropagation(d3.event);
-
-          // NOTE: kill hard coded dependencies
-          // do we actually want a popup?
-          var data = {
-            klacht: d.properties.KLACHT,
-            category: d.properties.CATEGORIE,
-            intakestatus: d.properties.INTAKESTAT
-          };
-
-          var t = "<h3>" + data.category + "</h3>";
-
-          var popup = L.popup()
-            .setLatLng([d.geometry.coordinates[1], d.geometry.coordinates[0]])
-            .setContent(t)
-            .openOn(scope.map);
-          window.setTimeout(function () {scope.map.closePopup();}, 1500);
-        });*/
       }
 
       /*
@@ -88,30 +66,8 @@ app.directive('vectorlayer', function () {
           });
         var selected = d3.selectAll(".circle.selected");
         selected.classed("hidden", false);
-        console.log(selected);
         selected.call(countEvents, 'alerts');
       };
-
-      /**
-       * Update sewerage classes based on current temporal extent
-       * NOTE: temporary function until we have a dedicated 
-       * events mechanism
-       */
-      var updateSewerage = function () {
-        // loop over sewerages to get id of sewerage over threshold
-        d3.selectAll(".pumpstation_sewerage")
-          .classed("exceeded", false);
-        var s = [scope.timeline.temporalExtent.start,
-                 scope.timeline.temporalExtent.end];
-        for (var i = 0; i < scope.formatted_geojsondata.length; i++) {
-          var sewerage = scope.formatted_geojsondata[i];
-          var time = +sewerage.date;
-          if (s[0] <= time && time <= s[1]) {
-            d3.select("#pumpstation" + sewerage.value)
-              .classed("exceeded", true);
-          }
-        }
-      }
 
       // watch for change in temporalExtent, change visibility of
       // alerts accordingly
@@ -150,58 +106,27 @@ app.directive('vectorlayer', function () {
         scope.box.content[type].count = ctr;
         //NOTE: ugly hack
         //scope.box.content[type].content_agg = ctr / num_citizens / timeInterval;
-        console.log(scope.box.content);
       };
       
       // Watch button click, toggle event layer
+      var eventLayers = [];
       scope.$watch('timeline.changed', function () {
+        // Fresh start
+        angular.forEach(eventLayers, function(layer) {
+          mapCtrl.removeLayer(layer);
+        });
         for (var eventType in scope.timeline.data) {
-          eventLayer = L.pointsLayer(scope.timeline.data[eventType], {
+          console.log(eventType, scope.timeline.data);
+          if (scope.timeline.data[eventType].active) {
+            eventLayer = L.pointsLayer(scope.timeline.data[eventType], {
                 applyStyle: circle_style
               });
-          mapCtrl.addLayer(eventLayer);
-          console.log("Adding event layer: ", eventType, ": ", eventLayer);
-          drawTimeEvents();
+            mapCtrl.addLayer(eventLayer);
+            eventLayers.push(eventLayer);
+            drawTimeEvents();
+          }
         }
       });
-
-      /*
-        if (scope.tools.active === "events") {
-          
-
-          // NOTE: remove this and make generic
-          // removing sewerage things ..
-
-
-
-          scope.box.sewerage = undefined;
-          for (var mapLayer in scope.mapState.layers) {
-            var layer = scope.mapState.layers[mapLayer];
-            if (layer.name === 'Riolering') {
-              layer.active = false;
-              scope.mapState.changed = Date.now();
-            }
-          }
-
-          if (scope.kpi[0].pi[0].loaded === undefined || scope.kpi[0].pi[0].loaded === false) {
-            if (scope.kpi[0].pi[0].data){
-            }
-            eventLayer = L.pointsLayer(scope.kpi[0].pi[0].data, {
-                applyStyle: circle_style
-              });  
-            mapCtrl.addLayer(eventLayer);
-            drawTimeEvents();
-            scope.kpi[0].pi[0].loaded = true;
-          }
-
-          d3.selectAll(".circle.selected").classed("hidden", false);
-          // set timeline data 
-          scope.timeline.data.kpi = scope.kpi[0].pi[0].data.features;
-        } else {
-          d3.selectAll(".circle").classed("hidden", true);
-          scope.timeline.enabled = false;
-        }
-      });*/
     }
   };
 });

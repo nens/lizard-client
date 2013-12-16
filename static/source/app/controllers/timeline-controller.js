@@ -36,7 +36,6 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource) {
           $scope.timeline.data[key].currentCount++;
         }
       }
-      console.log("Count: ", $scope.timeline.data[key].count, $scope.timeline.data[key].currentCount);
     }
   };
 

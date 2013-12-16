@@ -79,6 +79,12 @@
                 </li>
               </ul>
               </li>
+              <!-- Temporary item to enable events -->
+              <li id="events" class="nav-header" ng-class="{active: timeline.enabled};" ng-click="toggleTimelineEvents()">
+              {% trans "Events" %}
+              </li>
+              <ul class="list-group">
+              </ul>
             </ul>
           </div>
           <div id="ribbon">
@@ -103,14 +109,6 @@
         ng-class="{show: timeline.enabled}">
         </timeline>
 
-      <div id="ribbon" style="bottom: 200px;
-                              left: 0;
-                              top: 721px;
-                              -webkit-transform: rotate(90deg);">
-        <div class="arrow-up" ng-click="toggleTimelineEvents()" title="{% trans 'Map layers' %}">
-        </div>
-        <div class="arrow-down" ng-click="toggleTimelineEvents()" title="{% trans 'Map layers' %}"><i class="fa fa-twitter" style="z-index: 9999;"></i>
-        </div>
       </div>
 
     {% block box_awesome %}{% endblock %}

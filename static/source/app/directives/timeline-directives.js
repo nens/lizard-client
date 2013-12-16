@@ -78,7 +78,6 @@ app.controller('TimelineDirCtrl', function ($scope){
         var scale = d3.time.scale()
             .domain([minMax.min, minMax.max])
             .range([options.range[0], options.range[1]]);
-        console.log("scale: ", minMax.min, minMax.max);
       }
       else {
         if (options.scale === "ordinal") {
@@ -195,7 +194,6 @@ app.controller('TimelineDirCtrl', function ($scope){
             .attr("r", 5)
             .attr("opacity", 1)
             .on('click', function (d) {
-              console.log("clicked: ", d, "Box content: ", $scope.box.content.event);
               $scope.box.content.event = d;
               $scope.$digest();
             });
@@ -392,7 +390,6 @@ app.controller('TimelineDirCtrl', function ($scope){
       //Empty the current timeline
       d3.select(element[0]).select("#timeline-svg-wrapper").select("svg").remove()
       scope.timeline.height = 30 + timelineKeys.length * 30;
-      console.log("Heigh:", scope.timeline.height, "length: ", timelineKeys.length);
       var data = [];
       for (var i = 0; i < timelineKeys.length; i++) {
         var id = timelineKeys[i];
@@ -523,7 +520,6 @@ app.controller('TimelineDirCtrl', function ($scope){
           if (newVal === oldVal) {
             // do nothing
           } else if (newVal === 'zoom') {
-            //console.log(chart.svg)
             timelineCtrl.removeBrush(chart.svg);
             timelineCtrl.zoom = d3.behavior.zoom()
               .x(chart.x.scale)
