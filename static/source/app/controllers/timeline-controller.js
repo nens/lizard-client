@@ -59,6 +59,15 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource) {
     }
   };
 
+  $scope.timeline.zoomTo = function (geometry) {
+    var panZoom = {
+      lat: geometry.coordinates[1],
+      lng: geometry.coordinates[0],
+      zoom: 13};
+    $scope.panZoom = panZoom;
+    $scope.mapState.moved = Date.now();
+  };
+
   $scope.timeline.zoom = {
     in: function () {
       $scope.timeline.zoom.changed = 'in';

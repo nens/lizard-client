@@ -130,6 +130,7 @@ app.controller("MasterCtrl",
     layergroups: CabinetService.layergroups,
     layers: CabinetService.layers,
     baselayers: CabinetService.baselayers,
+    eventTypes: CabinetService.eventTypes,
     activeBaselayer: 3,
     changed: Date.now(),
     moved: Date.now(),
@@ -360,33 +361,14 @@ app.controller("MasterCtrl",
   */
   $scope.toggleTimelineEvents = function () {
     $scope.box.content.eventTypes = [];
-    //Temporary mock it till the api is implemented
-/*    CabinetService.eventTypes.get({},
-      function (response) {
-        $scope.box.eventTypes = response;
-      }
-    );*/
-    var response = {
-      "count": 2,
-      "next": null, 
-      "previous": null,
-      "results": [
-        {
-        "name": "Twitter",
-        "event_count": 4
-        },
-        {
-        "name": "Meldingen",
-        "event_count": 4
-        }
-      ]
-    };
     $scope.timeline.enabled = !$scope.timeline.enabled;
     if ($scope.timeline.enabled) {
       $scope.tools.active =  'events';
       $scope.box.content.eventTypes = response.results;
+      $scope.box.type = 'aggregate';
     } else {
       $scope.tools.active =  'none';
+      $scope.box.type = 'empty';
       $scope.box.content.eventTypes = undefined;
       angular.forEach($scope.timeline.data, function (timeline) {
         timeline.active = false;

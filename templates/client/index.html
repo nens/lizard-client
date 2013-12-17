@@ -71,11 +71,13 @@
               </ul>
               </li>
               <!-- Temporary item to enable events -->
-              <li id="events" class="nav-header" ng-class="{active: timeline.enabled};" ng-click="toggleTimelineEvents()">
+              <li id="events" class="nav-header">
               {% trans "Events" %}
-              </li>
               <ul class="list-group">
+                <li ng-repeat="event in mapState.eventTypes">
+                <label class="ng-class: {active: timeline.data[event.name].active};" ng-bind="event.name" ng-click="timeline.toggleEvents(event.name)"></label>
               </ul>
+              </li>
             </ul>
           </div>
           <div id="ribbon">

@@ -6,6 +6,16 @@ services.service("CabinetService", ["$resource",
   var layergroups = window.layerGroups;
   var layers = window.layers;
   var baselayers = window.baseLayers;
+  var eventTypes = [
+            {
+            "name": "Twitter",
+            "event_count": 4
+            },
+            {
+            "name": "Meldingen",
+            "event_count": 4
+            }
+          ];
 
   var termSearchResource,
       bboxSearchResource,
@@ -33,7 +43,6 @@ services.service("CabinetService", ["$resource",
     start: '@start',
     end: '@end'
   });
-  eventTypesResource = $resource('/api/v1/event_types', {isArray: true});
   eventsResource = $resource('api/v1/events/', {
     type: '@event_type',
     sub_type: '@event_subtype',
@@ -51,13 +60,13 @@ services.service("CabinetService", ["$resource",
     layergroups: layergroups,
     layers: layers,
     baselayers: baselayers,
+    eventTypes: eventTypes,
     termSearch: termSearchResource,
     bboxSearch: bboxSearchResource,
     geocode: geocodeResource,
     reverseGeocode: reverseGeocodeResource,
     timeseries: timeseriesResource,
     timeseriesLocationObject: timeseriesLocationObjectResource,
-    eventTypes: eventTypesResource,
     events: eventsResource,
     panZoom: null
   };

@@ -142,6 +142,7 @@ app
       };
 
       this.panZoomTo = function (panZoom) {
+        console.log("PanZoom: ", panZoom);
         $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
       };
 
@@ -259,17 +260,30 @@ app
       });
 
       scope.map.on('move', function () {
-        scope.$apply(function () {
+        // NOTE: Check whether a $digest is already happening before using apply
+        if(!scope.$$phase) {
+          scope.$apply(function () {
+            scope.mapState.moved = Date.now();
+            scope.mapState.bounds = scope.map.getBounds();
+            // scope.mapState.geom_wkt = "POLYGON(("
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
+            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
+            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
+            //     + "))";
+          });  
+        } else {
           scope.mapState.moved = Date.now();
-          scope.mapState.bounds = scope.map.getBounds();
-          // scope.mapState.geom_wkt = "POLYGON(("
-          //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
-          //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
-          //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
-          //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
-          //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
-          //     + "))";
-        });
+            scope.mapState.bounds = scope.map.getBounds();
+            // scope.mapState.geom_wkt = "POLYGON(("
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
+            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
+            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
+            //     + "))";
+        }
       });
 
       scope.map.on('dragend', function () {

@@ -12,10 +12,16 @@
   </table>
 </div>
 
-<div class="card" ng-class="{hidden: box.content.eventValue == undefined}">
-  <div class="card-title">
-    <i class="icon-certificate"></i>
-    <span><% box.content.eventValue.value %></span>
+<div class="card" ng-class="{hidden: box.content.eventValue == undefined}"ng-switch="box.content.eventValue.event_sub_type">
+  <div class="card-title" ng-switch-when="regen">
+    <i class="icon-twitter"></i><span class="card-title">&nbsp;#<% box.content.eventValue.event_sub_type %></span>
+    <i class="zoomto-icon icon-screenshot pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
+    <p><% box.content.eventValue.timestamp | date:'d, M, y H:mm:ss' %></p>
+    <p><% box.content.eventValue.value %></p>
+  </div>
+  <div class="card-title" ng-switch-default>
+    <i class="icon-exclamation-sign"></i>
+    <span><% box.content.eventValue %></span>
   </div>
 </div>
 
