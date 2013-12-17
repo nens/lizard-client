@@ -40,7 +40,7 @@
           <div class="layer-switcher slide-left">
             <ul class="nav">
               <li class="nav-header">
-              {% trans "Achtergrond" %}
+              {% trans "Basis" %}
               <ul class="list-group">
                 <li ng-repeat="layer in mapState.baselayers | orderBy:'order':true">
                 <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
@@ -51,15 +51,6 @@
               </li>
               <li class="nav-header">
               {% trans "Thema" %}
-              <ul class="list-group">
-                <li ng-repeat="layergroup in mapState.layergroups | orderBy:'order':true" >
-                <input id="<%layergroup.id%>-layergroup" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="toggleLayerGroup(layergroup)">
-                <label class="ng-class: {active: layergroup.active};" for="<% layergroup.id %>-layergroup" ng-bind="layergroup.name"></label>
-                </li>
-              </ul>
-              </li>
-              <li class="nav-header">
-              {% trans "Kaartlagen" %}
               <ul class="list-group">
                 <li ng-repeat="layer in mapState.layers | orderBy:'order':true">
                 <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
@@ -105,8 +96,7 @@
          </map>
       </div>
         <timeline 
-        class="navbar timeline navbar-fixed-bottom" 
-        ng-class="{show: timeline.enabled}">
+        class="navbar timeline navbar-fixed-bottom show">
         </timeline>
 
       </div>

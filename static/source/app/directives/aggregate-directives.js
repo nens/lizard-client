@@ -35,8 +35,8 @@ app.directive('vectorlayer', function () {
             return scale(d.event_sub_type);
           })
           .on('click', function (d) {
-            scope.box.content.event = d;
-            scope.$digest();
+            scope.box.content.eventValue = d;
+            scope.$apply();
           });
       }
 
@@ -66,7 +66,6 @@ app.directive('vectorlayer', function () {
           });
         var selected = d3.selectAll(".circle.selected");
         selected.classed("hidden", false);
-        selected.call(countEvents, 'alerts');
       };
 
       // watch for change in temporalExtent, change visibility of
@@ -75,38 +74,6 @@ app.directive('vectorlayer', function () {
         drawTimeEvents();
         scope.timeline.countCurrentEvents();
       });
-
-      /*
-       * Count events in viewport; update scope with count
-       */
-      var countEvents = function (selection, type) {
-        var ctr = 0;
-        var mapBounds = scope.map.getBounds();
-        //NOTE: hard coded SRS
-        var srs = "EPSG:4326" // L.CRS.EPSG3857.code;
-        // // for rasters, also send needed statistic
-        // scope.getRasterData("pop_density", scope.mapState.geom_wkt, srs, 'sum');
-        // scope.box.pop_density = 1000;
-        // var num_citizens = scope.box.pop_density / 100000000;
-        //console.log(num_citizens);
-        // timeInterval in months
-        var timeInterval = ((scope.timeline.temporalExtent.end -
-                             scope.timeline.temporalExtent.start)
-                             // (1000 * 60 * 60 * 24 * 30)
-                             );
-        selection.each(function (d) {
-          var point = new L.LatLng(d.geometry.coordinates[1],
-                                   d.geometry.coordinates[0]);
-          // NOTE: check if we can optimise this function
-          if (mapBounds.contains(point)) {
-            ctr += 1;
-          }
-        });
-        // pass newly calculated data to scope
-        scope.box.content[type].count = ctr;
-        //NOTE: ugly hack
-        //scope.box.content[type].content_agg = ctr / num_citizens / timeInterval;
-      };
       
       // Watch button click, toggle event layer
       var eventLayers = [];

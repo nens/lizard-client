@@ -194,8 +194,9 @@ app.controller('TimelineDirCtrl', function ($scope){
             .attr("r", 5)
             .attr("opacity", 1)
             .on('click', function (d) {
-              $scope.box.content.event = d;
-              $scope.$digest();
+              console.log("clikert!");
+              $scope.box.content.eventValue = d;
+              $scope.$apply();
             });
     };
 
@@ -377,16 +378,18 @@ app.controller('TimelineDirCtrl', function ($scope){
     var timelineKeys = [];
 
     scope.$watch('timeline.changed', function () {
-      if (scope.timeline.hidden) {
-        scope.timeline.toggleHideTimeline();
-      } else {
-        scope.timeline.hidden = false;
-      }
+      var oldLength = timelineKeys.length;
       timelineKeys = [];
       for (var key in scope.timeline.data) {
         if (scope.timeline.data[key].active) {
           timelineKeys.push(key);
         }
+      }
+      var newLength = timelineKeys.length;
+      if (scope.timeline.hidden && (newLength > oldLength)) {
+        scope.timeline.toggleHideTimeline();
+      } else {
+        scope.timeline.hidden = false;
       }
       drawTimeline(timelineKeys);
     });
