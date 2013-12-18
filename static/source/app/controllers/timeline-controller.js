@@ -25,12 +25,30 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource) {
         //$scope.selected_timeseries = undefined;
       //}
     //});
-
-
   });
 
-  $scope.timeline.toggleTimeline = function () {
-    $scope.timeline.open = !$scope.timeline.open;
+  $scope.timeline.countCurrentEvents = function () {
+    for (var key in $scope.timeline.data) {
+      $scope.timeline.data[key].currentCount = 0;
+      for (var j = 0; j < $scope.timeline.data[key].features.length; j++) {
+        var feature = $scope.timeline.data[key].features[j];
+        if (feature.inTempExtent && feature.inSpatExtent) {
+          $scope.timeline.data[key].currentCount++;
+        }
+      }
+    }
+  };
+
+  $scope.timeline.toggleHideTimeline = function () {
+    if ($scope.timeline.hidden) {
+      document.getElementById('timeline').removeAttribute('style');
+      $scope.timeline.hidden = false;
+    } else {
+      console.log('-' + $scope.timeline.height + 'px');
+      var lower = ($scope.timeline.height > 30) ? $scope.timeline.height + 5: 0;
+      document.getElementById('timeline').style.bottom = '-' + lower + 'px';
+      $scope.timeline.hidden = true;
+    }        
   };
 
   $scope.timeline.toggleTool = function () {
@@ -39,6 +57,15 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource) {
     } else {
       $scope.timeline.tool = 'zoom';
     }
+  };
+
+  $scope.timeline.zoomTo = function (geometry) {
+    var panZoom = {
+      lat: geometry.coordinates[1],
+      lng: geometry.coordinates[0],
+      zoom: 13};
+    $scope.panZoom = panZoom;
+    $scope.mapState.moved = Date.now();
   };
 
   $scope.timeline.zoom = {

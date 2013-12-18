@@ -40,7 +40,7 @@
           <div class="layer-switcher slide-left">
             <ul class="nav">
               <li class="nav-header">
-              {% trans "Achtergrond" %}
+              {% trans "Basis" %}
               <ul class="list-group">
                 <li ng-repeat="layer in mapState.baselayers | orderBy:'order':true">
                 <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
@@ -51,15 +51,6 @@
               </li>
               <li class="nav-header">
               {% trans "Thema" %}
-              <ul class="list-group">
-                <li ng-repeat="layergroup in mapState.layergroups | orderBy:'order':true" >
-                <input id="<%layergroup.id%>-layergroup" class="hide" type="checkbox" ng-model="layergroup.active" ng-change="toggleLayerGroup(layergroup)">
-                <label class="ng-class: {active: layergroup.active};" for="<% layergroup.id %>-layergroup" ng-bind="layergroup.name"></label>
-                </li>
-              </ul>
-              </li>
-              <li class="nav-header">
-              {% trans "Kaartlagen" %}
               <ul class="list-group">
                 <li ng-repeat="layer in mapState.layers | orderBy:'order':true">
                 <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
@@ -80,6 +71,14 @@
                 <li ng-click="toggleRain()" class="clickable"><label>Regen</label> </li>
               </ul>
               </li>
+              <!-- Temporary item to enable events -->
+              <li id="events" class="nav-header">
+              {% trans "Events" %}
+              <ul class="list-group">
+                <li ng-repeat="event in mapState.eventTypes">
+                <label class="ng-class: {active: timeline.data[event.name].active};" ng-bind="event.name" ng-click="timeline.toggleEvents(event.name)"></label>
+              </ul>
+              </li>
             </ul>
           </div>
           <div id="ribbon">
@@ -90,7 +89,7 @@
           </div>
         </div>
         <map layer-switch 
-             move-end pan-zoom="panZoom"
+             pan-zoom="panZoom"
              layers="mapState.layers"
              rasterprofile="disabled"
              locate="locate"
@@ -102,11 +101,10 @@
          </map>
       </div>
         <timeline 
-        class="navbar timeline navbar-fixed-bottom" 
-        ng-class="{hidden: !timeline.enabled}">
+        class="navbar timeline navbar-fixed-bottom show">
         </timeline>
-    <!--<timeline class="navbar timeline navbar-fixed-bottom" ng-class="{hidden: timeline.enabled}"></timeline>-->
 
+      </div>
 
     {% block box_awesome %}{% endblock %}
     <div class="container">

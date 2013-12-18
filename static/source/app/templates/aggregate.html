@@ -1,25 +1,30 @@
-<div class="card">
+<div class="card" ng-class="{hidden: box.content.eventTypes == undefined}">
   <div class="card-title">
-    <i class="fa fa-certificate"></i>
+    <i class="icon-certificate"></i>
     <span>Performance indicators</span>
   </div>
   <table class="left">
-    <tr>
-      <td><a ng-click="toggleTool('alerts')" class="clickable" title="Toggle meldingen">Meldingen</a></td>
-      <td>&nbsp;<% box.content.alerts.count %></td>
-      <td>
-        <!--<span class="label" ng-class="{'label-danger': box.content_agg >= 5,-->
-                                       <!--'label-success': box.content_agg < 5}">-->
-          <!--&nbsp;<% box.content.alerts.content_agg | number:0 %>-->
-        </span>
-      </td>
+    <tr ng-repeat="type in box.content.eventTypes">
+      <td><a ng-click="timeline.toggleEvents(type.name)" class="clickable" title="<%'Toggle ' + type.name %>"><% type.name %></a></td>
+      <td  ng-if="timeline.data[type.name].active" ng-bind="timeline.data[type.name].currentCount"></td>
+      <td ng-if="timeline.data[type.name].active">&nbsp;van&nbsp;de&nbsp;<% timeline.data[type.name].count %> </td>
     </tr>
-<!--     <tr>
-      <td><a ng-click="toggleTool('sewerage')" class="clickable" title="Toggle rioolvreemd water">Lozingen</a></td>
-      <td>&nbsp;<% box.content.isw.count %></td>
-    </tr> -->
   </table>
 </div>
+
+<div class="card" ng-class="{hidden: box.content.eventValue == undefined}"ng-switch="box.content.eventValue.event_sub_type">
+  <div class="card-title" ng-switch-when="regen">
+    <i class="icon-twitter"></i><span class="card-title">&nbsp;#<% box.content.eventValue.event_sub_type %></span>
+    <i class="zoomto-icon icon-screenshot pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
+    <p><% box.content.eventValue.timestamp | date:'d, M, y H:mm:ss' %></p>
+    <p><% box.content.eventValue.value %></p>
+  </div>
+  <div class="card-title" ng-switch-default>
+    <i class="icon-exclamation-sign"></i>
+    <span><% box.content.eventValue %></span>
+  </div>
+</div>
+
 
 <div class="card" ng-class="{hidden: box.content.sewerage == undefined}">
   <div class="card-title">

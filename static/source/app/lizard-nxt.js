@@ -116,7 +116,6 @@ app.controller("MasterCtrl",
     } else {
       $scope.tools.active = name;
     }
-    console.log($scope.tools.active);
     // NOTE: ugly hack, record if tool is time aware
     if ($scope.tools.active === "alerts" ||
         $scope.tools.active === "sewerage") {
@@ -131,6 +130,7 @@ app.controller("MasterCtrl",
     layergroups: CabinetService.layergroups,
     layers: CabinetService.layers,
     baselayers: CabinetService.baselayers,
+    eventTypes: CabinetService.eventTypes,
     activeBaselayer: 3,
     changed: Date.now(),
     moved: Date.now(),
@@ -150,12 +150,11 @@ app.controller("MasterCtrl",
     if (follow_3di) {
       // ugly way to make it zoom to 3Di layer when activated
       $scope.layerToZoomTo = layer;
-      $scope.zoomToLayer = !$scope.zoomToLayer;    
+      $scope.zoomToLayer = !$scope.zoomToLayer;
     }
   };
 
   $scope.threediTool = function () {
-      //console.log($scope.box.type);
       $scope.box.type = 'threedi';
       $scope.box.content = 'bladiblabla'; // maybe his should change ? :)
       $scope.tools.threedi.enabled = !$scope.tools.threedi.enabled;
@@ -325,12 +324,12 @@ app.controller("MasterCtrl",
   
   // HACK: get alert (meldingen) data from geojson
   // NOTE: this should come from events in HBASE
-  var alerts = '/static/data/klachten_purmerend_min.geojson';
-  $http.get(alerts)
-    .success(function (data) {
-      $scope.kpi[0].pi[0].data = data;  
-      //console.log("event data", data);
-    });
+  // var alerts = '/static/data/klachten_purmerend_min.geojson';
+  // $http.get(alerts)
+  //   .success(function (data) {
+  //     $scope.kpi[0].pi[0].data = data;  
+  //     //console.log("event data", data);
+  //   });
   // END HACK
 
   /*
@@ -396,17 +395,72 @@ app.controller("MasterCtrl",
    */
   $scope.timeline = {
     temporalExtent: {
-      start: 1382359037278,
+      start: Date.now() - 31556900000, // 1 year in ms
       end: Date.now(),
       changedZoom: true,
       at: Date.now() - this.start
     },
     tool: 'zoom',
     canceler: $q.defer(),
-    enabled: false
+    enabled: false,
+    data: {}
   };
 // END Temporal extent model
 
+  /**
+  * Event enabler
+  */
+  $scope.toggleTimelineEvents = function () {
+    $scope.box.content.eventTypes = [];
+    $scope.timeline.enabled = !$scope.timeline.enabled;
+    if ($scope.timeline.enabled) {
+      $scope.tools.active =  'events';
+      $scope.box.content.eventTypes = response.results;
+      $scope.box.type = 'aggregate';
+    } else {
+      $scope.tools.active =  'none';
+      $scope.box.type = 'empty';
+      $scope.box.content.eventTypes = undefined;
+      angular.forEach($scope.timeline.data, function (timeline) {
+        timeline.active = false;
+      });
+      $scope.timeline.changed = !$scope.timeline.changed;
+      document.getElementById('timeline').removeAttribute('style');
+    }      
+  };
+
+  $scope.timeline.toggleEvents = function (name) {
+    if ($scope.timeline.data[name]) {
+      if ($scope.timeline.data[name].active) {
+        $scope.timeline.data[name].active = false;
+      } else { $scope.timeline.data[name].active = true; }
+      $scope.timeline.changed = !$scope.timeline.changed;
+    } else {
+      getEvents(name);
+    }
+  };
+  
+  var getEvents = function (name) {
+    $scope.timeline.data[name] = [];
+/*    CabinetService.events.get({
+      type: name,
+      start: $scope.timeline.temporalExtent.start,
+      end: $scope.timeline.temporalExtent.end,
+      extent: $scope.mapState.bounds
+      }, function (response) {
+        $scope.timeline.data[name] = response.results;
+        $scope.timeline.data[name].count = response.count;
+      }
+    );*/
+    var url = (name == 'Twitter') ? '/static/data/twit.json': 'static/data/melding.json';
+    $http.get(url)
+    .success(function (response) {
+      $scope.timeline.data[name] = response.results[0];
+      $scope.timeline.data[name].count = response.count;
+      $scope.timeline.data[name].active = true;
+      $scope.timeline.changed = !$scope.timeline.changed;
+    });
+  };
 
 /**
 * keypress stuff
@@ -465,13 +519,13 @@ app.controller("MasterCtrl",
       radarImages.push(imageUrlBase + date);
     }
 
-
   $scope.animation = {
     at: Date.now(),
     playing: false,
     enabled: false,
     frame: radarImages,
-    currentFrame: 0
+    currentFrame: 0,
+    currentDate: Date.parse(dates[0])
   };
 
   //tmp
@@ -480,9 +534,22 @@ app.controller("MasterCtrl",
     if ($scope.animation.enabled) {
       $scope.animationDriver();
       $scope.animation.playing = true;
+      // $scope.timeline.temporalExtent.start = Date.parse(dates[0]);
+      // $scope.timeline.temporalExtent.end = Date.parse(dates[dates.length-1]);
     } else {
-      // $scope.animation.enabled = false;
+      $scope.animation.enabled = false;
       $scope.animation.playing = false;
+    }
+  };
+
+  $scope.toggleRainPlay = function (toggle) {
+    if ($scope.animation.enabled) {
+      if ($scope.animation.playing || toggle == "off") {
+        $scope.animation.playing = false;
+      } else {
+        $scope.animationDriver();
+        $scope.animation.playing = true;      
+      }
     }
   };
 
@@ -494,6 +561,7 @@ app.controller("MasterCtrl",
   $scope.step =  function (timestamp) {
     $scope.$apply(function () {
       $scope.animation.currentFrame++;
+      $scope.animation.currentDate = Date.parse(dates[$scope.animation.currentFrame]);
     });
 
     progress = timestamp - start;    
@@ -503,7 +571,7 @@ app.controller("MasterCtrl",
     if ($scope.animation.playing) {
       setTimeout(function () {
         requestAnimationFrame($scope.step);
-      }, 50);
+      }, 100);
     }    
   }
 

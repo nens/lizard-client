@@ -198,11 +198,19 @@ html, body{
     -webkit-transition: .2s;
     transition: .2s;
     opacity: 0;
-    visibility: hidden;
     font-size: 18px;
     margin-top: 6px;
     margin-right: 40px;
 }
+
+.zoomto-icon:hover {
+    color: #c0392b;
+}
+
+.zoomto-icon:active {
+    color: #c0392b;
+}
+
 
 .visible {
     opacity: 1;
@@ -248,6 +256,17 @@ html, body{
     color: #c0392b;
     font-style: italic;
     font-size: 14px;
+    text-shadow: none;
+    margin-left: 5px;
+}
+
+#events {
+    cursor: pointer;
+}
+
+.nav-header .active {
+    color: #c0392b;
+    font-style: italic;
     text-shadow: none;
     margin-left: 5px;
 }
@@ -453,8 +472,20 @@ html, body{
 
 /*timeline stuff*/
 .timeline {
+    min-height: 0;
     background-color: #fff;
     color: #222;
+    opacity: 0.9;
+    bottom: -45px;
+    -o-transition:.3s;
+    -ms-transition:.3s;
+    -moz-transition:.3s;
+    -webkit-transition:.3s;
+    transition:.3s;
+}
+
+.timeline.show {
+    bottom: 0;
 }
 
 .timeline.closed {
@@ -468,7 +499,7 @@ html, body{
 
 .bovenbalk{
     text-transform: uppercase;
-    box-shadow: 0 4px 5px #888;
+    box-shadow: 0 3px 10px #888;
 }
 
 .indicator {
@@ -505,11 +536,15 @@ html, body{
 }
 
 .bar{
+<<<<<<< HEAD
     opacity: 0.4;
 }
 
 .selected{
     opacity:1;
+=======
+    opacity: 0.5;
+>>>>>>> f28a078de5602d11dadb2b25f786ce3f7bcd2b9a
 }
 
 .extent{
@@ -529,14 +564,11 @@ html, body{
 }
 
 .selecting circle {
-  fill-opacity: .2;
-}
-
-.selecting circle.selected {
   fill-opacity: 0.8;
-  stroke: rgb(240, 50, 60);
+  stroke-width: 10px;
   stroke: rgba(240, 50, 60, 0.6);
 }
+
 
 .resize path {
   fill: #666;
@@ -802,6 +834,11 @@ li.recommendation > a {
     vertical-align: middle;
 }
 
+.card p {
+    color: #777;
+    white-space: normal;
+}
+
 .searchbox input {
     vertical-align: middle;
     background-color: transparent;
@@ -907,3 +944,8 @@ img.leaflet-image-layer {
     image-rendering: optimize-contrast;         /* CSS3 Proposed       */
     -ms-interpolation-mode: nearest-neighbor;   /* IE8+                */
     }
+
+/* Leaflet override */
+.leaflet-container img.leaflet-image-layer {
+        max-width: none !important;
+        }

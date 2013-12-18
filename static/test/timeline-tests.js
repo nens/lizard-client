@@ -16,7 +16,47 @@ describe('Testing timeline directive', function() {
     $rootScope = _$rootScope_;
     $httpBackend = _$httpBackend_;
     $controller = $controller;
-    data = [{"geometry":{"type":"Point","coordinates":[4.9499466890,52.5101659518]},"type":"Feature","properties":{"INTAKEDATU":"2012/12/18","KLACHT":"Grondwateroverlast","CATEGORIE":"GRONDWATER","AKTIEDATUM":"2012/12/27","INTAKESTAT":"Afgehandeld","AFHANDELDA":"27-12-2012"}},{"geometry":{"type":"Point","coordinates":[4.9632302810,52.5038627021]},"type":"Feature","properties":{"INTAKEDATU":"2012/04/12","KLACHT":"Grondwateroverlast","CATEGORIE":"GRONDWATER","AKTIEDATUM":"2012/12/13","INTAKESTAT":"Afgehandeld","AFHANDELDA":"05-12-2012"}},{"geometry":{"type":"Point","coordinates":[4.9664831466,52.5222611062]},"type":"Feature","properties":{"INTAKEDATU":"2012/06/11","KLACHT":"Grondwateroverlast","CATEGORIE":"GRONDWATER","AKTIEDATUM":"2012/11/15","INTAKESTAT":"Afgehandeld","AFHANDELDA":"14-11-2012"}},{"geometry":{"type":"Point","coordinates":[4.9702891586,52.5243898404]},"type":"Feature","properties":{"INTAKEDATU":"2012/10/15","KLACHT":"Grondwateroverlast","CATEGORIE":"GRONDWATER","AKTIEDATUM":"2012/10/24","INTAKESTAT":"Afgehandeld","AFHANDELDA":"22-10-2012"}},{"geometry":{"type":"Point","coordinates":[4.9284185842,52.4928915370]},"type":"Feature","properties":{"INTAKEDATU":"2012/03/30","KLACHT":"Grondwateroverlast","CATEGORIE":"GRONDWATER","AKTIEDATUM":"2012/04/10","INTAKESTAT":"Afgehandeld","AFHANDELDA":"02-04-2012"}},{"geometry":{"type":"Point","coordinates":[4.9594677757,52.5119363436]},"type":"Feature","properties":{"INTAKEDATU":"2011/11/22","KLACHT":"Grondwateroverlast","CATEGORIE":"GRONDWATER","AKTIEDATUM":"2011/12/01","INTAKESTAT":"Afgehandeld","AFHANDELDA":"08-12-2011"}},{"geometry":{"type":"Point","coordinates":[4.9281440060,52.4927354502]},"type":"Feature","properties":{"INTAKEDATU":"2012/07/08","KLACHT":"Rioolverzakking","CATEGORIE":"PUT BOVEN/ONDER BESTRATING","AKTIEDATUM":"2012/08/16","INTAKESTAT":"Afgehandeld","AFHANDELDA":"08-08-2012"}},{"geometry":{"type":"Point","coordinates":[4.9557002060,52.5185894148]},"type":"Feature","properties":{"INTAKEDATU":"2012/11/04","KLACHT":"Rioolverzakking","CATEGORIE":"PUT BOVEN/ONDER BESTRATING","AKTIEDATUM":"2012/04/20","INTAKESTAT":"Afgehandeld","AFHANDELDA":"05-06-2012"}}];
+    data = {
+      "count": 2,
+      "next": null, 
+      "previous": null,
+      "results": [
+        {
+           "event_type": "Twitter",
+           "type":"FeatureCollection",
+           "features":[
+           {
+           "type": "Feature",
+           "event_sub_type":"regen",
+           "value_type": "ordinal",
+           "value":"Cheap\nOnbeperkt SMS+Internet 5,00\n+ 90   min 10,00\n+ 150 minuten 11,00\n+ Onbeperkt bellen 24,00\nCheapsimonly.nl \n#amsterdam #utrecht #regen",
+           "timestamp":"1381845388000",
+           "geometry":{
+              "type":"Point",
+              "coordinates":[
+                 5.64723048,
+                 51.67624188
+              ]
+           }
+        },
+        {
+           "type": "Feature",
+           "event_sub_type":"regen",
+           "value_type": "ordinal",
+           "value":"De wolken boven Nederland zijn zwart, maar het regent niet.\nDe wind waait hard, maar het is niet koud.\nEen echte herfstdag in ons mooie land",
+           "timestamp":"1381997088000",
+           "geometry":{
+              "type":"Point",
+              "coordinates":[
+                 4.8181042,
+                 52.3835859
+              ]
+           }
+        }
+      ]
+    }
+  ]
+};
     element = angular.element('<div ng-controller="MasterCtrl">'
     + '</div>');
     element = $compile(element)($rootScope);

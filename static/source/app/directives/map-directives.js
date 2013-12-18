@@ -142,6 +142,7 @@ app
       };
 
       this.panZoomTo = function (panZoom) {
+        console.log("PanZoom: ", panZoom);
         $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
       };
 
@@ -200,7 +201,9 @@ app
      * Link function for this directive
      */
     var link = function (scope, element, attrs, ctrl) {
-
+      // Leaflet global variable to speed up vector layer, 
+      // see: http://leafletjs.com/reference.html#path-canvas
+      L_PREFER_CANVAS = true;
       // instead of 'map' element here for testability
       var map = new L.map(element[0], {
           center: new L.LatLng(52.0992287, 5.5698782),
@@ -256,18 +259,31 @@ app
         }
       });
 
-      scope.map.on('moveend', function () {
-        scope.$apply(function () {
+      scope.map.on('move', function () {
+        // NOTE: Check whether a $digest is already happening before using apply
+        if(!scope.$$phase) {
+          scope.$apply(function () {
+            scope.mapState.moved = Date.now();
+            scope.mapState.bounds = scope.map.getBounds();
+            // scope.mapState.geom_wkt = "POLYGON(("
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
+            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
+            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
+            //     + "))";
+          });  
+        } else {
           scope.mapState.moved = Date.now();
-          scope.mapState.bounds = scope.map.getBounds();
-          scope.mapState.geom_wkt = "POLYGON(("
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
-              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
-              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
-              + "))";
-        });
+            scope.mapState.bounds = scope.map.getBounds();
+            // scope.mapState.geom_wkt = "POLYGON(("
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
+            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
+            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
+            //     + "))";
+        }
       });
 
       scope.map.on('dragend', function () {
@@ -404,7 +420,7 @@ app.directive('sewerage', function ($http) {
               scope.mapState.changed = Date.now();
             }
           }
-          scope.timeline.data = scope.formatted_geojsondata;
+          scope.timeline.data.sewerage = scope.formatted_geojsondata;
         } else {
           for (var mapLayer in scope.mapState.layers) {
             var layer = scope.mapState.layers[mapLayer];
@@ -520,8 +536,9 @@ app.directive('animation', function () {
         }
       });
 
-      scope.$watch('animation.currentFrame', function () {
-        if (imageOverlay !== undefined) {
+      scope.$watch('animation.currentFrame', function (newVal, oldVal) {
+        // if (newVal == oldVal) { return; }
+        if (imageOverlay != undefined) {
           imageOverlay.setUrl(scope.animation.frame[scope.animation.currentFrame]);
         }
       });
