@@ -381,10 +381,7 @@ app.controller("MasterCtrl",
   $scope.format_rastercurve = function (data) {
     var formatted = [];
     for (var i in data[0]) {
-      var datarow = {
-        distance: data[0][i],
-        value: data[1][i]
-      };
+      var datarow = [data[0][i],data[1][i]];
       formatted.push(datarow);
     }
     return formatted;
