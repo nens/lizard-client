@@ -32,20 +32,18 @@ app.controller('MapCtrl', function ($scope) {
 
   // document this function
   $scope.$watch('keyPressed', function (newVal, oldVal) {
-    if (newVal !== oldVal) {
-      if (newVal === 51) {
-        $scope.mapState.activeBaselayer = 3;
-        $scope.switchBaseLayer();
-      } else if (newVal === 52) {
-        $scope.mapState.activeBaselayer = 4;
-        $scope.switchBaseLayer();
-      } else if (newVal === 49) {
-        $scope.mapState.activeBaselayer = 1;
-        $scope.switchBaseLayer();
-      } else if (newVal === 50) {
-        $scope.mapState.activeBaselayer = 2;
-        $scope.switchBaseLayer();
-      }
+    if (newVal === 51) {
+      $scope.mapState.activeBaselayer = 3;
+      $scope.switchBaseLayer();
+    } else if (newVal === 52) {
+      $scope.mapState.activeBaselayer = 4;
+      $scope.switchBaseLayer();
+    } else if (newVal === 49) {
+      $scope.mapState.activeBaselayer = 1;
+      $scope.switchBaseLayer();
+    } else if (newVal === 50) {
+      $scope.mapState.activeBaselayer = 2;
+      $scope.switchBaseLayer();
     }
   });
 

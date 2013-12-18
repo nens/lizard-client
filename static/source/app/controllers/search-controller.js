@@ -86,4 +86,10 @@ app.controller('SearchCtrl', ['$scope', 'CabinetService', function ($scope, Cabi
     // Perhaps bring down the number of controllers ?
     $scope.$parent.$parent.$parent.selected_timeseries = $scope.selected;
   });
+
+  $scope.$watch('keyPressed', function (newVal) {
+    if (newVal === 13 && $scope.keyTarget.id === "searchboxinput") {
+      $scope.search();
+    }
+  });
 }]);;

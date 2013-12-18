@@ -466,9 +466,15 @@ app.controller("MasterCtrl",
   // If escape is pressed close box
   $scope.keyPress = function ($event) {
     // watches can be placed in corresponding ctrls. as in MapCtrl
+    if ($event.target.nodeName === "INPUT" && 
+      ($event.which !== 27 && $event.which !== 13)) {
+     return; 
+   }
     $scope.keyPressed = $event.which;
+    $scope.keyTarget = $event.target;
     if ($event.which === 27) {
       $scope.box.type = 'empty';
+      $scope.box.empty = null;
     }
 
   };
@@ -555,10 +561,15 @@ app.controller("MasterCtrl",
   var finalFrame = radarImages.length- 1;
   var progress;
 
+  $scope.$watch('animation.currentFrame', function (newVal, oldVal) {
+    if (newVal === oldVal) { return;}
+    $scope.animation.currentDate = Date.parse(dates[$scope.animation.currentFrame]);
+
+  });
+
   $scope.step =  function (timestamp) {
     $scope.$apply(function () {
       $scope.animation.currentFrame++;
-      $scope.animation.currentDate = Date.parse(dates[$scope.animation.currentFrame]);
     });
 
     progress = timestamp - start;    
