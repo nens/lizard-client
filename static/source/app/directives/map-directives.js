@@ -508,28 +508,22 @@ app.directive('animation', function () {
   return {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
-      var contourslayer;
-
+      var imageBounds = [[54.28458617998074, 1.324296158471368], [49.82567047026146, 8.992548357936204]];
+      var imageOverlay =  L.imageOverlay('', imageBounds);
       scope.$watch('animation.enabled', function (newVal, oldVal) {
-        console.info(newVal)
         if (newVal !== oldVal) {
-          if (contourslayer === undefined) {
-            contourslayer = L.contoursLayer(scope.animation.frame[scope.animation.currentFrame]);
-          }
           if (newVal) {
-            mapCtrl.addLayer(contourslayer);
+            mapCtrl.addLayer(imageOverlay);
           } else {
-            console.info('i is removing', contourslayer);
-            // mapCtrl.removeLayer(contourslayer);
+            mapCtrl.removeLayer(imageOverlay);
           }
         }
       });
 
       scope.$watch('animation.currentFrame', function () {
-        // if (contourslayer !== undefined) {
-          contourslayer._updateData(scope.animation.frame[scope.animation.currentFrame]);
-          // contourslayer._update();
-        // }
+        if (imageOverlay !== undefined) {
+          imageOverlay.setUrl(scope.animation.frame[scope.animation.currentFrame]);
+        }
       });
     }
   };
