@@ -539,7 +539,9 @@ app.directive('animation', function () {
       scope.$watch('animation.currentFrame', function (newVal, oldVal) {
         // if (newVal == oldVal) { return; }
         if (imageOverlay != undefined) {
-          imageOverlay.setUrl(scope.animation.frame[scope.animation.currentFrame]);
+          var frame = scope.animation.frame[scope.animation.currentFrame];
+          var imgFromStorage = localStorage.getItem(scope.animation.currentFrame);
+          imageOverlay.setUrl(imgFromStorage);
         }
       });
     }

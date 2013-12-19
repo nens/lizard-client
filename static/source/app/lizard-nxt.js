@@ -497,15 +497,15 @@ app.controller("MasterCtrl",
         var hours = 3 * 60;
         var animationDatetimes = [];
         var now = moment();
+        now.hours(now.hours() - (60 / now.zone()));
         
         // The wms only accepts requests for every 5th minute exact
         now.minutes((Math.round(now.minutes()/5) * 5) % 60);
         now.seconds(0);
-        //console.debug("Now rounded = ", now.format('YYYY-MM-DDTHH:mm:ss'));
 
         for (var interval = 5; interval < hours; interval = interval + 5) {
             var animationDatetime = now.subtract('minutes', 5);
-            var UtsieAniDatetime = moment.utc(animationDatetime);
+            var UtsieAniDatetime = now.utc();
             animationDatetimes.push(UtsieAniDatetime.format('YYYY-MM-DDTHH:mm:ss') + '.000Z');
             }
 
@@ -516,22 +516,42 @@ app.controller("MasterCtrl",
     var imageUrlBase = 'http://regenradar.lizard.net/wms/?WIDTH=525&HEIGHT=497&SRS=EPSG%3A3857&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
     var dates = buildAnimationDatetimes();
     var radarImages = [];
+    localStorage.clear();
 
     // delete $http.defaults.headers.common['X-Requested-With'];
 
-    for (var i in dates) {
+    var ripImage = function (base, date, item) {
+      // var container = 
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      canvas.width = 525;
+      canvas.height = 497;
+      var img = document.createElement('img');
+      img.onload = function(e) {
+        ctx.drawImage(img, 0, 0, 525, 497);
+        var url = canvas.toDataURL(); // thank you: http://html5-demos.appspot.com/static/html5-whats-new/template/index.html#14
+        localStorage.setItem(item, url);
+        canvas.remove();
+      };
+      img.crossOrigin = 'anonymous';
+      img.src = base + date;
+    }
+
+    for (var i = 0; i < dates.length; i++) {
       var date = dates[i];
-      radarImages.push(imageUrlBase + date);
+      ripImage(imageUrlBase, date, i);
     }
 
   $scope.animation = {
     at: Date.now(),
     playing: false,
     enabled: false,
-    frame: radarImages,
+    frame: dates,
     currentFrame: 0,
     currentDate: Date.parse(dates[0])
   };
+
+  console.info($scope.animation);
 
   //tmp
   $scope.toggleRain = function () {
@@ -560,7 +580,7 @@ app.controller("MasterCtrl",
 
   var start = null;
   // var keys = Object.keys($scope.animation.frame);
-  var finalFrame = radarImages.length- 1;
+  var finalFrame = dates.length- 1;
   var progress;
 
   $scope.$watch('animation.currentFrame', function (newVal, oldVal) {
@@ -581,7 +601,7 @@ app.controller("MasterCtrl",
     if ($scope.animation.playing) {
       setTimeout(function () {
         requestAnimationFrame($scope.step);
-      }, 100);
+      }, 50);
     }    
   }
 
