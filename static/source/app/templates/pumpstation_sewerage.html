@@ -20,10 +20,10 @@
     </tr>
    </table>
 </div>
-<div class="card" ng-class="{hidden: selected_timeseries == undefined}">
+<div class="card" >
   <div class="input-prepend">
     <span class="add-on"> Tijdreeks</span> 
-    <select class="timeseries" ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
+    <select class="timeseries" ng-model="selected" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
   </div>
     <graph line data="data" title="" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></graph>
 </div>

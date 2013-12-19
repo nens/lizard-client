@@ -1,10 +1,12 @@
+// leaflet.contours-layer.js
+
 /* 
  * Leaflet layer for d3 vectors
- * Copied from http://bl.ocks.org/tnightingale/4718717
+ * Adjusted from http://bl.ocks.org/tnightingale/4718717
  *
  */
 
-L.PointsLayer = L.Class.extend({
+L.ContoursLayer = L.Class.extend({
     includes: L.Mixin.Events,
 
     options: {
@@ -66,13 +68,46 @@ L.PointsLayer = L.Class.extend({
             if (!this.options.cssclass) {
                 this.options.cssclass = ""
             }
-            var circles = this._layer.selectAll(".circle")
+            this._colorscale = d3.scale.ordinal()
+              .domain(function (d) {
+                return d3.set(d.properties.Value).values();
+              }).range(["#f7fbff","#deebf7","#c6dbef","#9ecae1","#6baed6","#4292c6","#2171b5","#08519c","#08306b"]);
+
+              // var scale = d3.scale.ordinal()
+              //     .range(colorbrewer.Blues[6])
+              //     .domain(function (d) {
+              //       return d3.set(d.properties.CATEGORIE).values();
+              //     });
+                
+            var that =  this;
+            var path = this._layer.selectAll("path")
                 .data(this._data.features).enter()
                 .append("path")
-                .attr("class", "circle " + this.options.cssclass);
+                .attr("d", this._path)
 
-            this._applyStyle(circles);
+                .attr("class", "contours " + this.options.cssclass)
+                .style("fill", function (d) {
+                    return that._colorscale(d.properties.Value)
+                });
+
+            // this._applyStyle(circles);
         }
+    },
+
+    _updateData: function (data) {
+        this._data = data;
+        var that =  this; 
+        this._layer.selectAll(".contours").remove()
+        var path = this._layer.selectAll("path")
+            .data(this._data.features).enter()
+            .append("path")
+            .attr("d", this._path)
+
+            .attr("class", "contours " + this.options.cssclass)
+            .style("fill", function (d) {
+                return that._colorscale(d.properties.Value)
+            });
+        this._update();
     },
 
     _update: function () {
@@ -89,17 +124,24 @@ L.PointsLayer = L.Class.extend({
             bounds = this._translateBounds(d3.geo.bounds(this._data), padding);
             dimensions = bounds.getSize();
 
+
         this._container.attr("width", dimensions.x).attr("height", dimensions.y)
             .style("margin-left", bounds.min.x + "px").style("margin-top", bounds.min.y + "px");
 
         this._layer.attr("transform", "translate(" + -bounds.min.x+ "," + -bounds.min.y+ ")")
 
-        this._layer.selectAll(".circle").attr("d", this._path);
+        var that = this;
+        this._layer.selectAll("path")
+            .attr("d", this._path)
+            .style("fill", function (d) {
+                    return that._colorscale(d.properties.Value)
+                });;
+
     },
 
-    _applyStyle: function (circles) {
+    _applyStyle: function (path) {
         if ('applyStyle' in this.options) {
-            this.options.applyStyle.call(this, circles);
+            this.options.applyStyle.call(this, path);
         }
     },
 
@@ -127,6 +169,6 @@ L.PointsLayer = L.Class.extend({
 
 });
 
-L.pointsLayer = function (data, options) {
-    return new L.PointsLayer(data, options);
+L.contoursLayer = function (data, options) {
+    return new L.ContoursLayer(data, options);
 };
