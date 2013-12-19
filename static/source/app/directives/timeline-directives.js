@@ -194,7 +194,7 @@ app.controller('TimelineDirCtrl', function ($scope){
             .attr("r", 5)
             .attr("opacity", 1)
             .on('click', function (d) {
-              console.log("clikert!");
+              $scope.box.type = 'aggregate';
               $scope.box.content.eventValue = d;
               $scope.$apply();
             });
@@ -386,18 +386,22 @@ app.controller('TimelineDirCtrl', function ($scope){
         }
       }
       var newLength = timelineKeys.length;
-      if (scope.timeline.hidden && (newLength > oldLength)) {
-        scope.timeline.toggleHideTimeline();
-      } else {
-        scope.timeline.hidden = false;
+      if (newLength !== oldLength) {
+        drawTimeline(timelineKeys);
+        if (newLength > oldLength) {
+          scope.timeline.hidden = false;
+        } else if (newLength === 0){
+          scope.timeline.height = 0;
+          scope.timeline.hidden = false;
+        }
+        scope.timeline.resizeTimeline();
       }
-      drawTimeline(timelineKeys);
     });
 
     var drawTimeline = function (timelineKeys) {
       //Empty the current timeline
       d3.select(element[0]).select("#timeline-svg-wrapper").select("svg").remove()
-      scope.timeline.height = 30 + timelineKeys.length * 30;
+      scope.timeline.height = 35 + timelineKeys.length * 30;
       var data = [];
       for (var i = 0; i < timelineKeys.length; i++) {
         var id = timelineKeys[i];
@@ -460,7 +464,8 @@ app.controller('TimelineDirCtrl', function ($scope){
       y.colorscale = timelineCtrl.scale(y, {
         range: [graph.height, 0],
         scale: (options.scale == 'ordinal') ? 'ordinal' : 'linear'
-      });
+      })
+      scope.timeline.colorScale = y.colorscale;
       y.scale = timelineCtrl.scale(y, {
         range: [graph.height-20, 20],
         scale: 'linear'
