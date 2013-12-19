@@ -15,13 +15,14 @@
 
 {% block javascript_body %}
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/jquery.min.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet/dist/leaflet.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-dist/leaflet.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.utfgrid/src/leaflet.utfgrid.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-tilelayer-geojson/TileLayer.GeoJSON.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lib/TileLayer.GeoJSONd3.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-resource/angular-resource.min.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/dist/js/bootstrap.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/moment/moment.js?{{ random_string }}"></script>
     <!-- NOTE: this should be part of d3js? otherwise we could just use d3 colors to get rid of this dependency -->
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/colorbrewer/colorbrewer.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lib/leaflet.points-layer.js?{{ random_string }}"></script>
@@ -46,8 +47,4 @@
     <script type="text/javascript" src="{{ STATIC_URL }}threedi/leaflet-plugins/TileLayer.WMS.incrementalSingleTile.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/animations.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-nxt.js?{{ random_string }}"></script>
-    <!--script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-ng.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-leaflet.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/animations.js?{{ random_string }}"></script-->
-    <!--script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script-->
 {% endblock %}
