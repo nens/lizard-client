@@ -20,6 +20,11 @@
       var layers = {{ strap_layers }};
       var layerGroups = {{ strap_layer_groups }};
 
+      var threedi_api_url = "{{ threedi_instance.api_url }}";
+      var threedi_subgrid_url = "{{ threedi_instance.socket_url }}";
+      var threedi_wms_server_url = "{{ threedi_instance.wms_url }}";
+      var threedi_data_url = "{{ threedi_instance.data_url }}";
+
       function logOut() {
         var r=confirm("Weet u zeker dat u wilt uitloggen?");
         if (r==true) {
@@ -32,7 +37,7 @@
     </script>
   </head>
 
-  <body>
+  <body ng-controller="Threedi">
 {% include "client/index.html" %}
 
     {% block javascript_body %}
@@ -40,6 +45,11 @@
     <script type="text/javascript" src="{{ STATIC_URL }}distjs/js/ng.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}distjs/js/vendor.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}distjs/js/nxt.js?{{ random_string }}"></script>
+    <script src="{{ STATIC_URL }}vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.bouncemarker/bouncemarker.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/leaflet-plugins/TileLayer.WMS.incrementalSingleTile.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/animations.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-nxt.js?{{ random_string }}"></script>
 
     {% endblock %}
 

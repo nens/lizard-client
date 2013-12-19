@@ -465,7 +465,7 @@ app.directive('threediMap', function(AnimatedLayer) {
 
             var clearScenarioEvents = function() {
                 for (var hash in scenario.events) {
-                     map.removeLayer(scenario.events[hash].mapmarker);
+                     MapCtrl.removeLayer(scenario.events[hash].mapmarker);
                      if (scenario.events[hash].mapmarker2 !== null) {
                          MapCtrl.removeLayer(scenario.events[hash].mapmarker2);
                      }
