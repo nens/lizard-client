@@ -494,8 +494,6 @@ app.controller("MasterCtrl",
     currentDate: Date.parse(dates[0])
   };
 
-  console.info($scope.animation);
-
   //tmp
   $scope.toggleRain = function () {
     $scope.animation.enabled = !$scope.animation.enabled;

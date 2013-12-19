@@ -94,37 +94,21 @@ describe('Testing timeline directive', function() {
     expect(canvas.width).toBe(options.width - 20 - 30);
   });
 
-  it('Should return the min max of numerical data, whether it be time or not', function () {
-    var mockdata = [{date: 48, value: 13}, {date: 13, value: 1102}, {date: 13, value: 670}];
-    var minMax = ctrl._numericalMinMax(mockdata, {key: 'value'});
-    expect(minMax.max).toBe(1102);
-    expect(minMax.min).toBe(13);
-  });
-
-  it('Should return the min max of data in a time string format', function () {
-    var minMax = ctrl._dateStringMinMax(data, {key: "INTAKEDATU"});
-    console.info('\n NOTE: data key is still "hardcoded" variable \n'
-      + 'because data is from geojson');
-    expect(minMax.min).toBe(1321916400000);
-    expect(minMax.max).toBe(1355785200000);
-  });
-
   it('Should make a scale when input is categorical', function () {
-    var minMax = ctrl._dateStringMinMax(data, {key: "INTAKEDATU"});
+    var minMax = {min: Date.now() - 31556900000, max: Date.now()};
     var options = { scale: 'ordinal'};
     var scale = ctrl.scale(minMax, options);
-    expect(scale("GRONDWATER")).toBe('#fc8d62');
+    expect(scale("regen")).toBe('#fc8d62');
   });
 
   it('Should make an axis function', function () {
-    var minMax = ctrl._dateStringMinMax(data, {key: "INTAKEDATU"});
-    var options = { scale: 'isodate',
+    var minMax = {min: Date.now() - 31556900000, max: Date.now()};
+    var options = { scale: 'time',
                     range: [0, 300]};
     var scale = ctrl.scale(minMax, options);
     var axis = ctrl.makeAxis(scale, {orientation: 'bottom'});
         var directiveElement = angular.element(''
       +'<div><div id="timeline-svg-wrapper">'
-      + '<svg></svg>'
       + '</div></div>');
     var canvas = ctrl.createCanvas(directiveElement, {
       width: 100,
@@ -136,11 +120,11 @@ describe('Testing timeline directive', function() {
   it('INTEGRATION:: Should draw a timeline', function () {
     var timelinelement = angular.element('<div ng-controller="TimelineCtrl">'
       + '<timeline></timeline></div>');
-    scope.timeline.data = data;
+    scope.timeline.data.twitter = data;
+    scope.timeline.data.twitter.active = true;
+    scope.timeline.changed = !scope.timeline.changed;
     timelinelement = $compile(timelinelement)(scope);
     // timelinescope= timelinelement().scope;
-    $httpBackend.when("GET", "/static/data/klachten_purmerend_min.geojson").respond('');
-    scope.tools.active = 'alerts';
     window.outerWidth = 1000;
     scope.$digest();
     expect(timelinelement[0].getElementsByTagName('circle').length > 0).toBe(true);

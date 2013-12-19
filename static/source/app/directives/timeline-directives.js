@@ -192,7 +192,7 @@ app.controller('TimelineDirCtrl', function ($scope){
             .attr("cx", xfunction)
             .attr("cy", heightfunction)
             .attr("r", 5)
-            .attr("opacity", 1)
+            .attr("fill-opacity", 1)
             .on('click', function (d) {
               $scope.box.type = 'aggregate';
               $scope.box.content.eventValue = d;

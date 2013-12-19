@@ -541,6 +541,10 @@ html, body{
     box-shadow: 0 3px 10px #888;
 }
 
+.middle {
+    vertical-align: middle;
+}
+
 .indicator {
       content: "";
       top:6px;
@@ -575,15 +579,11 @@ html, body{
 }
 
 .bar{
-<<<<<<< HEAD
-    opacity: 0.4;
+    opacity: 0.5;
 }
 
 .selected{
-    opacity:1;
-=======
     opacity: 0.5;
->>>>>>> f28a078de5602d11dadb2b25f786ce3f7bcd2b9a
 }
 
 .extent{

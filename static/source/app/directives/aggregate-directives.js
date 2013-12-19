@@ -30,7 +30,7 @@ app.directive('vectorlayer', function () {
           scale = scope.timeline.colorScale;
         }
 
-        circles.attr('opacity', 0.8)
+        circles.attr('fill-opacity', 0.8)
           .attr('stroke', "#e")
           .attr('stroke-width', 1)
           .attr('fill', function (d) {

@@ -34,7 +34,7 @@
         </span>
         <span ng-show="animation.enabled">
           <button ng-click="toggleRainPlay()" type="button" class="btn btn-default" ng-class="{'active' : animation.playing}"><i class="icon-play"></i></button>
-          <input type="range" min="0" max="33" ng-model="animation.currentFrame" ng-click="toggleRainPlay('off')">
+          <input type="range" class="middle" min="0" max="33" ng-model="animation.currentFrame" ng-click="toggleRainPlay('off')">
           <small><% animation.currentDate | date:'d MMM y - HH:mm' %></small>
         </span>
   </div>

@@ -525,7 +525,7 @@ app.directive('animation', function () {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
       var imageBounds = [[54.28458617998074, 1.324296158471368], [49.82567047026146, 8.992548357936204]];
-      var imageOverlay =  L.imageOverlay('', imageBounds);
+      var imageOverlay =  L.imageOverlay('', imageBounds, {opacity: 0.8});
       scope.$watch('animation.enabled', function (newVal, oldVal) {
         if (newVal !== oldVal) {
           if (newVal) {
@@ -537,7 +537,7 @@ app.directive('animation', function () {
       });
 
       scope.$watch('animation.currentFrame', function (newVal, oldVal) {
-        // if (newVal == oldVal) { return; }
+        if (newVal == oldVal) { return; }
         if (imageOverlay != undefined) {
           var frame = scope.animation.frame[scope.animation.currentFrame];
           var imgFromStorage = localStorage.getItem(scope.animation.currentFrame);
