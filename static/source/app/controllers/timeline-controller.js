@@ -73,7 +73,6 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource, $http, CabinetSe
   * Event enabler
   */
   $scope.toggleTimeline = function () {
-    console.log("Timeline is hidden:", $scope.timeline.hidden);
     if ($scope.timeline.hidden) {
       $scope.timeline.hidden = false;
       $scope.timeline.resizeTimeline();
@@ -87,8 +86,6 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource, $http, CabinetSe
   };
 
   $scope.timeline.resizeTimeline = function () {
-    console.log("Timeline is hidden:", $scope.timeline.hidden);
-    console.log("Timeline is:", $scope.timeline.height);
     if ($scope.timeline.hidden === false) {
       var height = ($scope.timeline.height > 30) ? 35 +$scope.timeline.height: 35;
       document.getElementById('timeline').style.height = height + 'px';
