@@ -1,4 +1,4 @@
-app.controller('TimelineCtrl', function ($scope, $q, $resource) {
+app.controller('TimelineCtrl', function ($scope, $q, $resource, $http, CabinetService) {
   // TIMELINE START
   // NOTE: refactor timeline stuff in it's own controller, most stuff is local
   // to timeline scope; only temporalextent should be exposed to master / root
@@ -39,18 +39,6 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource) {
     }
   };
 
-  $scope.timeline.toggleHideTimeline = function () {
-    if ($scope.timeline.hidden) {
-      document.getElementById('timeline').removeAttribute('style');
-      $scope.timeline.hidden = false;
-    } else {
-      console.log('-' + $scope.timeline.height + 'px');
-      var lower = ($scope.timeline.height > 30) ? $scope.timeline.height + 5: 0;
-      document.getElementById('timeline').style.bottom = '-' + lower + 'px';
-      $scope.timeline.hidden = true;
-    }        
-  };
-
   $scope.timeline.toggleTool = function () {
     if ($scope.timeline.tool === 'zoom') {
       $scope.timeline.tool = 'brush';
@@ -80,5 +68,65 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource) {
       $scope.timeline.zoom.changed = interval;
     }
   };
+
+  /**
+  * Event enabler
+  */
+  $scope.toggleTimeline = function () {
+    if ($scope.timeline.hidden) {
+      $scope.timeline.hidden = false;
+      $scope.timeline.resizeTimeline();
+    } else if ($scope.timeline.hidden === false) {
+      $scope.timeline.hidden = true;
+      $scope.timeline.resizeTimeline();
+    } else {
+      $scope.timeline.hidden = false;
+      document.getElementById('timeline').style.height = '35px';
+    }
+  };
+
+  $scope.timeline.resizeTimeline = function () {
+    if ($scope.timeline.hidden === false) {
+      var height = ($scope.timeline.height > 30) ? 35 +$scope.timeline.height: 35;
+      document.getElementById('timeline').style.height = height + 'px';
+    }
+    else { document.getElementById('timeline').style.height = '0'; }
+  };
+
+  $scope.timeline.toggleEvents = function (name) {
+    if ($scope.timeline.data[name]) {
+      if ($scope.timeline.data[name].active) {
+        $scope.timeline.data[name].active = false;
+      } else { $scope.timeline.data[name].active = true; }
+      $scope.timeline.changed = !$scope.timeline.changed;
+    } else {
+      getEvents(name);
+    }
+  };
+  
+  var getEvents = function (name) {
+    $scope.timeline.data[name] = [];
+/*    CabinetService.events.get({
+      type: name,
+      start: $scope.timeline.temporalExtent.start,
+      end: $scope.timeline.temporalExtent.end,
+      extent: $scope.mapState.bounds
+      }, function (response) {
+        $scope.timeline.data[name] = response.results[0];
+        $scope.timeline.data[name].count = response.count;
+        $scope.timeline.data[name].active = true;
+        $scope.timeline.changed = !$scope.timeline.changed;
+      }
+    );*/
+    var url = (name == 'Twitter') ? '/static/data/twit.json': 'static/data/melding.json';
+    $http.get(url)
+    .success(function (response) {
+      $scope.timeline.data[name] = response.results[0];
+      $scope.timeline.data[name].count = response.count;
+      $scope.timeline.data[name].active = true;
+      $scope.timeline.changed = !$scope.timeline.changed;
+    });
+  };
+
   // TIMELINE END 
 });
