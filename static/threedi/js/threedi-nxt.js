@@ -13,13 +13,8 @@ app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
     $scope.threedi_subgrid_url = window.threedi_subgrid_url;
     $scope.wms_server_url = window.threedi_wms_server_url; //'http://10.90.20.55:5000/3di/wms';
     $scope.data_url = window.threedi_data_url;
-    // Unfortunately, we still have to use xhr polling
-    var socket = io.connect(
-        $scope.threedi_subgrid_url,
-        {'transports': ['xhr-polling', 'websocket']});  //"http://localhost:9000/subgrid"
-    // var socket = io.connect(
-    //     $scope.threedi_subgrid_url, {resource: 'test.live.3di.lizard.net/socket.io'});
-    //var socket = io.connect("http://socket.lizard.net:80/test.live.3di.lizard.net/subgrid");
+
+    var socket = null;  // see $scope.connect
 
     $scope.have_master = false;
     $scope.is_master = false;
@@ -46,6 +41,14 @@ app.controller('Threedi', ['$scope', '$http', function($scope, $http) {
     $scope.messages = [];
 
     $scope.connect = function() {
+        // Unfortunately, we still have to use xhr polling
+        socket = io.connect(
+            $scope.threedi_subgrid_url,
+            {'transports': ['xhr-polling', 'websocket']});  //"http://localhost:9000/subgrid"
+        // var socket = io.connect(
+        //     $scope.threedi_subgrid_url, {resource: 'test.live.3di.lizard.net/socket.io'});
+        //var socket = io.connect("http://socket.lizard.net:80/test.live.3di.lizard.net/subgrid");
+
 	    $scope.state = null;
 	    $scope.scenarios = null;
         $scope.threedi_active = true;
@@ -668,7 +671,7 @@ app.directive('threediMap', function(AnimatedLayer) {
                     // wms_ani_layer = animation_init(value.model_slug, url);
                     wms_ani_initialized = scope.state.loaded_model;
                 }
-                if (wms_ani_layer !== undefined) {
+                if ((wms_ani_layer !== undefined) && (parseInt(scope.state.timestep) !== 0)) {
                     wms_ani_layer.setTimestep(
                         scope.state.timestep, 
                         {hmax: 2.0});
