@@ -1,0 +1,90 @@
+{
+   "count": 4,
+   "next": null, 
+   "previous": null,
+   "results": [
+      {
+         "event_type": "Meldingen",
+         "type":"FeatureCollection",
+         "features":[
+         {
+            "type": "Feature",
+            "event_sub_type": "Grondwater",
+            "value_type": "ordinal",
+            "value": "Grondwateroverlast",
+            "timestamp": "1355785200000",
+            "geometry":{
+               "type":"Point",
+               "coordinates":[
+                  4.9499466890,
+                  52.5101659518
+               ]
+            },         
+            "properties": {
+               "AKTIEDATUM":"2012/12/27",
+               "INTAKESTAT":"Afgehandeld",
+               "AFHANDELDA":"27-12-2012"
+            }
+         },
+         {
+            "type": "Feature",
+            "event_sub_type": "Grondwater",
+            "value_type": "ordinal",
+            "value": "Grondwateroverlast",
+            "timestamp": "1334181600000",
+            "geometry":{
+               "type":"Point",
+               "coordinates":[
+                  4.9632302810,
+                  52.5038627021
+               ]
+            },
+            "properties": {
+               "AKTIEDATUM":"2012/12/13",
+               "INTAKESTAT":"Afgehandeld",
+               "AFHANDELDA":"05-12-2012"
+            }
+         },
+         {
+            "type": "Feature",
+            "event_sub_type": "Grondwater",
+            "value_type": "ordinal",
+            "value": "Grondwateroverlast",
+            "timestamp": "1339365600000",         
+            "geometry":{
+               "type":"Point",
+               "coordinates":[
+                  4.9664831466,
+                  52.5222611062
+               ]
+            },
+            "properties":{
+               "AKTIEDATUM":"2012/11/15",
+               "INTAKESTAT":"Afgehandeld",
+               "AFHANDELDA":"14-11-2012"
+            }
+         },
+         {
+            "type": "Feature",
+            "event_sub_type": "Put boven/onder bestrating",
+            "value_type": "ordinal",
+            "value": "Rioolverzakking",
+            "timestamp": "1321398000000", 
+            "geometry":{
+               "type":"Point",
+               "coordinates":[
+                  4.9442129282,
+                  52.5100529344
+               ]
+            },
+            "properties":{
+               "AKTIEDATUM":"2011/11/25",
+               "INTAKESTAT":"Afgehandeld",
+               "AFHANDELDA":"16-11-2011"
+            }
+         }
+      ]
+   }
+   
+   ]
+}

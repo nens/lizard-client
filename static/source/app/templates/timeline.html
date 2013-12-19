@@ -1,11 +1,14 @@
 <div id="timeline" ng-controller="TimelineCtrl">
+      <div id="timeline-ribbon" class="ribbon">
+    <div class="arrow arrow-left" ng-click="toggleTimeline()" title="{% trans 'Map layers' %}">
+    </div>
+    <div class="arrow arrow-right" ng-click="toggleTimeline()()" title="{% trans 'Map layers' %}"><i class="icon-time ribbon-icon"></i>
+    </div>
+  </div>
   <div class="bovenbalk">
-    <div class="btn-group">
-      <button type="button" title="Zoom" class="btn btn-default" ng-class="{'active': timeline.tool == 'zoom'}" ng-click="timeline.toggleTool()">
-        <i class="icon-search"></i>
-      </button>
+    <div class="btn-group" >
       <button type="button" title="Select" class="btn btn-default" ng-class="{'active': timeline.tool == 'brush'}" ng-click="timeline.toggleTool()">
-        <i class="icon-screenshot"></i>
+        <i class="icon-crop"></i>
       </button>
         <!-- TODO add zoom with intervals.. -->
 
@@ -26,9 +29,16 @@
         Month
       </button> -->
     </div>
-                <small><% timeline.temporalExtent.start | date:'d MMM y' %> - <% timeline.temporalExtent.end | date:'d MMM y' %></small>
+        <span ng-hide="animation.enabled">
+          <small><% timeline.temporalExtent.start | date:'d MMM y' %> - <% timeline.temporalExtent.end | date:'d MMM y' %></small>
+        </span>
+        <span ng-show="animation.enabled">
+          <button ng-click="toggleRainPlay()" type="button" class="btn btn-default" ng-class="{'active' : animation.playing}"><i class="icon-play"></i></button>
+          <input type="range" class="middle" min="0" max="33" ng-model="animation.currentFrame" ng-click="toggleRainPlay('off')">
+          <small><% animation.currentDate | date:'d MMM y - HH:mm' %></small>
+        </span>
   </div>
-  <div id="timeline-svg-wrapper">
-    <svg></svg>
-  </div>
+
+  <div id="timeline-svg-wrapper"></div>
+<!-- INFO: d3 inserts timelines here -->
 </div>  

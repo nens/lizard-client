@@ -1,25 +1,19 @@
-<div class="card">
-  <div class="card-title">
-    <i class="fa fa-certificate"></i>
-    <span>Performance indicators</span>
+
+<div class="card" ng-class="{hidden: box.content.eventValue == undefined}"ng-switch="box.content.eventValue.event_sub_type">
+  <div class="card-title" ng-switch-when="regen">
+    <i class="icon-twitter"></i><span class="card-title">&nbsp;#<% box.content.eventValue.event_sub_type %></span>
+    <i class="zoomto-icon icon-screenshot pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
+    <p><% box.content.eventValue.timestamp | date:'d-M-y H:mm:ss' %></p>
+    <p><% box.content.eventValue.value %></p>
   </div>
-  <table class="left">
-    <tr>
-      <td><a ng-click="toggleTool('alerts')" class="clickable" title="Toggle meldingen">Meldingen</a></td>
-      <td>&nbsp;<% box.content.alerts.count %></td>
-      <td>
-        <!--<span class="label" ng-class="{'label-danger': box.content_agg >= 5,-->
-                                       <!--'label-success': box.content_agg < 5}">-->
-          <!--&nbsp;<% box.content.alerts.content_agg | number:0 %>-->
-        </span>
-      </td>
-    </tr>
-<!--     <tr>
-      <td><a ng-click="toggleTool('sewerage')" class="clickable" title="Toggle rioolvreemd water">Lozingen</a></td>
-      <td>&nbsp;<% box.content.isw.count %></td>
-    </tr> -->
-  </table>
+  <div class="card-title" ng-switch-default>
+    <i class="icon-exclamation-sign"></i>
+    <i class="zoomto-icon icon-screenshot pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
+    <p><% box.content.eventValue.timestamp | date:'d-M-y' %></p>
+    <p><% box.content.eventValue.value %></p>
+  </div>
 </div>
+
 
 <div class="card" ng-class="{hidden: box.content.sewerage == undefined}">
   <div class="card-title">

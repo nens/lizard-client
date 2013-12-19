@@ -142,6 +142,7 @@ app
       };
 
       this.panZoomTo = function (panZoom) {
+        console.log("PanZoom: ", panZoom);
         $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
       };
 
@@ -200,7 +201,9 @@ app
      * Link function for this directive
      */
     var link = function (scope, element, attrs, ctrl) {
-
+      // Leaflet global variable to speed up vector layer, 
+      // see: http://leafletjs.com/reference.html#path-canvas
+      L_PREFER_CANVAS = true;
       // instead of 'map' element here for testability
       var map = new L.map(element[0], {
           center: new L.LatLng(52.0992287, 5.5698782),
@@ -256,18 +259,31 @@ app
         }
       });
 
-      scope.map.on('moveend', function () {
-        scope.$apply(function () {
+      scope.map.on('move', function () {
+        // NOTE: Check whether a $digest is already happening before using apply
+        if(!scope.$$phase) {
+          scope.$apply(function () {
+            scope.mapState.moved = Date.now();
+            scope.mapState.bounds = scope.map.getBounds();
+            // scope.mapState.geom_wkt = "POLYGON(("
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
+            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
+            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
+            //     + "))";
+          });  
+        } else {
           scope.mapState.moved = Date.now();
-          scope.mapState.bounds = scope.map.getBounds();
-          scope.mapState.geom_wkt = "POLYGON(("
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
-              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
-              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
-              + "))";
-        });
+            scope.mapState.bounds = scope.map.getBounds();
+            // scope.mapState.geom_wkt = "POLYGON(("
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
+            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
+            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
+            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
+            //     + "))";
+        }
       });
 
       scope.map.on('dragend', function () {
@@ -404,7 +420,7 @@ app.directive('sewerage', function ($http) {
               scope.mapState.changed = Date.now();
             }
           }
-          scope.timeline.data = scope.formatted_geojsondata;
+          scope.timeline.data.sewerage = scope.formatted_geojsondata;
         } else {
           for (var mapLayer in scope.mapState.layers) {
             var layer = scope.mapState.layers[mapLayer];
@@ -508,28 +524,25 @@ app.directive('animation', function () {
   return {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
-      var contourslayer;
-
+      var imageBounds = [[54.28458617998074, 1.324296158471368], [49.82567047026146, 8.992548357936204]];
+      var imageOverlay =  L.imageOverlay('', imageBounds, {opacity: 0.8});
       scope.$watch('animation.enabled', function (newVal, oldVal) {
-        console.info(newVal)
         if (newVal !== oldVal) {
-          if (contourslayer === undefined) {
-            contourslayer = L.contoursLayer(scope.animation.frame[scope.animation.currentFrame]);
-          }
           if (newVal) {
-            mapCtrl.addLayer(contourslayer);
+            mapCtrl.addLayer(imageOverlay);
           } else {
-            console.info('i is removing', contourslayer);
-            // mapCtrl.removeLayer(contourslayer);
+            mapCtrl.removeLayer(imageOverlay);
           }
         }
       });
 
-      scope.$watch('animation.currentFrame', function () {
-        // if (contourslayer !== undefined) {
-          contourslayer._updateData(scope.animation.frame[scope.animation.currentFrame]);
-          // contourslayer._update();
-        // }
+      scope.$watch('animation.currentFrame', function (newVal, oldVal) {
+        if (newVal == oldVal) { return; }
+        if (imageOverlay != undefined) {
+          var frame = scope.animation.frame[scope.animation.currentFrame];
+          var imgFromStorage = localStorage.getItem(scope.animation.currentFrame);
+          imageOverlay.setUrl(imgFromStorage);
+        }
       });
     }
   };

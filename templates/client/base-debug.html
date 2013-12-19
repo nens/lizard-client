@@ -1,0 +1,101 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html ng-app="lizard-nxt" ng-controller="MasterCtrl" ng-keydown="keyPress($event)">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Lizard</title>
+    
+    {% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}vendor/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}vendor/leaflet/dist/leaflet.css" />
+
+    <link href="{{ STATIC_URL }}vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}source/assets/css/omnibox.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}source/assets/css/graph.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}source/assets/css/nxt_base.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css">
+    <link href="{{ STATIC_URL }}threedi/css/threedi.css" rel="stylesheet" />
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
+    {% endblock css %}
+
+    <script>
+      var debug = true;
+
+      var baseLayers = {{ strap_base_layers }};
+      var layers = {{ strap_layers }};
+      var layerGroups = {{ strap_layer_groups }};
+
+      var threedi_api_url = "{{ threedi_instance.api_url }}";
+      var threedi_subgrid_url = "{{ threedi_instance.socket_url }}";
+      var threedi_wms_server_url = "{{ threedi_instance.wms_url }}";
+      var threedi_data_url = "{{ threedi_instance.data_url }}";
+
+      function logOut() {
+        var r=confirm("Weet u zeker dat u wilt uitloggen?");
+        if (r==true) {
+          window.location = "{% url "login" %}?next=/";
+          }
+        else {
+          return false;
+        }
+        }
+    </script>
+  </head>
+
+  <body ng-controller="Threedi">
+
+    {% include "client/index.html" %}
+    {% block content %}
+
+    {% block box_awesome %}{% endblock %}
+
+    {% block toolbar_controllers %}
+  
+        {% endblock toolbar_controllers %}
+
+    {% endblock content %}
+
+    {% block javascript_body %}
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/jquery.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-dist/leaflet.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.utfgrid/src/leaflet.utfgrid.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-tilelayer-geojson/TileLayer.GeoJSON.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/lib/TileLayer.GeoJSONd3.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-resource/angular-resource.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/dist/js/bootstrap.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/moment/moment.js?{{ random_string }}"></script>
+    <!-- NOTE: this should be part of d3js? otherwise we could just use d3 colors to get rid of this dependency -->
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/colorbrewer/colorbrewer.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/lib/leaflet.points-layer.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/lib/leaflet.contours-layer.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt-services.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/search-controller.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/map-controller.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/timeline-controller.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/map-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/aggregate-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/omnibox-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/graph-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/raster-aggregate-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/profile-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/timeline-directives.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/templates/templates.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/socket.io-client/dist/socket.io.min.js"></script>
+    <!--script src="{{ STATIC_URL }}vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></scrip-->
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.bouncemarker/bouncemarker.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/leaflet-plugins/TileLayer.WMS.incrementalSingleTile.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/animations.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-nxt.js?{{ random_string }}"></script>
+    <!--script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-ng.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-leaflet.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/animations.js?{{ random_string }}"></script-->
+    <!--script type="text/javascript" src="{{ STATIC_URL }}lib/nxt_graph/nxt-graph.js?{{ random_string }}"></script-->
+    {% endblock %}
+
+  </body>
+</html>

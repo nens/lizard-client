@@ -16,7 +16,47 @@ describe('Testing timeline directive', function() {
     $rootScope = _$rootScope_;
     $httpBackend = _$httpBackend_;
     $controller = $controller;
-    data = [{"geometry":{"type":"Point","coordinates":[4.9499466890,52.5101659518]},"type":"Feature","properties":{"INTAKEDATU":"2012/12/18","KLACHT":"Grondwateroverlast","CATEGORIE":"GRONDWATER","AKTIEDATUM":"2012/12/27","INTAKESTAT":"Afgehandeld","AFHANDELDA":"27-12-2012"}},{"geometry":{"type":"Point","coordinates":[4.9632302810,52.5038627021]},"type":"Feature","properties":{"INTAKEDATU":"2012/04/12","KLACHT":"Grondwateroverlast","CATEGORIE":"GRONDWATER","AKTIEDATUM":"2012/12/13","INTAKESTAT":"Afgehandeld","AFHANDELDA":"05-12-2012"}},{"geometry":{"type":"Point","coordinates":[4.9664831466,52.5222611062]},"type":"Feature","properties":{"INTAKEDATU":"2012/06/11","KLACHT":"Grondwateroverlast","CATEGORIE":"GRONDWATER","AKTIEDATUM":"2012/11/15","INTAKESTAT":"Afgehandeld","AFHANDELDA":"14-11-2012"}},{"geometry":{"type":"Point","coordinates":[4.9702891586,52.5243898404]},"type":"Feature","properties":{"INTAKEDATU":"2012/10/15","KLACHT":"Grondwateroverlast","CATEGORIE":"GRONDWATER","AKTIEDATUM":"2012/10/24","INTAKESTAT":"Afgehandeld","AFHANDELDA":"22-10-2012"}},{"geometry":{"type":"Point","coordinates":[4.9284185842,52.4928915370]},"type":"Feature","properties":{"INTAKEDATU":"2012/03/30","KLACHT":"Grondwateroverlast","CATEGORIE":"GRONDWATER","AKTIEDATUM":"2012/04/10","INTAKESTAT":"Afgehandeld","AFHANDELDA":"02-04-2012"}},{"geometry":{"type":"Point","coordinates":[4.9594677757,52.5119363436]},"type":"Feature","properties":{"INTAKEDATU":"2011/11/22","KLACHT":"Grondwateroverlast","CATEGORIE":"GRONDWATER","AKTIEDATUM":"2011/12/01","INTAKESTAT":"Afgehandeld","AFHANDELDA":"08-12-2011"}},{"geometry":{"type":"Point","coordinates":[4.9281440060,52.4927354502]},"type":"Feature","properties":{"INTAKEDATU":"2012/07/08","KLACHT":"Rioolverzakking","CATEGORIE":"PUT BOVEN/ONDER BESTRATING","AKTIEDATUM":"2012/08/16","INTAKESTAT":"Afgehandeld","AFHANDELDA":"08-08-2012"}},{"geometry":{"type":"Point","coordinates":[4.9557002060,52.5185894148]},"type":"Feature","properties":{"INTAKEDATU":"2012/11/04","KLACHT":"Rioolverzakking","CATEGORIE":"PUT BOVEN/ONDER BESTRATING","AKTIEDATUM":"2012/04/20","INTAKESTAT":"Afgehandeld","AFHANDELDA":"05-06-2012"}}];
+    data = {
+      "count": 2,
+      "next": null, 
+      "previous": null,
+      "results": [
+        {
+           "event_type": "Twitter",
+           "type":"FeatureCollection",
+           "features":[
+           {
+           "type": "Feature",
+           "event_sub_type":"regen",
+           "value_type": "ordinal",
+           "value":"Cheap\nOnbeperkt SMS+Internet 5,00\n+ 90   min 10,00\n+ 150 minuten 11,00\n+ Onbeperkt bellen 24,00\nCheapsimonly.nl \n#amsterdam #utrecht #regen",
+           "timestamp":"1381845388000",
+           "geometry":{
+              "type":"Point",
+              "coordinates":[
+                 5.64723048,
+                 51.67624188
+              ]
+           }
+        },
+        {
+           "type": "Feature",
+           "event_sub_type":"regen",
+           "value_type": "ordinal",
+           "value":"De wolken boven Nederland zijn zwart, maar het regent niet.\nDe wind waait hard, maar het is niet koud.\nEen echte herfstdag in ons mooie land",
+           "timestamp":"1381997088000",
+           "geometry":{
+              "type":"Point",
+              "coordinates":[
+                 4.8181042,
+                 52.3835859
+              ]
+           }
+        }
+      ]
+    }
+  ]
+};
     element = angular.element('<div ng-controller="MasterCtrl">'
     + '</div>');
     element = $compile(element)($rootScope);
@@ -54,37 +94,21 @@ describe('Testing timeline directive', function() {
     expect(canvas.width).toBe(options.width - 20 - 30);
   });
 
-  it('Should return the min max of numerical data, whether it be time or not', function () {
-    var mockdata = [{date: 48, value: 13}, {date: 13, value: 1102}, {date: 13, value: 670}];
-    var minMax = ctrl._numericalMinMax(mockdata, {key: 'value'});
-    expect(minMax.max).toBe(1102);
-    expect(minMax.min).toBe(13);
-  });
-
-  it('Should return the min max of data in a time string format', function () {
-    var minMax = ctrl._dateStringMinMax(data, {key: "INTAKEDATU"});
-    console.info('\n NOTE: data key is still "hardcoded" variable \n'
-      + 'because data is from geojson');
-    expect(minMax.min).toBe(1321916400000);
-    expect(minMax.max).toBe(1355785200000);
-  });
-
   it('Should make a scale when input is categorical', function () {
-    var minMax = ctrl._dateStringMinMax(data, {key: "INTAKEDATU"});
+    var minMax = {min: Date.now() - 31556900000, max: Date.now()};
     var options = { scale: 'ordinal'};
     var scale = ctrl.scale(minMax, options);
-    expect(scale("GRONDWATER")).toBe('#fc8d62');
+    expect(scale("regen")).toBe('#fc8d62');
   });
 
   it('Should make an axis function', function () {
-    var minMax = ctrl._dateStringMinMax(data, {key: "INTAKEDATU"});
-    var options = { scale: 'isodate',
+    var minMax = {min: Date.now() - 31556900000, max: Date.now()};
+    var options = { scale: 'time',
                     range: [0, 300]};
     var scale = ctrl.scale(minMax, options);
     var axis = ctrl.makeAxis(scale, {orientation: 'bottom'});
         var directiveElement = angular.element(''
       +'<div><div id="timeline-svg-wrapper">'
-      + '<svg></svg>'
       + '</div></div>');
     var canvas = ctrl.createCanvas(directiveElement, {
       width: 100,
@@ -96,11 +120,11 @@ describe('Testing timeline directive', function() {
   it('INTEGRATION:: Should draw a timeline', function () {
     var timelinelement = angular.element('<div ng-controller="TimelineCtrl">'
       + '<timeline></timeline></div>');
-    scope.timeline.data = data;
+    scope.timeline.data.twitter = data;
+    scope.timeline.data.twitter.active = true;
+    scope.timeline.changed = !scope.timeline.changed;
     timelinelement = $compile(timelinelement)(scope);
     // timelinescope= timelinelement().scope;
-    $httpBackend.when("GET", "/static/data/klachten_purmerend_min.geojson").respond('');
-    scope.tools.active = 'alerts';
     window.outerWidth = 1000;
     scope.$digest();
     expect(timelinelement[0].getElementsByTagName('circle').length > 0).toBe(true);

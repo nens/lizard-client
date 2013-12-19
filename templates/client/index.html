@@ -1,43 +1,4 @@
 {% load i18n %}
-<!DOCTYPE html>
-<html ng-app="lizard-nxt" ng-controller="MasterCtrl" ng-keydown="keyPress($event)">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Lizard</title>
-    
-    {% block css %}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}distjs/css/vendor.css" />
-    <link href='http://fonts.googleapis.com/css?family=Petit+Formal+Script|Kite+One|Roboto+Slab' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}distjs/css/nxt.css" />
-    {% endblock css %}
-
-    <script>
-      var debug = true;
-
-      var baseLayers = {{ strap_base_layers }};
-      var layers = {{ strap_layers }};
-      var layerGroups = {{ strap_layer_groups }};
-
-      var threedi_api_url = "{{ threedi_instance.api_url }}";
-      var threedi_subgrid_url = "{{ threedi_instance.socket_url }}";
-      var threedi_wms_server_url = "{{ threedi_instance.wms_url }}";
-      var threedi_data_url = "{{ threedi_instance.data_url }}";
-
-      function logOut() {
-        var r=confirm("Weet u zeker dat u wilt uitloggen?");
-        if (r==true) {
-          window.location = "{% url "login" %}?next=/";
-          }
-        else {
-          return false;
-        }
-        }
-    </script>
-  </head>
-
-  <body ng-controller="Threedi">
     <header class="navbar navbar-inverse navbar-fixed-top">
       <!-- <div id="logo-row" class=""> -->
         <div id="logo">
@@ -160,12 +121,3 @@
     {% endblock content %}
 
 
-
-    {% block javascript_body %}
-    <script type="text/javascript" src="{{ STATIC_URL }}distjs/js/ng.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}distjs/js/vendor.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}distjs/js/nxt.js?{{ random_string }}"></script>
-    {% endblock %}
-
-  </body>
-</html>
