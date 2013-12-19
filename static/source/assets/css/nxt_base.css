@@ -252,7 +252,8 @@ html, body{
     margin-left: 0;
 }
 
-.layer-switcher label.active {
+.layer-switcher label.active,
+.layer-switcher label.count {
     color: #c0392b;
     font-style: italic;
     font-size: 14px;

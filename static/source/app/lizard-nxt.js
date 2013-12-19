@@ -445,8 +445,10 @@ app.controller("MasterCtrl",
       end: $scope.timeline.temporalExtent.end,
       extent: $scope.mapState.bounds
       }, function (response) {
-        $scope.timeline.data[name] = response.results;
+        $scope.timeline.data[name] = response.results[0];
         $scope.timeline.data[name].count = response.count;
+        $scope.timeline.data[name].active = true;
+        $scope.timeline.changed = !$scope.timeline.changed;
       }
     );*/
     var url = (name == 'Twitter') ? '/static/data/twit.json': 'static/data/melding.json';
