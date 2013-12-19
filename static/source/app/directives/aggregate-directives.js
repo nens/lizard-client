@@ -35,6 +35,7 @@ app.directive('vectorlayer', function () {
             return scale(d.event_sub_type);
           })
           .on('click', function (d) {
+            scope.box.type = 'aggregate';
             scope.box.content.eventValue = d;
             scope.$apply();
           });

@@ -194,7 +194,7 @@ app.controller('TimelineDirCtrl', function ($scope){
             .attr("r", 5)
             .attr("opacity", 1)
             .on('click', function (d) {
-              console.log("clikert!");
+              scope.box.type = 'aggregate';
               $scope.box.content.eventValue = d;
               $scope.$apply();
             });
