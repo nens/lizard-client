@@ -76,6 +76,7 @@
               <ul class="list-group">
                 <li ng-repeat="event in mapState.eventTypes">
                 <label class="ng-class: {active: timeline.data[event.name].active};" ng-bind="event.name" ng-click="timeline.toggleEvents(event.name)"></label>
+                <label class="count"  ng-if="timeline.data[event.name].active"><%timeline.data[event.name].currentCount %>&nbsp;(<% timeline.data[event.name].count %>) </label>
               </ul>
               </li>
             </ul>

@@ -1,27 +1,16 @@
-<div class="card" ng-class="{hidden: box.content.eventTypes == undefined}">
-  <div class="card-title">
-    <i class="icon-certificate"></i>
-    <span>Performance indicators</span>
-  </div>
-  <table class="left">
-    <tr ng-repeat="type in box.content.eventTypes">
-      <td><a ng-click="timeline.toggleEvents(type.name)" class="clickable" title="<%'Toggle ' + type.name %>"><% type.name %></a></td>
-      <td  ng-if="timeline.data[type.name].active" ng-bind="timeline.data[type.name].currentCount"></td>
-      <td ng-if="timeline.data[type.name].active">&nbsp;van&nbsp;de&nbsp;<% timeline.data[type.name].count %> </td>
-    </tr>
-  </table>
-</div>
 
 <div class="card" ng-class="{hidden: box.content.eventValue == undefined}"ng-switch="box.content.eventValue.event_sub_type">
   <div class="card-title" ng-switch-when="regen">
     <i class="icon-twitter"></i><span class="card-title">&nbsp;#<% box.content.eventValue.event_sub_type %></span>
     <i class="zoomto-icon icon-screenshot pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
-    <p><% box.content.eventValue.timestamp | date:'d, M, y H:mm:ss' %></p>
+    <p><% box.content.eventValue.timestamp | date:'d-M-y H:mm:ss' %></p>
     <p><% box.content.eventValue.value %></p>
   </div>
   <div class="card-title" ng-switch-default>
     <i class="icon-exclamation-sign"></i>
-    <span><% box.content.eventValue %></span>
+    <i class="zoomto-icon icon-screenshot pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
+    <p><% box.content.eventValue.timestamp | date:'d-M-y' %></p>
+    <p><% box.content.eventValue.value %></p>
   </div>
 </div>
 
