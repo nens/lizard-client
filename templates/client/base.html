@@ -41,16 +41,9 @@
 {% include "client/index.html" %}
 
     {% block javascript_body %}
-
     <script type="text/javascript" src="{{ STATIC_URL }}distjs/js/ng.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}distjs/js/vendor.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}distjs/js/nxt.js?{{ random_string }}"></script>
-    <script src="{{ STATIC_URL }}vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.bouncemarker/bouncemarker.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}threedi/leaflet-plugins/TileLayer.WMS.incrementalSingleTile.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/animations.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-nxt.js?{{ random_string }}"></script>
-
     {% endblock %}
 
   </body>
