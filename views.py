@@ -39,7 +39,7 @@ def index(request):
         # 'extent': extent,
     }
     if getattr(settings, "DEV_TEMPLATE", False):
-        return render_to_response('client/base-debug.html', context,
+        return render_to_response('client/debug.html', context,
                               context_instance=RequestContext(request))
     else:
         return render_to_response('client/base.html', context,
