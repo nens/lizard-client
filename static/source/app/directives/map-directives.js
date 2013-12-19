@@ -203,7 +203,7 @@ app
     var link = function (scope, element, attrs, ctrl) {
       // Leaflet global variable to speed up vector layer, 
       // see: http://leafletjs.com/reference.html#path-canvas
-      L_PREFER_CANVAS = true;
+      window.L_PREFER_CANVAS = true;
       // instead of 'map' element here for testability
       var map = new L.map(element[0], {
           center: new L.LatLng(52.0992287, 5.5698782),

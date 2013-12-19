@@ -21,6 +21,7 @@ services.service("CabinetService", ["$resource",
       bboxSearchResource,
       geocodeResource,
       reverseGeocodeResource,
+      eventsResource,
       apiLayerGroups,
       timeseriesLocationObjectResource,
       timeseriesResource;
