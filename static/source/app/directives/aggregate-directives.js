@@ -12,20 +12,22 @@ app.directive('vectorlayer', function () {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
-      var scale,
-          eventLayer;
+      var eventLayer;
 
       /*
        * Style event circles based on category and
        * add click event handling
        */
       function circle_style(circles) {
-        if (!scale) {
+        var scale;
+        if (!scope.timeline.colorScale) {
           scale = d3.scale.ordinal()
             .domain(function (d) {
               return d3.set(d.event_sub_type).values();
             })
             .range(colorbrewer.Set2[6]);
+        } else {
+          scale = scope.timeline.colorScale;
         }
 
         circles.attr('opacity', 0.8)
@@ -40,6 +42,13 @@ app.directive('vectorlayer', function () {
             scope.$apply();
           });
       }
+
+      scope.$watch('timeline.colorScale', function () {
+        d3.selectAll(".circle")
+        .attr('fill', function (d) {
+          return scope.timeline.colorScale(d.event_sub_type);
+        });
+      });
 
       /*
        * Reformat time to d3 time formatted object 

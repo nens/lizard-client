@@ -194,7 +194,7 @@ app.controller('TimelineDirCtrl', function ($scope){
             .attr("r", 5)
             .attr("opacity", 1)
             .on('click', function (d) {
-              scope.box.type = 'aggregate';
+              $scope.box.type = 'aggregate';
               $scope.box.content.eventValue = d;
               $scope.$apply();
             });
@@ -460,7 +460,8 @@ app.controller('TimelineDirCtrl', function ($scope){
       y.colorscale = timelineCtrl.scale(y, {
         range: [graph.height, 0],
         scale: (options.scale == 'ordinal') ? 'ordinal' : 'linear'
-      });
+      })
+      scope.timeline.colorScale = y.colorscale;
       y.scale = timelineCtrl.scale(y, {
         range: [graph.height-20, 20],
         scale: 'linear'
