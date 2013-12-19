@@ -356,63 +356,6 @@ app.controller("MasterCtrl",
   };
 // END Temporal extent model
 
-  /**
-  * Event enabler
-  */
-  $scope.toggleTimelineEvents = function () {
-    $scope.box.content.eventTypes = [];
-    $scope.timeline.enabled = !$scope.timeline.enabled;
-    if ($scope.timeline.enabled) {
-      $scope.tools.active =  'events';
-      $scope.box.content.eventTypes = response.results;
-      $scope.box.type = 'aggregate';
-    } else {
-      $scope.tools.active =  'none';
-      $scope.box.type = 'empty';
-      $scope.box.content.eventTypes = undefined;
-      angular.forEach($scope.timeline.data, function (timeline) {
-        timeline.active = false;
-      });
-      $scope.timeline.changed = !$scope.timeline.changed;
-      document.getElementById('timeline').removeAttribute('style');
-    }      
-  };
-
-  $scope.timeline.toggleEvents = function (name) {
-    if ($scope.timeline.data[name]) {
-      if ($scope.timeline.data[name].active) {
-        $scope.timeline.data[name].active = false;
-      } else { $scope.timeline.data[name].active = true; }
-      $scope.timeline.changed = !$scope.timeline.changed;
-    } else {
-      getEvents(name);
-    }
-  };
-  
-  var getEvents = function (name) {
-    $scope.timeline.data[name] = [];
-/*    CabinetService.events.get({
-      type: name,
-      start: $scope.timeline.temporalExtent.start,
-      end: $scope.timeline.temporalExtent.end,
-      extent: $scope.mapState.bounds
-      }, function (response) {
-        $scope.timeline.data[name] = response.results[0];
-        $scope.timeline.data[name].count = response.count;
-        $scope.timeline.data[name].active = true;
-        $scope.timeline.changed = !$scope.timeline.changed;
-      }
-    );*/
-    var url = (name == 'Twitter') ? '/static/data/twit.json': 'static/data/melding.json';
-    $http.get(url)
-    .success(function (response) {
-      $scope.timeline.data[name] = response.results[0];
-      $scope.timeline.data[name].count = response.count;
-      $scope.timeline.data[name].active = true;
-      $scope.timeline.changed = !$scope.timeline.changed;
-    });
-  };
-
 /**
 * keypress stuff
 */

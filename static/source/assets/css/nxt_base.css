@@ -180,12 +180,22 @@ html, body{
     font-weight: normal;
 }
 
-.icon-globe {
+.icon-compass {
+    top: -21px;
+    right:-6px;
+}
+
+.ribbon-icon {
     position: relative;
     color: #C0392B;
     margin: auto;
-    top: -21px;
     z-index: 10;
+    font-size: 22px;
+}
+
+.icon-time {
+    top: -0px;
+    right: 20px;
 }
 
 .zoomto-icon {
@@ -272,40 +282,68 @@ html, body{
     margin-left: 5px;
 }
 
-#ribbon {
-    position: absolute;
-    top: 16px;
-    left: -76px;
-    float: right;
+.ribbon {
+    position: absolute;   
     overflow: hidden;
     z-index: 10;
 }
 
+#ribbon {
+    top: 16px;
+    left: -60px;
+    float: right;
+}
+
+#timeline-ribbon {
+    top: -120px;
+    left: 16px;
+    float: left;
+}
+
 /*combine this class with next to DRY*/
-.arrow-up {
-    width: 76px;
+.arrow {
     position: relative;
-    top: 13px;
-    height: 0; 
     cursor: pointer;
-    border-left: 40px solid transparent;
+    z-index: 0;    
+}
+.arrow-up {
+    width: 60px;    
+    top: 10px;
+    height: 0; 
+    border-left: 20px solid transparent;
     border-right: 0 solid transparent;
     border-bottom: 30px solid #e74c3c;
-    z-index: 0;
 }
 
 .arrow-down {
-    width: 76px;
-    position: relative;
+    width: 60px;
     top: -30px;
-    height: 0; 
-    cursor: pointer;
-    border-left: 40px solid rgb(231, 76, 60);
-    border-left: 40px solid rgba(231, 76, 60, 0);
+    height: 60px; 
+    border-left: 20px solid rgba(231, 76, 60, 0);
     border-right: 0 solid transparent;
     border-top: 30px solid #e74c3c;
-    z-index: 0;
 }
+
+.arrow-left {
+    opacity: 1;
+    top: 60px;
+    left: -10px;
+    height: 60px; 
+    border-top: 20px solid transparent;
+    border-bottom: 0px solid transparent; 
+    
+    border-right:30px solid #e74c3c; 
+}
+
+.arrow-right {
+    height: 60px;
+    top: 0px;
+    border-top: 20px solid transparent;
+    border-bottom: 0px solid transparent;
+    border-left: 30px solid #e74c3c;
+}
+
+
 
 .info-text{
     margin-left: 0.5em;
@@ -474,10 +512,10 @@ html, body{
 /*timeline stuff*/
 .timeline {
     min-height: 0;
+    height: 0;
+    bottom: 0;
     background-color: #fff;
     color: #222;
-    opacity: 0.9;
-    bottom: -45px;
     -o-transition:.3s;
     -ms-transition:.3s;
     -moz-transition:.3s;
