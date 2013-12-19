@@ -390,11 +390,15 @@ app.controller('TimelineDirCtrl', function ($scope){
         drawTimeline(timelineKeys);
         if (newLength > oldLength) {
           scope.timeline.hidden = false;
-        } else if (newLength === 0){
+          scope.timeline.resizeTimeline();
+        } else if (newLength === 0 && !scope.timeline.hidden){
+          scope.timeline.height = 0;
+          scope.timeline.hidden = false;
+          scope.timeline.resizeTimeline();
+        } else if (newLength === 0) {
           scope.timeline.height = 0;
           scope.timeline.hidden = false;
         }
-        scope.timeline.resizeTimeline();
       }
     });
 

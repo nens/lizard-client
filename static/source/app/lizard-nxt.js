@@ -480,6 +480,10 @@ app.controller("MasterCtrl",
   $scope.toggleRain = function () {
     $scope.animation.enabled = !$scope.animation.enabled;
     if ($scope.animation.enabled) {
+      if (!$scope.timeline.hidden) { 
+        $scope.timeline.hidden = false;
+        $scope.timeline.resizeTimeline();
+      }
       $scope.animationDriver();
       $scope.animation.playing = true;
       // $scope.timeline.temporalExtent.start = Date.parse(dates[0]);
