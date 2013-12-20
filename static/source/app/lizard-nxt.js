@@ -409,12 +409,14 @@ app.controller("MasterCtrl",
 */
 
   // If escape is pressed close box
+  // NOTE: This fires the watches too often
   $scope.keyPress = function ($event) {
     // watches can be placed in corresponding ctrls. as in MapCtrl
     if ($event.target.nodeName === "INPUT" && 
       ($event.which !== 27 && $event.which !== 13)) {
      return; 
    }
+    $scope.keyIsPressed = !$scope.keyIsPressed;
     $scope.keyPressed = $event.which;
     $scope.keyTarget = $event.target;
     if ($event.which === 27) {

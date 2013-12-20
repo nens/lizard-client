@@ -20,6 +20,3 @@
   <i class="icon-map-marker"></i>&nbsp;<a ng-click="showDetails(g)" title="<% g.display_name %>" data-latitude="<% g.lat %>" data-longitude="<% g.lon %>" style="cursor:pointer;"><span><% g.display_name %></span></a> 
 </div>
 
-<div  ng-controller="SearchCtrl" ng-show="box.type == 'location'" class="card cluster location" ng-repeat="g in box.bbox_content">
-  <i class="icon-map-marker"></i>&nbsp;<a ng-click="showDetails(g)" title="<% g.name %>" data-latitude="<% g.geometry[0] %>" data-longitude="<% g.geometry[1] %>" style="cursor:pointer;"><span><% g.name %></span></a> 
-</div>    

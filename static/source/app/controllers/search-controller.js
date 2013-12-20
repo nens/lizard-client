@@ -84,12 +84,11 @@ app.controller('SearchCtrl', function ($scope, CabinetService) {
   });
 
   // Note: Watch is called too often
-  // $scope.$watch('keyPressed', function (newVal, oldVal) {
-  //   console.log(oldVal, newVal);
-  //   if (newVal !== oldVal && newVal === 13 && $scope.keyTarget.id === "searchboxinput") {
-  //     console.log(oldVal, newVal);
-  //     console.log("Search!!");
-  //     $scope.search();
-  //   }
-  // });
+  $scope.$watch('keyIsPressed', function (newVal, oldVal) {
+    if (newVal !== oldVal && $scope.keyTarget.id === "searchboxinput" && $scope.keyPressed === 13) {
+      console.log(oldVal, newVal);
+      console.log("Search!!");
+      $scope.search();
+    }
+  });
 });
