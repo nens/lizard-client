@@ -1,35 +1,33 @@
-app.controller('SearchCtrl', ['$scope', 'CabinetService', function ($scope, CabinetService) {
+app.controller('SearchCtrl', function ($scope, CabinetService) {
   /**
    * Refactor and design this cruft
    */
   $scope.searchMarkers = [];
   $scope.search = function ($event) {
-
     if ($scope.box.query.length > 1) {
-      var search = CabinetService.termSearch.query({q: $scope.box.query}, function (data) {
-          var sources = [];
-          for (var i in data) {
-          if(data[i].geometry !== null) {
-          sources.push(data[i]);
-          }
-          }
-          $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
-          for (var j in sources) {
-          //console.log('sources:',sources);
-          $scope.searchMarkers = [];
-          if(sources[j].geometry) {
-          $scope.searchMarkers.push(sources[j]);
-          }
-          }
+      // var search = CabinetService.termSearch.query({q: $scope.box.query}, function (data) {
+      //   var sources = [];
+      //   for (var i in data) {
+      //     if(data[i].geometry !== null) {
+      //       sources.push(data[i]);
+      //     }
+      //   }
+        // $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
+        // for (var j in sources) {
+        //   //console.log('sources:',sources);
+        //   $scope.searchMarkers = [];
+        //   if(sources[j].geometry) {
+        //     $scope.searchMarkers.push(sources[j]);
+        //   }
+        // }
 
-          $scope.searchData = sources;
-          });
-
-
-      var geocode = CabinetService.geocode.query({q: $scope.box.query}, function (data) {
-          //console.log(data);
-          $scope.box.content = data;
-          });
+        // $scope.searchData = sources;
+        // });
+      
+      CabinetService.geocode.query({q: $scope.box.query}, function (data) {
+        console.log(data);
+        $scope.box.content = data;
+        });
       $scope.box.type = "location";
     }
   };
@@ -46,7 +44,6 @@ app.controller('SearchCtrl', ['$scope', 'CabinetService', function ($scope, Cabi
           $scope.searchMarkers.push(data[i]);
         }
       }
-      //console.log('bbox_update:', data);
     });
   };
 
@@ -56,7 +53,7 @@ app.controller('SearchCtrl', ['$scope', 'CabinetService', function ($scope, Cabi
       // therefore no need to call $rootScope.
       $scope.$broadcast('clean');
       $scope.box.query = null;
-      $scope.box.type= 'empty';
+      $scope.box.type = 'empty';
   };
 
   $scope.showDetails = function (obj) {
@@ -86,9 +83,13 @@ app.controller('SearchCtrl', ['$scope', 'CabinetService', function ($scope, Cabi
     $scope.$parent.$parent.$parent.selected_timeseries = $scope.selected;
   });
 
-  $scope.$watch('keyPressed', function (newVal) {
-    if (newVal === 13 && $scope.keyTarget.id === "searchboxinput") {
-      $scope.search();
-    }
-  });
-}]);;
+  // Note: Watch is called too often
+  // $scope.$watch('keyPressed', function (newVal, oldVal) {
+  //   console.log(oldVal, newVal);
+  //   if (newVal !== oldVal && newVal === 13 && $scope.keyTarget.id === "searchboxinput") {
+  //     console.log(oldVal, newVal);
+  //     console.log("Search!!");
+  //     $scope.search();
+  //   }
+  // });
+});

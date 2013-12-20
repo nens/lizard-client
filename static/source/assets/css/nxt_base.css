@@ -271,10 +271,6 @@ html, body{
     margin-left: 5px;
 }
 
-#events {
-    cursor: pointer;
-}
-
 .nav-header .active {
     color: #c0392b;
     font-style: italic;
