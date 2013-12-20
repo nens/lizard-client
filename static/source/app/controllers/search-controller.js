@@ -61,18 +61,17 @@ app.controller('SearchCtrl', ['$scope', 'CabinetService', function ($scope, Cabi
 
   $scope.showDetails = function (obj) {
       $scope.currentObject = obj;
-      //console.log('obj:', obj);
       if ($scope.currentObject.lat && $scope.currentObject.lon) {
           // A lat and lon are present, instruct the map to pan/zoom to it
           var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
-          $scope.panZoom = {
+          $scope.$parent.$parent.$parent.panZoom = {
             lat: $scope.currentObject.lat,
             lng: $scope.currentObject.lon,
             zoom: 14
           };
       }
       else if ($scope.currentObject.geometry[0] && $scope.currentObject.geometry[1]) {
-          $scope.panZoom = {
+          $scope.$parent.$parent.$parent.panZoom = {
             lat: $scope.currentObject.geometry[1],
             lng: $scope.currentObject.geometry[0],
             zoom: 14

@@ -388,7 +388,7 @@ app.controller('TimelineDirCtrl', function ($scope){
       var newLength = timelineKeys.length;
       if (newLength !== oldLength) {
         drawTimeline(timelineKeys);
-        if (newLength > oldLength || (newLength > 0 !scope.timeline.hidden)) {
+        if (newLength > oldLength || (newLength > 0 && !scope.timeline.hidden)) {
           scope.timeline.hidden = false;
           scope.timeline.resizeTimeline();
         } else if (newLength === 0 && !scope.timeline.hidden){

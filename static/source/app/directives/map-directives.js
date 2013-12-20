@@ -142,7 +142,6 @@ app
       };
 
       this.panZoomTo = function (panZoom) {
-        console.log("PanZoom: ", panZoom);
         $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
       };
 
