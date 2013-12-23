@@ -386,8 +386,8 @@ app.controller('TimelineDirCtrl', function ($scope){
         }
       }
       var newLength = timelineKeys.length;
+      drawTimeline(timelineKeys);
       if (newLength !== oldLength) {
-        drawTimeline(timelineKeys);
         if (newLength > oldLength || (newLength > 0 && !scope.timeline.hidden)) {
           scope.timeline.hidden = false;
           scope.timeline.resizeTimeline();
@@ -456,15 +456,15 @@ app.controller('TimelineDirCtrl', function ($scope){
       x.max = new Date(scope.timeline.temporalExtent.end);
       var y = {max: timelineKeys.length -1,
        min: 0};
-      if (scope.timeline.xScale) {
-        x.scale = scope.timeline.xScale;  
-      } else {
+      // if (scope.timeline.xScale) {
+      //   x.scale = scope.timeline.xScale;  
+      // } else {
         x.scale = timelineCtrl.scale(x, {
           type: 'time',
           range: [0, graph.width],
           });
         scope.timeline.xScale = x.scale;
-      }
+      // }
       y.colorscale = timelineCtrl.scale(y, {
         range: [graph.height, 0],
         scale: (options.scale == 'ordinal') ? 'ordinal' : 'linear'

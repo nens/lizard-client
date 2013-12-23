@@ -438,7 +438,16 @@ app.controller("MasterCtrl",
 
 
   var buildAnimationDatetimes = function () {
-            // Build datetime objects to retrieve wms layers later on.
+        /*
+        * Currently the server stores only the last 24 hours. 
+        * Reset temporalextent to this last twenty four it it exceeds these limits
+        *
+        * Get radarimages for every 5th minutes if this fits in the localstorage, else confine to every 10th minute
+        */
+        var twentyFourAgo = Date.now() - 86400000;
+        $scope.timeline.temporalExtent.start = ($scope.timeline.temporalExtent.start < twentyFourAgo) ? twentyFourAgo: $scope.timeline.temporalExtent.start;
+        $scope.timeline.temporalExtent.end = ($scope.timeline.temporalExtent.end < twentyFourAgo || $scope.timeline.temporalExtent.end > Date.now()) ? Date.now(): $scope.timeline.temporalExtent.end;
+        $scope.timeline.changed = !$scope.timeline.changed;
         var hours = ($scope.timeline.temporalExtent.end - $scope.timeline.temporalExtent.start) / 60000;
         console.log(hours);
         var animationDatetimes = [];
@@ -448,8 +457,12 @@ app.controller("MasterCtrl",
         // The wms only accepts requests for every 5th minute exact
         now.minutes((Math.round(now.minutes()/5) * 5) % 60);
         now.seconds(0);
-        var intervalAdd = (hours/5 > 200) ? 10: 5;
-        console.log("Getting radar for every ", intervalAdd, "th minute");
+        
+        var intervalAdd = (hours / 5 > 200) ? 10: 5;
+
+        console.log("Getting radar images from", new Date($scope.timeline.temporalExtent.start),
+                    "to", new Date($scope.timeline.temporalExtent.end),
+                    "for every", intervalAdd, "th minute");
 
         for (var interval = 5; interval < hours; interval = interval + intervalAdd) {
             var animationDatetime = now.subtract('minutes', 5);
