@@ -44,6 +44,7 @@ app.directive('vectorlayer', function () {
       }
 
       scope.$watch('timeline.colorScale', function () {
+        console.log("setting color");
         d3.selectAll(".circle")
         .attr('fill', function (d) {
           return scope.timeline.colorScale(d.event_sub_type);

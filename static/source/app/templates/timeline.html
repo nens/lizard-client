@@ -29,13 +29,11 @@
         Month
       </button> -->
     </div>
-        <span ng-hide="animation.enabled">
-          <small><% timeline.temporalExtent.start | date:'d MMM y' %> - <% timeline.temporalExtent.end | date:'d MMM y' %></small>
-        </span>
-        <span ng-show="animation.enabled">
-          <button ng-click="toggleRainPlay()" type="button" class="btn btn-default" ng-class="{'active' : animation.playing}"><i class="icon-play"></i></button>
-          <input type="range" class="middle" min="0" max="33" ng-model="animation.currentFrame" ng-click="toggleRainPlay('off')">
-          <small><% animation.currentDate | date:'d MMM y - HH:mm' %></small>
+        <span>
+          <button ng-show="animation.enabled" ng-click="toggleRainPlay()" type="button" class="btn btn-default" ng-class="{'active' : animation.playing}"><i class="icon-play"></i></button>
+          <input ng-show="animation.enabled" type="range" class="middle" min="0" max="33" ng-model="animation.currentFrame" ng-click="toggleRainPlay('off')">
+          <small><% timeline.temporalExtent.start | date:'d MMM y' %> - <% timeline.temporalExtent.end | date:'d MMM y' %></small>        
+          <small ng-show="animation.enabled">(<% animation.currentDate | date:'d MMM y - HH:mm' %>)</small>
         </span>
   </div>
 

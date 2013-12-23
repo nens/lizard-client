@@ -392,7 +392,7 @@ app.controller("MasterCtrl",
    */
   $scope.timeline = {
     temporalExtent: {
-      start: Date.now() - 31556900000, // 1 year in ms
+      start: Date.now() - 86400000,//24 hours in ms // 31556900000, // 1 year in ms
       end: Date.now(),
       changedZoom: true,
       at: Date.now() - this.start
@@ -439,16 +439,19 @@ app.controller("MasterCtrl",
 
   var buildAnimationDatetimes = function () {
             // Build datetime objects to retrieve wms layers later on.
-        var hours = 3 * 60;
+        var hours = ($scope.timeline.temporalExtent.end - $scope.timeline.temporalExtent.start) / 60000;
+        console.log(hours);
         var animationDatetimes = [];
-        var now = moment();
+        var now = moment($scope.timeline.temporalExtent.end);
         now.hours(now.hours() - (60 / now.zone()));
         
         // The wms only accepts requests for every 5th minute exact
         now.minutes((Math.round(now.minutes()/5) * 5) % 60);
         now.seconds(0);
+        var intervalAdd = (hours/5 > 200) ? 10: 5;
+        console.log("Getting radar for every ", intervalAdd, "th minute");
 
-        for (var interval = 5; interval < hours; interval = interval + 5) {
+        for (var interval = 5; interval < hours; interval = interval + intervalAdd) {
             var animationDatetime = now.subtract('minutes', 5);
             var UtsieAniDatetime = now.utc();
             animationDatetimes.push(UtsieAniDatetime.format('YYYY-MM-DDTHH:mm:ss') + '.000Z');
@@ -459,9 +462,7 @@ app.controller("MasterCtrl",
     };
 
     var imageUrlBase = 'http://regenradar.lizard.net/wms/?WIDTH=525&HEIGHT=497&SRS=EPSG%3A3857&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
-    var dates = buildAnimationDatetimes();
-    var radarImages = [];
-    localStorage.clear();
+    var dates = [];
 
     // delete $http.defaults.headers.common['X-Requested-With'];
 
@@ -480,12 +481,7 @@ app.controller("MasterCtrl",
       };
       img.crossOrigin = 'anonymous';
       img.src = base + date;
-    }
-
-    for (var i = 0; i < dates.length; i++) {
-      var date = dates[i];
-      ripImage(imageUrlBase, date, i);
-    }
+    };
 
   $scope.animation = {
     at: Date.now(),
@@ -500,14 +496,20 @@ app.controller("MasterCtrl",
   $scope.toggleRain = function () {
     $scope.animation.enabled = !$scope.animation.enabled;
     if ($scope.animation.enabled) {
+      dates = buildAnimationDatetimes();
+      localStorage.clear();
+      for (var i = 0; i < dates.length; i++) {
+        var date = dates[i];
+        ripImage(imageUrlBase, date, i);
+      }
+      console.log("Radar dates:", dates.length, dates);
       if (!$scope.timeline.hidden) { 
         $scope.timeline.hidden = false;
         $scope.timeline.resizeTimeline();
       }
+      $scope.animation.currentFrame = 0;
       $scope.animationDriver();
       $scope.animation.playing = true;
-      // $scope.timeline.temporalExtent.start = Date.parse(dates[0]);
-      // $scope.timeline.temporalExtent.end = Date.parse(dates[dates.length-1]);
     } else {
       $scope.animation.enabled = false;
       $scope.animation.playing = false;
@@ -515,19 +517,19 @@ app.controller("MasterCtrl",
   };
 
   $scope.toggleRainPlay = function (toggle) {
+    console.log("toggling rainplay");
     if ($scope.animation.enabled) {
-      if ($scope.animation.playing || toggle == "off") {
+      if ($scope.animation.playing || toggle === "off") {
         $scope.animation.playing = false;
       } else {
         $scope.animationDriver();
-        $scope.animation.playing = true;      
+        $scope.animation.playing = true;
       }
     }
   };
 
   var start = null;
   // var keys = Object.keys($scope.animation.frame);
-  var finalFrame = dates.length- 1;
   var progress;
 
   $scope.$watch('animation.currentFrame', function (newVal, oldVal) {
@@ -540,9 +542,9 @@ app.controller("MasterCtrl",
     $scope.$apply(function () {
       $scope.animation.currentFrame++;
     });
-
-    progress = timestamp - start;    
-    if ($scope.animation.currentFrame == finalFrame) {
+    console.log(timestamp, $scope.animation.currentFrame);
+    progress = timestamp - start;
+    if ($scope.animation.currentFrame === dates.length - 1) {
       $scope.animation.currentFrame = -1;
     }  
     if ($scope.animation.playing) {
