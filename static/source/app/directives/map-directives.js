@@ -419,7 +419,7 @@ app.directive('sewerage', function ($http) {
               scope.mapState.changed = Date.now();
             }
           }
-          scope.timeline.data.sewerage = scope.formatted_geojsondata;
+          scope.timeState.timeline.data.sewerage = scope.formatted_geojsondata;
         } else {
           for (var mapLayer in scope.mapState.layers) {
             var layer = scope.mapState.layers[mapLayer];
@@ -481,7 +481,7 @@ app.directive('sewerage', function ($http) {
             return formatted;
           }
           scope.formatted_geojsondata = format(data);
-          scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
+          scope.timeState.changedZoom = !scope.timeState.changedZoom;
           scope.box.content.isw.count = 0;
           scope.rawGeojsondata = data;
         });

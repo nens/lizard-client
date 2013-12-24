@@ -20,14 +20,14 @@ app.directive('vectorlayer', function () {
        */
       function circle_style(circles) {
         var scale;
-        if (!scope.timeline.colorScale) {
+        if (!scope.timeState.colorScale) {
           scale = d3.scale.ordinal()
             .domain(function (d) {
               return d3.set(d.event_sub_type).values();
             })
             .range(colorbrewer.Set2[6]);
         } else {
-          scale = scope.timeline.colorScale;
+          scale = scope.timeState.colorScale;
         }
 
         circles.attr('fill-opacity', 0.8)
@@ -47,7 +47,7 @@ app.directive('vectorlayer', function () {
         console.log("setting color");
         d3.selectAll(".circle")
         .attr('fill', function (d) {
-          return scope.timeline.colorScale(d.event_sub_type);
+          return scope.timeState.colorScale(d.event_sub_type);
         });
       });
 
@@ -67,8 +67,8 @@ app.directive('vectorlayer', function () {
         d3.selectAll(".circle").classed("hidden", true);
         d3.selectAll(".circle")
           .classed("selected", function (d) {
-            var s = [scope.timeline.temporalExtent.start,
-                     scope.timeline.temporalExtent.end];
+            var s = [scope.timeState.start,
+                     scope.timeState.end];
             var time = d.timestamp;
             var contained = s[0] <= time && time <= s[1];
             // Some book keeping to count
@@ -81,21 +81,21 @@ app.directive('vectorlayer', function () {
 
       // watch for change in temporalExtent, change visibility of
       // alerts accordingly
-      scope.$watch('timeline.temporalExtent.changedZoom', function () {
+      scope.$watch('timeState.changedZoom', function () {
         drawTimeEvents();
-        scope.timeline.countCurrentEvents();
+        scope.timeState.countCurrentEvents();
       });
       
       // Watch button click, toggle event layer
       var eventLayers = [];
-      scope.$watch('timeline.changed', function () {
+      scope.$watch('timeState.timeline.changed', function () {
         // Fresh start
         angular.forEach(eventLayers, function(layer) {
           mapCtrl.removeLayer(layer);
         });
-        for (var eventType in scope.timeline.data) {
-          if (scope.timeline.data[eventType].active) {
-            eventLayer = L.pointsLayer(scope.timeline.data[eventType], {
+        for (var eventType in scope.timeState.timeline.data) {
+          if (scope.timeState.timeline.data[eventType].active) {
+            eventLayer = L.pointsLayer(scope.timeState.timeline.data[eventType], {
                 applyStyle: circle_style
               });
             mapCtrl.addLayer(eventLayer);

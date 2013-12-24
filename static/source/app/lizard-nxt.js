@@ -119,7 +119,7 @@ app.controller("MasterCtrl",
     // NOTE: ugly hack, record if tool is time aware
     if ($scope.tools.active === "alerts" ||
         $scope.tools.active === "sewerage") {
-      $scope.timeline.changed = !$scope.timeline.changed;
+      $scope.timeState.changed = !$scope.timeState.changed;
     }
   };
   // TOOLS
@@ -390,17 +390,27 @@ app.controller("MasterCtrl",
   /**
    * Temporal extent model
    */
-  $scope.timeline = {
-    temporalExtent: {
-      start: Date.now() - 86400000,//24 hours in ms // 31556900000, // 1 year in ms
-      end: Date.now(),
-      changedZoom: true,
-      at: Date.now() - this.start
-    },
-    tool: 'zoom',
-    canceler: $q.defer(),
-    enabled: false,
-    data: {}
+  $scope.timeState = {
+    start: Date.now() - 31556900000, // 1 year in ms ; 86400000,//24 hours in ms //
+    end: Date.now(),
+    changedZoom: Date.now(),
+    at: Date.now() - this.start,
+    timeline: {
+      tool: 'zoom',
+      canceler: $q.defer(),
+      enabled: false,
+      data: {},
+      changed: Date.now()
+      },
+    animation: {
+      at: Date.now(),
+      playing: false,
+      enabled: false,
+      frame: dates,
+      currentFrame: 0,
+      lenght: 0
+      //currentDate: Date.parse(dates[0])
+    }
   };
 // END Temporal extent model
 
@@ -436,7 +446,6 @@ app.controller("MasterCtrl",
   window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
                               window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
-
   var buildAnimationDatetimes = function () {
         /*
         * Currently the server stores only the last 24 hours. 
@@ -445,13 +454,18 @@ app.controller("MasterCtrl",
         * Get radarimages for every 5th minutes if this fits in the localstorage, else confine to every 10th minute
         */
         var twentyFourAgo = Date.now() - 86400000;
-        $scope.timeline.temporalExtent.start = ($scope.timeline.temporalExtent.start < twentyFourAgo) ? twentyFourAgo: $scope.timeline.temporalExtent.start;
-        $scope.timeline.temporalExtent.end = ($scope.timeline.temporalExtent.end < twentyFourAgo || $scope.timeline.temporalExtent.end > Date.now()) ? Date.now(): $scope.timeline.temporalExtent.end;
-        $scope.timeline.changed = !$scope.timeline.changed;
-        var hours = ($scope.timeline.temporalExtent.end - $scope.timeline.temporalExtent.start) / 60000;
+        if ($scope.timeState.start < twentyFourAgo) {
+          $scope.timeState.start = twentyFourAgo;
+          $scope.timeState.changed = !$scope.timeState.changed;
+        }
+        if ($scope.timeState.end < twentyFourAgo || $scope.timeState.end > Date.now()) {
+          $scope.timeState.end =  Date.now()
+          $scope.timeState.changed = !$scope.timeState.changed;
+        }
+        var hours = ($scope.timeState.end - $scope.timeState.start) / 60000;
         console.log(hours);
         var animationDatetimes = [];
-        var now = moment($scope.timeline.temporalExtent.end);
+        var now = moment($scope.timeState.end);
         now.hours(now.hours() - (60 / now.zone()));
         
         // The wms only accepts requests for every 5th minute exact
@@ -460,8 +474,8 @@ app.controller("MasterCtrl",
         
         var intervalAdd = (hours / 5 > 200) ? 10: 5;
 
-        console.log("Getting radar images from", new Date($scope.timeline.temporalExtent.start),
-                    "to", new Date($scope.timeline.temporalExtent.end),
+        console.log("Getting radar images from", new Date($scope.timeState.start),
+                    "to", new Date($scope.timeState.end),
                     "for every", intervalAdd, "th minute");
 
         for (var interval = 5; interval < hours; interval = interval + intervalAdd) {
@@ -502,31 +516,43 @@ app.controller("MasterCtrl",
     enabled: false,
     frame: dates,
     currentFrame: 0,
+    lenght: 0,
     currentDate: Date.parse(dates[0])
   };
+
+  $scope.$watch('timeline.changed', function () {
+    if ($scope.animation.enabled) {
+      makeItRain();
+    }
+  });
 
   //tmp
   $scope.toggleRain = function () {
     $scope.animation.enabled = !$scope.animation.enabled;
     if ($scope.animation.enabled) {
-      dates = buildAnimationDatetimes();
-      localStorage.clear();
-      for (var i = 0; i < dates.length; i++) {
-        var date = dates[i];
-        ripImage(imageUrlBase, date, i);
-      }
-      console.log("Radar dates:", dates.length, dates);
-      if (!$scope.timeline.hidden) { 
-        $scope.timeline.hidden = false;
-        $scope.timeline.resizeTimeline();
-      }
-      $scope.animation.currentFrame = 0;
-      $scope.animationDriver();
-      $scope.animation.playing = true;
+      makeItRain();
     } else {
       $scope.animation.enabled = false;
       $scope.animation.playing = false;
     }
+  };
+
+  var makeItRain = function () {
+    dates = buildAnimationDatetimes();
+    localStorage.clear();
+    for (var i = 0; i < dates.length; i++) {
+      var date = dates[i];
+      ripImage(imageUrlBase, date, i);
+    }
+    console.log("Radar dates:", dates.length, dates);
+    $scope.animation.length = dates.length - 1;
+    if (!$scope.timeState.hidden) { 
+      $scope.timeState.hidden = false;
+      $scope.timeState.resizeTimeline();
+    }
+    $scope.animation.currentFrame = 0;
+    $scope.animationDriver();
+    $scope.animation.playing = true;
   };
 
   $scope.toggleRainPlay = function (toggle) {
@@ -555,7 +581,6 @@ app.controller("MasterCtrl",
     $scope.$apply(function () {
       $scope.animation.currentFrame++;
     });
-    console.log(timestamp, $scope.animation.currentFrame);
     progress = timestamp - start;
     if ($scope.animation.currentFrame === dates.length - 1) {
       $scope.animation.currentFrame = -1;

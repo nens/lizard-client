@@ -74,7 +74,7 @@ describe('Testing timeline directive', function() {
   });
 
   it('should have a temporal extent available with date as epoch', function () {
-    var datestart = scope.timeline.temporalExtent.start;
+    var datestart = scope.timeState.start;
     var datestarttype = typeof datestart;
     console.info('\n' + 'NOTE: perhaps temporalExtent should be a Date object');
     expect(datestarttype).toBe("number");
@@ -120,9 +120,9 @@ describe('Testing timeline directive', function() {
   it('INTEGRATION:: Should draw a timeline', function () {
     var timelinelement = angular.element('<div ng-controller="TimelineCtrl">'
       + '<timeline></timeline></div>');
-    scope.timeline.data.twitter = data;
-    scope.timeline.data.twitter.active = true;
-    scope.timeline.changed = !scope.timeline.changed;
+    scope.timeState.timeline.data.twitter = data;
+    scope.timeState.timeline.data.twitter.active = true;
+    scope.timeState.changed = !scope.timeState.changed;
     timelinelement = $compile(timelinelement)(scope);
     // timelinescope= timelinelement().scope;
     window.outerWidth = 1000;
