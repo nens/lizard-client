@@ -521,7 +521,7 @@ app.controller('TimelineDirCtrl', function ($scope){
 
         svg.call(timelineCtrl.zoom)
 
-        scope.timeState.at = timelineCtrl.halfwayTime(x.scale, graph.width);
+        // scope.timeState.at = timelineCtrl.halfwayTime(x.scale, graph.width);
         return {
           x: x,
           height: graph.height,
