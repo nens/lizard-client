@@ -403,7 +403,8 @@ app.controller("MasterCtrl",
       changed: Date.now()
       },
     animation: {
-      at: Date.now(),
+      start: Date.now() - 31556900000,
+      end: Date.now(),
       playing: false,
       enabled: false,
       frame: dates,
@@ -554,13 +555,27 @@ app.controller("MasterCtrl",
     $scope.animation.playing = true;
   };
 
-  $scope.timeState.toggleAnimation = function (toggle) {
-    console.log("toggling animation");
-    if ($scope.timeState.animation.playing || toggle === "off") {
+  $scope.timeState.enableAnimation = function (toggle) {
+    console.log("Enabling animation");
+    if ($scope.timeState.animation.enabled || toggle === "off") {
         $scope.timeState.animation.playing = false;
+        $scope.timeState.animation.enabled = false;
     } else {
         $scope.timeState.animationDriver();
+        $scope.timeState.animation.enabled = true;
         $scope.timeState.animation.playing = true;
+    }
+  };
+
+
+  $scope.timeState.toggleAnimation = function (toggle) {
+    console.log("toggling animation");
+    $scope.timeState.animation.enabled = true;
+    if ($scope.timeState.animation.playing || toggle === "off") {
+      $scope.timeState.animation.playing = false;
+    } else {
+      $scope.timeState.animationDriver();
+      $scope.timeState.animation.playing = true;
     }
   };
 
@@ -576,28 +591,27 @@ app.controller("MasterCtrl",
   $scope.timeState.step =  function (timestamp) {
     $scope.$apply(function () {
       $scope.timeState.animation.currentFrame++;
-      $scope.timeState.at += $scope.timeState.timeStep;  
+      $scope.timeState.at += $scope.timeState.timeStep;
     });
     if ($scope.timeState.at >= $scope.timeState.end) {
       $scope.$apply(function () {
         $scope.timeState.at = $scope.timeState.start;
       });
     }
-    progress = timestamp - start;
-    if ($scope.timeState.animation.currentFrame === dates.length - 1) {
-      $scope.timeState.animation.currentFrame = -1;
-    }  
+    // progress = timestamp - start;
+    // if ($scope.timeState.animation.currentFrame === dates.length - 1) {
+    //   $scope.timeState.animation.currentFrame = -1;
+    // }  
     if ($scope.timeState.animation.playing) {
       setTimeout(function () {
         requestAnimationFrame($scope.timeState.step);
-      }, 50);
+      }, 5);
     }
   };
 
   $scope.timeState.animationDriver = function () {
     $scope.timeState.at = $scope.timeState.start;
-    $scope.timeState.timeStep = ($scope.timeState.end - $scope.timeState.start) / 200;
-    console.log($scope.timeState.timeStep);
+    $scope.timeState.timeStep = ($scope.timeState.end - $scope.timeState.start) / 1000;
     requestAnimationFrame($scope.timeState.step);
   };
 

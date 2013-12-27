@@ -301,37 +301,48 @@ app.controller('TimelineDirCtrl', function ($scope){
     this.halfwayTime = function (scale, width) {
       return scale.invert(width / 2).getTime();
     };
+
+
+    this.brushmove = function () {
+      var s = brush.extent();
+      // if (brush.extent()[0].getTime() === brush.extent()[1].getTime()) {
+      //   $scope.timeState.start = $scope.timeState.xScale.domain()[0].getTime();
+      //   $scope.timeState.end = $scope.timeState.xScale.domain()[1].getTime();
+      //   $scope.timeState.changedZoom = !$scope.timeState.changedZoom;
+      // } else {
+      s_sorted = [s[0].getTime(), s[1].getTime()].sort();
+      $scope.timeState.animation.start = s_sorted[0];
+      $scope.timeState.animation.end = s_sorted[1];
+      $scope.timeState.changedZoom = Date.now();
+      // }
+      console.log($scope.timeState.animation);
+
+      //NOTE: repair!
+
+            // d3.selectAll(".bar")
+            //   .classed("selecting", function (d) {
+            //     var s = [$scope.timeState.start,
+            //          $scope.timeState.end];
+            //     var time = d.timestamp;
+            //     var contained = s[0] <= time && time <= s[1];
+            //     return contained;
+            //   });
+          //  if (brush.extent()[0].getTime() === brush.extent()[1].getTime()) {
+          //   $scope.timeState.start = $scope.timeState.xScale.domain()[0].getTime();
+          //   $scope.timeState.end = $scope.timeState.xScale.domain()[1].getTime();
+          //   $scope.timeState.changedZoom = !$scope.timeState.changedZoom;
+          // } else {
+            // s_sorted = [s[0].getTime(), s[1].getTime()].sort();
+            // $scope.timeState.start = s_sorted[0];
+            // $scope.timeState.end = s_sorted[1];
+            // $scope.timeState.changedZoom = Date.now();
+          // }
+
+        };
+
     this.createBrush = function (scope, svg, x, height, xKey) {
       var brush = null;    
 
-      var brushmove = function () {
-        var s = brush.extent();
-            //NOTE: repair!
-            d3.selectAll(".bar")
-              .classed("selecting", function (d) {
-                var s = [scope.timeState.start,
-                     scope.timeState.end];
-                var time = d.timestamp;
-                var contained = s[0] <= time && time <= s[1];
-                return contained;
-              });
-
-           if (brush.extent()[0].getTime() === brush.extent()[1].getTime()) {
-            scope.$apply(function () {
-              scope.timeState.start = x.scale.domain()[0].getTime();
-              scope.timeState.end = x.scale.domain()[1].getTime();
-              scope.timeState.changedZoom = !scope.timeState.changedZoom;
-            });
-          } else {
-            scope.$apply(function () {
-              s_sorted = [s[0].getTime(), s[1].getTime()].sort();
-              scope.timeState.start = s_sorted[0];
-              scope.timeState.end = s_sorted[1];
-              scope.timeState.changedZoom = !scope.timeState.changedZoom;
-            });
-          }
-
-        };
        var brushstart = function () {
         //svg.classed("selecting", true);
       };
@@ -340,14 +351,17 @@ app.controller('TimelineDirCtrl', function ($scope){
     //    svg.classed("selecting", !d3.event.target.empty());
       };    
       var brush = d3.svg.brush().x(x.scale)
-        .on("brush", brushmove)
+        .on("brush", this.brushmove)
         .on("brushstart", brushstart)
         .on("brushend", brushend);
       this.brushg = svg.append("g")
         .attr("class", "brushed")
         .call(brush);
       this.brushg.selectAll("rect")
-        .attr("height", height);    
+        .attr("height", height);
+      console.log(brush)  ;
+      window.brush = brush;   
+      return brush;
       };
     this.removeBrush = function (svg) {
       if (this.brushg){
@@ -529,24 +543,38 @@ app.controller('TimelineDirCtrl', function ($scope){
           xKey: xKey
         }
     };
-      scope.$watch('timeline.tool', function (newVal, oldVal) {
-          if (newVal === oldVal) {
-            // do nothing
-          } else if (newVal === 'zoom') {
-            timelineCtrl.removeBrush(chart.svg);
-            timelineCtrl.zoom = d3.behavior.zoom()
-              .x(chart.x.scale)
-              .on("zoom", timelineCtrl.zoomed);
-            chart.svg.call(timelineCtrl.zoom);
-          } else if (newVal === 'brush') {
-            // chart.svg.call(timelineCtrl.zoom);
-            timelineCtrl.zoom = d3.behavior.zoom()
+
+    
+    var animationBrush;    
+    scope.$watch('timeState.animation.enabled', function (newVal, oldVal) {
+      if (newVal !== oldVal) {
+        if (scope.timeState.animation.enabled) {
+          timelineCtrl.zoom = d3.behavior.zoom()
               .x(chart.x.scale)
               .on("zoom", null);
-            chart.svg.on('.zoom', null);
-            timelineCtrl.createBrush(scope, chart.svg, chart.x, chart.height, chart.xKey);
-          }
-        });
+          chart.svg.on('.zoom', null);
+          animationBrush = timelineCtrl.createBrush(scope, chart.svg, chart.x, chart.height, chart.xKey);
+          var buffer = (scope.timeState.end - scope.timeState.start) / 100;
+          chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.at), new Date(scope.timeState.at + buffer)]));
+          timelineCtrl.brushmove();
+        } else {
+          timelineCtrl.removeBrush(chart.svg);
+          timelineCtrl.zoom = d3.behavior.zoom()
+          .x(chart.x.scale)
+          .on("zoom", timelineCtrl.zoomed);
+          chart.svg.call(timelineCtrl.zoom);
+        }
+      }
+    });
+
+    
+    scope.$watch('timeState.at' , function () {
+      if (scope.timeState.animation.enabled) {
+        var buffer = (scope.timeState.end - scope.timeState.start) / 100;
+        chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.at), new Date(scope.timeState.at + buffer)]));
+        timelineCtrl.brushmove();
+      }
+    });
 
       scope.$watch('timeline.zoom.changed', function (newVal, oldVal) {
         if (newVal !== oldVal) {

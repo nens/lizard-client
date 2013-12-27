@@ -62,13 +62,12 @@ app.directive('vectorlayer', function () {
       /*
        * Draw events based on current temporal extent
        */
-      var drawTimeEvents = function () {
+      var drawTimeEvents = function (start, end) {
         //NOTE: not optimal class switching
         d3.selectAll(".circle").classed("hidden", true);
         d3.selectAll(".circle")
           .classed("selected", function (d) {
-            var s = [scope.timeState.start,
-                     scope.timeState.end];
+            var s = [start, end];
             var time = d.timestamp;
             var contained = s[0] <= time && time <= s[1];
             // Some book keeping to count
@@ -82,7 +81,7 @@ app.directive('vectorlayer', function () {
       // watch for change in temporalExtent, change visibility of
       // alerts accordingly
       scope.$watch('timeState.changedZoom', function () {
-        drawTimeEvents();
+        drawTimeEvents(scope.timeState.start, scope.timeState.end);
         scope.timeState.countCurrentEvents();
       });
       
@@ -100,10 +99,19 @@ app.directive('vectorlayer', function () {
               });
             mapCtrl.addLayer(eventLayer);
             eventLayers.push(eventLayer);
-            drawTimeEvents();
+            drawTimeEvents(scope.timeState.start, scope.timeState.end);
           }
         }
       });
+
+    // Watch for animation   
+    scope.$watch('timeState.at', function () {
+      if (scope.timeState.animation.enabled) {
+        var buffer = (scope.timeState.end - scope.timeState.start) / 100;
+        drawTimeEvents(scope.timeState.at, scope.timeState.at + buffer);
+        scope.timeState.countCurrentEvents();
+      }
+    });
     }
   };
 });
