@@ -106,9 +106,10 @@ app.directive('vectorlayer', function () {
 
     // Watch for animation   
     scope.$watch('timeState.at', function () {
+      console.log("redraw? ", scope.timeState.animation.enabled);
       if (scope.timeState.animation.enabled) {
-        var buffer = (scope.timeState.end - scope.timeState.start) / 100;
-        drawTimeEvents(scope.timeState.at, scope.timeState.at + buffer);
+        console.log("redraw");
+        drawTimeEvents(scope.timeState.animation.start, scope.timeState.animation.end);
         scope.timeState.countCurrentEvents();
       }
     });

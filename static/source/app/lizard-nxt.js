@@ -403,8 +403,6 @@ app.controller("MasterCtrl",
       changed: Date.now()
       },
     animation: {
-      start: Date.now() - 31556900000,
-      end: Date.now(),
       playing: false,
       enabled: false,
       frame: dates,
@@ -558,24 +556,24 @@ app.controller("MasterCtrl",
   $scope.timeState.enableAnimation = function (toggle) {
     console.log("Enabling animation");
     if ($scope.timeState.animation.enabled || toggle === "off") {
-        $scope.timeState.animation.playing = false;
         $scope.timeState.animation.enabled = false;
     } else {
         $scope.timeState.animationDriver();
         $scope.timeState.animation.enabled = true;
-        $scope.timeState.animation.playing = true;
     }
   };
 
 
   $scope.timeState.toggleAnimation = function (toggle) {
     console.log("toggling animation");
-    $scope.timeState.animation.enabled = true;
+    if (!$scope.timeState.animation.enabled) {
+      $scope.timeState.enableAnimation();
+    }
     if ($scope.timeState.animation.playing || toggle === "off") {
       $scope.timeState.animation.playing = false;
     } else {
-      $scope.timeState.animationDriver();
       $scope.timeState.animation.playing = true;
+      requestAnimationFrame($scope.timeState.step);
     }
   };
 
@@ -591,11 +589,15 @@ app.controller("MasterCtrl",
   $scope.timeState.step =  function (timestamp) {
     $scope.$apply(function () {
       $scope.timeState.animation.currentFrame++;
-      $scope.timeState.at += $scope.timeState.timeStep;
+      $scope.timeState.animation.start += $scope.timeState.timeStep;
+      $scope.timeState.animation.end += $scope.timeState.timeStep;
+      $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
     });
     if ($scope.timeState.at >= $scope.timeState.end) {
       $scope.$apply(function () {
-        $scope.timeState.at = $scope.timeState.start;
+        $scope.timeState.animation.end = $scope.timeState.animation.end - $scope.timeState.animation.start + $scope.timeState.start;
+        $scope.timeState.animation.start = $scope.timeState.start;
+        $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
       });
     }
     // progress = timestamp - start;
@@ -612,7 +614,6 @@ app.controller("MasterCtrl",
   $scope.timeState.animationDriver = function () {
     $scope.timeState.at = $scope.timeState.start;
     $scope.timeState.timeStep = ($scope.timeState.end - $scope.timeState.start) / 1000;
-    requestAnimationFrame($scope.timeState.step);
   };
 
 

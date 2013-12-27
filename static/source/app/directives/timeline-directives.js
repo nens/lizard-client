@@ -313,9 +313,12 @@ app.controller('TimelineDirCtrl', function ($scope){
       s_sorted = [s[0].getTime(), s[1].getTime()].sort();
       $scope.timeState.animation.start = s_sorted[0];
       $scope.timeState.animation.end = s_sorted[1];
-      $scope.timeState.changedZoom = Date.now();
+      $scope.timeState.at = (s_sorted[0] + s_sorted[1]) / 2;
+      if (!$scope.timeState.animation.playing && !$scope.$$phase) {
+        $scope.$digest();
+      }
+      console.log($scope.timeState.at);
       // }
-      console.log($scope.timeState.animation);
 
       //NOTE: repair!
 
@@ -553,9 +556,14 @@ app.controller('TimelineDirCtrl', function ($scope){
               .x(chart.x.scale)
               .on("zoom", null);
           chart.svg.on('.zoom', null);
+
           animationBrush = timelineCtrl.createBrush(scope, chart.svg, chart.x, chart.height, chart.xKey);
-          var buffer = (scope.timeState.end - scope.timeState.start) / 100;
-          chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.at), new Date(scope.timeState.at + buffer)]));
+          if (scope.timeState.animation.start !== undefined && scope.timeState.animation.end !== undefined) {
+            chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
+          } else {
+            var buffer = (scope.timeState.end - scope.timeState.start) / 100;
+            chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.at), new Date(scope.timeState.at + buffer)]));          
+          }
           timelineCtrl.brushmove();
         } else {
           timelineCtrl.removeBrush(chart.svg);
@@ -570,8 +578,7 @@ app.controller('TimelineDirCtrl', function ($scope){
     
     scope.$watch('timeState.at' , function () {
       if (scope.timeState.animation.enabled) {
-        var buffer = (scope.timeState.end - scope.timeState.start) / 100;
-        chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.at), new Date(scope.timeState.at + buffer)]));
+        chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
         timelineCtrl.brushmove();
       }
     });
