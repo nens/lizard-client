@@ -131,6 +131,7 @@ app
         }
       };
 
+
       // Expects a leafletLayer as an argument
       this.addLayer = function (layer) {
         $scope.map.addLayer(layer);
@@ -151,7 +152,8 @@ app
         // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
       };
 
-      this.map = function () {return $scope.map; };// make map object available to outside world.
+      // make map object available to outside world.
+      this.map = function () {return $scope.map; };
       
       this.zoomToTheMagic = function (layer) {
         //console.log('zoomToTheMagic');
@@ -298,6 +300,22 @@ app
           });
         }
       });
+
+      /**
+       * Add geojson d3 layer
+       * test implementation
+       *
+       */
+      // fake line to initialise svg element
+      new L.geoJson({"type": "LineString", "coordinates": [[0, 0], [0, 0]]})
+        .addTo(map);
+      var surfaceLayer = new L.TileLayer.GeoJSONd3(
+        'api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=impervioussurface',
+        {
+          class: "channel"
+        });
+      map.addLayer(surfaceLayer);
+
     };
 
     return {
