@@ -44,7 +44,6 @@ app.directive('vectorlayer', function () {
       }
 
       scope.$watch('timeline.colorScale', function () {
-        console.log("setting color");
         d3.selectAll(".circle")
         .attr('fill', function (d) {
           return scope.timeState.colorScale(d.event_sub_type);
@@ -106,9 +105,7 @@ app.directive('vectorlayer', function () {
 
     // Watch for animation   
     scope.$watch('timeState.at', function () {
-      console.log("redraw? ", scope.timeState.animation.enabled);
       if (scope.timeState.animation.enabled) {
-        console.log("redraw");
         drawTimeEvents(scope.timeState.animation.start, scope.timeState.animation.end);
         scope.timeState.countCurrentEvents();
       }

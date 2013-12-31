@@ -202,7 +202,6 @@ app.controller("MasterCtrl",
         changedZoom: false,
       };
       $scope.box.content.changeFunction = function (start, stop) {
-        console.info('start', start);
         $scope.box.content.temporalExtent.start = start;
         $scope.box.content.temporalExtent.stop = stop;
         $scope.box.content.temporalExtent.changedZoom = !$scope.box.content.temporalExtent.changedZoom;
@@ -482,11 +481,10 @@ app.controller("MasterCtrl",
       canvas.height = 497;
       var img = document.createElement('img');
       img.onload = function(e) {
-        console.log(e, date);
-        $scope.rain.imageDates.push(date);
+        $scope.rain.imageDates.push(Date.parse(date));
         ctx.drawImage(img, 0, 0, 525, 497);
         var url = canvas.toDataURL(); // thank you: http://html5-demos.appspot.com/static/html5-whats-new/template/index.html#14
-        localStorage.setItem(item, url);
+        localStorage.setItem(Date.parse(date), url);
         canvas.remove();
       };
       img.crossOrigin = 'anonymous';
@@ -529,26 +527,22 @@ app.controller("MasterCtrl",
   var getRadarImages = function () {
     $scope.rain.imageDates = [];
     var imageUrlBase = 'http://regenradar.lizard.net/wms/?WIDTH=525&HEIGHT=497&SRS=EPSG%3A3857&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
-    var dates = [];
-    dates = buildAnimationDatetimes();
+    $scope.rain.dates = buildAnimationDatetimes();
     localStorage.clear();
-    for (var i = 0; i < dates.length; i++) {
-      var date = dates[i];
+    for (var i = 0; i < $scope.rain.dates.length; i++) {
+      var date = $scope.rain.dates[i];
       ripImage(imageUrlBase, date, i);
     }
-    console.log("Radar dates:", dates.length, dates);
-    $scope.rain.length = dates.length - 1;
+    $scope.rain.length = $scope.rain.dates.length - 1;
     if (!$scope.timeState.hidden) { 
       $scope.timeState.hidden = false;
       $scope.timeState.resizeTimeline();
     }
-    //$scope.animation.currentFrame = 0;
-    //$scope.animationDriver();
-    //$scope.animation.playing = true;
+    $scope.rain.currentFrame = 0;
+    $scope.rain.currentDate = Date.parse($scope.rain.dates[0]);
   };
 
   $scope.timeState.enableAnimation = function (toggle) {
-    console.log("Enabling animation");
     if ($scope.timeState.animation.enabled || toggle === "off") {
         $scope.timeState.animation.enabled = false;
     } else {
@@ -559,7 +553,6 @@ app.controller("MasterCtrl",
 
 
   $scope.timeState.toggleAnimation = function (toggle) {
-    console.log("toggling animation");
     if (!$scope.timeState.animation.enabled) {
       $scope.timeState.enableAnimation();
     }
@@ -571,45 +564,45 @@ app.controller("MasterCtrl",
     }
   };
 
-  var start = null;
-  // var keys = Object.keys($scope.animation.frame);
-  var progress;
+  var d = new Date()
+  var timeZoneOffset = d.getTimezoneOffset() * 60000;
 
-  // Watch for animation   
-  $scope.$watch('timeState.at', function () {
-    if ($scope.timeState.animation.enabled && $scope.rain.enabled) {
-      console.log($scope.rain.imageDates);
-
-      var now = moment($scope.timeState.at);
-      now.hours(now.hours() - (60 / now.zone()));
-      now.minutes((Math.round(now.minutes()/5) * 5) % 60);
-      now.seconds(0);
-      var date = now.format('YYYY-MM-DDTHH:mm:ss') + '.000Z';
-      console.log("Rounded is", date);
-      if ($scope.rain.imageDates.indexOf(date) !== -1) {
-        console.log("its in");
-        $scope.rain.currentDate = date;
+  // Watch for animation
+  $scope.$watch('timeState.at', function (n, o) {
+    console.log("scope.timeState.at fired");
+    if ($scope.rain.enabled && n !== o) {
+      var roundedMoment = Math.round($scope.timeState.at / 300000) * 300000 + timeZoneOffset; //Round to nearest five minutes
+      if ($scope.timeState.at >= ($scope.rain.currentDate + 300000)) {
+        if ($scope.rain.imageDates.indexOf(roundedMoment) !== -1) { // Check whether we have an image for this moment
+          $scope.rain.currentFrame = roundedMoment;
+        }
+      } else if ($scope.timeState.at <= ($scope.rain.currentDate - 300000)) {
+        if ($scope.rain.imageDates.indexOf(roundedMoment) !== -1) { // Check whether we have an image for this moment
+          $scope.rain.currentFrame = roundedMoment;
+        }
+      } else {
+        if (roundedMoment < $scope.rain.dates[0] || roundedMoment > $scope.rain.dates[$scope.rain.dates.length - 1]) {
+          $scope.rain.currentFrame = null;
+        }
       }
-      //$scope.timeState.animation.currentDate = Date.parse(dates[$scope.animation.currentFrame]);
+      $scope.rain.currentDate = roundedMoment;
     }
-  });
-
-  $scope.$watch('timeState.animation.currentFrame', function (newVal, oldVal) {
-    if (newVal === oldVal) { return;}
-    //$scope.timeState.animation.currentDate = Date.parse(dates[$scope.animation.currentFrame]);
-  });
+  }, true);
 
   $scope.timeState.step =  function (timestamp) {
     $scope.$apply(function () {
       $scope.timeState.animation.start += $scope.timeState.timeStep;
       $scope.timeState.animation.end += $scope.timeState.timeStep;
       $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
+      console.log($scope.timeState.at);
     });
     if ($scope.timeState.at >= $scope.timeState.end) {
       $scope.$apply(function () {
         $scope.timeState.animation.end = $scope.timeState.animation.end - $scope.timeState.animation.start + $scope.timeState.start;
         $scope.timeState.animation.start = $scope.timeState.start;
         $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
+        $scope.rain.currentFrame = null;
+        $scope.rain.currentDate = Date.parse($scope.rain.dates[0]);
       });
     }
     if ($scope.timeState.animation.playing) {

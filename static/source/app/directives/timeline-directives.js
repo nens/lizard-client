@@ -314,10 +314,10 @@ app.controller('TimelineDirCtrl', function ($scope){
       $scope.timeState.animation.start = s_sorted[0];
       $scope.timeState.animation.end = s_sorted[1];
       $scope.timeState.at = (s_sorted[0] + s_sorted[1]) / 2;
-      if (!$scope.timeState.animation.playing && !$scope.$$phase) {
-        $scope.$digest();
-      }
       console.log($scope.timeState.at);
+      if (!$scope.timeState.animation.playing && !$scope.$$phase) {
+        $scope.$apply();
+      }
       // }
 
       //NOTE: repair!
@@ -362,7 +362,6 @@ app.controller('TimelineDirCtrl', function ($scope){
         .call(brush);
       this.brushg.selectAll("rect")
         .attr("height", height);
-      console.log(brush)  ;
       window.brush = brush;   
       return brush;
       };
