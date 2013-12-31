@@ -1,7 +1,7 @@
-/*
- * Directive to add d3 vector layer to leaflet
+/**
+ * Add non tiled d3 event vector layer
  *
- * This is implemented as a layer to display point events. Events
+ * Implemented as a layer to display point events. Events
  * are aggregated based on viewport (spatial extent) and
  * time-interval (temporal extent, from timeline)
  *
@@ -89,7 +89,7 @@ app.directive('vectorlayer', function () {
       var eventLayers = [];
       scope.$watch('timeline.changed', function () {
         // Fresh start
-        angular.forEach(eventLayers, function(layer) {
+        angular.forEach(eventLayers, function (layer) {
           mapCtrl.removeLayer(layer);
         });
         for (var eventType in scope.timeline.data) {
@@ -106,3 +106,37 @@ app.directive('vectorlayer', function () {
     }
   };
 });
+
+
+/**
+ * Impervious surface vector layer
+ *
+ * Load data with d3 geojson vector plugin L.TileLayer.GeoJSONd3 in ./lib
+ *
+ */
+app.directive('surfacelayer', function () {
+  return {
+    restrict: 'A',
+    require: 'map',
+    link: function (scope, element, attrs, mapCtrl) {
+
+      /**
+       * Add geojson d3 layer
+       *
+       */
+      // fake line to initialise svg element
+      scope.$watch('tools.active', function () {
+        if (scope.tools.active === "profile") {
+          var surfaceLayer = new L.TileLayer.GeoJSONd3(
+            'api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=impervioussurface',
+            {
+              class: "polygon"
+            });
+          console.log(surfaceLayer);
+          mapCtrl.addLayer(surfaceLayer);
+        }
+      });
+    }
+  };
+});
+

@@ -37,7 +37,7 @@ app
                     // resolution: 2
                   });
                   leafletLayer.on('click', function (e) {
-                    if (e.data){
+                    if (e.data) {
                       $scope.getTimeseries(e.data);
                     }
                   });
@@ -206,10 +206,16 @@ app
       // see: http://leafletjs.com/reference.html#path-canvas
       window.L_PREFER_CANVAS = true;
       // instead of 'map' element here for testability
+      /**
+       * initial map bounds
+       */
       var map = new L.map(element[0], {
-          center: new L.LatLng(52.0992287, 5.5698782),
+          //center: new L.LatLng(52.0992287, 5.5698782),
           zoomControl: false,
-          zoom: 8
+          //zoom: 8
+          // centered on Purmerend
+          center: new L.LatLng(52.5, 4.98),
+          zoom: 17
         });
 
       scope.$watch('searchMarkers', function (newValue, oldValue) {
@@ -262,7 +268,7 @@ app
 
       scope.map.on('move', function () {
         // NOTE: Check whether a $digest is already happening before using apply
-        if(!scope.$$phase) {
+        if (!scope.$$phase) {
           scope.$apply(function () {
             scope.mapState.moved = Date.now();
             scope.mapState.bounds = scope.map.getBounds();
@@ -273,10 +279,10 @@ app
             //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
             //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
             //     + "))";
-          });  
+          });
         } else {
           scope.mapState.moved = Date.now();
-            scope.mapState.bounds = scope.map.getBounds();
+          scope.mapState.bounds = scope.map.getBounds();
             // scope.mapState.geom_wkt = "POLYGON(("
             //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
             //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
@@ -300,21 +306,6 @@ app
           });
         }
       });
-
-      /**
-       * Add geojson d3 layer
-       * test implementation
-       *
-       */
-      // fake line to initialise svg element
-      new L.geoJson({"type": "LineString", "coordinates": [[0, 0], [0, 0]]})
-        .addTo(map);
-      var surfaceLayer = new L.TileLayer.GeoJSONd3(
-        'api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=impervioussurface',
-        {
-          class: "channel"
-        });
-      map.addLayer(surfaceLayer);
 
     };
 
@@ -554,8 +545,8 @@ app.directive('animation', function () {
       });
 
       scope.$watch('animation.currentFrame', function (newVal, oldVal) {
-        if (newVal == oldVal) { return; }
-        if (imageOverlay != undefined) {
+        if (newVal === oldVal) { return; }
+        if (imageOverlay !== undefined) {
           var frame = scope.animation.frame[scope.animation.currentFrame];
           var imgFromStorage = localStorage.getItem(scope.animation.currentFrame);
           imageOverlay.setUrl(imgFromStorage);

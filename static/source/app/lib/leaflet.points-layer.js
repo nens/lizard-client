@@ -14,10 +14,10 @@ L.PointsLayer = L.Class.extend({
     },
 
     initialize: function (data, options) {
-        var options = L.setOptions(this, options);
-        this._data = data;
-        this._path = d3.geo.path().projection(this._project.bind(this))
-            .pointRadius(this._radius.bind(this));
+      options = L.setOptions(this, options);
+      this._data = data;
+      this._path = d3.geo.path().projection(this._project.bind(this))
+          .pointRadius(this._radius.bind(this));
     },
 
     onAdd: function (map) {
@@ -29,7 +29,7 @@ L.PointsLayer = L.Class.extend({
         // Set up events
         map.on({
             'moveend': this._update
-        }, this);
+          }, this);
 
         this._update();
     },
@@ -130,108 +130,3 @@ L.PointsLayer = L.Class.extend({
 L.pointsLayer = function (data, options) {
     return new L.PointsLayer(data, options);
   };
-
-/**
- * d3 polygon layer
- * 
- */
-//L.PolygonLayer = L.PointsLayer.extend({
-
-  //initialize: function (data, options) {
-    //options = L.setOptions(this, options);
-    //this._data = data;
-    //this._path = d3.geo.path().projection(this._project.bind(this));
-  //},
-
-  //_initContainer: function () {
-    //var overlayPane = this._map.getPanes().overlayPane;
-    ////console.log(this._container);
-    //if (!this._container || overlayPane.empty) {
-      //this._container = d3.select(overlayPane)
-          //.append('svg').attr('class', 'leaflet-layer leaflet-zoom-hide');
-
-      ////console.log(this._data.features);
-      //this._layer = this._container.append("g");
-
-      //if (!this.options.cssclass) {
-        //this.options.cssclass = "";
-      //}
-      //var polygons = this._layer.selectAll(".polygon")
-          //.data(this._data.features).enter()
-          //.append("path")
-          //.attr("class", "polygon " + this.options.cssclass);
-
-      //this._applyStyle(polygons);
-    //}
-  //},
-
-  //_update: function () {
-
-      //if (!this._map) { return; }
-
-      //var zoom = this._map.getZoom();
-
-      //if (zoom > this.options.maxZoom || zoom < this.options.minZoom) {
-        //return;
-      //}
-
-      //var padding = this.options.padding,
-          //bounds = this._translateBounds(d3.geo.bounds(this._data), padding),
-          //dimensions = bounds.getSize();
-
-      //this._container.attr("width", dimensions.x).attr("height", dimensions.y)
-          //.style("margin-left", bounds.min.x + "px").style("margin-top", bounds.min.y + "px");
-
-      //this._layer.attr("transform", "translate(" + -bounds.min.x + "," + -bounds.min.y + ")");
-
-      //this._layer.selectAll(".polygon").attr("d", this._path);
-  //}
-
-//});
-
-//L.polygonlayer = function (data, options) {
-  //return new L.PolygonLayer(data, options);
-//};
-
-/**
- * d3 GeoJSON TileLayer class
- *
- */
-L.TileLayer.GeoJSONd3 =  L.TileLayer.extend({
-  onAdd : function (map) {
-    L.TileLayer.prototype.onAdd.call(this, map);
-    this._path = d3.geo.path().projection(function (d) {
-      var point = map.latLngToLayerPoint(new L.LatLng(d[1], d[0]));
-      return [point.x, point.y];
-    });
-    this.on("tileunload", function (d) {
-      if (d.tile.xhr) d.tile.xhr.abort();
-      if (d.tile.nodes) d.tile.nodes.remove();
-      d.tile.nodes = null;
-      d.tile.xhr = null;
-    });
-  },
-
-  _loadTile : function (tile, tilePoint) {
-    var self = this;
-    this._adjustTilePoint(tilePoint);
-
-    var svg = d3.select(map._container).select("svg");
-
-    if (!tile.nodes && !tile.xhr) {
-      tile.xhr = d3.json(this.getTileUrl(tilePoint), function (geoJson) {
-          tile.xhr = null;
-
-          tile.nodes = svg.append("g");
-          var paths = tile.nodes.selectAll("path");
-
-          // background for channels
-          paths
-            .data(geoJson.features).enter()
-            .append("path")
-            .attr("d", self._path)
-            .attr("class", "background-channel clickable-channel");
-        });
-    }
-  }
-});
