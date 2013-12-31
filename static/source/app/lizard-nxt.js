@@ -482,6 +482,8 @@ app.controller("MasterCtrl",
       canvas.height = 497;
       var img = document.createElement('img');
       img.onload = function(e) {
+        console.log(e, date);
+        $scope.rain.imageDates.push(date);
         ctx.drawImage(img, 0, 0, 525, 497);
         var url = canvas.toDataURL(); // thank you: http://html5-demos.appspot.com/static/html5-whats-new/template/index.html#14
         localStorage.setItem(item, url);
@@ -499,7 +501,6 @@ app.controller("MasterCtrl",
 
   $scope.rain = {
     enabled: false,
-
   };
 
   $scope.toggleRain = function () {
@@ -526,6 +527,7 @@ app.controller("MasterCtrl",
   };
 
   var getRadarImages = function () {
+    $scope.rain.imageDates = [];
     var imageUrlBase = 'http://regenradar.lizard.net/wms/?WIDTH=525&HEIGHT=497&SRS=EPSG%3A3857&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
     var dates = [];
     dates = buildAnimationDatetimes();
@@ -576,7 +578,19 @@ app.controller("MasterCtrl",
   // Watch for animation   
   $scope.$watch('timeState.at', function () {
     if ($scope.timeState.animation.enabled && $scope.rain.enabled) {
-      console.log("redraw");
+      console.log($scope.rain.imageDates);
+
+      var now = moment($scope.timeState.at);
+      now.hours(now.hours() - (60 / now.zone()));
+      now.minutes((Math.round(now.minutes()/5) * 5) % 60);
+      now.seconds(0);
+      var date = now.format('YYYY-MM-DDTHH:mm:ss') + '.000Z';
+      console.log("Rounded is", date);
+      if ($scope.rain.imageDates.indexOf(date) !== -1) {
+        console.log("its in");
+        $scope.rain.currentDate = date;
+      }
+      //$scope.timeState.animation.currentDate = Date.parse(dates[$scope.animation.currentFrame]);
     }
   });
 

@@ -519,13 +519,13 @@ app.directive('sewerage', function ($http) {
   };
 });
 
-app.directive('animation', function () {
+app.directive('rain', function () {
   return {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
       var imageBounds = [[54.28458617998074, 1.324296158471368], [49.82567047026146, 8.992548357936204]];
       var imageOverlay =  L.imageOverlay('', imageBounds, {opacity: 0.8});
-      scope.$watch('animation.enabled', function (newVal, oldVal) {
+      scope.$watch('rain.enabled', function (newVal, oldVal) {
         if (newVal !== oldVal) {
           if (newVal) {
             mapCtrl.addLayer(imageOverlay);
@@ -535,11 +535,11 @@ app.directive('animation', function () {
         }
       });
 
-      scope.$watch('animation.currentFrame', function (newVal, oldVal) {
+      scope.$watch('rain.currentFrame', function (newVal, oldVal) {
         if (newVal == oldVal) { return; }
         if (imageOverlay != undefined) {
-          var frame = scope.animation.frame[scope.animation.currentFrame];
-          var imgFromStorage = localStorage.getItem(scope.animation.currentFrame);
+          var frame = scope.animation.frame[scope.rain.currentFrame];
+          var imgFromStorage = localStorage.getItem(scope.rain.currentFrame);
           imageOverlay.setUrl(imgFromStorage);
         }
       });
