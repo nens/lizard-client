@@ -538,10 +538,13 @@ app.directive('rain', function () {
       scope.$watch('rain.currentFrame', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
         if (imageOverlay != undefined) {
-          //var frame = scope.animation.frame[scope.rain.currentFrame];
           var imgFromStorage = localStorage.getItem(scope.rain.currentFrame);
           console.log(imgFromStorage);
           imageOverlay.setUrl(imgFromStorage);
+          imageOverlay.setOpacity(0.8);
+          if (scope.rain.currentFrame === null) {
+            imageOverlay.setOpacity(0);
+          }
         }
       });
     }

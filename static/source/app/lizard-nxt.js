@@ -569,7 +569,6 @@ app.controller("MasterCtrl",
 
   // Watch for animation
   $scope.$watch('timeState.at', function (n, o) {
-    console.log("scope.timeState.at fired");
     if ($scope.rain.enabled && n !== o) {
       var roundedMoment = Math.round($scope.timeState.at / 300000) * 300000 + timeZoneOffset; //Round to nearest five minutes
       if ($scope.timeState.at >= ($scope.rain.currentDate + 300000)) {
@@ -580,21 +579,20 @@ app.controller("MasterCtrl",
         if ($scope.rain.imageDates.indexOf(roundedMoment) !== -1) { // Check whether we have an image for this moment
           $scope.rain.currentFrame = roundedMoment;
         }
-      } else {
-        if (roundedMoment < $scope.rain.dates[0] || roundedMoment > $scope.rain.dates[$scope.rain.dates.length - 1]) {
-          $scope.rain.currentFrame = null;
-        }
+      }
+      if (roundedMoment < Date.parse($scope.rain.dates[0]) || roundedMoment > Date.parse($scope.rain.dates[$scope.rain.dates.length - 1])) {
+        console.log(Date.parse($scope.rain.dates[0]), roundedMoment, "Setting currentFrame to null");
+        $scope.rain.currentFrame = null;
       }
       $scope.rain.currentDate = roundedMoment;
     }
-  }, true);
+  });
 
   $scope.timeState.step =  function (timestamp) {
     $scope.$apply(function () {
       $scope.timeState.animation.start += $scope.timeState.timeStep;
       $scope.timeState.animation.end += $scope.timeState.timeStep;
       $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
-      console.log($scope.timeState.at);
     });
     if ($scope.timeState.at >= $scope.timeState.end) {
       $scope.$apply(function () {
