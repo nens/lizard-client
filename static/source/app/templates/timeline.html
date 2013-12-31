@@ -31,7 +31,7 @@
     </div>
         <span>
           <button ng-class="timeState.animation.enabled" ng-click="timeState.toggleAnimation()" type="button" class="btn btn-default" ><i class="icon-play"></i></button>
-          <input ng-show="timeState.animation.enabled" type="range" class="middle" min="0" max="<% timeState.animation.length %>" ng-model="timeState.animation.currentFrame" ng-click="toggleRainPlay('off')">
+          
           <span class="middle"><% timeState.start | date:'d MMM y' %> - <% timeState.end | date:'d MMM y' %> ( <% timeState.at | date:'d MMM y - HH:mm' %> )</span>        
         </span>
   </div>

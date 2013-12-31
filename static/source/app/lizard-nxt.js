@@ -405,7 +405,6 @@ app.controller("MasterCtrl",
     animation: {
       playing: false,
       enabled: false,
-      frame: dates,
       currentFrame: 0,
       lenght: 0
       //currentDate: Date.parse(dates[0])
@@ -440,27 +439,14 @@ app.controller("MasterCtrl",
 /*
 * animation stuffs
 */
-  
 
   window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
                               window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
   var buildAnimationDatetimes = function () {
         /*
-        * Currently the server stores only the last 24 hours. 
-        * Reset temporalextent to this last twenty four if it exceeds these limits
-        *
         * Get radarimages for every 5th minutes if this fits in the localstorage, else confine to every 10th minute
         */
-        var twentyFourAgo = Date.now() - 86400000;
-        if ($scope.timeState.start < twentyFourAgo) {
-          $scope.timeState.start = twentyFourAgo;
-          $scope.timeState.changed = !$scope.timeState.changed;
-        }
-        if ($scope.timeState.end < twentyFourAgo || $scope.timeState.end > Date.now()) {
-          $scope.timeState.end =  Date.now()
-          $scope.timeState.changed = !$scope.timeState.changed;
-        }
         var hours = ($scope.timeState.end - $scope.timeState.start) / 60000;
         var animationDatetimes = [];
         var now = moment($scope.timeState.end);
@@ -486,9 +472,6 @@ app.controller("MasterCtrl",
         return animationDatetimes;
     };
 
-    var imageUrlBase = 'http://regenradar.lizard.net/wms/?WIDTH=525&HEIGHT=497&SRS=EPSG%3A3857&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
-    var dates = [];
-
     // delete $http.defaults.headers.common['X-Requested-With'];
 
     var ripImage = function (base, date, item) {
@@ -508,34 +491,43 @@ app.controller("MasterCtrl",
       img.src = base + date;
     };
 
-  $scope.animation = {
-    at: Date.now(),
-    playing: false,
-    enabled: false,
-    frame: dates,
-    currentFrame: 0,
-    lenght: 0,
-    currentDate: Date.parse(dates[0])
-  };
-
   // $scope.$watch('timeline.changed', function () {
   //   if ($scope.animation.enabled) {
-  //     makeItRain();
+  //     getRadarImages();
   //   }
   // });
 
-  //tmp
+  $scope.rain = {
+    enabled: false,
+
+  };
+
   $scope.toggleRain = function () {
-    $scope.timeState.animation.enabled = !$scope.timeState.animation.enabled;
-    if ($scope.animation.enabled) {
-      makeItRain();
+    if ($scope.rain.enabled === false) {
+      /*
+      * Currently the server stores only the last 24 hours. 
+      * Reset temporalextent to this last twenty four if it exceeds these limits
+      */
+      var twentyFourAgo = Date.now() - 86400000;
+      if ($scope.timeState.start < twentyFourAgo) {
+        $scope.timeState.start = twentyFourAgo;
+        $scope.timeState.changed = !$scope.timeState.changed;
+      }
+      if ($scope.timeState.end < twentyFourAgo || $scope.timeState.end > Date.now()) {
+        $scope.timeState.end =  Date.now();
+        $scope.timeState.changed = !$scope.timeState.changed;
+      }
+      getRadarImages();
+      $scope.rain.enabled = true;
     } else {
-      $scope.animation.enabled = false;
-      $scope.animation.playing = false;
+      $scope.rain.enabled = false;
+      localStorage.clear();
     }
   };
 
-  var makeItRain = function () {
+  var getRadarImages = function () {
+    var imageUrlBase = 'http://regenradar.lizard.net/wms/?WIDTH=525&HEIGHT=497&SRS=EPSG%3A3857&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
+    var dates = [];
     dates = buildAnimationDatetimes();
     localStorage.clear();
     for (var i = 0; i < dates.length; i++) {
@@ -543,14 +535,14 @@ app.controller("MasterCtrl",
       ripImage(imageUrlBase, date, i);
     }
     console.log("Radar dates:", dates.length, dates);
-    $scope.animation.length = dates.length - 1;
+    $scope.rain.length = dates.length - 1;
     if (!$scope.timeState.hidden) { 
       $scope.timeState.hidden = false;
       $scope.timeState.resizeTimeline();
     }
-    $scope.animation.currentFrame = 0;
-    $scope.animationDriver();
-    $scope.animation.playing = true;
+    //$scope.animation.currentFrame = 0;
+    //$scope.animationDriver();
+    //$scope.animation.playing = true;
   };
 
   $scope.timeState.enableAnimation = function (toggle) {
@@ -581,14 +573,20 @@ app.controller("MasterCtrl",
   // var keys = Object.keys($scope.animation.frame);
   var progress;
 
+  // Watch for animation   
+  $scope.$watch('timeState.at', function () {
+    if ($scope.timeState.animation.enabled && $scope.rain.enabled) {
+      console.log("redraw");
+    }
+  });
+
   $scope.$watch('timeState.animation.currentFrame', function (newVal, oldVal) {
     if (newVal === oldVal) { return;}
-    $scope.timeState.animation.currentDate = Date.parse(dates[$scope.animation.currentFrame]);
+    //$scope.timeState.animation.currentDate = Date.parse(dates[$scope.animation.currentFrame]);
   });
 
   $scope.timeState.step =  function (timestamp) {
     $scope.$apply(function () {
-      $scope.timeState.animation.currentFrame++;
       $scope.timeState.animation.start += $scope.timeState.timeStep;
       $scope.timeState.animation.end += $scope.timeState.timeStep;
       $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
@@ -600,10 +598,6 @@ app.controller("MasterCtrl",
         $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
       });
     }
-    // progress = timestamp - start;
-    // if ($scope.timeState.animation.currentFrame === dates.length - 1) {
-    //   $scope.timeState.animation.currentFrame = -1;
-    // }  
     if ($scope.timeState.animation.playing) {
       setTimeout(function () {
         requestAnimationFrame($scope.timeState.step);
