@@ -445,10 +445,10 @@ app.controller("MasterCtrl",
 
   $scope.timeState.enableAnimation = function (toggle) {
     if ($scope.timeState.animation.enabled || toggle === "off") {
-        $scope.timeState.animation.enabled = false;
+      $scope.timeState.animation.enabled = false;
     } else {
-        $scope.timeState.animationDriver();
-        $scope.timeState.animation.enabled = true;
+      $scope.timeState.animationDriver();
+      $scope.timeState.animation.enabled = true;
     }
   };
 
@@ -577,11 +577,11 @@ app.controller("MasterCtrl",
       var twentyFourAgo = Date.now() - 86400000;
       if ($scope.timeState.start < twentyFourAgo) {
         $scope.timeState.start = twentyFourAgo;
-        $scope.timeState.changed = !$scope.timeState.changed;
+        $scope.timeState.timeline.changed = !$scope.timeState.timeline.changed;
       }
       if ($scope.timeState.end < twentyFourAgo || $scope.timeState.end > Date.now()) {
         $scope.timeState.end =  Date.now();
-        $scope.timeState.changed = !$scope.timeState.changed;
+        $scope.timeState.timeline.changed = !$scope.timeState.timeline.changed;
       }
       getRadarImages();
       $scope.rain.enabled = true;

@@ -421,7 +421,7 @@ app.controller('TimelineDirCtrl', function ($scope){
     var drawTimeline = function (timelineKeys) {
       //Empty the current timeline
       d3.select(element[0]).select("#timeline-svg-wrapper").select("svg").remove()
-      if (timelineKeys.length > 0 ){
+      if (timelineKeys.length > 0 ) {
         scope.timeState.height = 35 + timelineKeys.length * 30;
       } else {
         scope.timeState.height = 65;
@@ -463,6 +463,7 @@ app.controller('TimelineDirCtrl', function ($scope){
     })
 
     var drawChart = function (data, xKey, yKey, options) {
+      console.log(new Date(scope.timeState.start), new Date(scope.timeState.end));
       var graph = timelineCtrl.createCanvas(element, {
         start: scope.timeState.start,
         stop: scope.timeState.end,
@@ -517,7 +518,6 @@ app.controller('TimelineDirCtrl', function ($scope){
 
       var svg = graph.svg;
         timelineCtrl.zoomed = function () {
-          if (scope.timeState.timeline.tool === 'zoom'){
             svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {
               orientation: "bottom",
               ticks: timelineCtrl.ticksInterval
@@ -530,7 +530,8 @@ app.controller('TimelineDirCtrl', function ($scope){
               scope.timeState.changedZoom = !scope.timeState.changedZoom;
             });
             svg.call(timelineCtrl.zoom)       
-          } 
+            chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
+            timelineCtrl.brushmove();
         };
 
         timelineCtrl.zoom = d3.behavior.zoom()
@@ -553,16 +554,17 @@ app.controller('TimelineDirCtrl', function ($scope){
     scope.$watch('timeState.animation.enabled', function (newVal, oldVal) {
       if (newVal !== oldVal) {
         if (scope.timeState.animation.enabled) {
-          timelineCtrl.zoom = d3.behavior.zoom()
-              .x(chart.x.scale)
-              .on("zoom", null);
-          chart.svg.on('.zoom', null);
+          // timelineCtrl.zoom = d3.behavior.zoom()
+          //     .x(chart.x.scale)
+          //     .on("zoom", null);
+          // chart.svg.on('.zoom', null);
 
           animationBrush = timelineCtrl.createBrush(scope, chart.svg, chart.x, chart.height, chart.xKey);
           if (scope.timeState.animation.start !== undefined && scope.timeState.animation.end !== undefined) {
             chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
           } else {
             var buffer = (scope.timeState.end - scope.timeState.start) / 100;
+            console.log("Creating brush", new Date(scope.timeState.end), new Date(scope.timeState.start), new Date(scope.timeState.at), new Date(scope.timeState.at + buffer), buffer);
             chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.at), new Date(scope.timeState.at + buffer)]));          
           }
           timelineCtrl.brushmove();
@@ -590,6 +592,26 @@ app.controller('TimelineDirCtrl', function ($scope){
         timelineCtrl.ticksInterval = timelineCtrl.determineInterval(newVal);
       }
     });
+
+    scope.$watch('timeline.tool', function (newVal, oldVal) {
+    if (newVal === oldVal) {
+      return true // do nothing
+    } else if (newVal === 'zoom') {
+      timelineCtrl.removeBrush(chart.svg);
+      timelineCtrl.zoom = d3.behavior.zoom()
+        .x(chart.x.scale)
+        .on("zoom", timelineCtrl.zoomed);
+      chart.svg.call(timelineCtrl.zoom);
+    } else if (newVal === 'brush') {
+      createBrush();
+      // chart.svg.call(timelineCtrl.zoom);
+      timelineCtrl.zoom = d3.behavior.zoom()
+        .x(chart.x.scale)
+        .on("zoom", null);
+      chart.svg.on('.zoom', null);
+      timelineCtrl.createBrush(scope, chart.svg, chart.x, chart.height, chart.xKey);
+    }
+  });
 
     window.onresize = function () {
       scope.timeState.timeline.width = element.width();
