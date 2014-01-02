@@ -314,7 +314,6 @@ app.controller('TimelineDirCtrl', function ($scope){
       $scope.timeState.animation.start = s_sorted[0];
       $scope.timeState.animation.end = s_sorted[1];
       $scope.timeState.at = (s_sorted[0] + s_sorted[1]) / 2;
-      console.log($scope.timeState.at);
       if (!$scope.timeState.animation.playing && !$scope.$$phase) {
         $scope.$apply();
       }
@@ -386,8 +385,9 @@ app.controller('TimelineDirCtrl', function ($scope){
   
   var link = function (scope, element, attrs, timelineCtrl) {
     var chart;
+
     scope.timeState.timeline.width = element[0].offsetWidth;
-    if (scope.timeState.timeline.width < 10){
+    if (scope.timeState.timeline.width < 10) {
       scope.timeState.timeline.width = window.outerWidth;    
     }
 
@@ -421,7 +421,11 @@ app.controller('TimelineDirCtrl', function ($scope){
     var drawTimeline = function (timelineKeys) {
       //Empty the current timeline
       d3.select(element[0]).select("#timeline-svg-wrapper").select("svg").remove()
-      scope.timeState.height = 35 + timelineKeys.length * 30;
+      if (timelineKeys.length > 0 ){
+        scope.timeState.height = 35 + timelineKeys.length * 30;
+      } else {
+        scope.timeState.height = 65;
+      }
       var data = [];
       for (var i = 0; i < timelineKeys.length; i++) {
         var id = timelineKeys[i];
@@ -433,13 +437,11 @@ app.controller('TimelineDirCtrl', function ($scope){
           });  
         }
       }
-      if (timelineKeys.length > 0) {
-        chart = drawChart(data, 'timestamp', 'event_sub_type', {
-          scale: 'ordinal',
-          chart: 'circles',
-          dateparser: 'epoch'
-        });        
-      }
+      chart = drawChart(data, 'timestamp', 'event_sub_type', {
+        scale: 'ordinal',
+        chart: 'circles',
+        dateparser: 'epoch'
+      });        
      timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
      scope.timeState.countCurrentEvents();
 
@@ -582,12 +584,12 @@ app.controller('TimelineDirCtrl', function ($scope){
       }
     });
 
-      scope.$watch('timeline.zoom.changed', function (newVal, oldVal) {
-        if (newVal !== oldVal) {
-          // d3
-          timelineCtrl.ticksInterval = timelineCtrl.determineInterval(newVal);
-        }
-      });
+    scope.$watch('timeline.zoom.changed', function (newVal, oldVal) {
+      if (newVal !== oldVal) {
+        // d3
+        timelineCtrl.ticksInterval = timelineCtrl.determineInterval(newVal);
+      }
+    });
 
     window.onresize = function () {
       scope.timeState.timeline.width = element.width();
