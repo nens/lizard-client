@@ -407,7 +407,6 @@ app.controller("MasterCtrl",
       currentFrame: 0,
       lenght: 0,
       speed: 50
-      //currentDate: Date.parse(dates[0])
     }
   };
 // END Temporal extent model
@@ -446,15 +445,12 @@ app.controller("MasterCtrl",
 
   $scope.timeState.enableAnimation = function (toggle) {
     if ($scope.timeState.animation.enabled || toggle === "off") {
-      console.log("Disabling animation");
       $scope.timeState.animation.enabled = false;
     } else {
-      console.log("enabling animation");
       $scope.timeState.animationDriver();
       $scope.timeState.animation.enabled = true;
     }
   };
-
 
   $scope.timeState.toggleAnimation = function (toggle) {
     if (!$scope.timeState.animation.enabled) {
@@ -463,12 +459,42 @@ app.controller("MasterCtrl",
     if ($scope.timeState.animation.playing || toggle === "off") {
       $scope.timeState.animation.playing = false;
     } else {
-      $scope.timeState.animation.playing = true;
-      requestAnimationFrame($scope.timeState.step);
+    $scope.timeState.animation.playing = true;
+    requestAnimationFrame($scope.timeState.step);
     }
   };
 
-  var d = new Date()
+  $scope.timeState.step =  function (timestamp) {
+    $scope.$apply(function () {
+      $scope.timeState.animation.start += $scope.timeState.timeStep;
+      $scope.timeState.animation.end += $scope.timeState.timeStep;
+      $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
+    });
+    if ($scope.timeState.at >= $scope.timeState.end || $scope.timeState.at < $scope.timeState.start) {
+      $scope.$apply(function () {
+        $scope.timeState.animation.end = $scope.timeState.animation.end - $scope.timeState.animation.start + $scope.timeState.start;
+        $scope.timeState.animation.start = $scope.timeState.start;
+        $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
+        if ($scope.rain.enabled) {
+          $scope.rain.currentFrame = null;
+          $scope.rain.currentDate = Date.parse($scope.rain.dates[0]);
+        }
+      });
+    }
+    if ($scope.timeState.animation.playing) {
+      setTimeout(function () {
+        requestAnimationFrame($scope.timeState.step);
+      }, $scope.timeState.animation.speed);
+    }
+  };
+
+  $scope.timeState.animationDriver = function () {
+    $scope.timeState.at = $scope.timeState.start;
+    $scope.timeState.timeStep = ($scope.timeState.end - $scope.timeState.start) / 1000;
+  };
+
+
+  var d = new Date();
   var timeZoneOffset = d.getTimezoneOffset() * 60000;
 
   // Watch for animation
@@ -486,34 +512,6 @@ app.controller("MasterCtrl",
       }
     }
   });
-
-  $scope.timeState.step =  function (timestamp) {
-    $scope.$apply(function () {
-      $scope.timeState.animation.start += $scope.timeState.timeStep;
-      $scope.timeState.animation.end += $scope.timeState.timeStep;
-      $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
-    });
-    if ($scope.timeState.at >= $scope.timeState.end) {
-      $scope.$apply(function () {
-        $scope.timeState.animation.end = $scope.timeState.animation.end - $scope.timeState.animation.start + $scope.timeState.start;
-        $scope.timeState.animation.start = $scope.timeState.start;
-        $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
-        $scope.rain.currentFrame = null;
-        $scope.rain.currentDate = Date.parse($scope.rain.dates[0]);
-      });
-    }
-    if ($scope.timeState.animation.playing) {
-      setTimeout(function () {
-        requestAnimationFrame($scope.timeState.step);
-      }, $scope.timeState.animation.speed);
-    }
-  };
-
-  $scope.timeState.animationDriver = function () {
-    $scope.timeState.at = $scope.timeState.start;
-    $scope.timeState.timeStep = ($scope.timeState.end - $scope.timeState.start) / 1000;
-  };
-
 
 // END animation
 // Start Rain Stuff
