@@ -7,12 +7,12 @@
   </div>
   <div class="bovenbalk">
     <div class="btn-group" >
-      <button type="button" title="Select" class="btn btn-default" ng-class="{'active': timeState.timeline.tool == 'brush'}" ng-click="timeState.enableAnimation()">
-        <i class="icon-crop"></i>
+      <button type="button" title="Select" class="btn btn-default" ng-class="{'active': timeState.animation.enabled}" ng-click="timeState.enableAnimation()">
+        <i ng-class="{'icon-crop': !timeState.animation.enabled, 'icon-resize-horizontal active': timeState.animation.enabled }"></i>
       </button>
-      <button ng-class="timeState.animation.enabled" ng-click="timeState.toggleAnimation()" type="button" class="btn btn-default" ><i ng-class="{'icon-play': !timeState.animation.playing, 'icon-pause': timeState.animation.playing }"></i></button>
+      <button ng-click="timeState.toggleAnimation()" type="button" ng-class="{'active': timeState.animation.playing}" class="btn btn-default" ><i ng-class="{'icon-play': !timeState.animation.playing, 'icon-pause active': timeState.animation.playing }"></i></button>
       <label class="radio-inline speed-radio" id="left-speed-radio">
-        <input type="radio" ng-model="timeState.animation.speed" value="1"> Fast
+        <input type="radio" ng-model="timeState.animation.speed" value="0"> Fast
       </label>
       <label class="radio-inline speed-radio">
         <input type="radio" ng-model="timeState.animation.speed" value="50"> Medium

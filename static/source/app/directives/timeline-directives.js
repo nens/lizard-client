@@ -528,10 +528,8 @@ app.controller('TimelineDirCtrl', function ($scope){
             scope.$apply(function () {
               scope.timeState.start = x.scale.domain()[0].getTime();
               scope.timeState.end = x.scale.domain()[1].getTime();
+              scope.timeState.changedZoom = !scope.timeState.changedZoom;
             });
-            svg.call(timelineCtrl.zoom)       
-            chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
-            timelineCtrl.brushmove();
         };
 
         timelineCtrl.zoom = d3.behavior.zoom()
