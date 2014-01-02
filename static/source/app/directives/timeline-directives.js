@@ -346,7 +346,7 @@ app.controller('TimelineDirCtrl', function ($scope){
       var brush = null;    
 
        var brushstart = function () {
-        //svg.classed("selecting", true);
+
       };
       var brushend = function () {
 
@@ -394,6 +394,7 @@ app.controller('TimelineDirCtrl', function ($scope){
     var timelineKeys = [];
 
     scope.$watch('timeState.timeline.changed', function () {
+      scope.timeState.enableAnimation('off');
       var oldLength = timelineKeys.length;
       timelineKeys = [];
       for (var key in scope.timeState.timeline.data) {
@@ -424,7 +425,7 @@ app.controller('TimelineDirCtrl', function ($scope){
       if (timelineKeys.length > 0 ) {
         scope.timeState.height = 35 + timelineKeys.length * 30;
       } else {
-        scope.timeState.height = 65;
+        scope.timeState.height = 45;
       }
       var data = [];
       for (var i = 0; i < timelineKeys.length; i++) {
@@ -527,7 +528,6 @@ app.controller('TimelineDirCtrl', function ($scope){
             scope.$apply(function () {
               scope.timeState.start = x.scale.domain()[0].getTime();
               scope.timeState.end = x.scale.domain()[1].getTime();
-              scope.timeState.changedZoom = !scope.timeState.changedZoom;
             });
             svg.call(timelineCtrl.zoom)       
             chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
@@ -540,7 +540,6 @@ app.controller('TimelineDirCtrl', function ($scope){
 
         svg.call(timelineCtrl.zoom)
 
-        // scope.timeState.at = timelineCtrl.halfwayTime(x.scale, graph.width);
         return {
           x: x,
           height: graph.height,
@@ -552,12 +551,14 @@ app.controller('TimelineDirCtrl', function ($scope){
     
     var animationBrush;    
     scope.$watch('timeState.animation.enabled', function (newVal, oldVal) {
+      console.log("newVal, oldVal");
       if (newVal !== oldVal) {
         if (scope.timeState.animation.enabled) {
-          // timelineCtrl.zoom = d3.behavior.zoom()
-          //     .x(chart.x.scale)
-          //     .on("zoom", null);
-          // chart.svg.on('.zoom', null);
+          console.log("(re)instantiating brush");
+          timelineCtrl.zoom = d3.behavior.zoom()
+              .x(chart.x.scale)
+              .on("zoom", null);
+          chart.svg.on('.zoom', null);
 
           animationBrush = timelineCtrl.createBrush(scope, chart.svg, chart.x, chart.height, chart.xKey);
           if (scope.timeState.animation.start !== undefined && scope.timeState.animation.end !== undefined) {
@@ -568,7 +569,9 @@ app.controller('TimelineDirCtrl', function ($scope){
             chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.at), new Date(scope.timeState.at + buffer)]));          
           }
           timelineCtrl.brushmove();
-        } else {
+        } 
+        if (!scope.timeState.animation.enabled) {
+          console.log("removing brush")
           timelineCtrl.removeBrush(chart.svg);
           timelineCtrl.zoom = d3.behavior.zoom()
           .x(chart.x.scale)

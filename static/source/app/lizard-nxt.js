@@ -405,7 +405,8 @@ app.controller("MasterCtrl",
       playing: false,
       enabled: false,
       currentFrame: 0,
-      lenght: 0
+      lenght: 0,
+      speed: 50
       //currentDate: Date.parse(dates[0])
     }
   };
@@ -445,8 +446,10 @@ app.controller("MasterCtrl",
 
   $scope.timeState.enableAnimation = function (toggle) {
     if ($scope.timeState.animation.enabled || toggle === "off") {
+      console.log("Disabling animation");
       $scope.timeState.animation.enabled = false;
     } else {
+      console.log("enabling animation");
       $scope.timeState.animationDriver();
       $scope.timeState.animation.enabled = true;
     }
@@ -502,7 +505,7 @@ app.controller("MasterCtrl",
     if ($scope.timeState.animation.playing) {
       setTimeout(function () {
         requestAnimationFrame($scope.timeState.step);
-      }, 5);
+      }, $scope.timeState.animation.speed);
     }
   };
 

@@ -533,12 +533,19 @@ html, body{
 }
 
 .bovenbalk{
-    text-transform: uppercase;
     box-shadow: 0 3px 10px #888;
 }
 
 .middle {
     vertical-align: middle;
+}
+
+.speed-radio {
+    padding-top: 7px;
+}
+
+#left-speed-radio {
+    padding-left: 30px;
 }
 
 .indicator {
