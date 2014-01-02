@@ -182,6 +182,10 @@ app.controller("MasterCtrl",
 
   /**
    * Get data for timeseries
+   *
+   * the data that is passed as an argument to this function is data from the
+   * UTFgrid layer
+   *
    */
   $scope.selected_timeseries = undefined;
 

@@ -81,10 +81,11 @@ L.TileLayer.GeoJSONd3 = L.TileLayer.extend({
           .data(d.features).enter()
           .append("path")
             .attr("d", self._path)
-            .style("stroke", "#ddd")
-            .style("stroke-width", 0.9)
-            .style("fill", "#fefefe")
-            .attr("class", self.options.class);
+            .style("stroke-width", 0)
+            .style("fill-opacity", 0)
+            .attr("class", function (feature) {
+              return self.options.class + " p" + feature.properties.id;
+            });
          // }
       });
     }

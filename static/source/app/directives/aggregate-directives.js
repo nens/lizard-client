@@ -30,7 +30,8 @@ app.directive('vectorlayer', function () {
           scale = scope.timeline.colorScale;
         }
 
-        circles.attr('fill-opacity', 0.8)
+        circles
+          .attr('fill-opacity', 0.8)
           .attr('stroke', "#e")
           .attr('stroke-width', 1)
           .attr('fill', function (d) {
@@ -119,21 +120,62 @@ app.directive('surfacelayer', function () {
     restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
+      var surfaceLayer = new L.TileLayer.GeoJSONd3(
+        'api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=impervioussurface',
+        {
+          class: "polygon"
+        });
+
+      /**
+       * Pipe grid hover handler; highlight surfaces connected to pipe
+       *
+       */
+      var highlightSurface = function (surface_ids) {
+        var selector = "";
+        for (var i in surface_ids) {
+          selector += ".p" + surface_ids[i] + ", ";
+        }
+        selector = selector.slice(0, -2);
+        d3.selectAll(selector)
+          .style("stroke", "#f00")
+          .style("stroke-width", 1.2)
+          .style("fill", "#ddd")
+          .style("fill-opacity", 0.6)
+          .transition()
+          .duration(3000)
+          .style("stroke-width", 0)
+          .style("fill-opacity", 0);
+      };
 
       /**
        * Add geojson d3 layer
        *
        */
-      // fake line to initialise svg element
       scope.$watch('tools.active', function () {
         if (scope.tools.active === "profile") {
-          var surfaceLayer = new L.TileLayer.GeoJSONd3(
-            'api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=impervioussurface',
-            {
-              class: "polygon"
-            });
-          console.log(surfaceLayer);
           mapCtrl.addLayer(surfaceLayer);
+          // get pipe UTFgrid layer
+          // this is why I don't like leaflet: there is no simple method
+          // to get a layer from the map object by name or even id
+          var pipeLayer = false,
+              layer = {};
+          for (var i in scope.map._layers) {
+            layer = scope.map._layers[i];
+            if (layer._url && layer._url.indexOf('grid?object_types=pipe') !== -1) {
+              pipeLayer = layer;
+              break;
+            }
+          }
+          if (pipeLayer) {
+            pipeLayer.on('mouseover', function (e) {
+              var surface_ids = JSON.parse(e.data.impervious_surfaces);
+              if (surface_ids.indexOf("null") === -1) {
+                highlightSurface(surface_ids);
+              }
+            });
+          }
+        } else {
+          mapCtrl.removeLayer(surfaceLayer);
         }
       });
     }
