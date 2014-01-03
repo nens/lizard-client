@@ -539,7 +539,6 @@ app.directive('rain', function () {
         if (newVal === oldVal) { return; }
         if (imageOverlay != undefined) {
           var imgFromStorage = localStorage.getItem(scope.rain.currentFrame);
-          console.log(imgFromStorage);
           imageOverlay.setUrl(imgFromStorage);
           imageOverlay.setOpacity(0.8);
           if (scope.rain.currentFrame === null) {

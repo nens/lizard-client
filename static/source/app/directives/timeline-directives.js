@@ -299,7 +299,6 @@ app.controller('TimelineDirCtrl', function ($scope){
     })
 
     var drawChart = function (data, xKey, yKey, options) {
-      console.log(new Date(scope.timeState.start), new Date(scope.timeState.end));
       var graph = timelineCtrl.createCanvas(element, {
         start: scope.timeState.start,
         stop: scope.timeState.end,
@@ -436,7 +435,6 @@ app.controller('TimelineDirCtrl', function ($scope){
           chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
         } else {
           var buffer = (scope.timeState.end - scope.timeState.start) / 100;
-          console.log("Creating brush", new Date(scope.timeState.end), new Date(scope.timeState.start), new Date(scope.timeState.at), new Date(scope.timeState.at + buffer), buffer);
           chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.at), new Date(scope.timeState.at + buffer)]));          
         }
         timelineCtrl.brushmove();

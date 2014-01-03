@@ -87,7 +87,7 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource, $http, CabinetSe
 
   $scope.timeState.resizeTimeline = function () {
     if ($scope.timeState.hidden === false) {
-      var height = ($scope.timeState.height > 35) ? 35 + $scope.timeState.height: 35;
+      var height = ($scope.timeState.height > 35) ? 35 + $scope.timeState.height: 80;
       document.getElementById('timeline').style.height = height + 'px';
     }
     else { document.getElementById('timeline').style.height = '0'; }

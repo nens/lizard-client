@@ -142,6 +142,29 @@ app.controller("MasterCtrl",
   // /END MOVE TO MAP CONTROL
   // MAP MODEL
 
+  // TIME MODEL
+  $scope.timeState = {
+    start: Date.now() - 31556900000, // 1 year in ms
+    end: Date.now(),
+    changedZoom: Date.now(),
+    at: this.start,
+    timeline: {
+      tool: 'zoom',
+      canceler: $q.defer(),
+      enabled: false,
+      data: {},
+      changed: Date.now()
+      },
+    animation: {
+      playing: false,
+      enabled: false,
+      currentFrame: 0,
+      lenght: 0,
+      speed: 50
+    }
+  };
+// END TIME MODEL
+
   // 3Di START
   $scope.setFollow = function(layer, follow_3di) {
     layer.follow_3di = follow_3di;  // for GUI
@@ -386,31 +409,6 @@ app.controller("MasterCtrl",
     return formatted;
   };
 
-  /**
-   * Temporal extent model
-   */
-  $scope.timeState = {
-    start: Date.now() - 31556900000, // 1 year in ms ; 86400000,//24 hours in ms //
-    end: Date.now(),
-    changedZoom: Date.now(),
-    at: this.start,
-    timeline: {
-      tool: 'zoom',
-      canceler: $q.defer(),
-      enabled: false,
-      data: {},
-      changed: Date.now()
-      },
-    animation: {
-      playing: false,
-      enabled: false,
-      currentFrame: 0,
-      lenght: 0,
-      speed: 50
-    }
-  };
-// END Temporal extent model
-
 /**
 * keypress stuff
 */
@@ -499,11 +497,14 @@ app.controller("MasterCtrl",
 
   // Watch for animation
   $scope.$watch('timeState.at', function (n, o) {
-    if ($scope.rain.enabled && n !== o) {
-      var roundedMoment = Math.round($scope.timeState.at / 300000) * 300000 + timeZoneOffset; //Round to nearest five minutes
-      if ($scope.timeState.at >= ($scope.rain.currentDate + 300000) || $scope.timeState.at <= ($scope.rain.currentDate - 300000)) {
+    if (n === o) { return true }
+    console.log("yesh");
+    if ($scope.rain.enabled) {
+      var roundedMoment = Math.round($scope.timeState.at / 300000) * 300000 - timeZoneOffset; //Round to nearest five minutes
+      if (roundedMoment >= ($scope.rain.currentDate + 300000) || roundedMoment <= ($scope.rain.currentDate - 300000)) {
         $scope.rain.currentDate = roundedMoment;
         if ($scope.rain.imageDates.indexOf(roundedMoment) !== -1) { // Check whether we have an image for this moment
+          console.log("bingo");
           $scope.rain.currentFrame = roundedMoment;
         }
       }
@@ -514,7 +515,7 @@ app.controller("MasterCtrl",
   });
 
 // END animation
-// Start Rain Stuff
+// START Rain Stuff
 
   var buildAnimationDatetimes = function () {
         /*
@@ -528,20 +529,24 @@ app.controller("MasterCtrl",
         // The wms only accepts requests for every 5th minute exact
         now.minutes((Math.round(now.minutes()/5) * 5) % 60);
         now.seconds(0);
-        
-        var intervalAdd = (hours / 5 > 200) ? 10: 5;
+
+        var intervalAdd = 5;
+        if (hours / 5 > 200) { var intervalAdd = 25; }
+        else if (hours / 5 > 150) { var intervalAdd = 20; }
+        else if (hours / 5 > 100) { var intervalAdd = 15; }
 
         console.log("Getting radar images from", new Date($scope.timeState.start),
                     "to", new Date($scope.timeState.end),
                     "for every", intervalAdd, "th minute");
 
         for (var interval = 5; interval < hours; interval = interval + intervalAdd) {
-            var animationDatetime = now.subtract('minutes', 5);
-            var UtsieAniDatetime = now.utc();
-            animationDatetimes.push(UtsieAniDatetime.format('YYYY-MM-DDTHH:mm:ss') + '.000Z');
-            }
-
+          var animationDatetime = now.subtract('minutes', intervalAdd);
+          var UtsieAniDatetime = now.utc();
+          animationDatetimes.push(UtsieAniDatetime.format('YYYY-MM-DDTHH:mm:ss') + '.000Z');
+          }
         animationDatetimes.reverse();
+        console.log(animationDatetimes);
+
         return animationDatetimes;
     };
 
