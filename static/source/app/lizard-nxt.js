@@ -160,7 +160,7 @@ app.controller("MasterCtrl",
       enabled: false,
       currentFrame: 0,
       lenght: 0,
-      speed: 50
+      speed: 7
     }
   };
 // END TIME MODEL
@@ -482,13 +482,13 @@ app.controller("MasterCtrl",
     if ($scope.timeState.animation.playing) {
       setTimeout(function () {
         requestAnimationFrame($scope.timeState.step);
-      }, $scope.timeState.animation.speed);
+      }, 400 - Math.pow($scope.timeState.animation.speed, 2));
     }
   };
 
   $scope.timeState.animationDriver = function () {
     $scope.timeState.at = $scope.timeState.start;
-    $scope.timeState.timeStep = ($scope.timeState.end - $scope.timeState.start) / 1000;
+    $scope.timeState.timeStep = ($scope.timeState.end - $scope.timeState.start) / 500;
   };
 
 
@@ -498,13 +498,13 @@ app.controller("MasterCtrl",
   // Watch for animation
   $scope.$watch('timeState.at', function (n, o) {
     if (n === o) { return true }
-    console.log("yesh");
     if ($scope.rain.enabled) {
       var roundedMoment = Math.round($scope.timeState.at / 300000) * 300000 - timeZoneOffset; //Round to nearest five minutes
-      if (roundedMoment >= ($scope.rain.currentDate + 300000) || roundedMoment <= ($scope.rain.currentDate - 300000)) {
+      if (roundedMoment !== $scope.rain.currentDate &&
+        roundedMoment >= ($scope.rain.currentDate + 300000) || 
+        roundedMoment <= ($scope.rain.currentDate - 300000)) {
         $scope.rain.currentDate = roundedMoment;
         if ($scope.rain.imageDates.indexOf(roundedMoment) !== -1) { // Check whether we have an image for this moment
-          console.log("bingo");
           $scope.rain.currentFrame = roundedMoment;
         }
       }
@@ -545,7 +545,6 @@ app.controller("MasterCtrl",
           animationDatetimes.push(UtsieAniDatetime.format('YYYY-MM-DDTHH:mm:ss') + '.000Z');
           }
         animationDatetimes.reverse();
-        console.log(animationDatetimes);
 
         return animationDatetimes;
     };
@@ -574,7 +573,7 @@ app.controller("MasterCtrl",
     enabled: false,
   };
 
-  $scope.toggleRain = function () {
+  $scope.toggleRain = function (toggle) {
     if ($scope.rain.enabled === false) {
       /*
       * Currently the server stores only the last 24 hours. 
@@ -595,7 +594,7 @@ app.controller("MasterCtrl",
         $scope.timeState.hidden = false;
         $scope.timeState.resizeTimeline();
       }
-    } else {
+    } else if ($scope.rain.enabled || toggle === 'off') {
       $scope.rain.enabled = false;
       localStorage.clear();
     }

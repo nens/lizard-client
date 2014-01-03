@@ -506,6 +506,10 @@ html, body{
 }
 
 /*timeline stuff*/
+#timeline {
+    visibility: hidden;
+}
+
 .timeline {
     min-height: 0;
     height: 0;
@@ -540,8 +544,8 @@ html, body{
     vertical-align: middle;
 }
 
-.speed-radio {
-    padding-top: 7px;
+.extra-padding {
+    padding: 7px;
 }
 
 .btn {

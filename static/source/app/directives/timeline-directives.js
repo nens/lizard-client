@@ -169,7 +169,7 @@ app.controller('TimelineDirCtrl', function ($scope){
           .attr("y2", options.height - .5)
           .style("stroke", "#ccc");
     };
-    
+
     this.drawCircles = function(svg, x, y, data, options){
       // circle stuff
         var xfunction = function(d) { return x.scale(d[options.xKey]); };
@@ -454,32 +454,6 @@ app.controller('TimelineDirCtrl', function ($scope){
         timelineCtrl.brushmove();
       }
     });
-
-    scope.$watch('timeline.zoom.changed', function (newVal, oldVal) {
-      if (newVal !== oldVal) {
-        // d3
-        timelineCtrl.ticksInterval = timelineCtrl.determineInterval(newVal);
-      }
-    });
-
-    scope.$watch('timeline.tool', function (newVal, oldVal) {
-    if (newVal === oldVal) { return true }
-     else if (newVal === 'zoom') {
-      timelineCtrl.removeBrush(chart.svg);
-      timelineCtrl.zoom = d3.behavior.zoom()
-        .x(chart.x.scale)
-        .on("zoom", timelineCtrl.zoomed);
-      chart.svg.call(timelineCtrl.zoom);
-    } else if (newVal === 'brush') {
-      createBrush();
-      // chart.svg.call(timelineCtrl.zoom);
-      timelineCtrl.zoom = d3.behavior.zoom()
-        .x(chart.x.scale)
-        .on("zoom", null);
-      chart.svg.on('.zoom', null);
-      timelineCtrl.createBrush(scope, chart.svg, chart.x, chart.height, chart.xKey);
-    }
-  });
 
     window.onresize = function () {
       scope.timeState.timeline.width = element.width();
