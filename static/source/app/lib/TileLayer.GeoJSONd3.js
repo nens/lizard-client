@@ -4,16 +4,18 @@
  * plus code copied from http://bl.ocks.org/tnightingale/4718717
  * a little help from @jsmits and @fritzvd and @arjenvrielink
  * 
+ * Each feature gets it's id as a class attribute so you can easily select it
+ * with d3
+ *
  * NOTE: this a good candidate to release as open source plugin for leaflet
  *
  * TODO:
- * * write _applyStyle function
  * * write initialise function
+ * * improve documentation
  *
  */
-L.TileLayer.GeoJSONd3 = L.TileLayer.extend({
+L.GeoJSONd3 = L.TileLayer.extend({
 
-  // Write initialise function
     // code to add svg element to map container
     // var overlayPane = this._map.getPanes().overlayPane;
     //if (d3.select("svg.geojsontiles")[0].length === 0) {
@@ -35,6 +37,7 @@ L.TileLayer.GeoJSONd3 = L.TileLayer.extend({
 
   //initialize: function (data, options) {
     //options = L.setOptions(this, options);
+    //this._data = data;
   //},
 
   onAdd : function (map) {
@@ -65,9 +68,9 @@ L.TileLayer.GeoJSONd3 = L.TileLayer.extend({
     });
   },
 
-  //onRemove: function (map) {
-    //d3.select(".geojsontiles").remove();
-  //},
+  onRemove: function (map) {
+    d3.selectAll(".geojsontile").remove();
+  },
 
   _loadTile : function (tile, tilePoint) {
     var self = this;
@@ -76,8 +79,10 @@ L.TileLayer.GeoJSONd3 = L.TileLayer.extend({
     if (!tile.nodes && !tile.xhr) {
       tile.xhr = d3.json(this.getTileUrl(tilePoint), function (d) {
         tile.xhr = null;
-        tile.nodes = d3.select(".leaflet-overlay-pane").select("svg").append("g");
-        tile.nodes.selectAll("path")
+        tile.nodes = d3.select(".leaflet-overlay-pane").select("svg")
+          .append("g")
+            .attr("class", "geojsontile");
+        var features = tile.nodes.selectAll("path")
           .data(d.features).enter()
           .append("path")
             .attr("d", self._path)
@@ -86,11 +91,20 @@ L.TileLayer.GeoJSONd3 = L.TileLayer.extend({
             .attr("class", function (feature) {
               return self.options.class + " p" + feature.properties.id;
             });
-         // }
+
+        //this._applyStyle(features);
       });
     }
   },
 
-  //TODO: write applyStyle function
-  //_applyStyle: 
+  _applyStyle: function (features) {
+    console.log("apply style");
+    if ('applyStyle' in this.options) {
+      this.options.applyStyle.call(this, features);
+    }
+  }
 });
+
+L.geoJSONd3 = function (data, options) {
+  return new L.GeoJSONd3(data, options);
+};

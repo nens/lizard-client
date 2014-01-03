@@ -14,11 +14,11 @@ app.directive('vectorlayer', function () {
 
       var eventLayer;
 
-      /*
+      /**
        * Style event circles based on category and
        * add click event handling
        */
-      function circle_style(circles) {
+      function circleStyle(features) {
         var scale;
         if (!scope.timeline.colorScale) {
           scale = d3.scale.ordinal()
@@ -30,7 +30,7 @@ app.directive('vectorlayer', function () {
           scale = scope.timeline.colorScale;
         }
 
-        circles
+        features
           .attr('fill-opacity', 0.8)
           .attr('stroke', "#e")
           .attr('stroke-width', 1)
@@ -96,7 +96,7 @@ app.directive('vectorlayer', function () {
         for (var eventType in scope.timeline.data) {
           if (scope.timeline.data[eventType].active) {
             eventLayer = L.pointsLayer(scope.timeline.data[eventType], {
-                applyStyle: circle_style
+                applyStyle: circleStyle
               });
             mapCtrl.addLayer(eventLayer);
             eventLayers.push(eventLayer);
@@ -120,27 +120,64 @@ app.directive('surfacelayer', function () {
     restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
-      var surfaceLayer = new L.TileLayer.GeoJSONd3(
-        'api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=impervioussurface',
-        {
-          class: "polygon"
-        });
 
       /**
-       * Pipe grid hover handler; highlight surfaces connected to pipe
-       *
+       * Style surface features
        */
-      var highlightSurface = function (surface_ids) {
+      var surfaceStyle = function (features) {
+        features
+          .style("stroke-width", 0)
+          .style("fill-opacity", 0);
+      };
+
+      // define geojson layer
+      var surfaceLayer = L.geoJSONd3(
+        'api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=impervioussurface',
+        {
+          applyStyle: surfaceStyle,
+          class: "impervious_surface"
+        });
+      console.log(surfaceLayer);
+
+      /**
+       * Convert list with values to d3 selector
+       * 
+       * @param: list of values
+       * @returns: concatenated d3 suitable OR selector
+       */
+      var listToSelector = function (list) {
         var selector = "";
-        for (var i in surface_ids) {
-          selector += ".p" + surface_ids[i] + ", ";
+        for (var i in list) {
+          selector += ".p" + list[i] + ", ";
         }
         selector = selector.slice(0, -2);
+
+        return selector;
+      };
+
+      /**
+       * Highlight surfaces connected to pipe
+       *
+       * @param: surface_ids, list of ids of features to highlight
+       */
+      var highlightSurfaceEnter = function (surface_ids) {
+        var selector = listToSelector(surface_ids);
         d3.selectAll(selector)
           .style("stroke", "#f00")
           .style("stroke-width", 1.2)
           .style("fill", "#ddd")
           .style("fill-opacity", 0.6)
+          .transition();
+      };
+
+      /**
+       * Fade surfaces connected to pipe
+       * 
+       * @param: surface_ids, list of ids of features to fade
+       */
+      var highlightSurfaceExit = function (surface_ids) {
+        var selector = listToSelector(surface_ids);
+        d3.selectAll(selector)
           .transition()
           .duration(3000)
           .style("stroke-width", 0)
@@ -152,7 +189,7 @@ app.directive('surfacelayer', function () {
        *
        */
       scope.$watch('tools.active', function () {
-        if (scope.tools.active === "profile") {
+        if (scope.tools.active === "pipe_surface") {
           mapCtrl.addLayer(surfaceLayer);
           // get pipe UTFgrid layer
           // this is why I don't like leaflet: there is no simple method
@@ -170,11 +207,21 @@ app.directive('surfacelayer', function () {
             pipeLayer.on('mouseover', function (e) {
               var surface_ids = JSON.parse(e.data.impervious_surfaces);
               if (surface_ids.indexOf("null") === -1) {
-                highlightSurface(surface_ids);
+                highlightSurfaceEnter(surface_ids);
+              }
+            });
+
+            pipeLayer.on('mouseout', function (e) {
+              var surface_ids = JSON.parse(e.data.impervious_surfaces);
+              if (surface_ids.indexOf("null") === -1) {
+                highlightSurfaceExit(surface_ids);
               }
             });
           }
         } else {
+          // unregister event handlers and remove geojson layer
+          console.log("remove layer");
+          console.log(surfaceLayer);
           mapCtrl.removeLayer(surfaceLayer);
         }
       });

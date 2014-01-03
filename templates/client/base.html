@@ -97,6 +97,7 @@
 
                 <div ng-switch="layer.follow_3di" style="float: right;">
                   <div ng-switch-when="undefined">
+                    <i class="icon-info pull-right zoomto-icon" ng-class="{visible: layer.active && (layer.name === 'Riolering')}" ng-click="toggleTool('pipe_surface')"></i>
                     <i class="icon-screenshot pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="zoomToTheMagic(layer)"></i>
                   </div>
                   <div ng-switch-when="true">
