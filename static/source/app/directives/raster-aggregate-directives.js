@@ -33,7 +33,6 @@ app.directive('rasterAggregate', function ($q) {
             + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
             + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
             + "))"; 
-      console.info(geom_wkt);
       scope.mapState.timeout.resolve();
       scope.mapState.timeout = $q.defer();
       scope.getRasterData(raster, geom_wkt, srs, agg, true);
