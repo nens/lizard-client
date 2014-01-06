@@ -1,5 +1,5 @@
 // Timeline for lizard.
-app.controller('TimelineDirCtrl', function ($scope){
+app.controller('TimelineDirCtrl', function ($scope) {
     this.createCanvas = function (element, options) {
       // Draws a blank canvas based on viewport
       var margin = {
@@ -35,7 +35,7 @@ app.controller('TimelineDirCtrl', function ($scope){
       };
     };
 
-    this._numericalMinMax = function (data, options) {
+    this.numericalMinMax = function (data, options) {
       var max = d3.max(data, function (d) {
               return Number(d[options.key]);
             });
@@ -50,7 +50,7 @@ app.controller('TimelineDirCtrl', function ($scope){
       };
     };
 
-    this._dateStringMinMax = function (data, options) {
+    this.dateStringMinMax = function (data, options) {
       var domain = d3.extent(data, function (d) {
               return d3.time.format.iso.parse(d.properties[options.key]);
             });
@@ -64,9 +64,9 @@ app.controller('TimelineDirCtrl', function ($scope){
 
     this.maxMin = function (data, options) {
       if (options.dateparser === 'isodate') {
-        return this._dateStringMinMax(data, options);
+        return this.dateStringMinMax(data, options);
       } else {
-        return this._numericalMinMax(data, options);
+        return this.numericalMinMax(data, options);
       }
     };
 
