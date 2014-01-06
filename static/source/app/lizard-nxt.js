@@ -183,7 +183,7 @@ app.controller("MasterCtrl",
   /**
    * Get data for timeseries
    */
-  $scope.selected_timeseries = undefined;
+  $scope.box.content.selected_timeseries = undefined;
 
   $scope.getTimeseries = function (data) {
     /* data must have properties entity_name, id */
@@ -216,9 +216,9 @@ app.controller("MasterCtrl",
     }, function(response){
       $scope.timeseries = response;
       if ($scope.timeseries.length > 0){  
-        $scope.selected_timeseries = response[0];
+        $scope.box.content.selected_timeseries = response[0];
       } else {
-        $scope.selected_timeseries = undefined;
+        $scope.box.content.selected_timeseries = undefined;
       }
     });
 
@@ -249,9 +249,9 @@ app.controller("MasterCtrl",
       {get: 
         {method: 'GET', timeout: $scope.box.content.canceler.promise}
       });
-    if ($scope.selected_timeseries) {
+    if ($scope.box.content.selected_timeseries) {
       timeseries.get({
-        id: $scope.selected_timeseries.id,
+        id: $scope.box.content.selected_timeseries.id,
         start: $scope.box.content.temporalExtent.start,
         end: $scope.box.content.temporalExtent.end
       }, function(response){
@@ -259,7 +259,7 @@ app.controller("MasterCtrl",
           series: response.events.series,
           instants: response.events.instants
         };
-        $scope.selected_timeseries.events = response.events;
+        $scope.box.content.selected_timeseries.events = response.events;
         // var response;
         // if ($scope.timeseries.length > 0){
         //   $scope.selected_timeseries = response[0];
@@ -270,15 +270,15 @@ app.controller("MasterCtrl",
     }
   });
 
-  $scope.$watch('selected_timeseries.id', function () {
-    if ($scope.selected_timeseries !== undefined){
+  $scope.$watch('box.content.selected_timeseries.id', function () {
+    if ($scope.box.content.selected_timeseries !== undefined){
       // NOTE: this will change to $scope.selected_timeseries.instants
       $scope.data = {
-          series: $scope.selected_timeseries.events.series,
-          instants: $scope.selected_timeseries.events.instants
+          series: $scope.box.content.selected_timeseries.events.series,
+          instants: $scope.box.content.selected_timeseries.events.instants
         };
       // dit kan zeker nog mooier
-      $scope.metadata.title = " - " + $scope.selected_timeseries.location.name;
+      $scope.metadata.title = " - " + $scope.box.content.selected_timeseries.location.name;
       $scope.metadata.ylabel = "";//$scope.selected_timeseries.parameter + $scope.selected_timeseries.unit.code
       $scope.metadata.xlabel = "Tijd";
     } else {
