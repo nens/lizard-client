@@ -58,6 +58,7 @@ app.config(function($interpolateProvider) {
  * Stuff to reconsider, rethink, refactor:
  *
  * * [ ] Refactor master controller (states, data!)
+ * * [ ] Refactor timeline out of mapState with its own scope
  * * [ ] Refactor index.html and base-debug.html
  * * [ ] Fix + document Gruntfile.js / workflow
  * * [ ] Refactor css (csslint, -moz and -webkit)
