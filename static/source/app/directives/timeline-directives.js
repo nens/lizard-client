@@ -221,18 +221,15 @@ app.controller('TimelineDirCtrl', function ($scope){
         $scope.$apply();
       }
     };
-
+    var brush = null;
     this.createBrush = function (scope, svg, x, height, xKey) {
-      var brush = null;    
-
-      var brush = d3.svg.brush().x(x.scale)
+      brush = d3.svg.brush().x(x.scale)
         .on("brush", this.brushmove);
       this.brushg = svg.append("g")
         .attr("class", "brushed")
         .call(brush);
       this.brushg.selectAll("rect")
         .attr("height", height);
-      window.brush = brush;   
       return brush;
       };
 
@@ -382,7 +379,7 @@ app.controller('TimelineDirCtrl', function ($scope){
 
     var timelineKeys = [];
     scope.$watch('timeState.timeline.changed', function (n,o) {
-      if (n === o) { return true }
+      if (n === o) { return true; }
       scope.timeState.enableAnimation('off');
       var oldLength = timelineKeys.length;
       timelineKeys = [];
@@ -421,7 +418,6 @@ app.controller('TimelineDirCtrl', function ($scope){
     });
 
     
-    var animationBrush;    
     scope.$watch('timeState.animation.enabled', function (newVal, oldVal) {
       if (newVal === oldVal) { return true }
       if (scope.timeState.animation.enabled) {
