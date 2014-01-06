@@ -506,6 +506,10 @@ html, body{
 }
 
 /*timeline stuff*/
+#timeline {
+    visibility: hidden;
+}
+
 .timeline {
     min-height: 0;
     height: 0;
@@ -533,12 +537,28 @@ html, body{
 }
 
 .bovenbalk{
-    text-transform: uppercase;
     box-shadow: 0 3px 10px #888;
 }
 
 .middle {
     vertical-align: middle;
+}
+
+.extra-padding {
+    padding: 7px;
+}
+
+.btn {
+    -ms-user-select: none;
+    -moz-user-select: none; 
+    -khtml-user-select: none; 
+    -webkit-user-select: none; 
+    -o-user-select: none; 
+    user-select: none;
+} 
+
+#left-speed-radio {
+    padding-left: 30px;
 }
 
 .indicator {

@@ -58,6 +58,7 @@ app.config(function($interpolateProvider) {
  * Stuff to reconsider, rethink, refactor:
  *
  * * [ ] Refactor master controller (states, data!)
+ * * [ ] Refactor timeline out of mapState with its own scope
  * * [ ] Refactor index.html and base-debug.html
  * * [ ] Fix + document Gruntfile.js / workflow
  * * [ ] Refactor css (csslint, -moz and -webkit)
@@ -119,7 +120,7 @@ app.controller("MasterCtrl",
     // NOTE: ugly hack, record if tool is time aware
     if ($scope.tools.active === "alerts" ||
         $scope.tools.active === "sewerage") {
-      $scope.timeline.changed = !$scope.timeline.changed;
+      $scope.timeState.changed = !$scope.timeState.changed;
     }
   };
   // TOOLS
@@ -141,6 +142,29 @@ app.controller("MasterCtrl",
   };
   // /END MOVE TO MAP CONTROL
   // MAP MODEL
+
+  // TIME MODEL
+  $scope.timeState = {
+    start: Date.now() - 31556900000, // 1 year in ms
+    end: Date.now(),
+    changedZoom: Date.now(),
+    at: this.start,
+    timeline: {
+      tool: 'zoom',
+      canceler: $q.defer(),
+      enabled: false,
+      data: {},
+      changed: Date.now()
+    },
+    animation: {
+      playing: false,
+      enabled: false,
+      currentFrame: 0,
+      lenght: 0,
+      speed: 7
+    }
+  };
+// END TIME MODEL
 
   // 3Di START
   $scope.setFollow = function(layer, follow_3di) {
@@ -202,7 +226,6 @@ app.controller("MasterCtrl",
         changedZoom: false,
       };
       $scope.box.content.changeFunction = function (start, stop) {
-        console.info('start', start);
         $scope.box.content.temporalExtent.start = start;
         $scope.box.content.temporalExtent.stop = stop;
         $scope.box.content.temporalExtent.changedZoom = !$scope.box.content.temporalExtent.changedZoom;
@@ -387,23 +410,6 @@ app.controller("MasterCtrl",
     return formatted;
   };
 
-  /**
-   * Temporal extent model
-   */
-  $scope.timeline = {
-    temporalExtent: {
-      start: Date.now() - 31556900000, // 1 year in ms
-      end: Date.now(),
-      changedZoom: true,
-      at: Date.now() - this.start
-    },
-    tool: 'zoom',
-    canceler: $q.defer(),
-    enabled: false,
-    data: {}
-  };
-// END Temporal extent model
-
 /**
 * keypress stuff
 */
@@ -431,132 +437,184 @@ app.controller("MasterCtrl",
 /*
 * animation stuffs
 */
-  
 
   window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
                               window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
 
+  $scope.timeState.enableAnimation = function (toggle) {
+    if ($scope.timeState.animation.enabled || toggle === "off") {
+      $scope.timeState.animation.enabled = false;
+    } else {
+      $scope.timeState.animationDriver();
+      $scope.timeState.animation.enabled = true;
+    }
+  };
+
+  $scope.timeState.playPauseAnimation = function (toggle) {
+    if (!$scope.timeState.animation.enabled) {
+      $scope.timeState.enableAnimation();
+    }
+    if ($scope.timeState.animation.playing || toggle === "off") {
+      $scope.timeState.animation.playing = false;
+    } else {
+      $scope.timeState.animation.playing = true;
+      window.requestAnimationFrame($scope.timeState.step);
+    }
+  };
+
+  $scope.timeState.step =  function (timestamp) {
+    $scope.$apply(function () {
+      $scope.timeState.animation.start += $scope.timeState.timeStep;
+      $scope.timeState.animation.end += $scope.timeState.timeStep;
+      $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
+    });
+    if ($scope.timeState.at >= $scope.timeState.end || $scope.timeState.at < $scope.timeState.start) {
+      $scope.$apply(function () {
+        $scope.timeState.animation.end = $scope.timeState.animation.end - $scope.timeState.animation.start + $scope.timeState.start;
+        $scope.timeState.animation.start = $scope.timeState.start;
+        $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
+        if ($scope.rain.enabled) {
+          $scope.rain.currentFrame = null;
+          $scope.rain.currentDate = Date.parse($scope.rain.dates[0]);
+        }
+      });
+    }
+    if ($scope.timeState.animation.playing) {
+      setTimeout(function () {
+        window.requestAnimationFrame($scope.timeState.step);
+      }, 400 - Math.pow($scope.timeState.animation.speed, 2));
+    }
+  };
+
+  $scope.timeState.animationDriver = function () {
+    $scope.timeState.at = $scope.timeState.start;
+    $scope.timeState.timeStep = ($scope.timeState.end - $scope.timeState.start) / 500;
+  };
+
+
+  var d = new Date();
+  var timeZoneOffset = d.getTimezoneOffset() * 60000;
+
+  // Watch for animation
+  $scope.$watch('timeState.at', function (n, o) {
+    if (n === o) { return true; }
+    if ($scope.rain.enabled) {
+      var roundedMoment = Math.round($scope.timeState.at / 300000) * 300000 - timeZoneOffset; //Round to nearest five minutes
+      if (roundedMoment !== $scope.rain.currentDate &&
+        roundedMoment >= ($scope.rain.currentDate + 300000) ||
+        roundedMoment <= ($scope.rain.currentDate - 300000)) {
+        $scope.rain.currentDate = roundedMoment;
+        if ($scope.rain.imageDates.indexOf(roundedMoment) !== -1) { // Check whether we have an image for this moment
+          $scope.rain.currentFrame = roundedMoment;
+        }
+      }
+      if (roundedMoment < Date.parse($scope.rain.dates[0]) || roundedMoment > Date.parse($scope.rain.dates[$scope.rain.dates.length - 1])) {
+        $scope.rain.currentFrame = null;
+      }
+    }
+  });
+
+// END animation
+// START Rain Stuff
+
   var buildAnimationDatetimes = function () {
-            // Build datetime objects to retrieve wms layers later on.
-        var hours = 3 * 60;
+        /*
+        * Get radarimages for every 5th minutes if this fits in the localstorage, else confine to every 10th minute
+        */
+        var hours = ($scope.timeState.end - $scope.timeState.start) / 60000;
         var animationDatetimes = [];
-        var now = moment();
+        var now = moment($scope.timeState.end);
         now.hours(now.hours() - (60 / now.zone()));
         
         // The wms only accepts requests for every 5th minute exact
-        now.minutes((Math.round(now.minutes()/5) * 5) % 60);
+        now.minutes((Math.round(now.minutes() / 5) * 5) % 60);
         now.seconds(0);
 
-        for (var interval = 5; interval < hours; interval = interval + 5) {
-            var animationDatetime = now.subtract('minutes', 5);
-            var UtsieAniDatetime = now.utc();
-            animationDatetimes.push(UtsieAniDatetime.format('YYYY-MM-DDTHH:mm:ss') + '.000Z');
-            }
+        var intervalAdd = 5;
+        if (hours / 5 > 200) { intervalAdd = 25; }
+        else if (hours / 5 > 150) { intervalAdd = 20; }
+        else if (hours / 5 > 100) { intervalAdd = 15; }
 
+        console.log("Getting radar images from", new Date($scope.timeState.start),
+                    "to", new Date($scope.timeState.end),
+                    "for every", intervalAdd, "th minute");
+
+        for (var interval = 5; interval < hours; interval = interval + intervalAdd) {
+          var animationDatetime = now.subtract('minutes', intervalAdd);
+          var UtsieAniDatetime = now.utc();
+          animationDatetimes.push(UtsieAniDatetime.format('YYYY-MM-DDTHH:mm:ss') + '.000Z');
+        }
         animationDatetimes.reverse();
-        return animationDatetimes;
-    };
 
-    var imageUrlBase = 'http://regenradar.lizard.net/wms/?WIDTH=525&HEIGHT=497&SRS=EPSG%3A3857&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
-    var dates = buildAnimationDatetimes();
-    var radarImages = [];
-    localStorage.clear();
+        return animationDatetimes;
+      };
 
     // delete $http.defaults.headers.common['X-Requested-With'];
 
-    var ripImage = function (base, date, item) {
-      // var container = 
-      var canvas = document.createElement('canvas');
-      var ctx = canvas.getContext('2d');
-      canvas.width = 525;
-      canvas.height = 497;
-      var img = document.createElement('img');
-      img.onload = function(e) {
-        ctx.drawImage(img, 0, 0, 525, 497);
-        var url = canvas.toDataURL(); // thank you: http://html5-demos.appspot.com/static/html5-whats-new/template/index.html#14
-        localStorage.setItem(item, url);
-        canvas.remove();
-      };
-      img.crossOrigin = 'anonymous';
-      img.src = base + date;
-    }
+  var ripImage = function (base, date, item) {
+    // var container = 
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = 525;
+    canvas.height = 497;
+    var img = document.createElement('img');
+    img.onload = function (e) {
+      $scope.rain.imageDates.push(Date.parse(date));
+      ctx.drawImage(img, 0, 0, 525, 497);
+      var url = canvas.toDataURL(); // thank you: http://html5-demos.appspot.com/static/html5-whats-new/template/index.html#14
+      localStorage.setItem(Date.parse(date), url);
+      canvas.remove();
+    };
+    img.crossOrigin = 'anonymous';
+    img.src = base + date;
+  };
 
-    for (var i = 0; i < dates.length; i++) {
-      var date = dates[i];
+  $scope.rain = {
+    enabled: false,
+  };
+
+  $scope.toggleRain = function (toggle) {
+    if ($scope.rain.enabled === false) {
+      /*
+      * Currently the server stores only the last 24 hours. 
+      * Reset temporalextent to this last twenty four if it exceeds these limits
+      */
+      var twentyFourAgo = Date.now() - 86400000;
+      if ($scope.timeState.start < twentyFourAgo) {
+        $scope.timeState.start = twentyFourAgo;
+        $scope.timeState.timeline.changed = !$scope.timeState.timeline.changed;
+      }
+      if ($scope.timeState.end < twentyFourAgo || $scope.timeState.end > Date.now()) {
+        $scope.timeState.end =  Date.now();
+        $scope.timeState.timeline.changed = !$scope.timeState.timeline.changed;
+      }
+      getRadarImages();
+      $scope.rain.enabled = true;
+      if (!$scope.timeState.hidden) {
+        $scope.timeState.hidden = false;
+        $scope.timeState.resizeTimeline();
+      }
+    } else if ($scope.rain.enabled || toggle === 'off') {
+      $scope.rain.enabled = false;
+      localStorage.clear();
+    }
+  };
+
+  var getRadarImages = function () {
+    $scope.rain.imageDates = [];
+    var imageUrlBase = 'http://regenradar.lizard.net/wms/?WIDTH=525&HEIGHT=497&SRS=EPSG%3A3857&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
+    $scope.rain.dates = buildAnimationDatetimes();
+    localStorage.clear();
+    for (var i = 0; i < $scope.rain.dates.length; i++) {
+      var date = $scope.rain.dates[i];
       ripImage(imageUrlBase, date, i);
     }
-
-  $scope.animation = {
-    at: Date.now(),
-    playing: false,
-    enabled: false,
-    frame: dates,
-    currentFrame: 0,
-    currentDate: Date.parse(dates[0])
+    $scope.rain.length = $scope.rain.dates.length - 1;
+    $scope.rain.currentFrame = 0;
+    $scope.rain.currentDate = Date.parse($scope.rain.dates[0]);
   };
 
-  //tmp
-  $scope.toggleRain = function () {
-    $scope.animation.enabled = !$scope.animation.enabled;
-    if ($scope.animation.enabled) {
-      if (!$scope.timeline.hidden) { 
-        $scope.timeline.hidden = false;
-        $scope.timeline.resizeTimeline();
-      }
-      $scope.animationDriver();
-      $scope.animation.playing = true;
-      // $scope.timeline.temporalExtent.start = Date.parse(dates[0]);
-      // $scope.timeline.temporalExtent.end = Date.parse(dates[dates.length-1]);
-    } else {
-      $scope.animation.enabled = false;
-      $scope.animation.playing = false;
-    }
-  };
-
-  $scope.toggleRainPlay = function (toggle) {
-    if ($scope.animation.enabled) {
-      if ($scope.animation.playing || toggle == "off") {
-        $scope.animation.playing = false;
-      } else {
-        $scope.animationDriver();
-        $scope.animation.playing = true;      
-      }
-    }
-  };
-
-  var start = null;
-  // var keys = Object.keys($scope.animation.frame);
-  var finalFrame = dates.length- 1;
-  var progress;
-
-  $scope.$watch('animation.currentFrame', function (newVal, oldVal) {
-    if (newVal === oldVal) { return;}
-    $scope.animation.currentDate = Date.parse(dates[$scope.animation.currentFrame]);
-
-  });
-
-  $scope.step =  function (timestamp) {
-    $scope.$apply(function () {
-      $scope.animation.currentFrame++;
-    });
-
-    progress = timestamp - start;    
-    if ($scope.animation.currentFrame == finalFrame) {
-      $scope.animation.currentFrame = -1;
-    }  
-    if ($scope.animation.playing) {
-      setTimeout(function () {
-        requestAnimationFrame($scope.step);
-      }, 50);
-    }    
-  }
-
-  $scope.animationDriver = function () { 
-    requestAnimationFrame($scope.step);
-  };
-
-
-// END animation
+// End rain stuff
 
 }]);

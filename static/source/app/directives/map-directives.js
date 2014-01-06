@@ -419,7 +419,7 @@ app.directive('sewerage', function ($http) {
               scope.mapState.changed = Date.now();
             }
           }
-          scope.timeline.data.sewerage = scope.formatted_geojsondata;
+          scope.timeState.timeline.data.sewerage = scope.formatted_geojsondata;
         } else {
           for (var mapLayer in scope.mapState.layers) {
             var layer = scope.mapState.layers[mapLayer];
@@ -481,7 +481,7 @@ app.directive('sewerage', function ($http) {
             return formatted;
           }
           scope.formatted_geojsondata = format(data);
-          scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
+          scope.timeState.changedZoom = !scope.timeState.changedZoom;
           scope.box.content.isw.count = 0;
           scope.rawGeojsondata = data;
         });
@@ -519,13 +519,13 @@ app.directive('sewerage', function ($http) {
   };
 });
 
-app.directive('animation', function () {
+app.directive('rain', function () {
   return {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
       var imageBounds = [[54.28458617998074, 1.324296158471368], [49.82567047026146, 8.992548357936204]];
       var imageOverlay =  L.imageOverlay('', imageBounds, {opacity: 0.8});
-      scope.$watch('animation.enabled', function (newVal, oldVal) {
+      scope.$watch('rain.enabled', function (newVal, oldVal) {
         if (newVal !== oldVal) {
           if (newVal) {
             mapCtrl.addLayer(imageOverlay);
@@ -535,12 +535,15 @@ app.directive('animation', function () {
         }
       });
 
-      scope.$watch('animation.currentFrame', function (newVal, oldVal) {
-        if (newVal == oldVal) { return; }
+      scope.$watch('rain.currentFrame', function (newVal, oldVal) {
+        if (newVal === oldVal) { return; }
         if (imageOverlay != undefined) {
-          var frame = scope.animation.frame[scope.animation.currentFrame];
-          var imgFromStorage = localStorage.getItem(scope.animation.currentFrame);
+          var imgFromStorage = localStorage.getItem(scope.rain.currentFrame);
           imageOverlay.setUrl(imgFromStorage);
+          imageOverlay.setOpacity(0.8);
+          if (scope.rain.currentFrame === null) {
+            imageOverlay.setOpacity(0);
+          }
         }
       });
     }
