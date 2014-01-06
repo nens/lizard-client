@@ -286,7 +286,7 @@ angular.module('graph')
         var total=0;
         var pie = d3.layout.pie()
           .value(function (d) { 
-              total += d.data
+              total += d.data;
             return d.data})
           .sort(null);
         var arc = d3.svg.arc()
