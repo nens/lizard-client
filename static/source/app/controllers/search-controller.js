@@ -76,13 +76,6 @@ app.controller('SearchCtrl', function ($scope, CabinetService) {
       }
   };
 
-  $scope.$watch('selected', function (newVal, oldVal) {
-    if (newVal === oldVal) { return; }
-    // NOTE: wtf this is ugly. Have to figure out a fix for this.
-    // Perhaps bring down the number of controllers ?
-    $scope.$parent.$parent.$parent.selected_timeseries = $scope.selected;
-  });
-
   // Note: Watch is called too often
   $scope.$watch('keyIsPressed', function (newVal, oldVal) {
     if (newVal !== oldVal && $scope.keyTarget.id === "searchboxinput" && $scope.keyPressed === 13) {
