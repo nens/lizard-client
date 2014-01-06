@@ -450,7 +450,7 @@ app.controller("MasterCtrl",
     }
   };
 
-  $scope.timeState.toggleAnimation = function (toggle) {
+  $scope.timeState.playPauseAnimation = function (toggle) {
     if (!$scope.timeState.animation.enabled) {
       $scope.timeState.enableAnimation();
     }
