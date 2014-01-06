@@ -154,7 +154,7 @@ app.controller("MasterCtrl",
       enabled: false,
       data: {},
       changed: Date.now()
-      },
+    },
     animation: {
       playing: false,
       enabled: false,
@@ -457,8 +457,8 @@ app.controller("MasterCtrl",
     if ($scope.timeState.animation.playing || toggle === "off") {
       $scope.timeState.animation.playing = false;
     } else {
-    $scope.timeState.animation.playing = true;
-    requestAnimationFrame($scope.timeState.step);
+      $scope.timeState.animation.playing = true;
+      window.requestAnimationFrame($scope.timeState.step);
     }
   };
 
@@ -481,7 +481,7 @@ app.controller("MasterCtrl",
     }
     if ($scope.timeState.animation.playing) {
       setTimeout(function () {
-        requestAnimationFrame($scope.timeState.step);
+        window.requestAnimationFrame($scope.timeState.step);
       }, 400 - Math.pow($scope.timeState.animation.speed, 2));
     }
   };
@@ -497,11 +497,11 @@ app.controller("MasterCtrl",
 
   // Watch for animation
   $scope.$watch('timeState.at', function (n, o) {
-    if (n === o) { return true }
+    if (n === o) { return true; }
     if ($scope.rain.enabled) {
       var roundedMoment = Math.round($scope.timeState.at / 300000) * 300000 - timeZoneOffset; //Round to nearest five minutes
       if (roundedMoment !== $scope.rain.currentDate &&
-        roundedMoment >= ($scope.rain.currentDate + 300000) || 
+        roundedMoment >= ($scope.rain.currentDate + 300000) ||
         roundedMoment <= ($scope.rain.currentDate - 300000)) {
         $scope.rain.currentDate = roundedMoment;
         if ($scope.rain.imageDates.indexOf(roundedMoment) !== -1) { // Check whether we have an image for this moment
@@ -527,13 +527,13 @@ app.controller("MasterCtrl",
         now.hours(now.hours() - (60 / now.zone()));
         
         // The wms only accepts requests for every 5th minute exact
-        now.minutes((Math.round(now.minutes()/5) * 5) % 60);
+        now.minutes((Math.round(now.minutes() / 5) * 5) % 60);
         now.seconds(0);
 
         var intervalAdd = 5;
-        if (hours / 5 > 200) { var intervalAdd = 25; }
-        else if (hours / 5 > 150) { var intervalAdd = 20; }
-        else if (hours / 5 > 100) { var intervalAdd = 15; }
+        if (hours / 5 > 200) { intervalAdd = 25; }
+        else if (hours / 5 > 150) { intervalAdd = 20; }
+        else if (hours / 5 > 100) { intervalAdd = 15; }
 
         console.log("Getting radar images from", new Date($scope.timeState.start),
                     "to", new Date($scope.timeState.end),
@@ -543,31 +543,31 @@ app.controller("MasterCtrl",
           var animationDatetime = now.subtract('minutes', intervalAdd);
           var UtsieAniDatetime = now.utc();
           animationDatetimes.push(UtsieAniDatetime.format('YYYY-MM-DDTHH:mm:ss') + '.000Z');
-          }
+        }
         animationDatetimes.reverse();
 
         return animationDatetimes;
-    };
+      };
 
     // delete $http.defaults.headers.common['X-Requested-With'];
 
-    var ripImage = function (base, date, item) {
-      // var container = 
-      var canvas = document.createElement('canvas');
-      var ctx = canvas.getContext('2d');
-      canvas.width = 525;
-      canvas.height = 497;
-      var img = document.createElement('img');
-      img.onload = function(e) {
-        $scope.rain.imageDates.push(Date.parse(date));
-        ctx.drawImage(img, 0, 0, 525, 497);
-        var url = canvas.toDataURL(); // thank you: http://html5-demos.appspot.com/static/html5-whats-new/template/index.html#14
-        localStorage.setItem(Date.parse(date), url);
-        canvas.remove();
-      };
-      img.crossOrigin = 'anonymous';
-      img.src = base + date;
+  var ripImage = function (base, date, item) {
+    // var container = 
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = 525;
+    canvas.height = 497;
+    var img = document.createElement('img');
+    img.onload = function (e) {
+      $scope.rain.imageDates.push(Date.parse(date));
+      ctx.drawImage(img, 0, 0, 525, 497);
+      var url = canvas.toDataURL(); // thank you: http://html5-demos.appspot.com/static/html5-whats-new/template/index.html#14
+      localStorage.setItem(Date.parse(date), url);
+      canvas.remove();
     };
+    img.crossOrigin = 'anonymous';
+    img.src = base + date;
+  };
 
   $scope.rain = {
     enabled: false,
@@ -590,7 +590,7 @@ app.controller("MasterCtrl",
       }
       getRadarImages();
       $scope.rain.enabled = true;
-      if (!$scope.timeState.hidden) { 
+      if (!$scope.timeState.hidden) {
         $scope.timeState.hidden = false;
         $scope.timeState.resizeTimeline();
       }
