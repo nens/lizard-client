@@ -264,24 +264,10 @@ app
           scope.$apply(function () {
             scope.mapState.moved = Date.now();
             scope.mapState.bounds = scope.map.getBounds();
-            // scope.mapState.geom_wkt = "POLYGON(("
-            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
-            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
-            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
-            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
-            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
-            //     + "))";
           });  
         } else {
           scope.mapState.moved = Date.now();
             scope.mapState.bounds = scope.map.getBounds();
-            // scope.mapState.geom_wkt = "POLYGON(("
-            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
-            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
-            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
-            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
-            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
-            //     + "))";
         }
       });
 
