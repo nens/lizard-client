@@ -13,34 +13,3 @@
     <p><% box.content.eventValue.value %></p>
   </div>
 </div>
-
-
-<div class="card" ng-class="{hidden: box.content.sewerage == undefined}">
-  <div class="card-title">
-    <img src="/static/distjs/images/gemaal.png" class="img-circle"/>
-    <span ng-bind="box.content.sewerage.type"></span><span class="truncateme" ng-bind="box.content.sewerage.title"></span>
-  </div>
-  <table class="left">
-    <tr>
-      <td>Aanslagpeil (m NAP) </td>
-      <td ng-bind="box.content.sewerage.start_level | number: 2"></td>
-    </tr>
-    <tr>
-      <td>Afslagpeil (m NAP) </td>
-      <td ng-bind="box.content.sewerage.stop_level | number: 2"></td>
-    </tr>
-  </table>
-  <table class="right">
-    <tr>
-        <td>Capaciteit (m<sup>3</sup>/uur) </td>
-        <td ng-bind="box.content.sewerage.capacity | number: 2"></td>
-    </tr>
-   </table>
-</div>
-
-<div class="card" ng-class="{hidden: selected_timeseries == undefined}">
-  <div class="input-prepend">
-    <select class="timeseries" ng-model="selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
-  </div>
-    <graph line data="data" title="" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></graph>
-</div>
