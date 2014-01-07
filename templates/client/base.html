@@ -107,7 +107,7 @@
                   </div>
                 </div>
                 </li>
-                <li ng-click="toggleRain()" class="clickable"><label ng-class="{active: animation.enabled}">Regen</label> </li>
+                <li ng-click="toggleRain()" class="clickable"><label ng-class="{active: rain.enabled}">Regen</label> </li>
               </ul>
               </li>
               <!-- Temporary item to enable events -->
@@ -115,8 +115,8 @@
               {% trans "Events" %}
               <ul class="list-group">
                 <li ng-repeat="event in mapState.eventTypes">
-                <label class="ng-class: {active: timeline.data[event.name].active};" ng-bind="event.name" ng-click="timeline.toggleEvents(event.name)"></label>
-                <label class="count"  ng-if="timeline.data[event.name].active"><%timeline.data[event.name].currentCount %>&nbsp;(<% timeline.data[event.name].count %>) </label>
+                <label class="ng-class: {active: timeState.timeline.data[event.name].active};" ng-bind="event.name" ng-click="timeState.toggleEvents(event.name)"></label>
+                <label class="count"  ng-if="timeState.timeline.data[event.name].active"><% timeState.timeline.data[event.name].currentCount %>&nbsp;(<% timeState.timeline.data[event.name].count %>) </label>
               </ul>
               </li>
             </ul>
@@ -136,7 +136,7 @@
              zoom-to-layer="zoomToLayer"
              vectorlayer
              threedi-map
-             animation
+             rain
              >
          </map>
       </div>
