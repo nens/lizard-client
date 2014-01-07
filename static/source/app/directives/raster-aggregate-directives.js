@@ -5,11 +5,14 @@
 * Directive to show aggregation of raster files in omnibox.
 * Depends on graph-directives to draw pie chart
 */
-app.directive('rasterAggregate', function () {
+app.directive('rasterAggregate', function ($q) {
   var link = function (scope, element, attrs) {
     var agg, raster;
-
     var srs = 'EPSG:4326';
+
+    if (scope.mapState.timeout === undefined) {
+      scope.mapState.timeout = $q.defer();
+    }
 
     scope.$watch('mapState.bounds', function () {
       if (scope.box.type === 'landuse') {
@@ -22,8 +25,17 @@ app.directive('rasterAggregate', function () {
         scope.box.content.agg = agg;
         raster = 'ahn2';
       }
-     
-      scope.getRasterData(raster, scope.mapState.geom_wkt, srs, agg);
+    
+    var geom_wkt = "POLYGON(("
+            + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
+            + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
+            + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
+            + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
+            + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
+            + "))"; 
+      scope.mapState.timeout.resolve();
+      scope.mapState.timeout = $q.defer();
+      scope.getRasterData(raster, geom_wkt, srs, agg, true);
     });
   };
 

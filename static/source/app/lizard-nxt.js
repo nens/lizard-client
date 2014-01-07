@@ -336,7 +336,7 @@ app.controller("MasterCtrl",
    * Get raster data from server
    * NOTE: maybe add a callback as argument?
    */
-  $scope.getRasterData = function (raster_names, linestring_wkt, srs, agg) {
+  $scope.getRasterData = function (raster_names, linestring_wkt, srs, agg, timeout) {
     // build url
     // NOTE: first part hardcoded
     var url = "api/v1/rasters/";
@@ -346,8 +346,15 @@ app.controller("MasterCtrl",
     if (agg !== undefined) {
       url += "&agg=" + agg;  
     }
-    // get profile from server
-    $http.get(url)
+    var config = {
+      method: 'GET',
+      url: url
+    };
+    if (timeout) {
+      config.timeout = $scope.mapState.timeout.promise;
+    }
+    // get profile from serverr
+    $http(config)
       .success(function (data) {
         // NOTE: hack to try pop_density
         // NOTE: maybe this function should return something
@@ -374,7 +381,9 @@ app.controller("MasterCtrl",
       })
       .error(function (data) {
         //TODO: implement error function to return no data + message
-        console.info("failed getting profile data from server");
+        if (!timeout) {
+          console.info("failed getting profile data from server");        
+        }
       });
   };
 
