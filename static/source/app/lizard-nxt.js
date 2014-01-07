@@ -238,7 +238,7 @@ app.controller("MasterCtrl",
   };
 
   $scope.$watch('box.content.temporalExtent.changedZoom', function (newVal, oldVal) {
-    if (newVal == oldVal) { return; }
+    if (newVal == oldVal || ($scope.box.content.canceler === undefined)) { return; }
     $scope.box.content.canceler.resolve();
     $scope.box.content.canceler = $q.defer();
     var timeseries = $resource('/api/v1/timeseries/:id/?start=:start&end=:end', {
