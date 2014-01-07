@@ -1,3 +1,5 @@
+'use strict';
+
 // Timeline for lizard.
 app.controller('TimelineDirCtrl', function ($scope){
     this.createCanvas = function (element, options) {
@@ -324,7 +326,7 @@ app.controller('TimelineDirCtrl', function ($scope){
             });
           } else {
             scope.$apply(function () {
-              s_sorted = [s[0].getTime(), s[1].getTime()].sort();
+              var s_sorted = [s[0].getTime(), s[1].getTime()].sort();
               scope.timeline.temporalExtent.start = s_sorted[0];
               scope.timeline.temporalExtent.end = s_sorted[1];
               scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
