@@ -259,7 +259,7 @@ app.controller('TimelineDirCtrl', function ($scope){
         .classed("selected", function (d) {
           latLng[0] = d.geometry.coordinates[1];
           latLng[1] = d.geometry.coordinates[0];
-          contained = bounds.contains(latLng);
+          var contained = bounds.contains(latLng);
           // Some book keeping to count
           d.inSpatExtent = contained;
           return contained;
