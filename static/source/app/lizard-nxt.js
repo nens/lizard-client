@@ -493,7 +493,7 @@ app.controller("MasterCtrl",
 
     for (var i = 0; i < dates.length; i++) {
       var date = dates[i];
-      ripImage(imageUrlBase, date, i);
+      // ripImage(imageUrlBase, date, i);
     }
 
   $scope.animation = {
