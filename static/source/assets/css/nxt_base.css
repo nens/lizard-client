@@ -241,8 +241,8 @@ h1, h2, h3, h4, h5 {
       /*position: relative;*/
       z-index: 1;
     width: 500px;
-    height: 350px;
-    top: 35%;
+    height: 200px;
+    top: 50%;
     left: 50%;
     margin-left: -250px;
     margin-top: -175px;
@@ -333,7 +333,7 @@ h1, h2, h3, h4, h5 {
 .error-text{
     font-family: 'Roboto Slab', serif;
     text-transform: none;
-    font-size: 2em;
+    font-size: 1.5em;
     color: rgba(253, 253, 253, 1);
     text-shadow: none;
     background-color: rgba(22, 160, 133, 1.0);
