@@ -353,7 +353,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
           ticks: timelineCtrl.ticksInterval
         }));
         svg.selectAll("circle")
-          .attr("cx", function (d) { Math.round(scope.timeline.xScale(d[xKey])); });
+          .attr("cx", function (d) { return Math.round(scope.timeState.xScale(d[xKey])); });
         scope.$apply(function () {
           scope.timeState.start = x.scale.domain()[0].getTime();
           scope.timeState.end = x.scale.domain()[1].getTime();
