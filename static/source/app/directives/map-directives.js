@@ -21,38 +21,14 @@ app
           layer.leafletLayer = L.tileLayer(layer.url + '.png',
                                            {name: "Background", maxZoom: 20});
         } else if (layer.type === "TMS" && !layer.baselayer) {
-          if (layer.url.split('/api/v1/').length > 0) {
-            if (layer.content !== null) {
-              var layer_types = layer.content.split(',');
-              layer.grid_layers = [];
-              for (var i in layer_types) {
-                if (layer_types[i] === 'manhole' ||
-                    layer_types[i] === 'pipe' ||
-                    layer_types[i] === 'pumpstation_sewerage' ||
-                    layer_types[i] === 'pumpstation_non_sewerage') {
-                  var url = layer.url + '.grid?object_types=' + layer_types[i];
-                  var leafletLayer = new L.UtfGrid(url, {
-                    useJsonP: false,
-                    maxZoom: 20
-                    // resolution: 2
-                  });
-                  leafletLayer.on('click', function (e) {
-                    if (e.data){
-                      $scope.getTimeseries(e.data);
-                    }
-                  });
-                  layer.grid_layers.push(leafletLayer);
-                }
-              }
-            }
-          }
-          var params = layer.content === '' ? '' : '?object_types=' + layer.content;
-          layer.leafletLayer = L.tileLayer(layer.url + '.png' + params, {maxZoom: 20, zIndex: layer.z_index});
+          layer.leafletLayer = L.tileLayer(layer.url + '.png',
+                                           {minZoom: layer.min_zoom, maxZoom: 20, zIndex: layer.z_index});
         } else if (layer.type === "WMS") {
           var options = {
             layers: layer.content,
             format: 'image/png',
             version: '1.1.1',
+            minZoom: layer.min_zoom,
             maxZoom: 20
           };
           //NOTE ugly hack
@@ -64,6 +40,36 @@ app
             options.styles = 'jet:-5:20';
           }
           layer.leafletLayer = L.tileLayer.wms(layer.url, options);
+        } else if (layer.type === "ASSET") {
+          var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
+          layer.grid_layers = [];
+          for (var i in layer.assets) {
+            var asset = layer.assets[i];
+            if (asset.min_zoom_click !== null) {
+              var leafletLayer = new L.UtfGrid(url, {
+                ext: 'grid',
+                slug: asset.content,
+                name: asset.content,
+                useJsonP: false,
+                minZoom: asset.min_zoom_click,
+                maxZoom: 20
+              });
+              leafletLayer.on('click', function (e) {
+                if (e.data){
+                  $scope.getTimeseries(e.data);
+                }
+              });
+              layer.grid_layers.push(leafletLayer);
+            }
+          }
+          layer.leafletLayer = L.tileLayer(url, {
+            ext: 'png',
+            slug: layer.content,
+            name: layer.content,
+            minZoom: layer.min_zoom,
+            maxZoom: 20,
+            zIndex: layer.z_index
+          });
         } else {
           console.log(layer.type);
         }
