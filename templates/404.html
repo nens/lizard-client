@@ -1,0 +1,51 @@
+{% load i18n %}
+<html ng-app="lizard-nxt">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Lizard - 404 - Page Not found</title>
+
+    {% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}distjs/css/vendor.css" />
+    <link href='http://fonts.googleapis.com/css?family=Petit+Formal+Script|Kite+One|Roboto+Slab' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}distjs/css/nxt.css" />
+    {% endblock css %}
+  </head>
+
+  <body class="error-bg">
+    <div class="container">
+
+        <header class="navbar navbar-inverse navbar-fixed-top">
+
+        <div id="logo">
+          <a href="/"><img src="/static/source/assets/images/logo_text.png" alt="Lizard"></a>
+        </div>
+        <!-- <div id="site-actions">                  id="rightbar-actions"-->
+          <ul class="nav navbar-nav navbar-right" >
+              <li>
+                <a class="user" href="http://sso.lizard.net/edit_profile/" title="Edit profile"><div class="pull-right" id="username"> Fritz</div><i id="user-icon" class="icon-user pull-right"></i></a>
+              </li>
+              <li>
+                <a class="user" id="logout" href="/accounts/logout/?next=/" title="Logout" onclick="return logOut()"> 
+                  <i class="icon-off"></i></a>
+              </li>
+            
+            </ul>
+            
+          </div>
+        </div>
+    </header>
+    </div>
+    <div class="container"> 
+        <div class="error-text">
+            Oops, you might intend to be somewhere else. Let us help you.
+            <a href="/">Click Here To Go Back.</a><br><br>
+            Or <a href="mailto:info@nelen-schuurmans.nl?subject=404 on Lizard - Nxt">contact</a> us, if you feel we made a mistake.
+        </div>
+        <div class="error-gif">
+            <img src="{{ STATIC_URL }}source/assets/images/404.gif" />
+        </div>
+    </div>
+  </body>
+</html>
