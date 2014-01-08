@@ -14,7 +14,8 @@ app.directive('rasterAggregate', function ($q) {
       scope.mapState.timeout = $q.defer();
     }
 
-    scope.$watch('mapState.bounds', function () {
+    var mapWatch = scope.$watch('mapState.bounds', function () {
+      console.info('i should be quiet')
       if (scope.box.type === 'landuse') {
         agg = 'counts';
         scope.box.content.agg = agg;
@@ -36,6 +37,10 @@ app.directive('rasterAggregate', function ($q) {
       scope.mapState.timeout.resolve();
       scope.mapState.timeout = $q.defer();
       scope.getRasterData(raster, geom_wkt, srs, agg, true);
+    });
+
+    element.on('$destroy', function () {
+      mapWatch();
     });
   };
 
