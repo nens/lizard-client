@@ -206,7 +206,7 @@ app
       // instead of 'map' element here for testability
       var osmAttrib='Map data © OpenStreetMap contributors';
       var map = new L.map(element[0], {
-          center: new L.LatLng(52.0992287, 5.5698782),
+          center: new L.LatLng(52.27, 5.5698782),
           zoomControl: false,
           zoom: 8
         });
