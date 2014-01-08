@@ -204,11 +204,14 @@ app
       // see: http://leafletjs.com/reference.html#path-canvas
       window.L_PREFER_CANVAS = true;
       // instead of 'map' element here for testability
+      var osmAttrib='Map data © OpenStreetMap contributors';
       var map = new L.map(element[0], {
           center: new L.LatLng(52.0992287, 5.5698782),
           zoomControl: false,
           zoom: 8
         });
+      map.attributionControl.addAttribution(osmAttrib);
+      map.attributionControl.setPrefix('');
 
       scope.$watch('searchMarkers', function (newValue, oldValue) {
         if (newValue) {
