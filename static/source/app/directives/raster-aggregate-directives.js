@@ -24,7 +24,7 @@ app.directive('rasterAggregate', function ($q) {
       } else if (scope.box.type  === 'elevation') {
         agg = 'curve';
         scope.box.content.agg = agg;
-        raster = 'ahn2';
+        raster = 'elevation';
       }
     
     var geom_wkt = "POLYGON(("
