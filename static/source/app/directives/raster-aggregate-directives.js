@@ -15,7 +15,6 @@ app.directive('rasterAggregate', function ($q) {
     }
 
     var mapWatch = scope.$watch('mapState.bounds', function () {
-      console.info('i should be quiet')
       if (scope.box.type === 'landuse') {
         agg = 'counts';
         scope.box.content.agg = agg;
