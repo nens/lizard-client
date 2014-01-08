@@ -15,7 +15,6 @@ app.directive('rasterAggregate', function ($q) {
     }
 
     var mapWatch = scope.$watch('mapState.bounds', function () {
-      console.info('i should be quiet')
       if (scope.box.type === 'landuse') {
         agg = 'counts';
         scope.box.content.agg = agg;
@@ -24,7 +23,7 @@ app.directive('rasterAggregate', function ($q) {
       } else if (scope.box.type  === 'elevation') {
         agg = 'curve';
         scope.box.content.agg = agg;
-        raster = 'ahn2';
+        raster = 'elevation';
       }
     
     var geom_wkt = "POLYGON(("
