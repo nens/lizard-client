@@ -22,7 +22,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
         .attr('width', maxwidth)
         .attr('height', maxheight)
         .append("svg:g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        // .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .style("transform", "translate3d(" + margin.left + "," + margin.top + ")");
       svg.append("svg:rect")
         .attr("width", width)
         .attr("height", height)

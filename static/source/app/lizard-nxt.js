@@ -145,7 +145,7 @@ app.controller("MasterCtrl",
 
   // TIME MODEL
   $scope.timeState = {
-    start: Date.now() - 31556900000, // 1 year in ms
+    start: 1381363200000, // 10nd of october 2013, works nicely with the twitter data
     end: Date.now(),
     changedZoom: Date.now(),
     at: this.start,
@@ -431,6 +431,7 @@ app.controller("MasterCtrl",
       ($event.which !== 27 && $event.which !== 13)) {
      return; 
    }
+   console.log($event.which);
     $scope.keyIsPressed = !$scope.keyIsPressed;
     $scope.keyPressed = $event.which;
     $scope.keyTarget = $event.target;
