@@ -41,19 +41,18 @@ app
           }
           layer.leafletLayer = L.tileLayer.wms(layer.url, options);
         } else if (layer.type === "ASSET") {
-          var layer_types = layer.content.split(',');
+          var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
           layer.grid_layers = [];
-          for (var i in layer_types) {
-            if (layer_types[i] === 'manhole' ||
-                layer_types[i] === 'pipe' ||
-                layer_types[i] === 'pumpstation_sewerage' ||
-                layer_types[i] === 'pumpstation_non_sewerage') {
-              var url = layer.url + '.grid?object_types=' + layer_types[i];
+          for (var i in layer.assets) {
+            var asset = layer.assets[i];
+            if (asset.min_zoom_click !== null) {
               var leafletLayer = new L.UtfGrid(url, {
+                ext: 'grid',
+                slug: asset.content,
+                name: asset.content,
                 useJsonP: false,
-                minZoom: layer.min_zoom,
+                minZoom: asset.min_zoom_click,
                 maxZoom: 20
-                // resolution: 2
               });
               leafletLayer.on('click', function (e) {
                 if (e.data){
@@ -63,7 +62,8 @@ app
               layer.grid_layers.push(leafletLayer);
             }
           }
-          layer.leafletLayer = L.tileLayer('/api/v1/tiles/{slug}/{z}/{x}/{y}.png', {
+          layer.leafletLayer = L.tileLayer(url, {
+            ext: 'png',
             slug: layer.content,
             name: layer.content,
             minZoom: layer.min_zoom,
