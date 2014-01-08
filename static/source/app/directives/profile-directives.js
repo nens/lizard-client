@@ -75,7 +75,7 @@ app.directive('rasterprofile', function () {
           var srs = L.CRS.EPSG3857.code;
           
           // call getRasterData controller function on scope
-          scope.getRasterData("ahn2", profile_line_wkt, srs);
+          scope.getRasterData("elevation", profile_line_wkt, srs);
         };
 
         // enable and disable click handler
