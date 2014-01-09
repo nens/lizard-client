@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Lizard</title>
+
+    <style>
+    /* Customizable logo */
+    .navbar-brand {
+      width: 200px;
+      height: 50px;
+      background: url('{{ STATIC_URL }}source/assets/images/logo_text.png') no-repeat;
+      background-position: 12px 8px;
+    }
+    </style>
     
     {% block css %}
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}distjs/css/vendor.css" />
@@ -38,39 +48,59 @@
   </head>
 
   <body ng-controller="Threedi">
-    <header class="navbar navbar-inverse navbar-fixed-top">
-      <!-- <div id="logo-row" class=""> -->
-        <div id="logo">
-          <a href="/"><img src="{{ STATIC_URL }}source/assets/images/logo_text.png" alt="Lizard"></a>
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/"><span>Lizard</span></a>
+          <!-- <a class="navbar-brand" href="/"><img src="{{ STATIC_URL }}source/assets/images/logo_text.png" alt="Lizard"></a> -->
         </div>
-        <!-- <div id="site-actions">                  id="rightbar-actions"-->
-          <ul class="nav navbar-nav navbar-right" >
-            <li>
-              <a href="#" class="hide" ng-click="threediTool()" ng-class="{'hide': !threedi_active, 'icon-large': tools.active === 'threedi'}" title="3Di"><i class="icon-asterisk"></i></a>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+
+            <li class="visible-xs">
+              <a class="user" href="#" ng-click="threediTool()" ng-class="{'hide': !threedi_active, 'icon-large': tools.active === 'threedi'}" title="{% trans '3Di' %}"><div style="width:200px;" id="username"><i id="icon-asterisk" class="icon-asterisk"></i>&nbsp;&nbsp;3Di</div></a>
+            </li>            
+            <li class="visible-sm visible-md visible-lg">
+              <a href="#" ng-click="threediTool()" ng-class="{'hide': !threedi_active, 'icon-large': tools.active === 'threedi'}" title="{% trans '3Di' %}"><i class="icon-asterisk" ></i></a>
             </li>
-            <li class="site">
+
+            <li class="visible-xs">
+              <a class="user" href="#" ng-click="toggleTool('profile')" title="{% trans 'Edit profile' %}"><div style="width:200px;" id="username"><i id="icon-resize-full" ng-class="{'icon-large': tools.active === 'profile'}" class="icon-resize-full"></i>&nbsp;&nbsp;Intersection</div></a>
+            </li>            
+            <li class="visible-sm visible-md visible-lg">
               <a href="#" ng-click="toggleTool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.active === 'profile'}"></i></a>
             </li>
             {% if user.is_authenticated %}
               <li>
-                <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="pull-right" id="username"> {{ user.first_name }}</div><i id="user-icon" class="icon-user pull-right"></i></a>
+                <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="" id="username"><i id="" class="icon-user"></i>&nbsp;&nbsp;{{ user.first_name }}</div></a>
               </li>
-              <li>
-                <a class="user" id="logout" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"> 
-                  <i class="icon-off"></i></a>
+              <li class="visible-xs">
+                <a class="user" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"><div class="" id="username"><i id="" class="icon-off"></i>&nbsp;&nbsp;Uitloggen</div></a>
               </li>
+              <li class="visible-sm visible-md visible-lg">
+                <a class="user" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"><div class="pull-right" id="username" style="padding-right:20px;"><i id="" class="icon-off"></i></div></a>
+              </li>              
+
             {% else %}
               <li>
                 <a href="{% url "login" %}?next=/" title="{% trans 'Login' %}">
                   <i class="icon-user pull-right"></i></a>
               </li>
               {% endif %}
-            </ul>
-            {% block site_actions %}{% endblock site_actions %}
-          </div>
-        </div>
-      <!-- </div> -->
-    </header>
+          </ul>
+          {% block site_actions %}{% endblock site_actions %}
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+
     {% block content %}
 
     <div ng-controller='MapCtrl'>
@@ -156,7 +186,7 @@
 
 {% block toolbar_controllers %}
 
-        {% endblock toolbar_controllers %}
+    {% endblock toolbar_controllers %}
     {% endblock content %}
 
 
