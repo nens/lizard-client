@@ -51,7 +51,7 @@ app
                 slug: sublayer.asset,
                 name: sublayer.asset,
                 useJsonP: false,
-                minZoom: sublayer.min_zoom_click,
+                minZoom: 0,
                 maxZoom: 20
               });
               leafletLayer.on('click', function (e) {
