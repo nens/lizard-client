@@ -692,7 +692,7 @@ h1, h2, h3, h4, h5 {
 .nxt-font {
     font-family: 'Roboto Slab', serif;
     text-transform: none;
-    font-size: 17px !important; 
+    font-size: 15px !important; 
     color: #2c3e50;
     text-shadow: none;
 }

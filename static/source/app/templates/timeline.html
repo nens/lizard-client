@@ -11,10 +11,14 @@
 
   <div class="bovenbalk">
     <div class="btn-group" >
-      <a href="#" ng-click="timeState.enableAnimation()" class="extra-padding timeline-button" ng-class="{'active': timeState.animation.enabled}"><i ng-class="{'icon-crop': !timeState.animation.enabled, 'icon-resize-horizontal active': timeState.animation.enabled }"></i></a>
-      <a href="#" ng-click="timeState.playPauseAnimation()" class="extra-padding timeline-button" ng-class="{'active': timeState.animation.playing}"><i ng-class="{'icon-play': !timeState.animation.playing, 'icon-pause active': timeState.animation.playing }"></i></a>
-      <a href="#" ng-mousedown="timeState.animation.stepSize = timeState.animation.stepSize / 4" ng-mouseup="timeState.animation.stepSize = timeState.animation.stepSize * 4" class="extra-padding timeline-button timeline-button-active" ng-class="{'active': timeState.animation.playing}"><i ng-class="{'icon-forward icon-grey': !timeState.animation.playing, 'icon-forward': timeState.animation.playing }"></i></a>
-      <a href="#" ng-mousedown="timeState.animation.stepBack()" class="extra-padding timeline-button" ng-class="{'active': timeState.animation.playing}"><i class="icon-step-backward"></i></a>
+      <a href="#" ng-click="timeState.enableAnimation()" class="extra-padding timeline-button">
+        <i ng-class="{'icon-fixed-width icon-crop': !timeState.animation.enabled, 'icon-fixed-width icon-resize-horizontal': timeState.animation.enabled }"></i></a>
+      <a href="#" ng-click="timeState.playPauseAnimation()" class="extra-padding timeline-button" ng-class="{'active': timeState.animation.playing}">
+        <i ng-class="{'icon-fixed-width icon-play': !timeState.animation.playing, 'icon-fixed-width icon-pause active': timeState.animation.playing }"></i></a>
+      <a href="#" ng-mousedown="timeState.animation.animateExtraFast()" ng-mouseup="timeState.animation.stepSize = timeState.animation.stepSize * 4" class="extra-padding timeline-button timeline-button-active" ng-class="{'active': timeState.animation.playing}">
+        <i ng-class="{'icon-forward': !timeState.animation.playing, 'icon-forward': timeState.animation.playing }"></i></a>
+      <a href="#" ng-mousedown="timeState.animation.stepBack()" class="extra-padding timeline-button" ng-class="{'active': timeState.animation.playing}">
+        <i class="icon-step-backward"></i></a>
     </div>
     <span class="nxt-font"> | <% timeState.start | date:'d MMM y' %> - <% timeState.end | date:'d MMM y' %> ( <% timeState.at | date:'d MMM y - HH:mm' %> )</span>        
   </div>

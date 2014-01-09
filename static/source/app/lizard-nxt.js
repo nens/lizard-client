@@ -525,13 +525,15 @@ app.controller("MasterCtrl",
     }
   });
 
-  // Watch for fast-forward
-  $scope.$watch('timeState.animation.stepSize', function (n, o) {
-    if (n === o) { return true; }
+  var animationWasOn;
+  // Toggle fast-forward
+  $scope.timeState.animation.toggleAnimateExtraFast = function () {
+    $scope.timeState.animation.stepSize = $scope.timeState.animation.stepSize / 4;
+    animationWasOn = $scope.timeState.animation.playing;
     if (!$scope.timeState.animation.playing) {
       $scope.timeState.playPauseAnimation();
     }
-  });
+  };
 
   // Step back function
   $scope.timeState.animation.stepBack = function () {
@@ -542,10 +544,9 @@ app.controller("MasterCtrl",
     $scope.timeState.playPauseAnimation('off');
     if (!$scope.timeState.animation.playing && wasOn) {
       setTimeout(function () {
-      $scope.timeState.playPauseAnimation();
+        $scope.timeState.playPauseAnimation();
       }, 500);
     } else {
-
       $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
     }
   };
