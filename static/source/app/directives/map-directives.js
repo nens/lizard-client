@@ -25,16 +25,16 @@ app
                                            {minZoom: layer.min_zoom, maxZoom: 20, zIndex: layer.z_index});
         } else if (layer.type === "WMS") {
           var options = {
-            layers: layer.content,
+            layers: layer.slug,
             format: 'image/png',
             version: '1.1.1',
             minZoom: layer.min_zoom,
             maxZoom: 20
           };
           //NOTE ugly hack
-          if (layer.content === 'landuse') {
+          if (layer.slug === 'landuse') {
             options.styles = 'landuse';
-          } else if (layer.content === 'elevation') {
+          } else if (layer.slug === 'elevation') {
             // dynamically set min/max?
             // options.effects = 'shade:0:3';
             options.styles = 'jet:-5:20';
@@ -43,15 +43,15 @@ app
         } else if (layer.type === "ASSET") {
           var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
           layer.grid_layers = [];
-          for (var i in layer.assets) {
-            var asset = layer.assets[i];
-            if (asset.min_zoom_click !== null) {
+          for (var i in layer.sublayers) {
+            var sublayer = layer.sublayers[i];
+            if (sublayer.min_zoom_click !== null) {
               var leafletLayer = new L.UtfGrid(url, {
                 ext: 'grid',
-                slug: asset.content,
-                name: asset.content,
+                slug: sublayer.asset,
+                name: sublayer.asset,
                 useJsonP: false,
-                minZoom: asset.min_zoom_click,
+                minZoom: sublayer.min_zoom_click,
                 maxZoom: 20
               });
               leafletLayer.on('click', function (e) {
@@ -64,8 +64,8 @@ app
           }
           layer.leafletLayer = L.tileLayer(url, {
             ext: 'png',
-            slug: layer.content,
-            name: layer.content,
+            slug: layer.slug,
+            name: layer.slug,
             minZoom: layer.min_zoom,
             maxZoom: 20,
             zIndex: layer.z_index
