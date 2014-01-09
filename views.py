@@ -15,7 +15,7 @@ from django.utils.safestring import mark_safe
 from rest_framework.renderers import JSONRenderer
 from django.conf import settings
 
-from hydra_core.models import Layer, LayerGroup, ThreediInstance
+from hydra_core.models import Layer, ThreediInstance
 from lizard_nxt.server.serializers import spatial
 
 
@@ -28,13 +28,11 @@ def index(request):
         Layer.objects.filter(baselayer=True)).data
     layers = spatial.LayerSerializer(
         Layer.objects.filter(baselayer=False)).data
-    layer_groups = spatial.LayerGroupSerializer(LayerGroup.objects.all()).data
 
     context = {
         'random_string': md5(str(random.random())).hexdigest(),
         'strap_base_layers': _bootstrap(base_layers),
         'strap_layers': _bootstrap(layers),
-        'strap_layer_groups': _bootstrap(layer_groups),
         'threedi_instance': ThreediInstance.objects.all()[0],  # For now, just assign a server 
         # 'extent': extent,
     }

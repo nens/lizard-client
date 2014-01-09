@@ -132,7 +132,7 @@ app.controller("MasterCtrl",
     layers: CabinetService.layers,
     baselayers: CabinetService.baselayers,
     eventTypes: CabinetService.eventTypes,
-    activeBaselayer: 3,
+    activeBaselayer: 1,
     changed: Date.now(),
     moved: Date.now(),
     baselayerChanged: Date.now(),
@@ -261,7 +261,7 @@ app.controller("MasterCtrl",
   };
 
   $scope.$watch('box.content.temporalExtent.changedZoom', function (newVal, oldVal) {
-    if (newVal == oldVal) { return; }
+    if (newVal == oldVal || ($scope.box.content.canceler === undefined)) { return; }
     $scope.box.content.canceler.resolve();
     $scope.box.content.canceler = $q.defer();
     var timeseries = $resource('/api/v1/timeseries/:id/?start=:start&end=:end', {
@@ -359,7 +359,7 @@ app.controller("MasterCtrl",
    * Get raster data from server
    * NOTE: maybe add a callback as argument?
    */
-  $scope.getRasterData = function (raster_names, linestring_wkt, srs, agg) {
+  $scope.getRasterData = function (raster_names, linestring_wkt, srs, agg, timeout) {
     // build url
     // NOTE: first part hardcoded
     var url = "api/v1/rasters/";
@@ -369,8 +369,15 @@ app.controller("MasterCtrl",
     if (agg !== undefined) {
       url += "&agg=" + agg;  
     }
-    // get profile from server
-    $http.get(url)
+    var config = {
+      method: 'GET',
+      url: url
+    };
+    if (timeout) {
+      config.timeout = $scope.mapState.timeout.promise;
+    }
+    // get profile from serverr
+    $http(config)
       .success(function (data) {
         // NOTE: hack to try pop_density
         // NOTE: maybe this function should return something
@@ -397,7 +404,9 @@ app.controller("MasterCtrl",
       })
       .error(function (data) {
         //TODO: implement error function to return no data + message
-        console.info("failed getting profile data from server");
+        if (!timeout) {
+          console.info("failed getting profile data from server");        
+        }
       });
   };
 
