@@ -590,7 +590,7 @@ html, body{
     text-decoration: none;
 }
 
-.bovenbalk > a {
+.timeline-button {
     float: none;
     color: rgb(255, 255, 255);
     text-decoration: none;
