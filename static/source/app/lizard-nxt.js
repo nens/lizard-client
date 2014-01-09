@@ -161,7 +161,8 @@ app.controller("MasterCtrl",
       enabled: false,
       currentFrame: 0,
       lenght: 0,
-      speed: 7
+      speed: 20,
+      stepSize: 1000
     }
   };
 // END TIME MODEL
@@ -474,6 +475,7 @@ app.controller("MasterCtrl",
   };
 
   $scope.timeState.step =  function (timestamp) {
+    $scope.timeState.timeStep = ($scope.timeState.end - $scope.timeState.start) / $scope.timeState.animation.stepSize;
     $scope.$apply(function () {
       $scope.timeState.animation.start += $scope.timeState.timeStep;
       $scope.timeState.animation.end += $scope.timeState.timeStep;
@@ -499,7 +501,6 @@ app.controller("MasterCtrl",
 
   $scope.timeState.animationDriver = function () {
     $scope.timeState.at = $scope.timeState.start;
-    $scope.timeState.timeStep = ($scope.timeState.end - $scope.timeState.start) / 500;
   };
 
 
@@ -522,6 +523,14 @@ app.controller("MasterCtrl",
       if (roundedMoment < Date.parse($scope.rain.dates[0]) || roundedMoment > Date.parse($scope.rain.dates[$scope.rain.dates.length - 1])) {
         $scope.rain.currentFrame = null;
       }
+    }
+  });
+
+  // Watch for fast-forward
+  $scope.$watch('timeState.animation.stepSize', function (n, o) {
+    if (n === o) { return true; }
+    if (!$scope.timeState.animation.playing) {
+      $scope.timeState.playPauseAnimation();
     }
   });
 

@@ -633,7 +633,7 @@ h1, h2, h3, h4, h5 {
 .timeline {
     min-height: 0;
     bottom: 0;
-    background-color: rgba(255,255,255, 0.9);
+    background-color: rgba(255, 255, 255, 0.9);
     -o-transition:.3s;
     -ms-transition:.3s;
     -moz-transition:.3s;
@@ -655,23 +655,30 @@ h1, h2, h3, h4, h5 {
 }
 
 .bovenbalk{
-    background-color: rgba(22, 160, 133, 1);
+    background-color: rgba(236, 240, 241,1.0);
+    height: 40px;
+    line-height: 40px;
 }
 
 .middle {
     vertical-align: middle;
-    height: 30px;
+    height: 40px;
 }
 
 /*.navbar .nav > li > a:focus,*/
-.bovenbalk > a:hover {
-    color: #34495e;
+.timeline-button:hover {
+    color: rgba(127, 140, 141,1.0);
+    text-decoration: none;
+}
+
+.timeline-button-active:active {
+    color: rgba(231, 76, 60,1.0);
     text-decoration: none;
 }
 
 .timeline-button {
     float: none;
-    color: rgb(255, 255, 255);
+    color: rgba(44, 62, 80,1.0);
     text-decoration: none;
     text-shadow: none;
     -o-transition:.3s;
@@ -679,6 +686,7 @@ h1, h2, h3, h4, h5 {
     -moz-transition:.3s;
     -webkit-transition:.3s;
     transition:.3s;
+    font-size: 17px;
 }
 
 .nxt-font {
@@ -690,7 +698,7 @@ h1, h2, h3, h4, h5 {
 }
 
 .extra-padding {
-    padding: 7px;
+    padding: 15px;
 }
 
 .btn {
@@ -791,7 +799,7 @@ h1, h2, h3, h4, h5 {
   font-family: 'Roboto Slab', serif;
 text-transform: none;
 font-size: 15px;
-color: #2c3e50;
+fill: #2c3e50;
 text-shadow: none;
 }
 
