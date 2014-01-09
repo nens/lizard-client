@@ -432,7 +432,6 @@ app.controller("MasterCtrl",
       ($event.which !== 27 && $event.which !== 13)) {
      return; 
    }
-   console.log($event.which);
     $scope.keyIsPressed = !$scope.keyIsPressed;
     $scope.keyPressed = $event.which;
     $scope.keyTarget = $event.target;
@@ -533,6 +532,23 @@ app.controller("MasterCtrl",
       $scope.timeState.playPauseAnimation();
     }
   });
+
+  // Step back function
+  $scope.timeState.animation.stepBack = function () {
+    var stepBack = ($scope.timeState.end - $scope.timeState.start) / 10;
+    var wasOn = $scope.timeState.animation.playing;
+    $scope.timeState.animation.start = $scope.timeState.animation.start - stepBack;
+    $scope.timeState.animation.end = $scope.timeState.animation.end - stepBack;
+    $scope.timeState.playPauseAnimation('off');
+    if (!$scope.timeState.animation.playing && wasOn) {
+      setTimeout(function () {
+      $scope.timeState.playPauseAnimation();
+      }, 500);
+    } else {
+
+      $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
+    }
+  };
 
 // END animation
 // START Rain Stuff
