@@ -2,43 +2,25 @@
       <div id="timeline-ribbon" class="ribbon">
     <div class="arrow arrow-left" ng-click="toggleTimeline()" title="{% trans 'Map layers' %}">
     </div>
-    <div class="arrow arrow-right" ng-click="toggleTimeline()()" title="{% trans 'Map layers' %}"><i class="icon-time ribbon-icon"></i>
+    <div class="arrow arrow-right" ng-click="toggleTimeline()" title="{% trans 'Map layers' %}"><i class="icon-time ribbon-icon"></i>
     </div>
-  </div>
-  <div class="bovenbalk">
-    <div class="btn-group" >
-      <button type="button" title="Select" class="btn btn-default" ng-class="{'active': timeline.tool == 'brush'}" ng-click="timeline.toggleTool()">
-        <i class="icon-crop"></i>
-      </button>
-        <!-- TODO add zoom with intervals.. -->
-
-<!--       <button type="button" class="btn btn-default" ng-click="timeline.toggleTimeline()">
-        <i class="icon-collapse"></i>
-      </button>
-      <button type="button" class="btn btn-default" ng-click="timeline.zoom.in()">
-        <i class="icon-zoom-in"></i>
-      </button>
-      <button type="button" class="btn btn-default" ng-click="timeline.zoom.out()">
-        <i class="icon-zoom-out"></i>
-      </button>
-      <button type="button" class="btn btn-default" ng-class="{active: timeline.interval === 'week'}" ng-click="timeline.zoom.interval('week')">
-        Week
-      </button>
-      <button type="button" class="btn btn-default" ng-class="{active
-      : timeline.interval === 'month'}" ng-click="timeline.zoom.interval('month')">
-        Month
-      </button> -->
-    </div>
-        <span ng-hide="animation.enabled">
-          <small><% timeline.temporalExtent.start | date:'d MMM y' %> - <% timeline.temporalExtent.end | date:'d MMM y' %></small>
-        </span>
-        <span ng-show="animation.enabled">
-          <button ng-click="toggleRainPlay()" type="button" class="btn btn-default" ng-class="{'active' : animation.playing}"><i class="icon-play"></i></button>
-          <input type="range" class="middle" min="0" max="33" ng-model="animation.currentFrame" ng-click="toggleRainPlay('off')">
-          <small><% animation.currentDate | date:'d MMM y - HH:mm' %></small>
-        </span>
   </div>
 
   <div id="timeline-svg-wrapper"></div>
-<!-- INFO: d3 inserts timelines here -->
-</div>  
+  <!-- INFO: d3 inserts timelines here -->
+
+  <div class="bovenbalk">
+    <div class="btn-group" >
+      <a href="#" ng-click="timeState.enableAnimation()" class="extra-padding timeline-button">
+        <i ng-class="{'icon-fixed-width icon-crop': !timeState.animation.enabled, 'icon-fixed-width icon-resize-horizontal': timeState.animation.enabled }"></i></a>
+      <a href="#" ng-click="timeState.playPauseAnimation()" class="extra-padding timeline-button" ng-class="{'active': timeState.animation.playing}">
+        <i ng-class="{'icon-fixed-width icon-play': !timeState.animation.playing, 'icon-fixed-width icon-pause active': timeState.animation.playing }"></i></a>
+      <a href="#" ng-mousedown="timeState.animation.toggleAnimateFastForward(true)" ng-mouseup="timeState.animation.toggleAnimateFastForward(false)" class="extra-padding timeline-button timeline-button-active" ng-class="{'active': timeState.animation.playing}">
+        <i class="icon-fixed-width icon-forward"></i></a>
+      <a href="#" ng-mousedown="timeState.animation.stepBack()" class="extra-padding timeline-button" ng-class="{'active': timeState.animation.playing}">
+        <i class="icon-step-backward"></i></a>
+    </div>
+    <span class="nxt-font"> | <% timeState.start | date:'d MMM y' %> - <% timeState.end | date:'d MMM y' %> ( <% timeState.at | date:'d MMM y - HH:mm' %> )</span>        
+  </div>
+
+  </div>  

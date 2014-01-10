@@ -25,7 +25,6 @@ app.controller('SearchCtrl', function ($scope, CabinetService) {
         // });
       
       CabinetService.geocode.query({q: $scope.box.query}, function (data) {
-        console.log(data);
         $scope.box.content = data;
         });
       $scope.box.type = "location";
@@ -56,6 +55,7 @@ app.controller('SearchCtrl', function ($scope, CabinetService) {
       $scope.box.type = 'empty';
   };
 
+  // NOTE: find another way then $parent.$parent.../
   $scope.showDetails = function (obj) {
       $scope.currentObject = obj;
       if ($scope.currentObject.lat && $scope.currentObject.lon) {
@@ -76,18 +76,9 @@ app.controller('SearchCtrl', function ($scope, CabinetService) {
       }
   };
 
-  $scope.$watch('selected', function (newVal, oldVal) {
-    if (newVal === oldVal) { return; }
-    // NOTE: wtf this is ugly. Have to figure out a fix for this.
-    // Perhaps bring down the number of controllers ?
-    $scope.$parent.$parent.$parent.selected_timeseries = $scope.selected;
-  });
-
   // Note: Watch is called too often
   $scope.$watch('keyIsPressed', function (newVal, oldVal) {
     if (newVal !== oldVal && $scope.keyTarget.id === "searchboxinput" && $scope.keyPressed === 13) {
-      console.log(oldVal, newVal);
-      console.log("Search!!");
       $scope.search();
     }
   });

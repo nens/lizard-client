@@ -21,49 +21,55 @@ app
           layer.leafletLayer = L.tileLayer(layer.url + '.png',
                                            {name: "Background", maxZoom: 20});
         } else if (layer.type === "TMS" && !layer.baselayer) {
-          if (layer.url.split('/api/v1/').length > 0) {
-            if (layer.content !== null) {
-              var layer_types = layer.content.split(',');
-              layer.grid_layers = [];
-              for (var i in layer_types) {
-                if (layer_types[i] === 'manhole' ||
-                    layer_types[i] === 'pipe' ||
-                    layer_types[i] === 'pumpstation_sewerage' ||
-                    layer_types[i] === 'pumpstation_non_sewerage') {
-                  var url = layer.url + '.grid?object_types=' + layer_types[i];
-                  var leafletLayer = new L.UtfGrid(url, {
-                    useJsonP: false,
-                    maxZoom: 20
-                    // resolution: 2
-                  });
-                  leafletLayer.on('click', function (e) {
-                    if (e.data) {
-                      $scope.getTimeseries(e.data);
-                    }
-                  });
-                  layer.grid_layers.push(leafletLayer);
-                }
-              }
-            }
-          }
-          var params = layer.content === '' ? '' : '?object_types=' + layer.content;
-          layer.leafletLayer = L.tileLayer(layer.url + '.png' + params, {maxZoom: 20, zIndex: layer.z_index});
+          layer.leafletLayer = L.tileLayer(layer.url + '.png',
+                                           {minZoom: layer.min_zoom, maxZoom: 20, zIndex: layer.z_index});
         } else if (layer.type === "WMS") {
           var options = {
-            layers: layer.content,
+            layers: layer.slug,
             format: 'image/png',
             version: '1.1.1',
+            minZoom: layer.min_zoom,
             maxZoom: 20
           };
           //NOTE ugly hack
-          if (layer.content === 'landuse') {
+          if (layer.slug === 'landuse') {
             options.styles = 'landuse';
-          } else if (layer.content === 'elevation') {
+          } else if (layer.slug === 'elevation') {
             // dynamically set min/max?
             // options.effects = 'shade:0:3';
             options.styles = 'jet:-5:20';
           }
           layer.leafletLayer = L.tileLayer.wms(layer.url, options);
+        } else if (layer.type === "ASSET") {
+          var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
+          layer.grid_layers = [];
+          for (var i in layer.sublayers) {
+            var sublayer = layer.sublayers[i];
+            if (sublayer.min_zoom_click !== null) {
+              var leafletLayer = new L.UtfGrid(url, {
+                ext: 'grid',
+                slug: sublayer.asset,
+                name: sublayer.asset,
+                useJsonP: false,
+                minZoom: layer.min_zoom_click,
+                maxZoom: 20
+              });
+              leafletLayer.on('click', function (e) {
+                if (e.data){
+                  $scope.getTimeseries(e.data);
+                }
+              });
+              layer.grid_layers.push(leafletLayer);
+            }
+          }
+          layer.leafletLayer = L.tileLayer(url, {
+            ext: 'png',
+            slug: layer.slug,
+            name: layer.slug,
+            minZoom: layer.min_zoom,
+            maxZoom: 20,
+            zIndex: layer.z_index
+          });
         } else {
           console.log(layer.type);
         }
@@ -206,20 +212,14 @@ app
       // see: http://leafletjs.com/reference.html#path-canvas
       window.L_PREFER_CANVAS = true;
       // instead of 'map' element here for testability
-      /**
-       * initial map bounds
-       */
+      var osmAttrib = 'Map data © OpenStreetMap contributors';
       var map = new L.map(element[0], {
-          //center: new L.LatLng(52.0992287, 5.5698782),
+          center: new L.LatLng(52.27, 5.5698782),
           zoomControl: false,
-          //center: new L.LatLng(52.0992287, 5.5698782),
-          //zoom: 8
-          // centered on Purmerend
-          center: new L.LatLng(52.5, 4.98),
-          // centered on Schiedam
-          //center: new L.LatLng(51.9125, 4.4),
-          zoom: 17
+          zoom: 8
         });
+      map.attributionControl.addAttribution(osmAttrib);
+      map.attributionControl.setPrefix('');
 
       scope.$watch('searchMarkers', function (newValue, oldValue) {
         if (newValue) {
@@ -275,24 +275,10 @@ app
           scope.$apply(function () {
             scope.mapState.moved = Date.now();
             scope.mapState.bounds = scope.map.getBounds();
-            // scope.mapState.geom_wkt = "POLYGON(("
-            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
-            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
-            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
-            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
-            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
-            //     + "))";
-          });
+          });  
         } else {
           scope.mapState.moved = Date.now();
-          scope.mapState.bounds = scope.map.getBounds();
-            // scope.mapState.geom_wkt = "POLYGON(("
-            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
-            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
-            //     + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
-            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
-            //     + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
-            //     + "))";
+            scope.mapState.bounds = scope.map.getBounds();
         }
       });
 
@@ -431,7 +417,7 @@ app.directive('sewerage', function ($http) {
               scope.mapState.changed = Date.now();
             }
           }
-          scope.timeline.data.sewerage = scope.formatted_geojsondata;
+          scope.timeState.timeline.data.sewerage = scope.formatted_geojsondata;
         } else {
           for (var mapLayer in scope.mapState.layers) {
             var layer = scope.mapState.layers[mapLayer];
@@ -493,7 +479,7 @@ app.directive('sewerage', function ($http) {
             return formatted;
           }
           scope.formatted_geojsondata = format(data);
-          scope.timeline.temporalExtent.changedZoom = !scope.timeline.temporalExtent.changedZoom;
+          scope.timeState.changedZoom = !scope.timeState.changedZoom;
           scope.box.content.isw.count = 0;
           scope.rawGeojsondata = data;
         });
@@ -531,13 +517,13 @@ app.directive('sewerage', function ($http) {
   };
 });
 
-app.directive('animation', function () {
+app.directive('rain', function () {
   return {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
       var imageBounds = [[54.28458617998074, 1.324296158471368], [49.82567047026146, 8.992548357936204]];
       var imageOverlay =  L.imageOverlay('', imageBounds, {opacity: 0.8});
-      scope.$watch('animation.enabled', function (newVal, oldVal) {
+      scope.$watch('rain.enabled', function (newVal, oldVal) {
         if (newVal !== oldVal) {
           if (newVal) {
             mapCtrl.addLayer(imageOverlay);
@@ -547,12 +533,15 @@ app.directive('animation', function () {
         }
       });
 
-      scope.$watch('animation.currentFrame', function (newVal, oldVal) {
+      scope.$watch('rain.currentFrame', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
-        if (imageOverlay !== undefined) {
-          var frame = scope.animation.frame[scope.animation.currentFrame];
-          var imgFromStorage = localStorage.getItem(scope.animation.currentFrame);
+        if (imageOverlay != undefined) {
+          var imgFromStorage = localStorage.getItem(scope.rain.currentFrame);
           imageOverlay.setUrl(imgFromStorage);
+          imageOverlay.setOpacity(0.8);
+          if (scope.rain.currentFrame === null) {
+            imageOverlay.setOpacity(0);
+          }
         }
       });
     }
