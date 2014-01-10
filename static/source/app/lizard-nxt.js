@@ -147,7 +147,7 @@ app.controller("MasterCtrl",
 
   // TIME MODEL
   $scope.timeState = {
-    start: Date.now() - 31556900000, // 1 year in ms
+    start: 1381363200000, // 10nd of october 2013, works nicely with the twitter data
     end: Date.now(),
     changedZoom: Date.now(),
     at: this.start,
@@ -163,7 +163,8 @@ app.controller("MasterCtrl",
       enabled: false,
       currentFrame: 0,
       lenght: 0,
-      speed: 7
+      speed: 20,
+      stepSize: 1000
     }
   };
 // END TIME MODEL
@@ -477,6 +478,7 @@ app.controller("MasterCtrl",
   };
 
   $scope.timeState.step =  function (timestamp) {
+    $scope.timeState.timeStep = ($scope.timeState.end - $scope.timeState.start) / $scope.timeState.animation.stepSize;
     $scope.$apply(function () {
       $scope.timeState.animation.start += $scope.timeState.timeStep;
       $scope.timeState.animation.end += $scope.timeState.timeStep;
@@ -502,7 +504,6 @@ app.controller("MasterCtrl",
 
   $scope.timeState.animationDriver = function () {
     $scope.timeState.at = $scope.timeState.start;
-    $scope.timeState.timeStep = ($scope.timeState.end - $scope.timeState.start) / 500;
   };
 
 
@@ -527,6 +528,39 @@ app.controller("MasterCtrl",
       }
     }
   });
+
+  var animationWasOn;
+  // Toggle fast-forward
+  $scope.timeState.animation.toggleAnimateFastForward = function (toggle) {
+    if (toggle) {
+      $scope.timeState.animation.stepSize = $scope.timeState.animation.stepSize / 4;
+      animationWasOn = $scope.timeState.animation.playing;
+      if (!$scope.timeState.animation.playing) {
+        $scope.timeState.playPauseAnimation();
+      }
+    } else if (!toggle) {
+      $scope.timeState.animation.stepSize = $scope.timeState.animation.stepSize * 4;
+      if (!animationWasOn) {
+        $scope.timeState.playPauseAnimation('off');
+      }
+    }
+  };
+
+  // Step back function
+  $scope.timeState.animation.stepBack = function () {
+    var stepBack = ($scope.timeState.end - $scope.timeState.start) / 10;
+    var wasOn = $scope.timeState.animation.playing;
+    $scope.timeState.animation.start = $scope.timeState.animation.start - stepBack;
+    $scope.timeState.animation.end = $scope.timeState.animation.end - stepBack;
+    $scope.timeState.playPauseAnimation('off');
+    if (!$scope.timeState.animation.playing && wasOn) {
+      setTimeout(function () {
+        $scope.timeState.playPauseAnimation();
+      }, 500);
+    } else {
+      $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
+    }
+  };
 
 // END animation
 // START Rain Stuff

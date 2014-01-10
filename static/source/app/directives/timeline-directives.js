@@ -22,7 +22,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
         .attr('width', maxwidth)
         .attr('height', maxheight)
         .append("svg:g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .style("transform", "translate3d(" + margin.left + "," + margin.top + ")");
       svg.append("svg:rect")
         .attr("width", width)
         .attr("height", height)
@@ -270,6 +271,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
     };
 
     this.removeBrush = function (svg) {
+      console.log("removing brush", this.brushg, svg);
       if (this.brushg) {
         this.brushg.remove();
       }
@@ -464,7 +466,10 @@ app.controller('TimelineDirCtrl', function ($scope) {
         chart.svg.on('.zoom', null);
 
         animationBrush = timelineCtrl.createBrush(scope, chart.svg, chart.x, chart.height, chart.xKey);
-        if (scope.timeState.animation.start !== undefined && scope.timeState.animation.end !== undefined) {
+        if (scope.timeState.animation.start !== undefined 
+          && scope.timeState.animation.end !== undefined 
+          && scope.timeState.animation.start > scope.timeState.start
+          && scope.timeState.animation.end < scope.timeState.end) {
           chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
         } else {
           var buffer = (scope.timeState.end - scope.timeState.start) / 100;
