@@ -15,19 +15,18 @@ app.controller('TimelineDirCtrl', function ($scope) {
       var width = maxwidth - margin.left - margin.right,
         height = maxheight - margin.top - margin.bottom;
 
-      var svg = d3.select(element[0])
-        .select("#timeline-svg-wrapper")
-        .html("")
-        .append("svg:svg")
+      var svg = d3.select("#timeline-svg-wrapper")
+        .select("svg")
         .attr('width', maxwidth)
         .attr('height', maxheight)
-        .append("svg:g")
+        .select("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-        .style("transform", "translate3d(" + margin.left + "," + margin.top + ")");
-      svg.append("svg:rect")
+        .style("transform", "translate3d(" + margin.left + "," + margin.top + ")")
+        .select("rect")
         .attr("width", width)
-        .attr("height", height)
-        .attr("class", "plot-temporal");
+        .attr("class", "plot-temporal")
+        .transition().duration(10000)
+        .attr("height", height);
       return {
         svg: svg,
         height: height,
@@ -168,67 +167,68 @@ app.controller('TimelineDirCtrl', function ($scope) {
     };
 
     this.drawCircles = function (svg, x, y, data, options) {
-    //   // circle stuff
-    //   var xfunction = function (d) { return x.scale(d[options.xKey]); };
-    //   var yfunction = function (d) {
-    //     return y.colorscale(d[options.yKey]);
-    //   };
-    //   //var yfunction = function(d) { return options.height - y.scale(d[options.yKey]) - .5; };
-    //   var heightfunction = function (d) { return y.scale(d.event_type); };
-    //   svg.selectAll("circle")
-    //     .data(data)
-    //     .enter().append("circle")
-    //       // Initially hide all elements and unhide them when within bounds
-    //       .attr("class", "bar hidden")
-    //       .attr("cx", xfunction)
-    //       .attr("cy", heightfunction)
-    //       .attr("r", 5)
-    //       .attr("fill-opacity", 1)
-    //       .on('click', function (d) {
-    //         $scope.box.type = 'aggregate';
-    //         $scope.box.content.eventValue = d;
-    //         $scope.$apply();
-    //       });
-    // };
-
-    // this.update = function (data) {
+      // circle stuff
       var xfunction = function (d) { return x.scale(d[options.xKey]); };
-      var yfunction = function (d) { return y.colorscale(d[options.yKey]); };
+      var yfunction = function (d) {
+        return y.colorscale(d[options.yKey]);
+      };
+      //var yfunction = function(d) { return options.height - y.scale(d[options.yKey]) - .5; };
       var heightfunction = function (d) { return y.scale(d.event_type); };
-      // DATA JOIN
-      // Join new data with old elements, if any.
-      var circles = svg.selectAll("circle")
-          .data(data, function(d) { return d; });
-
-      // UPDATE
-      // Update old elements as needed.
-      circles.attr("class", "bar")
-        .transition()
-        .duration(750)
-        .attr("cx", xfunction)
-        .attr("cy", heightfunction)
-        .attr("r", 5)
-        .attr("fill-opacity", 1);
-
-      // ENTER
-      // Create new elements as needed.
-      circles.enter().append("circle")
-        .transition()
-        .duration(750)
-        .attr("cx", xfunction)
-        .attr("cy", heightfunction)
-        .attr("r", 5)
-        .attr("fill-opacity", 1);
-
-      // EXIT
-      // Remove old elements as needed.
-      circles.exit()
-        .transition()
-        .duration(750)
-        .attr("cy", heightfunction)
-        .style("fill-opacity", 1e-6)
-        .remove();
+      console.log(svg);
+      svg.selectAll("circle")
+        .data(data)
+        .enter().append("circle")
+          // Initially hide all elements and unhide them when within bounds
+          .attr("class", "bar hidden")
+          .attr("cx", xfunction)
+          .attr("cy", heightfunction)
+          .attr("r", 5)
+          .attr("fill-opacity", 1)
+          .on('click', function (d) {
+            $scope.box.type = 'aggregate';
+            $scope.box.content.eventValue = d;
+            $scope.$apply();
+          });
     };
+
+    // // this.update = function (data) {
+    //   var xfunction = function (d) { return x.scale(d[options.xKey]); };
+    //   var yfunction = function (d) { return y.colorscale(d[options.yKey]); };
+    //   var heightfunction = function (d) { return y.scale(d.event_type); };
+    //   // DATA JOIN
+    //   // Join new data with old elements, if any.
+    //   var circles = svg.selectAll("circle")
+    //       .data(data, function(d) { return d; });
+
+    //   // UPDATE
+    //   // Update old elements as needed.
+    //   circles.attr("class", "bar")
+    //     .transition()
+    //     .duration(750)
+    //     .attr("cx", xfunction)
+    //     .attr("cy", heightfunction)
+    //     .attr("r", 5)
+    //     .attr("fill-opacity", 1);
+
+    //   // ENTER
+    //   // Create new elements as needed.
+    //   circles.enter().append("circle")
+    //     .transition()
+    //     .duration(750)
+    //     .attr("cx", xfunction)
+    //     .attr("cy", heightfunction)
+    //     .attr("r", 5)
+    //     .attr("fill-opacity", 1);
+
+    //   // EXIT
+    //   // Remove old elements as needed.
+    //   circles.exit()
+    //     .transition()
+    //     .duration(750)
+    //     .attr("cy", heightfunction)
+    //     .style("fill-opacity", 1e-6)
+    //     .remove();
+    // };
 
     //NOTE: not optimal class switching 
     this.drawEventsContainedInBounds = function (bounds) {
