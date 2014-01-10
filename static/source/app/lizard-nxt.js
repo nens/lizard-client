@@ -527,11 +527,18 @@ app.controller("MasterCtrl",
 
   var animationWasOn;
   // Toggle fast-forward
-  $scope.timeState.animation.toggleAnimateExtraFast = function () {
-    $scope.timeState.animation.stepSize = $scope.timeState.animation.stepSize / 4;
-    animationWasOn = $scope.timeState.animation.playing;
-    if (!$scope.timeState.animation.playing) {
-      $scope.timeState.playPauseAnimation();
+  $scope.timeState.animation.toggleAnimateFastForward = function (toggle) {
+    if (toggle) {
+      $scope.timeState.animation.stepSize = $scope.timeState.animation.stepSize / 4;
+      animationWasOn = $scope.timeState.animation.playing;
+      if (!$scope.timeState.animation.playing) {
+        $scope.timeState.playPauseAnimation();
+      }
+    } else if (!toggle) {
+      $scope.timeState.animation.stepSize = $scope.timeState.animation.stepSize * 4;
+      if (!animationWasOn) {
+        $scope.timeState.playPauseAnimation('off');
+      }
     }
   };
 
