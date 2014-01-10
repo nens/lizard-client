@@ -132,7 +132,7 @@ app.controller("MasterCtrl",
     layers: CabinetService.layers,
     baselayers: CabinetService.baselayers,
     eventTypes: CabinetService.eventTypes,
-    activeBaselayer: 3,
+    activeBaselayer: 1,
     changed: Date.now(),
     moved: Date.now(),
     baselayerChanged: Date.now(),
@@ -140,6 +140,8 @@ app.controller("MasterCtrl",
     bounds: null,
     geom_wkt: ''
   };
+
+  $scope.panZoom = {};
   // /END MOVE TO MAP CONTROL
   // MAP MODEL
 
@@ -232,7 +234,9 @@ app.controller("MasterCtrl",
         $scope.box.content.temporalExtent.changedZoom = !$scope.box.content.temporalExtent.changedZoom;
       };
       $scope.box.content.canceler = $q.defer();
-    
+      $scope.timeseries = [];
+      $scope.box.content.selected_timeseries = undefined;
+   
 
     var new_data_get = CabinetService.timeseriesLocationObject.get({
       object_type: $scope.box.content.object_type,
@@ -592,8 +596,6 @@ app.controller("MasterCtrl",
 
         return animationDatetimes;
       };
-
-    // delete $http.defaults.headers.common['X-Requested-With'];
 
   var ripImage = function (base, date, item) {
     // var container = 

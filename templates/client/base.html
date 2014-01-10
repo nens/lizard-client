@@ -18,7 +18,6 @@
 
       var baseLayers = {{ strap_base_layers }};
       var layers = {{ strap_layers }};
-      var layerGroups = {{ strap_layer_groups }};
 
       var threedi_api_url = "{{ threedi_instance.api_url }}";
       var threedi_subgrid_url = "{{ threedi_instance.socket_url }}";
@@ -84,7 +83,6 @@
                 <li ng-repeat="layer in mapState.baselayers | orderBy:'order':true">
                 <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
                 <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
-                <i class="icon-info pull-right zoomto-icon " ng-class="{visible: layer.active && (layer.name == 'Hoogtekaart' || layer.name == 'Landgebruik')};" ng-click="toggleLayerInfo(layer.name)"></i>
                 </li> 
               </ul>
               </li>
