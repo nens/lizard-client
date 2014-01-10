@@ -92,11 +92,11 @@ app.directive('vectorlayer', function () {
         angular.forEach(eventLayers, function (layer) {
           mapCtrl.removeLayer(layer);
         });
-        for (var eventType in scope.timeline.data) {
-          if (scope.timeline.data[eventType].active) {
-            eventLayer = L.pointsLayer(scope.timeline.data[eventType], {
-                applyStyle: circleStyle
-              });
+        for (var eventType in scope.timeState.timeline.data) {
+          if (scope.timeState.timeline.data[eventType].active) {
+            eventLayer = L.pointsLayer(scope.timeState.timeline.data[eventType], {
+              applyStyle: circleStyle
+            });
             mapCtrl.addLayer(eventLayer);
             eventLayers.push(eventLayer);
             drawTimeEvents(scope.timeState.start, scope.timeState.end);
