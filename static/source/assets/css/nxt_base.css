@@ -221,6 +221,10 @@ html, body{
     color: #c0392b;
 }
 
+.icon-active {
+    color: #c0392b;
+}
+
 
 .visible {
     opacity: 1;

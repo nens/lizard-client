@@ -212,9 +212,12 @@ app
       var map = new L.map(element[0], {
           //center: new L.LatLng(52.0992287, 5.5698782),
           zoomControl: false,
+          //center: new L.LatLng(52.0992287, 5.5698782),
           //zoom: 8
           // centered on Purmerend
           center: new L.LatLng(52.5, 4.98),
+          // centered on Schiedam
+          //center: new L.LatLng(51.9125, 4.4),
           zoom: 17
         });
 

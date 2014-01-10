@@ -110,6 +110,7 @@ L.PointsLayer = L.Class.extend({
         return this.options.radius;
     },
 
+    // project and translateBounds are not necessary
     _project: function (x) {
         var point = this._map.latLngToLayerPoint([x[1], x[0]]);
         return [point.x, point.y];

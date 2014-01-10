@@ -7,49 +7,29 @@
  * Each feature gets it's id as a class attribute so you can easily select it
  * with d3
  *
- * NOTE: this a good candidate to release as open source plugin for leaflet
- *
- * TODO:
- * * write initialise function
- * * improve documentation
+ * NOTE: this a candidate to release as open source plugin for leaflet
  *
  */
 L.GeoJSONd3 = L.TileLayer.extend({
-
-    // code to add svg element to map container
-    // var overlayPane = this._map.getPanes().overlayPane;
-    //if (d3.select("svg.geojsontiles")[0].length === 0) {
-      //d3.select(this._container).select("svg.geojsontiles").select("g").remove();
-      //this.g = d3.select(this._container).select("svg.geojsontiles")
-        //.append("g");
-    //} else {
-
-      //this.g = d3.select(this._container).append("svg")
-        //.attr("class", "geojsontiles")
-        //.append("g");
-           //.attr("class", "leaflet-layer leaflet-zoom-hide")
-    //}
 
   options: {
     "maxZoom": 20,
     "minZoom": 16
   },
 
-  //initialize: function (data, options) {
-    //options = L.setOptions(this, options);
-    //this._data = data;
-  //},
-
   onAdd : function (map) {
+
     this._map = map;
-    //var overlayPane = this._map.getPanes().overlayPane;
-    //this._layer = d3.select(".leaflet-tile-container").append("svg");
-    // ugly hack to get the proper svg element
-    // TODO: clean up to elegant solution
-    new L.geoJson({"type": "LineString", "coordinates": [[0, 0], [0, 0]]})
-      .addTo(map);
 
     L.TileLayer.prototype.onAdd.call(this, map);
+
+    var dimensions = this._map.getPixelBounds().getSize();
+
+    this._container = d3.select(".leaflet-overlay-pane")
+      .append("svg")
+      .attr("class", "leaflet-layer leaflet-zoom-hide")
+      .attr("width", dimensions.x)
+      .attr("height", dimensions.y);
 
     this._path = d3.geo.path().projection(function (d) {
       var point = map.latLngToLayerPoint(new L.LatLng(d[1], d[0]));
@@ -86,21 +66,14 @@ L.GeoJSONd3 = L.TileLayer.extend({
           .data(d.features).enter()
           .append("path")
             .attr("d", self._path)
-            .style("stroke-width", 0)
-            .style("fill-opacity", 0)
             .attr("class", function (feature) {
               return self.options.class + " p" + feature.properties.id;
             });
-
-        //this._applyStyle(features);
+        
+        if (self.options.applyStyle) {
+          self.options.applyStyle.call(this, features);
+        }
       });
-    }
-  },
-
-  _applyStyle: function (features) {
-    console.log("apply style");
-    if ('applyStyle' in this.options) {
-      this.options.applyStyle.call(this, features);
     }
   }
 });
