@@ -14,18 +14,20 @@ app.controller('TimelineDirCtrl', function ($scope) {
   
       var width = maxwidth - margin.left - margin.right,
         height = maxheight - margin.top - margin.bottom;
+      console.log(width, height, maxwidth, maxheight);
 
-      var svg = d3.select("#timeline-svg-wrapper")
-        .select("svg")
-        .attr('width', maxwidth)
-        .attr('height', maxheight)
-        .select("g")
+      var svg = d3.select("#timeline-svg-wrapper").select("svg");
+        svg.attr('width', maxwidth)
+        // Transition the resizing .3s
+        .transition().duration(3000)
+        .attr('height', maxheight);
+        svg.select("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         .style("transform", "translate3d(" + margin.left + "," + margin.top + ")")
         .select("rect")
         .attr("width", width)
         .attr("class", "plot-temporal")
-        .transition().duration(10000)
+        .transition().duration(3000)
         .attr("height", height);
       return {
         svg: svg,
@@ -167,68 +169,71 @@ app.controller('TimelineDirCtrl', function ($scope) {
     };
 
     this.drawCircles = function (svg, x, y, data, options) {
-      // circle stuff
-      var xfunction = function (d) { return x.scale(d[options.xKey]); };
-      var yfunction = function (d) {
-        return y.colorscale(d[options.yKey]);
-      };
-      //var yfunction = function(d) { return options.height - y.scale(d[options.yKey]) - .5; };
-      var heightfunction = function (d) { return y.scale(d.event_type); };
-      console.log(svg);
-      svg.selectAll("circle")
-        .data(data)
-        .enter().append("circle")
-          // Initially hide all elements and unhide them when within bounds
-          .attr("class", "bar hidden")
-          .attr("cx", xfunction)
-          .attr("cy", heightfunction)
-          .attr("r", 5)
-          .attr("fill-opacity", 1)
-          .on('click', function (d) {
-            $scope.box.type = 'aggregate';
-            $scope.box.content.eventValue = d;
-            $scope.$apply();
-          });
-    };
-
-    // // this.update = function (data) {
+    //   // circle stuff
     //   var xfunction = function (d) { return x.scale(d[options.xKey]); };
-    //   var yfunction = function (d) { return y.colorscale(d[options.yKey]); };
+    //   var yfunction = function (d) {
+    //     return y.colorscale(d[options.yKey]);
+    //   };
+    //   //var yfunction = function(d) { return options.height - y.scale(d[options.yKey]) - .5; };
     //   var heightfunction = function (d) { return y.scale(d.event_type); };
-    //   // DATA JOIN
-    //   // Join new data with old elements, if any.
-    //   var circles = svg.selectAll("circle")
-    //       .data(data, function(d) { return d; });
-
-    //   // UPDATE
-    //   // Update old elements as needed.
-    //   circles.attr("class", "bar")
-    //     .transition()
-    //     .duration(750)
-    //     .attr("cx", xfunction)
-    //     .attr("cy", heightfunction)
-    //     .attr("r", 5)
-    //     .attr("fill-opacity", 1);
-
-    //   // ENTER
-    //   // Create new elements as needed.
-    //   circles.enter().append("circle")
-    //     .transition()
-    //     .duration(750)
-    //     .attr("cx", xfunction)
-    //     .attr("cy", heightfunction)
-    //     .attr("r", 5)
-    //     .attr("fill-opacity", 1);
-
-    //   // EXIT
-    //   // Remove old elements as needed.
-    //   circles.exit()
-    //     .transition()
-    //     .duration(750)
-    //     .attr("cy", heightfunction)
-    //     .style("fill-opacity", 1e-6)
-    //     .remove();
+    //   console.log(svg);
+    //   svg.selectAll("circle")
+    //     .data(data)
+    //     .enter().append("circle")
+    //       // Initially hide all elements and unhide them when within bounds
+    //       .attr("class", "bar hidden")
+    //       .attr("cx", xfunction)
+    //       .attr("cy", heightfunction)
+    //       .attr("r", 5)
+    //       .attr("fill-opacity", 1)
+    //       .on('click', function (d) {
+    //         $scope.box.type = 'aggregate';
+    //         $scope.box.content.eventValue = d;
+    //         $scope.$apply();
+    //       });
     // };
+
+    // this.update = function (data) {
+      var xfunction = function (d) { return x.scale(d[options.xKey]); };
+      var yfunction = function (d) { return y.colorscale(d[options.yKey]); };
+      var heightfunction = function (d) { return y.scale(d.event_type); };
+      // DATA JOIN
+      // Join new data with old elements, if any.
+      var circles = svg.selectAll("circle")
+          .data(data);
+
+      // UPDATE
+      // Update old elements as needed.
+      circles.attr("class", "bar")
+        .transition()
+        .delay(3000)
+        .duration(3000)
+        .attr("cx", xfunction)
+        .attr("cy", heightfunction)
+        .attr("r", 5)
+        .attr("fill-opacity", 1);
+
+      // ENTER
+      // Create new elements as needed.
+      circles.enter().append("circle")
+        .transition()
+        .delay(3000)
+        .duration(3000)
+        .attr("cx", xfunction)
+        .attr("cy", heightfunction)
+        .attr("r", 5)
+        .attr("fill-opacity", 1);
+
+      // EXIT
+      // Remove old elements as needed.
+      circles.exit()
+        .transition()
+        .delay(3000)
+        .duration(3000)
+        .attr("cy", heightfunction)
+        .style("fill-opacity", 1e-6)
+        .remove();
+    };
 
     //NOTE: not optimal class switching 
     this.drawEventsContainedInBounds = function (bounds) {
@@ -293,26 +298,42 @@ app.controller('TimelineDirCtrl', function ($scope) {
   
   var link = function (scope, element, attrs, timelineCtrl) {
     var chart;
+    var axisInitialized = false;
 
-    scope.timeState.timeline.width = element[0].offsetWidth;
-    if (scope.timeState.timeline.width < 10) {
-      scope.timeState.timeline.width = window.outerWidth;
-    }
-    
     var drawTimeline = function (data) {
-      //Empty the current timeline
-      //d3.select(element[0]).select("#timeline-svg-wrapper").select("svg").remove();
+      scope.timeState.timeline.width = element[0].offsetWidth;
+      if (scope.timeState.timeline.width < 10) {
+        scope.timeState.timeline.width = window.outerWidth;
+      }
       if (timelineKeys.length > 0) {
-        scope.timeState.height = 35 + timelineKeys.length * 30;
+        scope.timeState.height = 45 + timelineKeys.length * 30;
       } else {
         // Give the timeline a minimal height when its empty to display brush for animation
         scope.timeState.height = 45;
       }
+      
       chart = drawChart(data, 'timestamp', 'event_sub_type', {
         scale: 'ordinal',
         chart: 'circles',
         dateparser: 'epoch'
       });
+      if (!axisInitialized) {
+        var yAxis = function (d) { return d; };
+        var xAxis = timelineCtrl.makeAxis(chart.x.scale, {
+          orientation: "bottom",
+          ticks: timelineCtrl.ticksInterval
+        });
+        timelineCtrl.drawAxes(chart.svg, chart.x, chart.y, {
+          height: scope.timeState.height,
+          width: scope.timeState.timeline.width,
+          axes: {
+            x: xAxis,
+            y: yAxis
+          }
+        });
+        axisInitialized = true;
+      }
+
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
       scope.timeState.countCurrentEvents();
 
@@ -366,26 +387,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
         yKey: yKey
       });
       timelineCtrl.ticksInterval = timelineCtrl.determineInterval(scope.timeState.interval);
-      var yAxis;
-      if (options.scale === 'ordinal') {
-        yAxis = function (d) { return d; };
-      } else {
-        yAxis = timelineCtrl.makeAxis(y.scale, {
-          orientation: "left"
-        });
-      }
-      var xAxis = timelineCtrl.makeAxis(x.scale, {
-        orientation: "bottom",
-        ticks: timelineCtrl.ticksInterval
-      });
-      timelineCtrl.drawAxes(graph.svg, x, y, {
-        height: graph.height,
-        width: graph.width,
-        axes: {
-          x: xAxis,
-          y: yAxis
-        }
-      });
 
       var svg = graph.svg;
       timelineCtrl.zoomed = function () {
@@ -410,6 +411,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
 
       return {
         x: x,
+        y: y,
         height: graph.height,
         svg: svg,
         xKey: xKey
