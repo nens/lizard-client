@@ -41,6 +41,11 @@ h1, h2, h3, h4, h5 {
     -o-animation: grow .6s linear  forwards;
 }
 
+i, a:link {text-decoration:none !important;}
+i, a:visited {text-decoration:none !important;}
+i, a:hover {text-decoration:none !important;}
+i, a:active {text-decoration:none !important;}
+
 @keyframes grow {
     0% {
         width: 5px;
@@ -409,6 +414,7 @@ h1, h2, h3, h4, h5 {
 }
 
 #ribbon {
+    height: 40px;
     top: 16px;
     left: -60px;
     float: right;
@@ -781,6 +787,47 @@ h1, h2, h3, h4, h5 {
   stroke: rgba(240, 50, 60, 0.6);
 }
 
+.button-list-container {
+    position: absolute;
+    top: 72px;
+    right: 200px;
+    width: 28px;
+    text-align: center;
+}
+
+.button-list-item {
+    background-color: rgba(255, 255 ,255 , 0.9);
+    padding: 5px;
+}
+
+.button-list-item:first-child {
+    -webkit-border-top-left-radius: 2px;
+    -moz-border-radius-topleft: 2px;
+    border-top-left-radius: 2px;
+}
+
+.button-list-item:last-child {
+    -webkit-border-bottom-left-radius: 2px;
+    -moz-border-radius-bottomleft: 2px;
+    border-bottom-left-radius: 2px;
+}
+
+.button-list-link {
+    -o-transition:.3s;
+    -ms-transition:.3s;
+    -moz-transition:.3s;
+    -webkit-transition:.3s;
+    transition:.3s;
+    color: rgb(52, 73, 94);
+}
+
+.button-list-link:hover {
+    color: rgb(41, 128, 185);
+}
+
+.button-list-link.active {
+    color: rgb(192, 57, 43);
+}
 
 .resize path {
   fill: #666;
