@@ -56,11 +56,7 @@ app.directive('rasterprofile', function () {
         var updateLine = function (e) {
           scope.line_marker.setLatLngs([scope.first_click, e.latlng]);
         };
-
-        updateTooltip = function (e) {
-
-        };
-        
+   
         var drawLineCLickHandler = function (e) {
           // setup draw line to get profile info from server 
           if (scope.first_click === undefined) {

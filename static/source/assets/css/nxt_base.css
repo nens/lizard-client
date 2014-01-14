@@ -165,8 +165,13 @@ h1, h2, h3, h4, h5 {
     transition: .3s ease;
 }
 
+/* LEAFLET OVERRIDES */
 .leaflet-container a {
     color: #16a085;
+}
+
+.crosshair {
+    cursor: crosshair;
 }
 
 /*.leaflet-layer.faded-gray {*/
@@ -175,6 +180,8 @@ h1, h2, h3, h4, h5 {
     /*-webkit-filter: grayscale(100%); [> Chrome 19+ & Safari 6+ <]*/
     /*opacity: 0.50;*/
 /*}*/
+
+/* END LEAFLET OVERRIDES*/
 
 .slide-left{
     right: 0;
