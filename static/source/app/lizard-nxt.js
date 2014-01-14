@@ -169,6 +169,16 @@ app.controller("MasterCtrl",
   };
 // END TIME MODEL
 
+// COLOR MODEL
+  $scope.colors =  {
+    3: ["#27ae60","#2980b9","#8e44ad"],
+    4: ["#27ae60","#2980b9","#8e44ad","#2c3e50"],
+    5: ["#27ae60","#2980b9","#8e44ad","#2c3e50","#f39c12"],
+    6: ["#27ae60","#2980b9","#8e44ad","#2c3e50","#f39c12","#d35400"],
+    7: ["#27ae60","#2980b9","#8e44ad","#2c3e50","#f39c12","#d35400","#c0392b"],
+    8: ["#27ae60","#2980b9","#8e44ad","#2c3e50","#f39c12","#d35400","#c0392b","#16a085"]
+  };
+
   // 3Di START
   $scope.setFollow = function(layer, follow_3di) {
     layer.follow_3di = follow_3di;  // for GUI
