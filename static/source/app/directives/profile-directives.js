@@ -62,7 +62,7 @@ app.directive('rasterprofile', function () {
             console.log("Now click a second time to draw a line.");
             if (scope.line_marker === undefined) {
               scope.line_marker = L.polyline([scope.first_click, scope.first_click], {
-                color: 'lightseagreen',
+                color: '#2980b9',
                 weight: 2,
                 opacity: 1,
                 smoothFactor: 1,
