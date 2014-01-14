@@ -14,10 +14,10 @@ L.PointsLayer = L.Class.extend({
     },
 
     initialize: function (data, options) {
-        var options = L.setOptions(this, options);
-        this._data = data;
-        this._path = d3.geo.path().projection(this._project.bind(this))
-            .pointRadius(this._radius.bind(this));
+      options = L.setOptions(this, options);
+      this._data = data;
+      this._path = d3.geo.path().projection(this._project.bind(this))
+          .pointRadius(this._radius.bind(this));
     },
 
     onAdd: function (map) {
@@ -29,7 +29,7 @@ L.PointsLayer = L.Class.extend({
         // Set up events
         map.on({
             'moveend': this._update
-        }, this);
+          }, this);
 
         this._update();
     },
@@ -57,21 +57,21 @@ L.PointsLayer = L.Class.extend({
         var overlayPane = this._map.getPanes().overlayPane;
         //console.log(this._container);
         if (!this._container || overlayPane.empty) {
-            this._container = d3.select(overlayPane)
-                .append('svg').attr('class', 'leaflet-layer leaflet-zoom-hide');
+          this._container = d3.select(overlayPane)
+              .append('svg').attr('class', 'leaflet-layer leaflet-zoom-hide');
 
-            //console.log(this._data.features);
-            this._layer = this._container.append("g");
+          //console.log(this._data.features);
+          this._layer = this._container.append("g");
 
-            if (!this.options.cssclass) {
-                this.options.cssclass = ""
-            }
-            var circles = this._layer.selectAll(".circle")
-                .data(this._data.features).enter()
-                .append("path")
-                .attr("class", "circle " + this.options.cssclass);
+          if (!this.options.cssclass) {
+            this.options.cssclass = "";
+          }
+          var circles = this._layer.selectAll(".circle")
+              .data(this._data.features).enter()
+              .append("path")
+              .attr("class", "circle " + this.options.cssclass);
 
-            this._applyStyle(circles);
+          this._applyStyle(circles);
         }
     },
 
@@ -86,13 +86,13 @@ L.PointsLayer = L.Class.extend({
         }
 
         var padding = this.options.padding,
-            bounds = this._translateBounds(d3.geo.bounds(this._data), padding);
+            bounds = this._translateBounds(d3.geo.bounds(this._data), padding),
             dimensions = bounds.getSize();
 
         this._container.attr("width", dimensions.x).attr("height", dimensions.y)
             .style("margin-left", bounds.min.x + "px").style("margin-top", bounds.min.y + "px");
 
-        this._layer.attr("transform", "translate(" + -bounds.min.x+ "," + -bounds.min.y+ ")")
+        this._layer.attr("transform", "translate(" + -bounds.min.x + "," + -bounds.min.y + ")");
 
         this._layer.selectAll(".circle").attr("d", this._path);
     },
@@ -104,12 +104,13 @@ L.PointsLayer = L.Class.extend({
     },
 
     _radius: function (d) {
-        if (typeof this.options.radius == 'function') {
-            return this.options.radius.call(this, d);
+        if (typeof this.options.radius === 'function') {
+          return this.options.radius.call(this, d);
         }
         return this.options.radius;
     },
 
+    // project and translateBounds are not necessary
     _project: function (x) {
         var point = this._map.latLngToLayerPoint([x[1], x[0]]);
         return [point.x, point.y];
@@ -129,4 +130,4 @@ L.PointsLayer = L.Class.extend({
 
 L.pointsLayer = function (data, options) {
     return new L.PointsLayer(data, options);
-};
+  };

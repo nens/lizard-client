@@ -42,33 +42,47 @@ app.directive('rasterprofile', function () {
          */ 
         var drawLine = function (startpoint, endpoint) {
           var pointList = [startpoint, endpoint];
-          var firstpolyline = L.polyline(pointList, {
-            color: 'lightseagreen',
-            weight: 2,
-            opacity: 1,
-            smoothFactor: 1
-          });
-
-          if (scope.line_marker !== undefined) {
-            mapCtrl.removeLayer(scope.line_marker);
-          }
-
-          mapCtrl.addLayer(firstpolyline);
+          scope.line_marker.setLatLngs(pointList);         
+          scope.line_marker.options.dashArray = null;
+          scope.line_marker._updateStyle();
           scope.first_click = undefined;
-          scope.line_marker = firstpolyline;  // Remember what we've added
-          return firstpolyline;
+          
         };
-        
+
+        var updateLine = function (e) {
+          scope.line_marker.setLatLngs([scope.first_click, e.latlng]);
+          scope.line_marker.options.dashArray = "5, 5";
+          scope.line_marker._updateStyle();
+        };
+
         var drawLineCLickHandler = function (e) {
-          // setup draw line to get profile info from server 
+          // setup draw line to get profile info from server  
           if (scope.first_click === undefined) {
             scope.first_click = e.latlng;
             console.log("Now click a second time to draw a line.");
+            if (scope.line_marker === undefined) {
+              scope.line_marker = L.polyline([scope.first_click, scope.first_click], {
+                color: '#2980b9',
+                weight: 2,
+                opacity: 1,
+                smoothFactor: 1,
+                dashArray: "5, 5"
+              });  
+            } else {
+              updateLine(e);
+            }
+            
+            mapCtrl.addLayer(scope.line_marker);
+
+            scope.map.on('mousemove', updateLine);
+
             return;
           }
 
-          var profile_line = drawLine(scope.first_click, e.latlng);
-          var profile_line_wkt = toWKT(profile_line);
+          scope.map.off('mousemove', updateLine);
+          drawLine(scope.first_click, e.latlng);
+
+          var profile_line_wkt = toWKT(scope.line_marker);
           
           // Aargh, FCK leaflet, why can't I get a proper CRS from a MAPPING
           // library

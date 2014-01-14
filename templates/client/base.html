@@ -44,12 +44,6 @@
         </div>
         <!-- <div id="site-actions">                  id="rightbar-actions"-->
           <ul class="nav navbar-nav navbar-right" >
-            <li>
-              <a href="#" class="hide" ng-click="threediTool()" ng-class="{'hide': !threedi_active, 'icon-large': tools.active === 'threedi'}" title="3Di"><i class="icon-asterisk"></i></a>
-            </li>
-            <li class="site">
-              <a href="#" ng-click="toggleTool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.active === 'profile'}"></i></a>
-            </li>
             {% if user.is_authenticated %}
               <li>
                 <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="pull-right" id="username"> {{ user.first_name }}</div><i id="user-icon" class="icon-user pull-right"></i></a>
@@ -95,6 +89,7 @@
 
                 <div ng-switch="layer.follow_3di" style="float: right;">
                   <div ng-switch-when="undefined">
+                    <i class="surface-info icon-info pull-right zoomto-icon" ng-class="{visible: layer.active && (layer.name === 'Riolering')}" ng-click="toggleTool('pipe_surface')"></i>
                     <i class="icon-screenshot pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="zoomToTheMagic(layer)"></i>
                   </div>
                   <div ng-switch-when="true">
@@ -125,6 +120,12 @@
             <div class="arrow arrow-down" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}"><i class="icon-compass ribbon-icon"></i>
             </div>
           </div>
+          <div class="button-list-container" id="">
+            <div class="button-list-item"><a href="#" ng-click="toggleTool('profile')" class="button-list-link" title="{% trans 'Intersect tool' %}" ng-class="{'active': tools.active === 'profile'}"><i class="icon-resize-full"></i></a></div>
+            <div class="button-list-item"><a href="#" ng-click="box.type = 'elevation'" class="button-list-link" title="{% trans 'Elevation curve' %}" ng-class="{'active': box.type === 'elevation'}"><i class="icon-signal"></i></a></div>
+            <div class="button-list-item"><a href="#" ng-click="box.type = 'landuse'" class="button-list-link" title="{% trans 'Land use distribution' %}" ng-class="{'active': box.type === 'landuse'}"><i class="icon-circle-blank"></i></a></div>
+            <div class="hide button-list-item" ng-class="{'hide': !threedi_active}"><a href="#" ng-click="threediTool()" class="button-list-link" title="3Di" ng-class="{'active': tools.active === 'threedi'}"><i class="icon-asterisk"></i></a></div>
+          </div>
         </div>
         <map layer-switch 
              pan-zoom="panZoom"
@@ -133,9 +134,10 @@
              locate="locate"
              zoom-to-layer="zoomToLayer"
              vectorlayer
+             surfacelayer
              threedi-map
              rain
-             >
+             ng-class="{'crosshair': tools.active === 'profile'}">
          </map>
       </div>
         <timeline 

@@ -137,6 +137,7 @@ app
         }
       };
 
+
       // Expects a leafletLayer as an argument
       this.addLayer = function (layer) {
         $scope.map.addLayer(layer);
@@ -157,7 +158,8 @@ app
         // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
       };
 
-      this.map = function () {return $scope.map; };// make map object available to outside world.
+      // make map object available to outside world.
+      this.map = function () {return $scope.map; };
       
       this.zoomToTheMagic = function (layer) {
         //console.log('zoomToTheMagic');
@@ -210,7 +212,7 @@ app
       // see: http://leafletjs.com/reference.html#path-canvas
       window.L_PREFER_CANVAS = true;
       // instead of 'map' element here for testability
-      var osmAttrib='Map data © OpenStreetMap contributors';
+      var osmAttrib = 'Map data © OpenStreetMap contributors';
       var map = new L.map(element[0], {
           center: new L.LatLng(52.27, 5.5698782),
           zoomControl: false,
@@ -269,7 +271,7 @@ app
 
       scope.map.on('move', function () {
         // NOTE: Check whether a $digest is already happening before using apply
-        if(!scope.$$phase) {
+        if (!scope.$$phase) {
           scope.$apply(function () {
             scope.mapState.moved = Date.now();
             scope.mapState.bounds = scope.map.getBounds();
@@ -293,6 +295,7 @@ app
           });
         }
       });
+
     };
 
     return {
