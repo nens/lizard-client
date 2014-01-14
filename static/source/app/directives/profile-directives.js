@@ -43,22 +43,20 @@ app.directive('rasterprofile', function () {
         var drawLine = function (startpoint, endpoint) {
           var pointList = [startpoint, endpoint];
           scope.line_marker.setLatLngs(pointList);         
-
-          // if (scope.line_marker !== undefined) {
-          //   mapCtrl.removeLayer(scope.line_marker);
-          // }
-
+          scope.line_marker.options.dashArray = null;
+          scope.line_marker._updateStyle();
           scope.first_click = undefined;
-          // scope.line_marker = firstpolyline;  // Remember what we've added
-          // return firstpolyline;
+          
         };
 
         var updateLine = function (e) {
           scope.line_marker.setLatLngs([scope.first_click, e.latlng]);
+          scope.line_marker.options.dashArray = "5, 5";
+          scope.line_marker._updateStyle();
         };
-   
+
         var drawLineCLickHandler = function (e) {
-          // setup draw line to get profile info from server 
+          // setup draw line to get profile info from server  
           if (scope.first_click === undefined) {
             scope.first_click = e.latlng;
             console.log("Now click a second time to draw a line.");
