@@ -108,7 +108,18 @@ app.controller("MasterCtrl",
     active: "none", //NOTE: make list?
     threedi: {
       enabled: false
+    },
+    cursorTooltip: {
+      enabled: false,
+      content: '',
+      location: ''
     }
+  };
+
+  $scope.mouseMove = function ($event) {
+    if ($scope.tools.cursorTooltip.enabled){
+      $scope.tools.cursorTooltip.location = $event;
+    }  
   };
 
   $scope.toggleTool = function (name) {
