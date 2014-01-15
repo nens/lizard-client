@@ -75,16 +75,23 @@ app.directive('rainAggregate', function ($q, Restangular) {
         });
       };
 
-      scope.$watch('tools.active', function (newVal) {
+      scope.$watch('tools.active', function (newVal, oldVal) {
+          if (newVal === oldVal) { return; }
           if (newVal !== 'rain') {
             scope.map.off('click', rainClick);
+            if (newVal === 'none') {
+              scope.tools.cursorTooltip.enabled = false;
+              scope.tools.cursorTooltip.content = "";  
+            }
             //watch
             return;
             //link 
             return; 
+          } else {
+            scope.map.on('click', rainClick);
+            scope.tools.cursorTooltip.enabled = true;
+            scope.tools.cursorTooltip.content = "Click to get precipitation data for that location";
           }
-          console.info('yohoo');
-          scope.map.on('click', rainClick);
         });
     }
   };

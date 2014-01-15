@@ -230,8 +230,8 @@ angular.module('graph')
             margin = graph.margin;
 
 
-        var x = graphCtrl.maxMin(data, 'date');
-        var y = graphCtrl.maxMin(data, 'value');
+        var x = graphCtrl.maxMin(data, '0');
+        var y = graphCtrl.maxMin(data, '1');
 
         x.scale = graphCtrl.scale(x.min, x.max, {
           range: [0, width], 
@@ -251,10 +251,10 @@ angular.module('graph')
           .data(data)
           .enter().append("rect")
             .attr("class", "bar")
-            .attr("x", function(d) { return x.scale(d.date) - .5; })
-            .attr("y", function(d) { return height - y.scale(d.value) - .5; })
+            .attr("x", function(d) { return x.scale(!isNaN(d[0])) - .5; })
+            .attr("y", function(d) { return height - y.scale(!isNaN(d[1])) - .5; })
             .attr("width", 10)
-            .attr("height", function(d) { return y.scale(d.value); });
+            .attr("height", function(d) { return y.scale(!isNaN(d[1])); });
         svg.append("line")
           .attr("x1", 0)
           .attr("x2", width * data.length)
