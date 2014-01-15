@@ -98,7 +98,7 @@ app.directive('rasterprofile', function () {
         // 'tools.profile.enabled' is set by the MasterCtrl on <html> scope
         scope.$watch('tools.active', function () {
           if (scope.tools.active === "profile") {
-            scope.map.on('click',  drawLineCLickHandler);
+            scope.map.on('click', drawLineCLickHandler);
             scope.tools.cursorTooltip.enabled = true;
             scope.tools.cursorTooltip.content = "Click to draw a elevation profile";
           } else {

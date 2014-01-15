@@ -7,6 +7,7 @@ var app = angular.module("lizard-nxt", [
   'ngResource',
   'graph',
   'omnibox',
+  'restangular',
   'lizard-nxt.services']);
 
 /**
@@ -412,13 +413,17 @@ app.controller("MasterCtrl",
           };
         } else if (agg === 'counts') {
           $scope.data = data;
-        } else {
+        } else if (raster_names === 'elevation' && agg === undefined){
           // var d3data = format_data(data);
           $scope.box.type = "profile";
           $scope.box.content = {
             data: data,
             yLabel: 'hoogte [mNAP]',
             xLabel: 'afstand [m]'
+          };
+        } else {
+          $scope.box.content = {
+            data: data
           };
         }
       })
