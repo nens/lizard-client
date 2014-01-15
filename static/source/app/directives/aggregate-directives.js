@@ -25,7 +25,7 @@ app.directive('vectorlayer', function () {
             .domain(function (d) {
               return d3.set(d.event_sub_type).values();
             })
-            .range(colorbrewer.Set2[6]);
+            .range(scope.colors[8]);
         } else {
           scale = scope.timeState.colorScale;
         }
