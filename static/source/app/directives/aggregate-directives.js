@@ -44,7 +44,7 @@ app.directive('vectorlayer', function () {
           });
       }
 
-      scope.$watch('timeline.colorScale', function () {
+      scope.$watch('timeState.colorScale', function () {
         d3.selectAll(".circle")
         .attr('fill', function (d) {
           return scope.timeState.colorScale(d.event_sub_type);
