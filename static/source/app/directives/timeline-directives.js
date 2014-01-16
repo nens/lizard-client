@@ -136,14 +136,11 @@ app.controller('TimelineDirCtrl', function ($scope) {
         xAxis = this.makeAxis(x.scale, {orientation: "bottom"});
         yAxis = this.makeAxis(y.scale, {orientation: "left"});
       }
-      svg.append("svg:g")
+      svg.select("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0, " + options.height + ")")
         .call(xAxis);
-      svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis);
-    };
+      };
 
     this.drawBars = function (svg, x, y, data, options) {
       var xfunction = function (d) { return x.scale(d[options.xKey]) - 0.5; };
@@ -206,7 +203,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       // Update old elements as needed.
       circles.attr("class", "bar")
         .transition()
-        .delay(3000)
+        .delay(0)
         .duration(3000)
         .attr("cx", xfunction)
         .attr("cy", heightfunction)
@@ -217,7 +214,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       // Create new elements as needed.
       circles.enter().append("circle")
         .transition()
-        .delay(3000)
+        .delay(0)
         .duration(3000)
         .attr("cx", xfunction)
         .attr("cy", heightfunction)
@@ -228,7 +225,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       // Remove old elements as needed.
       circles.exit()
         .transition()
-        .delay(3000)
+        .delay(0)
         .duration(3000)
         .attr("cy", heightfunction)
         .style("fill-opacity", 1e-6)
