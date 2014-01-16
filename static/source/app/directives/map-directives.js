@@ -163,13 +163,10 @@ app
       this.zoomToTheMagic = function (layer) {
         //console.log('zoomToTheMagic');
         // TODO: make this not hardcoded. And make this a nice UX instead of a brutal one
-        if (layer.name === 'Riolering') {
+        if (layer.name === 'Afvalwater') {
           $scope.map.setView([52.503265633642194, 4.968782196044922], 14, {animate: true});
         }
-        if (layer.name === 'Kunstwerken') {
-          $scope.map.setView([52.60763454517434, 4.794158935546875], 12, {animate: true});
-        }
-        if (layer.name === 'Watergangen') {
+        if (layer.name === 'Oppervlaktewater') {
           $scope.map.setView([52.60763454517434, 4.794158935546875], 11, { animate: true });
         }
         // This button is not available for 3Di
@@ -418,7 +415,7 @@ app.directive('sewerage', function ($http) {
         if (scope.tools.active === "sewerage") {
           for (var mapLayer in scope.mapState.layers) {
             var layer = scope.mapState.layers[mapLayer];
-            if (layer.name === 'Riolering') {
+            if (layer.name === 'Afvalwater') {
               // NOTE: disable alerts
               layer.active = true;
               scope.mapState.changed = Date.now();
@@ -428,7 +425,7 @@ app.directive('sewerage', function ($http) {
         } else {
           for (var mapLayer in scope.mapState.layers) {
             var layer = scope.mapState.layers[mapLayer];
-            if (layer.name === 'Riolering') {
+            if (layer.name === 'Afvalwater') {
               // NOTE: disable alerts
               layer.active = false;
               scope.mapState.changed = Date.now();
@@ -445,11 +442,11 @@ app.directive('sewerage', function ($http) {
         var layer;
         for (var mapLayer in scope.mapState.layers) {
           var layer = scope.mapState.layers[mapLayer];
-          if (layer.name === 'Riolering' && layer.active) {
+          if (layer.name === 'Afvalwater' && layer.active) {
             // NOTE: disable alerts
             // NOTE: this should not be here.
             mapCtrl.addLayer(pumpstationLayer);
-          } else if (layer.name === 'Riolering' && !layer.active) {
+          } else if (layer.name === 'Afvalwater' && !layer.active) {
             if (pumpstationLayer) {
               mapCtrl.removeLayer(pumpstationLayer);
             }
