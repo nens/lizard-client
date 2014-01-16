@@ -31,6 +31,10 @@ def index(request):
         Layer.objects.filter(baselayer=True)).data
     layers = spatial.LayerSerializer(
         Layer.objects.filter(baselayer=False)).data
+        
+    # Define data bounds based on the (multiple) administrative bounds of all
+    # the user's organisations. The data bounding box is the rectangle around
+    # the data bounds.
     data_bounds = {}
     orgs = getattr(request, ORGANISATION_IDS, [])
     all_boundaries = []
