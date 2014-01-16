@@ -11,7 +11,6 @@ app
      * Control function for this directive
      */
     var MapCtrl  = function ($scope, $location) {
-    // TODO: Make this not suck.
       this.initiateLayer = function (layer) {
         if (layer.name === "Simulatie") {
           // Hack for 3Di.
@@ -213,10 +212,18 @@ app
       window.L_PREFER_CANVAS = true;
       // instead of 'map' element here for testability
       var osmAttrib = 'Map data © OpenStreetMap contributors';
+      var north = window.data_bbox['north'];
+      var east = window.data_bbox['east'];
+      var south = window.data_bbox['south'];
+      var west = window.data_bbox['west'];
+      var southWest = L.latLng(south, west);
+      var northEast = L.latLng(north, east);
+      var maxBounds = L.latLngBounds(southWest, northEast);
       var map = new L.map(element[0], {
-          center: new L.LatLng(52.27, 5.5698782),
+          center: new L.LatLng((north + south) / 2, (west + east) / 2),
           zoomControl: false,
-          zoom: 8
+          zoom: 8,
+          maxBounds: maxBounds
         });
       map.attributionControl.addAttribution(osmAttrib);
       map.attributionControl.setPrefix('');
