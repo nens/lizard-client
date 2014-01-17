@@ -643,10 +643,6 @@ i, a:active {text-decoration:none !important;}
 }
 
 /*timeline stuff*/
-#timeline {
-    visibility: hidden;
-}
-
 .timeline {
     min-height: 0;
     bottom: 0;
