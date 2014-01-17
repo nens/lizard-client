@@ -11,7 +11,6 @@ app
      * Control function for this directive
      */
     var MapCtrl  = function ($scope, $location) {
-    // TODO: Make this not suck.
       this.initiateLayer = function (layer) {
         if (layer.name === "Simulatie") {
           // Hack for 3Di.
@@ -164,13 +163,10 @@ app
       this.zoomToTheMagic = function (layer) {
         //console.log('zoomToTheMagic');
         // TODO: make this not hardcoded. And make this a nice UX instead of a brutal one
-        if (layer.name === 'Riolering') {
+        if (layer.name === 'Afvalwater') {
           $scope.map.setView([52.503265633642194, 4.968782196044922], 14, {animate: true});
         }
-        if (layer.name === 'Kunstwerken') {
-          $scope.map.setView([52.60763454517434, 4.794158935546875], 12, {animate: true});
-        }
-        if (layer.name === 'Watergangen') {
+        if (layer.name === 'Oppervlaktewater') {
           $scope.map.setView([52.60763454517434, 4.794158935546875], 11, { animate: true });
         }
         // This button is not available for 3Di
@@ -213,10 +209,18 @@ app
       window.L_PREFER_CANVAS = true;
       // instead of 'map' element here for testability
       var osmAttrib = 'Map data © OpenStreetMap contributors';
+      var north = window.data_bbox['north'];
+      var east = window.data_bbox['east'];
+      var south = window.data_bbox['south'];
+      var west = window.data_bbox['west'];
+      var southWest = L.latLng(south, west);
+      var northEast = L.latLng(north, east);
+      var maxBounds = L.latLngBounds(southWest, northEast);
       var map = new L.map(element[0], {
-          center: new L.LatLng(52.27, 5.5698782),
+          center: new L.LatLng((north + south) / 2, (west + east) / 2),
           zoomControl: false,
-          zoom: 8
+          zoom: 8,
+          maxBounds: maxBounds
         });
       map.attributionControl.addAttribution(osmAttrib);
       map.attributionControl.setPrefix('');
@@ -411,7 +415,7 @@ app.directive('sewerage', function ($http) {
         if (scope.tools.active === "sewerage") {
           for (var mapLayer in scope.mapState.layers) {
             var layer = scope.mapState.layers[mapLayer];
-            if (layer.name === 'Riolering') {
+            if (layer.name === 'Afvalwater') {
               // NOTE: disable alerts
               layer.active = true;
               scope.mapState.changed = Date.now();
@@ -421,7 +425,7 @@ app.directive('sewerage', function ($http) {
         } else {
           for (var mapLayer in scope.mapState.layers) {
             var layer = scope.mapState.layers[mapLayer];
-            if (layer.name === 'Riolering') {
+            if (layer.name === 'Afvalwater') {
               // NOTE: disable alerts
               layer.active = false;
               scope.mapState.changed = Date.now();
@@ -438,11 +442,11 @@ app.directive('sewerage', function ($http) {
         var layer;
         for (var mapLayer in scope.mapState.layers) {
           var layer = scope.mapState.layers[mapLayer];
-          if (layer.name === 'Riolering' && layer.active) {
+          if (layer.name === 'Afvalwater' && layer.active) {
             // NOTE: disable alerts
             // NOTE: this should not be here.
             mapCtrl.addLayer(pumpstationLayer);
-          } else if (layer.name === 'Riolering' && !layer.active) {
+          } else if (layer.name === 'Afvalwater' && !layer.active) {
             if (pumpstationLayer) {
               mapCtrl.removeLayer(pumpstationLayer);
             }
