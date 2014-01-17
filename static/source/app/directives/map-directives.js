@@ -30,7 +30,7 @@ app
                     layer_types[i] === 'pipe' ||
                     layer_types[i] === 'pumpstation_sewerage' ||
                     layer_types[i] === 'pumpstation_non_sewerage') {
-                  var url = layer.url + '.grid?object_types=' + layer_types[i];
+                  var url = layer.url + '.grid?object_types=' + layer.content;
                   var leafletLayer = new L.UtfGrid(url, {
                     useJsonP: false,
                     maxZoom: 20
@@ -43,6 +43,7 @@ app
                   });
                   layer.grid_layers.push(leafletLayer);
                 }
+                break;
               }
             }
           }
