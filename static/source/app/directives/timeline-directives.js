@@ -202,7 +202,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
     };
 
     var brush = null;
-    this.createBrush = function (svg, xScale, height, xKey) {
+    this.createBrush = function (svg, xScale, height) {
       brush = d3.svg.brush().x(xScale)
         .on("brush", this.brushmove);
       this.brushg = svg.append("g")
@@ -211,6 +211,18 @@ app.controller('TimelineDirCtrl', function ($scope) {
       this.brushg.selectAll("rect")
         .attr("height", height);
       return brush;
+    };
+
+    this.updateBrush = function (height) {
+      if (this.brushg) {
+        console.log("updating brush", this.brushg);
+        this.brushg.selectAll("rect")
+          .transition()
+          .delay(300)
+          .duration(300)
+          .attr("height", height);
+        this.brushg.call(brush);
+      }
     };
 
     this.removeBrush = function (svg) {
@@ -278,6 +290,10 @@ app.controller('TimelineDirCtrl', function ($scope) {
         orientation: "bottom",
         ticks: 5
       }));
+      // Update the brush if any
+      if (animationBrush) {
+        timelineCtrl.updateBrush(newGraph.height);
+      }
       // Create remaining scales
       var yScale = timelineCtrl.scale({min: 1, max: nEventTypes}, { min: newGraph.height - 20, max: 20 }, {scale: 'linear'});
       // Update the svg
@@ -367,7 +383,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         graph.svg.on('.zoom', null);
 
         // Create the brush
-        animationBrush = timelineCtrl.createBrush(graph.svg, graph.xScale, graph.height, graph.xKey);
+        animationBrush = timelineCtrl.createBrush(graph.svg, graph.xScale, graph.height);
         // Set the brush to the current animation start/end if defined and within the visible range, otherwise make one up
         if (scope.timeState.animation.start !== undefined 
           && scope.timeState.animation.end !== undefined 
