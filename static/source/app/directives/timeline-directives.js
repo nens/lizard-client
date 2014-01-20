@@ -61,7 +61,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
             .domain(function (d) {
               return d3.set(d.event_sub_type).values();
             })
-            .range(colorbrewer.Set2[6]);
+            .range($scope.colors[8]);
         }
         else if (options.scale === "linear") {
           scale = d3.scale.linear()
@@ -171,7 +171,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
         $scope.box.content.eventValue = d;
         $scope.$apply();
       });
-
     };
 
     this.drawEventsContainedInBounds = function (bounds) {

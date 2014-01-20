@@ -7,6 +7,7 @@ var app = angular.module("lizard-nxt", [
   'ngResource',
   'graph',
   'omnibox',
+  'restangular',
   'lizard-nxt.services']);
 
 /**
@@ -108,7 +109,18 @@ app.controller("MasterCtrl",
     active: "none", //NOTE: make list?
     threedi: {
       enabled: false
+    },
+    cursorTooltip: {
+      enabled: false,
+      content: '',
+      location: ''
     }
+  };
+
+  $scope.mouseMove = function ($event) {
+    if ($scope.tools.cursorTooltip.enabled){
+      $scope.tools.cursorTooltip.location = $event;
+    }  
   };
 
   $scope.toggleTool = function (name) {
@@ -169,6 +181,16 @@ app.controller("MasterCtrl",
   };
 // END TIME MODEL
 
+// COLOR MODEL
+  $scope.colors =  {
+    3: ["#27ae60","#2980b9","#8e44ad"],
+    4: ["#27ae60","#2980b9","#8e44ad","#2c3e50"],
+    5: ["#27ae60","#2980b9","#8e44ad","#2c3e50","#f39c12"],
+    6: ["#27ae60","#2980b9","#8e44ad","#2c3e50","#f39c12","#d35400"],
+    7: ["#27ae60","#2980b9","#8e44ad","#2c3e50","#f39c12","#d35400","#c0392b"],
+    8: ["#27ae60","#2980b9","#8e44ad","#2c3e50","#f39c12","#d35400","#c0392b","#16a085"]
+  };
+
   // 3Di START
   $scope.setFollow = function(layer, follow_3di) {
     layer.follow_3di = follow_3di;  // for GUI
@@ -187,25 +209,6 @@ app.controller("MasterCtrl",
       $scope.tools.threedi.enabled = !$scope.tools.threedi.enabled;
   }  
   // 3Di END
-
-  // Legacy formatter for KPI: remove?
-  // check how data comes from server? discuss with Jack / Carsten
-  $scope.format_data = function (data) {
-    if (data[0]){
-    $scope.formatted_data = [];
-      for (var i=0; i<data[0].values.length; i++){
-        var xyobject = {
-          date: data[1].values[i],
-          value: data[0].values[i]
-        };
-        $scope.formatted_data.push(xyobject);
-      }
-    } else {
-      $scope.formatted_data = undefined;
-    }
-    return $scope.formatted_data;
-  };
-  // end legacy formatter
 
   /**
    * Get data for timeseries
@@ -401,13 +404,17 @@ app.controller("MasterCtrl",
           };
         } else if (agg === 'counts') {
           $scope.data = data;
-        } else {
+        } else if (raster_names === 'elevation' && agg === undefined){
           // var d3data = format_data(data);
           $scope.box.type = "profile";
           $scope.box.content = {
             data: data,
             yLabel: 'hoogte [mNAP]',
             xLabel: 'afstand [m]'
+          };
+        } else {
+          $scope.box.content = {
+            data: data
           };
         }
       })
