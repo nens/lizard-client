@@ -56,10 +56,11 @@ app.directive('rainAggregate', function ($q, Restangular) {
 
 
       var rainClick = function (e) { 
-        var start = new Date(1389222036044);
-        var startString = start.toISOString().split('.')[0];
         var stop = new Date;
         var stopString = stop.toISOString().split('.')[0];
+        var start = new Date;
+        start.setDate(stop.getDate() - 2);
+        var startString = start.toISOString().split('.')[0];
         var wkt = "POINT(" + e.latlng.lng + " " + e.latlng.lat + ")";
         scope.mapState.timeout = $q.defer();
         // scope.getRasterData('rain', wkt, 'EPSG:4326', undefined, true);

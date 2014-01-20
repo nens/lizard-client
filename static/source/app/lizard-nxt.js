@@ -210,25 +210,6 @@ app.controller("MasterCtrl",
   }  
   // 3Di END
 
-  // Legacy formatter for KPI: remove?
-  // check how data comes from server? discuss with Jack / Carsten
-  $scope.format_data = function (data) {
-    if (data[0]){
-    $scope.formatted_data = [];
-      for (var i=0; i<data[0].values.length; i++){
-        var xyobject = {
-          date: data[1].values[i],
-          value: data[0].values[i]
-        };
-        $scope.formatted_data.push(xyobject);
-      }
-    } else {
-      $scope.formatted_data = undefined;
-    }
-    return $scope.formatted_data;
-  };
-  // end legacy formatter
-
   /**
    * Get data for timeseries
    *
