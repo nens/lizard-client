@@ -647,10 +647,7 @@ app.controller("MasterCtrl",
       }
       getRadarImages();
       $scope.rain.enabled = true;
-      if (!$scope.timeState.hidden) {
-        $scope.timeState.hidden = false;
-        $scope.timeState.resizeTimeline();
-      }
+      if ($scope.timeState.hidden !== false) { $scope.toggleTimeline(); }
     } else if ($scope.rain.enabled || toggle === 'off') {
       $scope.rain.enabled = false;
       localStorage.clear();
