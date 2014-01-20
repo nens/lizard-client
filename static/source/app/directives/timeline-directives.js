@@ -127,7 +127,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       var colorFunction = function (d) { return colorScale(d[colorKey]); };
       console.log(colorScale, colorKey);
       // DATA JOIN
-      // Join new data with old elements, if any.
+      // Join new data with old elements, based on the id value.
       var circles = svg.selectAll("circle")
           .data(data, function  (d) { return d.id; });
 
@@ -233,14 +233,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
       d3.selectAll('.bar').classed("selected", false);
     };
 
-    // this.determineInterval = function (interval) {
-    //   if (interval === 'week') {
-    //     return (d3.time.week);
-    //   } else if (interval === 'month') {
-    //     return (d3.time.month);
-    //   }
-    // };
-
     return this;
   })
 .directive('timeline', [ function ($timeout) {
@@ -267,7 +259,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
 
       // Add color scale
       graph.colorScale = timelineCtrl.scale(null, null, { scale: 'ordinal' });
-
 
       // Add zoom functionality
       graph.svg.call(d3.behavior.zoom()
@@ -393,14 +384,16 @@ app.controller('TimelineDirCtrl', function ($scope) {
           var buffer = (scope.timeState.end - scope.timeState.start) / 100;
           graph.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.at), new Date(scope.timeState.at + buffer)]));
         }
+        // Call brushmove to trigger update
         timelineCtrl.brushmove();
       }
       if (!scope.timeState.animation.enabled) {
         timelineCtrl.removeBrush(graph.svg);
-        timelineCtrl.zoom = d3.behavior.zoom()
-        .x(graph.xScale)
-        .on("zoom", timelineCtrl.zoomed);
-        graph.svg.call(timelineCtrl.zoom);
+        // Re-add zoom functionality
+        graph.svg.call(d3.behavior.zoom()
+          .x(graph.xScale)
+          .on("zoom", zoomed)
+        );
       }
     });
     
@@ -415,169 +408,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
       scope.timeState.timeline.width = element.width();
       scope.timeState.changed = !scope.timeState.changed;
     };
-
-
-    // var chart;
-    // var axisInitialized = false;
-
-    // var drawTimeline = function (data) {
-    //   scope.timeState.timeline.width = element[0].offsetWidth;
-    //   if (scope.timeState.timeline.width < 10) {
-    //     scope.timeState.timeline.width = window.outerWidth;
-    //   }
-    //   if (timelineKeys.length > 0) {
-    //     scope.timeState.height = 45 + timelineKeys.length * 30;
-    //   } else {
-    //     // Give the timeline a minimal height when its empty to display brush for animation
-    //     scope.timeState.height = 45;
-    //   }
-      
-    //   chart = drawChart(data, 'timestamp', 'event_sub_type', {
-    //     scale: 'ordinal',
-    //     chart: 'circles',
-    //     dateparser: 'epoch'
-    //   });
-    //   if (!axisInitialized) {
-    //     var yAxis = function (d) { return d; };
-    //     var xAxis = timelineCtrl.makeAxis(chart.x.scale, {
-    //       orientation: "bottom",
-    //       ticks: timelineCtrl.ticksInterval
-    //     });
-    //     timelineCtrl.drawAxes(chart.svg, chart.x, chart.y, {
-    //       height: scope.timeState.height,
-    //       width: scope.timeState.timeline.width,
-    //       axes: {
-    //         x: xAxis,
-    //         y: yAxis
-    //       }
-    //     });
-    //     axisInitialized = true;
-    //   }
-
-    //   timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
-    //   scope.timeState.countCurrentEvents();
-
-    //   //Set color based on event_subtype
-    //   var scale = d3.scale.ordinal()
-    //     .domain(function (d) {
-    //       return d3.set(d.event_sub_type).values();
-    //     })
-    //     .range(colorbrewer.Set2[6]);
-    //   d3.selectAll("circle")
-    //     .attr('fill', function (d) {
-    //       return scale(d.event_sub_type);
-    //     });
-    // };
-
-    // scope.$watch('mapState.moved', function () {
-    //   timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
-    //   scope.timeState.countCurrentEvents();
-    // });
-
-    // var drawChart = function (data, xKey, yKey, options) {
-    //   var graph = timelineCtrl.createCanvas(element, {
-    //     start: scope.timeState.start,
-    //     stop: scope.timeState.end,
-    //     height: scope.timeState.height,
-    //     width: scope.timeState.timeline.width
-    //   });
-    //   var x = {};
-    //   x.min = new Date(scope.timeState.start);
-    //   x.max = new Date(scope.timeState.end);
-    //   var y = {max: timelineKeys.length - 1,
-    //    min: 0};
-    //   x.scale = timelineCtrl.scale(x, {
-    //     type: 'time',
-    //     range: [0, graph.width],
-    //   });
-    //   scope.timeState.xScale = x.scale;
-    //   y.colorscale = timelineCtrl.scale(y, {
-    //     range: [graph.height, 0],
-    //     scale: (options.scale === 'ordinal') ? 'ordinal' : 'linear'
-    //   });
-    //   scope.timeState.colorScale = y.colorscale;
-    //   y.scale = timelineCtrl.scale(y, {
-    //     range: [graph.height - 20, 20],
-    //     scale: 'linear'
-    //   });
-    //   timelineCtrl.drawCircles(graph.svg, x, y, data, {
-    //     height: graph.height,
-    //     width: graph.width,
-    //     xKey: xKey,
-    //     yKey: yKey
-    //   });
-    //   timelineCtrl.ticksInterval = timelineCtrl.determineInterval(scope.timeState.interval);
-
-    //   var svg = graph.svg;
-    //   timelineCtrl.zoomed = function () {
-    //     svg.select(".x.axis").call(timelineCtrl.makeAxis(x.scale, {
-    //       orientation: "bottom",
-    //       ticks: timelineCtrl.ticksInterval
-    //     }));
-    //     svg.selectAll("circle")
-    //       .attr("cx", function (d) { return Math.round(scope.timeState.xScale(d[xKey])); });
-    //     scope.$apply(function () {
-    //       scope.timeState.start = x.scale.domain()[0].getTime();
-    //       scope.timeState.end = x.scale.domain()[1].getTime();
-    //       scope.timeState.changedZoom = !scope.timeState.changedZoom;
-    //     });
-    //   };
-
-    //   timelineCtrl.zoom = d3.behavior.zoom()
-    //     .x(x.scale)
-    //     .on("zoom", timelineCtrl.zoomed);
-
-    //   svg.call(timelineCtrl.zoom);
-
-    //   return {
-    //     x: x,
-    //     y: y,
-    //     height: graph.height,
-    //     svg: svg,
-    //     xKey: xKey
-    //   };
-    // };
-
-    // var timelineKeys = [];
-    // scope.$watch('timeState.timeline.changed', function (n, o) {
-    //   if (n === o) { return true; }
-    //   scope.timeState.enableAnimation('off');
-    //   var oldLength = timelineKeys.length;
-    //   timelineKeys = [];
-    //   for (var key in scope.timeState.timeline.data) {
-    //     if (scope.timeState.timeline.data[key].active) {
-    //       timelineKeys.push(key);
-    //     }
-    //   }
-    //   var data = [];
-    //   for (var i = 0; i < timelineKeys.length; i++) {
-    //     var id = timelineKeys[i];
-    //     if (scope.timeState.timeline.data[id].active) {
-    //       var iData = scope.timeState.timeline.data[id].features;
-    //       angular.forEach(iData, function (feature) {
-    //         feature.event_type = i;
-    //         data.push(feature);
-    //       });
-    //     }
-    //   }
-    //   drawTimeline(data);
-    //   // Determine whether timeline should be hidden or resized
-    //   var newLength = timelineKeys.length;
-    //   if (newLength !== oldLength) {
-    //     if (newLength > oldLength || (newLength > 0 && !scope.timeState.hidden)) {
-    //       scope.timeState.hidden = false;
-    //       scope.timeState.resizeTimeline();
-    //     } else if (newLength === 0 && !scope.timeState.hidden) {
-    //       scope.timeState.height = 0;
-    //       scope.timeState.hidden = false;
-    //       scope.timeState.resizeTimeline();
-    //     } else if (newLength === 0) {
-    //       scope.timeState.height = 0;
-    //       scope.timeState.hidden = false;
-    //     }
-    //   }
-    // });
-
 
   };
 

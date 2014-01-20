@@ -73,26 +73,17 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource, $http, CabinetSe
   * Event enabler
   */
   $scope.toggleTimeline = function () {
+    console.log($scope.timeState.hidden);
     if ($scope.timeState.hidden) {
       $scope.timeState.hidden = false;
-      $scope.timeState.resizeTimeline();
+      angular.element('#timeline').css('bottom', 0);
     } else if ($scope.timeState.hidden === false) {
       $scope.timeState.hidden = true;
-      $scope.timeState.resizeTimeline();
+      angular.element('#timeline').css('bottom', 0 - angular.element('#timeline').height());
     } else {
+      angular.element('#timeline').css('bottom', 0);
       $scope.timeState.hidden = false;
-      document.getElementById('timeline').style.height = '35px';
     }
-  };
-
-  $scope.timeState.resizeTimeline = function () {
-    document.getElementById('timeline').style.visibility = 'visible';
-    document.getElementById('timeline').style.height = '150px';
-    // if ($scope.timeState.hidden === false) {
-    //   var height = ($scope.timeState.height > 35) ? 45 + $scope.timeState.height: 90;
-    //   document.getElementById('timeline').style.height = height + 'px';
-    // }
-    // else { document.getElementById('timeline').style.height = '0'; }
   };
 
   $scope.timeState.toggleEvents = function (name) {
@@ -104,6 +95,7 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource, $http, CabinetSe
     } else {
       getEvents(name);
     }
+    if ($scope.timeState.hidden !== false) { $scope.toggleTimeline(); }
   };
   
   var getEvents = function (name) {
