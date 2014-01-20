@@ -51,7 +51,8 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource, $http, CabinetSe
     var panZoom = {
       lat: geometry.coordinates[1],
       lng: geometry.coordinates[0],
-      zoom: 15};
+      zoom: 15
+    };
     $scope.panZoom = panZoom;
     $scope.mapState.moved = Date.now();
   };
