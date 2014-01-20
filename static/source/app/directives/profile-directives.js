@@ -90,7 +90,7 @@ app.directive('rasterprofile', function () {
           
           // call getRasterData controller function on scope
           scope.getRasterData("elevation", profile_line_wkt, srs);
-          scope.tools.cursorTooltip.content = "Click to draw a elevation profile";
+          scope.tools.cursorTooltip.content = "Click to draw an elevation profile";
 
         };
 

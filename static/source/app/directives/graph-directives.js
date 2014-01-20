@@ -255,7 +255,6 @@ angular.module('graph')
           width: width
         });
 
-        // data.filter(function (d) { return d == null;}).remove?()
         // Bar Chart specific stuff
         svg.selectAll(".bar")
           .data(data)
@@ -265,12 +264,6 @@ angular.module('graph')
             .attr("y", function(d) { return y.scale(d[0]) - .5; })
             .attr("width", 5)
             .attr("height", function(d) { return height - y.scale(d[0]); });
-        // svg.append("line")
-        //   .attr("x1", 0)
-        //   .attr("x2", width * data.length)
-        //   .attr("y1", height - .5)
-        //   .attr("y2", height - .5)
-        //   .style("stroke", "#ccc");
     };
   };
   return {
