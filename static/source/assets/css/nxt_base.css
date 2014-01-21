@@ -458,6 +458,7 @@ i, a:active {text-decoration:none !important;}
 }
 
 #timeline-ribbon {
+    visibility: hidden;
     top: -120px;
     left: 16px;
     float: left;
@@ -677,7 +678,7 @@ i, a:active {text-decoration:none !important;}
 */
 .timeline {
     min-height: 0;
-    bottom: -96px;
+    bottom: -91px;
     background-color: rgba(255, 255, 255, 0.9);
     -o-transition:.3s;
     -ms-transition:.3s;

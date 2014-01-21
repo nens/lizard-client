@@ -16,10 +16,10 @@ app.controller('TimelineDirCtrl', function ($scope) {
         .attr('height', options.height)
         .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-          .attr("transform", "translate(0, " + height + ")")
-          // .style("transform", "translate3d(" + margin.left + "," + margin.top + ")")
+          //.style("transform", "translate3d(" + margin.left + "," + margin.top + ")")
           .append("rect")
             .attr("width", width)
+            .attr("height", height)
             .attr("class", "plot-temporal");
       return {
         svg: svg,
@@ -385,6 +385,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         timelineCtrl.brushmove();
       }
       if (!scope.timeState.animation.enabled) {
+        scope.timeState.animation.playing = false;
         timelineCtrl.removeBrush(graph.svg);
         // Re-add zoom functionality
         graph.svg.call(d3.behavior.zoom()

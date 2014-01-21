@@ -128,6 +128,7 @@ describe('Testing timeline directive', function() {
     var colorScale = ctrl.scale(null, null, { scale: 'ordinal' });
     var yScale = ctrl.scale({min: 1, max: 1}, { min: canvas.height - 20, max: 20 }, {scale: 'linear'});
     var cData = [];
+    //Format data
     angular.forEach(data.results[0].features, function (feature) {
       feature.event_type = 1;
       // Create unique id, a combo of time and location. I assume this is always unique..

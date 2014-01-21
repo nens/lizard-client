@@ -70,23 +70,6 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource, $http, CabinetSe
     }
   };
 
-  /**
-  * Event enabler
-  */
-  $scope.toggleTimeline = function () {
-    console.log($scope.timeState.hidden);
-    if ($scope.timeState.hidden) {
-      $scope.timeState.hidden = false;
-      angular.element('#timeline').css('bottom', 0);
-    } else if ($scope.timeState.hidden === false) {
-      $scope.timeState.hidden = true;
-      angular.element('#timeline').css('bottom', 0 - angular.element('#timeline').height());
-    } else {
-      angular.element('#timeline').css('bottom', 0);
-      $scope.timeState.hidden = false;
-    }
-  };
-
   $scope.timeState.toggleEvents = function (name) {
     if ($scope.timeState.timeline.data[name]) {
       if ($scope.timeState.timeline.data[name].active) {
