@@ -125,7 +125,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
       var xFunction = function (d) { return Math.round(xScale(d[xKey])); };
       var yFunction = function (d) { return yScale(d[yKey]); };
       var colorFunction = function (d) { return colorScale(d[colorKey]); };
-      console.log(colorScale, colorKey);
       // DATA JOIN
       // Join new data with old elements, based on the id value.
       var circles = svg.selectAll("circle")
@@ -214,7 +213,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
 
     this.updateBrush = function (height) {
       if (this.brushg) {
-        console.log("updating brush", this.brushg);
         this.brushg.selectAll("rect")
           .transition()
           .delay(300)
@@ -225,7 +223,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
     };
 
     this.removeBrush = function (svg) {
-      console.log("removing brush", this.brushg, svg);
       if (this.brushg) {
         this.brushg.remove();
       }
@@ -406,7 +403,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
 
     window.onresize = function () {
       scope.timeState.timeline.width = element.width();
-      scope.timeState.changed = !scope.timeState.changed;
+      scope.timeState.timeline.changed = !scope.timeState.timeline.changed;
     };
 
   };
