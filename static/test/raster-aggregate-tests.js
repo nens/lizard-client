@@ -54,8 +54,9 @@ describe('Testing raster requests directive', function() {
     };
 
     // This should seriously be removed from the lizard-nxt.js file.
-    $httpBackend.when("GET", "/static/data/klachten_purmerend_min.geojson").respond('');
-    $httpBackend.when("GET", "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725))&srs=EPSG:4326&agg=counts").respond('');
+    $httpBackend.when("GET",
+      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725))&srs=EPSG:4326&agg=counts"
+      ).respond('');
 
     scope.$digest();
 
@@ -84,7 +85,7 @@ describe('Testing raster requests directive', function() {
     // NOTE: Because layers are not available in "pure js"
     // the activeBaselayer is set. This test is in that sense FAKE!
     scope.activeBaselayer = scope.keyPressed;
-        console.info('\n NOTE: data based on the layername test is FAKE '
+    console.info('\n NOTE: data based on the layername test is FAKE '
       + '\n Because layers are not available in "pure js"');
     expect(scope.activeBaselayer).toEqual(4);
   });
@@ -101,12 +102,12 @@ describe('Testing raster requests directive', function() {
         agg: ''
       }
     }; 
-    scope.mapState.bounds = scope.map.getBounds();  
 
-    $httpBackend.when("GET", "/static/data/klachten_purmerend_min.geojson").respond('');
-    $httpBackend.when("GET", "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725))&srs=EPSG:4326&agg=counts").respond('');
+    $httpBackend.when("GET",
+      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725))&srs=EPSG:4326&agg=counts")
+    .respond('');
     scope.$digest();
-    var cardtitle = $(element.html()).find('h3').html();
+    var cardtitle = $(element.html()).find('h5').html();
     expect(cardtitle).toEqual('Landgebruik');
   });
 
@@ -124,22 +125,19 @@ describe('Testing raster requests directive', function() {
     // this normally registers on map move and on initiating map
     // mocked here.
     scope.mapState.bounds = map.getBounds();
-    scope.mapState.geom_wkt = "POLYGON(("
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
-              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
-              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
-              + "))";
+
+    var map = mapscope.map;
+    // this normally registers on map move and on initiating map
+    // mocked here.
     scope.box = {
       type: 'landuse',
       content: {
         agg: ''
       }
     };
-    $httpBackend.when("GET", "/static/data/klachten_purmerend_min.geojson").respond('');
-    $httpBackend.when("GET", "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725))&srs=EPSG:4326&agg=counts").respond('');
-
+    $httpBackend.when("GET",
+      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725))&srs=EPSG:4326&agg=counts")
+    .respond('');
     scope.$digest();
     expect(map.getBounds()).toEqual(scope.mapState.bounds);
   });
@@ -152,26 +150,19 @@ describe('Testing raster requests directive', function() {
     var mapelement = angular.element('<map></map>');
     mapelement = $compile(mapelement)($rootScope);
     var mapscope = element.scope();
-
-    var map = mapscope.map;
+        var map = mapscope.map;
     // this normally registers on map move and on initiating map
     // mocked here.
     scope.mapState.bounds = map.getBounds();
-    scope.mapState.geom_wkt = "POLYGON(("
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
-              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
-              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
-              + "))";
+
     scope.box = {
       type: 'landuse',
       content: {
         agg: ''
       }
     };
-    $httpBackend.when("GET", "/static/data/klachten_purmerend_min.geojson").respond('');
-    $httpBackend.when("GET", "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725, 5.570068359375 52.09975692575725))&srs=EPSG:4326&agg=counts")    
+    $httpBackend.when("GET", 
+      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725))&srs=EPSG:4326&agg=counts")
       .respond('[{"color": "#000000", "data": 256786, "label": 0},'
      + '{"color": "#e7e3e7", "data": 5089, "label": 241},'
      + '{"color": "#a5ff73", "data": 73, "label": "41 - LGN - Agrarisch Gras"},'

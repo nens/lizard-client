@@ -53,13 +53,13 @@ app.directive('rasterprofile', function () {
           scope.line_marker.setLatLngs([scope.first_click, e.latlng]);
           scope.line_marker.options.dashArray = "5, 5";
           scope.line_marker._updateStyle();
+          scope.tools.cursorTooltip.content = "Now click a second time to finish the line";
         };
 
         var drawLineCLickHandler = function (e) {
           // setup draw line to get profile info from server  
           if (scope.first_click === undefined) {
             scope.first_click = e.latlng;
-            console.log("Now click a second time to draw a line.");
             if (scope.line_marker === undefined) {
               scope.line_marker = L.polyline([scope.first_click, scope.first_click], {
                 color: '#2980b9',
@@ -90,15 +90,21 @@ app.directive('rasterprofile', function () {
           
           // call getRasterData controller function on scope
           scope.getRasterData("elevation", profile_line_wkt, srs);
+          scope.tools.cursorTooltip.content = "Click to draw an elevation profile";
+
         };
 
         // enable and disable click handler
         // 'tools.profile.enabled' is set by the MasterCtrl on <html> scope
         scope.$watch('tools.active', function () {
           if (scope.tools.active === "profile") {
-            scope.map.on('click',  drawLineCLickHandler);
+            scope.map.on('click', drawLineCLickHandler);
+            scope.tools.cursorTooltip.enabled = true;
+            scope.tools.cursorTooltip.content = "Click to draw a elevation profile";
           } else {
             //clean up map
+            scope.tools.cursorTooltip.enabled = false;
+            scope.tools.cursorTooltip.content = "";
             if (scope.line_marker) {
               mapCtrl.removeLayer(scope.line_marker);
             }

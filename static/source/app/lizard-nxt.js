@@ -7,16 +7,18 @@ var app = angular.module("lizard-nxt", [
   'ngResource',
   'graph',
   'omnibox',
-  'lizard-nxt.services']);
+  'restangular',
+  'lizard-nxt.services'
+]);
 
 /**
  * Change default angular tags to prevent collision with Django tags
  */
-app.config(function($interpolateProvider) {
+app.config(function ($interpolateProvider) {
   //To prevent Django and Angular Template hell
   $interpolateProvider.startSymbol('<%');
   $interpolateProvider.endSymbol('%>');
- });
+});
 
 
 /**
@@ -108,6 +110,17 @@ app.controller("MasterCtrl",
     active: "none", //NOTE: make list?
     threedi: {
       enabled: false
+    },
+    cursorTooltip: {
+      enabled: false,
+      content: '',
+      location: ''
+    }
+  };
+
+  $scope.mouseMove = function ($event) {
+    if ($scope.tools.cursorTooltip.enabled) {
+      $scope.tools.cursorTooltip.location = $event;
     }
   };
 
@@ -145,10 +158,11 @@ app.controller("MasterCtrl",
   // /END MOVE TO MAP CONTROL
   // MAP MODEL
 
+  var end = Date.now();
   // TIME MODEL
   $scope.timeState = {
-    start: 1381363200000, // 10nd of october 2013, works nicely with the twitter data
-    end: Date.now(),
+    start: end - (24 * 60 * 60 * 1000 * 14), // 14 days
+    end: end,
     changedZoom: Date.now(),
     at: this.start,
     timeline: {
@@ -171,16 +185,16 @@ app.controller("MasterCtrl",
 
 // COLOR MODEL
   $scope.colors =  {
-    3: ["#27ae60","#2980b9","#8e44ad"],
-    4: ["#27ae60","#2980b9","#8e44ad","#2c3e50"],
-    5: ["#27ae60","#2980b9","#8e44ad","#2c3e50","#f39c12"],
-    6: ["#27ae60","#2980b9","#8e44ad","#2c3e50","#f39c12","#d35400"],
-    7: ["#27ae60","#2980b9","#8e44ad","#2c3e50","#f39c12","#d35400","#c0392b"],
-    8: ["#27ae60","#2980b9","#8e44ad","#2c3e50","#f39c12","#d35400","#c0392b","#16a085"]
+    3: ["#27ae60", "#2980b9", "#8e44ad"],
+    4: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50"],
+    5: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12"],
+    6: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12", "#d35400"],
+    7: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12", "#d35400", "#c0392b"],
+    8: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12", "#d35400", "#c0392b", "#16a085"]
   };
 
   // 3Di START
-  $scope.setFollow = function(layer, follow_3di) {
+  $scope.setFollow = function (layer, follow_3di) {
     layer.follow_3di = follow_3di;  // for GUI
     $scope.follow_3di = follow_3di;
 
@@ -195,27 +209,8 @@ app.controller("MasterCtrl",
       $scope.box.type = 'threedi';
       $scope.box.content = 'bladiblabla'; // maybe his should change ? :)
       $scope.tools.threedi.enabled = !$scope.tools.threedi.enabled;
-  }  
+    };
   // 3Di END
-
-  // Legacy formatter for KPI: remove?
-  // check how data comes from server? discuss with Jack / Carsten
-  $scope.format_data = function (data) {
-    if (data[0]){
-    $scope.formatted_data = [];
-      for (var i=0; i<data[0].values.length; i++){
-        var xyobject = {
-          date: data[1].values[i],
-          value: data[0].values[i]
-        };
-        $scope.formatted_data.push(xyobject);
-      }
-    } else {
-      $scope.formatted_data = undefined;
-    }
-    return $scope.formatted_data;
-  };
-  // end legacy formatter
 
   /**
    * Get data for timeseries
@@ -229,35 +224,30 @@ app.controller("MasterCtrl",
   $scope.getTimeseries = function (data) {
     /* data must have properties entity_name, id */
     // NOTE: this is an aggregation demo HACK
-    if (!arguments[1] && arguments[1] != "nochange") {
+    if (!arguments[1] && arguments[1] !== "nochange") {
       $scope.box.type = data.entity_name;
       $scope.box.showCards = true;
     }
-      $scope.box.content.object_type = data.entity_name;
-      $scope.box.content.id = data.id;
-      $scope.box.content.data = data;
-      // NOTE: will temporalExtent also control timeiline temporalExtent?
-      $scope.box.content.temporalExtent = {
-        start: null,
-        end: null,
-        changedZoom: false,
-      };
-      $scope.box.content.changeFunction = function (start, stop) {
-        $scope.box.content.temporalExtent.start = start;
-        $scope.box.content.temporalExtent.stop = stop;
-        $scope.box.content.temporalExtent.changedZoom = !$scope.box.content.temporalExtent.changedZoom;
-      };
-      $scope.box.content.canceler = $q.defer();
-      $scope.timeseries = [];
-      $scope.box.content.selected_timeseries = undefined;
+    $scope.box.content.object_type = data.entity_name;
+    $scope.box.content.id = data.id;
+    $scope.box.content.data = data;
+    // NOTE: will temporalExtent also control timeiline temporalExtent?
+    $scope.box.content.temporalExtent = {
+      start: null,
+      end: null,
+      changedZoom: false,
+    };
+    $scope.box.content.canceler = $q.defer();
+    $scope.timeseries = [];
+    $scope.box.content.selected_timeseries = undefined;
    
 
     var new_data_get = CabinetService.timeseriesLocationObject.get({
       object_type: $scope.box.content.object_type,
       id: $scope.box.content.id
-    }, function(response){
+    }, function (response) {
       $scope.timeseries = response;
-      if ($scope.timeseries.length > 0){  
+      if ($scope.timeseries.length > 0) {
         $scope.box.content.selected_timeseries = response[0];
       } else {
         $scope.box.content.selected_timeseries = undefined;
@@ -269,34 +259,35 @@ app.controller("MasterCtrl",
         fromgrid: $scope.box.content.data,
         //type: $scope.box.content.data.entity_name
         type: data.entity_name
-     };
+      };
 
     // Otherwise changes are watched and called to often.
-    if ($scope.box.content.timeseries_changed === undefined){
+    if ($scope.box.content.timeseries_changed === undefined) {
       $scope.box.content.timeseries_changed = true;
     } else {
       $scope.box.content.timeseries_changed = !$scope.box.content.timeseries_changed;
     }
   };
 
-  $scope.$watch('box.content.temporalExtent.changedZoom', function (newVal, oldVal) {
-    if (newVal == oldVal || ($scope.box.content.canceler === undefined)) { return; }
+  $scope.$watch('timeState.changedZoom', function (newVal, oldVal) {
+    if (newVal === oldVal || ($scope.box.content.canceler === undefined)) { return; }
     $scope.box.content.canceler.resolve();
     $scope.box.content.canceler = $q.defer();
     var timeseries = $resource('/api/v1/timeseries/:id/?start=:start&end=:end', {
       id: '@id',
       start: '@start',
       end: '@end'
-      },
-      {get: 
+    },
+    {
+      get:
         {method: 'GET', timeout: $scope.box.content.canceler.promise}
-      });
+    });
     if ($scope.box.content.selected_timeseries) {
       timeseries.get({
         id: $scope.box.content.selected_timeseries.id,
         start: $scope.box.content.temporalExtent.start,
         end: $scope.box.content.temporalExtent.end
-      }, function(response){
+      }, function (response) {
         $scope.data = {
           series: response.events.series,
           instants: response.events.instants
@@ -308,12 +299,12 @@ app.controller("MasterCtrl",
         // } else {
         //   $scope.selected_timeseries = undefined;
         // }
-      });      
+      });
     }
   });
 
   $scope.$watch('box.content.selected_timeseries.id', function () {
-    if ($scope.box.content.selected_timeseries !== undefined){
+    if ($scope.box.content.selected_timeseries !== undefined) {
       // NOTE: this will change to $scope.selected_timeseries.instants
       $scope.data = {
           series: $scope.box.content.selected_timeseries.events.series,
@@ -353,15 +344,16 @@ app.controller("MasterCtrl",
    *
    * A PI has a name, data and a threshold
    */
-  $scope.kpi = [{"name": "general",
-                 "value": 7,
-                 "threshold": 6,
-                 "pi": [{
-                  "name": "Meldingen",
-                  "threshold": 8,
-                  "data": {}
-                 }]
-                }];
+  $scope.kpi = [{
+    "name": "general",
+    "value": 7,
+    "threshold": 6,
+    "pi": [{
+      "name": "Meldingen",
+      "threshold": 8,
+      "data": {}
+    }]
+  }];
   // END KPI MODEL
   
   // HACK: get alert (meldingen) data from geojson
@@ -386,7 +378,7 @@ app.controller("MasterCtrl",
     url += "&geom=" + linestring_wkt;
     url += "&srs=" + srs;
     if (agg !== undefined) {
-      url += "&agg=" + agg;  
+      url += "&agg=" + agg;
     }
     var config = {
       method: 'GET',
@@ -411,7 +403,7 @@ app.controller("MasterCtrl",
           };
         } else if (agg === 'counts') {
           $scope.data = data;
-        } else {
+        } else if (raster_names === 'elevation' && agg === undefined) {
           // var d3data = format_data(data);
           $scope.box.type = "profile";
           $scope.box.content = {
@@ -419,12 +411,16 @@ app.controller("MasterCtrl",
             yLabel: 'hoogte [mNAP]',
             xLabel: 'afstand [m]'
           };
+        } else {
+          $scope.box.content = {
+            data: data
+          };
         }
       })
       .error(function (data) {
         //TODO: implement error function to return no data + message
         if (!timeout) {
-          console.info("failed getting profile data from server");        
+          console.info("failed getting profile data from server");
         }
       });
   };
@@ -432,7 +428,7 @@ app.controller("MasterCtrl",
   $scope.format_rastercurve = function (data) {
     var formatted = [];
     for (var i in data[0]) {
-      var datarow = [data[0][i],data[1][i]];
+      var datarow = [data[0][i], data[1][i]];
       formatted.push(datarow);
     }
     return formatted;
@@ -446,10 +442,10 @@ app.controller("MasterCtrl",
   // NOTE: This fires the watches too often
   $scope.keyPress = function ($event) {
     // watches can be placed in corresponding ctrls. as in MapCtrl
-    if ($event.target.nodeName === "INPUT" && 
+    if ($event.target.nodeName === "INPUT" &&
       ($event.which !== 27 && $event.which !== 13)) {
-     return; 
-   }
+      return;
+    }
     $scope.keyIsPressed = !$scope.keyIsPressed;
     $scope.keyPressed = $event.which;
     $scope.keyTarget = $event.target;

@@ -377,6 +377,36 @@ i, a:active {text-decoration:none !important;}
     text-shadow: none;
 }
 
+.cursor-tooltip {
+    background: rgb(54, 54, 54);
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid transparent;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    color: #fff;
+    font: 12px/18px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    margin-left: 20px;
+    margin-top: -21px;
+    padding: 4px 8px;
+    position: absolute;
+    /*visibility: hidden;*/
+    /*content: "asldfjlksadjfsd";*/
+    white-space: nowrap;
+    z-index: 10000;
+}
+
+.cursor-tooltip:before {
+        border-right: 6px solid black;
+        border-right-color: rgba(0, 0, 0, 0.5);
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        content: "";
+        position: absolute;
+        top: 7px;
+        left: -7px;
+}
+
+
 .layer-switcher label {
     color: #2c3e50;
     font-style: normal;
