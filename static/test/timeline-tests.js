@@ -61,7 +61,7 @@ describe('Testing timeline directive', function() {
     + '</div>');
     element = $compile(element)($rootScope);
     scope = element.scope();
-    ctrl = $controller('TimelineDirCtrl', {$scope:scope});
+    ctrl = $controller('TimelineDirCtrl', {$scope: scope});
   }));
 
   it('should have d3 available', function () {
@@ -76,37 +76,34 @@ describe('Testing timeline directive', function() {
   it('should have a temporal extent available with date as epoch', function () {
     var datestart = scope.timeState.start;
     var datestarttype = typeof datestart;
-    console.info('\n' + 'NOTE: perhaps temporalExtent should be a Date object');
     expect(datestarttype).toBe("number");
   });
 
   it('Should create a canvas', function () {
-    var directiveElement = angular.element(''
-      +'<div><div id="timeline-svg-wrapper">'
-      + '<svg></svg>'
-      + '</div></div>');
+    var svg = $compile(angular.element('<svg></svg>'))(scope);
     var options = {
       width: 100,
-      height: 200 }
-    var canvas = ctrl.createCanvas(directiveElement, options);
-    expect(canvas.svg.select('rect').toString()).toBe('[object SVGRectElement]');
+      height: 200 };
+    var canvas = ctrl.createCanvas(d3.select(svg[0]), options);
+    expect(canvas.svg.select('g').select('rect').toString()).toBe('[object SVGRectElement]');
     expect(canvas.height).toBe(options.height - 20 - 3);
     expect(canvas.width).toBe(options.width - 20 - 30);
   });
 
   it('Should make a scale when input is categorical', function () {
-    var minMax = {min: Date.now() - 31556900000, max: Date.now()};
+    var minMax = null;
+    var range = null;
     var options = { scale: 'ordinal'};
-    var scale = ctrl.scale(minMax, options);
-    expect(scale("regen")).toBe('#fc8d62');
+    var scale = ctrl.scale(minMax, range, options);
+    expect(scale("regen")).toBe('#2980b9');
   });
 
   it('Should make an axis function', function () {
     var minMax = {min: Date.now() - 31556900000, max: Date.now()};
-    var options = { scale: 'time',
-                    range: [0, 300]};
-    var scale = ctrl.scale(minMax, options);
-    var axis = ctrl.makeAxis(scale, {orientation: 'bottom'});
+    var range = {min: 0, max: 300};
+    var options = { type: 'time' };
+    var scale = ctrl.scale(minMax, range, options);
+    var axis = ctrl.makeAxis(scale, {orientation: 'bottom', ticks: 5});
         var directiveElement = angular.element(''
       +'<div><div id="timeline-svg-wrapper">'
       + '</div></div>');
@@ -118,23 +115,32 @@ describe('Testing timeline directive', function() {
   });
 
   it('INTEGRATION:: Should draw a timeline', function () {
-    var timelinelement = angular.element('<div ng-controller="TimelineCtrl">'
-      + '<timeline></timeline></div>');
-    scope.timeState.timeline.data.twitter = data;
+    var svg = $compile(angular.element('<svg></svg>'))(scope);
+    var options = {
+      width: 100,
+      height: 200 };
+    var canvas = ctrl.createCanvas(d3.select(svg[0]), options);
+    expect(canvas.svg.select('g').select('rect').toString()).toBe('[object SVGRectElement]');
+    var minMax = {min: Date.now() - 31556900000, max: Date.now()};
+    var range = {min: 0, max: 300};
+    var options = { type: 'time' };
+    var xScale = ctrl.scale(minMax, range, options);
+    var colorScale = ctrl.scale(null, null, { scale: 'ordinal' });
+    var yScale = ctrl.scale({min: 1, max: 1}, { min: canvas.height - 20, max: 20 }, {scale: 'linear'});
+    var cData = [];
+    angular.forEach(data.results[0].features, function (feature) {
+      feature.event_type = 1;
+      // Create unique id, a combo of time and location. I assume this is always unique..
+      feature.id = "" + 'Twitter' + feature.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
+      cData.push(feature);
+      });
+    ctrl.drawCircles(canvas.svg, xScale, yScale, colorScale, 'timestamp', 'event_type', 'event_sub_type', cData);
+    scope.timeState.timeline.data.twitter = data.results[0];
     scope.timeState.timeline.data.twitter.active = true;
-    scope.timeState.changed = !scope.timeState.changed;
-    timelinelement = $compile(timelinelement)(scope);
-    // timelinescope= timelinelement().scope;
+    scope.timeState.timeline.changed = Date.now();
     window.outerWidth = 1000;
-    scope.$digest();
-    expect(timelinelement[0].getElementsByTagName('circle').length > 0).toBe(true);
+    scope.$apply();
+    expect(canvas.svg.selectAll("circle")[0].length).toBe(data.results[0].features.length);
   });
-
-
-  // it('Should draw axes', function () {
-  //   var canvas = ctrl.createCanvas(directiveElement, options);
-  //   var svg = canvas.svg;
-  //   //var x = 
-  // });
 
 });

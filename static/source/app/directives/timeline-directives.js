@@ -1,6 +1,6 @@
 // Timeline for lizard.
 app.controller('TimelineDirCtrl', function ($scope) {
-    this.createCanvas = function (options) {
+    this.createCanvas = function (svg, options) {
       // Draws a blank canvas based on viewport
       var margin = {
         top: 3,
@@ -12,16 +12,15 @@ app.controller('TimelineDirCtrl', function ($scope) {
       var width = options.width - margin.left - margin.right,
           height = options.height - margin.top - margin.bottom;
 
-      var svg = d3.select("#timeline-svg-wrapper").select("svg");
       svg.attr('width', options.width)
         .attr('height', options.height)
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-        .style("transform", "translate3d(" + margin.left + "," + margin.top + ")")
-        .attr("transform", "translate(0, " + height + ")")
-        .append("rect")
-        .attr("width", width)
-        .attr("class", "plot-temporal");
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+          .attr("transform", "translate(0, " + height + ")")
+          // .style("transform", "translate3d(" + margin.left + "," + margin.top + ")")
+          .append("rect")
+            .attr("width", width)
+            .attr("class", "plot-temporal");
       return {
         svg: svg,
         height: height,
@@ -241,7 +240,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
     */
     var createTimeline = function () {
       var canvasOptions = {width: element.width(), height: 45};
-      var graph = timelineCtrl.createCanvas(canvasOptions);
+      var svg = d3.select("#timeline-svg-wrapper").select("svg");
+      var graph = timelineCtrl.createCanvas(svg, canvasOptions);
 
       // Add x axis
       var x = {};
