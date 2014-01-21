@@ -5,25 +5,6 @@ app.controller('SearchCtrl', function ($scope, CabinetService) {
   $scope.searchMarkers = [];
   $scope.search = function ($event) {
     if ($scope.box.query.length > 1) {
-      // var search = CabinetService.termSearch.query({q: $scope.box.query}, function (data) {
-      //   var sources = [];
-      //   for (var i in data) {
-      //     if(data[i].geometry !== null) {
-      //       sources.push(data[i]);
-      //     }
-      //   }
-        // $scope.searchMarkers.filter(function (v, i, a) { return a.indexOf (v) == i; });
-        // for (var j in sources) {
-        //   //console.log('sources:',sources);
-        //   $scope.searchMarkers = [];
-        //   if(sources[j].geometry) {
-        //     $scope.searchMarkers.push(sources[j]);
-        //   }
-        // }
-
-        // $scope.searchData = sources;
-        // });
-      
       CabinetService.geocode.query({q: $scope.box.query}, function (data) {
         $scope.box.content = data;
         });
@@ -78,7 +59,8 @@ app.controller('SearchCtrl', function ($scope, CabinetService) {
 
   // Note: Watch is called too often
   $scope.$watch('keyIsPressed', function (newVal, oldVal) {
-    if (newVal !== oldVal && $scope.keyTarget.id === "searchboxinput" && $scope.keyPressed === 13) {
+    if (newVal !== oldVal && $scope.keyTarget.id === "searchboxinput" 
+      && $scope.keyPressed === 13) {
       $scope.search();
     }
   });
