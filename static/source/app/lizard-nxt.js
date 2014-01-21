@@ -158,10 +158,11 @@ app.controller("MasterCtrl",
   // /END MOVE TO MAP CONTROL
   // MAP MODEL
 
+  var end = Date.now();
   // TIME MODEL
   $scope.timeState = {
-    start: 1381363200000, // 10nd of october 2013, works nicely with the twitter data
-    end: Date.now(),
+    start: end - (24 * 60 * 60 * 1000 * 14), // 14 days
+    end: end,
     changedZoom: Date.now(),
     at: this.start,
     timeline: {
@@ -236,11 +237,6 @@ app.controller("MasterCtrl",
       end: null,
       changedZoom: false,
     };
-    $scope.box.content.changeFunction = function (start, stop) {
-      $scope.box.content.temporalExtent.start = start;
-      $scope.box.content.temporalExtent.stop = stop;
-      $scope.box.content.temporalExtent.changedZoom = !$scope.box.content.temporalExtent.changedZoom;
-    };
     $scope.box.content.canceler = $q.defer();
     $scope.timeseries = [];
     $scope.box.content.selected_timeseries = undefined;
@@ -273,7 +269,7 @@ app.controller("MasterCtrl",
     }
   };
 
-  $scope.$watch('box.content.temporalExtent.changedZoom', function (newVal, oldVal) {
+  $scope.$watch('timeState.changedZoom', function (newVal, oldVal) {
     if (newVal === oldVal || ($scope.box.content.canceler === undefined)) { return; }
     $scope.box.content.canceler.resolve();
     $scope.box.content.canceler = $q.defer();

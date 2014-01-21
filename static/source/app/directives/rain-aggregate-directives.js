@@ -10,10 +10,9 @@ app.directive('rainAggregate', function ($q, Restangular) {
       var rasterResource = Restangular.one('api/v1/rasters/');
 
       var rainClick = function (e) {
-        var stop = new Date();
+        var stop = new Date(scope.timeState.end);
         var stopString = stop.toISOString().split('.')[0];
-        var start = new Date();
-        start.setDate(stop.getDate() - 14);
+        var start = new Date(scope.timeState.start);
         var startString = start.toISOString().split('.')[0];
         var wkt = "POINT(" + e.latlng.lng + " " + e.latlng.lat + ")";
         scope.mapState.timeout = $q.defer();

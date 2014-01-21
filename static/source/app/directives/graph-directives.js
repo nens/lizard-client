@@ -6,7 +6,7 @@ angular.module('graph')
 .directive('graph', function () {
 
   var controller = function ($scope) {
-    this.createCanvas =  function(legend, element) {
+    this.createCanvas =  function (legend, element) {
       var margin = {
         top: 20,
         right: 20,
@@ -32,7 +32,7 @@ angular.module('graph')
         .attr('width', maxwidth)
         .attr('height', maxheight + 25)
         .append("svg:g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
       if (!legend.pie) {
         svg.append("svg:rect")
@@ -49,9 +49,9 @@ angular.module('graph')
           
       }
               
-      if (legend.xLabel ){
+      if (legend.xLabel) {
          //Create X axis label   
-         svg.append("text")
+        svg.append("text")
            .attr("x", width / 2)
            .attr("y",  height + margin.bottom * 2)
            .style("text-anchor", "middle")
@@ -225,7 +225,7 @@ angular.module('graph')
     restrict: 'E',
     replace: true,
     template: '<div class="graph-directive"></div>'
-  }
+  };
 });
 
 angular.module('graph')
@@ -243,7 +243,7 @@ angular.module('graph')
         var y = graphCtrl.maxMin(data, '0');
 
         x.scale = graphCtrl.scale(x.min, x.max, {
-          range: [0, width], 
+          range: [0, width],
           type: 'time'
         });
         y.scale = graphCtrl.scale(y.min, y.max, {
@@ -255,21 +255,51 @@ angular.module('graph')
           width: width
         });
 
+        var zoomed = function () {
+          svg.select(".x.axis")
+            .call(graphCtrl.makeAxis(x.scale, {orientation: "bottom"}))
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", function (d) {
+                return "rotate(-45)";
+              });
+
+          // svg.select("g")
+          svg.selectAll(".bar")
+            .attr("x", function (d) { return x.scale(d[1]) - 0.5; })
+            .attr("transform", "translate(" + "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ", 1)");
+          scope.$apply(function () {
+              // NOTE: maybe with $parent
+              scope.$parent.timeState.start = x.scale.domain()[0].getTime();
+              scope.$parent.timeState.end = x.scale.domain()[1].getTime();
+              scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
+            }); 
+        };
+        
+        var zoom = d3.behavior.zoom()
+          .x(x.scale)
+          .y(y.scale)
+          .on("zoom", zoomed);
+
         // Bar Chart specific stuff
         svg.selectAll(".bar")
           .data(data)
           .enter().append("rect")
             .attr("class", "bar")
-            .attr("x", function(d) { return x.scale(d[1]) - .5; })
-            .attr("y", function(d) { return y.scale(d[0]) - .5; })
+            .attr("x", function (d) { return x.scale(d[1]) - 0.5; })
+            .attr("y", function (d) { return y.scale(d[0]) - 0.5; })
             .attr("width", 5)
-            .attr("height", function(d) { return height - y.scale(d[0]); });
-    };
+            .attr("height", function (d) { return height - y.scale(d[0]); });
+
+        svg.call(zoom);
+      };
   };
   return {
     link: link,
     require: 'graph'
-  }
+  };
 });
 
 
@@ -286,7 +316,7 @@ angular.module('graph')
             radius = Math.min(width, height) / 1.4;
 
 
-        var total=0;
+        var total = 0;
         var pie = d3.layout.pie()
           .value(function (d) { 
               total += d.data;
@@ -533,9 +563,10 @@ angular.module('graph')
               .attr("d", line);
           if (header[keys.x].quantity == 'time') {
             scope.$apply(function () {
-              scope.$parent.box.content.temporalExtent.start = x.scale.domain()[0].getTime();
-              scope.$parent.box.content.temporalExtent.end = x.scale.domain()[1].getTime();
-              scope.$parent.box.content.temporalExtent.changedZoom = !scope.$parent.box.content.temporalExtent.changedZoom;
+              // NOTE: maybe with $parent
+              scope.$parent.timeState.start = x.scale.domain()[0].getTime();
+              scope.$parent.timeState.end = x.scale.domain()[1].getTime();
+              scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
             }); 
           }
             
