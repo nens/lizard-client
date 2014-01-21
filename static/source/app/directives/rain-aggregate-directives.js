@@ -1,13 +1,13 @@
 // rain-aggregate-directives.js
 'use strict';
 
-app.directive('rainAggregate', function ($q, Restangular) {
+app.directive('rainAggregate', function ($q, CabinetService) {
   return {
     restrict: "A",
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
-      var rasterResource = Restangular.one('api/v1/rasters/');
+      
 
       var rainClick = function (e) {
         var stop = new Date(scope.timeState.end);
@@ -18,18 +18,20 @@ app.directive('rainAggregate', function ($q, Restangular) {
         scope.mapState.timeout = $q.defer();
         // scope.getRasterData('rain', wkt, 'EPSG:4326', undefined, true);
         scope.box.type = "rain";
-        rasterResource.get({
+        CabinetService.rasterResource.get({
           raster_names: 'rain',
           geom: wkt,
           srs: 'EPSG:4236',
           start: startString,
           stop: stopString
         }).then(function (result) {
-          scope.box.content.data = result;
+          scope.rain.data = result;
+          scope.rain.wkt = wkt;
+          scope.rain.srs = 'EPSG:4236';
         });
       };
 
-      scope.$watch('tools.active', function (newVal, oldVal) {
+      var cleanup = scope.$watch('tools.active', function (newVal, oldVal) {
           if (newVal === oldVal) { return; }
           if (newVal !== 'rain') {
             scope.map.off('click', rainClick);

@@ -56,9 +56,9 @@ angular.module('graph')
            .attr("y",  height + margin.bottom * 2)
            .style("text-anchor", "middle")
            .text(legend.xLabel);
-       } 
+       }
 
-      if (legend.yLabel) {   
+      if (legend.yLabel) {
         //Create Y axis label
         svg.append("text")
           .attr("transform", "rotate(-90)")

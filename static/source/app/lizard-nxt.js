@@ -237,7 +237,6 @@ app.controller("MasterCtrl",
       end: null,
       changedZoom: false,
     };
-    $scope.box.content.canceler = $q.defer();
     $scope.timeseries = [];
     $scope.box.content.selected_timeseries = undefined;
    
@@ -269,10 +268,12 @@ app.controller("MasterCtrl",
     }
   };
 
+  $scope.canceler = $q.defer();
+
   $scope.$watch('timeState.changedZoom', function (newVal, oldVal) {
-    if (newVal === oldVal || ($scope.box.content.canceler === undefined)) { return; }
-    $scope.box.content.canceler.resolve();
-    $scope.box.content.canceler = $q.defer();
+    if ((newVal === oldVal) || ($scope.canceler === undefined)) { return; }
+    $scope.canceler.resolve();
+    $scope.canceler = $q.defer();
     var timeseries = $resource('/api/v1/timeseries/:id/?start=:start&end=:end', {
       id: '@id',
       start: '@start',
@@ -280,7 +281,7 @@ app.controller("MasterCtrl",
     },
     {
       get:
-        {method: 'GET', timeout: $scope.box.content.canceler.promise}
+        {method: 'GET', timeout: $scope.canceler.promise}
     });
     if ($scope.box.content.selected_timeseries) {
       timeseries.get({
@@ -293,12 +294,23 @@ app.controller("MasterCtrl",
           instants: response.events.instants
         };
         $scope.box.content.selected_timeseries.events = response.events;
-        // var response;
-        // if ($scope.timeseries.length > 0){
-        //   $scope.selected_timeseries = response[0];
-        // } else {
-        //   $scope.selected_timeseries = undefined;
-        // }
+      });
+    }
+    if ($scope.rain.data) {
+      var stop = new Date($scope.timeState.end);
+      var stopString = stop.toISOString().split('.')[0];
+      var start = new Date($scope.timeState.start);
+      var startString = start.toISOString().split('.')[0];
+      CabinetService.rasterResource.withHttpConfig({
+        timeout: $scope.canceler.promise
+      }).get({
+        raster_names: 'rain',
+        geom: $scope.rain.wkt,
+        srs: $scope.rain.srs,
+        start: startString,
+        stop: stopString
+      }).then(function (result) {
+        $scope.rain.data = result;
       });
     }
   });

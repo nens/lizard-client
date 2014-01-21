@@ -1,7 +1,7 @@
 var services = angular.module("lizard-nxt.services", ['ngResource']);
 
-services.service("CabinetService", ["$resource",
-  function ($resource, $rootScope) {
+services.service("CabinetService", ["$resource", "Restangular",
+  function ($resource, Restangular, $rootScope) {
 
   var layergroups = window.layerGroups;
   var layers = window.layers;
@@ -56,6 +56,7 @@ services.service("CabinetService", ["$resource",
       isArray: true
     }
   });
+  var rasterResource = Restangular.one('api/v1/rasters/');
 
   return {
     layergroups: layergroups,
@@ -65,6 +66,7 @@ services.service("CabinetService", ["$resource",
     termSearch: termSearchResource,
     bboxSearch: bboxSearchResource,
     geocode: geocodeResource,
+    rasterResource: rasterResource,
     reverseGeocode: reverseGeocodeResource,
     timeseries: timeseriesResource,
     timeseriesLocationObject: timeseriesLocationObjectResource,
