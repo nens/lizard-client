@@ -11,10 +11,11 @@ describe('Testing graph directives', function() {
   }));
 
   it('should have an isolate scope', function () {
-    var element = angular.element('<div ng-controller="MasterCtrl"><graph data="3"></graph></div>');
+    var element = angular.element('<div ng-controller="MasterCtrl">' +
+      '<graph data="3"></graph></div>');
     element = $compile(element)($rootScope);
     var scope = element.scope();
-    var isolatescope = angular.element(element.children()[0]).scope();
+    var isolatescope = scope.$$childTail;
     expect(scope.hasOwnProperty('$$isolateBindings')).toBe(false);
     expect(isolatescope.hasOwnProperty('$$isolateBindings')).toBe(true);
   });

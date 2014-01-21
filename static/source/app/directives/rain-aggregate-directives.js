@@ -7,13 +7,12 @@ app.directive('rainAggregate', function ($q, Restangular) {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
-    var rasterResource = Restangular.one('api/v1/rasters/');
+      var rasterResource = Restangular.one('api/v1/rasters/');
 
-      var rainClick = function (e) { 
-        var stop = new Date;
+      var rainClick = function (e) {
+        var stop = new Date(scope.timeState.end);
         var stopString = stop.toISOString().split('.')[0];
-        var start = new Date;
-        start.setDate(stop.getDate() - 2);
+        var start = new Date(scope.timeState.start);
         var startString = start.toISOString().split('.')[0];
         var wkt = "POINT(" + e.latlng.lng + " " + e.latlng.lat + ")";
         scope.mapState.timeout = $q.defer();
@@ -36,12 +35,9 @@ app.directive('rainAggregate', function ($q, Restangular) {
             scope.map.off('click', rainClick);
             if (newVal === 'none') {
               scope.tools.cursorTooltip.enabled = false;
-              scope.tools.cursorTooltip.content = "";  
+              scope.tools.cursorTooltip.content = "";
             }
-            //watch
             return;
-            //link 
-            return; 
           } else {
             scope.map.on('click', rainClick);
             scope.tools.cursorTooltip.enabled = true;
