@@ -427,7 +427,14 @@ angular.module('graph')
                               .on("mouseout", function() { d3.select(this).attr("r", 3) });
         
         var zoomed = function () {
-          svg.select(".x.axis").call(graphCtrl.makeAxis(x.scale, {orientation:"bottom"}));
+          svg.select(".x.axis").call(graphCtrl.makeAxis(x.scale, {orientation:"bottom"}))
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", function(d) {
+                  return "rotate(-45)" 
+                  });
           svg.select(".x.grid")
               .call(graphCtrl.makeAxis(x.scale, {orientation:"bottom"})
               .tickSize(-height, 0, 0)
@@ -558,6 +565,7 @@ angular.module('graph')
               .call(graphCtrl.makeAxis(y.scale, {orientation: "left"})
               .tickSize(-width, 0, 0)
               .tickFormat("")); 
+
           svg.select(".line")
               .attr("class", "line")
               .attr("d", line);
