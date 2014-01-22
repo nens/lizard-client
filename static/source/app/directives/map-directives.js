@@ -209,15 +209,13 @@ app
       window.L_PREFER_CANVAS = true;
       // instead of 'map' element here for testability
       var osmAttrib = 'Map data © OpenStreetMap contributors';
-      var north = window.data_bbox['north'];
-      var east = window.data_bbox['east'];
-      var south = window.data_bbox['south'];
-      var west = window.data_bbox['west'];
-      var southWest = L.latLng(south, west);
-      var northEast = L.latLng(north, east);
+      var bounds = window.data_bounds['all'];
+      var southWest = L.latLng(bounds['south'], bounds['west']);
+      var northEast = L.latLng(bounds['north'], bounds['east']);
       var maxBounds = L.latLngBounds(southWest, northEast);
       var map = new L.map(element[0], {
-          center: new L.LatLng((north + south) / 2, (west + east) / 2),
+          center: new L.LatLng((bounds['north'] + bounds['south']) / 2,
+                               (bounds['west'] + bounds['east']) / 2),
           zoomControl: false,
           zoom: 8,
           maxBounds: maxBounds

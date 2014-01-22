@@ -8,7 +8,8 @@ describe('Testing map directive', function () {
   beforeEach(inject(function (_$compile_, _$rootScope_) {
       $compile = _$compile_;
       $rootScope = _$rootScope_;
-      window.data_bbox = {
+      window.data_bounds = {};
+      window.data_bounds['all'] = {
         "west": 3.04,
         "east": 7.58,
         "north": 53.63,

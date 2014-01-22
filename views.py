@@ -44,21 +44,20 @@ def index(request):
             for polygon in boundary.the_geom:
                 boundaries.append(polygon)
                 all_boundaries.append(polygon)
-        mp = MultiPolygon(boundaries)
-        data_bounds[org.name] = {'type': mp.geom_type,'coordinates': mp.coords}
+        (west, south, east, north) = MultiPolygon(boundaries).extent
+        data_bounds[org.name] = {'north': north, 'east': east, 'south': south, 'west': west}
     if len(all_boundaries) > 0:
         (west, south, east, north) = MultiPolygon(all_boundaries).extent
-        data_bbox = {'north': north, 'east': east, 'south': south, 'west': west}
+        data_bounds['all'] = {'north': north, 'east': east, 'south': south, 'west': west}
     else:
         # The Netherlands
-        data_bbox = {'north': 53.63, 'east': 7.58, 'south': 50.57, 'west': 3.04}
+        data_bounds['all'] = {'north': 53.63, 'east': 7.58, 'south': 50.57, 'west': 3.04}
 
     context = {
         'random_string': md5(str(random.random())).hexdigest(),
         'strap_base_layers': _bootstrap(base_layers),
         'strap_layers': _bootstrap(layers),
         'strap_data_bounds': _bootstrap(data_bounds),
-        'strap_data_bbox': _bootstrap(data_bbox),
         'threedi_instance': ThreediInstance.objects.all()[0],  # For now, just assign a server 
     }
     if getattr(settings, "DEV_TEMPLATE", False):
