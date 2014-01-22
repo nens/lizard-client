@@ -15,13 +15,15 @@ app.controller('TimelineDirCtrl', function ($scope) {
       svg.attr('width', options.width)
         .attr('height', options.height)
         .append("g")
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
           //.style("transform", "translate3d(" + margin.left + "," + margin.top + ")")
-      svg.append("rect")
+          .append("rect")
             .attr("width", width)
             .attr("height", height)
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             .attr("class", "plot-temporal");
+      // Create element for axis
+      svg.select('g').append("g")
+        .attr('class', 'x axis');
       return {
         svg: svg,
         height: height,
@@ -39,12 +41,11 @@ app.controller('TimelineDirCtrl', function ($scope) {
         .delay(500)
         .attr('height', options.height)
         .select("g")
-        .attr("transform", "translate(" + graph.margin.left + "," + graph.height + ")");
-        //.attr("transform", "translate(" + graph.margin.left + "," + graph.margin.top + ")");
-      graph.svg.select("rect")
-        .attr("transform", "translate(" + graph.margin.left + ", " + graph.height + ")");
-        //.attr("transform", "translate(" + graph.margin.left + "," + graph.margin.top + ")");
-
+        .attr("transform", "translate(" + graph.margin.left + "," + graph.margin.top + ")")
+        .select('g')
+        .attr("transform", "translate(0 ," + graph.height + ")");
+      graph.svg.select("g").select("rect")
+          .attr("height", graph.height);
       return graph;
     };
 
@@ -92,12 +93,11 @@ app.controller('TimelineDirCtrl', function ($scope) {
     };
 
     /*
-    * Draws the given axis in the given svg
+    * Draws the given axis in the given graph
     */
-    this.drawAxes = function (svg, xAxis) {
-      svg.select("g")
-        .attr("class", "x axis")
-        .call(xAxis);
+    this.drawAxes = function (graph, xAxis) {
+      graph.svg.select('g').select('g')
+        .call(graph.xAxis);
       };
 
     // this.drawBars = function (svg, x, y, data, options) {
@@ -129,7 +129,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       var colorFunction = function (d) { return colorScale(d[colorKey]); };
       // DATA JOIN
       // Join new data with old elements, based on the id value.
-      var circles = svg.selectAll("circle")
+      var circles = svg.select('g').selectAll("circle")
           .data(data, function  (d) { return d.id; });
 
       // UPDATE
@@ -205,8 +205,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
     this.createBrush = function (graph) {
       brush = d3.svg.brush().x(graph.xScale)
         .on("brush", this.brushmove);
-      this.brushg = graph.svg.append("g")
-        .attr("transform", "translate(" + graph.margin.left + ", " + graph.margin.top + ")")
+      this.brushg = graph.svg.select('g').append("g")
+        // .attr("transform", "translate(" + graph.margin.left + ", " + graph.margin.top + ")")
         .attr("class", "brushed")
         .call(brush);
       this.brushg.selectAll("rect")
@@ -255,8 +255,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
       range.min = 0;
       range.max = graph.width;
       graph.xScale = timelineCtrl.scale(x, range, { type: 'time' });
-      var xAxis = timelineCtrl.makeAxis(graph.xScale, {orientation: "bottom", ticks: 5});
-      timelineCtrl.drawAxes(graph.svg, xAxis);
+      graph.xAxis = timelineCtrl.makeAxis(graph.xScale, {orientation: "bottom", ticks: 5});
+      timelineCtrl.drawAxes(graph, graph.xAxis);
 
       // Add color scale
       graph.colorScale = timelineCtrl.scale(null, null, { scale: 'ordinal' });
@@ -277,10 +277,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
     var updateTimeline = function (graph, data, nEventTypes) {
       var canvasOptions = {width: element.width(), height: 40 + nEventTypes * 25};
       var newGraph = timelineCtrl.updateCanvas(graph, canvasOptions);
-      newGraph.svg.select(".x.axis").call(timelineCtrl.makeAxis(graph.xScale, {
-        orientation: "bottom",
-        ticks: 5
-      }));
       // Update the brush if any
       if (animationBrush) {
         timelineCtrl.updateBrush(newGraph.height);
