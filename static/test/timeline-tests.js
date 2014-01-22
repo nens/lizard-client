@@ -79,7 +79,7 @@ describe('Testing timeline directive', function() {
     expect(datestarttype).toBe("number");
   });
 
-  it('Should create a canvas', function () {
+  it('Should create a graph object', function () {
     var svg = $compile(angular.element('<svg></svg>'))(scope);
     var options = {
       width: 100,
