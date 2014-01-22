@@ -297,6 +297,13 @@ app.controller('TimelineDirCtrl', function ($scope) {
       graph.xScale = timelineCtrl.scale(x, range, { type: 'time' });
       graph.xAxis = timelineCtrl.makeAxis(graph.xScale, {orientation: "bottom", ticks: 5});
       timelineCtrl.drawAxes(graph, graph.xAxis);
+
+      // Add zoom functionality
+      newGraph.svg.call(d3.behavior.zoom()
+        .x(graph.xScale)
+        .on("zoom", zoomed)
+      );
+
       return newGraph;
     };
 
@@ -346,7 +353,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
     var eventTypeLength = function () {
         var typeCount = 0;
         for (var key in scope.timeState.timeline.data) {
-          console.log(scope.timeState.timeline.data[key].active);
           if (scope.timeState.timeline.data[key].active) {
             typeCount++;
           }
