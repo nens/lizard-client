@@ -4,7 +4,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       // Draws a blank canvas based on viewport
       var margin = {
         top: 3,
-        right: 20,
+        right: 30,
         bottom: 20,
         left: 30
       };
@@ -15,11 +15,12 @@ app.controller('TimelineDirCtrl', function ($scope) {
       svg.attr('width', options.width)
         .attr('height', options.height)
         .append("g")
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
           //.style("transform", "translate3d(" + margin.left + "," + margin.top + ")")
-          .append("rect")
+      svg.append("rect")
             .attr("width", width)
             .attr("height", height)
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             .attr("class", "plot-temporal");
       return {
         svg: svg,
@@ -34,13 +35,15 @@ app.controller('TimelineDirCtrl', function ($scope) {
       graph.height = options.height - graph.margin.top - graph.margin.bottom;
 
       graph.svg.transition()
-        .duration(300)
-        .delay(300)
+        .duration(500)
+        .delay(500)
         .attr('height', options.height)
         .select("g")
-        .attr("transform", "translate(0, " + graph.height + ")")
-        .select("rect")
-        .attr("width", graph.width);
+        .attr("transform", "translate(" + graph.margin.left + "," + graph.height + ")");
+        //.attr("transform", "translate(" + graph.margin.left + "," + graph.margin.top + ")");
+      graph.svg.select("rect")
+        .attr("transform", "translate(" + graph.margin.left + ", " + graph.height + ")");
+        //.attr("transform", "translate(" + graph.margin.left + "," + graph.margin.top + ")");
 
       return graph;
     };
@@ -133,8 +136,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
       // Update old elements as needed.
       circles.attr("class", "bar")
         .transition()
-        .delay(300)
-        .duration(300)
+        .delay(500)
+        .duration(500)
         .attr("fill", colorFunction)
         .attr("cy", yFunction)
         .attr("cx", xFunction);
@@ -148,8 +151,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
         .attr("r", 5)
         .attr("fill-opacity", 0)
         .transition()
-        .delay(300)
-        .duration(300)
+        .delay(500)
+        .duration(500)
         .attr("fill-opacity", 1);
 
       // EXIT
@@ -157,8 +160,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
       circles.exit()
         .transition()
         .delay(0)
-        .duration(300)
-        .attr("cy", yFunction)
+        .duration(500)
+        .attr("cy", 0)
         .attr("cx", xFunction)
         .style("fill-opacity", 1e-6)
         .remove();
@@ -199,14 +202,15 @@ app.controller('TimelineDirCtrl', function ($scope) {
     };
 
     var brush = null;
-    this.createBrush = function (svg, xScale, height) {
-      brush = d3.svg.brush().x(xScale)
+    this.createBrush = function (graph) {
+      brush = d3.svg.brush().x(graph.xScale)
         .on("brush", this.brushmove);
-      this.brushg = svg.append("g")
+      this.brushg = graph.svg.append("g")
+        .attr("transform", "translate(" + graph.margin.left + ", " + graph.margin.top + ")")
         .attr("class", "brushed")
         .call(brush);
       this.brushg.selectAll("rect")
-        .attr("height", height);
+        .attr("height", graph.height);
       return brush;
     };
 
@@ -214,8 +218,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
       if (this.brushg) {
         this.brushg.selectAll("rect")
           .transition()
-          .delay(300)
-          .duration(300)
+          .delay(500)
+          .duration(500)
           .attr("height", height);
         this.brushg.call(brush);
       }
@@ -370,7 +374,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         graph.svg.on('.zoom', null);
 
         // Create the brush
-        animationBrush = timelineCtrl.createBrush(graph.svg, graph.xScale, graph.height);
+        animationBrush = timelineCtrl.createBrush(graph);
         // Set the brush to the current animation start/end if defined and within the visible range, otherwise make one up
         if (scope.timeState.animation.start !== undefined 
           && scope.timeState.animation.end !== undefined 
