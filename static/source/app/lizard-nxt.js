@@ -463,7 +463,6 @@ app.controller("MasterCtrl",
   * Event enabler
   */
   $scope.toggleTimeline = function () {
-    console.log($scope.timeState.hidden);
     if ($scope.timeState.hidden) {
       $scope.timeState.hidden = false;
       angular.element('#timeline').css('bottom', 0);
@@ -666,7 +665,6 @@ app.controller("MasterCtrl",
       }
       getRadarImages();
       $scope.rain.enabled = true;
-      console.log($scope.timeState.hidden);
       if ($scope.timeState.hidden !== false) { $scope.toggleTimeline(); }
     } else if ($scope.rain.enabled || toggle === 'off') {
       $scope.rain.enabled = false;

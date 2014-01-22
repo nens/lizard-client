@@ -287,6 +287,16 @@ app.controller('TimelineDirCtrl', function ($scope) {
       var yScale = timelineCtrl.scale({min: 1, max: nEventTypes}, { min: newGraph.height - 20, max: 20 }, {scale: 'linear'});
       // Update the svg
       timelineCtrl.drawCircles(newGraph.svg, newGraph.xScale, yScale, graph.colorScale, 'timestamp', 'event_type', 'event_sub_type', data);
+      // Update the scale in case somethin changed the timeState
+      var x = {};
+      x.min = new Date(scope.timeState.start);
+      x.max = new Date(scope.timeState.end);
+      var range = {};
+      range.min = 0;
+      range.max = graph.width;
+      graph.xScale = timelineCtrl.scale(x, range, { type: 'time' });
+      graph.xAxis = timelineCtrl.makeAxis(graph.xScale, {orientation: "bottom", ticks: 5});
+      timelineCtrl.drawAxes(graph, graph.xAxis);
       return newGraph;
     };
 
@@ -329,7 +339,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
             data.push(feature);
           });
         }
-        console.log(data.length, data);
       }
       return data;
     };
