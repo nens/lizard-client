@@ -271,11 +271,11 @@ angular.module('graph')
             .attr("x", function (d) { return x.scale(d[1]) - 0.5; })
             .attr("transform", "translate(" + "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ", 1)");
           scope.$apply(function () {
-              // NOTE: maybe with $parent
+              // step out of isolate scope with $parent.
               scope.$parent.timeState.start = x.scale.domain()[0].getTime();
               scope.$parent.timeState.end = x.scale.domain()[1].getTime();
               scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
-            }); 
+            });
         };
         
         var zoom = d3.behavior.zoom()

@@ -241,9 +241,8 @@ app.controller("MasterCtrl",
     $scope.box.content.selected_timeseries = undefined;
    
 
-    var new_data_get = CabinetService.timeseriesLocationObject.get({
-      location__object_type__model: $scope.box.content.object_type,
-      location__object_id: $scope.box.content.id
+    var new_data_get = CabinetService.timeseries.get({
+      object: $scope.box.content.object_type + '$' + $scope.box.content.id
     }).then(function (response) {
       $scope.timeseries = response;
       if ($scope.timeseries.length > 0) {

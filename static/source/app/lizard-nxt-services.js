@@ -31,7 +31,6 @@ services.service("CabinetService", ["Restangular",
   // bboxSearchResource = $resource('/api/v1/search/',{isArray: true});
   geocodeResource = Restangular.one('api/v1/geocode/');
   reverseGeocodeResource = Restangular.one('api/v1/reversegeocode/');
-  timeseriesLocationObjectResource = Restangular.one('api/v1/timeseries/');
   timeseriesResource = Restangular.one('api/v1/timeseries/');
   eventsResource = Restangular.one('api/v1/events/', {
     type: '@event_type',
@@ -58,7 +57,6 @@ services.service("CabinetService", ["Restangular",
     raster: rasterResource,
     reverseGeocode: reverseGeocodeResource,
     timeseries: timeseriesResource,
-    timeseriesLocationObject: timeseriesLocationObjectResource,
     events: eventsResource,
     panZoom: null
   };
