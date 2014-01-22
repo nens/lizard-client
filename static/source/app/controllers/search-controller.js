@@ -5,7 +5,7 @@ app.controller('SearchCtrl', function ($scope, CabinetService) {
   $scope.searchMarkers = [];
   $scope.search = function ($event) {
     if ($scope.box.query.length > 1) {
-      CabinetService.geocode.query({q: $scope.box.query}, function (data) {
+      CabinetService.geocode.get({q: $scope.box.query}).then(function (data) {
         $scope.box.content = data;
         });
       $scope.box.type = "location";

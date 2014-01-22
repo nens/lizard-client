@@ -7,8 +7,6 @@ app.directive('rainAggregate', function ($q, CabinetService) {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
-      
-
       var rainClick = function (e) {
         var stop = new Date(scope.timeState.end);
         var stopString = stop.toISOString().split('.')[0];
@@ -18,7 +16,7 @@ app.directive('rainAggregate', function ($q, CabinetService) {
         scope.mapState.timeout = $q.defer();
         // scope.getRasterData('rain', wkt, 'EPSG:4326', undefined, true);
         scope.box.type = "rain";
-        CabinetService.rasterResource.get({
+        CabinetService.raster.get({
           raster_names: 'rain',
           geom: wkt,
           srs: 'EPSG:4236',

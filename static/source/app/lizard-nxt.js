@@ -61,8 +61,8 @@ app.config(function ($interpolateProvider) {
  *
  * * [ ] Refactor master controller (states, data!)
  * * [ ] Refactor timeline out of mapState with its own scope
- * * [ ] Refactor index.html and base-debug.html
- * * [ ] Fix + document Gruntfile.js / workflow
+ * * [*] Refactor index.html and base-debug.html
+ * * [*] Fix + document Gruntfile.js / workflow
  * * [ ] Refactor css (csslint, -moz and -webkit)
  * * [ ] Integrate 3di into this paradigm (move from threedi to source/app)
  * * [ ] Refactor map controller and directives (e.g. layers come from djangotemplates)
@@ -73,8 +73,8 @@ app.config(function ($interpolateProvider) {
  *
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "$resource", "$q", "CabinetService",
-  function ($scope, $http, $resource, $q, CabinetService)  {
+  ["$scope", "$http", "Restangular", "$q", "CabinetService",
+  function ($scope, $http, Restangular, $q, CabinetService)  {
 
   // BOX MODEL
   $scope.box = {
@@ -242,9 +242,9 @@ app.controller("MasterCtrl",
    
 
     var new_data_get = CabinetService.timeseriesLocationObject.get({
-      object_type: $scope.box.content.object_type,
-      id: $scope.box.content.id
-    }, function (response) {
+      location__object_type__model: $scope.box.content.object_type,
+      location__object_id: $scope.box.content.id
+    }).then(function (response) {
       $scope.timeseries = response;
       if ($scope.timeseries.length > 0) {
         $scope.box.content.selected_timeseries = response[0];
@@ -274,21 +274,15 @@ app.controller("MasterCtrl",
     if ((newVal === oldVal) || ($scope.canceler === undefined)) { return; }
     $scope.canceler.resolve();
     $scope.canceler = $q.defer();
-    var timeseries = $resource('/api/v1/timeseries/:id/?start=:start&end=:end', {
-      id: '@id',
-      start: '@start',
-      end: '@end'
-    },
-    {
-      get:
-        {method: 'GET', timeout: $scope.canceler.promise}
-    });
     if ($scope.box.content.selected_timeseries) {
-      timeseries.get({
-        id: $scope.box.content.selected_timeseries.id,
-        start: $scope.box.content.temporalExtent.start,
-        end: $scope.box.content.temporalExtent.end
-      }, function (response) {
+      CabinetService.timeseries.one(
+        $scope.box.content.selected_timeseries.id + '/'
+      ).withHttpConfig({
+        timeout: $scope.canceler.promise
+      }).get({
+        start: $scope.timeState.start,
+        end: $scope.timeState.end
+      }).then(function (response) {
         $scope.data = {
           series: response.events.series,
           instants: response.events.instants
@@ -301,7 +295,7 @@ app.controller("MasterCtrl",
       var stopString = stop.toISOString().split('.')[0];
       var start = new Date($scope.timeState.start);
       var startString = start.toISOString().split('.')[0];
-      CabinetService.rasterResource.withHttpConfig({
+      CabinetService.raster.withHttpConfig({
         timeout: $scope.canceler.promise
       }).get({
         raster_names: 'rain',
