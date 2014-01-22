@@ -14,8 +14,9 @@ app.controller('TimelineDirCtrl', function ($scope) {
 
       svg.attr('width', options.width)
         .attr('height', options.height)
+        .style("margin-top", margin.top)
         .append("g")
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+          .attr("transform", "translate(" + margin.left + ", 0)")
           //.style("transform", "translate3d(" + margin.left + "," + margin.top + ")")
           .append("rect")
             .attr("width", width)
@@ -23,7 +24,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
             .attr("class", "plot-temporal");
       // Create element for axis
       svg.select('g').append("g")
-        .attr('class', 'x axis');
+        .attr('class', 'x axis')
+        .attr("transform", "translate(0 ," + height + ")");
       return {
         svg: svg,
         height: height,
@@ -41,11 +43,11 @@ app.controller('TimelineDirCtrl', function ($scope) {
         .delay(500)
         .attr('height', options.height)
         .select("g")
-        .attr("transform", "translate(" + graph.margin.left + "," + graph.margin.top + ")")
+        .attr("transform", "translate(" + graph.margin.left + ", 0)")
         .select('g')
         .attr("transform", "translate(0 ," + graph.height + ")");
       graph.svg.select("g").select("rect")
-          .attr("height", graph.height);
+        .attr("height", graph.height);
       return graph;
     };
 
@@ -243,7 +245,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
     * Draws an empty timeline
     */
     var createTimeline = function () {
-      var canvasOptions = {width: element.width(), height: 45};
+      var canvasOptions = {width: element.width(), height: 50};
       var svg = d3.select("#timeline-svg-wrapper").select("svg");
       var graph = timelineCtrl.createCanvas(svg, canvasOptions);
 
@@ -275,7 +277,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
     * Updates the graph with new data
     */
     var updateTimeline = function (graph, data, nEventTypes) {
-      var canvasOptions = {width: element.width(), height: 40 + nEventTypes * 25};
+      var canvasOptions = {width: element.width(), height: 45 + nEventTypes * 25};
       var newGraph = timelineCtrl.updateCanvas(graph, canvasOptions);
       // Update the brush if any
       if (animationBrush) {
@@ -341,7 +343,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
           }
         }
         return typeCount;
-    };
+      };
 
     scope.$watch('timeState.timeline.changed', function (n, o) {
       if (n === o) { return true; }
@@ -372,8 +374,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
         // Create the brush
         animationBrush = timelineCtrl.createBrush(graph);
         // Set the brush to the current animation start/end if defined and within the visible range, otherwise make one up
-        if (scope.timeState.animation.start !== undefined 
-          && scope.timeState.animation.end !== undefined 
+        if (scope.timeState.animation.start !== undefined
+          && scope.timeState.animation.end !== undefined
           && scope.timeState.animation.start > scope.timeState.start
           && scope.timeState.animation.end < scope.timeState.end) {
           graph.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
@@ -392,6 +394,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
           .x(graph.xScale)
           .on("zoom", zoomed)
         );
+        scope.timeState.changedZoom = Date.now();
       }
     });
     
