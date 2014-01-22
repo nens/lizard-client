@@ -44,8 +44,9 @@ def index(request):
             for polygon in boundary.the_geom:
                 boundaries.append(polygon)
                 all_boundaries.append(polygon)
-        (west, south, east, north) = MultiPolygon(boundaries).extent
-        data_bounds[org.name] = {'north': north, 'east': east, 'south': south, 'west': west}
+        if len(boundaries) > 0:
+            (west, south, east, north) = MultiPolygon(boundaries).extent
+            data_bounds[org.name] = {'north': north, 'east': east, 'south': south, 'west': west}
     if len(all_boundaries) > 0:
         (west, south, east, north) = MultiPolygon(all_boundaries).extent
         data_bounds['all'] = {'north': north, 'east': east, 'south': south, 'west': west}
