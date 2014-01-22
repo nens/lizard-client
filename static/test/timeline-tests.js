@@ -87,7 +87,7 @@ describe('Testing timeline directive', function() {
     var canvas = ctrl.createCanvas(d3.select(svg[0]), options);
     expect(canvas.svg.select('g').select('rect').toString()).toBe('[object SVGRectElement]');
     expect(canvas.height).toBe(options.height - 20 - 3);
-    expect(canvas.width).toBe(options.width - 20 - 30);
+    expect(canvas.width).toBe(options.width - 30 - 30);
   });
 
   it('Should make a scale when input is categorical', function () {
@@ -104,13 +104,6 @@ describe('Testing timeline directive', function() {
     var options = { type: 'time' };
     var scale = ctrl.scale(minMax, range, options);
     var axis = ctrl.makeAxis(scale, {orientation: 'bottom', ticks: 5});
-        var directiveElement = angular.element(''
-      +'<div><div id="timeline-svg-wrapper">'
-      + '</div></div>');
-    var canvas = ctrl.createCanvas(directiveElement, {
-      width: 100,
-      height: 200 
-    });
     expect(typeof(axis)).toBe('function');
   });
 
