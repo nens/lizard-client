@@ -11,7 +11,6 @@ app
      * Control function for this directive
      */
     var MapCtrl  = function ($scope, $location) {
-    // TODO: Make this not suck.
       this.initiateLayer = function (layer) {
         if (layer.name === "Simulatie") {
           // Hack for 3Di.
@@ -51,7 +50,7 @@ app
                 slug: sublayer.asset,
                 name: sublayer.asset,
                 useJsonP: false,
-                minZoom: sublayer.min_zoom_click,
+                minZoom: layer.min_zoom_click,
                 maxZoom: 20
               });
               leafletLayer.on('click', function (e) {
@@ -137,6 +136,7 @@ app
         }
       };
 
+
       // Expects a leafletLayer as an argument
       this.addLayer = function (layer) {
         $scope.map.addLayer(layer);
@@ -157,18 +157,16 @@ app
         // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
       };
 
-      this.map = function () {return $scope.map; };// make map object available to outside world.
+      // make map object available to outside world.
+      this.map = function () {return $scope.map; };
       
       this.zoomToTheMagic = function (layer) {
         //console.log('zoomToTheMagic');
         // TODO: make this not hardcoded. And make this a nice UX instead of a brutal one
-        if (layer.name === 'Riolering') {
+        if (layer.name === 'Afvalwater') {
           $scope.map.setView([52.503265633642194, 4.968782196044922], 14, {animate: true});
         }
-        if (layer.name === 'Kunstwerken') {
-          $scope.map.setView([52.60763454517434, 4.794158935546875], 12, {animate: true});
-        }
-        if (layer.name === 'Watergangen') {
+        if (layer.name === 'Oppervlaktewater') {
           $scope.map.setView([52.60763454517434, 4.794158935546875], 11, { animate: true });
         }
         // This button is not available for 3Di
@@ -210,11 +208,19 @@ app
       // see: http://leafletjs.com/reference.html#path-canvas
       window.L_PREFER_CANVAS = true;
       // instead of 'map' element here for testability
-      var osmAttrib='Map data © OpenStreetMap contributors';
+      var osmAttrib = 'Map data © OpenStreetMap contributors';
+      var north = window.data_bbox['north'];
+      var east = window.data_bbox['east'];
+      var south = window.data_bbox['south'];
+      var west = window.data_bbox['west'];
+      var southWest = L.latLng(south, west);
+      var northEast = L.latLng(north, east);
+      var maxBounds = L.latLngBounds(southWest, northEast);
       var map = new L.map(element[0], {
-          center: new L.LatLng(52.27, 5.5698782),
+          center: new L.LatLng((north + south) / 2, (west + east) / 2),
           zoomControl: false,
-          zoom: 8
+          zoom: 8,
+          maxBounds: maxBounds
         });
       map.attributionControl.addAttribution(osmAttrib);
       map.attributionControl.setPrefix('');
@@ -269,7 +275,7 @@ app
 
       scope.map.on('move', function () {
         // NOTE: Check whether a $digest is already happening before using apply
-        if(!scope.$$phase) {
+        if (!scope.$$phase) {
           scope.$apply(function () {
             scope.mapState.moved = Date.now();
             scope.mapState.bounds = scope.map.getBounds();
@@ -293,6 +299,7 @@ app
           });
         }
       });
+
     };
 
     return {
@@ -392,124 +399,6 @@ app.directive('zoomToLayer', function () {
           mapCtrl.zoomToTheMagic(scope.layerToZoomTo);
         }
       });
-    }
-  };
-});
-
-// NOTE: read geojson layer, geojson support should be in main map directive
-//
-app.directive('sewerage', function ($http) {
-  return {
-    restrict: 'A',
-    require: 'map',
-    link: function (scope, element, attrs, mapCtrl) {
-
-      scope.$watch('tools.active', function () {
-        if (scope.tools.active === "sewerage") {
-          for (var mapLayer in scope.mapState.layers) {
-            var layer = scope.mapState.layers[mapLayer];
-            if (layer.name === 'Riolering') {
-              // NOTE: disable alerts
-              layer.active = true;
-              scope.mapState.changed = Date.now();
-            }
-          }
-          scope.timeState.timeline.data.sewerage = scope.formatted_geojsondata;
-        } else {
-          for (var mapLayer in scope.mapState.layers) {
-            var layer = scope.mapState.layers[mapLayer];
-            if (layer.name === 'Riolering') {
-              // NOTE: disable alerts
-              layer.active = false;
-              scope.mapState.changed = Date.now();
-            }
-          }
-        }
-      });
-
-      var pumpstationLayer,
-          rawGeojsondata,
-          formatted_geojsondata;
-
-      scope.$watch('mapState.changed', function () {
-        var layer;
-        for (var mapLayer in scope.mapState.layers) {
-          var layer = scope.mapState.layers[mapLayer];
-          if (layer.name === 'Riolering' && layer.active) {
-            // NOTE: disable alerts
-            // NOTE: this should not be here.
-            mapCtrl.addLayer(pumpstationLayer);
-          } else if (layer.name === 'Riolering' && !layer.active) {
-            if (pumpstationLayer) {
-              mapCtrl.removeLayer(pumpstationLayer);
-            }
-          }
-        }
-      });
-
-      scope.$watch('box.content.sewerage.id', function () {
-        if (scope.box.content.sewerage) {
-          //NOTE: do this with d3
-          $('.pumpstation_sewerage').removeClass('selected');
-          $('#pumpstation_' + scope.box.content.sewerage.id).addClass('selected');
-        }
-      });
-   
-      var events = '/static/data/pumpstation_sewerage_integration.geojson';
-      $http.get(events)
-        .success(function (data) {
-          createGeoJsonLayer(data);
-          function format(data) {
-            var formatted = [];
-            for (var single in data.features ) {
-              var feature = data.features[single];
-              if (feature.properties.events) {
-                for (var i in feature.properties.events) {
-                  var date = Date.parse(feature.properties.events[i].timestamp);
-                  formatted.push({
-                    date: date,
-                    value: feature.properties.id
-                  });
-                }
-              }
-            }
-            return formatted;
-          }
-          scope.formatted_geojsondata = format(data);
-          scope.timeState.changedZoom = !scope.timeState.changedZoom;
-          scope.box.content.isw.count = 0;
-          scope.rawGeojsondata = data;
-        });
-
-      var createGeoJsonLayer = function (data) {
-        pumpstationLayer = new L.GeoJSON(data, {
-          pointToLayer: function (geojson, latlng) {
-            var pumpid = geojson.properties.id;
-            var cssclass = '';
-            if (geojson.properties.events) {
-              cssclass = "exceeded";
-            }
-            var pumpIcon = new L.DivIcon({
-              html: '<span class="pumpstation_sewerage ' + cssclass  + '" id = "pumpstation' + pumpid + '">&</span>',
-              iconAnchor: new L.Point(20, 20)
-            });
-            var pumpMarker = new L.Marker(latlng, {icon: pumpIcon});
-
-            pumpMarker.on('click', function (e) {
-              this.feature.properties.entity_name = 'pumpstation_sewerage';
-              scope.getTimeseries(this.feature.properties, 'nochange');
-              scope.box.content.sewerage = {
-                start_level: this.feature.properties.start_level,
-                stop_level: this.feature.properties.stop_level,
-                capacity: this.feature.properties.capacity,
-                type: this.feature.properties.type,
-                id: this.feature.properties.id
-              };
-            });
-            return pumpMarker;
-          }
-        });
-      };
     }
   };
 });

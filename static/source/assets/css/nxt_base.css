@@ -65,6 +65,11 @@ h1, h2, h3, h4, h5 {
     -o-animation: grow .6s linear  forwards;
 }
 
+i, a:link {text-decoration:none !important;}
+i, a:visited {text-decoration:none !important;}
+i, a:hover {text-decoration:none !important;}
+i, a:active {text-decoration:none !important;}
+
 @keyframes grow {
     0% {
         width: 5px;
@@ -189,8 +194,13 @@ h1, h2, h3, h4, h5 {
     transition: .3s ease;
 }
 
+/* LEAFLET OVERRIDES */
 .leaflet-container a {
     color: #16a085;
+}
+
+.crosshair {
+    cursor: crosshair;
 }
 
 /*.leaflet-layer.faded-gray {*/
@@ -199,6 +209,8 @@ h1, h2, h3, h4, h5 {
     /*-webkit-filter: grayscale(100%); [> Chrome 19+ & Safari 6+ <]*/
     /*opacity: 0.50;*/
 /*}*/
+
+/* END LEAFLET OVERRIDES*/
 
 .slide-left{
     right: 0;
@@ -238,7 +250,7 @@ h1, h2, h3, h4, h5 {
     opacity: 0;
     font-size: 18px;
     margin-top: 6px;
-    margin-right: 40px;
+    margin-right: 5px;
 }
 
 .zoomto-icon:hover {
@@ -246,6 +258,10 @@ h1, h2, h3, h4, h5 {
 }
 
 .zoomto-icon:active {
+    color: #c0392b;
+}
+
+.icon-active {
     color: #c0392b;
 }
 
@@ -385,6 +401,36 @@ h1, h2, h3, h4, h5 {
     text-shadow: none;
 }
 
+.cursor-tooltip {
+    background: rgb(54, 54, 54);
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid transparent;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    color: #fff;
+    font: 12px/18px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    margin-left: 20px;
+    margin-top: -21px;
+    padding: 4px 8px;
+    position: absolute;
+    /*visibility: hidden;*/
+    /*content: "asldfjlksadjfsd";*/
+    white-space: nowrap;
+    z-index: 10000;
+}
+
+.cursor-tooltip:before {
+        border-right: 6px solid black;
+        border-right-color: rgba(0, 0, 0, 0.5);
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        content: "";
+        position: absolute;
+        top: 7px;
+        left: -7px;
+}
+
+
 .layer-switcher label {
     color: #2c3e50;
     font-style: normal;
@@ -429,6 +475,7 @@ h1, h2, h3, h4, h5 {
 }
 
 #ribbon {
+    height: 40px;
     top: 16px;
     left: -60px;
     float: right;
@@ -661,10 +708,8 @@ h1, h2, h3, h4, h5 {
 
 .timeline {
     min-height: 0;
-    height: 0;
     bottom: 0;
-    background-color: #fff;
-    color: #222;
+    background-color: rgba(255, 255, 255, 0.9);
     -o-transition:.3s;
     -ms-transition:.3s;
     -moz-transition:.3s;
@@ -686,15 +731,50 @@ h1, h2, h3, h4, h5 {
 }
 
 .bovenbalk{
-    box-shadow: 0 3px 10px #888;
+    background-color: rgba(236, 240, 241,1.0);
+    height: 40px;
+    line-height: 40px;
 }
 
 .middle {
     vertical-align: middle;
+    height: 40px;
+}
+
+/*.navbar .nav > li > a:focus,*/
+.timeline-button:hover {
+    color: rgba(127, 140, 141,1.0);
+    text-decoration: none;
+}
+
+.timeline-button-active:active {
+    color: rgba(231, 76, 60,1.0);
+    text-decoration: none;
+}
+
+.timeline-button {
+    float: none;
+    color: rgba(44, 62, 80,1.0);
+    text-decoration: none;
+    text-shadow: none;
+    -o-transition:.3s;
+    -ms-transition:.3s;
+    -moz-transition:.3s;
+    -webkit-transition:.3s;
+    transition:.3s;
+    font-size: 17px;
+}
+
+.nxt-font {
+    font-family: 'Roboto Slab', serif;
+    text-transform: none;
+    font-size: 15px !important; 
+    color: #2c3e50;
+    text-shadow: none;
 }
 
 .extra-padding {
-    padding: 7px;
+    padding: 15px;
 }
 
 .btn {
@@ -773,6 +853,47 @@ h1, h2, h3, h4, h5 {
   stroke: rgba(240, 50, 60, 0.6);
 }
 
+.button-list-container {
+    position: absolute;
+    top: 72px;
+    right: 200px;
+    width: 28px;
+    text-align: center;
+}
+
+.button-list-item {
+    background-color: rgba(255, 255 ,255 , 0.9);
+    padding: 5px;
+}
+
+.button-list-item:first-child {
+    -webkit-border-top-left-radius: 2px;
+    -moz-border-radius-topleft: 2px;
+    border-top-left-radius: 2px;
+}
+
+.button-list-item:last-child {
+    -webkit-border-bottom-left-radius: 2px;
+    -moz-border-radius-bottomleft: 2px;
+    border-bottom-left-radius: 2px;
+}
+
+.button-list-link {
+    -o-transition:.3s;
+    -ms-transition:.3s;
+    -moz-transition:.3s;
+    -webkit-transition:.3s;
+    transition:.3s;
+    color: rgb(52, 73, 94);
+}
+
+.button-list-link:hover {
+    color: rgb(41, 128, 185);
+}
+
+.button-list-link.active {
+    color: rgb(192, 57, 43);
+}
 
 .resize path {
   fill: #666;
@@ -792,6 +913,11 @@ h1, h2, h3, h4, h5 {
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
+  font-family: 'Roboto Slab', serif;
+text-transform: none;
+font-size: 15px;
+fill: #2c3e50;
+text-shadow: none;
 }
 
 .brush .extent {

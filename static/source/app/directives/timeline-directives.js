@@ -22,7 +22,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
         .attr('width', maxwidth)
         .attr('height', maxheight)
         .append("svg:g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .style("transform", "translate3d(" + margin.left + "," + margin.top + ")");
       svg.append("svg:rect")
         .attr("width", width)
         .attr("height", height)
@@ -86,7 +87,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
             .domain(function (d) {
               return d3.set(d.event_sub_type).values();
             })
-            .range(colorbrewer.Set2[6]);
+            .range($scope.colors[8]);
         }
         else if (options.scale === "linear") {
           scale = d3.scale.linear()
@@ -183,11 +184,12 @@ app.controller('TimelineDirCtrl', function ($scope) {
           .attr("cy", heightfunction)
           .attr("r", 5)
           .attr("fill-opacity", 1)
+          .attr('fill', yfunction)
           .on('click', function (d) {
             $scope.box.type = 'aggregate';
             $scope.box.content.eventValue = d;
             $scope.$apply();
-          });
+            });
     };
 
     //NOTE: not optimal class switching 
@@ -231,6 +233,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
     };
 
     this.removeBrush = function (svg) {
+      console.log("removing brush", this.brushg, svg);
       if (this.brushg) {
         this.brushg.remove();
       }
@@ -274,17 +277,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
       });
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
       scope.timeState.countCurrentEvents();
-
-      //Set color based on event_subtype
-      var scale = d3.scale.ordinal()
-        .domain(function (d) {
-          return d3.set(d.event_sub_type).values();
-        })
-        .range(colorbrewer.Set2[6]);
-      d3.selectAll("circle")
-        .attr('fill', function (d) {
-          return scale(d.event_sub_type);
-        });
     };
 
     scope.$watch('mapState.moved', function () {
@@ -425,7 +417,10 @@ app.controller('TimelineDirCtrl', function ($scope) {
         chart.svg.on('.zoom', null);
 
         animationBrush = timelineCtrl.createBrush(scope, chart.svg, chart.x, chart.height, chart.xKey);
-        if (scope.timeState.animation.start !== undefined && scope.timeState.animation.end !== undefined) {
+        if (scope.timeState.animation.start !== undefined 
+          && scope.timeState.animation.end !== undefined 
+          && scope.timeState.animation.start > scope.timeState.start
+          && scope.timeState.animation.end < scope.timeState.end) {
           chart.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
         } else {
           var buffer = (scope.timeState.end - scope.timeState.start) / 100;

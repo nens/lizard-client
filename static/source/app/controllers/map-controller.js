@@ -44,6 +44,10 @@ app.controller('MapCtrl', function ($scope) {
     } else if (newVal === 50) {
       $scope.mapState.activeBaselayer = 2;
       $scope.switchBaseLayer();
+    } else if (newVal === 53) {
+      $scope.timeState.toggleEvents("Twitter");
+    } else if (newVal === 54) {
+      $scope.timeState.toggleEvents("Meldingen");
     }
   });
 

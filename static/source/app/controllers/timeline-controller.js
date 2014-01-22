@@ -51,7 +51,8 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource, $http, CabinetSe
     var panZoom = {
       lat: geometry.coordinates[1],
       lng: geometry.coordinates[0],
-      zoom: 15};
+      zoom: 15
+    };
     $scope.panZoom = panZoom;
     $scope.mapState.moved = Date.now();
   };
@@ -88,7 +89,7 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource, $http, CabinetSe
   $scope.timeState.resizeTimeline = function () {
     document.getElementById('timeline').style.visibility = 'visible';
     if ($scope.timeState.hidden === false) {
-      var height = ($scope.timeState.height > 35) ? 35 + $scope.timeState.height: 80;
+      var height = ($scope.timeState.height > 35) ? 45 + $scope.timeState.height: 90;
       document.getElementById('timeline').style.height = height + 'px';
     }
     else { document.getElementById('timeline').style.height = '0'; }
