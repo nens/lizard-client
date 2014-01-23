@@ -46,31 +46,6 @@ app.controller('TimelineCtrl', function ($scope, $q, $http, CabinetService) {
     }
   };
 
-  /**
-  * Event enabler
-  */
-  $scope.toggleTimeline = function () {
-    if ($scope.timeState.hidden) {
-      $scope.timeState.hidden = false;
-      $scope.timeState.resizeTimeline();
-    } else if ($scope.timeState.hidden === false) {
-      $scope.timeState.hidden = true;
-      $scope.timeState.resizeTimeline();
-    } else {
-      $scope.timeState.hidden = false;
-      document.getElementById('timeline').style.height = '35px';
-    }
-  };
-
-  $scope.timeState.resizeTimeline = function () {
-    document.getElementById('timeline').style.visibility = 'visible';
-    if ($scope.timeState.hidden === false) {
-      var height = ($scope.timeState.height > 35) ? 45 + $scope.timeState.height: 90;
-      document.getElementById('timeline').style.height = height + 'px';
-    }
-    else { document.getElementById('timeline').style.height = '0'; }
-  };
-
   $scope.timeState.toggleEvents = function (name) {
     if ($scope.timeState.timeline.data[name]) {
       if ($scope.timeState.timeline.data[name].active) {
@@ -80,6 +55,7 @@ app.controller('TimelineCtrl', function ($scope, $q, $http, CabinetService) {
     } else {
       getEvents(name);
     }
+    if ($scope.timeState.hidden !== false) { $scope.toggleTimeline(); }
   };
   
   var getEvents = function (name) {

@@ -462,6 +462,25 @@ app.controller("MasterCtrl",
 
 //END keypress
 
+
+  /**
+  * Event enabler
+  */
+  $scope.toggleTimeline = function () {
+    if ($scope.timeState.hidden) {
+      $scope.timeState.hidden = false;
+      angular.element('#timeline').css('bottom', 0);
+    } else if ($scope.timeState.hidden === false) {
+      $scope.timeState.hidden = true;
+      angular.element('#timeline').css('bottom', 0 - angular.element('#timeline').height());
+    } else {
+      angular.element('#timeline').css('bottom', 0);
+      angular.element('#timeline-ribbon').css('visibility', 'visible');
+      $scope.timeState.hidden = false;
+    }
+  };
+
+
 /*
 * animation stuffs
 */
@@ -650,10 +669,7 @@ app.controller("MasterCtrl",
       }
       getRadarImages();
       $scope.rain.enabled = true;
-      if (!$scope.timeState.hidden) {
-        $scope.timeState.hidden = false;
-        $scope.timeState.resizeTimeline();
-      }
+      if ($scope.timeState.hidden !== false) { $scope.toggleTimeline(); }
     } else if ($scope.rain.enabled || toggle === 'off') {
       $scope.rain.enabled = false;
       localStorage.clear();
