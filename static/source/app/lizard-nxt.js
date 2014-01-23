@@ -661,11 +661,13 @@ app.controller("MasterCtrl",
       var twentyFourAgo = Date.now() - 86400000;
       if ($scope.timeState.start < twentyFourAgo) {
         $scope.timeState.start = twentyFourAgo;
-        $scope.timeState.timeline.changed = !$scope.timeState.timeline.changed;
+        $scope.timeState.changeOrigin = 'rain';
+        $scope.timeState.changedZoom = !$scope.timeState.changedZoom;
       }
       if ($scope.timeState.end < twentyFourAgo || $scope.timeState.end > Date.now()) {
         $scope.timeState.end =  Date.now();
-        $scope.timeState.timeline.changed = !$scope.timeState.timeline.changed;
+        $scope.timeState.changeOrigin = 'rain';
+        $scope.timeState.changedZoom = !$scope.timeState.changedZoom;
       }
       getRadarImages();
       $scope.rain.enabled = true;
