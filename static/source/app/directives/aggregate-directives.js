@@ -19,16 +19,11 @@ app.directive('vectorlayer', function () {
        * add click event handling
        */
       function circleStyle(features) {
-        var scale;
-        if (!scope.timeState.colorScale) {
-          scale = d3.scale.ordinal()
+        var scale = d3.scale.ordinal()
             .domain(function (d) {
               return d3.set(d.event_sub_type).values();
             })
             .range(scope.colors[8]);
-        } else {
-          scale = scope.timeState.colorScale;
-        }
 
         features
           .attr('fill-opacity', 0.8)
@@ -43,13 +38,6 @@ app.directive('vectorlayer', function () {
             scope.$apply();
           });
       }
-
-      scope.$watch('timeState.colorScale', function () {
-        d3.selectAll(".circle")
-        .attr('fill', function (d) {
-          return scope.timeState.colorScale(d.event_sub_type);
-        });
-      });
 
       /*
        * Reformat time to d3 time formatted object 
