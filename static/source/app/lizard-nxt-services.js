@@ -1,4 +1,4 @@
-var services = angular.module("lizard-nxt.services", ['ngResource']);
+var services = angular.module("lizard-nxt.services", []);
 
 services.service("CabinetService", ["Restangular",
   function (Restangular, $rootScope) {

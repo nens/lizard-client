@@ -4,7 +4,6 @@
  * Initialise app
  */
 var app = angular.module("lizard-nxt", [
-  'ngResource',
   'graph',
   'omnibox',
   'restangular',
