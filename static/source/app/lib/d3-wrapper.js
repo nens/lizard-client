@@ -13,61 +13,60 @@
 'use strict';
 
 var NxtD3 = function (svg, options) {
-  this.svg = d3.select(svg);
+  this.svg = svg;
 
   this.createCanvas = function (svg, options) {
-    var margin = {
+    this.margin = {
       top: 3,
       right: 30,
       bottom: 20,
       left: 30
     };
 
-    var width = options.width - margin.left - margin.right,
-        height = options.height - margin.top - margin.bottom;
+    this.width = options.width - this.margin.left - this.margin.right;
+    this.height = options.height - this.margin.top - this.margin.bottom;
 
     svg.attr('width', options.width)
       .attr('height', options.height)
-      .style("margin-top", margin.top)
+      .style("margin-top", this.margin.top)
       .append("g")
-        .attr("transform", "translate(" + margin.left + ", 0)")
+        .attr("transform", "translate(" + this.margin.left + ", 0)")
         //.style("transform", "translate3d(" + margin.left + "," + margin.top + ")")
         .append("rect")
-          .attr("width", width)
-          .attr("height", height)
+          .attr("width", this.width)
+          .attr("height", this.height)
           .attr("class", "plot-temporal");
     // Create element for axis
     svg.select('g').append("g")
       .attr('class', 'x axis')
-      .attr("transform", "translate(0 ," + height + ")");
-    return {
-      svg: svg,
-      height: height,
-      width: width,
-      margin: margin
-    };
+      .attr("transform", "translate(0 ," + this.height + ")");
+    this.svg = svg;
   };
 
-  this.updateCanvas = function (graph, options) {
-    graph.width = options.width - graph.margin.left - graph.margin.right;
-    graph.height = options.height - graph.margin.top - graph.margin.bottom;
+  this.updateCanvas = function (options) {
+    this.width = options.width - this.margin.left - this.margin.right;
+    this.height = options.height - this.margin.top - this.margin.bottom;
 
-    graph.svg.transition()
+    this.svg.transition()
       .duration(500)
       .delay(500)
       .attr('height', options.height)
       .select("g")
-      .attr("transform", "translate(" + graph.margin.left + ", 0)")
+      .attr("transform", "translate(" + this.margin.left + ", 0)")
       .select('g')
-      .attr("transform", "translate(0 ," + graph.height + ")");
-    graph.svg.select("g").select("rect")
-      .attr("height", graph.height);
-    return graph;
+      .attr("transform", "translate(0 ," + this.height + ")");
+    this.svg.select("g").select("rect")
+      .attr("height", this.height);
   };
 
+  /*
+  * 
+  * @param {min: float, max: float} minMax - minimum and maximum of your input data
+  * @param {min: float, max: float} range - minimum and maximum of your element (width or height)
+  * @param {scale: string, type: string, colors: [array of strings]} options - options for your scale
+  *
+  */
   this.scale = function (minMax, range, options) {
-    // Instantiate a d3 scale based on min max and 
-    // width and height of plot
     var scale;
     if (options.type === 'time') {
       scale = d3.time.scale()
@@ -80,7 +79,7 @@ var NxtD3 = function (svg, options) {
           .domain(function (d) {
             return d3.set(d.event_sub_type).values();
           })
-          .range($scope.colors[8]);
+          .range(options.colors);
       }
       else if (options.scale === "linear") {
         scale = d3.scale.linear()
@@ -90,6 +89,7 @@ var NxtD3 = function (svg, options) {
     }
     return scale;
   };
+  
   this.makeAxis = function (scale, options) {
     // Make an axis for d3 based on a scale
     var axis;
