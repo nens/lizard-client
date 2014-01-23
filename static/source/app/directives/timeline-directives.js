@@ -423,6 +423,9 @@ app.controller('TimelineDirCtrl', function ($scope) {
           .x(graph.xScale)
           .on("zoom", zoomed)
         );
+        // Update circle positions
+        graph.svg.selectAll("circle")
+          .attr("cx", function (d) { return Math.round(graph.xScale(d.timestamp)); });
       }
     });
 

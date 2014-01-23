@@ -22,12 +22,14 @@ h1, h2, h3, h4, h5 {
     position: absolute;
 }
 
-  @media (min-width: 767px) /* @grid-float-breakpoint -1 */
+@media (min-width: 767px) /* @grid-float-breakpoint -1 */
   {
     .navbar-nav.navbar-right:last-child {
-      margin-right: -74px !important;
+      margin-right: 0px !important;
     }
   }
+
+
   .navbar {
     border: none !important;
   }
@@ -270,7 +272,6 @@ i, a:active {text-decoration:none !important;}
 .icon-active {
     color: #c0392b;
 }
-
 
 .visible {
     opacity: 1;
@@ -1025,6 +1026,11 @@ header {
 /*.navbar .nav > li > a:focus,*/
 .navbar .nav > li > a:hover {
     color: #34495e;
+    text-decoration: none;
+}
+
+.navbar .nav > li > a.logout:hover {
+    color: #C0392B;
     text-decoration: none;
 }
 

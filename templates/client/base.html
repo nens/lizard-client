@@ -52,25 +52,37 @@
         </div>
 
         <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
+          <ul class="nav navbar-nav navbar-right" style="">
 
             {% if user.is_authenticated %}
-              <li>
-                <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="" id="username"><i id="" class="icon-user"></i>&nbsp;&nbsp;{{ user.first_name }}</div></a>
-              </li>
               <li class="visible-xs">
-                <a class="user" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"><div class="" id="username"><i id="" class="icon-off"></i>&nbsp;&nbsp;Uitloggen</div></a>
-              </li>
+                <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="" id="username"><i id="" class="icon-user"></i>&nbsp;&nbsp;{{ user.first_name }}</div></a>
+              </li>            
               <li class="visible-sm visible-md visible-lg">
-                <a class="user" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"><div class="pull-right" id="username" style="padding-right:20px;"><i id="" class="icon-off"></i></div></a>
-              </li>              
+                <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}">
+                  <div class="" id="username">
+                    <i id="" class="icon-user" style="font-size:1.2em;"></i>&nbsp;&nbsp;{{ user.first_name }}
+                  </div>
+                </a>
+              </li>
 
+              <li class="visible-xs">
+                <a class="user logout" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"><div class="" id="username"><i id="" class="icon-off"></i>&nbsp;&nbsp;Uitloggen</div></a>
+              </li>
+              <li class="visible-sm visible-md visible-lg" style="width:63px;">
+                <a class="user logout" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()">
+                  <div class="pull-right" id="username">
+                    <i id="" style="font-size:1.2em;" class="icon-off"></i>
+                  </div>
+                </a>
+              </li>
             {% else %}
               <li>
                 <a href="{% url "login" %}?next=/" title="{% trans 'Login' %}">
                   <i class="icon-user pull-right"></i></a>
-              </li>
-              {% endif %}
+              </li>            
+            {% endif %}
+
           </ul>
           {% block site_actions %}{% endblock site_actions %}
         </div><!--/.nav-collapse -->
