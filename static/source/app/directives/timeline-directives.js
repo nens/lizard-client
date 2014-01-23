@@ -320,6 +320,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       scope.$apply(function () {
         scope.timeState.start = graph.xScale.domain()[0].getTime();
         scope.timeState.end = graph.xScale.domain()[1].getTime();
+        scope.timeState.changeOrigin = 'timeline';
         scope.timeState.changedZoom = !scope.timeState.changedZoom;
       });
     };

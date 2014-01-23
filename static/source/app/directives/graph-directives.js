@@ -274,6 +274,7 @@ angular.module('graph')
               // step out of isolate scope with $parent.
               scope.$parent.timeState.start = x.scale.domain()[0].getTime();
               scope.$parent.timeState.end = x.scale.domain()[1].getTime();
+              scope.$parent.timeState.changeOrigin = 'barChart';
               scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
             });
         };
@@ -574,6 +575,7 @@ angular.module('graph')
               // NOTE: maybe with $parent
               scope.$parent.timeState.start = x.scale.domain()[0].getTime();
               scope.$parent.timeState.end = x.scale.domain()[1].getTime();
+              scope.$parent.timeState.changeOrigin = 'lineChart';
               scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
             }); 
           }
