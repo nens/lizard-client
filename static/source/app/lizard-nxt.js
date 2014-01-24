@@ -181,6 +181,18 @@ app.controller("MasterCtrl",
   };
 // END TIME MODEL
 
+  $scope.timeState.countCurrentEvents = function () {
+    for (var key in $scope.timeState.timeline.data) {
+      $scope.timeState.timeline.data[key].currentCount = 0;
+      for (var j = 0; j < $scope.timeState.timeline.data[key].features.length; j++) {
+        var feature = $scope.timeState.timeline.data[key].features[j];
+        if (feature.inTempExtent && feature.inSpatExtent) {
+          $scope.timeState.timeline.data[key].currentCount++;
+        }
+      }
+    }
+  };
+
 // COLOR MODEL
   $scope.colors =  {
     3: ["#27ae60", "#2980b9", "#8e44ad"],
@@ -189,6 +201,70 @@ app.controller("MasterCtrl",
     6: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12", "#d35400"],
     7: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12", "#d35400", "#c0392b"],
     8: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12", "#d35400", "#c0392b", "#16a085"]
+  };
+
+// EVENTS MODEL
+  $scope.events = {
+    types: {}, // Metadata object
+    data: {}, // Long format events data object 
+  };
+
+  $scope.events.toggleEvents = function (name) {
+    if ($scope.events.types[name]) {
+      if ($scope.events.types[name].active) {
+        $scope.events.types[name].active = false;
+      } else { $scope.events.types[name].active = true; }
+      $scope.timeState.changedZoom = !$scope.timeState.changedZoom;
+    } else {
+      getEvents(name);
+    }
+    if ($scope.timeState.hidden !== false) { $scope.toggleTimeline(); }
+  };
+  
+  var getEvents = function (name) {
+    $scope.timeState.timeline.data[name] = [];
+/*    CabinetService.events.get({
+      type: name,
+      start: $scope.timeState.start,
+      end: $scope.timeState.end,
+      extent: $scope.mapState.bounds
+      }, function (response) {
+        $scope.timeState.timeline.data[name] = response.results[0];
+        $scope.timeState.timeline.data[name].count = response.count;
+        $scope.timeState.timeline.data[name].active = true;
+        $scope.timeState.timeline.changed = !$scope.timeState.timeline.changed;
+      }
+    );*/
+    var url = (name == 'Twitter') ? '/static/data/twit.json': 'static/data/melding.json';
+    $http.get(url)
+    .success(function (response) {
+      $scope.timeState.timeline.data[name] = response.results[0];
+      $scope.timeState.timeline.data[name].count = response.count;
+      $scope.timeState.timeline.data[name].active = true;
+      $scope.timeState.timeline.changed = Date.now();
+    });
+  };
+
+  /** 
+  * Formats data into long format
+  **/
+  var formatData = function () {
+    // Create data object
+    var data = [];
+    var typeCount = 0;
+    for (var key in scope.timeState.timeline.data) {
+      typeCount++;
+      if (scope.timeState.timeline.data[key].active) {
+        var iData = scope.timeState.timeline.data[key].features;
+        angular.forEach(iData, function (feature) {
+          feature.event_type = typeCount;
+          // Create unique id, a combo of time and location. I assume this is always unique..
+          feature.id = "" + key + feature.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
+          data.push(feature);
+        });
+      }
+    }
+    return data;
   };
 
   // 3Di START

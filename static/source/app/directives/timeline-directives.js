@@ -327,29 +327,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
     // Get the timeline-graph
     var graph = createTimeline();
 
-
-    /** 
-    * Formats data into long format
-    **/
-    var formatData = function () {
-      // Create data object
-      var data = [];
-      var typeCount = 0;
-      for (var key in scope.timeState.timeline.data) {
-        typeCount++;
-        if (scope.timeState.timeline.data[key].active) {
-          var iData = scope.timeState.timeline.data[key].features;
-          angular.forEach(iData, function (feature) {
-            feature.event_type = typeCount;
-            // Create unique id, a combo of time and location. I assume this is always unique..
-            feature.id = "" + key + feature.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
-            data.push(feature);
-          });
-        }
-      }
-      return data;
-    };
-
     var eventTypeLength = function () {
         var typeCount = 0;
         for (var key in scope.timeState.timeline.data) {
@@ -363,7 +340,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
     scope.$watch('timeState.timeline.changed', function (n, o) {
       if (n === o) { return true; }
       var nEventTypes = eventTypeLength();
-      var data = formatData();
+      var data = scope.events.data;
       graph = updateTimeline(graph, data, nEventTypes);
       scope.timeState.changedZoom = Date.now();
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
