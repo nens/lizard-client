@@ -52,6 +52,9 @@ h1, h2, h3, h4, h5 {
   .navbar-brand span {
     display: none;
   }
+  .navbar-collapse {
+    padding-right: 0px !important;
+  }
 
 
 .clickObj {
