@@ -242,7 +242,7 @@ angular.module('graph')
         var x = graphCtrl.maxMin(data, '1');
         var y = graphCtrl.maxMin(data, '0');
 
-        x.scale = graphCtrl.scale(x.min, x.max, {
+        x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
           range: [0, width],
           type: 'time'
         });
@@ -406,7 +406,7 @@ angular.module('graph')
         var x = graphCtrl.maxMin(data, 'x');
         var y = graphCtrl.maxMin(data, 'y');
 
-        x.scale = graphCtrl.scale(x.min, x.max, {
+        x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
           range: [0, width], 
         });
         y.scale = graphCtrl.scale(y.min, y.max, {
@@ -517,7 +517,7 @@ angular.module('graph')
 
         if (header[keys.x].quantity == 'time') {
           var x = graphCtrl.maxMin(data, keys.x);
-            x.scale = graphCtrl.scale(x.min, x.max, {
+            x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
               range: [0, width],
               type: 'time'
             });
@@ -527,7 +527,7 @@ angular.module('graph')
             });            
         } else {
           var x = graphCtrl.maxMin(data, keys.x);
-            x.scale = graphCtrl.scale(x.min, x.max, {
+            x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
               range: [0, width]
             });
             x.tickFormat = "";
