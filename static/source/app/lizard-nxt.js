@@ -58,17 +58,15 @@ app.config(function ($interpolateProvider) {
  * 
  * Stuff to reconsider, rethink, refactor:
  *
- * * [ ] Refactor master controller (states, data!)
- * * [ ] Refactor timeline out of mapState with its own scope
- * * [*] Refactor index.html and base-debug.html
- * * [*] Fix + document Gruntfile.js / workflow
+ * * [ ] Refactor map controller and directives
+ * * [-] Refactor master controller (states, data!)
+ * * [-] Refactor timeline out of mapState with its own scope
+ * * [+] Refactor index.html and base-debug.html
+ * * [ ] Fix + document Gruntfile.js / workflow
  * * [ ] Refactor css (csslint, -moz and -webkit)
+ * * [ ] Move or delete common directory in source
  * * [ ] Integrate 3di into this paradigm (move from threedi to source/app)
- * * [ ] Refactor map controller and directives (e.g. layers come from djangotemplates)
- * * [ ] Refactor timeline controller and directive
- * * [ ] Refactor search controller (including search design with ES / Haystack)
- * * [ ] There still is a box model on the scope that is now being **abused** to display
- * data in the box. That should be possible with data and state.tools models
+ * * [+] Refactor timeline controller and directive
  *
  */
 app.controller("MasterCtrl",
@@ -241,7 +239,9 @@ app.controller("MasterCtrl",
    
 
     var new_data_get = CabinetService.timeseries.get({
-      object: $scope.box.content.object_type + '$' + $scope.box.content.id
+      object: $scope.box.content.object_type + '$' + $scope.box.content.id,
+      start: $scope.timeState.start,
+      end: $scope.timeState.end
     }).then(function (response) {
       $scope.timeseries = response;
       if ($scope.timeseries.length > 0) {
