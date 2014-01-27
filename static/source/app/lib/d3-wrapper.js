@@ -25,38 +25,63 @@ var NxtD3 = function (svg, options) {
 
     this.width = options.width - this.margin.left - this.margin.right;
     this.height = options.height - this.margin.top - this.margin.bottom;
+    var that = this;
 
     svg.attr('width', options.width)
       .attr('height', options.height)
-      .style("margin-top", this.margin.top)
+      .style("margin-top", that.margin.top)
       .append("g")
-        .attr("transform", "translate(" + this.margin.left + ", 0)")
+        .attr("transform", "translate(" + that.margin.left + ", 0)")
         //.style("transform", "translate3d(" + margin.left + "," + margin.top + ")")
         .append("rect")
-          .attr("width", this.width)
-          .attr("height", this.height)
-          .attr("class", "plot-temporal");
+          .attr("width", that.width)
+          .attr("height", that.height)
+          .attr("class", "plot");
     // Create element for axis
     svg.select('g').append("g")
       .attr('class', 'x axis')
-      .attr("transform", "translate(0 ," + this.height + ")");
+      .attr("transform", "translate(0 ," + that.height + ")");
+    svg.select('g').append("g")
+      .attr('class', 'y axis');
     this.svg = svg;
   };
 
   this.updateCanvas = function (options) {
     this.width = options.width - this.margin.left - this.margin.right;
     this.height = options.height - this.margin.top - this.margin.bottom;
+    var that = this;
 
     this.svg.transition()
       .duration(500)
       .delay(500)
       .attr('height', options.height)
       .select("g")
-      .attr("transform", "translate(" + this.margin.left + ", 0)")
+      .attr("transform", "translate(" + that.margin.left + ", 0)")
       .select('g')
-      .attr("transform", "translate(0 ," + this.height + ")");
+      .attr("transform", "translate(0 ," + that.height + ")");
     this.svg.select("g").select("rect")
-      .attr("height", this.height);
+      .attr("height", that.height);
+  };
+
+  /*
+  *
+  * @param {Array} data - Data that you want the min max of.
+  * @param {string} key - key of the parameter in the data list.
+  *
+  */
+  this.maxMin = function (id, key) {
+    var that = this;
+
+    var max = d3.max(that.charts[id].data, function (d) {
+            return Number(d[key]);
+          });
+    var min = d3.min(that.charts[id].data, function (d) {
+            return Number(d[key]);
+          });
+    return {
+      max: max,
+      min: min
+    };
   };
 
   /*
@@ -66,12 +91,12 @@ var NxtD3 = function (svg, options) {
   * @param {scale: string, type: string, colors: [array of strings]} options - options for your scale
   *
   */
-  this.scale = function (minMax, range, options) {
+  this.createScale = function (minMax, options) {
     var scale;
     if (options.type === 'time') {
       scale = d3.time.scale()
         .domain([minMax.min, minMax.max])
-        .range([range.min, range.max]);
+        .range([options.range.min, options.range.max]);
     }
     else {
       if (options.scale === "ordinal") {
@@ -84,14 +109,19 @@ var NxtD3 = function (svg, options) {
       else if (options.scale === "linear") {
         scale = d3.scale.linear()
           .domain([minMax.min, minMax.max])
-          .range([range.min, range.max]);
+          .range([options.range.min, options.range.max]);
       }
     }
     return scale;
   };
   
+
+  /*
+  * Make an axis for d3 based on a scale
+  * @param {d3.scale} scale
+  * @param {Object {orientation: string, ticks: int}} options
+  */
   this.makeAxis = function (scale, options) {
-    // Make an axis for d3 based on a scale
     var axis;
     if (options.ticks) {
       axis = d3.svg.axis()
@@ -108,11 +138,14 @@ var NxtD3 = function (svg, options) {
   };
 
   /*
-  * Draws the given axis in the given graph
+  * Draws the given axis
+  * @param {d3.axis} axis
   */
-  this.drawAxes = function (graph, xAxis) {
-    graph.svg.select('g').select('g')
-      .call(graph.xAxis);
+  this.drawAxes = function (id) {
+    this.svg.select('.x.axis')
+      .call(this.charts[id].x.axis);
+    this.svg.select('.y.axis')
+      .call(this.charts[id].y.axis);
   };
 
 
@@ -122,7 +155,7 @@ var NxtD3 = function (svg, options) {
     var colorFunction = function (d) { return colorScale(d[colorKey]); };
     // DATA JOIN
     // Join new data with old elements, based on the id value.
-    var circles = svg.select('g').selectAll("circle")
+    var circles = this.svg.select('g').selectAll("circle")
         .data(data, function  (d) { return d.id; });
 
     // UPDATE
@@ -167,21 +200,52 @@ var NxtD3 = function (svg, options) {
     // });
   };
 
-  this.drawEventsContainedInBounds = function (bounds) {
-    var latLng = [];
-    d3.selectAll("circle").classed("hidden", true);
-    d3.selectAll("circle")
-      .classed("selected", function (d) {
-        latLng[0] = d.geometry.coordinates[1];
-        latLng[1] = d.geometry.coordinates[0];
-        var contained = bounds.contains(latLng);
-        // Some book keeping to count
-        d.inSpatExtent = contained;
-        return contained;
-      });
-    var selected = d3.selectAll("circle.selected");
-    selected.classed("hidden", false);
+  this.updateData = function (data) {
+    this.data = data;
   };
+
+  /*
+  *
+  * Draws svg rect's as bar chart.
+  *
+  */
+  this.drawBars = function (id) {
+    // Bar Chart specific stuff
+    var that = this.charts[id];
+    var height = this.height;
+    var bars = this.svg.select("g").selectAll(".bar")
+      .data(that.data, function (d) { return d[1]; });
+
+    bars.attr("class", "bar")
+      .transition()
+      .delay(500)
+      .duration(500)
+      .attr("x", function (d) { return that.x.scale(d[1]) - 0.5; })
+      .attr("y", function (d) { return that.y.scale(d[0]) - 0.5; })
+      .attr("height", function (d) { return height - that.y.scale(d[0]); });
+
+
+    bars.enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function (d) { return that.x.scale(d[1]) - 0.5; })
+      .attr("y", function (d) { return that.y.scale(d[0]) - 0.5; })
+      .attr("width", 5)
+      .attr("height", function (d) { return height - that.y.scale(d[0]); });
+
+    bars.exit()
+      .transition()
+      .delay(0)
+      .duration(500)
+      .attr("x", 0)
+      .attr("y", 0)
+      .style("fill-opacity", 1e-6)
+      .remove();
+  };
+
+  this.drawLine = function (id) {
+    var that = this.charts[id];
+    
+  }
 
   var brush = null;
   this.createBrush = function (graph) {
@@ -213,6 +277,47 @@ var NxtD3 = function (svg, options) {
     }
     svg.classed("selecting", false);
     d3.selectAll('.bar').classed("selected", false);
+  };
+
+  this.initiate = function (data, id) {
+    var newChart = null;
+    if (this.charts === undefined) {
+      this.charts = {};
+      newChart = true;
+    }
+    this.charts[id] = {
+      data: data
+    };
+    var x = this.maxMin(id, '1');
+    var y = this.maxMin(id, '0');
+
+    x.scale = this.createScale(x, {
+      range: {
+        min: 0,
+        max: this.width
+      },
+      type: 'time'
+    });
+
+    y.scale = this.createScale(y, {
+      range: {
+        min: this.height,
+        max: 0
+      },
+      scale: 'linear'
+    });
+
+    x.axis = this.makeAxis(x.scale, {
+      orientation: "bottom"
+    });
+    y.axis = this.makeAxis(y.scale, {
+      orientation: "left"
+    });
+    this.charts[id].x = x;
+    this.charts[id].y = y;
+    if (newChart) {
+      this.drawAxes(id);
+    }
   };
 
   this.createCanvas(this.svg, options);
