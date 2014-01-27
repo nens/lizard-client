@@ -70,7 +70,7 @@ app.directive('vectorlayer', function () {
       // alerts accordingly
       scope.$watch('timeState.changedZoom', function () {
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
-        scope.timeState.countCurrentEvents();
+        //scope.timeState.countCurrentEvents();
       });
       
       // Watch button click, toggle event layer

@@ -182,16 +182,18 @@ app.controller("MasterCtrl",
 // END TIME MODEL
 
   $scope.timeState.countCurrentEvents = function () {
-    for (var key in $scope.timeState.timeline.data) {
-      $scope.timeState.timeline.data[key].currentCount = 0;
-      for (var j = 0; j < $scope.timeState.timeline.data[key].features.length; j++) {
-        var feature = $scope.timeState.timeline.data[key].features[j];
+    for (var eventType in $scope.events.types) {
+      $scope.events.types[eventType].currentCount = 0;
+    }
+    for (var i = 0; i < $scope.events.data.features.length; i++) {
+        var feature = $scope.events.data.features[i];
         if (feature.inTempExtent && feature.inSpatExtent) {
-          $scope.timeState.timeline.data[key].currentCount++;
+          var eventType = feature.name;
+          $scope.events.types[eventType].currentCount++;
         }
-      }
     }
   };
+
 
 // COLOR MODEL
   $scope.colors =  {
@@ -205,16 +207,21 @@ app.controller("MasterCtrl",
 
 // EVENTS MODEL
   $scope.events = {
-    types: {}, // Metadata object
-    data: {}, // Long format events data object 
+    types: {count: 0}, // Metadata object
+    data: [], // Long format events data object
+    changed: Date.now()
   };
 
   $scope.events.toggleEvents = function (name) {
     if ($scope.events.types[name]) {
       if ($scope.events.types[name].active) {
         $scope.events.types[name].active = false;
-      } else { $scope.events.types[name].active = true; }
-      $scope.timeState.changedZoom = !$scope.timeState.changedZoom;
+        $scope.events.data = removeEvents($scope.events.data, name);
+        $scope.events.changed = Date.now();
+      } else { 
+        $scope.events.types[name].active = true;
+        getEvents(name);
+      }
     } else {
       getEvents(name);
     }
@@ -235,36 +242,62 @@ app.controller("MasterCtrl",
         $scope.timeState.timeline.changed = !$scope.timeState.timeline.changed;
       }
     );*/
-    var url = (name == 'Twitter') ? '/static/data/twit.json': 'static/data/melding.json';
+    // Get data from json as long as there is no db implementation
+    var url = (name === 'Twitter') ? '/static/data/twit.json': 'static/data/melding.json';
     $http.get(url)
     .success(function (response) {
-      $scope.timeState.timeline.data[name] = response.results[0];
-      $scope.timeState.timeline.data[name].count = response.count;
-      $scope.timeState.timeline.data[name].active = true;
-      $scope.timeState.timeline.changed = Date.now();
+      var data = response.results[0];
+      $scope.events.data = addEvents($scope.events.data, data, name);
+      $scope.events.types[name].count = response.count;
+      $scope.events.types[name].active = true;
+      $scope.events.changed = Date.now();
     });
   };
 
   /** 
-  * Formats data into long format
+  * Formats data into long format. LongData is the data object to add shortData to
+  * under the specified name.
   **/
-  var formatData = function () {
-    // Create data object
-    var data = [];
-    var typeCount = 0;
-    for (var key in scope.timeState.timeline.data) {
-      typeCount++;
-      if (scope.timeState.timeline.data[key].active) {
-        var iData = scope.timeState.timeline.data[key].features;
-        angular.forEach(iData, function (feature) {
-          feature.event_type = typeCount;
-          // Create unique id, a combo of time and location. I assume this is always unique..
-          feature.id = "" + key + feature.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
-          data.push(feature);
-        });
-      }
+  var addEvents = function (longData, shortData, name) {
+    // Create event identifier
+    var eventId;
+    if (longData.features === undefined) {longData.features = []; }
+    if (longData.features.length === 0) { eventId = 1; }
+    else {
+      var maxEventId = 1;
+      angular.forEach(longData, function (feature) {
+        maxEventId = feature.event_type > maxEventId ? feature.event_type : maxEventId;
+      });
+      eventId = maxEventId + 1;
     }
-    return data;
+    $scope.events.types[name] = {};
+    $scope.events.types[name].event_type = eventId;
+    for (var i = 0; i < shortData.features.length; i++) {
+      var feature = shortData.features[i];
+      feature.event_type = eventId;
+      feature.name = name;
+      // Create unique id, a combo of time and location. I assume this is always unique..
+      feature.id = name + feature.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
+      longData.features.push(feature);
+    };
+    $scope.events.types.count = $scope.events.types.count + 1;
+    return longData;
+  };
+
+  var removeEvents = function (longData, name) {
+    var eventId = $scope.events.types[name].event_type;
+    var iterations = longData.features.length;
+    for (var i = 0; i < iterations; i++) {
+      var index = iterations - 1 - i;
+      var feature = longData.features[index]; // Go from back to front to not mess with the order
+      if (feature.name === name) {
+        var j = longData.features.indexOf(feature);
+        longData.features.splice(j, 1);
+      }
+      else if (feature.event_type > eventId) { feature.event_type = feature.event_type - 1; }
+    };
+    $scope.events.types.count = $scope.events.types.count - 1;
+    return longData;
   };
 
   // 3Di START

@@ -327,27 +327,17 @@ app.controller('TimelineDirCtrl', function ($scope) {
     // Get the timeline-graph
     var graph = createTimeline();
 
-    var eventTypeLength = function () {
-        var typeCount = 0;
-        for (var key in scope.timeState.timeline.data) {
-          if (scope.timeState.timeline.data[key].active) {
-            typeCount++;
-          }
-        }
-        return typeCount;
-      };
-
-    scope.$watch('timeState.timeline.changed', function (n, o) {
+    scope.$watch('events.changed', function (n, o) {
       if (n === o) { return true; }
-      var nEventTypes = eventTypeLength();
-      var data = scope.events.data;
-      graph = updateTimeline(graph, data, nEventTypes);
+      var data = scope.events.data.features;
+      graph = updateTimeline(graph, data, scope.events.types.count);
       scope.timeState.changedZoom = Date.now();
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
       scope.timeState.countCurrentEvents();
     });
 
-    scope.$watch('mapState.moved', function () {
+    scope.$watch('mapState.moved', function (n, o) {
+      if (n === o) { return true; }
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
       scope.timeState.countCurrentEvents();
     });
