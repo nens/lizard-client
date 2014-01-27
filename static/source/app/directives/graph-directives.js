@@ -487,6 +487,9 @@ angular.module('graph')
           // This to not break profiles etc
           var data = timeseries.instants;
           var header = timeseries.series;
+          if (timeseries.series.length === 0) {
+            return; 
+          }
           var keys = {x:1, y:0};
         } else {
           var data = timeseries;
