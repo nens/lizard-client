@@ -380,7 +380,9 @@ app.controller('TimelineDirCtrl', function ($scope) {
       }
     });
     
-    scope.$watch('timeState.at', function () {
+    scope.$watch('timeState.at', function (n, o) {
+      if (n === o) { return true; }
+      console.log(scope.timeState.animation);
       if (scope.timeState.animation.enabled) {
         graph.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
         timelineCtrl.brushmove();
@@ -397,6 +399,11 @@ app.controller('TimelineDirCtrl', function ($scope) {
   return {
     replace: true,
     restrict: 'E',
+    scope: {
+      timeState: '@',
+      colors: '@',
+      animation: '@'
+    },
     link: link,
     controller: 'TimelineDirCtrl',
     templateUrl: 'templates/timeline.html'

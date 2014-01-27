@@ -73,24 +73,24 @@ app.directive('vectorlayer', function () {
         //scope.timeState.countCurrentEvents();
       });
       
-      // Watch button click, toggle event layer
-      var eventLayers = [];
-      scope.$watch('timeState.timeline.changed', function () {
-        // Fresh start
-        angular.forEach(eventLayers, function (layer) {
-          mapCtrl.removeLayer(layer);
-        });
-        for (var eventType in scope.timeState.timeline.data) {
-          if (scope.timeState.timeline.data[eventType].active) {
-            eventLayer = L.pointsLayer(scope.timeState.timeline.data[eventType], {
-              applyStyle: circleStyle
-            });
-            mapCtrl.addLayer(eventLayer);
-            eventLayers.push(eventLayer);
-            drawTimeEvents(scope.timeState.start, scope.timeState.end);
-          }
-        }
-      });
+      // // Watch button click, toggle event layer
+      // var eventLayers = [];
+      // scope.$watch('timeState.timeline.changed', function () {
+      //   // Fresh start
+      //   angular.forEach(eventLayers, function (layer) {
+      //     mapCtrl.removeLayer(layer);
+      //   });
+      //   for (var eventType in scope.timeState.timeline.data) {
+      //     if (scope.timeState.timeline.data[eventType].active) {
+      //       eventLayer = L.pointsLayer(scope.timeState.timeline.data[eventType], {
+      //         applyStyle: circleStyle
+      //       });
+      //       mapCtrl.addLayer(eventLayer);
+      //       eventLayers.push(eventLayer);
+      //       drawTimeEvents(scope.timeState.start, scope.timeState.end);
+      //     }
+      //   }
+      // });
 
       // Watch for animation   
       scope.$watch('timeState.at', function () {

@@ -163,13 +163,6 @@ app.controller("MasterCtrl",
     end: end,
     changedZoom: Date.now(),
     at: this.start,
-    timeline: {
-      tool: 'zoom',
-      canceler: $q.defer(),
-      enabled: false,
-      data: {},
-      changed: Date.now()
-    },
     animation: {
       playing: false,
       enabled: false,
@@ -194,6 +187,15 @@ app.controller("MasterCtrl",
     }
   };
 
+  $scope.timeState.zoomTo = function (geometry) {
+    var panZoom = {
+      lat: geometry.coordinates[1],
+      lng: geometry.coordinates[0],
+      zoom: 15
+    };
+    $scope.panZoom = panZoom;
+    $scope.mapState.moved = Date.now();
+  };
 
 // COLOR MODEL
   $scope.colors =  {
@@ -229,7 +231,6 @@ app.controller("MasterCtrl",
   };
   
   var getEvents = function (name) {
-    $scope.timeState.timeline.data[name] = [];
 /*    CabinetService.events.get({
       type: name,
       start: $scope.timeState.start,
