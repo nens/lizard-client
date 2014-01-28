@@ -6,22 +6,25 @@
  * time-interval (temporal extent, from timeline)
  *
  */
-app.controller('vectorLayerDirCtrl', function ($scope) {
-  return this;
-})
-.directive('vectorlayer', function () {
+app.directive('vectorlayer', function () {
   return {
     restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
-      var eventLayer;
+      var createEventLayer = function (style, data) {
+        var eventLayer = L.pointsLayer(data, {
+          applyStyle: style
+        });
+        mapCtrl.addLayer(eventLayer);
+        return eventLayer;
+      };
 
       /**
        * Style event circles based on category and
        * add click event handling
        */
-      function circleStyle(features) {
+      var circleStyle = function (features) {
         var scale = d3.scale.ordinal()
             .domain(function (d) {
               return d3.set(d.event_sub_type).values();
@@ -42,14 +45,6 @@ app.controller('vectorLayerDirCtrl', function ($scope) {
           });
       }
 
-      /*
-       * Reformat time to d3 time formatted object 
-       * NOTE: not used because API returns epoch ms.
-       */
-      function get_time(d) {
-        return d3.time(d.timestamp);
-      }
-      
       /*
        * Draw events based on current temporal extent
        */
@@ -79,16 +74,12 @@ app.controller('vectorLayerDirCtrl', function ($scope) {
       
       scope.$watch('events.changed', function (n, o) {
         if (n === o) { return true; }
-        for (var eventType in scope.timeState.timeline.data) {
-          if (scope.timeState.timeline.data[eventType].active) {
-            eventLayer = L.pointsLayer(scope.timeState.timeline.data[eventType], {
-              applyStyle: circleStyle
-            });
-            mapCtrl.addLayer(eventLayer);
-            eventLayers.push(eventLayer);
-            drawTimeEvents(scope.timeState.start, scope.timeState.end);
-          }
+        if (eventLayer) {
+          console.log("Removing?");
+          mapCtrl.removeLayer(eventLayer);
         }
+        var eventLayer = createEventLayer(circleStyle, scope.events.data);
+        drawTimeEvents(scope.timeState.start, scope.timeState.end);
       });
 
       // Watch for animation   

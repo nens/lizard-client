@@ -209,8 +209,10 @@ app.controller("MasterCtrl",
 
 // EVENTS MODEL
   $scope.events = {
-    types: {count: 0}, // Metadata object
-    data: [], // Long format events data object
+    types: { count: 0 }, // Metadata object
+    data: { type: "FeatureCollection",
+            features: [] // Long format events data object
+      },
     changed: Date.now()
   };
 
