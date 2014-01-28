@@ -56,9 +56,9 @@ angular.module('graph')
            .attr("y",  height + margin.bottom * 2)
            .style("text-anchor", "middle")
            .text(legend.xLabel);
-       } 
+       }
 
-      if (legend.yLabel) {   
+      if (legend.yLabel) {
         //Create Y axis label
         svg.append("text")
           .attr("transform", "rotate(-90)")
@@ -242,7 +242,7 @@ angular.module('graph')
         var x = graphCtrl.maxMin(data, '1');
         var y = graphCtrl.maxMin(data, '0');
 
-        x.scale = graphCtrl.scale(x.min, x.max, {
+        x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
           range: [0, width],
           type: 'time'
         });
@@ -271,11 +271,12 @@ angular.module('graph')
             .attr("x", function (d) { return x.scale(d[1]) - 0.5; })
             .attr("transform", "translate(" + "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ", 1)");
           scope.$apply(function () {
-              // NOTE: maybe with $parent
+              // step out of isolate scope with $parent.
               scope.$parent.timeState.start = x.scale.domain()[0].getTime();
               scope.$parent.timeState.end = x.scale.domain()[1].getTime();
+              scope.$parent.timeState.changeOrigin = 'barChart';
               scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
-            }); 
+            });
         };
         
         var zoom = d3.behavior.zoom()
@@ -405,7 +406,7 @@ angular.module('graph')
         var x = graphCtrl.maxMin(data, 'x');
         var y = graphCtrl.maxMin(data, 'y');
 
-        x.scale = graphCtrl.scale(x.min, x.max, {
+        x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
           range: [0, width], 
         });
         y.scale = graphCtrl.scale(y.min, y.max, {
@@ -427,7 +428,14 @@ angular.module('graph')
                               .on("mouseout", function() { d3.select(this).attr("r", 3) });
         
         var zoomed = function () {
-          svg.select(".x.axis").call(graphCtrl.makeAxis(x.scale, {orientation:"bottom"}));
+          svg.select(".x.axis").call(graphCtrl.makeAxis(x.scale, {orientation:"bottom"}))
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", function(d) {
+                  return "rotate(-45)" 
+                  });
           svg.select(".x.grid")
               .call(graphCtrl.makeAxis(x.scale, {orientation:"bottom"})
               .tickSize(-height, 0, 0)
@@ -479,6 +487,9 @@ angular.module('graph')
           // This to not break profiles etc
           var data = timeseries.instants;
           var header = timeseries.series;
+          if (timeseries.series.length === 0) {
+            return; 
+          }
           var keys = {x:1, y:0};
         } else {
           var data = timeseries;
@@ -509,7 +520,7 @@ angular.module('graph')
 
         if (header[keys.x].quantity == 'time') {
           var x = graphCtrl.maxMin(data, keys.x);
-            x.scale = graphCtrl.scale(x.min, x.max, {
+            x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
               range: [0, width],
               type: 'time'
             });
@@ -519,7 +530,7 @@ angular.module('graph')
             });            
         } else {
           var x = graphCtrl.maxMin(data, keys.x);
-            x.scale = graphCtrl.scale(x.min, x.max, {
+            x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
               range: [0, width]
             });
             x.tickFormat = "";
@@ -558,6 +569,7 @@ angular.module('graph')
               .call(graphCtrl.makeAxis(y.scale, {orientation: "left"})
               .tickSize(-width, 0, 0)
               .tickFormat("")); 
+
           svg.select(".line")
               .attr("class", "line")
               .attr("d", line);
@@ -566,6 +578,7 @@ angular.module('graph')
               // NOTE: maybe with $parent
               scope.$parent.timeState.start = x.scale.domain()[0].getTime();
               scope.$parent.timeState.end = x.scale.domain()[1].getTime();
+              scope.$parent.timeState.changeOrigin = 'lineChart';
               scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
             }); 
           }

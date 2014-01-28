@@ -1,31 +1,7 @@
-app.controller('TimelineCtrl', function ($scope, $q, $resource, $http, CabinetService) {
+app.controller('TimelineCtrl', function ($scope, $q, $http, CabinetService) {
   // TIMELINE START
   // NOTE: refactor timeline stuff in it's own controller, most stuff is local
   // to timeline scope; only temporalextent should be exposed to master / root
-
-  $scope.$watch('timeline.temporalExtent.changedZoom', function (newVal, oldVal) {
-    $scope.timeState.timeline.canceler.resolve();
-    $scope.timeState.timeline.canceler = $q.defer();
-    var timeseries = $resource('/api/v1/timeseries/:id/', {
-      id: '@id',
-      start: '@start',
-      end: '@end'
-    },
-    {get: {method: 'GET', timeout: $scope.timeState.timeline.canceler.promise}});
-    // commented by arjen to prevent 404s in dev
-    //var new_data_get = timeseries.get({
-      //id: 3,
-      //start: $scope.timeState.start,
-      //end: $scope.timeState.end
-    //}, function(response){
-      //$scope.timeseries = response;
-      //if ($scope.timeseries.length > 0){
-        //$scope.selected_timeseries = response[0];
-      //} else {
-        //$scope.selected_timeseries = undefined;
-      //}
-    //});
-  });
 
   $scope.timeState.countCurrentEvents = function () {
     for (var key in $scope.timeState.timeline.data) {
