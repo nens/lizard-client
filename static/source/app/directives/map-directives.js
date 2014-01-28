@@ -40,7 +40,6 @@ app
           }
           layer.leafletLayer = L.tileLayer.wms(layer.url, options);
         } else if (layer.type === "ASSET") {
-          console.log('layer:', layer);
           var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
           layer.grid_layers = [];
           for (var i in layer.sublayers) {
