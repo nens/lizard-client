@@ -27,9 +27,7 @@ L.Util.ajax = function (url, cb) {
 		if (request.readyState === 4 && request.status === 200) {
 			if (window.JSON) {
 				response = JSON.parse(request.responseText);
-				console.log('response:', response);
 			} else {
-				console.log('response:', response);
 				response = eval("(" + request.responseText + ")");
 			}
 			cb(response);
