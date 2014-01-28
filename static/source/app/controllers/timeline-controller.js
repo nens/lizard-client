@@ -96,7 +96,7 @@ app.controller('TimelineCtrl', function ($scope, $q, $resource, $http, CabinetSe
         $scope.timeState.timeline.changed = !$scope.timeState.timeline.changed;
       }
     );*/
-    var url = (name == 'Twitter') ? '/static/data/twit.json': 'static/data/melding.json';
+    var url = '/static/data/' + name + '.json';
     $http.get(url)
     .success(function (response) {
       $scope.timeState.timeline.data[name] = response.results[0];
