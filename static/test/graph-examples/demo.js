@@ -166,3 +166,13 @@ app.controller('DemoCtrl', function ($scope){
 
 
 });
+
+var go = function () {
+  var data = angular.element(document.getElementsByTagName('body')[0]).scope().data
+  window.jan = new NxtD3(d3.select('#test-wrapper'), {width: 500, height: 300})
+  jan.initiate(data, 'pietje')
+  jan.initiate(data, 'henk')
+  jan.drawBars('pietje')
+  jan.drawLine('henk')
+  jan.addZoom()
+};
