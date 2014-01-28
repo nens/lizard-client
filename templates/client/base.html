@@ -200,8 +200,12 @@
              ng-class="{'crosshair': tools.active === 'profile'}">
          </map>
       </div>
-        <timeline time-state="timeState" colors="colors" animation="animation"
-        class="navbar timeline navbar-fixed-bottom">
+        <timeline ng-if="{ timestate.hidden: 'false'}"
+                  time-state="timeState" 
+                  colors="colors" 
+                  animation="timeState.animation"
+                  events="events"
+                  class="navbar timeline navbar-fixed-bottom">
         </timeline>
 
       </div>

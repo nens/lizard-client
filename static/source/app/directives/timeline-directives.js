@@ -248,7 +248,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
       var canvasOptions = {width: element.width(), height: 50};
       var svg = d3.select("#timeline-svg-wrapper").select("svg");
       var graph = timelineCtrl.createCanvas(svg, canvasOptions);
-
       // Add x axis
       var x = {};
       x.min = new Date(scope.timeState.start);
@@ -330,6 +329,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
     scope.$watch('events.changed', function (n, o) {
       if (n === o) { return true; }
       var data = scope.events.data.features;
+      console.log(data);
       graph = updateTimeline(graph, data, scope.events.types.count);
       scope.timeState.changedZoom = Date.now();
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
@@ -399,11 +399,12 @@ app.controller('TimelineDirCtrl', function ($scope) {
   return {
     replace: true,
     restrict: 'E',
-    scope: {
-      timeState: '@',
-      colors: '@',
-      animation: '@'
-    },
+    // scope: {
+    //   timeState: '@',
+    //   colors: '@',
+    //   animation: '@',
+    //   events: '@'
+    // },
     link: link,
     controller: 'TimelineDirCtrl',
     templateUrl: 'templates/timeline.html'
