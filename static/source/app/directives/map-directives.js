@@ -40,6 +40,7 @@ app
           }
           layer.leafletLayer = L.tileLayer.wms(layer.url, options);
         } else if (layer.type === "ASSET") {
+          console.log('layer:', layer);
           var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
           layer.grid_layers = [];
           for (var i in layer.sublayers) {
@@ -50,7 +51,7 @@ app
                 slug: sublayer.asset,
                 name: sublayer.asset,
                 useJsonP: false,
-                minZoom: layer.min_zoom_click,
+                minZoom: layer.min_zoom,
                 maxZoom: 20
               });
               leafletLayer.on('click', function (e) {
