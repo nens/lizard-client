@@ -244,7 +244,7 @@ app.controller("MasterCtrl",
       }
     );*/
     // Get data from json as long as there is no db implementation
-    var url = (name === 'Twitter') ? '/static/data/twit.json': 'static/data/melding.json';
+    var url = '/static/data/' + name + '.json';
     $http.get(url)
     .success(function (response) {
       var data = response.results[0];

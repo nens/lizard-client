@@ -71,12 +71,14 @@ app.controller('vectorLayerDirCtrl', function ($scope) {
 
       // watch for change in temporalExtent, change visibility of
       // alerts accordingly
-      scope.$watch('timeState.changedZoom', function () {
+      scope.$watch('timeState.changedZoom', function (n, o) {
+        if (n === o) { return true; }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
         scope.timeState.countCurrentEvents();
       });
       
-      scope.$watch('events.changed', function () {
+      scope.$watch('events.changed', function (n, o) {
+        if (n === o) { return true; }
         for (var eventType in scope.timeState.timeline.data) {
           if (scope.timeState.timeline.data[eventType].active) {
             eventLayer = L.pointsLayer(scope.timeState.timeline.data[eventType], {
