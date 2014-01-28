@@ -4,7 +4,6 @@
  * Initialise app
  */
 var app = angular.module("lizard-nxt", [
-  'ngResource',
   'graph',
   'omnibox',
   'restangular',
@@ -71,8 +70,8 @@ app.config(function ($interpolateProvider) {
  *
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "$resource", "$q", "CabinetService",
-  function ($scope, $http, $resource, $q, CabinetService)  {
+  ["$scope", "$http", "Restangular", "$q", "CabinetService",
+  function ($scope, $http, Restangular, $q, CabinetService)  {
 
   // BOX MODEL
   $scope.box = {
@@ -347,15 +346,15 @@ app.controller("MasterCtrl",
       end: null,
       changedZoom: false,
     };
-    $scope.box.content.canceler = $q.defer();
     $scope.timeseries = [];
     $scope.box.content.selected_timeseries = undefined;
    
 
-    var new_data_get = CabinetService.timeseriesLocationObject.get({
-      object_type: $scope.box.content.object_type,
-      id: $scope.box.content.id
-    }, function (response) {
+    var new_data_get = CabinetService.timeseries.get({
+      object: $scope.box.content.object_type + '$' + $scope.box.content.id,
+      start: $scope.timeState.start,
+      end: $scope.timeState.end
+    }).then(function (response) {
       $scope.timeseries = response;
       if ($scope.timeseries.length > 0) {
         $scope.box.content.selected_timeseries = response[0];
@@ -379,36 +378,43 @@ app.controller("MasterCtrl",
     }
   };
 
+  $scope.canceler = $q.defer();
+
   $scope.$watch('timeState.changedZoom', function (newVal, oldVal) {
-    if (newVal === oldVal || ($scope.box.content.canceler === undefined)) { return; }
-    $scope.box.content.canceler.resolve();
-    $scope.box.content.canceler = $q.defer();
-    var timeseries = $resource('/api/v1/timeseries/:id/?start=:start&end=:end', {
-      id: '@id',
-      start: '@start',
-      end: '@end'
-    },
-    {
-      get:
-        {method: 'GET', timeout: $scope.box.content.canceler.promise}
-    });
+    if ((newVal === oldVal) || ($scope.canceler === undefined)) { return; }
+    $scope.canceler.resolve();
+    $scope.canceler = $q.defer();
     if ($scope.box.content.selected_timeseries) {
-      timeseries.get({
-        id: $scope.box.content.selected_timeseries.id,
-        start: $scope.box.content.temporalExtent.start,
-        end: $scope.box.content.temporalExtent.end
-      }, function (response) {
+      CabinetService.timeseries.one(
+        $scope.box.content.selected_timeseries.id + '/'
+      ).withHttpConfig({
+        timeout: $scope.canceler.promise
+      }).get({
+        start: $scope.timeState.start,
+        end: $scope.timeState.end
+      }).then(function (response) {
         $scope.data = {
           series: response.events.series,
           instants: response.events.instants
         };
         $scope.box.content.selected_timeseries.events = response.events;
-        // var response;
-        // if ($scope.timeseries.length > 0){
-        //   $scope.selected_timeseries = response[0];
-        // } else {
-        //   $scope.selected_timeseries = undefined;
-        // }
+      });
+    }
+    if ($scope.rain.data) {
+      var stop = new Date($scope.timeState.end);
+      var stopString = stop.toISOString().split('.')[0];
+      var start = new Date($scope.timeState.start);
+      var startString = start.toISOString().split('.')[0];
+      CabinetService.raster.withHttpConfig({
+        timeout: $scope.canceler.promise
+      }).get({
+        raster_names: 'rain',
+        geom: $scope.rain.wkt,
+        srs: $scope.rain.srs,
+        start: startString,
+        stop: stopString
+      }).then(function (result) {
+        $scope.rain.data = result;
       });
     }
   });
@@ -767,11 +773,13 @@ app.controller("MasterCtrl",
       var twentyFourAgo = Date.now() - 86400000;
       if ($scope.timeState.start < twentyFourAgo) {
         $scope.timeState.start = twentyFourAgo;
-        $scope.timeState.timeline.changed = !$scope.timeState.timeline.changed;
+        $scope.timeState.changeOrigin = 'rain';
+        $scope.timeState.changedZoom = !$scope.timeState.changedZoom;
       }
       if ($scope.timeState.end < twentyFourAgo || $scope.timeState.end > Date.now()) {
         $scope.timeState.end =  Date.now();
-        $scope.timeState.timeline.changed = !$scope.timeState.timeline.changed;
+        $scope.timeState.changeOrigin = 'rain';
+        $scope.timeState.changedZoom = !$scope.timeState.changedZoom;
       }
       getRadarImages();
       $scope.rain.enabled = true;

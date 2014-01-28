@@ -286,22 +286,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
       var yScale = timelineCtrl.scale({min: 1, max: nEventTypes}, { min: newGraph.height - 20, max: 20 }, {scale: 'linear'});
       // Update the svg
       timelineCtrl.drawCircles(newGraph.svg, newGraph.xScale, yScale, graph.colorScale, 'timestamp', 'event_type', 'event_sub_type', data);
-      // Update the scale in case somethin changed the timeState
-      var x = {};
-      x.min = new Date(scope.timeState.start);
-      x.max = new Date(scope.timeState.end);
-      var range = {};
-      range.min = 0;
-      range.max = graph.width;
-      graph.xScale = timelineCtrl.scale(x, range, { type: 'time' });
-      graph.xAxis = timelineCtrl.makeAxis(graph.xScale, {orientation: "bottom", ticks: 5});
-      timelineCtrl.drawAxes(graph, graph.xAxis);
-
-      // Add zoom functionality
-      newGraph.svg.call(d3.behavior.zoom()
-        .x(graph.xScale)
-        .on("zoom", zoomed)
-      );
 
       return newGraph;
     };
@@ -319,6 +303,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       scope.$apply(function () {
         scope.timeState.start = graph.xScale.domain()[0].getTime();
         scope.timeState.end = graph.xScale.domain()[1].getTime();
+        scope.timeState.changeOrigin = 'timeline';
         scope.timeState.changedZoom = !scope.timeState.changedZoom;
       });
     };
@@ -386,6 +371,30 @@ app.controller('TimelineDirCtrl', function ($scope) {
       if (scope.timeState.animation.enabled) {
         graph.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
         timelineCtrl.brushmove();
+      }
+    });
+
+    scope.$watch('timeState.changedZoom', function () {
+      if (scope.timeState.changeOrigin !== 'timeline') {
+        // Update the scale in case somethin changed the timeState
+        var x = {};
+        x.min = new Date(scope.timeState.start);
+        x.max = new Date(scope.timeState.end);
+        var range = {};
+        range.min = 0;
+        range.max = graph.width;
+        graph.xScale = timelineCtrl.scale(x, range, { type: 'time' });
+        graph.xAxis = timelineCtrl.makeAxis(graph.xScale, {orientation: "bottom", ticks: 5});
+        timelineCtrl.drawAxes(graph, graph.xAxis);
+
+        // Add zoom functionality
+        graph.svg.call(d3.behavior.zoom()
+          .x(graph.xScale)
+          .on("zoom", zoomed)
+        );
+        // Update circle positions
+        graph.svg.selectAll("circle")
+          .attr("cx", function (d) { return Math.round(graph.xScale(d.timestamp)); });
       }
     });
 
