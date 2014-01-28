@@ -14,7 +14,15 @@ services.service("CabinetService", ["Restangular",
             {
             "name": "Meldingen",
             "event_count": 4
-            }
+            },
+            {
+            "name": "Alarmen",
+            "event_count": 4
+            },
+            {
+            "name": "Aardbevingen",
+            "event_count": 4
+            } 
           ];
 
   var termSearchResource,
