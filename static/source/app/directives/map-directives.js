@@ -42,25 +42,23 @@ app
         } else if (layer.type === "ASSET") {
           var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
           layer.grid_layers = [];
-          for (var i in layer.sublayers) {
-            var sublayer = layer.sublayers[i];
-            if (sublayer.min_zoom_click !== null) {
-              var leafletLayer = new L.UtfGrid(url, {
-                ext: 'grid',
-                slug: sublayer.asset,
-                name: sublayer.asset,
-                useJsonP: false,
-                minZoom: sublayer.min_zoom_click,
-                maxZoom: 20
-              });
-              leafletLayer.on('click', function (e) {
-                if (e.data){
-                  $scope.activeObject = (e.data);
-                  $scope.activeObject.latlng = e.latlng;
-                }
-              });
-              layer.grid_layers.push(leafletLayer);
-            }
+          if (layer.min_zoom_click !== null) {
+            var leafletLayer = new L.UtfGrid(url, {
+              ext: 'grid',
+              slug: layer.slug,
+              name: layer.slug,
+              useJsonP: false,
+              minZoom: layer.min_zoom_click,
+              maxZoom: 20
+            });
+            leafletLayer.on('click', function (e) {
+              if (e.data) {
+                angular.extend($scope.activeObject, e.data);
+                $scope.activeObject.latlng = e.latlng;
+                $scope.activeObject.changed = !$scope.activeObject.changed;
+              }
+            });
+            layer.grid_layers.push(leafletLayer);
           }
           layer.leafletLayer = L.tileLayer(url, {
             ext: 'png',

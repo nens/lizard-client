@@ -252,14 +252,18 @@ app.controller("MasterCtrl",
   //   }
   // };
 
-  $scope.activeObject = {};
+  $scope.activeObject = {
+    changed: true
+  };
 
   $scope.canceler = $q.defer();
 
-  $scope.$watch('activeObject', function (newVal, oldVal) {
-    $scope.box.content.object_type = newVal.entity_name;
-    $scope.box.content.id = newVal.id;
-    $scope.box.content.data = newVal;
+  $scope.$watch('activeObject.changed', function (newVal, oldVal) {
+    if (newVal === oldVal) { return; }
+    $scope.box.content.object_type = $scope.activeObject.entity_name;
+    $scope.box.content.id = $scope.activeObject.id;
+    $scope.box.content.data = $scope.activeObject;
+    $scope.box.type = $scope.activeObject.entity_name;
 
     CabinetService.timeseries.get({
       object: $scope.box.content.object_type + '$' + $scope.box.content.id,
@@ -280,7 +284,8 @@ app.controller("MasterCtrl",
     var stopString = stop.toISOString().split('.')[0];
     var start = new Date($scope.timeState.start);
     var startString = start.toISOString().split('.')[0];
-    var wkt = "POINT(" + newVal.latlng.lng + " " + newVal.latlng.lat + ")";
+    var wkt = "POINT(" + $scope.activeObject.latlng.lng + " " 
+      + $scope.activeObject.latlng.lat + ")";
     $scope.canceler.resolve();
     $scope.canceler = $q.defer();
     // $scope.box.type = "rain";
@@ -336,21 +341,21 @@ app.controller("MasterCtrl",
     }
   });
 
-  $scope.$watch('box.content.selected_timeseries.id', function () {
-    if ($scope.box.content.selected_timeseries !== undefined) {
-      // NOTE: this will change to $scope.selected_timeseries.instants
-      $scope.data = {
-          series: $scope.box.content.selected_timeseries.events.series,
-          instants: $scope.box.content.selected_timeseries.events.instants
-        };
-      // dit kan zeker nog mooier
-      $scope.metadata.title = " - " + $scope.box.content.selected_timeseries.location.name;
-      $scope.metadata.ylabel = "";//$scope.selected_timeseries.parameter + $scope.selected_timeseries.unit.code
-      $scope.metadata.xlabel = "Tijd";
-    } else {
-      $scope.data = undefined;
-    }
-  });
+  // $scope.$watch('box.content.selected_timeseries.id', function () {
+  //   if ($scope.box.content.selected_timeseries !== undefined) {
+  //     // NOTE: this will change to $scope.selected_timeseries.instants
+  //     $scope.data = {
+  //         series: $scope.box.content.selected_timeseries.events.series,
+  //         instants: $scope.box.content.selected_timeseries.events.instants
+  //       };
+  //     // dit kan zeker nog mooier
+  //     $scope.metadata.title = " - " + $scope.box.content.selected_timeseries.location.name;
+  //     $scope.metadata.ylabel = "";//$scope.selected_timeseries.parameter + $scope.selected_timeseries.unit.code
+  //     $scope.metadata.xlabel = "Tijd";
+  //   } else {
+  //     $scope.data = undefined;
+  //   }
+  // });
 
 // END Timeseries
 
