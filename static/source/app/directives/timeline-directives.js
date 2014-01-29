@@ -1,3 +1,5 @@
+'use strict';
+
 // Timeline for lizard.
 app.controller('TimelineDirCtrl', function ($scope) {
     this.createCanvas = function (svg, options) {
