@@ -172,7 +172,9 @@ var go = function () {
   window.jan = new NxtD3(d3.select('#test-wrapper'), {width: 500, height: 300})
   jan.initiate(data, 'pietje')
   jan.initiate(data, 'henk')
-  jan.drawBars('pietje')
-  jan.drawLine('henk')
+  jan.initiate(data.reverse(), 'gerrit')
+  jan.drawBars('pietje', data)
+  jan.drawLine('gerrit', data.reverse())
+  jan.drawLine('henk', data)
   jan.addZoom()
 };
