@@ -3,6 +3,59 @@
 angular.module('graph', []);
 
 angular.module('graph')
+.directive('timeseriesRain', function () {
+  var link = function (scope, element, attrs) {
+    var svg = element.append('<svg id="chart-combined"></svg>');
+    var graph = new NxtD3(d3.select('#chart-combined'), {
+      width: 500,
+      height: 300
+    });
+
+    scope.$watch('rain', function () {
+      if (arguments) {
+        // graph.initiate(scope.data, 'rain');
+        graph.updateBars('rain', scope.rain);
+        // console.info('yo');
+      }
+    });
+
+    scope.$watch('enabled', function () {
+      if (scope.enabled) {
+        graph.charts = undefined;
+        graph.initiate(scope.rain, 'rain');
+        graph.drawBars('rain', scope.rain);
+        for (var i in scope.timeseries) {
+          graph.initiate(scope.timeseries[i], 'timeseries_' + i);
+        }
+      }
+    });
+
+    scope.$watch('timeseries', function (newVal, oldVal) {
+      for (var i in scope.timeseries) {
+        graph.drawLine('timeseries_' + i, scope.timeseries[i]);
+      }
+      graph.addZoom();
+    });
+  };
+
+  return {
+    link: link,
+    scope: {
+      // TODO: add extra options (e.g. width)? 
+      title: '=',
+      rain: '=',
+      timeseries: '=',
+      xlabel: '=',
+      ylabel: '=',
+      enabled: '='
+    },
+    restrict: 'E',
+    replace: true,
+    template: '<div class="graph-directive"></div>'
+  };
+});
+
+angular.module('graph')
 .directive('graph', function () {
 
   var controller = function ($scope) {

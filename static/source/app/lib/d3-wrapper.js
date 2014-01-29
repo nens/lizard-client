@@ -221,7 +221,7 @@ var NxtD3 = function (svg, options) {
     var height = nxtd3.height;
     nxtd3.charts[id].type = 'bar';
     var bars = nxtd3.svg.select("g").selectAll(".bar_" + id)
-      .data(data, function (d) { return d[1]; });
+      .data(data);
 
     nxtd3.charts[id].x.datafn = function (d) { return that.x.scale(d[1]) - 0.5; };
     nxtd3.charts[id].y.datafn = function (d) { return that.y.scale(d[0]) - 0.5; };
@@ -249,6 +249,11 @@ var NxtD3 = function (svg, options) {
       .attr("y", 0)
       .style("fill-opacity", 1e-6)
       .remove();
+  };
+
+  nxtd3.updateBars = function (id, data) {   
+    var bars = nxtd3.svg.select("g").selectAll(".bar_" + id)
+      .data(data);
   };
 
   nxtd3.drawLine = function (id, data) {
@@ -332,25 +337,27 @@ var NxtD3 = function (svg, options) {
             return "rotate(-45)";
           });
       for (var i in nxtd3.charts) {
-      // id = i;
-        if (nxtd3.charts[i].type === 'bar') {
-          svg.selectAll(".bar")
-            .attr("x", nxtd3.charts[i].x.datafn)
-            .attr("transform", "translate(" + "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ", 1)");
-        }
         if (nxtd3.charts[i].type === 'line') {
           svg.selectAll(".line_" + i)
             .attr("class", "line line_" + i)
             .attr("d", nxtd3.charts[i].line);
         }
+        if (nxtd3.charts[i].type === 'bar') {
+          svg.selectAll(".bar")
+            .attr("x", nxtd3.charts[i].x.datafn)
+            .attr("transform", "translate(" + "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ", 1)");
+        }
+
       }
     };
 
-    // for (var i in nxtd3.charts) {
-      // id = i;
     var zoom = d3.behavior.zoom()
     .x(firstChart.x.scale)
     .on("zoom", nxtd3.zoomed);
+
+    for (var i in nxtd3.charts) {
+      zoom.x(nxtd3.charts[i].x.scale)
+    }
 
     nxtd3.svg.call(zoom)
       .on("mousedown.zoom", null)
@@ -358,7 +365,6 @@ var NxtD3 = function (svg, options) {
       .on("touchmove.zoom", null)
       .on("touchend.zoom", null);
     nxtd3.svg.call(zoom);
-    // }
   };
 
   nxtd3.initiate = function (data, id) {
