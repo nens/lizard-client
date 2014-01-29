@@ -50,7 +50,7 @@ app
                 slug: sublayer.asset,
                 name: sublayer.asset,
                 useJsonP: false,
-                minZoom: layer.min_zoom_click,
+                minZoom: sublayer.min_zoom_click,
                 maxZoom: 20
               });
               leafletLayer.on('click', function (e) {
@@ -214,12 +214,10 @@ app
       var northEast = L.latLng(bounds['north'], bounds['east']);
       var maxBounds = L.latLngBounds(southWest, northEast);
       var map = new L.map(element[0], {
-          center: new L.LatLng((bounds['north'] + bounds['south']) / 2,
-                               (bounds['west'] + bounds['east']) / 2),
           zoomControl: false,
-          zoom: 8,
-          maxBounds: maxBounds
+          zoom: 12
         });
+      map.fitBounds(maxBounds);
       map.attributionControl.addAttribution(osmAttrib);
       map.attributionControl.setPrefix('');
 

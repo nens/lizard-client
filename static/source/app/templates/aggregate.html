@@ -6,6 +6,12 @@
     <p><% box.content.eventValue.timestamp | date:'d-M-y H:mm:ss' %></p>
     <p><% box.content.eventValue.value %></p>
   </div>
+  <div class="card-title" ng-switch-when="Aardbeving">
+    <i class="icon-twitter"></i><span class="card-title">&nbsp;#<% box.content.eventValue.event_sub_type %></span>
+    <i class="zoomto-icon icon-screenshot pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
+    <p><% box.content.eventValue.timestamp | date:'d-M-y H:mm:ss' %></p>
+    <p><% box.content.eventValue.value %></p>
+  </div>
   <div class="card-title" ng-switch-default>
     <i class="icon-exclamation-sign"></i><span class="card-title">&nbsp;<% box.content.eventValue.event_sub_type | lowercase %></span>
     <i class="zoomto-icon icon-screenshot pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>

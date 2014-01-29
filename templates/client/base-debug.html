@@ -16,6 +16,7 @@
     <link href="{{ STATIC_URL }}source/assets/css/graph.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}source/assets/css/nxt_base.css" rel="stylesheet" />
     <link rel="stylesheet" href="{{ STATIC_URL }}vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css">
+    <link href="{{ STATIC_URL }}vendor/angular-grid/ng-grid.css" rel="stylesheet" />    
     <link href="{{ STATIC_URL }}threedi/css/threedi.css" rel="stylesheet" />
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
     {% endblock css %}
@@ -60,11 +61,12 @@
     {% block javascript_body %}
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/jquery.min.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-dist/leaflet.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.utfgrid/src/leaflet.utfgrid.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-tilelayer-geojson/TileLayer.GeoJSON.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lib/TileLayer.GeoJSONd3.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/app/lib/leaflet-utfgrid-lizard.js?{{ random_string }}"></script>    
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-resource/angular-resource.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-grid/ng-grid-2.0.7.debug.js?{{ random_string }}"></script>        
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/dist/js/bootstrap.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/moment/moment.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lib/leaflet.points-layer.js?{{ random_string }}"></script>

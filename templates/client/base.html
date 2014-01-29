@@ -83,36 +83,6 @@
               </li>            
             {% endif %}
 
-<!--            <li class="visible-xs">
-              <a class="user" href="#" ng-click="threediTool()" ng-class="{'hide': !threedi_active, 'icon-large': tools.active === 'threedi'}" title="{% trans '3Di' %}"><div style="width:200px;" id="username"><i id="icon-asterisk" class="icon-asterisk"></i>&nbsp;&nbsp;3Di</div></a>
-            </li>            
-            <li class="visible-sm visible-md visible-lg">
-              <a href="#" ng-click="threediTool()" ng-class="{'hide': !threedi_active, 'icon-large': tools.active === 'threedi'}" title="{% trans '3Di' %}"><i class="icon-asterisk" ></i></a>
-            </li>
-
-            <li class="visible-xs">
-              <a class="user" href="#" ng-click="toggleTool('profile')" title="{% trans 'Edit profile' %}"><div style="width:200px;" id="username"><i id="icon-resize-full" ng-class="{'icon-large': tools.active === 'profile'}" class="icon-resize-full"></i>&nbsp;&nbsp;Intersection</div></a>
-            </li>            
-            <li class="visible-sm visible-md visible-lg">
-              <a href="#" ng-click="toggleTool('profile')" title="{% trans 'Intersect tool' %}"><i class="icon-resize-full" ng-class="{'icon-large': tools.active === 'profile'}"></i></a>
-            </li>
-            {% if user.is_authenticated %}
-              <li>
-                <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="" id="username"><i id="" class="icon-user"></i>&nbsp;&nbsp;{{ user.first_name }}</div></a>
-              </li>
-              <li class="visible-xs">
-                <a class="user" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"><div class="" id="username"><i id="" class="icon-off"></i>&nbsp;&nbsp;Uitloggen</div></a>
-              </li>
-              <li class="visible-sm visible-md visible-lg">
-                <a class="user" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"><div class="pull-right" id="username" style="padding-right:20px;"><i id="" class="icon-off"></i></div></a>
-              </li>   
-
-            {% else %}
-              <li>
-                <a href="{% url "login" %}?next=/" title="{% trans 'Login' %}">
-                  <i class="icon-user pull-right"></i></a>
-              </li>
-              {% endif %}-->
           </ul>
           {% block site_actions %}{% endblock site_actions %}
         </div><!--/.nav-collapse -->
@@ -158,7 +128,7 @@
                   </div>
                 </div>
                 </li>
-                <li ng-click="toggleRain()" class="clickable"><label ng-class="{active: rain.enabled}">Regen</label> </li>
+                <!-- <li ng-click="toggleRain()" class="clickable"><label ng-class="{active: animation.enabled}">Regen</label> </li> -->
               </ul>
               </li>
               <!-- Temporary item to enable events -->
@@ -207,7 +177,7 @@
       </div>
 
     {% block box_awesome %}{% endblock %}
-    <div class="container">
+    <div class="container" ng-controller="SearchCtrl">
       <omnibox id="omnibox">
   
       </omnibox>
