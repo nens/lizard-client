@@ -55,7 +55,8 @@ app
               });
               leafletLayer.on('click', function (e) {
                 if (e.data){
-                  $scope.getTimeseries(e.data);
+                  $scope.activeObject = (e.data);
+                  $scope.activeObject.latlng = e.latlng;
                 }
               });
               layer.grid_layers.push(leafletLayer);

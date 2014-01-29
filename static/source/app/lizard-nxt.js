@@ -218,27 +218,50 @@ app.controller("MasterCtrl",
    */
   $scope.box.content.selected_timeseries = undefined;
 
-  $scope.getTimeseries = function (data) {
-    /* data must have properties entity_name, id */
-    // NOTE: this is an aggregation demo HACK
-    if (!arguments[1] && arguments[1] !== "nochange") {
-      $scope.box.type = data.entity_name;
-      $scope.box.showCards = true;
-    }
-    $scope.box.content.object_type = data.entity_name;
-    $scope.box.content.id = data.id;
-    $scope.box.content.data = data;
-    // NOTE: will temporalExtent also control timeiline temporalExtent?
-    $scope.box.content.temporalExtent = {
-      start: null,
-      end: null,
-      changedZoom: false,
-    };
-    $scope.timeseries = [];
-    $scope.box.content.selected_timeseries = undefined;
+  // $scope.getTimeseries = function (data) {
+  //   /* data must have properties entity_name, id */
+  //   // NOTE: this is an aggregation demo HACK
+  //   if (!arguments[1] && arguments[1] !== "nochange") {
+  //     $scope.box.type = data.entity_name;
+  //     $scope.box.showCards = true;
+  //   }
+
+  //   // NOTE: will temporalExtent also control timeiline temporalExtent?
+  //   $scope.box.content.temporalExtent = {
+  //     start: null,
+  //     end: null,
+  //     changedZoom: false,
+  //   };
+  //   $scope.timeseries = [];
+  //   $scope.box.content.selected_timeseries = undefined;
    
 
-    var new_data_get = CabinetService.timeseries.get({
+  //   var new_data_get = 
+  //   $scope.metadata = {
+  //       title: null,
+  //       fromgrid: $scope.box.content.data,
+  //       //type: $scope.box.content.data.entity_name
+  //       type: data.entity_name
+  //     };
+
+  //   // Otherwise changes are watched and called to often.
+  //   if ($scope.box.content.timeseries_changed === undefined) {
+  //     $scope.box.content.timeseries_changed = true;
+  //   } else {
+  //     $scope.box.content.timeseries_changed = !$scope.box.content.timeseries_changed;
+  //   }
+  // };
+
+  $scope.activeObject = {};
+
+  $scope.canceler = $q.defer();
+
+  $scope.$watch('activeObject', function (newVal, oldVal) {
+    $scope.box.content.object_type = newVal.entity_name;
+    $scope.box.content.id = newVal.id;
+    $scope.box.content.data = newVal;
+
+    CabinetService.timeseries.get({
       object: $scope.box.content.object_type + '$' + $scope.box.content.id,
       start: $scope.timeState.start,
       end: $scope.timeState.end
@@ -249,24 +272,30 @@ app.controller("MasterCtrl",
       } else {
         $scope.box.content.selected_timeseries = undefined;
       }
+
     });
 
-    $scope.metadata = {
-        title: null,
-        fromgrid: $scope.box.content.data,
-        //type: $scope.box.content.data.entity_name
-        type: data.entity_name
-      };
-
-    // Otherwise changes are watched and called to often.
-    if ($scope.box.content.timeseries_changed === undefined) {
-      $scope.box.content.timeseries_changed = true;
-    } else {
-      $scope.box.content.timeseries_changed = !$scope.box.content.timeseries_changed;
-    }
-  };
-
-  $scope.canceler = $q.defer();
+    // rain retrieve
+    var stop = new Date($scope.timeState.end);
+    var stopString = stop.toISOString().split('.')[0];
+    var start = new Date($scope.timeState.start);
+    var startString = start.toISOString().split('.')[0];
+    var wkt = "POINT(" + newVal.latlng.lng + " " + newVal.latlng.lat + ")";
+    $scope.canceler.resolve();
+    $scope.canceler = $q.defer();
+    // $scope.box.type = "rain";
+    CabinetService.raster.get({
+      raster_names: 'rain',
+      geom: wkt,
+      srs: 'EPSG:4236',
+      start: startString,
+      stop: stopString
+    }).then(function (result) {
+      $scope.rain.data = result;
+      $scope.rain.wkt = wkt;
+      $scope.rain.srs = 'EPSG:4236';
+    });
+  });
 
   $scope.$watch('timeState.changedZoom', function (newVal, oldVal) {
     if ((newVal === oldVal) || ($scope.canceler === undefined)) { return; }
