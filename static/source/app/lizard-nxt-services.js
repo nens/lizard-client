@@ -7,15 +7,19 @@ services.service("CabinetService", ["$resource",
   var layers = window.layers;
   var baselayers = window.baseLayers;
   var eventTypes = [
-            {
-            "name": "Twitter",
-            "event_count": 4
-            },
-            {
-            "name": "Meldingen",
-            "event_count": 4
-            }
-          ];
+    {
+      "name": "Twitter",
+      "event_count": 4
+    },
+    {
+      "name": "Meldingen",
+      "event_count": 4
+    },
+    {
+      "name": "Gebouwen",
+      "event_count": 4
+    }
+  ];
 
   var termSearchResource,
       bboxSearchResource,
@@ -26,8 +30,8 @@ services.service("CabinetService", ["$resource",
       timeseriesLocationObjectResource,
       timeseriesResource;
   
-  termSearchResource = $resource('/api/v1/search/',{isArray: true});
-  bboxSearchResource = $resource('/api/v1/search/',{isArray: true});
+  termSearchResource = $resource('/api/v1/search/', {isArray: true});
+  bboxSearchResource = $resource('/api/v1/search/', {isArray: true});
   geocodeResource = $resource('/api/v1/geocode/');
   reverseGeocodeResource = $resource('/api/v1/reversegeocode/');
   timeseriesLocationObjectResource = $resource('/api/v1/timeseries/?object=:object_type$:id&page_size=0', {
