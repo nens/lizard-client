@@ -27,7 +27,7 @@ app.directive('vectorlayer', function () {
       var circleStyle = function (features) {
         var scale = d3.scale.ordinal()
             .domain(function (d) {
-              return d3.set(d.event_sub_type).values();
+              return d3.set(d.event_type).values();
             })
             .range(scope.colors[8]);
 
@@ -36,14 +36,14 @@ app.directive('vectorlayer', function () {
           .attr('stroke', "#e")
           .attr('stroke-width', 1)
           .attr('fill', function (d) {
-            return scale(d.event_sub_type);
+            return scale(d.event_type);
           })
           .on('click', function (d) {
             scope.box.type = 'aggregate';
             scope.box.content.eventValue = d;
             scope.$apply();
           });
-      }
+      };
 
       /*
        * Draw events based on current temporal extent
@@ -72,13 +72,15 @@ app.directive('vectorlayer', function () {
         scope.timeState.countCurrentEvents();
       });
       
+      var eventLayer;
       scope.$watch('events.changed', function (n, o) {
         if (n === o) { return true; }
+        console.log("Removing?", eventLayer);
         if (eventLayer) {
-          console.log("Removing?");
           mapCtrl.removeLayer(eventLayer);
         }
-        var eventLayer = createEventLayer(circleStyle, scope.events.data);
+        console.log('scope.events.data', scope.events.data);
+        eventLayer = createEventLayer(circleStyle, scope.events.data);
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
       });
 

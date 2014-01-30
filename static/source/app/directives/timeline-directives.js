@@ -64,7 +64,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         if (options.scale === "ordinal") {
           scale = d3.scale.ordinal()
             .domain(function (d) {
-              return d3.set(d.event_sub_type).values();
+              return d3.set(d.event_type).values();
             })
             .range($scope.colors[8]);
         }
@@ -285,7 +285,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       // Create remaining scales
       var yScale = timelineCtrl.scale({min: 1, max: nEventTypes}, { min: newGraph.height - 20, max: 20 }, {scale: 'linear'});
       // Update the svg
-      timelineCtrl.drawCircles(newGraph.svg, newGraph.xScale, yScale, graph.colorScale, 'timestamp', 'event_type', 'event_sub_type', data);
+      timelineCtrl.drawCircles(newGraph.svg, newGraph.xScale, yScale, graph.colorScale, 'timestamp', 'event_type', 'event_type', data);
 
       return newGraph;
     };
@@ -314,7 +314,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
     scope.$watch('events.changed', function (n, o) {
       if (n === o) { return true; }
       var data = scope.events.data.features;
-      console.log(data);
       graph = updateTimeline(graph, data, scope.events.types.count);
       scope.timeState.changedZoom = Date.now();
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
@@ -367,7 +366,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
     
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
-      console.log(scope.timeState.animation);
       if (scope.timeState.animation.enabled) {
         graph.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
         timelineCtrl.brushmove();

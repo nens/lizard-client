@@ -267,10 +267,11 @@ app.controller("MasterCtrl",
     if (longData.features.length === 0) { eventId = 1; }
     else {
       var maxEventId = 1;
-      angular.forEach(longData, function (feature) {
+      angular.forEach(longData.features, function (feature) {
         maxEventId = feature.event_type > maxEventId ? feature.event_type : maxEventId;
       });
       eventId = maxEventId + 1;
+      console.log(eventId);
     }
     $scope.events.types[name] = {};
     $scope.events.types[name].event_type = eventId;
