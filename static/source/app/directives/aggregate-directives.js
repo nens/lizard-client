@@ -12,20 +12,75 @@ app.directive('vectorlayer', function () {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
-      var createEventLayer = function (style, data) {
-        var eventLayer = L.pointsLayer(data, {
-          applyStyle: style
-        });
-        mapCtrl.addLayer(eventLayer);
-        return eventLayer;
+      var createEventLayer = function (data) {
+        var map = mapCtrl.map();
+        var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+            g = svg.append("g").attr("class", "leaflet-zoom-hide");
+        
+        function projectPoint(x, y) {
+          var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+          this.stream.point(point.x, point.y);
+        }
+
+        var transform = d3.geo.transform({point: projectPoint}),
+            path = d3.geo.path().projection(transform),
+            bounds = path.bounds(data);
+
+        function reset() {
+          var topLeft = bounds[0],
+              bottomRight = bounds[1];
+
+          svg.attr("width", bottomRight[0] - topLeft[0])
+             .attr("height", bottomRight[1] - topLeft[1])
+             .style("left", topLeft[0] + "px")
+             .style("top", topLeft[1] + "px");
+
+          g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+        }
+
+        map.on("viewreset", reset);
+
+        var feature = g.selectAll("path")
+            .data(data.features, function  (d) { return d.id; });
+
+        feature.enter().append("path")
+          .attr("d", path)
+          .attr("class", "circle")
+          .attr('fill-opacity', 0.8)
+          .attr('stroke', "#e")
+          .attr('stroke-width', 0)
+          .attr('fill', function (d) {
+            return d.color;
+          })
+          .on('click', function (d) {
+            scope.box.type = 'aggregate';
+            scope.box.content.eventValue = d;
+            scope.$apply();
+          });
+
+        reset();
+        return {
+          g: g,
+          path: path
+        };
       };
 
-      /**
-       * Style event circles based on category and
-       * add click event handling
-       */
-      var circleStyle = function (features) {
-        features
+      var updateEventLayer = function (eventLayer, data) {
+        var feature = eventLayer.g.selectAll("path")
+            .data(data.features, function  (d) { return d.id; })
+
+        feature.transition()
+          .duration(500)
+          .attr('fill', function (d) {
+            return d.color;
+          });
+
+        feature.enter().append("path")
+          .attr("d", eventLayer.path)
+          .attr("class", "circle")
+          .attr("fill-opacity", 0)
+          .transition()
+          .duration(500)
           .attr('fill-opacity', 0.8)
           .attr('stroke', "#e")
           .attr('stroke-width', 1)
@@ -37,6 +92,12 @@ app.directive('vectorlayer', function () {
             scope.box.content.eventValue = d;
             scope.$apply();
           });
+
+        feature.exit()
+          .transition()
+          .duration(500)
+          .style("fill-opacity", 1e-6)
+          .remove();
       };
 
       /*
@@ -69,12 +130,11 @@ app.directive('vectorlayer', function () {
       var eventLayer;
       scope.$watch('events.changed', function (n, o) {
         if (n === o) { return true; }
-        console.log("Removing?", eventLayer);
         if (eventLayer) {
-          mapCtrl.removeLayer(eventLayer);
+          updateEventLayer(eventLayer, scope.events.data);
+        } else {
+          eventLayer = createEventLayer(scope.events.data);
         }
-        console.log('scope.events.data', scope.events.data);
-        eventLayer = createEventLayer(circleStyle, scope.events.data);
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
       });
 
