@@ -5,37 +5,45 @@ angular.module('graph', []);
 angular.module('graph')
 .directive('timeseriesRain', function () {
   var link = function (scope, element, attrs) {
+
     var svg = element.append('<svg id="chart-combined"></svg>');
     var graph = new NxtD3(d3.select('#chart-combined'), {
       width: 500,
       height: 300
     });
 
-    scope.$watch('rain', function () {
-      if (arguments) {
-        // graph.initiate(scope.data, 'rain');
-        graph.updateBars('rain', scope.rain);
-        // console.info('yo');
-      }
-    });
+    //promises
 
     scope.$watch('enabled', function () {
       if (scope.enabled) {
-        graph.charts = undefined;
-        graph.initiate(scope.rain, 'rain');
-        graph.drawBars('rain', scope.rain);
+        graph.charts = {};
+        graph.initiate(scope.rainseries, 'rain');
+        graph.drawBars('rain', scope.rainseries);
         for (var i in scope.timeseries) {
           graph.initiate(scope.timeseries[i], 'timeseries_' + i);
+          graph.drawLine('timeseries_' + i, scope.timeseries[i]);
         }
+        graph.addZoom();
       }
     });
 
-    scope.$watch('timeseries', function (newVal, oldVal) {
-      for (var i in scope.timeseries) {
-        graph.drawLine('timeseries_' + i, scope.timeseries[i]);
+    scope.$watch('rainseries', function () {
+      if (graph.charts === undefined) { return; }
+      if (graph.charts.hasOwnProperty('rain')) {
+        // graph.initiate(scope.rainseries, 'rain');
+        // graph.drawBars('rain', scope.rainseries);
+        // console.info('yo');
+      } else {
+        graph.updateBars('rain', scope.rainseries);
+
       }
-      graph.addZoom();
     });
+  //   scope.$watch('timeseries', function (newVal, oldVal) {
+  //     for (var i in scope.timeseries) {
+  //       graph.drawLine('timeseries_' + i, scope.timeseries[i]);
+  //     }
+  //     graph.addZoom();
+  //   });
   };
 
   return {
@@ -43,7 +51,7 @@ angular.module('graph')
     scope: {
       // TODO: add extra options (e.g. width)? 
       title: '=',
-      rain: '=',
+      rainseries: '=',
       timeseries: '=',
       xlabel: '=',
       ylabel: '=',

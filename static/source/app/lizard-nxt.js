@@ -115,11 +115,11 @@ app.controller("MasterCtrl",
     }
   };
 
-  $scope.mouseMove = function ($event) {
-    if ($scope.tools.cursorTooltip.enabled) {
-      $scope.tools.cursorTooltip.location = $event;
-    }
-  };
+  // $scope.mouseMove = function ($event) {
+  //   if ($scope.tools.cursorTooltip.enabled) {
+  //     $scope.tools.cursorTooltip.location = $event;
+  //   }
+  // };
 
   $scope.toggleTool = function (name) {
     if ($scope.tools.active === name) {
@@ -158,7 +158,7 @@ app.controller("MasterCtrl",
   var end = Date.now();
   // TIME MODEL
   $scope.timeState = {
-    start: end - (24 * 60 * 60 * 1000 * 14), // 14 days
+    start: end - (24 * 60 * 60 * 1000 * 210), // 14 days
     end: end,
     changedZoom: Date.now(),
     at: this.start,
@@ -260,6 +260,7 @@ app.controller("MasterCtrl",
 
   $scope.$watch('activeObject.changed', function (newVal, oldVal) {
     if (newVal === oldVal) { return; }
+
     $scope.box.content.object_type = $scope.activeObject.entity_name;
     $scope.box.content.id = $scope.activeObject.id;
     $scope.box.content.data = $scope.activeObject;
@@ -284,7 +285,7 @@ app.controller("MasterCtrl",
     var stopString = stop.toISOString().split('.')[0];
     var start = new Date($scope.timeState.start);
     var startString = start.toISOString().split('.')[0];
-    var wkt = "POINT(" + $scope.activeObject.latlng.lng + " " 
+    var wkt = "POINT(" + $scope.activeObject.latlng.lng + " "
       + $scope.activeObject.latlng.lat + ")";
     $scope.canceler.resolve();
     $scope.canceler = $q.defer();
@@ -299,6 +300,7 @@ app.controller("MasterCtrl",
       $scope.rain.data = result;
       $scope.rain.wkt = wkt;
       $scope.rain.srs = 'EPSG:4236';
+      $scope.timeboxenabled = true;
     });
   });
 
@@ -337,6 +339,7 @@ app.controller("MasterCtrl",
         stop: stopString
       }).then(function (result) {
         $scope.rain.data = result;
+
       });
     }
   });

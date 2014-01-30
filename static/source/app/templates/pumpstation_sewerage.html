@@ -26,5 +26,5 @@
     <select class="timeseries" ng-model="box.content.selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
   </div>
     <graph line data="data" title="" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></graph>
-    <timeseries-rain timeseries="data" rain="rain.data"></timeseries-rain>
+    <timeseries-rain timeseries="data" rainseries="rain.data" enabled="timeboxenabled"></timeseries-rain>
 </div>
