@@ -27,7 +27,7 @@ app.directive('vectorlayer', function () {
       var circleStyle = function (features) {
         var scale = d3.scale.ordinal()
             .domain(function (d) {
-              return d3.set(d.event_type).values();
+              return d3.set(d.properties.event_sub_type).values();
             })
             .range(scope.colors[8]);
 
@@ -36,7 +36,7 @@ app.directive('vectorlayer', function () {
           .attr('stroke', "#e")
           .attr('stroke-width', 1)
           .attr('fill', function (d) {
-            return scale(d.event_type);
+            return scale(d.properties.event_sub_type);
           })
           .on('click', function (d) {
             scope.box.type = 'aggregate';
@@ -54,7 +54,7 @@ app.directive('vectorlayer', function () {
         d3.selectAll(".circle")
           .classed("selected", function (d) {
             var s = [start, end];
-            var time = d.timestamp;
+            var time = d.properties.timestamp;
             var contained = s[0] <= time && time <= s[1];
             // Some book keeping to count
             d.inTempExtent = contained;
