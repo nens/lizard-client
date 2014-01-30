@@ -25,18 +25,12 @@ app.directive('vectorlayer', function () {
        * add click event handling
        */
       var circleStyle = function (features) {
-        var scale = d3.scale.ordinal()
-            .domain(function (d) {
-              return d3.set(d.properties.event_sub_type).values();
-            })
-            .range(scope.colors[8]);
-
         features
           .attr('fill-opacity', 0.8)
           .attr('stroke', "#e")
           .attr('stroke-width', 1)
           .attr('fill', function (d) {
-            return scale(d.properties.event_sub_type);
+            return d.color;
           })
           .on('click', function (d) {
             scope.box.type = 'aggregate';
@@ -71,7 +65,7 @@ app.directive('vectorlayer', function () {
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
         scope.timeState.countCurrentEvents();
       });
-      
+
       var eventLayer;
       scope.$watch('events.changed', function (n, o) {
         if (n === o) { return true; }

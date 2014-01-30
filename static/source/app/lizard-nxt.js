@@ -220,6 +220,7 @@ app.controller("MasterCtrl",
       if ($scope.events.types[name].active) {
         $scope.events.types[name].active = false;
         $scope.events.data = removeEvents($scope.events.data, name);
+        addColor($scope.events.data);
         $scope.events.changed = Date.now();
       } else { 
         $scope.events.types[name].active = true;
@@ -245,18 +246,26 @@ app.controller("MasterCtrl",
       }
     );*/
     // Get data from json as long as there is no db implementation
-    var url = '/static/data/' + name + '.json';
+    var url = "";
+    if (name === 'Twitter') {
+      url = '/static/data/Twitter.geojson';
+    } else if (name === 'Meldingen') {
+      url = 'static/data/Klachten.geojson';
+    } else if (name === 'Gebouwen') {
+      url = 'static/data/Gebouwen.geojson';
+    }
     $http.get(url)
     .success(function (response) {
-      var data = response.results[0];
+      var data = response;
       $scope.events.data = addEvents($scope.events.data, data, name);
+      addColor($scope.events.data);
       $scope.events.types[name].count = response.count;
       $scope.events.types[name].active = true;
       $scope.events.changed = Date.now();
     });
   };
 
-  /** 
+  /**
   * Formats data into long format. LongData is the data object to add shortData to
   * under the specified name.
   **/
@@ -266,7 +275,7 @@ app.controller("MasterCtrl",
     if (longData.features === undefined) {longData.features = []; }
     if (longData.features.length === 0) { eventId = 1; }
     else {
-      var maxEventId = 1;
+      var maxEventId = 0;
       angular.forEach(longData.features, function (feature) {
         maxEventId = feature.event_type > maxEventId ? feature.event_type : maxEventId;
       });
@@ -278,15 +287,29 @@ app.controller("MasterCtrl",
     for (var i = 0; i < shortData.features.length; i++) {
       var feature = shortData.features[i];
       feature.event_type = eventId;
+      feature.color = $scope.colors[8][eventId];
       feature.name = name;
       // Create unique id, a combo of time and location. I assume this is always unique..
-      feature.id = name + feature.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
+      feature.id = name + feature.properties.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
       longData.features.push(feature);
     };
     $scope.events.types.count = $scope.events.types.count + 1;
     return longData;
   };
 
+  var addColor = function (longData) {
+    var scale = d3.scale.ordinal().range($scope.colors[8]);
+    if ($scope.events.types.count === 1) {
+      angular.forEach(longData.features, function (feature) {
+        feature.color = scale(feature.properties.event_sub_type);
+      });
+    } else {
+      angular.forEach(longData.features, function (feature) {
+        feature.color = scale(feature.properties.event_type);
+      });
+    }
+  };
+  
   var removeEvents = function (longData, name) {
     var eventId = $scope.events.types[name].event_type;
     var iterations = longData.features.length;

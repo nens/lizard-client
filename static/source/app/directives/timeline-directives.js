@@ -128,8 +128,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
     this.drawCircles = function (svg, xScale, yScale, colorScale, xKey, yKey, colorKey, data) {
       console.log(xKey, yKey, colorKey, data);
       var xFunction = function (d) { return Math.round(xScale(d.properties[xKey])); };
-      var yFunction = function (d) { return yScale(d.properties[yKey]); };
-      var colorFunction = function (d) { return colorScale(d.properties[colorKey]); };
+      var yFunction = function (d) { return yScale(d[yKey]); };
+      var colorFunction = function (d) { return d.color; };
       // DATA JOIN
       // Join new data with old elements, based on the id value.
       var circles = svg.select('g').selectAll("circle")
@@ -393,7 +393,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         );
         // Update circle positions
         graph.svg.selectAll("circle")
-          .attr("cx", function (d) { return Math.round(graph.xScale(d.timestamp)); });
+          .attr("cx", function (d) { return Math.round(graph.xScale(d.properties.timestamp)); });
       }
     });
 
