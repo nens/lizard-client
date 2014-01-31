@@ -35,7 +35,8 @@ app.directive('vectorlayer', function () {
              .style("left", topLeft[0] + "px")
              .style("top", topLeft[1] + "px");
 
-          g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+          g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")")
+           .selectAll("path").attr("d", path);
         }
 
         map.on("viewreset", reset);
@@ -47,8 +48,6 @@ app.directive('vectorlayer', function () {
           .attr("d", path)
           .attr("class", "circle")
           .attr('fill-opacity', 0.8)
-          .attr('stroke', "#e")
-          .attr('stroke-width', 0)
           .attr('fill', function (d) {
             return d.color;
           })
@@ -82,15 +81,8 @@ app.directive('vectorlayer', function () {
           .transition()
           .duration(500)
           .attr('fill-opacity', 0.8)
-          .attr('stroke', "#e")
-          .attr('stroke-width', 1)
           .attr('fill', function (d) {
             return d.color;
-          })
-          .on('click', function (d) {
-            scope.box.type = 'aggregate';
-            scope.box.content.eventValue = d;
-            scope.$apply();
           });
 
         feature.exit()
@@ -98,6 +90,12 @@ app.directive('vectorlayer', function () {
           .duration(500)
           .style("fill-opacity", 1e-6)
           .remove();
+
+        feature.on('click', function (d) {
+            scope.box.type = 'aggregate';
+            scope.box.content.eventValue = d;
+            scope.$apply();
+          });
       };
 
       /*
@@ -124,7 +122,7 @@ app.directive('vectorlayer', function () {
       scope.$watch('timeState.changedZoom', function (n, o) {
         if (n === o) { return true; }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
-        scope.timeState.countCurrentEvents();
+        scope.events.countCurrentEvents();
       });
 
       var eventLayer;
@@ -142,7 +140,7 @@ app.directive('vectorlayer', function () {
       scope.$watch('timeState.at', function () {
         if (scope.timeState.animation.enabled) {
           drawTimeEvents(scope.timeState.animation.start, scope.timeState.animation.end);
-          scope.timeState.countCurrentEvents();
+          scope.events.countCurrentEvents();
         }
       });
     }

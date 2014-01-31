@@ -137,7 +137,7 @@
               <ul class="list-group">
                 <li ng-repeat="event in mapState.eventTypes">
                 <label class="ng-class: {active: events.types[event.name].active};" ng-bind="event.name" ng-click="events.toggleEvents(event.name)"></label>
-                <label class="count"  ng-if="events.types[event.name].active"><% events..types[event.name].currentCount %>&nbsp;(<% events.types[event.name].count %>) </label>
+                <label class="count"  ng-if="events.types[event.name].active"><% events.types[event.name].currentCount %>&nbsp;(<% events.types[event.name].count %>) </label>
               </ul>
               </li>
             </ul>
@@ -170,8 +170,7 @@
              ng-class="{'crosshair': tools.active === 'profile'}">
          </map>
       </div>
-        <timeline ng-if="{ timestate.hidden: 'false'}"
-                  time-state="timeState" 
+        <timeline time-state="timeState" 
                   colors="colors" 
                   animation="timeState.animation"
                   events="events"

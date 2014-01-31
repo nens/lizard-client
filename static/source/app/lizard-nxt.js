@@ -173,19 +173,6 @@ app.controller("MasterCtrl",
   };
 // END TIME MODEL
 
-  $scope.timeState.countCurrentEvents = function () {
-    for (var eventType in $scope.events.types) {
-      $scope.events.types[eventType].currentCount = 0;
-    }
-    for (var i = 0; i < $scope.events.data.features.length; i++) {
-        var feature = $scope.events.data.features[i];
-        if (feature.inTempExtent && feature.inSpatExtent) {
-          var eventType = feature.name;
-          $scope.events.types[eventType].currentCount++;
-        }
-    }
-  };
-
   $scope.timeState.zoomTo = function (geometry) {
     var panZoom = {
       lat: geometry.coordinates[1],
@@ -213,6 +200,19 @@ app.controller("MasterCtrl",
             features: [] // Long format events data object
       },
     changed: Date.now()
+  };
+
+  $scope.events.countCurrentEvents = function () {
+    for (var eventType in $scope.events.types) {
+      $scope.events.types[eventType].currentCount = 0;
+    }
+    for (var i = 0; i < $scope.events.data.features.length; i++) {
+        var feature = $scope.events.data.features[i];
+        if (feature.inTempExtent && feature.inSpatExtent) {
+          var eventType = feature.name;
+          $scope.events.types[eventType].currentCount++;
+        }
+    }
   };
 
   $scope.events.toggleEvents = function (name) {
@@ -259,7 +259,7 @@ app.controller("MasterCtrl",
       var data = response;
       $scope.events.data = addEvents($scope.events.data, data, name);
       addColor($scope.events.data);
-      $scope.events.types[name].count = response.count;
+      $scope.events.types[name].count = response.features.length;
       $scope.events.types[name].active = true;
       $scope.events.changed = Date.now();
     });

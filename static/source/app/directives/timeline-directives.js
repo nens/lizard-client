@@ -1,6 +1,7 @@
 // Timeline for lizard.
 app.controller('TimelineDirCtrl', function ($scope) {
     this.createCanvas = function (svg, options) {
+      console.log("creating the timeline");
       // Draws a blank canvas based on viewport
       var margin = {
         top: 3,
@@ -238,7 +239,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
 
     return this;
   })
-.directive('timeline', [ function ($timeout) {
+.directive('timeline', [ function () {
   
   var link = function (scope, element, attrs, timelineCtrl) {
 
@@ -318,13 +319,13 @@ app.controller('TimelineDirCtrl', function ($scope) {
       graph = updateTimeline(graph, data, scope.events.types.count);
       scope.timeState.changedZoom = Date.now();
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
-      scope.timeState.countCurrentEvents();
+      scope.events.countCurrentEvents();
     });
 
     scope.$watch('mapState.moved', function (n, o) {
       if (n === o) { return true; }
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
-      scope.timeState.countCurrentEvents();
+      scope.events.countCurrentEvents();
     });
 
     // Create the brush to display automatic and manual selection of data in timeline both referred to as "animation"
