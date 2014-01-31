@@ -1,7 +1,6 @@
 // Timeline for lizard.
 app.controller('TimelineDirCtrl', function ($scope) {
     this.createCanvas = function (svg, options) {
-      console.log("creating the timeline");
       // Draws a blank canvas based on viewport
       var margin = {
         top: 3,
@@ -127,7 +126,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
     // };
 
     this.drawCircles = function (svg, xScale, yScale, colorScale, xKey, yKey, colorKey, data) {
-      console.log(xKey, yKey, colorKey, data);
       var xFunction = function (d) { return Math.round(xScale(d.properties[xKey])); };
       var yFunction = function (d) { return yScale(d[yKey]); };
       var colorFunction = function (d) { return d.color; };

@@ -274,7 +274,6 @@ app.controller("MasterCtrl",
         maxEventId = feature.event_type > maxEventId ? feature.event_type : maxEventId;
       });
       eventId = maxEventId + 1;
-      console.log(eventId);
     }
     $scope.events.types[name] = {};
     $scope.events.types[name].event_type = eventId;
@@ -303,7 +302,6 @@ app.controller("MasterCtrl",
         feature.color = $scope.events.scale(feature.name);
       });
     }
-    console.log("Scale", $scope.events.scale.domain());
   };
   
   var removeEvents = function (longData, name) {

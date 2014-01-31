@@ -28,7 +28,6 @@ app.directive('vectorlayer', function () {
 
         function reset() {
           bounds = path.bounds(data);
-          console.log(bounds[0][0]);
           // If no bounds: remove svg
           if (bounds[0][0] === Infinity) {
             svg.remove();
