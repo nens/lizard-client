@@ -27,15 +27,17 @@ app.directive('vectorlayer', function () {
             bounds = path.bounds(data);
 
         function reset() {
+          bounds = path.bounds(data);
+          
           var topLeft = bounds[0],
               bottomRight = bounds[1];
 
-          svg.attr("width", bottomRight[0] - topLeft[0])
-             .attr("height", bottomRight[1] - topLeft[1])
-             .style("left", topLeft[0] + "px")
-             .style("top", topLeft[1] + "px");
+          svg.attr("width", bottomRight[0] - topLeft[0] + 20)
+             .attr("height", bottomRight[1] - topLeft[1] + 20)
+             .style("left", (topLeft[0] - 10) + "px")
+             .style("top", (topLeft[1] - 10) + "px");
 
-          g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")")
+          g.attr("transform", "translate(" + -(topLeft[0] - 10) + "," + -(topLeft[1] - 10) + ")")
            .selectAll("path").attr("d", path);
         }
 
@@ -50,8 +52,9 @@ app.directive('vectorlayer', function () {
           .attr('fill-opacity', 0.8)
           .attr('fill', function (d) {
             return d.color;
-          })
-          .on('click', function (d) {
+          });
+
+        feature.on('click', function (d) {
             scope.box.type = 'aggregate';
             scope.box.content.eventValue = d;
             scope.$apply();
@@ -60,11 +63,13 @@ app.directive('vectorlayer', function () {
         reset();
         return {
           g: g,
-          path: path
+          path: path,
+          reset: reset
         };
       };
 
       var updateEventLayer = function (eventLayer, data) {
+        eventLayer.reset();
         var feature = eventLayer.g.selectAll("path")
             .data(data.features, function  (d) { return d.id; })
 
