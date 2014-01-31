@@ -28,6 +28,13 @@ app.directive('vectorlayer', function () {
 
         function reset() {
           bounds = path.bounds(data);
+          console.log(bounds[0][0]);
+          // If no bounds: remove svg
+          if (bounds[0][0] === Infinity) {
+            svg.remove();
+            eventLayer = undefined;
+            return true;
+          }
           
           var topLeft = bounds[0],
               bottomRight = bounds[1];
@@ -49,10 +56,14 @@ app.directive('vectorlayer', function () {
         feature.enter().append("path")
           .attr("d", path)
           .attr("class", "circle")
-          .attr('fill-opacity', 0.8)
+          .attr("fill-opacity", 0)
           .attr('fill', function (d) {
             return d.color;
-          });
+          })
+          .transition()
+          .delay(500)
+          .duration(1000)
+          .attr('fill-opacity', 0.8);
 
         feature.on('click', function (d) {
             scope.box.type = 'aggregate';
@@ -74,7 +85,8 @@ app.directive('vectorlayer', function () {
             .data(data.features, function  (d) { return d.id; })
 
         feature.transition()
-          .duration(500)
+          .delay(500)
+          .duration(1000)
           .attr('fill', function (d) {
             return d.color;
           });
@@ -83,16 +95,17 @@ app.directive('vectorlayer', function () {
           .attr("d", eventLayer.path)
           .attr("class", "circle")
           .attr("fill-opacity", 0)
-          .transition()
-          .duration(500)
-          .attr('fill-opacity', 0.8)
           .attr('fill', function (d) {
             return d.color;
-          });
+          })
+          .transition()
+          .delay(500)
+          .duration(1000)
+          .attr('fill-opacity', 0.8);
 
         feature.exit()
           .transition()
-          .duration(500)
+          .duration(1000)
           .style("fill-opacity", 1e-6)
           .remove();
 

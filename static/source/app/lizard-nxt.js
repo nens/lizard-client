@@ -199,6 +199,7 @@ app.controller("MasterCtrl",
     data: { type: "FeatureCollection",
             features: [] // Long format events data object
       },
+    scale: d3.scale.ordinal().range($scope.colors[8]),
     changed: Date.now()
   };
 
@@ -246,14 +247,7 @@ app.controller("MasterCtrl",
       }
     );*/
     // Get data from json as long as there is no db implementation
-    var url = "";
-    if (name === 'Twitter') {
-      url = '/static/data/Twitter.geojson';
-    } else if (name === 'Meldingen') {
-      url = 'static/data/Klachten.geojson';
-    } else if (name === 'Gebouwen') {
-      url = 'static/data/Gebouwen.geojson';
-    }
+    var url = '/static/data/' + name + '.geojson';
     $http.get(url)
     .success(function (response) {
       var data = response;
@@ -298,16 +292,18 @@ app.controller("MasterCtrl",
   };
 
   var addColor = function (longData) {
-    var scale = d3.scale.ordinal().range($scope.colors[8]);
     if ($scope.events.types.count === 1) {
+      var scale = d3.scale.ordinal().range($scope.colors[8])
       angular.forEach(longData.features, function (feature) {
         feature.color = scale(feature.properties.event_sub_type);
       });
     } else {
+      scale = d3.scale.ordinal().range($scope.colors[8]).domain;
       angular.forEach(longData.features, function (feature) {
-        feature.color = scale(feature.properties.event_type);
+        feature.color = $scope.events.scale(feature.name);
       });
     }
+    console.log("Scale", $scope.events.scale.domain());
   };
   
   var removeEvents = function (longData, name) {
