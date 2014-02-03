@@ -250,7 +250,9 @@ app.controller('TimelineDirCtrl', function ($scope) {
     */
     var createTimeline = function () {
       var canvasOptions = {width: window.innerWidth, height: 50};
-      var svg = d3.select("#timeline-svg-wrapper").select("svg").html('');
+      d3.select('#timeline').transition().duration(300).style('bottom', 0);
+      var svg = d3.select("#timeline-svg-wrapper")
+                  .select("svg").html('');
       var graph = timelineCtrl.createCanvas(svg, canvasOptions);
       // Add x axis
       var x = {};

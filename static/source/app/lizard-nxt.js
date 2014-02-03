@@ -70,8 +70,8 @@ app.config(function ($interpolateProvider) {
  *
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "Restangular", "$q", "CabinetService",
-  function ($scope, $http, Restangular, $q, CabinetService)  {
+  ["$scope", "$http", "Restangular", "$q", "$compile", "CabinetService",
+  function ($scope, $http, Restangular, $q, $compile, CabinetService)  {
 
   // BOX MODEL
   $scope.box = {
@@ -626,8 +626,11 @@ app.controller("MasterCtrl",
       $scope.timeState.hidden = true;
       angular.element('#timeline').css('bottom', 0 - angular.element('#timeline').height());
     } else {
-      angular.element('#timeline').css('bottom', 0);
-      angular.element('#timeline-ribbon').css('visibility', 'visible');
+      // Create timeline element when needed and no earlier
+      var timeline = angular.element('<timeline class="navbar timeline navbar-fixed-bottom"></timeline>');
+      var el = $compile(timeline)($scope);
+      angular.element('#master')
+        .append(timeline);
       $scope.timeState.hidden = false;
     }
   };

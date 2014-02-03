@@ -94,7 +94,7 @@
     
     <cursor-tooltip enabled="<% tools.cursorTooltip.enabled %>" class="cursor-tooltip"  ng-class="{hide: !tools.cursorTooltip.enabled}"></cursor-tooltip>
 
-    <div ng-controller='MapCtrl'>
+    <div id="master" ng-controller='MapCtrl'>
       <div class="layer-menu-container">
         <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': mapState.enabled}">
           <div class="layer-switcher slide-left">
@@ -170,14 +170,7 @@
              ng-class="{'crosshair': tools.active === 'profile'}">
          </map>
       </div>
-        <timeline time-state="timeState" 
-                  colors="colors" 
-                  animation="timeState.animation"
-                  events="events"
-                  class="navbar timeline navbar-fixed-bottom">
-        </timeline>
-
-      </div>
+    </div>
 
     {% block box_awesome %}{% endblock %}
     <div class="container" ng-controller="SearchCtrl">
