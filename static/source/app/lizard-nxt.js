@@ -183,6 +183,21 @@ app.controller("MasterCtrl",
     $scope.mapState.moved = Date.now();
   };
 
+  /**
+  * Watch to restrict values of timeState
+  **/
+  $scope.$watch('timeState.changedZoom', function (n, o) {
+    if (n === o || $scope.timeState.changeOrigin === 'master') { return true; }
+    if ($scope.timeState.start < -315619200000) {
+      $scope.timeState.changeOrigin = 'master';
+      $scope.timeState.start = -315619200000; 
+    }
+    if ($scope.timeState.end > 2208988800000) { 
+      $scope.timeState.changeOrigin = 'master';
+      $scope.timeState.end = 2208988800000; 
+    }
+  });
+
 // COLOR MODEL
   $scope.colors =  {
     3: ["#27ae60", "#2980b9", "#8e44ad"],
@@ -314,8 +329,15 @@ app.controller("MasterCtrl",
         var j = longData.features.indexOf(feature);
         longData.features.splice(j, 1);
       }
-      else if (feature.event_type > eventId) { feature.event_type = feature.event_type - 1; }
-    };
+      else if (feature.event_type > eventId) {
+        feature.event_type = feature.event_type - 1; }
+    }
+    for (var key in $scope.events.types) {
+      var eType = $scope.events.types[key];
+      if (eType.event_type > eventId) {
+        eType.event_type = eType.event_type - 1;
+      }
+    }
     $scope.events.types.count = $scope.events.types.count - 1;
     return longData;
   };

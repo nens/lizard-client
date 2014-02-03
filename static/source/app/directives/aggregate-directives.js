@@ -28,18 +28,17 @@ app.directive('vectorlayer', function () {
 
         function reset() {
           bounds = path.bounds(data);
-          // If no bounds: remove svg
-          if (bounds[0][0] === Infinity) {
-            svg.remove();
-            eventLayer = undefined;
-            return true;
-          }
-          
-          var topLeft = bounds[0],
-              bottomRight = bounds[1];
 
-          svg.attr("width", bottomRight[0] - topLeft[0] + 20)
-             .attr("height", bottomRight[1] - topLeft[1] + 20)
+          var topLeft = bounds[0],
+              bottomRight = bounds[1],
+              width = bottomRight[0] - topLeft[0] + 20,
+              height = bottomRight[1] - topLeft[1] + 20;
+
+          svg.attr()
+             .attr("width", width)
+             .attr("height", height)
+             // Shift whole viewbox halve a pixel for nice and crisp rendering
+             .attr("viewBox", "-0.5 -0.5 " + width + " " + height)
              .style("left", (topLeft[0] - 10) + "px")
              .style("top", (topLeft[1] - 10) + "px");
 
@@ -54,7 +53,7 @@ app.directive('vectorlayer', function () {
 
         feature.enter().append("path")
           .attr("d", path)
-          .attr("class", "circle")
+          .attr("class", "circle event")
           .attr("fill-opacity", 0)
           .attr('fill', function (d) {
             return d.color;
@@ -73,6 +72,7 @@ app.directive('vectorlayer', function () {
         reset();
         return {
           g: g,
+          svg: svg,
           path: path,
           reset: reset
         };
@@ -81,7 +81,7 @@ app.directive('vectorlayer', function () {
       var updateEventLayer = function (eventLayer, data) {
         eventLayer.reset();
         var feature = eventLayer.g.selectAll("path")
-            .data(data.features, function  (d) { return d.id; })
+            .data(data.features, function  (d) { return d.id; });
 
         feature.transition()
           .delay(500)
@@ -92,7 +92,7 @@ app.directive('vectorlayer', function () {
 
         feature.enter().append("path")
           .attr("d", eventLayer.path)
-          .attr("class", "circle")
+          .attr("class", "circle event")
           .attr("fill-opacity", 0)
           .attr('fill', function (d) {
             return d.color;
@@ -113,6 +113,11 @@ app.directive('vectorlayer', function () {
             scope.box.content.eventValue = d;
             scope.$apply();
           });
+      };
+
+      var removeEventLayer = function (eventLayer) {
+        eventLayer.svg.remove();
+        return eventLayer = false;
       };
 
       /*
@@ -146,7 +151,11 @@ app.directive('vectorlayer', function () {
       scope.$watch('events.changed', function (n, o) {
         if (n === o) { return true; }
         if (eventLayer) {
-          updateEventLayer(eventLayer, scope.events.data);
+          if (scope.events.data.features.length === 0) {
+            eventLayer = removeEventLayer(eventLayer);
+          } else {
+            updateEventLayer(eventLayer, scope.events.data);
+          }
         } else {
           eventLayer = createEventLayer(scope.events.data);
         }

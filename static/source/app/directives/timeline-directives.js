@@ -126,8 +126,9 @@ app.controller('TimelineDirCtrl', function ($scope) {
     // };
 
     this.drawCircles = function (svg, xScale, yScale, colorScale, xKey, yKey, colorKey, data) {
-      var xFunction = function (d) { return Math.round(xScale(d.properties[xKey])); };
-      var yFunction = function (d) { return yScale(d[yKey]); };
+      // Shift halve a pixel for nice and crisp rendering
+      var xFunction = function (d) { return Math.round(xScale(d.properties[xKey])) + 0.5; };
+      var yFunction = function (d) { return yScale(d[yKey]) + 0.5; };
       var colorFunction = function (d) { return d.color; };
       // DATA JOIN
       // Join new data with old elements, based on the id value.
@@ -136,7 +137,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
 
       // UPDATE
       // Update old elements as needed.
-      circles.attr("class", "bar")
+      circles.attr("class", "event")
         .transition()
         .delay(500)
         .duration(500)
@@ -148,6 +149,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       // Create new elements as needed.
       circles.enter().append("circle")
         .attr("cx", xFunction)
+        .attr("class", "event")
         .attr("cy", yFunction)
         .attr("fill", colorFunction)
         .attr("r", 5)
@@ -246,7 +248,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
     */
     var createTimeline = function () {
       var canvasOptions = {width: element.width(), height: 50};
-      var svg = d3.select("#timeline-svg-wrapper").select("svg");
+      var svg = d3.select("#timeline-svg-wrapper").select("svg").html('');
       var graph = timelineCtrl.createCanvas(svg, canvasOptions);
       // Add x axis
       var x = {};
@@ -283,7 +285,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         timelineCtrl.updateBrush(newGraph.height);
       }
       // Create remaining scales
-      var yScale = timelineCtrl.scale({min: 1, max: nEventTypes}, { min: newGraph.height - 20, max: 20 }, {scale: 'linear'});
+      var yScale = timelineCtrl.scale({min: 1, max: nEventTypes}, { min: newGraph.height - 27, max: 20 }, {scale: 'linear'});
       // Update the svg
       timelineCtrl.drawCircles(newGraph.svg, newGraph.xScale, yScale, graph.colorScale, 'timestamp', 'event_type', 'event_type', data);
 
@@ -397,8 +399,9 @@ app.controller('TimelineDirCtrl', function ($scope) {
     });
 
     window.onresize = function () {
-      scope.timeState.timeline.width = element.width();
-      scope.timeState.timeline.changed = !scope.timeState.timeline.changed;
+      // Recreate timeline
+      createTimeline();
+      scope.events.changed = Date.now();
     };
 
   };
