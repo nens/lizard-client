@@ -1,3 +1,5 @@
+'use strict';
+
 // Timeline for lizard.
 app.controller('TimelineDirCtrl', function ($scope) {
     this.createCanvas = function (svg, options) {
@@ -247,7 +249,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
     * Draws an empty timeline
     */
     var createTimeline = function () {
-      var canvasOptions = {width: element.width(), height: 50};
+      var canvasOptions = {width: window.width(), height: 50};
       var svg = d3.select("#timeline-svg-wrapper").select("svg").html('');
       var graph = timelineCtrl.createCanvas(svg, canvasOptions);
       // Add x axis
