@@ -591,7 +591,7 @@ angular.module('graph')
             });            
         } else {
           var x = graphCtrl.maxMin(data, keys.x);
-            x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
+            x.scale = graphCtrl.scale(x.min, x.max, {
               range: [0, width]
             });
             x.tickFormat = "";

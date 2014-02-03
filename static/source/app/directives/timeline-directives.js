@@ -247,7 +247,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
     * Draws an empty timeline
     */
     var createTimeline = function () {
-      var canvasOptions = {width: element.width(), height: 50};
+      var canvasOptions = {width: window.innerWidth, height: 50};
       var svg = d3.select("#timeline-svg-wrapper").select("svg");
       var graph = timelineCtrl.createCanvas(svg, canvasOptions);
 
