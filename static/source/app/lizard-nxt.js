@@ -158,8 +158,8 @@ app.controller("MasterCtrl",
   var end = Date.now();
   // TIME MODEL
   $scope.timeState = {
-    start: end - (24 * 60 * 60 * 1000 * 210), // 14 days
-    end: end,
+    start: end - (24 * 60 * 60 * 1000 * 250), // 14 days
+    end: end - (24 * 60 * 60 * 1000 * 200),
     changedZoom: Date.now(),
     at: this.start,
     timeline: {
@@ -274,7 +274,14 @@ app.controller("MasterCtrl",
       $scope.timeseries = response;
       if ($scope.timeseries.length > 0) {
         $scope.box.content.selected_timeseries = response[0];
+        $scope.data = response[0].events.instants;
+        $scope.metadata = {
+          title: null,
+          fromgrid: $scope.box.content.data,
+          type: $scope.box.content.data.entity_name
+        };
       } else {
+        $scope.data = null;
         $scope.box.content.selected_timeseries = undefined;
       }
 
@@ -317,11 +324,8 @@ app.controller("MasterCtrl",
         start: $scope.timeState.start,
         end: $scope.timeState.end
       }).then(function (response) {
-        $scope.data = {
-          series: response.events.series,
-          instants: response.events.instants
-        };
-        $scope.box.content.selected_timeseries.events = response.events;
+        $scope.data = response.events.instants;
+        // $scope.box.content.selected_timeseries.events = response.events;
       });
     }
     if ($scope.rain.data) {

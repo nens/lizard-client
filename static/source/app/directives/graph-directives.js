@@ -8,9 +8,10 @@ angular.module('graph')
 
     var svg = element.append('<svg id="chart-combined"></svg>');
     var graph = new NxtD3(d3.select('#chart-combined'), {
-      width: 500,
+      width: 400,
       height: 300
     });
+    graph.charts = {};
 
     //promises
 
@@ -19,31 +20,39 @@ angular.module('graph')
         graph.charts = {};
         graph.initiate(scope.rainseries, 'rain');
         graph.drawBars('rain', scope.rainseries);
-        for (var i in scope.timeseries) {
-          graph.initiate(scope.timeseries[i], 'timeseries_' + i);
-          graph.drawLine('timeseries_' + i, scope.timeseries[i]);
-        }
         graph.addZoom();
       }
     });
 
     scope.$watch('rainseries', function () {
       if (graph.charts === undefined) { return; }
-      if (graph.charts.hasOwnProperty('rain')) {
-        // graph.initiate(scope.rainseries, 'rain');
-        // graph.drawBars('rain', scope.rainseries);
-        // console.info('yo');
-      } else {
-        graph.updateBars('rain', scope.rainseries);
+      if (!graph.charts.hasOwnProperty('rain')) {
 
       }
+      if (graph.charts.hasOwnProperty('rain')) {
+        graph.updateBars('rain', scope.rainseries);
+      }
     });
-  //   scope.$watch('timeseries', function (newVal, oldVal) {
-  //     for (var i in scope.timeseries) {
-  //       graph.drawLine('timeseries_' + i, scope.timeseries[i]);
-  //     }
-  //     graph.addZoom();
-  //   });
+
+
+    scope.$watch('start', function () {
+      if (scope.$parent.changeOrigin === 'timeseries') {return;}
+      graph.updateTemporalExtent('rain', scope.start, scope.end);
+    });
+
+    scope.$watch('timeseries', function (newVal, oldVal) {
+      if (newVal === oldVal) { return; }
+      if (!graph.charts.hasOwnProperty('timeseries')) {
+        graph.initiate(scope.timeseries, 'timeseries');
+        graph.drawLine('timeseries', scope.timeseries);
+        // graph.drawAxes('timeseries');
+      }
+      if (graph.charts.hasOwnProperty('timeseries')) {
+        graph.drawLine('timeseries', scope.timeseries);
+        // graph.drawAxes('timeseries');
+      }
+      // graph.addZoom();
+    });
   };
 
   return {
@@ -55,7 +64,9 @@ angular.module('graph')
       timeseries: '=',
       xlabel: '=',
       ylabel: '=',
-      enabled: '='
+      enabled: '=',
+      start: '=',
+      stop: '='
     },
     restrict: 'E',
     replace: true,

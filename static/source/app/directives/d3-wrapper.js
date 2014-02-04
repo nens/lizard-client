@@ -20,7 +20,7 @@ var NxtD3 = function (svg, options) {
     nxtd3.margin = {
       top: 3,
       right: 30,
-      bottom: 20,
+      bottom: 30,
       left: 30
     };
 
@@ -45,8 +45,8 @@ var NxtD3 = function (svg, options) {
     svg.select('g').append("g")
       .attr('class', 'x axis')
       .attr("transform", "translate(0 ," + that.height + ")");
-    svg.select('g').append("g")
-      .attr('class', 'y axis');
+    // svg.select('g').append("g")
+    //   .attr('class', 'y axis');
     nxtd3.svg = svg;
   };
 
@@ -140,10 +140,10 @@ var NxtD3 = function (svg, options) {
   };
 
   /*
-  * Draws the given axis
-  * @param {d3.axis} axis
+  * Draws the given X axis
+  * @param {string} id
   */
-  nxtd3.drawAxes = function (id) {
+  nxtd3.drawXAxis = function (id) {
     nxtd3.svg.select('.x.axis')
       .call(nxtd3.charts[id].x.axis)
       .selectAll("text")
@@ -151,10 +151,27 @@ var NxtD3 = function (svg, options) {
         .attr("dx", "-.8em")
         .attr("dy", ".15em")
         .attr("transform", function (d) {
-            return "rotate(-45)";
+            return "rotate(-15)";
           });
-    nxtd3.svg.select('.y.axis')
+  };
+
+  /*
+  * Draws the given Y axis
+  * @param {string} id
+  */
+  nxtd3.drawYAxis = function (id) {
+    var width = nxtd3.width;
+    var specY = nxtd3.svg.select('.y_' + id);
+    if (specY[0][0] === null) {
+      nxtd3.svg.select("g").append("g")
+        .attr("class", "y axis y_" + id); 
+    }
+    specY = nxtd3.svg.select('.y_' + id)
       .call(nxtd3.charts[id].y.axis);
+    var orient = nxtd3.charts[id].y.axis.orient();
+    if (orient === "right") {
+      specY.attr("transform", "translate(" + width + " ,0)");
+    }
   };
 
 
@@ -271,17 +288,36 @@ var NxtD3 = function (svg, options) {
 
     nxtd3.charts[id].line.defined(
       function (d) {
-        return !isNaN(parseFloat(d[0]));
+        return !isNaN(d[0]);
       });
 
+    var marginLeft = nxtd3.margin.left;
+    var clippath = nxtd3.svg
+      .select("#clip");
+    nxtd3.svg.select("#gpath")
+          .attr("clip-path", "url(#clip)");
+    if (clippath[0][0] === null) {
+      nxtd3.svg.append("g")
+          .attr("clip-path", "url(#clip)")
+          .attr("id", "gpath")
+          .attr("transform", "translate(" + marginLeft + ", 0)");
+      clippath = nxtd3.svg.append("svg:clipPath")
+        .attr("id", "clip")
+        .append("svg:rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", width)
+        .attr("height", height);
+    }
+      
     var that = nxtd3.charts[id];
-    var linus = nxtd3.svg.select("g").selectAll("path.line_" + id)
+    var linus = nxtd3.svg.select("#gpath").selectAll("path.line_" + id)
       .data([data]);
     linus.enter().append("path")
       .attr("class", "line line_" + id)
       .attr("d", that.line);
     linus.transition()
-      .duration(300)
+      .duration(0)
       .attr("d", that.line);
     linus.exit().remove();
   };
@@ -333,8 +369,17 @@ var NxtD3 = function (svg, options) {
         .attr("dx", "-.8em")
         .attr("dy", ".15em")
         .attr("transform", function (d) {
-            return "rotate(-45)";
+            return "rotate(-15)";
           });
+      if (angular !== undefined) {
+        var scope = angular.element(nxtd3.svg[0]).scope();
+        scope.$apply(function () {
+          scope.timeState.start = firstChart.x.scale.domain()[0].getTime();
+          scope.timeState.end = firstChart.x.scale.domain()[1].getTime();
+          scope.timeState.changeOrigin = 'timeseries';
+          scope.timeState.changedZoom = !scope.timeState.changedZoom;
+        });
+      }
       for (var i in nxtd3.charts) {
         if (nxtd3.charts[i].type === 'line') {
           svg.selectAll(".line_" + i)
@@ -344,9 +389,8 @@ var NxtD3 = function (svg, options) {
         if (nxtd3.charts[i].type === 'bar') {
           svg.selectAll(".bar")
             .attr("x", nxtd3.charts[i].x.datafn)
-            .attr("transform", "translate(" + "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ", 1)");
+            .attr("transform", "translate(" + d3.event.translate[0] + ",0) scale(" + d3.event.scale + ", 1)");
         }
-
       }
     };
 
@@ -355,7 +399,7 @@ var NxtD3 = function (svg, options) {
     .on("zoom", nxtd3.zoomed);
 
     for (var i in nxtd3.charts) {
-      zoom.x(nxtd3.charts[i].x.scale)
+      zoom.x(nxtd3.charts[i].x.scale);
     }
 
     nxtd3.svg.call(zoom)
@@ -364,6 +408,28 @@ var NxtD3 = function (svg, options) {
       .on("touchmove.zoom", null)
       .on("touchend.zoom", null);
     nxtd3.svg.call(zoom);
+  };
+
+  nxtd3.updateTemporalExtent = function (id, start, end) {
+    var x = {};
+    x.min = new Date(start);
+    x.max = new Date(end);
+    var range = {};
+    range.min = 0;
+    range.max = nxtd3.width;
+    nxtd3.charts[id].x.scale = nxtd3.createScale(x, range, { type: 'time' });
+    nxtd3.charts[id].x.axis = nxtd3.makeAxis(nxtd3.charts[id].x.scale, {
+      orientation: "bottom",
+      ticks: 5
+    });
+    nxtd3.drawXAxis('rain');
+    nxtd3.addZoom();
+
+    var bars = nxtd3.svg.select("g").selectAll(".bar_" + id)
+    var that = nxtd3.charts[id];
+    nxtd3.charts[id].x.datafn = function (d) { return that.x.scale(d[1]) - 0.5; };
+    bars.attr("class", "bar bar_" + id)
+      .attr("x", that.x.datafn);
   };
 
   nxtd3.initiate = function (data, id) {
@@ -399,14 +465,21 @@ var NxtD3 = function (svg, options) {
       scale: 'linear'
     });
 
-    y.axis = nxtd3.makeAxis(y.scale, {
-      orientation: "left"
-    });
+    if (id === "rain") {
+      y.axis = nxtd3.makeAxis(y.scale, {
+        orientation: "right"
+      });
+    } else {
+      y.axis = nxtd3.makeAxis(y.scale, {
+        orientation: "left"
+      });
+    }
     nxtd3.charts[id].x = x;
     nxtd3.charts[id].y = y;
     if (newChart) {
-      nxtd3.drawAxes(id);
+      nxtd3.drawXAxis(id);
     }
+    nxtd3.drawYAxis(id);
   };
 
   nxtd3.createCanvas(nxtd3.svg, options);

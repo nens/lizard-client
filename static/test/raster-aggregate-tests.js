@@ -55,8 +55,9 @@ describe('Testing raster requests directive', function() {
 
     // This should seriously be removed from the lizard-nxt.js file.
     $httpBackend.when("GET",
-      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725))&srs=EPSG:4326&agg=counts"
+      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205))&srs=EPSG:4326&agg=counts"
       ).respond('');
+    
 
     scope.$digest();
 
@@ -104,7 +105,7 @@ describe('Testing raster requests directive', function() {
     }; 
 
     $httpBackend.when("GET",
-      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725))&srs=EPSG:4326&agg=counts")
+      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205))&srs=EPSG:4326&agg=counts")
     .respond('');
     scope.$digest();
     var cardtitle = $(element.html()).find('h5').html();
@@ -136,7 +137,7 @@ describe('Testing raster requests directive', function() {
       }
     };
     $httpBackend.when("GET",
-      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725))&srs=EPSG:4326&agg=counts")
+      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205))&srs=EPSG:4326&agg=counts")
     .respond('');
     scope.$digest();
     expect(map.getBounds()).toEqual(scope.mapState.bounds);
@@ -162,7 +163,7 @@ describe('Testing raster requests directive', function() {
       }
     };
     $httpBackend.when("GET", 
-      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725, 5.3118896484375 52.09975692575725))&srs=EPSG:4326&agg=counts")
+      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205))&srs=EPSG:4326&agg=counts")
       .respond('[{"color": "#000000", "data": 256786, "label": 0},'
      + '{"color": "#e7e3e7", "data": 5089, "label": 241},'
      + '{"color": "#a5ff73", "data": 73, "label": "41 - LGN - Agrarisch Gras"},'
