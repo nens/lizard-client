@@ -12,6 +12,14 @@ app.directive('vectorlayer', function () {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
+      /**
+       * Creates svg layer in leaflet's overlaypane and adds events as circles
+       *
+       * 
+       *
+       * @data: data object
+       * @return: object eventLayer object
+       */      
       var createEventLayer = function (data) {
         var map = mapCtrl.map();
         var svg = d3.select(map.getPanes().overlayPane).append("svg"),

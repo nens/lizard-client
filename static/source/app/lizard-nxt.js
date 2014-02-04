@@ -173,16 +173,6 @@ app.controller("MasterCtrl",
   };
 // END TIME MODEL
 
-  $scope.timeState.zoomTo = function (geometry) {
-    var panZoom = {
-      lat: geometry.coordinates[1],
-      lng: geometry.coordinates[0],
-      zoom: 15
-    };
-    $scope.panZoom = panZoom;
-    $scope.mapState.moved = Date.now();
-  };
-
   /**
   * Watch to restrict values of timeState
   **/
@@ -217,7 +207,32 @@ app.controller("MasterCtrl",
     scale: d3.scale.ordinal().range($scope.colors[8]),
     changed: Date.now()
   };
+  
+  /**
+   * Zoom to location
+   * 
+   * Used by the aggregate template under the 'screenshot' icon
+   * 
+   * @param: geometry object wit a list of lon lat
+   */
+  $scope.events.zoomTo = function (geometry) {
+    var panZoom = {
+      lat: geometry.coordinates[1],
+      lng: geometry.coordinates[0],
+      zoom: 15
+    };
+    $scope.panZoom = panZoom;
+    $scope.mapState.moved = Date.now();
+  };
 
+  /**
+   * Counts the events currently within the temporal and spatial extent
+   * 
+   * Called when the user pans the map or zooms the timeline.
+   * The aggregate directive flags events that are visible on the map at feature.inSpatExtent
+   * The timeline directive flags events that are currently on the map at inTempExtent attribute
+   * This function just sums it all up
+   */
   $scope.events.countCurrentEvents = function () {
     for (var eventType in $scope.events.types) {
       $scope.events.types[eventType].currentCount = 0;
@@ -231,6 +246,14 @@ app.controller("MasterCtrl",
     }
   };
 
+  /**
+   * Turns event types on or off
+   * 
+   * When an event type is off, it is passed to getEvents
+   * When an event type is on, it is passed to removeEvents and the remaining events are recolored
+   * 
+   * @param: str containing the name of the event type to toggle
+   */
   $scope.events.toggleEvents = function (name) {
     if ($scope.events.types[name]) {
       if ($scope.events.types[name].active) {
@@ -238,8 +261,7 @@ app.controller("MasterCtrl",
         $scope.events.data = removeEvents($scope.events.data, name);
         addColor($scope.events.data);
         $scope.events.changed = Date.now();
-      } else { 
-        $scope.events.types[name].active = true;
+      } else {
         getEvents(name);
       }
     } else {
@@ -247,7 +269,15 @@ app.controller("MasterCtrl",
     }
     if ($scope.timeState.hidden !== false) { $scope.toggleTimeline(); }
   };
-  
+
+  /**
+   * Downloads events and asynchronously fires callback
+   * 
+   * Callback passes the response to addEvents, recolors the event data object,
+   * Does bookkeeping and triggers watches by updating events.changed
+   * 
+   * @param: str containing the name of the event type to download
+   */
   var getEvents = function (name) {
 /*    CabinetService.events.get({
       type: name,
@@ -275,52 +305,81 @@ app.controller("MasterCtrl",
   };
 
   /**
-  * Formats data into long format. LongData is the data object to add shortData to
-  * under the specified name.
-  **/
+   * Adds events to event data object.
+   * 
+   * Takes a geojson compliant data object which is added to another geojson compliant data object 
+   * In order to identify the type of events in the longData object, an eventOrder is added to the features.
+   * This eventOrder is also used in the timeline for the yAxis. The indiviudual features also get a id which is used
+   * by d3 to identify the events in the update pattern.
+   * 
+   * @param: object geojson compliant data object to add too
+   * @param: object geojson compliant data object to add
+   * @param: str containing the name of the event type to add
+   * @returns: object geojson compliant data object 
+   */
   var addEvents = function (longData, shortData, name) {
     // Create event identifier
-    var eventId;
+    var eventOrder;
     if (longData.features === undefined) {longData.features = []; }
-    if (longData.features.length === 0) { eventId = 1; }
+    if (longData.features.length === 0) { eventOrder = 1; }
     else {
-      var maxEventId = 0;
+      var maxEventOrder = 0;
       angular.forEach(longData.features, function (feature) {
-        maxEventId = feature.event_type > maxEventId ? feature.event_type : maxEventId;
+        maxEventOrder = feature.event_type > maxEventOrder ? feature.event_type : maxEventOrder;
       });
-      eventId = maxEventId + 1;
+      eventOrder = maxEventOrder + 1;
     }
     $scope.events.types[name] = {};
-    $scope.events.types[name].event_type = eventId;
-    for (var i = 0; i < shortData.features.length; i++) {
-      var feature = shortData.features[i];
-      feature.event_type = eventId;
-      feature.color = $scope.colors[8][eventId];
+    $scope.events.types[name].event_type = eventOrder;
+    angular.forEach(shortData.features, function (feature) {
+      feature.event_type = eventOrder;
+      feature.color = $scope.colors[8][eventOrder];
       feature.name = name;
       // Create unique id, a combo of time and location. I assume this is always unique..
       feature.id = name + feature.properties.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
       longData.features.push(feature);
-    };
+    }
     $scope.events.types.count = $scope.events.types.count + 1;
     return longData;
   };
 
+  /**
+   * Adds a color attribute to features in event data object
+   * 
+   * Takes a geojson compliant data object and adds a color to all the features. 
+   * If there is only one event type, the events are colored on the basis of sub_event_type
+   * If there are multiple event types active, the events are colored on the basis of a colorscale
+   * on the scope and the name of the feature.
+   * 
+   * @param: object geojson compliant data object with all the events
+   */
   var addColor = function (longData) {
+    var scale;
     if ($scope.events.types.count === 1) {
-      var scale = d3.scale.ordinal().range($scope.colors[8])
+      scale = d3.scale.ordinal().range($scope.colors[8]);
       angular.forEach(longData.features, function (feature) {
         feature.color = scale(feature.properties.event_sub_type);
       });
     } else {
-      scale = d3.scale.ordinal().range($scope.colors[8]).domain;
       angular.forEach(longData.features, function (feature) {
         feature.color = $scope.events.scale(feature.name);
       });
     }
   };
   
+  /**
+   * Removes events from the data object.
+   * 
+   * Takes a geojson compliant data object and removes the features with the given name
+   * It also removes the metadata of these events and lowers the eventOrder of all the 
+   * event types which have a order that is greater than the order of the removed event type.
+   * 
+   * @param: object geojson compliant data object 
+   * @param: str containing the name of the event type to remove
+   * @returns: object geojson compliant data object 
+   */
   var removeEvents = function (longData, name) {
-    var eventId = $scope.events.types[name].event_type;
+    var eventOrder = $scope.events.types[name].event_type;
     var iterations = longData.features.length;
     for (var i = 0; i < iterations; i++) {
       var index = iterations - 1 - i;
@@ -329,12 +388,12 @@ app.controller("MasterCtrl",
         var j = longData.features.indexOf(feature);
         longData.features.splice(j, 1);
       }
-      else if (feature.event_type > eventId) {
+      else if (feature.event_type > eventOrder) {
         feature.event_type = feature.event_type - 1; }
     }
     for (var key in $scope.events.types) {
       var eType = $scope.events.types[key];
-      if (eType.event_type > eventId) {
+      if (eType.event_type > eventOrder) {
         eType.event_type = eType.event_type - 1;
       }
     }
