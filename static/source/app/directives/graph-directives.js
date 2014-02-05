@@ -35,8 +35,9 @@ angular.module('graph')
     });
 
 
-    scope.$watch('start', function () {
-      if (scope.$parent.changeOrigin === 'timeseries') {return;}
+    scope.$watch('start', function (newVal, oldVal) {
+      if (newVal === oldVal) { console.info('same', newVal);return; }
+      if (scope.$parent.timeState.changeOrigin === 'timeseries') { return;}
       graph.updateTemporalExtent('rain', scope.start, scope.end);
     });
 
@@ -66,7 +67,7 @@ angular.module('graph')
       ylabel: '=',
       enabled: '=',
       start: '=',
-      stop: '='
+      end: '='
     },
     restrict: 'E',
     replace: true,

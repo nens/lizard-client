@@ -312,7 +312,8 @@ app.controller("MasterCtrl",
   });
 
   $scope.$watch('timeState.changedZoom', function (newVal, oldVal) {
-    if ((newVal === oldVal) || ($scope.canceler === undefined)) { return; }
+    console.info($scope.timeState.changeOrigin);
+    if ((newVal === oldVal)) { return; }
     $scope.canceler.resolve();
     $scope.canceler = $q.defer();
     if ($scope.box.content.selected_timeseries) {

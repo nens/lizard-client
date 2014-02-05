@@ -20,7 +20,8 @@
           <div class="row">
             <div class="col-md-12 graph">
               <h3>Wrapper-test</h3>
-              <timeseries-rain rainseries="rain" timeseries="timeseries" enabled="enabled"></timeseries-rain>
+              <timeseries-rain rainseries="rain" timeseries="timeseries" enabled="enabled" start="timeState.start" stop="timeState.end"></timeseries-rain>
+              <input type="range" ng-model="timeState.at">
               <!-- <graph data="data" id="test-wrapper"></graph> -->
               <!-- <svg data="data" id="test-wrapper"></svg> -->
             </div>

@@ -18,11 +18,17 @@ app.controller('DemoCtrl', function ($scope){
 
   $scope.timeState = {
   	start: undefined,
-  	end: undefined
+  	end: undefined,
+   	max: 1389940563529,
+   	min: 1362313857969,
+   	at: 50
   };
 
-  $scope.$watch('timeState.changedZoom', function () {
-  	console.info('mos', $scope.timeState)
+  $scope.$watch('timeState.at', function () {
+  	var at = $scope.timeState.at / 100 * ($scope.timeState.max - $scope.timeState.min) ;
+  	// console.info('mos', at, $scope.timeState.start)
+  	$scope.timeState.changeOrigin = 'pietje';
+  	$scope.timeState.start = $scope.timeState.max - at;
   });
 
   $scope.empty = function () {

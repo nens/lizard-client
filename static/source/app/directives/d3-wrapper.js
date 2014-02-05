@@ -417,15 +417,16 @@ var NxtD3 = function (svg, options) {
     var range = {};
     range.min = 0;
     range.max = nxtd3.width;
-    nxtd3.charts[id].x.scale = nxtd3.createScale(x, range, { type: 'time' });
+
+    nxtd3.charts[id].x.scale = nxtd3.createScale(x, { type: 'time', range: range });
     nxtd3.charts[id].x.axis = nxtd3.makeAxis(nxtd3.charts[id].x.scale, {
       orientation: "bottom",
       ticks: 5
     });
-    nxtd3.drawXAxis('rain');
+    nxtd3.drawXAxis(id);
     nxtd3.addZoom();
 
-    var bars = nxtd3.svg.select("g").selectAll(".bar_" + id)
+    var bars = nxtd3.svg.select("g").selectAll(".bar_" + id);
     var that = nxtd3.charts[id];
     nxtd3.charts[id].x.datafn = function (d) { return that.x.scale(d[1]) - 0.5; };
     bars.attr("class", "bar bar_" + id)
