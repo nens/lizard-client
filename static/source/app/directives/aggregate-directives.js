@@ -20,7 +20,7 @@ app.directive('vectorlayer', function () {
        *
        * @parameter: object data object
        * @return: object eventLayer object
-       */      
+       */
       var createEventLayer = function (data) {
         var map = mapCtrl.map();
         var svg = d3.select(map.getPanes().overlayPane).append("svg"),
@@ -136,7 +136,7 @@ app.directive('vectorlayer', function () {
 
       var removeEventLayer = function (eventLayer) {
         eventLayer.svg.remove();
-        return eventLayer = false;
+        return false;
       };
 
       /**
