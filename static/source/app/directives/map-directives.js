@@ -1,6 +1,6 @@
 // leaflet.js
 app
-  .directive('map', [function () {
+  .directive('map', ['$location', function (location) {
 
     // WTF?
     var newValue = function () {
@@ -11,6 +11,12 @@ app
      * Control function for this directive
      */
     var MapCtrl  = function ($scope, $location) {
+
+      $scope.$on('$locationChangeSuccess', function(event){
+        var latlonzoom = $location.hash().split(',');
+        $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2]);
+      });
+
       this.initiateLayer = function (layer) {
         if (layer.name === "Simulatie") {
           // Hack for 3Di.
@@ -149,7 +155,6 @@ app
       };
 
       this.moveEnd = function (lat, lng, zoom) {
-        // console.log('moveEnd!', $location.path());
         $location.path(lat + ',' + lng + ',' + zoom);
         // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
       };
@@ -256,6 +261,8 @@ app
 
       scope.beenThreDoneIntersectSuggestion = false;
       scope.map.on('zoomend', function () {
+        location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
+
         if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
           if (!scope.beenThreDoneIntersectSuggestion) {
             scope.beenThreDoneIntersectSuggestion = true;
@@ -280,6 +287,8 @@ app
       });
 
       scope.map.on('dragend', function () {
+        location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
+
         if (scope.box.type === 'default') {
         // scope.box.type = 'empty';
           scope.$apply(function () {
