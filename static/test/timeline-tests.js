@@ -45,11 +45,11 @@ describe('Testing timeline directive', function() {
   });
 
   it('Should create a graph object', function () {
-    var svg = $compile(angular.element('<svg></svg>'))(scope);
+    var svg = d3.select(angular.element('<svg></svg>')[0]).append("svg:svg");
     var options = {
       width: 100,
       height: 200 };
-    var canvas = ctrl.createCanvas(d3.select(svg[0]), options);
+    var canvas = ctrl.createCanvas(svg, options);
     expect(canvas.svg.select('g').select('rect').toString()).toBe('[object SVGRectElement]');
     expect(canvas.height).toBe(options.height - 20 - 3);
     expect(canvas.width).toBe(options.width - 30 - 30);
@@ -73,11 +73,11 @@ describe('Testing timeline directive', function() {
   });
 
   it('INTEGRATION:: Should draw a timeline', function () {
-    var svg = $compile(angular.element('<svg></svg>'))(scope);
+    var svg = d3.select(angular.element('<svg></svg>')[0]).append("svg:svg");
     var options = {
       width: 100,
       height: 200 };
-    var canvas = ctrl.createCanvas(d3.select(svg[0]), options);
+    var canvas = ctrl.createCanvas(svg, options);
     expect(canvas.svg.select('g').select('rect').toString()).toBe('[object SVGRectElement]');
     var minMax = {min: Date.now() - 31556900000, max: Date.now()};
     var range = {min: 0, max: 300};
