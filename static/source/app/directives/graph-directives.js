@@ -29,7 +29,6 @@ angular.module('graph')
     scope.$watch('rainseries', function () {
       if (graph.charts === undefined) { return; }
       if (!graph.charts.hasOwnProperty('rain')) {
-
       }
       if (graph.charts.hasOwnProperty('rain')) {
         graph.updateBars('rain', scope.rainseries);
@@ -37,10 +36,12 @@ angular.module('graph')
     });
 
 
-    scope.$watch('start', function (newVal, oldVal) {
+    scope.$watch('changedZoom', function (newVal, oldVal) {
       if (newVal === oldVal) { return; }
       if (scope.$parent.timeState.changeOrigin === 'timeseries') { return;}
       graph.updateTemporalExtent('rain', scope.start, scope.end);
+      graph.updateBars('rain', scope.rainseries);
+      graph.updateLine('timeseries', scope.timeseries);
     });
 
     scope.$watch('timeseries', function (newVal, oldVal) {
@@ -48,13 +49,10 @@ angular.module('graph')
       if (!graph.charts.hasOwnProperty('timeseries')) {
         graph.initiate(scope.timeseries, 'timeseries');
         graph.drawLine('timeseries', scope.timeseries);
-        // graph.drawAxes('timeseries');
       }
       if (graph.charts.hasOwnProperty('timeseries')) {
         graph.updateLine('timeseries', scope.timeseries);
-        // graph.drawAxes('timeseries');
       }
-      // graph.addZoom();
     });
   };
 
@@ -69,7 +67,8 @@ angular.module('graph')
       ylabel: '=',
       enabled: '=',
       start: '=',
-      end: '='
+      end: '=',
+      changedZoom: '='
     },
     restrict: 'E',
     replace: true,

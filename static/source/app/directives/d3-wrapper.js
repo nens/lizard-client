@@ -338,8 +338,17 @@ var NxtD3 = function (svg, options) {
   };
 
   nxtd3.updateLine = function (id, data) {
+    nxtd3.charts[id].line = d3.svg.line()
+    .y(function (d) {
+      return that.y.scale(d[0]);
+    })
+    .x(function (d) {
+      return nxtd3.x.scale(d[1]);
+    });
+    var that = nxtd3.charts[id];
     nxtd3.svg.select("#gpath").selectAll("path.line_" + id)
-      .data([data]);
+      .data([data])
+      .attr("d", that.line);
   };
 
   var brush = null;

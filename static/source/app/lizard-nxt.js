@@ -280,9 +280,12 @@ app.controller("MasterCtrl",
           fromgrid: $scope.box.content.data,
           type: $scope.box.content.data.entity_name
         };
+        $scope.timeboxenabled = true;
       } else {
         $scope.data = null;
         $scope.box.content.selected_timeseries = undefined;
+        $scope.timeboxenabled = false;
+
       }
 
     });
@@ -307,13 +310,11 @@ app.controller("MasterCtrl",
       $scope.rain.data = result;
       $scope.rain.wkt = wkt;
       $scope.rain.srs = 'EPSG:4236';
-      $scope.timeboxenabled = true;
     });
   });
 
-  $scope.$watch('timeState.changedZoom', function (newVal, oldVal) {
-    console.info($scope.timeState.changeOrigin);
-    if ((newVal === oldVal)) { return; }
+
+  $scope.getData = function () {
     $scope.canceler.resolve();
     $scope.canceler = $q.defer();
     if ($scope.box.content.selected_timeseries) {
@@ -347,6 +348,12 @@ app.controller("MasterCtrl",
 
       });
     }
+  };
+
+  $scope.$watch('timeState.changedZoom', function (newVal, oldVal) {
+    if ((newVal === oldVal)) { return; }
+    $scope.getData();
+
   });
 
   // $scope.$watch('box.content.selected_timeseries.id', function () {
