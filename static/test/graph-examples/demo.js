@@ -17,8 +17,8 @@ app.controller('DemoCtrl', function ($scope){
   };
 
   $scope.timeState = {
-  	start: undefined,
-  	end: undefined,
+  	start: 1362313857969,
+  	end: 1389940563529,
    	max: 1389940563529,
    	min: 1362313857969,
    	at: 50

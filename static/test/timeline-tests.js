@@ -81,6 +81,7 @@ describe('Testing timeline directive', function() {
 
   it('Should create a graph object', function () {
     var svg = $compile(angular.element('<svg></svg>'))(scope);
+    svg = d3.select(svg[0]).append("svg:svg");
     var options = {
       width: 100,
       height: 200 };
@@ -109,6 +110,7 @@ describe('Testing timeline directive', function() {
 
   it('INTEGRATION:: Should draw a timeline', function () {
     var svg = $compile(angular.element('<svg></svg>'))(scope);
+    svg = d3.select(svg[0]).append("svg:svg");
     var options = {
       width: 100,
       height: 200 };

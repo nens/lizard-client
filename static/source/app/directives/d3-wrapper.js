@@ -45,8 +45,22 @@ var NxtD3 = function (svg, options) {
     svg.select('g').append("g")
       .attr('class', 'x axis')
       .attr("transform", "translate(0 ," + that.height + ")");
-    // svg.select('g').append("g")
-    //   .attr('class', 'y axis');
+
+    nxtd3.x = {
+      min: options.start,
+      max: options.end
+    };
+    nxtd3.x.scale = nxtd3.createScale(nxtd3.x, {
+      range: {
+        min: 0,
+        max: nxtd3.width
+      },
+      type: 'time'
+    });
+    nxtd3.x.axis = nxtd3.makeAxis(nxtd3.x.scale, {
+      orientation: "bottom"
+    });
+    nxtd3.drawXAxis();
     nxtd3.svg = svg;
   };
 
@@ -143,9 +157,10 @@ var NxtD3 = function (svg, options) {
   * Draws the given X axis
   * @param {string} id
   */
-  nxtd3.drawXAxis = function (id) {
+  nxtd3.drawXAxis = function () {
+    var that = nxtd3;
     nxtd3.svg.select('.x.axis')
-      .call(nxtd3.charts[id].x.axis)
+      .call(that.x.axis)
       .selectAll("text")
         .style("text-anchor", "end")
         .attr("dx", "-.8em")
@@ -164,7 +179,7 @@ var NxtD3 = function (svg, options) {
     var specY = nxtd3.svg.select('.y_' + id);
     if (specY[0][0] === null) {
       nxtd3.svg.select("g").append("g")
-        .attr("class", "y axis y_" + id); 
+        .attr("class", "y axis y_" + id);
     }
     specY = nxtd3.svg.select('.y_' + id)
       .call(nxtd3.charts[id].y.axis);
@@ -239,20 +254,20 @@ var NxtD3 = function (svg, options) {
     var bars = nxtd3.svg.select("g").selectAll(".bar_" + id)
       .data(data);
 
-    nxtd3.charts[id].x.datafn = function (d) { return that.x.scale(d[1]) - 0.5; };
+    nxtd3.charts[id].xdatafn = function (d) { return nxtd3.x.scale(d[1]) - 0.5; };
     nxtd3.charts[id].y.datafn = function (d) { return that.y.scale(d[0]) - 0.5; };
     bars.attr("class", "bar bar_" + id)
       .transition()
       .delay(0)
       .duration(0)
-      .attr("x", that.x.datafn)
+      .attr("x", that.xdatafn)
       .attr("y", that.y.datafn)
       .attr("height", function (d) { return height - that.y.scale(d[0]); });
 
 
     bars.enter().append("rect")
       .attr("class", "bar bar_" + id)
-      .attr("x", that.x.datafn)
+      .attr("x", that.xdatafn)
       .attr("y", that.y.datafn)
       .attr("width", 5)
       .attr("height", function (d) { return height - that.y.scale(d[0]); });
@@ -283,7 +298,7 @@ var NxtD3 = function (svg, options) {
       return that.y.scale(d[0]);
     })
     .x(function (d) {
-      return that.x.scale(d[1]);
+      return nxtd3.x.scale(d[1]);
     });
 
     nxtd3.charts[id].line.defined(
@@ -320,6 +335,11 @@ var NxtD3 = function (svg, options) {
       .duration(0)
       .attr("d", that.line);
     linus.exit().remove();
+  };
+
+  nxtd3.updateLine = function (id, data) {
+    nxtd3.svg.select("#gpath").selectAll("path.line_" + id)
+      .data([data]);
   };
 
   var brush = null;
@@ -360,7 +380,7 @@ var NxtD3 = function (svg, options) {
     nxtd3.zoomed = function () {
       // console.info(id, nxtd3.charts[id].x.tickFormat);
       nxtd3.svg.select(".x.axis").call(
-        nxtd3.makeAxis(nxtd3.charts[id].x.scale, {
+        nxtd3.makeAxis(nxtd3.x.scale, {
         orientation: "bottom",
         // tickFormat: nxtd3.charts[id].x.tickFormat
       }))
@@ -374,8 +394,8 @@ var NxtD3 = function (svg, options) {
       if (angular !== undefined) {
         var scope = angular.element(nxtd3.svg[0]).scope();
         scope.$apply(function () {
-          scope.timeState.start = firstChart.x.scale.domain()[0].getTime();
-          scope.timeState.end = firstChart.x.scale.domain()[1].getTime();
+          scope.timeState.start = nxtd3.x.scale.domain()[0].getTime();
+          scope.timeState.end = nxtd3.x.scale.domain()[1].getTime();
           scope.timeState.changeOrigin = 'timeseries';
           scope.timeState.changedZoom = !scope.timeState.changedZoom;
         });
@@ -388,19 +408,15 @@ var NxtD3 = function (svg, options) {
         }
         if (nxtd3.charts[i].type === 'bar') {
           svg.selectAll(".bar")
-            .attr("x", nxtd3.charts[i].x.datafn)
+            .attr("x", nxtd3.charts[i].xdatafn)
             .attr("transform", "translate(" + d3.event.translate[0] + ",0) scale(" + d3.event.scale + ", 1)");
         }
       }
     };
 
     var zoom = d3.behavior.zoom()
-    .x(firstChart.x.scale)
+    .x(nxtd3.x.scale)
     .on("zoom", nxtd3.zoomed);
-
-    for (var i in nxtd3.charts) {
-      zoom.x(nxtd3.charts[i].x.scale);
-    }
 
     nxtd3.svg.call(zoom)
       .on("mousedown.zoom", null)
@@ -418,19 +434,19 @@ var NxtD3 = function (svg, options) {
     range.min = 0;
     range.max = nxtd3.width;
 
-    nxtd3.charts[id].x.scale = nxtd3.createScale(x, { type: 'time', range: range });
-    nxtd3.charts[id].x.axis = nxtd3.makeAxis(nxtd3.charts[id].x.scale, {
+    nxtd3.x.scale = nxtd3.createScale(x, { type: 'time', range: range });
+    nxtd3.x.axis = nxtd3.makeAxis(nxtd3.x.scale, {
       orientation: "bottom",
       ticks: 5
     });
-    nxtd3.drawXAxis(id);
+    nxtd3.drawXAxis();
     nxtd3.addZoom();
 
     var bars = nxtd3.svg.select("g").selectAll(".bar_" + id);
     var that = nxtd3.charts[id];
-    nxtd3.charts[id].x.datafn = function (d) { return that.x.scale(d[1]) - 0.5; };
+    nxtd3.charts[id].xdatafn = function (d) { return nxtd3.x.scale(d[1]) - 0.5; };
     bars.attr("class", "bar bar_" + id)
-      .attr("x", that.x.datafn);
+      .attr("x", that.xdatafn);
   };
 
   nxtd3.initiate = function (data, id) {
@@ -440,23 +456,7 @@ var NxtD3 = function (svg, options) {
       newChart = true;
     }
     nxtd3.charts[id] = {};
-    var x = nxtd3.maxMin(data, '1');
     var y = nxtd3.maxMin(data, '0');
-    if (Object.keys(nxtd3.charts).length > 1) {
-      x.scale = nxtd3.charts[Object.keys(nxtd3.charts)[0]].x.scale;
-      x.axis = nxtd3.charts[Object.keys(nxtd3.charts)[0]].x.axis;
-    } else {
-      x.scale = nxtd3.createScale(x, {
-        range: {
-          min: 0,
-          max: nxtd3.width
-        },
-        type: 'time'
-      });
-      x.axis = nxtd3.makeAxis(x.scale, {
-        orientation: "bottom"
-      });
-    }
 
     y.scale = nxtd3.createScale(y, {
       range: {
@@ -475,11 +475,7 @@ var NxtD3 = function (svg, options) {
         orientation: "left"
       });
     }
-    nxtd3.charts[id].x = x;
     nxtd3.charts[id].y = y;
-    if (newChart) {
-      nxtd3.drawXAxis(id);
-    }
     nxtd3.drawYAxis(id);
   };
 

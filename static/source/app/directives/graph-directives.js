@@ -9,7 +9,9 @@ angular.module('graph')
     var svg = element.append('<svg id="chart-combined"></svg>');
     var graph = new NxtD3(d3.select('#chart-combined'), {
       width: 400,
-      height: 300
+      height: 300,
+      start: scope.start,
+      end: scope.end
     });
     graph.charts = {};
 
@@ -36,7 +38,7 @@ angular.module('graph')
 
 
     scope.$watch('start', function (newVal, oldVal) {
-      if (newVal === oldVal) { console.info('same', newVal);return; }
+      if (newVal === oldVal) { return; }
       if (scope.$parent.timeState.changeOrigin === 'timeseries') { return;}
       graph.updateTemporalExtent('rain', scope.start, scope.end);
     });
@@ -49,7 +51,7 @@ angular.module('graph')
         // graph.drawAxes('timeseries');
       }
       if (graph.charts.hasOwnProperty('timeseries')) {
-        graph.drawLine('timeseries', scope.timeseries);
+        graph.updateLine('timeseries', scope.timeseries);
         // graph.drawAxes('timeseries');
       }
       // graph.addZoom();
