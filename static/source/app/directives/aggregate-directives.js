@@ -208,8 +208,6 @@ app.directive('vectorlayer', function () {
         }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
       });
-
-      // Watch for animation
     }
   };
 });
