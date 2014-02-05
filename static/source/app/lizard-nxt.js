@@ -338,7 +338,7 @@ app.controller("MasterCtrl",
       // Create unique id, a combo of time and location. I assume this is always unique..
       feature.id = name + feature.properties.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
       longData.features.push(feature);
-    }
+    });
     $scope.events.types.count = $scope.events.types.count + 1;
     return longData;
   };
