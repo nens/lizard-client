@@ -15,9 +15,10 @@ app.directive('vectorlayer', function () {
       /**
        * Creates svg layer in leaflet's overlaypane and adds events as circles
        *
-       * 
+       * On leaflet's viewreset the svg rescaled and repositioned. This function should
+       * also be called when the data is changed
        *
-       * @data: data object
+       * @parameter: object data object
        * @return: object eventLayer object
        */      
       var createEventLayer = function (data) {
@@ -86,6 +87,16 @@ app.directive('vectorlayer', function () {
         };
       };
 
+      /**
+       * Updates svg layer in leaflet's overlaypane with new data object
+       *
+       * First call the reset function to give the svg enough space for the new data.
+       * Identify path elements with data objects via id and update, create or remove elements.
+       *
+       * @parameter: object eventLayer object to update
+       * @parameter: data object
+       * @return: object eventLayer object
+       */
       var updateEventLayer = function (eventLayer, data) {
         eventLayer.reset();
         var feature = eventLayer.g.selectAll("path")
@@ -128,8 +139,13 @@ app.directive('vectorlayer', function () {
         return eventLayer = false;
       };
 
-      /*
+      /**
        * Draw events based on current temporal extent
+       *
+       * Hide all elements and then unhides when within the given start and end timestamps
+       *
+       * @parameter: int start start timestamp in epoch ms
+       * @parameter: int end end timestamp in epoch ms
        */
       var drawTimeEvents = function (start, end) {
         //NOTE: not optimal class switching
@@ -147,14 +163,37 @@ app.directive('vectorlayer', function () {
         selected.classed("hidden", false);
       };
 
-      // watch for change in temporalExtent, change visibility of
-      // alerts accordingly
+      /**
+       * Watch that is fired when the timeState has changed
+       *
+       * Calls functions to draw events currently within the timeState
+       * and to count currently visible events
+       */
       scope.$watch('timeState.changedZoom', function (n, o) {
         if (n === o) { return true; }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
         scope.events.countCurrentEvents();
       });
+   
+      /**
+       * Watch that is fired when the animation has stepped
+       *
+       * Calls functions to draw events currently within the animation bounds
+       * and to count currently visible events
+       */
+      scope.$watch('timeState.at', function () {
+        if (scope.timeState.animation.enabled) {
+          drawTimeEvents(scope.timeState.animation.start, scope.timeState.animation.end);
+          scope.events.countCurrentEvents();
+        }
+      });
 
+      /**
+       * Watch that is fired when events data object has changed
+       *
+       * Calls functions to create, update or remove eventLayer. 
+       * And makes sure events are drawn in accordance to the current timeState.
+       */
       var eventLayer;
       scope.$watch('events.changed', function (n, o) {
         if (n === o) { return true; }
@@ -170,13 +209,7 @@ app.directive('vectorlayer', function () {
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
       });
 
-      // Watch for animation   
-      scope.$watch('timeState.at', function () {
-        if (scope.timeState.animation.enabled) {
-          drawTimeEvents(scope.timeState.animation.start, scope.timeState.animation.end);
-          scope.events.countCurrentEvents();
-        }
-      });
+      // Watch for animation
     }
   };
 });
