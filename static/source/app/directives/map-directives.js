@@ -51,8 +51,42 @@ app
               minZoom: layer.min_zoom_click,
               maxZoom: 20
             });
+            var clickLayer;
             leafletLayer.on('click', function (e) {
               if (e.data){
+                var geojsonFeature = { "type": "Feature" };
+                var geom = angular.fromJson(e.data.geom);
+                geojsonFeature.geometry = geom;
+                if (clickLayer) { $scope.map.removeLayer(clickLayer); }
+                clickLayer = L.geoJson(geojsonFeature, {
+                  style: {},
+                  pointToLayer: function (feature, latlng) {
+                    return L.circleMarker(latlng, {
+                      radius: 12,
+                      opacity: 0.5,
+                      fillOpacity: 0
+                      });
+                  }});
+                clickLayer.addTo($scope.map);
+
+                d3.select($scope.map.getPanes().overlayPane)
+                .select("svg").select("g")
+                .attr("transform", "translate(0, 6)")
+                .select("path")
+                .attr("stroke", "#2980b9")
+                .attr("fill-opacity", "0")
+                .transition().duration(300)
+                .attr("stroke-width", 2)
+                .transition().duration(300)
+                .attr("stroke-width", 20)
+                .transition().duration(300)
+                .attr("stroke-width", 10)
+                .transition().duration(300)
+                .attr("stroke-width", 15)
+                .transition().duration(300)
+                .attr("stroke-opacity", 0.7)
+                .attr("stroke-width", 10);
+                
                 $scope.getTimeseries(e.data);
               }
             });
