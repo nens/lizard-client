@@ -22,7 +22,11 @@ services.service("CabinetService", ["Restangular",
             {
             "name": "Aardbevingen",
             "event_count": 4
-            } 
+            },
+            {
+              "name": "Gebouwen",
+              "event_count": 4
+            }
           ];
 
   var termSearchResource,

@@ -66,7 +66,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         if (options.scale === "ordinal") {
           scale = d3.scale.ordinal()
             .domain(function (d) {
-              return d3.set(d.event_sub_type).values();
+              return d3.set(d.properties.event_sub_type).values();
             })
             .range($scope.colors[8]);
         }
@@ -128,9 +128,10 @@ app.controller('TimelineDirCtrl', function ($scope) {
     // };
 
     this.drawCircles = function (svg, xScale, yScale, colorScale, xKey, yKey, colorKey, data) {
-      var xFunction = function (d) { return Math.round(xScale(d[xKey])); };
-      var yFunction = function (d) { return yScale(d[yKey]); };
-      var colorFunction = function (d) { return colorScale(d[colorKey]); };
+      // Shift halve a pixel for nice and crisp rendering
+      var xFunction = function (d) { return Math.round(xScale(d.properties[xKey])) + 0.5; };
+      var yFunction = function (d) { return yScale(d[yKey]) + 0.5; };
+      var colorFunction = function (d) { return d.color; };
       // DATA JOIN
       // Join new data with old elements, based on the id value.
       var circles = svg.select('g').selectAll("circle")
@@ -138,7 +139,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
 
       // UPDATE
       // Update old elements as needed.
-      circles.attr("class", "bar")
+      circles.attr("class", "event")
         .transition()
         .delay(500)
         .duration(500)
@@ -150,6 +151,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       // Create new elements as needed.
       circles.enter().append("circle")
         .attr("cx", xFunction)
+        .attr("class", "event")
         .attr("cy", yFunction)
         .attr("fill", colorFunction)
         .attr("r", 5)
@@ -239,7 +241,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
 
     return this;
   })
-.directive('timeline', [ function ($timeout) {
+.directive('timeline', [ function () {
   
   var link = function (scope, element, attrs, timelineCtrl) {
 
@@ -248,9 +250,10 @@ app.controller('TimelineDirCtrl', function ($scope) {
     */
     var createTimeline = function () {
       var canvasOptions = {width: window.innerWidth, height: 50};
-      var svg = d3.select("#timeline-svg-wrapper").select("svg");
+      d3.select('#timeline').transition().duration(300).style('bottom', 0);
+      var svg = d3.select("#timeline-svg-wrapper")
+                  .select("svg").html('');
       var graph = timelineCtrl.createCanvas(svg, canvasOptions);
-
       // Add x axis
       var x = {};
       x.min = new Date(scope.timeState.start);
@@ -286,9 +289,9 @@ app.controller('TimelineDirCtrl', function ($scope) {
         timelineCtrl.updateBrush(newGraph.height);
       }
       // Create remaining scales
-      var yScale = timelineCtrl.scale({min: 1, max: nEventTypes}, { min: newGraph.height - 20, max: 20 }, {scale: 'linear'});
+      var yScale = timelineCtrl.scale({min: 1, max: nEventTypes}, { min: newGraph.height - 27, max: 20 }, {scale: 'linear'});
       // Update the svg
-      timelineCtrl.drawCircles(newGraph.svg, newGraph.xScale, yScale, graph.colorScale, 'timestamp', 'event_type', 'event_sub_type', data);
+      timelineCtrl.drawCircles(newGraph.svg, newGraph.xScale, yScale, graph.colorScale, 'timestamp', 'event_type', 'event_type', data);
 
       return newGraph;
     };
@@ -301,7 +304,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       }));
       // Update circle positions
       graph.svg.selectAll("circle")
-        .attr("cx", function (d) { return Math.round(graph.xScale(d.timestamp)); });
+        .attr("cx", function (d) { return Math.round(graph.xScale(d.properties.timestamp)); });
       // Update timeState and wake up watches
       scope.$apply(function () {
         scope.timeState.start = graph.xScale.domain()[0].getTime();
@@ -314,52 +317,19 @@ app.controller('TimelineDirCtrl', function ($scope) {
     // Get the timeline-graph
     var graph = createTimeline();
 
-
-    /** 
-    * Formats data into long format
-    **/
-    var formatData = function () {
-      // Create data object
-      var data = [];
-      var typeCount = 0;
-      for (var key in scope.timeState.timeline.data) {
-        typeCount++;
-        if (scope.timeState.timeline.data[key].active) {
-          var iData = scope.timeState.timeline.data[key].features;
-          angular.forEach(iData, function (feature) {
-            feature.event_type = typeCount;
-            // Create unique id, a combo of time and location. I assume this is always unique..
-            feature.id = "" + key + feature.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
-            data.push(feature);
-          });
-        }
-      }
-      return data;
-    };
-
-    var eventTypeLength = function () {
-        var typeCount = 0;
-        for (var key in scope.timeState.timeline.data) {
-          if (scope.timeState.timeline.data[key].active) {
-            typeCount++;
-          }
-        }
-        return typeCount;
-      };
-
-    scope.$watch('timeState.timeline.changed', function (n, o) {
+    scope.$watch('events.changed', function (n, o) {
       if (n === o) { return true; }
-      var nEventTypes = eventTypeLength();
-      var data = formatData();
-      graph = updateTimeline(graph, data, nEventTypes);
+      var data = scope.events.data.features;
+      graph = updateTimeline(graph, data, scope.events.types.count);
       scope.timeState.changedZoom = Date.now();
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
-      scope.timeState.countCurrentEvents();
+      scope.events.countCurrentEvents();
     });
 
-    scope.$watch('mapState.moved', function () {
+    scope.$watch('mapState.moved', function (n, o) {
+      if (n === o) { return true; }
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
-      scope.timeState.countCurrentEvents();
+      scope.events.countCurrentEvents();
     });
 
     // Create the brush to display automatic and manual selection of data in timeline both referred to as "animation"
@@ -400,7 +370,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
       }
     });
     
-    scope.$watch('timeState.at', function () {
+    scope.$watch('timeState.at', function (n, o) {
+      if (n === o) { return true; }
       if (scope.timeState.animation.enabled) {
         graph.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
         timelineCtrl.brushmove();
@@ -427,13 +398,14 @@ app.controller('TimelineDirCtrl', function ($scope) {
         );
         // Update circle positions
         graph.svg.selectAll("circle")
-          .attr("cx", function (d) { return Math.round(graph.xScale(d.timestamp)); });
+          .attr("cx", function (d) { return Math.round(graph.xScale(d.properties.timestamp)); });
       }
     });
 
     window.onresize = function () {
-      scope.timeState.timeline.width = element.width();
-      scope.timeState.timeline.changed = !scope.timeState.timeline.changed;
+      // Recreate timeline
+      createTimeline();
+      scope.events.changed = Date.now();
     };
 
   };
@@ -441,6 +413,12 @@ app.controller('TimelineDirCtrl', function ($scope) {
   return {
     replace: true,
     restrict: 'E',
+    // scope: {
+    //   timeState: '@',
+    //   colors: '@',
+    //   animation: '@',
+    //   events: '@'
+    // },
     link: link,
     controller: 'TimelineDirCtrl',
     templateUrl: 'templates/timeline.html'
