@@ -293,6 +293,10 @@ app
 
       scope.map.on('zoomend', function () {
         
+        /**
+         * NOTE: Somehow, this zoomend handler sometimes causes stuttering zoom behavior when zooming aggressively.
+         */
+
         scope.zooming = setTimeout(function(){
           // console.log('changing hash due to zoom event!');
           location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
