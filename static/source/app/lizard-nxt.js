@@ -255,6 +255,10 @@ app.controller("MasterCtrl",
         title: null,
         fromgrid: $scope.box.content.data,
         //type: $scope.box.content.data.entity_name
+        // latitude: 52.08618,
+        // longitude: 5.09474,
+        latitude: (Math.random() * (52.9000 - 52.0600) + 52.0600).toFixed(4),
+        longitude: (Math.random() * (5.10000 - 5.07000) + 5.07000).toFixed(4),
         type: data.entity_name
       };
 
