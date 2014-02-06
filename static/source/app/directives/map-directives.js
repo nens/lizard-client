@@ -14,7 +14,11 @@ app
 
       $scope.$on('$locationChangeSuccess', function(event){
         var latlonzoom = $location.hash().split(',');
-        $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2]);
+        if(latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
+          if(parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
+            $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset:true});
+          }
+        }
       });
 
       this.initiateLayer = function (layer) {
@@ -261,7 +265,10 @@ app
 
       scope.beenThreDoneIntersectSuggestion = false;
       scope.map.on('zoomend', function () {
-        location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
+        
+        setTimeout(function(){
+          location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
+        },1000);
 
         if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
           if (!scope.beenThreDoneIntersectSuggestion) {
@@ -287,7 +294,10 @@ app
       });
 
       scope.map.on('dragend', function () {
-        location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
+
+        setTimeout(function(){
+          location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
+        },1000);
 
         if (scope.box.type === 'default') {
         // scope.box.type = 'empty';
