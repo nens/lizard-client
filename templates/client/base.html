@@ -94,7 +94,7 @@
     
     <cursor-tooltip enabled="<% tools.cursorTooltip.enabled %>" class="cursor-tooltip"  ng-class="{hide: !tools.cursorTooltip.enabled}"></cursor-tooltip>
 
-    <div ng-controller='MapCtrl'>
+    <div id="master" ng-controller='MapCtrl'>
       <div class="layer-menu-container">
         <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': mapState.enabled}">
           <div class="layer-switcher slide-left">
@@ -136,8 +136,8 @@
               {% trans "Events" %}
               <ul class="list-group">
                 <li ng-repeat="event in mapState.eventTypes">
-                <label class="ng-class: {active: timeState.timeline.data[event.name].active};" ng-bind="event.name" ng-click="timeState.toggleEvents(event.name)"></label>
-                <label class="count"  ng-if="timeState.timeline.data[event.name].active"><% timeState.timeline.data[event.name].currentCount %>&nbsp;(<% timeState.timeline.data[event.name].count %>) </label>
+                <label class="ng-class: {active: events.types[event.name].active};" ng-bind="event.name" ng-click="events.toggleEvents(event.name)"></label>
+                <label class="count"  ng-if="events.types[event.name].active"><% events.types[event.name].currentCount %>&nbsp;(<% events.types[event.name].count %>) </label>
               </ul>
               </li>
             </ul>
@@ -170,11 +170,7 @@
              ng-class="{'crosshair': tools.active === 'profile'}">
          </map>
       </div>
-        <timeline 
-        class="navbar timeline navbar-fixed-bottom">
-        </timeline>
-
-      </div>
+    </div>
 
     {% block box_awesome %}{% endblock %}
     <div class="container" ng-controller="SearchCtrl">
