@@ -377,6 +377,10 @@ var NxtD3 = function (svg, options) {
     }
   };
 
+  nxtd3.clearLine = function (id) {
+    nxtd3.svg.select("#gpath").selectAll("path.line_" + id).remove();
+  };
+
   var brush = null;
   nxtd3.createBrush = function (graph) {
     brush = d3.svg.brush().x(graph.xScale)
@@ -443,8 +447,7 @@ var NxtD3 = function (svg, options) {
         }
         if (nxtd3.charts[i].type === 'bar') {
           svg.selectAll(".bar")
-            .attr("x", nxtd3.charts[i].xdatafn)
-            // .attr("transform", "scale(" + d3.event.scale + ", 1)");
+            .attr("x", nxtd3.charts[i].xdatafn);
         }
       }
     };

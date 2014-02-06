@@ -51,22 +51,40 @@ angular.module('graph')
           if (scope.$parent.timeState.changeOrigin === 'timeseries') { return; }
           graph.updateTemporalExtent('rain', scope.start, scope.end);
           graph.updateBars('rain', scope.rainseries);
-          graph.updateLine('timeseries', scope.timeseries.data);
+          if (graph.charts.hasOwnProperty('timeseries')) {
+            graph.updateLine('timeseries', scope.timeseries.data);          
+          } else {
+            graph.initiate(scope.timeseries.data, 'timeseries');
+            graph.drawLine('timeseries', scope.timeseries.data);
+          }
+          graph.addZoom();
         });
         watches.push(changedZoom);
 
         var timeseries = scope.$watch('timeseries.data', function (newVal, oldVal) {
           if ((newVal === oldVal) ||
-            (scope.timeseries.data === null)) { return; }
-          if ((scope.timeseries.id !== tsid) &&
-            (scope.timeseries.data.length > 0)) {
-            graph.charts['timeseries'] = null;
+            (scope.timeseries === null)) { return; }
+          if (scope.timeseries.data !== null) { 
+            if (scope.timeseries.id !== tsid) {
+              if (graph.charts.hasOwnProperty('timeseries')) {
+                graph.clearLine('timeseries');              
+              }
+              graph.charts['timeseries'] = null;
+            }
             graph.initiate(scope.timeseries.data, 'timeseries');
             graph.drawLine('timeseries', scope.timeseries.data);
             // graph.updateLine('timeseries', scope.timeseries.data);
           }
           if (graph.charts.hasOwnProperty('timeseries')) {
             // graph.drawLine('timeseries', scope.timeseries.data);
+            if (scope.timeseries.data === null) {
+              graph.clearLine('timeseries'); 
+              return;
+            }
+            if (scope.timeseries.data.length === 0) {
+              graph.clearLine('timeseries');
+              return;
+            }
             graph.updateLine('timeseries', scope.timeseries.data);
           }
           tsid = scope.timeseries.id;
