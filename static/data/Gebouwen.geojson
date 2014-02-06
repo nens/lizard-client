@@ -1,0 +1,222 @@
+{
+"type": "FeatureCollection",
+                                                                                
+"features": [
+{ "type": "Feature", "properties": { "timestamp": 1370602843.805389881134033, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.844287064429432, 52.954123353248043 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370564702.993170022964478, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.887383676591416, 52.968123479547351 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370566618.016639947891235, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.885591246271694, 52.971848398559153 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370607072.348170042037964, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.848919287516551, 52.95510309763376 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370564824.558710098266602, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.888564786345848, 52.971339162024393 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565131.23561, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.890706559039481, 52.969591923822833 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370591856.152349948883057, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.877276511934928, 52.965883853355727 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370586853.867069959640503, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.879743791722179, 52.961145343653641 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370604357.984440088272095, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.860653253772347, 52.957796163004637 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370601348.4, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.84724076899604, 52.954919641868877 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370564929.547159910202026, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.888137951026039, 52.969382778731934 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370566705.006799936294556, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.884150541899954, 52.972385568078394 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370579489.583889961242676, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.873715034877089, 52.965550137648258 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370590155.863579988479614, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.876337907382376, 52.958237794170373 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565581.58094, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.888896815183646, 52.971428315141729 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565017.958539962768555, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.887531559558952, 52.968806326630173 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370591783.593719959259033, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.875467317184163, 52.979014840310853 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370564846.661590099334717, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.886480912532392, 52.974469521407578 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565009.669909954071045, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.89044593694652, 52.969794886903863 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370577714.698349952697754, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.869716326552584, 52.971775855465573 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370593004.393840074539185, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.844611843642989, 52.95479454641837 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370586616.378469944000244, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.856734778821334, 52.963664261008894 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370581189.714339971542358, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.87698232838331, 52.97826307848873 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370582668.818850040435791, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.878533052042439, 52.97881171892292 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370579337.8298499584198, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.877244408247673, 52.978648228631045 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370599629.044539928436279, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.879525536776391, 52.961836147373369 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370591792.663549900054932, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.875379700378353, 52.978408736350204 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565277.666850090026855, "value": "BASF Performance Chemicals B.V", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "Kwetsbaar object" }, "geometry": { "type": "Point", "coordinates": [ 5.889448587921245, 52.96934146545118 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370566593.66, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.885251637270732, 52.972270424114477 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565145.049870014190674, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.888710227473523, 52.970153198249974 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370605936.13, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.877379683945743, 52.972797000362924 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370600274.934580087661743, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.873752517635607, 52.965311007821214 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370586513.19, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.868769340201124, 52.965804329893096 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370598114.953279972076416, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.85730529420784, 52.960199637402106 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370593799.999979972839355, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.87142403005903, 52.978537663240331 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370583547.762320041656494, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.895769428422082, 52.969242196326782 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370566732.843600034713745, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.884364210010264, 52.972167752590977 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370601274.770999908447266, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.847237313640241, 52.954770833819168 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565285.955470085144043, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.886046231436655, 52.974091568284713 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565178.204200029373169, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.887905600054518, 52.969870122828269 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370596367.102799892425537, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.886601835238795, 52.974510486485613 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370601343.979010105133057, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.851485075839063, 52.955431707612668 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370588429.51, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.844527828159104, 52.959121875127515 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370566711.966020107269287, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.885371158732629, 52.970951546298807 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370591781.77967, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.874680649470854, 52.978894606459292 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370598977.095599889755249, "value": "Anton van Dijk Recycling B.V.", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "Kwetsbaar object" }, "geometry": { "type": "Point", "coordinates": [ 5.87628829606174, 52.973329187867982 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370564987.567189931869507, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.888214359256265, 52.968582052835636 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370591781.77967, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.869060711798967, 52.984475259963382 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370604696.487970113754272, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.854904052704364, 52.956343272847498 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370574000.000070095062256, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.869393719367019, 52.971862564718307 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370596927.28968, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.864917254472626, 52.972111942347041 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370607098.866780042648315, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.847068735784826, 52.954381547082924 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370604644.41048002243042, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.853357500566174, 52.956180471070518 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565073.215579986572266, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.88936153802501, 52.971110828598455 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370598190.65, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.84778090642047, 52.955422924098372 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370600757.918800115585327, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.87990874844432, 52.961172377502791 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370583188.26, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.844751239627471, 52.959359985647154 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370602776.10627007484436, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.847150454703002, 52.954497877286755 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370564412.893349885940552, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.888464273368234, 52.972066869512354 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370598993.652940034866333, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.877188653540654, 52.965690193071524 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370604648.75, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.848167118662461, 52.955264883492745 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370584805.835939884185791, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.867712722483827, 52.96947073597741 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370564973.752929925918579, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.888707557134093, 52.971679146726075 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370572627.256400108337402, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.879515994718608, 52.979121937709039 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370577625.998310089111328, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.869715302233924, 52.971862984519134 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370566750.24, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.884606783360075, 52.97162865696594 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370566732.843600034713745, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.884483960404853, 52.971911528923833 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370566764.160160064697266, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.886144977691665, 52.974929002284483 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565012.432899951934814, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.884515900851593, 52.973510997836385 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370579520.587510108947754, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.868412700613965, 52.966038746540811 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370566795.476419925689697, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.883874946010704, 52.97275896560258 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370568267.349740028381348, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.882713344099887, 52.971401946729756 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370564658.787410020828247, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.885082413811428, 52.972542733617274 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370590244.136509895324707, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.8564390277922, 52.963799353901997 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370564877.052939891815186, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.888263485770406, 52.969741177605535 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370588370.491820096969604, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.876894261271032, 52.965891006481314 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565053.875679969787598, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.885985021132671, 52.968372756333551 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370583048.862790107727051, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.844380150484511, 52.959268914208231 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370564769.301660060882568, "value": "Ciba Heerenveen B.V.", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "Kwetsbaar object" }, "geometry": { "type": "Point", "coordinates": [ 5.887991549126423, 52.971581466766793 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370564860.475860118865967, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.88809734392321, 52.97210874363703 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565109.13273, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.889173862449378, 52.971511497732024 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370566673.690340042114258, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.884019089710426, 52.971358153990138 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370605952.447839975357056, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.877852210139482, 52.972841590502689 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370586573.794270038604736, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.856670225713526, 52.96397430092231 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370586513.19, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.868511086194969, 52.965656464839398 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370604667.55607008934021, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.857093008375647, 52.960131260488069 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370586529.57, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.867543593113815, 52.969718737588146 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370566440.556750059127808, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.885442009978376, 52.972059758081166 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370579399.84, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.876915484704873, 52.97971662895111 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370577632.115479946136475, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.876917583553433, 52.966075656843358 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565285.955470085144043, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.88569569298124, 52.968757777107967 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370605952.447839975357056, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.871490937405264, 52.974408235961498 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565178.204200029373169, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.889213583694925, 52.970315708449881 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565178.204200029373169, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.889006221063847, 52.971442063186863 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370602780.09, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.849012019454895, 52.95577421268721 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370581203.43, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.876971600006392, 52.979219729962523 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370565067.689939975738525, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.889422768754897, 52.97102806277077 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370582840.5, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.867436169100521, 52.969917422285299 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370566858.109339952468872, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.886633782799691, 52.967865298798891 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370581199.999919891357422, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.877290683768865, 52.978447431934718 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370582705.502599954605103, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.874149623243647, 52.978712146895752 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370584794.163919925689697, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.869179308542463, 52.971653713648401 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370566819.833760023117065, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.88384923844516, 52.971662577240224 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370571772.743730068206787, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.882577329589167, 52.958800055122907 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370604585.100009918212891, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.847816824464354, 52.955256555175239 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370607015.23122, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.845904557204578, 52.95447038028729 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370566534.51, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.884912838718104, 52.972994246214434 ] } }
+,
+{ "type": "Feature", "properties": { "timestamp": 1370605772.937419891357422, "value": "laagbouw", "value_type": "ordinal", "event_sub_type": 4, "event_type": null, "event_sub_type": "laagbouw" }, "geometry": { "type": "Point", "coordinates": [ 5.878507238522848, 52.983933271344 ] } }
+
+]
+}

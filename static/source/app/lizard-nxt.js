@@ -70,8 +70,8 @@ app.config(function ($interpolateProvider) {
  *
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "Restangular", "$q", "CabinetService",
-  function ($scope, $http, Restangular, $q, CabinetService)  {
+  ["$scope", "$http", "Restangular", "$q", "$compile", "CabinetService",
+  function ($scope, $http, Restangular, $q, $compile, CabinetService)  {
 
   // BOX MODEL
   $scope.box = {
@@ -162,13 +162,6 @@ app.controller("MasterCtrl",
     end: end - (24 * 60 * 60 * 1000 * 10),
     changedZoom: Date.now(),
     at: this.start,
-    timeline: {
-      tool: 'zoom',
-      canceler: $q.defer(),
-      enabled: false,
-      data: {},
-      changed: Date.now()
-    },
     animation: {
       playing: false,
       enabled: false,
@@ -180,6 +173,21 @@ app.controller("MasterCtrl",
   };
 // END TIME MODEL
 
+  /**
+  * Watch to restrict values of timeState
+  **/
+  $scope.$watch('timeState.changedZoom', function (n, o) {
+    if (n === o || $scope.timeState.changeOrigin === 'master') { return true; }
+    if ($scope.timeState.start < -315619200000) {
+      $scope.timeState.changeOrigin = 'master';
+      $scope.timeState.start = -315619200000; 
+    }
+    if ($scope.timeState.end > 2208988800000) { 
+      $scope.timeState.changeOrigin = 'master';
+      $scope.timeState.end = 2208988800000; 
+    }
+  });
+
 // COLOR MODEL
   $scope.colors =  {
     3: ["#27ae60", "#2980b9", "#8e44ad"],
@@ -188,6 +196,209 @@ app.controller("MasterCtrl",
     6: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12", "#d35400"],
     7: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12", "#d35400", "#c0392b"],
     8: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12", "#d35400", "#c0392b", "#16a085"]
+  };
+
+// EVENTS MODEL
+  $scope.events = {
+    types: { count: 0 }, // Metadata object
+    data: { type: "FeatureCollection",
+            features: [] // Long format events data object
+      },
+    scale: d3.scale.ordinal().range($scope.colors[8]),
+    changed: Date.now()
+  };
+  
+  /**
+   * Zoom to location
+   * 
+   * Used by the aggregate template under the 'screenshot' icon
+   * 
+   * @param: geometry object wit a list of lon lat
+   */
+  $scope.events.zoomTo = function (geometry) {
+    var panZoom = {
+      lat: geometry.coordinates[1],
+      lng: geometry.coordinates[0],
+      zoom: 15
+    };
+    $scope.panZoom = panZoom;
+    $scope.mapState.moved = Date.now();
+  };
+
+  /**
+   * Counts the events currently within the temporal and spatial extent
+   * 
+   * Called when the user pans the map or zooms the timeline.
+   * The aggregate directive flags events that are visible on the map at feature.inSpatExtent
+   * The timeline directive flags events that are currently on the map at inTempExtent attribute
+   * This function just sums it all up
+   */
+  $scope.events.countCurrentEvents = function () {
+    for (var eventType in $scope.events.types) {
+      $scope.events.types[eventType].currentCount = 0;
+    }
+    for (var i = 0; i < $scope.events.data.features.length; i++) {
+        var feature = $scope.events.data.features[i];
+        if (feature.inTempExtent && feature.inSpatExtent) {
+          var eventType = feature.name;
+          $scope.events.types[eventType].currentCount++;
+        }
+    }
+  };
+
+  /**
+   * Turns event types on or off
+   * 
+   * When an event type is off, it is passed to getEvents
+   * When an event type is on, it is passed to removeEvents and the remaining events are recolored
+   * 
+   * @param: str containing the name of the event type to toggle
+   */
+  $scope.events.toggleEvents = function (name) {
+    if ($scope.events.types[name]) {
+      if ($scope.events.types[name].active) {
+        $scope.events.types[name].active = false;
+        $scope.events.data = removeEvents($scope.events.data, name);
+        addColor($scope.events.data);
+        $scope.events.changed = Date.now();
+      } else {
+        getEvents(name);
+      }
+    } else {
+      getEvents(name);
+    }
+    if ($scope.timeState.hidden !== false) { $scope.toggleTimeline(); }
+  };
+
+  /**
+   * Downloads events and asynchronously fires callback
+   * 
+   * Callback passes the response to addEvents, recolors the event data object,
+   * Does bookkeeping and triggers watches by updating events.changed
+   * 
+   * @param: str containing the name of the event type to download
+   */
+  var getEvents = function (name) {
+/*    CabinetService.events.get({
+      type: name,
+      start: $scope.timeState.start,
+      end: $scope.timeState.end,
+      extent: $scope.mapState.bounds
+      }, function (response) {
+        $scope.timeState.timeline.data[name] = response.results[0];
+        $scope.timeState.timeline.data[name].count = response.count;
+        $scope.timeState.timeline.data[name].active = true;
+        $scope.timeState.timeline.changed = !$scope.timeState.timeline.changed;
+      }
+    );*/
+    // Get data from json as long as there is no db implementation
+    var url = '/static/data/' + name + '.geojson';
+    $http.get(url)
+    .success(function (response) {
+      var data = response;
+      $scope.events.data = addEvents($scope.events.data, data, name);
+      addColor($scope.events.data);
+      $scope.events.types[name].count = response.features.length;
+      $scope.events.types[name].active = true;
+      $scope.events.changed = Date.now();
+    });
+  };
+
+  /**
+   * Adds events to event data object.
+   * 
+   * Takes a geojson compliant data object which is added to another geojson compliant data object 
+   * In order to identify the type of events in the longData object, an eventOrder is added to the features.
+   * This eventOrder is also used in the timeline for the yAxis. The indiviudual features also get a id which is used
+   * by d3 to identify the events in the update pattern.
+   * 
+   * @param: object geojson compliant data object to add too
+   * @param: object geojson compliant data object to add
+   * @param: str containing the name of the event type to add
+   * @returns: object geojson compliant data object 
+   */
+  var addEvents = function (longData, shortData, name) {
+    // Create event identifier
+    var eventOrder;
+    if (longData.features === undefined) {longData.features = []; }
+    if (longData.features.length === 0) { eventOrder = 1; }
+    else {
+      var maxEventOrder = 0;
+      angular.forEach(longData.features, function (feature) {
+        maxEventOrder = feature.event_type > maxEventOrder ? feature.event_type : maxEventOrder;
+      });
+      eventOrder = maxEventOrder + 1;
+    }
+    $scope.events.types[name] = {};
+    $scope.events.types[name].event_type = eventOrder;
+    angular.forEach(shortData.features, function (feature) {
+      feature.event_type = eventOrder;
+      feature.color = $scope.colors[8][eventOrder];
+      feature.name = name;
+      // Create unique id, a combo of time and location. I assume this is always unique..
+      feature.id = name + feature.properties.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
+      longData.features.push(feature);
+    });
+    $scope.events.types.count = $scope.events.types.count + 1;
+    return longData;
+  };
+
+  /**
+   * Adds a color attribute to features in event data object
+   * 
+   * Takes a geojson compliant data object and adds a color to all the features. 
+   * If there is only one event type, the events are colored on the basis of sub_event_type
+   * If there are multiple event types active, the events are colored on the basis of a colorscale
+   * on the scope and the name of the feature.
+   * 
+   * @param: object geojson compliant data object with all the events
+   */
+  var addColor = function (longData) {
+    var scale;
+    if ($scope.events.types.count === 1) {
+      scale = d3.scale.ordinal().range($scope.colors[8]);
+      angular.forEach(longData.features, function (feature) {
+        feature.color = scale(feature.properties.event_sub_type);
+      });
+    } else {
+      angular.forEach(longData.features, function (feature) {
+        feature.color = $scope.events.scale(feature.name);
+      });
+    }
+  };
+  
+  /**
+   * Removes events from the data object.
+   * 
+   * Takes a geojson compliant data object and removes the features with the given name
+   * It also removes the metadata of these events and lowers the eventOrder of all the 
+   * event types which have a order that is greater than the order of the removed event type.
+   * 
+   * @param: object geojson compliant data object 
+   * @param: str containing the name of the event type to remove
+   * @returns: object geojson compliant data object 
+   */
+  var removeEvents = function (longData, name) {
+    var eventOrder = $scope.events.types[name].event_type;
+    var iterations = longData.features.length;
+    for (var i = 0; i < iterations; i++) {
+      var index = iterations - 1 - i;
+      var feature = longData.features[index]; // Go from back to front to not mess with the order
+      if (feature.name === name) {
+        var j = longData.features.indexOf(feature);
+        longData.features.splice(j, 1);
+      }
+      else if (feature.event_type > eventOrder) {
+        feature.event_type = feature.event_type - 1; }
+    }
+    for (var key in $scope.events.types) {
+      var eType = $scope.events.types[key];
+      if (eType.event_type > eventOrder) {
+        eType.event_type = eType.event_type - 1;
+      }
+    }
+    $scope.events.types.count = $scope.events.types.count - 1;
+    return longData;
   };
 
   // 3Di START
@@ -533,8 +744,11 @@ app.controller("MasterCtrl",
       $scope.timeState.hidden = true;
       angular.element('#timeline').css('bottom', 0 - angular.element('#timeline').height());
     } else {
-      angular.element('#timeline').css('bottom', 0);
-      angular.element('#timeline-ribbon').css('visibility', 'visible');
+      // Create timeline element when needed and no earlier
+      var timeline = angular.element('<timeline class="navbar timeline navbar-fixed-bottom"></timeline>');
+      var el = $compile(timeline)($scope);
+      angular.element('#master')
+        .append(timeline);
       $scope.timeState.hidden = false;
     }
   };
