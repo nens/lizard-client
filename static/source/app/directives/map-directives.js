@@ -276,21 +276,25 @@ app
 
 
       scope.map.on('zoomstart', function() {
+        // console.log('clearing zoomstart', scope.zooming);
         clearTimeout(scope.zooming);
       });
 
       scope.map.on('movestart', function() {
+        // console.log('clearing movestart', scope.dragging);
         clearTimeout(scope.dragging);
       });
 
-      scope.map.on('dragstart', function() {
-        clearTimeout(scope.dragging);
-      });
+      // scope.map.on('dragstart', function() {
+      //   console.log('clearing dragstart', scope.dragging);
+      //   clearTimeout(scope.dragging);
+      // });
 
 
       scope.map.on('zoomend', function () {
         
         scope.zooming = setTimeout(function(){
+          // console.log('changing hash due to zoom event!');
           location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
         },1000);
 
@@ -320,8 +324,9 @@ app
       scope.map.on('dragend', function () {
 
         scope.dragging = setTimeout(function(){
+          // console.log('changing hash due to drag event!');
           location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
-        },1000);
+        },200);
 
         if (scope.box.type === 'default') {
         // scope.box.type = 'empty';
