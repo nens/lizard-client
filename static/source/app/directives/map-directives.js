@@ -12,13 +12,22 @@ app
      */
     var MapCtrl  = function ($scope, $location) {
 
-      $scope.$on('$locationChangeSuccess', function(event){
-        var latlonzoom = $location.hash().split(',');
-        if(latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
-          if(parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
-            $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset:true});
-          }
+
+      $scope.$watch('locationHashChanged', function (n, o) {
+        if (n === o) { return true; } else {
+          var latlonzoom = $location.hash().split(',');
+          if(latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
+            if(parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
+              $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset:false, animate:false});
+            }
+          }        
         }
+      });
+
+      $scope.$on('$locationChangeSuccess', function(e, oldurl, newurl) {
+        // Set locationHashChanged variable to the new url. 
+        // locationsHashChanged is being $watched above
+        $scope.locationHashChanged = newurl;
       });
 
       this.initiateLayer = function (layer) {
@@ -264,9 +273,24 @@ app
       }
 
       scope.beenThreDoneIntersectSuggestion = false;
+
+
+      scope.map.on('zoomstart', function() {
+        clearTimeout(scope.zooming);
+      });
+
+      scope.map.on('movestart', function() {
+        clearTimeout(scope.dragging);
+      });
+
+      scope.map.on('dragstart', function() {
+        clearTimeout(scope.dragging);
+      });
+
+
       scope.map.on('zoomend', function () {
         
-        setTimeout(function(){
+        scope.zooming = setTimeout(function(){
           location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
         },1000);
 
@@ -295,7 +319,7 @@ app
 
       scope.map.on('dragend', function () {
 
-        setTimeout(function(){
+        scope.dragging = setTimeout(function(){
           location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
         },1000);
 
