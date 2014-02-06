@@ -10,7 +10,7 @@ app
     /**
      * Control function for this directive
      */
-    var MapCtrl  = function ($scope, $location) {
+    var MapCtrl  = function ($scope, $location, $timeout) {
       this.initiateLayer = function (layer) {
         if (layer.name === "Simulatie") {
           // Hack for 3Di.
@@ -51,44 +51,21 @@ app
               minZoom: layer.min_zoom_click,
               maxZoom: 20
             });
-            var clickLayer;
             leafletLayer.on('click', function (e) {
-              if (e.data){
-                var geojsonFeature = { "type": "Feature" };
-                var geom = angular.fromJson(e.data.geom);
-                geojsonFeature.geometry = geom;
-                if (clickLayer) { $scope.map.removeLayer(clickLayer); }
-                clickLayer = L.geoJson(geojsonFeature, {
-                  style: {},
-                  pointToLayer: function (feature, latlng) {
-                    return L.circleMarker(latlng, {
-                      radius: 12,
-                      opacity: 0.5,
-                      fillOpacity: 0
-                      });
-                  }});
-                clickLayer.addTo($scope.map);
-
-                d3.select($scope.map.getPanes().overlayPane)
-                .select("svg").select("g")
-                .attr("transform", "translate(0, 6)")
-                .select("path")
-                .attr("stroke", "#2980b9")
-                .attr("fill-opacity", "0")
-                .transition().duration(300)
-                .attr("stroke-width", 2)
-                .transition().duration(300)
-                .attr("stroke-width", 20)
-                .transition().duration(300)
-                .attr("stroke-width", 10)
-                .transition().duration(300)
-                .attr("stroke-width", 15)
-                .transition().duration(300)
-                .attr("stroke-opacity", 0.7)
-                .attr("stroke-width", 10);
-                
-                $scope.getTimeseries(e.data);
-              }
+              if (e.data) {
+                if (e.data.entity_name === 'pumpstation_sewerage'
+                  || e.data.entity_name === 'pumpstation_non_sewerage') {
+                  // Preferably this is only called when the object contains timeseries
+                  // but the getTimeseries does a lot more than just getting timeseries
+                  //$scope.getTimeseries(e.data);
+                } 
+                if (e.data.geom) {
+                  clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
+                  // Preferably this is only called when the object contains timeseries
+                  // but the getTimeseries does a lot more than just getting timeseries
+                  $scope.getTimeseries(e.data);
+                } else { console.info("You clicked on an object from negative space"); }
+              } else { clickInSpace(e.latlng); }
             });
             layer.grid_layers.push(leafletLayer);
           }
@@ -106,6 +83,125 @@ app
         layer.initiated = true;
       };
 
+      /**
+       * Draws visible feedback on the map after a click
+       *
+       * Removes possible click feedback layer and creates a new clickLayer
+       * containing a circle. The circle is than vibrated to attract attention
+       *
+       * @paramater: object latLng a leaflet object specifying the lat
+       * and long of a click
+       */
+      var removeProm;
+      var clickInSpace = function (latLng) {
+        $timeout.cancel(removeProm);
+        if ($scope.mapState.clickLayer) { 
+          $scope.map.removeLayer($scope.mapState.clickLayer);
+          delete $scope.mapState.clickLayer;
+        }
+        $scope.mapState.clickLayer = L.circleMarker(latLng, {
+          radius: 0,
+          opacity: 0.6,
+          color: "#1abc9c"
+        });
+        $scope.mapState.clickLayer.addTo($scope.map);
+        var selection = d3.select($scope.mapState.clickLayer._container);
+
+        selection.select("path")
+          .transition().duration(150)
+          .attr("stroke-width", 20)
+          .transition().duration(150)
+          .attr("stroke-width", 5)
+          .transition().duration(150)
+          .attr("stroke-width", 15)
+          .transition().duration(150)
+          .attr("stroke-opacity", 0.5)
+          .attr("stroke-width", 10);
+
+        if ($scope.box.type === 'empty') {
+          removeProm = $timeout(function () {
+            $scope.map.removeLayer($scope.mapState.clickLayer);
+          }, 1500);
+        }
+      };
+
+      /**
+       * Draws a circle around an object after a click
+       *
+       * Removes possible click feedback layer and creates a new clickLayer
+       * containing a circle. The circle is than vibrated to attract attention
+       *
+       * @paramater: object geojson compliant geometry object coming from UTFgrid
+       * @parameter: str entityName name of the object to give it custom styling
+       */
+      var clickGeometry = function (geometry, entityName) {
+        if ($scope.mapState.clickLayer) { 
+          $scope.map.removeLayer($scope.mapState.clickLayer);
+          delete $scope.mapState.clickLayer;
+          }
+
+        var geojsonFeature = { "type": "Feature" };
+        geojsonFeature.geometry = geometry;
+
+        //Put geometry in leaflet geojson layer
+        $scope.mapState.clickLayer = L.geoJson(geojsonFeature, {
+          minZoom: 13,
+          style: {},
+          pointToLayer: function (feature, latlng) {
+            this.circleMarker = L.circleMarker(latlng, {
+              radius: 11.5,
+              opacity: 0.5,
+              fillOpacity: 0,
+            });
+            return this.circleMarker;
+          }
+        });
+        $scope.mapState.clickLayer.addTo($scope.map);
+
+        // Manually edit with d3
+        // Due to some leaflet obscurity you have to get the first item with an unknown key.
+        var layer = $scope.mapState.clickLayer._layers;
+        var selection;
+        for (var key in layer) {
+          selection = d3.select(layer[key]._container);
+          break;
+        }
+
+        selection.select("path")
+          .attr("stroke", "#1abc9c")
+          .transition().duration(150)
+          .attr("stroke-width", 20)
+          .transition().duration(150)
+          .attr("stroke-width", 5)
+          .transition().duration(150)
+          .attr("stroke-width", 15)
+          .transition().duration(150)
+          .attr("stroke-opacity", 1)
+          .attr("stroke-width", 5);
+
+        // Entity specific modifications
+        if (entityName.indexOf("pumpstation") !== -1) {
+          selection.attr("transform", "translate(0, 5)");
+        } else if (entityName.indexOf("pipe") !== -1) {
+          selection.select("path").transition().delay(450).duration(150)
+          .attr("stroke-opacity", 0.6)
+          .attr("stroke-width", 10);
+        } else if (entityName === 'manhole') {
+          selection.attr("transform", "translate(1, 0)");
+          this.circleMarker.setRadius(7.5);
+        }
+      };
+
+      /**
+       * Watch to remove clicklayer when user clicks on omnibox close button
+       */
+      $scope.$watch('box.type', function (n, o) {
+        if (n === o) { return true; }
+        if ($scope.mapState.clickLayer && $scope.box.type === 'empty') {
+          $scope.map.removeLayer($scope.mapState.clickLayer);
+          delete $scope.mapState.clickLayer;
+        }
+      });
 
         // expects a layer hashtable with a leafletlayer object
       this.toggleLayer = function (layer) {
@@ -288,15 +384,20 @@ app
               + "))";
       }
 
-      scope.beenThreDoneIntersectSuggestion = false;
+      scope.beenThereDoneIntersectSuggestion = false;
       scope.map.on('zoomend', function () {
         if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
-          if (!scope.beenThreDoneIntersectSuggestion) {
-            scope.beenThreDoneIntersectSuggestion = true;
-            scope.$apply(function () {
-              scope.box.type = 'intersecttool';
-            });
+          if (!scope.beenThereDoneIntersectSuggestion) {
+            scope.beenThereDoneIntersectSuggestion = true;
+            scope.box.type = 'intersecttool';
           }
+        }
+        // Hide and unhide clicklayer when zoomed out or in
+        if (scope.mapState.clickLayer && scope.map.getZoom() < 13) {
+          scope.map.removeLayer(scope.mapState.clickLayer);
+        }
+        if (scope.mapState.clickLayer && scope.map.getZoom() > 12) {
+          scope.map.addLayer(scope.mapState.clickLayer);
         }
       });
 
