@@ -15,45 +15,68 @@ angular.module('graph')
     });
     graph.charts = {};
 
+    var tsid;
     //promises
 
     scope.$watch('enabled', function () {
-      if (scope.enabled) {
+      var watches = [];
+      if (!scope.enabled)  {
         graph.charts = {};
-        graph.initiate(scope.rainseries, 'rain');
-        graph.drawBars('rain', scope.rainseries);
+        if (watches.length > 0) {
+          for (var i in watches) {
+            var fn = watches[i];
+            fn();
+          }
+        }
+      } else {
+        graph.charts = {};
+
         graph.addZoom();
+
+
+        var rainseries = scope.$watch('rainseries', function () {
+          if (graph.charts === undefined) { return; }
+          if ((!graph.charts.hasOwnProperty('rain')) && scope.rainseries !== undefined) {
+            graph.initiate(scope.rainseries, 'rain');
+            graph.drawBars('rain', scope.rainseries);
+          }
+          if (graph.charts.hasOwnProperty('rain')) {
+            graph.updateBars('rain', scope.rainseries);
+          }
+        });
+        watches.push(rainseries);
+
+        var changedZoom = scope.$watch('changedZoom', function (newVal, oldVal) {
+          if (newVal === oldVal) { return; }
+          if (scope.$parent.timeState.changeOrigin === 'timeseries') { return; }
+          graph.updateTemporalExtent('rain', scope.start, scope.end);
+          graph.updateBars('rain', scope.rainseries);
+          graph.updateLine('timeseries', scope.timeseries.data);
+        });
+        watches.push(changedZoom);
+
+        var timeseries = scope.$watch('timeseries.data', function (newVal, oldVal) {
+          if ((newVal === oldVal) ||
+            (scope.timeseries.data === null)) { return; }
+          if ((scope.timeseries.id !== tsid) &&
+            (scope.timeseries.data.length > 0)) {
+            graph.charts['timeseries'] = null;
+            graph.initiate(scope.timeseries.data, 'timeseries');
+            graph.drawLine('timeseries', scope.timeseries.data);
+            // graph.updateLine('timeseries', scope.timeseries.data);
+          }
+          if (graph.charts.hasOwnProperty('timeseries')) {
+            // graph.drawLine('timeseries', scope.timeseries.data);
+            graph.updateLine('timeseries', scope.timeseries.data);
+          }
+          tsid = scope.timeseries.id;
+
+        });
+        watches.push(timeseries);
       }
     });
 
-    scope.$watch('rainseries', function () {
-      if (graph.charts === undefined) { return; }
-      if (!graph.charts.hasOwnProperty('rain')) {
-      }
-      if (graph.charts.hasOwnProperty('rain')) {
-        graph.updateBars('rain', scope.rainseries);
-      }
-    });
 
-
-    scope.$watch('changedZoom', function (newVal, oldVal) {
-      if (newVal === oldVal) { return; }
-      if (scope.$parent.timeState.changeOrigin === 'timeseries') { return;}
-      graph.updateTemporalExtent('rain', scope.start, scope.end);
-      graph.updateBars('rain', scope.rainseries);
-      graph.updateLine('timeseries', scope.timeseries);
-    });
-
-    scope.$watch('timeseries', function (newVal, oldVal) {
-      if (newVal === oldVal) { return; }
-      if (!graph.charts.hasOwnProperty('timeseries')) {
-        graph.initiate(scope.timeseries, 'timeseries');
-        graph.drawLine('timeseries', scope.timeseries);
-      }
-      if (graph.charts.hasOwnProperty('timeseries')) {
-        graph.updateLine('timeseries', scope.timeseries);
-      }
-    });
   };
 
   return {

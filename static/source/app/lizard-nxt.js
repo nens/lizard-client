@@ -159,7 +159,7 @@ app.controller("MasterCtrl",
   // TIME MODEL
   $scope.timeState = {
     start: end - (24 * 60 * 60 * 1000 * 250), // 14 days
-    end: end - (24 * 60 * 60 * 1000 * 200),
+    end: end - (24 * 60 * 60 * 1000 * 10),
     changedZoom: Date.now(),
     at: this.start,
     timeline: {
@@ -261,6 +261,11 @@ app.controller("MasterCtrl",
   $scope.$watch('activeObject.changed', function (newVal, oldVal) {
     if (newVal === oldVal) { return; }
 
+
+    // NOTE: this is of course utterly crappy, 
+    // I copy pasted this from the 'old way'
+    // the only thing changed is the restangular thingy
+    // and it not being part of a big blobbish function: getTimeseries
     $scope.box.content.object_type = $scope.activeObject.entity_name;
     $scope.box.content.id = $scope.activeObject.id;
     $scope.box.content.data = $scope.activeObject;
@@ -274,7 +279,12 @@ app.controller("MasterCtrl",
       $scope.timeseries = response;
       if ($scope.timeseries.length > 0) {
         $scope.box.content.selected_timeseries = response[0];
-        $scope.data = response[0].events.instants;
+        // for now on scope. legacy..
+        // $scope.data =
+        $scope.data = {
+          data: response[0].events.instants,
+          id: $scope.activeObject.id
+        };
         $scope.metadata = {
           title: null,
           fromgrid: $scope.box.content.data,
@@ -282,9 +292,9 @@ app.controller("MasterCtrl",
         };
         $scope.timeboxenabled = true;
       } else {
+        $scope.timeboxenabled = false;
         $scope.data = null;
         $scope.box.content.selected_timeseries = undefined;
-        $scope.timeboxenabled = false;
 
       }
 
@@ -326,7 +336,7 @@ app.controller("MasterCtrl",
         start: $scope.timeState.start,
         end: $scope.timeState.end
       }).then(function (response) {
-        $scope.data = response.events.instants;
+        $scope.data.data = response.events.instants;
         // $scope.box.content.selected_timeseries.events = response.events;
       });
     }

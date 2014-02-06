@@ -254,13 +254,20 @@ var NxtD3 = function (svg, options) {
     var bars = nxtd3.svg.select("g").selectAll(".bar_" + id)
       .data(data);
 
-    nxtd3.charts[id].xdatafn = function (d) { return nxtd3.x.scale(d[1]) - 0.5; };
+    var barwidth;
+    nxtd3.charts[id].xdatafn = function (d) { 
+      barwidth = (nxtd3.x.scale(d[1] + 300000) - nxtd3.x.scale(d[1]));
+      return nxtd3.x.scale(d[1]);
+    };
     nxtd3.charts[id].y.datafn = function (d) { return that.y.scale(d[0]) - 0.5; };
     bars.attr("class", "bar bar_" + id)
       .transition()
       .delay(0)
       .duration(0)
-      .attr("x", that.xdatafn)
+      .attr("x", function (d) { 
+        barwidth = (nxtd3.x.scale(d[1] + 300000) - nxtd3.x.scale(d[1]));
+        return nxtd3.x.scale(d[1]) - barwidth;
+      })
       .attr("y", that.y.datafn)
       .attr("height", function (d) { return height - that.y.scale(d[0]); });
 
@@ -269,7 +276,7 @@ var NxtD3 = function (svg, options) {
       .attr("class", "bar bar_" + id)
       .attr("x", that.xdatafn)
       .attr("y", that.y.datafn)
-      .attr("width", 5)
+      .attr("width", barwidth)
       .attr("height", function (d) { return height - that.y.scale(d[0]); });
 
     bars.exit()
@@ -284,7 +291,24 @@ var NxtD3 = function (svg, options) {
 
   nxtd3.updateBars = function (id, data) {
     var bars = nxtd3.svg.select("g").selectAll(".bar_" + id)
-      .data(data);
+    var barwidth;
+    nxtd3.charts[id].xdatafn = function (d) { 
+      // barwidth = (nxtd3.x.scale(d[1] + 30000) - nxtd3.x.scale(d[1]))
+      return nxtd3.x.scale(d[1]);
+    };
+
+    var that = nxtd3.charts[id];
+    bars.attr("class", "bar bar_" + id)
+      .attr("x", function (d) { 
+      barwidth = (nxtd3.x.scale(d[1] + 300000) - nxtd3.x.scale(d[1]));
+      return nxtd3.x.scale(d[1]);
+    })
+      // .attr("transform", "")
+      .attr("width", function () { 
+        if (barwidth > 0.5){
+          return barwidth;
+        } else { return 1; }
+      });
   };
 
   nxtd3.drawLine = function (id, data) {
@@ -338,17 +362,19 @@ var NxtD3 = function (svg, options) {
   };
 
   nxtd3.updateLine = function (id, data) {
-    nxtd3.charts[id].line = d3.svg.line()
-    .y(function (d) {
-      return that.y.scale(d[0]);
-    })
-    .x(function (d) {
-      return nxtd3.x.scale(d[1]);
-    });
-    var that = nxtd3.charts[id];
-    nxtd3.svg.select("#gpath").selectAll("path.line_" + id)
-      .data([data])
-      .attr("d", that.line);
+    if (data.length > 0) {
+      nxtd3.charts[id].line = d3.svg.line()
+      .y(function (d) {
+        return that.y.scale(d[0]);
+      })
+      .x(function (d) {
+        return nxtd3.x.scale(d[1]);
+      });
+      var that = nxtd3.charts[id];
+      nxtd3.svg.select("#gpath").selectAll("path.line_" + id)
+        .data([data])
+        .attr("d", that.line);
+    }
   };
 
   var brush = null;
@@ -418,7 +444,7 @@ var NxtD3 = function (svg, options) {
         if (nxtd3.charts[i].type === 'bar') {
           svg.selectAll(".bar")
             .attr("x", nxtd3.charts[i].xdatafn)
-            .attr("transform", "translate(" + d3.event.translate[0] + ",0) scale(" + d3.event.scale + ", 1)");
+            // .attr("transform", "scale(" + d3.event.scale + ", 1)");
         }
       }
     };
@@ -449,13 +475,9 @@ var NxtD3 = function (svg, options) {
       ticks: 5
     });
     nxtd3.drawXAxis();
-    nxtd3.addZoom();
+    // nxtd3.addZoom();
 
-    var bars = nxtd3.svg.select("g").selectAll(".bar_" + id);
-    var that = nxtd3.charts[id];
-    nxtd3.charts[id].xdatafn = function (d) { return nxtd3.x.scale(d[1]) - 0.5; };
-    bars.attr("class", "bar bar_" + id)
-      .attr("x", that.xdatafn);
+
   };
 
   nxtd3.initiate = function (data, id) {
