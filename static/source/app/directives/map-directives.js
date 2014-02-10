@@ -1,6 +1,6 @@
 // leaflet.js
 app
-  .directive('map', [function () {
+  .directive('map', ['$location', function (location) {
 
     // WTF?
     var newValue = function () {
@@ -11,6 +11,25 @@ app
      * Control function for this directive
      */
     var MapCtrl  = function ($scope, $location) {
+
+
+      $scope.$watch('locationHashChanged', function (n, o) {
+        if (n === o) { return true; } else {
+          var latlonzoom = $location.hash().split(',');
+          if(latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
+            if(parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
+              $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset:false, animate:false});
+            }
+          }        
+        }
+      });
+
+      $scope.$on('$locationChangeSuccess', function(e, oldurl, newurl) {
+        // Set locationHashChanged variable to the new url. 
+        // locationsHashChanged is being $watched above
+        $scope.locationHashChanged = newurl;
+      });
+
       this.initiateLayer = function (layer) {
         if (layer.name === "Simulatie") {
           // Hack for 3Di.
@@ -153,7 +172,6 @@ app
       };
 
       this.moveEnd = function (lat, lng, zoom) {
-        // console.log('moveEnd!', $location.path());
         $location.path(lat + ',' + lng + ',' + zoom);
         // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
       };
@@ -259,7 +277,35 @@ app
       }
 
       scope.beenThreDoneIntersectSuggestion = false;
+
+
+      scope.map.on('zoomstart', function() {
+        // console.log('clearing zoomstart', scope.zooming);
+        clearTimeout(scope.zooming);
+      });
+
+      scope.map.on('movestart', function() {
+        // console.log('clearing movestart', scope.dragging);
+        clearTimeout(scope.dragging);
+      });
+
+      // scope.map.on('dragstart', function() {
+      //   console.log('clearing dragstart', scope.dragging);
+      //   clearTimeout(scope.dragging);
+      // });
+
+
       scope.map.on('zoomend', function () {
+        
+        /**
+         * NOTE: Somehow, this zoomend handler sometimes causes stuttering zoom behavior when zooming aggressively.
+         */
+
+        scope.zooming = setTimeout(function(){
+          // console.log('changing hash due to zoom event!');
+          location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
+        },1000);
+
         if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
           if (!scope.beenThreDoneIntersectSuggestion) {
             scope.beenThreDoneIntersectSuggestion = true;
@@ -284,6 +330,12 @@ app
       });
 
       scope.map.on('dragend', function () {
+
+        scope.dragging = setTimeout(function(){
+          // console.log('changing hash due to drag event!');
+          location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
+        },200);
+
         if (scope.box.type === 'default') {
         // scope.box.type = 'empty';
           scope.$apply(function () {
