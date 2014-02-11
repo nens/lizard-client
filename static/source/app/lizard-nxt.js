@@ -84,7 +84,7 @@ app.controller("MasterCtrl",
     query: null,
     disabled: false,
     showCards: false,
-    type: 'empty', // NOTE: default, box type is empty, leave it this way 'feb 2014 ernstkui'
+    type: 'empty', // NOTE: default, box type is empty, that makes a whole lot more sense than aggregate
     content: {},
     changed: Date.now()
   };
