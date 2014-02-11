@@ -3,6 +3,121 @@
 angular.module('graph', []);
 
 angular.module('graph')
+.directive('timeseriesRain', function () {
+  var link = function (scope, element, attrs) {
+
+    var svg = element.append('<svg id="chart-combined"></svg>');
+    var graph = new NxtD3(d3.select('#chart-combined'), {
+      width: 400,
+      height: 300,
+      start: scope.start,
+      end: scope.end
+    });
+    graph.charts = {};
+
+    var tsid;
+    //promises
+
+    scope.$watch('enabled', function () {
+      var watches = [];
+      if (!scope.enabled)  {
+        graph.charts = {};
+        if (watches.length > 0) {
+          for (var i in watches) {
+            var fn = watches[i];
+            fn();
+          }
+        }
+      } else {
+        graph.charts = {};
+
+        graph.addZoom();
+
+
+        var rainseries = scope.$watch('rainseries', function () {
+          if (graph.charts === undefined) { return; }
+          if ((!graph.charts.hasOwnProperty('rain')) && scope.rainseries !== undefined) {
+            graph.initiate(scope.rainseries, 'rain');
+            graph.drawBars('rain', scope.rainseries);
+          }
+          if (graph.charts.hasOwnProperty('rain')) {
+            graph.updateBars('rain', scope.rainseries);
+          }
+        });
+        watches.push(rainseries);
+
+        var changedZoom = scope.$watch('changedZoom', function (newVal, oldVal) {
+          if (newVal === oldVal) { return; }
+          if (scope.$parent.timeState.changeOrigin === 'timeseries') { return; }
+          graph.updateTemporalExtent('rain', scope.start, scope.end);
+          graph.updateBars('rain', scope.rainseries);
+          if (graph.charts.hasOwnProperty('timeseries')) {
+            graph.updateLine('timeseries', scope.timeseries.data);
+          } else {
+            graph.initiate(scope.timeseries.data, 'timeseries');
+            graph.drawLine('timeseries', scope.timeseries.data);
+          }
+          graph.addZoom();
+        });
+        watches.push(changedZoom);
+
+        var timeseries = scope.$watch('timeseries.data', function (newVal, oldVal) {
+          if ((newVal === oldVal) ||
+            (scope.timeseries === null)) { return; }
+          if (scope.timeseries.data !== null) {
+            if (scope.timeseries.id !== tsid) {
+              if (graph.charts.hasOwnProperty('timeseries')) {
+                graph.clearLine('timeseries');
+              }
+              graph.charts['timeseries'] = null;
+            }
+            graph.initiate(scope.timeseries.data, 'timeseries');
+            graph.drawLine('timeseries', scope.timeseries.data);
+            // graph.updateLine('timeseries', scope.timeseries.data);
+          }
+          if (graph.charts.hasOwnProperty('timeseries')) {
+            // graph.drawLine('timeseries', scope.timeseries.data);
+            if (scope.timeseries.data === null) {
+              graph.clearLine('timeseries');
+              return;
+            }
+            if (scope.timeseries.data.length === 0) {
+              graph.clearLine('timeseries');
+              return;
+            }
+            graph.updateLine('timeseries', scope.timeseries.data);
+          }
+          tsid = scope.timeseries.id;
+
+        });
+        watches.push(timeseries);
+      }
+    });
+
+
+  };
+
+  return {
+    link: link,
+    scope: {
+      // TODO: add extra options (e.g. width)? 
+      title: '=',
+      rainseries: '=',
+      timeseries: '=',
+      xlabel: '=',
+      ylabel: '=',
+      enabled: '=',
+      start: '=',
+      end: '=',
+      changedZoom: '='
+    },
+    restrict: 'E',
+    replace: true,
+    template: '<div class="graph-directive"></div>'
+  };
+});
+
+angular.module('graph')
 .directive('graph', function () {
 
   var controller = function ($scope) {

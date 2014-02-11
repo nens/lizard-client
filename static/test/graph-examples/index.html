@@ -19,11 +19,14 @@
 
           <div class="row">
             <div class="col-md-12 graph">
-              <h3>Kpi</h3>
-              <graph line data="data" title="metadata.title"ylabel="" xlabel="" ymin="0" ymax="10"></graph>
+              <h3>Wrapper-test</h3>
+              <timeseries-rain rainseries="rain" timeseries="timeseries" enabled="enabled" start="timeState.start" end="timeState.end"></timeseries-rain>
+              <input type="range" ng-model="timeState.at">
+              <!-- <graph data="data" id="test-wrapper"></graph> -->
+              <!-- <svg data="data" id="test-wrapper"></svg> -->
             </div>
           </div>
-          <div class="row">
+<!--           <div class="row">
             <div class="col-md-12 graph">
               <h3>BarChart</h3>
               <graph bar-chart data="data.instants" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel" ></graph>
@@ -33,12 +36,6 @@
             <div class="col-md-12 graph">
               <h3>Scatterplot</h3>
               <graph scatter data="scatter" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel" ></graph>
-            </div>
-          </div>
-           <div class="row">
-            <div class="col-md-12 graph">
-              <h3>Single line</h3>
-              <graph line data="formatted_data1" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel" size></graph>
             </div>
           </div>
 
@@ -54,12 +51,12 @@
               <h3>Double line double axis</h3>
               <graph multitypeline data="formatted_2line" title="metadata.title" xlabel="metadata.xlabel" ylabel="metadata.ylabel" ></graph>
             </div>
-          </div>
+          </div> -->
               
         </div>
         <div class="col-md-4">
           <button type="button" class="btn btn-default" ng-click="updateData()">Randomize Data for Graph</button>
-          <button type="button" class="btn btn-default" ng-click="malformData()">Break Graph</button>
+          <button type="button" class="btn btn-default" ng-click="empty()">Break Graph</button>
         </div>
       </div>
 
@@ -67,6 +64,7 @@
     </div>
       <script type="text/javascript" src="../../vendor/angular/angular.js"></script>
       <script type="text/javascript" src="../../vendor/d3/d3.min.js"></script>
+      <script type="text/javascript" src="../../source/app/directives/d3-wrapper.js"></script>
       <script type="text/javascript" src="../../source/app/directives/graph-directives.js"></script>
       <script type="text/javascript" src="demo.js"></script>
   </body>

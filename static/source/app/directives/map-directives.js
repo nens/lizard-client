@@ -71,8 +71,12 @@ app
               maxZoom: 20
             });
             leafletLayer.on('click', function (e) {
-              if (e.data){
-                $scope.getTimeseries(e.data);
+              if (e.data) {
+                $scope.$apply(function () {
+                  angular.extend($scope.activeObject, e.data);
+                  $scope.activeObject.latlng = e.latlng;
+                  $scope.activeObject.changed = !$scope.activeObject.changed;
+                });
               }
             });
             layer.grid_layers.push(leafletLayer);
