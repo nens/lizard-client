@@ -71,29 +71,19 @@ app
             });
             leafletLayer.on('click', function (e) {
               if (e.data) {
-                if (e.data.entity_name === 'pumpstation_sewerage'
-                  || e.data.entity_name === 'pumpstation_non_sewerage') {
-                  // NOTE: Preferably this is only called when the object contains timeseries
-                  // but the getTimeseries does a lot more than just getting timeseries
-                  //$scope.getTimeseries(e.data);
-                  return true;
-                }
                 if (e.data.geom) {
                   clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
-                  // Preferably this is only called when the object contains timeseries
-                  // but the getTimeseries does a lot more than just getting timeseries
-                  $scope.getTimeseries(e.data);
                 } else {
                   console.info("You clicked on an object from negative space");
                 }
               } else {
                 clickInSpace(e.latlng);
-                $scope.$apply(function () {
-                  angular.extend($scope.activeObject, e.data);
-                  $scope.activeObject.latlng = e.latlng;
-                  $scope.activeObject.changed = !$scope.activeObject.changed;
-                });
               }
+              $scope.$apply(function () {
+                angular.extend($scope.activeObject, e.data);
+                $scope.activeObject.latlng = e.latlng;
+                $scope.activeObject.changed = !$scope.activeObject.changed;
+              });
             });
             layer.grid_layers.push(leafletLayer);
           }
@@ -146,7 +136,7 @@ app
           .attr("stroke-opacity", 0.5)
           .attr("stroke-width", 10);
 
-        if ($scope.box.type === 'empty') {
+        if ($scope.box.type !== 'rain') {
           removeProm = $timeout(function () {
             $scope.map.removeLayer($scope.mapState.clickLayer);
           }, 1500);
@@ -165,6 +155,7 @@ app
        *  styling
        */
       var clickGeometry = function (geometry, entityName) {
+        $timeout.cancel(removeProm);
         if ($scope.mapState.clickLayer) {
           $scope.map.removeLayer($scope.mapState.clickLayer);
           delete $scope.mapState.clickLayer;
