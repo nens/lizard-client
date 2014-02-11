@@ -158,38 +158,6 @@
 }
 
 
-.card .front {
-    -webkit-transition-duration: 400ms;
-    transition-duration: 400ms;
-    z-index: 10;
-}
-.card .back {
-    -webkit-transition-duration: 400ms;
-    transition-duration: 400ms;
-    z-index:0;
-    -webkit-transform: rotateX(180deg);
-    transform: rotateX(180deg);
-}
-.card .back {
-    display: none;
-}
-.card .front {
-    display: block;
-}
-.card.flip .back {
-    display: block;
-}
-.card.flip .front {
-    display: none;
-}
-.card.flip {
-    -webkit-transition-duration: 400ms;
-    transition-duration: 400ms;
-    -webkit-transform: rotateX(180deg);
-    transform: rotateX(180deg);
-    z-index:0;
-}
-
 .card .card-title span {
     font-size: 1em;
     margin-bottom: 3em;
@@ -220,7 +188,7 @@
     line-height: 15px;
     font-size: 0.9em;
     list-style: none;
-    width: 50%;
+    width: 150px;
     margin-left: 37px;
     color: #777;
 }
