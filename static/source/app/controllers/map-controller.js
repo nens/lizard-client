@@ -1,4 +1,4 @@
-app.controller('MapCtrl', function ($scope) {
+app.controller('MapCtrl', function ($scope, $location) {
 
   $scope.$on('PanZoomeroom', function (message, value) {
     $scope.panZoom = value;
