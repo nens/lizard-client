@@ -10,21 +10,20 @@ app
     /**
      * Control function for this directive
      */
-    var MapCtrl  = function ($scope, $location) {
-
+    var MapCtrl  = function ($scope, $location, $timeout) {
 
       $scope.$watch('locationHashChanged', function (n, o) {
         if (n === o) { return true; } else {
           var latlonzoom = $location.hash().split(',');
-          if(latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
-            if(parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
-              $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset:false, animate:false});
+          if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
+            if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
+              $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: false, animate: false});
             }
-          }        
+          }
         }
       });
 
-      $scope.$on('$locationChangeSuccess', function(e, oldurl, newurl) {
+      $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
         // Set locationHashChanged variable to the new url. 
         // locationsHashChanged is being $watched above
         $scope.locationHashChanged = newurl;
@@ -72,6 +71,23 @@ app
             });
             leafletLayer.on('click', function (e) {
               if (e.data) {
+                if (e.data.entity_name === 'pumpstation_sewerage'
+                  || e.data.entity_name === 'pumpstation_non_sewerage') {
+                  // NOTE: Preferably this is only called when the object contains timeseries
+                  // but the getTimeseries does a lot more than just getting timeseries
+                  //$scope.getTimeseries(e.data);
+                  return true;
+                }
+                if (e.data.geom) {
+                  clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
+                  // Preferably this is only called when the object contains timeseries
+                  // but the getTimeseries does a lot more than just getting timeseries
+                  $scope.getTimeseries(e.data);
+                } else {
+                  console.info("You clicked on an object from negative space");
+                }
+              } else {
+                clickInSpace(e.latlng);
                 $scope.$apply(function () {
                   angular.extend($scope.activeObject, e.data);
                   $scope.activeObject.latlng = e.latlng;
@@ -94,6 +110,128 @@ app
         }
         layer.initiated = true;
       };
+
+      /**
+       * Draws visible feedback on the map after a click
+       *
+       * Removes possible click feedback layer and creates a new clickLayer
+       * containing a circle. The circle is than vibrated to attract attention
+       *
+       * @param {object} latLng Leaflet object specifying the latitude
+       * and longitude of a click
+       */
+      var removeProm;
+      var clickInSpace = function (latLng) {
+        $timeout.cancel(removeProm);
+        if ($scope.mapState.clickLayer) {
+          $scope.map.removeLayer($scope.mapState.clickLayer);
+          delete $scope.mapState.clickLayer;
+        }
+        $scope.mapState.clickLayer = L.circleMarker(latLng, {
+          radius: 0,
+          opacity: 0.6,
+          color: "#1abc9c"
+        });
+        $scope.mapState.clickLayer.addTo($scope.map);
+        var selection = d3.select($scope.mapState.clickLayer._container);
+
+        selection.select("path")
+          .transition().duration(150)
+          .attr("stroke-width", 20)
+          .transition().duration(150)
+          .attr("stroke-width", 5)
+          .transition().duration(150)
+          .attr("stroke-width", 15)
+          .transition().duration(150)
+          .attr("stroke-opacity", 0.5)
+          .attr("stroke-width", 10);
+
+        if ($scope.box.type === 'empty') {
+          removeProm = $timeout(function () {
+            $scope.map.removeLayer($scope.mapState.clickLayer);
+          }, 1500);
+        }
+      };
+
+      /**
+       * Draws a circle around an object on click.
+       *
+       * Removes possible click feedback layer and creates a new clickLayer
+       * containing a circle. The circle is vibrated to attract attention.
+       *
+       * @param {object} geometry Geojson compliant geometry object coming
+       *  from UTFgrid
+       * @param {string} entityName Name of the object to give it custom
+       *  styling
+       */
+      var clickGeometry = function (geometry, entityName) {
+        if ($scope.mapState.clickLayer) {
+          $scope.map.removeLayer($scope.mapState.clickLayer);
+          delete $scope.mapState.clickLayer;
+        }
+
+        var geojsonFeature = { "type": "Feature" };
+        geojsonFeature.geometry = geometry;
+
+        //Put geometry in leaflet geojson layer
+        $scope.mapState.clickLayer = L.geoJson(geojsonFeature, {
+          minZoom: 13,
+          style: {},
+          pointToLayer: function (feature, latlng) {
+            this.circleMarker = L.circleMarker(latlng, {
+              radius: 11.5,
+              opacity: 0.5,
+              fillOpacity: 0,
+            });
+            return this.circleMarker;
+          }
+        });
+        $scope.mapState.clickLayer.addTo($scope.map);
+
+        // Manually edit with d3
+        // Due to some leaflet obscurity you have to get the first item with an unknown key.
+        var layer = $scope.mapState.clickLayer._layers;
+        var selection;
+        for (var key in layer) {
+          selection = d3.select(layer[key]._container);
+          break;
+        }
+
+        selection.select("path")
+          .attr("stroke", "#1abc9c")
+          .transition().duration(150)
+          .attr("stroke-width", 20)
+          .transition().duration(150)
+          .attr("stroke-width", 5)
+          .transition().duration(150)
+          .attr("stroke-width", 15)
+          .transition().duration(150)
+          .attr("stroke-opacity", 1)
+          .attr("stroke-width", 5);
+
+        // Entity specific modifications
+        if (entityName.indexOf("pumpstation") !== -1) {
+          selection.attr("transform", "translate(0, 5)");
+        } else if (entityName.indexOf("pipe") !== -1) {
+          selection.select("path").transition().delay(450).duration(150)
+          .attr("stroke-opacity", 0.6)
+          .attr("stroke-width", 10);
+        } else if (entityName === 'manhole') {
+          selection.attr("transform", "translate(1, 0)");
+          this.circleMarker.setRadius(7.5);
+        }
+      };
+
+      /**
+       * Watch to remove clicklayer when user clicks on omnibox close button.
+       */
+      $scope.$watch('box.type', function (n, o) {
+        if (n === o) { return true; }
+        if ($scope.mapState.clickLayer && $scope.box.type === 'empty') {
+          $scope.map.removeLayer($scope.mapState.clickLayer);
+          delete $scope.mapState.clickLayer;
+        }
+      });
 
       // expects a layer hashtable with a leafletlayer object
       this.toggleLayer = function (layer) {
@@ -232,7 +370,7 @@ app
 
 
     /**
-     * Link function for this directive
+     * Link function for this directive.
      */
     var link = function (scope, element, attrs, ctrl) {
       // Leaflet global variable to speed up vector layer, 
@@ -240,9 +378,9 @@ app
       window.L_PREFER_CANVAS = true;
       // instead of 'map' element here for testability
       var osmAttrib = 'Map data © OpenStreetMap contributors';
-      var bounds = window.data_bounds['all'];
-      var southWest = L.latLng(bounds['south'], bounds['west']);
-      var northEast = L.latLng(bounds['north'], bounds['east']);
+      var bounds = window.data_bounds.all;
+      var southWest = L.latLng(bounds.south, bounds.west);
+      var northEast = L.latLng(bounds.north, bounds.east);
       var maxBounds = L.latLngBounds(southWest, northEast);
       var map = new L.map(element[0], {
           zoomControl: false,
@@ -288,24 +426,15 @@ app
               + "))";
       }
 
-      scope.beenThreDoneIntersectSuggestion = false;
+      scope.beenThereDoneIntersectSuggestion = false;
 
-
-      scope.map.on('zoomstart', function() {
-        // console.log('clearing zoomstart', scope.zooming);
+      scope.map.on('zoomstart', function () {
         clearTimeout(scope.zooming);
       });
 
-      scope.map.on('movestart', function() {
-        // console.log('clearing movestart', scope.dragging);
+      scope.map.on('movestart', function () {
         clearTimeout(scope.dragging);
       });
-
-      // scope.map.on('dragstart', function() {
-      //   console.log('clearing dragstart', scope.dragging);
-      //   clearTimeout(scope.dragging);
-      // });
-
 
       scope.map.on('zoomend', function () {
         
@@ -313,18 +442,23 @@ app
          * NOTE: Somehow, this zoomend handler sometimes causes stuttering zoom behavior when zooming aggressively.
          */
 
-        scope.zooming = setTimeout(function(){
+        scope.zooming = setTimeout(function () {
           // console.log('changing hash due to zoom event!');
           location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
-        },1000);
+        }, 1000);
 
         if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
-          if (!scope.beenThreDoneIntersectSuggestion) {
-            scope.beenThreDoneIntersectSuggestion = true;
-            scope.$apply(function () {
-              scope.box.type = 'intersecttool';
-            });
+          if (!scope.beenThereDoneIntersectSuggestion) {
+            scope.beenThereDoneIntersectSuggestion = true;
+            scope.box.type = 'intersecttool';
           }
+        }
+        // Hide and unhide clicklayer when zoomed out or in
+        if (scope.mapState.clickLayer && scope.map.getZoom() < 13) {
+          scope.map.removeLayer(scope.mapState.clickLayer);
+        }
+        if (scope.mapState.clickLayer && scope.map.getZoom() > 12) {
+          scope.map.addLayer(scope.mapState.clickLayer);
         }
       });
 
@@ -334,19 +468,21 @@ app
           scope.$apply(function () {
             scope.mapState.moved = Date.now();
             scope.mapState.bounds = scope.map.getBounds();
-          });  
+          });
         } else {
           scope.mapState.moved = Date.now();
-            scope.mapState.bounds = scope.map.getBounds();
+          scope.mapState.bounds = scope.map.getBounds();
         }
       });
 
       scope.map.on('dragend', function () {
 
-        scope.dragging = setTimeout(function(){
+        scope.dragging = setTimeout(function () {
           // console.log('changing hash due to drag event!');
-          location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
-        },200);
+          location.hash(scope.map.getCenter().lat + ',' +
+                        scope.map.getCenter().lng + ',' +
+                        scope.map.getZoom());
+        }, 200);
 
         if (scope.box.type === 'default') {
         // scope.box.type = 'empty';
@@ -483,7 +619,7 @@ app.directive('rain', function () {
 
       scope.$watch('rain.currentFrame', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
-        if (imageOverlay != undefined) {
+        if (imageOverlay !== undefined) {
           var imgFromStorage = localStorage.getItem(scope.rain.currentFrame);
           imageOverlay.setUrl(imgFromStorage);
           imageOverlay.setOpacity(0.8);
