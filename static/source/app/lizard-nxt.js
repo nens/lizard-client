@@ -121,11 +121,11 @@ app.controller("MasterCtrl",
     }
   };
 
-  $scope.mouseMove = function ($event) {
-    if ($scope.tools.cursorTooltip.enabled) {
-      $scope.tools.cursorTooltip.location = $event;
-    }
-  };
+  // $scope.mouseMove = function ($event) {
+  //   if ($scope.tools.cursorTooltip.enabled) {
+  //     $scope.tools.cursorTooltip.location = $event;
+  //   }
+  // };
 
   $scope.toggleTool = function (name) {
     if ($scope.tools.active === name) {
@@ -164,8 +164,8 @@ app.controller("MasterCtrl",
   var end = Date.now();
   // TIME MODEL
   $scope.timeState = {
-    start: end - (24 * 60 * 60 * 1000 * 14), // 14 days
-    end: end,
+    start: end - (24 * 60 * 60 * 1000 * 250), // 14 days
+    end: end - (24 * 60 * 60 * 1000 * 10),
     changedZoom: Date.now(),
     at: this.start,
     animation: {
@@ -436,27 +436,60 @@ app.controller("MasterCtrl",
    */
   $scope.box.content.selected_timeseries = undefined;
 
-  $scope.getTimeseries = function (data) {
-    /* data must have properties entity_name, id */
-    // NOTE: this is an aggregation demo HACK
-    if (!arguments[1] && arguments[1] !== "nochange") {
-      $scope.box.type = data.entity_name;
-      $scope.box.showCards = true;
-    }
-    $scope.box.content.object_type = data.entity_name;
-    $scope.box.content.id = data.id;
-    $scope.box.content.data = data;
-    // NOTE: will temporalExtent also control timeiline temporalExtent?
-    $scope.box.content.temporalExtent = {
-      start: null,
-      end: null,
-      changedZoom: false,
-    };
-    $scope.timeseries = [];
-    $scope.box.content.selected_timeseries = undefined;
+  // $scope.getTimeseries = function (data) {
+  //   /* data must have properties entity_name, id */
+  //   // NOTE: this is an aggregation demo HACK
+  //   if (!arguments[1] && arguments[1] !== "nochange") {
+  //     $scope.box.type = data.entity_name;
+  //     $scope.box.showCards = true;
+  //   }
+
+  //   // NOTE: will temporalExtent also control timeiline temporalExtent?
+  //   $scope.box.content.temporalExtent = {
+  //     start: null,
+  //     end: null,
+  //     changedZoom: false,
+  //   };
+  //   $scope.timeseries = [];
+  //   $scope.box.content.selected_timeseries = undefined;
    
 
-    var new_data_get = CabinetService.timeseries.get({
+  //   var new_data_get = 
+  //   $scope.metadata = {
+  //       title: null,
+  //       fromgrid: $scope.box.content.data,
+  //       //type: $scope.box.content.data.entity_name
+  //       type: data.entity_name
+  //     };
+
+  //   // Otherwise changes are watched and called to often.
+  //   if ($scope.box.content.timeseries_changed === undefined) {
+  //     $scope.box.content.timeseries_changed = true;
+  //   } else {
+  //     $scope.box.content.timeseries_changed = !$scope.box.content.timeseries_changed;
+  //   }
+  // };
+
+  $scope.activeObject = {
+    changed: true
+  };
+
+  $scope.canceler = $q.defer();
+
+  $scope.$watch('activeObject.changed', function (newVal, oldVal) {
+    if (newVal === oldVal) { return; }
+
+
+    // NOTE: this is of course utterly crappy, 
+    // I copy pasted this from the 'old way'
+    // the only thing changed is the restangular thingy
+    // and it not being part of a big blobbish function: getTimeseries
+    $scope.box.content.object_type = $scope.activeObject.entity_name;
+    $scope.box.content.id = $scope.activeObject.id;
+    $scope.box.content.data = $scope.activeObject;
+    $scope.box.type = $scope.activeObject.entity_name;
+
+    CabinetService.timeseries.get({
       object: $scope.box.content.object_type + '$' + $scope.box.content.id,
       start: $scope.timeState.start,
       end: $scope.timeState.end
@@ -464,30 +497,52 @@ app.controller("MasterCtrl",
       $scope.timeseries = response;
       if ($scope.timeseries.length > 0) {
         $scope.box.content.selected_timeseries = response[0];
+        // for now on scope. legacy..
+        // $scope.data =
+        $scope.data = {
+          data: response[0].events.instants,
+          id: $scope.activeObject.id
+        };
+        $scope.metadata = {
+          title: null,
+          fromgrid: $scope.box.content.data,
+          type: $scope.box.content.data.entity_name
+        };
+        $scope.timeboxenabled = true;
       } else {
+        $scope.timeboxenabled = false;
+        $scope.data = null;
         $scope.box.content.selected_timeseries = undefined;
+
       }
+
     });
 
-    $scope.metadata = {
-        title: null,
-        fromgrid: $scope.box.content.data,
-        //type: $scope.box.content.data.entity_name
-        type: data.entity_name
-      };
+    // rain retrieve
+    var stop = new Date($scope.timeState.end);
+    var stopString = stop.toISOString().split('.')[0];
+    var start = new Date($scope.timeState.start);
+    var startString = start.toISOString().split('.')[0];
+    var wkt = "POINT(" + $scope.activeObject.latlng.lng + " "
+      + $scope.activeObject.latlng.lat + ")";
+    $scope.canceler.resolve();
+    $scope.canceler = $q.defer();
+    // $scope.box.type = "rain";
+    CabinetService.raster.get({
+      raster_names: 'rain',
+      geom: wkt,
+      srs: 'EPSG:4236',
+      start: startString,
+      stop: stopString
+    }).then(function (result) {
+      $scope.rain.data = result;
+      $scope.rain.wkt = wkt;
+      $scope.rain.srs = 'EPSG:4236';
+    });
+  });
 
-    // Otherwise changes are watched and called to often.
-    if ($scope.box.content.timeseries_changed === undefined) {
-      $scope.box.content.timeseries_changed = true;
-    } else {
-      $scope.box.content.timeseries_changed = !$scope.box.content.timeseries_changed;
-    }
-  };
 
-  $scope.canceler = $q.defer();
-
-  $scope.$watch('timeState.changedZoom', function (newVal, oldVal) {
-    if ((newVal === oldVal) || ($scope.canceler === undefined)) { return; }
+  $scope.getData = function () {
     $scope.canceler.resolve();
     $scope.canceler = $q.defer();
     if ($scope.box.content.selected_timeseries) {
@@ -499,11 +554,8 @@ app.controller("MasterCtrl",
         start: $scope.timeState.start,
         end: $scope.timeState.end
       }).then(function (response) {
-        $scope.data = {
-          series: response.events.series,
-          instants: response.events.instants
-        };
-        $scope.box.content.selected_timeseries.events = response.events;
+        $scope.data.data = response.events.instants;
+        // $scope.box.content.selected_timeseries.events = response.events;
       });
     }
     if ($scope.rain.data) {
@@ -521,25 +573,32 @@ app.controller("MasterCtrl",
         stop: stopString
       }).then(function (result) {
         $scope.rain.data = result;
+
       });
     }
+  };
+
+  $scope.$watch('timeState.changedZoom', function (newVal, oldVal) {
+    if ((newVal === oldVal)) { return; }
+    $scope.getData();
+
   });
 
-  $scope.$watch('box.content.selected_timeseries.id', function () {
-    if ($scope.box.content.selected_timeseries !== undefined) {
-      // NOTE: this will change to $scope.selected_timeseries.instants
-      $scope.data = {
-          series: $scope.box.content.selected_timeseries.events.series,
-          instants: $scope.box.content.selected_timeseries.events.instants
-        };
-      // dit kan zeker nog mooier
-      $scope.metadata.title = " - " + $scope.box.content.selected_timeseries.location.name;
-      $scope.metadata.ylabel = "";//$scope.selected_timeseries.parameter + $scope.selected_timeseries.unit.code
-      $scope.metadata.xlabel = "Tijd";
-    } else {
-      $scope.data = undefined;
-    }
-  });
+  // $scope.$watch('box.content.selected_timeseries.id', function () {
+  //   if ($scope.box.content.selected_timeseries !== undefined) {
+  //     // NOTE: this will change to $scope.selected_timeseries.instants
+  //     $scope.data = {
+  //         series: $scope.box.content.selected_timeseries.events.series,
+  //         instants: $scope.box.content.selected_timeseries.events.instants
+  //       };
+  //     // dit kan zeker nog mooier
+  //     $scope.metadata.title = " - " + $scope.box.content.selected_timeseries.location.name;
+  //     $scope.metadata.ylabel = "";//$scope.selected_timeseries.parameter + $scope.selected_timeseries.unit.code
+  //     $scope.metadata.xlabel = "Tijd";
+  //   } else {
+  //     $scope.data = undefined;
+  //   }
+  // });
 
 // END Timeseries
 
