@@ -143,7 +143,51 @@
     text-overflow:ellipsis;
     background: rgba(255,255,255,0.9);
     border-radius: 2px;
-    /*box-shadow: 0 2px 6px rgba(0,0,0,0.3),0 4px 15px -5px rgba(0,0,0,0.0);*/
+    /*box-shadow: 0 2px 6px rgba(0,0,0,0.3),0 4px 15px -5px rgba(0,0,0,0.0);*/    
+    /*-webkit-backface-visibility: hidden;*/
+    backface-visibility: hidden;
+    -webkit-transition-duration: 400ms;
+    transition-duration: 400ms;
+    -webkit-transition-duration: 400ms;
+    transition-duration: 400ms;
+    
+    -webkit-transform: rotateX(360deg);
+    transform: rotateX(360deg);
+    z-index:10;
+
+}
+
+
+.card .front {
+    -webkit-transition-duration: 400ms;
+    transition-duration: 400ms;
+    z-index: 10;
+}
+.card .back {
+    -webkit-transition-duration: 400ms;
+    transition-duration: 400ms;
+    z-index:0;
+    -webkit-transform: rotateX(180deg);
+    transform: rotateX(180deg);
+}
+.card .back {
+    display: none;
+}
+.card .front {
+    display: block;
+}
+.card.flip .back {
+    display: block;
+}
+.card.flip .front {
+    display: none;
+}
+.card.flip {
+    -webkit-transition-duration: 400ms;
+    transition-duration: 400ms;
+    -webkit-transform: rotateX(180deg);
+    transform: rotateX(180deg);
+    z-index:0;
 }
 
 .card .card-title span {
@@ -157,6 +201,16 @@
     margin-right: 1em;
 }
 
+.card .flip-button, .card .flip-button a {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    color: lightgray;
+}
+.card .flip-button a:hover{
+    color: gray;
+}
+
 .card table{
     margin-top: 0.5em;
 }
@@ -166,7 +220,7 @@
     line-height: 15px;
     font-size: 0.9em;
     list-style: none;
-    width: 150px;
+    width: 50%;
     margin-left: 37px;
     color: #777;
 }
@@ -181,11 +235,87 @@
     color: #777;
 }
 
+.card table.fullwidth{
+    line-height: 15px;
+    font-size: 0.9em;
+    list-style: none;
+    width: 100%;
+    margin-left: 37px;
+    color: #777;
+}
+.card table.fullwidth tr td{
+    width:250px;
+}
+
+.card .actions {
+    padding: 10px 10px 0px 0px;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.card .actions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.card .actions ul li {
+    /*display: inline;*/
+}
+.card .actions ul li a {
+    color: lightgray;
+}
+.card .actions ul li a:hover {
+    color: gray;
+}
+.card .actions ul li.export{
+    
+}
+.card .actions ul li.fullscreen{
+    
+}
 
 .card select.timeseries{
     width: 300px;
 }
 
+.card details table {
+    margin-left: 0px !important;
+}
+
+@-webkit-keyframes fadeIn {
+    0% {
+        opacity: 0.1;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.card details[open] table {
+    -webkit-animation-name: fadeIn;
+    -webkit-animation-duration: 0.5s;
+}    
+.card details{
+    cursor: pointer;
+    line-height: 15px;
+    font-size: 0.9em;
+    list-style: none;
+    width: 150px;
+    margin-left: 37px;
+    margin-top: 5px;
+    color: #777;        
+}
+
+.card hr {
+    margin: 0;
+    padding: 0;
+}
+
+summary, details { display: block; }
+details { visibility: hidden; }
+details > summary { visibility: visible; }
+summary.no-det:before { content: "►"; padding-right: 5px; font-size: 1.2em; transition: .6s linear; }
+details[open] summary.no-det:before { transform: rotate(90deg); }
+details[open] { visibility: visible; }
 
 /*.card {
     width:378px;
