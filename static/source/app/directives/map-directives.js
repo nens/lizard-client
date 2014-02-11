@@ -91,8 +91,7 @@ app
         layer.initiated = true;
       };
 
-
-        // expects a layer hashtable with a leafletlayer object
+      // expects a layer hashtable with a leafletlayer object
       this.toggleLayer = function (layer) {
         // 3Di hack
         if (layer.name === "Simulatie") {
@@ -120,9 +119,23 @@ app
           if (layer.leafletLayer) {
             $scope.map.addLayer(layer.leafletLayer);
             if (layer.grid_layers) {
-              for (var j in layer.grid_layers) {
-                $scope.map.addLayer(layer.grid_layers[j]);
-              }
+              // Add listener to start loading utf layers
+              // after loading of visible layer to have an
+              // increased user experience
+              layer.leafletLayer.on('load', function () {
+                // Add all the grid layers of the layer when load finished
+                angular.forEach(layer.grid_layers, function (layer) {
+                  $scope.map.addLayer(layer);
+                });
+              });
+              layer.leafletLayer.on('loading', function () {
+                // Temporarily remove all utfLayers for performance
+                angular.forEach(layer.grid_layers, function (layer) {
+                  if ($scope.map.hasLayer(layer)) {
+                    $scope.map.removeLayer(layer);
+                  }
+                });
+              });
             }
           } else {
             console.log('leaflet layer not defined', layer.type);
@@ -141,8 +154,7 @@ app
           }
         } else if (layer.active) {
           if (layer.leafletLayer) {
-            $scope.map.addLayer(layer.leafletLayer);
-            layer.leafletLayer.bringToBack();
+            $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: true });
             //if (layer.name === 'Satellite') {
               //layer.leafletLayer.getContainer().classList.add('faded-gray');
             //}
@@ -379,6 +391,7 @@ app.directive('layerSwitch', [function () {
     require: 'map',
     link: function (scope, elements, attrs, MapCtrl) {
       scope.$watch('mapState.changed', function () {
+        // THis means that all active layers are added also when the layer is already added. :o
         for (var i in layers) {
           var layer = layers[i];
           if (!layer.initiated) {
