@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Initialise app
+ * Initialise app.
  */
 var app = angular.module("lizard-nxt", [
   'graph',
@@ -11,7 +11,7 @@ var app = angular.module("lizard-nxt", [
 ]);
 
 /**
- * Change default angular tags to prevent collision with Django tags
+ * Change default angular tags to prevent collision with Django tags.
  */
 app.config(function ($interpolateProvider) {
   //To prevent Django and Angular Template hell
@@ -20,10 +20,10 @@ app.config(function ($interpolateProvider) {
 });
 
 /**
- * Set url fragment behavior to HTML5 mode (without hash in url)
+ * Set url fragment behavior to HTML5 mode (without hash in url).
  */
-app.config(function($locationProvider) {
-    $locationProvider.html5Mode(true).hashPrefix('!');
+app.config(function ($locationProvider) {
+  $locationProvider.html5Mode(true).hashPrefix('!');
 });
 
 /**
@@ -84,7 +84,7 @@ app.controller("MasterCtrl",
     query: null,
     disabled: false,
     showCards: false,
-    type: 'empty', // NOTE: default, box type is empty, that makes a whole lot more sense than aggregate
+    type: 'empty', // NOTE: default, box type is empty
     content: {},
     changed: Date.now()
   };
@@ -180,17 +180,17 @@ app.controller("MasterCtrl",
 // END TIME MODEL
 
   /**
-  * Watch to restrict values of timeState
-  **/
+   * Watch to restrict values of timeState.
+   */
   $scope.$watch('timeState.changedZoom', function (n, o) {
     if (n === o || $scope.timeState.changeOrigin === 'master') { return true; }
     if ($scope.timeState.start < -315619200000) {
       $scope.timeState.changeOrigin = 'master';
-      $scope.timeState.start = -315619200000; 
+      $scope.timeState.start = -315619200000;
     }
-    if ($scope.timeState.end > 2208988800000) { 
+    if ($scope.timeState.end > 2208988800000) {
       $scope.timeState.changeOrigin = 'master';
-      $scope.timeState.end = 2208988800000; 
+      $scope.timeState.end = 2208988800000;
     }
   });
 
@@ -219,7 +219,7 @@ app.controller("MasterCtrl",
    * 
    * Used by the aggregate template under the 'screenshot' icon
    * 
-   * @param: geometry object wit a list of lon lat
+   * @param {object} geometry Object wit a list of lon lat
    */
   $scope.events.zoomTo = function (geometry) {
     var panZoom = {
@@ -244,11 +244,11 @@ app.controller("MasterCtrl",
       $scope.events.types[eventType].currentCount = 0;
     }
     for (var i = 0; i < $scope.events.data.features.length; i++) {
-        var feature = $scope.events.data.features[i];
-        if (feature.inTempExtent && feature.inSpatExtent) {
-          var eventType = feature.name;
-          $scope.events.types[eventType].currentCount++;
-        }
+      var feature = $scope.events.data.features[i];
+      if (feature.inTempExtent && feature.inSpatExtent) {
+        eventType = feature.name;
+        $scope.events.types[eventType].currentCount++;
+      }
     }
   };
 
@@ -395,7 +395,8 @@ app.controller("MasterCtrl",
         longData.features.splice(j, 1);
       }
       else if (feature.event_type > eventOrder) {
-        feature.event_type = feature.event_type - 1; }
+        feature.event_type = feature.event_type - 1;
+      }
     }
     for (var key in $scope.events.types) {
       var eType = $scope.events.types[key];
@@ -819,9 +820,10 @@ app.controller("MasterCtrl",
 // START Rain Stuff
 
   var buildAnimationDatetimes = function () {
-        /*
-        * Get radarimages for every 5th minutes if this fits in the localstorage, else confine to every 10th minute
-        */
+        /**
+         * Get radarimages for every 5th minutes if this fits in the
+         * localstorage, else confine to every 10th minute
+         */
         var hours = ($scope.timeState.end - $scope.timeState.start) / 60000;
         var animationDatetimes = [];
         var now = moment($scope.timeState.end);
