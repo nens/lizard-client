@@ -79,14 +79,14 @@ app
                 } else {
                   console.info("You clicked on an object from negative space");
                 }
+                $scope.$apply(function () {
+                  angular.extend($scope.activeObject, e.data);
+                  $scope.activeObject.latlng = e.latlng;
+                  $scope.activeObject.changed = !$scope.activeObject.changed;
+                });
               } else {
                 clickInSpace(e.latlng);
               }
-              $scope.$apply(function () {
-                angular.extend($scope.activeObject, e.data);
-                $scope.activeObject.latlng = e.latlng;
-                $scope.activeObject.changed = !$scope.activeObject.changed;
-              });
             });
             layer.grid_layers.push(leafletLayer);
           }
