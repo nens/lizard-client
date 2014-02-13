@@ -12,9 +12,15 @@ app
      */
     var MapCtrl  = function ($scope, $location, $timeout) {
 
+      /**
+       * Listener to update map view when user changes url
+       *
+       * HoldRightThere is set to true when the application updates
+       * the url. Then, this listener is fired but does not nothing but
+       * resetting the holdRightThere back to false
+       */
       $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
         if (!$scope.holdRightThere || oldurl === newurl) {
-          console.log("changin zoom because of location event", e);
           var latlonzoom = $location.hash().split(',');
           if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
             if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
@@ -446,8 +452,13 @@ app
         }
       });
 
+      /**
+       * Update the url when the map has been moved
+       *
+       * Set holdRightThere so the url listener is not fired when the application
+       * changes the url. Precision of url is 5.
+       */
       scope.map.on('moveend', function () {
-        console.log('changing hash due to zoom event!');
         scope.holdRightThere = true;
         var newHash = [
           scope.map.getCenter().lat.toFixed(5),
