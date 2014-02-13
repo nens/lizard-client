@@ -51,7 +51,7 @@ angular.module('graph')
           if (scope.$parent.timeState.changeOrigin === 'timeseries') { return; }
             graph.updateTemporalExtent('rain', scope.start, scope.end);
           if (graph.charts.hasOwnProperty('rain')) {
-            graph.updateBars('rain', scope.rainseries);  
+            graph.updateBars('rain', scope.rainseries); 
           }
           if (graph.charts.hasOwnProperty('timeseries')) {
             graph.updateLine('timeseries', scope.timeseries.data);

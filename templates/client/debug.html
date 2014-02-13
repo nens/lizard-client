@@ -9,6 +9,7 @@
     <link href="{{ STATIC_URL }}source/assets/css/graph.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}source/assets/css/nxt_base.css" rel="stylesheet" />
     <link rel="stylesheet" href="{{ STATIC_URL }}vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css">
+    <link href="{{ STATIC_URL }}vendor/leaflet.loading/src/Control.Loading.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}threedi/css/threedi.css" rel="stylesheet" />
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
 {% endblock css %}
@@ -29,7 +30,6 @@
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/search-controller.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/map-controller.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/timeline-controller.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/map-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/aggregate-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/omnibox-directives.js?{{ random_string }}"></script>
@@ -47,5 +47,6 @@
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/Leaflet.bouncemarker/bouncemarker.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}threedi/leaflet-plugins/TileLayer.WMS.incrementalSingleTile.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/animations.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet.loading/src/Control.Loading.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}threedi/js/threedi-nxt.js?{{ random_string }}"></script>
 {% endblock %}
