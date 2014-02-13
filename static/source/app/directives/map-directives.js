@@ -12,22 +12,19 @@ app
      */
     var MapCtrl  = function ($scope, $location, $timeout) {
 
-      $scope.$watch('locationHashChanged', function (n, o) {
-        if (n === o) { return true; } else {
+      $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
+        if (!$scope.holdRightThere || oldurl === newurl) {
+          console.log("changin zoom because of location event", e);
           var latlonzoom = $location.hash().split(',');
           if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
             if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
-              $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: false, animate: false});
+              $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: true, animate: true});
             }
           }
         }
+        $scope.holdRightThere = false;
       });
 
-      $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-        // Set locationHashChanged variable to the new url. 
-        // locationsHashChanged is being $watched above
-        $scope.locationHashChanged = newurl;
-      });
 
       this.initiateLayer = function (layer) {
         if (layer.name === "Simulatie") {
@@ -419,24 +416,7 @@ app
 
       scope.beenThereDoneIntersectSuggestion = false;
 
-      scope.map.on('zoomstart', function () {
-        clearTimeout(scope.zooming);
-      });
-
-      scope.map.on('movestart', function () {
-        clearTimeout(scope.dragging);
-      });
-
       scope.map.on('zoomend', function () {
-        
-        /**
-         * NOTE: Somehow, this zoomend handler sometimes causes stuttering zoom behavior when zooming aggressively.
-         */
-
-        scope.zooming = setTimeout(function () {
-          // console.log('changing hash due to zoom event!');
-          location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
-        }, 1000);
 
         if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
           if (!scope.beenThereDoneIntersectSuggestion) {
@@ -466,14 +446,17 @@ app
         }
       });
 
-      scope.map.on('dragend', function () {
+      scope.map.on('moveend', function () {
+        console.log('changing hash due to zoom event!');
+        scope.holdRightThere = true;
+        var newHash = [
+          scope.map.getCenter().lat.toFixed(5),
+          scope.map.getCenter().lng.toFixed(5),
+          scope.map.getZoom()].join(',');
+        location.hash(newHash);
+      });
 
-        scope.dragging = setTimeout(function () {
-          // console.log('changing hash due to drag event!');
-          location.hash(scope.map.getCenter().lat + ',' +
-                        scope.map.getCenter().lng + ',' +
-                        scope.map.getZoom());
-        }, 200);
+      scope.map.on('dragend', function () {
 
         if (scope.box.type === 'default') {
         // scope.box.type = 'empty';
