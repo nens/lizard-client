@@ -12,22 +12,19 @@ app
      */
     var MapCtrl  = function ($scope, $location, $timeout) {
 
-      $scope.$watch('locationHashChanged', function (n, o) {
-        if (n === o) { return true; } else {
+      $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
+        if (!$scope.holdRightThere || oldurl === newurl) {
+          console.log("changin zoom because of location event", e);
           var latlonzoom = $location.hash().split(',');
           if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
             if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
-              $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: false, animate: false});
+              $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: true, animate: true});
             }
           }
         }
+        $scope.holdRightThere = false;
       });
 
-      $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-        // Set locationHashChanged variable to the new url. 
-        // locationsHashChanged is being $watched above
-        $scope.locationHashChanged = newurl;
-      });
 
       this.initiateLayer = function (layer) {
         if (layer.name === "Simulatie") {
@@ -71,29 +68,19 @@ app
             });
             leafletLayer.on('click', function (e) {
               if (e.data) {
-                if (e.data.entity_name === 'pumpstation_sewerage'
-                  || e.data.entity_name === 'pumpstation_non_sewerage') {
-                  // NOTE: Preferably this is only called when the object contains timeseries
-                  // but the getTimeseries does a lot more than just getting timeseries
-                  //$scope.getTimeseries(e.data);
-                  return true;
-                }
                 if (e.data.geom) {
                   clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
-                  // Preferably this is only called when the object contains timeseries
-                  // but the getTimeseries does a lot more than just getting timeseries
-                  $scope.getTimeseries(e.data);
                 } else {
                   console.info("You clicked on an object from negative space");
                 }
               } else {
                 clickInSpace(e.latlng);
-                $scope.$apply(function () {
-                  angular.extend($scope.activeObject, e.data);
-                  $scope.activeObject.latlng = e.latlng;
-                  $scope.activeObject.changed = !$scope.activeObject.changed;
-                });
               }
+              $scope.$apply(function () {
+                angular.extend($scope.activeObject, e.data);
+                $scope.activeObject.latlng = e.latlng;
+                $scope.activeObject.changed = !$scope.activeObject.changed;
+              });
             });
             layer.grid_layers.push(leafletLayer);
           }
@@ -146,7 +133,7 @@ app
           .attr("stroke-opacity", 0.5)
           .attr("stroke-width", 10);
 
-        if ($scope.box.type === 'empty') {
+        if ($scope.box.type !== 'rain') {
           removeProm = $timeout(function () {
             $scope.map.removeLayer($scope.mapState.clickLayer);
           }, 1500);
@@ -165,6 +152,7 @@ app
        *  styling
        */
       var clickGeometry = function (geometry, entityName) {
+        $timeout.cancel(removeProm);
         if ($scope.mapState.clickLayer) {
           $scope.map.removeLayer($scope.mapState.clickLayer);
           delete $scope.mapState.clickLayer;
@@ -261,9 +249,23 @@ app
           if (layer.leafletLayer) {
             $scope.map.addLayer(layer.leafletLayer);
             if (layer.grid_layers) {
-              for (var j in layer.grid_layers) {
-                $scope.map.addLayer(layer.grid_layers[j]);
-              }
+              // Add listener to start loading utf layers
+              // after loading of visible layer to have an
+              // increased user experience
+              layer.leafletLayer.on('load', function () {
+                // Add all the grid layers of the layer when load finished
+                angular.forEach(layer.grid_layers, function (layer) {
+                  $scope.map.addLayer(layer);
+                });
+              });
+              layer.leafletLayer.on('loading', function () {
+                // Temporarily remove all utfLayers for performance
+                angular.forEach(layer.grid_layers, function (layer) {
+                  if ($scope.map.hasLayer(layer)) {
+                    $scope.map.removeLayer(layer);
+                  }
+                });
+              });
             }
           } else {
             console.log('leaflet layer not defined', layer.type);
@@ -282,8 +284,7 @@ app
           }
         } else if (layer.active) {
           if (layer.leafletLayer) {
-            $scope.map.addLayer(layer.leafletLayer);
-            layer.leafletLayer.bringToBack();
+            $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: true });
             //if (layer.name === 'Satellite') {
               //layer.leafletLayer.getContainer().classList.add('faded-gray');
             //}
@@ -415,24 +416,7 @@ app
 
       scope.beenThereDoneIntersectSuggestion = false;
 
-      scope.map.on('zoomstart', function () {
-        clearTimeout(scope.zooming);
-      });
-
-      scope.map.on('movestart', function () {
-        clearTimeout(scope.dragging);
-      });
-
       scope.map.on('zoomend', function () {
-        
-        /**
-         * NOTE: Somehow, this zoomend handler sometimes causes stuttering zoom behavior when zooming aggressively.
-         */
-
-        scope.zooming = setTimeout(function () {
-          // console.log('changing hash due to zoom event!');
-          location.hash(scope.map.getCenter().lat + ',' + scope.map.getCenter().lng + ',' + scope.map.getZoom());
-        }, 1000);
 
         if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
           if (!scope.beenThereDoneIntersectSuggestion) {
@@ -462,14 +446,17 @@ app
         }
       });
 
-      scope.map.on('dragend', function () {
+      scope.map.on('moveend', function () {
+        console.log('changing hash due to zoom event!');
+        scope.holdRightThere = true;
+        var newHash = [
+          scope.map.getCenter().lat.toFixed(5),
+          scope.map.getCenter().lng.toFixed(5),
+          scope.map.getZoom()].join(',');
+        location.hash(newHash);
+      });
 
-        scope.dragging = setTimeout(function () {
-          // console.log('changing hash due to drag event!');
-          location.hash(scope.map.getCenter().lat + ',' +
-                        scope.map.getCenter().lng + ',' +
-                        scope.map.getZoom());
-        }, 200);
+      scope.map.on('dragend', function () {
 
         if (scope.box.type === 'default') {
         // scope.box.type = 'empty';
@@ -518,6 +505,7 @@ app.directive('layerSwitch', [function () {
     require: 'map',
     link: function (scope, elements, attrs, MapCtrl) {
       scope.$watch('mapState.changed', function () {
+        // THis means that all active layers are added also when the layer is already added. :o
         for (var i in layers) {
           var layer = layers[i];
           if (!layer.initiated) {

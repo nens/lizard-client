@@ -489,67 +489,59 @@ app.controller("MasterCtrl",
     $scope.box.content.data = $scope.activeObject;
     $scope.box.type = $scope.activeObject.entity_name;
 
-    CabinetService.timeseries.get({
-      object: $scope.box.content.object_type + '$' + $scope.box.content.id,
-      start: $scope.timeState.start,
-      end: $scope.timeState.end
-    }).then(function (response) {
-      $scope.timeseries = response;
-      if ($scope.timeseries.length > 0) {
-        $scope.box.content.selected_timeseries = response[0];
-        // for now on scope. legacy..
-        // $scope.data =
-        $scope.data = {
-          data: response[0].events.instants,
-          id: $scope.activeObject.id
-        };
-        $scope.metadata = {
-          title: null,
-          fromgrid: $scope.box.content.data,
-          type: $scope.box.content.data.entity_name
-        };
-        $scope.timeboxenabled = true;
-      } else {
-        $scope.timeboxenabled = false;
-        $scope.data = null;
-        $scope.box.content.selected_timeseries = undefined;
 
-      }
-
-    $scope.metadata = {
-        title: null,
-        fromgrid: $scope.box.content.data,
-        // type: $scope.box.content.data.entity_name
-        // latitude: 52.08618,
-        // longitude: 5.09474,
-        // latitude: (Math.random() * (52.9000 - 52.0600) + 52.0600).toFixed(4),
-        // longitude: (Math.random() * (5.10000 - 5.07000) + 5.07000).toFixed(4),
-        type: data.entity_name
-      };
-    });
-
-
-    // rain retrieve
-    var stop = new Date($scope.timeState.end);
-    var stopString = stop.toISOString().split('.')[0];
-    var start = new Date($scope.timeState.start);
-    var startString = start.toISOString().split('.')[0];
-    var wkt = "POINT(" + $scope.activeObject.latlng.lng + " "
-      + $scope.activeObject.latlng.lat + ")";
-    $scope.canceler.resolve();
-    $scope.canceler = $q.defer();
-    // $scope.box.type = "rain";
-    CabinetService.raster.get({
-      raster_names: 'rain',
-      geom: wkt,
-      srs: 'EPSG:4236',
-      start: startString,
-      stop: stopString
-    }).then(function (result) {
-      $scope.rain.data = result;
-      $scope.rain.wkt = wkt;
-      $scope.rain.srs = 'EPSG:4236';
-    });
+    if ($scope.activeObject.entity_name === 'pumpstation_sewerage'
+      || $scope.activeObject.entity_name === 'pumpstation_non_sewerage') {
+      CabinetService.timeseries.get({
+        object: $scope.box.content.object_type + '$' + $scope.box.content.id,
+        start: $scope.timeState.start,
+        end: $scope.timeState.end
+      }).then(function (response) {
+        $scope.timeseries = response;
+        if ($scope.timeseries.length > 0) {
+          $scope.box.content.selected_timeseries = response[0];
+          // for now on scope. legacy..
+          // $scope.data =
+          $scope.data = {
+            data: response[0].events.instants,
+            id: $scope.activeObject.id
+          };
+          $scope.metadata = {
+            title: null,
+            fromgrid: $scope.box.content.data,
+            type: $scope.box.content.data.entity_name
+          };
+          $scope.timeboxenabled = true;
+        } else {
+          $scope.timeboxenabled = false;
+          $scope.data = null;
+          $scope.box.content.selected_timeseries = undefined;
+        }
+      });
+    }
+    if ($scope.tools.active === 'rain') {
+      // rain retrieve
+      var stop = new Date($scope.timeState.end);
+      var stopString = stop.toISOString().split('.')[0];
+      var start = new Date($scope.timeState.start);
+      var startString = start.toISOString().split('.')[0];
+      var wkt = "POINT(" + $scope.activeObject.latlng.lng + " "
+        + $scope.activeObject.latlng.lat + ")";
+      $scope.canceler.resolve();
+      $scope.canceler = $q.defer();
+      // $scope.box.type = "rain";
+      CabinetService.raster.get({
+        raster_names: 'rain',
+        geom: wkt,
+        srs: 'EPSG:4236',
+        start: startString,
+        stop: stopString
+      }).then(function (result) {
+        $scope.rain.data = result;
+        $scope.rain.wkt = wkt;
+        $scope.rain.srs = 'EPSG:4236';
+      });
+    }
   });
 
 
