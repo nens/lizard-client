@@ -1,4 +1,59 @@
 <div class="card">
+<!-- Card for "culvert" / "duiker" -->
+  <div class="actions">
+    <ul>
+      <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
+      <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
+    </ul>
+  </div>
+
+  <div class="card-title">
+    <img src="/static/distjs/images/knoop.png" class="img-circle">
+    <span>Duiker</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
+  </div>
+  <table class="fullwidth">
+    <tbody>
+    <tr>
+      <td>Type</td>
+      <td><span ng-bind="metadata.fromgrid.type | number: 2" class="ng-binding">...</span></td>
+    </tr>  
+    <tr>
+      <td>Lengte</td>
+      <td><span ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</span></td>
+    </tr>
+    <tr>
+      <td>Breedte</td>
+      <td><span ng-bind="metadata.fromgrid.width | number: 2" class="ng-binding">...</span></td>
+    </tr>    
+  </tbody></table>
+  
+  <details>
+    <summary>Meer details</summary>
+    <table>
+      <tbody>
+      <tr>
+        <td>Richting</td>
+        <td><span ng-bind="metadata.fromgrid.direction" class="ng-binding">...</span></td>
+      </tr>     
+      <tr>
+        <td><abbr title="Binnen Onderkant Buis (bovenstrooms)">BOB bovenstrooms</abbr></td>
+        <td><span ng-bind="metadata.fromgrid.ground_level_upstream" class="ng-binding">...</span></td>
+      </tr>
+      <tr>
+        <td><abbr title="Binnen Onderkant Buis (benedenstrooms)">BOB benedenstrooms</abbr></td>
+        <td><span ng-bind="metadata.fromgrid.ground_level_downstream" class="ng-binding">...</span></td>
+      </tr>      
+      <tr>
+        <td><img src="http://placehold.it/200x100"></td>
+      </tr>
+    </tbody></table>    
+  </details>
+</div>
+
+
+<!--
+// For reference - 14 feb.
+<div class="card">
   <div class="card-title">
     <img src="/static/distjs/images/culvert.png" class="img-circle"/>
     <span>Culvert</span><span class="truncateme" ng-bind="metadata.title"></span>
@@ -31,3 +86,4 @@
   </div>
     <graph line data="data" title="" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></graph>
 </div>
+-->
