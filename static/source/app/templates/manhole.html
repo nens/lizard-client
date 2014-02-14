@@ -45,7 +45,8 @@
         <td>Materiaal</td>
         <td ng-bind="metadata.fromgrid.material | number: 2" class="ng-binding">...</td>
       </tr>        
-    </tbody></table>
+      </tbody>
+    </table>
 
     <hr style="clear:both;">
 
@@ -55,44 +56,3 @@
     </details>  
 
 </div>
-
-<!--
-// For reference - 14 feb.
-<div class="card">
-  <div class="card-title">
-    <img src="/static/distjs/images/knoop.png" class="img-circle"/>
-    <span>Knoop</span><span class="truncateme" ng-bind="metadata.title"></span>
-  </div>
-  <table class="left">
-    <tr>
-      <td>BOK (m) </td>
-      <td ng-bind="metadata.fromgrid.bottom_level | number: 2"></td>
-    </tr>
-    <tr>
-      <td>Breedte (m) </td>
-      <td ng-bind="metadata.fromgrid.width | number: 2"></td>
-    </tr>
-  </table>
-  <table class="right">
-    <tr>
-      <td>WOS opp. (m<sup>2</sup>) </td>
-      <td ng-bind="metadata.fromgrid.drainage_area | number: 2"></td>
-    </tr>
-    <tr>
-      <td>Maaiveld (m NAP) </td>
-      <td ng-bind="metadadata.fromgrid.surface_level | number: 2"></td>
-    </tr>
-  </table>
-</div>
-<div class="card">
-  <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-45&heading=98&size=350x150&location=<%metadata.latitude%>,<%metadata.longitude%>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo" width="350" height="150" />
-</div>
-<div class="card" ng-class="{hidden: box.content.selected_timeseries == undefined}">
-  <div class="input-prepend">
-    <span class="add-on"> Tijdreeks</span> 
-    <select class="timeseries" ng-model="box.content.selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
-  </div>
-
-  <graph line data="timeseriesdata" title="" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></graph>
-</div>
--->

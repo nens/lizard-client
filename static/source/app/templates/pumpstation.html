@@ -1,40 +1,41 @@
 <div class="card">
-<!-- Card for "pumpstation" / "gemaal" -->
-	<div class="actions">
-		<ul>
-			<li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
-			<li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
-		</ul>
-	</div>
+    <!-- Card for "pumpstation" / "gemaal" -->
+    <div class="actions">
+        <ul>
+            <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
+            <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
+        </ul>
+    </div>
 
-  <div class="card-title">
-    <img src="/static/distjs/images/gemaal.png" class="img-circle">
-    <span>Gemaal</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
-  </div>
-  <table class="left">
-    <tbody>
-    <tr>
-      <td>Naam</td>
-      <td><span ng-bind="metadata.fromgrid.name | number: 2" class="ng-binding">...</span></td>
-    </tr>
-    <tr>
-      <td>Capaciteit</td>
-      <td><span ng-bind="metadata.fromgrid.capacity | number: 2" class="ng-binding">...</span></td>
-    </tr>
-    <tr>
-      <td>Aanslagpeil</td>
-      <td ng-bind="metadata.fromgrid.start_level" class="ng-binding">...</td>
-    </tr>    
-    <tr>
-      <td>Afslagpeil</td>
-      <td ng-bind="metadata.fromgrid.stop_level" class="ng-binding">...</td>
-    </tr>        
-  </tbody></table>
-  <table class="right">
-    <tbody>
-    <tr>
-      <td><span><img src="http://placehold.it/100x100"></span></td>
-    </tr>
-    </tbody>
-  </table>  
+    <div class="card-title">
+        <img src="/static/distjs/images/gemaal.png" class="img-circle">
+        <span>Gemaal</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
+    </div>
+    <table class="left">
+        <tbody>
+        <tr>
+            <td>Naam</td>
+            <td><span ng-bind="metadata.fromgrid.name | number: 2" class="ng-binding">...</span></td>
+        </tr>
+        <tr>
+            <td>Capaciteit</td>
+            <td><span ng-bind="metadata.fromgrid.capacity | number: 2" class="ng-binding">...</span></td>
+        </tr>
+        <tr>
+            <td>Aanslagpeil</td>
+            <td ng-bind="metadata.fromgrid.start_level" class="ng-binding">...</td>
+        </tr>    
+        <tr>
+            <td>Afslagpeil</td>
+            <td ng-bind="metadata.fromgrid.stop_level" class="ng-binding">...</td>
+        </tr>        
+        </tbody>
+    </table>
+    <table class="right">
+        <tbody>
+        <tr>
+            <td><span><img src="http://placehold.it/100x100"></span></td>
+        </tr>
+        </tbody>
+    </table>  
 </div>

@@ -1,94 +1,60 @@
 <div id="cards" class="pullDown cardbox ng-scope" ng-show="box.showCards"><div class="card">
-<!-- Card for "overflow" / "overstort" -->
-  <div class="actions">
-    <ul>
-      <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
-      <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
-    </ul>
-  </div>
+    <!-- Card for "overflow" / "overstort" -->
+    <div class="actions">
+        <ul>
+            <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
+            <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
+        </ul>
+    </div>
 
-  <div class="card-title">
-    <img src="/static/distjs/images/geslotenleiding.png" class="img-circle">
-    <span>Gesloten Leiding</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
-  </div>
-  <table class="left">
-    <tbody>
-    <tr>
-      <td>Lengte</td>
-      <td ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</td>
-    </tr>
-    <tr>
-      <td>Breedte</td>
-      <td ng-bind="metadata.fromgrid.width | number: 2" class="ng-binding">...</td>
-    </tr>    
-    <tr>
-      <td>Hoogte</td>
-      <td ng-bind="metadata.fromgrid.height | number: 2" class="ng-binding">...</td>
-    </tr>        
-    <tr>
-      <td>Materiaal</td>
-      <td ng-bind="metadata.fromgrid.material" class="ng-binding">...</td>
-    </tr>        
-    <tr>
-      <td>Lengte</td>
-      <td ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</td>
-    </tr>            
-  </tbody></table>
-  <table class="right">
-    <tbody><tr>
-      <td>Vorm</td>
-      <td ng-bind="metadata.fromgrid.shape | number: 2" class="ng-binding">...</td>
-    </tr>
-    <tr>
-      <td><abbr title="Startpunt binnen onderkant buis">BOB startpunt</abbr></td>
-      <td ng-bind="metadadata.fromgrid.bob_start | number: 2" class="ng-binding">...</td>
-    </tr>
-    <tr>
-      <td><abbr title="Eindpunt binnen onderkant buis">BOB eindpunt</abbr></td>
-      <td ng-bind="metadata.fromgrid.bob_end | number: 2" class="ng-binding">...</td>
-    </tr>        
-  </tbody></table>
+    <div class="card-title">
+        <img src="/static/distjs/images/geslotenleiding.png" class="img-circle">
+        <span>Gesloten Leiding</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
+    </div>
+    <table class="left">
+        <tbody>
+        <tr>
+            <td>Lengte</td>
+            <td ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</td>
+        </tr>
+        <tr>
+            <td>Breedte</td>
+            <td ng-bind="metadata.fromgrid.width | number: 2" class="ng-binding">...</td>
+        </tr>    
+        <tr>
+            <td>Hoogte</td>
+            <td ng-bind="metadata.fromgrid.height | number: 2" class="ng-binding">...</td>
+        </tr>        
+        <tr>
+            <td>Materiaal</td>
+            <td ng-bind="metadata.fromgrid.material" class="ng-binding">...</td>
+        </tr>        
+        <tr>
+            <td>Lengte</td>
+            <td ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</td>
+        </tr>            
+        </tbody>
+    </table>
+    <table class="right">
+        <tbody><tr>
+            <td>Vorm</td>
+            <td ng-bind="metadata.fromgrid.shape | number: 2" class="ng-binding">...</td>
+        </tr>
+        <tr>
+            <td><abbr title="Startpunt binnen onderkant buis">BOB startpunt</abbr></td>
+            <td ng-bind="metadadata.fromgrid.bob_start | number: 2" class="ng-binding">...</td>
+        </tr>
+        <tr>
+            <td><abbr title="Eindpunt binnen onderkant buis">BOB eindpunt</abbr></td>
+            <td ng-bind="metadata.fromgrid.bob_end | number: 2" class="ng-binding">...</td>
+        </tr>        
+        </tbody>
+    </table>
 
-  <hr style="clear:both;">
+    <hr style="clear:both;">
 
-  <details>
-    <summary>Meer details</summary>
-    <div class="dwa-timeserie">DWA Timeserie hier...</div>
-  </details>  
+    <details>
+        <summary>Meer details</summary>
+        <div class="dwa-timeserie">DWA Timeserie hier...</div>
+    </details>  
 </div>
-
-
-
-<!--
-// For reference - 14 feb.
-<div class="card">
-  <div class="card-title">
-    <img src="/static/distjs/images/geslotenleiding.png" class="img-circle"/>
-    <span>Geslotenleiding</span><span class="truncateme" ng-bind="metadata.title"></span>
-  </div>
-  <table class="left">
-    <tr>
-      <td>Lengte (m) </td>
-      <td ng-bind="metadata.fromgrid.length | number: 2"></td>
-    </tr>
-    <tr>
-      <td>Breedte (m) </td>
-      <td ng-bind="metadata.fromgrid.width | number: 2"></td>
-    </tr>
-  </table>
-  <table class="right">
-    <tr>
-        <td>Hoogte (m) </td>
-        <td ng-bind="metadata.fromgrid.height | number: 2"></td>
-    </tr>
-   </table>
-</div>
-<div class="card" ng-class="{hidden: box.content.selected_timeseries == undefined}">
-  <div class="input-prepend">
-    <span class="add-on"> Tijdreeks</span> 
-    <select class="timeseries" ng-model="box.content.selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
-  </div>
-
-    <graph line data="data" title="" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></graph>
-</div>
--->

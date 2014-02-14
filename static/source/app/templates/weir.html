@@ -1,73 +1,41 @@
 <div class="card">
-  <div class="actions">
-    <ul>
-      <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
-      <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
-    </ul>
-  </div>
+    <div class="actions">
+        <ul>
+            <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
+            <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
+        </ul>
+    </div>
 
-  <div class="card-title">
-    <img src="/static/distjs/images/weir.png" class="img-circle">
-    <span>Stuw</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
-  </div>
-  <table class="fullwidth">
-    <tbody>
-    <tr>
-      <td>Type</td>
-      <td><span ng-bind="metadata.fromgrid.type | number: 2" class="ng-binding">...</span></td>
-    </tr>  
-    <tr>
-      <td>Breedte</td>
-      <td><span ng-bind="metadata.fromgrid.breedte | number: 2" class="ng-binding">...</span></td>
-    </tr>
-    <tr>
-      <td>Hoogte</td>
-      <td><span ng-bind="metadata.fromgrid.height | number: 2" class="ng-binding">...</span></td>
-    </tr>    
-  </tbody></table>
-  
-  <details>
-    <summary>Meer details</summary>
-    <table>
-      <tbody>
-      <tr>
-        <td>Regelbaar?</td>
-        <td><i class="fa fa-check"></i></td>
-      </tr>     
-    </tbody></table>    
-  </details>
-</div>
+    <div class="card-title">
+        <img src="/static/distjs/images/weir.png" class="img-circle">
+        <span>Stuw</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
+    </div>
+    <table class="fullwidth">
+        <tbody>
+        <tr>
+            <td>Type</td>
+            <td><span ng-bind="metadata.fromgrid.type | number: 2" class="ng-binding">...</span></td>
+        </tr>  
+        <tr>
+            <td>Breedte</td>
+            <td><span ng-bind="metadata.fromgrid.breedte | number: 2" class="ng-binding">...</span></td>
+        </tr>
+        <tr>
+            <td>Hoogte</td>
+            <td><span ng-bind="metadata.fromgrid.height | number: 2" class="ng-binding">...</span></td>
+        </tr>    
+        </tbody>
+    </table>
 
-
-<!--
-// For reference - 14 feb.
-<div class="card">
-  <div class="card-title">
-    <img src="/static/distjs/images/weir.png" class="img-circle"/>
-    <span>Stuw</span><span class="truncateme" ng-bind="metadata.title"></span>
-  </div>
-  <table class="left">
-    <tr>
-      <td>Kruinbreedte (m) </td>
-      <td ng-bind="metadata.fromgrid.ground_level_upstream | number: 2"></td>
-    </tr>
-    <tr>
-      <td>Kruinhoogte (m) </td>
-      <td ng-bind="metadata.fromgrid.ground_level_downstream | number: 2"></td>
-    </tr>
-  </table>
-  <table class="right">
-    <tr>
-        <td>Debiet coefficient</td>
-        <td ng-bind="metadata.fromgrid.discharge_coef | number: 2"></td>
-    </tr>
-   </table>
+    <details>
+        <summary>Meer details</summary>
+        <table>
+            <tbody>
+            <tr>
+                <td>Regelbaar?</td>
+                <td><i class="fa fa-check"></i></td>
+            </tr>     
+            </tbody>
+        </table>    
+    </details>
 </div>
-<div class="card" ng-class="{hidden: box.content.selected_timeseries == undefined}">
-  <div class="input-prepend">
-    <span class="add-on"> Tijdreeks</span> 
-    <select class="timeseries" ng-model="box.content.selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
-  </div>
-    <graph line data="data" title="" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></graph>
-</div>
--->

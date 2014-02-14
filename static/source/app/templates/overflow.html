@@ -1,44 +1,46 @@
 <div class="card">
-<!-- Card for "overflow" / "overstort" -->
-	<div class="actions">
-		<ul>
-			<li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
-			<li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
-		</ul>
-	</div>
+    <!-- Card for "overflow" / "overstort" -->
+    <div class="actions">
+        <ul>
+            <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
+            <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
+        </ul>
+    </div>
 
-  <div class="card-title">
-    <img src="images/knoop.png" class="img-circle">
-    <span>Overstort</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
-  </div>
-  <table class="fullwidth">
-    <tbody>
-    <tr>
-      <td>Breedte</td>
-      <td><span ng-bind="metadata.fromgrid.width | number: 2" class="ng-binding">...</span></td>
-    </tr>
-    <tr>
-      <td>Overstorthoogte</td>
-      <td><span ng-bind="metadata.fromgrid.crest_level | number: 2" class="ng-binding">...</span></td>
-    </tr>    
-  </tbody></table>
-  
-	<details>
-		<summary>Meer details</summary>
-	  <table>
-	    <tbody>
-	    <tr>
-	      <td>Oppervlaktewaterniveau (gemiddeld)</td>
-	      <td><span ng-bind="metadata.fromgrid.open_water_level_average" class="ng-binding">...</span></td>
-	    </tr>	    
-	    <tr>
-	      <td>Oppervlaktewaterniveau (zomer)</td>
-	      <td><span ng-bind="metadata.fromgrid.open_water_level_summer" class="ng-binding">...</span></td>
-	    </tr>
-	    <tr>
-	      <td>Oppervlaktewaterniveau (winter)</td>
-	      <td ng-bind="metadata.fromgrid.open_water_level_winter" class="ng-binding">...</td>
-	    </tr>   
-	  </tbody></table>		
-	</details>
+    <div class="card-title">
+        <img src="images/knoop.png" class="img-circle">
+        <span>Overstort</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
+    </div>
+    <table class="fullwidth">
+        <tbody>
+        <tr>
+            <td>Breedte</td>
+            <td><span ng-bind="metadata.fromgrid.width | number: 2" class="ng-binding">...</span></td>
+        </tr>
+        <tr>
+            <td>Overstorthoogte</td>
+            <td><span ng-bind="metadata.fromgrid.crest_level | number: 2" class="ng-binding">...</span></td>
+        </tr>    
+        </tbody>
+    </table>
+
+    <details>
+        <summary>Meer details</summary>
+        <table>
+            <tbody>
+            <tr>
+                <td>Oppervlaktewaterniveau (gemiddeld)</td>
+                <td><span ng-bind="metadata.fromgrid.open_water_level_average" class="ng-binding">...</span></td>
+            </tr>	    
+            <tr>
+                <td>Oppervlaktewaterniveau (zomer)</td>
+                <td><span ng-bind="metadata.fromgrid.open_water_level_summer" class="ng-binding">...</span></td>
+            </tr>
+            <tr>
+                <td>Oppervlaktewaterniveau (winter)</td>
+                <td ng-bind="metadata.fromgrid.open_water_level_winter" class="ng-binding">...</td>
+            </tr>   
+            </tbody>
+      </table>		
+    </details>
 </div>
