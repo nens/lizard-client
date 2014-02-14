@@ -519,29 +519,27 @@ app.controller("MasterCtrl",
         }
       });
     }
-    if ($scope.tools.active === 'rain') {
-      // rain retrieve
-      var stop = new Date($scope.timeState.end);
-      var stopString = stop.toISOString().split('.')[0];
-      var start = new Date($scope.timeState.start);
-      var startString = start.toISOString().split('.')[0];
-      var wkt = "POINT(" + $scope.activeObject.latlng.lng + " "
-        + $scope.activeObject.latlng.lat + ")";
-      $scope.canceler.resolve();
-      $scope.canceler = $q.defer();
-      // $scope.box.type = "rain";
-      CabinetService.raster.get({
-        raster_names: 'rain',
-        geom: wkt,
-        srs: 'EPSG:4236',
-        start: startString,
-        stop: stopString
-      }).then(function (result) {
-        $scope.rain.data = result;
-        $scope.rain.wkt = wkt;
-        $scope.rain.srs = 'EPSG:4236';
-      });
-    }
+    // rain retrieve
+    var stop = new Date($scope.timeState.end);
+    var stopString = stop.toISOString().split('.')[0];
+    var start = new Date($scope.timeState.start);
+    var startString = start.toISOString().split('.')[0];
+    var wkt = "POINT(" + $scope.activeObject.latlng.lng + " "
+      + $scope.activeObject.latlng.lat + ")";
+    $scope.canceler.resolve();
+    $scope.canceler = $q.defer();
+    // $scope.box.type = "rain";
+    CabinetService.raster.get({
+      raster_names: 'rain',
+      geom: wkt,
+      srs: 'EPSG:4236',
+      start: startString,
+      stop: stopString
+    }).then(function (result) {
+      $scope.rain.data = result;
+      $scope.rain.wkt = wkt;
+      $scope.rain.srs = 'EPSG:4236';
+    });
   });
 
 

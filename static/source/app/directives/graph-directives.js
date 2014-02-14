@@ -49,8 +49,10 @@ angular.module('graph')
         var changedZoom = scope.$watch('changedZoom', function (newVal, oldVal) {
           if (newVal === oldVal) { return; }
           if (scope.$parent.timeState.changeOrigin === 'timeseries') { return; }
-          graph.updateTemporalExtent('rain', scope.start, scope.end);
-          graph.updateBars('rain', scope.rainseries);
+            graph.updateTemporalExtent('rain', scope.start, scope.end);
+          if (graph.charts.hasOwnProperty('rain')) {
+            graph.updateBars('rain', scope.rainseries);  
+          }
           if (graph.charts.hasOwnProperty('timeseries')) {
             graph.updateLine('timeseries', scope.timeseries.data);
           } else {
