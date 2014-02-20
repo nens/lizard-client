@@ -103,8 +103,8 @@
               {% trans "Basis" %}
               <ul class="list-group">
                 <li ng-repeat="layer in mapState.baselayers | orderBy:'order':true">
-                <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="mapState.changeBaseLayer(layer)"> 
-                <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
+                <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer"> 
+                <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name" ng-click="mapState.changeBaselayer(layer)"></label>
                 </li> 
               </ul>
               </li>

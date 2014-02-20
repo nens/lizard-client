@@ -260,7 +260,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
 
   // expects a layer hashtable with a leafletlayer object
   this.toggleBaseLayer = function (layer) {
-    //var layers = $scope.map._layers;
+    console.log(layer);
     if (!layer.active) {
       if (layer.leafletLayer) {
         $scope.map.removeLayer(layer.leafletLayer);
@@ -461,6 +461,12 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
 
     scope.mapState.changeBaselayer = function (baselayer) {
       ctrl.toggleBaseLayer(baselayer);
+      scope.mapState.activeBaselayer = baselayer.id;
+      angular.forEach(scope.mapState.baselayers, function (baselayer){
+        if (baselayer.id !== scope.mapState.activeBaselayer) {
+          ctrl.toggleBaseLayer(baselayer);
+        }
+      });
     };
 
     scope.zoomToTheMagic = function (layer) {
