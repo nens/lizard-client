@@ -143,9 +143,9 @@
             </ul>
           </div>
           <div id="ribbon" class="ribbon">
-            <div class="arrow arrow-up" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}">
+            <div class="arrow arrow-up" ng-click="mapState.enabled = !mapState.enabled" title="{% trans 'Map layers' %}">
             </div>
-            <div class="arrow arrow-down" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}"><i class="icon-compass ribbon-icon"></i>
+            <div class="arrow arrow-down" ng-click="mapState.enabled = !mapState.enabled" title="{% trans 'Map layers' %}"><i class="icon-compass ribbon-icon"></i>
             </div>
           </div>
           <div class="button-list-container" id="">

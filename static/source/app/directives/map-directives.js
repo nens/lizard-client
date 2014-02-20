@@ -2,85 +2,87 @@
 
 app.controller('MapDirCtrl', function ($scope, $timeout) {
 
-      var lowestUTFLayer;
-      var utfLayersOrder = [];
-      var utfHit = false;
+  // UTF bookkeeping
+  var lowestUTFLayer;
+  var utfLayersOrder = [];
+  var utfHit = false;
 
-      this.initiateLayer = function (layer) {
-        if (layer.name === "Simulatie") {
-          // Hack for 3Di.
-          //console.log("Initiate 3Di");
-          layer.follow_3di = false;
-        } else if (layer.type === "TMS" && layer.baselayer) {
-          layer.leafletLayer = L.tileLayer(layer.url + '.png',
-                                           {name: "Background", maxZoom: 20});
-        } else if (layer.type === "TMS" && !layer.baselayer) {
-          layer.leafletLayer = L.tileLayer(layer.url + '.png',
-                                           {minZoom: layer.min_zoom, maxZoom: 20, zIndex: layer.z_index});
-        } else if (layer.type === "WMS") {
-          var options = {
-            layers: layer.slug,
-            format: 'image/png',
-            version: '1.1.1',
-            minZoom: layer.min_zoom,
-            maxZoom: 20
-          };
-          //NOTE ugly hack
-          if (layer.slug === 'landuse') {
-            options.styles = 'landuse';
-          } else if (layer.slug === 'elevation') {
-            // dynamically set min/max?
-            // options.effects = 'shade:0:3';
-            options.styles = 'jet:-5:20';
-          }
-          layer.leafletLayer = L.tileLayer.wms(layer.url, options);
-        } else if (layer.type === "ASSET") {
-          var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
-          if (layer.min_zoom_click !== null) {
-            var leafletLayer = new L.UtfGrid(url, {
-              ext: 'grid',
-              slug: layer.slug,
-              name: layer.slug,
-              useJsonP: false,
-              minZoom: layer.min_zoom_click,
-              maxZoom: 20,
-              order: layer.order
-            });
-            leafletLayer.on('click', function (e) {
-              if (e.data) {
-                if (e.data.geom) {
-                  utfHit = true;
-                  clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
-                } else {
-                  console.info("You clicked on an object from negative space");
-                }
-                $scope.$apply(function () {
-                  angular.extend($scope.activeObject, e.data);
-                  $scope.activeObject.latlng = e.latlng;
-                  $scope.activeObject.changed = !$scope.activeObject.changed;
-                });
-              } else {
-                if (leafletLayer.options.order === lowestUTFLayer) {
-                  if (!utfHit || utfLayersOrder.length < 2) { clickInSpace(e.latlng); }
-                  utfHit = false;
-                }
-              }
-            });
-            layer.grid_layer = leafletLayer;
-          }
-          layer.leafletLayer = L.tileLayer(url, {
-            ext: 'png',
-            slug: layer.slug,
-            name: layer.slug,
-            minZoom: layer.min_zoom,
-            maxZoom: 20,
-            zIndex: layer.z_index
-          });
-        } else {
-          console.log(layer.type);
-        }
-        layer.initiated = true;
+  this.initiateLayer = function (layer) {
+    if (layer.name === "Simulatie") {
+      // Hack for 3Di.
+      //console.log("Initiate 3Di");
+      layer.follow_3di = false;
+    } else if (layer.type === "TMS" && layer.baselayer) {
+      layer.leafletLayer = L.tileLayer(layer.url + '.png',
+                                       {name: "Background", maxZoom: 20});
+    } else if (layer.type === "TMS" && !layer.baselayer) {
+      layer.leafletLayer = L.tileLayer(layer.url + '.png',
+                                       {minZoom: layer.min_zoom, maxZoom: 20, zIndex: layer.z_index});
+    } else if (layer.type === "WMS") {
+      var options = {
+        layers: layer.slug,
+        format: 'image/png',
+        version: '1.1.1',
+        minZoom: layer.min_zoom,
+        maxZoom: 20
       };
+      //NOTE ugly hack
+      if (layer.slug === 'landuse') {
+        options.styles = 'landuse';
+      } else if (layer.slug === 'elevation') {
+        // dynamically set min/max?
+        // options.effects = 'shade:0:3';
+        options.styles = 'jet:-5:20';
+      }
+      layer.leafletLayer = L.tileLayer.wms(layer.url, options);
+    } else if (layer.type === "ASSET") {
+      var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
+      if (layer.min_zoom_click !== null) {
+        var leafletLayer = new L.UtfGrid(url, {
+          ext: 'grid',
+          slug: layer.slug,
+          name: layer.slug,
+          useJsonP: false,
+          minZoom: layer.min_zoom_click,
+          maxZoom: 20,
+          order: layer.order
+        });
+        leafletLayer.on('click', function (e) {
+          if (e.data) {
+            if (e.data.geom) {
+              utfHit = true;
+              clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
+            } else {
+              console.info("You clicked on an object from negative space");
+            }
+            $scope.$apply(function () {
+              angular.extend($scope.activeObject, e.data);
+              $scope.activeObject.latlng = e.latlng;
+              $scope.activeObject.changed = !$scope.activeObject.changed;
+            });
+          } else {
+            if (leafletLayer.options.order === lowestUTFLayer) {
+              if (!utfHit || utfLayersOrder.length < 2) { clickInSpace(e.latlng); }
+              utfHit = false;
+            }
+          }
+        });
+        layer.grid_layer = leafletLayer;
+      }
+      layer.leafletLayer = L.tileLayer(url, {
+        ext: 'png',
+        slug: layer.slug,
+        name: layer.slug,
+        minZoom: layer.min_zoom,
+        maxZoom: 20,
+        zIndex: layer.z_index
+      });
+    } else {
+      console.log(layer.type);
+    }
+    layer.initiated = true;
+  };
+
   /**
    * Draws visible feedback on the map after a click
    *
@@ -142,6 +144,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       delete $scope.mapState.clickLayer;
     }
 
+    var circleMarker;
     var geojsonFeature = { "type": "Feature" };
     geojsonFeature.geometry = geometry;
 
@@ -150,7 +153,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       minZoom: 13,
       style: {},
       pointToLayer: function (feature, latlng) {
-        var circleMarker = L.circleMarker(latlng, {
+        circleMarker = L.circleMarker(latlng, {
           radius: 11.5,
           opacity: 0.5,
           fillOpacity: 0,
@@ -190,20 +193,9 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       .attr("stroke-width", 10);
     } else if (entityName === 'manhole') {
       selection.attr("transform", "translate(1, 0)");
-      this.circleMarker.setRadius(7.5);
+      circleMarker.setRadius(7.5);
     }
   };
-
-  /**
-   * Watch to remove clicklayer when user clicks on omnibox close button.
-   */
-  $scope.$watch('box.type', function (n, o) {
-    if (n === o) { return true; }
-    if ($scope.mapState.clickLayer && $scope.box.type === 'empty') {
-      $scope.map.removeLayer($scope.mapState.clickLayer);
-      delete $scope.mapState.clickLayer;
-    }
-  });
 
   // expects a layer hashtable with a leafletlayer object
   this.toggleLayer = function (layer) {
@@ -270,7 +262,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
     }
   };
 
-
   // Expects a leafletLayer as an argument
   this.addLayer = function (layer) {
     $scope.map.addLayer(layer);
@@ -283,11 +274,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
 
   this.panZoomTo = function (panZoom) {
     $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
-  };
-
-  this.moveEnd = function (lat, lng, zoom) {
-    $location.path(lat + ',' + lng + ',' + zoom);
-    // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
   };
 
   // make map object available to outside world.
@@ -355,13 +341,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
     scope.map = map;
 
     // Initialise layers
-    angular.forEach(scope.mapState.layers, function (layer) {
-      if (!layer.initiated) {
-        ctrl.initiateLayer(layer);
-      }
-      ctrl.toggleLayer(layer);      
-    });
-
     angular.forEach(scope.mapState.baselayers, function (layer) {
       if (!layer.initiated) {
         ctrl.initiateLayer(layer);
@@ -369,26 +348,12 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       ctrl.toggleBaseLayer(layer);      
     });
 
-    scope.$watch('searchMarkers', function (newValue, oldValue) {
-      if (newValue) {
-        for (var i in scope.searchMarkers) {
-          return;
-          // var cm = new L.CircleMarker(
-          //   new L.LatLng(
-          //     scope.searchMarkers[i].geometry[1],
-          //     scope.searchMarkers[i].geometry[0]
-          //   ),
-          //   {
-          //     color: '#fff',
-          //     fillColor: '#3186cc',
-          //     fillOpacity: 0.0,
-          //     radius: 5
-          //   }
-          // ).addTo(scope.map);
-          // cm.bindPopup(scope.searchMarkers[i].name);
-        }
+    angular.forEach(scope.mapState.layers, function (layer) {
+      if (!layer.initiated) {
+        ctrl.initiateLayer(layer);
       }
-    }, true);
+      ctrl.toggleLayer(layer);      
+    });
 
     // first time is not triggered until move.
     if (scope.mapState) {
@@ -482,6 +447,17 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       scope.holdRightThere = false;
     });
 
+    /**
+     * Watch to remove clicklayer when user clicks on omnibox close button.
+     */
+    scope.$watch('box.type', function (n, o) {
+      if (n === o) { return true; }
+      if (scope.mapState.clickLayer && scope.box.type === 'empty') {
+        ctrl.removeLayer(scope.mapState.clickLayer);
+        delete scope.mapState.clickLayer;
+      }
+    });
+
     //NOTE prevent meaningless 'changed' states, move this to relevant model
     scope.mapState.changeLayer = function (layer) {
       ctrl.toggleLayer(layer);
@@ -489,6 +465,10 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
 
     scope.mapState.changeBaselayer = function (baselayer) {
       ctrl.toggleBaseLayer(baselayer);
+    };
+
+    scope.zoomToTheMagic = function (layer) {
+      ctrl.zoomToTheMagic(layer);
     };
 
   };
@@ -502,68 +482,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
     };
   }
 ]);
-
-// app.directive('moveEnd', [function () {
-//   return {
-//     require: 'map',
-//     link: function (scope, elements, attrs, MapCtrl) {
-      
-//       scope.$watch('moveend', function (newValue, oldValue) {
-//         if (newValue) {
-//           MapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
-//         }
-//       });
-//     },
-//     restrict: 'A'
-//   };
-// }]);
-
-// // NOTE: this whole directive should go; fix with ng-click and map-controller
-// // functions
-// app.directive('panZoom', [function () {
-//   return {
-//     require: 'map',
-//     link: function (scope, elements, attrs, MapCtrl) {
-//       scope.$watch('panZoom', function () {
-//         if (scope.panZoom !== undefined) {
-//           if (scope.panZoom.hasOwnProperty('lat') &&
-//             scope.panZoom.hasOwnProperty('lng') &&
-//             scope.panZoom.hasOwnProperty('zoom')) {
-//             MapCtrl.panZoomTo(scope.panZoom);
-//           }
-//         }
-//       });
-//     }
-//   };
-// }]);
-
-// // NOTE: what does this layer do?
-// app.directive('locate', function () {
-//   return {
-//     require: 'map',
-//     link: function (scope, element, attrs, mapCtrl) {
-//       scope.$watch('locate', function () {
-//         if (scope.locate !== undefined) {
-//           mapCtrl.locateMe();
-//         }
-//       });
-//     }
-//   };
-// });
-
-// // NOTE: this should probably go to main directive
-// app.directive('zoomToLayer', function () {
-//   return {
-//     require: 'map',
-//     link: function (scope, element, attrs, mapCtrl) {
-//       scope.$watch('zoomToLayer', function () {
-//         if (scope.zoomToLayer !== undefined) {
-//           mapCtrl.zoomToTheMagic(scope.layerToZoomTo);
-//         }
-//       });
-//     }
-//   };
-// });
 
 app.directive('rain', function () {
   return {

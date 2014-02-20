@@ -599,31 +599,31 @@ angular.module('graph')
             height = graph.height,
             width = graph.width,
             margin = graph.margin;
-
-        if (timeseries.hasOwnProperty('instants')){
-          // This to not break profiles etc
-          var data = timeseries.instants;
-          var header = timeseries.series;
-          if (timeseries.series.length === 0) {
-            return; 
+        if (timeseries) {
+          if (timeseries.hasOwnProperty('instants')){
+            // This to not break profiles etc
+            var data = timeseries.instants;
+            var header = timeseries.series;
+            if (timeseries.series.length === 0) {
+              return; 
+            }
+            var keys = {x:1, y:0};
+          } else {
+            var data = timeseries;
+            var keys = {x:0, y:1};
+            var header = [{
+              name: "distance",
+              quantity: null,
+              type: "float",
+              unit: "m"
+            }, {
+              name: "height",
+              quantity: null,
+              type: "float",
+              unit: "m"
+            }]
           }
-          var keys = {x:1, y:0};
-        } else {
-          var data = timeseries;
-          var keys = {x:0, y:1};
-          var header = [{
-            name: "distance",
-            quantity: null,
-            type: "float",
-            unit: "m"
-          }, {
-            name: "height",
-            quantity: null,
-            type: "float",
-            unit: "m"
-          }]
         }
-
         var y = graphCtrl.maxMin(data, keys.y);
         y.scale = graphCtrl.scale(y.min, y.max, {
           range: [height, 0]
