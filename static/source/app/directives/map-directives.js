@@ -1,5 +1,22 @@
 'use strict';
 
+/**
+ * Map directive
+ *
+ * Overview
+ * ========
+ *
+ * Defines the map. Directive does all the watching and DOM binding, MapDirCtrl holds 
+ * all the testable logic. Ideally the directive has no logic and the MapDirCtrl
+ * is independent of the rest of the application.
+ * 
+ * TODO:
+ * * [ ] Move $scope out of MapDirCtrl
+ * * [ ] Split up massive functions in MapDirCtrl
+ * * [ ] Get rain stuff into the directive and the MapDirCtrl
+ * 
+ */
+
 app.controller('MapDirCtrl', function ($scope, $timeout) {
 
   // UTF bookkeeping
@@ -212,7 +229,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       } else {
         console.log('leaflet layer not defined', layer.type);
       }
-    } 
+    }
     if (layer.active) {
       if (layer.leafletLayer) {
         $scope.map.addLayer(layer.leafletLayer);
@@ -296,27 +313,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
     $scope.map.fitBounds(extent);
   };
 
-  this.locateMe = function () {
-    // $scope.map.locate({ setView: true });
-    function onLocationFound(e) {
-      var radius = e.accuracy / 2;
-
-      L.marker(e.latlng).addTo($scope.map)
-        .bindPopup("You are within " + radius + " meters from this point").openPopup();
-
-      L.circle(e.latlng, radius).addTo($scope.map);
-    }
-
-    function onLocationError(e) {
-      alert(e.message);
-    }
-
-    $scope.map.on('locationfound', onLocationFound);
-    $scope.map.on('locationerror', onLocationError);
-
-    $scope.map.locate({setView: true, maxZoom: 16});
-  };
-
   return this;
 })
 .directive('map', ['$location', function ($location) {
@@ -345,14 +341,14 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       if (!layer.initiated) {
         ctrl.initiateLayer(layer);
       }
-      ctrl.toggleBaseLayer(layer);      
+      ctrl.toggleBaseLayer(layer);
     });
 
     angular.forEach(scope.mapState.layers, function (layer) {
       if (!layer.initiated) {
         ctrl.initiateLayer(layer);
       }
-      ctrl.toggleLayer(layer);      
+      ctrl.toggleLayer(layer);
     });
 
     // first time is not triggered until move.
