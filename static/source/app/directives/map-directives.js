@@ -31,6 +31,9 @@ app
         $scope.holdRightThere = false;
       });
 
+      var lowestUTFLayer;
+      var utfLayersOrder = [];
+      var utfHit = false;
 
       this.initiateLayer = function (layer) {
         if (layer.name === "Simulatie") {
@@ -62,7 +65,6 @@ app
           layer.leafletLayer = L.tileLayer.wms(layer.url, options);
         } else if (layer.type === "ASSET") {
           var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
-          layer.grid_layers = [];
           if (layer.min_zoom_click !== null) {
             var leafletLayer = new L.UtfGrid(url, {
               ext: 'grid',
@@ -70,11 +72,13 @@ app
               name: layer.slug,
               useJsonP: false,
               minZoom: layer.min_zoom_click,
-              maxZoom: 20
+              maxZoom: 20,
+              order: layer.order
             });
             leafletLayer.on('click', function (e) {
               if (e.data) {
                 if (e.data.geom) {
+                  utfHit = true;
                   clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
                 } else {
                   console.info("You clicked on an object from negative space");
@@ -85,10 +89,13 @@ app
                   $scope.activeObject.changed = !$scope.activeObject.changed;
                 });
               } else {
-                clickInSpace(e.latlng);
+                if (leafletLayer.options.order === lowestUTFLayer) {
+                  if (!utfHit || utfLayersOrder.length < 2) { clickInSpace(e.latlng); }
+                  utfHit = false;
+                }
               }
             });
-            layer.grid_layers.push(leafletLayer);
+            layer.grid_layer = leafletLayer;
           }
           layer.leafletLayer = L.tileLayer(url, {
             ext: 'png',
@@ -142,6 +149,7 @@ app
         if ($scope.box.type !== 'rain') {
           removeProm = $timeout(function () {
             $scope.map.removeLayer($scope.mapState.clickLayer);
+            $scope.box.type = 'empty';
           }, 1500);
         }
       };
@@ -243,9 +251,11 @@ app
         if (!layer.active) {
           if (layer.leafletLayer) {
             $scope.map.removeLayer(layer.leafletLayer);
-            if (layer.grid_layers) {
-              for (var i in layer.grid_layers) {
-                $scope.map.removeLayer(layer.grid_layers[i]);
+            if (layer.grid_layer) {
+              $scope.map.removeLayer(layer.grid_layer);
+              utfLayersOrder.splice(utfLayersOrder.indexOf(layer.grid_layer.options.order), 1);
+              if (layer.order === lowestUTFLayer) {
+                lowestUTFLayer = utfLayersOrder.sort()[-1];
               }
             }
           } else {
@@ -254,23 +264,23 @@ app
         } else {
           if (layer.leafletLayer) {
             $scope.map.addLayer(layer.leafletLayer);
-            if (layer.grid_layers) {
+            if (layer.grid_layer) {
+              if (layer.order < lowestUTFLayer || lowestUTFLayer === undefined) {
+                lowestUTFLayer = layer.order;
+              }
+              utfLayersOrder.push(layer.order);
               // Add listener to start loading utf layers
               // after loading of visible layer to have an
               // increased user experience
               layer.leafletLayer.on('load', function () {
-                // Add all the grid layers of the layer when load finished
-                angular.forEach(layer.grid_layers, function (layer) {
-                  $scope.map.addLayer(layer);
-                });
+                // Add the grid layers of the layer when load finished
+                $scope.map.addLayer(layer.grid_layer);
               });
               layer.leafletLayer.on('loading', function () {
                 // Temporarily remove all utfLayers for performance
-                angular.forEach(layer.grid_layers, function (layer) {
-                  if ($scope.map.hasLayer(layer)) {
-                    $scope.map.removeLayer(layer);
-                  }
-                });
+                if ($scope.map.hasLayer(layer.grid_layer)) {
+                  $scope.map.removeLayer(layer.grid_layer);
+                }
               });
             }
           } else {
