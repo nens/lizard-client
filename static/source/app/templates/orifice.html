@@ -1,0 +1,48 @@
+<div class="card">
+<!-- Card for "orifice" / "doorlaat" -->
+  <div class="actions">
+    <ul>
+      <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
+      <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
+    </ul>
+  </div>
+
+  <div class="card-title">
+    <img src="images/knoop.png" class="img-circle">
+    <span>Doorlaat</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
+  </div>
+  <table class="fullwidth">
+    <tbody>
+    <tr>
+      <td><abbr title="Grootte van de opening">Lengte x Breedte</abbr></td>
+      <td><span ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</span>&nbsp;x&nbsp;<span ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</span></td>
+    </tr>
+    <tr>
+      <td>Vorm</td>
+      <td ng-bind="metadata.fromgrid.shape" class="ng-binding">...</td>
+    </tr>    
+    </tbody>
+  </table>
+  
+  <hr style="clear:both;">
+
+  <details>
+      <summary>Meer details</summary>
+      <table class="fullwidth">
+          <tbody>
+          <tr>
+              <td>Richting</td>
+              <td><span ng-bind="metadata.fromgrid.direction" class="ng-binding">...</span></td>
+          </tr>
+          <tr>
+              <td>Negatieve maximale debiet</td>
+              <td ng-bind="metadata.fromgrid.negative_flow_limit" class="ng-binding">...</td>
+          </tr>   
+          <tr>
+              <td>Positieve maximale debiet</td>
+              <td ng-bind="metadata.fromgrid.positive_flow_limit" class="ng-binding">...</td>
+          </tr>   	     
+          </tbody>
+      </table>
+  </details>
+</div>

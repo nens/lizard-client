@@ -2,78 +2,85 @@
 
 app.controller('MapDirCtrl', function ($scope, $timeout) {
 
-  this.initiateLayer = function (layer) {
-    if (layer.name === "Simulatie") {
-      // Hack for 3Di.
-      //console.log("Initiate 3Di");
-      layer.follow_3di = false;
-    } else if (layer.type === "TMS" && layer.baselayer) {
-      layer.leafletLayer = L.tileLayer(layer.url + '.png',
-                                       {name: "Background", maxZoom: 20});
-    } else if (layer.type === "TMS" && !layer.baselayer) {
-      layer.leafletLayer = L.tileLayer(layer.url + '.png',
-                                       {minZoom: layer.min_zoom, maxZoom: 20, zIndex: layer.z_index});
-    } else if (layer.type === "WMS") {
-      var options = {
-        layers: layer.slug,
-        format: 'image/png',
-        version: '1.1.1',
-        minZoom: layer.min_zoom,
-        maxZoom: 20
-      };
-      //NOTE ugly hack
-      if (layer.slug === 'landuse') {
-        options.styles = 'landuse';
-      } else if (layer.slug === 'elevation') {
-        // dynamically set min/max?
-        // options.effects = 'shade:0:3';
-        options.styles = 'jet:-5:20';
-      }
-      layer.leafletLayer = L.tileLayer.wms(layer.url, options);
-    } else if (layer.type === "ASSET") {
-      var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
-      layer.grid_layers = [];
-      if (layer.min_zoom_click !== null) {
-        var leafletLayer = new L.UtfGrid(url, {
-          ext: 'grid',
-          slug: layer.slug,
-          name: layer.slug,
-          useJsonP: false,
-          minZoom: layer.min_zoom_click,
-          maxZoom: 20
-        });
-        leafletLayer.on('click', function (e) {
-          if (e.data) {
-            if (e.data.geom) {
-              clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
-            } else {
-              console.info("You clicked on an object from negative space");
-            }
-            $scope.$apply(function () {
-              angular.extend($scope.activeObject, e.data);
-              $scope.activeObject.latlng = e.latlng;
-              $scope.activeObject.changed = !$scope.activeObject.changed;
-            });
-          } else {
-            clickInSpace(e.latlng);
-          }
-        });
-        layer.grid_layers.push(leafletLayer);
-      }
-      layer.leafletLayer = L.tileLayer(url, {
-        ext: 'png',
-        slug: layer.slug,
-        name: layer.slug,
-        minZoom: layer.min_zoom,
-        maxZoom: 20,
-        zIndex: layer.z_index
-      });
-    } else {
-      console.log(layer.type);
-    }
-    layer.initiated = true;
-  };
+      var lowestUTFLayer;
+      var utfLayersOrder = [];
+      var utfHit = false;
 
+      this.initiateLayer = function (layer) {
+        if (layer.name === "Simulatie") {
+          // Hack for 3Di.
+          //console.log("Initiate 3Di");
+          layer.follow_3di = false;
+        } else if (layer.type === "TMS" && layer.baselayer) {
+          layer.leafletLayer = L.tileLayer(layer.url + '.png',
+                                           {name: "Background", maxZoom: 20});
+        } else if (layer.type === "TMS" && !layer.baselayer) {
+          layer.leafletLayer = L.tileLayer(layer.url + '.png',
+                                           {minZoom: layer.min_zoom, maxZoom: 20, zIndex: layer.z_index});
+        } else if (layer.type === "WMS") {
+          var options = {
+            layers: layer.slug,
+            format: 'image/png',
+            version: '1.1.1',
+            minZoom: layer.min_zoom,
+            maxZoom: 20
+          };
+          //NOTE ugly hack
+          if (layer.slug === 'landuse') {
+            options.styles = 'landuse';
+          } else if (layer.slug === 'elevation') {
+            // dynamically set min/max?
+            // options.effects = 'shade:0:3';
+            options.styles = 'jet:-5:20';
+          }
+          layer.leafletLayer = L.tileLayer.wms(layer.url, options);
+        } else if (layer.type === "ASSET") {
+          var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
+          if (layer.min_zoom_click !== null) {
+            var leafletLayer = new L.UtfGrid(url, {
+              ext: 'grid',
+              slug: layer.slug,
+              name: layer.slug,
+              useJsonP: false,
+              minZoom: layer.min_zoom_click,
+              maxZoom: 20,
+              order: layer.order
+            });
+            leafletLayer.on('click', function (e) {
+              if (e.data) {
+                if (e.data.geom) {
+                  utfHit = true;
+                  clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
+                } else {
+                  console.info("You clicked on an object from negative space");
+                }
+                $scope.$apply(function () {
+                  angular.extend($scope.activeObject, e.data);
+                  $scope.activeObject.latlng = e.latlng;
+                  $scope.activeObject.changed = !$scope.activeObject.changed;
+                });
+              } else {
+                if (leafletLayer.options.order === lowestUTFLayer) {
+                  if (!utfHit || utfLayersOrder.length < 2) { clickInSpace(e.latlng); }
+                  utfHit = false;
+                }
+              }
+            });
+            layer.grid_layer = leafletLayer;
+          }
+          layer.leafletLayer = L.tileLayer(url, {
+            ext: 'png',
+            slug: layer.slug,
+            name: layer.slug,
+            minZoom: layer.min_zoom,
+            maxZoom: 20,
+            zIndex: layer.z_index
+          });
+        } else {
+          console.log(layer.type);
+        }
+        layer.initiated = true;
+      };
   /**
    * Draws visible feedback on the map after a click
    *
@@ -109,9 +116,10 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       .attr("stroke-opacity", 0.5)
       .attr("stroke-width", 10);
 
-    if ($scope.box.type !== 'rain') {
+    if ($scope.box.type !== 'rain' || $scope.box.type !== 'aggregate') {
       removeProm = $timeout(function () {
         $scope.map.removeLayer($scope.mapState.clickLayer);
+        $scope.box.type = 'empty';
       }, 1500);
     }
   };
@@ -142,12 +150,12 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       minZoom: 13,
       style: {},
       pointToLayer: function (feature, latlng) {
-        this.circleMarker = L.circleMarker(latlng, {
+        var circleMarker = L.circleMarker(latlng, {
           radius: 11.5,
           opacity: 0.5,
           fillOpacity: 0,
         });
-        return this.circleMarker;
+        return circleMarker;
       }
     });
     $scope.mapState.clickLayer.addTo($scope.map);
@@ -199,48 +207,40 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
 
   // expects a layer hashtable with a leafletlayer object
   this.toggleLayer = function (layer) {
-    // 3Di hack
-    if (layer.name === "Simulatie") {
-      //console.log("Toggle 3Di layer " + layer.active);
-      if (layer.active) {
-        // $scope.threediTool();
-        $scope.connect();
-      } else {
-        $scope.disconnect();
-      }
-      return;
-    }
     if (!layer.active) {
       if (layer.leafletLayer) {
         $scope.map.removeLayer(layer.leafletLayer);
-        if (layer.grid_layers) {
-          for (var i in layer.grid_layers) {
-            $scope.map.removeLayer(layer.grid_layers[i]);
+        if (layer.grid_layer) {
+          $scope.map.removeLayer(layer.grid_layer);
+          utfLayersOrder.splice(utfLayersOrder.indexOf(layer.grid_layer.options.order), 1);
+          if (layer.order === lowestUTFLayer) {
+            lowestUTFLayer = utfLayersOrder.sort()[-1];
           }
         }
       } else {
         console.log('leaflet layer not defined', layer.type);
       }
-    } else {
+    } 
+    if (layer.active) {
       if (layer.leafletLayer) {
         $scope.map.addLayer(layer.leafletLayer);
-        if (layer.grid_layers) {
+        if (layer.grid_layer) {
+          if (layer.order < lowestUTFLayer || lowestUTFLayer === undefined) {
+            lowestUTFLayer = layer.order;
+          }
+          utfLayersOrder.push(layer.order);
           // Add listener to start loading utf layers
           // after loading of visible layer to have an
           // increased user experience
           layer.leafletLayer.on('load', function () {
-            // Add all the grid layers of the layer when load finished
-            angular.forEach(layer.grid_layers, function (layer) {
-              $scope.map.addLayer(layer);
-            });
+            // Add the grid layers of the layer when load finished
+            $scope.map.addLayer(layer.grid_layer);
           });
           layer.leafletLayer.on('loading', function () {
             // Temporarily remove all utfLayers for performance
-            angular.forEach(layer.grid_layers, function (layer) {
-              if ($scope.map.hasLayer(layer)) {
-                $scope.map.removeLayer(layer);
-              }
-            });
+            if ($scope.map.hasLayer(layer.grid_layer)) {
+              $scope.map.removeLayer(layer.grid_layer);
+            }
           });
         }
       } else {
@@ -352,12 +352,22 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
     map.fitBounds(maxBounds);
     map.attributionControl.addAttribution(osmAttrib);
     map.attributionControl.setPrefix('');
+    scope.map = map;
 
-    var loadingControl = L.Control.loading({
-      position: 'bottomleft',
-      seperate: true
+    // Initialise layers
+    angular.forEach(scope.mapState.layers, function (layer) {
+      if (!layer.initiated) {
+        ctrl.initiateLayer(layer);
+      }
+      ctrl.toggleLayer(layer);      
     });
-    map.addControl(loadingControl);
+
+    angular.forEach(scope.mapState.baselayers, function (layer) {
+      if (!layer.initiated) {
+        ctrl.initiateLayer(layer);
+      }
+      ctrl.toggleBaseLayer(layer);      
+    });
 
     scope.$watch('searchMarkers', function (newValue, oldValue) {
       if (newValue) {
@@ -379,9 +389,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
         }
       }
     }, true);
-
-    // NOTE check if this is necessary
-    scope.map = map;
 
     // first time is not triggered until move.
     if (scope.mapState) {
@@ -475,6 +482,15 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       scope.holdRightThere = false;
     });
 
+    //NOTE prevent meaningless 'changed' states, move this to relevant model
+    scope.mapState.changeLayer = function (layer) {
+      ctrl.toggleLayer(layer);
+    };
+
+    scope.mapState.changeBaselayer = function (baselayer) {
+      ctrl.toggleBaseLayer(baselayer);
+    };
+
   };
 
   return {
@@ -487,97 +503,67 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
   }
 ]);
 
-app.directive('moveEnd', [function () {
-  return {
-    require: 'map',
-    link: function (scope, elements, attrs, MapCtrl) {
+// app.directive('moveEnd', [function () {
+//   return {
+//     require: 'map',
+//     link: function (scope, elements, attrs, MapCtrl) {
       
-      scope.$watch('moveend', function (newValue, oldValue) {
-        if (newValue) {
-          MapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
-        }
-      });
-    },
-    restrict: 'A'
-  };
-}]);
+//       scope.$watch('moveend', function (newValue, oldValue) {
+//         if (newValue) {
+//           MapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
+//         }
+//       });
+//     },
+//     restrict: 'A'
+//   };
+// }]);
 
-// NOTE this whole directive should go; fix with ng-click and map-controller
-// functions
-app.directive('layerSwitch', [function () {
-  return {
-    require: 'map',
-    link: function (scope, elements, attrs, MapCtrl) {
-      scope.$watch('mapState.changed', function () {
-        // THis means that all active layers are added also when the layer is already added. :o
-        for (var i in layers) {
-          var layer = layers[i];
-          if (!layer.initiated) {
-            MapCtrl.initiateLayer(layer);
-          }
-          MapCtrl.toggleLayer(layer);
-        }
-      });
-      scope.$watch('mapState.baselayerChanged', function () {
-        for (var i in scope.mapState.baselayers) {
-          var layer = scope.mapState.baselayers[i];
-          if (!layer.initiated) {
-            MapCtrl.initiateLayer(layer);
-          }
-          MapCtrl.toggleBaseLayer(layer);
-        }
-      });
-    },
-    restrict: 'A'
-  };
-}]);
+// // NOTE: this whole directive should go; fix with ng-click and map-controller
+// // functions
+// app.directive('panZoom', [function () {
+//   return {
+//     require: 'map',
+//     link: function (scope, elements, attrs, MapCtrl) {
+//       scope.$watch('panZoom', function () {
+//         if (scope.panZoom !== undefined) {
+//           if (scope.panZoom.hasOwnProperty('lat') &&
+//             scope.panZoom.hasOwnProperty('lng') &&
+//             scope.panZoom.hasOwnProperty('zoom')) {
+//             MapCtrl.panZoomTo(scope.panZoom);
+//           }
+//         }
+//       });
+//     }
+//   };
+// }]);
 
-// NOTE: this whole directive should go; fix with ng-click and map-controller
-// functions
-app.directive('panZoom', [function () {
-  return {
-    require: 'map',
-    link: function (scope, elements, attrs, MapCtrl) {
-      scope.$watch('panZoom', function () {
-        if (scope.panZoom !== undefined) {
-          if (scope.panZoom.hasOwnProperty('lat') &&
-            scope.panZoom.hasOwnProperty('lng') &&
-            scope.panZoom.hasOwnProperty('zoom')) {
-            MapCtrl.panZoomTo(scope.panZoom);
-          }
-        }
-      });
-    }
-  };
-}]);
+// // NOTE: what does this layer do?
+// app.directive('locate', function () {
+//   return {
+//     require: 'map',
+//     link: function (scope, element, attrs, mapCtrl) {
+//       scope.$watch('locate', function () {
+//         if (scope.locate !== undefined) {
+//           mapCtrl.locateMe();
+//         }
+//       });
+//     }
+//   };
+// });
 
-// NOTE: what does this layer do?
-app.directive('locate', function () {
-  return {
-    require: 'map',
-    link: function (scope, element, attrs, mapCtrl) {
-      scope.$watch('locate', function () {
-        if (scope.locate !== undefined) {
-          mapCtrl.locateMe();
-        }
-      });
-    }
-  };
-});
-
-// NOTE: this should probably go to main directive
-app.directive('zoomToLayer', function () {
-  return {
-    require: 'map',
-    link: function (scope, element, attrs, mapCtrl) {
-      scope.$watch('zoomToLayer', function () {
-        if (scope.zoomToLayer !== undefined) {
-          mapCtrl.zoomToTheMagic(scope.layerToZoomTo);
-        }
-      });
-    }
-  };
-});
+// // NOTE: this should probably go to main directive
+// app.directive('zoomToLayer', function () {
+//   return {
+//     require: 'map',
+//     link: function (scope, element, attrs, mapCtrl) {
+//       scope.$watch('zoomToLayer', function () {
+//         if (scope.zoomToLayer !== undefined) {
+//           mapCtrl.zoomToTheMagic(scope.layerToZoomTo);
+//         }
+//       });
+//     }
+//   };
+// });
 
 app.directive('rain', function () {
   return {

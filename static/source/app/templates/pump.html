@@ -1,0 +1,45 @@
+<div class="card">
+<!-- Card for "pump" / "gemaalpomp" -->
+  <div class="actions">
+    <ul>
+      <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
+      <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
+    </ul>
+  </div>
+
+  <div class="card-title">
+    <img src="/static/distjs/images/knoop.png" class="img-circle">
+    <span>Gemaalpomp</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
+  </div>
+  <table class="fullwidth">
+    <tbody>
+    <tr>
+      <td>Capaciteit</td>
+      <td><span ng-bind="metadata.fromgrid.capacity | number: 2" class="ng-binding">...</span></td>
+    </tr>
+    <tr>
+      <td>Type</td>
+      <td><span ng-bind="metadata.fromgrid.type | number: 2" class="ng-binding">...</span></td>
+    </tr>    
+    </tbody>
+  </table>
+  
+  <details>
+    <summary>Meer details</summary>
+    <table>
+      <tbody>
+      <tr>
+        <td>Aanslagpeil</td>
+        <td><span ng-bind="metadata.fromgrid.start_level" class="ng-binding">...</span></td>
+      </tr>     
+      <tr>
+        <td>Afslagpeil</td>
+        <td><span ng-bind="metadata.fromgrid.stop_level" class="ng-binding">...</span></td>
+      </tr>
+      <tr>
+        <td><img src="http://placehold.it/200x100"></td>
+      </tr>
+      </tbody>
+  </table>    
+  </details>
+</div>

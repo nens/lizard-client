@@ -1,0 +1,26 @@
+<!-- Card for "channel" / "kanaal" -->
+<div class="card">
+  <div class="actions">
+    <ul>
+      <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
+      <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
+    </ul>
+  </div>
+
+  <div class="card-title">
+    <img src="/static/distjs/images/knoop.png" class="img-circle" alt="Manhole">
+    <span>Kanaal</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
+  </div>
+  <table class="fullwidth">
+    <tbody>
+    <tr>
+      <td>Type</td>
+      <td><span ng-bind="metadata.fromgrid.type | number: 2" class="ng-binding">...</span></td>
+    </tr>  
+    <tr>
+      <td>Naam</td>
+      <td><span ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</span></td>
+    </tr>
+   </tbody>
+  </table>
+</div>

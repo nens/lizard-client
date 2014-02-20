@@ -1,34 +1,58 @@
 <div class="card">
-  <div class="card-title">
-    <img src="/static/distjs/images/knoop.png" class="img-circle"/>
-    <span>Knoop</span><span class="truncateme" ng-bind="metadata.title"></span>
-  </div>
-  <table class="left">
-    <tr>
-      <td>BOK (m) </td>
-      <td ng-bind="metadata.fromgrid.bottom_level | number: 2"></td>
-    </tr>
-    <tr>
-      <td>Breedte (m) </td>
-      <td ng-bind="metadata.fromgrid.width | number: 2"></td>
-    </tr>
-  </table>
-  <table class="right">
-    <tr>
-      <td>WOS opp. (m<sup>2</sup>) </td>
-      <td ng-bind="metadata.fromgrid.drainage_area | number: 2"></td>
-    </tr>
-    <tr>
-      <td>Maaiveld (m NAP) </td>
-      <td ng-bind="metadadata.fromgrid.surface_level | number: 2"></td>
-    </tr>
-  </table>
-</div>
-<div class="card" ng-class="{hidden: box.content.selected_timeseries == undefined}">
-  <div class="input-prepend">
-    <span class="add-on"> Tijdreeks</span> 
-    <select class="timeseries" ng-model="box.content.selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
-  </div>
+<!-- Card for "put" / "manhole" -->
+    <div class="actions">
+      <ul>
+        <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li>
+        <li class="fullscreen"><a href="#" title="Maak deze infocard groter"><i class="fa fa-arrows-alt"></i></a></li>
+        <li class="favorite"><a href="#" title="Voeg toe aan favorieten"><i class="fa fa-bookmark"></i></a></li>
+        <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li>
+      </ul>
+    </div>
 
-  <graph line data="timeseriesdata" title="" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></graph>
+    <div class="card-title">
+      <img src="/static/distjs/images/knoop.png" class="img-circle">
+      <span>Put</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
+    </div>
+    <table class="left">
+      <tbody>
+      <tr>
+        <td><abbr title="Maaiveld volgens beheergegevens (JAARTAL)">Maaiveld</abbr></td>
+        <td ng-bind="metadata.fromgrid.surface_level | number: 2" class="ng-binding">...</td>
+      </tr>
+      <tr>
+        <td><abbr title="Werkelijk maaiveld volgens Algemene Hoogtekaart Nederland (JAARTAL)">Maaiveld (ahn2)</abbr></td>
+        <td ng-bind="metadata.fromgrid.surface_level_ahn2 | number: 2" class="ng-binding">...</td>
+      </tr>    
+      <tr>
+        <td>Breedte</td>
+        <td ng-bind="metadata.fromgrid.width | number: 2" class="ng-binding">...</td>
+      </tr>        
+      <tr>
+        <td>Lengte</td>
+        <td ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</td>
+      </tr>            
+    </tbody></table>
+    <table class="right">
+      <tbody><tr>
+        <td>Vorm</td>
+        <td ng-bind="metadata.fromgrid.shape | number: 2" class="ng-binding">...</td>
+      </tr>
+      <tr>
+        <td>Putbodem</td>
+        <td ng-bind="metadadata.fromgrid.bottom_level | number: 2" class="ng-binding">...</td>
+      </tr>
+      <tr>
+        <td>Materiaal</td>
+        <td ng-bind="metadata.fromgrid.material | number: 2" class="ng-binding">...</td>
+      </tr>        
+      </tbody>
+    </table>
+
+    <hr style="clear:both;">
+
+    <details>
+      <summary>Meer details</summary>
+      <img src="http://placehold.it/200x100">
+    </details>  
+
 </div>

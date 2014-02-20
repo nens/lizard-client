@@ -59,18 +59,6 @@ app.controller('MapCtrl', function ($scope, $location) {
     }
   };
 
-  $scope.toggleLayerGroup = function (layergroup) {
-    var grouplayers = layergroup.layers;
-    for (var i in grouplayers) {
-      for (var j in $scope.mapState.layers) {
-        if ($scope.mapState.layers[j].id === grouplayers[i]) {
-          $scope.mapState.layers[j].active = layergroup.active;
-        }
-      }
-    }
-    $scope.mapState.changed = Date.now();
-  };
-
   // NOTE REFACTOR CANDIDATE
   // use toggleTool() in ng-click in index.html
   $scope.toggleLayerSwitcher = function () {
@@ -85,10 +73,6 @@ app.controller('MapCtrl', function ($scope, $location) {
   };
   // END REFACTOR CANDIDATE
 
-  //NOTE prevent meaningless 'changed' states, move this to relevant model
-  $scope.changed = function () {
-    $scope.mapState.changed = Date.now();
-  };
 
   $scope.zoomToTheMagic = function (layer) {
     $scope.layerToZoomTo = layer;

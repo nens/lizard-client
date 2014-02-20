@@ -1,33 +1,53 @@
 <div class="card">
+<!-- Card for "culvert" / "duiker" -->
+  <div class="actions">
+    <ul>
+      <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
+      <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
+    </ul>
+  </div>
+
   <div class="card-title">
-    <img src="/static/distjs/images/culvert.png" class="img-circle"/>
-    <span>Culvert</span><span class="truncateme" ng-bind="metadata.title"></span>
+    <img src="/static/distjs/images/knoop.png" class="img-circle">
+    <span>Duiker</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
   </div>
-  <table class="left">
+  <table class="fullwidth">
+    <tbody>
     <tr>
-      <td>BOB Bovenstrooms (m NAP) </td>
-      <td ng-bind="metadata.fromgrid.ground_level_upstream | number: 2"></td>
+      <td>Type</td>
+      <td><span ng-bind="metadata.fromgrid.type | number: 2" class="ng-binding">...</span></td>
+    </tr>  
+    <tr>
+      <td>Lengte</td>
+      <td><span ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</span></td>
     </tr>
     <tr>
-      <td>BOB Benedenstrooms (m NAP) </td>
-      <td ng-bind="metadata.fromgrid.ground_level_downstream | number: 2"></td>
-    </tr>
+      <td>Breedte</td>
+      <td><span ng-bind="metadata.fromgrid.width | number: 2" class="ng-binding">...</span></td>
+    </tr>    
+    </tbody>
   </table>
-  <table class="right">
-    <tr>
-        <td>Breedte (m) </td>
-        <td ng-bind="metadata.fromgrid.width | number: 2"></td>
-    </tr>
-    <tr>
-        <td>Lengte (m) </td>
-        <td ng-bind="metadata.fromgrid.length | number: 2"></td>
-    </tr>
-   </table>
-</div>
-<div class="card" ng-class="{hidden: box.content.selected_timeseries == undefined}">
-  <div class="input-prepend">
-    <span class="add-on"> Tijdreeks</span> 
-    <select class="timeseries" ng-model="box.content.selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
-  </div>
-    <graph line data="data" title="" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></graph>
+  
+  <details>
+    <summary>Meer details</summary>
+    <table>
+      <tbody>
+      <tr>
+        <td>Richting</td>
+        <td><span ng-bind="metadata.fromgrid.direction" class="ng-binding">...</span></td>
+      </tr>     
+      <tr>
+        <td><abbr title="Binnen Onderkant Buis (bovenstrooms)">BOB bovenstrooms</abbr></td>
+        <td><span ng-bind="metadata.fromgrid.ground_level_upstream" class="ng-binding">...</span></td>
+      </tr>
+      <tr>
+        <td><abbr title="Binnen Onderkant Buis (benedenstrooms)">BOB benedenstrooms</abbr></td>
+        <td><span ng-bind="metadata.fromgrid.ground_level_downstream" class="ng-binding">...</span></td>
+      </tr>      
+      <tr>
+        <td><img src="http://placehold.it/200x100"></td>
+      </tr>
+    </tbody>
+  </table>    
+  </details>
 </div>

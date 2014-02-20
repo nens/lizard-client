@@ -103,7 +103,7 @@
               {% trans "Basis" %}
               <ul class="list-group">
                 <li ng-repeat="layer in mapState.baselayers | orderBy:'order':true">
-                <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
+                <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="mapState.changeBaseLayer(layer)"> 
                 <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
                 </li> 
               </ul>
@@ -112,7 +112,7 @@
               {% trans "Thema" %}
               <ul class="list-group">
                 <li ng-repeat="layer in mapState.layers | orderBy:'order':true">
-                <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
+                <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="mapState.changeLayer(layer)">
                 <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
 
                 <div ng-switch="layer.follow_3di" style="float: right;">
@@ -156,12 +156,8 @@
             <div class="hide button-list-item" ng-class="{'hide': !threedi_active}"><a href="#" ng-click="threediTool()" class="button-list-link" title="3Di" ng-class="{'active': tools.active === 'threedi'}"><i class="icon-asterisk"></i></a></div>
           </div>
         </div>
-        <map layer-switch 
-             pan-zoom="panZoom"
-             layers="mapState.layers"
+        <map layers="mapState.layers"
              rasterprofile="disabled"
-             locate="locate"
-             zoom-to-layer="zoomToLayer"
              vectorlayer
              click-layer="clickLayer"
              surfacelayer
