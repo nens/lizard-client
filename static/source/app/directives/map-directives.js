@@ -260,19 +260,17 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
 
   // expects a layer hashtable with a leafletlayer object
   this.toggleBaseLayer = function (layer) {
-    console.log(layer);
-    if (!layer.active) {
+    if (layer.id !== $scope.mapState.activeBaselayer) {
+      layer.active = false;
       if (layer.leafletLayer) {
         $scope.map.removeLayer(layer.leafletLayer);
       } else {
         console.log('leaflet layer not defined');
       }
-    } else if (layer.active) {
+    } else if (layer.id === $scope.mapState.activeBaselayer) {
+      layer.active = true;
       if (layer.leafletLayer) {
         $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: true });
-        //if (layer.name === 'Satellite') {
-          //layer.leafletLayer.getContainer().classList.add('faded-gray');
-        //}
       } else {
         console.log('leaflet layer not defined');
       }
@@ -454,18 +452,25 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       }
     });
 
-    //NOTE prevent meaningless 'changed' states, move this to relevant model
     scope.mapState.changeLayer = function (layer) {
       ctrl.toggleLayer(layer);
     };
 
+    /**
+     * Changes the baselayer
+     *
+     * There is only one active baselayer. If baselayer is given, this layer
+     * becomes the activebaselayer and all baselayers are send to the
+     * toggleBaselayer function to turn them on or off. If you set the
+     * activeBaselayer manually this function may also be called to update all 
+     * baselayers.     * 
+     * 
+     * @param {layer object} baselayer: the baselayer to activate
+     */
     scope.mapState.changeBaselayer = function (baselayer) {
-      ctrl.toggleBaseLayer(baselayer);
-      scope.mapState.activeBaselayer = baselayer.id;
-      angular.forEach(scope.mapState.baselayers, function (baselayer){
-        if (baselayer.id !== scope.mapState.activeBaselayer) {
-          ctrl.toggleBaseLayer(baselayer);
-        }
+      if (baselayer) { scope.mapState.activeBaselayer = baselayer.id; }
+      angular.forEach(scope.mapState.baselayers, function (baselayer) {
+        ctrl.toggleBaseLayer(baselayer);
       });
     };
 
