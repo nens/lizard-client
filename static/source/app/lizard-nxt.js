@@ -708,7 +708,6 @@ app.controller("MasterCtrl",
 
   };
 
-  // document this function
   $scope.$watch('keyPressed', function (newVal, oldVal) {
     if (newVal === 51) {
       $scope.mapState.activeBaselayer = 3;

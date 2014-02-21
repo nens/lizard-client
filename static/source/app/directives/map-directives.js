@@ -311,6 +311,20 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
     $scope.map.fitBounds(extent);
   };
 
+  this.boxType = function (activeBaselayer, currentType) {
+    var newType;
+    if (activeBaselayer === 3) {
+      newType = 'elevation';
+    } else if (activeBaselayer === 4) {
+      newType = 'landuse';
+    } else if (currentType === 'landuse' || currentType === 'elevation') {
+      newType = 'empty';
+    } else {
+      newType = currentType;
+    }
+    return newType;
+  };
+
   return this;
 })
 .directive('map', ['$location', function ($location) {
@@ -463,7 +477,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
      * becomes the activebaselayer and all baselayers are send to the
      * toggleBaselayer function to turn them on or off. If you set the
      * activeBaselayer manually this function may also be called to update all 
-     * baselayers.     * 
+     * baselayers. 
      * 
      * @param {layer object} baselayer: the baselayer to activate
      */
@@ -472,7 +486,12 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       angular.forEach(scope.mapState.baselayers, function (baselayer) {
         ctrl.toggleBaseLayer(baselayer);
       });
+      scope.mapState.baselayerChanged = Date.now();
+      scope.box.type = ctrl.boxType(scope.mapState.activeBaselayer, scope.box.type);
     };
+
+
+
 
     scope.zoomToTheMagic = function (layer) {
       ctrl.zoomToTheMagic(layer);
