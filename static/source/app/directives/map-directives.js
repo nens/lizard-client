@@ -98,6 +98,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       console.log(layer.type);
     }
     layer.initiated = true;
+
   };
 
   /**
@@ -418,7 +419,8 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       var newHash = [
         scope.map.getCenter().lat.toFixed(5),
         scope.map.getCenter().lng.toFixed(5),
-        scope.map.getZoom()].join(',');
+        scope.map.getZoom()
+      ].join(',');
       $location.hash(newHash);
     });
 
@@ -506,8 +508,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       controller: 'MapDirCtrl',
       link: link
     };
-  }
-]);
+}]);
 
 app.directive('rain', function () {
   return {
