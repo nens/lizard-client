@@ -66,6 +66,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
         });
         leafletLayer.on('click', function (e) {
           if (e.data) {
+            console.log(e.data);
             if (e.data.geom) {
               utfHit = true;
               clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
@@ -77,6 +78,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
               $scope.activeObject.latlng = e.latlng;
               $scope.activeObject.changed = !$scope.activeObject.changed;
             });
+            console.log('activeObject', $scope.activeObject);
           } else {
             if (leafletLayer.options.order === lowestUTFLayer) {
               if (!utfHit || utfLayersOrder.length < 2) { clickInSpace(e.latlng); }

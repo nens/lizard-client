@@ -15,38 +15,34 @@
         <tbody>
         <tr>
             <td>Lengte</td>
-            <td ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</td>
+            <td ng-bind="activeObject.length | number: 2" class="ng-binding">...</td>
         </tr>
         <tr>
             <td>Breedte</td>
-            <td ng-bind="metadata.fromgrid.width | number: 2" class="ng-binding">...</td>
+            <td ng-bind="activeObject.width | number: 2" class="ng-binding">...</td>
         </tr>    
         <tr>
             <td>Hoogte</td>
-            <td ng-bind="metadata.fromgrid.height | number: 2" class="ng-binding">...</td>
+            <td ng-bind="activeObject.height | number: 2" class="ng-binding">...</td>
         </tr>        
         <tr>
             <td>Materiaal</td>
-            <td ng-bind="metadata.fromgrid.material" class="ng-binding">...</td>
+            <td ng-bind="activeObject.material" class="ng-binding">...</td>
         </tr>        
-        <tr>
-            <td>Lengte</td>
-            <td ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</td>
-        </tr>            
         </tbody>
     </table>
     <table class="right">
         <tbody><tr>
             <td>Vorm</td>
-            <td ng-bind="metadata.fromgrid.shape | number: 2" class="ng-binding">...</td>
+            <td ng-bind="activeObject.shape | number: 2" class="ng-binding">...</td>
         </tr>
         <tr>
             <td><abbr title="Startpunt binnen onderkant buis">BOB startpunt</abbr></td>
-            <td ng-bind="metadadata.fromgrid.bob_start | number: 2" class="ng-binding">...</td>
+            <td ng-bind="activeObject.invert_level_start_point | number: 2" class="ng-binding">...</td>
         </tr>
         <tr>
             <td><abbr title="Eindpunt binnen onderkant buis">BOB eindpunt</abbr></td>
-            <td ng-bind="metadata.fromgrid.bob_end | number: 2" class="ng-binding">...</td>
+            <td ng-bind="activeObject.invert_level_end_point | number: 2" class="ng-binding">...</td>
         </tr>        
         </tbody>
     </table>

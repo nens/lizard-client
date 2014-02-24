@@ -17,25 +17,25 @@
       <tbody>
       <tr>
         <td><abbr title="Maaiveld volgens beheergegevens (JAARTAL)">Maaiveld</abbr></td>
-        <td ng-bind="metadata.fromgrid.surface_level | number: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.surface_level | number: 2" class="ng-binding">...</td>
       </tr>
       <tr>
         <td><abbr title="Werkelijk maaiveld volgens Algemene Hoogtekaart Nederland (JAARTAL)">Maaiveld (ahn2)</abbr></td>
-        <td ng-bind="metadata.fromgrid.surface_level_ahn2 | number: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.surface_level_ahn2 | number: 2" class="ng-binding">...</td>
       </tr>    
       <tr>
         <td>Breedte</td>
-        <td ng-bind="metadata.fromgrid.width | number: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.width | number: 2" class="ng-binding">...</td>
       </tr>        
       <tr>
         <td>Lengte</td>
-        <td ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.length | number: 2" class="ng-binding">...</td>
       </tr>            
     </tbody></table>
     <table class="right">
       <tbody><tr>
         <td>Vorm</td>
-        <td ng-bind="metadata.fromgrid.shape | number: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.shape | number: 2" class="ng-binding">...</td>
       </tr>
       <tr>
         <td>Putbodem</td>
@@ -43,7 +43,7 @@
       </tr>
       <tr>
         <td>Materiaal</td>
-        <td ng-bind="metadata.fromgrid.material | number: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.material | number: 2" class="ng-binding">...</td>
       </tr>        
       </tbody>
     </table>

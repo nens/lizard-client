@@ -15,19 +15,19 @@
         <tbody>
         <tr>
             <td>Naam</td>
-            <td><span ng-bind="metadata.fromgrid.name | number: 2" class="ng-binding">...</span></td>
+            <td><span ng-bind="activeObject.name | number: 2" class="ng-binding">...</span></td>
         </tr>
         <tr>
             <td>Capaciteit</td>
-            <td><span ng-bind="metadata.fromgrid.capacity | number: 2" class="ng-binding">...</span></td>
+            <td><span ng-bind="activeObject.capacity | number: 2" class="ng-binding">...</span></td>
         </tr>
         <tr>
             <td>Aanslagpeil</td>
-            <td ng-bind="metadata.fromgrid.start_level" class="ng-binding">...</td>
+            <td ng-bind="activeObject.start_level" class="ng-binding">...</td>
         </tr>    
         <tr>
             <td>Afslagpeil</td>
-            <td ng-bind="metadata.fromgrid.stop_level" class="ng-binding">...</td>
+            <td ng-bind="activeObject.stop_level" class="ng-binding">...</td>
         </tr>        
         </tbody>
     </table>

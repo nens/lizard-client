@@ -15,11 +15,11 @@
         <tbody>
         <tr>
             <td>Breedte</td>
-            <td><span ng-bind="metadata.fromgrid.width | number: 2" class="ng-binding">...</span></td>
+            <td><span ng-bind="activeObject.width | number: 2" class="ng-binding">...</span></td>
         </tr>
         <tr>
             <td>Overstorthoogte</td>
-            <td><span ng-bind="metadata.fromgrid.crest_level | number: 2" class="ng-binding">...</span></td>
+            <td><span ng-bind="activeObject.crest_level | number: 2" class="ng-binding">...</span></td>
         </tr>    
         </tbody>
     </table>
@@ -30,15 +30,15 @@
             <tbody>
             <tr>
                 <td>Oppervlaktewaterniveau (gemiddeld)</td>
-                <td><span ng-bind="metadata.fromgrid.open_water_level_average" class="ng-binding">...</span></td>
+                <td><span ng-bind="activeObject.open_water_level_average" class="ng-binding">...</span></td>
             </tr>	    
             <tr>
                 <td>Oppervlaktewaterniveau (zomer)</td>
-                <td><span ng-bind="metadata.fromgrid.open_water_level_summer" class="ng-binding">...</span></td>
+                <td><span ng-bind="activeObject.open_water_level_summer" class="ng-binding">...</span></td>
             </tr>
             <tr>
                 <td>Oppervlaktewaterniveau (winter)</td>
-                <td ng-bind="metadata.fromgrid.open_water_level_winter" class="ng-binding">...</td>
+                <td ng-bind="activeObject.open_water_level_winter" class="ng-binding">...</td>
             </tr>   
             </tbody>
       </table>		

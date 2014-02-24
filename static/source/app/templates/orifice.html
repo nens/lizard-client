@@ -15,11 +15,11 @@
     <tbody>
     <tr>
       <td><abbr title="Grootte van de opening">Lengte x Breedte</abbr></td>
-      <td><span ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</span>&nbsp;x&nbsp;<span ng-bind="metadata.fromgrid.length | number: 2" class="ng-binding">...</span></td>
+      <td><span ng-bind="activeObject.length | number: 2" class="ng-binding">...</span>&nbsp;x&nbsp;<span ng-bind="activeObject.length | number: 2" class="ng-binding">...</span></td>
     </tr>
     <tr>
       <td>Vorm</td>
-      <td ng-bind="metadata.fromgrid.shape" class="ng-binding">...</td>
+      <td ng-bind="activeObject.shape" class="ng-binding">...</td>
     </tr>    
     </tbody>
   </table>
@@ -32,15 +32,15 @@
           <tbody>
           <tr>
               <td>Richting</td>
-              <td><span ng-bind="metadata.fromgrid.direction" class="ng-binding">...</span></td>
+              <td><span ng-bind="activeObject.direction" class="ng-binding">...</span></td>
           </tr>
           <tr>
               <td>Negatieve maximale debiet</td>
-              <td ng-bind="metadata.fromgrid.negative_flow_limit" class="ng-binding">...</td>
+              <td ng-bind="activeObject.negative_flow_limit" class="ng-binding">...</td>
           </tr>   
           <tr>
               <td>Positieve maximale debiet</td>
-              <td ng-bind="metadata.fromgrid.positive_flow_limit" class="ng-binding">...</td>
+              <td ng-bind="activeObject.positive_flow_limit" class="ng-binding">...</td>
           </tr>   	     
           </tbody>
       </table>
