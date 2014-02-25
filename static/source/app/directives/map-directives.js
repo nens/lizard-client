@@ -20,9 +20,9 @@
 app.controller('MapDirCtrl', function ($scope, $timeout) {
 
   // UTF bookkeeping
-  var lowestUTFLayer;
-  var utfLayersOrder = [];
-  var utfHit = false;
+  var lowestUTFLayer,
+      utfLayersOrder = [],
+      utfHit = false;
 
   this.initiateLayer = function (layer) {
     if (layer.name === "Simulatie") {
@@ -31,10 +31,13 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       layer.follow_3di = false;
     } else if (layer.type === "TMS" && layer.baselayer) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
-                                       {name: "Background", maxZoom: 20});
+                                       {name: "Background",
+                                        maxZoom: 20});
     } else if (layer.type === "TMS" && !layer.baselayer) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
-                                       {minZoom: layer.min_zoom, maxZoom: 20, zIndex: layer.z_index});
+                                       {minZoom: layer.min_zoom,
+                                        maxZoom: 20,
+                                        zIndex: layer.z_index});
     } else if (layer.type === "WMS") {
       var options = {
         layers: layer.slug,
@@ -64,6 +67,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
           maxZoom: 20,
           order: layer.order
         });
+
         leafletLayer.on('click', function (e) {
           if (e.data) {
             if (e.data.geom) {
@@ -80,7 +84,9 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
             console.log('activeObject', $scope.activeObject);
           } else {
             if (leafletLayer.options.order === lowestUTFLayer) {
-              if (!utfHit || utfLayersOrder.length < 2) { clickInSpace(e.latlng); }
+              if (!utfHit || utfLayersOrder.length < 2) {
+                clickInSpace(e.latlng);
+              }
               utfHit = false;
             }
           }
@@ -112,6 +118,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
    * and longitude of a click
    */
   var removeProm;
+
   var clickInSpace = function (latLng) {
     $timeout.cancel(removeProm);
     if ($scope.mapState.clickLayer) {
