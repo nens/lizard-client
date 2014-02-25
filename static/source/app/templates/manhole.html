@@ -35,15 +35,15 @@
     <table class="right">
       <tbody><tr>
         <td>Vorm</td>
-        <td ng-bind="activeObject.shape | niceNumberOrDash: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.shape" class="ng-binding">...</td>
       </tr>
       <tr>
         <td>Putbodem</td>
-        <td ng-bind="metadadata.fromgrid.bottom_level | niceNumberOrDash: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.bottom_level | niceNumberOrDash: 2" class="ng-binding">...</td>
       </tr>
       <tr>
         <td>Materiaal</td>
-        <td ng-bind="activeObject.material | niceNumberOrDash: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.material" class="ng-binding">...</td>
       </tr>        
       </tbody>
     </table>

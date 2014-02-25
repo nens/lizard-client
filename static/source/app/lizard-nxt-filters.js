@@ -25,7 +25,7 @@ app.filter('niceNumberOrDash', function () {
       if (typeof(input) === 'number') {
         var factor = 1;
         if (decimals) {
-          factor = Number(factor + decimals * '0');
+          factor = Math.pow(10, decimals);
         }
         out = Math.round(input * factor) / factor;
       } else {
