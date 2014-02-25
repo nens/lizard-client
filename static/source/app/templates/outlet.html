@@ -9,13 +9,13 @@
 
     <div class="card-title">
         <img src="images/knoop.png" class="img-circle">
-        <span>Uitlaat met keerklep</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
+        <span>Uitlaat met keerklep</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.title">code</span>)
     </div>
     <table class="fullwidth">
         <tbody>
         <tr>
             <td>Oppervlaktewaterniveau (gemiddeld)</td>
-            <td><span ng-bind="activeObject.open_water_level_average | number: 2" class="ng-binding">...</span></td>
+            <td><span ng-bind="activeObject.open_water_level_average | niceNumberOrDash: 2" class="ng-binding">...</span></td>
         </tr>
        </tbody>
     </table>

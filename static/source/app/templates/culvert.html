@@ -9,21 +9,21 @@
 
   <div class="card-title">
     <img src="/static/distjs/images/knoop.png" class="img-circle">
-    <span>Duiker</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
+    <span>Duiker</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
   </div>
   <table class="fullwidth">
     <tbody>
     <tr>
       <td>Type</td>
-      <td><span ng-bind="activeObject.type | number: 2" class="ng-binding">...</span></td>
+      <td><span ng-bind="activeObject.type | niceNumberOrDash: 2" class="ng-binding">...</span></td>
     </tr>  
     <tr>
       <td>Lengte</td>
-      <td><span ng-bind="activeObject.length | number: 2" class="ng-binding">...</span></td>
+      <td><span ng-bind="activeObject.length | niceNumberOrDash: 2" class="ng-binding">...</span></td>
     </tr>
     <tr>
       <td>Breedte</td>
-      <td><span ng-bind="activeObject.width | number: 2" class="ng-binding">...</span></td>
+      <td><span ng-bind="activeObject.width | niceNumberOrDash: 2" class="ng-binding">...</span></td>
     </tr>    
     </tbody>
   </table>

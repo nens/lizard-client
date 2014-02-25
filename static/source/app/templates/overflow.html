@@ -9,17 +9,17 @@
 
     <div class="card-title">
         <img src="images/knoop.png" class="img-circle">
-        <span>Overstort</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
+        <span>Overstort</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.title">...</span>)
     </div>
     <table class="fullwidth">
         <tbody>
         <tr>
             <td>Breedte</td>
-            <td><span ng-bind="activeObject.width | number: 2" class="ng-binding">...</span></td>
+            <td><span ng-bind="activeObject.width | niceNumberOrDash: 2" class="ng-binding">...</span></td>
         </tr>
         <tr>
             <td>Overstorthoogte</td>
-            <td><span ng-bind="activeObject.crest_level | number: 2" class="ng-binding">...</span></td>
+            <td><span ng-bind="activeObject.crest_level | niceNumberOrDash: 2" class="ng-binding">...</span></td>
         </tr>    
         </tbody>
     </table>

@@ -9,17 +9,17 @@
 
     <div class="card-title">
         <img src="/static/distjs/images/gemaal.png" class="img-circle">
-        <span>Gemaal</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
+        <span>Gemaal</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code"></span>)
     </div>
     <table class="left">
         <tbody>
         <tr>
             <td>Naam</td>
-            <td><span ng-bind="activeObject.name | number: 2" class="ng-binding">...</span></td>
+            <td><span ng-bind="activeObject.name | niceNumberOrDash: 2" class="ng-binding">...</span></td>
         </tr>
         <tr>
             <td>Capaciteit</td>
-            <td><span ng-bind="activeObject.capacity | number: 2" class="ng-binding">...</span></td>
+            <td><span ng-bind="activeObject.capacity | niceNumberOrDash: 2" class="ng-binding">...</span></td>
         </tr>
         <tr>
             <td>Aanslagpeil</td>

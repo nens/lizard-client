@@ -11,39 +11,39 @@
 
     <div class="card-title">
       <img src="/static/distjs/images/knoop.png" class="img-circle">
-      <span>Put</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
+      <span>Put</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
     </div>
     <table class="left">
       <tbody>
       <tr>
         <td><abbr title="Maaiveld volgens beheergegevens (JAARTAL)">Maaiveld</abbr></td>
-        <td ng-bind="activeObject.surface_level | number: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.surface_level | niceNumberOrDash: 2" class="ng-binding">...</td>
       </tr>
       <tr>
         <td><abbr title="Werkelijk maaiveld volgens Algemene Hoogtekaart Nederland (JAARTAL)">Maaiveld (ahn2)</abbr></td>
-        <td ng-bind="activeObject.surface_level_ahn2 | number: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.surface_level_ahn2 | niceNumberOrDash: 2" class="ng-binding">...</td>
       </tr>    
       <tr>
         <td>Breedte</td>
-        <td ng-bind="activeObject.width | number: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.width | niceNumberOrDash: 2" class="ng-binding">...</td>
       </tr>        
       <tr>
         <td>Lengte</td>
-        <td ng-bind="activeObject.length | number: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.length | niceNumberOrDash: 2" class="ng-binding">...</td>
       </tr>            
     </tbody></table>
     <table class="right">
       <tbody><tr>
         <td>Vorm</td>
-        <td ng-bind="activeObject.shape | number: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.shape | niceNumberOrDash: 2" class="ng-binding">...</td>
       </tr>
       <tr>
         <td>Putbodem</td>
-        <td ng-bind="metadadata.fromgrid.bottom_level | number: 2" class="ng-binding">...</td>
+        <td ng-bind="metadadata.fromgrid.bottom_level | niceNumberOrDash: 2" class="ng-binding">...</td>
       </tr>
       <tr>
         <td>Materiaal</td>
-        <td ng-bind="activeObject.material | number: 2" class="ng-binding">...</td>
+        <td ng-bind="activeObject.material | niceNumberOrDash: 2" class="ng-binding">...</td>
       </tr>        
       </tbody>
     </table>

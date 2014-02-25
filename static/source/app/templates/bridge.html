@@ -7,8 +7,8 @@
     </div>
 
     <div class="card-title">
-        <img src="/static/distjs/images/weir.png" class="img-circle">
-        <span>Stuw</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
+        <img src="/static/distjs/images/bridge.png" class="img-circle">
+        <span>Brug</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code"></span>)
     </div>
     <table class="fullwidth">
         <tbody>
@@ -18,12 +18,16 @@
         </tr>  
         <tr>
             <td>Breedte</td>
-            <td><span ng-bind="activeObject.breedte | niceNumberOrDash: 2" class="ng-binding">...</span></td>
+            <td><span ng-bind="activeObject.width | niceNumberOrDash: 2" class="ng-binding">...</span></td>
+        </tr>
+        <tr>
+            <td>lengte</td>
+            <td><span ng-bind="activeObject.length | niceNumberOrDash: 2" class="ng-binding">...</span></td>
         </tr>
         <tr>
             <td>Hoogte</td>
             <td><span ng-bind="activeObject.height | niceNumberOrDash: 2" class="ng-binding">...</span></td>
-        </tr>    
+        </tr>
         </tbody>
     </table>
 
