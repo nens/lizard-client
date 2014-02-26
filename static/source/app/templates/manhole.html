@@ -13,7 +13,7 @@
       <img src="/static/distjs/images/knoop.png" class="img-circle">
       <span>Put</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
     </div>
-    <table class="left">
+    <table class="fullwidth">
       <tbody>
       <tr>
         <td><abbr title="Maaiveld volgens beheergegevens (JAARTAL)">Maaiveld</abbr></td>
@@ -32,26 +32,28 @@
         <td ng-bind="activeObject.length | niceNumberOrDash: 2" class="ng-binding">...</td>
       </tr>            
     </tbody></table>
-    <table class="right">
-      <tbody><tr>
-        <td>Vorm</td>
-        <td ng-bind="activeObject.shape" class="ng-binding">...</td>
-      </tr>
-      <tr>
-        <td>Putbodem</td>
-        <td ng-bind="activeObject.bottom_level | niceNumberOrDash: 2" class="ng-binding">...</td>
-      </tr>
-      <tr>
-        <td>Materiaal</td>
-        <td ng-bind="activeObject.material" class="ng-binding">...</td>
-      </tr>        
-      </tbody>
-    </table>
 
     <hr style="clear:both;">
 
     <details>
       <summary>Meer details</summary>
+
+      <table class="fullwidth">
+        <tbody><tr>
+          <td>Vorm</td>
+          <td ng-bind="activeObject.shape" class="ng-binding">...</td>
+        </tr>
+        <tr>
+          <td>Putbodem</td>
+          <td ng-bind="activeObject.bottom_level | niceNumberOrDash: 2" class="ng-binding">...</td>
+        </tr>
+        <tr>
+          <td>Materiaal</td>
+          <td ng-bind="activeObject.material" class="ng-binding">...</td>
+        </tr>        
+        </tbody>
+      </table>
+
       <a href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&cbp=11,90,0,0,40">
         <img src="http://maps.googleapis.com/maps/api/streetview?pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
       </a>
