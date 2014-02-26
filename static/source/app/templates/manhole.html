@@ -18,18 +18,22 @@
       <tr>
         <td><abbr title="Maaiveld volgens beheergegevens (JAARTAL)">Maaiveld</abbr></td>
         <td ng-bind="activeObject.surface_level | niceNumberOrDash: 2" class="ng-binding">...</td>
+        <td>mNAP</td>
       </tr>
       <tr>
         <td><abbr title="Werkelijk maaiveld volgens Algemene Hoogtekaart Nederland (JAARTAL)">Maaiveld (ahn2)</abbr></td>
         <td ng-bind="activeObject.surface_level_ahn2 | niceNumberOrDash: 2" class="ng-binding">...</td>
+        <td>mNAP</td>
       </tr>    
       <tr>
         <td>Breedte</td>
         <td ng-bind="activeObject.width | niceNumberOrDash: 2" class="ng-binding">...</td>
+        <td>m</td>
       </tr>        
       <tr>
         <td>Lengte</td>
         <td ng-bind="activeObject.length | niceNumberOrDash: 2" class="ng-binding">...</td>
+        <td>m</td>
       </tr>            
     </tbody></table>
 
@@ -40,16 +44,19 @@
 
       <table class="fullwidth">
         <tbody><tr>
-          <td>Vorm</td>
+          <td style="width:360px;">Vorm</td>
           <td ng-bind="activeObject.shape" class="ng-binding">...</td>
+          <td>&nbsp;</td>
         </tr>
         <tr>
-          <td>Putbodem</td>
+          <td style="width:360px;">Putbodem</td>
           <td ng-bind="activeObject.bottom_level | niceNumberOrDash: 2" class="ng-binding">...</td>
+          <td>mNAP</td>
         </tr>
         <tr>
-          <td>Materiaal</td>
+          <td style="width:360px;">Materiaal</td>
           <td ng-bind="activeObject.material" class="ng-binding">...</td>
+          <td>&nbsp;</td>
         </tr>        
         </tbody>
       </table>
