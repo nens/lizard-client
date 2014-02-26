@@ -4,10 +4,10 @@ angular.module("omnibox", ["templates-main"])
   .directive("omnibox", ["$compile", "$templateCache",
     function ($compile, $templateCache) {
 
-    var getTemplate = function (contentType) {
-      if (contentType === undefined) { 
-        contentType = 'empty';
-    }
+      var getTemplate = function (contentType) {
+        if (contentType === undefined) { 
+          contentType = 'empty';
+      }
 
       var template,
       templateUrl = 'templates/' + contentType + '.html';

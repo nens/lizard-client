@@ -424,9 +424,10 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
      */
     scope.map.on('moveend', function () {
       scope.holdRightThere = true;
+      var COORD_PRECISION = 5;
       var newHash = [
-        scope.map.getCenter().lat.toFixed(5),
-        scope.map.getCenter().lng.toFixed(5),
+        scope.map.getCenter().lat.toFixed(COORD_PRECISION),
+        scope.map.getCenter().lng.toFixed(COORD_PRECISION),
         scope.map.getZoom()
       ].join(',');
       $location.hash(newHash);
