@@ -11,40 +11,53 @@
     <img src="/static/distjs/images/knoop.png" class="img-circle">
     <span>Duiker</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
   </div>
-  <table class="fullwidth">
-    <tbody>
-    <tr>
-      <td>Type</td>
-      <td><span ng-bind="activeObject.type" class="ng-binding">...</span></td>
-    </tr>  
-    <tr>
-      <td>Lengte</td>
-      <td><span ng-bind="activeObject.length | niceNumberOrDash: 2" class="ng-binding">...</span></td>
-    </tr>
-    <tr>
-      <td>Breedte</td>
-      <td><span ng-bind="activeObject.width | niceNumberOrDash: 2" class="ng-binding">...</span></td>
-    </tr>    
-    </tbody>
-  </table>
-  
-  <details>
-    <summary>Meer details</summary>
-    <table>
+
+    <table class="fullwidth">
       <tbody>
       <tr>
-        <td>Richting</td>
-        <td><span ng-bind="activeObject.allowed_flow_direction" class="ng-binding">...</span></td>
-      </tr>     
-      <tr>
-        <td><abbr title="Binnen Onderkant Buis (bovenstrooms)">BOB bovenstrooms</abbr></td>
-        <td><span ng-bind="activeObject.ground_level_upstream" class="ng-binding">...</span></td>
+        <td>Type</td>
+        <td>
+          <span ng-bind="activeObject.type" class="ng-binding"></span>
+        </td>
       </tr>
       <tr>
-        <td><abbr title="Binnen Onderkant Buis (benedenstrooms)">BOB benedenstrooms</abbr></td>
-        <td><span ng-bind="activeObject.ground_level_downstream" class="ng-binding">...</span></td>
-      </tr>      
-    </tbody>
-  </table>    
-  </details>
+        <td>Lengte</td>
+        <td>
+          <span ng-bind="activeObject.length | niceNumberOrDash: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-if="activeObject.surface_level_ahn2"> m
+        </td>  
+      </tr>    
+      <tr>
+        <td>Breedte</td>
+        <td>
+          <span ng-bind="activeObject.width | niceNumberOrDash: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-if="activeObject.width"> m</span>
+        </td> 
+      </tr>               
+    </tbody></table>
+
+
+    <div class="card-details" ng-click="activeObject.details = !activeObject.details">
+      <i class="fa fa-caret-right icon-ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="activeObject.details"> Minder details</span>
+    </div>
+    <div class="hidden-details" ng-class="{'unhidden-details': activeObject.details}">
+      <table class="fullwidth">
+        <tbody><tr>
+          <td>Richting</td>
+          <td><span ng-bind="activeObject.allowed_flow_direction" class="ng-binding">...</span></td>
+        </tr>
+        <tr>
+          <td><abbr title="Binnen Onderkant Buis (bovenstrooms)">BOB bovenstrooms</abbr></td>
+          <td><span ng-bind="activeObject.bed_level_upstream" class="ng-binding">...</span></td>
+        </tr>
+        <tr>
+          <td><abbr title="Binnen Onderkant Buis (benedenstrooms)">BOB benedenstrooms</abbr></td>
+          <td><span ng-bind="activeObject.bed_level_downstream" class="ng-binding">...</span></td>
+        </tr>
+        </tr>        
+        </tbody>
+      </table>
+
+    </div>  
+
 </div>
