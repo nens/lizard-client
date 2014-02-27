@@ -34,3 +34,31 @@ app.filter('niceNumberOrDash', function () {
       return out;
     };
   });
+
+app.filter('lookupManholeShape', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case 0.0:
+      out = 'vierkant';
+      break;
+    case 1.0:
+      out = 'rond';
+      break;
+    case 2.0:
+      out = 'rechthoekig';
+      break;
+    default:
+      out = '...';
+    }
+    return out;
+  };
+});
+
+app.filter('lookupManholeMaterial', function () {
+  return function (input) {
+    var out;
+    out = '...';
+    return out;
+  };
+});
