@@ -471,7 +471,8 @@ app.controller("MasterCtrl",
   // };
 
   $scope.activeObject = {
-    changed: true
+    changed: true,
+    details: false
   };
 
   $scope.canceler = $q.defer();

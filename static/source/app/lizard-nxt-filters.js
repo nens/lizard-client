@@ -29,7 +29,7 @@ app.filter('niceNumberOrDash', function () {
         }
         out = Math.round(input * factor) / factor;
       } else {
-        out = '-';
+        out = '...';
       }
       return out;
     };
