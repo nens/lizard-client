@@ -7,27 +7,27 @@ services.service("CabinetService", ["Restangular",
   var layers = window.layers;
   var baselayers = window.baseLayers;
   var eventTypes = [
-            {
-            "name": "Twitter",
-            "event_count": 4
-            },
-            {
-            "name": "Meldingen",
-            "event_count": 4
-            },
-            {
-            "name": "Alarmen",
-            "event_count": 4
-            },
-            {
-            "name": "Aardbevingen",
-            "event_count": 4
-            },
-            {
-              "name": "Gebouwen",
-              "event_count": 4
-            }
-          ];
+    {
+      "name": "Twitter",
+      "event_count": 4
+    },
+    {
+      "name": "Meldingen",
+      "event_count": 4
+    },
+    {
+      "name": "Alarmen",
+      "event_count": 4
+    },
+    {
+      "name": "Aardbevingen",
+      "event_count": 4
+    },
+    {
+      "name": "Gebouwen",
+      "event_count": 4
+    }
+  ];
 
   var termSearchResource,
       bboxSearchResource,

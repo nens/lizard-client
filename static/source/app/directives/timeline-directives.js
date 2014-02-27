@@ -102,7 +102,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
     this.drawAxes = function (graph, xAxis) {
       graph.svg.select('g').select('g')
         .call(graph.xAxis);
-      };
+    };
 
     // this.drawBars = function (svg, x, y, data, options) {
     //   var xfunction = function (d) { return x.scale(d[options.xKey]) - 0.5; };
