@@ -333,9 +333,10 @@ app.directive('surfacelayer', function () {
        *
        */
       scope.$watch('tools.active', function () {
+        var pipeLayer = {};
         if (scope.tools.active === "pipe_surface") {
           mapCtrl.addLayer(surfaceLayer);
-          var pipeLayer = getLayer('grid', 'pipe');
+          pipeLayer = getLayer('grid', 'pipe');
           if (pipeLayer) {
             // icon active
             angular.element(".surface-info").addClass("icon-active");
@@ -343,7 +344,7 @@ app.directive('surfacelayer', function () {
             pipeLayer.on('mouseout', highlightSurface);
           }
         } else {
-          var pipeLayer = getLayer('grid', 'pipe');
+          pipeLayer = getLayer('grid', 'pipe');
           if (pipeLayer) {
             // icon inactive
             angular.element(".surface-info").removeClass("icon-active");

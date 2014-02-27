@@ -39,10 +39,10 @@ app.directive('rasterprofile', function () {
          * Draw a line and remove existing line (if exists).
          * borrow from 3di:
          * https://github.com/nens/threedi-server/blob/master/threedi_server/static/js/threedi-ng.js
-         */ 
+         */
         var drawLine = function (startpoint, endpoint) {
           var pointList = [startpoint, endpoint];
-          scope.line_marker.setLatLngs(pointList);         
+          scope.line_marker.setLatLngs(pointList);
           scope.line_marker.options.dashArray = null;
           scope.line_marker._updateStyle();
           scope.first_click = undefined;
@@ -67,7 +67,7 @@ app.directive('rasterprofile', function () {
                 opacity: 1,
                 smoothFactor: 1,
                 dashArray: "5, 5"
-              });  
+              });
             } else {
               updateLine(e);
             }

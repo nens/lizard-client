@@ -255,7 +255,7 @@ var NxtD3 = function (svg, options) {
       .data(data);
 
     var barwidth;
-    nxtd3.charts[id].xdatafn = function (d) { 
+    nxtd3.charts[id].xdatafn = function (d) {
       barwidth = (nxtd3.x.scale(d[1] + 300000) - nxtd3.x.scale(d[1]));
       return nxtd3.x.scale(d[1]);
     };
@@ -264,7 +264,7 @@ var NxtD3 = function (svg, options) {
       .transition()
       .delay(0)
       .duration(0)
-      .attr("x", function (d) { 
+      .attr("x", function (d) {
         barwidth = (nxtd3.x.scale(d[1] + 300000) - nxtd3.x.scale(d[1]));
         return nxtd3.x.scale(d[1]) - barwidth;
       })
@@ -290,22 +290,22 @@ var NxtD3 = function (svg, options) {
   };
 
   nxtd3.updateBars = function (id, data) {
-    var bars = nxtd3.svg.select("g").selectAll(".bar_" + id)
+    var bars = nxtd3.svg.select("g").selectAll(".bar_" + id);
     var barwidth;
-    nxtd3.charts[id].xdatafn = function (d) { 
+    nxtd3.charts[id].xdatafn = function (d) {
       // barwidth = (nxtd3.x.scale(d[1] + 30000) - nxtd3.x.scale(d[1]))
       return nxtd3.x.scale(d[1]);
     };
 
     var that = nxtd3.charts[id];
     bars.attr("class", "bar bar_" + id)
-      .attr("x", function (d) { 
+      .attr("x", function (d) {
       barwidth = (nxtd3.x.scale(d[1] + 300000) - nxtd3.x.scale(d[1]));
       return nxtd3.x.scale(d[1]);
     })
       // .attr("transform", "")
-      .attr("width", function () { 
-        if (barwidth > 0.5){
+      .attr("width", function () {
+        if (barwidth > 0.5) {
           return barwidth;
         } else { return 1; }
       });
