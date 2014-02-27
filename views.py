@@ -16,7 +16,7 @@ from django.template import RequestContext
 from django.utils.safestring import mark_safe
 from rest_framework.renderers import JSONRenderer
 
-from hydra_core.models import AdministrativeBoundary, Layer, ThreediInstance
+from hydra_core.models import Layer, ThreediInstance
 from lizard_nxt.server.serializers import spatial
 from lizard_nxt.server.middleware import ORGANISATION_IDS
 from lizard_auth_client.models import Organisation
@@ -31,7 +31,7 @@ def index(request):
         Layer.objects.filter(baselayer=True)).data
     layers = spatial.LayerSerializer(
         Layer.objects.filter(baselayer=False)).data
-        
+
     # Define data bounds based on the (multiple) administrative bounds of all
     # the user's organisations. The data bounding box is the rectangle around
     # the data bounds.
@@ -46,27 +46,31 @@ def index(request):
                 all_boundaries.append(polygon)
         if len(boundaries) > 0:
             (west, south, east, north) = MultiPolygon(boundaries).extent
-            data_bounds[org.name] = {'north': north, 'east': east, 'south': south, 'west': west}
+            data_bounds[org.name] = {'north': north, 'east': east,
+                                     'south': south, 'west': west}
     if len(all_boundaries) > 0:
         (west, south, east, north) = MultiPolygon(all_boundaries).extent
-        data_bounds['all'] = {'north': north, 'east': east, 'south': south, 'west': west}
+        data_bounds['all'] = {'north': north, 'east': east,
+                              'south': south, 'west': west}
     else:
         # The Netherlands
-        data_bounds['all'] = {'north': 53.63, 'east': 7.58, 'south': 50.57, 'west': 3.04}
+        data_bounds['all'] = {'north': 53.63, 'east': 7.58,
+                              'south': 50.57, 'west': 3.04}
 
     context = {
         'random_string': md5(str(random.random())).hexdigest(),
         'strap_base_layers': _bootstrap(base_layers),
         'strap_layers': _bootstrap(layers),
         'strap_data_bounds': _bootstrap(data_bounds),
-        'threedi_instance': ThreediInstance.objects.all()[0],  # For now, just assign a server 
+        'threedi_instance': ThreediInstance.objects.all()[0],
+        # For now, just assign a server
     }
     if getattr(settings, "DEV_TEMPLATE", False):
         return render_to_response('client/debug.html', context,
-                              context_instance=RequestContext(request))
+                                  context_instance=RequestContext(request))
     else:
         return render_to_response('client/base.html', context,
-                              context_instance=RequestContext(request))
+                                  context_instance=RequestContext(request))
 
 
 def search(request):
