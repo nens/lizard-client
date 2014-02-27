@@ -292,17 +292,21 @@ angular.module('graph')
 
     scope.$watch('data', function () {
       if (scope.data !== undefined && graphCtrl.callChart !== undefined) {
+        var ymin = 0.0,
+            ymax = 0.0,
+            xmin = 0.0,
+            xmax = 0.0;
         if (attrs.ymax) {
-          var ymax = parseFloat(attrs.ymax);
+          ymax = parseFloat(attrs.ymax);
         }
         if (attrs.ymin) {
-          var ymin = parseFloat(attrs.ymin);
+          ymin = parseFloat(attrs.ymin);
         }
         if (attrs.xmax) {
-          var xmax = parseFloat(attrs.xmax);
+          xmax = parseFloat(attrs.xmax);
         }
         if (attrs.xmin) {
-          var xmin = parseFloat(attrs.xmin);
+          xmin = parseFloat(attrs.xmin);
         }
         var legend = {
           title: scope.title,
@@ -776,13 +780,19 @@ angular.module('graph')
 
 
        // check if data is time based or distance based
+      var chartType = {},
+          make_x_axis = {},
+          make_y_axis = {},
+          xAxis = {},
+          yAxis = {},
+          line2 = {};
       if (data[0].hasOwnProperty('date')) {
         x = d3.time.scale()
           .domain([xmin, xmax])
           .range([0, width]);
 
-        var chartType = graphCtrl.defineChartType(y);
-        var line2 =  d3.svg.line()
+        chartType = graphCtrl.defineChartType(y);
+        line2 =  d3.svg.line()
             .y(function (d) {
               return y(d.value2);
             })
@@ -803,7 +813,7 @@ angular.module('graph')
             }
           });
 
-        var make_x_axis = function () {
+        make_x_axis = function () {
           return d3.svg.axis()
             .scale(x)
             .orient("bottom")
@@ -811,7 +821,7 @@ angular.module('graph')
             .ticks(5);
         };
 
-        var xAxis = d3.svg.axis()
+        xAxis = d3.svg.axis()
           .scale(x)
           .orient("bottom")
           .ticks(5);
@@ -827,7 +837,7 @@ angular.module('graph')
           return x(d.distance);
         });
 
-        var make_x_axis = function () {
+        make_x_axis = function () {
           return d3.svg.axis()
             .scale(x)
             .orient("bottom")
@@ -835,7 +845,7 @@ angular.module('graph')
             .ticks(5);
         };
 
-        var xAxis = d3.svg.axis()
+        xAxis = d3.svg.axis()
           .scale(x)
           .orient("bottom")
           .ticks(5);
@@ -867,7 +877,7 @@ angular.module('graph')
       svg.call(zoom);
 
       //TODO: Ticks hardcoded, make variable
-      var make_y_axis = function () {
+      make_y_axis = function () {
         return d3.svg.axis()
           .scale(y)
           .orient("left")
@@ -879,7 +889,7 @@ angular.module('graph')
         .attr("transform", "translate(0, " + height + ")")
         .call(xAxis);
 
-      var yAxis = d3.svg.axis()
+      yAxis = d3.svg.axis()
         .scale(y)
         .orient("left")
         .ticks(5);
@@ -937,22 +947,26 @@ angular.module('graph')
         .datum(data)
         .attr("class", "line2")
         .style("stroke", "crimson")
-        .attr("d", line2);   
+        .attr("d", line2);
     };
 
     scope.$watch('data', function () {
       if (scope.data !== undefined) {
+        var ymin = 0.0,
+            ymax = 0.0,
+            xmin = 0.0,
+            xmax = 0.0;
         if (attrs.ymax) {
-          var ymax = parseFloat(attrs.ymax);
+          ymax = parseFloat(attrs.ymax);
         }
         if (attrs.ymin) {
-          var ymin = parseFloat(attrs.ymin);
+          ymin = parseFloat(attrs.ymin);
         }
         if (attrs.xmax) {
-          var xmax = parseFloat(attrs.xmax);
+          xmax = parseFloat(attrs.xmax);
         }
         if (attrs.xmin) {
-          var xmin = parseFloat(attrs.xmin);
+          xmin = parseFloat(attrs.xmin);
         }
         var legend = {
           title: scope.title,
@@ -1016,13 +1030,18 @@ angular.module('graph')
           .range([height, 0]);
 
 
-     // check if data is time based or distance based
+      // check if data is time based or distance based
+      var line2 = {},
+          line = {},
+          make_x_axis = {},
+          make_y_axis = {},
+          xAxis = {};
       if (data[0].hasOwnProperty('date')) {
         x = d3.time.scale()
           .domain([xmin, xmax])
           .range([0, width]);
 
-        var line = d3.svg.line()
+        line = d3.svg.line()
               .y(function (d) {
                 return y(d.value);
               })
@@ -1035,12 +1054,12 @@ angular.module('graph')
             });
         line.defined(function (d) { return !isNaN(d.value); });
 
-        var line2 = d3.svg.line()
+        line2 = d3.svg.line()
               .y(function (d) {
                 return y1(d.value2);
               })
               .x(function (d) {
-              if (legend.type === "kpi"){
+              if (legend.type === "kpi") {
                 return x(Date.parse(d.date2));
               } else {
                 return x(d.date2);
@@ -1048,7 +1067,7 @@ angular.module('graph')
             });
         line2.defined(function (d) { return !isNaN(d.value2); });
 
-        var make_x_axis = function () {
+        make_x_axis = function () {
           return d3.svg.axis()
             .scale(x)
             .orient("bottom")
@@ -1056,7 +1075,7 @@ angular.module('graph')
             .ticks(5);
         };
 
-        var xAxis = d3.svg.axis()
+        xAxis = d3.svg.axis()
           .scale(x)
           .orient("bottom")
           .ticks(5);
@@ -1072,7 +1091,7 @@ angular.module('graph')
           return x(d.distance);
         });
 
-        var make_x_axis = function () {
+        make_x_axis = function () {
           return d3.svg.axis()
             .scale(x)
             .orient("bottom")
@@ -1080,7 +1099,7 @@ angular.module('graph')
             .ticks(5);
         };
 
-        var xAxis = d3.svg.axis()
+        xAxis = d3.svg.axis()
           .scale(x)
           .orient("bottom")
           .ticks(5);
@@ -1109,7 +1128,7 @@ angular.module('graph')
       svg.call(zoom);
 
       //TODO: Ticks hardcoded, make variable
-      var make_y_axis = function (y) {
+      make_y_axis = function (y) {
         return d3.svg.axis()
           .scale(y)
           .orient("left")
@@ -1180,17 +1199,21 @@ angular.module('graph')
 
     scope.$watch('data', function () {
       if (scope.data !== undefined) {
+        var ymin = 0.0,
+            ymax = 0.0,
+            xmin = 0.0,
+            xmax = 0.0;
         if (attrs.ymax) {
-          var ymax = parseFloat(attrs.ymax);
+          ymax = parseFloat(attrs.ymax);
         }
         if (attrs.ymin) {
-          var ymin = parseFloat(attrs.ymin);
+          ymin = parseFloat(attrs.ymin);
         }
         if (attrs.xmax) {
-          var xmax = parseFloat(attrs.xmax);
+          xmax = parseFloat(attrs.xmax);
         }
-        if (attrs.xmin){
-          var xmin = parseFloat(attrs.xmin);
+        if (attrs.xmin) {
+          xmin = parseFloat(attrs.xmin);
         }
         var legend = {
           title: scope.title,

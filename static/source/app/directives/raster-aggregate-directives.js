@@ -26,13 +26,18 @@ app.directive('rasterAggregate', function ($q) {
         raster = 'elevation';
       }
     
-    var geom_wkt = "POLYGON(("
-            + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
-            + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
-            + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
-            + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
-            + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
-            + "))"; 
+      var geom_wkt = "POLYGON(("
+              + scope.mapState.bounds.getWest() + " "
+              + scope.mapState.bounds.getSouth() + ", "
+              + scope.mapState.bounds.getEast() + " "
+              + scope.mapState.bounds.getSouth() + ", "
+              + scope.mapState.bounds.getEast() + " "
+              + scope.mapState.bounds.getNorth() + ", "
+              + scope.mapState.bounds.getWest() + " "
+              + scope.mapState.bounds.getNorth() + ", "
+              + scope.mapState.bounds.getWest() + " "
+              + scope.mapState.bounds.getSouth()
+              + "))";
       scope.mapState.timeout.resolve();
       scope.mapState.timeout = $q.defer();
       scope.getRasterData(raster, geom_wkt, srs, agg, true);

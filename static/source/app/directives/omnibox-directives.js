@@ -5,9 +5,9 @@ angular.module("omnibox", ["templates-main"])
     function ($compile, $templateCache) {
 
     var getTemplate = function (contentType) {
-      if (contentType === undefined) { 
+      if (contentType === undefined) {
         contentType = 'empty';
-    }
+      }
 
       var template,
       templateUrl = 'templates/' + contentType + '.html';
