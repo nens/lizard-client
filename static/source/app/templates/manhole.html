@@ -49,10 +49,9 @@
       </tr>            
     </tbody></table>
 
-    <hr style="clear:both;">
-
-    <span ng-if="!activeObject.details" ng-click="activeObject.details = !activeObject.details">Meer details</span>
-    <span ng-if="activeObject.details" ng-click="activeObject.details = !activeObject.details">Minder details</span>
+    <div class="card-details" ng-click="activeObject.details = !activeObject.details">
+      <i class="fa fa-caret-right icon-ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="activeObject.details"> Minder details</span>
+    </div>
     <div class="hidden-details" ng-class="{'unhidden-details': activeObject.details}">
       <table class="fullwidth">
         <tbody><tr>
@@ -83,5 +82,4 @@
         <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
       </a>
     </detail>  
-
 </div>

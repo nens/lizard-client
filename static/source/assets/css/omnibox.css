@@ -193,10 +193,11 @@
     width: 100%;
     margin-left: 37px;
     color: #777;
+    margin-bottom: 16px;
 }
 
 .card table.fullwidth tr td{
-    width:250px;
+    width: 320px;
 }
 
 .card .actions {
@@ -223,49 +224,6 @@
 .card .timeseries{
     width: 300px;
 }
-
-.card details table {
-    margin-left: 0 !important;
-}
-
-@-webkit-keyframes fadeIn {
-    0% {
-        opacity: 0.1;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-.card details[open] table {
-    -webkit-animation-name: fadeIn;
-    -moz-animation-name: fadeIn;
-    -webkit-animation-duration: 0.5s;
-    -moz-animation-duration: 0.5s;
-}    
-
-.card details{
-    cursor: pointer;
-    line-height: 15px;
-    font-size: 0.9em;
-    list-style: none;
-    width: 90%;
-    margin-left: 37px;
-    margin-top: 5px;
-    color: #777;        
-}
-
-.card hr {
-    margin: 0;
-    padding: 0;
-}
-
-summary, details { display: block; }
-details { visibility: hidden; }
-details > summary { visibility: visible; }
-summary.no-det:before { content: "►"; padding-right: 5px; font-size: 1.2em; transition: .6s linear; }
-details[open] summary.no-det:before { transform: rotate(90deg); }
-details[open] { visibility: visible; }
 
 .card .nxt-box-overflow {
     overflow: auto;
@@ -529,4 +487,32 @@ details[open] { visibility: visible; }
 #box-awesome-results p {
 	margin-top: 10px;
 	margin-left: 20px;
+}
+
+.card-details {
+    cursor: pointer;    
+}
+
+.hidden-details {
+    opacity: 0;
+    max-height: 0;
+    -webkit-transition: .3s ease;
+}
+
+.unhidden-details {
+    opacity: 1;
+    max-height: 220px;
+}
+
+.icon-ready-to-rotate {
+    -webkit-transition: all .3s ease;
+}
+
+.rotate-ninety {
+    -webkit-transform: rotate(90deg);   
+}
+
+.card-details{
+    color: #777;
+    font-size: 13px;
 }
