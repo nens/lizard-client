@@ -2,7 +2,7 @@
       <div id="timeline-ribbon" class="ribbon">
     <div class="arrow arrow-left" ng-click="toggleTimeline()" title="{% trans 'Map layers' %}">
     </div>
-    <div class="arrow arrow-right" ng-click="toggleTimeline()" title="{% trans 'Map layers' %}"><i class="icon-time ribbon-icon"></i>
+    <div class="arrow arrow-right" ng-click="toggleTimeline()" title="{% trans 'Map layers' %}"><i class="fa fa-clock-o ribbon-icon-timeline"></i>
     </div>
   </div>
 
@@ -13,13 +13,13 @@
   <div class="bovenbalk">
     <div class="btn-group" >
       <a href="#" ng-click="timeState.enableAnimation()" class="extra-padding timeline-button">
-        <i ng-class="{'icon-fixed-width icon-crop': !timeState.animation.enabled, 'icon-fixed-width icon-resize-horizontal': timeState.animation.enabled }"></i></a>
+        <i ng-class="{'fa-fw fa fa-crop': !timeState.animation.enabled, 'fa-fw fa fa-arrows-h': timeState.animation.enabled }"></i></a>
       <a href="#" ng-click="timeState.playPauseAnimation()" class="extra-padding timeline-button" ng-class="{'active': timeState.animation.playing}">
-        <i ng-class="{'icon-fixed-width icon-play': !timeState.animation.playing, 'icon-fixed-width icon-pause active': timeState.animation.playing }"></i></a>
+        <i ng-class="{'fa-fw fa fa-play': !timeState.animation.playing, 'fa-fw fa fa-pause active': timeState.animation.playing }"></i></a>
       <a href="#" ng-mousedown="timeState.animation.toggleAnimateFastForward(true)" ng-mouseup="timeState.animation.toggleAnimateFastForward(false)" class="extra-padding timeline-button timeline-button-active" ng-class="{'active': timeState.animation.playing}">
-        <i class="icon-fixed-width icon-forward"></i></a>
+        <i class="fa-fw fa fa-forward"></i></a>
       <a href="#" ng-mousedown="timeState.animation.stepBack()" class="extra-padding timeline-button" ng-class="{'active': timeState.animation.playing}">
-        <i class="icon-step-backward"></i></a>
+        <i class="fa fa-step-backward"></i></a>
     </div>
     <span class="nxt-font"> | <% timeState.start | date:'d MMM y' %> - <% timeState.end | date:'d MMM y' %> ( <% timeState.at | date:'d MMM y - HH:mm' %> )</span>        
   </div>
