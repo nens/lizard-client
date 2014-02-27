@@ -4,6 +4,7 @@ angular.module("omnibox", ["templates-main"])
   .directive("omnibox", ["$compile", "$templateCache",
     function ($compile, $templateCache) {
 
+
       var getTemplate = function (contentType) {
         if (contentType === undefined) { 
           contentType = 'empty';
