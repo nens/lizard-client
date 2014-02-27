@@ -196,10 +196,6 @@
     margin-bottom: 16px;
 }
 
-.card table.fullwidth tr td{
-    width: 320px;
-}
-
 .card .actions {
     padding: 10px 10px 0 0;
     position: absolute;
@@ -515,4 +511,8 @@
 .card-details{
     color: #777;
     font-size: 13px;
+}
+
+.streetview {
+    margin-left: 38px;
 }

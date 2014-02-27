@@ -1,5 +1,5 @@
 
-<div class="card" ng-class="{hidden: box.content.eventValue == undefined}"ng-switch="box.content.eventValue.properties.event_sub_type">
+<div class="card" ng-class="{hidden: box.content.eventValue == undefined}" ng-switch="box.content.eventValue.properties.event_sub_type">
   <div class="card-title" ng-switch-when="regen">
     <i class="fa fa-twitter"></i><span class="card-title">&nbsp;#<% box.content.eventValue.properties.event_sub_type %></span>
     <i class="zoomto-icon fa fa-crosshairs pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
