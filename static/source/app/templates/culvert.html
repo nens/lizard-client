@@ -23,14 +23,14 @@
       <tr>
         <td>Lengte</td>
         <td>
-          <span ng-bind="activeObject.length | niceNumberOrDash: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-bind="activeObject.length | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
           <span ng-if="activeObject.surface_level_ahn2"> m
         </td>  
       </tr>    
       <tr>
         <td>Breedte</td>
         <td>
-          <span ng-bind="activeObject.width | niceNumberOrDash: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-bind="activeObject.width | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
           <span ng-if="activeObject.width"> m</span>
         </td> 
       </tr>               
