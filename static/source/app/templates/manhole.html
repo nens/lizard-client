@@ -19,7 +19,7 @@
       <td class="fixed-width-card-table"><abbr title="Maaiveld volgens beheergegevens">Maaiveld</abbr></td>
       <td>
         <span ng-bind="activeObject.surface_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-        <span ng-if="activeObject.surface_level"> m
+        <span ng-if="!!activeObject.surface_level"> m
         <span style="word-spacing: 0;"> boven NAP</span></span>
       </td>
     </tr>
@@ -37,14 +37,14 @@
       <td class="fixed-width-card-table">Breedte</td>
       <td>
         <span ng-bind="activeObject.width | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-        <span ng-if="activeObject.width"> m</span>
+        <span ng-if="!!activeObject.width"> m</span>
       </td> 
     </tr>        
     <tr>
       <td class="fixed-width-card-table">Lengte</td>
       <td>
         <span ng-bind="activeObject.length | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-        <span ng-if="activeObject.length"> m</span>
+        <span ng-if="!!activeObject.length"> m</span>
       </td> 
     </tr>
   </tbody>
