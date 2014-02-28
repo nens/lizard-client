@@ -81,7 +81,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
               $scope.activeObject.latlng = e.latlng;
               $scope.activeObject.changed = !$scope.activeObject.changed;
             });
-            console.log('activeObject', $scope.activeObject);
           } else {
             if (leafletLayer.options.order === lowestUTFLayer) {
               if (!utfHit || utfLayersOrder.length < 2) {
