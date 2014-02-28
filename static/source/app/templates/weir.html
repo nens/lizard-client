@@ -1,41 +1,43 @@
 <div class="card">
-    <div class="actions">
-        <ul>
-            <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
-            <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
-        </ul>
-    </div>
+<!-- Card for "stuw" / "weir" -->
+<!--     <div class="actions">
+      <ul>
+        <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li>
+        <li class="fullscreen"><a href="#" title="Maak deze infocard groter"><i class="fa fa-arrows-alt"></i></a></li>
+        <li class="favorite"><a href="#" title="Voeg toe aan favorieten"><i class="fa fa-bookmark"></i></a></li>
+        <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li>
+      </ul>
+    </div> -->
 
-    <div class="card-title">
-        <img src="/static/distjs/images/weir.png" class="img-circle">
-        <span>Stuw</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
-    </div>
-    <table class="fullwidth">
-        <tbody>
-        <tr>
-            <td>Type</td>
-            <td><span ng-bind="activeObject.type | niceNumberOrDash: 2" class="ng-binding">...</span></td>
-        </tr>  
-        <tr>
-            <td>Breedte</td>
-            <td><span ng-bind="activeObject.breedte | niceNumberOrDash: 2" class="ng-binding">...</span></td>
-        </tr>
-        <tr>
-            <td>Hoogte</td>
-            <td><span ng-bind="activeObject.height | niceNumberOrDash: 2" class="ng-binding">...</span></td>
-        </tr>    
-        </tbody>
-    </table>
+  <div class="card-title">
+    <img src="/static/distjs/images/weir.png" class="img-circle">
+    <span>Stuw</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
+  </div>
+  <table class="fullwidth">
+    <tbody>
+    <tr>
+        <td class="fixed-width-card-table">Type</td>
+        <td><span ng-bind="activeObject.type" class="ng-binding">...</span></td>
+    </tr>  
+    <tr>
+        <td class="fixed-width-card-table">Breedte</td>
+        <td><span ng-bind="activeObject.breedte | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
+    </tr>
+    <tr>
+        <td class="fixed-width-card-table">Hoogte</td>
+        <td><span ng-bind="activeObject.height | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
+    </tr>  
+  </tbody>
+  </table>
 
-    <details>
-        <summary>Meer details</summary>
-        <table>
-            <tbody>
-            <tr>
-                <td>Regelbaar?</td>
-                <td><i class="fa fa-check"></i></td>
-            </tr>     
-            </tbody>
-        </table>    
-    </details>
+  <div class="card-details" ng-click="activeObject.details = !activeObject.details">
+    <i class="fa fa-caret-right icon-ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="activeObject.details"> Minder details</span>
+  </div>
+  <div class="hidden-details" ng-class="{'unhidden-details': activeObject.details}">
+    <div class="streetview">
+    <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&cbp=11,90,0,0,40">
+      <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
+    </a>
+    </div>
+  </div>
 </div>

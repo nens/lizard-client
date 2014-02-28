@@ -6,17 +6,17 @@
   <table class="left">
     <tr>
       <td>Aanslagpeil (m NAP) </td>
-      <td ng-bind="activeObject.start_level | niceNumberOrDash: 2"></td>
+      <td ng-bind="activeObject.start_level | niceNumberOrEllipsis: 2"></td>
     </tr>
     <tr>
       <td>Afslagpeil (m NAP) </td>
-      <td ng-bind="activeObject.stop_level | niceNumberOrDash: 2"></td>
+      <td ng-bind="activeObject.stop_level | niceNumberOrEllipsis: 2"></td>
     </tr>
   </table>
   <table class="right">
     <tr>
         <td>Capaciteit (l/s) </td>
-        <td ng-bind="activeObject.capacity | niceNumberOrDash: 2"></td>
+        <td ng-bind="activeObject.capacity | niceNumberOrEllipsis: 2"></td>
     </tr>
    </table>
 </div>
