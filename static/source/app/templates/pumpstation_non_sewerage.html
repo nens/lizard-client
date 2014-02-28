@@ -1,29 +1,69 @@
 <div class="card">
+<!-- Card for "gemaal" / "pumpstation non sewerage" -->
+<!--     <div class="actions">
+      <ul>
+        <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li>
+        <li class="fullscreen"><a href="#" title="Maak deze infocard groter"><i class="fa fa-arrows-alt"></i></a></li>
+        <li class="favorite"><a href="#" title="Voeg toe aan favorieten"><i class="fa fa-bookmark"></i></a></li>
+        <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li>
+      </ul>
+    </div> -->
+
   <div class="card-title">
-    <img src="/static/distjs/images/gemaal.png" class="img-circle"/>
-    <span ng-bind="activeObject.type"></span><span class="truncateme" ng-bind="activeObject.code"></span>
+    <img src="/static/distjs/images/gemaal.png" class="img-circle">
+    <span ng-bind="activeObject.type"></span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code"></span>)
   </div>
-  <table class="left">
+  <table class="fullwidth">
+    <tbody>
     <tr>
-      <td>Aanslagpeil (m NAP) </td>
-      <td ng-bind="activeObject.start_level | niceNumberOrEllipsis: 2"></td>
+      <td class="fixed-width-card-table">Naam</td>
+      <td>
+        <span ng-bind="activeObject.name" class="ng-binding"></span>
+      </td>
     </tr>
     <tr>
-      <td>Afslagpeil (m NAP) </td>
-      <td ng-bind="activeObject.stop_level | niceNumberOrEllipsis: 2"></td>
+      <td class="fixed-width-card-table">Aanslagpeil</td>
+      <td>
+        <span ng-bind="activeObject.start_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-if="activeObject.surface_level"> m
+        <span style="word-spacing: 0;"> boven NAP</span></span>
+      </td>
     </tr>
+    <tr>
+      <td>Afslagpeil</abbr>
+      </td>
+      <td>
+        <span ng-bind="activeObject.stop_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-if="activeObject.stoplevel"> m
+        <span style="word-spacing: 0;"> boven NAP</span></span>
+      </td>  
+    </tr>    
+    <tr>
+      <td class="fixed-width-card-table">Capaciteit</td>
+      <td>
+        <span ng-bind="activeObject.capacity | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-if="activeObject.capacity"> l/s</span>
+      </td> 
+    </tr>
+  </tbody>
   </table>
-  <table class="right">
-    <tr>
-        <td>Capaciteit (l/s) </td>
-        <td ng-bind="activeObject.capacity | niceNumberOrEllipsis: 2"></td>
-    </tr>
-   </table>
+
+  <div class="card-details" ng-click="activeObject.details = !activeObject.details">
+    <i class="fa fa-caret-right icon-ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="activeObject.details"> Minder details</span>
+  </div>
+  <div class="hidden-details" ng-class="{'unhidden-details': activeObject.details}">
+    <div class="streetview">
+    <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&cbp=11,90,0,0,40">
+      <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
+    </a>
+    </div>
+  </div>
 </div>
-<div class="card" ng-class="{hidden: box.content.selected_timeseries == undefined}">
+
+<div class="card" ng-class="{hidden: box.content.selected_timeseries == undefined}" >
   <div class="input-prepend">
-    <span class="add-on"> Tijdreeks</span> 
+    <span class="add-on"> Tijdreeks</span>
     <select class="timeseries" ng-model="box.content.selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
   </div>
-    <graph line data="data" title="" xlabel="metadata.xlabel" ylabel="metadata.ylabel"></graph>
+    <timeseries-rain timeseries="data" rainseries="rain.data" start="timeState.start" end="timeState.end" enabled="timeboxenabled" changed-zoom="timeState.changedZoom"></timeseries-rain>
 </div>
