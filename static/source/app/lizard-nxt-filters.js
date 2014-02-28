@@ -63,6 +63,36 @@ app.filter('lookupManholeMaterial', function () {
   };
 });
 
+app.filter('truncate', function () {
+    return function (text, length, end) {
+        if (isNaN(length))
+            length = 10;
+
+        if (end === undefined)
+            end = "...";
+
+        if (text.length <= length || text.length - end.length <= length) {
+            return text;
+        }
+        else {
+            return String(text).substring(0, length-end.length) + end;
+        }
+    };
+});
+
+
+app.filter('allowedFlowDirection', function () {
+    return function (input) {
+      var out;
+      if (input != null && input !== undefined) {
+        out = input;
+      } else {
+        out = '...';
+      }
+      return out;
+    };
+  });
+
 app.filter('pipeTypeOrEllipsis', function () {
   return function (input) {
     var out;
