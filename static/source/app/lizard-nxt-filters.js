@@ -92,3 +92,39 @@ app.filter('allowedFlowDirection', function () {
       return out;
     };
   });
+
+app.filter('pipeTypeOrEllipsis', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case '00':
+      out = 'gemengd';
+      break;
+    case '01':
+      out = 'regenwater';
+      break;
+    case '02':
+      out = 'DWA';
+      break;
+    default:
+      out = '...';
+    }
+    return out;
+  };
+});
+
+app.filter('lookupPipeShape', function () {
+  return function (input) {
+    var out;
+    out = '...';
+    return out;
+  };    
+});
+
+app.filter('pipeMaterialOrEllipsis', function () {
+  return function (input) {
+    var out;
+    out = '...';
+    return out;
+  };
+});
