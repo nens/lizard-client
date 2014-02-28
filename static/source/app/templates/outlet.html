@@ -18,13 +18,13 @@
   <table class="fullwidth">
     <tbody>
     <tr>
-      <td>
+      <td style="width:170px;">
         <abbr title="Werkelijk maaiveld volgens Algemene Hoogtekaart Nederland">Maaiveld (ahn2)</abbr>
       </td>
       <td>
         <span ng-bind="activeObject.open_water_level_average | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
         <span ng-if="activeObject.open_water_level_average"> m
-        <span style="word-spacing: 0;"> boven NAP</span></span>
+        <span style="word-spacing: 0;">NAP</span></span>
       </td>  
     </tr>    
   </tbody>
@@ -38,7 +38,7 @@
     <table class="fullwidth">
       <tbody>
       <tr>
-        <td class="fixed-width-card-table"><abbr title="Oppervlaktewaterniveau (zomer)">OWN (zomer)</abbr></td>
+        <td  style="width:170px;" class="fixed-width-card-table"><abbr title="Oppervlaktewaterniveau (zomer)">OWN (zomer)</abbr></td>
         <td>
           <span ng-bind="activeObject.open_water_level_summer | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
           <span ng-if="!!activeObject.open_water_level_summer"> m
