@@ -11,20 +11,20 @@
 
   <div class="card-title">
     <img src="/static/distjs/images/weir.png" class="img-circle">
-    <span>Put</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
+    <span>Stuw</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
   </div>
   <table class="fullwidth">
     <tbody>
     <tr>
-        <td>Type</td>
+        <td class="fixed-width-card-table">Type</td>
         <td><span ng-bind="activeObject.type" class="ng-binding">...</span></td>
     </tr>  
     <tr>
-        <td>Breedte</td>
+        <td class="fixed-width-card-table">Breedte</td>
         <td><span ng-bind="activeObject.breedte | niceNumberOrDash: 2" class="ng-binding">...</span></td>
     </tr>
     <tr>
-        <td>Hoogte</td>
+        <td class="fixed-width-card-table">Hoogte</td>
         <td><span ng-bind="activeObject.height | niceNumberOrDash: 2" class="ng-binding">...</span></td>
     </tr>  
   </tbody>

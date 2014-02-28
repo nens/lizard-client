@@ -516,3 +516,7 @@
 .streetview {
     margin-left: 38px;
 }
+
+.fixed-width-card-table {
+    width: 170px;
+}

@@ -16,7 +16,7 @@
   <table class="fullwidth">
     <tbody>
     <tr>
-      <td><abbr title="Maaiveld volgens beheergegevens">Maaiveld</abbr></td>
+      <td class="fixed-width-card-table"><abbr title="Maaiveld volgens beheergegevens">Maaiveld</abbr></td>
       <td>
         <span ng-bind="activeObject.surface_level | niceNumberOrDash: 2" class="ng-binding" style="word-spacing: -2px;"></span>
         <span ng-if="activeObject.surface_level"> m
@@ -34,14 +34,14 @@
       </td>  
     </tr>    
     <tr>
-      <td>Breedte</td>
+      <td class="fixed-width-card-table">Breedte</td>
       <td>
         <span ng-bind="activeObject.width | niceNumberOrDash: 2" class="ng-binding" style="word-spacing: -2px;"></span>
         <span ng-if="activeObject.width"> m</span>
       </td> 
     </tr>        
     <tr>
-      <td>Lengte</td>
+      <td class="fixed-width-card-table">Lengte</td>
       <td>
         <span ng-bind="activeObject.length | niceNumberOrDash: 2" class="ng-binding" style="word-spacing: -2px;"></span>
         <span ng-if="activeObject.length"> m</span>
@@ -57,11 +57,11 @@
     <table class="fullwidth">
       <tbody>
       <tr>
-        <td style="width: 170px;">Vorm</td>
+        <td class="fixed-width-card-table">Vorm</td>
         <td ng-bind="activeObject.shape | lookupManholeShape"></td>
       </tr>
       <tr>
-        <td>Putbodem</td>
+        <td class="fixed-width-card-table">Putbodem</td>
         <td>
           <span ng-bind="activeObject.bottom_level | niceNumberOrDash: 2" class="ng-binding" style="word-spacing: -2px;"></span>
           <span ng-if="!!activeObject.bottom_level"> m
@@ -69,7 +69,7 @@
         </td>            
       </tr>
       <tr>
-        <td>Materiaal</td>
+        <td class="fixed-width-card-table">Materiaal</td>
         <!-- Implement the filter -->
         <td ng-bind="activeObject.material | lookupManholeMaterial"></td>
       </tr>
