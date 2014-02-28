@@ -17,7 +17,7 @@
       <tr>
         <td style="width:170px;">Type</td>
         <td>
-          <span ng-bind="activeObject.type" class="ng-binding"></span>
+          <abbr title="<% activeObject.type %>"><span ng-bind="activeObject.type | truncate:20" class="truncateme ng-binding"></span></abbr>
         </td>
       </tr>
       <tr>
@@ -44,7 +44,7 @@
       <table class="fullwidth">
         <tbody><tr>
           <td style="width:170px;">Richting</td>
-          <td><span ng-bind="activeObject.allowed_flow_direction | ellipsisIfNull" class="ng-binding"></span></td>
+          <td><span ng-bind="activeObject.allowed_flow_direction | allowedFlowDirection" class="ng-binding"></span></td>
         </tr>
         <tr>
           <td><abbr title="Binnen Onderkant Buis (bovenstrooms)">BOB bovenstrooms</abbr></td>
