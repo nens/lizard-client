@@ -1,38 +1,64 @@
 <div class="card">
     <!-- Card for "outlet" / "uitlaat met keerklep" -->
+
+    <!--
     <div class="actions">
         <ul>
             <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
             <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
         </ul>
     </div>
+    -->
 
     <div class="card-title">
         <img src="images/knoop.png" class="img-circle">
         <span>Uitlaat met keerklep</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.title">code</span>)
     </div>
-    <table class="fullwidth">
-        <tbody>
-        <tr>
-            <td>Oppervlaktewaterniveau (gemiddeld)</td>
-            <td><span ng-bind="activeObject.open_water_level_average | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
-        </tr>
-       </tbody>
-    </table>
 
-    <details>
-        <summary>Meer details</summary>
-        <table>
-            <tbody>
-            <tr>
-                <td>Oppervlaktewaterniveau (zomer)</td>
-                <td><span ng-bind="activeObject.open_water_level_summer" class="ng-binding">...</span></td>
-            </tr>
-            <tr>
-                <td>Oppervlaktewaterniveau (winter)</td>
-                <td ng-bind="activeObject.open_water_level_winter" class="ng-binding">...</td>
-            </tr>   
-            </tbody>
-        </table>		
-    </details>
+  <table class="fullwidth">
+    <tbody>
+    <tr>
+      <td>
+        <abbr title="Werkelijk maaiveld volgens Algemene Hoogtekaart Nederland">Maaiveld (ahn2)</abbr>
+      </td>
+      <td>
+        <span ng-bind="activeObject.open_water_level_average | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-if="activeObject.open_water_level_average"> m
+        <span style="word-spacing: 0;"> boven NAP</span></span>
+      </td>  
+    </tr>    
+  </tbody>
+  </table>
+
+
+  <div class="card-details" ng-click="activeObject.details = !activeObject.details">
+    <i class="fa fa-caret-right icon-ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="activeObject.details"> Minder details</span>
+  </div>
+  <div class="hidden-details" ng-class="{'unhidden-details': activeObject.details}">
+    <table class="fullwidth">
+      <tbody>
+      <tr>
+        <td class="fixed-width-card-table"><abbr title="Oppervlaktewaterniveau (zomer)">OWN (zomer)</abbr></td>
+        <td>
+          <span ng-bind="activeObject.open_water_level_summer | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-if="!!activeObject.open_water_level_summer"> m
+          <span style="word-spacing: 0;"> boven NAP</span></span>
+        </td>            
+      </tr>
+      <tr>
+        <td class="fixed-width-card-table"><abbr title="Oppervlaktewaterniveau (winter)">OWN (winter)</abbr></td>
+        <td>
+          <span ng-bind="activeObject.open_water_level_winter | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-if="!!activeObject.open_water_level_winter"> m
+          <span style="word-spacing: 0;"> boven NAP</span></span>
+        </td>            
+      </tr>
+      </tbody>
+    </table>
+    <div class="streetview">
+    <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&cbp=11,90,0,0,40">
+      <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
+    </a>
+    </div>
+  </div>
 </div>
