@@ -15,9 +15,9 @@
     <table class="fullwidth">
       <tbody>
       <tr>
-        <td>Type</td>
+        <td style="width:170px;">Type</td>
         <td>
-          <span ng-bind="activeObject.type" class="ng-binding"></span>
+          <abbr title="<% activeObject.type %>"><span ng-bind="activeObject.type | truncate:20" class="truncateme ng-binding"></span></abbr>
         </td>
       </tr>
       <tr>
@@ -43,16 +43,16 @@
     <div class="hidden-details" ng-class="{'unhidden-details': activeObject.details}">
       <table class="fullwidth">
         <tbody><tr>
-          <td>Richting</td>
-          <td><span ng-bind="activeObject.allowed_flow_direction" class="ng-binding">...</span></td>
+          <td style="width:170px;">Richting</td>
+          <td><span ng-bind="activeObject.allowed_flow_direction | allowedFlowDirection" class="ng-binding"></span></td>
         </tr>
         <tr>
           <td><abbr title="Binnen Onderkant Buis (bovenstrooms)">BOB bovenstrooms</abbr></td>
-          <td><span ng-bind="activeObject.bed_level_upstream" class="ng-binding">...</span></td>
+          <td><span ng-bind="activeObject.bed_level_upstream | niceNumberOrDash: 2" class="ng-binding">...</span></td>
         </tr>
         <tr>
           <td><abbr title="Binnen Onderkant Buis (benedenstrooms)">BOB benedenstrooms</abbr></td>
-          <td><span ng-bind="activeObject.bed_level_downstream" class="ng-binding">...</span></td>
+          <td><span ng-bind="activeObject.bed_level_downstream | niceNumberOrDash: 2" class="ng-binding">...</span></td>
         </tr>
         </tr>        
         </tbody>
