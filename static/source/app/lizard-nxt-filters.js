@@ -12,7 +12,7 @@
 
 
 /**
- * Nice number or ellipsis returns a rounded number or a '...'.
+ * Returns a rounded number or a '...' based on input type.
  *
  * @param {string or number} input to round or convert to dash
  * @param {number} optional decimals to round the number to
