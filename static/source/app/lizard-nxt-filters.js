@@ -116,7 +116,22 @@ app.filter('pipeTypeOrEllipsis', function () {
 app.filter('lookupPipeShape', function () {
   return function (input) {
     var out;
-    out = '...';
+    switch (input) {
+    case '0.0':
+      out = 'rond';
+      break;
+    case '1.0':
+      out = 'eivorm';
+      break;
+    case '2.0':
+      out = 'rechthoek';
+      break;
+    case '4.0':
+      out = 'vierkant';
+      break;
+    default:
+      out = '...';
+    }
     return out;
   };
 });
@@ -124,7 +139,19 @@ app.filter('lookupPipeShape', function () {
 app.filter('pipeMaterialOrEllipsis', function () {
   return function (input) {
     var out;
-    out = '...';
+    switch (input) {
+    case '0.0':
+      out = 'beton';
+      break;
+    case '1.0':
+      out = 'PVC';
+      break;
+    case '2.0':
+      out = 'gres';
+      break;
+    default:
+      out = '...';
+    }
     return out;
   };
 });
