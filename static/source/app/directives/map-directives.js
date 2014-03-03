@@ -33,11 +33,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
                                        {name: "Background",
                                         maxZoom: 20});
-    } else if (layer.type === "TMS" && !layer.baselayer) {
-      layer.leafletLayer = L.tileLayer(layer.url + '.png',
-                                       {minZoom: layer.min_zoom,
-                                        maxZoom: 20,
-                                        zIndex: layer.z_index});
     } else if (layer.type === "WMS") {
       var options = {
         layers: layer.slug,
@@ -58,7 +53,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
     } else if (layer.type === "ASSET") {
       var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
       if (layer.min_zoom_click !== null) {
-        var leafletLayer = new L.UtfGrid(url, {
+        var leafletLayer = new L.UtfGrid(layer.url, {
           ext: 'grid',
           slug: layer.slug,
           name: layer.slug,
@@ -92,7 +87,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
         });
         layer.grid_layer = leafletLayer;
       }
-      layer.leafletLayer = L.tileLayer(url, {
+      layer.leafletLayer = L.tileLayer(layer.url, {
         ext: 'png',
         slug: layer.slug,
         name: layer.slug,
@@ -100,8 +95,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
         maxZoom: 20,
         zIndex: layer.z_index
       });
-    } else {
-      console.log(layer.type);
     }
     layer.initiated = true;
 
