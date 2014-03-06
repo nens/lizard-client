@@ -143,7 +143,9 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       .attr("stroke-opacity", 0.5)
       .attr("stroke-width", 10);
 
-    if ($scope.box.type !== 'rain' || $scope.box.type !== 'aggregate') {
+    if ($scope.box.type !== 'rain' &&
+      $scope.box.type !== 'aggregate' &&
+      $scope.box.type !== 'profile') {
       removeProm = $timeout(function () {
         $scope.map.removeLayer($scope.mapState.clickLayer);
         $scope.box.type = 'empty';
