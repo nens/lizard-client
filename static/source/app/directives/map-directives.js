@@ -112,6 +112,14 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
 
   };
 
+  /**
+   * Rescale elevation raster
+   *
+   * Makes a request to the raster server with the current bounds
+   * Gets a new scale limit and refreshes the layer
+   *
+   * @param  {bounds object} bounds contains the corners of the current map view 
+   */
   this.rescaleElevation = function (bounds) {
     // Make request to raster to get min and max of current bounds
     var url = 'https://raster.lizard.net/wms' + '?request=getlimits&layers=elevation' +
@@ -124,11 +132,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
       $scope.map.removeLayer(elevationLayer);
       $scope.map.addLayer(elevationLayer);
     });
-    // var url = '/wms?request=getlimits&layers=' + layern.getValue();
-    // url += '&width=16&height=16&srs=epsg:4326&bbox=' + map.getBounds().toBBoxString();
-    // $.getJSON(url, function(data) {
-    // limits = ':' + data[0][0] + ':' + data[0][1];
-    // updateStyle();
   };
 
   /**
