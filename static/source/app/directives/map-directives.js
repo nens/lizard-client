@@ -123,7 +123,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
       elevationLayer.setParams({styles: styles}, true);
       $scope.map.removeLayer(elevationLayer);
       $scope.map.addLayer(elevationLayer);
-      console.log('redrawing layer:', elevationLayer, $scope.map);
     });
     // var url = '/wms?request=getlimits&layers=' + layern.getValue();
     // url += '&width=16&height=16&srs=epsg:4326&bbox=' + map.getBounds().toBBoxString();
