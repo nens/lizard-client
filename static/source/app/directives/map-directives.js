@@ -52,7 +52,8 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       } else if (layer.slug === 'elevation') {
         // dynamically set min/max?
         // options.effects = 'shade:0:3';
-        options.styles = 'jet:-5:20';
+        options.styles = 'BrBG:-5:20';
+        options.effects = 'shade:0:3';
       }
       layer.leafletLayer = L.tileLayer.wms(layer.url, options);
     } else if (layer.type === "ASSET") {
@@ -65,7 +66,8 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
           useJsonP: false,
           minZoom: layer.min_zoom_click,
           maxZoom: 20,
-          order: layer.order
+          order: layer.z_index,
+          zIndex: layer.z_index
         });
 
         leafletLayer.on('click', function (e) {
@@ -237,7 +239,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
           }
         }
       } else {
-        console.log('leaflet layer not defined', layer.type);
+        console.log('leaflet layer not defined', layer.type, layer.name);
       }
     }
     if (layer.active) {
