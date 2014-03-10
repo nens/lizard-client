@@ -17,8 +17,9 @@
  * 
  */
 
-app.controller('MapDirCtrl', function ($scope, $timeout) {
+app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
 
+  var elevationLayer;
   // UTF bookkeeping
   var lowestUTFLayer,
       utfLayersOrder = [],
@@ -49,12 +50,15 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
       //NOTE ugly hack
       if (layer.slug === 'landuse') {
         options.styles = 'landuse';
+        layer.leafletLayer = L.tileLayer.wms(layer.url, options);
       } else if (layer.slug === 'elevation') {
         // dynamically set min/max?
         // options.effects = 'shade:0:3';
-        options.styles = 'jet:-5:20';
+        options.styles = 'BrBG_r:-5:5';
+        options.effects = 'shade:0:3';
+        layer.leafletLayer = L.tileLayer.wms(layer.url, options);
+        elevationLayer = layer.leafletLayer;
       }
-      layer.leafletLayer = L.tileLayer.wms(layer.url, options);
     } else if (layer.type === "ASSET") {
       var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
       if (layer.min_zoom_click !== null) {
@@ -65,7 +69,8 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
           useJsonP: false,
           minZoom: layer.min_zoom_click,
           maxZoom: 20,
-          order: layer.order
+          order: layer.z_index,
+          zIndex: layer.z_index
         });
 
         leafletLayer.on('click', function (e) {
@@ -105,6 +110,28 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
     }
     layer.initiated = true;
 
+  };
+
+  /**
+   * Rescale elevation raster
+   *
+   * Makes a request to the raster server with the current bounds
+   * Gets a new scale limit and refreshes the layer
+   *
+   * @param  {bounds object} bounds contains the corners of the current map view 
+   */
+  this.rescaleElevation = function (bounds) {
+    // Make request to raster to get min and max of current bounds
+    var url = 'https://raster.lizard.net/wms' + '?request=getlimits&layers=elevation' +
+      '&width=16&height=16&srs=epsg:4326&bbox=' +
+      bounds.toBBoxString();
+    $http.get(url).success(function (data) {
+      var limits = ':' + data[0][0] + ':' + data[0][1];
+      var styles = 'BrBG_r' + limits;
+      elevationLayer.setParams({styles: styles}, true);
+      $scope.map.removeLayer(elevationLayer);
+      $scope.map.addLayer(elevationLayer);
+    });
   };
 
   /**
@@ -237,7 +264,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
           }
         }
       } else {
-        console.log('leaflet layer not defined', layer.type);
+        console.log('leaflet layer not defined', layer.type, layer.name);
       }
     }
     if (layer.active) {
@@ -432,6 +459,10 @@ app.controller('MapDirCtrl', function ($scope, $timeout) {
         scope.map.getZoom()
       ].join(',');
       $location.hash(newHash);
+      if (scope.mapState.activeBaselayer === 3) {
+        //console.log(scope.mapState.bounds, scope.mapState.baseLayers[scope.mapState.activeBaselayer]);
+        ctrl.rescaleElevation(scope.mapState.bounds);
+      }
     });
 
     scope.map.on('dragend', function () {
