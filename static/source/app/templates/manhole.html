@@ -13,10 +13,12 @@
       <img src="/static/distjs/images/knoop.png" class="img-circle">
       <span>Put</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="metadata.title">code</span>)
     </div>
+
+    <% metadata.fromgrid %>
     <table class="left">
       <tbody>
       <tr>
-        <td><abbr title="Maaiveld volgens beheergegevens (JAARTAL)">Maaiveld</abbr></td>
+        <td><abbr title="Maaiveld volgens beheergegevens (JAARTAL)">Maaiveld</abbr><% metadata %></td>
         <td ng-bind="metadata.fromgrid.surface_level | number: 2" class="ng-binding">...</td>
       </tr>
       <tr>
