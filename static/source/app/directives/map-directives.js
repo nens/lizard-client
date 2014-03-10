@@ -458,9 +458,13 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
         scope.map.getCenter().lng.toFixed(COORD_PRECISION),
         scope.map.getZoom()
       ].join(',');
-      $location.hash(newHash);
+      if (!scope.$$phase) {
+        scope.$apply(function () {
+          $location.hash(newHash);
+        });
+      }
+      // If elevation layer is active:
       if (scope.mapState.activeBaselayer === 3) {
-        //console.log(scope.mapState.bounds, scope.mapState.baseLayers[scope.mapState.activeBaselayer]);
         ctrl.rescaleElevation(scope.mapState.bounds);
       }
     });
@@ -487,7 +491,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
      * resetting the holdRightThere back to false
      */
     scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-      if (!scope.holdRightThere || oldurl === newurl) {
+      if (!scope.holdRightThere || scope.holdRightThere === undefined) {
         var latlonzoom = $location.hash().split(',');
         if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
           if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
