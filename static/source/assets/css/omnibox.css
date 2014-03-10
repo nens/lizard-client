@@ -1,16 +1,19 @@
 #omnibox {
     position: absolute;
     width: 400px;
-    left: 0px;
+    left: 0;
     margin: 16px;
     top: 50px;
     z-index: 10;
     -webkit-transition: left 0.5s;
+    -moz-transition: left 0.5s;
+    -o-transition: left 0.5s;
     transition: left 0.5s;
 }
 
 .searchbox {
-    background: rgba(255,255,255,0.9);
+    background: rgb(255, 255, 255);
+    background: rgba(255, 255, 255, 0.9);
     border: 1px solid transparent;
     border-right: 0;
     border-radius: 2px 0 0 2px;
@@ -38,6 +41,7 @@
     -o-transition: all 200ms cubic-bezier(0.52,0,0.48,1);
     transition: all 200ms cubic-bezier(0.52,0,0.48,1);
 }
+
 
 .cards-minimized .searchbox-shadow {
     box-shadow: 0 2px 6px rgba(0,0,0,0.3),0 4px 15px -5px rgba(0,0,0,0.3);
@@ -193,10 +197,7 @@
     width: 100%;
     margin-left: 37px;
     color: #777;
-}
-
-.card table.fullwidth tr td{
-    width:250px;
+    margin-bottom: 16px;
 }
 
 .card .actions {
@@ -223,49 +224,6 @@
 .card .timeseries{
     width: 300px;
 }
-
-.card details table {
-    margin-left: 0 !important;
-}
-
-@-webkit-keyframes fadeIn {
-    0% {
-        opacity: 0.1;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-.card details[open] table {
-    -webkit-animation-name: fadeIn;
-    -moz-animation-name: fadeIn;
-    -webkit-animation-duration: 0.5s;
-    -moz-animation-duration: 0.5s;
-}    
-
-.card details{
-    cursor: pointer;
-    line-height: 15px;
-    font-size: 0.9em;
-    list-style: none;
-    width: 150px;
-    margin-left: 37px;
-    margin-top: 5px;
-    color: #777;        
-}
-
-.card hr {
-    margin: 0;
-    padding: 0;
-}
-
-summary, details { display: block; }
-details { visibility: hidden; }
-details > summary { visibility: visible; }
-summary.no-det:before { content: "►"; padding-right: 5px; font-size: 1.2em; transition: .6s linear; }
-details[open] summary.no-det:before { transform: rotate(90deg); }
-details[open] { visibility: visible; }
 
 .card .nxt-box-overflow {
     overflow: auto;
@@ -321,7 +279,6 @@ details[open] { visibility: visible; }
     -ms-transition: all 200ms cubic-bezier(0.52,0,0.48,1);
     -o-transition: all 200ms cubic-bezier(0.52,0,0.48,1);
     transition: all 200ms cubic-bezier(0.52,0,0.48,1);
-    
 }
 
 .results-shadow {
@@ -359,7 +316,6 @@ details[open] { visibility: visible; }
 
 #results ul li {
     list-style-image:url('img/globe-icon.png');
-    
 }
 
 .nav a{
@@ -390,7 +346,7 @@ details[open] { visibility: visible; }
     vertical-align: middle;
     width: 3em; height: 1em;
     border: 1px solid #000;
-    border: 1px solid rgba(0,0,0,.3);
+    border: 1px solid rgba(0, 0, 0, .3);
     border-radius: 999px;
     margin: 0 .5em;
     background: white;
@@ -498,7 +454,7 @@ details[open] { visibility: visible; }
     background-image: -webkit-linear-gradient(top, #177d89, #115e67);
     border: 0;
     border-radius: 0 2px 2px 0;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 	color: white;
 }
 
@@ -529,4 +485,40 @@ details[open] { visibility: visible; }
 #box-awesome-results p {
 	margin-top: 10px;
 	margin-left: 20px;
+}
+
+.card-details {
+    cursor: pointer;    
+}
+
+.hidden-details {
+    opacity: 0;
+    max-height: 0;
+    -webkit-transition: .3s ease;
+}
+
+.unhidden-details {
+    opacity: 1;
+    max-height: 220px;
+}
+
+.icon-ready-to-rotate {
+    -webkit-transition: all .3s ease;
+}
+
+.rotate-ninety {
+    -webkit-transform: rotate(90deg);   
+}
+
+.card-details{
+    color: #777;
+    font-size: 13px;
+}
+
+.streetview {
+    margin-left: 38px;
+}
+
+.fixed-width-card-table {
+    width: 170px;
 }

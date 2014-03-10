@@ -56,30 +56,30 @@
 
             {% if user.is_authenticated %}
               <li class="visible-xs">
-                <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="" id="username"><i id="" class="icon-user"></i>&nbsp;&nbsp;{{ user.first_name }}</div></a>
+                <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="" id="username"><i id="" class="fa fa-user"></i>&nbsp;&nbsp;{{ user.first_name }}</div></a>
               </li>            
               <li class="visible-sm visible-md visible-lg">
                 <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}">
                   <div class="" id="username">
-                    <i id="" class="icon-user" style="font-size:1.2em;"></i>&nbsp;&nbsp;{{ user.first_name }}
+                    <i id="" class="fa fa-user" style="font-size:1.2em;"></i>&nbsp;&nbsp;{{ user.first_name }}
                   </div>
                 </a>
               </li>
 
               <li class="visible-xs">
-                <a class="user logout" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"><div class="" id="username"><i id="" class="icon-off"></i>&nbsp;&nbsp;Uitloggen</div></a>
+                <a class="user logout" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"><div class="" id="username"><i id="" class="fa fa-power-off"></i>&nbsp;&nbsp;Uitloggen</div></a>
               </li>
               <li class="visible-sm visible-md visible-lg" style="width:63px;">
                 <a class="user logout" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()">
                   <div class="pull-right" id="username">
-                    <i id="" style="font-size:1.2em;" class="icon-off"></i>
+                    <i id="" style="font-size:1.2em;" class="fa fa-power-off"></i>
                   </div>
                 </a>
               </li>
             {% else %}
               <li>
                 <a href="{% url "login" %}?next=/" title="{% trans 'Login' %}">
-                  <i class="icon-user pull-right"></i></a>
+                  <i class="fa fa-user pull-right"></i></a>
               </li>            
             {% endif %}
 
@@ -94,7 +94,7 @@
     
     <cursor-tooltip enabled="<% tools.cursorTooltip.enabled %>" class="cursor-tooltip"  ng-class="{hide: !tools.cursorTooltip.enabled}"></cursor-tooltip>
 
-    <div id="master" ng-controller='MapCtrl'>
+    <div id="master">
       <div class="layer-menu-container">
         <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': mapState.enabled}">
           <div class="layer-switcher slide-left">
@@ -103,8 +103,8 @@
               {% trans "Basis" %}
               <ul class="list-group">
                 <li ng-repeat="layer in mapState.baselayers | orderBy:'order':true">
-                <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer" ng-change="switchBaseLayer()"> 
-                <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name"></label>
+                <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer"> 
+                <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name" ng-click="mapState.changeBaselayer(layer)"></label>
                 </li> 
               </ul>
               </li>
@@ -112,7 +112,7 @@
               {% trans "Thema" %}
               <ul class="list-group">
                 <li ng-repeat="layer in mapState.layers | orderBy:'order':true">
-                <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="changed()">
+                <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="mapState.changeLayer(layer)">
                 <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
 
                 <div ng-switch="layer.follow_3di" style="float: right;">
@@ -143,25 +143,21 @@
             </ul>
           </div>
           <div id="ribbon" class="ribbon">
-            <div class="arrow arrow-up" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}">
+            <div class="arrow arrow-up" ng-click="mapState.enabled = !mapState.enabled" title="{% trans 'Map layers' %}">
             </div>
-            <div class="arrow arrow-down" ng-click="toggleLayerSwitcher()" title="{% trans 'Map layers' %}"><i class="icon-compass ribbon-icon"></i>
+            <div class="arrow arrow-down" ng-click="mapState.enabled = !mapState.enabled" title="{% trans 'Map layers' %}"><i class="fa fa-compass ribbon-icon"></i>
             </div>
           </div>
           <div class="button-list-container" id="">
-            <div class="button-list-item"><a href="#" ng-click="toggleTool('profile')" class="button-list-link" title="{% trans 'Intersect tool' %}" ng-class="{'active': tools.active === 'profile'}"><i class="icon-resize-full"></i></a></div>
-            <div class="button-list-item"><a href="#" ng-click="box.type = 'elevation'" class="button-list-link" title="{% trans 'Elevation curve' %}" ng-class="{'active': box.type === 'elevation'}"><i class="icon-signal"></i></a></div>
-            <div class="button-list-item"><a href="#" ng-click="box.type = 'landuse'" class="button-list-link" title="{% trans 'Land use distribution' %}" ng-class="{'active': box.type === 'landuse'}"><i class="icon-circle-blank"></i></a></div>
-            <div class="button-list-item"><a href="#" ng-click="toggleTool('rain')" class="button-list-link" title="{% trans 'Rain App' %}" ng-class="{'active': tools.active === 'rain'}"><i class="icon-cloud"></i></a></div>
-            <div class="hide button-list-item" ng-class="{'hide': !threedi_active}"><a href="#" ng-click="threediTool()" class="button-list-link" title="3Di" ng-class="{'active': tools.active === 'threedi'}"><i class="icon-asterisk"></i></a></div>
+            <div class="button-list-item"><a href="#" ng-click="toggleTool('profile')" class="button-list-link" title="{% trans 'Intersect tool' %}" ng-class="{'active': tools.active === 'profile'}"><i class="fa fa-expand"></i></a></div>
+            <div class="button-list-item"><a href="#" ng-click="box.type = 'elevation'" class="button-list-link" title="{% trans 'Elevation curve' %}" ng-class="{'active': box.type === 'elevation'}"><i class="fa fa-signal"></i></a></div>
+            <div class="button-list-item"><a href="#" ng-click="box.type = 'landuse'" class="button-list-link" title="{% trans 'Land use distribution' %}" ng-class="{'active': box.type === 'landuse'}"><i class="fa fa-circle-o"></i></a></div>
+            <div class="button-list-item"><a href="#" ng-click="toggleTool('rain')" class="button-list-link" title="{% trans 'Rain App' %}" ng-class="{'active': tools.active === 'rain'}"><i class="fa fa-cloud"></i></a></div>
+            <div class="hide button-list-item" ng-class="{'hide': !threedi_active}"><a href="#" ng-click="threediTool()" class="button-list-link" title="3Di" ng-class="{'active': tools.active === 'threedi'}"><i class="fa fa-asterisk"></i></a></div>
           </div>
         </div>
-        <map layer-switch 
-             pan-zoom="panZoom"
-             layers="mapState.layers"
+        <map layers="mapState.layers"
              rasterprofile="disabled"
-             locate="locate"
-             zoom-to-layer="zoomToLayer"
              vectorlayer
              click-layer="clickLayer"
              surfacelayer

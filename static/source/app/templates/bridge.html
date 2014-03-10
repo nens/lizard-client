@@ -1,5 +1,5 @@
 <div class="card">
-<!-- Card for "stuw" / "weir" -->
+<!-- Card for "brug" / "bridge" -->
 <!--     <div class="actions">
       <ul>
         <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li>
@@ -9,24 +9,36 @@
       </ul>
     </div> -->
 
-  <div class="card-title">
-    <img src="/static/distjs/images/weir.png" class="img-circle">
-    <span>Stuw</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
-  </div>
+    <div class="card-title">
+        <img src="/static/distjs/images/bridge.png" class="img-circle">
+        <span>Brug</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code"></span>)
+    </div>
   <table class="fullwidth">
     <tbody>
     <tr>
         <td class="fixed-width-card-table">Type</td>
-        <td><span ng-bind="activeObject.type" class="ng-binding">...</span></td>
-    </tr>  
+        <td>
+            <span ng-bind="activeObject.type" class="ng-binding"></span>
+        </td>
+    </tr>
     <tr>
         <td class="fixed-width-card-table">Breedte</td>
-        <td><span ng-bind="activeObject.breedte | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
+        <td>
+            <span ng-bind="activeObject.width | niceNumberOrEllipsis: 2" class="ng-binding"></span>
+        </td>
+    </tr>
+    <tr>
+        <td class="fixed-width-card-table">lengte</td>
+        <td>
+            <span ng-bind="activeObject.length | niceNumberOrEllipsis: 2" class="ng-binding"></span>
+        </td>
     </tr>
     <tr>
         <td class="fixed-width-card-table">Hoogte</td>
-        <td><span ng-bind="activeObject.height | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
-    </tr>  
+        <td>
+            <span ng-bind="activeObject.height | niceNumberOrEllipsis: 2" class="ng-binding"></span>
+        </td>
+    </tr>
   </tbody>
   </table>
 
@@ -41,3 +53,4 @@
     </div>
   </div>
 </div>
+

@@ -471,7 +471,8 @@ app.controller("MasterCtrl",
   // };
 
   $scope.activeObject = {
-    changed: true
+    changed: true,
+    details: false
   };
 
   $scope.canceler = $q.defer();
@@ -618,35 +619,6 @@ app.controller("MasterCtrl",
     }
     return formatted_data;
   };
-  /**
-   * KPI model
-   *
-   * KPI is a list of KPI's, every KPI has a name, value, threshold and
-   * a list of PI's
-   *
-   * A PI has a name, data and a threshold
-   */
-  $scope.kpi = [{
-    "name": "general",
-    "value": 7,
-    "threshold": 6,
-    "pi": [{
-      "name": "Meldingen",
-      "threshold": 8,
-      "data": {}
-    }]
-  }];
-  // END KPI MODEL
-  
-  // HACK: get alert (meldingen) data from geojson
-  // NOTE: this should come from events in HBASE
-  // var alerts = '/static/data/klachten_purmerend_min.geojson';
-  // $http.get(alerts)
-  //   .success(function (data) {
-  //     $scope.kpi[0].pi[0].data = data;  
-  //     //console.log("event data", data);
-  //   });
-  // END HACK
 
   /*
    * Get raster data from server
@@ -723,7 +695,6 @@ app.controller("MasterCtrl",
   // If escape is pressed close box
   // NOTE: This fires the watches too often
   $scope.keyPress = function ($event) {
-    // watches can be placed in corresponding ctrls. as in MapCtrl
     if ($event.target.nodeName === "INPUT" &&
       ($event.which !== 27 && $event.which !== 13)) {
       return;
@@ -736,6 +707,34 @@ app.controller("MasterCtrl",
       $scope.box.empty = null;
     }
 
+  };
+
+  $scope.$watch('keyPressed', function (newVal, oldVal) {
+    if (newVal === 51) {
+      $scope.mapState.activeBaselayer = 3;
+      $scope.mapState.changeBaselayer();
+    } else if (newVal === 52) {
+      $scope.mapState.activeBaselayer = 4;
+      $scope.mapState.changeBaselayer();
+    } else if (newVal === 49) {
+      $scope.mapState.activeBaselayer = 1;
+      $scope.mapState.changeBaselayer();
+    } else if (newVal === 50) {
+      $scope.mapState.activeBaselayer = 2;
+      $scope.mapState.changeBaselayer();
+    } else if (newVal === 53) {
+      $scope.events.toggleEvents("Twitter");
+    } else if (newVal === 54) {
+      $scope.events.toggleEvents("Meldingen");
+    }
+  });
+
+  $scope.toggleLayerInfo = function (layername) {
+    if (layername === 'Hoogtekaart') {
+      $scope.keyPressed = 51;
+    } else if (layername === 'Landgebruik') {
+      $scope.keyPressed = 52;
+    }
   };
 
 //END keypress

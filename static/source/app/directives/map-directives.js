@@ -1,590 +1,524 @@
-// leaflet.js
-app
-  .directive('map', ['$location', function (location) {
+'use strict';
 
-    // WTF?
-    var newValue = function () {
-      var variable = 1;
-    };
+/**
+ * Map directive
+ *
+ * Overview
+ * ========
+ *
+ * Defines the map. Directive does all the watching and DOM binding, MapDirCtrl holds 
+ * all the testable logic. Ideally the directive has no logic and the MapDirCtrl
+ * is independent of the rest of the application.
+ * 
+ * TODO:
+ * * [ ] Move $scope out of MapDirCtrl
+ * * [ ] Split up massive functions in MapDirCtrl
+ * * [ ] Get rain stuff into the directive and the MapDirCtrl
+ * 
+ */
 
-    /**
-     * Control function for this directive
-     */
-    var MapCtrl  = function ($scope, $location, $timeout) {
+app.controller('MapDirCtrl', function ($scope, $timeout) {
 
-      /**
-       * Listener to update map view when user changes url
-       *
-       * HoldRightThere is set to true when the application updates
-       * the url. Then, this listener is fired but does not nothing but
-       * resetting the holdRightThere back to false
-       */
-      $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-        if (!$scope.holdRightThere || oldurl === newurl) {
-          var latlonzoom = $location.hash().split(',');
-          if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
-            if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
-              $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: true, animate: true});
+  // UTF bookkeeping
+  var lowestUTFLayer,
+      utfLayersOrder = [],
+      utfHit = false;
+
+  this.initiateLayer = function (layer) {
+    if (layer.name === "Simulatie") {
+      // Hack for 3Di.
+      //console.log("Initiate 3Di");
+      layer.follow_3di = false;
+    } else if (layer.type === "TMS" && layer.baselayer) {
+      layer.leafletLayer = L.tileLayer(layer.url + '.png',
+                                       {name: "Background",
+                                        maxZoom: 20});
+    } else if (layer.type === "TMS" && !layer.baselayer) {
+      layer.leafletLayer = L.tileLayer(layer.url + '.png',
+                                       {minZoom: layer.min_zoom,
+                                        maxZoom: 20,
+                                        zIndex: layer.z_index});
+    } else if (layer.type === "WMS") {
+      var options = {
+        layers: layer.slug,
+        format: 'image/png',
+        version: '1.1.1',
+        minZoom: layer.min_zoom,
+        maxZoom: 20
+      };
+      //NOTE ugly hack
+      if (layer.slug === 'landuse') {
+        options.styles = 'landuse';
+      } else if (layer.slug === 'elevation') {
+        // dynamically set min/max?
+        // options.effects = 'shade:0:3';
+        options.styles = 'jet:-5:20';
+      }
+      layer.leafletLayer = L.tileLayer.wms(layer.url, options);
+    } else if (layer.type === "ASSET") {
+      var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
+      if (layer.min_zoom_click !== null) {
+        var leafletLayer = new L.UtfGrid(url, {
+          ext: 'grid',
+          slug: layer.slug,
+          name: layer.slug,
+          useJsonP: false,
+          minZoom: layer.min_zoom_click,
+          maxZoom: 20,
+          order: layer.order
+        });
+
+        leafletLayer.on('click', function (e) {
+          if (e.data) {
+            if (e.data.geom) {
+              utfHit = true;
+              clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
+            } else {
+              console.info("You clicked on an object from negative space");
             }
-          }
-        }
-        $scope.holdRightThere = false;
-      });
-
-
-      this.initiateLayer = function (layer) {
-        if (layer.name === "Simulatie") {
-          // Hack for 3Di.
-          //console.log("Initiate 3Di");
-          layer.follow_3di = false;
-        } else if (layer.type === "TMS" && layer.baselayer) {
-          layer.leafletLayer = L.tileLayer(layer.url + '.png',
-                                           {name: "Background", maxZoom: 20});
-        } else if (layer.type === "TMS" && !layer.baselayer) {
-          layer.leafletLayer = L.tileLayer(layer.url + '.png',
-                                           {minZoom: layer.min_zoom, maxZoom: 20, zIndex: layer.z_index});
-        } else if (layer.type === "WMS") {
-          var options = {
-            layers: layer.slug,
-            format: 'image/png',
-            version: '1.1.1',
-            minZoom: layer.min_zoom,
-            maxZoom: 20
-          };
-          //NOTE ugly hack
-          if (layer.slug === 'landuse') {
-            options.styles = 'landuse';
-          } else if (layer.slug === 'elevation') {
-            // dynamically set min/max?
-            // options.effects = 'shade:0:3';
-            options.styles = 'jet:-5:20';
-          }
-          layer.leafletLayer = L.tileLayer.wms(layer.url, options);
-        } else if (layer.type === "ASSET") {
-          var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
-          layer.grid_layers = [];
-          if (layer.min_zoom_click !== null) {
-            var leafletLayer = new L.UtfGrid(url, {
-              ext: 'grid',
-              slug: layer.slug,
-              name: layer.slug,
-              useJsonP: false,
-              minZoom: layer.min_zoom_click,
-              maxZoom: 20
+            $scope.$apply(function () {
+              angular.extend($scope.activeObject, e.data);
+              $scope.activeObject.latlng = e.latlng;
+              $scope.activeObject.changed = !$scope.activeObject.changed;
             });
-            leafletLayer.on('click', function (e) {
-              if (e.data) {
-                if (e.data.geom) {
-                  clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
-                } else {
-                  console.info("You clicked on an object from negative space");
-                }
-                $scope.$apply(function () {
-                  angular.extend($scope.activeObject, e.data);
-                  $scope.activeObject.latlng = e.latlng;
-                  $scope.activeObject.changed = !$scope.activeObject.changed;
-                });
-              } else {
+          } else {
+            if (leafletLayer.options.order === lowestUTFLayer) {
+              if (!utfHit || utfLayersOrder.length < 2) {
                 clickInSpace(e.latlng);
               }
-            });
-            layer.grid_layers.push(leafletLayer);
-          }
-          layer.leafletLayer = L.tileLayer(url, {
-            ext: 'png',
-            slug: layer.slug,
-            name: layer.slug,
-            minZoom: layer.min_zoom,
-            maxZoom: 20,
-            zIndex: layer.z_index
-          });
-        } else {
-          console.log(layer.type);
-        }
-        layer.initiated = true;
-      };
-
-      /**
-       * Draws visible feedback on the map after a click
-       *
-       * Removes possible click feedback layer and creates a new clickLayer
-       * containing a circle. The circle is than vibrated to attract attention
-       *
-       * @param {object} latLng Leaflet object specifying the latitude
-       * and longitude of a click
-       */
-      var removeProm;
-      var clickInSpace = function (latLng) {
-        $timeout.cancel(removeProm);
-        if ($scope.mapState.clickLayer) {
-          $scope.map.removeLayer($scope.mapState.clickLayer);
-          delete $scope.mapState.clickLayer;
-        }
-        $scope.mapState.clickLayer = L.circleMarker(latLng, {
-          radius: 0,
-          opacity: 0.6,
-          color: "#1abc9c"
-        });
-        $scope.mapState.clickLayer.addTo($scope.map);
-        var selection = d3.select($scope.mapState.clickLayer._container);
-
-        selection.select("path")
-          .transition().duration(150)
-          .attr("stroke-width", 20)
-          .transition().duration(150)
-          .attr("stroke-width", 5)
-          .transition().duration(150)
-          .attr("stroke-width", 15)
-          .transition().duration(150)
-          .attr("stroke-opacity", 0.5)
-          .attr("stroke-width", 10);
-
-        if ($scope.box.type !== 'rain') {
-          removeProm = $timeout(function () {
-            $scope.map.removeLayer($scope.mapState.clickLayer);
-          }, 1500);
-        }
-      };
-
-      /**
-       * Draws a circle around an object on click.
-       *
-       * Removes possible click feedback layer and creates a new clickLayer
-       * containing a circle. The circle is vibrated to attract attention.
-       *
-       * @param {object} geometry Geojson compliant geometry object coming
-       *  from UTFgrid
-       * @param {string} entityName Name of the object to give it custom
-       *  styling
-       */
-      var clickGeometry = function (geometry, entityName) {
-        $timeout.cancel(removeProm);
-        if ($scope.mapState.clickLayer) {
-          $scope.map.removeLayer($scope.mapState.clickLayer);
-          delete $scope.mapState.clickLayer;
-        }
-
-        var geojsonFeature = { "type": "Feature" };
-        geojsonFeature.geometry = geometry;
-
-        //Put geometry in leaflet geojson layer
-        $scope.mapState.clickLayer = L.geoJson(geojsonFeature, {
-          minZoom: 13,
-          style: {},
-          pointToLayer: function (feature, latlng) {
-            this.circleMarker = L.circleMarker(latlng, {
-              radius: 11.5,
-              opacity: 0.5,
-              fillOpacity: 0,
-            });
-            return this.circleMarker;
-          }
-        });
-        $scope.mapState.clickLayer.addTo($scope.map);
-
-        // Manually edit with d3
-        // Due to some leaflet obscurity you have to get the first item with an unknown key.
-        var layer = $scope.mapState.clickLayer._layers;
-        var selection;
-        for (var key in layer) {
-          selection = d3.select(layer[key]._container);
-          break;
-        }
-
-        selection.select("path")
-          .attr("stroke", "#1abc9c")
-          .transition().duration(150)
-          .attr("stroke-width", 20)
-          .transition().duration(150)
-          .attr("stroke-width", 5)
-          .transition().duration(150)
-          .attr("stroke-width", 15)
-          .transition().duration(150)
-          .attr("stroke-opacity", 1)
-          .attr("stroke-width", 5);
-
-        // Entity specific modifications
-        if (entityName.indexOf("pumpstation") !== -1) {
-          selection.attr("transform", "translate(0, 5)");
-        } else if (entityName.indexOf("pipe") !== -1) {
-          selection.select("path").transition().delay(450).duration(150)
-          .attr("stroke-opacity", 0.6)
-          .attr("stroke-width", 10);
-        } else if (entityName === 'manhole') {
-          selection.attr("transform", "translate(1, 0)");
-          this.circleMarker.setRadius(7.5);
-        }
-      };
-
-      /**
-       * Watch to remove clicklayer when user clicks on omnibox close button.
-       */
-      $scope.$watch('box.type', function (n, o) {
-        if (n === o) { return true; }
-        if ($scope.mapState.clickLayer && $scope.box.type === 'empty') {
-          $scope.map.removeLayer($scope.mapState.clickLayer);
-          delete $scope.mapState.clickLayer;
-        }
-      });
-
-      // expects a layer hashtable with a leafletlayer object
-      this.toggleLayer = function (layer) {
-        // 3Di hack
-        if (layer.name === "Simulatie") {
-          //console.log("Toggle 3Di layer " + layer.active);
-          if (layer.active) {
-            // $scope.threediTool();
-            $scope.connect();
-          } else {
-            $scope.disconnect();
-          }
-          return;
-        }
-        if (!layer.active) {
-          if (layer.leafletLayer) {
-            $scope.map.removeLayer(layer.leafletLayer);
-            if (layer.grid_layers) {
-              for (var i in layer.grid_layers) {
-                $scope.map.removeLayer(layer.grid_layers[i]);
-              }
+              utfHit = false;
             }
-          } else {
-            console.log('leaflet layer not defined', layer.type);
           }
-        } else {
-          if (layer.leafletLayer) {
-            $scope.map.addLayer(layer.leafletLayer);
-            if (layer.grid_layers) {
-              // Add listener to start loading utf layers
-              // after loading of visible layer to have an
-              // increased user experience
-              layer.leafletLayer.on('load', function () {
-                // Add all the grid layers of the layer when load finished
-                angular.forEach(layer.grid_layers, function (layer) {
-                  $scope.map.addLayer(layer);
-                });
-              });
-              layer.leafletLayer.on('loading', function () {
-                // Temporarily remove all utfLayers for performance
-                angular.forEach(layer.grid_layers, function (layer) {
-                  if ($scope.map.hasLayer(layer)) {
-                    $scope.map.removeLayer(layer);
-                  }
-                });
-              });
-            }
-          } else {
-            console.log('leaflet layer not defined', layer.type);
-          }
-        }
-      };
-
-      // expects a layer hashtable with a leafletlayer object
-      this.toggleBaseLayer = function (layer) {
-        //var layers = $scope.map._layers;
-        if (!layer.active) {
-          if (layer.leafletLayer) {
-            $scope.map.removeLayer(layer.leafletLayer);
-          } else {
-            console.log('leaflet layer not defined');
-          }
-        } else if (layer.active) {
-          if (layer.leafletLayer) {
-            $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: true });
-            //if (layer.name === 'Satellite') {
-              //layer.leafletLayer.getContainer().classList.add('faded-gray');
-            //}
-          } else {
-            console.log('leaflet layer not defined');
-          }
-        }
-      };
-
-
-      // Expects a leafletLayer as an argument
-      this.addLayer = function (layer) {
-        $scope.map.addLayer(layer);
-      };
-
-      // Expects a leafletLayer as an argument
-      this.removeLayer = function (layer) {
-        $scope.map.removeLayer(layer);
-      };
-
-      this.panZoomTo = function (panZoom) {
-        $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
-      };
-
-      this.moveEnd = function (lat, lng, zoom) {
-        $location.path(lat + ',' + lng + ',' + zoom);
-        // $location.path($scope.map.getCenter().lat.toString() + ',' + $scope.map.getCenter().lng.toString() + ',' + $scope.map.getZoom().toString());
-      };
-
-      // make map object available to outside world.
-      this.map = function () {return $scope.map; };
-      
-      this.zoomToTheMagic = function (layer) {
-        //console.log('zoomToTheMagic');
-        // TODO: make this not hardcoded. And make this a nice UX instead of a brutal one
-        if (layer.name === 'Afvalwater') {
-          $scope.map.setView([52.503265633642194, 4.968782196044922], 14, {animate: true});
-        }
-        if (layer.name === 'Oppervlaktewater') {
-          $scope.map.setView([52.60763454517434, 4.794158935546875], 11, { animate: true });
-        }
-        // This button is not available for 3Di
-      };
-
-      this.fitBounds = function (extent) {
-        // extent is in format [[extent[0], extent[1]], [extent[2], extent[3]]]
-        $scope.map.fitBounds(extent);
-      };
-
-      this.locateMe = function () {
-        // $scope.map.locate({ setView: true });
-        function onLocationFound(e) {
-          var radius = e.accuracy / 2;
-
-          L.marker(e.latlng).addTo($scope.map)
-            .bindPopup("You are within " + radius + " meters from this point").openPopup();
-
-          L.circle(e.latlng, radius).addTo($scope.map);
-        }
-
-        function onLocationError(e) {
-          alert(e.message);
-        }
-
-        $scope.map.on('locationfound', onLocationFound);
-        $scope.map.on('locationerror', onLocationError);
-
-        $scope.map.locate({setView: true, maxZoom: 16});
-      };
-    };
-
-
-    /**
-     * Link function for this directive.
-     */
-    var link = function (scope, element, attrs, ctrl) {
-      // Leaflet global variable to speed up vector layer, 
-      // see: http://leafletjs.com/reference.html#path-canvas
-      window.L_PREFER_CANVAS = true;
-      // instead of 'map' element here for testability
-      var osmAttrib = 'Map data © OpenStreetMap contributors';
-      var bounds = window.data_bounds.all;
-      var southWest = L.latLng(bounds.south, bounds.west);
-      var northEast = L.latLng(bounds.north, bounds.east);
-      var maxBounds = L.latLngBounds(southWest, northEast);
-      var map = new L.map(element[0], {
-          zoomControl: false,
-          zoom: 12
         });
-      map.fitBounds(maxBounds);
-      map.attributionControl.addAttribution(osmAttrib);
-      map.attributionControl.setPrefix('');
-
-      scope.$watch('searchMarkers', function (newValue, oldValue) {
-        if (newValue) {
-          for (var i in scope.searchMarkers) {
-            return;
-            // var cm = new L.CircleMarker(
-            //   new L.LatLng(
-            //     scope.searchMarkers[i].geometry[1],
-            //     scope.searchMarkers[i].geometry[0]
-            //   ),
-            //   {
-            //     color: '#fff',
-            //     fillColor: '#3186cc',
-            //     fillOpacity: 0.0,
-            //     radius: 5
-            //   }
-            // ).addTo(scope.map);
-            // cm.bindPopup(scope.searchMarkers[i].name);
-          }
-        }
-      }, true);
-
-      // NOTE check if this is necessary
-      scope.map = map;
-
-      // first time is not triggered until move.
-      if (scope.mapState) {
-        scope.mapState.bounds = scope.map.getBounds();
-        scope.mapState.geom_wkt = "POLYGON(("
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
-              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
-              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
-              + "))";
+        layer.grid_layer = leafletLayer;
       }
+      layer.leafletLayer = L.tileLayer(url, {
+        ext: 'png',
+        slug: layer.slug,
+        name: layer.slug,
+        minZoom: layer.min_zoom,
+        maxZoom: 20,
+        zIndex: layer.z_index
+      });
+    } else {
+      console.log(layer.type);
+    }
+    layer.initiated = true;
 
-      scope.beenThereDoneIntersectSuggestion = false;
+  };
 
-      scope.map.on('zoomend', function () {
+  /**
+   * Draws visible feedback on the map after a click
+   *
+   * Removes possible click feedback layer and creates a new clickLayer
+   * containing a circle. The circle is than vibrated to attract attention
+   *
+   * @param {object} latLng Leaflet object specifying the latitude
+   * and longitude of a click
+   */
+  var removeProm;
 
-        if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
-          if (!scope.beenThereDoneIntersectSuggestion) {
-            scope.beenThereDoneIntersectSuggestion = true;
-            scope.box.type = 'intersecttool';
+  var clickInSpace = function (latLng) {
+    $timeout.cancel(removeProm);
+    if ($scope.mapState.clickLayer) {
+      $scope.map.removeLayer($scope.mapState.clickLayer);
+      delete $scope.mapState.clickLayer;
+    }
+    $scope.mapState.clickLayer = L.circleMarker(latLng, {
+      radius: 0,
+      opacity: 0.6,
+      color: "#1abc9c"
+    });
+    $scope.mapState.clickLayer.addTo($scope.map);
+    var selection = d3.select($scope.mapState.clickLayer._container);
+
+    selection.select("path")
+      .transition().duration(150)
+      .attr("stroke-width", 20)
+      .transition().duration(150)
+      .attr("stroke-width", 5)
+      .transition().duration(150)
+      .attr("stroke-width", 15)
+      .transition().duration(150)
+      .attr("stroke-opacity", 0.5)
+      .attr("stroke-width", 10);
+
+    if ($scope.box.type !== 'rain' &&
+      $scope.box.type !== 'aggregate' &&
+      $scope.box.type !== 'profile') {
+      removeProm = $timeout(function () {
+        $scope.map.removeLayer($scope.mapState.clickLayer);
+        $scope.box.type = 'empty';
+      }, 1500);
+    }
+  };
+
+  /**
+   * Draws a circle around an object on click.
+   *
+   * Removes possible click feedback layer and creates a new clickLayer
+   * containing a circle. The circle is vibrated to attract attention.
+   *
+   * @param {object} geometry Geojson compliant geometry object coming
+   *  from UTFgrid
+   * @param {string} entityName Name of the object to give it custom
+   *  styling
+   */
+  var clickGeometry = function (geometry, entityName) {
+    $timeout.cancel(removeProm);
+    if ($scope.mapState.clickLayer) {
+      $scope.map.removeLayer($scope.mapState.clickLayer);
+      delete $scope.mapState.clickLayer;
+    }
+
+    var circleMarker;
+    var geojsonFeature = { "type": "Feature" };
+    geojsonFeature.geometry = geometry;
+
+    //Put geometry in leaflet geojson layer
+    $scope.mapState.clickLayer = L.geoJson(geojsonFeature, {
+      minZoom: 13,
+      style: {},
+      pointToLayer: function (feature, latlng) {
+        circleMarker = L.circleMarker(latlng, {
+          radius: 11.5,
+          opacity: 0.5,
+          fillOpacity: 0,
+        });
+        return circleMarker;
+      }
+    });
+    $scope.mapState.clickLayer.addTo($scope.map);
+
+    // Manually edit with d3
+    // Due to some leaflet obscurity you have to get the first item with an unknown key.
+    var layer = $scope.mapState.clickLayer._layers;
+    var selection;
+    for (var key in layer) {
+      selection = d3.select(layer[key]._container);
+      break;
+    }
+
+    selection.select("path")
+      .attr("stroke", "#1abc9c")
+      .transition().duration(150)
+      .attr("stroke-width", 20)
+      .transition().duration(150)
+      .attr("stroke-width", 5)
+      .transition().duration(150)
+      .attr("stroke-width", 15)
+      .transition().duration(150)
+      .attr("stroke-opacity", 1)
+      .attr("stroke-width", 5);
+
+    // Entity specific modifications
+    if (entityName.indexOf("pumpstation") !== -1) {
+      selection.attr("transform", "translate(0, 5)");
+    } else if (entityName.indexOf("pipe") !== -1) {
+      selection.select("path").transition().delay(450).duration(150)
+      .attr("stroke-opacity", 0.6)
+      .attr("stroke-width", 10);
+    } else if (entityName === 'manhole') {
+      selection.attr("transform", "translate(1, 0)");
+      circleMarker.setRadius(7.5);
+    }
+  };
+
+  // expects a layer hashtable with a leafletlayer object
+  this.toggleLayer = function (layer) {
+    if (!layer.active) {
+      if (layer.leafletLayer) {
+        $scope.map.removeLayer(layer.leafletLayer);
+        if (layer.grid_layer) {
+          $scope.map.removeLayer(layer.grid_layer);
+          utfLayersOrder.splice(utfLayersOrder.indexOf(layer.grid_layer.options.order), 1);
+          if (layer.order === lowestUTFLayer) {
+            lowestUTFLayer = utfLayersOrder.sort()[-1];
           }
         }
-        // Hide and unhide clicklayer when zoomed out or in
-        if (scope.mapState.clickLayer && scope.map.getZoom() < 13) {
-          scope.map.removeLayer(scope.mapState.clickLayer);
-        }
-        if (scope.mapState.clickLayer && scope.map.getZoom() > 12) {
-          scope.map.addLayer(scope.mapState.clickLayer);
-        }
-      });
-
-      scope.map.on('move', function () {
-        // NOTE: Check whether a $digest is already happening before using apply
-        if (!scope.$$phase) {
-          scope.$apply(function () {
-            scope.mapState.moved = Date.now();
-            scope.mapState.bounds = scope.map.getBounds();
+      } else {
+        console.log('leaflet layer not defined', layer.type);
+      }
+    }
+    if (layer.active) {
+      if (layer.leafletLayer) {
+        $scope.map.addLayer(layer.leafletLayer);
+        if (layer.grid_layer) {
+          if (layer.order < lowestUTFLayer || lowestUTFLayer === undefined) {
+            lowestUTFLayer = layer.order;
+          }
+          utfLayersOrder.push(layer.order);
+          // Add listener to start loading utf layers
+          // after loading of visible layer to have an
+          // increased user experience
+          layer.leafletLayer.on('load', function () {
+            // Add the grid layers of the layer when load finished
+            $scope.map.addLayer(layer.grid_layer);
           });
-        } else {
+          layer.leafletLayer.on('loading', function () {
+            // Temporarily remove all utfLayers for performance
+            if ($scope.map.hasLayer(layer.grid_layer)) {
+              $scope.map.removeLayer(layer.grid_layer);
+            }
+          });
+        }
+      } else {
+        console.log('leaflet layer not defined', layer.type);
+      }
+    }
+  };
+
+  // expects a layer hashtable with a leafletlayer object
+  this.toggleBaseLayer = function (layer) {
+    if (layer.id !== $scope.mapState.activeBaselayer) {
+      layer.active = false;
+      if (layer.leafletLayer) {
+        $scope.map.removeLayer(layer.leafletLayer);
+      } else {
+        console.log('leaflet layer not defined');
+      }
+    } else if (layer.id === $scope.mapState.activeBaselayer) {
+      layer.active = true;
+      if (layer.leafletLayer) {
+        $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: true });
+      } else {
+        console.log('leaflet layer not defined');
+      }
+    }
+  };
+
+  // Expects a leafletLayer as an argument
+  this.addLayer = function (layer) {
+    $scope.map.addLayer(layer);
+  };
+
+  // Expects a leafletLayer as an argument
+  this.removeLayer = function (layer) {
+    $scope.map.removeLayer(layer);
+  };
+
+  this.panZoomTo = function (panZoom) {
+    $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
+  };
+
+  // make map object available to outside world.
+  this.map = function () {return $scope.map; };
+  
+  this.zoomToTheMagic = function (layer) {
+    //console.log('zoomToTheMagic');
+    // TODO: make this not hardcoded. And make this a nice UX instead of a brutal one
+    if (layer.name === 'Afvalwater') {
+      $scope.map.setView([52.503265633642194, 4.968782196044922], 14, {animate: true});
+    }
+    if (layer.name === 'Oppervlaktewater') {
+      $scope.map.setView([52.60763454517434, 4.794158935546875], 11, { animate: true });
+    }
+    // This button is not available for 3Di
+  };
+
+  this.fitBounds = function (extent) {
+    // extent is in format [[extent[0], extent[1]], [extent[2], extent[3]]]
+    $scope.map.fitBounds(extent);
+  };
+
+  this.boxType = function (activeBaselayer, currentType) {
+    var newType;
+    if (activeBaselayer === 3) {
+      newType = 'elevation';
+    } else if (activeBaselayer === 4) {
+      newType = 'landuse';
+    } else if (currentType === 'landuse' || currentType === 'elevation') {
+      newType = 'empty';
+    } else {
+      newType = currentType;
+    }
+    return newType;
+  };
+
+  return this;
+})
+.directive('map', ['$location', function ($location) {
+
+  var link = function (scope, element, attrs, ctrl) {
+    // Leaflet global variable to speed up vector layer, 
+    // see: http://leafletjs.com/reference.html#path-canvas
+    window.L_PREFER_CANVAS = true;
+    // instead of 'map' element here for testability
+    var osmAttrib = 'Map data © OpenStreetMap contributors';
+    var bounds = window.data_bounds.all;
+    var southWest = L.latLng(bounds.south, bounds.west);
+    var northEast = L.latLng(bounds.north, bounds.east);
+    var maxBounds = L.latLngBounds(southWest, northEast);
+    var map = new L.map(element[0], {
+        zoomControl: false,
+        zoom: 12
+      });
+    map.fitBounds(maxBounds);
+    map.attributionControl.addAttribution(osmAttrib);
+    map.attributionControl.setPrefix('');
+    scope.map = map;
+
+    // Initialise layers
+    angular.forEach(scope.mapState.baselayers, function (layer) {
+      if (!layer.initiated) {
+        ctrl.initiateLayer(layer);
+      }
+      ctrl.toggleBaseLayer(layer);
+    });
+
+    angular.forEach(scope.mapState.layers, function (layer) {
+      if (!layer.initiated) {
+        ctrl.initiateLayer(layer);
+      }
+      ctrl.toggleLayer(layer);
+    });
+
+    // first time is not triggered until move.
+    if (scope.mapState) {
+      scope.mapState.bounds = scope.map.getBounds();
+      scope.mapState.geom_wkt = "POLYGON(("
+            + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
+            + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
+            + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
+            + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
+            + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
+            + "))";
+    }
+
+    scope.beenThereDoneIntersectSuggestion = false;
+
+    scope.map.on('zoomend', function () {
+
+      if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
+        if (!scope.beenThereDoneIntersectSuggestion) {
+          scope.beenThereDoneIntersectSuggestion = true;
+          scope.box.type = 'intersecttool';
+        }
+      }
+      // Hide and unhide clicklayer when zoomed out or in
+      if (scope.mapState.clickLayer && scope.map.getZoom() < 13) {
+        scope.map.removeLayer(scope.mapState.clickLayer);
+      }
+      if (scope.mapState.clickLayer && scope.map.getZoom() > 12) {
+        scope.map.addLayer(scope.mapState.clickLayer);
+      }
+    });
+
+    scope.map.on('move', function () {
+      // NOTE: Check whether a $digest is already happening before using apply
+      if (!scope.$$phase) {
+        scope.$apply(function () {
           scope.mapState.moved = Date.now();
           scope.mapState.bounds = scope.map.getBounds();
+        });
+      } else {
+        scope.mapState.moved = Date.now();
+        scope.mapState.bounds = scope.map.getBounds();
+      }
+    });
+
+    /**
+     * Update the url when the map has been moved
+     *
+     * Set holdRightThere so the url listener is not fired when the application
+     * changes the url. Precision of url is 5.
+     */
+    scope.map.on('moveend', function () {
+      scope.holdRightThere = true;
+      var COORD_PRECISION = 5;
+      var newHash = [
+        scope.map.getCenter().lat.toFixed(COORD_PRECISION),
+        scope.map.getCenter().lng.toFixed(COORD_PRECISION),
+        scope.map.getZoom()
+      ].join(',');
+      $location.hash(newHash);
+    });
+
+    scope.map.on('dragend', function () {
+      if (scope.box.type === 'default') {
+      // scope.box.type = 'empty';
+        scope.$apply(function () {
+          scope.box.close();
+        });
+      }
+      if (scope.box.type === 'intersecttool') {
+        scope.$apply(function () {
+          scope.box.type = 'empty';
+        });
+      }
+    });
+
+    /**
+     * Listener to update map view when user changes url
+     *
+     * HoldRightThere is set to true when the application updates
+     * the url. Then, this listener is fired but does nothing but
+     * resetting the holdRightThere back to false
+     */
+    scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
+      if (!scope.holdRightThere || oldurl === newurl) {
+        var latlonzoom = $location.hash().split(',');
+        if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
+          if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
+            scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: true, animate: true});
+          }
         }
-      });
+      }
+      scope.holdRightThere = false;
+    });
 
-      /**
-       * Update the url when the map has been moved
-       *
-       * Set holdRightThere so the url listener is not fired when the application
-       * changes the url. Precision of url is 5.
-       */
-      scope.map.on('moveend', function () {
-        scope.holdRightThere = true;
-        var newHash = [
-          scope.map.getCenter().lat.toFixed(5),
-          scope.map.getCenter().lng.toFixed(5),
-          scope.map.getZoom()].join(',');
-        location.hash(newHash);
-      });
+    /**
+     * Watch to remove clicklayer when user clicks on omnibox close button.
+     */
+    scope.$watch('box.type', function (n, o) {
+      if (n === o) { return true; }
+      if (scope.mapState.clickLayer && scope.box.type === 'empty') {
+        ctrl.removeLayer(scope.mapState.clickLayer);
+        delete scope.mapState.clickLayer;
+      }
+    });
 
-      scope.map.on('dragend', function () {
-
-        if (scope.box.type === 'default') {
-        // scope.box.type = 'empty';
-          scope.$apply(function () {
-            scope.box.close();
-          });
-        }
-        if (scope.box.type === 'intersecttool') {
-          scope.$apply(function () {
-            scope.box.type = 'empty';
-          });
-        }
-      });
-
+    scope.mapState.changeLayer = function (layer) {
+      ctrl.toggleLayer(layer);
     };
 
-    return {
-        restrict: 'E',
-        replace: true,
-        template: '<div id="map"></div>',
-        controller: MapCtrl,
-        link: link
-      };
-  }
-]);
-
-app.directive('moveEnd', [function () {
-  return {
-    require: 'map',
-    link: function (scope, elements, attrs, MapCtrl) {
-      
-      scope.$watch('moveend', function (newValue, oldValue) {
-        if (newValue) {
-          MapCtrl.moveEnd(scope.map.getCenter().lat.toString(), scope.map.getCenter().lng.toString(), scope.map.getZoom().toString());
-        }
+    /**
+     * Changes the baselayer
+     *
+     * There is only one active baselayer. If baselayer is given, this layer
+     * becomes the activebaselayer and all baselayers are send to the
+     * toggleBaselayer function to turn them on or off. If you set the
+     * activeBaselayer manually this function may also be called to update all 
+     * baselayers. 
+     * 
+     * @param {layer object} baselayer: the baselayer to activate
+     */
+    scope.mapState.changeBaselayer = function (baselayer) {
+      if (baselayer) { scope.mapState.activeBaselayer = baselayer.id; }
+      angular.forEach(scope.mapState.baselayers, function (baselayer) {
+        ctrl.toggleBaseLayer(baselayer);
       });
-    },
-    restrict: 'A'
+      scope.mapState.baselayerChanged = Date.now();
+      scope.box.type = ctrl.boxType(scope.mapState.activeBaselayer, scope.box.type);
+    };
+
+
+
+
+    scope.zoomToTheMagic = function (layer) {
+      ctrl.zoomToTheMagic(layer);
+    };
+
   };
+
+  return {
+      restrict: 'E',
+      replace: true,
+      template: '<div id="map"></div>',
+      controller: 'MapDirCtrl',
+      link: link
+    };
 }]);
-
-// NOTE this whole directive should go; fix with ng-click and map-controller
-// functions
-app.directive('layerSwitch', [function () {
-  return {
-    require: 'map',
-    link: function (scope, elements, attrs, MapCtrl) {
-      scope.$watch('mapState.changed', function () {
-        // THis means that all active layers are added also when the layer is already added. :o
-        for (var i in layers) {
-          var layer = layers[i];
-          if (!layer.initiated) {
-            MapCtrl.initiateLayer(layer);
-          }
-          MapCtrl.toggleLayer(layer);
-        }
-      });
-      scope.$watch('mapState.baselayerChanged', function () {
-        for (var i in scope.mapState.baselayers) {
-          var layer = scope.mapState.baselayers[i];
-          if (!layer.initiated) {
-            MapCtrl.initiateLayer(layer);
-          }
-          MapCtrl.toggleBaseLayer(layer);
-        }
-      });
-    },
-    restrict: 'A'
-  };
-}]);
-
-// NOTE: this whole directive should go; fix with ng-click and map-controller
-// functions
-app.directive('panZoom', [function () {
-  return {
-    require: 'map',
-    link: function (scope, elements, attrs, MapCtrl) {
-      scope.$watch('panZoom', function () {
-        if (scope.panZoom !== undefined) {
-          if (scope.panZoom.hasOwnProperty('lat') &&
-            scope.panZoom.hasOwnProperty('lng') &&
-            scope.panZoom.hasOwnProperty('zoom')) {
-            MapCtrl.panZoomTo(scope.panZoom);
-          }
-        }
-      });
-    }
-  };
-}]);
-
-// NOTE: what does this layer do?
-app.directive('locate', function () {
-  return {
-    require: 'map',
-    link: function (scope, element, attrs, mapCtrl) {
-      scope.$watch('locate', function () {
-        if (scope.locate !== undefined) {
-          mapCtrl.locateMe();
-        }
-      });
-    }
-  };
-});
-
-// NOTE: this should probably go to main directive
-app.directive('zoomToLayer', function () {
-  return {
-    require: 'map',
-    link: function (scope, element, attrs, mapCtrl) {
-      scope.$watch('zoomToLayer', function () {
-        if (scope.zoomToLayer !== undefined) {
-          mapCtrl.zoomToTheMagic(scope.layerToZoomTo);
-        }
-      });
-    }
-  };
-});
 
 app.directive('rain', function () {
   return {
