@@ -149,11 +149,46 @@
             </div>
           </div>
           <div class="button-list-container" id="">
-            <div class="button-list-item"><a href="#" ng-click="toggleTool('profile')" class="button-list-link" title="{% trans 'Intersect tool' %}" ng-class="{'active': tools.active === 'profile'}"><i class="fa fa-expand"></i></a></div>
-            <div class="button-list-item"><a href="#" ng-click="box.type = 'elevation'" class="button-list-link" title="{% trans 'Elevation curve' %}" ng-class="{'active': box.type === 'elevation'}"><i class="fa fa-signal"></i></a></div>
-            <div class="button-list-item"><a href="#" ng-click="box.type = 'landuse'" class="button-list-link" title="{% trans 'Land use distribution' %}" ng-class="{'active': box.type === 'landuse'}"><i class="fa fa-circle-o"></i></a></div>
+            <div class="button-list-item">
+              <a href="#"
+                 ng-click="toggleTool('profile')"
+                 class="button-list-link"
+                 title="{% trans 'Intersect tool' %}"
+                 ng-class="{'active': tools.active === 'profile'}">
+                 <i class="fa fa-expand"></i>
+              </a>
+            </div>
+            <div class="button-list-item" ng-class="{'hide': box.type !== 'elevation'}">
+              <a href="#"
+                 ng-click="box.type = 'elevation'"
+                 class="button-list-link"
+                 title="{% trans 'Elevation curve' %}"
+                 ng-class="{'active': box.type === 'elevation'}">
+                 <i class="fa fa-signal"></i>
+              </a>
+            </div>
+            <div class="button-list-item" ng-class="{'hide': box.type !== 'elevation'}">
+              <a href="#"
+                 ng-click="toggleTool('autorescale')"
+                 class="button-list-link"
+                 title="{% trans 'Automatic rescaling on/off' %}"
+                 ng-class="{'active': tools.active === 'autorescale'}">
+                 <i class="fa fa-unsorted"></i>
+              </a>
+            </div>            
+            <div class="button-list-item">
+              <a href="#"
+                 ng-click="box.type = 'landuse'"
+                 class="button-list-link"
+                 title="{% trans 'Land use distribution' %}"
+                 ng-class="{'active': box.type === 'landuse'}">
+                 <i class="fa fa-circle-o"></i>
+              </a>
+            </div>
+            <!--
             <div class="button-list-item"><a href="#" ng-click="toggleTool('rain')" class="button-list-link" title="{% trans 'Rain App' %}" ng-class="{'active': tools.active === 'rain'}"><i class="fa fa-cloud"></i></a></div>
-            <div class="hide button-list-item" ng-class="{'hide': !threedi_active}"><a href="#" ng-click="threediTool()" class="button-list-link" title="3Di" ng-class="{'active': tools.active === 'threedi'}"><i class="fa fa-asterisk"></i></a></div>
+            -->
+            <!-- <div class="hide button-list-item" ng-class="{'hide': !threedi_active}"><a href="#" ng-click="threediTool()" class="button-list-link" title="3Di" ng-class="{'active': tools.active === 'threedi'}"><i class="fa fa-asterisk"></i></a></div> -->
           </div>
         </div>
         <map layers="mapState.layers"

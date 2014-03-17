@@ -134,11 +134,6 @@ app.controller("MasterCtrl",
     } else {
       $scope.tools.active = name;
     }
-    // NOTE: ugly hack, record if tool is time aware
-    if ($scope.tools.active === "alerts" ||
-        $scope.tools.active === "sewerage") {
-      $scope.timeState.changed = !$scope.timeState.changed;
-    }
   };
   // TOOLS
 
