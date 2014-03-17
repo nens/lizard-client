@@ -86,7 +86,8 @@ app.controller("MasterCtrl",
     showCards: false,
     type: 'empty', // NOTE: default, box type is empty
     content: {},
-    changed: Date.now()
+    changed: Date.now(),
+    mouseLoc: []
   };
 
   $scope.box.content.alerts = {};

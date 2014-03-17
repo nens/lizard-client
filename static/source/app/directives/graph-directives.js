@@ -726,6 +726,29 @@ angular.module('graph')
           .datum(data)
           .attr("class", "line")
           .attr("d", line);
+
+        if (scope.tools.active === 'profile') {
+
+          var zoom = d3.behavior.zoom()
+            .x(x.scale)
+            .on("zoom", null);
+          svg.call(zoom);
+
+          var rect = d3.select(graph.svg[0][0]).select('rect');
+          rect.on('mousemove', function () {
+            var pos = x.scale.invert(d3.mouse(this)[0]);
+            scope.$apply(function () {
+              scope.$parent.box.mouseLoc = pos;
+            });
+          });
+          
+          d3.select(graph.svg[0][0]).on('mouseout', function () {
+            console.log('mouseout');
+            scope.$apply(function () {
+              scope.$parent.box.mouseLoc = undefined;
+            });
+          });
+        }
       };
     };
 
