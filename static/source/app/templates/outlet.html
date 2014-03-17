@@ -11,8 +11,8 @@
     -->
 
     <div class="card-title">
-        <img src="images/knoop.png" class="img-circle">
-        <span>Uitlaat met keerklep</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">code</span>)
+        <!-- <img src="images/knoop.png" class="img-circle"> -->
+        <i class="icon-outlet"></i><span class="title-text">Uitlaat met keerklep</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">code</span>)
     </div>
 
   <table class="fullwidth">
@@ -30,7 +30,7 @@
 
 
   <div class="card-details" ng-click="activeObject.details = !activeObject.details">
-    <i class="fa fa-caret-right icon-ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="activeObject.details"> Minder details</span>
+    <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="activeObject.details"> Minder details</span>
   </div>
   <div class="hidden-details" ng-class="{'unhidden-details': activeObject.details}">
     <table class="fullwidth">

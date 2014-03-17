@@ -8,8 +8,8 @@
   </div>
 
   <div class="card-title">
-    <img src="/static/distjs/images/knoop.png" class="img-circle">
-    <span>Duiker</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
+    <!-- <img src="/static/distjs/images/knoop.png" class="img-circle"> -->
+    <i class="icon-culvert"></i><span class="title-text">Duiker</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
   </div>
 
     <table class="fullwidth">
@@ -38,7 +38,7 @@
 
 
     <div class="card-details" ng-click="activeObject.details = !activeObject.details">
-      <i class="fa fa-caret-right icon-ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="activeObject.details"> Minder details</span>
+      <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="activeObject.details"> Minder details</span>
     </div>
     <div class="hidden-details" ng-class="{'unhidden-details': activeObject.details}">
       <table class="fullwidth">

@@ -157,6 +157,17 @@
     margin-right: 1em;
 }
 
+.card .card-title i[class*='icon-'] {
+    color: #E74C3C;
+    font-size: 1.8em;
+    top: 17px;
+    position: absolute;
+    left: 20px;
+}
+.card .card-title .title-text {
+    margin-left: 38px;
+}
+
 .card .flip-button, .card .flip-button a {
     position: absolute;
     bottom: 5px;
@@ -502,7 +513,7 @@
     max-height: 220px;
 }
 
-.icon-ready-to-rotate {
+.ready-to-rotate {
     -webkit-transition: all .3s ease;
 }
 

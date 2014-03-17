@@ -98,16 +98,16 @@ app.filter('pipeTypeOrEllipsis', function () {
     var out;
     switch (input) {
     case '00':
-      out = 'gemengd';
+      out = 'Gemengde leiding';
       break;
     case '01':
-      out = 'regenwater';
+      out = 'Regenwaterleiding';
       break;
     case '02':
-      out = 'DWA';
+      out = 'Vuilwaterleiding';
       break;
     default:
-      out = '...';
+      out = 'Gesloten leiding';
     }
     return out;
   };
