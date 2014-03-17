@@ -25,7 +25,7 @@
       <td class="fixed-width-card-table">Aanslagpeil</td>
       <td>
         <span ng-bind="activeObject.start_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-        <span ng-if="activeObject.surface_level"> m
+        <span ng-if="!!activeObject.surface_level"> m
         <span style="word-spacing: 0;"> boven NAP</span></span>
       </td>
     </tr>
@@ -34,7 +34,7 @@
       </td>
       <td>
         <span ng-bind="activeObject.stop_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-        <span ng-if="activeObject.stoplevel"> m
+        <span ng-if="!!activeObject.stoplevel"> m
         <span style="word-spacing: 0;"> boven NAP</span></span>
       </td>  
     </tr>    
@@ -42,14 +42,14 @@
       <td class="fixed-width-card-table">Capaciteit</td>
       <td>
         <span ng-bind="activeObject.capacity | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-        <span ng-if="activeObject.capacity"> l/s</span>
+        <span ng-if="!!activeObject.capacity"> l/s</span>
       </td> 
     </tr>
   </tbody>
   </table>
 
   <div class="card-details" ng-click="activeObject.details = !activeObject.details">
-    <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="activeObject.details"> Minder details</span>
+    <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="!!activeObject.details"> Minder details</span>
   </div>
   <div class="hidden-details" ng-class="{'unhidden-details': activeObject.details}">
     <div class="streetview">

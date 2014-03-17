@@ -23,7 +23,7 @@
       </td>
       <td>
         <span ng-bind="activeObject.width | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-        <span ng-if="activeObject.width"> m</span>
+        <span ng-if="!!activeObject.width"> m</span>
       </td>  
     </tr> 
     <tr>
@@ -32,14 +32,14 @@
       </td>
       <td>
         <span ng-bind="activeObject.crest_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-        <span ng-if="activeObject.crest_level"> m</span>
+        <span ng-if="!!activeObject.crest_level"> m</span>
       </td>  
     </tr>           
   </tbody>
   </table>
 
   <div class="card-details" ng-click="activeObject.details = !activeObject.details">
-    <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="activeObject.details"> Minder details</span>
+    <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="!!activeObject.details"> Minder details</span>
   </div>
   <div class="hidden-details" ng-class="{'unhidden-details': activeObject.details}">
     <table class="fullwidth">
