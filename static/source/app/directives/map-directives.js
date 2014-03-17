@@ -450,7 +450,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
      * Set holdRightThere so the url listener is not fired when the application
      * changes the url. Precision of url is 5.
      */
-    scope.tools.active === 'autorescale';
 
     scope.map.on('moveend', function () {
       scope.holdRightThere = true;
@@ -462,7 +461,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
       ].join(',');
       $location.hash(newHash);
       if (scope.mapState.activeBaselayer === 3 && scope.tools.active === 'autorescale') {
-        //console.log(scope.mapState.bounds, scope.mapState.baseLayers[scope.mapState.activeBaselayer]);
         ctrl.rescaleElevation(scope.mapState.bounds);
       }
     });
