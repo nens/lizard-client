@@ -86,7 +86,8 @@ app.controller("MasterCtrl",
     showCards: false,
     type: 'empty', // NOTE: default, box type is empty
     content: {},
-    changed: Date.now()
+    changed: Date.now(),
+    mouseLoc: []
   };
 
   $scope.box.content.alerts = {};
@@ -132,11 +133,6 @@ app.controller("MasterCtrl",
       $scope.tools.active = "none";
     } else {
       $scope.tools.active = name;
-    }
-    // NOTE: ugly hack, record if tool is time aware
-    if ($scope.tools.active === "alerts" ||
-        $scope.tools.active === "sewerage") {
-      $scope.timeState.changed = !$scope.timeState.changed;
     }
   };
   // TOOLS

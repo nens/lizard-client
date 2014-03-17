@@ -34,11 +34,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
                                        {name: "Background",
                                         maxZoom: 20});
-    } else if (layer.type === "TMS" && !layer.baselayer) {
-      layer.leafletLayer = L.tileLayer(layer.url + '.png',
-                                       {minZoom: layer.min_zoom,
-                                        maxZoom: 20,
-                                        zIndex: layer.z_index});
     } else if (layer.type === "WMS") {
       var options = {
         layers: layer.slug,
@@ -62,7 +57,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
     } else if (layer.type === "ASSET") {
       var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
       if (layer.min_zoom_click !== null) {
-        var leafletLayer = new L.UtfGrid(url, {
+        var leafletLayer = new L.UtfGrid(layer.url, {
           ext: 'grid',
           slug: layer.slug,
           name: layer.slug,
@@ -97,7 +92,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
         });
         layer.grid_layer = leafletLayer;
       }
-      layer.leafletLayer = L.tileLayer(url, {
+      layer.leafletLayer = L.tileLayer(layer.url, {
         ext: 'png',
         slug: layer.slug,
         name: layer.slug,
@@ -105,8 +100,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
         maxZoom: 20,
         zIndex: layer.z_index
       });
-    } else {
-      console.log(layer.type);
     }
     layer.initiated = true;
 
@@ -450,6 +443,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
      * Set holdRightThere so the url listener is not fired when the application
      * changes the url. Precision of url is 5.
      */
+
     scope.map.on('moveend', function () {
       scope.holdRightThere = true;
       var COORD_PRECISION = 5;
@@ -462,9 +456,11 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
         scope.$apply(function () {
           $location.hash(newHash);
         });
+      } else {
+        $location.hash(newHash);
       }
       // If elevation layer is active:
-      if (scope.mapState.activeBaselayer === 3) {
+      if (scope.mapState.activeBaselayer === 3 && scope.tools.active === 'autorescale') {
         ctrl.rescaleElevation(scope.mapState.bounds);
       }
     });

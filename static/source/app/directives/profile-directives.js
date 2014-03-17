@@ -8,7 +8,6 @@ app.directive('rasterprofile', function () {
     restrict: "A",
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
-
         // function to convert Leaflet layer to WKT
         // from https://gist.github.com/bmcbride/4248238
         // added project to 3857
@@ -45,6 +44,7 @@ app.directive('rasterprofile', function () {
           scope.line_marker.setLatLngs(pointList);
           scope.line_marker.options.dashArray = null;
           scope.line_marker._updateStyle();
+          scope.firstClick = angular.copy(scope.first_click);
           scope.first_click = undefined;
           
         };
@@ -54,6 +54,7 @@ app.directive('rasterprofile', function () {
           scope.line_marker.options.dashArray = "5, 5";
           scope.line_marker._updateStyle();
           scope.tools.cursorTooltip.content = "Now click a second time to finish the line";
+          scope.lastClick = e.latlng;
         };
 
         var drawLineCLickHandler = function (e) {
@@ -107,6 +108,40 @@ app.directive('rasterprofile', function () {
               mapCtrl.removeLayer(scope.line_marker);
             }
             scope.map.off('click', drawLineCLickHandler);
+          }
+        });
+
+        var circle;
+        scope.$watch('box.mouseLoc', function (n, o) {
+          if (n === o) { return true; }
+          if (scope.box.mouseLoc !== undefined) {
+            var lat1 = scope.firstClick.lat;
+            var lat2 = scope.lastClick.lat;
+            var lon1 = scope.firstClick.lng;
+            var lon2 = scope.lastClick.lng;
+            var maxD = scope.box.content.data[scope.box.content.data.length - 1][0];
+            var d = scope.box.mouseLoc;
+            var r = d / maxD;
+            var dLat = (lat2 - lat1) * r;
+            var dLon = (lon2 - lon1) * r;
+            var posLat = dLat + lat1;
+            var posLon = dLon + lon1;
+            if (circle === undefined) {
+              circle = L.circleMarker([posLat, posLon], {
+                  color: '#2980b9',
+                  opacity: 1,
+                  fillOpacity: 1
+                });
+              mapCtrl.addLayer(circle);
+            } else {
+              circle.setLatLng([posLat, posLon]);
+            }
+          }
+          else {
+            if (circle !== undefined) {
+              mapCtrl.removeLayer(circle);
+              circle = undefined;
+            }
           }
         });
 
