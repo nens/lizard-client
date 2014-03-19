@@ -136,11 +136,11 @@ angular.module('graph')
       maxheight = 250;
 
       if (legend.yLabel) {
-        margin.left = 45;
+        margin.left = 60;
       }
 
       if (legend.xLabel) {
-        margin.bottom = 15;
+        margin.bottom = 35;
       }
       var width = maxwidth - margin.left - margin.right,
         height = maxheight - margin.top - margin.bottom;
@@ -172,7 +172,7 @@ angular.module('graph')
          //Create X axis label   
         svg.append("text")
            .attr("x", width / 2)
-           .attr("y",  height + margin.bottom * 2)
+           .attr("y",  height + margin.bottom * 1.5)
            .style("text-anchor", "middle")
            .text(legend.xLabel);
       }
