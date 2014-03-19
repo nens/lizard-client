@@ -130,7 +130,8 @@ app.directive('rasterprofile', function () {
               circle = L.circleMarker([posLat, posLon], {
                   color: '#2980b9',
                   opacity: 1,
-                  fillOpacity: 1
+                  fillOpacity: 1,
+                  radius: 5
                 });
               mapCtrl.addLayer(circle);
             } else {

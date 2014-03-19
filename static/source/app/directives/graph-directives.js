@@ -735,7 +735,7 @@ angular.module('graph')
           svg.call(zoom);
 
           //var rect = d3.select(graph.svg[0][0]).select('rect');
-          console.log(chartBody, clip);
+          console.log(chartBody, clip, svg);
 
           chartBody.on('mousemove', function () {
             var pos = x.scale.invert(d3.mouse(this)[0]);
@@ -744,14 +744,14 @@ angular.module('graph')
             });
           });
 
-          svg.on('mousemove', function () {
+          svg.select('rect').on('mousemove', function () {
             var pos = x.scale.invert(d3.mouse(this)[0]);
             scope.$apply(function () {
               scope.$parent.box.mouseLoc = pos;
             });
           });
           
-          svg.on('mouseout', function () {
+          svg.select('rect').on('mouseout', function () {
             scope.$apply(function () {
               scope.$parent.box.mouseLoc = undefined;
             });
