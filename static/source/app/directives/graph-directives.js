@@ -729,21 +729,29 @@ angular.module('graph')
 
         if (scope.tools.active === 'profile') {
 
-          var zoom = d3.behavior.zoom()
+          zoom = d3.behavior.zoom()
             .x(x.scale)
             .on("zoom", null);
           svg.call(zoom);
 
-          var rect = d3.select(graph.svg[0][0]).select('rect');
-          rect.on('mousemove', function () {
+          //var rect = d3.select(graph.svg[0][0]).select('rect');
+          console.log(chartBody, clip);
+
+          chartBody.on('mousemove', function () {
+            var pos = x.scale.invert(d3.mouse(this)[0]);
+            scope.$apply(function () {
+              scope.$parent.box.mouseLoc = pos;
+            });
+          });
+
+          svg.on('mousemove', function () {
             var pos = x.scale.invert(d3.mouse(this)[0]);
             scope.$apply(function () {
               scope.$parent.box.mouseLoc = pos;
             });
           });
           
-          d3.select(graph.svg[0][0]).on('mouseout', function () {
-            console.log('mouseout');
+          svg.on('mouseout', function () {
             scope.$apply(function () {
               scope.$parent.box.mouseLoc = undefined;
             });
