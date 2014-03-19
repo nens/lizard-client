@@ -466,7 +466,7 @@ angular.module('graph')
               text = svg.select("text")
                   .attr("transform", "translate(" + width / 2 +
                     ", " + (20 + height) + ")")
-                  .attr("dy", ".5em")
+                  .attr("dy", "2em")
                   .style("text-anchor", "middle")
                   .style("fill", "#222")
                   .attr("class", "on")
