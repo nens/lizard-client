@@ -734,9 +734,9 @@ angular.module('graph')
             .on("zoom", null);
           svg.call(zoom);
 
-          //var rect = d3.select(graph.svg[0][0]).select('rect');
-          console.log(chartBody, clip, svg);
-
+          // Events do not bubble when with d3.
+          // Put listener on body and rect to move bolletje on the line
+          // in profile directive
           chartBody.on('mousemove', function () {
             var pos = x.scale.invert(d3.mouse(this)[0]);
             scope.$apply(function () {
