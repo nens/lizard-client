@@ -156,7 +156,7 @@
                  <i class="fa fa-expand"></i>
               </a>
             </div>
-            <div class="button-list-item" ng-class="{'hide': box.type !== 'elevation'}">
+            <div class="button-list-item">
               <a href="#"
                  ng-click="box.type = 'elevation'"
                  class="button-list-link"
@@ -165,15 +165,6 @@
                  <i class="fa fa-signal"></i>
               </a>
             </div>
-            <div class="button-list-item" ng-class="{'hide': box.type !== 'elevation'}">
-              <a href="#"
-                 ng-click="toggleTool('autorescale')"
-                 class="button-list-link"
-                 title="{% trans 'Automatic rescaling on/off' %}"
-                 ng-class="{'active': tools.active === 'autorescale'}">
-                 <i class="fa fa-unsorted"></i>
-              </a>
-            </div>            
             <div class="button-list-item">
               <a href="#"
                  ng-click="box.type = 'landuse'"
@@ -183,6 +174,15 @@
                  <i class="fa fa-circle-o"></i>
               </a>
             </div>
+            <div class="button-list-item" ng-class="{'hide': mapState.activeBaselayer !== 3}">
+              <a href="#"
+                 ng-click="toggleTool('autorescale')"
+                 class="button-list-link"
+                 title="{% trans 'Automatic rescaling on/off' %}"
+                 ng-class="{'active': tools.active === 'autorescale'}">
+                 <i class="fa fa-unsorted"></i>
+              </a>
+            </div>            
             <!--
             <div class="button-list-item"><a href="#" ng-click="toggleTool('rain')" class="button-list-link" title="{% trans 'Rain App' %}" ng-class="{'active': tools.active === 'rain'}"><i class="fa fa-cloud"></i></a></div>
             -->

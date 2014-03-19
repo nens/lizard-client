@@ -49,7 +49,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
       } else if (layer.slug === 'elevation') {
         // dynamically set min/max?
         // options.effects = 'shade:0:3';
-        options.styles = 'BrBG_r:-5:5';
+        options.styles = 'BrBG_r';
         options.effects = 'shade:0:3';
         layer.leafletLayer = L.tileLayer.wms(layer.url, options);
         elevationLayer = layer.leafletLayer;
@@ -232,16 +232,16 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
       .attr("stroke-width", 5);
 
     // Entity specific modifications
-    if (entityName.indexOf("pumpstation") !== -1) {
-      selection.attr("transform", "translate(0, 5)");
-    } else if (entityName.indexOf("pipe") !== -1) {
-      selection.select("path").transition().delay(450).duration(150)
-      .attr("stroke-opacity", 0.6)
-      .attr("stroke-width", 10);
-    } else if (entityName === 'manhole') {
-      selection.attr("transform", "translate(1, 0)");
-      circleMarker.setRadius(7.5);
-    }
+    // if (entityName.indexOf("pumpstation") !== -1) {
+    //   selection.attr("transform", "translate(0, 5)");
+    // if (entityName.indexOf("pipe") !== -1) {
+    //   selection.select("path").transition().delay(450).duration(150)
+    //   .attr("stroke-opacity", 0.6)
+    //   .attr("stroke-width", 10);
+    // } else if (entityName === 'manhole') {
+    //   //selection.attr("transform", "translate(1, 0)");
+    //   circleMarker.setRadius(7.5);
+    // }
   };
 
   // expects a layer hashtable with a leafletlayer object
@@ -512,6 +512,16 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
     scope.mapState.changeLayer = function (layer) {
       ctrl.toggleLayer(layer);
     };
+
+    /**
+     * Rescale elevation map when pressing on or off
+     */
+    scope.$watch('tools.active', function (n, o) {
+      if (n === o) { return true; }
+      if (scope.tools.active === 'autorescale') {
+        ctrl.rescaleElevation(scope.mapState.bounds);
+      }
+    });
 
     /**
      * Changes the baselayer
