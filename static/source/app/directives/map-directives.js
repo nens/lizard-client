@@ -83,10 +83,10 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
             });
           } else {
             if (leafletLayer.options.order === lowestUTFLayer) {
+              clickInSpace(e.latlng);
               if (!utfHit || utfLayersOrder.length < 2) {
-                clickInSpace(e.latlng);
+                utfHit = false;
               }
-              utfHit = false;
             }
           }
         });
@@ -163,12 +163,12 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
       .attr("stroke-opacity", 0.5)
       .attr("stroke-width", 10);
 
-    if ($scope.box.type !== 'rain' &&
-      $scope.box.type !== 'aggregate' &&
-      $scope.box.type !== 'profile') {
+    if ($scope.box.type !== 'rain') {
       removeProm = $timeout(function () {
         $scope.map.removeLayer($scope.mapState.clickLayer);
-        $scope.box.type = 'empty';
+        if ($scope.box.type !== 'profile') {
+          $scope.box.type = 'empty';
+        }
       }, 1500);
     }
   };
@@ -287,9 +287,9 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
         $scope.map.addLayer(layer.leafletLayer);
         if (layer.grid_layer) {
           if (layer.order < lowestUTFLayer || lowestUTFLayer === undefined) {
-            lowestUTFLayer = layer.order;
+            lowestUTFLayer = layer.z_index;
           }
-          utfLayersOrder.push(layer.order);
+          utfLayersOrder.push(layer.z_index);
           // Add listener to start loading utf layers
           // after loading of visible layer to have an
           // increased user experience
