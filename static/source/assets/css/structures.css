@@ -3,11 +3,11 @@
 
 @font-face {
 	font-family:"structures";
-	src:url("fonts/structures.eot");
-	src:url("fonts/structures.eot?#iefix") format("embedded-opentype"),
-		url("fonts/structures.woff") format("woff"),
-		url("fonts/structures.ttf") format("truetype"),
-		url("fonts/structures.svg?#structures") format("svg");
+	src:url("../fonts/structures.eot");
+	src:url("../fonts/structures.eot?#iefix") format("embedded-opentype"),
+		url("../fonts/structures.woff") format("woff"),
+		url("../fonts/structures.ttf") format("truetype"),
+		url("../fonts/structures.svg?#structures") format("svg");
 	font-weight:normal;
 	font-style:normal;
 }
