@@ -48,7 +48,7 @@ app.directive('rainAggregate', function ($q, CabinetService) {
           start: startString,
           stop: stopString,
           interval: interval,
-          statWin: statWin
+          stat_win: statWin
         }).then(callback);
       };
 
