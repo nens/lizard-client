@@ -329,6 +329,10 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
     }
   };
 
+  // this.toggleOverlayer = function(layer) {
+  //   $scope.map.addLayer())
+  // }
+
   // Expects a leafletLayer as an argument
   this.addLayer = function (layer) {
     $scope.map.addLayer(layer);
@@ -341,21 +345,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
 
   this.panZoomTo = function (panZoom) {
     $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
-  };
-
-  // make map object available to outside world.
-  this.map = function () {return $scope.map; };
-  
-  this.zoomToTheMagic = function (layer) {
-    //console.log('zoomToTheMagic');
-    // TODO: make this not hardcoded. And make this a nice UX instead of a brutal one
-    if (layer.name === 'Afvalwater') {
-      $scope.map.setView([52.503265633642194, 4.968782196044922], 14, {animate: true});
-    }
-    if (layer.name === 'Oppervlaktewater') {
-      $scope.map.setView([52.60763454517434, 4.794158935546875], 11, { animate: true });
-    }
-    // This button is not available for 3Di
   };
 
   this.fitBounds = function (extent) {
@@ -378,8 +367,8 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
   };
 
   return this;
-})
-.directive('map', ['$location', function ($location) {
+});
+app.directive('map', ['$location', function ($location) {
 
   var link = function (scope, element, attrs, ctrl) {
     // Leaflet global variable to speed up vector layer, 
@@ -565,12 +554,14 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
       scope.box.type = ctrl.boxType(scope.mapState.activeBaselayer, scope.box.type);
     };
 
-
-
-
-    scope.zoomToTheMagic = function (layer) {
-      ctrl.zoomToTheMagic(layer);
-    };
+    /**
+     * Changes the overlayer
+     * @param  {[type]} overlayer [description]
+     * @return {[type]}           [description]
+     */
+    scope.mapState.changeOverlayer = function(overlayer) {
+      console.log('overlayer',overlayer);
+    }
 
   };
 

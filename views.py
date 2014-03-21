@@ -29,6 +29,8 @@ def _bootstrap(objects):
 def index(request):
     base_layers = spatial.LayerSerializer(
         Layer.objects.filter(baselayer=True)).data
+    over_layers = spatial.LayerSerializer(
+        Layer.objects.filter(overlayer=True)).data
     layers = spatial.LayerSerializer(
         Layer.objects.filter(baselayer=False)).data
 
@@ -71,6 +73,7 @@ def index(request):
     context = {
         'random_string': md5(str(random.random())).hexdigest(),
         'strap_base_layers': _bootstrap(base_layers),
+        'strap_over_layers': _bootstrap(over_layers),
         'strap_layers': _bootstrap(layers),
         'strap_data_bounds': _bootstrap(data_bounds),
         'threedi_instance': ThreediInstance.objects.all()[0],

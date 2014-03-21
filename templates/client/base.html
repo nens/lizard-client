@@ -17,13 +17,9 @@
       var debug = true;
 
       var baseLayers = {{ strap_base_layers }};
+      var overLayers = {{ strap_over_layers }};
       var layers = {{ strap_layers }};
       var data_bounds = {{ strap_data_bounds }};
-    
-      var threedi_api_url = "{{ threedi_instance.api_url }}";
-      var threedi_subgrid_url = "{{ threedi_instance.socket_url }}";
-      var threedi_wms_server_url = "{{ threedi_instance.wms_url }}";
-      var threedi_data_url = "{{ threedi_instance.data_url }}";
 
       function logOut() {
         var r=confirm("Weet u zeker dat u wilt uitloggen?");
@@ -37,7 +33,7 @@
     </script>
   </head>
 
-  <body ng-controller="Threedi">
+  <body>
 
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
@@ -106,6 +102,15 @@
                 </li> 
               </ul>
               </li>
+              <li class="nav-header">
+              {% trans "Overlays" %}
+              <ul class="list-group">
+                <li ng-repeat="layer in mapState.overlayers | orderBy:'order':true">
+                <input id="<%layer.id%>-overlayer" class="hide" type="radio" ng-model="mapState.activeOverlayer" ng-value="layer.id" name="overlayer"> 
+                <label class="ng-class: {active: layer.active};" for="<% layer.id %>-overlayer" ng-bind="layer.name" ng-click="mapState.changeOverlayer(layer)"></label>
+                </li> 
+              </ul>
+              </li>              
               <li class="nav-header">
               {% trans "Thema" %}
               <ul class="list-group">
@@ -183,10 +188,6 @@
                  <i class="fa fa-unsorted"></i>
               </a>
             </div>            
-            <!--
-            <div class="button-list-item"><a href="#" ng-click="toggleTool('rain')" class="button-list-link" title="{% trans 'Rain App' %}" ng-class="{'active': tools.active === 'rain'}"><i class="fa fa-cloud"></i></a></div>
-            -->
-            <!-- <div class="hide button-list-item" ng-class="{'hide': !threedi_active}"><a href="#" ng-click="threediTool()" class="button-list-link" title="3Di" ng-class="{'active': tools.active === 'threedi'}"><i class="fa fa-asterisk"></i></a></div> -->
           </div>
         </div>
         <map layers="mapState.layers"
@@ -194,7 +195,6 @@
              vectorlayer
              click-layer="clickLayer"
              surfacelayer
-             threedi-map
              rain
              rain-aggregate
              ng-class="{'crosshair': tools.active === 'profile'}">
