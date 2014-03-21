@@ -516,107 +516,14 @@ app.controller("MasterCtrl",
         }
       });
     }
-    // rain retrieve
-    var stop = new Date($scope.timeState.end);
-    var start = new Date($scope.timeState.start);
-    var latLng = $scope.activeObject.latlng;
-    var callback = function (result) {
-      $scope.rain.data = result;
-      //$scope.rain.wkt = wkt;
-      $scope.rain.srs = 'EPSG:4236';
-    };
-    getRain(start, stop, latLng, callback);
   });
 
-  /**
-   * Gets rain from the server
-   *
-   * @param  {int} start    start of rainserie
-   * @param  {int} stop     end of rainserie
-   * @param  {function} callback function
-   * @param  {object} latLng   location of rainserie in {lat: int, lng: int} (currently only supports points)
-   * @param  {int} interval width of the aggregation, default: stop - start / 100
-   * @param  {int} statWin   window for the min/max, default: 5 min
-   */
-  var getRain = function (start, stop, latLng, callback, interval, statWin) {
-    var stopString = stop.toISOString().split('.')[0];
-    var startString = start.toISOString().split('.')[0];
-    var wkt = "POINT(" + latLng.lng + " " + latLng.lat + ")";
-    if (interval === undefined) {
-      interval = stop - start / 100;
-    }
-    if (statWin === undefined) {
-      statWin = 300000;
-    }
-    CabinetService.raster.get({
-      raster_names: 'rain',
-      geom: wkt,
-      srs: 'EPSG:4236',
-      start: startString,
-      stop: stopString,
-      interval: interval,
-      statWin: statWin
-    }).then(callback);
-  };
-
-
-  $scope.getData = function () {
-    $scope.canceler.resolve();
-    $scope.canceler = $q.defer();
-    if ($scope.box.content.selected_timeseries) {
-      CabinetService.timeseries.one(
-        $scope.box.content.selected_timeseries.id + '/'
-      ).withHttpConfig({
-        timeout: $scope.canceler.promise
-      }).get({
-        start: $scope.timeState.start,
-        end: $scope.timeState.end
-      }).then(function (response) {
-        $scope.data.data = response.events.instants;
-        // $scope.box.content.selected_timeseries.events = response.events;
-      });
-    }
-    if ($scope.rain.data) {
-      var stop = new Date($scope.timeState.end);
-      var stopString = stop.toISOString().split('.')[0];
-      var start = new Date($scope.timeState.start);
-      var startString = start.toISOString().split('.')[0];
-      CabinetService.raster.withHttpConfig({
-        timeout: $scope.canceler.promise
-      }).get({
-        raster_names: 'rain',
-        geom: $scope.rain.wkt,
-        srs: $scope.rain.srs,
-        start: startString,
-        stop: stopString
-      }).then(function (result) {
-        $scope.rain.data = result;
-
-      });
-    }
-  };
 
   $scope.$watch('timeState.changedZoom', function (newVal, oldVal) {
     if ((newVal === oldVal)) { return; }
     $scope.getData();
 
   });
-
-  // $scope.$watch('box.content.selected_timeseries.id', function () {
-  //   if ($scope.box.content.selected_timeseries !== undefined) {
-  //     // NOTE: this will change to $scope.selected_timeseries.instants
-  //     $scope.data = {
-  //         series: $scope.box.content.selected_timeseries.events.series,
-  //         instants: $scope.box.content.selected_timeseries.events.instants
-  //       };
-  //     // dit kan zeker nog mooier
-  //     $scope.metadata.title = " - " + $scope.box.content.selected_timeseries.location.name;
-  //     $scope.metadata.ylabel = "";//$scope.selected_timeseries.parameter + $scope.selected_timeseries.unit.code
-  //     $scope.metadata.xlabel = "Tijd";
-  //   } else {
-  //     $scope.data = undefined;
-  //   }
-  // });
 
 // END Timeseries
 
