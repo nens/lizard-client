@@ -83,8 +83,8 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
             });
           } else {
             if (leafletLayer.options.order === lowestUTFLayer) {
-              clickInSpace(e.latlng);
               if (!utfHit || utfLayersOrder.length < 2) {
+                clickInSpace(e.latlng);
                 utfHit = false;
               }
             }
@@ -243,7 +243,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
         selection.attr("transform", "translate(8, 0)");
         circleMarker.setRadius(16);
       }
-      if ($scope.map.getZoom() < 12) {
+      if ($scope.map.getZoom() < 11) {
         selection.attr("transform", "translate(5, 0)");
         circleMarker.setRadius(13);
       }
@@ -274,7 +274,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
         if (layer.grid_layer) {
           $scope.map.removeLayer(layer.grid_layer);
           utfLayersOrder.splice(utfLayersOrder.indexOf(layer.grid_layer.options.order), 1);
-          if (layer.order === lowestUTFLayer) {
+          if (layer.z_index === lowestUTFLayer) {
             lowestUTFLayer = utfLayersOrder.sort()[-1];
           }
         }
@@ -438,10 +438,10 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
         }
       }
       // Hide and unhide clicklayer when zoomed out or in
-      if (scope.mapState.clickLayer && scope.map.getZoom() < 13) {
+      if (scope.mapState.clickLayer && scope.map.getZoom() < 12) {
         scope.map.removeLayer(scope.mapState.clickLayer);
       }
-      if (scope.mapState.clickLayer && scope.map.getZoom() > 12) {
+      if (scope.mapState.clickLayer && scope.map.getZoom() > 11) {
         scope.map.addLayer(scope.mapState.clickLayer);
       }
     });
