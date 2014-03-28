@@ -106,10 +106,10 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
   };
 
   /**
-   * Rescale elevation raster
+   * Rescale elevation raster.
    *
    * Makes a request to the raster server with the current bounds
-   * Gets a new scale limit and refreshes the layer
+   * Gets a new scale limit and refreshes the layer.
    *
    * @param  {bounds object} bounds contains the corners of the current map view 
    */
@@ -128,10 +128,10 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
   };
 
   /**
-   * Draws visible feedback on the map after a click
+   * Draws visible feedback on the map after a click.
    *
    * Removes possible click feedback layer and creates a new clickLayer
-   * containing a circle. The circle is than vibrated to attract attention
+   * containing a circle. The circle is than vibrated to attract attention.
    *
    * @param {object} latLng Leaflet object specifying the latitude
    * and longitude of a click
@@ -564,9 +564,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
       scope.mapState.baselayerChanged = Date.now();
       scope.box.type = ctrl.boxType(scope.mapState.activeBaselayer, scope.box.type);
     };
-
-
-
 
     scope.zoomToTheMagic = function (layer) {
       ctrl.zoomToTheMagic(layer);
