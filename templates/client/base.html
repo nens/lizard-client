@@ -106,11 +106,11 @@
               {% trans "Overlays" %}
               <ul class="list-group">
                 <li ng-repeat="layer in mapState.overlayers | orderBy:'order':true">
-                <input id="<%layer.id%>-overlayer" class="hide" type="radio" ng-model="mapState.activeOverlayer" ng-value="layer.id" name="overlayer"> 
-                <label class="ng-class: {active: layer.active};" for="<% layer.id %>-overlayer" ng-bind="layer.name" ng-click="mapState.changeOverlayer(layer)"></label>
-                </li> 
+                <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="mapState.changeLayer(layer, 0.5)">
+                <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
+                </li>
               </ul>
-              </li>              
+              </li>
               <li class="nav-header">
               {% trans "Thema" %}
               <ul class="list-group">

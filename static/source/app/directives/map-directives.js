@@ -28,7 +28,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
   this.initiateLayer = function (layer) {
     if (layer.name === "Simulatie") {
       // Hack for 3Di.
-      //console.log("Initiate 3Di");
       layer.follow_3di = false;
     } else if (layer.type === "TMS" && layer.baselayer) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
@@ -267,7 +266,12 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
   };
 
   // expects a layer hashtable with a leafletlayer object
-  this.toggleLayer = function (layer) {
+  this.toggleLayer = function (layer, opacity) {
+
+    if(opacity) {
+      layer.leafletLayer.options.opacity = opacity;
+    }
+
     if (!layer.active) {
       if (layer.leafletLayer) {
         $scope.map.removeLayer(layer.leafletLayer);
@@ -312,6 +316,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
 
   // expects a layer hashtable with a leafletlayer object
   this.toggleBaseLayer = function (layer) {
+
     if (layer.id !== $scope.mapState.activeBaselayer) {
       layer.active = false;
       if (layer.leafletLayer) {
@@ -329,9 +334,26 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
     }
   };
 
-  // this.toggleOverlayer = function(layer) {
-  //   $scope.map.addLayer())
-  // }
+  // expects a layer hashtable with a leafletlayer object
+  this.toggleOverLayer = function (layer) {
+
+    if (layer.id !== $scope.mapState.activeOverlayer) {
+      layer.active = false;
+      if (layer.leafletLayer) {
+        $scope.map.removeLayer(layer.leafletLayer);
+      } else {
+        console.log('leaflet layer not defined');
+      }
+    } else if (layer.id === $scope.mapState.activeOverlayer) {
+      layer.active = true;
+      if (layer.leafletLayer) {
+        console.log(layer.leafletLayer);
+        $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: false });
+      } else {
+        console.log('leaflet layer not defined');
+      }
+    }
+  };
 
   // Expects a leafletLayer as an argument
   this.addLayer = function (layer) {
@@ -395,6 +417,13 @@ app.directive('map', ['$location', function ($location) {
         ctrl.initiateLayer(layer);
       }
       ctrl.toggleBaseLayer(layer);
+    });
+
+    angular.forEach(scope.mapState.overlayers, function (layer) {
+      if (!layer.initiated) {
+        ctrl.initiateLayer(layer);
+      }
+      ctrl.toggleOverLayer(layer);
     });
 
     angular.forEach(scope.mapState.layers, function (layer) {
@@ -520,8 +549,8 @@ app.directive('map', ['$location', function ($location) {
       }
     });
 
-    scope.mapState.changeLayer = function (layer) {
-      ctrl.toggleLayer(layer);
+    scope.mapState.changeLayer = function (layer, opacity) {
+      ctrl.toggleLayer(layer, opacity);
     };
 
     /**
@@ -560,7 +589,8 @@ app.directive('map', ['$location', function ($location) {
      * @return {[type]}           [description]
      */
     scope.mapState.changeOverlayer = function(overlayer) {
-      console.log('overlayer',overlayer);
+      ctrl.toggleOverLayer(overlayer);
+      scope.mapState.overlayerChanged = Date.now();
     }
 
   };
