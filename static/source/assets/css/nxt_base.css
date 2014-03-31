@@ -266,7 +266,7 @@ i, a:active {text-decoration:none !important;}
     -moz-transition: .2s;
     -webkit-transition: .2s;
     transition: .2s;
-    opacity: 0;
+    opacity: 1;
     font-size: 18px;
     margin-top: 6px;
     margin-right: 5px;
