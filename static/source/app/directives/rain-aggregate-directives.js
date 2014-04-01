@@ -36,7 +36,7 @@ app.directive('rainAggregate', function ($q, CabinetService) {
         var startString = start.toISOString().split('.')[0];
         var wkt = "POINT(" + latLng.lng + " " + latLng.lat + ")";
         if (interval === undefined) {
-          interval = stop - start / 100;
+          interval = (stop - start) / 100;
         }
         if (statWin === undefined) {
           statWin = 300000;
