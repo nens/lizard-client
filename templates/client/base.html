@@ -115,7 +115,6 @@
 
                 <div ng-switch="layer.follow_3di" style="float: right;">
                   <div ng-switch-when="undefined">
-                    <i class="surface-info icon-info pull-right zoomto-icon" ng-class="{visible: layer.active && (layer.name === 'Riolering')}" ng-click="toggleTool('pipe_surface')"></i>
                     <i class="icon-screenshot pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="zoomToTheMagic(layer)"></i>
                   </div>
                   <div ng-switch-when="true">
@@ -192,6 +191,15 @@
                  <i class="fa fa-cloud"></i>
               </a>
             </div>
+            <div class="button-list-item" ng-class="{'hide': mapState.activeBaselayer !== 1}">
+              <a href="#"
+                 ng-click="toggleTool('pipeSurface')"
+                 class="button-list-link"
+                 title="{% trans 'Highlight connected impervious surface' %}"
+                 ng-class="{'active': tools.active === 'pipeSurface'}">
+                 <i class="fa fa-code-fork"></i>
+              </a>
+            </div>            
           </div>
         </div>
         <map layers="mapState.layers"

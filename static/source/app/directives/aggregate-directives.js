@@ -183,7 +183,8 @@ app.directive('vectorlayer', function () {
        */
       scope.$watch('timeState.at', function () {
         if (scope.timeState.animation.enabled) {
-          drawTimeEvents(scope.timeState.animation.start, scope.timeState.animation.end);
+          drawTimeEvents(scope.timeState.animation.start,
+                         scope.timeState.animation.end);
           scope.events.countCurrentEvents();
         }
       });
@@ -309,8 +310,8 @@ app.directive('surfacelayer', function () {
             tmpLayer = {};
         for (var i in scope.map._layers) {
           tmpLayer = scope.map._layers[i];
-          if (tmpLayer._url && tmpLayer._url.indexOf(
-            layerType + '?object_types=' + entityName) !== -1) {
+          if (tmpLayer.options.name === entityName &&
+              tmpLayer.options.ext === layerType) {
             layer = tmpLayer;
             break;
           }
@@ -320,7 +321,7 @@ app.directive('surfacelayer', function () {
 
       // Initialise geojson layer
       var surfaceLayer = L.geoJSONd3(
-        'api/v1/tiles/{z}/{x}/{y}/.geojson?object_types=impervioussurface',
+        'api/v1/tiles/impervioussurface/{z}/{x}/{y}.geojson',
         {
           applyStyle: surfaceStyle,
           class: "impervious_surface"
@@ -334,9 +335,9 @@ app.directive('surfacelayer', function () {
        */
       scope.$watch('tools.active', function () {
         var pipeLayer = {};
-        if (scope.tools.active === "pipe_surface") {
+        if (scope.tools.active === "pipeSurface") {
           mapCtrl.addLayer(surfaceLayer);
-          pipeLayer = getLayer('grid', 'pipe');
+          pipeLayer = getLayer('grid', 'sewerage');
           if (pipeLayer) {
             // icon active
             angular.element(".surface-info").addClass("icon-active");
