@@ -1302,3 +1302,9 @@ img.leaflet-image-layer {
 .leaflet-container img.leaflet-image-layer {
         max-width: none !important;
         }
+
+.whisker-vertical {
+    stroke-dasharray: 3,3;
+    stroke: #7f8c8d;
+    stroke-width: 1px;
+}

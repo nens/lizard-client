@@ -173,7 +173,7 @@
                  <i class="fa fa-circle-o"></i>
               </a>
             </div>
-            <div class="button-list-item" ng-class="{'hide': mapState.activeBaselayer !== 3}">
+            <div class="button-list-item" ng-show="mapState.activeBaselayer === 3">
               <a href="#"
                  ng-click="toggleTool('autorescale')"
                  class="button-list-link"

@@ -364,9 +364,10 @@ angular.module('graph')
             width = graph.width,
             margin = graph.margin;
 
-
-        var x = graphCtrl.maxMin(data, '1');
-        var y = graphCtrl.maxMin(data, '0');
+        var x = {};
+        x.max = data[data.length - 1][0];
+        x.min = data[0][0];
+        var y = graphCtrl.maxMin(data, '2');
 
         x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
           range: [0, width],
@@ -409,16 +410,25 @@ angular.module('graph')
           .x(x.scale)
           .y(y.scale)
           .on("zoom", zoomed);
-
+        
         // Bar Chart specific stuff
         svg.selectAll(".bar")
           .data(data)
           .enter().append("rect")
             .attr("class", "bar")
-            .attr("x", function (d) { return x.scale(d[1]) - 0.5; })
-            .attr("y", function (d) { return y.scale(d[0]) - 0.5; })
-            .attr("width", 5)
-            .attr("height", function (d) { return height - y.scale(d[0]); });
+            .attr("x", function (d) { return x.scale(d[0]) - 0.5; })
+            .attr("y", function (d) { return y.scale(d[1]) - 0.5; })
+            .attr("width", width / attrs.barWidth)
+            .attr("height", function (d) { return 200 - y.scale(d[1]); });
+
+        svg.selectAll('.center-whisker')
+          .data(data)
+          .enter().append('line')
+            .attr('class', 'whisker-vertical')
+            .attr('x1', function (d) { return x.scale(d[0]) - 0.5; })
+            .attr('y1', function (d) { console.log(d[2], y.scale(d[2])); return y.scale(d[2]); })
+            .attr('x2', function (d) { return x.scale(d[0]) - 0.5; })
+            .attr('y2', function (d) { return y.scale(d[1]); });
 
         svg.call(zoom);
       };
