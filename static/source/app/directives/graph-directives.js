@@ -416,8 +416,8 @@ angular.module('graph')
           .data(data)
           .enter().append("rect")
             .attr("class", "bar")
-            .attr("x", function (d) { return x.scale(d[0]) - 0.5; })
-            .attr("y", function (d) { return y.scale(d[1]) - 0.5; })
+            .attr("x", function (d) { return x.scale(d[0]) - 0.5 * width / attrs.barWidth; })
+            .attr("y", function (d) { console.log(d[0], d[1], d[2]); return y.scale(d[1]) - 0.5; })
             .attr("width", width / attrs.barWidth)
             .attr("height", function (d) { return 200 - y.scale(d[1]); });
 
@@ -426,7 +426,7 @@ angular.module('graph')
           .enter().append('line')
             .attr('class', 'whisker-vertical')
             .attr('x1', function (d) { return x.scale(d[0]) - 0.5; })
-            .attr('y1', function (d) { console.log(d[2], y.scale(d[2])); return y.scale(d[2]); })
+            .attr('y1', function (d) { return y.scale(d[2]); })
             .attr('x2', function (d) { return x.scale(d[0]) - 0.5; })
             .attr('y2', function (d) { return y.scale(d[1]); });
 

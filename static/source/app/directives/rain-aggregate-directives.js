@@ -12,15 +12,16 @@ app.directive('rainAggregate', function ($q, CabinetService) {
         var stop = new Date(scope.timeState.end);
         var start = new Date(scope.timeState.start);
         var latLng = e.latlng;
-        var interval = (stop - start) / 100;
-        var statWin = 300000;
+        var nBars = 10;
+        var interval = (stop - start) / nBars;
+        var statWin = interval / 10;
         var callback = function (response) {
-          angular.forEach(response.result, function (value) {
+/*          angular.forEach(response.result, function (value) {
             value[1] = value[1] * 1000; // convert to mm
             value[2] = value[2] * 1000;
-          });
+          });*/
           scope.rain.data = response.result;
-          scope.rain.interval = 100;
+          scope.rain.nbar = nBars;
           //$scope.rain.wkt = wkt;
           scope.rain.srs = 'EPSG:4236';
         };     

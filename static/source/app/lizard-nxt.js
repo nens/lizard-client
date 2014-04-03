@@ -160,8 +160,8 @@ app.controller("MasterCtrl",
   var end = Date.now();
   // TIME MODEL
   $scope.timeState = {
-    start: end - (24 * 60 * 60 * 1000 * 250), // 14 days
-    end: end - (24 * 60 * 60 * 1000 * 10),
+    start: 1389606808000,
+    end: 1389952408000,
     changedZoom: Date.now(),
     at: this.start,
     animation: {
