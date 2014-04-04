@@ -518,13 +518,6 @@ app.controller("MasterCtrl",
     }
   });
 
-
-  $scope.$watch('timeState.changedZoom', function (newVal, oldVal) {
-    if ((newVal === oldVal)) { return; }
-    $scope.getData();
-
-  });
-
 // END Timeseries
 
   // rewrite data to make d3 parseable

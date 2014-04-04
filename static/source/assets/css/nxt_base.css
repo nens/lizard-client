@@ -1308,3 +1308,8 @@ img.leaflet-image-layer {
     stroke: #7f8c8d;
     stroke-width: 1px;
 }
+
+.whisker-horizontal {
+    stroke: #7f8c8d;
+    stroke-width: 1px;
+}
