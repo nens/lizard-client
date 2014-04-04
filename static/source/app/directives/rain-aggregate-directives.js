@@ -14,7 +14,7 @@ app.directive('rainAggregate', function ($q, CabinetService) {
         var latLng = e.latlng;
         var nBars = 20;
         var interval = (stop - start) / nBars;
-        var statWin = interval / 5;
+        var statWin = 60 * 60 * 1000; // 1 hour
         scope.box.type = 'rain';
         var callback = function (response) {
           scope.rain.data = response.result;
