@@ -7,14 +7,24 @@ app.directive('rainAggregate', function ($q, CabinetService) {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
+      scope.$watch('rain.statWin', function (n, o) {
+        if (n === o) {return true; }
+        console.log(scope.rain.statWin);
+        rainClick();
+      });
+
       var rainClick = function (e) {
         // rain retrieve
         var stop = new Date(scope.timeState.end);
         var start = new Date(scope.timeState.start);
-        var latLng = e.latlng;
+        if (e) {
+          scope.rain.latLng = e.latlng;
+        }
         var nBars = 20;
         var interval = (stop - start) / nBars;
-        var statWin = 60 * 60 * 1000; // 1 hour
+        if (scope.rain.statWin === undefined) {
+          scope.rain.statWin = 60 * 60 * 1000; // 1 hour
+        }
         scope.box.type = 'rain';
         var callback = function (response) {
           scope.rain.data = response.result;
@@ -22,7 +32,7 @@ app.directive('rainAggregate', function ($q, CabinetService) {
           //$scope.rain.wkt = wkt;
           scope.rain.srs = 'EPSG:4236';
         };
-        getRain(start, stop, latLng, callback, interval, statWin);
+        getRain(start, stop, scope.rain.latLng, callback, interval, scope.rain.statWin);
       };
 
       /**
