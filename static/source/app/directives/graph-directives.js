@@ -290,7 +290,9 @@ angular.module('graph')
 
   var link = function (scope, element, attrs, graphCtrl) {
 
-    scope.$watch('data', function () {
+    scope.$watch('data', function (n, o) {
+      if (n === o) { return true; }
+      console.log("Data!");
       if (scope.data !== undefined && graphCtrl.callChart !== undefined) {
         var ymin = 0.0,
             ymax = 0.0,
@@ -395,8 +397,15 @@ angular.module('graph')
 
           // svg.select("g")
           svg.selectAll(".bar")
-            .attr("x", function (d) { return x.scale(d[1]) - 0.5; })
+            .attr("x", function (d) { return x.scale(d[0]) - 0.5 * width / attrs.barWidth; })
             .attr("transform", "translate(" + "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ", 1)");
+          svg.selectAll('.whisker-vertical')
+            .attr('x1', function (d) { return x.scale(d[0]); })
+            .attr('x2', function (d) { return x.scale(d[0]); });
+          svg.selectAll('.whisker-horizontal')
+            .attr('x1', function (d) { return x.scale(d[0]) - 0.35 * width / attrs.barWidth; })
+            .attr('x2', function (d) { return x.scale(d[0]) + 0.35 * width / attrs.barWidth; });
+
           scope.$apply(function () {
               // step out of isolate scope with $parent.
               scope.$parent.timeState.start = x.scale.domain()[0].getTime();
@@ -410,9 +419,21 @@ angular.module('graph')
           .x(x.scale)
           .y(y.scale)
           .on("zoom", zoomed);
+
+        var clip = svg.append("defs").append("svg:clipPath")
+          .attr("id", "clip")
+          .append("svg:rect")
+          .attr("id", "clip-rect")
+          .attr("x", "0")
+          .attr("y", "0")
+          .attr("width", width)
+          .attr("height", height);
         
+        var g = svg.append("g")
+          .attr("clip-path", "url(#clip)");
+
         // Bar Chart specific stuff
-        svg.selectAll(".bar")
+        g.selectAll(".bar")
           .data(data)
           .enter().append("rect")
             .attr("class", "bar")
@@ -421,7 +442,7 @@ angular.module('graph')
             .attr("width", width / attrs.barWidth)
             .attr("height", function (d) { return 200 - y.scale(d[1]); });
 
-        svg.selectAll('.center-whisker')
+        g.selectAll('.whisker-vertical')
           .data(data)
           .enter().append('line')
             .attr('class', 'whisker-vertical')
@@ -430,7 +451,7 @@ angular.module('graph')
             .attr('x2', function (d) { return x.scale(d[0]); })
             .attr('y2', function (d) { return y.scale(d[1]); });
 
-        svg.selectAll('.whisker-line')
+        g.selectAll('.whisker-horizontal')
           .data(data)
           .enter().append('line')
             .attr('class', 'whisker-horizontal')
@@ -441,6 +462,10 @@ angular.module('graph')
 
         svg.call(zoom);
       };
+
+    graphCtrl.updateChart = function (data, element) {
+
+    };
   };
   return {
     link: link,
