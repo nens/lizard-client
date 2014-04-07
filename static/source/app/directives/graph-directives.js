@@ -145,7 +145,7 @@ angular.module('graph')
       var width = maxwidth - margin.left - margin.right,
         height = maxheight - margin.top - margin.bottom;
 
-      var svg = d3.select(element[0])
+      this.svg = d3.select(element[0])
         .html("")
         .append("svg:svg")
         .attr('width', maxwidth)
@@ -154,12 +154,12 @@ angular.module('graph')
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
       if (!legend.pie) {
-        svg.append("svg:rect")
+        this.svg.append("svg:rect")
           .attr("width", width)
           .attr("height", height)
           .attr("class", "plot");
         //Create title
-        svg.append("text")
+        this.svg.append("text")
           .attr("x", width / 2)
           .attr("y", -50 / 2 + margin.top)
           .attr("class", "title")
@@ -170,7 +170,7 @@ angular.module('graph')
               
       if (legend.xLabel) {
          //Create X axis label   
-        svg.append("text")
+        this.svg.append("text")
            .attr("x", width / 2)
            .attr("y",  height + margin.bottom * 1.5)
            .style("text-anchor", "middle")
@@ -179,7 +179,7 @@ angular.module('graph')
 
       if (legend.yLabel) {
         //Create Y axis label
-        svg.append("text")
+        this.svg.append("text")
           .attr("transform", "rotate(-90)")
           .attr("y", 0 - margin.left)
           .attr("x", 0 - (height / 2))
@@ -188,11 +188,31 @@ angular.module('graph')
           .text(legend.yLabel);
       }
       return {
-        svg: svg,
+        svg: this.svg,
         height: height,
         width: width,
         margin: margin
       };
+    };
+
+    this.createDrawingArea = function (width, height) {
+      // Add clippath to limit the drawing area to inside the graph
+      // See: http://bost.ocks.org/mike/path/
+      var clip = this.svg.append("defs").append("svg:clipPath")
+        .attr("id", "clip")
+        .append("svg:rect")
+        .attr("id", "clip-rect")
+        .attr("x", "0")
+        .attr("y", "0")
+        .attr("width", width)
+        .attr("height", height);
+      
+      // Put the data in this element
+      var g = this.svg.append("g")
+        .attr("clip-path", "url(#clip)")
+        .attr('id', 'feature-group');
+
+      return g;
     };
 
     this.maxMin = function (data, key) {
@@ -292,8 +312,9 @@ angular.module('graph')
 
     scope.$watch('data', function (n, o) {
       if (n === o) { return true; }
-      console.log("Data!");
-      if (scope.data !== undefined && graphCtrl.callChart !== undefined) {
+      if (scope.data !== undefined
+        && graphCtrl.callChart !== undefined
+        && scope.graph === undefined) {
         var ymin = 0.0,
             ymax = 0.0,
             xmin = 0.0,
@@ -322,10 +343,11 @@ angular.module('graph')
           type: attrs.type
         };
         // clear the chart beforehand
-        // NOTE: Still needs some good error handling. 
-        // Such as not calling chart if data is malformed
         d3.select(element[0]).html("");
-        graphCtrl.callChart(scope.data, element, legend);
+        scope.graph = graphCtrl.callChart(scope.data, element, legend);
+        scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph);
+      } else if (scope.graph !== undefined) {
+        scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph);
       } else {
         // empty the mofo beforehand
         d3.select(element[0]).html("");
@@ -360,108 +382,183 @@ angular.module('graph')
 .directive('barChart', function () {
   var link = function (scope, element, attrs, graphCtrl) {
     graphCtrl.callChart = function (data, element, legend) {
-        var graph = graphCtrl.createCanvas(legend, element);
-        var svg = graph.svg,
-            height = graph.height,
-            width = graph.width,
-            margin = graph.margin;
+      var graph = graphCtrl.createCanvas(legend, element);
+      var svg = graph.svg,
+          height = graph.height,
+          width = graph.width,
+          margin = graph.margin,
+          barWidth = attrs.barWidth;
 
-        var x = {};
-        x.max = data[data.length - 1][0];
-        x.min = data[0][0];
-        var y = graphCtrl.maxMin(data, '2');
+      var x = {};
+      x.max = data[data.length - 1][0];
+      x.min = data[0][0];
+      var y = graphCtrl.maxMin(data, '2');
 
-        x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
-          range: [0, width],
-          type: 'time'
-        });
-        y.scale = graphCtrl.scale(y.min, y.max, {
-          range: [height, 0]
-        });
+      x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
+        range: [0, width],
+        type: 'time'
+      });
+      y.scale = graphCtrl.scale(y.min, y.max, {
+        range: [height, 0]
+      });
 
-        graphCtrl.drawAxes(svg, x, y, {
-          height: height,
-          width: width
-        });
+      graphCtrl.drawAxes(svg, x, y, {
+        height: height,
+        width: width
+      });
 
-        var zoomed = function () {
-          svg.select(".x.axis")
-            .call(graphCtrl.makeAxis(x.scale, {orientation: "bottom"}))
-            .selectAll("text")
-            .style("text-anchor", "end")
-            .attr("dx", "-.8em")
-            .attr("dy", ".15em")
-            .attr("transform", function (d) {
-                return "rotate(-45)";
-              });
-
-          // svg.select("g")
-          svg.selectAll(".bar")
-            .attr("x", function (d) { return x.scale(d[0]) - 0.5 * width / attrs.barWidth; })
-            .attr("transform", "translate(" + "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ", 1)");
-          svg.selectAll('.whisker-vertical')
-            .attr('x1', function (d) { return x.scale(d[0]); })
-            .attr('x2', function (d) { return x.scale(d[0]); });
-          svg.selectAll('.whisker-horizontal')
-            .attr('x1', function (d) { return x.scale(d[0]) - 0.35 * width / attrs.barWidth; })
-            .attr('x2', function (d) { return x.scale(d[0]) + 0.35 * width / attrs.barWidth; });
-
-          scope.$apply(function () {
-              // step out of isolate scope with $parent.
-              scope.$parent.timeState.start = x.scale.domain()[0].getTime();
-              scope.$parent.timeState.end = x.scale.domain()[1].getTime();
-              scope.$parent.timeState.changeOrigin = 'barChart';
-              scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
+      var zoomed = function () {
+        svg.select(".x.axis")
+          .call(graphCtrl.makeAxis(x.scale, {orientation: "bottom"}))
+          .selectAll("text")
+          .style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", function (d) {
+              return "rotate(-45)";
             });
-        };
-        
-        var zoom = d3.behavior.zoom()
-          .x(x.scale)
-          .y(y.scale)
-          .on("zoom", zoomed);
 
-        var clip = svg.append("defs").append("svg:clipPath")
-          .attr("id", "clip")
-          .append("svg:rect")
-          .attr("id", "clip-rect")
-          .attr("x", "0")
-          .attr("y", "0")
-          .attr("width", width)
-          .attr("height", height);
-        
-        var g = svg.append("g")
-          .attr("clip-path", "url(#clip)");
+        // svg.select("g")
+        svg.selectAll(".bar")
+          .attr("x", function (d) { return x.scale(d[0]) - 0.5 * width / barWidth; })
+          .attr("transform", "translate(" + "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ", 1)");
+        svg.selectAll('.whisker-vertical')
+          .attr('x1', function (d) { return x.scale(d[0]); })
+          .attr('x2', function (d) { return x.scale(d[0]); });
+        svg.selectAll('.whisker-horizontal')
+          .attr('x1', function (d) { return x.scale(d[0]) - 0.35 * width / barWidth; })
+          .attr('x2', function (d) { return x.scale(d[0]) + 0.35 * width / barWidth; });
 
-        // Bar Chart specific stuff
-        g.selectAll(".bar")
-          .data(data)
-          .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", function (d) { return x.scale(d[0]) - 0.5 * width / attrs.barWidth; })
-            .attr("y", function (d) { return y.scale(d[1]); })
-            .attr("width", width / attrs.barWidth)
-            .attr("height", function (d) { return 200 - y.scale(d[1]); });
-
-        g.selectAll('.whisker-vertical')
-          .data(data)
-          .enter().append('line')
-            .attr('class', 'whisker-vertical')
-            .attr('x1', function (d) { return x.scale(d[0]); })
-            .attr('y1', function (d) { return y.scale(d[2]); })
-            .attr('x2', function (d) { return x.scale(d[0]); })
-            .attr('y2', function (d) { return y.scale(d[1]); });
-
-        g.selectAll('.whisker-horizontal')
-          .data(data)
-          .enter().append('line')
-            .attr('class', 'whisker-horizontal')
-            .attr('x1', function (d) { return x.scale(d[0]) - 0.35 * width / attrs.barWidth; })
-            .attr('y1', function (d) { return y.scale(d[2]); })
-            .attr('x2', function (d) { return x.scale(d[0]) + 0.35 * width / attrs.barWidth; })
-            .attr('y2', function (d) { return y.scale(d[2]); });
-
-        svg.call(zoom);
+        scope.$apply(function () {
+            // step out of isolate scope with $parent.
+            scope.$parent.timeState.start = x.scale.domain()[0].getTime();
+            scope.$parent.timeState.end = x.scale.domain()[1].getTime();
+            scope.$parent.timeState.changeOrigin = 'barChart';
+            scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
+          });
       };
+
+      graphCtrl.createDrawingArea(width, height);
+
+      return {
+        svg: svg,
+        height: height,
+        width: width,
+        x: x,
+        y: y,
+        zoomFn: zoomed,
+        barWidth: barWidth
+      };
+    };
+
+    graphCtrl.drawFeatures = function (data, graph) {
+      var svg = graph.svg,
+      g = svg.select('#feature-group'),
+      x = graph.x,
+      y = graph.y,
+      width = graph.width,
+      barWidth = graph.barWidth;
+      
+      var zoom = d3.behavior.zoom()
+        .x(x.scale)
+        .y(y.scale)
+        .on("zoom", graph.zoomFn);
+
+      svg.call(zoom);
+
+      // Join new data with old elements, based on the id value.
+      var bar = g.selectAll(".bar")
+          .data(data, function  (d) { return d[0]; });
+
+      var whiskerV = g.selectAll(".whisker-vertical")
+          .data(data, function  (d) { return d[0]; });
+
+      var whiskerH = g.selectAll(".whisker-horizontal")
+          .data(data, function  (d) { return d[0]; });
+
+      // UPDATE
+      // Update old elements as needed.
+      bar.transition()
+        .delay(500)
+        .duration(500)
+        .attr("x", function (d) { return x.scale(d[0]) - 0.5 * width / attrs.barWidth; })
+        .attr("width", width / attrs.barWidth)
+        .attr("height", function (d) { return 200 - y.scale(d[1]); })
+        .attr("y", function (d) { return y.scale(d[1]); });
+
+      whiskerV.transition()
+        .delay(500)
+        .duration(500)
+        .attr('x1', function (d) { return x.scale(d[0]); })
+        .attr('y1', function (d) { return y.scale(d[2]); })
+        .attr('x2', function (d) { return x.scale(d[0]); })
+        .attr('y2', function (d) { return y.scale(d[1]); });
+
+      whiskerH.transition()
+        .delay(500)
+        .duration(500)
+        .attr('x1', function (d) { return x.scale(d[0]) - 0.35 * width / attrs.barWidth; })
+        .attr('y1', function (d) { return y.scale(d[2]); })
+        .attr('x2', function (d) { return x.scale(d[0]) + 0.35 * width / attrs.barWidth; })
+        .attr('y2', function (d) { return y.scale(d[2]); });
+
+      // ENTER
+      // Create new elements as needed.
+      bar.enter().append("rect")
+          .attr("class", "bar")
+          .attr("x", function (d) { return x.scale(d[0]) - 0.5 * width / attrs.barWidth; })
+          .attr("width", width / attrs.barWidth)
+          .transition()
+          .delay(500)
+          .duration(500)
+          .attr("height", function (d) { return 200 - y.scale(d[1]); })
+          .attr("y", function (d) { return y.scale(d[1]); });
+
+      whiskerV.enter().append('line')
+          .attr('class', 'whisker-vertical')
+          .attr('x1', function (d) { return x.scale(d[0]); })
+          .attr('y1', function (d) { return y.scale(d[2]); })
+          .attr('x2', function (d) { return x.scale(d[0]); })
+          .attr('y2', function (d) { return y.scale(d[1]); });
+
+      whiskerH.enter().append('line')
+          .attr('class', 'whisker-horizontal')
+          .attr('x1', function (d) { return x.scale(d[0]) - 0.35 * width / attrs.barWidth; })
+          .attr('y1', function (d) { return y.scale(d[2]); })
+          .attr('x2', function (d) { return x.scale(d[0]) + 0.35 * width / attrs.barWidth; })
+          .attr('y2', function (d) { return y.scale(d[2]); });
+
+      // EXIT
+      // Remove old elements as needed.
+      bar.exit()
+        .transition()
+        .delay(0)
+        .duration(500)
+        .attr("cy", 0)
+        .attr("cx", 0)
+        .style("fill-opacity", 1e-6)
+        .remove();
+
+      whiskerV.exit()
+        .transition()
+        .delay(0)
+        .duration(500)
+        .attr("cy", 0)
+        .attr("cx", 0)
+        .style("fill-opacity", 1e-6)
+        .remove();
+
+      whiskerH.exit()
+        .transition()
+        .delay(0)
+        .duration(500)
+        .attr("cy", 0)
+        .attr("cx", 0)
+        .style("fill-opacity", 1e-6)
+        .remove();
+
+      return graph;
+    };
 
     graphCtrl.updateChart = function (data, element) {
 
