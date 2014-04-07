@@ -466,7 +466,7 @@ angular.module('graph')
 
       svg.call(zoom);
 
-      // Join new data with old elements, based on the id value.
+      // Join new data with old elements, based on the timestamp.
       var bar = g.selectAll(".bar")
           .data(data, function  (d) { return d[0]; });
 
