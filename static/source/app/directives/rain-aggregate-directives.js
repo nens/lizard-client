@@ -21,35 +21,64 @@ app.directive('rainAggregate', function ($q, CabinetService) {
         );
       };
 
-      scope.$watch('timeState.end', function (n, o) {
+      var holdYourFire = false;
+      var firstTimeStart;
+      scope.$watch('timeState.start', function (n, o) {
         if (n === o || scope.box.type !== 'rain') { return true; }
-        var firstTime;
-        if (scope.timeState.end > scope.rain.end) {
-          if (firstTime === undefined) {
-            getMoreRain();
-            firstTime = true;
-          } else if (scope.timeState.end > scope.rain.end - 10 * scope.rain.interval) {
-            getMoreRain();
+        if (scope.timeState.start < scope.rain.start - scope.rain.interval) {
+          if (firstTimeStart === undefined) {
+            getMoreRain(true);
+            firstTimeStart = true;
+          } else if (scope.timeState.start < scope.rain.start + 10 * scope.rain.interval
+              && !holdYourFire) {
+            holdYourFire = true;
+            getMoreRain(true);
+            setTimeout(function () {
+              holdYourFire = false;
+            }, 1000);
           }
         }
       });
 
-      var getMoreRain = function (starty) {
-        var stop, start;
-        if (starty) {
-          start = scope.rain.start - 20 * scope.rain.interval;
-          stop = scope.rain.end;
-        } else {
-          stop = scope.rain.end + 20 * scope.rain.interval;
-          start = scope.rain.start;
+      var firstTimeEnd;
+      scope.$watch('timeState.end', function (n, o) {
+        if (n === o || scope.box.type !== 'rain') { return true; }
+        if (scope.timeState.end > scope.rain.end + 2 * scope.rain.interval) {
+          if (firstTimeEnd === undefined) {
+            getMoreRain();
+            firstTimeEnd = true;
+          } else if (scope.timeState.end > scope.rain.end - 10 * scope.rain.interval
+              && !holdYourFire) {
+            holdYourFire = true;
+            getMoreRain();
+            setTimeout(function () {
+              holdYourFire = false;
+            }, 1000);
+          }
+
         }
-        var callback = function (response) {
-          console.log(response, scope.rain.data.concat(response.result));
-          scope.rain.data = scope.rain.data.concat(response.result);
-          scope.rain.end = scope.rain.data[scope.rain.data.length - 1][0];
-          scope.rain.start = scope.rain.data[0][0];
-        };
-        getRain(new Date(start),
+      });
+
+      var getMoreRain = function (starty) {
+        var stop, start, callback;
+        if (starty) {
+          start = scope.rain.start - 40 * scope.rain.interval;
+          stop = scope.rain.start;
+          scope.rain.start = start;
+          callback = function (response) {
+            scope.rain.data = response.result.concat(scope.rain.data);
+          };
+        } else {
+          stop = scope.rain.end + 40 * scope.rain.interval;
+          start = scope.rain.end;
+          scope.rain.end = stop;
+          callback = function (response) {
+            scope.rain.data = scope.rain.data.concat(response.result);
+          };
+        }
+        console.log(new Date(start), new Date(stop));
+        getRain(
+          new Date(start),
           new Date(stop),
           scope.rain.latLng,
           callback,

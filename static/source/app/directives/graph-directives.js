@@ -418,7 +418,6 @@ angular.module('graph')
               return "rotate(-45)";
             });
 
-        // svg.select("g")
         svg.selectAll(".bar")
           .attr("x", function (d) { return x.scale(d[0]) - 0.5 * width / barWidth; })
           .attr("transform", "translate(" + "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ", 1)");
@@ -435,10 +434,16 @@ angular.module('graph')
             scope.$parent.timeState.end = x.scale.domain()[1].getTime();
             scope.$parent.timeState.changeOrigin = 'barChart';
             scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
-          });
+        });
       };
 
       graphCtrl.createDrawingArea(width, height);
+
+      var zoom = d3.behavior.zoom()
+        .x(x.scale)
+        .on("zoom", zoomed);
+
+      svg.call(zoom);
 
       return {
         svg: svg,
@@ -458,12 +463,6 @@ angular.module('graph')
       y = graph.y,
       width = graph.width,
       barWidth = graph.barWidth;
-      
-      var zoom = d3.behavior.zoom()
-        .x(x.scale)
-        .on("zoom", graph.zoomFn);
-
-      svg.call(zoom);
 
       var yN = graphCtrl.maxMin(data, '2');
       if (yN.max > y.max || yN.max < (0.5 * y.max)) {
@@ -517,24 +516,18 @@ angular.module('graph')
       // Update old elements as needed.
       bar.transition()
         .duration(500)
-        .attr("x", function (d) { return x.scale(d[0]) - 0.5 * width / attrs.barWidth; })
-        .attr("width", width / barWidth)
         .attr("height", heightFn)
         .attr("y", function (d) { return y.scale(d[1]); })
         .each("end", rescale);
 
       whiskerV.transition()
         .duration(500)
-        .attr('x1', function (d) { return x.scale(d[0]); })
         .attr('y1', function (d) { return y.scale(d[2]); })
-        .attr('x2', function (d) { return x.scale(d[0]); })
         .attr('y2', function (d) { return y.scale(d[1]); });
 
       whiskerH.transition()
         .duration(500)
-        .attr('x1', function (d) { return x.scale(d[0]) - 0.35 * width / attrs.barWidth; })
         .attr('y1', function (d) { return y.scale(d[2]); })
-        .attr('x2', function (d) { return x.scale(d[0]) + 0.35 * width / attrs.barWidth; })
         .attr('y2', function (d) { return y.scale(d[2]); });
 
       // ENTER
@@ -583,10 +576,6 @@ angular.module('graph')
         .remove();
 
       return graph;
-    };
-
-    graphCtrl.updateChart = function (data, element) {
-
     };
   };
   return {
