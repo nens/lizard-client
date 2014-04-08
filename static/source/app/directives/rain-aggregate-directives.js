@@ -7,32 +7,78 @@ app.directive('rainAggregate', function ($q, CabinetService) {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
-      scope.$watch('rain.statWin', function (n, o) {
+      var statWinWatch =  function (n, o) {
         if (n === o) {return true; }
-        console.log(scope.rain.statWin);
-        rainClick();
-      });
-
-      var rainClick = function (e) {
-        // rain retrieve
-        var stop = new Date(scope.timeState.end);
-        var start = new Date(scope.timeState.start);
-        if (e) {
-          scope.rain.latLng = e.latlng;
-        }
-        var nBars = 20;
-        var interval = (stop - start) / nBars;
-        if (scope.rain.statWin === undefined) {
-          scope.rain.statWin = 60 * 60 * 1000; // 1 hour
-        }
-        scope.box.type = 'rain';
         var callback = function (response) {
           scope.rain.data = response.result;
-          scope.rain.nbar = nBars;
-          //$scope.rain.wkt = wkt;
-          scope.rain.srs = 'EPSG:4236';
         };
-        getRain(start, stop, scope.rain.latLng, callback, interval, scope.rain.statWin);
+        getRain(new Date(scope.rain.start),
+          new Date(scope.rain.end),
+          scope.rain.latLng,
+          callback,
+          scope.rain.interval,
+          scope.rain.statWin
+        );
+      };
+
+      scope.$watch('timeState.end', function (n, o) {
+        if (n === o || scope.box.type !== 'rain') { return true; }
+        var firstTime;
+        if (scope.timeState.end > scope.rain.end) {
+          if (firstTime === undefined) {
+            getMoreRain();
+            firstTime = true;
+          } else if (scope.timeState.end > scope.rain.end - 10 * scope.rain.interval) {
+            getMoreRain();
+          }
+        }
+      });
+
+      var getMoreRain = function (starty) {
+        var stop, start;
+        if (starty) {
+          start = scope.rain.start - 20 * scope.rain.interval;
+          stop = scope.rain.end;
+        } else {
+          stop = scope.rain.end + 20 * scope.rain.interval;
+          start = scope.rain.start;
+        }
+        var callback = function (response) {
+          console.log(response, scope.rain.data.concat(response.result));
+          scope.rain.data = scope.rain.data.concat(response.result);
+          scope.rain.end = scope.rain.data[scope.rain.data.length - 1][0];
+          scope.rain.start = scope.rain.data[0][0];
+        };
+        getRain(new Date(start),
+          new Date(stop),
+          scope.rain.latLng,
+          callback,
+          scope.rain.interval,
+          scope.rain.statWin
+        );
+      };
+
+      // scope.$watch('timeState.start', function (n, o) {
+      //   if (n === o || scope.box.type !== 'rain') { return true; }
+      //   scope.rain.rainClick();
+      // });
+
+      scope.rain.rainClick = function (e) {
+        var stop = new Date(scope.timeState.end);
+        var start = new Date(scope.timeState.start);
+        scope.rain.latLng = e.latlng;
+        var nBars = 20;
+        scope.rain.interval = 17280000;
+        scope.rain.statWin = 60 * 60 * 1000; // 1 hour
+        scope.box.type = 'rain';
+        scope.$watch('rain.statWin', statWinWatch);
+        var callback = function (response) {
+          scope.rain.data = response.result;
+          scope.rain.end = scope.rain.data[scope.rain.data.length - 1][0];
+          scope.rain.start = scope.rain.data[0][0];
+          scope.rain.nbar = nBars;
+        };
+        getRain(start, stop, scope.rain.latLng, callback, scope.rain.interval, scope.rain.statWin);
       };
 
       /**
@@ -69,10 +115,10 @@ app.directive('rainAggregate', function ($q, CabinetService) {
       var cleanup = scope.$watch('tools.active', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
         if (newVal !== 'rain') {
-          scope.map.off('click', rainClick);
+          scope.map.off('click', scope.rain.rainClick);
         }
         if (scope.tools.active === 'rain') {
-          scope.map.on('click', rainClick);
+          scope.map.on('click', scope.rain.rainClick);
         }
       });
     }
