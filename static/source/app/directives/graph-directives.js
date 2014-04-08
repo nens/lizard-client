@@ -207,7 +207,7 @@ angular.module('graph')
         .attr("width", width)
         .attr("height", height);
       
-      // Put the data in this element
+      // Put the data in this group
       var g = this.svg.append("g")
         .attr("clip-path", "url(#clip)")
         .attr('id', 'feature-group');
@@ -312,6 +312,7 @@ angular.module('graph')
 
     scope.$watch('data', function (n, o) {
       if (n === o) { return true; }
+      // Build chart from scratch
       if (scope.data !== undefined
         && graphCtrl.callChart !== undefined
         && scope.graph === undefined) {
@@ -334,7 +335,7 @@ angular.module('graph')
         var legend = {
           title: scope.title,
           xLabel: scope.xlabel,
-          yLabel: scope.ylabel,
+          yLabel: 'mm/uur',
           // maybe from scope so controller determines labels
           ymin: ymin,
           ymax: ymax,
@@ -346,10 +347,11 @@ angular.module('graph')
         d3.select(element[0]).html("");
         scope.graph = graphCtrl.callChart(scope.data, element, legend);
         scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph);
+      // Update graph with new data
       } else if (scope.graph !== undefined) {
         scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph);
+      // Clear graph when no more data
       } else {
-        // empty the mofo beforehand
         d3.select(element[0]).html("");
       }
     });
@@ -381,6 +383,15 @@ angular.module('graph')
 angular.module('graph')
 .directive('barChart', function () {
   var link = function (scope, element, attrs, graphCtrl) {
+    /**
+     * Builds d3 chart object with axes scales and zoom functionality
+     * Designed and used by the rain on point, see templates/rain.html
+     * and rain-aggregate-directives
+     * 
+     * @param  {object} data    list of data values [timestamp, mean, max]
+     * @param  {[type]} element html element
+     * @return {[object]}       graph object
+     */
     graphCtrl.callChart = function (data, element, legend) {
       var graph = graphCtrl.createCanvas(legend, element);
       var svg = graph.svg,
@@ -437,7 +448,7 @@ angular.module('graph')
         });
       };
 
-      graphCtrl.createDrawingArea(width, height);
+      var g = graphCtrl.createDrawingArea(width, height);
 
       var zoom = d3.behavior.zoom()
         .x(x.scale)
@@ -447,6 +458,7 @@ angular.module('graph')
 
       return {
         svg: svg,
+        g: g,
         height: height,
         width: width,
         x: x,
@@ -458,7 +470,7 @@ angular.module('graph')
 
     graphCtrl.drawFeatures = function (data, graph) {
       var svg = graph.svg,
-      g = svg.select('#feature-group'),
+      g = graph.g,
       x = graph.x,
       y = graph.y,
       width = graph.width,
@@ -466,7 +478,6 @@ angular.module('graph')
 
       var yN = graphCtrl.maxMin(data, '2');
       if (yN.max > y.max || yN.max < (0.5 * y.max)) {
-        console.log('rescale', yN, y);
         y = yN;
         y.scale = graphCtrl.scale(y.min, y.max, {
           range: [graph.height, 0]

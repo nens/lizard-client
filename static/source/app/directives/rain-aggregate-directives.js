@@ -76,7 +76,6 @@ app.directive('rainAggregate', function ($q, CabinetService) {
             scope.rain.data = scope.rain.data.concat(response.result);
           };
         }
-        console.log(new Date(start), new Date(stop));
         getRain(
           new Date(start),
           new Date(stop),
