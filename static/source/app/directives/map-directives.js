@@ -332,6 +332,15 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
         console.log('leaflet layer not defined');
       }
     }
+
+    try {
+      angular.forEach($scope.mapState.overlayers, function (layer) {
+          layer.leafletLayer.bringToFront();
+      });
+    }
+    catch(err) {
+      // console.log('Error:', err);
+    }    
   };
 
   // expects a layer hashtable with a leafletlayer object
