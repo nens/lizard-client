@@ -34,14 +34,9 @@ def index(request):
     layers = spatial.LayerSerializer(
         Layer.objects.filter(baselayer=False)).data
 
-    if getattr(settings, "DEBUG"):
-        for layer in layers:
-            if layer['type'] == 'ASSET':
-                layer['url'] = 'http://' + request.META['HTTP_HOST'] + '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}'
-    else:
-        for layer in layers:
-            if layer['type'] == 'ASSET':
-                layer['url'] = 'http://{s}.' + request.META['HTTP_HOST'] + '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}'
+    for layer in layers:
+        if layer['type'] == 'ASSET':
+            layer['url'] = 'http://' + request.META['HTTP_HOST'] + '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}'
 
 
 
