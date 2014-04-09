@@ -130,7 +130,7 @@ angular.module('graph')
         top: 20,
         right: 20,
         bottom: 30,
-        left: 50
+        left: 30
       },
       maxwidth = 350,
       maxheight = 250;
