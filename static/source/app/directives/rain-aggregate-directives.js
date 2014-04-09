@@ -148,7 +148,7 @@ app.directive('rainAggregate', function ($q, CabinetService) {
         CabinetService.raster.get({
           raster_names: 'rain',
           geom: wkt,
-          srs: 'EPSG:4236',
+          srs: 'EPSG:4326',
           start: startString,
           stop: stopString,
           interval: interval,
