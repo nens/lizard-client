@@ -335,7 +335,7 @@ angular.module('graph')
         var legend = {
           title: scope.title,
           xLabel: scope.xlabel,
-          yLabel: 'mm/uur',
+          yLabel: attrs.ylabel,
           // maybe from scope so controller determines labels
           ymin: ymin,
           ymax: ymax,
