@@ -792,6 +792,7 @@ app.controller("MasterCtrl",
   };
 
 // END animation
+//
 // START Rain Stuff
 
   var buildAnimationDatetimes = function () {
@@ -849,38 +850,23 @@ app.controller("MasterCtrl",
     enabled: false,
   };
 
-  $scope.toggleRain = function (toggle) {
-    if ($scope.rain.enabled === false) {
-      /*
-      * Currently the server stores only the last 24 hours. 
-      * Reset temporalextent to this last twenty four if it exceeds these limits
-      */
-      var twentyFourAgo = Date.now() - 86400000;
-      if ($scope.timeState.start < twentyFourAgo) {
-        $scope.timeState.start = twentyFourAgo;
-        $scope.timeState.changeOrigin = 'rain';
-        $scope.timeState.changedZoom = !$scope.timeState.changedZoom;
-      }
-      if ($scope.timeState.end < twentyFourAgo || $scope.timeState.end > Date.now()) {
-        $scope.timeState.end =  Date.now();
-        $scope.timeState.changeOrigin = 'rain';
-        $scope.timeState.changedZoom = !$scope.timeState.changedZoom;
-      }
-      getRadarImages();
-      $scope.rain.enabled = true;
-      if ($scope.timeState.hidden !== false) { $scope.toggleTimeline(); }
-    } else if ($scope.rain.enabled || toggle === 'off') {
-      $scope.rain.enabled = false;
-      localStorage.clear();
-    }
-  };
-
+  /**
+   * [-] set rain.enabled when image arrives
+   * [-] add click handler in rain graph and timeline to call getRadarImages()
+   * and set brush to click location
+   *
+   * [-] remove localstorage
+   * [-] buildAnimationDateTimes: 1 timestamp
+   * [-] render image as d3 canvas -> is now rendered in rain directive in map-directives.js
+   *
+   */
   var getRadarImages = function () {
     $scope.rain.imageDates = [];
     var imageUrlBase = 'http://regenradar.lizard.net/wms/?WIDTH=525&HEIGHT=497&SRS=EPSG%3A3857&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
     $scope.rain.dates = buildAnimationDatetimes();
     localStorage.clear();
     for (var i = 0; i < $scope.rain.dates.length; i++) {
+
       var date = $scope.rain.dates[i];
       ripImage(imageUrlBase, date, i);
     }
