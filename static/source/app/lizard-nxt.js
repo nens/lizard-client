@@ -64,6 +64,9 @@ app.config(function ($locationProvider) {
  * 
  * Stuff to reconsider, rethink, refactor:
  *
+ * * [ ] Create a mapState.here to describe the current spatial location 
+ *       just like timeState.at describes the now. map-directive should set this, 
+ *       watches should listen to this to draw a clicklayer, get rain, get data from utf, etc.
  * * [ ] Refactor map controller and directives
  * * [-] Refactor master controller (states, data!)
  * * [-] Refactor timeline out of mapState with its own scope
@@ -73,7 +76,7 @@ app.config(function ($locationProvider) {
  * * [ ] Move or delete common directory in source
  * * [ ] Integrate 3di into this paradigm (move from threedi to source/app)
  * * [+] Refactor timeline controller and directive
- *
+
  */
 app.controller("MasterCtrl",
   ["$scope", "$http", "Restangular", "$q", "$compile", "CabinetService",

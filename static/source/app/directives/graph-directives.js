@@ -130,7 +130,7 @@ angular.module('graph')
         top: 20,
         right: 20,
         bottom: 30,
-        left: 50
+        left: 30
       },
       maxwidth = 350,
       maxheight = 250;
@@ -207,7 +207,7 @@ angular.module('graph')
         .attr("width", width)
         .attr("height", height);
       
-      // Put the data in this element
+      // Put the data in this group
       var g = this.svg.append("g")
         .attr("clip-path", "url(#clip)")
         .attr('id', 'feature-group');
@@ -312,6 +312,7 @@ angular.module('graph')
 
     scope.$watch('data', function (n, o) {
       if (n === o) { return true; }
+      // Build chart from scratch
       if (scope.data !== undefined
         && graphCtrl.callChart !== undefined
         && scope.graph === undefined) {
@@ -334,7 +335,7 @@ angular.module('graph')
         var legend = {
           title: scope.title,
           xLabel: scope.xlabel,
-          yLabel: scope.ylabel,
+          yLabel: attrs.ylabel,
           // maybe from scope so controller determines labels
           ymin: ymin,
           ymax: ymax,
@@ -346,10 +347,11 @@ angular.module('graph')
         d3.select(element[0]).html("");
         scope.graph = graphCtrl.callChart(scope.data, element, legend);
         scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph);
+      // Update graph with new data
       } else if (scope.graph !== undefined) {
         scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph);
+      // Clear graph when no more data
       } else {
-        // empty the mofo beforehand
         d3.select(element[0]).html("");
       }
     });
@@ -381,6 +383,17 @@ angular.module('graph')
 angular.module('graph')
 .directive('barChart', function () {
   var link = function (scope, element, attrs, graphCtrl) {
+    
+    /**
+     * Builds d3 chart object with axes scales and zoom functionality.
+     *
+     * Designed and used by the rain on point, see templates/rain.html
+     * and rain-aggregate-directives.
+     * 
+     * @param   {object} data    list of data values [timestamp, mean, max]
+     * @param   {[type]} element html element
+     * @returns {[object]}       graph object
+     */
     graphCtrl.callChart = function (data, element, legend) {
       var graph = graphCtrl.createCanvas(legend, element);
       var svg = graph.svg,
@@ -418,7 +431,6 @@ angular.module('graph')
               return "rotate(-45)";
             });
 
-        // svg.select("g")
         svg.selectAll(".bar")
           .attr("x", function (d) { return x.scale(d[0]) - 0.5 * width / barWidth; })
           .attr("transform", "translate(" + "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ", 1)");
@@ -438,10 +450,17 @@ angular.module('graph')
           });
       };
 
-      graphCtrl.createDrawingArea(width, height);
+      var g = graphCtrl.createDrawingArea(width, height);
+
+      var zoom = d3.behavior.zoom()
+        .x(x.scale)
+        .on("zoom", zoomed);
+
+      svg.call(zoom);
 
       return {
         svg: svg,
+        g: g,
         height: height,
         width: width,
         x: x,
@@ -451,23 +470,22 @@ angular.module('graph')
       };
     };
 
+    /**
+     * Draws new features, updates and removes features and rescales graph.
+     * 
+     * @param  {object} data  new data object
+     * @param  {object} graph graph object
+     */
     graphCtrl.drawFeatures = function (data, graph) {
       var svg = graph.svg,
-      g = svg.select('#feature-group'),
+      g = graph.g,
       x = graph.x,
       y = graph.y,
       width = graph.width,
       barWidth = graph.barWidth;
-      
-      var zoom = d3.behavior.zoom()
-        .x(x.scale)
-        .on("zoom", graph.zoomFn);
-
-      svg.call(zoom);
 
       var yN = graphCtrl.maxMin(data, '2');
       if (yN.max > y.max || yN.max < (0.5 * y.max)) {
-        console.log('rescale', yN, y);
         y = yN;
         y.scale = graphCtrl.scale(y.min, y.max, {
           range: [graph.height, 0]
@@ -517,24 +535,18 @@ angular.module('graph')
       // Update old elements as needed.
       bar.transition()
         .duration(500)
-        .attr("x", function (d) { return x.scale(d[0]) - 0.5 * width / attrs.barWidth; })
-        .attr("width", width / barWidth)
         .attr("height", heightFn)
         .attr("y", function (d) { return y.scale(d[1]); })
         .each("end", rescale);
 
       whiskerV.transition()
         .duration(500)
-        .attr('x1', function (d) { return x.scale(d[0]); })
         .attr('y1', function (d) { return y.scale(d[2]); })
-        .attr('x2', function (d) { return x.scale(d[0]); })
         .attr('y2', function (d) { return y.scale(d[1]); });
 
       whiskerH.transition()
         .duration(500)
-        .attr('x1', function (d) { return x.scale(d[0]) - 0.35 * width / attrs.barWidth; })
         .attr('y1', function (d) { return y.scale(d[2]); })
-        .attr('x2', function (d) { return x.scale(d[0]) + 0.35 * width / attrs.barWidth; })
         .attr('y2', function (d) { return y.scale(d[2]); });
 
       // ENTER
@@ -583,10 +595,6 @@ angular.module('graph')
         .remove();
 
       return graph;
-    };
-
-    graphCtrl.updateChart = function (data, element) {
-
     };
   };
   return {
