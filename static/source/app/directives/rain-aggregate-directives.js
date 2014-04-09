@@ -8,8 +8,8 @@ app.directive('rainAggregate', function ($q, CabinetService) {
     link: function (scope, element, attrs, mapCtrl) {
 
       /**
-       * Watch function to replace rain.data object 
-       * with data computed with a different window
+       * Watch function to replace rain.data object with data computed for 
+       * different window.
        */
       var statWinWatch =  function (n, o) {
         if (n === o) {return true; }
@@ -26,7 +26,7 @@ app.directive('rainAggregate', function ($q, CabinetService) {
       };
 
       /**
-       * Watch to trigger the call for more rain when the user scrolls the graph
+       * Watch to trigger call for more rain when user scrolls graph.
        */
       var holdYourFire = false;
       var firstTimeStart;
@@ -48,7 +48,7 @@ app.directive('rainAggregate', function ($q, CabinetService) {
       });
 
       /**
-       * Watch to trigger the call for more rain when the user scrolls the graph
+       * Watch to trigger call for more rain when user scrolls graph.
        */
       var firstTimeEnd;
       scope.$watch('timeState.end', function (n, o) {
@@ -70,7 +70,7 @@ app.directive('rainAggregate', function ($q, CabinetService) {
       });
 
       /**
-       * Adds rain data to the current scope.rain.data object.
+       * Adds rain data to current scope.rain.data object.
        * 
        * @param  {boolean} starty if true adds data to the front,
        *                          else to the back of the data element
@@ -126,7 +126,7 @@ app.directive('rainAggregate', function ($q, CabinetService) {
       };
 
       /**
-       * Gets rain from the server
+       * Gets rain from server.
        *
        * @param  {int} start    start of rainserie
        * @param  {int} stop     end of rainserie
