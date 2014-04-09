@@ -7,6 +7,10 @@ app.directive('rainAggregate', function ($q, CabinetService) {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
+      /**
+       * Watch function to replace rain.data object 
+       * with data computed with a different window
+       */
       var statWinWatch =  function (n, o) {
         if (n === o) {return true; }
         var callback = function (response) {
@@ -21,6 +25,9 @@ app.directive('rainAggregate', function ($q, CabinetService) {
         );
       };
 
+      /**
+       * Watch to trigger the call for more rain when the user scrolls the graph
+       */
       var holdYourFire = false;
       var firstTimeStart;
       scope.$watch('timeState.start', function (n, o) {
@@ -40,6 +47,9 @@ app.directive('rainAggregate', function ($q, CabinetService) {
         }
       });
 
+      /**
+       * Watch to trigger the call for more rain when the user scrolls the graph
+       */
       var firstTimeEnd;
       scope.$watch('timeState.end', function (n, o) {
         if (n === o || scope.box.type !== 'rain') { return true; }
@@ -59,6 +69,12 @@ app.directive('rainAggregate', function ($q, CabinetService) {
         }
       });
 
+      /**
+       * Adds rain data to the current scope.rain.data object.
+       * 
+       * @param  {boolean} starty if true adds data to the front,
+       *                          else to the back of the data element
+       */
       var getMoreRain = function (starty) {
         var stop, start, callback;
         if (starty) {
@@ -86,11 +102,11 @@ app.directive('rainAggregate', function ($q, CabinetService) {
         );
       };
 
-      // scope.$watch('timeState.start', function (n, o) {
-      //   if (n === o || scope.box.type !== 'rain') { return true; }
-      //   scope.rain.rainClick();
-      // });
-
+      /**
+       * Takes current timeState and location of click to put rain data on the scope.
+       * 
+       * @param  {latlng object} e leaflet location object
+       */
       scope.rain.rainClick = function (e) {
         var stop = new Date(scope.timeState.end);
         var start = new Date(scope.timeState.start);

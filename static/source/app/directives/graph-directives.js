@@ -383,6 +383,7 @@ angular.module('graph')
 angular.module('graph')
 .directive('barChart', function () {
   var link = function (scope, element, attrs, graphCtrl) {
+    
     /**
      * Builds d3 chart object with axes scales and zoom functionality
      * Designed and used by the rain on point, see templates/rain.html
@@ -468,6 +469,12 @@ angular.module('graph')
       };
     };
 
+    /**
+     * Draws new features, updates and removes features and rescales graph
+     * 
+     * @param  {object} data  new data object
+     * @param  {object} graph graph object
+     */
     graphCtrl.drawFeatures = function (data, graph) {
       var svg = graph.svg,
       g = graph.g,
