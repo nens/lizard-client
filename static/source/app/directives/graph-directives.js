@@ -385,13 +385,14 @@ angular.module('graph')
   var link = function (scope, element, attrs, graphCtrl) {
     
     /**
-     * Builds d3 chart object with axes scales and zoom functionality
+     * Builds d3 chart object with axes scales and zoom functionality.
+     *
      * Designed and used by the rain on point, see templates/rain.html
-     * and rain-aggregate-directives
+     * and rain-aggregate-directives.
      * 
-     * @param  {object} data    list of data values [timestamp, mean, max]
-     * @param  {[type]} element html element
-     * @return {[object]}       graph object
+     * @param   {object} data    list of data values [timestamp, mean, max]
+     * @param   {[type]} element html element
+     * @returns {[object]}       graph object
      */
     graphCtrl.callChart = function (data, element, legend) {
       var graph = graphCtrl.createCanvas(legend, element);
@@ -446,7 +447,7 @@ angular.module('graph')
             scope.$parent.timeState.end = x.scale.domain()[1].getTime();
             scope.$parent.timeState.changeOrigin = 'barChart';
             scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
-        });
+          });
       };
 
       var g = graphCtrl.createDrawingArea(width, height);
@@ -470,7 +471,7 @@ angular.module('graph')
     };
 
     /**
-     * Draws new features, updates and removes features and rescales graph
+     * Draws new features, updates and removes features and rescales graph.
      * 
      * @param  {object} data  new data object
      * @param  {object} graph graph object

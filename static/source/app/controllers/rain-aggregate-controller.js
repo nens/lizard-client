@@ -8,16 +8,8 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
     $scope.rain.rainClick($scope.mapState.here);
   });
 
-  function destroy() {
-    if ($scope.$$phase) {
-      setTimeout(function () {destroy(); }, 100);
-    } else {
-      $scope.$destroy();
-    }
-  }
-
   /**
-   * Clean up the box when the tool is turned off
+   * Clean up box when tool is turned off
    */
   $scope.$watch('tools.active', function (n, o) {
     if ($scope.tools.active !== 'rain') {
@@ -26,7 +18,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
   });
 
   /**
-   * Turn of tools when the box.type is changed or closed
+   * Turn of tools when box.type is changed or closed
    */
   $scope.$watch('box.type', function (n, o) {
     if ($scope.box.type !== 'rain') {
@@ -44,8 +36,8 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
   };
 
   /**
-   * Watch function to replace rain.data object 
-   * with data computed with a different window
+   * Watch function to replace rain.data object with data computed for 
+   * different window.
    */
   var statWinWatch =  function (n, o) {
     if (n === o) {return true; }
@@ -62,7 +54,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
   };
 
   /**
-   * Watch to trigger the call for more rain when the user scrolls the graph
+   * Watch to trigger call for more rain when user scrolls graph.
    */
   var holdYourFire = false;
   var firstTimeStart;
@@ -84,7 +76,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
   });
 
   /**
-   * Watch to trigger the call for more rain when the user scrolls the graph
+   * Watch to trigger call for more rain when user scrolls graph.
    */
   var firstTimeEnd;
   $scope.$watch('timeState.end', function (n, o) {
@@ -106,23 +98,22 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
   });
 
   /**
-   * Adds rain data to the current $scope.rain.data object.
+   * Adds rain data to current $scope.rain.data object.
    * 
    * @param  {boolean} starty if true adds data to the front,
    *                          else to the back of the data element
    */
   var getMoreRain = function (starty) {
     var stop, start, callback;
-    var buffer = 40;
     if (starty) {
-      start = $scope.rain.start - buffer * $scope.rain.interval;
+      start = $scope.rain.start - 40 * $scope.rain.interval;
       stop = $scope.rain.start;
       $scope.rain.start = start;
       callback = function (response) {
         $scope.rain.data = response.result.concat($scope.rain.data);
       };
     } else {
-      stop = $scope.rain.end + buffer * $scope.rain.interval;
+      stop = $scope.rain.end + 40 * $scope.rain.interval;
       start = $scope.rain.end;
       $scope.rain.end = stop;
       callback = function (response) {
@@ -163,7 +154,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
   };
 
   /**
-   * Gets rain from the server
+   * Gets rain from server.
    *
    * @param  {int} start    start of rainserie
    * @param  {int} stop     end of rainserie
