@@ -184,9 +184,9 @@
             </div>            
             <div class="button-list-item">
               <a href="#" 
-                 ng-click="toggleTool('rain')"
+                 ng-click="toggleTool('rain'); box.type = 'rain'"
                  class="button-list-link" 
-                 title="{% trans 'Regen op punt' %}" 
+                 title="{% trans 'Rain on location' %}" 
                  ng-class="{'active': tools.active === 'rain'}">
                  <i class="fa fa-cloud"></i>
               </a>
@@ -209,7 +209,6 @@
              surfacelayer
              threedi-map
              rain
-             rain-aggregate
              ng-class="{'crosshair': tools.active === 'profile'}">
          </map>
       </div>

@@ -153,6 +153,7 @@ app.controller("MasterCtrl",
     baselayerChanged: Date.now(),
     enabled: false,
     bounds: null,
+    here: null,
     geom_wkt: ''
   };
 
