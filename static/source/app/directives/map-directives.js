@@ -593,7 +593,8 @@ app.directive('rain', function () {
   return {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
-      var imageBounds = [[54.28458617998074, 1.324296158471368], [49.82567047026146, 8.992548357936204]];
+      var imageBounds = [[54.28458617998074, 1.324296158471368],
+                         [49.82567047026146, 8.992548357936204]];
       var imageOverlay =  L.imageOverlay('', imageBounds, {opacity: 0.8});
       scope.$watch('rain.enabled', function (newVal, oldVal) {
         if (newVal !== oldVal) {
@@ -605,15 +606,26 @@ app.directive('rain', function () {
         }
       });
 
-      scope.$watch('rain.currentFrame', function (newVal, oldVal) {
+      scope.$watch('rain.currentImage', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
         if (imageOverlay !== undefined) {
-          var imgFromStorage = localStorage.getItem(scope.rain.currentFrame);
-          imageOverlay.setUrl(imgFromStorage);
+          //var imgFromStorage = localStorage.getItem(scope.rain.currentFrame);
+          //imageOverlay.setUrl(imgFromStorage);
+          console.log(scope.rain.currentImage);
+          imageOverlay.setUrl(scope.rain.currentImage);
           imageOverlay.setOpacity(0.8);
           if (scope.rain.currentFrame === null) {
             imageOverlay.setOpacity(0);
           }
+        }
+      });
+
+      scope.$watch('timeState.at', function (newVal, oldVal) {
+        console.log(scope.timeState.at);
+        if (newVal === oldVal) { return; }
+        if (imageOverlay !== undefined && scope.rain.enabled) {
+          console.log(scope.timeState.at);
+          scope.getRasterImages();
         }
       });
     }

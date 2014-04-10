@@ -125,12 +125,15 @@ app.controller("MasterCtrl",
     }
   };
 
-  // $scope.mouseMove = function ($event) {
-  //   if ($scope.tools.cursorTooltip.enabled) {
-  //     $scope.tools.cursorTooltip.location = $event;
-  //   }
-  // };
-
+  /**
+   * Toggle tool from "name" to "none"
+   *
+   * Sets tool.active model on scope to name of the tool if tool disabled 
+   * or "none" if tool is already enabled.
+   *
+   * @param {string} name name of the tool to toggle
+   *
+   */
   $scope.toggleTool = function (name) {
     if ($scope.tools.active === name) {
       $scope.tools.active = "none";
@@ -169,6 +172,8 @@ app.controller("MasterCtrl",
     changedZoom: Date.now(),
     at: this.start,
     animation: {
+      start: undefined,
+      stop: undefined,
       playing: false,
       enabled: false,
       currentFrame: 0,
@@ -661,8 +666,8 @@ app.controller("MasterCtrl",
 
 
   /**
-  * Event enabler
-  */
+   * Event enabler
+   */
   $scope.toggleTimeline = function () {
     if ($scope.timeState.hidden) {
       $scope.timeState.hidden = false;
@@ -796,9 +801,35 @@ app.controller("MasterCtrl",
   };
 
 // END animation
-//
-// START Rain Stuff
 
+// START Rain Stuff
+  $scope.toggleRain = function (toggle) {
+    if ($scope.rain.enabled === false) {
+      $scope.toggleTimeline();
+      /*
+      * Currently the server stores only the last 24 hours. 
+      * Reset temporalextent to this last twenty four if it exceeds these limits
+      */
+      //var twentyFourAgo = Date.now() - 86400000;
+      //if ($scope.timeState.start < twentyFourAgo) {
+        //$scope.timeState.start = twentyFourAgo;
+        //$scope.timeState.changeOrigin = 'rain';
+        //$scope.timeState.changedZoom = !$scope.timeState.changedZoom;
+      //}
+      //if ($scope.timeState.end < twentyFourAgo || $scope.timeState.end > Date.now()) {
+        //$scope.timeState.end =  Date.now();
+        //$scope.timeState.changeOrigin = 'rain';
+        //$scope.timeState.changedZoom = !$scope.timeState.changedZoom;
+      //}
+      $scope.getRasterImages();
+      $scope.rain.enabled = true;
+      if ($scope.timeState.hidden !== false) { $scope.toggleTimeline(); }
+    } else if ($scope.rain.enabled || toggle === 'off') {
+      $scope.toggleTimeline();
+      $scope.rain.enabled = false;
+      localStorage.clear();
+    }
+  };
   var buildAnimationDatetimes = function () {
         /**
          * Get radarimages for every 5th minutes if this fits in the
@@ -833,7 +864,6 @@ app.controller("MasterCtrl",
       };
 
   var ripImage = function (base, date, item) {
-    // var container = 
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
     canvas.width = 525;
@@ -846,7 +876,7 @@ app.controller("MasterCtrl",
       localStorage.setItem(Date.parse(date), url);
       canvas.remove();
     };
-    img.crossOrigin = 'anonymous';
+    img.crossOrigin = 'Anonymous';
     img.src = base + date;
   };
 
@@ -864,19 +894,43 @@ app.controller("MasterCtrl",
    * [-] render image as d3 canvas -> is now rendered in rain directive in map-directives.js
    *
    */
-  var getRadarImages = function () {
-    $scope.rain.imageDates = [];
-    var imageUrlBase = 'http://regenradar.lizard.net/wms/?WIDTH=525&HEIGHT=497&SRS=EPSG%3A3857&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
-    $scope.rain.dates = buildAnimationDatetimes();
-    localStorage.clear();
-    for (var i = 0; i < $scope.rain.dates.length; i++) {
 
-      var date = $scope.rain.dates[i];
-      ripImage(imageUrlBase, date, i);
-    }
-    $scope.rain.length = $scope.rain.dates.length - 1;
+  /**
+   * Get images for dynamic raster layer for interval to prepare for animation.
+   *
+   * Get 1 image for timestamp.
+   *
+   * TODO:
+   * [ ] get images for interval, start / stop
+   * [ ] make url variable depending on raster layer 
+   *
+   */
+  $scope.getRasterImages = {};
+  $scope.getRasterImages = function () {
+    $scope.rain.imageDates = [];
+    //var imageUrlBase = 'http://regenradar.lizard.net/wms/?WIDTH=525&HEIGHT=497&SRS=EPSG%3A3857&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
+    var imageUrlBase = 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=demo%3Aradar&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
+    //$scope.rain.dates = buildAnimationDatetimes();
+    //localStorage.clear();
+    //for (var i = 0; i < $scope.rain.dates.length; i++) {
+
+      //var date = $scope.rain.dates[i];
+      //ripImage(imageUrlBase, date, i);
+    //}
+    //$scope.rain.length = $scope.rain.dates.length - 1;
     $scope.rain.currentFrame = 0;
-    $scope.rain.currentDate = Date.parse($scope.rain.dates[0]);
+    //$scope.rain.currentDate = Date.parse($scope.rain.dates[0]);
+    // TODO: rewrite to d3 time formatting
+    var now = moment($scope.timeState.at);
+    now.hours(now.hours() - (60 / now.zone()));
+    // The wms only accepts requests for every 5th minute exact
+    now.minutes((Math.round(now.minutes() / 5) * 5) % 60);
+    now.seconds(0);
+    //$scope.rain.currentImage = imageUrlBase + now.utc().format('YYYY-MM-DDTHH:mm:ss') + '.000Z';
+    $scope.rain.currentImage = imageUrlBase + now.utc().format('YYYY-MM-DDTHH:mm:ss');
+    console.log(now.utc().format('YYYY-MM-DDTHH:mm:ss') + '.000Z');
+    console.log(now.utc().format('YYYY-MM-DDTHH:mm:ss'));
+    console.log($scope.rain.currentImage);
   };
 
 // End rain stuff

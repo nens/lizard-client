@@ -189,7 +189,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
     brush = d3.svg.brush().x(graph.xScale)
       .on("brush", this.brushmove);
     this.brushg = graph.svg.select('g').append("g")
-      // .attr("transform", "translate(" + graph.margin.left + ", " + graph.margin.top + ")")
       .attr("class", "brushed")
       .call(brush);
     this.brushg.selectAll("rect")
@@ -241,6 +240,21 @@ app.controller('TimelineDirCtrl', function ($scope) {
       graph.xScale = timelineCtrl.scale(x, range, { type: 'time' });
       graph.xAxis = timelineCtrl.makeAxis(graph.xScale, {orientation: "bottom", ticks: 5});
       timelineCtrl.drawAxes(graph, graph.xAxis);
+
+      /**
+       * Click handler to set scope.at to to timestamp where clicked in
+       * timeline.
+       *
+       * Is eg used by dynamic raster functionality to get image for time
+       * clicked.
+       *
+       */
+      graph.svg.on("click", function () {
+        var timeClicked = +(graph.xScale.invert(d3.event.x));
+        console.log("Set time to", timeClicked);
+        scope.timeState.at = timeClicked;
+        scope.$digest();
+      });
 
       // Add color scale
       graph.colorScale = timelineCtrl.scale(null, null, { scale: 'ordinal' });
@@ -372,6 +386,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
           .x(graph.xScale)
           .on("zoom", zoomed)
         );
+
         // Update circle positions
         graph.svg.selectAll("circle")
           .attr("cx", function (d) { return Math.round(graph.xScale(d.properties.timestamp)); });

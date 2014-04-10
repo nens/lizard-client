@@ -184,7 +184,7 @@
             </div>            
             <div class="button-list-item">
               <a href="#" 
-                 ng-click="toggleTool('rain'); box.type = 'rain'"
+                 ng-click="toggleTool('rain'); box.type = 'rain'; toggleRain();"
                  class="button-list-link" 
                  title="{% trans 'Rain on location' %}" 
                  ng-class="{'active': tools.active === 'rain'}">
