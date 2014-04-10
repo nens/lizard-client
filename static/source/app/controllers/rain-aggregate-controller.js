@@ -105,15 +105,16 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
    */
   var getMoreRain = function (starty) {
     var stop, start, callback;
+    var buffer = 40; // Collect 40 new bars at the time
     if (starty) {
-      start = $scope.rain.start - 40 * $scope.rain.interval;
+      start = $scope.rain.start - buffer * $scope.rain.interval;
       stop = $scope.rain.start;
       $scope.rain.start = start;
       callback = function (response) {
         $scope.rain.data = response.result.concat($scope.rain.data);
       };
     } else {
-      stop = $scope.rain.end + 40 * $scope.rain.interval;
+      stop = $scope.rain.end + buffer * $scope.rain.interval;
       start = $scope.rain.end;
       $scope.rain.end = stop;
       callback = function (response) {
