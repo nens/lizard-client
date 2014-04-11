@@ -171,6 +171,7 @@ app.controller("MasterCtrl",
     end: 1389952408000,
     changedZoom: Date.now(),
     at: this.start,
+    hidden: undefined,
     animation: {
       start: undefined,
       stop: undefined,
@@ -278,7 +279,9 @@ app.controller("MasterCtrl",
     } else {
       getEvents(name);
     }
-    if ($scope.timeState.hidden !== false) { $scope.toggleTimeline(); }
+    if ($scope.timeState.hidden !== false) {
+      $scope.toggleTimeline();
+    }
   };
 
   /**
@@ -664,35 +667,41 @@ app.controller("MasterCtrl",
 
 //END keypress
 
-
   /**
-   * Event enabler
+   * Switch timeline on or off.
+   *
+   * Uses 3 way logic: true, false and undefined:
+   *   undefined: timeline element doesn't exist yet.
+   *   false: timeline exists but is hidden.
+   *   true: timeline exists and is shown>
+   *
+   * Initial state of the timeState.hidden is 'undefined'.
    */
   $scope.toggleTimeline = function () {
-    if ($scope.timeState.hidden) {
-      $scope.timeState.hidden = false;
-      angular.element('#timeline').css('bottom', 0);
-    } else if ($scope.timeState.hidden === false) {
-      $scope.timeState.hidden = true;
-      angular.element('#timeline').css('bottom', 0 - angular.element('#timeline').height());
-    } else {
+    if ($scope.timeState.hidden === undefined) {
       // Create timeline element when needed and no earlier
-      var timeline = angular.element('<timeline class="navbar timeline navbar-fixed-bottom"></timeline>');
+      var timeline = angular.element(
+        '<timeline class="navbar timeline navbar-fixed-bottom"></timeline>');
       var el = $compile(timeline)($scope);
       angular.element('#master')
         .append(timeline);
       $scope.timeState.hidden = false;
+    } else if ($scope.timeState.hidden === true) {
+      $scope.timeState.hidden = false;
+      angular.element('#timeline').css('bottom', 0);
+    } else if ($scope.timeState.hidden === false) {
+      $scope.timeState.hidden = true;
+      angular.element('#timeline').css(
+        'bottom', 0 - angular.element('#timeline').height());
     }
   };
 
-
-/*
-* animation stuffs
-*/
+/**
+ * Animation stuff.
+ */
 
   window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
                               window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-
 
   $scope.timeState.enableAnimation = function (toggle) {
     if ($scope.timeState.animation.enabled || toggle === "off") {
@@ -727,10 +736,6 @@ app.controller("MasterCtrl",
         $scope.timeState.animation.end = $scope.timeState.animation.end - $scope.timeState.animation.start + $scope.timeState.start;
         $scope.timeState.animation.start = $scope.timeState.start;
         $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
-        if ($scope.rain.enabled) {
-          $scope.rain.currentFrame = null;
-          $scope.rain.currentDate = Date.parse($scope.rain.dates[0]);
-        }
       });
     }
     if ($scope.timeState.animation.playing) {
@@ -740,32 +745,12 @@ app.controller("MasterCtrl",
     }
   };
 
+  /**
+   * Set timeSate.at to start of timeline.
+   */
   $scope.timeState.animationDriver = function () {
     $scope.timeState.at = $scope.timeState.start;
   };
-
-
-  var d = new Date();
-  var timeZoneOffset = d.getTimezoneOffset() * 60000;
-
-  // Watch for animation
-  $scope.$watch('timeState.at', function (n, o) {
-    if (n === o) { return true; }
-    if ($scope.rain.enabled) {
-      var roundedMoment = Math.round($scope.timeState.at / 300000) * 300000 - timeZoneOffset; //Round to nearest five minutes
-      if (roundedMoment !== $scope.rain.currentDate &&
-        roundedMoment >= ($scope.rain.currentDate + 300000) ||
-        roundedMoment <= ($scope.rain.currentDate - 300000)) {
-        $scope.rain.currentDate = roundedMoment;
-        if ($scope.rain.imageDates.indexOf(roundedMoment) !== -1) { // Check whether we have an image for this moment
-          $scope.rain.currentFrame = roundedMoment;
-        }
-      }
-      if (roundedMoment < Date.parse($scope.rain.dates[0]) || roundedMoment > Date.parse($scope.rain.dates[$scope.rain.dates.length - 1])) {
-        $scope.rain.currentFrame = null;
-      }
-    }
-  });
 
   var animationWasOn;
   // Toggle fast-forward
@@ -803,134 +788,62 @@ app.controller("MasterCtrl",
 // END animation
 
 // START Rain Stuff
-  $scope.toggleRain = function (toggle) {
-    if ($scope.rain.enabled === false) {
-      $scope.toggleTimeline();
-      /*
-      * Currently the server stores only the last 24 hours. 
-      * Reset temporalextent to this last twenty four if it exceeds these limits
-      */
-      //var twentyFourAgo = Date.now() - 86400000;
-      //if ($scope.timeState.start < twentyFourAgo) {
-        //$scope.timeState.start = twentyFourAgo;
-        //$scope.timeState.changeOrigin = 'rain';
-        //$scope.timeState.changedZoom = !$scope.timeState.changedZoom;
-      //}
-      //if ($scope.timeState.end < twentyFourAgo || $scope.timeState.end > Date.now()) {
-        //$scope.timeState.end =  Date.now();
-        //$scope.timeState.changeOrigin = 'rain';
-        //$scope.timeState.changedZoom = !$scope.timeState.changedZoom;
-      //}
-      $scope.getRasterImages();
-      $scope.rain.enabled = true;
-      if ($scope.timeState.hidden !== false) { $scope.toggleTimeline(); }
-    } else if ($scope.rain.enabled || toggle === 'off') {
-      $scope.toggleTimeline();
-      $scope.rain.enabled = false;
-      localStorage.clear();
-    }
-  };
-  var buildAnimationDatetimes = function () {
-        /**
-         * Get radarimages for every 5th minutes if this fits in the
-         * localstorage, else confine to every 10th minute
-         */
-        var hours = ($scope.timeState.end - $scope.timeState.start) / 60000;
-        var animationDatetimes = [];
-        var now = moment($scope.timeState.end);
-        now.hours(now.hours() - (60 / now.zone()));
-        
-        // The wms only accepts requests for every 5th minute exact
-        now.minutes((Math.round(now.minutes() / 5) * 5) % 60);
-        now.seconds(0);
+// TODO: rewrite to handle general dynamic raster stuff.
 
-        var intervalAdd = 5;
-        if (hours / 5 > 200) { intervalAdd = 25; }
-        else if (hours / 5 > 150) { intervalAdd = 20; }
-        else if (hours / 5 > 100) { intervalAdd = 15; }
-
-        console.log("Getting radar images from", new Date($scope.timeState.start),
-                    "to", new Date($scope.timeState.end),
-                    "for every", intervalAdd, "th minute");
-
-        for (var interval = 5; interval < hours; interval = interval + intervalAdd) {
-          var animationDatetime = now.subtract('minutes', intervalAdd);
-          var UtsieAniDatetime = now.utc();
-          animationDatetimes.push(UtsieAniDatetime.format('YYYY-MM-DDTHH:mm:ss') + '.000Z');
-        }
-        animationDatetimes.reverse();
-
-        return animationDatetimes;
-      };
-
-  var ripImage = function (base, date, item) {
-    var canvas = document.createElement('canvas');
-    var ctx = canvas.getContext('2d');
-    canvas.width = 525;
-    canvas.height = 497;
-    var img = document.createElement('img');
-    img.onload = function (e) {
-      $scope.rain.imageDates.push(Date.parse(date));
-      ctx.drawImage(img, 0, 0, 525, 497);
-      var url = canvas.toDataURL(); // thank you: http://html5-demos.appspot.com/static/html5-whats-new/template/index.html#14
-      localStorage.setItem(Date.parse(date), url);
-      canvas.remove();
-    };
-    img.crossOrigin = 'Anonymous';
-    img.src = base + date;
-  };
-
+  /**
+   * Initial state 
+   */
   $scope.rain = {
     enabled: false,
   };
 
   /**
-   * [-] set rain.enabled when image arrives
-   * [-] add click handler in rain graph and timeline to call getRadarImages()
-   * and set brush to click location
+   * Switch rain tool on or off.
    *
-   * [-] remove localstorage
-   * [-] buildAnimationDateTimes: 1 timestamp
-   * [-] render image as d3 canvas -> is now rendered in rain directive in map-directives.js
+   * TODO: should be refactored to handle generic dynamic raster layers.
    *
    */
+  $scope.toggleRain = function () {
+    if ($scope.rain.enabled === false) {
+      $scope.getRasterImages();
+      $scope.rain.enabled = true;
+      if ($scope.timeState.hidden !== false) {
+        $scope.toggleTimeline();
+      }
+    } else if ($scope.rain.enabled) {
+      $scope.toggleTimeline();
+      $scope.rain.enabled = false;
+    }
+  };
 
   /**
    * Get images for dynamic raster layer for interval to prepare for animation.
    *
-   * Get 1 image for timestamp.
+   * Get 1 image for $scope.timeState.at.
    *
    * TODO:
    * [ ] get images for interval, start / stop
    * [ ] make url variable depending on raster layer 
+   * [ ] make coeff variable depending on raster layer, raster layer should
+   * publish it's time resolution.
    *
    */
   $scope.getRasterImages = {};
   $scope.getRasterImages = function () {
     $scope.rain.imageDates = [];
-    //var imageUrlBase = 'http://regenradar.lizard.net/wms/?WIDTH=525&HEIGHT=497&SRS=EPSG%3A3857&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
     var imageUrlBase = 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=demo%3Aradar&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
-    //$scope.rain.dates = buildAnimationDatetimes();
-    //localStorage.clear();
-    //for (var i = 0; i < $scope.rain.dates.length; i++) {
-
-      //var date = $scope.rain.dates[i];
-      //ripImage(imageUrlBase, date, i);
-    //}
-    //$scope.rain.length = $scope.rain.dates.length - 1;
-    $scope.rain.currentFrame = 0;
-    //$scope.rain.currentDate = Date.parse($scope.rain.dates[0]);
-    // TODO: rewrite to d3 time formatting
-    var now = moment($scope.timeState.at);
-    now.hours(now.hours() - (60 / now.zone()));
-    // The wms only accepts requests for every 5th minute exact
-    now.minutes((Math.round(now.minutes() / 5) * 5) % 60);
-    now.seconds(0);
-    //$scope.rain.currentImage = imageUrlBase + now.utc().format('YYYY-MM-DDTHH:mm:ss') + '.000Z';
-    $scope.rain.currentImage = imageUrlBase + now.utc().format('YYYY-MM-DDTHH:mm:ss');
-    console.log(now.utc().format('YYYY-MM-DDTHH:mm:ss') + '.000Z');
-    console.log(now.utc().format('YYYY-MM-DDTHH:mm:ss'));
-    console.log($scope.rain.currentImage);
+    // round time to minutes
+    if ($scope.timeState.at !== undefined) {
+      var utc_formatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
+      // The rain wms only accepts requests for every 5th minute exact
+      // round to nearest 5 minutes
+      var coeff = 1000 * 60 * 5;
+      var now = parseInt(($scope.timeState.at + (coeff / 2)) / coeff) * coeff;
+      // correct for time zone offset in ms
+      var timeZoneOffsetMs = (new Date(now)).getTimezoneOffset() * 60 * 1000;
+      now = now - timeZoneOffsetMs;
+      $scope.rain.currentImage = imageUrlBase + utc_formatter(new Date(now));
+    }
   };
 
 // End rain stuff

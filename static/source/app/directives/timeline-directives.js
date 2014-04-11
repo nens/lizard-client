@@ -242,8 +242,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
       timelineCtrl.drawAxes(graph, graph.xAxis);
 
       /**
-       * Click handler to set scope.at to to timestamp where clicked in
-       * timeline.
+       * Click handler to set scope.timeState.at to to timestamp where clicked
+       * in timeline.
        *
        * Is eg used by dynamic raster functionality to get image for time
        * clicked.
@@ -251,7 +251,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
        */
       graph.svg.on("click", function () {
         var timeClicked = +(graph.xScale.invert(d3.event.x));
-        console.log("Set time to", timeClicked);
         scope.timeState.at = timeClicked;
         scope.$digest();
       });

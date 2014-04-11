@@ -27,8 +27,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
 
   this.initiateLayer = function (layer) {
     if (layer.name === "Simulatie") {
-      // Hack for 3Di.
-      //console.log("Initiate 3Di");
       layer.follow_3di = false;
     } else if (layer.type === "TMS" && layer.baselayer) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
@@ -596,6 +594,12 @@ app.directive('rain', function () {
       var imageBounds = [[54.28458617998074, 1.324296158471368],
                          [49.82567047026146, 8.992548357936204]];
       var imageOverlay =  L.imageOverlay('', imageBounds, {opacity: 0.8});
+
+      /**
+       * When rain is enabled, add imageOverlay layer, remove layer when rain
+       * is disabled.
+       *
+       */
       scope.$watch('rain.enabled', function (newVal, oldVal) {
         if (newVal !== oldVal) {
           if (newVal) {
@@ -606,26 +610,43 @@ app.directive('rain', function () {
         }
       });
 
+      /**
+       * Watch for rain.currentImage, update imageOverlay.
+       */
       scope.$watch('rain.currentImage', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
         if (imageOverlay !== undefined) {
-          //var imgFromStorage = localStorage.getItem(scope.rain.currentFrame);
-          //imageOverlay.setUrl(imgFromStorage);
-          console.log(scope.rain.currentImage);
           imageOverlay.setUrl(scope.rain.currentImage);
           imageOverlay.setOpacity(0.8);
-          if (scope.rain.currentFrame === null) {
-            imageOverlay.setOpacity(0);
-          }
         }
       });
 
+      /** 
+       * Watch changes in timeState.at, get new raster images, if imageOverlay
+       * exists and rain tool is enabled and animation is not playing.
+       *
+       */
       scope.$watch('timeState.at', function (newVal, oldVal) {
-        console.log(scope.timeState.at);
         if (newVal === oldVal) { return; }
-        if (imageOverlay !== undefined && scope.rain.enabled) {
-          console.log(scope.timeState.at);
+        if (imageOverlay !== undefined
+            && scope.rain.enabled
+            && !scope.timeState.animation.enabled) {
           scope.getRasterImages();
+        }
+      });
+
+      /**
+       * Watch if animation is playing. While animation is playing, hide
+       * raster image; when playing stops, get new raster image.
+       *
+       */
+      scope.$watch('timeState.animation.playing', function (newVal, oldVal) {
+        if (newVal === oldVal) { return; }
+        if (!scope.timeState.animation.playing) {
+          mapCtrl.addLayer(imageOverlay);
+          scope.getRasterImages();
+        } else {
+          mapCtrl.removeLayer(imageOverlay);
         }
       });
     }
