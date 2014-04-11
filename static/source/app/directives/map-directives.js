@@ -28,7 +28,6 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
   this.initiateLayer = function (layer) {
     if (layer.name === "Simulatie") {
       // Hack for 3Di.
-      //console.log("Initiate 3Di");
       layer.follow_3di = false;
     } else if (layer.type === "TMS" && layer.baselayer) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
@@ -268,6 +267,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
 
   // expects a layer hashtable with a leafletlayer object
   this.toggleLayer = function (layer) {
+
     if (!layer.active) {
       if (layer.leafletLayer) {
         $scope.map.removeLayer(layer.leafletLayer);
@@ -312,6 +312,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
 
   // expects a layer hashtable with a leafletlayer object
   this.toggleBaseLayer = function (layer) {
+
     if (layer.id !== $scope.mapState.activeBaselayer) {
       layer.active = false;
       if (layer.leafletLayer) {
@@ -325,6 +326,59 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
         $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: true });
       } else {
         console.log('leaflet layer not defined');
+      }
+    }
+
+    try {
+      angular.forEach($scope.mapState.overlayers, function (layer) {
+          layer.leafletLayer.bringToFront();
+        });
+    } catch (err ) {
+      // known error
+      if (err instanceof TypeError) {
+        return;
+      } else {
+        console.error('Error:', err);
+      }
+    }
+  };
+
+  /**
+   * TODO: refactor with toggleBaselayer.
+   * Toggle overlayer.
+   *
+   * @param {layer object} layer leaflet layer object
+   * @param {float} opacity opacity between 0 and 1
+   *
+   */
+  this.toggleOverLayer = function (layer, opacity) {
+
+    if (opacity) {
+      layer.leafletLayer.options.opacity = opacity;
+    }
+
+    if (layer.id !== $scope.mapState.activeOverlayer) {
+      console.log(layer.active);
+      layer.active = false;
+      if (layer.leafletLayer) {
+        $scope.map.removeLayer(layer.leafletLayer);
+      } else {
+        console.log('leaflet layer not defined');
+      }
+    } else if (layer.id === $scope.mapState.activeOverlayer) {
+      if (layer.active) {
+        if (layer.leafletLayer) {
+          $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: false });
+        } else {
+          console.log('leaflet layer not defined');
+        }
+      } else {
+        if (layer.leafletLayer) {
+          $scope.map.removeLayer(layer.leafletLayer);
+          $scope.mapState.activeOverlayer = undefined;
+        } else {
+          console.log('leaflet layer not defined');
+        }
       }
     }
   };
@@ -343,31 +397,26 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
     $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
   };
 
-  // make map object available to outside world.
-  this.map = function () {return $scope.map; };
-  
-  this.zoomToTheMagic = function (layer) {
-    //console.log('zoomToTheMagic');
-    // TODO: make this not hardcoded. And make this a nice UX instead of a brutal one
-    if (layer.name === 'Afvalwater') {
-      $scope.map.setView([52.503265633642194, 4.968782196044922], 14, {animate: true});
-    }
-    if (layer.name === 'Oppervlaktewater') {
-      $scope.map.setView([52.60763454517434, 4.794158935546875], 11, { animate: true });
-    }
-    // This button is not available for 3Di
-  };
-
   this.fitBounds = function (extent) {
     // extent is in format [[extent[0], extent[1]], [extent[2], extent[3]]]
     $scope.map.fitBounds(extent);
   };
 
-  this.boxType = function (activeBaselayer, currentType) {
+  /**
+   * Set box type based on active layer.
+   *
+   * TODO: refactor
+   *
+   * @param {layer object} activeBaselayer
+   * @param {string} currentType current box type
+   * @return {string} newType new box type
+   *
+   */
+  this.boxType = function (activeBaselayer, activeOverlayer, currentType) {
     var newType;
     if (activeBaselayer === 3) {
       newType = 'elevation';
-    } else if (activeBaselayer === 4) {
+    } else if (activeOverlayer === 4) {
       newType = 'landuse';
     } else if (currentType === 'landuse' || currentType === 'elevation') {
       newType = 'empty';
@@ -378,8 +427,8 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
   };
 
   return this;
-})
-.directive('map', ['$location', function ($location) {
+});
+app.directive('map', ['$location', function ($location) {
 
   var link = function (scope, element, attrs, ctrl) {
     // Leaflet global variable to speed up vector layer, 
@@ -406,6 +455,12 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
         ctrl.initiateLayer(layer);
       }
       ctrl.toggleBaseLayer(layer);
+    });
+
+    angular.forEach(scope.mapState.overlayers, function (layer) {
+      if (!layer.initiated) {
+        ctrl.initiateLayer(layer);
+      }
     });
 
     angular.forEach(scope.mapState.layers, function (layer) {
@@ -555,7 +610,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
     });
 
     /**
-     * Changes the baselayer
+     * Changes the baselayer.
      *
      * There is only one active baselayer. If baselayer is given, this layer
      * becomes the activebaselayer and all baselayers are send to the
@@ -571,7 +626,23 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
         ctrl.toggleBaseLayer(baselayer);
       });
       scope.mapState.baselayerChanged = Date.now();
-      scope.box.type = ctrl.boxType(scope.mapState.activeBaselayer, scope.box.type);
+      scope.box.type = ctrl.boxType(scope.mapState.activeBaselayer,
+                                    scope.mapState.activeOverlayer,
+                                    scope.box.type);
+    };
+
+    /**
+     * Changes the overlayer.
+     *
+     * @param  {layer object} overlayer: the overlayer to activate
+     */
+    scope.mapState.changeOverlayer = function (overlayer, opacity) {
+      if (overlayer) { scope.mapState.activeOverlayer = overlayer.id; }
+      ctrl.toggleOverLayer(overlayer, opacity);
+      scope.mapState.overlayerChanged = Date.now();
+      scope.box.type = ctrl.boxType(scope.mapState.activeBaselayer,
+                                    scope.mapState.activeOverlayer,
+                                    scope.box.type);
     };
 
     scope.zoomToTheMagic = function (layer) {

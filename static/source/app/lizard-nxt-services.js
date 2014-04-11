@@ -6,6 +6,7 @@ services.service("CabinetService", ["Restangular",
   var layergroups = window.layerGroups;
   var layers = window.layers;
   var baselayers = window.baseLayers;
+  var overlayers = window.overLayers;
   var eventTypes = [
     {
       "name": "Twitter",
@@ -62,6 +63,7 @@ services.service("CabinetService", ["Restangular",
     layergroups: layergroups,
     layers: layers,
     baselayers: baselayers,
+    overlayers: overlayers,
     eventTypes: eventTypes,
     // termSearch: termSearchResource,
     // bboxSearch: bboxSearchResource,
