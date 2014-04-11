@@ -106,7 +106,7 @@
               {% trans "Overlays" %}
               <ul class="list-group">
                 <li ng-repeat="layer in mapState.overlayers | orderBy:'order':true">
-                <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="mapState.changeLayer(layer, 0.5)">
+                <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="mapState.changeOverlayer(layer, 0.5)">
                 <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
                 </li>
               </ul>

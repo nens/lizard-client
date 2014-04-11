@@ -266,11 +266,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
   };
 
   // expects a layer hashtable with a leafletlayer object
-  this.toggleLayer = function (layer, opacity) {
-
-    if(opacity) {
-      layer.leafletLayer.options.opacity = opacity;
-    }
+  this.toggleLayer = function (layer) {
 
     if (!layer.active) {
       if (layer.leafletLayer) {
@@ -336,17 +332,33 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
     try {
       angular.forEach($scope.mapState.overlayers, function (layer) {
           layer.leafletLayer.bringToFront();
-      });
+        });
+    } catch (err ) {
+      // known error
+      if (err instanceof TypeError) {
+        return;
+      } else {
+        console.error('Error:', err);
+      }
     }
-    catch(err) {
-      // console.log('Error:', err);
-    }    
   };
 
-  // expects a layer hashtable with a leafletlayer object
-  this.toggleOverLayer = function (layer) {
+  /**
+   * TODO: refactor with toggleBaselayer.
+   * Toggle overlayer.
+   *
+   * @param {layer object} layer leaflet layer object
+   * @param {float} opacity opacity between 0 and 1
+   *
+   */
+  this.toggleOverLayer = function (layer, opacity) {
+
+    if (opacity) {
+      layer.leafletLayer.options.opacity = opacity;
+    }
 
     if (layer.id !== $scope.mapState.activeOverlayer) {
+      console.log(layer.active);
       layer.active = false;
       if (layer.leafletLayer) {
         $scope.map.removeLayer(layer.leafletLayer);
@@ -354,12 +366,19 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
         console.log('leaflet layer not defined');
       }
     } else if (layer.id === $scope.mapState.activeOverlayer) {
-      layer.active = true;
-      if (layer.leafletLayer) {
-        console.log(layer.leafletLayer);
-        $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: false });
+      if (layer.active) {
+        if (layer.leafletLayer) {
+          $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: false });
+        } else {
+          console.log('leaflet layer not defined');
+        }
       } else {
-        console.log('leaflet layer not defined');
+        if (layer.leafletLayer) {
+          $scope.map.removeLayer(layer.leafletLayer);
+          $scope.mapState.activeOverlayer = undefined;
+        } else {
+          console.log('leaflet layer not defined');
+        }
       }
     }
   };
@@ -383,11 +402,21 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
     $scope.map.fitBounds(extent);
   };
 
-  this.boxType = function (activeBaselayer, currentType) {
+  /**
+   * Set box type based on active layer.
+   *
+   * TODO: refactor
+   *
+   * @param {layer object} activeBaselayer
+   * @param {string} currentType current box type
+   * @return {string} newType new box type
+   *
+   */
+  this.boxType = function (activeBaselayer, activeOverlayer, currentType) {
     var newType;
     if (activeBaselayer === 3) {
       newType = 'elevation';
-    } else if (activeBaselayer === 4) {
+    } else if (activeOverlayer === 4) {
       newType = 'landuse';
     } else if (currentType === 'landuse' || currentType === 'elevation') {
       newType = 'empty';
@@ -432,7 +461,6 @@ app.directive('map', ['$location', function ($location) {
       if (!layer.initiated) {
         ctrl.initiateLayer(layer);
       }
-      ctrl.toggleOverLayer(layer);
     });
 
     angular.forEach(scope.mapState.layers, function (layer) {
@@ -558,8 +586,8 @@ app.directive('map', ['$location', function ($location) {
       }
     });
 
-    scope.mapState.changeLayer = function (layer, opacity) {
-      ctrl.toggleLayer(layer, opacity);
+    scope.mapState.changeLayer = function (layer) {
+      ctrl.toggleLayer(layer);
     };
 
     /**
@@ -573,7 +601,7 @@ app.directive('map', ['$location', function ($location) {
     });
 
     /**
-     * Changes the baselayer
+     * Changes the baselayer.
      *
      * There is only one active baselayer. If baselayer is given, this layer
      * becomes the activebaselayer and all baselayers are send to the
@@ -589,17 +617,25 @@ app.directive('map', ['$location', function ($location) {
         ctrl.toggleBaseLayer(baselayer);
       });
       scope.mapState.baselayerChanged = Date.now();
-      scope.box.type = ctrl.boxType(scope.mapState.activeBaselayer, scope.box.type);
+      scope.box.type = ctrl.boxType(scope.mapState.activeBaselayer,
+                                    scope.mapState.activeOverlayer,
+                                    scope.box.type);
     };
 
     /**
-     * Changes the overlayer
-     * @param  {[type]} overlayer: the overlayer to activate
+     * Changes the overlayer.
+     *
+     * @param  {layer object} overlayer: the overlayer to activate
      */
-    scope.mapState.changeOverlayer = function(overlayer) {
-      ctrl.toggleOverLayer(overlayer);
+    scope.mapState.changeOverlayer = function (overlayer, opacity) {
+      if (overlayer) { scope.mapState.activeOverlayer = overlayer.id; }
+      ctrl.toggleOverLayer(overlayer, opacity);
       scope.mapState.overlayerChanged = Date.now();
+      scope.box.type = ctrl.boxType(scope.mapState.activeBaselayer,
+                                    scope.mapState.activeOverlayer,
+                                    scope.box.type);
     };
+
     scope.zoomToTheMagic = function (layer) {
       ctrl.zoomToTheMagic(layer);
     };
