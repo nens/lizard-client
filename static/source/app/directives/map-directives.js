@@ -594,13 +594,12 @@ app.directive('map', ['$location', function ($location) {
 
     /**
      * Changes the overlayer
-     * @param  {[type]} overlayer [description]
-     * @return {[type]}           [description]
+     * @param  {[type]} overlayer: the overlayer to activate
      */
     scope.mapState.changeOverlayer = function(overlayer) {
       ctrl.toggleOverLayer(overlayer);
       scope.mapState.overlayerChanged = Date.now();
-    }
+    };
     scope.zoomToTheMagic = function (layer) {
       ctrl.zoomToTheMagic(layer);
     };
