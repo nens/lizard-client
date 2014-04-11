@@ -484,6 +484,15 @@ app.directive('map', ['$location', function ($location) {
 
     scope.beenThereDoneIntersectSuggestion = false;
 
+    scope.map.on('click', function (e) {
+      // NOTE: Check whether a $digest is already happening before using apply
+      if (!scope.$$phase) {
+        scope.$apply(function () {
+          scope.mapState.here = e.latlng;
+        });
+      }
+    });
+
     scope.map.on('zoomend', function () {
 
       if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {

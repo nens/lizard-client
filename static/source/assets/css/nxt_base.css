@@ -839,10 +839,6 @@ i, a:active {text-decoration:none !important;}
             filter: drop-shadow( -5px -5px 5px #000 );*/
 }
 
-.bar{
-    opacity: 0.5;
-}
-
 .selected{
     opacity: 0.5;
 }
@@ -1302,3 +1298,14 @@ img.leaflet-image-layer {
 .leaflet-container img.leaflet-image-layer {
         max-width: none !important;
         }
+
+.whisker-vertical {
+    stroke-dasharray: 3,3;
+    stroke: #7f8c8d;
+    stroke-width: 1px;
+}
+
+.whisker-horizontal {
+    stroke: #7f8c8d;
+    stroke-width: 1px;
+}

@@ -64,6 +64,9 @@ app.config(function ($locationProvider) {
  * 
  * Stuff to reconsider, rethink, refactor:
  *
+ * * [ ] Create a mapState.here to describe the current spatial location 
+ *       just like timeState.at describes the now. map-directive should set this, 
+ *       watches should listen to this to draw a clicklayer, get rain, get data from utf, etc.
  * * [ ] Refactor map controller and directives
  * * [-] Refactor master controller (states, data!)
  * * [-] Refactor timeline out of mapState with its own scope
@@ -72,7 +75,7 @@ app.config(function ($locationProvider) {
  * * [ ] Refactor css (csslint, -moz and -webkit)
  * * [ ] Move or delete common directory in source
  * * [+] Refactor timeline controller and directive
- *
+
  */
 app.controller("MasterCtrl",
   ["$scope", "$http", "Restangular", "$q", "$compile", "CabinetService",
@@ -147,6 +150,7 @@ app.controller("MasterCtrl",
     baselayerChanged: Date.now(),
     enabled: false,
     bounds: null,
+    here: null,
     geom_wkt: ''
   };
 
@@ -157,8 +161,8 @@ app.controller("MasterCtrl",
   var end = Date.now();
   // TIME MODEL
   $scope.timeState = {
-    start: end - (24 * 60 * 60 * 1000 * 250), // 14 days
-    end: end - (24 * 60 * 60 * 1000 * 10),
+    start: 1389606808000,
+    end: 1389952408000,
     changedZoom: Date.now(),
     at: this.start,
     animation: {
@@ -494,87 +498,7 @@ app.controller("MasterCtrl",
         }
       });
     }
-    // rain retrieve
-    var stop = new Date($scope.timeState.end);
-    var stopString = stop.toISOString().split('.')[0];
-    var start = new Date($scope.timeState.start);
-    var startString = start.toISOString().split('.')[0];
-    var wkt = "POINT(" + $scope.activeObject.latlng.lng + " "
-      + $scope.activeObject.latlng.lat + ")";
-    $scope.canceler.resolve();
-    $scope.canceler = $q.defer();
-    // $scope.box.type = "rain";
-    CabinetService.raster.get({
-      raster_names: 'rain',
-      geom: wkt,
-      srs: 'EPSG:4236',
-      start: startString,
-      stop: stopString
-    }).then(function (result) {
-      $scope.rain.data = result;
-      $scope.rain.wkt = wkt;
-      $scope.rain.srs = 'EPSG:4236';
-    });
   });
-
-
-  $scope.getData = function () {
-    $scope.canceler.resolve();
-    $scope.canceler = $q.defer();
-    if ($scope.box.content.selected_timeseries) {
-      CabinetService.timeseries.one(
-        $scope.box.content.selected_timeseries.id + '/'
-      ).withHttpConfig({
-        timeout: $scope.canceler.promise
-      }).get({
-        start: $scope.timeState.start,
-        end: $scope.timeState.end
-      }).then(function (response) {
-        $scope.data.data = response.events.instants;
-        // $scope.box.content.selected_timeseries.events = response.events;
-      });
-    }
-    if ($scope.rain.data) {
-      var stop = new Date($scope.timeState.end);
-      var stopString = stop.toISOString().split('.')[0];
-      var start = new Date($scope.timeState.start);
-      var startString = start.toISOString().split('.')[0];
-      CabinetService.raster.withHttpConfig({
-        timeout: $scope.canceler.promise
-      }).get({
-        raster_names: 'rain',
-        geom: $scope.rain.wkt,
-        srs: $scope.rain.srs,
-        start: startString,
-        stop: stopString
-      }).then(function (result) {
-        $scope.rain.data = result;
-
-      });
-    }
-  };
-
-  $scope.$watch('timeState.changedZoom', function (newVal, oldVal) {
-    if ((newVal === oldVal)) { return; }
-    $scope.getData();
-
-  });
-
-  // $scope.$watch('box.content.selected_timeseries.id', function () {
-  //   if ($scope.box.content.selected_timeseries !== undefined) {
-  //     // NOTE: this will change to $scope.selected_timeseries.instants
-  //     $scope.data = {
-  //         series: $scope.box.content.selected_timeseries.events.series,
-  //         instants: $scope.box.content.selected_timeseries.events.instants
-  //       };
-  //     // dit kan zeker nog mooier
-  //     $scope.metadata.title = " - " + $scope.box.content.selected_timeseries.location.name;
-  //     $scope.metadata.ylabel = "";//$scope.selected_timeseries.parameter + $scope.selected_timeseries.unit.code
-  //     $scope.metadata.xlabel = "Tijd";
-  //   } else {
-  //     $scope.data = undefined;
-  //   }
-  // });
 
 // END Timeseries
 

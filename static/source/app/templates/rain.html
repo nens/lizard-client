@@ -1,4 +1,9 @@
-<div class="card">
-    <graph bar-chart data="rain.data" ylabel="mm" xlabel="tijd"></graph>
+<div class="card" ng-controller="RainAggregate">
+    <graph bar-chart data="rain.data" bar-width="<% rain.nbar %>" ylabel="mm/uur" xlabel="tijd"></graph>
     <!--<graph line data="box.content" ylabel="" xlabel=""></graph>-->
+    <form name="myForm">
+      <tt>Periode = <% rain.statWin %></tt><br/>
+      <input type="radio" ng-model="rain.statWin" value="<% 60 * 60 * 1000 %>">  1 uur <br/>
+      <input type="radio" ng-model="rain.statWin" value="<% 60 * 60 * 1000 * 3 %>"> 3 uur <br/>
+    </form>
 </div>
