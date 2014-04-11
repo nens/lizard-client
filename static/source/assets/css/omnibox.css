@@ -134,18 +134,17 @@
     background: rgba(255,255,255,0.9);
     border-radius: 2px;
     backface-visibility: hidden;
-    -webkit-transition-duration: 400ms;
-    -moz-transition-duration: 400ms;
-    -o-transition-duration: 400ms;
-    transition-duration: 400ms;
-    -webkit-transform: rotateX(360deg);
-    -ms-transform: rotateX(360deg);
-    -moz-transform: rotateX(360deg);
-    -o-transform: rotateX(360deg);
-    transform: rotateX(360deg);
     z-index:10;
+    width: 400px;
+    transition: all .3s ease;
+    -webkit-transition: all .3s ease;      
 }
-
+.card.large {
+    width:600px;
+    transition: all .3s ease; 
+    -webkit-transition: all .3s ease;      
+ 
+}
 .card .card-title span {
     font-size: 1em;
     margin-bottom: 3em;
@@ -225,6 +224,7 @@
 }
 
 .card .actions ul li a {
+    cursor: pointer;
     color: lightgray;
 }
 

@@ -138,6 +138,19 @@ app.controller("MasterCtrl",
       $scope.tools.active = name;
     }
   };
+
+  $scope.toggleCardSize = function() {
+    console.log('toggleCardSize()');
+    if ( $scope.largeCard ) {
+      $scope.largeCard = false;
+    } else {
+      $scope.largeCard = true;
+
+      
+      
+    }
+
+  };
   // TOOLS
 
   // MAP MODEL

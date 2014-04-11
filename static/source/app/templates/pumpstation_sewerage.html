@@ -1,13 +1,19 @@
-<div class="card">
+<div ng-class="largeCard ? 'card large' : 'card'">
 <!-- Card for "rioolgemaal" / "pumpstation sewerage" -->
-<!--     <div class="actions">
+    <div class="actions">
       <ul>
-        <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li>
-        <li class="fullscreen"><a href="#" title="Maak deze infocard groter"><i class="fa fa-arrows-alt"></i></a></li>
-        <li class="favorite"><a href="#" title="Voeg toe aan favorieten"><i class="fa fa-bookmark"></i></a></li>
-        <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li>
+        <!-- <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li> -->
+        <li class="fullscreen">
+          <a 
+            ng-click="toggleCardSize()"
+            title="Maak deze infocard groter">
+            <i class="fa fa-arrows-alt"></i>
+          </a>
+        </li>
+        <!-- <li class="favorite"><a href="#" title="Voeg toe aan favorieten"><i class="fa fa-bookmark"></i></a></li> -->
+        <!-- <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li> -->
       </ul>
-    </div> -->
+    </div>
 
   <div class="card-title">
     <!-- <img src="/static/distjs/images/gemaal.png" class="img-circle"> -->
