@@ -74,7 +74,6 @@ app.config(function ($locationProvider) {
  * * [ ] Fix + document Gruntfile.js / workflow
  * * [ ] Refactor css (csslint, -moz and -webkit)
  * * [ ] Move or delete common directory in source
- * * [ ] Integrate 3di into this paradigm (move from threedi to source/app)
  * * [+] Refactor timeline controller and directive
 
  */
@@ -115,9 +114,6 @@ app.controller("MasterCtrl",
   // TOOLS
   $scope.tools = {
     active: "none", //NOTE: make list?
-    threedi: {
-      enabled: false
-    },
     cursorTooltip: {
       enabled: false,
       content: '',
@@ -149,6 +145,7 @@ app.controller("MasterCtrl",
     layergroups: CabinetService.layergroups,
     layers: CabinetService.layers,
     baselayers: CabinetService.baselayers,
+    overlayers: CabinetService.overlayers,    
     eventTypes: CabinetService.eventTypes,
     activeBaselayer: 1,
     changed: Date.now(),
@@ -415,25 +412,6 @@ app.controller("MasterCtrl",
     $scope.events.types.count = $scope.events.types.count - 1;
     return longData;
   };
-
-  // 3Di START
-  $scope.setFollow = function (layer, follow_3di) {
-    layer.follow_3di = follow_3di;  // for GUI
-    $scope.follow_3di = follow_3di;
-
-    if (follow_3di) {
-      // ugly way to make it zoom to 3Di layer when activated
-      $scope.layerToZoomTo = layer;
-      $scope.zoomToLayer = !$scope.zoomToLayer;
-    }
-  };
-
-  $scope.threediTool = function () {
-      $scope.box.type = 'threedi';
-      $scope.box.content = 'bladiblabla'; // maybe his should change ? :)
-      $scope.tools.threedi.enabled = !$scope.tools.threedi.enabled;
-    };
-  // 3Di END
 
   /**
    * Get data for timeseries

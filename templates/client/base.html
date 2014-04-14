@@ -17,13 +17,9 @@
       var debug = true;
 
       var baseLayers = {{ strap_base_layers }};
+      var overLayers = {{ strap_over_layers }};
       var layers = {{ strap_layers }};
       var data_bounds = {{ strap_data_bounds }};
-    
-      var threedi_api_url = "{{ threedi_instance.api_url }}";
-      var threedi_subgrid_url = "{{ threedi_instance.socket_url }}";
-      var threedi_wms_server_url = "{{ threedi_instance.wms_url }}";
-      var threedi_data_url = "{{ threedi_instance.data_url }}";
 
       function logOut() {
         var r=confirm("Weet u zeker dat u wilt uitloggen?");
@@ -37,7 +33,7 @@
     </script>
   </head>
 
-  <body ng-controller="Threedi">
+  <body>
 
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
@@ -104,6 +100,15 @@
                 <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer"> 
                 <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name" ng-click="mapState.changeBaselayer(layer)"></label>
                 </li> 
+              </ul>
+              </li>
+              <li class="nav-header">
+              {% trans "Overlays" %}
+              <ul class="list-group">
+                <li ng-repeat="layer in mapState.overlayers | orderBy:'order':true">
+                <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="mapState.changeOverlayer(layer, 0.5)">
+                <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
+                </li>
               </ul>
               </li>
               <li class="nav-header">
@@ -207,7 +212,6 @@
              vectorlayer
              click-layer="clickLayer"
              surfacelayer
-             threedi-map
              rain
              ng-class="{'crosshair': tools.active === 'profile'}">
          </map>

@@ -358,4 +358,3 @@ app.directive('surfacelayer', function () {
     }
   };
 });
-
