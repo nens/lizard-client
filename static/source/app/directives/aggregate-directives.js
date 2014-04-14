@@ -15,14 +15,14 @@ app.directive('vectorlayer', function () {
       /**
        * Creates svg layer in leaflet's overlaypane and adds events as circles
        *
-       * On leaflet's viewreset the svg rescaled and repositioned. This function should
-       * also be called when the data is changed
+       * On leaflet's viewreset the svg rescaled and repositioned. This
+       * function should also be called when the data is changed.
        *
        * @parameter: object data object
        * @return: object eventLayer object
        */
       var createEventLayer = function (data) {
-        var map = mapCtrl.map();
+        var map = scope.map;
         var svg = d3.select(map.getPanes().overlayPane).append("svg"),
             g = svg.append("g").attr("class", "leaflet-zoom-hide");
         
@@ -215,7 +215,7 @@ app.directive('vectorlayer', function () {
 
 
 /**
- * Impervious surface vector layer
+ * Impervious surface vector layer.
  *
  * Load data with d3 geojson vector plugin L.TileLayer.GeoJSONd3 in ./lib
  * bind highlight function to mouseover and mouseout events.

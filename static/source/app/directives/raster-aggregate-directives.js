@@ -1,10 +1,11 @@
 // raster-aggregate-directives.js
 
-/* *
-*
-* Directive to show aggregation of raster files in omnibox.
-* Depends on graph-directives to draw pie chart
-*/
+/**
+ * Directive to show aggregation of raster files in omnibox.
+ *
+ * Depends on graph-directives to draw pie chart.
+ *
+ */
 app.directive('rasterAggregate', function ($q) {
   var link = function (scope, element, attrs) {
     var agg, raster;
@@ -18,7 +19,6 @@ app.directive('rasterAggregate', function ($q) {
       if (scope.box.type === 'landuse') {
         agg = 'counts';
         scope.box.content.agg = agg;
-
         raster = 'landuse';
       } else if (scope.box.type  === 'elevation') {
         agg = 'curve';
