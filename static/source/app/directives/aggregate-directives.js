@@ -272,22 +272,24 @@ app.directive('surfacelayer', function () {
        *
        */
       var highlightSurface = function (e) {
-        var surface_ids = JSON.parse(e.data.impervious_surfaces);
-        if (surface_ids.indexOf("null") === -1) {
-          var selector = listToSelector(surface_ids);
-          if (e.type === 'mouseover') {
-            d3.selectAll(selector)
-              .style("stroke", "#f00")
-              .style("stroke-width", 1.2)
-              .style("fill", "#ddd")
-              .style("fill-opacity", 0.6)
-              .transition();
-          } else if (e.type === 'mouseout') {
-            d3.selectAll(selector)
-              .transition()
-              .duration(3000)
-              .style("stroke-width", 0)
-              .style("fill-opacity", 0);
+        if (e.data.impervious_surfaces !== undefined) {
+          var surface_ids = JSON.parse(e.data.impervious_surfaces);
+          if (surface_ids.indexOf("null") === -1) {
+            var selector = listToSelector(surface_ids);
+            if (e.type === 'mousemove') {
+              d3.selectAll(selector)
+                .style("stroke", "#e74c3c")
+                .style("stroke-width", 2.5)
+                .style("fill", "#ddd")
+                .style("fill-opacity", 0.6)
+                .transition();
+            } else if (e.type === 'mouseout') {
+              d3.selectAll(selector)
+                .transition()
+                .duration(500)
+                .style("stroke-width", 0)
+                .style("fill-opacity", 0);
+            }
           }
         }
       };
@@ -341,7 +343,7 @@ app.directive('surfacelayer', function () {
           if (pipeLayer) {
             // icon active
             angular.element(".surface-info").addClass("icon-active");
-            pipeLayer.on('mouseover', highlightSurface);
+            pipeLayer.on('mousemove', highlightSurface);
             pipeLayer.on('mouseout', highlightSurface);
           }
         } else {
@@ -349,7 +351,7 @@ app.directive('surfacelayer', function () {
           if (pipeLayer) {
             // icon inactive
             angular.element(".surface-info").removeClass("icon-active");
-            pipeLayer.off('mouseover', highlightSurface);
+            pipeLayer.off('mousemove', highlightSurface);
             pipeLayer.off('mouseout', highlightSurface);
           }
           mapCtrl.removeLayer(surfaceLayer);
