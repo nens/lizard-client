@@ -229,35 +229,27 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
 
     // Entity specific modifications
     if (entityName.indexOf("pumpstation_non_sewerage") !== -1) {
-      selection.attr("transform", "translate(-6, 0)");
       circleMarker.setRadius(13);
       if ($scope.map.getZoom() < 21) {
-        selection.attr("transform", "translate(0, 0)");
-        circleMarker.setRadius(11);
+        circleMarker.setRadius(13);
       }
       if ($scope.map.getZoom() < 13) {
-        selection.attr("transform", "translate(8, 0)");
         circleMarker.setRadius(16);
       }
       if ($scope.map.getZoom() < 11) {
-        selection.attr("transform", "translate(5, 0)");
         circleMarker.setRadius(13);
       }
     } else if (entityName.indexOf("pumpstation_sewerage") !== -1) {
-      selection.attr("transform", "translate(0, 3)");
       circleMarker.setRadius(11);
     } else if (entityName.indexOf("weir") !== -1) {
-      selection.attr("transform", "translate(0, 4)");
       circleMarker.setRadius(11);
     } else if (entityName.indexOf("bridge") !== -1) {
-      selection.attr("transform", "translate(-5, 6)");
       circleMarker.setRadius(14);
     } else if (entityName.indexOf("pipe") !== -1 || entityName.indexOf("culvert") !== -1) {
       selection.select("path").transition().delay(450).duration(150)
       .attr("stroke-opacity", 0.6)
       .attr("stroke-width", 10);
     } else if (entityName === 'manhole') {
-      //selection.attr("transform", "translate(1, 0)");
       circleMarker.setRadius(7.5);
     }
   };
