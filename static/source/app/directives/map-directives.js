@@ -285,6 +285,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
           layer.leafletLayer.on('load', function () {
             // Add the grid layers of the layer when load finished
             $scope.map.addLayer(layer.grid_layer);
+            // Broadcast a load finished message to a.o. aggregate-directive
             $rootScope.$broadcast(layer.slug + 'GridLoaded');
           });
           layer.leafletLayer.on('loading', function () {

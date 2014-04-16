@@ -278,8 +278,6 @@ app.directive('surfacelayer', function () {
             var selector = listToSelector(surface_ids);
             if (e.type === 'mousemove') {
               d3.selectAll(selector)
-                // .style("stroke", "#e74c3c")
-                // .style("stroke-width", 2.5)
                 .style("fill", "#e74c3c")
                 .style("fill-opacity", 0.6)
                 .transition();
@@ -346,6 +344,9 @@ app.directive('surfacelayer', function () {
             pipeLayer.on('mousemove', highlightSurface);
             pipeLayer.on('mouseout', highlightSurface);
           } else {
+            // If there is no grid layer it is probably still being
+            // loaded by the map-directive which will broadcast a 
+            // message when its loaded. 
             scope.$on('sewerageGridLoaded', function () {
               if (scope.tools.active === 'pipeSurface') {
                 pipeLayer = getLayer('grid', 'sewerage');
