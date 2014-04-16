@@ -278,9 +278,9 @@ app.directive('surfacelayer', function () {
             var selector = listToSelector(surface_ids);
             if (e.type === 'mousemove') {
               d3.selectAll(selector)
-                .style("stroke", "#e74c3c")
-                .style("stroke-width", 2.5)
-                .style("fill", "#ddd")
+                // .style("stroke", "#e74c3c")
+                // .style("stroke-width", 2.5)
+                .style("fill", "#e74c3c")
                 .style("fill-opacity", 0.6)
                 .transition();
             } else if (e.type === 'mouseout') {
@@ -340,11 +340,19 @@ app.directive('surfacelayer', function () {
         if (scope.tools.active === "pipeSurface") {
           mapCtrl.addLayer(surfaceLayer);
           pipeLayer = getLayer('grid', 'sewerage');
+          // icon active
+          angular.element(".surface-info").addClass("icon-active");
           if (pipeLayer) {
-            // icon active
-            angular.element(".surface-info").addClass("icon-active");
             pipeLayer.on('mousemove', highlightSurface);
             pipeLayer.on('mouseout', highlightSurface);
+          } else {
+            scope.$on('sewerageGridLoaded', function () {
+              if (scope.tools.active === 'pipeSurface') {
+                pipeLayer = getLayer('grid', 'sewerage');
+                pipeLayer.on('mousemove', highlightSurface);
+                pipeLayer.on('mouseout', highlightSurface);
+              }
+            });
           }
         } else {
           pipeLayer = getLayer('grid', 'pipe');
