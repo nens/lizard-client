@@ -22,7 +22,7 @@ app.directive('vectorlayer', function () {
        * @return: object eventLayer object
        */
       var createEventLayer = function (data) {
-        var map = mapCtrl.map();
+        var map = scope.map;
         var svg = d3.select(map.getPanes().overlayPane).append("svg"),
             g = svg.append("g").attr("class", "leaflet-zoom-hide");
         
@@ -230,6 +230,8 @@ app.directive('surfacelayer', function () {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
+      var bottomLeft = {};
+
       /**
        * Style surface features.
        *
@@ -327,16 +329,22 @@ app.directive('surfacelayer', function () {
           class: "impervious_surface"
         });
 
+      var moveEnd = function () {}
+
+
       /**
        * Listen to tools model for pipe_surface tool to become active. Add 
-       * geojson d3 layer and bind mouseover and mouseout events to 
+       * geojson d3 layer and bind mousemove and mouseout events to 
        * highlight impervious surface.
        *
        */
-      scope.$watch('tools.active', function () {
+      scope.$watch('tools.active', function (n, o) {
+        if (n === o) { return true; }
         var pipeLayer = {};
         if (scope.tools.active === "pipeSurface") {
           mapCtrl.addLayer(surfaceLayer);
+          bottomLeft = scope.map.getPixelBounds().getBottomLeft();
+          scope.map.on('moveend', moveEnd);
           pipeLayer = getLayer('grid', 'sewerage');
           // icon active
           angular.element(".surface-info").addClass("icon-active");
