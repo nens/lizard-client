@@ -75,6 +75,8 @@ app.config(function ($locationProvider) {
  * * [ ] Refactor css (csslint, -moz and -webkit)
  * * [ ] Move or delete common directory in source
  * * [+] Refactor timeline controller and directive
+ * * [ ] Move event logic to event controller (on event / layer tag)
+ * * [ ] Move animation logic to animation controller (on timeline tag)
 
  */
 app.controller("MasterCtrl",
@@ -145,7 +147,7 @@ app.controller("MasterCtrl",
     layergroups: CabinetService.layergroups,
     layers: CabinetService.layers,
     baselayers: CabinetService.baselayers,
-    overlayers: CabinetService.overlayers,    
+    overlayers: CabinetService.overlayers,
     eventTypes: CabinetService.eventTypes,
     activeBaselayer: 1,
     changed: Date.now(),
@@ -161,8 +163,8 @@ app.controller("MasterCtrl",
   // /END MOVE TO MAP CONTROL
   // MAP MODEL
 
-  var end = Date.now();
   // TIME MODEL
+  var end = Date.now();
   $scope.timeState = {
     start: 1389606808000,
     end: 1389952408000,
@@ -256,7 +258,7 @@ app.controller("MasterCtrl",
   };
 
   /**
-   * Turns event types on or off
+   * Turns event types on or off.
    * 
    * When an event type is off, it is passed to getEvents
    * When an event type is on, it is passed to removeEvents and the remaining events are recolored
@@ -282,7 +284,7 @@ app.controller("MasterCtrl",
   };
 
   /**
-   * Downloads events and asynchronously fires callback
+   * Downloads events and asynchronously fires callback.
    * 
    * Callback passes the response to addEvents, recolors the event data object,
    * Does bookkeeping and triggers watches by updating events.changed
@@ -290,18 +292,6 @@ app.controller("MasterCtrl",
    * @param: str containing the name of the event type to download
    */
   var getEvents = function (name) {
-/*    CabinetService.events.get({
-      type: name,
-      start: $scope.timeState.start,
-      end: $scope.timeState.end,
-      extent: $scope.mapState.bounds
-      }, function (response) {
-        $scope.timeState.timeline.data[name] = response.results[0];
-        $scope.timeState.timeline.data[name].count = response.count;
-        $scope.timeState.timeline.data[name].active = true;
-        $scope.timeState.timeline.changed = !$scope.timeState.timeline.changed;
-      }
-    );*/
     // Get data from json as long as there is no db implementation
     var url = '/static/data/' + name + '.geojson';
     $http.get(url)
@@ -318,10 +308,12 @@ app.controller("MasterCtrl",
   /**
    * Adds events to event data object.
    * 
-   * Takes a geojson compliant data object which is added to another geojson compliant data object 
-   * In order to identify the type of events in the longData object, an eventOrder is added to the features.
-   * This eventOrder is also used in the timeline for the yAxis. The indiviudual features also get a id which is used
-   * by d3 to identify the events in the update pattern.
+   * Takes a geojson compliant data object which is added to another geojson
+   * compliant data object. In order to identify the type of events in the
+   * longData object, an eventOrder is added to the features. This eventOrder
+   * is also used in the timeline for the yAxis. The indiviudual features also
+   * get an id which is used by d3 to identify the events in the update
+   * pattern.
    * 
    * @param: object geojson compliant data object to add too
    * @param: object geojson compliant data object to add
@@ -414,7 +406,7 @@ app.controller("MasterCtrl",
   };
 
   /**
-   * Get data for timeseries
+   * Get data for timeseries.
    *
    * the data that is passed as an argument to this function is data from the
    * UTFgrid layer
@@ -476,7 +468,6 @@ app.controller("MasterCtrl",
     $scope.box.content.data = $scope.activeObject;
     $scope.box.type = $scope.activeObject.entity_name;
 
-
     if ($scope.activeObject.entity_name === 'pumpstation_sewerage'
       || $scope.activeObject.entity_name === 'pumpstation_non_sewerage') {
       CabinetService.timeseries.get({
@@ -488,7 +479,6 @@ app.controller("MasterCtrl",
         if ($scope.timeseries.length > 0) {
           $scope.box.content.selected_timeseries = response[0];
           // for now on scope. legacy..
-          // $scope.data =
           $scope.data = {
             data: response[0].events.instants,
             id: $scope.activeObject.id
@@ -510,24 +500,8 @@ app.controller("MasterCtrl",
 
 // END Timeseries
 
-  // rewrite data to make d3 parseable
-  // NOTE: refactor?
-  var format_data = function (data) {
-    var formatted_data = [];
-    for (var i = 0; i < data.length; i++) {
-      //NOTE: think of fix for nodata in d3
-      var value = data[i][1] === null ? 0 : data[i][1];
-      var xyobject = {
-        distance: data[i][0],
-        value: value
-      };
-      formatted_data.push(xyobject);
-    }
-    return formatted_data;
-  };
-
-  /*
-   * Get raster data from server
+  /**
+   * Get raster data from server.
    * NOTE: maybe add a callback as argument?
    */
   $scope.getRasterData = function (raster_names, linestring_wkt, srs, agg, timeout) {
@@ -547,15 +521,10 @@ app.controller("MasterCtrl",
     if (timeout) {
       config.timeout = $scope.mapState.timeout.promise;
     }
-    // get profile from serverr
+    // get aggregated raster data from serverr
     $http(config)
       .success(function (data) {
-        // NOTE: hack to try pop_density
-        // NOTE: maybe this function should return something
-        // instead of setting variables.
-        if (raster_names === 'pop_density') {
-          $scope.box.pop_density = data;
-        } else if (agg === 'curve') {
+        if (agg === 'curve') {
           $scope.data = $scope.format_rastercurve(data);
           $scope.box.content = {
             yLabel: 'hoogte [mNAP]',
@@ -564,7 +533,6 @@ app.controller("MasterCtrl",
         } else if (agg === 'counts') {
           $scope.data = data;
         } else if (raster_names === 'elevation' && agg === undefined) {
-          // var d3data = format_data(data);
           $scope.box.type = "profile";
           $scope.box.content = {
             data: data,
@@ -612,7 +580,6 @@ app.controller("MasterCtrl",
       $scope.box.type = 'empty';
       $scope.box.empty = null;
     }
-
   };
 
   $scope.$watch('keyPressed', function (newVal, oldVal) {
