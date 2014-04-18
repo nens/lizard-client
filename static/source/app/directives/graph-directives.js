@@ -125,6 +125,33 @@ angular.module('graph')
 .directive('graph', function () {
 
   var controller = function ($scope) {
+
+    /**
+     * Abstract function. Directives using this controller
+     * will need to implement a callChart function. See
+     * barChart directive for an example
+     * 
+     * @param  {object} data    data object
+     * @param  {object} element html element
+     * @param  {legend} legend  legend element containing labels
+     * @return {object} graph object
+     */
+    this.callChart = function (data, element, legend) {
+    };
+
+    /**
+     * Optional abstract function. Directive might implement
+     * this function to update an existing graph with new data.
+     * See barchart directive for an example
+     * 
+     * @param  {object} data    data object
+     * @param  {object} graph   graph object from callChart
+     * @return {object} graph object
+     */
+    this.drawFeatures = function (data, graph) {
+    };
+
+
     this.createCanvas =  function (legend, element) {
       var margin = {
         top: 20,
@@ -265,6 +292,7 @@ angular.module('graph')
       }
       return axis;
     };
+
     this.drawAxes = function (svg, x, y, options) {
       var xAxis = {}, yAxis = {};
       if (options.axes) {
