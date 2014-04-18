@@ -329,8 +329,6 @@ app.directive('surfacelayer', function () {
           class: "impervious_surface"
         });
 
-      var moveEnd = function () {}
-
 
       /**
        * Listen to tools model for pipe_surface tool to become active. Add 
@@ -343,8 +341,6 @@ app.directive('surfacelayer', function () {
         var pipeLayer = {};
         if (scope.tools.active === "pipeSurface") {
           mapCtrl.addLayer(surfaceLayer);
-          bottomLeft = scope.map.getPixelBounds().getBottomLeft();
-          scope.map.on('moveend', moveEnd);
           pipeLayer = getLayer('grid', 'sewerage');
           // icon active
           angular.element(".surface-info").addClass("icon-active");
