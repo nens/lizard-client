@@ -116,11 +116,6 @@ app.controller("MasterCtrl",
   // TOOLS
   $scope.tools = {
     active: "none", //NOTE: make list?
-    cursorTooltip: {
-      enabled: false,
-      content: '',
-      location: ''
-    }
   };
 
   /**

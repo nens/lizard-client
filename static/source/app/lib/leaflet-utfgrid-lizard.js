@@ -53,6 +53,8 @@ L.UtfGrid = L.Class.extend({
 	//The thing the mouse is currently on
 	_mouseOn: null,
 
+	_tilesToload: 0,
+
 	initialize: function (url, options) {
 		L.Util.setOptions(this, options);
 
@@ -160,6 +162,7 @@ L.UtfGrid = L.Class.extend({
 	//Load up all required json grid files
 	//TODO: Load from center etc
 	_update: function () {
+		this._tilesToload = 0;
 
 		var bounds = this._map.getPixelBounds(),
 		    zoom = this._map.getZoom(),
@@ -186,6 +189,9 @@ L.UtfGrid = L.Class.extend({
 
 				if (!this._cache.hasOwnProperty(key)) {
 					this._cache[key] = null;
+					
+					this._tilesToload = this._tilesToload + 1;
+					console.log(this._tilesToload);
 
 					if (this.options.useJsonP) {
 						this._loadTileP(zoom, xw, yw);
@@ -195,6 +201,10 @@ L.UtfGrid = L.Class.extend({
 				}
 			}
 		}
+	},
+
+	_tilesLoaded: function () {
+		this.fire('load');
 	},
 
 	_loadTileP: function (zoom, x, y) {
@@ -237,6 +247,9 @@ L.UtfGrid = L.Class.extend({
 		var self = this;
 		L.Util.ajax(url, function (data) {
 			self._cache[key] = data;
+			self._tilesToload = self._tilesToload - 1;
+			console.log(self._tilesToload);
+			if (self._tilesToload === 0) {self._tilesLoaded();}
 		});
 	},
 

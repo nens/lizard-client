@@ -63,29 +63,6 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
           order: layer.z_index,
           zIndex: layer.z_index
         });
-
-        leafletLayer.on('click', function (e) {
-          if (e.data) {
-            if (e.data.geom) {
-              utfHit = true;
-              clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
-            } else {
-              console.info("You clicked on an object from negative space");
-            }
-            $scope.$apply(function () {
-              angular.extend($scope.activeObject, e.data);
-              $scope.activeObject.latlng = e.latlng;
-              $scope.activeObject.changed = !$scope.activeObject.changed;
-            });
-          } else {
-            if (leafletLayer.options.order === lowestUTFLayer) {
-              if (!utfHit || utfLayersOrder.length < 2) {
-                clickInSpace(e.latlng);
-                utfHit = false;
-              }
-            }
-          }
-        });
         layer.grid_layer = leafletLayer;
       }
       layer.leafletLayer = L.tileLayer(layer.url, {
@@ -123,137 +100,6 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
     });
   };
 
-  /**
-   * Draws visible feedback on the map after a click.
-   *
-   * Removes possible click feedback layer and creates a new clickLayer
-   * containing a circle. The circle is than vibrated to attract attention.
-   *
-   * @param {object} latLng Leaflet object specifying the latitude
-   * and longitude of a click
-   */
-  var removeProm;
-
-  var clickInSpace = function (latLng) {
-    $timeout.cancel(removeProm);
-    if ($scope.mapState.clickLayer) {
-      $scope.map.removeLayer($scope.mapState.clickLayer);
-      delete $scope.mapState.clickLayer;
-    }
-    $scope.mapState.clickLayer = L.circleMarker(latLng, {
-      radius: 0,
-      opacity: 0.6,
-      color: "#1abc9c"
-    });
-    $scope.mapState.clickLayer.addTo($scope.map);
-    var selection = d3.select($scope.mapState.clickLayer._container);
-
-    selection.select("path")
-      .transition().duration(150)
-      .attr("stroke-width", 20)
-      .transition().duration(150)
-      .attr("stroke-width", 5)
-      .transition().duration(150)
-      .attr("stroke-width", 15)
-      .transition().duration(150)
-      .attr("stroke-opacity", 0.5)
-      .attr("stroke-width", 10);
-
-    if ($scope.box.type !== 'rain') {
-      removeProm = $timeout(function () {
-        $scope.map.removeLayer($scope.mapState.clickLayer);
-        if ($scope.box.type !== 'profile') {
-          $scope.box.type = 'empty';
-        }
-      }, 1500);
-    }
-  };
-
-  /**
-   * Draws a circle around an object on click.
-   *
-   * Removes possible click feedback layer and creates a new clickLayer
-   * containing a circle. The circle is vibrated to attract attention.
-   *
-   * @param {object} geometry Geojson compliant geometry object coming
-   *  from UTFgrid
-   * @param {string} entityName Name of the object to give it custom
-   *  styling
-   */
-  var clickGeometry = function (geometry, entityName) {
-    $timeout.cancel(removeProm);
-    if ($scope.mapState.clickLayer) {
-      $scope.map.removeLayer($scope.mapState.clickLayer);
-      delete $scope.mapState.clickLayer;
-    }
-
-    var circleMarker;
-    var geojsonFeature = { "type": "Feature" };
-    geojsonFeature.geometry = geometry;
-
-    //Put geometry in leaflet geojson layer
-    $scope.mapState.clickLayer = L.geoJson(geojsonFeature, {
-      minZoom: 13,
-      style: {},
-      pointToLayer: function (feature, latlng) {
-        circleMarker = L.circleMarker(latlng, {
-          radius: 11.5,
-          opacity: 0.5,
-          fillOpacity: 0,
-        });
-        return circleMarker;
-      }
-    });
-    $scope.mapState.clickLayer.addTo($scope.map);
-
-    // Manually edit with d3
-    // Due to some leaflet obscurity you have to get the first item with an unknown key.
-    var layer = $scope.mapState.clickLayer._layers;
-    var selection;
-    for (var key in layer) {
-      selection = d3.select(layer[key]._container);
-      break;
-    }
-
-    selection.select("path")
-      .attr("stroke", "#1abc9c")
-      .transition().duration(150)
-      .attr("stroke-width", 20)
-      .transition().duration(150)
-      .attr("stroke-width", 5)
-      .transition().duration(150)
-      .attr("stroke-width", 15)
-      .transition().duration(150)
-      .attr("stroke-opacity", 1)
-      .attr("stroke-width", 5);
-
-    // Entity specific modifications
-    if (entityName.indexOf("pumpstation_non_sewerage") !== -1) {
-      circleMarker.setRadius(13);
-      if ($scope.map.getZoom() < 21) {
-        circleMarker.setRadius(13);
-      }
-      if ($scope.map.getZoom() < 13) {
-        circleMarker.setRadius(16);
-      }
-      if ($scope.map.getZoom() < 11) {
-        circleMarker.setRadius(13);
-      }
-    } else if (entityName.indexOf("pumpstation_sewerage") !== -1) {
-      circleMarker.setRadius(11);
-    } else if (entityName.indexOf("weir") !== -1) {
-      circleMarker.setRadius(11);
-    } else if (entityName.indexOf("bridge") !== -1) {
-      circleMarker.setRadius(14);
-    } else if (entityName.indexOf("pipe") !== -1 || entityName.indexOf("culvert") !== -1) {
-      selection.select("path").transition().delay(450).duration(150)
-      .attr("stroke-opacity", 0.6)
-      .attr("stroke-width", 10);
-    } else if (entityName === 'manhole') {
-      circleMarker.setRadius(7.5);
-    }
-  };
-
   // expects a layer hashtable with a leafletlayer object
   this.toggleLayer = function (layer) {
 
@@ -285,8 +131,11 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
           layer.leafletLayer.on('load', function () {
             // Add the grid layers of the layer when load finished
             $scope.map.addLayer(layer.grid_layer);
-            // Broadcast a load finished message to a.o. aggregate-directive
-            $rootScope.$broadcast(layer.slug + 'GridLoaded');
+            layer.grid_layer.on('load', function () {
+              console.log('Grid loaded.');
+              // Broadcast a load finished message to a.o. aggregate-directive
+              $rootScope.$broadcast(layer.slug + 'GridLoaded');
+            });
           });
           layer.leafletLayer.on('loading', function () {
             // Temporarily remove all utfLayers for performance
@@ -481,6 +330,8 @@ app.directive('map', ['$location', function ($location) {
         scope.$apply(function () {
           scope.mapState.here = e.latlng;
         });
+      } else {
+        scope.mapState.here = e.latlng;
       }
     });
 
@@ -491,13 +342,6 @@ app.directive('map', ['$location', function ($location) {
           scope.beenThereDoneIntersectSuggestion = true;
           scope.box.type = 'intersecttool';
         }
-      }
-      // Hide and unhide clicklayer when zoomed out or in
-      if (scope.mapState.clickLayer && scope.map.getZoom() < 12) {
-        scope.map.removeLayer(scope.mapState.clickLayer);
-      }
-      if (scope.mapState.clickLayer && scope.map.getZoom() > 11) {
-        scope.map.addLayer(scope.mapState.clickLayer);
       }
     });
 

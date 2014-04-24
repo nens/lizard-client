@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Leaflet Tilelayer for d3 geojson vectors
  * from https://gist.github.com/ZJONSSON/5529395
