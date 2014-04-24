@@ -88,6 +88,10 @@
 
     {% block content %}
     
+    <div id="text-mode-scrollable">
+      
+    </div>
+
     <div id="master">
       <div class="layer-menu-container">
         <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': mapState.enabled}">
@@ -220,9 +224,7 @@
 
     {% block box_awesome %}{% endblock %}
     <div class="container" ng-controller="SearchCtrl">
-      <omnibox id="omnibox">
-  
-      </omnibox>
+      <omnibox id="omnibox"></omnibox>
     </div>
   </div> <!-- MapCtrl Closed.-->
 

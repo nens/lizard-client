@@ -136,8 +136,9 @@
     backface-visibility: hidden;
     z-index:10;
     width: 400px;
-    transition: all .3s ease;
-    -webkit-transition: all .3s ease;      
+    top:0px;
+    transition: all .3s ease-out;
+    -webkit-transition: all .3s ease-out;      
 }
 .card.large {
     width:600px;
@@ -145,6 +146,47 @@
     -webkit-transition: all .3s ease;      
  
 }
+.card-hidden {
+    /*margin-top: -30%;*/
+
+    opacity: 0.5;
+    transition: all .2s ease; 
+    -webkit-transition: all .2s ease;   
+    transform: translateY(-95%);
+    -webkit-transform: translateY(-95%);
+    -webkit-transition-delay:1s;
+    transition-delay:1s;
+}
+
+
+.card {
+    vertical-align: middle;
+}
+
+.card p {
+    color: #777;
+    white-space: normal;
+}
+
+.searchbox input {
+    vertical-align: middle;
+    background-color: transparent;
+    border: 0;
+    font-size: 14px;
+    font-weight: 300;
+    margin: 0;
+    outline: 0;
+    padding: 0;
+    width: 100%;
+    box-shadow: none;
+    height: auto !important;
+    color: #7f8c8d;
+}
+
+#cards {
+    margin-top: 0;
+}
+
 .card .card-title span {
     font-size: 1em;
     margin-bottom: 3em;
@@ -533,3 +575,7 @@
 .fixed-width-card-table {
     width: 170px;
 }
+
+
+
+.text-mode-scrollable

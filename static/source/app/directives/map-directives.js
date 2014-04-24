@@ -428,7 +428,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
 
   return this;
 });
-app.directive('map', ['$location', function ($location) {
+app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
 
   var link = function (scope, element, attrs, ctrl) {
     // Leaflet global variable to speed up vector layer, 
@@ -523,6 +523,12 @@ app.directive('map', ['$location', function ($location) {
       }
     });
 
+
+
+    scope.map.on('movestart', function() {
+          scope.box.mapMoving = true;
+    });
+
     /**
      * Update the url when the map has been moved
      *
@@ -531,6 +537,7 @@ app.directive('map', ['$location', function ($location) {
      */
 
     scope.map.on('moveend', function () {
+
       scope.holdRightThere = true;
       var COORD_PRECISION = 5;
       var newHash = [
@@ -540,6 +547,7 @@ app.directive('map', ['$location', function ($location) {
       ].join(',');
       if (!scope.$$phase) {
         scope.$apply(function () {
+          scope.box.mapMoving = false;
           $location.hash(newHash);
         });
       } else {

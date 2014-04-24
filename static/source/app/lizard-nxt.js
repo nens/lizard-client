@@ -83,6 +83,7 @@ app.controller("MasterCtrl",
 
   // BOX MODEL
   $scope.box = {
+    largeCard: false,
     query: null,
     disabled: false,
     showCards: false,
@@ -136,17 +137,18 @@ app.controller("MasterCtrl",
   };
 
   $scope.toggleCardSize = function() {
-    console.log('toggleCardSize()');
-    if ( $scope.largeCard ) {
-      $scope.largeCard = false;
+    // console.log('toggleCardSize()');
+    if ( $scope.box.largeCard ) {
+      $scope.box.largeCard = false;
     } else {
-      $scope.largeCard = true;
-
-      
-      
+      $scope.box.largeCard = true;      
     }
-
   };
+
+  $scope.toggleDetailmode = function() {
+    console.log('Showing detailmode for ', $scope.activeObject);
+  };
+
   // TOOLS
 
   // MAP MODEL

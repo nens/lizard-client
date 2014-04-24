@@ -38,24 +38,14 @@ app.controller('SearchCtrl', function ($scope, CabinetService) {
       $scope.box.type = 'empty';
     };
 
-  // NOTE: find another way then $parent.$parent.../
   $scope.showDetails = function (obj) {
-      $scope.currentObject = obj;
-      if ($scope.currentObject.lat && $scope.currentObject.lon) {
-          // A lat and lon are present, instruct the map to pan/zoom to it
-        var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
-        $scope.$parent.$parent.$parent.panZoom = {
-          lat: $scope.currentObject.lat,
-          lng: $scope.currentObject.lon,
-          zoom: 14
-        };
-      }
-      else if ($scope.currentObject.geometry[0] && $scope.currentObject.geometry[1]) {
-        $scope.$parent.$parent.$parent.panZoom = {
-          lat: $scope.currentObject.geometry[1],
-          lng: $scope.currentObject.geometry[0],
-          zoom: 14
-        };
+      if (obj.boundingbox) {
+        southWest = new L.LatLng(obj.boundingbox[0], obj.boundingbox[2]),
+        northEast = new L.LatLng(obj.boundingbox[1], obj.boundingbox[3]),
+        bounds = new L.LatLngBounds(southWest, northEast);
+        $scope.map.fitBounds(bounds);
+      } else {
+        console.error('Oops, no boundingbox on this result - TODO: show a proper message instead of this console error...');
       }
     };
 

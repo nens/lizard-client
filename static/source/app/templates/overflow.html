@@ -1,12 +1,12 @@
-<div ng-class="largeCard ? 'card large' : 'card'">
+<div ng-class="box.mapMoving ? 'card-hidden' : ''" class="card">
     <!-- Card for "overflow" / "overstort" -->
     <div class="actions">
       <ul>
         <!-- <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li> -->
         <li class="fullscreen">
           <a 
-            ng-click="toggleCardSize()"
-            title="Maak deze infocard groter">
+            ng-click="toggleDetailmode()"
+            title="Bekijk in detailmode">
             <i class="fa fa-arrows-alt"></i>
           </a>
         </li>
@@ -76,10 +76,16 @@
       </tr>
       </tbody>
     </table>
+
+    
     <div class="streetview">
-    <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&cbp=11,90,0,0,40">
-      <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
-    </a>
+      <streetview
+        lat='<% activeObject.latlng.lat %>'
+        lon='<% activeObject.latlng.lng %>'>
+      </streetview>
+    <!-- <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&cbp=11,90,0,0,40"> -->
+      <!-- <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo"> -->
+    <!-- </a> -->
     </div>
   </div>
 </div>

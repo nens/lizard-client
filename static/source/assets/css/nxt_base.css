@@ -1179,33 +1179,6 @@ li.recommendation > a {
     vertical-align: middle;
 }
 
-.card {
-    vertical-align: middle;
-}
-
-.card p {
-    color: #777;
-    white-space: normal;
-}
-
-.searchbox input {
-    vertical-align: middle;
-    background-color: transparent;
-    border: 0;
-    font-size: 14px;
-    font-weight: 300;
-    margin: 0;
-    outline: 0;
-    padding: 0;
-    width: 100%;
-    box-shadow: none;
-    height: auto !important;
-    color: #7f8c8d;
-}
-
-#cards {
-    margin-top: 0;
-}
 
 a {
     color: #2980b9;
