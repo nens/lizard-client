@@ -589,6 +589,7 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
           }
         }
       }
+      scope.box.mapMoving = false;
       scope.holdRightThere = false;
     });
 
