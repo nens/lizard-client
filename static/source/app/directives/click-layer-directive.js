@@ -51,7 +51,6 @@ app.directive('clickLayer', ["$q", function ($q) {
 
       var self = this;
 
-      console.log('start vibrating');
       clearInterval(this._vibration);
       this._vibration = setInterval(function () {
         self._selection.select("path")
@@ -64,8 +63,6 @@ app.directive('clickLayer', ["$q", function ($q) {
     };
 
     this.stopVibration = function () {
-      console.log('stop vibrating feature', this);
-      
       clearInterval(this._vibration);
       this._selection.select("path")
         .attr("stroke-width", 15)
@@ -201,7 +198,7 @@ app.directive('clickLayer', ["$q", function ($q) {
     };
 
     function drawArrowHere(latlng) {
-
+      
     }
 
     function drawFromHereToHere(latlng) {
@@ -218,7 +215,10 @@ app.directive('clickLayer', ["$q", function ($q) {
         if (response.data === null && sewerageLayer.isLoading) {
           getDataFromUTFAsynchronous(sewerageLayer, e);
         } else {
-          scope.deferred.resolve(sewerageLayer._objectForEvent(e));
+          scope.deferred.resolve(response);
+          angular.extend(scope.activeObject, response.data);
+          scope.activeObject.latlng = response.latlng;
+          scope.activeObject.changed = !scope.activeObject.changed;
         }
       } else {
         getDataFromUTFAsynchronous(sewerageLayer, e);
@@ -240,7 +240,11 @@ app.directive('clickLayer', ["$q", function ($q) {
         // it into an $apply call so that the model changes are properly observed.
         scope.$apply(function () {
           sewerageLayer = getLayer('grid', 'sewerage');
-          scope.deferred.resolve(sewerageLayer._objectForEvent(e));
+          var response = sewerageLayer._objectForEvent(e)
+          scope.deferred.resolve(response);
+          angular.extend(scope.activeObject, response.data);
+          scope.activeObject.latlng = response.latlng;
+          scope.activeObject.changed = !scope.activeObject.changed;
         });
       });
     }
@@ -272,40 +276,6 @@ app.directive('clickLayer', ["$q", function ($q) {
       return layer;
     };
 
-
-    //  // for the purpose of this example let's assume that variables `$q`, `scope` and `okToGreet`
-    // // are available in the current lexical scope (they could have been injected or passed in).
-     
-    // function asyncGreet(name) {
-    // var deferred = $q.defer();
-     
-    // setTimeout(function() {
-    // // since this fn executes async in a future turn of the event loop, we need to wrap
-    // // our code into an $apply call so that the model changes are properly observed.
-    // scope.$apply(function() {
-    // deferred.notify('About to greet ' + name + '.');
-     
-    // if (okToGreet(name)) {
-    // deferred.resolve('Hello, ' + name + '!');
-    // } else {
-    // deferred.reject('Greeting ' + name + ' is not allowed.');
-    // }
-    // });
-    // }, 1000);
-     
-    // return deferred.promise;
-    // }
-     
-    // var promise = asyncGreet('Robin Hood');
-    // promise.then(function(greeting) {
-    // alert('Success: ' + greeting);
-    // }, function(reason) {
-    // alert('Failed: ' + reason);
-    // }, function(update) {
-    // alert('Got notification: ' + update);
-    // });
-
-
     // leafletLayer.on('click', function (e) {
     //   if (e.data) {
     //     $scope.$apply(function () {
@@ -316,52 +286,6 @@ app.directive('clickLayer', ["$q", function ($q) {
     //   }
     // });
 
-    // /**
-    //  * Draws visible feedback on the map after a click.
-    //  *
-    //  * Removes possible click feedback layer and creates a new clickLayer
-    //  * containing a circle. The circle is than vibrated to attract attention.
-    //  *
-    //  * @param {object} latLng Leaflet object specifying the latitude
-    //  * and longitude of a click
-    //  */
-    // var removeProm;
-
-    // var clickInSpace = function (latLng) {
-    //   $timeout.cancel(removeProm);
-    //   if ($scope.mapState.clickLayer) {
-    //     $scope.map.removeLayer($scope.mapState.clickLayer);
-    //     delete $scope.mapState.clickLayer;
-    //   }
-    //   $scope.mapState.clickLayer = L.circleMarker(latLng, {
-    //     radius: 0,
-    //     opacity: 0.6,
-    //     color: "#1abc9c"
-    //   });
-    //   $scope.mapState.clickLayer.addTo($scope.map);
-    //   var selection = d3.select($scope.mapState.clickLayer._container);
-
-    //   selection.select("path")
-    //     .transition().duration(150)
-    //     .attr("stroke-width", 20)
-    //     .transition().duration(150)
-    //     .attr("stroke-width", 5)
-    //     .transition().duration(150)
-    //     .attr("stroke-width", 15)
-    //     .transition().duration(150)
-    //     .attr("stroke-opacity", 0.5)
-    //     .attr("stroke-width", 10);
-
-    //   if ($scope.box.type !== 'rain') {
-    //     removeProm = $timeout(function () {
-    //       $scope.map.removeLayer($scope.mapState.clickLayer);
-    //       if ($scope.box.type !== 'profile') {
-    //         $scope.box.type = 'empty';
-    //       }
-    //     }, 1500);
-    //   }
-    // };
-
     };
 
   return {
@@ -371,21 +295,3 @@ app.directive('clickLayer', ["$q", function ($q) {
     controller: MapClickController
   };
 }]);
-
-
- //            if (e.data.geom) {
- //              utfHit = true;
- //              clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
- //            } else {
- //              console.info("You clicked on an object from negative space");
- //            }
-
- // else {
- //            if (leafletLayer.options.order === lowestUTFLayer) {
- //              if (!utfHit || utfLayersOrder.length < 2) {
- //                clickInSpace(e.latlng);
- //                utfHit = false;
- //              }
- //            }
- //          }
-
