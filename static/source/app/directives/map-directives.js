@@ -17,7 +17,7 @@
  * 
  */
 
-app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
+app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
 
   var elevationLayer;
   // UTF bookkeeping
@@ -26,10 +26,7 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
       utfHit = false;
 
   this.initiateLayer = function (layer) {
-    if (layer.name === "Simulatie") {
-      // Hack for 3Di.
-      layer.follow_3di = false;
-    } else if (layer.type === "TMS" && layer.baselayer) {
+    if (layer.type === "TMS" && layer.baselayer) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
                                        {name: "Background",
                                         maxZoom: 20});
@@ -232,35 +229,27 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
 
     // Entity specific modifications
     if (entityName.indexOf("pumpstation_non_sewerage") !== -1) {
-      selection.attr("transform", "translate(-6, 0)");
       circleMarker.setRadius(13);
       if ($scope.map.getZoom() < 21) {
-        selection.attr("transform", "translate(0, 0)");
-        circleMarker.setRadius(11);
+        circleMarker.setRadius(13);
       }
       if ($scope.map.getZoom() < 13) {
-        selection.attr("transform", "translate(8, 0)");
         circleMarker.setRadius(16);
       }
       if ($scope.map.getZoom() < 11) {
-        selection.attr("transform", "translate(5, 0)");
         circleMarker.setRadius(13);
       }
     } else if (entityName.indexOf("pumpstation_sewerage") !== -1) {
-      selection.attr("transform", "translate(0, 3)");
       circleMarker.setRadius(11);
     } else if (entityName.indexOf("weir") !== -1) {
-      selection.attr("transform", "translate(0, 4)");
       circleMarker.setRadius(11);
     } else if (entityName.indexOf("bridge") !== -1) {
-      selection.attr("transform", "translate(-5, 6)");
       circleMarker.setRadius(14);
     } else if (entityName.indexOf("pipe") !== -1 || entityName.indexOf("culvert") !== -1) {
       selection.select("path").transition().delay(450).duration(150)
       .attr("stroke-opacity", 0.6)
       .attr("stroke-width", 10);
     } else if (entityName === 'manhole') {
-      //selection.attr("transform", "translate(1, 0)");
       circleMarker.setRadius(7.5);
     }
   };
@@ -296,6 +285,8 @@ app.controller('MapDirCtrl', function ($scope, $timeout, $http) {
           layer.leafletLayer.on('load', function () {
             // Add the grid layers of the layer when load finished
             $scope.map.addLayer(layer.grid_layer);
+            // Broadcast a load finished message to a.o. aggregate-directive
+            $rootScope.$broadcast(layer.slug + 'GridLoaded');
           });
           layer.leafletLayer.on('loading', function () {
             // Temporarily remove all utfLayers for performance
@@ -673,8 +664,15 @@ app.directive('rain', function () {
   return {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
-      var imageBounds = [[54.28458617998074, 1.324296158471368], [49.82567047026146, 8.992548357936204]];
+      var imageBounds = [[54.28458617998074, 1.324296158471368],
+                         [49.82567047026146, 8.992548357936204]];
       var imageOverlay =  L.imageOverlay('', imageBounds, {opacity: 0.8});
+
+      /**
+       * When rain is enabled, add imageOverlay layer, remove layer when rain
+       * is disabled.
+       *
+       */
       scope.$watch('rain.enabled', function (newVal, oldVal) {
         if (newVal !== oldVal) {
           if (newVal) {
@@ -685,15 +683,43 @@ app.directive('rain', function () {
         }
       });
 
-      scope.$watch('rain.currentFrame', function (newVal, oldVal) {
+      /**
+       * Watch for rain.currentImage, update imageOverlay.
+       */
+      scope.$watch('rain.currentImage', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
         if (imageOverlay !== undefined) {
-          var imgFromStorage = localStorage.getItem(scope.rain.currentFrame);
-          imageOverlay.setUrl(imgFromStorage);
+          imageOverlay.setUrl(scope.rain.currentImage);
           imageOverlay.setOpacity(0.8);
-          if (scope.rain.currentFrame === null) {
-            imageOverlay.setOpacity(0);
-          }
+        }
+      });
+
+      /** 
+       * Watch changes in timeState.at, get new raster images, if imageOverlay
+       * exists and rain tool is enabled and animation is not playing.
+       *
+       */
+      scope.$watch('timeState.at', function (newVal, oldVal) {
+        if (newVal === oldVal) { return; }
+        if (imageOverlay !== undefined
+            && scope.rain.enabled
+            && !scope.timeState.animation.enabled) {
+          scope.getRasterImages();
+        }
+      });
+
+      /**
+       * Watch if animation is playing. While animation is playing, hide
+       * raster image; when playing stops, get new raster image.
+       *
+       */
+      scope.$watch('timeState.animation.playing', function (newVal, oldVal) {
+        if (newVal === oldVal) { return; }
+        if (!scope.timeState.animation.playing) {
+          mapCtrl.addLayer(imageOverlay);
+          scope.getRasterImages();
+        } else {
+          mapCtrl.removeLayer(imageOverlay);
         }
       });
     }

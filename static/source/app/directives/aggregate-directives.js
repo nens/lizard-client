@@ -15,14 +15,14 @@ app.directive('vectorlayer', function () {
       /**
        * Creates svg layer in leaflet's overlaypane and adds events as circles
        *
-       * On leaflet's viewreset the svg rescaled and repositioned. This function should
-       * also be called when the data is changed
+       * On leaflet's viewreset the svg rescaled and repositioned. This
+       * function should also be called when the data is changed.
        *
        * @parameter: object data object
        * @return: object eventLayer object
        */
       var createEventLayer = function (data) {
-        var map = mapCtrl.map();
+        var map = scope.map;
         var svg = d3.select(map.getPanes().overlayPane).append("svg"),
             g = svg.append("g").attr("class", "leaflet-zoom-hide");
         
@@ -215,7 +215,7 @@ app.directive('vectorlayer', function () {
 
 
 /**
- * Impervious surface vector layer
+ * Impervious surface vector layer.
  *
  * Load data with d3 geojson vector plugin L.TileLayer.GeoJSONd3 in ./lib
  * bind highlight function to mouseover and mouseout events.
@@ -229,6 +229,8 @@ app.directive('surfacelayer', function () {
     restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
+
+      var bottomLeft = {};
 
       /**
        * Style surface features.
@@ -272,22 +274,22 @@ app.directive('surfacelayer', function () {
        *
        */
       var highlightSurface = function (e) {
-        var surface_ids = JSON.parse(e.data.impervious_surfaces);
-        if (surface_ids.indexOf("null") === -1) {
-          var selector = listToSelector(surface_ids);
-          if (e.type === 'mouseover') {
-            d3.selectAll(selector)
-              .style("stroke", "#f00")
-              .style("stroke-width", 1.2)
-              .style("fill", "#ddd")
-              .style("fill-opacity", 0.6)
-              .transition();
-          } else if (e.type === 'mouseout') {
-            d3.selectAll(selector)
-              .transition()
-              .duration(3000)
-              .style("stroke-width", 0)
-              .style("fill-opacity", 0);
+        if (e.data.impervious_surfaces !== undefined) {
+          var surface_ids = JSON.parse(e.data.impervious_surfaces);
+          if (surface_ids.indexOf("null") === -1) {
+            var selector = listToSelector(surface_ids);
+            if (e.type === 'mousemove') {
+              d3.selectAll(selector)
+                .style("fill", "#e74c3c")
+                .style("fill-opacity", 0.6)
+                .transition();
+            } else if (e.type === 'mouseout') {
+              d3.selectAll(selector)
+                .transition()
+                .duration(500)
+                .style("stroke-width", 0)
+                .style("fill-opacity", 0);
+            }
           }
         }
       };
@@ -327,29 +329,42 @@ app.directive('surfacelayer', function () {
           class: "impervious_surface"
         });
 
+
       /**
        * Listen to tools model for pipe_surface tool to become active. Add 
-       * geojson d3 layer and bind mouseover and mouseout events to 
+       * geojson d3 layer and bind mousemove and mouseout events to 
        * highlight impervious surface.
        *
        */
-      scope.$watch('tools.active', function () {
+      scope.$watch('tools.active', function (n, o) {
+        if (n === o) { return true; }
         var pipeLayer = {};
         if (scope.tools.active === "pipeSurface") {
           mapCtrl.addLayer(surfaceLayer);
           pipeLayer = getLayer('grid', 'sewerage');
+          // icon active
+          angular.element(".surface-info").addClass("icon-active");
           if (pipeLayer) {
-            // icon active
-            angular.element(".surface-info").addClass("icon-active");
-            pipeLayer.on('mouseover', highlightSurface);
+            pipeLayer.on('mousemove', highlightSurface);
             pipeLayer.on('mouseout', highlightSurface);
+          } else {
+            // If there is no grid layer it is probably still being
+            // loaded by the map-directive which will broadcast a 
+            // message when its loaded. 
+            scope.$on('sewerageGridLoaded', function () {
+              if (scope.tools.active === 'pipeSurface') {
+                pipeLayer = getLayer('grid', 'sewerage');
+                pipeLayer.on('mousemove', highlightSurface);
+                pipeLayer.on('mouseout', highlightSurface);
+              }
+            });
           }
         } else {
           pipeLayer = getLayer('grid', 'pipe');
           if (pipeLayer) {
             // icon inactive
             angular.element(".surface-info").removeClass("icon-active");
-            pipeLayer.off('mouseover', highlightSurface);
+            pipeLayer.off('mousemove', highlightSurface);
             pipeLayer.off('mouseout', highlightSurface);
           }
           mapCtrl.removeLayer(surfaceLayer);
