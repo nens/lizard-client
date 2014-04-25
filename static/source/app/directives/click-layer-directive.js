@@ -179,6 +179,10 @@ app.directive('clickLayer', ["$q", function ($q) {
       }
     });
 
+    scope.$watch('tools.active', function (n,o) {
+      if (n !== o) { ctrl.emptyClickLayer(scope.map); }
+    })
+
     /**
      * Draws visible feedback on the map after a click.
      *
@@ -241,6 +245,7 @@ app.directive('clickLayer', ["$q", function ($q) {
           angular.extend(scope.activeObject, response.data);
           scope.activeObject.latlng = response.latlng;
           scope.activeObject.changed = !scope.activeObject.changed;
+          console.log(scope.activeObject);
         }
       } else {
         getDataFromUTFAsynchronous(e);
