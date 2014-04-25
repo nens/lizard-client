@@ -147,8 +147,6 @@
  
 }
 .card-hidden {
-    /*margin-top: -30%;*/
-
     opacity: 0.5;
     transition: all .2s ease; 
     -webkit-transition: all .2s ease;   
@@ -577,5 +575,26 @@
 }
 
 
-
-.text-mode-scrollable
+#dashboard {
+    position: absolute;
+    top: 50px !important;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    z-index: 999999 !important;
+    opacity: 1;
+    transition: all .3s ease; 
+    -webkit-transition: all .3s ease;
+}
+#dashboard.ng-hide {
+    opacity: 0;
+    transition: all .3s ease; 
+    -webkit-transition: all .3s ease;
+}
+.ng-hide {
+  display: block !important;
+ 
+  position:absolute;
+  top:-9999px;
+  left:-9999px;
+}
