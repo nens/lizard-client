@@ -21,6 +21,17 @@ app.directive('clickLayer', ["$q", function ($q) {
       this.clickLayer = L.geoJson().addTo(map);
     };
 
+    this._getSelection = function () {
+      // Due to some leaflet obscurity you have to get the first item with an unknown key.
+      var layer = this.clickLayer._layers;
+      var selection;
+      for (var key in layer) {
+        selection = d3.select(layer[key]._container);
+        break;
+      }
+      return selection;
+    };
+
     this.drawFeature = function (feature) {
       var geojsonFeature = { "type": "Feature" };
       geojsonFeature.geometry = feature;
@@ -39,15 +50,7 @@ app.directive('clickLayer', ["$q", function ($q) {
     };
 
     this.vibrateFeature = function () {
-      // Due to some leaflet obscurity you have to get the first item with an unknown key.
-      var layer = this.clickLayer._layers;
-      var selection;
-      for (var key in layer) {
-        selection = d3.select(layer[key]._container);
-        break;
-      }
-
-      this._selection = selection;
+      this._selection = this._getSelection();
 
       var self = this;
 
@@ -76,13 +79,7 @@ app.directive('clickLayer', ["$q", function ($q) {
     };
 
     this.drawObject = function (entityName, map) {
-      // Due to some leaflet obscurity you have to get the first item with an unknown key.
-      var layer = this.clickLayer._layers;
-      var selection;
-      for (var key in layer) {
-        selection = d3.select(layer[key]._container);
-        break;
-      }
+      var selection = this._getSelection();
 
       selection.select("path")
         .attr("stroke", "#1abc9c")
@@ -123,6 +120,25 @@ app.directive('clickLayer', ["$q", function ($q) {
       }
     };
 
+    this.substitueFeatureForArrow = function (point) {
+      var selection = this._getSelection();
+      var g = selection;
+      // This is an arrow
+      var path = "M " + point.x + " " + point.y + " " +
+                 "l 15 -10 " + 
+                 "l -10 0 " +
+                 "l 0 -15 " +
+                 "l -10 0 " +
+                 "l 0 15 " +
+                 "l -10 0 z";
+      g.select("path").attr("d", path)
+        .attr("stroke-opacity", 1)
+        .attr("stroke-width", 3)
+        .attr("stroke", "#2980b9")
+        .attr("fill", "#2980b9")
+        .attr("fill-opacity", "1");
+    };
+
   };
 
   var link = function (scope, element, attrs, ctrl) {
@@ -138,6 +154,7 @@ app.directive('clickLayer', ["$q", function ($q) {
       if (n === o) { return true; }
       switch (scope.tools.active) {
       case 'rain':
+        console.log('draw arrow at:', scope.mapState.here);
         drawArrowHere(scope.mapState.here);
         break;
       case 'profile':
@@ -198,7 +215,12 @@ app.directive('clickLayer', ["$q", function ($q) {
     };
 
     function drawArrowHere(latlng) {
-      
+      ctrl.emptyClickLayer(scope.map);
+      var geometry = {"type": "Point",
+                "coordinates": [latlng.lng, latlng.lat]};
+      ctrl.drawFeature(geometry);
+      var px = scope.map.latLngToLayerPoint(latlng);
+      ctrl.substitueFeatureForArrow(px);
     }
 
     function drawFromHereToHere(latlng) {
@@ -213,7 +235,7 @@ app.directive('clickLayer', ["$q", function ($q) {
       if (sewerageLayer) {
         var response = sewerageLayer._objectForEvent(e);
         if (response.data === null && sewerageLayer.isLoading) {
-          getDataFromUTFAsynchronous(sewerageLayer, e);
+          getDataFromUTFAsynchronous(e);
         } else {
           scope.deferred.resolve(response);
           angular.extend(scope.activeObject, response.data);
@@ -221,12 +243,12 @@ app.directive('clickLayer', ["$q", function ($q) {
           scope.activeObject.changed = !scope.activeObject.changed;
         }
       } else {
-        getDataFromUTFAsynchronous(sewerageLayer, e);
+        getDataFromUTFAsynchronous(e);
       }
       return scope.deferred.promise;
     }
 
-    function getDataFromUTFAsynchronous(sewerageLayer, e) {
+    function getDataFromUTFAsynchronous(e) {
       // If there is no grid layer it is probably still being
       // loaded by the map-directive which will broadcast a 
       // message when its loaded. 
@@ -239,7 +261,7 @@ app.directive('clickLayer', ["$q", function ($q) {
         // since this part executes async in a future turn of the event loop, we need to wrap
         // it into an $apply call so that the model changes are properly observed.
         scope.$apply(function () {
-          sewerageLayer = getLayer('grid', 'sewerage');
+          var sewerageLayer = getLayer('grid', 'sewerage');
           var response = sewerageLayer._objectForEvent(e)
           scope.deferred.resolve(response);
           angular.extend(scope.activeObject, response.data);
