@@ -211,6 +211,7 @@
             </div>            
           </div>
         </div>
+
         <map layers="mapState.layers"
              rasterprofile="disabled"
              vectorlayer
@@ -223,6 +224,16 @@
     </div>
 
     {% block box_awesome %}{% endblock %}
+
+<!--     <div id="dashboard" ng-controller="DashboardCtrl">
+      <div class="container">
+        <h3>Dashboard</h3>        
+      </div>
+    </div>
+ -->
+
+    <dashboard id="dashboard" ng-show="box.detailMode"></dashboard>
+
     <div class="container" ng-controller="SearchCtrl">
       <omnibox id="omnibox"></omnibox>
     </div>
