@@ -156,6 +156,11 @@ app.controller("MasterCtrl",
     // console.log('Showing detailmode for ', $scope.activeObject);
   };
 
+  $scope.bookmarkItem = function() {
+    // TODO: Create a bookmarking service and hook this up.
+    console.log('TODO: This should bookmark ', $scope.activeObject);
+  };
+
   // TOOLS
 
   // MAP MODEL
