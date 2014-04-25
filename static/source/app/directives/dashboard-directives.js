@@ -15,7 +15,7 @@ app.controller('DashboardDirCtrl', function ($scope, $timeout, $http, $sce) {
 		},
 		{
 			title:"Extra",
-			content:"Dynamic content 2", 
+			content: $sce.trustAsHtml("Dynamic content 2"), 
 			disabled: true
 		}];
 
