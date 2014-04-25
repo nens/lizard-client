@@ -7,6 +7,7 @@ var app = angular.module("lizard-nxt", [
   'graph',
   'omnibox',
   'restangular',
+  'ui.bootstrap',
   'lizard-nxt.services'
 ]);
 
@@ -83,14 +84,15 @@ app.controller("MasterCtrl",
 
   // BOX MODEL
   $scope.box = {
-    largeCard: false,
+    detailMode: false,
     query: null,
     disabled: false,
     showCards: false,
     type: 'empty', // NOTE: default, box type is empty
     content: {},
     changed: Date.now(),
-    mouseLoc: []
+    mouseLoc: [],
+    mapMoving: false
   };
 
   $scope.box.content.alerts = {};
@@ -146,7 +148,12 @@ app.controller("MasterCtrl",
   };
 
   $scope.toggleDetailmode = function() {
-    console.log('Showing detailmode for ', $scope.activeObject);
+    if($scope.box.detailMode) {
+      $scope.box.detailMode = false;
+    } else {
+      $scope.box.detailMode = true;
+    }
+    // console.log('Showing detailmode for ', $scope.activeObject);
   };
 
   // TOOLS
@@ -616,8 +623,14 @@ app.controller("MasterCtrl",
     $scope.keyPressed = $event.which;
     $scope.keyTarget = $event.target;
     if ($event.which === 27) {
-      $scope.box.type = 'empty';
-      $scope.box.empty = null;
+      // If detailMode is active, close that
+      if ($scope.box.detailMode) {
+        $scope.box.detailMode = false;        
+      } else {
+        // Or else, reset the omnibox state
+        $scope.box.type = 'empty';
+        $scope.box.empty = null;
+      }
     }
 
   };
