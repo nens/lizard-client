@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('DashboardDirCtrl', function ($scope, $timeout, $http, $sce) {
+app.controller('DashboardDirCtrl', ['$scope', '$timeout', '$http', '$sce', 'BookmarkService', function ($scope, $timeout, $http, $sce, BookmarkService) {
 
 	/*
 	 * TODO: This should build the dashboard according to a JSON object
@@ -11,66 +11,32 @@ app.controller('DashboardDirCtrl', function ($scope, $timeout, $http, $sce) {
 
 	$scope.tabs = [{
 			title: "Streetview", 
-			content: $sce.trustAsHtml("<h4>Streetview</h4>") // NOTE: Example of HTML escaping
+			content: $sce.trustAsHtml("<h4>Streetview</h4>")
 		},
 		{
 			title:"Extra",
-			content: $sce.trustAsHtml("Dynamic content 2"), 
+			content: $sce.trustAsHtml("<h4>Extra</h4><p>Dynamic content 2</p>"), 
 			disabled: true
 		}];
 
+	$scope.bookmarkService = BookmarkService;
+
 	$scope.alertMe = function() {
 		// NOTE: Example of how a controller function can be called from the directive
-		console.log('alertMe()');
+		return console.log('alertMe()');
 	};
-});
+}]);
 
-app.directive('dashboard', ['$location', '$timeout', '$compile', function ($location, $timeout, $compile) {
-
-  var container =  '<div class="container"><div class="row">' + 
-					  '<tabset justified="true" style="padding-top:5px;">' +
-
-					    '<tab select="alertMe()">'+
-					     '<tab-heading>'+
-					      '<i class="fa fa-bell"></i>'+
-					     '</tab-heading>'+
-					      '<h4>Alarmen</h4>'+
-					    '</tab>'+
-
-					    '<tab select="alertMe()">'+
-					     '<tab-heading>'+
-					      '<i class="fa fa-bookmark"></i>'+
-					     '</tab-heading>'+
-					      '<h4>Gemarkeerde objecten</h4>'+
-					    '</tab>'+
-
-					    '<tab select="alertMe()">'+
-					     '<tab-heading>'+
-					      '<i class="fa fa-gear"></i>'+
-					     '</tab-heading>'+
-					      '<h4>Dashboard instellingen</h4>'+
-					    '</tab>' +
-
-						'<tab ng-repeat="tab in tabs" heading="<%tab.title%>" active="tab.active" disabled="tab.disabled">'+
-							'<div ng-bind-html="tab.content"></div>'+
-						'</tab>'+
-
-					  '</tabset>' +
-  				  '</div></div>';
-
-
+app.directive('dashboard', ['$location', '$timeout', '$compile', 'BookmarkService', function ($location, $timeout, $compile, BookmarkService) {
 
   var link = function (scope, element, attrs, ctrl) {
-	var newScope = scope.$new();
-	element.append(container);
-	$compile(element.contents())(newScope);
   };
-
 
   return {
       restrict: 'E',
       replace: true,
       controller: 'DashboardDirCtrl',
+      templateUrl: 'templates/fullscreen.html',
       link: link
     };
 }]);
