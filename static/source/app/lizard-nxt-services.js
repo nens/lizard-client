@@ -1,9 +1,5 @@
 var services = angular.module("lizard-nxt.services", []);
 
-services.factory('BookmarkService', function($q, $rootScope) {
-  return {};
-});
-
 services.service("CabinetService", ["Restangular",
   function (Restangular, $rootScope) {
 

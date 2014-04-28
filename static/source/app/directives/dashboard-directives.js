@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('DashboardDirCtrl', ['$scope', '$timeout', '$http', '$sce', 'BookmarkService', function ($scope, $timeout, $http, $sce, BookmarkService) {
+app.controller('DashboardDirCtrl', ['$scope', '$timeout', '$http', '$sce', function ($scope, $timeout, $http, $sce) {
 
 	/*
 	 * TODO: This should build the dashboard according to a JSON object
@@ -27,7 +27,7 @@ app.controller('DashboardDirCtrl', ['$scope', '$timeout', '$http', '$sce', 'Book
 	};
 }]);
 
-app.directive('dashboard', ['$location', '$timeout', '$compile', 'BookmarkService', function ($location, $timeout, $compile, BookmarkService) {
+app.directive('dashboard', ['$location', '$timeout', '$compile', function ($location, $timeout, $compile) {
 
   var link = function (scope, element, attrs, ctrl) {
   };
