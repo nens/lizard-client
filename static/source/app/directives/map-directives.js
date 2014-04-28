@@ -132,7 +132,6 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
             // Add the grid layers of the layer when load finished
             $scope.map.addLayer(layer.grid_layer);
             layer.grid_layer.on('load', function () {
-              console.log('Grid loaded.');
               // Broadcast a load finished message to a.o. aggregate-directive
               $rootScope.$broadcast(layer.slug + 'GridLoaded');
             });
