@@ -81,8 +81,8 @@ app.config(function ($locationProvider) {
 
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "Restangular", "$q", "$compile", "CabinetService",
-  function ($scope, $http, Restangular, $q, $compile, CabinetService)  {
+  ["$scope", "$http", "Restangular", "$q", "$compile", "CabinetService", "BookmarkService",
+  function ($scope, $http, Restangular, $q, $compile, CabinetService, BookmarkService)  {
 
   // BOX MODEL
   $scope.box = {
@@ -93,8 +93,7 @@ app.controller("MasterCtrl",
     type: 'empty', // NOTE: default, box type is empty
     content: {},
     changed: Date.now(),
-    mouseLoc: [],
-    mapMoving: false
+    mouseLoc: []
   };
 
   $scope.box.content.alerts = {};
@@ -163,7 +162,9 @@ app.controller("MasterCtrl",
 
   $scope.bookmarkItem = function() {
     // TODO: Create a bookmarking service and hook this up.
-    console.log('TODO: This should bookmark ', $scope.activeObject);
+    console.log('BookmarkService:', BookmarkService);
+    return BookmarkService.add($scope.activeObject);
+    // console.log('TODO: This should bookmark ', $scope.activeObject);
   };
 
   // TOOLS
@@ -183,7 +184,8 @@ app.controller("MasterCtrl",
     enabled: false,
     bounds: null,
     here: null,
-    geom_wkt: ''
+    geom_wkt: '',
+    mapMoving: false
   };
 
   $scope.panZoom = {};
@@ -606,7 +608,7 @@ app.controller("MasterCtrl",
     if ($event.which === 27) {
       // If detailMode is active, close that
       if ($scope.box.detailMode) {
-        $scope.box.detailMode = false;        
+        $scope.box.detailMode = false;
       } else {
         // Or else, reset the omnibox state
         $scope.box.type = 'empty';
