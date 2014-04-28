@@ -1,0 +1,42 @@
+<div class="container-fluid"><div class="row">
+	  	<div class="col-md-5">
+	  <tabset justified="true" style="padding-top:10px;">
+
+	    <tab select="alertMe()">
+	     <tab-heading>
+	      <i class="fa fa-bar-chart-o"></i>
+	     </tab-heading>
+	      <h4>Grafieken</h4>
+	      <div class="row"><a href="#" class="thumbnail"><img src="http://placehold.it/600x180" alt="..."></a></div>
+	      <div class="row"><a href="#" class="thumbnail"><img src="http://placehold.it/600x180" alt="..."></a></div>
+		      <div class="row"><a href="#" class="thumbnail"><img src="http://placehold.it/600x180" alt="..."></a></div>
+	      <div class="row"><a href="#" class="thumbnail"><img src="http://placehold.it/600x180" alt="..."></a></div>				      
+	    </tab>
+
+	    <tab select="alertMe()">
+	     <tab-heading>
+	      <i class="fa fa-bookmark"></i>
+	     </tab-heading>
+	      <h4>Gemarkeerde objecten</h4>
+	    </tab>
+
+	    <tab select="alertMe()">
+	     <tab-heading>
+	      <i class="fa fa-gear"></i>
+	     </tab-heading>
+	      <h4>Dashboard instellingen</h4>
+	    </tab>
+
+		<tab ng-repeat="tab in tabs" heading="<%tab.title%>" active="tab.active" disabled="tab.disabled">
+			<div ng-bind-html="tab.content"></div>
+		</tab>
+
+	  </tabset>
+	</div>
+	<div class="col-md-6">
+
+	</div>		
+	<div class="col-md-1">
+		  <button type="button" class="close" style="padding:5px;" ng-click="box.detailMode = false">&times;</button>
+	</div>
+  </div></div>
