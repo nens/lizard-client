@@ -93,7 +93,7 @@ app.directive('clickLayer', ["$q", function ($q) {
         .attr("stroke-opacity", 0.8)
         .attr("stroke-width", 5);
 
-      // // Entity specific modifications
+      // Entity specific modifications
       if (entityName.indexOf("pumpstation_non_sewerage") !== -1) {
         this._circleMarker.setRadius(13);
         if (map.getZoom() < 13) {
@@ -148,24 +148,26 @@ app.directive('clickLayer', ["$q", function ($q) {
       if (n === o) { return true; }
       switch (scope.tools.active) {
       case 'rain':
-        console.log('draw arrow at:', scope.mapState.here);
         drawArrowHere(scope.mapState.here);
         break;
       case 'profile':
         drawFromHereToHere(scope.mapState.here);
         break;
       default:
+        // Give feedback of the click
         drawClickInSpace(scope.mapState.here);
         if (scope.deferred) {
           // cancel by resolving
           scope.deferred.resolve();
         }
+        // Get data asynchronous
         var promise = getDataFromUTF(scope.mapState.here);
         promise.then(function (response) {
+          // Either way, stop vibrating
           ctrl.stopVibration();
           if (response) {
             if (response.data) {
-              drawGeometry(response.data);
+              drawGeometry(response.data.geom, response.data.entity_name);
             }
           }
         });
@@ -173,7 +175,10 @@ app.directive('clickLayer', ["$q", function ($q) {
       }
     });
 
-    scope.$watch('tools.active', function (n,o) {
+    /**
+     * Remove click feedback when switching between tools.
+     */
+    scope.$watch('tools.active', function (n, o) {
       if (n !== o) { ctrl.emptyClickLayer(scope.map); }
     });
 
@@ -182,6 +187,7 @@ app.directive('clickLayer', ["$q", function ($q) {
      *
      * Removes possible click feedback layer and creates a new clickLayer
      * containing a circle. The circle is than vibrated to attract attention.
+     * You will need to manully call ctrl.stopVibrating or remove the layer.
      *
      * @param {object} latLng Leaflet object specifying the latitude
      * and longitude of a click
@@ -198,20 +204,27 @@ app.directive('clickLayer', ["$q", function ($q) {
      * Draws a circle around an object on click.
      *
      * Removes possible click feedback layer and creates a new clickLayer
-     * containing a circle. The circle is vibrated to attract attention.
+     * containing a circle around the clicked object. The circle is vibrated
+     * to attract attention.
      *
-     * @param {object} geometry Geojson compliant geometry object coming
-     *  from UTFgrid
+     * @param {object} geom Geojson compliant geometry object
      * @param {string} entityName Name of the object to give it custom
      *  styling
      */
-    var drawGeometry = function (data) {
+    var drawGeometry = function (geom, entityName) {
       ctrl.emptyClickLayer(scope.map);
-      var geometry = angular.fromJson(data.geom);
+      var geometry = angular.fromJson(geom);
       ctrl.drawFeature(geometry);
-      ctrl.drawObject(data.entity_name, scope.map);
+      ctrl.drawObject(entityName, scope.map);
     };
 
+    /**
+     * Draws an arrow at specified location to indicate click.
+     * Used to indicate location of rain graph
+     * 
+     * @param {object} latLng Leaflet object specifying the latitude
+     * and longitude of a click
+     */
     function drawArrowHere(latlng) {
       ctrl.emptyClickLayer(scope.map);
       var geometry = {"type": "Point",
@@ -221,25 +234,50 @@ app.directive('clickLayer', ["$q", function ($q) {
       ctrl.substitueFeatureForArrow(px);
     }
 
-    function drawFromHereToHere(latlng) {
-
+    /**
+     * TODO
+     * 
+     * Draws an arrow directing to the users mouse which stops following
+     * the mouse at the second click to show location of line for profile
+     * tool.
+     * 
+     * @param  {[type]} [description]
+     * @return {[type]} [description]
+     */
+    function drawFromHereToHere() {
     }
 
+    /**
+     * Gets data from utf grid.
+     *  
+     * @param  {object} latlng leaflet object specifying the location
+     *                         of a click
+     * @return {promise} scope.defferred.promise Containing a thennable 
+     *                         promise of an utf data object which is either
+     *                         immediately resolved or resolved when the 
+     *                         the grid layer has finished loading
+     */
     function getDataFromUTF(latlng) {
       scope.deferred = $q.defer();
+      // Get sewerageLayer or false
       var sewerageLayer = getLayer('grid', 'sewerage');
+      // event object for utfgrid plugin
       var e = {};
       e.latlng = latlng;
       if (sewerageLayer) {
+        // Make call to private function from utfgrid plugin
         var response = sewerageLayer._objectForEvent(e);
+        // If empty and still loading it might be empty because
+        // the grid was there but did not contain the tile containing
+        // this the latlng. 
         if (response.data === null && sewerageLayer.isLoading) {
           getDataFromUTFAsynchronous(e);
         } else {
+          // Resolve with response and update activeObject
           scope.deferred.resolve(response);
           angular.extend(scope.activeObject, response.data);
           scope.activeObject.latlng = response.latlng;
           scope.activeObject.changed = !scope.activeObject.changed;
-          console.log(scope.activeObject);
         }
       } else {
         getDataFromUTFAsynchronous(e);
@@ -247,6 +285,13 @@ app.directive('clickLayer', ["$q", function ($q) {
       return scope.deferred.promise;
     }
 
+    /**
+     * Adds listener to the broadcast from map-directive messaging
+     * that the utf grid has finished loading.
+     * 
+     * @param  {leaflet event object} e containing e.latlng for the 
+     *                                  location of the click
+     */
     function getDataFromUTFAsynchronous(e) {
       // If there is no grid layer it is probably still being
       // loaded by the map-directive which will broadcast a 
@@ -257,11 +302,11 @@ app.directive('clickLayer', ["$q", function ($q) {
       }
       scope.on = scope.$on('sewerageGridLoaded', function () {
         scope.on();
+        var sewerageLayer = getLayer('grid', 'sewerage');
+        var response = sewerageLayer._objectForEvent(e);
         // since this part executes async in a future turn of the event loop, we need to wrap
         // it into an $apply call so that the model changes are properly observed.
         scope.$apply(function () {
-          var sewerageLayer = getLayer('grid', 'sewerage');
-          var response = sewerageLayer._objectForEvent(e)
           scope.deferred.resolve(response);
           angular.extend(scope.activeObject, response.data);
           scope.activeObject.latlng = response.latlng;
@@ -297,21 +342,10 @@ app.directive('clickLayer', ["$q", function ($q) {
       return layer;
     };
 
-    // leafletLayer.on('click', function (e) {
-    //   if (e.data) {
-    //     $scope.$apply(function () {
-    //       angular.extend($scope.activeObject, e.data);
-    //       $scope.activeObject.latlng = e.latlng;
-    //       $scope.activeObject.changed = !$scope.activeObject.changed;
-    //     });
-    //   }
-    // });
-
-    };
+  };
 
   return {
     scope: true, // isolate scope
-    //require: 'map',
     link: link,
     controller: MapClickController
   };
