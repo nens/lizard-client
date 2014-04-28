@@ -80,7 +80,7 @@ app.directive('clickLayer', ["$q", function ($q) {
 
     this.drawObject = function (entityName, map) {
       var selection = this._getSelection();
-
+      this._circleMarker.setRadius(11);
       selection.select("path")
         .attr("stroke", "#1abc9c")
         .transition().duration(150)
@@ -90,20 +90,14 @@ app.directive('clickLayer', ["$q", function ($q) {
         .transition().duration(150)
         .attr("stroke-width", 15)
         .transition().duration(150)
-        .attr("stroke-opacity", 1)
+        .attr("stroke-opacity", 0.8)
         .attr("stroke-width", 5);
 
-      // Entity specific modifications
+      // // Entity specific modifications
       if (entityName.indexOf("pumpstation_non_sewerage") !== -1) {
         this._circleMarker.setRadius(13);
-        if (map.getZoom() < 21) {
-          this._circleMarker.setRadius(13);
-        }
         if (map.getZoom() < 13) {
           this._circleMarker.setRadius(16);
-        }
-        if (map.getZoom() < 11) {
-          this._circleMarker.setRadius(13);
         }
       } else if (entityName.indexOf("pumpstation_sewerage") !== -1) {
         this._circleMarker.setRadius(11);
