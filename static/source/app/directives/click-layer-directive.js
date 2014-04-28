@@ -2,11 +2,14 @@
  * Click layer
  * 
  * Watches mapState.here to register a click on the map
- * Provides the tool-specific feedback by modifying the DOM
- * Watches activeObject to override this feedback with 
- * 
- * Requires map, scope.mapState.here and a notion of the utf-grids
- * 
+ * Provides the tool-specific feedback by modifying the DOM. Click
+ * layer feedback either is hardcoded bound to the tool or comes 
+ * from the utf grid. 
+ *
+ *  TODO: What is now called MapClickController should become a service,
+ *  the semi generic functions from the link function should be part of this
+ *  service and the rest should form a controller.. Since there is no direct 
+ *  DOM modification. Probably.?
  */
 
 
@@ -14,6 +17,10 @@ app.directive('clickLayer', ["$q", function ($q) {
 
   var MapClickController = function () {
     
+    /**
+     * Remove any existing click layers and creates a new empty one
+     * @param  {leaflet map object} map
+     */
     this.emptyClickLayer = function (map) {
       if (this.clickLayer) {
         map.removeLayer(this.clickLayer);
@@ -21,12 +28,17 @@ app.directive('clickLayer', ["$q", function ($q) {
       this.clickLayer = L.geoJson().addTo(map);
     };
 
-    this._getSelection = function () {
+    /**
+     * Returns the svg as a d3 selection of leaflet layer
+     * @param  {leaflet svg layer} layer
+     * @return {d3 selection} the svg of the leaflet object layer
+     */
+    this._getSelection = function (layer) {
       // Due to some leaflet obscurity you have to get the first item with an unknown key.
-      var layer = this.clickLayer._layers;
+      var _layers = layer._layers;
       var selection;
-      for (var key in layer) {
-        selection = d3.select(layer[key]._container);
+      for (var key in _layers) {
+        selection = d3.select(_layers[key]._container);
         break;
       }
       return selection;
@@ -50,7 +62,7 @@ app.directive('clickLayer', ["$q", function ($q) {
     };
 
     this.vibrateFeature = function () {
-      this._selection = this._getSelection();
+      this._selection = this._getSelection(this.clickLayer);
 
       var self = this;
 
@@ -79,7 +91,7 @@ app.directive('clickLayer', ["$q", function ($q) {
     };
 
     this.drawObject = function (entityName, map) {
-      var selection = this._getSelection();
+      var selection = this._getSelection(this.clickLayer);
       this._circleMarker.setRadius(11);
       selection.select("path")
         .attr("stroke", "#1abc9c")
@@ -115,7 +127,7 @@ app.directive('clickLayer', ["$q", function ($q) {
     };
 
     this.substitueFeatureForArrow = function (point) {
-      var selection = this._getSelection();
+      var selection = this._getSelection(this.clickLayer);
       var g = selection;
       // This is an arrow:
       var path = "M " + point.x + " " + point.y + " " +
