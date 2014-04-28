@@ -123,7 +123,7 @@ app.directive('clickLayer', ["$q", function ($q) {
     this.substitueFeatureForArrow = function (point) {
       var selection = this._getSelection();
       var g = selection;
-      // This is an arrow
+      // This is an arrow:
       var path = "M " + point.x + " " + point.y + " " +
                  "l 15 -10 " + 
                  "l -10 0 " +
@@ -181,7 +181,7 @@ app.directive('clickLayer', ["$q", function ($q) {
 
     scope.$watch('tools.active', function (n,o) {
       if (n !== o) { ctrl.emptyClickLayer(scope.map); }
-    })
+    });
 
     /**
      * Draws visible feedback on the map after a click.
