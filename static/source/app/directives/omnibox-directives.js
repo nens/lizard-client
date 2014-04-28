@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module("omnibox", ["templates-main"])
-  .directive("omnibox", ["$compile", "$templateCache",
-    function ($compile, $templateCache) {
+  .directive("omnibox", ["$compile", "$templateCache", "BookmarkService",
+    function ($compile, $templateCache, BookmarkService) {
 
     var getTemplate = function (contentType) {
       if (contentType === undefined) {
@@ -45,51 +45,6 @@ angular.module("omnibox", ["templates-main"])
       restrict: 'E',
       link: linker,
       templateUrl: 'templates/omnibox-search.html'
-    };
-  }])
-  .directive('streetview', ['$compile', '$timeout', function($compile, $timeout){
-    return {
-      scope: true,
-      link: function(scope, $element, $attrs, $transclude) {
-
-        scope.svWidth = 300;
-        scope.svHeight = 150;
-
-        scope.$watch('box.largeCard', function(o,n) {
-          console.log('watch', scope.$parent.$parent.box.largeCard);
-          if(o===n) { return false; }
-          if(scope.$parent.$parent.box.largeCard) {
-            scope.svWidth = 500;
-            scope.svHeight = 250;
-            var omnibox = angular.element(document.querySelector('.card'));
-            var height = 0;
-            angular.forEach(omnibox.children(), function(value, key) {
-              // console.log(value, key);
-              height = height + value.clientHeight;
-            });
-            omnibox[0].style.height = 100 + height + 'px';
-            // debugger;
-          } else {
-            scope.svWidth = 300;
-            scope.svHeight = 150;
-            var omnibox = angular.element(document.querySelector('.card'));
-            var height = 0;
-            angular.forEach(omnibox.children(), function(value, key) {
-              // console.log(value, key);
-              height = height + value.clientHeight;
-            });
-            omnibox[0].style.height = 30 + height + 'px';
-          }
-        });
-
-        $timeout(function() {
-          scope.svLat = $attrs.lat;
-          scope.svLon = $attrs.lon;
-        }, 400);
-      },
-      restrict: 'E',
-      template: '<img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=<% svWidth %>x<% svHeight %>&location=<% svLat %>,<% svLon %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo" />',
-      replace: true
     };
   }]);
 
