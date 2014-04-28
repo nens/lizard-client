@@ -80,8 +80,8 @@ app.config(function ($locationProvider) {
 
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "Restangular", "$q", "$compile", "CabinetService",
-  function ($scope, $http, Restangular, $q, $compile, CabinetService)  {
+  ["$scope", "$http", "$q", "$compile", "CabinetService",
+  function ($scope, $http, $q, $compile, CabinetService) {
 
   // BOX MODEL
   $scope.box = {
@@ -245,6 +245,7 @@ app.controller("MasterCtrl",
    * This function just sums it all up
    */
   $scope.events.countCurrentEvents = function () {
+    console.log($scope.events.types);
     for (var eventType in $scope.events.types) {
       $scope.events.types[eventType].currentCount = 0;
     }
@@ -263,20 +264,20 @@ app.controller("MasterCtrl",
    * When an event type is off, it is passed to getEvents
    * When an event type is on, it is passed to removeEvents and the remaining events are recolored
    * 
-   * @param: str containing the name of the event type to toggle
+   * @param: str containing the type of the event type to toggle
    */
-  $scope.events.toggleEvents = function (name) {
-    if ($scope.events.types[name]) {
-      if ($scope.events.types[name].active) {
-        $scope.events.types[name].active = false;
-        $scope.events.data = removeEvents($scope.events.data, name);
+  $scope.events.toggleEvents = function (type) {
+    if ($scope.events.types[type]) {
+      if ($scope.events.types[type].active) {
+        $scope.events.types[type].active = false;
+        $scope.events.data = removeEvents($scope.events.data, type);
         addColor($scope.events.data);
         $scope.events.changed = Date.now();
       } else {
-        getEvents(name);
+        getEvents(type);
       }
     } else {
-      getEvents(name);
+      getEvents(type);
     }
     if ($scope.timeState.hidden !== false) {
       $scope.toggleTimeline();
@@ -291,16 +292,20 @@ app.controller("MasterCtrl",
    * 
    * @param: str containing the name of the event type to download
    */
-  var getEvents = function (name) {
+  var getEvents = function (type) {
+    CabinetService.events.get()
+      .then(function (response) {
+        console.log(response);
+      });
     // Get data from json as long as there is no db implementation
-    var url = '/static/data/' + name + '.geojson';
+    var url = '/static/data/' + type + '.geojson';
     $http.get(url)
     .success(function (response) {
       var data = response;
-      $scope.events.data = addEvents($scope.events.data, data, name);
+      $scope.events.data = addEvents($scope.events.data, data, type);
       addColor($scope.events.data);
-      $scope.events.types[name].count = response.features.length;
-      $scope.events.types[name].active = true;
+      $scope.events.types[type].count = response.features.length;
+      $scope.events.types[type].active = true;
       $scope.events.changed = Date.now();
     });
   };
@@ -317,10 +322,10 @@ app.controller("MasterCtrl",
    * 
    * @param: object geojson compliant data object to add too
    * @param: object geojson compliant data object to add
-   * @param: str containing the name of the event type to add
+   * @param: str containing the type of the event to add
    * @returns: object geojson compliant data object 
    */
-  var addEvents = function (longData, shortData, name) {
+  var addEvents = function (longData, shortData, type) {
     // Create event identifier
     var eventOrder;
     if (longData.features === undefined) {longData.features = []; }
@@ -332,14 +337,14 @@ app.controller("MasterCtrl",
       });
       eventOrder = maxEventOrder + 1;
     }
-    $scope.events.types[name] = {};
-    $scope.events.types[name].event_type = eventOrder;
+    $scope.events.types[type] = {};
+    $scope.events.types[type].event_type = eventOrder;
     angular.forEach(shortData.features, function (feature) {
       feature.event_type = eventOrder;
       feature.color = $scope.colors[8][eventOrder];
-      feature.name = name;
+      feature.type = type;
       // Create unique id, a combo of time and location. I assume this is always unique..
-      feature.id = name + feature.properties.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
+      feature.id = type + feature.properties.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
       longData.features.push(feature);
     });
     $scope.events.types.count = $scope.events.types.count + 1;
@@ -352,7 +357,7 @@ app.controller("MasterCtrl",
    * Takes a geojson compliant data object and adds a color to all the features. 
    * If there is only one event type, the events are colored on the basis of sub_event_type
    * If there are multiple event types active, the events are colored on the basis of a colorscale
-   * on the scope and the name of the feature.
+   * on the scope and the type of the feature.
    * 
    * @param: object geojson compliant data object with all the events
    */
@@ -365,7 +370,7 @@ app.controller("MasterCtrl",
       });
     } else {
       angular.forEach(longData.features, function (feature) {
-        feature.color = $scope.events.scale(feature.name);
+        feature.color = $scope.events.scale(feature.type);
       });
     }
   };
@@ -373,21 +378,21 @@ app.controller("MasterCtrl",
   /**
    * Removes events from the data object.
    * 
-   * Takes a geojson compliant data object and removes the features with the given name
+   * Takes a geojson compliant data object and removes the features with the given type
    * It also removes the metadata of these events and lowers the eventOrder of all the 
    * event types which have a order that is greater than the order of the removed event type.
    * 
    * @param: object geojson compliant data object 
-   * @param: str containing the name of the event type to remove
+   * @param: str containing the type of the event to remove
    * @returns: object geojson compliant data object 
    */
-  var removeEvents = function (longData, name) {
-    var eventOrder = $scope.events.types[name].event_type;
+  var removeEvents = function (longData, type) {
+    var eventOrder = $scope.events.types[type].event_type;
     var iterations = longData.features.length;
     for (var i = 0; i < iterations; i++) {
       var index = iterations - 1 - i;
       var feature = longData.features[index]; // Go from back to front to not mess with the order
-      if (feature.name === name) {
+      if (feature.type === type) {
         var j = longData.features.indexOf(feature);
         longData.features.splice(j, 1);
       }

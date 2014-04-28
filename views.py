@@ -16,13 +16,18 @@ from django.template import RequestContext
 from django.utils.safestring import mark_safe
 from rest_framework.renderers import JSONRenderer
 
-from hydra_core.models import Layer, ThreediInstance
+from hydra_core.models import Layer
+from hydra_core.models import Event
 from lizard_nxt.server.serializers import spatial
 from lizard_nxt.server.middleware import ORGANISATION_IDS
 from lizard_auth_client.models import Organisation
 
 
 def _bootstrap(objects):
+    """Render objects as JSON.
+
+    :param objects: objects to render
+    """
     return mark_safe(JSONRenderer().render(objects))
 
 
@@ -33,12 +38,16 @@ def index(request):
         Layer.objects.filter(overlayer=True)).data
     layers = spatial.LayerSerializer(
         Layer.objects.filter(baselayer=False)).data
+    events = Event.objects.distinct('type')
+    event_types = []
+    for event in events:
+        count = Event.objects.filter(type=event.type).count()
+        event_types.append({"type": event.type, "event_count": count})
 
     for layer in layers:
         if layer['type'] == 'ASSET':
-            layer['url'] = 'http://' + request.META['HTTP_HOST'] + '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}'
-
-
+            layer['url'] = ('http://' + request.META['HTTP_HOST'] +
+                            '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}')
 
     # Define data bounds based on the (multiple) administrative bounds of all
     # the user's organisations. The data bounding box is the rectangle around
@@ -71,7 +80,7 @@ def index(request):
         'strap_over_layers': _bootstrap(over_layers),
         'strap_layers': _bootstrap(layers),
         'strap_data_bounds': _bootstrap(data_bounds),
-        'threedi_instance': ThreediInstance.objects.all()[0],
+        'strap_event_types': _bootstrap(event_types),
         # For now, just assign a server
     }
     if getattr(settings, "DEV_TEMPLATE", False):
