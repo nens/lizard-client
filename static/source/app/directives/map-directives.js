@@ -517,7 +517,7 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
 
 
     scope.map.on('movestart', function() {
-          scope.box.mapMoving = true;
+          scope.mapState.mapMoving = true;
     });
 
     /**
@@ -538,7 +538,7 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
       ].join(',');
       if (!scope.$$phase) {
         scope.$apply(function () {
-          scope.box.mapMoving = false;
+          scope.mapState.mapMoving = false;
           $location.hash(newHash);
         });
       } else {
@@ -580,7 +580,7 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
           }
         }
       }
-      scope.box.mapMoving = false;
+      scope.mapState.mapMoving = false;
       scope.holdRightThere = false;
     });
 
