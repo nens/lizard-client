@@ -81,8 +81,8 @@ app.config(function ($locationProvider) {
 
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "Restangular", "$q", "$compile", "CabinetService", "BookmarkService",
-  function ($scope, $http, Restangular, $q, $compile, CabinetService, BookmarkService)  {
+  ["$scope", "$http", "Restangular", "$q", "$compile", "CabinetService",
+  function ($scope, $http, Restangular, $q, $compile, CabinetService)  {
 
   // BOX MODEL
   $scope.box = {
@@ -160,12 +160,6 @@ app.controller("MasterCtrl",
     // console.log('Showing detailmode for ', $scope.activeObject);
   };
 
-  $scope.bookmarkItem = function() {
-    // TODO: Create a bookmarking service and hook this up.
-    console.log('BookmarkService:', BookmarkService);
-    return BookmarkService.add($scope.activeObject);
-    // console.log('TODO: This should bookmark ', $scope.activeObject);
-  };
 
   // TOOLS
 
