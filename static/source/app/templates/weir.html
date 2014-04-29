@@ -1,13 +1,26 @@
-<div class="card">
+<div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
 <!-- Card for "stuw" / "weir" -->
-<!--     <div class="actions">
+    <div class="actions">
       <ul>
-        <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li>
-        <li class="fullscreen"><a href="#" title="Maak deze infocard groter"><i class="fa fa-arrows-alt"></i></a></li>
-        <li class="favorite"><a href="#" title="Voeg toe aan favorieten"><i class="fa fa-bookmark"></i></a></li>
-        <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li>
+        <!-- <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li> -->
+        <li class="fullscreen">
+          <a 
+            ng-click="toggleDetailmode()"
+            title="Bekijk in detailmode">
+            <i class="fa fa-lg fa-plus-square-o"></i>
+          </a>
+        </li>
+<!--         <li class="favorite">
+          <a
+            ng-click="bookmarkItem()" 
+            title="Voeg toe aan favorieten">
+            <i class="fa fa-lg fa-bookmark"></i>
+          </a>
+        </li> -->
+        <!-- <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li> -->
       </ul>
-    </div> -->
+    </div> <!-- end actions -->
+
 
   <div class="card-title">
     <!-- <img src="/static/distjs/images/weir.png" class="img-circle"> -->

@@ -47,3 +47,4 @@ angular.module("omnibox", ["templates-main"])
       templateUrl: 'templates/omnibox-search.html'
     };
   }]);
+

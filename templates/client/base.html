@@ -88,6 +88,10 @@
 
     {% block content %}
     
+    <div id="text-mode-scrollable">
+      
+    </div>
+
     <div id="master">
       <div class="layer-menu-container">
         <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': mapState.enabled}">
@@ -207,6 +211,7 @@
             </div>            
           </div>
         </div>
+
         <map layers="mapState.layers"
              rasterprofile="disabled"
              vectorlayer
@@ -219,10 +224,10 @@
     </div>
 
     {% block box_awesome %}{% endblock %}
+    <dashboard id="dashboard" ng-show="box.detailMode"></dashboard>
+
     <div class="container" ng-controller="SearchCtrl">
-      <omnibox id="omnibox">
-  
-      </omnibox>
+      <omnibox id="omnibox"></omnibox>
     </div>
   </div> <!-- MapCtrl Closed.-->
 
