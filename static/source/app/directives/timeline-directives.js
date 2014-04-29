@@ -224,7 +224,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       .attr('x2', graph.xScale(now))
       .attr('y1', graph.height)
       .attr('y2', 0)
-      .attr('style', 'stroke:rgb(255,0,0);stroke-width:2');
+      .attr('style', 'stroke:#2980b9;stroke-width:4');
   };
 
   return this;
@@ -306,6 +306,10 @@ app.controller('TimelineDirCtrl', function ($scope) {
       // Update circle positions
       graph.svg.selectAll("circle")
         .attr("cx", function (d) { return Math.round(graph.xScale(d.properties.timestamp)); });
+      // Update now indicator
+      graph.svg.selectAll('.now-indicator')
+        .attr('x1', graph.xScale(scope.timeState.at))
+        .attr('x2', graph.xScale(scope.timeState.at));
       // Update timeState and wake up watches
       scope.$apply(function () {
         scope.timeState.start = graph.xScale.domain()[0].getTime();

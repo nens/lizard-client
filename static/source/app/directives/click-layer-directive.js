@@ -139,8 +139,8 @@ app.directive('clickLayer', ["$q", function ($q) {
                  "l -10 0 z";
       g.select("path").attr("d", path)
         .attr("stroke-opacity", 1)
-        .attr("stroke-width", 3)
-        .attr("stroke", "#2980b9")
+        .attr("stroke-width", 2)
+        .attr("stroke", "white")
         .attr("fill", "#2980b9")
         .attr("fill-opacity", "1");
     };
