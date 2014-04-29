@@ -51,7 +51,8 @@ app.directive('vectorlayer', function () {
              .style("left", (topLeft[0] - 10) + "px")
              .style("top", (topLeft[1] - 10) + "px");
 
-          g.attr("transform", "translate(" + -(topLeft[0] - 10) + "," + -(topLeft[1] - 10) + ")")
+          g.attr("transform", "translate(" + -(topLeft[0] - 10) + "," +
+                 -(topLeft[1] - 10) + ")")
            .selectAll("path").attr("d", path);
         }
 

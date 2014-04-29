@@ -245,14 +245,13 @@ app.controller("MasterCtrl",
    * This function just sums it all up
    */
   $scope.events.countCurrentEvents = function () {
-    console.log($scope.events.types);
     for (var eventType in $scope.events.types) {
       $scope.events.types[eventType].currentCount = 0;
     }
     for (var i = 0; i < $scope.events.data.features.length; i++) {
       var feature = $scope.events.data.features[i];
       if (feature.inTempExtent && feature.inSpatExtent) {
-        eventType = feature.name;
+        eventType = feature.event_type;
         $scope.events.types[eventType].currentCount++;
       }
     }
@@ -290,24 +289,18 @@ app.controller("MasterCtrl",
    * Callback passes the response to addEvents, recolors the event data object,
    * Does bookkeeping and triggers watches by updating events.changed
    * 
-   * @param: str containing the name of the event type to download
+   * @param: str containing the type of the event type to download
    */
   var getEvents = function (type) {
-    CabinetService.events.get()
+    CabinetService.events.get({type: type})
       .then(function (response) {
-        console.log(response);
+        var data = response;
+        $scope.events.data = addEvents($scope.events.data, data, type);
+        addColor($scope.events.data);
+        $scope.events.types[type].count = response.features.length;
+        $scope.events.types[type].active = true;
+        $scope.events.changed = Date.now();
       });
-    // Get data from json as long as there is no db implementation
-    var url = '/static/data/' + type + '.geojson';
-    $http.get(url)
-    .success(function (response) {
-      var data = response;
-      $scope.events.data = addEvents($scope.events.data, data, type);
-      addColor($scope.events.data);
-      $scope.events.types[type].count = response.features.length;
-      $scope.events.types[type].active = true;
-      $scope.events.changed = Date.now();
-    });
   };
 
   /**
@@ -328,23 +321,26 @@ app.controller("MasterCtrl",
   var addEvents = function (longData, shortData, type) {
     // Create event identifier
     var eventOrder;
-    if (longData.features === undefined) {longData.features = []; }
-    if (longData.features.length === 0) { eventOrder = 1; }
-    else {
+    if (longData.features === undefined) { longData.features = []; }
+    if (longData.features.length === 0) {
+      eventOrder = 1;
+    } else {
       var maxEventOrder = 0;
       angular.forEach(longData.features, function (feature) {
-        maxEventOrder = feature.event_type > maxEventOrder ? feature.event_type : maxEventOrder;
+        maxEventOrder = feature.event_order > maxEventOrder ?
+                        feature.event_order : maxEventOrder;
       });
       eventOrder = maxEventOrder + 1;
     }
     $scope.events.types[type] = {};
     $scope.events.types[type].event_type = eventOrder;
     angular.forEach(shortData.features, function (feature) {
-      feature.event_type = eventOrder;
+      feature.event_order = eventOrder;
       feature.color = $scope.colors[8][eventOrder];
-      feature.type = type;
-      // Create unique id, a combo of time and location. I assume this is always unique..
-      feature.id = type + feature.properties.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
+      feature.event_type = type;
+      feature.id = type + feature.properties.timestamp +
+                   feature.geometry.coordinates[0] +
+                   feature.geometry.coordinates[1];
       longData.features.push(feature);
     });
     $scope.events.types.count = $scope.events.types.count + 1;
@@ -354,23 +350,27 @@ app.controller("MasterCtrl",
   /**
    * Adds a color attribute to features in event data object
    * 
-   * Takes a geojson compliant data object and adds a color to all the features. 
-   * If there is only one event type, the events are colored on the basis of sub_event_type
-   * If there are multiple event types active, the events are colored on the basis of a colorscale
-   * on the scope and the type of the feature.
+   * Takes a geojson compliant data object and adds a color to all the
+   * features. If there is only one event type, the events are colored on the
+   * basis of sub_event_type. If there are multiple event types active, the
+   * events are colored on the basis of a colorscale on the scope and the type
+   * of the feature.
    * 
    * @param: object geojson compliant data object with all the events
+   *
+   * TODO: something goes wrong when adding a second event series, ordinal
+   * scale is ignored.
    */
   var addColor = function (longData) {
     var scale;
     if ($scope.events.types.count === 1) {
       scale = d3.scale.ordinal().range($scope.colors[8]);
       angular.forEach(longData.features, function (feature) {
-        feature.color = scale(feature.properties.event_sub_type);
+        feature.color = scale(feature.properties.sub_type);
       });
     } else {
       angular.forEach(longData.features, function (feature) {
-        feature.color = $scope.events.scale(feature.type);
+        feature.color = $scope.events.scale(feature.event_type);
       });
     }
   };
@@ -392,7 +392,7 @@ app.controller("MasterCtrl",
     for (var i = 0; i < iterations; i++) {
       var index = iterations - 1 - i;
       var feature = longData.features[index]; // Go from back to front to not mess with the order
-      if (feature.type === type) {
+      if (feature.event_type === type) {
         var j = longData.features.indexOf(feature);
         longData.features.splice(j, 1);
       }
