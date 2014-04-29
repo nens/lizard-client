@@ -19,8 +19,6 @@ app.controller('DashboardDirCtrl', ['$scope', '$timeout', '$http', '$sce', funct
 			disabled: true
 		}];
 
-	$scope.bookmarkService = BookmarkService;
-
 	$scope.alertMe = function() {
 		// NOTE: Example of how a controller function can be called from the directive
 		return console.log('alertMe()');
