@@ -227,6 +227,28 @@ app.controller('TimelineDirCtrl', function ($scope) {
       .attr('style', 'stroke:#2980b9;stroke-width:4');
   };
 
+  this.hideNow = function (graph) {
+    var line = graph.svg.select('g').select('.now-indicator');
+    line
+      .attr('x1', null)
+      .attr('x2', null)
+      .attr('y1', null)
+      .attr('y2', null)
+      .attr('style', null);
+  };
+
+  this.updateNow = function (graph, now) {
+    var line = graph.svg.select('g').select('.now-indicator');
+    line
+      .transition()
+      .delay(500)
+      .duration(500)
+      .attr('x1', graph.xScale(now))
+      .attr('x2', graph.xScale(now))
+      .attr('y1', graph.height)
+      .attr('y2', 0);
+  };
+
   return this;
 })
 .directive('timeline', [ function () {
@@ -293,7 +315,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       var yScale = timelineCtrl.scale({min: 1, max: nEventTypes}, { min: newGraph.height - 27, max: 20 }, {scale: 'linear'});
       // Update the svg
       timelineCtrl.drawCircles(newGraph.svg, newGraph.xScale, yScale, graph.colorScale, 'timestamp', 'event_type', 'event_type', data);
-
+      timelineCtrl.updateNow(newGraph, scope.timeState.at);
       return newGraph;
     };
 
@@ -378,10 +400,13 @@ app.controller('TimelineDirCtrl', function ($scope) {
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.animation.enabled) {
+        timelineCtrl.hideNow(graph);
         graph.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
         timelineCtrl.brushmove();
-      } else {
+      } else if (scope.tools.active === 'rain') {
         timelineCtrl.drawNow(graph, scope.timeState.at);
+      } else {
+        timelineCtrl.hideNow(graph);
       }
     });
 
