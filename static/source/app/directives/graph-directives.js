@@ -469,13 +469,6 @@ angular.module('graph')
           .attr('x1', function (d) { return x.scale(d[0]) - 0.35 * width / barWidth; })
           .attr('x2', function (d) { return x.scale(d[0]) + 0.35 * width / barWidth; });
 
-        scope.$apply(function () {
-            // step out of isolate scope with $parent.
-            scope.$parent.timeState.start = x.scale.domain()[0].getTime();
-            scope.$parent.timeState.end = x.scale.domain()[1].getTime();
-            scope.$parent.timeState.changeOrigin = 'barChart';
-            scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
-          });
       };
 
       var g = graphCtrl.createDrawingArea(width, height);
