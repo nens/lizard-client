@@ -287,7 +287,7 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
     map.attributionControl.addAttribution(osmAttrib);
     map.attributionControl.setPrefix('');
     scope.map = map;
-
+    window.mapobj = map;
     // Initialise layers
     angular.forEach(scope.mapState.baselayers, function (layer) {
       if (!layer.initiated) {
