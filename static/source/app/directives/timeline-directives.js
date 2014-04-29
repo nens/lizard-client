@@ -215,6 +215,10 @@ app.controller('TimelineDirCtrl', function ($scope) {
     d3.selectAll('.bar').classed("selected", false);
   };
 
+  this.drawNow = function (svg, now) {
+
+  };
+
   return this;
 })
 .directive('timeline', [ function () {
@@ -250,7 +254,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
        *
        */
       graph.svg.on("click", function () {
-        var timeClicked = +(graph.xScale.invert(d3.event.x));
+        var timeClicked = +(graph.xScale.invert(d3.event.x- graph.margin.left));
         scope.timeState.at = timeClicked;
         scope.$digest();
       });
@@ -364,6 +368,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
       if (scope.timeState.animation.enabled) {
         graph.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
         timelineCtrl.brushmove();
+      } else {
+        timelineCtrl.drawNow(graph.svg, scope.timestate.at);
       }
     });
 
