@@ -24,6 +24,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
           .attr("width", width)
           .attr("height", height)
           .attr("class", "plot-temporal");
+    svg.select('g').append('line')
+      .attr('class', 'now-indicator');
     // Create element for axis
     svg.select('g').append("g")
       .attr('class', 'x axis')
@@ -215,8 +217,14 @@ app.controller('TimelineDirCtrl', function ($scope) {
     d3.selectAll('.bar').classed("selected", false);
   };
 
-  this.drawNow = function (svg, now) {
-
+  this.drawNow = function (graph, now) {
+    var line = graph.svg.select('g').select('.now-indicator');
+    line
+      .attr('x1', graph.xScale(now))
+      .attr('x2', graph.xScale(now))
+      .attr('y1', graph.height)
+      .attr('y2', 0)
+      .attr('style', 'stroke:rgb(255,0,0);stroke-width:2');
   };
 
   return this;
@@ -369,7 +377,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         graph.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
         timelineCtrl.brushmove();
       } else {
-        timelineCtrl.drawNow(graph.svg, scope.timestate.at);
+        timelineCtrl.drawNow(graph, scope.timeState.at);
       }
     });
 
