@@ -254,7 +254,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
        *
        */
       graph.svg.on("click", function () {
-        var timeClicked = +(graph.xScale.invert(d3.event.x- graph.margin.left));
+        var timeClicked = +(graph.xScale.invert(d3.event.x - graph.margin.left));
         scope.timeState.at = timeClicked;
         scope.$digest();
       });
