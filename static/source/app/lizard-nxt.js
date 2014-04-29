@@ -780,7 +780,6 @@ app.controller("MasterCtrl",
         $scope.toggleTimeline();
       }
     } else if ($scope.rain.enabled) {
-      $scope.toggleTimeline();
       $scope.rain.enabled = false;
     }
   };
