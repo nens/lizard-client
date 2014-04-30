@@ -438,9 +438,9 @@ app.controller('TimelineDirCtrl', function ($scope) {
      * Hide the now indicator when switching 
      * to anything but the rain tool.
      */
-    scope.$watch('tools.active', function (n,o) {
+    scope.$watch('tools.active', function (n, o) {
       if (n === o || scope.tools.active === 'rain') {
-        return true; 
+        return true;
       } else {
         timelineCtrl.hideNow(graph);
       }
