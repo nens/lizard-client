@@ -7,6 +7,7 @@ var app = angular.module("lizard-nxt", [
   'graph',
   'omnibox',
   'restangular',
+  'ui.bootstrap',
   'lizard-nxt.services'
 ]);
 
@@ -85,6 +86,7 @@ app.controller("MasterCtrl",
 
   // BOX MODEL
   $scope.box = {
+    detailMode: false,
     query: null,
     disabled: false,
     showCards: false,
@@ -116,11 +118,6 @@ app.controller("MasterCtrl",
   // TOOLS
   $scope.tools = {
     active: "none", //NOTE: make list?
-    cursorTooltip: {
-      enabled: false,
-      content: '',
-      location: ''
-    }
   };
 
   /**
@@ -139,6 +136,26 @@ app.controller("MasterCtrl",
       $scope.tools.active = name;
     }
   };
+
+  $scope.toggleCardSize = function() {
+    // console.log('toggleCardSize()');
+    if ( $scope.box.largeCard ) {
+      $scope.box.largeCard = false;
+    } else {
+      $scope.box.largeCard = true;      
+    }
+  };
+
+  $scope.toggleDetailmode = function() {
+    if($scope.box.detailMode) {
+      $scope.box.detailMode = false;
+    } else {
+      $scope.box.detailMode = true;
+    }
+    // console.log('Showing detailmode for ', $scope.activeObject);
+  };
+
+
   // TOOLS
 
   // MAP MODEL
@@ -156,7 +173,8 @@ app.controller("MasterCtrl",
     enabled: false,
     bounds: null,
     here: null,
-    geom_wkt: ''
+    geom_wkt: '',
+    mapMoving: false
   };
 
   $scope.panZoom = {};
@@ -577,8 +595,14 @@ app.controller("MasterCtrl",
     $scope.keyPressed = $event.which;
     $scope.keyTarget = $event.target;
     if ($event.which === 27) {
-      $scope.box.type = 'empty';
-      $scope.box.empty = null;
+      // If detailMode is active, close that
+      if ($scope.box.detailMode) {
+        $scope.box.detailMode = false;
+      } else {
+        // Or else, reset the omnibox state
+        $scope.box.type = 'empty';
+        $scope.box.empty = null;
+      }
     }
   };
 
@@ -756,7 +780,6 @@ app.controller("MasterCtrl",
         $scope.toggleTimeline();
       }
     } else if ($scope.rain.enabled) {
-      $scope.toggleTimeline();
       $scope.rain.enabled = false;
     }
   };

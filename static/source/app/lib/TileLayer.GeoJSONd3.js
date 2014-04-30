@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Leaflet Tilelayer for d3 geojson vectors
  * from https://gist.github.com/ZJONSSON/5529395
@@ -33,7 +35,7 @@ L.GeoJSONd3 = L.TileLayer.extend({
 
     this._container = d3.select(".leaflet-overlay-pane")
       .append("svg")
-      .attr("class", "leaflet-layer leaflet-zoom-hide")
+      .attr("class", "leaflet-layer leaflet-zoom-hide geojson-d3")
       .attr("viewBox", "-0.5 -0.5 " + dimensions.x + " " + dimensions.y)
       .attr("width", dimensions.x)
       .attr("height", dimensions.y);
@@ -124,7 +126,7 @@ L.GeoJSONd3 = L.TileLayer.extend({
     if (!tile.nodes && !tile.xhr) {
       tile.xhr = d3.json(this.getTileUrl(tilePoint), function (d) {
         tile.xhr = null;
-        tile.nodes = d3.select(".leaflet-overlay-pane").select("svg")
+        tile.nodes = self._container
           .append("g")
             .attr("class", "geojsontile")
             .attr("transform", "translate(" + -(self._left) + "," + -(self._top) + ")");

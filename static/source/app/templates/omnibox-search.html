@@ -1,10 +1,10 @@
-<div class="searchbox" id="searchbox" tabindex="-1" role="search" style="">
+<div class="searchbox" id="searchbox" tabindex="-1" role="search">
     <form id="searchbox_form"> 
         <table cellspacing="0" cellpadding="0" id="" class="searchboxinput" style="width: 375px; padding: 0px;">
             <tbody>
                 <tr>
                     <td>
-                        <input ng-model="box.query" ng-focus id="searchboxinput" name="q" tabindex="1" autocomplete="off" dir="ltr" spellcheck="false"><a href="" ng-click="reset_query()" id="clear" ></a>
+                        <input ng-model="box.query" ng-focus id="searchboxinput" name="q" tabindex="1" placeholder="Zoeken op adres, gemeente, ..." autocomplete="off" dir="ltr" spellcheck="false"><a href="" ng-click="reset_query()" id="clear" ></a>
                     </td>
                 </tr>
             </tbody>
@@ -13,6 +13,4 @@
     <button id="search-button" class="searchbutton" ng-click="search($event)" aria-label="Search" tabindex="3"></button>
 </div>
 
-<div id="cards" class="pullDown cardbox" ng-show="box.showCards">
-   
-</div> 
+<div id="cards" class="pullDown cardbox" ng-show="box.showCards" style="position:absolute;top:30px;clip:rect(0px,400px,1000px,0px);"></div> 
