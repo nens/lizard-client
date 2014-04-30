@@ -355,8 +355,8 @@ angular.module('graph')
         .transition()
         .duration(300)
         .ease('in-out')
-        .attr('x1', graph.x.scale(now))
-        .attr('x2', graph.x.scale(now))
+        .attr('x1', graph.x.scale(now) || -5)
+        .attr('x2', graph.x.scale(now) || -5)
         .attr('y1', graph.height)
         .attr('y2', 0);
     };
@@ -411,6 +411,7 @@ angular.module('graph')
         d3.select(element[0]).html("");
         scope.graph = graphCtrl.callChart(scope.data, element, legend);
         scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph);
+        // Draw the now for the rain
         if (scope.$parent.tools.active === 'rain') {
           graphCtrl.drawNow(scope.graph, scope.$parent.timeState.at);
         }

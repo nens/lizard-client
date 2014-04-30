@@ -24,10 +24,11 @@ app.controller('TimelineDirCtrl', function ($scope) {
           .attr("width", width)
           .attr("height", height)
           .attr("class", "plot-temporal");
+    // Create line for the timeState.at just out of sight
     svg.select('g').append('line')
       .attr('class', 'now-indicator')
-      .attr('x1', -35)
-      .attr('x2', -35)
+      .attr('x1', - margin.left - 5)
+      .attr('x2', - margin.left - 5)
       .attr('y1', height)
       .attr('y2', 0);
     // Create element for axis
@@ -247,8 +248,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
   this.hideNow = function (graph) {
     var line = graph.svg.select('g').select('.now-indicator');
     line
-      .attr('x1', -35)
-      .attr('x2', -35)
+      .attr('x1', - graph.margin.left - 5)
+      .attr('x2', - graph.margin.left - 5)
       .attr('y1', graph.height)
       .attr('y2', 0);
   };
@@ -352,9 +353,9 @@ app.controller('TimelineDirCtrl', function ($scope) {
       graph.svg.selectAll("circle")
         .attr("cx", function (d) { return Math.round(graph.xScale(d.properties.timestamp)); });
       // Update now indicator
-      graph.svg.selectAll('.now-indicator')
-        .attr('x1', graph.xScale(scope.timeState.at))
-        .attr('x2', graph.xScale(scope.timeState.at));
+      graph.svg.select('.now-indicator')
+        .attr('x1', graph.xScale(scope.timeState.at) || graph.margin.left - 5)
+        .attr('x2', graph.xScale(scope.timeState.at) || graph.margin.left - 5);
       // Update timeState and wake up watches
       scope.$apply(function () {
         scope.timeState.start = graph.xScale.domain()[0].getTime();
