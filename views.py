@@ -71,6 +71,7 @@ def index(request):
         'strap_over_layers': _bootstrap(over_layers),
         'strap_layers': _bootstrap(layers),
         'strap_data_bounds': _bootstrap(data_bounds),
+        'strap_orgs': _bootstrap(orgs),
         'threedi_instance': ThreediInstance.objects.all()[0],
         # For now, just assign a server
     }
