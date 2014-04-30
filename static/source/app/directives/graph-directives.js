@@ -239,6 +239,9 @@ angular.module('graph')
         .attr("clip-path", "url(#clip)")
         .attr('id', 'feature-group');
 
+      g.append('line')
+        .attr('class', 'now-indicator');
+
       return g;
     };
 
@@ -334,6 +337,27 @@ angular.module('graph')
           .tickFormat("")
         );
     };
+
+    this.drawNow = function (graph, now) {
+      var line = graph.svg.select('#feature-group').select('.now-indicator');
+      line
+        .attr('x1', graph.x.scale(now))
+        .attr('x2', graph.x.scale(now))
+        .attr('y1', graph.height)
+        .attr('y2', 0)
+        .attr('style', 'stroke:#2980b9;stroke-width:4');
+    };
+
+    this.hideNow = function (graph) {
+      var line = graph.svg.select('#feature-group').select('.now-indicator');
+      line
+        .attr('x1', null)
+        .attr('x2', null)
+        .attr('y1', null)
+        .attr('y2', null)
+        .attr('style', null);
+    };
+
   };
 
   var link = function (scope, element, attrs, graphCtrl) {
@@ -381,6 +405,16 @@ angular.module('graph')
       // Clear graph when no more data
       } else {
         d3.select(element[0]).html("");
+      }
+    });
+    
+    scope.$parent.$watch('timeState.at', function (n, o) {
+      if (n === o) { return true; }
+      console.log(scope.$parent.timeState.at);
+      if (scope.$parent.tools.active === 'rain') {
+        graphCtrl.drawNow(scope.graph, scope.$parent.timeState.at);
+      } else {
+        graphCtrl.hideNow(scope.graph);
       }
     });
 
