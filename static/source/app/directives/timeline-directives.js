@@ -25,7 +25,11 @@ app.controller('TimelineDirCtrl', function ($scope) {
           .attr("height", height)
           .attr("class", "plot-temporal");
     svg.select('g').append('line')
-      .attr('class', 'now-indicator');
+      .attr('class', 'now-indicator')
+      .attr('x1', -35)
+      .attr('x2', -35)
+      .attr('y1', height)
+      .attr('y2', 0);
     // Create element for axis
     svg.select('g').append("g")
       .attr('class', 'x axis')
@@ -220,21 +224,22 @@ app.controller('TimelineDirCtrl', function ($scope) {
   this.drawNow = function (graph, now) {
     var line = graph.svg.select('g').select('.now-indicator');
     line
+      .transition()
+      .duration(300)
+      .ease('in-out')
       .attr('x1', graph.xScale(now))
       .attr('x2', graph.xScale(now))
       .attr('y1', graph.height)
-      .attr('y2', 0)
-      .attr('style', 'stroke:#2980b9;stroke-width:4');
+      .attr('y2', 0);
   };
 
   this.hideNow = function (graph) {
     var line = graph.svg.select('g').select('.now-indicator');
     line
-      .attr('x1', null)
-      .attr('x2', null)
-      .attr('y1', null)
-      .attr('y2', null)
-      .attr('style', null);
+      .attr('x1', -35)
+      .attr('x2', -35)
+      .attr('y1', graph.height)
+      .attr('y2', 0);
   };
 
   this.updateNow = function (graph, now) {
@@ -405,6 +410,14 @@ app.controller('TimelineDirCtrl', function ($scope) {
         timelineCtrl.brushmove();
       } else if (scope.tools.active === 'rain') {
         timelineCtrl.drawNow(graph, scope.timeState.at);
+      } else {
+        timelineCtrl.hideNow(graph);
+      }
+    });
+
+    scope.$watch('tools.active', function (n,o) {
+      if (n === o || scope.tools.active === 'rain') {
+        return true; 
       } else {
         timelineCtrl.hideNow(graph);
       }

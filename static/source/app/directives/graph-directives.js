@@ -240,7 +240,11 @@ angular.module('graph')
         .attr('id', 'feature-group');
 
       g.append('line')
-        .attr('class', 'now-indicator');
+        .attr('class', 'now-indicator')
+        .attr('x1', -1)
+        .attr('x2', -1)
+        .attr('y1', height)
+        .attr('y2', 0);
 
       return g;
     };
@@ -341,11 +345,13 @@ angular.module('graph')
     this.drawNow = function (graph, now) {
       var line = graph.svg.select('#feature-group').select('.now-indicator');
       line
+        .transition()
+        .duration(300)
+        .ease('in-out')
         .attr('x1', graph.x.scale(now))
         .attr('x2', graph.x.scale(now))
         .attr('y1', graph.height)
-        .attr('y2', 0)
-        .attr('style', 'stroke:#2980b9;stroke-width:4');
+        .attr('y2', 0);
     };
 
     this.hideNow = function (graph) {
@@ -354,8 +360,7 @@ angular.module('graph')
         .attr('x1', null)
         .attr('x2', null)
         .attr('y1', null)
-        .attr('y2', null)
-        .attr('style', null);
+        .attr('y2', null);
     };
 
   };
@@ -502,6 +507,9 @@ angular.module('graph')
         svg.selectAll('.whisker-horizontal')
           .attr('x1', function (d) { return x.scale(d[0]) - 0.35 * width / barWidth; })
           .attr('x2', function (d) { return x.scale(d[0]) + 0.35 * width / barWidth; });
+        svg.select('#feature-group').select('.now-indicator')
+          .attr('x1', x.scale(scope.$parent.timeState.at))
+          .attr('x2', x.scale(scope.$parent.timeState.at));
 
       };
 
