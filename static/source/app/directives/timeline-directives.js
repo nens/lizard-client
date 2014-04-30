@@ -221,6 +221,12 @@ app.controller('TimelineDirCtrl', function ($scope) {
     d3.selectAll('.bar').classed("selected", false);
   };
 
+  /**
+   * Shows the line element indicating timeState.at.
+   * 
+   * @param  {graph object} graph contains the svg and a d3 scale object
+   * @param  {now} now   epoch timestamp in ms
+   */
   this.drawNow = function (graph, now) {
     var line = graph.svg.select('g').select('.now-indicator');
     line
@@ -233,6 +239,11 @@ app.controller('TimelineDirCtrl', function ($scope) {
       .attr('y2', 0);
   };
 
+  /**
+   * Hides the now element by moving it out of side to the left.
+   *
+   * @param  {graph object} graph contains the svg
+   */
   this.hideNow = function (graph) {
     var line = graph.svg.select('g').select('.now-indicator');
     line
@@ -242,6 +253,13 @@ app.controller('TimelineDirCtrl', function ($scope) {
       .attr('y2', 0);
   };
 
+  /**
+   * Updates the height of the now indicator line when the 
+   * timeline is rescaled.
+   * 
+   * @param  {graph object} graph contains the svg and a d3 scale object
+   * @param  {now} now   epoch timestamp in ms
+   */
   this.updateNow = function (graph, now) {
     var line = graph.svg.select('g').select('.now-indicator');
     line
@@ -415,6 +433,10 @@ app.controller('TimelineDirCtrl', function ($scope) {
       }
     });
 
+    /**
+     * Hide the now indicator when switching 
+     * to anything but the rain tool.
+     */
     scope.$watch('tools.active', function (n,o) {
       if (n === o || scope.tools.active === 'rain') {
         return true; 

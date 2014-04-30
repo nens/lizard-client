@@ -239,10 +239,11 @@ angular.module('graph')
         .attr("clip-path", "url(#clip)")
         .attr('id', 'feature-group');
 
+      // Create line to indicate timeState.at out of sight
       g.append('line')
         .attr('class', 'now-indicator')
-        .attr('x1', -1)
-        .attr('x2', -1)
+        .attr('x1', -5)
+        .attr('x2', -5)
         .attr('y1', height)
         .attr('y2', 0);
 
@@ -342,6 +343,12 @@ angular.module('graph')
         );
     };
 
+    /**
+     * Shows the line element indicating timeState.at.
+     * 
+     * @param  {graph object} graph contains the svg and a d3 scale object
+     * @param  {now} now   epoch timestamp in ms
+     */
     this.drawNow = function (graph, now) {
       var line = graph.svg.select('#feature-group').select('.now-indicator');
       line
@@ -357,8 +364,8 @@ angular.module('graph')
     this.hideNow = function (graph) {
       var line = graph.svg.select('#feature-group').select('.now-indicator');
       line
-        .attr('x1', null)
-        .attr('x2', null)
+        .attr('x1', -5)
+        .attr('x2', -5)
         .attr('y1', null)
         .attr('y2', null);
     };
@@ -404,6 +411,9 @@ angular.module('graph')
         d3.select(element[0]).html("");
         scope.graph = graphCtrl.callChart(scope.data, element, legend);
         scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph);
+        if (scope.$parent.tools.active === 'rain') {
+          graphCtrl.drawNow(scope.graph, scope.$parent.timeState.at);
+        }
       // Update graph with new data
       } else if (scope.graph !== undefined) {
         scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph);
@@ -415,10 +425,10 @@ angular.module('graph')
     
     scope.$parent.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
-      console.log(scope.$parent.timeState.at);
-      if (scope.$parent.tools.active === 'rain') {
+      if (scope.$parent.tools.active === 'rain' &&
+        scope.graph) {
         graphCtrl.drawNow(scope.graph, scope.$parent.timeState.at);
-      } else {
+      } else if (scope.graph) {
         graphCtrl.hideNow(scope.graph);
       }
     });
