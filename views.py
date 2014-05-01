@@ -18,6 +18,7 @@ from rest_framework.renderers import JSONRenderer
 
 from hydra_core.models import Layer
 from hydra_core.models import Event
+from hydra_core.models import EventSeries
 from lizard_nxt.server.serializers import spatial
 from lizard_nxt.server.middleware import ORGANISATION_IDS
 from lizard_auth_client.models import Organisation
@@ -38,11 +39,13 @@ def index(request):
         Layer.objects.filter(overlayer=True)).data
     layers = spatial.LayerSerializer(
         Layer.objects.filter(baselayer=False)).data
-    events = Event.objects.distinct('type')
+    event_series = EventSeries.objects.all()
     event_types = []
-    for event in events:
-        count = Event.objects.filter(type=event.type).count()
-        event_types.append({"type": event.type, "event_count": count})
+    for event_series_ in event_series:
+        count = Event.objects.filter(event_series=event_series_).count()
+        event_types.append({"type": event_series_.type,
+                            "event_count": count,
+                            "event_series": event_series_.id})
 
     for layer in layers:
         if layer['type'] == 'ASSET':

@@ -139,8 +139,8 @@
               {% trans "Events" %}
               <ul class="list-group">
                 <li ng-repeat="event in mapState.eventTypes">
-                <label class="ng-class: {active: events.types[event.type].active};" ng-bind="event.type" ng-click="events.toggleEvents(event.type)"></label>
-                <label class="count"  ng-if="events.types[event.type].active"><% events.types[event.type].currentCount %>&nbsp;(<% event.event_count %>) </label>
+                <label class="ng-class: {active: events.types[event.event_series].active};" ng-bind="event.type" ng-click="events.toggleEvents(event.event_series)"></label>
+                <label class="count"  ng-if="events.types[event.event_series].active"><% events.types[event.event_series].currentCount %>&nbsp;(<% event.event_count %>) </label>
               </ul>
               </li>
             </ul>

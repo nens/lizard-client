@@ -211,14 +211,15 @@ app.controller("MasterCtrl",
 
 // EVENTS MODEL
   $scope.events = {
-    types: { count: 0 }, // Metadata object
+    //TODO: refactor event meta data (remove eventTypes from mapState)
+    types: { count: 0, 1: {}, 2: {}, 3: {}, 4: {} }, // Metadata object
     data: { type: "FeatureCollection",
             features: [] // Long format events data object
       },
     scale: d3.scale.ordinal().range($scope.colors[8]),
     changed: Date.now()
   };
-  
+
   /**
    * Zoom to location
    * 
@@ -245,14 +246,17 @@ app.controller("MasterCtrl",
    * This function just sums it all up
    */
   $scope.events.countCurrentEvents = function () {
-    for (var eventType in $scope.events.types) {
-      $scope.events.types[eventType].currentCount = 0;
+    var i,
+        eventType;
+    var typeLength = $scope.mapState.eventTypes.length;
+    for (i = 0; i < typeLength; i++) {
+      eventType = $scope.mapState.eventTypes[i];
+      $scope.events.types[eventType.event_series].currentCount = 0;
     }
-    for (var i = 0; i < $scope.events.data.features.length; i++) {
+    for (i = 0; i < $scope.events.data.features.length; i++) {
       var feature = $scope.events.data.features[i];
       if (feature.inTempExtent && feature.inSpatExtent) {
-        eventType = feature.event_type;
-        $scope.events.types[eventType].currentCount++;
+        $scope.events.types[feature.properties.event_series].currentCount++;
       }
     }
   };
@@ -265,18 +269,18 @@ app.controller("MasterCtrl",
    * 
    * @param: str containing the type of the event type to toggle
    */
-  $scope.events.toggleEvents = function (type) {
-    if ($scope.events.types[type]) {
-      if ($scope.events.types[type].active) {
-        $scope.events.types[type].active = false;
-        $scope.events.data = removeEvents($scope.events.data, type);
+  $scope.events.toggleEvents = function (eventSeriesId) {
+    if ($scope.events.types[eventSeriesId]) {
+      if ($scope.events.types[eventSeriesId].active) {
+        $scope.events.types[eventSeriesId].active = false;
+        $scope.events.data = removeEvents($scope.events.data, eventSeriesId);
         addColor($scope.events.data);
         $scope.events.changed = Date.now();
       } else {
-        getEvents(type);
+        getEvents(eventSeriesId);
       }
     } else {
-      getEvents(type);
+      getEvents(eventSeriesId);
     }
     if ($scope.timeState.hidden !== false) {
       $scope.toggleTimeline();
@@ -289,16 +293,16 @@ app.controller("MasterCtrl",
    * Callback passes the response to addEvents, recolors the event data object,
    * Does bookkeeping and triggers watches by updating events.changed
    * 
-   * @param: str containing the type of the event type to download
+   * @param: int containing the id of the event series to download
    */
-  var getEvents = function (type) {
-    CabinetService.events.get({type: type})
+  var getEvents = function (eventSeriesId) {
+    CabinetService.events.get({event_series: eventSeriesId})
       .then(function (response) {
         var data = response;
-        $scope.events.data = addEvents($scope.events.data, data, type);
+        $scope.events.data = addEvents($scope.events.data, data, eventSeriesId);
         addColor($scope.events.data);
-        $scope.events.types[type].count = response.features.length;
-        $scope.events.types[type].active = true;
+        $scope.events.types[eventSeriesId].count = response.features.length;
+        $scope.events.types[eventSeriesId].active = true;
         $scope.events.changed = Date.now();
       });
   };
@@ -318,7 +322,7 @@ app.controller("MasterCtrl",
    * @param: str containing the type of the event to add
    * @returns: object geojson compliant data object 
    */
-  var addEvents = function (longData, shortData, type) {
+  var addEvents = function (longData, shortData, eventSeriesId) {
     // Create event identifier
     var eventOrder;
     if (longData.features === undefined) { longData.features = []; }
@@ -332,13 +336,13 @@ app.controller("MasterCtrl",
       });
       eventOrder = maxEventOrder + 1;
     }
-    $scope.events.types[type] = {};
-    $scope.events.types[type].event_type = eventOrder;
+    $scope.events.types[eventSeriesId] = {};
+    $scope.events.types[eventSeriesId].event_type = eventOrder;
     angular.forEach(shortData.features, function (feature) {
       feature.event_order = eventOrder;
       feature.color = $scope.colors[8][eventOrder];
-      feature.event_type = type;
-      feature.id = type + feature.properties.timestamp +
+      //feature.event_type = type;
+      feature.id = eventSeriesId + feature.properties.timestamp +
                    feature.geometry.coordinates[0] +
                    feature.geometry.coordinates[1];
       longData.features.push(feature);
@@ -366,11 +370,11 @@ app.controller("MasterCtrl",
     if ($scope.events.types.count === 1) {
       scale = d3.scale.ordinal().range($scope.colors[8]);
       angular.forEach(longData.features, function (feature) {
-        feature.color = scale(feature.properties.sub_type);
+        feature.color = scale(feature.properties.category);
       });
     } else {
       angular.forEach(longData.features, function (feature) {
-        feature.color = $scope.events.scale(feature.event_type);
+        feature.color = $scope.events.scale(feature.properties.event_series);
       });
     }
   };
@@ -386,13 +390,13 @@ app.controller("MasterCtrl",
    * @param: str containing the type of the event to remove
    * @returns: object geojson compliant data object 
    */
-  var removeEvents = function (longData, type) {
-    var eventOrder = $scope.events.types[type].event_type;
+  var removeEvents = function (longData, eventSeriesId) {
+    var eventOrder = $scope.events.types[eventSeriesId].event_type;
     var iterations = longData.features.length;
     for (var i = 0; i < iterations; i++) {
       var index = iterations - 1 - i;
       var feature = longData.features[index]; // Go from back to front to not mess with the order
-      if (feature.event_type === type) {
+      if (feature.event_type === eventSeriesId) {
         var j = longData.features.indexOf(feature);
         longData.features.splice(j, 1);
       }
@@ -600,10 +604,6 @@ app.controller("MasterCtrl",
     } else if (newVal === 50) {
       $scope.mapState.activeBaselayer = 2;
       $scope.mapState.changeBaselayer();
-    } else if (newVal === 53) {
-      $scope.events.toggleEvents("Twitter");
-    } else if (newVal === 54) {
-      $scope.events.toggleEvents("Meldingen");
     }
   });
 

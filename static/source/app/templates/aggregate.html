@@ -1,19 +1,19 @@
 
-<div class="card" ng-class="{hidden: box.content.eventValue == undefined}" ng-switch="box.content.eventValue.properties.sub_type">
+<div class="card" ng-class="{hidden: box.content.eventValue == undefined}" ng-switch="box.content.eventValue.properties.category">
   <div class="card-title" ng-switch-when="regen">
-    <i class="fa fa-twitter"></i><span class="card-title">&nbsp;#<% box.content.eventValue.properties.sub_type %></span>
+    <i class="fa fa-twitter"></i><span class="card-title">&nbsp;#<% box.content.eventValue.properties.category %></span>
     <i class="zoomto-icon fa fa-crosshairs pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
     <p><% box.content.eventValue.properties.timestamp | date:'d-M-y H:mm:ss' %></p>
     <p><% box.content.eventValue.properties.value %></p>
   </div>
   <div class="card-title" ng-switch-when="Aardbeving">
-    <i class="fa fa-twitter"></i><span class="card-title">&nbsp;#<% box.content.eventValue.properties.sub_type %></span>
+    <i class="fa fa-twitter"></i><span class="card-title">&nbsp;#<% box.content.eventValue.properties.category %></span>
     <i class="zoomto-icon fa fa-crosshairs pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
     <p><% box.content.eventValue.properties.timestamp | date:'d-M-y H:mm:ss' %></p>
     <p><% box.content.eventValue.properties.value %></p>
   </div>
   <div class="card-title" ng-switch-default>
-    <i class="fa fa-exclamation-circle"></i><span class="card-title">&nbsp;<% box.content.eventValue.properties.sub_type | lowercase %></span>
+    <i class="fa fa-exclamation-circle"></i><span class="card-title">&nbsp;<% box.content.eventValue.properties.category | lowercase %></span>
     <i class="zoomto-icon fa fa-crosshairs pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
     <p><% box.content.eventValue.properties.timestamp | date:'d-M-y' %></p>
   </div>
