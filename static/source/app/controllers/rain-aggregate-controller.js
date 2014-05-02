@@ -178,7 +178,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
       statWin = 300000;
     }
     CabinetService.raster.get({
-      raster_names: 'rain',
+      raster_names: 'demo/radar',
       geom: wkt,
       srs: 'EPSG:4326',
       start: startString,
