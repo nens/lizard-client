@@ -29,14 +29,15 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
     if (layer.type === "TMS" && layer.baselayer) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
                                        {name: "Background",
-                                        maxZoom: 20});
+                                        maxZoom: 20, zIndex: layer.z_index});
     } else if (layer.type === "WMS") {
       var options = {
         layers: layer.slug,
         format: 'image/png',
         version: '1.1.1',
         minZoom: layer.min_zoom,
-        maxZoom: 20
+        maxZoom: 20,
+        zIndex: layer.z_index
       };
       //NOTE ugly hack
       if (layer.slug === 'landuse') {
