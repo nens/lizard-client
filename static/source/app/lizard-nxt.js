@@ -209,10 +209,28 @@ app.controller("MasterCtrl",
     8: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12", "#d35400", "#c0392b", "#16a085"]
   };
 
+  /**
+   * Build object template to hold information per event type.
+   * 
+   * @param object eventTypes object with event ids
+   * @returns  
+   */
+  var buildEventTypesTemplate = function (eventTypes) {
+  
+    var eventTypesTemplate = {};
+    for (var i = 0; i < eventTypes.length; i++) {
+      eventTypesTemplate[eventTypes[i].event_series] = {};
+    }
+    eventTypesTemplate.count = 0;
+
+    return eventTypesTemplate;
+  };
+
 // EVENTS MODEL
   $scope.events = {
     //TODO: refactor event meta data (remove eventTypes from mapState)
-    types: { count: 0, 1: {}, 2: {}, 3: {}, 4: {}, 5: {} }, // Metadata object
+    //types: { count: 0, 1: {}, 2: {}, 3: {}, 4: {}, 5: {} }, // Metadata object
+    types: buildEventTypesTemplate($scope.mapState.eventTypes),
     data: { type: "FeatureCollection",
             features: [] // Long format events data object
       },
