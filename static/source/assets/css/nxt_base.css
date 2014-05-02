@@ -212,6 +212,40 @@ i, a:active {text-decoration:none !important;}
     transition: .3s ease;
 }
 
+ul.list-inline li.baselayer-icon {
+    position:relative;
+    /*border:1px solid #ccc;*/
+    padding:4px;
+    margin:4px;
+    width:50px;
+    height:50px;
+    overflow:hidden;
+}
+ul.list-inline li.baselayer-icon#Topografie {
+    background-image: url('../images/baselayerbackgrounds/topo.png');
+}
+ul.list-inline li.baselayer-icon#Satelliet {
+    background-image: url('../images/baselayerbackgrounds/sat.png');
+}
+ul.list-inline li.baselayer-icon#Hoogtekaart {
+    background-image: url('../images/baselayerbackgrounds/hoogte.png');
+}
+ul.list-inline li.baselayer-icon span{
+    color: #fff;
+    position: absolute;
+    bottom: 0;
+    font-size: 10px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+ul.list-inline li.baselayer-icon.active {
+    border: 1px solid red;
+}
+ul.list-inline li.baselayer-icon label{
+    display:none;
+}
+.tooltip {
+    position: fixed;
+}
 /* LEAFLET OVERRIDES */
 .leaflet-container a {
     color: #16a085;
