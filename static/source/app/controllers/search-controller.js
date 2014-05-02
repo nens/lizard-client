@@ -21,7 +21,7 @@ app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
     var nextTab;
     switch (e.keyCode) {
       case KeyCodes.BACKSPACE:
-        $('#searchboxinput').focus();
+        angular.element('#searchboxinput')[0].focus();
         break;
       case KeyCodes.ESCAPE:
         $target.blur();
@@ -41,7 +41,6 @@ app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
       // focus the next element by tabindex
       $timeout(function () {
         var el = $('[tabindex=' + (parseInt($target.attr("tabindex")) + nextTab) + ']').focus();
-        console.log(el);
       }, 30);
     }
   };
@@ -54,7 +53,7 @@ app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
     if ($scope.box.query.length > 1) {
       CabinetService.geocode.get({q: $scope.box.query}).then(function (data) {
         $scope.box.content = data;
-        $('#searchboxinput').focus();
+        angular.element('#searchboxinput')[0].focus();
       });
       $scope.box.type = "location";
     }
