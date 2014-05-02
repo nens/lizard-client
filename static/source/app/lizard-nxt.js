@@ -212,7 +212,7 @@ app.controller("MasterCtrl",
 // EVENTS MODEL
   $scope.events = {
     //TODO: refactor event meta data (remove eventTypes from mapState)
-    types: { count: 0, 1: {}, 2: {}, 3: {}, 4: {} }, // Metadata object
+    types: { count: 0, 1: {}, 2: {}, 3: {}, 4: {}, 5: {} }, // Metadata object
     data: { type: "FeatureCollection",
             features: [] // Long format events data object
       },
@@ -396,7 +396,7 @@ app.controller("MasterCtrl",
     for (var i = 0; i < iterations; i++) {
       var index = iterations - 1 - i;
       var feature = longData.features[index]; // Go from back to front to not mess with the order
-      if (feature.event_type === eventSeriesId) {
+      if (feature.properties.event_series === eventSeriesId) {
         var j = longData.features.indexOf(feature);
         longData.features.splice(j, 1);
       }
@@ -411,6 +411,7 @@ app.controller("MasterCtrl",
       }
     }
     $scope.events.types.count = $scope.events.types.count - 1;
+
     return longData;
   };
 
