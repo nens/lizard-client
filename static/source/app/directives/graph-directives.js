@@ -239,6 +239,14 @@ angular.module('graph')
         .attr("clip-path", "url(#clip)")
         .attr('id', 'feature-group');
 
+      // Create line to indicate timeState.at out of sight
+      g.append('line')
+        .attr('class', 'now-indicator')
+        .attr('x1', -5)
+        .attr('x2', -5)
+        .attr('y1', height)
+        .attr('y2', 0);
+
       return g;
     };
 
@@ -334,6 +342,34 @@ angular.module('graph')
           .tickFormat("")
         );
     };
+
+    /**
+     * Shows the line element indicating timeState.at.
+     * 
+     * @param  {graph object} graph contains the svg and a d3 scale object
+     * @param  {now} now   epoch timestamp in ms
+     */
+    this.drawNow = function (graph, now) {
+      var line = graph.svg.select('#feature-group').select('.now-indicator');
+      line
+        .transition()
+        .duration(300)
+        .ease('in-out')
+        .attr('x1', graph.x.scale(now) || -5)
+        .attr('x2', graph.x.scale(now) || -5)
+        .attr('y1', graph.height)
+        .attr('y2', 0);
+    };
+
+    this.hideNow = function (graph) {
+      var line = graph.svg.select('#feature-group').select('.now-indicator');
+      line
+        .attr('x1', -5)
+        .attr('x2', -5)
+        .attr('y1', null)
+        .attr('y2', null);
+    };
+
   };
 
   var link = function (scope, element, attrs, graphCtrl) {
@@ -375,12 +411,26 @@ angular.module('graph')
         d3.select(element[0]).html("");
         scope.graph = graphCtrl.callChart(scope.data, element, legend);
         scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph);
+        // Draw the now for the rain
+        if (scope.$parent.tools.active === 'rain') {
+          graphCtrl.drawNow(scope.graph, scope.$parent.timeState.at);
+        }
       // Update graph with new data
       } else if (scope.graph !== undefined) {
         scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph);
       // Clear graph when no more data
       } else {
         d3.select(element[0]).html("");
+      }
+    });
+    
+    scope.$parent.$watch('timeState.at', function (n, o) {
+      if (n === o) { return true; }
+      if (scope.$parent.tools.active === 'rain' &&
+        scope.graph) {
+        graphCtrl.drawNow(scope.graph, scope.$parent.timeState.at);
+      } else if (scope.graph) {
+        graphCtrl.hideNow(scope.graph);
       }
     });
 
@@ -468,14 +518,10 @@ angular.module('graph')
         svg.selectAll('.whisker-horizontal')
           .attr('x1', function (d) { return x.scale(d[0]) - 0.35 * width / barWidth; })
           .attr('x2', function (d) { return x.scale(d[0]) + 0.35 * width / barWidth; });
+        svg.select('#feature-group').select('.now-indicator')
+          .attr('x1', x.scale(scope.$parent.timeState.at))
+          .attr('x2', x.scale(scope.$parent.timeState.at));
 
-        scope.$apply(function () {
-            // step out of isolate scope with $parent.
-            scope.$parent.timeState.start = x.scale.domain()[0].getTime();
-            scope.$parent.timeState.end = x.scale.domain()[1].getTime();
-            scope.$parent.timeState.changeOrigin = 'barChart';
-            scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
-          });
       };
 
       var g = graphCtrl.createDrawingArea(width, height);

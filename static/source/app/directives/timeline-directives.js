@@ -30,6 +30,13 @@ app.controller('TimelineDirCtrl', function ($scope) {
       .attr('width', 0)
       .attr('id', 'nodata')
       .style('fill', 'url(#lightstripe)');
+    // Create line for the timeState.at just out of sight
+    svg.select('g').append('line')
+      .attr('class', 'now-indicator')
+      .attr('x1', - margin.left - 5)
+      .attr('x2', - margin.left - 5)
+      .attr('y1', height)
+      .attr('y2', 0);
     // Create element for axis
     svg.select('g').append("g")
       .attr('class', 'x axis')
@@ -221,6 +228,57 @@ app.controller('TimelineDirCtrl', function ($scope) {
     d3.selectAll('.bar').classed("selected", false);
   };
 
+  /**
+   * Shows the line element indicating timeState.at.
+   * 
+   * @param  {graph object} graph contains the svg and a d3 scale object
+   * @param  {now} now   epoch timestamp in ms
+   */
+  this.drawNow = function (graph, now) {
+    var line = graph.svg.select('g').select('.now-indicator');
+    line
+      .transition()
+      .duration(300)
+      .ease('in-out')
+      .attr('x1', graph.xScale(now))
+      .attr('x2', graph.xScale(now))
+      .attr('y1', graph.height)
+      .attr('y2', 0);
+  };
+
+  /**
+   * Hides the now element by moving it out of side to the left.
+   *
+   * @param  {graph object} graph contains the svg
+   */
+  this.hideNow = function (graph) {
+    var line = graph.svg.select('g').select('.now-indicator');
+    line
+      .attr('x1', - graph.margin.left - 5)
+      .attr('x2', - graph.margin.left - 5)
+      .attr('y1', graph.height)
+      .attr('y2', 0);
+  };
+
+  /**
+   * Updates the height of the now indicator line when the 
+   * timeline is rescaled.
+   * 
+   * @param  {graph object} graph contains the svg and a d3 scale object
+   * @param  {now} now   epoch timestamp in ms
+   */
+  this.updateNow = function (graph, now) {
+    var line = graph.svg.select('g').select('.now-indicator');
+    line
+      .transition()
+      .delay(500)
+      .duration(500)
+      .attr('x1', graph.xScale(now))
+      .attr('x2', graph.xScale(now))
+      .attr('y1', graph.height)
+      .attr('y2', 0);
+  };
+
   return this;
 })
 .directive('timeline', [ function () {
@@ -256,7 +314,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
        *
        */
       graph.svg.on("click", function () {
-        var timeClicked = +(graph.xScale.invert(d3.event.x));
+        var timeClicked = +(graph.xScale.invert(d3.event.x - graph.margin.left));
         scope.timeState.at = timeClicked;
         scope.$digest();
       });
@@ -287,7 +345,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       var yScale = timelineCtrl.scale({min: 1, max: nEventTypes}, { min: newGraph.height - 27, max: 20 }, {scale: 'linear'});
       // Update the svg
       timelineCtrl.drawCircles(newGraph.svg, newGraph.xScale, yScale, graph.colorScale, 'timestamp', 'event_type', 'event_type', data);
-
+      timelineCtrl.updateNow(newGraph, scope.timeState.at);
       return newGraph;
     };
 
@@ -333,6 +391,10 @@ app.controller('TimelineDirCtrl', function ($scope) {
       // Update circle positions
       graph.svg.selectAll("circle")
         .attr("cx", function (d) { return Math.round(graph.xScale(d.properties.timestamp)); });
+      // Update now indicator
+      graph.svg.select('.now-indicator')
+        .attr('x1', graph.xScale(scope.timeState.at) || graph.margin.left - 5)
+        .attr('x2', graph.xScale(scope.timeState.at) || graph.margin.left - 5);
       // Update timeState and wake up watches
       scope.$apply(function () {
         scope.timeState.start = graph.xScale.domain()[0].getTime();
@@ -402,8 +464,25 @@ app.controller('TimelineDirCtrl', function ($scope) {
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.animation.enabled) {
+        timelineCtrl.hideNow(graph);
         graph.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
         timelineCtrl.brushmove();
+      } else if (scope.tools.active === 'rain') {
+        timelineCtrl.drawNow(graph, scope.timeState.at);
+      } else {
+        timelineCtrl.hideNow(graph);
+      }
+    });
+
+    /**
+     * Hide the now indicator when switching 
+     * to anything but the rain tool.
+     */
+    scope.$watch('tools.active', function (n, o) {
+      if (n === o || scope.tools.active === 'rain') {
+        return true;
+      } else {
+        timelineCtrl.hideNow(graph);
       }
     });
 

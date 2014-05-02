@@ -1273,8 +1273,8 @@ img.leaflet-image-layer {
 
 /* Leaflet override */
 .leaflet-container img.leaflet-image-layer {
-        max-width: none !important;
-        }
+    max-width: none !important;
+}
 
 .whisker-vertical {
     stroke-dasharray: 3,3;
@@ -1285,4 +1285,10 @@ img.leaflet-image-layer {
 .whisker-horizontal {
     stroke: #7f8c8d;
     stroke-width: 1px;
+}
+
+.now-indicator {
+    stroke-dasharray: 6,1;
+    stroke: #2c3e50;
+    stroke-width: 3;
 }
