@@ -23,7 +23,13 @@ app.controller('TimelineDirCtrl', function ($scope) {
         .append("rect")
           .attr("width", width)
           .attr("height", height)
+          // .style("fill", "url(#lightstripe)")
           .attr("class", "plot-temporal");
+    svg.select('g').append('rect')
+      .attr('height', height)
+      .attr('width', 0)
+      .attr('id', 'nodata')
+      .style('fill', 'url(#lightstripe)');
     // Create element for axis
     svg.select('g').append("g")
       .attr('class', 'x axis')
@@ -285,12 +291,45 @@ app.controller('TimelineDirCtrl', function ($scope) {
       return newGraph;
     };
 
+    var nodataPosition = function (scale) {
+      
+      var year2014 = 1388534400; // since epoch
+      var widthInMiliseconds = year2014 - scope.timeState.start;
+
+      // If 2014 lies before the current timerange, set widthInMiliseconds to current timestart
+      if(year2014 < scope.timeState.start) {
+        widthInMiliseconds = scope.timeState.start;
+      }
+      // If 2014 is beyond the current timerange, set widthInMiliseconds to total time (end-start)
+      if(year2014 > scope.timeState.end) {
+        widthInMiliseconds = scope.timeState.end - scope.timeState.start;
+      }
+      // Put calculated widthInMiliseconds through the xScale function which is passed to nodataPosition()
+      // This converts the width to pixels
+      var width = scale(widthInMiliseconds) > 0 ? scale(widthInMiliseconds) : 20;
+
+      console.log('timeState.start:', scope.timeState.start);
+      console.log('converted timeState.start:', new Date(scope.timeState.start));
+      console.log('widthInMiliseconds:', widthInMiliseconds);
+      console.log('width:', width);
+      return Math.round(width);
+    };
+
+    var zoomend = function() {
+      // Update nodata zone
+      graph.svg.select("#nodata")
+        .attr('width', function (d) {
+          return nodataPosition(graph.xScale);
+        });      
+    };
+
     var zoomed = function () {
       // Update x Axis
       graph.svg.select(".x.axis").call(timelineCtrl.makeAxis(graph.xScale, {
         orientation: "bottom",
         ticks: 5
       }));
+      zoomend();
       // Update circle positions
       graph.svg.selectAll("circle")
         .attr("cx", function (d) { return Math.round(graph.xScale(d.properties.timestamp)); });
@@ -354,6 +393,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         graph.svg.call(d3.behavior.zoom()
           .x(graph.xScale)
           .on("zoom", zoomed)
+          .on("mouseup", zoomend)
         );
         scope.timeState.changedZoom = Date.now();
       }
