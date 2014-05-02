@@ -24,7 +24,7 @@
 
     <div class="card-title">
         <!-- <img src="images/knoop.png" class="img-circle"> -->
-        <i class="icon-outlet"></i><span class="title-text">Uitlaat met keerklep</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">code</span>)
+        <i class="icon-outlet"></i><span class="title-text">Uitlaat met keerklep</span>&nbsp;<span ng-if="activeObject.code">(</span><span class="truncateme ng-binding" ng-bind="activeObject.code"></span><span ng-if="activeObject.code">)</span>
     </div>
 
   <table class="fullwidth">
