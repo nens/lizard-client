@@ -17,7 +17,7 @@
  * 
  */
 
-app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
+app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $filter) {
 
   var elevationLayer;
   // UTF bookkeeping
@@ -29,14 +29,15 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
     if (layer.type === "TMS" && layer.baselayer) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
                                        {name: "Background",
-                                        maxZoom: 20});
+                                        maxZoom: 20, zIndex: layer.z_index});
     } else if (layer.type === "WMS") {
       var options = {
         layers: layer.slug,
         format: 'image/png',
         version: '1.1.1',
         minZoom: layer.min_zoom,
-        maxZoom: 20
+        maxZoom: 20,
+        zIndex: layer.z_index
       };
       //NOTE ugly hack
       if (layer.slug === 'landuse') {
@@ -183,43 +184,21 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
   };
 
   /**
-   * TODO: refactor with toggleBaselayer.
-   * Toggle overlayer.
-   *
-   * @param {layer object} layer leaflet layer object
-   * @param {float} opacity opacity between 0 and 1
-   *
+   * Update overlayer opacities.
    */
-  this.toggleOverLayer = function (layer, opacity) {
-
-    if (opacity) {
-      layer.leafletLayer.options.opacity = opacity;
-    }
-
-    if (layer.id !== $scope.mapState.activeOverlayer) {
-      console.log(layer.active);
-      layer.active = false;
-      if (layer.leafletLayer) {
-        $scope.map.removeLayer(layer.leafletLayer);
-      } else {
-        console.log('leaflet layer not defined');
+  this.updateOverLayers = function (mapState) {
+    var numLayers = 1;
+    angular.forEach(mapState.layers, function (layer) {
+      if ((layer.overlayer === true) && (layer.active)) {
+        numLayers += 1;
       }
-    } else if (layer.id === $scope.mapState.activeOverlayer) {
-      if (layer.active) {
-        if (layer.leafletLayer) {
-          $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: false });
-        } else {
-          console.log('leaflet layer not defined');
-        }
-      } else {
-        if (layer.leafletLayer) {
-          $scope.map.removeLayer(layer.leafletLayer);
-          $scope.mapState.activeOverlayer = undefined;
-        } else {
-          console.log('leaflet layer not defined');
-        }
+    });
+    angular.forEach($filter('orderBy')(mapState.layers, 'z_index', true), function (layer) {
+      if ((layer.overlayer === true) && (layer.active)) {
+        layer.leafletLayer.setOpacity(1 / numLayers);
+        numLayers -= 1;
       }
-    }
+    });
   };
 
   // Expects a leafletLayer as an argument
@@ -251,18 +230,18 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
    * @return {string} newType new box type
    *
    */
-  this.boxType = function (activeBaselayer, activeOverlayer, currentType) {
-    var newType;
-    if (activeBaselayer === 3) {
-      newType = 'elevation';
-    } else if (activeOverlayer === 4) {
-      newType = 'landuse';
-    } else if (currentType === 'landuse' || currentType === 'elevation') {
-      newType = 'empty';
+  this.boxType = function (mapState) {
+    var newState = 'empty';
+    if (mapState.activeBaselayer === 3) {
+      newState = 'elevation';
     } else {
-      newType = currentType;
+      angular.forEach(mapState.layers, function (layer) {
+        if ((layer.slug === 'landuse') && (layer.active)) {
+          newState = 'landuse';
+        }
+      });
     }
-    return newType;
+    return newState;
   };
 
   return this;
@@ -294,12 +273,6 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
         ctrl.initiateLayer(layer);
       }
       ctrl.toggleBaseLayer(layer);
-    });
-
-    angular.forEach(scope.mapState.overlayers, function (layer) {
-      if (!layer.initiated) {
-        ctrl.initiateLayer(layer);
-      }
     });
 
     angular.forEach(scope.mapState.layers, function (layer) {
@@ -439,7 +412,11 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
     });
 
     scope.mapState.changeLayer = function (layer) {
+      if (layer.overlayer === true) {
+      	ctrl.updateOverLayers(scope.mapState);
+      }
       ctrl.toggleLayer(layer);
+      scope.box.type = ctrl.boxType(scope.mapState);
     };
 
     /**
@@ -469,23 +446,7 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
         ctrl.toggleBaseLayer(baselayer);
       });
       scope.mapState.baselayerChanged = Date.now();
-      scope.box.type = ctrl.boxType(scope.mapState.activeBaselayer,
-                                    scope.mapState.activeOverlayer,
-                                    scope.box.type);
-    };
-
-    /**
-     * Changes the overlayer.
-     *
-     * @param  {layer object} overlayer: the overlayer to activate
-     */
-    scope.mapState.changeOverlayer = function (overlayer, opacity) {
-      if (overlayer) { scope.mapState.activeOverlayer = overlayer.id; }
-      ctrl.toggleOverLayer(overlayer, opacity);
-      scope.mapState.overlayerChanged = Date.now();
-      scope.box.type = ctrl.boxType(scope.mapState.activeBaselayer,
-                                    scope.mapState.activeOverlayer,
-                                    scope.box.type);
+      scope.box.type = ctrl.boxType(scope.mapState);
     };
 
     scope.zoomToTheMagic = function (layer) {
