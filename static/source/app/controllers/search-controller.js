@@ -4,55 +4,50 @@ app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
    */
 
   var KeyCodes = {
-      BACKSPACE : 8,
-      TABKEY : 9,
-      RETURNKEY : 13,
-      ESCAPE : 27,
-      SPACEBAR : 32,
-      LEFTARROW : 37,
-      UPARROW : 38,
-      RIGHTARROW : 39,
-      DOWNARROW : 40,
+    BACKSPACE : 8,
+    TABKEY : 9,
+    RETURNKEY : 13,
+    ESCAPE : 27,
+    SPACEBAR : 32,
+    LEFTARROW : 37,
+    UPARROW : 38,
+    RIGHTARROW : 39,
+    DOWNARROW : 40,
   };
 
-  $scope.onKeydown = function(item, $event) {
-          var e = $event;
-          var $target = $(e.target);
-          var nextTab;
-          switch (e.keyCode) {
-              case KeyCodes.BACKSPACE:
-                  $('#searchboxinput').focus();
-                  break;
-              case KeyCodes.ESCAPE:
-                  $target.blur();
-                  break;
-              case KeyCodes.UPARROW:
-                  nextTab = - 1;
-                  break;
-              case KeyCodes.RETURNKEY:
-                  e.preventDefault();
-                  break;
-              case KeyCodes.DOWNARROW:
-                  nextTab = 1;
-                  break;
-          }
-          if (nextTab !== undefined) {
-              // do this outside the current $digest cycle
-              // focus the next element by tabindex
-             $timeout(function() {
-              var el = $('[tabindex=' + (parseInt($target.attr("tabindex")) + nextTab) + ']').focus();
-              console.log(el);
-             },30);
-          }
+  $scope.onKeydown = function (item, $event) {
+    var e = $event;
+    var $target = $(e.target);
+    var nextTab;
+    switch (e.keyCode) {
+      case KeyCodes.BACKSPACE:
+        $('#searchboxinput').focus();
+        break;
+      case KeyCodes.ESCAPE:
+        $target.blur();
+        break;
+      case KeyCodes.UPARROW:
+        nextTab = - 1;
+        break;
+      case KeyCodes.RETURNKEY:
+        e.preventDefault();
+        break;
+      case KeyCodes.DOWNARROW:
+        nextTab = 1;
+        break;
+    }
+    if (nextTab !== undefined) {
+      // do this outside the current $digest cycle
+      // focus the next element by tabindex
+      $timeout(function () {
+        var el = $('[tabindex=' + (parseInt($target.attr("tabindex")) + nextTab) + ']').focus();
+        console.log(el);
+      }, 30);
+    }
   };
-  $scope.onFocus = function(item, $event) {
-      $scope.showDetails(item);
+  $scope.onFocus = function (item, $event) {
+    $scope.showDetails(item);
   };
-
-
-
-
-
 
   $scope.searchMarkers = [];
   $scope.search = function ($event) {

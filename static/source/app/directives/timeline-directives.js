@@ -355,11 +355,11 @@ app.controller('TimelineDirCtrl', function ($scope) {
       var widthInMiliseconds = year2014 - scope.timeState.start;
 
       // If 2014 lies before the current timerange, set widthInMiliseconds to current timestart
-      if(year2014 < scope.timeState.start) {
+      if (year2014 < scope.timeState.start) {
         widthInMiliseconds = scope.timeState.start;
       }
       // If 2014 is beyond the current timerange, set widthInMiliseconds to total time (end-start)
-      if(year2014 > scope.timeState.end) {
+      if (year2014 > scope.timeState.end) {
         widthInMiliseconds = scope.timeState.end - scope.timeState.start;
       }
       // Put calculated widthInMiliseconds through the xScale function which is passed to nodataPosition()
@@ -373,12 +373,12 @@ app.controller('TimelineDirCtrl', function ($scope) {
       return Math.round(width);
     };
 
-    var zoomend = function() {
+    var zoomend = function () {
       // Update nodata zone
       graph.svg.select("#nodata")
         .attr('width', function (d) {
           return nodataPosition(graph.xScale);
-        });      
+        });
     };
 
     var zoomed = function () {
