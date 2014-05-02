@@ -31,7 +31,7 @@
 
   <div class="card-title">
     <!-- <img src="images/knoop.png" class="img-circle"> -->
-    <i class="icon-manhole"></i><span class="title-text">Doorlaat</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.title">...</span>)
+    <i class="icon-manhole"></i><span class="title-text">Doorlaat</span>&nbsp;<span ng-if="activeObject.code">(</span><span class="truncateme ng-binding" ng-bind="activeObject.code"></span><span ng-if="activeObject.code">)</span>
   </div>
   <table class="fullwidth">
     <tbody>
