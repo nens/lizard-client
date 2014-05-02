@@ -17,7 +17,6 @@
       var debug = true;
 
       var baseLayers = {{ strap_base_layers }};
-      var overLayers = {{ strap_over_layers }};
       var layers = {{ strap_layers }};
       var data_bounds = {{ strap_data_bounds }};
 
@@ -104,15 +103,6 @@
                 <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer"> 
                 <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name" ng-click="mapState.changeBaselayer(layer)"></label>
                 </li> 
-              </ul>
-              </li>
-              <li class="nav-header">
-              {% trans "Overlays" %}
-              <ul class="list-group">
-                <li ng-repeat="layer in mapState.overlayers | orderBy:'order':true">
-                <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="mapState.changeOverlayer(layer, 0.5)">
-                <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
-                </li>
               </ul>
               </li>
               <li class="nav-header">
