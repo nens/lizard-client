@@ -1,15 +1,30 @@
-<div class="card">
+<div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
 <!-- Card for "culvert" / "duiker" -->
-  <div class="actions">
-    <ul>
-      <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
-      <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
-    </ul>
-  </div>
+
+    <div class="actions">
+      <ul>
+        <!-- <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li> -->
+        <li class="fullscreen">
+          <a 
+            ng-click="toggleDetailmode()"
+            title="Bekijk in detailmode">
+            <i class="fa fa-lg fa-plus-square-o"></i>
+          </a>
+        </li>
+<!--         <li class="favorite">
+          <a
+            ng-click="bookmarkItem()" 
+            title="Voeg toe aan favorieten">
+            <i class="fa fa-lg fa-bookmark"></i>
+          </a>
+        </li> -->
+        <!-- <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li> -->
+      </ul>
+    </div> <!-- end actions -->
 
   <div class="card-title">
     <!-- <img src="/static/distjs/images/knoop.png" class="img-circle"> -->
-    <i class="icon-culvert"></i><span class="title-text">Duiker</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
+    <i class="icon-culvert"></i><span class="title-text">Duiker</span>&nbsp;<span ng-if="activeObject.code">(</span><span class="truncateme ng-binding" ng-bind="activeObject.code"></span><span ng-if="activeObject.code">)</span>
   </div>
 
     <table class="fullwidth">
@@ -48,11 +63,11 @@
         </tr>
         <tr>
           <td><abbr title="Binnen Onderkant Buis (bovenstrooms)">BOB bovenstrooms</abbr></td>
-          <td><span ng-bind="activeObject.bed_level_upstream | niceNumberOrDash: 2" class="ng-binding">...</span></td>
+          <td><span ng-bind="activeObject.bed_level_upstream | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
         </tr>
         <tr>
           <td><abbr title="Binnen Onderkant Buis (benedenstrooms)">BOB benedenstrooms</abbr></td>
-          <td><span ng-bind="activeObject.bed_level_downstream | niceNumberOrDash: 2" class="ng-binding">...</span></td>
+          <td><span ng-bind="activeObject.bed_level_downstream | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
         </tr>
         </tr>        
         </tbody>

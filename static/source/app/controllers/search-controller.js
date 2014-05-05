@@ -1,12 +1,59 @@
-app.controller('SearchCtrl', function ($scope, CabinetService) {
+app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
   /**
    * Refactor and design this cruft
    */
+
+  var KeyCodes = {
+    BACKSPACE : 8,
+    TABKEY : 9,
+    RETURNKEY : 13,
+    ESCAPE : 27,
+    SPACEBAR : 32,
+    LEFTARROW : 37,
+    UPARROW : 38,
+    RIGHTARROW : 39,
+    DOWNARROW : 40,
+  };
+
+  $scope.onKeydown = function (item, $event) {
+    var e = $event;
+    var $target = $(e.target);
+    var nextTab;
+    switch (e.keyCode) {
+      case KeyCodes.BACKSPACE:
+        angular.element('#searchboxinput')[0].focus();
+        break;
+      case KeyCodes.ESCAPE:
+        $target.blur();
+        break;
+      case KeyCodes.UPARROW:
+        nextTab = - 1;
+        break;
+      case KeyCodes.RETURNKEY:
+        e.preventDefault();
+        break;
+      case KeyCodes.DOWNARROW:
+        nextTab = 1;
+        break;
+    }
+    if (nextTab !== undefined) {
+      // do this outside the current $digest cycle
+      // focus the next element by tabindex
+      $timeout(function () {
+        var el = $('[tabindex=' + (parseInt($target.attr("tabindex")) + nextTab) + ']').focus();
+      }, 30);
+    }
+  };
+  $scope.onFocus = function (item, $event) {
+    $scope.showDetails(item);
+  };
+
   $scope.searchMarkers = [];
   $scope.search = function ($event) {
     if ($scope.box.query.length > 1) {
       CabinetService.geocode.get({q: $scope.box.query}).then(function (data) {
         $scope.box.content = data;
+        angular.element('#searchboxinput')[0].focus();
       });
       $scope.box.type = "location";
     }
@@ -38,24 +85,14 @@ app.controller('SearchCtrl', function ($scope, CabinetService) {
       $scope.box.type = 'empty';
     };
 
-  // NOTE: find another way then $parent.$parent.../
   $scope.showDetails = function (obj) {
-      $scope.currentObject = obj;
-      if ($scope.currentObject.lat && $scope.currentObject.lon) {
-          // A lat and lon are present, instruct the map to pan/zoom to it
-        var latlng = {'lat': $scope.currentObject.lat, 'lon': $scope.currentObject.lon};
-        $scope.$parent.$parent.$parent.panZoom = {
-          lat: $scope.currentObject.lat,
-          lng: $scope.currentObject.lon,
-          zoom: 14
-        };
-      }
-      else if ($scope.currentObject.geometry[0] && $scope.currentObject.geometry[1]) {
-        $scope.$parent.$parent.$parent.panZoom = {
-          lat: $scope.currentObject.geometry[1],
-          lng: $scope.currentObject.geometry[0],
-          zoom: 14
-        };
+      if (obj.boundingbox) {
+        var southWest = new L.LatLng(obj.boundingbox[0], obj.boundingbox[2]);
+        var northEast = new L.LatLng(obj.boundingbox[1], obj.boundingbox[3]);
+        var bounds = new L.LatLngBounds(southWest, northEast);
+        window.mapobj.fitBounds(bounds);
+      } else {
+        console.error('Oops, no boundingbox on this result - TODO: show a proper message instead of this console error...');
       }
     };
 

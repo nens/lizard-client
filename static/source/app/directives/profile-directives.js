@@ -98,12 +98,7 @@ app.directive('rasterprofile', function () {
         scope.$watch('tools.active', function () {
           if (scope.tools.active === "profile") {
             scope.map.on('click', drawLineCLickHandler);
-            scope.tools.cursorTooltip.enabled = true;
-            scope.tools.cursorTooltip.content = "Click to draw a elevation profile";
           } else {
-            //clean up map
-            scope.tools.cursorTooltip.enabled = false;
-            scope.tools.cursorTooltip.content = "";
             if (scope.line_marker) {
               mapCtrl.removeLayer(scope.line_marker);
             }

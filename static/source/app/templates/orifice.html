@@ -1,5 +1,27 @@
-<div class="card">
+<div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
 <!-- Card for "orifice" / "doorlaat" -->
+    <div class="actions">
+      <ul>
+        <!-- <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li> -->
+        <li class="fullscreen">
+          <a 
+            ng-click="toggleDetailmode()"
+            title="Bekijk in detailmode">
+            <i class="fa fa-lg fa-plus-square-o"></i>
+          </a>
+        </li>
+<!--         <li class="favorite">
+          <a
+            ng-click="bookmarkItem()" 
+            title="Voeg toe aan favorieten">
+            <i class="fa fa-lg fa-bookmark"></i>
+          </a>
+        </li> -->
+        <!-- <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li> -->
+      </ul>
+    </div> <!-- end actions -->
+
+
   <div class="actions">
     <ul>
       <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
@@ -9,7 +31,7 @@
 
   <div class="card-title">
     <!-- <img src="images/knoop.png" class="img-circle"> -->
-    <i class="icon-manhole"></i><span class="title-text">Doorlaat</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.title">...</span>)
+    <i class="icon-manhole"></i><span class="title-text">Doorlaat</span>&nbsp;<span ng-if="activeObject.code">(</span><span class="truncateme ng-binding" ng-bind="activeObject.code"></span><span ng-if="activeObject.code">)</span>
   </div>
   <table class="fullwidth">
     <tbody>

@@ -17,7 +17,7 @@
  * 
  */
 
-app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
+app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $filter) {
 
   var elevationLayer;
   // UTF bookkeeping
@@ -29,14 +29,15 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
     if (layer.type === "TMS" && layer.baselayer) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
                                        {name: "Background",
-                                        maxZoom: 20});
+                                        maxZoom: 20, zIndex: layer.z_index});
     } else if (layer.type === "WMS") {
       var options = {
         layers: layer.slug,
         format: 'image/png',
         version: '1.1.1',
         minZoom: layer.min_zoom,
-        maxZoom: 20
+        maxZoom: 20,
+        zIndex: layer.z_index
       };
       //NOTE ugly hack
       if (layer.slug === 'landuse') {
@@ -62,29 +63,6 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
           maxZoom: 20,
           order: layer.z_index,
           zIndex: layer.z_index
-        });
-
-        leafletLayer.on('click', function (e) {
-          if (e.data) {
-            if (e.data.geom) {
-              utfHit = true;
-              clickGeometry(angular.fromJson(e.data.geom), e.data.entity_name);
-            } else {
-              console.info("You clicked on an object from negative space");
-            }
-            $scope.$apply(function () {
-              angular.extend($scope.activeObject, e.data);
-              $scope.activeObject.latlng = e.latlng;
-              $scope.activeObject.changed = !$scope.activeObject.changed;
-            });
-          } else {
-            if (leafletLayer.options.order === lowestUTFLayer) {
-              if (!utfHit || utfLayersOrder.length < 2) {
-                clickInSpace(e.latlng);
-                utfHit = false;
-              }
-            }
-          }
         });
         layer.grid_layer = leafletLayer;
       }
@@ -123,137 +101,6 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
     });
   };
 
-  /**
-   * Draws visible feedback on the map after a click.
-   *
-   * Removes possible click feedback layer and creates a new clickLayer
-   * containing a circle. The circle is than vibrated to attract attention.
-   *
-   * @param {object} latLng Leaflet object specifying the latitude
-   * and longitude of a click
-   */
-  var removeProm;
-
-  var clickInSpace = function (latLng) {
-    $timeout.cancel(removeProm);
-    if ($scope.mapState.clickLayer) {
-      $scope.map.removeLayer($scope.mapState.clickLayer);
-      delete $scope.mapState.clickLayer;
-    }
-    $scope.mapState.clickLayer = L.circleMarker(latLng, {
-      radius: 0,
-      opacity: 0.6,
-      color: "#1abc9c"
-    });
-    $scope.mapState.clickLayer.addTo($scope.map);
-    var selection = d3.select($scope.mapState.clickLayer._container);
-
-    selection.select("path")
-      .transition().duration(150)
-      .attr("stroke-width", 20)
-      .transition().duration(150)
-      .attr("stroke-width", 5)
-      .transition().duration(150)
-      .attr("stroke-width", 15)
-      .transition().duration(150)
-      .attr("stroke-opacity", 0.5)
-      .attr("stroke-width", 10);
-
-    if ($scope.box.type !== 'rain') {
-      removeProm = $timeout(function () {
-        $scope.map.removeLayer($scope.mapState.clickLayer);
-        if ($scope.box.type !== 'profile') {
-          $scope.box.type = 'empty';
-        }
-      }, 1500);
-    }
-  };
-
-  /**
-   * Draws a circle around an object on click.
-   *
-   * Removes possible click feedback layer and creates a new clickLayer
-   * containing a circle. The circle is vibrated to attract attention.
-   *
-   * @param {object} geometry Geojson compliant geometry object coming
-   *  from UTFgrid
-   * @param {string} entityName Name of the object to give it custom
-   *  styling
-   */
-  var clickGeometry = function (geometry, entityName) {
-    $timeout.cancel(removeProm);
-    if ($scope.mapState.clickLayer) {
-      $scope.map.removeLayer($scope.mapState.clickLayer);
-      delete $scope.mapState.clickLayer;
-    }
-
-    var circleMarker;
-    var geojsonFeature = { "type": "Feature" };
-    geojsonFeature.geometry = geometry;
-
-    //Put geometry in leaflet geojson layer
-    $scope.mapState.clickLayer = L.geoJson(geojsonFeature, {
-      minZoom: 13,
-      style: {},
-      pointToLayer: function (feature, latlng) {
-        circleMarker = L.circleMarker(latlng, {
-          radius: 11.5,
-          opacity: 0.5,
-          fillOpacity: 0,
-        });
-        return circleMarker;
-      }
-    });
-    $scope.mapState.clickLayer.addTo($scope.map);
-
-    // Manually edit with d3
-    // Due to some leaflet obscurity you have to get the first item with an unknown key.
-    var layer = $scope.mapState.clickLayer._layers;
-    var selection;
-    for (var key in layer) {
-      selection = d3.select(layer[key]._container);
-      break;
-    }
-
-    selection.select("path")
-      .attr("stroke", "#1abc9c")
-      .transition().duration(150)
-      .attr("stroke-width", 20)
-      .transition().duration(150)
-      .attr("stroke-width", 5)
-      .transition().duration(150)
-      .attr("stroke-width", 15)
-      .transition().duration(150)
-      .attr("stroke-opacity", 1)
-      .attr("stroke-width", 5);
-
-    // Entity specific modifications
-    if (entityName.indexOf("pumpstation_non_sewerage") !== -1) {
-      circleMarker.setRadius(13);
-      if ($scope.map.getZoom() < 21) {
-        circleMarker.setRadius(13);
-      }
-      if ($scope.map.getZoom() < 13) {
-        circleMarker.setRadius(16);
-      }
-      if ($scope.map.getZoom() < 11) {
-        circleMarker.setRadius(13);
-      }
-    } else if (entityName.indexOf("pumpstation_sewerage") !== -1) {
-      circleMarker.setRadius(11);
-    } else if (entityName.indexOf("weir") !== -1) {
-      circleMarker.setRadius(11);
-    } else if (entityName.indexOf("bridge") !== -1) {
-      circleMarker.setRadius(14);
-    } else if (entityName.indexOf("pipe") !== -1 || entityName.indexOf("culvert") !== -1) {
-      selection.select("path").transition().delay(450).duration(150)
-      .attr("stroke-opacity", 0.6)
-      .attr("stroke-width", 10);
-    } else if (entityName === 'manhole') {
-      circleMarker.setRadius(7.5);
-    }
-  };
-
   // expects a layer hashtable with a leafletlayer object
   this.toggleLayer = function (layer) {
 
@@ -285,8 +132,10 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
           layer.leafletLayer.on('load', function () {
             // Add the grid layers of the layer when load finished
             $scope.map.addLayer(layer.grid_layer);
-            // Broadcast a load finished message to a.o. aggregate-directive
-            $rootScope.$broadcast(layer.slug + 'GridLoaded');
+            layer.grid_layer.on('load', function () {
+              // Broadcast a load finished message to a.o. aggregate-directive
+              $rootScope.$broadcast(layer.slug + 'GridLoaded');
+            });
           });
           layer.leafletLayer.on('loading', function () {
             // Temporarily remove all utfLayers for performance
@@ -335,43 +184,21 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
   };
 
   /**
-   * TODO: refactor with toggleBaselayer.
-   * Toggle overlayer.
-   *
-   * @param {layer object} layer leaflet layer object
-   * @param {float} opacity opacity between 0 and 1
-   *
+   * Update overlayer opacities.
    */
-  this.toggleOverLayer = function (layer, opacity) {
-
-    if (opacity) {
-      layer.leafletLayer.options.opacity = opacity;
-    }
-
-    if (layer.id !== $scope.mapState.activeOverlayer) {
-      console.log(layer.active);
-      layer.active = false;
-      if (layer.leafletLayer) {
-        $scope.map.removeLayer(layer.leafletLayer);
-      } else {
-        console.log('leaflet layer not defined');
+  this.updateOverLayers = function (mapState) {
+    var numLayers = 1;
+    angular.forEach(mapState.layers, function (layer) {
+      if ((layer.overlayer === true) && (layer.active)) {
+        numLayers += 1;
       }
-    } else if (layer.id === $scope.mapState.activeOverlayer) {
-      if (layer.active) {
-        if (layer.leafletLayer) {
-          $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: false });
-        } else {
-          console.log('leaflet layer not defined');
-        }
-      } else {
-        if (layer.leafletLayer) {
-          $scope.map.removeLayer(layer.leafletLayer);
-          $scope.mapState.activeOverlayer = undefined;
-        } else {
-          console.log('leaflet layer not defined');
-        }
+    });
+    angular.forEach($filter('orderBy')(mapState.layers, 'z_index', true), function (layer) {
+      if ((layer.overlayer === true) && (layer.active)) {
+        layer.leafletLayer.setOpacity(1 / numLayers);
+        numLayers -= 1;
       }
-    }
+    });
   };
 
   // Expects a leafletLayer as an argument
@@ -403,23 +230,23 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http) {
    * @return {string} newType new box type
    *
    */
-  this.boxType = function (activeBaselayer, activeOverlayer, currentType) {
-    var newType;
-    if (activeBaselayer === 3) {
-      newType = 'elevation';
-    } else if (activeOverlayer === 4) {
-      newType = 'landuse';
-    } else if (currentType === 'landuse' || currentType === 'elevation') {
-      newType = 'empty';
+  this.boxType = function (mapState) {
+    var newState = 'empty';
+    if (mapState.activeBaselayer === 3) {
+      newState = 'elevation';
     } else {
-      newType = currentType;
+      angular.forEach(mapState.layers, function (layer) {
+        if ((layer.slug === 'landuse') && (layer.active)) {
+          newState = 'landuse';
+        }
+      });
     }
-    return newType;
+    return newState;
   };
 
   return this;
 });
-app.directive('map', ['$location', function ($location) {
+app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
 
   var link = function (scope, element, attrs, ctrl) {
     // Leaflet global variable to speed up vector layer, 
@@ -439,19 +266,13 @@ app.directive('map', ['$location', function ($location) {
     map.attributionControl.addAttribution(osmAttrib);
     map.attributionControl.setPrefix('');
     scope.map = map;
-
+    window.mapobj = map;
     // Initialise layers
     angular.forEach(scope.mapState.baselayers, function (layer) {
       if (!layer.initiated) {
         ctrl.initiateLayer(layer);
       }
       ctrl.toggleBaseLayer(layer);
-    });
-
-    angular.forEach(scope.mapState.overlayers, function (layer) {
-      if (!layer.initiated) {
-        ctrl.initiateLayer(layer);
-      }
     });
 
     angular.forEach(scope.mapState.layers, function (layer) {
@@ -481,6 +302,8 @@ app.directive('map', ['$location', function ($location) {
         scope.$apply(function () {
           scope.mapState.here = e.latlng;
         });
+      } else {
+        scope.mapState.here = e.latlng;
       }
     });
 
@@ -491,13 +314,6 @@ app.directive('map', ['$location', function ($location) {
           scope.beenThereDoneIntersectSuggestion = true;
           scope.box.type = 'intersecttool';
         }
-      }
-      // Hide and unhide clicklayer when zoomed out or in
-      if (scope.mapState.clickLayer && scope.map.getZoom() < 12) {
-        scope.map.removeLayer(scope.mapState.clickLayer);
-      }
-      if (scope.mapState.clickLayer && scope.map.getZoom() > 11) {
-        scope.map.addLayer(scope.mapState.clickLayer);
       }
     });
 
@@ -514,6 +330,12 @@ app.directive('map', ['$location', function ($location) {
       }
     });
 
+
+
+    scope.map.on('movestart', function() {
+          scope.mapState.mapMoving = true;
+    });
+
     /**
      * Update the url when the map has been moved
      *
@@ -522,6 +344,7 @@ app.directive('map', ['$location', function ($location) {
      */
 
     scope.map.on('moveend', function () {
+
       scope.holdRightThere = true;
       var COORD_PRECISION = 5;
       var newHash = [
@@ -531,6 +354,7 @@ app.directive('map', ['$location', function ($location) {
       ].join(',');
       if (!scope.$$phase) {
         scope.$apply(function () {
+          scope.mapState.mapMoving = false;
           $location.hash(newHash);
         });
       } else {
@@ -572,6 +396,7 @@ app.directive('map', ['$location', function ($location) {
           }
         }
       }
+      scope.mapState.mapMoving = false;
       scope.holdRightThere = false;
     });
 
@@ -587,7 +412,11 @@ app.directive('map', ['$location', function ($location) {
     });
 
     scope.mapState.changeLayer = function (layer) {
+      if (layer.overlayer === true) {
+      	ctrl.updateOverLayers(scope.mapState);
+      }
       ctrl.toggleLayer(layer);
+      scope.box.type = ctrl.boxType(scope.mapState);
     };
 
     /**
@@ -617,23 +446,7 @@ app.directive('map', ['$location', function ($location) {
         ctrl.toggleBaseLayer(baselayer);
       });
       scope.mapState.baselayerChanged = Date.now();
-      scope.box.type = ctrl.boxType(scope.mapState.activeBaselayer,
-                                    scope.mapState.activeOverlayer,
-                                    scope.box.type);
-    };
-
-    /**
-     * Changes the overlayer.
-     *
-     * @param  {layer object} overlayer: the overlayer to activate
-     */
-    scope.mapState.changeOverlayer = function (overlayer, opacity) {
-      if (overlayer) { scope.mapState.activeOverlayer = overlayer.id; }
-      ctrl.toggleOverLayer(overlayer, opacity);
-      scope.mapState.overlayerChanged = Date.now();
-      scope.box.type = ctrl.boxType(scope.mapState.activeBaselayer,
-                                    scope.mapState.activeOverlayer,
-                                    scope.box.type);
+      scope.box.type = ctrl.boxType(scope.mapState);
     };
 
     scope.zoomToTheMagic = function (layer) {

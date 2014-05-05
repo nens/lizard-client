@@ -10,6 +10,10 @@ html, body{
     overflow:hidden;
 }
 
+/* Fix for angular-ui bootstrap - see http://angular-ui.github.io/bootstrap/ */
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+
 h1, h2, h3, h4, h5 {
     font-family: 'Roboto', sans-serif !important;
 }
@@ -1179,33 +1183,6 @@ li.recommendation > a {
     vertical-align: middle;
 }
 
-.card {
-    vertical-align: middle;
-}
-
-.card p {
-    color: #777;
-    white-space: normal;
-}
-
-.searchbox input {
-    vertical-align: middle;
-    background-color: transparent;
-    border: 0;
-    font-size: 14px;
-    font-weight: 300;
-    margin: 0;
-    outline: 0;
-    padding: 0;
-    width: 100%;
-    box-shadow: none;
-    height: auto !important;
-    color: #7f8c8d;
-}
-
-#cards {
-    margin-top: 0;
-}
 
 a {
     color: #2980b9;
@@ -1296,8 +1273,8 @@ img.leaflet-image-layer {
 
 /* Leaflet override */
 .leaflet-container img.leaflet-image-layer {
-        max-width: none !important;
-        }
+    max-width: none !important;
+}
 
 .whisker-vertical {
     stroke-dasharray: 3,3;
@@ -1308,4 +1285,10 @@ img.leaflet-image-layer {
 .whisker-horizontal {
     stroke: #7f8c8d;
     stroke-width: 1px;
+}
+
+.now-indicator {
+    stroke-dasharray: 6,1;
+    stroke: #2c3e50;
+    stroke-width: 3;
 }

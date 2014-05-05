@@ -35,8 +35,6 @@ def _bootstrap(objects):
 def index(request):
     base_layers = spatial.LayerSerializer(
         Layer.objects.filter(baselayer=True)).data
-    over_layers = spatial.LayerSerializer(
-        Layer.objects.filter(overlayer=True)).data
     layers = spatial.LayerSerializer(
         Layer.objects.filter(baselayer=False)).data
     event_series = EventSeries.objects.all()
@@ -80,10 +78,14 @@ def index(request):
     context = {
         'random_string': md5(str(random.random())).hexdigest(),
         'strap_base_layers': _bootstrap(base_layers),
-        'strap_over_layers': _bootstrap(over_layers),
         'strap_layers': _bootstrap(layers),
         'strap_data_bounds': _bootstrap(data_bounds),
+<<<<<<< HEAD
         'strap_event_types': _bootstrap(event_types),
+=======
+        'strap_orgs': _bootstrap(orgs),
+        'threedi_instance': ThreediInstance.objects.all()[0],
+>>>>>>> af5c41d94140583cd68dcd38fdffe0b38d6395fd
         # For now, just assign a server
     }
     if getattr(settings, "DEV_TEMPLATE", False):

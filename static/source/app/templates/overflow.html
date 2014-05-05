@@ -1,14 +1,26 @@
-<div class="card">
+<div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
     <!-- Card for "overflow" / "overstort" -->
-
-    <!--
     <div class="actions">
-        <ul>
-            <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
-            <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
-        </ul>
-    </div>
-    -->
+      <ul>
+        <!-- <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li> -->
+        <li class="fullscreen">
+          <a 
+            ng-click="toggleDetailmode()"
+            title="Bekijk in detailmode">
+            <i class="fa fa-lg fa-plus-square-o"></i>
+          </a>
+        </li>
+<!--         <li class="favorite">
+          <a
+            ng-click="bookmarkItem()" 
+            title="Voeg toe aan favorieten">
+            <i class="fa fa-lg fa-bookmark"></i>
+          </a>
+        </li> -->
+        <!-- <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li> -->
+      </ul>
+    </div> <!-- end actions -->
+
 
     <div class="card-title">
         <!-- <img src="images/knoop.png" class="img-circle"> -->
@@ -70,6 +82,8 @@
       </tr>
       </tbody>
     </table>
+
+    
     <div class="streetview">
     <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&cbp=11,90,0,0,40">
       <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">

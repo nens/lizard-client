@@ -14,6 +14,9 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
   $scope.$watch('tools.active', function (n, o) {
     if ($scope.tools.active !== 'rain') {
       $scope.box.type = 'empty';
+      // Destroy scope at the end of this digest. Workaround from:
+      // https://github.com/shinetech/angular-models/blob/master/angular-models.js
+      $scope.$$postDigest(function () { $scope.$destroy(); });
     }
   });
 

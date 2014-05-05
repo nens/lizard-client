@@ -1,5 +1,5 @@
 <!-- Card for "channel" / "kanaal" -->
-<div class="card">
+<div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
   <div class="actions">
     <ul>
       <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
@@ -9,7 +9,7 @@
 
   <div class="card-title">
     <!-- <img src="/static/distjs/images/knoop.png" class="img-circle" alt="Manhole"> -->
-    <i class="icon-manhole"></i><span class="title-text">Kanaal</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
+    <i class="icon-manhole"></i><span class="title-text">Kanaal</span>&nbsp;<span ng-if="activeObject.code">(</span><span class="truncateme ng-binding" ng-bind="activeObject.code"></span><span ng-if="activeCode.code">)</span>
   </div>
   <table class="fullwidth">
     <tbody>
