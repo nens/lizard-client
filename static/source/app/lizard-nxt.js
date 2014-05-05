@@ -379,9 +379,6 @@ app.controller("MasterCtrl",
    * of the feature.
    * 
    * @param: object geojson compliant data object with all the events
-   *
-   * TODO: something goes wrong when adding a second event series, ordinal
-   * scale is ignored.
    */
   var addColor = function (longData) {
     var scale;
