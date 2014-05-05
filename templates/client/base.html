@@ -137,7 +137,6 @@
           <div class="layer-switcher slide-left">
             <ul class="nav">
               <li class="nav-header">
-              {% trans "Thema" %}
               <ul class="list-group">
                 <li ng-repeat="layer in mapState.layers | orderBy:'order':true">
                 <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="mapState.changeLayer(layer)">
@@ -160,7 +159,6 @@
               </li>
               <!-- Temporary item to enable events -->
               <li id="events" class="nav-header">
-              {% trans "Events" %}
               <ul class="list-group">
                 <li ng-repeat="event in mapState.eventTypes">
                 <label class="ng-class: {active: events.types[event.name].active};" ng-bind="event.name" ng-click="events.toggleEvents(event.name)"></label>
