@@ -16,13 +16,19 @@ from django.template import RequestContext
 from django.utils.safestring import mark_safe
 from rest_framework.renderers import JSONRenderer
 
-from hydra_core.models import Layer, ThreediInstance
+from hydra_core.models import Layer
+from hydra_core.models import Event
+from hydra_core.models import EventSeries
 from lizard_nxt.server.serializers import spatial
 from lizard_nxt.server.middleware import ORGANISATION_IDS
 from lizard_auth_client.models import Organisation
 
 
 def _bootstrap(objects):
+    """Render objects as JSON.
+
+    :param objects: objects to render
+    """
     return mark_safe(JSONRenderer().render(objects))
 
 
@@ -31,12 +37,18 @@ def index(request):
         Layer.objects.filter(baselayer=True)).data
     layers = spatial.LayerSerializer(
         Layer.objects.filter(baselayer=False)).data
+    event_series = EventSeries.objects.all()
+    event_types = []
+    for event_series_ in event_series:
+        count = Event.objects.filter(event_series=event_series_).count()
+        event_types.append({"type": event_series_.type,
+                            "event_count": count,
+                            "event_series": event_series_.id})
 
     for layer in layers:
         if layer['type'] == 'ASSET':
-            layer['url'] = 'http://' + request.META['HTTP_HOST'] + '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}'
-
-
+            layer['url'] = ('http://' + request.META['HTTP_HOST'] +
+                            '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}')
 
     # Define data bounds based on the (multiple) administrative bounds of all
     # the user's organisations. The data bounding box is the rectangle around
@@ -68,9 +80,8 @@ def index(request):
         'strap_base_layers': _bootstrap(base_layers),
         'strap_layers': _bootstrap(layers),
         'strap_data_bounds': _bootstrap(data_bounds),
+        'strap_event_types': _bootstrap(event_types),
         'strap_orgs': _bootstrap(orgs),
-        'threedi_instance': ThreediInstance.objects.all()[0],
-        # For now, just assign a server
     }
     if getattr(settings, "DEV_TEMPLATE", False):
         return render_to_response('client/debug.html', context,

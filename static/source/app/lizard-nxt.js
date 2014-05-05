@@ -80,8 +80,8 @@ app.config(function ($locationProvider) {
 
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "Restangular", "$q", "$compile", "CabinetService",
-  function ($scope, $http, Restangular, $q, $compile, CabinetService)  {
+  ["$scope", "$http", "$q", "$compile", "CabinetService",
+  function ($scope, $http, $q, $compile, CabinetService) {
 
   // BOX MODEL
   $scope.box = {
@@ -217,8 +217,27 @@ app.controller("MasterCtrl",
   // EVENTS
   
   // EVENTS MODEL
+  /**
+   * Build object template to hold information per event type.
+   * 
+   * @param object eventTypes object with event ids
+   * @returns  
+   */
+  var buildEventTypesTemplate = function (eventTypes) {
+  
+    var eventTypesTemplate = {};
+    for (var i = 0; i < eventTypes.length; i++) {
+      eventTypesTemplate[eventTypes[i].event_series] = {};
+    }
+    eventTypesTemplate.count = 0;
+
+    return eventTypesTemplate;
+  };
+
   $scope.events = {
-    types: { count: 0 }, // Metadata object
+    //TODO: refactor event meta data (remove eventTypes from mapState)
+    //types: { count: 0, 1: {}, 2: {}, 3: {}, 4: {}, 5: {} }, // Metadata object
+    types: buildEventTypesTemplate($scope.mapState.eventTypes),
     data: { type: "FeatureCollection",
             features: [] // Long format events data object
       },
@@ -254,14 +273,17 @@ app.controller("MasterCtrl",
    * up.
    */
   $scope.events.countCurrentEvents = function () {
-    for (var eventType in $scope.events.types) {
-      $scope.events.types[eventType].currentCount = 0;
+    var i,
+        eventType;
+    var typeLength = $scope.mapState.eventTypes.length;
+    for (i = 0; i < typeLength; i++) {
+      eventType = $scope.mapState.eventTypes[i];
+      $scope.events.types[eventType.event_series].currentCount = 0;
     }
-    for (var i = 0; i < $scope.events.data.features.length; i++) {
+    for (i = 0; i < $scope.events.data.features.length; i++) {
       var feature = $scope.events.data.features[i];
       if (feature.inTempExtent && feature.inSpatExtent) {
-        eventType = feature.name;
-        $scope.events.types[eventType].currentCount++;
+        $scope.events.types[feature.properties.event_series].currentCount++;
       }
     }
   };
@@ -273,20 +295,20 @@ app.controller("MasterCtrl",
    * When an event type is on, it is passed to removeEvents and the remaining
    * events are recolored.
    * 
-   * @param: str containing the name of the event type to toggle
+   * @param: str containing the type of the event type to toggle
    */
-  $scope.events.toggleEvents = function (name) {
-    if ($scope.events.types[name]) {
-      if ($scope.events.types[name].active) {
-        $scope.events.types[name].active = false;
-        $scope.events.data = removeEvents($scope.events.data, name);
+  $scope.events.toggleEvents = function (eventSeriesId) {
+    if ($scope.events.types[eventSeriesId]) {
+      if ($scope.events.types[eventSeriesId].active) {
+        $scope.events.types[eventSeriesId].active = false;
+        $scope.events.data = removeEvents($scope.events.data, eventSeriesId);
         addColor($scope.events.data);
         $scope.events.changed = Date.now();
       } else {
-        getEvents(name);
+        getEvents(eventSeriesId);
       }
     } else {
-      getEvents(name);
+      getEvents(eventSeriesId);
     }
     if ($scope.timeState.hidden !== false) {
       $scope.toggleTimeline();
@@ -299,20 +321,18 @@ app.controller("MasterCtrl",
    * Callback passes the response to addEvents, recolors the event data object,
    * Does bookkeeping and triggers watches by updating events.changed
    * 
-   * @param: str containing the name of the event type to download
+   * @param: int containing the id of the event series to download
    */
-  var getEvents = function (name) {
-    // Get data from json as long as there is no db implementation
-    var url = '/static/data/' + name + '.geojson';
-    $http.get(url)
-    .success(function (response) {
-      var data = response;
-      $scope.events.data = addEvents($scope.events.data, data, name);
-      addColor($scope.events.data);
-      $scope.events.types[name].count = response.features.length;
-      $scope.events.types[name].active = true;
-      $scope.events.changed = Date.now();
-    });
+  var getEvents = function (eventSeriesId) {
+    CabinetService.events.get({event_series: eventSeriesId})
+      .then(function (response) {
+        var data = response;
+        $scope.events.data = addEvents($scope.events.data, data, eventSeriesId);
+        addColor($scope.events.data);
+        $scope.events.types[eventSeriesId].count = response.features.length;
+        $scope.events.types[eventSeriesId].active = true;
+        $scope.events.changed = Date.now();
+      });
   };
 
   /**
@@ -327,29 +347,32 @@ app.controller("MasterCtrl",
    * 
    * @param: object geojson compliant data object to add too
    * @param: object geojson compliant data object to add
-   * @param: str containing the name of the event type to add
+   * @param: str containing the type of the event to add
    * @returns: object geojson compliant data object 
    */
-  var addEvents = function (longData, shortData, name) {
+  var addEvents = function (longData, shortData, eventSeriesId) {
     // Create event identifier
     var eventOrder;
-    if (longData.features === undefined) {longData.features = []; }
-    if (longData.features.length === 0) { eventOrder = 1; }
-    else {
+    if (longData.features === undefined) { longData.features = []; }
+    if (longData.features.length === 0) {
+      eventOrder = 1;
+    } else {
       var maxEventOrder = 0;
       angular.forEach(longData.features, function (feature) {
-        maxEventOrder = feature.event_type > maxEventOrder ? feature.event_type : maxEventOrder;
+        maxEventOrder = feature.event_order > maxEventOrder ?
+                        feature.event_order : maxEventOrder;
       });
       eventOrder = maxEventOrder + 1;
     }
-    $scope.events.types[name] = {};
-    $scope.events.types[name].event_type = eventOrder;
+    $scope.events.types[eventSeriesId] = {};
+    $scope.events.types[eventSeriesId].event_type = eventOrder;
     angular.forEach(shortData.features, function (feature) {
-      feature.event_type = eventOrder;
+      feature.event_order = eventOrder;
       feature.color = $scope.colors[8][eventOrder];
-      feature.name = name;
-      // Create unique id, a combo of time and location. I assume this is always unique..
-      feature.id = name + feature.properties.timestamp + feature.geometry.coordinates[0] + feature.geometry.coordinates[1];
+      //feature.event_type = type;
+      feature.id = eventSeriesId + feature.properties.timestamp +
+                   feature.geometry.coordinates[0] +
+                   feature.geometry.coordinates[1];
       longData.features.push(feature);
     });
     $scope.events.types.count = $scope.events.types.count + 1;
@@ -359,11 +382,11 @@ app.controller("MasterCtrl",
   /**
    * Adds a color attribute to features in event data object
    * 
-   * Takes a geojson compliant data object and adds a color to all the features. 
-   * If there is only one event type, the events are colored on the basis of
-   * sub_event_type. If there are multiple event types active, the events are
-   * colored on the basis of a colorscale on the scope and the name of the
-   * feature.
+   * Takes a geojson compliant data object and adds a color to all the
+   * features. If there is only one event type, the events are colored on the
+   * basis of sub_event_type. If there are multiple event types active, the
+   * events are colored on the basis of a colorscale on the scope and the type
+   * of the feature.
    * 
    * @param: object geojson compliant data object with all the events
    */
@@ -372,11 +395,11 @@ app.controller("MasterCtrl",
     if ($scope.events.types.count === 1) {
       scale = d3.scale.ordinal().range($scope.colors[8]);
       angular.forEach(longData.features, function (feature) {
-        feature.color = scale(feature.properties.event_sub_type);
+        feature.color = scale(feature.properties.category);
       });
     } else {
       angular.forEach(longData.features, function (feature) {
-        feature.color = $scope.events.scale(feature.name);
+        feature.color = $scope.events.scale(feature.properties.event_series);
       });
     }
   };
@@ -390,16 +413,16 @@ app.controller("MasterCtrl",
    * the order of the removed event type.
    * 
    * @param: object geojson compliant data object 
-   * @param: str containing the name of the event type to remove
+   * @param: str containing the type of the event to remove
    * @returns: object geojson compliant data object 
    */
-  var removeEvents = function (longData, name) {
-    var eventOrder = $scope.events.types[name].event_type;
+  var removeEvents = function (longData, eventSeriesId) {
+    var eventOrder = $scope.events.types[eventSeriesId].event_type;
     var iterations = longData.features.length;
     for (var i = 0; i < iterations; i++) {
       var index = iterations - 1 - i;
       var feature = longData.features[index]; // Go from back to front to not mess with the order
-      if (feature.name === name) {
+      if (feature.properties.event_series === eventSeriesId) {
         var j = longData.features.indexOf(feature);
         longData.features.splice(j, 1);
       }
@@ -414,6 +437,7 @@ app.controller("MasterCtrl",
       }
     }
     $scope.events.types.count = $scope.events.types.count - 1;
+
     return longData;
   };
 
@@ -614,10 +638,6 @@ app.controller("MasterCtrl",
     } else if (newVal === 50) {
       $scope.mapState.activeBaselayer = 2;
       $scope.mapState.changeBaselayer();
-    } else if (newVal === 53) {
-      $scope.events.toggleEvents("Twitter");
-    } else if (newVal === 54) {
-      $scope.events.toggleEvents("Meldingen");
     }
   });
 

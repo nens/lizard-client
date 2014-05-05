@@ -117,7 +117,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       .call(graph.xAxis);
   };
 
-  this.drawCircles = function (svg, xScale, yScale, colorScale, xKey, yKey, colorKey, data) {
+  this.drawCircles = function (svg, xScale, yScale, colorScale, xKey, yKey, data) {
     // Shift halve a pixel for nice and crisp rendering
     var xFunction = function (d) { return Math.round(xScale(d.properties[xKey])) + 0.5; };
     var yFunction = function (d) { return yScale(d[yKey]) + 0.5; };
@@ -335,16 +335,21 @@ app.controller('TimelineDirCtrl', function ($scope) {
      * Updates the graph with new data
      */
     var updateTimeline = function (graph, data, nEventTypes) {
-      var canvasOptions = {width: element.width(), height: 45 + nEventTypes * 25};
+      var canvasOptions = {width: element.width(),
+                           height: 45 + nEventTypes * 25};
       var newGraph = timelineCtrl.updateCanvas(graph, canvasOptions);
       // Update the brush if any
       if (animationBrush) {
         timelineCtrl.updateBrush(newGraph.height);
       }
       // Create remaining scales
-      var yScale = timelineCtrl.scale({min: 1, max: nEventTypes}, { min: newGraph.height - 27, max: 20 }, {scale: 'linear'});
+      var yScale = timelineCtrl.scale({min: 1, max: nEventTypes},
+                                      {min: newGraph.height - 27, max: 20 },
+                                      {scale: 'linear'});
       // Update the svg
-      timelineCtrl.drawCircles(newGraph.svg, newGraph.xScale, yScale, graph.colorScale, 'timestamp', 'event_type', 'event_type', data);
+      timelineCtrl.drawCircles(newGraph.svg, newGraph.xScale, yScale,
+                               graph.colorScale, 'timestamp', 'event_order',
+                               data);
       timelineCtrl.updateNow(newGraph, scope.timeState.at);
       return newGraph;
     };
@@ -390,7 +395,9 @@ app.controller('TimelineDirCtrl', function ($scope) {
       zoomend();
       // Update circle positions
       graph.svg.selectAll("circle")
-        .attr("cx", function (d) { return Math.round(graph.xScale(d.properties.timestamp)); });
+        .attr("cx", function (d) {
+          return Math.round(graph.xScale(d.properties.timestamp));
+        });
       // Update now indicator
       graph.svg.select('.now-indicator')
         .attr('x1', graph.xScale(scope.timeState.at) || graph.margin.left - 5)

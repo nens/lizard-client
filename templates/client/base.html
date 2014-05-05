@@ -19,6 +19,7 @@
       var baseLayers = {{ strap_base_layers }};
       var layers = {{ strap_layers }};
       var data_bounds = {{ strap_data_bounds }};
+      var event_types = {{ strap_event_types }};
 
       function logOut() {
         var r=confirm("Weet u zeker dat u wilt uitloggen?");
@@ -172,8 +173,8 @@
               {% trans "Events" %}
               <ul class="list-group">
                 <li ng-repeat="event in mapState.eventTypes">
-                <label class="ng-class: {active: events.types[event.name].active};" ng-bind="event.name" ng-click="events.toggleEvents(event.name)"></label>
-                <label class="count"  ng-if="events.types[event.name].active"><% events.types[event.name].currentCount %>&nbsp;(<% events.types[event.name].count %>) </label>
+                <label class="ng-class: {active: events.types[event.event_series].active};" ng-bind="event.type" ng-click="events.toggleEvents(event.event_series)"></label>
+                <label class="count"  ng-if="events.types[event.event_series].active"><% events.types[event.event_series].currentCount %>&nbsp;(<% event.event_count %>) </label>
               </ul>
               </li>
             </ul>

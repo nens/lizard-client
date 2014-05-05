@@ -7,28 +7,7 @@ services.service("CabinetService", ["Restangular",
   var layers = window.layers;
   var baselayers = window.baseLayers;
   var overlayers = window.overLayers;
-  var eventTypes = [
-    {
-      "name": "Twitter",
-      "event_count": 4
-    },
-    {
-      "name": "Meldingen",
-      "event_count": 4
-    },
-    {
-      "name": "Alarmen",
-      "event_count": 4
-    },
-    {
-      "name": "Aardbevingen",
-      "event_count": 4
-    },
-    {
-      "name": "Gebouwen",
-      "event_count": 4
-    }
-  ];
+  var eventTypes = window.event_types;
 
   var termSearchResource,
       bboxSearchResource,
@@ -45,18 +24,7 @@ services.service("CabinetService", ["Restangular",
   geocodeResource = Restangular.one('api/v1/geocode/');
   reverseGeocodeResource = Restangular.one('api/v1/reversegeocode/');
   timeseriesResource = Restangular.one('api/v1/timeseries/');
-  eventsResource = Restangular.one('api/v1/events/', {
-    type: '@event_type',
-    sub_type: '@event_subtype',
-    start: '@start',
-    end: '@end',
-    extent: '@extent'
-  }, {
-    get: {
-      method: 'GET',
-      isArray: true
-    }
-  });
+  eventsResource = Restangular.one('api/v1/events/');
   var rasterResource = Restangular.one('api/v1/rasters/');
 
   return {
