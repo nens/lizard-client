@@ -80,13 +80,8 @@ def index(request):
         'strap_base_layers': _bootstrap(base_layers),
         'strap_layers': _bootstrap(layers),
         'strap_data_bounds': _bootstrap(data_bounds),
-<<<<<<< HEAD
         'strap_event_types': _bootstrap(event_types),
-=======
         'strap_orgs': _bootstrap(orgs),
-        'threedi_instance': ThreediInstance.objects.all()[0],
->>>>>>> af5c41d94140583cd68dcd38fdffe0b38d6395fd
-        # For now, just assign a server
     }
     if getattr(settings, "DEV_TEMPLATE", False):
         return render_to_response('client/debug.html', context,
