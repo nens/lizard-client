@@ -46,10 +46,9 @@ app.config(function ($locationProvider) {
  *
  * Application state
  * -----------------
- * state.spatial 
- * state.temporal
- * state.animate ?
- * state.tools
+ * state.mapState => spatial state
+ * state.timeState => temporal state
+ * state.tools => active tool(s)
  * user.profile
  *
  * Data
@@ -65,19 +64,19 @@ app.config(function ($locationProvider) {
  * 
  * Stuff to reconsider, rethink, refactor:
  *
- * * [ ] Create a mapState.here to describe the current spatial location 
+ * * [+] Create a mapState.here to describe the current spatial location 
  *       just like timeState.at describes the now. map-directive should set this, 
  *       watches should listen to this to draw a clicklayer, get rain, get data from utf, etc.
  * * [ ] Refactor map controller and directives
  * * [-] Refactor master controller (states, data!)
- * * [-] Refactor timeline out of mapState with its own scope
+ * * [+] Refactor timeline out of mapState with its own scope
  * * [+] Refactor index.html and base-debug.html
  * * [ ] Fix + document Gruntfile.js / workflow
  * * [ ] Refactor css (csslint, -moz and -webkit)
  * * [ ] Move or delete common directory in source
  * * [+] Refactor timeline controller and directive
  * * [ ] Move event logic to event controller (on event / layer tag)
- * * [ ] Move animation logic to animation controller (on timeline tag)
+ * * [+] Move animation logic to animation controller (on timeline tag)
 
  */
 app.controller("MasterCtrl",
@@ -137,25 +136,13 @@ app.controller("MasterCtrl",
     }
   };
 
-  $scope.toggleCardSize = function() {
-    // console.log('toggleCardSize()');
-    if ( $scope.box.largeCard ) {
-      $scope.box.largeCard = false;
-    } else {
-      $scope.box.largeCard = true;      
-    }
-  };
-
-  $scope.toggleDetailmode = function() {
-    if($scope.box.detailMode) {
+  $scope.toggleDetailmode = function () {
+    if ($scope.box.detailMode) {
       $scope.box.detailMode = false;
     } else {
       $scope.box.detailMode = true;
     }
-    // console.log('Showing detailmode for ', $scope.activeObject);
   };
-
-
   // TOOLS
 
   // MAP MODEL
@@ -227,7 +214,9 @@ app.controller("MasterCtrl",
     8: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12", "#d35400", "#c0392b", "#16a085"]
   };
 
-// EVENTS MODEL
+  // EVENTS
+  
+  // EVENTS MODEL
   $scope.events = {
     types: { count: 0 }, // Metadata object
     data: { type: "FeatureCollection",
@@ -236,31 +225,33 @@ app.controller("MasterCtrl",
     scale: d3.scale.ordinal().range($scope.colors[8]),
     changed: Date.now()
   };
-  
+
   /**
-   * Zoom to location
+   * Zoom to event location
    * 
    * Used by the aggregate template under the 'screenshot' icon
    * 
-   * @param {object} geometry Object wit a list of lon lat
+   * @param {object} geometry Object wit a list of lon, lat
    */
   $scope.events.zoomTo = function (geometry) {
     var panZoom = {
-      lat: geometry.coordinates[1],
       lng: geometry.coordinates[0],
+      lat: geometry.coordinates[1],
       zoom: 15
     };
     $scope.panZoom = panZoom;
     $scope.mapState.moved = Date.now();
   };
+  
 
   /**
    * Counts the events currently within the temporal and spatial extent
    * 
    * Called when the user pans the map or zooms the timeline.
-   * The aggregate directive flags events that are visible on the map at feature.inSpatExtent
-   * The timeline directive flags events that are currently on the map at inTempExtent attribute
-   * This function just sums it all up
+   * The aggregate directive flags events that are visible on the map at
+   * feature.inSpatExtent. The timeline directive flags events that are
+   * currently on the map at inTempExtent attribute. This function sums it all
+   * up.
    */
   $scope.events.countCurrentEvents = function () {
     for (var eventType in $scope.events.types) {
@@ -278,8 +269,9 @@ app.controller("MasterCtrl",
   /**
    * Turns event types on or off.
    * 
-   * When an event type is off, it is passed to getEvents
-   * When an event type is on, it is passed to removeEvents and the remaining events are recolored
+   * When an event type is off, it is passed to getEvents.
+   * When an event type is on, it is passed to removeEvents and the remaining
+   * events are recolored.
    * 
    * @param: str containing the name of the event type to toggle
    */
@@ -368,9 +360,10 @@ app.controller("MasterCtrl",
    * Adds a color attribute to features in event data object
    * 
    * Takes a geojson compliant data object and adds a color to all the features. 
-   * If there is only one event type, the events are colored on the basis of sub_event_type
-   * If there are multiple event types active, the events are colored on the basis of a colorscale
-   * on the scope and the name of the feature.
+   * If there is only one event type, the events are colored on the basis of
+   * sub_event_type. If there are multiple event types active, the events are
+   * colored on the basis of a colorscale on the scope and the name of the
+   * feature.
    * 
    * @param: object geojson compliant data object with all the events
    */
@@ -391,9 +384,10 @@ app.controller("MasterCtrl",
   /**
    * Removes events from the data object.
    * 
-   * Takes a geojson compliant data object and removes the features with the given name
-   * It also removes the metadata of these events and lowers the eventOrder of all the 
-   * event types which have a order that is greater than the order of the removed event type.
+   * Takes a geojson compliant data object and removes the features with the
+   * given name. It also removes the metadata of these events and lowers the
+   * eventOrder of all the event types which have a order that is greater than
+   * the order of the removed event type.
    * 
    * @param: object geojson compliant data object 
    * @param: str containing the name of the event type to remove
@@ -422,6 +416,10 @@ app.controller("MasterCtrl",
     $scope.events.types.count = $scope.events.types.count - 1;
     return longData;
   };
+
+  // END EVENTS
+
+  // TIMESERIES
 
   /**
    * Get data for timeseries.
@@ -476,7 +474,6 @@ app.controller("MasterCtrl",
   $scope.$watch('activeObject.changed', function (newVal, oldVal) {
     if (newVal === oldVal) { return; }
 
-
     // NOTE: this is of course utterly crappy, 
     // I copy pasted this from the 'old way'
     // the only thing changed is the restangular thingy
@@ -516,7 +513,7 @@ app.controller("MasterCtrl",
     }
   });
 
-// END Timeseries
+  // END TIMESERIES
 
   /**
    * Get raster data from server.
@@ -580,9 +577,7 @@ app.controller("MasterCtrl",
     return formatted;
   };
 
-/**
-* keypress stuff
-*/
+  // KEYPRESS
 
   // If escape is pressed close box
   // NOTE: This fires the watches too often
@@ -634,7 +629,7 @@ app.controller("MasterCtrl",
     }
   };
 
-//END keypress
+  //END KEYPRESS
 
   /**
    * Switch timeline on or off.
@@ -665,99 +660,8 @@ app.controller("MasterCtrl",
     }
   };
 
-/**
- * Animation stuff.
- */
-
-  window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
-                              window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-
-  $scope.timeState.enableAnimation = function (toggle) {
-    if ($scope.timeState.animation.enabled || toggle === "off") {
-      $scope.timeState.animation.enabled = false;
-    } else {
-      $scope.timeState.animationDriver();
-      $scope.timeState.animation.enabled = true;
-    }
-  };
-
-  $scope.timeState.playPauseAnimation = function (toggle) {
-    if (!$scope.timeState.animation.enabled) {
-      $scope.timeState.enableAnimation();
-    }
-    if ($scope.timeState.animation.playing || toggle === "off") {
-      $scope.timeState.animation.playing = false;
-    } else {
-      $scope.timeState.animation.playing = true;
-      window.requestAnimationFrame($scope.timeState.step);
-    }
-  };
-
-  $scope.timeState.step =  function (timestamp) {
-    $scope.timeState.timeStep = ($scope.timeState.end - $scope.timeState.start) / $scope.timeState.animation.stepSize;
-    $scope.$apply(function () {
-      $scope.timeState.animation.start += $scope.timeState.timeStep;
-      $scope.timeState.animation.end += $scope.timeState.timeStep;
-      $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
-    });
-    if ($scope.timeState.at >= $scope.timeState.end || $scope.timeState.at < $scope.timeState.start) {
-      $scope.$apply(function () {
-        $scope.timeState.animation.end = $scope.timeState.animation.end - $scope.timeState.animation.start + $scope.timeState.start;
-        $scope.timeState.animation.start = $scope.timeState.start;
-        $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
-      });
-    }
-    if ($scope.timeState.animation.playing) {
-      setTimeout(function () {
-        window.requestAnimationFrame($scope.timeState.step);
-      }, 400 - Math.pow($scope.timeState.animation.speed, 2));
-    }
-  };
-
-  /**
-   * Set timeSate.at to start of timeline.
-   */
-  $scope.timeState.animationDriver = function () {
-    $scope.timeState.at = $scope.timeState.start;
-  };
-
-  var animationWasOn;
-  // Toggle fast-forward
-  $scope.timeState.animation.toggleAnimateFastForward = function (toggle) {
-    if (toggle) {
-      $scope.timeState.animation.stepSize = $scope.timeState.animation.stepSize / 4;
-      animationWasOn = $scope.timeState.animation.playing;
-      if (!$scope.timeState.animation.playing) {
-        $scope.timeState.playPauseAnimation();
-      }
-    } else if (!toggle) {
-      $scope.timeState.animation.stepSize = $scope.timeState.animation.stepSize * 4;
-      if (!animationWasOn) {
-        $scope.timeState.playPauseAnimation('off');
-      }
-    }
-  };
-
-  // Step back function
-  $scope.timeState.animation.stepBack = function () {
-    var stepBack = ($scope.timeState.end - $scope.timeState.start) / 10;
-    var wasOn = $scope.timeState.animation.playing;
-    $scope.timeState.animation.start = $scope.timeState.animation.start - stepBack;
-    $scope.timeState.animation.end = $scope.timeState.animation.end - stepBack;
-    $scope.timeState.playPauseAnimation('off');
-    if (!$scope.timeState.animation.playing && wasOn) {
-      setTimeout(function () {
-        $scope.timeState.playPauseAnimation();
-      }, 500);
-    } else {
-      $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
-    }
-  };
-
-// END animation
-
-// START Rain Stuff
-// TODO: rewrite to handle general dynamic raster stuff.
+  // RAIN
+  // TODO: rewrite to handle general dynamic raster stuff.
 
   /**
    * Initial state 
@@ -768,8 +672,6 @@ app.controller("MasterCtrl",
 
   /**
    * Switch rain tool on or off.
-   *
-   * TODO: should be refactored to handle generic dynamic raster layers.
    *
    */
   $scope.toggleRain = function () {
@@ -814,6 +716,6 @@ app.controller("MasterCtrl",
     }
   };
 
-// End rain stuff
+  // END RAIN
 
 }]);
