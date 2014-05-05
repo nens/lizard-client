@@ -220,16 +220,35 @@ ul.list-inline li.baselayer-icon {
     width:50px;
     height:50px;
     overflow:hidden;
+    border: 2px solid #34495e;
 }
 ul.list-inline li.baselayer-icon#Topografie {
-    background-image: url('../images/baselayerbackgrounds/topo.png');
+    /*background-image: url('../images/baselayerbackgrounds/topo.png');*/
 }
 ul.list-inline li.baselayer-icon#Satelliet {
-    background-image: url('../images/baselayerbackgrounds/sat.png');
+    /*background-image: url('../images/baselayerbackgrounds/sat.png');*/
 }
 ul.list-inline li.baselayer-icon#Hoogtekaart {
-    background-image: url('../images/baselayerbackgrounds/hoogte.png');
+    /*background-image: url('../images/baselayerbackgrounds/hoogte.png');*/
 }
+
+.lizard-icon {
+    position: relative;
+    font-size: 2em;
+    top: 10px;
+}
+.icon-satellite {
+    top:16px;
+    left:2px;
+}
+.icon-terrain {
+    left:2px;
+}
+.fa-road {
+    top: 3px;
+    left: 1px;
+}
+
 ul.list-inline li.baselayer-icon span{
     color: #fff;
     position: absolute;
@@ -238,7 +257,7 @@ ul.list-inline li.baselayer-icon span{
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 ul.list-inline li.baselayer-icon.active {
-    border: 1px solid red;
+    border: 2px solid red;
 }
 ul.list-inline li.baselayer-icon label{
     display:none;

@@ -167,19 +167,22 @@
                 <label class="count"  ng-if="events.types[event.name].active"><% events.types[event.name].currentCount %>&nbsp;(<% events.types[event.name].count %>) </label>
               </ul>
               </li>
-              <li class="nav-header">
-              {% trans "Basis" %}
+              <li class="nav-header"> 
               <ul class="list-inline">
                 <li class="baselayer-icon"
                     rel="tooltip" 
                     data-toggle="tooltip" 
-                    data-placement="left" 
+                    data-placement="bottom" 
                     title="<% layer.name %>"
                     ng-click="mapState.changeBaselayer(layer)"
                     ng-repeat="layer in mapState.baselayers | orderBy:'order':true"
                     ng-class="{active: layer.active}"
                     id="<% layer.name %>">
-                  <span ng-bind="layer.name"></span>
+                  <!-- <span ng-bind="layer.name"></span> -->
+                  <i ng-if="layer.name == 'Topografie'" class="lizard-icon fa fa-road fa-2x"></i>
+                  <i ng-if="layer.name == 'Satelliet'" class="lizard-icon icon-satellite"></i>
+                  <i ng-if="layer.name == 'Hoogtekaart'" class="lizard-icon icon-terrain"></i>
+
                   <input id="<%layer.id%>-baselayer" 
                          class="hide" 
                          type="radio" 
@@ -191,12 +194,6 @@
                          ng-bind="layer.name">
                   </label>    
                 </li>
-
-
-<!--                 <li ng-repeat="layer in mapState.baselayers | orderBy:'order':true">
-                <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer"> 
-                <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name" ng-click="mapState.changeBaselayer(layer)"></label>
-                </li>  -->
               </ul>
               </li>              
             </ul>
