@@ -89,29 +89,40 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
    */
   var getMoreRain = function (starty) {
     var stop, start, callback;
-    var buffer = 40; // Collect 40 new bars at the time
-    if (starty) {
+    var buffer = 40; // Collect 40 new bars at the time=
+    var aggWindow = getAggWindow($scope.timeState.start,
+                               $scope.timeState.end,
+                               272);  // graph is 272 px wide
+    if (aggWindow !== $scope.rain.aggWindow) {
+      $scope.rain.aggWindow = aggWindow;
+      start = $scope.timeState.start;
+      stop = $scope.timeState.end;
+      callback = function (response) {
+        $scope.rain.data = response.result;
+        $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
+        $scope.rain.start = $scope.rain.data[0][0];
+      };
+    } else if (starty) {
       start = $scope.rain.start - buffer * $scope.rain.aggWindow;
       stop = $scope.rain.start;
-      $scope.rain.start = start;
       callback = function (response) {
         $scope.rain.data = response.result.concat($scope.rain.data);
+        $scope.rain.start = start;
       };
     } else {
       stop = $scope.rain.end + buffer * $scope.rain.aggWindow;
       start = $scope.rain.end;
-      $scope.rain.end = stop;
       callback = function (response) {
         $scope.rain.data = $scope.rain.data.concat(response.result);
+        $scope.rain.end = stop;
       };
     }
     getRain(
       new Date(start),
       new Date(stop),
       $scope.rain.latLng,
-      callback,
       $scope.rain.aggWindow
-    );
+    ).then(callback);
   };
 
   /**
@@ -123,18 +134,35 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
     var stop = new Date($scope.timeState.end);
     var start = new Date($scope.timeState.start);
     $scope.rain.latLng = latlng;
-    $scope.rain.aggWindow = 1000 * 60 * 5;
+    $scope.rain.aggWindow = getAggWindow($scope.timeState.start,
+                               $scope.timeState.end,
+                               272);  // graph is 272 px wide
     $scope.box.type = 'rain';
-    var callback = function (response) {
-      $scope.rain.data = response.result;
-      $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
-      $scope.rain.start = $scope.rain.data[0][0];
-      var interval = $scope.timeState.end - $scope.timeState.start;
-      $scope.rain.nbar = 270 * $scope.rain.aggWindow / interval;
-      console.log($scope.rain.nbar);
-      $scope.rain.nbar = 20;
-    };
-    getRain(start, stop, $scope.rain.latLng, callback, $scope.rain.aggWindow);
+    getRain(start, stop, $scope.rain.latLng, $scope.rain.aggWindow)
+      .then(function (response) {
+        $scope.rain.data = response.result;
+        $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
+        $scope.rain.start = $scope.rain.data[0][0];
+      }
+    );
+  };
+
+  var getAggWindow = function (start, stop, drawingWidth) {
+    var aggWindow;
+    var minPx = 3; // Minimum width of a bar
+    // Available zoomlevels
+    var zoomLvls = {1: 300000, // 5 minutes
+                    2: 6000000, // 1 hour
+                    3: 144000000}; // 1 day
+    // ms per pixel
+    var msPerPx = (stop - start) / drawingWidth;
+    for (var zoomLvl in zoomLvls) {
+      aggWindow = zoomLvls[zoomLvl];
+      if (aggWindow > minPx * msPerPx) {
+        break; // If zoomlevel is sufficient to get enough width in the bars
+      }
+    }
+    return aggWindow;
   };
 
   /**
@@ -142,22 +170,22 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
    *
    * @param  {int} start    start of rainserie
    * @param  {int} stop     end of rainserie
-   * @param  {function} callback function
    * @param  {object} latLng   location of rainserie in {lat: int, lng: int} (currently only supports points)
    * @param  {int} aggWindow width of the aggregation
+   * @return {promise} returns a thennable promise which may resolve with rain data on response.result
    */
-  var getRain = function (start, stop, latLng, callback, aggWindow) {
+  var getRain = function (start, stop, latLng, aggWindow) {
     var stopString = stop.toISOString().split('.')[0];
     var startString = start.toISOString().split('.')[0];
     var wkt = "POINT(" + latLng.lng + " " + latLng.lat + ")";
-    CabinetService.raster.get({
-      raster_names: 'demo:radar',
-      geom: wkt,
-      srs: 'EPSG:4326',
-      start: startString,
-      stop: stopString,
-      window: aggWindow
-    }).then(callback);
+    return CabinetService.raster.get({
+        raster_names: 'rain',
+        geom: wkt,
+        srs: 'EPSG:4326',
+        start: startString,
+        stop: stopString,
+        window: aggWindow
+      });
   };
 
 }]);
