@@ -27,8 +27,9 @@ app.controller('TimelineDirCtrl', function ($scope) {
           .attr("class", "plot-temporal");
     svg.select('g').append('rect')
       .attr('height', height)
-      .attr('width', 0)
+      .attr('width', width)
       .attr('id', 'nodata')
+      .attr('x', -4000) // make sure nodata bar is invisible at first
       .style('fill', 'url(#lightstripe)');
     // Create line for the timeState.at just out of sight
     svg.select('g').append('line')
@@ -283,7 +284,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
 })
 .directive('timeline', [ function () {
   
-  var link = function (scope, element, attrs, timelineCtrl) {
+  var link = function (scope, element, attrs, timelineCtrl, $timeout) {
 
     /**
      * Draws an empty timeline
@@ -328,6 +329,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         .on("zoom", zoomed)
       );
 
+      // timelineCtrl.zoomNodata();
       return graph;
     };
 
@@ -338,6 +340,12 @@ app.controller('TimelineDirCtrl', function ($scope) {
       var canvasOptions = {width: element.width(),
                            height: 45 + nEventTypes * 25};
       var newGraph = timelineCtrl.updateCanvas(graph, canvasOptions);
+
+      d3.select('#nodata').transition()
+        .duration(500)
+        .delay(500)
+        .attr('height', newGraph.height);
+
       // Update the brush if any
       if (animationBrush) {
         timelineCtrl.updateBrush(newGraph.height);
@@ -355,34 +363,16 @@ app.controller('TimelineDirCtrl', function ($scope) {
     };
 
     var nodataPosition = function (scale) {
-      
-      var year2014 = 1388534400; // since epoch
-      var widthInMiliseconds = year2014 - scope.timeState.start;
-
-      // If 2014 lies before the current timerange, set widthInMiliseconds to current timestart
-      if (year2014 < scope.timeState.start) {
-        widthInMiliseconds = scope.timeState.start;
-      }
-      // If 2014 is beyond the current timerange, set widthInMiliseconds to total time (end-start)
-      if (year2014 > scope.timeState.end) {
-        widthInMiliseconds = scope.timeState.end - scope.timeState.start;
-      }
-      // Put calculated widthInMiliseconds through the xScale function which is passed to nodataPosition()
-      // This converts the width to pixels
-      var width = scale(widthInMiliseconds) > 0 ? scale(widthInMiliseconds) : 20;
-
-      console.log('timeState.start:', scope.timeState.start);
-      console.log('converted timeState.start:', new Date(scope.timeState.start));
-      console.log('widthInMiliseconds:', widthInMiliseconds);
-      console.log('width:', width);
-      return Math.round(width);
+      var year2014 = 1388534400000; // in msecs, since epoch
+      var x = scale(year2014);
+      return Math.round(x);
     };
 
-    var zoomend = function () {
+    var zoomNodata = function () {
       // Update nodata zone
       graph.svg.select("#nodata")
-        .attr('width', function (d) {
-          return nodataPosition(graph.xScale);
+        .attr('x', function (d) {
+          return nodataPosition(graph.xScale) - graph.svg.select('#nodata').attr('width');
         });
     };
 
@@ -392,7 +382,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         orientation: "bottom",
         ticks: 5
       }));
-      zoomend();
+
       // Update circle positions
       graph.svg.selectAll("circle")
         .attr("cx", function (d) {
@@ -409,6 +399,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         scope.timeState.changeOrigin = 'timeline';
         scope.timeState.changedZoom = !scope.timeState.changedZoom;
       });
+      zoomNodata();      
     };
 
     // Get the timeline-graph
@@ -421,6 +412,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       scope.timeState.changedZoom = Date.now();
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
       scope.events.countCurrentEvents();
+      // zoomed();
     });
 
     scope.$watch('mapState.moved', function (n, o) {
@@ -462,7 +454,6 @@ app.controller('TimelineDirCtrl', function ($scope) {
         graph.svg.call(d3.behavior.zoom()
           .x(graph.xScale)
           .on("zoom", zoomed)
-          .on("mouseup", zoomend)
         );
         scope.timeState.changedZoom = Date.now();
       }
