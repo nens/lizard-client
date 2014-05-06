@@ -34,26 +34,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
     start: undefined,
     stop: undefined,
     interval: undefined,
-    statWin: undefined,
     data: undefined
-  };
-
-  /**
-   * Watch function to replace rain.data object with data computed for 
-   * different window.
-   */
-  var statWinWatch =  function (n, o) {
-    if (n === o) {return true; }
-    var callback = function (response) {
-      $scope.rain.data = response.result;
-    };
-    getRain(new Date($scope.rain.start),
-      new Date($scope.rain.end),
-      $scope.rain.latLng,
-      callback,
-      $scope.rain.interval,
-      $scope.rain.statWin
-    );
   };
 
   /**
@@ -109,29 +90,41 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
   var getMoreRain = function (starty) {
     var stop, start, callback;
     var buffer = 40; // Collect 40 new bars at the time
-    if (starty) {
-      start = $scope.rain.start - buffer * $scope.rain.interval;
+    var interval = getInterval($scope.timeState.start,
+                               $scope.timeState.end,
+                               272);  // graph is 272 px wide
+    console.log('interval: ', interval);
+    if (interval !== $scope.rain.interval) {
+      $scope.rain.interval = interval;
+      start = $scope.timeState.start;
+      stop = $scope.timeState.end;
+      callback = function (response) {
+        $scope.rain.data = response.result;
+        $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
+        $scope.rain.start = $scope.rain.data[0][0];
+      };
+    } else if (starty) {
+      start = $scope.rain.start - buffer * interval;
       stop = $scope.rain.start;
-      $scope.rain.start = start;
       callback = function (response) {
         $scope.rain.data = response.result.concat($scope.rain.data);
+        $scope.rain.start = start;
       };
     } else {
       stop = $scope.rain.end + buffer * $scope.rain.interval;
       start = $scope.rain.end;
-      $scope.rain.end = stop;
       callback = function (response) {
         $scope.rain.data = $scope.rain.data.concat(response.result);
+        $scope.rain.end = stop;
       };
     }
+    console.log('getting more rain');
     getRain(
       new Date(start),
       new Date(stop),
       $scope.rain.latLng,
-      callback,
-      $scope.rain.interval,
-      $scope.rain.statWin
-    );
+      $scope.rain.interval
+    ).then(callback);
   };
 
   /**
@@ -143,18 +136,36 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
     var stop = new Date($scope.timeState.end);
     var start = new Date($scope.timeState.start);
     $scope.rain.latLng = latlng;
-    var nBars = 20;
-    $scope.rain.interval = 17280000;
-    $scope.rain.statWin = 60 * 60 * 1000; // 1 hour
+    $scope.rain.interval = getInterval($scope.timeState.start,
+                               $scope.timeState.end,
+                               272);  // graph is 272 px wide
     $scope.box.type = 'rain';
-    $scope.$watch('rain.statWin', statWinWatch);
-    var callback = function (response) {
-      $scope.rain.data = response.result;
-      $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
-      $scope.rain.start = $scope.rain.data[0][0];
-      $scope.rain.nbar = nBars;
-    };
-    getRain(start, stop, $scope.rain.latLng, callback, $scope.rain.interval, $scope.rain.statWin);
+    getRain(start, stop, $scope.rain.latLng, $scope.rain.interval)
+      .then(function (response) {
+        $scope.rain.data = response.result;
+        $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
+        $scope.rain.start = $scope.rain.data[0][0];
+      }
+    );
+  };
+
+  var getInterval = function (start, stop, drawingWidth) {
+    var interval;
+    var minPx = 3; // Minimum width of a bar
+    // Available zoomlevels
+    var zoomLvls = {1: 300000, // 5 minutes
+                    2: 6000000, // 1 hour
+                    3: 144000000}; // 1 day
+    // ms per pixel
+    var msPerPx = (stop - start) / drawingWidth;
+    for (var zoomLvl in zoomLvls) {
+      interval = zoomLvls[zoomLvl];
+      if (interval > minPx * msPerPx) {
+        break; // If zoomlevel is sufficient to get enough width in the bars
+      }
+    }
+    console.log('interval: ', interval, 'width: ', ((stop - start) / drawingWidth) / interval);
+    return interval;
   };
 
   /**
@@ -162,30 +173,24 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
    *
    * @param  {int} start    start of rainserie
    * @param  {int} stop     end of rainserie
-   * @param  {function} callback function
    * @param  {object} latLng   location of rainserie in {lat: int, lng: int} (currently only supports points)
    * @param  {int} interval width of the aggregation, default: stop - start / 100
-   * @param  {int} statWin   window for the min/max, default: 5 min
    */
-  var getRain = function (start, stop, latLng, callback, interval, statWin) {
+  var getRain = function (start, stop, latLng, interval) {
     var stopString = stop.toISOString().split('.')[0];
     var startString = start.toISOString().split('.')[0];
     var wkt = "POINT(" + latLng.lng + " " + latLng.lat + ")";
     if (interval === undefined) {
       interval = (stop - start) / 100;
     }
-    if (statWin === undefined) {
-      statWin = 300000;
-    }
-    CabinetService.raster.get({
-      raster_names: 'rain',
-      geom: wkt,
-      srs: 'EPSG:4326',
-      start: startString,
-      stop: stopString,
-      interval: interval,
-      stat_win: statWin
-    }).then(callback);
+    return CabinetService.raster.get({
+        raster_names: 'rain',
+        geom: wkt,
+        srs: 'EPSG:4326',
+        start: startString,
+        stop: stopString,
+        interval: interval
+      });
   };
 
 }]);
