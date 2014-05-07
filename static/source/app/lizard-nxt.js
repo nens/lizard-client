@@ -8,7 +8,6 @@ var app = angular.module("lizard-nxt", [
   'omnibox',
   'restangular',
   'ui.bootstrap',
-  'lizard-nxt.services'
 ]);
 
 /**
@@ -80,8 +79,8 @@ app.config(function ($locationProvider) {
 
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "$q", "$compile", "CabinetService",
-  function ($scope, $http, $q, $compile, CabinetService) {
+  ["$scope", "$http", "$q", "$compile", "CabinetService", "RasterService",
+  function ($scope, $http, $q, $compile, CabinetService, RasterService) {
 
   // BOX MODEL
   $scope.box = {
@@ -174,7 +173,6 @@ app.controller("MasterCtrl",
     start: 1389606808000,
     end: 1389952408000,
     changedZoom: Date.now(),
-    at: this.start,
     hidden: undefined,
     animation: {
       start: undefined,
@@ -187,6 +185,9 @@ app.controller("MasterCtrl",
       stepSize: 1000
     }
   };
+  // initialise 'now'
+  $scope.timeState.at = $scope.timeState.start;
+
 // END TIME MODEL
 
   /**
@@ -539,6 +540,8 @@ app.controller("MasterCtrl",
 
   // END TIMESERIES
 
+  //TODO: move to raster-service ?
+
   /**
    * Get raster data from server.
    * NOTE: maybe add a callback as argument?
@@ -591,7 +594,6 @@ app.controller("MasterCtrl",
         }
       });
   };
-
   $scope.format_rastercurve = function (data) {
     var formatted = [];
     for (var i in data[0]) {
@@ -696,13 +698,16 @@ app.controller("MasterCtrl",
    */
   $scope.toggleRain = function () {
     if ($scope.rain.enabled === false) {
-      $scope.getRasterImages();
+      $scope.getRasterImages($scope.timeState.start);
+      $scope.timeState.animation.speed = 5;
+      $scope.rain.currentDate = $scope.timeState.start;
       $scope.rain.enabled = true;
       if ($scope.timeState.hidden !== false) {
         $scope.toggleTimeline();
       }
     } else if ($scope.rain.enabled) {
       $scope.rain.enabled = false;
+      $scope.timeState.animation.speed = 20;
     }
   };
 
@@ -718,23 +723,38 @@ app.controller("MasterCtrl",
    * publish it's time resolution.
    *
    */
-  $scope.getRasterImages = {};
-  $scope.getRasterImages = function () {
-    $scope.rain.imageDates = [];
-    var imageUrlBase = 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=demo%3Aradar&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
-    // round time to minutes
-    if ($scope.timeState.at !== undefined) {
-      var utc_formatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
-      // The rain wms only accepts requests for every 5th minute exact
-      // round to nearest 5 minutes
-      var coeff = 1000 * 60 * 5;
-      var now = parseInt(($scope.timeState.at + (coeff / 2)) / coeff) * coeff;
-      // correct for time zone offset in ms
-      var timeZoneOffsetMs = (new Date(now)).getTimezoneOffset() * 60 * 1000;
-      now = now - timeZoneOffsetMs;
-      $scope.rain.currentImage = imageUrlBase + utc_formatter(new Date(now));
-    }
+  $scope.getRasterImages = function (timestamp) {
+    var rasterName = "rain";
+    $scope.rain.images = RasterService.getWMSImages(rasterName, timestamp);
+    console.log($scope.rain.images);
   };
+
+  /** 
+   * Watch changes in timeState.at, get new raster images, if imageOverlay
+   * exists and rain tool is enabled and animation is not playing.
+   */
+  $scope.$watch('timeState.at', function (newVal, oldVal) {
+    if (newVal === oldVal) { return; }
+    if ($scope.rain.enabled) {
+      var d = new Date();
+      var timeZoneOffset = d.getTimezoneOffset() * 60000;
+      //var roundedMoment = Math.round($scope.timeState.at / 300000) * 300000 - timeZoneOffset; //Round to nearest five minutes
+      var roundedMoment = Math.round($scope.timeState.at / 300000) * 300000 - timeZoneOffset; //Round to nearest five minutes
+      console.log($scope.rain.images, roundedMoment);
+      if (roundedMoment !== $scope.rain.currentDate &&
+        roundedMoment >= ($scope.rain.currentDate + 300000) ||
+        roundedMoment <= ($scope.rain.currentDate - 300000)) {
+        $scope.rain.currentDate = roundedMoment;
+        if ($scope.rain.images[roundedMoment]) { // Check whether we have an image for this moment
+          $scope.rain.currentImage = $scope.rain.images[roundedMoment];
+          console.log("set image: ", $scope.rain.currentImage);
+        } else {
+          $scope.getRasterImages(roundedMoment + timeZoneOffset);
+        }
+      }
+    }
+  });
+
 
   // END RAIN
 

@@ -1,7 +1,5 @@
-var services = angular.module("lizard-nxt.services", []);
-
-services.service("CabinetService", ["Restangular",
-  function (Restangular, $rootScope) {
+app.service("CabinetService", ["Restangular",
+  function (Restangular) {
 
   var layergroups = window.layerGroups;
   var layers = window.layers;

@@ -10,8 +10,10 @@ app.controller('TimeLine', ["$scope", "$q", "CabinetService",
   function ($scope, $q, CabinetService) {
 
   // animation
-  window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
-                              window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+  window.requestAnimationFrame = window.requestAnimationFrame ||
+                                 window.mozRequestAnimationFrame ||
+                                 window.webkitRequestAnimationFrame ||
+                                 window.msRequestAnimationFrame;
 
   $scope.timeState.enableAnimation = function (toggle) {
     if ($scope.timeState.animation.enabled || toggle === "off") {
@@ -30,15 +32,16 @@ app.controller('TimeLine', ["$scope", "$q", "CabinetService",
       $scope.timeState.animation.playing = false;
     } else {
       $scope.timeState.animation.playing = true;
-      window.requestAnimationFrame($scope.timeState.step);
+      window.requestAnimationFrame(step);
     }
   };
 
-  $scope.timeState.step =  function (timestamp) {
-    $scope.timeState.timeStep = ($scope.timeState.end - $scope.timeState.start) / $scope.timeState.animation.stepSize;
+  var step =  function (timestamp) {
+    var timeStep = ($scope.timeState.end - $scope.timeState.start) /
+                   $scope.timeState.animation.stepSize;
     $scope.$apply(function () {
-      $scope.timeState.animation.start += $scope.timeState.timeStep;
-      $scope.timeState.animation.end += $scope.timeState.timeStep;
+      $scope.timeState.animation.start += timeStep;
+      $scope.timeState.animation.end += timeStep;
       $scope.timeState.at = ($scope.timeState.animation.end + $scope.timeState.animation.start) / 2;
     });
     if ($scope.timeState.at >= $scope.timeState.end || $scope.timeState.at < $scope.timeState.start) {
@@ -50,7 +53,7 @@ app.controller('TimeLine', ["$scope", "$q", "CabinetService",
     }
     if ($scope.timeState.animation.playing) {
       setTimeout(function () {
-        window.requestAnimationFrame($scope.timeState.step);
+        window.requestAnimationFrame(step);
       }, 400 - Math.pow($scope.timeState.animation.speed, 2));
     }
   };
