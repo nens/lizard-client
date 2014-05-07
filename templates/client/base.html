@@ -19,6 +19,7 @@
       var baseLayers = {{ strap_base_layers }};
       var layers = {{ strap_layers }};
       var data_bounds = {{ strap_data_bounds }};
+      var event_types = {{ strap_event_types }};
 
       function logOut() {
         var r=confirm("Weet u zeker dat u wilt uitloggen?");
@@ -84,6 +85,46 @@
       </div>
     </div>
 
+    {% block svg_styles %}
+    <div id="patterns" style="height:0;">
+      <svg height="8" width="8" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <defs>
+          <pattern id="crosshatch" patternUnits="userSpaceOnUse" width="8" height="8">
+            <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc4JyBoZWlnaHQ9JzgnPgogIDxyZWN0IHdpZHRoPSc4JyBoZWlnaHQ9JzgnIGZpbGw9JyNmZmYnLz4KICA8cGF0aCBkPSdNMCAwTDggOFpNOCAwTDAgOFonIHN0cm9rZS13aWR0aD0nMC41JyBzdHJva2U9JyNhYWEnLz4KPC9zdmc+Cg==" x="0" y="0" width="8" height="8">
+            </image>
+          </pattern>
+        </defs>
+      </svg><svg height="5" width="5" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <defs>
+          <pattern id="lightstripe" patternUnits="userSpaceOnUse" width="5" height="5">
+            <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1JyBoZWlnaHQ9JzUnPgogIDxyZWN0IHdpZHRoPSc1JyBoZWlnaHQ9JzUnIGZpbGw9J3doaXRlJy8+CiAgPHBhdGggZD0nTTAgNUw1IDBaTTYgNEw0IDZaTS0xIDFMMSAtMVonIHN0cm9rZT0nIzg4OCcgc3Ryb2tlLXdpZHRoPScxJy8+Cjwvc3ZnPg==" x="0" y="0" width="5" height="5">
+            </image>
+          </pattern>
+        </defs>
+      </svg><svg height="5" width="5" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <defs>
+          <pattern id="smalldot" patternUnits="userSpaceOnUse" width="5" height="5">
+            <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1JyBoZWlnaHQ9JzUnPgo8cmVjdCB3aWR0aD0nNScgaGVpZ2h0PSc1JyBmaWxsPScjZmZmJy8+CjxyZWN0IHdpZHRoPScxJyBoZWlnaHQ9JzEnIGZpbGw9JyNjY2MnLz4KPC9zdmc+" x="0" y="0" width="5" height="5">
+            </image>
+          </pattern>
+        </defs>
+      </svg><svg height="49" width="6" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <defs>
+          <pattern id="verticalstripe" patternUnits="userSpaceOnUse" width="6" height="49">
+            <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc2JyBoZWlnaHQ9JzQ5Jz4KICA8cmVjdCB3aWR0aD0nMycgaGVpZ2h0PSc1MCcgZmlsbD0nI2ZmZicvPgogIDxyZWN0IHg9JzMnIHdpZHRoPScxJyBoZWlnaHQ9JzUwJyBmaWxsPScjY2NjJy8+Cjwvc3ZnPgo=" x="0" y="0" width="6" height="49">
+            </image>
+          </pattern>
+        </defs>
+      </svg><svg height="6" width="6" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <defs>
+          <pattern id="whitecarbon" patternUnits="userSpaceOnUse" width="6" height="6">
+            <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHhtbG5zOnhsaW5rPSdodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rJyB3aWR0aD0nNicgaGVpZ2h0PSc2Jz4KICA8cmVjdCB3aWR0aD0nNicgaGVpZ2h0PSc2JyBmaWxsPScjZWVlZWVlJy8+CiAgPGcgaWQ9J2MnPgogICAgPHJlY3Qgd2lkdGg9JzMnIGhlaWdodD0nMycgZmlsbD0nI2U2ZTZlNicvPgogICAgPHJlY3QgeT0nMScgd2lkdGg9JzMnIGhlaWdodD0nMicgZmlsbD0nI2Q4ZDhkOCcvPgogIDwvZz4KICA8dXNlIHhsaW5rOmhyZWY9JyNjJyB4PSczJyB5PSczJy8+Cjwvc3ZnPg==" x="0" y="0" width="6" height="6">
+            </image>
+          </pattern>
+        </defs>
+      </svg>
+    </div>    
+    {% endblock svg_styles %}
 
     {% block content %}
     
@@ -97,16 +138,6 @@
           <div class="layer-switcher slide-left">
             <ul class="nav">
               <li class="nav-header">
-              {% trans "Basis" %}
-              <ul class="list-group">
-                <li ng-repeat="layer in mapState.baselayers | orderBy:'order':true">
-                <input id="<%layer.id%>-baselayer" class="hide" type="radio" ng-model="mapState.activeBaselayer" ng-value="layer.id" name="baselayer"> 
-                <label class="ng-class: {active: layer.active};" for="<% layer.id %>-baselayer" ng-bind="layer.name" ng-click="mapState.changeBaselayer(layer)"></label>
-                </li> 
-              </ul>
-              </li>
-              <li class="nav-header">
-              {% trans "Thema" %}
               <ul class="list-group">
                 <li ng-repeat="layer in mapState.layers | orderBy:'order':true">
                 <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="mapState.changeLayer(layer)">
@@ -129,13 +160,41 @@
               </li>
               <!-- Temporary item to enable events -->
               <li id="events" class="nav-header">
-              {% trans "Events" %}
               <ul class="list-group">
                 <li ng-repeat="event in mapState.eventTypes">
-                <label class="ng-class: {active: events.types[event.name].active};" ng-bind="event.name" ng-click="events.toggleEvents(event.name)"></label>
-                <label class="count"  ng-if="events.types[event.name].active"><% events.types[event.name].currentCount %>&nbsp;(<% events.types[event.name].count %>) </label>
+                <label class="ng-class: {active: events.types[event.event_series].active};" ng-bind="event.type" ng-click="events.toggleEvents(event.event_series)"></label>
+                <label class="count"  ng-if="events.types[event.event_series].active"><% events.types[event.event_series].currentCount %>&nbsp;(<% event.event_count %>) </label>
               </ul>
               </li>
+              <li class="nav-header"> 
+              <ul class="list-inline">
+                <li class="baselayer-icon"
+                    rel="tooltip" 
+                    data-toggle="tooltip" 
+                    data-placement="bottom" 
+                    title="<% layer.name %>"
+                    ng-click="mapState.changeBaselayer(layer)"
+                    ng-repeat="layer in mapState.baselayers | orderBy:'order':true"
+                    ng-class="{active: layer.active}"
+                    id="<% layer.name %>">
+                  <!-- <span ng-bind="layer.name"></span> -->
+                  <i ng-if="layer.name == 'Topografie'" class="lizard-icon fa fa-road fa-2x"></i>
+                  <i ng-if="layer.name == 'Satelliet'" class="lizard-icon icon-satellite"></i>
+                  <i ng-if="layer.name == 'Hoogtekaart'" class="lizard-icon icon-terrain"></i>
+
+                  <input id="<%layer.id%>-baselayer" 
+                         class="hide" 
+                         type="radio" 
+                         ng-model="mapState.activeBaselayer" 
+                         ng-value="layer.id" 
+                         name="baselayer"> 
+                  <label class="ng-class: {active: layer.active};" 
+                         for="<% layer.id %>-baselayer"
+                         ng-bind="layer.name">
+                  </label>    
+                </li>
+              </ul>
+              </li>              
             </ul>
           </div>
           <div id="ribbon" class="ribbon">
@@ -234,5 +293,10 @@
     <script type="text/javascript" src="{{ STATIC_URL }}distjs/js/nxt.js?{{ random_string }}"></script>
     {% endblock %}
 
+  <script>
+    $(function () {
+        $("[rel='tooltip']").tooltip();
+    });
+  </script>
   </body>
 </html>

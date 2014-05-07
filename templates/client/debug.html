@@ -8,15 +8,14 @@
     <link href="{{ STATIC_URL }}source/assets/css/omnibox.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}source/assets/css/graph.css" rel="stylesheet" />
     <link href="{{ STATIC_URL }}source/assets/css/nxt_base.css" rel="stylesheet" />
-    <link href="{{ STATIC_URL }}vendor/nens-carto/webfonts/Structures-webfont/structures/dest/css/structures.css" rel="stylesheet" />
-    <link rel="stylesheet" href="{{ STATIC_URL }}vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css">
+    <link href="{{ STATIC_URL }}vendor/lizard-iconfont/lizard/dest/fonts/Lizard.css" rel="stylesheet" />
+    <!-- <link href="{{ STATIC_URL }}vendor/nens-carto/webfonts/Structures-webfont/structures/dest/css/structures.css" rel="stylesheet" /> -->
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
 {% endblock css %}
 
 {% block javascript_body %}
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/jquery/jquery.min.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-dist/leaflet.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/leaflet-tilelayer-geojson/TileLayer.GeoJSON.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lib/TileLayer.GeoJSONd3.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lib/leaflet-utfgrid-lizard.js?{{ random_string }}"></script>        
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular/angular.js?{{ random_string }}"></script>
@@ -24,6 +23,7 @@
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/lodash/dist/lodash.min.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/bootstrap/dist/js/bootstrap.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}vendor/angular-ui-bootstrap/ui-bootstrap-tpls-0.10.0.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/ui-utils/ui-utils.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lib/leaflet.contours-layer.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt-services.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt.js?{{ random_string }}"></script>
@@ -34,12 +34,12 @@
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/omnibox-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/dashboard-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/graph-directives.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/d3-wrapper.js?{{ random_string }}"></script>
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/d3-wrapper.js?{{ random_string }}"></script>-->
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/raster-aggregate-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/profile-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/directives/timeline-directives.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/controllers/rain-aggregate-controller.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/templates/templates.js?{{ random_string }}"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.min.js?{{ random_string }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}vendor/d3/d3.js?{{ random_string }}"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}source/app/lizard-nxt-filters.js?{{ random_string }}"></script>
 {% endblock %}

@@ -23,7 +23,14 @@ app.controller('TimelineDirCtrl', function ($scope) {
         .append("rect")
           .attr("width", width)
           .attr("height", height)
+          // .style("fill", "url(#lightstripe)")
           .attr("class", "plot-temporal");
+    svg.select('g').append('rect')
+      .attr('height', height)
+      .attr('width', width)
+      .attr('id', 'nodata')
+      .attr('x', -4000) // make sure nodata bar is invisible at first
+      .style('fill', 'url(#lightstripe)');
     // Create line for the timeState.at just out of sight
     svg.select('g').append('line')
       .attr('class', 'now-indicator')
@@ -111,7 +118,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       .call(graph.xAxis);
   };
 
-  this.drawCircles = function (svg, xScale, yScale, colorScale, xKey, yKey, colorKey, data) {
+  this.drawCircles = function (svg, xScale, yScale, colorScale, xKey, yKey, data) {
     // Shift halve a pixel for nice and crisp rendering
     var xFunction = function (d) { return Math.round(xScale(d.properties[xKey])) + 0.5; };
     var yFunction = function (d) { return yScale(d[yKey]) + 0.5; };
@@ -277,7 +284,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
 })
 .directive('timeline', [ function () {
   
-  var link = function (scope, element, attrs, timelineCtrl) {
+  var link = function (scope, element, attrs, timelineCtrl, $timeout) {
 
     /**
      * Draws an empty timeline
@@ -322,6 +329,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         .on("zoom", zoomed)
       );
 
+      // timelineCtrl.zoomNodata();
       return graph;
     };
 
@@ -329,18 +337,43 @@ app.controller('TimelineDirCtrl', function ($scope) {
      * Updates the graph with new data
      */
     var updateTimeline = function (graph, data, nEventTypes) {
-      var canvasOptions = {width: element.width(), height: 45 + nEventTypes * 25};
+      var canvasOptions = {width: element.width(),
+                           height: 45 + nEventTypes * 25};
       var newGraph = timelineCtrl.updateCanvas(graph, canvasOptions);
+
+      d3.select('#nodata').transition()
+        .duration(500)
+        .delay(500)
+        .attr('height', newGraph.height);
+
       // Update the brush if any
       if (animationBrush) {
         timelineCtrl.updateBrush(newGraph.height);
       }
       // Create remaining scales
-      var yScale = timelineCtrl.scale({min: 1, max: nEventTypes}, { min: newGraph.height - 27, max: 20 }, {scale: 'linear'});
+      var yScale = timelineCtrl.scale({min: 1, max: nEventTypes},
+                                      {min: newGraph.height - 27, max: 20 },
+                                      {scale: 'linear'});
       // Update the svg
-      timelineCtrl.drawCircles(newGraph.svg, newGraph.xScale, yScale, graph.colorScale, 'timestamp', 'event_type', 'event_type', data);
+      timelineCtrl.drawCircles(newGraph.svg, newGraph.xScale, yScale,
+                               graph.colorScale, 'timestamp', 'event_order',
+                               data);
       timelineCtrl.updateNow(newGraph, scope.timeState.at);
       return newGraph;
+    };
+
+    var nodataPosition = function (scale) {
+      var year2014 = 1388534400000; // in msecs, since epoch
+      var x = scale(year2014);
+      return Math.round(x);
+    };
+
+    var zoomNodata = function () {
+      // Update nodata zone
+      graph.svg.select("#nodata")
+        .attr('x', function (d) {
+          return nodataPosition(graph.xScale) - graph.svg.select('#nodata').attr('width');
+        });
     };
 
     var zoomed = function () {
@@ -349,9 +382,12 @@ app.controller('TimelineDirCtrl', function ($scope) {
         orientation: "bottom",
         ticks: 5
       }));
+
       // Update circle positions
       graph.svg.selectAll("circle")
-        .attr("cx", function (d) { return Math.round(graph.xScale(d.properties.timestamp)); });
+        .attr("cx", function (d) {
+          return Math.round(graph.xScale(d.properties.timestamp));
+        });
       // Update now indicator
       graph.svg.select('.now-indicator')
         .attr('x1', graph.xScale(scope.timeState.at) || graph.margin.left - 5)
@@ -363,6 +399,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         scope.timeState.changeOrigin = 'timeline';
         scope.timeState.changedZoom = !scope.timeState.changedZoom;
       });
+      zoomNodata();      
     };
 
     // Get the timeline-graph
@@ -375,6 +412,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       scope.timeState.changedZoom = Date.now();
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
       scope.events.countCurrentEvents();
+      // zoomed();
     });
 
     scope.$watch('mapState.moved', function (n, o) {

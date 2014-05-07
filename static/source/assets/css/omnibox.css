@@ -280,11 +280,23 @@
     overflow: auto;
 }
 
-.card .location {
-    width:357px;
+#cards .location {
+    padding: 10px;
+    background-color: #fff;
+    width:400px;
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
+    font-size: .9em;
+}
+.location:focus {
+    background-color: #ebf2fe !important;
+    outline: 0;
+    outline: thin dotted \9;
+    font-weight: bold;
+}
+.location:focus > i {
+    color: #FF565D !important;
 }
 
 .card .location ul {
