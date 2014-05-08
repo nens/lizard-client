@@ -179,7 +179,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
     var startString = start.toISOString().split('.')[0];
     var wkt = "POINT(" + latLng.lng + " " + latLng.lat + ")";
     return CabinetService.raster.get({
-        raster_names: 'rain',
+        raster_names: 'demo:radar',
         geom: wkt,
         srs: 'EPSG:4326',
         start: startString,
