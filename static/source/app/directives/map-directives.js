@@ -336,8 +336,8 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
 
 
 
-    scope.map.on('movestart', function() {
-          scope.mapState.mapMoving = true;
+    scope.map.on('movestart', function () {
+      scope.mapState.mapMoving = true;
     });
 
     /**
@@ -417,7 +417,7 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
 
     scope.mapState.changeLayer = function (layer) {
       if (layer.overlayer === true) {
-      	ctrl.updateOverLayers(scope.mapState);
+        ctrl.updateOverLayers(scope.mapState);
       }
       ctrl.toggleLayer(layer);
       scope.box.type = ctrl.boxType(scope.mapState);

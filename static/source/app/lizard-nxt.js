@@ -138,17 +138,17 @@ app.controller("MasterCtrl",
     }
   };
 
-  $scope.toggleCardSize = function() {
+  $scope.toggleCardSize = function () {
     // console.log('toggleCardSize()');
-    if ( $scope.box.largeCard ) {
+    if ($scope.box.largeCard) {
       $scope.box.largeCard = false;
     } else {
-      $scope.box.largeCard = true;      
+      $scope.box.largeCard = true;
     }
   };
 
-  $scope.toggleDetailmode = function() {
-    if($scope.box.detailMode) {
+  $scope.toggleDetailmode = function () {
+    if ($scope.box.detailMode) {
       $scope.box.detailMode = false;
     } else {
       $scope.box.detailMode = true;

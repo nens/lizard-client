@@ -131,7 +131,7 @@ app.directive('clickLayer', ["$q", function ($q) {
       var g = selection;
       // This is an arrow:
       var path = "M " + point.x + " " + point.y + " " +
-                 "l 15 -10 " + 
+                 "l 15 -10 " +
                  "l -10 0 " +
                  "l 0 -15 " +
                  "l -10 0 " +
