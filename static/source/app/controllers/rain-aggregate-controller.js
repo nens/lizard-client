@@ -33,7 +33,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
   $scope.rain = {
     start: undefined,
     stop: undefined,
-    window: undefined,
+    aggWindow: undefined,
     data: undefined
   };
 
@@ -44,11 +44,11 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
   var firstTimeStart;
   $scope.$watch('timeState.start', function (n, o) {
     if (n === o || $scope.box.type !== 'rain') { return true; }
-    if ($scope.timeState.start < $scope.rain.start - $scope.rain.window) {
+    if ($scope.timeState.start < $scope.rain.start - $scope.rain.aggWindow) {
       if (firstTimeStart === undefined) {
         getMoreRain(true);
         firstTimeStart = true;
-      } else if ($scope.timeState.start < $scope.rain.start + 10 * $scope.rain.window
+      } else if ($scope.timeState.start < $scope.rain.start + 10 * $scope.rain.aggWindow
           && !holdYourFire) {
         holdYourFire = true;
         getMoreRain(true);
@@ -65,11 +65,11 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
   var firstTimeEnd;
   $scope.$watch('timeState.end', function (n, o) {
     if (n === o || $scope.box.type !== 'rain') { return true; }
-    if ($scope.timeState.end > $scope.rain.end + 2 * $scope.rain.window) {
+    if ($scope.timeState.end > $scope.rain.end + 2 * $scope.rain.aggWindow) {
       if (firstTimeEnd === undefined) {
         getMoreRain();
         firstTimeEnd = true;
-      } else if ($scope.timeState.end > $scope.rain.end - 10 * $scope.rain.window
+      } else if ($scope.timeState.end > $scope.rain.end - 10 * $scope.rain.aggWindow
           && !holdYourFire) {
         holdYourFire = true;
         getMoreRain();
@@ -91,14 +91,14 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
     var stop, start, callback;
     var buffer = 40; // Collect 40 new bars at the time
     if (starty) {
-      start = $scope.rain.start - buffer * $scope.rain.window;
+      start = $scope.rain.start - buffer * $scope.rain.aggWindow;
       stop = $scope.rain.start;
       $scope.rain.start = start;
       callback = function (response) {
         $scope.rain.data = response.result.concat($scope.rain.data);
       };
     } else {
-      stop = $scope.rain.end + buffer * $scope.rain.window;
+      stop = $scope.rain.end + buffer * $scope.rain.aggWindow;
       start = $scope.rain.end;
       $scope.rain.end = stop;
       callback = function (response) {
@@ -110,7 +110,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
       new Date(stop),
       $scope.rain.latLng,
       callback,
-      $scope.rain.window
+      $scope.rain.aggWindow
     );
   };
 
@@ -123,18 +123,18 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
     var stop = new Date($scope.timeState.end);
     var start = new Date($scope.timeState.start);
     $scope.rain.latLng = latlng;
-    $scope.rain.window = 1000 * 60 * 5;
+    $scope.rain.aggWindow = 1000 * 60 * 5;
     $scope.box.type = 'rain';
     var callback = function (response) {
       $scope.rain.data = response.result;
       $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
       $scope.rain.start = $scope.rain.data[0][0];
       var interval = $scope.timeState.end - $scope.timeState.start;
-      $scope.rain.nbar = 270 * $scope.rain.window / interval;
+      $scope.rain.nbar = 270 * $scope.rain.aggWindow / interval;
       console.log($scope.rain.nbar);
       $scope.rain.nbar = 20;
     };
-    getRain(start, stop, $scope.rain.latLng, callback, $scope.rain.window);
+    getRain(start, stop, $scope.rain.latLng, callback, $scope.rain.aggWindow);
   };
 
   /**
