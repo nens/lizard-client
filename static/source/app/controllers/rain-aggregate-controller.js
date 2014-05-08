@@ -151,9 +151,9 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
     var aggWindow;
     var minPx = 3; // Minimum width of a bar
     // Available zoomlevels
-    var zoomLvls = {1: 300000, // 5 minutes
-                    2: 3600000, // 1 hour
-                    3: 86400000}; // 1 day
+    var zoomLvls = {fiveMinutes: 300000,
+                    hour: 3600000,
+                    day: 86400000};
     // ms per pixel
     var msPerPx = (stop - start) / drawingWidth;
     for (var zoomLvl in zoomLvls) {
