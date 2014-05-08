@@ -13,7 +13,6 @@ app.service("RasterService", ["Restangular", function (Restangular) {
    */
   this.getWMSImages = function (rasterName, timestamp) {
     var imageUrlBase = 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=demo%3Aradar&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=';
-    // round time to minutes
     if (timestamp !== undefined) {
       var utc_formatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
       // The rain wms only accepts requests for every 5th minute exact
@@ -25,14 +24,12 @@ app.service("RasterService", ["Restangular", function (Restangular) {
       var timeZoneOffsetMs = (new Date(now)).getTimezoneOffset() * 60 * 1000;
       now = now - timeZoneOffsetMs;
       // TODO: cleanup browser cache
-      // buil object with images and preload images in browserCache
+      // build object with images and preload images in browserCache
       var nxtDate = now,
           imageUrl,
           imageUrls = {};
-      //for (var i = 0; i < (12 * 24 * 2); i++) {
-      for (var i = 0; i < (12 * 24); i++) {
+      for (var i = 0; i < (24); i++) {
         imageUrl = imageUrlBase + utc_formatter(new Date(nxtDate));
-        //console.log(nxtDate, imageUrl);
         (new Image()).src = imageUrl;
         imageUrls[nxtDate] = imageUrl;
         nxtDate += coeff;

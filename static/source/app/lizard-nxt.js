@@ -727,7 +727,6 @@ app.controller("MasterCtrl",
   $scope.getRasterImages = function (timestamp) {
     var rasterName = "rain";
     $scope.rain.images = RasterService.getWMSImages(rasterName, timestamp);
-    console.log($scope.rain.images);
   };
 
   /** 
@@ -737,20 +736,19 @@ app.controller("MasterCtrl",
   $scope.$watch('timeState.at', function (newVal, oldVal) {
     if (newVal === oldVal) { return; }
     if ($scope.rain.enabled) {
-      var d = new Date();
+      var d = new Date($scope.timeState.at);
       var timeZoneOffset = d.getTimezoneOffset() * 60000;
-      //var roundedMoment = Math.round($scope.timeState.at / 300000) * 300000 - timeZoneOffset; //Round to nearest five minutes
       var roundedMoment = Math.round($scope.timeState.at / 300000) * 300000 - timeZoneOffset; //Round to nearest five minutes
-      console.log($scope.rain.images, roundedMoment);
       if (roundedMoment !== $scope.rain.currentDate &&
         roundedMoment >= ($scope.rain.currentDate + 300000) ||
         roundedMoment <= ($scope.rain.currentDate - 300000)) {
         $scope.rain.currentDate = roundedMoment;
         if ($scope.rain.images[roundedMoment]) { // Check whether we have an image for this moment
           $scope.rain.currentImage = $scope.rain.images[roundedMoment];
-          console.log("set image: ", $scope.rain.currentImage);
         } else {
+          console.log("data not in rain.images, getting new data");
           $scope.getRasterImages(roundedMoment + timeZoneOffset);
+          $scope.rain.currentImage = $scope.rain.images[roundedMoment];
         }
       }
     }
