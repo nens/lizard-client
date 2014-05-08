@@ -363,7 +363,7 @@ angular.module('graph')
       var x = {};
       x.max = data[data.length - 1][0];
       x.min = data[0][0];
-      var y = graphCtrl.maxMin(data, '2');
+      var y = graphCtrl.maxMin(data, '1');
 
       x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
         range: [0, width],
@@ -436,7 +436,7 @@ angular.module('graph')
       width = graph.width,
       barWidth = graph.barWidth;
 
-      var yN = graphCtrl.maxMin(data, '2');
+      var yN = graphCtrl.maxMin(data, '1');
       if (yN.max > y.max || yN.max < (0.5 * y.max)) {
         y = yN;
         y.scale = graphCtrl.scale(y.min, y.max, {
@@ -490,7 +490,7 @@ angular.module('graph')
       bar.enter().append("rect")
           .attr("class", "bar")
           .attr("x", function (d) { return x.scale(d[0]) - 0.5 * barWidth; })
-          .attr('width', function (d) {return x.scale(data[1][0]) - x.scale(data[0][0]); })
+          .attr('width', function (d) { return x.scale(data[1][0]) - x.scale(data[0][0]); })
           .attr("y", function (d) { return y.scale(0); })
           .attr("height", 0)
           .transition()
