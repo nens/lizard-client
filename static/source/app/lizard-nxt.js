@@ -8,6 +8,7 @@ var app = angular.module("lizard-nxt", [
   'omnibox',
   'restangular',
   'ui.bootstrap',
+  'ui.utils',
 ]);
 
 /**
