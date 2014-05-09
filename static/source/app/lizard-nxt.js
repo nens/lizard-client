@@ -81,7 +81,9 @@ app.config(function ($locationProvider) {
  */
 app.controller("MasterCtrl",
   ["$scope", "$http", "$q", "$compile", "CabinetService", "RasterService",
-  function ($scope, $http, $q, $compile, CabinetService, RasterService) {
+   "UtilService",
+  function ($scope, $http, $q, $compile, CabinetService, RasterService,
+            UtilService) {
 
   // BOX MODEL
   $scope.box = {
@@ -684,7 +686,6 @@ app.controller("MasterCtrl",
   };
 
   // RAIN
-  // TODO: rewrite to handle general dynamic raster stuff.
 
   /**
    * Initial state 
@@ -696,12 +697,14 @@ app.controller("MasterCtrl",
   /**
    * Switch rain tool on or off.
    *
+   * Switches rain tool; get raster images, adjust animation speed, show
+   * timeline.
    */
   $scope.toggleRain = function () {
     if ($scope.rain.enabled === false) {
-      $scope.getRasterImages($scope.timeState.start);
+      $scope.rain.images = RasterService.getRainWMSImages($scope.timeState.at);
       $scope.timeState.animation.speed = 5;
-      $scope.rain.currentDate = $scope.timeState.start;
+      $scope.rain.currentDate = $scope.timeState.at;
       $scope.rain.enabled = true;
       if ($scope.timeState.hidden !== false) {
         $scope.toggleTimeline();
@@ -712,33 +715,18 @@ app.controller("MasterCtrl",
     }
   };
 
-  /**
-   * Get images for dynamic raster layer for interval to prepare for animation.
-   *
-   * Get 1 image for $scope.timeState.at.
-   *
-   * TODO:
-   * [ ] get images for interval, start / stop
-   * [ ] make url variable depending on raster layer 
-   * [ ] make coeff variable depending on raster layer, raster layer should
-   * publish it's time resolution.
-   *
-   */
-  $scope.getRasterImages = function (timestamp) {
-    var rasterName = "rain";
-    $scope.rain.images = RasterService.getWMSImages(rasterName, timestamp);
-  };
-
   /** 
-   * Watch changes in timeState.at, get new raster images, if imageOverlay
-   * exists and rain tool is enabled and animation is not playing.
+   * Lookup nearest image for timeState.at and set to currentImage.
+   *
+   * If timestamp is not in images, get new images from server.
    */
   $scope.$watch('timeState.at', function (newVal, oldVal) {
     if (newVal === oldVal) { return; }
     if ($scope.rain.enabled) {
-      var d = new Date($scope.timeState.at);
-      var timeZoneOffset = d.getTimezoneOffset() * 60000;
-      var roundedMoment = Math.round($scope.timeState.at / 300000) * 300000 - timeZoneOffset; //Round to nearest five minutes
+      var coeff = RasterService.rainInfo.timeResolution;
+      var now = $scope.timeState.at;
+      var roundedMoment = UtilService.roundTimestamp(now, coeff, true);
+
       if (roundedMoment !== $scope.rain.currentDate &&
         roundedMoment >= ($scope.rain.currentDate + 300000) ||
         roundedMoment <= ($scope.rain.currentDate - 300000)) {
@@ -747,13 +735,12 @@ app.controller("MasterCtrl",
           $scope.rain.currentImage = $scope.rain.images[roundedMoment];
         } else {
           console.log("data not in rain.images, getting new data");
-          $scope.getRasterImages(roundedMoment + timeZoneOffset);
+          $scope.rain.images = RasterService.getRainWMSImages(now);
           $scope.rain.currentImage = $scope.rain.images[roundedMoment];
         }
       }
     }
   });
-
 
   // END RAIN
 
