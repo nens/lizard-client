@@ -259,22 +259,18 @@ angular.module('graph')
 
   var link = function (scope, element, attrs, graphCtrl) {
 
-    scope.$watch('data', function (n, o) {
-      if (n === o) { return true; }
-      // Build chart from scratch
+    scope.$watch('data', function () {
       var legend = {
         title: scope.title,
         xLabel: scope.xlabel,
         yLabel: scope.ylabel,
-        // maybe from scope so controller determines labels
         type: attrs.type
       };
       if (attrs.yfilter) {
         legend.yLabel = $filter(attrs.yfilter)(scope.ylabel);
       }
-      if (scope.data !== undefined
-        && graphCtrl.callChart !== undefined
-        && scope.graph === undefined) {
+      // Build chart from scratch
+      if (scope.graph === undefined) {
         // clear the chart beforehand
         d3.select(element[0]).html("");
         scope.graph = graphCtrl.callChart(scope.data, element, legend);
@@ -284,11 +280,8 @@ angular.module('graph')
           graphCtrl.drawNow(scope.graph, scope.$parent.timeState.at);
         }
       // Update graph with new data
-      } else if (scope.graph !== undefined) {
-        scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph, legend);
-      // Clear graph when no more data
       } else {
-        d3.select(element[0]).html("");
+        scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph, legend);
       }
     });
     
