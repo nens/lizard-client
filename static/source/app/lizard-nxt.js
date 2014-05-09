@@ -138,17 +138,17 @@ app.controller("MasterCtrl",
     }
   };
 
-  $scope.toggleCardSize = function() {
+  $scope.toggleCardSize = function () {
     // console.log('toggleCardSize()');
-    if ( $scope.box.largeCard ) {
+    if ($scope.box.largeCard) {
       $scope.box.largeCard = false;
     } else {
-      $scope.box.largeCard = true;      
+      $scope.box.largeCard = true;
     }
   };
 
-  $scope.toggleDetailmode = function() {
-    if($scope.box.detailMode) {
+  $scope.toggleDetailmode = function () {
+    if ($scope.box.detailMode) {
       $scope.box.detailMode = false;
     } else {
       $scope.box.detailMode = true;
@@ -185,8 +185,8 @@ app.controller("MasterCtrl",
   // TIME MODEL
   var end = Date.now();
   $scope.timeState = {
-    start: 1389606808000,
-    end: 1389952408000,
+    start: 1389803883000,
+    end: 1389872283000,
     changedZoom: Date.now(),
     at: this.start,
     hidden: undefined,

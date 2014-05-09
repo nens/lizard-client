@@ -50,6 +50,10 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
         options.effects = 'shade:0:3';
         layer.leafletLayer = L.tileLayer.wms(layer.url, options);
         elevationLayer = layer.leafletLayer;
+      } else if (layer.slug === 'demo/radar') {
+        options.styles = 'transparent';
+        options.transparent = true;
+        layer.leafletLayer = L.tileLayer.wms(layer.url, options);
       }
     } else if (layer.type === "ASSET") {
       var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
@@ -332,8 +336,8 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
 
 
 
-    scope.map.on('movestart', function() {
-          scope.mapState.mapMoving = true;
+    scope.map.on('movestart', function () {
+      scope.mapState.mapMoving = true;
     });
 
     /**
@@ -413,7 +417,7 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
 
     scope.mapState.changeLayer = function (layer) {
       if (layer.overlayer === true) {
-      	ctrl.updateOverLayers(scope.mapState);
+        ctrl.updateOverLayers(scope.mapState);
       }
       ctrl.toggleLayer(layer);
       scope.box.type = ctrl.boxType(scope.mapState);
