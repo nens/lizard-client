@@ -500,7 +500,7 @@ angular.module('graph')
             height = graph.height,
             width = graph.width,
             margin = graph.margin,
-            radius = Math.min(width, height) / 1.4;
+            radius = Math.min(width, height) / 1.6;
 
 
         var total = 0;
@@ -511,8 +511,8 @@ angular.module('graph')
             })
           .sort(null);
         var arc = d3.svg.arc()
-            .innerRadius(radius - 80)
-            .outerRadius(radius - 20);
+            .innerRadius(radius - radius / 1.75)
+            .outerRadius(radius);
 
         var text = svg.append("text");
         var path = svg.datum(data).selectAll("path")
