@@ -728,8 +728,8 @@ app.controller("MasterCtrl",
       var roundedMoment = UtilService.roundTimestamp(now, coeff, true);
 
       if (roundedMoment !== $scope.rain.currentDate &&
-        roundedMoment >= ($scope.rain.currentDate + 300000) ||
-        roundedMoment <= ($scope.rain.currentDate - 300000)) {
+        roundedMoment >= ($scope.rain.currentDate + coeff) ||
+        roundedMoment <= ($scope.rain.currentDate - coeff)) {
         $scope.rain.currentDate = roundedMoment;
         if ($scope.rain.images[roundedMoment]) { // Check whether we have an image for this moment
           $scope.rain.currentImage = $scope.rain.images[roundedMoment];
