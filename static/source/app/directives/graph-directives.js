@@ -1,5 +1,15 @@
+'use strict';
+
 //graph.js
 
+/**
+ * The graph directive contains low level behavior of the graph element
+ * Higher level behavior that is chart type specific, is implemented
+ * in directives for attributes.
+ *
+ * In HTML this should look like:
+ * <graph [graph-type] data=[data object] [optional labels, titles etc]></graph>
+ */
 angular.module('graph', []);
 
 angular.module('graph')
@@ -9,8 +19,9 @@ angular.module('graph')
 
     /**
      * Abstract function. Directives using this controller
-     * will need to implement a callChart function. See
-     * barChart directive for an example
+     * will need to implement a callChart function. This 
+     * function should be called once to set up the graph. 
+     * See barChart directive for an example.
      * 
      * @param  {object} data    data object
      * @param  {object} element html element
@@ -22,8 +33,9 @@ angular.module('graph')
 
     /**
      * Optional abstract function. Directive might implement
-     * this function to update an existing graph with new data.
-     * See barchart directive for an example
+     * this function to update an existing graph with new data
+     * following a d3 update pattern. See barchart directive 
+     * for an example.
      * 
      * @param  {object} data    data object
      * @param  {object} graph   graph object from callChart
@@ -253,12 +265,11 @@ angular.module('graph')
       var legend = {
         title: scope.title,
         xLabel: scope.xlabel,
-        yLabel: attrs.ylabel,
+        yLabel: scope.ylabel,
         // maybe from scope so controller determines labels
         type: attrs.type
       };
       if (attrs.yfilter) {
-        console.log('filter', scope.ylabel, 'to', $filter(attrs.yfilter)(scope.ylabel));
         legend.yLabel = $filter(attrs.yfilter)(scope.ylabel);
       }
       if (scope.data !== undefined
