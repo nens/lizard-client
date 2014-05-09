@@ -36,12 +36,12 @@ angular.module('graph')
     this.createCanvas =  function (legend, element) {
       var margin = {
         top: 20,
-        right: 20,
-        bottom: 30,
-        left: 30
+        right: 10,
+        bottom: 20,
+        left: 20
       },
       maxwidth = 350,
-      maxheight = 250;
+      maxheight = 150;
 
       if (legend.yLabel) {
         margin.left = 60;
@@ -207,22 +207,6 @@ angular.module('graph')
       svg.append("g")
         .attr("class", "y-axis y axis")
         .call(yAxis);
-
-      svg.append("g")
-        .attr("class", "x grid")
-        .attr("transform", "translate(0, " + (options.height + 6) + ")")
-        .call(xAxis
-          .tickSize(-options.height, 0, 0)
-        )
-        .selectAll("text")
-          .style("visibility", "hidden");
-
-      svg.append("g")
-        .attr("class", "y-grid y grid")
-        .call(yAxis
-          .tickSize(-options.width, 0, 0)
-          .tickFormat("")
-        );
     };
 
     /**
@@ -407,14 +391,6 @@ angular.module('graph')
           .duration(800)
           .ease("sin-in-out")
           .call(yAxis);
-        svg.select('.y-grid')
-          .transition()
-          .duration(800)
-          .ease("sin-in-out")
-          .call(yAxis
-            .tickSize(-width, 0, 0)
-            .tickFormat("")
-          );
       };
 
       if (legend.yLabel) {
@@ -479,6 +455,10 @@ angular.module('graph')
           .duration(500)
           .attr("height", function (d) { return 200 - y.scale(d[1]); })
           .attr("y", function (d) { return y.scale(d[1]); });
+
+      // Move now-indicator to the front
+      var nowEl = g.select('.now-indicator').node();
+      nowEl.parentNode.appendChild(nowEl);
 
       // EXIT
       // Remove old elements as needed.
