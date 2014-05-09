@@ -449,10 +449,6 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
       scope.box.type = ctrl.boxType(scope.mapState);
     };
 
-    scope.zoomToTheMagic = function (layer) {
-      ctrl.zoomToTheMagic(layer);
-    };
-
   };
 
   return {

@@ -142,18 +142,6 @@
                 <li ng-repeat="layer in mapState.layers | orderBy:'order':true">
                 <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="mapState.changeLayer(layer)">
                 <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
-
-                <div ng-switch="layer.follow_3di" style="float: right;">
-                  <div ng-switch-when="undefined">
-                    <i class="icon-screenshot pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="zoomToTheMagic(layer)"></i>
-                  </div>
-                  <div ng-switch-when="true">
-                    <i class="icon-eye-close pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="setFollow(layer, false)"></i>
-                  </div>
-                  <div ng-switch-when="false">
-                    <i class="icon-eye-open pull-right zoomto-icon" ng-class="{visible: layer.active}" ng-click="setFollow(layer, true)"></i>
-                  </div>
-                </div>
                 </li>
                 <!-- <li ng-click="toggleRain()" class="clickable"><label ng-class="{active: animation.enabled}">Regen</label> </li> -->
               </ul>
