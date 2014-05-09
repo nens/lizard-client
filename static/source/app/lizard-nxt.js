@@ -725,7 +725,7 @@ app.controller("MasterCtrl",
     if ($scope.rain.enabled) {
       var coeff = RasterService.rainInfo.timeResolution;
       var now = $scope.timeState.at;
-      var roundedMoment = UtilService.roundTimestamp(now, coeff, true);
+      var roundedMoment = UtilService.roundTimestamp(now, coeff, false);
 
       if (roundedMoment !== $scope.rain.currentDate &&
         roundedMoment >= ($scope.rain.currentDate + coeff) ||

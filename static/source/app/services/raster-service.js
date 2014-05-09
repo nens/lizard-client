@@ -23,7 +23,7 @@ app.service("RasterService", ["Restangular", "UtilService",
   this.getRainWMSImages = function (timestamp) {
     var coeff = this.rainInfo.timeResolution,
         imageUrlBase = this.rainInfo.imageUrlBase,
-        now = UtilService.roundTimestamp(timestamp, coeff, true);
+        now = UtilService.roundTimestamp(timestamp, coeff, false);
 
     return this.getWMSImages(imageUrlBase, now, coeff);
   };
