@@ -389,8 +389,7 @@ angular.module('graph')
       g = graph.g,
       x = graph.x,
       y = graph.y,
-      width = graph.width,
-      barWidth = x.scale(data[1][0]) - x.scale(data[0][0]);
+      width = graph.width;
 
       var yN = graphCtrl.maxMin(data, '1');
       if (yN.max > y.max || yN.max < (0.5 * y.max)) {
@@ -441,7 +440,6 @@ angular.module('graph')
             return "rotate(-45)";
           });
 
-      console.log(data);
       // Join new data with old elements, based on the timestamp.
       var bar = g.selectAll(".bar")
           .data(data, function  (d) { return d[0]; });
@@ -456,6 +454,8 @@ angular.module('graph')
         }
         return h;
       };
+      
+      var barWidth = x.scale(data[1][0]) - x.scale(data[0][0]);
 
       // UPDATE
       // Update old elements as needed.
@@ -476,7 +476,7 @@ angular.module('graph')
           .attr("y", function (d) { return y.scale(0); })
           .attr("height", 0)
           .transition()
-          .duration(400)
+          .duration(500)
           .attr("height", function (d) { return 200 - y.scale(d[1]); })
           .attr("y", function (d) { return y.scale(d[1]); });
 
