@@ -40,7 +40,7 @@ angular.module('graph')
         bottom: 20,
         left: 20
       },
-      maxwidth = 350,
+      maxwidth = 370,
       maxheight = 150;
 
       if (legend.yLabel) {
@@ -68,6 +68,7 @@ angular.module('graph')
           .attr("class", "plot");
         //Create title
         this.svg.append("text")
+          .attr('class', 'graph-text')
           .attr("x", width / 2)
           .attr("y", -50 / 2 + margin.top)
           .attr("class", "title")
@@ -79,6 +80,7 @@ angular.module('graph')
       if (legend.xLabel) {
          //Create X axis label   
         this.svg.append("text")
+           .attr('class', 'graph-text')
            .attr("x", width / 2)
            .attr("y",  height + margin.bottom * 1.5)
            .style("text-anchor", "middle")
@@ -88,6 +90,7 @@ angular.module('graph')
       if (legend.yLabel) {
         //Create Y axis label
         this.svg.append("text")
+          .attr('class', 'graph-text')
           .attr('id', 'ylabel')
           .attr("transform", "rotate(-90)")
           .attr("y", 0 - margin.left)
@@ -198,6 +201,7 @@ angular.module('graph')
         .call(xAxis)
         .selectAll("text")
           .style("text-anchor", "end")
+          .attr('class', 'graph-text')
           .attr("dx", "-.8em")
           .attr("dy", ".15em")
           .attr("transform", function (d) {
@@ -206,7 +210,10 @@ angular.module('graph')
 
       svg.append("g")
         .attr("class", "y-axis y axis")
-        .call(yAxis);
+        .call(yAxis)
+        .selectAll("text")
+          .style("text-anchor", "end")
+          .attr('class', 'graph-text');
     };
 
     /**
@@ -390,7 +397,10 @@ angular.module('graph')
           .transition()
           .duration(800)
           .ease("sin-in-out")
-          .call(yAxis);
+          .call(yAxis)
+          .selectAll("text")
+            .style("text-anchor", "end")
+            .attr('class', 'graph-text');
       };
 
       if (legend.yLabel) {
@@ -409,12 +419,13 @@ angular.module('graph')
       svg.select(".x.axis")
         .call(graphCtrl.makeAxis(x.scale, {orientation: "bottom"}))
         .selectAll("text")
-        .style("text-anchor", "end")
-        .attr("dx", "-.8em")
-        .attr("dy", ".15em")
-        .attr("transform", function (d) {
-            return "rotate(-45)";
-          });
+          .style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", function (d) {
+              return "rotate(-45)";
+            })
+          .attr('class', 'graph-text');
 
       // Join new data with old elements, based on the timestamp.
       var bar = g.selectAll(".bar")
@@ -439,7 +450,7 @@ angular.module('graph')
         .duration(500)
         .attr("height", heightFn)
         .attr("x", function (d) { return x.scale(d[0]) - 0.5 * barWidth; })
-        .attr('width', function (d) { return x.scale(data[1][0]) - x.scale(data[0][0]); })
+        .attr('width', function (d) { return barWidth; })
         .attr("y", function (d) { return y.scale(d[1]); })
         .each("end", rescale);
 
@@ -448,7 +459,7 @@ angular.module('graph')
       bar.enter().append("rect")
           .attr("class", "bar")
           .attr("x", function (d) { return x.scale(d[0]) - 0.5 * barWidth; })
-          .attr('width', function (d) { return x.scale(data[1][0]) - x.scale(data[0][0]); })
+          .attr('width', function (d) { return barWidth; })
           .attr("y", function (d) { return y.scale(0); })
           .attr("height", 0)
           .transition()

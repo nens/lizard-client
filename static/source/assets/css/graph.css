@@ -4,7 +4,7 @@
 /* tell the SVG path to be a thin blue line without any area fill */
 
 .plot {
-    fill: rgba(250, 250, 255, 0.6);
+    fill: rgba(250, 250, 255, 0);
 }
 .grid .tick {
     stroke: lightgray;
@@ -47,6 +47,10 @@
 
 rect {
   fill: #2980b9;
+}
+
+rect.bar {
+  stroke-width: 1;
   stroke: white;
 }
 
@@ -61,6 +65,13 @@ text, axis text {
   fill: darkgray;
   stroke: none;
   font-size: 0.8em;
+}
+
+.graph-text {
+  fill: darkgray !important;
+  stroke: none !important;
+  font-size: 13px !important;
+  font-family: sans-serif !important;
 }
 
 text.d3tooltip {
