@@ -37,6 +37,9 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
     data: undefined
   };
 
+
+  // TODO: Re implement the following when enabling scrolling in the rain graph in fullscreen.
+
   // /**
   //  * Watch to trigger call for more rain when user scrolls graph.
   //  */
@@ -80,6 +83,8 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
 
   //   }
   // });
+
+  // End todo
 
   /**
    * Adds rain data to current $scope.rain.data object.
