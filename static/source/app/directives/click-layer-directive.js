@@ -131,7 +131,7 @@ app.directive('clickLayer', ["$q", function ($q) {
       var g = selection;
       // This is an arrow:
       var path = "M " + point.x + " " + point.y + " " +
-                 "l 15 -10 " + 
+                 "l 15 -10 " +
                  "l -10 0 " +
                  "l 0 -15 " +
                  "l -10 0 " +
@@ -271,18 +271,18 @@ app.directive('clickLayer', ["$q", function ($q) {
      */
     function getDataFromUTF(latlng) {
       scope.deferred = $q.defer();
-      // Get sewerageLayer or false
-      var sewerageLayer = getLayer('grid', 'sewerage');
+      // Get waterchainLayer or false
+      var waterchainLayer = getLayer('grid', 'waterchain');
       // event object for utfgrid plugin
       var e = {};
       e.latlng = latlng;
-      if (sewerageLayer) {
+      if (waterchainLayer) {
         // Make call to private function from utfgrid plugin
-        var response = sewerageLayer._objectForEvent(e);
+        var response = waterchainLayer._objectForEvent(e);
         // If empty and still loading it might be empty because
         // the grid was there but did not contain the tile containing
         // this the latlng. 
-        if (response.data === null && sewerageLayer.isLoading) {
+        if (response.data === null && waterchainLayer.isLoading) {
           getDataFromUTFAsynchronous(e);
         } else {
           // Resolve with response and update activeObject
@@ -312,10 +312,10 @@ app.directive('clickLayer', ["$q", function ($q) {
         // cancel it
         scope.on();
       }
-      scope.on = scope.$on('sewerageGridLoaded', function () {
+      scope.on = scope.$on('waterchainGridLoaded', function () {
         scope.on();
-        var sewerageLayer = getLayer('grid', 'sewerage');
-        var response = sewerageLayer._objectForEvent(e);
+        var waterchainLayer = getLayer('grid', 'waterchain');
+        var response = waterchainLayer._objectForEvent(e);
         // since this part executes async in a future turn of the event loop, we need to wrap
         // it into an $apply call so that the model changes are properly observed.
         scope.$apply(function () {

@@ -358,8 +358,7 @@ angular.module('graph')
       var svg = graph.svg,
           height = graph.height,
           width = graph.width,
-          margin = graph.margin,
-          barWidth = attrs.barWidth;
+          margin = graph.margin;
 
       var x = {};
       x.max = data[data.length - 1][0];
@@ -373,6 +372,8 @@ angular.module('graph')
       y.scale = graphCtrl.scale(y.min, y.max, {
         range: [height, 0]
       });
+
+      var barWidth = x.scale(data[1][0]) - x.scale(data[0][0]);
 
       graphCtrl.drawAxes(svg, x, y, {
         height: height,
@@ -390,18 +391,14 @@ angular.module('graph')
               return "rotate(-45)";
             });
 
+        var barWidth = x.scale(data[1][0]) - x.scale(data[0][0]);
+
         svg.selectAll(".bar")
           .attr("x", function (d) { return x.scale(d[0]) - 0.5 * width / barWidth; })
           .attr("transform", "translate(" + "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ", 1)");
-        svg.selectAll('.whisker-vertical')
-          .attr('x1', function (d) { return x.scale(d[0]); })
-          .attr('x2', function (d) { return x.scale(d[0]); });
-        svg.selectAll('.whisker-horizontal')
-          .attr('x1', function (d) { return x.scale(d[0]) - 0.35 * width / barWidth; })
-          .attr('x2', function (d) { return x.scale(d[0]) + 0.35 * width / barWidth; });
         svg.select('#feature-group').select('.now-indicator')
-          .attr('x1', x.scale(scope.$parent.timeState.at))
-          .attr('x2', x.scale(scope.$parent.timeState.at));
+          .attr('x1', x.scale(scope.$parent.timeState.at) || -5)
+          .attr('x2', x.scale(scope.$parent.timeState.at) || -5);
 
       };
 
@@ -469,12 +466,6 @@ angular.module('graph')
       var bar = g.selectAll(".bar")
           .data(data, function  (d) { return d[0]; });
 
-      var whiskerV = g.selectAll(".whisker-vertical")
-          .data(data, function  (d) { return d[0]; });
-
-      var whiskerH = g.selectAll(".whisker-horizontal")
-          .data(data, function  (d) { return d[0]; });
-
       var heightFn = function (d) {
         var height = y.scale(d[1]);
         var h;
@@ -494,22 +485,12 @@ angular.module('graph')
         .attr("y", function (d) { return y.scale(d[1]); })
         .each("end", rescale);
 
-      whiskerV.transition()
-        .duration(500)
-        .attr('y1', function (d) { return y.scale(d[2]); })
-        .attr('y2', function (d) { return y.scale(d[1]); });
-
-      whiskerH.transition()
-        .duration(500)
-        .attr('y1', function (d) { return y.scale(d[2]); })
-        .attr('y2', function (d) { return y.scale(d[2]); });
-
       // ENTER
       // Create new elements as needed.
       bar.enter().append("rect")
           .attr("class", "bar")
-          .attr("x", function (d) { return x.scale(d[0]) - 0.5 * width / attrs.barWidth; })
-          .attr("width", width / attrs.barWidth)
+          .attr("x", function (d) { return x.scale(d[0]) - 0.5 * barWidth; })
+          .attr('width', function (d) {return x.scale(data[1][0]) - x.scale(data[0][0]); })
           .attr("y", function (d) { return y.scale(0); })
           .attr("height", 0)
           .transition()
@@ -517,36 +498,9 @@ angular.module('graph')
           .attr("height", function (d) { return 200 - y.scale(d[1]); })
           .attr("y", function (d) { return y.scale(d[1]); });
 
-      whiskerV.enter().append('line')
-          .attr('class', 'whisker-vertical')
-          .attr('x1', function (d) { return x.scale(d[0]); })
-          .attr('x2', function (d) { return x.scale(d[0]); })
-          .attr('y1', function (d) { return y.scale(d[1]); })
-          .attr('y2', function (d) { return y.scale(d[1]); })
-          .transition()
-          .duration(400)
-          .attr('y1', function (d) { return y.scale(d[2]); });
-
-      whiskerH.enter().append('line')
-          .attr('class', 'whisker-horizontal')
-          .attr('x1', function (d) { return x.scale(d[0]) - 0.35 * width / attrs.barWidth; })
-          .attr('x2', function (d) { return x.scale(d[0]) + 0.35 * width / attrs.barWidth; })
-          .attr('y1', function (d) { return y.scale(d[1]); })
-          .attr('y2', function (d) { return y.scale(d[1]); })
-          .transition()
-          .duration(400)
-          .attr('y1', function (d) { return y.scale(d[2]); })
-          .attr('y2', function (d) { return y.scale(d[2]); });
-
       // EXIT
       // Remove old elements as needed.
       bar.exit()
-        .remove();
-
-      whiskerV.exit()
-        .remove();
-
-      whiskerH.exit()
         .remove();
 
       return graph;
