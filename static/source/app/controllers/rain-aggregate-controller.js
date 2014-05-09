@@ -162,7 +162,6 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
         break; // If zoomlevel is sufficient to get enough width in the bars
       }
     }
-    console.log('aggWindow: ', aggWindow, 'pxwidth: ', drawingWidth / ((stop - start) / aggWindow));
     return aggWindow;
   };
 
