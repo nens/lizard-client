@@ -253,7 +253,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
 app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
 
   var link = function (scope, element, attrs, ctrl) {
-    // Leaflet global variable to speed up vector layer, 
+    // Leaflet global variable to peed up vector layer, 
     // see: http://leafletjs.com/reference.html#path-canvas
     window.L_PREFER_CANVAS = true;
     // instead of 'map' element here for testability
@@ -462,29 +462,52 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
     };
 }]);
 
-app.directive('rain', function () {
+/**
+ * Show rain WMS images as overlay, animate overlays when animation is
+ * playing.
+ */
+app.directive('rain', ["RasterService", "UtilService",
+  function (RasterService, UtilService) {
   return {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
+
+      // TODO: get imageBounds from map extent or set in RasterService
       var imageBounds = [[54.28458617998074, 1.324296158471368],
                          [49.82567047026146, 8.992548357936204]];
-      var imageOverlay =  L.imageOverlay('', imageBounds, {opacity: 0.8});
-      var loading_raster = false;
+      var step = RasterService.rainInfo.timeResolution;
+      //var imageUrlBase = RasterService.rainInfo.imageUrlBase;
+      var imageUrlBase = "http://placehold.it/512.png&text=";
+      var imageOverlays = {};
+      var frameLookup = {};
+      var numCachedFrames = 10;
+      var previousFrame = 0;
+      var previousDate;
+      var nxtDate;
+      for (var i = 0; i < numCachedFrames; i++) {
+        imageOverlays[i] = L.imageOverlay('', imageBounds, {opacity: 0});
+      }
 
       /**
-       * Set loading_raster to false when image is loaded.
+       * Get next x images from timestamp;
+       *
+       * @param: {integer} timestamp - javascript timestamp in ms
+       *
+       * TODO: check if this should go to the RasterService?
        */
-      imageOverlay.on("load", function () {
-        console.log("loaded overlay");
-        loading_raster = false;
-      });
-
-      /**
-       * When loading image overlay, display message.
-       */
-      imageOverlay.on("loading", function () {
-        console.log("loading overlay");
-      });
+      var getImages = function (timestamp) {
+        var utc_formatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
+        nxtDate = UtilService.roundTimestamp(scope.timeState.at,
+                                                 step, false);
+        previousDate = nxtDate;
+        for (i = 0; i < numCachedFrames; i++) {
+          imageOverlays[i].setUrl(imageUrlBase + utc_formatter(
+            new Date(nxtDate)));
+          frameLookup[nxtDate] = i;
+          nxtDate += step;
+        }
+        imageOverlays[0].setOpacity(1);
+      };
 
       /**
        * When rain is enabled, add imageOverlay layer, remove layer when rain
@@ -492,31 +515,48 @@ app.directive('rain', function () {
        */
       scope.$watch('rain.enabled', function (newVal, oldVal) {
         if (newVal !== oldVal) {
+          var i;
           if (newVal) {
-            mapCtrl.addLayer(imageOverlay);
+            for (i = 0; i < numCachedFrames; i++) {
+              mapCtrl.addLayer(imageOverlays[i]);
+            }
+            getImages(scope.timeState.at);
           } else {
-            mapCtrl.removeLayer(imageOverlay);
+            for (i = 0; i < numCachedFrames; i++) {
+              mapCtrl.removeLayer(imageOverlays[i]);
+            }
           }
         }
       });
 
       /**
-       * Watch for rain.currentImage, update imageOverlay.
+       * Animator; watch for timeState.at, show corresponding frame.
        *
-       * Sets loading_raster to true, set to false by "load" event on
-       * imageOverlay.
+       * Lookup timeState.at in frameLookup, set opacity of previous frame
+       * to 0, set opacity of currentFrame to 1. Replace previous frame
+       * with next frame; If frame is not in lookupFrame, get new images.
        */
-      scope.$watch('rain.currentImage', function (newVal, oldVal) {
+      scope.$watch('timeState.at', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
-        if (imageOverlay !== undefined) {
-          if (!loading_raster) {
-            loading_raster = true;
-            imageOverlay.setUrl(scope.rain.currentImage);
-          } else {
-            console.log("still drawing overlay");
+        if (scope.rain.enabled) {
+          var currentDate = UtilService.roundTimestamp(scope.timeState.at, step, false);
+          var overlayIndex = frameLookup[currentDate];
+          if (overlayIndex !== undefined &&
+              overlayIndex !== previousFrame) {
+            imageOverlays[previousFrame].setOpacity(0);
+            imageOverlays[previousFrame].setUrl(imageUrlBase + nxtDate);
+            delete frameLookup[previousDate];
+            frameLookup[nxtDate] = previousFrame;
+            imageOverlays[overlayIndex].setOpacity(1);
+            previousFrame = overlayIndex;
+            previousDate = currentDate;
+            nxtDate += step;
+          } else if (overlayIndex === undefined) {
+            console.log("get new images");
+            getImages(scope.timeState.at);
           }
         }
       });
     }
   };
-});
+}]);
