@@ -1,7 +1,7 @@
 'use strict';
 
-app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
-  function ($scope, $q, CabinetService) {
+app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterService"
+  function ($scope, $q, CabinetService, RasterService) {
 
   $scope.$watch('mapState.here', function (n, o) {
     if (n === o) {return true; }
@@ -33,7 +33,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
   $scope.rain = {
     start: undefined,
     stop: undefined,
-    aggWindow: 300000,
+    aggWindow: RasterService.rainInfo.temporalResolution,
     data: undefined
   };
 
@@ -144,7 +144,6 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
                                272);  // graph is 272 px wide
     getRain(start, stop, $scope.rain.latLng, $scope.rain.aggWindow)
       .then(function (response) {
-        $scope.box.type = 'rain';
         $scope.rain.data = response.result;
         $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
         $scope.rain.start = $scope.rain.data[0][0];
