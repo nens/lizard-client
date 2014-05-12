@@ -447,101 +447,31 @@ app.controller("MasterCtrl",
 
   // END EVENTS
 
-  // TIMESERIES
+
+  // ActiveObject part
 
   /**
-   * Get data for timeseries.
-   *
-   * the data that is passed as an argument to this function is data from the
-   * UTFgrid layer
-   *
+   * ActiveObject is the object which is currently active in the 
+   * application. Commonly set by a click on the utf grid. The 
+   * activeObject may have associated events and timeseries which
+   * may be requested with extra calls. 
    */
-  $scope.box.content.selected_timeseries = undefined;
-
-  // $scope.getTimeseries = function (data) {
-  //   /* data must have properties entity_name, id */
-  //   // NOTE: this is an aggregation demo HACK
-  //   if (!arguments[1] && arguments[1] !== "nochange") {
-  //     $scope.box.type = data.entity_name;
-  //     $scope.box.showCards = true;
-  //   }
-
-  //   // NOTE: will temporalExtent also control timeiline temporalExtent?
-  //   $scope.box.content.temporalExtent = {
-  //     start: null,
-  //     end: null,
-  //     changedZoom: false,
-  //   };
-  //   $scope.timeseries = [];
-  //   $scope.box.content.selected_timeseries = undefined;
-   
-
-  //   var new_data_get = 
-  //   $scope.metadata = {
-  //       title: null,
-  //       fromgrid: $scope.box.content.data,
-  //       //type: $scope.box.content.data.entity_name
-  //       type: data.entity_name
-  //     };
-
-  //   // Otherwise changes are watched and called to often.
-  //   if ($scope.box.content.timeseries_changed === undefined) {
-  //     $scope.box.content.timeseries_changed = true;
-  //   } else {
-  //     $scope.box.content.timeseries_changed = !$scope.box.content.timeseries_changed;
-  //   }
-  // };
-
   $scope.activeObject = {
     changed: true,
-    details: false
+    details: false,
+    attrs: undefined
   };
-
-  $scope.canceler = $q.defer();
 
   $scope.$watch('activeObject.changed', function (newVal, oldVal) {
     if (newVal === oldVal) { return; }
-
-    // NOTE: this is of course utterly crappy, 
-    // I copy pasted this from the 'old way'
-    // the only thing changed is the restangular thingy
-    // and it not being part of a big blobbish function: getTimeseries
-    $scope.box.content.object_type = $scope.activeObject.entity_name;
-    $scope.box.content.id = $scope.activeObject.id;
-    $scope.box.content.data = $scope.activeObject;
-    $scope.box.type = $scope.activeObject.entity_name;
-
-    if ($scope.activeObject.entity_name === 'pumpstation_sewerage'
-      || $scope.activeObject.entity_name === 'pumpstation_non_sewerage') {
-      CabinetService.timeseries.get({
-        object: $scope.box.content.object_type + '$' + $scope.box.content.id,
-        start: $scope.timeState.start,
-        end: $scope.timeState.end
-      }).then(function (response) {
-        $scope.timeseries = response;
-        if ($scope.timeseries.length > 0) {
-          $scope.box.content.selected_timeseries = response[0];
-          // for now on scope. legacy..
-          $scope.data = {
-            data: response[0].events.instants,
-            id: $scope.activeObject.id
-          };
-          $scope.metadata = {
-            title: null,
-            fromgrid: $scope.box.content.data,
-            type: $scope.box.content.data.entity_name
-          };
-          $scope.timeboxenabled = true;
-        } else {
-          $scope.timeboxenabled = false;
-          $scope.data = null;
-          $scope.box.content.selected_timeseries = undefined;
-        }
-      });
-    }
+    $scope.box.content.object_type = $scope.activeObject.attrs.entity_name;
+    $scope.box.content.id = $scope.activeObject.attrs.id;
+    $scope.box.content.data = $scope.activeObject.attrs;
+    $scope.box.type = $scope.activeObject.attrs.entity_name;
+    console.log($scope.activeObject.attrs);
   });
 
-  // END TIMESERIES
+  // END activeObject part
 
   //TODO: move to raster-service ?
 

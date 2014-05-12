@@ -24,7 +24,7 @@
 
     <div class="card-title">
         <!-- <img src="images/knoop.png" class="img-circle"> -->
-        <i class="icon-outlet"></i><span class="title-text">Uitlaat met keerklep</span>&nbsp;<span ng-if="activeObject.code">(</span><span class="truncateme ng-binding" ng-bind="activeObject.code"></span><span ng-if="activeObject.code">)</span>
+        <i class="icon-outlet"></i><span class="title-text">Uitlaat met keerklep</span>&nbsp;<span ng-if="activeObject.attrs.code">(</span><span class="truncateme ng-binding" ng-bind="activeObject.attrs.code"></span><span ng-if="activeObject.attrs.code">)</span>
     </div>
 
   <table class="fullwidth">
@@ -32,8 +32,8 @@
     <tr>
       <td style="width:170px;">Maaiveld</td>
       <td>
-        <span ng-bind="activeObject.open_water_level_average | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-        <span ng-if="!!activeObject.open_water_level_average"> m
+        <span ng-bind="activeObject.attrs.open_water_level_average | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-if="!!activeObject.attrs.open_water_level_average"> m
         <span style="word-spacing: 0;">NAP</span></span>
       </td>  
     </tr>    
@@ -41,33 +41,33 @@
   </table>
 
 
-  <div class="card-details" ng-click="activeObject.details = !activeObject.details">
-    <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="!!activeObject.details"> Minder details</span>
+  <div class="card-details" ng-click="activeObject.attrs.details = !activeObject.attrs.details">
+    <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.attrs.details}"></i><span ng-if="!activeObject.attrs.details"> Meer details</span><span ng-if="!!activeObject.attrs.details"> Minder details</span>
   </div>
-  <div class="hidden-details" ng-class="{'unhidden-details': activeObject.details}">
+  <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
     <table class="fullwidth">
       <tbody>
       <tr>
         <td  style="width:170px;" class="fixed-width-card-table"><abbr title="Oppervlaktewaterniveau (zomer)">OWN (zomer)</abbr></td>
         <td>
-          <span ng-bind="activeObject.open_water_level_summer | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-          <span ng-if="!!activeObject.open_water_level_summer"> m
+          <span ng-bind="activeObject.attrs.open_water_level_summer | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-if="!!activeObject.attrs.open_water_level_summer"> m
           <span style="word-spacing: 0;"> boven NAP</span></span>
         </td>            
       </tr>
       <tr>
         <td class="fixed-width-card-table"><abbr title="Oppervlaktewaterniveau (winter)">OWN (winter)</abbr></td>
         <td>
-          <span ng-bind="activeObject.open_water_level_winter | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-          <span ng-if="!!activeObject.open_water_level_winter"> m
+          <span ng-bind="activeObject.attrs.open_water_level_winter | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-if="!!activeObject.attrs.open_water_level_winter"> m
           <span style="word-spacing: 0;"> boven NAP</span></span>
         </td>            
       </tr>
       </tbody>
     </table>
     <div class="streetview">
-    <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&cbp=11,90,0,0,40">
-      <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
+    <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.attrs.latlng.lat %>,<% activeObject.attrs.latlng.lng %>&cbp=11,90,0,0,40">
+      <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.attrs.latlng.lat %>,<% activeObject.attrs.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
     </a>
     </div>
   </div>

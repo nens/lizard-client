@@ -9,17 +9,17 @@
 
   <div class="card-title">
     <!-- <img src="/static/distjs/images/knoop.png" class="img-circle" alt="Manhole"> -->
-    <i class="icon-manhole"></i><span class="title-text">Kanaal</span>&nbsp;<span ng-if="activeObject.code">(</span><span class="truncateme ng-binding" ng-bind="activeObject.code"></span><span ng-if="activeCode.code">)</span>
+    <i class="icon-manhole"></i><span class="title-text">Kanaal</span>&nbsp;<span ng-if="activeObject.attrs.code">(</span><span class="truncateme ng-binding" ng-bind="activeObject.attrs.code"></span><span ng-if="activeCode.code">)</span>
   </div>
   <table class="fullwidth">
     <tbody>
     <tr>
       <td>Type</td>
-      <td><span ng-bind="activeObject.type | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
+      <td><span ng-bind="activeObject.attrs.type | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
     </tr>  
     <tr>
       <td>Naam</td>
-      <td><span ng-bind="activeObject.length | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
+      <td><span ng-bind="activeObject.attrs.length | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
     </tr>
    </tbody>
   </table>

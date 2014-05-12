@@ -287,9 +287,7 @@ app.directive('clickLayer', ["$q", function ($q) {
         } else {
           // Resolve with response and update activeObject
           scope.deferred.resolve(response);
-          angular.extend(scope.activeObject, response.data);
-          scope.activeObject.latlng = response.latlng;
-          scope.activeObject.changed = !scope.activeObject.changed;
+          extendDataToActiveObject(response);
         }
       } else {
         getDataFromUTFAsynchronous(e);
@@ -320,12 +318,17 @@ app.directive('clickLayer', ["$q", function ($q) {
         // it into an $apply call so that the model changes are properly observed.
         scope.$apply(function () {
           scope.deferred.resolve(response);
-          angular.extend(scope.activeObject, response.data);
-          scope.activeObject.latlng = response.latlng;
-          scope.activeObject.changed = !scope.activeObject.changed;
+          extendDataToActiveObject(response);
         });
       });
     }
+
+    var extendDataToActiveObject = function (response) {
+      scope.activeObject.attrs = {};
+      angular.extend(scope.activeObject.attrs, response.data);
+      scope.activeObject.latlng = response.latlng;
+      scope.activeObject.changed = !scope.activeObject.changed;
+    };
 
     /**
      * Get layer from leaflet map object.

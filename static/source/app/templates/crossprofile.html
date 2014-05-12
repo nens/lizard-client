@@ -9,13 +9,13 @@
  -->
   <div class="card-title">
     <!-- <img src="/static/distjs/images/knoop.png" class="img-circle" alt=""> -->
-    <i class="icon-manhole"></i><span class="title-text">Kruisprofiel</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.code">...</span>)
+    <i class="icon-manhole"></i><span class="title-text">Kruisprofiel</span>&nbsp;(<span class="truncateme ng-binding" ng-bind="activeObject.attrs.code">...</span>)
   </div>
   <table class="fullwidth">
     <tbody>
     <tr>
       <td>Type</td>
-      <td><span ng-bind="activeObject.type | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
+      <td><span ng-bind="activeObject.attrs.type | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
     </tr>  
     </tbody>
   </table>

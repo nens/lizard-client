@@ -23,65 +23,65 @@
 
   <div class="card-title">
     <img src="/static/distjs/images/geslotenleiding.png" class="img-circle">
-    <span ng-bind="activeObject.type | pipeTypeOrEllipsis"></span>
+    <span ng-bind="activeObject.attrs.type | pipeTypeOrEllipsis"></span>
   </div>
   <table class="fullwidth">
     <tbody>
     <tr>
       <td class="fixed-width-card-table">Lengte</td>
       <td>
-        <span ng-bind="activeObject.length | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-        <span ng-if="!!activeObject.length"> m</span>
+        <span ng-bind="activeObject.attrs.length | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-if="!!activeObject.attrs.length"> m</span>
       </td>
     </tr>
     <tr>
       <td>Breedte</td>
       <td>
-        <span ng-bind="activeObject.width | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-        <span ng-if="!!activeObject.width"> m</span>
+        <span ng-bind="activeObject.attrs.width | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-if="!!activeObject.attrs.width"> m</span>
       </td>  
     </tr>    
     <tr>
       <td class="fixed-width-card-table">Vorm</td>
       <td>
-        <span ng-bind="activeObject.shape | lookupPipeShape" class="ng-binding"></span>
+        <span ng-bind="activeObject.attrs.shape | lookupPipeShape" class="ng-binding"></span>
       </td> 
     </tr>        
       <tr>
         <td class="fixed-width-card-table">Materiaal</td>
         <td>
         <!-- Implement the filter -->
-          <span ng-bind="activeObject.material | pipeMaterialOrEllipsis" class="ng-binding"></span>
+          <span ng-bind="activeObject.attrs.material | pipeMaterialOrEllipsis" class="ng-binding"></span>
         </td>            
       </tr>
   </tbody>
   </table>
 
-  <div class="card-details" ng-click="activeObject.details = !activeObject.details">
-    <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.details}"></i><span ng-if="!activeObject.details"> Meer details</span><span ng-if="!!activeObject.details"> Minder details</span>
+  <div class="card-details" ng-click="activeObject.attrs.details = !activeObject.attrs.details">
+    <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.attrs.details}"></i><span ng-if="!activeObject.attrs.details"> Meer details</span><span ng-if="!!activeObject.attrs.details"> Minder details</span>
   </div>
-  <div class="hidden-details" ng-class="{'unhidden-details': activeObject.details}">
+  <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
     <table class="fullwidth">
       <tbody>
       <tr>
         <td class="fixed-width-card-table">Aantal bewoners</td>
         <td>
-          <span ng-bind="activeObject.number_of_inhabitants | niceNumberOrEllipsis: 0" class="ng-binding"></span>
+          <span ng-bind="activeObject.attrs.number_of_inhabitants | niceNumberOrEllipsis: 0" class="ng-binding"></span>
         </td>            
       </tr>
         <tr>
             <td><abbr title="Start binnen onderkant buis">BOB start</abbr></td>
-            <td ng-bind="activeObject.invert_level_start_point | niceNumberOrEllipsis: 2" class="ng-binding"></td>
+            <td ng-bind="activeObject.attrs.invert_level_start_point | niceNumberOrEllipsis: 2" class="ng-binding"></td>
         </tr>
         <tr>
             <td><abbr title="Eind binnen onderkant buis">BOB eind</abbr></td>
-            <td ng-bind="activeObject.invert_level_end_point | niceNumberOrEllipsis: 2" class="ng-binding"></td>
+            <td ng-bind="activeObject.attrs.invert_level_end_point | niceNumberOrEllipsis: 2" class="ng-binding"></td>
         </tr>         
       </tbody>
     </table>
     <div class="streetview">
-    <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&cbp=11,90,0,0,40">
-      <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
+    <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.attrs.latlng.lat %>,<% activeObject.attrs.latlng.lng %>&cbp=11,90,0,0,40">
+      <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.attrs.latlng.lat %>,<% activeObject.attrs.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
     </a>
     </div>
   </div>
