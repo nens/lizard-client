@@ -30,6 +30,7 @@ app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
         nextTab = - 1;
         break;
       case KeyCodes.RETURNKEY:
+        $scope.box.type = 'empty'; // Hides the results
         e.preventDefault();
         break;
       case KeyCodes.DOWNARROW:
