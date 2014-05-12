@@ -6,8 +6,8 @@
  * Manipulates timeState model, animation controls.
  *
  */
-app.controller('TimeLine', ["$scope", "$q", "CabinetService",
-  function ($scope, $q, CabinetService) {
+app.controller('TimeLine', ["$scope", "$q", "RasterService",
+  function ($scope, $q, RasterService) {
 
   window.requestAnimationFrame = window.requestAnimationFrame ||
                                  window.mozRequestAnimationFrame ||
@@ -51,8 +51,15 @@ app.controller('TimeLine', ["$scope", "$q", "CabinetService",
    * current temporal extent, start animation at start of temporal extent.
    */
   var step =  function () {
-    var timeStep = ($scope.timeState.end - $scope.timeState.start) /
-                   $scope.timeState.animation.stepSize;
+    var currentInterval = $scope.timeState.end - $scope.timeState.start;
+    var timeStep = currentInterval / $scope.timeState.animation.stepSize;
+    // hack to slow down animation for rasters to min resolution
+    if ($scope.rain.enabled &&
+        timeStep - RasterService.rainInfo.timeResolution > 0) {
+      var timeFraction = timeStep / RasterService.rainInfo.timeResolution;
+      $scope.timeState.animation.speed = 50 - (timeFraction / 2);
+      timeStep = RasterService.rainInfo.timeResolution;
+    }
     $scope.$apply(function () {
       $scope.timeState.animation.start += timeStep;
       $scope.timeState.animation.end += timeStep;
@@ -60,14 +67,13 @@ app.controller('TimeLine', ["$scope", "$q", "CabinetService",
     if ($scope.timeState.at >= $scope.timeState.end ||
         $scope.timeState.at < $scope.timeState.start) {
       $scope.$apply(function () {
-        $scope.timeState.animation.start = $scope.timeState.start;
         $scope.timeState.animation.end = $scope.timeState.animation.end -
                                          $scope.timeState.animation.start +
                                          $scope.timeState.start;
+        $scope.timeState.animation.start = $scope.timeState.start;
       });
-      $scope.timeState.at = ($scope.timeState.animation.end +
-                            $scope.timeState.animation.start) / 2;
     }
+    $scope.timeState.at = $scope.timeState.animation.end;
     if ($scope.timeState.animation.playing) {
       setTimeout(function () {
         window.requestAnimationFrame(step);

@@ -486,10 +486,17 @@ app.directive('rain', ["RasterService", "UtilService",
       var previousDate;
       var nxtDate;
       var loadingRaster = 0;
+
+      /**
+       * Callback function for "load" event. Subtracts -1 of loadingRaster.
+       */
       var setLoadingRaster = function (e) {
         loadingRaster -= 1;
       };
 
+      /**
+       * Set up imageOverlays.
+       */
       for (var i = 0; i < numCachedFrames; i++) {
         var imageOverlay = L.imageOverlay('', imageBounds, {opacity: 0});
         imageOverlay.on("load", setLoadingRaster);
@@ -565,8 +572,7 @@ app.directive('rain', ["RasterService", "UtilService",
             previousFrame = overlayIndex;
             previousDate = currentDate;
             nxtDate += step;
-          } else if (overlayIndex === undefined &&
-                     loadingRaster < numCachedFrames * 0.5) {
+          } else if (overlayIndex === undefined) {
             console.log("get new images");
             getImages(scope.timeState.at);
           }
