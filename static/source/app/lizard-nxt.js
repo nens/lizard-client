@@ -700,16 +700,20 @@ app.controller("MasterCtrl",
    * timeline.
    */
   $scope.toggleRain = function () {
+    var oneday = 86400000; // 1 day in ms
+    var currentInterval = $scope.timeState.end - $scope.timeState.start;
+    var timeFraction = (oneday * 2) / currentInterval;
     if ($scope.rain.enabled === false) {
       //TODO: check speed
-      $scope.timeState.animation.speed = 20;
+      $scope.timeState.animation.speed = timeFraction * 20;
+      console.log($scope.timeState.animation.speed);
       $scope.rain.enabled = true;
       if ($scope.timeState.hidden !== false) {
         $scope.toggleTimeline();
       }
     } else if ($scope.rain.enabled) {
       $scope.rain.enabled = false;
-      $scope.timeState.animation.speed = 20;
+      $scope.timeState.animation.speed = timeFraction / 20;
     }
   };
 

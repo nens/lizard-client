@@ -65,9 +65,9 @@ app.controller('TimeLine', ["$scope", "$q", "CabinetService",
                                          $scope.timeState.animation.start +
                                          $scope.timeState.start;
       });
+      $scope.timeState.at = ($scope.timeState.animation.end +
+                            $scope.timeState.animation.start) / 2;
     }
-    $scope.timeState.at = ($scope.timeState.animation.end +
-                           $scope.timeState.animation.start) / 2;
     if ($scope.timeState.animation.playing) {
       setTimeout(function () {
         window.requestAnimationFrame(step);

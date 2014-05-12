@@ -475,17 +475,25 @@ app.directive('rain', ["RasterService", "UtilService",
       // TODO: get imageBounds from map extent or set in RasterService
       var imageBounds = [[54.28458617998074, 1.324296158471368],
                          [49.82567047026146, 8.992548357936204]];
+      var utcFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
       var step = RasterService.rainInfo.timeResolution;
-      //var imageUrlBase = RasterService.rainInfo.imageUrlBase;
-      var imageUrlBase = "http://placehold.it/512.png&text=";
+      var imageUrlBase = RasterService.rainInfo.imageUrlBase;
+      //var imageUrlBase = "http://placehold.it/512.png&text=";
       var imageOverlays = {};
       var frameLookup = {};
-      var numCachedFrames = 10;
+      var numCachedFrames = 20;
       var previousFrame = 0;
       var previousDate;
       var nxtDate;
+      var loadingRaster = 0;
+      var setLoadingRaster = function (e) {
+        loadingRaster -= 1;
+      };
+
       for (var i = 0; i < numCachedFrames; i++) {
-        imageOverlays[i] = L.imageOverlay('', imageBounds, {opacity: 0});
+        var imageOverlay = L.imageOverlay('', imageBounds, {opacity: 0});
+        imageOverlay.on("load", setLoadingRaster);
+        imageOverlays[i] = imageOverlay;
       }
 
       /**
@@ -496,13 +504,15 @@ app.directive('rain', ["RasterService", "UtilService",
        * TODO: check if this should go to the RasterService?
        */
       var getImages = function (timestamp) {
-        var utc_formatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
         nxtDate = UtilService.roundTimestamp(scope.timeState.at,
                                                  step, false);
         previousDate = nxtDate;
+        loadingRaster = 0;
         for (i = 0; i < numCachedFrames; i++) {
-          imageOverlays[i].setUrl(imageUrlBase + utc_formatter(
-            new Date(nxtDate)));
+          loadingRaster += 1;
+          imageOverlays[i].setOpacity(0);
+          imageOverlays[i].setUrl(imageUrlBase +
+                                  utcFormatter(new Date(nxtDate)));
           frameLookup[nxtDate] = i;
           nxtDate += step;
         }
@@ -539,22 +549,39 @@ app.directive('rain', ["RasterService", "UtilService",
       scope.$watch('timeState.at', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
         if (scope.rain.enabled) {
-          var currentDate = UtilService.roundTimestamp(scope.timeState.at, step, false);
+          var currentDate = UtilService.roundTimestamp(scope.timeState.at,
+                                                       step, false);
           var overlayIndex = frameLookup[currentDate];
+          console.log(loadingRaster);
           if (overlayIndex !== undefined &&
               overlayIndex !== previousFrame) {
             imageOverlays[previousFrame].setOpacity(0);
-            imageOverlays[previousFrame].setUrl(imageUrlBase + nxtDate);
+            loadingRaster += 1;
+            imageOverlays[previousFrame].setUrl(imageUrlBase +
+              utcFormatter(new Date(nxtDate)));
             delete frameLookup[previousDate];
             frameLookup[nxtDate] = previousFrame;
             imageOverlays[overlayIndex].setOpacity(1);
             previousFrame = overlayIndex;
             previousDate = currentDate;
             nxtDate += step;
-          } else if (overlayIndex === undefined) {
+          } else if (overlayIndex === undefined &&
+                     loadingRaster < numCachedFrames * 0.5) {
             console.log("get new images");
             getImages(scope.timeState.at);
           }
+        }
+      });
+
+      /**
+       * Get new set of images when animation stops playing 
+       * (resets rasterLoading to 0)
+       */
+      scope.$watch('timeState.at', function (newVal, oldVal) {
+        if (newVal === oldVal) { return; }
+        if (!scope.timeState.animation.playing) {
+          console.log("pause");
+          getImages(scope.timeState.at);
         }
       });
     }
