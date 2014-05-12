@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterService"
+app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterService",
   function ($scope, $q, CabinetService, RasterService) {
 
   $scope.$watch('mapState.here', function (n, o) {
@@ -33,7 +33,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
   $scope.rain = {
     start: undefined,
     stop: undefined,
-    aggWindow: RasterService.rainInfo.temporalResolution,
+    aggWindow: RasterService.rainInfo.timeResolution,
     data: undefined
   };
 

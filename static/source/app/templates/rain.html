@@ -1,3 +1,3 @@
 <div class="card" ng-controller="RainAggregate">
-    <graph bar-chart data="rain.data" ylabel="rain.aggWindow" yfilter="aggWinToYLabel" xlabel="tijd"></graph>
+    <graph ng-if="!!rain.data" bar-chart data="rain.data" ylabel="rain.aggWindow" yfilter="aggWinToYLabel" xlabel="tijd"></graph>
 </div>
