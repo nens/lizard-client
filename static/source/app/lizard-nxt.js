@@ -239,10 +239,7 @@ app.controller("MasterCtrl",
   
     var eventTypesTemplate = {};
     for (var i = 0; i < eventTypes.length; i++) {
-      // debugger;
       eventTypesTemplate[eventTypes[i].event_series] = {};
-
-      // eventTypesTemplate[eventTypes[i].type] = eventTypes[i].type;
     }
     eventTypesTemplate.count = 0;
 
