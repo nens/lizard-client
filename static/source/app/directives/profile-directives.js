@@ -53,7 +53,6 @@ app.directive('rasterprofile', function () {
           scope.line_marker.setLatLngs([scope.first_click, e.latlng]);
           scope.line_marker.options.dashArray = "5, 5";
           scope.line_marker._updateStyle();
-          scope.tools.cursorTooltip.content = "Now click a second time to finish the line";
           scope.lastClick = e.latlng;
         };
 

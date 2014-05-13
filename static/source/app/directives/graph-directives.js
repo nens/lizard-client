@@ -1,16 +1,27 @@
+'use strict';
+
 //graph.js
 
+/**
+ * The graph directive contains low level behavior of the graph element
+ * Higher level behavior that is chart type specific, is implemented
+ * in directives for attributes.
+ *
+ * In HTML this should look like:
+ * <graph [graph-type] data=[data object] [optional labels, titles etc]></graph>
+ */
 angular.module('graph', []);
 
 angular.module('graph')
-.directive('graph', function () {
+.directive('graph', function ($filter) {
 
   var controller = function ($scope) {
 
     /**
      * Abstract function. Directives using this controller
-     * will need to implement a callChart function. See
-     * barChart directive for an example
+     * will need to implement a callChart function. This 
+     * function should be called once to set up the graph. 
+     * See barChart directive for an example.
      * 
      * @param  {object} data    data object
      * @param  {object} element html element
@@ -22,8 +33,9 @@ angular.module('graph')
 
     /**
      * Optional abstract function. Directive might implement
-     * this function to update an existing graph with new data.
-     * See barchart directive for an example
+     * this function to update an existing graph with new data
+     * following a d3 update pattern. See barchart directive 
+     * for an example.
      * 
      * @param  {object} data    data object
      * @param  {object} graph   graph object from callChart
@@ -36,12 +48,12 @@ angular.module('graph')
     this.createCanvas =  function (legend, element) {
       var margin = {
         top: 20,
-        right: 20,
-        bottom: 30,
-        left: 30
+        right: 10,
+        bottom: 20,
+        left: 20
       },
-      maxwidth = 350,
-      maxheight = 250;
+      maxwidth = 370,
+      maxheight = 150;
 
       if (legend.yLabel) {
         margin.left = 60;
@@ -68,6 +80,7 @@ angular.module('graph')
           .attr("class", "plot");
         //Create title
         this.svg.append("text")
+          .attr('class', 'graph-text')
           .attr("x", width / 2)
           .attr("y", -50 / 2 + margin.top)
           .attr("class", "title")
@@ -79,6 +92,7 @@ angular.module('graph')
       if (legend.xLabel) {
          //Create X axis label   
         this.svg.append("text")
+           .attr('class', 'graph-text')
            .attr("x", width / 2)
            .attr("y",  height + margin.bottom * 1.5)
            .style("text-anchor", "middle")
@@ -88,6 +102,8 @@ angular.module('graph')
       if (legend.yLabel) {
         //Create Y axis label
         this.svg.append("text")
+          .attr('class', 'graph-text')
+          .attr('id', 'ylabel')
           .attr("transform", "rotate(-90)")
           .attr("y", 0 - margin.left)
           .attr("x", 0 - (height / 2))
@@ -197,6 +213,7 @@ angular.module('graph')
         .call(xAxis)
         .selectAll("text")
           .style("text-anchor", "end")
+          .attr('class', 'graph-text')
           .attr("dx", "-.8em")
           .attr("dy", ".15em")
           .attr("transform", function (d) {
@@ -205,23 +222,10 @@ angular.module('graph')
 
       svg.append("g")
         .attr("class", "y-axis y axis")
-        .call(yAxis);
-
-      svg.append("g")
-        .attr("class", "x grid")
-        .attr("transform", "translate(0, " + (options.height + 6) + ")")
-        .call(xAxis
-          .tickSize(-options.height, 0, 0)
-        )
+        .call(yAxis)
         .selectAll("text")
-          .style("visibility", "hidden");
-
-      svg.append("g")
-        .attr("class", "y-grid y grid")
-        .call(yAxis
-          .tickSize(-options.width, 0, 0)
-          .tickFormat("")
-        );
+          .style("text-anchor", "end")
+          .attr('class', 'graph-text');
     };
 
     /**
@@ -255,53 +259,29 @@ angular.module('graph')
 
   var link = function (scope, element, attrs, graphCtrl) {
 
-    scope.$watch('data', function (n, o) {
-      if (n === o) { return true; }
+    scope.$watch('data', function () {
+      var legend = {
+        title: scope.title,
+        xLabel: scope.xlabel,
+        yLabel: scope.ylabel,
+        type: attrs.type
+      };
+      if (attrs.yfilter) {
+        legend.yLabel = $filter(attrs.yfilter)(scope.ylabel);
+      }
       // Build chart from scratch
-      if (scope.data !== undefined
-        && graphCtrl.callChart !== undefined
-        && scope.graph === undefined) {
-        var ymin = 0.0,
-            ymax = 0.0,
-            xmin = 0.0,
-            xmax = 0.0;
-        if (attrs.ymax) {
-          ymax = parseFloat(attrs.ymax);
-        }
-        if (attrs.ymin) {
-          ymin = parseFloat(attrs.ymin);
-        }
-        if (attrs.xmax) {
-          xmax = parseFloat(attrs.xmax);
-        }
-        if (attrs.xmin) {
-          xmin = parseFloat(attrs.xmin);
-        }
-        var legend = {
-          title: scope.title,
-          xLabel: scope.xlabel,
-          yLabel: attrs.ylabel,
-          // maybe from scope so controller determines labels
-          ymin: ymin,
-          ymax: ymax,
-          xmin: xmin,
-          xmax: xmax,
-          type: attrs.type
-        };
+      if (scope.graph === undefined) {
         // clear the chart beforehand
         d3.select(element[0]).html("");
         scope.graph = graphCtrl.callChart(scope.data, element, legend);
-        scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph);
+        scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph, legend);
         // Draw the now for the rain
         if (scope.$parent.tools.active === 'rain') {
           graphCtrl.drawNow(scope.graph, scope.$parent.timeState.at);
         }
       // Update graph with new data
-      } else if (scope.graph !== undefined) {
-        scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph);
-      // Clear graph when no more data
       } else {
-        d3.select(element[0]).html("");
+        scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph, legend);
       }
     });
     
@@ -363,7 +343,7 @@ angular.module('graph')
       var x = {};
       x.max = data[data.length - 1][0];
       x.min = data[0][0];
-      var y = graphCtrl.maxMin(data, '2');
+      var y = graphCtrl.maxMin(data, '1');
 
       x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
         range: [0, width],
@@ -380,35 +360,7 @@ angular.module('graph')
         width: width
       });
 
-      var zoomed = function () {
-        svg.select(".x.axis")
-          .call(graphCtrl.makeAxis(x.scale, {orientation: "bottom"}))
-          .selectAll("text")
-          .style("text-anchor", "end")
-          .attr("dx", "-.8em")
-          .attr("dy", ".15em")
-          .attr("transform", function (d) {
-              return "rotate(-45)";
-            });
-
-        var barWidth = x.scale(data[1][0]) - x.scale(data[0][0]);
-
-        svg.selectAll(".bar")
-          .attr("x", function (d) { return x.scale(d[0]) - 0.5 * width / barWidth; })
-          .attr("transform", "translate(" + "translate(" + d3.event.translate[0] + ",0)scale(" + d3.event.scale + ", 1)");
-        svg.select('#feature-group').select('.now-indicator')
-          .attr('x1', x.scale(scope.$parent.timeState.at) || -5)
-          .attr('x2', x.scale(scope.$parent.timeState.at) || -5);
-
-      };
-
       var g = graphCtrl.createDrawingArea(width, height);
-
-      var zoom = d3.behavior.zoom()
-        .x(x.scale)
-        .on("zoom", zoomed);
-
-      svg.call(zoom);
 
       return {
         svg: svg,
@@ -417,7 +369,6 @@ angular.module('graph')
         width: width,
         x: x,
         y: y,
-        zoomFn: zoomed,
         barWidth: barWidth
       };
     };
@@ -428,15 +379,14 @@ angular.module('graph')
      * @param  {object} data  new data object
      * @param  {object} graph graph object
      */
-    graphCtrl.drawFeatures = function (data, graph) {
+    graphCtrl.drawFeatures = function (data, graph, legend) {
       var svg = graph.svg,
       g = graph.g,
       x = graph.x,
       y = graph.y,
-      width = graph.width,
-      barWidth = graph.barWidth;
+      width = graph.width;
 
-      var yN = graphCtrl.maxMin(data, '2');
+      var yN = graphCtrl.maxMin(data, '1');
       if (yN.max > y.max || yN.max < (0.5 * y.max)) {
         y = yN;
         y.scale = graphCtrl.scale(y.min, y.max, {
@@ -451,16 +401,35 @@ angular.module('graph')
           .transition()
           .duration(800)
           .ease("sin-in-out")
-          .call(yAxis);
-        svg.select('.y-grid')
-          .transition()
-          .duration(800)
-          .ease("sin-in-out")
-          .call(yAxis
-            .tickSize(-width, 0, 0)
-            .tickFormat("")
-          );
+          .call(yAxis)
+          .selectAll("text")
+            .style("text-anchor", "end")
+            .attr('class', 'graph-text');
       };
+
+      if (legend.yLabel) {
+        //Create Y axis label
+        svg.select("#ylabel")
+          .text(legend.yLabel);
+      }
+
+      // Create new scale since timeState might have changed
+      x.scale = graphCtrl.scale(scope.timeState.start, scope.timeState.end, {
+        range: [0, width],
+        type: 'time'
+      });
+
+      // Update axis with new scale
+      svg.select(".x.axis")
+        .call(graphCtrl.makeAxis(x.scale, {orientation: "bottom"}))
+        .selectAll("text")
+          .style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", function (d) {
+              return "rotate(-45)";
+            })
+          .attr('class', 'graph-text');
 
       // Join new data with old elements, based on the timestamp.
       var bar = g.selectAll(".bar")
@@ -476,12 +445,16 @@ angular.module('graph')
         }
         return h;
       };
+      
+      var barWidth = x.scale(data[1][0]) - x.scale(data[0][0]);
 
       // UPDATE
       // Update old elements as needed.
       bar.transition()
         .duration(500)
         .attr("height", heightFn)
+        .attr("x", function (d) { return x.scale(d[0]) - 0.5 * barWidth; })
+        .attr('width', function (d) { return barWidth; })
         .attr("y", function (d) { return y.scale(d[1]); })
         .each("end", rescale);
 
@@ -490,13 +463,17 @@ angular.module('graph')
       bar.enter().append("rect")
           .attr("class", "bar")
           .attr("x", function (d) { return x.scale(d[0]) - 0.5 * barWidth; })
-          .attr('width', function (d) {return x.scale(data[1][0]) - x.scale(data[0][0]); })
+          .attr('width', function (d) { return barWidth; })
           .attr("y", function (d) { return y.scale(0); })
           .attr("height", 0)
           .transition()
-          .duration(400)
+          .duration(500)
           .attr("height", function (d) { return 200 - y.scale(d[1]); })
           .attr("y", function (d) { return y.scale(d[1]); });
+
+      // Move now-indicator to the front
+      var nowEl = g.select('.now-indicator').node();
+      nowEl.parentNode.appendChild(nowEl);
 
       // EXIT
       // Remove old elements as needed.
@@ -523,7 +500,7 @@ angular.module('graph')
             height = graph.height,
             width = graph.width,
             margin = graph.margin,
-            radius = Math.min(width, height) / 1.4;
+            radius = Math.min(width, height) / 1.6;
 
 
         var total = 0;
@@ -534,8 +511,8 @@ angular.module('graph')
             })
           .sort(null);
         var arc = d3.svg.arc()
-            .innerRadius(radius - 80)
-            .outerRadius(radius - 20);
+            .innerRadius(radius - radius / 1.75)
+            .outerRadius(radius);
 
         var text = svg.append("text");
         var path = svg.datum(data).selectAll("path")
