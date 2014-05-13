@@ -50,13 +50,23 @@ def index(request):
             layer['url'] = ('http://' + request.META['HTTP_HOST'] +
                             '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}')
 
+    # Save ourselves from: 'module' object has no attribute 'empty_iter'.
+    # This exception occurs with Johnny Cache when ids is empty.
+
+    ids = getattr(request, ORGANISATION_IDS, [])
+
+    if ids:
+        orgs = Organisation.objects.filter(pk__in=ids)
+    else:
+        orgs = Organisation.objects.none()
+
     # Define data bounds based on the (multiple) administrative bounds of all
     # the user's organisations. The data bounding box is the rectangle around
     # the data bounds.
+
     data_bounds = {}
-    orgs = getattr(request, ORGANISATION_IDS, [])
     all_boundaries = []
-    for org in Organisation.objects.filter(id__in=orgs):
+    for org in orgs:
         boundaries = []
         for boundary in org.administrativeboundary_set.all():
             for polygon in boundary.the_geom:
