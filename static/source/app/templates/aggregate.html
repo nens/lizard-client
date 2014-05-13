@@ -1,20 +1,17 @@
+<div class="card"
+     ng-class="mapState.mapMoving ? 'card-hidden' : ''"
+     ng-switch on="box.type">
 
-<div class="card" ng-class="{hidden: box.content.eventValue == undefined}" ng-switch="box.content.eventValue.properties.category">
-  <div class="card-title" ng-switch-when="regen">
-    <i class="fa fa-twitter"></i><span class="card-title">&nbsp;#<% box.content.eventValue.properties.category %></span>
-    <i class="zoomto-icon fa fa-crosshairs pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
-    <p><% box.content.eventValue.properties.timestamp | date:'d-M-y H:mm:ss' %></p>
-    <p><% box.content.eventValue.properties.value %></p>
-  </div>
-  <div class="card-title" ng-switch-when="Aardbeving">
-    <i class="fa fa-twitter"></i><span class="card-title">&nbsp;#<% box.content.eventValue.properties.category %></span>
-    <i class="zoomto-icon fa fa-crosshairs pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
-    <p><% box.content.eventValue.properties.timestamp | date:'d-M-y H:mm:ss' %></p>
-    <p><% box.content.eventValue.properties.value %></p>
-  </div>
-  <div class="card-title" ng-switch-default>
-    <i class="fa fa-exclamation-circle"></i><span class="card-title">&nbsp;<% box.content.eventValue.properties.category | lowercase %></span>
-    <i class="zoomto-icon fa fa-crosshairs pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
-    <p><% box.content.eventValue.properties.timestamp | date:'d-M-y' %></p>
-  </div>
+    <div ng-switch-when="aggregate">
+      <div class="card-title">
+        <i class="fa fa-sitemap"></i><span class="title-text" style="margin-left:10px !important;">PI</span>
+      </div>
+      <table ng-table class="table">
+        <tr ng-repeat="event in mapState.eventTypes">
+            <td data-title="'Type'"><%event.type%></td>
+            <td data-title="'Actief'"><% events.types[event.event_series].currentCount %></td>
+            <td data-title="'Totaal'"><%event.event_count%></td>
+        </tr>
+      </table>
+    </div>
 </div>
