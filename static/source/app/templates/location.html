@@ -30,6 +30,7 @@
 <div ng-controller="SearchCtrl"
      ng-show="box.type == 'location'"
      class="cluster location"
+     ng-class="mapState.mapMoving ? 'card-hidden' : ''"
      style="outline:none;"
      tabindex="<% $index %>"
      ng-repeat="obj in box.content | orderBy:'display_name'"
