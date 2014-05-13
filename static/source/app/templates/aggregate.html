@@ -4,13 +4,20 @@
 
     <div ng-switch-when="aggregate">
       <div class="card-title">
-        <i class="fa fa-sitemap"></i><span class="title-text" style="margin-left:10px !important;">PI</span>
+        <i class="fa fa-sitemap"></i><span class="title-text" style="margin-left:10px !important;">Prestatie Indicatoren (PI)</span>
       </div>
-      <table ng-table class="table">
+      <table ng-table="kpiTableParams" class="table">
         <tr ng-repeat="event in mapState.eventTypes">
-            <td data-title="'Type'"><%event.type%></td>
-            <td data-title="'Actief'"><% events.types[event.event_series].currentCount %></td>
-            <td data-title="'Totaal'"><%event.event_count%></td>
+            <td data-title="'Type'" 
+                sortable="'type'">
+                <% event.type %>
+            </td>
+            <td data-title="'Actief'">
+                <% events.types[event.event_series].currentCount %>
+            </td>
+            <td data-title="'Totaal'">
+                <% event.event_count %>
+            </td>
         </tr>
       </table>
     </div>

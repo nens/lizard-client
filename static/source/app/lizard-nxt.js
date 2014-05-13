@@ -81,10 +81,10 @@ app.config(function ($locationProvider) {
 
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "$q", "$compile", "CabinetService", "RasterService",
-   "UtilService",
-  function ($scope, $http, $q, $compile, CabinetService, RasterService,
-            UtilService) {
+  ["$scope", "$http", "$filter", "$q", "$compile", "CabinetService", "RasterService",
+   "UtilService", "ngTableParams",
+  function ($scope, $http, $filter, $q, $compile, CabinetService, RasterService,
+            UtilService, ngTableParams) {
 
   // BOX MODEL
   $scope.box = {
@@ -238,6 +238,26 @@ app.controller("MasterCtrl",
 
     return eventTypesTemplate;
   };
+
+  $scope.kpiTableParams = new ngTableParams({
+      page: 1,            // show first page
+      count: 10,           // count per page
+      sorting: {
+        type: 'asc'     // initial sorting
+      }
+  }, {
+      total: $scope.mapState.eventTypes.length,
+      counts: [],
+      getData: function($defer, params) {
+        // use build-in angular filter
+        var orderedData = params.sorting() ?
+                            $filter('orderBy')($scope.mapState.eventTypes, params.orderBy()) :
+                            $scope.mapState.eventTypes;
+
+        $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+      }
+  });
+
 
   $scope.events = {
     //TODO: refactor event meta data (remove eventTypes from mapState)
