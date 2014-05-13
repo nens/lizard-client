@@ -82,7 +82,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
           .domain(function (d) {
             return d3.set(d.properties.event_sub_type).values();
           })
-          .range($scope.colors[8]);
+          .range(options.colors[8]);
       }
       else if (options.scale === "linear") {
         scale = d3.scale.linear()
@@ -282,7 +282,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
 
   return this;
 })
-.directive('timeline', [ function () {
+.directive('timeline', ["EventService", function (EventService) {
   
   var link = function (scope, element, attrs, timelineCtrl, $timeout) {
 
@@ -321,7 +321,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       });
 
       // Add color scale
-      graph.colorScale = timelineCtrl.scale(null, null, { scale: 'ordinal' });
+      graph.colorScale = timelineCtrl.scale(null, null, { scale: 'ordinal', colors: EventService.colors});
 
       // Add zoom functionality
       graph.svg.call(d3.behavior.zoom()
@@ -411,14 +411,14 @@ app.controller('TimelineDirCtrl', function ($scope) {
       graph = updateTimeline(graph, data, scope.events.types.count);
       scope.timeState.changedZoom = Date.now();
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
-      scope.events.countCurrentEvents();
+      EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
       // zoomed();
     });
 
     scope.$watch('mapState.moved', function (n, o) {
       if (n === o) { return true; }
       timelineCtrl.drawEventsContainedInBounds(scope.mapState.bounds);
-      scope.events.countCurrentEvents();
+      EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
     });
 
     // Create the brush to display automatic and manual selection of data in timeline both referred to as "animation"
