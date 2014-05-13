@@ -9,6 +9,7 @@ var app = angular.module("lizard-nxt", [
   'restangular',
   'ui.bootstrap',
   'ui.utils',
+  'ngTable',
   'lizard-nxt.services'
 ]);
 
@@ -238,7 +239,10 @@ app.controller("MasterCtrl",
   
     var eventTypesTemplate = {};
     for (var i = 0; i < eventTypes.length; i++) {
+      // debugger;
       eventTypesTemplate[eventTypes[i].event_series] = {};
+
+      // eventTypesTemplate[eventTypes[i].type] = eventTypes[i].type;
     }
     eventTypesTemplate.count = 0;
 
@@ -375,6 +379,13 @@ app.controller("MasterCtrl",
     }
     $scope.events.types[eventSeriesId] = {};
     $scope.events.types[eventSeriesId].event_type = eventOrder;
+    angular.forEach($scope.mapState.eventTypes, function (eventType) {
+      // This adds the eventTitle (ie. 'Meldingen') to the event
+      if(eventType.event_series === eventSeriesId) {
+        $scope.events.types[eventSeriesId].eventTitle = eventType.type; 
+        return;
+      }
+    });
     angular.forEach(shortData.features, function (feature) {
       feature.event_order = eventOrder;
       feature.color = $scope.colors[8][eventOrder];
