@@ -334,8 +334,6 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
       }
     });
 
-
-
     scope.map.on('movestart', function () {
       scope.mapState.mapMoving = true;
     });
@@ -471,11 +469,26 @@ app.directive('rain', function () {
       var imageBounds = [[54.28458617998074, 1.324296158471368],
                          [49.82567047026146, 8.992548357936204]];
       var imageOverlay =  L.imageOverlay('', imageBounds, {opacity: 0.8});
+      var loading_raster = false;
+
+      /**
+       * Set loading_raster to false when image is loaded.
+       */
+      imageOverlay.on("load", function () {
+        console.log("loaded overlay");
+        loading_raster = false;
+      });
+
+      /**
+       * When loading image overlay, display message.
+       */
+      imageOverlay.on("loading", function () {
+        console.log("loading overlay");
+      });
 
       /**
        * When rain is enabled, add imageOverlay layer, remove layer when rain
        * is disabled.
-       *
        */
       scope.$watch('rain.enabled', function (newVal, oldVal) {
         if (newVal !== oldVal) {
@@ -489,41 +502,19 @@ app.directive('rain', function () {
 
       /**
        * Watch for rain.currentImage, update imageOverlay.
+       *
+       * Sets loading_raster to true, set to false by "load" event on
+       * imageOverlay.
        */
       scope.$watch('rain.currentImage', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
         if (imageOverlay !== undefined) {
-          imageOverlay.setUrl(scope.rain.currentImage);
-          imageOverlay.setOpacity(0.8);
-        }
-      });
-
-      /** 
-       * Watch changes in timeState.at, get new raster images, if imageOverlay
-       * exists and rain tool is enabled and animation is not playing.
-       *
-       */
-      scope.$watch('timeState.at', function (newVal, oldVal) {
-        if (newVal === oldVal) { return; }
-        if (imageOverlay !== undefined
-            && scope.rain.enabled
-            && !scope.timeState.animation.enabled) {
-          scope.getRasterImages();
-        }
-      });
-
-      /**
-       * Watch if animation is playing. While animation is playing, hide
-       * raster image; when playing stops, get new raster image.
-       *
-       */
-      scope.$watch('timeState.animation.playing', function (newVal, oldVal) {
-        if (newVal === oldVal) { return; }
-        if (!scope.timeState.animation.playing) {
-          mapCtrl.addLayer(imageOverlay);
-          scope.getRasterImages();
-        } else {
-          mapCtrl.removeLayer(imageOverlay);
+          if (!loading_raster) {
+            loading_raster = true;
+            imageOverlay.setUrl(scope.rain.currentImage);
+          } else {
+            console.log("still drawing overlay");
+          }
         }
       });
     }

@@ -248,9 +248,9 @@ app.controller('TimelineDirCtrl', function ($scope) {
   };
 
   /**
-   * Hides the now element by moving it out of side to the left.
+   * Hides the now element by moving it out of sight to the left.
    *
-   * @param  {graph object} graph contains the svg
+   * @param  {graph object} graph containing the svg.
    */
   this.hideNow = function (graph) {
     var line = graph.svg.select('g').select('.now-indicator');
@@ -399,7 +399,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         scope.timeState.changeOrigin = 'timeline';
         scope.timeState.changedZoom = !scope.timeState.changedZoom;
       });
-      zoomNodata();      
+      zoomNodata();
     };
 
     // Get the timeline-graph
@@ -459,16 +459,23 @@ app.controller('TimelineDirCtrl', function ($scope) {
       }
     });
     
+    /**
+     * Update brush and "Now" elements.
+     *
+     * If animation is enabled, update brush element; if rain is enabled as
+     * well, update "Now" element.
+     */
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.animation.enabled) {
-        timelineCtrl.hideNow(graph);
-        graph.svg.select(".brushed").call(animationBrush.extent([new Date(scope.timeState.animation.start), new Date(scope.timeState.animation.end)]));
+        graph.svg.select(".brushed")
+          .call(animationBrush.extent(
+            [new Date(scope.timeState.animation.start),
+             new Date(scope.timeState.animation.end)]));
         timelineCtrl.brushmove();
-      } else if (scope.tools.active === 'rain') {
+      }
+      if (scope.tools.active === 'rain') {
         timelineCtrl.drawNow(graph, scope.timeState.at);
-      } else {
-        timelineCtrl.hideNow(graph);
       }
     });
 

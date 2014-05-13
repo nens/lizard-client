@@ -1,7 +1,7 @@
 'use strict';
 
-app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
-  function ($scope, $q, CabinetService) {
+app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterService",
+  function ($scope, $q, CabinetService, RasterService) {
 
   $scope.$watch('mapState.here', function (n, o) {
     if (n === o) {return true; }
@@ -33,53 +33,58 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
   $scope.rain = {
     start: undefined,
     stop: undefined,
-    aggWindow: undefined,
+    aggWindow: RasterService.rainInfo.timeResolution,
     data: undefined
   };
 
-  /**
-   * Watch to trigger call for more rain when user scrolls graph.
-   */
-  var holdYourFire = false;
-  var firstTimeStart;
-  $scope.$watch('timeState.start', function (n, o) {
-    if (n === o || $scope.box.type !== 'rain') { return true; }
-    if ($scope.timeState.start < $scope.rain.start - $scope.rain.aggWindow) {
-      if (firstTimeStart === undefined) {
-        getMoreRain(true);
-        firstTimeStart = true;
-      } else if ($scope.timeState.start < $scope.rain.start + 10 * $scope.rain.aggWindow
-          && !holdYourFire) {
-        holdYourFire = true;
-        getMoreRain(true);
-        setTimeout(function () {
-          holdYourFire = false;
-        }, 1000);
-      }
-    }
-  });
 
-  /**
-   * Watch to trigger call for more rain when user scrolls graph.
-   */
-  var firstTimeEnd;
-  $scope.$watch('timeState.end', function (n, o) {
-    if (n === o || $scope.box.type !== 'rain') { return true; }
-    if ($scope.timeState.end > $scope.rain.end + 2 * $scope.rain.aggWindow) {
-      if (firstTimeEnd === undefined) {
-        getMoreRain();
-        firstTimeEnd = true;
-      } else if ($scope.timeState.end > $scope.rain.end - 10 * $scope.rain.aggWindow
-          && !holdYourFire) {
-        holdYourFire = true;
-        getMoreRain();
-        setTimeout(function () {
-          holdYourFire = false;
-        }, 1000);
-      }
+  // TODO: Re implement the following when enabling scrolling in the rain graph in fullscreen.
 
-    }
-  });
+  // /**
+  //  * Watch to trigger call for more rain when user scrolls graph.
+  //  */
+  // var holdYourFire = false;
+  // var firstTimeStart;
+  // $scope.$watch('timeState.start', function (n, o) {
+  //   if (n === o || $scope.box.type !== 'rain') { return true; }
+  //   if ($scope.timeState.start < $scope.rain.start - $scope.rain.aggWindow) {
+  //     if (firstTimeStart === undefined) {
+  //       getMoreRain(true);
+  //       firstTimeStart = true;
+  //     } else if ($scope.timeState.start < $scope.rain.start + 10 * $scope.rain.aggWindow
+  //         && !holdYourFire) {
+  //       holdYourFire = true;
+  //       getMoreRain(true);
+  //       setTimeout(function () {
+  //         holdYourFire = false;
+  //       }, 1000);
+  //     }
+  //   }
+  // });
+
+  // /**
+  //  * Watch to trigger call for more rain when user scrolls graph.
+  //  */
+  // var firstTimeEnd;
+  // $scope.$watch('timeState.end', function (n, o) {
+  //   if (n === o || $scope.box.type !== 'rain') { return true; }
+  //   if ($scope.timeState.end > $scope.rain.end + 2 * $scope.rain.aggWindow) {
+  //     if (firstTimeEnd === undefined) {
+  //       getMoreRain();
+  //       firstTimeEnd = true;
+  //     } else if ($scope.timeState.end > $scope.rain.end - 10 * $scope.rain.aggWindow
+  //         && !holdYourFire) {
+  //       holdYourFire = true;
+  //       getMoreRain();
+  //       setTimeout(function () {
+  //         holdYourFire = false;
+  //       }, 1000);
+  //     }
+
+  //   }
+  // });
+
+  // End todo
 
   /**
    * Adds rain data to current $scope.rain.data object.
@@ -137,7 +142,6 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
     $scope.rain.aggWindow = getAggWindow($scope.timeState.start,
                                $scope.timeState.end,
                                272);  // graph is 272 px wide
-    $scope.box.type = 'rain';
     getRain(start, stop, $scope.rain.latLng, $scope.rain.aggWindow)
       .then(function (response) {
         $scope.rain.data = response.result;
@@ -151,9 +155,9 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService",
     var aggWindow;
     var minPx = 3; // Minimum width of a bar
     // Available zoomlevels
-    var zoomLvls = {1: 300000, // 5 minutes
-                    2: 6000000, // 1 hour
-                    3: 144000000}; // 1 day
+    var zoomLvls = {fiveMinutes: 300000,
+                    hour: 3600000,
+                    day: 86400000};
     // ms per pixel
     var msPerPx = (stop - start) / drawingWidth;
     for (var zoomLvl in zoomLvls) {

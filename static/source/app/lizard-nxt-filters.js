@@ -155,3 +155,23 @@ app.filter('pipeMaterialOrEllipsis', function () {
     return out;
   };
 });
+
+app.filter('aggWinToYLabel', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case 300000:
+      out = 'mm / 5 min';
+      break;
+    case 3600000:
+      out = 'mm / uur';
+      break;
+    case 86400000:
+      out = 'mm / dag';
+      break;
+    default:
+      out = '...';
+    }
+    return out;
+  };
+});
