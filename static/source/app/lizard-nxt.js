@@ -9,8 +9,7 @@ var app = angular.module("lizard-nxt", [
   'restangular',
   'ui.bootstrap',
   'ui.utils',
-  'ngTable',
-  'lizard-nxt.services'
+  'ngTable'
 ]);
 
 /**
