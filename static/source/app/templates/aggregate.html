@@ -16,22 +16,23 @@
                    ng-click="group.$hideRows = !group.$hideRows">
                     <span class="glyphicon" 
                           ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
-                    <strong><% group.value %></strong>
+                    <strong><% group.value %> (id: <% group.data[0].event_series %>)</strong>
                 </a>
             </td>
         </tr>
-        <tr ng-hide="group.$hideRows" ng-repeat="event in group.data">   
-        <!-- TODO: This should loop over the categories and show the totals of their events -->
-             <td sortable="type" data-title="'Type'">
-                <% event.type %>
-            </td>
-            <td sortable="currentCount" data-title="'Actief'">
-                <% events.types[event.event_series].currentCount %>
-            </td>
-            <td data-title="'Totaal'">
-                <% event.event_count %>
-            </td>
-        </tr>
+        <tr ng-hide="group.$hideRows" ng-repeat="feature in events.data.features">
+         <!-- | filter: {feature.properties.event_series: group.data[0].event_series} -->
+         <!-- TODO: Cant figure out how to use filter/ng-hide to show only the corresponding event_series -->
+          <td data-title="'Categorie'">
+            <% feature.properties.category %>
+          </td>   
+          <td data-title="'Totaal'">
+            0
+          </td>
+          <td data-title="'ID'">
+            <% feature.properties.event_series %>
+          </td>
+        </tr>        
     </tbody>
     </table>
 
