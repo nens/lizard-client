@@ -91,7 +91,7 @@ def index(request):
         'strap_layers': _bootstrap(layers),
         'strap_data_bounds': _bootstrap(data_bounds),
         'strap_event_types': _bootstrap(event_types),
-        'strap_orgs': _bootstrap(orgs),
+        'strap_orgs': _bootstrap(ids),
     }
     if getattr(settings, "DEV_TEMPLATE", False):
         return render_to_response('client/debug.html', context,
