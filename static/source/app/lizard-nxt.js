@@ -320,7 +320,10 @@ app.controller("MasterCtrl",
     EventService.getEventsForObject($scope.activeObject.attrs.entity_name,
                                     $scope.activeObject.attrs.id)
     .then(function (response) {
-      $scope.activeObject.events = response;
+      $scope.activeObject.events = [];
+      angular.forEach(response.features, function (feature) {
+        $scope.activeObject.events.push(feature.properties);
+      });
       console.log($scope.activeObject);
     });
   });
