@@ -278,7 +278,7 @@ app.controller("MasterCtrl",
    * @param: int containing the id of the event series to download
    */
   var getEvents = function (eventSeriesId) {
-    EventService.get({event_series: eventSeriesId})
+    EventService.getEvents({event_series: eventSeriesId})
       .then(function (response) {
         var data = response;
         var dataOrder = EventService.addEvents($scope.events.data, data, eventSeriesId);
@@ -319,10 +319,10 @@ app.controller("MasterCtrl",
     $scope.box.type = $scope.activeObject.attrs.entity_name;
     EventService.getEventsForObject($scope.activeObject.attrs.entity_name,
                                     $scope.activeObject.attrs.id)
-      .then(function (response) {
-        $scope.activeObject.events = response;
-      });
-    console.log($scope.activeObject.attrs);
+    .then(function (response) {
+      $scope.activeObject.events = response;
+      console.log($scope.activeObject);
+    });
   });
 
   // END activeObject part
