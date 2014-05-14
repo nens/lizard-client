@@ -9,6 +9,7 @@ var app = angular.module("lizard-nxt", [
   'restangular',
   'ui.bootstrap',
   'ui.utils',
+  'ngTable'
 ]);
 
 /**
@@ -80,10 +81,10 @@ app.config(function ($locationProvider) {
 
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "$q", "$compile", "CabinetService", "RasterService",
-   "UtilService",
-  function ($scope, $http, $q, $compile, CabinetService, RasterService,
-            UtilService) {
+  ["$scope", "$http", "$filter", "$q", "$compile", "CabinetService", "RasterService",
+   "UtilService", "ngTableParams",
+  function ($scope, $http, $filter, $q, $compile, CabinetService, RasterService,
+            UtilService, ngTableParams) {
 
   // BOX MODEL
   $scope.box = {
@@ -238,6 +239,27 @@ app.controller("MasterCtrl",
     return eventTypesTemplate;
   };
 
+  $scope.kpiTableParams = new ngTableParams({
+      page: 1,            // show first page
+      count: 10           // count per page
+  }, {
+      total: $scope.mapState.eventTypes.length,
+      counts: [],
+      groupBy: function(item) {
+        return item.type + ' (' + item.event_count + ' totaal, ' + $scope.events.types.count + ' actief)'; //TODO: Active doesnt update?
+      },
+      getData: function($defer, params) {
+        // use build-in angular filter
+        console.log('--->',$scope.events.data);
+        var orderedData = params.sorting() ?
+                            $filter('orderBy')($scope.mapState.eventTypes, params.orderBy()) :
+                            $scope.mapState.eventTypes;
+
+        $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+      }
+  });
+
+
   $scope.events = {
     //TODO: refactor event meta data (remove eventTypes from mapState)
     types: buildEventTypesTemplate($scope.mapState.eventTypes),
@@ -369,6 +391,13 @@ app.controller("MasterCtrl",
     }
     $scope.events.types[eventSeriesId] = {};
     $scope.events.types[eventSeriesId].event_type = eventOrder;
+    angular.forEach($scope.mapState.eventTypes, function (eventType) {
+      // This adds the eventTitle (ie. 'Meldingen') to the event
+      if(eventType.event_series === eventSeriesId) {
+        $scope.events.types[eventSeriesId].eventTitle = eventType.type; 
+        return;
+      }
+    });
     angular.forEach(shortData.features, function (feature) {
       feature.event_order = eventOrder;
       feature.color = $scope.colors[8][eventOrder];
