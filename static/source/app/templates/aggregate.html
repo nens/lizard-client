@@ -20,23 +20,10 @@
                 </a>
             </td>
         </tr>
-<!--         <tr ng-hide="group.$hideRows" 
-            ng-repeat="e in events.data.features">
-          <td data-title="'Categorie'"><% e.properties.category %></td>
-          <td data-title="'Totaal'">...</td>
-        </tr>
-
-        <tr ng-hide="group.$hideRows" ng-repeat="e in events.data.features">
-          <td title="'ID'"><% e %> <% e.properties.event_series %></td>
-
-
-         <tr ng-hide="group.$hideRows" ng-repeat="event in group.data">
-          <td title="'Test'"><% events.data.features[event.event_series] %></td>
--->
-        <tr ng-hide="group.$hideRows" 
-            ng-repeat="event in events.data.features">
+        <tr ng-hide="group.$hideRows" ng-repeat="event in group.data">   
+        <!-- TODO: This should loop over the categories and show the totals of their events -->
              <td sortable="type" data-title="'Type'">
-                <% event %> <!-- <% event.event_series %> -->
+                <% event.type %>
             </td>
             <td sortable="currentCount" data-title="'Actief'">
                 <% events.types[event.event_series].currentCount %>
