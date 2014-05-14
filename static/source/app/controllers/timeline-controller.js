@@ -77,7 +77,7 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
     if ($scope.timeState.animation.playing) {
       setTimeout(function () {
         window.requestAnimationFrame(step);
-      }, 400 - Math.pow($scope.timeState.animation.speed, 2));
+      }, 50);
     }
   };
 

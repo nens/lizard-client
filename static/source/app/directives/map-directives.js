@@ -480,7 +480,7 @@ app.directive('rain', ["RasterService", "UtilService",
       var imageUrlBase = RasterService.rainInfo.imageUrlBase;
       var imageOverlays = {};
       var frameLookup = {};
-      var numCachedFrames = 50;
+      var numCachedFrames = 30;
       var previousFrame = 0;
       var previousDate;
       var nxtDate;
@@ -499,10 +499,12 @@ app.directive('rain', ["RasterService", "UtilService",
         image.on("load", function (e) {
           loadingRaster -= 1;
           frameLookup[date] = i;
+          if (!scope.timeState.animation.playing) {
+            console.info("Queue:", loadingRaster);
+          }
           if (restart && loadingRaster === 0) {
             restart = false;
             scope.timeState.playPauseAnimation();
-            imageOverlays[0].setOpacity(0);
           }
         });
       };
@@ -519,9 +521,13 @@ app.directive('rain', ["RasterService", "UtilService",
                                                  step, false);
         previousDate = nxtDate;
         loadingRaster = 0;
+        // All frames are going to load new ones, empty lookup
+        frameLookup = {};
         for (var i in imageOverlays) {
           loadingRaster += 1;
           imageOverlays[i].setOpacity(0);
+          // Remove old listener
+          imageOverlays[i].off('load');
           addLoadListener(imageOverlays[i], i, nxtDate);
           imageOverlays[i].setUrl(imageUrlBase +
                         utcFormatter(new Date(nxtDate)));
@@ -604,6 +610,7 @@ app.directive('rain', ["RasterService", "UtilService",
         if (!scope.timeState.animation.playing) {
           getImages(scope.timeState.at);
           imageOverlays[0].setOpacity(1);
+          previousFrame = 0;
         }
       });
     }
