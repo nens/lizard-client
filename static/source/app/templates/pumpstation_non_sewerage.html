@@ -73,16 +73,27 @@
       <i class="fa fa-sitemap"></i><span class="title-text" style="margin-left:10px !important;">Prestatie Indicatoren (PI)</span>
     </div>
     <div>
-      <table class="table">
-        <tr ng-repeat="event in activeObject.events.features">
-          <td data-title="'Categorie'" sortable="'Categorie'">
-            <% event.properties.category %>
-          </td>
-          <td data-title="'Actief'">
-            <% event.properties.value %>
-          </td>
+          
+    <table ng-table="tableParams" class="table">
+    <tbody ng-repeat="group in $groups">
+        <tr class="ng-table-group">
+            <td colspan="<% $columns.length %>">
+                <a href="" ng-click="group.$hideRows = !group.$hideRows">
+                    <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
+                    <strong><% group.value %></strong>
+                </a>
+            </td>
         </tr>
-      </table>
+        <tr ng-hide="group.$hideRows" ng-repeat="user in group.data">
+            <td sortable="name" data-title="'Waarde'">
+                <a ng-click="events.zoomTo(user.geometry)"><% user.value %></a>
+            </td>
+            <td sortable="age" data-title="'Moment'">
+                <% user.timestamp | date %>
+            </td>
+        </tr>
+    </tbody>
+    </table>
     </div>
   </div>
 </div>
