@@ -81,10 +81,17 @@ app.config(function ($locationProvider) {
 
  */
 app.controller("MasterCtrl",
+<<<<<<< HEAD
   ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService", "RasterService",
    "UtilService", "EventService", "ngTableParams",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, ngTableParams) {
+=======
+  ["$scope", "$http", "$filter", "$q", "$compile", "CabinetService", "RasterService",
+   "UtilService", "ngTableParams",
+  function ($scope, $http, $filter, $q, $compile, CabinetService, RasterService,
+            UtilService, ngTableParams) {
+>>>>>>> 9c633b890a3ee90fd4fba9f9953b1729139993de
 
   // BOX MODEL
   $scope.box = {
@@ -223,6 +230,26 @@ app.controller("MasterCtrl",
     changed: Date.now()
   };
 
+  $scope.kpiTableParams = new ngTableParams({
+      page: 1,            // show first page
+      count: 10           // count per page
+  }, {
+      total: $scope.mapState.eventTypes.length,
+      counts: [],
+      groupBy: function(item) {
+        return item.type + ' (' + item.event_count + ' totaal, ' + $scope.events.types.count + ' actief)'; //TODO: Active doesnt update?
+      },
+      getData: function($defer, params) {
+        // use build-in angular filter
+        console.log('--->',$scope.events.data);
+        var orderedData = params.sorting() ?
+                            $filter('orderBy')($scope.mapState.eventTypes, params.orderBy()) :
+                            $scope.mapState.eventTypes;
+
+        $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+      }
+  });
+  
   /**
    * Zoom to event location
    * 
@@ -506,10 +533,8 @@ app.controller("MasterCtrl",
    */
   $scope.toggleRain = function () {
     if ($scope.rain.enabled === false) {
-      $scope.rain.images = RasterService.getRainWMSImages($scope.timeState.at);
-      $scope.timeState.animation.speed = 5;
-      $scope.rain.currentDate = $scope.timeState.at;
       $scope.rain.enabled = true;
+      $scope.timeState.animation.speed = 50;
       if ($scope.timeState.hidden !== false) {
         $scope.toggleTimeline();
       }
@@ -518,33 +543,6 @@ app.controller("MasterCtrl",
       $scope.timeState.animation.speed = 20;
     }
   };
-
-  /** 
-   * Lookup nearest image for timeState.at and set to currentImage.
-   *
-   * If timestamp is not in images, get new images from server.
-   */
-  $scope.$watch('timeState.at', function (newVal, oldVal) {
-    if (newVal === oldVal) { return; }
-    if ($scope.rain.enabled) {
-      var coeff = RasterService.rainInfo.timeResolution;
-      var now = $scope.timeState.at;
-      var roundedMoment = UtilService.roundTimestamp(now, coeff, false);
-
-      if (roundedMoment !== $scope.rain.currentDate &&
-        roundedMoment >= ($scope.rain.currentDate + coeff) ||
-        roundedMoment <= ($scope.rain.currentDate - coeff)) {
-        $scope.rain.currentDate = roundedMoment;
-        if ($scope.rain.images[roundedMoment]) { // Check whether we have an image for this moment
-          $scope.rain.currentImage = $scope.rain.images[roundedMoment];
-        } else {
-          console.log("data not in rain.images, getting new data");
-          $scope.rain.images = RasterService.getRainWMSImages(now);
-          $scope.rain.currentImage = $scope.rain.images[roundedMoment];
-        }
-      }
-    }
-  });
 
   // END RAIN
 
