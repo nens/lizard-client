@@ -1,8 +1,8 @@
 /**
- * Service to handle raster requests.
+ * Service to handle events.
  */
-app.service("EventService", ["Restangular", "UtilService", "$q",
-  function (Restangular, UtilService, $q) {
+app.service("EventService", ["Restangular", "$q",
+  function (Restangular, $q) {
 
 
   // COLOR MODEL
