@@ -607,7 +607,8 @@ app.directive('rain', ["RasterService", "UtilService",
        */
       scope.$watch('timeState.at', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
-        if (!scope.timeState.animation.playing) {
+        if (!scope.timeState.animation.playing 
+          && scope.rain.enabled) {
           getImages(scope.timeState.at);
           imageOverlays[0].setOpacity(1);
           previousFrame = 0;
