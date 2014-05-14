@@ -241,15 +241,16 @@ app.controller("MasterCtrl",
 
   $scope.kpiTableParams = new ngTableParams({
       page: 1,            // show first page
-      count: 10,           // count per page
-      sorting: {
-        type: 'asc'     // initial sorting
-      }
+      count: 10           // count per page
   }, {
       total: $scope.mapState.eventTypes.length,
       counts: [],
+      groupBy: function(item) {
+        return item.type + ' (' + item.event_count + ' totaal, ' + $scope.events.types.count + ' actief)'; //TODO: Active doesnt update?
+      },
       getData: function($defer, params) {
         // use build-in angular filter
+        console.log('--->',$scope.events.data);
         var orderedData = params.sorting() ?
                             $filter('orderBy')($scope.mapState.eventTypes, params.orderBy()) :
                             $scope.mapState.eventTypes;

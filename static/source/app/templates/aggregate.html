@@ -5,20 +5,48 @@
     <div ng-switch-when="aggregate">
       <div class="card-title">
         <i class="fa fa-sitemap"></i><span class="title-text" style="margin-left:10px !important;">Prestatie Indicatoren (PI)</span>
-      </div>
-      <table ng-table="kpiTableParams" class="table">
-        <tr ng-repeat="event in mapState.eventTypes">
-            <td data-title="'Type'" 
-                sortable="'type'">
-                <% event.type %>
+    </div>
+
+   <table ng-table="kpiTableParams" class="table">
+    <tbody ng-repeat="group in $groups">
+        <tr class="ng-table-group">
+            <td colspan="<% $columns.length %>">            
+                <a href="" 
+                   ng-init="group.$hideRows = true" 
+                   ng-click="group.$hideRows = !group.$hideRows">
+                    <span class="glyphicon" 
+                          ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
+                    <strong><% group.value %></strong>
+                </a>
             </td>
-            <td data-title="'Actief'">
+        </tr>
+<!--         <tr ng-hide="group.$hideRows" 
+            ng-repeat="e in events.data.features">
+          <td data-title="'Categorie'"><% e.properties.category %></td>
+          <td data-title="'Totaal'">...</td>
+        </tr>
+
+        <tr ng-hide="group.$hideRows" ng-repeat="e in events.data.features">
+          <td title="'ID'"><% e %> <% e.properties.event_series %></td>
+
+
+         <tr ng-hide="group.$hideRows" ng-repeat="event in group.data">
+          <td title="'Test'"><% events.data.features[event.event_series] %></td>
+-->
+        <tr ng-hide="group.$hideRows" 
+            ng-repeat="event in events.data.features">
+             <td sortable="type" data-title="'Type'">
+                <% event %> <!-- <% event.event_series %> -->
+            </td>
+            <td sortable="currentCount" data-title="'Actief'">
                 <% events.types[event.event_series].currentCount %>
             </td>
             <td data-title="'Totaal'">
                 <% event.event_count %>
             </td>
         </tr>
-      </table>
+    </tbody>
+    </table>
+
     </div>
 </div>
