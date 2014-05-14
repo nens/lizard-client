@@ -11,7 +11,6 @@ app.service("CabinetService", ["Restangular",
       bboxSearchResource,
       geocodeResource,
       reverseGeocodeResource,
-      eventsResource,
       apiLayerGroups,
       timeseriesLocationObjectResource,
       timeseriesResource;
@@ -22,7 +21,6 @@ app.service("CabinetService", ["Restangular",
   geocodeResource = Restangular.one('api/v1/geocode/');
   reverseGeocodeResource = Restangular.one('api/v1/reversegeocode/');
   timeseriesResource = Restangular.one('api/v1/timeseries/');
-  eventsResource = Restangular.one('api/v1/events/');
   var rasterResource = Restangular.one('api/v1/rasters/');
 
   return {
@@ -37,7 +35,6 @@ app.service("CabinetService", ["Restangular",
     raster: rasterResource,
     reverseGeocode: reverseGeocodeResource,
     timeseries: timeseriesResource,
-    events: eventsResource,
     panZoom: null
   };
 }]);

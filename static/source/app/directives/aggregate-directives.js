@@ -6,7 +6,7 @@
  * time-interval (temporal extent, from timeline)
  *
  */
-app.directive('vectorlayer', function () {
+app.directive('vectorlayer', ["EventService", function (EventService) {
   return {
     restrict: 'A',
     require: 'map',
@@ -173,7 +173,7 @@ app.directive('vectorlayer', function () {
       scope.$watch('timeState.changedZoom', function (n, o) {
         if (n === o) { return true; }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
-        scope.events.countCurrentEvents();
+        EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
       });
    
       /**
@@ -186,7 +186,7 @@ app.directive('vectorlayer', function () {
         if (scope.timeState.animation.enabled) {
           drawTimeEvents(scope.timeState.animation.start,
                          scope.timeState.animation.end);
-          scope.events.countCurrentEvents();
+          EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
         }
       });
 
@@ -212,7 +212,7 @@ app.directive('vectorlayer', function () {
       });
     }
   };
-});
+}]);
 
 
 /**
