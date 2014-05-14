@@ -81,18 +81,10 @@ app.config(function ($locationProvider) {
 
  */
 app.controller("MasterCtrl",
-<<<<<<< HEAD
   ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService", "RasterService",
    "UtilService", "EventService", "ngTableParams",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, ngTableParams) {
-=======
-  ["$scope", "$http", "$filter", "$q", "$compile", "CabinetService", "RasterService",
-   "UtilService", "ngTableParams",
-  function ($scope, $http, $filter, $q, $compile, CabinetService, RasterService,
-            UtilService, ngTableParams) {
->>>>>>> 9c633b890a3ee90fd4fba9f9953b1729139993de
-
   // BOX MODEL
   $scope.box = {
     detailMode: false,
@@ -249,7 +241,7 @@ app.controller("MasterCtrl",
         $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
       }
   });
-  
+
   /**
    * Zoom to event location
    * 
