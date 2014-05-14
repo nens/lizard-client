@@ -500,6 +500,7 @@ app.directive('rain', ["RasterService", "UtilService",
           loadingRaster -= 1;
           frameLookup[date] = i;
           if (restart && loadingRaster === 0) {
+            restart = false;
             scope.timeState.playPauseAnimation();
             imageOverlays[0].setOpacity(0);
           }
@@ -586,7 +587,9 @@ app.directive('rain', ["RasterService", "UtilService",
             nxtDate += step;
           } else if (overlayIndex === undefined) {
             console.info("We will have to go get", currentDate, ". Get new images!");
-            restart = true;
+            if (scope.timeState.animation.playing) {
+              restart = true;
+            }
             scope.timeState.playPauseAnimation('off');
           }
         }
