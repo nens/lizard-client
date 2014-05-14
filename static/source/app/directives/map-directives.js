@@ -478,30 +478,32 @@ app.directive('rain', ["RasterService", "UtilService",
       var utcFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
       var step = RasterService.rainInfo.timeResolution;
       var imageUrlBase = RasterService.rainInfo.imageUrlBase;
-      //var imageUrlBase = "http://placehold.it/512.png&text=";
       var imageOverlays = {};
       var frameLookup = {};
-      var numCachedFrames = 10;
+      var numCachedFrames = 50;
       var previousFrame = 0;
       var previousDate;
       var nxtDate;
       var loadingRaster = 0;
-
-      /**
-       * Callback function for "load" event. Subtracts -1 of loadingRaster.
-       */
-      var setLoadingRaster = function (e) {
-        loadingRaster -= 1;
-      };
+      var restart = false;
 
       /**
        * Set up imageOverlays.
        */
       for (var i = 0; i < numCachedFrames; i++) {
         var imageOverlay = L.imageOverlay('', imageBounds, {opacity: 0});
-        imageOverlay.on("load", setLoadingRaster);
         imageOverlays[i] = imageOverlay;
       }
+
+      var addLoadListener = function (image, i, date) {
+        image.on("load", function (e) {
+          loadingRaster -= 1;
+          frameLookup[date] = i;
+          if (restart && loadingRaster === 0) {
+            scope.timeState.playPauseAnimation();
+          }
+        });
+      };
 
       /**
        * Get next x images from timestamp;
@@ -518,9 +520,9 @@ app.directive('rain', ["RasterService", "UtilService",
         for (var i in imageOverlays) {
           loadingRaster += 1;
           imageOverlays[i].setOpacity(0);
+          addLoadListener(imageOverlays[i], i, nxtDate);
           imageOverlays[i].setUrl(imageUrlBase +
-                                  utcFormatter(new Date(nxtDate)));
-          frameLookup[nxtDate] = i;
+                        utcFormatter(new Date(nxtDate)));
           nxtDate += step;
         }
         imageOverlays[0].setOpacity(1);
@@ -535,13 +537,11 @@ app.directive('rain', ["RasterService", "UtilService",
           var i;
           if (newVal) {
             for (i in imageOverlays) {
-              console.log('adding imageOverlays');
               mapCtrl.addLayer(imageOverlays[i]);
             }
             getImages(scope.timeState.at);
           } else {
             for (i in imageOverlays) {
-              console.log('removing imageOverlays');
               mapCtrl.removeLayer(imageOverlays[i]);
             }
           }
@@ -556,40 +556,37 @@ app.directive('rain', ["RasterService", "UtilService",
        * with next frame; If frame is not in lookupFrame, get new images.
        */
       scope.$watch('timeState.at', function (newVal, oldVal) {
-        if (newVal === oldVal) { return; }
+        var currentDate = UtilService.roundTimestamp(newVal,
+                                             step, false);
+        var oldDate = UtilService.roundTimestamp(oldVal,
+                                             step, false);
+        if (currentDate === oldDate) { return; }
         if (scope.rain.enabled) {
-          var currentDate = UtilService.roundTimestamp(scope.timeState.at,
-                                                       step, false);
-          // NOTE: this frame is in the lookup but might still be on its way
-          // from the server?
           var overlayIndex = frameLookup[currentDate];
           if (overlayIndex !== undefined &&
               overlayIndex !== previousFrame) {
+            //debugger
             // Turn off old frame
             imageOverlays[previousFrame].setOpacity(0);
             // Turn on new frame
-            // NOTE: We might be turning on a frame that is not yet there.
             imageOverlays[overlayIndex].setOpacity(1);
-
+            // Delete the old overlay from the lookup, it is gone.
+            delete frameLookup[currentDate];
+            // Add listener to asynchronously update loadingRaster and framelookup
+            addLoadListener(imageOverlays[previousFrame], previousFrame, nxtDate);
+            // We are now waiting for one extra raster
+            loadingRaster += 1;
             // Tell the old overlay to go and get a new image.
             imageOverlays[previousFrame].setUrl(imageUrlBase +
               utcFormatter(new Date(nxtDate)));
-            // We are now waiting for one extra raster
-            loadingRaster += 1;
-            console.log("We now have a qeue of:", loadingRaster);
-            // Delete the old overlay from the lookup, it is gone.
-            delete frameLookup[previousDate];
-            // Add the new overlay to the lookup.
-            // NOTE: shouldn't this happen asynchronous?
-            frameLookup[nxtDate] = previousFrame;
-
+           
             previousFrame = overlayIndex;
             previousDate = currentDate;
-
             nxtDate += step;
           } else if (overlayIndex === undefined) {
-            console.log("We will have to go get that one. Get new images!");
-            getImages(scope.timeState.at);
+            console.info("We will have to go get", currentDate, ". Get new images!");
+            restart = true;
+            scope.timeState.playPauseAnimation('off');
           }
         }
       });
@@ -601,7 +598,6 @@ app.directive('rain', ["RasterService", "UtilService",
       scope.$watch('timeState.at', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
         if (!scope.timeState.animation.playing) {
-          console.log("pause. Hurry! Get new images!");
           getImages(scope.timeState.at);
         }
       });
