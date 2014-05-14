@@ -1,20 +1,40 @@
+<div class="card"
+     ng-class="mapState.mapMoving ? 'card-hidden' : ''"
+     ng-switch on="box.type">
 
-<div class="card" ng-class="{hidden: box.content.eventValue == undefined}" ng-switch="box.content.eventValue.properties.category">
-  <div class="card-title" ng-switch-when="regen">
-    <i class="fa fa-twitter"></i><span class="card-title">&nbsp;#<% box.content.eventValue.properties.category %></span>
-    <i class="zoomto-icon fa fa-crosshairs pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
-    <p><% box.content.eventValue.properties.timestamp | date:'d-M-y H:mm:ss' %></p>
-    <p><% box.content.eventValue.properties.value %></p>
-  </div>
-  <div class="card-title" ng-switch-when="Aardbeving">
-    <i class="fa fa-twitter"></i><span class="card-title">&nbsp;#<% box.content.eventValue.properties.category %></span>
-    <i class="zoomto-icon fa fa-crosshairs pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
-    <p><% box.content.eventValue.properties.timestamp | date:'d-M-y H:mm:ss' %></p>
-    <p><% box.content.eventValue.properties.value %></p>
-  </div>
-  <div class="card-title" ng-switch-default>
-    <i class="fa fa-exclamation-circle"></i><span class="card-title">&nbsp;<% box.content.eventValue.properties.category | lowercase %></span>
-    <i class="zoomto-icon fa fa-crosshairs pull-right" ng-click="timeline.zoomTo(box.content.eventValue.geometry)" style="opacity: 1;"></i>
-    <p><% box.content.eventValue.properties.timestamp | date:'d-M-y' %></p>
-  </div>
+    <div ng-switch-when="aggregate">
+      <div class="card-title">
+        <i class="fa fa-sitemap"></i><span class="title-text" style="margin-left:10px !important;">Prestatie Indicatoren (PI)</span>
+    </div>
+
+   <table ng-table="kpiTableParams" class="table">
+    <tbody ng-repeat="group in $groups">
+        <tr class="ng-table-group">
+            <td colspan="<% $columns.length %>">            
+                <a href="" 
+                   ng-init="group.$hideRows = true" 
+                   ng-click="group.$hideRows = !group.$hideRows">
+                    <span class="glyphicon" 
+                          ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
+                    <strong><% group.value %> (id: <% group.data[0].event_series %>)</strong>
+                </a>
+            </td>
+        </tr>
+        <tr ng-hide="group.$hideRows" ng-repeat="feature in events.data.features">
+         <!-- | filter: {feature.properties.event_series: group.data[0].event_series} -->
+         <!-- TODO: Cant figure out how to use filter/ng-hide to show only the corresponding event_series -->
+          <td data-title="'Categorie'">
+            <% feature.properties.category %>
+          </td>   
+          <td data-title="'Totaal'">
+            0
+          </td>
+          <td data-title="'ID'">
+            <% feature.properties.event_series %>
+          </td>
+        </tr>        
+    </tbody>
+    </table>
+
+    </div>
 </div>

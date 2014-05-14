@@ -55,7 +55,12 @@
                 <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}"><div class="" id="username"><i id="" class="fa fa-user"></i>&nbsp;&nbsp;{{ user.first_name }}</div></a>
               </li>            
               <li class="visible-sm visible-md visible-lg">
-                <a class="user" href="http://sso.lizard.net/edit_profile/" title="{% trans 'Edit profile' %}">
+                <a class="user" 
+                   rel="tooltip" 
+                   data-toggle="tooltip" 
+                   data-placement="left" 
+                   title="{% trans 'Edit profile' %}"
+                   href="http://sso.lizard.net/edit_profile/">
                   <div class="" id="username">
                     <i id="" class="fa fa-user" style="font-size:1.2em;"></i>&nbsp;&nbsp;{{ user.first_name }}
                   </div>
@@ -63,10 +68,32 @@
               </li>
 
               <li class="visible-xs">
-                <a class="user logout" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()"><div class="" id="username"><i id="" class="fa fa-power-off"></i>&nbsp;&nbsp;Uitloggen</div></a>
+                <a class="user logout" 
+                   href="{% url "lizard_auth_client.sso_logout" %}?next=/" 
+                   rel="tooltip" 
+                   data-toggle="tooltip" 
+                   data-placement="left"                   
+                   title="{% trans 'Logout' %}" 
+                   onclick="return logOut()">
+                    <div class=""
+                         title="{% trans 'Logout' %}" 
+                         rel="tooltip" 
+                         data-toggle="tooltip" 
+                         data-placement="left"
+                         id="username">
+                      <i id="" 
+                         class="fa fa-power-off"></i>&nbsp;&nbsp;Uitloggen
+                    </div>
+                </a>
               </li>
               <li class="visible-sm visible-md visible-lg" style="width:63px;">
-                <a class="user logout" href="{% url "lizard_auth_client.sso_logout" %}?next=/" title="{% trans 'Logout' %}" onclick="return logOut()">
+                <a class="user logout" 
+                   rel="tooltip" 
+                   data-toggle="tooltip" 
+                   data-placement="left"
+                   href="{% url "lizard_auth_client.sso_logout" %}?next=/" 
+                   title="{% trans 'Logout' %}" 
+                   onclick="return logOut()">
                   <div class="pull-right" id="username">
                     <i id="" style="font-size:1.2em;" class="fa fa-power-off"></i>
                   </div>
@@ -140,8 +167,14 @@
               <li class="nav-header">
               <ul class="list-group">
                 <li ng-repeat="layer in mapState.layers | orderBy:'order':true">
-                <input id="<%layer.id%>-layer" class="hide" type="checkbox" ng-model="layer.active" ng-change="mapState.changeLayer(layer)">
-                <label class="ng-class: {active: layer.active};" for="<% layer.id %>-layer" ng-bind="layer.name"></label>
+                <input id="<%layer.id%>-layer" 
+                       class="hide"
+                       type="checkbox"
+                       ng-model="layer.active"
+                       ng-change="mapState.changeLayer(layer)">
+                <label class="ng-class: {active: layer.active};" 
+                       for="<% layer.id %>-layer"
+                       ng-bind="layer.name"></label>
                 </li>
                 <!-- <li ng-click="toggleRain()" class="clickable"><label ng-class="{active: animation.enabled}">Regen</label> </li> -->
               </ul>
@@ -150,8 +183,12 @@
               <li id="events" class="nav-header">
               <ul class="list-group">
                 <li ng-repeat="event in mapState.eventTypes">
-                <label class="ng-class: {active: events.types[event.event_series].active};" ng-bind="event.type" ng-click="events.toggleEvents(event.event_series)"></label>
-                <label class="count"  ng-if="events.types[event.event_series].active"><% events.types[event.event_series].currentCount %>&nbsp;(<% event.event_count %>) </label>
+                <label class="ng-class: {active: events.types[event.event_series].active};" 
+                       ng-bind="event.type" 
+                       ng-click="events.toggleEvents(event.event_series);box.type='aggregate';"></label>
+                <label class="count"
+                       ng-if="events.types[event.event_series].active">
+                       <% events.types[event.event_series].currentCount %>&nbsp;(<% event.event_count %>) </label>
               </ul>
               </li>
               <li class="nav-header"> 
@@ -185,10 +222,15 @@
               </li>              
             </ul>
           </div>
-          <div id="ribbon" class="ribbon">
-            <div class="arrow arrow-up" ng-click="mapState.enabled = !mapState.enabled" title="{% trans 'Map layers' %}">
+          <div id="ribbon"
+               class="ribbon"
+               rel="tooltip"
+               data-toggle="tooltip"
+               data-placement="left"
+               title="Kaartlagen">
+            <div class="arrow arrow-up" ng-click="mapState.enabled = !mapState.enabled"">
             </div>
-            <div class="arrow arrow-down" ng-click="mapState.enabled = !mapState.enabled" title="{% trans 'Map layers' %}"><i class="fa fa-compass ribbon-icon"></i>
+            <div class="arrow arrow-down" ng-click="mapState.enabled = !mapState.enabled"><i class="fa fa-compass ribbon-icon"></i>
             </div>
           </div>
           <div class="button-list-container" id="">
