@@ -69,6 +69,21 @@
       <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.attrs.latlng.lat %>,<% activeObject.attrs.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
     </a>
     </div>
+    <div class="card-title">
+      <i class="fa fa-sitemap"></i><span class="title-text" style="margin-left:10px !important;">Prestatie Indicatoren (PI)</span>
+    </div>
+    <div>
+      <table class="table">
+        <tr ng-repeat="event in activeObject.events.features">
+          <td data-title="'Categorie'" sortable="'Categorie'">
+            <% event.properties.category %>
+          </td>
+          <td data-title="'Actief'">
+            <% event.properties.value %>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
 </div>
 
