@@ -501,6 +501,7 @@ app.directive('rain', ["RasterService", "UtilService",
           frameLookup[date] = i;
           if (restart && loadingRaster === 0) {
             scope.timeState.playPauseAnimation();
+            imageOverlays[0].setOpacity(0);
           }
         });
       };
@@ -525,7 +526,6 @@ app.directive('rain', ["RasterService", "UtilService",
                         utcFormatter(new Date(nxtDate)));
           nxtDate += step;
         }
-        imageOverlays[0].setOpacity(1);
       };
 
       /**
@@ -565,13 +565,14 @@ app.directive('rain', ["RasterService", "UtilService",
           var overlayIndex = frameLookup[currentDate];
           if (overlayIndex !== undefined &&
               overlayIndex !== previousFrame) {
-            //debugger
             // Turn off old frame
             imageOverlays[previousFrame].setOpacity(0);
             // Turn on new frame
             imageOverlays[overlayIndex].setOpacity(1);
             // Delete the old overlay from the lookup, it is gone.
             delete frameLookup[currentDate];
+            // Remove old listener
+            imageOverlays[previousFrame].off('load');
             // Add listener to asynchronously update loadingRaster and framelookup
             addLoadListener(imageOverlays[previousFrame], previousFrame, nxtDate);
             // We are now waiting for one extra raster
@@ -599,6 +600,7 @@ app.directive('rain', ["RasterService", "UtilService",
         if (newVal === oldVal) { return; }
         if (!scope.timeState.animation.playing) {
           getImages(scope.timeState.at);
+          imageOverlays[0].setOpacity(1);
         }
       });
     }
