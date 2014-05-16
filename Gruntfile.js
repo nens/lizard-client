@@ -1,19 +1,10 @@
 'use strict';
 
-// live reloader
-// var LIVERELOAD_PORT = 35729;
-// var lrSnippet = require('connect-livereload')({ port: LIVERELOAD_PORT });
-// var mountFolder = function (connect, dir) {
-//   return connect.static(require('path').resolve(dir));
-// };
-
-// var proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
-
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
   require('time-grunt')(grunt);
 
-  var lizard_nxt_dir = 'lizard_nxt/client/static/';
+  var lizard_nxt_dir = 'lizard_nxt/client/';
 
 
   // Project configuration.
@@ -54,7 +45,6 @@ module.exports = function (grunt) {
         '<%= nxt_dir.vendor %>/restangular/dist/restangular.min.js',
         '<%= nxt_dir.vendor %>/ui-utils/ui-utils.js',
         '<%= nxt_dir.vendor %>/ng-table/ng-table.min.js',
-        // '<%= nxt_dir.vendor %>/angular-ui-utils/modules/event/event.js'
       ],
       appfiles: [
         '<%= nxt_dir.src %>/app/lizard-nxt.js',
@@ -82,54 +72,7 @@ module.exports = function (grunt) {
           files: ['<%= nxt_dir.src %>/app/templates/{,*/}*.html'],
           tasks: ['html2js']
         }
-      // build: {
-      //   files: [
-      //     '.tmp/styles/{,*/}*.css',
-      //     '{.tmp,<%= nxt_dir.src %>}/app/{,*/}*.js',
-      //     '<%= nxt_dir.src %>/assets/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
-      //   ],
-      //   tasks: ['plakhetaanelkaar']
-      // }
-      // livereload: {
-      //   options: {
-      //     livereload: LIVERELOAD_PORT
-      //   },
-      //   files: [
-      //     '<%= nxt_dir.base %>/templates/{,*/}*.html',
-      //     '<%= nxt_dir.dist %>{,*/}*.*'
-      //   ]
-      // }
       },
-    // will this work with django?
-    // connect: {
-    //   options: {
-    //     port: 9000,
-    //     // Change this to '0.0.0.0' to access the server from outside.
-    //     hostname: 'localhost'
-    //   },
-    //   livereload: {
-    //     options: {
-    //       middleware: function (connect) {
-    //         return [
-    //           proxySnippet
-    //           // lrSnippet,
-    //           // mountFolder(connect, '.tmp'),
-    //           // mountFolder(connect, '<%= nxt_dir.dist %>')
-    //         ];
-    //       }
-    //     }
-    //   },
-    //   proxies: [
-    //           {
-    //               context: '/',
-    //               host: 'localhost',
-    //               port: 8000,
-    //               https: false,
-    //               changeOrigin: false,
-    //               xforward: false
-    //           }
-    //       ]
-    // },
       clean: {
         dist: {
           files: [{
@@ -197,7 +140,7 @@ module.exports = function (grunt) {
           ignores: [
             'lizard_nxt/client/static/source/app/lib/leaflet-utfgrid-lizard.js',
             'lizard_nxt/client/static/source/app/lib/leaflet.contours-layer.js',
-	          'lizard_nxt/client/static/source/app/templates/templates.js'
+            'lizard_nxt/client/static/source/app/templates/templates.js'
           ]
         }
       },
