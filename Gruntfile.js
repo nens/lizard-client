@@ -4,7 +4,7 @@ module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
   require('time-grunt')(grunt);
 
-  var lizard_nxt_dir = 'lizard_nxt/client/';
+  var lizard_nxt_dir = '';
 
 
   // Project configuration.
