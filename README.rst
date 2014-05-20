@@ -3,6 +3,7 @@ Lizard client
 
 Angular/leaflet/d3 app that visualizes (geo-)information specific for the water sector. It is the front-end in the lizard-nxt ecosystem, with the closed source lizard-nxt django app as an API to the hydra-core db.
 
+* `Demo`_
 * `Install`_
 * `Use`_
 
@@ -10,6 +11,11 @@ For more than demo purposes Lizard client depends on:
 
 * `Hydra-core <https://github.com/nens/hydra-core>`_, a django app with hydrological models and utils
 * `Lizard-nxt <https://github.com/nens/lizard-nxt>`_, a django site that provides an api for lizard nxt
+
+Demo
+----
+
+TODO
 
 Install
 -------
