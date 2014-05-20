@@ -29,6 +29,22 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
     }
   });
 
+  $scope.$watch('mapState.bounds', function (n, o) {
+    if (n === o) { return true; }
+    if ($scope.timeState.hidden === false) {
+      var aggWindow = getAggWindow($scope.timeState.start,
+                           $scope.timeState.end,
+                           window.innerWidth);  // width of timeline
+      var start = $scope.timeState.start;
+      var stop = $scope.timeState.end;
+      var geom = $scope.mapState.bounds;
+      var rain = getRain(new Date(start), new Date(stop), geom, aggWindow);
+      rain.then(function (response) {
+        RasterService.setIntensityData(response);
+      });
+    }
+  });
+
   // Rain model
   $scope.rain = {
     start: undefined,
@@ -174,14 +190,26 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
    *
    * @param  {int} start    start of rainserie
    * @param  {int} stop     end of rainserie
-   * @param  {object} latLng   location of rainserie in {lat: int, lng: int} (currently only supports points)
+   * @param  {object} geom   location of rainserie in {lat: int, lng: int} or leaflet bounds object
    * @param  {int} aggWindow width of the aggregation
    * @return {promise} returns a thennable promise which may resolve with rain data on response
    */
-  var getRain = function (start, stop, latLng, aggWindow) {
+  var getRain = function (start, stop, geom, aggWindow) {
     var stopString = stop.toISOString().split('.')[0];
     var startString = start.toISOString().split('.')[0];
-    var wkt = "POINT(" + latLng.lng + " " + latLng.lat + ")";
+    var wkt;
+    if (geom.lat && geom.lng) {
+      // geom is a latLng object
+      wkt = "POINT(" + geom.lng + " " + geom.lat + ")";
+    } else {
+      wkt = "POLYGON(("
+            + geom.getWest() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getSouth()
+            + "))";
+    }
     return CabinetService.raster.get({
         raster_names: 'demo:radar',
         geom: wkt,
