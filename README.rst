@@ -14,19 +14,23 @@ For more than demo purposes Lizard client depends on:
 Install
 -------
 
-    # Clone this repo::
-    git clone git@github.com:nens/lizard-client.git
+Clone this repo:
 
-    cd lizard-client
+  git clone git@github.com:nens/lizard-client.git
 
-    # Run NPM install (see `Node Package Manager <https://www.npmjs.org/>`)
-    npm install
-    
-    # Install vendor files
-    bower install
+  cd lizard-client
 
-    # Create dist files (optional) and templates (compulsory)
-    grunt
+Run NPM install (see `Node Package Manager <https://www.npmjs.org/>`):
+
+  npm install
+
+Install vendor files:
+
+  bower install
+
+Create dist files (optional) and templates (compulsory)
+
+  grunt
 
 
 Use
