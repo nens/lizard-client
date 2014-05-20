@@ -20,13 +20,18 @@ TODO
 Install
 -------
 
+Lizard client can be installed independent of the lizard-nxt ecosystem or from within lizard-nxt using mr. developer
+
+Independent
+~~~~~~~~~~~
+
 Clone this repo::
 
   git clone git@github.com:nens/lizard-client.git
 
   cd lizard-client
 
-Run NPM install (see `Node Package Manager <https://www.npmjs.org/>`)::
+Run NPM install (see `Node Package Manager <https://www.npmjs.org/>`_)::
 
   npm install
 
@@ -38,6 +43,25 @@ Create dist files (optional) and templates (compulsory)::
 
   grunt
 
+Using mr. developer
+~~~~~~~~~~~~~~~~~~~
+
+Change dir to lizard nxt and run::
+
+  bin/develop up
+  
+Install vendor files::
+
+  bower install
+
+Create dist files (optional) and templates (compulsory)::
+
+  grunt
+  
+Django's staticfiles_dirs setting should point to src/lizard-client to serve the files from django runserver. Now change dir to lizard-nxt root
+and runserver::
+
+  bin/django runserver <ip>:<port>
 
 Use
 ---
