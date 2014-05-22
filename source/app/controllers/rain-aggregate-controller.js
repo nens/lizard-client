@@ -14,6 +14,10 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
   $scope.$watch('tools.active', function (n, o) {
     if ($scope.tools.active !== 'rain') {
       $scope.box.type = 'empty';
+      RasterService.setIntensityData([]);
+      $scope.timeState.changeOrigin = 'RainAggregate';
+      $scope.timeState.changedZoom = Date.now();
+      console.log("we are closing", RasterService.getIntensityData());
       // Destroy scope at the end of this digest. Workaround from:
       // https://github.com/shinetech/angular-models/blob/master/angular-models.js
       $scope.$$postDigest(function () { $scope.$destroy(); });
@@ -31,6 +35,21 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
 
   $scope.$watch('mapState.bounds', function (n, o) {
     if ($scope.timeState.hidden === false) {
+      var start = $scope.timeState.start;
+      var stop = $scope.timeState.end;
+      var geom = $scope.mapState.bounds;
+      var rain = getRainForBounds(geom, start, stop);
+      rain.then(function (response) {
+        RasterService.setIntensityData(response);
+        $scope.timeState.changeOrigin = 'RainAggregate';
+        $scope.timeState.changedZoom = Date.now();
+      });
+    }
+  });
+
+  $scope.$watch('timeState.changedZoom', function (n, o) {
+    if ($scope.timeState.hidden === false
+      && $scope.timeState.changeOrigin !== 'RainAggregate') {
       var start = $scope.timeState.start;
       var stop = $scope.timeState.end;
       var geom = $scope.mapState.bounds;
