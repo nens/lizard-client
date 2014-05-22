@@ -16,14 +16,14 @@ app.service("RasterService", ["Restangular", "UtilService",
   };
 
   // Set by rain controller and get by timeline
-  this.intensityData = [];
+  var intensityData = [];
 
   var setIntensityData = function (data) {
-    this.intensityData = data;
+    intensityData = data;
   };
 
   var getIntensityData = function () {
-    return this.intensityData;
+    return intensityData;
   };
 
   return {
