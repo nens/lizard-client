@@ -29,7 +29,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
     if (layer.type === "TMS" && layer.baselayer) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
                                        {name: "Background",
-                                        maxZoom: 20, zIndex: layer.z_index});
+                                        maxZoom: 19, zIndex: layer.z_index});
     } else if (layer.type === "WMS") {
       var options = {
         layers: layer.slug,
