@@ -36,7 +36,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
         format: 'image/png',
         version: '1.1.1',
         minZoom: layer.min_zoom,
-        maxZoom: 20,
+        maxZoom: 19,
         zIndex: layer.z_index
       };
       //NOTE ugly hack
@@ -64,7 +64,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
           name: layer.slug,
           useJsonP: false,
           minZoom: layer.min_zoom_click,
-          maxZoom: 20,
+          maxZoom: 19,
           order: layer.z_index,
           zIndex: layer.z_index
         });
@@ -75,7 +75,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
         slug: layer.slug,
         name: layer.slug,
         minZoom: layer.min_zoom,
-        maxZoom: 20,
+        maxZoom: 19,
         zIndex: layer.z_index
       });
     }
