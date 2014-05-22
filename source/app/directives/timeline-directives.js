@@ -195,8 +195,12 @@ app.controller('TimelineDirCtrl', function ($scope) {
     var bar = graph.svg.select("g").select('#rain-bar').selectAll('.bar-timeline')
         .data(data, function  (d) { return d[0]; });
 
-    var barWidth = graph.xScale(data[1][0]) - graph.xScale(data[0][0]);
-    
+    var barWidth;
+    if (data.length > 0) {
+      barWidth = graph.xScale(data[1][0]) - graph.xScale(data[0][0]);
+    } else {
+      barWidth = 0;
+    }
     var y = maxMin(data, '1');
     var yRange = {min: graph.height, max: 0};
     var options = {scale: 'linear'};
@@ -231,6 +235,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
     bar.exit()
       .transition()
       .duration(500)
+      .attr("y", graph.height)
       .attr("height", 0)
       .remove();
 
@@ -471,7 +476,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
         scope.timeState.start = graph.xScale.domain()[0].getTime();
         scope.timeState.end = graph.xScale.domain()[1].getTime();
         scope.timeState.changeOrigin = 'timeline';
-        scope.timeState.changedZoom = !scope.timeState.changedZoom;
+        scope.timeState.changedZoom = Date.now();
       });
       zoomNodata();
     };
@@ -588,12 +593,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
         graph.svg.selectAll("circle")
           .attr("cx", function (d) { return Math.round(graph.xScale(d.properties.timestamp)); });
 
-        if (scope.tools.active === 'rain') {
-          var data = RasterService.getIntensityData();
-          if (data.length > 0) {
-            timelineCtrl.drawRainIntensity(data, graph);
-          }
-        }
+        var data = RasterService.getIntensityData();
+        timelineCtrl.drawRainIntensity(data, graph);
       }
     });
 
