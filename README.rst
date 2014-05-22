@@ -48,7 +48,13 @@ Using mr. developer
 
 Change dir to lizard nxt and run::
 
-  bin/develop up
+  bin/develop co lizard-client
+
+  bin/develop up lizard-client
+
+Then cd to src/lizard-client and install Node deps using::
+
+  npm install
   
 Install vendor files::
 

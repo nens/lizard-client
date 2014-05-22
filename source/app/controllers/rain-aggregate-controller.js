@@ -103,7 +103,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
       start = $scope.timeState.start;
       stop = $scope.timeState.end;
       callback = function (response) {
-        $scope.rain.data = response.result;
+        $scope.rain.data = response;
         $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
         $scope.rain.start = $scope.rain.data[0][0];
       };
@@ -111,14 +111,14 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
       start = $scope.rain.start - buffer * $scope.rain.aggWindow;
       stop = $scope.rain.start;
       callback = function (response) {
-        $scope.rain.data = response.result.concat($scope.rain.data);
+        $scope.rain.data = response.concat($scope.rain.data);
         $scope.rain.start = start;
       };
     } else {
       stop = $scope.rain.end + buffer * $scope.rain.aggWindow;
       start = $scope.rain.end;
       callback = function (response) {
-        $scope.rain.data = $scope.rain.data.concat(response.result);
+        $scope.rain.data = $scope.rain.data.concat(response);
         $scope.rain.end = stop;
       };
     }
@@ -144,7 +144,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
                                272);  // graph is 272 px wide
     getRain(start, stop, $scope.rain.latLng, $scope.rain.aggWindow)
       .then(function (response) {
-        $scope.rain.data = response.result;
+        $scope.rain.data = response;
         $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
         $scope.rain.start = $scope.rain.data[0][0];
       }
@@ -176,7 +176,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
    * @param  {int} stop     end of rainserie
    * @param  {object} latLng   location of rainserie in {lat: int, lng: int} (currently only supports points)
    * @param  {int} aggWindow width of the aggregation
-   * @return {promise} returns a thennable promise which may resolve with rain data on response.result
+   * @return {promise} returns a thennable promise which may resolve with rain data on response
    */
   var getRain = function (start, stop, latLng, aggWindow) {
     var stopString = stop.toISOString().split('.')[0];
