@@ -41,7 +41,12 @@ app.controller('TimelineDirCtrl', function ($scope) {
     // Create element for axis
     svg.select('g').append("g")
       .attr('class', 'x axis')
+      .attr('id', 'xaxis')
       .attr("transform", "translate(0 ," + height + ")");
+    svg.select('g').append('g')
+      .attr('height', height)
+      .attr('width', width)
+      .attr('id', 'rain-bar');
     return {
       svg: svg,
       height: height,
@@ -65,6 +70,20 @@ app.controller('TimelineDirCtrl', function ($scope) {
     graph.svg.select("g").select("rect")
       .attr("height", graph.height);
     return graph;
+  };
+
+  var maxMin = function (data, key) {
+    var max = d3.max(data, function (d) {
+            return Number(d[key]);
+          });
+
+    var min = d3.min(data, function (d) {
+            return Number(d[key]);
+          });
+    return {
+      max: max,
+      min: min
+    };
   };
 
   this.scale = function (minMax, range, options) {
@@ -114,7 +133,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
    * Draws the given axis in the given graph
    */
   this.drawAxes = function (graph, xAxis) {
-    graph.svg.select('g').select('g')
+    graph.svg.select('g').select('#xaxis')
       .call(graph.xAxis);
   };
 
@@ -169,6 +188,54 @@ app.controller('TimelineDirCtrl', function ($scope) {
       $scope.box.content.eventValue = d;
       $scope.$apply();
     });
+  };
+
+  this.drawRainIntensity = function (data, graph) {
+    // Join new data with old elements, based on the timestamp.
+    var bar = graph.svg.select("g").select('#rain-bar').selectAll('.bar-timeline')
+        .data(data, function  (d) { return d[0]; });
+
+    var barWidth = graph.xScale(data[1][0]) - graph.xScale(data[0][0]);
+    
+    var y = maxMin(data, '1');
+    var yRange = {min: graph.height, max: 0};
+    var options = {scale: 'linear'};
+    var yScale = d3.scale.linear().domain([y.min, y.max]).range([yRange.min, yRange.max]);
+    var zero = yScale(0);
+
+    // UPDATE
+    // // Update old elements as needed.
+    bar.transition()
+      .duration(500)
+      .attr("x", function (d) { return graph.xScale(d[0]) - 0.5 * barWidth; })
+      .attr('width', barWidth)
+      .delay(500)
+      .attr("y", function (d) { return yScale(d[1]); })
+      .attr("height", function (d) { return graph.height - yScale(d[1]); });
+
+    // ENTER
+    // Create new elements as needed.
+    bar.enter().append("rect")
+      .attr("class", "bar-timeline")
+      .attr("x", function (d) { return graph.xScale(d[0]) - 0.5 * barWidth; })
+      .attr('width', function (d) { return barWidth; })
+      .attr("y", zero)
+      .attr("height", 0)
+      .transition()
+      .duration(500)
+      .attr("y", function (d) { return yScale(d[1]); })
+      .attr("height", function (d) { return graph.height - yScale(d[1]); });
+
+    // EXIT
+    // Remove old elements as needed.
+    bar.exit()
+      .transition()
+      .duration(500)
+      .attr("height", 0)
+      .remove();
+
+    var barsEl = graph.svg.select("g").select('#rain-bar').node();
+    barsEl.parentNode.insertBefore(barsEl, barsEl.parentNode.firstChild);
   };
 
   this.drawEventsContainedInBounds = function (bounds) {
@@ -282,7 +349,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
 
   return this;
 })
-.directive('timeline', ["EventService", function (EventService) {
+.directive('timeline', ["EventService", "RasterService", function (EventService, RasterService) {
   
   var link = function (scope, element, attrs, timelineCtrl, $timeout) {
 
@@ -290,7 +357,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
      * Draws an empty timeline
      */
     var createTimeline = function () {
-      var canvasOptions = {width: window.innerWidth, height: 50};
+      var canvasOptions = {width: window.innerWidth, height: 80};
       d3.select('#timeline').transition().duration(300).style('bottom', 0);
       var svg = d3.select("#timeline-svg-wrapper")
                   .select("svg").html('');
@@ -338,7 +405,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
      */
     var updateTimeline = function (graph, data, nEventTypes) {
       var canvasOptions = {width: element.width(),
-                           height: 45 + nEventTypes * 25};
+                           height: 75 + nEventTypes * 15};
       var newGraph = timelineCtrl.updateCanvas(graph, canvasOptions);
 
       d3.select('#nodata').transition()
@@ -359,6 +426,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
                                graph.colorScale, 'timestamp', 'event_order',
                                data);
       timelineCtrl.updateNow(newGraph, scope.timeState.at);
+      timelineCtrl.drawRainIntensity(RasterService.getIntensityData(), newGraph);
       return newGraph;
     };
 
@@ -378,10 +446,8 @@ app.controller('TimelineDirCtrl', function ($scope) {
 
     var zoomed = function () {
       // Update x Axis
-      graph.svg.select(".x.axis").call(timelineCtrl.makeAxis(graph.xScale, {
-        orientation: "bottom",
-        ticks: 5
-      }));
+      graph.xAxis = timelineCtrl.makeAxis(graph.xScale, {orientation: "bottom", ticks: 5});
+      timelineCtrl.drawAxes(graph, graph.xAxis);
 
       // Update circle positions
       graph.svg.selectAll("circle")
@@ -392,6 +458,14 @@ app.controller('TimelineDirCtrl', function ($scope) {
       graph.svg.select('.now-indicator')
         .attr('x1', graph.xScale(scope.timeState.at) || graph.margin.left - 5)
         .attr('x2', graph.xScale(scope.timeState.at) || graph.margin.left - 5);
+
+      // Update bars
+      var data = RasterService.getIntensityData();
+      var barWidth = graph.xScale(data[1][0]) - graph.xScale(data[0][0]);
+      graph.svg.select("g").selectAll('.bar-timeline')
+        .attr("x", function (d) { return graph.xScale(d[0]) - 0.5 * barWidth; })
+        .attr('width', function (d) { return barWidth; });
+      
       // Update timeState and wake up watches
       scope.$apply(function () {
         scope.timeState.start = graph.xScale.domain()[0].getTime();
@@ -493,7 +567,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
 
     scope.$watch('timeState.changedZoom', function () {
       if (scope.timeState.changeOrigin !== 'timeline') {
-        // Update the scale in case somethin changed the timeState
+        // Update the scale in case something changed the timeState
         var x = {};
         x.min = new Date(scope.timeState.start);
         x.max = new Date(scope.timeState.end);
@@ -513,6 +587,13 @@ app.controller('TimelineDirCtrl', function ($scope) {
         // Update circle positions
         graph.svg.selectAll("circle")
           .attr("cx", function (d) { return Math.round(graph.xScale(d.properties.timestamp)); });
+
+        if (scope.tools.active === 'rain') {
+          var data = RasterService.getIntensityData();
+          if (data.length > 0) {
+            timelineCtrl.drawRainIntensity(data, graph);
+          }
+        }
       }
     });
 
