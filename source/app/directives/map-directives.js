@@ -257,7 +257,7 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
     // see: http://leafletjs.com/reference.html#path-canvas
     window.L_PREFER_CANVAS = true;
     // instead of 'map' element here for testability
-    var osmAttrib = 'Map data © OpenStreetMap contributors';
+    var osmAttrib = '<a href="https://www.mapbox.com/about/maps/">&copy; Mapbox</a> <a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>';
     var bounds = window.data_bounds.all;
     var southWest = L.latLng(bounds.south, bounds.west);
     var northEast = L.latLng(bounds.north, bounds.east);
