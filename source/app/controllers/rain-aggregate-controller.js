@@ -30,17 +30,15 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
   });
 
   $scope.$watch('mapState.bounds', function (n, o) {
-    if (n === o) { return true; }
     if ($scope.timeState.hidden === false) {
-      var aggWindow = getAggWindow($scope.timeState.start,
-                           $scope.timeState.end,
-                           window.innerWidth);  // width of timeline
       var start = $scope.timeState.start;
       var stop = $scope.timeState.end;
       var geom = $scope.mapState.bounds;
-      var rain = getRain(new Date(start), new Date(stop), geom, aggWindow);
+      var rain = getRainForBounds(geom, start, stop);
       rain.then(function (response) {
         RasterService.setIntensityData(response);
+        $scope.timeState.changeOrigin = 'RainAggregate';
+        $scope.timeState.changedZoom = Date.now();
       });
     }
   });
@@ -53,6 +51,11 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
     data: undefined
   };
 
+  var getRainForBounds = function (bounds, start, stop) {
+    var aggWindow = getAggWindow(start, stop, window.innerWidth);  // width of timeline
+    var rain = getRain(new Date(start), new Date(stop), bounds, aggWindow);
+    return rain;
+  };
 
   // TODO: Re implement the following when enabling scrolling in the rain graph in fullscreen.
 
@@ -210,7 +213,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
             + geom.getWest() + " " + geom.getSouth()
             + "))";
     }
-    return CabinetService.raster.get({
+    return CabinetService.raster().get({
         raster_names: 'demo:radar',
         geom: wkt,
         srs: 'EPSG:4326',
