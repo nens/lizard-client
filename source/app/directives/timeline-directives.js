@@ -387,9 +387,12 @@ app.controller('TimelineDirCtrl', function ($scope) {
        *
        */
       graph.svg.on("click", function () {
-        var timeClicked = +(graph.xScale.invert(d3.event.x - graph.margin.left));
-        scope.timeState.at = timeClicked;
-        scope.$digest();
+        // Check whether user is dragging instead of clicking
+        if (!d3.event.defaultPrevented) {
+          var timeClicked = +(graph.xScale.invert(d3.event.x - graph.margin.left));
+          scope.timeState.at = timeClicked;
+          scope.$digest();
+        }
       });
 
       // Add color scale
