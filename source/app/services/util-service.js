@@ -29,4 +29,40 @@ app.service("UtilService", function () {
     return roundedTimestamp;
   };
 
+  this.getZoomlevelLabel = function(zoomlevel) {
+      var zoomLevel = zoomlevel;
+      switch (true) {
+        case (zoomLevel>=18):
+          console.log('Objectniveau'); // fa-building
+          return 'object';
+          break;
+        case (zoomLevel>=17):
+          console.log('Straatniveau'); // fa-road
+          return 'street';
+          break;
+        case (zoomLevel>=15):
+          console.log('Gemeenteniveau'); // fa-university
+          return 'municipal';
+          break;
+        case (zoomLevel>=10):
+          console.log('Provincieniveau'); // fa-university
+          return 'provincial';
+          break;
+        case (zoomLevel>=8):
+          console.log('Landniveau'); // fa-university
+          return 'country';
+          break;        
+        case (zoomLevel>=5):
+          console.log('Continentniveau'); // fa-globe
+          return 'continental';
+          break;              
+        case (zoomLevel>=2):
+          console.log('Wereldniveau'); // fa-globe
+          return 'global';
+          break;
+      }
+      var attrib = $('.leaflet-control-attribution');
+      attrib.html(zoomLevel);
+  }
+
 });

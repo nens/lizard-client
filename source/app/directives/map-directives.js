@@ -252,7 +252,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
 
   return this;
 });
-app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
+app.directive('map', ['$location', '$timeout', 'UtilService', function ($location, $timeout, UtilService) {
 
   var link = function (scope, element, attrs, ctrl) {
     // Leaflet global variable to peed up vector layer, 
@@ -271,6 +271,7 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
     map.fitBounds(maxBounds);
     map.attributionControl.addAttribution(osmAttrib);
     map.attributionControl.setPrefix('');
+    UtilService.getZoomlevelLabel(map.getZoom());
     scope.map = map;
     window.mapobj = map;
     // Initialise layers
@@ -314,6 +315,8 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
     });
 
     scope.map.on('zoomend', function () {
+
+      UtilService.getZoomlevelLabel(scope.map.getZoom());
 
       if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
         if (!scope.beenThereDoneIntersectSuggestion) {
