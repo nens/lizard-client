@@ -330,6 +330,7 @@ app.controller('TimelineDirCtrl', function ($scope) {
       );
 
       // timelineCtrl.zoomNodata();
+      $("[rel='tooltip']").tooltip();
       return graph;
     };
 
