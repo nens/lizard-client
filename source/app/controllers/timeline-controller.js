@@ -33,12 +33,12 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
    * Set $scope.timeState.animation.playing to true or false.
    */
   $scope.timeState.playPauseAnimation = function (toggle) {
-    if (!$scope.timeState.animation.enabled) {
-      $scope.timeState.enableAnimation();
-    }
     if ($scope.timeState.animation.playing || toggle === "off") {
       $scope.timeState.animation.playing = false;
     } else {
+      if (!$scope.timeState.animation.enabled) {
+        $scope.timeState.enableAnimation();
+      }
       $scope.timeState.animation.playing = true;
       window.requestAnimationFrame(step);
     }

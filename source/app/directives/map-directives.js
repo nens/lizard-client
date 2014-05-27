@@ -272,7 +272,8 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
     map.attributionControl.addAttribution(osmAttrib);
     map.attributionControl.setPrefix('');
     scope.map = map;
-    window.mapobj = map;
+    scope.mapState.bounds = scope.map.getBounds();
+
     // Initialise layers
     angular.forEach(scope.mapState.baselayers, function (layer) {
       if (!layer.initiated) {
@@ -287,18 +288,6 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
       }
       ctrl.toggleLayer(layer);
     });
-
-    // first time is not triggered until move.
-    if (scope.mapState) {
-      scope.mapState.bounds = scope.map.getBounds();
-      scope.mapState.geom_wkt = "POLYGON(("
-            + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
-            + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
-            + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
-            + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
-            + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
-            + "))";
-    }
 
     scope.beenThereDoneIntersectSuggestion = false;
 
@@ -501,9 +490,6 @@ app.directive('rain', ["RasterService", "UtilService",
         image.on("load", function (e) {
           loadingRaster -= 1;
           frameLookup[date] = i;
-          if (!scope.timeState.animation.playing) {
-            console.info("Queue:", loadingRaster);
-          }
           if (restart && loadingRaster === 0) {
             restart = false;
             scope.timeState.playPauseAnimation();

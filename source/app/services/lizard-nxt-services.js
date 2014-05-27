@@ -1,5 +1,5 @@
-app.service("CabinetService", ["Restangular",
-  function (Restangular) {
+app.service("CabinetService", ["$q", "Restangular",
+  function ($q, Restangular) {
 
   var layergroups = window.layerGroups;
   var layers = window.layers;
@@ -21,7 +21,17 @@ app.service("CabinetService", ["Restangular",
   geocodeResource = Restangular.one('api/v1/geocode/');
   reverseGeocodeResource = Restangular.one('api/v1/reversegeocode/');
   timeseriesResource = Restangular.one('api/v1/timeseries/');
-  var rasterResource = Restangular.one('api/v1/rasters/');
+
+  var abortGet;
+  var rasterResource = function () {
+    if (abortGet) {
+      abortGet.resolve();
+    }
+    abortGet = $q.defer();
+    return Restangular
+      .one('api/v1/rasters/')
+      .withHttpConfig({timeout: abortGet.promise});
+  };
 
   return {
     layergroups: layergroups,
