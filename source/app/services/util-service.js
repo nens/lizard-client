@@ -1,6 +1,49 @@
 /**
  * Generic utilities
  */
+app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope', function ($location, $parse, $rootScope) {
+    var service = {
+      getHash: function () {
+        return parseKeyValue($location.hash());
+      },
+      setHash: function (obj, replaceHistory) {
+        if (!isDefined(replaceHistory)) replaceHistory = true;
+        var obj2 = {};
+        // strip out blank values
+        var oldhash = this.getHash();
+        angular.forEach(obj, function (v, k) { 
+          if (v) obj2[k] = v; 
+        });
+        jQuery.extend(oldhash, obj2); // TODO/WISH: Replace jQuery with a native solution
+        $location.hash(toKeyValue(oldhash));
+        if (replaceHistory) {
+          $location.replace();
+        }
+      },
+      sync: function (expr, scope, replaceHistory) {
+        if (!scope) scope = $rootScope;
+
+        var setHash = function (val, old) {
+          var obj = service.getHash();
+          obj[expr] = val;
+          service.setHash(obj, replaceHistory);
+        };
+        setHash($parse(expr)(scope));
+        scope.$watch(expr, setHash);
+
+        window.addEventListener('hashchange', function () {
+          scope.$apply(function () {
+            var obj = service.getHash();
+            var val = obj[expr];
+            $parse(expr).assign(scope, val);
+          });
+        });
+      }
+    };
+    return service;
+  }]);
+
+
 app.service("UtilService", function () {
 
   /**
@@ -30,39 +73,32 @@ app.service("UtilService", function () {
   };
 
   this.getZoomlevelLabel = function(zoomlevel) {
+    // TODO: Can be used to communicate the current 
+    // zoomlevel in language comprehensible to the user
       var zoomLevel = zoomlevel;
       switch (true) {
         case (zoomLevel>=18):
-          console.log('Objectniveau'); // fa-building
+          // console.log('Objectniveau'); // fa-building
           return 'object';
-          break;
         case (zoomLevel>=17):
-          console.log('Straatniveau'); // fa-road
+          // console.log('Straatniveau'); // fa-road
           return 'street';
-          break;
         case (zoomLevel>=15):
-          console.log('Gemeenteniveau'); // fa-university
+          // console.log('Gemeenteniveau'); // fa-university
           return 'municipal';
-          break;
         case (zoomLevel>=10):
-          console.log('Provincieniveau'); // fa-university
+          // console.log('Provincieniveau'); // fa-university
           return 'provincial';
-          break;
         case (zoomLevel>=8):
-          console.log('Landniveau'); // fa-university
+          // console.log('Landniveau'); // fa-university
           return 'country';
-          break;        
         case (zoomLevel>=5):
-          console.log('Continentniveau'); // fa-globe
+          // console.log('Continentniveau'); // fa-globe
           return 'continental';
-          break;              
         case (zoomLevel>=2):
-          console.log('Wereldniveau'); // fa-globe
+          // console.log('Wereldniveau'); // fa-globe
           return 'global';
-          break;
       }
-      var attrib = $('.leaflet-control-attribution');
-      attrib.html(zoomLevel);
-  }
+  };
 
 });
