@@ -14,7 +14,7 @@ app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope', function ($l
         angular.forEach(obj, function (v, k) { 
           if (v) obj2[k] = v; 
         });
-        jQuery.extend(oldhash, obj2); // TODO/WISH: Replace jQuery with a native solution
+        angular.extend(oldhash, obj2);
         $location.hash(toKeyValue(oldhash));
         if (replaceHistory) {
           $location.replace();
