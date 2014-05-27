@@ -252,7 +252,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
 
   return this;
 });
-app.directive('map', ['$location', '$timeout', 'UtilService', function ($location, $timeout, UtilService) {
+app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', function ($location, $timeout, UtilService, hashSyncHelper) {
 
   var link = function (scope, element, attrs, ctrl) {
     // Leaflet global variable to peed up vector layer, 
@@ -362,10 +362,10 @@ app.directive('map', ['$location', '$timeout', 'UtilService', function ($locatio
       if (!scope.$$phase) {
         scope.$apply(function () {
           scope.mapState.mapMoving = false;
-          $location.hash(newHash);
+          hashSyncHelper.setHash({'location':newHash});
         });
       } else {
-        $location.hash(newHash);
+        hashSyncHelper.setHash({'location':newHash});
       }
       // If elevation layer is active:
       if (scope.mapState.activeBaselayer === 3 && scope.tools.active === 'autorescale') {
@@ -396,16 +396,34 @@ app.directive('map', ['$location', '$timeout', 'UtilService', function ($locatio
      */
     scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
       if (!scope.holdRightThere || scope.holdRightThere === undefined) {
-        var latlonzoom = $location.hash().split(',');
-        if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
-          if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
-            scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: true, animate: true});
+        var hash = hashSyncHelper.getHash();
+
+        var baselayerHash = hash.bl;
+        var locationHash = hash.location;
+
+        if(baselayerHash !== undefined) {
+          scope.mapState.activeBaselayer = parseInt(baselayerHash);
+          scope.mapState.changeBaselayer();
+        }
+
+        if(locationHash !== undefined) { 
+          var latlonzoom = locationHash.split(','); 
+          if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
+            if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
+              scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: true, animate: true});
+            }
           }
         }
       }
       scope.mapState.mapMoving = false;
       scope.holdRightThere = false;
     });
+
+    scope.$watch('mapState.activeBaselayer', function(n,o) {
+      if (n === o) { return true; }      
+      hashSyncHelper.setHash({'bl':n}); // set baselayer in url by id
+    });
+
 
     /**
      * Watch to remove clicklayer when user clicks on omnibox close button.
