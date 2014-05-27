@@ -16,7 +16,7 @@ app.service("RasterService", ["Restangular", "UtilService",
   };
 
   // Set by rain controller and get by timeline
-  var intensityData = [];
+  var intensityData;
 
   var setIntensityData = function (data) {
     intensityData = data;
