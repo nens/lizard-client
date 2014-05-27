@@ -49,7 +49,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
     };
 
     // Create the timeline
-    var timeline = new Timeline(el, angular.copy(dimensions), start, end, zoomFn, clickFn, brushFn);
+    var timeline = new Timeline(el, angular.copy(dimensions), start, end, zoomFn, clickFn);
 
     var updateTimelineHeight = function (dim, nEventTypes) {
       var newDimensions = timeline.dimensions;
@@ -95,7 +95,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
       if (newVal === oldVal) { return true; }
       if (scope.timeState.animation.enabled) {
         // Cancel zoom behavior
-        timeline.removeZoom();
+        timeline.removeZoomListener();
 
         var start;
         var end;
@@ -111,9 +111,8 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
           end = scope.timeState.at + buffer;
         }
 
-        // Create the brush
-        timeline.drawBrush();
-        timeline.updateBrush(start, end);
+        // Draw the brush
+        timeline.drawBrush(start, end, brushFn);
       }
       if (!scope.timeState.animation.enabled) {
         scope.timeState.animation.playing = false;
@@ -133,11 +132,11 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.animation.enabled) {
-        graph.svg.select(".brushed")
-          .call(animationBrush.extent(
-            [new Date(scope.timeState.animation.start),
-             new Date(scope.timeState.animation.end)]));
-        timelineCtrl.brushmove();
+        // graph.svg.select(".brushed")
+        //   .call(animationBrush.extent(
+        //     [new Date(scope.timeState.animation.start),
+        //      new Date(scope.timeState.animation.end)]));
+        // timelineCtrl.brushmove();
       }
       if (scope.tools.active === 'rain') {
         timeline.updateNowElement(scope.timeState.at);

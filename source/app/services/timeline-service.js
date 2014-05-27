@@ -34,7 +34,6 @@ app.factory("Timeline", [ function () {
     zoom = createZoomListener(svg, this.dimensions, xScale, xAxis, zoomFn);
     this.addZoomListener();
     addClickListener(svg, xScale, this.dimensions, clickFn);
-    addBrush(brushFn);
   }
 
   Timeline.prototype = {
@@ -65,9 +64,13 @@ app.factory("Timeline", [ function () {
         .attr('y2', 0);
     },
 
-    drawBrush: function (start, end) {
+    drawBrush: function (start, end, brushFn) {
+      var brushAndBrushG = addBrush(brushFn);
+      brush = brushAndBrushG.brush;
+      brushg = brushAndBrushG.brushg;
       var height = this.dimensions.height - this.dimensions.padding.top - this.dimensions.padding.bottom;
-            
+      brush.extent([new Date(start), new Date(end)]);
+      brushg.call(brush);
       brushg.selectAll("rect")
         .attr("height", height)
         .selectAll("rect")
@@ -75,7 +78,7 @@ app.factory("Timeline", [ function () {
           .delay(500)
           .duration(500)
           .attr("height", height);
-      brushg.call(brush);
+      brushFn(brush);
     },
 
     removeBrush: function () {
@@ -439,13 +442,13 @@ app.factory("Timeline", [ function () {
   };
 
   var addBrush = function (brushFn) {
-    var brush = d3.svg.brush().x(xScale)
-      .on("brush", function (brush) {
+    var brush = d3.svg.brush().x(xScale);
+    brush.on("brush", function () {
         brushFn(brush);
       }
     );
     var brushg = svg.select('g').append("g")
-      .attr("class", "brushed")
+      .attr("class", "brushed");
     return {
       brush: brush,
       brushg: brushg
