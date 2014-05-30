@@ -14,6 +14,10 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
   $scope.$watch('tools.active', function (n, o) {
     if ($scope.tools.active !== 'rain') {
       $scope.box.type = 'empty';
+      RasterService.setIntensityData([]);
+      $scope.timeState.changeOrigin = 'RainAggregate';
+      $scope.timeState.changedZoom = Date.now();
+      console.log("we are closing", RasterService.getIntensityData());
       // Destroy scope at the end of this digest. Workaround from:
       // https://github.com/shinetech/angular-models/blob/master/angular-models.js
       $scope.$$postDigest(function () { $scope.$destroy(); });
@@ -29,6 +33,35 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
     }
   });
 
+  $scope.$watch('mapState.bounds', function (n, o) {
+    if ($scope.timeState.hidden === false) {
+      var start = $scope.timeState.start;
+      var stop = $scope.timeState.end;
+      var geom = $scope.mapState.bounds;
+      var rain = getRainForBounds(geom, start, stop);
+      rain.then(function (response) {
+        RasterService.setIntensityData(response);
+        $scope.timeState.changeOrigin = 'RainAggregate';
+        $scope.timeState.changedZoom = Date.now();
+      });
+    }
+  });
+
+  $scope.$watch('timeState.changedZoom', function (n, o) {
+    if ($scope.timeState.hidden === false
+      && $scope.timeState.changeOrigin !== 'RainAggregate') {
+      var start = $scope.timeState.start;
+      var stop = $scope.timeState.end;
+      var geom = $scope.mapState.bounds;
+      var rain = getRainForBounds(geom, start, stop);
+      rain.then(function (response) {
+        RasterService.setIntensityData(response);
+        $scope.timeState.changeOrigin = 'RainAggregate';
+        $scope.timeState.changedZoom = Date.now();
+      });
+    }
+  });
+
   // Rain model
   $scope.rain = {
     start: undefined,
@@ -37,6 +70,11 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
     data: undefined
   };
 
+  var getRainForBounds = function (bounds, start, stop) {
+    var aggWindow = getAggWindow(start, stop, window.innerWidth);  // width of timeline
+    var rain = getRain(new Date(start), new Date(stop), bounds, aggWindow);
+    return rain;
+  };
 
   // TODO: Re implement the following when enabling scrolling in the rain graph in fullscreen.
 
@@ -174,15 +212,27 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
    *
    * @param  {int} start    start of rainserie
    * @param  {int} stop     end of rainserie
-   * @param  {object} latLng   location of rainserie in {lat: int, lng: int} (currently only supports points)
+   * @param  {object} geom   location of rainserie in {lat: int, lng: int} or leaflet bounds object
    * @param  {int} aggWindow width of the aggregation
    * @return {promise} returns a thennable promise which may resolve with rain data on response
    */
-  var getRain = function (start, stop, latLng, aggWindow) {
+  var getRain = function (start, stop, geom, aggWindow) {
     var stopString = stop.toISOString().split('.')[0];
     var startString = start.toISOString().split('.')[0];
-    var wkt = "POINT(" + latLng.lng + " " + latLng.lat + ")";
-    return CabinetService.raster.get({
+    var wkt;
+    if (geom.lat && geom.lng) {
+      // geom is a latLng object
+      wkt = "POINT(" + geom.lng + " " + geom.lat + ")";
+    } else {
+      wkt = "POLYGON(("
+            + geom.getWest() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getSouth()
+            + "))";
+    }
+    return CabinetService.raster().get({
         raster_names: 'demo:radar',
         geom: wkt,
         srs: 'EPSG:4326',

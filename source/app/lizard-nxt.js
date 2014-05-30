@@ -490,7 +490,14 @@ app.controller("MasterCtrl",
    * Initial state of the timeState.hidden is 'undefined'.
    */
   $scope.toggleTimeline = function () {
-    if ($scope.timeState.hidden === undefined) {
+    if ($scope.timeState.hidden === true) {
+      $scope.timeState.hidden = false;
+      angular.element('#timeline').css('bottom', 0);
+    } else if ($scope.timeState.hidden === false) {
+      $scope.timeState.hidden = true;
+      angular.element('#timeline').css(
+        'bottom', 0 - angular.element('#timeline').height());
+    } else if ($scope.timeState.hidden === undefined) {
       // Create timeline element when needed and no earlier
       var timeline = angular.element(
         '<timeline class="navbar timeline navbar-fixed-bottom"></timeline>');
@@ -498,13 +505,6 @@ app.controller("MasterCtrl",
       angular.element('#master')
         .append(timeline);
       $scope.timeState.hidden = false;
-    } else if ($scope.timeState.hidden === true) {
-      $scope.timeState.hidden = false;
-      angular.element('#timeline').css('bottom', 0);
-    } else if ($scope.timeState.hidden === false) {
-      $scope.timeState.hidden = true;
-      angular.element('#timeline').css(
-        'bottom', 0 - angular.element('#timeline').height());
     }
   };
 

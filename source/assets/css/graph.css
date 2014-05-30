@@ -54,6 +54,13 @@ rect.bar {
   stroke: white;
 }
 
+.bar-timeline {
+  fill: #95a5a6;
+  stroke-width: 1;
+  fill-opacity: 1;
+  stroke: white;
+}
+
 
 .y1.axis  text {
   fill: crimson;
