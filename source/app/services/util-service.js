@@ -2,25 +2,34 @@
  * Generic utilities
  */
 app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope', function ($location, $parse, $rootScope) {
+  /**
+   * Offers a getHash and setHash for manipulating the url hash
+   */
     var service = {
       getHash: function () {
+        // Reads the hash fragment from angulars location service
+        // and returns it as a key/value object.
         return parseKeyValue($location.hash());
       },
       setHash: function (obj, replaceHistory) {
+        // Sets the url hash with a {'key':'val'} and doesnt return
         if (!isDefined(replaceHistory)) replaceHistory = true;
         var obj2 = {};
-        // strip out blank values
-        var oldhash = this.getHash();
+        var oldhash = this.getHash(); // Copy the current hash
         angular.forEach(obj, function (v, k) { 
+          // Loop over the incoming object and fill obj2 with it
           if (v) obj2[k] = v; 
         });
+        // Then extend the original hash object with the new hash object
         angular.extend(oldhash, obj2);
+        // And finally set the hash using angular location service
         $location.hash(toKeyValue(oldhash));
         if (replaceHistory) {
           $location.replace();
         }
       },
       sync: function (expr, scope, replaceHistory) {
+        // Unused for now
         if (!scope) scope = $rootScope;
 
         var setHash = function (val, old) {
