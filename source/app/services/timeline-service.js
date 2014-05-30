@@ -11,17 +11,17 @@ app.factory("Timeline", [ function () {
   var xScale;
   var xAxis;
   var zoom;
+  var brush;
 
   // Timeline elements
   var noDataIndicator;
   var nowIndicator;
-  var brush;
   var brushg;
   var circles;
   var bars;
 
   // Constructor function  
-  function Timeline(element, dimensions, start, end, zoomFn, clickFn, brushFn) {
+  function Timeline(element, dimensions, start, end, zoomFn, clickFn) {
     this.dimensions = dimensions;
     initialHeight = dimensions.height;
     svg = createCanvas(element, this.dimensions);
@@ -65,12 +65,29 @@ app.factory("Timeline", [ function () {
     },
 
     drawBrush: function (start, end, brushFn) {
-      var brushAndBrushG = addBrush(brushFn);
-      brush = brushAndBrushG.brush;
-      brushg = brushAndBrushG.brushg;
+      var brush = d3.svg.brush().x(xScale);
+      brush.on("brush", function () {
+        var extent = brushg.select('.extent');
+        var s = [xScale.invert(Number(extent.attr('x'))), xScale.invert(Number(extent.attr('x')) + Number(extent.attr('width')))];
+        if (circles) {
+          circles.classed("selected", function (d) {
+            var t = new Date(d.properties.timestamp);
+            return s[0] <= t && t <= s[1];
+          });
+        }
+        if (bars) {
+          bars.classed("selected", function (d) {
+            var t = new Date(d[0]);
+            return s[0] <= t && t <= s[1]; });
+        }
+        brushFn(brush);
+      });
+
+      brushg = svg.select('g').append("g")
+        .attr("class", "brushed");
+
       var height = this.dimensions.height - this.dimensions.padding.top - this.dimensions.padding.bottom;
-      brush.extent([new Date(start), new Date(end)]);
-      brushg.call(brush);
+      brushg.call(brush.extent([new Date(start), new Date(end)]));
       brushg.selectAll("rect")
         .attr("height", height)
         .selectAll("rect")
@@ -109,8 +126,8 @@ app.factory("Timeline", [ function () {
       if (nowIndicator && now) {
         this.updateNowElement(now);
       }
-      if (brush && anStart && anEnd) {
-        drawBrush(anStart, anEnd);
+      if (brush) {
+        updateBrush(anStart, anEnd, brushg, brush, this.dimensions);
       }
     },
 
@@ -194,6 +211,12 @@ app.factory("Timeline", [ function () {
         .x(xScale)
         .on("zoom", null)
       );
+      svg
+        .on("zoom", null)
+        .on("mousedown.zoom", null)
+        .on("touchstart.zoom", null)
+        .on("touchmove.zoom", null)
+        .on("touchend.zoom", null);
     }
   };
 
@@ -305,8 +328,7 @@ app.factory("Timeline", [ function () {
   };
 
   var updateCircleElements = function (circles, xScale) {
-    // Shift halve a pixel for nice and crisp rendering
-    var xFunction = function (d) { return Math.round(xScale(d.properties.timestamp)) + 0.5; };
+    var xFunction = function (d) { return Math.round(xScale(d.properties.timestamp)); };
 
     // UPDATE
     // Update old elements as needed.
@@ -441,18 +463,19 @@ app.factory("Timeline", [ function () {
     return bars;
   };
 
-  var addBrush = function (brushFn) {
-    var brush = d3.svg.brush().x(xScale);
-    brush.on("brush", function () {
-        brushFn(brush);
-      }
-    );
-    var brushg = svg.select('g').append("g")
-      .attr("class", "brushed");
-    return {
-      brush: brush,
-      brushg: brushg
-    };
+  var updateBrush = function (start, end, brushg, brush, dimensions) {
+    var height = dimensions.height - dimensions.padding.top - dimensions.padding.bottom;
+    brush.extent([new Date(start), new Date(end)]);
+    brushg.selectAll("rect")
+        .transition()
+        .delay(500)
+        .duration(500)
+        .attr("height", height)
+        .selectAll("rect")
+          .transition()
+          .delay(500)
+          .duration(500)
+          .attr("height", height);
   };
 
   var maxMin = function (data, key) {
