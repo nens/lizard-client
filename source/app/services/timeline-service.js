@@ -1,5 +1,5 @@
 /**
- * Service to create and update the timeline.
+ * Service to create and update a timeline.
  */
 app.factory("Timeline", [ function () {
 
@@ -10,8 +10,12 @@ app.factory("Timeline", [ function () {
   // D3 components
   var xScale;
   var xAxis;
-  var zoom;
   var brush;
+
+  // Interaction functions
+  var clicked;
+  var zoomed;
+  var brushed;
 
   // Timeline elements
   var noDataIndicator;
@@ -21,8 +25,8 @@ app.factory("Timeline", [ function () {
   var bars;
 
   // Constructor function  
-  function Timeline(element, dimensions, start, end, zoomFn, clickFn) {
-    this.dimensions = dimensions;
+  function Timeline(element, dimensions, start, end, interaction) {
+    this.dimensions = angular.copy(dimensions);
     initialHeight = dimensions.height;
     svg = createCanvas(element, this.dimensions);
     var width = dimensions.width - dimensions.padding.left - dimensions.padding.right;
@@ -31,9 +35,17 @@ app.factory("Timeline", [ function () {
                             { type: 'time' });
     xAxis = makeAxis(xScale, {orientation: "bottom", ticks: 5});
     drawAxes(svg, xAxis);
-    zoom = createZoomListener(svg, this.dimensions, xScale, xAxis, zoomFn);
-    this.addZoomListener();
-    addClickListener(svg, xScale, this.dimensions, clickFn);
+    if (interaction) {
+      if (interaction.zoomFn) {
+        zoomed = setZoomFunction(svg, this.dimensions, xScale, xAxis, interaction.zoomFn);
+      }
+      if (interaction.clickFn) {
+        clicked = setClickFunction(xScale, this.dimensions, interaction.clickFn);
+      }
+      if (interaction.brushFn) {
+        brushed = setBrushFunction(xScale, interaction.brushFn);
+      }
+    }
   }
 
   Timeline.prototype = {
@@ -64,28 +76,16 @@ app.factory("Timeline", [ function () {
         .attr('y2', 0);
     },
 
-    drawBrush: function (start, end, brushFn) {
-      var brush = d3.svg.brush().x(xScale);
-      brush.on("brush", function () {
-        var extent = brushg.select('.extent');
-        var s = [xScale.invert(Number(extent.attr('x'))), xScale.invert(Number(extent.attr('x')) + Number(extent.attr('width')))];
-        if (circles) {
-          circles.classed("selected", function (d) {
-            var t = new Date(d.properties.timestamp);
-            return s[0] <= t && t <= s[1];
-          });
-        }
-        if (bars) {
-          bars.classed("selected", function (d) {
-            var t = new Date(d[0]);
-            return s[0] <= t && t <= s[1]; });
-        }
-        brushFn(brush);
-      });
+    addClickListener: function () {
+      svg.on("click", clicked);
+    },
+
+    drawBrush: function (start, end) {
+      brush = d3.svg.brush().x(xScale);
+      brush.on("brush", brushed);
 
       brushg = svg.select('g').append("g")
         .attr("class", "brushed");
-
       var height = this.dimensions.height - this.dimensions.padding.top - this.dimensions.padding.bottom;
       brushg.call(brush.extent([new Date(start), new Date(end)]));
       brushg.selectAll("rect")
@@ -95,7 +95,7 @@ app.factory("Timeline", [ function () {
           .delay(500)
           .duration(500)
           .attr("height", height);
-      brushFn(brush);
+      brushed();
     },
 
     removeBrush: function () {
@@ -140,16 +140,7 @@ app.factory("Timeline", [ function () {
     },
 
     drawCircles: function (data, nLines, colors) {
-      var lowestCircleLine = 30; // lowest line is drawn 20px from the bottom
-      if (bars) {
-        lowestCircleLine = 80;
-      }
-      var iniH = initialHeight;
-      var dims = this.dimensions;
-      var yScale = function (order) {
-        var fromTop = (iniH - 26) / 2 + dims.events * (order - 1);
-        return fromTop;
-      };
+      var yScale = makeEventsYscale(initialHeight, this.dimensions);
       circles = drawCircleElements(
         svg,
         this.dimensions,
@@ -202,7 +193,7 @@ app.factory("Timeline", [ function () {
     addZoomListener: function () {
       svg.call(d3.behavior.zoom()
         .x(xScale)
-        .on("zoom", zoom)
+        .on("zoom", zoomed)
       );
     },
 
@@ -276,8 +267,8 @@ app.factory("Timeline", [ function () {
     return svg;
   };
 
-  var createZoomListener = function (svg, dimensions, xScale, xAxis, zoomFn) {
-    var zoom = function () {
+  var setZoomFunction = function (svg, dimensions, xScale, xAxis, zoomFn) {
+    var zoomed = function () {
       drawAxes(svg, xAxis);
       if (circles) {
         circles.attr("cx", function (d) {
@@ -307,24 +298,37 @@ app.factory("Timeline", [ function () {
         zoomFn(xScale);
       }
     };
-    return zoom;
+    return zoomed;
   };
 
-  /**
-   * Click handler to set scope.timeState.at to to timestamp where clicked
-   * in timeline.
-   *
-   * Is eg used by dynamic raster functionality to get image for time
-   * clicked.
-   *
-   */
-  var addClickListener = function (svg, xScale, dimensions, clickFn) {
-    svg.on("click", function () {
+  var setBrushFunction = function (xScale, brushFn) {
+    var brushed = function () {
+      var s = brush.extent();
+      if (circles) {
+        circles.classed("selected", function (d) {
+          var t = new Date(d.properties.timestamp);
+          return s[0] <= t && t <= s[1];
+        });
+      }
+      if (bars) {
+        bars.classed("selected", function (d) {
+          var t = new Date(d[0]);
+          return s[0] <= t && t <= s[1];
+        });
+      }
+      brushFn(brush);
+    };
+    return brushed;
+  };
+
+  var setClickFunction = function (xScale, dimensions, clickFn) {
+    var clicked = function () {
       // Check whether user is dragging instead of clicking
       if (!d3.event.defaultPrevented) {
         clickFn(xScale, dimensions);
       }
-    });
+    };
+    return clicked;
   };
 
   var updateCircleElements = function (circles, xScale) {
@@ -517,6 +521,15 @@ app.factory("Timeline", [ function () {
     }
     return scale;
   };
+
+  var makeEventsYscale = function (iniH, dims) {
+    var yScale = function (order) {
+      var fromTop = (iniH - 26) / 2 + dims.events * (order - 1);
+      return fromTop;
+    };
+    return yScale;
+  };
+
 
   var makeAxis = function (scale, options) {
     // Make an axis for d3 based on a scale

@@ -19,37 +19,40 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
     var start = scope.timeState.start;
     var end = scope.timeState.end;
     var el = d3.select(element[0]).select("#timeline-svg-wrapper").select("svg");
-    // Move timeline element into sight
-    d3.select('#timeline').transition().duration(300).style('bottom', 0);
-
-    var zoomFn = function (scale) {
-      scope.$apply(function () {
-        scope.timeState.start = scale.domain()[0].getTime();
-        scope.timeState.end = scale.domain()[1].getTime();
-        scope.timeState.changeOrigin = 'timeline';
-        scope.timeState.changedZoom = Date.now();
-      });
-    };
-    
-    var clickFn = function (scale, dimensions) {
-      var timeClicked = +(scale.invert(d3.event.x - dimensions.padding.left));
-      scope.timeState.at = timeClicked;
-      scope.$digest();
-    };
-
-    var brushFn = function (brush) {
-      var s = brush.extent();
-      var sSorted = [s[0].getTime(), s[1].getTime()].sort();
-      scope.timeState.animation.start = sSorted[0];
-      scope.timeState.animation.end = sSorted[1];
-      scope.timeState.at = (sSorted[0] + sSorted[1]) / 2;
-      if (!scope.timeState.animation.playing && !scope.$$phase) {
-        scope.$apply();
+    var interaction = {
+      zoomFn: function (scale) {
+        scope.$apply(function () {
+          scope.timeState.start = scale.domain()[0].getTime();
+          scope.timeState.end = scale.domain()[1].getTime();
+          scope.timeState.changeOrigin = 'timeline';
+          scope.timeState.changedZoom = Date.now();
+        });
+      },
+      clickFn: function (scale, dimensions) {
+        var timeClicked = +(scale.invert(d3.event.x - dimensions.padding.left));
+        scope.timeState.at = timeClicked;
+        scope.$digest();
+      },
+      brushFn: function (brush) {
+        var s = brush.extent();
+        var sSorted = [s[0].getTime(), s[1].getTime()].sort();
+        scope.timeState.animation.start = sSorted[0];
+        scope.timeState.animation.end = sSorted[1];
+        scope.timeState.at = (sSorted[0] + sSorted[1]) / 2;
+        if (!scope.timeState.animation.playing && !scope.$$phase) {
+          scope.$apply();
+        }
       }
     };
 
+    // Move timeline element into sight
+    d3.select('#timeline').transition().duration(300).style('bottom', 0);
+
     // Create the timeline
-    var timeline = new Timeline(el, angular.copy(dimensions), start, end, zoomFn, clickFn);
+    var timeline = new Timeline(el, dimensions, start, end, interaction);
+    // Activate zoom and click listener
+    timeline.addZoomListener();
+    timeline.addClickListener();
 
     var updateTimelineHeight = function (dim, nEventTypes) {
       var newDimensions = timeline.dimensions;
@@ -112,7 +115,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
         }
 
         // Draw the brush
-        timeline.drawBrush(start, end, brushFn);
+        timeline.drawBrush(start, end, interaction.brushFn);
       }
       if (!scope.timeState.animation.enabled) {
         scope.timeState.animation.playing = false;
