@@ -131,6 +131,12 @@ app.factory("Timeline", [ function () {
       }
     },
 
+    updateBrushExtent: function (start, end) {
+      brushg
+        .call(brush.extent([new Date(start), new Date(end)]));
+      brushed();
+    },
+
     updateNowElement: function (now) {
       var height = this.dimensions.height - this.dimensions.padding.top - this.dimensions.padding.bottom;
       nowIndicator
@@ -321,6 +327,24 @@ app.factory("Timeline", [ function () {
     return brushed;
   };
 
+  var updateBrush = function (start, end, brushg, brush, dimensions) {
+    brushg
+      .call(brush.extent([new Date(start), new Date(end)]));
+    brushed();
+
+    var height = dimensions.height - dimensions.padding.top - dimensions.padding.bottom;
+    brushg.selectAll("rect")
+      .transition()
+      .delay(500)
+      .duration(500)
+      .attr("height", height)
+        .selectAll("rect")
+          .transition()
+          .delay(500)
+          .duration(500)
+          .attr("height", height);
+  };
+
   var setClickFunction = function (xScale, dimensions, clickFn) {
     var clicked = function () {
       // Check whether user is dragging instead of clicking
@@ -465,21 +489,6 @@ app.factory("Timeline", [ function () {
     barsEl.parentNode.insertBefore(barsEl, barsEl.parentNode.firstChild);
 
     return bars;
-  };
-
-  var updateBrush = function (start, end, brushg, brush, dimensions) {
-    var height = dimensions.height - dimensions.padding.top - dimensions.padding.bottom;
-    brush.extent([new Date(start), new Date(end)]);
-    brushg.selectAll("rect")
-        .transition()
-        .delay(500)
-        .duration(500)
-        .attr("height", height)
-        .selectAll("rect")
-          .transition()
-          .delay(500)
-          .duration(500)
-          .attr("height", height);
   };
 
   var maxMin = function (data, key) {

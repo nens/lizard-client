@@ -66,7 +66,10 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
         newDimensions.height = dim.height +
                                eventHeight;
       }
-      timeline.resize(newDimensions);
+      timeline.resize(newDimensions,
+        scope.timeState.at,
+        scope.timeState.animation.start,
+        scope.timeState.animation.end);
     };
 
     scope.$watch('events.changed', function (n, o) {
@@ -115,7 +118,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
         }
 
         // Draw the brush
-        timeline.drawBrush(start, end, interaction.brushFn);
+        timeline.drawBrush(start, end);
       }
       if (!scope.timeState.animation.enabled) {
         scope.timeState.animation.playing = false;
@@ -135,11 +138,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.animation.enabled) {
-        // graph.svg.select(".brushed")
-        //   .call(animationBrush.extent(
-        //     [new Date(scope.timeState.animation.start),
-        //      new Date(scope.timeState.animation.end)]));
-        // timelineCtrl.brushmove();
+        timeline.updateBrushExtent(scope.timeState.animation.start, scope.timeState.animation.end);
       }
       if (scope.tools.active === 'rain') {
         timeline.updateNowElement(scope.timeState.at);
