@@ -107,10 +107,14 @@ app.factory("Timeline", [ function () {
     },
 
     resize: function (dimensions, now, anStart, anEnd) {
-      this.dimensions = dimensions;
+      if (dimensions) {
+        this.dimensions = dimensions;
+      }
       svg = updateCanvas(svg, this.dimensions);
       drawAxes(svg, xAxis);
-      this.updateElements(now, anStart, anEnd);
+      if (now && anStart && anEnd) {
+        this.updateElements(now, anStart, anEnd);
+      }
     },
 
     updateElements: function (now, anStart, anEnd) {
@@ -258,17 +262,21 @@ app.factory("Timeline", [ function () {
       .duration(500)
       .delay(500)
       .attr('height', dimensions.height)
+      .attr('width', dimensions.width)
       .select("g")
       .attr("transform", "translate(" + dimensions.padding.left + ", 0)")
       .select('g')
       .attr("transform", "translate(0 ," + height + ")");
     svg.select("g").select("rect")
-      .attr("height", height);
+      .attr("height", height)
+      .attr("width", width);
     // Update rain bars
     svg.select('g').select('#rain-bar')
+      .attr('width', width)
       .attr('height', height);
     // Update circles
     svg.select('g').select('#circle-group')
+      .attr('width', width)
       .attr('height', height);
     return svg;
   };
@@ -563,10 +571,6 @@ app.factory("Timeline", [ function () {
   var drawAxes = function (svg, xAxis) {
     svg.select('g').select('#xaxis')
       .call(xAxis);
-  };
-
-  window.onresize = function () {
-    this.resize();
   };
 
   return Timeline;

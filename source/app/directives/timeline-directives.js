@@ -46,7 +46,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
     };
 
     // Move timeline element into sight
-    d3.select('#timeline').transition().duration(300).style('bottom', 0);
+    d3.select(element[0]).transition().duration(300).style('bottom', 0);
 
     // Create the timeline
     var timeline = new Timeline(el, dimensions, start, end, interaction);
@@ -83,11 +83,15 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
       EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
     });
 
+    scope.$watch('raster.changed', function (n, o) {
+      if (n === o) { return true; }
+      timeline.drawBars(RasterService.getIntensityData());
+    });
+
     scope.$watch('timeState.changedZoom', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.changeOrigin !== 'timeline') {
         timeline.zoomTo(scope.timeState.start, scope.timeState.end);
-        // timeline.drawBars(RasterService.getIntensityData());
       }
     });
 
@@ -156,6 +160,12 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
     //     timelineCtrl.hideNow(graph);
     //   }
     // });
+
+    window.onresize = function () {
+      var dimensions = timeline.dimensions;
+      dimensions.width = window.innerWidth;
+      timeline.resize(dimensions);
+    };
 
   };
 
