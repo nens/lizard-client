@@ -158,7 +158,7 @@ app.factory("Timeline", [ function () {
     },
 
     drawBars: function (data) {
-      var height = initialHeight - this.dimensions.padding.top - this.dimensions.padding.bottom;
+      var height = initialHeight - this.dimensions.padding.top - this.dimensions.padding.bottom + this.dimensions.bars;
 
       var y = maxMin(data, '1');
       var options = {scale: 'linear'};
@@ -562,7 +562,8 @@ app.factory("Timeline", [ function () {
 
   var makeEventsYscale = function (iniH, dims) {
     var yScale = function (order) {
-      var fromTop = (iniH - 26) / 2 + dims.events * (order - 1);
+      var padding = dims.events / 2;
+      var fromTop = padding + dims.padding.top + dims.events * (order - 1);
       return fromTop;
     };
     return yScale;

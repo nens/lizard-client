@@ -6,7 +6,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
   var link = function (scope, element, attrs, timelineCtrl, $timeout) {
     var dimensions = {
       width: window.innerWidth,
-      height: 80,
+      height: 65,
       events: 40,
       bars: 40,
       padding: {
@@ -55,13 +55,15 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
     timeline.addClickListener();
 
     var updateTimelineHeight = function (newDim, dim, nEventTypes) {
-      var eventHeight = (nEventTypes - 1) * dim.events;
+      var eventHeight;
       eventHeight = eventHeight > 0 ? eventHeight: 0; // Default to 0px
-      if (scope.tools.active === 'rain' && nEventTypes > 0) {
+      if (scope.tools.active === 'rain') {
+        eventHeight = nEventTypes * dim.events;
         newDim.height = dim.height +
                                dim.bars +
                                eventHeight;
       } else {
+        eventHeight = (nEventTypes - 1) * dim.events;
         newDim.height = dim.height + eventHeight;
       }
       timeline.resize(newDim,
