@@ -85,6 +85,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
 
     scope.$watch('raster.changed', function (n, o) {
       if (n === o) { return true; }
+      console.log("drawing bars");
       timeline.drawBars(RasterService.getIntensityData());
     });
 

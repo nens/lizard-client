@@ -55,8 +55,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
       var rain = getRainForBounds(geom, start, stop);
       rain.then(function (response) {
         RasterService.setIntensityData(response);
-        $scope.timeState.changeOrigin = 'RainAggregate';
-        $scope.timeState.changedZoom = Date.now();
+        $scope.raster.changed = Date.now();
       });
     }
   });

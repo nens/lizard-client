@@ -368,6 +368,10 @@ app.controller("MasterCtrl",
 
   //TODO: move to raster-service ?
 
+  $scope.raster = {
+    changed: Date.now()
+  };
+
   /**
    * Get raster data from server.
    * NOTE: maybe add a callback as argument?
