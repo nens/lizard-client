@@ -169,6 +169,11 @@ app.factory("Timeline", [ function () {
       bars = drawRectElements(svg, this.dimensions, data, xScale, yScale);
     },
 
+    removeBars: function () {
+      drawRectElements(svg, this.dimensions, []);
+      bars = undefined;
+    },
+
     drawEventsContainedInBounds: function (bounds) {
       var latLng = [];
       d3.selectAll("circle").classed("hidden", true);
@@ -376,16 +381,23 @@ app.factory("Timeline", [ function () {
       var oldHeight = oldDimensions.height - oldDimensions.padding.top - oldDimensions.padding.bottom;
       var heightDiff = newHeight - oldHeight;
       var barWidth = Number(rectangles.attr('width'));
-
-      rectangles.transition()
-        .duration(500)
-        .delay(500)
-        .attr("y", function (d) {
-          return Number(d3.select(this).attr("y")) + heightDiff;
-        })
-        .attr("x", function (d) {
-          return xScale(d[0]) - 0.5 * barWidth;
-        });
+      if (heightDiff !== 0) {
+        rectangles.transition()
+          .duration(500)
+          .delay(500)
+          .attr("y", function (d) {
+            return Number(d3.select(this).attr("y")) + heightDiff;
+          })
+          .attr("x", function (d) {
+            return xScale(d[0]) - 0.5 * barWidth;
+          });
+      } else {
+        rectangles.transition()
+          .duration(500)
+          .attr("x", function (d) {
+            return xScale(d[0]) - 0.5 * barWidth;
+          });
+      }
     }
   };
 
@@ -488,6 +500,7 @@ app.factory("Timeline", [ function () {
       .attr("height", 0)
       .attr("y", height)
       .transition()
+      .delay(500)
       .duration(500)
       .attr("height", function (d) { return yScale(d[1]); })
       .attr("y", function (d) { return height - yScale(d[1]); });
@@ -549,7 +562,7 @@ app.factory("Timeline", [ function () {
 
   var makeEventsYscale = function (iniH, dims) {
     var yScale = function (order) {
-      var fromTop = (iniH - dims.events) / 2 + dims.events * (order - 1);
+      var fromTop = (iniH - 26) / 2 + dims.events * (order - 1);
       return fromTop;
     };
     return yScale;

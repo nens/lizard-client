@@ -6,7 +6,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
   var link = function (scope, element, attrs, timelineCtrl, $timeout) {
     var dimensions = {
       width: window.innerWidth,
-      height: 90,
+      height: 80,
       events: 40,
       bars: 40,
       padding: {
@@ -73,8 +73,6 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
     scope.$watch('events.changed', function (n, o) {
       if (n === o) { return true; }
       updateTimelineHeight(angular.copy(timeline.dimensions), dimensions, scope.events.types.count);
-      scope.timeState.changeOrigin = 'timeline';
-      scope.timeState.changedZoom = Date.now();
       var data = scope.events.data.features;
       timeline.drawCircles(data, scope.events.types.count, EventService.colors);
       timeline.drawEventsContainedInBounds(scope.mapState.bounds);
@@ -83,8 +81,13 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
 
     scope.$watch('raster.changed', function (n, o) {
       if (n === o) { return true; }
-      updateTimelineHeight(angular.copy(timeline.dimensions), dimensions, scope.events.types.count);
-      timeline.drawBars(RasterService.getIntensityData());
+      if (scope.tools.active === 'rain') {
+        updateTimelineHeight(angular.copy(timeline.dimensions), dimensions, scope.events.types.count);
+        timeline.drawBars(RasterService.getIntensityData());
+      } else {
+        timeline.removeBars();
+        updateTimelineHeight(angular.copy(timeline.dimensions), dimensions, scope.events.types.count);
+      }
     });
 
     scope.$watch('timeState.changedZoom', function (n, o) {
