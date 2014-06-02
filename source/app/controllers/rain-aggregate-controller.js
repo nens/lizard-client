@@ -15,8 +15,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
     if ($scope.tools.active !== 'rain') {
       $scope.box.type = 'empty';
       RasterService.setIntensityData([]);
-      $scope.timeState.changeOrigin = 'RainAggregate';
-      $scope.timeState.changedZoom = Date.now();
+      $scope.raster.changed = Date.now();
       // Destroy scope at the end of this digest. Workaround from:
       // https://github.com/shinetech/angular-models/blob/master/angular-models.js
       $scope.$$postDigest(function () { $scope.$destroy(); });

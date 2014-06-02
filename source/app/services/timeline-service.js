@@ -371,21 +371,22 @@ app.factory("Timeline", [ function () {
   var updateRectangleElements = function (rectangles, xScale, oldDimensions, newDimensions) {
     // UPDATE
     // Update old elements as needed.
-    var newHeight = newDimensions.height - newDimensions.padding.top - newDimensions.padding.bottom;
-    var oldHeight = oldDimensions.height - oldDimensions.padding.top - oldDimensions.padding.bottom;
-    var heightDiff = newHeight - oldHeight;
-    var barWidth = Number(rectangles.attr('width'));
+    if (rectangles[0].length > 0) {
+      var newHeight = newDimensions.height - newDimensions.padding.top - newDimensions.padding.bottom;
+      var oldHeight = oldDimensions.height - oldDimensions.padding.top - oldDimensions.padding.bottom;
+      var heightDiff = newHeight - oldHeight;
+      var barWidth = Number(rectangles.attr('width'));
 
-    rectangles.transition()
-      .duration(500)
-      .delay(500)
-      .attr("y", function (d) {
-        console.log(Number(d3.select(this).attr("y")), heightDiff);
-        return Number(d3.select(this).attr("y")) + heightDiff;
-      })
-      .attr("x", function (d) {
-        return xScale(d[0]) - 0.5 * barWidth;
-      });
+      rectangles.transition()
+        .duration(500)
+        .delay(500)
+        .attr("y", function (d) {
+          return Number(d3.select(this).attr("y")) + heightDiff;
+        })
+        .attr("x", function (d) {
+          return xScale(d[0]) - 0.5 * barWidth;
+        });
+    }
   };
 
   var updateNoDataElement = function (noDataIndicator, xScale, dimensions) {
@@ -548,7 +549,7 @@ app.factory("Timeline", [ function () {
 
   var makeEventsYscale = function (iniH, dims) {
     var yScale = function (order) {
-      var fromTop = (iniH - 26) / 2 + dims.events * (order - 1);
+      var fromTop = (iniH - dims.events) / 2 + dims.events * (order - 1);
       return fromTop;
     };
     return yScale;

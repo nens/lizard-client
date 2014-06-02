@@ -6,9 +6,9 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
   var link = function (scope, element, attrs, timelineCtrl, $timeout) {
     var dimensions = {
       width: window.innerWidth,
-      height: 70,
+      height: 90,
       events: 40,
-      bars: 50,
+      bars: 40,
       padding: {
         top: 3,
         right: 30,
@@ -54,19 +54,17 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
     timeline.addZoomListener();
     timeline.addClickListener();
 
-    var updateTimelineHeight = function (dim, nEventTypes) {
-      var newDimensions = angular.copy(timeline.dimensions);
+    var updateTimelineHeight = function (newDim, dim, nEventTypes) {
       var eventHeight = (nEventTypes - 1) * dim.events;
       eventHeight = eventHeight > 0 ? eventHeight: 0; // Default to 0px
-      if (scope.tools.active === 'rain') {
-        newDimensions.height = dim.height +
+      if (scope.tools.active === 'rain' && nEventTypes > 0) {
+        newDim.height = dim.height +
                                dim.bars +
                                eventHeight;
       } else {
-        newDimensions.height = dim.height +
-                               eventHeight;
+        newDim.height = dim.height + eventHeight;
       }
-      timeline.resize(newDimensions,
+      timeline.resize(newDim,
         scope.timeState.at,
         scope.timeState.animation.start,
         scope.timeState.animation.end);
@@ -74,7 +72,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
 
     scope.$watch('events.changed', function (n, o) {
       if (n === o) { return true; }
-      updateTimelineHeight(dimensions, scope.events.types.count);
+      updateTimelineHeight(angular.copy(timeline.dimensions), dimensions, scope.events.types.count);
       scope.timeState.changeOrigin = 'timeline';
       scope.timeState.changedZoom = Date.now();
       var data = scope.events.data.features;
@@ -85,6 +83,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
 
     scope.$watch('raster.changed', function (n, o) {
       if (n === o) { return true; }
+      updateTimelineHeight(angular.copy(timeline.dimensions), dimensions, scope.events.types.count);
       timeline.drawBars(RasterService.getIntensityData());
     });
 
@@ -145,7 +144,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
         timeline.updateBrushExtent(scope.timeState.animation.start, scope.timeState.animation.end);
       }
       if (scope.tools.active === 'rain') {
-        timeline.updateNowElement(scope.timeState.at);
+        //timeline.updateNowElement(scope.timeState.at);
       }
     });
 
