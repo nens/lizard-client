@@ -23,15 +23,6 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
     }
   });
 
-  /**
-   * Turn of tools when box.type is changed or closed
-   */
-  $scope.$watch('box.type', function (n, o) {
-    if ($scope.box.type !== 'rain') {
-      $scope.tools.active = null;
-    }
-  });
-
   $scope.$watch('mapState.bounds', function (n, o) {
     if ($scope.timeState.hidden === false) {
       var start = $scope.timeState.start;
@@ -40,8 +31,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
       var rain = getRainForBounds(geom, start, stop);
       rain.then(function (response) {
         RasterService.setIntensityData(response);
-        $scope.timeState.changeOrigin = 'RainAggregate';
-        $scope.timeState.changedZoom = Date.now();
+        $scope.raster.changed = Date.now();
       });
     }
   });

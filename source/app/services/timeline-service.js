@@ -107,22 +107,19 @@ app.factory("Timeline", [ function () {
     },
 
     resize: function (dimensions, now, anStart, anEnd) {
-      if (dimensions) {
-        this.dimensions = dimensions;
-      }
+      var oldDimensions = angular.copy(this.dimensions);
+      this.dimensions = dimensions;
+      this.updateElements(oldDimensions, now, anStart, anEnd);
       svg = updateCanvas(svg, this.dimensions);
       drawAxes(svg, xAxis);
-      if (now && anStart && anEnd) {
-        this.updateElements(now, anStart, anEnd);
-      }
     },
 
-    updateElements: function (now, anStart, anEnd) {
+    updateElements: function (oldDimensions, now, anStart, anEnd) {
       if (circles) {
         updateCircleElements(circles, xScale);
       }
-      if (bars) {
-        updateRectangleElements(bars, xScale, this.dimensions);
+      if (bars && oldDimensions) {
+        updateRectangleElements(bars, xScale, oldDimensions, this.dimensions);
       }
       if (noDataIndicator) {
         updateNoDataElement(noDataIndicator, xScale, this.dimensions);
@@ -130,7 +127,7 @@ app.factory("Timeline", [ function () {
       if (nowIndicator && now) {
         this.updateNowElement(now);
       }
-      if (brush) {
+      if (brush && anStart && anEnd) {
         updateBrush(anStart, anEnd, brushg, brush, this.dimensions);
       }
     },
@@ -161,13 +158,13 @@ app.factory("Timeline", [ function () {
     },
 
     drawBars: function (data) {
-      var height = this.dimensions.height - this.dimensions.padding.top - this.dimensions.padding.bottom;
+      var height = initialHeight - this.dimensions.padding.top - this.dimensions.padding.bottom;
 
       var y = maxMin(data, '1');
       var options = {scale: 'linear'};
       var yScale = makeScale(
         y,
-        {min: height, max: 0},
+        {min: 0, max: height},
         options);
       bars = drawRectElements(svg, this.dimensions, data, xScale, yScale);
     },
@@ -265,9 +262,9 @@ app.factory("Timeline", [ function () {
       .attr('width', dimensions.width)
       .select("g")
       .attr("transform", "translate(" + dimensions.padding.left + ", 0)")
-      .select('g')
+      .select('#xaxis')
       .attr("transform", "translate(0 ," + height + ")");
-    svg.select("g").select("rect")
+    svg.select("g").select(".plot-temporal")
       .attr("height", height)
       .attr("width", width);
     // Update rain bars
@@ -371,11 +368,24 @@ app.factory("Timeline", [ function () {
     circles.attr("cx", xFunction);
   };
 
-  var updateRectangleElements = function (rectangles, xScale) {
+  var updateRectangleElements = function (rectangles, xScale, oldDimensions, newDimensions) {
     // UPDATE
     // Update old elements as needed.
-    var barWidth = rectangles.attr('width');
-    rectangles.attr("x", function (d) { return xScale(d[0]) - 0.5 * barWidth; });
+    var newHeight = newDimensions.height - newDimensions.padding.top - newDimensions.padding.bottom;
+    var oldHeight = oldDimensions.height - oldDimensions.padding.top - oldDimensions.padding.bottom;
+    var heightDiff = newHeight - oldHeight;
+    var barWidth = Number(rectangles.attr('width'));
+
+    rectangles.transition()
+      .duration(500)
+      .delay(500)
+      .attr("y", function (d) {
+        console.log(Number(d3.select(this).attr("y")), heightDiff);
+        return Number(d3.select(this).attr("y")) + heightDiff;
+      })
+      .attr("x", function (d) {
+        return xScale(d[0]) - 0.5 * barWidth;
+      });
   };
 
   var updateNoDataElement = function (noDataIndicator, xScale, dimensions) {
@@ -399,7 +409,7 @@ app.factory("Timeline", [ function () {
   };
 
   var drawCircleElements = function (svg, dimensions, data, xScale, yScale) {
-    var xFunction = function (d) { return Math.round(xScale(d.properties.timestamp)); };
+    var xFunction = function (d) { return xScale(d.properties.timestamp); };
     var yFunction = function (d) { return yScale(d.event_order); };
     var colorFunction = function (d) { return d.color; };
     // DATA JOIN
@@ -459,30 +469,27 @@ app.factory("Timeline", [ function () {
       barWidth = 0;
     }
 
-    var zero = yScale(0);
-
-    // UPDATE
-    // Update old elements as needed.
+    // // UPDATE
+    // // Update old elements as needed.
     bars.transition()
       .duration(500)
       .attr("x", function (d) { return xScale(d[0]) - 0.5 * barWidth; })
       .attr('width', barWidth)
-      .delay(500)
-      .attr("y", function (d) { return yScale(d[1]); })
-      .attr("height", function (d) { return height - yScale(d[1]); });
+      .attr("height", function (d) { return yScale(d[1]); })
+      .attr("y", function (d) { return height - yScale(d[1]); });
 
     // ENTER
     // Create new elements as needed.
     bars.enter().append("rect")
       .attr("class", "bar-timeline")
       .attr("x", function (d) { return xScale(d[0]) - 0.5 * barWidth; })
-      .attr('width', function (d) { return barWidth; })
-      .attr("y", zero)
+      .attr('width', barWidth)
       .attr("height", 0)
+      .attr("y", height)
       .transition()
       .duration(500)
-      .attr("y", function (d) { return yScale(d[1]); })
-      .attr("height", function (d) { return height - yScale(d[1]); });
+      .attr("height", function (d) { return yScale(d[1]); })
+      .attr("y", function (d) { return height - yScale(d[1]); });
 
     // EXIT
     // Remove old elements as needed.

@@ -55,7 +55,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
     timeline.addClickListener();
 
     var updateTimelineHeight = function (dim, nEventTypes) {
-      var newDimensions = timeline.dimensions;
+      var newDimensions = angular.copy(timeline.dimensions);
       var eventHeight = (nEventTypes - 1) * dim.events;
       eventHeight = eventHeight > 0 ? eventHeight: 0; // Default to 0px
       if (scope.tools.active === 'rain') {
@@ -85,7 +85,6 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
 
     scope.$watch('raster.changed', function (n, o) {
       if (n === o) { return true; }
-      console.log("drawing bars");
       timeline.drawBars(RasterService.getIntensityData());
     });
 
