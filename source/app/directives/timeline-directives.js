@@ -4,6 +4,7 @@
 app.directive('timeline', ["EventService", "RasterService", "Timeline", function (EventService, RasterService, Timeline) {
   
   var link = function (scope, element, attrs, timelineCtrl, $timeout) {
+
     var dimensions = {
       width: window.innerWidth,
       height: 70,
