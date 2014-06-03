@@ -56,14 +56,15 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
 
     var updateTimelineHeight = function (newDim, dim, nEventTypes) {
       var eventHeight;
-      eventHeight = eventHeight > 0 ? eventHeight: 0; // Default to 0px
       if (scope.tools.active === 'rain') {
         eventHeight = nEventTypes * dim.events;
+        eventHeight = eventHeight > 0 ? eventHeight: 0; // Default to 0px
         newDim.height = dim.height +
                                dim.bars +
                                eventHeight;
       } else {
         eventHeight = (nEventTypes - 1) * dim.events;
+        eventHeight = eventHeight > 0 ? eventHeight: 0; // Default to 0px
         newDim.height = dim.height + eventHeight;
       }
       timeline.resize(newDim,

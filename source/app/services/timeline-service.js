@@ -110,7 +110,7 @@ app.factory("Timeline", [ function () {
       var oldDimensions = angular.copy(this.dimensions);
       this.dimensions = dimensions;
       this.updateElements(oldDimensions, now, anStart, anEnd);
-      svg = updateCanvas(svg, this.dimensions);
+      svg = updateCanvas(svg, oldDimensions, this.dimensions);
       drawAxes(svg, xAxis);
     },
 
@@ -256,27 +256,38 @@ app.factory("Timeline", [ function () {
 
   };
 
-  var updateCanvas = function (svg, dimensions) {
-    var width = dimensions.width - dimensions.padding.left - dimensions.padding.right;
-    var height = dimensions.height - dimensions.padding.top - dimensions.padding.bottom;
+  var updateCanvas = function (svg, oldDims, newDims) {
+    var width = newDims.width - newDims.padding.left - newDims.padding.right;
+    var height = newDims.height - newDims.padding.top - newDims.padding.bottom;
 
-    svg.transition()
-      .duration(500)
-      .delay(500)
-      .attr('height', dimensions.height)
-      .attr('width', dimensions.width)
-      .select("g")
-      .attr("transform", "translate(" + dimensions.padding.left + ", 0)")
-      .select('#xaxis')
-      .attr("transform", "translate(0 ," + height + ")");
+    if (newDims.height < oldDims.height) {
+      svg.transition()
+        .duration(500)
+        .delay(500)
+        .attr('height', newDims.height)
+        .attr('width', newDims.width)
+        .select("g")
+        .attr("transform", "translate(" + newDims.padding.left + ", 0)")
+        .select('#xaxis')
+        .attr("transform", "translate(0 ," + height + ")");
+    } else {
+      svg.transition()
+        .duration(500)
+        .attr('height', newDims.height)
+        .attr('width', newDims.width)
+        .select("g")
+        .attr("transform", "translate(" + newDims.padding.left + ", 0)")
+        .select('#xaxis')
+        .attr("transform", "translate(0 ," + height + ")");
+    }
     svg.select("g").select(".plot-temporal")
       .attr("height", height)
       .attr("width", width);
-    // Update rain bars
+    // Update rain bar group
     svg.select('g').select('#rain-bar')
       .attr('width', width)
       .attr('height', height);
-    // Update circles
+    // Update circle group
     svg.select('g').select('#circle-group')
       .attr('width', width)
       .attr('height', height);
@@ -385,7 +396,6 @@ app.factory("Timeline", [ function () {
       if (heightDiff !== 0) {
         rectangles.transition()
           .duration(500)
-          .delay(500)
           .attr("y", function (d) {
             return Number(d3.select(this).attr("y")) + heightDiff;
           })
