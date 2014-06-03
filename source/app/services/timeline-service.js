@@ -411,7 +411,6 @@ app.factory("Timeline", [ function () {
     if (oldDim.height > newDim.height) {
       delay = 500;
     }
-    debugger
     brushg.selectAll("rect")
       .transition()
       .duration(500)
