@@ -102,8 +102,7 @@ app.factory("Timeline", [ function () {
       if (brushg) {
         brushg.remove();
       }
-      svg.classed("selecting", false);
-      d3.selectAll('.event').classed("selected", false);
+      svg.selectAll(".selected").classed("selected", false);
     },
 
     resize: function (dimensions) {
@@ -127,8 +126,8 @@ app.factory("Timeline", [ function () {
       if (nowIndicator) {
         this.updateNowElement();
       }
-      if (brush) {
-        updateBrush(brushg, brush, this.dimensions);
+      if (brushg) {
+        updateBrush(brushg, brush, oldDimensions, this.dimensions);
       }
     },
 
@@ -171,7 +170,6 @@ app.factory("Timeline", [ function () {
 
     removeBars: function () {
       drawRectElements(svg, this.dimensions, []);
-      bars.classed("selected", false);
       bars = undefined;
     },
 
@@ -350,14 +348,18 @@ app.factory("Timeline", [ function () {
     return brushed;
   };
 
-  var updateBrush = function (brushg, brush, dimensions) {
-    // brushg.call(brush.extent());
+  var updateBrush = function (brushg, brush, oldDim, newDim) {
     brushed();
-
-    var height = dimensions.height - dimensions.padding.top - dimensions.padding.bottom;
+    var height = newDim.height - newDim.padding.top - newDim.padding.bottom;
+    var delay = 0;
+    if (oldDim.height > newDim.height) {
+      delay = 500;
+    }
+    debugger
     brushg.selectAll("rect")
       .transition()
       .duration(500)
+      .delay(delay)
       .attr("height", height)
         .selectAll("rect")
           .transition()
