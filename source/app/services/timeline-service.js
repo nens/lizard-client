@@ -292,7 +292,8 @@ app.factory("Timeline", [ function () {
         });
       }
       if (bars) {
-        var newWidth = bars.attr('width') * d3.event.scale;
+        var barData = bars.data();
+        var newWidth = xScale(barData[1][0]) - xScale(barData[0][0]);
         bars
           .attr("x", function (d) { return xScale(d[0]) - 0.5 * newWidth; })
           .attr('width', newWidth);
