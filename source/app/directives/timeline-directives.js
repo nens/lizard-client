@@ -67,10 +67,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
         eventHeight = eventHeight > 0 ? eventHeight: 0; // Default to 0px
         newDim.height = dim.height + eventHeight;
       }
-      timeline.resize(newDim,
-        scope.timeState.at,
-        scope.timeState.animation.start,
-        scope.timeState.animation.end);
+      timeline.resize(newDim);
     };
 
     scope.$watch('events.changed', function (n, o) {

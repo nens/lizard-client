@@ -106,15 +106,15 @@ app.factory("Timeline", [ function () {
       d3.selectAll('.event').classed("selected", false);
     },
 
-    resize: function (dimensions, now, anStart, anEnd) {
+    resize: function (dimensions) {
       var oldDimensions = angular.copy(this.dimensions);
       this.dimensions = dimensions;
-      this.updateElements(oldDimensions, now, anStart, anEnd);
+      this.updateElements(oldDimensions);
       svg = updateCanvas(svg, oldDimensions, this.dimensions);
       drawAxes(svg, xAxis);
     },
 
-    updateElements: function (oldDimensions, now, anStart, anEnd) {
+    updateElements: function (oldDimensions) {
       if (circles) {
         updateCircleElements(circles, xScale);
       }
@@ -124,11 +124,11 @@ app.factory("Timeline", [ function () {
       if (noDataIndicator) {
         updateNoDataElement(noDataIndicator, xScale, this.dimensions);
       }
-      if (nowIndicator && now) {
-        this.updateNowElement(now);
+      if (nowIndicator) {
+        this.updateNowElement();
       }
-      if (brush && anStart && anEnd) {
-        updateBrush(anStart, anEnd, brushg, brush, this.dimensions);
+      if (brush) {
+        updateBrush(brushg, brush, this.dimensions);
       }
     },
 
@@ -171,6 +171,7 @@ app.factory("Timeline", [ function () {
 
     removeBars: function () {
       drawRectElements(svg, this.dimensions, []);
+      bars.classed("selected", false);
       bars = undefined;
     },
 
@@ -349,15 +350,13 @@ app.factory("Timeline", [ function () {
     return brushed;
   };
 
-  var updateBrush = function (start, end, brushg, brush, dimensions) {
-    brushg
-      .call(brush.extent([new Date(start), new Date(end)]));
+  var updateBrush = function (brushg, brush, dimensions) {
+    // brushg.call(brush.extent());
     brushed();
 
     var height = dimensions.height - dimensions.padding.top - dimensions.padding.bottom;
     brushg.selectAll("rect")
       .transition()
-      .delay(500)
       .duration(500)
       .attr("height", height)
         .selectAll("rect")
@@ -389,15 +388,23 @@ app.factory("Timeline", [ function () {
     // UPDATE
     // Update old elements as needed.
     if (rectangles[0].length > 0) {
+      var barHeight = initialHeight - newDimensions.padding.top - newDimensions.padding.bottom + newDimensions.bars;
+      var y = maxMin(rectangles.data(), '1');
+      var options = {scale: 'linear'};
       var newHeight = newDimensions.height - newDimensions.padding.top - newDimensions.padding.bottom;
       var oldHeight = oldDimensions.height - oldDimensions.padding.top - oldDimensions.padding.bottom;
       var heightDiff = newHeight - oldHeight;
+      var yScale = makeScale(
+        y,
+        {min: 0, max: barHeight},
+        options);
       var barWidth = Number(rectangles.attr('width'));
-      if (heightDiff !== 0) {
+      if (heightDiff < 0) {
         rectangles.transition()
           .duration(500)
+          .delay(500)
           .attr("y", function (d) {
-            return Number(d3.select(this).attr("y")) + heightDiff;
+            return newHeight - yScale(d[1]);
           })
           .attr("x", function (d) {
             return xScale(d[0]) - 0.5 * barWidth;
@@ -405,6 +412,9 @@ app.factory("Timeline", [ function () {
       } else {
         rectangles.transition()
           .duration(500)
+          .attr("y", function (d) {
+            return newHeight - yScale(d[1]);
+          })
           .attr("x", function (d) {
             return xScale(d[0]) - 0.5 * barWidth;
           });
