@@ -88,7 +88,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
       if (n === o) { return true; }
       updateTimelineHeight(angular.copy(timeline.dimensions), dimensions, scope.events.types.count);
       var data = scope.events.data.features;
-      timeline.drawCircles(data, scope.events.types.count, EventService.colors);
+      timeline.drawCircles(data);
       timeline.drawEventsContainedInBounds(scope.mapState.bounds);
       EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
     });

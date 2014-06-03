@@ -1,5 +1,17 @@
 /**
- * Service to create and update a timeline.
+ * Service to create and update a timeline currently used by the timeline-directive.
+ *
+ * Inject "Timeline" and call new timeline(<args>) to create a timeline. Currently the timeline
+ * supports circles (events), vertical bars (rain intensity) and a brush (selection tool). 
+ * The user may interact with the app through click, zoom and brush functions. Brush and 
+ * zoom is mutually exclusive. When you add brush functionality, zoom functionality has to 
+ * be removed manually by calling removeZoomListener() and vice versa. Zooming is prefered above
+ * clicking: when a user zooms through dragging, no click is fired.
+ *
+ * Everything in the timeline is animated for 500 milliseconds. To add new elements to the 
+ * timeline, make sure the elements are updated on zoom, brush and resize. The timeline resizes
+ * before elements are added and after elements are removed. Therefore new and old dimensions 
+ * need to be compared to delay the resize of elements the same amount as the canvas.
  */
 app.factory("Timeline", [ function () {
 
@@ -8,7 +20,8 @@ app.factory("Timeline", [ function () {
   var initialHeight;
 
   // D3 components
-  var xScale;
+  var xScale; // The only d3 scale for placement on the x axis within the whole timeline. Is only
+              // updated when zoomTo is called.
   var xAxis;
   var brush;
 
@@ -21,10 +34,21 @@ app.factory("Timeline", [ function () {
   var noDataIndicator;
   var nowIndicator;
   var brushg;
-  var circles;
-  var bars;
+  var circles; // events
+  var bars; // rain intensity
 
-  // Constructor function  
+  /**
+   * Constructor
+   * 
+   * @param {SVG element}         element svg element for the timeline.
+   * @param {object} dimensions   object containing, width, height, height per line of events, height
+   *                              per line of bars and an object containing top, bottom, left and right
+   *                              padding. All values in px.
+   * @param {epoch ms} start      begin value in milliseconds from epoch.
+   * @param {epoch ms} end        end value in milliseconds from epoch.
+   * @param {object} interaction  optional object containing callback functions for zoom, click and brush
+   *                              interaction with the rest of the app. 
+   */
   function Timeline(element, dimensions, start, end, interaction) {
     this.dimensions = angular.copy(dimensions);
     initialHeight = dimensions.height;
@@ -80,6 +104,9 @@ app.factory("Timeline", [ function () {
       svg.on("click", clicked);
     },
 
+    /**
+     * Draws a brush from start to end
+     */
     drawBrush: function (start, end) {
       brush = d3.svg.brush().x(xScale);
       brush.on("brush", brushed);
@@ -105,6 +132,18 @@ app.factory("Timeline", [ function () {
       svg.selectAll(".selected").classed("selected", false);
     },
 
+    /**
+     * Resizes the timeline.
+     *
+     * Makes a deep copy of the old dimensions,
+     * updates canvas,
+     * updates all elements,
+     * redraws the axis.
+     * 
+     * @param {object} dimensions   object containing, width, height, height per line of events, height
+     *                              per line of bars and an object containing top, bottom, left and right
+     *                              padding. All values in px.
+     */
     resize: function (dimensions) {
       var oldDimensions = angular.copy(this.dimensions);
       this.dimensions = dimensions;
@@ -131,6 +170,9 @@ app.factory("Timeline", [ function () {
       }
     },
 
+    /**
+     * Updates the brush's extent and calls the brush function
+     */
     updateBrushExtent: function (start, end) {
       brushg
         .call(brush.extent([new Date(start), new Date(end)]));
@@ -145,7 +187,16 @@ app.factory("Timeline", [ function () {
         .attr('y1', height);
     },
 
-    drawCircles: function (data, nLines, colors) {
+    /**
+     * Updates, adds or removes all circles in the data object
+     *
+     * @param {array} data array of objects [{properties.timestamp: timestamp, 
+     *                                        id: <id>,
+     *                                        color: <color code>,
+     *                                        geometry.coordinates: [lat, lon],
+     *                                        event_order: <int specifying the line of events>}]
+     */
+    drawCircles: function (data) {
       var yScale = makeEventsYscale(initialHeight, this.dimensions);
       circles = drawCircleElements(
         svg,
@@ -156,6 +207,11 @@ app.factory("Timeline", [ function () {
       );
     },
 
+    /**
+     * Updates, adds or removes all bars in the data object
+     *
+     * @param {array} data array of arrays [[bar_timestamp, bar_height]]
+     */
     drawBars: function (data) {
       var height = initialHeight - this.dimensions.padding.top - this.dimensions.padding.bottom + this.dimensions.bars;
 
