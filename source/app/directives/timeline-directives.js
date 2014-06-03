@@ -164,8 +164,8 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
           end = scope.timeState.animation.end;
         } else {
           var buffer = (scope.timeState.end - scope.timeState.start) / 100;
-          start = scope.timeState.at;
-          end = scope.timeState.at + buffer;
+          end = scope.timeState.at;
+          start = scope.timeState.at - buffer;
         }
 
         // Draw the brush

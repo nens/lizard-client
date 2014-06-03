@@ -122,6 +122,10 @@ app.factory("Timeline", [ function () {
           .delay(500)
           .duration(500)
           .attr("height", height);
+      brushg.select('.e').select('rect')
+        .attr("x", 0)
+        .attr("width", 2)
+        .attr("style", "fill: #e74c3c;");
       brushed();
     },
 
@@ -411,7 +415,6 @@ app.factory("Timeline", [ function () {
     if (oldDim.height > newDim.height) {
       delay = 500;
     }
-    debugger
     brushg.selectAll("rect")
       .transition()
       .duration(500)
