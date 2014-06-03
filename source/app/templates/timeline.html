@@ -1,8 +1,12 @@
 <div id="timeline" ng-controller="TimeLine">
-      <div id="timeline-ribbon" class="ribbon">
-    <div class="arrow arrow-left" ng-click="toggleTimeline()" title="Map layers">
+  <div id="timeline-ribbon" class="ribbon" rel="tooltip" 
+         data-toggle="tooltip" 
+         data-placement="right" 
+         title="" 
+         data-original-title="Tijdlijn aan/uit">
+    <div class="arrow arrow-left" ng-click="toggleTimeline()">
     </div>
-    <div class="arrow arrow-right" ng-click="toggleTimeline()" title="Map layers"><i class="fa fa-clock-o ribbon-icon-timeline"></i>
+    <div class="arrow arrow-right" ng-click="toggleTimeline()"><i class="fa fa-clock-o ribbon-icon-timeline"></i>
     </div>
   </div>
 
@@ -12,14 +16,55 @@
 
   <div class="bovenbalk">
     <div class="btn-group" >
-      <a href="#" ng-click="timeState.enableAnimation()" class="extra-padding timeline-button">
+      <a href="#" 
+         ng-click="timeState.enableAnimation()" 
+         class="extra-padding timeline-button"
+         rel="tooltip" 
+         data-toggle="tooltip" 
+         data-placement="top" 
+         title="" 
+         data-original-title="Tijdlijnselectie">
         <i ng-class="{'fa-fw fa fa-crop': !timeState.animation.enabled, 'fa-fw fa fa-arrows-h': timeState.animation.enabled }"></i></a>
-      <a href="#" ng-click="timeState.playPauseAnimation()" class="extra-padding timeline-button" ng-class="{'active': timeState.animation.playing}">
+      <a href="#" 
+         ng-click="timeState.playPauseAnimation()" 
+         class="extra-padding timeline-button" 
+         ng-class="{'active': timeState.animation.playing}"
+         rel="tooltip" 
+         data-toggle="tooltip" 
+         data-placement="top" 
+         title="" 
+         data-original-title="Afspelen/pauzeren">
         <i ng-class="{'fa-fw fa fa-play': !timeState.animation.playing, 'fa-fw fa fa-pause active': timeState.animation.playing }"></i></a>
-      <a href="#" ng-mousedown="timeState.animation.toggleAnimateFastForward(true)" ng-mouseup="timeState.animation.toggleAnimateFastForward(false)" class="extra-padding timeline-button timeline-button-active" ng-class="{'active': timeState.animation.playing}">
+      <a href="#" 
+         ng-mousedown="timeState.animation.toggleAnimateFastForward(true)" 
+         ng-mouseup="timeState.animation.toggleAnimateFastForward(false)" 
+         class="extra-padding timeline-button timeline-button-active" 
+         ng-class="{'active': timeState.animation.playing}"
+         rel="tooltip" 
+         data-toggle="tooltip" 
+         data-placement="top" 
+         title="" 
+         data-original-title="Voorwaards versnellen">
         <i class="fa-fw fa fa-forward"></i></a>
-      <a href="#" ng-mousedown="timeState.animation.stepBack()" class="extra-padding timeline-button" ng-class="{'active': timeState.animation.playing}">
+      <a href="#" 
+         ng-mousedown="timeState.animation.stepBack()" 
+         class="extra-padding timeline-button" 
+         ng-class="{'active': timeState.animation.playing}"
+         rel="tooltip" 
+         data-toggle="tooltip" 
+         data-placement="top" 
+         title="" 
+         data-original-title="Stap terug in tijd">
         <i class="fa fa-step-backward"></i></a>
+      <a href="#" 
+         ng-mousedown=""
+         class="extra-padding timeline-button" 
+         rel="tooltip" 
+         data-toggle="tooltip" 
+         data-placement="top" 
+         title="" 
+         data-original-title="Naar nu">
+        <i class="fa fa-clock-o"></i></a>
     </div>
     <span class="nxt-font"> | <% timeState.start | date:'d MMM y' %> - <% timeState.end | date:'d MMM y' %> ( <% timeState.at | date:'d MMM y - HH:mm' %> )</span>        
   </div>

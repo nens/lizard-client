@@ -55,6 +55,7 @@ module.exports = function (grunt) {
         '<%= nxt_dir.src %>/app/templates/templates.js',
         '<%= nxt_dir.src %>/app/lib/TileLayer.GeoJSONd3.js',
         '<%= nxt_dir.src %>/app/lib/leaflet-utfgrid-lizard.js',
+        '<%= nxt_dir.src %>/app/lib/utils.js',        
       ],
       watch: {
         tests: {

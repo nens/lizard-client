@@ -82,9 +82,9 @@ app.config(function ($locationProvider) {
  */
 app.controller("MasterCtrl",
   ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService", "RasterService",
-   "UtilService", "EventService", "ngTableParams",
+   "UtilService", "EventService", "ngTableParams", "hashSyncHelper",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, EventService, ngTableParams) {
+            UtilService, EventService, ngTableParams, hashSyncHelper) {
   // BOX MODEL
   $scope.box = {
     detailMode: false,
@@ -345,7 +345,7 @@ app.controller("MasterCtrl",
         feature.properties.geometry = feature.geometry;
         $scope.activeObject.events.push(feature.properties);
       });
-      console.log($scope.activeObject);
+      // console.log($scope.activeObject);
 
       $scope.tableParams = new ngTableParams({
           page: 1,            // show first page
@@ -489,7 +489,7 @@ app.controller("MasterCtrl",
    * Uses 3 way logic: true, false and undefined:
    *   undefined: timeline element doesn't exist yet.
    *   false: timeline exists but is hidden.
-   *   true: timeline exists and is shown>
+   *   true: timeline exists and is shown.
    *
    * Initial state of the timeState.hidden is 'undefined'.
    */
@@ -518,7 +518,7 @@ app.controller("MasterCtrl",
    * Initial state 
    */
   $scope.rain = {
-    enabled: false,
+    enabled: false
   };
 
   /**

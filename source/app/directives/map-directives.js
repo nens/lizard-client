@@ -29,14 +29,16 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
     if (layer.type === "TMS" && layer.baselayer) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
                                        {name: "Background",
-                                        maxZoom: 20, zIndex: layer.z_index});
+                                        maxZoom: 19, 
+                                        detectRetina: true,
+                                        zIndex: layer.z_index});
     } else if (layer.type === "WMS") {
       var options = {
         layers: layer.slug,
         format: 'image/png',
         version: '1.1.1',
         minZoom: layer.min_zoom,
-        maxZoom: 20,
+        maxZoom: 19,
         zIndex: layer.z_index
       };
       //NOTE ugly hack
@@ -64,7 +66,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
           name: layer.slug,
           useJsonP: false,
           minZoom: layer.min_zoom_click,
-          maxZoom: 20,
+          maxZoom: 19,
           order: layer.z_index,
           zIndex: layer.z_index
         });
@@ -75,7 +77,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
         slug: layer.slug,
         name: layer.slug,
         minZoom: layer.min_zoom,
-        maxZoom: 20,
+        maxZoom: 19,
         zIndex: layer.z_index
       });
     }
@@ -250,14 +252,14 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
 
   return this;
 });
-app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
+app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', function ($location, $timeout, UtilService, hashSyncHelper) {
 
   var link = function (scope, element, attrs, ctrl) {
     // Leaflet global variable to peed up vector layer, 
     // see: http://leafletjs.com/reference.html#path-canvas
     window.L_PREFER_CANVAS = true;
     // instead of 'map' element here for testability
-    var osmAttrib = 'Map data © OpenStreetMap contributors';
+    var osmAttrib = '<a href="https://www.mapbox.com/about/maps/">&copy; Mapbox</a> <a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>';
     var bounds = window.data_bounds.all;
     var southWest = L.latLng(bounds.south, bounds.west);
     var northEast = L.latLng(bounds.north, bounds.east);
@@ -269,6 +271,7 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
     map.fitBounds(maxBounds);
     map.attributionControl.addAttribution(osmAttrib);
     map.attributionControl.setPrefix('');
+    UtilService.getZoomlevelLabel(map.getZoom());
     scope.map = map;
     scope.mapState.bounds = scope.map.getBounds();
 
@@ -301,6 +304,8 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
     });
 
     scope.map.on('zoomend', function () {
+
+      UtilService.getZoomlevelLabel(scope.map.getZoom());
 
       if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
         if (!scope.beenThereDoneIntersectSuggestion) {
@@ -346,10 +351,10 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
       if (!scope.$$phase) {
         scope.$apply(function () {
           scope.mapState.mapMoving = false;
-          $location.hash(newHash);
+          hashSyncHelper.setHash({'location':newHash});
         });
       } else {
-        $location.hash(newHash);
+        hashSyncHelper.setHash({'location':newHash});
       }
       // If elevation layer is active:
       if (scope.mapState.activeBaselayer === 3 && scope.tools.active === 'autorescale') {
@@ -380,16 +385,34 @@ app.directive('map', ['$location', '$timeout', function ($location, $timeout) {
      */
     scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
       if (!scope.holdRightThere || scope.holdRightThere === undefined) {
-        var latlonzoom = $location.hash().split(',');
-        if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
-          if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
-            scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: true, animate: true});
+        var hash = hashSyncHelper.getHash();
+
+        var baselayerHash = hash.bl;
+        var locationHash = hash.location;
+
+        if(baselayerHash !== undefined) {
+          scope.mapState.activeBaselayer = parseInt(baselayerHash);
+          scope.mapState.changeBaselayer();
+        }
+
+        if(locationHash !== undefined) { 
+          var latlonzoom = locationHash.split(','); 
+          if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
+            if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
+              scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: true, animate: true});
+            }
           }
         }
       }
       scope.mapState.mapMoving = false;
       scope.holdRightThere = false;
     });
+
+    scope.$watch('mapState.activeBaselayer', function(n,o) {
+      if (n === o) { return true; }      
+      hashSyncHelper.setHash({'bl':n}); // set baselayer in url by id
+    });
+
 
     /**
      * Watch to remove clicklayer when user clicks on omnibox close button.
