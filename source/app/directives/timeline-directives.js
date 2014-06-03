@@ -19,6 +19,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
     var start = scope.timeState.start;
     var end = scope.timeState.end;
     var el = d3.select(element[0]).select("#timeline-svg-wrapper").select("svg");
+    
     var interaction = {
       zoomFn: function (scale) {
         scope.$apply(function () {
@@ -50,10 +51,14 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
 
     // Create the timeline
     var timeline = new Timeline(el, dimensions, start, end, interaction);
+    
     // Activate zoom and click listener
     timeline.addZoomListener();
     timeline.addClickListener();
 
+    /**
+     * Redetermines dimensions of timeline and calls resize.
+     */
     var updateTimelineHeight = function (newDim, dim, nEventTypes) {
       var eventHeight;
       if (scope.tools.active === 'rain') {
@@ -70,6 +75,15 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
       timeline.resize(newDim);
     };
 
+    /**
+     * Timeline is updated when new events are added. 
+     * 
+     * Resizes timeline,
+     * redraws existing events,
+     * adds new events,
+     * draws only those in the spatial extent of the map,
+     * and counts the currently visible events.
+     */
     scope.$watch('events.changed', function (n, o) {
       if (n === o) { return true; }
       updateTimelineHeight(angular.copy(timeline.dimensions), dimensions, scope.events.types.count);
@@ -79,6 +93,14 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
       EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
     });
 
+    /**
+     * Timeline is updated when new aggregated raster data is available.
+     *
+     * Resizes timeline,
+     * redraws existing bars,
+     * adds new bars,
+     * and removes old bars.
+     */
     scope.$watch('raster.changed', function (n, o) {
       if (n === o) { return true; }
       if (scope.tools.active === 'rain') {
@@ -90,6 +112,11 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
       }
     });
 
+
+    /**
+     * Timeline is updated when something other than the timeline
+     * updates the temporal extent.
+     */
     scope.$watch('timeState.changedZoom', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.changeOrigin !== 'timeline') {
@@ -97,12 +124,29 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
       }
     });
 
+    /**
+     * Draws only those events that are in the spatial extent of the map.
+     */
     scope.$watch('mapState.moved', function (n, o) {
       if (n === o) { return true; }
       timeline.drawEventsContainedInBounds(scope.mapState.bounds);
       EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
     });
 
+    /**
+     * Adds or removes brush when animation is toggled.
+     *
+     * When animation is enabled,
+     * zoom functionality is disabled,
+     * animation extent is set when not undefined or outside of temporal extent,
+     * brush is drawn.
+     *
+     * When animation is disabled,
+     * animation is paused,
+     * brush is removed,
+     * zoom functionality is added,
+     * changedZoom is called to re-add all events on timeline to the map
+     */
     scope.$watch('timeState.animation.enabled', function (newVal, oldVal) {
       if (newVal === oldVal) { return true; }
       if (scope.timeState.animation.enabled) {
@@ -150,18 +194,6 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
         //timeline.updateNowElement(scope.timeState.at);
       }
     });
-
-    /**
-     * Hide the now indicator when switching 
-     * to anything but the rain tool.
-     */
-    // scope.$watch('tools.active', function (n, o) {
-    //   if (n === o || scope.tools.active === 'rain') {
-    //     return true;
-    //   } else {
-    //     timelineCtrl.hideNow(graph);
-    //   }
-    // });
 
     window.onresize = function () {
       var dimensions = timeline.dimensions;
