@@ -491,8 +491,8 @@ app.factory("Timeline", [ function () {
 
   /**
    * Moves rectangle elements to right position relative to the timeline svg and xaxis.
-   * Everythig to the svg is relative to the top left corner, so if the timeline grows,
-   * the bars need to mover further down. The amount is computed from the difference between
+   * Everything to the svg is relative to the top left corner, so if the timeline grows,
+   * the bars need to move further down. The amount is computed from the difference between
    * the old and new dimensions and the move is delayed depending on the growth or shrinkage
    * of the timeline.
    */
