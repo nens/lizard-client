@@ -428,7 +428,7 @@ app.factory("Timeline", [ function () {
     var clicked = function () {
       // Check whether user is dragging instead of clicking
       if (!d3.event.defaultPrevented) {
-        clickFn(xScale, dimensions);
+        clickFn(d3.event, xScale, dimensions);
       }
     };
     return clicked;
