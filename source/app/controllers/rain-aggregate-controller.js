@@ -183,11 +183,11 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
   };
 
   /**
-   * Returns the aggWindow. Either  five minutes, an hour or a day, should 
+   * Returns aggWindow. Either five minutes, an hour or a day, should 
    * lead to a minimum of three pixels within the drawing width.
    * 
-   * @param  {int} start    start of rainserie.
-   * @param  {int} stop     end of rainserie.
+   * @param  {int} start    start of rainseries.
+   * @param  {int} stop     end of rainseries.
    * @param  {int} drawingWidth size of graph in px.
    * @return {int} aggWindow in ms.
    */
