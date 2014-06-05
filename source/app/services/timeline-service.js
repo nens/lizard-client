@@ -110,6 +110,10 @@ app.factory("Timeline", [ function () {
     drawBrush: function (start, end) {
       brush = d3.svg.brush().x(xScale);
       brush.on("brush", brushed);
+      brush.on('brushstart', function () {
+        svg.on('click', null);
+      });
+      brush.on("brushend", this.addClickListener()); //TODO: Snap the brush to nearest logical unit, 5min, hour, week etc.
 
       brushg = svg.select('g').append("g")
         .attr("class", "brushed");
@@ -275,10 +279,7 @@ app.factory("Timeline", [ function () {
       );
       svg
         .on("zoom", null)
-        .on("mousedown.zoom", null)
-        .on("touchstart.zoom", null)
-        .on("touchmove.zoom", null)
-        .on("touchend.zoom", null);
+        .on("mousedown.zoom", null);
     }
   };
 
@@ -431,6 +432,7 @@ app.factory("Timeline", [ function () {
     var clicked = function () {
       // Check whether user is dragging instead of clicking
       if (!d3.event.defaultPrevented) {
+        console.log('clicking', d3.event);
         clickFn(xScale, dimensions);
       }
     };
