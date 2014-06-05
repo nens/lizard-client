@@ -25,7 +25,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
       zoomFn: function (scale) {
         scope.$apply(function () {
           scope.timeState.start = scale.domain()[0].getTime();
-          scope.timeState.end = scale.domain()[1].getTime();
+          scope.timeState.at = scale.domain()[1].getTime();
           scope.timeState.changeOrigin = 'timeline';
           scope.timeState.changedZoom = Date.now();
         });
@@ -39,8 +39,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
         var s = brush.extent();
         var sSorted = [s[0].getTime(), s[1].getTime()].sort();
         scope.timeState.animation.start = sSorted[0];
-        scope.timeState.animation.end = sSorted[1];
-        scope.timeState.at = (sSorted[0] + sSorted[1]) / 2;
+        scope.timeState.at = sSorted[1];
         if (!scope.timeState.animation.playing && !scope.$$phase) {
           scope.$apply();
         }
@@ -157,11 +156,11 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
         var start;
         var end;
         if (scope.timeState.animation.start !== undefined
-          && scope.timeState.animation.end !== undefined
+          && scope.timeState.at !== undefined
           && scope.timeState.animation.start > scope.timeState.start
-          && scope.timeState.animation.end < scope.timeState.end) {
+          && scope.timeState.at < scope.timeState.end) {
           start = scope.timeState.animation.start;
-          end = scope.timeState.animation.end;
+          end = scope.timeState.at;
         } else {
           var buffer = (scope.timeState.end - scope.timeState.start) / 100;
           end = scope.timeState.at;
@@ -189,7 +188,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline", function
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.animation.enabled) {
-        timeline.updateBrushExtent(scope.timeState.animation.start, scope.timeState.animation.end);
+        timeline.updateBrushExtent(scope.timeState.animation.start, scope.timeState.at);
       }
       if (scope.tools.active === 'rain') {
         //timeline.updateNowElement(scope.timeState.at);

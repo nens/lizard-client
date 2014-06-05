@@ -179,7 +179,6 @@ app.controller("MasterCtrl",
     hidden: undefined,
     animation: {
       start: undefined,
-      stop: undefined,
       playing: false,
       enabled: false,
       currentFrame: 0,

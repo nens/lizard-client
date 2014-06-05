@@ -62,18 +62,17 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
     }
     $scope.$apply(function () {
       $scope.timeState.animation.start += timeStep;
-      $scope.timeState.animation.end += timeStep;
+      $scope.timeState.at += timeStep;
     });
     if ($scope.timeState.at >= $scope.timeState.end ||
         $scope.timeState.at < $scope.timeState.start) {
       $scope.$apply(function () {
-        $scope.timeState.animation.end = $scope.timeState.animation.end -
+        $scope.timeState.at = $scope.timeState.at -
                                          $scope.timeState.animation.start +
                                          $scope.timeState.start;
         $scope.timeState.animation.start = $scope.timeState.start;
       });
     }
-    $scope.timeState.at = $scope.timeState.animation.end;
     if ($scope.timeState.animation.playing) {
       setTimeout(function () {
         window.requestAnimationFrame(step);
@@ -109,15 +108,12 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
     var stepBack = ($scope.timeState.end - $scope.timeState.start) / 10;
     var wasOn = $scope.timeState.animation.playing;
     $scope.timeState.animation.start = $scope.timeState.animation.start - stepBack;
-    $scope.timeState.animation.end = $scope.timeState.animation.end - stepBack;
+    $scope.timeState.at = $scope.timeState.at - stepBack;
     $scope.timeState.playPauseAnimation('off');
     if (!$scope.timeState.animation.playing && wasOn) {
       setTimeout(function () {
         $scope.timeState.playPauseAnimation();
       }, 500);
-    } else {
-      $scope.timeState.at = ($scope.timeState.animation.end +
-                             $scope.timeState.animation.start) / 2;
     }
   };
 }]);
