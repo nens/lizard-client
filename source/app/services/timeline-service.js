@@ -1,5 +1,5 @@
 /**
- * Service to create and update a timeline currently used by the timeline-directive.
+ * Service to create and update a timeline. Currently used by the timeline-directive.
  *
  * Inject "Timeline" and call new timeline(<args>) to create a timeline. Currently the timeline
  * supports circles (events), vertical bars (rain intensity) and a brush (selection tool). 
@@ -76,6 +76,7 @@ app.factory("Timeline", [ function () {
 
     constructor: Timeline,
 
+    // TODO: create real noDataIndicator, this is just legacy code
     addNoDataIndicator: function () {
       var width = this.dimensions.width - this.dimensions.padding.left - this.dimensions.padding.right,
       height = this.dimensions.height - this.dimensions.padding.top - this.dimensions.padding.bottom;
@@ -88,6 +89,7 @@ app.factory("Timeline", [ function () {
         .style('fill', 'url(#lightstripe)');
     },
 
+    // TODO: remove nowIndicator and add it to the brush
     addNowIndicator: function () {
       var height = this.dimensions.height - this.dimensions.padding.top - this.dimensions.padding.bottom;
 
@@ -160,6 +162,11 @@ app.factory("Timeline", [ function () {
       drawAxes(svg, xAxis);
     },
 
+    /**
+     * Update all elements to accomadate new dimensions.
+     * 
+     * @param  {dimensions object} oldDimensions copy of the old dimensions
+     */
     updateElements: function (oldDimensions) {
       if (circles) {
         updateCircleElements(circles, xScale);
@@ -174,7 +181,7 @@ app.factory("Timeline", [ function () {
         this.updateNowElement();
       }
       if (brushg) {
-        updateBrush(brushg, brush, oldDimensions, this.dimensions);
+        updateBrush(brushg, oldDimensions, this.dimensions);
       }
     },
 
@@ -187,6 +194,7 @@ app.factory("Timeline", [ function () {
       brushed();
     },
 
+    // TODO: remove nowIndicator and add it to the brush
     updateNowElement: function (now) {
       var height = this.dimensions.height - this.dimensions.padding.top - this.dimensions.padding.bottom;
       nowIndicator
@@ -237,6 +245,13 @@ app.factory("Timeline", [ function () {
       bars = undefined;
     },
 
+    /**
+     * Takes a leaflet bounds object and filters all circles whether their geographic
+     * location falls within the bounds. Candidate to be refactored, since this
+     * service is specific to events.
+     * 
+     * @param  {leaflet bounds object} bounds to filter events with
+     */
     drawEventsContainedInBounds: function (bounds) {
       var latLng = [];
       d3.selectAll("circle").classed("hidden", true);
@@ -253,12 +268,15 @@ app.factory("Timeline", [ function () {
       selected.classed("hidden", false);
     },
 
+    /**
+     * Update domain of scale and call functions to update timeline to new
+     * scale.
+     * 
+     * @param  {int} start in ms since epoch
+     * @param  {int} end   in ms since epoch
+     */
     zoomTo: function (start, end) {
-      var width = this.dimensions.width - this.dimensions.padding.left - this.dimensions.padding.right;
-      xScale = makeScale(
-        {min: new Date(start), max: new Date(end)},
-        {min: 0, max: width},
-        { type: 'time' });
+      xScale.domain([new Date(start), new Date(end)]);
       xAxis = makeAxis(xScale, {orientation: "bottom", ticks: 5});
       this.updateElements();
       drawAxes(svg, xAxis);
@@ -272,6 +290,9 @@ app.factory("Timeline", [ function () {
       );
     },
 
+    /**
+     * Thorougly removes zoom listeners.
+     */
     removeZoomListener: function () {
       svg.call(d3.behavior.zoom()
         .x(xScale)
@@ -283,6 +304,15 @@ app.factory("Timeline", [ function () {
     }
   };
 
+  /**
+   * Creates groups according to dimensions to accomadete all timeline elements,
+   * 
+   * @param  {d3 selection} svg        element to create timeline.
+   * @param  {object}       dimensions object containing, width, height, height per line of events, height
+   *                                   per line of bars and an object containing top, bottom, left and right
+   *                                   padding. All values in px.
+   * @return {d3 selection} svg        timeline svg.
+   */
   var createCanvas = function (svg, dimensions) {
     var width = dimensions.width - dimensions.padding.left - dimensions.padding.right,
         height = dimensions.height - dimensions.padding.top - dimensions.padding.bottom;
@@ -316,6 +346,10 @@ app.factory("Timeline", [ function () {
 
   };
 
+  /**
+   * Updates the timeline svg. With a delay when getting smaller, without when 
+   * becoming larger.
+   */
   var updateCanvas = function (svg, oldDims, newDims) {
     var width = newDims.width - newDims.padding.left - newDims.padding.right;
     var height = newDims.height - newDims.padding.top - newDims.padding.bottom;
@@ -354,6 +388,12 @@ app.factory("Timeline", [ function () {
     return svg;
   };
 
+  /**
+   * Create function that updates all elements to zoom action and calls zoomFn.
+   *
+   * Put all scope specific in the zoom callback from the directive, all the standard
+   * (re-)placement of elements in here.
+   */
   var setZoomFunction = function (svg, dimensions, xScale, xAxis, zoomFn) {
     var zoomed = function () {
       drawAxes(svg, xAxis);
@@ -368,11 +408,6 @@ app.factory("Timeline", [ function () {
         bars
           .attr("x", function (d) { return xScale(d[0]) - 0.5 * newWidth; })
           .attr('width', newWidth);
-      }
-      if (nowIndicator) {
-        nowIndicator
-          .attr('x1', xScale(scope.timeState.at) || graph.margin.left - 5)
-          .attr('x2', xScale(scope.timeState.at) || graph.margin.left - 5);
       }
       if (noDataIndicator) {
         var year2014 = 1388534400000; // in msecs, since epoch
@@ -389,6 +424,9 @@ app.factory("Timeline", [ function () {
     return zoomed;
   };
 
+  /**
+   * Create brush function that does all the brush selection and call the callback.
+   */
   var setBrushFunction = function (xScale, brushFn) {
     var brushed = function () {
       var s = brush.extent();
@@ -409,7 +447,23 @@ app.factory("Timeline", [ function () {
     return brushed;
   };
 
-  var updateBrush = function (brushg, brush, oldDim, newDim) {
+  /**
+   * Creates click function. If default is prevented, the click was a zoom.
+   */
+  var setClickFunction = function (xScale, dimensions, clickFn) {
+    var clicked = function () {
+      // Check whether user is dragging instead of clicking
+      if (!d3.event.defaultPrevented) {
+        clickFn(d3.event, xScale, dimensions);
+      }
+    };
+    return clicked;
+  };
+
+  /**
+   * Updates the visible brush element's vertical height.
+   */
+  var updateBrush = function (brushg, oldDim, newDim) {
     brushed();
     var height = newDim.height - newDim.padding.top - newDim.padding.bottom;
     var delay = 0;
@@ -428,17 +482,10 @@ app.factory("Timeline", [ function () {
           .attr("height", height);
   };
 
-  var setClickFunction = function (xScale, dimensions, clickFn) {
-    var clicked = function () {
-      // Check whether user is dragging instead of clicking
-      if (!d3.event.defaultPrevented) {
-        console.log('clicking', d3.event);
-        clickFn(xScale, dimensions);
-      }
-    };
-    return clicked;
-  };
-
+  /**
+   * Updates horizontal position of circles. To update height, get the data and call
+   * drawCircles.
+   */
   var updateCircleElements = function (circles, xScale) {
     var xFunction = function (d) { return Math.round(xScale(d.properties.timestamp)); };
 
@@ -447,6 +494,13 @@ app.factory("Timeline", [ function () {
     circles.attr("cx", xFunction);
   };
 
+  /**
+   * Moves rectangle elements to right position relative to the timeline svg and xaxis.
+   * Everything to the svg is relative to the top left corner, so if the timeline grows,
+   * the bars need to move further down. The amount is computed from the difference between
+   * the old and new dimensions and the move is delayed depending on the growth or shrinkage
+   * of the timeline.
+   */
   var updateRectangleElements = function (rectangles, xScale, oldDimensions, newDimensions) {
     // UPDATE
     // Update old elements as needed.
@@ -485,6 +539,7 @@ app.factory("Timeline", [ function () {
     }
   };
 
+  // TODO: legacy, implement real noDataIndicator.
   var updateNoDataElement = function (noDataIndicator, xScale, dimensions) {
     var width = dimensions.width - dimensions.padding.left - dimensions.padding.right,
       height = dimensions.height - dimensions.padding.top - dimensions.padding.bottom,
@@ -499,12 +554,9 @@ app.factory("Timeline", [ function () {
       });
   };
 
-  var updateNowElement = function (nowIndicator, xScale, dimensions, now) {
-    nowIndicator
-      .attr('x1', xScale(now) || dimensions.padding.left - 5)
-      .attr('x2', xScale(now) || dimensions.padding.left - 5);
-  };
-
+  /**
+   * Draws circle elements according to a d3 update pattern.
+   */
   var drawCircleElements = function (svg, dimensions, data, xScale, yScale) {
     var xFunction = function (d) { return xScale(d.properties.timestamp); };
     var yFunction = function (d) { return yScale(d.event_order); };
@@ -552,7 +604,9 @@ app.factory("Timeline", [ function () {
     return circles;
   };
 
-
+  /**
+   * Draws bar elements according to a d3 update pattern.
+   */
   var drawRectElements = function (svg, dimensions, data, xScale, yScale) {
     var height = dimensions.height - dimensions.padding.top - dimensions.padding.bottom;
     // Join new data with old elements, based on the timestamp.
@@ -604,6 +658,9 @@ app.factory("Timeline", [ function () {
     return bars;
   };
 
+  /**
+   * Returns a max min object for a data object or array of arrays.
+   */
   var maxMin = function (data, key) {
     var max = d3.max(data, function (d) {
             return Number(d[key]);
@@ -618,6 +675,9 @@ app.factory("Timeline", [ function () {
     };
   };
 
+  /**
+   * Returns a d3 scale.
+   */
   var makeScale = function (minMax, range, options) {
     // Instantiate a d3 scale based on min max and 
     // width and height of plot
@@ -644,6 +704,12 @@ app.factory("Timeline", [ function () {
     return scale;
   };
 
+  /**
+   * Returns a d3 scale to place events vertically in lines above each other.
+   * 
+   * @param  {int}               iniH initial height of the timeline in px.
+   * @param  {dimensions object} dims current dimensions of the timeline.
+   */
   var makeEventsYscale = function (iniH, dims) {
     var yScale = function (order) {
       var padding = dims.events / 2;
@@ -653,7 +719,9 @@ app.factory("Timeline", [ function () {
     return yScale;
   };
 
-
+  /**
+   * Create a d3 axis based on scale.
+   */
   var makeAxis = function (scale, options) {
     // Make an axis for d3 based on a scale
     var axis;
