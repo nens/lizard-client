@@ -22,6 +22,9 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
     }
   });
 
+  /**
+   * Get new raster rain data when panning or zooming spatially.
+   */
   $scope.$watch('mapState.bounds', function (n, o) {
     if ($scope.timeState.hidden === false) {
       var start = $scope.timeState.start;
@@ -35,6 +38,9 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
     }
   });
 
+  /**
+   * Get new raster rain data when panning or zooming temporally.
+   */
   $scope.$watch('timeState.changedZoom', function (n, o) {
     if ($scope.timeState.hidden === false
       && $scope.timeState.changeOrigin !== 'RainAggregate') {
@@ -176,6 +182,15 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
     );
   };
 
+  /**
+   * Returns the aggWindow. Either  five minutes, an hour or a day, should 
+   * lead to a minimum of three pixels within the drawing width.
+   * 
+   * @param  {int} start    start of rainserie.
+   * @param  {int} stop     end of rainserie.
+   * @param  {int} drawingWidth size of graph in px.
+   * @return {int} aggWindow in ms.
+   */
   var getAggWindow = function (start, stop, drawingWidth) {
     var aggWindow;
     var minPx = 3; // Minimum width of a bar
