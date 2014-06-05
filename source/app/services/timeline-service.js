@@ -1,5 +1,5 @@
 /**
- * Service to create and update a timeline currently used by the timeline-directive.
+ * Service to create and update a timeline. Currently used by the timeline-directive.
  *
  * Inject "Timeline" and call new timeline(<args>) to create a timeline. Currently the timeline
  * supports circles (events), vertical bars (rain intensity) and a brush (selection tool). 
@@ -76,6 +76,7 @@ app.factory("Timeline", [ function () {
 
     constructor: Timeline,
 
+    // TODO: create real noDataIndicator, this is just legacy code
     addNoDataIndicator: function () {
       var width = this.dimensions.width - this.dimensions.padding.left - this.dimensions.padding.right,
       height = this.dimensions.height - this.dimensions.padding.top - this.dimensions.padding.bottom;
@@ -88,6 +89,7 @@ app.factory("Timeline", [ function () {
         .style('fill', 'url(#lightstripe)');
     },
 
+    // TODO: remove nowIndicator and add it to the brush
     addNowIndicator: function () {
       var height = this.dimensions.height - this.dimensions.padding.top - this.dimensions.padding.bottom;
 
@@ -152,6 +154,11 @@ app.factory("Timeline", [ function () {
       drawAxes(svg, xAxis);
     },
 
+    /**
+     * Update all elements to accomadate new dimensions.
+     * 
+     * @param  {dimensions object} oldDimensions copy of the old dimensions
+     */
     updateElements: function (oldDimensions) {
       if (circles) {
         updateCircleElements(circles, xScale);
@@ -179,6 +186,7 @@ app.factory("Timeline", [ function () {
       brushed();
     },
 
+    // TODO: remove nowIndicator and add it to the brush
     updateNowElement: function (now) {
       var height = this.dimensions.height - this.dimensions.padding.top - this.dimensions.padding.bottom;
       nowIndicator
@@ -229,6 +237,13 @@ app.factory("Timeline", [ function () {
       bars = undefined;
     },
 
+    /**
+     * Takes a leaflet bounds object and filters all circles whether their geographic
+     * location falls within the bounds. Candidate to be refactored, since this
+     * service is specific to events.
+     * 
+     * @param  {leaflet bounds object} bounds to filter events with
+     */
     drawEventsContainedInBounds: function (bounds) {
       var latLng = [];
       d3.selectAll("circle").classed("hidden", true);
@@ -245,12 +260,15 @@ app.factory("Timeline", [ function () {
       selected.classed("hidden", false);
     },
 
+    /**
+     * Update domain of scale and call functions to update timeline to new
+     * scale.
+     * 
+     * @param  {int} start in ms since epoch
+     * @param  {int} end   in ms since epoch
+     */
     zoomTo: function (start, end) {
-      var width = this.dimensions.width - this.dimensions.padding.left - this.dimensions.padding.right;
-      xScale = makeScale(
-        {min: new Date(start), max: new Date(end)},
-        {min: 0, max: width},
-        { type: 'time' });
+      xScale.domain([new Date(start), new Date(end)]);
       xAxis = makeAxis(xScale, {orientation: "bottom", ticks: 5});
       this.updateElements();
       drawAxes(svg, xAxis);
@@ -264,6 +282,9 @@ app.factory("Timeline", [ function () {
       );
     },
 
+    /**
+     * Thorougly removes zoom listeners.
+     */
     removeZoomListener: function () {
       svg.call(d3.behavior.zoom()
         .x(xScale)
