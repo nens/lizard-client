@@ -175,6 +175,12 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
         EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
       });
+
+      scope.$watch('events.changed', function (n, o) {
+        if (n === o) { return true; }
+        drawTimeEvents(scope.timeState.start, scope.timeState.end);
+        EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
+      });
    
       /**
        * Watch that is fired when the animation has stepped

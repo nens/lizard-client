@@ -123,8 +123,8 @@ app.service("EventService", ["Restangular", "$q",
         var j = longData.features.indexOf(feature);
         longData.features.splice(j, 1);
       }
-      else if (feature.event_type > eventOrder) {
-        feature.event_type = feature.event_type - 1;
+      else if (feature.event_order > eventOrder) {
+        feature.event_order = feature.event_order - 1;
       }
     }
     for (var key in types) {
