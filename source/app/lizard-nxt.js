@@ -344,22 +344,6 @@ app.controller("MasterCtrl",
         feature.properties.geometry = feature.geometry;
         $scope.activeObject.events.push(feature.properties);
       });
-      // console.log($scope.activeObject);
-
-      $scope.tableParams = new ngTableParams({
-          page: 1,            // show first page
-          count: 10          // count per page
-      }, {
-          groupBy: 'category',
-          total: $scope.activeObject.events.length,
-          getData: function ($defer, params) {
-              var orderedData = params.sorting() ?
-                      $filter('orderBy')($scope.activeObject.events, $scope.tableParams.orderBy()) :
-                      $scope.activeObject.events;
-
-              $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-          }
-      });
     });
   });
 
