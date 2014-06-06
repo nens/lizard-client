@@ -39,13 +39,14 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
         });
       },
       /**
-       * Update 'now' on click
+       * Enable animation on click
        *
        * Recieves d3.event, scale and timeline dimensions
        */
       clickFn: function (event, scale, dimensions) {
         var timeClicked = +(scale.invert(event.x - dimensions.padding.left));
         scope.timeState.at = timeClicked;
+        scope.timeState.animation.enabled = true;
         scope.$digest();
       },
       /**
@@ -57,8 +58,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
         var s = brush.extent();
         var sSorted = [s[0].getTime(), s[1].getTime()].sort();
         scope.timeState.animation.start = sSorted[0];
-        scope.timeState.animation.end = sSorted[1];
-        scope.timeState.at = (sSorted[0] + sSorted[1]) / 2;
+        scope.timeState.at = sSorted[1];
         if (!scope.timeState.animation.playing && !scope.$$phase) {
           scope.$apply();
         }
@@ -71,9 +71,8 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
     // Create the timeline
     var timeline = new Timeline(el, dimensions, start, end, interaction);
     
-    // Activate zoom and click listener
+    // Activate zoom listener
     timeline.addZoomListener();
-    timeline.addClickListener();
 
     /**
      * Redetermines dimensions of timeline and calls resize.
@@ -175,15 +174,15 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
         var start;
         var end;
         if (scope.timeState.animation.start !== undefined
-          && scope.timeState.animation.end !== undefined
+          && scope.timeState.at !== undefined
           && scope.timeState.animation.start > scope.timeState.start
-          && scope.timeState.animation.end < scope.timeState.end) {
+          && scope.timeState.at < scope.timeState.end) {
           start = scope.timeState.animation.start;
-          end = scope.timeState.animation.end;
+          end = scope.timeState.at;
         } else {
           var buffer = (scope.timeState.end - scope.timeState.start) / 100;
-          start = scope.timeState.at;
-          end = scope.timeState.at + buffer;
+          end = scope.timeState.at;
+          start = scope.timeState.at - buffer;
         }
 
         // Draw the brush
@@ -207,7 +206,19 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.animation.enabled) {
-        timeline.updateBrushExtent(scope.timeState.animation.start, scope.timeState.animation.end);
+        timeline.updateBrushExtent(scope.timeState.animation.start, scope.timeState.at);
+      }
+    });
+
+    /**
+     * Add click listener when rain is on
+     */
+    scope.$watch('tools.active', function (n, o) {
+      if (n === o) { return true; }
+      if (scope.tools.active === 'rain') {
+        timeline.addClickListener();
+      } else {
+        timeline.removeClickListener();
       }
     });
 

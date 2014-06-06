@@ -191,7 +191,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
       scope.$watch('timeState.at', function () {
         if (scope.timeState.animation.enabled) {
           drawTimeEvents(scope.timeState.animation.start,
-                         scope.timeState.animation.end);
+                         scope.timeState.at);
           EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
         }
       });

@@ -106,12 +106,20 @@ app.factory("Timeline", [ function () {
       svg.on("click", clicked);
     },
 
+    removeClickListener: function () {
+      svg.on("click", null);
+    },
+
     /**
      * Draws a brush from start to end
      */
     drawBrush: function (start, end) {
       brush = d3.svg.brush().x(xScale);
       brush.on("brush", brushed);
+      brush.on('brushstart', function () {
+        svg.on('click', null);
+      });
+      brush.on("brushend", brushend); //TODO: Snap the brush to nearest logical unit, 5min, hour, week etc.
 
       brushg = svg.select('g').append("g")
         .attr("class", "brushed");
@@ -124,7 +132,11 @@ app.factory("Timeline", [ function () {
           .delay(500)
           .duration(500)
           .attr("height", height);
-      brushed();
+      brushg.select('.e').select('rect')
+        .attr("x", 0)
+        .attr("width", 2)
+        .attr("style", "fill: #e74c3c;");
+      brushend();
     },
 
     removeBrush: function () {
@@ -292,10 +304,7 @@ app.factory("Timeline", [ function () {
       );
       svg
         .on("zoom", null)
-        .on("mousedown.zoom", null)
-        .on("touchstart.zoom", null)
-        .on("touchmove.zoom", null)
-        .on("touchend.zoom", null);
+        .on("mousedown.zoom", null);
     }
   };
 
@@ -440,6 +449,22 @@ app.factory("Timeline", [ function () {
       brushFn(brush);
     };
     return brushed;
+  };
+
+  var brushend = function () {
+    var extent = brush.extent();
+    var size = xScale(extent[1].getTime()) - xScale(extent[0].getTime());
+    if (size < 1) {
+      var start = xScale.invert(xScale(extent[1].getTime()) - 1);
+      var now = extent[1];
+      brush.extent([start, now]);
+      brushg.call(brush);
+    }
+    brushed();
+    if (d3.event.type === 'click') {
+      d3.event.preventDefault();
+      Timeline.prototype.addClickListener();
+    }
   };
 
   /**
