@@ -1351,7 +1351,6 @@ img.leaflet-image-layer {
 }
 
 .now-indicator {
-    stroke-dasharray: 6,1;
-    stroke: #2c3e50;
+    stroke: #e74c3c;
     stroke-width: 2;
 }
