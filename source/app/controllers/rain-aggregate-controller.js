@@ -41,7 +41,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
   /**
    * Get new raster rain data when panning or zooming temporally.
    */
-  $scope.$watch('timeState.changedZoom', function (n, o) {
+  $scope.$watch('timeState.zoomEnded', function (n, o) {
     if ($scope.timeState.hidden === false
       && $scope.timeState.changeOrigin !== 'RainAggregate') {
       var start = $scope.timeState.start;

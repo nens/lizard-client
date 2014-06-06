@@ -28,6 +28,7 @@ app.factory("Timeline", [ function () {
   // Interaction functions
   var clicked;
   var zoomed;
+  var zoomend;
   var brushed;
 
   // Timeline elements
@@ -68,6 +69,9 @@ app.factory("Timeline", [ function () {
       }
       if (interaction.brushFn) {
         brushed = setBrushFunction(xScale, interaction.brushFn);
+      }
+      if (interaction.zoomEndFn) {
+        zoomend = setZoomEndFunction(interaction.zoomEndFn);
       }
     }
   }
@@ -291,6 +295,7 @@ app.factory("Timeline", [ function () {
       svg.call(d3.behavior.zoom()
         .x(xScale)
         .on("zoom", zoomed)
+        .on("zoomend", zoomend)
       );
     },
 
@@ -303,6 +308,7 @@ app.factory("Timeline", [ function () {
         .on("zoom", null)
       );
       svg
+        .on("zoomend", null)
         .on("zoom", null)
         .on("mousedown.zoom", null);
     }
@@ -426,6 +432,16 @@ app.factory("Timeline", [ function () {
       }
     };
     return zoomed;
+  };
+
+  /**
+   * Create zoomend
+   */
+  var setZoomEndFunction = function (zoomEndFn) {
+    var zoomend = function () {
+      zoomEndFn();
+    };
+    return zoomend;
   };
 
   /**
