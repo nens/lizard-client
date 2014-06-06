@@ -33,7 +33,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
       zoomFn: function (scale) {
         scope.$apply(function () {
           scope.timeState.start = scale.domain()[0].getTime();
-          scope.timeState.at = scale.domain()[1].getTime();
+          scope.timeState.end = scale.domain()[1].getTime();
           scope.timeState.changeOrigin = 'timeline';
           scope.timeState.changedZoom = Date.now();
         });
@@ -46,6 +46,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
       clickFn: function (event, scale, dimensions) {
         var timeClicked = +(scale.invert(event.x - dimensions.padding.left));
         scope.timeState.at = timeClicked;
+        scope.timeState.animation.enabled = true;
         scope.$digest();
       },
       /**
@@ -70,9 +71,8 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
     // Create the timeline
     var timeline = new Timeline(el, dimensions, start, end, interaction);
     
-    // Activate zoom and click listener
+    // Activate zoom listener
     timeline.addZoomListener();
-    timeline.addClickListener();
 
     /**
      * Redetermines dimensions of timeline and calls resize.
@@ -207,6 +207,18 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
       if (n === o) { return true; }
       if (scope.timeState.animation.enabled) {
         timeline.updateBrushExtent(scope.timeState.animation.start, scope.timeState.at);
+      }
+    });
+
+    /**
+     * Add click listener when rain is on
+     */
+    scope.$watch('tools.active', function (n, o) {
+      if (n === o) { return true; }
+      if (scope.tools.active === 'rain') {
+        timeline.addClickListener();
+      } else {
+        timeline.removeClickListener();
       }
     });
 

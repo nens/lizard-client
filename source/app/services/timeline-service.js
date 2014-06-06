@@ -106,6 +106,10 @@ app.factory("Timeline", [ function () {
       svg.on("click", clicked);
     },
 
+    removeClickListener: function () {
+      svg.on("click", null);
+    },
+
     /**
      * Draws a brush from start to end
      */
@@ -115,7 +119,7 @@ app.factory("Timeline", [ function () {
       brush.on('brushstart', function () {
         svg.on('click', null);
       });
-      brush.on("brushend", this.addClickListener()); //TODO: Snap the brush to nearest logical unit, 5min, hour, week etc.
+      brush.on("brushend", brushend); //TODO: Snap the brush to nearest logical unit, 5min, hour, week etc.
 
       brushg = svg.select('g').append("g")
         .attr("class", "brushed");
@@ -132,7 +136,7 @@ app.factory("Timeline", [ function () {
         .attr("x", 0)
         .attr("width", 2)
         .attr("style", "fill: #e74c3c;");
-      brushed();
+      brushend();
     },
 
     removeBrush: function () {
@@ -445,6 +449,22 @@ app.factory("Timeline", [ function () {
       brushFn(brush);
     };
     return brushed;
+  };
+
+  var brushend = function () {
+    var extent = brush.extent();
+    var size = xScale(extent[1].getTime()) - xScale(extent[0].getTime());
+    if (size < 1) {
+      var start = xScale.invert(xScale(extent[1].getTime()) - 1);
+      var now = extent[1];
+      brush.extent([start, now]);
+      brushg.call(brush);
+    }
+    brushed();
+    if (d3.event.type === 'click') {
+      d3.event.preventDefault();
+      Timeline.prototype.addClickListener();
+    }
   };
 
   /**
