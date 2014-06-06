@@ -116,4 +116,14 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
       }, 500);
     }
   };
+
+  /**
+   * Move timeState.end to now.
+   */
+  $scope.timeState.zoomToNow = function () {
+    $scope.timeState.end = Date.now();
+    $scope.timeState.changeOrigin = 'user';
+    $scope.timeState.changedZoom = Date.now();
+  };
+
 }]);

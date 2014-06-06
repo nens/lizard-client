@@ -39,7 +39,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
         });
       },
       /**
-       * Update 'now' on click
+       * Enable animation on click
        *
        * Recieves d3.event, scale and timeline dimensions
        */
