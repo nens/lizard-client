@@ -176,6 +176,7 @@ app.controller("MasterCtrl",
     start: 1389803883000,
     end: 1389872283000,
     changedZoom: Date.now(),
+    zoomEnded: null,
     hidden: undefined,
     animation: {
       start: undefined,

@@ -39,6 +39,14 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
         });
       },
       /**
+       * Update zoomEnded to trigger new call for rain intensity
+       */
+      zoomEndFn: function () {
+        scope.$apply(function () {
+          scope.timeState.zoomEnded = Date.now();
+        });
+      },
+      /**
        * Enable animation on click
        *
        * Recieves d3.event, scale and timeline dimensions
