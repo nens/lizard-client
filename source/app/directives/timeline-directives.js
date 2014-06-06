@@ -44,9 +44,9 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
        * Recieves d3.event, scale and timeline dimensions
        */
       clickFn: function (event, scale, dimensions) {
+        scope.timeState.animation.enabled = true;
         var timeClicked = +(scale.invert(event.x - dimensions.padding.left));
         scope.timeState.at = timeClicked;
-        scope.timeState.animation.enabled = true;
         scope.$digest();
       },
       /**
@@ -73,6 +73,11 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
     
     // Activate zoom listener
     timeline.addZoomListener();
+
+    if (scope.tools.active === 'rain') {
+      // Activate click listener
+      timeline.addClickListener();
+    }
 
     /**
      * Redetermines dimensions of timeline and calls resize.
