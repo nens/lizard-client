@@ -315,21 +315,14 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
       }
     });
 
-    scope.map.on('move', function () {
-      // NOTE: Check whether a $digest is already happening before using apply
+    scope.map.on('movestart', function () {
       if (!scope.$$phase) {
         scope.$apply(function () {
-          scope.mapState.moved = Date.now();
-          scope.mapState.bounds = scope.map.getBounds();
+          scope.mapState.mapMoving = true;
         });
       } else {
-        scope.mapState.moved = Date.now();
-        scope.mapState.bounds = scope.map.getBounds();
+        scope.mapState.mapMoving = true;
       }
-    });
-
-    scope.map.on('movestart', function () {
-      scope.mapState.mapMoving = true;
     });
 
     /**
@@ -340,6 +333,17 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
      */
 
     scope.map.on('moveend', function () {
+
+      // NOTE: Check whether a $digest is already happening before using apply
+      if (!scope.$$phase) {
+        scope.$apply(function () {
+          scope.mapState.moved = Date.now();
+          scope.mapState.bounds = scope.map.getBounds();
+        });
+      } else {
+        scope.mapState.moved = Date.now();
+        scope.mapState.bounds = scope.map.getBounds();
+      }
 
       scope.holdRightThere = true;
       var COORD_PRECISION = 5;
@@ -354,6 +358,7 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
           hashSyncHelper.setHash({'location':newHash});
         });
       } else {
+        scope.mapState.mapMoving = false;
         hashSyncHelper.setHash({'location':newHash});
       }
       // If elevation layer is active:
