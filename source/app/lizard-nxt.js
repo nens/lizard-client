@@ -82,9 +82,9 @@ app.config(function ($locationProvider) {
  */
 app.controller("MasterCtrl",
   ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService", "RasterService",
-   "UtilService", "EventService", "ngTableParams", "hashSyncHelper",
+   "UtilService", "EventService", "TimeseriesService", "ngTableParams", "hashSyncHelper",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, EventService, ngTableParams, hashSyncHelper) {
+            UtilService, EventService, TimeseriesService, ngTableParams, hashSyncHelper) {
   // BOX MODEL
   $scope.box = {
     detailMode: false,
@@ -327,8 +327,10 @@ app.controller("MasterCtrl",
     changed: true, // To trigger the watch
     details: false, // To display details in the card
     attrs: undefined, // To store object data
+    hasTimeseries: false,
     events: [],
-    timeseries: []
+    timeseries: [],
+    selectedTimeseries: null
   };
 
   $scope.$watch('activeObject.changed', function (newVal, oldVal) {
@@ -346,6 +348,9 @@ app.controller("MasterCtrl",
         $scope.activeObject.events.push(feature.properties);
       });
     });
+    $scope.activeObject.timeseries = TimeseriesService.getRandomTimeseries();
+    $scope.activeObject.selectedTimeseries = $scope.activeObject.timeseries[0];
+    $scope.activeObject.hasTimeseries = true;
   });
 
   // END activeObject part
