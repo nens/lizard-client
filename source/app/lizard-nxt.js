@@ -197,7 +197,6 @@ app.controller("MasterCtrl",
   var parts = last_visit_string.match(/(\w{3}\s\d{2}\s\d{4})/);
   alert(parts);
 
-
   // var last_visit_int = Date.UTC(+parts[3], parts[2]-1, +parts[1], +parts[4], +parts[5]);
   // alert(last_visit_int);
 
