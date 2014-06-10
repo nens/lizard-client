@@ -184,7 +184,7 @@ app.controller("MasterCtrl",
       enabled: false,
       currentFrame: 0,
       lenght: 0,
-      speed: 20,
+      minLag: 50, // Time in ms between frames
       stepSize: 1000
     }
   };
@@ -519,13 +519,11 @@ app.controller("MasterCtrl",
   $scope.toggleRain = function () {
     if ($scope.rain.enabled === false) {
       $scope.rain.enabled = true;
-      $scope.timeState.animation.speed = 50;
       if ($scope.timeState.hidden !== false) {
         $scope.toggleTimeline();
       }
     } else if ($scope.rain.enabled) {
       $scope.rain.enabled = false;
-      $scope.timeState.animation.speed = 20;
     }
   };
 
