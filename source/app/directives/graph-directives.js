@@ -326,10 +326,10 @@ angular.module('graph')
     /**
      * Builds d3 chart object with axes scales and zoom functionality.
      *
-     * Designed and used by the rain on point, see templates/rain.html
+     * Designed for and used by the rain on point, see templates/rain.html
      * and rain-aggregate-directives.
      * 
-     * @param   {object} data    list of data values [timestamp, mean, max]
+     * @param   {object} data    list of data values [timestamp, sum]
      * @param   {[type]} element html element
      * @returns {[object]}       graph object
      */
@@ -599,7 +599,7 @@ angular.module('graph')
           range: [height, 0]
         });
 
-        var line = d3.svg.line()
+        var line = d3.svg.line().interpolate('basis')
           .y(function (d) {
             return y.scale(d[keys.y]);
           });
