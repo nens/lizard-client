@@ -692,9 +692,19 @@ angular.module('graph')
           .append("svg:rect")
           .attr("x", 0)
           .attr("y", 0)
-          .attr("width", width)
+          .attr("width", 0)
           .attr("height", height);
 
+        if (scope.$parent.box.type !== 'elevation') {
+          clip
+            .transition()
+            .ease('linear')
+            .duration(1000)
+            .attr("width", width);
+        } else {
+          clip
+            .attr("width", width);
+        }
 
         var chartBody = svg.append("g")
           .attr("clip-path", "url(#clip)");
