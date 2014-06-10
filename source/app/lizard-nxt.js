@@ -171,25 +171,38 @@ app.controller("MasterCtrl",
   // MAP MODEL
 
   // TIME MODEL
+  // var end = Date.now();
+  // $scope.timeState = {
+  //   start: 1389803883000,
+  //   end: 1389872283000,
+  //   changedZoom: Date.now(),
+  //   zoomEnded: null,
+  //   hidden: undefined,
+  //   animation: {
+  //     start: undefined,
+  //     playing: false,
+  //     enabled: false,
+  //     currentFrame: 0,
+  //     lenght: 0,
+  //     speed: 20,
+  //     stepSize: 1000
+  //   }
+  // };
+  // // initialise 'now'
+  // $scope.timeState.at = $scope.timeState.start;
+
   var end = Date.now();
-  $scope.timeState = {
-    start: 1389803883000,
-    end: 1389872283000,
-    changedZoom: Date.now(),
-    zoomEnded: null,
-    hidden: undefined,
-    animation: {
-      start: undefined,
-      playing: false,
-      enabled: false,
-      currentFrame: 0,
-      lenght: 0,
-      speed: 20,
-      stepSize: 1000
-    }
-  };
-  // initialise 'now'
-  $scope.timeState.at = $scope.timeState.start;
+  var two_days_ago = end - 48*60*60*1000;
+  var last_visit_string = $('#last-visit-string').text();
+  var parts = last_visit_string.match(/(\w{3}\s\d{2}\s\d{4})/);
+  alert(parts);
+
+
+  // var last_visit_int = Date.UTC(+parts[3], parts[2]-1, +parts[1], +parts[4], +parts[5]);
+  // alert(last_visit_int);
+
+  //var last_visit_int = parseInt(last_visit_string);
+  // alert(last_visit_int);
 
 // END TIME MODEL
 
