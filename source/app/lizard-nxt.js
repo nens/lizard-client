@@ -82,9 +82,9 @@ app.config(function ($locationProvider) {
  */
 app.controller("MasterCtrl",
   ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService", "RasterService",
-   "UtilService", "EventService", "ngTableParams", "hashSyncHelper",
+   "UtilService", "EventService", "TimeseriesService", "ngTableParams", "hashSyncHelper",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, EventService, ngTableParams, hashSyncHelper) {
+            UtilService, EventService, TimeseriesService, ngTableParams, hashSyncHelper) {
   // BOX MODEL
   $scope.box = {
     detailMode: false,
@@ -327,8 +327,10 @@ app.controller("MasterCtrl",
     changed: true, // To trigger the watch
     details: false, // To display details in the card
     attrs: undefined, // To store object data
+    hasTimeseries: false,
     events: [],
-    timeseries: []
+    timeseries: [],
+    selectedTimeseries: null
   };
 
   $scope.$watch('activeObject.changed', function (newVal, oldVal) {
@@ -345,23 +347,10 @@ app.controller("MasterCtrl",
         feature.properties.geometry = feature.geometry;
         $scope.activeObject.events.push(feature.properties);
       });
-      // console.log($scope.activeObject);
-
-      $scope.tableParams = new ngTableParams({
-          page: 1,            // show first page
-          count: 10          // count per page
-      }, {
-          groupBy: 'category',
-          total: $scope.activeObject.events.length,
-          getData: function ($defer, params) {
-              var orderedData = params.sorting() ?
-                      $filter('orderBy')($scope.activeObject.events, $scope.tableParams.orderBy()) :
-                      $scope.activeObject.events;
-
-              $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-          }
-      });
     });
+    $scope.activeObject.timeseries = TimeseriesService.getRandomTimeseries();
+    $scope.activeObject.selectedTimeseries = $scope.activeObject.timeseries[0];
+    $scope.activeObject.hasTimeseries = true;
   });
 
   // END activeObject part
