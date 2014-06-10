@@ -477,9 +477,11 @@ app.factory("Timeline", [ function () {
       brushg.call(brush);
     }
     brushed();
-    if (d3.event.type === 'click') {
-      d3.event.preventDefault();
-      Timeline.prototype.addClickListener();
+    if (d3.event) {
+      if (d3.event.type === 'click') {
+        d3.event.preventDefault();
+        Timeline.prototype.addClickListener();
+      }
     }
   };
 
