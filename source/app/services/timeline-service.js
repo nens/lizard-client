@@ -408,9 +408,9 @@ app.factory("Timeline", [ function () {
     var zoomed = function () {
       drawAxes(svg, xAxis);
       if (circles) {
-        circles.attr("cx", function (d) {
-          return Math.round(xScale(d.properties.timestamp));
-        });
+        // circles.attr("cx", function (d) {
+        //   return Math.round(xScale(d.properties.timestamp));
+        // });
       }
       if (bars) {
         var barData = bars.data();
@@ -529,7 +529,7 @@ app.factory("Timeline", [ function () {
 
     // UPDATE
     // Update old elements as needed.
-    circles.attr("cx", xFunction);
+    //circles.attr("cx", xFunction);
   };
 
   /**
@@ -596,37 +596,41 @@ app.factory("Timeline", [ function () {
    * Draws circle elements according to a d3 update pattern.
    */
   var drawCircleElements = function (svg, dimensions, data, xScale, yScale) {
-    var xFunction = function (d) { return xScale(d.properties.timestamp); };
+    var xOneFunction = function (d) { return xScale(d.properties.timestamp_start); };
+    var xTwoFunction = function (d) { return xScale(d.properties.timestamp_end); };
     var yFunction = function (d) { return yScale(d.event_order); };
     var colorFunction = function (d) { return d.color; };
     // DATA JOIN
     // Join new data with old elements, based on the id value.
-    circles = svg.select('g').select('#circle-group').selectAll("circle")
-        .data(data, function  (d) { return d.id; });
+    circles = svg.select('g').select('#circle-group').selectAll("path")
+        .data(data, function  (d) { 
+          console.log(d);
+          return d.id; });
 
     // UPDATE
     // Update old elements as needed.
-    circles.attr("class", "event")
-      .transition()
+    circles.transition()
       .delay(500)
       .duration(500)
-      .attr("fill", colorFunction)
-      .attr("cy", yFunction)
-      .attr("cx", xFunction);
+      .attr("stroke", colorFunction)
+      .attr("d", function (d) { return "M " + xOneFunction(d) + " " + yFunction(d) + " L " + xTwoFunction(d) + " " + yFunction(d); });
 
     // ENTER
     // Create new elements as needed.
-    circles.enter().append("circle")
-      .attr("cx", xFunction)
+    circles.enter().append("path")
       .attr("class", "event")
-      .attr("cy", yFunction)
-      .attr("fill", colorFunction)
-      .attr("r", 5)
-      .attr("fill-opacity", 0)
+      .attr("stroke", colorFunction)
+      .attr("d", function (d) { 
+        console.log(d);
+        return "M " + xOneFunction(d) + " " + yFunction(d) + " L " + xTwoFunction(d) + " " + yFunction(d); })
+      // .attr("r", 5)
+      .attr("stroke-opacity", 0)
+      .attr("stroke-width", 0)
       .transition()
       .delay(500)
       .duration(500)
-      .attr("fill-opacity", 1);
+      .attr("stroke-width", 3)
+      .attr("stroke-opacity", 0.5);
 
     // EXIT
     // Remove old elements as needed.
@@ -634,8 +638,7 @@ app.factory("Timeline", [ function () {
       .transition()
       .delay(0)
       .duration(500)
-      .attr("cy", 0)
-      .attr("cx", xFunction)
+      .attr("d", function (d) { return "M " + xOneFunction(d) + " " + 0 + " L " + xTwoFunction(d) + " " + 0; })
       .style("fill-opacity", 1e-6)
       .remove();
 
