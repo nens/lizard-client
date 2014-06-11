@@ -1,12 +1,16 @@
 # js installs
 vendor/
 node_modules/
-.grunt/
+node_modules
+.npm-debug.log.grunt/
+
+# test stuff
 _SpecRunner.html
+jshint.xml
+coverage/
+cobertura-coverage.xml
+
 tmp/
+tmp
 dist/
 templates.js
-node_modules
-jshint.xml
-.npm-debug.log
-tmp
