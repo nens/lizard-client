@@ -7,5 +7,6 @@ tmp/
 dist/
 templates.js
 node_modules
+jshint.xml
 .npm-debug.log
 tmp
