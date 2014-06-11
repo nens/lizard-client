@@ -29,7 +29,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
     if (layer.type === "TMS" && layer.baselayer) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
                                        {name: "Background",
-                                        maxZoom: 19, 
+                                        maxZoom: 19,
                                         detectRetina: true,
                                         zIndex: layer.z_index});
     } else if (layer.type === "WMS") {
@@ -351,10 +351,10 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
       if (!scope.$$phase) {
         scope.$apply(function () {
           scope.mapState.mapMoving = false;
-          hashSyncHelper.setHash({'location':newHash});
+          hashSyncHelper.setHash({'location': newHash});
         });
       } else {
-        hashSyncHelper.setHash({'location':newHash});
+        hashSyncHelper.setHash({'location': newHash});
       }
       // If elevation layer is active:
       if (scope.mapState.activeBaselayer === 3 && scope.tools.active === 'autorescale') {
@@ -390,13 +390,13 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
         var baselayerHash = hash.bl;
         var locationHash = hash.location;
 
-        if(baselayerHash !== undefined) {
-          scope.mapState.activeBaselayer = parseInt(baselayerHash);
+        if (baselayerHash !== undefined) {
+          scope.mapState.activeBaselayer = parseInt(baselayerHash, 10);
           scope.mapState.changeBaselayer();
         }
 
-        if(locationHash !== undefined) { 
-          var latlonzoom = locationHash.split(','); 
+        if (locationHash !== undefined) {
+          var latlonzoom = locationHash.split(',');
           if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
             if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
               scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: true, animate: true});
@@ -408,9 +408,9 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
       scope.holdRightThere = false;
     });
 
-    scope.$watch('mapState.activeBaselayer', function(n,o) {
-      if (n === o) { return true; }      
-      hashSyncHelper.setHash({'bl':n}); // set baselayer in url by id
+    scope.$watch('mapState.activeBaselayer', function (n, o) {
+      if (n === o) { return true; }
+      hashSyncHelper.setHash({'bl': n}); // set baselayer in url by id
     });
 
 
@@ -616,7 +616,7 @@ app.directive('rain', ["RasterService", "UtilService",
        */
       scope.$watch('timeState.at', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
-        if (!scope.timeState.animation.playing 
+        if (!scope.timeState.animation.playing
           && scope.rain.enabled) {
           getImages(scope.timeState.at);
           imageOverlays[0].setOpacity(1);
