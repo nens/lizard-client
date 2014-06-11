@@ -6,9 +6,7 @@ node_modules
 
 # test stuff
 _SpecRunner.html
-jshint.xml
-coverage/
-cobertura-coverage.xml
+qa/
 
 tmp/
 tmp

@@ -141,7 +141,7 @@ module.exports = function (grunt) {
         options: {
           jshintrc: '.jshintrc',
           reporter: 'jslint',
-          reporterOutput: 'jshint.xml',
+          reporterOutput: 'qa/jshint.xml',
           force: true // finishes jshint instead of `failing`.
         }
       },
@@ -152,7 +152,10 @@ module.exports = function (grunt) {
                 '<%= testfiles %>',
                 '<%= appfiles %>'],
           options: {
-            specs: '<%= nxt_dir.test %>/**/*.js'
+            specs: '<%= nxt_dir.test %>/**/*.js',
+            junit: {
+              path: 'qa/junit'
+            }
           }
         },
         istanbul: {
@@ -161,10 +164,10 @@ module.exports = function (grunt) {
             specs: '<%= jasmine.pivotal.options.specs %>',
             template: require('grunt-template-jasmine-istanbul'),
             templateOptions: {
-              coverage: 'coverage/json/coverage.json',
+              coverage: 'qa/coverage/json/coverage.json',
               report: [
-                  {type: 'html', options: {dir: 'coverage/html'}},
-                  {type: 'cobertura', options: {dir: ''}},
+                  {type: 'html', options: {dir: 'qa/coverage/html'}},
+                  {type: 'cobertura', options: {dir: 'qa/'}},
                   {type: 'text-summary'}
                 ]
               }
