@@ -154,7 +154,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         d3.selectAll(".circle")
           .classed("selected", function (d) {
             var s = [start, end];
-            var time = d.properties.timestamp;
+            var time = d.properties.timestamp_end;
             var contained = s[0] <= time && time <= s[1];
             // Some book keeping to count
             d.inTempExtent = contained;
@@ -191,7 +191,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
       scope.$watch('timeState.at', function () {
         if (scope.timeState.animation.enabled) {
           drawTimeEvents(scope.timeState.animation.start,
-                         scope.timeState.animation.end);
+                         scope.timeState.at);
           EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
         }
       });
@@ -348,7 +348,7 @@ app.directive('surfacelayer', function () {
         var pipeLayer = {};
         if (scope.tools.active === "pipeSurface") {
           mapCtrl.addLayer(surfaceLayer);
-          pipeLayer = getLayer('grid', 'sewerage');
+          pipeLayer = getLayer('grid', 'waterchain');
           // icon active
           angular.element(".surface-info").addClass("icon-active");
           if (pipeLayer) {
@@ -358,9 +358,9 @@ app.directive('surfacelayer', function () {
             // If there is no grid layer it is probably still being
             // loaded by the map-directive which will broadcast a 
             // message when its loaded. 
-            scope.$on('sewerageGridLoaded', function () {
+            scope.$on('waterchainGridLoaded', function () {
               if (scope.tools.active === 'pipeSurface') {
-                pipeLayer = getLayer('grid', 'sewerage');
+                pipeLayer = getLayer('grid', 'waterchain');
                 pipeLayer.on('mousemove', highlightSurface);
                 pipeLayer.on('mouseout', highlightSurface);
               }

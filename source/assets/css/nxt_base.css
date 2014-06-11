@@ -1339,19 +1339,7 @@ img.leaflet-image-layer {
     max-width: none !important;
 }
 
-.whisker-vertical {
-    stroke-dasharray: 3,3;
-    stroke: #7f8c8d;
-    stroke-width: 1px;
-}
-
-.whisker-horizontal {
-    stroke: #7f8c8d;
-    stroke-width: 1px;
-}
-
 .now-indicator {
-    stroke-dasharray: 6,1;
-    stroke: #2c3e50;
+    stroke: #e74c3c;
     stroke-width: 2;
 }

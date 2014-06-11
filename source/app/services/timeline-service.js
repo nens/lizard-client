@@ -28,6 +28,7 @@ app.factory("Timeline", [ function () {
   // Interaction functions
   var clicked;
   var zoomed;
+  var zoomend;
   var brushed;
 
   // Timeline elements
@@ -69,6 +70,9 @@ app.factory("Timeline", [ function () {
       if (interaction.brushFn) {
         brushed = setBrushFunction(xScale, interaction.brushFn);
       }
+      if (interaction.zoomEndFn) {
+        zoomend = setZoomEndFunction(interaction.zoomEndFn);
+      }
     }
   }
 
@@ -106,12 +110,20 @@ app.factory("Timeline", [ function () {
       svg.on("click", clicked);
     },
 
+    removeClickListener: function () {
+      svg.on("click", null);
+    },
+
     /**
      * Draws a brush from start to end
      */
     drawBrush: function (start, end) {
       brush = d3.svg.brush().x(xScale);
       brush.on("brush", brushed);
+      brush.on('brushstart', function () {
+        svg.on('click', null);
+      });
+      brush.on("brushend", brushend); //TODO: Snap the brush to nearest logical unit, 5min, hour, week etc.
 
       brushg = svg.select('g').append("g")
         .attr("class", "brushed");
@@ -124,7 +136,11 @@ app.factory("Timeline", [ function () {
           .delay(500)
           .duration(500)
           .attr("height", height);
-      brushed();
+      brushg.select('.e').select('rect')
+        .attr("x", 0)
+        .attr("width", 2)
+        .attr("style", "fill: #e74c3c;");
+      brushend();
     },
 
     removeBrush: function () {
@@ -279,6 +295,7 @@ app.factory("Timeline", [ function () {
       svg.call(d3.behavior.zoom()
         .x(xScale)
         .on("zoom", zoomed)
+        .on("zoomend", zoomend)
       );
     },
 
@@ -291,11 +308,9 @@ app.factory("Timeline", [ function () {
         .on("zoom", null)
       );
       svg
+        .on("zoomend", null)
         .on("zoom", null)
-        .on("mousedown.zoom", null)
-        .on("touchstart.zoom", null)
-        .on("touchmove.zoom", null)
-        .on("touchend.zoom", null);
+        .on("mousedown.zoom", null);
     }
   };
 
@@ -394,7 +409,7 @@ app.factory("Timeline", [ function () {
       drawAxes(svg, xAxis);
       if (circles) {
         circles.attr("cx", function (d) {
-          return Math.round(xScale(d.properties.timestamp));
+          return Math.round(xScale(d.properties.timestamp_end));
         });
       }
       if (bars) {
@@ -420,6 +435,16 @@ app.factory("Timeline", [ function () {
   };
 
   /**
+   * Create zoomend
+   */
+  var setZoomEndFunction = function (zoomEndFn) {
+    var zoomend = function () {
+      zoomEndFn();
+    };
+    return zoomend;
+  };
+
+  /**
    * Create brush function that does all the brush selection and call the callback.
    */
   var setBrushFunction = function (xScale, brushFn) {
@@ -427,7 +452,7 @@ app.factory("Timeline", [ function () {
       var s = brush.extent();
       if (circles) {
         circles.classed("selected", function (d) {
-          var t = new Date(d.properties.timestamp);
+          var t = new Date(d.properties.timestamp_end);
           return s[0] <= t && t <= s[1];
         });
       }
@@ -440,6 +465,24 @@ app.factory("Timeline", [ function () {
       brushFn(brush);
     };
     return brushed;
+  };
+
+  var brushend = function () {
+    var extent = brush.extent();
+    var size = xScale(extent[1].getTime()) - xScale(extent[0].getTime());
+    if (size < 1) {
+      var start = xScale.invert(xScale(extent[1].getTime()) - 1);
+      var now = extent[1];
+      brush.extent([start, now]);
+      brushg.call(brush);
+    }
+    brushed();
+    if (d3.event) {
+      if (d3.event.type === 'click') {
+        d3.event.preventDefault();
+        Timeline.prototype.addClickListener();
+      }
+    }
   };
 
   /**
@@ -482,7 +525,7 @@ app.factory("Timeline", [ function () {
    * drawCircles.
    */
   var updateCircleElements = function (circles, xScale) {
-    var xFunction = function (d) { return Math.round(xScale(d.properties.timestamp)); };
+    var xFunction = function (d) { return Math.round(xScale(d.properties.timestamp_end)); };
 
     // UPDATE
     // Update old elements as needed.
@@ -553,7 +596,7 @@ app.factory("Timeline", [ function () {
    * Draws circle elements according to a d3 update pattern.
    */
   var drawCircleElements = function (svg, dimensions, data, xScale, yScale) {
-    var xFunction = function (d) { return xScale(d.properties.timestamp); };
+    var xFunction = function (d) { return xScale(d.properties.timestamp_end); };
     var yFunction = function (d) { return yScale(d.event_order); };
     var colorFunction = function (d) { return d.color; };
     // DATA JOIN

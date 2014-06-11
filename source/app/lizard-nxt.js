@@ -82,9 +82,9 @@ app.config(function ($locationProvider) {
  */
 app.controller("MasterCtrl",
   ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService", "RasterService",
-   "UtilService", "EventService", "ngTableParams", "hashSyncHelper",
+   "UtilService", "EventService", "TimeseriesService", "ngTableParams", "hashSyncHelper",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, EventService, ngTableParams, hashSyncHelper) {
+            UtilService, EventService, TimeseriesService, ngTableParams, hashSyncHelper) {
   // BOX MODEL
   $scope.box = {
     detailMode: false,
@@ -176,15 +176,15 @@ app.controller("MasterCtrl",
     start: 1389803883000,
     end: 1389872283000,
     changedZoom: Date.now(),
+    zoomEnded: null,
     hidden: undefined,
     animation: {
       start: undefined,
-      stop: undefined,
       playing: false,
       enabled: false,
       currentFrame: 0,
       lenght: 0,
-      speed: 20,
+      minLag: 50, // Time in ms between frames
       stepSize: 1000
     }
   };
@@ -327,8 +327,10 @@ app.controller("MasterCtrl",
     changed: true, // To trigger the watch
     details: false, // To display details in the card
     attrs: undefined, // To store object data
+    hasTimeseries: false,
     events: [],
-    timeseries: []
+    timeseries: [],
+    selectedTimeseries: null
   };
 
   $scope.$watch('activeObject.changed', function (newVal, oldVal) {
@@ -345,8 +347,6 @@ app.controller("MasterCtrl",
         feature.properties.geometry = feature.geometry;
         $scope.activeObject.events.push(feature.properties);
       });
-      // console.log($scope.activeObject);
-
       $scope.tableParams = new ngTableParams({
           page: 1,            // show first page
           count: 10          // count per page
@@ -362,6 +362,9 @@ app.controller("MasterCtrl",
             }
         });
     });
+    $scope.activeObject.timeseries = TimeseriesService.getRandomTimeseries();
+    $scope.activeObject.selectedTimeseries = $scope.activeObject.timeseries[0];
+    $scope.activeObject.hasTimeseries = true;
   });
 
   // END activeObject part
@@ -530,13 +533,11 @@ app.controller("MasterCtrl",
   $scope.toggleRain = function () {
     if ($scope.rain.enabled === false) {
       $scope.rain.enabled = true;
-      $scope.timeState.animation.speed = 50;
       if ($scope.timeState.hidden !== false) {
         $scope.toggleTimeline();
       }
     } else if ($scope.rain.enabled) {
       $scope.rain.enabled = false;
-      $scope.timeState.animation.speed = 20;
     }
   };
 

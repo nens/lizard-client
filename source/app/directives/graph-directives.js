@@ -326,10 +326,10 @@ angular.module('graph')
     /**
      * Builds d3 chart object with axes scales and zoom functionality.
      *
-     * Designed and used by the rain on point, see templates/rain.html
+     * Designed for and used by the rain on point, see templates/rain.html
      * and rain-aggregate-directives.
      * 
-     * @param   {object} data    list of data values [timestamp, mean, max]
+     * @param   {object} data    list of data values [timestamp, sum]
      * @param   {[type]} element html element
      * @returns {[object]}       graph object
      */
@@ -599,7 +599,7 @@ angular.module('graph')
           range: [height, 0]
         });
 
-        var line = d3.svg.line()
+        var line = d3.svg.line().interpolate('basis')
           .y(function (d) {
             return y.scale(d[keys.y]);
           });
@@ -692,9 +692,19 @@ angular.module('graph')
           .append("svg:rect")
           .attr("x", 0)
           .attr("y", 0)
-          .attr("width", width)
+          .attr("width", 0)
           .attr("height", height);
 
+        if (scope.$parent.box.type !== 'elevation') {
+          clip
+            .transition()
+            .ease('linear')
+            .duration(1000)
+            .attr("width", width);
+        } else {
+          clip
+            .attr("width", width);
+        }
 
         var chartBody = svg.append("g")
           .attr("clip-path", "url(#clip)");
