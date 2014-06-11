@@ -11,7 +11,9 @@ describe('Testing graph directives', function() {
   }));
 
   it('should have an isolate scope', function () {
-    var element = angular.element('<div ng-controller="MasterCtrl">' +
+    // tests whether the scope that is passed to the graph directive
+    // so we use a dummy ctrl (in `test/mocks.js`)
+    var element = angular.element('<div ng-controller="DummyCtrl">' +
       '<graph data="3"></graph></div>');
     element = $compile(element)($rootScope);
     var scope = element.scope();

@@ -36,7 +36,8 @@ module.exports = function (grunt) {
         '<%= nxt_dir.vendor %>/lodash/dist/lodash.min.js',
       ],
       testfiles: [
-        '<%= nxt_dir.vendor %>/angular-mocks/angular-mocks.js'
+        '<%= nxt_dir.vendor %>/angular-mocks/angular-mocks.js',
+        '<%= nxt_dir.test %>/mocks.js'
       ],
       angularfiles:
       [
@@ -149,10 +150,14 @@ module.exports = function (grunt) {
         pivotal: {
           src: ['<%= angularfiles %>',
                 '<%= vendorfiles %>',
-                '<%= testfiles %>',
-                '<%= appfiles %>'],
+                '<%= appfiles %>',
+                '<%= testfiles %>'
+              ],
           options: {
-            specs: '<%= nxt_dir.test %>/**/*.js',
+            specs: [
+              '<%= nxt_dir.test %>/**/*.js',
+              '!<%= nxt_dir.test %>/mocks.js'
+              ],
             junit: {
               path: 'qa/junit'
             }

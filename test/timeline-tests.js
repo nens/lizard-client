@@ -9,8 +9,7 @@ describe('Testing timeline directive', function() {
 
   beforeEach(module('lizard-nxt',
     'templates-main',
-    'graph',
-    'lizard-nxt.services'));
+    'graph'));
   beforeEach(inject(function (_$compile_, _$rootScope_, _$httpBackend_, $controller) {
     $compile = _$compile_;
     $rootScope = _$rootScope_;
@@ -26,7 +25,7 @@ describe('Testing timeline directive', function() {
     + '</div>');
     element = $compile(element)($rootScope);
     scope = element.scope();
-    ctrl = $controller('TimelineDirCtrl', {$scope: scope});
+    ctrl = $controller('TimeLine', {$scope: scope});
   }));
 
   it('should have d3 available', function () {

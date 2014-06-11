@@ -7,9 +7,7 @@ describe('Testing lizard-nxt omnibox directive', function() {
   var $compile, $rootScope;
 
   beforeEach(module('lizard-nxt',
-    'templates-main',
-    'graph',
-    'lizard-nxt.services'));
+    'templates-main'));
   beforeEach(inject(function (_$compile_, _$rootScope_) {
     $compile = _$compile_;
     $rootScope = _$rootScope_;
@@ -29,13 +27,22 @@ describe('Testing lizard-nxt omnibox directive', function() {
   });
 
   it('Should retrieve and draw a pumpstation template', function() {
+    var parentElement = angular.element('<div ng-controller="MasterCtrl"></div>');
+    parentElement = $compile(parentElement)($rootScope);
+    var parentScope = parentElement.scope();
+
+    parentScope.box = {
+        type: 'pumpstation_sewerage'
+    };
+    parentScope.activeObject = {
+      selectedTimeseries: {
+        data: [0,3]
+      }
+    }
     var element = angular.element('<omnibox></omnibox>');
-    element = $compile(element)($rootScope);
+    element = $compile(element)(parentScope);
     var scope = element.scope();
 
-    scope.box = {
-        type: 'pumpstation_sewerage'
-    }
     scope.$digest();
 
     // do something useful

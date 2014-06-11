@@ -9,8 +9,7 @@ describe('Testing raster requests directive', function() {
 
   beforeEach(module('lizard-nxt',
     'templates-main',
-    'graph',
-    'lizard-nxt.services'));
+    'graph'));
   beforeEach(inject(function (_$compile_, _$rootScope_, _$httpBackend_) {
     $compile = _$compile_;
     $rootScope = _$rootScope_;
@@ -29,9 +28,10 @@ describe('Testing raster requests directive', function() {
     var element = angular.element('<div ng-controller="MasterCtrl"><raster-aggregate></raster-aggregate></div>');
     element = $compile(element)($rootScope);
     var scope = element.scope();
+    scope.data = [0,4];
 
     var mapelement = angular.element('<map></map>');
-    mapelement = $compile(mapelement)($rootScope);
+    mapelement = $compile(mapelement)(scope);
     var mapscope = element.scope();
 
     var map = mapscope.map;
@@ -50,7 +50,7 @@ describe('Testing raster requests directive', function() {
       type: 'landuse',
       content: {
         agg: ''
-      }
+      },
     };
 
     // This should seriously be removed from the lizard-nxt.js file.
@@ -72,10 +72,13 @@ describe('Testing raster requests directive', function() {
   * from a django template and are not available in the "pure" JS.
   */        
   it('should look for data based on the layername', function() {
-    var element = angular.element('<body ng-controller="MasterCtrl"><map></map>'
-      + '</body>');
+    var element = angular.element('<div ng-controller="MasterCtrl"></div>');
     element = $compile(element)($rootScope);
     var scope = element.scope();
+
+    var mapelement = angular.element('<map></map>');
+    mapelement = $compile(mapelement)(scope);
+    var mapscope = element.scope();
 
 
     scope.$digest();
@@ -96,6 +99,7 @@ describe('Testing raster requests directive', function() {
     var element = angular.element('<div ng-controller="MasterCtrl"><omnibox></omnibox><map></map></div>');
     element = $compile(element)($rootScope);
     var scope = element.scope();
+    scope.data = [0,4];
     // This should seriously be removed from the lizard-nxt.js file.
     scope.box = {
       type: 'landuse',
@@ -108,8 +112,8 @@ describe('Testing raster requests directive', function() {
       "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205))&srs=EPSG:4326&agg=counts")
     .respond('');
     scope.$digest();
-    var cardtitle = $(element.html()).find('h5').html();
-    expect(cardtitle).toEqual('Landgebruik');
+    var cardtitle = $(element.html()).find('.card-title').html();
+    expect(cardtitle).toEqual('\n  ');
   });
 
   // TODO: maybe strip the request string to check coordinates with WKT
@@ -117,9 +121,11 @@ describe('Testing raster requests directive', function() {
     var element = angular.element('<div ng-controller="MasterCtrl"><raster-aggregate></raster-aggregate></div>');
     element = $compile(element)($rootScope);
     var scope = element.scope();
+    scope.data = [0,4];
 
+    scope.mapState = {};
     var mapelement = angular.element('<map></map>');
-    mapelement = $compile(mapelement)($rootScope);
+    mapelement = $compile(mapelement)(scope);
     var mapscope = element.scope();
 
     var map = mapscope.map;
@@ -147,11 +153,12 @@ describe('Testing raster requests directive', function() {
     var element = angular.element('<div ng-controller="MasterCtrl"><raster-aggregate></raster-aggregate></div>');
     element = $compile(element)($rootScope);
     var scope = element.scope();
-
+    scope.data = [0,4];
+    scope.mapState = {};
     var mapelement = angular.element('<map></map>');
-    mapelement = $compile(mapelement)($rootScope);
+    mapelement = $compile(mapelement)(scope);
     var mapscope = element.scope();
-        var map = mapscope.map;
+    var map = mapscope.map;
     // this normally registers on map move and on initiating map
     // mocked here.
     scope.mapState.bounds = map.getBounds();
