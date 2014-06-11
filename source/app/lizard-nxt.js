@@ -225,22 +225,22 @@ app.controller("MasterCtrl",
   $scope.kpiTableParams = new ngTableParams({
       page: 1,            // show first page
       count: 10           // count per page
-  }, {
+    }, {
       total: $scope.mapState.eventTypes.length,
       counts: [],
-      groupBy: function(item) {
+      groupBy: function (item) {
         return item.type + ' (' + item.event_count + ' totaal, ' + $scope.events.types.count + ' actief)'; //TODO: Active doesnt update?
       },
-      getData: function($defer, params) {
+      getData: function ($defer, params) {
         // use build-in angular filter
-        console.log('--->',$scope.events.data);
+        console.log('--->', $scope.events.data);
         var orderedData = params.sorting() ?
                             $filter('orderBy')($scope.mapState.eventTypes, params.orderBy()) :
                             $scope.mapState.eventTypes;
 
         $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
       }
-  });
+    });
 
   /**
    * Zoom to event location
@@ -347,6 +347,20 @@ app.controller("MasterCtrl",
         feature.properties.geometry = feature.geometry;
         $scope.activeObject.events.push(feature.properties);
       });
+      $scope.tableParams = new ngTableParams({
+          page: 1,            // show first page
+          count: 10          // count per page
+        }, {
+          groupBy: 'category',
+          total: $scope.activeObject.events.length,
+          getData: function ($defer, params) {
+              var orderedData = params.sorting() ?
+                      $filter('orderBy')($scope.activeObject.events, $scope.tableParams.orderBy()) :
+                      $scope.activeObject.events;
+
+              $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+            }
+        });
     });
     $scope.activeObject.timeseries = TimeseriesService.getRandomTimeseries();
     $scope.activeObject.selectedTimeseries = $scope.activeObject.timeseries[0];
