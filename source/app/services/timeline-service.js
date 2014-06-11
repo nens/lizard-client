@@ -409,7 +409,7 @@ app.factory("Timeline", [ function () {
       drawAxes(svg, xAxis);
       if (circles) {
         circles.attr("cx", function (d) {
-          return Math.round(xScale(d.properties.timestamp));
+          return Math.round(xScale(d.properties.timestamp_end));
         });
       }
       if (bars) {
@@ -452,7 +452,7 @@ app.factory("Timeline", [ function () {
       var s = brush.extent();
       if (circles) {
         circles.classed("selected", function (d) {
-          var t = new Date(d.properties.timestamp);
+          var t = new Date(d.properties.timestamp_end);
           return s[0] <= t && t <= s[1];
         });
       }
@@ -525,7 +525,7 @@ app.factory("Timeline", [ function () {
    * drawCircles.
    */
   var updateCircleElements = function (circles, xScale) {
-    var xFunction = function (d) { return Math.round(xScale(d.properties.timestamp)); };
+    var xFunction = function (d) { return Math.round(xScale(d.properties.timestamp_end)); };
 
     // UPDATE
     // Update old elements as needed.
@@ -596,7 +596,7 @@ app.factory("Timeline", [ function () {
    * Draws circle elements according to a d3 update pattern.
    */
   var drawCircleElements = function (svg, dimensions, data, xScale, yScale) {
-    var xFunction = function (d) { return xScale(d.properties.timestamp); };
+    var xFunction = function (d) { return xScale(d.properties.timestamp_end); };
     var yFunction = function (d) { return yScale(d.event_order); };
     var colorFunction = function (d) { return d.color; };
     // DATA JOIN
