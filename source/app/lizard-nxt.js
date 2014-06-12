@@ -328,40 +328,33 @@ app.controller("MasterCtrl",
     details: false, // To display details in the card
     attrs: undefined, // To store object data
     hasTimeseries: false,
-    events: [],
     timeseries: [],
+    hasEvents: false,
+    events: [],
     selectedTimeseries: null
   };
 
   $scope.$watch('activeObject.changed', function (newVal, oldVal) {
     if (newVal === oldVal) { return; }
+    $scope.activeObject.hasTimeries = false;
+    $scope.activeObject.hasEvents = false;
     $scope.box.content.object_type = $scope.activeObject.attrs.entity_name;
     $scope.box.content.id = $scope.activeObject.attrs.id;
     $scope.box.content.data = $scope.activeObject.attrs;
     $scope.box.type = $scope.activeObject.attrs.entity_name;
-    EventService.getEventsForObject($scope.activeObject.attrs.entity_name,
-                                    $scope.activeObject.attrs.id)
-    .then(function (response) {
-      $scope.activeObject.events = [];
-      angular.forEach(response.features, function (feature) {
-        feature.properties.geometry = feature.geometry;
-        $scope.activeObject.events.push(feature.properties);
-      });
-      $scope.tableParams = new ngTableParams({
-          page: 1,            // show first page
-          count: 10          // count per page
-        }, {
-          groupBy: 'category',
-          total: $scope.activeObject.events.length,
-          getData: function ($defer, params) {
-              var orderedData = params.sorting() ?
-                      $filter('orderBy')($scope.activeObject.events, $scope.tableParams.orderBy()) :
-                      $scope.activeObject.events;
-
-              $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-            }
+    EventService.getEvents({object: $scope.activeObject.attrs.entity_name +
+                                    '$' +
+                                    $scope.activeObject.attrs.id})
+      .then(function (response) {
+        $scope.activeObject.events = [];
+        angular.forEach(response.features, function (feature) {
+          feature.properties.geometry = feature.geometry;
+          $scope.activeObject.events.push(feature.properties);
         });
-    });
+        if ($scope.activeObject.events.length > 0) {
+          $scope.activeObject.hasEvents = true;
+        }
+      });
     $scope.activeObject.timeseries = TimeseriesService.getRandomTimeseries();
     $scope.activeObject.selectedTimeseries = $scope.activeObject.timeseries[0];
     $scope.activeObject.hasTimeseries = true;
