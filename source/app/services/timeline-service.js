@@ -603,9 +603,7 @@ app.factory("Timeline", [ function () {
     // DATA JOIN
     // Join new data with old elements, based on the id value.
     circles = svg.select('g').select('#circle-group').selectAll("path")
-        .data(data, function  (d) { 
-          console.log(d);
-          return d.id; });
+        .data(data, function  (d) { return d.id; });
 
     // UPDATE
     // Update old elements as needed.
@@ -613,17 +611,18 @@ app.factory("Timeline", [ function () {
       .delay(500)
       .duration(500)
       .attr("stroke", colorFunction)
-      .attr("d", function (d) { return "M " + xOneFunction(d) + " " + yFunction(d) + " L " + xTwoFunction(d) + " " + yFunction(d); });
+      .attr("d", function (d) {
+        return "M " + xOneFunction(d) + " " + yFunction(d) + " L " + xTwoFunction(d) + " " + yFunction(d);
+      });
 
     // ENTER
     // Create new elements as needed.
     circles.enter().append("path")
       .attr("class", "event")
       .attr("stroke", colorFunction)
-      .attr("d", function (d) { 
-        console.log(d);
+      .attr("d", function (d) {
         return "M " + xOneFunction(d) + " " + yFunction(d) + " L " + xTwoFunction(d) + " " + yFunction(d); })
-      // .attr("r", 5)
+      .attr("stroke-linejoin", "round")
       .attr("stroke-opacity", 0)
       .attr("stroke-width", 0)
       .transition()
