@@ -165,20 +165,9 @@ app.service("EventService", ["Restangular", "$q",
   
   Restangular.setRequestSuffix('?page_size=0');
   eventsResource = Restangular.one('api/v1/events/');
-  // TODO: Restangular.one('api/v1/objects/');
-  objectEventsResource = function (name, objectID) {
-    var defer = $q.defer();
-    setTimeout(function () {
-      var response = {"type": "FeatureCollection", "features": [{"id": 3503, "type": "Feature", "geometry": {"type": "Point", "coordinates": [4.954955496434113, 52.501379130617515]}, "properties": {"category": "STANKOVERLAST", "value": "Rioolverstopping", "timestamp": 1389819600000, "event_series": "Alarmen"}}, {"id": 3504, "type": "Feature", "geometry": {"type": "Point", "coordinates": [4.954955496434113, 52.501379130617515]}, "properties": {"category": "STANKOVERLAST", "value": "Rioolverstopping", "timestamp": 1389906000000, "event_series": "Alarmen"}}, {"id": 3505, "type": "Feature", "geometry": {"type": "Point", "coordinates": [4.986668114895552, 52.50079113117614]}, "properties": {"category": "PUTDEKSELWEG", "value": "Rioolverstopping", "timestamp": 1389992400000, "event_series": "Alarmen"}}, {"id": 3500, "type": "Feature", "geometry": {"type": "Point", "coordinates": [4.974311869167772, 52.522110756663764]}, "properties": {"category": "STANKOVERLAST", "value": "Rioolverstopping", "timestamp": 1389560400000, "event_series": "Alarmen"}}]};
-      defer.resolve(response);
-    }, 500);
-    return defer.promise;
-  };
-
 
   return {
     getEvents: eventsResource.get,
-    getEventsForObject: objectEventsResource,
     buildEventTypesTemplate: buildEventTypesTemplate,
     countCurrentEvents: countCurrentEvents,
     addEvents: addEvents,
