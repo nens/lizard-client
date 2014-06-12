@@ -2,10 +2,10 @@
 
 /*
   Gruntfile for Lizard NXT client.
-  
+
   To see what tasks are available run::
   `grunt --help`
-  
+
   Before deploying it should run::
   `grunt build`
 
