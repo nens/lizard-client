@@ -154,7 +154,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         d3.selectAll(".circle")
           .classed("selected", function (d) {
             var s = [start, end];
-            var time = d.properties.timestamp;
+            var time = d.properties.timestamp_end;
             var contained = s[0] <= time && time <= s[1];
             // Some book keeping to count
             d.inTempExtent = contained;

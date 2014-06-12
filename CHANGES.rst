@@ -59,3 +59,7 @@ unreleased
 - Cleanup of depricated client side javascript code
 
 - Added unit tests for timeline.
+
+- Added coverage, junit and jshint reports (in `qa/`) for jenkins.
+
+- JSHint cleanup.

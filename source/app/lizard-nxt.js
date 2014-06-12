@@ -184,7 +184,7 @@ app.controller("MasterCtrl",
       enabled: false,
       currentFrame: 0,
       lenght: 0,
-      speed: 20,
+      minLag: 50, // Time in ms between frames
       stepSize: 1000
     }
   };
@@ -225,22 +225,22 @@ app.controller("MasterCtrl",
   $scope.kpiTableParams = new ngTableParams({
       page: 1,            // show first page
       count: 10           // count per page
-  }, {
+    }, {
       total: $scope.mapState.eventTypes.length,
       counts: [],
-      groupBy: function(item) {
+      groupBy: function (item) {
         return item.type + ' (' + item.event_count + ' totaal, ' + $scope.events.types.count + ' actief)'; //TODO: Active doesnt update?
       },
-      getData: function($defer, params) {
+      getData: function ($defer, params) {
         // use build-in angular filter
-        console.log('--->',$scope.events.data);
+        console.log('--->', $scope.events.data);
         var orderedData = params.sorting() ?
                             $filter('orderBy')($scope.mapState.eventTypes, params.orderBy()) :
                             $scope.mapState.eventTypes;
 
         $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
       }
-  });
+    });
 
   /**
    * Zoom to event location
@@ -347,6 +347,20 @@ app.controller("MasterCtrl",
         feature.properties.geometry = feature.geometry;
         $scope.activeObject.events.push(feature.properties);
       });
+      $scope.tableParams = new ngTableParams({
+          page: 1,            // show first page
+          count: 10          // count per page
+        }, {
+          groupBy: 'category',
+          total: $scope.activeObject.events.length,
+          getData: function ($defer, params) {
+              var orderedData = params.sorting() ?
+                      $filter('orderBy')($scope.activeObject.events, $scope.tableParams.orderBy()) :
+                      $scope.activeObject.events;
+
+              $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+            }
+        });
     });
     $scope.activeObject.timeseries = TimeseriesService.getRandomTimeseries();
     $scope.activeObject.selectedTimeseries = $scope.activeObject.timeseries[0];
@@ -519,13 +533,11 @@ app.controller("MasterCtrl",
   $scope.toggleRain = function () {
     if ($scope.rain.enabled === false) {
       $scope.rain.enabled = true;
-      $scope.timeState.animation.speed = 50;
       if ($scope.timeState.hidden !== false) {
         $scope.toggleTimeline();
       }
     } else if ($scope.rain.enabled) {
       $scope.rain.enabled = false;
-      $scope.timeState.animation.speed = 20;
     }
   };
 

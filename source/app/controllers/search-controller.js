@@ -20,28 +20,28 @@ app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
     var $target = $(e.target);
     var nextTab;
     switch (e.keyCode) {
-      case KeyCodes.BACKSPACE:
-        angular.element('#searchboxinput')[0].focus();
-        break;
-      case KeyCodes.ESCAPE:
-        $target.blur();
-        break;
-      case KeyCodes.UPARROW:
-        nextTab = - 1;
-        break;
-      case KeyCodes.RETURNKEY:
-        $scope.box.type = 'empty'; // Hides the results
-        e.preventDefault();
-        break;
-      case KeyCodes.DOWNARROW:
-        nextTab = 1;
-        break;
+    case KeyCodes.BACKSPACE:
+      angular.element('#searchboxinput')[0].focus();
+      break;
+    case KeyCodes.ESCAPE:
+      $target.blur();
+      break;
+    case KeyCodes.UPARROW:
+      nextTab = - 1;
+      break;
+    case KeyCodes.RETURNKEY:
+      $scope.box.type = 'empty'; // Hides the results
+      e.preventDefault();
+      break;
+    case KeyCodes.DOWNARROW:
+      nextTab = 1;
+      break;
     }
     if (nextTab !== undefined) {
       // do this outside the current $digest cycle
       // focus the next element by tabindex
       $timeout(function () {
-        var el = $('[tabindex=' + (parseInt($target.attr("tabindex")) + nextTab) + ']').focus();
+        var el = $('[tabindex=' + (parseInt($target.attr("tabindex"), 10) + nextTab) + ']').focus();
       }, 30);
     }
   };

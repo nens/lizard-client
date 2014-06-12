@@ -133,16 +133,16 @@ module.exports = function (grunt) {
         all: [
           // 'Gruntfile.js',
           '<%= nxt_dir.src %>/app/**/*.js',
+          '!<%= nxt_dir.src %>/app/lib/leaflet-utfgrid-lizard.js',
+          '!<%= nxt_dir.src %>/app/lib/leaflet.contours-layer.js',
+          '!<%= nxt_dir.src %>/app/lib/TileLayer.GeoJSONd3.js',
+          '!<%= nxt_dir.src %>/app/templates/templates.js'
         ],
         options: {
           jshintrc: '.jshintrc',
           reporter: 'jslint',
-          reporterOutput: 'jshint.xml',
-          ignores: [
-            'lizard_nxt/client/static/source/app/lib/leaflet-utfgrid-lizard.js',
-            'lizard_nxt/client/static/source/app/lib/leaflet.contours-layer.js',
-            'lizard_nxt/client/static/source/app/templates/templates.js'
-          ]
+          reporterOutput: 'qa/jshint.xml',
+          force: true // finishes jshint instead of `failing`.
         }
       },
       jasmine: {
@@ -152,7 +152,10 @@ module.exports = function (grunt) {
                 '<%= testfiles %>',
                 '<%= appfiles %>'],
           options: {
-            specs: '<%= nxt_dir.test %>/**/*.js'
+            specs: '<%= nxt_dir.test %>/**/*.js',
+            junit: {
+              path: 'qa/junit'
+            }
           }
         },
         istanbul: {
@@ -161,10 +164,10 @@ module.exports = function (grunt) {
             specs: '<%= jasmine.pivotal.options.specs %>',
             template: require('grunt-template-jasmine-istanbul'),
             templateOptions: {
-              coverage: 'coverage/json/coverage.json',
+              coverage: 'qa/coverage/json/coverage.json',
               report: [
-                  {type: 'html', options: {dir: 'coverage/html'}},
-                  {type: 'cobertura', options: {dir: ''}},
+                  {type: 'html', options: {dir: 'qa/coverage/html'}},
+                  {type: 'cobertura', options: {dir: 'qa/'}},
                   {type: 'text-summary'}
                 ]
               }

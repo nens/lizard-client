@@ -411,6 +411,9 @@ app.factory("Timeline", [ function () {
         // circles.attr("cx", function (d) {
         //   return Math.round(xScale(d.properties.timestamp));
         // });
+        circles.attr("cx", function (d) {
+          return Math.round(xScale(d.properties.timestamp_end));
+        });
       }
       if (bars) {
         var barData = bars.data();
@@ -452,7 +455,7 @@ app.factory("Timeline", [ function () {
       var s = brush.extent();
       if (circles) {
         circles.classed("selected", function (d) {
-          var t = new Date(d.properties.timestamp);
+          var t = new Date(d.properties.timestamp_end);
           return s[0] <= t && t <= s[1];
         });
       }
@@ -525,7 +528,7 @@ app.factory("Timeline", [ function () {
    * drawCircles.
    */
   var updateCircleElements = function (circles, xScale) {
-    var xFunction = function (d) { return Math.round(xScale(d.properties.timestamp)); };
+    var xFunction = function (d) { return Math.round(xScale(d.properties.timestamp_end)); };
 
     // UPDATE
     // Update old elements as needed.

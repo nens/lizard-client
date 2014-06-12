@@ -52,13 +52,15 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
    */
   var step =  function () {
     var currentInterval = $scope.timeState.end - $scope.timeState.start;
-    var timeStep = currentInterval / $scope.timeState.animation.stepSize;
+    var timeStep;
     // hack to slow down animation for rasters to min resolution
-    if ($scope.rain.enabled &&
-        timeStep - RasterService.rainInfo.timeResolution > 0) {
-      var timeFraction = timeStep / RasterService.rainInfo.timeResolution;
-      $scope.timeState.animation.speed = 50 - (timeFraction / 2);
-      timeStep = RasterService.rainInfo.timeResolution;
+    if ($scope.rain.enabled) {
+      // Divide by ten to make the movement in the timeline smooth.
+      timeStep = RasterService.rainInfo.timeResolution / 10;
+      $scope.timeState.animation.minLag = RasterService.rainInfo.minTimeBetweenFrames / 10;
+    } else {
+      timeStep = currentInterval / $scope.timeState.animation.stepSize;
+      $scope.timeState.animation.minLag = 50;
     }
     $scope.$apply(function () {
       $scope.timeState.animation.start += timeStep;
@@ -76,7 +78,7 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
     if ($scope.timeState.animation.playing) {
       setTimeout(function () {
         window.requestAnimationFrame(step);
-      }, 50);
+      }, $scope.timeState.animation.minLag);
     }
   };
 
