@@ -26,30 +26,5 @@ describe('Testing lizard-nxt omnibox directive', function() {
     expect(cardbox).toBe(true);
   });
 
-  it('Should retrieve and draw a pumpstation template', function() {
-    var parentElement = angular.element('<div ng-controller="MasterCtrl"></div>');
-    parentElement = $compile(parentElement)($rootScope);
-    var parentScope = parentElement.scope();
-
-    parentScope.box = {
-        type: 'pumpstation_sewerage'
-    };
-    parentScope.activeObject = {
-      selectedTimeseries: {
-        data: [0,3]
-      }
-    }
-    var element = angular.element('<omnibox></omnibox>');
-    element = $compile(element)(parentScope);
-    var scope = element.scope();
-
-    scope.$digest();
-
-    // do something useful
-    // var cardbox = angular.element(element.children()[1]).hasClass('cardbox')
-    expect(true).toBe(true);
-  });
-
-
 
 });
