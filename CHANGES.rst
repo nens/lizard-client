@@ -63,3 +63,7 @@ unreleased
 - Added coverage, junit and jshint reports (in `qa/`) for jenkins.
 
 - JSHint cleanup.
+
+- Gruntfile cleanup. 
+
+- Got tests to run.
