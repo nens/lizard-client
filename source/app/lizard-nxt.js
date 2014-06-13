@@ -170,29 +170,29 @@ app.controller("MasterCtrl",
   // /END MOVE TO MAP CONTROL
   // MAP MODEL
 
-    var end = Date.now();
-    var two_days_ago = end - 48*60*60*1000;
-    var seven_days_ago = end - 24*7*60*60*1000;
-    var last_visit = CabinetService.lastVisitUtime;
-    // TIME MODEL
-    $scope.timeState = {
-      start: Math.max(seven_days_ago, Math.min(two_days_ago, last_visit)),
-      end: end,
-      changedZoom: Date.now(),
-      zoomEnded: null,
-      hidden: undefined,
-      animation: {
-        start: undefined,
-        playing: false,
-        enabled: false,
-        currentFrame: 0,
-        lenght: 0,
-        speed: 20,
-        stepSize: 1000
-      }
-    };
-    // initialise 'now'
-    $scope.timeState.at = $scope.timeState.start;
+  var end = Date.now();
+  var two_days_ago = end - 48 * 60 * 60 * 1000;
+  var seven_days_ago = end - 24 * 7 * 60 * 60 * 1000;
+  var last_visit = CabinetService.lastVisitUtime;
+  // TIME MODEL
+  $scope.timeState = {
+    start: Math.max(seven_days_ago, Math.min(two_days_ago, last_visit)),
+    end: end,
+    changedZoom: Date.now(),
+    zoomEnded: null,
+    hidden: undefined,
+    animation: {
+      start: undefined,
+      playing: false,
+      enabled: false,
+      currentFrame: 0,
+      lenght: 0,
+      speed: 20,
+      stepSize: 1000
+    }
+  };
+  // initialise 'now'
+  $scope.timeState.at = $scope.timeState.start;
 
 // END TIME MODEL
 
@@ -228,22 +228,22 @@ app.controller("MasterCtrl",
   $scope.kpiTableParams = new ngTableParams({
       page: 1,            // show first page
       count: 10           // count per page
-  }, {
+    }, {
       total: $scope.mapState.eventTypes.length,
       counts: [],
-      groupBy: function(item) {
+      groupBy: function (item) {
         return item.type + ' (' + item.event_count + ' totaal, ' + $scope.events.types.count + ' actief)'; //TODO: Active doesnt update?
       },
-      getData: function($defer, params) {
+      getData: function ($defer, params) {
         // use build-in angular filter
-        console.log('--->',$scope.events.data);
+        console.log('--->', $scope.events.data);
         var orderedData = params.sorting() ?
                             $filter('orderBy')($scope.mapState.eventTypes, params.orderBy()) :
                             $scope.mapState.eventTypes;
 
         $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
       }
-  });
+    });
 
   /**
    * Zoom to event location
