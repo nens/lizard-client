@@ -72,6 +72,13 @@
   </div>
 </div>
 
+<div class="card" ng-class="{hidden: !activeObject.hasEvents}">
+  <i class="fa fa-circle"></i>&nbsp; Events: <br />
+  <div class="card-events" ng-repeat="event in activeObject.events">
+    <% event.timestamp_start | date : 'dd-MM' %> > <% event.timestamp_end | date : 'dd-MM-yy' %> <% event.category %>: <% event.value %>
+  </div>
+</div>
+
 <div class="card" ng-class="{hidden: !activeObject.hasTimeseries}" >
   <div class="input-prepend">
     <span class="add-on"> Tijdreeks</span>

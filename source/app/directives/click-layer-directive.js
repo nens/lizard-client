@@ -326,7 +326,10 @@ app.directive('clickLayer', ["$q", function ($q) {
     var extendDataToActiveObject = function (response) {
       scope.activeObject.attrs = {};
       angular.extend(scope.activeObject.attrs, response.data);
-      scope.activeObject.latlng = response.latlng;
+      if (response.data) {
+        var geom = JSON.parse(response.data.geom);
+        scope.activeObject.latlng = {lat: geom.coordinates[0], lng: geom.coordinates[1]};
+      }
       scope.activeObject.changed = !scope.activeObject.changed;
     };
 

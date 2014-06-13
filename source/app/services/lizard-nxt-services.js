@@ -6,6 +6,7 @@ app.service("CabinetService", ["$q", "Restangular",
   var baselayers = window.baseLayers;
   var overlayers = window.overLayers;
   var eventTypes = window.event_types;
+  var lastVisitUtime = window.last_visit_utime;
 
   var termSearchResource,
       bboxSearchResource,
@@ -45,6 +46,7 @@ app.service("CabinetService", ["$q", "Restangular",
     raster: rasterResource,
     reverseGeocode: reverseGeocodeResource,
     timeseries: timeseriesResource,
-    panZoom: null
+    panZoom: null,
+    lastVisitUtime: lastVisitUtime
   };
 }]);
