@@ -1149,7 +1149,16 @@ header {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    
+}
+
+#last-visit {
+    font-family: 'Roboto Slab', sans-serif !important;
+    font-size: 14px;
+    color: #fff ;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-right: 10px;
+    margin-top: 15px;
 }
 
 #user-icon {
@@ -1343,3 +1352,4 @@ img.leaflet-image-layer {
     stroke: #e74c3c;
     stroke-width: 2;
 }
+
