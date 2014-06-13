@@ -284,8 +284,8 @@ app.factory("Timeline", [ function () {
      */
     drawEventsContainedInBounds: function (bounds) {
       var latLng = [];
-      d3.selectAll("circle").classed("hidden", true);
-      d3.selectAll("circle")
+      lines.classed("selected", false);
+      lines
         .classed("selected", function (d) {
           latLng[0] = d.geometry.coordinates[1];
           latLng[1] = d.geometry.coordinates[0];
@@ -294,8 +294,6 @@ app.factory("Timeline", [ function () {
           d.inSpatExtent = contained;
           return contained;
         });
-      var selected = d3.selectAll("circle.selected");
-      selected.classed("hidden", false);
     },
 
     /**
