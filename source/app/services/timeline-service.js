@@ -284,6 +284,7 @@ app.factory("Timeline", [ function () {
      */
     drawEventsContainedInBounds: function (bounds) {
       var latLng = [];
+      lines.classed("hidden", true);
       lines.classed("selected", false);
       lines
         .classed("selected", function (d) {
@@ -294,6 +295,7 @@ app.factory("Timeline", [ function () {
           d.inSpatExtent = contained;
           return contained;
         });
+      d3.selectAll(".selected").classed("hidden", false);
     },
 
     /**
