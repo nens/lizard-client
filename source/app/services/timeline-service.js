@@ -687,12 +687,15 @@ app.factory("Timeline", [ function () {
     var yFunction = function (d) { return yScale(d.event_order); };
     var colorFunction = function (d) { return d.color; };
     var dFunction = function (d) {
+      // Draws a small line from the end of the event to start
       var path =
         "M " + xOneFunction(d) + " " + yFunction(d)
         + " L " + (xTwoFunction(d) + 0.5) + " " + yFunction(d);
       return path;
     };
     var initialDFunction = function (d) {
+      // Draws a mimimal line from end to just next to the end to create a circle
+      // + 0.5 is to prevent flickering in browsers when transitioning
       var path =
         "M " + xOneFunction(d) + " " + yFunction(d)
         + " L " + (xOneFunction(d) + 0.5) + " " + yFunction(d);
