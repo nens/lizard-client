@@ -223,13 +223,13 @@ app.factory("Timeline", [ function () {
      */
     drawCircles: function (data) {
       var yScale = makeEventsYscale(initialHeight, this.dimensions);
-      circles = drawCircleElements(
-        svg,
-        this.dimensions,
-        data,
-        xScale,
-        yScale
-      );
+      // circles = drawCircleElements(
+      //   svg,
+      //   this.dimensions,
+      //   data,
+      //   xScale,
+      //   yScale
+      // );
       tails = drawLineElements(
         svg,
         this.dimensions,
@@ -655,10 +655,23 @@ app.factory("Timeline", [ function () {
    * Draws horizontal line elements according to a d3 update pattern.
    */
   var drawLineElements = function (svg, dimensions, data, xScale, yScale) {
-    var xOneFunction = function (d) { return xScale(d.properties.timestamp_start); };
-    var xTwoFunction = function (d) { return xScale(d.properties.timestamp_end); };
+    var xOneFunction = function (d) { return xScale(d.properties.timestamp_end); };
+    var xTwoFunction = function (d) { return xScale(d.properties.timestamp_start); };
     var yFunction = function (d) { return yScale(d.event_order); };
     var colorFunction = function (d) { return d.color; };
+    var dFunction = function (d) {
+      var path =
+        "M " + xOneFunction(d) + " " + yFunction(d)
+        + " L " + (xTwoFunction(d) + 0.5) + " " + yFunction(d);
+      return path;
+    };
+    var initialDFunction = function (d) {
+      var path =
+        "M " + xOneFunction(d) + " " + yFunction(d)
+        + " L " + (xOneFunction(d) + 0.5) + " " + yFunction(d);
+      return path;
+    };
+    
     // DATA JOIN
     // Join new data with old elements, based on the id value.
     tails = svg.select('g').select('#circle-group').selectAll("path")
@@ -670,37 +683,42 @@ app.factory("Timeline", [ function () {
       .delay(500)
       .duration(500)
       .attr("stroke", colorFunction)
-      .attr("d", function (d) {
-        return "M " + xOneFunction(d) + " " + yFunction(d) + " L " + xTwoFunction(d) + " " + yFunction(d);
-      });
+      .attr("d", dFunction);
 
     // ENTER
     // Create new elements as needed.
     tails.enter().append("path")
       .attr("class", "event")
       .attr("stroke", colorFunction)
-      .attr("d", function (d) {
-        return "M " + xOneFunction(d) + " " + yFunction(d) + " L " + xTwoFunction(d) + " " + yFunction(d); })
-      .attr("stroke-linejoin", "round")
+      .attr("d", initialDFunction)
+      .attr("stroke-linecap", "round")
       .attr("stroke-opacity", 0)
       .attr("stroke-width", 0)
-      .transition()
+    .transition()
       .delay(500)
       .duration(500)
-      .attr("stroke-width", 3)
-      .attr("stroke-opacity", 0.5);
+      .attr("stroke-width", 10)
+      .attr("stroke-opacity", 0.8)
+    .transition()
+      .delay(1000)
+      .duration(500)
+      .attr("d", dFunction);
 
     // EXIT
     // Remove old elements as needed.
-    circles.exit()
+    tails.exit()
       .transition()
       .delay(0)
       .duration(500)
-      .attr("d", function (d) { return "M " + xOneFunction(d) + " " + 0 + " L " + xTwoFunction(d) + " " + 0; })
-      .style("fill-opacity", 1e-6)
+      .attr("d", initialDFunction)
+    .transition()
+      .delay(500)
+      .duration(500)
+      .attr("stroke-width", 0)
+      .style("fill-opacity", 0)
       .remove();
 
-    return circles;
+    return tails;
   };
 
   /**
