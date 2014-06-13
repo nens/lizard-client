@@ -24,6 +24,7 @@ app.factory("Timeline", [ function () {
               // updated when zoomTo is called.
   var xAxis;
   var brush;
+  var ordinalYScale; // Scale used to place events in lines for each type
 
   // Interaction functions
   var clicked;
@@ -168,6 +169,7 @@ app.factory("Timeline", [ function () {
       this.dimensions = dimensions;
       this.updateElements(oldDimensions);
       svg = updateCanvas(svg, oldDimensions, this.dimensions);
+      ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
       drawAxes(svg, xAxis);
     },
 
@@ -222,13 +224,12 @@ app.factory("Timeline", [ function () {
      *                                        event_order: <int specifying the line of events>}]
      */
     drawCircles: function (data) {
-      var yScale = makeEventsYscale(initialHeight, this.dimensions);
       circles = drawCircleElements(
         svg,
         this.dimensions,
         data,
         xScale,
-        yScale
+        ordinalYScale
       );
     },
 
@@ -243,13 +244,12 @@ app.factory("Timeline", [ function () {
      *                                        event_order: <int specifying the line of events>}]
      */
     drawLines: function (data) {
-      var yScale = makeEventsYscale(initialHeight, this.dimensions);
       lines = drawLineElements(
         svg,
         this.dimensions,
-        data,
         xScale,
-        yScale
+        ordinalYScale,
+        data
       );
     },
 
@@ -433,6 +433,18 @@ app.factory("Timeline", [ function () {
         circles.attr("cx", function (d) {
           return Math.round(xScale(d.properties.timestamp_end));
         });
+      }
+      if (lines) {
+        var xOneFunction = function (d) { return xScale(d.properties.timestamp_end); };
+        var xTwoFunction = function (d) { return xScale(d.properties.timestamp_start); };
+        var yFunction = function (d) { return ordinalYScale(d.event_order); };
+        var dFunction = function (d) {
+          var path =
+            "M " + xOneFunction(d) + " " + yFunction(d)
+            + " L " + (xTwoFunction(d) + 0.5) + " " + yFunction(d);
+          return path;
+        };
+        lines.attr("d", dFunction);
       }
       if (bars) {
         var barData = bars.data();
@@ -621,6 +633,7 @@ app.factory("Timeline", [ function () {
     var xFunction = function (d) { return xScale(d.properties.timestamp_end); };
     var yFunction = function (d) { return yScale(d.event_order); };
     var colorFunction = function (d) { return d.color; };
+    
     // DATA JOIN
     // Join new data with old elements, based on the id value.
     circles = svg.select('g').select('#circle-group').selectAll("circle")
@@ -668,7 +681,7 @@ app.factory("Timeline", [ function () {
   /**
    * Draws horizontal line elements according to a d3 update pattern.
    */
-  var drawLineElements = function (svg, dimensions, data, xScale, yScale) {
+  var drawLineElements = function (svg, dimensions, xScale, yScale, data) {
     var xOneFunction = function (d) { return xScale(d.properties.timestamp_end); };
     var xTwoFunction = function (d) { return xScale(d.properties.timestamp_start); };
     var yFunction = function (d) { return yScale(d.event_order); };
@@ -686,10 +699,12 @@ app.factory("Timeline", [ function () {
       return path;
     };
     
-    // DATA JOIN
-    // Join new data with old elements, based on the id value.
-    lines = svg.select('g').select('#circle-group').selectAll("path")
-        .data(data, function  (d) { return d.id; });
+    if (data) {
+      // DATA JOIN
+      // Join new data with old elements, based on the id value.
+      lines = svg.select('g').select('#circle-group').selectAll("path")
+          .data(data, function  (d) { return d.id; });
+    }
 
     // UPDATE
     // Update old elements as needed.
