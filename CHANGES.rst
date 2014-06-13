@@ -6,7 +6,7 @@ unreleased
 
 - Events with start and end as line in timeline
 
-- Cumulative rain for spatila extent in timeline
+- Cumulative rain for spatial extent in timeline
 
 - Event aggregate table in object cards (Performance Indicator)
 
