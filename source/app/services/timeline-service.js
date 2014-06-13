@@ -36,7 +36,7 @@ app.factory("Timeline", [ function () {
   var nowIndicator;
   var brushg;
   var circles; // events
-  var tails; // events start - end
+  var lines; // events start - end
   var bars; // rain intensity
 
   /**
@@ -223,14 +223,28 @@ app.factory("Timeline", [ function () {
      */
     drawCircles: function (data) {
       var yScale = makeEventsYscale(initialHeight, this.dimensions);
-      // circles = drawCircleElements(
-      //   svg,
-      //   this.dimensions,
-      //   data,
-      //   xScale,
-      //   yScale
-      // );
-      tails = drawLineElements(
+      circles = drawCircleElements(
+        svg,
+        this.dimensions,
+        data,
+        xScale,
+        yScale
+      );
+    },
+
+    /**
+     * Updates, adds or removes all lines in the data object
+     * 
+     * @param {array} data array of objects [{properties.timestamp_end: timestamp, 
+     *                                        properties.timestamp_start: timestamp, 
+     *                                        id: <id>,
+     *                                        color: <color code>,
+     *                                        geometry.coordinates: [lat, lon],
+     *                                        event_order: <int specifying the line of events>}]
+     */
+    drawLines: function (data) {
+      var yScale = makeEventsYscale(initialHeight, this.dimensions);
+      lines = drawLineElements(
         svg,
         this.dimensions,
         data,
@@ -674,12 +688,12 @@ app.factory("Timeline", [ function () {
     
     // DATA JOIN
     // Join new data with old elements, based on the id value.
-    tails = svg.select('g').select('#circle-group').selectAll("path")
+    lines = svg.select('g').select('#circle-group').selectAll("path")
         .data(data, function  (d) { return d.id; });
 
     // UPDATE
     // Update old elements as needed.
-    tails.transition()
+    lines.transition()
       .delay(500)
       .duration(500)
       .attr("stroke", colorFunction)
@@ -687,7 +701,7 @@ app.factory("Timeline", [ function () {
 
     // ENTER
     // Create new elements as needed.
-    tails.enter().append("path")
+    lines.enter().append("path")
       .attr("class", "event")
       .attr("stroke", colorFunction)
       .attr("d", initialDFunction)
@@ -706,7 +720,7 @@ app.factory("Timeline", [ function () {
 
     // EXIT
     // Remove old elements as needed.
-    tails.exit()
+    lines.exit()
       .transition()
       .delay(0)
       .duration(500)
@@ -718,7 +732,7 @@ app.factory("Timeline", [ function () {
       .style("fill-opacity", 0)
       .remove();
 
-    return tails;
+    return lines;
   };
 
   /**
