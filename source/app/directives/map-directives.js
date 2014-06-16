@@ -589,7 +589,7 @@ app.directive('rain', ["RasterService", "UtilService",
             // Turn off old frame
             imageOverlays[previousFrame].setOpacity(0);
             // Turn on new frame
-            imageOverlays[overlayIndex].setOpacity(0.8);
+            imageOverlays[overlayIndex].setOpacity(0.7);
             // Delete the old overlay from the lookup, it is gone.
             delete frameLookup[currentDate];
             // Remove old listener
@@ -624,7 +624,7 @@ app.directive('rain', ["RasterService", "UtilService",
         if (!scope.timeState.animation.playing
           && scope.rain.enabled) {
           getImages(scope.timeState.at);
-          imageOverlays[0].setOpacity(1);
+          imageOverlays[0].setOpacity(0.7);
           previousFrame = 0;
         }
       });
