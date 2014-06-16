@@ -7,6 +7,8 @@ var app = angular.module("lizard-nxt", [
   'graph',
   'omnibox',
   'restangular',
+  'ngSanitize',
+  'ngCsv',
   'ui.bootstrap',
   'ui.utils',
   'ngTable'
