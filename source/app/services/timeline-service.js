@@ -24,6 +24,7 @@ app.factory("Timeline", [ function () {
               // updated when zoomTo is called.
   var xAxis;
   var brush;
+  var ordinalYScale; // Scale used to place events in lines for each type
 
   // Interaction functions
   var clicked;
@@ -36,6 +37,7 @@ app.factory("Timeline", [ function () {
   var nowIndicator;
   var brushg;
   var circles; // events
+  var lines; // events start - end
   var bars; // rain intensity
 
   /**
@@ -167,6 +169,7 @@ app.factory("Timeline", [ function () {
       this.dimensions = dimensions;
       this.updateElements(oldDimensions);
       svg = updateCanvas(svg, oldDimensions, this.dimensions);
+      ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
       drawAxes(svg, xAxis);
     },
 
@@ -221,13 +224,32 @@ app.factory("Timeline", [ function () {
      *                                        event_order: <int specifying the line of events>}]
      */
     drawCircles: function (data) {
-      var yScale = makeEventsYscale(initialHeight, this.dimensions);
       circles = drawCircleElements(
         svg,
         this.dimensions,
         data,
         xScale,
-        yScale
+        ordinalYScale
+      );
+    },
+
+    /**
+     * Updates, adds or removes all lines in the data object
+     * 
+     * @param {array} data array of objects [{properties.timestamp_end: timestamp, 
+     *                                        properties.timestamp_start: timestamp, 
+     *                                        id: <id>,
+     *                                        color: <color code>,
+     *                                        geometry.coordinates: [lat, lon],
+     *                                        event_order: <int specifying the line of events>}]
+     */
+    drawLines: function (data) {
+      lines = drawLineElements(
+        svg,
+        this.dimensions,
+        xScale,
+        ordinalYScale,
+        data
       );
     },
 
@@ -262,8 +284,9 @@ app.factory("Timeline", [ function () {
      */
     drawEventsContainedInBounds: function (bounds) {
       var latLng = [];
-      d3.selectAll("circle").classed("hidden", true);
-      d3.selectAll("circle")
+      lines.classed("hidden", true);
+      lines.classed("selected", false);
+      lines
         .classed("selected", function (d) {
           latLng[0] = d.geometry.coordinates[1];
           latLng[1] = d.geometry.coordinates[0];
@@ -272,8 +295,7 @@ app.factory("Timeline", [ function () {
           d.inSpatExtent = contained;
           return contained;
         });
-      var selected = d3.selectAll("circle.selected");
-      selected.classed("hidden", false);
+      d3.selectAll(".selected").classed("hidden", false);
     },
 
     /**
@@ -411,6 +433,18 @@ app.factory("Timeline", [ function () {
         circles.attr("cx", function (d) {
           return Math.round(xScale(d.properties.timestamp_end));
         });
+      }
+      if (lines) {
+        var xOneFunction = function (d) { return xScale(d.properties.timestamp_end); };
+        var xTwoFunction = function (d) { return xScale(d.properties.timestamp_start); };
+        var yFunction = function (d) { return ordinalYScale(d.event_order); };
+        var dFunction = function (d) {
+          var path =
+            "M " + xOneFunction(d) + " " + yFunction(d)
+            + " L " + (xTwoFunction(d) + 0.5) + " " + yFunction(d);
+          return path;
+        };
+        lines.attr("d", dFunction);
       }
       if (bars) {
         var barData = bars.data();
@@ -599,6 +633,7 @@ app.factory("Timeline", [ function () {
     var xFunction = function (d) { return xScale(d.properties.timestamp_end); };
     var yFunction = function (d) { return yScale(d.event_order); };
     var colorFunction = function (d) { return d.color; };
+    
     // DATA JOIN
     // Join new data with old elements, based on the id value.
     circles = svg.select('g').select('#circle-group').selectAll("circle")
@@ -640,6 +675,82 @@ app.factory("Timeline", [ function () {
       .remove();
 
     return circles;
+  };
+
+
+  /**
+   * Draws horizontal line elements according to a d3 update pattern.
+   */
+  var drawLineElements = function (svg, dimensions, xScale, yScale, data) {
+    var xOneFunction = function (d) { return xScale(d.properties.timestamp_end); };
+    var xTwoFunction = function (d) { return xScale(d.properties.timestamp_start); };
+    var yFunction = function (d) { return yScale(d.event_order); };
+    var colorFunction = function (d) { return d.color; };
+    var dFunction = function (d) {
+      // Draws a small line from the end of the event to start
+      var path =
+        "M " + xOneFunction(d) + " " + yFunction(d)
+        + " L " + (xTwoFunction(d) + 0.5) + " " + yFunction(d);
+      return path;
+    };
+    var initialDFunction = function (d) {
+      // Draws a mimimal line from end to just next to the end to create a circle
+      // + 0.5 is to prevent flickering in browsers when transitioning
+      var path =
+        "M " + xOneFunction(d) + " " + yFunction(d)
+        + " L " + (xOneFunction(d) + 0.5) + " " + yFunction(d);
+      return path;
+    };
+    
+    if (data) {
+      // DATA JOIN
+      // Join new data with old elements, based on the id value.
+      lines = svg.select('g').select('#circle-group').selectAll("path")
+          .data(data, function  (d) { return d.id; });
+    }
+
+    // UPDATE
+    // Update old elements as needed.
+    lines.transition()
+      .delay(500)
+      .duration(500)
+      .attr("stroke", colorFunction)
+      .attr("d", dFunction);
+
+    // ENTER
+    // Create new elements as needed.
+    lines.enter().append("path")
+      .attr("class", "event")
+      .attr("stroke", colorFunction)
+      .attr("d", initialDFunction)
+      .attr("stroke-linecap", "round")
+      .attr("stroke-opacity", 0)
+      .attr("stroke-width", 0)
+    .transition()
+      .delay(500)
+      .duration(500)
+      .attr("stroke-width", 10)
+      .attr("stroke-opacity", 0.8)
+    .transition()
+      .delay(1000)
+      .duration(500)
+      .attr("d", dFunction);
+
+    // EXIT
+    // Remove old elements as needed.
+    lines.exit()
+      .transition()
+      .delay(0)
+      .duration(500)
+      .attr("d", initialDFunction)
+    .transition()
+      .delay(500)
+      .duration(500)
+      .attr("stroke-width", 0)
+      .style("fill-opacity", 0)
+      .remove();
+
+    return lines;
   };
 
   /**

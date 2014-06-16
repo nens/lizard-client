@@ -119,7 +119,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
       if (n === o) { return true; }
       updateTimelineHeight(angular.copy(timeline.dimensions), dimensions, scope.events.types.count);
       var data = scope.events.data.features;
-      timeline.drawCircles(data);
+      timeline.drawLines(data);
       timeline.drawEventsContainedInBounds(scope.mapState.bounds);
       EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
     });
