@@ -1,3 +1,30 @@
 <div class="card" ng-controller="RainAggregate">
+  <div class="actions">
+    <ul>
+      <li class="fullscreen">
+        <a 
+          ng-click="toggleDetailmode()"
+          title="Bekijk in detailmode">
+          <i class="fa fa-lg fa-plus-square-o"></i>
+        </a>
+      </li>
+      <li class="export">
+        <a 
+          href="#" title="Data van deze infocard exporteren" 
+          ng-csv="rain.data" filename="neerslag.csv"
+          csv-header="['Timestamp (ms)', 'Rain (mm)']" >
+          <i class="fa fa-share-square-o"></i>
+        </a>
+      </li>
+<!--         <li class="favorite">
+          <a
+            ng-click="bookmarkItem()" 
+            title="Voeg toe aan favorieten">
+            <i class="fa fa-lg fa-bookmark"></i>
+          </a>
+        </li> -->
+        <!-- <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li> -->
+      </ul>
+    </div> <!-- end actions -->
     <graph ng-if="!!rain.data" bar-chart data="rain.data" ylabel="rain.aggWindow" yfilter="aggWinToYLabel" xlabel="tijd"></graph>
 </div>
