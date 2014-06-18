@@ -185,6 +185,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
   /**
    * Returns aggWindow. Either five minutes, an hour or a day, should 
    * lead to a minimum of three pixels within the drawing width.
+   * TODO: REMOVE THIS FUNCTION, IN FAFOUR OF ITS CLONE IN UTIL-SERVICE.JS !
    * 
    * @param  {int} start    start of rainseries.
    * @param  {int} stop     end of rainseries.
@@ -211,6 +212,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
 
   /**
    * Gets rain from server.
+   * TODO: REMOVE THIS FUNCTION, IN FAFOUR OF ITS CLONE IN RASTER-SERVICE.JS !
    *
    * @param  {int} start    start of rainserie
    * @param  {int} stop     end of rainserie

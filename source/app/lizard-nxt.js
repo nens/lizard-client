@@ -363,6 +363,13 @@ app.controller("MasterCtrl",
     $scope.activeObject.timeseries = TimeseriesService.getRandomTimeseries();
     $scope.activeObject.selectedTimeseries = $scope.activeObject.timeseries[0];
     $scope.activeObject.hasTimeseries = true;
+    var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, window.innerWidth);
+    var callback = function (response) {
+      $scope.rain.data = response;
+      $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
+      $scope.rain.start = $scope.rain.data[0][0];
+    }
+    RasterService.getRain(new Date($scope.timeState.start), new Date($scope.timeState.end), $scope.activeObject.latlng, aggWindow).then(callback);
   });
 
   // END activeObject part

@@ -111,4 +111,32 @@ app.service("UtilService", function () {
     }
   };
 
+  /**
+   * Returns aggWindow. Either five minutes, an hour or a day, should 
+   * lead to a minimum of three pixels within the drawing width.
+   * TODO: REMOVE THIS FUNCTION, IN FAFOUR OF ITS CLONE IN RASTER-SERVICE.JS !
+   * 
+   * @param  {int} start    start of rainseries.
+   * @param  {int} stop     end of rainseries.
+   * @param  {int} drawingWidth size of graph in px.
+   * @return {int} aggWindow in ms.
+   */
+  this.getAggWindow = function (start, stop, drawingWidth) {
+    var aggWindow;
+    var minPx = 3; // Minimum width of a bar
+    // Available zoomlevels
+    var zoomLvls = {fiveMinutes: 300000,
+                    hour: 3600000,
+                    day: 86400000};
+    // ms per pixel
+    var msPerPx = (stop - start) / drawingWidth;
+    for (var zoomLvl in zoomLvls) {
+      aggWindow = zoomLvls[zoomLvl];
+      if (aggWindow > minPx * msPerPx) {
+        break; // If zoomlevel is sufficient to get enough width in the bars
+      }
+    }
+    return aggWindow;
+  };
+
 });
