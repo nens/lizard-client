@@ -29,7 +29,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
     if (layer.type === "TMS" && layer.baselayer) {
       layer.leafletLayer = L.tileLayer(layer.url + '.png',
                                        {name: "Background",
-                                        maxZoom: 19, 
+                                        maxZoom: 19,
                                         detectRetina: true,
                                         zIndex: layer.z_index});
     } else if (layer.type === "WMS") {
@@ -315,21 +315,14 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
       }
     });
 
-    scope.map.on('move', function () {
-      // NOTE: Check whether a $digest is already happening before using apply
+    scope.map.on('movestart', function () {
       if (!scope.$$phase) {
         scope.$apply(function () {
-          scope.mapState.moved = Date.now();
-          scope.mapState.bounds = scope.map.getBounds();
+          scope.mapState.mapMoving = true;
         });
       } else {
-        scope.mapState.moved = Date.now();
-        scope.mapState.bounds = scope.map.getBounds();
+        scope.mapState.mapMoving = true;
       }
-    });
-
-    scope.map.on('movestart', function () {
-      scope.mapState.mapMoving = true;
     });
 
     /**
@@ -341,6 +334,17 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
 
     scope.map.on('moveend', function () {
 
+      // NOTE: Check whether a $digest is already happening before using apply
+      if (!scope.$$phase) {
+        scope.$apply(function () {
+          scope.mapState.moved = Date.now();
+          scope.mapState.bounds = scope.map.getBounds();
+        });
+      } else {
+        scope.mapState.moved = Date.now();
+        scope.mapState.bounds = scope.map.getBounds();
+      }
+
       scope.holdRightThere = true;
       var COORD_PRECISION = 5;
       var newHash = [
@@ -351,10 +355,11 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
       if (!scope.$$phase) {
         scope.$apply(function () {
           scope.mapState.mapMoving = false;
-          hashSyncHelper.setHash({'location':newHash});
+          hashSyncHelper.setHash({'location': newHash});
         });
       } else {
-        hashSyncHelper.setHash({'location':newHash});
+        scope.mapState.mapMoving = false;
+        hashSyncHelper.setHash({'location': newHash});
       }
       // If elevation layer is active:
       if (scope.mapState.activeBaselayer === 3 && scope.tools.active === 'autorescale') {
@@ -390,13 +395,13 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
         var baselayerHash = hash.bl;
         var locationHash = hash.location;
 
-        if(baselayerHash !== undefined) {
-          scope.mapState.activeBaselayer = parseInt(baselayerHash);
+        if (baselayerHash !== undefined) {
+          scope.mapState.activeBaselayer = parseInt(baselayerHash, 10);
           scope.mapState.changeBaselayer();
         }
 
-        if(locationHash !== undefined) { 
-          var latlonzoom = locationHash.split(','); 
+        if (locationHash !== undefined) {
+          var latlonzoom = locationHash.split(',');
           if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
             if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
               scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: true, animate: true});
@@ -408,9 +413,9 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
       scope.holdRightThere = false;
     });
 
-    scope.$watch('mapState.activeBaselayer', function(n,o) {
-      if (n === o) { return true; }      
-      hashSyncHelper.setHash({'bl':n}); // set baselayer in url by id
+    scope.$watch('mapState.activeBaselayer', function (n, o) {
+      if (n === o) { return true; }
+      hashSyncHelper.setHash({'bl': n}); // set baselayer in url by id
     });
 
 
@@ -584,7 +589,7 @@ app.directive('rain', ["RasterService", "UtilService",
             // Turn off old frame
             imageOverlays[previousFrame].setOpacity(0);
             // Turn on new frame
-            imageOverlays[overlayIndex].setOpacity(1);
+            imageOverlays[overlayIndex].setOpacity(0.7);
             // Delete the old overlay from the lookup, it is gone.
             delete frameLookup[currentDate];
             // Remove old listener
@@ -616,10 +621,10 @@ app.directive('rain', ["RasterService", "UtilService",
        */
       scope.$watch('timeState.at', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
-        if (!scope.timeState.animation.playing 
+        if (!scope.timeState.animation.playing
           && scope.rain.enabled) {
           getImages(scope.timeState.at);
-          imageOverlays[0].setOpacity(1);
+          imageOverlays[0].setOpacity(0.7);
           previousFrame = 0;
         }
       });

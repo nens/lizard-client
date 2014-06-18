@@ -21,7 +21,7 @@ describe('Testing map directive', function () {
       element = angular.element('<div ng-controller="MasterCtrl">'
       + '</div>');
       element = $compile(element)($rootScope);
-      scope = {};
+      scope = element.scope();
       ctrl = $controller('MapDirCtrl', {$scope: scope});
       baseLayers = [{"type": "TMS", "aggregation_type": "none", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 1, "name": "Topografie", "dimensions": null, "url": "http://{s}.tiles.mapbox.com/v3/examples.map-szwdot65/{z}/{x}/{y}", "slug": "", "active": true, "order": 3, "z_index": null, "baselayer": true}, {"type": "TMS", "aggregation_type": "none", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 2, "name": "Satelliet", "dimensions": null, "url": "http://khm1.googleapis.com/kh/v=137&src=app&x={x}&y={y}&z={z}&s=&token=66417", "slug": "", "active": false, "order": 2, "z_index": null, "baselayer": true}, {"type": "WMS", "aggregation_type": "none", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 3, "name": "Hoogtekaart", "dimensions": null, "url": "http://raster.lizard.net/wms", "slug": "elevation", "active": false, "order": 1, "z_index": null, "baselayer": true}];
       layers = [{"type": "ASSET", "aggregation_type": "none", "min_zoom": 12, "min_zoom_click": 0, "sublayers": [{"asset": "pumpeddrainagearea", "min_zoom": 12, "min_zoom_click": null}, {"asset": "pipe", "min_zoom": 13, "min_zoom_click": 0}], "id": 5, "name": "Afvalwater", "dimensions": null, "url": "", "slug": "sewerage", "active": true, "order": 4, "z_index": 5, "baselayer": false}];
@@ -55,16 +55,18 @@ describe('Testing map directive', function () {
     var asset = layers[0];
     asset.active = true;
     ctrl.initiateLayer(asset);
-    scope.map = new L.map(element[0], {});
+
+    scope.mapState = {};
+    var mapEl = angular.element('<map></map>');
+    mapEl = $compile(mapEl)(scope);
+
     ctrl.toggleLayer(asset);
 
     var e = {};
     var latLng = {lat: 52.518571202030884, lng: 4.948310852050781}
     e.latlng = latLng;
-    scope.mapState = {};
     scope.map.fireEvent('click', { e: e });
-    // Find a way to test whether the click created a clickLayer
-    expect(scope.mapState.clickLayer).not.toBeUndefined();
+    expect(scope.mapState.hasOwnProperty('here')).toBe(true);
   });
 
 });

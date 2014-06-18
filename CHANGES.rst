@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 unreleased
 -----------
 
+- Events with start and end as line in timeline
+
+- Cumulative rain for spatial extent in timeline
+
 - Event aggregate table in object cards (Performance Indicator)
 
 - Event aggregate table for eventseries (Performance Indicator)
@@ -59,3 +63,11 @@ unreleased
 - Cleanup of depricated client side javascript code
 
 - Added unit tests for timeline.
+
+- Added coverage, junit and jshint reports (in `qa/`) for jenkins.
+
+- JSHint cleanup.
+
+- Gruntfile cleanup. 
+
+- Got tests to run.

@@ -36,7 +36,8 @@
     "lizard-iconfont": "git@github.com:nens/lizard-iconfont.git",
     "restangular": "~1.4.0",
     "ui-utils": "~0.1.1",
-    "ng-table": "~0.3.2"
+    "ng-table": "~0.3.2",
+    "ng-csv": "~0.2.1"
   },
   "resolutions": {
     "angular": "1.2.9"

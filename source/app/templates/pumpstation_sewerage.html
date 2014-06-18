@@ -72,10 +72,18 @@
   </div>
 </div>
 
-<div class="card" ng-class="{hidden: box.content.selected_timeseries == undefined}" >
+<div class="card" ng-class="{hidden: !activeObject.hasEvents}">
+  <i class="fa fa-circle"></i>&nbsp; Events: <br />
+  <div class="card-events" ng-repeat="event in activeObject.events">
+    <% event.timestamp_start | date : 'dd-MM' %> > <% event.timestamp_end | date : 'dd-MM-yy' %> <% event.category %>: <% event.value %>
+  </div>
+</div>
+
+<div class="card" ng-class="{hidden: !activeObject.hasTimeseries}" >
   <div class="input-prepend">
     <span class="add-on"> Tijdreeks</span>
-    <select class="timeseries" ng-model="box.content.selected_timeseries" ng-options="tijdseries as tijdseries.name for tijdseries in timeseries"></select>
+    <select class="timeseries" ng-model="activeObject.selectedTimeseries" ng-options="series as series.name for series in activeObject.timeseries"></select>
   </div>
-    <timeseries-rain timeseries="data" rainseries="rain.data" start="timeState.start" end="timeState.end" enabled="timeboxenabled" changed-zoom="timeState.changedZoom"></timeseries-rain>
+    <graph line data="activeObject.selectedTimeseries.data" ylabel="selectedTimeseries.name" xlabel="n"></graph>
+    <!-- <timeseries-rain timeseries="data" rainseries="rain.data" start="timeState.start" end="timeState.end" enabled="timeboxenabled" changed-zoom="timeState.changedZoom"></timeseries-rain> -->
 </div>

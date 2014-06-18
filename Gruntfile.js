@@ -1,6 +1,23 @@
 'use strict';
 
+/*
+  Gruntfile for Lizard NXT client.
+
+  To see what tasks are available run::
+  `grunt --help`
+
+  Before deploying it should run::
+  `grunt build`
+
+  In development run::
+  `grunt watch`
+  This watches all the files and runs tests as
+  you develop.
+
+*/
+
 module.exports = function (grunt) {
+  // loads all the grunt dependencies found in package.json
   require('load-grunt-tasks')(grunt);
   require('time-grunt')(grunt);
 
@@ -16,6 +33,7 @@ module.exports = function (grunt) {
       src: lizard_nxt_dir + 'source',
       dist: lizard_nxt_dir + 'dist'
     },
+  // converts html templates to Angular modules
     html2js: {
       options: {
         rename: function (moduleName) {
@@ -27,6 +45,7 @@ module.exports = function (grunt) {
         dest: '<%= nxt_dir.src %>/app/templates/templates.js'
       },
     },
+    // variables to be used in other parts of grunt file
     vendorfiles:
       [
         '<%= nxt_dir.vendor %>/bootstrap/bootstrap.js',
@@ -36,7 +55,8 @@ module.exports = function (grunt) {
         '<%= nxt_dir.vendor %>/lodash/dist/lodash.min.js',
       ],
       testfiles: [
-        '<%= nxt_dir.vendor %>/angular-mocks/angular-mocks.js'
+        '<%= nxt_dir.vendor %>/angular-mocks/angular-mocks.js',
+        '<%= nxt_dir.test %>/mocks.js'
       ],
       angularfiles:
       [
@@ -44,6 +64,8 @@ module.exports = function (grunt) {
         '<%= nxt_dir.vendor %>/angular/angular.js',
         '<%= nxt_dir.vendor %>/restangular/dist/restangular.min.js',
         '<%= nxt_dir.vendor %>/ui-utils/ui-utils.js',
+        '<%= nxt_dir.vendor %>/angular-sanitize/angular-sanitize.min.js',
+        '<%= nxt_dir.vendor %>/ng-csv/build/ng-csv.min.js',
         '<%= nxt_dir.vendor %>/ng-table/ng-table.min.js',
       ],
       appfiles: [
@@ -57,6 +79,13 @@ module.exports = function (grunt) {
         '<%= nxt_dir.src %>/app/lib/leaflet-utfgrid-lizard.js',
         '<%= nxt_dir.src %>/app/lib/utils.js',        
       ],
+      /* 
+      can be run while developing 
+      watches:
+        * JS appfiles and specs -> runs tests
+        * CSS files -> runs minification
+        * HTML files -> runs html2js
+      */
       watch: {
         tests: {
           files: [
@@ -74,6 +103,7 @@ module.exports = function (grunt) {
           tasks: ['html2js']
         }
       },
+      // destroys dist folder (e.g. before regenerating it)
       clean: {
         dist: {
           files: [{
@@ -86,6 +116,7 @@ module.exports = function (grunt) {
           }]
         }
       },
+      // minifies all the css
       cssmin: {
         dist: {
           files: {
@@ -104,85 +135,58 @@ module.exports = function (grunt) {
           }
         }
       },
-      htmlmin: {
-        dist: {
-          options: {
-            /*removeCommentsFromCDATA: true,
-            // https://github.com/yeoman/grunt-usemin/issues/44
-            //collapseWhitespace: true,
-            collapseBooleanAttributes: true,
-            removeAttributeQuotes: true,
-            removeRedundantAttributes: true,
-            useShortDoctype: true,
-            removeEmptyAttributes: true,
-            removeOptionalTags: true*/
-          },
-          files: [{
-            expand: true,
-            cwd: '<%= nxt_dir.src %>/app/',
-            src: [
-              '*.html',
-              'templates/*.html',
-            // '../../../templates/client/base-src.html'
-            ],
-            dest: '<%= nxt_dir.dist %>'
-          }]
-        }
-      },
+      // produces linting results
       jshint: {
         all: [
           // 'Gruntfile.js',
           '<%= nxt_dir.src %>/app/**/*.js',
+          '!<%= nxt_dir.src %>/app/lib/leaflet-utfgrid-lizard.js',
+          '!<%= nxt_dir.src %>/app/lib/leaflet.contours-layer.js',
+          '!<%= nxt_dir.src %>/app/lib/TileLayer.GeoJSONd3.js',
+          '!<%= nxt_dir.src %>/app/templates/templates.js'
         ],
         options: {
           jshintrc: '.jshintrc',
           reporter: 'jslint',
-          reporterOutput: 'jshint.xml',
-          ignores: [
-            'lizard_nxt/client/static/source/app/lib/leaflet-utfgrid-lizard.js',
-            'lizard_nxt/client/static/source/app/lib/leaflet.contours-layer.js',
-            'lizard_nxt/client/static/source/app/templates/templates.js'
-          ]
+          reporterOutput: 'qa/jshint.xml',
+          force: true // finishes jshint instead of `failing`.
         }
       },
+      // test suite (suite is pronounced as sweet, not suit)
       jasmine: {
         pivotal: {
           src: ['<%= angularfiles %>',
                 '<%= vendorfiles %>',
-                '<%= testfiles %>',
-                '<%= appfiles %>'],
+                '<%= appfiles %>',
+                '<%= testfiles %>'
+              ],
           options: {
-            specs: '<%= nxt_dir.test %>/**/*.js'
+            specs: [
+              '<%= nxt_dir.test %>/**/*.js',
+              '!<%= nxt_dir.test %>/mocks.js'
+              ],
+            junit: {
+              path: 'qa/junit'
+            }
           }
         },
+        // istanbul produces coverage reports in xml (cobertura)
+        // needs the same input as jasmine stuff
         istanbul: {
-          src: ['<%= appfiles %>'],
+          src: '<%= jasmine.pivotal.src %>',
           options: {
             specs: '<%= jasmine.pivotal.options.specs %>',
             template: require('grunt-template-jasmine-istanbul'),
             templateOptions: {
-              coverage: 'coverage/json/coverage.json',
+              coverage: 'qa/coverage/json/coverage.json',
               report: [
-                  {type: 'html', options: {dir: 'coverage/html'}},
-                  {type: 'cobertura', options: {dir: ''}},
+                  {type: 'html', options: {dir: 'qa/coverage/html'}},
+                  {type: 'cobertura', options: {dir: 'qa/'}},
                   {type: 'text-summary'}
                 ]
               }
             }
           },
-        },
-        useminPrepare: {
-          html: '<%= nxt_dir.base %>../templates/client/index.html',
-          options: {
-            dest: '<%= nxt_dir.dist %>'
-          }
-        },
-        usemin: {
-          html: ['<%= nxt_dir.dist %>/{,*/}*.html'],
-          css: ['<%= nxt_dir.dist %>/styles/{,*/}*.css'],
-          options: {
-            dirs: ['<%= nxt_dir.dist %>']
-          }
         },
         concat: {
           dist: {

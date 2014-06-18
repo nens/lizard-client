@@ -7,6 +7,8 @@ var app = angular.module("lizard-nxt", [
   'graph',
   'omnibox',
   'restangular',
+  'ngSanitize',
+  'ngCsv',
   'ui.bootstrap',
   'ui.utils',
   'ngTable'
@@ -82,9 +84,9 @@ app.config(function ($locationProvider) {
  */
 app.controller("MasterCtrl",
   ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService", "RasterService",
-   "UtilService", "EventService", "ngTableParams", "hashSyncHelper",
+   "UtilService", "EventService", "TimeseriesService", "ngTableParams", "hashSyncHelper",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, EventService, ngTableParams, hashSyncHelper) {
+            UtilService, EventService, TimeseriesService, ngTableParams, hashSyncHelper) {
   // BOX MODEL
   $scope.box = {
     detailMode: false,
@@ -170,21 +172,24 @@ app.controller("MasterCtrl",
   // /END MOVE TO MAP CONTROL
   // MAP MODEL
 
-  // TIME MODEL
   var end = Date.now();
+  var two_days_ago = end - 48 * 60 * 60 * 1000;
+  var seven_days_ago = end - 24 * 7 * 60 * 60 * 1000;
+  var last_visit = CabinetService.lastVisitUtime;
+  // TIME MODEL
   $scope.timeState = {
-    start: 1389803883000,
-    end: 1389872283000,
+    start: Math.max(seven_days_ago, Math.min(two_days_ago, last_visit)),
+    end: end,
     changedZoom: Date.now(),
+    zoomEnded: null,
     hidden: undefined,
     animation: {
       start: undefined,
-      stop: undefined,
       playing: false,
       enabled: false,
       currentFrame: 0,
       lenght: 0,
-      speed: 20,
+      minLag: 50, // Time in ms between frames
       stepSize: 1000
     }
   };
@@ -225,22 +230,22 @@ app.controller("MasterCtrl",
   $scope.kpiTableParams = new ngTableParams({
       page: 1,            // show first page
       count: 10           // count per page
-  }, {
+    }, {
       total: $scope.mapState.eventTypes.length,
       counts: [],
-      groupBy: function(item) {
+      groupBy: function (item) {
         return item.type + ' (' + item.event_count + ' totaal, ' + $scope.events.types.count + ' actief)'; //TODO: Active doesnt update?
       },
-      getData: function($defer, params) {
+      getData: function ($defer, params) {
         // use build-in angular filter
-        console.log('--->',$scope.events.data);
+        console.log('--->', $scope.events.data);
         var orderedData = params.sorting() ?
                             $filter('orderBy')($scope.mapState.eventTypes, params.orderBy()) :
                             $scope.mapState.eventTypes;
 
         $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
       }
-  });
+    });
 
   /**
    * Zoom to event location
@@ -327,46 +332,46 @@ app.controller("MasterCtrl",
     changed: true, // To trigger the watch
     details: false, // To display details in the card
     attrs: undefined, // To store object data
+    hasTimeseries: false,
+    timeseries: [],
+    hasEvents: false,
     events: [],
-    timeseries: []
+    selectedTimeseries: null
   };
 
   $scope.$watch('activeObject.changed', function (newVal, oldVal) {
     if (newVal === oldVal) { return; }
+    $scope.activeObject.hasTimeries = false;
+    $scope.activeObject.hasEvents = false;
     $scope.box.content.object_type = $scope.activeObject.attrs.entity_name;
     $scope.box.content.id = $scope.activeObject.attrs.id;
     $scope.box.content.data = $scope.activeObject.attrs;
     $scope.box.type = $scope.activeObject.attrs.entity_name;
-    EventService.getEventsForObject($scope.activeObject.attrs.entity_name,
-                                    $scope.activeObject.attrs.id)
-    .then(function (response) {
-      $scope.activeObject.events = [];
-      angular.forEach(response.features, function (feature) {
-        feature.properties.geometry = feature.geometry;
-        $scope.activeObject.events.push(feature.properties);
+    EventService.getEvents({object: $scope.activeObject.attrs.entity_name +
+                                    '$' +
+                                    $scope.activeObject.attrs.id})
+      .then(function (response) {
+        $scope.activeObject.events = [];
+        angular.forEach(response.features, function (feature) {
+          feature.properties.geometry = feature.geometry;
+          $scope.activeObject.events.push(feature.properties);
+        });
+        if ($scope.activeObject.events.length > 0) {
+          $scope.activeObject.hasEvents = true;
+        }
       });
-      // console.log($scope.activeObject);
-
-      $scope.tableParams = new ngTableParams({
-          page: 1,            // show first page
-          count: 10          // count per page
-      }, {
-          groupBy: 'category',
-          total: $scope.activeObject.events.length,
-          getData: function ($defer, params) {
-              var orderedData = params.sorting() ?
-                      $filter('orderBy')($scope.activeObject.events, $scope.tableParams.orderBy()) :
-                      $scope.activeObject.events;
-
-              $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-          }
-      });
-    });
+    $scope.activeObject.timeseries = TimeseriesService.getRandomTimeseries();
+    $scope.activeObject.selectedTimeseries = $scope.activeObject.timeseries[0];
+    $scope.activeObject.hasTimeseries = true;
   });
 
   // END activeObject part
 
   //TODO: move to raster-service ?
+
+  $scope.raster = {
+    changed: Date.now()
+  };
 
   /**
    * Get raster data from server.
@@ -526,13 +531,11 @@ app.controller("MasterCtrl",
   $scope.toggleRain = function () {
     if ($scope.rain.enabled === false) {
       $scope.rain.enabled = true;
-      $scope.timeState.animation.speed = 50;
       if ($scope.timeState.hidden !== false) {
         $scope.toggleTimeline();
       }
     } else if ($scope.rain.enabled) {
       $scope.rain.enabled = false;
-      $scope.timeState.animation.speed = 20;
     }
   };
 

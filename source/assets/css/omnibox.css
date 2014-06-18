@@ -217,27 +217,23 @@
     color: gray;
 }
 
-.card table{
+.card table, .card-events {
     margin-top: 0.5em;
+    line-height: 15px;
+    font-size: 0.9em;
+    list-style: none;
+    color: #777;
 }
 
 .card .left{
     float: left;
-    line-height: 15px;
-    font-size: 0.9em;
-    list-style: none;
     width: 150px;
     margin-left: 37px;
-    color: #777;
 }
 
 
 .card .right{
-    line-height: 15px;
-    font-size: 0.9em;
-    list-style: none;
     width: 150px;
-    color: #777;
 }
 
 .card table.fullwidth{

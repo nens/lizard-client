@@ -12,12 +12,12 @@ app.controller('DashboardDirCtrl', ['$scope', '$timeout', '$http', '$sce', funct
    */
 
   $scope.tabs = [{
-      title: "Streetview", 
+      title: "Streetview",
       content: $sce.trustAsHtml("<h4>Streetview</h4>")
     },
     {
-      title:"Extra",
-      content: $sce.trustAsHtml("<h4>Extra</h4><p>Dynamic content 2</p>"), 
+      title: "Extra",
+      content: $sce.trustAsHtml("<h4>Extra</h4><p>Dynamic content 2</p>"),
       disabled: true
     }];
 }]);

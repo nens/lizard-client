@@ -15,9 +15,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
     if ($scope.tools.active !== 'rain') {
       $scope.box.type = 'empty';
       RasterService.setIntensityData([]);
-      $scope.timeState.changeOrigin = 'RainAggregate';
-      $scope.timeState.changedZoom = Date.now();
-      console.log("we are closing", RasterService.getIntensityData());
+      $scope.raster.changed = Date.now();
       // Destroy scope at the end of this digest. Workaround from:
       // https://github.com/shinetech/angular-models/blob/master/angular-models.js
       $scope.$$postDigest(function () { $scope.$destroy(); });
@@ -25,14 +23,8 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
   });
 
   /**
-   * Turn of tools when box.type is changed or closed
+   * Get new raster rain data when panning or zooming spatially.
    */
-  $scope.$watch('box.type', function (n, o) {
-    if ($scope.box.type !== 'rain') {
-      $scope.tools.active = null;
-    }
-  });
-
   $scope.$watch('mapState.bounds', function (n, o) {
     if ($scope.timeState.hidden === false) {
       var start = $scope.timeState.start;
@@ -41,13 +33,15 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
       var rain = getRainForBounds(geom, start, stop);
       rain.then(function (response) {
         RasterService.setIntensityData(response);
-        $scope.timeState.changeOrigin = 'RainAggregate';
-        $scope.timeState.changedZoom = Date.now();
+        $scope.raster.changed = Date.now();
       });
     }
   });
 
-  $scope.$watch('timeState.changedZoom', function (n, o) {
+  /**
+   * Get new raster rain data when panning or zooming temporally.
+   */
+  $scope.$watch('timeState.zoomEnded', function (n, o) {
     if ($scope.timeState.hidden === false
       && $scope.timeState.changeOrigin !== 'RainAggregate') {
       var start = $scope.timeState.start;
@@ -56,8 +50,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
       var rain = getRainForBounds(geom, start, stop);
       rain.then(function (response) {
         RasterService.setIntensityData(response);
-        $scope.timeState.changeOrigin = 'RainAggregate';
-        $scope.timeState.changedZoom = Date.now();
+        $scope.raster.changed = Date.now();
       });
     }
   });
@@ -189,6 +182,15 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
     );
   };
 
+  /**
+   * Returns aggWindow. Either five minutes, an hour or a day, should 
+   * lead to a minimum of three pixels within the drawing width.
+   * 
+   * @param  {int} start    start of rainseries.
+   * @param  {int} stop     end of rainseries.
+   * @param  {int} drawingWidth size of graph in px.
+   * @return {int} aggWindow in ms.
+   */
   var getAggWindow = function (start, stop, drawingWidth) {
     var aggWindow;
     var minPx = 3; // Minimum width of a bar

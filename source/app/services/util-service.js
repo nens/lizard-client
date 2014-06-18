@@ -1,7 +1,8 @@
 /**
  * Generic utilities
  */
-app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope', function ($location, $parse, $rootScope) {
+app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
+  function ($location, $parse, $rootScope) {
   /**
    * Offers a getHash and setHash for manipulating the url hash
    */
@@ -16,9 +17,9 @@ app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope', function ($l
         if (!isDefined(replaceHistory)) replaceHistory = true;
         var obj2 = {};
         var oldhash = this.getHash(); // Copy the current hash
-        angular.forEach(obj, function (v, k) { 
+        angular.forEach(obj, function (v, k) {
           // Loop over the incoming object and fill obj2 with it
-          if (v) obj2[k] = v; 
+          if (v) obj2[k] = v;
         });
         // Then extend the original hash object with the new hash object
         angular.extend(oldhash, obj2);
@@ -70,7 +71,7 @@ app.service("UtilService", function () {
    */
   this.roundTimestamp = function (timestamp, coefficient, tzOffset) {
     var roundedTimestamp = parseInt((timestamp + (coefficient / 2)) /
-                                    coefficient) * coefficient;
+                                    coefficient, 10) * coefficient;
 
     if (tzOffset === true) {
       var timeZoneOffset = (new Date(roundedTimestamp)).getTimezoneOffset() *
@@ -81,33 +82,33 @@ app.service("UtilService", function () {
     return roundedTimestamp;
   };
 
-  this.getZoomlevelLabel = function(zoomlevel) {
+  this.getZoomlevelLabel = function (zoomlevel) {
     // TODO: Can be used to communicate the current 
     // zoomlevel in language comprehensible to the user
-      var zoomLevel = zoomlevel;
-      switch (true) {
-        case (zoomLevel>=18):
-          // console.log('Objectniveau'); // fa-building
-          return 'object';
-        case (zoomLevel>=17):
-          // console.log('Straatniveau'); // fa-road
-          return 'street';
-        case (zoomLevel>=15):
-          // console.log('Gemeenteniveau'); // fa-university
-          return 'municipal';
-        case (zoomLevel>=10):
-          // console.log('Provincieniveau'); // fa-university
-          return 'provincial';
-        case (zoomLevel>=8):
-          // console.log('Landniveau'); // fa-university
-          return 'country';
-        case (zoomLevel>=5):
-          // console.log('Continentniveau'); // fa-globe
-          return 'continental';
-        case (zoomLevel>=2):
-          // console.log('Wereldniveau'); // fa-globe
-          return 'global';
-      }
+    var zoomLevel = zoomlevel;
+    switch (true) {
+    case (zoomLevel >= 18):
+      // console.log('Objectniveau'); // fa-building
+      return 'object';
+    case (zoomLevel >= 17):
+      // console.log('Straatniveau'); // fa-road
+      return 'street';
+    case (zoomLevel >= 15):
+      // console.log('Gemeenteniveau'); // fa-university
+      return 'municipal';
+    case (zoomLevel >= 10):
+      // console.log('Provincieniveau'); // fa-university
+      return 'provincial';
+    case (zoomLevel >= 8):
+      // console.log('Landniveau'); // fa-university
+      return 'country';
+    case (zoomLevel >= 5):
+      // console.log('Continentniveau'); // fa-globe
+      return 'continental';
+    case (zoomLevel >= 2):
+      // console.log('Wereldniveau'); // fa-globe
+      return 'global';
+    }
   };
 
 });
