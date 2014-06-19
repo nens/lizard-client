@@ -347,6 +347,7 @@ app.controller("MasterCtrl",
     $scope.box.content.id = $scope.activeObject.attrs.id;
     $scope.box.content.data = $scope.activeObject.attrs;
     $scope.box.type = $scope.activeObject.attrs.entity_name;
+    // Get events
     EventService.getEvents({object: $scope.activeObject.attrs.entity_name +
                                     '$' +
                                     $scope.activeObject.attrs.id})
@@ -360,15 +361,17 @@ app.controller("MasterCtrl",
           $scope.activeObject.hasEvents = true;
         }
       });
+    // Get timeseries
     $scope.activeObject.timeseries = TimeseriesService.getRandomTimeseries();
     $scope.activeObject.selectedTimeseries = $scope.activeObject.timeseries[0];
     $scope.activeObject.hasTimeseries = true;
+    // Get rain
     var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, window.innerWidth);
     var callback = function (response) {
       $scope.rain.data = response;
       $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
       $scope.rain.start = $scope.rain.data[0][0];
-    }
+    };
     RasterService.getRain(new Date($scope.timeState.start), new Date($scope.timeState.end), $scope.activeObject.latlng, aggWindow).then(callback);
   });
 
