@@ -53,7 +53,8 @@ app.directive('clickLayer', ["$q", function ($q) {
           radius: 0,
           weight: 12,
           color: '#1abc9c',
-          fill: false
+          fill: false,
+          zIndexOffset: 1000
         });
         self._circleMarker = circleMarker;
         return circleMarker;
@@ -130,16 +131,11 @@ app.directive('clickLayer', ["$q", function ($q) {
       var selection = this._getSelection(this.clickLayer);
       var g = selection;
       // This is an arrow:
-      var path = "M " + point.x + " " + point.y + " " +
-                 "l 15 -10 " +
-                 "l -10 0 " +
-                 "l 0 -15 " +
-                 "l -10 0 " +
-                 "l 0 15 " +
-                 "l -10 0 z";
+      var path = "M" + point.x + " " + (point.y - 32) + "c-5.523 0-10 4.477-10 10 0 10 10 22 10 22s10-12 10-22c0-5.523-4.477-10-10-10z" +
+                 "M" + point.x + " " + (point.y - 16) + "c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z";
       g.select("path").attr("d", path)
         .attr("stroke-opacity", 1)
-        .attr("stroke-width", 2)
+        .attr("stroke-width", 1.5)
         .attr("stroke", "white")
         .attr("fill", "#2980b9")
         .attr("fill-opacity", "1");
