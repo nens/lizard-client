@@ -1358,3 +1358,7 @@ img.leaflet-image-layer {
 .recurrence-time-container {
   padding-top: 5px; 
 }
+
+.leaflet-overlay-pane svg {
+  z-index: 1000;
+}
