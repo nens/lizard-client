@@ -27,4 +27,26 @@
       </ul>
     </div> <!-- end actions -->
     <graph ng-if="!!rain.data" bar-chart data="rain.data" ylabel="rain.aggWindow" yfilter="aggWinToYLabel" xlabel="tijd"></graph>
+
+    <div class="recurrence-time-container" ng-if="!!rain.recurrenceTime">
+      <table class="table table-hover table-condensed">
+        <caption>Herhalingstijden</caption>
+        <thead>
+            <tr>
+              <th>Start</th>
+              <th>Duur</th>
+              <th class="text-right">mm</th>
+              <th>Herhalingstijd</th>
+            </tr>
+        </thead>
+        <tbody>
+          <tr class="recurrence_time" ng-repeat="recurTime in rain.recurrenceTime">
+              <td><% recurTime.start | date : 'dd-MM-yyyy HH:mm' %></td>
+              <td><% recurTime.td_window %></td>
+              <td class="text-right"><% recurTime.max | number: 1 %></td>
+              <td><% recurTime.t %></td>
+          </tr>
+        </tbody>
+      </table>
+   </div>
 </div>

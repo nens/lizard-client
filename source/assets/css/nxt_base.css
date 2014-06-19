@@ -1355,3 +1355,6 @@ img.leaflet-image-layer {
     stroke-width: 2;
 }
 
+.recurrence-time-container {
+  padding-top: 5px; 
+}
