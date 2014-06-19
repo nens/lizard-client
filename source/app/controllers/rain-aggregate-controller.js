@@ -179,7 +179,15 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
         $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
         $scope.rain.start = $scope.rain.data[0][0];
       }
-    );
+    ).then(function () {
+      // TODO: this is now an extra call to get rain recurrence time
+      // refactor to one call
+      getRain(start, stop, $scope.rain.latLng, $scope.rain.aggWindow, 'rrc')
+        .then(function (response) {
+          $scope.rain.recurrenceTime = response;
+        }
+      );
+    });
   };
 
   /**
@@ -218,9 +226,10 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
    * @param  {int} stop     end of rainserie
    * @param  {object} geom   location of rainserie in {lat: int, lng: int} or leaflet bounds object
    * @param  {int} aggWindow width of the aggregation
+   * @param  {string} agg aggregation method eg. 'sum', 'rrc'
    * @return {promise} returns a thennable promise which may resolve with rain data on response
    */
-  var getRain = function (start, stop, geom, aggWindow) {
+  var getRain = function (start, stop, geom, aggWindow, agg) {
     var stopString = stop.toISOString().split('.')[0];
     var startString = start.toISOString().split('.')[0];
     var wkt;
@@ -242,7 +251,8 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
         srs: 'EPSG:4326',
         start: startString,
         stop: stopString,
-        window: aggWindow
+        window: aggWindow,
+        agg: agg
       });
   };
 
