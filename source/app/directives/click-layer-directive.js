@@ -118,7 +118,8 @@ app.directive('clickLayer', ["$q", function ($q) {
         this._circleMarker.setRadius(11);
       } else if (entityName.indexOf("bridge") !== -1) {
         this._circleMarker.setRadius(14);
-      } else if (entityName.indexOf("pipe") !== -1 || entityName.indexOf("culvert") !== -1) {
+      } else if (entityName.indexOf("pipe") !== -1 ||
+                 entityName.indexOf("culvert") !== -1) {
         selection.select("path").transition().delay(450).duration(150)
         .attr("stroke-opacity", 0.6)
         .attr("stroke-width", 10);
@@ -131,8 +132,11 @@ app.directive('clickLayer', ["$q", function ($q) {
       var selection = this._getSelection(this.clickLayer);
       var g = selection;
       // This is an arrow:
-      var path = "M" + point.x + " " + (point.y - 32) + "c-5.523 0-10 4.477-10 10 0 10 10 22 10 22s10-12 10-22c0-5.523-4.477-10-10-10z" +
-                 "M" + point.x + " " + (point.y - 16) + "c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z";
+      var path = "M" + point.x + " " + (point.y - 32) +
+                 "c-5.523 0-10 4.477-10 10 0 10 10 22 10 " +
+                 " 22s10-12 10-22c0-5.523-4.477-10-10-10z" +
+                 "M" + point.x + " " + (point.y - 16) +
+                 "c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z";
       g.select("path").attr("d", path)
         .attr("stroke-opacity", 1)
         .attr("stroke-width", 1.5)
