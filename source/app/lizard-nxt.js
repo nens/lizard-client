@@ -172,14 +172,16 @@ app.controller("MasterCtrl",
   // /END MOVE TO MAP CONTROL
   // MAP MODEL
 
-  var end = Date.now();
-  var two_days_ago = end - 48 * 60 * 60 * 1000;
-  var seven_days_ago = end - 24 * 7 * 60 * 60 * 1000;
-  var last_visit = CabinetService.lastVisitUtime;
+  var now = Date.now();
+  var day = 24 * 60 * 60 * 1000;
+  var tomorrow = now + day;
+  var twoDaysAgo = now - 2 * day;
+  var sevenDaysAgo = now - 7 * day;
+  var lastVisit = CabinetService.lastVisitUtime;
   // TIME MODEL
   $scope.timeState = {
-    start: Math.max(seven_days_ago, Math.min(two_days_ago, last_visit)),
-    end: end,
+    start: Math.max(sevenDaysAgo, Math.min(twoDaysAgo, lastVisit)),
+    end: tomorrow,
     changedZoom: Date.now(),
     zoomEnded: null,
     hidden: undefined,
