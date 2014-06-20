@@ -32,7 +32,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         }
 
         var transform = d3.geo.transform({point: projectPoint}),
-            path = d3.geo.path().projection(transform),
+            path = d3.geo.path().projection(transform).pointRadius(6),
             bounds = path.bounds(data);
 
         function reset() {
@@ -65,13 +65,17 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           .attr("d", path)
           .attr("class", "circle event")
           .attr("fill-opacity", 0)
+          .attr('stroke-width', 1.8)
+          .attr('stroke', 'white')
+          .attr('stroke-opacity', 0)
           .attr('fill', function (d) {
             return d.color;
           })
           .transition()
           .delay(500)
           .duration(1000)
-          .attr('fill-opacity', 0.8);
+          .attr('stroke-opacity', 1)
+          .attr('fill-opacity', 1);
 
         feature.on('click', function (d) {
             scope.box.type = 'aggregate';
@@ -114,13 +118,17 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           .attr("d", eventLayer.path)
           .attr("class", "circle event")
           .attr("fill-opacity", 0)
+          .attr('stroke-width', 1.8)
+          .attr('stroke', 'white')
+          .attr('stroke-opacity', 0)
           .attr('fill', function (d) {
             return d.color;
           })
           .transition()
           .delay(500)
           .duration(1000)
-          .attr('fill-opacity', 0.8);
+          .attr('stroke-opacity', 1)
+          .attr('fill-opacity', 1);
 
         feature.exit()
           .transition()
