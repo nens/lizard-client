@@ -4,7 +4,6 @@
 app.service("EventService", ["Restangular", "$q",
   function (Restangular, $q) {
 
-
   // COLOR MODEL
   var colors =  {
     3: ["#27ae60", "#2980b9", "#8e44ad"],
@@ -26,6 +25,9 @@ app.service("EventService", ["Restangular", "$q",
     var eventTypesTemplate = {};
     for (var i = 0; i < eventTypes.length; i++) {
       eventTypesTemplate[eventTypes[i].event_series] = {};
+      eventTypesTemplate[
+        eventTypes[i].event_series].count = eventTypes[i].event_count;
+      eventTypesTemplate[eventTypes[i].event_series].name = eventTypes[i].type;
     }
     eventTypesTemplate.count = 0;
 

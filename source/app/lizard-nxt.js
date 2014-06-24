@@ -180,8 +180,10 @@ app.controller("MasterCtrl",
   var lastVisit = CabinetService.lastVisitUtime;
   // TIME MODEL
   $scope.timeState = {
-    start: Math.max(sevenDaysAgo, Math.min(twoDaysAgo, lastVisit)),
-    end: tomorrow,
+    //start: Math.max(sevenDaysAgo, Math.min(twoDaysAgo, lastVisit)),
+    //end: tomorrow,
+    start: 1380622947000,
+    end: 1393669347000,
     changedZoom: Date.now(),
     zoomEnded: null,
     hidden: undefined,
@@ -229,26 +231,6 @@ app.controller("MasterCtrl",
     changed: Date.now()
   };
 
-  $scope.kpiTableParams = new ngTableParams({
-      page: 1,            // show first page
-      count: 10           // count per page
-    }, {
-      total: $scope.mapState.eventTypes.length,
-      counts: [],
-      groupBy: function (item) {
-        return item.type + ' (' + item.event_count + ' totaal, ' + $scope.events.types.count + ' actief)'; //TODO: Active doesnt update?
-      },
-      getData: function ($defer, params) {
-        // use build-in angular filter
-        console.log('--->', $scope.events.data);
-        var orderedData = params.sorting() ?
-                            $filter('orderBy')($scope.mapState.eventTypes, params.orderBy()) :
-                            $scope.mapState.eventTypes;
-
-        $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-      }
-    });
-
   /**
    * Zoom to event location
    * 
@@ -283,7 +265,9 @@ app.controller("MasterCtrl",
                                                        $scope.events.data,
                                                        eventSeriesId);
         $scope.events.types.count = $scope.events.types.count - 1;
-        EventService.addColor($scope.events.data, $scope.events.types.count, $scope.events.scale);
+        EventService.addColor($scope.events.data,
+                              $scope.events.types.count,
+                              $scope.events.scale);
         $scope.events.changed = Date.now();
       } else {
         getEvents(eventSeriesId);
@@ -307,14 +291,14 @@ app.controller("MasterCtrl",
   var getEvents = function (eventSeriesId) {
     EventService.getEvents({event_series: eventSeriesId})
       .then(function (response) {
-        var data = response;
-        var dataOrder = EventService.addEvents($scope.events.data, data, eventSeriesId);
+        var dataOrder = EventService.addEvents($scope.events.data, response,
+                                               eventSeriesId);
         $scope.events.data = dataOrder.data;
-        $scope.events.types[eventSeriesId] = {};
         $scope.events.types[eventSeriesId].event_type = dataOrder.order;
         $scope.events.types.count = $scope.events.types.count + 1;
-        EventService.addColor($scope.events.data, $scope.events.types.count, $scope.events.scale);
-        $scope.events.types[eventSeriesId].count = response.features.length;
+        EventService.addColor($scope.events.data,
+                              $scope.events.types.count,
+                              $scope.events.scale);
         $scope.events.types[eventSeriesId].active = true;
         $scope.events.changed = Date.now();
       });

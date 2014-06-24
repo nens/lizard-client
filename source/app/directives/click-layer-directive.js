@@ -165,6 +165,8 @@ app.directive('clickLayer', ["$q", function ($q) {
       case 'profile':
         drawFromHereToHere(scope.mapState.here);
         break;
+      case 'events':
+        break;
       default:
         // Give feedback of the click
         drawClickInSpace(scope.mapState.here);

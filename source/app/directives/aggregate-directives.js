@@ -61,12 +61,25 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         var feature = g.selectAll("path")
             .data(data.features, function  (d) { return d.id; });
 
+        var overlapFeatures = {};
+
+        var countOverlapFeatures = function (d) {
+          var key = d.geometry.coordinates[0] + d.geometry.coordinates[1];
+          var coord = overlapFeatures[key];
+          if (coord === undefined) {
+            overlapFeatures[key] = 1;
+          } else {
+            overlapFeatures[key] += 1;
+          }
+          return overlapFeatures[key];
+        };
+
         feature.enter().append("path")
           .attr("d", path)
           .attr("class", "circle event")
           .attr("fill-opacity", 0)
-          .attr('stroke-width', 1.8)
-          .attr('stroke', 'white')
+          .attr('stroke-width', countOverlapFeatures)
+          .attr('stroke', function (d) { return d.color; })
           .attr('stroke-opacity', 0)
           .attr('fill', function (d) {
             return d.color;
@@ -78,7 +91,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           .attr('fill-opacity', 1);
 
         feature.on('click', function (d) {
-            scope.box.type = 'aggregate';
+            scope.box.type = 'event-aggregate';
             scope.box.content.eventValue = d;
             scope.$apply();
           });
@@ -137,7 +150,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           .remove();
 
         feature.on('click', function (d) {
-            scope.box.type = 'aggregate';
+            scope.box.type = 'event-aggregate';
             scope.box.content.eventValue = d;
             scope.$apply();
           });
@@ -151,7 +164,8 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
       /**
        * Draw events based on current temporal extent
        *
-       * Hide all elements and then unhides when within the given start and end timestamps
+       * Hide all elements and then unhides when within the given start
+       * and end timestamps.
        *
        * @parameter: int start start timestamp in epoch ms
        * @parameter: int end end timestamp in epoch ms
@@ -170,6 +184,8 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           });
         var selected = d3.selectAll(".circle.selected");
         selected.classed("hidden", false);
+        EventService.countCurrentEvents(scope.mapState.eventTypes,
+                                        scope.events);
       };
 
       /**
@@ -181,13 +197,15 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
       scope.$watch('timeState.changedZoom', function (n, o) {
         if (n === o) { return true; }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
-        EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
+        EventService.countCurrentEvents(scope.mapState.eventTypes,
+                                        scope.events);
       });
 
       scope.$watch('events.changed', function (n, o) {
         if (n === o) { return true; }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
-        EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
+        EventService.countCurrentEvents(scope.mapState.eventTypes,
+                                        scope.events);
       });
    
       /**

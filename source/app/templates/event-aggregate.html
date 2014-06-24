@@ -1,0 +1,35 @@
+<div class="card" ng-if="events.types.count > 0"
+  ng-class="mapState.mapMoving ? 'card-hidden' : ''">
+
+  <div>
+    <div >
+      <% box.content.eventValue.properties.timestamp_start | date %> -
+      <% box.content.eventValue.properties.timestamp_end | date %> <br />
+      <% box.content.eventValue.properties.category %> <br />
+      <% box.content.eventValue.properties.value %> <br />
+    </div>
+    <div class="card-title">
+      <i class="fa fa-sitemap"></i><span class="title-text" style="margin-left:10px !important;">Samenvatting</span>
+    </div>
+
+    <div class="event-aggregate-container">
+      <table class="table table-hover table-condensed">
+        <thead>
+            <tr>
+              <th>Naam</th>
+              <th>Aantal</th>
+              <th>Totaal</th>
+            </tr>
+        </thead>
+        <tbody>
+          <tr class="recurrence_time" ng-repeat="eventType in events.types" ng-if="eventType.currentCount > 0">
+            <td><% eventType.name %></td>
+            <td><strong><% eventType.currentCount %></strong></td>
+            <td><% eventType.count %></td>
+          </tr>
+        </tbody>
+      </table>
+   </div>
+
+  </div>
+</div>
