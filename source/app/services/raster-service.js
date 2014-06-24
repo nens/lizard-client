@@ -35,9 +35,10 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService",
    * @param  {int} stop     end of rainserie
    * @param  {object} geom   location of rainserie in {lat: int, lng: int} or leaflet bounds object
    * @param  {int} aggWindow width of the aggregation
+   * @param  {string} agg aggregation method eg. 'sum', 'rrc'
    * @return {promise} returns a thennable promise which may resolve with rain data on response
    */
-  var getRain = function (start, stop, geom, aggWindow) {
+  var getRain = function (start, stop, geom, aggWindow, agg) {
     var stopString = stop.toISOString().split('.')[0];
     var startString = start.toISOString().split('.')[0];
     var wkt;
@@ -59,7 +60,8 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService",
         srs: 'EPSG:4326',
         start: startString,
         stop: stopString,
-        window: aggWindow
+        window: aggWindow,
+        agg: agg
       });
   };
 

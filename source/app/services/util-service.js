@@ -14,12 +14,12 @@ app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
       },
       setHash: function (obj, replaceHistory) {
         // Sets the url hash with a {'key':'val'} and doesnt return
-        if (!isDefined(replaceHistory)) replaceHistory = true;
+        if (!isDefined(replaceHistory)) { replaceHistory = true; }
         var obj2 = {};
         var oldhash = this.getHash(); // Copy the current hash
         angular.forEach(obj, function (v, k) {
           // Loop over the incoming object and fill obj2 with it
-          if (v) obj2[k] = v;
+          if (v) { obj2[k] = v; }
         });
         // Then extend the original hash object with the new hash object
         angular.extend(oldhash, obj2);
@@ -31,7 +31,7 @@ app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
       },
       sync: function (expr, scope, replaceHistory) {
         // Unused for now
-        if (!scope) scope = $rootScope;
+        if (!scope) {scope = $rootScope; }
 
         var setHash = function (val, old) {
           var obj = service.getHash();
@@ -114,7 +114,6 @@ app.service("UtilService", function () {
   /**
    * Returns aggWindow. Either five minutes, an hour or a day, should 
    * lead to a minimum of three pixels within the drawing width.
-   * TODO: REMOVE THIS FUNCTION, IN FAFOUR OF ITS CLONE IN RASTER-SERVICE.JS !
    * 
    * @param  {int} start    start of rainseries.
    * @param  {int} stop     end of rainseries.
