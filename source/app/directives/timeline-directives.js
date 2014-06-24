@@ -160,8 +160,10 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
      */
     scope.$watch('mapState.moved', function (n, o) {
       if (n === o) { return true; }
-      timeline.drawEventsContainedInBounds(scope.mapState.bounds);
-      EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
+      if (scope.events.data.features.length > 0) {
+        timeline.drawEventsContainedInBounds(scope.mapState.bounds);
+        EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
+      }
     });
 
     /**
