@@ -6,49 +6,48 @@
  * time-interval (temporal extent, from timeline)
  *
  */
-
 app.directive('vectorlayer', ["EventService", function (EventService) {
+  
+  /**
+   * Utilfunction that creates/returns a "feature"
+   *
+   * @parameter: object eventLayer A magic object related to D3/Leaflet
+   * @parameter: object data object
+   * @return: object A magic object called "feature" related to D3/Leaflet
+   */
+  var getFeature = function (g, data) {
+    return g.selectAll("path")
+            .data(data.features, function (d) { return d.id; });
+  };
+
+  /**
+   * Utilfunction that draws the Event markers. 
+   *
+   * @parameter: object A magic object we call "feature" related to D3/Leaflet
+   * @return: void
+   */
+  var drawMarkers = function (feature, path) {
+    feature.enter().append("path")
+      .attr("d", path)
+      .attr("class", "circle event")
+      .attr("fill-opacity", 0)
+      .attr('stroke-width', 1.8)
+      .attr('stroke', 'white')
+      .attr('stroke-opacity', 0)
+      .attr('fill', function (d) {
+        return d.color;
+      })
+      .transition()
+      .delay(500)
+      .duration(1000)
+      .attr('stroke-opacity', 1)
+      .attr('fill-opacity', 1);   
+  };
+
   return {
     restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
-
-      /**
-       * Utilfunction that creates/returns a "feature"
-       *
-       * @parameter: object data object
-       * @return: object A magic object called "feature" related to D3/Leaflet
-       */
-      var getFeature = function (data) {
-        return eventLayer.g.selectAll("path")
-                .data(data.features, function (d) { return d.id; });
-      };
-
-      /**
-       * Utilfunction that draws an Event marker. 
-       *
-       * @parameter: object A magic object we call "feature" related to D3/Leaflet
-       * @return: void
-       */
-      var drawMarker = function (feature) {
-
-        feature.enter().append("path")
-          .attr("d", path)
-          .attr("class", "circle event")
-          .attr("fill-opacity", 0)
-          .attr('stroke-width', 1.8)
-          .attr('stroke', 'white')
-          .attr('stroke-opacity', 0)
-          .attr('fill', function (d) {
-            return d.color;
-          })
-          .transition()
-          .delay(500)
-          .duration(1000)
-          .attr('stroke-opacity', 1)
-          .attr('fill-opacity', 1);   
-      };
-
       /**
        * Creates svg layer in leaflet's overlaypane and adds events as circles
        *
@@ -59,6 +58,15 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * @return: object eventLayer object
        */
       var createEventLayer = function (data) {
+
+        // TODO: introduce the neat & consistent style of *declaring*
+        // local vars in the first line of the function body, i.e.:
+        //
+        // var map, svg, g, transform, path, bounds, ...;
+        //
+        // The *assignment* of values can then take place in the most
+        // applicable places.
+
         var map = scope.map;
         var svg = d3.select(map.getPanes().overlayPane).append("svg"),
             g = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -97,28 +105,8 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
 
         // BEGIN REFACTOR CANDIDATE ////
 
-        // var feature = g.selectAll("path")
-        //     .data(data.features, function (d) { return d.id; });
-
-        var feature = this.getFeature(data);
-
-        // feature.enter().append("path")
-        //   .attr("d", path)
-        //   .attr("class", "circle event")
-        //   .attr("fill-opacity", 0)
-        //   .attr('stroke-width', 1.8)
-        //   .attr('stroke', 'white')
-        //   .attr('stroke-opacity', 0)
-        //   .attr('fill', function (d) {
-        //     return d.color;
-        //   })
-        //   .transition()
-        //   .delay(500)
-        //   .duration(1000)
-        //   .attr('stroke-opacity', 1)
-        //   .attr('fill-opacity', 1);
-
-        this.drawMarker(feature);
+        var feature = getFeature(g, data);
+        drawMarkers(feature, path);
 
         // END REFACTOR CANDIDATE ///////
 
@@ -150,12 +138,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
       var updateEventLayer = function (eventLayer, data) {
         eventLayer.reset();
 
-        // BEGIN REFACTOR CANDIDATE ////
-
-        // var feature = eventLayer.g.selectAll("path")
-        //     .data(data.features, function  (d) { return d.id; });
-
-        var feature = getFeature(data);
+        var feature = getFeature(eventLayer.g, data);
 
         feature.transition()
           .delay(500)
@@ -164,23 +147,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
             return d.color;
           });
 
-        this.drawMarker(feature);
-
-        // feature.enter().append("path")
-        //   .attr("d", eventLayer.path)
-        //   .attr("class", "circle event")
-        //   .attr("fill-opacity", 0)
-        //   .attr('stroke-width', 1.8)
-        //   .attr('stroke', 'white')
-        //   .attr('stroke-opacity', 0)
-        //   .attr('fill', function (d) {
-        //     return d.color;
-        //   })
-        //   .transition()
-        //   .delay(500)
-        //   .duration(1000)
-        //   .attr('stroke-opacity', 1)
-        //   .attr('fill-opacity', 1);
+        drawMarkers(feature, eventLayer.path);
 
         feature.exit()
           .transition()
