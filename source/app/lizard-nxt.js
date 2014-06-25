@@ -180,10 +180,8 @@ app.controller("MasterCtrl",
   var lastVisit = CabinetService.lastVisitUtime;
   // TIME MODEL
   $scope.timeState = {
-    //start: Math.max(sevenDaysAgo, Math.min(twoDaysAgo, lastVisit)),
-    //end: tomorrow,
-    start: 1380622947000,
-    end: 1393669347000,
+    start: Math.max(sevenDaysAgo, Math.min(twoDaysAgo, lastVisit)),
+    end: tomorrow,
     changedZoom: Date.now(),
     zoomEnded: null,
     hidden: undefined,
