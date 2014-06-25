@@ -298,11 +298,9 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           if (scope.events.data.features.length === 0) {
             eventLayer = removeEventLayer(eventLayer);
           } else {
-            overlapEvents = {};
             updateEventLayer(eventLayer, scope.events.data);
           }
         } else {
-          overlapEvents = {};
           eventLayer = createEventLayer(scope.events.data);
         }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
