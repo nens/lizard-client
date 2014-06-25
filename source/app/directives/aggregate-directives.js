@@ -103,12 +103,8 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
 
         map.on("viewreset", reset);
 
-        // BEGIN REFACTOR CANDIDATE ////
-
         var feature = getFeature(g, data);
         drawMarkers(feature, path);
-
-        // END REFACTOR CANDIDATE ///////
 
         feature.on('click', function (d) {
             scope.box.type = 'aggregate';
