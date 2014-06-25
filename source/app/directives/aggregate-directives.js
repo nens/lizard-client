@@ -392,28 +392,11 @@ app.directive('surfacelayer', function () {
        * @param: entityName, name of ento
        * @returns: leaflet layer object or false if layer not found
        */
-      // var getLayer = function (layerType, entityName) {
-
-      //   var layer, tmpLayer, k;
-
-      //   layer = false,
-      //   tmpLayer = {};
-
-      //   for (k in scope.map._layers) {
-      //     tmpLayer = scope.map._layers[k];
-      //     if (tmpLayer.options.name === entityName &&
-      //         tmpLayer.options.ext === layerType) {
-      //       layer = tmpLayer;
-      //       break;
-      //     }
-      //   }
-      //   return layer;
-      // };
 
       var getLayer = function (layerType, entityName) {
 
         var k, opts;
-
+        
         for (k in scope.map._layers) {
           opts = scope.map._layers[k].options;
           if (opts.name === entityName && opts.ext === layerType) {
