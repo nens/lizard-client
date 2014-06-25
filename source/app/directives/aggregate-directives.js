@@ -412,15 +412,12 @@ app.directive('surfacelayer', function () {
 
       var getLayer = function (layerType, entityName) {
 
-        var layer, tmpLayer, k;
-
-        tmpLayer = {};
+        var k, opts;
 
         for (k in scope.map._layers) {
-          tmpLayer = scope.map._layers[k];
-          if (tmpLayer.options.name === entityName &&
-              tmpLayer.options.ext === layerType) {
-            return tmpLayer;
+          opts = scope.map._layers[k].options;
+          if (opts.name === entityName && opts.ext === layerType) {
+            return scope.map._layers[k];
           }
         }
         return false;
