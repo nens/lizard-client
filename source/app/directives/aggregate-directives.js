@@ -131,8 +131,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         g = svg.append("g").attr("class", "leaflet-zoom-hide");
         
         function projectPoint(x, y) {
-          var point;
-          point = map.latLngToLayerPoint(new L.LatLng(y, x));
+          var point = map.latLngToLayerPoint(new L.LatLng(y, x));
           this.stream.point(point.x, point.y);
         }
 
@@ -151,14 +150,14 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           svg.attr()
              .attr("width", width)
              .attr("height", height)
-             // Shift whole viewbox halve a pixel for nice and crisp rendering
+             // Shift whole viewbox half a pixel for nice and crisp rendering
              .attr("viewBox", "-0.5 -0.5 " + width + " " + height)
              .style("left", (topLeft[0] - 10) + "px")
              .style("top", (topLeft[1] - 10) + "px");
 
           g.attr("transform", "translate(" + -(topLeft[0] - 10) + "," +
                  -(topLeft[1] - 10) + ")")
-           .selectAll("path").attr("d", path);
+            .selectAll("path").attr("d", path);
         }
 
         map.on("viewreset", reset);
