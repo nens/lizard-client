@@ -79,9 +79,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         } else {
           overlapEvents[key] += 1;
         }
-        var result = overlapEvents[key];
-
-        return result;
+        return overlapEvents[key];
       };
 
       /**
