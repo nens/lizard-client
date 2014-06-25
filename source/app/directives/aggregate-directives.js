@@ -7,10 +7,55 @@
  *
  */
 app.directive('vectorlayer', ["EventService", function (EventService) {
+  
   return {
     restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
+
+      /**
+       * Get color from feature.
+       * 
+       * @param {object} d - D3 bound data object; expects color property.
+       */
+      var getEventColor = function (d) {
+        return d.color;
+      };
+
+      /**
+       * Event click handler.
+       *
+       * Highlights selected event in black. Sets box.content.eventValue to 
+       * current bound data object (d).
+       *
+       * @param {object} d - D3 bound data object.
+       */
+      var eventClickHandler = function (d) {
+        // unhighlight events
+        d3.selectAll(".circle.event")
+          .attr("stroke", getEventColor)
+          .attr("fill", getEventColor);
+        // highlight selected event
+        d3.select(this).transition()
+          .duration(1000)
+          .attr("stroke", "black")
+          .attr("fill", "black");
+        scope.box.type = 'event-aggregate';
+        scope.box.content.eventValue = d;
+        scope.$apply();
+      };
+
+      /**
+       * Utilfunction that creates/returns a "feature"
+       *
+       * @parameter {object} g - D3 g (svg) selection.
+       * @parameter {object} data - Event data object.
+       * @returns {object} - D3 selection.
+       */
+      var getFeatureSelection = function (g, data) {
+        return g.selectAll("path")
+                .data(data.features, function (d) { return d.id; });
+      };
 
       // object to keep count of overlapping events
       var overlapEvents = {};
@@ -34,7 +79,38 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         } else {
           overlapEvents[key] += 1;
         }
-        return overlapEvents[key];
+        var result = overlapEvents[key];
+
+        return result;
+      };
+
+      /**
+       * Utilfunction that draws the Event markers. 
+       *
+       * @parameter {object} feature - D3 selection
+       * @parameter {object} path - D3 svg path
+       */
+      var drawMarkers = function (feature, path) {
+        feature.enter().append("path")
+          // TODO: attempt to scale events on pointRadius; problem is that
+          // on zoom out radius increases.
+          //.attr("d", (function () {
+            //console.log("Called d attr function", overlapEvents);
+            //path.pointRadius(countOverlapEvents);
+            //return path;
+          //})())
+          .attr("d", path)
+          .attr("class", "circle event")
+          .attr("fill-opacity", 0)
+          .attr('stroke-width', countOverlapEvents)
+          .attr('stroke', getEventColor)
+          .attr('stroke-opacity', 0)
+          .attr('fill', getEventColor)
+          .transition()
+          .delay(500)
+          .duration(1000)
+          .attr('stroke-opacity', 1)
+          .attr('fill-opacity', 1);
       };
 
       /**
@@ -43,10 +119,19 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * On leaflet's viewreset the svg rescaled and repositioned. This
        * function should also be called when the data is changed.
        *
-       * @parameter: object data object
-       * @return: object eventLayer object
+       * @parameter {object} data - Object
+       * @return {object} eventLayer - Object
        */
       var createEventLayer = function (data) {
+
+        // TODO: introduce the neat & consistent style of *declaring*
+        // local vars in the first line of the function body, i.e.:
+        //
+        // var map, svg, g, transform, path, bounds, ...;
+        //
+        // The *assignment* of values can then take place in the most
+        // applicable places.
+
         var map = scope.map;
         var svg = d3.select(map.getPanes().overlayPane).append("svg"),
             g = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -83,42 +168,14 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
 
         map.on("viewreset", reset);
 
-        var feature = g.selectAll("path")
-            .data(data.features, function  (d) { return d.id; });
+        var featureSelection = getFeatureSelection(g, data);
 
         // reset counter
         overlapEvents = {};
 
-        feature.enter().append("path")
-          .attr("d", path)
-          .attr("class", "circle event")
-          .attr("fill-opacity", 0)
-          .attr('stroke-width', countOverlapEvents)
-          .attr('stroke', function (d) { return d.color; })
-          .attr('stroke-opacity', 0)
-          .attr('fill', function (d) {
-            return d.color;
-          })
-          .transition()
-          .delay(500)
-          .duration(1000)
-          .attr('stroke-opacity', 1)
-          .attr('fill-opacity', 1);
+        drawMarkers(featureSelection, path);
 
-        feature.on('click', function (d, i) {
-            // unhighlight events
-            d3.selectAll(".circle.event")
-              .attr("stroke", function (d) { return d.color; })
-              .attr("fill", function (d) { return d.color; });
-            // highlight selected event
-            d3.select(this).transition()
-              .duration(1000)
-              .attr("stroke", "black")
-              .attr("fill", "black");
-            scope.box.type = 'event-aggregate';
-            scope.box.content.eventValue = d;
-            scope.$apply();
-          });
+        featureSelection.on('click', eventClickHandler);
 
         reset();
         return {
@@ -141,55 +198,25 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        */
       var updateEventLayer = function (eventLayer, data) {
         eventLayer.reset();
-        var feature = eventLayer.g.selectAll("path")
-            .data(data.features, function  (d) { return d.id; });
 
-        feature.transition()
+        var featureSelection = getFeatureSelection(eventLayer.g, data);
+
+        featureSelection.transition()
           .delay(500)
           .duration(1000)
-          .attr('fill', function (d) {
-            return d.color;
-          });
+          .attr('fill', getEventColor);
 
-        // reset counter
-        overlapEvents = {};
+        overlapEvents = {}; // reset counter
 
-        feature.enter().append("path")
-          .attr("d", eventLayer.path)
-          .attr("class", "circle event")
-          .attr("fill-opacity", 0)
-          .attr('stroke-width', countOverlapEvents)
-          .attr('stroke', function (d) { return d.color; })
-          .attr('stroke-opacity', 0)
-          .attr('fill', function (d) {
-            return d.color;
-          })
-          .transition()
-          .delay(500)
-          .duration(1000)
-          .attr('stroke-opacity', 1)
-          .attr('fill-opacity', 1);
+        drawMarkers(featureSelection, eventLayer.path);
 
-        feature.exit()
+        featureSelection.exit()
           .transition()
           .duration(1000)
           .style("fill-opacity", 1e-6)
           .remove();
 
-        feature.on('click', function (d) {
-            // unhighlight events
-            d3.selectAll(".circle.event")
-              .attr("stroke", function (d) { return d.color; })
-              .attr("fill", function (d) { return d.color; });
-            // highlight selected event
-            d3.select(this).transition()
-              .duration(1000)
-              .attr("stroke", "black")
-              .attr("fill", "black");
-            scope.box.type = 'event-aggregate';
-            scope.box.content.eventValue = d;
-            scope.$apply();
-          });
+        featureSelection.on('click', eventClickHandler);
       };
 
       var removeEventLayer = function (eventLayer) {
@@ -397,7 +424,6 @@ app.directive('surfacelayer', function () {
           applyStyle: surfaceStyle,
           class: "impervious_surface"
         });
-
 
       /**
        * Listen to tools model for pipe_surface tool to become active. Add 
