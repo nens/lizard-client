@@ -14,39 +14,47 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
     link: function (scope, element, attrs, mapCtrl) {
 
       /**
-       * Utilfunction that creates/returns a "feature"
-       *
-       * @parameter: object eventLayer A magic object related to D3/Leaflet
-       * @parameter: object data object
-       * @return: object A magic object called "feature" related to D3/Leaflet
+       * Get color from feature.
+       * 
+       * @param {object} d - D3 bound data object; expects color property.
        */
-      var getFeature = function (g, data) {
-        return g.selectAll("path")
-                .data(data.features, function (d) { return d.id; });
+      var getEventColor = function (d) {
+        return d.color;
       };
 
       /**
-       * Utilfunction that draws the Event markers. 
+       * Event click handler.
        *
-       * @parameter: object A magic object we call "feature" related to D3/Leaflet
-       * @return: void
+       * Highlights selected event in black. Sets box.content.eventValue to 
+       * current bound data object (d).
+       *
+       * @param {object} d - D3 bound data object.
        */
-      var drawMarkers = function (feature, path) {
-        feature.enter().append("path")
-          .attr("d", path)
-          .attr("class", "circle event")
-          .attr("fill-opacity", 0)
-          .attr('stroke-width', 1.8)
-          .attr('stroke', 'white')
-          .attr('stroke-opacity', 0)
-          .attr('fill', function (d) {
-            return d.color;
-          })
-          .transition()
-          .delay(500)
+      var eventClickHandler = function (d) {
+        // unhighlight events
+        d3.selectAll(".circle.event")
+          .attr("stroke", getEventColor)
+          .attr("fill", getEventColor);
+        // highlight selected event
+        d3.select(this).transition()
           .duration(1000)
-          .attr('stroke-opacity', 1)
-          .attr('fill-opacity', 1);   
+          .attr("stroke", "black")
+          .attr("fill", "black");
+        scope.box.type = 'event-aggregate';
+        scope.box.content.eventValue = d;
+        scope.$apply();
+      };
+
+      /**
+       * Utilfunction that creates/returns a "feature"
+       *
+       * @parameter {object} g - D3 g (svg) selection.
+       * @parameter {object} data - Event data object.
+       * @returns {object} - D3 selection.
+       */
+      var getFeatureSelection = function (g, data) {
+        return g.selectAll("path")
+                .data(data.features, function (d) { return d.id; });
       };
 
       // object to keep count of overlapping events
@@ -71,7 +79,38 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         } else {
           overlapEvents[key] += 1;
         }
-        return overlapEvents[key];
+        var result = overlapEvents[key];
+
+        return result;
+      };
+
+      /**
+       * Utilfunction that draws the Event markers. 
+       *
+       * @parameter {object} feature - D3 selection
+       * @parameter {object} path - D3 svg path
+       */
+      var drawMarkers = function (feature, path) {
+        feature.enter().append("path")
+          // TODO: attempt to scale events on pointRadius; problem is that
+          // on zoom out radius increases.
+          //.attr("d", (function () {
+            //console.log("Called d attr function", overlapEvents);
+            //path.pointRadius(countOverlapEvents);
+            //return path;
+          //})())
+          .attr("d", path)
+          .attr("class", "circle event")
+          .attr("fill-opacity", 0)
+          .attr('stroke-width', countOverlapEvents)
+          .attr('stroke', getEventColor)
+          .attr('stroke-opacity', 0)
+          .attr('fill', getEventColor)
+          .transition()
+          .delay(500)
+          .duration(1000)
+          .attr('stroke-opacity', 1)
+          .attr('fill-opacity', 1);
       };
 
       /**
@@ -80,8 +119,8 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * On leaflet's viewreset the svg rescaled and repositioned. This
        * function should also be called when the data is changed.
        *
-       * @parameter: object data object
-       * @return: object eventLayer object
+       * @parameter {object} data - Object
+       * @return {object} eventLayer - Object
        */
       var createEventLayer = function (data) {
 
@@ -129,25 +168,14 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
 
         map.on("viewreset", reset);
 
-        var feature = getFeature(g, data);
-        drawMarkers(feature, path);
+        var featureSelection = getFeatureSelection(g, data);
 
         // reset counter
         overlapEvents = {};
-        feature.on('click', function (d, i) {
-            // unhighlight events
-            d3.selectAll(".circle.event")
-              .attr("stroke", function (d) { return d.color; })
-              .attr("fill", function (d) { return d.color; });
-            // highlight selected event
-            d3.select(this).transition()
-              .duration(1000)
-              .attr("stroke", "black")
-              .attr("fill", "black");
-            scope.box.type = 'event-aggregate';
-            scope.box.content.eventValue = d;
-            scope.$apply();
-          });
+
+        drawMarkers(featureSelection, path);
+
+        featureSelection.on('click', eventClickHandler);
 
         reset();
         return {
@@ -171,39 +199,24 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
       var updateEventLayer = function (eventLayer, data) {
         eventLayer.reset();
 
-        var feature = getFeature(eventLayer.g, data);
+        var featureSelection = getFeatureSelection(eventLayer.g, data);
 
-        feature.transition()
+        featureSelection.transition()
           .delay(500)
           .duration(1000)
-          .attr('fill', function (d) {
-            return d.color;
-          });
+          .attr('fill', getEventColor);
 
         overlapEvents = {}; // reset counter
 
-        drawMarkers(feature, eventLayer.path);
+        drawMarkers(featureSelection, eventLayer.path);
 
-        feature.exit()
+        featureSelection.exit()
           .transition()
           .duration(1000)
           .style("fill-opacity", 1e-6)
           .remove();
 
-        feature.on('click', function (d) {
-            // unhighlight events
-            d3.selectAll(".circle.event")
-              .attr("stroke", function (d) { return d.color; })
-              .attr("fill", function (d) { return d.color; });
-            // highlight selected event
-            d3.select(this).transition()
-              .duration(1000)
-              .attr("stroke", "black")
-              .attr("fill", "black");
-            scope.box.type = 'event-aggregate';
-            scope.box.content.eventValue = d;
-            scope.$apply();
-          });
+        featureSelection.on('click', eventClickHandler);
       };
 
       var removeEventLayer = function (eventLayer) {
@@ -285,9 +298,11 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           if (scope.events.data.features.length === 0) {
             eventLayer = removeEventLayer(eventLayer);
           } else {
+            overlapEvents = {};
             updateEventLayer(eventLayer, scope.events.data);
           }
         } else {
+          overlapEvents = {};
           eventLayer = createEventLayer(scope.events.data);
         }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
