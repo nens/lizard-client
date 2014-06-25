@@ -13,12 +13,16 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
+      // declaring all local vars for current scope:
+      var getEventColor, eventClickHandler, getFeatureSelection, 
+          overlapEvents, countOverlapEvents, drawMarkers, createEventLayer;
+
       /**
        * Get color from feature.
        * 
        * @param {object} d - D3 bound data object; expects color property.
        */
-      var getEventColor = function (d) {
+      getEventColor = function (d) {
         return d.color;
       };
 
@@ -30,7 +34,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        *
        * @param {object} d - D3 bound data object.
        */
-      var eventClickHandler = function (d) {
+      eventClickHandler = function (d) {
         // unhighlight events
         d3.selectAll(".circle.event")
           .attr("stroke", getEventColor)
@@ -52,13 +56,13 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * @parameter {object} data - Event data object.
        * @returns {object} - D3 selection.
        */
-      var getFeatureSelection = function (g, data) {
+      getFeatureSelection = function (g, data) {
         return g.selectAll("path")
                 .data(data.features, function (d) { return d.id; });
       };
 
       // object to keep count of overlapping events
-      var overlapEvents = {};
+      overlapEvents = {};
 
       /**
        * Count events that are on the same location.
@@ -71,7 +75,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * @returns {integer} Count for current key
        *
        */
-      var countOverlapEvents = function (d) {
+      countOverlapEvents = function (d) {
         var key = d.geometry.coordinates[0] + d.geometry.coordinates[1];
         var coord = overlapEvents[key];
         if (coord === undefined) {
@@ -88,7 +92,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * @parameter {object} feature - D3 selection
        * @parameter {object} path - D3 svg path
        */
-      var drawMarkers = function (feature, path) {
+      drawMarkers = function (feature, path) {
         feature.enter().append("path")
           // TODO: attempt to scale events on pointRadius; problem is that
           // on zoom out radius increases.
@@ -120,17 +124,17 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * @parameter {object} data - Object
        * @return {object} eventLayer - Object
        */
-      var createEventLayer = function (data) {
+      createEventLayer = function (data) {
 
         // declaring all local vars in 1st line of function body!
         var map, svg, g, transform, path, bounds, featureSelection, 
-            overlapEvents;
+            overlapEvents, projectPoint, reset;
 
         map = scope.map;
         svg = d3.select(map.getPanes().overlayPane).append("svg");
         g = svg.append("g").attr("class", "leaflet-zoom-hide");
         
-        function projectPoint(x, y) {
+        projectPoint = function (x, y) {
           var point = map.latLngToLayerPoint(new L.LatLng(y, x));
           this.stream.point(point.x, point.y);
         }
@@ -139,9 +143,13 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         path = d3.geo.path().projection(transform).pointRadius(6);
         bounds = path.bounds(data);
 
-        function reset() {
+        reset = function () {
+
+          // (re-)assign an existing var, declared in an embedding scope
           bounds = path.bounds(data);
 
+          // declare AND assign vars, for the local scope (too contrived for
+          // separation of declaration/assignment)
           var topLeft = bounds[0],
               bottomRight = bounds[1],
               width = bottomRight[0] - topLeft[0] + 20,
@@ -165,8 +173,8 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         overlapEvents = {}; // reset counter
         drawMarkers(featureSelection, path);
         featureSelection.on('click', eventClickHandler);
-
         reset();
+
         return {
           g: g,
           svg: svg,
@@ -396,7 +404,7 @@ app.directive('surfacelayer', function () {
       var getLayer = function (layerType, entityName) {
 
         var k, opts;
-        
+
         for (k in scope.map._layers) {
           opts = scope.map._layers[k].options;
           if (opts.name === entityName && opts.ext === layerType) {
