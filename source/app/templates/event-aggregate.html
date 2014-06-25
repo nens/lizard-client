@@ -2,11 +2,17 @@
   ng-class="mapState.mapMoving ? 'card-hidden' : ''">
 
   <div>
-    <div >
-      <% box.content.eventValue.properties.timestamp_start | date %> -
-      <% box.content.eventValue.properties.timestamp_end | date %> <br />
-      <% box.content.eventValue.properties.category %> <br />
-      <% box.content.eventValue.properties.value %> <br />
+    <div ng-if="box.content.eventValue.properties.value" >
+      <p>
+        <strong>
+          <% box.content.eventValue.properties.category %> <br />
+        </strong>
+        <% box.content.eventValue.properties.value %> <br />
+        <small>
+          <% box.content.eventValue.properties.timestamp_start | date: 'yyyy-MM-dd HH:mm' %> -
+          <% box.content.eventValue.properties.timestamp_end | date: 'yyyy-MM-dd HH:mm' %>
+        </small>
+      </p>
     </div>
     <div class="card-title">
       <i class="fa fa-sitemap"></i><span class="title-text" style="margin-left:10px !important;">Samenvatting</span>
@@ -16,13 +22,15 @@
       <table class="table table-hover table-condensed">
         <thead>
             <tr>
-              <th>Naam</th>
+              <th></th>
+              <th></th>
               <th>Aantal</th>
               <th>Totaal</th>
             </tr>
         </thead>
         <tbody>
           <tr class="recurrence_time" ng-repeat="eventType in events.types" ng-if="eventType.currentCount > 0">
+            <td><i class="fa fa-circle" ng-style="{color: eventType.color }"></i></td>
             <td><% eventType.name %></td>
             <td><strong><% eventType.currentCount %></strong></td>
             <td><% eventType.count %></td>

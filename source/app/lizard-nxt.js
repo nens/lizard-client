@@ -265,9 +265,7 @@ app.controller("MasterCtrl",
                                                        $scope.events.data,
                                                        eventSeriesId);
         $scope.events.types.count = $scope.events.types.count - 1;
-        EventService.addColor($scope.events.data,
-                              $scope.events.types.count,
-                              $scope.events.scale);
+        EventService.addColor($scope.events);
         $scope.events.changed = Date.now();
       } else {
         getEvents(eventSeriesId);
@@ -296,9 +294,7 @@ app.controller("MasterCtrl",
         $scope.events.data = dataOrder.data;
         $scope.events.types[eventSeriesId].event_type = dataOrder.order;
         $scope.events.types.count = $scope.events.types.count + 1;
-        EventService.addColor($scope.events.data,
-                              $scope.events.types.count,
-                              $scope.events.scale);
+        EventService.addColor($scope.events);
         $scope.events.types[eventSeriesId].active = true;
         $scope.events.changed = Date.now();
       });

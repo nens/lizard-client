@@ -12,6 +12,31 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
+      // object to keep count of overlapping events
+      var overlapEvents = {};
+
+      /**
+       * Count events that are on the same location.
+       *
+       * Adds a lat + lon key to overlapEvents if not defined and sets
+       * counter to 1. If key exists adds +1 to counter. Returns counter for
+       * current key.
+       *
+       * @parameter {object} d D3 data object, should have a geometry property
+       * @returns {integer} Count for current key
+       *
+       */
+      var countOverlapEvents = function (d) {
+        var key = d.geometry.coordinates[0] + d.geometry.coordinates[1];
+        var coord = overlapEvents[key];
+        if (coord === undefined) {
+          overlapEvents[key] = 1;
+        } else {
+          overlapEvents[key] += 1;
+        }
+        return overlapEvents[key];
+      };
+
       /**
        * Creates svg layer in leaflet's overlaypane and adds events as circles
        *
@@ -61,24 +86,14 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         var feature = g.selectAll("path")
             .data(data.features, function  (d) { return d.id; });
 
-        var overlapFeatures = {};
-
-        var countOverlapFeatures = function (d) {
-          var key = d.geometry.coordinates[0] + d.geometry.coordinates[1];
-          var coord = overlapFeatures[key];
-          if (coord === undefined) {
-            overlapFeatures[key] = 1;
-          } else {
-            overlapFeatures[key] += 1;
-          }
-          return overlapFeatures[key];
-        };
+        // reset counter
+        overlapEvents = {};
 
         feature.enter().append("path")
           .attr("d", path)
           .attr("class", "circle event")
           .attr("fill-opacity", 0)
-          .attr('stroke-width', countOverlapFeatures)
+          .attr('stroke-width', countOverlapEvents)
           .attr('stroke', function (d) { return d.color; })
           .attr('stroke-opacity', 0)
           .attr('fill', function (d) {
@@ -90,7 +105,16 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           .attr('stroke-opacity', 1)
           .attr('fill-opacity', 1);
 
-        feature.on('click', function (d) {
+        feature.on('click', function (d, i) {
+            // unhighlight events
+            d3.selectAll(".circle.event")
+              .attr("stroke", function (d) { return d.color; })
+              .attr("fill", function (d) { return d.color; });
+            // highlight selected event
+            d3.select(this).transition()
+              .duration(1000)
+              .attr("stroke", "black")
+              .attr("fill", "black");
             scope.box.type = 'event-aggregate';
             scope.box.content.eventValue = d;
             scope.$apply();
@@ -127,12 +151,15 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
             return d.color;
           });
 
+        // reset counter
+        overlapEvents = {};
+
         feature.enter().append("path")
           .attr("d", eventLayer.path)
           .attr("class", "circle event")
           .attr("fill-opacity", 0)
-          .attr('stroke-width', 1.8)
-          .attr('stroke', 'white')
+          .attr('stroke-width', countOverlapEvents)
+          .attr('stroke', function (d) { return d.color; })
           .attr('stroke-opacity', 0)
           .attr('fill', function (d) {
             return d.color;
@@ -150,6 +177,15 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           .remove();
 
         feature.on('click', function (d) {
+            // unhighlight events
+            d3.selectAll(".circle.event")
+              .attr("stroke", function (d) { return d.color; })
+              .attr("fill", function (d) { return d.color; });
+            // highlight selected event
+            d3.select(this).transition()
+              .duration(1000)
+              .attr("stroke", "black")
+              .attr("fill", "black");
             scope.box.type = 'event-aggregate';
             scope.box.content.eventValue = d;
             scope.$apply();
@@ -180,7 +216,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
             var contained = s[0] <= time && time <= s[1];
             // Some book keeping to count
             d.inTempExtent = contained;
-            return contained;
+            return !!contained;
           });
         var selected = d3.selectAll(".circle.selected");
         selected.classed("hidden", false);
