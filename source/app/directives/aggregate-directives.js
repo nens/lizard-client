@@ -8,46 +8,46 @@
  */
 app.directive('vectorlayer', ["EventService", function (EventService) {
   
-  /**
-   * Utilfunction that creates/returns a "feature"
-   *
-   * @parameter: object eventLayer A magic object related to D3/Leaflet
-   * @parameter: object data object
-   * @return: object A magic object called "feature" related to D3/Leaflet
-   */
-  var getFeature = function (g, data) {
-    return g.selectAll("path")
-            .data(data.features, function (d) { return d.id; });
-  };
-
-  /**
-   * Utilfunction that draws the Event markers. 
-   *
-   * @parameter: object A magic object we call "feature" related to D3/Leaflet
-   * @return: void
-   */
-  var drawMarkers = function (feature, path) {
-    feature.enter().append("path")
-      .attr("d", path)
-      .attr("class", "circle event")
-      .attr("fill-opacity", 0)
-      .attr('stroke-width', 1.8)
-      .attr('stroke', 'white')
-      .attr('stroke-opacity', 0)
-      .attr('fill', function (d) {
-        return d.color;
-      })
-      .transition()
-      .delay(500)
-      .duration(1000)
-      .attr('stroke-opacity', 1)
-      .attr('fill-opacity', 1);   
-  };
-
   return {
     restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
+
+      /**
+       * Utilfunction that creates/returns a "feature"
+       *
+       * @parameter: object eventLayer A magic object related to D3/Leaflet
+       * @parameter: object data object
+       * @return: object A magic object called "feature" related to D3/Leaflet
+       */
+      var getFeature = function (g, data) {
+        return g.selectAll("path")
+                .data(data.features, function (d) { return d.id; });
+      };
+
+      /**
+       * Utilfunction that draws the Event markers. 
+       *
+       * @parameter: object A magic object we call "feature" related to D3/Leaflet
+       * @return: void
+       */
+      var drawMarkers = function (feature, path) {
+        feature.enter().append("path")
+          .attr("d", path)
+          .attr("class", "circle event")
+          .attr("fill-opacity", 0)
+          .attr('stroke-width', 1.8)
+          .attr('stroke', 'white')
+          .attr('stroke-opacity', 0)
+          .attr('fill', function (d) {
+            return d.color;
+          })
+          .transition()
+          .delay(500)
+          .duration(1000)
+          .attr('stroke-opacity', 1)
+          .attr('fill-opacity', 1);   
+      };
 
       // object to keep count of overlapping events
       var overlapEvents = {};
@@ -129,29 +129,11 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
 
         map.on("viewreset", reset);
 
-        var feature = g.selectAll("path")
-            .data(data.features, function (d) { return d.id; });
+        var feature = getFeature(g, data);
+        drawMarkers(feature, path);
 
         // reset counter
         overlapEvents = {};
-
-        feature.enter().append("path")
-          .attr("d", path)
-          .attr("class", "circle event")
-          .attr("fill-opacity", 0)
-          .attr('stroke-width', countOverlapEvents)
-          .attr('stroke', function (d) { return d.color; })
-          .attr('stroke-opacity', 0)
-          .attr('fill', function (d) {
-            return d.color;
-          })
-          .transition()
-          .delay(500)
-          .duration(1000)
-          .attr('stroke-opacity', 1)
-          .attr('fill-opacity', 1);
->>>>>>> ed3cc90bba1c9892b663aa24fc0443f29b058618
-
         feature.on('click', function (d, i) {
             // unhighlight events
             d3.selectAll(".circle.event")
@@ -198,24 +180,9 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
             return d.color;
           });
 
-        // reset counter
-        overlapEvents = {};
+        overlapEvents = {}; // reset counter
 
-        feature.enter().append("path")
-          .attr("d", eventLayer.path)
-          .attr("class", "circle event")
-          .attr("fill-opacity", 0)
-          .attr('stroke-width', countOverlapEvents)
-          .attr('stroke', function (d) { return d.color; })
-          .attr('stroke-opacity', 0)
-          .attr('fill', function (d) {
-            return d.color;
-          })
-          .transition()
-          .delay(500)
-          .duration(1000)
-          .attr('stroke-opacity', 1)
-          .attr('fill-opacity', 1);
+        drawMarkers(feature, eventLayer.path);
 
         feature.exit()
           .transition()
@@ -444,7 +411,6 @@ app.directive('surfacelayer', function () {
           applyStyle: surfaceStyle,
           class: "impervious_surface"
         });
-
 
       /**
        * Listen to tools model for pipe_surface tool to become active. Add 
