@@ -122,26 +122,23 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        */
       var createEventLayer = function (data) {
 
-        // TODO: introduce the neat & consistent style of *declaring*
-        // local vars in the first line of the function body, i.e.:
-        //
-        // var map, svg, g, transform, path, bounds, ...;
-        //
-        // The *assignment* of values can then take place in the most
-        // applicable places.
+        // declaring all local vars in 1st line of function body!
+        var map, svg, g, transform, path, bounds, featureSelection, 
+            overlapEvents;
 
-        var map = scope.map;
-        var svg = d3.select(map.getPanes().overlayPane).append("svg"),
-            g = svg.append("g").attr("class", "leaflet-zoom-hide");
+        map = scope.map;
+        svg = d3.select(map.getPanes().overlayPane).append("svg");
+        g = svg.append("g").attr("class", "leaflet-zoom-hide");
         
         function projectPoint(x, y) {
-          var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+          var point;
+          point = map.latLngToLayerPoint(new L.LatLng(y, x));
           this.stream.point(point.x, point.y);
         }
 
-        var transform = d3.geo.transform({point: projectPoint}),
-            path = d3.geo.path().projection(transform).pointRadius(6),
-            bounds = path.bounds(data);
+        transform = d3.geo.transform({point: projectPoint}),
+        path = d3.geo.path().projection(transform).pointRadius(6);
+        bounds = path.bounds(data);
 
         function reset() {
           bounds = path.bounds(data);
@@ -165,14 +162,9 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         }
 
         map.on("viewreset", reset);
-
-        var featureSelection = getFeatureSelection(g, data);
-
-        // reset counter
-        overlapEvents = {};
-
+        featureSelection = getFeatureSelection(g, data);
+        overlapEvents = {}; // reset counter
         drawMarkers(featureSelection, path);
-
         featureSelection.on('click', eventClickHandler);
 
         reset();
