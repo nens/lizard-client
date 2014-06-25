@@ -48,6 +48,32 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
     restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
+
+      // object to keep count of overlapping events
+      var overlapEvents = {};
+
+      /**
+       * Count events that are on the same location.
+       *
+       * Adds a lat + lon key to overlapEvents if not defined and sets
+       * counter to 1. If key exists adds +1 to counter. Returns counter for
+       * current key.
+       *
+       * @parameter {object} d D3 data object, should have a geometry property
+       * @returns {integer} Count for current key
+       *
+       */
+      var countOverlapEvents = function (d) {
+        var key = d.geometry.coordinates[0] + d.geometry.coordinates[1];
+        var coord = overlapEvents[key];
+        if (coord === undefined) {
+          overlapEvents[key] = 1;
+        } else {
+          overlapEvents[key] += 1;
+        }
+        return overlapEvents[key];
+      };
+
       /**
        * Creates svg layer in leaflet's overlaypane and adds events as circles
        *
@@ -103,11 +129,40 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
 
         map.on("viewreset", reset);
 
-        var feature = getFeature(g, data);
-        drawMarkers(feature, path);
+        var feature = g.selectAll("path")
+            .data(data.features, function (d) { return d.id; });
 
-        feature.on('click', function (d) {
-            scope.box.type = 'aggregate';
+        // reset counter
+        overlapEvents = {};
+
+        feature.enter().append("path")
+          .attr("d", path)
+          .attr("class", "circle event")
+          .attr("fill-opacity", 0)
+          .attr('stroke-width', countOverlapEvents)
+          .attr('stroke', function (d) { return d.color; })
+          .attr('stroke-opacity', 0)
+          .attr('fill', function (d) {
+            return d.color;
+          })
+          .transition()
+          .delay(500)
+          .duration(1000)
+          .attr('stroke-opacity', 1)
+          .attr('fill-opacity', 1);
+>>>>>>> ed3cc90bba1c9892b663aa24fc0443f29b058618
+
+        feature.on('click', function (d, i) {
+            // unhighlight events
+            d3.selectAll(".circle.event")
+              .attr("stroke", function (d) { return d.color; })
+              .attr("fill", function (d) { return d.color; });
+            // highlight selected event
+            d3.select(this).transition()
+              .duration(1000)
+              .attr("stroke", "black")
+              .attr("fill", "black");
+            scope.box.type = 'event-aggregate';
             scope.box.content.eventValue = d;
             scope.$apply();
           });
@@ -143,7 +198,24 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
             return d.color;
           });
 
-        drawMarkers(feature, eventLayer.path);
+        // reset counter
+        overlapEvents = {};
+
+        feature.enter().append("path")
+          .attr("d", eventLayer.path)
+          .attr("class", "circle event")
+          .attr("fill-opacity", 0)
+          .attr('stroke-width', countOverlapEvents)
+          .attr('stroke', function (d) { return d.color; })
+          .attr('stroke-opacity', 0)
+          .attr('fill', function (d) {
+            return d.color;
+          })
+          .transition()
+          .delay(500)
+          .duration(1000)
+          .attr('stroke-opacity', 1)
+          .attr('fill-opacity', 1);
 
         feature.exit()
           .transition()
@@ -152,7 +224,16 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           .remove();
 
         feature.on('click', function (d) {
-            scope.box.type = 'aggregate';
+            // unhighlight events
+            d3.selectAll(".circle.event")
+              .attr("stroke", function (d) { return d.color; })
+              .attr("fill", function (d) { return d.color; });
+            // highlight selected event
+            d3.select(this).transition()
+              .duration(1000)
+              .attr("stroke", "black")
+              .attr("fill", "black");
+            scope.box.type = 'event-aggregate';
             scope.box.content.eventValue = d;
             scope.$apply();
           });
@@ -166,7 +247,8 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
       /**
        * Draw events based on current temporal extent
        *
-       * Hide all elements and then unhides when within the given start and end timestamps
+       * Hide all elements and then unhides when within the given start
+       * and end timestamps.
        *
        * @parameter: int start start timestamp in epoch ms
        * @parameter: int end end timestamp in epoch ms
@@ -181,10 +263,12 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
             var contained = s[0] <= time && time <= s[1];
             // Some book keeping to count
             d.inTempExtent = contained;
-            return contained;
+            return !!contained;
           });
         var selected = d3.selectAll(".circle.selected");
         selected.classed("hidden", false);
+        EventService.countCurrentEvents(scope.mapState.eventTypes,
+                                        scope.events);
       };
 
       /**
@@ -196,13 +280,15 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
       scope.$watch('timeState.changedZoom', function (n, o) {
         if (n === o) { return true; }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
-        EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
+        EventService.countCurrentEvents(scope.mapState.eventTypes,
+                                        scope.events);
       });
 
       scope.$watch('events.changed', function (n, o) {
         if (n === o) { return true; }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
-        EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
+        EventService.countCurrentEvents(scope.mapState.eventTypes,
+                                        scope.events);
       });
    
       /**

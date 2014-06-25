@@ -4,15 +4,14 @@
 app.service("EventService", ["Restangular", "$q",
   function (Restangular, $q) {
 
-
   // COLOR MODEL
   var colors =  {
     3: ["#27ae60", "#2980b9", "#8e44ad"],
-    4: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50"],
-    5: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12"],
-    6: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12", "#d35400"],
-    7: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12", "#d35400", "#c0392b"],
-    8: ["#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f39c12", "#d35400", "#c0392b", "#16a085"]
+    4: ["#27ae60", "#2980b9", "#8e44ad", "#7f8c8d"],
+    5: ["#27ae60", "#2980b9", "#8e44ad", "#7f8c8d", "#f39c12"],
+    6: ["#27ae60", "#2980b9", "#8e44ad", "#7f8c8d", "#f39c12", "#d35400"],
+    7: ["#27ae60", "#2980b9", "#8e44ad", "#7f8c8d", "#f39c12", "#d35400", "#c0392b"],
+    8: ["#27ae60", "#2980b9", "#8e44ad", "#7f8c8d", "#f39c12", "#d35400", "#c0392b", "#16a085"]
   };
 
   /**
@@ -26,6 +25,9 @@ app.service("EventService", ["Restangular", "$q",
     var eventTypesTemplate = {};
     for (var i = 0; i < eventTypes.length; i++) {
       eventTypesTemplate[eventTypes[i].event_series] = {};
+      eventTypesTemplate[
+        eventTypes[i].event_series].count = eventTypes[i].event_count;
+      eventTypesTemplate[eventTypes[i].event_series].name = eventTypes[i].type;
     }
     eventTypesTemplate.count = 0;
 
@@ -144,20 +146,28 @@ app.service("EventService", ["Restangular", "$q",
    * basis of sub_event_type. If there are multiple event types active, the
    * events are colored on the basis of a colorscale on the scope and the type
    * of the feature.
+   *
+   * NOTE: simplified to show only one color per event series to avoid 
+   * confusion.
    * 
-   * @param: object geojson compliant data object with all the events
+   * @param {object} events - Lizard NXT events object.
    */
-  var addColor = function (longData, count, scale) {
-    if (count === 1) {
-      scale = d3.scale.ordinal().range(colors[8]);
-      angular.forEach(longData.features, function (feature) {
-        feature.color = scale(feature.properties.category);
-      });
-    } else {
-      angular.forEach(longData.features, function (feature) {
-        feature.color = scale(feature.properties.event_series);
-      });
-    }
+  var addColor = function (events) {
+    angular.forEach(events.data.features, function (feature) {
+      var eventSeriesId = feature.properties.event_series;
+      feature.color = events.scale(eventSeriesId);
+      events.types[eventSeriesId].color = feature.color;
+    });
+    //if (count === 1) {
+      //scale = d3.scale.ordinal().range(colors[8]);
+      //angular.forEach(longData.features, function (feature) {
+        //feature.color = scale(feature.properties.category);
+      //});
+    //} else {
+      //angular.forEach(longData.features, function (feature) {
+        //feature.color = scale(feature.properties.event_series);
+      //});
+    //}
   };
 
   var eventsResource,
