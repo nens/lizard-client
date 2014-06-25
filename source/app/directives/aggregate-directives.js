@@ -6,11 +6,48 @@
  * time-interval (temporal extent, from timeline)
  *
  */
+
 app.directive('vectorlayer', ["EventService", function (EventService) {
   return {
     restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
+
+      /**
+       * Utilfunction that creates/returns a "feature"
+       *
+       * @parameter: object data object
+       * @return: object A magic object called "feature" related to D3/Leaflet
+       */
+      var getFeature = function (data) {
+        return eventLayer.g.selectAll("path")
+                .data(data.features, function (d) { return d.id; });
+      };
+
+      /**
+       * Utilfunction that draws an Event marker. 
+       *
+       * @parameter: object A magic object we call "feature" related to D3/Leaflet
+       * @return: void
+       */
+      var drawMarker = function (feature) {
+
+        feature.enter().append("path")
+          .attr("d", path)
+          .attr("class", "circle event")
+          .attr("fill-opacity", 0)
+          .attr('stroke-width', 1.8)
+          .attr('stroke', 'white')
+          .attr('stroke-opacity', 0)
+          .attr('fill', function (d) {
+            return d.color;
+          })
+          .transition()
+          .delay(500)
+          .duration(1000)
+          .attr('stroke-opacity', 1)
+          .attr('fill-opacity', 1);   
+      };
 
       /**
        * Creates svg layer in leaflet's overlaypane and adds events as circles
@@ -58,24 +95,32 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
 
         map.on("viewreset", reset);
 
-        var feature = g.selectAll("path")
-            .data(data.features, function  (d) { return d.id; });
+        // BEGIN REFACTOR CANDIDATE ////
 
-        feature.enter().append("path")
-          .attr("d", path)
-          .attr("class", "circle event")
-          .attr("fill-opacity", 0)
-          .attr('stroke-width', 1.8)
-          .attr('stroke', 'white')
-          .attr('stroke-opacity', 0)
-          .attr('fill', function (d) {
-            return d.color;
-          })
-          .transition()
-          .delay(500)
-          .duration(1000)
-          .attr('stroke-opacity', 1)
-          .attr('fill-opacity', 1);
+        // var feature = g.selectAll("path")
+        //     .data(data.features, function (d) { return d.id; });
+
+        var feature = this.getFeature(data);
+
+        // feature.enter().append("path")
+        //   .attr("d", path)
+        //   .attr("class", "circle event")
+        //   .attr("fill-opacity", 0)
+        //   .attr('stroke-width', 1.8)
+        //   .attr('stroke', 'white')
+        //   .attr('stroke-opacity', 0)
+        //   .attr('fill', function (d) {
+        //     return d.color;
+        //   })
+        //   .transition()
+        //   .delay(500)
+        //   .duration(1000)
+        //   .attr('stroke-opacity', 1)
+        //   .attr('fill-opacity', 1);
+
+        this.drawMarker(feature);
+
+        // END REFACTOR CANDIDATE ///////
 
         feature.on('click', function (d) {
             scope.box.type = 'aggregate';
@@ -104,8 +149,13 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        */
       var updateEventLayer = function (eventLayer, data) {
         eventLayer.reset();
-        var feature = eventLayer.g.selectAll("path")
-            .data(data.features, function  (d) { return d.id; });
+
+        // BEGIN REFACTOR CANDIDATE ////
+
+        // var feature = eventLayer.g.selectAll("path")
+        //     .data(data.features, function  (d) { return d.id; });
+
+        var feature = getFeature(data);
 
         feature.transition()
           .delay(500)
@@ -114,21 +164,23 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
             return d.color;
           });
 
-        feature.enter().append("path")
-          .attr("d", eventLayer.path)
-          .attr("class", "circle event")
-          .attr("fill-opacity", 0)
-          .attr('stroke-width', 1.8)
-          .attr('stroke', 'white')
-          .attr('stroke-opacity', 0)
-          .attr('fill', function (d) {
-            return d.color;
-          })
-          .transition()
-          .delay(500)
-          .duration(1000)
-          .attr('stroke-opacity', 1)
-          .attr('fill-opacity', 1);
+        this.drawMarker(feature);
+
+        // feature.enter().append("path")
+        //   .attr("d", eventLayer.path)
+        //   .attr("class", "circle event")
+        //   .attr("fill-opacity", 0)
+        //   .attr('stroke-width', 1.8)
+        //   .attr('stroke', 'white')
+        //   .attr('stroke-opacity', 0)
+        //   .attr('fill', function (d) {
+        //     return d.color;
+        //   })
+        //   .transition()
+        //   .delay(500)
+        //   .duration(1000)
+        //   .attr('stroke-opacity', 1)
+        //   .attr('fill-opacity', 1);
 
         feature.exit()
           .transition()
