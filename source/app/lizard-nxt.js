@@ -338,7 +338,9 @@ app.controller("MasterCtrl",
           $scope.activeObject.events.push(feature.properties);
         });
         if ($scope.activeObject.events.length > 0) {
+          EventService.addColor($scope.events);
           $scope.activeObject.hasEvents = true;
+          $scope.activeObject.eventTableParams.reload();
         }
       });
     // Get timeseries
@@ -353,6 +355,33 @@ app.controller("MasterCtrl",
       $scope.rain.start = $scope.rain.data[0][0];
     };
     RasterService.getRain(new Date($scope.timeState.start), new Date($scope.timeState.end), $scope.activeObject.latlng, aggWindow).then(callback);
+  });
+
+  /**
+   * Parameters for ngTable.
+   *
+   * Controls how ngTable behaves. Don't forget to call the reload() method
+   * when you refresh the data (like in an API call). 
+   */
+  $scope.activeObject.eventTableParams = new ngTableParams({
+    page: 1,
+    count: 10,
+    sorting: {
+      timestamp_start: 'desc'
+    }
+  }, {
+    total: 0,
+    groupBy: 'category',
+    getData: function ($defer, params) {
+      params.total($scope.activeObject.events.length);
+      params.count($scope.activeObject.events.length);
+      var data = $scope.activeObject.events;
+      var orderedData = params.sorting() ?
+          $filter('orderBy')(data, params.orderBy()) :
+          data;
+      $defer.resolve(orderedData.slice((params.page() - 1) * params.count(),
+                                        params.page() * params.count()));
+    },
   });
 
   // END activeObject part

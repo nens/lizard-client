@@ -632,7 +632,7 @@ app.factory("Timeline", [ function () {
   var drawCircleElements = function (svg, dimensions, data, xScale, yScale) {
     var xFunction = function (d) { return xScale(d.properties.timestamp_end); };
     var yFunction = function (d) { return yScale(d.event_order); };
-    var colorFunction = function (d) { return d.color; };
+    var colorFunction = function (d) { return d.properties.color; };
     
     // DATA JOIN
     // Join new data with old elements, based on the id value.
@@ -685,7 +685,7 @@ app.factory("Timeline", [ function () {
     var xOneFunction = function (d) { return xScale(d.properties.timestamp_end); };
     var xTwoFunction = function (d) { return xScale(d.properties.timestamp_start); };
     var yFunction = function (d) { return yScale(d.event_order); };
-    var colorFunction = function (d) { return d.color; };
+    var colorFunction = function (d) { return d.properties.color; };
     var dFunction = function (d) {
       // Draws a small line from the end of the event to start
       var path =

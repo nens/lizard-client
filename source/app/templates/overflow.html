@@ -1,31 +1,21 @@
 <div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
-    <!-- Card for "overflow" / "overstort" -->
-    <div class="actions">
-      <ul>
-        <!-- <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li> -->
-        <li class="fullscreen">
-          <a 
-            ng-click="toggleDetailmode()"
-            title="Bekijk in detailmode">
-            <i class="fa fa-lg fa-plus-square-o"></i>
-          </a>
-        </li>
-<!--         <li class="favorite">
-          <a
-            ng-click="bookmarkItem()" 
-            title="Voeg toe aan favorieten">
-            <i class="fa fa-lg fa-bookmark"></i>
-          </a>
-        </li> -->
-        <!-- <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li> -->
-      </ul>
-    </div> <!-- end actions -->
+  <!-- Card for "overflow" / "overstort" -->
+  <div class="actions">
+    <ul>
+      <li class="fullscreen">
+      <a 
+        ng-click="toggleDetailmode()"
+        title="Bekijk in detailmode">
+        <i class="fa fa-lg fa-plus-square-o"></i>
+      </a>
+      </li>
+    </ul>
+  </div> <!-- end actions -->
 
 
-    <div class="card-title">
-        <!-- <img src="images/knoop.png" class="img-circle"> -->
-        <i class="icon-overflow-open"></i><span class="title-text">Overstort</span>
-    </div>
+  <div class="card-title">
+    <i class="icon-overflow-open"></i><span class="title-text">Overstort</span>
+  </div>
 
   <table class="fullwidth">
     <tbody>
@@ -47,12 +37,13 @@
         <span ng-if="!!activeObject.attrs.crest_level"> m</span>
       </td>  
     </tr>           
-  </tbody>
+    </tbody>
   </table>
 
   <div class="card-details" ng-click="activeObject.attrs.details = !activeObject.attrs.details">
     <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.attrs.details}"></i><span ng-if="!activeObject.attrs.details"> Meer details</span><span ng-if="!!activeObject.attrs.details"> Minder details</span>
   </div>
+
   <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
     <table class="fullwidth">
       <tbody>
@@ -61,7 +52,7 @@
         <td>
           <span ng-bind="activeObject.attrs.open_water_level_average | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
           <span ng-if="!!activeObject.attrs.open_water_level_average"> m
-          <span style="word-spacing: 0;">NAP</span></span>
+            <span style="word-spacing: 0;">NAP</span></span>
         </td>            
       </tr>      
       <tr>
@@ -69,7 +60,7 @@
         <td>
           <span ng-bind="activeObject.attrs.open_water_level_summer | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
           <span ng-if="!!activeObject.attrs.open_water_level_summer"> m
-          <span style="word-spacing: 0;">NAP</span></span>
+            <span style="word-spacing: 0;">NAP</span></span>
         </td>            
       </tr>
       <tr>
@@ -77,24 +68,44 @@
         <td>
           <span ng-bind="activeObject.attrs.open_water_level_winter | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
           <span ng-if="!!activeObject.attrs.open_water_level_winter"> m
-          <span style="word-spacing: 0;">NAP</span></span>
+            <span style="word-spacing: 0;">NAP</span></span>
         </td>            
       </tr>
       </tbody>
     </table>
 
-    
-    <div class="streetview">
-    <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lng %>,<% activeObject.latlng.lat %>&cbp=11,90,0,0,40">
-      <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lng %>,<% activeObject.latlng.lat %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
-    </a>
+
+    <div class="streetview" ng-class="{hide: !activeObject.attrs.details}">
+      <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lng %>,<% activeObject.latlng.lat %>&cbp=11,90,0,0,40">
+        <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lng %>,<% activeObject.latlng.lat %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo"> &nbsp;
+      </a>
     </div>
   </div>
+
+<div class="event-container" ng-class="{hidden: !activeObject.hasEvents}">
+  <h4>Meldingen (<% activeObject.eventTableParams.total() %>)</h4>
+  <table ng-table="activeObject.eventTableParams"
+    class="table table-condensed table-hover">
+    <tbody ng-repeat="group in $groups">
+    <tr class="ng-table-group">
+      <td colspan="<% $columns.length %>">
+        <a href="" ng-click="group.$hideRows = !group.$hideRows"
+          ng-style="{color: events.scale(group.data[0].event_series) }">
+          <span class="glyphicon"
+                ng-class="{'glyphicon-chevron-right': !group.$hideRows,
+                           'glyphicon-chevron-down': group.$hideRows}">
+          </span>
+          <strong><% group.value %> (<% group.data.length %>)</strong>
+        </a>
+      </td>
+    </tr>
+    <tr ng-hide="!group.$hideRows" ng-repeat="event in group.data">
+      <td data-title="'Waarde'" sortable="'value'"><% event.value | limitTo: 32  %></td>
+      <td data-title="'Start'" sortable="'timestamp_start'"><% event.timestamp_start | date: 'yyyy-MM-dd HH:mm' %></td>
+      <td data-title="'Eind'" sortable="'timestamp_end'"><% event.timestamp_end | date: 'yyyy-MM-dd HH:mm' %></td>
+    </tr>
+    </tbody>
+  </table>
 </div>
 
-<div class="card" ng-class="{hidden: !activeObject.hasEvents}">
-  <i class="fa fa-circle"></i>&nbsp; Events: <br />
-  <div class="card-events" ng-repeat="event in activeObject.events">
-    <% event.timestamp_start | date : 'dd-MM' %> > <% event.timestamp_end | date : 'dd-MM-yy' %> <% event.category %>: <% event.value %>
-  </div>
 </div>

@@ -14,7 +14,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
     link: function (scope, element, attrs, mapCtrl) {
 
       // declaring all local vars for current scope:
-      var getEventColor, eventClickHandler, getFeatureSelection, 
+      var getEventColor, eventClickHandler, getFeatureSelection,
           overlapEvents, countOverlapEvents, drawMarkers, createEventLayer;
 
       /**
@@ -23,7 +23,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * @param {object} d - D3 bound data object; expects color property.
        */
       getEventColor = function (d) {
-        return d.color;
+        return d.properties.color;
       };
 
       /**
@@ -127,7 +127,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
       createEventLayer = function (data) {
 
         // declaring all local vars in 1st line of function body!
-        var map, svg, g, transform, path, bounds, featureSelection, 
+        var map, svg, g, transform, path, bounds, featureSelection,
             overlapEvents, projectPoint, reset;
 
         map = scope.map;
@@ -137,7 +137,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         projectPoint = function (x, y) {
           var point = map.latLngToLayerPoint(new L.LatLng(y, x));
           this.stream.point(point.x, point.y);
-        }
+        };
 
         transform = d3.geo.transform({point: projectPoint}),
         path = d3.geo.path().projection(transform).pointRadius(6);
@@ -166,7 +166,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           g.attr("transform", "translate(" + -(topLeft[0] - 10) + "," +
                  -(topLeft[1] - 10) + ")")
             .selectAll("path").attr("d", path);
-        }
+        };
 
         map.on("viewreset", reset);
         featureSelection = getFeatureSelection(g, data);
