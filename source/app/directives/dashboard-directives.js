@@ -11,15 +11,24 @@ app.controller('DashboardDirCtrl', ['$scope', '$timeout', '$http', '$sce', funct
    * 
    */
 
-  $scope.tabs = [{
-      title: "Streetview",
-      content: $sce.trustAsHtml("<h4>Streetview</h4>")
-    },
-    {
-      title: "Extra",
-      content: $sce.trustAsHtml("<h4>Extra</h4><p>Dynamic content 2</p>"),
-      disabled: true
-    }];
+  $scope.tabs = [];
+
+  $scope.image = "http://redcube.nl/~freelink/lizard-nxt/gemeente_map_placeholder.png";
+  $scope.table = "http://redcube.nl/~freelink/lizard-nxt/gemeente_map_placeholder.png";
+
+  $scope.togglePeriod = function (period) {
+    if (period === 'Month') {
+      $scope.image = "http://redcube.nl/~freelink/lizard-nxt/gemeente_map_placeholder.png";
+      $scope.table = "http://redcube.nl/~freelink/lizard-nxt/gemeente_map_placeholder.png";
+    } else if (period === 'Year') {
+      $scope.image = "http://redcube.nl/~freelink/lizard-nxt/object_map_placeholder.png";
+      $scope.table = "http://redcube.nl/~freelink/lizard-nxt/object_map_placeholder.png";
+    } else if (period === 'Quarter') {
+      $scope.image = "http://redcube.nl/~freelink/lizard-nxt/bemgebied_map_placeholder.png";
+      $scope.table = "http://redcube.nl/~freelink/lizard-nxt/bemgebied_map_placeholder.png";
+    }
+  };
+
 }]);
 
 app.directive('dashboard', ['$location', '$timeout', '$compile', function ($location, $timeout, $compile) {

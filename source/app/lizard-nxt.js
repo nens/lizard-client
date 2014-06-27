@@ -140,6 +140,15 @@ app.controller("MasterCtrl",
     }
   };
 
+  /**
+   * Switch between contexts.
+   *
+   * @param {string} context - Context name to switch to
+   */
+  $scope.switchContext = function (context) {
+    $scope.box.context = context;
+  };
+
   $scope.toggleDetailmode = function () {
     if ($scope.box.detailMode) {
       $scope.box.detailMode = false;
