@@ -13,19 +13,19 @@ app.controller('DashboardDirCtrl', ['$scope', '$timeout', '$http', '$sce', funct
 
   $scope.tabs = [];
 
-  $scope.image = "http://redcube.nl/~freelink/lizard-nxt/gemeente_map_placeholder.png";
-  $scope.table = "http://redcube.nl/~freelink/lizard-nxt/gemeente_map_placeholder.png";
+  $scope.image = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Maand.png";
+  $scope.table = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Maand_tabel.png";
 
   $scope.togglePeriod = function (period) {
     if (period === 'Month') {
-      $scope.image = "http://redcube.nl/~freelink/lizard-nxt/gemeente_map_placeholder.png";
-      $scope.table = "http://redcube.nl/~freelink/lizard-nxt/gemeente_map_placeholder.png";
+      $scope.image = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Maand.png";
+      $scope.table = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Maand_tabel.png";
     } else if (period === 'Year') {
-      $scope.image = "http://redcube.nl/~freelink/lizard-nxt/object_map_placeholder.png";
-      $scope.table = "http://redcube.nl/~freelink/lizard-nxt/object_map_placeholder.png";
+      $scope.image = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Jaar.png";
+      $scope.table = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Jaar_tabel.png";
     } else if (period === 'Quarter') {
-      $scope.image = "http://redcube.nl/~freelink/lizard-nxt/bemgebied_map_placeholder.png";
-      $scope.table = "http://redcube.nl/~freelink/lizard-nxt/bemgebied_map_placeholder.png";
+      $scope.image = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Kwartaal.png";
+      $scope.table = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Kwartaal_tabel.png";
     }
   };
 
