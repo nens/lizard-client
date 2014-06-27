@@ -82,8 +82,9 @@
     </div>
   </div>
 
+<!-- NOTE: REFACTOR TO EVENTS DIRECTIVE -->
 <div class="event-container" ng-class="{hidden: !activeObject.hasEvents}">
-  <h4>Meldingen (<% activeObject.eventTableParams.total() %>)</h4>
+  <h4>Gebeurtenissen (<% activeObject.eventTableParams.total() %>)</h4>
   <table ng-table="activeObject.eventTableParams"
     class="table table-condensed table-hover">
     <tbody ng-repeat="group in $groups">
@@ -107,5 +108,17 @@
     </tbody>
   </table>
 </div>
+
+<script type="text/ng-template" id="custom/pager">
+  <ul class="pager ng-cloak">
+    <li ng-repeat="page in pages"
+        ng-class="{'disabled': !page.active, 'previous': page.type == 'prev', 'next': page.type == 'next'}"
+        ng-show="page.type == 'prev' || page.type == 'next'" ng-switch="page.type">
+      <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo;</a>
+      <a ng-switch-when="next" ng-click="params.page(page.number)" href="">&raquo;</a>
+    </li>
+  </ul>
+</script>
+<!-- END NOTE: REFACTOR TO EVENTS DIRECTIVE -->
 
 </div>
