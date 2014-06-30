@@ -74,52 +74,9 @@
       </tbody>
     </table>
 
-
-    <div class="streetview" ng-class="{hide: !activeObject.attrs.details}">
-      <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lng %>,<% activeObject.latlng.lat %>&cbp=11,90,0,0,40">
-        <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lng %>,<% activeObject.latlng.lat %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo"> &nbsp;
-      </a>
-    </div>
+    <streetview></streetview>
   </div>
 
-<!-- NOTE: REFACTOR TO EVENTS DIRECTIVE -->
-<div class="event-container" ng-class="{hidden: !activeObject.hasEvents}">
-  <h4>Gebeurtenissen (<% activeObject.eventTableParams.total() %>)</h4>
-  <table ng-table="activeObject.eventTableParams"
-    class="table table-condensed table-hover"
-    template-pagination="custom/pager">
-    <tbody ng-repeat="group in $groups">
-    <tr class="ng-table-group">
-      <td colspan="<% $columns.length %>">
-        <a href="" ng-click="group.$hideRows = !group.$hideRows"
-          ng-style="{color: events.scale(group.data[0].event_series) }">
-          <span class="glyphicon"
-                ng-class="{'glyphicon-chevron-right': !group.$hideRows,
-                           'glyphicon-chevron-down': group.$hideRows}">
-          </span>
-          <strong><% group.value %> (<% group.data.length %>)</strong>
-        </a>
-      </td>
-    </tr>
-    <tr ng-hide="!group.$hideRows" ng-repeat="event in group.data">
-      <td data-title="'Waarde'" sortable="'value'"><% event.value | limitTo: 32  %></td>
-      <td data-title="'Start'" sortable="'timestamp_start'"><% event.timestamp_start | date: 'yyyy-MM-dd HH:mm' %></td>
-      <td data-title="'Eind'" sortable="'timestamp_end'"><% event.timestamp_end | date: 'yyyy-MM-dd HH:mm' %></td>
-    </tr>
-    </tbody>
-  </table>
-</div>
-
-<script type="text/ng-template" id="custom/pager">
-  <ul class="pager ng-cloak">
-    <li ng-repeat="page in pages"
-        ng-class="{'disabled': !page.active, 'previous': page.type == 'prev', 'next': page.type == 'next'}"
-        ng-show="page.type == 'prev' || page.type == 'next'" ng-switch="page.type">
-      <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo;</a>
-      <a ng-switch-when="next" ng-click="params.page(page.number)" href="">&raquo;</a>
-    </li>
-  </ul>
-</script>
-<!-- END NOTE: REFACTOR TO EVENTS DIRECTIVE -->
+<event></event>
 
 </div>
