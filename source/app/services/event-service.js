@@ -91,7 +91,7 @@ app.service("EventService", ["Restangular", "$q",
     }
     angular.forEach(shortData.features, function (feature) {
       feature.event_order = eventOrder;
-      feature.color = colors[8][eventOrder];
+      feature.properties.color = colors[8][eventOrder];
       feature.id = eventSeriesId + feature.properties.timestamp_end +
                    feature.geometry.coordinates[0] +
                    feature.geometry.coordinates[1];
@@ -155,8 +155,8 @@ app.service("EventService", ["Restangular", "$q",
   var addColor = function (events) {
     angular.forEach(events.data.features, function (feature) {
       var eventSeriesId = feature.properties.event_series;
-      feature.color = events.scale(eventSeriesId);
-      events.types[eventSeriesId].color = feature.color;
+      feature.properties.color = events.scale(eventSeriesId);
+      events.types[eventSeriesId].color = feature.properties.color;
     });
     //if (count === 1) {
       //scale = d3.scale.ordinal().range(colors[8]);
