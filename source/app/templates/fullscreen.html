@@ -1,42 +1,126 @@
-<div class="container-fluid"><div class="row">
-	  	<div class="col-md-5">
-	  <tabset justified="true" style="padding-top:10px;">
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
 
-	    <tab>
-	     <tab-heading>
-	      <i class="fa fa-bar-chart-o"></i>
-	     </tab-heading>
-	      <h4>Grafieken</h4>
-	      <div class="row"><a href="#" class="thumbnail"><img src="http://placehold.it/600x180" alt="..."></a></div>
-	      <div class="row"><a href="#" class="thumbnail"><img src="http://placehold.it/600x180" alt="..."></a></div>
-		      <div class="row"><a href="#" class="thumbnail"><img src="http://placehold.it/600x180" alt="..."></a></div>
-	      <div class="row"><a href="#" class="thumbnail"><img src="http://placehold.it/600x180" alt="..."></a></div>				      
-	    </tab>
+      <button type="button" class="close" style="padding:5px;" ng-click="box.detailMode = false">&times;</button>
 
-	    <tab>
-	     <tab-heading>
-	      <i class="fa fa-bookmark"></i>
-	     </tab-heading>
-	      <h4>Gemarkeerde objecten</h4>
-	    </tab>
+      <tabset justified="true" style="padding-top:10px;">
 
-	    <tab>
-	     <tab-heading>
-	      <i class="fa fa-gear"></i>
-	     </tab-heading>
-	      <h4>Dashboard instellingen</h4>
-	    </tab>
+      <tab>
+      <tab-heading>
+        <i class="fa fa-square"></i>
+      </tab-heading>
+      <!-- NOTE: REFACTOR TO DIRECTIVE -->
+      <div class="row">
+        <!-- GRAPHS -->
+        <div class="col-md-7"> 
+          <div class="row"><a href="#" class="thumbnail"><img src="<% image %>" alt="..."></a></div>
+          <div class="row"><a href="#" class="thumbnail"><img src="http://placehold.it/600x180" alt="..."></a></div>
+        </div>
+        <div class="col-md-5">
+          <div class="row">
+            <!--MAP-->
+            <div class="col-md-12">
+              <img src="http://redcube.nl/~freelink/lizard-nxt/object_map_placeholder.png" class="img-responsive center-block" alt="object">
+            </div>
+          </div>
+          <div class="row">
+            <!--TABLES-->
+            <div class="col-md-12">
+              <img src="<% table %>" class="img-responsive center-block" width=400 alt="object">
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- TIMELINE? -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="btn-group">
+            <button type="button" class="btn btn-default" ng-click="togglePeriod('Month')">Maand</button>
+            <button type="button" class="btn btn-default" ng-click="togglePeriod('Quarter')">Kwartaal</button>
+            <button type="button" class="btn btn-default" ng-click="togglePeriod('Year')">Jaar</button>
+          </div>
+        </div>
+      </div>
+      </tab>
 
-		<tab ng-repeat="tab in tabs" heading="<%tab.title%>" active="tab.active" disabled="tab.disabled">
-			<div ng-bind-html="tab.content"></div>
-		</tab>
+      <tab>
+      <tab-heading>
+      <i class="fa fa-th-large"></i>
+      </tab-heading>
+      <!-- NOTE: REFACTOR TO DIRECTIVE -->
+      <div class="row">
+        <!-- GRAPHS -->
+        <div class="col-md-7"> 
+          <div class="row"><a href="#" class="thumbnail"><img src="http://placehold.it/600x180" alt="..."></a></div>
+          <div class="row"><a href="#" class="thumbnail"><img src="http://placehold.it/600x180" alt="..."></a></div>
+        </div>
+        <div class="col-md-5">
+          <div class="row">
+            <!--MAP-->
+            <div class="col-md-12">
+              <img src="http://redcube.nl/~freelink/lizard-nxt/bemgebied_map_placeholder.png" class="img-responsive center-block" alt="object">
+            </div>
+          </div>
+          <div class="row">
+            <!--TABLES-->
+            <div class="col-md-12">
+              TABLES
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- TIMELINE? -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="btn-group">
+            <button type="button" class="btn btn-default" ng-click="togglePeriod('Month')">Maand</button>
+            <button type="button" class="btn btn-default" ng-click="togglePeriod('Quarter')">Kwartaal</button>
+            <button type="button" class="btn btn-default" ng-click="togglePeriod('Year')">Jaar</button>
+          </div>
+        </div>
+      </div>
+      </tab>
 
-	  </tabset>
-	</div>
-	<div class="col-md-6">
+      <tab>
+      <tab-heading>
+      <i class="fa fa-th"></i>
+      </tab-heading>
+      <!-- NOTE: REFACTOR TO DIRECTIVE -->
+      <div class="row">
+        <!-- GRAPHS -->
+        <div class="col-md-7"> 
+          <div class="row"><a href="#" class="thumbnail"><img src="http://placehold.it/600x180" alt="..."></a></div>
+          <div class="row"><a href="#" class="thumbnail"><img src="http://placehold.it/600x180" alt="..."></a></div>
+        </div>
+        <div class="col-md-5">
+          <div class="row">
+            <!--MAP-->
+            <div class="col-md-12">
+              <img src="http://redcube.nl/~freelink/lizard-nxt/gemeente_map_placeholder.png" width=400 class="img-responsive center-block" alt="object">
+            </div>
+          </div>
+          <div class="row">
+            <!--TABLES-->
+            <div class="col-md-12">
+              TABLES
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- TIMELINE? -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="btn-group">
+            <button type="button" class="btn btn-default" ng-click="togglePeriod('Month')">Maand</button>
+            <button type="button" class="btn btn-default" ng-click="togglePeriod('Quarter')">Kwartaal</button>
+            <button type="button" class="btn btn-default" ng-click="togglePeriod('Year')">Jaar</button>
+          </div>
+        </div>
+      </div>
+      </tab>
 
-	</div>		
-	<div class="col-md-1">
-		  <button type="button" class="close" style="padding:5px;" ng-click="box.detailMode = false">&times;</button>
-	</div>
-  </div></div>
+      </tabset>
+    </div>
+  </div>
+</div>

@@ -86,7 +86,8 @@
 <div class="event-container" ng-class="{hidden: !activeObject.hasEvents}">
   <h4>Gebeurtenissen (<% activeObject.eventTableParams.total() %>)</h4>
   <table ng-table="activeObject.eventTableParams"
-    class="table table-condensed table-hover">
+    class="table table-condensed table-hover"
+    template-pagination="custom/pager">
     <tbody ng-repeat="group in $groups">
     <tr class="ng-table-group">
       <td colspan="<% $columns.length %>">

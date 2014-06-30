@@ -139,7 +139,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           this.stream.point(point.x, point.y);
         };
 
-        transform = d3.geo.transform({point: projectPoint}),
+        transform = d3.geo.transform({point: projectPoint});
         path = d3.geo.path().projection(transform).pointRadius(6);
         bounds = path.bounds(data);
 
