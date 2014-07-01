@@ -21,10 +21,15 @@
       </ul>
     </div> <!-- end actions -->
 
-  <div class="card-title">
-    <img src="/static/dist/images/geslotenleiding.png" class="img-circle">
-    <span ng-bind="activeObject.attrs.type | pipeTypeOrEllipsis"></span>
-  </div>
+  
+  <!-- 
+  HOW TO COUPLE THE IMG SRC TO A CSS CLASS, E.G. "icon-closed-channel"?
+  <img src="/static/dist/images/geslotenleiding.png" class="img-circle">
+  -->
+  <cardtitle data-icon="icon-manhole"
+             data-name="<% activeObject.attrs.type | pipeTypeOrEllipsis %>">
+  </cardtitle>
+
   <table class="fullwidth">
     <tbody>
     <tr>

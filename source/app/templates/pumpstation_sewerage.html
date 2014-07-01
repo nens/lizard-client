@@ -11,15 +11,9 @@
     </ul>
   </div> <!-- end actions -->
 
-  <div class="card-title">
-    <i class="icon-pumpstation-diesel"></i>
-    <span class="title-text"
-          ng-bind="activeObject.attrs.type"></span>&nbsp;
-    <span ng-if="activeObject.attrs.code">(</span>
-    <span class="truncateme ng-binding"
-          ng-bind="activeObject.attrs.code"></span>
-    <span ng-if="activeObject.attrs.code">)</span>
-  </div>
+  <cardtitle data-icon="icon-pumpstation-diesel" 
+             data-name="Rioolgemaal">
+  </cardtitle>
 
   <table class="fullwidth">
     <tbody>

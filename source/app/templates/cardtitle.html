@@ -1,0 +1,15 @@
+<div class="card-title">
+
+  <i id="icon-holder" class="is-set-dynamically"></i>
+  <span id="title-holder" class="title-text">...</span>&nbsp;
+  <span ng-if="activeObject.attrs.code">(</span>
+  <span class="truncateme ng-binding" ng-bind="activeObject.attrs.code"></span>
+  <span ng-if="activeObject.attrs.code">)</span>
+  
+  <script type="text/javascript" id="setter">
+    var cardTitle = $("#setter").closest("cardtitle");
+    $("#icon-holder").attr("class", cardTitle.data("icon"));
+    $("#title-holder").text(cardTitle.data("name"));
+  </script>
+
+</div>

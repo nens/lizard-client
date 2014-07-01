@@ -36,3 +36,14 @@ app.directive('streetview', [function () {
       templateUrl: 'templates/streetview.html'
     };
 }]);
+
+
+/**
+ * Cardtitle directive.
+ */
+ app.directive('cardtitle', [function () {
+  return {
+      restrict: 'E',
+      templateUrl: 'templates/cardtitle.html'
+    };
+}]);
