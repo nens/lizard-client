@@ -11,107 +11,70 @@
     </ul>
   </div> <!-- end actions -->
 
-  <div class="card-title">
-    <!-- <img src="/static/dist/images/gemaal.png" class="img-circle"> -->
-    <i class="icon-pumpstation-diesel"></i><span class="title-text" ng-bind="activeObject.attrs.type"></span>&nbsp;<span ng-if="activeObject.attrs.code">(</span><span class="truncateme ng-binding" ng-bind="activeObject.attrs.code"></span><span ng-if="activeObject.attrs.code">)</span>
-  </div>
+  <cardtitle data-icon="icon-pumpstation-diesel" 
+             data-name="Rioolgemaal">
+  </cardtitle>
 
   <table class="fullwidth">
     <tbody>
     <tr>
       <td class="fixed-width-card-table">Naam</td>
       <td>
-        <span ng-bind="activeObject.attrs.name" class="ng-binding"></span>
+        <span ng-bind="activeObject.attrs.name"
+              class="ng-binding">
+        </span>
       </td>
     </tr>
     <tr>
       <td class="fixed-width-card-table">Aanslagpeil</td>
       <td>
-        <span ng-bind="activeObject.attrs.start_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-bind="activeObject.attrs.start_level | niceNumberOrEllipsis: 2"
+              class="ng-binding wspace-minus">
+        </span>
         <span ng-if="!!activeObject.attrs.surface_level"> m
-          <span style="word-spacing: 0;"> boven NAP</span></span>
+        <span class="wspace-zero"> boven NAP</span>
+        </span>
       </td>
     </tr>
     <tr>
       <td>Afslagpeil</abbr>
     </td>
     <td>
-      <span ng-bind="activeObject.attrs.stop_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+      <span ng-bind="activeObject.attrs.stop_level | niceNumberOrEllipsis: 2"
+            class="ng-binding wspace-minus">
+      </span>
       <span ng-if="!!activeObject.attrs.stoplevel"> m
-        <span style="word-spacing: 0;"> boven NAP</span></span>
+      <span class="wspace-zero"> boven NAP</span>
+      </span>
     </td>  
   </tr>    
   <tr>
     <td class="fixed-width-card-table">Capaciteit</td>
     <td>
-      <span ng-bind="activeObject.attrs.capacity | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+      <span ng-bind="activeObject.attrs.capacity | niceNumberOrEllipsis: 2"
+            class="ng-binding wspace-minus">
+      </span>
       <span ng-if="!!activeObject.attrs.capacity"> l/s</span>
     </td> 
   </tr>
   </tbody>
   </table>
 
-<div class="card-details" ng-click="activeObject.attrs.details = !activeObject.attrs.details">
-  <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.attrs.details}"></i><span ng-if="!activeObject.attrs.details"> Meer details</span><span ng-if="!!activeObject.attrs.details"> Minder details</span>
+<div class="card-details"
+     ng-click="activeObject.attrs.details = !activeObject.attrs.details">
+  <i class="fa fa-caret-right ready-to-rotate"
+     ng-class="{'rotate-ninety': activeObject.attrs.details}"></i>
+  <span ng-if="!activeObject.attrs.details"> Meer details</span>
+  <span ng-if="!!activeObject.attrs.details"> Minder details</span>
 </div>
 
-<div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
-  <div class="streetview" ng-class="{hide: !activeObject.attrs.details">
-    <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lng %>,<% activeObject.latlng.lat %>&cbp=11,90,0,0,40">
-      <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lng %>,<% activeObject.latlng.lat %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo"> &nbsp;
-    </a>
+  <div class="hidden-details"
+       ng-class="{'unhidden-details': activeObject.attrs.details}">
+    <streetview></streetview>
   </div>
-</div>
 
-<!-- NOTE: REFACTOR TO TIMESERIES DIRECTIVE -->
-<div class="timeseries-container" ng-class="{hidden: !activeObject.hasTimeseries}" >
-  <h4>Metingen</h4>
-<div class="input-prepend">
-  <select class="timeseries" ng-model="activeObject.selectedTimeseries" ng-options="series as series.name for series in activeObject.timeseries"></select>
-</div>
-<graph line data="activeObject.selectedTimeseries.data" ylabel="selectedTimeseries.name" xlabel="n"></graph>
-</div>
-<!-- END NOTE: REFACTOR TO TIMESERIES DIRECTIVE -->
+<timeseries></timeseries>
 
-
-<!-- NOTE: REFACTOR TO EVENTS DIRECTIVE -->
-<div class="event-container" ng-class="{hidden: !activeObject.hasEvents}">
-  <h4>Gebeurtenissen (<% activeObject.eventTableParams.total() %>)</h4>
-  <table ng-table="activeObject.eventTableParams"
-    class="table table-condensed table-hover"
-    template-pagination="custom/pager">
-    <tbody ng-repeat="group in $groups">
-    <tr class="ng-table-group">
-      <td colspan="<% $columns.length %>">
-        <a href="" ng-click="group.$hideRows = !group.$hideRows"
-          ng-style="{color: events.scale(group.data[0].event_series) }">
-          <span class="glyphicon"
-                ng-class="{'glyphicon-chevron-right': !group.$hideRows,
-                           'glyphicon-chevron-down': group.$hideRows}">
-          </span>
-          <strong><% group.value %> (<% group.data.length %>)</strong>
-        </a>
-      </td>
-    </tr>
-    <tr ng-hide="!group.$hideRows" ng-repeat="event in group.data">
-      <td data-title="'Waarde'" sortable="'value'"><% event.value | limitTo: 32  %></td>
-      <td data-title="'Start'" sortable="'timestamp_start'"><% event.timestamp_start | date: 'yyyy-MM-dd HH:mm' %></td>
-      <td data-title="'Eind'" sortable="'timestamp_end'"><% event.timestamp_end | date: 'yyyy-MM-dd HH:mm' %></td>
-    </tr>
-    </tbody>
-  </table>
-</div>
-
-<script type="text/ng-template" id="custom/pager">
-  <ul class="pager ng-cloak">
-    <li ng-repeat="page in pages"
-        ng-class="{'disabled': !page.active, 'previous': page.type == 'prev', 'next': page.type == 'next'}"
-        ng-show="page.type == 'prev' || page.type == 'next'" ng-switch="page.type">
-      <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo;</a>
-      <a ng-switch-when="next" ng-click="params.page(page.number)" href="">&raquo;</a>
-    </li>
-  </ul>
-</script>
-<!-- END NOTE: REFACTOR TO EVENTS DIRECTIVE -->
+<event></event>
 
 </div>

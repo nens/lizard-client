@@ -22,15 +22,14 @@
       </ul>
     </div> <!-- end actions -->
 
-  <div class="card-title">
-    <!-- <img src="/static/dist/images/knoop.png" class="img-circle"> -->
-    <i class="icon-culvert"></i><span class="title-text">Duiker</span>&nbsp;<span ng-if="activeObject.attrs.code">(</span><span class="truncateme ng-binding" ng-bind="activeObject.attrs.code"></span><span ng-if="activeObject.attrs.code">)</span>
-  </div>
+  <cardtitle data-icon="icon-culvert"
+             data-name="Duiker">
+  </cardtitle>
 
     <table class="fullwidth">
       <tbody>
       <tr>
-        <td style="width:170px;">Type</td>
+        <td class="fullwidth-key">Type</td>
         <td>
           <abbr title="<% activeObject.attrs.type %>"><span ng-bind="activeObject.attrs.type | truncate:20" class="truncateme ng-binding"></span></abbr>
         </td>
@@ -38,14 +37,14 @@
       <tr>
         <td>Lengte</td>
         <td>
-          <span ng-bind="activeObject.attrs.length | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-bind="activeObject.attrs.length | niceNumberOrEllipsis: 2" class="wspace-minus ng-binding"></span>
           <span ng-if="!!activeObject.attrs.surface_level_ahn2"> m
         </td>  
       </tr>    
       <tr>
         <td>Breedte</td>
         <td>
-          <span ng-bind="activeObject.attrs.width | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-bind="activeObject.attrs.width | niceNumberOrEllipsis: 2" class="wspace-minus ng-binding"></span>
           <span ng-if="!!activeObject.attrs.width"> m</span>
         </td> 
       </tr>               
@@ -58,7 +57,7 @@
     <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
       <table class="fullwidth">
         <tbody><tr>
-          <td style="width:170px;">Richting</td>
+          <td class="fullwidth-key">Richting</td>
           <td><span ng-bind="activeObject.attrs.allowed_flow_direction | allowedFlowDirection" class="ng-binding"></span></td>
         </tr>
         <tr>
@@ -72,11 +71,7 @@
         </tr>        
         </tbody>
       </table>
-      <div class="streetview">
-      <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lng %>,<% activeObject.latlng.lat %>&cbp=11,90,0,0,40">
-        <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lng %>,<% activeObject.latlng.lat %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
-      </a>
-      </div>
+      <streetview></streetview>
     </div>  
 
 </div>

@@ -49,7 +49,8 @@
 
 .searchboxinput {
     line-height: 30px;
-    width: 100%;
+    width: 375px; 
+    padding: 0px;
 }
 
 #clear {
@@ -183,6 +184,9 @@
 
 #cards {
     margin-top: 0;
+    position: absolute;
+    top: 30px;
+    clip: rect(0px,400px,1000px,0px);
 }
 
 .card .card-title span {

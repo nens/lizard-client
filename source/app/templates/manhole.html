@@ -21,24 +21,24 @@
       </ul>
     </div> <!-- end actions -->
 
-  <div class="card-title">
-    <!--<img src="/static/dist/images/knoop.png" class="img-circle">-->
-    <i class="icon-manhole"></i><span class="title-text">Put</span>&nbsp;<span ng-if="activeObject.attrs.code">(</span><span class="truncateme ng-binding" ng-bind="activeObject.attrs.code"></span><span ng-if="activeObject.attrs.code">)</span>
-  </div>
+  <cardtitle data-icon="icon-manhole"
+             data-name="Put">
+  </cardtitle>
+
   <table class="fullwidth">
     <tbody>
     <tr>
       <td class="fixed-width-card-table"><abbr title="Maaiveld volgens beheergegevens">Maaiveld</abbr></td>
       <td>
-        <span ng-bind="activeObject.attrs.surface_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-bind="activeObject.attrs.surface_level | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
         <span ng-if="!!activeObject.attrs.surface_level"> m
-        <span style="word-spacing: 0;">NAP</span></span>
+        <span class="wspace-zero">NAP</span></span>
       </td>
     </tr>
     <tr>
       <td class="fixed-width-card-table">Breedte</td>
       <td>
-        <span ng-bind="activeObject.attrs.width | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-bind="activeObject.attrs.width | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
         <span ng-if="!!activeObject.attrs.width"> m</span>
       </td> 
     </tr>
@@ -49,9 +49,9 @@
     <tr>
       <td class="fixed-width-card-table">Putbodem</td>
       <td>
-        <span ng-bind="activeObject.attrs.bottom_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-bind="activeObject.attrs.bottom_level | niceNumberOrEllipsis: 2" class="wspace-minus ng-binding"></span>
         <span ng-if="!!activeObject.attrs.bottom_level"> m
-        <span style="word-spacing: 0;">NAP</span></span>
+        <span class="wspace-zero">NAP</span></span>
       </td>            
     </tr>
     <tr>
@@ -66,10 +66,6 @@
     <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.attrs.details}"></i><span ng-if="!activeObject.attrs.details"> Meer details</span><span ng-if="!!activeObject.attrs.details"> Minder details</span>
   </div>
   <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
-    <div class="streetview">
-    <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lng %>,<% activeObject.latlng.lat %>&cbp=11,90,0,0,40">
-      <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lng %>,<% activeObject.latlng.lat %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
-    </a>
-    </div>
+    <streetview></streetview>
   </div>
 </div>

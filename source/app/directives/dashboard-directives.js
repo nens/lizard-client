@@ -12,7 +12,6 @@ app.controller('DashboardDirCtrl', ['$scope', '$timeout', '$http', '$sce', funct
    */
 
   $scope.tabs = [];
-
   $scope.image = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Maand.png";
   $scope.table = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Maand_tabel.png";
 
