@@ -102,3 +102,44 @@
 	content:"\e011";
 }
 
+.fullwidth-key {
+	width: 170px;
+}
+
+.wspace-zero {
+  word-spacing: 0;
+}
+
+.wspace-minus {
+  word-spacing: -2px;
+}
+
+.clear-both {
+	clear: both;
+}
+
+.left-margin-title {
+	margin-left: 10px !important;
+}
+
+.pad-button {
+	padding: 5px;
+}
+
+.pad-tabset {
+	padding-top: 10px;
+}
+
+.pointer {
+	cursor: pointer;
+}
+
+.no-outline {
+	outline: none;
+}
+
+.location-ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}

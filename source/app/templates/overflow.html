@@ -19,11 +19,9 @@
   <table class="fullwidth">
     <tbody>
     <tr>
-      <td style="width:170px;">
-        Breedte
-      </td>
+      <td class="fullwidth-key">Breedte</td>
       <td>
-        <span ng-bind="activeObject.attrs.width | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-bind="activeObject.attrs.width | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
         <span ng-if="!!activeObject.attrs.width"> m</span>
       </td>  
     </tr> 
@@ -32,7 +30,7 @@
         Overstorthoogte
       </td>
       <td>
-        <span ng-bind="activeObject.attrs.crest_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-bind="activeObject.attrs.crest_level | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
         <span ng-if="!!activeObject.attrs.crest_level"> m</span>
       </td>  
     </tr>           
@@ -47,27 +45,27 @@
     <table class="fullwidth">
       <tbody>
       <tr>
-        <td style="width:170px;" class="fixed-width-card-table"><abbr title="Oppervlaktewaterniveau (gemiddeld)">OWN (gemiddeld)</abbr></td>
+        <td class="fullwidth-key fixed-width-card-table"><abbr title="Oppervlaktewaterniveau (gemiddeld)">OWN (gemiddeld)</abbr></td>
         <td>
-          <span ng-bind="activeObject.attrs.open_water_level_average | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-bind="activeObject.attrs.open_water_level_average | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
           <span ng-if="!!activeObject.attrs.open_water_level_average"> m
-            <span style="word-spacing: 0;">NAP</span></span>
+            <span class="wspace-zero">NAP</span></span>
         </td>            
       </tr>      
       <tr>
         <td class="fixed-width-card-table"><abbr title="Oppervlaktewaterniveau (zomer)">OWN (zomer)</abbr></td>
         <td>
-          <span ng-bind="activeObject.attrs.open_water_level_summer | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-bind="activeObject.attrs.open_water_level_summer | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
           <span ng-if="!!activeObject.attrs.open_water_level_summer"> m
-            <span style="word-spacing: 0;">NAP</span></span>
+            <span class="wspace-zero">NAP</span></span>
         </td>            
       </tr>
       <tr>
         <td class="fixed-width-card-table"><abbr title="Oppervlaktewaterniveau (winter)">OWN (winter)</abbr></td>
         <td>
-          <span ng-bind="activeObject.attrs.open_water_level_winter | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-bind="activeObject.attrs.open_water_level_winter | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
           <span ng-if="!!activeObject.attrs.open_water_level_winter"> m
-            <span style="word-spacing: 0;">NAP</span></span>
+            <span class="wspace-zero">NAP</span></span>
         </td>            
       </tr>
       </tbody>

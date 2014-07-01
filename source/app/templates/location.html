@@ -3,7 +3,7 @@
      ng-class="{'pullDown': currentObject}"
      ng-show="currentObject">
 	<h5><i class="fa fa-map-marker fa-lg"></i>&nbsp;<span ng-bind="currentObject.display_name"></span></h5>
-	<ul style="list-style:none;padding:0;margin:0;">
+	<ul class="location-ul">
 	    <li ng-repeat="(key, value) in currentObject" class="truncateme">
       		<abbr ng-bind="value" 
                 title="<% key %>"></abbr>
@@ -21,7 +21,7 @@
     <a ng-click="showDetails(value)" 
        data-latitude="<% value.geometry[0] %>" 
        data-longitude="<% value.geometry[1] %>" 
-       style="cursor:pointer;">
+       class="pointer">
       <span ng-bind-html="value.name"></span>
     </a>
   </span>
@@ -29,9 +29,8 @@
 
 <div ng-controller="SearchCtrl"
      ng-show="box.type == 'location'"
-     class="cluster location"
+     class="cluster location no-outline"
      ng-class="mapState.mapMoving ? 'card-hidden' : ''"
-     style="outline:none;"
      tabindex="<% $index %>"
      ng-repeat="obj in box.content | orderBy:'display_name'"
      ng-focus="onFocus(obj, $event)"
@@ -41,7 +40,7 @@
      title="<% obj.display_name %>" 
      data-latitude="<% obj.lat %>" 
      data-longitude="<% obj.lon %>" 
-     style="cursor:pointer;">
+     class="pointer">
      <!-- <span ng-bind-html="obj.display_name"></span></a> -->
      <span><% obj.display_name %></span></a>
 </div>

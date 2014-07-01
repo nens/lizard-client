@@ -29,7 +29,7 @@
     <table class="fullwidth">
       <tbody>
       <tr>
-        <td style="width:170px;">Type</td>
+        <td class="fullwidth-key">Type</td>
         <td>
           <abbr title="<% activeObject.attrs.type %>"><span ng-bind="activeObject.attrs.type | truncate:20" class="truncateme ng-binding"></span></abbr>
         </td>
@@ -37,14 +37,14 @@
       <tr>
         <td>Lengte</td>
         <td>
-          <span ng-bind="activeObject.attrs.length | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-bind="activeObject.attrs.length | niceNumberOrEllipsis: 2" class="wspace-minus ng-binding"></span>
           <span ng-if="!!activeObject.attrs.surface_level_ahn2"> m
         </td>  
       </tr>    
       <tr>
         <td>Breedte</td>
         <td>
-          <span ng-bind="activeObject.attrs.width | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+          <span ng-bind="activeObject.attrs.width | niceNumberOrEllipsis: 2" class="wspace-minus ng-binding"></span>
           <span ng-if="!!activeObject.attrs.width"> m</span>
         </td> 
       </tr>               
@@ -57,7 +57,7 @@
     <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
       <table class="fullwidth">
         <tbody><tr>
-          <td style="width:170px;">Richting</td>
+          <td class="fullwidth-key">Richting</td>
           <td><span ng-bind="activeObject.attrs.allowed_flow_direction | allowedFlowDirection" class="ng-binding"></span></td>
         </tr>
         <tr>

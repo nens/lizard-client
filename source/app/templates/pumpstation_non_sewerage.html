@@ -36,24 +36,24 @@
     <tr>
       <td class="fixed-width-card-table">Aanslagpeil</td>
       <td>
-        <span ng-bind="activeObject.attrs.start_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-bind="activeObject.attrs.start_level | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
         <span ng-if="!!activeObject.attrs.surface_level"> m
-        <span style="word-spacing: 0;"> boven NAP</span></span>
+        <span class="wspace-zero"> boven NAP</span></span>
       </td>
     </tr>
     <tr>
       <td>Afslagpeil</abbr>
       </td>
       <td>
-        <span ng-bind="activeObject.attrs.stop_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-bind="activeObject.attrs.stop_level | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
         <span ng-if="!!activeObject.attrs.stoplevel"> m
-        <span style="word-spacing: 0;"> boven NAP</span></span>
+        <span class="wspace-zero"> boven NAP</span></span>
       </td>  
     </tr>    
     <tr>
       <td class="fixed-width-card-table">Capaciteit</td>
       <td>
-        <span ng-bind="activeObject.attrs.capacity | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-bind="activeObject.attrs.capacity | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
         <span ng-if="!!activeObject.attrs.capacity"> l/s</span>
       </td> 
     </tr>
@@ -66,7 +66,7 @@
   <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
     <streetview></streetview>
     <div class="card-title">
-      <i class="fa fa-sitemap"></i><span class="title-text" style="margin-left:10px !important;">Prestatie Indicatoren (PI)</span>
+      <i class="fa fa-sitemap"></i><span class="title-text left-margin-title">Prestatie Indicatoren (PI)</span>
     </div>
     <div>  
     <table ng-table="tableParams" class="table">
