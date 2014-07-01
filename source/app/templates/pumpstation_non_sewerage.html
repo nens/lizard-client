@@ -65,31 +65,6 @@
   </div>
   <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
     <streetview></streetview>
-    <div class="card-title">
-      <i class="fa fa-sitemap"></i><span class="title-text left-margin-title">Prestatie Indicatoren (PI)</span>
-    </div>
-    <div>  
-    <table ng-table="tableParams" class="table">
-    <tbody ng-repeat="group in $groups">
-        <tr class="ng-table-group">
-            <td colspan="<% $columns.length %>">
-                <a href="" ng-click="group.$hideRows = !group.$hideRows">
-                    <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
-                    <strong><% group.value %></strong>
-                </a>
-            </td>
-        </tr>
-        <tr ng-hide="group.$hideRows" ng-repeat="user in group.data">
-            <td sortable="name" data-title="'Waarde'">
-                <a ng-click="events.zoomTo(user.geometry)"><% user.value %></a>
-            </td>
-            <td sortable="age" data-title="'Moment'">
-                <% user.timestamp | date %>
-            </td>
-        </tr>
-    </tbody>
-    </table>
-    </div>
   </div>
 </div>
 
