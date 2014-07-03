@@ -510,7 +510,7 @@ angular.module('graph')
             })
           .sort(function (a, b) {
             var ordFunction = function (x) {
-              return parseInt(x.label.split(' ')[0]);
+              return x.label ? parseInt(x.label.split(' ')[0]) : 0;
             };
             return d3.ascending(ordFunction(a), ordFunction(b));
           });
@@ -521,32 +521,75 @@ angular.module('graph')
 
         d3.select(".graph-directive")
           .insert("div")
-          .classed("donut-underline", true);
+          .classed("donut-underline-top", true);
+
+        d3.select(".graph-directive")
+          .insert("div")
+          .classed("donut-underline-bottom", true);
 
         d3.select(".graph-directive")
           .insert("div")
           .classed("percentage-container", true);
 
-        var rmRasterSpecificInfo = function () {
+        /** 
+         * Removes the DOM elements (.percentage-container AND 
+         * .donut-underline-top) according to the currently selected raster.
+         */ 
 
-          d3.select(".percentage-container")
-            .transition()
-            .duration(300)
-            .style("opacity", 0.0);
+        var rmRasterSpecificInfo = function () {
 
           svg.select("text")
             .transition()
             .duration(300)
             .attr("fill-opacity", 0.0);
 
-          d3.select('.donut-underline')
+          d3.select(".percentage-container")
+            .transition()
+            .duration(300)
+            .style("opacity", 0.0);
+
+          d3.select('.donut-underline-top')
+            .transition()
+            .duration(300)
+            .style("opacity", 0.0);
+
+          d3.select('.donut-underline-bottom')
             .transition()
             .duration(300)
             .style("opacity", 0.0);
         };
 
-        /* Function that 
+        /**
+         * Formats a number (might be both Int and Float) to show a consistent
+         * amount of decimals it the final string representation: e.g. 
          *
+         * 25   ::= "25.00 %"
+         * 25.1 ::= "25.10 %"
+         * 3.14 ::=  "3.14 %"
+         * 
+         * @param {number} vloot - A number that is in need of formatting
+         */
+
+        var formatPercentage = function (vloot) {
+
+          var splitted = ("" + vloot).split('.');
+          var suffix = splitted[1];
+
+          if (!suffix) {
+            suffix = "00";
+          } else if (suffix.length === 1) {
+            suffix += 0;
+          }
+
+          return splitted[0] + "." + suffix + " %";
+        };
+
+        /** 
+         * Appends/fills/styles the DOM elements (.percentage-container, 
+         * .donut-underline-top AND .donut-underline-bottom) according 
+         * to the currently selected raster.
+         *
+         * @param {object} d - D3 datum object. 
          */ 
 
         var addRasterSpecificInfo = function (d) {
@@ -555,13 +598,13 @@ angular.module('graph')
 
           d3.select(".percentage-container")
             .style("opacity", 0.0);
-          d3.select('.donut-underline')
+          d3.select('.donut-underline-top')
             .style("opacity", 0.0);
           svg.select('text')
             .attr('fill-opacity', 0.0);
 
           d3.select(".percentage-container")
-            .text(Math.round(d.data.data / total * 10000) / 100 + " %")
+            .text(formatPercentage(Math.round(d.data.data/total * 10000) / 100))
             .transition()
             .duration(300)
             .style("opacity", 1.0);
@@ -574,6 +617,7 @@ angular.module('graph')
             .style("text-anchor", "middle")
             .style("fill", "#555")
             .attr("class", "on")
+            .style("font-weight", 700)
             .style("font-size", "16px")
             .text(function () {
               var text = "";
@@ -589,18 +633,23 @@ angular.module('graph')
             .duration(300)
             .attr("fill-opacity", 1.0);
 
-          d3.select('.donut-underline')
-            .transition()
+          var f = function () {
+            this.transition()
             .duration(300)
             .style("background-color", d.data.color)
             .style("opacity", 1.0);
+          };
+
+          d3.select('.donut-underline-top').call(f);
+          d3.select('.donut-underline-bottom').call(f);
+
         };
 
         var text = svg.append("text");
         var path = svg.datum(data).selectAll("path")
             .data(pie)
           .enter().append("path")
-            .attr("fill", function (d, i) {return d.data.color; })
+            .attr("fill", function (d) {return d.data.color; })
             .attr("d", arc)
             .attr("transform", "translate(" +
               ((width / 2) - 100) + ", " + ((height / 2) + 15) + ")")
@@ -615,7 +664,7 @@ angular.module('graph')
                 .attr("fill-opacity", 1.0);
               addRasterSpecificInfo(d);
             })
-            .on("mouseout", function (d) {
+            .on("mouseout", function () {
               d3.selectAll("path")
                 .transition()
                 .duration(200)

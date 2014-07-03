@@ -61,7 +61,6 @@ rect.bar {
   stroke: white;
 }
 
-
 .y1.axis  text {
   fill: crimson;
   stroke: none;
@@ -109,12 +108,21 @@ text.d3tooltip:after {
       left: 50px;
 }
 
-.donut-underline {
+.donut-underline-top {
   width: 195px;
   height: 2px;
   background-color: #222;
   float: right;
   margin-top: -150px;
+  opacity: 0.0;
+}
+
+.donut-underline-bottom {
+  width: 195px;
+  height: 2px;
+  background-color: #222;
+  float: right;
+  margin-top: -35px;
   opacity: 0.0;
 }
 
