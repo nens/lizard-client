@@ -108,3 +108,27 @@ text.d3tooltip:after {
       top: 44px;
       left: 50px;
 }
+
+.donut-underline {
+  width: 195px;
+  height: 2px;
+  background-color: #222;
+  float: right;
+  margin-top: -150px;
+  opacity: 0.0;
+}
+
+.percentage-container {
+
+  width: 185px;
+  height: 90px;
+  float: right;
+  margin-top: -136px;
+  opacity: 0.0;
+
+  text-align: center;
+  color: #555;
+  font-weight: 800;
+  font-size: 40px;
+  padding-top: 15px;
+}

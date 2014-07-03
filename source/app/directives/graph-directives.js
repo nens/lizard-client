@@ -508,10 +508,89 @@ angular.module('graph')
               total += d.data;
               return d.data;
             })
-          .sort(null);
+          .sort(function (a, b) {
+            var ordFunction = function (x) {
+              return parseInt(x.label.split(' ')[0]);
+            };
+            return d3.ascending(ordFunction(a), ordFunction(b));
+          });
+
         var arc = d3.svg.arc()
             .innerRadius(radius - radius / 1.75)
             .outerRadius(radius);
+
+        d3.select(".graph-directive")
+          .insert("div")
+          .classed("donut-underline", true);
+
+        d3.select(".graph-directive")
+          .insert("div")
+          .classed("percentage-container", true);
+
+        var rmTerrainSpecificInfo = function () {
+
+          d3.select(".percentage-container")
+            .transition()
+            .duration(300)
+            .style("opacity", 0.0);
+
+          svg.select("text")
+            .transition()
+            .duration(300)
+            .attr("fill-opacity", 0.0);
+
+          d3.select('.donut-underline')
+            .transition()
+            .duration(300)
+            .style("opacity", 0.0);
+        };
+
+        var addTerrainSpecificInfo = function (d) {
+
+          // setting the plain text:
+
+          d3.select(".percentage-container")
+            .style("opacity", 0.0);
+          d3.select('.donut-underline')
+            .style("opacity", 0.0);
+          svg.select('text')
+            .attr('fill-opacity', 0.0);
+
+          d3.select(".percentage-container")
+            .text(Math.round(d.data.data / total * 10000) / 100 + " %")
+            .transition()
+            .duration(300)
+            .style("opacity", 1.0);
+          
+          text = svg.select("text")
+            .attr("transform", "translate(" + width / 2 +
+              ", " + (20 + height) + ")")
+            .attr("dx", radius - 10)
+            .attr("dy", -(radius / 2 + 92))
+            .style("text-anchor", "middle")
+            .style("fill", "#555")
+            .attr("class", "on")
+            .style("font-size", "16px")
+            .text(function () {
+              var text = "";
+              try {
+                text = d.data.label.split('-')[2];
+                text = (text !== undefined) ? text : d.data.label;
+              } catch (e) {
+                text = d.data.label === 0 ? 'Geen data' : 'Overig';
+              }
+              return text;
+            })
+            .transition()
+            .duration(300)
+            .attr("fill-opacity", 1.0);
+
+          d3.select('.donut-underline')
+            .transition()
+            .duration(300)
+            .style("background-color", d.data.color)
+            .style("opacity", 1.0);
+        };
 
         var text = svg.append("text");
         var path = svg.datum(data).selectAll("path")
@@ -519,40 +598,27 @@ angular.module('graph')
           .enter().append("path")
             .attr("fill", function (d, i) {return d.data.color; })
             .attr("d", arc)
-            // .attr("transform", "translate(" +
-            //   width / 2  + ", " + height / 2 + ")")
             .attr("transform", "translate(" +
-              ((width / 2) - 100) + ", " + ((height / 2) + 14) + ")")
-            .on("mouseenter", function (d) {
-              text = svg.select("text")
-                  // .attr("transform", "translate(" + width / 2 +
-                  //   ", " + (20 + height) + ")")
-                  // .attr("dy", "2em")
-                  .attr("transform", "translate(" + width / 2 +
-                    ", " + (20 + height) + ")")
-                  .attr("dx", radius)
-                  .attr("dy", -(radius / 2 + 14))
-                  .style("text-anchor", "middle")
-                  .style("fill", "#222")
-                  .attr("class", "on")
-                  .style("font-size", "14px")
-                  .text(function () {
-                    var text = "";
-                    try {
-                      text = d.data.label.split('-')[2];
-                      text = (text !== undefined) ? text : d.data.label;
-                    } catch (e) {
-                      if (d.data.label === 0) {
-                        text = 'Geen data';
-                      } else {
-                        text = 'Overig';
-                      }
-                    }
-                    text += " - " +
-                      Math.round(d.data.data / total * 10000) / 100 + " %";
-                    return text;
-                  });
+              ((width / 2) - 100) + ", " + ((height / 2) + 15) + ")")
+            .on("mouseover", function (d) {
+              d3.selectAll("path")
+                .transition()
+                .duration(200)
+                .attr("fill-opacity", 0.2);
+              d3.select(this)
+                .transition()
+                .duration(200)
+                .attr("fill-opacity", 1.0);
+              addTerrainSpecificInfo(d);
             })
+            .on("mouseout", function (d) {
+              d3.selectAll("path")
+                .transition()
+                .duration(200)
+                .attr("fill-opacity", 1.0);
+              rmTerrainSpecificInfo();
+            })
+            .on("click", addTerrainSpecificInfo)
             .each(function (d) { this._current = d; });
       };
     };
