@@ -500,8 +500,7 @@ angular.module('graph')
             height = graph.height,
             width = graph.width,
             margin = graph.margin,
-            radius = Math.min(width, height) / 1.6;
-
+            radius = Math.min(width, height) / 1.3;
 
         var total = 0;
         var pie = d3.layout.pie()
@@ -520,16 +519,23 @@ angular.module('graph')
           .enter().append("path")
             .attr("fill", function (d, i) {return d.data.color; })
             .attr("d", arc)
+            // .attr("transform", "translate(" +
+            //   width / 2  + ", " + height / 2 + ")")
             .attr("transform", "translate(" +
-              width / 2  + ", " + height / 2 + ")")
+              ((width / 2) - 100) + ", " + ((height / 2) + 14) + ")")
             .on("mouseenter", function (d) {
               text = svg.select("text")
+                  // .attr("transform", "translate(" + width / 2 +
+                  //   ", " + (20 + height) + ")")
+                  // .attr("dy", "2em")
                   .attr("transform", "translate(" + width / 2 +
                     ", " + (20 + height) + ")")
-                  .attr("dy", "2em")
+                  .attr("dx", radius)
+                  .attr("dy", -(radius / 2 + 14))
                   .style("text-anchor", "middle")
                   .style("fill", "#222")
                   .attr("class", "on")
+                  .style("font-size", "14px")
                   .text(function () {
                     var text = "";
                     try {
