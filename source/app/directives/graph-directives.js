@@ -527,7 +527,7 @@ angular.module('graph')
           .insert("div")
           .classed("percentage-container", true);
 
-        var rmTerrainSpecificInfo = function () {
+        var rmRasterSpecificInfo = function () {
 
           d3.select(".percentage-container")
             .transition()
@@ -545,7 +545,11 @@ angular.module('graph')
             .style("opacity", 0.0);
         };
 
-        var addTerrainSpecificInfo = function (d) {
+        /* Function that 
+         *
+         */ 
+
+        var addRasterSpecificInfo = function (d) {
 
           // setting the plain text:
 
@@ -609,16 +613,16 @@ angular.module('graph')
                 .transition()
                 .duration(200)
                 .attr("fill-opacity", 1.0);
-              addTerrainSpecificInfo(d);
+              addRasterSpecificInfo(d);
             })
             .on("mouseout", function (d) {
               d3.selectAll("path")
                 .transition()
                 .duration(200)
                 .attr("fill-opacity", 1.0);
-              rmTerrainSpecificInfo();
+              rmRasterSpecificInfo();
             })
-            .on("click", addTerrainSpecificInfo)
+            .on("click", addRasterSpecificInfo)
             .each(function (d) { this._current = d; });
       };
     };
