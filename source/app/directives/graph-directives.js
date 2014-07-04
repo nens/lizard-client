@@ -589,9 +589,7 @@ angular.module('graph')
          * @param {object} d - D3 datum object. 
          */ 
         var addRasterSpecificInfo = function (d) {
-
-          // setting the plain text:
-
+          
           d3.selectAll(".fading")
             .style("opacity", 0.0);
           svg.select('text')
@@ -604,7 +602,6 @@ angular.module('graph')
             .transition()
             .duration(300)
             .style("opacity", 1.0);
-          
           
           svg.select("text")
             .attr("transform", "translate(" + width / 2 +
