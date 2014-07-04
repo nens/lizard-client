@@ -36,6 +36,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        */
       eventClickHandler = function (d) {
 
+        // unhighlight events
         d3.selectAll(".circle.event")
           .attr("stroke", getEventColor)
           .attr("fill", getEventColor);
