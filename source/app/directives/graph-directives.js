@@ -567,21 +567,21 @@ angular.module('graph')
          * 25.1 ::= "25.10 %"
          * 3.14 ::=  "3.14 %"
          * 
-         * @param {number} vloot - A number that is in need of formatting
+         * @param {number} vloot - A number that is in need of formatting.
+         * @return {string} - A string representation of the passed number.
          */
-
         var formatPercentage = function (vloot) {
 
           var splitted = ("" + vloot).split('.');
-          var suffix = splitted[1];
+          var suffix = splitted.length > 1 && splitted[1];
 
           if (!suffix) {
             suffix = "00";
           } else if (suffix.length === 1) {
-            suffix += 0;
+            suffix += "0";
           }
 
-          return splitted[0] + "." + suffix + " %";
+          return splitted[0] + "." + suffix;
         };
 
         /** 
@@ -591,7 +591,6 @@ angular.module('graph')
          *
          * @param {object} d - D3 datum object. 
          */ 
-
         var addRasterSpecificInfo = function (d) {
 
           // setting the plain text:
@@ -604,7 +603,9 @@ angular.module('graph')
             .attr('fill-opacity', 0.0);
 
           d3.select(".percentage-container")
-            .text(formatPercentage(Math.round(d.data.data/total * 10000) / 100))
+            .text(formatPercentage(
+              Math.round(d.data.data/total * 10000) / 100) + " %"
+            )
             .transition()
             .duration(300)
             .style("opacity", 1.0);
