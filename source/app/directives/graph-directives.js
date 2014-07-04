@@ -521,15 +521,23 @@ angular.module('graph')
 
         d3.select(".graph-directive")
           .insert("div")
-          .classed("donut-underline-top", true);
+          .classed({
+            "donut-underline": true,
+            "donut-underline-top": true, 
+            "fading": true
+          });
 
         d3.select(".graph-directive")
           .insert("div")
-          .classed("donut-underline-bottom", true);
+          .classed({
+            "donut-underline": true,
+            "donut-underline-bottom": true, 
+            "fading": true
+          });
 
         d3.select(".graph-directive")
           .insert("div")
-          .classed("percentage-container", true);
+          .classed({"percentage-container": true, "fading": true});
 
         /** 
          * Removes the DOM elements (.percentage-container AND 
@@ -543,17 +551,7 @@ angular.module('graph')
             .duration(300)
             .attr("fill-opacity", 0.0);
 
-          d3.select(".percentage-container")
-            .transition()
-            .duration(300)
-            .style("opacity", 0.0);
-
-          d3.select('.donut-underline-top')
-            .transition()
-            .duration(300)
-            .style("opacity", 0.0);
-
-          d3.select('.donut-underline-bottom')
+          d3.selectAll(".fading")
             .transition()
             .duration(300)
             .style("opacity", 0.0);
@@ -595,16 +593,14 @@ angular.module('graph')
 
           // setting the plain text:
 
-          d3.select(".percentage-container")
-            .style("opacity", 0.0);
-          d3.select('.donut-underline-top')
+          d3.selectAll(".fading")
             .style("opacity", 0.0);
           svg.select('text')
             .attr('fill-opacity', 0.0);
 
           d3.select(".percentage-container")
             .text(formatPercentage(
-              Math.round(d.data.data/total * 10000) / 100) + " %"
+              Math.round(d.data.data / total * 10000) / 100) + " %"
             )
             .transition()
             .duration(300)
@@ -634,16 +630,19 @@ angular.module('graph')
             .duration(300)
             .attr("fill-opacity", 1.0);
 
-          var f = function () {
+          /**
+           * Fade in donut lines; the colored lines that are above and beneath
+           * the big digits denoting the percentage of the currently selected
+           * (hovered) slice of the pie chart.
+           */
+          var fadeInDonutlines = function () {
             this.transition()
             .duration(300)
             .style("background-color", d.data.color)
             .style("opacity", 1.0);
           };
-
-          d3.select('.donut-underline-top').call(f);
-          d3.select('.donut-underline-bottom').call(f);
-
+          d3.select('.donut-underline-top').call(fadeInDonutlines);
+          d3.select('.donut-underline-bottom').call(fadeInDonutlines);
         };
 
         var text = svg.append("text");
