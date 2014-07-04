@@ -128,16 +128,29 @@ app.directive('clickLayer', ["$q", function ($q) {
       }
     };
 
-    this.substitueFeatureForArrow = function (point) {
-      var selection = this._getSelection(this.clickLayer);
-      var g = selection;
-      // This is an arrow:
+    this.removeLocationMarker = function () {
+      d3.select(".location-marker").remove();
+    };
+
+    this.addLocationMarker = function (point) {
+      //var selection = this._getSelection(this.clickLayer);
+      var selection;
+      selection = d3.select("svg.leaflet-zoom-animated");
+      // remove location marker if exists
+      this.removeLocationMarker();
+      //try {
+      //} catch (e) {
+        //console.log("No location arrow yet", e);
+      //}
+      // This is a location marker
       var path = "M" + point.x + " " + (point.y - 32) +
                  "c-5.523 0-10 4.477-10 10 0 10 10 22 10 " +
                  " 22s10-12 10-22c0-5.523-4.477-10-10-10z" +
                  "M" + point.x + " " + (point.y - 16) +
                  "c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z";
-      g.select("path").attr("d", path)
+      selection.append("path")
+        .classed("location-marker", true)
+        .attr("d", path)
         .attr("stroke-opacity", 1)
         .attr("stroke-width", 1.5)
         .attr("stroke", "white")
@@ -158,34 +171,40 @@ app.directive('clickLayer', ["$q", function ($q) {
      */
     scope.$watch('mapState.here', function (n, o) {
       if (n === o) { return true; }
-      switch (scope.tools.active) {
-        case 'rain':
-          drawArrowHere(scope.mapState.here);
-          break;
-        case 'profile':
-          drawFromHereToHere(scope.mapState.here);
-          break;
-        case 'events':
-          break;
-        default:
-          // Give feedback of the click
-          drawClickInSpace(scope.mapState.here);
-          if (scope.deferred) {
-            // cancel by resolving
-            scope.deferred.resolve();
-          }
-          // Get data asynchronous
-          var promise = getDataFromUTF(scope.mapState.here);
-          promise.then(function (response) {
-            // Either way, stop vibrating
-            ctrl.stopVibration();
-            if (response) {
-              if (response.data) {
-                drawGeometry(response.data.geom, response.data.entity_name);
-              }
+
+      var defaultClickHandler = function (here) {
+        // Give feedback of the click
+        drawClickInSpace(here);
+        if (scope.deferred) {
+          // cancel by resolving
+          scope.deferred.resolve();
+        }
+        // Get data asynchronous
+        var promise = getDataFromUTF(here);
+        promise.then(function (response) {
+          // Either way, stop vibrating
+          ctrl.stopVibration();
+          if (response) {
+            if (response.data) {
+              drawGeometry(response.data.geom, response.data.entity_name);
             }
-          });
-          break;
+          }
+        });
+      };
+
+      switch (scope.tools.active) {
+      case 'rain':
+        drawArrowHere(scope.mapState.here);
+        defaultClickHandler(scope.mapState.here);
+        break;
+      case 'profile':
+        ctrl.removeLocationMarker();
+        drawFromHereToHere(scope.mapState.here);
+        break;
+      default:
+        ctrl.removeLocationMarker();
+        defaultClickHandler(scope.mapState.here);
+        break;
       }
     });
 
@@ -242,10 +261,10 @@ app.directive('clickLayer', ["$q", function ($q) {
     function drawArrowHere(latlng) {
       ctrl.emptyClickLayer(scope.map);
       var geometry = {"type": "Point",
-                "coordinates": [latlng.lng, latlng.lat]};
+                      "coordinates": [latlng.lng, latlng.lat]};
       ctrl.drawFeature(geometry);
       var px = scope.map.latLngToLayerPoint(latlng);
-      ctrl.substitueFeatureForArrow(px);
+      ctrl.addLocationMarker(px);
     }
 
     /**

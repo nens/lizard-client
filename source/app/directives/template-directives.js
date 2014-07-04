@@ -41,9 +41,19 @@ app.directive('streetview', [function () {
 /**
  * Cardtitle directive.
  */
- app.directive('cardtitle', [function () {
+app.directive('cardtitle', [function () {
   return {
       restrict: 'E',
       templateUrl: 'templates/cardtitle.html'
+    };
+}]);
+
+/**
+ * Event aggregate directive.
+ */
+app.directive('eventaggregate', [function () {
+  return {
+      restrict: 'E',
+      templateUrl: 'templates/event-aggregate.html'
     };
 }]);
