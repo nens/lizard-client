@@ -136,3 +136,10 @@ text.d3tooltip:after {
   font-size: 40px;
   padding-top: 15px;
 }
+
+.donut-title-text {
+  text-anchor: middle;
+  fill: #555;
+  font-weight: 700;
+  font-size: 16px;
+}

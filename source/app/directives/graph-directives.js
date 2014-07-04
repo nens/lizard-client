@@ -605,16 +605,13 @@ angular.module('graph')
             .duration(300)
             .style("opacity", 1.0);
           
-          text = svg.select("text")
+          svg.select("text")
             .attr("transform", "translate(" + width / 2 +
               ", " + (20 + height) + ")")
             .attr("dx", radius - 10)
             .attr("dy", -(radius / 2 + 92))
-            .style("text-anchor", "middle")
-            .style("fill", "#555")
             .attr("class", "on")
-            .style("font-weight", 700)
-            .style("font-size", "16px")
+            .classed("donut-title-text", true)
             .text(function () {
               var text = "";
               try {
