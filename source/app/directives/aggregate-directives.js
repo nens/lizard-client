@@ -35,6 +35,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * @param {object} d - D3 bound data object.
        */
       eventClickHandler = function (d) {
+
         // unhighlight events
         d3.selectAll(".circle.event")
           .attr("stroke", getEventColor)

@@ -133,6 +133,7 @@ app.controller("MasterCtrl",
    *
    */
   $scope.toggleTool = function (name) {
+    
     if ($scope.tools.active === name) {
       $scope.tools.active = "none";
     } else {
@@ -363,7 +364,12 @@ app.controller("MasterCtrl",
       $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
       $scope.rain.start = $scope.rain.data[0][0];
     };
-    RasterService.getRain(new Date($scope.timeState.start), new Date($scope.timeState.end), $scope.activeObject.latlng, aggWindow).then(callback);
+    RasterService.getRain(
+      new Date($scope.timeState.start), 
+      new Date($scope.timeState.end), 
+      $scope.activeObject.latlng, 
+      aggWindow
+    ).then(callback);
   });
 
   /**
