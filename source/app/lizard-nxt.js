@@ -141,11 +141,6 @@ app.controller("MasterCtrl",
     }
   };
 
-  //  $scope.toggleTool = function (name) {
-  //   $scope.tools.active = name || 'none';
-  // };
-
-
   /**
    * Switch between contexts.
    *
