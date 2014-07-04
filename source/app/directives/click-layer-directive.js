@@ -157,9 +157,7 @@ app.directive('clickLayer', ["$q", function ($q) {
      * hightlight around the geometry.
      */
     scope.$watch('mapState.here', function (n, o) {
-      console.log("mapState.here changed, new val: " + n);
       if (n === o) { return true; }
-
       switch (scope.tools.active) {
         case 'rain':
           drawArrowHere(scope.mapState.here);
