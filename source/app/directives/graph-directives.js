@@ -605,6 +605,7 @@ angular.module('graph')
             .duration(300)
             .style("opacity", 1.0);
           
+          
           svg.select("text")
             .attr("transform", "translate(" + width / 2 +
               ", " + (20 + height) + ")")
