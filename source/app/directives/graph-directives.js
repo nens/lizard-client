@@ -608,8 +608,7 @@ angular.module('graph')
               ", " + (20 + height) + ")")
             .attr("dx", radius - 10)
             .attr("dy", -(radius / 2 + 92))
-            .attr("class", "on")
-            .classed("donut-title-text", true)
+            .classed({"donut-title-text": true, "on": true})
             .text(function () {
               var text = "";
               try {

@@ -139,7 +139,12 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
             // Add the grid layers of the layer when load finished
             $scope.map.addLayer(layer.grid_layer);
             layer.grid_layer.on('load', function () {
-              // Broadcast a load finished message to a.o. aggregate-directive
+
+              // TODO: Must be implemented via ng watch, e.g.
+              // $scope.mapState.gridLoaded. Also, refactor click layer directive.
+              
+              //// Broadcast a load finished message to a.o. aggregate-directive
+
               $rootScope.$broadcast(layer.slug + 'GridLoaded');
             });
           });

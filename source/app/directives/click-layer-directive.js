@@ -157,35 +157,37 @@ app.directive('clickLayer', ["$q", function ($q) {
      * hightlight around the geometry.
      */
     scope.$watch('mapState.here', function (n, o) {
+      console.log("mapState.here changed, new val: " + n);
       if (n === o) { return true; }
+
       switch (scope.tools.active) {
-      case 'rain':
-        drawArrowHere(scope.mapState.here);
-        break;
-      case 'profile':
-        drawFromHereToHere(scope.mapState.here);
-        break;
-      case 'events':
-        break;
-      default:
-        // Give feedback of the click
-        drawClickInSpace(scope.mapState.here);
-        if (scope.deferred) {
-          // cancel by resolving
-          scope.deferred.resolve();
-        }
-        // Get data asynchronous
-        var promise = getDataFromUTF(scope.mapState.here);
-        promise.then(function (response) {
-          // Either way, stop vibrating
-          ctrl.stopVibration();
-          if (response) {
-            if (response.data) {
-              drawGeometry(response.data.geom, response.data.entity_name);
-            }
+        case 'rain':
+          drawArrowHere(scope.mapState.here);
+          break;
+        case 'profile':
+          drawFromHereToHere(scope.mapState.here);
+          break;
+        case 'events':
+          break;
+        default:
+          // Give feedback of the click
+          drawClickInSpace(scope.mapState.here);
+          if (scope.deferred) {
+            // cancel by resolving
+            scope.deferred.resolve();
           }
-        });
-        break;
+          // Get data asynchronous
+          var promise = getDataFromUTF(scope.mapState.here);
+          promise.then(function (response) {
+            // Either way, stop vibrating
+            ctrl.stopVibration();
+            if (response) {
+              if (response.data) {
+                drawGeometry(response.data.geom, response.data.entity_name);
+              }
+            }
+          });
+          break;
       }
     });
 
@@ -313,6 +315,10 @@ app.directive('clickLayer', ["$q", function ($q) {
         scope.on();
       }
       scope.on = scope.$on('waterchainGridLoaded', function () {
+
+        // TODO: Must be implemented via ng watch, e.g.
+        // $scope.mapState.gridLoaded. Also, refactor map directive.
+
         scope.on();
         var waterchainLayer = getLayer('grid', 'waterchain');
         var response = waterchainLayer._objectForEvent(e);
@@ -325,11 +331,15 @@ app.directive('clickLayer', ["$q", function ($q) {
       });
     }
 
-    var extendDataToActiveObject = function (response) {
+    var extendDataToActiveObject = function (data) {
+
+      // Return directly if no data is returned from the UTFgrid!
+      if (!data.data) { return; }
+
       scope.activeObject.attrs = {};
-      angular.extend(scope.activeObject.attrs, response.data);
-      if (response.data) {
-        var geom = JSON.parse(response.data.geom);
+      angular.extend(scope.activeObject.attrs, data.data);
+      if (data.data) {
+        var geom = JSON.parse(data.data.geom);
         scope.activeObject.latlng = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
       }
       scope.activeObject.changed = !scope.activeObject.changed;
