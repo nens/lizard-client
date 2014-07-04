@@ -61,7 +61,6 @@ rect.bar {
   stroke: white;
 }
 
-
 .y1.axis  text {
   fill: crimson;
   stroke: none;
@@ -107,4 +106,40 @@ text.d3tooltip:after {
       border-color: #FFFFFF transparent transparent transparent;
       top: 44px;
       left: 50px;
+}
+
+.donut-underline {
+  width: 195px;
+  height: 2px;
+  background-color: #222;
+  float: right;
+  opacity: 0.0;
+}
+
+.donut-underline-top {
+  margin-top: -150px;
+}
+
+.donut-underline-bottom {
+  margin-top: -35px;
+}
+
+.percentage-container {
+  width: 185px;
+  height: 90px;
+  float: right;
+  margin-top: -136px;
+  opacity: 0.0;
+  text-align: center;
+  color: #555;
+  font-weight: 800;
+  font-size: 40px;
+  padding-top: 15px;
+}
+
+.donut-title-text {
+  text-anchor: middle;
+  fill: #555;
+  font-weight: 700;
+  font-size: 16px;
 }

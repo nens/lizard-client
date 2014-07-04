@@ -500,8 +500,7 @@ angular.module('graph')
             height = graph.height,
             width = graph.width,
             margin = graph.margin,
-            radius = Math.min(width, height) / 1.6;
-
+            radius = Math.min(width, height) / 1.3;
 
         var total = 0;
         var pie = d3.layout.pie()
@@ -509,44 +508,164 @@ angular.module('graph')
               total += d.data;
               return d.data;
             })
-          .sort(null);
+          .sort(function (a, b) {
+            var ordFunction = function (x) {
+              return x.label ? parseInt(x.label.split(' ')[0]) : 0;
+            };
+            return d3.ascending(ordFunction(a), ordFunction(b));
+          });
+
         var arc = d3.svg.arc()
             .innerRadius(radius - radius / 1.75)
             .outerRadius(radius);
+
+        d3.select(".graph-directive")
+          .insert("div")
+          .classed({
+            "donut-underline": true,
+            "donut-underline-top": true, 
+            "fading": true
+          });
+
+        d3.select(".graph-directive")
+          .insert("div")
+          .classed({
+            "donut-underline": true,
+            "donut-underline-bottom": true, 
+            "fading": true
+          });
+
+        d3.select(".graph-directive")
+          .insert("div")
+          .classed({"percentage-container": true, "fading": true});
+
+        /** 
+         * Removes the DOM elements (.percentage-container AND 
+         * .donut-underline-top) according to the currently selected raster.
+         */ 
+        var rmRasterSpecificInfo = function () {
+
+          svg.select("text")
+            .transition()
+            .duration(300)
+            .attr("fill-opacity", 0.0);
+
+          d3.selectAll(".fading")
+            .transition()
+            .duration(300)
+            .style("opacity", 0.0);
+        };
+
+        /**
+         * Formats a number (might be both Int and Float) to show a consistent
+         * amount of decimals it the final string representation: e.g. 
+         *
+         * 25   ::= "25.00 %"
+         * 25.1 ::= "25.10 %"
+         * 3.14 ::=  "3.14 %"
+         * 
+         * @param {number} vloot - A number that is in need of formatting.
+         * @return {string} - A string representation of the passed number.
+         */
+        var formatPercentage = function (vloot) {
+
+          var splitted = ("" + vloot).split('.');
+          var suffix = splitted.length > 1 && splitted[1];
+
+          if (!suffix) {
+            suffix = "00";
+          } else if (suffix.length === 1) {
+            suffix += "0";
+          }
+
+          return splitted[0] + "." + suffix;
+        };
+
+        /** 
+         * Appends/fills/styles the DOM elements (.percentage-container, 
+         * .donut-underline-top AND .donut-underline-bottom) according 
+         * to the currently selected raster.
+         *
+         * @param {object} d - D3 datum object. 
+         */ 
+        var addRasterSpecificInfo = function (d) {
+          
+          d3.selectAll(".fading")
+            .style("opacity", 0.0);
+          svg.select('text')
+            .attr('fill-opacity', 0.0);
+
+          d3.select(".percentage-container")
+            .text(formatPercentage(
+              Math.round(d.data.data / total * 10000) / 100) + " %"
+            )
+            .transition()
+            .duration(300)
+            .style("opacity", 1.0);
+          
+          svg.select("text")
+            .attr("transform", "translate(" + width / 2 +
+              ", " + (20 + height) + ")")
+            .attr("dx", radius - 10)
+            .attr("dy", -(radius / 2 + 92))
+            .attr("class", "on")
+            .classed("donut-title-text", true)
+            .text(function () {
+              var text = "";
+              try {
+                text = d.data.label.split('-')[2];
+                text = (text !== undefined) ? text : d.data.label;
+              } catch (e) {
+                text = d.data.label === 0 ? 'Geen data' : 'Overig';
+              }
+              return text;
+            })
+            .transition()
+            .duration(300)
+            .attr("fill-opacity", 1.0);
+
+          /**
+           * Fade in donut lines; the colored lines that are above and beneath
+           * the big digits denoting the percentage of the currently selected
+           * (hovered) slice of the pie chart.
+           */
+          var fadeInDonutlines = function () {
+            this.transition()
+            .duration(300)
+            .style("background-color", d.data.color)
+            .style("opacity", 1.0);
+          };
+          d3.select('.donut-underline-top').call(fadeInDonutlines);
+          d3.select('.donut-underline-bottom').call(fadeInDonutlines);
+        };
 
         var text = svg.append("text");
         var path = svg.datum(data).selectAll("path")
             .data(pie)
           .enter().append("path")
-            .attr("fill", function (d, i) {return d.data.color; })
+            .attr("fill", function (d) {return d.data.color; })
             .attr("d", arc)
             .attr("transform", "translate(" +
-              width / 2  + ", " + height / 2 + ")")
-            .on("mouseenter", function (d) {
-              text = svg.select("text")
-                  .attr("transform", "translate(" + width / 2 +
-                    ", " + (20 + height) + ")")
-                  .attr("dy", "2em")
-                  .style("text-anchor", "middle")
-                  .style("fill", "#222")
-                  .attr("class", "on")
-                  .text(function () {
-                    var text = "";
-                    try {
-                      text = d.data.label.split('-')[2];
-                      text = (text !== undefined) ? text : d.data.label;
-                    } catch (e) {
-                      if (d.data.label === 0) {
-                        text = 'Geen data';
-                      } else {
-                        text = 'Overig';
-                      }
-                    }
-                    text += " - " +
-                      Math.round(d.data.data / total * 10000) / 100 + " %";
-                    return text;
-                  });
+              ((width / 2) - 100) + ", " + ((height / 2) + 15) + ")")
+            .on("mouseover", function (d) {
+              d3.selectAll("path")
+                .transition()
+                .duration(200)
+                .attr("fill-opacity", 0.2);
+              d3.select(this)
+                .transition()
+                .duration(200)
+                .attr("fill-opacity", 1.0);
+              addRasterSpecificInfo(d);
             })
+            .on("mouseout", function () {
+              d3.selectAll("path")
+                .transition()
+                .duration(200)
+                .attr("fill-opacity", 1.0);
+              rmRasterSpecificInfo();
+            })
+            .on("click", addRasterSpecificInfo)
             .each(function (d) { this._current = d; });
       };
     };
