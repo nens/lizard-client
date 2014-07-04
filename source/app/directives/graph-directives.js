@@ -543,7 +543,6 @@ angular.module('graph')
          * Removes the DOM elements (.percentage-container AND 
          * .donut-underline-top) according to the currently selected raster.
          */ 
-
         var rmRasterSpecificInfo = function () {
 
           svg.select("text")
