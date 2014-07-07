@@ -133,11 +133,21 @@ app.controller("MasterCtrl",
    *
    */
   $scope.toggleTool = function (name) {
+    
     if ($scope.tools.active === name) {
       $scope.tools.active = "none";
     } else {
       $scope.tools.active = name;
     }
+  };
+
+  /**
+   * Switch between contexts.
+   *
+   * @param {string} context - Context name to switch to
+   */
+  $scope.switchContext = function (context) {
+    $scope.box.context = context;
   };
 
   $scope.toggleDetailmode = function () {
@@ -172,14 +182,16 @@ app.controller("MasterCtrl",
   // /END MOVE TO MAP CONTROL
   // MAP MODEL
 
-  var end = Date.now();
-  var two_days_ago = end - 48 * 60 * 60 * 1000;
-  var seven_days_ago = end - 24 * 7 * 60 * 60 * 1000;
-  var last_visit = CabinetService.lastVisitUtime;
+  var now = Date.now();
+  var day = 24 * 60 * 60 * 1000;
+  var tomorrow = now + day;
+  var twoDaysAgo = now - 2 * day;
+  var sevenDaysAgo = now - 7 * day;
+  var lastVisit = CabinetService.lastVisitUtime;
   // TIME MODEL
   $scope.timeState = {
-    start: Math.max(seven_days_ago, Math.min(two_days_ago, last_visit)),
-    end: end,
+    start: Math.max(sevenDaysAgo, Math.min(twoDaysAgo, lastVisit)),
+    end: tomorrow,
     changedZoom: Date.now(),
     zoomEnded: null,
     hidden: undefined,
@@ -227,26 +239,6 @@ app.controller("MasterCtrl",
     changed: Date.now()
   };
 
-  $scope.kpiTableParams = new ngTableParams({
-      page: 1,            // show first page
-      count: 10           // count per page
-    }, {
-      total: $scope.mapState.eventTypes.length,
-      counts: [],
-      groupBy: function (item) {
-        return item.type + ' (' + item.event_count + ' totaal, ' + $scope.events.types.count + ' actief)'; //TODO: Active doesnt update?
-      },
-      getData: function ($defer, params) {
-        // use build-in angular filter
-        console.log('--->', $scope.events.data);
-        var orderedData = params.sorting() ?
-                            $filter('orderBy')($scope.mapState.eventTypes, params.orderBy()) :
-                            $scope.mapState.eventTypes;
-
-        $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-      }
-    });
-
   /**
    * Zoom to event location
    * 
@@ -281,7 +273,7 @@ app.controller("MasterCtrl",
                                                        $scope.events.data,
                                                        eventSeriesId);
         $scope.events.types.count = $scope.events.types.count - 1;
-        EventService.addColor($scope.events.data, $scope.events.types.count, $scope.events.scale);
+        EventService.addColor($scope.events);
         $scope.events.changed = Date.now();
       } else {
         getEvents(eventSeriesId);
@@ -305,14 +297,12 @@ app.controller("MasterCtrl",
   var getEvents = function (eventSeriesId) {
     EventService.getEvents({event_series: eventSeriesId})
       .then(function (response) {
-        var data = response;
-        var dataOrder = EventService.addEvents($scope.events.data, data, eventSeriesId);
+        var dataOrder = EventService.addEvents($scope.events.data, response,
+                                               eventSeriesId);
         $scope.events.data = dataOrder.data;
-        $scope.events.types[eventSeriesId] = {};
         $scope.events.types[eventSeriesId].event_type = dataOrder.order;
         $scope.events.types.count = $scope.events.types.count + 1;
-        EventService.addColor($scope.events.data, $scope.events.types.count, $scope.events.scale);
-        $scope.events.types[eventSeriesId].count = response.features.length;
+        EventService.addColor($scope.events);
         $scope.events.types[eventSeriesId].active = true;
         $scope.events.changed = Date.now();
       });
@@ -347,6 +337,7 @@ app.controller("MasterCtrl",
     $scope.box.content.id = $scope.activeObject.attrs.id;
     $scope.box.content.data = $scope.activeObject.attrs;
     $scope.box.type = $scope.activeObject.attrs.entity_name;
+    // Get events
     EventService.getEvents({object: $scope.activeObject.attrs.entity_name +
                                     '$' +
                                     $scope.activeObject.attrs.id})
@@ -357,12 +348,55 @@ app.controller("MasterCtrl",
           $scope.activeObject.events.push(feature.properties);
         });
         if ($scope.activeObject.events.length > 0) {
+          EventService.addColor($scope.events);
           $scope.activeObject.hasEvents = true;
+          $scope.activeObject.eventTableParams.reload();
         }
       });
+    // Get timeseries
     $scope.activeObject.timeseries = TimeseriesService.getRandomTimeseries();
     $scope.activeObject.selectedTimeseries = $scope.activeObject.timeseries[0];
     $scope.activeObject.hasTimeseries = true;
+    // Get rain
+    var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, window.innerWidth);
+    var callback = function (response) {
+      $scope.rain.data = response;
+      $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
+      $scope.rain.start = $scope.rain.data[0][0];
+    };
+    RasterService.getRain(
+      new Date($scope.timeState.start), 
+      new Date($scope.timeState.end), 
+      $scope.activeObject.latlng, 
+      aggWindow
+    ).then(callback);
+  });
+
+  /**
+   * Parameters for ngTable.
+   *
+   * Controls how ngTable behaves. Don't forget to call the reload() method
+   * when you refresh the data (like in an API call). 
+   */
+  $scope.activeObject.eventTableParams = new ngTableParams({
+    page: 1,
+    count: 10,
+    sorting: {
+      timestamp_start: 'desc'
+    }
+  }, {
+    total: 0,
+    groupBy: 'category',
+    getData: function ($defer, params) {
+      params.total($scope.activeObject.events.length);
+      params.count($scope.activeObject.events.length);
+      var data = $scope.activeObject.events;
+      var orderedData = params.sorting() ?
+          $filter('orderBy')(data, params.orderBy()) :
+          data;
+      $defer.resolve(orderedData.slice((params.page() - 1) * params.count(),
+                                        params.page() * params.count()));
+    },
   });
 
   // END activeObject part

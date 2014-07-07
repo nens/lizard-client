@@ -7,10 +7,114 @@
  *
  */
 app.directive('vectorlayer', ["EventService", function (EventService) {
+  
   return {
     restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
+
+      // declaring all local vars for current scope:
+      var getEventColor, eventClickHandler, getFeatureSelection,
+          overlapEvents, countOverlapEvents, drawMarkers, createEventLayer;
+
+      /**
+       * Get color from feature.
+       * 
+       * @param {object} d - D3 bound data object; expects color property.
+       */
+      getEventColor = function (d) {
+        return d.properties.color;
+      };
+
+      /**
+       * Event click handler.
+       *
+       * Highlights selected event in black. Sets box.content.eventValue to 
+       * current bound data object (d).
+       *
+       * @param {object} d - D3 bound data object.
+       */
+      eventClickHandler = function (d) {
+
+        // unhighlight events
+        d3.selectAll(".circle.event")
+          .attr("stroke", getEventColor)
+          .attr("fill", getEventColor);
+        // highlight selected event
+        d3.select(this).transition()
+          .duration(1000)
+          .attr("stroke", "black")
+          .attr("fill", "black");
+        scope.box.type = 'event-aggregate';
+        scope.box.content.eventValue = d;
+        scope.$apply();
+      };
+
+      /**
+       * Utilfunction that creates/returns a "feature"
+       *
+       * @parameter {object} g - D3 g (svg) selection.
+       * @parameter {object} data - Event data object.
+       * @returns {object} - D3 selection.
+       */
+      getFeatureSelection = function (g, data) {
+        return g.selectAll("path")
+                .data(data.features, function (d) { return d.id; });
+      };
+
+      // object to keep count of overlapping events
+      overlapEvents = {};
+
+      /**
+       * Count events that are on the same location.
+       *
+       * Adds a lat + lon key to overlapEvents if not defined and sets
+       * counter to 1. If key exists adds +1 to counter. Returns counter for
+       * current key.
+       *
+       * @parameter {object} d D3 data object, should have a geometry property
+       * @returns {integer} Count for current key
+       *
+       */
+      countOverlapEvents = function (d) {
+        var key = d.geometry.coordinates[0] + d.geometry.coordinates[1];
+        var coord = overlapEvents[key];
+        if (coord === undefined) {
+          overlapEvents[key] = 1;
+        } else {
+          overlapEvents[key] += 1;
+        }
+        return overlapEvents[key];
+      };
+
+      /**
+       * Utilfunction that draws the Event markers. 
+       *
+       * @parameter {object} feature - D3 selection
+       * @parameter {object} path - D3 svg path
+       */
+      drawMarkers = function (feature, path) {
+        feature.enter().append("path")
+          // TODO: attempt to scale events on pointRadius; problem is that
+          // on zoom out radius increases.
+          //.attr("d", (function () {
+            //console.log("Called d attr function", overlapEvents);
+            //path.pointRadius(countOverlapEvents);
+            //return path;
+          //})())
+          .attr("d", path)
+          .attr("class", "circle event")
+          .attr("fill-opacity", 0)
+          .attr('stroke-width', countOverlapEvents)
+          .attr('stroke', getEventColor)
+          .attr('stroke-opacity', 0)
+          .attr('fill', getEventColor)
+          .transition()
+          .delay(500)
+          .duration(1000)
+          .attr('stroke-opacity', 1)
+          .attr('fill-opacity', 1);
+      };
 
       /**
        * Creates svg layer in leaflet's overlaypane and adds events as circles
@@ -18,26 +122,35 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * On leaflet's viewreset the svg rescaled and repositioned. This
        * function should also be called when the data is changed.
        *
-       * @parameter: object data object
-       * @return: object eventLayer object
+       * @parameter {object} data - Object
+       * @return {object} eventLayer - Object
        */
-      var createEventLayer = function (data) {
-        var map = scope.map;
-        var svg = d3.select(map.getPanes().overlayPane).append("svg"),
-            g = svg.append("g").attr("class", "leaflet-zoom-hide");
+      createEventLayer = function (data) {
+
+        // declaring all local vars in 1st line of function body!
+        var map, svg, g, transform, path, bounds, featureSelection,
+            overlapEvents, projectPoint, reset;
+
+        map = scope.map;
+        svg = d3.select(map.getPanes().overlayPane).append("svg");
+        g = svg.append("g").attr("class", "leaflet-zoom-hide");
         
-        function projectPoint(x, y) {
+        projectPoint = function (x, y) {
           var point = map.latLngToLayerPoint(new L.LatLng(y, x));
           this.stream.point(point.x, point.y);
-        }
+        };
 
-        var transform = d3.geo.transform({point: projectPoint}),
-            path = d3.geo.path().projection(transform),
-            bounds = path.bounds(data);
+        transform = d3.geo.transform({point: projectPoint});
+        path = d3.geo.path().projection(transform).pointRadius(6);
+        bounds = path.bounds(data);
 
-        function reset() {
+        reset = function () {
+
+          // (re-)assign an existing var, declared in an embedding scope
           bounds = path.bounds(data);
 
+          // declare AND assign vars, for the local scope (too contrived for
+          // separation of declaration/assignment)
           var topLeft = bounds[0],
               bottomRight = bounds[1],
               width = bottomRight[0] - topLeft[0] + 20,
@@ -46,40 +159,23 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           svg.attr()
              .attr("width", width)
              .attr("height", height)
-             // Shift whole viewbox halve a pixel for nice and crisp rendering
+             // Shift whole viewbox half a pixel for nice and crisp rendering
              .attr("viewBox", "-0.5 -0.5 " + width + " " + height)
              .style("left", (topLeft[0] - 10) + "px")
              .style("top", (topLeft[1] - 10) + "px");
 
           g.attr("transform", "translate(" + -(topLeft[0] - 10) + "," +
                  -(topLeft[1] - 10) + ")")
-           .selectAll("path").attr("d", path);
-        }
+            .selectAll("path").attr("d", path);
+        };
 
         map.on("viewreset", reset);
-
-        var feature = g.selectAll("path")
-            .data(data.features, function  (d) { return d.id; });
-
-        feature.enter().append("path")
-          .attr("d", path)
-          .attr("class", "circle event")
-          .attr("fill-opacity", 0)
-          .attr('fill', function (d) {
-            return d.color;
-          })
-          .transition()
-          .delay(500)
-          .duration(1000)
-          .attr('fill-opacity', 0.8);
-
-        feature.on('click', function (d) {
-            scope.box.type = 'aggregate';
-            scope.box.content.eventValue = d;
-            scope.$apply();
-          });
-
+        featureSelection = getFeatureSelection(g, data);
+        overlapEvents = {}; // reset counter
+        drawMarkers(featureSelection, path);
+        featureSelection.on('click', eventClickHandler);
         reset();
+
         return {
           g: g,
           svg: svg,
@@ -100,39 +196,25 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        */
       var updateEventLayer = function (eventLayer, data) {
         eventLayer.reset();
-        var feature = eventLayer.g.selectAll("path")
-            .data(data.features, function  (d) { return d.id; });
 
-        feature.transition()
+        var featureSelection = getFeatureSelection(eventLayer.g, data);
+
+        featureSelection.transition()
           .delay(500)
           .duration(1000)
-          .attr('fill', function (d) {
-            return d.color;
-          });
+          .attr('fill', getEventColor);
 
-        feature.enter().append("path")
-          .attr("d", eventLayer.path)
-          .attr("class", "circle event")
-          .attr("fill-opacity", 0)
-          .attr('fill', function (d) {
-            return d.color;
-          })
-          .transition()
-          .delay(500)
-          .duration(1000)
-          .attr('fill-opacity', 0.8);
+        overlapEvents = {}; // reset counter
 
-        feature.exit()
+        drawMarkers(featureSelection, eventLayer.path);
+
+        featureSelection.exit()
           .transition()
           .duration(1000)
           .style("fill-opacity", 1e-6)
           .remove();
 
-        feature.on('click', function (d) {
-            scope.box.type = 'aggregate';
-            scope.box.content.eventValue = d;
-            scope.$apply();
-          });
+        featureSelection.on('click', eventClickHandler);
       };
 
       var removeEventLayer = function (eventLayer) {
@@ -143,7 +225,8 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
       /**
        * Draw events based on current temporal extent
        *
-       * Hide all elements and then unhides when within the given start and end timestamps
+       * Hide all elements and then unhides when within the given start
+       * and end timestamps.
        *
        * @parameter: int start start timestamp in epoch ms
        * @parameter: int end end timestamp in epoch ms
@@ -158,10 +241,12 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
             var contained = s[0] <= time && time <= s[1];
             // Some book keeping to count
             d.inTempExtent = contained;
-            return contained;
+            return !!contained;
           });
         var selected = d3.selectAll(".circle.selected");
         selected.classed("hidden", false);
+        EventService.countCurrentEvents(scope.mapState.eventTypes,
+                                        scope.events);
       };
 
       /**
@@ -173,13 +258,15 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
       scope.$watch('timeState.changedZoom', function (n, o) {
         if (n === o) { return true; }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
-        EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
+        EventService.countCurrentEvents(scope.mapState.eventTypes,
+                                        scope.events);
       });
 
       scope.$watch('events.changed', function (n, o) {
         if (n === o) { return true; }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
-        EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
+        EventService.countCurrentEvents(scope.mapState.eventTypes,
+                                        scope.events);
       });
    
       /**
@@ -314,18 +401,18 @@ app.directive('surfacelayer', function () {
        * @param: entityName, name of ento
        * @returns: leaflet layer object or false if layer not found
        */
+
       var getLayer = function (layerType, entityName) {
-        var layer = false,
-            tmpLayer = {};
-        for (var i in scope.map._layers) {
-          tmpLayer = scope.map._layers[i];
-          if (tmpLayer.options.name === entityName &&
-              tmpLayer.options.ext === layerType) {
-            layer = tmpLayer;
-            break;
+
+        var k, opts;
+
+        for (k in scope.map._layers) {
+          opts = scope.map._layers[k].options;
+          if (opts.name === entityName && opts.ext === layerType) {
+            return scope.map._layers[k];
           }
         }
-        return layer;
+        return false;
       };
 
       // Initialise geojson layer
@@ -335,7 +422,6 @@ app.directive('surfacelayer', function () {
           applyStyle: surfaceStyle,
           class: "impervious_surface"
         });
-
 
       /**
        * Listen to tools model for pipe_surface tool to become active. Add 

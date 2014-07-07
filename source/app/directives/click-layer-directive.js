@@ -53,7 +53,8 @@ app.directive('clickLayer', ["$q", function ($q) {
           radius: 0,
           weight: 12,
           color: '#1abc9c',
-          fill: false
+          fill: false,
+          zIndexOffset: 1000
         });
         self._circleMarker = circleMarker;
         return circleMarker;
@@ -117,7 +118,8 @@ app.directive('clickLayer', ["$q", function ($q) {
         this._circleMarker.setRadius(11);
       } else if (entityName.indexOf("bridge") !== -1) {
         this._circleMarker.setRadius(14);
-      } else if (entityName.indexOf("pipe") !== -1 || entityName.indexOf("culvert") !== -1) {
+      } else if (entityName.indexOf("pipe") !== -1 ||
+                 entityName.indexOf("culvert") !== -1) {
         selection.select("path").transition().delay(450).duration(150)
         .attr("stroke-opacity", 0.6)
         .attr("stroke-width", 10);
@@ -126,20 +128,31 @@ app.directive('clickLayer', ["$q", function ($q) {
       }
     };
 
-    this.substitueFeatureForArrow = function (point) {
-      var selection = this._getSelection(this.clickLayer);
-      var g = selection;
-      // This is an arrow:
-      var path = "M " + point.x + " " + point.y + " " +
-                 "l 15 -10 " +
-                 "l -10 0 " +
-                 "l 0 -15 " +
-                 "l -10 0 " +
-                 "l 0 15 " +
-                 "l -10 0 z";
-      g.select("path").attr("d", path)
+    this.removeLocationMarker = function () {
+      d3.select(".location-marker").remove();
+    };
+
+    this.addLocationMarker = function (point) {
+      //var selection = this._getSelection(this.clickLayer);
+      var selection;
+      selection = d3.select("svg.leaflet-zoom-animated");
+      // remove location marker if exists
+      this.removeLocationMarker();
+      //try {
+      //} catch (e) {
+        //console.log("No location arrow yet", e);
+      //}
+      // This is a location marker
+      var path = "M" + point.x + " " + (point.y - 32) +
+                 "c-5.523 0-10 4.477-10 10 0 10 10 22 10 " +
+                 " 22s10-12 10-22c0-5.523-4.477-10-10-10z" +
+                 "M" + point.x + " " + (point.y - 16) +
+                 "c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z";
+      selection.append("path")
+        .classed("location-marker", true)
+        .attr("d", path)
         .attr("stroke-opacity", 1)
-        .attr("stroke-width", 2)
+        .attr("stroke-width", 1.5)
         .attr("stroke", "white")
         .attr("fill", "#2980b9")
         .attr("fill-opacity", "1");
@@ -158,22 +171,16 @@ app.directive('clickLayer', ["$q", function ($q) {
      */
     scope.$watch('mapState.here', function (n, o) {
       if (n === o) { return true; }
-      switch (scope.tools.active) {
-      case 'rain':
-        drawArrowHere(scope.mapState.here);
-        break;
-      case 'profile':
-        drawFromHereToHere(scope.mapState.here);
-        break;
-      default:
+
+      var defaultClickHandler = function (here) {
         // Give feedback of the click
-        drawClickInSpace(scope.mapState.here);
+        drawClickInSpace(here);
         if (scope.deferred) {
           // cancel by resolving
           scope.deferred.resolve();
         }
         // Get data asynchronous
-        var promise = getDataFromUTF(scope.mapState.here);
+        var promise = getDataFromUTF(here);
         promise.then(function (response) {
           // Either way, stop vibrating
           ctrl.stopVibration();
@@ -183,6 +190,20 @@ app.directive('clickLayer', ["$q", function ($q) {
             }
           }
         });
+      };
+
+      switch (scope.tools.active) {
+      case 'rain':
+        drawArrowHere(scope.mapState.here);
+        defaultClickHandler(scope.mapState.here);
+        break;
+      case 'profile':
+        ctrl.removeLocationMarker();
+        drawFromHereToHere(scope.mapState.here);
+        break;
+      default:
+        ctrl.removeLocationMarker();
+        defaultClickHandler(scope.mapState.here);
         break;
       }
     });
@@ -240,10 +261,10 @@ app.directive('clickLayer', ["$q", function ($q) {
     function drawArrowHere(latlng) {
       ctrl.emptyClickLayer(scope.map);
       var geometry = {"type": "Point",
-                "coordinates": [latlng.lng, latlng.lat]};
+                      "coordinates": [latlng.lng, latlng.lat]};
       ctrl.drawFeature(geometry);
       var px = scope.map.latLngToLayerPoint(latlng);
-      ctrl.substitueFeatureForArrow(px);
+      ctrl.addLocationMarker(px);
     }
 
     /**
@@ -311,6 +332,10 @@ app.directive('clickLayer', ["$q", function ($q) {
         scope.on();
       }
       scope.on = scope.$on('waterchainGridLoaded', function () {
+
+        // TODO: Must be implemented via ng watch, e.g.
+        // $scope.mapState.gridLoaded. Also, refactor map directive.
+
         scope.on();
         var waterchainLayer = getLayer('grid', 'waterchain');
         var response = waterchainLayer._objectForEvent(e);
@@ -323,12 +348,16 @@ app.directive('clickLayer', ["$q", function ($q) {
       });
     }
 
-    var extendDataToActiveObject = function (response) {
+    var extendDataToActiveObject = function (data) {
+
+      // Return directly if no data is returned from the UTFgrid!
+      if (!data.data) { return; }
+
       scope.activeObject.attrs = {};
-      angular.extend(scope.activeObject.attrs, response.data);
-      if (response.data) {
-        var geom = JSON.parse(response.data.geom);
-        scope.activeObject.latlng = {lat: geom.coordinates[0], lng: geom.coordinates[1]};
+      angular.extend(scope.activeObject.attrs, data.data);
+      if (data.data) {
+        var geom = JSON.parse(data.data.geom);
+        scope.activeObject.latlng = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
       }
       scope.activeObject.changed = !scope.activeObject.changed;
     };

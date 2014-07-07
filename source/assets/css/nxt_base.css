@@ -1346,6 +1346,8 @@ img.leaflet-image-layer {
 /* Leaflet override */
 .leaflet-container img.leaflet-image-layer {
     max-width: none !important;
+    -webkit-filter: contrast(200%);
+    filter: contrast(200%);
 }
 
 .now-indicator {
@@ -1353,3 +1355,10 @@ img.leaflet-image-layer {
     stroke-width: 2;
 }
 
+.recurrence-time-container {
+  padding-top: 5px; 
+}
+
+.leaflet-overlay-pane svg {
+  z-index: 1000;
+}

@@ -1,0 +1,59 @@
+<div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
+<!-- Card for "put" / "manhole" -->
+    <div class="actions">
+      <ul>
+        <!-- <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li> -->
+        <li class="fullscreen">
+          <a 
+            ng-click="toggleDetailmode()"
+            title="Bekijk in detailmode">
+            <i class="fa fa-lg fa-plus-square-o"></i>
+          </a>
+        </li>
+<!--         <li class="favorite">
+          <a
+            ng-click="bookmarkItem()" 
+            title="Voeg toe aan favorieten">
+            <i class="fa fa-lg fa-bookmark"></i>
+          </a>
+        </li> -->
+        <!-- <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li> -->
+      </ul>
+    </div> <!-- end actions -->
+
+  <cardtitle data-icon="icon-manhole"
+             data-name="Meetstation">
+  </cardtitle>
+
+  <table class="fullwidth">
+    <tbody>
+    <tr>
+      <td class="fixed-width-card-table">Naam</td>
+      <td>
+        <span ng-bind="activeObject.attrs.name" class="ng-binding"></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="fixed-width-card-table">Regio</td>
+      <td>
+        <span ng-bind="activeObject.attrs.region" class="ng-binding"></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="fixed-width-card-table">Categorie</td>
+      <td>
+        <span ng-bind="activeObject.attrs.category" class="ng-binding"></span>
+      </td>
+    </tr>
+    <tr>
+      <td class="fixed-width-card-table">Frequentie</td>
+      <td>
+        <span ng-bind="activeObject.attrs.frequency" class="ng-binding"></span>
+      </td>
+    </tr>
+    </tr>         
+  </tbody>
+  </table>
+  <graph ng-if="!!rain.data" bar-chart data="rain.data" ylabel="rain.aggWindow" yfilter="aggWinToYLabel" xlabel="tijd"></graph>
+
+</div>

@@ -1,89 +1,82 @@
 <div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
-<!-- Card for "rioolgemaal" / "pumpstation sewerage" -->
-    <div class="actions">
-      <ul>
-        <!-- <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li> -->
-        <li class="fullscreen">
-          <a 
-            ng-click="toggleDetailmode()"
-            title="Bekijk in detailmode">
-            <i class="fa fa-lg fa-plus-square-o"></i>
-          </a>
-        </li>
-<!--         <li class="favorite">
-          <a
-            ng-click="bookmarkItem()" 
-            title="Voeg toe aan favorieten">
-            <i class="fa fa-lg fa-bookmark"></i>
-          </a>
-        </li> -->
-        <!-- <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li> -->
-      </ul>
-    </div> <!-- end actions -->
+  <div class="actions">
+    <ul>
+      <li class="fullscreen">
+      <a 
+        ng-click="toggleDetailmode()"
+        title="Bekijk in detailmode">
+        <i class="fa fa-lg fa-plus-square-o"></i>
+      </a>
+      </li>
+    </ul>
+  </div> <!-- end actions -->
 
-  <div class="card-title">
-    <!-- <img src="/static/dist/images/gemaal.png" class="img-circle"> -->
-    <i class="icon-pumpstation-diesel"></i><span class="title-text" ng-bind="activeObject.attrs.type"></span>&nbsp;<span ng-if="activeObject.attrs.code">(</span><span class="truncateme ng-binding" ng-bind="activeObject.attrs.code"></span><span ng-if="activeObject.attrs.code">)</span>
-  </div>
+  <cardtitle data-icon="icon-pumpstation-diesel" 
+             data-name="Rioolgemaal">
+  </cardtitle>
+
   <table class="fullwidth">
     <tbody>
     <tr>
       <td class="fixed-width-card-table">Naam</td>
       <td>
-        <span ng-bind="activeObject.attrs.name" class="ng-binding"></span>
+        <span ng-bind="activeObject.attrs.name"
+              class="ng-binding">
+        </span>
       </td>
     </tr>
     <tr>
       <td class="fixed-width-card-table">Aanslagpeil</td>
       <td>
-        <span ng-bind="activeObject.attrs.start_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-bind="activeObject.attrs.start_level | niceNumberOrEllipsis: 2"
+              class="ng-binding wspace-minus">
+        </span>
         <span ng-if="!!activeObject.attrs.surface_level"> m
-        <span style="word-spacing: 0;"> boven NAP</span></span>
+        <span class="wspace-zero"> boven NAP</span>
+        </span>
       </td>
     </tr>
     <tr>
       <td>Afslagpeil</abbr>
-      </td>
-      <td>
-        <span ng-bind="activeObject.attrs.stop_level | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-        <span ng-if="!!activeObject.attrs.stoplevel"> m
-        <span style="word-spacing: 0;"> boven NAP</span></span>
-      </td>  
-    </tr>    
-    <tr>
-      <td class="fixed-width-card-table">Capaciteit</td>
-      <td>
-        <span ng-bind="activeObject.attrs.capacity | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
-        <span ng-if="!!activeObject.attrs.capacity"> l/s</span>
-      </td> 
-    </tr>
+    </td>
+    <td>
+      <span ng-bind="activeObject.attrs.stop_level | niceNumberOrEllipsis: 2"
+            class="ng-binding wspace-minus">
+      </span>
+      <span ng-if="!!activeObject.attrs.stoplevel"> m
+      <span class="wspace-zero"> boven NAP</span>
+      </span>
+    </td>  
+  </tr>    
+  <tr>
+    <td class="fixed-width-card-table">Capaciteit</td>
+    <td>
+      <span ng-bind="activeObject.attrs.capacity | niceNumberOrEllipsis: 2"
+            class="ng-binding wspace-minus">
+      </span>
+      <span ng-if="!!activeObject.attrs.capacity"> l/s</span>
+    </td> 
+  </tr>
   </tbody>
   </table>
 
-  <div class="card-details" ng-click="activeObject.attrs.details = !activeObject.attrs.details">
-    <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.attrs.details}"></i><span ng-if="!activeObject.attrs.details"> Meer details</span><span ng-if="!!activeObject.attrs.details"> Minder details</span>
-  </div>
-  <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
-    <div class="streetview">
-    <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&cbp=11,90,0,0,40">
-      <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
-    </a>
-    </div>
-  </div>
+<div class="card-details"
+     ng-click="activeObject.attrs.details = !activeObject.attrs.details">
+  <i class="fa fa-caret-right ready-to-rotate"
+     ng-class="{'rotate-ninety': activeObject.attrs.details}"></i>
+  <span ng-if="!activeObject.attrs.details"> Meer details</span>
+  <span ng-if="!!activeObject.attrs.details"> Minder details</span>
 </div>
 
-<div class="card" ng-class="{hidden: !activeObject.hasEvents}">
-  <i class="fa fa-circle"></i>&nbsp; Events: <br />
-  <div class="card-events" ng-repeat="event in activeObject.events">
-    <% event.timestamp_start | date : 'dd-MM' %> > <% event.timestamp_end | date : 'dd-MM-yy' %> <% event.category %>: <% event.value %>
+  <div class="hidden-details"
+       ng-class="{'unhidden-details': activeObject.attrs.details}">
+    <streetview></streetview>
   </div>
-</div>
 
-<div class="card" ng-class="{hidden: !activeObject.hasTimeseries}" >
-  <div class="input-prepend">
-    <span class="add-on"> Tijdreeks</span>
-    <select class="timeseries" ng-model="activeObject.selectedTimeseries" ng-options="series as series.name for series in activeObject.timeseries"></select>
-  </div>
-    <graph line data="activeObject.selectedTimeseries.data" ylabel="selectedTimeseries.name" xlabel="n"></graph>
-    <!-- <timeseries-rain timeseries="data" rainseries="rain.data" start="timeState.start" end="timeState.end" enabled="timeboxenabled" changed-zoom="timeState.changedZoom"></timeseries-rain> -->
+<timeseries></timeseries>
+
+<event></event>
+
+<eventaggregate></eventaggregate>
+
 </div>

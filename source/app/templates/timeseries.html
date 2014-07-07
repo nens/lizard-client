@@ -1,0 +1,14 @@
+<div class="timeseries-container"
+     ng-class="{hidden: !activeObject.hasTimeseries}" >
+  <h4>Metingen</h4>
+  <div class="input-prepend">
+    <select class="timeseries"
+            ng-model="activeObject.selectedTimeseries"
+            ng-options="series as series.name for series in activeObject.timeseries">
+    </select>
+  </div>
+  <graph line data="activeObject.selectedTimeseries.data"
+         ylabel="selectedTimeseries.name" 
+         xlabel="n">
+   </graph>
+</div>

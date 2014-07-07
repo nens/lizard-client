@@ -1,7 +1,8 @@
 'use strict';
 
-app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterService",
-  function ($scope, $q, CabinetService, RasterService) {
+app.controller('RainAggregate', ["$scope", "$q", "UtilService",
+                                 "CabinetService", "RasterService",
+  function ($scope, $q, UtilService, CabinetService, RasterService) {
 
   $scope.$watch('mapState.here', function (n, o) {
     if (n === o) {return true; }
@@ -64,8 +65,9 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
   };
 
   var getRainForBounds = function (bounds, start, stop) {
-    var aggWindow = getAggWindow(start, stop, window.innerWidth);  // width of timeline
-    var rain = getRain(new Date(start), new Date(stop), bounds, aggWindow);
+    var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);  // width of timeline
+    var rain = RasterService.getRain(new Date(start), new Date(stop),
+                                     bounds, aggWindow);
     return rain;
   };
 
@@ -126,9 +128,9 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
   var getMoreRain = function (starty) {
     var stop, start, callback;
     var buffer = 40; // Collect 40 new bars at the time=
-    var aggWindow = getAggWindow($scope.timeState.start,
-                               $scope.timeState.end,
-                               272);  // graph is 272 px wide
+    var aggWindow = RasterService.getAggWindow($scope.timeState.start,
+                                               $scope.timeState.end,
+                                               272);  // graph is 272 px wide
     if (aggWindow !== $scope.rain.aggWindow) {
       $scope.rain.aggWindow = aggWindow;
       start = $scope.timeState.start;
@@ -153,7 +155,7 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
         $scope.rain.end = stop;
       };
     }
-    getRain(
+    RasterService.getRain(
       new Date(start),
       new Date(stop),
       $scope.rain.latLng,
@@ -170,78 +172,25 @@ app.controller('RainAggregate', ["$scope", "$q", "CabinetService", "RasterServic
     var stop = new Date($scope.timeState.end);
     var start = new Date($scope.timeState.start);
     $scope.rain.latLng = latlng;
-    $scope.rain.aggWindow = getAggWindow($scope.timeState.start,
-                               $scope.timeState.end,
-                               272);  // graph is 272 px wide
-    getRain(start, stop, $scope.rain.latLng, $scope.rain.aggWindow)
+    $scope.rain.aggWindow = UtilService.getAggWindow($scope.timeState.start,
+                                                     $scope.timeState.end,
+                                                     272);  // graph is 272 px wide
+    RasterService.getRain(start, stop, $scope.rain.latLng, $scope.rain.aggWindow)
       .then(function (response) {
         $scope.rain.data = response;
         $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
         $scope.rain.start = $scope.rain.data[0][0];
       }
-    );
-  };
-
-  /**
-   * Returns aggWindow. Either five minutes, an hour or a day, should 
-   * lead to a minimum of three pixels within the drawing width.
-   * 
-   * @param  {int} start    start of rainseries.
-   * @param  {int} stop     end of rainseries.
-   * @param  {int} drawingWidth size of graph in px.
-   * @return {int} aggWindow in ms.
-   */
-  var getAggWindow = function (start, stop, drawingWidth) {
-    var aggWindow;
-    var minPx = 3; // Minimum width of a bar
-    // Available zoomlevels
-    var zoomLvls = {fiveMinutes: 300000,
-                    hour: 3600000,
-                    day: 86400000};
-    // ms per pixel
-    var msPerPx = (stop - start) / drawingWidth;
-    for (var zoomLvl in zoomLvls) {
-      aggWindow = zoomLvls[zoomLvl];
-      if (aggWindow > minPx * msPerPx) {
-        break; // If zoomlevel is sufficient to get enough width in the bars
-      }
-    }
-    return aggWindow;
-  };
-
-  /**
-   * Gets rain from server.
-   *
-   * @param  {int} start    start of rainserie
-   * @param  {int} stop     end of rainserie
-   * @param  {object} geom   location of rainserie in {lat: int, lng: int} or leaflet bounds object
-   * @param  {int} aggWindow width of the aggregation
-   * @return {promise} returns a thennable promise which may resolve with rain data on response
-   */
-  var getRain = function (start, stop, geom, aggWindow) {
-    var stopString = stop.toISOString().split('.')[0];
-    var startString = start.toISOString().split('.')[0];
-    var wkt;
-    if (geom.lat && geom.lng) {
-      // geom is a latLng object
-      wkt = "POINT(" + geom.lng + " " + geom.lat + ")";
-    } else {
-      wkt = "POLYGON(("
-            + geom.getWest() + " " + geom.getSouth() + ", "
-            + geom.getEast() + " " + geom.getSouth() + ", "
-            + geom.getEast() + " " + geom.getNorth() + ", "
-            + geom.getWest() + " " + geom.getNorth() + ", "
-            + geom.getWest() + " " + geom.getSouth()
-            + "))";
-    }
-    return CabinetService.raster().get({
-        raster_names: 'demo:radar',
-        geom: wkt,
-        srs: 'EPSG:4326',
-        start: startString,
-        stop: stopString,
-        window: aggWindow
-      });
+    ).then(function () {
+      // TODO: this is now an extra call to get rain recurrence time
+      // refactor to one call
+      RasterService.getRain(start, stop, $scope.rain.latLng,
+                            $scope.rain.aggWindow, 'rrc')
+        .then(function (response) {
+          $scope.rain.recurrenceTime = response;
+        }
+      );
+    });
   };
 
 }]);

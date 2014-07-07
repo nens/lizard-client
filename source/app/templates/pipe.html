@@ -21,23 +21,28 @@
       </ul>
     </div> <!-- end actions -->
 
-  <div class="card-title">
-    <img src="/static/dist/images/geslotenleiding.png" class="img-circle">
-    <span ng-bind="activeObject.attrs.type | pipeTypeOrEllipsis"></span>
-  </div>
+  
+  <!-- 
+  HOW TO COUPLE THE IMG SRC TO A CSS CLASS, E.G. "icon-closed-channel"?
+  <img src="/static/dist/images/geslotenleiding.png" class="img-circle">
+  -->
+  <cardtitle data-icon="icon-manhole"
+             data-name="<% activeObject.attrs.type | pipeTypeOrEllipsis %>">
+  </cardtitle>
+
   <table class="fullwidth">
     <tbody>
     <tr>
       <td class="fixed-width-card-table">Lengte</td>
       <td>
-        <span ng-bind="activeObject.attrs.length | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-bind="activeObject.attrs.length | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
         <span ng-if="!!activeObject.attrs.length"> m</span>
       </td>
     </tr>
     <tr>
       <td>Breedte</td>
       <td>
-        <span ng-bind="activeObject.attrs.width | niceNumberOrEllipsis: 2" class="ng-binding" style="word-spacing: -2px;"></span>
+        <span ng-bind="activeObject.attrs.width | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
         <span ng-if="!!activeObject.attrs.width"> m</span>
       </td>  
     </tr>    
@@ -79,10 +84,6 @@
         </tr>         
       </tbody>
     </table>
-    <div class="streetview">
-    <a target="_blank" href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&cbp=11,90,0,0,40">
-      <img src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=300x150&location=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo">
-    </a>
-    </div>
+    <streetview></streetview>
   </div>
 </div>

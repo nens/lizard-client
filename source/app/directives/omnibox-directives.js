@@ -36,9 +36,8 @@ angular.module("omnibox", ["templates-main"])
           scope.box.showCards = false;
         }
       });
-
+      
       replaceTemplate();
-
     };
 
     return {

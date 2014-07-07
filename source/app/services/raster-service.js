@@ -1,8 +1,8 @@
 /**
  * Service to handle raster requests.
  */
-app.service("RasterService", ["Restangular", "UtilService",
-  function (Restangular, UtilService) {
+app.service("RasterService", ["Restangular", "UtilService", "CabinetService",
+  function (Restangular, UtilService, CabinetService) {
 
   /**
    * Hard coded rain variables.
@@ -28,10 +28,48 @@ app.service("RasterService", ["Restangular", "UtilService",
     return intensityData;
   };
 
+  /**
+   * Gets rain from server.
+   *
+   * @param  {int} start    start of rainserie
+   * @param  {int} stop     end of rainserie
+   * @param  {object} geom   location of rainserie in {lat: int, lng: int} or leaflet bounds object
+   * @param  {int} aggWindow width of the aggregation
+   * @param  {string} agg aggregation method eg. 'sum', 'rrc'
+   * @return {promise} returns a thennable promise which may resolve with rain data on response
+   */
+  var getRain = function (start, stop, geom, aggWindow, agg) {
+    var stopString = stop.toISOString().split('.')[0];
+    var startString = start.toISOString().split('.')[0];
+    var wkt;
+    if (geom.lat && geom.lng) {
+      // geom is a latLng object
+      wkt = "POINT(" + geom.lng + " " + geom.lat + ")";
+    } else {
+      wkt = "POLYGON(("
+            + geom.getWest() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getSouth()
+            + "))";
+    }
+    return CabinetService.raster().get({
+        raster_names: 'demo:radar',
+        geom: wkt,
+        srs: 'EPSG:4326',
+        start: startString,
+        stop: stopString,
+        window: aggWindow,
+        agg: agg
+      });
+  };
+
   return {
     rainInfo: rainInfo,
     getIntensityData: getIntensityData,
-    setIntensityData: setIntensityData
+    setIntensityData: setIntensityData,
+    getRain: getRain
   };
 
 }]);
