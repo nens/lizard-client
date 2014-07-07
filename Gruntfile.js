@@ -64,6 +64,8 @@ module.exports = function (grunt) {
         '<%= nxt_dir.vendor %>/angular/angular.js',
         '<%= nxt_dir.vendor %>/restangular/dist/restangular.min.js',
         '<%= nxt_dir.vendor %>/ui-utils/ui-utils.js',
+        '<%= nxt_dir.vendor %>/angular-sanitize/angular-sanitize.min.js',
+        '<%= nxt_dir.vendor %>/ng-csv/build/ng-csv.min.js',
         '<%= nxt_dir.vendor %>/ng-table/ng-table.min.js',
       ],
       appfiles: [

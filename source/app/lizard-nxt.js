@@ -84,9 +84,9 @@ app.config(function ($locationProvider) {
  */
 app.controller("MasterCtrl",
   ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService", "RasterService",
-   "UtilService", "EventService", "TimeseriesService", "ngTableParams", "hashSyncHelper",
+   "UtilService", "EventService", "TimeseriesService", "ngTableParams",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, EventService, TimeseriesService, ngTableParams, hashSyncHelper) {
+            UtilService, EventService, TimeseriesService, ngTableParams) {
   // BOX MODEL
   $scope.box = {
     detailMode: false,
