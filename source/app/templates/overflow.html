@@ -1,17 +1,7 @@
 <div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
   <!-- Card for "overflow" / "overstort" -->
-  <div class="actions">
-    <ul>
-      <li class="fullscreen">
-      <a 
-        ng-click="toggleDetailmode()"
-        title="Bekijk in detailmode">
-        <i class="fa fa-lg fa-plus-square-o"></i>
-      </a>
-      </li>
-    </ul>
-  </div> <!-- end actions -->
 
+  <actions></actions>
   <cardtitle data-icon="icon-overflow-open" 
              data-name="Overstort">
   </cardtitle>

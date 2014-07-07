@@ -4,6 +4,8 @@
  * * Event
  * * Timeseries
  * * Streetview
+ * * Event aggregation
+ * * Actions
  *
  */
 
@@ -56,4 +58,14 @@ app.directive('eventaggregate', [function () {
       restrict: 'E',
       templateUrl: 'templates/event-aggregate.html'
     };
+}]);
+
+/**
+ * Actions directive.
+ */
+app.directive('actions', [function () {
+  return {
+    restrict: 'E',
+    templateUrl: 'templates/actions.html'
+  }
 }]);
