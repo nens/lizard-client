@@ -40,10 +40,10 @@ app.config(function ($locationProvider) {
  * relevant for rootscope live in their own controller
  *
  * Directives watch models in MasterCtrl and respond to changes in those models
- * for example, a user zooms in on the timeline, the timeline directive sets 
+ * for example, a user zooms in on the timeline, the timeline directive sets
  * the temporal.extent on the state.temporal; a map directive watches state.temporal
  * and updates map objects accordingly.
- * 
+ *
  * Models
  * ======
  *
@@ -64,11 +64,11 @@ app.config(function ($locationProvider) {
  *
  * TODO / Refactor
  * ---------------
- * 
+ *
  * Stuff to reconsider, rethink, refactor:
  *
- * * [+] Create a mapState.here to describe the current spatial location 
- *       just like timeState.at describes the now. map-directive should set this, 
+ * * [+] Create a mapState.here to describe the current spatial location
+ *       just like timeState.at describes the now. map-directive should set this,
  *       watches should listen to this to draw a clicklayer, get rain, get data from utf, etc.
  * * [ ] Refactor map controller and directives
  * * [-] Refactor master controller (states, data!)
@@ -104,7 +104,7 @@ app.controller("MasterCtrl",
   // BOX MODEL
 
   // BOX FUNCTIONS
-  
+
   // REFACTOR CANDIDATE
   $scope.geoLocate = function () {
     $scope.locate = !$scope.locate;
@@ -126,14 +126,14 @@ app.controller("MasterCtrl",
   /**
    * Toggle tool from "name" to "none"
    *
-   * Sets tool.active model on scope to name of the tool if tool disabled 
+   * Sets tool.active model on scope to name of the tool if tool disabled
    * or "none" if tool is already enabled.
    *
    * @param {string} name name of the tool to toggle
    *
    */
   $scope.toggleTool = function (name) {
-    
+
     if ($scope.tools.active === name) {
       $scope.tools.active = "none";
     } else {
@@ -226,7 +226,7 @@ app.controller("MasterCtrl",
   });
 
   // EVENTS
-  
+
   // EVENTS MODEL
   $scope.events = {
     //TODO: refactor event meta data (remove eventTypes from mapState)
@@ -241,9 +241,9 @@ app.controller("MasterCtrl",
 
   /**
    * Zoom to event location
-   * 
+   *
    * Used by the aggregate template under the 'screenshot' icon
-   * 
+   *
    * @param {object} geometry Object wit a list of lon, lat
    */
   $scope.events.zoomTo = function (geometry) {
@@ -258,11 +258,11 @@ app.controller("MasterCtrl",
 
   /**
    * Turns event types on or off.
-   * 
+   *
    * When an event type is off, it is passed to getEvents.
    * When an event type is on, it is passed to removeEvents and the remaining
    * events are recolored.
-   * 
+   *
    * @param: str containing the type of the event type to toggle
    */
   $scope.events.toggleEvents = function (eventSeriesId) {
@@ -288,10 +288,10 @@ app.controller("MasterCtrl",
 
   /**
    * Downloads events and asynchronously fires callback.
-   * 
+   *
    * Callback passes the response to addEvents, recolors the event data object,
    * Does bookkeeping and triggers watches by updating events.changed
-   * 
+   *
    * @param: int containing the id of the event series to download
    */
   var getEvents = function (eventSeriesId) {
@@ -313,10 +313,10 @@ app.controller("MasterCtrl",
   // ActiveObject part
 
   /**
-   * ActiveObject is the object which is currently active in the 
-   * application. Commonly set by a click on the utf grid. The 
+   * ActiveObject is the object which is currently active in the
+   * application. Commonly set by a click on the utf grid. The
    * activeObject may have associated events and timeseries which
-   * may be requested from the server. 
+   * may be requested from the server.
    */
   $scope.activeObject = {
     changed: true, // To trigger the watch
@@ -326,7 +326,306 @@ app.controller("MasterCtrl",
     timeseries: [],
     hasEvents: false,
     events: [],
-    selectedTimeseries: null
+    selectedTimeseries: null,
+    wantedAttrs: {
+      bridge: {
+        rows: [
+          {
+            keyName: "Type",
+            attrName: "type",
+            ngBindValue: "activeObject.attrs.type",
+            valueSuffix: ""
+          },
+          {
+            keyName: "Breedte",
+            attrName: "width",
+            ngBindValue:
+              "activeObject.attrs.width | niceNumberOrEllipsis: 2",
+            valueSuffix: " m"
+          },
+          {
+            keyName: "Lengte",
+            attrName: "length",
+            ngBindValue:
+              "activeObject.attrs.length | niceNumberOrEllipsis: 2",
+            valueSuffix: " m"
+          },
+          {
+            keyName: "Hoogte",
+            attrName: "height",
+            ngBindValue:
+              "activeObject.attrs.height | niceNumberOrEllipsis: 2",
+            valueSuffix: " m"
+          }
+        ]
+      },
+      channel: {
+        rows: [
+          {
+            keyName: "Type",
+            attrName: "type",
+            ngBindValue: "activeObject.attrs.type | niceNumberOrEllipsis: 2",
+            valueSuffix: " m"
+          },
+          {
+            keyName: "Lengte",
+            attrName: "length",
+            ngBindValue: "activeObject.attrs.length | niceNumberOrEllipsis: 2",
+            valueSuffix: " m"
+          }
+        ]
+      },
+      crossprofile: {
+        rows: [
+          {
+            keyName: "Type",
+            attrName: "type",
+            ngBindValue:
+              "activeObject.attrs.type | niceNumberOrEllipsis: 2",
+            valueSuffix: ""
+          }
+        ]
+      },
+      culvert: {
+        rows: [
+          {
+            keyName: "Type",
+            attrName: "type",
+            ngBindValue:
+              "activeObject.attrs.type | truncate: 20",
+            valueSuffix: ""
+          },
+          {
+            keyName: "Lengte",
+            attrName: "length",
+            ngBindValue:
+              "activeObject.attrs.length | niceNumberOrEllipsis: 2",
+            valueSuffix: " m"
+          },
+          {
+            keyName: "Breedte",
+            attrName: "width",
+            ngBindValue:
+              "activeObject.attrs.width | niceNumberOrEllipsis: 2",
+            valueSuffix: " m"
+          }
+        ]
+      },
+      manhole: {
+        rows: [
+          {
+            keyName: "Maaiveld",
+            attrName: "surface_level",
+            ngBindValue:
+              "activeObject.attrs.surface_level | niceNumberOrEllipsis: 2",
+            valueSuffix: " m NAP"
+          },
+          {
+            keyName: "Breedte",
+            attrName: "width",
+            ngBindValue:
+              "activeObject.attrs.width | niceNumberOrEllipsis: 2",
+            valueSuffix: " m"
+          },
+          {
+            keyName: "Vorm",
+            attrName: "shape",
+            ngBindValue:
+              "activeObject.attrs.shape | lookupManholeShape",
+            valueSuffix: ""
+          },
+          {
+            keyName: "Putbodem",
+            attrName: "bottom_level",
+            ngBindValue:
+              "activeObject.attrs.bottom_level | niceNumberOrEllipsis: 2",
+            valueSuffix: " m NAP"
+          },
+          {
+            keyName: "Materiaal",
+            attrName: "material",
+            ngBindValue:
+              "activeObject.attrs.material | lookupManholeMaterial",
+            valueSuffix: ""
+          }
+        ],
+      },
+      measuringstation: {
+        rows: [
+          {
+            keyName: "Naam",
+            attrName: "name",
+            ngBindValue: "activeObject.attrs.name",
+            valueSuffix: ""
+          },
+          {
+            keyName: "Regio",
+            attrName: "region",
+            ngBindValue: "activeObject.attrs.region",
+            valueSuffix: ""
+          },
+          {
+            keyName: "Categorie",
+            attrName: "category",
+            ngBindValue: "activeObject.attrs.category",
+            valueSuffix: ""
+          },
+          {
+            keyName: "Frequentie",
+            attrName: "frequency",
+            ngBindValue: "activeObject.attrs.frequency",
+            valueSuffix: ""
+          }
+        ]
+      },
+      /*orifice: { // NB! The info table needs more data: "lengte * breedte" is undefined atm.
+        rows: [
+          {
+            keyName: "Lengte x Breedte",
+            attrName: "length",
+            ngBindValue:
+              "",
+            valueSuffix: ""
+          }
+        ]
+      }, */
+      outlet: {
+        rows: [
+          {
+            keyName: "Maaiveld",
+            attrName: "open_water_level_average",
+            ngBindValue:
+              "activeObject.attrs.open_water_level_average | niceNumberOrEllipsis: 2",
+            valueSuffix: " m NAP"
+          }
+        ]
+      },
+      overflow: {
+        rows: [
+          {
+            keyName: "Breedte",
+            attrName: "width",
+            ngBindValue: "activeObject.attrs.width | niceNumberOrEllipsis: 2",
+            valueSuffix: " m"
+          },
+          {
+            keyName: "Overstorthoogte",
+            attrName: "crest_level",
+            ngBindValue: "activeObject.attrs.crest_level | niceNumberOrEllipsis: 2",
+            valueSuffix: " m"
+          }
+        ]
+      },
+      pipe: {
+        rows: [
+          {
+            keyName: "Lengte",
+            attrName: "length",
+            ngBindValue:
+              "activeObject.attrs.length | niceNumberOrEllipsis: 2",
+            valueSuffix: " m"
+          },
+          {
+            keyName: "Breedte",
+            attrName: "width",
+            ngBindValue:
+              "activeObject.attrs.width | niceNumberOrEllipsis: 2",
+            valueSuffix: " m"
+          },
+          {
+            keyName: "Vorm",
+            attrName: "shape",
+            ngBindValue:
+              "activeObject.attrs.shape | lookupPipeShape",
+            valueSuffix: ""
+          },
+          {
+            keyName: "Materiaal",
+            attrName: "material",
+            ngBindValue:
+              "activeObject.attrs.material | pipeMaterialOrEllipsis",
+            valueSuffix: ""
+          }
+        ]
+      },
+      pumpstation_sewerage: {
+        rows: [
+          {
+            keyName: "Naam",
+            attrName: "name",
+            ngBindValue: "activeObject.attrs.name",
+            valueSuffix: ""
+          },
+          {
+            keyName: "Aanslagpeil",
+            attrName: "start_level",
+            ngBindValue:
+              "activeObject.attrs.start_level | niceNumberOrEllipsis: 2",
+            valueSuffix: " m boven NAP"
+          },
+          {
+            keyName: "Afslagpeil",
+            attrName: "stop_level",
+            ngBindValue:
+              "activeObject.attrs.stop_level | niceNumberOrEllipsis: 2",
+            valueSuffix: " m boven NAP"
+          },
+          {
+            keyName: "Capaciteit",
+            attrName: "capacity",
+            ngBindValue:
+              "activeObject.attrs.capacity | niceNumberOrEllipsis: 2",
+            valueSuffix: " l/s"
+          }
+        ]
+      },
+      pumpstation_non_sewerage: {
+        rows: [
+          {
+            keyName: "Naam",
+            attrName: "name",
+            ngBindValue: "activeObject.attrs.name",
+            valueSuffix: ""
+          },
+          {
+            keyName: "Aanslagpeil",
+            attrName: "start_level",
+            ngBindValue:
+              "activeObject.attrs.start_level | niceNumberOrEllipsis: 2",
+            valueSuffix: " m boven NAP"
+          },
+          {
+            keyName: "Capaciteit",
+            attrName: "capacity",
+            ngBindValue:
+              "activeObject.attrs.capacity | niceNumberOrEllipsis: 2",
+            valueSuffix: " l/s"
+          }
+        ]
+      },
+      weir: {
+        rows: [
+          {
+            keyName: "Type",
+            attrName: "type",
+            ngBindValue: "activeObject.attrs.type",
+            valueSuffix: ""
+          },
+          {
+            keyName: "Breedte",
+            attrName: "width", // NB! this was set to "breedte" in the original code, which is supposedly erronious (?)
+            ngBindValue: "activeObject.attrs.width | niceNumberOrEllipsis: 2", // see commnent above
+            valueSuffix: " m"
+          },
+          {
+            keyName: "Hoogte",
+            attrName: "height",
+            ngBindValue: "activeObject.attrs.height | niceNumberOrEllipsis: 2",
+            valueSuffix: " m"
+          }
+        ]
+      }
+    }
   };
 
   $scope.$watch('activeObject.changed', function (newVal, oldVal) {
@@ -365,9 +664,9 @@ app.controller("MasterCtrl",
       $scope.rain.start = $scope.rain.data[0][0];
     };
     RasterService.getRain(
-      new Date($scope.timeState.start), 
-      new Date($scope.timeState.end), 
-      $scope.activeObject.latlng, 
+      new Date($scope.timeState.start),
+      new Date($scope.timeState.end),
+      $scope.activeObject.latlng,
       aggWindow
     ).then(callback);
   });
@@ -376,7 +675,7 @@ app.controller("MasterCtrl",
    * Parameters for ngTable.
    *
    * Controls how ngTable behaves. Don't forget to call the reload() method
-   * when you refresh the data (like in an API call). 
+   * when you refresh the data (like in an API call).
    */
   $scope.activeObject.eventTableParams = new ngTableParams({
     page: 1,
@@ -550,7 +849,7 @@ app.controller("MasterCtrl",
   // RAIN
 
   /**
-   * Initial state 
+   * Initial state
    */
   $scope.rain = {
     enabled: false

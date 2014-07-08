@@ -4,69 +4,22 @@
   <cardtitle data-icon="icon-pumpstation-diesel" 
              data-name="Rioolgemaal">
   </cardtitle>
+  <fullwidth></fullwidth>
 
-  <table class="fullwidth">
-    <tbody>
-    <tr>
-      <td class="fixed-width-card-table">Naam</td>
-      <td>
-        <span ng-bind="activeObject.attrs.name"
-              class="ng-binding">
-        </span>
-      </td>
-    </tr>
-    <tr>
-      <td class="fixed-width-card-table">Aanslagpeil</td>
-      <td>
-        <span ng-bind="activeObject.attrs.start_level | niceNumberOrEllipsis: 2"
-              class="ng-binding wspace-minus">
-        </span>
-        <span ng-if="!!activeObject.attrs.surface_level"> m
-        <span class="wspace-zero"> boven NAP</span>
-        </span>
-      </td>
-    </tr>
-    <tr>
-      <td>Afslagpeil</abbr>
-    </td>
-    <td>
-      <span ng-bind="activeObject.attrs.stop_level | niceNumberOrEllipsis: 2"
-            class="ng-binding wspace-minus">
-      </span>
-      <span ng-if="!!activeObject.attrs.stoplevel"> m
-      <span class="wspace-zero"> boven NAP</span>
-      </span>
-    </td>  
-  </tr>    
-  <tr>
-    <td class="fixed-width-card-table">Capaciteit</td>
-    <td>
-      <span ng-bind="activeObject.attrs.capacity | niceNumberOrEllipsis: 2"
-            class="ng-binding wspace-minus">
-      </span>
-      <span ng-if="!!activeObject.attrs.capacity"> l/s</span>
-    </td> 
-  </tr>
-  </tbody>
-  </table>
-
-<div class="card-details"
-     ng-click="activeObject.attrs.details = !activeObject.attrs.details">
-  <i class="fa fa-caret-right ready-to-rotate"
-     ng-class="{'rotate-ninety': activeObject.attrs.details}"></i>
-  <span ng-if="!activeObject.attrs.details"> Meer details</span>
-  <span ng-if="!!activeObject.attrs.details"> Minder details</span>
-</div>
+  <div class="card-details"
+       ng-click="activeObject.attrs.details = !activeObject.attrs.details">
+    <i class="fa fa-caret-right ready-to-rotate"
+       ng-class="{'rotate-ninety': activeObject.attrs.details}"></i>
+    <span ng-if="!activeObject.attrs.details"> Meer details</span>
+    <span ng-if="!!activeObject.attrs.details"> Minder details</span>
+  </div>
 
   <div class="hidden-details"
        ng-class="{'unhidden-details': activeObject.attrs.details}">
     <streetview></streetview>
   </div>
 
-<timeseries></timeseries>
-
-<event></event>
-
-<eventaggregate></eventaggregate>
-
+  <timeseries></timeseries>
+  <event></event>
+  <eventaggregate></eventaggregate>
 </div>

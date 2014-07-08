@@ -69,3 +69,22 @@ app.directive('actions', [function () {
     templateUrl: 'templates/actions.html'
   }
 }]);
+
+/**
+ * Fullwidth directive.
+ */
+app.directive('fullwidth', [function () {
+  return {
+    restrict: 'E',
+    templateUrl: 'templates/fullwidth.html'
+  }
+}]);
+
+// app.directive('attribute', [function () {
+//   return {
+//     restrict: 'E',
+//     templateUrl: 'templates/attribute.html'
+//   }
+// }]);
+
+

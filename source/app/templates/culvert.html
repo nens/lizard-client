@@ -6,8 +6,11 @@
              data-name="Duiker">
   </cardtitle>
 
-    <table class="fullwidth">
-      <tbody>
+  <fullwidth></fullwidth>
+  
+  <!--
+  <table class="fullwidth">
+    <tbody>
       <tr>
         <td class="fullwidth-key">Type</td>
         <td>
@@ -28,12 +31,14 @@
           <span ng-if="!!activeObject.attrs.width"> m</span>
         </td> 
       </tr>               
-    </tbody></table>
-
+    </tbody>
+  </table>
+  -->
 
     <div class="card-details" ng-click="activeObject.attrs.details = !activeObject.attrs.details">
       <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.attrs.details}"></i><span ng-if="!activeObject.attrs.details"> Meer details</span><span ng-if="!!activeObject.attrs.details"> Minder details</span>
     </div>
+
     <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
       <table class="fullwidth">
         <tbody><tr>

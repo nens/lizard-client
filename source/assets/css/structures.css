@@ -118,6 +118,10 @@
 	clear: both;
 }
 
+.float-left {
+	float: left;
+}
+
 .left-margin-title {
 	margin-left: 10px !important;
 }
