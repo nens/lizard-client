@@ -892,10 +892,15 @@ app.factory("Timeline", [ function () {
    * Draws the given axis in the given svg
    */
   var drawAxes = function (svg, xAxis, duration) {
-    svg.select('g').select('#xaxis')
-      .transition()
-      .duration(duration || 0)
-      .call(xAxis);
+    if (duration) {
+      svg.select('g').select('#xaxis')
+        .transition()
+        .duration(duration)
+        .call(xAxis);
+    } else {
+      svg.select('g').select('#xaxis')
+        .call(xAxis);
+    }
   };
 
   return Timeline;
