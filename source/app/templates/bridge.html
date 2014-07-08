@@ -7,37 +7,6 @@
   </cardtitle>
   <fullwidth></fullwidth>
 
-  <!--
-  <table class="fullwidth">
-    <tbody>
-    <tr>
-        <td class="fixed-width-card-table">Type</td>
-        <td>
-            <span ng-bind="activeObject.attrs.type" class="ng-binding"></span>
-        </td>
-    </tr>
-    <tr>
-        <td class="fixed-width-card-table">Breedte</td>
-        <td>
-            <span ng-bind="activeObject.attrs.width | niceNumberOrEllipsis: 2" class="ng-binding"></span>
-        </td>
-    </tr>
-    <tr>
-        <td class="fixed-width-card-table">lengte</td>
-        <td>
-            <span ng-bind="activeObject.attrs.length | niceNumberOrEllipsis: 2" class="ng-binding"></span>
-        </td>
-    </tr>
-    <tr>
-        <td class="fixed-width-card-table">Hoogte</td>
-        <td>
-            <span ng-bind="activeObject.attrs.height | niceNumberOrEllipsis: 2" class="ng-binding"></span>
-        </td>
-    </tr>
-  </tbody>
-  </table>
-  -->
-
   <div class="card-details" ng-click="activeObject.attrs.details = !activeObject.attrs.details">
     <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.attrs.details}"></i><span ng-if="!activeObject.attrs.details"> Meer details</span><span ng-if="!!activeObject.attrs.details"> Minder details</span>
   </div>
