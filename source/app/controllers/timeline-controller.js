@@ -123,7 +123,13 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
    * Move timeState.end to now.
    */
   $scope.timeState.zoomToNow = function () {
-    $scope.timeState.end = Date.now();
+    var now = Date.now();
+    var day = 24 * 60 * 60 * 1000;
+    var tomorrow = now + day;
+    var sevenDaysAgo = now - 7 * day;
+    $scope.timeState.start = sevenDaysAgo;
+    $scope.timeState.end = tomorrow;
+    $scope.timeState.at = now;
     $scope.timeState.changeOrigin = 'user';
     $scope.timeState.changedZoom = Date.now();
   };
