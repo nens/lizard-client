@@ -1263,7 +1263,8 @@ a {
 /*
  * d3 vector layers css
  */
-.circle {
+.circle,
+.clickable {
   cursor: pointer;
 }
 

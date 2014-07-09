@@ -14,7 +14,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
     link: function (scope, element, attrs, mapCtrl) {
 
       // declaring all local vars for current scope:
-      var getEventColor, eventClickHandler, getFeatureSelection,
+      var getEventColor, eventClickHandler, getFeatureSelection, idExtractor,
           overlapEvents, countOverlapEvents, drawMarkers, createEventLayer;
 
       /**
@@ -35,13 +35,13 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * @param {object} d - D3 bound data object.
        */
       eventClickHandler = function (d) {
-
+        var id = this.options.selectorPrefix + this._idExtractor(d);
         // unhighlight events
         d3.selectAll(".circle.event")
           .attr("stroke", getEventColor)
           .attr("fill", getEventColor);
         // highlight selected event
-        d3.select(this).transition()
+        d3.select("." + id).transition()
           .duration(1000)
           .attr("stroke", "black")
           .attr("fill", "black");
@@ -97,15 +97,15 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         feature.enter().append("path")
           // TODO: attempt to scale events on pointRadius; problem is that
           // on zoom out radius increases.
-          //.attr("d", (function () {
-            //console.log("Called d attr function", overlapEvents);
-            //path.pointRadius(countOverlapEvents);
-            //return path;
-          //})())
+          .attr("d", (function () {
+            console.log("Called d attr function", overlapEvents);
+            path.pointRadius(countOverlapEvents);
+            return path;
+          })())
           .attr("d", path)
           .attr("class", "circle event")
           .attr("fill-opacity", 0)
-          .attr('stroke-width', countOverlapEvents)
+          // .attr('stroke-width', countOverlapEvents)
           .attr('stroke', getEventColor)
           .attr('stroke-opacity', 0)
           .attr('fill', getEventColor)
@@ -114,6 +114,16 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
           .duration(1000)
           .attr('stroke-opacity', 1)
           .attr('fill-opacity', 1);
+      };
+
+      /**
+       * idExtractor is a generator function to extract id's from 
+       * the geoJson
+       * @param  {object} feature - geoJson feature
+       * @return {string} id - String
+       */
+      idExtractor = function (feature) {
+        return feature.id.toString().split('.')[0];
       };
 
       /**
@@ -132,56 +142,62 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
             overlapEvents, projectPoint, reset;
 
         map = scope.map;
-        svg = d3.select(map.getPanes().overlayPane).append("svg");
-        g = svg.append("g").attr("class", "leaflet-zoom-hide");
+        var d3Layer = L.nonTiledGeoJSONd3(data, {
+          selectorPrefix: 'm',
+          idExtractor: idExtractor
+        });
+        map.addLayer(d3Layer);
+        d3Layer._bindClick(eventClickHandler);
+        // svg = d3.select(map.getPanes().overlayPane).append("svg");
+        // g = svg.append("g").attr("class", "leaflet-zoom-hide");
         
-        projectPoint = function (x, y) {
-          var point = map.latLngToLayerPoint(new L.LatLng(y, x));
-          this.stream.point(point.x, point.y);
-        };
+        // projectPoint = function (x, y) {
+        //   var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+        //   this.stream.point(point.x, point.y);
+        // };
 
-        transform = d3.geo.transform({point: projectPoint});
-        path = d3.geo.path().projection(transform).pointRadius(6);
-        bounds = path.bounds(data);
+        // transform = d3.geo.transform({point: projectPoint});
+        // path = d3.geo.path().projection(transform).pointRadius(6);
+        // bounds = path.bounds(data);
 
-        reset = function () {
+        // reset = function () {
 
-          // (re-)assign an existing var, declared in an embedding scope
-          bounds = path.bounds(data);
+        //   // (re-)assign an existing var, declared in an embedding scope
+        //   bounds = path.bounds(data);
 
-          // declare AND assign vars, for the local scope (too contrived for
-          // separation of declaration/assignment)
-          var topLeft = bounds[0],
-              bottomRight = bounds[1],
-              width = bottomRight[0] - topLeft[0] + 20,
-              height = bottomRight[1] - topLeft[1] + 20;
+        //   // declare AND assign vars, for the local scope (too contrived for
+        //   // separation of declaration/assignment)
+        //   var topLeft = bounds[0],
+        //       bottomRight = bounds[1],
+        //       width = bottomRight[0] - topLeft[0] + 20,
+        //       height = bottomRight[1] - topLeft[1] + 20;
 
-          svg.attr()
-             .attr("width", width)
-             .attr("height", height)
-             // Shift whole viewbox half a pixel for nice and crisp rendering
-             .attr("viewBox", "-0.5 -0.5 " + width + " " + height)
-             .style("left", (topLeft[0] - 10) + "px")
-             .style("top", (topLeft[1] - 10) + "px");
+        //   svg.attr()
+        //      .attr("width", width)
+        //      .attr("height", height)
+        //      // Shift whole viewbox half a pixel for nice and crisp rendering
+        //      .attr("viewBox", "-0.5 -0.5 " + width + " " + height)
+        //      .style("left", (topLeft[0] - 10) + "px")
+        //      .style("top", (topLeft[1] - 10) + "px");
 
-          g.attr("transform", "translate(" + -(topLeft[0] - 10) + "," +
-                 -(topLeft[1] - 10) + ")")
-            .selectAll("path").attr("d", path);
-        };
+        //   g.attr("transform", "translate(" + -(topLeft[0] - 10) + "," +
+        //          -(topLeft[1] - 10) + ")")
+        //     .selectAll("path").attr("d", path);
+        // };
 
-        map.on("viewreset", reset);
-        featureSelection = getFeatureSelection(g, data);
-        overlapEvents = {}; // reset counter
-        drawMarkers(featureSelection, path);
-        featureSelection.on('click', eventClickHandler);
-        reset();
+        // map.on("viewreset", reset);
+        // featureSelection = getFeatureSelection(g, data);
+        // overlapEvents = {}; // reset counter
+        // drawMarkers(featureSelection, path);
+        // featureSelection.on('click', eventClickHandler);
+        // reset();
 
-        return {
-          g: g,
-          svg: svg,
-          path: path,
-          reset: reset
-        };
+        // return {
+        //   g: g,
+        //   svg: svg,
+        //   path: path,
+        //   reset: reset
+        // };
       };
 
       /**
