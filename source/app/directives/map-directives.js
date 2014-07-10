@@ -413,6 +413,15 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
       scope.box.type = ctrl.boxType(scope.mapState);
     };
 
+    scope.$watch('mapState.panZoom', function (n, o) {
+      if (n === o) { return true; }
+      if (scope.mapState.panZoom.isValid()) {
+        ctrl.fitBounds(scope.mapState.panZoom);
+      } else {
+        ctrl.panZoomTo(scope.mapState.panZoom);
+      }
+    });
+
     // Instantiate the controller that updates the hash url after creating the map
     // and all its listeners.
     $controller('hashGetterSetter', {$scope: scope});
