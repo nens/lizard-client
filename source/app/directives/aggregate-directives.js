@@ -14,8 +14,8 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
     link: function (scope, element, attrs, mapCtrl) {
 
       // declaring all local vars for current scope:
-      var getEventColor, eventClickHandler, getFeatureSelection, idExtractor,
-          overlapEvents, countOverlapEvents, drawMarkers, createEventLayer;
+      var getEventColor, eventClickHandler, getFeatureSelection,
+          idExtractor, createEventLayer, d3eventLayer;
 
       /**
        * Get color from feature.
@@ -38,12 +38,10 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         var id = this.options.selectorPrefix + this._idExtractor(d);
         // unhighlight events
         d3.selectAll(".circle.event")
-          .attr("stroke", getEventColor)
           .attr("fill", getEventColor);
         // highlight selected event
         d3.select("." + id).transition()
           .duration(1000)
-          .attr("stroke", "black")
           .attr("fill", "black");
         scope.box.type = 'event-aggregate';
         scope.box.content.eventValue = d;
@@ -62,60 +60,6 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
                 .data(data.features, function (d) { return d.id; });
       };
 
-      // object to keep count of overlapping events
-      overlapEvents = {};
-
-      /**
-       * Count events that are on the same location.
-       *
-       * Adds a lat + lon key to overlapEvents if not defined and sets
-       * counter to 1. If key exists adds +1 to counter. Returns counter for
-       * current key.
-       *
-       * @parameter {object} d D3 data object, should have a geometry property
-       * @returns {integer} Count for current key
-       *
-       */
-      countOverlapEvents = function (d) {
-        var key = d.geometry.coordinates[0] + d.geometry.coordinates[1];
-        var coord = overlapEvents[key];
-        if (coord === undefined) {
-          overlapEvents[key] = 1;
-        } else {
-          overlapEvents[key] += 1;
-        }
-        return overlapEvents[key];
-      };
-
-      /**
-       * Utilfunction that draws the Event markers. 
-       *
-       * @parameter {object} feature - D3 selection
-       * @parameter {object} path - D3 svg path
-       */
-      drawMarkers = function (feature, path) {
-        feature.enter().append("path")
-          // TODO: attempt to scale events on pointRadius; problem is that
-          // on zoom out radius increases.
-          .attr("d", (function () {
-            console.log("Called d attr function", overlapEvents);
-            path.pointRadius(countOverlapEvents);
-            return path;
-          })())
-          .attr("d", path)
-          .attr("class", "circle event")
-          .attr("fill-opacity", 0)
-          // .attr('stroke-width', countOverlapEvents)
-          .attr('stroke', getEventColor)
-          .attr('stroke-opacity', 0)
-          .attr('fill', getEventColor)
-          .transition()
-          .delay(500)
-          .duration(1000)
-          .attr('stroke-opacity', 1)
-          .attr('fill-opacity', 1);
-      };
-
       /**
        * idExtractor is a generator function to extract id's from 
        * the geoJson
@@ -123,7 +67,9 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * @return {string} id - String
        */
       idExtractor = function (feature) {
-        return feature.id.toString().split('.')[0];
+        var id = feature.id.toString().split('.')[0] + 
+                + '_es_' + feature.properties.event_series;
+        return id;
       };
 
       /**
@@ -139,65 +85,24 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
 
         // declaring all local vars in 1st line of function body!
         var map, svg, g, transform, path, bounds, featureSelection,
-            overlapEvents, projectPoint, reset;
+            projectPoint, reset;
 
         map = scope.map;
-        var d3Layer = L.nonTiledGeoJSONd3(data, {
-          selectorPrefix: 'm',
-          idExtractor: idExtractor
-        });
-        map.addLayer(d3Layer);
-        d3Layer._bindClick(eventClickHandler);
-        // svg = d3.select(map.getPanes().overlayPane).append("svg");
-        // g = svg.append("g").attr("class", "leaflet-zoom-hide");
-        
-        // projectPoint = function (x, y) {
-        //   var point = map.latLngToLayerPoint(new L.LatLng(y, x));
-        //   this.stream.point(point.x, point.y);
-        // };
-
-        // transform = d3.geo.transform({point: projectPoint});
-        // path = d3.geo.path().projection(transform).pointRadius(6);
-        // bounds = path.bounds(data);
-
-        // reset = function () {
-
-        //   // (re-)assign an existing var, declared in an embedding scope
-        //   bounds = path.bounds(data);
-
-        //   // declare AND assign vars, for the local scope (too contrived for
-        //   // separation of declaration/assignment)
-        //   var topLeft = bounds[0],
-        //       bottomRight = bounds[1],
-        //       width = bottomRight[0] - topLeft[0] + 20,
-        //       height = bottomRight[1] - topLeft[1] + 20;
-
-        //   svg.attr()
-        //      .attr("width", width)
-        //      .attr("height", height)
-        //      // Shift whole viewbox half a pixel for nice and crisp rendering
-        //      .attr("viewBox", "-0.5 -0.5 " + width + " " + height)
-        //      .style("left", (topLeft[0] - 10) + "px")
-        //      .style("top", (topLeft[1] - 10) + "px");
-
-        //   g.attr("transform", "translate(" + -(topLeft[0] - 10) + "," +
-        //          -(topLeft[1] - 10) + ")")
-        //     .selectAll("path").attr("d", path);
-        // };
-
-        // map.on("viewreset", reset);
-        // featureSelection = getFeatureSelection(g, data);
-        // overlapEvents = {}; // reset counter
-        // drawMarkers(featureSelection, path);
-        // featureSelection.on('click', eventClickHandler);
-        // reset();
-
-        // return {
-        //   g: g,
-        //   svg: svg,
-        //   path: path,
-        //   reset: reset
-        // };
+        // if d3eventlayer does not exist create.
+        if (d3eventLayer === undefined) {
+          d3eventLayer = L.nonTiledGeoJSONd3(data, {
+            selectorPrefix: 'm',
+            idExtractor: idExtractor,
+            class: 'circle event'
+          });
+        }
+        map.addLayer(d3eventLayer);
+        d3eventLayer._bindClick(eventClickHandler);
+        // for backwards compatibility. 
+        d3eventLayer.g = d3eventLayer._container.selectAll("g");
+        d3eventLayer.svg = d3eventLayer.svg;
+        d3eventLayer.reset = d3eventLayer._onMove;
+        return d3eventLayer
       };
 
       /**
@@ -211,30 +116,15 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * @return: object eventLayer object
        */
       var updateEventLayer = function (eventLayer, data) {
-        eventLayer.reset();
+        eventLayer._data = data;
+        eventLayer._refreshData();
 
-        var featureSelection = getFeatureSelection(eventLayer.g, data);
+        eventLayer._bindClick(eventClickHandler);
 
-        featureSelection.transition()
-          .delay(500)
-          .duration(1000)
-          .attr('fill', getEventColor);
-
-        overlapEvents = {}; // reset counter
-
-        drawMarkers(featureSelection, eventLayer.path);
-
-        featureSelection.exit()
-          .transition()
-          .duration(1000)
-          .style("fill-opacity", 1e-6)
-          .remove();
-
-        featureSelection.on('click', eventClickHandler);
       };
 
       var removeEventLayer = function (eventLayer) {
-        eventLayer.svg.remove();
+        scope.map.removeLayer(eventLayer);
         return false;
       };
 

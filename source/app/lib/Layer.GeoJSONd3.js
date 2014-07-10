@@ -43,12 +43,16 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
       .attr("width", size.x)
       .attr("height", size.y);
 
-    this._path = d3.geo.path().projection(function (d) {
+    this._projection = function (d) {
       var point = map.latLngToLayerPoint(new L.LatLng(d[1], d[0]));
       return [point.x, point.y];
-    });
+    };
+    var self = this;
+    this._path = d3.geo.path().projection(self._projection);
 
-    this._renderData();
+    this.overlapEvents = {};
+    this.g = this._renderG();
+    this._refreshData();
 
     // Call onmove to position the svg.
     this._onMove();
@@ -61,36 +65,88 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
   },
 
+  _renderG: function () {
+    return this._container.append("g")
+      .attr("class", "geojsonnontile")
+      .attr("transform", "translate(" + self._left + "," + self._top + ")");
+  },
+
   /**
    * _renderData 
    * Renders geoJSON data in the svg container.
    * If the options has a 'selectorPrefix' property
    * your 'path' elements will be accessible with an id.
+   *
+   * NOTE: this is now only a good option for point data.
+   * something could be done with paths:
+   *        .append("path")
+   *        .attr("d", self._path);
+   *
    */
-  _renderData: function () {
+  _refreshData: function () {
     var self = this;
-    var g = self._container.append("g")
-      .attr("class", "geojsonnontile")
-      .attr("transform", "translate(" + self._left + "," + self._top + ")");
-    var features = g.selectAll("path")
-      .data(this._data.features).enter()
-      .append("path")
-        .attr("d", self._path)
-        .attr("stroke", function (d) {d.properties.color})
-        .attr("class", function (feature) {
-          var classList = self.options.class;
-          if (self.options.hasOwnProperty('selectorPrefix')) {
-            classList += " " + self.options.selectorPrefix + self._idExtractor(feature);
-          }
-          return classList;
-        });
+    self.overlapEvents = {};
+    if (this.g.empty()) {
+      this.g = this._renderG();
+    }
+    var features = this.g.selectAll("circle")
+      .data(this._data.features, self.idExtractor);
 
+      features.enter()
+        .append("svg:circle")
+          .attr("stroke", "white")
+          .attr("class", function (feature) {
+            var classList = self.options.class;
+            if (self.options.hasOwnProperty('selectorPrefix')) {
+              classList += " " + self.options.selectorPrefix + self._idExtractor(feature);
+            }
+            return classList;
+          });
+
+      features
+        .attr("fill", function (d) { return d.properties.color; })
+        .attr("cx", function (d) { return self._projection(d.geometry.coordinates)[0]; })
+        .attr("cy", function (d) { return self._projection(d.geometry.coordinates)[1]; })
+        .attr("r", function (d) {
+          // console.log(self.idExtractor(d))
+          return self.countOverlapEvents(self, d) * 3
+        });
+        
+      features.exit()
+          .style("fill-opacity", 1e-6)
+          .remove();
       if (self.options.applyStyle) {
         self.options.applyStyle.call(this, features);
       }
   },
 
+  // object to keep count of overlapping events
+  overlapEvents: {},
+
+  /**
+   * Count events that are on the same location.
+   *
+   * Adds a lat + lon key to overlapEvents if not defined and sets
+   * counter to 1. If key exists adds +1 to counter. Returns counter for
+   * current key.
+   *
+   * @parameter {object} d D3 data object, should have  a geometry property
+   * @returns {integer} Count for current key
+   *
+   */
+  countOverlapEvents: function (self, d) {
+      var key = d.geometry.coordinates[0] + d.geometry.coordinates[1];
+      var coord = self.overlapEvents[key];
+      if (coord === undefined) {
+        self.overlapEvents[key] = 1;
+      } else {
+        self.overlapEvents[key] += 1;
+      }
+      return self.overlapEvents[key];
+  },
+
   onRemove: function (map) {
+    this.overlapEvents = {};
     d3.selectAll(".geojsonnontile").remove();
     this._container.remove();
     this._map.off('moveend', this._onMove, this);
@@ -112,13 +168,14 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     // Store location of the svg to position incoming tiles
     this._left = origin.x - bottomLeft.x;
     this._top = origin.y - (bottomLeft.y - size.y);
-    console.log({left: this._left, top: this._top});
     svg.style("left", - this._left + "px")
       .style("top", - this._top + "px");
       // debugger
     svg.selectAll("g")
       .attr("transform", "translate(" + this._left + "," + this._top + ")")
-      .selectAll("path").attr("d", self._path);
+      .selectAll("circle")
+        .attr("cx", function (d) { return self._projection(d.geometry.coordinates)[0] })
+        .attr("cy", function (d) { return self._projection(d.geometry.coordinates)[1] });
     },
 
   /**
@@ -133,6 +190,12 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
       .attr("height", size.y);
   },
 
+  getFeatureSelection: function (self) {
+    return this ._container.selectAll("g")
+          .selectAll("circle")
+            // .data(self._data.features, self.idExtractor);
+  },
+
   /**
   * Click handler can be bound with this function.
   * Works differently from Leaflet native, because it 
@@ -143,12 +206,8 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
   _bindClick: function (fn) {
     var self = this;
     if (typeof(fn) == "function") {
-      var featureSelection = self._container.selectAll("g")
-        .selectAll("path")
-        .classed("clickable", true)
-        .data(self._data.features, function (d) {
-          return d.id;
-        });
+      // console.log('jasd')
+      var featureSelection = self.getFeatureSelection(self);
       self.clickHandler = fn;
       // NOTE: this is a d3 click.
       featureSelection.on('click', function (d) {
@@ -156,7 +215,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
         self.clickHandler(d);
       });
     }
-  }
+  },
 });
 
 L.nonTiledGeoJSONd3 = function (data, options) {
