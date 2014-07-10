@@ -4,8 +4,11 @@
  * * Event
  * * Timeseries
  * * Streetview
+ * * Cardtitle
  * * Event aggregation
  * * Actions
+ * * Cardattributes
+ * * Detailswitch
  *
  */
 
@@ -70,21 +73,18 @@ app.directive('actions', [function () {
   }
 }]);
 
-/**
- * Fullwidth directive.
- */
-app.directive('fullwidth', [function () {
+app.directive('cardattributes', [function () {
   return {
     restrict: 'E',
-    templateUrl: 'templates/fullwidth.html'
+    templateUrl: 'templates/cardattributes.html'
   }
 }]);
 
-// app.directive('attribute', [function () {
-//   return {
-//     restrict: 'E',
-//     templateUrl: 'templates/attribute.html'
-//   }
-// }]);
+app.directive('detailswitch', [function () {
+  return {
+    restrict: 'E',
+    templateUrl: 'templates/detailswitch.html'
+  }
+}])
 
 

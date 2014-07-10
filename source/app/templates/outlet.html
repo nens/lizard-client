@@ -1,15 +1,13 @@
 <div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
   <!-- Card for "outlet" / "uitlaat met keerklep" -->
-  
+
   <actions></actions>
   <cardtitle data-icon="icon-outlet"
              data-name="Uitlaat met keerklep">
   </cardtitle>
-  <fullwidth></fullwidth>
+  <cardattributes></cardattributes>
+  <detailswitch></detailswitch>
 
-  <div class="card-details" ng-click="activeObject.attrs.details = !activeObject.attrs.details">
-    <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.attrs.details}"></i><span ng-if="!activeObject.attrs.details"> Meer details</span><span ng-if="!!activeObject.attrs.details"> Minder details</span>
-  </div>
   <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
     <table class="fullwidth">
       <tbody>
@@ -19,7 +17,7 @@
           <span ng-bind="activeObject.attrs.open_water_level_summer | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
           <span ng-if="!!activeObject.attrs.open_water_level_summer"> m
           <span class="wspace-zero"> boven NAP</span></span>
-        </td>            
+        </td>
       </tr>
       <tr>
         <td class="fixed-width-card-table"><abbr title="Oppervlaktewaterniveau (winter)">OWN (winter)</abbr></td>
@@ -27,7 +25,7 @@
           <span ng-bind="activeObject.attrs.open_water_level_winter | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
           <span ng-if="!!activeObject.attrs.open_water_level_winter"> m
           <span class="wspace-zero"> boven NAP</span></span>
-        </td>            
+        </td>
       </tr>
       </tbody>
     </table>

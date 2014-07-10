@@ -4,41 +4,6 @@
   <cardtitle data-icon="icon-manhole"
              data-name="Meetstation">
   </cardtitle>
-
-  <fullwidth></fullwidth>
-
-  <!--
-  <table class="fullwidth">
-    <tbody>
-    <tr>
-      <td class="fixed-width-card-table">Naam</td>
-      <td>
-        <span ng-bind="activeObject.attrs.name" class="ng-binding"></span>
-      </td>
-    </tr>
-    <tr>
-      <td class="fixed-width-card-table">Regio</td>
-      <td>
-        <span ng-bind="activeObject.attrs.region" class="ng-binding"></span>
-      </td>
-    </tr>
-    <tr>
-      <td class="fixed-width-card-table">Categorie</td>
-      <td>
-        <span ng-bind="activeObject.attrs.category" class="ng-binding"></span>
-      </td>
-    </tr>
-    <tr>
-      <td class="fixed-width-card-table">Frequentie</td>
-      <td>
-        <span ng-bind="activeObject.attrs.frequency" class="ng-binding"></span>
-      </td>
-    </tr>
-    </tr>         
-  </tbody>
-  </table>
-  -->
-
+  <cardattributes></cardattributes>
   <graph ng-if="!!rain.data" bar-chart data="rain.data" ylabel="rain.aggWindow" yfilter="aggWinToYLabel" xlabel="tijd"></graph>
-
 </div>

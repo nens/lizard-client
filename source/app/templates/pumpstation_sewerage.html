@@ -1,25 +1,31 @@
-<div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
+<!-- CARD 1/4: object info -->
+<div class="card">
 
   <actions></actions>
-  <cardtitle data-icon="icon-pumpstation-diesel" 
+  <cardtitle data-icon="icon-pumpstation-diesel"
              data-name="Rioolgemaal">
   </cardtitle>
-  <fullwidth></fullwidth>
-
-  <div class="card-details"
-       ng-click="activeObject.attrs.details = !activeObject.attrs.details">
-    <i class="fa fa-caret-right ready-to-rotate"
-       ng-class="{'rotate-ninety': activeObject.attrs.details}"></i>
-    <span ng-if="!activeObject.attrs.details"> Meer details</span>
-    <span ng-if="!!activeObject.attrs.details"> Minder details</span>
-  </div>
+  <cardattributes></cardattributes>
+  <detailswitch></detailswitch>
 
   <div class="hidden-details"
        ng-class="{'unhidden-details': activeObject.attrs.details}">
     <streetview></streetview>
   </div>
+</div>
 
+<!-- CARD 2/4: timeseries -->
+<div class="card">
   <timeseries></timeseries>
+</div>
+
+<!-- CARD 3/4: event -->
+<div class="card">
   <event></event>
+</div>
+
+<!-- CARD 4/4: eventaggregate -->
+<div class="card">
   <eventaggregate></eventaggregate>
 </div>
+

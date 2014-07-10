@@ -2,11 +2,18 @@
   <ul>
     <!-- <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li> -->
     <li class="fullscreen">
-      <a 
+      <a
         ng-click="toggleDetailmode()"
         title="Bekijk in detailmode">
         <i class="fa fa-lg fa-plus-square-o"></i>
       </a>
     </li>
+    <li class="fullscreen">
+      <a
+        onclick="$(this).closest('.card').remove()"
+        title="Sluit deze kaart">
+        <i class="fa fa-lg">&times;</i>
+      </a>
+    </li>
   </ul>
-</div> 
+</div>

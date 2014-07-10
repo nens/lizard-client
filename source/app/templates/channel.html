@@ -1,11 +1,11 @@
 <!-- Card for "channel" / "kanaal" -->
 <div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
-  
+
   <actions></actions>
   <cardtitle data-icon="icon-manhole"
              data-name="Kanaal">
   </cardtitle>
-  <fullwidth></fullwidth>
+  <cardattributes></cardattributes>
 
   <!-- NB: this original code is erronious, the key "Naam" doesn correspond to
        the attribute activeObject.attrs.length, amirite? :/
@@ -15,7 +15,7 @@
     <tr>
       <td>Type</td>
       <td><span ng-bind="activeObject.attrs.type | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
-    </tr>  
+    </tr>
     <tr>
       <td>Naam</td>
       <td><span ng-bind="activeObject.attrs.length | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>

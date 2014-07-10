@@ -2,52 +2,16 @@
 <!-- Card for "gesloten leiding" / "pipe" -->
 
   <actions></actions>
-  <!-- 
+  <!--
   HOW TO COUPLE THE IMG SRC TO A CSS CLASS, E.G. "icon-closed-channel"?
   <img src="/static/dist/images/geslotenleiding.png" class="img-circle">
   -->
   <cardtitle data-icon="icon-manhole"
              data-name="<% activeObject.attrs.type | pipeTypeOrEllipsis %>">
   </cardtitle>
+  <cardattributes></cardattributes>
+  <detailswitch></detailswitch>
 
-  <fullwidth></fullwidth>
-
-  <!--
-  <table class="fullwidth">
-    <tbody>
-    <tr>
-      <td class="fixed-width-card-table">Lengte</td>
-      <td>
-        <span ng-bind="activeObject.attrs.length | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
-        <span ng-if="!!activeObject.attrs.length"> m</span>
-      </td>
-    </tr>
-    <tr>
-      <td>Breedte</td>
-      <td>
-        <span ng-bind="activeObject.attrs.width | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
-        <span ng-if="!!activeObject.attrs.width"> m</span>
-      </td>  
-    </tr>    
-    <tr>
-      <td class="fixed-width-card-table">Vorm</td>
-      <td>
-        <span ng-bind="activeObject.attrs.shape | lookupPipeShape" class="ng-binding"></span>
-      </td> 
-    </tr>        
-      <tr>
-        <td class="fixed-width-card-table">Materiaal</td>
-        <td>
-          <span ng-bind="activeObject.attrs.material | pipeMaterialOrEllipsis" class="ng-binding"></span>
-        </td>            
-      </tr>
-  </tbody>
-  </table>
-  -->
-
-  <div class="card-details" ng-click="activeObject.attrs.details = !activeObject.attrs.details">
-    <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.attrs.details}"></i><span ng-if="!activeObject.attrs.details"> Meer details</span><span ng-if="!!activeObject.attrs.details"> Minder details</span>
-  </div>
   <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
     <table class="fullwidth">
       <tbody>
@@ -55,7 +19,7 @@
         <td class="fixed-width-card-table">Aantal bewoners</td>
         <td>
           <span ng-bind="activeObject.attrs.number_of_inhabitants | niceNumberOrEllipsis: 0" class="ng-binding"></span>
-        </td>            
+        </td>
       </tr>
         <tr>
             <td><abbr title="Start binnen onderkant buis">BOB start</abbr></td>
@@ -64,7 +28,7 @@
         <tr>
             <td><abbr title="Eind binnen onderkant buis">BOB eind</abbr></td>
             <td ng-bind="activeObject.attrs.invert_level_end_point | niceNumberOrEllipsis: 2" class="ng-binding"></td>
-        </tr>         
+        </tr>
       </tbody>
     </table>
     <streetview></streetview>

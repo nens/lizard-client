@@ -5,20 +5,9 @@
   <cardtitle data-icon="icon-bridge-fixed"
              data-name="Brug">
   </cardtitle>
-  <fullwidth></fullwidth>
+  <cardattributes></cardattributes>
+  <detailswitch></detailswitch>
 
-  <div class="card-details"
-       ng-click="activeObject.attrs.details = !activeObject.attrs.details">
-    <i class="fa fa-caret-right ready-to-rotate"
-       ng-class="{'rotate-ninety': activeObject.attrs.details}">
-    </i>
-    <span ng-if="!activeObject.attrs.details">
-      Meer details
-    </span>
-    <span ng-if="!!activeObject.attrs.details">
-      Minder details
-    </span>
-  </div>
   <div class="hidden-details"
       ng-class="{'unhidden-details': activeObject.attrs.details}">
     <streetview></streetview>
