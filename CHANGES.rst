@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 unreleased
 -----------
 
+- Events circles on map now don't increase with every redraw
+
 - Events with start and end as line in timeline
 
 - Cumulative rain for spatial extent in timeline
