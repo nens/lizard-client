@@ -108,8 +108,16 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
         .attr("cx", function (d) { return self._projection(d.geometry.coordinates)[0]; })
         .attr("cy", function (d) { return self._projection(d.geometry.coordinates)[1]; })
         .attr("r", function (d) {
-          // console.log(self.idExtractor(d))
-          return self.countOverlapEvents(self, d) * 3
+          var radius, overlaps;
+          overlaps = self.countOverlapEvents(self, d);
+          if (overlaps < 6) {
+            radius = 6;
+          } else if (overlaps > 25) {
+            radius = 25;
+          } else {
+            radius = overlaps;
+          }
+          return radius;
         });
         
       features.exit()
