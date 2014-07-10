@@ -91,7 +91,7 @@ app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
         var southWest = new L.LatLng(obj.boundingbox[0], obj.boundingbox[2]);
         var northEast = new L.LatLng(obj.boundingbox[1], obj.boundingbox[3]);
         var bounds = new L.LatLngBounds(southWest, northEast);
-        window.mapobj.fitBounds(bounds);
+        $scope.mapState.panZoom = bounds;
       } else {
         console.error('Oops, no boundingbox on this result - TODO: show a proper message instead of this console error...');
       }

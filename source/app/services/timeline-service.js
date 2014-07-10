@@ -309,7 +309,7 @@ app.factory("Timeline", [ function () {
       xScale.domain([new Date(start), new Date(end)]);
       xAxis = makeAxis(xScale, {orientation: "bottom", ticks: 5});
       this.updateElements();
-      drawAxes(svg, xAxis);
+      drawAxes(svg, xAxis, 500);
       this.addZoomListener();
     },
 
@@ -891,9 +891,16 @@ app.factory("Timeline", [ function () {
   /**
    * Draws the given axis in the given svg
    */
-  var drawAxes = function (svg, xAxis) {
-    svg.select('g').select('#xaxis')
-      .call(xAxis);
+  var drawAxes = function (svg, xAxis, duration) {
+    if (duration) {
+      svg.select('g').select('#xaxis')
+        .transition()
+        .duration(duration)
+        .call(xAxis);
+    } else {
+      svg.select('g').select('#xaxis')
+        .call(xAxis);
+    }
   };
 
   return Timeline;
