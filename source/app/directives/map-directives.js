@@ -17,7 +17,7 @@
  * 
  */
 
-app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $filter) {
+app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
 
   var elevationLayer;
   // UTF bookkeeping
@@ -257,7 +257,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
 
   return this;
 });
-app.directive('map', ['$location', '$timeout', 'UtilService', function ($location, $timeout, UtilService) {
+app.directive('map', ['$controller', 'UtilService', function ($controller, UtilService) {
 
   var link = function (scope, element, attrs, ctrl) {
     // Leaflet global variable to speed up vector layer, 
@@ -330,15 +330,7 @@ app.directive('map', ['$location', '$timeout', 'UtilService', function ($locatio
       }
     });
 
-    /**
-     * Update the url when the map has been moved
-     *
-     * Set holdRightThere so the url listener is not fired when the application
-     * changes the url. Precision of url is 5.
-     */
-
     scope.map.on('moveend', function () {
-
       // NOTE: Check whether a $digest is already happening before using apply
       if (!scope.$$phase) {
         scope.$apply(function () {
@@ -351,8 +343,6 @@ app.directive('map', ['$location', '$timeout', 'UtilService', function ($locatio
         scope.mapState.mapMoving = false;
         scope.mapState.bounds = scope.map.getBounds();
       }
-
-      scope.holdRightThere = true;
 
       // If elevation layer is active:
       if (scope.mapState.activeBaselayer === 3 && scope.tools.active === 'autorescale') {
@@ -422,6 +412,10 @@ app.directive('map', ['$location', '$timeout', 'UtilService', function ($locatio
       scope.mapState.baselayerChanged = Date.now();
       scope.box.type = ctrl.boxType(scope.mapState);
     };
+
+    // Instantiate the controller that updates the hash url after creating the map
+    // and all its listeners.
+    $controller('hashGetterSetter', {$scope: scope});
 
   };
 
