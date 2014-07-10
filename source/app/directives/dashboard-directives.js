@@ -30,7 +30,7 @@ app.controller('DashboardDirCtrl', ['$scope', '$timeout', '$http', '$sce', funct
 
 }]);
 
-app.directive('dashboard', ['$location', '$timeout', '$compile', function ($location, $timeout, $compile) {
+app.directive('dashboard', ['$timeout', '$compile', function ($timeout, $compile) {
 
   var link = function (scope, element, attrs, ctrl) {
   };
