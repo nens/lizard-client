@@ -273,6 +273,13 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
         zoomControl: false,
         zoom: 12
       });
+
+    /***
+      * Fade out (in) currently (in-)visible cards.
+      *
+      * @param {boolean} fadeIn - A boolean denoting whether we need to
+      * fade in or out.
+      */
     var fadeCurrentCards = function (fadeIn) {
       console.log('move ' + (fadeIn ? 'end': 'start'));
       d3.selectAll(".card")
