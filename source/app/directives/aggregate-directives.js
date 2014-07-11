@@ -61,14 +61,14 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
       };
 
       /**
-       * idExtractor is a generator function to extract id's from 
-       * the geoJson
+       * Generator function to extract id's from geoJson.
+       *
        * @param  {object} feature - geoJson feature
        * @return {string} id - String
        */
       idExtractor = function (feature) {
-        var id = feature.id.toString().split('.')[0] + 
-                + '_es_' + feature.properties.event_series;
+        var id = feature.id.toString().split('.')[0] +
+                  '_es_' + feature.properties.event_series;
         return id;
       };
 
@@ -79,7 +79,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * function should also be called when the data is changed.
        *
        * @parameter {object} data - Object
-       * @return {object} eventLayer - Object
+       * @return {object} eventLayer - Leaflet layer object
        */
       createEventLayer = function (data) {
 
@@ -88,6 +88,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
             projectPoint, reset;
 
         map = scope.map;
+
         // if d3eventlayer does not exist create.
         if (d3eventLayer === undefined) {
           d3eventLayer = L.nonTiledGeoJSONd3(data, {
@@ -96,20 +97,24 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
             class: 'circle event'
           });
         }
+
         map.addLayer(d3eventLayer);
         d3eventLayer._bindClick(eventClickHandler);
+
         // for backwards compatibility. 
         d3eventLayer.g = d3eventLayer._container.selectAll("g");
         d3eventLayer.svg = d3eventLayer.svg;
         d3eventLayer.reset = d3eventLayer._onMove;
-        return d3eventLayer
+
+        return d3eventLayer;
       };
 
       /**
        * Updates svg layer in leaflet's overlaypane with new data object
        *
-       * First call the reset function to give the svg enough space for the new data.
-       * Identify path elements with data objects via id and update, create or remove elements.
+       * First call the reset function to give the svg enough space for the 
+       * new data.Identify path elements with data objects via id and update,
+       * create or remove elements.
        *
        * @parameter: object eventLayer object to update
        * @parameter: data object
@@ -185,7 +190,8 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         if (scope.timeState.animation.enabled) {
           drawTimeEvents(scope.timeState.animation.start,
                          scope.timeState.at);
-          EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
+          EventService.countCurrentEvents(scope.mapState.eventTypes,
+                                          scope.events);
         }
       });
 

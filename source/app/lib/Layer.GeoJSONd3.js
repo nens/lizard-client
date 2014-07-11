@@ -24,15 +24,13 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     if (this.options.hasOwnProperty('idExtractor')) {
       this._idExtractor = this.options.idExtractor;
     } else {
-      this._idExtractor = function (feature) { return feature.id; }
+      this._idExtractor = function (feature) { return feature.id; };
     }
   },
 
   onAdd : function (map) {
 
     this._map = map;
-
-    // L.TileLayer.prototype.onAdd.call(this, map);
 
     var size = this._map.getPixelBounds().getSize();
 
@@ -50,7 +48,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     var self = this;
     this._path = d3.geo.path().projection(self._projection);
 
-    this.overlapEvents = {};
+    this.overlapLocations = {};
     this.g = this._renderG();
     this._refreshData();
 
@@ -60,12 +58,10 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     // add event listeners to update layer's position and size
     this._map.on('moveend', this._onMove, this);
     this._map.on('resize', this._onResize, this);
-    // this._map.on("viewreset", renderData);
-
-
   },
 
   _renderG: function () {
+    var self = this;
     return this._container.append("g")
       .attr("class", "geojsonnontile")
       .attr("transform", "translate(" + self._left + "," + self._top + ")");
@@ -85,76 +81,84 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
    */
   _refreshData: function () {
     var self = this;
-    self.overlapEvents = {};
+    self.overlapLocations = {};
     if (this.g.empty()) {
       this.g = this._renderG();
     }
     var features = this.g.selectAll("circle")
       .data(this._data.features, self.idExtractor);
 
-      features.enter()
-        .append("svg:circle")
-          .attr("stroke", "white")
-          .attr("class", function (feature) {
-            var classList = self.options.class;
-            if (self.options.hasOwnProperty('selectorPrefix')) {
-              classList += " " + self.options.selectorPrefix + self._idExtractor(feature);
-            }
-            return classList;
-          });
-
-      features
-        .attr("fill", function (d) { return d.properties.color; })
-        .attr("cx", function (d) { return self._projection(d.geometry.coordinates)[0]; })
-        .attr("cy", function (d) { return self._projection(d.geometry.coordinates)[1]; })
-        .attr("r", function (d) {
-          var radius, overlaps;
-          overlaps = self.countOverlapEvents(self, d);
-          if (overlaps < 6) {
-            radius = 6;
-          } else if (overlaps > 25) {
-            radius = 25;
-          } else {
-            radius = overlaps;
+    features.enter()
+      .append("svg:circle")
+        .attr("stroke-width", 1.8)
+        .attr("stroke", "white")
+        .attr("class", function (feature) {
+          var classList = self.options.class;
+          if (self.options.hasOwnProperty('selectorPrefix')) {
+            classList += " " + self.options.selectorPrefix
+                             + self._idExtractor(feature);
           }
-          return radius;
+          return classList;
         });
-        
-      features.exit()
-          .style("fill-opacity", 1e-6)
-          .remove();
-      if (self.options.applyStyle) {
-        self.options.applyStyle.call(this, features);
-      }
+
+    features
+      .attr("fill", function (d) { return d.properties.color; })
+      .attr("cx", function (d) {
+        return self._projection(d.geometry.coordinates)[0];
+      })
+      .attr("cy", function (d) {
+        return self._projection(d.geometry.coordinates)[1];
+      })
+      .attr("r", function (d) {
+        var radius, overlaps;
+        overlaps = self.countOverlapLocations(self, d);
+        // logarithmic scaling with a minimum radius of 6
+        radius = 6 + (5 * Math.log(overlaps));
+        return radius;
+      });
+
+    features.exit()
+        .style("fill-opacity", 1e-6)
+        .remove();
+    if (self.options.applyStyle) {
+      self.options.applyStyle.call(this, features);
+    }
   },
 
   // object to keep count of overlapping events
-  overlapEvents: {},
+  overlapLocations: {},
 
   /**
-   * Count events that are on the same location.
+   * Count overlapping locations.
    *
-   * Adds a lat + lon key to overlapEvents if not defined and sets
+   * Adds a lat + lon key to overlapLocations if not defined and sets
    * counter to 1. If key exists adds +1 to counter. Returns counter for
    * current key.
+   *
+   * TODO: add option to set precision of location?
    *
    * @parameter {object} d D3 data object, should have  a geometry property
    * @returns {integer} Count for current key
    *
    */
-  countOverlapEvents: function (self, d) {
+  countOverlapLocations: function (self, d) {
       var key = d.geometry.coordinates[0] + d.geometry.coordinates[1];
-      var coord = self.overlapEvents[key];
+      var coord = self.overlapLocations[key];
       if (coord === undefined) {
-        self.overlapEvents[key] = 1;
+        self.overlapLocations[key] = 1;
       } else {
-        self.overlapEvents[key] += 1;
+        self.overlapLocations[key] += 1;
       }
-      return self.overlapEvents[key];
-  },
+      return self.overlapLocations[key];
+    },
 
+  /**
+   * Clean up layer.
+   *
+   * reset overlapLocations, remove DOM elements, unbind events.
+   */
   onRemove: function (map) {
-    this.overlapEvents = {};
+    this.overlapLocations = {};
     d3.selectAll(".geojsonnontile").remove();
     this._container.remove();
     this._map.off('moveend', this._onMove, this);
@@ -182,9 +186,13 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     svg.selectAll("g")
       .attr("transform", "translate(" + this._left + "," + this._top + ")")
       .selectAll("circle")
-        .attr("cx", function (d) { return self._projection(d.geometry.coordinates)[0] })
-        .attr("cy", function (d) { return self._projection(d.geometry.coordinates)[1] });
-    },
+        .attr("cx", function (d) {
+          return self._projection(d.geometry.coordinates)[0];
+        })
+        .attr("cy", function (d) {
+          return self._projection(d.geometry.coordinates)[1];
+        });
+  },
 
   /**
    * Resize event function. Calls onmove to repostion and gets new pixel
@@ -198,23 +206,25 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
       .attr("height", size.y);
   },
 
-  getFeatureSelection: function (self) {
-    return this ._container.selectAll("g")
-          .selectAll("circle")
-            // .data(self._data.features, self.idExtractor);
+  /**
+   * Select all features in layer.
+   */
+  getFeatureSelection: function () {
+    return this._container.selectAll("g")
+          .selectAll("circle");
   },
 
   /**
-  * Click handler can be bound with this function.
-  * Works differently from Leaflet native, because it 
-  * not have a connection to UTFGrid like the TileLayers.
-  * It uses d3 selection and d3 onClick event.
-  *
-  */
+   * Bind click handler to layer.
+   *
+   * Works differently from Leaflet native, because it does not have a
+   * connection to UTFGrid like the TileLayers. It uses d3 selection and
+   * d3 onClick event.
+   *
+   */
   _bindClick: function (fn) {
     var self = this;
-    if (typeof(fn) == "function") {
-      // console.log('jasd')
+    if (typeof(fn) === "function") {
       var featureSelection = self.getFeatureSelection(self);
       self.clickHandler = fn;
       // NOTE: this is a d3 click.
