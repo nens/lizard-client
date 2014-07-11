@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 unreleased
 -----------
 
+- DRY up HTML for cards
+
 - Events with start and end as line in timeline
 
 - Cumulative rain for spatial extent in timeline
