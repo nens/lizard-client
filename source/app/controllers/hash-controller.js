@@ -4,13 +4,19 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
   function ($scope, hashSyncHelper) {
 
     // Only set url when user changed it or on pageload
-    var updateUrl = true;
+    // Watches are asynchronous, so they all need their
+    // own update boolean.
+    var updateBaseLayerUrl = true,
+      updateLocationUrl = true,
+      updateStartUrl = true,
+      updateEndUrl = true;
 
     /**
      * Set baselayer hash when activeBaselayer changed.
      */
     $scope.$watch('mapState.activeBaselayer', function (n, o) {
       if (n === o) { return true; }
+      updateBaseLayerUrl = false;
       setBaselayerUrl($scope.mapState.activeBaselayer);
     });
 
@@ -19,7 +25,7 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
      */
     $scope.$watch('mapState.moved', function (n, o) {
       if (n === o) { return true; }
-      updateUrl = false;
+      updateLocationUrl = false;
       setCoordinatesUrl();
     });
 
@@ -28,7 +34,7 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
      */
     $scope.$watch('timeState.start', function (n, o) {
       if (n === o) { return true; }
-      updateUrl = false;
+      updateStartUrl = false;
       setTimeStateUrl($scope.timeState.start, true);
     });
 
@@ -37,7 +43,7 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
      */
     $scope.$watch('timeState.end', function (n, o) {
       if (n === o) { return true; }
-      updateUrl = false;
+      updateEndUrl = false;
       setTimeStateUrl($scope.timeState.end, false);
     });
 
@@ -96,19 +102,18 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
      * resetting the updateUrl back to true
      */
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-      if (updateUrl) {
-        var hash = hashSyncHelper.getHash();
+      var hash = hashSyncHelper.getHash();
+      if (updateBaseLayerUrl) {
 
         var baselayerHash = hash.baselayer;
-        var locationHash = hash.location;
-        var startHash = hash.start;
-        var endHash = hash.end;
-
+        console.log(baselayerHash);
         if (baselayerHash !== undefined) {
           $scope.mapState.activeBaselayer = parseInt(baselayerHash, 10);
           $scope.mapState.changeBaselayer();
         }
-
+      }
+      if (updateLocationUrl) {
+        var locationHash = hash.location;
         if (locationHash !== undefined) {
           var latlonzoom = locationHash.split(',');
           if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
@@ -117,16 +122,23 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
             }
           }
         }
-
+      }
+      if (updateStartUrl) {
+        var startHash = hash.start;
         if (startHash !== undefined) {
           $scope.timeState.start = Date.parse(startHash);
         }
-
+      }
+      if (updateEndUrl) {
+        var endHash = hash.end;
         if (endHash !== undefined) {
           $scope.timeState.end = Date.parse(endHash);
         }
       }
-      updateUrl = true;
+      updateBaseLayerUrl = true;
+      updateLocationUrl = true;
+      updateStartUrl = true;
+      updateEndUrl = true;
     });
 
   }
