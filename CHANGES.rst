@@ -10,6 +10,10 @@ unreleased
 
 - Events circle radius is logarithmically scaled.
 
+- Include timeState in url hash
+
+- Events with start and end as line in timeline
+
 - Events circles on map now don't increase with every redraw.
 
 - Events with start and end as line in timeline.

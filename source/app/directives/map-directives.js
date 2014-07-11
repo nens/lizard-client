@@ -17,7 +17,7 @@
  *
  */
 
-app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $filter) {
+app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
 
   var elevationLayer;
   // UTF bookkeeping
@@ -257,7 +257,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
 
   return this;
 });
-app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', function ($location, $timeout, UtilService, hashSyncHelper) {
+app.directive('map', ['$controller', 'UtilService', function ($controller, UtilService) {
 
   var link = function (scope, element, attrs, ctrl) {
     // Leaflet global variable to peed up vector layer,
@@ -285,6 +285,7 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
         .transition(100)
         .style("opacity", (fadeIn ? 1 : 0.2));
     };
+    
     map.fitBounds(maxBounds);
     map.attributionControl.addAttribution(osmAttrib);
     map.attributionControl.setPrefix('');
@@ -345,44 +346,21 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
       }
     });
 
-    /**
-     * Update the url when the map has been moved
-     *
-     * Set holdRightThere so the url listener is not fired when the application
-     * changes the url. Precision of url is 5.
-     */
-
     scope.map.on('moveend', function () {
-
       fadeCurrentCards(true);
-
       // NOTE: Check whether a $digest is already happening before using apply
       if (!scope.$$phase) {
         scope.$apply(function () {
           scope.mapState.moved = Date.now();
+          scope.mapState.mapMoving = false;
           scope.mapState.bounds = scope.map.getBounds();
         });
       } else {
         scope.mapState.moved = Date.now();
+        scope.mapState.mapMoving = false;
         scope.mapState.bounds = scope.map.getBounds();
       }
 
-      scope.holdRightThere = true;
-      var COORD_PRECISION = 5;
-      var newHash = [
-        scope.map.getCenter().lat.toFixed(COORD_PRECISION),
-        scope.map.getCenter().lng.toFixed(COORD_PRECISION),
-        scope.map.getZoom()
-      ].join(',');
-      if (!scope.$$phase) {
-        scope.$apply(function () {
-          scope.mapState.mapMoving = false;
-          hashSyncHelper.setHash({'location': newHash});
-        });
-      } else {
-        scope.mapState.mapMoving = false;
-        hashSyncHelper.setHash({'location': newHash});
-      }
       // If elevation layer is active:
       if (scope.mapState.activeBaselayer === 3 && scope.tools.active === 'autorescale') {
         ctrl.rescaleElevation(scope.mapState.bounds);
@@ -402,44 +380,6 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
         });
       }
     });
-
-    /**
-     * Listener to update map view when user changes url
-     *
-     * HoldRightThere is set to true when the application updates
-     * the url. Then, this listener is fired but does nothing but
-     * resetting the holdRightThere back to false
-     */
-    scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-      if (!scope.holdRightThere || scope.holdRightThere === undefined) {
-        var hash = hashSyncHelper.getHash();
-
-        var baselayerHash = hash.bl;
-        var locationHash = hash.location;
-
-        if (baselayerHash !== undefined) {
-          scope.mapState.activeBaselayer = parseInt(baselayerHash, 10);
-          scope.mapState.changeBaselayer();
-        }
-
-        if (locationHash !== undefined) {
-          var latlonzoom = locationHash.split(',');
-          if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
-            if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
-              scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: true, animate: true});
-            }
-          }
-        }
-      }
-      scope.mapState.mapMoving = false;
-      scope.holdRightThere = false;
-    });
-
-    scope.$watch('mapState.activeBaselayer', function (n, o) {
-      if (n === o) { return true; }
-      hashSyncHelper.setHash({'bl': n}); // set baselayer in url by id
-    });
-
 
     /**
      * Watch to remove clicklayer when user clicks on omnibox close button.
@@ -498,6 +438,10 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
         ctrl.panZoomTo(scope.mapState.panZoom);
       }
     });
+
+    // Instantiate the controller that updates the hash url after creating the map
+    // and all its listeners.
+    $controller('hashGetterSetter', {$scope: scope});
 
   };
 
