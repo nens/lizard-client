@@ -4,17 +4,21 @@ Changelog of lizard-nxt client
 unreleased
 -----------
 
-- Events with start and end as line in timeline
+- Events circle radius is logarithmically scaled.
 
-- Cumulative rain for spatial extent in timeline
+- Events circles on map now don't increase with every redraw.
 
-- Event aggregate table in object cards (Performance Indicator)
+- Events with start and end as line in timeline.
 
-- Event aggregate table for eventseries (Performance Indicator)
+- Cumulative rain for spatial extent in timeline.
 
-- Simplified omnibox graphs
+- Event aggregate table in object cards (Performance Indicator).
 
-- Cumulative rain in card
+- Event aggregate table for eventseries (Performance Indicator).
+
+- Simplified omnibox graphs.
+
+- Cumulative rain in card.
 
 - Add rain animation.
 
