@@ -281,7 +281,6 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
       * fade in or out.
       */
     var fadeCurrentCards = function (fadeIn) {
-      console.log('move ' + (fadeIn ? 'end': 'start'));
       d3.selectAll(".card")
         .transition(100)
         .style("opacity", (fadeIn ? 1 : 0.2));
