@@ -47,6 +47,12 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
       setTimeStateUrl($scope.timeState.end, false);
     });
 
+    /**
+     * Updates hash with new time.
+     * 
+     * @param {int]} time  to set in hash in ms from epoch
+     * @param {boolean} start if true sets start else it sets end
+     */
     var setTimeStateUrl = function (time, start) {
       var date = new Date(time);
       var dateString = date.toDateString()
@@ -60,6 +66,10 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
       }
     };
 
+    /**
+     * Sets the coordinates in the hash with a precision
+     * of 4 decimals.
+     */
     var setCoordinatesUrl = function () {
       var COORD_PRECISION = 4;
       var newHash = [
@@ -76,10 +86,18 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
       }
     };
 
+    /**
+     * Updates activeBaselayer in hash.
+     * 
+     * @param {int} baselayerId id of active baselayer
+     */
     var setBaselayerUrl = function (baselayerId) {
       hashSyncHelper.setHash({'baselayer': baselayerId}); // set baselayer in url by id
     };
 
+    /**
+     * Sets up the hash at creation of the controller.
+     */
     (function setUrlHashWhenEmpty() {
       var hash = hashSyncHelper.getHash();
 
