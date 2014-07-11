@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 unreleased
 -----------
 
+- Include timeState in url hash
+
 - Events with start and end as line in timeline
 
 - Cumulative rain for spatial extent in timeline
