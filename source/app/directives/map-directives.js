@@ -6,15 +6,15 @@
  * Overview
  * ========
  *
- * Defines the map. Directive does all the watching and DOM binding, MapDirCtrl holds 
+ * Defines the map. Directive does all the watching and DOM binding, MapDirCtrl holds
  * all the testable logic. Ideally the directive has no logic and the MapDirCtrl
  * is independent of the rest of the application.
- * 
+ *
  * TODO:
  * * [ ] Move $scope out of MapDirCtrl
  * * [ ] Split up massive functions in MapDirCtrl
  * * [ ] Get rain stuff into the directive and the MapDirCtrl
- * 
+ *
  */
 
 app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $filter) {
@@ -91,7 +91,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
    * Makes a request to the raster server with the current bounds
    * Gets a new scale limit and refreshes the layer.
    *
-   * @param  {bounds object} bounds contains the corners of the current map view 
+   * @param  {bounds object} bounds contains the corners of the current map view
    */
   this.rescaleElevation = function (bounds) {
     // Make request to raster to get min and max of current bounds
@@ -142,7 +142,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
 
               // TODO: Must be implemented via ng watch, e.g.
               // $scope.mapState.gridLoaded. Also, refactor click layer directive.
-              
+
               //// Broadcast a load finished message to a.o. aggregate-directive
 
               $rootScope.$broadcast(layer.slug + 'GridLoaded');
@@ -260,7 +260,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
 app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', function ($location, $timeout, UtilService, hashSyncHelper) {
 
   var link = function (scope, element, attrs, ctrl) {
-    // Leaflet global variable to peed up vector layer, 
+    // Leaflet global variable to peed up vector layer,
     // see: http://leafletjs.com/reference.html#path-canvas
     window.L_PREFER_CANVAS = true;
     // instead of 'map' element here for testability
@@ -273,6 +273,18 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
         zoomControl: false,
         zoom: 12
       });
+
+    /***
+      * Fade out (in) currently (in-)visible cards.
+      *
+      * @param {boolean} fadeIn - A boolean denoting whether we need to
+      * fade in or out.
+      */
+    var fadeCurrentCards = function (fadeIn) {
+      d3.selectAll(".card")
+        .transition(100)
+        .style("opacity", (fadeIn ? 1 : 0.2));
+    };
     map.fitBounds(maxBounds);
     map.attributionControl.addAttribution(osmAttrib);
     map.attributionControl.setPrefix('');
@@ -321,6 +333,9 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
     });
 
     scope.map.on('movestart', function () {
+
+      fadeCurrentCards(false);
+
       if (!scope.$$phase) {
         scope.$apply(function () {
           scope.mapState.mapMoving = true;
@@ -338,6 +353,8 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
      */
 
     scope.map.on('moveend', function () {
+
+      fadeCurrentCards(true);
 
       // NOTE: Check whether a $digest is already happening before using apply
       if (!scope.$$phase) {
@@ -459,9 +476,9 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
      * There is only one active baselayer. If baselayer is given, this layer
      * becomes the activebaselayer and all baselayers are send to the
      * toggleBaselayer function to turn them on or off. If you set the
-     * activeBaselayer manually this function may also be called to update all 
-     * baselayers. 
-     * 
+     * activeBaselayer manually this function may also be called to update all
+     * baselayers.
+     *
      * @param {layer object} baselayer: the baselayer to activate
      */
     scope.mapState.changeBaselayer = function (baselayer) {
@@ -615,7 +632,7 @@ app.directive('rain', ["RasterService", "UtilService",
             // Tell the old overlay to go and get a new image.
             imageOverlays[previousFrame].setUrl(imageUrlBase +
               utcFormatter(new Date(nxtDate)));
-           
+
             previousFrame = overlayIndex;
             previousDate = currentDate;
             nxtDate += step;
@@ -630,7 +647,7 @@ app.directive('rain', ["RasterService", "UtilService",
       });
 
       /**
-       * Get new set of images when animation stops playing 
+       * Get new set of images when animation stops playing
        * (resets rasterLoading to 0)
        */
       scope.$watch('timeState.at', function (newVal, oldVal) {

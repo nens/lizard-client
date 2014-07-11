@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 unreleased
 -----------
 
+- DRY up HTML for cards
+
+- Events with start and end as line in timeline
+
 - Events circle radius is logarithmically scaled.
 
 - Events circles on map now don't increase with every redraw.

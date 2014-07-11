@@ -1,26 +1,27 @@
 <!-- Card for "channel" / "kanaal" -->
 <div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
-  <div class="actions">
-    <ul>
-      <li class="export"><a href="#" title="Exporteren"><i class="fa fa-share-square-o"></i></a></li>
-      <li class="fullscreen"><a href="#" title="Volledig beeld"><i class="fa fa-arrows-alt"></i></a></li>
-    </ul>
-  </div>
 
+  <actions></actions>
   <cardtitle data-icon="icon-manhole"
              data-name="Kanaal">
   </cardtitle>
+  <cardattributes></cardattributes>
+
+  <!-- NB: this original code is erronious, the key "Naam" doesn correspond to
+       the attribute activeObject.attrs.length, amirite? :/
 
   <table class="fullwidth">
     <tbody>
     <tr>
       <td>Type</td>
       <td><span ng-bind="activeObject.attrs.type | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
-    </tr>  
+    </tr>
     <tr>
       <td>Naam</td>
       <td><span ng-bind="activeObject.attrs.length | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
     </tr>
    </tbody>
   </table>
+  -->
+
 </div>
