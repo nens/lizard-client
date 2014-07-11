@@ -4,6 +4,11 @@
  * * Event
  * * Timeseries
  * * Streetview
+ * * Cardtitle
+ * * Event aggregation
+ * * Actions
+ * * Cardattributes
+ * * Detailswitch
  *
  */
 
@@ -57,3 +62,29 @@ app.directive('eventaggregate', [function () {
       templateUrl: 'templates/event-aggregate.html'
     };
 }]);
+
+/**
+ * Actions directive.
+ */
+app.directive('actions', [function () {
+  return {
+    restrict: 'E',
+    templateUrl: 'templates/actions.html'
+  }
+}]);
+
+app.directive('cardattributes', [function () {
+  return {
+    restrict: 'E',
+    templateUrl: 'templates/cardattributes.html'
+  }
+}]);
+
+app.directive('detailswitch', [function () {
+  return {
+    restrict: 'E',
+    templateUrl: 'templates/detailswitch.html'
+  }
+}])
+
+
