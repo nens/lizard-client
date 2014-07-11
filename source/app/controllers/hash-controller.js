@@ -43,7 +43,10 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
 
     var setTimeStateUrl = function (time, start) {
       var date = new Date(time);
-      var dateString = date.toDateString().split(' ').join('-');
+      var dateString = date.toDateString()
+        .slice(4) // Cut off day name
+        .split(' ') // Replace spaces by hyphens
+        .join('-');
       if (start) {
         hashSyncHelper.setHash({'start': dateString});
       } else {
