@@ -490,6 +490,15 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
       scope.box.type = ctrl.boxType(scope.mapState);
     };
 
+    scope.$watch('mapState.panZoom', function (n, o) {
+      if (n === o) { return true; }
+      if (scope.mapState.panZoom.isValid()) {
+        ctrl.fitBounds(scope.mapState.panZoom);
+      } else {
+        ctrl.panZoomTo(scope.mapState.panZoom);
+      }
+    });
+
   };
 
   return {

@@ -8,15 +8,21 @@ unreleased
 
 - Events with start and end as line in timeline
 
-- Cumulative rain for spatial extent in timeline
+- Events circle radius is logarithmically scaled.
 
-- Event aggregate table in object cards (Performance Indicator)
+- Events circles on map now don't increase with every redraw.
 
-- Event aggregate table for eventseries (Performance Indicator)
+- Events with start and end as line in timeline.
 
-- Simplified omnibox graphs
+- Cumulative rain for spatial extent in timeline.
 
-- Cumulative rain in card
+- Event aggregate table in object cards (Performance Indicator).
+
+- Event aggregate table for eventseries (Performance Indicator).
+
+- Simplified omnibox graphs.
+
+- Cumulative rain in card.
 
 - Add rain animation.
 
