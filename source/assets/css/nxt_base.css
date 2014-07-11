@@ -906,9 +906,9 @@ ul.list-inline li.baselayer-icon label{
             filter: drop-shadow( -5px -5px 5px #000 );*/
 }
 
-.selected{
+/*.selected{
     opacity: 0.8;
-}
+}*/
 
 .extent{
     fill: rgba(30,30,30,0.2);
@@ -1263,7 +1263,8 @@ a {
 /*
  * d3 vector layers css
  */
-.circle {
+.circle,
+.clickable {
   cursor: pointer;
 }
 
