@@ -7,9 +7,7 @@ describe('Testing raster requests directive', function() {
 
   var $compile, $rootScope, $httpBackend;
 
-  beforeEach(module('lizard-nxt',
-    'templates-main',
-    'graph'));
+  beforeEach(module('lizard-nxt'));
   beforeEach(inject(function (_$compile_, _$rootScope_, _$httpBackend_) {
     $compile = _$compile_;
     $rootScope = _$rootScope_;
@@ -25,27 +23,23 @@ describe('Testing raster requests directive', function() {
   *       quite henous.
   */
   it('should know what kind of aggregation method it should use', function() {
-    var element = angular.element('<div ng-controller="MasterCtrl"><raster-aggregate></raster-aggregate></div>');
+    var element = angular.element('<raster-aggregate></raster-aggregate>');
     element = $compile(element)($rootScope);
     var scope = element.scope();
-    scope.data = [0,4];
+    scope.data = [0, 4];
 
-    var mapelement = angular.element('<map></map>');
-    mapelement = $compile(mapelement)(scope);
-    var mapscope = element.scope();
+    scope.mapState = {
+      bounds: {
+        getWest: function () { return 4; },
+        getNorth: function () { return 5; },
+        getSouth: function () { return 6; },
+        getEast: function () { return 7; },
+      }
+    };
 
-    var map = mapscope.map;
+    scope.getRasterData = function () {return true; };
+    scope.tools = {active: 'landuse'};
 
-    // this normally registers on map move and on initiating map
-    // mocked here.
-    scope.mapState.bounds = map.getBounds();
-    scope.mapState.geom_wkt = "POLYGON(("
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth() + ", "
-              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getSouth() + ", "
-              + scope.mapState.bounds.getEast() + " " + scope.mapState.bounds.getNorth() + ", "
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getNorth() + ", "
-              + scope.mapState.bounds.getWest() + " " + scope.mapState.bounds.getSouth()
-              + "))";
     scope.box = {
       type: 'landuse',
       content: {
@@ -116,53 +110,23 @@ describe('Testing raster requests directive', function() {
     expect(cardtitle).toEqual('\n  ');
   });
 
-  // TODO: maybe strip the request string to check coordinates with WKT
-  it('should request data based on viewport', function() {
-    var element = angular.element('<div ng-controller="MasterCtrl"><raster-aggregate></raster-aggregate></div>');
-    element = $compile(element)($rootScope);
-    var scope = element.scope();
-    scope.data = [0,4];
-
-    scope.mapState = {};
-    var mapelement = angular.element('<map></map>');
-    mapelement = $compile(mapelement)(scope);
-    var mapscope = element.scope();
-
-    var map = mapscope.map;
-    // this normally registers on map move and on initiating map
-    // mocked here.
-    scope.mapState.bounds = map.getBounds();
-
-    var map = mapscope.map;
-    // this normally registers on map move and on initiating map
-    // mocked here.
-    scope.box = {
-      type: 'landuse',
-      content: {
-        agg: ''
-      }
-    };
-    $httpBackend.when("GET",
-      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205))&srs=EPSG:4326&agg=counts")
-    .respond('');
-    scope.$digest();
-    expect(map.getBounds()).toEqual(scope.mapState.bounds);
-  });
-
   it('should draw data based on request', function() {
     var element = angular.element('<div ng-controller="MasterCtrl"><raster-aggregate></raster-aggregate></div>');
     element = $compile(element)($rootScope);
     var scope = element.scope();
     scope.data = [0,4];
-    scope.mapState = {};
-    var mapelement = angular.element('<map></map>');
-    mapelement = $compile(mapelement)(scope);
-    var mapscope = element.scope();
-    var map = mapscope.map;
+
+    scope.mapState = {
+      bounds: {
+        getWest: function () { return 4; },
+        getNorth: function () { return 5; },
+        getSouth: function () { return 6; },
+        getEast: function () { return 7; },
+      }
+    };
+
     // this normally registers on map move and on initiating map
     // mocked here.
-    scope.mapState.bounds = map.getBounds();
-
     scope.box = {
       type: 'landuse',
       content: {
@@ -170,7 +134,7 @@ describe('Testing raster requests directive', function() {
       }
     };
     $httpBackend.when("GET", 
-      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205))&srs=EPSG:4326&agg=counts")
+      "api/v1/rasters/?raster_names=landuse&geom=POLYGON((4 6, 7 6, 7 5, 4 5, 4 6))&srs=EPSG:4326&agg=counts")
       .respond('[{"color": "#000000", "data": 256786, "label": 0},'
      + '{"color": "#e7e3e7", "data": 5089, "label": 241},'
      + '{"color": "#a5ff73", "data": 73, "label": "41 - LGN - Agrarisch Gras"},'
