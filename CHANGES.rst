@@ -1,8 +1,8 @@
 Changelog of lizard-nxt client
-===================================================
+==============================
 
 unreleased
------------
+----------
 
 - DRY up HTML for cards
 
