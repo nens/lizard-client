@@ -1,70 +1,13 @@
 <div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
 <!-- Card for "put" / "manhole" -->
-    <div class="actions">
-      <ul>
-        <!-- <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li> -->
-        <li class="fullscreen">
-          <a 
-            ng-click="toggleDetailmode()"
-            title="Bekijk in detailmode">
-            <i class="fa fa-lg fa-plus-square-o"></i>
-          </a>
-        </li>
-<!--         <li class="favorite">
-          <a
-            ng-click="bookmarkItem()" 
-            title="Voeg toe aan favorieten">
-            <i class="fa fa-lg fa-bookmark"></i>
-          </a>
-        </li> -->
-        <!-- <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li> -->
-      </ul>
-    </div> <!-- end actions -->
 
+  <actions></actions>
   <cardtitle data-icon="icon-manhole"
              data-name="Put">
   </cardtitle>
+  <cardattributes></cardattributes>
+  <detailswitch></detailswitch>
 
-  <table class="fullwidth">
-    <tbody>
-    <tr>
-      <td class="fixed-width-card-table"><abbr title="Maaiveld volgens beheergegevens">Maaiveld</abbr></td>
-      <td>
-        <span ng-bind="activeObject.attrs.surface_level | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
-        <span ng-if="!!activeObject.attrs.surface_level"> m
-        <span class="wspace-zero">NAP</span></span>
-      </td>
-    </tr>
-    <tr>
-      <td class="fixed-width-card-table">Breedte</td>
-      <td>
-        <span ng-bind="activeObject.attrs.width | niceNumberOrEllipsis: 2" class="ng-binding wspace-minus"></span>
-        <span ng-if="!!activeObject.attrs.width"> m</span>
-      </td> 
-    </tr>
-    <tr>
-      <td class="fixed-width-card-table">Vorm</td>
-      <td ng-bind="activeObject.attrs.shape | lookupManholeShape"></td>
-    </tr>
-    <tr>
-      <td class="fixed-width-card-table">Putbodem</td>
-      <td>
-        <span ng-bind="activeObject.attrs.bottom_level | niceNumberOrEllipsis: 2" class="wspace-minus ng-binding"></span>
-        <span ng-if="!!activeObject.attrs.bottom_level"> m
-        <span class="wspace-zero">NAP</span></span>
-      </td>            
-    </tr>
-    <tr>
-      <td class="fixed-width-card-table">Materiaal</td>
-      <td ng-bind="activeObject.attrs.material | lookupManholeMaterial"></td>
-    </tr>
-    </tr>         
-  </tbody>
-  </table>
-
-  <div class="card-details" ng-click="activeObject.attrs.details = !activeObject.attrs.details">
-    <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.attrs.details}"></i><span ng-if="!activeObject.attrs.details"> Meer details</span><span ng-if="!!activeObject.attrs.details"> Minder details</span>
-  </div>
   <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
     <streetview></streetview>
   </div>

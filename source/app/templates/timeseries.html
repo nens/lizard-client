@@ -1,6 +1,9 @@
 <div class="timeseries-container"
      ng-class="{hidden: !activeObject.hasTimeseries}" >
   <h4>Metingen</h4>
+  <i class="fa fa-lg close-ancestor-card"
+     onclick="$(this).closest('.card').remove()"
+    >&times;</i>
   <div class="input-prepend">
     <select class="timeseries"
             ng-model="activeObject.selectedTimeseries"
@@ -8,7 +11,7 @@
     </select>
   </div>
   <graph line data="activeObject.selectedTimeseries.data"
-         ylabel="selectedTimeseries.name" 
+         ylabel="selectedTimeseries.name"
          xlabel="n">
    </graph>
 </div>

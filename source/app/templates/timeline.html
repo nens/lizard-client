@@ -16,8 +16,7 @@
 
   <div class="bovenbalk">
     <div class="btn-group" >
-      <a href="#" 
-         ng-click="timeState.enableAnimation()" 
+      <a ng-click="timeState.enableAnimation()" 
          class="extra-padding timeline-button"
          rel="tooltip" 
          data-toggle="tooltip" 
@@ -25,8 +24,7 @@
          title="" 
          data-original-title="Tijdlijnselectie">
         <i ng-class="{'fa-fw fa fa-crop': !timeState.animation.enabled, 'fa-fw fa fa-arrows-h': timeState.animation.enabled }"></i></a>
-      <a href="#" 
-         ng-click="timeState.playPauseAnimation()" 
+      <a ng-click="timeState.playPauseAnimation()" 
          class="extra-padding timeline-button" 
          ng-class="{'active': timeState.animation.playing}"
          rel="tooltip" 
@@ -35,8 +33,7 @@
          title="" 
          data-original-title="Afspelen/pauzeren">
         <i ng-class="{'fa-fw fa fa-play': !timeState.animation.playing, 'fa-fw fa fa-pause active': timeState.animation.playing }"></i></a>
-      <a href="#" 
-         ng-mousedown="timeState.animation.toggleAnimateFastForward(true)" 
+      <a ng-mousedown="timeState.animation.toggleAnimateFastForward(true)" 
          ng-mouseup="timeState.animation.toggleAnimateFastForward(false)" 
          class="extra-padding timeline-button timeline-button-active" 
          ng-class="{'active': timeState.animation.playing}"
@@ -46,8 +43,7 @@
          title="" 
          data-original-title="Voorwaards versnellen">
         <i class="fa-fw fa fa-forward"></i></a>
-      <a href="#" 
-         ng-mousedown="timeState.animation.stepBack()" 
+      <a ng-mousedown="timeState.animation.stepBack()" 
          class="extra-padding timeline-button" 
          ng-class="{'active': timeState.animation.playing}"
          rel="tooltip" 
@@ -56,8 +52,7 @@
          title="" 
          data-original-title="Stap terug in tijd">
         <i class="fa fa-step-backward"></i></a>
-      <a href="#" 
-         ng-mousedown="timeState.zoomToNow()"
+      <a ng-mousedown="timeState.zoomToNow()"
          class="extra-padding timeline-button" 
          rel="tooltip" 
          data-toggle="tooltip" 

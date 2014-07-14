@@ -6,18 +6,18 @@
  * Overview
  * ========
  *
- * Defines the map. Directive does all the watching and DOM binding, MapDirCtrl holds 
+ * Defines the map. Directive does all the watching and DOM binding, MapDirCtrl holds
  * all the testable logic. Ideally the directive has no logic and the MapDirCtrl
  * is independent of the rest of the application.
- * 
+ *
  * TODO:
  * * [ ] Move $scope out of MapDirCtrl
  * * [ ] Split up massive functions in MapDirCtrl
  * * [ ] Get rain stuff into the directive and the MapDirCtrl
- * 
+ *
  */
 
-app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $filter) {
+app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
 
   var elevationLayer;
   // UTF bookkeeping
@@ -91,7 +91,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
    * Makes a request to the raster server with the current bounds
    * Gets a new scale limit and refreshes the layer.
    *
-   * @param  {bounds object} bounds contains the corners of the current map view 
+   * @param  {bounds object} bounds contains the corners of the current map view
    */
   this.rescaleElevation = function (bounds) {
     // Make request to raster to get min and max of current bounds
@@ -142,7 +142,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
 
               // TODO: Must be implemented via ng watch, e.g.
               // $scope.mapState.gridLoaded. Also, refactor click layer directive.
-              
+
               //// Broadcast a load finished message to a.o. aggregate-directive
 
               $rootScope.$broadcast(layer.slug + 'GridLoaded');
@@ -257,10 +257,10 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $timeout, $http, $fil
 
   return this;
 });
-app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', function ($location, $timeout, UtilService, hashSyncHelper) {
+app.directive('map', ['$controller', 'UtilService', function ($controller, UtilService) {
 
   var link = function (scope, element, attrs, ctrl) {
-    // Leaflet global variable to peed up vector layer, 
+    // Leaflet global variable to peed up vector layer,
     // see: http://leafletjs.com/reference.html#path-canvas
     window.L_PREFER_CANVAS = true;
     // instead of 'map' element here for testability
@@ -273,6 +273,19 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
         zoomControl: false,
         zoom: 12
       });
+
+    /***
+      * Fade out (in) currently (in-)visible cards.
+      *
+      * @param {boolean} fadeIn - A boolean denoting whether we need to
+      * fade in or out.
+      */
+    var fadeCurrentCards = function (fadeIn) {
+      d3.selectAll(".card")
+        .transition(100)
+        .style("opacity", (fadeIn ? 1 : 0.2));
+    };
+    
     map.fitBounds(maxBounds);
     map.attributionControl.addAttribution(osmAttrib);
     map.attributionControl.setPrefix('');
@@ -321,6 +334,9 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
     });
 
     scope.map.on('movestart', function () {
+
+      fadeCurrentCards(false);
+
       if (!scope.$$phase) {
         scope.$apply(function () {
           scope.mapState.mapMoving = true;
@@ -330,42 +346,21 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
       }
     });
 
-    /**
-     * Update the url when the map has been moved
-     *
-     * Set holdRightThere so the url listener is not fired when the application
-     * changes the url. Precision of url is 5.
-     */
-
     scope.map.on('moveend', function () {
-
+      fadeCurrentCards(true);
       // NOTE: Check whether a $digest is already happening before using apply
       if (!scope.$$phase) {
         scope.$apply(function () {
           scope.mapState.moved = Date.now();
+          scope.mapState.mapMoving = false;
           scope.mapState.bounds = scope.map.getBounds();
         });
       } else {
         scope.mapState.moved = Date.now();
+        scope.mapState.mapMoving = false;
         scope.mapState.bounds = scope.map.getBounds();
       }
 
-      scope.holdRightThere = true;
-      var COORD_PRECISION = 5;
-      var newHash = [
-        scope.map.getCenter().lat.toFixed(COORD_PRECISION),
-        scope.map.getCenter().lng.toFixed(COORD_PRECISION),
-        scope.map.getZoom()
-      ].join(',');
-      if (!scope.$$phase) {
-        scope.$apply(function () {
-          scope.mapState.mapMoving = false;
-          hashSyncHelper.setHash({'location': newHash});
-        });
-      } else {
-        scope.mapState.mapMoving = false;
-        hashSyncHelper.setHash({'location': newHash});
-      }
       // If elevation layer is active:
       if (scope.mapState.activeBaselayer === 3 && scope.tools.active === 'autorescale') {
         ctrl.rescaleElevation(scope.mapState.bounds);
@@ -385,44 +380,6 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
         });
       }
     });
-
-    /**
-     * Listener to update map view when user changes url
-     *
-     * HoldRightThere is set to true when the application updates
-     * the url. Then, this listener is fired but does nothing but
-     * resetting the holdRightThere back to false
-     */
-    scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-      if (!scope.holdRightThere || scope.holdRightThere === undefined) {
-        var hash = hashSyncHelper.getHash();
-
-        var baselayerHash = hash.bl;
-        var locationHash = hash.location;
-
-        if (baselayerHash !== undefined) {
-          scope.mapState.activeBaselayer = parseInt(baselayerHash, 10);
-          scope.mapState.changeBaselayer();
-        }
-
-        if (locationHash !== undefined) {
-          var latlonzoom = locationHash.split(',');
-          if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
-            if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
-              scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: true, animate: true});
-            }
-          }
-        }
-      }
-      scope.mapState.mapMoving = false;
-      scope.holdRightThere = false;
-    });
-
-    scope.$watch('mapState.activeBaselayer', function (n, o) {
-      if (n === o) { return true; }
-      hashSyncHelper.setHash({'bl': n}); // set baselayer in url by id
-    });
-
 
     /**
      * Watch to remove clicklayer when user clicks on omnibox close button.
@@ -459,9 +416,9 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
      * There is only one active baselayer. If baselayer is given, this layer
      * becomes the activebaselayer and all baselayers are send to the
      * toggleBaselayer function to turn them on or off. If you set the
-     * activeBaselayer manually this function may also be called to update all 
-     * baselayers. 
-     * 
+     * activeBaselayer manually this function may also be called to update all
+     * baselayers.
+     *
      * @param {layer object} baselayer: the baselayer to activate
      */
     scope.mapState.changeBaselayer = function (baselayer) {
@@ -481,6 +438,10 @@ app.directive('map', ['$location', '$timeout', 'UtilService', 'hashSyncHelper', 
         ctrl.panZoomTo(scope.mapState.panZoom);
       }
     });
+
+    // Instantiate the controller that updates the hash url after creating the map
+    // and all its listeners.
+    $controller('hashGetterSetter', {$scope: scope});
 
   };
 
@@ -615,7 +576,7 @@ app.directive('rain', ["RasterService", "UtilService",
             // Tell the old overlay to go and get a new image.
             imageOverlays[previousFrame].setUrl(imageUrlBase +
               utcFormatter(new Date(nxtDate)));
-           
+
             previousFrame = overlayIndex;
             previousDate = currentDate;
             nxtDate += step;
@@ -630,7 +591,7 @@ app.directive('rain', ["RasterService", "UtilService",
       });
 
       /**
-       * Get new set of images when animation stops playing 
+       * Get new set of images when animation stops playing
        * (resets rasterLoading to 0)
        */
       scope.$watch('timeState.at', function (newVal, oldVal) {

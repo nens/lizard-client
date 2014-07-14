@@ -1,50 +1,13 @@
 <div ng-class="mapState.mapMoving ? 'card-hidden' : ''" class="card">
 <!-- Card for "stuw" / "weir" -->
-    <div class="actions">
-      <ul>
-        <!-- <li class="export"><a href="#" title="Data van deze infocard exporteren"><i class="fa fa-share-square-o"></i></a></li> -->
-        <li class="fullscreen">
-          <a 
-            ng-click="toggleDetailmode()"
-            title="Bekijk in detailmode">
-            <i class="fa fa-lg fa-plus-square-o"></i>
-          </a>
-        </li>
-<!--         <li class="favorite">
-          <a
-            ng-click="bookmarkItem()" 
-            title="Voeg toe aan favorieten">
-            <i class="fa fa-lg fa-bookmark"></i>
-          </a>
-        </li> -->
-        <!-- <li class="metadata"><a href="#" title="Bekijk metadata"><i class="fa fa-question-circle"></i></a></li> -->
-      </ul>
-    </div> <!-- end actions -->
 
-  <cardtitle data-icon="icon-weir" 
+  <actions></actions>
+  <cardtitle data-icon="icon-weir"
              data-name="Stuw">
   </cardtitle>
-  
-  <table class="fullwidth">
-    <tbody>
-    <tr>
-        <td class="fixed-width-card-table">Type</td>
-        <td><span ng-bind="activeObject.attrs.type" class="ng-binding">...</span></td>
-    </tr>  
-    <tr>
-        <td class="fixed-width-card-table">Breedte</td>
-        <td><span ng-bind="activeObject.attrs.breedte | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
-    </tr>
-    <tr>
-        <td class="fixed-width-card-table">Hoogte</td>
-        <td><span ng-bind="activeObject.attrs.height | niceNumberOrEllipsis: 2" class="ng-binding">...</span></td>
-    </tr>  
-  </tbody>
-  </table>
+  <cardattributes></cardattributes>
+  <detailswitch></detailswitch>
 
-  <div class="card-details" ng-click="activeObject.attrs.details = !activeObject.attrs.details">
-    <i class="fa fa-caret-right ready-to-rotate" ng-class="{'rotate-ninety': activeObject.attrs.details}"></i><span ng-if="!activeObject.attrs.details"> Meer details</span><span ng-if="!!activeObject.attrs.details"> Minder details</span>
-  </div>
   <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
     <streetview></streetview>
   </div>
