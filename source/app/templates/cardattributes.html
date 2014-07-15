@@ -1,6 +1,6 @@
 <table class="fullwidth">
   <tbody>
-    <tr ng-repeat="obj in pointObject.wantedAttrs[box.type].rows">
+    <tr ng-repeat="obj in pointObject.attrs.wanted[box.type].rows">
       <td class="fixed-width-card-table"><% obj.keyName %></td>
       <td
         ng-show="pointObject.attrs.data[obj.attrName]">

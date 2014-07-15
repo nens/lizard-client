@@ -325,7 +325,7 @@ app.controller("MasterCtrl",
     attrs: {
       active: false,
       data: [],
-      wantedAttrs: CabinetService.wantedAttrs
+      wanted: CabinetService.wantedAttrs
     },
     rain: {
       active: false,
@@ -343,8 +343,6 @@ app.controller("MasterCtrl",
       active: false,
       data: []
     }
-    // hasTimeseries: false,
-    // hasEvents: false,
   };
 
   $scope.$watch('pointObject.changed', function (newVal, oldVal) {
