@@ -7,27 +7,27 @@
   <img src="/static/dist/images/geslotenleiding.png" class="img-circle">
   -->
   <cardtitle data-icon="icon-manhole"
-             data-name="<% activeObject.attrs.type | pipeTypeOrEllipsis %>">
+             data-name="<% pointObject.attrs.type | pipeTypeOrEllipsis %>">
   </cardtitle>
   <cardattributes></cardattributes>
   <detailswitch></detailswitch>
 
-  <div class="hidden-details" ng-class="{'unhidden-details': activeObject.attrs.details}">
+  <div class="hidden-details" ng-class="{'unhidden-details': pointObject.attrs.details}">
     <table class="fullwidth">
       <tbody>
       <tr>
         <td class="fixed-width-card-table">Aantal bewoners</td>
         <td>
-          <span ng-bind="activeObject.attrs.number_of_inhabitants | niceNumberOrEllipsis: 0" class="ng-binding"></span>
+          <span ng-bind="pointObject.attrs.number_of_inhabitants | niceNumberOrEllipsis: 0" class="ng-binding"></span>
         </td>
       </tr>
         <tr>
             <td><abbr title="Start binnen onderkant buis">BOB start</abbr></td>
-            <td ng-bind="activeObject.attrs.invert_level_start_point | niceNumberOrEllipsis: 2" class="ng-binding"></td>
+            <td ng-bind="pointObject.attrs.invert_level_start_point | niceNumberOrEllipsis: 2" class="ng-binding"></td>
         </tr>
         <tr>
             <td><abbr title="Eind binnen onderkant buis">BOB eind</abbr></td>
-            <td ng-bind="activeObject.attrs.invert_level_end_point | niceNumberOrEllipsis: 2" class="ng-binding"></td>
+            <td ng-bind="pointObject.attrs.invert_level_end_point | niceNumberOrEllipsis: 2" class="ng-binding"></td>
         </tr>
       </tbody>
     </table>

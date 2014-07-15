@@ -306,9 +306,9 @@ app.directive('clickLayer', ["$q", function ($q) {
         if (response.data === null && waterchainLayer.isLoading) {
           getDataFromUTFAsynchronous(e);
         } else {
-          // Resolve with response and update activeObject
+          // Resolve with response and update pointObject
           scope.deferred.resolve(response);
-          extendDataToActiveObject(response);
+          extendDataTopointObject(response);
         }
       } else {
         getDataFromUTFAsynchronous(e);
@@ -343,23 +343,23 @@ app.directive('clickLayer', ["$q", function ($q) {
         // it into an $apply call so that the model changes are properly observed.
         scope.$apply(function () {
           scope.deferred.resolve(response);
-          extendDataToActiveObject(response);
+          extendDataTopointObject(response);
         });
       });
     }
 
-    var extendDataToActiveObject = function (data) {
+    var extendDataTopointObject = function (data) {
 
       // Return directly if no data is returned from the UTFgrid!
       if (!data.data) { return; }
 
-      scope.activeObject.attrs = {};
-      angular.extend(scope.activeObject.attrs, data.data);
+      scope.pointObject.attrs = {};
+      angular.extend(scope.pointObject.attrs, data.data);
       if (data.data) {
         var geom = JSON.parse(data.data.geom);
-        scope.activeObject.latlng = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
+        scope.pointObject.latlng = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
       }
-      scope.activeObject.changed = !scope.activeObject.changed;
+      scope.pointObject.changed = !scope.pointObject.changed;
     };
 
     /**
