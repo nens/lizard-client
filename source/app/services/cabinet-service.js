@@ -29,28 +29,28 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Type",
           attrName: "type",
-          ngBindValue: "activeObject.attrs.type",
+          ngBindValue: "pointObject.attrs.type",
           valueSuffix: ""
         },
         {
           keyName: "Breedte",
           attrName: "width",
           ngBindValue:
-            "activeObject.attrs.width | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.width | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Lengte",
           attrName: "length",
           ngBindValue:
-            "activeObject.attrs.length | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.length | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Hoogte",
           attrName: "height",
           ngBindValue:
-            "activeObject.attrs.height | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.height | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         }
       ]
@@ -60,13 +60,13 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Type",
           attrName: "type",
-          ngBindValue: "activeObject.attrs.type | niceNumberOrEllipsis: 2",
+          ngBindValue: "pointObject.attrs.type | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Lengte",
           attrName: "length",
-          ngBindValue: "activeObject.attrs.length | niceNumberOrEllipsis: 2",
+          ngBindValue: "pointObject.attrs.length | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         }
       ]
@@ -77,7 +77,7 @@ app.service("CabinetService", ["$q", "Restangular",
           keyName: "Type",
           attrName: "type",
           ngBindValue:
-            "activeObject.attrs.type | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.type | niceNumberOrEllipsis: 2",
           valueSuffix: ""
         }
       ]
@@ -88,21 +88,21 @@ app.service("CabinetService", ["$q", "Restangular",
           keyName: "Type",
           attrName: "type",
           ngBindValue:
-            "activeObject.attrs.type | truncate: 20",
+            "pointObject.attrs.type | truncate: 20",
           valueSuffix: ""
         },
         {
           keyName: "Lengte",
           attrName: "length",
           ngBindValue:
-            "activeObject.attrs.length | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.length | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Breedte",
           attrName: "width",
           ngBindValue:
-            "activeObject.attrs.width | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.width | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         }
       ]
@@ -113,35 +113,35 @@ app.service("CabinetService", ["$q", "Restangular",
           keyName: "Maaiveld",
           attrName: "surface_level",
           ngBindValue:
-            "activeObject.attrs.surface_level | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.surface_level | niceNumberOrEllipsis: 2",
           valueSuffix: " m NAP"
         },
         {
           keyName: "Breedte",
           attrName: "width",
           ngBindValue:
-            "activeObject.attrs.width | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.width | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Vorm",
           attrName: "shape",
           ngBindValue:
-            "activeObject.attrs.shape | lookupManholeShape",
+            "pointObject.attrs.shape | lookupManholeShape",
           valueSuffix: ""
         },
         {
           keyName: "Putbodem",
           attrName: "bottom_level",
           ngBindValue:
-            "activeObject.attrs.bottom_level | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.bottom_level | niceNumberOrEllipsis: 2",
           valueSuffix: " m NAP"
         },
         {
           keyName: "Materiaal",
           attrName: "material",
           ngBindValue:
-            "activeObject.attrs.material | lookupManholeMaterial",
+            "pointObject.attrs.material | lookupManholeMaterial",
           valueSuffix: ""
         }
       ],
@@ -151,25 +151,25 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Naam",
           attrName: "name",
-          ngBindValue: "activeObject.attrs.name",
+          ngBindValue: "pointObject.attrs.name",
           valueSuffix: ""
         },
         {
           keyName: "Regio",
           attrName: "region",
-          ngBindValue: "activeObject.attrs.region",
+          ngBindValue: "pointObject.attrs.region",
           valueSuffix: ""
         },
         {
           keyName: "Categorie",
           attrName: "category",
-          ngBindValue: "activeObject.attrs.category",
+          ngBindValue: "pointObject.attrs.category",
           valueSuffix: ""
         },
         {
           keyName: "Frequentie",
           attrName: "frequency",
-          ngBindValue: "activeObject.attrs.frequency",
+          ngBindValue: "pointObject.attrs.frequency",
           valueSuffix: ""
         }
       ]
@@ -191,7 +191,7 @@ app.service("CabinetService", ["$q", "Restangular",
           keyName: "Maaiveld",
           attrName: "open_water_level_average",
           ngBindValue:
-            "activeObject.attrs.open_water_level_average | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.open_water_level_average | niceNumberOrEllipsis: 2",
           valueSuffix: " m NAP"
         }
       ]
@@ -201,13 +201,13 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Breedte",
           attrName: "width",
-          ngBindValue: "activeObject.attrs.width | niceNumberOrEllipsis: 2",
+          ngBindValue: "pointObject.attrs.width | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Overstorthoogte",
           attrName: "crest_level",
-          ngBindValue: "activeObject.attrs.crest_level | niceNumberOrEllipsis: 2",
+          ngBindValue: "pointObject.attrs.crest_level | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         }
       ]
@@ -218,28 +218,28 @@ app.service("CabinetService", ["$q", "Restangular",
           keyName: "Lengte",
           attrName: "length",
           ngBindValue:
-            "activeObject.attrs.length | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.length | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Breedte",
           attrName: "width",
           ngBindValue:
-            "activeObject.attrs.width | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.width | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Vorm",
           attrName: "shape",
           ngBindValue:
-            "activeObject.attrs.shape | lookupPipeShape",
+            "pointObject.attrs.shape | lookupPipeShape",
           valueSuffix: ""
         },
         {
           keyName: "Materiaal",
           attrName: "material",
           ngBindValue:
-            "activeObject.attrs.material | pipeMaterialOrEllipsis",
+            "pointObject.attrs.material | pipeMaterialOrEllipsis",
           valueSuffix: ""
         }
       ]
@@ -249,28 +249,28 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Naam",
           attrName: "name",
-          ngBindValue: "activeObject.attrs.name",
+          ngBindValue: "pointObject.attrs.name",
           valueSuffix: ""
         },
         {
           keyName: "Aanslagpeil",
           attrName: "start_level",
           ngBindValue:
-            "activeObject.attrs.start_level | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.start_level | niceNumberOrEllipsis: 2",
           valueSuffix: " m boven NAP"
         },
         {
           keyName: "Afslagpeil",
           attrName: "stop_level",
           ngBindValue:
-            "activeObject.attrs.stop_level | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.stop_level | niceNumberOrEllipsis: 2",
           valueSuffix: " m boven NAP"
         },
         {
           keyName: "Capaciteit",
           attrName: "capacity",
           ngBindValue:
-            "activeObject.attrs.capacity | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.capacity | niceNumberOrEllipsis: 2",
           valueSuffix: " l/s"
         }
       ]
@@ -280,21 +280,21 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Naam",
           attrName: "name",
-          ngBindValue: "activeObject.attrs.name",
+          ngBindValue: "pointObject.attrs.name",
           valueSuffix: ""
         },
         {
           keyName: "Aanslagpeil",
           attrName: "start_level",
           ngBindValue:
-            "activeObject.attrs.start_level | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.start_level | niceNumberOrEllipsis: 2",
           valueSuffix: " m boven NAP"
         },
         {
           keyName: "Capaciteit",
           attrName: "capacity",
           ngBindValue:
-            "activeObject.attrs.capacity | niceNumberOrEllipsis: 2",
+            "pointObject.attrs.capacity | niceNumberOrEllipsis: 2",
           valueSuffix: " l/s"
         }
       ]
@@ -304,19 +304,19 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Type",
           attrName: "type",
-          ngBindValue: "activeObject.attrs.type",
+          ngBindValue: "pointObject.attrs.type",
           valueSuffix: ""
         },
         {
           keyName: "Breedte",
           attrName: "width", // NB! this was set to "breedte" in the original code, which is supposedly erronious (?)
-          ngBindValue: "activeObject.attrs.width | niceNumberOrEllipsis: 2", // see commnent above
+          ngBindValue: "pointObject.attrs.width | niceNumberOrEllipsis: 2", // see commnent above
           valueSuffix: " m"
         },
         {
           keyName: "Hoogte",
           attrName: "height",
-          ngBindValue: "activeObject.attrs.height | niceNumberOrEllipsis: 2",
+          ngBindValue: "pointObject.attrs.height | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         }
       ]
