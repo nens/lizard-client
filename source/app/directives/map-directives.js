@@ -314,9 +314,11 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
       // NOTE: Check whether a $digest is already happening before using apply
       if (!scope.$$phase) {
         scope.$apply(function () {
+          scope.box.type = 'activePoint';
           scope.mapState.here = e.latlng;
         });
       } else {
+        scope.box.type = 'activePoint';
         scope.mapState.here = e.latlng;
       }
     });

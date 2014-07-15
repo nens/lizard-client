@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('activePoint', ["$scope", "$filter", "CabinetService",
+app.controller('ActivePoint', ["$scope", "$filter", "CabinetService",
     "RasterService", "EventService", "TimeseriesService", "UtilService",
     "ngTableParams",
   function ($scope,
