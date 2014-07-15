@@ -1,16 +1,16 @@
 <div class="timeseries-container"
-     ng-class="{hidden: !pointObject.hasTimeseries}" >
+     ng-class="{hidden: !activeObject.hasTimeseries}" >
   <h4>Metingen</h4>
   <i class="fa fa-lg close-ancestor-card"
      onclick="$(this).closest('.card').remove()"
     >&times;</i>
   <div class="input-prepend">
     <select class="timeseries"
-            ng-model="pointObject.selectedTimeseries"
-            ng-options="series as series.name for series in pointObject.timeseries">
+            ng-model="activeObject.selectedTimeseries"
+            ng-options="series as series.name for series in activeObject.timeseries">
     </select>
   </div>
-  <graph line data="pointObject.selectedTimeseries.data"
+  <graph line data="activeObject.selectedTimeseries.data"
          ylabel="selectedTimeseries.name"
          xlabel="n">
    </graph>

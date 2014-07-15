@@ -311,15 +311,15 @@ app.controller("MasterCtrl",
   // END EVENTS
 
 
-  // pointObject part
+  // ActiveObject part
 
   /**
-   * pointObject is the object which is currently active in the
+   * ActiveObject is the object which is currently active in the
    * application. Commonly set by a click on the utf grid. The
-   * pointObject may have associated events and timeseries which
+   * activeObject may have associated events and timeseries which
    * may be requested from the server.
    */
-  $scope.pointObject = {
+  $scope.activeObject = {
     changed: true, // To trigger the watch
     details: false, // To display details in the card
     attrs: undefined, // To store object data
@@ -331,34 +331,34 @@ app.controller("MasterCtrl",
     wantedAttrs: CabinetService.wantedAttrs
   };
 
-  $scope.$watch('pointObject.changed', function (newVal, oldVal) {
+  $scope.$watch('activeObject.changed', function (newVal, oldVal) {
     if (newVal === oldVal) { return; }
-    $scope.pointObject.hasTimeries = false;
-    $scope.pointObject.hasEvents = false;
-    $scope.box.content.object_type = $scope.pointObject.attrs.entity_name;
-    $scope.box.content.id = $scope.pointObject.attrs.id;
-    $scope.box.content.data = $scope.pointObject.attrs;
-    $scope.box.type = $scope.pointObject.attrs.entity_name;
+    $scope.activeObject.hasTimeries = false;
+    $scope.activeObject.hasEvents = false;
+    $scope.box.content.object_type = $scope.activeObject.attrs.entity_name;
+    $scope.box.content.id = $scope.activeObject.attrs.id;
+    $scope.box.content.data = $scope.activeObject.attrs;
+    $scope.box.type = $scope.activeObject.attrs.entity_name;
     // Get events
-    EventService.getEvents({object: $scope.pointObject.attrs.entity_name +
+    EventService.getEvents({object: $scope.activeObject.attrs.entity_name +
                                     '$' +
-                                    $scope.pointObject.attrs.id})
+                                    $scope.activeObject.attrs.id})
       .then(function (response) {
-        $scope.pointObject.events = [];
+        $scope.activeObject.events = [];
         angular.forEach(response.features, function (feature) {
           feature.properties.geometry = feature.geometry;
-          $scope.pointObject.events.push(feature.properties);
+          $scope.activeObject.events.push(feature.properties);
         });
-        if ($scope.pointObject.events.length > 0) {
+        if ($scope.activeObject.events.length > 0) {
           EventService.addColor($scope.events);
-          $scope.pointObject.hasEvents = true;
-          $scope.pointObject.eventTableParams.reload();
+          $scope.activeObject.hasEvents = true;
+          $scope.activeObject.eventTableParams.reload();
         }
       });
     // Get timeseries
-    $scope.pointObject.timeseries = TimeseriesService.getRandomTimeseries();
-    $scope.pointObject.selectedTimeseries = $scope.pointObject.timeseries[0];
-    $scope.pointObject.hasTimeseries = true;
+    $scope.activeObject.timeseries = TimeseriesService.getRandomTimeseries();
+    $scope.activeObject.selectedTimeseries = $scope.activeObject.timeseries[0];
+    $scope.activeObject.hasTimeseries = true;
     // Get rain
     var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, window.innerWidth);
     var callback = function (response) {
@@ -369,7 +369,7 @@ app.controller("MasterCtrl",
     RasterService.getRain(
       new Date($scope.timeState.start),
       new Date($scope.timeState.end),
-      $scope.pointObject.latlng,
+      $scope.activeObject.latlng,
       aggWindow
     ).then(callback);
   });
@@ -380,7 +380,7 @@ app.controller("MasterCtrl",
    * Controls how ngTable behaves. Don't forget to call the reload() method
    * when you refresh the data (like in an API call).
    */
-  $scope.pointObject.eventTableParams = new ngTableParams({
+  $scope.activeObject.eventTableParams = new ngTableParams({
     page: 1,
     count: 10,
     sorting: {
@@ -390,9 +390,9 @@ app.controller("MasterCtrl",
     total: 0,
     groupBy: 'category',
     getData: function ($defer, params) {
-      params.total($scope.pointObject.events.length);
-      params.count($scope.pointObject.events.length);
-      var data = $scope.pointObject.events;
+      params.total($scope.activeObject.events.length);
+      params.count($scope.activeObject.events.length);
+      var data = $scope.activeObject.events;
       var orderedData = params.sorting() ?
           $filter('orderBy')(data, params.orderBy()) :
           data;
@@ -401,7 +401,7 @@ app.controller("MasterCtrl",
     },
   });
 
-  // END pointObject part
+  // END activeObject part
 
   //TODO: move to raster-service ?
 

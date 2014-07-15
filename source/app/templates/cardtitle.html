@@ -2,12 +2,12 @@
 
   <i id="icon-holder" class="is-set-dynamically"></i>
   
-  <!--<i class="<% pointObject.attrs.getIcon() %>"></i>-->
+  <!--<i class="<% activeObject.attrs.getIcon() %>"></i>-->
 
   <span id="title-holder" class="title-text">...</span>&nbsp;
-  <span ng-if="pointObject.attrs.code">(</span>
-  <span class="truncateme ng-binding" ng-bind="pointObject.attrs.code"></span>
-  <span ng-if="pointObject.attrs.code">)</span>
+  <span ng-if="activeObject.attrs.code">(</span>
+  <span class="truncateme ng-binding" ng-bind="activeObject.attrs.code"></span>
+  <span ng-if="activeObject.attrs.code">)</span>
   
   <script type="text/javascript" id="setter">
     var cardTitle = $("#setter").closest("cardtitle");
