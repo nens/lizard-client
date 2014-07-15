@@ -456,15 +456,17 @@ app.controller("MasterCtrl",
       })
       .error(function (data) {
         //TODO: implement error function to return no data + message
-        if (!timeout) {
+        if (JS_DEBUG && !timeout) {
           console.info("failed getting profile data from server");
         }
       });
   };
   $scope.format_rastercurve = function (data) {
-    var formatted = [];
-    for (var i in data[0]) {
-      var datarow = [data[0][i], data[1][i]];
+
+    var i, datarow, formatted = [];
+
+    for (i in data[0]) {
+      datarow = [data[0][i], data[1][i]];
       formatted.push(datarow);
     }
     return formatted;
