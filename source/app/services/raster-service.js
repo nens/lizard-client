@@ -65,11 +65,75 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService",
       });
   };
 
+
+  /**
+   * Get raster data from server.
+   * NOTE: maybe add a callback as argument?
+   */
+  var formatRasterCurve = function (data) {
+    var formatted = [];
+    for (var i in data[0]) {
+      var datarow = [data[0][i], data[1][i]];
+      formatted.push(datarow);
+    }
+    return formatted;
+  };
+  
+  var getRasterData = function (raster_names, linestring_wkt, srs, agg, timeout) {
+    // build url
+    // NOTE: first part hardcoded
+    var url = "api/v1/rasters/";
+    url += "?raster_names=" + raster_names;
+    url += "&geom=" + linestring_wkt;
+    url += "&srs=" + srs;
+    if (agg !== undefined) {
+      url += "&agg=" + agg;
+    }
+    var config = {
+      method: 'GET',
+      url: url
+    };
+    if (timeout) {
+      config.timeout = $scope.mapState.timeout.promise;
+    }
+    // get aggregated raster data from serverr
+    $http(config)
+      .success(function (data) {
+        if (agg === 'curve') {
+          $scope.data = formatRasterCurve(data);
+          $scope.box.content = {
+            yLabel: 'hoogte [mNAP]',
+            xLabel: '[%]'
+          };
+        } else if (agg === 'counts') {
+          $scope.data = data;
+        } else if (raster_names === 'elevation' && agg === undefined) {
+          $scope.box.type = "profile";
+          $scope.box.content = {
+            data: data,
+            yLabel: 'hoogte [mNAP]',
+            xLabel: 'afstand [m]'
+          };
+        } else {
+          $scope.box.content = {
+            data: data
+          };
+        }
+      })
+      .error(function (data) {
+        //TODO: implement error function to return no data + message
+        if (!timeout) {
+          console.info("failed getting profile data from server");
+        }
+      });
+  };
+
   return {
     rainInfo: rainInfo,
     getIntensityData: getIntensityData,
     setIntensityData: setIntensityData,
-    getRain: getRain
+    getRain: getRain,
+    getRasterData: getRasterData,
   };
 
 }]);
