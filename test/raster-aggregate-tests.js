@@ -12,7 +12,7 @@ describe('Testing raster directive', function() {
     $compile = _$compile_;
     $rootScope = _$rootScope_;
     $httpBackend = _$httpBackend_;
-    element = angular.element('<div ng-controller="MasterCtrl">'
+    element = angular.element('<div ng-controller="RasterAggregateCtrl">'
       + '</div>');
     element = $compile(element)($rootScope);
     scope = element.scope();

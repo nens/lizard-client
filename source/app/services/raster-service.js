@@ -81,18 +81,13 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService",
     srs = (options.srs) ? options.srs : 'EPSG:4326';
     agg = (options.agg) ? options.agg : '';
 
-    if (geom.lat && geom.lng) {
-      // geom is a latLng object
-      wkt = "POINT(" + geom.lng + " " + geom.lat + ")";
-    } else {
-      wkt = "POLYGON(("
-            + geom.getWest() + " " + geom.getSouth() + ", "
-            + geom.getEast() + " " + geom.getSouth() + ", "
-            + geom.getEast() + " " + geom.getNorth() + ", "
-            + geom.getWest() + " " + geom.getNorth() + ", "
-            + geom.getWest() + " " + geom.getSouth()
-            + "))";
-    }
+    wkt = "POLYGON(("
+          + geom.getWest() + " " + geom.getSouth() + ", "
+          + geom.getEast() + " " + geom.getSouth() + ", "
+          + geom.getEast() + " " + geom.getNorth() + ", "
+          + geom.getWest() + " " + geom.getNorth() + ", "
+          + geom.getWest() + " " + geom.getSouth()
+          + "))";
 
     var rasterService = (options.q) ? CabinetService.raster(options.q) : CabinetService.raster();
     return rasterService.get({
