@@ -56,14 +56,6 @@ app.controller('RainAggregate', ["$scope", "$q", "UtilService",
     }
   });
 
-  // Rain model
-  $scope.pointObject.rain = {
-    start: undefined,
-    stop: undefined,
-    aggWindow: RasterService.rainInfo.timeResolution,
-    data: undefined
-  };
-
   var getRainForBounds = function (bounds, start, stop) {
     var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);  // width of timeline
     var rain = RasterService.getRain(new Date(start), new Date(stop),

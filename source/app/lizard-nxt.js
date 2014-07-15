@@ -322,6 +322,12 @@ app.controller("MasterCtrl",
     changed: true, // To trigger the watch
     details: false, // To display details in the card
     attrs: undefined, // To store object data
+    rain: { // To store rain data
+      start: undefined,
+      stop: undefined,
+      aggWindow: RasterService.rainInfo.timeResolution,
+      data: undefined
+    },
     hasTimeseries: false,
     timeseries: [],
     hasEvents: false,
