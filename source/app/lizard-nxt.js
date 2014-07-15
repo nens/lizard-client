@@ -314,7 +314,7 @@ app.controller("MasterCtrl",
   // pointObject part
 
   /**
-   * pointObject is the object which is holds all data of a point
+   * pointObject is the object which holds all data of a point
    * in space. It is updated after a users click. Commonly set by
    * a click on the utf grid. The pointObject may have associated 
    * events and timeseries which may be requested from the server.
@@ -376,9 +376,9 @@ app.controller("MasterCtrl",
     // Get rain
     var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, window.innerWidth);
     var callback = function (response) {
-      $scope.rain.data = response;
-      $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
-      $scope.rain.start = $scope.rain.data[0][0];
+      $scope.pointObject.rain.data = response;
+      $scope.rain.end = $scope.pointObject.rain.data[$scope.pointObject.rain.data.length - 1][0];
+      $scope.rain.start = $scope.pointObject.rain.data[0][0];
     };
     RasterService.getRain(
       new Date($scope.timeState.start),
