@@ -564,14 +564,6 @@ app.controller("MasterCtrl",
   };
 
   // RAIN
-
-  /**
-   * Initial state
-   */
-  $scope.pointObject.rain = {
-    enabled: false
-  };
-
   /**
    * Switch rain tool on or off.
    *
