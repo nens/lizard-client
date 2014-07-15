@@ -8,12 +8,12 @@ app.controller('DashboardDirCtrl', ['$scope', '$timeout', '$http', '$sce', funct
    * persists/keeps its configuration for this user/organisation using the API
    *
    * TODO: good candidate for ui-router.
-   * 
+   *
    */
 
   $scope.tabs = [];
-  $scope.image = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Maand.png";
-  $scope.table = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Maand_tabel.png";
+  //$scope.image = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Maand.png";
+  //$scope.table = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Maand_tabel.png";
 
   $scope.togglePeriod = function (period) {
     if (period === 'Month') {
@@ -27,7 +27,6 @@ app.controller('DashboardDirCtrl', ['$scope', '$timeout', '$http', '$sce', funct
       $scope.table = "http://redcube.nl/~freelink/lizard-nxt/Onderhoud_Kwartaal_tabel.png";
     }
   };
-
 }]);
 
 app.directive('dashboard', ['$timeout', '$compile', function ($timeout, $compile) {
