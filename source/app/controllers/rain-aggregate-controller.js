@@ -6,7 +6,7 @@ app.controller('RainAggregate', ["$scope", "$q", "UtilService",
 
   $scope.$watch('mapState.here', function (n, o) {
     if (n === o) {return true; }
-    $scope.rain.rainClick($scope.mapState.here);
+    $scope.activeObject.rain.rainClick($scope.mapState.here);
   });
 
   /**
@@ -57,7 +57,7 @@ app.controller('RainAggregate', ["$scope", "$q", "UtilService",
   });
 
   // Rain model
-  $scope.rain = {
+  $scope.activeObject.rain = {
     start: undefined,
     stop: undefined,
     aggWindow: RasterService.rainInfo.timeResolution,
@@ -80,11 +80,11 @@ app.controller('RainAggregate', ["$scope", "$q", "UtilService",
   // var firstTimeStart;
   // $scope.$watch('timeState.start', function (n, o) {
   //   if (n === o || $scope.box.type !== 'rain') { return true; }
-  //   if ($scope.timeState.start < $scope.rain.start - $scope.rain.aggWindow) {
+  //   if ($scope.timeState.start < $scope.activeObject.rain.start - $scope.activeObject.rain.aggWindow) {
   //     if (firstTimeStart === undefined) {
   //       getMoreRain(true);
   //       firstTimeStart = true;
-  //     } else if ($scope.timeState.start < $scope.rain.start + 10 * $scope.rain.aggWindow
+  //     } else if ($scope.timeState.start < $scope.activeObject.rain.start + 10 * $scope.activeObject.rain.aggWindow
   //         && !holdYourFire) {
   //       holdYourFire = true;
   //       getMoreRain(true);
@@ -101,11 +101,11 @@ app.controller('RainAggregate', ["$scope", "$q", "UtilService",
   // var firstTimeEnd;
   // $scope.$watch('timeState.end', function (n, o) {
   //   if (n === o || $scope.box.type !== 'rain') { return true; }
-  //   if ($scope.timeState.end > $scope.rain.end + 2 * $scope.rain.aggWindow) {
+  //   if ($scope.timeState.end > $scope.activeObject.rain.end + 2 * $scope.activeObject.rain.aggWindow) {
   //     if (firstTimeEnd === undefined) {
   //       getMoreRain();
   //       firstTimeEnd = true;
-  //     } else if ($scope.timeState.end > $scope.rain.end - 10 * $scope.rain.aggWindow
+  //     } else if ($scope.timeState.end > $scope.activeObject.rain.end - 10 * $scope.activeObject.rain.aggWindow
   //         && !holdYourFire) {
   //       holdYourFire = true;
   //       getMoreRain();
@@ -120,7 +120,7 @@ app.controller('RainAggregate', ["$scope", "$q", "UtilService",
   // End todo
 
   /**
-   * Adds rain data to current $scope.rain.data object.
+   * Adds rain data to current $scope.activeObject.rain.data object.
    * 
    * @param  {boolean} starty if true adds data to the front,
    *                          else to the back of the data element
@@ -131,35 +131,35 @@ app.controller('RainAggregate', ["$scope", "$q", "UtilService",
     var aggWindow = RasterService.getAggWindow($scope.timeState.start,
                                                $scope.timeState.end,
                                                272);  // graph is 272 px wide
-    if (aggWindow !== $scope.rain.aggWindow) {
-      $scope.rain.aggWindow = aggWindow;
+    if (aggWindow !== $scope.activeObject.rain.aggWindow) {
+      $scope.activeObject.rain.aggWindow = aggWindow;
       start = $scope.timeState.start;
       stop = $scope.timeState.end;
       callback = function (response) {
-        $scope.rain.data = response;
-        $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
-        $scope.rain.start = $scope.rain.data[0][0];
+        $scope.activeObject.rain.data = response;
+        $scope.activeObject.rain.end = $scope.activeObject.rain.data[$scope.activeObject.rain.data.length - 1][0];
+        $scope.activeObject.rain.start = $scope.activeObject.rain.data[0][0];
       };
     } else if (starty) {
-      start = $scope.rain.start - buffer * $scope.rain.aggWindow;
-      stop = $scope.rain.start;
+      start = $scope.activeObject.rain.start - buffer * $scope.activeObject.rain.aggWindow;
+      stop = $scope.activeObject.rain.start;
       callback = function (response) {
-        $scope.rain.data = response.concat($scope.rain.data);
-        $scope.rain.start = start;
+        $scope.activeObject.rain.data = response.concat($scope.activeObject.rain.data);
+        $scope.activeObject.rain.start = start;
       };
     } else {
-      stop = $scope.rain.end + buffer * $scope.rain.aggWindow;
-      start = $scope.rain.end;
+      stop = $scope.activeObject.rain.end + buffer * $scope.activeObject.rain.aggWindow;
+      start = $scope.activeObject.rain.end;
       callback = function (response) {
-        $scope.rain.data = $scope.rain.data.concat(response);
-        $scope.rain.end = stop;
+        $scope.activeObject.rain.data = $scope.activeObject.rain.data.concat(response);
+        $scope.activeObject.rain.end = stop;
       };
     }
     RasterService.getRain(
       new Date(start),
       new Date(stop),
-      $scope.rain.latLng,
-      $scope.rain.aggWindow
+      $scope.activeObject.rain.latLng,
+      $scope.activeObject.rain.aggWindow
     ).then(callback);
   };
 
@@ -168,26 +168,26 @@ app.controller('RainAggregate', ["$scope", "$q", "UtilService",
    * 
    * @param  {latlng object} e leaflet location object
    */
-  $scope.rain.rainClick = function (latlng) {
+  $scope.activeObject.rain.rainClick = function (latlng) {
     var stop = new Date($scope.timeState.end);
     var start = new Date($scope.timeState.start);
-    $scope.rain.latLng = latlng;
-    $scope.rain.aggWindow = UtilService.getAggWindow($scope.timeState.start,
+    $scope.activeObject.rain.latLng = latlng;
+    $scope.activeObject.rain.aggWindow = UtilService.getAggWindow($scope.timeState.start,
                                                      $scope.timeState.end,
                                                      272);  // graph is 272 px wide
-    RasterService.getRain(start, stop, $scope.rain.latLng, $scope.rain.aggWindow)
+    RasterService.getRain(start, stop, $scope.activeObject.rain.latLng, $scope.activeObject.rain.aggWindow)
       .then(function (response) {
-        $scope.rain.data = response;
-        $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
-        $scope.rain.start = $scope.rain.data[0][0];
+        $scope.activeObject.rain.data = response;
+        $scope.activeObject.rain.end = $scope.activeObject.rain.data[$scope.activeObject.rain.data.length - 1][0];
+        $scope.activeObject.rain.start = $scope.activeObject.rain.data[0][0];
       }
     ).then(function () {
       // TODO: this is now an extra call to get rain recurrence time
       // refactor to one call
-      RasterService.getRain(start, stop, $scope.rain.latLng,
-                            $scope.rain.aggWindow, 'rrc')
+      RasterService.getRain(start, stop, $scope.activeObject.rain.latLng,
+                            $scope.activeObject.rain.aggWindow, 'rrc')
         .then(function (response) {
-          $scope.rain.recurrenceTime = response;
+          $scope.activeObject.rain.recurrenceTime = response;
         }
       );
     });
