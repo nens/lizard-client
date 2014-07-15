@@ -319,11 +319,6 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
       }
     });
 
-    scope.map.on('zoomend', function () {
-
-      UtilService.getZoomlevelLabel(scope.map.getZoom());
-    });
-
     scope.map.on('movestart', function () {
 
       fadeCurrentCards(false);
