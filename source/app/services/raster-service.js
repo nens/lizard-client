@@ -67,65 +67,40 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService",
 
 
   /**
-   * Get raster data from server.
-   * NOTE: maybe add a callback as argument?
+   * getRasterData gets different types of raster data from
+   * the `/api/v1/raster` endpoint.
+   * @param  {string} rasterNames - String with requested raster
+   * @param  {object} geom        - Object -> Leaflet.Bounds
+   * @param  {object} options     - Optional object with extra params
+   * @return {promise}  Restangular.get promise
    */
-  var formatRasterCurve = function (data) {
-    var formatted = [];
-    for (var i in data[0]) {
-      var datarow = [data[0][i], data[1][i]];
-      formatted.push(datarow);
+  var getRasterData = function (rasterNames, geom, options) {
+
+    var wkt, srs, agg;
+
+    srs = (options.srs) ? options.srs : 'EPSG:4326';
+    agg = (options.agg) ? options.agg : '';
+
+    if (geom.lat && geom.lng) {
+      // geom is a latLng object
+      wkt = "POINT(" + geom.lng + " " + geom.lat + ")";
+    } else {
+      wkt = "POLYGON(("
+            + geom.getWest() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getSouth()
+            + "))";
     }
-    return formatted;
-  };
-  
-  var getRasterData = function (raster_names, linestring_wkt, srs, agg, timeout) {
-    // build url
-    // NOTE: first part hardcoded
-    var url = "api/v1/rasters/";
-    url += "?raster_names=" + raster_names;
-    url += "&geom=" + linestring_wkt;
-    url += "&srs=" + srs;
-    if (agg !== undefined) {
-      url += "&agg=" + agg;
-    }
-    var config = {
-      method: 'GET',
-      url: url
-    };
-    if (timeout) {
-      config.timeout = $scope.mapState.timeout.promise;
-    }
-    // get aggregated raster data from serverr
-    $http(config)
-      .success(function (data) {
-        if (agg === 'curve') {
-          $scope.data = formatRasterCurve(data);
-          $scope.box.content = {
-            yLabel: 'hoogte [mNAP]',
-            xLabel: '[%]'
-          };
-        } else if (agg === 'counts') {
-          $scope.data = data;
-        } else if (raster_names === 'elevation' && agg === undefined) {
-          $scope.box.type = "profile";
-          $scope.box.content = {
-            data: data,
-            yLabel: 'hoogte [mNAP]',
-            xLabel: 'afstand [m]'
-          };
-        } else {
-          $scope.box.content = {
-            data: data
-          };
-        }
-      })
-      .error(function (data) {
-        //TODO: implement error function to return no data + message
-        if (!timeout) {
-          console.info("failed getting profile data from server");
-        }
-      });
+
+    var rasterService = (options.q) ? CabinetService.raster(options.q) : CabinetService.raster();
+    return rasterService.get({
+      raster_names: rasterNames,
+      geom: wkt,
+      srs: srs,
+      agg: agg
+    });
   };
 
   return {
@@ -133,7 +108,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService",
     getIntensityData: getIntensityData,
     setIntensityData: setIntensityData,
     getRain: getRain,
-    getRasterData: getRasterData,
+    getRasterData: getRasterData
   };
 
 }]);
