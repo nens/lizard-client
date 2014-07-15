@@ -314,10 +314,10 @@ app.controller("MasterCtrl",
   // pointObject part
 
   /**
-   * pointObject is the object which is currently active in the
-   * application. Commonly set by a click on the utf grid. The
-   * pointObject may have associated events and timeseries which
-   * may be requested from the server.
+   * pointObject is the object which is holds all data of a point
+   * in space. It is updated after a users click. Commonly set by
+   * a click on the utf grid. The pointObject may have associated 
+   * events and timeseries which may be requested from the server.
    */
   $scope.pointObject = {
     changed: true, // To trigger the watch
