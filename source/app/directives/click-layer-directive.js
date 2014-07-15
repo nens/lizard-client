@@ -353,8 +353,8 @@ app.directive('clickLayer', ["$q", function ($q) {
       // Return directly if no data is returned from the UTFgrid!
       if (!data.data) { return; }
 
-      scope.pointObject.attrs = {};
-      angular.extend(scope.pointObject.attrs, data.data);
+      scope.pointObject.attrs.data = {};
+      angular.extend(scope.pointObject.attrs.data, data.data);
       if (data.data) {
         var geom = JSON.parse(data.data.geom);
         scope.pointObject.latlng = {lat: geom.coordinates[1], lng: geom.coordinates[0]};

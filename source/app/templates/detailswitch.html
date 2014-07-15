@@ -1,7 +1,7 @@
 <div class="card-details"
-     ng-click="pointObject.attrs.details = !pointObject.attrs.details">
+     ng-click="pointObject.attrs.data.details = !pointObject.attrs.data.details">
   <i class="fa fa-caret-right ready-to-rotate"
-     ng-class="{'rotate-ninety': pointObject.attrs.details}"></i>
-  <span ng-if="!pointObject.attrs.details"> Meer details</span>
-  <span ng-if="!!pointObject.attrs.details"> Minder details</span>
+     ng-class="{'rotate-ninety': pointObject.attrs.data.details}"></i>
+  <span ng-if="!pointObject.attrs.data.details"> Meer details</span>
+  <span ng-if="!!pointObject.attrs.data.details"> Minder details</span>
 </div>

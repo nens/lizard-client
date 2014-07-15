@@ -1,5 +1,5 @@
 <div class="event-container"
-     ng-class="{hidden: !pointObject.hasEvents}">
+     ng-class="{hidden: !pointObject.events.active}">
   <h4>Gebeurtenissen (<% pointObject.eventTableParams.total() %>)</h4>
   <table ng-table="pointObject.eventTableParams"
         class="table table-condensed table-hover"

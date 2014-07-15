@@ -12,13 +12,13 @@
   for the regular attributes? -->
 
   <div class="hidden-details"
-       ng-class="{'unhidden-details': pointObject.attrs.details}">
+       ng-class="{'unhidden-details': pointObject.attrs.data.details}">
     <table class="fullwidth">
       <tbody>
         <tr>
           <td class="fullwidth-key">Richting</td>
           <td>
-            <span ng-bind="pointObject.attrs.allowed_flow_direction | allowedFlowDirection"
+            <span ng-bind="pointObject.attrs.data.allowed_flow_direction | allowedFlowDirection"
                   class="ng-binding">
             </span>
           </td>
@@ -30,7 +30,7 @@
             </abbr>
           </td>
           <td>
-            <span ng-bind="pointObject.attrs.bed_level_upstream | niceNumberOrEllipsis: 2"
+            <span ng-bind="pointObject.attrs.data.bed_level_upstream | niceNumberOrEllipsis: 2"
                   class="ng-binding">
               ...
             </span>
@@ -43,7 +43,7 @@
             </abbr>
           </td>
           <td>
-            <span ng-bind="pointObject.attrs.bed_level_downstream | niceNumberOrEllipsis: 2"
+            <span ng-bind="pointObject.attrs.data.bed_level_downstream | niceNumberOrEllipsis: 2"
                   class="ng-binding">
               ...
             </span>

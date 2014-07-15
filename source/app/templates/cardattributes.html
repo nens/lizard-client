@@ -3,12 +3,12 @@
     <tr ng-repeat="obj in pointObject.wantedAttrs[box.type].rows">
       <td class="fixed-width-card-table"><% obj.keyName %></td>
       <td
-        ng-show="pointObject.attrs[obj.attrName]">
+        ng-show="pointObject.attrs.data[obj.attrName]">
         <span class="ng-binding">
           <% $eval(obj.ngBindValue) + obj.valueSuffix %>
         </span>
       </td>
-      <td ng-hide="pointObject.attrs[obj.attrName]" style="float:left;">
+      <td ng-hide="pointObject.attrs.data[obj.attrName]" style="float:left;">
         <% "..." %>
       </td>
     </tr>

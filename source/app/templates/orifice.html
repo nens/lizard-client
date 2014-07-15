@@ -14,7 +14,7 @@
   </cardtitle>
 
   <!-- wtf gebeurt hier? 
-    pointObject.attrs.length == "lengte x breedte" ????
+    pointObject.attrs.data.length == "lengte x breedte" ????
     -->
   <table class="fullwidth">
     <tbody>
@@ -23,12 +23,12 @@
           <abbr title="Grootte van de opening">Lengte x Breedte</abbr>
         </td>
         <td>
-          <span ng-bind="pointObject.attrs.length | niceNumberOrEllipsis: 2" 
+          <span ng-bind="pointObject.attrs.data.length | niceNumberOrEllipsis: 2" 
                 class="ng-binding">
             ...
           </span>
           &nbsp;x&nbsp;
-          <span ng-bind="pointObject.attrs.length | niceNumberOrEllipsis: 2" 
+          <span ng-bind="pointObject.attrs.data.length | niceNumberOrEllipsis: 2" 
                 class="ng-binding">
             ...
           </span>
@@ -36,7 +36,7 @@
       </tr>
       <tr>
         <td>Vorm</td>
-        <td ng-bind="pointObject.attrs.shape" class="ng-binding">
+        <td ng-bind="pointObject.attrs.data.shape" class="ng-binding">
           ...
         </td>
       </tr>    
@@ -51,15 +51,15 @@
           <tbody>
           <tr>
               <td>Richting</td>
-              <td><span ng-bind="pointObject.attrs.direction" class="ng-binding">...</span></td>
+              <td><span ng-bind="pointObject.attrs.data.direction" class="ng-binding">...</span></td>
           </tr>
           <tr>
               <td>Negatieve maximale debiet</td>
-              <td ng-bind="pointObject.attrs.negative_flow_limit" class="ng-binding">...</td>
+              <td ng-bind="pointObject.attrs.data.negative_flow_limit" class="ng-binding">...</td>
           </tr>   
           <tr>
               <td>Positieve maximale debiet</td>
-              <td ng-bind="pointObject.attrs.positive_flow_limit" class="ng-binding">...</td>
+              <td ng-bind="pointObject.attrs.data.positive_flow_limit" class="ng-binding">...</td>
           </tr>   	     
           </tbody>
       </table>

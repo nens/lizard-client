@@ -321,49 +321,59 @@ app.controller("MasterCtrl",
   $scope.pointObject = {
     changed: true, // To trigger the watch
     details: false, // To display details in the card
-    attrs: undefined, // To store object data
-    rain: { // To store rain data
+    attrs: {
+      active: false,
+      data: [],
+      wantedAttrs: CabinetService.wantedAttrs
+    },
+    rain: {
+      active: false,
       start: undefined,
       stop: undefined,
       aggWindow: RasterService.rainInfo.timeResolution,
       data: undefined
     },
-    hasTimeseries: false,
-    timeseries: [],
-    hasEvents: false,
-    events: [],
-    selectedTimeseries: null,
-    wantedAttrs: CabinetService.wantedAttrs
+    timeseries: {
+      active: false,
+      data: [],
+      selectedTimeseries: null
+    },
+    events: {
+      active: false,
+      data: []
+    }
+    // hasTimeseries: false,
+    // hasEvents: false,
   };
 
   $scope.$watch('pointObject.changed', function (newVal, oldVal) {
     if (newVal === oldVal) { return; }
     $scope.pointObject.hasTimeries = false;
-    $scope.pointObject.hasEvents = false;
-    $scope.box.content.object_type = $scope.pointObject.attrs.entity_name;
-    $scope.box.content.id = $scope.pointObject.attrs.id;
-    $scope.box.content.data = $scope.pointObject.attrs;
-    $scope.box.type = $scope.pointObject.attrs.entity_name;
+    $scope.pointObject.events.active = false;
+    $scope.box.content.object_type = $scope.pointObject.attrs.data.entity_name;
+    $scope.box.content.id = $scope.pointObject.attrs.data.id;
+    $scope.box.content.data = $scope.pointObject.attrs.data;
+    $scope.box.type = $scope.pointObject.attrs.data.entity_name;
     // Get events
-    EventService.getEvents({object: $scope.pointObject.attrs.entity_name +
+    EventService.getEvents({object: $scope.pointObject.attrs.data.entity_name +
                                     '$' +
-                                    $scope.pointObject.attrs.id})
+                                    $scope.pointObject.attrs.data.id})
       .then(function (response) {
-        $scope.pointObject.events = [];
+        $scope.pointObject.events.data = [];
         angular.forEach(response.features, function (feature) {
           feature.properties.geometry = feature.geometry;
-          $scope.pointObject.events.push(feature.properties);
+          $scope.pointObject.events.data.push(feature.properties);
         });
-        if ($scope.pointObject.events.length > 0) {
+        if ($scope.pointObject.events.data.length > 0) {
           EventService.addColor($scope.events);
-          $scope.pointObject.hasEvents = true;
+          $scope.pointObject.events.active = true;
           $scope.pointObject.eventTableParams.reload();
         }
       });
     // Get timeseries
-    $scope.pointObject.timeseries = TimeseriesService.getRandomTimeseries();
-    $scope.pointObject.selectedTimeseries = $scope.pointObject.timeseries[0];
-    $scope.pointObject.hasTimeseries = true;
+    $scope.pointObject.timeseries.data = TimeseriesService.getRandomTimeseries();
+    $scope.pointObject.selectedTimeseries = $scope.pointObject.timeseries.data[0];
+    $scope.pointObject.timeseries.active = true;
     // Get rain
     var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, window.innerWidth);
     var callback = function (response) {
@@ -395,9 +405,9 @@ app.controller("MasterCtrl",
     total: 0,
     groupBy: 'category',
     getData: function ($defer, params) {
-      params.total($scope.pointObject.events.length);
-      params.count($scope.pointObject.events.length);
-      var data = $scope.pointObject.events;
+      params.total($scope.pointObject.events.data.length);
+      params.count($scope.pointObject.events.data.length);
+      var data = $scope.pointObject.events.data;
       var orderedData = params.sorting() ?
           $filter('orderBy')(data, params.orderBy()) :
           data;
