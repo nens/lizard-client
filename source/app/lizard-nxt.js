@@ -579,13 +579,13 @@ app.controller("MasterCtrl",
    * timeline.
    */
   $scope.toggleRain = function () {
-    if ($scope.scope.pointObject.rain.active === false) {
-      $scope.scope.pointObject.rain.active = true;
+    if ($scope.pointObject.rain.active === false) {
+      $scope.pointObject.rain.active = true;
       if ($scope.timeState.hidden !== false) {
         $scope.toggleTimeline();
       }
-    } else if ($scope.scope.pointObject.rain.active) {
-      $scope.scope.pointObject.rain.active = false;
+    } else if ($scope.pointObject.rain.active) {
+      $scope.pointObject.rain.active = false;
     }
   };
 
