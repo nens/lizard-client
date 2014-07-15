@@ -325,7 +325,7 @@ app.service("CabinetService", ["$q", "Restangular",
 
   var abortGet;
   var rasterResource = function (q) {
-    var localPromise = (q) ? q : abortGet;
+    var localPromise = q ? q : abortGet;
     if (localPromise === abortGet) {
       if (abortGet) {
         abortGet.resolve();

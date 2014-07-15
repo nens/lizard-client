@@ -365,42 +365,57 @@ app.controller("MasterCtrl",
         //   };
         // }
 
-  var mapWatch = $scope.$watch('mapState.bounds', function (newVal, oldVal) {    
-    if (newVal === oldVal) { return; }
-
+  /**
+   * Cancels pending requests and refreshes $q type promises
+   */
+  $scope.extAggPromiseRefresh = function () {
     $scope.extentAggregate.landuse.q.resolve();
     $scope.extentAggregate.elevation.q.resolve();
     // $scope.extentAggregate.soil.q.resolve();
     $scope.extentAggregate.landuse.q = $q.defer();
     $scope.extentAggregate.elevation.q = $q.defer();
     // $scope.extentAggregate.soil.q = $q.defer();
+  }
 
-    var geom = $scope.mapState.bounds;
+  $scope.handleLanduseCount = function (data) {
+    $scope.extentAggregate.landuse.data = data;
+    $scope.extentAggregate.landuse.active = true;
+  };
 
-    /**
-     * Get raster data from server.
-     * NOTE: maybe add a callback as argument?
-     */
+  $scope.getLanduseCount = function () {
     RasterService.getRasterData('landuse', geom, {
       agg: 'counts',
       q: $scope.extentAggregate.landuse.q
-    }).then(function (data) {
-        $scope.extentAggregate.landuse.data = data;
-        $scope.extentAggregate.landuse.active = true;
-      });
+    }).then($scope.handleLanduseCount);
+  };
+
+  $scope.handleElevationCurve = function (data) {
+    var formatted = [];
+    for (var i in data[0]) {
+      var datarow = [data[0][i], data[1][i]];
+      formatted.push(datarow);
+    }
+    $scope.extentAggregate.elevation.data = formatted;
+  };
+
+  $scope.getElevationCurve = function () {
     RasterService.getRasterData('elevation', geom, {
       agg: 'curve',
       q: $scope.extentAggregate.elevation.q
-    })
-      .then(function (data) {
-        var formatted = [];
-        for (var i in data[0]) {
-          var datarow = [data[0][i], data[1][i]];
-          formatted.push(datarow);
-        }
-        $scope.extentAggregate.elevation.data = formatted;
-      });
-  });
+    }).then($scope.handleElevationCurve);
+
+  };
+
+  var mapWatch = $scope.$watch('mapState.bounds', function (newVal, oldVal) {    
+    if (newVal === oldVal) { return; }
+
+    $scope.extAggPromiseRefresh();
+
+    var geom = $scope.mapState.bounds;
+
+    $scope.getLanduseCount();   
+    $scope.getElevationCurve();
+  });   
  
   // END ExtentAggregate
 
