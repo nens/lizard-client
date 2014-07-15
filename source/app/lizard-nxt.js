@@ -377,8 +377,8 @@ app.controller("MasterCtrl",
     var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, window.innerWidth);
     var callback = function (response) {
       $scope.pointObject.rain.data = response;
-      $scope.rain.end = $scope.pointObject.rain.data[$scope.pointObject.rain.data.length - 1][0];
-      $scope.rain.start = $scope.pointObject.rain.data[0][0];
+      $scope.pointObject.rain.end = $scope.pointObject.rain.data[$scope.pointObject.rain.data.length - 1][0];
+      $scope.pointObject.rain.start = $scope.pointObject.rain.data[0][0];
     };
     RasterService.getRain(
       new Date($scope.timeState.start),
@@ -568,7 +568,7 @@ app.controller("MasterCtrl",
   /**
    * Initial state
    */
-  $scope.rain = {
+  $scope.pointObject.rain = {
     enabled: false
   };
 
@@ -579,13 +579,13 @@ app.controller("MasterCtrl",
    * timeline.
    */
   $scope.toggleRain = function () {
-    if ($scope.rain.enabled === false) {
-      $scope.rain.enabled = true;
+    if ($scope.scope.pointObject.rain.active === false) {
+      $scope.scope.pointObject.rain.active = true;
       if ($scope.timeState.hidden !== false) {
         $scope.toggleTimeline();
       }
-    } else if ($scope.rain.enabled) {
-      $scope.rain.enabled = false;
+    } else if ($scope.scope.pointObject.rain.active) {
+      $scope.scope.pointObject.rain.active = false;
     }
   };
 
