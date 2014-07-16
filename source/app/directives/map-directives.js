@@ -350,16 +350,17 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
     scope.map.on('moveend', function () {
       fadeCurrentCards(true);
       // NOTE: Check whether a $digest is already happening before using apply
-      if (!scope.$$phase) {
-        scope.$apply(function () {
-          scope.mapState.moved = Date.now();
-          scope.mapState.mapMoving = false;
-          scope.mapState.bounds = scope.map.getBounds();
-        });
-      } else {
+
+      var finalizeMove = function () {
         scope.mapState.moved = Date.now();
         scope.mapState.mapMoving = false;
         scope.mapState.bounds = scope.map.getBounds();
+      };
+
+      if (!scope.$$phase) {
+        scope.$apply(finalizeMove);
+      } else {
+        finalizeMove();
       }
 
       if (scope.mapState.activeBaselayer === 3) {
