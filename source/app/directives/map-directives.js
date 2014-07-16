@@ -286,7 +286,7 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
         .transition(100)
         .style("opacity", (fadeIn ? 1 : 0.2));
     };
-    
+
     map.fitBounds(maxBounds);
     map.attributionControl.addAttribution(osmAttrib);
     map.attributionControl.setPrefix('');
@@ -309,8 +309,6 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
       ctrl.toggleLayer(layer);
     });
 
-    scope.beenThereDoneIntersectSuggestion = false;
-
     scope.map.on('click', function (e) {
       // NOTE: Check whether a $digest is already happening before using apply
       if (!scope.$$phase) {
@@ -319,18 +317,6 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
         });
       } else {
         scope.mapState.here = e.latlng;
-      }
-    });
-
-    scope.map.on('zoomend', function () {
-
-      UtilService.getZoomlevelLabel(scope.map.getZoom());
-
-      if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
-        if (!scope.beenThereDoneIntersectSuggestion) {
-          scope.beenThereDoneIntersectSuggestion = true;
-          scope.box.type = 'intersecttool';
-        }
       }
     });
 
@@ -483,6 +469,7 @@ app.directive('rain', ["RasterService", "UtilService",
       /**
        * Set up imageOverlays.
        */
+
       for (var i = 0; i < numCachedFrames; i++) {
         var imageOverlay = L.imageOverlay('', imageBounds, {opacity: 0});
         imageOverlays[i] = imageOverlay;

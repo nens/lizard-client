@@ -121,15 +121,17 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
      */
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
       var hash = hashSyncHelper.getHash();
-      if (updateBaseLayerUrl) {
+      if (updateBaseLayerUrl
+        && updateLocationUrl
+        && updateStartUrl
+        && updateEndUrl) {
 
         var baselayerHash = hash.baselayer;
         if (baselayerHash !== undefined) {
           $scope.mapState.activeBaselayer = parseInt(baselayerHash, 10);
           $scope.mapState.changeBaselayer();
         }
-      }
-      if (updateLocationUrl) {
+
         var locationHash = hash.location;
         if (locationHash !== undefined) {
           var latlonzoom = locationHash.split(',');
@@ -139,14 +141,12 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
             }
           }
         }
-      }
-      if (updateStartUrl) {
+
         var startHash = hash.start;
         if (startHash !== undefined) {
           $scope.timeState.start = Date.parse(startHash);
         }
-      }
-      if (updateEndUrl) {
+
         var endHash = hash.end;
         if (endHash !== undefined) {
           $scope.timeState.end = Date.parse(endHash);
