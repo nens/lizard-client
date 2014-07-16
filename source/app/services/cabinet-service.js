@@ -331,6 +331,7 @@ app.service("CabinetService", ["$q", "Restangular",
         abortGet.resolve();
       }
       abortGet = $q.defer();
+      localPromise = abortGet;
     }
     return Restangular
       .one('api/v1/rasters/')

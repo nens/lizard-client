@@ -76,20 +76,25 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService",
    */
   var getRasterData = function (rasterNames, geom, options) {
 
-    var wkt, srs, agg;
+    var wkt, srs, agg, rasterService;
 
-    srs = (options.srs) ? options.srs : 'EPSG:4326';
-    agg = (options.agg) ? options.agg : '';
+    srs = options.srs ? options.srs : 'EPSG:4326';
+    agg = options.agg ? options.agg : '';
 
-    wkt = "POLYGON(("
-          + geom.getWest() + " " + geom.getSouth() + ", "
-          + geom.getEast() + " " + geom.getSouth() + ", "
-          + geom.getEast() + " " + geom.getNorth() + ", "
-          + geom.getWest() + " " + geom.getNorth() + ", "
-          + geom.getWest() + " " + geom.getSouth()
-          + "))";
+    if (options.wkt) {
+      wkt = options.wkt;
+    } else {
+      wkt = "POLYGON(("
+            + geom.getWest() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getSouth()
+            + "))";
+    }
 
-    var rasterService = (options.q) ? CabinetService.raster(options.q) : CabinetService.raster();
+    rasterService = (options.q) ? CabinetService.raster(options.q) : CabinetService.raster();
+    
     return rasterService.get({
       raster_names: rasterNames,
       geom: wkt,

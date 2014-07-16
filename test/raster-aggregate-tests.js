@@ -5,7 +5,7 @@ describe('Testing raster directive', function() {
   // Difficult to test in an isolated way
   // depends on quite a number of stuff.
 
-  var $compile, $rootScope, $httpBackend, $q, element, scope;
+  var $compile, $rootScope, $httpBackend, element, scope;
 
   beforeEach(module('lizard-nxt'));
   beforeEach(inject(function (_$compile_, _$rootScope_, _$httpBackend_) {

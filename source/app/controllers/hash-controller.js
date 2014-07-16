@@ -124,7 +124,6 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
       if (updateBaseLayerUrl) {
 
         var baselayerHash = hash.baselayer;
-        console.log(baselayerHash);
         if (baselayerHash !== undefined) {
           $scope.mapState.activeBaselayer = parseInt(baselayerHash, 10);
           $scope.mapState.changeBaselayer();

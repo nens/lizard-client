@@ -121,7 +121,8 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
           }
         }
       } else {
-        console.log('leaflet layer not defined', layer.type, layer.name);
+        // fck log messages.
+        // console.log('leaflet layer not defined', layer.type, layer.name);
       }
     }
     if (layer.active) {
@@ -242,7 +243,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
    *
    */
   this.boxType = function (mapState) {
-    var newState = 'empty';
+    var newState = ($scope.box.type === 'profile') ? 'profile' : 'raster-aggregate';
     if (mapState.activeBaselayer === 3) {
       newState = 'elevation';
     } else {

@@ -78,9 +78,12 @@ app.controller("RasterAggregateCtrl", ["$scope", "$q", "RasterService",
   };
 
   $scope.handleElevationCurve = function (data) {
-    var formatted = [];
-    for (var i in data[0]) {
-      var datarow = [data[0][i], data[1][i]];
+    var datarow,
+        i,
+        formatted = [];
+        
+    for (i in data[0]) {
+      datarow = [data[0][i], data[1][i]];
       formatted.push(datarow);
     }
     $scope.extentAggregate.elevation.data = formatted;
@@ -95,7 +98,7 @@ app.controller("RasterAggregateCtrl", ["$scope", "$q", "RasterService",
   };
 
   var mapWatch = $scope.$watch('mapState.bounds', function (newVal, oldVal) {    
-    if (newVal === oldVal) { return; }
+    // if (newVal === oldVal) { return; }
 
     $scope.extAggPromiseRefresh();
 
@@ -105,5 +108,4 @@ app.controller("RasterAggregateCtrl", ["$scope", "$q", "RasterService",
     $scope.getElevationCurve(geom);
   });   
  
-  // END ExtentAggregate
 }]);

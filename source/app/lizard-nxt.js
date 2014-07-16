@@ -135,7 +135,8 @@ app.controller("MasterCtrl",
   $scope.toggleTool = function (name) {
 
     if ($scope.tools.active === name) {
-      $scope.tools.active = "none";
+      $scope.tools.active = 'none';
+      $scope.box.type = 'raster-aggregate';
     } else {
       $scope.tools.active = name;
     }
