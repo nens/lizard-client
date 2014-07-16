@@ -31,28 +31,6 @@ app.controller("RasterAggregateCtrl", ["$scope", "$q", "RasterService",
   };
 
 
-// still need to be implemented in template or somethgin.
-        // if (agg === 'curve') {
-        //   $scope.data = formatRasterCurve(data);
-        //   $scope.box.content = {
-        //     yLabel: 'hoogte [mNAP]',
-        //     xLabel: '[%]'
-        //   };
-        // } else if (agg === 'counts') {
-        //   $scope.data = data;
-        // } else if (raster_names === 'elevation' && agg === undefined) {
-        //   $scope.box.type = "profile";
-        //   $scope.box.content = {
-        //     data: data,
-        //     yLabel: 'hoogte [mNAP]',
-        //     xLabel: 'afstand [m]'
-        //   };
-        // } else {
-        //   $scope.box.content = {
-        //     data: data
-        //   };
-        // }
-
   /**
    * Cancels pending requests and refreshes $q type promises
    */
