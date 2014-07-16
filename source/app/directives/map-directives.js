@@ -94,6 +94,9 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
    * @param  {bounds object} bounds contains the corners of the current map view
    */
   this.rescaleElevation = function (bounds) {
+
+    console.log("gggggggggrrrrrrrrrrrrrrrr");
+
     // Make request to raster to get min and max of current bounds
     var url = 'https://raster.lizard.net/wms' + '?request=getlimits&layers=elevation' +
       '&width=16&height=16&srs=epsg:4326&bbox=' +
@@ -285,7 +288,7 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
         .transition(100)
         .style("opacity", (fadeIn ? 1 : 0.2));
     };
-    
+
     map.fitBounds(maxBounds);
     map.attributionControl.addAttribution(osmAttrib);
     map.attributionControl.setPrefix('');
