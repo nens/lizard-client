@@ -95,8 +95,6 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
    */
   this.rescaleElevation = function (bounds) {
 
-    console.log("gggggggggrrrrrrrrrrrrrrrr");
-
     // Make request to raster to get min and max of current bounds
     var url = 'https://raster.lizard.net/wms' + '?request=getlimits&layers=elevation' +
       '&width=16&height=16&srs=epsg:4326&bbox=' +
@@ -364,8 +362,7 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
         scope.mapState.bounds = scope.map.getBounds();
       }
 
-      // If elevation layer is active:
-      if (scope.mapState.activeBaselayer === 3 && scope.tools.active === 'autorescale') {
+      if (scope.mapState.activeBaselayer === 3) {
         ctrl.rescaleElevation(scope.mapState.bounds);
       }
     });
