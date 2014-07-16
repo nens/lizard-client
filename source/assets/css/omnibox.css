@@ -53,6 +53,10 @@
     padding: 0px;
 }
 
+#searchboxinput:hover {
+  cursor: pointer;
+}
+
 #clear {
     text-indent: -1000em;
     width: 16px;
