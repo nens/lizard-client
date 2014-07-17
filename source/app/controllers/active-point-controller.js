@@ -2,7 +2,7 @@
 
 app.controller('ActivePointCtrl', ["$scope", "$filter", "CabinetService",
     "RasterService", "EventService", "TimeseriesService", "UtilService",
-    "ngTableParams", "UtfGridService",
+    "ngTableParams", "UtfGridService", "ClickFeedbackService",
   function ($scope,
             $filter,
             CabinetService,
@@ -11,7 +11,8 @@ app.controller('ActivePointCtrl', ["$scope", "$filter", "CabinetService",
             TimeseriesService,
             UtilService,
             ngTableParams,
-            UtfGridService
+            UtfGridService,
+            ClickFeedbackService
   ) {
 
     /**
@@ -46,12 +47,17 @@ app.controller('ActivePointCtrl', ["$scope", "$filter", "CabinetService",
       }
     };
 
+    ClickFeedbackService.drawClickInSpace($scope.map, $scope.pointObject.latlng);
     UtfGridService.getDataFromUTF($scope.map, $scope.pointObject.latlng)
     .then(
       function (response) {
         extendDataToPointObject(response);
-        
-      }//set response on attrs and call ClickFeedbackService.draw())
+        // Either way, stop vibrating
+        ClickFeedbackService.stopVibration();
+        if (response && response.data) {
+          ClickFeedbackService.drawGeometry($scope.map, response.data.geom, response.data.entity_name);
+        }
+      }
     );
     // .then(TimeseriesService.getTimeseries)
     // .then(EventService.getEvents());
