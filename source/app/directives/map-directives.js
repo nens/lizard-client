@@ -257,7 +257,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
 
   return this;
 });
-app.directive('map', ['$controller', 'UtilService', function ($controller, UtilService) {
+app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($controller, $rootScope, UtilService) {
 
   var link = function (scope, element, attrs, ctrl) {
     // Leaflet global variable to peed up vector layer,
@@ -316,10 +316,12 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
       if (!scope.$$phase) {
         scope.$apply(function () {
           scope.box.type = 'activePoint';
+          $rootScope.$broadcast('newPointActive');
           scope.mapState.here = e.latlng;
         });
       } else {
         scope.box.type = 'activePoint';
+        $rootScope.$broadcast('newPointActive');
         scope.mapState.here = e.latlng;
       }
     });

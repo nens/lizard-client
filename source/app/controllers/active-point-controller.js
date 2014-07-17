@@ -21,99 +21,110 @@ app.controller('ActivePointCtrl', ["$scope", "$filter", "CabinetService",
      * a click on the utf grid. The pointObject may have associated 
      * events and timeseries which may be requested from the server.
      */
-    $scope.pointObject = {
-      latlng: $scope.mapState.here,
-      details: false, // To display details in the card
-      attrs: {
-        active: false,
-        data: [],
-        wanted: CabinetService.wantedAttrs
-      },
-      rain: {
-        active: false,
-        start: undefined,
-        stop: undefined,
-        aggWindow: RasterService.rainInfo.timeResolution,
-        data: undefined
-      },
-      timeseries: {
-        active: false,
-        data: [],
-        selectedTimeseries: null
-      },
-      events: {
-        active: false,
-        data: []
-      }
+    var createPointObject = function () {
+
+      $scope.pointObject = {
+        latlng: $scope.mapState.here, // Updated by the return of the utf-grid
+        details: false, // To display details in the card
+        attrs: {
+          active: false,
+          data: [],
+          wanted: CabinetService.wantedAttrs
+        },
+        rain: {
+          active: false,
+          start: undefined,
+          stop: undefined,
+          aggWindow: RasterService.rainInfo.timeResolution,
+          data: undefined
+        },
+        timeseries: {
+          active: false,
+          data: [],
+          selectedTimeseries: null
+        },
+        events: {
+          active: false,
+          data: []
+        }
+      };
     };
 
-    ClickFeedbackService.drawClickInSpace($scope.map, $scope.pointObject.latlng);
-    UtfGridService.getDataFromUTF($scope.map, $scope.pointObject.latlng)
-    .then(
-      function (response) {
-        extendDataToPointObject(response);
-        // Either way, stop vibrating
-        ClickFeedbackService.stopVibration();
-        if (response && response.data) {
-          ClickFeedbackService.drawGeometry($scope.map, response.data.geom, response.data.entity_name);
-        }
-      }
-    );
-    // .then(TimeseriesService.getTimeseries)
-    // .then(EventService.getEvents());
+    var fillPointObject = function () {
 
+      //Get attrs
+      ClickFeedbackService.drawClickInSpace($scope.map, $scope.pointObject.latlng);
+      UtfGridService.getDataFromUTF($scope.map, $scope.pointObject.latlng)
+      .then(
+        function (response) {
+          extendDataToPointObject(response);
+          // Either way, stop vibrating
+          ClickFeedbackService.stopVibration();
+          if (response && response.data) {
+            ClickFeedbackService.drawGeometry($scope.map, response.data.geom, response.data.entity_name);
+
+            // Get timeseries
+            $scope.pointObject.timeseries.data = TimeseriesService.getRandomTimeseries();
+            $scope.pointObject.timeseries.selectedTimeseries = $scope.pointObject.timeseries.data[0];
+            $scope.pointObject.timeseries.active = true;
+
+            // Get events
+            EventService.getEvents({object: $scope.pointObject.attrs.data.entity_name +
+                                      '$' +
+                                      $scope.pointObject.attrs.data.id})
+            .then(function (response) {
+              $scope.pointObject.events.data = [];
+              angular.forEach(response.features, function (feature) {
+                feature.properties.geometry = feature.geometry;
+                $scope.pointObject.events.data.push(feature.properties);
+              });
+              if ($scope.pointObject.events.data.length > 0) {
+                $scope.pointObject.events.active = true;
+                EventService.addColor($scope.events);
+                $scope.pointObject.events.active = true;
+                $scope.pointObject.eventTableParams.reload();
+              }
+            });
+          }
+
+          // Get rain
+          var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, window.innerWidth);
+          var callback = function (response) {
+            $scope.pointObject.rain.active = true;
+            $scope.pointObject.rain.data = response;
+            $scope.pointObject.rain.end = $scope.pointObject.rain.data[$scope.pointObject.rain.data.length - 1][0];
+            $scope.pointObject.rain.start = $scope.pointObject.rain.data[0][0];
+          };
+          RasterService.getRain(
+            new Date($scope.timeState.start),
+            new Date($scope.timeState.end),
+            $scope.pointObject.latlng,
+            aggWindow
+          )
+          .then(callback);
+
+          console.log($scope.pointObject);
+        }
+      );
+    };
 
     var extendDataToPointObject = function (data) {
       // Return directly if no data is returned from the UTFgrid!
       if (!data.data) { return; }
       angular.extend($scope.pointObject.attrs.data, data.data);
       if (data.data) {
+        $scope.pointObject.attrs.active = true;
         var geom = JSON.parse(data.data.geom);
         $scope.pointObject.latlng = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
       }
     };
 
-
-    // RainService.geterain()
-
-
-
-    // Get events
-    EventService.getEvents({object: $scope.pointObject.attrs.data.entity_name +
-                                    '$' +
-                                    $scope.pointObject.attrs.data.id})
-      .then(function (response) {
-        $scope.pointObject.events.data = [];
-        angular.forEach(response.features, function (feature) {
-          feature.properties.geometry = feature.geometry;
-          $scope.pointObject.events.data.push(feature.properties);
-        });
-        if ($scope.pointObject.events.data.length > 0) {
-          EventService.addColor($scope.events);
-          $scope.pointObject.events.active = true;
-          $scope.pointObject.eventTableParams.reload();
-        }
-      });
-
-    // Get timeseries
-    $scope.pointObject.timeseries.data = TimeseriesService.getRandomTimeseries();
-    $scope.pointObject.timeseries.selectedTimeseries = $scope.pointObject.timeseries.data[0];
-    $scope.pointObject.timeseries.active = true;
-    
-    // Get rain
-    var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, window.innerWidth);
-    var callback = function (response) {
-      $scope.pointObject.rain.data = response;
-      $scope.pointObject.rain.end = $scope.pointObject.rain.data[$scope.pointObject.rain.data.length - 1][0];
-      $scope.pointObject.rain.start = $scope.pointObject.rain.data[0][0];
-    };
-    RasterService.getRain(
-      new Date($scope.timeState.start),
-      new Date($scope.timeState.end),
-      $scope.mapState.here,
-      aggWindow
-    )
-    .then(callback);
+    createPointObject();
+    fillPointObject();
+    $scope.$on('newPointActive', function () {
+      createPointObject();
+      fillPointObject();
+    });
 
     /**
      * Parameters for ngTable.
@@ -142,7 +153,6 @@ app.controller('ActivePointCtrl', ["$scope", "$filter", "CabinetService",
       },
     });
 
-    console.log($scope.pointObject);
   }
 
 ]);

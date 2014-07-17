@@ -1,3 +1,22 @@
 <div ng-controller="ActivePointCtrl" class="card">
-	<% box %>
+  <actions></actions>
+  <cardtitle data-icon="icon-pumpstation-electric"
+             data-name="Gemaal">
+  </cardtitle>
+  <cardattributes></cardattributes>
+  <detailswitch></detailswitch>
+
+  <div class="hidden-details" ng-class="{'unhidden-details': pointObject.attrs.data.details}">
+    <streetview></streetview>
+  </div>
+</div>
+
+<div class="card" ng-class="{hidden: !pointObject.timeseries.active}" >
+  <div class="input-prepend">
+    <span class="add-on"> Tijdreeks</span>
+    <select class="timeseries" ng-model="pointObject.selectedTimeseries" ng-options="series as series.name for series in pointObject.timeseries.data"></select>
+  </div>
+    <graph line data="pointObject.selectedTimeseries.data" ylabel="selectedTimeseries.name" xlabel="n"></graph>
+    <!-- <timeseries-rain timeseries="data" rainseries="rain.data" start="timeState.start" end="timeState.end" enabled="timeboxenabled" changed-zoom="timeState.changedZoom"></timeseries-rain> -->
+</div>
 </div>
