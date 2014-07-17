@@ -5,7 +5,9 @@ describe('Testing raster requests directive', function() {
   // Difficult to test in an isolated way
   // depends on quite a number of stuff.
 
-  var $compile, $rootScope, $httpBackend;
+  var $compile, $rootScope, $httpBackend, JS_DEBUG;
+
+  JS_DEBUG = true;
 
   beforeEach(module('lizard-nxt'));
   beforeEach(inject(function (_$compile_, _$rootScope_, _$httpBackend_) {
@@ -51,7 +53,7 @@ describe('Testing raster requests directive', function() {
     $httpBackend.when("GET",
       "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205))&srs=EPSG:4326&agg=counts"
       ).respond('');
-    
+
 
     scope.$digest();
 
@@ -64,7 +66,7 @@ describe('Testing raster requests directive', function() {
   /*
   * Another difficult one to test. At the moment the layers come
   * from a django template and are not available in the "pure" JS.
-  */        
+  */
   it('should look for data based on the layername', function() {
     var element = angular.element('<div ng-controller="MasterCtrl"></div>');
     element = $compile(element)($rootScope);
@@ -100,7 +102,7 @@ describe('Testing raster requests directive', function() {
       content: {
         agg: ''
       }
-    }; 
+    };
 
     $httpBackend.when("GET",
       "api/v1/rasters/?raster_names=landuse&geom=POLYGON((5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205, 5.625 52.482780222078205))&srs=EPSG:4326&agg=counts")
@@ -133,7 +135,7 @@ describe('Testing raster requests directive', function() {
         agg: ''
       }
     };
-    $httpBackend.when("GET", 
+    $httpBackend.when("GET",
       "api/v1/rasters/?raster_names=landuse&geom=POLYGON((4 6, 7 6, 7 5, 4 5, 4 6))&srs=EPSG:4326&agg=counts")
       .respond('[{"color": "#000000", "data": 256786, "label": 0},'
      + '{"color": "#e7e3e7", "data": 5089, "label": 241},'
