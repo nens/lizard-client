@@ -121,7 +121,9 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
           }
         }
       } else {
-        console.log('leaflet layer not defined', layer.type, layer.name);
+        if (JS_DEBUG) {
+          console.log('leaflet layer not defined', layer.type, layer.name);
+        }
       }
     }
     if (layer.active) {
@@ -156,7 +158,9 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
           });
         }
       } else {
-        console.log('leaflet layer not defined', layer.type);
+        if (JS_DEBUG) {
+          console.log('leaflet layer not defined', layer.type);
+        }
       }
     }
   };
@@ -169,14 +173,18 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
       if (layer.leafletLayer) {
         $scope.map.removeLayer(layer.leafletLayer);
       } else {
-        console.log('leaflet layer not defined');
+        if (JS_DEBUG) {
+          console.log('leaflet layer not defined');
+        }
       }
     } else if (layer.id === $scope.mapState.activeBaselayer) {
       layer.active = true;
       if (layer.leafletLayer) {
         $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: true });
       } else {
-        console.log('leaflet layer not defined');
+        if (JS_DEBUG) {
+          console.log('leaflet layer not defined');
+        }
       }
     }
 
@@ -189,7 +197,9 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
       if (err instanceof TypeError) {
         return;
       } else {
-        console.error('Error:', err);
+        if (JS_DEBUG) {
+          console.error('Error:', err);
+        }
       }
     }
   };
@@ -201,13 +211,13 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
     var numLayers = 1;
     angular.forEach(mapState.layers, function (layer) {
       if ((layer.overlayer === true) && (layer.active)) {
-        numLayers += 1;
+        numLayers++;
       }
     });
     angular.forEach($filter('orderBy')(mapState.layers, 'z_index', true), function (layer) {
       if ((layer.overlayer === true) && (layer.active)) {
         layer.leafletLayer.setOpacity(1 / numLayers);
-        numLayers -= 1;
+        numLayers--;
       }
     });
   };
@@ -568,7 +578,9 @@ app.directive('rain', ["RasterService", "UtilService",
             previousDate = currentDate;
             nxtDate += step;
           } else if (overlayIndex === undefined) {
-            console.info("We will have to go get", currentDate, ". Get new images!");
+            if (JS_DEBUG) {
+              console.info("We will have to go get", currentDate, ". Get new images!");
+            }
             if (scope.timeState.animation.playing) {
               restart = true;
             }
