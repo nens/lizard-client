@@ -291,9 +291,20 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
       * fade in or out.
       */
     var fadeCurrentCards = function (fadeIn) {
-      d3.selectAll(".card")
-        .transition(100)
-        .style("opacity", (fadeIn ? 1 : 0.2));
+
+      var cards = d3.selectAll(".card");
+
+      if (fadeIn) {
+        // card comes back instantaniously
+        cards
+          .style("opacity", 1);
+      } else {
+        // card goes away with animation
+        cards
+          .transition(100)
+          .delay(fadeIn ? 1 : 500)
+          .style("opacity", 0.2);
+      }
     };
 
     map.fitBounds(maxBounds);
