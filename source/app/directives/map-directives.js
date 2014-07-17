@@ -122,7 +122,9 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
           }
         }
       } else {
-        console.log('leaflet layer not defined', layer.type, layer.name);
+        if (JS_DEBUG) {
+          console.log('leaflet layer not defined', layer.type, layer.name);
+        }
       }
     }
     if (layer.active) {
@@ -157,7 +159,9 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
           });
         }
       } else {
-        console.log('leaflet layer not defined', layer.type);
+        if (JS_DEBUG) {
+          console.log('leaflet layer not defined', layer.type);
+        }
       }
     }
   };
@@ -170,14 +174,18 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
       if (layer.leafletLayer) {
         $scope.map.removeLayer(layer.leafletLayer);
       } else {
-        console.log('leaflet layer not defined');
+        if (JS_DEBUG) {
+          console.log('leaflet layer not defined');
+        }
       }
     } else if (layer.id === $scope.mapState.activeBaselayer) {
       layer.active = true;
       if (layer.leafletLayer) {
         $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: true });
       } else {
-        console.log('leaflet layer not defined');
+        if (JS_DEBUG) {
+          console.log('leaflet layer not defined');
+        }
       }
     }
 
@@ -190,7 +198,9 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
       if (err instanceof TypeError) {
         return;
       } else {
-        console.error('Error:', err);
+        if (JS_DEBUG) {
+          console.error('Error:', err);
+        }
       }
     }
   };
@@ -202,13 +212,13 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
     var numLayers = 1;
     angular.forEach(mapState.layers, function (layer) {
       if ((layer.overlayer === true) && (layer.active)) {
-        numLayers += 1;
+        numLayers++;
       }
     });
     angular.forEach($filter('orderBy')(mapState.layers, 'z_index', true), function (layer) {
       if ((layer.overlayer === true) && (layer.active)) {
         layer.leafletLayer.setOpacity(1 / numLayers);
-        numLayers -= 1;
+        numLayers--;
       }
     });
   };
@@ -320,8 +330,6 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
       ctrl.toggleLayer(layer);
     });
 
-    scope.beenThereDoneIntersectSuggestion = false;
-
     scope.map.on('click', function (e) {
       // NOTE: Check whether a $digest is already happening before using apply
       if (!scope.$$phase) {
@@ -330,18 +338,6 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
         });
       } else {
         scope.mapState.here = e.latlng;
-      }
-    });
-
-    scope.map.on('zoomend', function () {
-
-      UtilService.getZoomlevelLabel(scope.map.getZoom());
-
-      if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
-        if (!scope.beenThereDoneIntersectSuggestion) {
-          scope.beenThereDoneIntersectSuggestion = true;
-          scope.box.type = 'intersecttool';
-        }
       }
     });
 
@@ -490,6 +486,7 @@ app.directive('rain', ["RasterService", "UtilService",
       /**
        * Set up imageOverlays.
        */
+
       for (var i = 0; i < numCachedFrames; i++) {
         var imageOverlay = L.imageOverlay('', imageBounds, {opacity: 0});
         imageOverlays[i] = imageOverlay;
@@ -589,7 +586,9 @@ app.directive('rain', ["RasterService", "UtilService",
             previousDate = currentDate;
             nxtDate += step;
           } else if (overlayIndex === undefined) {
-            console.info("We will have to go get", currentDate, ". Get new images!");
+            if (JS_DEBUG) {
+              console.info("We will have to go get", currentDate, ". Get new images!");
+            }
             if (scope.timeState.animation.playing) {
               restart = true;
             }

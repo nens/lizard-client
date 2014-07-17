@@ -634,3 +634,7 @@
   color: darkgrey;
   cursor: pointer;
 }
+
+.pointer:hover {
+  cursor: pointer;
+}
