@@ -299,10 +299,16 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
         cards
           .style("opacity", 1);
       } else {
-        // card fades away into transparancy
-        cards
-          .transition(100)
-          .style("opacity", 0.2);
+        // card fades away into transparancy, after a delay, but only if
+        // the map is still moving after that delay
+        setTimeout(function () {
+          if (scope.mapState.mapMoving) {
+            cards
+              .transition(100)
+              .style("opacity", 0.2);
+          }
+        }, 700);
+
       }
     };
 
