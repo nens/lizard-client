@@ -5,15 +5,14 @@ describe('Testing raster requests directive', function() {
   // Difficult to test in an isolated way
   // depends on quite a number of stuff.
 
-  var $compile, $rootScope, $httpBackend, JS_DEBUG;
-
-  JS_DEBUG = true;
+  var $compile, $rootScope, $httpBackend;
 
   beforeEach(module('lizard-nxt'));
   beforeEach(inject(function (_$compile_, _$rootScope_, _$httpBackend_) {
     $compile = _$compile_;
     $rootScope = _$rootScope_;
     $httpBackend = _$httpBackend_;
+    JS_DEBUG = true;
   }));
 
   /**
