@@ -287,6 +287,17 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
         .style("opacity", (fadeIn ? 1 : 0.2));
     };
 
+    scope.mapState.switchLayerOrRescaleElevation = function (layer) {
+
+      if (layer.name === 'Hoogtekaart'
+          && scope.mapState.activeBaselayer === 3) {
+        ctrl.rescaleElevation(scope.mapState.bounds);
+
+      } else {
+        scope.mapState.changeBaselayer(layer);
+      }
+    }
+
     map.fitBounds(maxBounds);
     map.attributionControl.addAttribution(osmAttrib);
     map.attributionControl.setPrefix('');
@@ -361,10 +372,6 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
         scope.$apply(finalizeMove);
       } else {
         finalizeMove();
-      }
-
-      if (scope.mapState.activeBaselayer === 3) {
-        ctrl.rescaleElevation(scope.mapState.bounds);
       }
     });
 
