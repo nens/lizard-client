@@ -299,10 +299,9 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
         cards
           .style("opacity", 1);
       } else {
-        // card goes away with animation
+        // card fades away into transparancy
         cards
           .transition(100)
-          .delay(fadeIn ? 1 : 500)
           .style("opacity", 0.2);
       }
     };
@@ -354,7 +353,9 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
     });
 
     scope.map.on('moveend', function () {
+
       fadeCurrentCards(true);
+
       // NOTE: Check whether a $digest is already happening before using apply
       if (!scope.$$phase) {
         scope.$apply(function () {
