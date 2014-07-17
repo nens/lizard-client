@@ -292,9 +292,25 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
       * fade in or out.
       */
     var fadeCurrentCards = function (fadeIn) {
-      d3.selectAll(".card")
-        .transition(100)
-        .style("opacity", (fadeIn ? 1 : 0.2));
+
+      var cards = d3.selectAll(".card");
+
+      if (fadeIn) {
+        // card comes back instantaniously
+        cards
+          .style("opacity", 1);
+      } else {
+        // card fades away into transparancy, after a delay, but only if
+        // the map is still moving after that delay
+        setTimeout(function () {
+          if (scope.mapState.mapMoving) {
+            cards
+              .transition(100)
+              .style("opacity", 0.2);
+          }
+        }, 700);
+
+      }
     };
 
     scope.mapState.switchLayerOrRescaleElevation = function (layer) {
@@ -355,7 +371,9 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
     });
 
     scope.map.on('moveend', function () {
+
       fadeCurrentCards(true);
+
       // NOTE: Check whether a $digest is already happening before using apply
 
       var finalizeMove = function () {
