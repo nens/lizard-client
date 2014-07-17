@@ -94,6 +94,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
    * @param  {bounds object} bounds contains the corners of the current map view
    */
   this.rescaleElevation = function (bounds) {
+
     // Make request to raster to get min and max of current bounds
     var url = 'https://raster.lizard.net/wms' + '?request=getlimits&layers=elevation' +
       '&width=16&height=16&srs=epsg:4326&bbox=' +
@@ -296,6 +297,17 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
         .style("opacity", (fadeIn ? 1 : 0.2));
     };
 
+    scope.mapState.switchLayerOrRescaleElevation = function (layer) {
+
+      if (layer.name === 'Hoogtekaart'
+          && scope.mapState.activeBaselayer === 3) {
+        ctrl.rescaleElevation(scope.mapState.bounds);
+
+      } else {
+        scope.mapState.changeBaselayer(layer);
+      }
+    }
+
     map.fitBounds(maxBounds);
     map.attributionControl.addAttribution(osmAttrib);
     map.attributionControl.setPrefix('');
@@ -345,21 +357,17 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
     scope.map.on('moveend', function () {
       fadeCurrentCards(true);
       // NOTE: Check whether a $digest is already happening before using apply
-      if (!scope.$$phase) {
-        scope.$apply(function () {
-          scope.mapState.moved = Date.now();
-          scope.mapState.mapMoving = false;
-          scope.mapState.bounds = scope.map.getBounds();
-        });
-      } else {
+
+      var finalizeMove = function () {
         scope.mapState.moved = Date.now();
         scope.mapState.mapMoving = false;
         scope.mapState.bounds = scope.map.getBounds();
-      }
+      };
 
-      // If elevation layer is active:
-      if (scope.mapState.activeBaselayer === 3 && scope.tools.active === 'autorescale') {
-        ctrl.rescaleElevation(scope.mapState.bounds);
+      if (!scope.$$phase) {
+        scope.$apply(finalizeMove);
+      } else {
+        finalizeMove();
       }
     });
 
