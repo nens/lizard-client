@@ -53,10 +53,6 @@
     padding: 0px;
 }
 
-#searchboxinput:hover {
-  cursor: pointer;
-}
-
 #clear {
     text-indent: -1000em;
     width: 16px;
@@ -637,4 +633,8 @@
 .close-ancestor-card:hover {
   color: darkgrey;
   cursor: pointer;
+}
+
+.pointer:hover {
+    cursor: pointer;
 }
