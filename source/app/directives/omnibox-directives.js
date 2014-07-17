@@ -33,7 +33,6 @@ angular.module("omnibox", ["templates-main"])
         if (scope.box.type === 'empty') {
           scope.box.showCards = false;
         } else {
-          console.log("HIER WAS IK GEBLEVEN");
           scope.box.showCards = true;
         }
       });
