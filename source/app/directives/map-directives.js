@@ -312,6 +312,7 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
 
     scope.map.on('click', function (e) {
       // NOTE: Check whether a $digest is already happening before using apply
+      console.log('click');
       if (!scope.$$phase) {
         scope.$apply(function () {
           scope.box.type = 'activePoint';

@@ -352,7 +352,7 @@ app.directive('clickLayer', ["$q", function ($q) {
 
       // Return directly if no data is returned from the UTFgrid!
       if (!data.data) { return; }
-
+      console.log(scope.box.type, scope.pointObject);
       scope.pointObject.attrs.data = {};
       angular.extend(scope.pointObject.attrs.data, data.data);
       if (data.data) {

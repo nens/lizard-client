@@ -1,8 +1,8 @@
 'use strict';
 
-app.controller('ActivePoint', ["$scope", "$filter", "CabinetService",
+app.controller('ActivePointCtrl', ["$scope", "$filter", "CabinetService",
     "RasterService", "EventService", "TimeseriesService", "UtilService",
-    "ngTableParams",
+    "ngTableParams", "UtfGridService",
   function ($scope,
             $filter,
             CabinetService,
@@ -10,7 +10,8 @@ app.controller('ActivePoint', ["$scope", "$filter", "CabinetService",
             EventService,
             TimeseriesService,
             UtilService,
-            ngTableParams
+            ngTableParams,
+            UtfGridService
   ) {
 
     /**
@@ -20,6 +21,7 @@ app.controller('ActivePoint', ["$scope", "$filter", "CabinetService",
      * events and timeseries which may be requested from the server.
      */
     $scope.pointObject = {
+      latlng: $scope.mapState.here,
       details: false, // To display details in the card
       attrs: {
         active: false,
@@ -43,6 +45,32 @@ app.controller('ActivePoint', ["$scope", "$filter", "CabinetService",
         data: []
       }
     };
+
+    UtfGridService.getDataFromUTF($scope.map, $scope.pointObject.latlng)
+    .then(
+      function (response) {
+        extendDataToPointObject(response);
+        
+      }//set response on attrs and call ClickFeedbackService.draw())
+    );
+    // .then(TimeseriesService.getTimeseries)
+    // .then(EventService.getEvents());
+
+
+    var extendDataToPointObject = function (data) {
+      // Return directly if no data is returned from the UTFgrid!
+      if (!data.data) { return; }
+      angular.extend($scope.pointObject.attrs.data, data.data);
+      if (data.data) {
+        var geom = JSON.parse(data.data.geom);
+        $scope.pointObject.latlng = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
+      }
+    };
+
+
+    // RainService.geterain()
+
+
 
     // Get events
     EventService.getEvents({object: $scope.pointObject.attrs.data.entity_name +
