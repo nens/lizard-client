@@ -94,6 +94,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
    * @param  {bounds object} bounds contains the corners of the current map view
    */
   this.rescaleElevation = function (bounds) {
+
     // Make request to raster to get min and max of current bounds
     var url = 'https://raster.lizard.net/wms' + '?request=getlimits&layers=elevation' +
       '&width=16&height=16&srs=epsg:4326&bbox=' +
@@ -121,7 +122,9 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
           }
         }
       } else {
-        console.log('leaflet layer not defined', layer.type, layer.name);
+        if (JS_DEBUG) {
+          console.log('leaflet layer not defined', layer.type, layer.name);
+        }
       }
     }
     if (layer.active) {
@@ -156,7 +159,9 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
           });
         }
       } else {
-        console.log('leaflet layer not defined', layer.type);
+        if (JS_DEBUG) {
+          console.log('leaflet layer not defined', layer.type);
+        }
       }
     }
   };
@@ -169,14 +174,18 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
       if (layer.leafletLayer) {
         $scope.map.removeLayer(layer.leafletLayer);
       } else {
-        console.log('leaflet layer not defined');
+        if (JS_DEBUG) {
+          console.log('leaflet layer not defined');
+        }
       }
     } else if (layer.id === $scope.mapState.activeBaselayer) {
       layer.active = true;
       if (layer.leafletLayer) {
         $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: true });
       } else {
-        console.log('leaflet layer not defined');
+        if (JS_DEBUG) {
+          console.log('leaflet layer not defined');
+        }
       }
     }
 
@@ -189,7 +198,9 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
       if (err instanceof TypeError) {
         return;
       } else {
-        console.error('Error:', err);
+        if (JS_DEBUG) {
+          console.error('Error:', err);
+        }
       }
     }
   };
@@ -201,13 +212,13 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
     var numLayers = 1;
     angular.forEach(mapState.layers, function (layer) {
       if ((layer.overlayer === true) && (layer.active)) {
-        numLayers += 1;
+        numLayers++;
       }
     });
     angular.forEach($filter('orderBy')(mapState.layers, 'z_index', true), function (layer) {
       if ((layer.overlayer === true) && (layer.active)) {
         layer.leafletLayer.setOpacity(1 / numLayers);
-        numLayers -= 1;
+        numLayers--;
       }
     });
   };
@@ -281,11 +292,38 @@ app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($con
       * fade in or out.
       */
     var fadeCurrentCards = function (fadeIn) {
-      d3.selectAll(".card")
-        .transition(100)
-        .style("opacity", (fadeIn ? 1 : 0.2));
+
+      var cards = d3.selectAll(".card");
+
+      if (fadeIn) {
+        // card comes back instantaniously
+        cards
+          .style("opacity", 1);
+      } else {
+        // card fades away into transparancy, after a delay, but only if
+        // the map is still moving after that delay
+        setTimeout(function () {
+          if (scope.mapState.mapMoving) {
+            cards
+              .transition(100)
+              .style("opacity", 0.2);
+          }
+        }, 700);
+
+      }
     };
-    
+
+    scope.mapState.switchLayerOrRescaleElevation = function (layer) {
+
+      if (layer.name === 'Hoogtekaart'
+          && scope.mapState.activeBaselayer === 3) {
+        ctrl.rescaleElevation(scope.mapState.bounds);
+
+      } else {
+        scope.mapState.changeBaselayer(layer);
+      }
+    }
+
     map.fitBounds(maxBounds);
     map.attributionControl.addAttribution(osmAttrib);
     map.attributionControl.setPrefix('');
@@ -308,8 +346,6 @@ app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($con
       ctrl.toggleLayer(layer);
     });
 
-    scope.beenThereDoneIntersectSuggestion = false;
-
     scope.map.on('click', function (e) {
       // NOTE: Check whether a $digest is already happening before using apply
       console.log('click');
@@ -323,18 +359,6 @@ app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($con
         scope.box.type = 'activePoint';
         scope.mapState.here = e.latlng;
         $rootScope.$broadcast('newPointActive');
-      }
-    });
-
-    scope.map.on('zoomend', function () {
-
-      UtilService.getZoomlevelLabel(scope.map.getZoom());
-
-      if (scope.map.getZoom() > 10 && scope.box.type === 'empty') {
-        if (!scope.beenThereDoneIntersectSuggestion) {
-          scope.beenThereDoneIntersectSuggestion = true;
-          scope.box.type = 'intersecttool';
-        }
       }
     });
 
@@ -352,23 +376,21 @@ app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($con
     });
 
     scope.map.on('moveend', function () {
+
       fadeCurrentCards(true);
+
       // NOTE: Check whether a $digest is already happening before using apply
-      if (!scope.$$phase) {
-        scope.$apply(function () {
-          scope.mapState.moved = Date.now();
-          scope.mapState.mapMoving = false;
-          scope.mapState.bounds = scope.map.getBounds();
-        });
-      } else {
+
+      var finalizeMove = function () {
         scope.mapState.moved = Date.now();
         scope.mapState.mapMoving = false;
         scope.mapState.bounds = scope.map.getBounds();
-      }
+      };
 
-      // If elevation layer is active:
-      if (scope.mapState.activeBaselayer === 3 && scope.tools.active === 'autorescale') {
-        ctrl.rescaleElevation(scope.mapState.bounds);
+      if (!scope.$$phase) {
+        scope.$apply(finalizeMove);
+      } else {
+        finalizeMove();
       }
     });
 
@@ -487,6 +509,7 @@ app.directive('rain', ["RasterService", "UtilService",
       /**
        * Set up imageOverlays.
        */
+
       for (var i = 0; i < numCachedFrames; i++) {
         var imageOverlay = L.imageOverlay('', imageBounds, {opacity: 0});
         imageOverlays[i] = imageOverlay;
@@ -586,7 +609,9 @@ app.directive('rain', ["RasterService", "UtilService",
             previousDate = currentDate;
             nxtDate += step;
           } else if (overlayIndex === undefined) {
-            console.info("We will have to go get", currentDate, ". Get new images!");
+            if (JS_DEBUG) {
+              console.info("We will have to go get", currentDate, ". Get new images!");
+            }
             if (scope.timeState.animation.playing) {
               restart = true;
             }

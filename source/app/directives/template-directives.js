@@ -85,6 +85,18 @@ app.directive('detailswitch', [function () {
     restrict: 'E',
     templateUrl: 'templates/detailswitch.html'
   }
-}])
+}]);
 
+app.directive('datadetailcard', [function () {
+  return {
+    restrict: 'E',
+    templateUrl: 'templates/data-detail-card.html'
+  }
+}]);
 
+app.directive('dataaggregationcard', [function () {
+  return {
+    restrict: 'E',
+    templateUrl: 'templates/data-aggregation-card.html'
+  }
+}]);

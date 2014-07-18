@@ -82,39 +82,39 @@ app.service("UtilService", function () {
     return roundedTimestamp;
   };
 
-  this.getZoomlevelLabel = function (zoomlevel) {
-    // TODO: Can be used to communicate the current 
+  this.getZoomlevelLabel = function (zoomLevel) {
+    // TODO: Can be used to communicate the current
     // zoomlevel in language comprehensible to the user
-    var zoomLevel = zoomlevel;
+
     switch (true) {
-    case (zoomLevel >= 18):
-      // console.log('Objectniveau'); // fa-building
-      return 'object';
-    case (zoomLevel >= 17):
-      // console.log('Straatniveau'); // fa-road
-      return 'street';
-    case (zoomLevel >= 15):
-      // console.log('Gemeenteniveau'); // fa-university
-      return 'municipal';
-    case (zoomLevel >= 10):
-      // console.log('Provincieniveau'); // fa-university
-      return 'provincial';
-    case (zoomLevel >= 8):
-      // console.log('Landniveau'); // fa-university
-      return 'country';
-    case (zoomLevel >= 5):
-      // console.log('Continentniveau'); // fa-globe
-      return 'continental';
-    case (zoomLevel >= 2):
-      // console.log('Wereldniveau'); // fa-globe
-      return 'global';
+      case (zoomLevel >= 18):
+        // console.log('Objectniveau'); // fa-building
+        return 'object';
+      case (zoomLevel >= 17):
+        // console.log('Straatniveau'); // fa-road
+        return 'street';
+      case (zoomLevel >= 15):
+        // console.log('Gemeenteniveau'); // fa-university
+        return 'municipal';
+      case (zoomLevel >= 10):
+        // console.log('Provincieniveau'); // fa-university
+        return 'provincial';
+      case (zoomLevel >= 8):
+        // console.log('Landniveau'); // fa-university
+        return 'country';
+      case (zoomLevel >= 5):
+        // console.log('Continentniveau'); // fa-globe
+        return 'continental';
+      case (zoomLevel >= 2):
+        // console.log('Wereldniveau'); // fa-globe
+        return 'global';
     }
   };
 
   /**
-   * Returns aggWindow. Either five minutes, an hour or a day, should 
+   * Returns aggWindow. Either five minutes, an hour or a day, should
    * lead to a minimum of three pixels within the drawing width.
-   * 
+   *
    * @param  {int} start    start of rainseries.
    * @param  {int} stop     end of rainseries.
    * @param  {int} drawingWidth size of graph in px.
