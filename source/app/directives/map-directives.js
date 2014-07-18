@@ -316,13 +316,13 @@ app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($con
       if (!scope.$$phase) {
         scope.$apply(function () {
           scope.box.type = 'activePoint';
-          $rootScope.$broadcast('newPointActive');
           scope.mapState.here = e.latlng;
+          $rootScope.$broadcast('newPointActive');
         });
       } else {
         scope.box.type = 'activePoint';
-        $rootScope.$broadcast('newPointActive');
         scope.mapState.here = e.latlng;
+        $rootScope.$broadcast('newPointActive');
       }
     });
 
