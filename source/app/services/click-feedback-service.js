@@ -136,22 +136,14 @@ app.service("ClickFeedbackService", ["$rootScope",
       };
 
       this.addLocationMarker = function (point) {
-        //var selection = this._getSelection(this.clickLayer);
-        var selection;
-        selection = d3.select("svg.leaflet-zoom-animated");
-        // remove location marker if exists
-        this.removeLocationMarker();
-        //try {
-        //} catch (e) {
-          //console.log("No location arrow yet", e);
-        //}
+        var selection = this._getSelection(this.clickLayer);
         // This is a location marker
         var path = "M" + point.x + " " + (point.y - 32) +
                    "c-5.523 0-10 4.477-10 10 0 10 10 22 10 " +
                    " 22s10-12 10-22c0-5.523-4.477-10-10-10z" +
                    "M" + point.x + " " + (point.y - 16) +
                    "c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z";
-        selection.append("path")
+        selection.select("path")
           .classed("location-marker", true)
           .attr("d", path)
           .attr("stroke-opacity", 1)
