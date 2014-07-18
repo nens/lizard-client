@@ -22,9 +22,7 @@ app.controller('ActivePointCtrl', ["$scope", "$filter", "CabinetService",
      * events and timeseries which may be requested from the server.
      */
     var createPointObject = function () {
-
       $scope.pointObject = {
-        latlng: $scope.mapState.here, // Updated by the return of the utf-grid
         details: false, // To display details in the card
         attrs: {
           active: false,
@@ -51,76 +49,84 @@ app.controller('ActivePointCtrl', ["$scope", "$filter", "CabinetService",
     };
 
     var fillPointObject = function () {
-
-      //Get attrs
-      ClickFeedbackService.drawClickInSpace($scope.map, $scope.pointObject.latlng);
-      UtfGridService.getDataFromUTF($scope.map, $scope.pointObject.latlng)
-      .then(
-        function (response) {
-          extendDataToPointObject(response);
-          // Either way, stop vibrating
-          ClickFeedbackService.stopVibration();
-          if (response && response.data) {
-            ClickFeedbackService.drawGeometry($scope.map, response.data.geom, response.data.entity_name);
-
-            // Get timeseries
-            $scope.pointObject.timeseries.data = TimeseriesService.getRandomTimeseries();
-            $scope.pointObject.timeseries.selectedTimeseries = $scope.pointObject.timeseries.data[0];
-            $scope.pointObject.timeseries.active = true;
-
-            // Get events
-            EventService.getEvents({object: $scope.pointObject.attrs.data.entity_name +
-                                      '$' +
-                                      $scope.pointObject.attrs.data.id})
-            .then(function (response) {
-              $scope.pointObject.events.data = [];
-              angular.forEach(response.features, function (feature) {
-                feature.properties.geometry = feature.geometry;
-                $scope.pointObject.events.data.push(feature.properties);
-              });
-              if ($scope.pointObject.events.data.length > 0) {
-                $scope.pointObject.events.active = true;
-                EventService.addColor($scope.events);
-                $scope.pointObject.events.active = true;
-                $scope.pointObject.eventTableParams.reload();
-              }
-            });
-          }
-
-          // Get rain
-          var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, window.innerWidth);
-          var callback = function (response) {
-            $scope.pointObject.rain.active = true;
-            $scope.pointObject.rain.data = response;
-            $scope.pointObject.rain.end = $scope.pointObject.rain.data[$scope.pointObject.rain.data.length - 1][0];
-            $scope.pointObject.rain.start = $scope.pointObject.rain.data[0][0];
-          };
-          RasterService.getRain(
-            new Date($scope.timeState.start),
-            new Date($scope.timeState.end),
-            $scope.pointObject.latlng,
-            aggWindow
-          )
-          .then(callback);
-
-          console.log($scope.pointObject);
-        }
-      );
+      //Give feedback to user
+      ClickFeedbackService.drawClickInSpace($scope.map, $scope.mapState.here);
+      //Get attribute data from utf
+      UtfGridService.getDataFromUTF($scope.map, $scope.mapState.here)
+        .then(utfgridResponded);
     };
 
-    var extendDataToPointObject = function (data) {
+    var getTimeSeriesForObject = function () {
+      // Get timeseries
+      $scope.pointObject.timeseries.data = TimeseriesService.getRandomTimeseries();
+      $scope.pointObject.timeseries.selectedTimeseries = $scope.pointObject.timeseries.data[0];
+      $scope.pointObject.timeseries.active = true;
+    };
+
+    var utfgridResponded = function (response) {
+      attrsResponded(response);
+      // Either way, stop vibrating click feedback.
+      ClickFeedbackService.stopVibration();
+      if (response && response.data) {
+        // Draw feedback around object.
+        ClickFeedbackService.drawGeometry($scope.map, response.data.geom, response.data.entity_name);
+        var entity = $scope.pointObject.attrs.data.entity_name;
+        var id = $scope.pointObject.attrs.data.id;
+        // Get events belonging to object.
+        EventService.getEvents({object: entity + '$' + id})
+          .then(eventResponded);
+        // Get timeseries belonging to object.
+        getTimeSeriesForObject();
+      } else {
+        // If not hit object, threat it as a rain click, draw rain click arrow.
+        ClickFeedbackService.drawArrowHere($scope.map, $scope.mapState.here);
+      }
+
+      // Get rain of latlng of click or location of object
+      var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, window.innerWidth);
+      RasterService.getRain(
+        new Date($scope.timeState.start),
+        new Date($scope.timeState.end),
+        $scope.mapState.here,
+        aggWindow
+      )
+        .then(rainResponded);
+    };
+
+    var rainResponded = function (response) {
+      $scope.pointObject.rain.active = true;
+      $scope.pointObject.rain.data = response;
+      $scope.pointObject.rain.end = $scope.pointObject.rain.data[$scope.pointObject.rain.data.length - 1][0];
+      $scope.pointObject.rain.start = $scope.pointObject.rain.data[0][0];
+    };
+
+    var eventResponded = function (response) {
+      $scope.pointObject.events.data = [];
+      angular.forEach(response.features, function (feature) {
+        feature.properties.geometry = feature.geometry;
+        $scope.pointObject.events.data.push(feature.properties);
+      });
+      if ($scope.pointObject.events.data.length > 0) {
+        $scope.pointObject.events.active = true;
+        EventService.addColor($scope.events);
+        $scope.pointObject.eventTableParams.reload();
+      }
+    };
+
+    var attrsResponded = function (data) {
       // Return directly if no data is returned from the UTFgrid!
       if (!data.data) { return; }
       angular.extend($scope.pointObject.attrs.data, data.data);
       if (data.data) {
         $scope.pointObject.attrs.active = true;
         var geom = JSON.parse(data.data.geom);
-        $scope.pointObject.latlng = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
+        $scope.mapState.here = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
       }
     };
 
     createPointObject();
     fillPointObject();
+
     $scope.$on('newPointActive', function () {
       createPointObject();
       fillPointObject();
