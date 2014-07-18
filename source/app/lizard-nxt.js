@@ -311,65 +311,79 @@ app.controller("MasterCtrl",
   };
   // END EVENTS
 
-  // ActiveObject part
+  // pointObject part
 
   /**
-   * ActiveObject is the object which is currently active in the
-   * application. Commonly set by a click on the utf grid. The
-   * activeObject may have associated events and timeseries which
-   * may be requested from the server.
+   * pointObject is the object which holds all data of a point
+   * in space. It is updated after a users click. Commonly set by
+   * a click on the utf grid. The pointObject may have associated 
+   * events and timeseries which may be requested from the server.
    */
-  $scope.activeObject = {
+  $scope.pointObject = {
     changed: true, // To trigger the watch
     details: false, // To display details in the card
-    attrs: undefined, // To store object data
-    hasTimeseries: false,
-    timeseries: [],
-    hasEvents: false,
-    events: [],
-    selectedTimeseries: null,
-    wantedAttrs: CabinetService.wantedAttrs
+    attrs: {
+      active: false,
+      data: [],
+      wanted: CabinetService.wantedAttrs
+    },
+    rain: {
+      active: false,
+      start: undefined,
+      stop: undefined,
+      aggWindow: RasterService.rainInfo.timeResolution,
+      data: undefined
+    },
+    timeseries: {
+      active: false,
+      data: [],
+      selectedTimeseries: null
+    },
+    events: {
+      active: false,
+      data: []
+    }
   };
 
-  $scope.$watch('activeObject.changed', function (newVal, oldVal) {
+  $scope.$watch('pointObject.changed', function (newVal, oldVal) {
     if (newVal === oldVal) { return; }
-    $scope.activeObject.hasTimeries = false;
-    $scope.activeObject.hasEvents = false;
-    $scope.box.content.object_type = $scope.activeObject.attrs.entity_name;
-    $scope.box.content.id = $scope.activeObject.attrs.id;
-    $scope.box.content.data = $scope.activeObject.attrs;
-    $scope.box.type = $scope.activeObject.attrs.entity_name;
+    $scope.pointObject.hasTimeries = false;
+    $scope.pointObject.events.active = false;
+    $scope.box.content.object_type = $scope.pointObject.attrs.data.entity_name;
+    $scope.box.content.id = $scope.pointObject.attrs.data.id;
+    $scope.box.content.data = $scope.pointObject.attrs.data;
+    $scope.box.type = $scope.pointObject.attrs.data.entity_name;
     // Get events
-    EventService.getEvents({object: $scope.activeObject.attrs.entity_name +
+    EventService.getEvents({object: $scope.pointObject.attrs.data.entity_name +
                                     '$' +
-                                    $scope.activeObject.attrs.id})
+                                    $scope.pointObject.attrs.data.id})
       .then(function (response) {
-        $scope.activeObject.events = [];
+        $scope.pointObject.events.data = [];
         angular.forEach(response.features, function (feature) {
           feature.properties.geometry = feature.geometry;
-          $scope.activeObject.events.push(feature.properties);
+          $scope.pointObject.events.data.push(feature.properties);
         });
-        if ($scope.activeObject.events.length > 0) {
+        if ($scope.pointObject.events.data.length > 0) {
           EventService.addColor($scope.events);
-          $scope.activeObject.hasEvents = true;
-          $scope.activeObject.eventTableParams.reload();
+          $scope.pointObject.events.active = true;
+          $scope.pointObject.eventTableParams.reload();
         }
       });
     // Get timeseries
-    $scope.activeObject.timeseries = TimeseriesService.getRandomTimeseries();
-    $scope.activeObject.selectedTimeseries = $scope.activeObject.timeseries[0];
-    $scope.activeObject.hasTimeseries = true;
+    $scope.pointObject.timeseries.data = TimeseriesService.getRandomTimeseries();
+    $scope.pointObject.selectedTimeseries = $scope.pointObject.timeseries.data[0];
+    $scope.pointObject.timeseries.active = true;
     // Get rain
     var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, window.innerWidth);
     var callback = function (response) {
-      $scope.rain.data = response;
-      $scope.rain.end = $scope.rain.data[$scope.rain.data.length - 1][0];
-      $scope.rain.start = $scope.rain.data[0][0];
+      $scope.pointObject.rain.data = response;
+      $scope.pointObject.rain.end = $scope.pointObject.rain.data[$scope.pointObject.rain.data.length - 1][0];
+      $scope.pointObject.rain.start = $scope.pointObject.rain.data[0][0];
     };
     RasterService.getRain(
       new Date($scope.timeState.start),
       new Date($scope.timeState.end),
-      $scope.activeObject.latlng,
+      $scope.pointObject.latlng,
       aggWindow
     ).then(callback);
   });
@@ -380,7 +394,7 @@ app.controller("MasterCtrl",
    * Controls how ngTable behaves. Don't forget to call the reload() method
    * when you refresh the data (like in an API call).
    */
-  $scope.activeObject.eventTableParams = new ngTableParams({
+  $scope.pointObject.eventTableParams = new ngTableParams({
     page: 1,
     count: 10,
     sorting: {
@@ -390,9 +404,9 @@ app.controller("MasterCtrl",
     total: 0,
     groupBy: 'category',
     getData: function ($defer, params) {
-      params.total($scope.activeObject.events.length);
-      params.count($scope.activeObject.events.length);
-      var data = $scope.activeObject.events;
+      params.total($scope.pointObject.events.data.length);
+      params.count($scope.pointObject.events.data.length);
+      var data = $scope.pointObject.events.data;
       var orderedData = params.sorting() ?
           $filter('orderBy')(data, params.orderBy()) :
           data;
@@ -401,7 +415,7 @@ app.controller("MasterCtrl",
     },
   });
 
-  // END activeObject part
+  // END pointObject part
 
   //TODO: move to raster-service ?
 
@@ -489,14 +503,6 @@ app.controller("MasterCtrl",
   };
 
   // RAIN
-
-  /**
-   * Initial state
-   */
-  $scope.rain = {
-    enabled: false
-  };
-
   /**
    * Switch rain tool on or off.
    *
@@ -504,13 +510,13 @@ app.controller("MasterCtrl",
    * timeline.
    */
   $scope.toggleRain = function () {
-    if ($scope.rain.enabled === false) {
-      $scope.rain.enabled = true;
+    if ($scope.pointObject.rain.active === false) {
+      $scope.pointObject.rain.active = true;
       if ($scope.timeState.hidden !== false) {
         $scope.toggleTimeline();
       }
-    } else if ($scope.rain.enabled) {
-      $scope.rain.enabled = false;
+    } else if ($scope.pointObject.rain.active) {
+      $scope.pointObject.rain.active = false;
     }
   };
 

@@ -580,7 +580,7 @@ app.directive('rain', ["RasterService", "UtilService",
         var oldDate = UtilService.roundTimestamp(oldVal,
                                              step, false);
         if (currentDate === oldDate) { return; }
-        if (scope.rain.enabled) {
+        if (scope.pointObject.rain.active) {
           var overlayIndex = frameLookup[currentDate];
           if (overlayIndex !== undefined &&
               overlayIndex !== previousFrame) {
@@ -622,7 +622,7 @@ app.directive('rain', ["RasterService", "UtilService",
       scope.$watch('timeState.at', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
         if (!scope.timeState.animation.playing
-          && scope.rain.enabled) {
+          && scope.pointObject.rain.active) {
           getImages(scope.timeState.at);
           imageOverlays[0].setOpacity(0.7);
           previousFrame = 0;

@@ -1,7 +1,7 @@
 <div class="event-container"
-     ng-class="{hidden: !activeObject.hasEvents}">
-  <h4>Gebeurtenissen (<% activeObject.eventTableParams.total() %>)</h4>
-  <table ng-table="activeObject.eventTableParams"
+     ng-class="{hidden: !pointObject.events.active}">
+  <h4>Gebeurtenissen (<% pointObject.eventTableParams.total() %>)</h4>
+  <table ng-table="pointObject.eventTableParams"
         class="table table-condensed table-hover"
         template-pagination="custom/pager">
     <tbody ng-repeat="group in $groups">

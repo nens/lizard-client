@@ -1,7 +1,7 @@
 <div class="streetview"
-     ng-class="{hide: !activeObject.attrs.details}">
+     ng-class="{hide: !pointObject.attrs.data.details}">
   <a target="_blank"
-     href="https://maps.google.com/maps?q=&layer=c&cbll=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&cbp=11,90,0,0,40">
-    <img class="streetview-img" src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=370x150&location=<% activeObject.latlng.lat %>,<% activeObject.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo"> &nbsp;
+     href="https://maps.google.com/maps?q=&layer=c&cbll=<% pointObject.latlng.lat %>,<% pointObject.latlng.lng %>&cbp=11,90,0,0,40">
+    <img class="streetview-img" src="http://maps.googleapis.com/maps/api/streetview?fov=120&pitch=-40&heading=90&size=370x150&location=<% pointObject.latlng.lat %>,<% pointObject.latlng.lng %>&sensor=false&key=AIzaSyCnhiYnIG6gN6SwiXltQ3vUGrr9WGovfzo"> &nbsp;
   </a>
 </div>
