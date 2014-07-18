@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 unreleased
 ----------
 
+- Layers are mentioned in slug of URL
+
 - DRY up HTML for cards
 
 - Events with start and end as line in timeline
