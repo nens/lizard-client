@@ -14,7 +14,7 @@ describe('Testing raster directive', function() {
     $httpBackend = _$httpBackend_;
     element = angular.element('<div ng-controller="RasterAggregateCtrl">'
       + '</div>');
-    element = $compile(element)($rootScope);
+    JS_DEBUG = true;
     scope = element.scope();
   }));
 
@@ -68,9 +68,7 @@ describe('Testing raster directive', function() {
   });
 
   it('should update the elevation data object with the response', function () {
-    var dataBefore = scope.extentAggregate.elevation.data.length;
-
-    scope.handleElevationCurve([
+    var dataBefore = [
       [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
         10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0,
         23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 34.0, 35.0,
@@ -105,8 +103,10 @@ describe('Testing raster directive', function() {
         70.87527340091765, 80.34080569026992, 80.4959783507511, 80.65115101123229,
         82.185636209324, 82.34080886980519, 85.25460660550743, 85.40977926598862,
         90.39254580810666, 90.54771846858785, 95.18565687630326, 95.34082953678444,
-        95.49600219726562]]);
-    expect(dataBefore).not.toEqual(scope.extentAggregate.elevation.data.length)
+        95.49600219726562]]
+
+    scope.handleElevationCurve(dataBefore);
+    expect(dataBefore).toEqual(scope.extentAggregate.elevation.data);
   });
 
 });

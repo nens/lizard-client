@@ -22,7 +22,7 @@ angular.module("omnibox", ["templates-main"])
       var replaceTemplate = function () {
         var template = getTemplate(scope.box.type);
         // we don't want the dynamic template to overwrite the search box.
-        // NOTE: the reason for selecting the specific child is jqLite does 
+        // NOTE: the reason for selecting the specific child is jqLite does
         // not support selectors.
         angular.element(element.children()[1]).html(template);
         $compile(element.contents())(scope);
@@ -30,13 +30,13 @@ angular.module("omnibox", ["templates-main"])
 
       scope.$watch('box.type', function () {
         replaceTemplate();
-        if (scope.box.type !== 'empty') {
-          scope.box.showCards = true;
-        } else {
+        if (scope.box.type === 'empty') {
           scope.box.showCards = false;
+        } else {
+          scope.box.showCards = true;
         }
       });
-      
+
       replaceTemplate();
     };
 
