@@ -73,7 +73,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
         .then(utfgridResponded(map, here))
         .then(function () {
           getRainForLocation();
-          console.log($scope.pointObject);
         });
     };
 

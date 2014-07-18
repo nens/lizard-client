@@ -555,8 +555,8 @@ app.directive('rain', ["RasterService", "UtilService",
        * When rain is enabled, add imageOverlay layer, remove layer when rain
        * is disabled.
        */
-      scope.$watch('rain.enabled', function (newVal, oldVal) {
-        if (newVal !== oldVal) {
+      scope.$watch('tools.active', function (newVal, oldVal) {
+        if (newVal !== oldVal && scope.tools.active === 'rain') {
           var i;
           if (newVal) {
             for (i in imageOverlays) {
