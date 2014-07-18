@@ -155,34 +155,4 @@ app.controller('RainAggregate', ["$scope", "$q", "UtilService",
     ).then(callback);
   };
 
-  /**
-   * Takes current timeState and location of click to put rain data on the $scope.
-   * 
-   * @param  {latlng object} e leaflet location object
-   */
-  $scope.pointObject.rain.rainClick = function (latlng) {
-    var stop = new Date($scope.timeState.end);
-    var start = new Date($scope.timeState.start);
-    $scope.pointObject.rain.latLng = latlng;
-    $scope.pointObject.rain.aggWindow = UtilService.getAggWindow($scope.timeState.start,
-                                                     $scope.timeState.end,
-                                                     272);  // graph is 272 px wide
-    RasterService.getRain(start, stop, $scope.pointObject.rain.latLng, $scope.pointObject.rain.aggWindow)
-      .then(function (response) {
-        $scope.pointObject.rain.data = response;
-        $scope.pointObject.rain.end = $scope.pointObject.rain.data[$scope.pointObject.rain.data.length - 1][0];
-        $scope.pointObject.rain.start = $scope.pointObject.rain.data[0][0];
-      }
-    ).then(function () {
-      // TODO: this is now an extra call to get rain recurrence time
-      // refactor to one call
-      RasterService.getRain(start, stop, $scope.pointObject.rain.latLng,
-                            $scope.pointObject.rain.aggWindow, 'rrc')
-        .then(function (response) {
-          $scope.pointObject.rain.recurrenceTime = response;
-        }
-      );
-    });
-  };
-
 }]);

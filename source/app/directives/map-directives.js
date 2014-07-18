@@ -348,17 +348,16 @@ app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($con
 
     scope.map.on('click', function (e) {
       // NOTE: Check whether a $digest is already happening before using apply
-      console.log('click');
       if (!scope.$$phase) {
         scope.$apply(function () {
-          scope.box.type = 'activePoint';
+          scope.box.type = 'pointObject';
           scope.mapState.here = e.latlng;
-          $rootScope.$broadcast('newPointActive');
+          $rootScope.$broadcast('newPointObject');
         });
       } else {
-        scope.box.type = 'activePoint';
+        scope.box.type = 'pointObject';
         scope.mapState.here = e.latlng;
-        $rootScope.$broadcast('newPointActive');
+        $rootScope.$broadcast('newPointObject');
       }
     });
 
