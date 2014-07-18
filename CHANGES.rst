@@ -4,6 +4,9 @@ Changelog of lizard-nxt client
 unreleased
 ----------
 
+- All clicks on the map result in displaying several cards
+  with all available data
+
 - DRY up HTML for cards
 
 - Events with start and end as line in timeline
@@ -17,6 +20,9 @@ unreleased
 - Events circles on map now don't increase with every redraw.
 
 - Events with start and end as line in timeline.
+
+Release 0.1
+-----------
 
 - Cumulative rain for spatial extent in timeline.
 
