@@ -1,5 +1,7 @@
 // mocks.js
 
+window.JS_DEBUG = false;
+
 app.controller('DummyCtrl', ['$scope', function ($scope) {
   $scope.dummy = {};
 }]);

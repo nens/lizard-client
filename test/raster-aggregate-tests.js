@@ -14,7 +14,7 @@ describe('Testing raster directive', function() {
     $httpBackend = _$httpBackend_;
     element = angular.element('<div ng-controller="RasterAggregateCtrl">'
       + '</div>');
-    JS_DEBUG = true;
+    $compile(element)($rootScope);
     scope = element.scope();
   }));
 
@@ -25,21 +25,21 @@ describe('Testing raster directive', function() {
       landuse: {
         active: false,
         data: [],
-        q: scope.extentAggregate.landuse.q
+        q: ''
       },
       soil: {
         active: false,
         data: [],
         types: [],
-        q: scope.extentAggregate.soil.q
+        q: ''
       },
       elevation: {
         active: false,
         data: [],
-        q: scope.extentAggregate.elevation.q
+        q: ''
       }
     };
-    expect(scope.extentAggregate).toEqual(extentAggregate);
+    expect(Object.keys(scope.extentAggregate)).toEqual(Object.keys(extentAggregate));
   });
 
   it('should Refresh Promises', function () {
@@ -106,7 +106,8 @@ describe('Testing raster directive', function() {
         95.49600219726562]]
 
     scope.handleElevationCurve(dataBefore);
-    expect(dataBefore).toEqual(scope.extentAggregate.elevation.data);
+    // data is now differently formatted, check new length with element length
+    expect(dataBefore[0].length).toEqual(scope.extentAggregate.elevation.data.length);
   });
 
 });

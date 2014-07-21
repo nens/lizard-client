@@ -9,7 +9,17 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
     var updateBaseLayerUrl = true,
       updateLocationUrl = true,
       updateStartUrl = true,
-      updateEndUrl = true;
+      updateEndUrl = true,
+      updateLayersUrl = true;
+
+    /**
+     * set layer(s) when these change.
+     */
+    $scope.$watch('mapState.activeLayersChanged', function (n, o) {
+      if (n === o) { return true; }
+      updateLayersUrl = false;
+      setLayersUrl($scope.mapState.layers);
+    }); 
 
     /**
      * Set baselayer hash when activeBaselayer changed.
@@ -95,20 +105,36 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
       hashSyncHelper.setHash({'baselayer': baselayerId}); // set baselayer in url by id
     };
 
+    var setLayersUrl = function (layers) {
+      if (layers === undefined) { return; }
+      var slugs = Object.keys(layers),
+          i,
+          activeSlugs = [];
+      for (i = 0; i < slugs.length; i++) {
+        if (layers[slugs[i]].active) {
+          activeSlugs.push(slugs[i]);
+        }
+      }
+      hashSyncHelper.setHash({'layers': activeSlugs.toString()});
+    };
+
     /**
      * Sets up the hash at creation of the controller.
      */
     (function setUrlHashWhenEmpty() {
-      var hash = hashSyncHelper.getHash();
-
-      var baselayerHash = hash.baselayer;
-      var locationHash = hash.location;
+      var hash = hashSyncHelper.getHash(),
+          baselayerHash = hash.baselayer,
+          layersHash = hash.layers,
+          locationHash = hash.location;
 
       if (!locationHash) {
         setCoordinatesUrl();
       }
       if (!baselayerHash) {
         setBaselayerUrl($scope.mapState.activeBaselayer);
+      }
+      if (!layersHash) {
+        setLayersUrl($scope.mapState.layers);
       }
     })();
 
@@ -120,34 +146,59 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
      * resetting the updateUrl back to true
      */
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-      var hash = hashSyncHelper.getHash();
+      var hash, baselayerHash, locationHash, layersHash, startHash, endHash;
+      hash = hashSyncHelper.getHash();
       if (updateBaseLayerUrl
         && updateLocationUrl
         && updateStartUrl
-        && updateEndUrl) {
+        && updateEndUrl
+        && updateLayersUrl) {
 
-        var baselayerHash = hash.baselayer;
+        baselayerHash = hash.baselayer;
         if (baselayerHash !== undefined) {
           $scope.mapState.activeBaselayer = parseInt(baselayerHash, 10);
           $scope.mapState.changeBaselayer();
         }
 
-        var locationHash = hash.location;
+        locationHash = hash.location;
         if (locationHash !== undefined) {
           var latlonzoom = locationHash.split(',');
           if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
-            if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
-              $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: true, animate: true});
+            if (parseFloat(latlonzoom[0]) &&
+                parseFloat(latlonzoom[1]) &&
+                parseFloat(latlonzoom[2])) {
+              $scope.map.setView(
+                [latlonzoom[0], latlonzoom[1]],
+                latlonzoom[2],
+                {reset: true, animate: true}
+              );
             }
           }
         }
 
-        var startHash = hash.start;
+        layersHash = hash.layers;
+        if (layersHash !== undefined) {
+          var activeSlugs = layersHash.split(','),
+              allSlugs = Object.keys($scope.mapState.layers),
+              i,
+              active;
+
+          for (i = 0; i < allSlugs.length; i++) {
+            // check if hash contains layers otherwise set to inactive;
+            active = (activeSlugs.indexOf(allSlugs[i]) >= 0);
+            $scope.mapState.layers[allSlugs[i]]['active'] = active;
+            if (active) {
+              $scope.mapState.changeLayer($scope.mapState.layers[allSlugs[i]]);
+            }
+          }
+        }
+
+        startHash = hash.start;
         if (startHash !== undefined) {
           $scope.timeState.start = Date.parse(startHash);
         }
 
-        var endHash = hash.end;
+        endHash = hash.end;
         if (endHash !== undefined) {
           $scope.timeState.end = Date.parse(endHash);
         }
@@ -156,6 +207,7 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
       updateLocationUrl = true;
       updateStartUrl = true;
       updateEndUrl = true;
+      updateLayersUrl = true;
     });
 
   }
