@@ -1,0 +1,71 @@
+<div ng-controller="pointObjectCtrl">
+  <div class="card" ng-class="{hidden: !pointObject.attrs.active}">
+    <actions></actions>
+    <cardtitle data-icon="icon-pumpstation-electric"
+               data-name="Gemaal">
+    </cardtitle>
+    <cardattributes></cardattributes>
+  </div>
+
+  <div class="card" ng-class="{hidden: !pointObject.streetview.active}">
+    <streetview></streetview>
+  </div>
+
+  <div class="card" ng-class="{hidden: !pointObject.events.active}">
+    <event></event>
+  </div>
+
+  <div class="card" ng-class="{hidden: !pointObject.timeseries.active}" >
+    <div class="input-prepend">
+      <span class="add-on"> Tijdreeks</span>
+      <select class="timeseries" ng-model="pointObject.timeseries.selectedTimeseries" ng-options="series as series.name for series in pointObject.timeseries.data"></select>
+    </div>
+      <graph line data="pointObject.timeseries.selectedTimeseries.data" ylabel="pointObject.selectedTimeseries.name" xlabel="n"></graph>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <ul>
+        <li class="fullscreen">
+          <a 
+            ng-click="toggleDetailmode()"
+            title="Bekijk in detailmode">
+            <i class="fa fa-lg fa-plus-square-o"></i>
+          </a>
+        </li>
+        <li class="export">
+          <a 
+            href="#" title="Data van deze infocard exporteren" 
+            ng-csv="rain.data" filename="neerslag.csv"
+            csv-header="['Timestamp (ms)', 'Rain (mm)']" >
+            <i class="fa fa-share-square-o"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <graph ng-if="!!pointObject.rain.data" bar-chart data="pointObject.rain.data" ylabel="pointObject.rain.aggWindow" yfilter="aggWinToYLabel" xlabel="tijd"></graph>
+
+    <div class="recurrence-time-container" ng-if="!!pointObject.rain.recurrenceTime">
+      <table class="table table-hover table-condensed">
+        <caption>Herhalingstijden</caption>
+        <thead>
+          <tr>
+            <th>Start</th>
+            <th>Duur</th>
+            <th class="text-right">mm</th>
+            <th>Herhalingstijd</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="recurrence_time" ng-repeat="recurTime in pointObject.rain.recurrenceTime">
+            <td><% recurTime.start | date : 'dd-MM-yyyy HH:mm' %></td>
+            <td><% recurTime.td_window %></td>
+            <td class="text-right"><% recurTime.max | number: 1 %></td>
+            <td><% recurTime.t %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

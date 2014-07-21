@@ -1,8 +1,8 @@
 'use strict';
 
 // Timeline for lizard.
-app.directive('timeline', ["EventService", "RasterService", "Timeline",
-  function (EventService, RasterService, Timeline) {
+app.directive('timeline', ["EventService", "RasterService", "UtilService", "Timeline",
+  function (EventService, RasterService, UtilService, Timeline) {
   
   var link = function (scope, element, attrs, timelineCtrl, $timeout) {
 
@@ -42,6 +42,9 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
        * Update zoomEnded to trigger new call for rain intensity
        */
       zoomEndFn: function () {
+        if (scope.tools.active === 'rain') {
+          getRain();
+        }
         scope.$apply(function () {
           scope.timeState.zoomEnded = Date.now();
         });
@@ -78,7 +81,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
 
     // Create the timeline
     var timeline = new Timeline(el, dimensions, start, end, interaction);
-    
+
     // Activate zoom listener
     timeline.addZoomListener();
 
@@ -163,6 +166,7 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
       if (scope.events.data.features.length > 0) {
         timeline.drawEventsContainedInBounds(scope.mapState.bounds);
         EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
+        getRain();
       }
     });
 
@@ -234,8 +238,26 @@ app.directive('timeline', ["EventService", "RasterService", "Timeline",
         timeline.addClickListener();
       } else {
         timeline.removeClickListener();
+        RasterService.setIntensityData([]);
+        scope.raster.changed = Date.now();
       }
     });
+
+    // Rain specific stuff
+    var getRain = function () {
+      var start = scope.timeState.start;
+      var stop = scope.timeState.end;
+      var bounds = scope.mapState.bounds;
+      var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);  // width of timeline
+      RasterService.getRain(new Date(start), new Date(stop),
+                                       bounds, aggWindow)
+      .then(function (response) {
+        RasterService.setIntensityData(response);
+        scope.raster.changed = Date.now();
+      });
+    };
+
+    if (scope.tools.active === 'rain') { getRain(); }
 
     window.onresize = function () {
       var dimensions = timeline.dimensions;

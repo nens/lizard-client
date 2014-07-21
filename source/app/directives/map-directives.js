@@ -272,7 +272,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
 });
 
 
-app.directive('map', ['$controller', 'UtilService', function ($controller, UtilService) {
+app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($controller, $rootScope, UtilService) {
 
   var link = function (scope, element, attrs, ctrl) {
     // Leaflet global variable to peed up vector layer,
@@ -355,10 +355,14 @@ app.directive('map', ['$controller', 'UtilService', function ($controller, UtilS
       // NOTE: Check whether a $digest is already happening before using apply
       if (!scope.$$phase) {
         scope.$apply(function () {
+          scope.box.type = 'pointObject';
           scope.mapState.here = e.latlng;
+          $rootScope.$broadcast('newPointObject');
         });
       } else {
+        scope.box.type = 'pointObject';
         scope.mapState.here = e.latlng;
+        $rootScope.$broadcast('newPointObject');
       }
     });
 
@@ -557,8 +561,8 @@ app.directive('rain', ["RasterService", "UtilService",
        * When rain is enabled, add imageOverlay layer, remove layer when rain
        * is disabled.
        */
-      scope.$watch('rain.enabled', function (newVal, oldVal) {
-        if (newVal !== oldVal) {
+      scope.$watch('tools.active', function (newVal, oldVal) {
+        if (newVal !== oldVal && scope.tools.active === 'rain') {
           var i;
           if (newVal) {
             for (i in imageOverlays) {
@@ -586,7 +590,7 @@ app.directive('rain', ["RasterService", "UtilService",
         var oldDate = UtilService.roundTimestamp(oldVal,
                                              step, false);
         if (currentDate === oldDate) { return; }
-        if (scope.pointObject.rain.active) {
+        if (scope.tools.active === 'rain') {
           var overlayIndex = frameLookup[currentDate];
           if (overlayIndex !== undefined &&
               overlayIndex !== previousFrame) {
@@ -628,7 +632,7 @@ app.directive('rain', ["RasterService", "UtilService",
       scope.$watch('timeState.at', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
         if (!scope.timeState.animation.playing
-          && scope.pointObject.rain.active) {
+          && scope.tools.active === 'rain') {
           getImages(scope.timeState.at);
           imageOverlays[0].setOpacity(0.7);
           previousFrame = 0;
