@@ -106,6 +106,7 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
     };
 
     var setLayersUrl = function (layers) {
+      if (layers === undefined) { return; }
       var slugs = Object.keys(layers),
           i,
           activeSlugs = [];
@@ -121,16 +122,19 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
      * Sets up the hash at creation of the controller.
      */
     (function setUrlHashWhenEmpty() {
-      var hash = hashSyncHelper.getHash();
-
-      var baselayerHash = hash.baselayer;
-      var locationHash = hash.location;
+      var hash = hashSyncHelper.getHash(),
+          baselayerHash = hash.baselayer,
+          layersHash = hash.layers,
+          locationHash = hash.location;
 
       if (!locationHash) {
         setCoordinatesUrl();
       }
       if (!baselayerHash) {
         setBaselayerUrl($scope.mapState.activeBaselayer);
+      }
+      if (!layersHash) {
+        setLayersUrl($scope.mapState.layers);
       }
     })();
 
