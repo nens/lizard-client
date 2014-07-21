@@ -162,10 +162,9 @@ app.controller("MasterCtrl",
   // MAP MODEL
   // MOVE TO MAP CONTROL ?
   $scope.mapState = {
-    layergroups: CabinetService.layergroups,
     layers: CabinetService.layers,
+    activeLayersChanged: false,
     baselayers: CabinetService.baselayers,
-    overlayers: CabinetService.overlayers,
     eventTypes: CabinetService.eventTypes,
     activeBaselayer: 1,
     changed: Date.now(),

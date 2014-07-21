@@ -12,7 +12,7 @@ describe('Testing raster requests directive', function() {
     $compile = _$compile_;
     $rootScope = _$rootScope_;
     $httpBackend = _$httpBackend_;
-    JS_DEBUG = true;
+    JS_DEBUG = false;
   }));
 
   /**
