@@ -164,8 +164,14 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
         if (locationHash !== undefined) {
           var latlonzoom = locationHash.split(',');
           if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
-            if (parseFloat(latlonzoom[0]) && parseFloat(latlonzoom[1]) && parseFloat(latlonzoom[2])) {
-              $scope.map.setView([latlonzoom[0], latlonzoom[1]], latlonzoom[2], {reset: true, animate: true});
+            if (parseFloat(latlonzoom[0]) &&
+                parseFloat(latlonzoom[1]) &&
+                parseFloat(latlonzoom[2])) {
+              $scope.map.setView(
+                [latlonzoom[0], latlonzoom[1]],
+                latlonzoom[2],
+                {reset: true, animate: true}
+              );
             }
           }
         }

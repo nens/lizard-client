@@ -3,9 +3,10 @@
  */
 app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
   function ($location, $parse, $rootScope) {
-  /**
-   * Offers a getHash and setHash for manipulating the url hash
-   */
+
+    /**
+     * Offers a getHash and setHash for manipulating the url hash
+     */
     var service = {
       getHash: function () {
         // Reads the hash fragment from angulars location service
