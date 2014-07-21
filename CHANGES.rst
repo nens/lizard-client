@@ -7,6 +7,8 @@ unreleased
 - All clicks on the map result in displaying several cards
   with all available data
 
+- Layers are mentioned in slug of URL
+
 - DRY up HTML for cards
 
 - Events with start and end as line in timeline

@@ -207,6 +207,8 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
 
   /**
    * Update overlayer opacities.
+   *
+   * TODO: Remove overlayers
    */
   this.updateOverLayers = function (mapState) {
     var numLayers = 1;
@@ -268,6 +270,8 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
 
   return this;
 });
+
+
 app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($controller, $rootScope, UtilService) {
 
   var link = function (scope, element, attrs, ctrl) {
@@ -340,6 +344,7 @@ app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($con
     });
 
     angular.forEach(scope.mapState.layers, function (layer) {
+      scope.mapState.activeLayersChanged = !scope.mapState.activeLayersChanged;
       if (!layer.initiated) {
         ctrl.initiateLayer(layer);
       }
@@ -423,6 +428,7 @@ app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($con
         ctrl.updateOverLayers(scope.mapState);
       }
       ctrl.toggleLayer(layer);
+      scope.mapState.activeLayersChanged = !scope.mapState.activeLayersChanged;
       scope.box.type = ctrl.boxType(scope.mapState);
     };
 
