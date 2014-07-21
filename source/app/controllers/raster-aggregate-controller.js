@@ -1,4 +1,4 @@
-app.controller("RasterAggregateCtrl", ["$scope", "$q", "RasterService", 
+app.controller("RasterAggregateCtrl", ["$scope", "$q", "RasterService",
   function ($scope, $q, RasterService) {
   /**
    * ExtentAggregate is the object which collects different
@@ -41,7 +41,7 @@ app.controller("RasterAggregateCtrl", ["$scope", "$q", "RasterService",
     $scope.extentAggregate.landuse.q = $q.defer();
     $scope.extentAggregate.elevation.q = $q.defer();
     // $scope.extentAggregate.soil.q = $q.defer();
-  }
+  };
 
   $scope.handleLanduseCount = function (data) {
     $scope.extentAggregate.landuse.data = data;
@@ -75,15 +75,14 @@ app.controller("RasterAggregateCtrl", ["$scope", "$q", "RasterService",
 
   };
 
-  var mapWatch = $scope.$watch('mapState.bounds', function (newVal, oldVal) {    
-    // if (newVal === oldVal) { return; }
+  var mapWatch = $scope.$watch('mapState.bounds', function (newVal, oldVal) {
 
     $scope.extAggPromiseRefresh();
 
     var geom = $scope.mapState.bounds;
 
-    $scope.getLanduseCount(geom);   
+    $scope.getLanduseCount(geom);
     $scope.getElevationCurve(geom);
-  });   
+  });
  
 }]);

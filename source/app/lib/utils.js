@@ -20,6 +20,7 @@ function encodeUriQuery(val, pctEncodeSpaces) {
             .replace(/%20/g, (pctEncodeSpaces ? '%20' : '+'));
 }
 
+// Why don't we put this in the UtilService itself?
 function parseKeyValue(keyValue) {
   var obj = {}, key_value, key;
   angular.forEach((keyValue || "").split('&'), function (keyValue) {

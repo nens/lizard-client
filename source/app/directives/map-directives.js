@@ -326,7 +326,7 @@ app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($con
       } else {
         scope.mapState.changeBaselayer(layer);
       }
-    }
+    };
 
     map.fitBounds(maxBounds);
     map.attributionControl.addAttribution(osmAttrib);
