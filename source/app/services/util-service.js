@@ -19,7 +19,8 @@ app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
         var oldhash = this.getHash(); // Copy the current hash
         angular.forEach(obj, function (v, k) {
           // Loop over the incoming object and fill obj2 with it
-          if (v) { obj2[k] = v; }
+          // if v == "" this v is still used. !important for layers=
+          if (v !== undefined) { obj2[k] = v; }
         });
         // Then extend the original hash object with the new hash object
         angular.extend(oldhash, obj2);
