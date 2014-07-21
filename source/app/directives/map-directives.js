@@ -255,7 +255,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
    *
    */
   this.boxType = function (mapState) {
-    var newState = 'empty';
+    var newState = ($scope.box.type === 'profile') ? 'profile' : 'raster-aggregate';
     if (mapState.activeBaselayer === 3) {
       newState = 'elevation';
     } else {

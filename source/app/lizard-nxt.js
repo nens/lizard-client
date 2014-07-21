@@ -135,7 +135,8 @@ app.controller("MasterCtrl",
   $scope.toggleTool = function (name) {
 
     if ($scope.tools.active === name) {
-      $scope.tools.active = "none";
+      $scope.tools.active = 'none';
+      $scope.box.type = 'raster-aggregate';
     } else {
       $scope.tools.active = name;
     }
@@ -313,69 +314,6 @@ app.controller("MasterCtrl",
 
   $scope.raster = {
     changed: Date.now()
-  };
-
-  /**
-   * Get raster data from server.
-   * NOTE: maybe add a callback as argument?
-   */
-  $scope.getRasterData = function (raster_names, linestring_wkt, srs, agg, timeout) {
-    // build url
-    // NOTE: first part hardcoded
-    var url = "api/v1/rasters/";
-    url += "?raster_names=" + raster_names;
-    url += "&geom=" + linestring_wkt;
-    url += "&srs=" + srs;
-    if (agg !== undefined) {
-      url += "&agg=" + agg;
-    }
-    var config = {
-      method: 'GET',
-      url: url
-    };
-    if (timeout) {
-      config.timeout = $scope.mapState.timeout.promise;
-    }
-    // get aggregated raster data from serverr
-    $http(config)
-      .success(function (data) {
-        if (agg === 'curve') {
-          $scope.data = $scope.format_rastercurve(data);
-          $scope.box.content = {
-            yLabel: 'hoogte [mNAP]',
-            xLabel: '[%]'
-          };
-        } else if (agg === 'counts') {
-          $scope.data = data;
-        } else if (raster_names === 'elevation' && agg === undefined) {
-          $scope.box.type = "profile";
-          $scope.box.content = {
-            data: data,
-            yLabel: 'hoogte [mNAP]',
-            xLabel: 'afstand [m]'
-          };
-        } else {
-          $scope.box.content = {
-            data: data
-          };
-        }
-      })
-      .error(function (data) {
-        //TODO: implement error function to return no data + message
-        if (JS_DEBUG && !timeout) {
-          console.info("failed getting profile data from server");
-        }
-      });
-  };
-  $scope.format_rastercurve = function (data) {
-
-    var i, datarow, formatted = [];
-
-    for (i in data[0]) {
-      datarow = [data[0][i], data[1][i]];
-      formatted.push(datarow);
-    }
-    return formatted;
   };
 
   // KEYPRESS

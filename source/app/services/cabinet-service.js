@@ -324,14 +324,18 @@ app.service("CabinetService", ["$q", "Restangular",
   };
 
   var abortGet;
-  var rasterResource = function () {
-    if (abortGet) {
-      abortGet.resolve();
+  var rasterResource = function (q) {
+    var localPromise = q ? q : abortGet;
+    if (localPromise === abortGet) {
+      if (abortGet) {
+        abortGet.resolve();
+      }
+      abortGet = $q.defer();
+      localPromise = abortGet;
     }
-    abortGet = $q.defer();
     return Restangular
       .one('api/v1/rasters/')
-      .withHttpConfig({timeout: abortGet.promise});
+      .withHttpConfig({timeout: localPromise.promise});
   };
 
   return {

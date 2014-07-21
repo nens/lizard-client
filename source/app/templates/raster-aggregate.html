@@ -1,6 +1,13 @@
-<div id="raster-aggregate">
-    <div ng-switch on="box.type">
-        <graph ng-switch-when="landuse" pie data="data"></graph>
-        <graph ng-switch-when="elevation" line data="data" title="" xlabel="box.content.xLabel" ylabel="box.content.yLabel"></graph>
+<div ng-controller="RasterAggregateCtrl">
+  <div class="card">
+    <div class="card-title">
     </div>
+      <graph pie data="extentAggregate.landuse.data"></graph>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+    </div>
+      <graph line xlabel="'afstand [m]'" ylabel="'hoogte [mNAP]'" data="extentAggregate.elevation.data"></graph>
+  </div>
 </div>

@@ -2,7 +2,7 @@
 
 // this directive is implemented with the idea that we will switch to OL
 // ie. ugly abuse of scope, sending data to server via
-app.directive('rasterprofile', function () {
+app.directive('rasterprofile', ['RasterService', function (RasterService) {
 
   return {
     restrict: "A",
@@ -75,7 +75,6 @@ app.directive('rasterprofile', function () {
             mapCtrl.addLayer(scope.line_marker);
 
             scope.map.on('mousemove', updateLine);
-
             return;
           }
 
@@ -88,8 +87,19 @@ app.directive('rasterprofile', function () {
           // library
           var srs = L.CRS.EPSG3857.code;
           
-          // call getRasterData controller function on scope
-          scope.getRasterData("elevation", profile_line_wkt, srs);
+          RasterService.getRasterData('elevation', 'nogeom', {
+                    agg: '',
+                    srs: srs,
+                    wkt: profile_line_wkt
+                  }).then(function (data) {
+                    scope.box.content = {
+                      type: 'profile',
+                      data: data,
+                      yLabel: 'hoogte [mNAP]',
+                      xLabel: 'afstand [m]'
+                    }
+                    scope.box.type = "profile"
+                  });
         };
 
         // enable and disable click handler
@@ -143,4 +153,4 @@ app.directive('rasterprofile', function () {
       }
 
   };
-});
+}]);

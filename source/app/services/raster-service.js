@@ -65,11 +65,50 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService",
       });
   };
 
+
+  /**
+   * getRasterData gets different types of raster data from
+   * the `/api/v1/raster` endpoint.
+   * @param  {string} rasterNames - String with requested raster
+   * @param  {object} geom        - Object -> Leaflet.Bounds
+   * @param  {object} options     - Optional object with extra params
+   * @return {promise}  Restangular.get promise
+   */
+  var getRasterData = function (rasterNames, geom, options) {
+
+    var wkt, srs, agg, rasterService;
+
+    srs = options.srs ? options.srs : 'EPSG:4326';
+    agg = options.agg ? options.agg : '';
+
+    if (options.wkt) {
+      wkt = options.wkt;
+    } else {
+      wkt = "POLYGON(("
+            + geom.getWest() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getSouth()
+            + "))";
+    }
+
+    rasterService = (options.q) ? CabinetService.raster(options.q) : CabinetService.raster();
+    
+    return rasterService.get({
+      raster_names: rasterNames,
+      geom: wkt,
+      srs: srs,
+      agg: agg
+    });
+  };
+
   return {
     rainInfo: rainInfo,
     getIntensityData: getIntensityData,
     setIntensityData: setIntensityData,
-    getRain: getRain
+    getRain: getRain,
+    getRasterData: getRasterData
   };
 
 }]);
