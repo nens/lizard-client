@@ -1,18 +1,14 @@
 <div class="card-title">
-
-  <i id="icon-holder" class="is-set-dynamically"></i>
+  <!-- temporary solution I guess. -->
+  <i id="icon-holder" class="icon-<% pointObject.attrs.data.entity_name.split('_')[0] %>"></i>
   
   <!--<i class="<% pointObject.attrs.data.getIcon() %>"></i>-->
 
-  <span id="title-holder" class="title-text">...</span>&nbsp;
+  <span id="title-holder" class="title-text"><% gettext(pointObject.attrs.data.entity_name) %></span>&nbsp;
   <span ng-if="pointObject.attrs.data.code">(</span>
   <span class="truncateme ng-binding" ng-bind="pointObject.attrs.data.code"></span>
   <span ng-if="pointObject.attrs.data.code">)</span>
   
-  <script type="text/javascript" id="setter">
-    var cardTitle = $("#setter").closest("cardtitle");
-    $("#icon-holder").attr("class", cardTitle.data("icon"));
-    $("#title-holder").text(cardTitle.data("name"));
-  </script>
+
 
 </div>
