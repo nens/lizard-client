@@ -40,7 +40,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
         },
         attrs: {
           active: false,
-          data: [],
+          data: {},
           wanted: CabinetService.wantedAttrs
         },
         rain: {
