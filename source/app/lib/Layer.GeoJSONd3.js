@@ -142,7 +142,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
    *
    */
   countOverlapLocations: function (self, d) {
-      var key = d.geometry.coordinates[0] + d.geometry.coordinates[1];
+      var key = "x:" + d.geometry.coordinates[0] + "y:" + d.geometry.coordinates[1];
       var coord = self.overlapLocations[key];
       if (coord === undefined) {
         self.overlapLocations[key] = 1;

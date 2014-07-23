@@ -272,7 +272,8 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
 });
 
 
-app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($controller, $rootScope, UtilService) {
+app.directive('map', ['$controller', '$rootScope', 'UtilService', 'ClickFeedbackService',
+  function ($controller, $rootScope, UtilService, ClickFeedbackService) {
 
   var link = function (scope, element, attrs, ctrl) {
     // Leaflet global variable to peed up vector layer,
@@ -378,6 +379,10 @@ app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($con
         scope.mapState.mapMoving = true;
       }
     });
+
+    // initialize empty ClickLayer. 
+    // Otherwise click of events-aggregate and clicklayer
+    ClickFeedbackService.drawClickInSpace(map, new L.LatLng(180.0, 90.0));
 
     scope.map.on('moveend', function () {
 

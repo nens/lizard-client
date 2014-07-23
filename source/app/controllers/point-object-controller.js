@@ -66,9 +66,13 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     };
 
     var fillPointObject = function (map, here) {
-      //Give feedback to user
-      ClickFeedbackService.drawClickInSpace(map, here);
-      //Get attribute data from utf
+      if (here.type == 'events') {
+        eventResponded(here.eventData);
+      } else {
+        // Give feedback to user
+        ClickFeedbackService.drawClickInSpace(map, here);
+      }
+      // Get attribute data from utf
       UtfGridService.getDataFromUTF(map, here)
         .then(utfgridResponded(map, here))
         .then(function () {
@@ -80,7 +84,9 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       return function (response) {
         attrsResponded(response, $scope.pointObject);
         // Either way, stop vibrating click feedback.
-        ClickFeedbackService.stopVibration();
+        if (here.type !== 'events') {
+          ClickFeedbackService.stopVibration();
+        }
         if (response && response.data) {
           $scope.pointObject.attrs.active = true;
           // Set here to location of object
@@ -96,8 +102,10 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           // Get timeseries belonging to object.
           getTimeSeriesForObject();
         } else {
-          // If not hit object, threat it as a rain click, draw rain click arrow.
-          ClickFeedbackService.drawArrowHere(map, here);
+          // If not hit object, threaten it as a rain click, draw rain click arrow.
+          if (here.type == 'events') {
+            ClickFeedbackService.drawArrowHere(map, here);
+          }
         }
       };
     };
@@ -154,13 +162,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     };
 
     $scope.pointObject = createPointObject();
-    fillPointObject($scope.map, $scope.mapState.here);
-
-    $scope.$on('newPointObject', function () {
-      $scope.pointObject = createPointObject();
-      fillPointObject($scope.map, $scope.mapState.here);
-    });
-
     /**
      * Parameters for ngTable.
      *
@@ -186,6 +187,13 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
         $defer.resolve(orderedData.slice((params.page() - 1) * params.count(),
                                           params.page() * params.count()));
       },
+    });
+
+    fillPointObject($scope.map, $scope.mapState.here);
+
+    $scope.$on('newPointObject', function () {
+      $scope.pointObject = createPointObject();
+      fillPointObject($scope.map, $scope.mapState.here);
     });
 
   }

@@ -6,7 +6,7 @@
  * time-interval (temporal extent, from timeline)
  *
  */
-app.directive('vectorlayer', ["EventService", function (EventService) {
+app.directive('vectorlayer', ["EventService", "$rootScope", function (EventService, $rootScope) {
   
   return {
     restrict: 'A',
@@ -35,7 +35,23 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
        * @param {object} d - D3 bound data object.
        */
       eventClickHandler = function (d) {
-        var id = this.options.selectorPrefix + this._idExtractor(d);
+        var id, here, features, f;
+        features = [];
+        for (f = 0; f < d3eventLayer._data.features.length; f++ ) {
+          if (matchLocation(d.geometry.coordinates, d3eventLayer._data.features[f].geometry.coordinates)) {
+            features.push(d3eventLayer._data.features[f]);
+          };
+        }
+
+        id = this.options.selectorPrefix + this._idExtractor(d);
+        here = new L.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
+        angular.extend(here, {
+          type: 'events',
+          eventData: {
+            features: features
+          }
+        });
+        here.type = 'events';
         // unhighlight events
         d3.selectAll(".circle.event")
           .attr("fill", getEventColor);
@@ -43,10 +59,29 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         d3.select("." + id).transition()
           .duration(1000)
           .attr("fill", "black");
-        scope.box.type = 'event-aggregate';
-        scope.box.content.eventValue = d;
-        scope.$apply();
+
+        var setEventOnPoint = function () {
+          if (scope.box.type == 'pointObject') {
+            scope.mapState.here = here;
+            $rootScope.$broadcast('newPointObject');
+          } else {
+            scope.mapState.here = here;
+            scope.box.type = 'pointObject';
+          }
+        };
+        if (!scope.$$phase) {
+          scope.$apply(setEventOnPoint);
+        } else {
+          setEventOnPoint();
+        }
       };
+
+      matchLocation = function (coordinatesa, coordinatesb) {
+        if (coordinatesa[0] === coordinatesb[0] && 
+          coordinatesa[1] === coordinatesb[1]) {
+          return true;
+        }
+      }
 
       /**
        * Utilfunction that creates/returns a "feature"
@@ -92,13 +127,15 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         // if d3eventlayer does not exist create.
         if (d3eventLayer === undefined) {
           d3eventLayer = L.nonTiledGeoJSONd3(data, {
+            ext: 'd3',
+            name: 'events',
             selectorPrefix: 'm',
             idExtractor: idExtractor,
             class: 'circle event'
           });
         }
 
-        map.addLayer(d3eventLayer);
+        map.addLayer(d3eventLayer); 
         d3eventLayer._bindClick(eventClickHandler);
 
         // for backwards compatibility. 
