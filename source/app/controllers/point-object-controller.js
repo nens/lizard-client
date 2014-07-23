@@ -25,6 +25,37 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
             ClickFeedbackService
   ) {
 
+
+    /**
+     * Parameters for ngTable.
+     *
+     * Controls how ngTable behaves. Don't forget to call the reload() method
+     * when you refresh the data (like in an API call).
+     */
+    var eventTableParams = function () {
+      return new ngTableParams({
+          page: 1,
+          count: 10,
+          sorting: {
+            timestamp_start: 'desc'
+          }
+        }, {
+          total: 0,
+          groupBy: 'category',
+          getData: function ($defer, params) {
+            params.total($scope.pointObject.events.data.length);
+            params.count($scope.pointObject.events.data.length);
+            var data = $scope.pointObject.events.data;
+            var orderedData = params.sorting() ?
+                $filter('orderBy')(data, params.orderBy()) :
+                data;
+            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(),
+                                              params.page() * params.count()));
+          },
+        });
+    };
+
+
     /**
      * pointObject is the object which holds all data of a point
      * in space. It is updated after a users click. The pointObject 
@@ -60,7 +91,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           active: false,
           data: []
         },
-        eventTableParams: undefined
+        eventTableParams: eventTableParams()
       };
       return pointObject;
     };
@@ -68,6 +99,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     var fillPointObject = function (map, here) {
       if (here.type == 'events') {
         eventResponded(here.eventData);
+        console.log(here.eventData);
       } else {
         // Give feedback to user
         ClickFeedbackService.drawClickInSpace(map, here);
@@ -162,33 +194,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     };
 
     $scope.pointObject = createPointObject();
-    /**
-     * Parameters for ngTable.
-     *
-     * Controls how ngTable behaves. Don't forget to call the reload() method
-     * when you refresh the data (like in an API call).
-     */
-    $scope.pointObject.eventTableParams = new ngTableParams({
-      page: 1,
-      count: 10,
-      sorting: {
-        timestamp_start: 'desc'
-      }
-    }, {
-      total: 0,
-      groupBy: 'category',
-      getData: function ($defer, params) {
-        params.total($scope.pointObject.events.data.length);
-        params.count($scope.pointObject.events.data.length);
-        var data = $scope.pointObject.events.data;
-        var orderedData = params.sorting() ?
-            $filter('orderBy')(data, params.orderBy()) :
-            data;
-        $defer.resolve(orderedData.slice((params.page() - 1) * params.count(),
-                                          params.page() * params.count()));
-      },
-    });
-
     fillPointObject($scope.map, $scope.mapState.here);
 
     $scope.$on('newPointObject', function () {
