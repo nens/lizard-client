@@ -523,7 +523,7 @@ angular.module('graph')
           .insert("div")
           .classed({
             "donut-underline": true,
-            "donut-underline-top": true, 
+            "donut-underline-top": true,
             "fading": true
           });
 
@@ -531,7 +531,7 @@ angular.module('graph')
           .insert("div")
           .classed({
             "donut-underline": true,
-            "donut-underline-bottom": true, 
+            "donut-underline-bottom": true,
             "fading": true
           });
 
@@ -542,7 +542,7 @@ angular.module('graph')
         /** 
          * Removes the DOM elements (.percentage-container AND 
          * .donut-underline-top) according to the currently selected raster.
-         */ 
+         */
         var rmRasterSpecificInfo = function () {
 
           svg.select("text")
@@ -587,7 +587,7 @@ angular.module('graph')
          * to the currently selected raster.
          *
          * @param {object} d - D3 datum object. 
-         */ 
+         */
         var addRasterSpecificInfo = function (d) {
           
           d3.selectAll(".fading")

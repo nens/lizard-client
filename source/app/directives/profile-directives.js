@@ -88,18 +88,18 @@ app.directive('rasterprofile', ['RasterService', function (RasterService) {
           var srs = L.CRS.EPSG3857.code;
           
           RasterService.getRasterData('elevation', 'nogeom', {
-                    agg: '',
-                    srs: srs,
-                    wkt: profile_line_wkt
-                  }).then(function (data) {
-                    scope.box.content = {
-                      type: 'profile',
-                      data: data,
-                      yLabel: 'hoogte [mNAP]',
-                      xLabel: 'afstand [m]'
-                    }
-                    scope.box.type = "profile"
-                  });
+            agg: '',
+            srs: srs,
+            wkt: profile_line_wkt
+          }).then(function (data) {
+            scope.box.content = {
+              type: 'profile',
+              data: data,
+              yLabel: 'hoogte [mNAP]',
+              xLabel: 'afstand [m]'
+            };
+            scope.box.type = "profile";
+          });
         };
 
         // enable and disable click handler

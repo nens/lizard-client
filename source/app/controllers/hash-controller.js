@@ -19,7 +19,7 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
       if (n === o) { return true; }
       updateLayersUrl = false;
       setLayersUrl($scope.mapState.layers);
-    }); 
+    });
 
     /**
      * Set baselayer hash when activeBaselayer changed.
@@ -186,7 +186,7 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
           for (i = 0; i < allSlugs.length; i++) {
             // check if hash contains layers otherwise set to inactive;
             active = (activeSlugs.indexOf(allSlugs[i]) >= 0);
-            $scope.mapState.layers[allSlugs[i]]['active'] = active;
+            $scope.mapState.layers[allSlugs[i]].active = active;
             if (active) {
               $scope.mapState.changeLayer($scope.mapState.layers[allSlugs[i]]);
             }

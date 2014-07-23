@@ -322,7 +322,7 @@ app.directive('map', ['$controller', '$rootScope', 'UtilService', function ($con
       } else {
         scope.mapState.changeBaselayer(layer);
       }
-    }
+    };
 
     map.fitBounds(maxBounds);
     map.attributionControl.addAttribution(osmAttrib);
@@ -558,9 +558,9 @@ app.directive('rain', ["RasterService", "UtilService",
        * is disabled.
        */
       scope.$watch('tools.active', function (newVal, oldVal) {
-        if (newVal !== oldVal && scope.tools.active === 'rain') {
+        if (newVal !== oldVal) {
           var i;
-          if (newVal) {
+          if (newVal && scope.tools.active === 'rain') {
             for (i in imageOverlays) {
               mapCtrl.addLayer(imageOverlays[i]);
             }
