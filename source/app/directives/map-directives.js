@@ -47,12 +47,15 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
       } else if (layer.slug === 'elevation') {
         options.styles = 'BrBG_r';
         options.effects = 'shade:0:3';
-        elevationLayer = L.tileLayer.wms(layer.url, options);
       } else if (layer.slug === 'demo/radar') {
         options.styles = 'transparent';
         options.transparent = true;
       }
       layer.leafletLayer = L.tileLayer.wms(layer.url, options);
+      //NOTE ugly hack because of ugly hack
+      if (layer.slug === 'elevation') {
+        elevationLayer = layer.leafletLayer;
+      }
     } else if (layer.type === "ASSET") {
       var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
       if (layer.min_zoom_click !== null) {
@@ -87,7 +90,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
    * Makes a request to the raster server with the current bounds
    * Gets a new scale limit and refreshes the layer.
    *
-   * @param  {bounds object} bounds contains the corners of the current map view
+   * @param {bounds object} bounds contains the corners of the current map view
    */
   this.rescaleElevation = function (bounds) {
 
@@ -99,8 +102,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
       var limits = ':' + data[0][0] + ':' + data[0][1];
       var styles = 'BrBG_r' + limits;
       elevationLayer.setParams({styles: styles}, true);
-      $scope.map.removeLayer(elevationLayer);
-      $scope.map.addLayer(elevationLayer);
+      elevationLayer.redraw();
     });
   };
 
