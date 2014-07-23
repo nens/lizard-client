@@ -44,18 +44,17 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
       //NOTE ugly hack
       if (layer.slug === 'landuse') {
         options.styles = 'landuse';
-        layer.leafletLayer = L.tileLayer.wms(layer.url, options);
       } else if (layer.slug === 'elevation') {
-        // dynamically set min/max?
-        // options.effects = 'shade:0:3';
         options.styles = 'BrBG_r';
         options.effects = 'shade:0:3';
-        layer.leafletLayer = L.tileLayer.wms(layer.url, options);
-        elevationLayer = layer.leafletLayer;
       } else if (layer.slug === 'demo/radar') {
         options.styles = 'transparent';
         options.transparent = true;
-        layer.leafletLayer = L.tileLayer.wms(layer.url, options);
+      }
+      layer.leafletLayer = L.tileLayer.wms(layer.url, options);
+      //NOTE ugly hack because of ugly hack
+      if (layer.slug === 'elevation') {
+        elevationLayer = layer.leafletLayer;
       }
     } else if (layer.type === "ASSET") {
       var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
@@ -91,7 +90,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
    * Makes a request to the raster server with the current bounds
    * Gets a new scale limit and refreshes the layer.
    *
-   * @param  {bounds object} bounds contains the corners of the current map view
+   * @param {bounds object} bounds contains the corners of the current map view
    */
   this.rescaleElevation = function (bounds) {
 
@@ -103,8 +102,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
       var limits = ':' + data[0][0] + ':' + data[0][1];
       var styles = 'BrBG_r' + limits;
       elevationLayer.setParams({styles: styles}, true);
-      $scope.map.removeLayer(elevationLayer);
-      $scope.map.addLayer(elevationLayer);
+      elevationLayer.redraw();
     });
   };
 
