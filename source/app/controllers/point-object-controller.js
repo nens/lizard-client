@@ -25,6 +25,37 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
             ClickFeedbackService
   ) {
 
+
+    /**
+     * Parameters for ngTable.
+     *
+     * Controls how ngTable behaves. Don't forget to call the reload() method
+     * when you refresh the data (like in an API call).
+     */
+    var eventTableParams = function () {
+      return new ngTableParams({
+          page: 1,
+          count: 10,
+          sorting: {
+            timestamp_start: 'desc'
+          }
+        }, {
+          total: 0,
+          groupBy: 'category',
+          getData: function ($defer, params) {
+            params.total($scope.pointObject.events.data.length);
+            params.count($scope.pointObject.events.data.length);
+            var data = $scope.pointObject.events.data;
+            var orderedData = params.sorting() ?
+                $filter('orderBy')(data, params.orderBy()) :
+                data;
+            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(),
+                                              params.page() * params.count()));
+          },
+        });
+    };
+
+
     /**
      * pointObject is the object which holds all data of a point
      * in space. It is updated after a users click. The pointObject 
@@ -60,15 +91,19 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           active: false,
           data: []
         },
-        eventTableParams: undefined
+        eventTableParams: eventTableParams()
       };
       return pointObject;
     };
 
     var fillPointObject = function (map, here) {
-      //Give feedback to user
-      ClickFeedbackService.drawClickInSpace(map, here);
-      //Get attribute data from utf
+      if (here.type == 'events') {
+        eventResponded(here.eventData);
+      } else {
+        // Give feedback to user
+        ClickFeedbackService.drawClickInSpace(map, here);
+      }
+      // Get attribute data from utf
       UtfGridService.getDataFromUTF(map, here)
         .then(utfgridResponded(map, here))
         .then(function () {
@@ -80,7 +115,9 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       return function (response) {
         attrsResponded(response, $scope.pointObject);
         // Either way, stop vibrating click feedback.
-        ClickFeedbackService.stopVibration();
+        if (here.type !== 'events') {
+          ClickFeedbackService.stopVibration();
+        }
         if (response && response.data) {
           $scope.pointObject.attrs.active = true;
           // Set here to location of object
@@ -96,8 +133,10 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           // Get timeseries belonging to object.
           getTimeSeriesForObject();
         } else {
-          // If not hit object, threat it as a rain click, draw rain click arrow.
-          ClickFeedbackService.drawArrowHere(map, here);
+          // If not hit object, threaten it as a rain click, draw rain click arrow.
+          if (here.type == 'events') {
+            ClickFeedbackService.drawArrowHere(map, here);
+          }
         }
       };
     };
@@ -159,33 +198,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     $scope.$on('newPointObject', function () {
       $scope.pointObject = createPointObject();
       fillPointObject($scope.map, $scope.mapState.here);
-    });
-
-    /**
-     * Parameters for ngTable.
-     *
-     * Controls how ngTable behaves. Don't forget to call the reload() method
-     * when you refresh the data (like in an API call).
-     */
-    $scope.pointObject.eventTableParams = new ngTableParams({
-      page: 1,
-      count: 10,
-      sorting: {
-        timestamp_start: 'desc'
-      }
-    }, {
-      total: 0,
-      groupBy: 'category',
-      getData: function ($defer, params) {
-        params.total($scope.pointObject.events.data.length);
-        params.count($scope.pointObject.events.data.length);
-        var data = $scope.pointObject.events.data;
-        var orderedData = params.sorting() ?
-            $filter('orderBy')(data, params.orderBy()) :
-            data;
-        $defer.resolve(orderedData.slice((params.page() - 1) * params.count(),
-                                          params.page() * params.count()));
-      },
     });
 
   }

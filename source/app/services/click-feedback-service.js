@@ -26,9 +26,11 @@ app.service("ClickFeedbackService", ["$rootScope",
        */
       this.emptyClickLayer = function (map) {
         if (this.clickLayer) {
-          map.removeLayer(this.clickLayer);
+          this.clickLayer.clearLayers();
+        } else {
+          this.clickLayer = L.geoJson().addTo(map);
+          this.clickLayer.options.name = 'click';
         }
-        this.clickLayer = L.geoJson().addTo(map);
       };
 
       /**
@@ -155,7 +157,14 @@ app.service("ClickFeedbackService", ["$rootScope",
 
     };
 
-    var ctrl = new Ctrl();
+    var ctrl = new Ctrl(),
+        drawClickInSpace,
+        drawGeometry,
+        drawArrowHere,
+        emptyClickLayer,
+        stopVibration;
+
+    emptyClickLayer = ctrl.emptyClickLayer;
 
     /**
      * Draws visible feedback on the map after a click.
@@ -167,7 +176,7 @@ app.service("ClickFeedbackService", ["$rootScope",
      * @param {object} latLng Leaflet object specifying the latitude
      * and longitude of a click
      */
-    function drawClickInSpace(map, latlng) {
+    drawClickInSpace = function (map, latlng) {
       ctrl.emptyClickLayer(map);
       var geometry = {"type": "Point",
                       "coordinates": [latlng.lng, latlng.lat]};
@@ -186,7 +195,7 @@ app.service("ClickFeedbackService", ["$rootScope",
      * @param {string} entityName Name of the object to give it custom
      *  styling
      */
-    var drawGeometry = function (map, geom, entityName) {
+    drawGeometry = function (map, geom, entityName) {
       ctrl.emptyClickLayer(map);
       var geometry = angular.fromJson(geom);
       ctrl.drawFeature(geometry);
@@ -200,7 +209,7 @@ app.service("ClickFeedbackService", ["$rootScope",
      * @param {object} latLng Leaflet object specifying the latitude
      * and longitude of a click
      */
-    function drawArrowHere(map, latlng) {
+    drawArrowHere = function (map, latlng) {
       ctrl.emptyClickLayer(map);
       var geometry = {"type": "Point",
                       "coordinates": [latlng.lng, latlng.lat]};
@@ -209,11 +218,12 @@ app.service("ClickFeedbackService", ["$rootScope",
       ctrl.addLocationMarker(px);
     }
 
-    function stopVibration() {
+    stopVibration = function () {
       ctrl.stopVibration();
     }
 
     return {
+      emptyClickLayer: emptyClickLayer,
       drawArrowHere: drawArrowHere,
       drawGeometry: drawGeometry,
       drawClickInSpace: drawClickInSpace,

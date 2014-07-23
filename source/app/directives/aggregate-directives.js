@@ -6,7 +6,7 @@
  * time-interval (temporal extent, from timeline)
  *
  */
-app.directive('vectorlayer', ["EventService", function (EventService) {
+app.directive('vectorlayer', ["EventService", "$rootScope", function (EventService, $rootScope) {
   
   return {
     restrict: 'A',
@@ -15,7 +15,7 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
 
       // declaring all local vars for current scope:
       var getEventColor, eventClickHandler, getFeatureSelection,
-          idExtractor, createEventLayer, d3eventLayer;
+          idExtractor, createEventLayer, d3eventLayer, highlightEvents;
 
       /**
        * Get color from feature.
@@ -27,15 +27,10 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
       };
 
       /**
-       * Event click handler.
-       *
-       * Highlights selected event in black. Sets box.content.eventValue to 
-       * current bound data object (d).
-       *
-       * @param {object} d - D3 bound data object.
+       * Highlights and unhighlights data points
+       * @param  {string} - String with id that should be highlighted
        */
-      eventClickHandler = function (d) {
-        var id = this.options.selectorPrefix + this._idExtractor(d);
+      highlightEvents = function (id) {
         // unhighlight events
         d3.selectAll(".circle.event")
           .attr("fill", getEventColor);
@@ -43,10 +38,66 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         d3.select("." + id).transition()
           .duration(1000)
           .attr("fill", "black");
-        scope.box.type = 'event-aggregate';
-        scope.box.content.eventValue = d;
-        scope.$apply();
+      }
+
+      /**
+       * Event click handler.
+       *
+       * Gets id's highlights events, 
+       * matchesLocations and passes them to 'here' object
+       * For pointObject to pick 'em up.
+       *
+       * @param {object} d - D3 bound data object.
+       */
+      eventClickHandler = function (d) {
+        var id, here, features, f;
+        features = matchLocation(d, d3eventLayer._data.features);
+        id = this.options.selectorPrefix + this._idExtractor(d);
+        here = new L.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
+        angular.extend(here, {
+          type: 'events',
+          eventData: {
+            features: features
+          }
+        });
+
+        here.type = 'events';
+
+        highlightEvents(id);
+
+        var setEventOnPoint = function () {
+          if (scope.box.type == 'pointObject') {
+            scope.mapState.here = here;
+            $rootScope.$broadcast('newPointObject');
+          } else {
+            scope.mapState.here = here;
+            scope.box.type = 'pointObject';
+          }
+        };
+        if (!scope.$$phase) {
+          scope.$apply(setEventOnPoint);
+        } else {
+          setEventOnPoint();
+        }
       };
+
+      /**
+       * Gets data point and searches through list of 
+       * geojson features for matches. Returns matchedLocations
+       * @param  {[object]} d       Clicked object
+       * @param  {[array]} features List of other geojson features.
+       * @return {[array]}          List of Matched Locations
+       */
+      matchLocation = function (d, features) {
+        var matchedLocation = [];
+        for (f = 0; f < features.length; f++ ) {
+          if (d.geometry.coordinates[0] === features[f].geometry.coordinates[0] &&
+            d.geometry.coordinates[1] === features[f].geometry.coordinates[1] ) {
+            matchedLocation.push(features[f]);
+          };
+        }
+        return matchedLocation;
+      }
 
       /**
        * Utilfunction that creates/returns a "feature"
@@ -92,6 +143,8 @@ app.directive('vectorlayer', ["EventService", function (EventService) {
         // if d3eventlayer does not exist create.
         if (d3eventLayer === undefined) {
           d3eventLayer = L.nonTiledGeoJSONd3(data, {
+            ext: 'd3',
+            name: 'events',
             selectorPrefix: 'm',
             idExtractor: idExtractor,
             class: 'circle event'
