@@ -15,7 +15,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope", function (EventServi
 
       // declaring all local vars for current scope:
       var getEventColor, eventClickHandler, getFeatureSelection,
-          idExtractor, createEventLayer, d3eventLayer;
+          idExtractor, createEventLayer, d3eventLayer, highlightEvents;
 
       /**
        * Get color from feature.
@@ -27,22 +27,31 @@ app.directive('vectorlayer', ["EventService", "$rootScope", function (EventServi
       };
 
       /**
+       * Highlights and unhighlights data points
+       * @param  {string} - String with id that should be highlighted
+       */
+      highlightEvents = function (id) {
+        // unhighlight events
+        d3.selectAll(".circle.event")
+          .attr("fill", getEventColor);
+        // highlight selected event
+        d3.select("." + id).transition()
+          .duration(1000)
+          .attr("fill", "black");
+      }
+
+      /**
        * Event click handler.
        *
-       * Highlights selected event in black. Sets box.content.eventValue to 
-       * current bound data object (d).
+       * Gets id's highlights events, 
+       * matchesLocations and passes them to 'here' object
+       * For pointObject to pick 'em up.
        *
        * @param {object} d - D3 bound data object.
        */
       eventClickHandler = function (d) {
         var id, here, features, f;
-        features = [];
-        for (f = 0; f < d3eventLayer._data.features.length; f++ ) {
-          if (matchLocation(d.geometry.coordinates, d3eventLayer._data.features[f].geometry.coordinates)) {
-            features.push(d3eventLayer._data.features[f]);
-          };
-        }
-
+        features = matchLocation(d, d3eventLayer._data.features);
         id = this.options.selectorPrefix + this._idExtractor(d);
         here = new L.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
         angular.extend(here, {
@@ -51,14 +60,10 @@ app.directive('vectorlayer', ["EventService", "$rootScope", function (EventServi
             features: features
           }
         });
+
         here.type = 'events';
-        // unhighlight events
-        d3.selectAll(".circle.event")
-          .attr("fill", getEventColor);
-        // highlight selected event
-        d3.select("." + id).transition()
-          .duration(1000)
-          .attr("fill", "black");
+
+        highlightEvents(id);
 
         var setEventOnPoint = function () {
           if (scope.box.type == 'pointObject') {
@@ -76,11 +81,22 @@ app.directive('vectorlayer', ["EventService", "$rootScope", function (EventServi
         }
       };
 
-      matchLocation = function (coordinatesa, coordinatesb) {
-        if (coordinatesa[0] === coordinatesb[0] && 
-          coordinatesa[1] === coordinatesb[1]) {
-          return true;
+      /**
+       * Gets data point and searches through list of 
+       * geojson features for matches. Returns matchedLocations
+       * @param  {[object]} d       Clicked object
+       * @param  {[array]} features List of other geojson features.
+       * @return {[array]}          List of Matched Locations
+       */
+      matchLocation = function (d, features) {
+        var matchedLocation = [];
+        for (f = 0; f < features.length; f++ ) {
+          if (d.geometry.coordinates[0] === features[f].geometry.coordinates[0] &&
+            d.geometry.coordinates[1] === features[f].geometry.coordinates[1] ) {
+            matchedLocation.push(features[f]);
+          };
         }
+        return matchedLocation;
       }
 
       /**
@@ -135,7 +151,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope", function (EventServi
           });
         }
 
-        map.addLayer(d3eventLayer); 
+        map.addLayer(d3eventLayer);
         d3eventLayer._bindClick(eventClickHandler);
 
         // for backwards compatibility. 

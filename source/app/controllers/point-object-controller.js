@@ -99,7 +99,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     var fillPointObject = function (map, here) {
       if (here.type == 'events') {
         eventResponded(here.eventData);
-        console.log(here.eventData);
       } else {
         // Give feedback to user
         ClickFeedbackService.drawClickInSpace(map, here);
