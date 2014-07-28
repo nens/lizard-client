@@ -31,45 +31,52 @@ app.config(function ($locationProvider) {
 });
 
 /**
- * Master controller
  *
- * Overview
- * ========
+ * @name MasterController
+ * @class MasterCtrl
+ * @memberOf app
+ * @requires UtilService
+ * @requires EventService
+ * @requires CabinetService
+ * @requires RasterService
+ *
+ * @summary Master controller
+ *
+ * @description
+ * ## Overview
  *
  * Defines general models and gets data from server; functions that are not
  * relevant for rootscope live in their own controller
  *
  * Directives watch models in MasterCtrl and respond to changes in those models
  * for example, a user zooms in on the timeline, the timeline directive sets
- * the temporal.extent on the state.temporal; a map directive watches state.temporal
- * and updates map objects accordingly.
+ * the temporal.extent on the state.temporal; a map directive watches 
+ * state.temporal and updates map objects accordingly.
  *
- * Models
- * ======
+ * ## Models
  *
- * Application state
- * -----------------
+ * Application state >> link to state property in this module.
+ *
  * state.mapState => spatial state
  * state.timeState => temporal state
  * state.tools => active tool(s)
  * user.profile
  *
- * Data
- * ----
+ * Data >> link to data properties in this module.
  * data.active
  * data.objects
  * data.events
  * data.timeseries
  * data.aggregates
  *
- * TODO / Refactor
- * ---------------
+ * ## TODO / Refactor
  *
  * Stuff to reconsider, rethink, refactor:
  *
  * * [+] Create a mapState.here to describe the current spatial location
- *       just like timeState.at describes the now. map-directive should set this,
- *       watches should listen to this to draw a clicklayer, get rain, get data from utf, etc.
+ * just like timeState.at describes the now. map-directive should set this, 
+ * watches should listen to this to draw a clicklayer, get rain, get data from 
+ * utf, etc.
  * * [ ] Refactor map controller and directives
  * * [-] Refactor master controller (states, data!)
  * * [+] Refactor timeline out of mapState with its own scope
@@ -83,11 +90,21 @@ app.config(function ($locationProvider) {
 
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService", "RasterService",
-   "UtilService", "EventService", "TimeseriesService", "ngTableParams",
+  ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService",
+  "RasterService", "UtilService", "EventService", "TimeseriesService",
+  "ngTableParams",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, TimeseriesService, ngTableParams) {
   // BOX MODEL
+  /**
+   * @memberOf app.MasterCtrl
+   * @summary Box model
+   *
+   * @description Box model holds properties to render the omnibox.
+   *
+   * @property {object} box - Box model
+   * @property {boolean} box.detailMode - Detail mode, defaults to false.
+   */
   $scope.box = {
     detailMode: false,
     query: null,
@@ -142,15 +159,28 @@ app.controller("MasterCtrl",
     'pumpstation_sewerage': 'Rioolgemaal'
   };
 
+  /**
+   * @function
+   * @memberOf app.MasterCtrl
+   *
+   * @summary Get translation for text
+   * @desc Get translation for text
+   *
+   * @param {string} text - Text to translate.
+   * @returns {string} text - Translated text.
+   */
   $scope.gettext = function (text) {
-    return $scope.translations[text]
+    return $scope.translations[text];
   };
 
 
   /**
-   * Toggle tool from "name" to "none"
+   * @function
+   * @memberOf app.MasterCtrl
    *
-   * Sets tool.active model on scope to name of the tool if tool disabled
+   * @summary Toggle tool from "name" to "none".
+   *
+   * @desc Sets tool.active model on scope to name of the tool if tool disabled
    * or "none" if tool is already enabled.
    *
    * @param {string} name name of the tool to toggle
@@ -212,7 +242,8 @@ app.controller("MasterCtrl",
   var twoDaysAgo = now - 2 * day;
   var sevenDaysAgo = now - 7 * day;
   var lastVisit = CabinetService.lastVisitUtime;
-  var start = Math.max(sevenDaysAgo, Math.min(twoDaysAgo, lastVisit)) || sevenDaysAgo;
+  var start = Math.max(sevenDaysAgo, Math.min(twoDaysAgo, lastVisit)) ||
+              sevenDaysAgo;
   // TIME MODEL
   $scope.timeState = {
     start: start,

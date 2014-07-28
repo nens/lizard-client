@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 unreleased
 ----------
 
+- Add jsdoc-conf.json, configuration file for jsdoc.
+
 - All clicks on the map result in displaying several cards
   with all available data
 

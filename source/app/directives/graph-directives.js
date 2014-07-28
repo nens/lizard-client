@@ -231,7 +231,7 @@ angular.module('graph')
     /**
      * Shows the line element indicating timeState.at.
      * 
-     * @param  {graph object} graph contains the svg and a d3 scale object
+     * @param  {object} graph contains the svg and a d3 scale object
      * @param  {now} now   epoch timestamp in ms
      */
     this.drawNow = function (graph, now) {
@@ -330,8 +330,8 @@ angular.module('graph')
      * and rain-aggregate-directives.
      * 
      * @param   {object} data    list of data values [timestamp, sum]
-     * @param   {[type]} element html element
-     * @returns {[object]}       graph object
+     * @param   {type} element html element
+     * @returns {object}       graph object
      */
     graphCtrl.callChart = function (data, element, legend) {
       var graph = graphCtrl.createCanvas(legend, element);

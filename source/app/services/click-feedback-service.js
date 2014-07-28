@@ -21,8 +21,9 @@ app.service("ClickFeedbackService", ["$rootScope",
     var Ctrl = function () {
       
       /**
-       * Remove any existing click layers and creates a new empty one
-       * @param  {leaflet map object} map
+       * Remove any existing click layers and creates a new empty one.
+       *
+       * @param {object} map
        */
       this.emptyClickLayer = function (map) {
         if (this.clickLayer) {
@@ -34,12 +35,14 @@ app.service("ClickFeedbackService", ["$rootScope",
       };
 
       /**
-       * Returns the svg as a d3 selection of leaflet layer
-       * @param  {leaflet svg layer} layer
-       * @return {d3 selection} the svg of the leaflet object layer
+       * Returns the svg as a d3 selection of leaflet layer.
+       *
+       * @param  {object} layer
+       * @return {object} the svg of the leaflet object layer
        */
       this._getSelection = function (layer) {
-        // Due to some leaflet obscurity you have to get the first item with an unknown key.
+        // Due to some leaflet obscurity you have to get the first item with an
+        // unknown key.
         var _layers = layer._layers;
         var selection;
         for (var key in _layers) {
@@ -182,7 +185,7 @@ app.service("ClickFeedbackService", ["$rootScope",
                       "coordinates": [latlng.lng, latlng.lat]};
       ctrl.drawFeature(geometry);
       ctrl.vibrateFeature();
-    }
+    };
 
     /**
      * Draws a circle around an object on click.
@@ -216,11 +219,11 @@ app.service("ClickFeedbackService", ["$rootScope",
       ctrl.drawFeature(geometry);
       var px = map.latLngToLayerPoint(latlng);
       ctrl.addLocationMarker(px);
-    }
+    };
 
     stopVibration = function () {
       ctrl.stopVibration();
-    }
+    };
 
     return {
       emptyClickLayer: emptyClickLayer,
@@ -231,4 +234,3 @@ app.service("ClickFeedbackService", ["$rootScope",
     };
   }
 ]);
-

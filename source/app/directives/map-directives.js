@@ -85,12 +85,12 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
   };
 
   /**
-   * Rescale elevation raster.
+   * @summary Rescale elevation raster.
    *
-   * Makes a request to the raster server with the current bounds
+   * @desc Makes a request to the raster server with the current bounds
    * Gets a new scale limit and refreshes the layer.
    *
-   * @param {bounds object} bounds contains the corners of the current map view
+   * @param {object} bounds contains the corners of the current map view.
    */
   this.rescaleElevation = function (bounds) {
 
@@ -247,7 +247,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
    *
    * TODO: refactor
    *
-   * @param {layer object} activeBaselayer
+   * @param {object} activeBaselayer
    * @param {string} currentType current box type
    * @return {string} newType new box type
    *
@@ -454,7 +454,7 @@ app.directive('map', ['$controller', '$rootScope', 'UtilService', 'ClickFeedback
      * activeBaselayer manually this function may also be called to update all
      * baselayers.
      *
-     * @param {layer object} baselayer: the baselayer to activate
+     * @param {object} baselayer: the baselayer to activate
      */
     scope.mapState.changeBaselayer = function (baselayer) {
       if (baselayer) { scope.mapState.activeBaselayer = baselayer.id; }
