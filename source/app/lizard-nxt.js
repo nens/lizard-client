@@ -87,43 +87,23 @@ app.controller("MasterCtrl",
    "UtilService", "EventService", "TimeseriesService", "ngTableParams",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, TimeseriesService, ngTableParams) {
+
   // BOX MODEL
   $scope.box = {
-    detailMode: false,
-    query: null,
-    disabled: false,
-    showCards: false,
-    type: 'empty', // NOTE: default, box type is empty
-    content: {},
+    detailMode: false, // Switch between card or fullscreen
+    query: null, // Search bar query
+    showCards: false,// Only used for search results
+    type: 'empty', // Default box type
+    content: {}, // Inconsistently used to store data to display in box
     changed: Date.now(),
-    mouseLoc: []
+    mouseLoc: [] // Used to draw 'bolletje' on elevation profile
   };
-
-  $scope.box.content.alerts = {};
-  $scope.box.content.isw = {};
   // BOX MODEL
-
-  // BOX FUNCTIONS
-
-  // REFACTOR CANDIDATE
-  $scope.geoLocate = function () {
-    $scope.locate = !$scope.locate;
-  };
-
-  $scope.simulateSearch = function (keyword) {
-    $scope.box.query = keyword;
-    $scope.search();
-  };
-  // END REFACTOR CANDIDATE
-  //
-  // BOX FUNCTIONS
 
   // TOOLS
   $scope.tools = {
     active: "none", //NOTE: make list?
   };
-
-
 
   // START placeholder translations for django i8n
   // because all templates are now refactored
@@ -143,7 +123,7 @@ app.controller("MasterCtrl",
   };
 
   $scope.gettext = function (text) {
-    return $scope.translations[text]
+    return $scope.translations[text];
   };
 
 
