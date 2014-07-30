@@ -6,7 +6,8 @@
  * time-interval (temporal extent, from timeline)
  *
  */
-app.directive('vectorlayer', ["EventService", "$rootScope", function (EventService, $rootScope) {
+app.directive('vectorlayer', ["EventService", "$rootScope",
+  function (EventService, $rootScope) {
   
   return {
     restrict: 'A',
@@ -14,7 +15,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope", function (EventServi
     link: function (scope, element, attrs, mapCtrl) {
 
       // declaring all local vars for current scope:
-      var getEventColor, eventClickHandler, getFeatureSelection,
+      var getEventColor, eventClickHandler, getFeatureSelection, matchLocation,
           idExtractor, createEventLayer, d3eventLayer, highlightEvents;
 
       /**
@@ -38,7 +39,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope", function (EventServi
         d3.select("." + id).transition()
           .duration(1000)
           .attr("fill", "black");
-      }
+      };
 
       /**
        * Event click handler.
@@ -53,7 +54,8 @@ app.directive('vectorlayer', ["EventService", "$rootScope", function (EventServi
         var id, here, features, f;
         features = matchLocation(d, d3eventLayer._data.features);
         id = this.options.selectorPrefix + this._idExtractor(d);
-        here = new L.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
+        here = new L.LatLng(d.geometry.coordinates[1],
+                            d.geometry.coordinates[0]);
         angular.extend(here, {
           type: 'events',
           eventData: {
@@ -66,7 +68,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope", function (EventServi
         highlightEvents(id);
 
         var setEventOnPoint = function () {
-          if (scope.box.type == 'pointObject') {
+          if (scope.box.type === 'pointObject') {
             scope.mapState.here = here;
             $rootScope.$broadcast('newPointObject');
           } else {
@@ -89,15 +91,18 @@ app.directive('vectorlayer', ["EventService", "$rootScope", function (EventServi
        * @return {[array]}          List of Matched Locations
        */
       matchLocation = function (d, features) {
-        var matchedLocation = [];
-        for (f = 0; f < features.length; f++ ) {
-          if (d.geometry.coordinates[0] === features[f].geometry.coordinates[0] &&
-            d.geometry.coordinates[1] === features[f].geometry.coordinates[1] ) {
+        var matchedLocation = [],
+            f;
+        for (f = 0; f < features.length; f++) {
+          if (d.geometry.coordinates[0] === features[f].geometry.coordinates[0]
+              &&
+              d.geometry.coordinates[1] === features[f].geometry.coordinates[1])
+          {
             matchedLocation.push(features[f]);
-          };
+          }
         }
         return matchedLocation;
-      }
+      };
 
       /**
        * Utilfunction that creates/returns a "feature"
