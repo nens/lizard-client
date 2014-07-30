@@ -1,3 +1,12 @@
+/**
+ * Persistent storage of card property priority.
+ *
+ * Usage: inject service and setPriority to store
+ * priority of card properties betweeen different
+ * instantiations of raster-extent-controller and
+ * possibly point-object-controller.
+ */
+
 app.service("CardService", [
   function () {
 
