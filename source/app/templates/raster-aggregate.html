@@ -1,11 +1,11 @@
 <div ng-controller="RasterAggregateCtrl">
-  <div class="card">
+  <div class="card"  ng-class="{hidden: !extentAggregate.landuse.active}">
     <div class="card-title">
     </div>
       <graph pie data="extentAggregate.landuse.data"></graph>
   </div>
 
-  <div class="card">
+  <div class="card"  ng-class="{hidden: !extentAggregate.elevation.active}">
     <div class="card-title">
     </div>
       <graph line xlabel="'afstand [m]'" ylabel="'hoogte [mNAP]'" data="extentAggregate.elevation.data"></graph>
