@@ -93,7 +93,7 @@ app.controller("MasterCtrl",
     detailMode: false, // Switch between card or fullscreen
     query: null, // Search bar query
     showCards: false,// Only used for search results
-    type: 'empty', // Default box type
+    type: 'extentAggregate', // Default box type
     content: {}, // Inconsistently used to store data to display in box
     changed: Date.now(),
     mouseLoc: [] // Used to draw 'bolletje' on elevation profile
@@ -140,7 +140,7 @@ app.controller("MasterCtrl",
 
     if ($scope.tools.active === name) {
       $scope.tools.active = 'none';
-      $scope.box.type = 'raster-aggregate';
+      $scope.box.type = 'extentAggregate';
     } else {
       $scope.tools.active = name;
     }
@@ -169,9 +169,7 @@ app.controller("MasterCtrl",
   $scope.mapState = {
     layers: CabinetService.layers,
     activeLayersChanged: false,
-    baselayers: CabinetService.baselayers,
     eventTypes: CabinetService.eventTypes,
-    activeBaselayer: 1,
     changed: Date.now(),
     moved: Date.now(),
     baselayerChanged: Date.now(),
