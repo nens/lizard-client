@@ -129,7 +129,38 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
         agg: aggType,
         q: cancelers[slug]
       });
-    
+
+    return dataProm;
+  };
+
+  /**
+   * Requests data from raster service.
+   * 
+   * @param  {layer object} layer     nxt defition of a layer
+   * @param  {str} slug               short description of layer
+   * @param  {object} agg             extentAggregate object of this 
+   * @param  {bounds object} bounds   mapState.bounds, containing
+   * @return {promise}                a promise with aggregated data and
+   *                                  the slug
+   */
+  var getAggregationForActiveLayer = function (layer, slug, agg, bounds) {
+    var dataProm = getRasterDataForExtentData(
+      layer.aggregation_type,
+      agg,
+      slug,
+      bounds)
+      .then(function (data) {
+        agg.data = data;
+        agg.type = layer.aggregation_type;
+        if (layer.aggregation_type === 'curve') {
+          // TODO: return data in a better way or rewrite graph directive
+          agg.data = handleElevationCurve(data);
+        }
+        return {
+          agg: agg,
+          slug: slug
+        };
+      });
     return dataProm;
   };
 
@@ -140,7 +171,8 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     getRain: getRain,
     getRasterData: getRasterData,
     handleElevationCurve: handleElevationCurve,
-    getRasterDataForExtentData: getRasterDataForExtentData
+    getRasterDataForExtentData: getRasterDataForExtentData,
+    getAggregationForActiveLayer: getAggregationForActiveLayer
   };
 
 }]);

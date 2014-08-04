@@ -27,46 +27,14 @@ app.controller("ExtentAggregateCtrl", [
     var updateExtentAgg = function (bounds, layers, extentAggregate) {
       angular.forEach(layers, function (layer, slug) {
         if (layer.active && layer.aggregation_type !== 'none') {
-          var dataProm = getAggregationForActiveLayer(layer, slug, extentAggregate, bounds);
+          var agg = extentAggregate[slug] || {};
+          var dataProm = RasterService.getAggregationForActiveLayer(layer, slug, agg, bounds);
           // Pass the promise to a function that handles the scope.
           putDataOnscope(dataProm);
-        } else if (slug in $scope.extentAggregate && !layer.active) {
+        } else if (slug in extentAggregate && !layer.active) {
           removeDataFromScope(slug);
         }
       });
-    };
-
-    /**
-     * Requests data from raster service.
-     * 
-     * @param  {layer object} layer     nxt defition of a layer
-     * @param  {str} slug               short description of layer
-     * @param  {object} extentAggregate extentAggregate object of this 
-     *                                  ctrl
-     * @param  {bounds object} bounds   mapState.bounds, containing
-     * @return {promise}                a promise with aggregated data and
-     *                                  the slug
-     */
-    var getAggregationForActiveLayer = function (layer, slug, extentAggregate, bounds) {
-      var agg = extentAggregate[slug] || {};
-      var dataProm = RasterService.getRasterDataForExtentData(
-        layer.aggregation_type,
-        agg,
-        slug,
-        bounds)
-        .then(function (data) {
-          agg.data = data;
-          agg.type = layer.aggregation_type;
-          if (layer.aggregation_type === 'curve') {
-            // TODO: return data in a better way or rewrite graph directive
-            agg.data = RasterService.handleElevationCurve(data);
-          }
-          return {
-            agg: agg,
-            slug: slug
-          };
-        });
-      return dataProm;
     };
 
     /**
@@ -100,7 +68,6 @@ app.controller("ExtentAggregateCtrl", [
       updateExtentAgg(
         $scope.mapState.bounds,
         $scope.mapState.layers,
-        $q,
         $scope.extentAggregate
         );
     });
@@ -114,7 +81,6 @@ app.controller("ExtentAggregateCtrl", [
       updateExtentAgg(
         $scope.mapState.bounds,
         $scope.mapState.layers,
-        $q,
         $scope.extentAggregate
         );
     });
