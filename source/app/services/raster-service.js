@@ -1,8 +1,8 @@
 /**
  * Service to handle raster requests.
  */
-app.service("RasterService", ["Restangular", "UtilService", "CabinetService",
-  function (Restangular, UtilService, CabinetService) {
+app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$q",
+  function (Restangular, UtilService, CabinetService, $q) {
 
   /**
    * Hard coded rain variables.
@@ -115,13 +115,32 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService",
     return formatted;
   };
 
+  var cancelers = {};
+
+  var getRasterDataForExtentData = function (aggType, agg, slug, bounds) {
+
+    if (cancelers[slug]) {
+      cancelers[slug].resolve();
+    }
+
+    cancelers[slug] = $q.defer();
+
+    var dataProm = getRasterData(slug, bounds, {
+        agg: aggType,
+        q: cancelers[slug]
+      });
+    
+    return dataProm;
+  };
+
   return {
     rainInfo: rainInfo,
     getIntensityData: getIntensityData,
     setIntensityData: setIntensityData,
     getRain: getRain,
     getRasterData: getRasterData,
-    handleElevationCurve: handleElevationCurve
+    handleElevationCurve: handleElevationCurve,
+    getRasterDataForExtentData: getRasterDataForExtentData
   };
 
 }]);
