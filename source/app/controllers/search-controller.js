@@ -30,7 +30,7 @@ app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
       nextTab = - 1;
       break;
     case KeyCodes.RETURNKEY:
-      $scope.box.type = 'empty'; // Hides the results
+      $scope.box.type = 'extentAggregate'; // Hides the results
       e.preventDefault();
       break;
     case KeyCodes.DOWNARROW:
@@ -77,13 +77,14 @@ app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
     });
   };
 
-  $scope.reset_query = function () {
+  $scope.resetQuery = function () {
       // clean stuff..
       // Search Ctrl is the parent of omnibox cards
       // therefore no need to call $rootScope.
       $scope.$broadcast('clean');
       $scope.box.query = null;
       $scope.box.type = 'extentAggregate';
+      $scope.box.showCards = true;
     };
 
   $scope.showDetails = function (obj) {

@@ -179,4 +179,12 @@ app.service("UtilService", function () {
     }
   };
 
+  // this.objectTree = function (obj) {
+
+  //   // formats
+
+  //   var result
+
+  // };
+
 });
