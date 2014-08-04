@@ -14,37 +14,63 @@ app.controller("ExtentAggregateCtrl", [
      */
     $scope.extentAggregate = {};
 
-    var updateExtentAgg = function (bounds, layers, q) {
+    var getExtentData = function (layer, agg, slug, bounds, q) {
+      if (agg.q) {
+        console.log('Doing this already');
+        agg.q.resolve();
+      }
+      agg.q = q.defer();
+
+      console.log('launching:', slug);
+      var dataProm = RasterService.getRasterData(slug, bounds, {
+          agg: layer.aggregation_type,
+          q: agg.q
+        });
+      return dataProm;
+    };
+
+    var getVisualizationForAggType = function (aggType) {
+      switch (aggType) {
+      case 'count':
+        return 'pie';
+      case 'curve':
+        return 'line';
+      }
+    };
+
+    var updateExtentAgg = function (bounds, layers, q, extentAggregate) {
       angular.forEach(layers, function (layer, slug) {
         if (layer.active && layer.aggregation_type !== 'none') {
-          var agg = {};
-          if (agg.q) {
-            agg.q.resolve();
-          }
-          agg.q = q.defer();
-          console.log('launching:', slug, layer.aggregation_type, bounds, {
-            agg: layer.aggregation_type,
-            q: agg.q
-          });
-          RasterService.getRasterData(slug, bounds, {
-            agg: layer.aggregation_type,
-            q: agg.q
-          }).then(function (data) {
+          var agg = extentAggregate[slug] || {};
+          var dataAndVisProm = getExtentData(layer, agg, slug, bounds, q)
+          .then(function (data) {
             agg.data = data;
-            switch (layer.aggregation_type) {
-            case 'count':
-              agg.vis = 'pie';
-              break;
-            case 'curve':
-              agg.vis = 'line';
-              break;
+            agg.vis = getVisualizationForAggType(layer.aggregation_type);
+            if (layer.aggregation_type === 'curve') {
+              agg.data = RasterService.handleElevationCurve(data);
             }
-            $scope.extentAggregate[slug] = agg;
-          });
+            return {
+              agg: agg,
+              slug: slug
+            };
+          })
+          putDataOnscope(dataAndVisProm);
         } else if (slug in $scope.extentAggregate && !layer.active) {
-          delete $scope.extentAggregate[slug];
+          removeDataFromScope(slug);
         }
       });
+    };
+
+    var putDataOnscope = function (dataAndVisProm) {
+      dataAndVisProm
+      .then(function (result) {
+        $scope.extentAggregate[result.slug] = result.agg;
+        console.log("putting on scope", $scope.extentAggregate);
+      });
+    };
+
+    var removeDataFromScope = function (slug) {
+      delete $scope.extentAggregate[slug];
     };
 
     $scope.$watch('mapState.bounds', function (n, o) {
@@ -52,7 +78,8 @@ app.controller("ExtentAggregateCtrl", [
       updateExtentAgg(
         $scope.mapState.bounds,
         $scope.mapState.layers,
-        $q
+        $q,
+        $scope.extentAggregate
         );
     });
 
@@ -61,7 +88,8 @@ app.controller("ExtentAggregateCtrl", [
       updateExtentAgg(
         $scope.mapState.bounds,
         $scope.mapState.layers,
-        $q
+        $q,
+        $scope.extentAggregate
         );
     });
 

@@ -45,7 +45,12 @@ angular.module("omnibox", ["templates-main"])
       });
     
       replaceTemplate();
-
+      if (scope.box.type === 'empty') {
+        scope.box.showCards = false;
+      } else {
+        scope.box.showCards = true;
+      }
+        
     };
 
     return {

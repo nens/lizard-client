@@ -103,12 +103,25 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService",
     });
   };
 
+  var handleElevationCurve = function (data) {
+    var datarow,
+        i,
+        formatted = [];
+
+    for (i in data[0]) {
+      datarow = [data[0][i], data[1][i]];
+      formatted.push(datarow);
+    }
+    return formatted;
+  };
+
   return {
     rainInfo: rainInfo,
     getIntensityData: getIntensityData,
     setIntensityData: setIntensityData,
     getRain: getRain,
-    getRasterData: getRasterData
+    getRasterData: getRasterData,
+    handleElevationCurve: handleElevationCurve
   };
 
 }]);

@@ -119,7 +119,6 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
     }
 
     if (!layer.active) {
-      console.log('turning', layer.slug, 'off');
       $scope.map.removeLayer(layer.leafletLayer);
       if (layer.grid_layer) {
         $scope.map.removeLayer(layer.grid_layer);
@@ -154,7 +153,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
         $scope.map.removeLayer(i.leafletLayer);
       }
     });
-  }
+  };
 
   /**
    * Update overlayer opacities.
