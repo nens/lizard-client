@@ -11,11 +11,7 @@
     </div>
     <div ng-switch="agg.type" class="card-content" id="card-content-<% agg.name %>">
       <hr class="card-separator" id ="card-separator-<% agg.name %>">
-      <% agg.type %>
-      <br>
-      <% agg.data %>
       <graph ng-switch-when="curve" line xlabel="'[%]'" ylabel="'hoogte [mNAP]'" data="agg.data" class="xyGraph"></graph>
-      <graph ng-switch-when="count" pie data="agg.data" class="donutGraph"></graph>
       <graph ng-switch-when="counts" pie data="agg.data" class="donutGraph"></graph>
       <graph ng-switch-default line></graph>
     </div>
@@ -23,7 +19,7 @@
 </div>
 
 <!-- TODO, include events as layers and make them part of the aggregate controller and the above switch -->
-<div class="card" ng-if="events.types.count > 0">
+<div ng-controller="ExtentAggregateCtrl" class="card active" ng-if="events.types.count > 0" id="card-summary">
 
   <div>
     <div ng-if="box.content.eventValue.properties.value" >
@@ -38,17 +34,22 @@
       </small>
       </p>
     </div>
+
     <div class="card-title">
-      <i class="fa fa-sitemap"></i>
-      <span class="title-text left-margin-title">Samenvatting</span>
-      <i class="fa fa-lg close-ancestor-card"
-         style="top: 0px;"
-         onclick="$(this).closest('.card').remove()">
-         &times;
-      </i>
+      <span class="card-title-text">Samenvatting gebeurtenissen</span>
+      <div class="card-title-button"
+           ng-click="toggleThisCard('summary')">
+        <span class="card-title-button-text">
+          <i class="fa fa-chevron-down"></i>
+        </span>
+      </div>
     </div>
 
-    <div class="event-aggregate-container">
+    <div class="card-content" id="card-content-summary">
+
+      <hr class="card-separator" id="card-separator-summary">
+
+      <div class="event-aggregate-container">
       <table class="table table-hover table-condensed">
         <thead>
           <tr>
@@ -67,7 +68,7 @@
         </tr>
         </tbody>
       </table>
-    </div>
 
+    </div>
   </div>
 </div>
