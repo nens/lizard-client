@@ -15,7 +15,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
     link: function (scope, element, attrs, mapCtrl) {
 
       // declaring all local vars for current scope:
-      var getEventColor, eventClickHandler, getFeatureSelection,
+      var getEventColor, eventClickHandler, getFeatureSelection, matchLocation,
           idExtractor, createEventLayer, d3eventLayer, highlightEvents;
 
       /**
@@ -90,7 +90,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
        * @param  {array} features List of other geojson features.
        * @return {array}          List of Matched Locations
        */
-      var matchLocation = function (d, features) {
+      matchLocation = function (d, features) {
         var matchedLocation = [],
             f;
         for (f = 0; f < features.length; f++) {
