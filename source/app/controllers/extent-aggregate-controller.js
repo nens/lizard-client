@@ -15,16 +15,15 @@ app.controller("ExtentAggregateCtrl", [
     $scope.extentAggregate = {};
 
     var getExtentData = function (layer, agg, slug, bounds, q) {
-      if (agg.q) {
-        console.log('Doing this already');
-        agg.q.resolve();
+      if (agg.canceler) {
+        agg.canceler.resolve();
       }
-      agg.q = q.defer();
+      agg.canceler = q.defer();
+      putCancelerOnScope(slug, agg.canceler);
 
-      console.log('launching:', slug);
       var dataProm = RasterService.getRasterData(slug, bounds, {
           agg: layer.aggregation_type,
-          q: agg.q
+          q: agg.canceler
         });
       return dataProm;
     };
@@ -33,11 +32,12 @@ app.controller("ExtentAggregateCtrl", [
       angular.forEach(layers, function (layer, slug) {
         if (layer.active && layer.aggregation_type !== 'none') {
           var agg = extentAggregate[slug] || {};
-          var dataAndVisProm = getExtentData(layer, agg, slug, bounds, q)
+          var dataProm = getExtentData(layer, agg, slug, bounds, q)
           .then(function (data) {
             agg.data = data;
             agg.type = layer.aggregation_type;
             if (layer.aggregation_type === 'curve') {
+              // TODO: return data in a better way or rewrite graph directive
               agg.data = RasterService.handleElevationCurve(data);
             }
             return {
@@ -45,7 +45,8 @@ app.controller("ExtentAggregateCtrl", [
               slug: slug
             };
           });
-          putDataOnscope(dataAndVisProm);
+          // Pass the promise to a function that handles the scope.
+          putDataOnscope(dataProm);
         } else if (slug in $scope.extentAggregate && !layer.active) {
           removeDataFromScope(slug);
         }
@@ -58,11 +59,17 @@ app.controller("ExtentAggregateCtrl", [
         if (result.agg.data.length > 0) {
           $scope.extentAggregate[result.slug] = result.agg;
           $scope.extentAggregate[result.slug].name = $scope.mapState.layers[result.slug].name;
-          console.log("putting on scope", $scope.extentAggregate);
         } else if (result.slug in $scope.extentAggregate) {
           removeDataFromScope(result.slug);
         }
       });
+    };
+
+    var putCancelerOnScope = function (slug, canceler) {
+      if (!$scope.extentAggregate[slug]) {
+        $scope.extentAggregate[slug] = {};
+      }
+      $scope.extentAggregate[slug].canceler = canceler;
     };
 
     var removeDataFromScope = function (slug) {
