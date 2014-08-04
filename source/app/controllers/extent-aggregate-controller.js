@@ -44,7 +44,7 @@ app.controller("ExtentAggregateCtrl", [
               agg: agg,
               slug: slug
             };
-          })
+          });
           putDataOnscope(dataAndVisProm);
         } else if (slug in $scope.extentAggregate && !layer.active) {
           removeDataFromScope(slug);
