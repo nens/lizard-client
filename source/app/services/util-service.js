@@ -140,4 +140,43 @@ app.service("UtilService", function () {
     return aggWindow;
   };
 
+  this.toggleThisCard = function (cardName) {
+
+    // working, but uses jQuery instead of CSS animations!
+
+    var card,
+        cont,
+        btnText,
+        titleText,
+        separator,
+        SLIDE_TIME = 350,
+        FADE_TIME = 200,
+        FADE_TIME_2 = 500;
+
+    card = $('#card-' + cardName);
+    cont = $(card).find('.card-content')[0];
+    btnText = $(card).find('.card-title-button-text')[0];
+    titleText = $(card).find('.card-title-text')[0];
+    separator = $(card).find('.card-separator')[0];
+
+    if ($(card).hasClass("active")) {
+
+      $(separator).fadeOut(FADE_TIME, function () {
+        $(cont).slideUp(SLIDE_TIME, function () {
+          $(card).removeClass("active");
+          $(btnText).html("<i class='fa fa-chevron-left'></i>");
+        });
+      });
+
+    } else {
+
+      $(separator).css("display", "none");
+      $(cont).slideDown(SLIDE_TIME, function () {
+        $(card).addClass("active");
+        $(separator).fadeIn(FADE_TIME);
+        $(btnText).html("<i class='fa fa-chevron-down'></i>");
+      });
+    }
+  };
+
 });

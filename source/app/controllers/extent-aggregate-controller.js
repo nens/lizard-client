@@ -2,7 +2,8 @@ app.controller("ExtentAggregateCtrl", [
   "$scope",
   "$q",
   "RasterService",
-  function ($scope, $q, RasterService) {
+  "UtilService",
+  function ($scope, $q, RasterService, UtilService) {
     /**
      * ExtentAggregate is the object which collects different
      * sets of aggregation data. If there is no activeObject,
@@ -88,6 +89,8 @@ app.controller("ExtentAggregateCtrl", [
         $scope.extentAggregate
         );
     });
+
+    $scope.toggleThisCard = UtilService.toggleThisCard;
 
     // /**
     //  * Cancels pending requests and refreshes $q type promises
