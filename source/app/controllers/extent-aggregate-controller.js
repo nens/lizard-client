@@ -55,9 +55,13 @@ app.controller("ExtentAggregateCtrl", [
     var putDataOnscope = function (dataAndVisProm) {
       dataAndVisProm
       .then(function (result) {
-        $scope.extentAggregate[result.slug] = result.agg;
-        $scope.extentAggregate[result.slug].name = $scope.mapState.layers[result.slug].name;
-        console.log("putting on scope", $scope.extentAggregate);
+        if (result.agg.data.length > 0) {
+          $scope.extentAggregate[result.slug] = result.agg;
+          $scope.extentAggregate[result.slug].name = $scope.mapState.layers[result.slug].name;
+          console.log("putting on scope", $scope.extentAggregate);
+        } else if (result.slug in $scope.extentAggregate) {
+          removeDataFromScope(result.slug);
+        }
       });
     };
 
