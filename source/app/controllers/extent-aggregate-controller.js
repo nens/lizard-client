@@ -65,6 +65,7 @@ app.controller("ExtentAggregateCtrl", [
       dataAndVisProm
       .then(function (result) {
         $scope.extentAggregate[result.slug] = result.agg;
+        $scope.extentAggregate[result.slug].name = $scope.mapState.layers[result.slug].name;
         console.log("putting on scope", $scope.extentAggregate);
       });
     };

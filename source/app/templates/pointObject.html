@@ -1,70 +1,143 @@
 <div ng-controller="pointObjectCtrl">
-  <div class="card" ng-class="{hidden: !pointObject.attrs.active}">
-    <actions></actions>
-    <cardtitle>
-    </cardtitle>
-    <cardattributes></cardattributes>
+
+  <!--
+  <div class="card">
+    debug: "<% pointObject.attrs.data.entity_name %>"
+  </div>
+  -->
+
+  <!-- details for HYDRO-OBJECT a.k.a. Kunstwerk -->
+  <div id="kunstwerk-card" class="card active" ng-class="{hidden: !pointObject.attrs.active}">
+
+    <div class="card-title">
+      <span class="card-title-text">Objectinformatie</span>
+      <div class="card-title-button"
+           ng-click="toggleThisCard('kunstwerk-card')">
+        <span class="card-title-button-text">
+          <i class="fa fa-chevron-down"></i>
+        </span>
+      </div>
+    </div>
+
+    <div class="card-content">
+      <hr class="card-separator">
+
+      <i id="icon-holder" class="icon-<% pointObject.attrs.data.entity_name.split('_')[0] %>"></i>
+
+      <span class="kunstwerk-title">
+        <span id="title-holder" class="card-title-text kunstwerk-title-text"><% gettext(pointObject.attrs.data.entity_name) %></span>&nbsp;
+        <span ng-if="pointObject.attrs.data.code">(</span>
+        <span class="truncateme ng-binding" ng-bind="pointObject.attrs.data.code"></span>
+        <span ng-if="pointObject.attrs.data.code">)</span>
+      </span>
+
+      <cardattributes></cardattributes>
+    </div>
+
   </div>
 
+  <!-- start: details for EVENT a.k.a. Gebeurtenis....
+
+  NB! THIS DOESN'T WORK ATM
+
+  <div id="single-event-card"
+       class="card active"
+       ng-if="mustShowEventButNotKunstwerk()">
+    <div class="card-title">
+      <span class="card-title-text">Gebeurtenissig</span>
+      <div class="card-title-button"
+           ng-click="toggleThisCard('single-event-card')">
+        <span class="card-title-button-text">
+          <i class="fa fa-chevron-down"></i>
+        </span>
+      </div>
+    </div>
+    <div class="card-content">
+      <hr class="card-separator">
+      <event></event>
+    </div>
+  </div>
+  ...end: details for EVENT -->
+
+  <!--
   <div class="card" ng-class="{hidden: !pointObject.streetview.active}">
     <streetview></streetview>
   </div>
 
-  <div class="card" ng-class="{hidden: !pointObject.events.active}">
+  <div class="card active"
+       ng-class="{hidden: !pointObject.events.active}"
+       style="border: 10px solid red; color: red;">
     <event></event>
   </div>
+  -->
 
-  <div class="card" ng-class="{hidden: !pointObject.timeseries.active}" >
-    <div class="input-prepend">
-      <span class="add-on"> Tijdreeks</span>
+  <!-- begin: single card -->
+  <div id="timeseries-card" class="card" ng-class="{hidden: !pointObject.timeseries.active}">
+    <div class="card-title">
+        <span class="card-title-text">Tijdreeks</span>
+        <div class="card-title-button"
+             ng-click="toggleThisCard('timeseries-card')">
+          <span class="card-title-button-text">
+            <i class="fa fa-chevron-down"></i>
+          </span>
+        </div>
+    </div>
+    <div class="card-content">
+      <hr class="card-separator">
       <select class="timeseries" ng-model="pointObject.timeseries.selectedTimeseries" ng-options="series as series.name for series in pointObject.timeseries.data"></select>
-    </div>
       <graph line data="pointObject.timeseries.selectedTimeseries.data" ylabel="pointObject.selectedTimeseries.name" xlabel="n"></graph>
-  </div>
-
-  <div class="card">
-    <div class="actions">
-      <ul>
-        <li class="fullscreen">
-          <a 
-            ng-click="toggleDetailmode()"
-            title="Bekijk in detailmode">
-            <i class="fa fa-lg fa-plus-square-o"></i>
-          </a>
-        </li>
-        <li class="export">
-          <a 
-            href="#" title="Data van deze infocard exporteren" 
-            ng-csv="rain.data" filename="neerslag.csv"
-            csv-header="['Timestamp (ms)', 'Rain (mm)']" >
-            <i class="fa fa-share-square-o"></i>
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <graph ng-if="!!pointObject.rain.data" bar-chart data="pointObject.rain.data" ylabel="pointObject.rain.aggWindow" yfilter="aggWinToYLabel" xlabel="tijd"></graph>
-
-    <div class="recurrence-time-container" ng-if="!!pointObject.rain.recurrenceTime">
-      <table class="table table-hover table-condensed">
-        <caption>Herhalingstijden</caption>
-        <thead>
-          <tr>
-            <th>Start</th>
-            <th>Duur</th>
-            <th class="text-right">mm</th>
-            <th>Herhalingstijd</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="recurrence_time" ng-repeat="recurTime in pointObject.rain.recurrenceTime">
-            <td><% recurTime.start | date : 'dd-MM-yyyy HH:mm' %></td>
-            <td><% recurTime.td_window %></td>
-            <td class="text-right"><% recurTime.max | number: 1 %></td>
-            <td><% recurTime.t %></td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
+  <!-- end: single card -->
+
+  <!-- rain card v2 starts here... -->
+  <div id="rain-card" class="card active">
+    <div class="card-title">
+      <span class="card-title-text">Neerslag</span>
+      <div class="card-title-button"
+           ng-click="toggleThisCard('rain-card')">
+        <span class="card-title-button-text">
+          <i class="fa fa-chevron-down"></i>
+        </span>
+      </div>
+      <a
+        id="export-rain-csv-button"
+        href="#"
+        title="Data van deze infocard exporteren"
+        ng-csv="rain.data" filename="neerslag.csv"
+        csv-header="['Timestamp (ms)', 'Rain (mm)']" >
+        <i class="fa fa-share-square-o"></i>
+      </a>
+    </div>
+    <div class="card-content">
+
+      <hr class="card-separator">
+
+      <graph class="xyGraph" ng-if="!!pointObject.rain.data" bar-chart data="pointObject.rain.data" ylabel="pointObject.rain.aggWindow" yfilter="aggWinToYLabel" xlabel="tijd"></graph>
+
+      <div class="recurrence-time-container" ng-if="!!pointObject.rain.recurrenceTime">
+        <table class="table table-hover table-condensed">
+          <caption>Herhalingstijden</caption>
+          <thead>
+            <tr>
+              <th>Start</th>
+              <th>Duur</th>
+              <th class="text-right">mm</th>
+              <th>Herhalingstijd</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="recurrence_time" ng-repeat="recurTime in pointObject.rain.recurrenceTime">
+              <td><% recurTime.start | date : 'dd-MM-yyyy HH:mm' %></td>
+              <td><% recurTime.td_window %></td>
+              <td class="text-right"><% recurTime.max | number: 1 %></td>
+              <td><% recurTime.t %></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- ... rain card v2 ends here -->
+
 </div>

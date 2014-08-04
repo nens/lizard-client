@@ -124,7 +124,7 @@
     outline: none;
 }
 
-.card {
+/*.card {
     padding: 15px;
     margin: 5px 0 0 0;
     position: relative;
@@ -143,7 +143,10 @@
 
     border: 1px sild #00f;
 }
+*/
 
+
+/*
 .card.large {
     width:600px;
     transition: all .3s ease;
@@ -168,7 +171,7 @@
     color: #777;
     white-space: normal;
 }
-
+*/
 .searchbox input {
     vertical-align: middle;
     background-color: transparent;
@@ -191,7 +194,7 @@
     clip: rect(0px,400px,1000px,0px);
 }
 
-.card .card-title span {
+/*.card .card-title span {
     font-size: 1em;
     margin-bottom: 3em;
 }
@@ -200,18 +203,20 @@
     width: 20px;
     height: 20px;
     margin-right: 1em;
+}*/
+
+.card i[class*='icon-'] {
+    color: #E74C3C;
+    font-size: 1.5em;
+    top: 10px;
+    position: relative;
+    left: 0;
 }
 
-.card .card-title i[class*='icon-'] {
-    color: #E74C3C;
-    font-size: 1.8em;
-    top: 17px;
-    position: absolute;
-    left: 20px;
-}
+/*
 .card .card-title .title-text {
     margin-left: 38px;
-}
+}*/
 
 .card .flip-button, .card .flip-button a {
     position: absolute;
@@ -274,10 +279,10 @@
     color: gray;
 }
 
-.card .timeseries{
+/*.card .timeseries{
     width: 300px;
 }
-
+*/
 .card .nxt-box-overflow {
     overflow: auto;
 }
@@ -480,28 +485,28 @@
 }
 
 #box-awesome {
-	position: fixed;
-	z-index: 2000;
-	top: 54px;
-	left: 50px;
+    position: fixed;
+    z-index: 2000;
+    top: 54px;
+    left: 50px;
 }
 
 #box-awesome-search {
-	position: relative;
-	width: 400px;
-	height: 28px;
+    position: relative;
+    width: 400px;
+    height: 28px;
 }
 
 #box-awesome-search input {
-	padding-left: 10px !important;
-	font-size: 1em;
-    font-family: 'Roboto', sans-serif !important;
-	padding-right: 0;
-	width: 100%;
-	outline: 0;
-	border: 0;
-	border-radius: 0;
-	box-shadow: 0 2px 6px rgba(0,0,0,0.3),0 4px 15px -5px rgba(0,0,0,0.0);
+    padding-left: 10px !important;
+    font-size: 1em;
+  font-family: 'Roboto', sans-serif !important;
+    padding-right: 0;
+    width: 100%;
+    outline: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3),0 4px 15px -5px rgba(0,0,0,0.0);
     -webkit-transition: all 200ms cubic-bezier(0.52,0,0.48,1);
     -moz-transition: all 200ms cubic-bezier(0.52,0,0.48,1);
     -ms-transition: all 200ms cubic-bezier(0.52,0,0.48,1);
@@ -510,46 +515,46 @@
 }
 
 #box-awesome-search button {
-	position: relative;
-	top: -35px;
-	left: 400px;
-	width: 72px;
-	height: 27px;
-	background-image: linear-gradient(to bottom, #177d89, #115e67);
+    position: relative;
+    top: -35px;
+    left: 400px;
+    width: 72px;
+    height: 27px;
+    background-image: linear-gradient(to bottom, #177d89, #115e67);
     background-image: -webkit-linear-gradient(top, #177d89, #115e67);
     border: 0;
     border-radius: 0 2px 2px 0;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-	color: white;
+    color: white;
 }
 
 #box-awesome-inner {
-	position: relative;
-	top: -5px;
-	padding: 1em 2em 3em 2em;
-	border-radius: 10px;
-	width: 400px;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 4px 15px -5px transparent;
-	background: #FFF;
+    position: relative;
+    top: -5px;
+    padding: 1em 2em 3em 2em;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 4px 15px -5px transparent;
+    background: #FFF;
 }
 
 #box-awesome-results {
-	position: relative;
-	top: 15px;
-	width: 400px;
-	height: 150px;
-	overflow-x: hidden;
-	background-color: #FFF;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 4px 15px -5px transparent;
+    position: relative;
+    top: 15px;
+    width: 400px;
+    height: 150px;
+    overflow-x: hidden;
+    background-color: #FFF;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 4px 15px -5px transparent;
 }
 
 #box-awesome-results ul {
-	list-style-type: none;
+    list-style-type: none;
 }
 
 #box-awesome-results p {
-	margin-top: 10px;
-	margin-left: 20px;
+    margin-top: 10px;
+    margin-left: 20px;
 }
 
 .card-details {
@@ -585,7 +590,10 @@
 }
 
 .fixed-width-card-table {
-    width: 170px;
+  width: 170px;
+  /*font-family: 'Roboto Slab', sans-serif;*/
+  font-size: 12px;
+  color: #7f8c8d;
 }
 
 
@@ -635,6 +643,102 @@
   cursor: pointer;
 }
 
+/* Omnibox (from 18 july) */
+
+.card {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow:ellipsis;
+  background: #FFF;
+  background: rgba(255,255,255,0.9);
+  border-radius: 2px;
+  backface-visibility: hidden;
+  z-index:10;
+  width: 400px;
+  top:0px;
+  transition: all .3s ease-out;
+  -webkit-transition: all .3s ease-out;
+  margin-bottom: 5px;
+}
+
+.card-content {
+  padding: 0 10px 0 10px;
+  margin: 10px 0 -5px 0;
+}
+
+.empty-card-content {
+  height: 40px;
+  color: #7f8c8d;
+}
+
+.card-title {
+  font-family: 'Roboto Slab', serif;
+  color: #7f8c8d;
+  /*text-align: center;*/
+  margin-left: 10px;
+  height: 50px;
+  line-height: 50px;
+}
+
+.card-separator {
+  position: relative;
+  top: -10px;/*
+  margin: 0 3px 0 10px;*/
+  margin: 0;
+  border: 0;
+  border-top: 1px solid #bdc3c7;
+}
+
+.card-title-button {
+  position: relative;
+  left: 8px;
+  width: 35px;
+  height: 25px;
+  float: right;
+  border-radius: 2px;
+  margin: 10px 0 10px 0;
+  color: #95a5a6;
+}
+
+.card-title-button:hover {
+  cursor: pointer;
+  color: #1abc9c;
+}
+
+.card-title-button-text {
+  position: relative;
+  top: -12px;
+  left: 2px;
+}
+
 .pointer:hover {
   cursor: pointer;
 }
+
+#export-rain-csv-button {
+  float: right;
+  position: relative;
+/*  right: 10px;*/
+  top: -1px;
+  color: #95a5a6;
+}
+
+select.timeseries {
+  width: 100%;
+}
+
+.kunstwerk-title-text {
+  position: relative;
+  left: 10px;
+  /*font-family: 'Roboto Slab', sans-serif;*/
+  color: #7f8c8d;
+}
+
+/*#icon-holder {
+  background-color: #f0e;
+  min-width: 50px;
+  min-height: 50px;
+  width: 50px;
+}
+*/

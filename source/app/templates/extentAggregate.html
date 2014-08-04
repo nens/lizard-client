@@ -1,12 +1,55 @@
 <div ng-controller="ExtentAggregateCtrl">
-  <div ng-repeat="agg in extentAggregate" class="card">
-    <div class="card-title"></div>
-    <graph line xlabel="'afstand [m]'" ylabel="'hoogte [mNAP]'" data="agg.data"></graph>
+  <div ng-repeat="agg in extentAggregate" class="card active">
+    <div class="card-title">
+      <span class="card-title-text"><% agg.name %></span>
+      <div class="card-title-button"
+           ng-click="toggleThisCard()">
+        <span class="card-title-button-text">
+          <i class="fa fa-chevron-down"></i>
+        </span>
+      </div>
+    </div>
+    <div class="card-content">
+      <hr class="card-separator">
+      <graph line xlabel="'afstand [m]'" ylabel="'hoogte [mNAP]'" data="agg.data" class="xyGraph"></graph>
+    </div>
   </div>
 
-<!--   <div class="card"  ng-class="{hidden: !extentAggregate.elevation.active}">
+
+<!--   <div id="land-usage-card"
+       class="agg-card card "
+       ng-if="mapState.layers.landuse.active && extentAggregate.landuse.data.length > 0">
     <div class="card-title">
+        <span class="card-title-text">Landgebruik</span>
+        
     </div>
-      <graph line xlabel="'afstand [m]'" ylabel="'hoogte [mNAP]'" data="extentAggregate.elevation.data"></graph>
-  </div> -->
+    <div class="card-content">
+      <hr class="card-separator">
+      <graph pie data="extentAggregate.landuse.data" class="donutGraph"></graph>
+    </div>
+  </div>
+
+  <div id="elevation-card"
+       class="agg-card card active"
+       ng-if="mapState.baselayers.elevation.active && extentAggregate.elevation.data.length > 0">
+    <div class="card-title">
+        <span class="card-title-text">Maaiveldcurve</span>
+        <div class="card-title-button"
+             ng-click="toggleThisCard('elevation-card')">
+          <span class="card-title-button-text">
+            <i class="fa fa-chevron-down"></i>
+          </span>
+        </div>
+    </div>
+    <div class="card-content">
+      <hr class="card-separator">
+      <graph line
+             xlabel="'afstand [m]'"
+             ylabel="'hoogte [mNAP]'"
+             data="extentAggregate.elevation.data"
+             class="xyGraph">
+      </graph>
+    </div>
+  </div>
+ -->
 </div>
