@@ -50,6 +50,10 @@ angular.module("omnibox", ["templates-main"])
       } else {
         scope.box.showCards = true;
       }
+
+      // scope.$watch('mapState.moving', function (n, o) {
+        //Implement fade in-out of cards
+      // });
         
     };
 

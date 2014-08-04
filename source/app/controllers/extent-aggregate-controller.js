@@ -29,15 +29,6 @@ app.controller("ExtentAggregateCtrl", [
       return dataProm;
     };
 
-    var getVisualizationForAggType = function (aggType) {
-      switch (aggType) {
-      case 'count':
-        return 'pie';
-      case 'curve':
-        return 'line';
-      }
-    };
-
     var updateExtentAgg = function (bounds, layers, q, extentAggregate) {
       angular.forEach(layers, function (layer, slug) {
         if (layer.active && layer.aggregation_type !== 'none') {
@@ -45,7 +36,7 @@ app.controller("ExtentAggregateCtrl", [
           var dataAndVisProm = getExtentData(layer, agg, slug, bounds, q)
           .then(function (data) {
             agg.data = data;
-            agg.vis = getVisualizationForAggType(layer.aggregation_type);
+            agg.type = layer.aggregation_type;
             if (layer.aggregation_type === 'curve') {
               agg.data = RasterService.handleElevationCurve(data);
             }
