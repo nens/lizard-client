@@ -4,8 +4,10 @@ Changelog of lizard-nxt client
 unreleased
 ----------
 
-- All clicks on the map result in displaying several cards
-  with all available data
+- All clicks on the map result all data available to that location
+
+- ExtentAggregat is the default card displaying an extent summary of 
+  all active data layers
 
 - Layers are mentioned in slug of URL
 
