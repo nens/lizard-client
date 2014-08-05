@@ -11,8 +11,6 @@ angular.module("omnibox", ["templates-main"])
       }
 
       var templateUrl = 'templates/' + contentType + '.html';
-      console.log('scope.box:', scope.box);
-      console.log("getting template from URL: " + templateUrl);
       return $templateCache.get(templateUrl);
     };
 

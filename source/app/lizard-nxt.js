@@ -67,9 +67,6 @@ app.config(function ($locationProvider) {
  *
  * Stuff to reconsider, rethink, refactor:
  *
- * * [+] Create a mapState.here to describe the current spatial location
- *       just like timeState.at describes the now. map-directive should set this,
- *       watches should listen to this to draw a clicklayer, get rain, get data from utf, etc.
  * * [ ] Refactor map controller and directives
  * * [-] Refactor master controller (states, data!)
  * * [+] Refactor timeline out of mapState with its own scope
@@ -172,7 +169,7 @@ app.controller("MasterCtrl",
     baselayerChanged: Date.now(),
     enabled: false,
     bounds: null,
-    here: null,
+    here: null, // Leaflet point object describing a users location of interest
     geom_wkt: '',
     mapMoving: false
   };

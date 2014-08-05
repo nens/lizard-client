@@ -115,9 +115,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       return function (response) {
         attrsResponded(response, $scope.pointObject);
         // Either way, stop vibrating click feedback.
-        if (here.type !== 'events') {
-          ClickFeedbackService.stopVibration();
-        }
+        ClickFeedbackService.stopVibration();
         if (response && response.data) {
           $scope.pointObject.attrs.active = true;
           // Set here to location of object
@@ -134,9 +132,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           getTimeSeriesForObject();
         } else {
           // If not hit object, threaten it as a rain click, draw rain click arrow.
-          if (here.type == 'events') {
-            ClickFeedbackService.drawArrowHere(map, here);
-          }
+          ClickFeedbackService.drawArrowHere(map, here);
         }
       };
     };
