@@ -291,8 +291,6 @@ app.directive('map', [
 
       scope.map.on('movestart', function () {
 
-        UtilService.fadeCurrentCards(scope, false);
-
         if (!scope.$$phase) {
           scope.$apply(function () {
             scope.mapState.mapMoving = true;
@@ -307,8 +305,6 @@ app.directive('map', [
       ClickFeedbackService.drawClickInSpace(map, new L.LatLng(180.0, 90.0));
 
       scope.map.on('moveend', function () {
-
-        UtilService.fadeCurrentCards(scope, true);
 
         // NOTE: Check whether a $digest is already happening before using apply
 

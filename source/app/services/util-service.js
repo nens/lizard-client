@@ -142,8 +142,6 @@ app.service("UtilService", function () {
 
   this.toggleThisCard = function (cardName) {
 
-    console.log("in function: UtilService.toggleThisCard");
-
     // working, but uses jQuery instead of CSS animations!
 
     var card,

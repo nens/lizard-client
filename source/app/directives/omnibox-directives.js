@@ -49,7 +49,11 @@ angular.module("omnibox", ["templates-main"])
 
       scope.$watch('mapState.mapMoving', function (n, o) {
         if (n === o) { return true; }
-        UtilService.fadeCurrentCards(scope);
+        if (n)
+          UtilService.fadeCurrentCards(scope);
+        else {
+          d3.selectAll(".card").transition(200).style("opacity", 1);
+        }
       });
 
       finalizeTemplateRendering();
