@@ -83,7 +83,7 @@ app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
       // therefore no need to call $rootScope.
       $scope.$broadcast('clean');
       $scope.box.query = null;
-      $scope.box.type = 'empty';
+      $scope.box.type = 'extentAggregate';
     };
 
   $scope.showDetails = function (obj) {

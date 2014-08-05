@@ -19,16 +19,23 @@ angular.module("omnibox", ["templates-main"])
 
     var linker = function (scope, element, attrs) {
 
+      var oldScope;
+
       var replaceTemplate = function () {
         var template = getTemplate(scope.box.type);
         // we don't want the dynamic template to overwrite the search box.
         // NOTE: the reason for selecting the specific child is jqLite does
         // not support selectors.
         angular.element(element.children()[1]).html(template);
-        $compile(element.contents())(scope);
+        var newScope = scope.$new();
+        $compile(element.contents())(newScope);
+        // We need to manually destroy scopes here when switching templates.
+        if (oldScope) { oldScope.$destroy(); }
+        oldScope = newScope;
       };
 
-      scope.$watch('box.type', function () {
+      scope.$watch('box.type', function (n, o) {
+        if (n === o) { return true; }
         replaceTemplate();
         if (scope.box.type === 'empty') {
           scope.box.showCards = false;
@@ -36,8 +43,18 @@ angular.module("omnibox", ["templates-main"])
           scope.box.showCards = true;
         }
       });
-
+    
       replaceTemplate();
+      if (scope.box.type === 'empty') {
+        scope.box.showCards = false;
+      } else {
+        scope.box.showCards = true;
+      }
+
+      // scope.$watch('mapState.moving', function (n, o) {
+        //Implement fade in-out of cards
+      // });
+        
     };
 
     return {

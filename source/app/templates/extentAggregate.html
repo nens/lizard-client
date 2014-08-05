@@ -1,19 +1,16 @@
 <div ng-controller="ExtentAggregateCtrl">
-  <div ng-repeat="agg in extentAggregate" class="card active" id="card-<% agg.name %>">
+  <div ng-repeat="agg in extentAggregate" class="card active">
     <div class="card-title">
       <span class="card-title-text"><% agg.name %></span>
       <div class="card-title-button"
-           ng-click="toggleThisCard(agg.name)">
+           ng-click="toggleThisCard()">
         <span class="card-title-button-text">
           <i class="fa fa-chevron-down"></i>
         </span>
       </div>
     </div>
-    <div ng-switch="agg.type" class="card-content" id="card-content-<% agg.name %>">
-      <hr class="card-separator" id ="card-separator-<% agg.name %>">
-      <% agg.type %>
-      <br>
-      <% agg.data %>
+    <div ng-switch="agg.type" class="card-content">
+      <hr class="card-separator">
       <graph ng-switch-when="curve" line xlabel="'[%]'" ylabel="'hoogte [mNAP]'" data="agg.data" class="xyGraph"></graph>
       <graph ng-switch-when="counts" pie data="agg.data" class="donutGraph"></graph>
       <graph ng-switch-default line></graph>
@@ -30,7 +27,7 @@
       <strong>
         <% box.content.eventValue.properties.category %> <br />
       </strong>
-      <% box.content.eventValue.properties.value %> <br />
+      <% box.content.eventValue.properties.value %> <br />  
       <small>
         <% box.content.eventValue.properties.timestamp_start | date: 'yyyy-MM-dd HH:mm' %> -
         <% box.content.eventValue.properties.timestamp_end | date: 'yyyy-MM-dd HH:mm' %>

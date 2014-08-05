@@ -36,14 +36,12 @@ describe('Testing hash controller', function () {
 
     // Mock the mapState
     $scope.mapState = {
-      activeBaselayer: 2,
       activeLayersChanged: false,
       layers: {
         'testlayer': {
           active: true
         }
       },
-      changeBaselayer: function () { return true; }
     };
 
     // Mock initial time
@@ -61,12 +59,6 @@ describe('Testing hash controller', function () {
     var controller = createController();
     var location = hashSyncHelper.getHash().location;
     expect(location).toBe('51.1234,6.1200,10');
-  });
-
-  it('should should set baselayer on hash at creation', function () {
-    var controller = createController();
-    var baselayer = hashSyncHelper.getHash().baselayer;
-    expect(baselayer).toBe('2');
   });
 
   it('should should set layers on hash at creation', function () {

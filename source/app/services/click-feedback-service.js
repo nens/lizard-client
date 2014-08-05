@@ -26,11 +26,10 @@ app.service("ClickFeedbackService", ["$rootScope",
        */
       this.emptyClickLayer = function (map) {
         if (this.clickLayer) {
-          this.clickLayer.clearLayers();
-        } else {
-          this.clickLayer = L.geoJson().addTo(map);
-          this.clickLayer.options.name = 'click';
+          map.removeLayer(this.clickLayer);
         }
+        this.clickLayer = L.geoJson().addTo(map);
+        this.clickLayer.options.name = 'click';
       };
 
       /**
@@ -162,9 +161,12 @@ app.service("ClickFeedbackService", ["$rootScope",
         drawGeometry,
         drawArrowHere,
         emptyClickLayer,
-        stopVibration;
+        stopVibration,
+        emptyClickLayer;
 
-    emptyClickLayer = ctrl.emptyClickLayer;
+    emptyClickLayer = function (map) {
+      ctrl.emptyClickLayer(map);
+    };
 
     /**
      * Draws visible feedback on the map after a click.
@@ -182,7 +184,7 @@ app.service("ClickFeedbackService", ["$rootScope",
                       "coordinates": [latlng.lng, latlng.lat]};
       ctrl.drawFeature(geometry);
       ctrl.vibrateFeature();
-    }
+    };
 
     /**
      * Draws a circle around an object on click.
@@ -216,11 +218,11 @@ app.service("ClickFeedbackService", ["$rootScope",
       ctrl.drawFeature(geometry);
       var px = map.latLngToLayerPoint(latlng);
       ctrl.addLocationMarker(px);
-    }
+    };
 
     stopVibration = function () {
       ctrl.stopVibration();
-    }
+    };
 
     return {
       emptyClickLayer: emptyClickLayer,

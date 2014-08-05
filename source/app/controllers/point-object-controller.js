@@ -200,6 +200,10 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       fillPointObject($scope.map, $scope.mapState.here);
     });
 
+    $scope.$on('$destroy', function () {
+      ClickFeedbackService.emptyClickLayer($scope.map);
+    });
+
   }
 
 ]);
