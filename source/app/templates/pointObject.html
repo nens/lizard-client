@@ -7,20 +7,20 @@
   -->
 
   <!-- details for HYDRO-OBJECT a.k.a. Kunstwerk -->
-  <div id="kunstwerk-card" class="card active" ng-class="{hidden: !pointObject.attrs.active}">
+  <div id="card-kunstwerk" class="card active" ng-class="{hidden: !pointObject.attrs.active}">
 
     <div class="card-title">
       <span class="card-title-text">Objectinformatie</span>
       <div class="card-title-button"
-           ng-click="toggleThisCard('kunstwerk-card')">
+           ng-click="toggleThisCard('kunstwerk')">
         <span class="card-title-button-text">
           <i class="fa fa-chevron-down"></i>
         </span>
       </div>
     </div>
 
-    <div class="card-content">
-      <hr class="card-separator">
+    <div class="card-content" id="card-content-kunstwerk">
+      <hr class="card-separator" id="card-separator-kunstwerk">
 
       <i id="icon-holder" class="icon-<% pointObject.attrs.data.entity_name.split('_')[0] %>"></i>
 
@@ -33,7 +33,6 @@
 
       <cardattributes></cardattributes>
     </div>
-
   </div>
 
   <!-- start: details for EVENT a.k.a. Gebeurtenis....
@@ -72,18 +71,18 @@
   -->
 
   <!-- begin: single card -->
-  <div id="timeseries-card" class="card" ng-class="{hidden: !pointObject.timeseries.active}">
+  <div id="card-timeseries" class="card" ng-class="{hidden: !pointObject.timeseries.active}">
     <div class="card-title">
         <span class="card-title-text">Tijdreeks</span>
         <div class="card-title-button"
-             ng-click="toggleThisCard('timeseries-card')">
+             ng-click="toggleThisCard('timeseries')">
           <span class="card-title-button-text">
             <i class="fa fa-chevron-down"></i>
           </span>
         </div>
     </div>
-    <div class="card-content">
-      <hr class="card-separator">
+    <div class="card-content" id="card-content-timeseries">
+      <hr class="card-separator" id="card-separator-timeseries">
       <select class="timeseries" ng-model="pointObject.timeseries.selectedTimeseries" ng-options="series as series.name for series in pointObject.timeseries.data"></select>
       <graph line data="pointObject.timeseries.selectedTimeseries.data" ylabel="pointObject.selectedTimeseries.name" xlabel="n"></graph>
     </div>
@@ -91,11 +90,11 @@
   <!-- end: single card -->
 
   <!-- rain card v2 starts here... -->
-  <div id="rain-card" class="card active">
+  <div id="card-rain" class="card active">
     <div class="card-title">
       <span class="card-title-text">Neerslag</span>
       <div class="card-title-button"
-           ng-click="toggleThisCard('rain-card')">
+           ng-click="toggleThisCard('rain')">
         <span class="card-title-button-text">
           <i class="fa fa-chevron-down"></i>
         </span>
@@ -109,9 +108,9 @@
         <i class="fa fa-share-square-o"></i>
       </a>
     </div>
-    <div class="card-content">
+    <div class="card-content" id="card-content-rain">
 
-      <hr class="card-separator">
+      <hr class="card-separator" id="card-separator-rain">
 
       <graph class="xyGraph" ng-if="!!pointObject.rain.data" bar-chart data="pointObject.rain.data" ylabel="pointObject.rain.aggWindow" yfilter="aggWinToYLabel" xlabel="tijd"></graph>
 

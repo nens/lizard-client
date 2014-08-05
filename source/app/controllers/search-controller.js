@@ -85,6 +85,7 @@ app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
       $scope.box.query = null;
       $scope.box.type = 'extentAggregate';
       $scope.box.showCards = true;
+      //console.log($scope);
     };
 
   $scope.showDetails = function (obj) {

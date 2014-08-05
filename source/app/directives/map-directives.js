@@ -244,33 +244,6 @@ app.directive('map', [
           zoom: 12
         });
 
-      // /***
-      //   * Fade out (in) currently (in-)visible cards.
-      //   *
-      //   * @param {boolean} fadeIn - A boolean denoting whether we need to
-      //   * fade in or out.
-      //   */
-      // var fadeCurrentCards = function (fadeIn) {
-
-      //   var cards = d3.selectAll(".card");
-
-      //   if (fadeIn) {
-      //     // card comes back instantaniously
-      //     cards
-      //       .style("opacity", 1);
-      //   } else {
-      //     // card fades away into transparancy, after a delay, but only if
-      //     // the map is still moving after that delay
-      //     setTimeout(function () {
-      //       if (scope.mapState.mapMoving) {
-      //         cards
-      //           .transition(100)
-      //           .style("opacity", 0.2);
-      //       }
-      //     }, 700);
-      //   }
-      // };
-
       scope.mapState.switchLayerOrRescaleElevation = function (layer) {
 
         if (layer.name === 'Hoogtekaart'
@@ -327,6 +300,7 @@ app.directive('map', [
         } else {
           scope.mapState.mapMoving = true;
         }
+      });
 
       // initialize empty ClickLayer.
       // Otherwise click of events-aggregate and clicklayer

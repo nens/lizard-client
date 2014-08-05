@@ -142,6 +142,8 @@ app.service("UtilService", function () {
 
   this.toggleThisCard = function (cardName) {
 
+    console.log("in function: UtilService.toggleThisCard");
+
     // working, but uses jQuery instead of CSS animations!
 
     var card,
@@ -185,11 +187,11 @@ app.service("UtilService", function () {
     * @param {boolean} fadeIn - A boolean denoting whether we need to
     * fade in or out.
     */
-  this.fadeCurrentCards = function (scope, fadeIn) {
+  this.fadeCurrentCards = function (scope) {
 
     var cards = d3.selectAll(".card");
 
-    if (fadeIn) {
+    if (!scope.mapState.mapMoving) {
       // card comes back instantaniously
       cards
         .style("opacity", 1);
@@ -201,6 +203,9 @@ app.service("UtilService", function () {
           cards
             .transition(100)
             .style("opacity", 0.2);
+        } else {
+          cards
+            .style("opacity", 1);
         }
       }, 700);
     }

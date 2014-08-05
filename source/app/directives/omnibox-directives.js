@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module("omnibox", ["templates-main"])
-  .directive("omnibox", ["$compile", "$templateCache",
-    function ($compile, $templateCache) {
+  .directive("omnibox", ["$compile", "$templateCache", "UtilService",
+    function ($compile, $templateCache, UtilService) {
 
     var getTemplate = function (contentType) {
       if (contentType === undefined) {
@@ -34,27 +34,25 @@ angular.module("omnibox", ["templates-main"])
         oldScope = newScope;
       };
 
+      var finalizeTemplateRendering = function () {
+        replaceTemplate();
+        scope.box.showCards = scope.box.type !== 'empty';
+
+        // console.log("in function: finalizeTemplateRendering()");
+        // console.log("scope.box.type: " + scope.box.type);
+      };
+
       scope.$watch('box.type', function (n, o) {
         if (n === o) { return true; }
-        replaceTemplate();
-        if (scope.box.type === 'empty') {
-          scope.box.showCards = false;
-        } else {
-          scope.box.showCards = true;
-        }
+        finalizeTemplateRendering();
       });
-    
-      replaceTemplate();
-      if (scope.box.type === 'empty') {
-        scope.box.showCards = false;
-      } else {
-        scope.box.showCards = true;
-      }
 
-      // scope.$watch('mapState.moving', function (n, o) {
-        //Implement fade in-out of cards
-      // });
-        
+      scope.$watch('mapState.mapMoving', function (n, o) {
+        if (n === o) { return true; }
+        UtilService.fadeCurrentCards(scope);
+      });
+
+      finalizeTemplateRendering();
     };
 
     return {
