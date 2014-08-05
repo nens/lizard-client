@@ -681,6 +681,11 @@
   line-height: 50px;
 }
 
+.card-title-text {
+  display: inline-block;
+  float: left;
+}
+
 .card-separator {
   position: relative;
   top: -10px;/*
