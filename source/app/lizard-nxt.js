@@ -88,8 +88,6 @@ app.controller("MasterCtrl",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, TimeseriesService, ngTableParams) {
 
-  $scope.toggleThisCard = UtilService.toggleThisCard;
-
   // BOX MODEL
   $scope.box = {
     contextSwitchMode: false, // Switch between card or fullscreen

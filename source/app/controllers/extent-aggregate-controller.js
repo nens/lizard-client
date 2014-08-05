@@ -1,8 +1,7 @@
 app.controller("ExtentAggregateCtrl", [
   "$scope",
   "RasterService",
-  "UtilService",
-  function ($scope, RasterService, UtilService) {
+  function ($scope, RasterService) {
     /**
      * ExtentAggregate is the object which collects different
      * sets of aggregation data. If there is no activeObject,
