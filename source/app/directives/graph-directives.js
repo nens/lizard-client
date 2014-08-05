@@ -19,10 +19,10 @@ angular.module('graph')
 
     /**
      * Abstract function. Directives using this controller
-     * will need to implement a callChart function. This 
-     * function should be called once to set up the graph. 
+     * will need to implement a callChart function. This
+     * function should be called once to set up the graph.
      * See barChart directive for an example.
-     * 
+     *
      * @param  {object} data    data object
      * @param  {object} element html element
      * @param  {legend} legend  legend element containing labels
@@ -34,9 +34,9 @@ angular.module('graph')
     /**
      * Optional abstract function. Directive might implement
      * this function to update an existing graph with new data
-     * following a d3 update pattern. See barchart directive 
+     * following a d3 update pattern. See barchart directive
      * for an example.
-     * 
+     *
      * @param  {object} data    data object
      * @param  {object} graph   graph object from callChart
      * @return {object} graph object
@@ -86,11 +86,11 @@ angular.module('graph')
           .attr("class", "title")
           .style("text-anchor", "middle")
           .text(legend.title);
-          
+
       }
-              
+
       if (legend.xLabel) {
-         //Create X axis label   
+         //Create X axis label
         this.svg.append("text")
            .attr('class', 'graph-text')
            .attr("x", width / 2)
@@ -130,7 +130,7 @@ angular.module('graph')
         .attr("y", "0")
         .attr("width", width)
         .attr("height", height);
-      
+
       // Put the data in this group
       var g = this.svg.append("g")
         .attr("clip-path", "url(#clip)")
@@ -230,7 +230,7 @@ angular.module('graph')
 
     /**
      * Shows the line element indicating timeState.at.
-     * 
+     *
      * @param  {graph object} graph contains the svg and a d3 scale object
      * @param  {now} now   epoch timestamp in ms
      */
@@ -284,7 +284,7 @@ angular.module('graph')
         scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph, legend);
       }
     });
-    
+
     scope.$parent.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
       if (scope.$parent.tools.active === 'rain' &&
@@ -301,7 +301,7 @@ angular.module('graph')
     controller: controller,
     link: link,
     scope: {
-      // TODO: add extra options (e.g. width)? 
+      // TODO: add extra options (e.g. width)?
       title: '=',
       data: '=',
       xlabel: '=',
@@ -322,13 +322,13 @@ angular.module('graph')
 angular.module('graph')
 .directive('barChart', function () {
   var link = function (scope, element, attrs, graphCtrl) {
-    
+
     /**
      * Builds d3 chart object with axes scales and zoom functionality.
      *
      * Designed for and used by the rain on point, see templates/rain.html
      * and rain-aggregate-directives.
-     * 
+     *
      * @param   {object} data    list of data values [timestamp, sum]
      * @param   {[type]} element html element
      * @returns {[object]}       graph object
@@ -375,7 +375,7 @@ angular.module('graph')
 
     /**
      * Draws new features, updates and removes features and rescales graph.
-     * 
+     *
      * @param  {object} data  new data object
      * @param  {object} graph graph object
      */
@@ -445,7 +445,7 @@ angular.module('graph')
         }
         return h;
       };
-      
+
       var barWidth = x.scale(data[1][0]) - x.scale(data[0][0]);
 
       // UPDATE
@@ -519,7 +519,7 @@ angular.module('graph')
             .innerRadius(radius - radius / 1.75)
             .outerRadius(radius);
 
-        d3.select(".graph-directive")
+        d3.select(".donutGraph.graph-directive")
           .insert("div")
           .classed({
             "donut-underline": true,
@@ -527,7 +527,7 @@ angular.module('graph')
             "fading": true
           });
 
-        d3.select(".graph-directive")
+        d3.select(".donutGraph.graph-directive")
           .insert("div")
           .classed({
             "donut-underline": true,
@@ -535,12 +535,12 @@ angular.module('graph')
             "fading": true
           });
 
-        d3.select(".graph-directive")
+        d3.select(".donutGraph.graph-directive")
           .insert("div")
           .classed({"percentage-container": true, "fading": true});
 
-        /** 
-         * Removes the DOM elements (.percentage-container AND 
+        /**
+         * Removes the DOM elements (.percentage-container AND
          * .donut-underline-top) according to the currently selected raster.
          */
         var rmRasterSpecificInfo = function () {
@@ -558,12 +558,12 @@ angular.module('graph')
 
         /**
          * Formats a number (might be both Int and Float) to show a consistent
-         * amount of decimals it the final string representation: e.g. 
+         * amount of decimals it the final string representation: e.g.
          *
          * 25   ::= "25.00 %"
          * 25.1 ::= "25.10 %"
          * 3.14 ::=  "3.14 %"
-         * 
+         *
          * @param {number} vloot - A number that is in need of formatting.
          * @return {string} - A string representation of the passed number.
          */
@@ -581,15 +581,15 @@ angular.module('graph')
           return splitted[0] + "." + suffix;
         };
 
-        /** 
-         * Appends/fills/styles the DOM elements (.percentage-container, 
-         * .donut-underline-top AND .donut-underline-bottom) according 
+        /**
+         * Appends/fills/styles the DOM elements (.percentage-container,
+         * .donut-underline-top AND .donut-underline-bottom) according
          * to the currently selected raster.
          *
-         * @param {object} d - D3 datum object. 
+         * @param {object} d - D3 datum object.
          */
         var addRasterSpecificInfo = function (d) {
-          
+
           d3.selectAll(".fading")
             .style("opacity", 0.0);
           svg.select('text')
@@ -602,7 +602,7 @@ angular.module('graph')
             .transition()
             .duration(300)
             .style("opacity", 1.0);
-          
+
           svg.select("text")
             .attr("transform", "translate(" + width / 2 +
               ", " + (20 + height) + ")")
@@ -724,7 +724,7 @@ angular.module('graph')
         line.defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
 
         var x = {};
-        if (header[keys.x] 
+        if (header[keys.x]
           && header[keys.x].quantity === 'time') {
           x = graphCtrl.maxMin(data, keys.x);
           x.scale = graphCtrl.scale(
@@ -856,7 +856,7 @@ angular.module('graph')
               scope.$parent.box.mouseLoc = pos;
             });
           });
-          
+
           svg.select('rect').on('mouseout', function () {
             scope.$apply(function () {
               scope.$parent.box.mouseLoc = undefined;

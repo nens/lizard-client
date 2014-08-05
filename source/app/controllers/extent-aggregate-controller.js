@@ -16,12 +16,12 @@ app.controller("ExtentAggregateCtrl", [
     /**
      * Loops over all layers to request aggregation data for all
      * active layers with an aggregation type.
-     * 
+     *
      * @param  {bounds object} bounds   mapState.bounds, containing
      *                                  leaflet bounds
      * @param  {layers object} layers   mapState.layers, containing
      *                                  nxt definition of layers
-     * @param  {object} extentAggregate extentAggregate object of this 
+     * @param  {object} extentAggregate extentAggregate object of this
      *                                  ctrl
      */
     var updateExtentAgg = function (bounds, layers, extentAggregate) {
@@ -40,7 +40,7 @@ app.controller("ExtentAggregateCtrl", [
     /**
      * Puts dat on extentAggregate when promise resolves or
      * removes item from extentAggregate when no data is returned.
-     * 
+     *
      * @param  {promise}               a promise with aggregated data and
      *                                 the slug
      */
@@ -61,29 +61,32 @@ app.controller("ExtentAggregateCtrl", [
     };
 
     /**
-     * Updates extentaggregate when user moves map.
+     * private function to eliminate redundancy: gets called
+     * in multiple $watches declared locally.
      */
-    $scope.$watch('mapState.bounds', function (n, o) {
-      if (n === o) { return true; }
+
+    var _updateExtentAgg = function () {
       updateExtentAgg(
         $scope.mapState.bounds,
         $scope.mapState.layers,
         $scope.extentAggregate
-        );
-    });
+      );
+    };
 
+    /**
+     * Updates extentaggregate when user moves map.
+     */
+    $scope.$watch('mapState.bounds', function (n, o) {
+      if (n === o) { return true; }
+      _updateExtentAgg();
+    });
 
     /**
      * Updates extentaggregate when users changes layers.
      */
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return true; }
-      updateExtentAgg(
-        $scope.mapState.bounds,
-        $scope.mapState.layers,
-        $scope.extentAggregate
-        );
+      _updateExtentAgg();
     });
-
   }
 ]);

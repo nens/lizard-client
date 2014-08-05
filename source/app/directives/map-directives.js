@@ -111,10 +111,9 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
       if (!layer.active) { layer.active = true; }
       else if (layer.slug === 'elevation') { rescaleElevation(bounds); }
       turnOffAllOtherBaselayers(layer.id, layers);
-    } else if (layer.overlayer) {
-      updateOverLayers(layers);
-      layer.active = !layer.active;
     } else {
+      if (layer.overlayer)
+        updateOverLayers(layers);
       layer.active = !layer.active;
     }
 
@@ -244,34 +243,6 @@ app.directive('map', [
           zoom: 12
         });
 
-      /***
-        * Fade out (in) currently (in-)visible cards.
-        *
-        * @param {boolean} fadeIn - A boolean denoting whether we need to
-        * fade in or out.
-        */
-      var fadeCurrentCards = function (fadeIn) {
-
-        var cards = d3.selectAll(".card");
-
-        if (fadeIn) {
-          // card comes back instantaniously
-          cards
-            .style("opacity", 1);
-        } else {
-          // card fades away into transparancy, after a delay, but only if
-          // the map is still moving after that delay
-          setTimeout(function () {
-            if (scope.mapState.mapMoving) {
-              cards
-                .transition(100)
-                .style("opacity", 0.2);
-            }
-          }, 700);
-
-        }
-      };
-
       scope.mapState.switchLayerOrRescaleElevation = function (layer) {
 
         if (layer.name === 'Hoogtekaart'
@@ -319,8 +290,6 @@ app.directive('map', [
 
       scope.map.on('movestart', function () {
 
-        fadeCurrentCards(false);
-
         if (!scope.$$phase) {
           scope.$apply(function () {
             scope.mapState.mapMoving = true;
@@ -330,13 +299,11 @@ app.directive('map', [
         }
       });
 
-      // initialize empty ClickLayer. 
+      // initialize empty ClickLayer.
       // Otherwise click of events-aggregate and clicklayer
       ClickFeedbackService.drawClickInSpace(map, new L.LatLng(180.0, 90.0));
 
       scope.map.on('moveend', function () {
-
-        fadeCurrentCards(true);
 
         // NOTE: Check whether a $digest is already happening before using apply
 

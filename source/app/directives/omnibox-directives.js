@@ -1,20 +1,17 @@
 'use strict';
 
 angular.module("omnibox", ["templates-main"])
-  .directive("omnibox", ["$compile", "$templateCache",
-    function ($compile, $templateCache) {
+  .directive("omnibox", ["$compile", "$templateCache", "UtilService",
+    function ($compile, $templateCache, UtilService) {
 
-    var getTemplate = function (contentType) {
+    var getTemplate = function (scope, contentType) {
       if (contentType === undefined) {
-        contentType = 'empty';
+        contentType = 'extentAggregate';
+        //contentType = 'empty';
       }
 
-      var template,
-          templateUrl = 'templates/' + contentType + '.html';
-
-      template = $templateCache.get(templateUrl);
-
-      return template;
+      var templateUrl = 'templates/' + contentType + '.html';
+      return $templateCache.get(templateUrl);
     };
 
     var linker = function (scope, element, attrs) {
@@ -22,7 +19,7 @@ angular.module("omnibox", ["templates-main"])
       var oldScope;
 
       var replaceTemplate = function () {
-        var template = getTemplate(scope.box.type);
+        var template = getTemplate(scope, scope.box.type);
         // we don't want the dynamic template to overwrite the search box.
         // NOTE: the reason for selecting the specific child is jqLite does
         // not support selectors.
@@ -34,27 +31,29 @@ angular.module("omnibox", ["templates-main"])
         oldScope = newScope;
       };
 
+      var finalizeTemplateRendering = function () {
+        replaceTemplate();
+        scope.box.showCards = scope.box.type !== 'empty';
+      };
+
       scope.$watch('box.type', function (n, o) {
         if (n === o) { return true; }
-        replaceTemplate();
-        if (scope.box.type === 'empty') {
-          scope.box.showCards = false;
-        } else {
-          scope.box.showCards = true;
+        finalizeTemplateRendering();
+      });
+
+      scope.$watch('mapState.mapMoving', function (n, o) {
+        if (n === o) { return true; }
+        if (n)
+          UtilService.fadeCurrentCards(scope);
+        else {
+          // Snap away from current card fade-in/out practices:
+          // make cards visible again, unconditionally and w/o possible
+          // setTimeout() conflicts.
+          d3.selectAll(".card").transition(200).style("opacity", 1);
         }
       });
-    
-      replaceTemplate();
-      if (scope.box.type === 'empty') {
-        scope.box.showCards = false;
-      } else {
-        scope.box.showCards = true;
-      }
 
-      // scope.$watch('mapState.moving', function (n, o) {
-        //Implement fade in-out of cards
-      // });
-        
+      finalizeTemplateRendering();
     };
 
     return {
