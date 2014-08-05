@@ -1,8 +1,8 @@
 /**
  * Service to handle raster requests.
  */
-app.service("RasterService", ["Restangular", "UtilService", "CabinetService",
-  function (Restangular, UtilService, CabinetService) {
+app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$q",
+  function (Restangular, UtilService, CabinetService, $q) {
 
   /**
    * Hard coded rain variables.
@@ -103,12 +103,76 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService",
     });
   };
 
+  var handleElevationCurve = function (data) {
+    var datarow,
+        i,
+        formatted = [];
+
+    for (i in data[0]) {
+      datarow = [data[0][i], data[1][i]];
+      formatted.push(datarow);
+    }
+    return formatted;
+  };
+
+  var cancelers = {};
+
+  var getRasterDataForExtentData = function (aggType, agg, slug, bounds) {
+
+    if (cancelers[slug]) {
+      cancelers[slug].resolve();
+    }
+
+    cancelers[slug] = $q.defer();
+
+    var dataProm = getRasterData(slug, bounds, {
+        agg: aggType,
+        q: cancelers[slug]
+      });
+
+    return dataProm;
+  };
+
+  /**
+   * Requests data from raster service.
+   * 
+   * @param  {layer object} layer     nxt defition of a layer
+   * @param  {str} slug               short description of layer
+   * @param  {object} agg             extentAggregate object of this 
+   * @param  {bounds object} bounds   mapState.bounds, containing
+   * @return {promise}                a promise with aggregated data and
+   *                                  the slug
+   */
+  var getAggregationForActiveLayer = function (layer, slug, agg, bounds) {
+    var dataProm = getRasterDataForExtentData(
+      layer.aggregation_type,
+      agg,
+      slug,
+      bounds)
+      .then(function (data) {
+        agg.data = data;
+        agg.type = layer.aggregation_type;
+        if (layer.aggregation_type === 'curve') {
+          // TODO: return data in a better way or rewrite graph directive
+          agg.data = handleElevationCurve(data);
+        }
+        return {
+          agg: agg,
+          slug: slug
+        };
+      });
+    return dataProm;
+  };
+
   return {
     rainInfo: rainInfo,
     getIntensityData: getIntensityData,
     setIntensityData: setIntensityData,
     getRain: getRain,
-    getRasterData: getRasterData
+    getRasterData: getRasterData,
+    handleElevationCurve: handleElevationCurve,
+    getRasterDataForExtentData: getRasterDataForExtentData,
+    getAggregationForActiveLayer: getAggregationForActiveLayer
   };
 
 }]);

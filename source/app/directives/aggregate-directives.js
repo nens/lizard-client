@@ -8,7 +8,7 @@
  */
 app.directive('vectorlayer', ["EventService", "$rootScope",
   function (EventService, $rootScope) {
-  
+
   return {
     restrict: 'A',
     require: 'map',
@@ -20,7 +20,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
 
       /**
        * Get color from feature.
-       * 
+       *
        * @param {object} d - D3 bound data object; expects color property.
        */
       getEventColor = function (d) {
@@ -41,50 +41,50 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
           .attr("fill", "black");
       };
 
+      // /**
+      //  * Event click handler.
+      //  *
+      //  * Gets id's highlights events,
+      //  * matchesLocations and passes them to 'here' object
+      //  * For pointObject to pick 'em up.
+      //  *
+      //  * @param {object} d - D3 bound data object.
+      //  */
+      // eventClickHandler = function (d) {
+      //   var id, here, features, f;
+      //   features = matchLocation(d, d3eventLayer._data.features);
+      //   id = this.options.selectorPrefix + this._idExtractor(d);
+      //   here = new L.LatLng(d.geometry.coordinates[1],
+      //                       d.geometry.coordinates[0]);
+      //   angular.extend(here, {
+      //     type: 'events',
+      //     eventData: {
+      //       features: features
+      //     }
+      //   });
+
+      //   here.type = 'events';
+
+      //   highlightEvents(id);
+
+      //   var setEventOnPoint = function () {
+      //     if (scope.box.type === 'pointObject') {
+      //       scope.mapState.here = here;
+      //       $rootScope.$broadcast('newPointObject');
+      //     } else {
+      //       scope.mapState.here = here;
+      //       scope.box.type = 'pointObject';
+      //     }
+      //   };
+      //   if (!scope.$$phase) {
+      //     scope.$apply(setEventOnPoint);
+      //   } else {
+      //     setEventOnPoint();
+      //   }
+      // };
+
       /**
-       * Event click handler.
-       *
-       * Gets id's highlights events, 
-       * matchesLocations and passes them to 'here' object
-       * For pointObject to pick 'em up.
-       *
-       * @param {object} d - D3 bound data object.
-       */
-      eventClickHandler = function (d) {
-        var id, here, features, f;
-        features = matchLocation(d, d3eventLayer._data.features);
-        id = this.options.selectorPrefix + this._idExtractor(d);
-        here = new L.LatLng(d.geometry.coordinates[1],
-                            d.geometry.coordinates[0]);
-        angular.extend(here, {
-          type: 'events',
-          eventData: {
-            features: features
-          }
-        });
-
-        here.type = 'events';
-
-        highlightEvents(id);
-
-        var setEventOnPoint = function () {
-          if (scope.box.type === 'pointObject') {
-            scope.mapState.here = here;
-            $rootScope.$broadcast('newPointObject');
-          } else {
-            scope.mapState.here = here;
-            scope.box.type = 'pointObject';
-          }
-        };
-        if (!scope.$$phase) {
-          scope.$apply(setEventOnPoint);
-        } else {
-          setEventOnPoint();
-        }
-      };
-
-      /**
-       * Gets data point and searches through list of 
+       * Gets data point and searches through list of
        * geojson features for matches. Returns matchedLocations
        * @param  {object} d       Clicked object
        * @param  {array} features List of other geojson features.
@@ -159,7 +159,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
         map.addLayer(d3eventLayer);
         d3eventLayer._bindClick(eventClickHandler);
 
-        // for backwards compatibility. 
+        // for backwards compatibility.
         d3eventLayer.g = d3eventLayer._container.selectAll("g");
         d3eventLayer.svg = d3eventLayer.svg;
         d3eventLayer.reset = d3eventLayer._onMove;
@@ -170,7 +170,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
       /**
        * Updates svg layer in leaflet's overlaypane with new data object
        *
-       * First call the reset function to give the svg enough space for the 
+       * First call the reset function to give the svg enough space for the
        * new data.Identify path elements with data objects via id and update,
        * create or remove elements.
        *
@@ -237,7 +237,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
         EventService.countCurrentEvents(scope.mapState.eventTypes,
                                         scope.events);
       });
-   
+
       /**
        * Watch that is fired when the animation has stepped
        *
@@ -256,7 +256,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
       /**
        * Watch that is fired when events data object has changed
        *
-       * Calls functions to create, update or remove eventLayer. 
+       * Calls functions to create, update or remove eventLayer.
        * And makes sure events are drawn in accordance to the current timeState.
        */
       var eventLayer;
@@ -311,7 +311,7 @@ app.directive('surfacelayer', function () {
 
       /**
        * Convert list with values to d3 selector
-       * 
+       *
        * @param: list of values
        * @returns: concatenated d3 suitable OR selector
        */
@@ -329,7 +329,7 @@ app.directive('surfacelayer', function () {
       /**
        * Callback function to highlight surfaces connected to pipe
        *
-       * Selects d3 objects based on ids in data property (in this case in 
+       * Selects d3 objects based on ids in data property (in this case in
        * `impervious_surfaces`. On 'mouseover' highlights features, on
        * 'mouseout' fades features to transparant
        *
@@ -394,8 +394,8 @@ app.directive('surfacelayer', function () {
         });
 
       /**
-       * Listen to tools model for pipe_surface tool to become active. Add 
-       * geojson d3 layer and bind mousemove and mouseout events to 
+       * Listen to tools model for pipe_surface tool to become active. Add
+       * geojson d3 layer and bind mousemove and mouseout events to
        * highlight impervious surface.
        *
        */
@@ -412,8 +412,8 @@ app.directive('surfacelayer', function () {
             pipeLayer.on('mouseout', highlightSurface);
           } else {
             // If there is no grid layer it is probably still being
-            // loaded by the map-directive which will broadcast a 
-            // message when its loaded. 
+            // loaded by the map-directive which will broadcast a
+            // message when its loaded.
             scope.$on('waterchainGridLoaded', function () {
               if (scope.tools.active === 'pipeSurface') {
                 pipeLayer = getLayer('grid', 'waterchain');

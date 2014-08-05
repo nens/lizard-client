@@ -92,7 +92,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
    *
    * @param {object} bounds contains the corners of the current map view.
    */
-  this.rescaleElevation = function (bounds) {
+  var rescaleElevation = function (bounds) {
 
     // Make request to raster to get min and max of current bounds
     var url = 'https://raster.lizard.net/wms' + '?request=getlimits&layers=elevation' +
@@ -106,101 +106,52 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
     });
   };
 
-  // expects a layer hashtable with a leafletlayer object
-  this.toggleLayer = function (layer) {
+  this.toggleLayer = function (layer, layers, bounds) {
+    if (layer.baselayer) {
+      if (!layer.active) { layer.active = true; }
+      else if (layer.slug === 'elevation') { rescaleElevation(bounds); }
+      turnOffAllOtherBaselayers(layer.id, layers);
+    } else {
+      if (layer.overlayer)
+        updateOverLayers(layers);
+      layer.active = !layer.active;
+    }
 
     if (!layer.active) {
-      if (layer.leafletLayer) {
-        $scope.map.removeLayer(layer.leafletLayer);
-        if (layer.grid_layer) {
-          $scope.map.removeLayer(layer.grid_layer);
-          utfLayersOrder.splice(utfLayersOrder.indexOf(layer.grid_layer.options.order), 1);
-          if (layer.z_index === lowestUTFLayer) {
-            lowestUTFLayer = utfLayersOrder.sort()[-1];
-          }
-        }
-      } else {
-        if (JS_DEBUG) {
-          console.log('leaflet layer not defined', layer.type, layer.name);
-        }
+      $scope.map.removeLayer(layer.leafletLayer);
+      if (layer.grid_layer) {
+        $scope.map.removeLayer(layer.grid_layer);
       }
     }
+
     if (layer.active) {
-      if (layer.leafletLayer) {
-        $scope.map.addLayer(layer.leafletLayer);
-        if (layer.grid_layer) {
-          if (layer.order < lowestUTFLayer || lowestUTFLayer === undefined) {
-            lowestUTFLayer = layer.z_index;
+      $scope.map.addLayer(layer.leafletLayer);
+      if (layer.grid_layer) {
+        layer.leafletLayer.on('load', function () {
+          // Add the grid layers of the layer when load finished
+          $scope.map.addLayer(layer.grid_layer);
+          layer.grid_layer.on('load', function () {
+            // Broadcast a load finished message to a.o. aggregate-directive
+            $rootScope.$broadcast(layer.slug + 'GridLoaded');
+          });
+        });
+        layer.leafletLayer.on('loading', function () {
+          // Temporarily remove all utfLayers for performance
+          if ($scope.map.hasLayer(layer.grid_layer)) {
+            $scope.map.removeLayer(layer.grid_layer);
           }
-          utfLayersOrder.push(layer.z_index);
-          // Add listener to start loading utf layers
-          // after loading of visible layer to have an
-          // increased user experience
-          layer.leafletLayer.on('load', function () {
-            // Add the grid layers of the layer when load finished
-            $scope.map.addLayer(layer.grid_layer);
-            layer.grid_layer.on('load', function () {
-
-              // TODO: Must be implemented via ng watch, e.g.
-              // $scope.mapState.gridLoaded. Also, refactor click layer directive.
-
-              //// Broadcast a load finished message to a.o. aggregate-directive
-
-              $rootScope.$broadcast(layer.slug + 'GridLoaded');
-            });
-          });
-          layer.leafletLayer.on('loading', function () {
-            // Temporarily remove all utfLayers for performance
-            if ($scope.map.hasLayer(layer.grid_layer)) {
-              $scope.map.removeLayer(layer.grid_layer);
-            }
-          });
-        }
-      } else {
-        if (JS_DEBUG) {
-          console.log('leaflet layer not defined', layer.type);
-        }
+        });
       }
     }
   };
 
-  // expects a layer hashtable with a leafletlayer object
-  this.toggleBaseLayer = function (layer) {
-
-    if (layer.id !== $scope.mapState.activeBaselayer) {
-      layer.active = false;
-      if (layer.leafletLayer) {
-        $scope.map.removeLayer(layer.leafletLayer);
-      } else {
-        if (JS_DEBUG) {
-          console.log('leaflet layer not defined');
-        }
+  var turnOffAllOtherBaselayers = function (id, layers) {
+    angular.forEach(layers, function (i) {
+      if (i.baselayer && i.id !== id && i.active) {
+        i.active = false;
+        $scope.map.removeLayer(i.leafletLayer);
       }
-    } else if (layer.id === $scope.mapState.activeBaselayer) {
-      layer.active = true;
-      if (layer.leafletLayer) {
-        $scope.map.addLayer(layer.leafletLayer, { insertAtTheBottom: true });
-      } else {
-        if (JS_DEBUG) {
-          console.log('leaflet layer not defined');
-        }
-      }
-    }
-
-    try {
-      angular.forEach($scope.mapState.overlayers, function (layer) {
-          layer.leafletLayer.bringToFront();
-        });
-    } catch (err ) {
-      // known error
-      if (err instanceof TypeError) {
-        return;
-      } else {
-        if (JS_DEBUG) {
-          console.error('Error:', err);
-        }
-      }
-    }
+    });
   };
 
   /**
@@ -208,14 +159,14 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
    *
    * TODO: Remove overlayers
    */
-  this.updateOverLayers = function (mapState) {
+  var updateOverLayers = function (layers) {
     var numLayers = 1;
-    angular.forEach(mapState.layers, function (layer) {
+    angular.forEach(layers, function (layer) {
       if ((layer.overlayer === true) && (layer.active)) {
         numLayers++;
       }
     });
-    angular.forEach($filter('orderBy')(mapState.layers, 'z_index', true), function (layer) {
+    angular.forEach($filter('orderBy')(layers, 'z_index', true), function (layer) {
       if ((layer.overlayer === true) && (layer.active)) {
         layer.leafletLayer.setOpacity(1 / numLayers);
         numLayers--;
@@ -253,7 +204,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
    *
    */
   this.boxType = function (mapState) {
-    var newState = ($scope.box.type === 'profile') ? 'profile' : 'raster-aggregate';
+    var newState = ($scope.box.type === 'profile') ? 'profile' : 'extentAggregate';
     if (mapState.activeBaselayer === 3) {
       newState = 'elevation';
     } else {
@@ -270,224 +221,159 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
 });
 
 
-app.directive('map', ['$controller', '$rootScope', 'UtilService', 'ClickFeedbackService',
+app.directive('map', [
+  '$controller',
+  '$rootScope',
+  'UtilService',
+  'ClickFeedbackService',
   function ($controller, $rootScope, UtilService, ClickFeedbackService) {
 
-  var link = function (scope, element, attrs, ctrl) {
-    // Leaflet global variable to peed up vector layer,
-    // see: http://leafletjs.com/reference.html#path-canvas
-    window.L_PREFER_CANVAS = true;
-    // instead of 'map' element here for testability
-    var osmAttrib = '<a href="https://www.mapbox.com/about/maps/">&copy; Mapbox</a> <a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>';
-    var bounds = window.data_bounds.all;
-    var southWest = L.latLng(bounds.south, bounds.west);
-    var northEast = L.latLng(bounds.north, bounds.east);
-    var maxBounds = L.latLngBounds(southWest, northEast);
-    var map = new L.map(element[0], {
-        zoomControl: false,
-        zoom: 12
+    var link = function (scope, element, attrs, ctrl) {
+      // Leaflet global variable to peed up vector layer,
+      // see: http://leafletjs.com/reference.html#path-canvas
+      window.L_PREFER_CANVAS = true;
+      // instead of 'map' element here for testability
+      var osmAttrib = '<a href="https://www.mapbox.com/about/maps/">&copy; Mapbox</a> <a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>';
+      var bounds = window.data_bounds.all;
+      var southWest = L.latLng(bounds.south, bounds.west);
+      var northEast = L.latLng(bounds.north, bounds.east);
+      var maxBounds = L.latLngBounds(southWest, northEast);
+      var map = new L.map(element[0], {
+          zoomControl: false,
+          zoom: 12
+        });
+
+      scope.mapState.switchLayerOrRescaleElevation = function (layer) {
+
+        if (layer.name === 'Hoogtekaart'
+            && scope.mapState.activeBaselayer === 3) {
+          ctrl.rescaleElevation(scope.mapState.bounds);
+
+        } else {
+          scope.mapState.changeBaselayer(layer);
+        }
+      };
+
+      map.fitBounds(maxBounds);
+      map.attributionControl.addAttribution(osmAttrib);
+      map.attributionControl.setPrefix('');
+      UtilService.getZoomlevelLabel(map.getZoom());
+      scope.map = map;
+      scope.mapState.bounds = scope.map.getBounds();
+
+      // Initialise layers
+      angular.forEach(scope.mapState.layers, function (layer) {
+        scope.mapState.activeLayersChanged = !scope.mapState.activeLayersChanged;
+        if (!layer.initiated) {
+          ctrl.initiateLayer(layer);
+        }
+        if (layer.active) {
+          layer.active = false;
+          ctrl.toggleLayer(layer, scope.mapState.layers, scope.mapState.bounds);
+        }
       });
 
-    /***
-      * Fade out (in) currently (in-)visible cards.
-      *
-      * @param {boolean} fadeIn - A boolean denoting whether we need to
-      * fade in or out.
-      */
-    var fadeCurrentCards = function (fadeIn) {
-
-      var cards = d3.selectAll(".card");
-
-      if (fadeIn) {
-        // card comes back instantaniously
-        cards
-          .style("opacity", 1);
-      } else {
-        // card fades away into transparancy, after a delay, but only if
-        // the map is still moving after that delay
-        setTimeout(function () {
-          if (scope.mapState.mapMoving) {
-            cards
-              .transition(100)
-              .style("opacity", 0.2);
-          }
-        }, 700);
-
-      }
-    };
-
-    scope.mapState.switchLayerOrRescaleElevation = function (layer) {
-
-      if (layer.name === 'Hoogtekaart'
-          && scope.mapState.activeBaselayer === 3) {
-        ctrl.rescaleElevation(scope.mapState.bounds);
-
-      } else {
-        scope.mapState.changeBaselayer(layer);
-      }
-    };
-
-    map.fitBounds(maxBounds);
-    map.attributionControl.addAttribution(osmAttrib);
-    map.attributionControl.setPrefix('');
-    UtilService.getZoomlevelLabel(map.getZoom());
-    scope.map = map;
-    scope.mapState.bounds = scope.map.getBounds();
-
-    // Initialise layers
-    angular.forEach(scope.mapState.baselayers, function (layer) {
-      if (!layer.initiated) {
-        ctrl.initiateLayer(layer);
-      }
-      ctrl.toggleBaseLayer(layer);
-    });
-
-    angular.forEach(scope.mapState.layers, function (layer) {
-      scope.mapState.activeLayersChanged = !scope.mapState.activeLayersChanged;
-      if (!layer.initiated) {
-        ctrl.initiateLayer(layer);
-      }
-      ctrl.toggleLayer(layer);
-    });
-
-    scope.map.on('click', function (e) {
-      // NOTE: Check whether a $digest is already happening before using apply
-      if (!scope.$$phase) {
-        scope.$apply(function () {
+      scope.map.on('click', function (e) {
+        // NOTE: Check whether a $digest is already happening before using apply
+        if (!scope.$$phase) {
+          scope.$apply(function () {
+            scope.box.type = 'pointObject';
+            scope.mapState.here = e.latlng;
+            $rootScope.$broadcast('newPointObject');
+          });
+        } else {
           scope.box.type = 'pointObject';
           scope.mapState.here = e.latlng;
           $rootScope.$broadcast('newPointObject');
-        });
-      } else {
-        scope.box.type = 'pointObject';
-        scope.mapState.here = e.latlng;
-        $rootScope.$broadcast('newPointObject');
-      }
-    });
+        }
+      });
 
-    scope.map.on('movestart', function () {
+      scope.map.on('movestart', function () {
 
-      fadeCurrentCards(false);
-
-      if (!scope.$$phase) {
-        scope.$apply(function () {
+        if (!scope.$$phase) {
+          scope.$apply(function () {
+            scope.mapState.mapMoving = true;
+          });
+        } else {
           scope.mapState.mapMoving = true;
-        });
-      } else {
-        scope.mapState.mapMoving = true;
-      }
-    });
+        }
+      });
 
-    // initialize empty ClickLayer. 
-    // Otherwise click of events-aggregate and clicklayer
-    ClickFeedbackService.drawClickInSpace(map, new L.LatLng(180.0, 90.0));
+      // initialize empty ClickLayer.
+      // Otherwise click of events-aggregate and clicklayer
+      ClickFeedbackService.drawClickInSpace(map, new L.LatLng(180.0, 90.0));
 
-    scope.map.on('moveend', function () {
+      scope.map.on('moveend', function () {
 
-      fadeCurrentCards(true);
+        // NOTE: Check whether a $digest is already happening before using apply
 
-      // NOTE: Check whether a $digest is already happening before using apply
+        var finalizeMove = function () {
+          scope.mapState.moved = Date.now();
+          scope.mapState.mapMoving = false;
+          scope.mapState.bounds = scope.map.getBounds();
+        };
 
-      var finalizeMove = function () {
-        scope.mapState.moved = Date.now();
-        scope.mapState.mapMoving = false;
-        scope.mapState.bounds = scope.map.getBounds();
+        if (!scope.$$phase) {
+          scope.$apply(finalizeMove);
+        } else {
+          finalizeMove();
+        }
+      });
+
+      scope.map.on('dragend', function () {
+        if (scope.box.type === 'default') {
+        // scope.box.type = 'empty';
+          scope.$apply(function () {
+            scope.box.close();
+          });
+        }
+        if (scope.box.type === 'intersecttool') {
+          scope.$apply(function () {
+            scope.box.type = 'empty';
+          });
+        }
+      });
+
+      /**
+       * Watch to remove clicklayer when user clicks on omnibox close button.
+       */
+      scope.$watch('box.type', function (n, o) {
+        if (n === o) { return true; }
+        if (scope.mapState.clickLayer && scope.box.type === 'empty') {
+          ctrl.removeLayer(scope.mapState.clickLayer);
+          delete scope.mapState.clickLayer;
+        }
+      });
+
+      scope.mapState.changeLayer = function (layer) {
+        ctrl.toggleLayer(layer, scope.mapState.layers, scope.mapState.bounds);
+        scope.mapState.activeLayersChanged = !scope.mapState.activeLayersChanged;
       };
 
-      if (!scope.$$phase) {
-        scope.$apply(finalizeMove);
-      } else {
-        finalizeMove();
-      }
-    });
-
-    scope.map.on('dragend', function () {
-      if (scope.box.type === 'default') {
-      // scope.box.type = 'empty';
-        scope.$apply(function () {
-          scope.box.close();
-        });
-      }
-      if (scope.box.type === 'intersecttool') {
-        scope.$apply(function () {
-          scope.box.type = 'empty';
-        });
-      }
-    });
-
-    /**
-     * Watch to remove clicklayer when user clicks on omnibox close button.
-     */
-    scope.$watch('box.type', function (n, o) {
-      if (n === o) { return true; }
-      if (scope.mapState.clickLayer && scope.box.type === 'empty') {
-        ctrl.removeLayer(scope.mapState.clickLayer);
-        delete scope.mapState.clickLayer;
-      }
-    });
-
-    scope.mapState.changeLayer = function (layer) {
-      if (layer.overlayer === true) {
-        ctrl.updateOverLayers(scope.mapState);
-      }
-      ctrl.toggleLayer(layer);
-      scope.mapState.activeLayersChanged = !scope.mapState.activeLayersChanged;
-      scope.box.type = ctrl.boxType(scope.mapState);
-    };
-
-    /**
-     * Rescale elevation map when pressing on or off
-     */
-    scope.$watch('tools.active', function (n, o) {
-      if (n === o) { return true; }
-      if (scope.tools.active === 'autorescale') {
-        ctrl.rescaleElevation(scope.mapState.bounds);
-      }
-    });
-
-    /**
-     * Changes the baselayer.
-     *
-     * There is only one active baselayer. If baselayer is given, this layer
-     * becomes the activebaselayer and all baselayers are send to the
-     * toggleBaselayer function to turn them on or off. If you set the
-     * activeBaselayer manually this function may also be called to update all
-     * baselayers.
-     *
-     * @param {object} baselayer: the baselayer to activate
-     */
-    scope.mapState.changeBaselayer = function (baselayer) {
-      if (baselayer) { scope.mapState.activeBaselayer = baselayer.id; }
-      angular.forEach(scope.mapState.baselayers, function (baselayer) {
-        ctrl.toggleBaseLayer(baselayer);
+      scope.$watch('mapState.panZoom', function (n, o) {
+        if (n === o) { return true; }
+        if (scope.mapState.panZoom.isValid()) {
+          ctrl.fitBounds(scope.mapState.panZoom);
+        } else {
+          ctrl.panZoomTo(scope.mapState.panZoom);
+        }
       });
-      scope.mapState.baselayerChanged = Date.now();
-      scope.box.type = ctrl.boxType(scope.mapState);
+
+      // Instantiate the controller that updates the hash url after creating the map
+      // and all its listeners.
+      $controller('hashGetterSetter', {$scope: scope});
+
     };
 
-    scope.$watch('mapState.panZoom', function (n, o) {
-      if (n === o) { return true; }
-      if (scope.mapState.panZoom.isValid()) {
-        ctrl.fitBounds(scope.mapState.panZoom);
-      } else {
-        ctrl.panZoomTo(scope.mapState.panZoom);
-      }
-    });
-
-    // Instantiate the controller that updates the hash url after creating the map
-    // and all its listeners.
-    $controller('hashGetterSetter', {$scope: scope});
-
-  };
-
-  return {
+    return {
       restrict: 'E',
       replace: true,
       template: '<div id="map"></div>',
       controller: 'MapDirCtrl',
       link: link
     };
-}]);
+  }
+]);
 
 /**
  * Show rain WMS images as overlay, animate overlays when animation is

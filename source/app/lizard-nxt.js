@@ -50,7 +50,7 @@ app.config(function ($locationProvider) {
  *
  * Directives watch models in MasterCtrl and respond to changes in those models
  * for example, a user zooms in on the timeline, the timeline directive sets
- * the temporal.extent on the state.temporal; a map directive watches 
+ * the temporal.extent on the state.temporal; a map directive watches
  * state.temporal and updates map objects accordingly.
  *
  * ## Models
@@ -73,10 +73,6 @@ app.config(function ($locationProvider) {
  *
  * Stuff to reconsider, rethink, refactor:
  *
- * * [+] Create a mapState.here to describe the current spatial location
- * just like timeState.at describes the now. map-directive should set this, 
- * watches should listen to this to draw a clicklayer, get rain, get data from 
- * utf, etc.
  * * [ ] Refactor map controller and directives
  * * [-] Refactor master controller (states, data!)
  * * [+] Refactor timeline out of mapState with its own scope
@@ -95,6 +91,7 @@ app.controller("MasterCtrl",
   "ngTableParams",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, TimeseriesService, ngTableParams) {
+
   // BOX MODEL
   /**
    * @memberOf app.MasterCtrl
@@ -106,41 +103,20 @@ app.controller("MasterCtrl",
    * @property {boolean} box.detailMode - Detail mode, defaults to false.
    */
   $scope.box = {
-    detailMode: false,
-    query: null,
-    disabled: false,
-    showCards: false,
-    type: 'empty', // NOTE: default, box type is empty
-    content: {},
+    contextSwitchMode: false, // Switch between card or fullscreen
+    query: null, // Search bar query
+    showCards: false,// Only used for search results
+    type: 'extentAggregate', // Default box type
+    content: {}, // Inconsistently used to store data to display in box
     changed: Date.now(),
-    mouseLoc: []
+    mouseLoc: [] // Used to draw 'bolletje' on elevation profile
   };
-
-  $scope.box.content.alerts = {};
-  $scope.box.content.isw = {};
   // BOX MODEL
-
-  // BOX FUNCTIONS
-
-  // REFACTOR CANDIDATE
-  $scope.geoLocate = function () {
-    $scope.locate = !$scope.locate;
-  };
-
-  $scope.simulateSearch = function (keyword) {
-    $scope.box.query = keyword;
-    $scope.search();
-  };
-  // END REFACTOR CANDIDATE
-  //
-  // BOX FUNCTIONS
 
   // TOOLS
   $scope.tools = {
     active: "none", //NOTE: make list?
   };
-
-
 
   // START placeholder translations for django i8n
   // because all templates are now refactored
@@ -190,7 +166,7 @@ app.controller("MasterCtrl",
 
     if ($scope.tools.active === name) {
       $scope.tools.active = 'none';
-      $scope.box.type = 'raster-aggregate';
+      $scope.box.type = 'extentAggregate';
     } else {
       $scope.tools.active = name;
     }
@@ -205,13 +181,10 @@ app.controller("MasterCtrl",
     $scope.box.context = context;
   };
 
-  $scope.toggleDetailmode = function () {
-    if ($scope.box.detailMode) {
-      $scope.box.detailMode = false;
-    } else {
-      $scope.box.detailMode = true;
-    }
+  $scope.toggleContextSwitchMode = function () {
+    $scope.box.contextSwitchMode = !$scope.box.contextSwitchMode;
   };
+
   // TOOLS
 
   // MAP MODEL
@@ -219,15 +192,13 @@ app.controller("MasterCtrl",
   $scope.mapState = {
     layers: CabinetService.layers,
     activeLayersChanged: false,
-    baselayers: CabinetService.baselayers,
     eventTypes: CabinetService.eventTypes,
-    activeBaselayer: 1,
     changed: Date.now(),
     moved: Date.now(),
     baselayerChanged: Date.now(),
     enabled: false,
     bounds: null,
-    here: null,
+    here: null, // Leaflet point object describing a users location of interest
     geom_wkt: '',
     mapMoving: false
   };
@@ -383,10 +354,11 @@ app.controller("MasterCtrl",
     $scope.keyIsPressed = !$scope.keyIsPressed;
     $scope.keyPressed = $event.which;
     $scope.keyTarget = $event.target;
+
     if ($event.which === 27) {
       // If detailMode is active, close that
-      if ($scope.box.detailMode) {
-        $scope.box.detailMode = false;
+      if ($scope.box.contextSwitchMode) {
+        $scope.box.contextSwitchMode = false;
       } else {
         // Or else, reset the omnibox state
         $scope.box.type = 'empty';
