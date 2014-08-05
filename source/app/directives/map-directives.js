@@ -110,14 +110,24 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
 
     console.log("layer:", layer);
 
+    // if (layer.baselayer) {
+    //   if (!layer.active) { layer.active = true; }
+    //   else if (layer.slug === 'elevation') { rescaleElevation(bounds); }
+    //   turnOffAllOtherBaselayers(layer.id, layers);
+    // } else if (layer.overlayer) {
+    //   updateOverLayers(layers);
+    //   layer.active = !layer.active;
+    // } else {
+    //   layer.active = !layer.active;
+    // }
+
     if (layer.baselayer) {
       if (!layer.active) { layer.active = true; }
       else if (layer.slug === 'elevation') { rescaleElevation(bounds); }
       turnOffAllOtherBaselayers(layer.id, layers);
-    } else if (layer.overlayer) {
-      updateOverLayers(layers);
-      layer.active = !layer.active;
     } else {
+      if (layer.overlayer)
+        updateOverLayers(layers);
       layer.active = !layer.active;
     }
 
