@@ -88,9 +88,10 @@ app.controller("MasterCtrl",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, TimeseriesService, ngTableParams) {
 
+  $scope.toggleThisCard = UtilService.toggleThisCard;
+
   // BOX MODEL
   $scope.box = {
-    //detailMode: false, // Switch between card or fullscreen
     contextSwitchMode: false, // Switch between card or fullscreen
     query: null, // Search bar query
     showCards: false,// Only used for search results

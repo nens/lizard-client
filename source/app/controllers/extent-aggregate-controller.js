@@ -89,49 +89,5 @@ app.controller("ExtentAggregateCtrl", [
       if (n === o) { return true; }
       _updateExtentAgg();
     });
-
-    $scope.toggleThisCard = UtilService.toggleThisCard;
-
-    // /**
-    //  * Cancels pending requests and refreshes $q type promises
-    //  */
-    // var extAggPromiseRefresh = function () {
-    //   $scope.extentAggregate.landuse.q.resolve();
-    //   $scope.extentAggregate.elevation.q.resolve();
-    //   // $scope.extentAggregate.soil.q.resolve();
-    //   $scope.extentAggregate.landuse.q = $q.defer();
-    //   $scope.extentAggregate.elevation.q = $q.defer();
-    //   // $scope.extentAggregate.soil.q = $q.defer();
-    // };
-
-    // var handleLanduseCount = function (data) {
-    //   $scope.extentAggregate.landuse.data = data;
-    //   $scope.extentAggregate.landuse.active = true;
-    // };
-
-    // var getLanduseCount = function (geom) {
-    //   RasterService.getRasterData('landuse', geom, {
-    //     agg: 'counts',
-    //     q: $scope.extentAggregate.landuse.q
-    //   }).then(handleLanduseCount);
-    // };
-
-    // var handleElevationCurve = function (data) {
-    //   var datarow,
-    //       i,
-    //       formatted = [];
-
-    //   for (i in data[0]) {
-    //     datarow = [data[0][i], data[1][i]];
-    //     formatted.push(datarow);
-    //   }
-    //   $scope.extentAggregate.elevation.data = formatted;
-    // };
-
-    // var getElevationCurve = function (geom) {
-    //   RasterService.getRasterData('elevation', geom, {
-    //     agg: 'curve',
-    //     q: $scope.extentAggregate.elevation.q
-    //   }).then(handleElevationCurve);
   }
 ]);

@@ -203,7 +203,5 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer($scope.map);
     });
-
-    $scope.toggleThisCard = UtilService.toggleThisCard;
   }
 ]);
