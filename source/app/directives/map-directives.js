@@ -107,6 +107,9 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
   };
 
   this.toggleLayer = function (layer, layers, bounds) {
+
+    console.log("layer:", layer);
+
     if (layer.baselayer) {
       if (!layer.active) { layer.active = true; }
       else if (layer.slug === 'elevation') { rescaleElevation(bounds); }

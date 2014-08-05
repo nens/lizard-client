@@ -90,7 +90,8 @@ app.controller("MasterCtrl",
 
   // BOX MODEL
   $scope.box = {
-    detailMode: false, // Switch between card or fullscreen
+    //detailMode: false, // Switch between card or fullscreen
+    contextSwitchMode: false, // Switch between card or fullscreen
     query: null, // Search bar query
     showCards: false,// Only used for search results
     type: 'extentAggregate', // Default box type
@@ -155,13 +156,10 @@ app.controller("MasterCtrl",
     $scope.box.context = context;
   };
 
-  $scope.toggleDetailmode = function () {
-    if ($scope.box.detailMode) {
-      $scope.box.detailMode = false;
-    } else {
-      $scope.box.detailMode = true;
-    }
+  $scope.toggleContextSwitchMode = function () {
+    $scope.box.contextSwitchMode = !$scope.box.contextSwitchMode;
   };
+
   // TOOLS
 
   // MAP MODEL
@@ -330,10 +328,11 @@ app.controller("MasterCtrl",
     $scope.keyIsPressed = !$scope.keyIsPressed;
     $scope.keyPressed = $event.which;
     $scope.keyTarget = $event.target;
+
     if ($event.which === 27) {
       // If detailMode is active, close that
-      if ($scope.box.detailMode) {
-        $scope.box.detailMode = false;
+      if ($scope.box.contextSwitchMode) {
+        $scope.box.contextSwitchMode = false;
       } else {
         // Or else, reset the omnibox state
         $scope.box.type = 'empty';

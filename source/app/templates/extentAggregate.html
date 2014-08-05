@@ -17,12 +17,10 @@
       <graph ng-switch-default line></graph>
     </div>
   </div>
-</div>
 
-<!-- TODO, include events as layers and make them part of the aggregate controller and the above switch -->
-<div ng-controller="ExtentAggregateCtrl" class="card active" ng-if="events.types.count > 0" id="card-summary">
 
-  <div>
+  <div class="card active" ng-if="events.types.count > 0" id="card-summary">
+
     <div ng-if="box.content.eventValue.properties.value" >
       <p>
       <strong>
@@ -72,4 +70,5 @@
 
     </div>
   </div>
+
 </div>

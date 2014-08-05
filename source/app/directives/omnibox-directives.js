@@ -4,17 +4,16 @@ angular.module("omnibox", ["templates-main"])
   .directive("omnibox", ["$compile", "$templateCache", "UtilService",
     function ($compile, $templateCache, UtilService) {
 
-    var getTemplate = function (contentType) {
+    var getTemplate = function (scope, contentType) {
       if (contentType === undefined) {
-        contentType = 'empty';
+        contentType = 'extentAggregate';
+        //contentType = 'empty';
       }
 
-      var template,
-          templateUrl = 'templates/' + contentType + '.html';
-
-      template = $templateCache.get(templateUrl);
-
-      return template;
+      var templateUrl = 'templates/' + contentType + '.html';
+      console.log('scope.box:', scope.box);
+      console.log("getting template from URL: " + templateUrl);
+      return $templateCache.get(templateUrl);
     };
 
     var linker = function (scope, element, attrs) {
@@ -22,7 +21,7 @@ angular.module("omnibox", ["templates-main"])
       var oldScope;
 
       var replaceTemplate = function () {
-        var template = getTemplate(scope.box.type);
+        var template = getTemplate(scope, scope.box.type);
         // we don't want the dynamic template to overwrite the search box.
         // NOTE: the reason for selecting the specific child is jqLite does
         // not support selectors.
