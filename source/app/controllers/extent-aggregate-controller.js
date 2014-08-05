@@ -61,29 +61,32 @@ app.controller("ExtentAggregateCtrl", [
     };
 
     /**
-     * Updates extentaggregate when user moves map.
+     * private function to eliminate redundancy: gets called
+     * in multiple $watches declared locally.
      */
-    $scope.$watch('mapState.bounds', function (n, o) {
-      if (n === o) { return true; }
+
+    var _updateExtentAgg = function () {
       updateExtentAgg(
         $scope.mapState.bounds,
         $scope.mapState.layers,
         $scope.extentAggregate
-        );
-    });
+      );
+    };
 
+    /**
+     * Updates extentaggregate when user moves map.
+     */
+    $scope.$watch('mapState.bounds', function (n, o) {
+      if (n === o) { return true; }
+      _updateExtentAgg();
+    });
 
     /**
      * Updates extentaggregate when users changes layers.
      */
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return true; }
-      updateExtentAgg(
-        $scope.mapState.bounds,
-        $scope.mapState.layers,
-        $scope.extentAggregate
-        );
+      _updateExtentAgg();
     });
-
   }
 ]);

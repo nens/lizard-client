@@ -67,9 +67,6 @@ app.config(function ($locationProvider) {
  *
  * Stuff to reconsider, rethink, refactor:
  *
- * * [+] Create a mapState.here to describe the current spatial location
- *       just like timeState.at describes the now. map-directive should set this,
- *       watches should listen to this to draw a clicklayer, get rain, get data from utf, etc.
  * * [ ] Refactor map controller and directives
  * * [-] Refactor master controller (states, data!)
  * * [+] Refactor timeline out of mapState with its own scope
@@ -90,7 +87,7 @@ app.controller("MasterCtrl",
 
   // BOX MODEL
   $scope.box = {
-    detailMode: false, // Switch between card or fullscreen
+    contextSwitchMode: false, // Switch between card or fullscreen
     query: null, // Search bar query
     showCards: false,// Only used for search results
     type: 'extentAggregate', // Default box type
@@ -155,13 +152,10 @@ app.controller("MasterCtrl",
     $scope.box.context = context;
   };
 
-  $scope.toggleDetailmode = function () {
-    if ($scope.box.detailMode) {
-      $scope.box.detailMode = false;
-    } else {
-      $scope.box.detailMode = true;
-    }
+  $scope.toggleContextSwitchMode = function () {
+    $scope.box.contextSwitchMode = !$scope.box.contextSwitchMode;
   };
+
   // TOOLS
 
   // MAP MODEL
@@ -175,7 +169,7 @@ app.controller("MasterCtrl",
     baselayerChanged: Date.now(),
     enabled: false,
     bounds: null,
-    here: null,
+    here: null, // Leaflet point object describing a users location of interest
     geom_wkt: '',
     mapMoving: false
   };
@@ -330,10 +324,11 @@ app.controller("MasterCtrl",
     $scope.keyIsPressed = !$scope.keyIsPressed;
     $scope.keyPressed = $event.which;
     $scope.keyTarget = $event.target;
+
     if ($event.which === 27) {
       // If detailMode is active, close that
-      if ($scope.box.detailMode) {
-        $scope.box.detailMode = false;
+      if ($scope.box.contextSwitchMode) {
+        $scope.box.contextSwitchMode = false;
       } else {
         // Or else, reset the omnibox state
         $scope.box.type = 'empty';

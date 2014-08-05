@@ -2,7 +2,7 @@
 
 /**
  * pointObject is the contoller of the pointObject template. It gathers all data
- * belonging to a location in space. It becomes active by setting box.type to 
+ * belonging to a location in space. It becomes active by setting box.type to
  * 'pointObject' and is updated by broadcasting 'newPointActive'. It reads and
  * writes mapState.here.
  *
@@ -58,8 +58,8 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
 
     /**
      * pointObject is the object which holds all data of a point
-     * in space. It is updated after a users click. The pointObject 
-     * may have associated events and timeseries which are requested 
+     * in space. It is updated after a users click. The pointObject
+     * may have associated events and timeseries which are requested
      * from the server by the services.
      *
      * @return {object} empty pointObject.
@@ -115,9 +115,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       return function (response) {
         attrsResponded(response, $scope.pointObject);
         // Either way, stop vibrating click feedback.
-        if (here.type !== 'events') {
-          ClickFeedbackService.stopVibration();
-        }
+        ClickFeedbackService.stopVibration();
         if (response && response.data) {
           $scope.pointObject.attrs.active = true;
           // Set here to location of object
@@ -134,9 +132,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           getTimeSeriesForObject();
         } else {
           // If not hit object, threaten it as a rain click, draw rain click arrow.
-          if (here.type == 'events') {
-            ClickFeedbackService.drawArrowHere(map, here);
-          }
+          ClickFeedbackService.drawArrowHere(map, here);
         }
       };
     };
@@ -203,7 +199,5 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer($scope.map);
     });
-
   }
-
 ]);
