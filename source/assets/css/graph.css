@@ -110,7 +110,7 @@ text.d3tooltip:after {
 
 .donut-underline {
   width: 195px;
-  height: 2px;
+  height: 1px;
   background-color: #222;
   float: right;
   opacity: 0.0;
@@ -131,7 +131,7 @@ text.d3tooltip:after {
   margin-top: -136px;
   opacity: 0.0;
   text-align: center;
-  color: #555;
+  color: #7f8c8d;
   font-weight: 800;
   font-size: 40px;
   padding-top: 15px;
@@ -139,7 +139,11 @@ text.d3tooltip:after {
 
 .donut-title-text {
   text-anchor: middle;
-  fill: #555;
-  font-weight: 700;
-  font-size: 16px;
+  fill: #7f8c8d;
+  font-size: 14px;
+  font-family: 'Roboto Slab', serif;
+}
+
+.donutGraph, .xyGraph {
+  margin-bottom: 15px;
 }

@@ -724,7 +724,8 @@ angular.module('graph')
         line.defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
 
         var x = {};
-        if (header[keys.x].quantity === 'time') {
+        if (header[keys.x] 
+          && header[keys.x].quantity === 'time') {
           x = graphCtrl.maxMin(data, keys.x);
           x.scale = graphCtrl.scale(
             scope.timeState.start, scope.timeState.end, {

@@ -1,3 +1,24 @@
+<div ng-controller="ExtentAggregateCtrl">
+  <div ng-repeat="agg in extentAggregate" class="card active">
+    <div class="card-title">
+      <span class="card-title-text"><% agg.name %></span>
+      <div class="card-title-button"
+           ng-click="toggleThisCard()">
+        <span class="card-title-button-text">
+          <i class="fa fa-chevron-down"></i>
+        </span>
+      </div>
+    </div>
+    <div ng-switch="agg.type" class="card-content">
+      <hr class="card-separator">
+      <graph ng-switch-when="curve" line xlabel="'[%]'" ylabel="'hoogte [mNAP]'" data="agg.data" class="xyGraph"></graph>
+      <graph ng-switch-when="counts" pie data="agg.data" class="donutGraph"></graph>
+      <graph ng-switch-default line></graph>
+    </div>
+  </div>
+</div>
+
+<!-- TODO, include events as layers and make them part of the aggregate controller and the above switch -->
 <div class="card" ng-if="events.types.count > 0">
 
   <div>
@@ -6,7 +27,7 @@
       <strong>
         <% box.content.eventValue.properties.category %> <br />
       </strong>
-      <% box.content.eventValue.properties.value %> <br />
+      <% box.content.eventValue.properties.value %> <br />  
       <small>
         <% box.content.eventValue.properties.timestamp_start | date: 'yyyy-MM-dd HH:mm' %> -
         <% box.content.eventValue.properties.timestamp_end | date: 'yyyy-MM-dd HH:mm' %>
