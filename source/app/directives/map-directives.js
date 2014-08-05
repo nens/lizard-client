@@ -244,33 +244,32 @@ app.directive('map', [
           zoom: 12
         });
 
-      /***
-        * Fade out (in) currently (in-)visible cards.
-        *
-        * @param {boolean} fadeIn - A boolean denoting whether we need to
-        * fade in or out.
-        */
-      var fadeCurrentCards = function (fadeIn) {
+      // /***
+      //   * Fade out (in) currently (in-)visible cards.
+      //   *
+      //   * @param {boolean} fadeIn - A boolean denoting whether we need to
+      //   * fade in or out.
+      //   */
+      // var fadeCurrentCards = function (fadeIn) {
 
-        var cards = d3.selectAll(".card");
+      //   var cards = d3.selectAll(".card");
 
-        if (fadeIn) {
-          // card comes back instantaniously
-          cards
-            .style("opacity", 1);
-        } else {
-          // card fades away into transparancy, after a delay, but only if
-          // the map is still moving after that delay
-          setTimeout(function () {
-            if (scope.mapState.mapMoving) {
-              cards
-                .transition(100)
-                .style("opacity", 0.2);
-            }
-          }, 700);
-
-        }
-      };
+      //   if (fadeIn) {
+      //     // card comes back instantaniously
+      //     cards
+      //       .style("opacity", 1);
+      //   } else {
+      //     // card fades away into transparancy, after a delay, but only if
+      //     // the map is still moving after that delay
+      //     setTimeout(function () {
+      //       if (scope.mapState.mapMoving) {
+      //         cards
+      //           .transition(100)
+      //           .style("opacity", 0.2);
+      //       }
+      //     }, 700);
+      //   }
+      // };
 
       scope.mapState.switchLayerOrRescaleElevation = function (layer) {
 
@@ -319,7 +318,7 @@ app.directive('map', [
 
       scope.map.on('movestart', function () {
 
-        fadeCurrentCards(false);
+        UtilService.fadeCurrentCards(scope, false);
 
         if (!scope.$$phase) {
           scope.$apply(function () {
@@ -328,15 +327,14 @@ app.directive('map', [
         } else {
           scope.mapState.mapMoving = true;
         }
-      });
 
-      // initialize empty ClickLayer. 
+      // initialize empty ClickLayer.
       // Otherwise click of events-aggregate and clicklayer
       ClickFeedbackService.drawClickInSpace(map, new L.LatLng(180.0, 90.0));
 
       scope.map.on('moveend', function () {
 
-        fadeCurrentCards(true);
+        UtilService.fadeCurrentCards(scope, true);
 
         // NOTE: Check whether a $digest is already happening before using apply
 

@@ -179,12 +179,31 @@ app.service("UtilService", function () {
     }
   };
 
-  // this.objectTree = function (obj) {
+  /***
+    * Fade out (in) currently (in-)visible cards.
+    *
+    * @param {boolean} fadeIn - A boolean denoting whether we need to
+    * fade in or out.
+    */
+  this.fadeCurrentCards = function (scope, fadeIn) {
 
-  //   // formats
+    var cards = d3.selectAll(".card");
 
-  //   var result
-
-  // };
+    if (fadeIn) {
+      // card comes back instantaniously
+      cards
+        .style("opacity", 1);
+    } else {
+      // card fades away into transparancy, after a delay, but only if
+      // the map is still moving after that delay
+      setTimeout(function () {
+        if (scope.mapState.mapMoving) {
+          cards
+            .transition(100)
+            .style("opacity", 0.2);
+        }
+      }, 700);
+    }
+  };
 
 });

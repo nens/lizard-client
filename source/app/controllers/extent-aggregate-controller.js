@@ -1,65 +1,56 @@
 app.controller("ExtentAggregateCtrl", [
   "$scope",
-  "$q",
   "RasterService",
   "UtilService",
-  function ($scope, $q, RasterService, UtilService) {
+  function ($scope, RasterService, UtilService) {
     /**
      * ExtentAggregate is the object which collects different
      * sets of aggregation data. If there is no activeObject,
      * this is the default collection of data to be shown in the
      * client.
      *
-     * Contains: landuse, soil and elevation data.
+     * Contains data of all active layers with an aggregation_type
      *
      */
     $scope.extentAggregate = {};
 
-    var getExtentData = function (layer, agg, slug, bounds, q) {
-      if (agg.q) {
-        console.log('Doing this already');
-        agg.q.resolve();
-      }
-      agg.q = q.defer();
-
-      console.log('launching:', slug);
-      var dataProm = RasterService.getRasterData(slug, bounds, {
-          agg: layer.aggregation_type,
-          q: agg.q
-        });
-      return dataProm;
-    };
-
-    var updateExtentAgg = function (bounds, layers, q, extentAggregate) {
+    /**
+     * Loops over all layers to request aggregation data for all
+     * active layers with an aggregation type.
+     *
+     * @param  {bounds object} bounds   mapState.bounds, containing
+     *                                  leaflet bounds
+     * @param  {layers object} layers   mapState.layers, containing
+     *                                  nxt definition of layers
+     * @param  {object} extentAggregate extentAggregate object of this
+     *                                  ctrl
+     */
+    var updateExtentAgg = function (bounds, layers, extentAggregate) {
       angular.forEach(layers, function (layer, slug) {
         if (layer.active && layer.aggregation_type !== 'none') {
           var agg = extentAggregate[slug] || {};
-          var dataAndVisProm = getExtentData(layer, agg, slug, bounds, q)
-          .then(function (data) {
-            agg.data = data;
-            agg.type = layer.aggregation_type;
-            if (layer.aggregation_type === 'curve') {
-              agg.data = RasterService.handleElevationCurve(data);
-            }
-            return {
-              agg: agg,
-              slug: slug
-            };
-          });
-          putDataOnscope(dataAndVisProm);
-        } else if (slug in $scope.extentAggregate && !layer.active) {
+          var dataProm = RasterService.getAggregationForActiveLayer(layer, slug, agg, bounds);
+          // Pass the promise to a function that handles the scope.
+          putDataOnscope(dataProm);
+        } else if (slug in extentAggregate && !layer.active) {
           removeDataFromScope(slug);
         }
       });
     };
 
-    var putDataOnscope = function (dataAndVisProm) {
-      dataAndVisProm
+    /**
+     * Puts dat on extentAggregate when promise resolves or
+     * removes item from extentAggregate when no data is returned.
+     *
+     * @param  {promise}               a promise with aggregated data and
+     *                                 the slug
+     */
+    var putDataOnscope = function (dataProm) {
+      dataProm
       .then(function (result) {
         if (result.agg.data.length > 0) {
           $scope.extentAggregate[result.slug] = result.agg;
           $scope.extentAggregate[result.slug].name = $scope.mapState.layers[result.slug].name;
-          console.log("putting on scope", $scope.extentAggregate);
         } else if (result.slug in $scope.extentAggregate) {
           removeDataFromScope(result.slug);
         }
@@ -70,24 +61,33 @@ app.controller("ExtentAggregateCtrl", [
       delete $scope.extentAggregate[slug];
     };
 
+    /**
+     * private function to eliminate redundancy: gets called
+     * in multiple $watches declared locally.
+     */
+
+    var _updateExtentAgg = function () {
+      updateExtentAgg(
+        $scope.mapState.bounds,
+        $scope.mapState.layers,
+        $scope.extentAggregate
+      );
+    };
+
+    /**
+     * Updates extentaggregate when user moves map.
+     */
     $scope.$watch('mapState.bounds', function (n, o) {
       if (n === o) { return true; }
-      updateExtentAgg(
-        $scope.mapState.bounds,
-        $scope.mapState.layers,
-        $q,
-        $scope.extentAggregate
-        );
+      _updateExtentAgg();
     });
 
+    /**
+     * Updates extentaggregate when users changes layers.
+     */
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return true; }
-      updateExtentAgg(
-        $scope.mapState.bounds,
-        $scope.mapState.layers,
-        $q,
-        $scope.extentAggregate
-        );
+      _updateExtentAgg();
     });
 
     $scope.toggleThisCard = UtilService.toggleThisCard;
