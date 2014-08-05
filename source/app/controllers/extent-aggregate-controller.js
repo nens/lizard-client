@@ -87,4 +87,3 @@ app.controller("ExtentAggregateCtrl", [
 
   }
 ]);
->>>>>>> f8fd97bfc52acb1b3d1530a17885137c788ec2b3
