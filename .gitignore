@@ -1,0 +1,15 @@
+# js installs
+vendor/
+node_modules/
+node_modules
+.npm-debug.log
+.grunt/
+
+# test stuff
+_SpecRunner.html
+qa/
+
+tmp/
+tmp
+dist/
+templates.js

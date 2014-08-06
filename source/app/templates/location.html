@@ -1,0 +1,47 @@
+<div id="detail"
+     class="card location"
+     ng-class="{'pullDown': currentObject}"
+     ng-show="currentObject">
+	<h5><i class="fa fa-map-marker fa-lg"></i>&nbsp;<span ng-bind="currentObject.display_name"></span></h5>
+	<ul class="location-ul">
+	    <li ng-repeat="(key, value) in currentObject" class="truncateme">
+      		<abbr ng-bind="value" 
+                title="<% key %>"></abbr>
+	    </li>
+	</ul>
+</div>
+
+<div ng-controller="SearchCtrl"
+     ng-show="box.query.length > 0"
+     ng-cloak
+     ng-repeat="(key, value) in searchData"
+     class="card cluster location">
+  <span ng-if="value.pin">
+    <i class="fa fa-table"></i>&nbsp;
+    <a ng-click="showDetails(value)" 
+       data-latitude="<% value.geometry[0] %>" 
+       data-longitude="<% value.geometry[1] %>" 
+       class="pointer">
+      <span ng-bind-html="value.name"></span>
+    </a>
+  </span>
+</div>
+
+<div ng-controller="SearchCtrl"
+     ng-show="box.type == 'location'"
+     class="cluster location no-outline"
+     ng-class="mapState.mapMoving ? 'card-hidden' : ''"
+     tabindex="<% $index %>"
+     ng-repeat="obj in box.content | orderBy:'display_name'"
+     ng-focus="onFocus(obj, $event)"
+     ng-keydown="onKeydown(obj, $event)">
+  <i class="fa fa-map-marker"></i>&nbsp;
+  <a ng-click="showDetails(obj)" 
+     title="<% obj.display_name %>" 
+     data-latitude="<% obj.lat %>" 
+     data-longitude="<% obj.lon %>" 
+     class="pointer">
+     <!-- <span ng-bind-html="obj.display_name"></span></a> -->
+     <span><% obj.display_name %></span></a>
+</div>
+

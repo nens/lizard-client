@@ -1,0 +1,14 @@
+<div class="card-title">
+  <!-- temporary solution I guess. -->
+  <i id="icon-holder" class="icon-<% pointObject.attrs.data.entity_name.split('_')[0] %>"></i>
+  
+  <!--<i class="<% pointObject.attrs.data.getIcon() %>"></i>-->
+
+  <span id="title-holder" class="title-text"><% gettext(pointObject.attrs.data.entity_name) %></span>&nbsp;
+  <span ng-if="pointObject.attrs.data.code">(</span>
+  <span class="truncateme ng-binding" ng-bind="pointObject.attrs.data.code"></span>
+  <span ng-if="pointObject.attrs.data.code">)</span>
+  
+
+
+</div>

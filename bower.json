@@ -1,0 +1,45 @@
+{
+  "name": "lizard-nxt-client",
+  "version": "0.0.0",
+  "homepage": "https://github.com/nens/lizard-nxt",
+  "authors": [
+    "fritzvd <fritz.vandeventer@nelen-schuurmans.nl>"
+  ],
+  "description": "Client for Lizard-NxT",
+  "main": "./lizard_nxt/client/static/js/nxt-map.js",
+  "keywords": [
+    "map",
+    "geographic",
+    "gis",
+    "hydrology"
+  ],
+  "license": "GPLv3",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "1.2.9",
+    "angular-mocks": "1.2.0",
+    "angular-ui-bootstrap": "git://github.com/angular-ui/bootstrap.git#gh-pages",
+    "bootstrap": "~3.1.1",
+    "d3": "~3.3.2",
+    "font-awesome": "~4.0.3",
+    "jquery": "~1.10.1",
+    "jquery-ui": "~1.10.3",
+    "leaflet-dist": "0.7.1",
+    "nens-carto": "git@github.com:nens/nens-carto.git",
+    "lizard-iconfont": "git@github.com:nens/lizard-iconfont.git",
+    "restangular": "~1.4.0",
+    "ui-utils": "~0.1.1",
+    "ng-table": "~0.3.2",
+    "ng-csv": "~0.2.1"
+  },
+  "resolutions": {
+    "angular": "1.2.9"
+  }
+}

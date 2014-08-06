@@ -1,0 +1,16 @@
+<table class="fullwidth">
+  <tbody>
+    <tr ng-repeat="obj in pointObject.attrs.wanted[pointObject.attrs.data.entity_name].rows">
+      <td class="fixed-width-card-table"><% obj.keyName %></td>
+      <td
+        ng-show="pointObject.attrs.data[obj.attrName]">
+        <span class="ng-binding">
+          <% $eval(obj.ngBindValue) + obj.valueSuffix %>
+        </span>
+      </td>
+      <td ng-hide="pointObject.attrs.data[obj.attrName]" style="float:left;">
+        <% "..." %>
+      </td>
+    </tr>
+  </tbody>
+</table>
