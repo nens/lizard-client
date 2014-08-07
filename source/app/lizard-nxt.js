@@ -180,15 +180,10 @@ app.controller("MasterCtrl",
 
   var now = Date.now();
   var day = 24 * 60 * 60 * 1000;
-  var tomorrow = now + day;
-  var twoDaysAgo = now - 2 * day;
-  var sevenDaysAgo = now - 7 * day;
-  var lastVisit = CabinetService.lastVisitUtime;
-  var start = Math.max(sevenDaysAgo, Math.min(twoDaysAgo, lastVisit)) || sevenDaysAgo;
   // TIME MODEL
   $scope.timeState = {
-    start: start,
-    end: tomorrow,
+    start: now - 2 * day,
+    end: now + day,
     changedZoom: Date.now(),
     zoomEnded: null,
     hidden: undefined,
