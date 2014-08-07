@@ -134,7 +134,9 @@ app.controller("MasterCtrl",
    *
    */
   $scope.toggleTool = function (name) {
-
+    if (name === 'intersect') {
+      $scope.box.type  = 'intersect';
+    }
     if ($scope.tools.active === name) {
       $scope.tools.active = 'none';
       $scope.box.type = 'extentAggregate';
