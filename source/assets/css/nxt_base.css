@@ -49,13 +49,6 @@ h1, h2, h3, h4, h5 {
     background: url('../images/logo_text.png') no-repeat;
     background-position: 12px 8px;
   }
-  .navbar-version, .navbar-version:link, .navbar-version:active, .navbar-version:visited {
-    color: white;
-    cursor: pointer;
-    font-size: 8pt;
-    position: absolute;
-    margin-top: 29px;
-  }
   .navbar-toggle, .navbar-inverse .navbar-toggle, .navbar-inverse .navbar-toggle:hover{
     background-color: rgba(22, 160, 133, 1.0) !important;
     border: none !important;
