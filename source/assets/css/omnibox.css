@@ -747,3 +747,21 @@ select.timeseries {
   width: 50px;
 }
 */
+
+.relatified-events-header:hover {
+  cursor: pointer;
+}
+
+.kunstwerk-icon {
+  float: left;
+}
+
+td.lineout {
+  border-top: 1px solid #ddd;
+  width: 100%;
+}
+
+td.lineout:nth-of-type(1) {
+  position: relative;
+  top: -1px;
+}

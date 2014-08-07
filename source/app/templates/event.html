@@ -5,10 +5,11 @@
         class="table table-condensed table-hover"
         template-pagination="custom/pager">
     <tbody ng-repeat="group in $groups">
-    <tr class="ng-table-group">
+    <tr class="ng-table-group relatified-events-header"
+        ng-click="group.$hideRows = !group.$hideRows">
       <td colspan="<% $columns.length %>">
-        <a href="" ng-click="group.$hideRows = !group.$hideRows"
-          ng-style="{color: events.scale(group.data[0].event_series) }">
+        <a href="#"
+           ng-style="{color: events.scale(group.data[0].event_series) }">
           <span class="glyphicon"
                 ng-class="{'glyphicon-chevron-right': !group.$hideRows,
                            'glyphicon-chevron-down': group.$hideRows}">
@@ -50,3 +51,4 @@
     </li>
   </ul>
 </script>
+
