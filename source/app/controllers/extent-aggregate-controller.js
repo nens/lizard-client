@@ -88,5 +88,9 @@ app.controller("ExtentAggregateCtrl", [
       if (n === o) { return true; }
       _updateExtentAgg();
     });
+
+    // Load data at initialization.
+    _updateExtentAgg();
+
   }
 ]);
