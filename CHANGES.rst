@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 unreleased
 ----------
 
+
+Release 0.1
+-----------
+
 - All clicks on the map result all data available to that location
 
 - ExtentAggregat is the default card displaying an extent summary of 
@@ -24,9 +28,6 @@ unreleased
 - Events circles on map now don't increase with every redraw.
 
 - Events with start and end as line in timeline.
-
-Release 0.1
------------
 
 - Cumulative rain for spatial extent in timeline.
 
