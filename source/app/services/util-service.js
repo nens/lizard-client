@@ -159,6 +159,8 @@ app.service("UtilService", function () {
     titleText = $(card).find('.card-title-text')[0];
     separator = $(card).find('.card-separator')[0];
 
+    console.log('chev', chev);
+
     if ($(card).hasClass("active")) {
 
       $(separator).fadeOut(FADE_TIME, function () {
