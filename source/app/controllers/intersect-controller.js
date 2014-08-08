@@ -5,11 +5,11 @@ app.controller("IntersectCtrl", [
   function ($scope, RasterService, ClickFeedbackService) {
     /**
      * lineIntersect is the object which collects different
-     * sets of aggregation data. If there is no activeObject,
-     * this is the default collection of data to be shown in the
-     * client.
+     * sets of line data. If the intersect tool is turned on,
+     * intersect is set to box.type and this controller becomes
+     * active.
      *
-     * Contains data of all active layers with an aggregation_type
+     * Contains data of all active layers with a suitable aggregation_type
      *
      */
     $scope.lineIntersect = {};
@@ -17,14 +17,14 @@ app.controller("IntersectCtrl", [
     var firstClick, secondClick;
 
     /**
-     * Loops over all layers to request aggregation data for all
+     * Loops over all layers to request intersection data for all
      * active layers with a raster store path and an appropriate
      * aggregation_type type.
      *
-     * @param  {line object}   line     object describing the profile
+     * @param  {wkt str}   line         str describing the line
      * @param  {layers object} layers   mapState.layers, containing
      *                                  nxt definition of layers
-     * @param  {object} lineIntersect lineIntersect object of this
+     * @param  {object} lineIntersect   lineIntersect object of this
      *                                  ctrl
      */
     var updateExtentAgg = function (line, layers, lineIntersect) {
@@ -47,8 +47,8 @@ app.controller("IntersectCtrl", [
      * Puts dat on lineIntersect when promise resolves or
      * removes item from lineIntersect when no data is returned.
      *
-     * @param  {promise}               a promise with aggregated data and
-     *                                 the slug
+     * @param  {promise}  dataProm       a promise with line data
+     * @param  {str}      slug           slug name of layer
      */
     var putDataOnscope = function (dataProm, slug) {
       dataProm.then(function (result) {
@@ -67,10 +67,12 @@ app.controller("IntersectCtrl", [
     };
 
     /**
-     * private function to eliminate redundancy: gets called
-     * in multiple $watches declared locally.
+     * calls updateLineIntersect with a wkt representation of
+     * input
+     *
+     * @param {leaflet point object} firstClick
+     * @param {leaflet point object} secondClick
      */
-
     var _updateLineIntersect = function (firstClcik, secondClick) {
       var line = [
         "LINESTRING(",
@@ -91,7 +93,15 @@ app.controller("IntersectCtrl", [
     };
 
     /**
-     * Updates firsClick and or secondClick
+     * Updates firsClick and or secondClick and draws
+     * appropriate feedback
+     *
+     * It either:
+     *   1. Removes the current line
+     *   2. Sets firstClick and draws a tiny line from the first
+     *      click to the current pos of mouse.
+     *   3. Sets the second click and draws the lne from
+     *      the first to the second.
      */
     $scope.$watch('mapState.here', function (n, o) {
       if (n === o) { return true; }
@@ -111,7 +121,10 @@ app.controller("IntersectCtrl", [
       }
     });
 
-    var userHereWatch = $scope.$watch('mapState.userHere', function (n, o) {
+    /**
+     * Updates line according to geo-pos of mouse
+     */
+    $scope.$watch('mapState.userHere', function (n, o) {
       if (n === o) { return true; }
       if (firstClick && !secondClick) {
         ClickFeedbackService.drawLine($scope.map, firstClick, $scope.mapState.userHere, true);
@@ -119,7 +132,7 @@ app.controller("IntersectCtrl", [
     });
 
     /**
-     * Updates lineIntersect when users changes layers.
+     * Updates lineIntersect data when users changes layers.
      */
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return true; }
@@ -128,6 +141,11 @@ app.controller("IntersectCtrl", [
       }
     });
 
+    /**
+     * Legacy function to draw 'bolletje'
+     *
+     * TODO
+     */
     var circle;
     $scope.$watch('box.mouseLoc', function (n, o) {
       if (n === o) { return true; }
@@ -163,6 +181,9 @@ app.controller("IntersectCtrl", [
       }
     });
 
+    /**
+     * Clean up all drawings on box change.
+     */
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer($scope.map);
     });
