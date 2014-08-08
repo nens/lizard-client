@@ -178,7 +178,7 @@ app.filter('aggWinToYLabel', function () {
 
 app.filter('truncate', function () {
 
-  var MAX_LENGTH = 16;
+  var MAX_LENGTH = 20;
 
   return function (input) {
 
