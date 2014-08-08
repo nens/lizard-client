@@ -222,6 +222,34 @@ i, a:active {text-decoration:none !important;}
     transition: .3s ease;
 }
 
+label.layer-chooser {
+    height: 40px;
+    width: 100%;
+    position: relative;
+}
+
+label.layer-chooser > span.layer-text {
+    background: rgba(255,255,255, 0.8);
+    width: 60%;
+    padding: 5px;
+    z-index: 1;
+    position: absolute
+}
+
+label.layer-chooser > span.layer-img {
+    opacity: 0.5;
+    right: 0;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+label.layer-chooser::after {
+}
+
 ul.list-inline li.baselayer-icon {
     position:relative;
     /*border:1px solid #ccc;*/
