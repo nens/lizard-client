@@ -21,6 +21,12 @@ describe('Testing layer chooser directive', function() {
       layers: baseLayers
     };
     
+    scope.map = {
+      getZoom: function () {
+        return 10;
+      }
+    }
+
   }));
 
   it('should show the text of the layer', function () {
