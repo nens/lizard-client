@@ -1,38 +1,12 @@
 //layer-directive.js
 
 app.directive("layerChooser", function () {
-  var link, buildImageURL;
+  var link, buildImageURL, buildWMSURL;
   link = function (scope, element, attrs) {
     scope.$watch('mapState.pixelCenter', function (n, v) {
       if (n === v) { return; }
       if (scope.layer.type === 'WMS') {
-        // Copying getTileURL behavior of Leaflet
-        // Otherwise WMS tiles don't correspond with TMS'
-        // Takes the bounds and calculates a tile around the center.
-        var bbox, tileSize, nwPoint, nw, sePoint, se, crsString, crs;
-
-        nwPoint = L.point(scope.mapState.pixelCenter.x - 256, scope.mapState.pixelCenter.y - 256)
-        sePoint = nwPoint.add([256, 256]);
-
-        // if 
-        if (scope.layer.leafletLayer.wmsParams.hasOwnProperty('srs')) {
-          crsString = scope.layer.leafletLayer.wmsParams.srs;
-          crsString = crsString.split(':').join('');
-          crs = L.CRS[crsString]; 
-        } else {
-          crs = L.CRS.EPSG4326;
-        }
-        nw = crs.project(scope.map.unproject(nwPoint, scope.map.getZoom()));
-        se = crs.project(scope.map.unproject(sePoint, scope.map.getZoom()));
-
-        bbox = scope.layer.leafletLayer._wmsVersion >= 1.3 && crs === L.CRS.EPSG4326 ?
-            [se.y, nw.x, nw.y, se.x].join(',') :
-            [nw.x, se.y, se.x, nw.y].join(',');
-
-        scope.layer.imageURL = scope.layer.url + L.Util.getParamString(
-          scope.layer.leafletLayer.wmsParams, 
-          scope.layer.url, 
-          true) + '&BBOX=' + bbox + '&SRS=' + crs.code; 
+        buildWMSURL(scope);
     } else {
       scope.layer.imageURL = buildImageURL(scope.layer.url, {
         x: Math.floor(scope.mapState.pixelCenter.x / 256),
@@ -48,6 +22,47 @@ app.directive("layerChooser", function () {
     });
   };
 
+  /** 
+   * Build URL for WMS type layers.
+   * These are a bit different from the TMS/Asset ones.
+   * @param  {ngScope} scope Scope that is available in link function
+   */
+  buildWMSURL = function (scope) {
+    // Copying getTileURL behavior of Leaflet
+    // Otherwise WMS tiles don't correspond with TMS'
+    // Takes the bounds and calculates a tile around the center.
+    var bbox, tileSize, nwPoint, nw, sePoint, se, crsString, crs;
+
+    nwPoint = L.point(scope.mapState.pixelCenter.x - 256, scope.mapState.pixelCenter.y - 256)
+    sePoint = nwPoint.add([256, 256]);
+
+    // if 
+    if (scope.layer.leafletLayer.wmsParams.hasOwnProperty('srs')) {
+      crsString = scope.layer.leafletLayer.wmsParams.srs;
+      crsString = crsString.split(':').join('');
+      crs = L.CRS[crsString]; 
+    } else {
+      crs = L.CRS.EPSG4326;
+    }
+    nw = crs.project(scope.map.unproject(nwPoint, scope.map.getZoom()));
+    se = crs.project(scope.map.unproject(sePoint, scope.map.getZoom()));
+
+    bbox = scope.layer.leafletLayer._wmsVersion >= 1.3 && crs === L.CRS.EPSG4326 ?
+        [se.y, nw.x, nw.y, se.x].join(',') :
+        [nw.x, se.y, se.x, nw.y].join(',');
+
+    scope.layer.imageURL = scope.layer.url + L.Util.getParamString(
+      scope.layer.leafletLayer.wmsParams, 
+      scope.layer.url, 
+      true) + '&BBOX=' + bbox + '&SRS=' + crs.code; 
+  }
+
+  /**
+   * Builds image urls with the help of Leaflet.Util
+   * @param  {string} url  Template Url
+   * @param  {object} data Object with which to render template
+   * @return {string} URL with zoom, x, y
+   */
   buildImageURL = function (url, data) {
     var changedURL;
     changedURL = L.Util.template(url, data);
