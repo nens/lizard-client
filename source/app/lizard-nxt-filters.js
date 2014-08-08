@@ -7,7 +7,7 @@
  * ========
  *
  * Defines custom filters
- * 
+ *
  */
 
 
@@ -173,5 +173,19 @@ app.filter('aggWinToYLabel', function () {
       out = '...';
     }
     return out;
+  };
+});
+
+app.filter('truncate', function () {
+
+  var MAX_LENGTH = 16;
+
+  return function (input) {
+
+    if (input.length > MAX_LENGTH) {
+
+      return input.slice(0, MAX_LENGTH - 3) + "...";
+
+    } else return input;
   };
 });
