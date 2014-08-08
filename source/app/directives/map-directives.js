@@ -57,7 +57,6 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
         elevationLayer = layer.leafletLayer;
       }
     } else if (layer.type === "ASSET") {
-      var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
       if (layer.min_zoom_click !== null) {
         var leafletLayer = new L.UtfGrid(layer.url, {
           ext: 'grid',
@@ -260,6 +259,9 @@ app.directive('map', [
       UtilService.getZoomlevelLabel(map.getZoom());
       scope.map = map;
       scope.mapState.bounds = scope.map.getBounds();
+      // to calculate imageURLs
+      scope.mapState.pixelCenter = scope.map.getPixelBounds().getCenter();
+      scope.mapState.zoom = scope.map.getZoom();
 
       // Initialise layers
       angular.forEach(scope.mapState.layers, function (layer) {
@@ -328,6 +330,8 @@ app.directive('map', [
         var finalizeMove = function () {
           scope.mapState.moved = Date.now();
           scope.mapState.mapMoving = false;
+          scope.mapState.pixelCenter = scope.map.getPixelBounds().getCenter();
+          scope.mapState.zoom = scope.map.getZoom();
           scope.mapState.bounds = scope.map.getBounds();
         };
 

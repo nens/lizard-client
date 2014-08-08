@@ -171,6 +171,8 @@ app.controller("MasterCtrl",
     baselayerChanged: Date.now(),
     enabled: false,
     bounds: null,
+    pixelCenter: null,
+    zoom: null,
     here: null, // Leaflet point object describing a users location of interest
     userHere: null, // Geographical location of the users mouse
     geom_wkt: '',
