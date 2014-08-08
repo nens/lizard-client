@@ -172,6 +172,7 @@ app.controller("MasterCtrl",
     enabled: false,
     bounds: null,
     here: null, // Leaflet point object describing a users location of interest
+    userHere: null, // Geographical location of the users mouse
     geom_wkt: '',
     mapMoving: false
   };
