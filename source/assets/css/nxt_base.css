@@ -1369,3 +1369,15 @@ img.leaflet-image-layer {
   position: absolute;
   left: 92px;
 }
+
+::-webkit-input-placeholder {
+   color: #7f8c8d;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: #7f8c8d;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #7f8c8d;
+}

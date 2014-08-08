@@ -22,6 +22,7 @@
 
   <div class="card active" ng-if="events.types.count > 0" id="card-summary">
 
+    <!--
     <div ng-if="box.content.eventValue.properties.value" >
       <p>
       <strong>
@@ -34,6 +35,7 @@
       </small>
       </p>
     </div>
+    -->
 
     <div class="card-title">
       <span class="card-title-text">Samenvatting gebeurtenissen</span>
@@ -46,29 +48,31 @@
     </div>
 
     <div class="card-content" id="card-content-summary">
-
       <hr class="card-separator" id="card-separator-summary">
-
       <div class="event-aggregate-container">
-      <table class="table table-hover table-condensed">
-        <thead>
-          <tr>
-            <th></th>
-            <th></th>
-            <th>Aantal</th>
-            <th>Totaal</th>
-          </tr>
-        </thead>
-        <tbody>
-        <tr class="recurrence_time" ng-repeat="eventType in events.types" ng-if="eventType.currentCount > 0">
-          <td><i class="fa fa-circle" ng-style="{color: eventType.color }"></i></td>
-          <td><% eventType.name %></td>
-          <td><strong><% eventType.currentCount %></strong></td>
-          <td><% eventType.count %></td>
-        </tr>
-        </tbody>
-      </table>
 
+        <table class="table table-hover table-condensed"
+                ng-init="x = 23">
+          <thead>
+            <tr>
+              <th></th>
+              <th></th>
+              <th>Aantal</th>
+              <th>Totaal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="recurrence_time" ng-repeat="eventType in events.types" ng-if="eventType.currentCount > 0">
+              <td><i class="fa fa-circle" ng-style="{color: eventType.color }"></i></td>
+              <td><% eventType['name'] %></td>
+              <td><strong><% eventType['currentCount'] %></strong></td>
+              <td><% eventType['count'] %></td>
+            </tr>
+          </tbody>
+        </table>
+
+
+      </div>
     </div>
   </div>
 

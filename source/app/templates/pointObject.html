@@ -1,5 +1,11 @@
 <div ng-controller="pointObjectCtrl">
 
+  <!--
+  <div class="card">
+    debug: "<% pointObject.attrs.data.entity_name %>"
+  </div>
+  -->
+
   <!-- details for HYDRO-OBJECT a.k.a. Kunstwerk -->
   <div id="card-kunstwerk" class="card active" ng-class="{hidden: !pointObject.attrs.active}">
 
@@ -16,7 +22,7 @@
     <div class="card-content" id="card-content-kunstwerk">
       <hr class="card-separator" id="card-separator-kunstwerk">
 
-      <i id="icon-holder" class="kunstwerk-icon icon-<% pointObject.attrs.data.entity_name.split('_')[0] %>"></i>
+      <i id="icon-holder" class="icon-<% pointObject.attrs.data.entity_name.split('_')[0] %>"></i>
 
       <span class="kunstwerk-title">
         <span id="title-holder" class="card-title-text kunstwerk-title-text"><% gettext(pointObject.attrs.data.entity_name) %></span>&nbsp;
@@ -57,12 +63,11 @@
   -->
 
   <div id="card-relatified-events"
-     class="card active"
-     ng-class="{hidden: !pointObject.events.active}">
+       class="card active"
+       ng-class="{hidden: !pointObject.events.active}">
 
     <div class="card-title">
-
-      <span class="card-title-text">Gebeurtenissen bij dit object (<% pointObject.eventTableParams.total() %>)</span>
+      <span class="card-title-text">Objectgerelateerde gebeurtenissen</span>
       <div class="card-title-button"
            ng-click="toggleThisCard('relatified-events')">
         <span class="card-title-button-text">
@@ -73,9 +78,38 @@
 
     <div class="card-content" id="card-content-relatified-events">
       <hr class="card-separator" id="card-separator-relatified-events">
-      <event></event>
-    </div>
+      <table class="table table-hover table-condensed">
 
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+            <th>Aantal</th>
+            <th>Totaal</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr ng-repeat="eventSeries in pointObject.events"
+              ng-if="eventSeries.length > 0"
+              ng-init="type = events.types[eventSeries[0].event_series]">
+
+            <td>
+              <i class="fa fa-circle relatified-event-circle"
+                ng-style="{color: type.color }"
+                style="position: relative; left: 5px;">
+              </i>
+            </td>
+
+            <td><% type.name %></td>
+            <td><strong><% eventSeries.length %></strong></td>
+            <td><% type.count %></td>
+
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
   </div>
 
   <!-- begin: single card -->
@@ -107,6 +141,14 @@
           <i class="fa fa-chevron-down"></i>
         </span>
       </div>
+      <a
+        id="export-rain-csv-button"
+        href="#"
+        title="Data van deze infocard exporteren"
+        ng-csv="rain.data" filename="neerslag.csv"
+        csv-header="['Timestamp (ms)', 'Rain (mm)']" >
+        <i class="fa fa-share-square-o"></i>
+      </a>
     </div>
     <div class="card-content" id="card-content-rain">
 

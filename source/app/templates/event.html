@@ -1,9 +1,34 @@
+<!--
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>Aantal</th>
+      <th>Totaal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="recurrence_time" ng-repeat="type in events.types">
+      <td><i class="fa fa-circle" ng-style="{color: type.color }"></i></td>
+      <td><% type.name %></td>
+      <td>
+        <% type.currentCount %>
+      </td>
+      <td><% type %></td>
+    </tr>
+</table>
+-->
+
+
+<!--
 <div class="event-container"
      ng-class="{hidden: !pointObject.events.active}">
 
   <table ng-table="pointObject.eventTableParams"
         class="table table-condensed table-hover"
         template-pagination="custom/pager">
+
     <tbody ng-repeat="group in $groups">
     <tr class="ng-table-group relatified-events-header"
         ng-click="group.$hideRows = !group.$hideRows">
@@ -37,8 +62,8 @@
   </table>
 
 </div>
-
-<!-- ngTable template -->
+-->
+<!-- ngTable template
 <script type="text/ng-template"
         id="custom/pager">
 
@@ -51,4 +76,6 @@
     </li>
   </ul>
 </script>
+
+-->
 
