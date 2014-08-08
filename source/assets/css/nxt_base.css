@@ -223,7 +223,8 @@ i, a:active {text-decoration:none !important;}
 }
 
 label.layer-chooser {
-    height: 40px;
+    border: solid 2px rgba(0,0,0,0);
+    height: 50px;
     width: 100%;
     position: relative;
 }
@@ -237,7 +238,6 @@ label.layer-chooser > span.layer-text {
 }
 
 label.layer-chooser > span.layer-img {
-    opacity: 0.5;
     right: 0;
     position: absolute;
     height: 100%;
@@ -247,8 +247,14 @@ label.layer-chooser > span.layer-img {
     background-repeat: no-repeat;
 }
 
-label.layer-chooser::after {
+label.layer-chooser.active {
+    border: solid 2px #c0392b;
 }
+
+label.layer-chooser:hover {
+    border: solid 2px #E74C3C;
+}
+
 
 ul.list-inline li.baselayer-icon {
     position:relative;
@@ -568,10 +574,10 @@ ul.list-inline li.baselayer-icon label{
 .layer-switcher label.active,
 .layer-switcher label.count {
     color: #c0392b;
-    font-style: italic;
+    /*font-style: italic;*/
     font-size: 14px;
     text-shadow: none;
-    margin-left: 5px;
+    margin-left: 0;
 }
 
 .nav-header .active {
@@ -1377,6 +1383,10 @@ img.leaflet-image-layer {
     max-width: none !important;
     -webkit-filter: contrast(200%);
     filter: contrast(200%);
+}
+
+.leaflet-container {
+    background: #efefef;
 }
 
 .now-indicator {

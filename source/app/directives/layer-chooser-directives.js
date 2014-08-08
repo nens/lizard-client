@@ -1,79 +1,65 @@
 //layer-directive.js
 
 app.directive("layerChooser", function () {
-  var link, buildImageURL, buildWMSURL;
-  link = function (scope, element, attrs) {
-    scope.$watch('mapState.pixelCenter', function (n, v) {
-      if (n === v) { return; }
-      if (scope.layer.type === 'WMS') {
-        buildWMSURL(scope);
-    } else {
-      scope.layer.imageURL = buildImageURL(scope.layer.url, {
-        x: Math.floor(scope.mapState.pixelCenter.x / 256),
-        y: Math.floor(scope.mapState.pixelCenter.y / 256),
-        z: scope.mapState.zoom,
-        s: scope.layer.leafletLayer.options.subdomains[0],
-        slug: scope.layer.slug,
-        type: scope.layer.type,
-        ext: 'png'
-        });
-      }
-      scope.layer.imageStyle = {'background': 'url(' + scope.layer.imageURL + ')'};
+  var link = function (scope, element, attrs) {
+    var centroid, zoom, layerMap, layerLeafletLayer, layer, layerUrl, map;
+    centroid = [52.39240447569775, 5.101776123046875];
+    zoom = scope.map.getZoom();
+    layerMap = L.map(element.find('.layer-img')[0], {
+      center: centroid,
+      zoom: zoom - 2,
+      dragging: false,
+      touchZoom: false,
+      doubleClickzoom: false,
+      tap: false,
+      animate: true,
+      zoomControl: false,
+      attributionControl: false
     });
-  };
 
-  /** 
-   * Build URL for WMS type layers.
-   * These are a bit different from the TMS/Asset ones.
-   * @param  {ngScope} scope Scope that is available in link function
-   */
-  buildWMSURL = function (scope) {
-    // Copying getTileURL behavior of Leaflet
-    // Otherwise WMS tiles don't correspond with TMS'
-    // Takes the bounds and calculates a tile around the center.
-    var bbox, tileSize, nwPoint, nw, sePoint, se, crsString, crs;
-
-    nwPoint = L.point(scope.mapState.pixelCenter.x - 256, scope.mapState.pixelCenter.y - 256)
-    sePoint = nwPoint.add([256, 256]);
-
-    // if 
-    if (scope.layer.leafletLayer.wmsParams.hasOwnProperty('srs')) {
-      crsString = scope.layer.leafletLayer.wmsParams.srs;
-      crsString = crsString.split(':').join('');
-      crs = L.CRS[crsString]; 
+    layer = scope.layer;
+    
+    if (layer.type === 'WMS') {
+      var options = {
+        layers: layer.slug,
+        format: 'image/png',
+        version: '1.1.1',
+        minZoom: layer.min_zoom,
+        maxZoom: 19,
+        zIndex: layer.z_index
+      };
+      //NOTE ugly hack
+      if (layer.slug === 'landuse') {
+        options.styles = 'landuse';
+      } else if (layer.slug === 'elevation') {
+        options.styles = 'BrBG_r';
+        options.effects = 'shade:0:3';
+      } else if (layer.slug === 'demo/radar') {
+        options.styles = 'transparent';
+        options.transparent = true;
+      }
+      layerLeafletLayer = L.tileLayer.wms(layer.url, options);
     } else {
-      crs = L.CRS.EPSG4326;
+      layerUrl = (layer.type === 'TMS') ? layer.url + '.png' : layer.url;
+      layerLeafletLayer = L.tileLayer(layerUrl, {
+        ext: 'png',
+        slug: layer.slug,
+        name: layer.slug,
+        minZoom: layer.min_zoom,
+        maxZoom: 19,
+        zIndex: layer.z_index
+      });
     }
-    nw = crs.project(scope.map.unproject(nwPoint, scope.map.getZoom()));
-    se = crs.project(scope.map.unproject(sePoint, scope.map.getZoom()));
+    layerMap.addLayer(layerLeafletLayer);
 
-    bbox = scope.layer.leafletLayer._wmsVersion >= 1.3 && crs === L.CRS.EPSG4326 ?
-        [se.y, nw.x, nw.y, se.x].join(',') :
-        [nw.x, se.y, se.x, nw.y].join(',');
-
-    scope.layer.imageURL = scope.layer.url + L.Util.getParamString(
-      scope.layer.leafletLayer.wmsParams, 
-      scope.layer.url, 
-      true) + '&BBOX=' + bbox + '&SRS=' + crs.code; 
-  }
-
-  /**
-   * Builds image urls with the help of Leaflet.Util
-   * @param  {string} url  Template Url
-   * @param  {object} data Object with which to render template
-   * @return {string} URL with zoom, x, y
-   */
-  buildImageURL = function (url, data) {
-    var changedURL;
-    changedURL = L.Util.template(url, data);
-    if (data.type === 'ASSET') {
-      return changedURL;
-    } else if (data.type === 'WMS') {
-      // debugger
-    }
-    changedURL = changedURL + '.png';
-    return changedURL;
+    scope.$watch('mapState.bounds', function (n, v) {
+      if (n === v) { return; }
+        zoom = scope.map.getZoom();
+        centroid = scope.mapState.bounds.getCenter();
+        layerMap.setView(centroid, zoom - 2);
+      });
   };
+
 
   return {
     link: link,
