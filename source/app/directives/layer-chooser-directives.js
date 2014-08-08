@@ -12,6 +12,7 @@ app.directive("layerChooser", function () {
       touchZoom: false,
       doubleClickzoom: false,
       tap: false,
+      scrollWheelZoom: false,
       animate: true,
       zoomControl: false,
       attributionControl: false
