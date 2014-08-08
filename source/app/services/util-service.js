@@ -162,7 +162,7 @@ app.service("UtilService", function () {
 
     if ($(card).hasClass("active")) {
 
-      initHeight = $(cont).css('height');
+      initHeight = $(cont).css('height').split("px")[0];
       $(cont).data("init-height", initHeight);
 
       $(separator).fadeOut(FADE_TIME, function () {
@@ -174,7 +174,7 @@ app.service("UtilService", function () {
 
     } else {
 
-      initHeight = $(cont).data("init-height");
+      initHeight = parseInt($(cont).data("init-height"));
       console.log(initHeight);
 
       $(separator).css("display", "none");
