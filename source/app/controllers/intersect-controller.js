@@ -33,7 +33,10 @@ app.controller("IntersectCtrl", [
           && layer.store_path
           && layer.aggregation_type !== 'counts') {
           var agg = lineIntersect[slug] || {};
-          var options = {wkt: line};
+          var options = {
+            wkt: line,
+            srs: 'EPSG:3857'
+          };
           var dataProm = RasterService.getRasterData(slug, undefined, options);
           // Pass the promise to a function that handles the scope.
           putDataOnscope(dataProm, slug);
@@ -73,16 +76,18 @@ app.controller("IntersectCtrl", [
      * @param {leaflet point object} firstClick
      * @param {leaflet point object} secondClick
      */
-    var _updateLineIntersect = function (firstClcik, secondClick) {
+    var _updateLineIntersect = function (firstClick, secondClick) {
+      var firstPoint = L.CRS.EPSG3857.project(firstClick);
+      var secondPoint = L.CRS.EPSG3857.project(secondClick);
       var line = [
         "LINESTRING(",
-        firstClick.lng,
+        firstPoint.x,
         " ",
-        firstClick.lat,
+        firstPoint.y,
         ",",
-        secondClick.lng,
+        secondPoint.x,
         " ",
-        secondClick.lat,
+        secondPoint.y,
         ")"
       ].join('');
       updateExtentAgg(
