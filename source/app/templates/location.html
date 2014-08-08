@@ -1,11 +1,11 @@
 <div id="detail"
      class="card location"
      ng-class="{'pullDown': currentObject}"
-     ng-show="currentObject">
+     ng-if="currentObject">
 	<h5><i class="fa fa-map-marker fa-lg"></i>&nbsp;<span ng-bind="currentObject.display_name"></span></h5>
 	<ul class="location-ul">
 	    <li ng-repeat="(key, value) in currentObject" class="truncateme">
-      		<abbr ng-bind="value" 
+      		<abbr ng-bind="value"
                 title="<% key %>"></abbr>
 	    </li>
 	</ul>
@@ -18,9 +18,9 @@
      class="card cluster location">
   <span ng-if="value.pin">
     <i class="fa fa-table"></i>&nbsp;
-    <a ng-click="showDetails(value)" 
-       data-latitude="<% value.geometry[0] %>" 
-       data-longitude="<% value.geometry[1] %>" 
+    <a ng-click="showDetails(value)"
+       data-latitude="<% value.geometry[0] %>"
+       data-longitude="<% value.geometry[1] %>"
        class="pointer">
       <span ng-bind-html="value.name"></span>
     </a>
@@ -36,10 +36,10 @@
      ng-focus="onFocus(obj, $event)"
      ng-keydown="onKeydown(obj, $event)">
   <i class="fa fa-map-marker"></i>&nbsp;
-  <a ng-click="showDetails(obj)" 
-     title="<% obj.display_name %>" 
-     data-latitude="<% obj.lat %>" 
-     data-longitude="<% obj.lon %>" 
+  <a ng-click="showDetails(obj)"
+     title="<% obj.display_name %>"
+     data-latitude="<% obj.lat %>"
+     data-longitude="<% obj.lon %>"
      class="pointer">
      <!-- <span ng-bind-html="obj.display_name"></span></a> -->
      <span><% obj.display_name %></span></a>

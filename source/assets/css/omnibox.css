@@ -740,13 +740,9 @@ select.timeseries {
   color: #7f8c8d;
 }
 
-/*#icon-holder {
-  background-color: #f0e;
-  min-width: 50px;
-  min-height: 50px;
-  width: 50px;
+#icon-holder {
+  float: left;
 }
-*/
 
 .relatified-events-header:hover {
   cursor: pointer;

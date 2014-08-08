@@ -57,7 +57,6 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
         elevationLayer = layer.leafletLayer;
       }
     } else if (layer.type === "ASSET") {
-      var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
       if (layer.min_zoom_click !== null) {
         var leafletLayer = new L.UtfGrid(layer.url, {
           ext: 'grid',
