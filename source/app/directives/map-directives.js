@@ -308,7 +308,13 @@ app.directive('map', [
        * Used to draw clickfeedback.
        */
       scope.map.on('mousemove', function (e) {
-        scope.mapState.userHere = e.latlng;
+        if (!scope.$$phase) {
+          scope.$apply(function () {
+            scope.mapState.userHere = e.latlng;
+          });
+        } else {
+          scope.mapState.userHere = e.latlng;
+        }
       });
 
       // initialize empty ClickLayer.

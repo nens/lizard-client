@@ -30,6 +30,7 @@ app.service("ClickFeedbackService", ["$rootScope",
         }
         this.clickLayer = L.geoJson().addTo(map);
         this.clickLayer.options.name = 'click';
+        this.clickLayer.options.clickable = false;
       };
 
       /**
@@ -58,7 +59,8 @@ app.service("ClickFeedbackService", ["$rootScope",
             weight: 12,
             color: '#1abc9c',
             fill: false,
-            zIndexOffset: 1000
+            zIndexOffset: 1000,
+            clickable: false
           });
           self._circleMarker = circleMarker;
           return circleMarker;
@@ -66,7 +68,7 @@ app.service("ClickFeedbackService", ["$rootScope",
         this.clickLayer.addData(geojsonFeature);
       };
 
-      this.drawLineElement = function (first, second) {
+      this.drawLineElement = function (first, second, dashed) {
         var geojsonFeature = { "type": "Feature" };
         geojsonFeature.geometry = {
           "type": "LineString",
@@ -78,6 +80,9 @@ app.service("ClickFeedbackService", ["$rootScope",
           opacity: 1,
           smoothFactor: 1
         };
+        if (dashed) {
+          this.clickLayer.options.style.dashArray = "5, 5";
+        }
         this.clickLayer.addData(geojsonFeature);
       };
 
@@ -240,11 +245,9 @@ app.service("ClickFeedbackService", ["$rootScope",
       ctrl.stopVibration();
     };
 
-    drawLine = function (map, first, second) {
+    drawLine = function (map, first, second, dashed) {
       emptyClickLayer(map);
-      drawArrowHere(map, first);
-      drawArrowHere(map, second);
-      ctrl.drawLineElement(first, second);
+      ctrl.drawLineElement(first, second, dashed);
     };
 
     return {
