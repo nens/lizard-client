@@ -10,5 +10,14 @@
         </span>
       </div>
     </div>
-    <graph line data="intersect.data" ylabel="'hoogte [mNAP]'" xlabel="'afstand in [m]'"></graph>
+
+    <div id="card-content-<% intersect.name %>" class="card-content">
+      <div id="card-separator-<% intersect.name %>" class="card-separator"></div>
+      <graph line
+             data="intersect.data"
+             ylabel="'hoogte [mNAP]'"
+             xlabel="'afstand in [m]'">
+      </graph>
+    </div>
   </div>
+</div>
