@@ -36,7 +36,6 @@ app.controller("IntersectCtrl", [
           var options = {wkt: line};
           var dataProm = RasterService.getRasterData(slug, undefined, options);
           // Pass the promise to a function that handles the scope.
-          console.log(dataProm);
           putDataOnscope(dataProm, slug);
         } else if (slug in lineIntersect && !layer.active) {
           removeDataFromScope(slug);
@@ -124,7 +123,9 @@ app.controller("IntersectCtrl", [
      */
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return true; }
-      _updateLineIntersect(firstClick, secondClick);
+      if (firstClick && secondClick) {
+        _updateLineIntersect(firstClick, secondClick);
+      }
     });
 
     var circle;
