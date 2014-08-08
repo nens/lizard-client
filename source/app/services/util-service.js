@@ -149,6 +149,7 @@ app.service("UtilService", function () {
         btnText,
         titleText,
         separator,
+        initHeight,
         SLIDE_TIME = 350,
         FADE_TIME = 200,
         FADE_TIME_2 = 500;
@@ -161,6 +162,9 @@ app.service("UtilService", function () {
 
     if ($(card).hasClass("active")) {
 
+      initHeight = $(cont).css('height');
+      $(cont).data("init-height", initHeight);
+
       $(separator).fadeOut(FADE_TIME, function () {
         $(cont).slideUp(SLIDE_TIME, function () {
           $(card).removeClass("active");
@@ -169,6 +173,9 @@ app.service("UtilService", function () {
       });
 
     } else {
+
+      initHeight = $(cont).data("init-height");
+      console.log(initHeight);
 
       $(separator).css("display", "none");
       $(cont).slideDown(SLIDE_TIME, function () {
