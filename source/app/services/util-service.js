@@ -173,8 +173,6 @@ app.service("UtilService", function () {
         $(cont).attr("data-slide-time", slideTime);
       }
 
-      console.log('slideTime:', slideTime);
-
       $(separator).fadeOut(FADE_TIME, function () {
         $(cont).slideUp(slideTime, function () {
           $(card).removeClass("active");
