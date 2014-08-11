@@ -140,18 +140,26 @@ app.service("UtilService", function () {
     return aggWindow;
   };
 
+  /**
+   * @summary: Toggle visibility of a card's content.
+   * 
+   * NB! uses jQuery instead of CSS animations.
+   *
+   * @param {string} cardName An identifier specifying which card
+   * is the subject of the animation.
+   *
+   */
   this.toggleThisCard = function (cardName) {
-
-    // working, but uses jQuery instead of CSS animations!
 
     var card,
         cont,
         btnText,
         titleText,
         separator,
-        SLIDE_TIME = 350,
-        FADE_TIME = 200,
-        FADE_TIME_2 = 500;
+        initHeight,
+        slideTime,
+        SLIDE_TIME_PER_100PX = 200,
+        FADE_TIME = 200;
 
     card = $('#card-' + cardName);
     cont = $(card).find('.card-content')[0];
@@ -161,8 +169,19 @@ app.service("UtilService", function () {
 
     if ($(card).hasClass("active")) {
 
+      if ($(cont).data("slide-time")) {
+
+        slideTime = parseInt($(cont).data("slide-time"));
+
+      } else {
+
+        initHeight = parseInt($(cont).css('height').split("px")[0]);
+        slideTime = Math.floor((initHeight / 100) * SLIDE_TIME_PER_100PX);
+        $(cont).attr("data-slide-time", slideTime);
+      }
+
       $(separator).fadeOut(FADE_TIME, function () {
-        $(cont).slideUp(SLIDE_TIME, function () {
+        $(cont).slideUp(slideTime, function () {
           $(card).removeClass("active");
           $(btnText).html("<i class='fa fa-chevron-left'></i>");
         });
@@ -170,8 +189,9 @@ app.service("UtilService", function () {
 
     } else {
 
+      slideTime = parseInt($(cont).data("slide-time"));
       $(separator).css("display", "none");
-      $(cont).slideDown(SLIDE_TIME, function () {
+      $(cont).slideDown(slideTime, function () {
         $(card).addClass("active");
         $(separator).fadeIn(FADE_TIME);
         $(btnText).html("<i class='fa fa-chevron-down'></i>");

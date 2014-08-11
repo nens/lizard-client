@@ -11,7 +11,6 @@ var app = angular.module("lizard-nxt", [
   'ngCsv',
   'ui.bootstrap',
   'ui.utils',
-  'ngTable'
 ]);
 
 /**
@@ -106,11 +105,10 @@ app.config(function ($locationProvider) {
 
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService",
-   "RasterService", "UtilService", "EventService", "TimeseriesService",
-   "ngTableParams",
+  ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService", "RasterService",
+   "UtilService", "EventService", "TimeseriesService",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, EventService, TimeseriesService, ngTableParams) {
+            UtilService, EventService, TimeseriesService) {
 
   // BOX MODEL
   $scope.box = {
@@ -212,15 +210,10 @@ app.controller("MasterCtrl",
 
   var now = Date.now();
   var day = 24 * 60 * 60 * 1000;
-  var tomorrow = now + day;
-  var twoDaysAgo = now - 2 * day;
-  var sevenDaysAgo = now - 7 * day;
-  var lastVisit = CabinetService.lastVisitUtime;
-  var start = Math.max(sevenDaysAgo, Math.min(twoDaysAgo, lastVisit)) || sevenDaysAgo;
   // TIME MODEL
   $scope.timeState = {
-    start: start,
-    end: tomorrow,
+    start: now - 2 * day,
+    end: now + day,
     changedZoom: Date.now(),
     zoomEnded: null,
     hidden: undefined,
