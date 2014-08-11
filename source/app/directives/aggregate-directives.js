@@ -86,9 +86,9 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
       /**
        * Gets data point and searches through list of
        * geojson features for matches. Returns matchedLocations
-       * @param  {[object]} d       Clicked object
-       * @param  {[array]} features List of other geojson features.
-       * @return {[array]}          List of Matched Locations
+       * @param  {object} d       Clicked object
+       * @param  {array} features List of other geojson features.
+       * @return {array}          List of Matched Locations
        */
       matchLocation = function (d, features) {
         var matchedLocation = [],
@@ -96,8 +96,8 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
         for (f = 0; f < features.length; f++) {
           if (d.geometry.coordinates[0] === features[f].geometry.coordinates[0]
               &&
-              d.geometry.coordinates[1] === features[f].geometry.coordinates[1])
-          {
+              d.geometry.coordinates[1] === features[f].geometry.coordinates[1]
+              ) {
             matchedLocation.push(features[f]);
           }
         }

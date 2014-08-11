@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 unreleased
 ----------
 
+- Add jsdoc-conf.json, configuration file for jsdoc.
+
 - Intersection tool shows generic functionality for all 3-or-more-d layers
 
 Release 0.1

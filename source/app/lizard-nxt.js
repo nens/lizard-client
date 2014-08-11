@@ -56,10 +56,19 @@ app.config(function ($locationProvider) {
 });
 
 /**
- * Master controller
  *
- * Overview
- * ========
+ * @name MasterController
+ * @class MasterCtrl
+ * @memberOf app
+ * @requires UtilService
+ * @requires EventService
+ * @requires CabinetService
+ * @requires RasterService
+ *
+ * @summary Master controller
+ *
+ * @description
+ * ## Overview
  *
  * Defines general models and gets data from server; functions that are not
  * relevant for rootscope live in their own controller
@@ -69,39 +78,36 @@ app.config(function ($locationProvider) {
  * the temporal.extent on the state.temporal; a map directive watches
  * state.temporal and updates map objects accordingly.
  *
- * Models
- * ======
+ * ## Models
  *
- * Application state
- * -----------------
+ * Application state >> link to state property in this module.
+ *
  * state.mapState => spatial state
  * state.timeState => temporal state
  * state.tools => active tool(s)
  * user.profile
  *
- * Data
- * ----
+ * Data >> link to data properties in this module.
  * data.active
  * data.objects
  * data.events
  * data.timeseries
  * data.aggregates
  *
- * TODO / Refactor
- * ---------------
+ * ## TODO / Refactor
  *
  * Stuff to reconsider, rethink, refactor:
  *
- * * [ ] Refactor map controller and directives
- * * [-] Refactor master controller (states, data!)
- * * [+] Refactor timeline out of mapState with its own scope
- * * [+] Refactor index.html and base-debug.html
- * * [ ] Fix + document Gruntfile.js / workflow
- * * [ ] Refactor css (csslint, -moz and -webkit)
- * * [ ] Move or delete common directory in source
- * * [+] Refactor timeline controller and directive
- * * [ ] Move event logic to event controller (on event / layer tag)
- * * [+] Move animation logic to animation controller (on timeline tag)
+ * - [ ] Refactor map controller and directives
+ * - [-] Refactor master controller (states, data!)
+ * - [+] Refactor timeline out of mapState with its own scope
+ * - [+] Refactor index.html and base-debug.html
+ * - [ ] Fix + document Gruntfile.js / workflow
+ * - [ ] Refactor css (csslint, -moz and -webkit)
+ * - [ ] Move or delete common directory in source
+ * - [+] Refactor timeline controller and directive
+ * - [ ] Move event logic to event controller (on event / layer tag)
+ * - [+] Move animation logic to animation controller (on timeline tag)
 
  */
 app.controller("MasterCtrl",
@@ -111,6 +117,15 @@ app.controller("MasterCtrl",
             UtilService, EventService, TimeseriesService) {
 
   // BOX MODEL
+  /**
+   * @memberOf app.MasterCtrl
+   * @summary Box model
+   *
+   * @description Box model holds properties to render the omnibox.
+   *
+   * @property {object} box - Box model
+   * @property {boolean} box.detailMode - Detail mode, defaults to false.
+   */
   $scope.box = {
     contextSwitchMode: false, // Switch between card or fullscreen
     query: null, // Search bar query
@@ -144,15 +159,28 @@ app.controller("MasterCtrl",
     'pumpstation_sewerage': 'Rioolgemaal'
   };
 
+  /**
+   * @function
+   * @memberOf app.MasterCtrl
+   *
+   * @summary Get translation for text
+   * @desc Get translation for text
+   *
+   * @param {string} text - Text to translate.
+   * @returns {string} text - Translated text.
+   */
   $scope.gettext = function (text) {
     return $scope.translations[text];
   };
 
 
   /**
-   * Toggle tool from "name" to "none"
+   * @function
+   * @memberOf app.MasterCtrl
    *
-   * Sets tool.active model on scope to name of the tool if tool disabled
+   * @summary Toggle tool from "name" to "none".
+   *
+   * @desc Sets tool.active model on scope to name of the tool if tool disabled
    * or "none" if tool is already enabled.
    *
    * @param {string} name name of the tool to toggle
@@ -210,6 +238,7 @@ app.controller("MasterCtrl",
 
   var now = Date.now();
   var day = 24 * 60 * 60 * 1000;
+
   // TIME MODEL
   $scope.timeState = {
     start: now - 2 * day,

@@ -1,13 +1,26 @@
 /**
- * Generic utilities
+ * @class hashSyncHelper
+ * @memberOf app
+ * @summary Helper functions for hash sync.
+ * @description Helper functions for hash sync.
  */
 app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
   function ($location, $parse, $rootScope) {
 
+    var parseKeyValue,
+        isDefined,
+        toKeyValue;
     /**
      * Offers a getHash and setHash for manipulating the url hash
      */
     var service = {
+      /**
+       * @function getHash
+       * @memberOf HashSyncHelper
+       * @summary Reads has fragement from angulars location service and
+       * returns it as key / value object.
+       *
+       */
       getHash: function () {
         // Reads the hash fragment from angulars location service
         // and returns it as a key/value object.
@@ -56,13 +69,22 @@ app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
   }]);
 
 
+/**
+ * @ngdoc service
+ * @class UtilService
+ * @name UtilService
+ * @summary Generic util functions.
+ * @description Generic util functions.
+ */
 app.service("UtilService", function () {
 
   /**
-   * Round javascript timestamp to nearest coefficient.
+   * @function roundTimestamp
+   * @memberOf UtilService
+   * @summary Round javascript timestamp to nearest coefficient.
    *
-   * For example, if you want to round timestamp to the nearest 5 minutes,
-   * coefficient = 1000 * 60 * 5 = 30000
+   * @description For example, if you want to round timestamp to the nearest 5 
+   * minutes, coefficient = 1000 * 60 * 5 = 30000.
    *
    * @param {integer} timestamp - javascript timestamp in ms.
    * @param {integer} coefficient - coefficient to round to in ms.
@@ -114,7 +136,12 @@ app.service("UtilService", function () {
   };
 
   /**
-   * Returns aggWindow. Either five minutes, an hour or a day, should
+   * @function
+   * @memberOf UtilService
+   *
+   * @summary return aggregation window.
+   *
+   * @desc Returns aggWindow. Either five minutes, an hour or a day, should
    * lead to a minimum of three pixels within the drawing width.
    *
    * @param  {int} start    start of rainseries.

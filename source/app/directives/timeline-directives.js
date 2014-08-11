@@ -1,7 +1,16 @@
 'use strict';
 
 // Timeline for lizard.
-app.directive('timeline', ["EventService", "RasterService", "UtilService", "Timeline",
+/**
+ * @class app.TimeLineDirective
+ * @memberOf app
+ *
+ * @summary Timeline directive.
+ *
+ * @description Timeline directive.
+ */
+app.directive('timeline', ["EventService", "RasterService", "UtilService",
+                           "Timeline",
   function (EventService, RasterService, UtilService, Timeline) {
   
   var link = function (scope, element, attrs, timelineCtrl, $timeout) {
@@ -120,7 +129,8 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService", "Time
      */
     scope.$watch('events.changed', function (n, o) {
       if (n === o) { return true; }
-      updateTimelineHeight(angular.copy(timeline.dimensions), dimensions, scope.events.types.count);
+      updateTimelineHeight(angular.copy(timeline.dimensions), dimensions,
+        scope.events.types.count);
       var data = scope.events.data.features;
       timeline.drawLines(data);
       timeline.drawEventsContainedInBounds(scope.mapState.bounds);
@@ -138,11 +148,13 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService", "Time
     scope.$watch('raster.changed', function (n, o) {
       if (n === o) { return true; }
       if (scope.tools.active === 'rain') {
-        updateTimelineHeight(angular.copy(timeline.dimensions), dimensions, scope.events.types.count);
+        updateTimelineHeight(angular.copy(timeline.dimensions),
+          dimensions, scope.events.types.count);
         timeline.drawBars(RasterService.getIntensityData());
       } else {
         timeline.removeBars();
-        updateTimelineHeight(angular.copy(timeline.dimensions), dimensions, scope.events.types.count);
+        updateTimelineHeight(angular.copy(timeline.dimensions),
+          dimensions, scope.events.types.count);
       }
     });
 
@@ -165,7 +177,8 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService", "Time
       if (n === o) { return true; }
       if (scope.events.data.features.length > 0) {
         timeline.drawEventsContainedInBounds(scope.mapState.bounds);
-        EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
+        EventService.countCurrentEvents(
+          scope.mapState.eventTypes, scope.events);
         getRain();
       }
     });
@@ -225,7 +238,8 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService", "Time
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.animation.enabled) {
-        timeline.updateBrushExtent(scope.timeState.animation.start, scope.timeState.at);
+        timeline.updateBrushExtent(
+          scope.timeState.animation.start, scope.timeState.at);
       }
     });
 
@@ -248,7 +262,8 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService", "Time
       var start = scope.timeState.start;
       var stop = scope.timeState.end;
       var bounds = scope.mapState.bounds;
-      var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);  // width of timeline
+      // width of timeline
+      var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
       RasterService.getRain(new Date(start), new Date(stop),
                                        bounds, aggWindow)
       .then(function (response) {

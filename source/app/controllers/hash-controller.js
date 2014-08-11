@@ -49,8 +49,8 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
 
     /**
      * Updates hash with new time.
-     * 
-     * @param {int]} time  to set in hash in ms from epoch
+     *
+     * @param {int} time  to set in hash in ms from epoch
      * @param {boolean} start if true sets start else it sets end
      */
     var setTimeStateUrl = function (time, start) {
@@ -133,7 +133,8 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
         locationHash = hash.location;
         if (locationHash !== undefined) {
           var latlonzoom = locationHash.split(',');
-          if (latlonzoom.length >= 3) { // must have 3 parameters or don't setView here...
+          // must have 3 parameters or don't setView here...
+          if (latlonzoom.length >= 3) {
             if (parseFloat(latlonzoom[0]) &&
                 parseFloat(latlonzoom[1]) &&
                 parseFloat(latlonzoom[2])) {

@@ -17,9 +17,9 @@ app.controller("ExtentAggregateCtrl", [
      * Loops over all layers to request aggregation data for all
      * active layers with an aggregation type.
      *
-     * @param  {bounds object} bounds   mapState.bounds, containing
+     * @param  {object} bounds   mapState.bounds, containing
      *                                  leaflet bounds
-     * @param  {layers object} layers   mapState.layers, containing
+     * @param  {object} layers   mapState.layers, containing
      *                                  nxt definition of layers
      * @param  {object} extentAggregate extentAggregate object of this
      *                                  ctrl

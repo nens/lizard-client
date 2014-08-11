@@ -1,9 +1,12 @@
 'use strict';
 
 /**
- * TimeLine controller.
+ * @class app.TimeLineCtrl
+ * @memberOf app
  *
- * Manipulates timeState model, animation controls.
+ * @summary TimeLine controller.
+ *
+ * @desc Manipulates timeState model, animation controls.
  *
  */
 app.controller('TimeLine', ["$scope", "$q", "RasterService",
@@ -15,9 +18,12 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
                                  window.msRequestAnimationFrame;
 
   /**
-   * Toggle animation state.
+   * @function
+   * @memberOf app.TimeLineCtrl
    *
-   * Set $scope.timeState.animation.enabled to true or false.
+   * @summary Toggle animation state.
+   *
+   * @desc Set $scope.timeState.animation.enabled to true or false.
    */
   $scope.timeState.enableAnimation = function (toggle) {
     if ($scope.timeState.animation.enabled || toggle === "off") {
@@ -57,7 +63,8 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
     if ($scope.tools.active === 'rain') {
       // Divide by ten to make the movement in the timeline smooth.
       timeStep = RasterService.rainInfo.timeResolution / 10;
-      $scope.timeState.animation.minLag = RasterService.rainInfo.minTimeBetweenFrames / 10;
+      $scope.timeState.animation.minLag =
+        RasterService.rainInfo.minTimeBetweenFrames / 10;
     } else {
       timeStep = currentInterval / $scope.timeState.animation.stepSize;
       $scope.timeState.animation.minLag = 50;
@@ -90,13 +97,15 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
   var animationWasOn;
   $scope.timeState.animation.toggleAnimateFastForward = function (toggle) {
     if (toggle) {
-      $scope.timeState.animation.stepSize = $scope.timeState.animation.stepSize / 4;
+      $scope.timeState.animation.stepSize =
+        $scope.timeState.animation.stepSize / 4;
       animationWasOn = $scope.timeState.animation.playing;
       if (!$scope.timeState.animation.playing) {
         $scope.timeState.playPauseAnimation();
       }
     } else if (!toggle) {
-      $scope.timeState.animation.stepSize = $scope.timeState.animation.stepSize * 4;
+      $scope.timeState.animation.stepSize =
+        $scope.timeState.animation.stepSize * 4;
       if (!animationWasOn) {
         $scope.timeState.playPauseAnimation('off');
       }
@@ -109,7 +118,8 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
   $scope.timeState.animation.stepBack = function () {
     var stepBack = ($scope.timeState.end - $scope.timeState.start) / 10;
     var wasOn = $scope.timeState.animation.playing;
-    $scope.timeState.animation.start = $scope.timeState.animation.start - stepBack;
+    $scope.timeState.animation.start = $scope.timeState.animation.start -
+                                       stepBack;
     $scope.timeState.at = $scope.timeState.at - stepBack;
     $scope.timeState.playPauseAnimation('off');
     if (!$scope.timeState.animation.playing && wasOn) {
