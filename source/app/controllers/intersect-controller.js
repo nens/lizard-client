@@ -22,8 +22,8 @@ app.controller("IntersectCtrl", [
      * active layers with a raster store path and an appropriate
      * aggregation_type type.
      *
-     * @param  {wkt str}   line         str describing the line
-     * @param  {layers object} layers   mapState.layers, containing
+     * @param  {wktstring}   line         str describing the line
+     * @param  {object} layers   mapState.layers, containing
      *                                  nxt definition of layers
      * @param  {object} lineIntersect   lineIntersect object of this
      *                                  ctrl
@@ -67,8 +67,8 @@ app.controller("IntersectCtrl", [
     /**
      * Takes data array with degrees as x-axis.
      * Returns array with meters as x-axis
-     * @param  {[array]} data Array with degrees
-     * @return {[array]} data Array with meters
+     * @param  {array} data Array with degrees
+     * @return {array} data Array with meters
      */
     dataConvertToMeters = function (data) {
       for (var i = 0; data.length > i; i++) {
@@ -105,8 +105,8 @@ app.controller("IntersectCtrl", [
      * calls updateLineIntersect with a wkt representation of
      * input
      *
-     * @param {leaflet point object} firstClick
-     * @param {leaflet point object} secondClick
+     * @param {object} firstClick
+     * @param {object} secondClick
      */
     _updateLineIntersect = function (firstClick, secondClick) {
       var line = [
