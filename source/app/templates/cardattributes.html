@@ -1,16 +1,27 @@
-<table class="fullwidth">
+<!-- <table class="fullwidth" > -->
+<table id="kunstwerk-table" class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>Attribuut</th>
+      <th>Waarde</th>
+    </tr>
+  </thead>
   <tbody>
-    <tr ng-repeat="obj in pointObject.attrs.wanted[pointObject.attrs.data.entity_name].rows">
+    <tr class="attr-row" ng-repeat="obj in pointObject.attrs.wanted[pointObject.attrs.data.entity_name].rows">
+
       <td class="fixed-width-card-table"><% obj.keyName %></td>
-      <td
-        ng-show="pointObject.attrs.data[obj.attrName]">
+
+      <td class="lineout"
+          ng-show="pointObject.attrs.data[obj.attrName]">
         <span class="ng-binding">
           <% $eval(obj.ngBindValue) + obj.valueSuffix %>
         </span>
       </td>
-      <td ng-hide="pointObject.attrs.data[obj.attrName]" style="float:left;">
+
+      <td class="lineout" ng-hide="pointObject.attrs.data[obj.attrName]" style="float:left;">
         <% "..." %>
       </td>
+
     </tr>
   </tbody>
 </table>

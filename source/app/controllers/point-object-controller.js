@@ -12,7 +12,7 @@
 
 app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     "RasterService", "EventService", "TimeseriesService", "UtilService",
-    "ngTableParams", "UtfGridService", "ClickFeedbackService",
+    "UtfGridService", "ClickFeedbackService",
   function ($scope,
             $filter,
             CabinetService,
@@ -20,41 +20,9 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
             EventService,
             TimeseriesService,
             UtilService,
-            ngTableParams,
             UtfGridService,
             ClickFeedbackService
   ) {
-
-
-    /**
-     * Parameters for ngTable.
-     *
-     * Controls how ngTable behaves. Don't forget to call the reload() method
-     * when you refresh the data (like in an API call).
-     */
-    var eventTableParams = function () {
-      return new ngTableParams({
-          page: 1,
-          count: 10,
-          sorting: {
-            timestamp_start: 'desc'
-          }
-        }, {
-          total: 0,
-          groupBy: 'category',
-          getData: function ($defer, params) {
-            params.total($scope.pointObject.events.data.length);
-            params.count($scope.pointObject.events.data.length);
-            var data = $scope.pointObject.events.data;
-            var orderedData = params.sorting() ?
-                $filter('orderBy')(data, params.orderBy()) :
-                data;
-            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(),
-                                              params.page() * params.count()));
-          },
-        });
-    };
-
 
     /**
      * pointObject is the object which holds all data of a point
@@ -90,8 +58,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
         events: {
           active: false,
           data: []
-        },
-        eventTableParams: eventTableParams()
+        }
       };
       return pointObject;
     };
@@ -157,9 +124,9 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     };
 
     var getTimeSeriesForObject = function () {
-      $scope.pointObject.timeseries.data = TimeseriesService.getRandomTimeseries();
-      $scope.pointObject.timeseries.selectedTimeseries = $scope.pointObject.timeseries.data[0];
-      $scope.pointObject.timeseries.active = true;
+      // $scope.pointObject.timeseries.data = TimeseriesService.getRandomTimeseries();
+      // $scope.pointObject.timeseries.selectedTimeseries = $scope.pointObject.timeseries.data[0];
+      // $scope.pointObject.timeseries.active = true;
     };
 
     var rainResponded = function (response) {
@@ -178,7 +145,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       if ($scope.pointObject.events.data.length > 0) {
         $scope.pointObject.events.active = true;
         EventService.addColor($scope.events);
-        $scope.pointObject.eventTableParams.reload();
       }
     };
 

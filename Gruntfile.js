@@ -53,6 +53,7 @@ module.exports = function (grunt) {
         '<%= nxt_dir.vendor %>/leaflet-dist/leaflet.js',
         '<%= nxt_dir.vendor %>/angular-ui-bootstrap/ui-bootstrap-tpls-0.10.0.min.js',
         '<%= nxt_dir.vendor %>/lodash/dist/lodash.min.js',
+        '<%= nxt_dir.vendor %>/raven-js/dist/raven.min.js'
       ],
       testfiles: [
         '<%= nxt_dir.vendor %>/angular-mocks/angular-mocks.js',

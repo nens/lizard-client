@@ -222,6 +222,40 @@ i, a:active {text-decoration:none !important;}
     transition: .3s ease;
 }
 
+label.layer-chooser {
+    border: solid 2px rgba(0,0,0,0);
+    height: 50px;
+    width: 100%;
+    position: relative;
+}
+
+label.layer-chooser > span.layer-text {
+    background: rgba(255,255,255, 0.8);
+    width: 60%;
+    padding: 5px;
+    z-index: 1;
+    position: absolute
+}
+
+label.layer-chooser > span.layer-img {
+    right: 0;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+label.layer-chooser.active {
+    border: solid 2px #c0392b;
+}
+
+label.layer-chooser:hover {
+    border: solid 2px #E74C3C;
+}
+
+
 ul.list-inline li.baselayer-icon {
     position:relative;
     /*border:1px solid #ccc;*/
@@ -540,10 +574,10 @@ ul.list-inline li.baselayer-icon label{
 .layer-switcher label.active,
 .layer-switcher label.count {
     color: #c0392b;
-    font-style: italic;
+    /*font-style: italic;*/
     font-size: 14px;
     text-shadow: none;
-    margin-left: 5px;
+    margin-left: 0;
 }
 
 .nav-header .active {
@@ -1351,6 +1385,10 @@ img.leaflet-image-layer {
     filter: contrast(200%);
 }
 
+.leaflet-container {
+    background: #efefef;
+}
+
 .now-indicator {
     stroke: #e74c3c;
     stroke-width: 2;
@@ -1362,4 +1400,22 @@ img.leaflet-image-layer {
 
 .leaflet-overlay-pane svg {
   z-index: 1000;
+}
+
+.navbar-version {
+  display: none;
+  position: absolute;
+  left: 92px;
+}
+
+::-webkit-input-placeholder {
+   color: #7f8c8d;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: #7f8c8d;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #7f8c8d;
 }

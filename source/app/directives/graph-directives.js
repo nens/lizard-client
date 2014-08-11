@@ -833,7 +833,7 @@ angular.module('graph')
           .attr("class", "line")
           .attr("d", line);
 
-        if (scope.tools.active === 'profile') {
+        if (scope.box.type === 'intersect') {
 
           zoom = d3.behavior.zoom()
             .x(x.scale)

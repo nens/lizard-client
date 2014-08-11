@@ -57,7 +57,6 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
         elevationLayer = layer.leafletLayer;
       }
     } else if (layer.type === "ASSET") {
-      var url = '/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}';
       if (layer.min_zoom_click !== null) {
         var leafletLayer = new L.UtfGrid(layer.url, {
           ext: 'grid',
@@ -260,6 +259,9 @@ app.directive('map', [
       UtilService.getZoomlevelLabel(map.getZoom());
       scope.map = map;
       scope.mapState.bounds = scope.map.getBounds();
+      // to calculate imageURLs
+      scope.mapState.pixelCenter = scope.map.getPixelBounds().getCenter();
+      scope.mapState.zoom = scope.map.getZoom();
 
       // Initialise layers
       angular.forEach(scope.mapState.layers, function (layer) {
@@ -273,18 +275,22 @@ app.directive('map', [
         }
       });
 
+      var clicked = function (e) {
+        scope.mapState.here = e.latlng;
+        if (scope.box.type !== 'intersect') {
+          scope.box.type = 'pointObject';
+          $rootScope.$broadcast('newPointObject');
+        }
+      };
+
       scope.map.on('click', function (e) {
         // NOTE: Check whether a $digest is already happening before using apply
         if (!scope.$$phase) {
           scope.$apply(function () {
-            scope.box.type = 'pointObject';
-            scope.mapState.here = e.latlng;
-            $rootScope.$broadcast('newPointObject');
+            clicked(e);
           });
         } else {
-          scope.box.type = 'pointObject';
-          scope.mapState.here = e.latlng;
-          $rootScope.$broadcast('newPointObject');
+          clicked(e);
         }
       });
 
@@ -299,6 +305,20 @@ app.directive('map', [
         }
       });
 
+      /**
+       * Sets the geolocation of the users mouse to the mapState
+       * Used to draw clickfeedback.
+       */
+      scope.map.on('mousemove', function (e) {
+        if (!scope.$$phase) {
+          scope.$apply(function () {
+            scope.mapState.userHere = e.latlng;
+          });
+        } else {
+          scope.mapState.userHere = e.latlng;
+        }
+      });
+
       // initialize empty ClickLayer.
       // Otherwise click of events-aggregate and clicklayer
       ClickFeedbackService.drawClickInSpace(map, new L.LatLng(180.0, 90.0));
@@ -310,6 +330,8 @@ app.directive('map', [
         var finalizeMove = function () {
           scope.mapState.moved = Date.now();
           scope.mapState.mapMoving = false;
+          scope.mapState.pixelCenter = scope.map.getPixelBounds().getCenter();
+          scope.mapState.zoom = scope.map.getZoom();
           scope.mapState.bounds = scope.map.getBounds();
         };
 

@@ -35,36 +35,54 @@
     </div>
   </div>
 
-  <!-- start: details for EVENT a.k.a. Gebeurtenis....
-
-  NB! THIS DOESN'T WORK ATM
-
-  <div id="single-event-card"
+  <div id="card-relatified-events"
        class="card active"
-       ng-if="mustShowEventButNotKunstwerk()">
+       ng-class="{hidden: !pointObject.events.active}">
+
     <div class="card-title">
-      <span class="card-title-text">Gebeurtenissig</span>
+      <span class="card-title-text">Objectgerelateerde gebeurtenissen</span>
       <div class="card-title-button"
-           ng-click="toggleThisCard('single-event-card')">
+           ng-click="toggleThisCard('relatified-events')">
         <span class="card-title-button-text">
           <i class="fa fa-chevron-down"></i>
         </span>
       </div>
     </div>
-    <div class="card-content">
-      <hr class="card-separator">
-      <event></event>
+
+    <div class="card-content" id="card-content-relatified-events">
+      <hr class="card-separator" id="card-separator-relatified-events">
+      <table class="table table-hover table-condensed">
+
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+            <th>Aantal</th>
+            <th>Totaal</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr ng-repeat="eventSeries in pointObject.events"
+              ng-if="eventSeries.length > 0"
+              ng-init="type = events.types[eventSeries[0].event_series]">
+
+            <td>
+              <i class="fa fa-circle relatified-event-circle"
+                ng-style="{color: type.color }"
+                style="position: relative; left: 5px;">
+              </i>
+            </td>
+
+            <td><% type.name %></td>
+            <td><strong><% eventSeries.length %></strong></td>
+            <td><% type.count %></td>
+
+          </tr>
+        </tbody>
+
+      </table>
     </div>
-  </div>
-
-  <div class="card" ng-class="{hidden: !pointObject.streetview.active}">
-    <streetview></streetview>
-  </div>
-  -->
-
-  <div class="card active"
-       ng-class="{hidden: !pointObject.events.active}">
-    <event></event>
   </div>
 
   <!-- begin: single card -->

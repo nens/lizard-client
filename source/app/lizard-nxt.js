@@ -11,8 +11,33 @@ var app = angular.module("lizard-nxt", [
   'ngCsv',
   'ui.bootstrap',
   'ui.utils',
-  'ngTable'
 ]);
+
+/**
+ * Setup Raven if available.
+ * Raven is responsible for logging to https://sentry.lizard.net
+ */
+if (window.Raven) {
+  Raven.config('https://ceb01dd84c6941c8aa20e16f83bdb55e@sentry.lizard.net/19',
+  {
+    // limits logging to staging and prd
+    whitelistUrls: [/nxt\.lizard\.net/, /staging\.lizard\.net/]
+  }).install();
+}
+
+/**
+ * Decorator for ngExceptionHandler to log exceptions to sentry
+ */
+app.config(function ($provide) {
+  $provide.decorator("$exceptionHandler", function ($delegate) {
+      return function (exception, cause) {
+          $delegate(exception, cause);
+          Raven.captureException(exception, {
+            extra: {cause: cause}
+          });
+        };
+    });
+});
 
 /**
  * Change default angular tags to prevent collision with Django tags.
@@ -86,11 +111,10 @@ app.config(function ($locationProvider) {
 
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService",
-  "RasterService", "UtilService", "EventService", "TimeseriesService",
-  "ngTableParams",
+  ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService", "RasterService",
+   "UtilService", "EventService", "TimeseriesService",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, EventService, TimeseriesService, ngTableParams) {
+            UtilService, EventService, TimeseriesService) {
 
   // BOX MODEL
   /**
@@ -163,7 +187,9 @@ app.controller("MasterCtrl",
    *
    */
   $scope.toggleTool = function (name) {
-
+    if (name === 'intersect') {
+      $scope.box.type  = 'intersect';
+    }
     if ($scope.tools.active === name) {
       $scope.tools.active = 'none';
       $scope.box.type = 'extentAggregate';
@@ -198,7 +224,10 @@ app.controller("MasterCtrl",
     baselayerChanged: Date.now(),
     enabled: false,
     bounds: null,
+    pixelCenter: null,
+    zoom: null,
     here: null, // Leaflet point object describing a users location of interest
+    userHere: null, // Geographical location of the users mouse
     geom_wkt: '',
     mapMoving: false
   };
@@ -209,16 +238,11 @@ app.controller("MasterCtrl",
 
   var now = Date.now();
   var day = 24 * 60 * 60 * 1000;
-  var tomorrow = now + day;
-  var twoDaysAgo = now - 2 * day;
-  var sevenDaysAgo = now - 7 * day;
-  var lastVisit = CabinetService.lastVisitUtime;
-  var start = Math.max(sevenDaysAgo, Math.min(twoDaysAgo, lastVisit)) ||
-              sevenDaysAgo;
+
   // TIME MODEL
   $scope.timeState = {
-    start: start,
-    end: tomorrow,
+    start: now - 2 * day,
+    end: now + day,
     changedZoom: Date.now(),
     zoomEnded: null,
     hidden: undefined,
