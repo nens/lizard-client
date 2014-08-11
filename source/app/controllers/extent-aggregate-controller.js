@@ -68,8 +68,7 @@ app.controller("ExtentAggregateCtrl", [
      *
      * @return {boolean} The boolean specifying whether there are any events
      * present
-     **/
-
+     */
     $scope.eventsPresentInCurrentExtent = function () {
 
       if ($scope.events.types.count > 0) {

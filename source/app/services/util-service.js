@@ -141,14 +141,14 @@ app.service("UtilService", function () {
   };
 
   /**
-   * Toggle visibility of a card's content:
+   * @summary: Toggle visibility of a card's content.
+   * 
+   * NB! uses jQuery instead of CSS animations.
    *
    * @param {string} cardName An identifier specifying which card
    * is the subject of the animation.
    *
-   * NB! uses jQuery instead of CSS animations.
    */
-
   this.toggleThisCard = function (cardName) {
 
     var card,
