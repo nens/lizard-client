@@ -150,9 +150,9 @@ app.service("UtilService", function () {
         titleText,
         separator,
         initHeight,
-        SLIDE_TIME = 350,
-        FADE_TIME = 200,
-        FADE_TIME_2 = 500;
+        SLIDE_TIME_PER_100PX = 200,
+        slideTime,
+        FADE_TIME = 200;
 
     card = $('#card-' + cardName);
     cont = $(card).find('.card-content')[0];
@@ -162,11 +162,14 @@ app.service("UtilService", function () {
 
     if ($(card).hasClass("active")) {
 
-      initHeight = $(cont).css('height').split("px")[0];
-      $(cont).data("init-height", initHeight);
+      initHeight = parseInt($(cont).css('height').split("px")[0]);
+      $(cont).data("initheight", initHeight);
+      slideTime = Math.floor((initHeight / 100) * SLIDE_TIME_PER_100PX);
+
+      //console.log("slideTime:", slideTime);
 
       $(separator).fadeOut(FADE_TIME, function () {
-        $(cont).slideUp(SLIDE_TIME, function () {
+        $(cont).slideUp(slideTime, function () {
           $(card).removeClass("active");
           $(btnText).html("<i class='fa fa-chevron-left'></i>");
         });
