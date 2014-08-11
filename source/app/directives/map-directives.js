@@ -275,18 +275,22 @@ app.directive('map', [
         }
       });
 
+      var clicked = function (e) {
+        scope.mapState.here = e.latlng;
+        if (scope.box.type !== 'intersect') {
+          scope.box.type = 'pointObject';
+          $rootScope.$broadcast('newPointObject');
+        }
+      };
+
       scope.map.on('click', function (e) {
         // NOTE: Check whether a $digest is already happening before using apply
         if (!scope.$$phase) {
           scope.$apply(function () {
-            scope.box.type = 'pointObject';
-            scope.mapState.here = e.latlng;
-            $rootScope.$broadcast('newPointObject');
+            clicked(e);
           });
         } else {
-          scope.box.type = 'pointObject';
-          scope.mapState.here = e.latlng;
-          $rootScope.$broadcast('newPointObject');
+          clicked(e);
         }
       });
 
@@ -298,6 +302,20 @@ app.directive('map', [
           });
         } else {
           scope.mapState.mapMoving = true;
+        }
+      });
+
+      /**
+       * Sets the geolocation of the users mouse to the mapState
+       * Used to draw clickfeedback.
+       */
+      scope.map.on('mousemove', function (e) {
+        if (!scope.$$phase) {
+          scope.$apply(function () {
+            scope.mapState.userHere = e.latlng;
+          });
+        } else {
+          scope.mapState.userHere = e.latlng;
         }
       });
 

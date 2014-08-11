@@ -134,7 +134,9 @@ app.controller("MasterCtrl",
    *
    */
   $scope.toggleTool = function (name) {
-
+    if (name === 'intersect') {
+      $scope.box.type  = 'intersect';
+    }
     if ($scope.tools.active === name) {
       $scope.tools.active = 'none';
       $scope.box.type = 'extentAggregate';
@@ -172,6 +174,7 @@ app.controller("MasterCtrl",
     pixelCenter: null,
     zoom: null,
     here: null, // Leaflet point object describing a users location of interest
+    userHere: null, // Geographical location of the users mouse
     geom_wkt: '',
     mapMoving: false
   };
