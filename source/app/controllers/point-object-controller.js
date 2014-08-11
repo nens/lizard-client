@@ -157,9 +157,9 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     };
 
     var getTimeSeriesForObject = function () {
-      $scope.pointObject.timeseries.data = TimeseriesService.getRandomTimeseries();
-      $scope.pointObject.timeseries.selectedTimeseries = $scope.pointObject.timeseries.data[0];
-      $scope.pointObject.timeseries.active = true;
+      // $scope.pointObject.timeseries.data = TimeseriesService.getRandomTimeseries();
+      // $scope.pointObject.timeseries.selectedTimeseries = $scope.pointObject.timeseries.data[0];
+      // $scope.pointObject.timeseries.active = true;
     };
 
     var rainResponded = function (response) {
