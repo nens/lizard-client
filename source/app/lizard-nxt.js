@@ -15,6 +15,32 @@ var app = angular.module("lizard-nxt", [
 ]);
 
 /**
+ * Setup Raven if available.
+ * Raven is responsible for logging to https://sentry.lizard.net
+ */
+if (window.Raven) {
+  Raven.config('https://ceb01dd84c6941c8aa20e16f83bdb55e@sentry.lizard.net/19',
+  {
+    // limits logging to staging and prd
+    whitelistUrls: [/nxt\.lizard\.net/, /staging\.lizard\.net/]
+  }).install();
+}
+
+/**
+ * Decorator for ngExceptionHandler to log exceptions to sentry
+ */
+app.config(function ($provide) {
+  $provide.decorator("$exceptionHandler", function ($delegate) {
+      return function (exception, cause) {
+          $delegate(exception, cause);
+          Raven.captureException(exception, {
+            extra: {cause: cause}
+          });
+        };
+    });
+});
+
+/**
  * Change default angular tags to prevent collision with Django tags.
  */
 app.config(function ($interpolateProvider) {
@@ -41,8 +67,8 @@ app.config(function ($locationProvider) {
  *
  * Directives watch models in MasterCtrl and respond to changes in those models
  * for example, a user zooms in on the timeline, the timeline directive sets
- * the temporal.extent on the state.temporal; a map directive watches state.temporal
- * and updates map objects accordingly.
+ * the temporal.extent on the state.temporal; a map directive watches
+ * state.temporal and updates map objects accordingly.
  *
  * Models
  * ======
@@ -80,8 +106,9 @@ app.config(function ($locationProvider) {
 
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService", "RasterService",
-   "UtilService", "EventService", "TimeseriesService", "ngTableParams",
+  ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService",
+   "RasterService", "UtilService", "EventService", "TimeseriesService",
+   "ngTableParams",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, TimeseriesService, ngTableParams) {
 
