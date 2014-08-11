@@ -11,9 +11,9 @@
  * is independent of the rest of the application.
  *
  * TODO:
- * * [ ] Move $scope out of MapDirCtrl
- * * [ ] Split up massive functions in MapDirCtrl
- * * [ ] Get rain stuff into the directive and the MapDirCtrl
+ * - [ ] Move $scope out of MapDirCtrl
+ * - [ ] Split up massive functions in MapDirCtrl
+ * - [ ] Get rain stuff into the directive and the MapDirCtrl
  *
  */
 
@@ -84,12 +84,12 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
   };
 
   /**
-   * Rescale elevation raster.
+   * @summary Rescale elevation raster.
    *
-   * Makes a request to the raster server with the current bounds
+   * @desc Makes a request to the raster server with the current bounds
    * Gets a new scale limit and refreshes the layer.
    *
-   * @param {bounds object} bounds contains the corners of the current map view
+   * @param {object} bounds contains the corners of the current map view.
    */
   var rescaleElevation = function (bounds) {
 
@@ -197,7 +197,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
    *
    * TODO: refactor
    *
-   * @param {layer object} activeBaselayer
+   * @param {object} activeBaselayer
    * @param {string} currentType current box type
    * @return {string} newType new box type
    *
@@ -259,6 +259,9 @@ app.directive('map', [
       UtilService.getZoomlevelLabel(map.getZoom());
       scope.map = map;
       scope.mapState.bounds = scope.map.getBounds();
+      // to calculate imageURLs
+      scope.mapState.pixelCenter = scope.map.getPixelBounds().getCenter();
+      scope.mapState.zoom = scope.map.getZoom();
 
       // Initialise layers
       angular.forEach(scope.mapState.layers, function (layer) {
@@ -272,18 +275,22 @@ app.directive('map', [
         }
       });
 
+      var clicked = function (e) {
+        scope.mapState.here = e.latlng;
+        if (scope.box.type !== 'intersect') {
+          scope.box.type = 'pointObject';
+          $rootScope.$broadcast('newPointObject');
+        }
+      };
+
       scope.map.on('click', function (e) {
         // NOTE: Check whether a $digest is already happening before using apply
         if (!scope.$$phase) {
           scope.$apply(function () {
-            scope.box.type = 'pointObject';
-            scope.mapState.here = e.latlng;
-            $rootScope.$broadcast('newPointObject');
+            clicked(e);
           });
         } else {
-          scope.box.type = 'pointObject';
-          scope.mapState.here = e.latlng;
-          $rootScope.$broadcast('newPointObject');
+          clicked(e);
         }
       });
 
@@ -298,6 +305,20 @@ app.directive('map', [
         }
       });
 
+      /**
+       * Sets the geolocation of the users mouse to the mapState
+       * Used to draw clickfeedback.
+       */
+      scope.map.on('mousemove', function (e) {
+        if (!scope.$$phase) {
+          scope.$apply(function () {
+            scope.mapState.userHere = e.latlng;
+          });
+        } else {
+          scope.mapState.userHere = e.latlng;
+        }
+      });
+
       // initialize empty ClickLayer.
       // Otherwise click of events-aggregate and clicklayer
       ClickFeedbackService.drawClickInSpace(map, new L.LatLng(180.0, 90.0));
@@ -309,6 +330,8 @@ app.directive('map', [
         var finalizeMove = function () {
           scope.mapState.moved = Date.now();
           scope.mapState.mapMoving = false;
+          scope.mapState.pixelCenter = scope.map.getPixelBounds().getCenter();
+          scope.mapState.zoom = scope.map.getZoom();
           scope.mapState.bounds = scope.map.getBounds();
         };
 

@@ -6,7 +6,6 @@ app.service("CabinetService", ["$q", "Restangular",
   var baselayers = window.baseLayers;
   var overlayers = window.overLayers;
   var eventTypes = window.event_types;
-  var lastVisitUtime = window.last_visit_utime;
 
   var termSearchResource,
       bboxSearchResource,
@@ -17,8 +16,6 @@ app.service("CabinetService", ["$q", "Restangular",
       timeseriesResource;
 
   Restangular.setRequestSuffix('?page_size=0');
-  // termSearchResource = $resource('/api/v1/search/',{isArray: true});
-  // bboxSearchResource = $resource('/api/v1/search/',{isArray: true});
   geocodeResource = Restangular.one('api/v1/geocode/');
   reverseGeocodeResource = Restangular.one('api/v1/reversegeocode/');
   timeseriesResource = Restangular.one('api/v1/timeseries/');
@@ -351,7 +348,6 @@ app.service("CabinetService", ["$q", "Restangular",
     reverseGeocode: reverseGeocodeResource,
     timeseries: timeseriesResource,
     panZoom: null,
-    lastVisitUtime: lastVisitUtime,
     wantedAttrs: wantedAttrs
   };
 }]);

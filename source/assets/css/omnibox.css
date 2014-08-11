@@ -591,7 +591,6 @@
 
 .fixed-width-card-table {
   width: 170px;
-  /*font-family: 'Roboto Slab', sans-serif;*/
   font-size: 12px;
   color: #7f8c8d;
 }
@@ -651,7 +650,7 @@
   white-space: nowrap;
   text-overflow:ellipsis;
   background: #FFF;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255, 0.95);
   border-radius: 2px;
   backface-visibility: hidden;
   z-index:10;
@@ -675,7 +674,6 @@
 .card-title {
   font-family: 'Roboto Slab', serif;
   color: #7f8c8d;
-  /*text-align: center;*/
   margin-left: 10px;
   height: 50px;
   line-height: 50px;
@@ -688,9 +686,8 @@
 
 .card-separator {
   position: relative;
-  top: -10px;/*
-  margin: 0 3px 0 10px;*/
-  margin: 0;
+  top: -10px;
+  margin: 0 3px 0 10px;
   border: 0;
   border-top: 1px solid #bdc3c7;
 }
@@ -736,14 +733,23 @@ select.timeseries {
 .kunstwerk-title-text {
   position: relative;
   left: 10px;
-  /*font-family: 'Roboto Slab', sans-serif;*/
   color: #7f8c8d;
 }
 
-/*#icon-holder {
-  background-color: #f0e;
-  min-width: 50px;
-  min-height: 50px;
-  width: 50px;
+#icon-holder {
+  float: left;
+  margin-left: 5px;
 }
-*/
+
+.relatified-events-header:hover {
+  cursor: pointer;
+}
+
+td.lineout {
+  border-top: 1px solid #ddd;
+  width: 100%;
+}
+
+.attr-row:first-of-type td:nth-of-type(2) {
+  border-top: 0px;
+}

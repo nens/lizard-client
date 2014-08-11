@@ -46,7 +46,7 @@ app.service("UtfGridService", ["$q", "$rootScope",
      * Adds listener to the broadcast from map-directive messaging
      * that the utf grid has finished loading.
      * 
-     * @param  {leaflet event object} e containing e.latlng for the 
+     * @param  {object} e containing e.latlng for the 
      *                                  location of the click
      */
     function getDataFromUTFAsynchronous(e, promise, map) {
@@ -65,8 +65,9 @@ app.service("UtfGridService", ["$q", "$rootScope",
         on();
         var waterchainLayer = getLayer(map, 'grid', 'waterchain');
         var response = waterchainLayer._objectForEvent(e);
-        // since this part executes async in a future turn of the event loop, we need to wrap
-        // it into an $apply call so that the model changes are properly observed.
+        // since this part executes async in a future turn of the event loop,
+        // we need to wrap it into an $apply call so that the model changes are
+        // properly observed.
         $rootScope.$apply(function () {
           promise.resolve(response);
         });

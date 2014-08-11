@@ -1,5 +1,8 @@
 /**
- * Generic utilities
+ * @class hashSyncHelper
+ * @memberOf app
+ * @summary Helper functions for hash sync.
+ * @description Helper functions for hash sync.
  */
 app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
   function ($location, $parse, $rootScope) {
@@ -8,6 +11,13 @@ app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
      * Offers a getHash and setHash for manipulating the url hash
      */
     var service = {
+      /**
+       * @function getHash
+       * @memberOf HashSyncHelper
+       * @summary Reads has fragement from angulars location service and
+       * returns it as key / value object.
+       *
+       */
       getHash: function () {
         // Reads the hash fragment from angulars location service
         // and returns it as a key/value object.
@@ -56,13 +66,22 @@ app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
   }]);
 
 
+/**
+ * @ngdoc service
+ * @class UtilService
+ * @name UtilService
+ * @summary Generic util functions.
+ * @description Generic util functions.
+ */
 app.service("UtilService", function () {
 
   /**
-   * Round javascript timestamp to nearest coefficient.
+   * @function roundTimestamp
+   * @memberOf UtilService
+   * @summary Round javascript timestamp to nearest coefficient.
    *
-   * For example, if you want to round timestamp to the nearest 5 minutes,
-   * coefficient = 1000 * 60 * 5 = 30000
+   * @description For example, if you want to round timestamp to the nearest 5 
+   * minutes, coefficient = 1000 * 60 * 5 = 30000.
    *
    * @param {integer} timestamp - javascript timestamp in ms.
    * @param {integer} coefficient - coefficient to round to in ms.
@@ -114,7 +133,12 @@ app.service("UtilService", function () {
   };
 
   /**
-   * Returns aggWindow. Either five minutes, an hour or a day, should
+   * @function
+   * @memberOf UtilService
+   *
+   * @summary return aggregation window.
+   *
+   * @desc Returns aggWindow. Either five minutes, an hour or a day, should
    * lead to a minimum of three pixels within the drawing width.
    *
    * @param  {int} start    start of rainseries.
@@ -140,18 +164,26 @@ app.service("UtilService", function () {
     return aggWindow;
   };
 
+  /**
+   * @summary: Toggle visibility of a card's content.
+   * 
+   * NB! uses jQuery instead of CSS animations.
+   *
+   * @param {string} cardName An identifier specifying which card
+   * is the subject of the animation.
+   *
+   */
   this.toggleThisCard = function (cardName) {
-
-    // working, but uses jQuery instead of CSS animations!
 
     var card,
         cont,
         btnText,
         titleText,
         separator,
-        SLIDE_TIME = 350,
-        FADE_TIME = 200,
-        FADE_TIME_2 = 500;
+        initHeight,
+        slideTime,
+        SLIDE_TIME_PER_100PX = 200,
+        FADE_TIME = 200;
 
     card = $('#card-' + cardName);
     cont = $(card).find('.card-content')[0];
@@ -161,8 +193,19 @@ app.service("UtilService", function () {
 
     if ($(card).hasClass("active")) {
 
+      if ($(cont).data("slide-time")) {
+
+        slideTime = parseInt($(cont).data("slide-time"));
+
+      } else {
+
+        initHeight = parseInt($(cont).css('height').split("px")[0]);
+        slideTime = Math.floor((initHeight / 100) * SLIDE_TIME_PER_100PX);
+        $(cont).attr("data-slide-time", slideTime);
+      }
+
       $(separator).fadeOut(FADE_TIME, function () {
-        $(cont).slideUp(SLIDE_TIME, function () {
+        $(cont).slideUp(slideTime, function () {
           $(card).removeClass("active");
           $(btnText).html("<i class='fa fa-chevron-left'></i>");
         });
@@ -170,8 +213,9 @@ app.service("UtilService", function () {
 
     } else {
 
+      slideTime = parseInt($(cont).data("slide-time"));
       $(separator).css("display", "none");
-      $(cont).slideDown(SLIDE_TIME, function () {
+      $(cont).slideDown(slideTime, function () {
         $(card).addClass("active");
         $(separator).fadeIn(FADE_TIME);
         $(btnText).html("<i class='fa fa-chevron-down'></i>");

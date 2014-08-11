@@ -14,9 +14,9 @@
 /**
  * Returns a rounded number or a '...' based on input type.
  *
- * @param {string or number} input to round or convert to dash
+ * @param {string} input to round or convert to dash, can be string or number
  * @param {number} optional decimals to round the number to
- * @return {string or number} when input is a number: returns a number
+ * @return {string} when input is a number: returns a number
  * rounded to specified decimals else returns '-'
  */
 app.filter('niceNumberOrEllipsis', function () {
@@ -195,3 +195,4 @@ app.filter('truncate', function () {
     } else return input;
   };
 });
+

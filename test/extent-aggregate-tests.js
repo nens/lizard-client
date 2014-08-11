@@ -1,5 +1,3 @@
-// raster-aggregate-tests.js
-
 describe('Testing ExtentAggregateCtrl', function () {
   var $scope,
     $rootScope,

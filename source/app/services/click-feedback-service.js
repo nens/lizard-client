@@ -1,14 +1,14 @@
 /**
  * Click layer
- * 
+ *
  * Watches mapState.here to register a click on the map
  * Provides the tool-specific feedback by modifying the DOM. Click
- * layer feedback either is hardcoded bound to the tool or comes 
- * from the utf grid. 
+ * layer feedback either is hardcoded bound to the tool or comes
+ * from the utf grid.
  *
  *  TODO: What is now called MapClickController should become a service,
  *  the semi generic functions from the link function should be part of this
- *  service and the rest should form a controller.. Since there is no direct 
+ *  service and the rest should form a controller.. Since there is no direct
  *  DOM modification. Probably.?
  */
 
@@ -19,10 +19,11 @@
 app.service("ClickFeedbackService", ["$rootScope",
   function ($rootScope) {
     var Ctrl = function () {
-      
+
       /**
-       * Remove any existing click layers and creates a new empty one
-       * @param  {leaflet map object} map
+       * Remove any existing click layers and creates a new empty one.
+       *
+       * @param {object} map
        */
       this.emptyClickLayer = function (map) {
         if (this.clickLayer) {
@@ -30,15 +31,18 @@ app.service("ClickFeedbackService", ["$rootScope",
         }
         this.clickLayer = L.geoJson().addTo(map);
         this.clickLayer.options.name = 'click';
+        this.clickLayer.options.clickable = false;
       };
 
       /**
-       * Returns the svg as a d3 selection of leaflet layer
-       * @param  {leaflet svg layer} layer
-       * @return {d3 selection} the svg of the leaflet object layer
+       * Returns the svg as a d3 selection of leaflet layer.
+       *
+       * @param  {object} layer
+       * @return {object} the svg of the leaflet object layer
        */
       this._getSelection = function (layer) {
-        // Due to some leaflet obscurity you have to get the first item with an unknown key.
+        // Due to some leaflet obscurity you have to get the first item with an
+        // unknown key.
         var _layers = layer._layers;
         var selection;
         for (var key in _layers) {
@@ -58,11 +62,30 @@ app.service("ClickFeedbackService", ["$rootScope",
             weight: 12,
             color: '#1abc9c',
             fill: false,
-            zIndexOffset: 1000
+            zIndexOffset: 1000,
+            clickable: false
           });
           self._circleMarker = circleMarker;
           return circleMarker;
         };
+        this.clickLayer.addData(geojsonFeature);
+      };
+
+      this.drawLineElement = function (first, second, dashed) {
+        var geojsonFeature = { "type": "Feature" };
+        geojsonFeature.geometry = {
+          "type": "LineString",
+          "coordinates": [[first.lng, first.lat], [second.lng, second.lat]]
+        };
+        this.clickLayer.options.style = {
+          color: '#2980b9',
+          weight: 2,
+          opacity: 1,
+          smoothFactor: 1
+        };
+        if (dashed) {
+          this.clickLayer.options.style.dashArray = "5, 5";
+        }
         this.clickLayer.addData(geojsonFeature);
       };
 
@@ -162,7 +185,8 @@ app.service("ClickFeedbackService", ["$rootScope",
         drawArrowHere,
         emptyClickLayer,
         stopVibration,
-        emptyClickLayer;
+        emptyClickLayer,
+        drawLine;
 
     emptyClickLayer = function (map) {
       ctrl.emptyClickLayer(map);
@@ -207,7 +231,7 @@ app.service("ClickFeedbackService", ["$rootScope",
     /**
      * Draws an arrow at specified location to indicate click.
      * Used to indicate location of rain graph
-     * 
+     *
      * @param {object} latLng Leaflet object specifying the latitude
      * and longitude of a click
      */
@@ -224,13 +248,18 @@ app.service("ClickFeedbackService", ["$rootScope",
       ctrl.stopVibration();
     };
 
+    drawLine = function (map, first, second, dashed) {
+      emptyClickLayer(map);
+      ctrl.drawLineElement(first, second, dashed);
+    };
+
     return {
       emptyClickLayer: emptyClickLayer,
       drawArrowHere: drawArrowHere,
       drawGeometry: drawGeometry,
       drawClickInSpace: drawClickInSpace,
-      stopVibration: stopVibration
+      stopVibration: stopVibration,
+      drawLine: drawLine
     };
   }
 ]);
-

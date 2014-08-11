@@ -10,15 +10,17 @@ app.service("EventService", ["Restangular", "$q",
     4: ["#27ae60", "#2980b9", "#8e44ad", "#7f8c8d"],
     5: ["#27ae60", "#2980b9", "#8e44ad", "#7f8c8d", "#f39c12"],
     6: ["#27ae60", "#2980b9", "#8e44ad", "#7f8c8d", "#f39c12", "#d35400"],
-    7: ["#27ae60", "#2980b9", "#8e44ad", "#7f8c8d", "#f39c12", "#d35400", "#c0392b"],
-    8: ["#27ae60", "#2980b9", "#8e44ad", "#7f8c8d", "#f39c12", "#d35400", "#c0392b", "#16a085"]
+    7: ["#27ae60", "#2980b9", "#8e44ad", "#7f8c8d", "#f39c12", "#d35400",
+        "#c0392b"],
+    8: ["#27ae60", "#2980b9", "#8e44ad", "#7f8c8d", "#f39c12", "#d35400",
+        "#c0392b", "#16a085"]
   };
 
   /**
    * Build object template to hold information per event type.
    * 
-   * @param object eventTypes object with event ids
-   * @returns  
+   * @param {object} eventTypes object with event ids.
+   * @returns {object} eventTypesTemplate.
    */
   var buildEventTypesTemplate = function (eventTypes) {
   
@@ -120,7 +122,8 @@ app.service("EventService", ["Restangular", "$q",
     var iterations = longData.features.length;
     for (var i = 0; i < iterations; i++) {
       var index = iterations - 1 - i;
-      var feature = longData.features[index]; // Go from back to front to not mess with the order
+      // Go from back to front to not mess with the order
+      var feature = longData.features[index];
       if (feature.properties.event_series === eventSeriesId) {
         var j = longData.features.indexOf(feature);
         longData.features.splice(j, 1);

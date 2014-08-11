@@ -17,9 +17,9 @@ app.controller("ExtentAggregateCtrl", [
      * Loops over all layers to request aggregation data for all
      * active layers with an aggregation type.
      *
-     * @param  {bounds object} bounds   mapState.bounds, containing
+     * @param  {object} bounds   mapState.bounds, containing
      *                                  leaflet bounds
-     * @param  {layers object} layers   mapState.layers, containing
+     * @param  {object} layers   mapState.layers, containing
      *                                  nxt definition of layers
      * @param  {object} extentAggregate extentAggregate object of this
      *                                  ctrl
@@ -58,6 +58,32 @@ app.controller("ExtentAggregateCtrl", [
 
     var removeDataFromScope = function (slug) {
       delete $scope.extentAggregate[slug];
+    };
+
+    /**
+     * Returns true/false according to whether any events are present in the
+     * current intersection of spatial and temporal extent. This is used to
+     * determine whether the corresponding card (i.e. the Event summary card)
+     * needs to be shown.
+     *
+     * @return {boolean} The boolean specifying whether there are any events
+     * present
+     */
+    $scope.eventsPresentInCurrentExtent = function () {
+
+      if ($scope.events.types.count > 0) {
+
+        var i, type;
+
+        for (i in $scope.events.types) {
+          type = $scope.events.types[i];
+          if (type.currentCount && type.currentCount > 0) {
+            return true;
+          }
+        }
+      }
+
+      return false;
     };
 
     /**

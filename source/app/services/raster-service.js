@@ -136,10 +136,10 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
   /**
    * Requests data from raster service.
    * 
-   * @param  {layer object} layer     nxt defition of a layer
+   * @param  {object} layer     nxt defition of a layer
    * @param  {str} slug               short description of layer
    * @param  {object} agg             extentAggregate object of this 
-   * @param  {bounds object} bounds   mapState.bounds, containing
+   * @param  {object} bounds   mapState.bounds, containing
    * @return {promise}                a promise with aggregated data and
    *                                  the slug
    */
