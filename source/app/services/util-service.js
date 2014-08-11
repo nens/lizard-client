@@ -150,8 +150,8 @@ app.service("UtilService", function () {
         titleText,
         separator,
         initHeight,
-        SLIDE_TIME_PER_100PX = 200,
         slideTime,
+        SLIDE_TIME_PER_100PX = 200,
         FADE_TIME = 200;
 
     card = $('#card-' + cardName);
@@ -162,11 +162,18 @@ app.service("UtilService", function () {
 
     if ($(card).hasClass("active")) {
 
-      initHeight = parseInt($(cont).css('height').split("px")[0]);
-      $(cont).data("initheight", initHeight);
-      slideTime = Math.floor((initHeight / 100) * SLIDE_TIME_PER_100PX);
+      if ($(cont).data("slide-time")) {
 
-      //console.log("slideTime:", slideTime);
+        slideTime = parseInt($(cont).data("slide-time"));
+
+      } else {
+
+        initHeight = parseInt($(cont).css('height').split("px")[0]);
+        slideTime = Math.floor((initHeight / 100) * SLIDE_TIME_PER_100PX);
+        $(cont).attr("data-slide-time", slideTime);
+      }
+
+      console.log('slideTime:', slideTime);
 
       $(separator).fadeOut(FADE_TIME, function () {
         $(cont).slideUp(slideTime, function () {
@@ -177,11 +184,10 @@ app.service("UtilService", function () {
 
     } else {
 
-      initHeight = parseInt($(cont).data("init-height"));
-      console.log(initHeight);
-
+      slideTime = parseInt($(cont).data("slide-time"));
+      console.log('slideTime:', slideTime);
       $(separator).css("display", "none");
-      $(cont).slideDown(SLIDE_TIME, function () {
+      $(cont).slideDown(slideTime, function () {
         $(card).addClass("active");
         $(separator).fadeIn(FADE_TIME);
         $(btnText).html("<i class='fa fa-chevron-down'></i>");
