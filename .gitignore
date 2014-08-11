@@ -13,4 +13,4 @@ tmp/
 tmp
 dist/
 templates.js
-out/
+doc/

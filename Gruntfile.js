@@ -94,7 +94,7 @@ module.exports = function (grunt) {
             '<%= appfiles %>',
             '<%= nxt_dir.test %>/**/*.js'
           ],
-          tasks: ['test']
+          tasks: ['test', 'jsdoc']
         },
         styles: {
           files: ['<%= nxt_dir.src %>/assets/css/{,*/}*.css'],
@@ -134,6 +134,15 @@ module.exports = function (grunt) {
               '<%= nxt_dir.vendor %>/ng-table/ng-table.min.css',
               '<%= nxt_dir.vendor %>/lizard-iconfont/lizard/dest/css/Lizard.css'
             ]
+          }
+        }
+      },
+      // produces docs
+      jsdoc: {
+        dist: {
+          src: ['<%= appfiles %>'],
+          options: {
+            destination: 'doc'
           }
         }
       },
@@ -247,6 +256,7 @@ module.exports = function (grunt) {
     'cssmin',
     'html2js',
     'concat',
+    'jsdoc',
     'copy:dist'
   ]);
   grunt.registerTask('plakhetaanelkaar', [
