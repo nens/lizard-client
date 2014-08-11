@@ -183,7 +183,6 @@ app.service("UtilService", function () {
     } else {
 
       slideTime = parseInt($(cont).data("slide-time"));
-      console.log('slideTime:', slideTime);
       $(separator).css("display", "none");
       $(cont).slideDown(slideTime, function () {
         $(card).addClass("active");
