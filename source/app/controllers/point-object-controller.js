@@ -145,7 +145,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       if ($scope.pointObject.events.data.length > 0) {
         $scope.pointObject.events.active = true;
         EventService.addColor($scope.events);
-        $scope.pointObject.eventTableParams.reload();
       }
     };
 
