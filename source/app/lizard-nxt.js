@@ -73,16 +73,16 @@ app.config(function ($locationProvider) {
  *
  * Stuff to reconsider, rethink, refactor:
  *
- * * [ ] Refactor map controller and directives
- * * [-] Refactor master controller (states, data!)
- * * [+] Refactor timeline out of mapState with its own scope
- * * [+] Refactor index.html and base-debug.html
- * * [ ] Fix + document Gruntfile.js / workflow
- * * [ ] Refactor css (csslint, -moz and -webkit)
- * * [ ] Move or delete common directory in source
- * * [+] Refactor timeline controller and directive
- * * [ ] Move event logic to event controller (on event / layer tag)
- * * [+] Move animation logic to animation controller (on timeline tag)
+ * - [ ] Refactor map controller and directives
+ * - [-] Refactor master controller (states, data!)
+ * - [+] Refactor timeline out of mapState with its own scope
+ * - [+] Refactor index.html and base-debug.html
+ * - [ ] Fix + document Gruntfile.js / workflow
+ * - [ ] Refactor css (csslint, -moz and -webkit)
+ * - [ ] Move or delete common directory in source
+ * - [+] Refactor timeline controller and directive
+ * - [ ] Move event logic to event controller (on event / layer tag)
+ * - [+] Move animation logic to animation controller (on timeline tag)
 
  */
 app.controller("MasterCtrl",

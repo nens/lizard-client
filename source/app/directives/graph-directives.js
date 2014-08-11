@@ -231,7 +231,7 @@ angular.module('graph')
     /**
      * Shows the line element indicating timeState.at.
      *
-     * @param  {graph object} graph contains the svg and a d3 scale object
+     * @param  {object} graph contains the svg and a d3 scale object
      * @param  {now} now   epoch timestamp in ms
      */
     this.drawNow = function (graph, now) {
