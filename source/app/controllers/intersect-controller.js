@@ -14,7 +14,8 @@ app.controller("IntersectCtrl", [
      */
     $scope.lineIntersect = {};
 
-    var firstClick, secondClick;
+    var firstClick, secondClick, updateExtentAgg, putDataOnscope, dataConvertToMeters,
+        degToMeters, metersToDegs, removeDataFromScope, _updateLineIntersect;
 
     /**
      * Loops over all layers to request intersection data for all
@@ -27,17 +28,14 @@ app.controller("IntersectCtrl", [
      * @param  {object} lineIntersect   lineIntersect object of this
      *                                  ctrl
      */
-    var updateExtentAgg = function (line, layers, lineIntersect) {
+    updateExtentAgg = function (line, layers, lineIntersect) {
       angular.forEach(layers, function (layer, slug) {
         if (layer.active
           && layer.store_path
           && layer.aggregation_type !== 'counts') {
-          var agg = lineIntersect[slug] || {};
-          var options = {
-            wkt: line,
-            srs: 'EPSG:3857'
-          };
-          var dataProm = RasterService.getRasterData(slug, undefined, options);
+          var agg = lineIntersect[slug] || {},
+              options = {wkt: line},
+              dataProm = RasterService.getRasterData(slug, undefined, options);
           // Pass the promise to a function that handles the scope.
           putDataOnscope(dataProm, slug);
         } else if (slug in lineIntersect && !layer.active) {
@@ -53,11 +51,12 @@ app.controller("IntersectCtrl", [
      * @param  {promise}  dataProm       a promise with line data
      * @param  {str}      slug           slug name of layer
      */
-    var putDataOnscope = function (dataProm, slug) {
+    putDataOnscope = function (dataProm, slug) {
       dataProm.then(function (result) {
         if (result.length > 0) {
           $scope.lineIntersect[slug] = {};
-          $scope.lineIntersect[slug].data = result;
+          // convert degrees result to meters to display properly.
+          $scope.lineIntersect[slug].data = dataConvertToMeters(result);
           $scope.lineIntersect[slug].name = $scope.mapState.layers[slug].name;
         } else if (slug in $scope.lineIntersect) {
           removeDataFromScope(slug);
@@ -65,7 +64,40 @@ app.controller("IntersectCtrl", [
       });
     };
 
-    var removeDataFromScope = function (slug) {
+    /**
+     * Takes data array with degrees as x-axis.
+     * Returns array with meters as x-axis
+     * @param  {[array]} data Array with degrees
+     * @return {[array]} data Array with meters
+     */
+    dataConvertToMeters = function (data) {
+      for (var i = 0; data.length > i; i++) {
+        data[i][0] = degToMeters(data[i][0]); 
+      }
+      return data;
+    };
+
+    /**
+     * Takes degrees converts to radians 
+     * and then converts to "haversine km's approximation" and then to meters
+     * @param  {float} degrees 
+     * @return {float} meters
+     */
+    degToMeters = function (degrees) {
+      return  (degrees * Math.PI) / 180 * 6371 * 1000;
+    }
+
+    /**
+     * Takes meters converts to radians 
+     * and then converts degrees
+     * @param  {float} meters 
+     * @return {float} degrees
+     */
+    metersToDegs = function (meters) {
+      return (meters / 1000 / 6371) * 180 / Math.PI;
+    }
+
+    removeDataFromScope = function (slug) {
       delete $scope.lineIntersect[slug];
     };
 
@@ -76,18 +108,16 @@ app.controller("IntersectCtrl", [
      * @param {leaflet point object} firstClick
      * @param {leaflet point object} secondClick
      */
-    var _updateLineIntersect = function (firstClick, secondClick) {
-      var firstPoint = L.CRS.EPSG3857.project(firstClick);
-      var secondPoint = L.CRS.EPSG3857.project(secondClick);
+    _updateLineIntersect = function (firstClick, secondClick) {
       var line = [
         "LINESTRING(",
-        firstPoint.x,
+        firstClick.lng,
         " ",
-        firstPoint.y,
+        firstClick.lat,
         ",",
-        secondPoint.x,
+        secondClick.lng,
         " ",
-        secondPoint.y,
+        secondClick.lat,
         ")"
       ].join('');
       updateExtentAgg(
@@ -155,17 +185,20 @@ app.controller("IntersectCtrl", [
     $scope.$watch('box.mouseLoc', function (n, o) {
       if (n === o) { return true; }
       if ($scope.box.mouseLoc) {
-        var lat1 = firstClick.lat;
-        var lat2 = secondClick.lat;
-        var lon1 = firstClick.lng;
-        var lon2 = secondClick.lng;
-        var maxD = Math.sqrt(Math.pow((lat2 - lat1), 2) + Math.pow((lon2 - lon1), 2));
-        var d = $scope.box.mouseLoc;
-        var r = d / maxD;
-        var dLat = (lat2 - lat1) * r;
-        var dLon = (lon2 - lon1) * r;
-        var posLat = dLat + lat1;
-        var posLon = dLon + lon1;
+        // local vars declaration.
+        var lat1, lat2, lon1, lon2, maxD, d, r, dLat, dLon, posLat, posLon;
+
+        lat1 = firstClick.lat;
+        lat2 = secondClick.lat;
+        lon1 = firstClick.lng;
+        lon2 = secondClick.lng;
+        maxD = Math.sqrt(Math.pow((lat2 - lat1), 2) + Math.pow((lon2 - lon1), 2));
+        d = metersToDegs($scope.box.mouseLoc);
+        r = d / maxD;
+        dLat = (lat2 - lat1) * r;
+        dLon = (lon2 - lon1) * r;
+        posLat = dLat + lat1;
+        posLon = dLon + lon1;
         if (circle === undefined) {
           circle = L.circleMarker([posLat, posLon], {
               color: '#2980b9',
