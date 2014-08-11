@@ -11,7 +11,6 @@ var app = angular.module("lizard-nxt", [
   'ngCsv',
   'ui.bootstrap',
   'ui.utils',
-  'ngTable'
 ]);
 
 /**
@@ -81,9 +80,9 @@ app.config(function ($locationProvider) {
  */
 app.controller("MasterCtrl",
   ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService", "RasterService",
-   "UtilService", "EventService", "TimeseriesService", "ngTableParams",
+   "UtilService", "EventService", "TimeseriesService",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, EventService, TimeseriesService, ngTableParams) {
+            UtilService, EventService, TimeseriesService) {
 
   // BOX MODEL
   $scope.box = {
