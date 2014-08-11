@@ -4,6 +4,7 @@ Changelog of lizard-nxt client
 unreleased
 ----------
 
+- Intersection tool shows generic functionality for all 3-or-more-d layers
 
 Release 0.1
 -----------
@@ -12,7 +13,7 @@ Release 0.1
 
 - All clicks on the map result all data available to that location
 
-- ExtentAggregat is the default card displaying an extent summary of 
+- ExtentAggregat is the default card displaying an extent summary of
   all active data layers
 
 - Layers are mentioned in slug of URL
@@ -93,6 +94,6 @@ Release 0.1
 
 - JSHint cleanup.
 
-- Gruntfile cleanup. 
+- Gruntfile cleanup.
 
 - Got tests to run.
