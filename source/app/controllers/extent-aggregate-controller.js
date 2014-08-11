@@ -61,6 +61,30 @@ app.controller("ExtentAggregateCtrl", [
     };
 
     /**
+     * Returns true/false according to whether any events are present in the
+     * current intersection of spatial and temporal extent. This is used to
+     * determine whether the corresponding card (i.e. the Event summary card)
+     * needs to be shown.
+     **/
+
+    $scope.eventsPresentInCurrentExtent = function () {
+
+      if ($scope.events.types.count > 0) {
+
+        var i, type;
+
+        for (i in $scope.events.types) {
+          type = $scope.events.types[i];
+          if (type.currentCount && type.currentCount > 0) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    };
+
+    /**
      * private function to eliminate redundancy: gets called
      * in multiple $watches declared locally.
      */

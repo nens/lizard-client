@@ -20,7 +20,7 @@
 
   <!-- TODO, include events as layers and make them part of the aggregate controller and the above switch -->
 
-  <div class="card active" ng-if="events.types.count > 0" id="card-summary">
+  <div class="card active" ng-if="eventsPresentInCurrentExtent()" id="card-summary">
 
     <!--
     <div ng-if="box.content.eventValue.properties.value" >
@@ -62,11 +62,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="recurrence_time" ng-repeat="eventType in events.types" ng-if="eventType.currentCount > 0">
+            <tr class="recurrence_time"
+                ng-repeat="eventType in events.types"
+                ng-if="eventType.currentCount > 0">
+
               <td><i class="fa fa-circle" ng-style="{color: eventType.color }"></i></td>
               <td><% eventType['name'] %></td>
               <td><strong><% eventType['currentCount'] %></strong></td>
               <td><% eventType['count'] %></td>
+
             </tr>
           </tbody>
         </table>
