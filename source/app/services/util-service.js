@@ -7,8 +7,6 @@
 app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
   function ($location, $parse, $rootScope) {
 
-    var isDefined,
-        toKeyValue;
     /**
      * Offers a getHash and setHash for manipulating the url hash
      */

@@ -11,9 +11,9 @@
  * is independent of the rest of the application.
  *
  * TODO:
- * * [ ] Move $scope out of MapDirCtrl
- * * [ ] Split up massive functions in MapDirCtrl
- * * [ ] Get rain stuff into the directive and the MapDirCtrl
+ * - [ ] Move $scope out of MapDirCtrl
+ * - [ ] Split up massive functions in MapDirCtrl
+ * - [ ] Get rain stuff into the directive and the MapDirCtrl
  *
  */
 
