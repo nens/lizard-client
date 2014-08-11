@@ -140,9 +140,16 @@ app.service("UtilService", function () {
     return aggWindow;
   };
 
-  this.toggleThisCard = function (cardName) {
+  /**
+   * Toggle visibility of a card's content:
+   *
+   * @param {string} cardName An identifier specifying which card
+   * is the subject of the animation.
+   *
+   * NB! uses jQuery instead of CSS animations.
+   */
 
-    // working, but uses jQuery instead of CSS animations!
+  this.toggleThisCard = function (cardName) {
 
     var card,
         cont,

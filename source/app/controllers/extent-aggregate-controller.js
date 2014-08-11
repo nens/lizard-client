@@ -65,6 +65,9 @@ app.controller("ExtentAggregateCtrl", [
      * current intersection of spatial and temporal extent. This is used to
      * determine whether the corresponding card (i.e. the Event summary card)
      * needs to be shown.
+     *
+     * @return {boolean} The boolean specifying whether there are any events
+     * present
      **/
 
     $scope.eventsPresentInCurrentExtent = function () {
