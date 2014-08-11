@@ -176,6 +176,12 @@ app.filter('aggWinToYLabel', function () {
   };
 });
 
+/**
+ * Truncates a string to have no more than MAX_LENGTH characters.
+ * Used in the righthand menu for truncating lengthy layer names.
+ *
+ * @return {string} The truncated layer name
+ */
 app.filter('truncate', function () {
 
   var MAX_LENGTH = 20;
