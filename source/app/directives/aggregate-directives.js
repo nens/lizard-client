@@ -41,47 +41,48 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
           .attr("fill", "black");
       };
 
-      // /**
-      //  * Event click handler.
-      //  *
-      //  * Gets id's highlights events,
-      //  * matchesLocations and passes them to 'here' object
-      //  * For pointObject to pick 'em up.
-      //  *
-      //  * @param {object} d - D3 bound data object.
-      //  */
-      // eventClickHandler = function (d) {
-      //   var id, here, features, f;
-      //   features = matchLocation(d, d3eventLayer._data.features);
-      //   id = this.options.selectorPrefix + this._idExtractor(d);
-      //   here = new L.LatLng(d.geometry.coordinates[1],
-      //                       d.geometry.coordinates[0]);
-      //   angular.extend(here, {
-      //     type: 'events',
-      //     eventData: {
-      //       features: features
-      //     }
-      //   });
+      /**
+       * Event click handler.
+       *
+       * Gets id's highlights events,
+       * matchesLocations and passes them to 'here' object
+       * For pointObject to pick 'em up.
+       *
+       * @param {object} d - D3 bound data object.
+       */
+      eventClickHandler = function (d) {
+        var id, here, features, f;
+        features = matchLocation(d, d3eventLayer._data.features);
+        id = this.options.selectorPrefix + this._idExtractor(d);
+        here = new L.LatLng(d.geometry.coordinates[1],
+                            d.geometry.coordinates[0]);
+        angular.extend(here, {
+          type: 'events',
+          eventData: {
+            features: features
+          }
+        });
 
-      //   here.type = 'events';
+        here.type = 'events';
 
-      //   highlightEvents(id);
+        highlightEvents(id);
 
-      //   var setEventOnPoint = function () {
-      //     if (scope.box.type === 'pointObject') {
-      //       scope.mapState.here = here;
-      //       $rootScope.$broadcast('newPointObject');
-      //     } else {
-      //       scope.mapState.here = here;
-      //       scope.box.type = 'pointObject';
-      //     }
-      //   };
-      //   if (!scope.$$phase) {
-      //     scope.$apply(setEventOnPoint);
-      //   } else {
-      //     setEventOnPoint();
-      //   }
-      // };
+        var setEventOnPoint = function () {
+          if (scope.box.type === 'pointObject') {
+            scope.mapState.here = here;
+            $rootScope.$broadcast('newPointObject');
+          } else {
+            scope.mapState.here = here;
+            scope.box.type = 'pointObject';
+          }
+        };
+        
+        if (!scope.$$phase) {
+          scope.$apply(setEventOnPoint);
+        } else {
+          setEventOnPoint();
+        }
+      };
 
       /**
        * Gets data point and searches through list of
