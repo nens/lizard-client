@@ -5,17 +5,23 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
   function (Restangular, UtilService, CabinetService, $q) {
 
   /**
-   * Hard coded rain variables.
+   * Hard coded raster variables.
    *
    * timeResolution: smallest time resolution for rain in ms (5 min.)
    * minTimeBetweenFrames: minimum time between frames in ms.
-   * imageUrlBase: url to  get WMS rain images.
+   * imageUrlBase: url to  get WMS images.
+   * @param {string} layerName Name of layer on raster server
+   * @return {object} Returns hashtable with info for animation.
    */
-  var rainInfo = {
+  var rasterInfo = function (layerName) {
+    return {
     "timeResolution": 300000,
     "minTimeBetweenFrames": 250,
-    "imageUrlBase": 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=demo%3Aradar&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME='
+    "imageUrlBase": 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=' + layerName +'&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME='
+    };
   };
+
+  var rainInfo = rasterInfo('demo%3Aradar');
 
   // Set by rain controller and get by timeline
   var intensityData;
@@ -27,21 +33,20 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
   var getIntensityData = function () {
     return intensityData;
   };
-
   /**
-   * Gets rain from server.
+   * Gets temporal raster data from server.
    *
-   * @param  {int} start    start of rainserie
-   * @param  {int} stop     end of rainserie
-   * @param  {object} geom   location of rainserie in {lat: int, lng: int} or leaflet bounds object
+   * @param  {int} start    start of temporal extent
+   * @param  {int} stop     end of temporal extent
+   * @param  {object} geom   location of temporal extent in {lat: int, lng: int} or leaflet bounds object
    * @param  {int} aggWindow width of the aggregation
    * @param  {string} agg aggregation method eg. 'sum', 'rrc'
-   * @return {promise} returns a thennable promise which may resolve with rain data on response
+   * @return {promise} returns a thennable promise which may resolve with temporal raster data on response
    */
-  var getRain = function (start, stop, geom, aggWindow, agg) {
-    var stopString = stop.toISOString().split('.')[0];
-    var startString = start.toISOString().split('.')[0];
-    var wkt;
+  var getTemporalRaster = function (start, stop, geom, aggWindow, rasterNames, agg) {
+    var stopString, startString, wkt;
+    stopString = stop.toISOString().split('.')[0];
+    startString = start.toISOString().split('.')[0];
     if (geom.lat && geom.lng) {
       // geom is a latLng object
       wkt = "POINT(" + geom.lng + " " + geom.lat + ")";
@@ -55,7 +60,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
             + "))";
     }
     return CabinetService.raster().get({
-        raster_names: 'demo:radar',
+        raster_names: rasterNames,
         geom: wkt,
         srs: 'EPSG:4326',
         start: startString,
@@ -166,10 +171,11 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
 
   return {
     rainInfo: rainInfo,
+    rasterInfo: rasterInfo,
     getIntensityData: getIntensityData,
     setIntensityData: setIntensityData,
-    getRain: getRain,
     getRasterData: getRasterData,
+    getTemporalRaster: getTemporalRaster,
     handleElevationCurve: handleElevationCurve,
     getRasterDataForExtentData: getRasterDataForExtentData,
     getAggregationForActiveLayer: getAggregationForActiveLayer
