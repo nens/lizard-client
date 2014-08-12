@@ -51,14 +51,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           data: undefined,
           recurrenceTime: undefined
         },
-        rain: {
-          active: false,
-          start: undefined,
-          stop: undefined,
-          aggWindow: RasterService.rasterInfo('demo%3Aradar').timeResolution,
-          data: undefined,
-          recurrenceTime: undefined
-        },
         timeseries: {
           active: false,
           data: [],
@@ -113,6 +105,11 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       };
     };
 
+    /** 
+     * Goes through layers and selects the temporal layer
+     * that is active. If there is none, nothing happens.
+     * @return {void} 
+     */
     var getRasterForLocation = function () {
       var layer, lIndex, stop, start;
       for (lIndex in $scope.mapState.layers) {
@@ -123,6 +120,12 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       }
     };
 
+    /**
+     * Gets a layer and retrieves data based
+     * on temporal extent etc.
+     * @param  {object} layer Layer object, containing name, slug..
+     * @return {void}
+     */
     var getRasterForLayer = function (layer) {
       var stop = new Date($scope.timeState.end),
           start = new Date($scope.timeState.start);
@@ -149,6 +152,11 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
         });
     };
 
+    /**
+     * Sets data attributes if a response returned properly
+     * @param  {object} response Response from rasterService. (data-array)
+     * @return {void}
+     */
     var rasterLayerResponded = function (response) {
       $scope.pointObject.temporalRaster.active = true;
       $scope.pointObject.temporalRaster.data = response;
