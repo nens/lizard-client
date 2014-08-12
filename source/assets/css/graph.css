@@ -144,6 +144,10 @@ text.d3tooltip:after {
   font-family: 'Roboto Slab', serif;
 }
 
-.donutGraph, .xyGraph {
+.donutGraph {
   margin-bottom: 15px;
+}
+
+.xyGraph {
+  margin-bottom: -10px;
 }

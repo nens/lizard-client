@@ -127,7 +127,14 @@
 
       <hr class="card-separator" id="card-separator-rain">
 
-      <graph class="xyGraph" ng-if="!!pointObject.rain.data" bar-chart data="pointObject.rain.data" ylabel="pointObject.rain.aggWindow" yfilter="aggWinToYLabel" xlabel="tijd"></graph>
+      <graph bar-chart
+             class="xyGraph"
+             ng-if="!!pointObject.rain.data"
+             data="pointObject.rain.data"
+             ylabel="pointObject.rain.aggWindow"
+             yfilter="aggWinToYLabel"
+             xlabel="tijd">
+      </graph>
 
       <div class="recurrence-time-container" ng-if="!!pointObject.rain.recurrenceTime">
         <table class="table table-hover table-condensed">

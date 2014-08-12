@@ -12,7 +12,7 @@
 app.directive('timeline', ["EventService", "RasterService", "UtilService",
                            "Timeline",
   function (EventService, RasterService, UtilService, Timeline) {
-  
+
   var link = function (scope, element, attrs, timelineCtrl, $timeout) {
 
     var dimensions = {
@@ -32,7 +32,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
     var el = d3.select(element[0])
       .select("#timeline-svg-wrapper")
       .select("svg");
-    
+
     var interaction = {
       /**
        * Update timeState on zoom
@@ -72,7 +72,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       /**
        * Update timeState on brush
        *
-       * Recieves the d3 brush
+       * Receives the d3 brush
        */
       brushFn: function (brush) {
         var s = brush.extent();
@@ -119,8 +119,8 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
     };
 
     /**
-     * Timeline is updated when new events are added. 
-     * 
+     * Timeline is updated when new events are added.
+     *
      * Resizes timeline,
      * redraws existing events,
      * adds new events,
@@ -228,7 +228,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
         scope.timeState.changedZoom = Date.now();
       }
     });
-    
+
     /**
      * Update brush and "Now" elements.
      *
