@@ -7,18 +7,20 @@
     </tr>
   </thead>
   <tbody>
-    <tr class="attr-row" ng-repeat="obj in pointObject.attrs.wanted[pointObject.attrs.data.entity_name].rows">
+    <tr class="attr-row"
+        ng-repeat="obj in pointObject.attrs.wanted[pointObject.attrs.data.entity_name].rows"
+        ng-init="showCheck = pointObject.attrs.data[obj.attrName]">
 
       <td class="fixed-width-card-table"><% obj.keyName %></td>
 
       <td class="lineout"
-          ng-show="pointObject.attrs.data[obj.attrName]">
+          ng-if="showCheck">
         <span class="ng-binding">
           <% $eval(obj.ngBindValue) + obj.valueSuffix %>
         </span>
       </td>
 
-      <td class="lineout" ng-hide="pointObject.attrs.data[obj.attrName]" style="float:left;">
+      <td class="lineout" ng-if="!showCheck">
         <% "..." %>
       </td>
 

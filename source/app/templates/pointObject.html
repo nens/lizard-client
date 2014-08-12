@@ -1,11 +1,5 @@
 <div ng-controller="pointObjectCtrl">
 
-  <!--
-  <div class="card">
-    debug: "<% pointObject.attrs.data.entity_name %>"
-  </div>
-  -->
-
   <!-- details for HYDRO-OBJECT a.k.a. Kunstwerk -->
   <div id="card-kunstwerk" class="card active" ng-class="{hidden: !pointObject.attrs.active}">
 
@@ -25,10 +19,17 @@
       <i id="icon-holder" class="icon-<% pointObject.attrs.data.entity_name.split('_')[0] %>"></i>
 
       <span class="kunstwerk-title">
-        <span id="title-holder" class="card-title-text kunstwerk-title-text"><% gettext(pointObject.attrs.data.entity_name) %></span>&nbsp;
-        <span ng-if="pointObject.attrs.data.code">(</span>
-        <span class="truncateme ng-binding" ng-bind="pointObject.attrs.data.code"></span>
-        <span ng-if="pointObject.attrs.data.code">)</span>
+        <span id="title-holder" class="card-title-text kunstwerk-title-text">
+          <% gettext(pointObject.attrs.data.entity_name) %>
+        </span>
+        &nbsp;
+        <span class="kunstwerk-title-suffix">
+          <span ng-if="pointObject.attrs.data.code">(</span>
+          <span class="truncateme ng-binding"
+                ng-bind="pointObject.attrs.data.code">
+          </span>
+          <span ng-if="pointObject.attrs.data.code">)</span>
+        </span>
       </span>
 
       <cardattributes></cardattributes>
