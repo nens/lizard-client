@@ -56,32 +56,31 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
         id = this.options.selectorPrefix + this._idExtractor(d);
         here = new L.LatLng(d.geometry.coordinates[1],
                             d.geometry.coordinates[0]);
-        angular.extend(here, {
+        var eventDatastuff = {
           type: 'events',
           eventData: {
             features: features
           }
-        });
-
-        here.type = 'events';
+        };
 
         highlightEvents(id);
 
         var setEventOnPoint = function () {
           if (scope.box.type === 'pointObject') {
             scope.mapState.here = here;
-            $rootScope.$broadcast('newPointObject');
           } else {
-            scope.mapState.here = here;
             scope.box.type = 'pointObject';
+            scope.mapState.here = here;
           }
         };
-        
+
         if (!scope.$$phase) {
           scope.$apply(setEventOnPoint);
         } else {
           setEventOnPoint();
         }
+        $rootScope.$broadcast('newPointObject', eventDatastuff);
+
       };
 
       /**
