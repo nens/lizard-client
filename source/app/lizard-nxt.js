@@ -156,7 +156,8 @@ app.controller("MasterCtrl",
     'overflow': 'Overstort',
     'pipe': 'Gesloten Leiding',
     'pumpstation': 'Gemaal',
-    'pumpstation_sewerage': 'Rioolgemaal'
+    'pumpstation_sewerage': 'Rioolgemaal',
+    'weir': 'Stuw'
   };
 
   /**
