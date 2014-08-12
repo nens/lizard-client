@@ -463,4 +463,8 @@ app.controller("MasterCtrl",
 
   // END RAIN
 
+  $scope.toggleVersionVisibility = function () {
+    $('.navbar-version').toggle();
+  };
+
 }]);

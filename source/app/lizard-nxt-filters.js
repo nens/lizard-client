@@ -7,7 +7,7 @@
  * ========
  *
  * Defines custom filters
- * 
+ *
  */
 
 
@@ -175,3 +175,24 @@ app.filter('aggWinToYLabel', function () {
     return out;
   };
 });
+
+/**
+ * Truncates a string to have no more than MAX_LENGTH characters.
+ * Used in the righthand menu for truncating lengthy layer names.
+ *
+ * @return {string} The truncated layer name
+ */
+app.filter('truncate', function () {
+
+  var MAX_LENGTH = 20;
+
+  return function (input) {
+
+    if (input.length > MAX_LENGTH) {
+
+      return input.slice(0, MAX_LENGTH - 3) + "...";
+
+    } else return input;
+  };
+});
+
