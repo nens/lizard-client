@@ -42,11 +42,20 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           data: {},
           wanted: CabinetService.wantedAttrs
         },
+        temporalRaster: {
+          type: undefined,
+          active: false,
+          start: undefined,
+          stop: undefined,
+          aggWindow: RasterService.rasterInfo().timeResolution,
+          data: undefined,
+          recurrenceTime: undefined
+        },
         rain: {
           active: false,
           start: undefined,
           stop: undefined,
-          aggWindow: RasterService.rainInfo.timeResolution,
+          aggWindow: RasterService.rasterInfo('demo%3Aradar').timeResolution,
           data: undefined,
           recurrenceTime: undefined
         },
@@ -74,7 +83,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       UtfGridService.getDataFromUTF(map, here)
         .then(utfgridResponded(map, here))
         .then(function () {
-          getRainForLocation();
+          getRasterForLocation();
         });
     };
 
@@ -104,36 +113,53 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       };
     };
 
-    var getRainForLocation = function () {
-      var stop = new Date($scope.timeState.end);
-      var start = new Date($scope.timeState.start);
-      $scope.pointObject.rain.aggWindow = UtilService.getAggWindow($scope.timeState.start,
+    var getRasterForLocation = function () {
+      var layer, lIndex, stop, start;
+      for (lIndex in $scope.mapState.layers) {
+        layer = $scope.mapState.layers[lIndex];
+        if (layer.active && layer.temporal) {
+          getRasterForLayer(layer);
+        }
+      }
+    };
+
+    var getRasterForLayer = function (layer) {
+      var stop = new Date($scope.timeState.end),
+          start = new Date($scope.timeState.start);
+      $scope.pointObject.temporalRaster.aggWindow = UtilService.getAggWindow($scope.timeState.start,
                                                $scope.timeState.end,
                                                272);  // graph is 272 px wide
-      RasterService.getRain(start, stop, $scope.mapState.here, $scope.pointObject.rain.aggWindow)
-        .then(rainResponded)
+      RasterService.getTemporalRaster(
+        start, 
+        stop, 
+        $scope.mapState.here, 
+        $scope.pointObject.temporalRaster.aggWindow, 
+        layer.slug)
+        .then(rasterLayerResponded)
         .then(function () {
-          // TODO: this is now an extra call to get rain recurrence time
-          // refactor to one call
-          RasterService.getRain(start, stop, $scope.mapState.here, $scope.pointObject.rain.aggWindow, 'rrc')
-            .then(function (response) {
-              $scope.pointObject.rain.recurrenceTime = response;
-            }
-          );
+          if (layer.name === "Regen") {
+            // TODO: find another way to do this
+            $scope.pointObject.temporalRaster.type = 'rain';
+            RasterService.getTemporalRaster(start, stop, $scope.mapState.here, $scope.pointObject.temporalRaster.aggWindow, layer.slug, 'rrc')
+              .then(function (response) {
+                $scope.pointObject.temporalRaster.recurrenceTime = response;
+              }
+            );
+          }
         });
+    };
+
+    var rasterLayerResponded = function (response) {
+      $scope.pointObject.temporalRaster.active = true;
+      $scope.pointObject.temporalRaster.data = response;
+      $scope.pointObject.temporalRaster.end = $scope.pointObject.temporalRaster.data[$scope.pointObject.temporalRaster.data.length - 1][0];
+      $scope.pointObject.temporalRaster.start = $scope.pointObject.temporalRaster.data[0][0];
     };
 
     var getTimeSeriesForObject = function () {
       // $scope.pointObject.timeseries.data = TimeseriesService.getRandomTimeseries();
       // $scope.pointObject.timeseries.selectedTimeseries = $scope.pointObject.timeseries.data[0];
       // $scope.pointObject.timeseries.active = true;
-    };
-
-    var rainResponded = function (response) {
-      $scope.pointObject.rain.active = true;
-      $scope.pointObject.rain.data = response;
-      $scope.pointObject.rain.end = $scope.pointObject.rain.data[$scope.pointObject.rain.data.length - 1][0];
-      $scope.pointObject.rain.start = $scope.pointObject.rain.data[0][0];
     };
 
     var eventResponded = function (response) {
