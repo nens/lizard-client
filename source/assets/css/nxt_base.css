@@ -230,7 +230,7 @@ label.layer-chooser {
 }
 
 label.layer-chooser > span.layer-text {
-    background: rgba(255,255,255, 0.8);
+    background: rgba(255,255,255, 0.9);
     width: 60%;
     height: 29px;
     padding: 5px;
