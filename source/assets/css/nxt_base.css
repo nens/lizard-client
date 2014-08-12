@@ -224,7 +224,7 @@ i, a:active {text-decoration:none !important;}
 
 label.layer-chooser {
     border: solid 2px rgba(0,0,0,0);
-    height: 50px;
+    height: 33px;
     width: 100%;
     position: relative;
 }
@@ -232,6 +232,7 @@ label.layer-chooser {
 label.layer-chooser > span.layer-text {
     background: rgba(255,255,255, 0.8);
     width: 60%;
+    height: 29px;
     padding: 5px;
     z-index: 1;
     position: absolute
