@@ -264,8 +264,8 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       var bounds = scope.mapState.bounds;
       // width of timeline
       var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
-      RasterService.getRain(new Date(start), new Date(stop),
-                                       bounds, aggWindow)
+      RasterService.getTemporalRaster(new Date(start), new Date(stop),
+                                       bounds, aggWindow, 'demo:radar')
       .then(function (response) {
         RasterService.setIntensityData(response);
         scope.raster.changed = Date.now();
