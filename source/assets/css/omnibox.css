@@ -757,10 +757,15 @@ td.lineout {
 }
 
 .attr-row:first-of-type td:nth-of-type(2) {
-  border-top: 0px !important;
+  border-top: 0 !important;
 }
 
 .kunstwerk-title-suffix {
   color: #7f8c8d;
   margin-left: 10px;
+}
+
+.relatified-event-circle {
+  position: relative;
+  left: 5px;
 }
