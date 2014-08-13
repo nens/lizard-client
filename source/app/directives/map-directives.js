@@ -385,6 +385,10 @@ app.directive('map', [
             scope.toggleTimeline();
           }
 
+          // if (!layer.active) {
+          //   //
+          // }
+
         } else {
 
           // for other than temporalRaster layers, we do stuff the old way
@@ -496,8 +500,8 @@ app.directive('rain', ["RasterService", "UtilService",
       };
 
       /**
-       * When rain is enabled, add imageOverlay layer, remove layer when rain
-       * is disabled.
+       * When a temporal raster is enabled, add imageOverlay layer, and remove
+       * the layer it gets disabled.
        */
       scope.$watch('mapState.activeLayersChanged', function (n, o) {
 
@@ -508,7 +512,6 @@ app.directive('rain', ["RasterService", "UtilService",
           for (i in imageOverlays) {
             mapCtrl.addLayer(imageOverlays[i]);
           }
-
           getImages(scope.timeState.at);
 
         } else {
