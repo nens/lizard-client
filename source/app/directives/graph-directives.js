@@ -47,13 +47,13 @@ angular.module('graph')
 
     this.createCanvas =  function (legend, element) {
       var margin = {
-        top: 20,
-        right: 10,
-        bottom: 20,
-        left: 20
-      },
-      maxwidth = 370,
-      maxheight = 150;
+          top: 20,
+          right: 10,
+          bottom: 20,
+          left: 20
+        },
+        maxwidth = 370,
+        maxheight = 175;
 
       if (legend.yLabel) {
         margin.left = 60;
@@ -69,7 +69,7 @@ angular.module('graph')
         .html("")
         .append("svg:svg")
         .attr('width', maxwidth)
-        .attr('height', maxheight + 25)
+        .attr('height', maxheight + 50)
         .append("svg:g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
