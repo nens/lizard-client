@@ -99,7 +99,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     }
 
     rasterService = (options.q) ? CabinetService.raster(options.q) : CabinetService.raster();
-    
+
     return rasterService.get({
       raster_names: rasterNames,
       geom: wkt,
@@ -140,10 +140,10 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
 
   /**
    * Requests data from raster service.
-   * 
+   *
    * @param  {object} layer     nxt defition of a layer
    * @param  {str} slug               short description of layer
-   * @param  {object} agg             extentAggregate object of this 
+   * @param  {object} agg             extentAggregate object of this
    * @param  {object} bounds   mapState.bounds, containing
    * @return {promise}                a promise with aggregated data and
    *                                  the slug
@@ -169,6 +169,16 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     return dataProm;
   };
 
+  var getImgOverlays = function (numCachedFrames, imgBounds) {
+
+    var i, imgOverlays = {};
+
+    for (i = 0; i < numCachedFrames; i++)
+      imgOverlays[i] = L.imageOverlay('', imgBounds, {opacity: 0});
+
+    return imgOverlays;
+  };
+
   return {
     rainInfo: rainInfo,
     rasterInfo: rasterInfo,
@@ -176,6 +186,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     setIntensityData: setIntensityData,
     getRasterData: getRasterData,
     getTemporalRaster: getTemporalRaster,
+    getImgOverlays: getImgOverlays,
     handleElevationCurve: handleElevationCurve,
     getRasterDataForExtentData: getRasterDataForExtentData,
     getAggregationForActiveLayer: getAggregationForActiveLayer

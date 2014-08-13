@@ -61,6 +61,7 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
     var timeStep;
     // hack to slow down animation for rasters to min resolution
     if ($scope.tools.active === 'rain') {
+
       // Divide by ten to make the movement in the timeline smooth.
       timeStep = RasterService.rainInfo.timeResolution / 10;
       $scope.timeState.animation.minLag =

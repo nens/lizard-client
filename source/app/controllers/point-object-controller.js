@@ -65,7 +65,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     };
 
     var fillPointObject = function (map, here) {
-      if (here.type == 'events') {
+      if (here.type === 'events') {
         eventResponded(here.eventData);
       } else {
         // Give feedback to user
@@ -105,10 +105,10 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       };
     };
 
-    /** 
+    /**
      * Goes through layers and selects the temporal layer
      * that is active. If there is none, nothing happens.
-     * @return {void} 
+     * @return {void}
      */
     var getRasterForLocation = function () {
       var layer, lIndex, stop, start;
@@ -133,10 +133,10 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
                                                $scope.timeState.end,
                                                272);  // graph is 272 px wide
       RasterService.getTemporalRaster(
-        start, 
-        stop, 
-        $scope.mapState.here, 
-        $scope.pointObject.temporalRaster.aggWindow, 
+        start,
+        stop,
+        $scope.mapState.here,
+        $scope.pointObject.temporalRaster.aggWindow,
         layer.slug)
         .then(rasterLayerResponded)
         .then(function () {
