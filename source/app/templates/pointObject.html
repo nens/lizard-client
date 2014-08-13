@@ -122,7 +122,9 @@
   <!-- end: single card -->
 
   <!-- rain card v2 starts here... -->
-  <div id="card-rain" class="card active" ng-class="{hidden: pointObject.temporalRaster.type !== 'rain'}">
+  <div id="card-rain"
+       class="card active"
+       ng-class="{hidden: !(pointObject.temporalRaster.type === 'rain' && mapState.getActiveTemporalLayer())}">
     <div class="card-title">
       <span class="card-title-text">Neerslag</span>
       <div class="card-title-button"

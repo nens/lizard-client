@@ -61,11 +61,13 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
    * current temporal extent, start animation at start of temporal extent.
    */
   var step =  function () {
+
     var currentInterval = $scope.timeState.end - $scope.timeState.start;
     var timeStep;
 
     // hack to slow down animation for rasters to min resolution
 
+    // if (tools.active === 'rain') { // OLD, before temporalraster abstractification
     if (hasActiveTemporalLayer) {
 
       // Divide by ten to make the movement in the timeline smooth.
@@ -105,16 +107,18 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
    */
   var animationWasOn;
   $scope.timeState.animation.toggleAnimateFastForward = function (toggle) {
+
     if (toggle) {
-      $scope.timeState.animation.stepSize =
-        $scope.timeState.animation.stepSize / 4;
+
+      $scope.timeState.animation.stepSize /= 4;
       animationWasOn = $scope.timeState.animation.playing;
       if (!$scope.timeState.animation.playing) {
         $scope.timeState.playPauseAnimation();
       }
-    } else if (!toggle) {
-      $scope.timeState.animation.stepSize =
-        $scope.timeState.animation.stepSize * 4;
+
+    } else {
+
+      $scope.timeState.animation.stepSize *= 4;
       if (!animationWasOn) {
         $scope.timeState.playPauseAnimation('off');
       }
