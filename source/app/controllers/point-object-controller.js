@@ -64,9 +64,11 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       return pointObject;
     };
 
-    var fillPointObject = function (map, here) {
-      if (here.type === 'events') {
-        eventResponded(here.eventData);
+
+    var fillPointObject = function (map, here, extra) {
+
+      if (extra && extra.type === 'events') {
+        eventResponded(extra.eventData);
       } else {
         // Give feedback to user
         ClickFeedbackService.drawClickInSpace(map, here);
@@ -191,9 +193,9 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     $scope.pointObject = createPointObject();
     fillPointObject($scope.map, $scope.mapState.here);
 
-    $scope.$on('newPointObject', function () {
+    $scope.$on('newPointObject', function (msg, extra) {
       $scope.pointObject = createPointObject();
-      fillPointObject($scope.map, $scope.mapState.here);
+      fillPointObject($scope.map, $scope.mapState.here, extra);
     });
 
     $scope.$on('$destroy', function () {
