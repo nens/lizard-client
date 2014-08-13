@@ -48,7 +48,8 @@ module.exports = function (grunt) {
     // variables to be used in other parts of grunt file
     vendorfiles:
       [
-        '<%= nxt_dir.vendor %>/bootstrap/bootstrap.js',
+        //'<%= nxt_dir.vendor %>/bootstrap/bootstrap.js',  // TYPO?!
+        '<%= nxt_dir.vendor %>/bootstrap/js/bootstrap.js', // CORRECTION
         '<%= nxt_dir.vendor %>/d3/d3.js',
         '<%= nxt_dir.vendor %>/leaflet-dist/leaflet.js',
         '<%= nxt_dir.vendor %>/angular-ui-bootstrap/ui-bootstrap-tpls-0.10.0.min.js',
@@ -79,10 +80,10 @@ module.exports = function (grunt) {
         '<%= nxt_dir.src %>/app/lib/TileLayer.GeoJSONd3.js',
         '<%= nxt_dir.src %>/app/lib/Layer.GeoJSONd3.js',
         '<%= nxt_dir.src %>/app/lib/leaflet-utfgrid-lizard.js',
-        '<%= nxt_dir.src %>/app/lib/utils.js',        
+        '<%= nxt_dir.src %>/app/lib/utils.js',
       ],
-      /* 
-      can be run while developing 
+      /*
+      can be run while developing
       watches:
         * JS appfiles and specs -> runs tests
         * CSS files -> runs minification
@@ -243,7 +244,7 @@ module.exports = function (grunt) {
           }
         }
       });
-  
+
   grunt.registerTask('test', [
     'html2js',
     'jasmine'

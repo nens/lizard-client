@@ -2,6 +2,7 @@
 
 /**
  * Initialise app.
+ * @module lizard-nxt
  */
 var app = angular.module("lizard-nxt", [
   'graph',
@@ -56,7 +57,7 @@ app.config(function ($locationProvider) {
 });
 
 /**
- *
+ * 
  * @name MasterController
  * @class MasterCtrl
  * @memberOf app
@@ -156,7 +157,8 @@ app.controller("MasterCtrl",
     'overflow': 'Overstort',
     'pipe': 'Gesloten Leiding',
     'pumpstation': 'Gemaal',
-    'pumpstation_sewerage': 'Rioolgemaal'
+    'pumpstation_sewerage': 'Rioolgemaal',
+    'weir': 'Stuw'
   };
 
   /**
