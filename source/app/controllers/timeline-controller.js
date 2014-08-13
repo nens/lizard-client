@@ -50,6 +50,10 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
     }
   };
 
+  // Setting a local var: to prevent that function step() calls
+  // mapState.getActiveTemporalLayer() for every single frame
+  var hasActiveTemporalLayer = $scope.mapState.getActiveTemporalLayer();
+
   /**
    * Push animation 1 step forward.
    *
@@ -59,18 +63,16 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
   var step =  function () {
     var currentInterval = $scope.timeState.end - $scope.timeState.start;
     var timeStep;
+
     // hack to slow down animation for rasters to min resolution
-    // if ($scope.tools.active === 'rain') {
-    if ($scope.mapState.getActiveTemporalLayer()) {
+
+    if (hasActiveTemporalLayer) {
 
       // Divide by ten to make the movement in the timeline smooth.
 
-      // timeStep = RasterService.rainInfo.timeResolution / 10;  // OLD
-      timeStep = RasterService.rasterInfo().timeResolution / 10; // NEW
-
+      timeStep = RasterService.rasterInfo().timeResolution / 10;
       $scope.timeState.animation.minLag =
-        // RasterService.rainInfo.minTimeBetweenFrames / 10;  // OLD
-        RasterService.rasterInfo().minTimeBetweenFrames / 10; // NEW
+        RasterService.rasterInfo().minTimeBetweenFrames / 10;
 
     } else {
       timeStep = currentInterval / $scope.timeState.animation.stepSize;
