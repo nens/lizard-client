@@ -146,10 +146,17 @@
 
       <hr class="card-separator" id="card-separator-rain">
 
-      <graph class="xyGraph" ng-if="!!pointObject.temporalRaster.data" bar-chart
-        data="pointObject.temporalRaster.data" ylabel="pointObject.temporalRaster.aggWindow"
-        yfilter="aggWinToYLabel" xlabel="tijd"></graph>
-      <div class="recurrence-time-container" ng-if="!!pointObject.temporalRaster.recurrenceTime">
+      <graph bar-chart
+             class="xyGraph"
+             ng-if="!!pointObject.temporalRaster.data"
+             data="pointObject.temporalRaster.data"
+             ylabel="pointObject.temporalRaster.aggWindow"
+             yfilter="aggWinToYLabel"
+             xlabel="tijd">
+      </graph>
+      <div class="recurrence-time-container"
+           ng-if="!!pointObject.temporalRaster.recurrenceTime">
+
         <table class="table table-hover table-condensed">
           <caption>Herhalingstijden</caption>
           <thead>
