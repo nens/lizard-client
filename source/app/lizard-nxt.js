@@ -232,6 +232,16 @@ app.controller("MasterCtrl",
     userHere: null, // Geographical location of the users mouse
     geom_wkt: '',
     mapMoving: false,
+    getActiveTemporalLayer: function () {
+
+      var temporalLayers = this.getLayersByType('temporal');
+
+      for (var i = 0; i < temporalLayers.length; i++) {
+        if (temporalLayers[i].active) {
+          return temporalLayers[i];
+        }
+      }
+    },
     getLayersByType: function (layerType) {
 
       var attr, i, result = [];
@@ -257,7 +267,7 @@ app.controller("MasterCtrl",
           break;
 
         default:
-          console.log('EXCEPTION-esque: tried to call getlayersByType() with unknown arggument "' + layerType + '"');
+          console.log('EXCEPTION-esque: tried to call getLayersByType() with unknown arggument "' + layerType + '"');
       }
 
       return result;

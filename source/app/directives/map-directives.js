@@ -225,8 +225,14 @@ app.directive('map', [
   '$rootScope',
   'UtilService',
   'ClickFeedbackService',
-  function ($controller, $rootScope, UtilService, ClickFeedbackService) {
-
+  'RasterService',
+  function (
+    $controller,
+    $rootScope,
+    UtilService,
+    ClickFeedbackService,
+    RasterService
+    ) {
     var link = function (scope, element, attrs, ctrl) {
       // Leaflet global variable to peed up vector layer,
       // see: http://leafletjs.com/reference.html#path-canvas
@@ -372,16 +378,39 @@ app.directive('map', [
         console.log("[F] mapState.changeLayer()");
 
         if (layer.temporal) {
-          // do everything that used to happen when when toggling the rain tool..
+
+          scope.mapState.activeLayersChanged = !scope.mapState.activeLayersChanged;
+
+          // Do everything that used to happen when when toggling the
+          // rain tool..
+
+          // var i,
+          //     imageOverlays,
+          //     numCachedFrames = 30,
+          //     imageBounds = [[54.28458617998074, 1.324296158471368],
+          //                   [49.82567047026146, 8.992548357936204]];
+
+          // // toggle the layer's activity
           layer.active = !layer.active;
 
-          console.log('layer "' + layer.name +'" active?', layer.active);
-
+          // // toggle timeline if neccesary
           if (scope.timeState.hidden !== false) {
             scope.toggleTimeline();
           }
 
-          // ...
+          // // set imageOverlays
+          // imageOverlays = RasterService.getImgOverlays(
+          //   numCachedFrames,
+          //   imageBounds
+          // );
+
+          // // add each imageOverlay
+          // for (i in imageOverlays) {
+          //   console.log('debug: imageOverlay to add!');
+          //   ctrl.addLayer(imageOverlays[i]);
+          // }
+
+          // // getImages().....
 
         } else {
           // for other than temporalRaster layers, we do stuff the old way
@@ -449,16 +478,6 @@ app.directive('rain', ["RasterService", "UtilService",
         imageBounds
       );
 
-      console.log('[F] rain directive link function');
-      console.log('Do we have layers on the scope arg?',
-        typeof scope.layers === 'undefined'
-      );
-
-      // for (var i = 0; i < numCachedFrames; i++) {
-      //   var imageOverlay = L.imageOverlay('', imageBounds, {opacity: 0});
-      //   imageOverlays[i] = imageOverlay;
-      // }
-
       var addLoadListener = function (image, i, date) {
         image.on("load", function (e) {
           loadingRaster -= 1;
@@ -479,16 +498,26 @@ app.directive('rain', ["RasterService", "UtilService",
        */
       var getImages = function (timestamp) {
 
+        // Outer-scope vars written inside this function:
+        //
+        // imageOverlays
+        // nxtDate
+        // previousDate
+        // loadingRaster
+        // frameLookup
+        //
+
         nxtDate = UtilService.roundTimestamp(
           scope.timeState.at,
           step,
           false
         );
-        // writing outerscope variables..
+        // writing outer-scope variables..
         previousDate = nxtDate;
         loadingRaster = 0;
         // All frames are going to load new ones, empty lookup
         frameLookup = {};
+
         for (var i in imageOverlays) {
           loadingRaster += 1;
           imageOverlays[i].setOpacity(0);
@@ -501,21 +530,37 @@ app.directive('rain', ["RasterService", "UtilService",
         }
       };
 
+      scope.$watch('mapState.activeLayersChanged', function (n, o) {
+
+        console.log('[F] $watch(\'mapState.activeLayersChanged\', ...)');
+
+        // If a temporal layer is active:
+        // get images for the current imageOverlays
+
+        var activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
+
+        console.log('activeTemporalLayer:', activeTemporalLayer);
+
+        if (activeTemporalLayer) {
+          for (var i in imageOverlays) {
+            console.log('in for-loop');
+            mapCtrl.addLayer(imageOverlays[i]);
+          }
+          getImages(scope.timeState.at);
+        }
+      });
+
       /**
        * When rain is enabled, add imageOverlay layer, remove layer when rain
        * is disabled.
        */
       scope.$watch('tools.active', function (newVal, oldVal) {
 
-        console.log('[F] scope.$watch(\'tools.active\')');
-
         if (newVal !== oldVal) {
 
           var i;
 
           if (newVal && scope.tools.active === 'rain') {
-
-            // what happened when the rain tool got selected...
 
             for (i in imageOverlays) {
               mapCtrl.addLayer(imageOverlays[i]);
@@ -530,29 +575,6 @@ app.directive('rain', ["RasterService", "UtilService",
         }
       });
 
-      // scope.$watch('tools.active', function (newVal, oldVal) {
-
-      //   if (newVal !== oldVal) {
-      //     var i;
-      //     if (newVal && scope.tools.active === 'rain') {
-
-      //       // what happened when the rain tool got clicked...
-
-      //       for (i in imageOverlays) {
-      //         mapCtrl.addLayer(imageOverlays[i]);
-      //       }
-      //       getImages(scope.timeState.at);
-
-      //     } else {
-      //       for (i in imageOverlays) {
-      //         mapCtrl.removeLayer(imageOverlays[i]);
-      //       }
-      //     }
-      //   }
-      // });
-
-
-
       /**
        * Animator; watch for timeState.at, show corresponding frame.
        *
@@ -566,7 +588,10 @@ app.directive('rain', ["RasterService", "UtilService",
         var oldDate = UtilService.roundTimestamp(oldVal,
                                              step, false);
         if (currentDate === oldDate) { return; }
-        if (scope.tools.active === 'rain') {
+
+        //if (scope.tools.active === 'rain') {
+        if (scope.mapState.getActiveTemporalLayer()) {
+
           var overlayIndex = frameLookup[currentDate];
           if (overlayIndex !== undefined &&
               overlayIndex !== previousFrame) {
