@@ -170,13 +170,13 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
   };
 
   /**
-   * Get a list of Leaflet imageOverlays. This is used for the temporal
-   * layers
+   * Get a list of Leaflet imageOverlays. This is used for rasters with a
+   * temporal component.
    *
    * @param {integer} numCachedFrames
    * @param {float[]} imgBounds
-   * @return {Object[]}
    *
+   * @return {Object[]}
    */
   var getImgOverlays = function (numCachedFrames, imgBounds) {
 
