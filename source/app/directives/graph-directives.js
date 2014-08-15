@@ -53,7 +53,7 @@ angular.module('graph')
           left: 20
         },
         maxwidth = 370,
-        maxheight = 175;
+        maxheight = 150;
 
       if (legend.yLabel) {
         margin.left = 60;
@@ -69,7 +69,7 @@ angular.module('graph')
         .html("")
         .append("svg:svg")
         .attr('width', maxwidth)
-        .attr('height', maxheight + 50)
+        .attr('height', maxheight + 25)
         .append("svg:g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
