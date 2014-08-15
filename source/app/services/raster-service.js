@@ -5,6 +5,17 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
   function (Restangular, UtilService, CabinetService, $q) {
 
   /**
+   * Get latlon bounds for image.
+   *
+   * @param {object} layerName name of layer.
+   * @return {float[]} bounds in list of latlon list.
+   */
+  var _getImageBounds = function (layerName) {
+      return [[54.28458617998074, 1.324296158471368],
+              [49.82567047026146, 8.992548357936204]];
+    };
+
+  /**
    * Hard coded raster variables.
    *
    * timeResolution: smallest time resolution for rain in ms (5 min.)
@@ -15,13 +26,12 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    */
   var rasterInfo = function (layerName) {
     return {
-    "timeResolution": 300000,
-    "minTimeBetweenFrames": 250,
-    "imageUrlBase": 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=' + layerName +'&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME='
+      "timeResolution": 300000,
+      "minTimeBetweenFrames": 250,
+      "imageUrlBase": 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=' + layerName + '&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=',
+      "imageBounds": _getImageBounds(layerName)
     };
   };
-
-  var rainInfo = rasterInfo('demo%3Aradar');
 
   // Set by rain controller and get by timeline
   var intensityData;
@@ -99,7 +109,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     }
 
     rasterService = (options.q) ? CabinetService.raster(options.q) : CabinetService.raster();
-    
+
     return rasterService.get({
       raster_names: rasterNames,
       geom: wkt,
@@ -140,10 +150,10 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
 
   /**
    * Requests data from raster service.
-   * 
+   *
    * @param  {object} layer     nxt defition of a layer
    * @param  {str} slug               short description of layer
-   * @param  {object} agg             extentAggregate object of this 
+   * @param  {object} agg             extentAggregate object of this
    * @param  {object} bounds   mapState.bounds, containing
    * @return {promise}                a promise with aggregated data and
    *                                  the slug
@@ -169,13 +179,33 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     return dataProm;
   };
 
+  /**
+   * Get a list of Leaflet imageOverlays. This is used for rasters with a
+   * temporal component.
+   *
+   * @param {integer} numCachedFrames
+   * @param {float[]} imgBounds
+   *
+   * @return {Object[]}
+   */
+  var getImgOverlays = function (numCachedFrames, imgBounds) {
+
+    var i, imgOverlays = {};
+
+    for (i = 0; i < numCachedFrames; i++) {
+      imgOverlays[i] = L.imageOverlay('', imgBounds, {opacity: 0});
+    }
+
+    return imgOverlays;
+  };
+
   return {
-    rainInfo: rainInfo,
     rasterInfo: rasterInfo,
     getIntensityData: getIntensityData,
     setIntensityData: setIntensityData,
     getRasterData: getRasterData,
     getTemporalRaster: getTemporalRaster,
+    getImgOverlays: getImgOverlays,
     handleElevationCurve: handleElevationCurve,
     getRasterDataForExtentData: getRasterDataForExtentData,
     getAggregationForActiveLayer: getAggregationForActiveLayer

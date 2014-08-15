@@ -1,7 +1,9 @@
 <div ng-controller="pointObjectCtrl">
 
   <!-- details for HYDRO-OBJECT a.k.a. Kunstwerk -->
-  <div id="card-kunstwerk" class="card active" ng-class="{hidden: !pointObject.attrs.active}">
+  <div id="card-kunstwerk"
+       class="card active"
+       ng-class="{hidden: !pointObject.attrs.active}">
 
     <div class="card-title">
       <span class="card-title-text">Objectinformatie</span>
@@ -103,7 +105,9 @@
   </div>
 
   <!-- begin: single card -->
-  <div id="card-timeseries" class="card active" ng-class="{hidden: !pointObject.timeseries.active}">
+  <div id="card-timeseries"
+       class="card active"
+       ng-class="{hidden: !pointObject.timeseries.active}">
     <div class="card-title">
         <span class="card-title-text">Tijdreeks</span>
         <div class="card-title-button"
@@ -115,14 +119,25 @@
     </div>
     <div class="card-content" id="card-content-timeseries">
       <hr class="card-separator" id="card-separator-timeseries">
-      <select class="timeseries" ng-model="pointObject.timeseries.selectedTimeseries" ng-options="series as series.name for series in pointObject.timeseries.data"></select>
-      <graph line data="pointObject.timeseries.selectedTimeseries.data" ylabel="pointObject.selectedTimeseries.name" xlabel="n"></graph>
+      <select class="timeseries"
+              ng-model="pointObject.timeseries.selectedTimeseries"
+              ng-options="series as series.name for series in pointObject.timeseries.data">
+      </select>
+      <graph line
+             data="pointObject.timeseries.selectedTimeseries.data"
+             ylabel="pointObject.selectedTimeseries.name"
+             xlabel="n">
+       </graph>
     </div>
   </div>
   <!-- end: single card -->
 
   <!-- rain card v2 starts here... -->
-  <div id="card-rain" class="card active" ng-class="{hidden: pointObject.temporalRaster.type !== 'rain'}">
+  <div id="card-rain"
+       class="card active"
+       ng-class="{hidden: !(pointObject.temporalRaster.type === 'demo:radar'
+                            && mapState.getActiveTemporalLayer()
+                            && mapState.getActiveTemporalLayer().slug === 'demo:radar')}">
     <div class="card-title">
       <span class="card-title-text">Neerslag</span>
       <div class="card-title-button"
@@ -166,7 +181,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="recurrence_time" ng-repeat="recurTime in pointObject.temporalRaster.recurrenceTime">
+            <tr class="recurrence_time"
+                ng-repeat="recurTime in pointObject.temporalRaster.recurrenceTime">
               <td><% recurTime.start | date : 'dd-MM-yyyy HH:mm' %></td>
               <td><% recurTime.td_window %></td>
               <td class="text-right"><% recurTime.max | number: 1 %></td>

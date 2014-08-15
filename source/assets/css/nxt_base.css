@@ -215,6 +215,7 @@ i, a:active {text-decoration:none !important;}
     z-index: 15000;
     top: 50px;
     right: -200px;
+
     -o-transition:.3s ease;
     -ms-transition:.3s ease;
     -moz-transition:.3s ease;
@@ -227,6 +228,12 @@ label.layer-chooser {
     height: 33px;
     width: 100%;
     position: relative;
+
+    -o-transition:.3s ease;
+    -ms-transition:.3s ease;
+    -moz-transition:.3s ease;
+    -webkit-transition:.3s ease;
+    transition: .3s ease;
 }
 
 label.layer-chooser > span.layer-text {
@@ -235,7 +242,38 @@ label.layer-chooser > span.layer-text {
     height: 29px;
     padding: 5px;
     z-index: 1;
-    position: absolute
+    position: absolute;
+    color: #2c3e50;
+
+    -o-transition: .3s ease;
+    -ms-transition: .3s ease;
+    -moz-transition: .3s ease;
+    -webkit-transition: .3s ease;
+    transition: .3s ease;
+}
+
+label.layer-chooser:hover {
+    border: 2px solid #2980b9;
+}
+
+label.layer-chooser:hover > span.layer-text {
+    color: #2980b9;
+}
+
+label.layer-chooser.active:hover > span.layer-text {
+    color: #c0392b;
+}
+
+label.layer-chooser.active > span.layer-text {
+    color: #c0392b;
+}
+
+label.layer-chooser.active {
+    border: solid 2px #c0392b;
+}
+
+label.layer-chooser.active:hover {
+    border: solid 2px #c0392b;
 }
 
 label.layer-chooser > span.layer-img {
@@ -247,15 +285,6 @@ label.layer-chooser > span.layer-img {
     background-position: center;
     background-repeat: no-repeat;
 }
-
-label.layer-chooser.active {
-    border: solid 2px #c0392b;
-}
-
-label.layer-chooser:hover {
-    border: solid 2px #E74C3C;
-}
-
 
 ul.list-inline li.baselayer-icon {
     position:relative;
