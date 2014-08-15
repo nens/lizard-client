@@ -64,12 +64,11 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       return pointObject;
     };
 
+
     var fillPointObject = function (map, here, extra) {
 
-      if (extra) {
-        if (extra.type === 'events') {
-          eventResponded(extra.eventData);
-        }
+      if (extra && extra.type === 'events') {
+        eventResponded(extra.eventData);
       } else {
         // Give feedback to user
         ClickFeedbackService.drawClickInSpace(map, here);
@@ -93,7 +92,11 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           var geom = JSON.parse(response.data.geom);
           here = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
           // Draw feedback around object.
-          ClickFeedbackService.drawGeometry(map, response.data.geom, response.data.entity_name);
+          ClickFeedbackService.drawGeometry(
+            map,
+            response.data.geom,
+            response.data.entity_name
+          );
           var entity = $scope.pointObject.attrs.data.entity_name;
           var id = $scope.pointObject.attrs.data.id;
           // Get events belonging to object.
@@ -102,16 +105,17 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           // Get timeseries belonging to object.
           getTimeSeriesForObject();
         } else {
-          // If not hit object, threaten it as a rain click, draw rain click arrow.
+          // If not hit object, threaten it as a rain click, draw rain click 
+          // arrow.
           ClickFeedbackService.drawArrowHere(map, here);
         }
       };
     };
 
-    /** 
+    /**
      * Goes through layers and selects the temporal layer
      * that is active. If there is none, nothing happens.
-     * @return {void} 
+     * @return {void}
      */
     var getRasterForLocation = function () {
       var layer, lIndex, stop, start;
@@ -132,26 +136,30 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     var getRasterForLayer = function (layer) {
       var stop = new Date($scope.timeState.end),
           start = new Date($scope.timeState.start);
-      $scope.pointObject.temporalRaster.aggWindow = UtilService.getAggWindow($scope.timeState.start,
-                                               $scope.timeState.end,
-                                               272);  // graph is 272 px wide
+      $scope.pointObject.temporalRaster.aggWindow =
+        UtilService.getAggWindow($scope.timeState.start,
+                                 $scope.timeState.end,
+                                 272);  // graph is 272 px wide
       RasterService.getTemporalRaster(
-        start, 
-        stop, 
-        $scope.mapState.here, 
-        $scope.pointObject.temporalRaster.aggWindow, 
+        start,
+        stop,
+        $scope.mapState.here,
+        $scope.pointObject.temporalRaster.aggWindow,
         layer.slug)
         .then(rasterLayerResponded)
         .then(function () {
-          if (layer.name === "Regen") {
-            // TODO: find another way to do this
-            $scope.pointObject.temporalRaster.type = 'rain';
-            RasterService.getTemporalRaster(start, stop, $scope.mapState.here, $scope.pointObject.temporalRaster.aggWindow, layer.slug, 'rrc')
+          $scope.pointObject.temporalRaster.type = layer.slug;
+          RasterService.getTemporalRaster(
+            start,
+            stop,
+            $scope.mapState.here,
+            $scope.pointObject.temporalRaster.aggWindow,
+            layer.slug,
+            'rrc')
               .then(function (response) {
                 $scope.pointObject.temporalRaster.recurrenceTime = response;
               }
-            );
-          }
+          );
         });
     };
 
@@ -163,13 +171,20 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     var rasterLayerResponded = function (response) {
       $scope.pointObject.temporalRaster.active = true;
       $scope.pointObject.temporalRaster.data = response;
-      $scope.pointObject.temporalRaster.end = $scope.pointObject.temporalRaster.data[$scope.pointObject.temporalRaster.data.length - 1][0];
-      $scope.pointObject.temporalRaster.start = $scope.pointObject.temporalRaster.data[0][0];
+      $scope.pointObject.temporalRaster.end =
+        $scope
+         .pointObject
+         .temporalRaster
+         .data[$scope.pointObject.temporalRaster.data.length - 1][0];
+      $scope.pointObject.temporalRaster.start =
+        $scope.pointObject.temporalRaster.data[0][0];
     };
 
     var getTimeSeriesForObject = function () {
-      // $scope.pointObject.timeseries.data = TimeseriesService.getRandomTimeseries();
-      // $scope.pointObject.timeseries.selectedTimeseries = $scope.pointObject.timeseries.data[0];
+      // $scope.pointObject.timeseries.data =
+      //   TimeseriesService.getRandomTimeseries();
+      // $scope.pointObject.timeseries.selectedTimeseries =
+      //   $scope.pointObject.timeseries.data[0];
       // $scope.pointObject.timeseries.active = true;
     };
 

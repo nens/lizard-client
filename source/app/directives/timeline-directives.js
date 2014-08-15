@@ -48,11 +48,11 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
         });
       },
       /**
-       * Update zoomEnded to trigger new call for rain intensity
+       * Update zoomEnded to trigger new call for raster aggregate.
        */
       zoomEndFn: function () {
-        if (scope.tools.active === 'rain') {
-          getRain();
+        if (scope.mapState.getActiveTemporalLayer()) {
+          getTemporalRasterData();
         }
         scope.$apply(function () {
           scope.timeState.zoomEnded = Date.now();
@@ -94,7 +94,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
     // Activate zoom listener
     timeline.addZoomListener();
 
-    if (scope.tools.active === 'rain') {
+    if (scope.mapState.getActiveTemporalLayer()) {
       // Activate click listener
       timeline.addClickListener();
     }
@@ -104,7 +104,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
      */
     var updateTimelineHeight = function (newDim, dim, nEventTypes) {
       var eventHeight;
-      if (scope.tools.active === 'rain') {
+      if (scope.mapState.getActiveTemporalLayer()) {
         eventHeight = nEventTypes * dim.events;
         eventHeight = eventHeight > 0 ? eventHeight: 0; // Default to 0px
         newDim.height = dim.height +
@@ -147,7 +147,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
      */
     scope.$watch('raster.changed', function (n, o) {
       if (n === o) { return true; }
-      if (scope.tools.active === 'rain') {
+      if (scope.mapState.getActiveTemporalLayer()) {
         updateTimelineHeight(angular.copy(timeline.dimensions),
           dimensions, scope.events.types.count);
         timeline.drawBars(RasterService.getIntensityData());
@@ -179,7 +179,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
         timeline.drawEventsContainedInBounds(scope.mapState.bounds);
         EventService.countCurrentEvents(
           scope.mapState.eventTypes, scope.events);
-        getRain();
+        getTemporalRasterData();
       }
     });
 
@@ -232,8 +232,8 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
     /**
      * Update brush and "Now" elements.
      *
-     * If animation is enabled, update brush element; if rain is enabled as
-     * well, update "Now" element.
+     * If animation is enabled, update brush element; if raster animation is
+     * enabled as well, update "Now" element.
      */
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
@@ -244,11 +244,13 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
     });
 
     /**
-     * Add click listener when rain is on
+     * Add click listener when raster animation is on.
+     *
+     * TODO: this is still hard coded to rain: setIntensityData
      */
     scope.$watch('tools.active', function (n, o) {
       if (n === o) { return true; }
-      if (scope.tools.active === 'rain') {
+      if (scope.mapState.getActiveTemporalLayer()) {
         timeline.addClickListener();
       } else {
         timeline.removeClickListener();
@@ -257,22 +259,28 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       }
     });
 
-    // Rain specific stuff
-    var getRain = function () {
+    /**
+     * Get aggregate data for current temporal raster.
+     */
+    var getTemporalRasterData = function () {
       var start = scope.timeState.start;
       var stop = scope.timeState.end;
       var bounds = scope.mapState.bounds;
+      var activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
       // width of timeline
       var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
-      RasterService.getTemporalRaster(new Date(start), new Date(stop),
-                                       bounds, aggWindow, 'demo:radar')
+      RasterService.getTemporalRaster(new Date(start),
+                                      new Date(stop),
+                                      bounds,
+                                      aggWindow,
+                                      activeTemporalLayer.slug)
       .then(function (response) {
         RasterService.setIntensityData(response);
         scope.raster.changed = Date.now();
       });
     };
 
-    if (scope.tools.active === 'rain') { getRain(); }
+    if (scope.mapState.getActiveTemporalLayer()) { getTemporalRasterData(); }
 
     window.onresize = function () {
       var dimensions = timeline.dimensions;

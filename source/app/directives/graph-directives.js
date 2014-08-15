@@ -86,7 +86,6 @@ angular.module('graph')
           .attr("class", "title")
           .style("text-anchor", "middle")
           .text(legend.title);
-
       }
 
       if (legend.xLabel) {

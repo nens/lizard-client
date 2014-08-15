@@ -57,7 +57,7 @@ app.config(function ($locationProvider) {
 });
 
 /**
- * 
+ *
  * @name MasterController
  * @class MasterCtrl
  * @memberOf app
@@ -213,7 +213,62 @@ app.controller("MasterCtrl",
     $scope.box.contextSwitchMode = !$scope.box.contextSwitchMode;
   };
 
-  // TOOLS
+  /**
+   * Retrieves the (single) currently active layer which has a temporal
+   * component. Returns undefined if no temporal raster layer is
+   * currently active.
+   *
+   * @return {Object}
+   */
+  var _getActiveTemporalLayer = function () {
+
+    var i, temporalLayers = this.getLayersByType('temporal');
+
+    for (i = 0; i < temporalLayers.length; i++) {
+      if (temporalLayers[i].active) {
+        return temporalLayers[i];
+      }
+    }
+  };
+
+  /**
+   * Retrieves layers by type (base | over | temporal). Used for
+   * keeping the right-hand menu readable.
+   *
+   * @param {string} layerType A string representation of the
+   *                           three possible layer types.
+   * @return {Object[]}
+   */
+  var _getLayersByType = function (layerType) {
+
+    var attr, i, result = [];
+
+    switch (layerType) {
+
+      case 'base':
+        for (i in this.layers)
+          if (this.layers[i].baselayer && !this.layers[i].temporal)
+            result.push(this.layers[i]);
+        break;
+
+      case 'over':
+        for (i in this.layers)
+          if (!(this.layers[i].baselayer || this.layers[i].temporal))
+            result.push(this.layers[i]);
+        break;
+
+      case 'temporal':
+        for (i in this.layers)
+          if (this.layers[i].temporal)
+            result.push(this.layers[i]);
+        break;
+
+      default:
+        console.log('EXCEPTION-esque: tried to call getLayersByType() with unknown arggument "' + layerType + '"');
+    }
+
+    return result;
+  };
 
   // MAP MODEL
   // MOVE TO MAP CONTROL ?
@@ -231,7 +286,9 @@ app.controller("MasterCtrl",
     here: null, // Leaflet point object describing a users location of interest
     userHere: null, // Geographical location of the users mouse
     geom_wkt: '',
-    mapMoving: false
+    mapMoving: false,
+    getActiveTemporalLayer: _getActiveTemporalLayer,
+    getLayersByType: _getLayersByType
   };
 
   $scope.panZoom = {};
@@ -430,39 +487,25 @@ app.controller("MasterCtrl",
    * Initial state of the timeState.hidden is 'undefined'.
    */
   $scope.toggleTimeline = function () {
+
     if ($scope.timeState.hidden === true) {
       $scope.timeState.hidden = false;
       angular.element('#timeline').css('bottom', 0);
+
     } else if ($scope.timeState.hidden === false) {
       $scope.timeState.hidden = true;
       angular.element('#timeline').css(
         'bottom', 0 - angular.element('#timeline').height());
+
     } else if ($scope.timeState.hidden === undefined) {
       // Create timeline element when needed and no earlier
       var timeline = angular.element(
         '<timeline class="navbar timeline navbar-fixed-bottom"></timeline>');
       var el = $compile(timeline)($scope);
-      angular.element('#master')
-        .append(timeline);
+      angular.element('#master').append(timeline);
       $scope.timeState.hidden = false;
     }
   };
-
-  // RAIN
-  /**
-   * Switch rain tool on or off.
-   *
-   * Switches rain tool; get raster images, adjust animation speed, show
-   * timeline.
-   */
-  $scope.toggleRain = function () {
-    if ($scope.timeState.hidden !== false) {
-      $scope.toggleTimeline();
-    }
-    $scope.toggleTool('rain');
-  };
-
-  // END RAIN
 
   $scope.toggleVersionVisibility = function () {
     $('.navbar-version').toggle();
