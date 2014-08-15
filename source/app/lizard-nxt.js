@@ -507,9 +507,6 @@ app.controller("MasterCtrl",
     }
   };
 
-  // RAIN
-  // END RAIN
-
   $scope.toggleVersionVisibility = function () {
     $('.navbar-version').toggle();
   };
