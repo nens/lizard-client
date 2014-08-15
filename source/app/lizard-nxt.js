@@ -491,19 +491,6 @@ app.controller("MasterCtrl",
   };
 
   // RAIN
-  /**
-   * Switch rain tool on or off.
-   *
-   * Switches rain tool; get raster images, adjust animation speed, show
-   * timeline.
-   */
-  $scope.toggleRain = function () {
-    if ($scope.timeState.hidden !== false) {
-      $scope.toggleTimeline();
-    }
-    $scope.toggleTool('rain');
-  };
-
   // END RAIN
 
   $scope.toggleVersionVisibility = function () {
