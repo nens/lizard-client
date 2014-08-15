@@ -385,10 +385,6 @@ app.directive('map', [
             scope.toggleTimeline();
           }
 
-          // if (!layer.active) {
-          //   //
-          // }
-
         } else {
 
           // for other than temporalRaster layers, we do stuff the old way
@@ -537,7 +533,6 @@ app.directive('rain', ["RasterService", "UtilService",
                                              step, false);
         if (currentDate === oldDate) { return; }
 
-        //if (scope.tools.active === 'rain') {
         if (scope.mapState.getActiveTemporalLayer()) {
 
           var overlayIndex = frameLookup[currentDate];
