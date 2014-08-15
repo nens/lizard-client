@@ -53,7 +53,7 @@ angular.module('graph')
           left: 20
         },
         maxwidth = 370,
-        maxheight = 175;
+        maxheight = 150;
 
       if (legend.yLabel) {
         margin.left = 60;
@@ -69,7 +69,7 @@ angular.module('graph')
         .html("")
         .append("svg:svg")
         .attr('width', maxwidth)
-        .attr('height', maxheight + 50)
+        .attr('height', maxheight + 25)
         .append("svg:g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -644,6 +644,7 @@ angular.module('graph')
           .enter().append("path")
             .attr("fill", function (d) {return d.data.color; })
             .attr("d", arc)
+            //.attr("transform", "translate(50, 50)")
             .attr("transform", "translate(" +
               ((width / 2) - 100) + ", " + ((height / 2) + 15) + ")")
             .on("mouseover", function (d) {
