@@ -20,45 +20,44 @@ app.directive("layerChooser", function () {
 
     layer = scope.layer;
     
-    if (layer.type === 'WMS') {
-      var options = {
-        layers: layer.slug,
-        format: 'image/png',
-        version: '1.1.1',
-        minZoom: layer.min_zoom,
-        maxZoom: 19,
-        zIndex: layer.z_index
-      };
-      //NOTE ugly hack
-      if (layer.slug === 'landuse') {
-        options.styles = 'landuse';
-      } else if (layer.slug === 'elevation') {
-        options.styles = 'BrBG_r';
-        options.effects = 'shade:0:3';
-      } else if (layer.slug === 'demo/radar') {
-        options.styles = 'transparent';
-        options.transparent = true;
+    if (!layer.temporal) {
+      if (layer.type === 'WMS') {
+        var options = {
+          layers: layer.slug,
+          format: 'image/png',
+          version: '1.1.1',
+          minZoom: layer.min_zoom,
+          maxZoom: 19,
+          zIndex: layer.z_index
+        };
+        //NOTE ugly hack
+        if (layer.slug === 'landuse') {
+          options.styles = 'landuse';
+        } else if (layer.slug === 'elevation') {
+          options.styles = 'BrBG_r';
+          options.effects = 'shade:0:3';
+        }
+        layerLeafletLayer = L.tileLayer.wms(layer.url, options);
+      } else {
+        layerUrl = (layer.type === 'TMS') ? layer.url + '.png' : layer.url;
+        layerLeafletLayer = L.tileLayer(layerUrl, {
+          ext: 'png',
+          slug: layer.slug,
+          name: layer.slug,
+          minZoom: layer.min_zoom,
+          maxZoom: 19,
+          zIndex: layer.z_index
+        });
       }
-      layerLeafletLayer = L.tileLayer.wms(layer.url, options);
-    } else {
-      layerUrl = (layer.type === 'TMS') ? layer.url + '.png' : layer.url;
-      layerLeafletLayer = L.tileLayer(layerUrl, {
-        ext: 'png',
-        slug: layer.slug,
-        name: layer.slug,
-        minZoom: layer.min_zoom,
-        maxZoom: 19,
-        zIndex: layer.z_index
-      });
+      layerMap.addLayer(layerLeafletLayer);
     }
-    layerMap.addLayer(layerLeafletLayer);
 
     scope.$watch('mapState.bounds', function (n, v) {
       if (n === v) { return; }
-        zoom = scope.map.getZoom();
-        centroid = scope.mapState.bounds.getCenter();
-        layerMap.setView(centroid, zoom - 2);
-      });
+      zoom = scope.map.getZoom();
+      centroid = scope.mapState.bounds.getCenter();
+      layerMap.setView(centroid, zoom - 2);
+    });
   };
 
 
@@ -66,6 +65,6 @@ app.directive("layerChooser", function () {
     link: link,
     templateUrl: 'templates/layer-chooser.html',
     restrict: 'E'
-  }
+  };
 
 });

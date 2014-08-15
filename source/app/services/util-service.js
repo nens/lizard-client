@@ -80,7 +80,7 @@ app.service("UtilService", function () {
    * @memberOf UtilService
    * @summary Round javascript timestamp to nearest coefficient.
    *
-   * @description For example, if you want to round timestamp to the nearest 5 
+   * @description For example, if you want to round timestamp to the nearest 5
    * minutes, coefficient = 1000 * 60 * 5 = 30000.
    *
    * @param {integer} timestamp - javascript timestamp in ms.
@@ -94,7 +94,7 @@ app.service("UtilService", function () {
     var roundedTimestamp = parseInt((timestamp + (coefficient / 2)) /
                                     coefficient, 10) * coefficient;
 
-    if (tzOffset === true) {
+    if (!!tzOffset) {
       var timeZoneOffset = (new Date(roundedTimestamp)).getTimezoneOffset() *
         1000 * 60;
       roundedTimestamp = roundedTimestamp - timeZoneOffset;
@@ -166,7 +166,7 @@ app.service("UtilService", function () {
 
   /**
    * @summary: Toggle visibility of a card's content.
-   * 
+   *
    * NB! uses jQuery instead of CSS animations.
    *
    * @param {string} cardName An identifier specifying which card

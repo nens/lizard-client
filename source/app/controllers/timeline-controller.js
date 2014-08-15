@@ -50,6 +50,10 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
     }
   };
 
+  // Setting a local var: to prevent that function step() calls
+  // mapState.getActiveTemporalLayer() for every single frame
+  var hasActiveTemporalLayer = $scope.mapState.getActiveTemporalLayer();
+
   /**
    * Push animation 1 step forward.
    *
@@ -57,14 +61,20 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
    * current temporal extent, start animation at start of temporal extent.
    */
   var step =  function () {
+
     var currentInterval = $scope.timeState.end - $scope.timeState.start;
     var timeStep;
+
     // hack to slow down animation for rasters to min resolution
-    if ($scope.tools.active === 'rain') {
+
+    if (hasActiveTemporalLayer) {
+
       // Divide by ten to make the movement in the timeline smooth.
-      timeStep = RasterService.rainInfo.timeResolution / 10;
+
+      timeStep = RasterService.rasterInfo().timeResolution / 10;
       $scope.timeState.animation.minLag =
-        RasterService.rainInfo.minTimeBetweenFrames / 10;
+        RasterService.rasterInfo().minTimeBetweenFrames / 10;
+
     } else {
       timeStep = currentInterval / $scope.timeState.animation.stepSize;
       $scope.timeState.animation.minLag = 50;
@@ -96,16 +106,18 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
    */
   var animationWasOn;
   $scope.timeState.animation.toggleAnimateFastForward = function (toggle) {
+
     if (toggle) {
-      $scope.timeState.animation.stepSize =
-        $scope.timeState.animation.stepSize / 4;
+
+      $scope.timeState.animation.stepSize /= 4;
       animationWasOn = $scope.timeState.animation.playing;
       if (!$scope.timeState.animation.playing) {
         $scope.timeState.playPauseAnimation();
       }
-    } else if (!toggle) {
-      $scope.timeState.animation.stepSize =
-        $scope.timeState.animation.stepSize * 4;
+
+    } else {
+
+      $scope.timeState.animation.stepSize *= 4;
       if (!animationWasOn) {
         $scope.timeState.playPauseAnimation('off');
       }
