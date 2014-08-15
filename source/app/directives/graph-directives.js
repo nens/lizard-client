@@ -643,7 +643,6 @@ angular.module('graph')
           .enter().append("path")
             .attr("fill", function (d) {return d.data.color; })
             .attr("d", arc)
-            //.attr("transform", "translate(50, 50)")
             .attr("transform", "translate(" +
               ((width / 2) - 100) + ", " + ((height / 2) + 15) + ")")
             .on("mouseover", function (d) {
