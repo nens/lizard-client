@@ -213,7 +213,62 @@ app.controller("MasterCtrl",
     $scope.box.contextSwitchMode = !$scope.box.contextSwitchMode;
   };
 
-  // TOOLS
+  /**
+   * Retrieves the (single) currently active layer which has a temporal
+   * component. Returns undefined if no temporal raster layer is
+   * currently active.
+   *
+   * @return {Object}
+   */
+  var _getActiveTemporalLayer = function () {
+
+    var i, temporalLayers = this.getLayersByType('temporal');
+
+    for (i = 0; i < temporalLayers.length; i++) {
+      if (temporalLayers[i].active) {
+        return temporalLayers[i];
+      }
+    }
+  };
+
+  /**
+   * Retrieves layers by type (base | over | temporal). Used for
+   * keeping the right-hand menu readable.
+   *
+   * @param {string} layerType A string representation of the
+   *                           three possible layer types.
+   * @return {Object[]}
+   */
+  var _getLayersByType = function (layerType) {
+
+    var attr, i, result = [];
+
+    switch (layerType) {
+
+      case 'base':
+        for (i in this.layers)
+          if (this.layers[i].baselayer && !this.layers[i].temporal)
+            result.push(this.layers[i]);
+        break;
+
+      case 'over':
+        for (i in this.layers)
+          if (!(this.layers[i].baselayer || this.layers[i].temporal))
+            result.push(this.layers[i]);
+        break;
+
+      case 'temporal':
+        for (i in this.layers)
+          if (this.layers[i].temporal)
+            result.push(this.layers[i]);
+        break;
+
+      default:
+        console.log('EXCEPTION-esque: tried to call getLayersByType() with unknown arggument "' + layerType + '"');
+    }
+
+    return result;
+  };
 
   // MAP MODEL
   // MOVE TO MAP CONTROL ?
@@ -232,46 +287,8 @@ app.controller("MasterCtrl",
     userHere: null, // Geographical location of the users mouse
     geom_wkt: '',
     mapMoving: false,
-    getActiveTemporalLayer: function () {
-
-      var temporalLayers = this.getLayersByType('temporal');
-
-      for (var i = 0; i < temporalLayers.length; i++) {
-        if (temporalLayers[i].active) {
-          return temporalLayers[i];
-        }
-      }
-    },
-    getLayersByType: function (layerType) {
-
-      var attr, i, result = [];
-
-      switch (layerType) {
-
-        case 'base':
-          for (i in this.layers)
-            if (this.layers[i].baselayer && !this.layers[i].temporal)
-              result.push(this.layers[i]);
-          break;
-
-        case 'over':
-          for (i in this.layers)
-            if (!(this.layers[i].baselayer || this.layers[i].temporal))
-              result.push(this.layers[i]);
-          break;
-
-        case 'temporal':
-          for (i in this.layers)
-            if (this.layers[i].temporal)
-              result.push(this.layers[i]);
-          break;
-
-        default:
-          console.log('EXCEPTION-esque: tried to call getLayersByType() with unknown arggument "' + layerType + '"');
-      }
-
-      return result;
-    },
+    getActiveTemporalLayer: _getActiveTemporalLayer,
+    getLayersByType: _getLayersByType
   };
 
   $scope.panZoom = {};

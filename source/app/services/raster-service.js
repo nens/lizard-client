@@ -169,6 +169,15 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     return dataProm;
   };
 
+  /**
+   * Get a list of Leaflet imageOverlays. This is used for the temporal
+   * layers
+   *
+   * @param {integer} numCachedFrames
+   * @param {float[]} imgBounds
+   * @return {Object[]}
+   *
+   */
   var getImgOverlays = function (numCachedFrames, imgBounds) {
 
     var i, imgOverlays = {};

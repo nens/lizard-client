@@ -67,7 +67,6 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
 
     // hack to slow down animation for rasters to min resolution
 
-    // if (tools.active === 'rain') { // OLD, before temporalraster abstractification
     if (hasActiveTemporalLayer) {
 
       // Divide by ten to make the movement in the timeline smooth.
