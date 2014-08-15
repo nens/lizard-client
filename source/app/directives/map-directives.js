@@ -32,7 +32,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
                                         maxZoom: 19,
                                         detectRetina: true,
                                         zIndex: layer.z_index});
-    } else if (layer.type === "WMS") {
+    } else if (layer.type === "WMS" && !layer.temporal) {
       var options = {
         layers: layer.slug,
         format: 'image/png',
@@ -47,9 +47,6 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
       } else if (layer.slug === 'elevation') {
         options.styles = 'BrBG_r';
         options.effects = 'shade:0:3';
-      } else if (layer.slug === 'demo/radar') {
-        options.styles = 'transparent';
-        options.transparent = true;
       }
       layer.leafletLayer = L.tileLayer.wms(layer.url, options);
       //NOTE ugly hack because of ugly hack
@@ -94,9 +91,10 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
   var rescaleElevation = function (bounds) {
 
     // Make request to raster to get min and max of current bounds
-    var url = 'https://raster.lizard.net/wms' + '?request=getlimits&layers=elevation' +
-      '&width=16&height=16&srs=epsg:4326&bbox=' +
-      bounds.toBBoxString();
+    var url = 'https://raster.lizard.net/wms' +
+              '?request=getlimits&layers=elevation' +
+              '&width=16&height=16&srs=epsg:4326&bbox=' +
+              bounds.toBBoxString();
     $http.get(url).success(function (data) {
       var limits = ':' + data[0][0] + ':' + data[0][1];
       var styles = 'BrBG_r' + limits;
@@ -111,8 +109,9 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
       else if (layer.slug === 'elevation') { rescaleElevation(bounds); }
       turnOffAllOtherBaselayers(layer.id, layers);
     } else {
-      if (layer.overlayer)
+      if (layer.overlayer) {
         updateOverLayers(layers);
+      }
       layer.active = !layer.active;
     }
 
@@ -377,7 +376,8 @@ app.directive('map', [
 
         if (layer.temporal) {
 
-          scope.mapState.activeLayersChanged = !scope.mapState.activeLayersChanged;
+          scope.mapState.activeLayersChanged =
+            !scope.mapState.activeLayersChanged;
           layer.active = !layer.active;
 
           // toggle timeline if neccesary
@@ -389,7 +389,8 @@ app.directive('map', [
 
           // for other than temporalRaster layers, we do stuff the old way
           ctrl.toggleLayer(layer, scope.mapState.layers, scope.mapState.bounds);
-          scope.mapState.activeLayersChanged = !scope.mapState.activeLayersChanged;
+          scope.mapState.activeLayersChanged =
+            !scope.mapState.activeLayersChanged;
         }
       };
 
@@ -402,8 +403,8 @@ app.directive('map', [
         }
       });
 
-      // Instantiate the controller that updates the hash url after creating the map
-      // and all its listeners.
+      // Instantiate the controller that updates the hash url after creating the 
+      // map and all its listeners.
       $controller('hashGetterSetter', {$scope: scope});
 
     };
@@ -419,21 +420,19 @@ app.directive('map', [
 ]);
 
 /**
- * Show rain WMS images as overlay, animate overlays when animation is
+ * Show raster WMS images as overlay, animate overlays when animation is
  * playing.
  */
-app.directive('rain', ["RasterService", "UtilService",
+app.directive('rasteranimation', ["RasterService", "UtilService",
   function (RasterService, UtilService) {
   return {
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
-      // TODO: get imageBounds from map extent or set in RasterService
-      var imageBounds = [[54.28458617998074, 1.324296158471368],
-                         [49.82567047026146, 8.992548357936204]];
+      var imageUrlBase;
+      var imageBounds = RasterService.rasterInfo().imageBounds;
       var utcFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
-      var step = RasterService.rainInfo.timeResolution;
-      var imageUrlBase = RasterService.rainInfo.imageUrlBase;
+      var step = RasterService.rasterInfo().timeResolution;
       var imageOverlays = {};
       var frameLookup = {};
       var numCachedFrames = 30;
@@ -444,9 +443,8 @@ app.directive('rain', ["RasterService", "UtilService",
       var restart = false;
 
       /**
-       * Set up imageOverlays.
+       * Setup imageOverlays.
        */
-
       imageOverlays = RasterService.getImgOverlays(
         numCachedFrames,
         imageBounds
@@ -501,13 +499,16 @@ app.directive('rain', ["RasterService", "UtilService",
        */
       scope.$watch('mapState.activeLayersChanged', function (n, o) {
 
-        var i, hasActiveTemporalLayer = !!scope.mapState.getActiveTemporalLayer();
+        var i, activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
 
-        if (hasActiveTemporalLayer) {
+        if (activeTemporalLayer) {
 
           for (i in imageOverlays) {
             mapCtrl.addLayer(imageOverlays[i]);
           }
+          imageUrlBase = RasterService
+                          .rasterInfo(activeTemporalLayer.slug)
+                          .imageUrlBase;
           getImages(scope.timeState.at);
 
         } else {
@@ -546,8 +547,11 @@ app.directive('rain', ["RasterService", "UtilService",
             delete frameLookup[currentDate];
             // Remove old listener
             imageOverlays[previousFrame].off('load');
-            // Add listener to asynchronously update loadingRaster and framelookup
-            addLoadListener(imageOverlays[previousFrame], previousFrame, nxtDate);
+            // Add listener to asynchronously update loadingRaster and
+            // framelookup
+            addLoadListener(imageOverlays[previousFrame],
+                            previousFrame,
+                            nxtDate);
             // We are now waiting for one extra raster
             loadingRaster += 1;
             // Tell the old overlay to go and get a new image.
@@ -559,7 +563,8 @@ app.directive('rain', ["RasterService", "UtilService",
             nxtDate += step;
           } else if (overlayIndex === undefined) {
             if (JS_DEBUG) {
-              console.info("We will have to go get", currentDate, ". Get new images!");
+              console.info("We will have to go get", currentDate,
+                           ". Get new images!");
             }
             if (scope.timeState.animation.playing) {
               restart = true;
@@ -576,7 +581,7 @@ app.directive('rain', ["RasterService", "UtilService",
       scope.$watch('timeState.at', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
         if (!scope.timeState.animation.playing
-          && scope.tools.active === 'rain') {
+            && scope.mapState.getActiveTemporalLayer()) {
           getImages(scope.timeState.at);
           imageOverlays[0].setOpacity(0.7);
           previousFrame = 0;
