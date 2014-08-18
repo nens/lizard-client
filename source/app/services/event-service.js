@@ -94,10 +94,6 @@ app.service("EventService", ["Restangular", "$q",
     angular.forEach(shortData.features, function (feature) {
       feature.event_order = eventOrder;
       feature.properties.color = colors[8][eventOrder];
-      // NOTE: if everything is working this can just be removed
-      // feature.id = eventSeriesId + feature.properties.timestamp_end +
-      //              feature.geometry.coordinates[0] +
-      //              feature.geometry.coordinates[1];
       longData.features.push(feature);
     });
     return {
