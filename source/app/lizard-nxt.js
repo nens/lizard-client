@@ -112,8 +112,8 @@ app.config(function ($locationProvider) {
 
  */
 app.controller("MasterCtrl",
-  ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService", "RasterService",
-   "UtilService", "EventService", "TimeseriesService",
+  ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService",
+   "RasterService", "UtilService", "EventService", "TimeseriesService",
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, TimeseriesService) {
 
@@ -246,25 +246,32 @@ app.controller("MasterCtrl",
     switch (layerType) {
 
       case 'base':
-        for (i in this.layers)
-          if (this.layers[i].baselayer && !this.layers[i].temporal)
+        for (i in this.layers) {
+          if (this.layers[i].baselayer && !this.layers[i].temporal) {
             result.push(this.layers[i]);
+          }
+        }
         break;
 
       case 'over':
-        for (i in this.layers)
-          if (!(this.layers[i].baselayer || this.layers[i].temporal))
+        for (i in this.layers) {
+          if (!(this.layers[i].baselayer || this.layers[i].temporal)) {
             result.push(this.layers[i]);
+          }
+        }
         break;
 
       case 'temporal':
-        for (i in this.layers)
-          if (this.layers[i].temporal)
+        for (i in this.layers) {
+          if (this.layers[i].temporal) {
             result.push(this.layers[i]);
+          }
+        }
         break;
 
       default:
-        console.log('EXCEPTION-esque: tried to call getLayersByType() with unknown arggument "' + layerType + '"');
+        console.log('EXCEPTION-esque: tried to call getLayersByType() ' +
+                    'with unknown arggument "' + layerType + '"');
     }
 
     return result;
