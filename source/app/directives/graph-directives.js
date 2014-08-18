@@ -47,7 +47,7 @@ angular.module('graph')
 
     this.createCanvas =  function (legend, element) {
 
-      var isCartesianPlane = element.attr("class").indexOf("xyGraph") !== -1;
+      var isXyGraph = element.attr("class").indexOf("xyGraph") !== -1;
       var margin = {
           top: 20,
           right: 10,
@@ -71,7 +71,7 @@ angular.module('graph')
         .html("")
         .append("svg:svg")
         .attr('width', maxwidth)
-        .attr('height', maxheight + (isCartesianPlane ? 40 : 25))
+        .attr('height', maxheight + (isXyGraph ? 40 : 25))
         .append("svg:g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
