@@ -242,14 +242,17 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       }
     });
 
+
     /**
      * Add click listener when raster animation is on.
      *
      * TODO: this is still hard coded to rain: setIntensityData
      */
-    scope.$watch('tools.active', function (n, o) {
+    scope.$watch('mapState.activeLayersChanged', function (n ,o) {
+
       if (n === o) { return true; }
       if (scope.mapState.getActiveTemporalLayer()) {
+        getTemporalRasterData();
         timeline.addClickListener();
       } else {
         timeline.removeClickListener();
@@ -257,6 +260,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
         scope.raster.changed = Date.now();
       }
     });
+
 
     /**
      * Get aggregate data for current temporal raster.

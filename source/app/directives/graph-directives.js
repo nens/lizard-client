@@ -46,6 +46,8 @@ angular.module('graph')
 
 
     this.createCanvas =  function (legend, element) {
+
+      var isXyGraph = element.attr("class").indexOf("xyGraph") !== -1;
       var margin = {
           top: 20,
           right: 10,
@@ -69,7 +71,7 @@ angular.module('graph')
         .html("")
         .append("svg:svg")
         .attr('width', maxwidth)
-        .attr('height', maxheight + 25)
+        .attr('height', maxheight + (isXyGraph ? 40 : 25))
         .append("svg:g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -333,6 +335,7 @@ angular.module('graph')
      * @returns {object}       graph object
      */
     graphCtrl.callChart = function (data, element, legend) {
+
       var graph = graphCtrl.createCanvas(legend, element);
       var svg = graph.svg,
           height = graph.height,
@@ -678,6 +681,7 @@ angular.module('graph')
   .directive('line', function () {
     var link  = function (scope, element, attrs, graphCtrl) {
       graphCtrl.callChart = function (timeseries, element, legend) {
+
         var graph = graphCtrl.createCanvas(legend, element);
         var svg = graph.svg,
             height = graph.height,

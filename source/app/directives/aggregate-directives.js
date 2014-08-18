@@ -66,9 +66,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
         highlightEvents(id);
 
         var setEventOnPoint = function () {
-          if (scope.box.type === 'pointObject') {
-            scope.mapState.here = here;
-          } else {
+          if (scope.box.type !== 'pointObject') {
             scope.box.type = 'pointObject';
             scope.mapState.here = here;
           }
@@ -151,7 +149,6 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
             ext: 'd3',
             name: 'events',
             selectorPrefix: 'm',
-            idExtractor: idExtractor,
             class: 'circle event'
           });
         }
