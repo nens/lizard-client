@@ -149,7 +149,6 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
             ext: 'd3',
             name: 'events',
             selectorPrefix: 'm',
-            // idExtractor: idExtractor,
             class: 'circle event'
           });
         }
