@@ -51,7 +51,7 @@ app.factory("Timeline", [ function () {
   /**
    * @constructor
    * @memberOf app.TimeLineService
-   * 
+   *
    * @param {object} element svg element for the timeline.
    * @param {object} dimensions object containing, width, height, height per
    *  line of events, height per line of bars and an object containing top,
@@ -59,7 +59,7 @@ app.factory("Timeline", [ function () {
    * @param {integer} start begin value in milliseconds from epoch.
    * @param {integer} end end value in milliseconds from epoch.
    * @param {object} interaction  optional object containing callback functions
-   *  for zoom, click and brush interaction with the rest of the app. 
+   *  for zoom, click and brush interaction with the rest of the app.
    */
   function Timeline(element, dimensions, start, end, interaction) {
     this.dimensions = angular.copy(dimensions);
@@ -181,7 +181,7 @@ app.factory("Timeline", [ function () {
      * updates canvas,
      * updates all elements,
      * redraws the axis.
-     * 
+     *
      * @param {object} dimensions object containing, width, height, height per
      *  line of events, height per line of bars and an object containing top,
      *  bottom, left and right padding. All values in px.
@@ -197,7 +197,7 @@ app.factory("Timeline", [ function () {
 
     /**
      * Update all elements to accomadate new dimensions.
-     * 
+     *
      * @param  {object} oldDimensions copy of the old dimensions
      */
     updateElements: function (oldDimensions) {
@@ -241,7 +241,7 @@ app.factory("Timeline", [ function () {
     /**
      * Updates, adds or removes all circles in the data object
      *
-     * @param {array} data array of objects [{properties.timestamp: timestamp, 
+     * @param {array} data array of objects [{properties.timestamp: timestamp,
      *                                        id: <id>,
      *                                        color: <color code>,
      *                                        geometry.coordinates: [lat, lon],
@@ -259,9 +259,9 @@ app.factory("Timeline", [ function () {
 
     /**
      * Updates, adds or removes all lines in the data object
-     * 
-     * @param {array} data array of objects [{properties.timestamp_end: timestamp, 
-     *                                        properties.timestamp_start: timestamp, 
+     *
+     * @param {array} data array of objects [{properties.timestamp_end: timestamp,
+     *                                        properties.timestamp_start: timestamp,
      *                                        id: <id>,
      *                                        color: <color code>,
      *                                        geometry.coordinates: [lat, lon],
@@ -303,10 +303,10 @@ app.factory("Timeline", [ function () {
     },
 
     /**
-     * Takes a leaflet bounds object and filters all circles whether their 
+     * Takes a leaflet bounds object and filters all circles whether their
      * geographic location falls within the bounds. Candidate to be refactored,
      * since this service is specific to events.
-     * 
+     *
      * @param {object} bounds to filter events with
      */
     drawEventsContainedInBounds: function (bounds) {
@@ -328,7 +328,7 @@ app.factory("Timeline", [ function () {
     /**
      * Update domain of scale and call functions to update timeline to new
      * scale.
-     * 
+     *
      * @param  {int} start in ms since epoch
      * @param  {int} end   in ms since epoch
      */
@@ -365,7 +365,7 @@ app.factory("Timeline", [ function () {
 
   /**
    * Creates groups according to dimensions to accomadete all timeline elements,
-   * 
+   *
    * @param  {object} svg element to create timeline.
    * @param  {object} dimensions object containing, width, height, height per
    *  line of events, height per line of bars and an object containing top,
@@ -410,7 +410,7 @@ app.factory("Timeline", [ function () {
   };
 
   /**
-   * Updates the timeline svg. With a delay when getting smaller, without when 
+   * Updates the timeline svg. With a delay when getting smaller, without when
    * becoming larger.
    */
   var updateCanvas = function (svg, oldDims, newDims) {
@@ -454,7 +454,7 @@ app.factory("Timeline", [ function () {
   /**
    * Create function that updates all elements to zoom action and calls zoomFn.
    *
-   * Put all scope specific in the zoom callback from the directive, all the 
+   * Put all scope specific in the zoom callback from the directive, all the
    * standard (re-)placement of elements in here.
    */
   var setZoomFunction = function (svg, dimensions, xScale, xAxis, zoomFn) {
@@ -514,7 +514,7 @@ app.factory("Timeline", [ function () {
   };
 
   /**
-   * Create brush function that does all the brush selection and call the 
+   * Create brush function that does all the brush selection and call the
    * callback.
    */
   var setBrushFunction = function (xScale, brushFn) {
@@ -591,7 +591,7 @@ app.factory("Timeline", [ function () {
   };
 
   /**
-   * Updates horizontal position of circles. To update height, get the data and 
+   * Updates horizontal position of circles. To update height, get the data and
    * call drawCircles.
    */
   var updateCircleElements = function (circles, xScale) {
@@ -605,7 +605,7 @@ app.factory("Timeline", [ function () {
   };
 
   /**
-   * Moves rectangle elements to right position relative to the timeline svg 
+   * Moves rectangle elements to right position relative to the timeline svg
    * and xaxis. Everything to the svg is relative to the top left corner, so if
    * the timeline grows, the bars need to move further down. The amount is
    * computed from the difference between the old and new dimensions and the
@@ -679,7 +679,7 @@ app.factory("Timeline", [ function () {
     var xFunction = function (d) { return xScale(d.properties.timestamp_end); };
     var yFunction = function (d) { return yScale(d.event_order); };
     var colorFunction = function (d) { return d.properties.color; };
-    
+
     // DATA JOIN
     // Join new data with old elements, based on the id value.
     circles = svg.select('g').select('#circle-group').selectAll("circle")
@@ -744,14 +744,14 @@ app.factory("Timeline", [ function () {
       return path;
     };
     var initialDFunction = function (d) {
-      // Draws a mimimal line from end to just next to the end to create a 
+      // Draws a mimimal line from end to just next to the end to create a
       // circle + 0.5 is to prevent flickering in browsers when transitioning
       var path =
         "M " + xOneFunction(d) + " " + yFunction(d)
         + " L " + (xOneFunction(d) + 0.5) + " " + yFunction(d);
       return path;
     };
-    
+
     if (data) {
       // DATA JOIN
       // Join new data with old elements, based on the id value.
@@ -880,7 +880,7 @@ app.factory("Timeline", [ function () {
    * Returns a d3 scale.
    */
   var makeScale = function (minMax, range, options) {
-    // Instantiate a d3 scale based on min max and 
+    // Instantiate a d3 scale based on min max and
     // width and height of plot
     var scale;
     if (options.type === 'time') {
@@ -907,7 +907,7 @@ app.factory("Timeline", [ function () {
 
   /**
    * Returns a d3 scale to place events vertically in lines above each other.
-   * 
+   *
    * @param  {int} iniH initial height of the timeline in px.
    * @param  {object} dims current dimensions of the timeline.
    */

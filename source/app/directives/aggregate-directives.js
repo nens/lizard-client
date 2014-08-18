@@ -208,15 +208,16 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
             var s = [start, end];
             var time = d.properties.timestamp_end;
             var contained = s[0] <= time && time <= s[1];
+
             // Some book keeping to count
             d.inTempExtent = contained;
             return !!contained;
           });
         var selected = d3.selectAll(".circle.selected");
         selected.classed("hidden", false);
-        EventService.countCurrentEvents(scope.mapState.eventTypes,
-                                        scope.events);
+        EventService.countCurrentEvents(scope);
       };
+
 
       /**
        * Watch that is fired when the timeState has changed
@@ -227,15 +228,13 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
       scope.$watch('timeState.changedZoom', function (n, o) {
         if (n === o) { return true; }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
-        EventService.countCurrentEvents(scope.mapState.eventTypes,
-                                        scope.events);
+        EventService.countCurrentEvents(scope);
       });
 
       scope.$watch('events.changed', function (n, o) {
         if (n === o) { return true; }
         drawTimeEvents(scope.timeState.start, scope.timeState.end);
-        EventService.countCurrentEvents(scope.mapState.eventTypes,
-                                        scope.events);
+        EventService.countCurrentEvents(scope);
       });
 
       /**
@@ -245,11 +244,15 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
        * and to count currently visible events
        */
       scope.$watch('timeState.at', function () {
+
         if (scope.timeState.animation.enabled) {
-          drawTimeEvents(scope.timeState.animation.start,
-                         scope.timeState.at);
-          EventService.countCurrentEvents(scope.mapState.eventTypes,
-                                          scope.events);
+
+          drawTimeEvents(
+            scope.timeState.animation.start,
+            scope.timeState.at
+          );
+
+          EventService.countCurrentEvents(scope);
         }
       });
 
