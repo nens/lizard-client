@@ -134,7 +134,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       var data = scope.events.data.features;
       timeline.drawLines(data);
       timeline.drawEventsContainedInBounds(scope.mapState.bounds);
-      EventService.countCurrentEvents(scope.mapState.eventTypes, scope.events);
+      EventService.countCurrentEvents(scope);
     });
 
     /**
@@ -177,8 +177,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       if (n === o) { return true; }
       if (scope.events.data.features.length > 0) {
         timeline.drawEventsContainedInBounds(scope.mapState.bounds);
-        EventService.countCurrentEvents(
-          scope.mapState.eventTypes, scope.events);
+        EventService.countCurrentEvents(scope);
         getTemporalRasterData();
       }
     });
@@ -271,17 +270,20 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       var stop = scope.timeState.end;
       var bounds = scope.mapState.bounds;
       var activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
-      // width of timeline
-      var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
-      RasterService.getTemporalRaster(new Date(start),
-                                      new Date(stop),
-                                      bounds,
-                                      aggWindow,
-                                      activeTemporalLayer.slug)
-      .then(function (response) {
-        RasterService.setIntensityData(response);
-        scope.raster.changed = Date.now();
-      });
+
+      if (!!activeTemporalLayer) {
+        // width of timeline
+        var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
+        RasterService.getTemporalRaster(new Date(start),
+                                        new Date(stop),
+                                        bounds,
+                                        aggWindow,
+                                        activeTemporalLayer.slug)
+        .then(function (response) {
+          RasterService.setIntensityData(response);
+          scope.raster.changed = Date.now();
+        });
+      }
     };
 
     if (scope.mapState.getActiveTemporalLayer()) { getTemporalRasterData(); }
