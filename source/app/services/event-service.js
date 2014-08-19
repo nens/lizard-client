@@ -45,7 +45,7 @@ app.service("EventService", ["Restangular", "$q",
    * currently on the map at inTempExtent attribute. This function sums it all
    * up.
    *
-   * @param {object} An Angular scope
+   * @param {object} An Angular scope with mapState.bounds, timeState.start, timeState.end, mapState.eventTypes
    * @returns {void}
    */
   var countCurrentEvents = function (scope) {
