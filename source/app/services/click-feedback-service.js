@@ -95,8 +95,10 @@ app.service("ClickFeedbackService", ["$rootScope",
         var self = this;
 
         clearInterval(this._vibration);
+
         this._vibration = setInterval(function () {
           self._selection.select("path")
+            .classed("vibrator", true)
             .attr("stroke-width", 15)
             .transition().duration(200)
             .attr("stroke-width", 20)
@@ -108,6 +110,7 @@ app.service("ClickFeedbackService", ["$rootScope",
       this.stopVibration = function () {
         clearInterval(this._vibration);
         this._selection.select("path")
+          .classed("vibrator", true)
           .attr("stroke-width", 15)
           .transition().duration(200)
           .attr("stroke-width", 20)
@@ -118,10 +121,13 @@ app.service("ClickFeedbackService", ["$rootScope",
           .attr("stroke-opacity", 0);
       };
 
+
       this.drawObject = function (entityName, map) {
+
         var selection = this._getSelection(this.clickLayer);
         this._circleMarker.setRadius(11);
         selection.select("path")
+          .classed("vibrator", true)
           .attr("stroke", "#1abc9c")
           .transition().duration(150)
           .attr("stroke-width", 20)
@@ -192,6 +198,10 @@ app.service("ClickFeedbackService", ["$rootScope",
       ctrl.emptyClickLayer(map);
     };
 
+    killVibratingFeature = function () {
+      d3.selectAll('.vibrator').remove();
+    };
+
     /**
      * Draws visible feedback on the map after a click.
      *
@@ -259,6 +269,7 @@ app.service("ClickFeedbackService", ["$rootScope",
       drawGeometry: drawGeometry,
       drawClickInSpace: drawClickInSpace,
       stopVibration: stopVibration,
+      killVibratingFeature: killVibratingFeature,
       drawLine: drawLine
     };
   }

@@ -16,7 +16,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
 
       // declaring all local vars for current scope:
       var getEventColor, eventClickHandler, getFeatureSelection, matchLocation,
-          idExtractor, createEventLayer, d3eventLayer, highlightEvents;
+          idExtractor, createEventLayer, d3eventLayer, _highlightEvents;
 
       /**
        * Get color from feature.
@@ -31,7 +31,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
        * Highlights and unhighlights data points
        * @param  {string} - String with id that should be highlighted
        */
-      highlightEvents = function (id) {
+      _highlightEvents = function (id) {
         // unhighlight events
         d3.selectAll(".circle.event")
           .attr("fill", getEventColor);
@@ -52,6 +52,9 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
        */
       eventClickHandler = function (d) {
         var id, here, features, f;
+
+        console.log('clicked event(s)!');
+
         features = matchLocation(d, d3eventLayer._data.features);
         id = this.options.selectorPrefix + this._idExtractor(d);
         here = new L.LatLng(d.geometry.coordinates[1],
@@ -63,7 +66,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
           }
         };
 
-        highlightEvents(id);
+        _highlightEvents(id);
 
         var setEventOnPoint = function () {
           if (scope.box.type !== 'pointObject') {
@@ -77,8 +80,8 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
         } else {
           setEventOnPoint();
         }
-        $rootScope.$broadcast('newPointObject', eventDatastuff);
 
+        $rootScope.$broadcast('newPointObject', eventDatastuff);
       };
 
       /**
