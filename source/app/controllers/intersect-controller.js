@@ -14,7 +14,7 @@ app.controller("IntersectCtrl", [
      */
     $scope.lineIntersect = {};
 
-    var firstClick, secondClick, updateExtentAgg, putDataOnscope, dataConvertToMeters,
+    var firstClick, secondClick, updateLineIntersect, putDataOnscope, dataConvertToMeters,
         degToMeters, metersToDegs, removeDataFromScope, _updateLineIntersect;
 
     /**
@@ -28,7 +28,7 @@ app.controller("IntersectCtrl", [
      * @param  {object} lineIntersect   lineIntersect object of this
      *                                  ctrl
      */
-    updateExtentAgg = function (line, layers, lineIntersect) {
+    updateLineIntersect = function (line, layers, lineIntersect) {
       angular.forEach(layers, function (layer, slug) {
         if (layer.active
           && layer.store_path
@@ -72,30 +72,30 @@ app.controller("IntersectCtrl", [
      */
     dataConvertToMeters = function (data) {
       for (var i = 0; data.length > i; i++) {
-        data[i][0] = degToMeters(data[i][0]); 
+        data[i][0] = degToMeters(data[i][0]);
       }
       return data;
     };
 
     /**
-     * Takes degrees converts to radians 
+     * Takes degrees converts to radians
      * and then converts to "haversine km's approximation" and then to meters
-     * @param  {float} degrees 
+     * @param  {float} degrees
      * @return {float} meters
      */
     degToMeters = function (degrees) {
       return  (degrees * Math.PI) / 180 * 6371 * 1000;
-    }
+    };
 
     /**
-     * Takes meters converts to radians 
+     * Takes meters converts to radians
      * and then converts degrees
-     * @param  {float} meters 
+     * @param  {float} meters
      * @return {float} degrees
      */
     metersToDegs = function (meters) {
       return (meters / 1000 / 6371) * 180 / Math.PI;
-    }
+    };
 
     removeDataFromScope = function (slug) {
       delete $scope.lineIntersect[slug];
@@ -120,7 +120,7 @@ app.controller("IntersectCtrl", [
         secondClick.lat,
         ")"
       ].join('');
-      updateExtentAgg(
+      updateLineIntersect(
         line,
         $scope.mapState.layers,
         $scope.lineIntersect
