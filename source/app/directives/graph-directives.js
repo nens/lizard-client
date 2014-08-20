@@ -207,7 +207,7 @@ angular.module('graph')
         yAxis = this.makeAxis(y.scale, {orientation: "left"});
       }
       svg.append("svg:g")
-        .attr("class", "x axis")
+        .attr("class", "x-axis x axis")
         .attr("transform", "translate(0, " + options.height + ")")
         .call(xAxis)
         .selectAll("text")
@@ -810,6 +810,7 @@ angular.module('graph')
           height: height,
           width: width,
           x: x,
+          y: y,
           keys: keys,
         };
       };
@@ -824,22 +825,34 @@ angular.module('graph')
       graphCtrl.drawFeatures = function (data, graph, legend) {
         var svg = graph.svg,
         g = graph.g,
-        x = graph.x,
         keys = graph.keys,
         height = graph.height,
+        y = graph.y,
+        x = graph.x,
         width = graph.width;
+        var rescaleY = false;
+        var rescaleX = false;
 
-        var y = graphCtrl.maxMin(data, keys.y);
-        y.scale = graphCtrl.scale(y.min, y.max, {
-          range: [height, 0]
-        });
+        var yN = graphCtrl.maxMin(data, '1');
+        if (yN.max > y.max || yN.max < (0.5 * y.max)) {
+          rescaleY = true;
+          y = yN;
+          y.scale = graphCtrl.scale(0, y.max, {
+            range: [height, 0]
+          });
+          graph.y = y;
+        }
 
-        var x = {};
-        x = graphCtrl.maxMin(data, keys.x);
-        x.scale = graphCtrl.scale(x.min, x.max, {
-          range: [0, width]
-        });
-        x.tickFormat = "";
+        var xN = {};
+        xN = graphCtrl.maxMin(data, keys.x);
+        if (xN.max !== x.max || xN.min !== x.min) {
+          rescaleX = true;
+          x = xN;
+          x.scale = graphCtrl.scale(0, x.max, {
+            range: [0, width]
+          });
+          x.tickFormat = "";
+        }
 
         var line = d3.svg.line().interpolate('basis')
           .y(function (d) {
@@ -850,25 +863,33 @@ angular.module('graph')
           });
         line.defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
 
-        var yN = graphCtrl.maxMin(data, '1');
-        if (yN.max > y.max || yN.max < (0.5 * y.max)) {
-          y = yN;
-          y.scale = graphCtrl.scale(y.min, y.max, {
-            range: [graph.height, 0]
-          });
-          graph.y = y;
-        }
-
-        var rescale = function () {
+        var reYScale = function () {
           var yAxis = graphCtrl.makeAxis(y.scale, {orientation: 'left'});
           svg.select('.y-axis')
             .transition()
-            .duration(800)
+            .duration(300)
             .ease("sin-in-out")
             .call(yAxis)
             .selectAll("text")
               .style("text-anchor", "end")
               .attr('class', 'graph-text');
+        };
+
+        var reXScale = function () {
+          var xAxis = graphCtrl.makeAxis(x.scale, {orientation: 'bottom'});
+          svg.select('.x-axis')
+            .transition()
+            .duration(300)
+            .ease("sin-in-out")
+            .call(xAxis)
+            .selectAll("text")
+              .style("text-anchor", "end")
+              .attr('class', 'graph-text')
+              .attr("dx", "-.8em")
+              .attr("dy", ".15em")
+              .attr("transform", function (d) {
+                return "rotate(-45)";
+              });
         };
 
         if (legend.yLabel) {
@@ -877,11 +898,14 @@ angular.module('graph')
             .text(legend.yLabel);
         }
 
-        g.select("path")
-          .datum(data)
-          .transition()
-          .duration(300)
+        var path = g.select("path").datum(data);
+
+        path.transition()
+          .duration(1000)
           .attr("d", line);
+
+        if (rescaleY) { reYScale(); }
+        if (rescaleX) { reXScale(); }
 
         return graph;
       };
