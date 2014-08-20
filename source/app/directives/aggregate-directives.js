@@ -189,6 +189,32 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
       };
 
       /**
+       * Count overlapping locations.
+       *
+       * Adds a lat + lon key to overlapLocations if not defined and sets
+       * counter to 1. If key exists adds +1 to counter. Returns counter for
+       * current key.
+       *
+       * TODO: this code is duplicate from lib/Layer.GeoJSONd3.js. Refactor so
+       * everything is done with enter, update and exit selections of d3.
+       *
+       * @parameter {object} d D3 data object, should have  a geometry property
+       * @returns {integer} Count for current key
+       *
+       */
+      var _countOverlapLocations = function (overlapLocations, d) {
+        var key = "x:" + d.geometry.coordinates[0] +
+                  "y:" + d.geometry.coordinates[1];
+        var coord = overlapLocations[key];
+        if (coord === undefined) {
+          overlapLocations[key] = 1;
+        } else {
+          overlapLocations[key] += 1;
+        }
+        return overlapLocations[key];
+      };
+
+      /**
        * Draw events based on current temporal extent
        *
        * Hide all elements and then unhides when within the given start
@@ -211,7 +237,20 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
             return !!contained;
           });
         var selected = d3.selectAll(".circle.selected");
+
+        // hack to update radius of event circles on brush move
+        // duplicate code with Layer.GeoJSONd3.js
+        // TODO: refactor this code into above fill for update of d3 selection
+        var overlapLocations = {};
         selected.classed("hidden", false);
+        selected
+          .attr("r", function (d) {
+            var radius, overlaps;
+            overlaps = _countOverlapLocations(overlapLocations, d);
+            // logarithmic scaling with a minimum radius of 6
+            radius = 6 + (5 * Math.log(overlaps));
+            return radius;
+          });
         EventService.countCurrentEvents(scope);
       };
 
