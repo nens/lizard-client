@@ -1,25 +1,26 @@
 /**
- * ===========
- * Map-Service
- * ===========
- * 
- * Map service encapsulates all kinds of helper functions
+ * @ngdoc service
+ * @class MapService
+ * @memberof app
+ * @name MapService
+ * @requires LeafletService
+ * @summary Wraps stuff around Leaflet Map objects
+ * @description  Map service encapsulates all kinds of helper functions
  * for the map-directive. A wrapper of sorts for Leaflet stuff, 
  * the map object and mapState.
  *
- *
- * 
  */
-
 app.service('MapService', ['LeafletService', function (LeafletService) {
   var _map, createLayer, _initiateTMSLayer, _initiateWMSLayer,
       _initiateAssetLayer,
       addLayer, removeLayer, createMap;
 
   /**
-   * Creates a Leaflet map based on idString or Element.
+   * @function
+   * @memberof app.MapService
    * @param  {dynamic} mapElem can be string or Element.
    * @return {L.Map}   Leaflet.Map instance
+   * @description Creates a Leaflet map based on idString or Element.
    */
   createMap = function (mapElem) { // String or Element.
     _map = LeafletService.map(mapElem);
@@ -27,9 +28,11 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
   };
 
   /**
-   * Initiates a Leaflet Tilelayer
+   * @function
+   * @memberof app.MapService
    * @param  {object} layer as served from backend
    * @return {L.TileLayer} leafletLayer
+   * @description Initiates a Leaflet Tilelayer
    */
   _initiateTMSLayer = function (nonLeafLayer) {
     var layer = LeafletService.tileLayer(
@@ -47,9 +50,11 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
   };
 
   /**
-   * Initiates a Leaflet WMS layer
+   * @function
+   * @memberof app.MapService
    * @param  {object} nonLeafLayer as served from backend
    * @return {L.TileLayer.WMS}              [description]
+   * @description Initiates a Leaflet WMS layer
    */
   _initiateWMSLayer = function (nonLeafLayer) {
     var layer, _options;
@@ -74,12 +79,13 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
   };
 
   /**
-   * Initiates layers that deliver interaction with the map
-   * 
+   * @function
+   * @memberof app.MapService
    * @param  {object} nonLeafLayer as served from backend
    * @return {L.UtfGrid} utfgrid 
+   * @description Initiates layers that deliver interaction with the map
    */
-  _initiateAssetLayer = function (nonLeafLayer) {
+  _initiateGridLayer = function (nonLeafLayer) {
     var layer = new LeafletService.UtfGrid(nonLeafLayer, {
       ext: 'grid',
       slug: nonLeafLayer.slug,
@@ -96,25 +102,31 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
   }
 
   /**
-   * Throw in a layer as served from the backend
-   * 
+   * @function
+   * @memberof app.MapService
    * @param  {object} nonLeafLayer object from database
-   * @return {L.Class} Leaflet Layer type.
+   * @description Throw in a layer as served from the backend
    */
   createLayer = function (nonLeafLayer) {
     switch (nonLeafLayer.type){
     case ('TMS'):
-      return _initiateTMSLayer(nonLeafLayer);
+      _initiateTMSLayer(nonLeafLayer);
+      break;
     case ('WMS'):
-      return _initiateWMSLayer(nonLeafLayer);
+      _initiateWMSLayer(nonLeafLayer);
+      break;
     case ('ASSET'):
-      return _initiateAssetLayer(nonLeafLayer);
+      _initiateTMSLayer(nonLeafLayer);
+      _initiateGridLayer(nonLeafLayer);
+      break;
     }
   };
 
   /**
-   * Adds layer to map
+   * @function
+   * @memberof app.MapService
    * @param {L.Class} Leaflet layer.
+   * @description Adds layer to map
    */
   addLayer = function (layer) { // Leaflet Layer
     if (layer instanceof L.Class) {
@@ -123,8 +135,10 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
   };
 
   /**
-   * Removes layer from map
+   * @function
+   * @memberof app.MapService
    * @param  {L.Class} Leaflet layer
+   * @description Removes layer from map
    */
   removeLayer = function (layer) { // Leaflet Layer
     if (_map.hasLayer(layer)) {

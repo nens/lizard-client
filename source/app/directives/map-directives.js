@@ -17,7 +17,7 @@
  *
  */
 
-app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
+app.controller('MapDirCtrl', function ($scope, MapService, $rootScope, $http, $filter) {
 
   var elevationLayer;
   // UTF bookkeeping
@@ -25,60 +25,7 @@ app.controller('MapDirCtrl', function ($scope, $rootScope, $http, $filter) {
       utfLayersOrder = [],
       utfHit = false;
 
-  this.initiateLayer = function (layer) {
-    if (layer.type === "TMS" && layer.baselayer) {
-      layer.leafletLayer = L.tileLayer(layer.url + '.png',
-                                       {name: "Background",
-                                        maxZoom: 19,
-                                        detectRetina: true,
-                                        zIndex: layer.z_index});
-    } else if (layer.type === "WMS" && !layer.temporal) {
-      var options = {
-        layers: layer.slug,
-        format: 'image/png',
-        version: '1.1.1',
-        minZoom: layer.min_zoom,
-        maxZoom: 19,
-        zIndex: layer.z_index
-      };
-      //NOTE ugly hack
-      if (layer.slug === 'landuse') {
-        options.styles = 'landuse';
-      } else if (layer.slug === 'elevation') {
-        options.styles = 'BrBG_r';
-        options.effects = 'shade:0:3';
-      }
-      layer.leafletLayer = L.tileLayer.wms(layer.url, options);
-      //NOTE ugly hack because of ugly hack
-      if (layer.slug === 'elevation') {
-        elevationLayer = layer.leafletLayer;
-      }
-    } else if (layer.type === "ASSET") {
-      if (layer.min_zoom_click !== null) {
-        var leafletLayer = new L.UtfGrid(layer.url, {
-          ext: 'grid',
-          slug: layer.slug,
-          name: layer.slug,
-          useJsonP: false,
-          minZoom: layer.min_zoom_click,
-          maxZoom: 19,
-          order: layer.z_index,
-          zIndex: layer.z_index
-        });
-        layer.grid_layer = leafletLayer;
-      }
-      layer.leafletLayer = L.tileLayer(layer.url, {
-        ext: 'png',
-        slug: layer.slug,
-        name: layer.slug,
-        minZoom: layer.min_zoom,
-        maxZoom: 19,
-        zIndex: layer.z_index
-      });
-    }
-    layer.initiated = true;
-
-  };
+  this.initiateLayer = MapService.createLayer;
 
   /**
    * @summary Rescale elevation raster.
