@@ -18,8 +18,8 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
 
   /**
    * Creates a Leaflet map based on idString or Element.
-   * @param  {string || object} mapElem 
-   * @return {L.Map}            Leaflet.Map instance
+   * @param  {dynamic} mapElem can be string or Element.
+   * @return {L.Map}   Leaflet.Map instance
    */
   createMap = function (mapElem) { // String or Element.
     _map = LeafletService.map(mapElem);
@@ -54,20 +54,20 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
   _initiateWMSLayer = function (nonLeafLayer) {
     var layer, _options;
     _options = {
-        layers: layer.slug,
+        layers: nonLeafLayer.slug,
         format: 'image/png',
         version: '1.1.1',
-        minZoom: layer.min_zoom,
+        minZoom: nonLeafLayer.min_zoom,
         maxZoom: 19,
-        zIndex: layer.z_index
+        zIndex: nonLeafLayer.z_index
       };
     if (nonLeafLayer.slug == 'landuse') {
       _options.styles = 'landuse';
-    } else if (layer.slug == 'elevation') {
+    } else if (nonLeafLayer.slug == 'elevation') {
       _options.styles = 'BrBG_r';
       _options.effects = 'shade:0:3';
     }
-    layer = LeafletService.tileLayer.wms(nonLeafLayer.url, options);
+    layer = LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
     nonLeafLayer.leafletLayer = layer;
     nonLeafLayer.initiated = true;
     return layer;
@@ -118,7 +118,7 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
    */
   addLayer = function (layer) { // Leaflet Layer
     if (layer instanceof L.Class) {
-      _map.addLayer(Layer);
+      _map.addLayer(layer);
     }
   };
 
