@@ -58,20 +58,9 @@ app.directive('map', [
       var southWest = L.latLng(bounds.south, bounds.west);
       var northEast = L.latLng(bounds.north, bounds.east);
       var maxBounds = L.latLngBounds(southWest, northEast);
-      var map = ctrl.createMap(element[0]);
+      var map = MapService.createMap(element[0]);
 
-      scope.mapState.switchLayerOrRescaleElevation = function (layer) {
-
-        if (layer.name === 'Hoogtekaart'
-            && scope.mapState.activeBaselayer === 3) {
-          ctrl.rescaleElevation(scope.mapState.bounds);
-
-        } else {
-          scope.mapState.changeBaselayer(layer);
-        }
-      };
-
-      map.fitBounds(maxBounds);
+      MapService.fitBounds(maxBounds);
       map.attributionControl.addAttribution(osmAttrib);
       map.attributionControl.setPrefix('');
       UtilService.getZoomlevelLabel(map.getZoom());
