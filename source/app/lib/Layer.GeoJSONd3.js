@@ -18,6 +18,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     "maxZoom": 20,
     "minZoom": 10
   },
+
   initialize: function (data, options) {
     this._data = data;
     this.options = L.extend(this.options, options);
@@ -101,6 +102,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
           return classList;
         });
 
+    console.log("referesh data, draw features");
     features
       .attr("fill", function (d) { return d.properties.color; })
       .attr("cx", function (d) {
@@ -120,6 +122,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     features.exit()
         .style("fill-opacity", 1e-6)
         .remove();
+
     if (self.options.applyStyle) {
       self.options.applyStyle.call(this, features);
     }
@@ -142,7 +145,8 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
    *
    */
   countOverlapLocations: function (self, d) {
-      var key = "x:" + d.geometry.coordinates[0] + "y:" + d.geometry.coordinates[1];
+      var key = "x:" + d.geometry.coordinates[0] +
+                "y:" + d.geometry.coordinates[1];
       var coord = self.overlapLocations[key];
       if (coord === undefined) {
         self.overlapLocations[key] = 1;
