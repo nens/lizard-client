@@ -25,7 +25,14 @@ app.controller('MapDirCtrl', function ($scope, MapService, $rootScope, $http, $f
       utfLayersOrder = [],
       utfHit = false;
 
-  this.initiateLayer = MapService.createLayer;
+  // part of the great refactoring
+  this.initiateLayer = function (layer) {
+    MapService.createLayer(layer);
+    if (layer.slug === 'elevation') {
+        elevationLayer = layer.leafletLayer;
+      }
+  }
+
 
   /**
    * @summary Rescale elevation raster.
@@ -50,53 +57,10 @@ app.controller('MapDirCtrl', function ($scope, MapService, $rootScope, $http, $f
     });
   };
 
+  // part of big refactoring
   this.toggleLayer = function (layer, layers, bounds) {
-    if (layer.baselayer) {
-      if (!layer.active) { layer.active = true; }
-      else if (layer.slug === 'elevation') { rescaleElevation(bounds); }
-      turnOffAllOtherBaselayers(layer.id, layers);
-    } else {
-      if (layer.overlayer) {
-        updateOverLayers(layers);
-      }
-      layer.active = !layer.active;
-    }
-
-    if (!layer.active) {
-      $scope.map.removeLayer(layer.leafletLayer);
-      if (layer.grid_layer) {
-        $scope.map.removeLayer(layer.grid_layer);
-      }
-    }
-
-    if (layer.active) {
-      $scope.map.addLayer(layer.leafletLayer);
-      if (layer.grid_layer) {
-        layer.leafletLayer.on('load', function () {
-          // Add the grid layers of the layer when load finished
-          $scope.map.addLayer(layer.grid_layer);
-          layer.grid_layer.on('load', function () {
-            // Broadcast a load finished message to a.o. aggregate-directive
-            $rootScope.$broadcast(layer.slug + 'GridLoaded');
-          });
-        });
-        layer.leafletLayer.on('loading', function () {
-          // Temporarily remove all utfLayers for performance
-          if ($scope.map.hasLayer(layer.grid_layer)) {
-            $scope.map.removeLayer(layer.grid_layer);
-          }
-        });
-      }
-    }
-  };
-
-  var turnOffAllOtherBaselayers = function (id, layers) {
-    angular.forEach(layers, function (i) {
-      if (i.baselayer && i.id !== id && i.active) {
-        i.active = false;
-        $scope.map.removeLayer(i.leafletLayer);
-      }
-    });
+    if (layer.slug === 'elevation') { rescaleElevation(bounds); }
+    MapService.toggleLayer(layer, layers);
   };
 
   /**
@@ -138,29 +102,7 @@ app.controller('MapDirCtrl', function ($scope, MapService, $rootScope, $http, $f
     $scope.map.fitBounds(extent);
   };
 
-  /**
-   * Set box type based on active layer.
-   *
-   * TODO: refactor
-   *
-   * @param {object} activeBaselayer
-   * @param {string} currentType current box type
-   * @return {string} newType new box type
-   *
-   */
-  this.boxType = function (mapState) {
-    var newState = ($scope.box.type === 'profile') ? 'profile' : 'extentAggregate';
-    if (mapState.activeBaselayer === 3) {
-      newState = 'elevation';
-    } else {
-      angular.forEach(mapState.layers, function (layer) {
-        if ((layer.slug === 'landuse') && (layer.active)) {
-          newState = 'landuse';
-        }
-      });
-    }
-    return newState;
-  };
+  this.createMap = MapService.createMap;
 
   return this;
 });
@@ -189,10 +131,7 @@ app.directive('map', [
       var southWest = L.latLng(bounds.south, bounds.west);
       var northEast = L.latLng(bounds.north, bounds.east);
       var maxBounds = L.latLngBounds(southWest, northEast);
-      var map = new L.map(element[0], {
-          zoomControl: false,
-          zoom: 12
-        });
+      var map = ctrl.createMap(element[0]);
 
       scope.mapState.switchLayerOrRescaleElevation = function (layer) {
 

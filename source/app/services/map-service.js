@@ -10,10 +10,11 @@
  * the map object and mapState.
  *
  */
-app.service('MapService', ['LeafletService', function (LeafletService) {
+app.service('MapService', ['$rootScope', 'LeafletService', 
+  function ($rootScope, LeafletService) {
   var _map, createLayer, _initiateTMSLayer, _initiateWMSLayer,
-      _initiateAssetLayer,
-      addLayer, removeLayer, createMap;
+      _initiateAssetLayer, _turnOffAllOtherBaselayers,
+      addLayer, removeLayer, createMap, toggleLayer;
 
   /**
    * @function
@@ -44,9 +45,12 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
         detectRetina: true,
         zIndex: nonLeafLayer.z_index
       });
+    if (!nonLeafLayer.baselayer && nonLeafLayer.type == 'ASSET') {
+      layer._url = nonLeafLayer.url;
+      layer.options.ext = 'png';
+    }
     nonLeafLayer.leafletLayer = layer;
     nonLeafLayer.initiated = true;
-    return layer;
   };
 
   /**
@@ -62,7 +66,7 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
         layers: nonLeafLayer.slug,
         format: 'image/png',
         version: '1.1.1',
-        minZoom: nonLeafLayer.min_zoom,
+        minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom: NaN,
         maxZoom: 19,
         zIndex: nonLeafLayer.z_index
       };
@@ -75,7 +79,6 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
     layer = LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
     nonLeafLayer.leafletLayer = layer;
     nonLeafLayer.initiated = true;
-    return layer;
   };
 
   /**
@@ -86,19 +89,18 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
    * @description Initiates layers that deliver interaction with the map
    */
   _initiateGridLayer = function (nonLeafLayer) {
-    var layer = new LeafletService.UtfGrid(nonLeafLayer, {
+    var layer = new L.UtfGrid(nonLeafLayer.url, {
       ext: 'grid',
       slug: nonLeafLayer.slug,
       name: nonLeafLayer.slug,
       useJsonP: false,
-      minZoom: nonLeafLayer.min_zoom_click,
+      minZoom: (nonLeafLayer.min_zoom_click) ? nonLeafLayer.min_zoom_click : NaN,
       maxZoom: 19,
       order: nonLeafLayer.z_index,
       zIndex: nonLeafLayer.z_index
     });
-    nonLeafLayer.grid_layer = nonLeafLayer;
+    nonLeafLayer.grid_layer = layer;
     nonLeafLayer.initiated = true;
-    return layer;
   }
 
   /**
@@ -116,8 +118,11 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
       _initiateWMSLayer(nonLeafLayer);
       break;
     case ('ASSET'):
-      _initiateTMSLayer(nonLeafLayer);
       _initiateGridLayer(nonLeafLayer);
+      _initiateTMSLayer(nonLeafLayer);
+      break;
+    default:
+      _initiateTMSLayer(nonLeafLayer);
       break;
     }
   };
@@ -131,6 +136,8 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
   addLayer = function (layer) { // Leaflet Layer
     if (layer instanceof L.Class) {
       _map.addLayer(layer);
+    } else {
+      console.warn('layer not of type L.Class', layer);
     }
   };
 
@@ -143,13 +150,67 @@ app.service('MapService', ['LeafletService', function (LeafletService) {
   removeLayer = function (layer) { // Leaflet Layer
     if (_map.hasLayer(layer)) {
       _map.removeLayer(layer);
+    } else if (layer.options.ext !== 'grid'){
+      console.warn('layer not added to the map', layer);
     }
   };
+
+  /**
+   * @function
+   * @description legacy function from map-directive
+   * @param  {string} id     id for layer.
+   * @param  {object} layers 
+   */
+  _turnOffAllOtherBaselayers = function (id, layers) {
+    angular.forEach(layers, function (i) {
+      if (i.baselayer && i.id !== id && i.active) {
+        i.active = false;
+        removeLayer(i.leafletLayer);
+      }
+    });
+  };
+
+  /**
+   * @function
+   * @description legacy function from map-directive
+   * @param  {object} layer  single layer that needs to be toggled
+   * @param  {object} layers all layers to switch off.
+   */
+  toggleLayer = function (layer, layers) {
+    layer.active = !layer.active;
+    if (layer.active) {
+      addLayer(layer.leafletLayer);
+      if (layer.grid_layer) {
+        layer.leafletLayer.on('load', function () {
+          addLayer(layer.grid_layer);
+
+          layer.grid_layer.on('load', function () {
+            // Broadcast a load finished message to a.o. aggregate-directive
+            $rootScope.$broadcast(layer.slug + 'GridLoaded');
+          });
+        });
+        layer.leafletLayer.on('loading', function () {
+          // Temporarily remove all utfLayers for performance
+          removeLayer(layer.grid_layer);
+        });  
+      }
+    } else {
+      removeLayer(layer.leafletLayer);
+      if (layer.grid_layer) {
+        removeLayer(layer.grid_layer);
+      }
+    }
+
+    if (layer.baselayer){
+      _turnOffAllOtherBaselayers(layer.id, layers);
+    }
+  }
 
   return {
     createMap: createMap,
     createLayer: createLayer,
     addLayer: addLayer,
-    removeLayer: removeLayer
+    removeLayer: removeLayer,
+    toggleLayer: toggleLayer
   } 
 }]);
