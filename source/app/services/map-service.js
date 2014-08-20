@@ -10,10 +10,11 @@
  * the map object and mapState.
  *
  */
-app.service('MapService', ['$rootScope', 'LeafletService', 
-  function ($rootScope, LeafletService) {
+app.service('MapService', ['$rootScope', '$filter', '$http', 'LeafletService', 
+  function ($rootScope, $filter, $http, LeafletService) {
   var _map, createLayer, _initiateTMSLayer, _initiateWMSLayer,
-      _initiateAssetLayer, _turnOffAllOtherBaselayers,
+      _initiateAssetLayer, _turnOffAllOtherBaselayers, _rescaleElevation,
+      setView, fitBounds, _updateOverLayers, mapState,
       addLayer, removeLayer, createMap, toggleLayer;
 
   /**
@@ -24,7 +25,10 @@ app.service('MapService', ['$rootScope', 'LeafletService',
    * @description Creates a Leaflet map based on idString or Element.
    */
   createMap = function (mapElem) { // String or Element.
-    _map = LeafletService.map(mapElem);
+    _map = LeafletService.map(mapElem, {
+      zoomControl: false,
+      zoom: 12
+    });
     return _map;
   };
 
@@ -151,7 +155,7 @@ app.service('MapService', ['$rootScope', 'LeafletService',
     if (_map.hasLayer(layer)) {
       _map.removeLayer(layer);
     } else if (layer.options.ext !== 'grid'){
-      console.warn('layer not added to the map', layer);
+      // console.warn('layer not added to the map', layer);
     }
   };
 
@@ -170,6 +174,37 @@ app.service('MapService', ['$rootScope', 'LeafletService',
     });
   };
 
+  _updateOverLayers = function (layers) {
+    var numLayers = 1;
+    angular.forEach(layers, function (layer) {
+      if ((layer.overlayer === true) && (layer.active)) {
+        numLayers++;
+      }
+    });
+    angular.forEach($filter('orderBy')(layers, 'z_index', true), function (layer) {
+      if ((layer.overlayer === true) && (layer.active)) {
+        layer.leafletLayer.setOpacity(1 / numLayers);
+        numLayers--;
+      }
+    });
+  };
+
+  _rescaleElevation = function () {
+    var url, bounds, limits, styles;
+    bounds = _map.getBounds();
+    // Make request to raster to get min and max of current bounds
+    url = 'https://raster.lizard.net/wms' +
+              '?request=getlimits&layers=elevation' +
+              '&width=16&height=16&srs=epsg:4326&bbox=' +
+              bounds.toBBoxString();
+    $http.get(url).success(function (data) {
+      limits = ':' + data[0][0] + ':' + data[0][1];
+      styles = 'BrBG_r' + limits;
+      layers.elevation.leafletLayer.setParams({styles: styles}, true);
+      layers.elevation.leafletLayer.redraw();
+    });
+  };
+
   /**
    * @function
    * @description legacy function from map-directive
@@ -177,7 +212,16 @@ app.service('MapService', ['$rootScope', 'LeafletService',
    * @param  {object} layers all layers to switch off.
    */
   toggleLayer = function (layer, layers) {
-    layer.active = !layer.active;
+    if (layer.baselayer){
+      _turnOffAllOtherBaselayers(layer.id, layers);
+      if (!layer.active) { layer.active = true; }
+      else if (layer.slug == 'elevation' && layer.active) {
+        _rescaleElevation()
+      }
+    } else {
+      layer.active = !layer.active;
+    }
+
     if (layer.active) {
       addLayer(layer.leafletLayer);
       if (layer.grid_layer) {
@@ -201,9 +245,29 @@ app.service('MapService', ['$rootScope', 'LeafletService',
       }
     }
 
-    if (layer.baselayer){
-      _turnOffAllOtherBaselayers(layer.id, layers);
+
+    if (layer.overlayer) {
+      _updateOverLayers(layers);
     }
+  }
+
+  /**
+   * @function
+   * @description sets leaflet View based on panZoom
+   * @param {object} panZoom Hashtable with, lat, lng, zoom
+   */
+  setView = function (panZoom) {
+    _map.setView(new LeafletService.LatLng(
+      panZoom.lat, panZoom.lng), panZoom.zoom);
+  }
+
+  /**
+   * @function
+   * @description fits leaflet to extent
+   * @param  {array} extent Array with NW, NE, SW,SE
+   */
+  fitBounds = function (extent) {
+    _map.fitBounds(extent);
   }
 
   return {
@@ -211,6 +275,9 @@ app.service('MapService', ['$rootScope', 'LeafletService',
     createLayer: createLayer,
     addLayer: addLayer,
     removeLayer: removeLayer,
-    toggleLayer: toggleLayer
+    toggleLayer: toggleLayer,
+    setView: setView,
+    fitBounds: fitBounds,
+    mapState: mapState
   } 
 }]);

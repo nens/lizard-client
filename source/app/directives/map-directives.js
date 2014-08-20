@@ -19,90 +19,15 @@
 
 app.controller('MapDirCtrl', function ($scope, MapService, $rootScope, $http, $filter) {
 
-  var elevationLayer;
-  // UTF bookkeeping
-  var lowestUTFLayer,
-      utfLayersOrder = [],
-      utfHit = false;
-
   // part of the great refactoring
-  this.initiateLayer = function (layer) {
-    MapService.createLayer(layer);
-    if (layer.slug === 'elevation') {
-        elevationLayer = layer.leafletLayer;
-      }
-  }
-
-
-  /**
-   * @summary Rescale elevation raster.
-   *
-   * @desc Makes a request to the raster server with the current bounds
-   * Gets a new scale limit and refreshes the layer.
-   *
-   * @param {object} bounds contains the corners of the current map view.
-   */
-  var rescaleElevation = function (bounds) {
-
-    // Make request to raster to get min and max of current bounds
-    var url = 'https://raster.lizard.net/wms' +
-              '?request=getlimits&layers=elevation' +
-              '&width=16&height=16&srs=epsg:4326&bbox=' +
-              bounds.toBBoxString();
-    $http.get(url).success(function (data) {
-      var limits = ':' + data[0][0] + ':' + data[0][1];
-      var styles = 'BrBG_r' + limits;
-      elevationLayer.setParams({styles: styles}, true);
-      elevationLayer.redraw();
-    });
-  };
-
-  // part of big refactoring
-  this.toggleLayer = function (layer, layers, bounds) {
-    if (layer.slug === 'elevation') { rescaleElevation(bounds); }
-    MapService.toggleLayer(layer, layers);
-  };
-
-  /**
-   * Update overlayer opacities.
-   *
-   * TODO: Remove overlayers
-   */
-  var updateOverLayers = function (layers) {
-    var numLayers = 1;
-    angular.forEach(layers, function (layer) {
-      if ((layer.overlayer === true) && (layer.active)) {
-        numLayers++;
-      }
-    });
-    angular.forEach($filter('orderBy')(layers, 'z_index', true), function (layer) {
-      if ((layer.overlayer === true) && (layer.active)) {
-        layer.leafletLayer.setOpacity(1 / numLayers);
-        numLayers--;
-      }
-    });
-  };
-
-  // Expects a leafletLayer as an argument
-  this.addLayer = function (layer) {
-    $scope.map.addLayer(layer);
-  };
-
-  // Expects a leafletLayer as an argument
-  this.removeLayer = function (layer) {
-    $scope.map.removeLayer(layer);
-  };
-
-  this.panZoomTo = function (panZoom) {
-    $scope.map.setView(new L.LatLng(panZoom.lat, panZoom.lng), panZoom.zoom);
-  };
-
-  this.fitBounds = function (extent) {
-    // extent is in format [[extent[0], extent[1]], [extent[2], extent[3]]]
-    $scope.map.fitBounds(extent);
-  };
-
+  this.initiateLayer = MapService.createLayer;
+  this.toggleLayer = MapService.toggleLayer;
+  this.addLayer = MapService.addLayer;
+  this.removeLayer = MapService.removeLayer
   this.createMap = MapService.createMap;
+  this.panZoomTo = MapService.setView;
+  this.fitBounds = MapService.fitBounds;
+
 
   return this;
 });
@@ -114,12 +39,14 @@ app.directive('map', [
   'UtilService',
   'ClickFeedbackService',
   'RasterService',
+  'MapService',
   function (
     $controller,
     $rootScope,
     UtilService,
     ClickFeedbackService,
-    RasterService
+    RasterService,
+    MapService
     ) {
     var link = function (scope, element, attrs, ctrl) {
       // Leaflet global variable to peed up vector layer,
