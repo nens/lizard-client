@@ -75,15 +75,12 @@ app.controller("IntersectCtrl", [
     var createDataForTimeState = function (data, timeState) {
       var interval = timeState.end - timeState.start;
       var cur = timeState.at - timeState.start;
-      var prog = cur / interval;
-      var i = Math.round(data[0][1].length * prog);
-      console.log(prog, i);
+      var i = Math.round(data[0][1].length * cur / interval);
       var dataForTimeState = [];
       angular.forEach(data, function (value) {
         console.log(value[1][i]);
         dataForTimeState.push([value[0], value[1][i]]);
       });
-      console.log(dataForTimeState);
       return dataForTimeState;
     };
 

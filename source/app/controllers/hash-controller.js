@@ -99,6 +99,19 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
       hashSyncHelper.setHash({'layers': activeSlugs.toString()});
     };
 
+    var setTimeState = function (time, start) {
+      var msTime = Date.parse(time);
+      if (start) {
+        $scope.timeState.start = msTime;
+      } else {
+        $scope.timeState.end = msTime;
+      }
+      $scope.timeState.at = $scope.timeState.start +
+        ($scope.timeState.end - $scope.timeState.start) / 2;
+      $scope.timeState.changeOrigin = 'hash';
+      $scope.timeState.changedZoom = Date.now();
+    };
+
     /**
      * Sets up the hash at creation of the controller.
      */
@@ -157,7 +170,8 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
           for (i = 0; i < allSlugs.length; i++) {
             // check if hash contains layers otherwise set to inactive;
             active = (activeSlugs.indexOf(allSlugs[i]) >= 0);
-            if (active && !$scope.mapState.layers[allSlugs[i]].active) {
+            if ((active && !$scope.mapState.layers[allSlugs[i]].active)
+              || (!active && $scope.mapState.layers[allSlugs[i]].active)) {
               $scope.mapState.changeLayer($scope.mapState.layers[allSlugs[i]]);
             }
           }
@@ -165,12 +179,12 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
 
         startHash = hash.start;
         if (startHash !== undefined) {
-          $scope.timeState.start = Date.parse(startHash);
+          setTimeState(startHash, true);
         }
 
         endHash = hash.end;
         if (endHash !== undefined) {
-          $scope.timeState.end = Date.parse(endHash);
+          setTimeState(endHash, false);
         }
       }
       updateLocationUrl = true;
