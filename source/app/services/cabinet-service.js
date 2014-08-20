@@ -320,6 +320,14 @@ app.service("CabinetService", ["$q", "Restangular",
     }
   };
 
+  /**
+   * Raster resource, last stop to the server
+   * @param  {promise} q             a promise to cancel previous requests
+   *                                 if none is given a local 'abortGet' is used.
+   *                                 At the next request without a promise, the
+   *                                 abortGet is cancelled.
+   * @return {Restangular resource}  a gettable resource
+   */
   var abortGet;
   var rasterResource = function (q) {
     var localPromise = q ? q : abortGet;
