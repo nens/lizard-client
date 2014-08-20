@@ -711,16 +711,8 @@ angular.module('graph')
             }];
           }
         }
-        var y = graphCtrl.maxMin(data, keys.y);
-        y.scale = graphCtrl.scale(y.min, y.max, {
-          range: [height, 0]
-        });
 
-        var line = d3.svg.line().interpolate('basis')
-          .y(function (d) {
-            return y.scale(d[keys.y]);
-          });
-        line.defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
+        var line = d3.svg.line().interpolate('basis');
 
         var x = {};
         if (header[keys.x]
@@ -746,55 +738,19 @@ angular.module('graph')
           });
         }
 
-        // prevent errors
-        if (x === undefined) { return; }
+        var y = graphCtrl.maxMin(data, keys.y);
+        y.scale = graphCtrl.scale(y.min, y.max, {
+          range: [height, 0]
+        });
 
         var xAxis = graphCtrl.makeAxis(x.scale, {
           orientation: "bottom",
           tickFormat: x.tickFormat
         });
+
         var yAxis = graphCtrl.makeAxis(y.scale, {
           orientation: "left"
         });
-
-        var zoomed = function () {
-          // circleTooltip();
-          svg.select(".x.axis").call(graphCtrl.makeAxis(x.scale, {
-            orientation: "bottom",
-            tickFormat: x.tickFormat
-          }));
-          svg.select(".x.grid")
-            .call(graphCtrl.makeAxis(x.scale,  {
-              orientation: "bottom",
-              tickFormat: x.tickFormat
-            })
-            .tickSize(-height, 0, 0)
-            .tickFormat(""));
-          svg.select(".y.axis").call(graphCtrl.makeAxis(y.scale, {orientation: "left"}));
-          svg.select(".y.grid")
-              .call(graphCtrl.makeAxis(y.scale, {orientation: "left"})
-              .tickSize(-width, 0, 0)
-              .tickFormat(""));
-
-          svg.select(".line")
-              .attr("class", "line")
-              .attr("d", line);
-          if (header[keys.x].quantity === 'time') {
-            scope.$apply(function () {
-              // NOTE: maybe with $parent
-              scope.$parent.timeState.start = x.scale.domain()[0].getTime();
-              scope.$parent.timeState.end = x.scale.domain()[1].getTime();
-              scope.$parent.timeState.changeOrigin = 'lineChart';
-              scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
-            });
-          }
-        };
-
-        var zoom = d3.behavior.zoom()
-          .x(x.scale)
-          .on("zoom", zoomed);
-
-        svg.call(zoom);
 
         graphCtrl.drawAxes(svg, x, y, {
           height: height,
@@ -811,34 +767,19 @@ angular.module('graph')
           .attr("x", 0)
           .attr("y", 0)
           .attr("width", 0)
-          .attr("height", height);
-
-        if (scope.$parent.box.type !== 'elevation') {
-          clip
-            .transition()
-            .ease('linear')
-            .duration(1000)
-            .attr("width", width);
-        } else {
-          clip
-            .attr("width", width);
-        }
+          .attr("height", height)
+          .transition()
+          .ease('linear')
+          .duration(1000)
+          .attr("width", width);
 
         var chartBody = svg.append("g")
           .attr("clip-path", "url(#clip)");
 
         chartBody.append("svg:path")
-          .datum(data)
-          .attr("class", "line")
-          .attr("d", line);
+          .attr("class", "line");
 
         if (scope.box.type === 'intersect') {
-
-          zoom = d3.behavior.zoom()
-            .x(x.scale)
-            .on("zoom", null);
-          svg.call(zoom);
-
           // Events do not bubble when with d3.
           // Put listener on body and rect to move bolletje on the line
           // in profile directive
@@ -862,7 +803,89 @@ angular.module('graph')
             });
           });
         }
+
+        return {
+          svg: svg,
+          g: chartBody,
+          height: height,
+          width: width,
+          x: x,
+          keys: keys,
+        };
       };
+
+
+      /**
+       * Draws new features, updates and removes features and rescales graph.
+       *
+       * @param  {object} data  new data object
+       * @param  {object} graph graph object
+       */
+      graphCtrl.drawFeatures = function (data, graph, legend) {
+        var svg = graph.svg,
+        g = graph.g,
+        x = graph.x,
+        keys = graph.keys,
+        height = graph.height,
+        width = graph.width;
+
+        var y = graphCtrl.maxMin(data, keys.y);
+        y.scale = graphCtrl.scale(y.min, y.max, {
+          range: [height, 0]
+        });
+
+        var x = {};
+        x = graphCtrl.maxMin(data, keys.x);
+        x.scale = graphCtrl.scale(x.min, x.max, {
+          range: [0, width]
+        });
+        x.tickFormat = "";
+
+        var line = d3.svg.line().interpolate('basis')
+          .y(function (d) {
+            return y.scale(d[keys.y]);
+          })
+          .x(function (d) {
+            return x.scale(d[keys.x]);
+          });
+        line.defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
+
+        var yN = graphCtrl.maxMin(data, '1');
+        if (yN.max > y.max || yN.max < (0.5 * y.max)) {
+          y = yN;
+          y.scale = graphCtrl.scale(y.min, y.max, {
+            range: [graph.height, 0]
+          });
+          graph.y = y;
+        }
+
+        var rescale = function () {
+          var yAxis = graphCtrl.makeAxis(y.scale, {orientation: 'left'});
+          svg.select('.y-axis')
+            .transition()
+            .duration(800)
+            .ease("sin-in-out")
+            .call(yAxis)
+            .selectAll("text")
+              .style("text-anchor", "end")
+              .attr('class', 'graph-text');
+        };
+
+        if (legend.yLabel) {
+          //Create Y axis label
+          svg.select("#ylabel")
+            .text(legend.yLabel);
+        }
+
+        g.select("path")
+          .datum(data)
+          .transition()
+          .duration(300)
+          .attr("d", line);
+
+        return graph;
+      };
+
     };
 
     return {
