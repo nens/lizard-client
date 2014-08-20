@@ -33,9 +33,12 @@ app.controller("IntersectCtrl", [
         if (layer.active
           && layer.store_path
           && layer.aggregation_type !== 'counts') {
-          var agg = lineIntersect[slug] || {},
-              options = {wkt: line},
-              dataProm = RasterService.getRasterData(slug, undefined, options);
+          var agg = lineIntersect[slug] || {}, dataProm;
+          if (layer.temporal) {
+            dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
+          } else {
+            dataProm = RasterService.getRasterData(slug, line, undefined, undefined, {});
+          }
           // Pass the promise to a function that handles the scope.
           putDataOnscope(dataProm, slug);
         } else if (slug in lineIntersect && !layer.active) {
@@ -56,12 +59,32 @@ app.controller("IntersectCtrl", [
         if (result.length > 0) {
           $scope.lineIntersect[slug] = {};
           // convert degrees result to meters to display properly.
-          $scope.lineIntersect[slug].data = dataConvertToMeters(result);
+          if ($scope.mapState.layers[slug].temporal) {
+            $scope.lineIntersect[slug].result = dataConvertToMeters(result);
+            $scope.lineIntersect[slug].data = createDataForTimeState($scope.lineIntersect[slug].result, $scope.timeState);
+          } else {
+            $scope.lineIntersect[slug].data = dataConvertToMeters(result);
+          }
           $scope.lineIntersect[slug].name = $scope.mapState.layers[slug].name;
         } else if (slug in $scope.lineIntersect) {
           removeDataFromScope(slug);
         }
       });
+    };
+
+    var createDataForTimeState = function (data, timeState) {
+      var interval = timeState.end - timeState.start;
+      var cur = timeState.at - timeState.start;
+      var prog = cur / interval;
+      var i = Math.round(data[0][1].length * prog);
+      console.log(prog, i);
+      var dataForTimeState = [];
+      angular.forEach(data, function (value) {
+        console.log(value[1][i]);
+        dataForTimeState.push([value[0], value[1][i]]);
+      });
+      console.log(dataForTimeState);
+      return dataForTimeState;
     };
 
     /**
@@ -174,6 +197,17 @@ app.controller("IntersectCtrl", [
       if (firstClick && secondClick) {
         _updateLineIntersect(firstClick, secondClick);
       }
+    });
+
+    /**
+     * Updates lineIntersect of temporal layers when timeState.at changes.
+     */
+    $scope.$watch('timeState.at', function (n,o) {
+      angular.forEach($scope.lineIntersect, function (intersect, slug) {
+        if ($scope.mapState.layers[slug].temporal) {
+          intersect.data = createDataForTimeState(intersect.result, $scope.timeState);
+        }
+      });
     });
 
     /**
