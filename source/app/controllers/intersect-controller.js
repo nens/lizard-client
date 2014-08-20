@@ -78,7 +78,6 @@ app.controller("IntersectCtrl", [
       var i = Math.round(data[0][1].length * cur / interval);
       var dataForTimeState = [];
       angular.forEach(data, function (value) {
-        console.log(value[1][i]);
         dataForTimeState.push([value[0], value[1][i]]);
       });
       return dataForTimeState;
@@ -129,7 +128,16 @@ app.controller("IntersectCtrl", [
      * @param {object} secondClick
      */
     _updateLineIntersect = function (firstClick, secondClick) {
-      var line = [
+      var line = createLineWKT(firstClick, secondClick);
+      updateLineIntersect(
+        line,
+        $scope.mapState.layers,
+        $scope.lineIntersect
+      );
+    };
+
+    var createLineWKT = function (firstClick, secondClick) {
+      return [
         "LINESTRING(",
         firstClick.lng,
         " ",
@@ -140,11 +148,6 @@ app.controller("IntersectCtrl", [
         secondClick.lat,
         ")"
       ].join('');
-      updateLineIntersect(
-        line,
-        $scope.mapState.layers,
-        $scope.lineIntersect
-      );
     };
 
     /**
@@ -199,11 +202,24 @@ app.controller("IntersectCtrl", [
     /**
      * Updates lineIntersect of temporal layers when timeState.at changes.
      */
-    $scope.$watch('timeState.at', function (n,o) {
+    $scope.$watch('timeState.at', function (n, o) {
       angular.forEach($scope.lineIntersect, function (intersect, slug) {
         if ($scope.mapState.layers[slug].temporal) {
           intersect.data = createDataForTimeState(intersect.result, $scope.timeState);
         }
+      });
+    });
+
+    $scope.$watch('timeState.zoomEnded', function (n, o) {
+      if (n === o) { return true; }
+      var line = createLineWKT(firstClick, secondClick);
+      var dataProm;
+      angular.forEach($scope.lineIntersect, function (intersect, slug) {
+        if ($scope.mapState.layers[slug].temporal) {
+          dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
+        }
+        // Pass the promise to a function that handles the scope.
+        putDataOnscope(dataProm, slug);
       });
     });
 
