@@ -60,6 +60,11 @@ app.service("EventService", ["Restangular", "$q",
         timeStateEnd = scope.timeState.end,
         bounds = scope.mapState.bounds,
         typeLength = eventTypes.length;
+    
+    if (scope.timeState.animation.enabled) {
+      timeStateStart = scope.timeState.animation.start;
+      timeStateEnd = scope.timeState.at;
+    }
 
     for (i = 0; i < typeLength; i++) {
 

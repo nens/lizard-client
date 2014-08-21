@@ -18,6 +18,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     "maxZoom": 20,
     "minZoom": 10
   },
+
   initialize: function (data, options) {
     this._data = data;
     this.options = L.extend(this.options, options);
@@ -101,6 +102,8 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
           return classList;
         });
 
+    var overlapLocations = {};
+
     features
       .attr("fill", function (d) { return d.properties.color; })
       .attr("cx", function (d) {
@@ -111,7 +114,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
       })
       .attr("r", function (d) {
         var radius, overlaps;
-        overlaps = self.countOverlapLocations(self, d);
+        overlaps = self.countOverlapLocations(overlapLocations, d);
         // logarithmic scaling with a minimum radius of 6
         radius = 6 + (5 * Math.log(overlaps));
         return radius;
@@ -120,13 +123,11 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     features.exit()
         .style("fill-opacity", 1e-6)
         .remove();
+
     if (self.options.applyStyle) {
       self.options.applyStyle.call(this, features);
     }
   },
-
-  // object to keep count of overlapping events
-  overlapLocations: {},
 
   /**
    * Count overlapping locations.
@@ -141,15 +142,16 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
    * @returns {integer} Count for current key
    *
    */
-  countOverlapLocations: function (self, d) {
-      var key = "x:" + d.geometry.coordinates[0] + "y:" + d.geometry.coordinates[1];
-      var coord = self.overlapLocations[key];
+  countOverlapLocations: function (overlapLocations, d) {
+      var key = "x:" + d.geometry.coordinates[0] +
+                "y:" + d.geometry.coordinates[1];
+      var coord = overlapLocations[key];
       if (coord === undefined) {
-        self.overlapLocations[key] = 1;
+        overlapLocations[key] = 1;
       } else {
-        self.overlapLocations[key] += 1;
+        overlapLocations[key] += 1;
       }
-      return self.overlapLocations[key];
+      return overlapLocations[key];
     },
 
   /**
