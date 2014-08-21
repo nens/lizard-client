@@ -6,8 +6,8 @@
  * time-interval (temporal extent, from timeline)
  *
  */
-app.directive('vectorlayer', ["EventService", "$rootScope",
-  function (EventService, $rootScope) {
+app.directive('vectorlayer', ["EventService", "$rootScope", "ClickFeedbackService",
+  function (EventService, $rootScope, ClickFeedbackService) {
 
   return {
     restrict: 'A',
@@ -43,6 +43,12 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
           .transition()
           .duration(1000)
           .attr("fill", "black");
+
+
+        // hacky hack is oooow soooo hacky
+        setTimeout(function () {
+          ClickFeedbackService.removeLocationMarker();
+        }, 300);
 
       };
 
