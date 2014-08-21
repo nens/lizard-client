@@ -29,16 +29,21 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
 
       /**
        * Highlights and unhighlights data points
-       * @param  {string} - String with id that should be highlighted
+       * @param {string} - String with id that should be highlighted
        */
       _highlightEvents = function (id) {
         // unhighlight events
         d3.selectAll(".circle.event")
+          .classed("highlighted-event", false)
+          .attr("data-init-color", getEventColor)
           .attr("fill", getEventColor);
         // highlight selected event
-        d3.select("." + id).transition()
+        d3.select("." + id)
+          .classed("highlighted-event", true)
+          .transition()
           .duration(1000)
           .attr("fill", "black");
+
       };
 
       /**
@@ -51,9 +56,8 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
        * @param {object} d - D3 bound data object.
        */
       eventClickHandler = function (d) {
-        var id, here, features, f;
 
-        console.log('clicked event(s)!');
+        var id, here, features, f;
 
         features = matchLocation(d, d3eventLayer._data.features);
         id = this.options.selectorPrefix + this._idExtractor(d);
@@ -69,9 +73,9 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
         _highlightEvents(id);
 
         var setEventOnPoint = function () {
+          scope.mapState.here = here;
           if (scope.box.type !== 'pointObject') {
             scope.box.type = 'pointObject';
-            scope.mapState.here = here;
           }
         };
 

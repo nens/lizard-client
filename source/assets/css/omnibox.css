@@ -13,7 +13,7 @@
 
 .searchbox {
     background: rgb(255, 255, 255);
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     border: 1px solid transparent;
     border-right: 0;
     border-radius: 2px 0 0 2px;

@@ -1449,3 +1449,8 @@ img.leaflet-image-layer {
 ::-moz-placeholder {  /* Firefox 19+ */
    color: #7f8c8d;
 }
+
+#timeline-svg-wrapper {
+  cursor: pointer;
+  cursor: -webkit-grab;
+}

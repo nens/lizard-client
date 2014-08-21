@@ -70,11 +70,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       var clickedOnEvents = extra && extra.type === 'events';
 
       if (clickedOnEvents) {
-        //ClickFeedbackService.emptyClickLayer(map);
-        //ClickFeedbackService.removeVibrator();
         eventResponded(extra.eventData);
-        ClickFeedbackService.killVibratingFeature();
-        d3.select(".location-marker").remove()
       } else {
         // Give feedback to user
         ClickFeedbackService.drawClickInSpace(map, here);
@@ -234,5 +230,49 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer($scope.map);
     });
+
+    var _watchAttrAndEventActivity = function (n, o) {
+
+      var checkIfAttrsActive  = $scope.pointObject.attrs.active,
+          checkIfEventsActive = $scope.pointObject.events.active;
+
+      if (checkIfEventsActive && !checkIfAttrsActive) {
+
+        // Since we clearly clicked an event feature/circle,
+        // we need to kill both the vibrator and the locationmarker:
+
+        ClickFeedbackService.killVibrator();
+        ClickFeedbackService.removeLocationMarker();
+
+      } else if (!checkIfEventsActive && checkIfAttrsActive) {
+
+        // Since we clicked on something else than an event
+        // circle/feature, we go find the black one and give
+        // it it's initial color.
+
+        _recolorBlackEventFeature();
+        ClickFeedbackService.removeLocationMarker();
+
+      } else if (!checkIfEventsActive && !checkIfAttrsActive) {
+
+        _recolorBlackEventFeature();
+      }
+    };
+
+    // efficient $watches using a helper function.
+    $scope.$watch('pointObject.attrs.active',  _watchAttrAndEventActivity);
+    $scope.$watch('pointObject.events.active', _watchAttrAndEventActivity);
+
+    var _recolorBlackEventFeature = function () {
+
+      var feature = d3.select('.highlighted-event');
+
+      if (feature[0][0]) {
+
+        feature
+          .classed("highlighted-event", false)
+          .attr("fill", feature.attr("data-init-color"));
+      }
+    };
   }
 ]);

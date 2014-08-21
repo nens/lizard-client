@@ -90,14 +90,12 @@ app.service("ClickFeedbackService", ["$rootScope",
       };
 
       this.vibrateFeature = function () {
-        this._selection = this._getSelection(this.clickLayer);
 
-        var self = this;
-
+        var sel = this._selection = this._getSelection(this.clickLayer);
         clearInterval(this._vibration);
 
         this._vibration = setInterval(function () {
-          self._selection.select("path")
+          sel.select("path")
             .classed("vibrator", true)
             .attr("stroke-width", 15)
             .transition().duration(200)
@@ -182,7 +180,6 @@ app.service("ClickFeedbackService", ["$rootScope",
           .attr("fill", "#2980b9")
           .attr("fill-opacity", "1");
       };
-
     };
 
     var ctrl = new Ctrl(),
@@ -190,15 +187,19 @@ app.service("ClickFeedbackService", ["$rootScope",
         drawGeometry,
         drawArrowHere,
         emptyClickLayer,
+        killVibrator,
         stopVibration,
-        emptyClickLayer,
         drawLine;
 
+    /**
+     * Wrapper for
+     *
+     */
     emptyClickLayer = function (map) {
       ctrl.emptyClickLayer(map);
     };
 
-    killVibratingFeature = function () {
+    killVibrator = function () {
       d3.selectAll('.vibrator').remove();
     };
 
@@ -269,8 +270,9 @@ app.service("ClickFeedbackService", ["$rootScope",
       drawGeometry: drawGeometry,
       drawClickInSpace: drawClickInSpace,
       stopVibration: stopVibration,
-      killVibratingFeature: killVibratingFeature,
-      drawLine: drawLine
+      killVibrator: killVibrator,
+      drawLine: drawLine,
+      removeLocationMarker: ctrl.removeLocationMarker
     };
   }
 ]);
