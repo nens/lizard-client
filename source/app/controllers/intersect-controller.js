@@ -226,6 +226,9 @@ app.controller("IntersectCtrl", [
       });
     });
 
+    /**
+     * Reload data from temporal rasters when temporal zoomended.
+     */
     $scope.$watch('timeState.zoomEnded', function (n, o) {
       if (n === o) { return true; }
       var line = createLineWKT(firstClick, secondClick);
