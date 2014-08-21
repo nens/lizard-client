@@ -531,7 +531,7 @@ app.directive('rasteranimation', ["RasterService", "UtilService",
                                              step, false);
         var oldDate = UtilService.roundTimestamp(oldVal,
                                              step, false);
-
+        if (currentDate === oldDate) { return; }
         if (scope.mapState.getActiveTemporalLayer()) {
 
           var overlayIndex = frameLookup[currentDate];
