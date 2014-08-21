@@ -205,7 +205,7 @@ app.service("CabinetService", ["$q", "Restangular",
           keyName: "Overstorthoogte",
           attrName: "crest_level",
           ngBindValue: "pointObject.attrs.data.crest_level | niceNumberOrEllipsis: 2",
-          valueSuffix: " m"
+          valueSuffix: " m NAP"
         }
       ]
     },

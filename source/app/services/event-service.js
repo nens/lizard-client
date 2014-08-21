@@ -18,12 +18,12 @@ app.service("EventService", ["Restangular", "$q",
 
   /**
    * Build object template to hold information per event type.
-   * 
+   *
    * @param {object} eventTypes object with event ids.
    * @returns {object} eventTypesTemplate.
    */
   var buildEventTypesTemplate = function (eventTypes) {
-  
+
     var eventTypesTemplate = {};
     for (var i = 0; i < eventTypes.length; i++) {
       eventTypesTemplate[eventTypes[i].event_series] = {};
@@ -38,24 +38,56 @@ app.service("EventService", ["Restangular", "$q",
 
   /**
    * Counts the events currently within the temporal and spatial extent
-   * 
+   *
    * Called when the user pans the map or zooms the timeline.
    * The aggregate directive flags events that are visible on the map at
    * feature.inSpatExtent. The timeline directive flags events that are
    * currently on the map at inTempExtent attribute. This function sums it all
    * up.
+   *
+   * @param {object} An Angular scope with mapState.bounds, timeState.start, timeState.end, mapState.eventTypes
+   * @returns {void}
    */
-  var countCurrentEvents = function (eventTypes, events) {
+  var countCurrentEvents = function (scope) {
+
     var i,
-        eventType;
-    var typeLength = eventTypes.length;
+        eventType,
+        inTemporalExtent,
+        inSpatialExtent,
+        eventTypes = scope.mapState.eventTypes,
+        events = scope.events,
+        timeStateStart = scope.timeState.start,
+        timeStateEnd = scope.timeState.end,
+        bounds = scope.mapState.bounds,
+        typeLength = eventTypes.length;
+    
+    if (scope.timeState.animation.enabled) {
+      timeStateStart = scope.timeState.animation.start;
+      timeStateEnd = scope.timeState.at;
+    }
+
     for (i = 0; i < typeLength; i++) {
+
       eventType = eventTypes[i];
       events.types[eventType.event_series].currentCount = 0;
     }
+
     for (i = 0; i < events.data.features.length; i++) {
-      var feature = events.data.features[i];
-      if (feature.inTempExtent && feature.inSpatExtent) {
+
+      feature = events.data.features[i];
+
+      inTemporalExtent = _isInTemporalExtent(
+        feature,
+        timeStateStart,
+        timeStateEnd
+      );
+
+      inSpatialExtent = _isInSpatialExtent(
+        feature,
+        bounds
+      );
+
+      if (inTemporalExtent && inSpatialExtent) {
         events.types[feature.properties.event_series].currentCount++;
       }
     }
@@ -63,19 +95,50 @@ app.service("EventService", ["Restangular", "$q",
 
 
   /**
+   * Check whether an event is contained in the current temporal extent.
+   *
+   * @param {object} ev An event object
+   * @param {integer} tlStart epoch time representing the start of the current timeline
+   * @param {integer} tlEnd epoch time representing the end of the current timeline
+   *
+   * @returns {boolean}
+   */
+  var _isInTemporalExtent = function (ev, tlStart, tlEnd) {
+    return tlStart  <= ev.properties.timestamp_start
+           && tlEnd >= ev.properties.timestamp_end;
+  };
+
+
+  /**
+   * Check whether an event is contained in the current spatial extent.
+   *
+   * @param {object} ev An event object
+   * @param {object} bounds A Leaflet bounds object
+   *
+   * @returns {boolean}
+   */
+  var _isInSpatialExtent = function (ev, bounds) {
+    return bounds.contains([
+      ev.geometry.coordinates[1],
+      ev.geometry.coordinates[0]
+    ]);
+  };
+
+
+  /**
    * Adds events to event data object.
-   * 
+   *
    * Takes a geojson compliant data object which is added to another geojson
    * compliant data object. In order to identify the type of events in the
    * longData object, an eventOrder is added to the features. This eventOrder
    * is also used in the timeline for the yAxis. The indiviudual features also
    * get an id which is used by d3 to identify the events in the update
    * pattern.
-   * 
+   *
    * @param: object geojson compliant data object to add too
    * @param: object geojson compliant data object to add
    * @param: str containing the type of the event to add
-   * @returns: object geojson compliant data object 
+   * @returns: object geojson compliant data object
    */
   var addEvents = function (longData, shortData, eventSeriesId) {
     // Create event identifier
@@ -86,17 +149,13 @@ app.service("EventService", ["Restangular", "$q",
     } else {
       var maxEventOrder = 0;
       angular.forEach(longData.features, function (feature) {
-        maxEventOrder = feature.event_order > maxEventOrder ?
-                        feature.event_order : maxEventOrder;
+        maxEventOrder = Math.max(feature.event_order, maxEventOrder);
       });
       eventOrder = maxEventOrder + 1;
     }
     angular.forEach(shortData.features, function (feature) {
       feature.event_order = eventOrder;
       feature.properties.color = colors[8][eventOrder];
-      feature.id = eventSeriesId + feature.properties.timestamp_end +
-                   feature.geometry.coordinates[0] +
-                   feature.geometry.coordinates[1];
       longData.features.push(feature);
     });
     return {
@@ -104,18 +163,18 @@ app.service("EventService", ["Restangular", "$q",
       order: eventOrder
     };
   };
-  
+
   /**
    * Removes events from the data object.
-   * 
+   *
    * Takes a geojson compliant data object and removes the features with the
    * given name. It also removes the metadata of these events and lowers the
    * eventOrder of all the event types which have a order that is greater than
    * the order of the removed event type.
-   * 
-   * @param: object geojson compliant data object 
+   *
+   * @param: object geojson compliant data object
    * @param: str containing the type of the event to remove
-   * @returns: object geojson compliant data object 
+   * @returns: object geojson compliant data object
    */
   var removeEvents = function (types, longData, eventSeriesId) {
     var eventOrder = types[eventSeriesId].event_type;
@@ -143,16 +202,16 @@ app.service("EventService", ["Restangular", "$q",
 
   /**
    * Adds a color attribute to features in event data object
-   * 
+   *
    * Takes a geojson compliant data object and adds a color to all the
    * features. If there is only one event type, the events are colored on the
    * basis of sub_event_type. If there are multiple event types active, the
    * events are colored on the basis of a colorscale on the scope and the type
    * of the feature.
    *
-   * NOTE: simplified to show only one color per event series to avoid 
+   * NOTE: simplified to show only one color per event series to avoid
    * confusion.
-   * 
+   *
    * @param {object} events - Lizard NXT events object.
    */
   var addColor = function (events) {
@@ -175,7 +234,7 @@ app.service("EventService", ["Restangular", "$q",
 
   var eventsResource,
       objectEventsResource;
-  
+
   Restangular.setRequestSuffix('?page_size=0');
   eventsResource = Restangular.one('api/v1/events/');
 
