@@ -41,8 +41,14 @@ describe('Testing hash controller', function () {
       layers: {
         'testlayer': {
           active: true
+        },
+        'testlayer2': {
+          active: false
         }
       },
+      changeLayer: function (layer) {
+        layer.active = !layer.active;
+      }
     };
 
     // Mock initial time
@@ -105,5 +111,16 @@ describe('Testing hash controller', function () {
     expect($scope.timeState.at >= $scope.timeState.start
       && $scope.timeState.at <= $scope.timeState.end).toBe(true);
   });
+
+  it('should deactivate layer when layerHash is defined but active layer is not on hash', function () {
+    var controller = createController();
+
+    hashSyncHelper.setHash({'layers': 'testlayer2'});
+
+    $scope.$broadcast('$locationChangeSuccess');
+
+    expect($scope.mapState.layers.testlayer.active).toBe(false);
+    expect($scope.mapState.layers.testlayer2.active).toBe(true);
+  })
 
 });
