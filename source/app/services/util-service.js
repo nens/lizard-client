@@ -226,8 +226,8 @@ app.service("UtilService", function () {
   /***
     * Fade out (in) currently (in-)visible cards.
     *
-    * @param {boolean} fadeIn - A boolean denoting whether we need to
-    * fade in or out.
+    * @param {boolean} fadeIn - An Angular scope s.t.
+    * scope.mapState.mapMoving is defined.
     */
   this.fadeCurrentCards = function (scope) {
 
