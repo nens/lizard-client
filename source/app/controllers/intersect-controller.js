@@ -72,6 +72,20 @@ app.controller("IntersectCtrl", [
       });
     };
 
+    /**
+     * Creates a subset data object for a specific timeState
+     *
+     * @param  {array} data      array of shape:
+     *                           [
+     *                             [x0, [y0_1, y0_2, ..., y0_n]],
+     *                             [x1, [y1_1, y1_2, ..., y1_n]],
+     *                             ...
+     *                             [xm, [ym_1, ym_2, ..., ym_n]]
+     *                           ]
+     * @param  {object} timeState nxt timeState object
+     * @return {array}           array (for timestep 1) of shape:
+     *                           [[x0, y0_1], [x1, y1_1], ...]
+     */
     var createDataForTimeState = function (data, timeState) {
       var interval = timeState.end - timeState.start;
       var cur = timeState.at - timeState.start;

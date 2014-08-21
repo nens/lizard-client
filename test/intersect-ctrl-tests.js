@@ -2,7 +2,8 @@ describe('Testing IntersectAggregateCtrl', function () {
   var $scope,
     $rootScope,
     $controller,
-    createController;
+    createController,
+    result;
 
   beforeEach(module('lizard-nxt'));
 
@@ -10,6 +11,12 @@ describe('Testing IntersectAggregateCtrl', function () {
     $controller = $injector.get('$controller');
     $rootScope = $injector.get('$rootScope');
     $scope = $rootScope.$new();
+
+    $scope.timeState = {
+      start: 1,
+      end: 6,
+      at: 3
+    };
 
     $scope.mapState = {
       activeLayersChanged: true,
@@ -43,15 +50,23 @@ describe('Testing IntersectAggregateCtrl', function () {
           "slug": "landuse",
           "store_path": "use/wss",
           "active": false
+        },
+        "demo:radar": {
+          "aggregation_type": "none",
+          "name": "Regen",
+          "slug": "demo:radar",
+          "store_path": "radar/basic",
+          "temporal": true,
+          "active": false
         }
       }
     };
 
+    result = [[1, [2, 3, 4]], [2, [3, 4, 5]], [3, [4, 5, 6]]];
     var MockRasterService = {
       getRasterData: function (layer, slug, agg, bounds) {
         var dataProm = {};
         dataProm.then = function (callback) {
-          var result = [1, 2, 3, 4];
           callback(result);
         };
         return dataProm;
@@ -166,6 +181,44 @@ describe('Testing IntersectAggregateCtrl', function () {
     $scope.mapState.activeLayersChanged = false;
     $scope.$digest();
     expect($scope.lineIntersect.elevation).toBeUndefined();
+  });
+
+  it('should add data to the scope when getting data for temporal raster', function () {
+    createController();
+    $scope.mapState.layers['demo:radar'].active = true;
+    $scope.mapState.here = {
+      lat: 6,
+      lng: 52
+    };
+    $scope.$digest();
+    $scope.mapState.here = {
+      lat: 7,
+      lng: 51
+    };
+    $scope.$digest();
+    expect($scope.lineIntersect['demo:radar'].result).toBeDefined();
+  });
+
+  it('should add a specific subset to the data element when getting data for temporal raster', function () {
+    createController();
+    $scope.mapState.layers['demo:radar'].active = true;
+    $scope.mapState.here = {
+      lat: 6,
+      lng: 52
+    };
+    $scope.$digest();
+    $scope.mapState.here = {
+      lat: 7,
+      lng: 51
+    };
+    $scope.$digest();
+    // It converts the x-values from meters to degrees
+    // and takes the second element from the list that's
+    // returned by the mock (the second element corresponds
+    // to the time of timeState.at relative to start and end)
+    expect($scope.lineIntersect['demo:radar'].data[0][1]).toBe(result[0][1][1]);
+    expect($scope.lineIntersect['demo:radar'].data[1][1]).toBe(result[1][1][1]);
+    expect($scope.lineIntersect['demo:radar'].data[2][1]).toBe(result[2][1][1]);
   });
 
 });
