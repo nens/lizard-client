@@ -783,31 +783,6 @@ angular.module('graph')
         chartBody.append("svg:path")
           .attr("class", "line");
 
-        if (scope.box.type === 'intersect') {
-          // Events do not bubble when with d3.
-          // Put listener on body and rect to move bolletje on the line
-          // in profile directive
-          chartBody.on('mousemove', function () {
-            var pos = x.scale.invert(d3.mouse(this)[0]);
-            scope.$apply(function () {
-              scope.$parent.box.mouseLoc = pos;
-            });
-          });
-
-          svg.select('rect').on('mousemove', function () {
-            var pos = x.scale.invert(d3.mouse(this)[0]);
-            scope.$apply(function () {
-              scope.$parent.box.mouseLoc = pos;
-            });
-          });
-
-          svg.select('rect').on('mouseout', function () {
-            scope.$apply(function () {
-              scope.$parent.box.mouseLoc = undefined;
-            });
-          });
-        }
-
         return {
           svg: svg,
           g: chartBody,
@@ -838,7 +813,7 @@ angular.module('graph')
         var rescaleX = false;
 
         var yN = graphCtrl.maxMin(data, '1');
-        if (yN.max > y.max || yN.max < (0.5 * y.max)) {
+        if (yN.max > y.max || yN.max < (0.3 * y.max)) {
           rescaleY = true;
           y = yN;
           y.scale = graphCtrl.scale(0, y.max, {
@@ -905,12 +880,39 @@ angular.module('graph')
         var path = g.select("path").datum(data);
 
         path.transition()
-          .duration(1000)
+          .duration(300)
           .attr("d", line);
 
         if (rescaleY) { reYScale(); }
         if (rescaleX) { reXScale(); }
 
+        if (scope.box.type === 'intersect') {
+          // Events do not bubble when with d3.
+          // Put listener on body and rect to move bolletje on the line
+          // in profile directive
+          g.on('mousemove', function () {
+            var pos = x.scale.invert(d3.mouse(this)[0]);
+            scope.$apply(function () {
+              scope.$parent.box.mouseLoc = pos;
+            });
+          });
+
+          svg.select('rect').on('mousemove', function () {
+            var pos = x.scale.invert(d3.mouse(this)[0]);
+            scope.$apply(function () {
+              scope.$parent.box.mouseLoc = pos;
+            });
+          });
+
+          svg.select('rect').on('mouseout', function () {
+            scope.$apply(function () {
+              scope.$parent.box.mouseLoc = undefined;
+            });
+          });
+        }
+
+        graph.x = x;
+        graph.y = y;
         return graph;
       };
 

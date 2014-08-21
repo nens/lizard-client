@@ -166,6 +166,8 @@ app.controller("IntersectCtrl", [
       if (secondClick) {
         firstClick = undefined;
         secondClick = undefined;
+        // Empty data element since the line is gone
+        $scope.lineIntersect = {};
         ClickFeedbackService.emptyClickLayer($scope.map);
       } else {
         if (firstClick) {
@@ -217,9 +219,9 @@ app.controller("IntersectCtrl", [
       angular.forEach($scope.lineIntersect, function (intersect, slug) {
         if ($scope.mapState.layers[slug].temporal) {
           dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
+          // Pass the promise to a function that handles the scope.
+          putDataOnscope(dataProm, slug);
         }
-        // Pass the promise to a function that handles the scope.
-        putDataOnscope(dataProm, slug);
       });
     });
 
