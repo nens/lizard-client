@@ -185,7 +185,6 @@ app.service("ClickFeedbackService", ["$rootScope",
         drawArrowHere,
         emptyClickLayer,
         stopVibration,
-        emptyClickLayer,
         drawLine;
 
     emptyClickLayer = function (map) {
