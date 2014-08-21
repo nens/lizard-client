@@ -55,30 +55,25 @@ app.directive('map', [
       // instead of 'map' element here for testability
       var osmAttrib = '<a href="https://www.mapbox.com/about/maps/">&copy; Mapbox</a> <a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>';
       var bounds = window.data_bounds.all;
-      var southWest = L.latLng(bounds.south, bounds.west);
-      var northEast = L.latLng(bounds.north, bounds.east);
-      var maxBounds = L.latLngBounds(southWest, northEast);
-      var map = MapService.createMap(element[0]);
+      
+      var map = MapService.createMap(element[0], {
+        bounds: bounds,
+        attribution: osmAttrib
+      });
 
-      MapService.fitBounds(maxBounds);
-      map.attributionControl.addAttribution(osmAttrib);
-      map.attributionControl.setPrefix('');
-      UtilService.getZoomlevelLabel(map.getZoom());
       scope.map = map;
       scope.mapState.bounds = scope.map.getBounds();
-      // to calculate imageURLs
-      scope.mapState.pixelCenter = scope.map.getPixelBounds().getCenter();
-      scope.mapState.zoom = scope.map.getZoom();
+
 
       // Initialise layers
       angular.forEach(scope.mapState.layers, function (layer) {
         scope.mapState.activeLayersChanged = !scope.mapState.activeLayersChanged;
         if (!layer.initiated) {
-          ctrl.initiateLayer(layer);
+          MapService.createLayer(layer);
         }
         if (layer.active) {
           layer.active = false;
-          ctrl.toggleLayer(layer, scope.mapState.layers, scope.mapState.bounds);
+          MapService.toggleLayer(layer, scope.mapState.layers);
         }
       });
 

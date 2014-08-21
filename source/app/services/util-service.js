@@ -103,35 +103,6 @@ app.service("UtilService", function () {
     return roundedTimestamp;
   };
 
-  this.getZoomlevelLabel = function (zoomLevel) {
-    // TODO: Can be used to communicate the current
-    // zoomlevel in language comprehensible to the user
-
-    switch (true) {
-    case (zoomLevel >= 18):
-      // console.log('Objectniveau'); // fa-building
-      return 'object';
-    case (zoomLevel >= 17):
-      // console.log('Straatniveau'); // fa-road
-      return 'street';
-    case (zoomLevel >= 15):
-      // console.log('Gemeenteniveau'); // fa-university
-      return 'municipal';
-    case (zoomLevel >= 10):
-      // console.log('Provincieniveau'); // fa-university
-      return 'provincial';
-    case (zoomLevel >= 8):
-      // console.log('Landniveau'); // fa-university
-      return 'country';
-    case (zoomLevel >= 5):
-      // console.log('Continentniveau'); // fa-globe
-      return 'continental';
-    case (zoomLevel >= 2):
-      // console.log('Wereldniveau'); // fa-globe
-      return 'global';
-    }
-  };
-
   /**
    * @function
    * @memberOf UtilService

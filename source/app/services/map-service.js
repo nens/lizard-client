@@ -10,10 +10,15 @@
  * the map object and mapState.
  *
  */
-app.service('MapService', ['$rootScope', '$filter', '$http', 'LeafletService', 
-  function ($rootScope, $filter, $http, LeafletService) {
+app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','LeafletService', 
+  function ($rootScope, $filter, $http, CabinetService, LeafletService) {
+
+      // private
   var _map, createLayer, _initiateTMSLayer, _initiateWMSLayer,
       _initiateAssetLayer, _turnOffAllOtherBaselayers, _rescaleElevation,
+      _getActiveTemporalLayer, _getLayersByType,
+
+      // public
       setView, fitBounds, _updateOverLayers, mapState,
       addLayer, removeLayer, createMap, toggleLayer;
 
@@ -21,14 +26,24 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'LeafletService',
    * @function
    * @memberof app.MapService
    * @param  {dynamic} mapElem can be string or Element.
+   * @param  {options} Options (bounds, attribution etc.)
    * @return {L.Map}   Leaflet.Map instance
    * @description Creates a Leaflet map based on idString or Element.
    */
-  createMap = function (mapElem) { // String or Element.
+  createMap = function (mapElem, options) { // String or Element.
     _map = LeafletService.map(mapElem, {
       zoomControl: false,
       zoom: 12
     });
+
+    if (options) {
+      _map.fitBounds(
+        L.latLng(options.bounds.south, options.bounds.west),
+        L.latLng(options.bounds.north, options.bounds.east));
+
+      _map.attributionControl.addAttribution(options.attribution);
+      _map.attributionControl.setPrefix('');
+    }
     return _map;
   };
 
@@ -105,7 +120,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'LeafletService',
     });
     nonLeafLayer.grid_layer = layer;
     nonLeafLayer.initiated = true;
-  }
+  };
 
   /**
    * @function
@@ -249,7 +264,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'LeafletService',
     if (layer.overlayer) {
       _updateOverLayers(layers);
     }
-  }
+  };
 
   /**
    * @function
@@ -259,7 +274,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'LeafletService',
   setView = function (panZoom) {
     _map.setView(new LeafletService.LatLng(
       panZoom.lat, panZoom.lng), panZoom.zoom);
-  }
+  };
 
   /**
    * @function
@@ -268,9 +283,102 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'LeafletService',
    */
   fitBounds = function (extent) {
     _map.fitBounds(extent);
-  }
+  };
+
+  /**
+   * @function
+   * @memberOf app.MapService
+   * @description Retrieves the (single) currently active layer which has a temporal
+   * component. Returns undefined if no temporal raster layer is
+   * currently active.
+   *
+   * @return {Object}
+   */
+  _getActiveTemporalLayer = function () {
+
+    var i, temporalLayers = this.getLayersByType('temporal');
+
+    for (i = 0; i < temporalLayers.length; i++) {
+      if (temporalLayers[i].active) {
+        return temporalLayers[i];
+      }
+    }
+  };
+
+  /**
+   * @function
+   * @memberOf app.MapService
+   * @description Retrieves layers by type (base | over | temporal). Used for
+   * keeping the right-hand menu readable.
+   *
+   * @param {string} layerType A string representation of the
+   *                           three possible layer types.
+   * @return {Object[]}
+   */
+  _getLayersByType = function (layerType) {
+
+    var attr, i, result = [];
+
+    switch (layerType) {
+
+      case 'base':
+        for (i in this.layers) {
+          if (this.layers[i].baselayer && !this.layers[i].temporal) {
+            result.push(this.layers[i]);
+          }
+        }
+        break;
+
+      case 'over':
+        for (i in this.layers) {
+          if (!(this.layers[i].baselayer || this.layers[i].temporal)) {
+            result.push(this.layers[i]);
+          }
+        }
+        break;
+
+      case 'temporal':
+        for (i in this.layers) {
+          if (this.layers[i].temporal) {
+            result.push(this.layers[i]);
+          }
+        }
+        break;
+
+      default:
+        console.log('EXCEPTION-esque: tried to call getLayersByType() ' +
+                    'with unknown arggument "' + layerType + '"');
+    }
+
+    return result;
+  };
+
+  /**
+   * @memberOf app.MapService
+   * @type {Object}
+   * @description mapState is the mother of everything spatial.
+   * This is a central collection of the state the map is in.
+   */
+  mapState = {
+    here: null,
+    layers: CabinetService.layers,
+    activeLayersChanged: false,
+    eventTypes: CabinetService.eventTypes,
+    changed: Date.now(),
+    moved: Date.now(),
+    baselayerChanged: Date.now(),
+    enabled: false,
+    bounds: null,
+    here: null, // Leaflet point object describing a users location of interest
+    userHere: null, // Geographical location of the users mouse
+    geom_wkt: '',
+    mapMoving: false,
+    getActiveTemporalLayer: _getActiveTemporalLayer,
+    getLayersByType: _getLayersByType
+  };
 
   return {
+    mapState: mapState,
     createMap: createMap,
     createLayer: createLayer,
     addLayer: addLayer,
