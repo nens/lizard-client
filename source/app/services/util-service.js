@@ -166,11 +166,11 @@ app.service("UtilService", function () {
 
       if ($(cont).data("slide-time")) {
 
-        slideTime = parseInt($(cont).data("slide-time"));
+        slideTime = parseInt($(cont).data("slide-time"), 10);
 
       } else {
 
-        initHeight = parseInt($(cont).css('height').split("px")[0]);
+        initHeight = parseInt($(cont).css('height').split("px")[0], 10);
         slideTime = Math.floor((initHeight / 100) * SLIDE_TIME_PER_100PX);
         $(cont).attr("data-slide-time", slideTime);
       }
@@ -184,7 +184,7 @@ app.service("UtilService", function () {
 
     } else {
 
-      slideTime = parseInt($(cont).data("slide-time"));
+      slideTime = parseInt($(cont).data("slide-time"), 10);
       $(separator).css("display", "none");
       $(cont).slideDown(slideTime, function () {
         $(card).addClass("active");
@@ -197,8 +197,8 @@ app.service("UtilService", function () {
   /***
     * Fade out (in) currently (in-)visible cards.
     *
-    * @param {boolean} fadeIn - A boolean denoting whether we need to
-    * fade in or out.
+    * @param {boolean} fadeIn - An Angular scope s.t.
+    * scope.mapState.mapMoving is defined.
     */
   this.fadeCurrentCards = function (scope) {
 

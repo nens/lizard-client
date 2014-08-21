@@ -72,7 +72,7 @@ app.controller("IntersectCtrl", [
      */
     dataConvertToMeters = function (data) {
       for (var i = 0; data.length > i; i++) {
-        data[i][0] = degToMeters(data[i][0]); 
+        data[i][0] = degToMeters(data[i][0]);
       }
       return data;
     };
@@ -85,7 +85,7 @@ app.controller("IntersectCtrl", [
      */
     degToMeters = function (degrees) {
       return  (degrees * Math.PI) / 180 * 6371 * 1000;
-    }
+    };
 
     /**
      * Takes meters converts to radians 
@@ -95,7 +95,7 @@ app.controller("IntersectCtrl", [
      */
     metersToDegs = function (meters) {
       return (meters / 1000 / 6371) * 180 / Math.PI;
-    }
+    };
 
     removeDataFromScope = function (slug) {
       delete $scope.lineIntersect[slug];
