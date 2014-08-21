@@ -99,6 +99,15 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
       hashSyncHelper.setHash({'layers': activeSlugs.toString()});
     };
 
+    /**
+     * Sets the timeState on scope after locationChangeSucces.
+     *
+     * To prevent a timeState.at that lies outside of the interval.
+     * When Setting the start and end also set the at.
+     *
+     * @param {timeState} time  timeState with start and end.
+     * @param {boolean} start   Set timeStart or timeState.end
+     */
     var setTimeState = function (time, start) {
       var msTime = Date.parse(time);
       if (start) {
