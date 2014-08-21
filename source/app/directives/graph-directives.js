@@ -512,7 +512,7 @@ angular.module('graph')
             })
           .sort(function (a, b) {
             var ordFunction = function (x) {
-              return x.label ? parseInt(x.label.split(' ')[0]) : 0;
+              return x.label ? parseInt(x.label.split(' ')[0], 10) : 0;
             };
             return d3.ascending(ordFunction(a), ordFunction(b));
           });

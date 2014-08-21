@@ -245,33 +245,33 @@ app.controller("MasterCtrl",
 
     switch (layerType) {
 
-      case 'base':
-        for (i in this.layers) {
-          if (this.layers[i].baselayer && !this.layers[i].temporal) {
-            result.push(this.layers[i]);
-          }
+    case 'base':
+      for (i in this.layers) {
+        if (this.layers[i].baselayer && !this.layers[i].temporal) {
+          result.push(this.layers[i]);
         }
-        break;
+      }
+      break;
 
-      case 'over':
-        for (i in this.layers) {
-          if (!(this.layers[i].baselayer || this.layers[i].temporal)) {
-            result.push(this.layers[i]);
-          }
+    case 'over':
+      for (i in this.layers) {
+        if (!(this.layers[i].baselayer || this.layers[i].temporal)) {
+          result.push(this.layers[i]);
         }
-        break;
+      }
+      break;
 
-      case 'temporal':
-        for (i in this.layers) {
-          if (this.layers[i].temporal) {
-            result.push(this.layers[i]);
-          }
+    case 'temporal':
+      for (i in this.layers) {
+        if (this.layers[i].temporal) {
+          result.push(this.layers[i]);
         }
-        break;
+      }
+      break;
 
-      default:
-        console.log('EXCEPTION-esque: tried to call getLayersByType() ' +
-                    'with unknown arggument "' + layerType + '"');
+    default:
+      console.log('EXCEPTION-esque: tried to call getLayersByType() ' +
+                  'with unknown arggument "' + layerType + '"');
     }
 
     return result;
