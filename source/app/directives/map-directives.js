@@ -387,6 +387,10 @@ app.directive('map', [
 
         } else {
 
+          if (layer.slug === 'waterchain') {
+            ClickFeedbackService.killVibrator();
+          }
+
           // for other than temporalRaster layers, we do stuff the old way
           ctrl.toggleLayer(layer, scope.mapState.layers, scope.mapState.bounds);
           scope.mapState.activeLayersChanged =
@@ -403,7 +407,7 @@ app.directive('map', [
         }
       });
 
-      // Instantiate the controller that updates the hash url after creating the 
+      // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.
       $controller('hashGetterSetter', {$scope: scope});
 
