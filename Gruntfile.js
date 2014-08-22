@@ -176,7 +176,7 @@ module.exports = function (grunt) {
             specs: [
               '<%= nxt_dir.test %>/**/*.js',
               '!<%= nxt_dir.test %>/mocks.js'
-              ],
+            ],
             junit: {
               path: 'qa/junit'
             }
@@ -257,7 +257,6 @@ module.exports = function (grunt) {
     'cssmin',
     'html2js',
     'concat',
-    'jsdoc',
     'copy:dist'
   ]);
   grunt.registerTask('plakhetaanelkaar', [
