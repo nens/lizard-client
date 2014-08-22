@@ -265,6 +265,12 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     $scope.$watch('pointObject.attrs.active',  _watchAttrAndEventActivity);
     $scope.$watch('pointObject.events.active', _watchAttrAndEventActivity);
 
+
+    /**
+     * Give the black event circle, if present, it's initial color.
+     *
+     * @returns {void}
+     */
     var _recolorBlackEventFeature = function () {
 
       var feature = d3.select('.highlighted-event');
@@ -277,6 +283,14 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       }
     };
 
+
+    /**
+     * Checks whether rain data, retrieved from the back-end, contains at least
+     * one other value than null, so we know that data is available, and allow
+     * the app to show the card.
+     *
+     * @returns {boolean}
+     */
     $scope.mustShowRainCard = function () {
 
       var activeTemporalLayer = $scope.mapState.getActiveTemporalLayer();
