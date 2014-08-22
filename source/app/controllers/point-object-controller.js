@@ -280,18 +280,18 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     $scope.mustShowRainCard = function () {
 
       var activeTemporalLayer = $scope.mapState.getActiveTemporalLayer();
-      var rainIsInactive =
-            !($scope.pointObject.temporalRaster.type === 'demo:radar'
+      var rainIsActive =
+             ($scope.pointObject.temporalRaster.type === 'demo:radar'
                 && activeTemporalLayer
                 && activeTemporalLayer.slug === 'demo:radar'
               );
 
-      if (!rainIsInactive) {
+      if (rainIsActive) {
 
-        var i, data = $scope.pointObject.temporalRaster.data;
+        var i, rainData = $scope.pointObject.temporalRaster.data;
 
-        for (i = 0; i < data.length; i++) {
-          if (data[i][1] !== null) {
+        for (i = 0; i < rainData.length; i++) {
+          if (rainData[i][1] !== null) {
             return true;
           }
         }
