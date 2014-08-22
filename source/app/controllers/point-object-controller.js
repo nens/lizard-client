@@ -279,10 +279,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
 
     $scope.mustShowRainCard = function () {
 
-      HIER WAS IK!
-
-      console.log('[F] mustShowRainCard');
-
       var activeTemporalLayer = $scope.mapState.getActiveTemporalLayer();
       var rainIsInactive =
             !($scope.pointObject.temporalRaster.type === 'demo:radar'
@@ -301,6 +297,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
         }
       }
       return false;
-    }
+    };
   }
 ]);

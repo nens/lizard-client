@@ -131,24 +131,9 @@
   </div>
   <!-- end: single card -->
 
-<!--   <div class="card active">
-    ola!
-    <br>
-    <span><% pointObject.temporalRaster %></span>
-  </div>
- -->
-
-  <!-- rain card v2 starts here...
   <div id="card-rain"
        class="card active"
-       ng-class="{hidden: !(pointObject.temporalRaster.type === 'demo:radar'
-                            && mapState.getActiveTemporalLayer()
-                            && mapState.getActiveTemporalLayer().slug === 'demo:radar')}">
-
-  -->
-  <div id="card-rain"
-       class="card active"
-       ng-class="{hidden: false}">
+       ng-class="{hidden: !mustShowRainCard()}">
     <div class="card-title">
       <span class="card-title-text">Neerslag</span>
       <div class="card-title-button"
@@ -169,12 +154,6 @@
     <div class="card-content" id="card-content-rain">
 
       <hr class="card-separator" id="card-separator-rain">
-
-      <% pointObject.temporalRaster %>
-
-      <br>
-
-      <% "wut?" + mustShowRainCard() %>
 
       <graph bar-chart
              class="xyGraph"
