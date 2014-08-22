@@ -233,8 +233,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
 
     var _watchAttrAndEventActivity = function (n, o) {
 
-      //console.log('$scope.pointObject.events', $scope.pointObject.events);
-
       var checkIfAttrsActive  = $scope.pointObject.attrs.active,
           checkIfEventsActive = $scope.pointObject.events.active;
 
