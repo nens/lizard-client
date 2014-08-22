@@ -276,5 +276,31 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           .attr("fill", feature.attr("data-init-color"));
       }
     };
+
+    $scope.mustShowRainCard = function () {
+
+      HIER WAS IK!
+
+      console.log('[F] mustShowRainCard');
+
+      var activeTemporalLayer = $scope.mapState.getActiveTemporalLayer();
+      var rainIsInactive =
+            !($scope.pointObject.temporalRaster.type === 'demo:radar'
+                && activeTemporalLayer
+                && activeTemporalLayer.slug === 'demo:radar'
+              );
+
+      if (!rainIsInactive) {
+
+        var i, data = $scope.pointObject.temporalRaster.data;
+
+        for (i = 0; i < data.length; i++) {
+          if (data[i][1] !== null) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
   }
 ]);
