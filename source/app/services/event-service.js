@@ -74,7 +74,7 @@ app.service("EventService", ["Restangular", "$q",
 
     for (i = 0; i < events.data.features.length; i++) {
 
-      feature = events.data.features[i];
+      var feature = events.data.features[i];
 
       inTemporalExtent = _isInTemporalExtent(
         feature,

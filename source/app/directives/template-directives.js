@@ -70,33 +70,33 @@ app.directive('actions', [function () {
   return {
     restrict: 'E',
     templateUrl: 'templates/actions.html'
-  }
+  };
 }]);
 
 app.directive('cardattributes', [function () {
   return {
     restrict: 'E',
     templateUrl: 'templates/cardattributes.html'
-  }
+  };
 }]);
 
 app.directive('detailswitch', [function () {
   return {
     restrict: 'E',
     templateUrl: 'templates/detailswitch.html'
-  }
+  };
 }]);
 
 app.directive('datadetailcard', [function () {
   return {
     restrict: 'E',
     templateUrl: 'templates/data-detail-card.html'
-  }
+  };
 }]);
 
 app.directive('dataaggregationcard', [function () {
   return {
     restrict: 'E',
     templateUrl: 'templates/data-aggregation-card.html'
-  }
+  };
 }]);

@@ -90,13 +90,13 @@ app.service("ClickFeedbackService", ["$rootScope",
       };
 
       this.vibrateFeature = function () {
-        this._selection = this._getSelection(this.clickLayer);
 
-        var self = this;
-
+        var sel = this._selection = this._getSelection(this.clickLayer);
         clearInterval(this._vibration);
+
         this._vibration = setInterval(function () {
-          self._selection.select("path")
+          sel.select("path")
+            .classed("vibrator", true)
             .attr("stroke-width", 15)
             .transition().duration(200)
             .attr("stroke-width", 20)
@@ -108,6 +108,7 @@ app.service("ClickFeedbackService", ["$rootScope",
       this.stopVibration = function () {
         clearInterval(this._vibration);
         this._selection.select("path")
+          .classed("vibrator", true)
           .attr("stroke-width", 15)
           .transition().duration(200)
           .attr("stroke-width", 20)
@@ -118,10 +119,13 @@ app.service("ClickFeedbackService", ["$rootScope",
           .attr("stroke-opacity", 0);
       };
 
+
       this.drawObject = function (entityName, map) {
+
         var selection = this._getSelection(this.clickLayer);
         this._circleMarker.setRadius(11);
         selection.select("path")
+          .classed("vibrator", true)
           .attr("stroke", "#1abc9c")
           .transition().duration(150)
           .attr("stroke-width", 20)
@@ -176,7 +180,6 @@ app.service("ClickFeedbackService", ["$rootScope",
           .attr("fill", "#2980b9")
           .attr("fill-opacity", "1");
       };
-
     };
 
     var ctrl = new Ctrl(),
@@ -184,12 +187,20 @@ app.service("ClickFeedbackService", ["$rootScope",
         drawGeometry,
         drawArrowHere,
         emptyClickLayer,
+        killVibrator,
         stopVibration,
-        emptyClickLayer,
         drawLine;
 
+    /**
+     * Wrapper for
+     *
+     */
     emptyClickLayer = function (map) {
       ctrl.emptyClickLayer(map);
+    };
+
+    killVibrator = function () {
+      d3.selectAll('.vibrator').remove();
     };
 
     /**
@@ -259,7 +270,9 @@ app.service("ClickFeedbackService", ["$rootScope",
       drawGeometry: drawGeometry,
       drawClickInSpace: drawClickInSpace,
       stopVibration: stopVibration,
-      drawLine: drawLine
+      killVibrator: killVibrator,
+      drawLine: drawLine,
+      removeLocationMarker: ctrl.removeLocationMarker
     };
   }
 ]);

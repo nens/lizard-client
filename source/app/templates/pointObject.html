@@ -55,7 +55,7 @@
 
     <div class="card-title">
       <span class="card-title-text">
-        Objectgerelateerde gebeurtenissen
+        Gebeurtenissen
       </span>
       <div class="card-title-button"
            ng-click="toggleThisCard('relatified-events')">
@@ -84,18 +84,17 @@
 
         <tbody>
           <tr ng-repeat="eventSeries in pointObject.events"
-              ng-if="eventSeries.length > 0"
-              ng-init="type = events.types[eventSeries[0].event_series]">
+              ng-if="eventSeries.length > 0">
 
             <td>
-              <i class="fa fa-circle relatified-event-circle"
-                 ng-style="{color: type.color }">
+              <i class="fa fa-circle"
+                 ng-style="{color: events.types[eventSeries[0].event_series].color }">
               </i>
             </td>
 
-            <td><% type.name %></td>
+            <td><% events.types[eventSeries[0].event_series].name %></td>
             <td><strong><% eventSeries.length %></strong></td>
-            <td><% type.count %></td>
+            <td><% events.types[eventSeries[0].event_series].count %></td>
 
           </tr>
         </tbody>
