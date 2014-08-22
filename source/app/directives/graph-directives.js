@@ -271,18 +271,20 @@ angular.module('graph')
         legend.yLabel = $filter(attrs.yfilter)(scope.ylabel);
       }
       // Build chart from scratch
-      if (scope.graph === undefined) {
-        // clear the chart beforehand
-        d3.select(element[0]).html("");
-        scope.graph = graphCtrl.callChart(scope.data, element, legend);
-        scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph, legend);
-        // Draw the now for the rain
-        if (scope.$parent.tools.active === 'rain') {
-          graphCtrl.drawNow(scope.graph, scope.$parent.timeState.at);
+      if (scope.data) {
+        if (scope.graph === undefined) {
+          // clear the chart beforehand
+          d3.select(element[0]).html("");
+          scope.graph = graphCtrl.callChart(scope.data, element, legend);
+          scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph, legend);
+          // Draw the now for the rain
+          if (scope.$parent.tools.active === 'rain') {
+            graphCtrl.drawNow(scope.graph, scope.$parent.timeState.at);
+          }
+        // Update graph with new data
+        } else {
+          scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph, legend);
         }
-      // Update graph with new data
-      } else {
-        scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph, legend);
       }
     });
 
@@ -681,7 +683,6 @@ angular.module('graph')
   .directive('line', function () {
     var link  = function (scope, element, attrs, graphCtrl) {
       graphCtrl.callChart = function (timeseries, element, legend) {
-
         var graph = graphCtrl.createCanvas(legend, element);
         var svg = graph.svg,
             height = graph.height,
@@ -813,7 +814,11 @@ angular.module('graph')
         var rescaleX = false;
 
         var yN = graphCtrl.maxMin(data, '1');
-        if (yN.max > y.max || yN.max < (0.3 * y.max)) {
+        // Only rescale the y axis if values are greater than
+        // the top of the axis, or smaller than 0.1 of the height
+        // of the axis. To prevent rapid rescaling when animating
+        // rain.
+        if (yN.max > y.max || yN.max < (0.1 * y.max)) {
           rescaleY = true;
           y = yN;
           y.scale = graphCtrl.scale(0, y.max, {
