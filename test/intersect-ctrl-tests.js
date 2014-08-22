@@ -2,6 +2,7 @@ describe('Testing IntersectAggregateCtrl', function () {
   var $scope,
     $rootScope,
     $controller,
+    UtilService,
     createController,
     result;
 
@@ -10,6 +11,7 @@ describe('Testing IntersectAggregateCtrl', function () {
   beforeEach(inject(function ($injector) {
     $controller = $injector.get('$controller');
     $rootScope = $injector.get('$rootScope');
+    UtilService = $injector.get('UtilService');
     $scope = $rootScope.$new();
 
     $scope.timeState = {
@@ -82,7 +84,8 @@ describe('Testing IntersectAggregateCtrl', function () {
       $controller('IntersectCtrl', {
           '$scope': $scope,
           'RasterService': MockRasterService,
-          'ClickFeedbackService': MockClickFeedbackService
+          'ClickFeedbackService': MockClickFeedbackService,
+          'UtilService': UtilService
       });
       $scope.$digest();
     };

@@ -205,7 +205,6 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     return dataProm;
   };
 
-
   return {
     rasterInfo: rasterInfo,
     getIntensityData: getIntensityData,

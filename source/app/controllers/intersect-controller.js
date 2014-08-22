@@ -2,7 +2,8 @@ app.controller("IntersectCtrl", [
   "$scope",
   "RasterService",
   "ClickFeedbackService",
-  function ($scope, RasterService, ClickFeedbackService) {
+  "UtilService",
+  function ($scope, RasterService, ClickFeedbackService, UtilService) {
     /**
      * lineIntersect is the object which collects different
      * sets of line data. If the intersect tool is turned on,
@@ -14,8 +15,8 @@ app.controller("IntersectCtrl", [
      */
     $scope.lineIntersect = {};
 
-    var firstClick, secondClick, updateLineIntersect, putDataOnscope, dataConvertToMeters,
-        degToMeters, metersToDegs, removeDataFromScope, _updateLineIntersect;
+    var firstClick, secondClick, updateLineIntersect, putDataOnscope,
+      removeDataFromScope, _updateLineIntersect;
 
     /**
      * Loops over all layers to request intersection data for all
@@ -60,74 +61,16 @@ app.controller("IntersectCtrl", [
           $scope.lineIntersect[slug] = {};
           // convert degrees result to meters to display properly.
           if ($scope.mapState.layers[slug].temporal) {
-            $scope.lineIntersect[slug].result = dataConvertToMeters(result);
-            $scope.lineIntersect[slug].data = createDataForTimeState($scope.lineIntersect[slug].result, $scope.timeState);
+            $scope.lineIntersect[slug].result = UtilService.dataConvertToMeters(result);
+            $scope.lineIntersect[slug].data = UtilService.createDataForTimeState($scope.lineIntersect[slug].result, $scope.timeState);
           } else {
-            $scope.lineIntersect[slug].data = dataConvertToMeters(result);
+            $scope.lineIntersect[slug].data = UtilService.dataConvertToMeters(result);
           }
           $scope.lineIntersect[slug].name = $scope.mapState.layers[slug].name;
         } else if (slug in $scope.lineIntersect) {
           removeDataFromScope(slug);
         }
       });
-    };
-
-    /**
-     * Creates a subset data object for a specific timeState
-     *
-     * @param  {array} data      array of shape:
-     *                           [
-     *                             [x0, [y0_1, y0_2, ..., y0_n]],
-     *                             [x1, [y1_1, y1_2, ..., y1_n]],
-     *                             ...
-     *                             [xm, [ym_1, ym_2, ..., ym_n]]
-     *                           ]
-     * @param  {object} timeState nxt timeState object
-     * @return {array}           array (for timestep 1) of shape:
-     *                           [[x0, y0_1], [x1, y1_1], ...]
-     */
-    var createDataForTimeState = function (data, timeState) {
-      var interval = timeState.end - timeState.start;
-      var cur = timeState.at - timeState.start;
-      var i = Math.round(data[0][1].length * cur / interval);
-      var dataForTimeState = [];
-      angular.forEach(data, function (value) {
-        dataForTimeState.push([value[0], value[1][i]]);
-      });
-      return dataForTimeState;
-    };
-
-    /**
-     * Takes data array with degrees as x-axis.
-     * Returns array with meters as x-axis
-     * @param  {array} data Array with degrees
-     * @return {array} data Array with meters
-     */
-    dataConvertToMeters = function (data) {
-      for (var i = 0; data.length > i; i++) {
-        data[i][0] = degToMeters(data[i][0]);
-      }
-      return data;
-    };
-
-    /**
-     * Takes degrees converts to radians
-     * and then converts to "haversine km's approximation" and then to meters
-     * @param  {float} degrees
-     * @return {float} meters
-     */
-    degToMeters = function (degrees) {
-      return  (degrees * Math.PI) / 180 * 6371 * 1000;
-    };
-
-    /**
-     * Takes meters converts to radians
-     * and then converts degrees
-     * @param  {float} meters
-     * @return {float} degrees
-     */
-    metersToDegs = function (meters) {
-      return (meters / 1000 / 6371) * 180 / Math.PI;
     };
 
     removeDataFromScope = function (slug) {
@@ -142,26 +85,12 @@ app.controller("IntersectCtrl", [
      * @param {object} secondClick
      */
     _updateLineIntersect = function (firstClick, secondClick) {
-      var line = createLineWKT(firstClick, secondClick);
+      var line = UtilService.createLineWKT(firstClick, secondClick);
       updateLineIntersect(
         line,
         $scope.mapState.layers,
         $scope.lineIntersect
       );
-    };
-
-    var createLineWKT = function (firstClick, secondClick) {
-      return [
-        "LINESTRING(",
-        firstClick.lng,
-        " ",
-        firstClick.lat,
-        ",",
-        secondClick.lng,
-        " ",
-        secondClick.lat,
-        ")"
-      ].join('');
     };
 
     /**
@@ -221,7 +150,7 @@ app.controller("IntersectCtrl", [
     $scope.$watch('timeState.at', function (n, o) {
       angular.forEach($scope.lineIntersect, function (intersect, slug) {
         if ($scope.mapState.layers[slug].temporal) {
-          intersect.data = createDataForTimeState(intersect.result, $scope.timeState);
+          intersect.data = UtilService.createDataForTimeState(intersect.result, $scope.timeState);
         }
       });
     });
@@ -231,7 +160,7 @@ app.controller("IntersectCtrl", [
      */
     $scope.$watch('timeState.zoomEnded', function (n, o) {
       if (n === o) { return true; }
-      var line = createLineWKT(firstClick, secondClick);
+      var line = UtilService.createLineWKT(firstClick, secondClick);
       var dataProm;
       angular.forEach($scope.lineIntersect, function (intersect, slug) {
         if ($scope.mapState.layers[slug].temporal) {
@@ -259,7 +188,7 @@ app.controller("IntersectCtrl", [
         lon1 = firstClick.lng;
         lon2 = secondClick.lng;
         maxD = Math.sqrt(Math.pow((lat2 - lat1), 2) + Math.pow((lon2 - lon1), 2));
-        d = metersToDegs($scope.box.mouseLoc);
+        d = UtilService.metersToDegs($scope.box.mouseLoc);
         r = d / maxD;
         dLat = (lat2 - lat1) * r;
         dLon = (lon2 - lon1) * r;
