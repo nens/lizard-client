@@ -65,6 +65,15 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     };
 
 
+    /**
+     * TODO: update docstring.
+     *
+     * Fills PointObject with data from click.
+     *
+     * @param {object} map
+     * @param {object} here
+     * @param {object} extra
+     */
     var fillPointObject = function (map, here, extra) {
 
       var clickedOnEvents = extra && extra.type === 'events';
@@ -83,6 +92,24 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
         });
     };
 
+    /**
+     * 
+     * @summary Callback to handle utfGrid responses.
+     *
+     * @description When utfGrid responded with data, this function tries to 
+     * get object related data from the server. When an event layer is active,
+     * showOnlyEvents is true and no object related data is retrieved from the
+     * server.
+     *
+     * Objected related data retrieved from server:
+     * 
+     * - Timeseries: EventService.getEvents()
+     * - Events: getTimeSeriesForObject()
+     *
+     * @param {object} map - Leaflet map object.
+     * @param {object} here - object with lattitude and longitude.
+     * @param {boolean} showOnlyEvents - True if clicked on events
+     */
     var utfgridResponded = function (map, here, showOnlyEvents) {
       return function (response) {
 
@@ -111,10 +138,10 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           var entity = $scope.pointObject.attrs.data.entity_name;
           var id = $scope.pointObject.attrs.data.id;
           // Get events belonging to object.
-          EventService.getEvents(
-            showOnlyEvents ? {} : {object: entity + '$' + id}
-          )
-          .then(eventResponded);
+          if (!showOnlyEvents) {
+            EventService.getEvents({object: entity + '$' + id})
+              .then(eventResponded);
+          }
           // Get timeseries belonging to object.
           getTimeSeriesForObject();
         } else {
@@ -204,7 +231,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     var eventResponded = function (response) {
       $scope.pointObject.events.data = [];
       angular.forEach(response.features, function (feature) {
-        feature.properties.geometry = feature.geometry;
         $scope.pointObject.events.data.push(feature.properties);
       });
       if ($scope.pointObject.events.data.length > 0) {
@@ -232,8 +258,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     });
 
     var _watchAttrAndEventActivity = function (n, o) {
-
-      //console.log('$scope.pointObject.events', $scope.pointObject.events);
 
       var checkIfAttrsActive  = $scope.pointObject.attrs.active,
           checkIfEventsActive = $scope.pointObject.events.active;

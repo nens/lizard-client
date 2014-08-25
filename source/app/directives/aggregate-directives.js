@@ -6,8 +6,9 @@
  * time-interval (temporal extent, from timeline)
  *
  */
-app.directive('vectorlayer', ["EventService", "$rootScope", "ClickFeedbackService",
-  function (EventService, $rootScope, ClickFeedbackService) {
+app.directive('vectorlayer', ["EventService", "$rootScope",
+  "ClickFeedbackService", function (EventService, $rootScope,
+  ClickFeedbackService) {
 
   return {
     restrict: 'A',
@@ -261,6 +262,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope", "ClickFeedbackServic
             var radius, overlaps;
             overlaps = _countOverlapLocations(overlapLocations, d);
             // logarithmic scaling with a minimum radius of 6
+            d.properties.number_events_location = overlaps;
             radius = 6 + (5 * Math.log(overlaps));
             return radius;
           });
