@@ -439,24 +439,13 @@ angular.module('graph')
       var bar = g.selectAll(".bar")
           .data(data, function  (d) { return d[0]; });
 
-      var heightFn = function (d) {
-        var height = y.scale(d[1]);
-        var h;
-        if (height < 200) {
-          h = 200 - height;
-        } else {
-          h = 0;
-        }
-        return h;
-      };
-
       var barWidth = x.scale(data[1][0]) - x.scale(data[0][0]);
 
       // UPDATE
       // Update old elements as needed.
       bar.transition()
         .duration(500)
-        .attr("height", heightFn)
+        .attr("height", function (d) { return graph.height - y.scale(d[1]); })
         .attr("x", function (d) { return x.scale(d[0]) - 0.5 * barWidth; })
         .attr('width', function (d) { return barWidth; })
         .attr("y", function (d) { return y.scale(d[1]); })
@@ -472,7 +461,7 @@ angular.module('graph')
           .attr("height", 0)
           .transition()
           .duration(500)
-          .attr("height", function (d) { return 200 - y.scale(d[1]); })
+          .attr("height", function (d) { return graph.height - y.scale(d[1]); })
           .attr("y", function (d) { return y.scale(d[1]); });
 
       // Move now-indicator to the front
