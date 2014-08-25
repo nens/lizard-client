@@ -384,11 +384,13 @@ angular.module('graph')
      * @param  {object} graph graph object
      */
     graphCtrl.drawFeatures = function (data, graph, legend) {
+
       var svg = graph.svg,
-      g = graph.g,
-      x = graph.x,
-      y = graph.y,
-      width = graph.width;
+        g = graph.g,
+        x = graph.x,
+        y = graph.y,
+        width = graph.width,
+        HIDDEN_BAR_PIECE_HEIGHT = 90; // bugfix (firefox only)
 
       var yN = graphCtrl.maxMin(data, '1');
       if (yN.max > y.max || yN.max < (0.5 * y.max)) {
@@ -440,14 +442,13 @@ angular.module('graph')
           .data(data, function  (d) { return d[0]; });
 
       var heightFn = function (d) {
-        var height = y.scale(d[1]);
-        var h;
+        var h, height = y.scale(d[1]);
         if (height < 200) {
           h = 200 - height;
         } else {
           h = 0;
         }
-        return h;
+        return h - HIDDEN_BAR_PIECE_HEIGHT;
       };
 
       var barWidth = x.scale(data[1][0]) - x.scale(data[0][0]);
@@ -472,7 +473,9 @@ angular.module('graph')
           .attr("height", 0)
           .transition()
           .duration(500)
-          .attr("height", function (d) { return 200 - y.scale(d[1]); })
+          .attr("height", function (d) {
+            return 200 - HIDDEN_BAR_PIECE_HEIGHT - y.scale(d[1]);
+          })
           .attr("y", function (d) { return y.scale(d[1]); });
 
       // Move now-indicator to the front
