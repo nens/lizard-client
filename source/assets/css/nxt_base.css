@@ -282,6 +282,10 @@ label.layer-chooser > span.layer-img {
     background-repeat: no-repeat;
 }
 
+label.layer-chooser > span.layer-img:hover {
+    cursor: pointer !important;
+}
+
 ul.list-inline li.baselayer-icon {
     position:relative;
     /*border:1px solid #ccc;*/
