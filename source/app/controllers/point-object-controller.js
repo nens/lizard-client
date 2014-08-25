@@ -233,8 +233,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
 
     var _watchAttrAndEventActivity = function (n, o) {
 
-      //console.log('$scope.pointObject.events', $scope.pointObject.events);
-
       var checkIfAttrsActive  = $scope.pointObject.attrs.active,
           checkIfEventsActive = $scope.pointObject.events.active;
 
@@ -265,6 +263,12 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     $scope.$watch('pointObject.attrs.active',  _watchAttrAndEventActivity);
     $scope.$watch('pointObject.events.active', _watchAttrAndEventActivity);
 
+
+    /**
+     * Give the black event circle, if present, it's initial color.
+     *
+     * @returns {void}
+     */
     var _recolorBlackEventFeature = function () {
 
       var feature = d3.select('.highlighted-event');
@@ -276,5 +280,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           .attr("fill", feature.attr("data-init-color"));
       }
     };
+
+    $scope.mustShowRainCard = RasterService.mustShowRainCard;
   }
 ]);

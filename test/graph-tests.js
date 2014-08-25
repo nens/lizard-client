@@ -23,7 +23,6 @@ describe('Testing graph directives', function() {
   });
 
   it('should look at the data in the right way', function () {
-
   });
 
   it('should draw a canvas', function () {

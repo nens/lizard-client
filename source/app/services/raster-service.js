@@ -205,6 +205,35 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     return dataProm;
   };
 
+  /**
+   * Checks whether rain data, retrieved from the back-end, contains at least
+   * one other value than null, so we know that data is available, and allow
+   * the app to show the card.
+   *
+   * @returns {boolean}
+   */
+  var mustShowRainCard = function (mapState, pointObject) {
+
+    var activeTemporalLayer = mapState.getActiveTemporalLayer();
+    var rainIsActive =
+           (pointObject.temporalRaster.type === 'demo:radar'
+              && activeTemporalLayer
+              && activeTemporalLayer.slug === 'demo:radar'
+            );
+
+    if (rainIsActive) {
+
+      var i, rainData = pointObject.temporalRaster.data;
+
+      for (i = 0; i < rainData.length; i++) {
+        if (rainData[i][1] !== null) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
   return {
     rasterInfo: rasterInfo,
     getIntensityData: getIntensityData,
@@ -214,7 +243,8 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     getImgOverlays: getImgOverlays,
     handleElevationCurve: handleElevationCurve,
     getRasterDataForExtentData: getRasterDataForExtentData,
-    getAggregationForActiveLayer: getAggregationForActiveLayer
+    getAggregationForActiveLayer: getAggregationForActiveLayer,
+    mustShowRainCard: mustShowRainCard
   };
 
 }]);

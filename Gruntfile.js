@@ -138,6 +138,7 @@ module.exports = function (grunt) {
           }
         }
       },
+
       // produces docs
       jsdoc: {
         dist: {
