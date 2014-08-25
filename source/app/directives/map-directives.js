@@ -486,6 +486,7 @@ app.directive('rasteranimation', ["RasterService", "UtilService",
         frameLookup = {};
 
         for (var i in imageOverlays) {
+
           loadingRaster += 1;
           imageOverlays[i].setOpacity(0);
           // Remove old listener
@@ -506,7 +507,6 @@ app.directive('rasteranimation', ["RasterService", "UtilService",
         var i, activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
 
         if (activeTemporalLayer) {
-
           for (i in imageOverlays) {
             mapCtrl.addLayer(imageOverlays[i]);
           }
@@ -516,7 +516,6 @@ app.directive('rasteranimation', ["RasterService", "UtilService",
           getImages(scope.timeState.at);
 
         } else {
-
           for (i in imageOverlays) {
             mapCtrl.removeLayer(imageOverlays[i]);
           }
@@ -532,12 +531,12 @@ app.directive('rasteranimation', ["RasterService", "UtilService",
        * with next frame; If frame is not in lookupFrame, get new images.
        */
       scope.$watch('timeState.at', function (newVal, oldVal) {
+        if (newVal === oldVal) { return true; }
         var currentDate = UtilService.roundTimestamp(newVal,
                                              step, false);
         var oldDate = UtilService.roundTimestamp(oldVal,
                                              step, false);
         if (currentDate === oldDate) { return; }
-
         if (scope.mapState.getActiveTemporalLayer()) {
 
           var overlayIndex = frameLookup[currentDate];
