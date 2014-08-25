@@ -159,6 +159,7 @@ app.controller("IntersectCtrl", [
      * Reload data from temporal rasters when temporal zoomended.
      */
     $scope.$watch('timeState.zoomEnded', function (n, o) {
+
       if (n === o) { return true; }
       if (firstClick && secondClick) {
         var line = UtilService.createLineWKT(firstClick, secondClick);

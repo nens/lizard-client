@@ -387,6 +387,10 @@ app.directive('map', [
 
         } else {
 
+          if (layer.slug === 'waterchain') {
+            ClickFeedbackService.killVibrator();
+          }
+
           // for other than temporalRaster layers, we do stuff the old way
           ctrl.toggleLayer(layer, scope.mapState.layers, scope.mapState.bounds);
           scope.mapState.activeLayersChanged =
@@ -482,6 +486,7 @@ app.directive('rasteranimation', ["RasterService", "UtilService",
         frameLookup = {};
 
         for (var i in imageOverlays) {
+
           loadingRaster += 1;
           imageOverlays[i].setOpacity(0);
           // Remove old listener
