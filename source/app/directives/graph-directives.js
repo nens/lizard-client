@@ -886,7 +886,10 @@ angular.module('graph')
 
         path.transition()
           .duration(300)
-          .attr("d", line);
+          .attr("d", function (d) {
+            // Prevent returning invalid values for d
+            return line(d) || "M0, 0";
+          });
 
         if (rescaleY) { reYScale(); }
         if (rescaleX) { reXScale(); }
