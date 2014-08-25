@@ -671,50 +671,6 @@
   color: #7f8c8d;
 }
 
-.card-title {
-  font-family: 'Roboto Slab', serif;
-  color: #7f8c8d;
-  margin-left: 10px;
-  height: 50px;
-  line-height: 50px;
-}
-
-.card-title-text {
-  display: inline-block;
-  float: left;
-}
-
-.card-separator {
-  position: relative;
-  top: -10px;
-  /*margin: 0 3px 0 10px;*/
-  margin: 0;
-  border: 0;
-  border-top: 1px solid #bdc3c7;
-}
-
-.card-title-button {
-  position: relative;
-  left: 8px;
-  width: 35px;
-  height: 25px;
-  float: right;
-  border-radius: 2px;
-  margin: 10px 0 10px 0;
-  color: #95a5a6;
-}
-
-.card-title-button:hover {
-  cursor: pointer;
-  color: #1abc9c;
-}
-
-.card-title-button-text {
-  position: relative;
-  top: -12px;
-  left: 2px;
-}
-
 .pointer:hover {
   cursor: pointer;
 }
