@@ -1,13 +1,21 @@
 <div ng-controller="IntersectCtrl">
-
   <div ng-repeat="intersect in lineIntersect" class="card active" id="card-<% intersect.name %>">
-
     <div id="card-content-<% intersect.name %>" class="card-content">
-      <graph line
-             data="intersect.data"
-             ylabel="'hoogte [mNAP]'"
-             xlabel="'afstand in [m]'">
-      </graph>
+      <div ng-switch="intersect.name" class="card-content" id="card-content-<% agg.name %>">
+
+        <graph ng-switch-default
+          line
+          data="intersect.data"
+          ylabel="'hoogte [mNAP]'"
+          xlabel="'afstand in [m]'">
+        </graph>
+        <graph ng-switch-when="Regen"
+          line
+          data="intersect.data"
+          ylabel="'mm / 5 minuten'"
+          xlabel="'afstand in [m]'">
+        </graph>
+      </div>
     </div>
   </div>
 </div>

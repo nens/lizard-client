@@ -2,7 +2,8 @@ app.controller("IntersectCtrl", [
   "$scope",
   "RasterService",
   "ClickFeedbackService",
-  function ($scope, RasterService, ClickFeedbackService) {
+  "UtilService",
+  function ($scope, RasterService, ClickFeedbackService, UtilService) {
     /**
      * lineIntersect is the object which collects different
      * sets of line data. If the intersect tool is turned on,
@@ -14,8 +15,8 @@ app.controller("IntersectCtrl", [
      */
     $scope.lineIntersect = {};
 
-    var firstClick, secondClick, updateExtentAgg, putDataOnscope, dataConvertToMeters,
-        degToMeters, metersToDegs, removeDataFromScope, _updateLineIntersect;
+    var firstClick, secondClick, updateLineIntersect, putDataOnscope,
+      removeDataFromScope, _updateLineIntersect;
 
     /**
      * Loops over all layers to request intersection data for all
@@ -28,14 +29,17 @@ app.controller("IntersectCtrl", [
      * @param  {object} lineIntersect   lineIntersect object of this
      *                                  ctrl
      */
-    updateExtentAgg = function (line, layers, lineIntersect) {
+    updateLineIntersect = function (line, layers, lineIntersect) {
       angular.forEach(layers, function (layer, slug) {
         if (layer.active
           && layer.store_path
           && layer.aggregation_type !== 'counts') {
-          var agg = lineIntersect[slug] || {},
-              options = {wkt: line},
-              dataProm = RasterService.getRasterData(slug, undefined, options);
+          var agg = lineIntersect[slug] || {}, dataProm;
+          if (layer.temporal) {
+            dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
+          } else {
+            dataProm = RasterService.getRasterData(slug, line, undefined, undefined, {});
+          }
           // Pass the promise to a function that handles the scope.
           putDataOnscope(dataProm, slug);
         } else if (slug in lineIntersect && !layer.active) {
@@ -56,45 +60,17 @@ app.controller("IntersectCtrl", [
         if (result.length > 0) {
           $scope.lineIntersect[slug] = {};
           // convert degrees result to meters to display properly.
-          $scope.lineIntersect[slug].data = dataConvertToMeters(result);
+          if ($scope.mapState.layers[slug].temporal) {
+            $scope.lineIntersect[slug].result = UtilService.dataConvertToMeters(result);
+            $scope.lineIntersect[slug].data = UtilService.createDataForTimeState($scope.lineIntersect[slug].result, $scope.timeState);
+          } else {
+            $scope.lineIntersect[slug].data = UtilService.dataConvertToMeters(result);
+          }
           $scope.lineIntersect[slug].name = $scope.mapState.layers[slug].name;
         } else if (slug in $scope.lineIntersect) {
           removeDataFromScope(slug);
         }
       });
-    };
-
-    /**
-     * Takes data array with degrees as x-axis.
-     * Returns array with meters as x-axis
-     * @param  {array} data Array with degrees
-     * @return {array} data Array with meters
-     */
-    dataConvertToMeters = function (data) {
-      for (var i = 0; data.length > i; i++) {
-        data[i][0] = degToMeters(data[i][0]);
-      }
-      return data;
-    };
-
-    /**
-     * Takes degrees converts to radians 
-     * and then converts to "haversine km's approximation" and then to meters
-     * @param  {float} degrees 
-     * @return {float} meters
-     */
-    degToMeters = function (degrees) {
-      return  (degrees * Math.PI) / 180 * 6371 * 1000;
-    };
-
-    /**
-     * Takes meters converts to radians 
-     * and then converts degrees
-     * @param  {float} meters 
-     * @return {float} degrees
-     */
-    metersToDegs = function (meters) {
-      return (meters / 1000 / 6371) * 180 / Math.PI;
     };
 
     removeDataFromScope = function (slug) {
@@ -109,18 +85,8 @@ app.controller("IntersectCtrl", [
      * @param {object} secondClick
      */
     _updateLineIntersect = function (firstClick, secondClick) {
-      var line = [
-        "LINESTRING(",
-        firstClick.lng,
-        " ",
-        firstClick.lat,
-        ",",
-        secondClick.lng,
-        " ",
-        secondClick.lat,
-        ")"
-      ].join('');
-      updateExtentAgg(
+      var line = UtilService.createLineWKT(firstClick, secondClick);
+      updateLineIntersect(
         line,
         $scope.mapState.layers,
         $scope.lineIntersect
@@ -143,6 +109,8 @@ app.controller("IntersectCtrl", [
       if (secondClick) {
         firstClick = undefined;
         secondClick = undefined;
+        // Empty data element since the line is gone
+        $scope.lineIntersect = {};
         ClickFeedbackService.emptyClickLayer($scope.map);
       } else {
         if (firstClick) {
@@ -177,6 +145,36 @@ app.controller("IntersectCtrl", [
     });
 
     /**
+     * Updates lineIntersect of temporal layers when timeState.at changes.
+     */
+    $scope.$watch('timeState.at', function (n, o) {
+      angular.forEach($scope.lineIntersect, function (intersect, slug) {
+        if ($scope.mapState.layers[slug].temporal) {
+          intersect.data = UtilService.createDataForTimeState(intersect.result, $scope.timeState);
+        }
+      });
+    });
+
+    /**
+     * Reload data from temporal rasters when temporal zoomended.
+     */
+    $scope.$watch('timeState.zoomEnded', function (n, o) {
+
+      if (n === o) { return true; }
+      if (firstClick && secondClick) {
+        var line = UtilService.createLineWKT(firstClick, secondClick);
+        var dataProm;
+        angular.forEach($scope.lineIntersect, function (intersect, slug) {
+          if ($scope.mapState.layers[slug].temporal) {
+            dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
+            // Pass the promise to a function that handles the scope.
+            putDataOnscope(dataProm, slug);
+          }
+        });
+      }
+    });
+
+    /**
      * Legacy function to draw 'bolletje'
      *
      * TODO
@@ -193,7 +191,7 @@ app.controller("IntersectCtrl", [
         lon1 = firstClick.lng;
         lon2 = secondClick.lng;
         maxD = Math.sqrt(Math.pow((lat2 - lat1), 2) + Math.pow((lon2 - lon1), 2));
-        d = metersToDegs($scope.box.mouseLoc);
+        d = UtilService.metersToDegs($scope.box.mouseLoc);
         r = d / maxD;
         dLat = (lat2 - lat1) * r;
         dLon = (lon2 - lon1) * r;

@@ -164,64 +164,6 @@ app.service("UtilService", function () {
     return aggWindow;
   };
 
-  /**
-   * @summary: Toggle visibility of a card's content.
-   *
-   * NB! uses jQuery instead of CSS animations.
-   *
-   * @param {string} cardName An identifier specifying which card
-   * is the subject of the animation.
-   *
-   */
-  this.toggleThisCard = function (cardName) {
-
-    var card,
-        cont,
-        btnText,
-        titleText,
-        separator,
-        initHeight,
-        slideTime,
-        SLIDE_TIME_PER_100PX = 200,
-        FADE_TIME = 200;
-
-    card = $('#card-' + cardName);
-    cont = $(card).find('.card-content')[0];
-    btnText = $(card).find('.card-title-button-text')[0];
-    titleText = $(card).find('.card-title-text')[0];
-    separator = $(card).find('.card-separator')[0];
-
-    if ($(card).hasClass("active")) {
-
-      if ($(cont).data("slide-time")) {
-
-        slideTime = parseInt($(cont).data("slide-time"), 10);
-
-      } else {
-
-        initHeight = parseInt($(cont).css('height').split("px")[0], 10);
-        slideTime = Math.floor((initHeight / 100) * SLIDE_TIME_PER_100PX);
-        $(cont).attr("data-slide-time", slideTime);
-      }
-
-      $(separator).fadeOut(FADE_TIME, function () {
-        $(cont).slideUp(slideTime, function () {
-          $(card).removeClass("active");
-          $(btnText).html("<i class='fa fa-chevron-left'></i>");
-        });
-      });
-
-    } else {
-
-      slideTime = parseInt($(cont).data("slide-time"), 10);
-      $(separator).css("display", "none");
-      $(cont).slideDown(slideTime, function () {
-        $(card).addClass("active");
-        $(separator).fadeIn(FADE_TIME);
-        $(btnText).html("<i class='fa fa-chevron-down'></i>");
-      });
-    }
-  };
 
   /***
     * Fade out (in) currently (in-)visible cards.
@@ -251,6 +193,79 @@ app.service("UtilService", function () {
         }
       }, 700);
     }
+  };
+
+  /**
+   * Takes data array with degrees as x-axis.
+   * Returns array with meters as x-axis
+   * @param  {array} data Array with degrees
+   * @return {array} data Array with meters
+   */
+  this.dataConvertToMeters = function (data) {
+    for (var i = 0; data.length > i; i++) {
+      data[i][0] = this.degToMeters(data[i][0]);
+    }
+    return data;
+  };
+
+  /**
+   * Takes degrees converts to radians
+   * and then converts to "haversine km's approximation" and then to meters
+   * @param  {float} degrees
+   * @return {float} meters
+   */
+  this.degToMeters = function (degrees) {
+    return  (degrees * Math.PI) / 180 * 6371 * 1000;
+  };
+
+  /**
+   * Takes meters converts to radians
+   * and then converts degrees
+   * @param  {float} meters
+   * @return {float} degrees
+   */
+  this.metersToDegs = function (meters) {
+    return (meters / 1000 / 6371) * 180 / Math.PI;
+  };
+
+
+  /**
+   * Creates a subset data object for a specific timeState
+   *
+   * @param  {array} data      array of shape:
+   *                           [
+   *                             [x0, [y0_1, y0_2, ..., y0_n]],
+   *                             [x1, [y1_1, y1_2, ..., y1_n]],
+   *                             ...
+   *                             [xm, [ym_1, ym_2, ..., ym_n]]
+   *                           ]
+   * @param  {object} timeState nxt timeState object
+   * @return {array}           array (for timestep 1) of shape:
+   *                           [[x0, y0_1], [x1, y1_1], ...]
+   */
+  this.createDataForTimeState = function (data, timeState) {
+    var interval = timeState.end - timeState.start;
+    var cur = timeState.at - timeState.start;
+    var i = Math.round(data[0][1].length * cur / interval);
+    var dataForTimeState = [];
+    angular.forEach(data, function (value) {
+      dataForTimeState.push([value[0], value[1][i]]);
+    });
+    return dataForTimeState;
+  };
+
+  this.createLineWKT = function (firstClick, secondClick) {
+    return [
+      "LINESTRING(",
+      firstClick.lng,
+      " ",
+      firstClick.lat,
+      ",",
+      secondClick.lng,
+      " ",
+      secondClick.lat,
+      ")"
+    ].join('');
   };
 
 });

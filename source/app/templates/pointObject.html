@@ -5,21 +5,8 @@
        class="card active"
        ng-class="{hidden: !pointObject.attrs.active}">
 
-    <div class="card-title">
-      <span class="card-title-text">Objectinformatie</span>
-      <div class="card-title-button"
-           ng-click="toggleThisCard('kunstwerk')">
-        <span class="card-title-button-text">
-          <i class="fa fa-chevron-down"></i>
-        </span>
-      </div>
-    </div>
-
     <div class="card-content"
          id="card-content-kunstwerk">
-
-      <hr class="card-separator"
-          id="card-separator-kunstwerk">
 
       <i id="icon-holder"
          ng-if="pointObject.attrs.data.entity_name.split('_')[0] === 'bridge'"
@@ -53,23 +40,8 @@
        class="card active"
        ng-class="{hidden: !pointObject.events.active}">
 
-    <div class="card-title">
-      <span class="card-title-text">
-        Gebeurtenissen
-      </span>
-      <div class="card-title-button"
-           ng-click="toggleThisCard('relatified-events')">
-        <span class="card-title-button-text">
-          <i class="fa fa-chevron-down"></i>
-        </span>
-      </div>
-    </div>
-
     <div class="card-content"
          id="card-content-relatified-events">
-
-      <hr class="card-separator"
-          id="card-separator-relatified-events">
 
       <table class="table table-hover table-condensed">
 
@@ -107,17 +79,8 @@
   <div id="card-timeseries"
        class="card active"
        ng-class="{hidden: !pointObject.timeseries.active}">
-    <div class="card-title">
-        <span class="card-title-text">Tijdreeks</span>
-        <div class="card-title-button"
-             ng-click="toggleThisCard('timeseries')">
-          <span class="card-title-button-text">
-            <i class="fa fa-chevron-down"></i>
-          </span>
-        </div>
-    </div>
+
     <div class="card-content" id="card-content-timeseries">
-      <hr class="card-separator" id="card-separator-timeseries">
       <select class="timeseries"
               ng-model="pointObject.timeseries.selectedTimeseries"
               ng-options="series as series.name for series in pointObject.timeseries.data">
@@ -134,14 +97,7 @@
   <div id="card-rain"
        class="card active"
        ng-class="{hidden: !mustShowRainCard(mapState, pointObject)}">
-    <div class="card-title">
-      <span class="card-title-text">Neerslag</span>
-      <div class="card-title-button"
-           ng-click="toggleThisCard('rain')">
-        <span class="card-title-button-text">
-          <i class="fa fa-chevron-down"></i>
-        </span>
-      </div>
+    <div class="card-content" id="card-content-rain">
       <a
         id="export-rain-csv-button"
         href="#"
@@ -150,10 +106,6 @@
         csv-header="['Timestamp (ms)', 'Rain (mm)']" >
         <i class="fa fa-share-square-o"></i>
       </a>
-    </div>
-    <div class="card-content" id="card-content-rain">
-
-      <hr class="card-separator" id="card-separator-rain">
 
       <graph bar-chart
              class="xyGraph"

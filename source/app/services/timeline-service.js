@@ -163,7 +163,7 @@ app.factory("Timeline", [ function () {
       brushg.select('.e').select('rect')
         .attr("x", 0)
         .attr("width", 2)
-        .attr("style", "fill: #e74c3c;");
+        .attr("style", "fill: #2980b9;");
       brushend();
     },
 

@@ -13,7 +13,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
   var _getImageBounds = function (layerName) {
       return [[54.28458617998074, 1.324296158471368],
               [49.82567047026146, 8.992548357936204]];
-    };
+  };
 
   /**
    * Hard coded raster variables.
@@ -43,6 +43,39 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
   var getIntensityData = function () {
     return intensityData;
   };
+
+  /**
+   * Get a list of Leaflet imageOverlays. This is used for rasters with a
+   * temporal component.
+   *
+   * @param {integer} numCachedFrames
+   * @param {float[]} imgBounds
+   *
+   * @return {Object[]}
+   */
+  var getImgOverlays = function (numCachedFrames, imgBounds) {
+
+    var i, imgOverlays = {};
+
+    for (i = 0; i < numCachedFrames; i++) {
+      imgOverlays[i] = L.imageOverlay('', imgBounds, {opacity: 0});
+    }
+
+    return imgOverlays;
+  };
+
+  var handleElevationCurve = function (data) {
+    var datarow,
+        i,
+        formatted = [];
+
+    for (i in data[0]) {
+      datarow = [data[0][i], data[1][i]];
+      formatted.push(datarow);
+    }
+    return formatted;
+  };
+
   /**
    * Gets temporal raster data from server.
    *
@@ -80,59 +113,52 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
       });
   };
 
+  var cancelers = {};
 
   /**
    * getRasterData gets different types of raster data from
    * the `/api/v1/raster` endpoint.
-   * @param  {string} rasterNames - String with requested raster
+   * @param  {string} slug - String with requested raster
    * @param  {object} geom        - Object -> Leaflet.Bounds
    * @param  {object} options     - Optional object with extra params
    * @return {promise}  Restangular.get promise
    */
-  var getRasterData = function (rasterNames, geom, options) {
+  var getRasterData = function (slug, geom, start, stop, options) {
+    var srs, agg, rasterService, canceler, stopString, startString;
+    if (stop && start) {
+      stopString = new Date(stop).toISOString().split('.')[0];
+      startString = new Date(start).toISOString().split('.')[0];
+    }
 
-    var wkt, srs, agg, rasterService;
+    if (cancelers[slug]) {
+      cancelers[slug].resolve();
+    }
+
+    canceler = cancelers[slug] = $q.defer();
 
     srs = options.srs ? options.srs : 'EPSG:4326';
     agg = options.agg ? options.agg : '';
 
-    if (options.wkt) {
-      wkt = options.wkt;
-    } else {
-      wkt = "POLYGON(("
-            + geom.getWest() + " " + geom.getSouth() + ", "
-            + geom.getEast() + " " + geom.getSouth() + ", "
-            + geom.getEast() + " " + geom.getNorth() + ", "
-            + geom.getWest() + " " + geom.getNorth() + ", "
-            + geom.getWest() + " " + geom.getSouth()
-            + "))";
-    }
-
-    rasterService = (options.q) ? CabinetService.raster(options.q) : CabinetService.raster();
-
-    return rasterService.get({
-      raster_names: rasterNames,
-      geom: wkt,
+    return CabinetService.raster(canceler).get({
+      raster_names: slug,
+      geom: geom,
       srs: srs,
+      start: startString,
+      stop: stopString,
       agg: agg
     });
   };
 
-  var handleElevationCurve = function (data) {
-    var datarow,
-        i,
-        formatted = [];
-
-    for (i in data[0]) {
-      datarow = [data[0][i], data[1][i]];
-      formatted.push(datarow);
-    }
-    return formatted;
-  };
-
-  var cancelers = {};
 
   var getRasterDataForExtentData = function (aggType, agg, slug, bounds) {
+
+    var geom = "POLYGON(("
+      + bounds.getWest() + " " + bounds.getSouth() + ", "
+      + bounds.getEast() + " " + bounds.getSouth() + ", "
+      + bounds.getEast() + " " + bounds.getNorth() + ", "
+      + bounds.getWest() + " " + bounds.getNorth() + ", "
+      + bounds.getWest() + " " + bounds.getSouth()
+      + "))";
 
     if (cancelers[slug]) {
       cancelers[slug].resolve();
@@ -140,7 +166,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
 
     cancelers[slug] = $q.defer();
 
-    var dataProm = getRasterData(slug, bounds, {
+    var dataProm = getRasterData(slug, geom, undefined, undefined, {
         agg: aggType,
         q: cancelers[slug]
       });
@@ -180,26 +206,6 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
   };
 
   /**
-   * Get a list of Leaflet imageOverlays. This is used for rasters with a
-   * temporal component.
-   *
-   * @param {integer} numCachedFrames
-   * @param {float[]} imgBounds
-   *
-   * @return {Object[]}
-   */
-  var getImgOverlays = function (numCachedFrames, imgBounds) {
-
-    var i, imgOverlays = {};
-
-    for (i = 0; i < numCachedFrames; i++) {
-      imgOverlays[i] = L.imageOverlay('', imgBounds, {opacity: 0});
-    }
-
-    return imgOverlays;
-  };
-
-    /**
    * Checks whether rain data, retrieved from the back-end, contains at least
    * one other value than null, so we know that data is available, and allow
    * the app to show the card.
