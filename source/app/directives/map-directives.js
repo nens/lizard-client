@@ -482,6 +482,7 @@ app.directive('rasteranimation', ["RasterService", "UtilService",
         frameLookup = {};
 
         for (var i in imageOverlays) {
+
           loadingRaster += 1;
           imageOverlays[i].setOpacity(0);
           // Remove old listener
