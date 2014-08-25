@@ -281,34 +281,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       }
     };
 
-
-    /**
-     * Checks whether rain data, retrieved from the back-end, contains at least
-     * one other value than null, so we know that data is available, and allow
-     * the app to show the card.
-     *
-     * @returns {boolean}
-     */
-    $scope.mustShowRainCard = function () {
-
-      var activeTemporalLayer = $scope.mapState.getActiveTemporalLayer();
-      var rainIsActive =
-             ($scope.pointObject.temporalRaster.type === 'demo:radar'
-                && activeTemporalLayer
-                && activeTemporalLayer.slug === 'demo:radar'
-              );
-
-      if (rainIsActive) {
-
-        var i, rainData = $scope.pointObject.temporalRaster.data;
-
-        for (i = 0; i < rainData.length; i++) {
-          if (rainData[i][1] !== null) {
-            return true;
-          }
-        }
-      }
-      return false;
-    };
+    $scope.mustShowRainCard = RasterService.mustShowRainCard;
   }
 ]);
