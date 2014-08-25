@@ -387,6 +387,10 @@ app.directive('map', [
 
         } else {
 
+          if (layer.slug === 'waterchain') {
+            ClickFeedbackService.killVibrator();
+          }
+
           // for other than temporalRaster layers, we do stuff the old way
           ctrl.toggleLayer(layer, scope.mapState.layers, scope.mapState.bounds);
           scope.mapState.activeLayersChanged =

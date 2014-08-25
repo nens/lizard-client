@@ -243,7 +243,7 @@ label.layer-chooser > span.layer-text {
     padding: 5px;
     z-index: 1;
     position: absolute;
-    color: #2c3e50;
+    color: #7f8c8d;
 
     -o-transition: .3s ease;
     -ms-transition: .3s ease;
@@ -253,27 +253,23 @@ label.layer-chooser > span.layer-text {
 }
 
 label.layer-chooser:hover {
-    border: 2px solid #2980b9;
-}
-
-label.layer-chooser:hover > span.layer-text {
-    color: #2980b9;
+    border: 2px solid #7f8c8d;
 }
 
 label.layer-chooser.active:hover > span.layer-text {
-    color: #c0392b;
+    color: #2980b9;
 }
 
 label.layer-chooser.active > span.layer-text {
-    color: #c0392b;
+    color: #2980b9;
 }
 
 label.layer-chooser.active {
-    border: solid 2px #c0392b;
+    border: solid 2px #2980b9;
 }
 
 label.layer-chooser.active:hover {
-    border: solid 2px #c0392b;
+    border: solid 2px #2980b9;
 }
 
 label.layer-chooser > span.layer-img {
@@ -284,6 +280,10 @@ label.layer-chooser > span.layer-img {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+}
+
+label.layer-chooser > span.layer-img:hover {
+    cursor: pointer !important;
 }
 
 ul.list-inline li.baselayer-icon {
@@ -595,7 +595,7 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .layer-switcher label:hover {
-    color: #c0392b;
+    color: #2980b9;
     font-size: 14px;
     text-shadow: none;
     margin-left: 0;
@@ -603,7 +603,7 @@ ul.list-inline li.baselayer-icon label{
 
 .layer-switcher label.active,
 .layer-switcher label.count {
-    color: #c0392b;
+    color: #2980b9;
     /*font-style: italic;*/
     font-size: 14px;
     text-shadow: none;
@@ -975,7 +975,7 @@ ul.list-inline li.baselayer-icon label{
 }*/
 
 .extent{
-    fill: rgba(30,30,30,0.2);
+    fill: rgba(30,30,30,0.1);
 }
 
 .resize path {
@@ -1035,7 +1035,7 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .button-list-link.active {
-    color: rgb(192, 57, 43);
+    color: rgb(41, 128, 185);
 }
 
 .resize path {
