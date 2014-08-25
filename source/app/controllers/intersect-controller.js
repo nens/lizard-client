@@ -160,15 +160,17 @@ app.controller("IntersectCtrl", [
      */
     $scope.$watch('timeState.zoomEnded', function (n, o) {
       if (n === o) { return true; }
-      var line = UtilService.createLineWKT(firstClick, secondClick);
-      var dataProm;
-      angular.forEach($scope.lineIntersect, function (intersect, slug) {
-        if ($scope.mapState.layers[slug].temporal) {
-          dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
-          // Pass the promise to a function that handles the scope.
-          putDataOnscope(dataProm, slug);
-        }
-      });
+      if (firstClick && secondClick) {
+        var line = UtilService.createLineWKT(firstClick, secondClick);
+        var dataProm;
+        angular.forEach($scope.lineIntersect, function (intersect, slug) {
+          if ($scope.mapState.layers[slug].temporal) {
+            dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
+            // Pass the promise to a function that handles the scope.
+            putDataOnscope(dataProm, slug);
+          }
+        });
+      }
     });
 
     /**
