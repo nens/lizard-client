@@ -61,7 +61,6 @@ app.directive('map', [
       });
       MapService.initiateMapEvents();
       scope.map = map;
-      MapService.mapState.bounds = scope.map.getBounds();
 
 
       // Initialise layers

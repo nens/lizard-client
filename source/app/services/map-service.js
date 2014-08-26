@@ -17,6 +17,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
   var _map, createLayer, _initiateTMSLayer, _initiateWMSLayer,
       _initiateAssetLayer, _turnOffAllOtherBaselayers, _rescaleElevation,
       _getActiveTemporalLayer, _getLayersByType, _clicked, _updateOverLayers,
+      _moveEnded, _moveStarted, _mouseMoved, _dragEnded,
 
       // public
       setView, fitBounds, mapState, initiateMapEvents,
@@ -398,6 +399,44 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     $rootScope.$apply();
   };
 
+  _moveStarted = function () {
+    mapState.mapMoving = true;
+  };
+
+  _mouseMoved = function (e) {
+    mapState.userHere = e.latlng;
+  };
+
+  _moveEnded = function () {
+    var finalizeMove = function () {
+      mapState.moved = Date.now();
+      mapState.mapMoving = false;
+      mapState.pixelCenter = _map.getPixelBounds().getCenter();
+      mapState.zoom = _map.getZoom();
+      mapState.bounds = _map.getBounds();
+    };
+
+    if (!$rootScope.$$phase) {
+      $rootScope.$apply(finalizeMove);
+    } else {
+      finalizeMove();
+    }
+  };
+
+  _dragEnded = function () {
+    // if (scope.box.type === 'default') {
+    // // scope.box.type = 'empty';
+    //   scope.$apply(function () {
+    //     scope.box.close();
+    //   });
+    // }
+    // if (scope.box.type === 'intersecttool') {
+    //   scope.$apply(function () {
+    //     scope.box.type = 'empty';
+    //   });
+    // }
+  }
+
   /**
    * @function
    * @memberOf app.MapService
@@ -406,18 +445,10 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
    */
   initiateMapEvents = function () {
     _map.on('click', _clicked);
-
-    _map.on('movestart', function () {
-      mapState.mapMoving = true;
-    });
-
-    /**
-     * Sets the geolocation of the users mouse to the mapState
-     * Used to draw clickfeedback.
-     */
-    _map.on('mousemove', function (e) {
-      mapState.userHere = e.latlng;
-    });    
+    _map.on('movestart', _moveStarted);
+    _map.on('mousemove', _mouseMoved);
+    _map.on('moveend', _moveEnded);
+    _map.on('dragend', _dragEnded);
   };
 
 
