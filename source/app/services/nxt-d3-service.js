@@ -25,13 +25,14 @@ app.factory("NxtD3Service", [ function () {
      *                              values in px.
      * @return {object} svg         svg.
      */
-    _createCanvas: function (svg, dimensions) {
+    _createCanvas: function (element, dimensions) {
       var width = dimensions.width -
                   dimensions.padding.left -
                   dimensions.padding.right,
           height = dimensions.height -
                    dimensions.padding.top -
-                   dimensions.padding.bottom;
+                   dimensions.padding.bottom,
+      svg = d3.select(element);
       svg.attr('width', dimensions.width)
         .attr('height', dimensions.height)
         .style("margin-top", dimensions.padding.top)
