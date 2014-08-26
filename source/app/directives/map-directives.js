@@ -113,17 +113,6 @@ app.directive('map', [
         }
       });
 
-      /**
-       * Watch to remove clicklayer when user clicks on omnibox close button.
-       */
-      scope.$watch('box.type', function (n, o) {
-        if (n === o) { return true; }
-        if (scope.mapState.clickLayer && scope.box.type === 'empty') {
-          ctrl.removeLayer(scope.mapState.clickLayer);
-          delete scope.mapState.clickLayer;
-        }
-      });
-
       scope.mapState.changeLayer = function (layer) {
 
         if (layer.temporal) {

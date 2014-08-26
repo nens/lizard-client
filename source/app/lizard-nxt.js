@@ -236,7 +236,18 @@ app.controller('MasterCtrl',
         $scope.$broadcast('newPointObject');
       }
     }
-  })
+  });
+
+  /**
+   * Watch to remove clicklayer when user clicks on omnibox close button.
+   */
+  $scope.$watch('box.type', function (n, o) {
+    if (n === o) { return true; }
+    if ($scope.mapState.clickLayer && $scope.box.type === 'empty') {
+      MapService.removeLayer($scope.mapState.clickLayer);
+      delete $scope.mapState.clickLayer;
+    }
+  });
 
   var now = Date.now();
   var day = 24 * 60 * 60 * 1000;

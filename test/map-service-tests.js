@@ -27,7 +27,7 @@ describe('Testing map service', function () {
 
   it('should initiate an Asset layer ', function () {
     MapService.createLayer(layers.waterchain);
-    expect(layers.waterchain.grid_layer instanceof L.UtfGrid).toBe(false);
+    expect(layers.waterchain.grid_layer instanceof L.UtfGrid).toBe(true);
     expect(layers.waterchain.leafletLayer instanceof L.TileLayer).toBe(true);
   });
 
@@ -46,11 +46,31 @@ describe('Testing map service', function () {
       document.createElement('div')
       );
     var map = MapService.createMap(elem);
-     MapService.createLayer(layers.satellite);
+    MapService.createLayer(layers.satellite);
     MapService.addLayer(layers.satellite.leafletLayer);
     expect(map.hasLayer(layers.satellite.leafletLayer)).toBe(true);
     MapService.removeLayer(layers.satellite.leafletLayer);
     expect(map.hasLayer(layers.satellite.leafletLayer)).toBe(false);
+  });
+
+  it('should initiate and catch click events', function () {
+    elem = document.querySelector('body').appendChild(
+      document.createElement('div')
+      );
+    var bounds = window.data_bounds.all;
+    var map = MapService.createMap(elem, {
+      bounds: bounds
+    });
+    MapService.initiateMapEvents();
+    oldHere = MapService.mapState.here;
+    var location = new L.LatLng(52.5052,4.9604);
+    map.fireEvent('click', {
+      latlng: location,
+      layerPoint: map.latLngToLayerPoint(location),
+      containerPoint: map.latLngToContainerPoint(location)
+    });
+    expect(oldHere).toBe(null);
+    expect(MapService.mapState.here.lat).toBe(location.lat);
   });
 
 });

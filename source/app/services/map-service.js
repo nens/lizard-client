@@ -388,7 +388,11 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
    * @param  {event}  e Leaflet event object
    */
   _clicked = function (e) {
-    mapState.here = e.latlng;
+    if (e.hasOwnProperty('latlng')) {
+      mapState.here = e.latlng;
+    } else if (e.hasOwnProperty('e')) {
+      mapState.here = e.e.latlng;
+    }
     // removeLayer(mapState.clickLayer);
     // delete mapState.clickLayer;
     $rootScope.$apply();
