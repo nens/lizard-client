@@ -219,11 +219,24 @@ app.controller('MasterCtrl',
   // MOVE TO MAP CONTROL ?
   // 
   // $scope.layers = MapService.layers;
-  $scope.mapState = MapService.mapState
+  $scope.mapState = MapService.mapState;
 
-  $scope.panZoom = {};
-  // /END MOVE TO MAP CONTROL
-  // MAP MODEL
+  $scope.$watch('mapState.here', function (n, o) {
+    if (n === o) { return true; }
+    if (!$scope.$$phase) {
+      $scope.$apply(function () {
+        if ($scope.box.type !== 'intersect') {
+          $scope.box.type = 'pointObject';
+          $scope.$broadcast('newPointObject');
+        }
+      });
+    } else {
+      if ($scope.box.type !== 'intersect') {
+        $scope.box.type = 'pointObject';
+        $scope.$broadcast('newPointObject');
+      }
+    }
+  })
 
   var now = Date.now();
   var day = 24 * 60 * 60 * 1000;

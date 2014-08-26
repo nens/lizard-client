@@ -16,10 +16,10 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
       // private
   var _map, createLayer, _initiateTMSLayer, _initiateWMSLayer,
       _initiateAssetLayer, _turnOffAllOtherBaselayers, _rescaleElevation,
-      _getActiveTemporalLayer, _getLayersByType,
+      _getActiveTemporalLayer, _getLayersByType, _clicked, _updateOverLayers,
 
       // public
-      setView, fitBounds, _updateOverLayers, mapState,
+      setView, fitBounds, mapState, initiateMapEvents,
       addLayer, removeLayer, createMap, toggleLayer;
 
   /**
@@ -37,9 +37,9 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     });
 
     if (options) {
-      _map.fitBounds(
-        L.latLng(options.bounds.south, options.bounds.west),
-        L.latLng(options.bounds.north, options.bounds.east));
+      _map.fitBounds(LeafletService.latLngBounds(
+        LeafletService.latLng(options.bounds.south, options.bounds.west),
+        LeafletService.latLng(options.bounds.north, options.bounds.east)));
 
       _map.attributionControl.addAttribution(options.attribution);
       _map.attributionControl.setPrefix('');
@@ -377,6 +377,46 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     getLayersByType: _getLayersByType
   };
 
+  /**
+   * Click handlers for map.
+   */
+
+  /**
+   * @function
+   * @memberOf app.MapService
+   * @description small clickhandler for leafletclicks
+   * @param  {event}  e Leaflet event object
+   */
+  _clicked = function (e) {
+    mapState.here = e.latlng;
+    // removeLayer(mapState.clickLayer);
+    // delete mapState.clickLayer;
+    $rootScope.$apply();
+  };
+
+  /**
+   * @function
+   * @memberOf app.MapService
+   * @description Initiate map events
+   * @return {void}
+   */
+  initiateMapEvents = function () {
+    _map.on('click', _clicked);
+
+    _map.on('movestart', function () {
+      mapState.mapMoving = true;
+    });
+
+    /**
+     * Sets the geolocation of the users mouse to the mapState
+     * Used to draw clickfeedback.
+     */
+    _map.on('mousemove', function (e) {
+      mapState.userHere = e.latlng;
+    });    
+  };
+
+
   return {
     mapState: mapState,
     createMap: createMap,
@@ -386,6 +426,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     toggleLayer: toggleLayer,
     setView: setView,
     fitBounds: fitBounds,
+    initiateMapEvents: initiateMapEvents,
     mapState: mapState
   } 
 }]);

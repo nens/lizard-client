@@ -24,7 +24,6 @@ app.controller('MapDirCtrl', function ($scope, MapService, $rootScope, $http, $f
   this.toggleLayer = MapService.toggleLayer;
   this.addLayer = MapService.addLayer;
   this.removeLayer = MapService.removeLayer
-  this.createMap = MapService.createMap;
   this.panZoomTo = MapService.setView;
   this.fitBounds = MapService.fitBounds;
 
@@ -60,64 +59,20 @@ app.directive('map', [
         bounds: bounds,
         attribution: osmAttrib
       });
-
+      MapService.initiateMapEvents();
       scope.map = map;
-      scope.mapState.bounds = scope.map.getBounds();
+      MapService.mapState.bounds = scope.map.getBounds();
 
 
       // Initialise layers
-      angular.forEach(scope.mapState.layers, function (layer) {
-        scope.mapState.activeLayersChanged = !scope.mapState.activeLayersChanged;
+      angular.forEach(MapService.mapState.layers, function (layer) {
+        MapService.mapState.activeLayersChanged = !MapService.mapState.activeLayersChanged;
         if (!layer.initiated) {
           MapService.createLayer(layer);
         }
         if (layer.active) {
           layer.active = false;
-          MapService.toggleLayer(layer, scope.mapState.layers);
-        }
-      });
-
-      var clicked = function (e) {
-        scope.mapState.here = e.latlng;
-        if (scope.box.type !== 'intersect') {
-          scope.box.type = 'pointObject';
-          $rootScope.$broadcast('newPointObject');
-        }
-      };
-
-      scope.map.on('click', function (e) {
-        // NOTE: Check whether a $digest is already happening before using apply
-        if (!scope.$$phase) {
-          scope.$apply(function () {
-            clicked(e);
-          });
-        } else {
-          clicked(e);
-        }
-      });
-
-      scope.map.on('movestart', function () {
-
-        if (!scope.$$phase) {
-          scope.$apply(function () {
-            scope.mapState.mapMoving = true;
-          });
-        } else {
-          scope.mapState.mapMoving = true;
-        }
-      });
-
-      /**
-       * Sets the geolocation of the users mouse to the mapState
-       * Used to draw clickfeedback.
-       */
-      scope.map.on('mousemove', function (e) {
-        if (!scope.$$phase) {
-          scope.$apply(function () {
-            scope.mapState.userHere = e.latlng;
-          });
-        } else {
-          scope.mapState.userHere = e.latlng;
+          MapService.toggleLayer(layer, MapService.mapState.layers);
         }
       });
 
