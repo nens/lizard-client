@@ -51,7 +51,7 @@ module.exports = function (grunt) {
         //'<%= nxt_dir.vendor %>/bootstrap/bootstrap.js',  // TYPO?!
         '<%= nxt_dir.vendor %>/bootstrap/js/bootstrap.js', // CORRECTION
         '<%= nxt_dir.vendor %>/d3/d3.js',
-        '<%= nxt_dir.vendor %>/leaflet-dist/leaflet.js',
+        '<%= nxt_dir.vendor %>/leaflet-dist/dist/leaflet.js',
         '<%= nxt_dir.vendor %>/angular-ui-bootstrap/ui-bootstrap-tpls-0.10.0.min.js',
         '<%= nxt_dir.vendor %>/lodash/dist/lodash.min.js',
         '<%= nxt_dir.vendor %>/raven-js/dist/raven.min.js'
@@ -130,7 +130,7 @@ module.exports = function (grunt) {
             ],
             '<%= nxt_dir.dist %>/css/vendor.css' : [
               '<%= nxt_dir.vendor %>/bootstrap/dist/css/bootstrap.css',
-              '<%= nxt_dir.vendor %>/leaflet-dist/leaflet.css',
+              '<%= nxt_dir.vendor %>/leaflet-dist/dist/leaflet.css',
               '<%= nxt_dir.vendor %>/font-awesome/css/font-awesome.min.css',
               '<%= nxt_dir.vendor %>/ng-table/ng-table.min.css',
               '<%= nxt_dir.vendor %>/lizard-iconfont/lizard/dest/css/Lizard.css'
@@ -138,6 +138,7 @@ module.exports = function (grunt) {
           }
         }
       },
+
       // produces docs
       jsdoc: {
         dist: {
@@ -176,7 +177,7 @@ module.exports = function (grunt) {
             specs: [
               '<%= nxt_dir.test %>/**/*.js',
               '!<%= nxt_dir.test %>/mocks.js'
-              ],
+            ],
             junit: {
               path: 'qa/junit'
             }
@@ -257,7 +258,6 @@ module.exports = function (grunt) {
     'cssmin',
     'html2js',
     'concat',
-    'jsdoc',
     'copy:dist'
   ]);
   grunt.registerTask('plakhetaanelkaar', [

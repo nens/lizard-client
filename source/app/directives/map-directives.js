@@ -60,7 +60,7 @@ app.directive('map', [
       // Otherwise click of events-aggregate and clicklayer
       ClickFeedbackService.drawClickInSpace(new L.LatLng(180.0, 90.0));
 
-      // Instantiate the controller that updates the hash url after creating the 
+      // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.
       $controller('hashGetterSetter', {$scope: scope});
 
@@ -137,6 +137,7 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
         frameLookup = {};
 
         for (var i in imageOverlays) {
+
           loadingRaster += 1;
           imageOverlays[i].setOpacity(0);
           // Remove old listener
@@ -157,7 +158,6 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
         var i, activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
 
         if (activeTemporalLayer) {
-
           for (i in imageOverlays) {
             MapService.addLayer(imageOverlays[i]);
           }
@@ -167,7 +167,6 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
           getImages(scope.timeState.at);
 
         } else {
-
           for (i in imageOverlays) {
             MapService.removeLayer(imageOverlays[i]);
           }
@@ -183,12 +182,12 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
        * with next frame; If frame is not in lookupFrame, get new images.
        */
       scope.$watch('timeState.at', function (newVal, oldVal) {
+        if (newVal === oldVal) { return true; }
         var currentDate = UtilService.roundTimestamp(newVal,
                                              step, false);
         var oldDate = UtilService.roundTimestamp(oldVal,
                                              step, false);
         if (currentDate === oldDate) { return; }
-
         if (scope.mapState.getActiveTemporalLayer()) {
 
           var overlayIndex = frameLookup[currentDate];

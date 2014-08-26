@@ -61,7 +61,7 @@ app.service('ClickFeedbackService', ['$rootScope', 'MapService',
           var circleMarker = L.circleMarker(latlng, {
             radius: 0,
             weight: 12,
-            color: '#1abc9c',
+            color: '#2980b9',
             fill: false,
             zIndexOffset: 1000,
             clickable: false

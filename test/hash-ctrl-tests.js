@@ -47,8 +47,14 @@ describe('Testing hash controller', function () {
       layers: {
         'testlayer': {
           active: true
+        },
+        'testlayer2': {
+          active: false
         }
       },
+      changeLayer: function (layer) {
+        layer.active = !layer.active;
+      }
     };
 
     // Mock initial time
@@ -89,5 +95,39 @@ describe('Testing hash controller', function () {
     var newStart = hashSyncHelper.getHash().start;
     expect(newStart).toBe('Jul-11-2014');
   });
+
+  it('should set timeState.at between start and end when setting timeState', function () {
+    var controller = createController();
+
+    var start = new Date(1408627740686);
+    var dateString = start.toDateString()
+      .slice(4) // Cut off day name
+      .split(' ') // Replace spaces by hyphens
+      .join('-');
+
+    hashSyncHelper.setHash({'start': dateString});
+
+    var end = new Date(1408627748686);
+    var dateString = start.toDateString()
+      .slice(4) // Cut off day name
+      .split(' ') // Replace spaces by hyphens
+      .join('-');    hashSyncHelper.setHash({'end': dateString});
+
+    $scope.$broadcast('$locationChangeSuccess');
+
+    expect($scope.timeState.at >= $scope.timeState.start
+      && $scope.timeState.at <= $scope.timeState.end).toBe(true);
+  });
+
+  it('should deactivate layer when layerHash is defined but active layer is not on hash', function () {
+    var controller = createController();
+
+    hashSyncHelper.setHash({'layers': 'testlayer2'});
+
+    $scope.$broadcast('$locationChangeSuccess');
+
+    expect($scope.mapState.layers.testlayer.active).toBe(false);
+    expect($scope.mapState.layers.testlayer2.active).toBe(true);
+  })
 
 });

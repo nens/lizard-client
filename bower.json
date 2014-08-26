@@ -31,7 +31,7 @@
     "font-awesome": "~4.0.3",
     "jquery": "~1.10.1",
     "jquery-ui": "~1.10.3",
-    "leaflet-dist": "0.7.1",
+    "leaflet-dist": "git@github.com:Leaflet/Leaflet.git",
     "nens-carto": "git@github.com:nens/nens-carto.git",
     "lizard-iconfont": "git@github.com:nens/lizard-iconfont.git",
     "restangular": "~1.4.0",
