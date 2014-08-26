@@ -189,23 +189,14 @@ app.controller("MasterCtrl",
    *
    */
   $scope.toggleTool = function (name) {
-
     if (name === 'intersect') {
-
-      if ($scope.tools.active === 'intersect') {
-        $scope.tools.active = 'none';
-        $scope.box.type = 'extentAggregate';
-      } else  {
-        $scope.tools.active = 'intersect';
-        $scope.box.type = 'intersect';
-      }
-
-    } else if (name === 'pipeSurface') {
-
+      $scope.box.type  = 'intersect';
+    }
+    if ($scope.tools.active === name) {
+      $scope.tools.active = 'none';
       $scope.box.type = 'extentAggregate';
-      $scope.tools.active = $scope.tools.active === 'pipeSurface'
-        ? 'none'
-        : 'pipeSurface';
+    } else {
+      $scope.tools.active = name;
     }
   };
 
