@@ -20,8 +20,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
       _moveEnded, _moveStarted, _mouseMoved, _dragEnded,
 
       // public
-      setView, fitBounds, mapState, initiateMapEvents,
-      addLayer, removeLayer, createMap, toggleLayer;
+      setView, fitBounds, mapState, initiateMapEvents, getLayer,
+      newGeoJsonLayer, addLayer, removeLayer, createMap, toggleLayer;
 
   /**
    * @function
@@ -269,12 +269,51 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
 
   /**
    * @function
+   * @memberOf app.MapService
+   * @description Get layer from leaflet map object.
+   *
+   * Because leaflet doesn't supply a map method to get a layer by name or
+   * id, we need this crufty function to get a layer.
+   *
+   * NOTE: candidate for (leaflet) util module
+   *
+   * @layerType: layerType, type of layer to look for either `grid`, `png`
+   * or `geojson`
+   * @param: entityName, name of ento
+   * @returns: leaflet layer object or false if layer not found
+   */
+
+  getLayer = function (layerType, entityName) {
+
+    var k, opts;
+
+    for (k in _map._layers) {
+      opts = _map._layers[k].options;
+      if (opts.name === entityName && opts.ext === layerType) {
+        return _map._layers[k];
+      }
+    }
+    return false;
+  };
+
+  newGeoJsonLayer = function () {
+    return LeafletService.geoJson();
+  }
+
+  /**
+   * @function
    * @description sets leaflet View based on panZoom
    * @param {object} panZoom Hashtable with, lat, lng, zoom
    */
   setView = function (panZoom) {
-    _map.setView(new LeafletService.LatLng(
-      panZoom.lat, panZoom.lng), panZoom.zoom);
+    if (panZoom.hasOwnProperty('lat') &&
+        panZoom.hasOwnProperty('lng') &&
+        panZoom.hasOwnProperty('zoom')) {
+      _map.setView(new LeafletService.LatLng(
+        panZoom.lat, panZoom.lng), panZoom.zoom);
+    } else {
+      _map.setView.apply(_map, arguments);
+    }
   };
 
   /**
@@ -297,7 +336,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
    */
   _getActiveTemporalLayer = function () {
 
-    var i, temporalLayers = this.getLayersByType('temporal');
+    var i, temporalLayers = _getLayersByType('temporal');
 
     for (i = 0; i < temporalLayers.length; i++) {
       if (temporalLayers[i].active) {
@@ -354,6 +393,10 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     return result;
   };
 
+  latLngToLayerPoint = function (latlng) {
+    return _map.latLngToLayerPoint(latlng);
+  };
+
   /**
    * @memberOf app.MapService
    * @type {Object}
@@ -362,6 +405,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
    */
   mapState = {
     here: null,
+    center: null,
     layers: CabinetService.layers,
     activeLayersChanged: false,
     eventTypes: CabinetService.eventTypes,
@@ -376,34 +420,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     mapMoving: false,
     getActiveTemporalLayer: _getActiveTemporalLayer,
     getLayersByType: _getLayersByType
-  };
-
-  /**
-   * @function
-   * @memberof app.MapService
-   * @description changelayer function... legacy?
-   * @param  {object} layer Layer object
-   */
-  mapState.changeLayer = function (layer) {
-
-    if (layer.temporal) {
-
-      mapState.activeLayersChanged =
-        !mapState.activeLayersChanged;
-      layer.active = !layer.active;
-
-      // toggle timeline if neccesary
-      if (timeState.hidden !== false) {
-        toggleTimeline();
-      }
-
-    } else {
-
-      // for other than temporalRaster layers, we do stuff the old way
-      toggleLayer(layer, mapState.layers, mapState.bounds);
-      mapState.activeLayersChanged =
-        !mapState.activeLayersChanged;
-    }
   };
 
 
@@ -440,7 +456,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     var finalizeMove = function () {
       mapState.moved = Date.now();
       mapState.mapMoving = false;
-      mapState.pixelCenter = _map.getPixelBounds().getCenter();
+      mapState.center = _map.getCenter();
       mapState.zoom = _map.getZoom();
       mapState.bounds = _map.getBounds();
     };
@@ -491,10 +507,12 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     createLayer: createLayer,
     addLayer: addLayer,
     removeLayer: removeLayer,
+    getLayer: getLayer,
     toggleLayer: toggleLayer,
+    newGeoJsonLayer: newGeoJsonLayer,
+    latLngToLayerPoint: latLngToLayerPoint,
     setView: setView,
     fitBounds: fitBounds,
     initiateMapEvents: initiateMapEvents,
-    mapState: mapState
   } 
 }]);

@@ -221,6 +221,35 @@ app.controller('MasterCtrl',
   // $scope.layers = MapService.layers;
   $scope.mapState = MapService.mapState;
 
+  /**
+   * @function
+   * @memberof app.MasterCtrl
+   * @description changelayer function... legacy?
+   * @param  {object} layer Layer object
+   */
+  $scope.mapState.changeLayer = function (layer) {
+
+    if (layer.temporal) {
+
+      $scope.mapState.activeLayersChanged =
+        !$scope.mapState.activeLayersChanged;
+      layer.active = !layer.active;
+
+      // toggle timeline if neccesary
+      if ($scope.timeState.hidden !== false) {
+        $scope.toggleTimeline();
+      }
+
+    } else {
+
+      // for other than temporalRaster layers, we do stuff the old way
+      MapService.toggleLayer(layer, $scope.mapState.layers, $scope.mapState.bounds);
+      $scope.mapState.activeLayersChanged =
+        !$scope.mapState.activeLayersChanged;
+    }
+  };
+
+
   $scope.$watch('mapState.here', function (n, o) {
     if (n === o) { return true; }
     if (!$scope.$$phase) {

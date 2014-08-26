@@ -38,12 +38,11 @@ app.directive('map', [
       var osmAttrib = '<a href="https://www.mapbox.com/about/maps/">&copy; Mapbox</a> <a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>';
       var bounds = window.data_bounds.all;
       
-      var map = MapService.createMap(element[0], {
+      MapService.createMap(element[0], {
         bounds: bounds,
         attribution: osmAttrib
       });
       MapService.initiateMapEvents();
-      scope.map = map;
 
       // Initialise layers
       angular.forEach(MapService.mapState.layers, function (layer) {
@@ -59,7 +58,7 @@ app.directive('map', [
 
       // initialize empty ClickLayer.
       // Otherwise click of events-aggregate and clicklayer
-      ClickFeedbackService.drawClickInSpace(map, new L.LatLng(180.0, 90.0));
+      ClickFeedbackService.drawClickInSpace(new L.LatLng(180.0, 90.0));
 
       // Instantiate the controller that updates the hash url after creating the 
       // map and all its listeners.

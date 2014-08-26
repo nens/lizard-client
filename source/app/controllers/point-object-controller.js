@@ -65,7 +65,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     };
 
 
-    var fillPointObject = function (map, here, extra) {
+    var fillPointObject = function (here, extra) {
 
       var clickedOnEvents = extra && extra.type === 'events';
 
@@ -73,17 +73,17 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
         eventResponded(extra.eventData);
       } else {
         // Give feedback to user
-        ClickFeedbackService.drawClickInSpace(map, here);
+        ClickFeedbackService.drawClickInSpace(here);
       }
       // Get attribute data from utf
-      UtfGridService.getDataFromUTF(map, here)
-        .then(utfgridResponded(map, here, clickedOnEvents))
+      UtfGridService.getDataFromUTF(here)
+        .then(utfgridResponded(here, clickedOnEvents))
         .then(function () {
           getRasterForLocation();
         });
     };
 
-    var utfgridResponded = function (map, here, showOnlyEvents) {
+    var utfgridResponded = function (here, showOnlyEvents) {
       return function (response) {
 
         if (!showOnlyEvents) {
@@ -104,7 +104,6 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           here = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
           // Draw feedback around object.
           ClickFeedbackService.drawGeometry(
-            map,
             response.data.geom,
             response.data.entity_name
           );
@@ -120,7 +119,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
         } else {
           // If not hit object, threaten it as a rain click, draw rain click
           // arrow.
-          ClickFeedbackService.drawArrowHere(map, here);
+          ClickFeedbackService.drawArrowHere(here);
         }
       };
     };
@@ -220,15 +219,15 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     };
 
     $scope.pointObject = createPointObject();
-    fillPointObject($scope.map, $scope.mapState.here);
+    fillPointObject($scope.mapState.here);
 
     $scope.$on('newPointObject', function (msg, extra) {
       $scope.pointObject = createPointObject();
-      fillPointObject($scope.map, $scope.mapState.here, extra);
+      fillPointObject($scope.mapState.here, extra);
     });
 
     $scope.$on('$destroy', function () {
-      ClickFeedbackService.emptyClickLayer($scope.map);
+      ClickFeedbackService.emptyClickLayer();
     });
 
     var _watchAttrAndEventActivity = function (n, o) {
