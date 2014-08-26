@@ -238,6 +238,15 @@ app.controller('MasterCtrl',
     }
   });
 
+  $scope.$watch('mapState.panZoom', function (n, o) {
+    if (n === o) { return true; }
+    if ($scope.mapState.panZoom.isValid()) {
+      MapService.fitBounds($scope.mapState.panZoom);
+    } else {
+      MapService.panZoomTo($scope.mapState.panZoom);
+    }
+  });
+
   /**
    * Watch to remove clicklayer when user clicks on omnibox close button.
    */

@@ -17,21 +17,6 @@
  *
  */
 
-app.controller('MapDirCtrl', function ($scope, MapService, $rootScope, $http, $filter) {
-
-  // part of the great refactoring
-  this.initiateLayer = MapService.createLayer;
-  this.toggleLayer = MapService.toggleLayer;
-  this.addLayer = MapService.addLayer;
-  this.removeLayer = MapService.removeLayer
-  this.panZoomTo = MapService.setView;
-  this.fitBounds = MapService.fitBounds;
-
-
-  return this;
-});
-
-
 app.directive('map', [
   '$controller',
   '$rootScope',
@@ -47,10 +32,8 @@ app.directive('map', [
     RasterService,
     MapService
     ) {
-    var link = function (scope, element, attrs, ctrl) {
-      // Leaflet global variable to peed up vector layer,
-      // see: http://leafletjs.com/reference.html#path-canvas
-      window.L_PREFER_CANVAS = true;
+    var link = function (scope, element, attrs) {
+
       // instead of 'map' element here for testability
       var osmAttrib = '<a href="https://www.mapbox.com/about/maps/">&copy; Mapbox</a> <a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>';
       var bounds = window.data_bounds.all;
@@ -61,7 +44,6 @@ app.directive('map', [
       });
       MapService.initiateMapEvents();
       scope.map = map;
-
 
       // Initialise layers
       angular.forEach(MapService.mapState.layers, function (layer) {
@@ -79,70 +61,6 @@ app.directive('map', [
       // Otherwise click of events-aggregate and clicklayer
       ClickFeedbackService.drawClickInSpace(map, new L.LatLng(180.0, 90.0));
 
-      scope.map.on('moveend', function () {
-
-        // NOTE: Check whether a $digest is already happening before using apply
-
-        var finalizeMove = function () {
-          scope.mapState.moved = Date.now();
-          scope.mapState.mapMoving = false;
-          scope.mapState.pixelCenter = scope.map.getPixelBounds().getCenter();
-          scope.mapState.zoom = scope.map.getZoom();
-          scope.mapState.bounds = scope.map.getBounds();
-        };
-
-        if (!scope.$$phase) {
-          scope.$apply(finalizeMove);
-        } else {
-          finalizeMove();
-        }
-      });
-
-      scope.map.on('dragend', function () {
-        if (scope.box.type === 'default') {
-        // scope.box.type = 'empty';
-          scope.$apply(function () {
-            scope.box.close();
-          });
-        }
-        if (scope.box.type === 'intersecttool') {
-          scope.$apply(function () {
-            scope.box.type = 'empty';
-          });
-        }
-      });
-
-      scope.mapState.changeLayer = function (layer) {
-
-        if (layer.temporal) {
-
-          scope.mapState.activeLayersChanged =
-            !scope.mapState.activeLayersChanged;
-          layer.active = !layer.active;
-
-          // toggle timeline if neccesary
-          if (scope.timeState.hidden !== false) {
-            scope.toggleTimeline();
-          }
-
-        } else {
-
-          // for other than temporalRaster layers, we do stuff the old way
-          ctrl.toggleLayer(layer, scope.mapState.layers, scope.mapState.bounds);
-          scope.mapState.activeLayersChanged =
-            !scope.mapState.activeLayersChanged;
-        }
-      };
-
-      scope.$watch('mapState.panZoom', function (n, o) {
-        if (n === o) { return true; }
-        if (scope.mapState.panZoom.isValid()) {
-          ctrl.fitBounds(scope.mapState.panZoom);
-        } else {
-          ctrl.panZoomTo(scope.mapState.panZoom);
-        }
-      });
-
       // Instantiate the controller that updates the hash url after creating the 
       // map and all its listeners.
       $controller('hashGetterSetter', {$scope: scope});
@@ -153,7 +71,6 @@ app.directive('map', [
       restrict: 'E',
       replace: true,
       template: '<div id="map"></div>',
-      controller: 'MapDirCtrl',
       link: link
     };
   }
@@ -163,11 +80,10 @@ app.directive('map', [
  * Show raster WMS images as overlay, animate overlays when animation is
  * playing.
  */
-app.directive('rasteranimation', ["RasterService", "UtilService",
-  function (RasterService, UtilService) {
+app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
+  function (RasterService, UtilService, MapService) {
   return {
-    require: 'map',
-    link: function (scope, element, attrs, mapCtrl) {
+    link: function (scope, element, attrs) {
 
       var imageUrlBase;
       var imageBounds = RasterService.rasterInfo().imageBounds;
@@ -244,7 +160,7 @@ app.directive('rasteranimation', ["RasterService", "UtilService",
         if (activeTemporalLayer) {
 
           for (i in imageOverlays) {
-            mapCtrl.addLayer(imageOverlays[i]);
+            MapService.addLayer(imageOverlays[i]);
           }
           imageUrlBase = RasterService
                           .rasterInfo(activeTemporalLayer.slug)
@@ -254,7 +170,7 @@ app.directive('rasteranimation', ["RasterService", "UtilService",
         } else {
 
           for (i in imageOverlays) {
-            mapCtrl.removeLayer(imageOverlays[i]);
+            MapService.removeLayer(imageOverlays[i]);
           }
         }
       });

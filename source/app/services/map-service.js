@@ -379,6 +379,35 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
   };
 
   /**
+   * @function
+   * @memberof app.MapService
+   * @description changelayer function... legacy?
+   * @param  {object} layer Layer object
+   */
+  mapState.changeLayer = function (layer) {
+
+    if (layer.temporal) {
+
+      mapState.activeLayersChanged =
+        !mapState.activeLayersChanged;
+      layer.active = !layer.active;
+
+      // toggle timeline if neccesary
+      if (timeState.hidden !== false) {
+        toggleTimeline();
+      }
+
+    } else {
+
+      // for other than temporalRaster layers, we do stuff the old way
+      toggleLayer(layer, mapState.layers, mapState.bounds);
+      mapState.activeLayersChanged =
+        !mapState.activeLayersChanged;
+    }
+  };
+
+
+  /**
    * Click handlers for map.
    */
 
@@ -424,6 +453,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
   };
 
   _dragEnded = function () {
+    // TODO: find solution for this
+
     // if (scope.box.type === 'default') {
     // // scope.box.type = 'empty';
     //   scope.$apply(function () {
@@ -449,6 +480,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     _map.on('mousemove', _mouseMoved);
     _map.on('moveend', _moveEnded);
     _map.on('dragend', _dragEnded);
+    // fill mapState
+    _moveEnded();
   };
 
 

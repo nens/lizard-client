@@ -6,13 +6,12 @@
  * time-interval (temporal extent, from timeline)
  *
  */
-app.directive('vectorlayer', ["EventService", "$rootScope", "ClickFeedbackService",
+app.directive('vectorlayer', ['EventService', '$rootScope', 'ClickFeedbackService',
   function (EventService, $rootScope, ClickFeedbackService) {
 
   return {
     restrict: 'A',
-    require: 'map',
-    link: function (scope, element, attrs, mapCtrl) {
+    link: function (scope, element, attrsM) {
 
       // declaring all local vars for current scope:
       var getEventColor, eventClickHandler, getFeatureSelection, matchLocation,
@@ -340,11 +339,10 @@ app.directive('vectorlayer', ["EventService", "$rootScope", "ClickFeedbackServic
  * to make generic
  *
  */
-app.directive('surfacelayer', function () {
+app.directive('surfacelayer', ['MapService', function (MapService) {
   return {
     restrict: 'A',
-    require: 'map',
-    link: function (scope, element, attrs, mapCtrl) {
+    link: function (scope, element, attrs) {
 
       var bottomLeft = {};
 
@@ -455,7 +453,7 @@ app.directive('surfacelayer', function () {
         if (n === o) { return true; }
         var pipeLayer = {};
         if (scope.tools.active === "pipeSurface") {
-          mapCtrl.addLayer(surfaceLayer);
+          MapService.addLayer(surfaceLayer);
           pipeLayer = getLayer('grid', 'waterchain');
           // icon active
           angular.element(".surface-info").addClass("icon-active");
@@ -482,9 +480,9 @@ app.directive('surfacelayer', function () {
             pipeLayer.off('mousemove', highlightSurface);
             pipeLayer.off('mouseout', highlightSurface);
           }
-          mapCtrl.removeLayer(surfaceLayer);
+          MapService.removeLayer(surfaceLayer);
         }
       });
     }
   };
-});
+}]);
