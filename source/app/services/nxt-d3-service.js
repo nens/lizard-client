@@ -12,7 +12,7 @@
  */
 app.factory("NxtD3Service", [ function () {
 
-  var NxtD3 = {};
+  var NxtD3 = {}, createElementForAxis;
 
   NxtD3.prototype = {
     /**
@@ -113,17 +113,33 @@ app.factory("NxtD3Service", [ function () {
     /**
      * Draws the given axis in the given svg
      */
-    _drawAxes: function (svg, xAxis, duration) {
+    _drawAxes: function (svg, axis, dimensions, y, duration) {
+      var id = y ? 'yaxis': 'xaxis';
+      var axisEl = svg.select('g').select('#' + id);
+      if (!axisEl[0][0]) {
+        createElementForAxis(svg, id, dimensions, y);
+      }
       if (duration) {
-        svg.select('g').select('#xaxis')
+        axisEl
           .transition()
           .duration(duration)
-          .call(xAxis);
+          .call(axis);
       } else {
-        svg.select('g').select('#xaxis')
-          .call(xAxis);
+        axisEl
+          .call(axis);
       }
     }
+  };
+
+  createElementForAxis = function (svg, id, dimensions, y) {
+    var height = dimensions.height -
+                 dimensions.padding.top -
+                 dimensions.padding.bottom,
+    className = y ? 'y axis': 'x axis';
+    svg.select('g').append('g')
+      .attr('class', className)
+      .attr('id', id)
+      .attr("transform", "translate(0 ," + height + ")");
   };
 
   return NxtD3;

@@ -64,7 +64,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
     this.dimensions = angular.copy(dimensions);
     initialHeight = dimensions.height;
     var canvas = this._createCanvas(element, this.dimensions);
-    svg = addGroupsToCanvas(canvas, this.dimensions);
+    svg = addElementGroupsToCanvas(canvas, this.dimensions);
     var width = dimensions.width -
                 dimensions.padding.left -
                 dimensions.padding.right;
@@ -72,7 +72,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
                             {min: 0, max: width},
                             { type: 'time' });
     xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-    this._drawAxes(svg, xAxis);
+    this._drawAxes(svg, xAxis, dimensions);
     if (interaction) {
       if (interaction.zoomFn) {
         zoomed = setZoomFunction(svg, this.dimensions, xScale, xAxis,
@@ -205,7 +205,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
         this.updateElements(oldDimensions);
         svg = updateCanvas(svg, oldDimensions, this.dimensions);
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
-        this._drawAxes(svg, xAxis);
+        this._drawAxes(svg, xAxis, dimensions);
       }
     },
 
@@ -367,7 +367,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
         xScale.domain([new Date(start), new Date(end)]);
         xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
         this.updateElements();
-        this._drawAxes(svg, xAxis, 500);
+        this._drawAxes(svg, xAxis, this.dimensions, 500);
         this.addZoomListener();
       }
     },
@@ -408,18 +408,13 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
    *  bottom, left and right padding. All values in px.
    * @return {object} svg timeline svg.
    */
-  var addGroupsToCanvas = function (svg, dimensions) {
+  var addElementGroupsToCanvas = function (svg, dimensions) {
     var width = dimensions.width -
                 dimensions.padding.left -
                 dimensions.padding.right,
         height = dimensions.height -
                  dimensions.padding.top -
                  dimensions.padding.bottom;
-    // Create element for axis
-    svg.select('g').append("g")
-      .attr('class', 'x axis')
-      .attr('id', 'xaxis')
-      .attr("transform", "translate(0 ," + height + ")");
     // Create group for rain bars
     svg.select('g').append('g')
       .attr('height', height)
@@ -485,7 +480,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
    */
   var setZoomFunction = function (svg, dimensions, xScale, xAxis, zoomFn) {
     var zoomed = function () {
-      Timeline.prototype._drawAxes(svg, xAxis);
+      Timeline.prototype._drawAxes(svg, xAxis, dimensions);
       if (circles) {
         circles.attr("cx", function (d) {
           return Math.round(xScale(d.properties.timestamp_end));
