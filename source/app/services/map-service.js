@@ -318,7 +318,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    */
   newGeoJsonLayer = function () {
     return LeafletService.geoJson();
-  }
+  };
 
   /**
    * @function
@@ -382,34 +382,33 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     var attr, i, result = [];
 
     switch (layerType) {
-
-      case 'base':
-        for (i in CabinetService.layers) {
-          if (CabinetService.layers[i].baselayer && !CabinetService.layers[i].temporal) {
-            result.push(CabinetService.layers[i]);
-          }
+    case 'base':
+      for (i in CabinetService.layers) {
+        if (CabinetService.layers[i].baselayer && !CabinetService.layers[i].temporal) {
+          result.push(CabinetService.layers[i]);
         }
-        break;
+      }
+      break;
 
-      case 'over':
-        for (i in CabinetService.layers) {
-          if (!(CabinetService.layers[i].baselayer || CabinetService.layers[i].temporal)) {
-            result.push(CabinetService.layers[i]);
-          }
+    case 'over':
+      for (i in CabinetService.layers) {
+        if (!(CabinetService.layers[i].baselayer || CabinetService.layers[i].temporal)) {
+          result.push(CabinetService.layers[i]);
         }
-        break;
+      }
+      break;
 
-      case 'temporal':
-        for (i in CabinetService.layers) {
-          if (CabinetService.layers[i].temporal) {
-            result.push(CabinetService.layers[i]);
-          }
+    case 'temporal':
+      for (i in CabinetService.layers) {
+        if (CabinetService.layers[i].temporal) {
+          result.push(CabinetService.layers[i]);
         }
-        break;
+      }
+      break;
 
-      default:
-        console.log('EXCEPTION-esque: tried to call getLayersByType() ' +
-                    'with unknown arggument "' + layerType + '"');
+    default:
+      console.log('EXCEPTION-esque: tried to call getLayersByType() ' +
+                  'with unknown arggument "' + layerType + '"');
     }
 
     return result;

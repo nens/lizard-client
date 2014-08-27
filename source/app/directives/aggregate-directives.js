@@ -6,7 +6,7 @@
  * time-interval (temporal extent, from timeline)
  *
  */
-app.directive('vectorlayer', ['EventService', '$rootScope', 
+app.directive('vectorlayer', ['EventService', '$rootScope',
   'ClickFeedbackService', 'MapService',
   function (EventService, $rootScope, ClickFeedbackService, MapService) {
 
