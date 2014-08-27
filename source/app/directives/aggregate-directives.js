@@ -17,7 +17,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
 
       // declaring all local vars for current scope:
       var getEventColor, eventClickHandler, getFeatureSelection, matchLocation,
-          idExtractor, createEventLayer, d3eventLayer, _highlightEvents;
+          locationIdExtractor, createEventLayer, d3eventLayer, _highlightEvents;
 
       /**
        * Get color from feature.
@@ -29,22 +29,26 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
       };
 
       /**
-       * Highlights and unhighlights data points
-       * @param {string} - String with id that should be highlighted
+       * Highlights and unhighlights event points.
+       *
+       * Highlighting is done based on location. Every event with the same 
+       * location class gets highlighted.
+       *
+       * @param {string} locationId - Location class that should be highlighted.
        */
-      _highlightEvents = function (id) {
+      _highlightEvents = function (locationId) {
         // unhighlight events
         d3.selectAll(".circle.event")
           .classed("highlighted-event", false)
           .attr("data-init-color", getEventColor)
           .attr("fill", getEventColor);
+        
         // highlight selected event
-        d3.select("." + id)
+        d3.selectAll("." + locationId)
           .classed("highlighted-event", true)
           .transition()
-          .duration(1000)
+          .duration(200)
           .attr("fill", "black");
-
 
         // hacky hack is oooow soooo hacky
         setTimeout(function () {
@@ -56,9 +60,8 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
       /**
        * Event click handler.
        *
-       * Gets id's highlights events,
-       * matchesLocations and passes them to 'here' object
-       * For pointObject to pick 'em up.
+       * Gets id's highlights events, matchesLocations and passes them to
+       * 'here' object. For pointObject to pick 'em up.
        *
        * @param {object} d - D3 bound data object.
        */
@@ -117,7 +120,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
       };
 
       /**
-       * Utilfunction that creates/returns a "feature"
+       * Utilfunction that creates/returns a "feature".
        *
        * @parameter {object} g - D3 g (svg) selection.
        * @parameter {object} data - Event data object.
@@ -129,14 +132,19 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
       };
 
       /**
-       * Generator function to extract id's from geoJson.
+       * Extract location id's from GeoJSON.
        *
-       * @param  {object} feature - geoJson feature
-       * @return {string} id - String
+       * Each location gets the same id. Useful for selecting overlapping
+       * features by CSS class.
+       *
+       * @param  {object} feature - GeoJSON feature.
+       * @return {string} - Generated id.
        */
-      idExtractor = function (feature) {
-        var id = feature.id.toString().split('.')[0] +
-                  '_es_' + feature.properties.event_series;
+      locationIdExtractor = function (feature) {
+
+        var id = feature.geometry.coordinates[0].toString().replace('.', '_') +
+                 feature.geometry.coordinates[1].toString().replace('.', '_');
+
         return id;
       };
 
@@ -163,6 +171,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
             ext: 'd3',
             name: 'events',
             selectorPrefix: 'm',
+            idExtractor: locationIdExtractor,
             class: 'circle event'
           });
         }
@@ -229,10 +238,10 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
       };
 
       /**
-       * Draw events based on current temporal extent
+       * Draw events based on current temporal extent.
        *
-       * Hide all elements and then unhides when within the given start
-       * and end timestamps.
+       * Hide all elements and then unhides when within the given start and end
+       * timestamps.
        *
        * @parameter: int start start timestamp in epoch ms
        * @parameter: int end end timestamp in epoch ms
@@ -289,7 +298,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
       });
 
       /**
-       * Watch that is fired when the animation has stepped
+       * Watch that is fired when the animation has stepped.
        *
        * Calls functions to draw events currently within the animation bounds
        * and to count currently visible events
