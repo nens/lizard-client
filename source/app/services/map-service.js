@@ -13,13 +13,13 @@
 app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','LeafletService', 
   function ($rootScope, $filter, $http, CabinetService, LeafletService) {
 
-      // private
+      // private vars
   var _map, createLayer, _initiateTMSLayer, _initiateWMSLayer,
       _initiateAssetLayer, _turnOffAllOtherBaselayers, _rescaleElevation,
       _getActiveTemporalLayer, _getLayersByType, _clicked, _updateOverLayers,
       _moveEnded, _moveStarted, _mouseMoved, _dragEnded,
 
-      // public
+      // public vars
       setView, fitBounds, mapState, initiateMapEvents, getLayer,
       newGeoJsonLayer, addLayer, removeLayer, createMap, toggleLayer;
 
@@ -190,6 +190,12 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     });
   };
 
+  /**
+   * @function
+   * @memberOf app.MapService
+   * @description Updates opacity of different layers
+   * @param  {layersObject} 
+   */
   _updateOverLayers = function (layers) {
     var numLayers = 1;
     angular.forEach(layers, function (layer) {
@@ -205,6 +211,11 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     });
   };
 
+  /**
+   * @function
+   * @memberOf app.MapService
+   * @description Elevation can be rescaled according to extent 
+   */
   _rescaleElevation = function () {
     var url, bounds, limits, styles;
     bounds = _map.getBounds();
@@ -223,6 +234,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
 
   /**
    * @function
+   * @memberOf app.MapService
    * @description legacy function from map-directive
    * @param  {object} layer  single layer that needs to be toggled
    * @param  {object} layers all layers to switch off.
@@ -282,7 +294,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
    * @param: entityName, name of ento
    * @returns: leaflet layer object or false if layer not found
    */
-
   getLayer = function (layerType, entityName) {
 
     var k, opts;
@@ -296,12 +307,14 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     return false;
   };
 
+
   newGeoJsonLayer = function () {
     return LeafletService.geoJson();
   }
 
   /**
    * @function
+   * @memberOf app.MapService
    * @description sets leaflet View based on panZoom
    * @param {object} panZoom Hashtable with, lat, lng, zoom
    */
@@ -318,6 +331,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
 
   /**
    * @function
+   * @memberOf app.MapService
    * @description fits leaflet to extent
    * @param  {array} extent Array with NW, NE, SW,SE
    */
@@ -444,14 +458,26 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     $rootScope.$apply();
   };
 
+  /**
+   * @function
+   * @memberOf app.MapService
+   */
   _moveStarted = function () {
     mapState.mapMoving = true;
   };
 
+  /**
+   * @function
+   * @memberOf app.MapService
+   */  
   _mouseMoved = function (e) {
     mapState.userHere = e.latlng;
   };
 
+  /**
+   * @function
+   * @memberOf app.MapService
+   */
   _moveEnded = function () {
     var finalizeMove = function () {
       mapState.moved = Date.now();
@@ -468,6 +494,10 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     }
   };
 
+  /**
+   * @function
+   * @memberOf app.MapService
+   */
   _dragEnded = function () {
     // TODO: find solution for this
 
