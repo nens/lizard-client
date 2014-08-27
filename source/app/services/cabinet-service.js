@@ -326,7 +326,7 @@ app.service("CabinetService", ["$q", "Restangular",
    *                                 if none is given a local 'abortGet' is used.
    *                                 At the next request without a promise, the
    *                                 abortGet is cancelled.
-   * @return {Restangular resource}  a gettable resource
+   * @return {RestangularResource}  a gettable resource
    */
   var abortGet;
   var rasterResource = function (q) {
