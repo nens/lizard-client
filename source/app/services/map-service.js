@@ -10,14 +10,15 @@
  * the map object and mapState.
  *
  */
-app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','LeafletService', 
+app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
+                           'LeafletService',
   function ($rootScope, $filter, $http, CabinetService, LeafletService) {
 
       // private vars
   var _map, createLayer, _initiateTMSLayer, _initiateWMSLayer,
       _initiateAssetLayer, _turnOffAllOtherBaselayers, _rescaleElevation,
       _getActiveTemporalLayer, _getLayersByType, _clicked, _updateOverLayers,
-      _moveEnded, _moveStarted, _mouseMoved, _dragEnded,
+      _moveEnded, _moveStarted, _mouseMoved, _dragEnded, _initiateGridLayer,
 
       // public vars
       setView, fitBounds, mapState, initiateMapEvents, getLayer,
@@ -65,7 +66,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
         detectRetina: true,
         zIndex: nonLeafLayer.z_index
       });
-    if (!nonLeafLayer.baselayer && nonLeafLayer.type == 'ASSET') {
+    if (!nonLeafLayer.baselayer && nonLeafLayer.type === 'ASSET') {
       layer._url = nonLeafLayer.url;
       layer.options.ext = 'png';
     }
@@ -90,9 +91,9 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
         maxZoom: 19,
         zIndex: nonLeafLayer.z_index
       };
-    if (nonLeafLayer.slug == 'landuse') {
+    if (nonLeafLayer.slug === 'landuse') {
       _options.styles = 'landuse';
-    } else if (nonLeafLayer.slug == 'elevation') {
+    } else if (nonLeafLayer.slug === 'elevation') {
       _options.styles = 'BrBG_r';
       _options.effects = 'shade:0:3';
     }
@@ -130,7 +131,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
    * @description Throw in a layer as served from the backend
    */
   createLayer = function (nonLeafLayer) {
-    switch (nonLeafLayer.type){
+    switch (nonLeafLayer.type) {
     case ('TMS'):
       _initiateTMSLayer(nonLeafLayer);
       break;
@@ -170,8 +171,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
   removeLayer = function (layer) { // Leaflet Layer
     if (_map.hasLayer(layer)) {
       _map.removeLayer(layer);
-    } else if (layer.options.ext !== 'grid'){
-      // console.warn('layer not added to the map', layer);
     }
   };
 
@@ -228,8 +227,9 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     $http.get(url).success(function (data) {
       limits = ':' + data[0][0] + ':' + data[0][1];
       styles = 'BrBG_r' + limits;
-      layers.elevation.leafletLayer.setParams({styles: styles}, true);
-      layers.elevation.leafletLayer.redraw();
+      CabinetService.layers.elevation.leafletLayer.setParams(
+        {styles: styles}, true);
+      CabinetService.layers.elevation.leafletLayer.redraw();
     });
   };
 
@@ -241,10 +241,10 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
    * @param  {object} layers all layers to switch off.
    */
   toggleLayer = function (layer, layers) {
-    if (layer.baselayer){
+    if (layer.baselayer) {
       _turnOffAllOtherBaselayers(layer.id, layers);
       if (!layer.active) { layer.active = true; }
-      else if (layer.slug == 'elevation' && layer.active) {
+      else if (layer.slug === 'elevation' && layer.active) {
         _rescaleElevation();
       }
     } else {
@@ -265,7 +265,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
         layer.leafletLayer.on('loading', function () {
           // Temporarily remove all utfLayers for performance
           removeLayer(layer.grid_layer);
-        });  
+        });
       }
     } else {
       removeLayer(layer.leafletLayer);
@@ -413,6 +413,9 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     return result;
   };
 
+  /**
+   * @description legacy function.
+   */
   latLngToLayerPoint = function (latlng) {
     return _map.latLngToLayerPoint(latlng);
   };
@@ -434,7 +437,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     baselayerChanged: Date.now(),
     enabled: false,
     bounds: null,
-    here: null, // Leaflet point object describing a users location of interest
     userHere: null, // Geographical location of the users mouse
     geom_wkt: '',
     mapMoving: false,
@@ -475,7 +477,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
   /**
    * @function
    * @memberOf app.MapService
-   */  
+   */
   _mouseMoved = function (e) {
     mapState.userHere = e.latlng;
   };
@@ -503,26 +505,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
   /**
    * @function
    * @memberOf app.MapService
-   */
-  _dragEnded = function () {
-    // TODO: is this still being used?
-
-    // if (scope.box.type === 'default') {
-    // // scope.box.type = 'empty';
-    //   scope.$apply(function () {
-    //     scope.box.close();
-    //   });
-    // }
-    // if (scope.box.type === 'intersecttool') {
-    //   scope.$apply(function () {
-    //     scope.box.type = 'empty';
-    //   });
-    // }
-  }
-
-  /**
-   * @function
-   * @memberOf app.MapService
    * @description Initiate map events
    * @return {void}
    */
@@ -531,7 +513,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     _map.on('movestart', _moveStarted);
     _map.on('mousemove', _mouseMoved);
     _map.on('moveend', _moveEnded);
-    _map.on('dragend', _dragEnded);
     // fill mapState
     _moveEnded();
   };
@@ -550,5 +531,5 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     setView: setView,
     fitBounds: fitBounds,
     initiateMapEvents: initiateMapEvents,
-  } 
+  };
 }]);

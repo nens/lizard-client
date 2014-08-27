@@ -6,17 +6,11 @@
  * Overview
  * ========
  *
- * Defines the map. Directive does all the watching and DOM binding, MapDirCtrl holds
- * all the testable logic. Ideally the directive has no logic and the MapDirCtrl
- * is independent of the rest of the application.
- *
- * TODO:
- * - [ ] Move $scope out of MapDirCtrl
- * - [ ] Split up massive functions in MapDirCtrl
- * - [ ] Get rain stuff into the directive and the MapDirCtrl
+ * Defines the map. Directive does all the watching and DOM binding, MapDirCtrl 
+ * holds all the testable logic. Ideally the directive has no logic and the 
+ * MapDirCtrl is independent of the rest of the application.
  *
  */
-
 app.directive('map', [
   '$controller',
   '$rootScope',
@@ -46,7 +40,8 @@ app.directive('map', [
 
       // Initialise layers
       angular.forEach(MapService.mapState.layers, function (layer) {
-        MapService.mapState.activeLayersChanged = !MapService.mapState.activeLayersChanged;
+        MapService.mapState.activeLayersChanged =
+          !MapService.mapState.activeLayersChanged;
         if (!layer.initiated) {
           MapService.createLayer(layer);
         }
