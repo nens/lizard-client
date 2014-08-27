@@ -1,11 +1,11 @@
 //layer-directive.js
 
-app.directive("layerChooser", function () {
+app.directive("layerChooser", ['LeafletService', function (LeafletService) {
   var link = function (scope, element, attrs) {
     var centroid, zoom, layerMap, layerLeafletLayer, layer, layerUrl, map;
     centroid = [52.39240447569775, 5.101776123046875];
-    zoom = scope.map.getZoom();
-    layerMap = L.map(element.find('.layer-img')[0], {
+    zoom = scope.mapState.zoom;
+    layerMap = LeafletService.map(element.find('.layer-img')[0], {
       center: centroid,
       zoom: zoom - 2,
       dragging: false,
@@ -37,10 +37,10 @@ app.directive("layerChooser", function () {
           options.styles = 'BrBG_r';
           options.effects = 'shade:0:3';
         }
-        layerLeafletLayer = L.tileLayer.wms(layer.url, options);
+        layerLeafletLayer = LeafletService.tileLayer.wms(layer.url, options);
       } else {
         layerUrl = (layer.type === 'TMS') ? layer.url + '.png' : layer.url;
-        layerLeafletLayer = L.tileLayer(layerUrl, {
+        layerLeafletLayer = LeafletService.tileLayer(layerUrl, {
           ext: 'png',
           slug: layer.slug,
           name: layer.slug,
@@ -51,10 +51,9 @@ app.directive("layerChooser", function () {
       }
       layerMap.addLayer(layerLeafletLayer);
     }
-
     scope.$watch('mapState.bounds', function (n, v) {
       if (n === v) { return; }
-      zoom = scope.map.getZoom();
+      zoom = scope.mapState.zoom;
       centroid = scope.mapState.bounds.getCenter();
       layerMap.setView(centroid, zoom - 2);
     });
@@ -67,4 +66,4 @@ app.directive("layerChooser", function () {
     restrict: 'E'
   };
 
-});
+}]);

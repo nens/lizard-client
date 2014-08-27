@@ -2,10 +2,10 @@
 
 describe('Testing layer chooser directive', function() {
 
-  var $compile, $rootScope, $httpBackend, element, scope;
+  var $compile, $rootScope, $httpBackend, element, scope, LeafletService;
 
   beforeEach(module('lizard-nxt'));
-  beforeEach(inject(function (_$compile_, _$rootScope_, _$httpBackend_, $controller) {
+  beforeEach(inject(function (_$compile_, _$rootScope_, _$httpBackend_, $controller, $injector) {
     $compile = _$compile_;
     $rootScope = _$rootScope_;
     $controller = $controller;
@@ -15,18 +15,18 @@ describe('Testing layer chooser directive', function() {
       + '</div>');
     element = $compile(element)($rootScope);
     scope = element.scope();
-    ctrl = $controller('MapDirCtrl', {$scope: scope});
     baseLayers = [{"type": "TMS", "aggregation_type": "none", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 1, "name": "Topografie", "dimensions": null, "url": "http://{s}.tiles.mapbox.com/v3/examples.map-szwdot65/{z}/{x}/{y}", "slug": "", "active": true, "order": 3, "z_index": null, "baselayer": true}, {"type": "TMS", "aggregation_type": "none", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 2, "name": "Satelliet", "dimensions": null, "url": "http://khm1.googleapis.com/kh/v=137&src=app&x={x}&y={y}&z={z}&s=&token=66417", "slug": "", "active": false, "order": 2, "z_index": null, "baselayer": true}, {"type": "WMS", "aggregation_type": "none", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 3, "name": "Hoogtekaart", "dimensions": null, "url": "http://raster.lizard.net/wms", "slug": "elevation", "active": false, "order": 1, "z_index": null, "baselayer": true}];
-    scope.mapState = {
-      layers: baseLayers
-    };
-    
-    scope.map = {
-      getZoom: function () {
-        return 10;
-      }
-    }
+    LeafletService = $injector.get('LeafletService');
 
+    scope.mapState = {
+      layers: baseLayers,
+      zoom: 10,
+      bounds: LeafletService.bounds(
+        LeafletService.point(
+          window.data_bounds.all.south, window.data_bounds.all.east),
+        LeafletService.point(
+          window.data_bounds.all.north, window.data_bounds.all.west))
+    };
   }));
 
   it('should show the text of the layer', function () {

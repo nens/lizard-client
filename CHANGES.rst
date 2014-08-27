@@ -4,11 +4,13 @@ Changelog of lizard-nxt client
 unreleased
 ----------
 
-- Animate intersection with dynamic raster data
+- Refactor map directive into map service.
+
+- Animate intersection with dynamic raster data.
 
 - Add jsdoc-conf.json, configuration file for jsdoc.
 
-- Intersection tool shows generic functionality for all 3-or-more-d layers
+- Intersection tool shows generic functionality for all 3-or-more-d layers.
 
 Release 0.1
 -----------

@@ -111,11 +111,11 @@ app.config(function ($locationProvider) {
  * - [+] Move animation logic to animation controller (on timeline tag)
 
  */
-app.controller("MasterCtrl",
-  ["$scope", "$http", "$q", "$filter", "$compile", "CabinetService",
-   "RasterService", "UtilService", "EventService", "TimeseriesService",
+app.controller('MasterCtrl',
+  ['$scope', '$http', '$q', '$filter', '$compile', 'CabinetService',
+   'RasterService', 'UtilService', 'EventService', 'TimeseriesService', 'MapService',
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, EventService, TimeseriesService) {
+            UtilService, EventService, TimeseriesService, MapService) {
 
   // BOX MODEL
   /**
@@ -140,7 +140,7 @@ app.controller("MasterCtrl",
 
   // TOOLS
   $scope.tools = {
-    active: "none", //NOTE: make list?
+    active: 'none', //NOTE: make list?
   };
 
   // START placeholder translations for django i8n
@@ -213,94 +213,68 @@ app.controller("MasterCtrl",
     $scope.box.contextSwitchMode = !$scope.box.contextSwitchMode;
   };
 
-  /**
-   * Retrieves the (single) currently active layer which has a temporal
-   * component. Returns undefined if no temporal raster layer is
-   * currently active.
-   *
-   * @return {Object}
-   */
-  var _getActiveTemporalLayer = function () {
 
-    var i, temporalLayers = this.getLayersByType('temporal');
-
-    for (i = 0; i < temporalLayers.length; i++) {
-      if (temporalLayers[i].active) {
-        return temporalLayers[i];
-      }
-    }
-  };
-
-  /**
-   * Retrieves layers by type (base | over | temporal). Used for
-   * keeping the right-hand menu readable.
-   *
-   * @param {string} layerType A string representation of the
-   *                           three possible layer types.
-   * @return {Object[]}
-   */
-  var _getLayersByType = function (layerType) {
-
-    var attr, i, result = [];
-
-    switch (layerType) {
-
-    case 'base':
-      for (i in this.layers) {
-        if (this.layers[i].baselayer && !this.layers[i].temporal) {
-          result.push(this.layers[i]);
-        }
-      }
-      break;
-
-    case 'over':
-      for (i in this.layers) {
-        if (!(this.layers[i].baselayer || this.layers[i].temporal)) {
-          result.push(this.layers[i]);
-        }
-      }
-      break;
-
-    case 'temporal':
-      for (i in this.layers) {
-        if (this.layers[i].temporal) {
-          result.push(this.layers[i]);
-        }
-      }
-      break;
-
-    default:
-      console.log('EXCEPTION-esque: tried to call getLayersByType() ' +
-                  'with unknown arggument "' + layerType + '"');
-    }
-
-    return result;
-  };
 
   // MAP MODEL
   // MOVE TO MAP CONTROL ?
-  $scope.mapState = {
-    layers: CabinetService.layers,
-    activeLayersChanged: false,
-    eventTypes: CabinetService.eventTypes,
-    changed: Date.now(),
-    moved: Date.now(),
-    baselayerChanged: Date.now(),
-    enabled: false,
-    bounds: null,
-    pixelCenter: null,
-    zoom: null,
-    here: null, // Leaflet point object describing a users location of interest
-    userHere: null, // Geographical location of the users mouse
-    geom_wkt: '',
-    mapMoving: false,
-    getActiveTemporalLayer: _getActiveTemporalLayer,
-    getLayersByType: _getLayersByType
+  // 
+  // $scope.layers = MapService.layers;
+  $scope.mapState = MapService.mapState;
+
+  /**
+   * @function
+   * @memberof app.MasterCtrl
+   * @description changelayer function... legacy?
+   * @param  {object} layer Layer object
+   */
+  $scope.mapState.changeLayer = function (layer) {
+
+    if (layer.temporal) {
+
+      $scope.mapState.activeLayersChanged =
+        !$scope.mapState.activeLayersChanged;
+      layer.active = !layer.active;
+
+      // toggle timeline if neccesary
+      if ($scope.timeState.hidden !== false) {
+        $scope.toggleTimeline();
+      }
+
+    } else {
+
+      // for other than temporalRaster layers, we do stuff the old way
+      MapService.toggleLayer(layer, $scope.mapState.layers, $scope.mapState.bounds);
+      $scope.mapState.activeLayersChanged =
+        !$scope.mapState.activeLayersChanged;
+    }
   };
 
-  $scope.panZoom = {};
-  // /END MOVE TO MAP CONTROL
-  // MAP MODEL
+
+  $scope.$watch('mapState.here', function (n, o) {
+    if (n === o) { return true; }
+    if (!$scope.$$phase) {
+      $scope.$apply(function () {
+        if ($scope.box.type !== 'intersect') {
+          $scope.box.type = 'pointObject';
+          $scope.$broadcast('newPointObject');
+        }
+      });
+    } else {
+      if ($scope.box.type !== 'intersect') {
+        $scope.box.type = 'pointObject';
+        $scope.$broadcast('newPointObject');
+      }
+    }
+  });
+
+  $scope.$watch('mapState.panZoom', function (n, o) {
+    if (n === o) { return true; }
+    if ($scope.mapState.panZoom.isValid()) {
+      MapService.fitBounds($scope.mapState.panZoom);
+    } else {
+      MapService.panZoomTo($scope.mapState.panZoom);
+    }
+  });
 
   var now = Date.now();
   var day = 24 * 60 * 60 * 1000;
