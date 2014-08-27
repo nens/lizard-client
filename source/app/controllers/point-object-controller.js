@@ -111,12 +111,12 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     var utfgridResponded = function (here, showOnlyEvents) {
       return function (response) {
 
+        console.log(showOnlyEvents);
         if (!showOnlyEvents) {
           attrsResponded(response, $scope.pointObject);
-          ClickFeedbackService.stopVibration();
-        } else {
-          ClickFeedbackService.stopVibration();
         }
+
+        ClickFeedbackService.stopVibration();
 
         // Either way, stop vibrating click feedback.
 
@@ -243,6 +243,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     };
 
     $scope.pointObject = createPointObject();
+    console.log("initialise");
     fillPointObject($scope.mapState.here);
 
     $scope.$on('newPointObject', function (msg, extra) {
