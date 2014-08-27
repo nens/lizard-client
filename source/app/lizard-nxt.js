@@ -14,16 +14,35 @@ var app = angular.module("lizard-nxt", [
   'ui.utils',
 ]);
 
+window.RavenEnvironment = window.location.hostname;
+
 /**
  * Setup Raven if available.
  * Raven is responsible for logging to https://sentry.lizard.net
  */
-if (window.Raven) {
+if (window.Raven &&
+    window.RavenEnvironment == 'nxt.lizard.net') {
   Raven.config('https://ceb01dd84c6941c8aa20e16f83bdb55e@sentry.lizard.net/19',
   {
-    // limits logging to staging and prd
-    whitelistUrls: [/nxt\.lizard\.net/, /staging\.lizard\.net/]
+    // limits logging to prd
+    whitelistUrls: [/nxt\.lizard\.net/, /www\.nxt\.lizard\.net/]
   }).install();
+} else if (window.Raven &&
+           window.RavenEnvironment == 'staging.nxt.lizard.net') {
+  Raven.config('https://6e8bb5bc76e24d2685b9dcff6730ad5d@sentry.lizard.net/24',
+  {
+    // limits logging to staging and prd
+    whitelistUrls: [ /staging\.nxt\.lizard\.net/, /www\.staging\.nxt\.lizard\.net/]
+  }).install();
+} else if (window.Raven &&
+           window.RavenEnvironment == 'integration.nxt.lizard.net') {
+  Raven.config('https://5cc2af45c49c4cd7931c470886a4850b@sentry.lizard.net/25',
+  {
+    // limits logging to staging and prd
+    whitelistUrls: [ /integration\.nxt\.lizard\.net/, /www\.integration\.nxt\.lizard\.net/]
+  }).install();
+} else {
+  window.RavenEnvironment = false;
 }
 
 /**
@@ -33,9 +52,11 @@ app.config(function ($provide) {
   $provide.decorator("$exceptionHandler", function ($delegate) {
       return function (exception, cause) {
           $delegate(exception, cause);
-          Raven.captureException(exception, {
-            extra: {cause: cause}
-          });
+          if (window.RavenEnvironment) {
+            Raven.captureException(exception, {
+              extra: {cause: cause}
+            });
+          }
         };
     });
 });
