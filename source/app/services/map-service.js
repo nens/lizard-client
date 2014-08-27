@@ -177,7 +177,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
 
   /**
    * @function
-   * @description legacy function from map-directive
+   * @description legacy function from map-directive 
+   * turns of all active baselayers.
    * @param  {string} id     id for layer.
    * @param  {object} layers 
    */
@@ -235,7 +236,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
   /**
    * @function
    * @memberOf app.MapService
-   * @description legacy function from map-directive
+   * @description legacy function from map-directive --> does too much!
    * @param  {object} layer  single layer that needs to be toggled
    * @param  {object} layers all layers to switch off.
    */
@@ -244,7 +245,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
       _turnOffAllOtherBaselayers(layer.id, layers);
       if (!layer.active) { layer.active = true; }
       else if (layer.slug == 'elevation' && layer.active) {
-        _rescaleElevation()
+        _rescaleElevation();
       }
     } else {
       layer.active = !layer.active;
@@ -307,7 +308,12 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
     return false;
   };
 
-
+  /**
+   * @function
+   * @memberOf app.MapService
+   * @description wrapper for leaflet function.
+   * @return {L.GeoJson} empty geojson layer.
+   */
   newGeoJsonLayer = function () {
     return LeafletService.geoJson();
   }
@@ -499,7 +505,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService','L
    * @memberOf app.MapService
    */
   _dragEnded = function () {
-    // TODO: find solution for this
+    // TODO: is this still being used?
 
     // if (scope.box.type === 'default') {
     // // scope.box.type = 'empty';

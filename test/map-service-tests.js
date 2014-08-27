@@ -1,5 +1,5 @@
 describe('Testing map service', function () {
-  var $scope, $rootScope, MapService, elem;
+  var $scope, $rootScope, MapService;
 
   beforeEach(module('lizard-nxt'));
   beforeEach(inject(function ($injector, $compile) {
@@ -8,7 +8,7 @@ describe('Testing map service', function () {
   }));
 
   it('should create a map object', function () {
-    elem = document.querySelector('body').appendChild(
+    var elem = document.querySelector('body').appendChild(
       document.createElement('div')
       );
     var map = MapService.createMap(elem);
@@ -32,7 +32,7 @@ describe('Testing map service', function () {
   });
 
   it('should add a Layer', function () {
-    elem = document.querySelector('body').appendChild(
+    var elem = document.querySelector('body').appendChild(
       document.createElement('div')
       );
     var map = MapService.createMap(elem);
@@ -42,7 +42,7 @@ describe('Testing map service', function () {
   });
 
   it('should remove a Layer after adding', function () {
-    elem = document.querySelector('body').appendChild(
+    var elem = document.querySelector('body').appendChild(
       document.createElement('div')
       );
     var map = MapService.createMap(elem);
@@ -53,8 +53,38 @@ describe('Testing map service', function () {
     expect(map.hasLayer(layers.satellite.leafletLayer)).toBe(false);
   });
 
+  it('should turn of all active baselayers except for active.', function () {
+    var elem = document.querySelector('body').appendChild(
+      document.createElement('div')
+      );
+    var map = MapService.createMap(elem);
+    MapService.createLayer(layers.satellite);
+    MapService.createLayer(layers.topography);
+    MapService.toggleLayer(layers.topography, layers);
+    MapService.toggleLayer(layers.satellite, layers);
+
+    expect(layers.satellite.active).toBe(true);
+    expect(layers.topography.active).toBe(false);
+    expect(map.hasLayer(layers.topography.leafletLayer)).toBe(false);
+    expect(map.hasLayer(layers.satellite.leafletLayer)).toBe(true);
+  });
+
+  it('should give me the layer if it is added to the map', function () {
+    var elem = document.querySelector('body').appendChild(
+      document.createElement('div')
+      );
+    var map = MapService.createMap(elem);
+    MapService.createLayer(layers.waterchain);
+    MapService.addLayer(layers.waterchain.grid_layer);
+
+    var layer = MapService.getLayer('grid', 'waterchain');
+    
+    expect(MapService.getLayer('not', 'exist')).toBe(false);
+    expect(layer).toEqual(layers.waterchain.grid_layer);
+  });
+
   it('should initiate and catch click events', function () {
-    elem = document.querySelector('body').appendChild(
+    var elem = document.querySelector('body').appendChild(
       document.createElement('div')
       );
     var bounds = window.data_bounds.all;
