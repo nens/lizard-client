@@ -1,7 +1,7 @@
 'use strict';
 
-app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
-  function ($scope, hashSyncHelper) {
+app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
+  function ($scope, hashSyncHelper, MapService) {
 
     // Only set url when user changed it or on pageload
     // Watches are asynchronous, so they all need their
@@ -73,9 +73,9 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
     var setCoordinatesUrl = function () {
       var COORD_PRECISION = 4;
       var newHash = [
-        $scope.map.getCenter().lat.toFixed(COORD_PRECISION),
-        $scope.map.getCenter().lng.toFixed(COORD_PRECISION),
-        $scope.map.getZoom()
+        MapService.mapState.center.lat.toFixed(COORD_PRECISION),
+        MapService.mapState.center.lng.toFixed(COORD_PRECISION),
+        MapService.mapState.zoom
       ].join(',');
       if (!$scope.$$phase) {
         $scope.$apply(function () {
@@ -97,6 +97,28 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
         }
       }
       hashSyncHelper.setHash({'layers': activeSlugs.toString()});
+    };
+
+    /**
+     * Sets the timeState on scope after locationChangeSucces.
+     *
+     * To prevent a timeState.at that lies outside of the interval.
+     * When Setting the start and end also set the at.
+     *
+     * @param {timeState} time  timeState with start and end.
+     * @param {boolean} start   Set timeStart or timeState.end
+     */
+    var setTimeState = function (time, start) {
+      var msTime = Date.parse(time);
+      if (start) {
+        $scope.timeState.start = msTime;
+      } else {
+        $scope.timeState.end = msTime;
+      }
+      $scope.timeState.at = $scope.timeState.start +
+        ($scope.timeState.end - $scope.timeState.start) / 2;
+      $scope.timeState.changeOrigin = 'hash';
+      $scope.timeState.changedZoom = Date.now();
     };
 
     /**
@@ -138,7 +160,7 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
             if (parseFloat(latlonzoom[0]) &&
                 parseFloat(latlonzoom[1]) &&
                 parseFloat(latlonzoom[2])) {
-              $scope.map.setView(
+              MapService.setView(
                 [latlonzoom[0], latlonzoom[1]],
                 latlonzoom[2],
                 {reset: true, animate: true}
@@ -157,7 +179,8 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
           for (i = 0; i < allSlugs.length; i++) {
             // check if hash contains layers otherwise set to inactive;
             active = (activeSlugs.indexOf(allSlugs[i]) >= 0);
-            if (active && !$scope.mapState.layers[allSlugs[i]].active) {
+            if ((active && !$scope.mapState.layers[allSlugs[i]].active)
+              || (!active && $scope.mapState.layers[allSlugs[i]].active)) {
               $scope.mapState.changeLayer($scope.mapState.layers[allSlugs[i]]);
             }
           }
@@ -165,12 +188,12 @@ app.controller('hashGetterSetter', ["$scope", "hashSyncHelper",
 
         startHash = hash.start;
         if (startHash !== undefined) {
-          $scope.timeState.start = Date.parse(startHash);
+          setTimeState(startHash, true);
         }
 
         endHash = hash.end;
         if (endHash !== undefined) {
-          $scope.timeState.end = Date.parse(endHash);
+          setTimeState(endHash, false);
         }
       }
       updateLocationUrl = true;

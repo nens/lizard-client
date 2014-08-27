@@ -209,7 +209,7 @@ angular.module('graph')
         yAxis = this.makeAxis(y.scale, {orientation: "left"});
       }
       svg.append("svg:g")
-        .attr("class", "x axis")
+        .attr("class", "x-axis x axis")
         .attr("transform", "translate(0, " + options.height + ")")
         .call(xAxis)
         .selectAll("text")
@@ -271,18 +271,20 @@ angular.module('graph')
         legend.yLabel = $filter(attrs.yfilter)(scope.ylabel);
       }
       // Build chart from scratch
-      if (scope.graph === undefined) {
-        // clear the chart beforehand
-        d3.select(element[0]).html("");
-        scope.graph = graphCtrl.callChart(scope.data, element, legend);
-        scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph, legend);
-        // Draw the now for the rain
-        if (scope.$parent.tools.active === 'rain') {
-          graphCtrl.drawNow(scope.graph, scope.$parent.timeState.at);
+      if (scope.data) {
+        if (scope.graph === undefined) {
+          // clear the chart beforehand
+          d3.select(element[0]).html("");
+          scope.graph = graphCtrl.callChart(scope.data, element, legend);
+          scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph, legend);
+          // Draw the now for the rain
+          if (scope.$parent.tools.active === 'rain') {
+            graphCtrl.drawNow(scope.graph, scope.$parent.timeState.at);
+          }
+        // Update graph with new data
+        } else {
+          scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph, legend);
         }
-      // Update graph with new data
-      } else {
-        scope.graph = graphCtrl.drawFeatures(scope.data, scope.graph, legend);
       }
     });
 
@@ -437,24 +439,13 @@ angular.module('graph')
       var bar = g.selectAll(".bar")
           .data(data, function  (d) { return d[0]; });
 
-      var heightFn = function (d) {
-        var height = y.scale(d[1]);
-        var h;
-        if (height < 200) {
-          h = 200 - height;
-        } else {
-          h = 0;
-        }
-        return h;
-      };
-
       var barWidth = x.scale(data[1][0]) - x.scale(data[0][0]);
 
       // UPDATE
       // Update old elements as needed.
       bar.transition()
         .duration(500)
-        .attr("height", heightFn)
+        .attr("height", function (d) { return graph.height - y.scale(d[1]); })
         .attr("x", function (d) { return x.scale(d[0]) - 0.5 * barWidth; })
         .attr('width', function (d) { return barWidth; })
         .attr("y", function (d) { return y.scale(d[1]); })
@@ -470,7 +461,7 @@ angular.module('graph')
           .attr("height", 0)
           .transition()
           .duration(500)
-          .attr("height", function (d) { return 200 - y.scale(d[1]); })
+          .attr("height", function (d) { return graph.height - y.scale(d[1]); })
           .attr("y", function (d) { return y.scale(d[1]); });
 
       // Move now-indicator to the front
@@ -681,7 +672,6 @@ angular.module('graph')
   .directive('line', function () {
     var link  = function (scope, element, attrs, graphCtrl) {
       graphCtrl.callChart = function (timeseries, element, legend) {
-
         var graph = graphCtrl.createCanvas(legend, element);
         var svg = graph.svg,
             height = graph.height,
@@ -715,16 +705,8 @@ angular.module('graph')
             }];
           }
         }
-        var y = graphCtrl.maxMin(data, keys.y);
-        y.scale = graphCtrl.scale(y.min, y.max, {
-          range: [height, 0]
-        });
 
-        var line = d3.svg.line().interpolate('basis')
-          .y(function (d) {
-            return y.scale(d[keys.y]);
-          });
-        line.defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
+        var line = d3.svg.line().interpolate('basis');
 
         var x = {};
         if (header[keys.x]
@@ -750,55 +732,19 @@ angular.module('graph')
           });
         }
 
-        // prevent errors
-        if (x === undefined) { return; }
+        var y = graphCtrl.maxMin(data, keys.y);
+        y.scale = graphCtrl.scale(y.min, y.max, {
+          range: [height, 0]
+        });
 
         var xAxis = graphCtrl.makeAxis(x.scale, {
           orientation: "bottom",
           tickFormat: x.tickFormat
         });
+
         var yAxis = graphCtrl.makeAxis(y.scale, {
           orientation: "left"
         });
-
-        var zoomed = function () {
-          // circleTooltip();
-          svg.select(".x.axis").call(graphCtrl.makeAxis(x.scale, {
-            orientation: "bottom",
-            tickFormat: x.tickFormat
-          }));
-          svg.select(".x.grid")
-            .call(graphCtrl.makeAxis(x.scale,  {
-              orientation: "bottom",
-              tickFormat: x.tickFormat
-            })
-            .tickSize(-height, 0, 0)
-            .tickFormat(""));
-          svg.select(".y.axis").call(graphCtrl.makeAxis(y.scale, {orientation: "left"}));
-          svg.select(".y.grid")
-              .call(graphCtrl.makeAxis(y.scale, {orientation: "left"})
-              .tickSize(-width, 0, 0)
-              .tickFormat(""));
-
-          svg.select(".line")
-              .attr("class", "line")
-              .attr("d", line);
-          if (header[keys.x].quantity === 'time') {
-            scope.$apply(function () {
-              // NOTE: maybe with $parent
-              scope.$parent.timeState.start = x.scale.domain()[0].getTime();
-              scope.$parent.timeState.end = x.scale.domain()[1].getTime();
-              scope.$parent.timeState.changeOrigin = 'lineChart';
-              scope.$parent.timeState.changedZoom = !scope.timeState.changedZoom;
-            });
-          }
-        };
-
-        var zoom = d3.behavior.zoom()
-          .x(x.scale)
-          .on("zoom", zoomed);
-
-        svg.call(zoom);
 
         graphCtrl.drawAxes(svg, x, y, {
           height: height,
@@ -815,38 +761,133 @@ angular.module('graph')
           .attr("x", 0)
           .attr("y", 0)
           .attr("width", 0)
-          .attr("height", height);
-
-        if (scope.$parent.box.type !== 'elevation') {
-          clip
-            .transition()
-            .ease('linear')
-            .duration(1000)
-            .attr("width", width);
-        } else {
-          clip
-            .attr("width", width);
-        }
+          .attr("height", height)
+          .transition()
+          .ease('linear')
+          .duration(1000)
+          .attr("width", width);
 
         var chartBody = svg.append("g")
           .attr("clip-path", "url(#clip)");
 
         chartBody.append("svg:path")
-          .datum(data)
-          .attr("class", "line")
-          .attr("d", line);
+          .attr("class", "line");
+
+        return {
+          svg: svg,
+          g: chartBody,
+          height: height,
+          width: width,
+          x: x,
+          y: y,
+          keys: keys,
+        };
+      };
+
+
+      /**
+       * Draws new features, updates and removes features and rescales graph.
+       *
+       * @param  {object} data  new data object
+       * @param  {object} graph graph object
+       */
+      graphCtrl.drawFeatures = function (data, graph, legend) {
+        var svg = graph.svg,
+        g = graph.g,
+        keys = graph.keys,
+        height = graph.height,
+        y = graph.y,
+        x = graph.x,
+        width = graph.width;
+        var rescaleY = false;
+        var rescaleX = false;
+
+        var yN = graphCtrl.maxMin(data, '1');
+        // Only rescale the y axis if values are greater than
+        // the top of the axis, or smaller than 0.1 of the height
+        // of the axis. To prevent rapid rescaling when animating
+        // rain.
+        if (yN.max > y.max || yN.max < (0.1 * y.max)) {
+          rescaleY = true;
+          y = yN;
+          y.scale = graphCtrl.scale(0, y.max, {
+            range: [height, 0]
+          });
+          graph.y = y;
+        }
+
+        var xN = {};
+        xN = graphCtrl.maxMin(data, keys.x);
+        if (xN.max !== x.max || xN.min !== x.min) {
+          rescaleX = true;
+          x = xN;
+          x.scale = graphCtrl.scale(0, x.max, {
+            range: [0, width]
+          });
+          x.tickFormat = "";
+        }
+
+        var line = d3.svg.line().interpolate('basis')
+          .y(function (d) {
+            return y.scale(d[keys.y]);
+          })
+          .x(function (d) {
+            return x.scale(d[keys.x]);
+          });
+        line.defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
+
+        var reYScale = function () {
+          var yAxis = graphCtrl.makeAxis(y.scale, {orientation: 'left'});
+          svg.select('.y-axis')
+            .transition()
+            .duration(300)
+            .ease("sin-in-out")
+            .call(yAxis)
+            .selectAll("text")
+              .style("text-anchor", "end")
+              .attr('class', 'graph-text');
+        };
+
+        var reXScale = function () {
+          var xAxis = graphCtrl.makeAxis(x.scale, {orientation: 'bottom'});
+          svg.select('.x-axis')
+            .transition()
+            .duration(300)
+            .ease("sin-in-out")
+            .call(xAxis)
+            .selectAll("text")
+              .style("text-anchor", "end")
+              .attr('class', 'graph-text')
+              .attr("dx", "-.8em")
+              .attr("dy", ".15em")
+              .attr("transform", function (d) {
+                return "rotate(-45)";
+              });
+        };
+
+        if (legend.yLabel) {
+          //Create Y axis label
+          svg.select("#ylabel")
+            .text(legend.yLabel);
+        }
+
+        var path = g.select("path").datum(data);
+
+        path.transition()
+          .duration(300)
+          .attr("d", function (d) {
+            // Prevent returning invalid values for d
+            return line(d) || "M0, 0";
+          });
+
+        if (rescaleY) { reYScale(); }
+        if (rescaleX) { reXScale(); }
 
         if (scope.box.type === 'intersect') {
-
-          zoom = d3.behavior.zoom()
-            .x(x.scale)
-            .on("zoom", null);
-          svg.call(zoom);
-
           // Events do not bubble when with d3.
           // Put listener on body and rect to move bolletje on the line
           // in profile directive
-          chartBody.on('mousemove', function () {
+          g.on('mousemove', function () {
             var pos = x.scale.invert(d3.mouse(this)[0]);
             scope.$apply(function () {
               scope.$parent.box.mouseLoc = pos;
@@ -866,7 +907,12 @@ angular.module('graph')
             });
           });
         }
+
+        graph.x = x;
+        graph.y = y;
+        return graph;
       };
+
     };
 
     return {

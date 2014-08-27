@@ -6,14 +6,13 @@
  * time-interval (temporal extent, from timeline)
  *
  */
-app.directive('vectorlayer', ["EventService", "$rootScope",
-  "ClickFeedbackService", function (EventService, $rootScope,
-  ClickFeedbackService) {
+app.directive('vectorlayer', ['EventService', '$rootScope',
+  'ClickFeedbackService', 'MapService',
+  function (EventService, $rootScope, ClickFeedbackService, MapService) {
 
   return {
     restrict: 'A',
-    require: 'map',
-    link: function (scope, element, attrs, mapCtrl) {
+    link: function (scope, element, attrsM) {
 
       // declaring all local vars for current scope:
       var getEventColor, eventClickHandler, getFeatureSelection, matchLocation,
@@ -163,7 +162,6 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
         var map, svg, g, transform, path, bounds, featureSelection,
             projectPoint, reset;
 
-        map = scope.map;
 
         // if d3eventlayer does not exist create.
         if (d3eventLayer === undefined) {
@@ -176,7 +174,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
           });
         }
 
-        map.addLayer(d3eventLayer);
+        MapService.addLayer(d3eventLayer);
         d3eventLayer._bindClick(eventClickHandler);
 
         // for backwards compatibility.
@@ -207,7 +205,7 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
       };
 
       var removeEventLayer = function (eventLayer) {
-        scope.map.removeLayer(eventLayer);
+        MapService.removeLayer(eventLayer);
         return false;
       };
 
@@ -351,11 +349,10 @@ app.directive('vectorlayer', ["EventService", "$rootScope",
  * to make generic
  *
  */
-app.directive('surfacelayer', function () {
+app.directive('surfacelayer', ['MapService', function (MapService) {
   return {
     restrict: 'A',
-    require: 'map',
-    link: function (scope, element, attrs, mapCtrl) {
+    link: function (scope, element, attrs) {
 
       var bottomLeft = {};
 
@@ -421,32 +418,7 @@ app.directive('surfacelayer', function () {
         }
       };
 
-      /**
-       * Get layer from leaflet map object.
-       *
-       * Because leaflet doesn't supply a map method to get a layer by name or
-       * id, we need this crufty function to get a layer.
-       *
-       * NOTE: candidate for (leaflet) util module
-       *
-       * @layerType: layerType, type of layer to look for either `grid`, `png`
-       * or `geojson`
-       * @param: entityName, name of ento
-       * @returns: leaflet layer object or false if layer not found
-       */
-
-      var getLayer = function (layerType, entityName) {
-
-        var k, opts;
-
-        for (k in scope.map._layers) {
-          opts = scope.map._layers[k].options;
-          if (opts.name === entityName && opts.ext === layerType) {
-            return scope.map._layers[k];
-          }
-        }
-        return false;
-      };
+      var getLayer = MapService.getLayer;
 
       // Initialise geojson layer
       var surfaceLayer = L.geoJSONd3(
@@ -466,7 +438,7 @@ app.directive('surfacelayer', function () {
         if (n === o) { return true; }
         var pipeLayer = {};
         if (scope.tools.active === "pipeSurface") {
-          mapCtrl.addLayer(surfaceLayer);
+          MapService.addLayer(surfaceLayer);
           pipeLayer = getLayer('grid', 'waterchain');
           // icon active
           angular.element(".surface-info").addClass("icon-active");
@@ -493,9 +465,9 @@ app.directive('surfacelayer', function () {
             pipeLayer.off('mousemove', highlightSurface);
             pipeLayer.off('mouseout', highlightSurface);
           }
-          mapCtrl.removeLayer(surfaceLayer);
+          MapService.removeLayer(surfaceLayer);
         }
       });
     }
   };
-});
+}]);

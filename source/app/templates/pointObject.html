@@ -103,15 +103,10 @@
   </div>
   <!-- end: single card -->
 
-  <!-- rain card v2 starts here... -->
   <div id="card-rain"
        class="card active"
-       ng-class="{hidden: !(pointObject.temporalRaster.type === 'demo:radar'
-                            && mapState.getActiveTemporalLayer()
-                            && mapState.getActiveTemporalLayer().slug === 'demo:radar')}">
-
+       ng-class="{hidden: !mustShowRainCard(mapState, pointObject)}">
     <div class="card-content" id="card-content-rain">
-
       <a
         id="export-rain-csv-button"
         href="#"

@@ -16,8 +16,8 @@
 /**
  * Service to draw click feedback.
  */
-app.service("ClickFeedbackService", ["$rootScope",
-  function ($rootScope) {
+app.service('ClickFeedbackService', ['$rootScope', 'MapService',
+  function ($rootScope, MapService) {
     var Ctrl = function () {
 
       /**
@@ -25,11 +25,12 @@ app.service("ClickFeedbackService", ["$rootScope",
        *
        * @param {object} map
        */
-      this.emptyClickLayer = function (map) {
+      this.emptyClickLayer = function () {
         if (this.clickLayer) {
-          map.removeLayer(this.clickLayer);
+          MapService.removeLayer(this.clickLayer);
         }
-        this.clickLayer = L.geoJson().addTo(map);
+        this.clickLayer = MapService.newGeoJsonLayer();
+        MapService.addLayer(this.clickLayer);
         this.clickLayer.options.name = 'click';
         this.clickLayer.options.clickable = false;
       };
@@ -120,7 +121,7 @@ app.service("ClickFeedbackService", ["$rootScope",
       };
 
 
-      this.drawObject = function (entityName, map) {
+      this.drawObject = function (entityName) {
 
         var selection = this._getSelection(this.clickLayer);
         this._circleMarker.setRadius(11);
@@ -140,7 +141,7 @@ app.service("ClickFeedbackService", ["$rootScope",
         // Entity specific modifications
         if (entityName.indexOf("pumpstation_non_sewerage") !== -1) {
           this._circleMarker.setRadius(13);
-          if (map.getZoom() < 13) {
+          if (MapService.mapState.zoom < 13) {
             this._circleMarker.setRadius(16);
           }
         } else if (entityName.indexOf("pumpstation_sewerage") !== -1) {
@@ -195,8 +196,8 @@ app.service("ClickFeedbackService", ["$rootScope",
      * Wrapper for
      *
      */
-    emptyClickLayer = function (map) {
-      ctrl.emptyClickLayer(map);
+    emptyClickLayer = function () {
+      ctrl.emptyClickLayer();
     };
 
     killVibrator = function () {
@@ -213,8 +214,8 @@ app.service("ClickFeedbackService", ["$rootScope",
      * @param {object} latLng Leaflet object specifying the latitude
      * and longitude of a click
      */
-    drawClickInSpace = function (map, latlng) {
-      ctrl.emptyClickLayer(map);
+    drawClickInSpace = function (latlng) {
+      ctrl.emptyClickLayer();
       var geometry = {"type": "Point",
                       "coordinates": [latlng.lng, latlng.lat]};
       ctrl.drawFeature(geometry);
@@ -232,11 +233,11 @@ app.service("ClickFeedbackService", ["$rootScope",
      * @param {string} entityName Name of the object to give it custom
      *  styling
      */
-    drawGeometry = function (map, geom, entityName) {
-      ctrl.emptyClickLayer(map);
+    drawGeometry = function (geom, entityName) {
+      ctrl.emptyClickLayer();
       var geometry = angular.fromJson(geom);
       ctrl.drawFeature(geometry);
-      ctrl.drawObject(entityName, map);
+      ctrl.drawObject(entityName);
     };
 
     /**
@@ -246,12 +247,12 @@ app.service("ClickFeedbackService", ["$rootScope",
      * @param {object} latLng Leaflet object specifying the latitude
      * and longitude of a click
      */
-    drawArrowHere = function (map, latlng) {
-      ctrl.emptyClickLayer(map);
+    drawArrowHere = function (latlng) {
+      ctrl.emptyClickLayer();
       var geometry = {"type": "Point",
                       "coordinates": [latlng.lng, latlng.lat]};
       ctrl.drawFeature(geometry);
-      var px = map.latLngToLayerPoint(latlng);
+      var px = MapService.latLngToLayerPoint(latlng);
       ctrl.addLocationMarker(px);
     };
 
@@ -259,8 +260,8 @@ app.service("ClickFeedbackService", ["$rootScope",
       ctrl.stopVibration();
     };
 
-    drawLine = function (map, first, second, dashed) {
-      emptyClickLayer(map);
+    drawLine = function (first, second, dashed) {
+      emptyClickLayer();
       ctrl.drawLineElement(first, second, dashed);
     };
 
