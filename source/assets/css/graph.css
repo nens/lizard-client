@@ -45,13 +45,10 @@
   shape-rendering: crispEdges;
 }
 
-rect {
-  fill: #95a5a6;
-}
-
 rect.bar {
   stroke-width: 1;
   stroke: white;
+  fill: #95a5a6;
 }
 
 .bar-timeline {

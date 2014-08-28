@@ -5,7 +5,7 @@
  * from https://gist.github.com/ZJONSSON/5529395
  * plus code copied from http://bl.ocks.org/tnightingale/4718717
  * Cotributions from @jsmits, @fritzvd, @arjenvrielink and @ernstkui
- * 
+ *
  * Each feature gets it's id as a class attribute so you can easily select it
  * with d3
  *
@@ -69,8 +69,8 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
   },
 
   /**
-   * _renderData 
-   * Renders geoJSON data in the svg container.
+   * _renderData
+   * Renders geoJSON data (for displaying Events) in the svg container.
    * If the options has a 'selectorPrefix' property
    * your 'path' elements will be accessible with an id.
    *
@@ -78,7 +78,6 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
    * something could be done with paths:
    *        .append("path")
    *        .attr("d", self._path);
-   *
    */
   _refreshData: function () {
     var self = this;
@@ -129,6 +128,122 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     }
   },
 
+  _getPointsForArrow: function (centerCoord) {
+
+    var // the final result/return value we'll build in this method
+        result = "",
+
+        // the center point for the arrow
+        cx = centerCoord[0],
+        cy = centerCoord[1],
+
+        // constant for scaling the arrow
+        SCALE_FACTOR = 0.2,
+
+        // points for neat arrow, not scaled nor shifted
+        X_VALS_FOR_ARROW = [100, 100, 130, 70, 70,  10,  40,  40],
+        Y_VALS_FOR_ARROW = [225, 115, 115, 15, 15, 115, 115, 225],
+        WIDTH_FOR_ARROW = 120,  // max diff X_VALS_FOR_ARROW
+        HEIGHT_FOR_ARROW = 210, // max diff Y_VALS_FOR_ARROW
+
+        // declaring vars used in loop-body outside of the loop-body
+        xCoord,
+        yCoord,
+
+        // ..to eliminate unneccesary var keywords
+        i;
+
+    for (i = 0; i < X_VALS_FOR_ARROW.length; i++) {
+
+      xCoord = Math.round(((X_VALS_FOR_ARROW[i] + (120 * 0.5)) * SCALE_FACTOR) + cx);
+      yCoord = Math.round(((Y_VALS_FOR_ARROW[i] - (210 * 0.5)) * SCALE_FACTOR) + cy);
+      result += (xCoord + "," + yCoord + " ");
+    }
+
+    return result;
+  },
+
+
+  /**
+   * Renders geoJSON data (for displaying Currents) in the svg container.
+   *
+   * @param {integer} index - Denotes the value for n when we render the
+   * n-th point in time for a current. For every point in time this should be
+   * calculated only once, and this can subsequently be used for every current
+   * repr.
+   *
+   * @param {integer} index - The n-th step in time, used for animation
+   * @returns {void}
+   */
+  _refreshDataForCurrents: function (timeStepIndex) {
+
+    var self = this,
+        MAX_SPEED_FOR_CURRENT = 100; // arbitrary for now
+
+    if (this.g.empty()) {
+      this.g = this._renderG();
+    }
+
+    var features = this.g.selectAll(".current-arrow")
+      .data(this._data.features, self.idExtractor);
+
+    features.enter()
+      .append("svg:polygon")
+        .attr("points", function (d) {
+
+          return self._getPointsForArrow(
+            self._projection(d.geometry.coordinates)
+          );
+
+        })
+        .attr("rel", "tooltip")
+        .attr("title", function (d) {
+
+          return "foooohoooobaaaar";
+
+        })
+        .attr("stroke-width", 1.8)
+        .attr("stroke", "white")
+        .attr("class", function (feature) {
+          var classList = self.options.class;
+          if (self.options.hasOwnProperty('selectorPrefix')) {
+            classList += " " + self.options.selectorPrefix
+                             + self._idExtractor(feature);
+          }
+          return classList;
+        });
+
+    features
+      .attr("fill", function (d) {
+        var relSpeed = d.properties.speeds[timeStepIndex] / MAX_SPEED_FOR_CURRENT;
+        var shade = 255 - Math.floor(relSpeed * 256);
+        return "rgb(" + shade + ", " + shade + ", " + shade + ")";
+      })
+      .attr("x", function (d) {
+        return self._projection(d.geometry.coordinates)[0];
+      })
+      .attr("y", function (d) {
+        return self._projection(d.geometry.coordinates)[1];
+      })
+      .attr("width", 100)
+      .attr("height", 50)
+      .attr("transform", function (d) {
+
+        var deg, cx, cy;
+
+        deg = d.properties.directions[timeStepIndex];
+        cx = self._projection(d.geometry.coordinates)[0];
+        cy = self._projection(d.geometry.coordinates)[1];
+
+        return "rotate(" + deg + ", " + cx + ", " + cy + ")";
+      });
+
+    features.exit()
+        .style("fill-opacity", 1e-6)
+        .remove();
+  },
+
+
   /**
    * Count overlapping locations.
    *
@@ -168,9 +283,9 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
   },
 
   /**
-   * Move event function. The svg is moved by the position of the bottomleft 
-   * corner of the map relative to the origin. The features within the svg 
-   * are moved in the opposite direction to keep the features at the same 
+   * Move event function. The svg is moved by the position of the bottomleft
+   * corner of the map relative to the origin. The features within the svg
+   * are moved in the opposite direction to keep the features at the same
    * position relative to the map.
    */
   _onMove: function () {
