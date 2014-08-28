@@ -15,6 +15,8 @@ app.factory("NxtD3Service", [ function () {
   var NxtD3 = {}, createElementForAxis;
 
   NxtD3.prototype = {
+
+    _transTime: 300,
     /**
      * Creates a svg canvas for drawing,
      *
@@ -26,12 +28,8 @@ app.factory("NxtD3Service", [ function () {
      * @return {object} svg         svg.
      */
     _createCanvas: function (element, dimensions) {
-      var width = dimensions.width -
-                  dimensions.padding.left -
-                  dimensions.padding.right,
-          height = dimensions.height -
-                   dimensions.padding.top -
-                   dimensions.padding.bottom,
+      var width = this._getWidth(dimensions),
+      height = this._getHeight(dimensions),
       svg = d3.select(element);
       svg.attr('width', dimensions.width)
         .attr('height', dimensions.height)
@@ -129,13 +127,29 @@ app.factory("NxtD3Service", [ function () {
         axisEl
           .call(axis);
       }
+    },
+
+    /**
+     * Retruns width from dimensions.
+     */
+    _getWidth: function (dimensions) {
+      return dimensions.width -
+        dimensions.padding.left -
+        dimensions.padding.right;
+    },
+
+    /**
+     * Returns height from dimensions.
+     */
+    _getHeight: function (dimensions) {
+      return dimensions.height -
+        dimensions.padding.top -
+        dimensions.padding.bottom;
     }
   };
 
   createElementForAxis = function (svg, id, dimensions, y) {
-    var height = dimensions.height -
-                 dimensions.padding.top -
-                 dimensions.padding.bottom,
+    var height = NxtD3.prototype.getHeight(dimensions),
     className = y ? 'y axis': 'x axis';
     svg.select('g').append('g')
       .attr('class', className)

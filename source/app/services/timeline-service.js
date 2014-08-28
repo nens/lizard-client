@@ -98,12 +98,8 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
     // TODO: create real noDataIndicator, this is just legacy code
     addNoDataIndicator: {
       value: function () {
-        var width = this.dimensions.width -
-                    this.dimensions.padding.left -
-                    this.dimensions.padding.right,
-            height = this.dimensions.height -
-                     this.dimensions.padding.top -
-                     this.dimensions.padding.bottom;
+        var width = this._getWidth(this.dimensions),
+        height = this._getHeight(this.dimensions);
 
         noDataIndicator = this.svg.select('g').append('rect')
           .attr('height', height)
@@ -117,9 +113,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
     // TODO: remove nowIndicator and add it to the brush
     addNowIndicator: {
       value: function () {
-        var height = this.dimensions.height -
-                     this.dimensions.padding.top -
-                     this.dimensions.padding.bottom;
+        var height = this._getHeight(this.dimensions);
 
         // Create line for the timeState.at just out of sight
         nowIndicator = svg.select('g').append('line')
@@ -158,9 +152,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
 
         brushg = svg.select('g').append("g")
           .attr("class", "brushed");
-        var height = this.dimensions.height -
-                     this.dimensions.padding.top -
-                     this.dimensions.padding.bottom;
+        var height = this._getHeight(this.dimensions);
         brushg.call(brush.extent([new Date(start), new Date(end)]));
         brushg.selectAll("rect")
           .attr("height", height)
@@ -248,9 +240,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
     // TODO: remove nowIndicator and add it to the brush
     updateNowElement: {
       value: function (now) {
-        var height = this.dimensions.height -
-                     this.dimensions.padding.top -
-                     this.dimensions.padding.bottom;
+        var height = this._getHeight(this.dimensions);
         nowIndicator
           .attr('x1', - this.dimensions.padding.left - 5)
           .attr('x2', - this.dimensions.padding.left - 5)
@@ -409,12 +399,8 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
    * @return {object} svg timeline svg.
    */
   var addElementGroupsToCanvas = function (svg, dimensions) {
-    var width = dimensions.width -
-                dimensions.padding.left -
-                dimensions.padding.right,
-        height = dimensions.height -
-                 dimensions.padding.top -
-                 dimensions.padding.bottom;
+    var width = Timeline.prototype._getWidth(dimensions),
+    height = Timeline.prototype._getHeight(dimensions);
     // Create group for rain bars
     svg.select('g').append('g')
       .attr('height', height)
@@ -435,8 +421,8 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
    * becoming larger.
    */
   var updateCanvas = function (svg, oldDims, newDims) {
-    var width = newDims.width - newDims.padding.left - newDims.padding.right;
-    var height = newDims.height - newDims.padding.top - newDims.padding.bottom;
+    var width = Timeline.prototype._getWidth(newDims),
+    height = Timeline.prototype._getHeight(newDims);
 
     if (newDims.height < oldDims.height) {
       svg.transition()
@@ -594,7 +580,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
    */
   var updateBrush = function (brushg, oldDim, newDim) {
     brushed();
-    var height = newDim.height - newDim.padding.top - newDim.padding.bottom;
+    height = Timeline.prototype._getHeight(newDim);
     var delay = 0;
     if (oldDim.height > newDim.height) {
       delay = 500;
@@ -638,19 +624,17 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
     // Update old elements as needed.
     if (rectangles[0].length > 0) {
       var barHeight = initialHeight - newDimensions.padding.top -
-                      newDimensions.padding.bottom + newDimensions.bars;
-      var y = Timeline.prototype._maxMin(rectangles.data(), '1');
-      var options = {scale: 'linear'};
-      var newHeight = newDimensions.height - newDimensions.padding.top -
-                      newDimensions.padding.bottom;
-      var oldHeight = oldDimensions.height - oldDimensions.padding.top -
-                      oldDimensions.padding.bottom;
-      var heightDiff = newHeight - oldHeight;
-      var yScale = Timeline.prototype._makeScale(
+                      newDimensions.padding.bottom + newDimensions.bars,
+      y = Timeline.prototype._maxMin(rectangles.data(), '1'),
+      options = {scale: 'linear'},
+      newHeight = Timeline.prototype._getHeight(newDimensions),
+      oldHeight = Timeline.prototype._getHeight(oldDimensions),
+      heightDiff = newHeight - oldHeight;
+      yScale = Timeline.prototype._makeScale(
         y,
         {min: 0, max: barHeight},
-        options);
-      var barWidth = Number(rectangles.attr('width'));
+        options),
+      barWidth = Number(rectangles.attr('width'));
       if (heightDiff < 0) {
         rectangles.transition()
           .duration(500)
@@ -676,14 +660,10 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
 
   // TODO: legacy, implement real noDataIndicator.
   var updateNoDataElement = function (noDataIndicator, xScale, dimensions) {
-    var width = dimensions.width -
-                dimensions.padding.left -
-                dimensions.padding.right,
-        height = dimensions.height -
-                 dimensions.padding.top -
-                 dimensions.padding.bottom,
-      year2014 = 1388534400000, // in msecs, since epoch
-      x = xScale(year2014);
+    var width = Timeline.prototype._getWidth(dimensions),
+    height = Timeline.prototype._getHeight(dimensions),
+    year2014 = 1388534400000, // in msecs, since epoch
+    x = xScale(year2014);
 
     noDataIndicator
       .attr('height', height)
@@ -828,9 +808,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
    * Draws bar elements according to a d3 update pattern.
    */
   var drawRectElements = function (svg, dimensions, data, xScale, yScale) {
-    var height = dimensions.height -
-                 dimensions.padding.top -
-                 dimensions.padding.bottom;
+    var height = Timeline.prototype._getHeight(dimensions),
     // Join new data with old elements, based on the timestamp.
     bars = svg.select("g").select('#rain-bar').selectAll('.bar-timeline')
         .data(data, function  (d) { return d[0]; });

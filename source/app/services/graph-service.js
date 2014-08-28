@@ -21,13 +21,15 @@ app.factory("Graph", ["NxtD3Service", function (NxtD3Service) {
   xAxis,
   yAxis,
   yScale,
+  pie,
+  arc,
 
   // Interaction functions
   clicked,
   hoovered,
 
   // Graph elements
-  nowIndicator;
+  donutArcs;
 
   /**
    * @constructor
@@ -41,12 +43,9 @@ app.factory("Graph", ["NxtD3Service", function (NxtD3Service) {
    * @param {object} interaction  optional object containing callback functions
    *  for click and hover interaction.
    */
-  function Graph(svg, dimensions, data, interaction) {
+  function Graph(element, dimensions, data, interaction) {
     this.dimensions = angular.copy(dimensions);
-    svg = this._createCanvas(svg, this.dimensions);
-    var width = dimensions.width -
-                dimensions.padding.left -
-                dimensions.padding.right;
+    svg = this._createCanvas(element, this.dimensions);
     if (interaction) {
       if (interaction.clickFn) {
         // clicked = setClickFunction(xScale, this.dimensions,
@@ -62,14 +61,73 @@ app.factory("Graph", ["NxtD3Service", function (NxtD3Service) {
 
     constructor: Graph,
 
+    createDonut: {
+      value: function () {
+        var donutHeight = getDonutHeight(this.dimensions);
+        this.dimensions.r = donutHeight / 2;
+        pie = createPie(this.dimensions);
+        arc = createArc(this.dimensions);
+      }
+    },
+    drawDonut: {
+      value: function (data) {
+        _drawDonut(svg, this.dimensions, data, pie, arc);
+      }
+    }
+
   });
+
+  var createPie, createArc, _drawDonut, getDonutHeight;
+
+  createPie = function (dimensions) {
+    return d3.layout.pie()
+      .value(function (d) {
+          return d.data;
+        })
+      .sort(null);
+  };
+
+  createArc = function (dimensions) {
+    var ARC_INNER_RADIUS = 0.4;
+    return d3.svg.arc()
+      .innerRadius(dimensions.r * ARC_INNER_RADIUS)
+      .outerRadius(dimensions.r);
+  };
+
+  _drawDonut = function (svg, dimensions, data, pie, arc) {
+    var width = Graph.prototype._getWidth(dimensions),
+    donutHeight = getDonutHeight(dimensions);
+
+    // Store the displayed angles in _current.
+    // Then, interpolate from _current to the new angles.
+    // During the transition, _current is updated in-place by d3.interpolate.
+    function arcTween(a) {
+      var i = d3.interpolate(this._current, a);
+      this._current = i(0);
+      return function (t) {
+        return arc(i(t));
+      };
+    }
+
+    var donutArcs = svg.datum(data).selectAll("path").data(pie);
+
+    donutArcs
+      .transition()
+      .duration(Graph.prototype._transTime)
+      .attrTween("d", arcTween); // redraw the arcs
+
+    donutArcs.enter().append("path")
+      .attr("fill", function (d) {return d.data.color; })
+      .attr("d", arc)
+      .each(function (d) { this._current = d; }) // store the initial angles
+      .attr("transform", "translate(" +
+        donutHeight / 2 + ", " + donutHeight / 2 + ")");
+  };
+
+  getDonutHeight = function (dimensions) {
+    return dimensions.height - dimensions.padding.top;
+  };
 
   return Graph;
 
 }]);
-
-// xScale = this._makeScale({min: new Date(start), max: new Date(end)},
-    //                         {min: 0, max: width},
-    //                         { type: 'time' });
-    // xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-    // drawAxes(svg, xAxis);

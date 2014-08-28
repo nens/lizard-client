@@ -7,17 +7,31 @@
  * @memberof app
  * @name graph
  * @requires Graph
- * @summary Creates a Graph, adds it to the scope and watches data to
- *          call update.
- * @description  It sets up a graph object and puts it on the scope
- *               for further modifications by the subdirectives
- *
+ * @summary Creates a Graph, adds it to the graphCtrl and watches data to
+ *          call graphCtrl.updateGraph.
+ * @description  Usage: <graph <type> <attrs></graph>
+ *               Angular runs graph.graphCtrl, graph.compile.preCompile,
+ *               <type directive>.link, graph.link. It sets up a graph
+ *               object and puts it on the graphCtrl for further
+ *               modifications by the subdirectives.
  */
 app.directive('graph', ["Graph", function (Graph) {
 
-  var link = function (scope, element, attrs) {
+  var graphCtrl, preCompile, link;
 
-    var dimensions = {
+  graphCtrl = function ($scope) {
+    this.data = $scope.data;
+    this.graph = {};
+
+    // Abstract function which will be called
+    // when the data changes.
+    this.updateGraph = function (data) {};
+  };
+
+  preCompile = function (scope, element, attrs, graphCtrl) {
+    var dimensions, el;
+
+    dimensions = {
       width: 370,
       height: 150,
       padding: {
@@ -26,23 +40,31 @@ app.directive('graph', ["Graph", function (Graph) {
         bottom: 20,
         left: 20
       }
-    },
+    };
 
     el = element[0].firstChild;
 
-    // Create the graph and put it on the scope
-    scope.graph = new Graph(el, dimensions, scope.data);
+    // Create the graph and put it on the controller
+    graphCtrl.graph = new Graph(el, dimensions);
+  };
 
+  link = function (scope, element, attrs, graphCtrl) {
+    /**
+     * Calls updateGraph when data changes.
+     */
     scope.$watch('data', function (n, o) {
-      if (scope.updateGraph) {
-        scope.updateGraph();
-      }
+      graphCtrl.updateGraph(scope.data);
     });
-
   };
 
   return {
-    link: link,
+    controller: graphCtrl,
+    compile: function (scope, element, attrs, graphCtrl) {
+      return {
+        pre: preCompile,
+        post: link
+      };
+    },
     scope: {
       data: '=',
       xlabel: '=',
@@ -55,6 +77,196 @@ app.directive('graph', ["Graph", function (Graph) {
   };
 
 }]);
+
+
+app.directive('pie', ["Graph", function (Graph) {
+
+  var link = function (scope, element, attrs, graphCtrl) {
+
+    // Pie graph requires a few extra elements to display its text.
+    element.append('<div class="donut-underline donut-underline-top fading"></div>');
+    element.append('<div class="donut-underline donut-underline-bottom fading"></div>');
+    element.append('<div class="percentage-container fading"></div>');
+
+    var graph, data;
+
+    graph = graphCtrl.graph;
+    data = graphCtrl.data;
+
+    graph.createDonut();
+    graph.drawDonut(data);
+
+    graphCtrl.updateGraph = function (data) {
+      graph.drawDonut(data);
+    };
+
+  };
+
+  return {
+    require: 'graph',
+    link: link,
+    restrict: 'A'
+  };
+
+}]);
+
+
+// graphCtrl.callChart = function (data, element, legend) {
+//         legend.pie = true;
+//         var graph = graphCtrl.createCanvas(legend, element);
+//         var svg = graph.svg,
+//             height = graph.height,
+//             width = graph.width,
+//             margin = graph.margin,
+//             radius = Math.min(width, height) / 1.3;
+
+//         var total = 0;
+//         var pie = d3.layout.pie()
+//           .value(function (d) {
+//               total += d.data;
+//               return d.data;
+//             })
+//           .sort(function (a, b) {
+//             var ordFunction = function (x) {
+//               return x.label ? parseInt(x.label.split(' ')[0], 10) : 0;
+//             };
+//             return d3.ascending(ordFunction(a), ordFunction(b));
+//           });
+
+//         var arc = d3.svg.arc()
+//             .innerRadius(radius - radius / 1.75)
+//             .outerRadius(radius);
+
+
+//         /**
+//          * Removes the DOM elements (.percentage-container AND
+//          * .donut-underline-top) according to the currently selected raster.
+//          */
+//         var rmRasterSpecificInfo = function () {
+
+//           svg.select("text")
+//             .transition()
+//             .duration(300)
+//             .attr("fill-opacity", 0.0);
+
+//           d3.selectAll(".fading")
+//             .transition()
+//             .duration(300)
+//             .style("opacity", 0.0);
+//         };
+
+//         /**
+//          * Formats a number (might be both Int and Float) to show a consistent
+//          * amount of decimals it the final string representation: e.g.
+//          *
+//          * 25   ::= "25.00 %"
+//          * 25.1 ::= "25.10 %"
+//          * 3.14 ::=  "3.14 %"
+//          *
+//          * @param {number} vloot - A number that is in need of formatting.
+//          * @return {string} - A string representation of the passed number.
+//          */
+//         var formatPercentage = function (vloot) {
+
+//           var splitted = ("" + vloot).split('.');
+//           var suffix = splitted.length > 1 && splitted[1];
+
+//           if (!suffix) {
+//             suffix = "00";
+//           } else if (suffix.length === 1) {
+//             suffix += "0";
+//           }
+
+//           return splitted[0] + "." + suffix;
+//         };
+
+//         /**
+//          * Appends/fills/styles the DOM elements (.percentage-container,
+//          * .donut-underline-top AND .donut-underline-bottom) according
+//          * to the currently selected raster.
+//          *
+//          * @param {object} d - D3 datum object.
+//          */
+//         var addRasterSpecificInfo = function (d) {
+
+//           d3.selectAll(".fading")
+//             .style("opacity", 0.0);
+//           svg.select('text')
+//             .attr('fill-opacity', 0.0);
+
+//           d3.select(".percentage-container")
+//             .text(formatPercentage(
+//               Math.round(d.data.data / total * 10000) / 100) + " %"
+//             )
+//             .transition()
+//             .duration(300)
+//             .style("opacity", 1.0);
+
+//           svg.select("text")
+//             .attr("transform", "translate(" + width / 2 +
+//               ", " + (20 + height) + ")")
+//             .attr("dx", radius - 10)
+//             .attr("dy", -(radius / 2 + 92))
+//             .classed({"donut-title-text": true, "on": true})
+//             .text(function () {
+//               var text = "";
+//               try {
+//                 text = d.data.label.split('-')[2];
+//                 text = (text !== undefined) ? text : d.data.label;
+//               } catch (e) {
+//                 text = d.data.label === 0 ? 'Geen data' : 'Overig';
+//               }
+//               return text;
+//             })
+//             .transition()
+//             .duration(300)
+//             .attr("fill-opacity", 1.0);
+
+//           /**
+//            * Fade in donut lines; the colored lines that are above and beneath
+//            * the big digits denoting the percentage of the currently selected
+//            * (hovered) slice of the pie chart.
+//            */
+//           var fadeInDonutlines = function () {
+//             this.transition()
+//             .duration(300)
+//             .style("background-color", d.data.color)
+//             .style("opacity", 1.0);
+//           };
+//           d3.select('.donut-underline-top').call(fadeInDonutlines);
+//           d3.select('.donut-underline-bottom').call(fadeInDonutlines);
+//         };
+
+//         var text = svg.append("text");
+//         var path = svg.datum(data).selectAll("path")
+//             .data(pie)
+//           .enter().append("path")
+//             .attr("fill", function (d) {return d.data.color; })
+//             .attr("d", arc)
+//             .attr("transform", "translate(" +
+//               ((width / 2) - 100) + ", " + ((height / 2) + 15) + ")")
+//             .on("mouseover", function (d) {
+//               d3.selectAll("path")
+//                 .transition()
+//                 .duration(200)
+//                 .attr("fill-opacity", 0.2);
+//               d3.select(this)
+//                 .transition()
+//                 .duration(200)
+//                 .attr("fill-opacity", 1.0);
+//               addRasterSpecificInfo(d);
+//             })
+//             .on("mouseout", function () {
+//               d3.selectAll("path")
+//                 .transition()
+//                 .duration(200)
+//                 .attr("fill-opacity", 1.0);
+//               rmRasterSpecificInfo();
+//             })
+//             .on("click", addRasterSpecificInfo)
+//             .each(function (d) { this._current = d; });
+//       };
+//     };
 
 
 // //graph.js
