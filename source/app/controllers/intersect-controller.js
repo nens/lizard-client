@@ -1,9 +1,11 @@
-app.controller("IntersectCtrl", [
-  "$scope",
-  "RasterService",
-  "ClickFeedbackService",
-  "UtilService",
-  function ($scope, RasterService, ClickFeedbackService, UtilService) {
+app.controller('IntersectCtrl', [
+  '$scope',
+  'RasterService',
+  'ClickFeedbackService',
+  'MapService',
+  'UtilService',
+  function ($scope, RasterService, ClickFeedbackService, MapService, UtilService) {
+
     /**
      * lineIntersect is the object which collects different
      * sets of line data. If the intersect tool is turned on,
@@ -109,17 +111,17 @@ app.controller("IntersectCtrl", [
       if (secondClick) {
         firstClick = undefined;
         secondClick = undefined;
+        ClickFeedbackService.emptyClickLayer();
         // Empty data element since the line is gone
         $scope.lineIntersect = {};
-        ClickFeedbackService.emptyClickLayer($scope.map);
       } else {
         if (firstClick) {
           secondClick = $scope.mapState.here;
           _updateLineIntersect(firstClick, secondClick);
-          ClickFeedbackService.drawLine($scope.map, firstClick, secondClick, false);
+          ClickFeedbackService.drawLine(firstClick, secondClick, false);
         } else {
           firstClick = $scope.mapState.here;
-          ClickFeedbackService.drawLine($scope.map, firstClick, $scope.mapState.userHere);
+          ClickFeedbackService.drawLine(firstClick, $scope.mapState.userHere);
         }
       }
     });
@@ -130,7 +132,7 @@ app.controller("IntersectCtrl", [
     $scope.$watch('mapState.userHere', function (n, o) {
       if (n === o) { return true; }
       if (firstClick && !secondClick) {
-        ClickFeedbackService.drawLine($scope.map, firstClick, $scope.mapState.userHere, true);
+        ClickFeedbackService.drawLine(firstClick, $scope.mapState.userHere, true);
       }
     });
 
@@ -204,14 +206,14 @@ app.controller("IntersectCtrl", [
               fillOpacity: 1,
               radius: 5
             });
-          $scope.map.addLayer(circle);
+          MapService.addLayer(circle);
         } else {
           circle.setLatLng([posLat, posLon]);
         }
       }
       else {
         if (circle !== undefined) {
-          $scope.map.removeLayer(circle);
+          MapService.removeLayer(circle);
           circle = undefined;
         }
       }
@@ -221,7 +223,7 @@ app.controller("IntersectCtrl", [
      * Clean up all drawings on box change.
      */
     $scope.$on('$destroy', function () {
-      ClickFeedbackService.emptyClickLayer($scope.map);
+      ClickFeedbackService.emptyClickLayer();
     });
 
   }

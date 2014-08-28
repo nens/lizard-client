@@ -35,11 +35,4 @@ describe('Testing MasterController', function () {
     expect($scope.box.type).toBe('extentAggregate');
   });
 
-  it('should set tools.active to rain when rain is toggled', function () {
-    createController();
-    $scope.toggleTool('rain');
-    $scope.$digest();
-    expect($scope.tools.active).toBe('rain');
-  });
-
 });

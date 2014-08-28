@@ -142,7 +142,8 @@ module.exports = function (grunt) {
       // produces docs
       jsdoc: {
         dist: {
-          src: ['<%= appfiles %>'],
+          src: ['<%= appfiles %>',
+                'README.md'],
           options: {
             destination: 'doc'
           }
