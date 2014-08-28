@@ -3,6 +3,7 @@
 /**
  * @ngdoc
  * @memberOf app
+ * @class pointObjectCtrl
  * @name pointObjectCtrl
  * @description pointObject is the contoller of the pointObject template. 
  * It gathers all data belonging to a location in space. It becomes active
