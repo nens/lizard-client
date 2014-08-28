@@ -16,13 +16,11 @@ app.factory("Graph", ["NxtD3Service", function (NxtD3Service) {
   var svg,
 
   // D3 components
-  xScale, // The only d3 scale for placement on the x axis within the whole
-              // timeline.
-  xAxis,
-  yAxis,
-  yScale,
+  x = {},
+  y = {},
   pie,
   arc,
+  line,
 
   // Interaction functions
   clicked,
@@ -73,11 +71,45 @@ app.factory("Graph", ["NxtD3Service", function (NxtD3Service) {
       value: function (data) {
         _drawDonut(svg, this.dimensions, data, pie, arc);
       }
+    },
+    setupXYGraph: {
+      value: function (data, keys) {
+        var width = this._getWidth(this.dimensions),
+        height = this._getHeight(this.dimensions);
+        x.maxMin = this._maxMin(data, keys.x);
+        x.scale = this._makeScale(x.maxMin, {min: 0, max: width}, {scale: 'linear'});
+        x.axis = this._makeAxis(x.scale, {orientation: 'bottom'});
+        y.maxMin = this._maxMin(data, keys.y);
+        y.scale = this._makeScale(y.maxMin, {min: 0, max: height}, {scale: 'linear'});
+        y.axis = this._makeAxis(y.scale, {orientation: 'left'});
+        drawAxes(svg, x.axis, this.dimensions, false);
+        drawAxes(svg, y.axis, this.dimensions, true);
+
+      }
     }
 
   });
 
-  var createPie, createArc, _drawDonut, getDonutHeight;
+  var createPie, createArc, _drawDonut, getDonutHeight, drawAxes;
+
+  drawAxes = function (svg, axis, dimensions, y) {
+    Graph.prototype._drawAxes(svg, axis, dimensions, y);
+    var axis;
+    if (y) {
+      axis = d3.select('#yaxis')
+        .attr("class", "y-axis y axis")
+        .selectAll("text")
+        .style("text-anchor", "end")
+        .attr('class', 'graph-text');
+    } else {
+      axis = d3.select('#xaxis')
+        .attr("class", "x-axis x axis")
+        .selectAll("text")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", "rotate(-45)");
+    }
+  };
 
   createPie = function (dimensions) {
     return d3.layout.pie()

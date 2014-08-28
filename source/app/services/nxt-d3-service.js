@@ -94,17 +94,13 @@ app.factory("NxtD3Service", [ function () {
      */
     _makeAxis: function (scale, options) {
       // Make an axis for d3 based on a scale
-      var axis;
+      var axis = d3.svg.axis()
+        .scale(scale)
+        .orient(options.orientation);
       if (options.ticks) {
-        axis = d3.svg.axis()
-                .scale(scale)
-                .orient(options.orientation)
-                .ticks(options.ticks);
+        axis.ticks(options.ticks);
       } else {
-        axis = d3.svg.axis()
-              .scale(scale)
-              .orient(options.orientation)
-              .ticks(5);
+        axis.ticks(5);
       }
       return axis;
     },
@@ -116,7 +112,7 @@ app.factory("NxtD3Service", [ function () {
       var id = y ? 'yaxis': 'xaxis';
       var axisEl = svg.select('g').select('#' + id);
       if (!axisEl[0][0]) {
-        createElementForAxis(svg, id, dimensions, y);
+        axisEl = createElementForAxis(svg, id, dimensions, y);
       }
       if (duration) {
         axisEl
@@ -149,12 +145,12 @@ app.factory("NxtD3Service", [ function () {
   };
 
   createElementForAxis = function (svg, id, dimensions, y) {
-    var height = NxtD3.prototype.getHeight(dimensions),
-    className = y ? 'y axis': 'x axis';
-    svg.select('g').append('g')
+    var className = y ? 'y axis': 'x axis',
+    transform = y ? 0: NxtD3.prototype._getHeight(dimensions);
+    return svg.select('g').append('g')
       .attr('class', className)
       .attr('id', id)
-      .attr("transform", "translate(0 ," + height + ")");
+      .attr("transform", "translate(0 ," + transform + ")");
   };
 
   return NxtD3;
