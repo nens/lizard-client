@@ -1,10 +1,13 @@
 'use strict';
 
 /**
- * pointObject is the contoller of the pointObject template. It gathers all data
- * belonging to a location in space. It becomes active by setting box.type to
- * 'pointObject' and is updated by broadcasting 'newPointActive'. It reads and
- * writes mapState.here.
+ * @ngdoc
+ * @memberOf app
+ * @name pointObjectCtrl
+ * @description pointObject is the contoller of the pointObject template. 
+ * It gathers all data belonging to a location in space. It becomes active
+ * by setting box.type to 'pointObject' and is updated by broadcasting
+ * 'newPointActive'. It reads and writes mapState.here.
  *
  * TODO:
  * - [ ] Include the click action on individual events into this paradigm.
@@ -25,11 +28,13 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
   ) {
 
     /**
-     * pointObject is the object which holds all data of a point
+     * @function
+     * @memberOf app.pointObjectCtrl
+     * @description pointObject is the object which holds all data of a point
      * in space. It is updated after a users click. The pointObject
      * may have associated events and timeseries which are requested
      * from the server by the services.
-     *
+     * 
      * @return {object} empty pointObject.
      */
     var createPointObject = function () {
@@ -64,7 +69,12 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
       return pointObject;
     };
 
-
+    /**
+     * @function
+     * @memberOf app.pointObjectCtrl
+     * @param  {L.LatLng} here  
+     * @param  {object}   ?extra Optional extra info
+     */
     var fillPointObject = function (here, extra) {
 
       var clickedOnEvents = extra && extra.type === 'events';
@@ -83,6 +93,14 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
         });
     };
 
+    /**
+     * @function
+     * @memberOf app.pointObjectCtrl
+     * @description callback for utfgrid
+     * @param  {L.LatLng} here
+     * @param  {Boolean}  showOnlyEvents if events are clicked
+     * @return {function} 
+     */
     var utfgridResponded = function (here, showOnlyEvents) {
       return function (response) {
 
@@ -125,7 +143,9 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
     };
 
     /**
-     * Goes through layers and selects the temporal layer
+     * @function
+     * @memberOf app.pointObjectCtrl
+     * @description Goes through layers and selects the temporal layer
      * that is active. If there is none, nothing happens.
      * @return {void}
      */
@@ -140,7 +160,9 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
     };
 
     /**
-     * Gets a layer and retrieves data based
+     * @function
+     * @memberOf app.pointObjectCtrl
+     * @description Gets a layer and retrieves data based
      * on temporal extent etc.
      * @param  {object} layer Layer object, containing name, slug..
      * @return {void}
@@ -176,7 +198,9 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
     };
 
     /**
-     * Sets data attributes if a response returned properly
+     * @function
+     * @memberOf app.pointObjectCtrl
+     * @description Sets data attributes if a response returned properly
      * @param  {object} response Response from rasterService. (data-array)
      * @return {void}
      */
@@ -192,6 +216,12 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
         $scope.pointObject.temporalRaster.data[0][0];
     };
 
+    /**
+     * @function
+     * @memberOf app.pointObjectCtrl
+     * @description placeholder for now. Should fill data object
+     * with timeseries information. (Draw graphs and such);
+     */
     var getTimeSeriesForObject = function () {
       // $scope.pointObject.timeseries.data =
       //   TimeseriesService.getRandomTimeseries();
@@ -200,6 +230,12 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
       // $scope.pointObject.timeseries.active = true;
     };
 
+    /**
+     * @function
+     * @memberOf app.pointObjectCtrl
+     * @description fired when event API call responds
+     * @param  {jsondata} response
+     */
     var eventResponded = function (response) {
       $scope.pointObject.events.data = [];
       angular.forEach(response.features, function (feature) {
@@ -212,6 +248,12 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
       }
     };
 
+    /**
+     * @function
+     * @memberOf app.pointObjectCtrl
+     * @description returns data from UTFgrid
+     * @param {jsondata} data 
+     */
     var attrsResponded = function (data) {
       // Return directly if no data is returned from the UTFgrid
       if (!data.data) { return; }
@@ -230,6 +272,11 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
       ClickFeedbackService.emptyClickLayer();
     });
 
+    /**
+     * @function
+     * @memberOf app.pointObjectCtrl
+     * @description watch function
+     */
     var _watchAttrAndEventActivity = function (n, o) {
 
       var checkIfAttrsActive  = $scope.pointObject.attrs.active,
@@ -264,7 +311,9 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
 
 
     /**
-     * Give the black event circle, if present, it's initial color.
+     * @function
+     * @memberOf app.pointObjectCtrl
+     * @description Give the black event circle, if present, it's initial color.
      *
      * @returns {void}
      */
