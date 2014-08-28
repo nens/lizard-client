@@ -199,7 +199,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
         .attr("rel", "tooltip")
         .attr("title", function (d) {
 
-          return "foooohoooobaaaar";
+          return "some alphanumeric info";
 
         })
         .attr("stroke-width", 1.8)

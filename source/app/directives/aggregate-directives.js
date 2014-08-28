@@ -501,7 +501,7 @@ var dummyResults = {
       },
       properties: {
         speeds: [100, 100, 100],
-        directions: [45, 45, 90],
+        directions: [15, 45, 90],
         times: [1388519651612, 1388519951612, 1388520251612]
       }
     },
@@ -517,47 +517,12 @@ var dummyResults = {
       },
       properties: {
         speeds: [60, 50, 40],
-        directions: [35, 45, 90],
+        directions: [90, 90, 90],
         times: [1388519651612, 1388519951612, 1388520251612]
       }
-    },
-    {
-      id: 1002,
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [
-          5.217143061339773,
-          52.61973183097332
-        ]
-      },
-      properties: {
-        speeds: [10, 30, 50],
-        directions: [15, 45, 90],
-        times: [1388519651612, 1388519951612, 1388520251612]
-      }
-    },
+    }
   ]
 };
-
-
-    // {
-    //   id: 1002,
-    //   type: "Feature",
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [
-    //       5.217143061339773,
-    //       52.61973183097332
-    //     ]
-    //   },
-    //   properties: {
-    //     id: 1,
-    //     name: 'name',
-    //     head: [{'name':'time','primary':true},{'name':'speeds','unit':'m/s'},{'name':'directions':'unit':'deg'}],
-    //     series: [[1388519651612, 1388519951612, 1388520251612], [10, 30, 50], [15, 45, 90]],
-    //   }
-    // },
 
 
 /**
@@ -565,23 +530,23 @@ var dummyResults = {
  *
  * Implemented as a layer to display current speed/direction on the map.
  */
-app.directive('currentlayer', ["UtilService", function (UtilService) {
+app.directive('temporalVectorLayer', ["UtilService", "MapService",
+  function (UtilService, MapService) {
 
-  var mustDrawCurrentLayer,
-      getCurrentData,
-      createCurrentLayer,
-      updateCurrentLayer,
-      d3currentLayer,
-      drawSingleCurrentFeature,
+  var mustDrawTVLayer,
+      getTVData,
+      createTVLayer,
+      updateTVLayer,
+      d3TVLayer,
       getFeatureIndexForNow;
 
   // Stubbed for now...
-  mustDrawCurrentLayer = function () {
+  mustDrawTVLayer = function () {
     return true;
   };
 
   // Stubbed for now....
-  getCurrentData = function () {
+  getTVData = function () {
     return dummyResults;
   };
 
@@ -594,16 +559,15 @@ app.directive('currentlayer', ["UtilService", function (UtilService) {
    * Creates svg layer in leaflet's overlaypane and adds current speed/direction
    * as arrows
    *
-   *
    * @parameter {object} scope - A ng scope s.t. scope.map is defined
    * @parameter {object} data - Object
    * @return    {object} eventLayer - Leaflet layer object
    */
-  createCurrentLayer = function (scope, data) {
+  createTVLayer = function (scope, data) {
 
     // if d3currentlayer does not exist atm, create it.
-    if (d3currentLayer === undefined) {
-      d3currentLayer = L.nonTiledGeoJSONd3(data, {
+    if (d3TVLayer === undefined) {
+      d3TVLayer = L.nonTiledGeoJSONd3(data, {
         ext: 'd3',
         name: 'current',
         selectorPrefix: 'a',
@@ -611,13 +575,13 @@ app.directive('currentlayer', ["UtilService", function (UtilService) {
       });
     }
 
-    scope.map.addLayer(d3currentLayer);
+    MapService.addLayer(d3TVLayer);
 
     // for backwards compatibility.
-    d3currentLayer.g = d3currentLayer._container.selectAll("g");
-    d3currentLayer.reset = d3currentLayer._onMove;
+    d3TVLayer.g = d3TVLayer._container.selectAll("g");
+    d3TVLayer.reset = d3TVLayer._onMove;
 
-    return d3currentLayer;
+    return d3TVLayer;
   };
 
   /**
@@ -631,51 +595,21 @@ app.directive('currentlayer', ["UtilService", function (UtilService) {
    * @parameter {object} data - data object
    * @returns {void}
    */
-  updateCurrentLayer = function (currentLayer, data, featureIndex) {
-    currentLayer._data = data;
-    currentLayer._refreshDataForCurrents(featureIndex);
+  updateTVLayer = function (tvLayer, data, featureIndex) {
+    tvLayer._data = data;
+    tvLayer._refreshDataForCurrents(featureIndex);
   };
-
-
-  /**
-   * Draw currents based on timeState.at
-   *
-   * @returns {void}
-   */
-  // drawSingleCurrentFeature = function (currentFeature) {
-
-  //   var selection = d3.selectAll(".current-arrow");
-
-  //   //   .classed("selected", function (d) {
-
-
-  //   //     var s = [start, end];
-  //   //     var time = d.properties.timestamp_end;
-  //   //     var contained = s[0] <= time && time <= s[1];
-
-  //   //     // Some book keeping to count
-  //   //     d.inTempExtent = contained;
-  //   //     return !!contained;
-
-  //   //   });
-
-  //   // var selected = d3.selectAll(".current-arrow.selected");
-
-  //   // // ...
-  // };
-
-
 
   return {
     restrict: 'A',
     require: 'map',
     link: function (scope, element, attrs, mapCtrl) {
 
-      var currentLayer = createCurrentLayer(scope, {
-          type: "FeatureCollection",
-          features: []
-        }),
-        step = 300000;
+      var tvLayer = createTVLayer(scope, {
+            type: "FeatureCollection",
+            features: []
+          }),
+          STEP_SIZE = 300000;
 
       scope.$watch('timeState.at', function (newVal, oldVal) {
 
@@ -683,21 +617,17 @@ app.directive('currentlayer', ["UtilService", function (UtilService) {
 
         if (
             newVal !== oldVal
-            && mustDrawCurrentLayer()
+            && mustDrawTVLayer()
             && scope.timeState.animation.enabled
             ) {
 
           var i,
-              currentData,
+              tvData,
               featureIndex;
 
-          currentData = getCurrentData();
+          tvData = getTVData();
           featureIndex = getFeatureIndexForNow();
-          updateCurrentLayer(currentLayer, currentData, featureIndex);
-
-          // for (i = 0; i < currentData.features.length; i++) {
-          //   drawSingleCurrentFeature(currentData.features[i], featureIndex);
-          // }
+          updateTVLayer(tvLayer, tvData, featureIndex);
         }
       });
     },
