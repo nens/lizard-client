@@ -515,17 +515,6 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
 
   // Stubbed for now...
   mustDrawTVLayer = function (scope) {
-
-    // var layers = scope.mapState.layers;
-    // for (var k in layers) {
-    //   if (layers[k].slug === 'probeersel') {
-    //     console.log('layer "probeersel" active?', layers[k].active);
-    //     return layers[k].active;
-    //   }
-    // }
-
-    // return false;
-
     return true;
   };
 
