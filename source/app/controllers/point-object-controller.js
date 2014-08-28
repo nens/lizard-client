@@ -10,9 +10,9 @@
  * - [ ] Include the click action on individual events into this paradigm.
  */
 
-app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
-    "RasterService", "EventService", "TimeseriesService", "UtilService",
-    "UtfGridService", "ClickFeedbackService",
+app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
+    'RasterService', 'EventService', 'TimeseriesService', 'UtilService',
+    'UtfGridService', 'ClickFeedbackService',
   function ($scope,
             $filter,
             CabinetService,
