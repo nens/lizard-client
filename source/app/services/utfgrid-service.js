@@ -1,8 +1,8 @@
 /**
  * Service to handle utf grid requests.
  */
-app.service("UtfGridService", ["$q", "$rootScope",
-  function ($q, $rootScope) {
+app.service('UtfGridService', ['$q', '$rootScope', 'MapService',
+  function ($q, $rootScope, MapService) {
 
     var on;
 
@@ -16,10 +16,10 @@ app.service("UtfGridService", ["$q", "$rootScope",
      *                         immediately resolved or resolved when the 
      *                         the grid layer has finished loading
      */
-    function getDataFromUTF(map, latlng) {
+    function getDataFromUTF(latlng) {
       var deferred = $q.defer();
       // Get waterchainLayer or false
-      var waterchainLayer = getLayer(map, 'grid', 'waterchain');
+      var waterchainLayer = MapService.getLayer('grid', 'waterchain');
       // event object for utfgrid plugin
       var e = {
         latlng: latlng
@@ -31,13 +31,13 @@ app.service("UtfGridService", ["$q", "$rootScope",
         // the grid was there but did not contain the tile containing
         // this the latlng. 
         if (response.data === null && waterchainLayer.isLoading) {
-          getDataFromUTFAsynchronous(e, deferred, map);
+          getDataFromUTFAsynchronous(e, deferred);
         } else {
           // Resolve with response and update pointObject
           deferred.resolve(response);
         }
       } else {
-        getDataFromUTFAsynchronous(e, deferred, map);
+        getDataFromUTFAsynchronous(e, deferred);
       }
       return deferred.promise;
     }
@@ -49,7 +49,7 @@ app.service("UtfGridService", ["$q", "$rootScope",
      * @param  {object} e containing e.latlng for the 
      *                                  location of the click
      */
-    function getDataFromUTFAsynchronous(e, promise, map) {
+    function getDataFromUTFAsynchronous(e, promise) {
       // If there is no grid layer it is probably still being
       // loaded by the map-directive which will broadcast a 
       // message when its loaded. 
@@ -63,7 +63,7 @@ app.service("UtfGridService", ["$q", "$rootScope",
         // $$rootScope.mapState.gridLoaded. Also, refactor map directive.
 
         on();
-        var waterchainLayer = getLayer(map, 'grid', 'waterchain');
+        var waterchainLayer = MapService.getLayer('grid', 'waterchain');
         var response = waterchainLayer._objectForEvent(e);
         // since this part executes async in a future turn of the event loop,
         // we need to wrap it into an $apply call so that the model changes are
@@ -73,33 +73,6 @@ app.service("UtfGridService", ["$q", "$rootScope",
         });
       });
     }
-
-    /**
-     * Get layer from leaflet map object.
-     *
-     * Because leaflet doesn't supply a map method to get a layer by name or
-     * id, we need this crufty function to get a layer.
-     *
-     * NOTE: candidate for (leaflet) util module
-     *
-     * @layerType: layerType, type of layer to look for either `grid`, `png`
-     * or `geojson`
-     * @param: entityName, name of ento
-     * @returns: leaflet layer object or false if layer not found
-     */
-    var getLayer = function (map, layerType, entityName) {
-      var layer = false,
-          tmpLayer = {};
-      for (var i in map._layers) {
-        tmpLayer = map._layers[i];
-        if (tmpLayer.options.name === entityName &&
-            tmpLayer.options.ext === layerType) {
-          layer = tmpLayer;
-          break;
-        }
-      }
-      return layer;
-    };
 
     return { getDataFromUTF: getDataFromUTF };
 

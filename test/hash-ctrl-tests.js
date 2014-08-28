@@ -21,22 +21,28 @@ describe('Testing hash controller', function () {
     $scope = $rootScope.$new();
     hashSyncHelper = $injector.get('hashSyncHelper');
 
-    // Mock a map on $scope
-    $scope.map = {
-      getCenter: function () {
-        return {
-          lat: 51.12345,
-          lng: 6.12
-        };
-      },
-      getZoom: function () {
-        return 10;
-      },
-      setView: function () {}
-    };
+    // Mock MapService
+    var mockMapService = {
+        mapState: {
+        center: {
+            lat: 51.12345,
+            lng: 6.12
+          },
+        activeLayersChanged: false,
+        layers: {
+          'testlayer': {
+            active: true
+          }
+        },
+      };
+    }
 
     // Mock the mapState
     $scope.mapState = {
+      center: {
+          lat: 51.12345,
+          lng: 6.12
+        },
       activeLayersChanged: false,
       layers: {
         'testlayer': {
@@ -57,7 +63,8 @@ describe('Testing hash controller', function () {
     createController = function() {
       return $controller('hashGetterSetter', {
           '$scope': $scope,
-          'hashSyncHelper': hashSyncHelper
+          'hashSyncHelper': hashSyncHelper,
+          'MapService': mockMapService
       });
     };
   }));
