@@ -37,27 +37,16 @@ app.directive('map', [
         attribution: osmAttrib
       });
       MapService.initiateMapEvents();
-
-      // Initialise layers
-      angular.forEach(MapService.mapState.layers, function (layer) {
-        MapService.mapState.activeLayersChanged =
-          !MapService.mapState.activeLayersChanged;
-        if (!layer.initiated) {
-          MapService.createLayer(layer);
-        }
-        if (layer.active) {
-          layer.active = false;
-          MapService.toggleLayer(layer, MapService.mapState.layers);
-        }
-      });
+      scope.mapState.layersNeedLoading = true;
+      
+      // Instantiate the controller that updates the hash url after creating the
+      // map and all its listeners.
+      $controller('hashGetterSetter', {$scope: scope});
 
       // initialize empty ClickLayer.
       // Otherwise click of events-aggregate and clicklayer
       ClickFeedbackService.drawClickInSpace(new L.LatLng(180.0, 90.0));
 
-      // Instantiate the controller that updates the hash url after creating the
-      // map and all its listeners.
-      $controller('hashGetterSetter', {$scope: scope});
 
     };
 

@@ -93,7 +93,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
         ClickFeedbackService.drawClickInSpace(here);
         // Get attribute data from utf
         UtfGridService.getDataFromUTF(here)
-          .then(utfgridResponded(here, clickedOnEvents), _noUTF)
+          .then(utfgridResponded(here, clickedOnEvents), _noUTF(here))
           .then(function () {
             getRasterForLocation();
           });
@@ -106,9 +106,11 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @memberOf app.pointObjectCtrl
      * @description errorcallback for UTFGrid
      */
-    _noUTF = function () {
-      ClickFeedbackService.killVibrator();
-      ClickFeedbackService.removeLocationMarker();
+    _noUTF = function (here) {
+      return function () {
+        ClickFeedbackService.drawArrowHere(here);
+        getRasterForLocation();
+      }
     };
 
     /**
@@ -267,7 +269,6 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @param  {object} jsondata response
      */
     eventResponded = function (response, clickedOnEvents) {
-    var eventResponded = function (response, clickedOnEvents) {
       $scope.pointObject.events.data = [];
       angular.forEach(response.features, function (feature) {
         $scope.pointObject.events.data.push(feature.properties);
@@ -362,22 +363,22 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
     $scope.$watch('pointObject.attrs.active',  _watchAttrAndEventActivity);
     $scope.$watch('pointObject.events.active', _watchAttrAndEventActivity);
 
-    $scope.$watch('mapState.activeLayersChanged', function (n, o) {
-      if (n === o) { return; }
+    // $scope.$watch('mapState.activeLayersChanged', function (n, o) {
+    //   if (n === o) { return; }
 
-      if (!$scope.pointObject.temporalRaster.active &&
-          !$scope.pointObject.attrs.active &&
-          !$scope.pointObject.timeseries.active &&
-          !$scope.pointObject.events.active) {
-        $scope.box.type = 'extentAgg';
-        console.log('daar')
-      } else {
-        $scope.pointObject = createPointObject();
-        console.log('hier')
-        fillPointObject($scope.mapState.here);
-      }
-    });
+    //   if (!$scope.pointObject.temporalRaster.active &&
+    //       !$scope.pointObject.attrs.active &&
+    //       !$scope.pointObject.timeseries.active &&
+    //       !$scope.pointObject.events.active) {
+    //     $scope.box.type = 'extentAgg';
+    //     console.log('daar')
+    //   } else {
+    //     $scope.pointObject = createPointObject();
+    //     fillPointObject($scope.mapState.here);
+    //   }
+    // });
 
     $scope.mustShowRainCard = RasterService.mustShowRainCard;
   }
+  
 ]);

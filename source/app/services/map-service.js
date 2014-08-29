@@ -247,6 +247,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @param  {object} layers all layers to switch off.
    */
   toggleLayer = function (layer, layers) {
+    // if (!layer.initiated) { return; }
     if (layer.baselayer) {
       _turnOffAllOtherBaselayers(layer.id, layers);
       if (!layer.active) { layer.active = true; }
@@ -282,6 +283,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
 
     if (layer.overlayer) {
+      console.log(layers.leafletLayer);
       _updateOverLayers(layers);
     }
   };
@@ -496,6 +498,11 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       mapState.moved = Date.now();
       mapState.mapMoving = false;
       mapState.center = _map.getCenter();
+      var zoom = _map.getZoom();
+      if (zoom === Infinity) {
+        // debugger
+      }
+      // mapState.zoom = (zoom !== Infinity) ? mapState.zoom : zoom;
       mapState.zoom = _map.getZoom();
       mapState.bounds = _map.getBounds();
     };
