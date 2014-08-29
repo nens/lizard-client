@@ -35,15 +35,17 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @description Creates a Leaflet map based on idString or Element.
    */
   createMap = function (mapElem, options) { // String or Element.
+    var bounds = L.latLngBounds(
+      L.latLng(data_bounds.all.south, data_bounds.all.east),
+      L.latLng(data_bounds.all.north, data_bounds.all.west));
     _map = LeafletService.map(mapElem, {
       zoomControl: false,
-      zoom: 12
+      zoom: 12,
+      center: bounds.getCenter()
     });
 
     if (options) {
-      _map.fitBounds(LeafletService.latLngBounds(
-        LeafletService.latLng(options.bounds.south, options.bounds.west),
-        LeafletService.latLng(options.bounds.north, options.bounds.east)));
+      _map.fitBounds(bounds);
 
       _map.attributionControl.addAttribution(options.attribution);
       _map.attributionControl.setPrefix('');
