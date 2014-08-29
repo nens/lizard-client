@@ -458,45 +458,6 @@ app.directive('surfacelayer', ['MapService', function (MapService) {
 }]);
 
 
-// var dummyResults = {
-
-//   type: "FeatureCollection",
-//   features: [
-//     {
-//       id: 1000,
-//       type: "Feature",
-//       geometry: {
-//         type: "Point",
-//         coordinates: [
-//           5.217143061339773,
-//           52.46973183097332
-//         ]
-//       },
-//       properties: {
-//         speeds: [100, 100, 100],
-//         directions: [15, 45, 90],
-//         times: [1388519651612, 1388519951612, 1388520251612]
-//       }
-//     },
-//     {
-//       id: 1001,
-//       type: "Feature",
-//       geometry: {
-//         type: "Point",
-//         coordinates: [
-//           5.467143061339773,
-//           52.61973183097332
-//         ]
-//       },
-//       properties: {
-//         speeds: [60, 50, 40],
-//         directions: [90, 90, 90],
-//         times: [1388519651612, 1388519951612, 1388520251612]
-//       }
-//     }
-//   ]
-// };
-
 var dummyResults = {
 
   type: "FeatureCollection",
@@ -532,9 +493,9 @@ var dummyResults = {
           }
         ],
         instants: [
-          [1396353600000, 1396353900000, 1396354200000],
-          [ 1,  1,  1],
-          [15, 25, 35]
+          [1388531000000, 1388531300000, 1388531600000, 1388531900000, 1388532200000, 1388532500000],
+          [10, 20, 50, 80, 90, 100],
+          [45, 90, 135, 150, 180, 230]
         ],
         code: undefined,
         id: 1000,
@@ -571,9 +532,9 @@ var dummyResults = {
           }
         ],
         instants: [
-          [1396353600000, 1396353900000, 1396354200000],
-          [50, 50, 50],
-          [45, 90, 135]
+          [1388531000000, 1388531300000, 1388531600000, 1388531900000, 1388532200000, 1388532500000],
+          [100, 90, 80, 70, 60, 50],
+          [45, 90, 135, 150, 180, 230]
         ],
         code: undefined,
         id: 1001,
@@ -610,9 +571,9 @@ var dummyResults = {
           }
         ],
         instants: [
-          [1396353600000, 1396353900000, 1396354200000],
-          [100, 100, 100],
-          [45, 90, 135]
+          [1388531000000, 1388531300000, 1388531600000, 1388531900000, 1388532200000, 1388532500000],
+          [100, 100, 100, 100, 100, 100],
+          [45, 90, 135, 150, 180, 230]
         ],
         code: undefined,
         id: 1002,
@@ -654,9 +615,41 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
     return dummyResults;
   };
 
-  // Stubbed for now, always gets the first measurement
-  getTimeIndex = function () {
-    return 0;
+  getTimeIndex = function (scope, tvData, stepSize) {
+
+    var i,
+        virtualNow = scope.timeState.at,
+        relevantTimestamps = tvData.features[0].properties.instants[0],
+        currentTimestamp,
+        minTimestamp,
+        maxTimestamp;
+
+    if (relevantTimestamps.length === 0) {
+      console.log("[E] we don't have any relevant timestamps (i.e. no data!)");
+      return;
+    }
+
+    minTimestamp = relevantTimestamps[0];
+    maxTimestamp = relevantTimestamps[relevantTimestamps.length - 1];
+
+    if (virtualNow < minTimestamp || virtualNow > maxTimestamp) {
+
+      // if too early/late for any results, return undefined
+      return;
+
+    } else {
+
+      // ..else, retrieve index:
+      for (i = 0; i < relevantTimestamps.length; i++) {
+
+        currentTimestamp = relevantTimestamps[i];
+
+        if (currentTimestamp >= virtualNow
+            && currentTimestamp < virtualNow + stepSize) {
+          return i;
+        }
+      }
+    }
   };
 
   /**
@@ -708,9 +701,11 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
     restrict: 'A',
     link: function (scope, element, attrs) {
 
+      var mostRecentTimeindex = 0;
+
       scope.$watch('timeState.at', function (newVal, oldVal) {
 
-        console.log('watching: timeState.at (' + scope.timeState.at + ')');
+        //console.log('watching: timeState.at (' + scope.timeState.at + ')');
 
         var tvLayer,
             STEP_SIZE = 300000;
@@ -726,12 +721,14 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
         if (newVal !== oldVal && mustDrawTVLayer()) {
 
           var tvData,
-              timeIndex,
-              directions;
+              timeIndex;
 
           tvData = getTVData();
-          timeIndex = getTimeIndex();
-          updateTVLayer(tvLayer, tvData, timeIndex);
+          timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
+
+          if (timeIndex !== undefined) {
+            updateTVLayer(tvLayer, tvData, timeIndex);
+          }
         }
       });
     }

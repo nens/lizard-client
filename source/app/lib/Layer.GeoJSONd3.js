@@ -130,6 +130,8 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
   _getPointsForArrow: function (centerCoord) {
 
+    console.log('[i] centerCoord:', centerCoord);
+
     var // the final result/return value we'll build in this method
         result = "",
 
@@ -155,7 +157,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
     for (i = 0; i < X_VALS_FOR_ARROW.length; i++) {
 
-      xCoord = Math.round(((X_VALS_FOR_ARROW[i] + (120 * 0.5)) * SCALE_FACTOR) + cx);
+      xCoord = Math.round(((X_VALS_FOR_ARROW[i] - (120 * 0.5)) * SCALE_FACTOR) + cx);
       yCoord = Math.round(((Y_VALS_FOR_ARROW[i] - (210 * 0.5)) * SCALE_FACTOR) + cy);
       result += (xCoord + "," + yCoord + " ");
     }
@@ -178,7 +180,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
   _refreshDataForCurrents: function (timeStepIndex) {
 
     var self = this,
-        MAX_SPEED_FOR_CURRENT = 100; // arbitrary for now
+        MAX_SPEED_FOR_CURRENT = 100; // arbitrary for now, must be adapted to reallife data..
 
     if (this.g.empty()) {
       this.g = this._renderG();
@@ -194,10 +196,6 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
             self._projection(d.geometry.coordinates)
           );
         })
-        .attr("rel", "tooltip")
-        .attr("title", function (d) {
-          return "Some alphanumeric info";
-        })
         .attr("stroke-width", 1.8)
         .attr("stroke", "white")
         .attr("class", function (feature) {
@@ -209,23 +207,16 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
           return classList;
         });
 
-
     features
       .attr("fill", function (d) {
 
-        //var relSpeed = d.properties.speeds[timeStepIndex] / MAX_SPEED_FOR_CURRENT;
-        var relSpeed = d.properties.instants[1][timeStepIndex] / MAX_SPEED_FOR_CURRENT;
-        var shade = 255 - Math.floor(relSpeed * 256);
+        var relSpeed, shade;
+
+        relSpeed = d.properties.instants[1][timeStepIndex] / MAX_SPEED_FOR_CURRENT;
+        shade = 255 - Math.floor(relSpeed * 256);
         return "rgb(" + shade + ", " + shade + ", " + shade + ")";
+
       })
-      .attr("x", function (d) {
-        return self._projection(d.geometry.coordinates)[0];
-      })
-      .attr("y", function (d) {
-        return self._projection(d.geometry.coordinates)[1];
-      })
-      // .attr("width", 120)
-      // .attr("height", 210)
       .attr("transform", function (d) {
 
         var deg, cx, cy;
