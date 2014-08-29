@@ -190,17 +190,13 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     features.enter()
       .append("svg:polygon")
         .attr("points", function (d) {
-
           return self._getPointsForArrow(
             self._projection(d.geometry.coordinates)
           );
-
         })
         .attr("rel", "tooltip")
         .attr("title", function (d) {
-
-          return "some alphanumeric info";
-
+          return "Some alphanumeric info";
         })
         .attr("stroke-width", 1.8)
         .attr("stroke", "white")
@@ -213,9 +209,12 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
           return classList;
         });
 
+
     features
       .attr("fill", function (d) {
-        var relSpeed = d.properties.speeds[timeStepIndex] / MAX_SPEED_FOR_CURRENT;
+
+        //var relSpeed = d.properties.speeds[timeStepIndex] / MAX_SPEED_FOR_CURRENT;
+        var relSpeed = d.properties.instants[1][timeStepIndex] / MAX_SPEED_FOR_CURRENT;
         var shade = 255 - Math.floor(relSpeed * 256);
         return "rgb(" + shade + ", " + shade + ", " + shade + ")";
       })
@@ -225,13 +224,13 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
       .attr("y", function (d) {
         return self._projection(d.geometry.coordinates)[1];
       })
-      .attr("width", 100)
-      .attr("height", 50)
+      // .attr("width", 120)
+      // .attr("height", 210)
       .attr("transform", function (d) {
 
         var deg, cx, cy;
 
-        deg = d.properties.directions[timeStepIndex];
+        deg = d.properties.instants[2][timeStepIndex];
         cx = self._projection(d.geometry.coordinates)[0];
         cy = self._projection(d.geometry.coordinates)[1];
 
