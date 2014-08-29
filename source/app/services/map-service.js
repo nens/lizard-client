@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * @ngdoc service
  * @class MapService
@@ -21,7 +23,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       _moveEnded, _moveStarted, _mouseMoved, _dragEnded, _initiateGridLayer,
 
       // public vars
-      setView, fitBounds, mapState, initiateMapEvents, getLayer,
+      setView, fitBounds, mapState, initiateMapEvents, getLayer, latLngToLayerPoint,
       newGeoJsonLayer, addLayer, removeLayer, createMap, toggleLayer;
 
   /**
@@ -382,34 +384,33 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     var attr, i, result = [];
 
     switch (layerType) {
-
-      case 'base':
-        for (i in this.layers) {
-          if (this.layers[i].baselayer && !this.layers[i].temporal) {
-            result.push(this.layers[i]);
-          }
+    case 'base':
+      for (i in CabinetService.layers) {
+        if (CabinetService.layers[i].baselayer && !CabinetService.layers[i].temporal) {
+          result.push(CabinetService.layers[i]);
         }
-        break;
+      }
+      break;
 
-      case 'over':
-        for (i in this.layers) {
-          if (!(this.layers[i].baselayer || this.layers[i].temporal)) {
-            result.push(this.layers[i]);
-          }
+    case 'over':
+      for (i in CabinetService.layers) {
+        if (!(CabinetService.layers[i].baselayer || CabinetService.layers[i].temporal)) {
+          result.push(CabinetService.layers[i]);
         }
-        break;
+      }
+      break;
 
-      case 'temporal':
-        for (i in this.layers) {
-          if (this.layers[i].temporal) {
-            result.push(this.layers[i]);
-          }
+    case 'temporal':
+      for (i in CabinetService.layers) {
+        if (CabinetService.layers[i].temporal) {
+          result.push(CabinetService.layers[i]);
         }
-        break;
+      }
+      break;
 
-      default:
-        console.log('EXCEPTION-esque: tried to call getLayersByType() ' +
-                    'with unknown arggument "' + layerType + '"');
+    default:
+      console.log('EXCEPTION-esque: tried to call getLayersByType() ' +
+                  'with unknown arggument "' + layerType + '"');
     }
 
     return result;

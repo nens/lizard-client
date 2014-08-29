@@ -13,7 +13,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
   var _getImageBounds = function (layerName) {
       return [[54.28458617998074, 1.324296158471368],
               [49.82567047026146, 8.992548357936204]];
-  };
+    };
 
   /**
    * Hard coded raster variables.
