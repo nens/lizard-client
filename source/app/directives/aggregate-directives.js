@@ -572,7 +572,7 @@ var dummyResults = {
         ],
         instants: [
           [1388531000000, 1388531300000, 1388531600000, 1388531900000, 1388532200000, 1388532500000],
-          [100, 100, 100, 100, 100, 100],
+          [100, 90, 80, 70, 60, 50],
           [45, 90, 135, 150, 180, 230]
         ],
         code: undefined,
@@ -701,16 +701,14 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
     restrict: 'A',
     link: function (scope, element, attrs) {
 
-      var mostRecentTimeindex = 0;
+      var previousTimeIndex,
+          STEP_SIZE = 300000,
+          tvData = getTVData(),
+          tvLayer;
 
       scope.$watch('timeState.at', function (newVal, oldVal) {
 
-        //console.log('watching: timeState.at (' + scope.timeState.at + ')');
-
-        var tvLayer,
-            STEP_SIZE = 300000;
-
-        if (MapService.isMapDefined()) {
+        if (!tvLayer && MapService.isMapDefined()) {
 
           tvLayer = createTVLayer(scope, {
             type: "FeatureCollection",
@@ -720,16 +718,29 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
 
         if (newVal !== oldVal && mustDrawTVLayer()) {
 
-          var tvData,
-              timeIndex;
-
-          tvData = getTVData();
-          timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
+          var timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
 
           if (timeIndex !== undefined) {
+            //previousTimeIndex = timeIndex;
             updateTVLayer(tvLayer, tvData, timeIndex);
           }
         }
+      });
+
+      scope.$watch('mapState.zoom', function (newVal, oldVal) {
+
+        console.log('mapState.zoom:', scope.mapState.zoom);
+
+        if (newVal !== oldVal && mustDrawTVLayer()) {
+
+          var timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
+
+          if (timeIndex !== undefined) {
+            //previousTimeIndex = timeIndex;
+            updateTVLayer(tvLayer, tvData, timeIndex);
+          }
+        }
+
       });
     }
   };

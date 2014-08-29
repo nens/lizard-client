@@ -217,7 +217,7 @@ app.controller('MasterCtrl',
 
   // MAP MODEL
   // MOVE TO MAP CONTROL ?
-  // 
+  //
   // $scope.layers = MapService.layers;
   $scope.mapState = MapService.mapState;
 

@@ -130,8 +130,6 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
   _getPointsForArrow: function (centerCoord) {
 
-    console.log('[i] centerCoord:', centerCoord);
-
     var // the final result/return value we'll build in this method
         result = "",
 
@@ -145,7 +143,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
         // points for neat arrow, not scaled nor shifted
         X_VALS_FOR_ARROW = [100, 100, 130, 70, 70,  10,  40,  40],
         Y_VALS_FOR_ARROW = [225, 115, 115, 15, 15, 115, 115, 225],
-        WIDTH_FOR_ARROW = 120,  // max diff X_VALS_FOR_ARROW
+        WIDTH_FOR_ARROW  = 120,  // max diff X_VALS_FOR_ARROW
         HEIGHT_FOR_ARROW = 210, // max diff Y_VALS_FOR_ARROW
 
         // declaring vars used in loop-body outside of the loop-body
@@ -157,8 +155,8 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
     for (i = 0; i < X_VALS_FOR_ARROW.length; i++) {
 
-      xCoord = Math.round(((X_VALS_FOR_ARROW[i] - (120 * 0.5)) * SCALE_FACTOR) + cx);
-      yCoord = Math.round(((Y_VALS_FOR_ARROW[i] - (210 * 0.5)) * SCALE_FACTOR) + cy);
+      xCoord = Math.round(((X_VALS_FOR_ARROW[i] - WIDTH_FOR_ARROW / 2) * SCALE_FACTOR) + cx);
+      yCoord = Math.round(((Y_VALS_FOR_ARROW[i] - HEIGHT_FOR_ARROW / 2) * SCALE_FACTOR) + cy);
       result += (xCoord + "," + yCoord + " ");
     }
 
@@ -199,15 +197,22 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
         .attr("stroke-width", 1.8)
         .attr("stroke", "white")
         .attr("class", function (feature) {
+
           var classList = self.options.class;
+
           if (self.options.hasOwnProperty('selectorPrefix')) {
             classList += " " + self.options.selectorPrefix
-                             + self._idExtractor(feature);
+                             + feature.properties.id;
           }
           return classList;
         });
 
     features
+      .attr("points", function (d) {
+          return self._getPointsForArrow(
+            self._projection(d.geometry.coordinates)
+          );
+        })
       .attr("fill", function (d) {
 
         var relSpeed, shade;
