@@ -1,67 +1,69 @@
 /**
  * @class hashSyncHelper
  * @memberOf app
+ *
  * @summary Helper functions for hash sync.
- * @description Helper functions for hash sync.
+ *
+ * @description
+ * Provides a setter and getter function to manipulate the url hash to keep the
+ * url hash synchronised with the actual application state. That way you can
+ * use the url to share application state.
+ *
+ * **Example:** https://nxt.lizard.net/#location=52.3663,5.1893,13&layers=topography&start=Dec-01-2013&end=Mar-12-2014
+ *
+ * where:
+ *
+ * - **location:** spatial extent with comma seperated latlon of centroid and
+ * zoomlevel: `location=lat,lon,zoomlevel`.
+ * - **layers:** comma seperated list of layer slugs: `layers=slug1,slug2`.
+ * - **start:** start of timeline: `start=May-01-2014`.
+ * - **end:** end of timeline: `end=Jun-29-2014`.
  */
 app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
   function ($location, $parse, $rootScope) {
 
-    /**
-     * Offers a getHash and setHash for manipulating the url hash
-     */
     var service = {
       /**
        * @function getHash
-       * @memberOf HashSyncHelper
-       * @summary Reads has fragement from angulars location service and
+       * @memberOf hashSyncHelper
+       *
+       * @summary Reads has fragment from angulars location service and
        * returns it as key / value object.
        *
+       * @return {object}
        */
       getHash: function () {
-        // Reads the hash fragment from angulars location service
-        // and returns it as a key/value object.
         return parseKeyValue($location.hash());
       },
+
+      /**
+       * @function setHash
+       * @memberOf hashSyncHelper
+       *
+       * @summary Sets the url hash with a {'key':'val'}.
+       * 
+       * @description Loops over the incoming object and fill obj2 with it. Then
+       * extend the original hash object with the new hash object. Finally set 
+       * the hash using angular location service.
+       *
+       * @param {object} obj - Object with key
+       * @param {boolean} replaceHistory - Replace history or not.
+       */
       setHash: function (obj, replaceHistory) {
-        // Sets the url hash with a {'key':'val'} and doesnt return
         if (!isDefined(replaceHistory)) { replaceHistory = true; }
         var obj2 = {};
         var oldhash = this.getHash(); // Copy the current hash
         angular.forEach(obj, function (v, k) {
-          // Loop over the incoming object and fill obj2 with it
-          // if v == "" this v is still used. !important for layers=
           if (v !== undefined) { obj2[k] = v; }
         });
-        // Then extend the original hash object with the new hash object
         angular.extend(oldhash, obj2);
-        // And finally set the hash using angular location service
         $location.hash(toKeyValue(oldhash));
         if (replaceHistory) {
           $location.replace();
         }
-      },
-      sync: function (expr, scope, replaceHistory) {
-        // Unused for now
-        if (!scope) {scope = $rootScope; }
-
-        var setHash = function (val, old) {
-          var obj = service.getHash();
-          obj[expr] = val;
-          service.setHash(obj, replaceHistory);
-        };
-        setHash($parse(expr)(scope));
-        scope.$watch(expr, setHash);
-
-        window.addEventListener('hashchange', function () {
-          scope.$apply(function () {
-            var obj = service.getHash();
-            var val = obj[expr];
-            $parse(expr).assign(scope, val);
-          });
-        });
       }
     };
+
     return service;
   }]);
 
@@ -104,7 +106,7 @@ app.service("UtilService", function () {
   };
 
   /**
-   * @function
+   * @function getAggWindow
    * @memberOf UtilService
    *
    * @summary return aggregation window.
@@ -136,12 +138,15 @@ app.service("UtilService", function () {
   };
 
 
-  /***
-    * Fade out (in) currently (in-)visible cards.
-    *
-    * @param {boolean} fadeIn - An Angular scope s.t.
-    * scope.mapState.mapMoving is defined.
-    */
+  /**
+   * @function fadeCurrentCards
+   * @memberOf UtilService
+   *
+   * @summary Fade out (in) currently (in-)visible cards.
+   *
+   * @param {boolean} fadeIn - An Angular scope s.t.
+   * scope.mapState.mapMoving is defined.
+   */
   this.fadeCurrentCards = function (scope) {
 
     var cards = d3.selectAll(".card");
@@ -167,8 +172,12 @@ app.service("UtilService", function () {
   };
 
   /**
-   * Takes data array with degrees as x-axis.
-   * Returns array with meters as x-axis
+   * @function dataConvertToMeters
+   * @memberOf UtilService
+   *
+   * @summary Takes data array with degrees as x-axis. Returns array with
+   * meters as x-axis
+   *
    * @param  {array} data Array with degrees
    * @return {array} data Array with meters
    */
@@ -178,10 +187,13 @@ app.service("UtilService", function () {
     }
     return data;
   };
-
   /**
-   * Takes degrees converts to radians
-   * and then converts to "haversine km's approximation" and then to meters
+   * @function degToMeters
+   * @memberOf UtilService
+   *
+   * @summary Takes degrees converts to radians, then converts to
+   * "haversine km's approximation", then to meters
+   *
    * @param  {float} degrees
    * @return {float} meters
    */
@@ -190,8 +202,11 @@ app.service("UtilService", function () {
   };
 
   /**
-   * Takes meters converts to radians
-   * and then converts degrees
+   * @function metersToDegs
+   * @memberOf UtilService
+   *
+   * @summary Takes meters converts to radians, then converts degrees.
+   *
    * @param  {float} meters
    * @return {float} degrees
    */
@@ -201,7 +216,10 @@ app.service("UtilService", function () {
 
 
   /**
-   * Creates a subset data object for a specific timeState
+   * @function createDataForTimeState
+   * @memberOf UtilService
+   *
+   * @summary Creates a subset data object for a specific timeState.
    *
    * @param  {array} data      array of shape:
    *                           [
@@ -225,6 +243,16 @@ app.service("UtilService", function () {
     return dataForTimeState;
   };
 
+  /**
+   * @function createLineWKT
+   * @memberOf UtilService
+   *
+   * @summary Create WKT line from two latlon objects.
+   *
+   * @param {object} firstClick - object with list of latlon.
+   * @param {object} secondClick - object with list of latlon.
+   * @return {string} - WKT string of line between firstClick and secondClick.
+   */
   this.createLineWKT = function (firstClick, secondClick) {
     return [
       "LINESTRING(",
