@@ -13,12 +13,8 @@
  */
 app.factory("Graph", ["NxtD3Service", function (NxtD3Service) {
 
-  var svg,
-
   // D3 components
-  x = {},
-  y = {},
-  pie,
+  var pie,
   arc,
   line,
 
@@ -27,7 +23,8 @@ app.factory("Graph", ["NxtD3Service", function (NxtD3Service) {
   hoovered,
 
   // Graph elements
-  donutArcs;
+  donutArcs,
+  path;
 
   /**
    * @constructor
@@ -43,16 +40,7 @@ app.factory("Graph", ["NxtD3Service", function (NxtD3Service) {
    */
   function Graph(element, dimensions, data, interaction) {
     this.dimensions = angular.copy(dimensions);
-    svg = this._createCanvas(element, this.dimensions);
-    if (interaction) {
-      if (interaction.clickFn) {
-        // clicked = setClickFunction(xScale, this.dimensions,
-        //   interaction.clickFn);
-      }
-      if (interaction.moveFn) {
-        // brushed = setMoveFunction(xScale, interaction.brushFn);
-      }
-    }
+    this.svg = this._createCanvas(element, this.dimensions);
   }
 
   Graph.prototype = Object.create(NxtD3Service.prototype, {
@@ -69,44 +57,132 @@ app.factory("Graph", ["NxtD3Service", function (NxtD3Service) {
     },
     drawDonut: {
       value: function (data) {
-        _drawDonut(svg, this.dimensions, data, pie, arc);
+        _drawDonut(this.svg, this.dimensions, data, pie, arc);
       }
     },
     setupXYGraph: {
+      value: function (data, keys, labels) {
+        var optionsX = {
+            scale: 'linear',
+            orientation: 'bottom'
+          },
+        optionsY = {
+            scale: 'linear',
+            orientation: 'left'
+          };
+        this.x = createD3Objects(this.svg, this.dimensions, data, keys.x, optionsX, false);
+        this.y = createD3Objects(this.svg, this.dimensions, data, keys.y, optionsY, true);
+        addLabel(this.svg, this.dimensions, labels.x, false);
+        addLabel(this.svg, this.dimensions, labels.y, true);
+      }
+    },
+    setupLineGraph: {
+      value: function (keys) {
+        line = this._createLine(this.x, this.y, keys);
+      }
+    },
+    drawLine: {
       value: function (data, keys) {
-        var width = this._getWidth(this.dimensions),
-        height = this._getHeight(this.dimensions);
-        x.maxMin = this._maxMin(data, keys.x);
-        x.scale = this._makeScale(x.maxMin, {min: 0, max: width}, {scale: 'linear'});
-        x.axis = this._makeAxis(x.scale, {orientation: 'bottom'});
-        y.maxMin = this._maxMin(data, keys.y);
-        y.scale = this._makeScale(y.maxMin, {min: 0, max: height}, {scale: 'linear'});
-        y.axis = this._makeAxis(y.scale, {orientation: 'left'});
-        drawAxes(svg, x.axis, this.dimensions, false);
-        drawAxes(svg, y.axis, this.dimensions, true);
-
+        if (toRescale(data, keys.x, 1, this.x.maxMin)) {
+          this.x.scale.domain([0, this._maxMin(data, keys.x).max]);
+          this.x.axis = this._makeAxis(this.x.scale, {orientation: 'bottom'});
+          drawAxes(this.svg, this.x.axis, this.dimensions, false, this._transTime);
+          line = this._createLine(this.x, this.y, keys);
+        }
+        if (toRescale(data, keys.y, 0.1, this.y.maxMin)) {
+          this.y.scale.domain([0, this._maxMin(data, keys.y).max]);
+          this.y.axis = this._makeAxis(this.y.scale, {orientation: 'left'});
+          drawAxes(this.svg, this.y.axis, this.dimensions, true, this._transTime);
+          line = this._createLine(this.x, this.y, keys);
+        }
+        path = _drawLine(this.svg, line, data, this._transTime, path);
       }
     }
 
   });
 
-  var createPie, createArc, _drawDonut, getDonutHeight, drawAxes;
+  var createPie, createArc, _drawDonut, getDonutHeight, drawAxes, addLabel,
+  createD3Objects, toRescale, _drawLine;
 
-  drawAxes = function (svg, axis, dimensions, y) {
-    Graph.prototype._drawAxes(svg, axis, dimensions, y);
-    var axis;
+  _drawLine = function (svg, line, data, duration, path) {
+    if (!path) {
+      path = svg.select('g').append("svg:path")
+        .attr("class", "line");
+    }
+
+    path.datum(data)
+      .transition()
+      .duration(duration)
+      .attr("d", function (d) {
+        // Prevent returning invalid values for d
+        return line(d) || "M0, 0";
+      });
+    return path;
+  };
+
+  toRescale = function (data, key, limit, old) {
+    var rescale = false,
+    n = Graph.prototype._maxMin(data, key);
+    if (n.max > old.max
+      || n.max < (limit * old.max)
+      || n.min !== old.min) {
+      rescale = true;
+    }
+    return rescale;
+  };
+
+  createD3Objects = function (svg, dimensions, data, key, options, y) {
+    var width = Graph.prototype._getWidth(dimensions),
+    height = Graph.prototype._getHeight(dimensions),
+    d3Objects = {},
+    domain = y ? {max: 0, min: height}: {min: 0, max: width};
+
+    d3Objects.maxMin = Graph.prototype._maxMin(data, key);
+    d3Objects.scale = Graph.prototype._makeScale(d3Objects.maxMin, domain, options);
+    d3Objects.axis = Graph.prototype._makeAxis(d3Objects.scale, options);
+    drawAxes(svg, d3Objects.axis, dimensions, y);
+    return d3Objects;
+  };
+
+  addLabel = function (svg, dimensions, label, y) {
+    var width = Graph.prototype._getWidth(dimensions),
+    height = Graph.prototype._getHeight(dimensions),
+    PIXEL_CORRECTION = 1,
+    el = svg.append("text")
+      .attr('class', 'graph-text')
+      .style("text-anchor", "middle")
+      .text(label);
     if (y) {
-      axis = d3.select('#yaxis')
+      el.attr('id', 'ylabel')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 0)
+        .attr('x', 0 - height / 2);
+      el.attr('dy', 0.5 * el.node().getBBox().height + PIXEL_CORRECTION);
+    } else {
+      el.attr('id', 'xlabel')
+        .attr('x', dimensions.padding.left + width / 2)
+        .attr('y', dimensions.height - PIXEL_CORRECTION);
+      el.attr('dy', - 0.5 * el.node().getBBox().height);
+    }
+  };
+
+  drawAxes = function (svg, axis, dimensions, y, duration) {
+    Graph.prototype._drawAxes(svg, axis, dimensions, y, duration);
+    var axisEl;
+    if (y) {
+      axisEl = svg.select('#yaxis')
         .attr("class", "y-axis y axis")
         .selectAll("text")
         .style("text-anchor", "end")
         .attr('class', 'graph-text');
     } else {
-      axis = d3.select('#xaxis')
+      axisEl = svg.select('#xaxis')
         .attr("class", "x-axis x axis")
         .selectAll("text")
           .attr("dx", "-.8em")
           .attr("dy", ".15em")
+          .style("text-anchor", "end")
+          .attr('class', 'graph-text')
           .attr("transform", "rotate(-45)");
     }
   };

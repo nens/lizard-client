@@ -31,11 +31,13 @@ app.factory("NxtD3Service", [ function () {
       var width = this._getWidth(dimensions),
       height = this._getHeight(dimensions),
       svg = d3.select(element);
+      // Create the svg as big as the dimensions
       svg.attr('width', dimensions.width)
         .attr('height', dimensions.height)
-        .style("margin-top", dimensions.padding.top)
+        // Create a drawing group that is shifted left side padding to the right
         .append("g")
-          .attr("transform", "translate(" + dimensions.padding.left + ", 0)")
+          .attr("transform", "translate(" + dimensions.padding.left + ", " + dimensions.padding.top + ")")
+          // Add a graph area rectangle the size of the dimensions minus the padding
           .append("rect")
             .attr("width", width)
             .attr("height", height)
@@ -141,6 +143,17 @@ app.factory("NxtD3Service", [ function () {
       return dimensions.height -
         dimensions.padding.top -
         dimensions.padding.bottom;
+    },
+
+    _createLine: function (x, y, keys) {
+      return d3.svg.line().interpolate('basis')
+        .y(function (d) {
+          return y.scale(d[keys.y]);
+        })
+        .x(function (d) {
+          return x.scale(d[keys.x]);
+        })
+        .defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
     }
   };
 
