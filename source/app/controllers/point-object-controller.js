@@ -78,17 +78,18 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       var clickedOnEvents = extra && extra.type === 'events';
 
       if (clickedOnEvents) {
-        eventResponded(extra.eventData);
+        ClickFeedbackService.emptyClickLayer();
+        eventResponded(extra.eventData, clickedOnEvents);
       } else {
         // Give feedback to user
         ClickFeedbackService.drawClickInSpace(here);
+        // Get attribute data from utf
+        UtfGridService.getDataFromUTF(here)
+          .then(utfgridResponded(here, clickedOnEvents))
+          .then(function () {
+            getRasterForLocation();
+          });
       }
-      // Get attribute data from utf
-      UtfGridService.getDataFromUTF(here)
-        .then(utfgridResponded(here, clickedOnEvents))
-        .then(function () {
-          getRasterForLocation();
-        });
     };
 
     /**
@@ -111,14 +112,12 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     var utfgridResponded = function (here, showOnlyEvents) {
       return function (response) {
 
-        console.log(showOnlyEvents);
         if (!showOnlyEvents) {
           attrsResponded(response, $scope.pointObject);
         }
 
-        ClickFeedbackService.stopVibration();
-
         // Either way, stop vibrating click feedback.
+        ClickFeedbackService.stopVibration();
 
         if (response && response.data) {
 
@@ -225,7 +224,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       // $scope.pointObject.timeseries.active = true;
     };
 
-    var eventResponded = function (response) {
+    var eventResponded = function (response, clickedOnEvents) {
       $scope.pointObject.events.data = [];
       angular.forEach(response.features, function (feature) {
         $scope.pointObject.events.data.push(feature.properties);
@@ -233,6 +232,9 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
       if ($scope.pointObject.events.data.length > 0) {
         $scope.pointObject.events.active = true;
         EventService.addColor($scope.events);
+      }
+      if (clickedOnEvents) {
+        $scope.$apply();
       }
     };
 
@@ -243,11 +245,9 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     };
 
     $scope.pointObject = createPointObject();
-    console.log("initialise");
     fillPointObject($scope.mapState.here);
 
-    $scope.$on('newPointObject', function (msg, extra) {
-      $scope.pointObject = createPointObject();
+    $scope.$on('updatePointObject', function (msg, extra) {
       fillPointObject($scope.mapState.here, extra);
     });
 

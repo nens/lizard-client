@@ -115,7 +115,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       slug: nonLeafLayer.slug,
       name: nonLeafLayer.slug,
       useJsonP: false,
-      minZoom: (nonLeafLayer.min_zoom_click) ? nonLeafLayer.min_zoom_click : NaN,
+      minZoom: (nonLeafLayer.min_zoom_click) ?
+        nonLeafLayer.min_zoom_click : NaN,
       maxZoom: 19,
       order: nonLeafLayer.z_index,
       zIndex: nonLeafLayer.z_index
@@ -203,7 +204,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
         numLayers++;
       }
     });
-    angular.forEach($filter('orderBy')(layers, 'z_index', true), function (layer) {
+    angular.forEach($filter('orderBy')(layers, 'z_index', true),
+      function (layer) {
       if ((layer.overlayer === true) && (layer.active)) {
         layer.leafletLayer.setOpacity(1 / numLayers);
         numLayers--;
@@ -316,7 +318,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    */
   newGeoJsonLayer = function () {
     return LeafletService.geoJson();
-  }
+  };
 
   /**
    * @function
@@ -348,8 +350,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
   /**
    * @function
    * @memberOf app.MapService
-   * @description Retrieves the (single) currently active layer which has a temporal
-   * component. Returns undefined if no temporal raster layer is
+   * @description Retrieves the (single) currently active layer which has a
+   * temporal component. Returns undefined if no temporal raster layer is
    * currently active.
    *
    * @return {Object}

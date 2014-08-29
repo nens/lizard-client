@@ -82,9 +82,9 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
         _highlightEvents(id);
 
         var setEventOnPoint = function () {
-          scope.mapState.here = here;
           if (scope.box.type !== 'pointObject') {
             scope.box.type = 'pointObject';
+            scope.mapState.here = here;
           }
         };
 
@@ -94,12 +94,13 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
           setEventOnPoint();
         }
 
-        $rootScope.$broadcast('newPointObject', eventDatastuff);
+        $rootScope.$broadcast('updatePointObject', eventDatastuff);
       };
 
       /**
-       * Gets data point and searches through list of
-       * geojson features for matches. Returns matchedLocations
+       * Gets data point and searches through list of geojson features for
+       * matches. Returns matchedLocations
+       *
        * @param  {object} d       Clicked object
        * @param  {array} features List of other geojson features.
        * @return {array}          List of Matched Locations
