@@ -86,17 +86,19 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
       var clickedOnEvents = extra && extra.type === 'events';
 
       if (clickedOnEvents) {
-        eventResponded(extra.eventData);
+        ClickFeedbackService.emptyClickLayer();
+        eventResponded(extra.eventData, clickedOnEvents);
       } else {
         // Give feedback to user
         ClickFeedbackService.drawClickInSpace(here);
+        // Get attribute data from utf
+        UtfGridService.getDataFromUTF(here)
+          .then(utfgridResponded(here, clickedOnEvents), _noUTF)
+          .then(function () {
+            getRasterForLocation();
+          });
       }
-      // Get attribute data from utf
-      UtfGridService.getDataFromUTF(here)
-        .then(utfgridResponded(here, clickedOnEvents), _noUTF)
-        .then(function () {
-          getRasterForLocation();
-        });
+
     };
 
     /**
@@ -113,20 +115,31 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @function
      * @memberOf app.pointObjectCtrl
      * @description callback for utfgrid
-     * @param  {L.LatLng} here
-     * @param  {Boolean}  showOnlyEvents if events are clicked
+     *  
+     * @summary Callback to handle utfGrid responses.
+     *
+     * @description When utfGrid responded with data, this function tries to 
+     * get object related data from the server. When an event layer is active,
+     * showOnlyEvents is true and no object related data is retrieved from the
+     * server.
+     *
+     * Objected related data retrieved from server:
+     * 
+     * - Timeseries: EventService.getEvents()
+     * - Events: getTimeSeriesForObject()
+     *
+     * @param {object} here - object with lattitude and longitude.
+     * @param {boolean} showOnlyEvents - True if clicked on events
      * @return {function} 
      */
     utfgridResponded = function (here, showOnlyEvents) {
       return function (response) {
         if (!showOnlyEvents) {
           attrsResponded(response, $scope.pointObject);
-          ClickFeedbackService.stopVibration();
-        } else {
-          ClickFeedbackService.stopVibration();
         }
 
         // Either way, stop vibrating click feedback.
+        ClickFeedbackService.stopVibration();
 
         if (response && response.data) {
 
@@ -143,10 +156,10 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
           var entity = $scope.pointObject.attrs.data.entity_name;
           var id = $scope.pointObject.attrs.data.id;
           // Get events belonging to object.
-          EventService.getEvents(
-            showOnlyEvents ? {} : {object: entity + '$' + id}
-          )
-          .then(eventResponded);
+          if (!showOnlyEvents) {
+            EventService.getEvents({object: entity + '$' + id})
+              .then(eventResponded);
+          }
           // Get timeseries belonging to object.
           getTimeSeriesForObject();
         } else {
@@ -248,18 +261,23 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
     /**
      * @function
      * @memberOf app.pointObjectCtrl
+     *
      * @description fired when event API call responds
-     * @param  {jsondata} response
+     *
+     * @param  {object} jsondata response
      */
-    eventResponded = function (response) {
+    eventResponded = function (response, clickedOnEvents) {
+    var eventResponded = function (response, clickedOnEvents) {
       $scope.pointObject.events.data = [];
       angular.forEach(response.features, function (feature) {
-        feature.properties.geometry = feature.geometry;
         $scope.pointObject.events.data.push(feature.properties);
       });
       if ($scope.pointObject.events.data.length > 0) {
         $scope.pointObject.events.active = true;
         EventService.addColor($scope.events);
+      }
+      if (clickedOnEvents) {
+        $scope.$apply();
       }
     };
 
@@ -278,8 +296,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
     $scope.pointObject = createPointObject();
     fillPointObject($scope.mapState.here);
 
-    $scope.$on('newPointObject', function (msg, extra) {
-      $scope.pointObject = createPointObject();
+    $scope.$on('updatePointObject', function (msg, extra) {
       fillPointObject($scope.mapState.here, extra);
     });
 
