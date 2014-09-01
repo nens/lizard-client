@@ -24,7 +24,7 @@
 app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
 
   // The timeline
-  var svg, initialHeight,
+  var initialHeight,
 
   // D3 components
   xScale, // The only d3 scale for placement on the x axis within the whole
@@ -61,21 +61,20 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
    *  for zoom, click and brush interaction with the rest of the app.
    */
   function Timeline(element, dimensions, start, end, interaction) {
-    this.dimensions = angular.copy(dimensions);
+    NxtD3Service.call(this, element, dimensions);
     initialHeight = dimensions.height;
-    var canvas = this._createCanvas(element, this.dimensions);
-    svg = addElementGroupsToCanvas(canvas, this.dimensions);
+    this.svg = addElementGroupsToCanvas(this.svg, this.dimensions);
     var width = dimensions.width -
                 dimensions.padding.left -
                 dimensions.padding.right;
-    xScale = this._makeScale({min: new Date(start), max: new Date(end)},
+    xScale = this._makeScale({min: start, max: end},
                             {min: 0, max: width},
-                            { type: 'time' });
+                            {scale: 'time' });
     xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-    this._drawAxes(svg, xAxis, dimensions);
+    this._drawAxes(this.svg, xAxis, dimensions);
     if (interaction) {
       if (interaction.zoomFn) {
-        zoomed = setZoomFunction(svg, this.dimensions, xScale, xAxis,
+        zoomed = setZoomFunction(this.svg, this.dimensions, xScale, xAxis,
           interaction.zoomFn);
       }
       if (interaction.clickFn) {
@@ -116,7 +115,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
         var height = this._getHeight(this.dimensions);
 
         // Create line for the timeState.at just out of sight
-        nowIndicator = svg.select('g').append('line')
+        nowIndicator = this.svg.select('g').append('line')
           .attr('class', 'now-indicator')
           .attr('x1', - this.dimensions.padding.left - 5)
           .attr('x2', - this.dimensions.padding.left - 5)
@@ -127,13 +126,13 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
 
     addClickListener: {
       value: function () {
-        svg.on("click", clicked);
+        this.svg.on("click", clicked);
       }
     },
 
     removeClickListener: {
       value: function () {
-        svg.on("click", null);
+        this.svg.on("click", null);
       }
     },
 
@@ -145,12 +144,12 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
         brush = d3.svg.brush().x(xScale);
         brush.on("brush", brushed);
         brush.on('brushstart', function () {
-          svg.on('click', null);
+          this.svg.on('click', null);
         });
         //TODO: Snap the brush to nearest logical unit, 5min, hour, week etc.
         brush.on("brushend", brushend);
 
-        brushg = svg.select('g').append("g")
+        brushg = this.svg.select('g').append("g")
           .attr("class", "brushed");
         var height = this._getHeight(this.dimensions);
         brushg.call(brush.extent([new Date(start), new Date(end)]));
@@ -174,7 +173,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
         if (brushg) {
           brushg.remove();
         }
-        svg.selectAll(".selected").classed("selected", false);
+        this.svg.selectAll(".selected").classed("selected", false);
       }
     },
 
@@ -195,9 +194,9 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
         var oldDimensions = angular.copy(this.dimensions);
         this.dimensions = dimensions;
         this.updateElements(oldDimensions);
-        svg = updateCanvas(svg, oldDimensions, this.dimensions);
+        this.svg = updateCanvas(this.svg, oldDimensions, this.dimensions);
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
-        this._drawAxes(svg, xAxis, dimensions);
+        this._drawAxes(this.svg, xAxis, dimensions);
       }
     },
 
@@ -260,7 +259,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
     drawCircles: {
       value: function (data) {
         circles = drawCircleElements(
-          svg,
+          this.svg,
           this.dimensions,
           data,
           xScale,
@@ -282,7 +281,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
     drawLines: {
       value: function (data) {
         lines = drawLineElements(
-          svg,
+          this.svg,
           this.dimensions,
           xScale,
           ordinalYScale,
@@ -309,13 +308,13 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
           y,
           {min: 0, max: height},
           options);
-        bars = drawRectElements(svg, this.dimensions, data, xScale, yScale);
+        bars = drawRectElements(this.svg, this.dimensions, data, xScale, yScale);
       }
     },
 
     removeBars: {
       value: function () {
-        drawRectElements(svg, this.dimensions, []);
+        drawRectElements(this.svg, this.dimensions, []);
         bars = undefined;
       }
     },
@@ -357,14 +356,14 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
         xScale.domain([new Date(start), new Date(end)]);
         xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
         this.updateElements();
-        this._drawAxes(svg, xAxis, this.dimensions, 500);
+        this._drawAxes(this.svg, xAxis, this.dimensions, 500);
         this.addZoomListener();
       }
     },
 
     addZoomListener: {
       value: function () {
-        svg.call(d3.behavior.zoom()
+        this.svg.call(d3.behavior.zoom()
           .x(xScale)
           .on("zoom", zoomed)
           .on("zoomend", zoomend)
@@ -377,11 +376,11 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
      */
     removeZoomListener: {
       value: function () {
-        svg.call(d3.behavior.zoom()
+        this.svg.call(d3.behavior.zoom()
           .x(xScale)
           .on("zoom", null)
         );
-        svg
+        this.svg
           .on("zoomend", null)
           .on("zoom", null)
           .on("mousedown.zoom", null);
@@ -580,7 +579,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
    */
   var updateBrush = function (brushg, oldDim, newDim) {
     brushed();
-    height = Timeline.prototype._getHeight(newDim);
+    var height = Timeline.prototype._getHeight(newDim);
     var delay = 0;
     if (oldDim.height > newDim.height) {
       delay = 500;
@@ -629,7 +628,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
       options = {scale: 'linear'},
       newHeight = Timeline.prototype._getHeight(newDimensions),
       oldHeight = Timeline.prototype._getHeight(oldDimensions),
-      heightDiff = newHeight - oldHeight;
+      heightDiff = newHeight - oldHeight,
       yScale = Timeline.prototype._makeScale(
         y,
         {min: 0, max: barHeight},

@@ -85,18 +85,19 @@
               ng-model="pointObject.timeseries.selectedTimeseries"
               ng-options="series as series.name for series in pointObject.timeseries.data">
       </select>
-      <graph line
+<!--       <graph line
              data="pointObject.timeseries.selectedTimeseries.data"
              ylabel="pointObject.selectedTimeseries.name"
-             xlabel="n">
-       </graph>
+             xlabel="n"
+             keys="{x: 0, y: 1}">
+       </graph> -->
     </div>
   </div>
   <!-- end: single card -->
 
   <div id="card-rain"
        class="card active"
-       ng-class="{hidden: !mustShowRainCard(mapState, pointObject)}">
+       ng-if="!mustShowRainCard(mapState, pointObject)">
     <div class="card-content" id="card-content-rain">
       <a
         id="export-rain-csv-button"
@@ -113,7 +114,7 @@
              data="pointObject.temporalRaster.data"
              ylabel="pointObject.temporalRaster.aggWindow"
              yfilter="aggWinToYLabel"
-             xlabel="tijd">
+             keys="{x: 0, y: 1}">
       </graph>
       <div class="recurrence-time-container"
            ng-if="!!pointObject.temporalRaster.recurrenceTime">

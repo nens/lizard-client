@@ -4,7 +4,7 @@
 
     <div ng-switch="agg.type" class="card-content" id="card-content-<% agg.name %>">
       <graph ng-switch-when="curve" line xlabel="'[%]'" ylabel="'hoogte [mNAP]'" data="agg.data" keys="{x: 0, y: 1}" class="xyGraph"></graph>
-      <graph ng-switch-when="counts" pie data="agg.data" class="donutGraph"></graph>
+      <graph ng-switch-when="counts" horizontal-stack data="agg.data" class="donutGraph" keys="{x: 'data', y: 'label'}" xlabel="'[%]'" ></graph>
       <graph ng-switch-default line></graph>
     </div>
   </div>

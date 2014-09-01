@@ -12,39 +12,23 @@
  */
 app.factory("NxtD3Service", [ function () {
 
-  var NxtD3 = {}, createElementForAxis;
+  var createCanvas, createElementForAxis, resizeCanvas, createDrawingArea;
+
+  function NxtD3(element, dimensions) {
+    this.dimensions = angular.copy(dimensions);
+    this.svg = createCanvas(element, this.dimensions);
+    this.svg = createDrawingArea(this.svg, this.dimensions);
+  }
 
   NxtD3.prototype = {
 
     _transTime: 300,
-    /**
-     * Creates a svg canvas for drawing,
-     *
-     * @param  {object} svg element to create canvas.
-     * @param  {object} dimensions  object containing, width, height and an
-     *                              object containing top,
-     *                              bottom, left and right padding. All
-     *                              values in px.
-     * @return {object} svg         svg.
-     */
-    _createCanvas: function (element, dimensions) {
-      var width = this._getWidth(dimensions),
-      height = this._getHeight(dimensions),
-      svg = d3.select(element);
-      // Create the svg as big as the dimensions
-      svg.attr('width', dimensions.width)
-        .attr('height', dimensions.height)
-        // Create a drawing group that is shifted left side padding to the right
-        .append("g")
-          .attr("transform", "translate(" + dimensions.padding.left + ", " + dimensions.padding.top + ")")
-          // Add a graph area rectangle the size of the dimensions minus the padding
-          .append("rect")
-            .attr("width", width)
-            .attr("height", height)
-            .attr("class", "plot-temporal");
-      return svg;
-    },
 
+    resize: function (dimensions) {
+      this.dimensions = angular.copy(dimensions);
+      this.svg = resizeCanvas(this.svg, this.dimensions);
+      this.svg = createDrawingArea(this.svg, this.dimensions);
+    },
     /**
      * Returns a max min object for a data object or array of arrays.
      */
@@ -69,24 +53,20 @@ app.factory("NxtD3Service", [ function () {
       // Instantiate a d3 scale based on min max and
       // width and height of plot
       var scale;
-      if (options.type === 'time') {
+      if (options.scale === 'time') {
         scale = d3.time.scale()
+          .domain([new Date(minMax.min), new Date(minMax.max)])
+          .range([range.min, range.max]);
+      } else if (options.scale === "ordinal") {
+        scale = d3.scale.ordinal()
+          .domain(function (d) {
+            return d3.set(d.properties.event_sub_type).values();
+          })
+          .range(options.colors[8]);
+      } else if (options.scale === "linear") {
+        scale = d3.scale.linear()
           .domain([minMax.min, minMax.max])
           .range([range.min, range.max]);
-      }
-      else {
-        if (options.scale === "ordinal") {
-          scale = d3.scale.ordinal()
-            .domain(function (d) {
-              return d3.set(d.properties.event_sub_type).values();
-            })
-            .range(options.colors[8]);
-        }
-        else if (options.scale === "linear") {
-          scale = d3.scale.linear()
-            .domain([minMax.min, minMax.max])
-            .range([range.min, range.max]);
-        }
       }
       return scale;
     },
@@ -157,7 +137,70 @@ app.factory("NxtD3Service", [ function () {
     }
   };
 
+  createDrawingArea = function (svg, dimensions) {
+    var width = NxtD3.prototype._getWidth(dimensions),
+    height = NxtD3.prototype._getHeight(dimensions),
+    // Add clippath to limit the drawing area to inside the graph
+    // See: http://bost.ocks.org/mike/path/
+    clip = svg.select('g').select("defs");
+    if (!clip[0][0]) {
+      svg.select('g').append('defs').append("svg:clipPath");
+    }
+    svg.select('g').select("defs").select("clipPath")
+      .attr("id", "clip")
+      .append("svg:rect")
+      .attr("id", "clip-rect")
+      .attr("x", "0")
+      .attr("y", "0")
+      .attr("width", width)
+      .attr("height", height);
+    // Put the data in this group
+    var g = svg.select('g').select('g');
+    if (!g[0][0]) {
+      g = svg.select('g').append('g');
+    }
+    g.attr("clip-path", "url(#clip)")
+      .attr('id', 'feature-group');
+    return svg;
+  };
+
+  /**
+   * Creates a svg canvas for drawing,
+   *
+   * @param  {object} svg element to create canvas.
+   * @param  {object} dimensions  object containing, width, height and an
+   *                              object containing top,
+   *                              bottom, left and right padding. All
+   *                              values in px.
+   * @return {object} svg         svg.
+   */
+  createCanvas = function (element, dimensions) {
+    var width = NxtD3.prototype._getWidth(dimensions),
+    height = NxtD3.prototype._getHeight(dimensions),
+    svg = d3.select(element);
+    // Create the svg as big as the dimensions
+    svg.attr('width', dimensions.width)
+      .attr('height', dimensions.height)
+      // Create a drawing group that is shifted left side padding to the right
+      .append("g")
+        .attr("transform", "translate(" + dimensions.padding.left + ", " + dimensions.padding.top + ")");
+    return svg;
+  };
+
+  resizeCanvas = function (svg, dimensions) {
+    var width = NxtD3.prototype._getWidth(dimensions),
+    height = NxtD3.prototype._getHeight(dimensions);
+    // Create the svg as big as the dimensions
+    svg.attr('width', dimensions.width)
+      .attr('height', dimensions.height)
+      // Create a drawing group that is shifted left side padding to the right
+      .select("g")
+        .attr("transform", "translate(" + dimensions.padding.left + ", " + dimensions.padding.top + ")");
+    return svg;
+  };
+
   createElementForAxis = function (svg, id, dimensions, y) {
+    console.log(NxtD3.prototype._getHeight(dimensions), y)
     var className = y ? 'y axis': 'x axis',
     transform = y ? 0: NxtD3.prototype._getHeight(dimensions);
     return svg.select('g').append('g')

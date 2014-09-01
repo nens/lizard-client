@@ -20,13 +20,15 @@ app.directive('graph', ["Graph", function (Graph) {
   var graphCtrl, preCompile, link;
 
   graphCtrl = function ($scope, Graph) {
-    this.data = $scope.data;
-    this.keys = $scope.keys;
+    // Provide defaults for backwards compatability
+    this.data = $scope.data || [];
+    this.keys = $scope.keys || {x: 0, y: 1};
     this.labels = {
-      x: $scope.xlabel,
-      y: $scope.ylabel
+      x: $scope.xlabel || '',
+      y: $scope.ylabel || ''
     };
     this.graph = {};
+    this.yfilter = "";
   };
 
   preCompile = function (scope, element, attrs, graphCtrl) {
@@ -62,6 +64,8 @@ app.directive('graph', ["Graph", function (Graph) {
 
     el = element[0].firstChild;
 
+    graphCtrl.yfilter = attrs.yfilter;
+
     // Create the graph and put it on the controller
     graphCtrl.graph = new Graph(el, dimensions);
 
@@ -74,7 +78,7 @@ app.directive('graph', ["Graph", function (Graph) {
      */
     scope.$watch('data', function (n, o) {
       if (n === o) { return true; }
-      graphCtrl.graph.update(scope.data, scope.keys, scope.labels);
+      graphCtrl.update.call(graphCtrl.graph, scope.data, scope.keys, graphCtrl.labels);
     });
 
   };
@@ -92,6 +96,7 @@ app.directive('graph', ["Graph", function (Graph) {
       xlabel: '=',
       ylabel: '=',
       keys: '=',
+      yfilter: '='
     },
     restrict: 'E',
     replace: true,
@@ -112,9 +117,9 @@ app.directive('pie', [function () {
 
     var graph = graphCtrl.graph;
 
-    graph.createDonut();
     graph.drawDonut(graphCtrl.data);
-    graph.update = graph.drawDonut;
+    graphCtrl.update = graph.drawDonut;
+
   };
 
   return {
@@ -133,10 +138,70 @@ app.directive('line', [function () {
     graph = graphCtrl.graph,
     keys = graphCtrl.keys;
 
-    graph.setupXYGraph(data, keys, graphCtrl.labels);
-    graph.setupLineGraph(keys);
-    graph.drawLine(data, keys);
-    graph.update = graph.drawLine;
+    graph.drawLine(data, keys, graphCtrl.labels);
+    graphCtrl.update = graph.drawLine;
+
+  };
+
+  return {
+    require: 'graph',
+    link: link,
+    restrict: 'A'
+  };
+
+}]);
+
+
+app.directive('barChart', ['$filter', function ($filter) {
+
+  var link = function (scope, element, attrs, graphCtrl) {
+
+    var data = graphCtrl.data,
+    labels = graphCtrl.labels,
+    filter = graphCtrl.yfilter,
+    graph = graphCtrl.graph,
+    keys = graphCtrl.keys;
+
+    if (filter) {
+      labels.y = $filter(filter)(labels.y);
+    }
+
+    graph.drawBars(data, keys, labels);
+
+    graphCtrl.update = function (data, keys, labels) {
+      if (filter) {
+        labels.y = $filter(filter)(labels.y);
+      }
+      this.drawBars(data, keys, labels);
+    };
+
+  };
+
+  return {
+    require: 'graph',
+    link: link,
+    restrict: 'A'
+  };
+
+}]);
+
+
+
+app.directive('horizontalStack', [function () {
+
+  var link = function (scope, element, attrs, graphCtrl) {
+
+    var graph = graphCtrl.graph,
+
+    stackDimensions = graph.dimensions;
+    stackDimensions.height = 80;
+    stackDimensions.padding.left = 0;
+    stackDimensions.padding.right = 0;
+
+    graph.resize(stackDimensions);
+    graph.drawHorizontalStack(graphCtrl.data, graphCtrl.keys, graphCtrl.labels);
+    graphCtrl.update = graph.drawHorizontalStack;
+
   };
 
   return {
