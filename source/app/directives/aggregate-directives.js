@@ -729,8 +729,6 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
 
       scope.$watch('mapState.zoom', function (newVal, oldVal) {
 
-        console.log('mapState.zoom:', scope.mapState.zoom);
-
         if (newVal !== oldVal && mustDrawTVLayer()) {
 
           var timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
