@@ -210,7 +210,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     });
     angular.forEach($filter('orderBy')(layers, 'z_index', true),
       function (layer) {
-      if ((layer.overlayer === true) && (layer.active)) {
+      if ((layer.overlayer === true) && (layer.active) && 
+          'leafletLayer' in layer) {
         layer.leafletLayer.setOpacity(1 / numLayers);
         numLayers--;
       }
@@ -283,7 +284,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
 
     if (layer.overlayer) {
-      console.log(layers.leafletLayer);
       _updateOverLayers(layers);
     }
   };
