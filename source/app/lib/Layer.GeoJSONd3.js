@@ -138,7 +138,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
         cy = centerCoord[1],
 
         // constant for scaling the arrow
-        SCALE_FACTOR = 0.2,
+        SCALE_FACTOR = 0.5,
 
         // points for neat arrow, not scaled nor shifted
         X_VALS_FOR_ARROW = [100, 100, 130, 70, 70,  10,  40,  40],
@@ -178,7 +178,8 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
   _refreshDataForCurrents: function (timeStepIndex) {
 
     var self = this,
-        MAX_SPEED_FOR_CURRENT = 100; // arbitrary for now, must be adapted to reallife data..
+        MAX_SPEED_FOR_CURRENT = 5.1, // arbitrary for now, must be adapted to reallife data..
+        MAX_DIRECTON = 27.3;
 
     if (this.g.empty()) {
       this.g = this._renderG();
@@ -217,16 +218,16 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
         var relSpeed, shade;
 
-        relSpeed = d.properties.instants[1][timeStepIndex] / MAX_SPEED_FOR_CURRENT;
+        relSpeed = d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED_FOR_CURRENT;
         shade = 255 - Math.floor(relSpeed * 256);
-        return "rgb(" + shade + ", " + shade + ", " + shade + ")";
+        return "rgb(255, " + shade + ", " + shade + ")";
 
       })
       .attr("transform", function (d) {
 
         var deg, cx, cy;
 
-        deg = d.properties.instants[2][timeStepIndex];
+        deg = Math.floor(360 * (d.properties.timeseries[2].data[timeStepIndex] / MAX_DIRECTON));
         cx = self._projection(d.geometry.coordinates)[0];
         cy = self._projection(d.geometry.coordinates)[1];
 

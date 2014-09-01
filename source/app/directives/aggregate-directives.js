@@ -458,130 +458,130 @@ app.directive('surfacelayer', ['MapService', function (MapService) {
 }]);
 
 
-var dummyResults = {
+// var dummyResults = {
 
-  type: "FeatureCollection",
-  features: [
+//   type: "FeatureCollection",
+//   features: [
 
-    {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [5.33, 52.52]
-      },
-      properties: {
-        series: [
-          {
-            type: "timestamp",
-            name: "timestamp",
-            unit: "ms",
-            quantity: "time"
-          },
-          {
-            quantity: "velocity",
-            type: "decimal",
-            name: "speed",
-            unit: "m/s",
-            precision: 0
-          },
-          {
-            quantity: "angle",
-            type: "decimal",
-            name: "direction",
-            unit: "degrees",
-            precision: 0
-          }
-        ],
-        instants: [
-          [1388531000000, 1388531300000, 1388531600000, 1388531900000, 1388532200000, 1388532500000],
-          [10, 20, 50, 80, 90, 100],
-          [45, 90, 135, 150, 180, 230]
-        ],
-        code: undefined,
-        id: 1000,
-        name: 'Een eerste stroming'
-      }
-    },
-    {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [5.255, 52.517]
-      },
-      properties: {
-        series: [
-          {
-            type: "timestamp",
-            name: "timestamp",
-            unit: "ms",
-            quantity: "time"
-          },
-          {
-            quantity: "velocity",
-            type: "decimal",
-            name: "speed",
-            unit: "m/s",
-            precision: 0
-          },
-          {
-            quantity: "angle",
-            type: "decimal",
-            name: "direction",
-            unit: "degrees",
-            precision: 0
-          }
-        ],
-        instants: [
-          [1388531000000, 1388531300000, 1388531600000, 1388531900000, 1388532200000, 1388532500000],
-          [100, 90, 80, 70, 60, 50],
-          [45, 90, 135, 150, 180, 230]
-        ],
-        code: undefined,
-        id: 1001,
-        name: 'Ene tweede stroming'
-      }
-    },
-    {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [5.46, 52.61]
-      },
-      properties: {
-        series: [
-          {
-            type: "timestamp",
-            name: "timestamp",
-            unit: "ms",
-            quantity: "time"
-          },
-          {
-            quantity: "velocity",
-            type: "decimal",
-            name: "speed",
-            unit: "m/s",
-            precision: 0
-          },
-          {
-            quantity: "angle",
-            type: "decimal",
-            name: "direction",
-            unit: "degrees",
-            precision: 0
-          }
-        ],
-        instants: [
-          [1388531000000, 1388531300000, 1388531600000, 1388531900000, 1388532200000, 1388532500000],
-          [100, 90, 80, 70, 60, 50],
-          [45, 90, 135, 150, 180, 230]
-        ],
-        code: undefined,
-        id: 1002,
-        name: 'Een dritte stroming'
-      }
-    },
-  ]
-};
+//     {
+//       type: "Feature",
+//       geometry: {
+//         type: "Point",
+//         coordinates: [5.33, 52.52]
+//       },
+//       properties: {
+//         series: [
+//           {
+//             type: "timestamp",
+//             name: "timestamp",
+//             unit: "ms",
+//             quantity: "time"
+//           },
+//           {
+//             quantity: "velocity",
+//             type: "decimal",
+//             name: "speed",
+//             unit: "m/s",
+//             precision: 0
+//           },
+//           {
+//             quantity: "angle",
+//             type: "decimal",
+//             name: "direction",
+//             unit: "degrees",
+//             precision: 0
+//           }
+//         ],
+//         instants: [
+//           [1388531000000, 1388531300000, 1388531600000, 1388531900000, 1388532200000, 1388532500000],
+//           [10, 20, 50, 80, 90, 100],
+//           [45, 90, 135, 150, 180, 230]
+//         ],
+//         code: undefined,
+//         id: 1000,
+//         name: 'Een eerste stroming'
+//       }
+//     },
+//     {
+//       type: "Feature",
+//       geometry: {
+//         type: "Point",
+//         coordinates: [5.255, 52.517]
+//       },
+//       properties: {
+//         series: [
+//           {
+//             type: "timestamp",
+//             name: "timestamp",
+//             unit: "ms",
+//             quantity: "time"
+//           },
+//           {
+//             quantity: "velocity",
+//             type: "decimal",
+//             name: "speed",
+//             unit: "m/s",
+//             precision: 0
+//           },
+//           {
+//             quantity: "angle",
+//             type: "decimal",
+//             name: "direction",
+//             unit: "degrees",
+//             precision: 0
+//           }
+//         ],
+//         instants: [
+//           [1388531000000, 1388531300000, 1388531600000, 1388531900000, 1388532200000, 1388532500000],
+//           [100, 90, 80, 70, 60, 50],
+//           [45, 90, 135, 150, 180, 230]
+//         ],
+//         code: undefined,
+//         id: 1001,
+//         name: 'Ene tweede stroming'
+//       }
+//     },
+//     {
+//       type: "Feature",
+//       geometry: {
+//         type: "Point",
+//         coordinates: [5.46, 52.61]
+//       },
+//       properties: {
+//         series: [
+//           {
+//             type: "timestamp",
+//             name: "timestamp",
+//             unit: "ms",
+//             quantity: "time"
+//           },
+//           {
+//             quantity: "velocity",
+//             type: "decimal",
+//             name: "speed",
+//             unit: "m/s",
+//             precision: 0
+//           },
+//           {
+//             quantity: "angle",
+//             type: "decimal",
+//             name: "direction",
+//             unit: "degrees",
+//             precision: 0
+//           }
+//         ],
+//         instants: [
+//           [1388531000000, 1388531300000, 1388531600000, 1388531900000, 1388532200000, 1388532500000],
+//           [100, 90, 80, 70, 60, 50],
+//           [45, 90, 135, 150, 180, 230]
+//         ],
+//         code: undefined,
+//         id: 1002,
+//         name: 'Een dritte stroming'
+//       }
+//     },
+//   ]
+// };
 
 
 /**
@@ -596,30 +596,63 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
   var API_URL = '/api/v1/tiles/location/5/16/10.geojson'; // tmp
 
   // declaring local vars
-  var mustDrawTVLayer,
-      getTVData,
+  var tvData,
+      mustDrawTVLayer,
+      setTVData,
       createTVLayer,
       updateTVLayer,
       d3TVLayer,
       getTimeIndex,
       getValueFromTimeseriesJSON,
-      mostRecentMeasurementTime;
+      mostRecentMeasurementTime,
+      changeTVData;
 
   // Stubbed for now...
   mustDrawTVLayer = function (scope) {
     return true;
   };
 
-  // Stubbed for now....
-  getTVData = function () {
-    return dummyResults;
+  // Tmp/dev-only: method to have more than a single datum per day, since
+  // else animations would be dragging a long way too much;
+  changeTVData = function (obj) {
+
+    var oldTimestamps = obj.features[0].properties.timeseries[0].data;
+    var minTimestamp = oldTimestamps[0];
+    var newTimestamps = [];
+    var STEP_SIZE = 300000;
+
+    for (var i = 0; i < oldTimestamps.length; i++) {
+      newTimestamps.push(minTimestamp + i * STEP_SIZE);
+    }
+    obj.features[0].properties.timeseries[0].data = newTimestamps;
+    return obj;
+  };
+
+  setTVData = function () {
+
+    var response, request = new XMLHttpRequest();
+    request.open("GET", API_URL, true);
+
+    request.onreadystatechange = function () {
+      /*jshint evil: true */
+      if (request.readyState === 4 && request.status === 200) {
+        if (window.JSON) {
+          response = JSON.parse(request.responseText);
+        } else {
+          response = eval("(" + request.responseText + ")");
+        }
+        tvData = changeTVData(response);
+        console.log('Got proper JSON response from API endpoint:', response);
+      }
+    };
+    request.send();
   };
 
   getTimeIndex = function (scope, tvData, stepSize) {
 
     var i,
         virtualNow = scope.timeState.at,
-        relevantTimestamps = tvData.features[0].properties.instants[0],
+        relevantTimestamps = tvData.features[0].properties.timeseries[0].data,
         currentTimestamp,
         minTimestamp,
         maxTimestamp;
@@ -635,6 +668,7 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
     if (virtualNow < minTimestamp || virtualNow > maxTimestamp) {
 
       // if too early/late for any results, return undefined
+      console.log(virtualNow < minTimestamp ? "too early" : "too late");
       return;
 
     } else {
@@ -642,10 +676,13 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
       // ..else, retrieve index:
       for (i = 0; i < relevantTimestamps.length; i++) {
 
+        console.log("looping through relevantTimestamps, i =", i);
+
         currentTimestamp = relevantTimestamps[i];
 
         if (currentTimestamp >= virtualNow
             && currentTimestamp < virtualNow + stepSize) {
+          console.log("Found relevant timestamp!", currentTimestamp, "(index =", i, ")");
           return i;
         }
       }
@@ -702,26 +739,29 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
     link: function (scope, element, attrs) {
 
       var previousTimeIndex,
+          //STEP_SIZE = 86400000,
           STEP_SIZE = 300000,
-          tvData = getTVData(),
-          tvLayer;
+          tvLayer,
+          timeIndex;
+
+      setTVData();
 
       scope.$watch('timeState.at', function (newVal, oldVal) {
 
-        if (!tvLayer && MapService.isMapDefined()) {
+        console.log('[W] scope.$watch("timeState.at", ...)');
 
+        if (!tvLayer && MapService.isMapDefined()) {
           tvLayer = createTVLayer(scope, {
             type: "FeatureCollection",
             features: []
           });
         }
 
-        if (newVal !== oldVal && mustDrawTVLayer()) {
+        if (tvData && newVal !== oldVal && mustDrawTVLayer()) {
 
-          var timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
-
+          timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
+          console.log("timeIndex:", timeIndex);
           if (timeIndex !== undefined) {
-            //previousTimeIndex = timeIndex;
             updateTVLayer(tvLayer, tvData, timeIndex);
           }
         }
@@ -729,16 +769,14 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
 
       scope.$watch('mapState.zoom', function (newVal, oldVal) {
 
-        if (newVal !== oldVal && mustDrawTVLayer()) {
+        console.log('[W] scope.$watch("mapState.zoom", ...)');
 
-          var timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
-
+        if (tvData && newVal !== oldVal && mustDrawTVLayer()) {
+          timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
           if (timeIndex !== undefined) {
-            //previousTimeIndex = timeIndex;
             updateTVLayer(tvLayer, tvData, timeIndex);
           }
         }
-
       });
     }
   };

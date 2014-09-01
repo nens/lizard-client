@@ -149,18 +149,14 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       _initiateWMSLayer(nonLeafLayer);
       break;
     case ('ASSET'):
-
-      if (nonLeafLayer.slug === 'probeersel') {
-        console.log('[F] MapService.createLayer');
-        // _initiateGridLayer(nonLeafLayer);
-        // _initiateTMSLayer(nonLeafLayer);
-      } else {
-        _initiateGridLayer(nonLeafLayer);
-        _initiateTMSLayer(nonLeafLayer);
-      }
-
+      _initiateGridLayer(nonLeafLayer);
+      _initiateTMSLayer(nonLeafLayer);
+      break;
+    case ('Vector'):
+      console.log("initated Vector layer!");
       break;
     default:
+      console.log('nonLeafLayer:', nonLeafLayer.slug);
       _initiateTMSLayer(nonLeafLayer);
       break;
     }
