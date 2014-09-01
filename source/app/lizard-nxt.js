@@ -377,6 +377,8 @@ app.controller('MasterCtrl',
     if ($scope.timeState.hidden !== false) {
       $scope.toggleTimeline();
     }
+    $scope.mapState.activeLayersChanged =
+     !$scope.mapState.activeLayersChanged;
   };
 
   /**

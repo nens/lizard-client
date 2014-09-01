@@ -110,7 +110,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
       return function () {
         ClickFeedbackService.drawArrowHere(here);
         getRasterForLocation();
-      }
+      };
     };
 
     /**
@@ -366,10 +366,12 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return; }
 
+
+
       // NOTE: how should we do this....?
       $scope.pointObject.attrs.active = $scope.mapState.layers.waterchain.active;
       $scope.pointObject.temporalRaster.active = $scope.mapState.layers['demo:radar'].active;
-      // $scope.pointObject.events.active = $scope.mapState.layers['demo:radar'].active;
+      $scope.pointObject.events.active = $scope.events.data.features.length > 0;
 
       if (!$scope.pointObject.temporalRaster.active &&
           !$scope.pointObject.attrs.active &&
