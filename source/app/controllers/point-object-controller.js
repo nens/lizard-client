@@ -363,20 +363,20 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
     $scope.$watch('pointObject.attrs.active',  _watchAttrAndEventActivity);
     $scope.$watch('pointObject.events.active', _watchAttrAndEventActivity);
 
-    // $scope.$watch('mapState.activeLayersChanged', function (n, o) {
-    //   if (n === o) { return; }
+    $scope.$watch('mapState.activeLayersChanged', function (n, o) {
+      if (n === o) { return; }
 
-    //   if (!$scope.pointObject.temporalRaster.active &&
-    //       !$scope.pointObject.attrs.active &&
-    //       !$scope.pointObject.timeseries.active &&
-    //       !$scope.pointObject.events.active) {
-    //     $scope.box.type = 'extentAgg';
-    //     console.log('daar')
-    //   } else {
-    //     $scope.pointObject = createPointObject();
-    //     fillPointObject($scope.mapState.here);
-    //   }
-    // });
+      if (!$scope.pointObject.temporalRaster.active &&
+          !$scope.pointObject.attrs.active &&
+          !$scope.pointObject.timeseries.active &&
+          !$scope.pointObject.events.active) {
+        $scope.box.type = 'extentAgg';
+        console.log('daar')
+      } else {
+        $scope.pointObject = createPointObject();
+        fillPointObject($scope.mapState.here);
+      }
+    });
 
     $scope.mustShowRainCard = RasterService.mustShowRainCard;
   }

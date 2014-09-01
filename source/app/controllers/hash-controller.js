@@ -186,7 +186,6 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
           }
         }
         if ($scope.mapState.layersNeedLoading) {
-          console.log('zeker weten niet')
           // Initialise layers
           angular.forEach(MapService.mapState.layers, function (layer) {
             MapService.mapState.activeLayersChanged =
