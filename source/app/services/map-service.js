@@ -210,7 +210,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     });
     angular.forEach($filter('orderBy')(layers, 'z_index', true),
       function (layer) {
-      if ((layer.overlayer === true) && (layer.active) && 
+      if ((layer.overlayer === true) && (layer.active) &&
           'leafletLayer' in layer) {
         layer.leafletLayer.setOpacity(1 / numLayers);
         numLayers--;
@@ -498,11 +498,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       mapState.moved = Date.now();
       mapState.mapMoving = false;
       mapState.center = _map.getCenter();
-      var zoom = _map.getZoom();
-      if (zoom === Infinity) {
-        // debugger
-      }
-      // mapState.zoom = (zoom !== Infinity) ? mapState.zoom : zoom;
       mapState.zoom = _map.getZoom();
       mapState.bounds = _map.getBounds();
     };
