@@ -155,8 +155,8 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
     for (i = 0; i < X_VALS_FOR_ARROW.length; i++) {
 
-      xCoord = Math.round(((X_VALS_FOR_ARROW[i] -  WIDTH_FOR_ARROW / 2) * SCALE_FACTOR) + cx);
-      yCoord = Math.round(((Y_VALS_FOR_ARROW[i] - HEIGHT_FOR_ARROW / 2) * SCALE_FACTOR) + cy);
+      xCoord = Math.round(((X_VALS_FOR_ARROW[i] -  WIDTH_FOR_ARROW / 2 - 1) * SCALE_FACTOR) + cx);
+      yCoord = Math.round(((Y_VALS_FOR_ARROW[i] - HEIGHT_FOR_ARROW / 2 - 1) * SCALE_FACTOR) + cy);
 
       result += xCoord + "," + yCoord + " ";
     }
@@ -197,7 +197,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
             self._projection(d.geometry.coordinates)
           );
         })
-        .attr("stroke-width", 1.8)
+        .attr("stroke-width", 1)
         .attr("stroke", "white")
         .attr("class", function (feature) {
 
@@ -205,24 +205,15 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
           if (self.options.hasOwnProperty('selectorPrefix')) {
             classList += " " + self.options.selectorPrefix
-                             + feature.properties.id;
+                             + feature.properties.id
+                             + "current-arrow";
           }
           return classList;
         });
 
-    // features.enter()
-    //   .append("svg:circle")
-    //     .attr("cx", function (d) {
-    //       return self._projection(d.geometry.coordinates)[0];
-    //     })
-    //     .attr("cy", function (d) {
-    //       return self._projection(d.geometry.coordinates)[1];
-    //     })
-    //     .attr("r", 5)
-    //     .attr("fill", "#ff0000");
-
     // UPDATE
     //
+    + "current-arrow"
     // NB! We do not morph between two different states of the arrow
     features
       .attr("points", function (d) {
@@ -230,40 +221,26 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
             self._projection(d.geometry.coordinates)
           );
         })
+      .attr("transform", function (d) {
+
+        var deg, cx, cy, projection;
+
+        deg = Math.floor(360 * (d.properties.timeseries[2].data[timeStepIndex] / MAX_DIRECTON));
+        projection = self._projection(d.geometry.coordinates);
+        cx = projection[0];
+        cy = projection[1];
+
+        return "rotate(" + deg + ", " + cx + ", " + cy + ")";
+      })
       .attr("fill", function (d) {
 
         var relSpeed, shade;
 
         relSpeed = d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED_FOR_CURRENT;
         shade = 255 - Math.floor(relSpeed * 256);
+
         return "rgb(255, " + shade + ", " + shade + ")";
-
-      })
-      .attr("transform", function (d) {
-
-        console.log("d", d);
-
-        var deg, cx, cy, projection;
-
-        deg = Math.floor(360 * (d.properties.timeseries[2].data[timeStepIndex] / MAX_DIRECTON));
-        projection = self._projection(d.geometry.coordinates);
-
-        cx = projection[0];
-        cy = projection[1];
-
-        return "rotate(" + deg + ", " + cx + ", " + cy + ")";
       });
-
-
-    // features
-    //   .select("circle")
-    //     .attr("cx", function (d) {
-    //       return self._projection(d.geometry.coordinates)[0];
-    //     })
-    //     .attr("cy", function (d) {
-    //       return self._projection(d.geometry.coordinates)[1];
-    //     })
-    //     .attr("fill", "rgb(255, 0, 0)");
 
     // EXIT
     features.exit()

@@ -513,7 +513,8 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
   function (UtilService, MapService) {
 
   // declaring constants:
-  var API_URL = '/api/v1/tiles/location/5/16/10.geojson'; // tmp
+  var API_URL = '/api/v1/tiles/location/5/16/10.geojson', // tmp
+      ANIMATION_DURATION = 500;
 
   // declaring local vars
   var tvData,
@@ -523,29 +524,13 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
       updateTVLayer,
       d3TVLayer,
       getTimeIndex,
-      getValueFromTimeseriesJSON,
       previousTimeIndex,
-      changeTVData;
+      changeTVData,
+      clearTVLayer,
+      updateTVLayerConditionally;
 
-  // Stubbed for now...
   mustDrawTVLayer = function (scope) {
-    return true;
-  };
-
-  // Tmp/dev-only: method to have more than a single datum per day, since
-  // else animations would be dragging a long way too much;
-  changeTVData = function (obj) {
-    var i,
-        newTimestamps = [],
-        STEP_SIZE = 300000,
-        oldTimestamps = obj.features[0].properties.timeseries[0].data,
-        minTimestamp = oldTimestamps[0];
-
-    for (i = 0; i < oldTimestamps.length; i++) {
-      newTimestamps.push(minTimestamp + i * STEP_SIZE);
-    }
-    obj.features[0].properties.timeseries[0].data = newTimestamps;
-    return obj;
+    return scope.mapState.layers.flow.active;
   };
 
   setTVData = function () {
@@ -561,14 +546,13 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
         } else {
           response = eval("(" + request.responseText + ")");
         }
-        // tvData = changeTVData(response);
         tvData = response;
       }
     };
     request.send();
   };
 
-  getTimeIndex = function (scope, tvData, stepSize, previousTimeIndex) {
+  getTimeIndex = function (scope, tvData, stepSize) {
 
     var i,
         virtualNow = scope.timeState.at,
@@ -585,27 +569,33 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
     minTimestamp = relevantTimestamps[0];
     maxTimestamp = relevantTimestamps[relevantTimestamps.length - 1];
 
-    if (virtualNow < minTimestamp || virtualNow > maxTimestamp) {
+    if (virtualNow < minTimestamp) {
 
-      // if too early/late for any results, return undefined
-      console.log(virtualNow < minTimestamp ? "too early" : "too late");
+      console.log("[I] timeState.at: too early");
+      previousTimeIndex = 0;
+      clearTVLayer();
+      return;
+
+    } else if ( virtualNow > maxTimestamp) {
+
+      console.log("[I] timeState.at: too late");
+      clearTVLayer();
       return;
 
     } else {
 
       // ..else, retrieve index:
-      var minTimeIndex = previousTimeIndex || 0,
-          maxIterations = relevantTimestamps.length - minTimeIndex;
 
-      for (i = minTimeIndex; i < maxIterations; i++) {
+      var startIndex = previousTimeIndex || 0,
+          endIndex = relevantTimestamps.length - startIndex;
 
-        //console.log("looping through relevantTimestamps, i =", i);
+      for (i = startIndex; i < endIndex; i++) {
 
         currentTimestamp = relevantTimestamps[i];
 
         if (currentTimestamp >= virtualNow
             && currentTimestamp < virtualNow + stepSize) {
-          //console.log("Found relevant timestamp!", currentTimestamp, "(index =", i, ")");
+
           return i;
         }
       }
@@ -657,13 +647,16 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
     tvLayer._refreshDataForCurrents(timeIndex);
   };
 
+  clearTVLayer = function () {
+    d3.selectAll("polygon.current-arrow").remove();
+  };
+
   return {
     restrict: 'A',
     link: function (scope, element, attrs) {
 
       var previousTimeIndex,
           STEP_SIZE = 86400000,
-          //STEP_SIZE = 300000,
           tvLayer,
           timeIndex;
 
@@ -671,7 +664,7 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
 
       scope.$watch('timeState.at', function (newVal, oldVal) {
 
-        // console.log('[W] scope.$watch("timeState.at", ...)');
+        if (newVal === oldVal) { return; }
 
         if (!tvLayer && MapService.isMapDefined()) {
           tvLayer = createTVLayer(scope, {
@@ -680,10 +673,10 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
           });
         }
 
-        if (tvData && newVal !== oldVal && mustDrawTVLayer()) {
-
+        if (tvData && mustDrawTVLayer(scope)) {
           timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
           if (timeIndex !== undefined) {
+            previousTimeIndex = timeIndex;
             updateTVLayer(tvLayer, tvData, timeIndex);
           }
         }
@@ -691,12 +684,28 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
 
       scope.$watch('mapState.zoom', function (newVal, oldVal) {
 
-        console.log('[W] scope.$watch("mapState.zoom", ...)');
+        if (newVal === oldVal) { return; }
 
-        if (tvData && newVal !== oldVal && mustDrawTVLayer()) {
+        if (tvData && mustDrawTVLayer(scope)) {
           timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
           if (timeIndex !== undefined) {
-            previousTimeIndex = timeIndex;
+            clearTVLayer();
+            updateTVLayer(tvLayer, tvData, timeIndex);
+          }
+        }
+      });
+
+      scope.$watch('mapState.layers.flow.active', function (newVal, oldVal) {
+
+        console.log('debug:');
+
+        if (newVal === oldVal) { return; }
+
+        clearTVLayer();
+
+        if (tvData && mustDrawTVLayer(scope)) {
+          timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
+          if (timeIndex !== undefined) {
             updateTVLayer(tvLayer, tvData, timeIndex);
           }
         }
