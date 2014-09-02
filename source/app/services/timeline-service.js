@@ -127,7 +127,6 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
 
     addClickListener: {
       value: function () {
-        console.log(this);
         this.svg.on("click", clicked);
       }
     },

@@ -46,7 +46,7 @@
 }
 
 rect {
-  fill: none;
+  opacity: 0;
 }
 
 rect.bar {

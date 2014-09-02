@@ -122,9 +122,9 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     followMouse: {
       value: function (callback) {
         var self = this;
-        this.svg.select('#listeners').on('mousemove', function () {
+        var el = this.svg.select('g').select('#listeners');
+        el.on('mousemove', function () {
           var pos = self.x.scale.invert(d3.mouse(this)[0]);
-          console.log(pos);
           callback(pos);
         });
       }
@@ -139,7 +139,6 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
   _drawHorizontalStacks = function (svg, dimensions, duration, scale, data, keys, total, labels) {
     var width = Graph.prototype._getWidth(dimensions),
     height = Graph.prototype._getHeight(dimensions);
-    console.log(width);
     var previousCumu = 0;
     angular.forEach(data, function (value) {
       value.start = previousCumu;
@@ -149,7 +148,6 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     // Join new data with old elements, based on the timestamp.
     var rects = svg.select('g').select('#feature-group').selectAll("rect")
       .data(data, function (d) { return d[keys.y]; });
-
 
     // UPDATE
     // Update old elements as needed.
