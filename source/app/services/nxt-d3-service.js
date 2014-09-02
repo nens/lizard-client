@@ -24,6 +24,22 @@ app.factory("NxtD3", [ function () {
     constructor: NxtD3,
 
     _transTime: 300,
+    _localeFormatter: {
+      'nl_NL': d3.locale({
+        "decimal": ",",
+        "thousands": ".",
+        "grouping": [3],
+        "currency": ["€", ""],
+        "dateTime": "%a %b %e %X %Y",
+        "date": "%d-%m-%Y",
+        "time": "%H:%M:%S",
+        "periods": ["AM", "PM"],
+        "days": ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
+        "shortDays": ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"],
+        "months": ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"],
+        "shortMonths": ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"]
+      })
+    },
 
     resize: function (dimensions) {
       this.dimensions = angular.copy(dimensions);
@@ -110,6 +126,17 @@ app.factory("NxtD3", [ function () {
         axis.ticks(options.ticks);
       } else {
         axis.ticks(5);
+      }
+      if (scale.domain()[0] instanceof Date) {
+        var tickFormat = this._localeFormatter['nl_NL'].timeFormat.multi([
+              ["%H:%M", function(d) { return d.getMinutes(); }],
+              ["%H:%M", function(d) { return d.getHours(); }],
+              ["%a %d", function(d) { return d.getDay() && d.getDate() != 1; }],
+              ["%b %d", function(d) { return d.getDate() != 1; }],
+              ["%B", function(d) { return d.getMonth(); }],
+              ["%Y", function() { return true; }]
+            ]);
+        axis.tickFormat(tickFormat);
       }
       return axis;
     },
