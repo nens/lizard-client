@@ -529,12 +529,6 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
       brushg.call(brush);
     }
     brushed();
-    if (d3.event) {
-      if (d3.event.type === 'click') {
-        d3.event.preventDefault();
-        Timeline.prototype.addClickListener();
-      }
-    }
   };
 
   /**

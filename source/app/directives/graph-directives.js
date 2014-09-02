@@ -19,22 +19,17 @@ app.directive('graph', ["Graph", function (Graph) {
 
   var graphCtrl, preCompile, link;
 
-  graphCtrl = function ($scope, Graph) {
-    // Provide defaults for backwards compatability
-    this.data = $scope.data || [];
-    this.keys = $scope.keys || {x: 0, y: 1};
-    this.labels = {
-      x: $scope.xlabel || '',
-      y: $scope.ylabel || ''
-    };
-    this.graph = {};
-    this.yfilter = "";
-    // Define data update function in attribute directives
-    this.update = function () {};
-    // Define timeState.now update function in attribute directives
-    this.now = function () {};
-  };
-
+  /**
+   * @function
+   * @memberOf app.graph
+   * @param {scope}     scope     local scope
+   * @param {object}    element
+   * @param {object}    attrs     data, keys, labels and now
+   * @param {object}    graphCtrl controller
+   * @description       sets up a graph on the controller after
+   *                    the controller's instantiation, but before
+   *                    the link.
+   */
   preCompile = function (scope, element, attrs, graphCtrl) {
     /*
                        dimensions.width
@@ -72,7 +67,6 @@ app.directive('graph', ["Graph", function (Graph) {
 
     // Create the graph and put it on the controller
     graphCtrl.graph = new Graph(el, dimensions);
-
   };
 
   link = function (scope, element, attrs, graphCtrl) {
@@ -89,6 +83,22 @@ app.directive('graph', ["Graph", function (Graph) {
       graphCtrl.now.call(graphCtrl.graph, scope.now);
     });
 
+  };
+
+  graphCtrl = function ($scope, Graph) {
+    // Provide defaults for backwards compatability
+    this.data = $scope.data || [];
+    this.keys = $scope.keys || {x: 0, y: 1};
+    this.labels = {
+      x: $scope.xlabel || '',
+      y: $scope.ylabel || ''
+    };
+    this.graph = {};
+    this.yfilter = "";
+    // Define data update function in attribute directives
+    this.update = function () {};
+    // Define timeState.now update function in attribute directives
+    this.now = function () {};
   };
 
   return {
