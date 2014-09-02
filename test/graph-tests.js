@@ -1,52 +1,109 @@
 // graph-tests.js
 
-describe('Testing graph directives', function() {
+describe('Testing graph directives', function () {
 
-  var $compile, $rootScope;
+  var $compile, $rootScope, element, scope, dimensions;
 
   beforeEach(module('lizard-nxt'));
-  beforeEach(inject(function(_$compile_, _$rootScope_){
+  beforeEach(inject(function (_$compile_, _$rootScope_) {
       $compile = _$compile_;
       $rootScope = _$rootScope_;
   }));
 
-  it('should have an isolate scope', function () {
-    // tests whether the scope that is passed to the graph directive
-    // so we use a dummy ctrl (in `test/mocks.js`)
-    var element = angular.element('<div ng-controller="DummyCtrl">' +
-      '<graph data="3"></graph></div>');
+  beforeEach(function () {
+    dimensions = {width: 100, height: 90};
+    stringDim = '{width: ' + String(dimensions.width) + ', height: ' + String(dimensions.height) + '}';
+    element = angular.element('<div>' +
+      '<graph data="[[3, 4], [2,3], [5,6]]" dimensions="'+ stringDim +'"></graph></div>');
     element = $compile(element)($rootScope);
-    var scope = element.scope();
-    var isolatescope = scope.$$childTail;
-    expect(scope.hasOwnProperty('$$isolateBindings')).toBe(false);
-    expect(isolatescope.hasOwnProperty('$$isolateBindings')).toBe(true);
+    scope = element.scope();
+    scope.$digest();
   });
 
-  it('should look at the data in the right way', function () {
+  it('should have an svg', function () {
+    expect(d3.select(element[0]).select('svg')[0][0]).not.toBeNull();
   });
 
-  it('should draw a canvas', function () {
+  it('should have the correct height', function () {
+    expect(d3.select(element[0]).select('svg').attr('height')).toBe(String(dimensions.height));
+  });
 
+  it('should have the correct width', function () {
+    expect(d3.select(element[0]).select('svg').attr('width')).toBe(String(dimensions.width));
   });
 
 });
 
-describe('Testing graph subdirectives', function() {
+describe('Testing line graph attribute directive', function() {
 
-  var $compile, $rootScope;
+  var $compile, $rootScope, element, scope;
 
   beforeEach(module('lizard-nxt'));
-  beforeEach(inject(function(_$compile_, _$rootScope_){
+  beforeEach(inject(function (_$compile_, _$rootScope_) {
       $compile = _$compile_;
       $rootScope = _$rootScope_;
   }));
 
-  it('should draw a line', function () {
-
+  beforeEach(function () {
+    element = angular.element('<div>' +
+      '<graph line data="[[3, 4], [2,3], [5,6]]"></graph></div>');
+    element = $compile(element)($rootScope);
+    scope = element.scope();
+    scope.$digest();
   });
 
-  it('should draw 2 lines', function () {
+  it('should draw a line', function () {
+    expect(d3.select(element[0]).select('path')[0][0]).not.toBeNull();
+  });
 
+});
+
+describe('Testing barChart attribute directive', function() {
+
+  var $compile, $rootScope, element, scope;
+
+  beforeEach(module('lizard-nxt'));
+  beforeEach(inject(function (_$compile_, _$rootScope_) {
+      $compile = _$compile_;
+      $rootScope = _$rootScope_;
+  }));
+
+  beforeEach(function () {
+    element = angular.element('<div>' +
+      '<graph bar-chart data="[[1, 4], [2,3], [5,6]]"></graph></div>');
+    element = $compile(element)($rootScope);
+    scope = element.scope();
+    scope.$digest();
+  });
+
+  it('should draw a bunch of rectangles', function () {
+    expect(d3.select(element[0]).select('rect')[0][0]).not.toBeNull();
+    expect(d3.select(element[0]).select('#feature-group').selectAll('rect')[0].length).toBe(3);
+  });
+
+});
+
+describe('Testing horizontalStackChart attribute directive', function() {
+
+  var $compile, $rootScope, element, scope;
+
+  beforeEach(module('lizard-nxt'));
+  beforeEach(inject(function (_$compile_, _$rootScope_) {
+      $compile = _$compile_;
+      $rootScope = _$rootScope_;
+  }));
+
+  beforeEach(function () {
+    element = angular.element('<div>' +
+      '<graph bar-chart data="[[1, 4], [2,3], [5,6]]"></graph></div>');
+    element = $compile(element)($rootScope);
+    scope = element.scope();
+    scope.$digest();
+  });
+
+  it('should also draw a bunch of rectangles', function () {
+    expect(d3.select(element[0]).select('rect')[0][0]).not.toBeNull();
+    expect(d3.select(element[0]).select('#feature-group').selectAll('rect')[0].length).toBe(3);
   });
 
 });
