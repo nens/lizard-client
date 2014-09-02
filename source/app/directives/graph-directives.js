@@ -70,6 +70,7 @@ app.directive('graph', ["Graph", function (Graph) {
 
     // Create the graph and put it on the controller
     graphCtrl.graph = new Graph(el, dimensions);
+    debugger
   };
 
   /**

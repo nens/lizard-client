@@ -1,5 +1,4 @@
 // graph-tests.js
-
 describe('Testing graph directives', function () {
 
   var $compile, $rootScope, element, scope, dimensions;
@@ -20,7 +19,7 @@ describe('Testing graph directives', function () {
     scope.$digest();
   });
 
-  it('should have an svg', function () {
+  it('should have a svg', function () {
     expect(d3.select(element[0]).select('svg')[0][0]).not.toBeNull();
   });
 
@@ -106,4 +105,41 @@ describe('Testing horizontalStackChart attribute directive', function() {
     expect(d3.select(element[0]).select('#feature-group').selectAll('rect')[0].length).toBe(3);
   });
 
+});
+
+describe('Testing graph', function () {
+  var graph, dimensions;
+
+  beforeEach(module('lizard-nxt'));
+
+  beforeEach(inject(function ($injector) {
+    var Graph = $injector.get('Graph');
+    var element = angular.element('<svg></svg>')[0];
+    dimensions = {
+      width: 120,
+      height: 100,
+      padding: {
+        top: 1,
+        right: 2,
+        bottom: 3,
+        left: 4
+      }
+    };
+    graph = new Graph(element, dimensions);
+  }));
+
+  it('should create a canvas with certain width', function () {
+    expect(graph.svg.attr('width')).toBe(String(dimensions.width));
+  });
+
+  it('should create a clippath drawing area ', function () {
+    var clippath = graph.svg.select('g').select('g').attr('clip-path');
+    expect(clippath).toBe('url(#clip)');
+  });
+
+  it('should transform the drawing area to create a padding', function () {
+    var translate = "translate(" + dimensions.padding.left + ", " + dimensions.padding.top + ")";
+    var transform = graph.svg.select('g').attr('transform');
+    expect(transform).toBe(translate);
+  });
 });

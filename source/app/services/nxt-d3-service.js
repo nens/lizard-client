@@ -21,6 +21,8 @@ app.factory("NxtD3", [ function () {
 
   NxtD3.prototype = {
 
+    constructor: NxtD3,
+
     _transTime: 300,
 
     resize: function (dimensions) {

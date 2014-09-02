@@ -27,7 +27,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
    *                            bottom, left and right padding.
    *                            All values in px.
    */
-  function Graph(element, dimensions, data) {
+  function Graph(element, dimensions) {
     NxtD3.call(this, element, dimensions);
     this.svg = this.createDrawingArea(this.svg, this.dimensions);
   }
