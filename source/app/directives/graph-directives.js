@@ -29,6 +29,10 @@ app.directive('graph', ["Graph", function (Graph) {
     };
     this.graph = {};
     this.yfilter = "";
+    // Define data update function in attribute directives
+    this.update = function () {};
+    // Define timeState.now update function in attribute directives
+    this.now = function () {};
   };
 
   preCompile = function (scope, element, attrs, graphCtrl) {
@@ -81,6 +85,10 @@ app.directive('graph', ["Graph", function (Graph) {
       graphCtrl.update.call(graphCtrl.graph, graphCtrl.data, graphCtrl.keys, graphCtrl.labels);
     });
 
+    scope.$watch('now', function (n, o) {
+      graphCtrl.now.call(graphCtrl.graph, scope.now);
+    });
+
   };
 
   return {
@@ -96,7 +104,8 @@ app.directive('graph', ["Graph", function (Graph) {
       xlabel: '=',
       ylabel: '=',
       keys: '=',
-      yfilter: '='
+      yfilter: '=',
+      now: '='
     },
     restrict: 'E',
     replace: true,
@@ -146,6 +155,12 @@ app.directive('line', [function () {
       });
     });
 
+    graph.mouseExit(function () {
+      scope.$apply(function () {
+        scope.$parent.box.mouseLoc = undefined;
+      });
+    });
+
     graphCtrl.update = graph.drawLine;
 
   };
@@ -181,6 +196,7 @@ app.directive('barChart', ['$filter', function ($filter) {
       }
       this.drawBars(data, keys, labels);
     };
+    graphCtrl.now = graph.drawNow;
 
   };
 

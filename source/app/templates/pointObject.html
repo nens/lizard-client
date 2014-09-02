@@ -114,7 +114,8 @@
              data="pointObject.temporalRaster.data"
              ylabel="pointObject.temporalRaster.aggWindow"
              yfilter="aggWinToYLabel"
-             keys="{x: 0, y: 1}">
+             keys="{x: 0, y: 1}"
+             now="timeState.at">
       </graph>
       <div class="recurrence-time-container"
            ng-if="!!pointObject.temporalRaster.recurrenceTime">

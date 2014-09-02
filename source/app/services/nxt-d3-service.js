@@ -159,6 +159,21 @@ app.factory("NxtD3", [ function () {
           return x.scale(d[keys.x]);
         })
         .defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
+    },
+    drawNow: function (now) {
+      var height = this._getHeight(this.dimensions);
+
+      var nowIndicator = this.svg.select('g').select('#feature-group').select('.now-indicator');
+      if (!nowIndicator[0][0]) {
+        nowIndicator = this.svg.select('g').select('#feature-group').append('line')
+          .attr('class', 'now-indicator');
+      }
+      var x = this.x.scale(now);
+      nowIndicator.transition().duration(this._transTime)
+        .attr('x1', x)
+        .attr('x2', x)
+        .attr('y1', height)
+        .attr('y2', 0);
     }
   };
 

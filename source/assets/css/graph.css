@@ -46,6 +46,10 @@
 }
 
 rect {
+fill: #95a5a6;
+}
+
+#listeners {
   opacity: 0;
 }
 

@@ -110,21 +110,6 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
       }
     },
 
-    // TODO: remove nowIndicator and add it to the brush
-    addNowIndicator: {
-      value: function () {
-        var height = this._getHeight(this.dimensions);
-
-        // Create line for the timeState.at just out of sight
-        nowIndicator = this.svg.select('g').append('line')
-          .attr('class', 'now-indicator')
-          .attr('x1', - this.dimensions.padding.left - 5)
-          .attr('x2', - this.dimensions.padding.left - 5)
-          .attr('y1', height)
-          .attr('y2', 0);
-      }
-    },
-
     addClickListener: {
       value: function () {
         this.svg.on("click", clicked);
@@ -235,17 +220,6 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
         brushg
           .call(brush.extent([new Date(start), new Date(end)]));
         brushed();
-      }
-    },
-
-    // TODO: remove nowIndicator and add it to the brush
-    updateNowElement: {
-      value: function (now) {
-        var height = this._getHeight(this.dimensions);
-        nowIndicator
-          .attr('x1', - this.dimensions.padding.left - 5)
-          .attr('x2', - this.dimensions.padding.left - 5)
-          .attr('y1', height);
       }
     },
 

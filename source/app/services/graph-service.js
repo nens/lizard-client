@@ -128,8 +128,16 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
           callback(pos);
         });
       }
+    },
+    mouseExit: {
+      value: function (callback) {
+        var self = this;
+        var el = this.svg.select('g').select('#listeners');
+        el.on('mouseout', function () {
+          callback();
+        });
+      }
     }
-
   });
 
   var createPie, createArc, _drawDonut, getDonutHeight, drawAxes, addLabel,
