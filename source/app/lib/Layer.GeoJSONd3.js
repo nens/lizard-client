@@ -129,8 +129,17 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
   },
 
 
+  _arrowConstants: {
+    // points for neat arrow, not scaled nor shifted
+    X_VALS: [ 90,  90, 120, 60, 60,   0,  30,  30],
+    Y_VALS: [210, 100, 100,  0,  0, 100, 100, 210],
+    WIDTH: 120,  // max diff X_VALS_FOR_ARROW
+    HEIGHT: 210, // max diff Y_VALS_FOR_ARROW
+  },
+
+
   /**
-   * Returns a set of points (in string form), for drawing a SVG polygon.
+   * Returns a set of points (as string), for drawing a SVG polygon.
    *
    * @param {integer[]} centerCoord - An X and Y value which represent the center af the arrow to be drawn
    * @returns {string}
@@ -145,13 +154,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
         cy = centerCoord[1],
 
         // constant for scaling the arrow
-        SCALE_FACTOR = (scaleFactor * 0.5 + 0.5) || 0.5,
-
-        // points for neat arrow, not scaled nor shifted
-        X_VALS_FOR_ARROW = [ 90,  90, 120, 60, 60,   0,  30,  30],
-        Y_VALS_FOR_ARROW = [210, 100, 100,  0,  0, 100, 100, 210],
-        WIDTH_FOR_ARROW  = 120,  // max diff X_VALS_FOR_ARROW
-        HEIGHT_FOR_ARROW = 210, // max diff Y_VALS_FOR_ARROW
+        SCALE_FACTOR = (scaleFactor * 0.5 + 0.5) || 0.75,
 
         // declaring vars used in loop-body outside of the loop-body
         xCoord,
@@ -160,10 +163,10 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
         // ..to eliminate unneccesary var keywords
         i;
 
-    for (i = 0; i < X_VALS_FOR_ARROW.length; i++) {
+    for (i = 0; i < this._arrowConstants.X_VALS.length; i++) {
 
-      xCoord = Math.round(((X_VALS_FOR_ARROW[i] -  WIDTH_FOR_ARROW / 2 - 1) * SCALE_FACTOR) + cx);
-      yCoord = Math.round(((Y_VALS_FOR_ARROW[i] - HEIGHT_FOR_ARROW / 2 - 1) * SCALE_FACTOR) + cy);
+      xCoord = Math.round(((this._arrowConstants.X_VALS[i] - this._arrowConstants.WIDTH  / 2 - 1) * SCALE_FACTOR) + cx);
+      yCoord = Math.round(((this._arrowConstants.Y_VALS[i] - this._arrowConstants.HEIGHT / 2 - 1) * SCALE_FACTOR) + cy);
 
       result += xCoord + "," + yCoord + " ";
     }
@@ -186,26 +189,42 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
   _refreshDataForCurrents: function (timeStepIndex) {
 
     var self = this,
-        MAX_SPEED_FOR_CURRENT = 5.1, // arbitrary for now, must be adapted to reallife data..
-        MAX_DIRECTON = 27.3;
+        features,
+        MAX_SPEED_FOR_CURRENT = Math.max.apply(
+          null,
+          self._data.features[0].properties.timeseries[1].data
+        ),
+        MAX_DIRECTON = Math.max.apply(
+          null,
+          self._data.features[0].properties.timeseries[2].data
+        ),
+        _getPoints = function (d) {
+          return self._getPointsForArrow(
+            self._projection(d.geometry.coordinates),
+            d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED_FOR_CURRENT
+          );
+        },
+        _getFill = function (d) {
+          var relSpeed, shade;
+          relSpeed = d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED_FOR_CURRENT;
+          shade = 255 - Math.floor((relSpeed - 10e-6) * 256);
+          return "rgb(255, " + shade + ", " + shade + ")";
+        };
 
     if (this.g.empty()) {
       this.g = this._renderG();
     }
 
-    var features = this.g.selectAll(".current-arrow")
+    features = this.g.selectAll(".current-arrow")
       .data(this._data.features, self.idExtractor);
 
     // ENTER
     features.enter()
       .append("svg:polygon")
-        .attr("points", function (d) {
-          return self._getPointsForArrow(
-            self._projection(d.geometry.coordinates)
-          );
-        })
+        .attr("points", _getPoints)
         .attr("stroke-width", 1)
         .attr("stroke", "white")
+        .attr("fill", _getFill)
         .attr("class", function (feature) {
 
           var classList = self.options.class;
@@ -222,15 +241,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     //
     // NB! We do not morph between two different states of the arrow
     features
-      .attr("points", function (d) {
-
-          var relSpeed = d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED_FOR_CURRENT;
-
-          return self._getPointsForArrow(
-            self._projection(d.geometry.coordinates),
-            relSpeed
-          );
-        })
+      .attr("points", _getPoints)
       .attr("transform", function (d) {
 
         var deg, cx, cy, projection;
@@ -244,20 +255,12 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
       })
       .transition()
       .duration(200)
-      .attr("fill", function (d) {
-
-        var relSpeed, shade;
-
-        relSpeed = d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED_FOR_CURRENT;
-        shade = 255 - Math.floor(relSpeed * 256);
-
-        return "rgb(255, " + shade + ", " + shade + ")";
-      });
+      .attr("fill", _getFill);
 
     // EXIT
     features.exit()
-        .style("fill-opacity", 1e-6)
-        .remove();
+      .style("fill-opacity", 1e-6)
+      .remove();
   },
 
 
