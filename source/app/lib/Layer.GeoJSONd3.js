@@ -242,6 +242,8 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
         return "rotate(" + deg + ", " + cx + ", " + cy + ")";
       })
+      .transition()
+      .duration(200)
       .attr("fill", function (d) {
 
         var relSpeed, shade;
