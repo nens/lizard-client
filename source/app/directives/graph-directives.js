@@ -106,7 +106,7 @@ app.directive('graph', ["Graph", function (Graph) {
    * @memberOf app.graph
    * @param {scope}     $scope    local scope
    * @param {Graph}     Graph     graph service
-   * @description       Stores the graph directives data update functions
+   * @description       Stores the graph directives data and update functions
    */
   graphCtrl = function ($scope, Graph) {
     // Provide defaults for backwards compatability
@@ -280,7 +280,7 @@ app.directive('barChart', ['$filter', function ($filter) {
  * @ngdoc directive
  * @class graph
  * @memberof app.graph
- * @name barChart
+ * @name horizontal stack
  * @requires graph
  * @description       Draws a barchart. With dynamic axis label.
  *                    Initially written to substitute the landuse donut.
