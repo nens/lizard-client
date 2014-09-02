@@ -118,6 +118,16 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
 
         _drawHorizontalStacks(this.svg, this.dimensions, this._transTime, this.x.scale, data, keys, total, labels);
       }
+    },
+    followMouse: {
+      value: function (callback) {
+        var self = this;
+        this.svg.select('#listeners').on('mousemove', function () {
+          var pos = self.x.scale.invert(d3.mouse(this)[0]);
+          console.log(pos);
+          callback(pos);
+        });
+      }
     }
 
   });

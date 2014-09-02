@@ -182,7 +182,12 @@ app.factory("NxtD3", [ function () {
       .attr('height', dimensions.height)
       // Create a drawing group that is shifted left side padding to the right
       .append("g")
-        .attr("transform", "translate(" + dimensions.padding.left + ", " + dimensions.padding.top + ")");
+        .attr("transform", "translate(" + dimensions.padding.left + ", " + dimensions.padding.top + ")")
+        // Add rect element to attach listeners
+        .append('rect')
+          .attr('id', 'listeners')
+          .attr('width', width)
+          .attr('height', height);
     return svg;
   };
 

@@ -139,6 +139,13 @@ app.directive('line', [function () {
     keys = graphCtrl.keys;
 
     graph.drawLine(data, keys, graphCtrl.labels);
+
+    graph.followMouse(function (position) {
+      scope.$apply(function () {
+        scope.$parent.box.mouseLoc = position;
+      });
+    });
+
     graphCtrl.update = graph.drawLine;
 
   };
