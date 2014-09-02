@@ -11,7 +11,7 @@
  *
  * Everything in the graphs is animated for 500 milliseconds.
  */
-app.factory("Graph", ["NxtD3Service", function (NxtD3Service) {
+app.factory("Graph", ["NxtD3", function (NxtD3) {
 
   // Interaction functions
   var clicked,
@@ -28,10 +28,11 @@ app.factory("Graph", ["NxtD3Service", function (NxtD3Service) {
    *                            All values in px.
    */
   function Graph(element, dimensions, data) {
-    NxtD3Service.call(this, element, dimensions);
+    NxtD3.call(this, element, dimensions);
+    this.svg = this.createDrawingArea(this.svg, this.dimensions);
   }
 
-  Graph.prototype = Object.create(NxtD3Service.prototype, {
+  Graph.prototype = Object.create(NxtD3.prototype, {
 
     constructor: Graph,
 
@@ -123,7 +124,7 @@ app.factory("Graph", ["NxtD3Service", function (NxtD3Service) {
 
   var createPie, createArc, _drawDonut, getDonutHeight, drawAxes, addLabel,
   createD3Objects, toRescale, _drawLine, setupXYGraph, setupLineGraph, createDonut,
-  getBarWidth, _drawBars, createDrawingArea, _drawHorizontalStacks, setupXGraph;
+  getBarWidth, _drawBars, _drawHorizontalStacks, setupXGraph;
 
   _drawHorizontalStacks = function (svg, dimensions, duration, scale, data, keys, total, labels) {
     var width = Graph.prototype._getWidth(dimensions),
@@ -170,12 +171,12 @@ app.factory("Graph", ["NxtD3Service", function (NxtD3Service) {
       label = labels[labels.length - 1];
       label = Math.round(d.data / total * 100) + '% ' + label;
       svg.select('#xlabel')
-        .text(label).style("color", '#2980b9');
+        .text(label).attr("class", 'selected');
     });
 
     rects.on('mouseout', function (d) {
       svg.select('#xlabel')
-        .text(labels.x);
+        .text(labels.x).classed({"selected": false});
     });
 
   };
@@ -206,6 +207,7 @@ app.factory("Graph", ["NxtD3Service", function (NxtD3Service) {
       .attr("height", 0)
       .transition()
       .duration(duration)
+      .delay(function (d, i) { return i * 0.1 * duration; })
       .attr("height", function (d) { return height - y.scale(d[keys.y]); })
       .attr("y", function (d) { return y.scale(d[keys.y]); });
 

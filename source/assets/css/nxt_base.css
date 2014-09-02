@@ -970,9 +970,10 @@ ul.list-inline li.baselayer-icon label{
             filter: drop-shadow( -5px -5px 5px #000 );*/
 }
 
-/*.selected{
-    opacity: 0.8;
-}*/
+.selected{
+    color: #2980b9;
+    fill: #2980b9;
+}
 
 .extent{
     fill: rgba(30,30,30,0.1);

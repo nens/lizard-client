@@ -21,7 +21,7 @@
  * elements are removed. Therefore new and old dimensions need to be compared
  * to delay the resize of elements the same amount as the canvas.
  */
-app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
+app.factory("Timeline", ["NxtD3", function (NxtD3) {
 
   // The timeline
   var initialHeight,
@@ -61,7 +61,8 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
    *  for zoom, click and brush interaction with the rest of the app.
    */
   function Timeline(element, dimensions, start, end, interaction) {
-    NxtD3Service.call(this, element, dimensions);
+    NxtD3.call(this, element, dimensions);
+    console.log(this);
     initialHeight = dimensions.height;
     this.svg = addElementGroupsToCanvas(this.svg, this.dimensions);
     var width = dimensions.width -
@@ -90,7 +91,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
     }
   }
 
-  Timeline.prototype = Object.create(NxtD3Service.prototype, {
+  Timeline.prototype = Object.create(NxtD3.prototype, {
 
     constructor: Timeline,
 
@@ -126,6 +127,7 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
 
     addClickListener: {
       value: function () {
+        console.log(this);
         this.svg.on("click", clicked);
       }
     },
@@ -143,8 +145,9 @@ app.factory("Timeline", ["NxtD3Service", function (NxtD3Service) {
       value: function (start, end) {
         brush = d3.svg.brush().x(xScale);
         brush.on("brush", brushed);
+        var self = this;
         brush.on('brushstart', function () {
-          this.svg.on('click', null);
+          self.svg.on('click', null);
         });
         //TODO: Snap the brush to nearest logical unit, 5min, hour, week etc.
         brush.on("brushend", brushend);

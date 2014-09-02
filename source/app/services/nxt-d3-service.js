@@ -10,14 +10,13 @@
  * in the higher level graph and timeline services or use these methods
  * directly by calling NxtD3Service.<method>(<args>).
  */
-app.factory("NxtD3Service", [ function () {
+app.factory("NxtD3", [ function () {
 
   var createCanvas, createElementForAxis, resizeCanvas, createDrawingArea;
 
   function NxtD3(element, dimensions) {
     this.dimensions = angular.copy(dimensions);
     this.svg = createCanvas(element, this.dimensions);
-    this.svg = createDrawingArea(this.svg, this.dimensions);
   }
 
   NxtD3.prototype = {
@@ -27,7 +26,33 @@ app.factory("NxtD3Service", [ function () {
     resize: function (dimensions) {
       this.dimensions = angular.copy(dimensions);
       this.svg = resizeCanvas(this.svg, this.dimensions);
-      this.svg = createDrawingArea(this.svg, this.dimensions);
+      this.svg = this.createDrawingArea(this.svg, this.dimensions);
+    },
+    createDrawingArea: function (svg, dimensions) {
+      var width = NxtD3.prototype._getWidth(dimensions),
+      height = NxtD3.prototype._getHeight(dimensions);
+      // Add clippath to limit the drawing area to inside the graph
+      // See: http://bost.ocks.org/mike/path/
+      var clip = svg.select('g').select("defs");
+      if (!clip[0][0]) {
+        svg.select('g').append('defs').append("svg:clipPath");
+      }
+      svg.select('g').select("defs").select("clipPath")
+        .attr("id", "clip")
+        .append("svg:rect")
+        .attr("id", "clip-rect")
+        .attr("x", "0")
+        .attr("y", "0")
+        .attr("width", width)
+        .attr("height", height);
+      // Put the data in this group
+      var g = svg.select('g').select('g');
+      if (!g[0][0]) {
+        g = svg.select('g').append('g');
+      }
+      g.attr("clip-path", "url(#clip)")
+        .attr('id', 'feature-group');
+      return svg;
     },
     /**
      * Returns a max min object for a data object or array of arrays.
@@ -137,32 +162,6 @@ app.factory("NxtD3Service", [ function () {
     }
   };
 
-  createDrawingArea = function (svg, dimensions) {
-    var width = NxtD3.prototype._getWidth(dimensions),
-    height = NxtD3.prototype._getHeight(dimensions),
-    // Add clippath to limit the drawing area to inside the graph
-    // See: http://bost.ocks.org/mike/path/
-    clip = svg.select('g').select("defs");
-    if (!clip[0][0]) {
-      svg.select('g').append('defs').append("svg:clipPath");
-    }
-    svg.select('g').select("defs").select("clipPath")
-      .attr("id", "clip")
-      .append("svg:rect")
-      .attr("id", "clip-rect")
-      .attr("x", "0")
-      .attr("y", "0")
-      .attr("width", width)
-      .attr("height", height);
-    // Put the data in this group
-    var g = svg.select('g').select('g');
-    if (!g[0][0]) {
-      g = svg.select('g').append('g');
-    }
-    g.attr("clip-path", "url(#clip)")
-      .attr('id', 'feature-group');
-    return svg;
-  };
 
   /**
    * Creates a svg canvas for drawing,
@@ -200,7 +199,6 @@ app.factory("NxtD3Service", [ function () {
   };
 
   createElementForAxis = function (svg, id, dimensions, y) {
-    console.log(NxtD3.prototype._getHeight(dimensions), y)
     var className = y ? 'y axis': 'x axis',
     transform = y ? 0: NxtD3.prototype._getHeight(dimensions);
     return svg.select('g').append('g')
