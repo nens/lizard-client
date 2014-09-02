@@ -526,8 +526,7 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
       getTimeIndex,
       previousTimeIndex,
       changeTVData,
-      clearTVLayer,
-      updateTVLayerConditionally;
+      clearTVLayer;
 
   mustDrawTVLayer = function (scope) {
     return scope.mapState.layers.flow.active;
@@ -554,8 +553,7 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
 
   getTimeIndex = function (scope, tvData, stepSize) {
 
-    var i,
-        virtualNow = scope.timeState.at,
+    var virtualNow = scope.timeState.at,
         relevantTimestamps = tvData.features[0].properties.timeseries[0].data,
         currentTimestamp,
         minTimestamp,
@@ -571,28 +569,24 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
 
     if (virtualNow < minTimestamp) {
 
-      console.log("[I] timeState.at: too early");
       previousTimeIndex = 0;
       clearTVLayer();
       return;
 
     } else if ( virtualNow > maxTimestamp) {
 
-      console.log("[I] timeState.at: too late");
       clearTVLayer();
       return;
 
     } else {
 
-      // ..else, retrieve index:
-
-      var startIndex = previousTimeIndex || 0,
+      var i,
+          startIndex = previousTimeIndex || 0,
           endIndex = relevantTimestamps.length - startIndex;
 
       for (i = startIndex; i < endIndex; i++) {
 
         currentTimestamp = relevantTimestamps[i];
-
         if (currentTimestamp >= virtualNow
             && currentTimestamp < virtualNow + stepSize) {
 
@@ -658,7 +652,19 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
       var previousTimeIndex,
           STEP_SIZE = 86400000,
           tvLayer,
-          timeIndex;
+          timeIndex,
+          getTimeIndexAndUpdate;
+
+      getTimeIndexAndUpdate = function () {
+
+        if (tvData && mustDrawTVLayer(scope)) {
+          timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
+          if (timeIndex !== undefined) {
+            previousTimeIndex = timeIndex;
+            updateTVLayer(tvLayer, tvData, timeIndex);
+          }
+        }
+      };
 
       setTVData();
 
@@ -673,42 +679,26 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
           });
         }
 
-        if (tvData && mustDrawTVLayer(scope)) {
-          timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
-          if (timeIndex !== undefined) {
-            previousTimeIndex = timeIndex;
-            updateTVLayer(tvLayer, tvData, timeIndex);
-          }
-        }
+        getTimeIndexAndUpdate();
       });
 
       scope.$watch('mapState.zoom', function (newVal, oldVal) {
 
         if (newVal === oldVal) { return; }
 
-        if (tvData && mustDrawTVLayer(scope)) {
-          timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
-          if (timeIndex !== undefined) {
-            clearTVLayer();
-            updateTVLayer(tvLayer, tvData, timeIndex);
-          }
-        }
+        clearTVLayer();
+        getTimeIndexAndUpdate();
       });
 
       scope.$watch('mapState.layers.flow.active', function (newVal, oldVal) {
 
-        console.log('debug:');
-
         if (newVal === oldVal) { return; }
 
         clearTVLayer();
-
-        if (tvData && mustDrawTVLayer(scope)) {
-          timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
-          if (timeIndex !== undefined) {
-            updateTVLayer(tvLayer, tvData, timeIndex);
-          }
+        if (newVal && scope.timeState.hidden !== false) {
+          scope.toggleTimeline();
         }
+        getTimeIndexAndUpdate();
       });
     }
   };

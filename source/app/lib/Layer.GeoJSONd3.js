@@ -128,7 +128,14 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     }
   },
 
-  _getPointsForArrow: function (centerCoord) {
+
+  /**
+   * Returns a set of points (in string form), for drawing a SVG polygon.
+   *
+   * @param {integer[]} centerCoord - An X and Y value which represent the center af the arrow to be drawn
+   * @returns {string}
+   */
+  _getPointsForArrow: function (centerCoord, scaleFactor) {
 
     var // the final result/return value we'll build in this method
         result = "",
@@ -138,7 +145,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
         cy = centerCoord[1],
 
         // constant for scaling the arrow
-        SCALE_FACTOR = 0.5,
+        SCALE_FACTOR = (scaleFactor * 0.5 + 0.5) || 0.5,
 
         // points for neat arrow, not scaled nor shifted
         X_VALS_FOR_ARROW = [ 90,  90, 120, 60, 60,   0,  30,  30],
@@ -206,19 +213,22 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
           if (self.options.hasOwnProperty('selectorPrefix')) {
             classList += " " + self.options.selectorPrefix
                              + feature.properties.id
-                             + "current-arrow";
+                             + " current-arrow";
           }
           return classList;
         });
 
     // UPDATE
     //
-    + "current-arrow"
     // NB! We do not morph between two different states of the arrow
     features
       .attr("points", function (d) {
+
+          var relSpeed = d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED_FOR_CURRENT;
+
           return self._getPointsForArrow(
-            self._projection(d.geometry.coordinates)
+            self._projection(d.geometry.coordinates),
+            relSpeed
           );
         })
       .attr("transform", function (d) {
