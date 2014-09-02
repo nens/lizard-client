@@ -141,8 +141,8 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
         SCALE_FACTOR = 0.5,
 
         // points for neat arrow, not scaled nor shifted
-        X_VALS_FOR_ARROW = [100, 100, 130, 70, 70,  10,  40,  40],
-        Y_VALS_FOR_ARROW = [225, 115, 115, 15, 15, 115, 115, 225],
+        X_VALS_FOR_ARROW = [ 90,  90, 120, 60, 60,   0,  30,  30],
+        Y_VALS_FOR_ARROW = [210, 100, 100,  0,  0, 100, 100, 210],
         WIDTH_FOR_ARROW  = 120,  // max diff X_VALS_FOR_ARROW
         HEIGHT_FOR_ARROW = 210, // max diff Y_VALS_FOR_ARROW
 
@@ -155,9 +155,10 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
     for (i = 0; i < X_VALS_FOR_ARROW.length; i++) {
 
-      xCoord = Math.round(((X_VALS_FOR_ARROW[i] - WIDTH_FOR_ARROW / 2) * SCALE_FACTOR) + cx);
+      xCoord = Math.round(((X_VALS_FOR_ARROW[i] -  WIDTH_FOR_ARROW / 2) * SCALE_FACTOR) + cx);
       yCoord = Math.round(((Y_VALS_FOR_ARROW[i] - HEIGHT_FOR_ARROW / 2) * SCALE_FACTOR) + cy);
-      result += (xCoord + "," + yCoord + " ");
+
+      result += xCoord + "," + yCoord + " ";
     }
 
     return result;
@@ -188,6 +189,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     var features = this.g.selectAll(".current-arrow")
       .data(this._data.features, self.idExtractor);
 
+    // ENTER
     features.enter()
       .append("svg:polygon")
         .attr("points", function (d) {
@@ -208,6 +210,20 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
           return classList;
         });
 
+    // features.enter()
+    //   .append("svg:circle")
+    //     .attr("cx", function (d) {
+    //       return self._projection(d.geometry.coordinates)[0];
+    //     })
+    //     .attr("cy", function (d) {
+    //       return self._projection(d.geometry.coordinates)[1];
+    //     })
+    //     .attr("r", 5)
+    //     .attr("fill", "#ff0000");
+
+    // UPDATE
+    //
+    // NB! We do not morph between two different states of the arrow
     features
       .attr("points", function (d) {
           return self._getPointsForArrow(
@@ -225,15 +241,31 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
       })
       .attr("transform", function (d) {
 
-        var deg, cx, cy;
+        console.log("d", d);
+
+        var deg, cx, cy, projection;
 
         deg = Math.floor(360 * (d.properties.timeseries[2].data[timeStepIndex] / MAX_DIRECTON));
-        cx = self._projection(d.geometry.coordinates)[0];
-        cy = self._projection(d.geometry.coordinates)[1];
+        projection = self._projection(d.geometry.coordinates);
+
+        cx = projection[0];
+        cy = projection[1];
 
         return "rotate(" + deg + ", " + cx + ", " + cy + ")";
       });
 
+
+    // features
+    //   .select("circle")
+    //     .attr("cx", function (d) {
+    //       return self._projection(d.geometry.coordinates)[0];
+    //     })
+    //     .attr("cy", function (d) {
+    //       return self._projection(d.geometry.coordinates)[1];
+    //     })
+    //     .attr("fill", "rgb(255, 0, 0)");
+
+    // EXIT
     features.exit()
         .style("fill-opacity", 1e-6)
         .remove();
