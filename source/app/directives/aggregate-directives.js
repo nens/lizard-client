@@ -513,8 +513,7 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
   function (UtilService, MapService) {
 
   // declaring constants:
-  var API_URL = '/api/v1/tiles/location/5/16/10.geojson', // tmp
-      ANIMATION_DURATION = 500;
+  var API_URL = '/api/v1/tiles/location/5/16/10.geojson';
 
   // declaring local vars
   var tvData,
@@ -660,6 +659,7 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
         if (tvData && mustDrawTVLayer(scope)) {
           timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
           if (timeIndex !== undefined) {
+            console.log('kom ik hier???');
             previousTimeIndex = timeIndex;
             updateTVLayer(tvLayer, tvData, timeIndex);
           }

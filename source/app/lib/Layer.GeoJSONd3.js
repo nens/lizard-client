@@ -129,8 +129,11 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
   },
 
 
+  /**
+   * Constant for eliminating unneccesary repeated variable declarations and
+   * assignments in the method: _getPointsForArrow
+   */
   _arrowConstants: {
-    // points for neat arrow, not scaled nor shifted
     X_VALS: [ 90,  90, 120, 60, 60,   0,  30,  30],
     Y_VALS: [210, 100, 100,  0,  0, 100, 100, 210],
     WIDTH: 120,  // max diff X_VALS_FOR_ARROW
@@ -149,12 +152,12 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     var // the final result/return value we'll build in this method
         result = "",
 
-        // the center point for the arrow
+        // the center for the arrow
         cx = centerCoord[0],
         cy = centerCoord[1],
 
         // constant for scaling the arrow
-        SCALE_FACTOR = (scaleFactor * 0.5 + 0.5) || 0.75,
+        SCALE_FACTOR = scaleFactor ? (scaleFactor * 0.5 + 0.5) : 0.75,
 
         // declaring vars used in loop-body outside of the loop-body
         xCoord,
@@ -190,23 +193,23 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
     var self = this,
         features,
-        MAX_SPEED_FOR_CURRENT = Math.max.apply(
+        MAX_SPEED = Math.max.apply(
           null,
           self._data.features[0].properties.timeseries[1].data
         ),
-        MAX_DIRECTON = Math.max.apply(
+        MAX_DIRECTION = Math.max.apply(
           null,
           self._data.features[0].properties.timeseries[2].data
         ),
         _getPoints = function (d) {
           return self._getPointsForArrow(
             self._projection(d.geometry.coordinates),
-            d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED_FOR_CURRENT
+            d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED
           );
         },
         _getFill = function (d) {
           var relSpeed, shade;
-          relSpeed = d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED_FOR_CURRENT;
+          relSpeed = d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED;
           shade = 255 - Math.floor((relSpeed - 10e-6) * 256);
           return "rgb(255, " + shade + ", " + shade + ")";
         };
@@ -231,22 +234,23 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
           if (self.options.hasOwnProperty('selectorPrefix')) {
             classList += " " + self.options.selectorPrefix
-                             + feature.properties.id
-                             + " current-arrow";
+                             + feature.properties.id;
           }
           return classList;
         });
 
     // UPDATE
     //
-    // NB! We do not morph between two different states of the arrow
+    // NB! We do not morph between two different shapes of the arrow, only their
+    // fill is animated. For an example what D3 does when using the default way of
+    // transitioning for rotation: http://jsfiddle.net/5ugtadxL/
     features
       .attr("points", _getPoints)
       .attr("transform", function (d) {
 
         var deg, cx, cy, projection;
 
-        deg = Math.floor(360 * (d.properties.timeseries[2].data[timeStepIndex] / MAX_DIRECTON));
+        deg = Math.floor(360 * (d.properties.timeseries[2].data[timeStepIndex] / MAX_DIRECTION));
         projection = self._projection(d.geometry.coordinates);
         cx = projection[0];
         cy = projection[1];
