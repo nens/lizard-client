@@ -91,7 +91,7 @@ app.directive('graph', ["Graph", function (Graph) {
      */
     scope.$watch('data', function (n, o) {
       if (n === o) { return true; }
-      graphCtrl.update.call(graphCtrl.graph, graphCtrl.data, graphCtrl.keys, graphCtrl.labels);
+      graphCtrl.update.call(graphCtrl.graph, scope.data, scope.keys, scope.labels);
     });
 
     scope.$watch('now', function (n, o) {

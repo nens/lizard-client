@@ -63,30 +63,32 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     /**
      * @function
      * @memberOf app.Graph
-     * @param {object} data object. Currently supports the format:
-     *                    [
-     *                      [x,y],
-     *                      ...,
-     *                    ]
-     * @param {object} keys
-     * @param {object} labels
-     * @description       If necessary creates a d3 pie and arc and
-     *                    draws the features in the data element.
+     * @param {object} data   Currently supports the format:
+     *                        [
+     *                          [value, value],
+     *                          ...,
+     *                        ]
+     * @param {object} keys   Mapping between x and y values of data object:
+     *                        example: {x: 0, y: 1}
+     * @param {object} labels Object {x: 'x label', y: 'y label'} will be
+     *                        mapped to axis labels of the graph
+     * @description           Draws a line, if necessary sets up the graph,
+     *                        if necessary modifies domain and redraws axis,
+     *                        and draws the line according to the data object.
      */
     drawLine: {
       value: function (data, keys, labels) {
         if (!this.xy) {
           this.xy = setupXYGraph(this.svg, this.dimensions, data, keys, labels);
         }
-        console.log(data);
-        rescale(this.svg, this.dimensions, this.xy, data, keys);
+        this.xy = rescale(this.svg, this.dimensions, this.xy, data, keys);
         this._line = this._createLine(this.xy, keys);
         this._path = _drawLine(this.svg, this._line, data, this._transTime, this._path);
       }
     },
     drawBars: {
       value: function (data, keys, labels) {
-        if (!this.x || !this.y) {
+        if (!this.xy) {
           var options = {
             x: {
               scale: 'time',
@@ -97,22 +99,11 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
               orientation: 'left'
             }
           };
-          var yx = setupXYGraph(this.svg, this.dimensions, data, keys, labels, options);
-          this.x = yx.x;
-          this.y = yx.y;
-          this.x.barWidth = getBarWidth(this.x, data, keys);
+          this.xy = setupXYGraph(this.svg, this.dimensions, data, keys, labels, options);
+          this.xy.barWidth = getBarWidth(this.xy.x, data, keys);
         }
-        if (toRescale(data, keys.x, 1, this.x.maxMin)) {
-          this.x.scale.domain([0, this._maxMin(data, keys.x).max]);
-          this.x.axis = this._makeAxis(this.x.scale, {orientation: 'bottom'});
-          drawAxes(this.svg, this.x.axis, this.dimensions, false, this._transTime);
-          this.x.barWidth = getBarWidth(this.x, data, keys);
-        }
-        if (toRescale(data, keys.y, 0.1, this.y.maxMin)) {
-          this.y.scale.domain([0, this._maxMin(data, keys.y).max]);
-          this.y.axis = this._makeAxis(this.y.scale, {orientation: 'left'});
-          drawAxes(this.svg, this.y.axis, this.dimensions, true, this._transTime);
-        }
+        this.xy = rescale(this.svg, this.dimensions, this.xy, data, keys);
+        this.xy.barWidth = getBarWidth(this.xy.x, data, keys);
         _drawBars(this.svg, this.dimensions, this.x, this.y, keys, data, this._transTime);
       }
     },
@@ -138,7 +129,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
         var self = this;
         var el = this.svg.select('g').select('#listeners');
         el.on('mousemove', function () {
-          var pos = self.x.scale.invert(d3.mouse(this)[0]);
+          var pos = self.xy.x.scale.invert(d3.mouse(this)[0]);
           callback(pos);
         });
       }
@@ -171,7 +162,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       if (toRescale(data, keys[key], limits[key], value.maxMin)) {
         value.scale.domain([0, Graph.prototype._maxMin(data, keys[key]).max]);
         value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
-        drawAxes(svg, value.axis, dimensions, key === 'y' ? true: false, this._transTime);
+        drawAxes(svg, value.axis, dimensions, key === 'y' ? true: false, Graph.prototype._transTime);
       }
     });
     return xy;
@@ -325,7 +316,6 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       path = svg.select('g').select('#feature-group').append("svg:path")
         .attr("class", "line");
     }
-
     path.datum(data)
       .transition()
       .duration(duration)
