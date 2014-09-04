@@ -108,6 +108,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      */
     _noUTF = function (here) {
       return function () {
+        $scope.pointObject.attrs.active = false;
         ClickFeedbackService.drawArrowHere(here);
         getRasterForLocation();
       };
