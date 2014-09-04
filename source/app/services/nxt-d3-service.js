@@ -178,14 +178,13 @@ app.factory("NxtD3", [ function () {
         dimensions.padding.top -
         dimensions.padding.bottom;
     },
-
-    _createLine: function (x, y, keys) {
+    _createLine: function (xy, keys) {
       return d3.svg.line().interpolate('basis')
         .y(function (d) {
-          return y.scale(d[keys.y]);
+          return xy.y.scale(d[keys.y]);
         })
         .x(function (d) {
-          return x.scale(d[keys.x]);
+          return xy.x.scale(d[keys.x]);
         })
         .defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
     },

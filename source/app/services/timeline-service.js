@@ -62,7 +62,6 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
    */
   function Timeline(element, dimensions, start, end, interaction) {
     NxtD3.call(this, element, dimensions);
-    console.log(this);
     initialHeight = dimensions.height;
     this.svg = addElementGroupsToCanvas(this.svg, this.dimensions);
     var width = dimensions.width -

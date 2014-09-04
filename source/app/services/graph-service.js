@@ -7,21 +7,18 @@
  *
  * @description Inject "Graph" and call new graph(<args>) to create a
  * graph. Currently the graph supports lines, bars and donut. The user may interact with
- * the graph through click and hover functions.
+ * the graph through click and hover functions. Graph inherits from
+ * NxtD3, a lower level d3 helper class.
  *
- * Everything in the graphs is animated for 500 milliseconds.
+ * Everything in the graphs is animated according to NxtD3.transTime.
  */
 app.factory("Graph", ["NxtD3", function (NxtD3) {
-
-  // Interaction functions
-  var clicked,
-  hoovered;
 
   /**
    * @constructor
    * @memberOf app.Graph
    *
-   * @param {object} element svg element for the graph.
+   * @param {object} element    svg element for the graph.
    * @param {object} dimensions object containing, width, height and
    *                            an object containing top,
    *                            bottom, left and right padding.
@@ -36,6 +33,21 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
 
     constructor: Graph,
 
+    /**
+     * @function
+     * @memberOf app.Graph
+     * @param {object}    data object. Currently supports the format:
+     *                    [
+     *                      {
+     *                        "<key to color>": "<color str>",
+     *                        "<value key": <value int>,
+     *                        "<label key>": "<label>"
+     *                      },
+     *                      ...,
+     *                    ]
+     * @description       If necessary creates a d3 pie and arc and
+     *                    draws the features in the data element.
+     */
     drawDonut: {
       value: function (data) {
         if (!this.dimensions.r || this._arc || this._pie) {
@@ -47,26 +59,28 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
         _drawDonut(this.svg, this.dimensions, data, this._pie, this._arc);
       }
     },
+
+    /**
+     * @function
+     * @memberOf app.Graph
+     * @param {object} data object. Currently supports the format:
+     *                    [
+     *                      [x,y],
+     *                      ...,
+     *                    ]
+     * @param {object} keys
+     * @param {object} labels
+     * @description       If necessary creates a d3 pie and arc and
+     *                    draws the features in the data element.
+     */
     drawLine: {
       value: function (data, keys, labels) {
-        if (!this.x || !this.y) {
-          var yx = setupXYGraph(this.svg, this.dimensions, data, keys, labels);
-          this.x = yx.x;
-          this.y = yx.y;
+        if (!this.xy) {
+          this.xy = setupXYGraph(this.svg, this.dimensions, data, keys, labels);
         }
-        if (toRescale(data, keys.x, 1, this.x.maxMin)) {
-          this.x.scale.domain([0, this._maxMin(data, keys.x).max]);
-          this.x.axis = this._makeAxis(this.x.scale, {orientation: 'bottom'});
-          drawAxes(this.svg, this.x.axis, this.dimensions, false, this._transTime);
-          this._line = this._createLine(this.x, this.y, keys);
-        }
-        if (toRescale(data, keys.y, 0.1, this.y.maxMin)) {
-          this.y.scale.domain([0, this._maxMin(data, keys.y).max]);
-          this.y.axis = this._makeAxis(this.y.scale, {orientation: 'left'});
-          drawAxes(this.svg, this.y.axis, this.dimensions, true, this._transTime);
-          this._line = this._createLine(this.x, this.y, keys);
-        }
-        if (!this.line) { this._line = this._createLine(this.x, this.y, keys); }
+        console.log(data);
+        rescale(this.svg, this.dimensions, this.xy, data, keys);
+        this._line = this._createLine(this.xy, keys);
         this._path = _drawLine(this.svg, this._line, data, this._transTime, this._path);
       }
     },
@@ -142,7 +156,26 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
 
   var createPie, createArc, _drawDonut, getDonutHeight, drawAxes, addLabel,
   createD3Objects, toRescale, _drawLine, setupXYGraph, setupLineGraph, createDonut,
-  getBarWidth, _drawBars, _drawHorizontalStacks, setupXGraph;
+  getBarWidth, _drawBars, _drawHorizontalStacks, setupXGraph, rescale;
+
+  rescale = function (svg, dimensions, xy, data, keys) {
+    var limits = {
+      x: 1,
+      y: 0.1
+    },
+    orientation = {
+      x: 'bottom',
+      y: 'left'
+    };
+    angular.forEach(xy, function (value, key) {
+      if (toRescale(data, keys[key], limits[key], value.maxMin)) {
+        value.scale.domain([0, Graph.prototype._maxMin(data, keys[key]).max]);
+        value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
+        drawAxes(svg, value.axis, dimensions, key === 'y' ? true: false, this._transTime);
+      }
+    });
+    return xy;
+  };
 
   _drawHorizontalStacks = function (svg, dimensions, duration, scale, data, keys, total, labels) {
     var width = Graph.prototype._getWidth(dimensions),
