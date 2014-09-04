@@ -21,6 +21,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       _initiateAssetLayer, _turnOffAllOtherBaselayers, _rescaleElevation,
       _getActiveTemporalLayer, _getLayersByType, _clicked, _updateOverLayers,
       _moveEnded, _moveStarted, _mouseMoved, _dragEnded, _initiateGridLayer,
+      _initiated,
 
       // public vars
       setView, fitBounds, mapState, initiateMapEvents, getLayer, latLngToLayerPoint,
@@ -50,6 +51,9 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       _map.attributionControl.addAttribution(options.attribution);
       _map.attributionControl.setPrefix('');
     }
+
+    mapState.initiated = true;
+
     return _map;
   };
 
@@ -136,6 +140,9 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @description Throw in a layer as served from the backend
    */
   createLayer = function (nonLeafLayer) {
+    // temporal layers should not be added to the map.
+    if (nonLeafLayer.temporal) { return; }
+
     switch (nonLeafLayer.type) {
     case ('TMS'):
       _initiateTMSLayer(nonLeafLayer);
@@ -436,6 +443,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
   mapState = {
     here: null,
     center: null,
+    initiated: _initiated,
     layers: CabinetService.layers,
     activeLayersChanged: false,
     eventTypes: CabinetService.eventTypes,

@@ -108,7 +108,6 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
        * TODO: check if this should go to the RasterService?
        */
       var getImages = function (timestamp) {
-
         nxtDate = UtilService.roundTimestamp(
           scope.timeState.at,
           step,
@@ -140,7 +139,6 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
       scope.$watch('mapState.activeLayersChanged', function (n, o) {
 
         var i, activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
-
         if (activeTemporalLayer) {
           for (i in imageOverlays) {
             MapService.addLayer(imageOverlays[i]);
@@ -218,8 +216,9 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
        */
       scope.$watch('timeState.at', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
-        if (!scope.timeState.animation.playing
-            && scope.mapState.getActiveTemporalLayer()) {
+        if (!scope.timeState.animation.playing &&
+            scope.mapState.getActiveTemporalLayer() &&
+            scope.mapState.initiated) {
           getImages(scope.timeState.at);
           imageOverlays[0].setOpacity(0.7);
           previousFrame = 0;
