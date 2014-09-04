@@ -90,7 +90,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
     features.enter()
       .append("svg:circle")
-        .attr("stroke-width", 1.8)
+        .attr("stroke-width", 1)
         .attr("stroke", "white")
         .attr("class", function (feature) {
           var classList = self.options.class;
@@ -157,9 +157,10 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
         cy = centerCoord[1],
 
         // constant for scaling the arrow
-        SCALE_FACTOR = scaleFactor ? (scaleFactor * 0.5 + 0.5) : 0.75,
+        SCALE_FACTOR = scaleFactor ? (scaleFactor * 0.75 + 0.25) : 0.75,
 
-        // declaring vars used in loop-body outside of the loop-body
+        // declaring vars used (= repeatedly assigned) in loop-body, outside of
+        // the loop-body
         xCoord,
         yCoord,
 
@@ -168,8 +169,19 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
     for (i = 0; i < this._arrowConstants.X_VALS.length; i++) {
 
-      xCoord = Math.round(((this._arrowConstants.X_VALS[i] - this._arrowConstants.WIDTH  / 2 - 1) * SCALE_FACTOR) + cx);
-      yCoord = Math.round(((this._arrowConstants.Y_VALS[i] - this._arrowConstants.HEIGHT / 2 - 1) * SCALE_FACTOR) + cy);
+      xCoord = Math.round(
+        (
+          (this._arrowConstants.X_VALS[i] - this._arrowConstants.WIDTH  / 2 - 1)
+          * SCALE_FACTOR
+        ) + cx
+      );
+
+      yCoord = Math.round(
+        (
+          (this._arrowConstants.Y_VALS[i] - this._arrowConstants.HEIGHT / 2 - 1)
+          * SCALE_FACTOR
+        ) + cy
+      );
 
       result += xCoord + "," + yCoord + " ";
     }
@@ -192,21 +204,31 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
   _refreshDataForCurrents: function (timeStepIndex) {
 
     var self = this,
+
         features,
+
+        // Optional: hardcode a value for an absolute max value (shared among
+        // timeseries), e.g: MAX_SPEED = 99.9. The current solution deduces the
+        // the value for MAX_SPEED from the 1st timeseries.
         MAX_SPEED = Math.max.apply(
           null,
           self._data.features[0].properties.timeseries[1].data
         ),
+
+        // Optional: hardcode a value for an absolute max value (shared among
+        // timeseries), e.g: MAX_DIRECTION = 123. Wolog, see MAX_SPEED above.
         MAX_DIRECTION = Math.max.apply(
           null,
           self._data.features[0].properties.timeseries[2].data
         ),
+
         _getPoints = function (d) {
           return self._getPointsForArrow(
             self._projection(d.geometry.coordinates),
             d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED
           );
         },
+
         _getFill = function (d) {
           var relSpeed, shade;
           relSpeed = d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED;
