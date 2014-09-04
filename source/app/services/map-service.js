@@ -486,13 +486,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @memberOf app.MapService
    */
   _mouseMoved = function (e) {
-    if (!$rootScope.$$phase) {
-      $rootScope.$apply(function () {
-        mapState.userHere = e.latlng;
-      });
-    } else {
-      mapState.userHere = e.latlng;
-    }
+    mapState.userHere = e.latlng;
   };
 
   /**
