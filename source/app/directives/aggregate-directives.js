@@ -659,7 +659,6 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService',
         if (tvData && mustDrawTVLayer(scope)) {
           timeIndex = getTimeIndex(scope, tvData, STEP_SIZE);
           if (timeIndex !== undefined) {
-            console.log('kom ik hier???');
             previousTimeIndex = timeIndex;
             updateTVLayer(tvLayer, tvData, timeIndex);
           }
