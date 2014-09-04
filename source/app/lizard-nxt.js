@@ -14,10 +14,16 @@ var app = angular.module("lizard-nxt", [
   'ui.utils',
 ]);
 
-
-if (window.Raven &&
-    window.RavenEnvironment) {
-  Raven.config(window.RavenEnvironment).install();
+/**
+ * Setup Raven if available.
+ * Raven is responsible for logging to https://sentry.lizard.net
+ */
+if (window.Raven) {
+  Raven.config('https://ceb01dd84c6941c8aa20e16f83bdb55e@sentry.lizard.net/19',
+  {
+    // limits logging to staging and prd
+    whitelistUrls: [/nxt\.lizard\.net/, /staging\.lizard\.net/]
+  }).install();
 }
 
 /**
@@ -27,11 +33,9 @@ app.config(function ($provide) {
   $provide.decorator("$exceptionHandler", function ($delegate) {
       return function (exception, cause) {
           $delegate(exception, cause);
-          if (window.RavenEnvironment) {
-            Raven.captureException(exception, {
-              extra: {cause: cause}
-            });
-          }
+          Raven.captureException(exception, {
+            extra: {cause: cause}
+          });
         };
     });
 });
