@@ -145,6 +145,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
    * Returns a set of points (as string), for drawing a SVG polygon.
    *
    * @param {integer[]} centerCoord - An X and Y value which represent the center af the arrow to be drawn
+   * @param {float} scaleFactor - A value [0 ... 1] representing the scaling
    * @returns {string}
    */
   _getPointsForArrow: function (centerCoord, scaleFactor) {
@@ -222,6 +223,13 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
           self._data.features[0].properties.timeseries[2].data
         ),
 
+        /**
+         * Helper used by each D3 datum, for the arrow dimensions.
+         *
+         * @param {object} d - A D3 datum
+         * @returns {string} - A scaled arrow (represented by a list of
+         *                     points, as used by a SVG polygon element)
+         */
         _getPoints = function (d) {
           return self._getPointsForArrow(
             self._projection(d.geometry.coordinates),
@@ -229,6 +237,13 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
           );
         },
 
+        /**
+         * Helper used by each D3 datum, for the arrow coloring.
+         *
+         * @param {object} d - A D3 datum
+         * @returns {string} - A scaled (based on the relative speed)
+         *                     color for the arrow.
+         */
         _getFill = function (d) {
           var relSpeed, shade;
           relSpeed = d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED;
