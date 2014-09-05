@@ -91,7 +91,8 @@ app.directive('graph', ["Graph", function (Graph) {
      */
     scope.$watch('data', function (n, o) {
       if (n === o) { return true; }
-      graphCtrl.updateData.call(graphCtrl.graph, scope.data, scope.keys, scope.labels);
+      var labels = {x: scope.xlabel, y: scope.ylabel};
+      graphCtrl.updateData.call(graphCtrl.graph, scope.data, scope.keys, labels);
     });
 
     scope.$watch('now', function (n, o) {
@@ -257,7 +258,7 @@ app.directive('barChart', ['$filter', function ($filter) {
     graph.drawNow(graphCtrl.now);
 
     // Function to call when data changes
-    graphCtrl.update = function (data, keys, labels) {
+    graphCtrl.updateData = function (data, keys, labels) {
       if (filter) {
         labels.y = $filter(filter)(labels.y);
       }
@@ -296,7 +297,7 @@ app.directive('horizontalStack', [function () {
     graph.drawHorizontalStack(graphCtrl.data, graphCtrl.keys, graphCtrl.labels);
 
     // Function to call when data changes
-    graphCtrl.update = graph.drawHorizontalStack;
+    graphCtrl.updateData = graph.drawHorizontalStack;
 
   };
 

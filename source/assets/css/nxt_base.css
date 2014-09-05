@@ -864,6 +864,10 @@ ul.list-inline li.baselayer-icon label{
     transition:.3s;
 }
 
+.timeline-svg-wrapper {
+    margin-top: 3px;
+}
+
 .timeline.show {
     bottom: 0;
 }
