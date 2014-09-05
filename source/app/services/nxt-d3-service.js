@@ -12,11 +12,11 @@
  */
 app.factory("NxtD3", [ function () {
 
-  var createCanvas, createElementForAxis, resizeCanvas, createDrawingArea;
+  var createCanvas, createElementForAxis, resizeCanvas, _createDrawingArea;
 
   function NxtD3(element, dimensions) {
     this.dimensions = angular.copy(dimensions);
-    this.svg = createCanvas(element, this.dimensions);
+    this._svg = createCanvas(element, this.dimensions);
   }
 
   NxtD3.prototype = {
@@ -43,26 +43,25 @@ app.factory("NxtD3", [ function () {
 
     resize: function (dimensions) {
       this.dimensions = angular.copy(dimensions);
-      this.svg = resizeCanvas(this.svg, this.dimensions);
-      this.svg = this.createDrawingArea(this.svg, this.dimensions);
+      this._svg = resizeCanvas(this._svg, this.dimensions);
+      this._svg = this._createDrawingArea(this._svg, this.dimensions);
     },
-    createDrawingArea: function (svg, dimensions) {
+    _createDrawingArea: function (svg, dimensions) {
       var width = NxtD3.prototype._getWidth(dimensions),
       height = NxtD3.prototype._getHeight(dimensions);
       // Add clippath to limit the drawing area to inside the graph
       // See: http://bost.ocks.org/mike/path/
       var clip = svg.select('g').select("defs");
       if (!clip[0][0]) {
-        svg.select('g').append('defs').append("svg:clipPath");
+        svg.select('g').append('defs').append("svg:clipPath")
+          .attr("id", "clip")
+          .append("svg:rect")
+          .attr("id", "clip-rect")
+          .attr("x", "0")
+          .attr("y", "0")
+          .attr("width", width)
+          .attr("height", height);
       }
-      svg.select('g').select("defs").select("clipPath")
-        .attr("id", "clip")
-        .append("svg:rect")
-        .attr("id", "clip-rect")
-        .attr("x", "0")
-        .attr("y", "0")
-        .attr("width", width)
-        .attr("height", height);
       // Put the data in this group
       var g = svg.select('g').select('g');
       if (!g[0][0]) {
@@ -188,15 +187,20 @@ app.factory("NxtD3", [ function () {
         })
         .defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
     },
-    drawNow: function (now) {
+    _drawNow: function (now, scale) {
       var height = this._getHeight(this.dimensions);
+      var x = scale(now);
 
-      var nowIndicator = this.svg.select('g').select('#feature-group').select('.now-indicator');
+      var nowIndicator = this._svg.select('g').select('#feature-group').select('.now-indicator');
+
       if (!nowIndicator[0][0]) {
-        nowIndicator = this.svg.select('g').select('#feature-group').append('line')
-          .attr('class', 'now-indicator');
+        nowIndicator = this._svg.select('g').select('#feature-group').append('line')
+          .attr('class', 'now-indicator')
+          .attr('x1', x)
+          .attr('x2', x)
+          .attr('y1', height)
+          .attr('y2', 0);
       }
-      var x = this.x.scale(now);
       nowIndicator.transition().duration(this._transTime)
         .attr('x1', x)
         .attr('x2', x)

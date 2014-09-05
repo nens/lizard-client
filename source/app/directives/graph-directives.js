@@ -91,12 +91,12 @@ app.directive('graph', ["Graph", function (Graph) {
      */
     scope.$watch('data', function (n, o) {
       if (n === o) { return true; }
-      graphCtrl.update.call(graphCtrl.graph, scope.data, scope.keys, scope.labels);
+      graphCtrl.updateData.call(graphCtrl.graph, scope.data, scope.keys, scope.labels);
     });
 
     scope.$watch('now', function (n, o) {
       if (n === o) { return true; }
-      graphCtrl.now.call(graphCtrl.graph, scope.now);
+      graphCtrl.updateNow.call(graphCtrl.graph, scope.now);
     });
 
   };
@@ -118,10 +118,11 @@ app.directive('graph', ["Graph", function (Graph) {
     };
     this.graph = {};
     this.yfilter = "";
+    this.now = $scope.now;
     // Define data update function in attribute directives
-    this.update = function () {};
+    this.updateData = function () {};
     // Define timeState.now update function in attribute directives
-    this.now = function () {};
+    this.updateNow = function () {};
   };
 
   return {
@@ -165,7 +166,7 @@ app.directive('donut', [function () {
 
     graph.drawDonut(graphCtrl.data);
     // Function to call when data changes
-    graphCtrl.update = graph.drawDonut;
+    graphCtrl.updateData = graph.drawDonut;
 
   };
 
@@ -212,7 +213,7 @@ app.directive('line', [function () {
     });
 
     // Function to call when data changes
-    graphCtrl.update = graph.drawLine;
+    graphCtrl.updateData = graph.drawLine;
 
   };
 
@@ -253,6 +254,7 @@ app.directive('barChart', ['$filter', function ($filter) {
     }
 
     graph.drawBars(data, keys, labels);
+    graph.drawNow(graphCtrl.now);
 
     // Function to call when data changes
     graphCtrl.update = function (data, keys, labels) {
@@ -263,7 +265,7 @@ app.directive('barChart', ['$filter', function ($filter) {
     };
 
     // Function to call when timeState.at changes
-    graphCtrl.now = graph.drawNow;
+    graphCtrl.updateNow = graph.drawNow;
 
   };
 

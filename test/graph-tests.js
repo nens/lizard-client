@@ -128,6 +128,8 @@ describe('Testing barChart attribute directive', function() {
     expect(d3.select(element[0]).select('#feature-group').selectAll('rect')[0].length).toBe(3);
   });
 
+  it
+
 });
 
 describe('Testing horizontalStackChart attribute directive', function() {
@@ -156,39 +158,162 @@ describe('Testing horizontalStackChart attribute directive', function() {
 });
 
 describe('Testing graph', function () {
-  var graph, dimensions;
+  var graph, dimensions, $compile, $rootScope;
 
   beforeEach(module('lizard-nxt'));
 
+  beforeEach(inject(function (_$compile_, _$rootScope_) {
+        $compile = _$compile_;
+        $rootScope = _$rootScope_;
+    })
+  );
+
   beforeEach(inject(function ($injector) {
-    var Graph = $injector.get('Graph');
-    var element = angular.element('<svg></svg>')[0];
-    dimensions = {
-      width: 120,
-      height: 100,
-      padding: {
-        top: 1,
-        right: 2,
-        bottom: 3,
-        left: 4
-      }
-    };
-    graph = new Graph(element, dimensions);
-  }));
+      var Graph = $injector.get('Graph'),
+      element = angular.element('<div><svg></svg></div>'),
+      el = element[0].firstChild;
+      dimensions = {
+        width: 120,
+        height: 100,
+        padding: {
+          top: 1,
+          right: 2,
+          bottom: 3,
+          left: 4
+        }
+      },
+      graph = new Graph(el, dimensions);
+    })
+  );
 
   it('should create a canvas with certain width', function () {
-    expect(graph.svg.attr('width')).toBe(String(dimensions.width));
+    expect(graph._svg.attr('width')).toBe(String(dimensions.width));
   });
 
   it('should create a clippath drawing area ', function () {
-    var clippath = graph.svg.select('g').select('g').attr('clip-path');
+    var clippath = graph._svg.select('g').select('g').attr('clip-path');
     expect(clippath).toBe('url(#clip)');
   });
 
   it('should transform the drawing area to create a padding', function () {
     var translate = "translate(" + dimensions.padding.left + ", " + dimensions.padding.top + ")";
-    var transform = graph.svg.select('g').attr('transform');
+    var transform = graph._svg.select('g').attr('transform');
     expect(transform).toBe(translate);
   });
+
+  it('should create xy when drawing a line', function () {
+    var data = [[0, 0], [1, 3], [2, 1]],
+    keys = {x: 0, y: 1},
+    labels = {x: 'afstand', y: 'elevation'};
+    expect(graph.xy).toBe(undefined);
+    graph.drawLine(data, keys, labels);
+    expect(graph.xy).not.toBe(undefined)
+  });
+
+  it('should have an xy with scales', function () {
+    var data = [[0, 0], [1, 3], [2, 1]];
+    keys = {x: 0, y: 1},
+    labels = {x: 'afstand', y: 'elevation'},
+    height = dimensions.height - dimensions.padding.top - dimensions.padding.bottom
+    width = dimensions.width - dimensions.padding.left - dimensions.padding.right
+    graph.drawLine(data, keys, labels);
+    expect(graph.xy.x.scale(graph.xy.x.maxMin.max)).toBe(width);
+    expect(graph.xy.x.scale(0)).toBe(0);
+    expect(graph.xy.y.scale(graph.xy.y.maxMin.max)).toBe(0);
+    expect(graph.xy.y.scale(0)).toBe(height);
+  });
+
+  it('should have an xy with axes', function () {
+    var data = [[0, 0], [1, 3], [2, 1]];
+    keys = {x: 0, y: 1},
+    labels = {x: 'afstand', y: 'elevation'},
+    graph.drawLine(data, keys, labels);
+    expect(graph.xy.y.axis.name).toBe('axis');
+    expect(graph.xy.x.axis.name).toBe('axis');
+  });
+
+  it('should rescale the x when max or min changes', function () {
+    var data = [[0, 0], [1, 3], [2, 1]];
+    keys = {x: 0, y: 1},
+    labels = {x: 'afstand', y: 'elevation'},
+    graph.drawLine(data, keys, labels);
+    expect(graph.xy.x.maxMin.min).toBe(0);
+    expect(graph.xy.x.maxMin.max).toBe(2);
+    data[0][0] = -1;
+    data[2][0] = 3;
+    graph.drawLine(data, keys, labels);
+    expect(graph.xy.x.maxMin.min).toBe(-1);
+    expect(graph.xy.x.maxMin.max).toBe(3);
+  });
+
+  it('should rescale the y when max increase', function () {
+    var data = [[0, 0], [1, 3], [2, 1]];
+    keys = {x: 0, y: 1},
+    labels = {x: 'afstand', y: 'elevation'},
+    graph.drawLine(data, keys, labels);
+    expect(graph.xy.y.maxMin.max).toBe(3);
+    data[0][1] = 4;
+    graph.drawLine(data, keys, labels);
+    expect(graph.xy.y.maxMin.max).toBe(4);
+  });
+
+  it('should not rescale the y when max halves', function () {
+    var data = [[0, 0], [1, 3], [2, 1]];
+    keys = {x: 0, y: 1},
+    labels = {x: 'afstand', y: 'elevation'},
+    graph.drawLine(data, keys, labels);
+    expect(graph.xy.y.maxMin.max).toBe(3);
+    data[1][1] = 1.5;
+    graph.drawLine(data, keys, labels);
+    expect(graph.xy.y.maxMin.max).toBe(3);
+  });
+
+  it('should rescale the y when max diminishes', function () {
+    var data = [[0, 0], [1, 3], [2, 1]];
+    keys = {x: 0, y: 1},
+    labels = {x: 'afstand', y: 'elevation'},
+    graph.drawLine(data, keys, labels);
+    expect(graph.xy.y.maxMin.max).toBe(3);
+    data[1][1] = 0.2;
+    data[2][1] = 0.2;
+    graph.drawLine(data, keys, labels);
+    expect(graph.xy.y.maxMin.max).toBe(0.2);
+  });
+
+  it('should create a line', function () {
+    var data = [[0, 0], [1, 3], [2, 1]];
+    keys = {x: 0, y: 1},
+    labels = {x: 'afstand', y: 'elevation'};
+    graph.drawLine(data, keys, labels);
+    expect(graph._line).toBeDefined();
+  });
+
+  it('should create a barchart with time on the x scale', function () {
+    var data = [[1409748900000, 0], [1409752500000, 1], [1409756100000, 3]];
+    keys = {x: 0, y: 1},
+    labels = {x: 'afstand', y: 'elevation'};
+    graph.drawBars(data, keys, labels);
+    expect(graph.xy.x.scale.domain()[0] instanceof Date).toBe(true)
+  });
+
+  it('should have a barWidth when drawing bars', function () {
+    var data = [[1409748900000, 0], [1409752500000, 1], [1409756100000, 3]];
+    keys = {x: 0, y: 1},
+    labels = {x: 'afstand', y: 'elevation'};
+    graph.drawBars(data, keys, labels);
+    expect(graph.xy.barWidth).toEqual(graph.xy.x.scale(data[1][0]) - graph.xy.x.scale(data[0][0]));
+  });
+
+  it('should draw a now element at the right place', function () {
+    var data = [[1409748900000, 0], [1409752500000, 1], [1409756100000, 3]];
+    keys = {x: 0, y: 1},
+    labels = {x: 'afstand', y: 'elevation'};
+    graph.drawBars(data, keys, labels);
+    graph.drawNow(data[1][0]);
+    var indicator = graph._svg.select('g').select('#feature-group').select('.now-indicator');
+    expect(indicator.attr('x1')).toEqual(String(graph.xy.x.scale(data[1][0])));
+  });
+
+
 
 });

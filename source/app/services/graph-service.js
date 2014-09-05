@@ -6,7 +6,8 @@
  * @summary Service to create and update a graph
  *
  * @description Inject "Graph" and call new graph(<args>) to create a
- * graph. Currently the graph supports lines, bars and donut. The user may interact with
+ * graph. Currently the graph supports lines, bars, donut, and a flat
+ * donut called horizontal stacked bar. The user may interact with
  * the graph through click and hover functions. Graph inherits from
  * NxtD3, a lower level d3 helper class.
  *
@@ -26,7 +27,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
    */
   function Graph(element, dimensions) {
     NxtD3.call(this, element, dimensions);
-    this.svg = this.createDrawingArea(this.svg, this.dimensions);
+    this._svg = this._createDrawingArea(this._svg, this.dimensions);
   }
 
   Graph.prototype = Object.create(NxtD3.prototype, {
@@ -51,12 +52,9 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     drawDonut: {
       value: function (data) {
         if (!this.dimensions.r || this._arc || this._pie) {
-          var donut = createDonut(this.dimensions);
-          this.dimensions = donut.dimensions;
-          this._pie = donut.pie;
-          this._arc = donut.arc;
+          this._donut = createDonut(this.dimensions);
         }
-        _drawDonut(this.svg, this.dimensions, data, this._pie, this._arc);
+        _drawDonut(this._svg, this.dimensions, this._donut, data);
       }
     },
 
@@ -75,17 +73,37 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
      * @description           Draws a line, if necessary sets up the graph,
      *                        if necessary modifies domain and redraws axis,
      *                        and draws the line according to the data object.
+     *                        Currently only a linear scale on the x-axis is supported.
      */
     drawLine: {
       value: function (data, keys, labels) {
         if (!this.xy) {
-          this.xy = setupXYGraph(this.svg, this.dimensions, data, keys, labels);
+          this.xy = createXYGraph(this._svg, this.dimensions, data, keys, labels);
+        } else {
+          this.xy = rescale(this._svg, this.dimensions, this.xy, data, keys);
         }
-        this.xy = rescale(this.svg, this.dimensions, this.xy, data, keys);
         this._line = this._createLine(this.xy, keys);
-        this._path = _drawLine(this.svg, this._line, data, this._transTime, this._path);
+        this._path = _drawLine(this._svg, this._line, data, this._transTime, this._path);
       }
     },
+
+    /**
+     * @function
+     * @memberOf app.Graph
+     * @param {object} data   Currently supports the format:
+     *                        [
+     *                          [value, value],
+     *                          ...,
+     *                        ]
+     * @param {object} keys   Mapping between x and y values of data object:
+     *                        example: {x: 0, y: 1}
+     * @param {object} labels Object {x: 'x label', y: 'y label'} will be
+     *                        mapped to axis labels of the graph
+     * @description           Draws a barchart, if necessary sets up the graph,
+     *                        if necessary modifies domain and redraws axis,
+     *                        and draws the line according to the data object.
+     *                        Currently only a time scale on the x-axis is supported.
+     */
     drawBars: {
       value: function (data, keys, labels) {
         if (!this.xy) {
@@ -99,55 +117,105 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
               orientation: 'left'
             }
           };
-          this.xy = setupXYGraph(this.svg, this.dimensions, data, keys, labels, options);
+          this.xy = createXYGraph(this._svg, this.dimensions, data, keys, labels, options);
+          this.xy.barWidth = getBarWidth(this.xy.x, data, keys);
+        } else {
+          this.xy = rescale(this._svg, this.dimensions, this.xy, data, keys);
           this.xy.barWidth = getBarWidth(this.xy.x, data, keys);
         }
-        this.xy = rescale(this.svg, this.dimensions, this.xy, data, keys);
-        this.xy.barWidth = getBarWidth(this.xy.x, data, keys);
-        _drawBars(this.svg, this.dimensions, this.x, this.y, keys, data, this._transTime);
+        drawVerticalRects(this._svg, this.dimensions, this.xy, keys, data, this._transTime);
       }
     },
+
+    /**
+     * @function
+     * @memberOf app.Graph
+     * @param {object}    data object. Currently supports the format:
+     *                    [
+     *                      {
+     *                        "<key to color>": "<color str>",
+     *                        "<value key": <value int>,
+     *                        "<label key>": "<label>"
+     *                      },
+     *                      ...,
+     *                    ]
+     * @param {object} keys   Mapping between x values of data object:
+     *                        example: {x: 'color'}
+     * @param {object} labels Object {x: 'x label'} will be
+     *                        mapped to axis labels of the graph
+     * @description           If necessary an x-scale, axis, draws the
+     *                        label and sets up a mousemove listener.
+     *                        It draws the rectangles.
+     */
     drawHorizontalStack: {
       value: function (data, keys, labels) {
-        if (!this.x) {
-          setupXGraph(this.svg, this.dimensions, labels);
-        }
-
+        // normalize data
         var total = d3.sum(data, function (d) {
           return Number(d[keys.x]);
         });
-        this.x = {max: total, min: 0};
-        var width = this._getWidth(this.dimensions),
-        range = {min: 0, max: width};
-        this.x.scale = this._makeScale(this.x, range, {scale: 'linear'});
-
-        _drawHorizontalStacks(this.svg, this.dimensions, this._transTime, this.x.scale, data, keys, total, labels);
+        angular.forEach(data, function (value, key) {
+          value[keys.x] = value[keys.x] / total;
+        });
+        if (!this.x) {
+          this.x = createXGraph(this._svg, this.dimensions, labels);
+        }
+        drawHorizontalRectss(this._svg, this.dimensions, this._transTime, this.x.scale, data, keys, labels);
       }
     },
+
+    /**
+     * @function
+     * @memberOf app.Graph
+     * @param {function} callback
+     * @description      Sets a listener on the drawing rectangle
+     *                   and on mousemove calls the callback with
+     *                   the current position on the drawing area.
+     */
     followMouse: {
       value: function (callback) {
         var self = this;
-        var el = this.svg.select('g').select('#listeners');
+        var el = this._svg.select('g').select('#listeners');
         el.on('mousemove', function () {
           var pos = self.xy.x.scale.invert(d3.mouse(this)[0]);
           callback(pos);
         });
       }
     },
+
+    /**
+     * @function
+     * @memberOf app.Graph
+     * @param {function} callback
+     * @description      Sets a listener on the drawing rectangle
+     *                   and on mouseout calls the callback.
+     */
     mouseExit: {
       value: function (callback) {
         var self = this;
-        var el = this.svg.select('g').select('#listeners');
+        var el = this._svg.select('g').select('#listeners');
         el.on('mouseout', function () {
           callback();
         });
+      }
+    },
+
+    /**
+     * @function
+     * @memberOf app.Graph
+     * @param {int}    draw   Timestamp in ms from epoch
+     * @description           draws the now according the
+     *                        current active scale.
+     */
+    drawNow: {
+      value: function (now) {
+        this._drawNow(now, this.xy.x.scale);
       }
     }
   });
 
   var createPie, createArc, _drawDonut, getDonutHeight, drawAxes, addLabel,
-  createD3Objects, toRescale, _drawLine, setupXYGraph, setupLineGraph, createDonut,
-  getBarWidth, _drawBars, _drawHorizontalStacks, setupXGraph, rescale;
+  createD3Objects, toRescale, _drawLine, createXYGraph, setupLineGraph, createDonut,
+  getBarWidth, drawVerticalRects, drawHorizontalRectss, createXGraph, rescale;
 
   rescale = function (svg, dimensions, xy, data, keys) {
     var limits = {
@@ -160,7 +228,8 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     };
     angular.forEach(xy, function (value, key) {
       if (toRescale(data, keys[key], limits[key], value.maxMin)) {
-        value.scale.domain([0, Graph.prototype._maxMin(data, keys[key]).max]);
+        value.maxMin = Graph.prototype._maxMin(data, keys[key])
+        value.scale.domain([0, value.maxMin.max]);
         value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
         drawAxes(svg, value.axis, dimensions, key === 'y' ? true: false, Graph.prototype._transTime);
       }
@@ -168,7 +237,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     return xy;
   };
 
-  _drawHorizontalStacks = function (svg, dimensions, duration, scale, data, keys, total, labels) {
+  drawHorizontalRectss = function (svg, dimensions, duration, scale, data, keys, labels) {
     var width = Graph.prototype._getWidth(dimensions),
     height = Graph.prototype._getHeight(dimensions);
     var previousCumu = 0;
@@ -176,6 +245,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       value.start = previousCumu;
       previousCumu += value.data;
     });
+    var total = 1;
 
     // Join new data with old elements, based on the timestamp.
     var rects = svg.select('g').select('#feature-group').selectAll("rect")
@@ -207,23 +277,26 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       .remove();
 
     rects.on('mousemove', function (d) {
-      var labels = d.label.split('-'),
-      label = labels[labels.length - 1];
-      label = Math.round(d.data / total * 100) + '% ' + label;
+      var labelstr = d.label.split('-'),
+      label = Math.round(d.data * 100) + '% ' + labelstr[labelstr.length - 1];
       svg.select('#xlabel')
         .text(label).attr("class", 'selected');
     });
 
     rects.on('mouseout', function (d) {
       svg.select('#xlabel')
-        .text(labels.x).classed({"selected": false});
+        .text(labels.x)
+        .classed({"selected": false});
     });
 
   };
 
-  _drawBars = function (svg, dimensions, x, y, keys, data, duration) {
+  drawVerticalRects = function (svg, dimensions, xy, keys, data, duration) {
     var width = Graph.prototype._getWidth(dimensions),
     height = Graph.prototype._getHeight(dimensions),
+    x = xy.x,
+    y = xy.y,
+    barWidth =  xy.barWidth,
 
     // Join new data with old elements, based on the timestamp.
     bar = svg.select('g').select('#feature-group').selectAll(".bar")
@@ -234,15 +307,15 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     bar.transition()
       .duration(duration)
       .attr("height", function (d) { return height - y.scale(d[keys.y]); })
-      .attr("x", function (d) { return x.scale(d[keys.x]) - 0.5 * x.barWidth; })
-      .attr('width', function (d) { return x.barWidth; })
+      .attr("x", function (d) { return x.scale(d[keys.x]) - 0.5 * barWidth; })
+      .attr('width', function (d) { return barWidth; })
       .attr("y", function (d) { return y.scale(d[keys.y]); });
     // ENTER
     // Create new elements as needed.
     bar.enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function (d) { return x.scale(d[keys.x]) - 0.5 * x.barWidth; })
-      .attr('width', function (d) { return x.barWidth; })
+      .attr("x", function (d) { return x.scale(d[keys.x]) - 0.5 * barWidth; })
+      .attr('width', function (d) { return barWidth; })
       .attr("y", function (d) { return y.scale(0); })
       .attr("height", 0)
       .transition()
@@ -273,22 +346,24 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     };
   };
 
-  setupXGraph = function (svg, dimensions, labels) {
+  createXGraph = function (svg, dimensions, labels) {
+    var x = {};
     var options = {
       scale: 'linear',
       orientation: 'bottom'
-    };
-    var width = Graph.prototype._getWidth(dimensions),
+    },
+    width = Graph.prototype._getWidth(dimensions),
     range = {min: 0, max: width},
     // Axis should run from zero to 100%
-    domain = {min: 0, max: 100},
-    axisScale = Graph.prototype._makeScale(domain, range, {scale: 'linear'}),
-    axis = Graph.prototype._makeAxis(axisScale, {orientation: 'bottom'});
-    drawAxes(svg, axis, dimensions, false);
+    domain = {min: 0, max: 1};
+    x.scale = Graph.prototype._makeScale(domain, range, {scale: 'linear'}),
+    x.axis = Graph.prototype._makeAxis(x.scale, {orientation: 'bottom'});
+    drawAxes(svg, x.axis, dimensions, false);
     addLabel(svg, dimensions, labels.x, false);
+    return x;
   };
 
-  setupXYGraph = function (svg, dimensions, data, keys, labels, options) {
+  createXYGraph = function (svg, dimensions, data, keys, labels, options) {
     if (!options) {
       options = {
         x: {
@@ -408,9 +483,11 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       .outerRadius(dimensions.r);
   };
 
-  _drawDonut = function (svg, dimensions, data, pie, arc) {
+  _drawDonut = function (svg, dimensions, donut, data) {
     var width = Graph.prototype._getWidth(dimensions),
-    donutHeight = getDonutHeight(dimensions);
+    donutHeight = getDonutHeight(dimensions),
+    pie = donut.pie,
+    arc = donut.arc;
 
     // Store the displayed angles in _current.
     // Then, interpolate from _current to the new angles.
