@@ -13,12 +13,14 @@ app.service("CabinetService", ["$q", "Restangular",
       reverseGeocodeResource,
       apiLayerGroups,
       timeseriesLocationObjectResource,
-      timeseriesResource;
+      timeseriesResource,
+      flowResource;
 
   Restangular.setRequestSuffix('?page_size=0');
   geocodeResource = Restangular.one('api/v1/geocode/');
   reverseGeocodeResource = Restangular.one('api/v1/reversegeocode/');
   timeseriesResource = Restangular.one('api/v1/timeseries/');
+  // flowResource = Restangular.one('api/v1/location/');
 
   var wantedAttrs = {
     bridge: {
