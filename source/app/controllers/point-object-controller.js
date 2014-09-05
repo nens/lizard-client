@@ -344,7 +344,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
           lng = $scope.$parent.mapState.here.lng,
           _formatDate = function (epoch) {
             var unsplitted = new Date(parseInt(epoch));
-            return unsplitted.toString().split(' ').slice(0, 4).join(' ');
+            return unsplitted.toString().split(' ').slice(0, 5).join(' ');
           };
 
       for (i = 0; i< data.length; i++) {
