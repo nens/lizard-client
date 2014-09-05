@@ -63,7 +63,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       nonLeafLayer.url + '.png', {
         name: (nonLeafLayer.baselayer) ? 'Background': nonLeafLayer.slug,
         slug: nonLeafLayer.slug,
-        minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom: NaN,
+        minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom: 0,
         maxZoom: 19,
         detectRetina: true,
         zIndex: nonLeafLayer.z_index
@@ -89,7 +89,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
         layers: nonLeafLayer.slug,
         format: 'image/png',
         version: '1.1.1',
-        minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom: NaN,
+        minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom: 0,
         maxZoom: 19,
         zIndex: nonLeafLayer.z_index
       };
@@ -117,7 +117,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       slug: nonLeafLayer.slug,
       name: nonLeafLayer.slug,
       useJsonP: false,
-      minZoom: (nonLeafLayer.min_zoom_click) ? nonLeafLayer.min_zoom_click : NaN,
+      minZoom: (nonLeafLayer.min_zoom_click) ?
+        nonLeafLayer.min_zoom_click : 0,
       maxZoom: 19,
       order: nonLeafLayer.z_index,
       zIndex: nonLeafLayer.z_index
@@ -480,7 +481,13 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @memberOf app.MapService
    */
   _mouseMoved = function (e) {
-    mapState.userHere = e.latlng;
+    if (!$rootScope.$$phase) {
+      $rootScope.$apply(function () {
+        mapState.userHere = e.latlng;
+      });
+    } else {
+      mapState.userHere = e.latlng;
+    }
   };
 
   /**
