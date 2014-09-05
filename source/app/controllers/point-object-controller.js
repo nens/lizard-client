@@ -4,7 +4,7 @@
  * @ngdoc
  * @memberOf app
  * @name pointObjectCtrl
- * @description pointObject is the contoller of the pointObject template. 
+ * @description pointObject is the contoller of the pointObject template.
  * It gathers all data belonging to a location in space. It becomes active
  * by setting box.type to 'pointObject' and is updated by broadcasting
  * 'newPointActive'. It reads and writes mapState.here.
@@ -34,7 +34,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
      * in space. It is updated after a users click. The pointObject
      * may have associated events and timeseries which are requested
      * from the server by the services.
-     * 
+     *
      * @return {object} empty pointObject.
      */
     var createPointObject = function () {
@@ -72,7 +72,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     /**
      * @function
      * @memberOf app.pointObjectCtrl
-     * @param  {L.LatLng} here  
+     * @param  {L.LatLng} here
      * @param  {object}   ?extra Optional extra info
      */
     var fillPointObject = function (here, extra) {
@@ -99,7 +99,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
      * @description callback for utfgrid
      * @param  {L.LatLng} here
      * @param  {Boolean}  showOnlyEvents if events are clicked
-     * @return {function} 
+     * @return {function}
      */
     var utfgridResponded = function (here, showOnlyEvents) {
       return function (response) {
@@ -252,7 +252,7 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
      * @function
      * @memberOf app.pointObjectCtrl
      * @description returns data from UTFgrid
-     * @param {jsondata} data 
+     * @param {jsondata} data
      */
     var attrsResponded = function (data) {
       // Return directly if no data is returned from the UTFgrid
@@ -330,5 +330,34 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
     };
 
     $scope.mustShowRainCard = RasterService.mustShowRainCard;
+
+    /**
+     * Format the CSV (exporting rain data for a point in space/interval in
+     * time) in a way that makes it comprehensible for les autres.
+     *
+     */
+    $scope.formatCSVColumns = function (data) {
+
+      var i,
+          formattedData = [],
+          lat = $scope.$parent.mapState.here.lat,
+          lng = $scope.$parent.mapState.here.lng,
+          _formatDate = function (epoch) {
+            var unsplitted = new Date(parseInt(epoch));
+            return unsplitted.toString().split(' ').slice(0, 4).join(' ');
+          };
+
+      for (i = 0; i< data.length; i++) {
+
+        formattedData.push([
+          _formatDate(data[i][0]),
+          data[i][1],
+          lat,
+          lng
+        ]);
+      }
+
+      return formattedData;
+    };
   }
 ]);
