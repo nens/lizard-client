@@ -31,6 +31,15 @@
     "debug"         : false,  // Allow debugger statements e.g. browser breakpoints.
     "devel"         : true,   // Allow development statements e.g. `console.log();`.
 
+    "globals"   : {
+        /* MOCHA */
+        "describe"   : false,
+        "it"         : false,
+        "before"     : false,
+        "beforeEach" : false,
+        "after"      : false,
+        "afterEach"  : false
+    }
 
     // EcmaScript 5.
     "strict"        : false,  // Require `use strict` pragma in every file.
