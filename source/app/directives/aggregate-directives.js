@@ -465,66 +465,12 @@ app.directive('surfacelayer', ['MapService', function (MapService) {
 app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVectorService',
   function (UtilService, MapService, TemporalVectorService) {
 
-  // declaring constants:
-  var API_URL = '/api/v1/tiles/location/5/16/10.geojson';
-
-  // declaring local vars
-  var d3TVLayer,
-      previousTimeIndex,
-      setTVData,
-      tvData;
-
-  setTVData = function () {
-
-    var response, request = new XMLHttpRequest();
-    request.open("GET", API_URL, true);
-
-    request.onreadystatechange = function () {
-      /*jshint evil: true */
-      if (request.readyState === 4 && request.status === 200) {
-        if (window.JSON) {
-          response = JSON.parse(request.responseText);
-        } else {
-          response = eval("(" + request.responseText + ")");
-        }
-        tvData = response;
-      }
-    };
-    request.send();
-  };
-
   return {
     restrict: 'A',
     link: function (scope, element, attrs) {
 
-      var previousTimeIndex,
-          STEP_SIZE = 86400000,
-          tvLayer,
-          timeIndex,
-          getTimeIndexAndUpdate;
-
-      setTVData();
-
-      getTimeIndexAndUpdate = function () {
-
-        if (tvData && TemporalVectorService.mustDrawTVLayer(scope)) {
-
-          timeIndex = TemporalVectorService.getTimeIndex(
-            scope,
-            tvData,
-            STEP_SIZE
-          );
-
-          if (timeIndex !== undefined) {
-            previousTimeIndex = timeIndex;
-            TemporalVectorService.updateTVLayer(
-              tvLayer,
-              tvData,
-              timeIndex
-            );
-          }
-        }
-      };
+      var tvLayer,
+          tvData = TemporalVectorService.getTVData();
 
       scope.$watch('timeState.at', function (newVal, oldVal) {
 
@@ -537,7 +483,7 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
           });
         }
 
-        getTimeIndexAndUpdate();
+        TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
       });
 
       scope.$watch('mapState.zoom', function (newVal, oldVal) {
@@ -545,7 +491,7 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
         if (newVal === oldVal) { return; }
 
         TemporalVectorService.clearTVLayer();
-        getTimeIndexAndUpdate();
+        TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
       });
 
       scope.$watch('mapState.layers.flow.active', function (newVal, oldVal) {
@@ -556,7 +502,11 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
         if (newVal && scope.timeState.hidden !== false) {
           scope.toggleTimeline();
         }
-        getTimeIndexAndUpdate();
+        TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
+      });
+
+      scope.$watch('timeState.animation.playing', function (newVal, oldVal) {
+        TemporalVectorService.resetTimeIndex();
       });
     }
   };

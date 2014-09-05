@@ -2,25 +2,33 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
 
   // declaring local vars
   var tvData,
+      tvLayer,
       mustDrawTVLayer,
-      setTVData,
-      createTVLayer,
-      updateTVLayer,
-      d3TVLayer,
+      getTVData,
       getTimeIndex,
       getTimeIndexAndUpdate,
-      previousTimeIndex,
-      changeTVData,
+      createTVLayer,
+      updateTVLayer,
       clearTVLayer,
+      d3TVLayer,
       timeIndex,
-      tvLayer,
+      previousTimeIndex,
+      resetTimeindex,
       STEP_SIZE = 86400000,
       API_URL = '/api/v1/tiles/location/5/16/10.geojson';
 
-  setTVData = function () {
+
+  /**
+   * A synchronious call to retrieve the timeseries data from the API endpoint;
+   * NB! This uses a hardcoded URL for now, suince we dont have any actual data
+   * atm.
+   *
+   * @returns {object} - The geojson object with the timeseries data.
+   */
+  getTVData = function () {
 
     var response, request = new XMLHttpRequest();
-    request.open("GET", API_URL, true);
+    request.open("GET", API_URL, false);
 
     request.onreadystatechange = function () {
       /*jshint evil: true */
@@ -30,10 +38,41 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
         } else {
           response = eval("(" + request.responseText + ")");
         }
-        tvData = response;
       }
     };
     request.send();
+    return response;
+  };
+
+
+  /**
+   * Retrieves both the index (for data representing the next animation frame
+   * to be drawn) and, if succesful in the previous step, calls updateTVLayer
+   *
+   * @param {scope} scope - A ng scope s.t. scope.map is defined
+   * @param {object} tvLayer - a Leaflet layer for the vector drawings
+   * @param {object} tvData - geojson representing the timeseries data
+   *
+   * @returns {void}
+   */
+  getTimeIndexAndUpdate = function (scope, tvLayer, tvData) {
+
+    if (tvData && mustDrawTVLayer(scope)) {
+
+      timeIndex = getTimeIndex(
+        scope,
+        tvData
+      );
+
+      if (timeIndex !== undefined) {
+        previousTimeIndex = scope.timeState.animation.playing ? timeIndex : 0;
+        updateTVLayer(
+          tvLayer,
+          tvData,
+          timeIndex
+        );
+      }
+    }
   };
 
 
@@ -42,8 +81,9 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
    * as arrows
    *
    * @parameter {object} scope - A ng scope s.t. scope.map is defined
-   * @parameter {object} data - Object
-   * @return    {object} eventLayer - Leaflet layer object
+   * @parameter {object} data - A geojson object representing timeseries
+   *
+   * @return {object} eventLayer - Leaflet layer object
    */
   createTVLayer = function (scope, data) {
 
@@ -76,6 +116,7 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
    *
    * @parameter {object} currentLayer - currentLayer object to update
    * @parameter {object} data - data object
+   *
    * @returns {void}
    */
   updateTVLayer = function (tvLayer, data, timeIndex) {
@@ -84,12 +125,24 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
   };
 
 
+  /**
+   * Clears the temporal vector layer; removes all polygon elements with
+   * class "current-arrow", thus clearing the layer.
+   *
+   * @returns {void}
+   */
   clearTVLayer = function () {
     d3.selectAll("polygon.current-arrow").remove();
   };
 
 
-  getTimeIndex = function (scope, tvData, stepSize) {
+  /**
+   * @param {object} scope - A ng scope s.t. scopemap is defined
+   * @param {object} tvData - A geojson object representing the timeseries data.
+   *
+   * @returns {integer}
+   */
+  getTimeIndex = function (scope, tvData) {
 
     var virtualNow = scope.timeState.at,
         relevantTimestamps = tvData.features[0].properties.timeseries[0].data,
@@ -98,7 +151,9 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
         maxTimestamp;
 
     if (relevantTimestamps.length === 0) {
-      console.log("[E] we don't have any relevant timestamps (i.e. no data!)");
+      if (window.JS_DEBUG) {
+        console.log("[E] we don't have any relevant timestamps (i.e. no data!)");
+      }
       return;
     }
 
@@ -127,7 +182,7 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
         currentTimestamp = relevantTimestamps[i];
 
         if (currentTimestamp >= virtualNow
-            && currentTimestamp < virtualNow + stepSize) {
+            && currentTimestamp < virtualNow + STEP_SIZE) {
 
           return i;
         }
@@ -136,17 +191,34 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
   };
 
 
+  /**
+   * Check whether we need to draw the temporal vector layer.
+   *
+   * @returns {boolean}
+   */
   mustDrawTVLayer = function (scope) {
     return scope.mapState.layers.flow.active;
   };
 
 
+  /**
+   * Resets the previous timeStepIndex to 0, to prevent that dragging the brush
+   * along the timeline only works forwards: now one may drag backwards
+   *
+   * @returns {void}
+   */
+  var resetPreviousTimeIndex = function () {
+    previousTimeIndex = 0;
+  };
+
   return {
     createTVLayer: createTVLayer,
-    updateTVLayer: updateTVLayer,
     clearTVLayer: clearTVLayer,
     mustDrawTVLayer: mustDrawTVLayer,
-    getTimeIndex: getTimeIndex
+    getTVData: getTVData,
+    getTimeIndex: getTimeIndex,
+    getTimeIndexAndUpdate: getTimeIndexAndUpdate,
+    resetTimeIndex: resetPreviousTimeIndex
   };
 
 }]);
