@@ -864,6 +864,10 @@ ul.list-inline li.baselayer-icon label{
     transition:.3s;
 }
 
+.timeline-svg-wrapper {
+    margin-top: 3px;
+}
+
 .timeline.show {
     bottom: 0;
 }
@@ -970,9 +974,10 @@ ul.list-inline li.baselayer-icon label{
             filter: drop-shadow( -5px -5px 5px #000 );*/
 }
 
-/*.selected{
-    opacity: 0.8;
-}*/
+.selected{
+    color: #2980b9;
+    fill: #2980b9;
+}
 
 .extent{
     fill: rgba(30,30,30,0.1);
@@ -1420,7 +1425,7 @@ img.leaflet-image-layer {
 }
 
 .now-indicator {
-    stroke: #e74c3c;
+    stroke: #2980b9;
     stroke-width: 2;
 }
 

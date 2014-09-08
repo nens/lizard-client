@@ -8,6 +8,10 @@ unreleased
 
 - implement temporal vector directive/layer
 
+- Rain bars are drawn and removed one by one
+
+- Converted land use donut to horizontal bar
+
 - Refactor map directive into map service.
 
 - Animate intersection with dynamic raster data.

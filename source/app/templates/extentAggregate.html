@@ -3,8 +3,8 @@
   <div ng-repeat="agg in extentAggregate" class="card active" id="card-<% agg.name %>">
 
     <div ng-switch="agg.type" class="card-content" id="card-content-<% agg.name %>">
-      <graph ng-switch-when="curve" line xlabel="'[%]'" ylabel="'hoogte [mNAP]'" data="agg.data" class="xyGraph"></graph>
-      <graph ng-switch-when="counts" pie data="agg.data" class="donutGraph"></graph>
+      <graph ng-switch-when="curve" line xlabel="'[%]'" ylabel="'hoogte [mNAP]'" data="agg.data" keys="{x: 0, y: 1}"></graph>
+      <graph ng-switch-when="counts" horizontal-stack data="agg.data" keys="{x: 'data', y: 'label'}" xlabel="'[%]'" dimensions="{height: 80, padding: {left: 0, right: 0, top: 5, bottom: 50}}"></graph>
       <graph ng-switch-default line></graph>
     </div>
   </div>

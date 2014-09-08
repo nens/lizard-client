@@ -46,11 +46,10 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
       var point = map.latLngToLayerPoint(new L.LatLng(d[1], d[0]));
       return [point.x, point.y];
     };
-    var self = this;
-    this._path = d3.geo.path().projection(self._projection);
+    this._path = d3.geo.path().projection(this._projection);
 
     this.overlapLocations = {};
-    this.g = this._renderG();
+    this.g = this._container.append("g").attr("class", "geojsonnontile");
     this._refreshData();
 
     // Call onmove to position the svg.
@@ -62,15 +61,14 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
   },
 
   _renderG: function () {
-    var self = this;
     return this._container.append("g")
       .attr("class", "geojsonnontile")
-      .attr("transform", "translate(" + self._left + "," + self._top + ")");
+      .attr("transform", "translate(" + this._left + "," + this._top + ")");
   },
 
   /**
    * _renderData
-   * Renders geoJSON data (for displaying Events) in the svg container.
+   * Renders geoJSON data in the svg container.
    * If the options has a 'selectorPrefix' property
    * your 'path' elements will be accessible with an id.
    *

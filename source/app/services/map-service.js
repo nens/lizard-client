@@ -21,6 +21,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       _initiateAssetLayer, _turnOffAllOtherBaselayers, _rescaleElevation,
       _getActiveTemporalLayer, _getLayersByType, _clicked, _updateOverLayers,
       _moveEnded, _moveStarted, _mouseMoved, _dragEnded, _initiateGridLayer,
+      _initiated,
 
       // public vars
       setView, fitBounds, mapState, initiateMapEvents, getLayer, latLngToLayerPoint,
@@ -36,22 +37,24 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    */
   createMap = function (mapElem, options) { // String or Element.
 
+    var bounds = L.latLngBounds(
+      L.latLng(data_bounds.all.south, data_bounds.all.east),
+      L.latLng(data_bounds.all.north, data_bounds.all.west));
+
     _map = LeafletService.map(mapElem, {
       zoomControl: false,
-      zoom: 12
+      zoom: 12,
+      center: bounds.getCenter()
     });
 
     if (options) {
-      _map.fitBounds(LeafletService.latLngBounds(
-        LeafletService.latLng(options.bounds.south, options.bounds.west),
-        LeafletService.latLng(options.bounds.north, options.bounds.east)));
+      _map.fitBounds(bounds);
 
       _map.attributionControl.addAttribution(options.attribution);
       _map.attributionControl.setPrefix('');
     }
 
-    // This return is only for the test-suite, i.e. the embedding scope's
-    // variable called "_map" is (over-)written in this function body.
+    mapState.initiated = true;
     return _map;
   };
 
@@ -71,7 +74,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       nonLeafLayer.url + '.png', {
         name: (nonLeafLayer.baselayer) ? 'Background': nonLeafLayer.slug,
         slug: nonLeafLayer.slug,
-        minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom: NaN,
+        minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom: 0,
         maxZoom: 19,
         detectRetina: true,
         zIndex: nonLeafLayer.z_index
@@ -97,7 +100,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
         layers: nonLeafLayer.slug,
         format: 'image/png',
         version: '1.1.1',
-        minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom: NaN,
+        minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom: 0,
         maxZoom: 19,
         zIndex: nonLeafLayer.z_index
       };
@@ -125,7 +128,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       slug: nonLeafLayer.slug,
       name: nonLeafLayer.slug,
       useJsonP: false,
-      minZoom: (nonLeafLayer.min_zoom_click) ? nonLeafLayer.min_zoom_click : NaN,
+      minZoom: (nonLeafLayer.min_zoom_click) ?
+        nonLeafLayer.min_zoom_click : 0,
       maxZoom: 19,
       order: nonLeafLayer.z_index,
       zIndex: nonLeafLayer.z_index
@@ -141,6 +145,9 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @description Throw in a layer as served from the backend
    */
   createLayer = function (nonLeafLayer) {
+    // temporal layers should not be added to the map.
+    if (nonLeafLayer.temporal) { return; }
+
     switch (nonLeafLayer.type) {
     case ('TMS'):
       _initiateTMSLayer(nonLeafLayer);
@@ -217,8 +224,10 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
         numLayers++;
       }
     });
-    angular.forEach($filter('orderBy')(layers, 'z_index', true), function (layer) {
-      if ((layer.overlayer === true) && (layer.active)) {
+    angular.forEach($filter('orderBy')(layers, 'z_index', true),
+      function (layer) {
+      if ((layer.overlayer === true) && (layer.active) &&
+          'leafletLayer' in layer) {
         layer.leafletLayer.setOpacity(1 / numLayers);
         numLayers--;
       }
@@ -255,6 +264,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @param  {object} layers all layers to switch off.
    */
   toggleLayer = function (layer, layers) {
+    // if (!layer.initiated) { return; }
     if (layer.baselayer) {
       _turnOffAllOtherBaselayers(layer.id, layers);
       if (!layer.active) { layer.active = true; }
@@ -362,8 +372,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
   /**
    * @function
    * @memberOf app.MapService
-   * @description Retrieves the (single) currently active layer which has a temporal
-   * component. Returns undefined if no temporal raster layer is
+   * @description Retrieves the (single) currently active layer which has a
+   * temporal component. Returns undefined if no temporal raster layer is
    * currently active.
    *
    * @return {Object}
@@ -442,6 +452,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
   mapState = {
     here: null,
     center: null,
+    initiated: _initiated,
     layers: CabinetService.layers,
     activeLayersChanged: false,
     eventTypes: CabinetService.eventTypes,
@@ -492,7 +503,13 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @memberOf app.MapService
    */
   _mouseMoved = function (e) {
-    mapState.userHere = e.latlng;
+    if (!$rootScope.$$phase) {
+      $rootScope.$apply(function () {
+        mapState.userHere = e.latlng;
+      });
+    } else {
+      mapState.userHere = e.latlng;
+    }
   };
 
   /**

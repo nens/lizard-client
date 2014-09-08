@@ -26,14 +26,13 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
         bottom: 20,
         left: 30
       }
-    };
-    var start = scope.timeState.start;
-    var end = scope.timeState.end;
-    var el = d3.select(element[0])
-      .select("#timeline-svg-wrapper")
-      .select("svg");
+    },
+    start = scope.timeState.start,
+    end = scope.timeState.end,
 
-    var interaction = {
+    el = element[0].getElementsByTagName('svg')[0],
+
+    interaction = {
       /**
        * Update timeState on zoom
        *
