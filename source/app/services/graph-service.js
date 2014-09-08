@@ -77,13 +77,13 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
      */
     drawLine: {
       value: function (data, keys, labels) {
-        if (!this.xy) {
-          this.xy = this._createXYGraph(data, keys, labels);
+        if (!this._xy) {
+          this._xy = this._createXYGraph(data, keys, labels);
         } else {
-          this.xy = rescale(this._svg, this.dimensions, this.xy, data, keys);
+          this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys);
         }
-        this._line = this._createLine(this.xy, keys);
-        this._path = drawPath(this._svg, this._line, data, this.transTime, this._path);
+        var line = this._createLine(this._xy, keys);
+        this._path = drawPath(this._svg, line, data, this.transTime, this._path);
       }
     },
 
@@ -106,7 +106,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
      */
     drawBars: {
       value: function (data, keys, labels) {
-        if (!this.xy) {
+        if (!this._xy) {
           var options = {
             x: {
               scale: 'time',
@@ -117,11 +117,11 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
               orientation: 'left'
             }
           };
-          this.xy = this._createXYGraph(data, keys, labels, options);
+          this._xy = this._createXYGraph(data, keys, labels, options);
         } else {
-          this.xy = rescale(this._svg, this.dimensions, this.xy, data, keys);
+          this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys);
         }
-        drawVerticalRects(this._svg, this.dimensions, this.xy, keys, data, this.transTime);
+        drawVerticalRects(this._svg, this.dimensions, this._xy, keys, data, this.transTime);
       }
     },
 
@@ -147,8 +147,8 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
      */
     drawHorizontalStack: {
       value: function (data, keys, labels) {
-        if (!this.x) {
-          this.x = createXGraph(this._svg, this.dimensions, labels);
+        if (!this._x) {
+          this._x = createXGraph(this._svg, this.dimensions, labels);
         }
         // normalize data
         var total = d3.sum(data, function (d) {
@@ -157,7 +157,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
         angular.forEach(data, function (value, key) {
           value[keys.x] = value[keys.x] / total;
         });
-        drawHorizontalRectss(this._svg, this.dimensions, this.transTime, this.x.scale, data, keys, labels);
+        drawHorizontalRectss(this._svg, this.dimensions, this.transTime, this._x.scale, data, keys, labels);
       }
     },
 
@@ -205,7 +205,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
      */
     drawNow: {
       value: function (now) {
-        this._drawNow(now, this.xy.x.scale);
+        this._drawNow(now, this._xy.x.scale);
       }
     },
 
