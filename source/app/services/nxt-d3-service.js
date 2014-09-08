@@ -338,7 +338,12 @@ app.factory("NxtD3", [ function () {
 
       if (!nowIndicator[0][0]) {
         nowIndicator = this._svg.select('g').select('#feature-group').append('line')
-          .attr('class', 'now-indicator');
+          .attr('class', 'now-indicator')
+          // create without transition
+          .attr('x1', x)
+          .attr('x2', x)
+          .attr('y1', height)
+          .attr('y2', 0);
       }
       nowIndicator.transition().duration(this.transTime)
         .attr('x1', x)
