@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 unreleased
 ----------
 
+- Add rain per month aggregation
+
 - Refactor map directive into map service.
 
 - Animate intersection with dynamic raster data.

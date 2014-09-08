@@ -126,7 +126,7 @@ app.service("UtilService", function () {
     var zoomLvls = {fiveMinutes: 300000,
                     hour: 3600000,
                     day: 86400000,
-                    month: 2635200000};
+                    month: 2635200000}; // Month equals 30.5 days
     // ms per pixel
     var msPerPx = (stop - start) / drawingWidth;
     for (var zoomLvl in zoomLvls) {
