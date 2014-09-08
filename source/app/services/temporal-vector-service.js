@@ -98,11 +98,6 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
     }
 
     MapService.addLayer(d3TVLayer);
-
-    // for backwards compatibility.
-    d3TVLayer.g = d3TVLayer._container.selectAll("g");
-    d3TVLayer.reset = d3TVLayer._onMove;
-
     return d3TVLayer;
   };
 
@@ -208,11 +203,12 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
    * @returns {void}
    */
   var resetPreviousTimeIndex = function () {
-    previousTimeIndex = 0;
+    this.previousTimeIndex = 0;
   };
 
   return {
     createTVLayer: createTVLayer,
+    resetPreviousTimeIndex: resetPreviousTimeIndex,
     clearTVLayer: clearTVLayer,
     mustDrawTVLayer: mustDrawTVLayer,
     getTVData: getTVData,

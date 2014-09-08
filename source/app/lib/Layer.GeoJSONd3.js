@@ -251,7 +251,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
           return "rgb(255, " + shade + ", " + shade + ")";
         };
 
-    if (this.g.empty()) {
+    if (!this.g || this.g.empty()) {
       this.g = this._renderG();
     }
 
