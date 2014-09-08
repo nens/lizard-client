@@ -21,6 +21,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       _initiateAssetLayer, _turnOffAllOtherBaselayers, _rescaleElevation,
       _getActiveTemporalLayer, _getLayersByType, _clicked, _updateOverLayers,
       _moveEnded, _moveStarted, _mouseMoved, _dragEnded, _initiateGridLayer,
+      _initiated,
 
       // public vars
       setView, fitBounds, mapState, initiateMapEvents, getLayer, latLngToLayerPoint,
@@ -35,19 +36,24 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @description Creates a Leaflet map based on idString or Element.
    */
   createMap = function (mapElem, options) { // String or Element.
+    var bounds = L.latLngBounds(
+      L.latLng(data_bounds.all.south, data_bounds.all.east),
+      L.latLng(data_bounds.all.north, data_bounds.all.west));
     _map = LeafletService.map(mapElem, {
       zoomControl: false,
-      zoom: 12
+      zoom: 12,
+      center: bounds.getCenter()
     });
 
     if (options) {
-      _map.fitBounds(LeafletService.latLngBounds(
-        LeafletService.latLng(options.bounds.south, options.bounds.west),
-        LeafletService.latLng(options.bounds.north, options.bounds.east)));
+      _map.fitBounds(bounds);
 
       _map.attributionControl.addAttribution(options.attribution);
       _map.attributionControl.setPrefix('');
     }
+
+    mapState.initiated = true;
+
     return _map;
   };
 
@@ -134,6 +140,9 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @description Throw in a layer as served from the backend
    */
   createLayer = function (nonLeafLayer) {
+    // temporal layers should not be added to the map.
+    if (nonLeafLayer.temporal) { return; }
+
     switch (nonLeafLayer.type) {
     case ('TMS'):
       _initiateTMSLayer(nonLeafLayer);
@@ -206,8 +215,10 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
         numLayers++;
       }
     });
-    angular.forEach($filter('orderBy')(layers, 'z_index', true), function (layer) {
-      if ((layer.overlayer === true) && (layer.active)) {
+    angular.forEach($filter('orderBy')(layers, 'z_index', true),
+      function (layer) {
+      if ((layer.overlayer === true) && (layer.active) &&
+          'leafletLayer' in layer) {
         layer.leafletLayer.setOpacity(1 / numLayers);
         numLayers--;
       }
@@ -244,6 +255,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @param  {object} layers all layers to switch off.
    */
   toggleLayer = function (layer, layers) {
+    // if (!layer.initiated) { return; }
     if (layer.baselayer) {
       _turnOffAllOtherBaselayers(layer.id, layers);
       if (!layer.active) { layer.active = true; }
@@ -351,8 +363,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
   /**
    * @function
    * @memberOf app.MapService
-   * @description Retrieves the (single) currently active layer which has a temporal
-   * component. Returns undefined if no temporal raster layer is
+   * @description Retrieves the (single) currently active layer which has a
+   * temporal component. Returns undefined if no temporal raster layer is
    * currently active.
    *
    * @return {Object}
@@ -431,6 +443,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
   mapState = {
     here: null,
     center: null,
+    initiated: _initiated,
     layers: CabinetService.layers,
     activeLayersChanged: false,
     eventTypes: CabinetService.eventTypes,

@@ -36,8 +36,10 @@ app.service('UtfGridService', ['$q', '$rootScope', 'MapService',
           // Resolve with response and update pointObject
           deferred.resolve(response);
         }
-      } else {
+      } else if (MapService.mapState.layers.waterchain.active) {
         getDataFromUTFAsynchronous(e, deferred);
+      } else {
+        deferred.reject();  
       }
       return deferred.promise;
     }
@@ -64,13 +66,20 @@ app.service('UtfGridService', ['$q', '$rootScope', 'MapService',
 
         on();
         var waterchainLayer = MapService.getLayer('grid', 'waterchain');
-        var response = waterchainLayer._objectForEvent(e);
-        // since this part executes async in a future turn of the event loop,
-        // we need to wrap it into an $apply call so that the model changes are
-        // properly observed.
-        $rootScope.$apply(function () {
-          promise.resolve(response);
-        });
+        if (waterchainLayer) {
+          var response = waterchainLayer._objectForEvent(e);
+          // since this part executes async in a future turn of the event loop,
+          // we need to wrap it into an $apply call so that the model changes are
+          // properly observed.
+          $rootScope.$apply(function () {
+            promise.resolve(response);
+          });          
+        } else {
+          $rootScope.$apply(function () {
+            promise.reject();
+          });  
+        }
+
       });
     }
 
