@@ -5,7 +5,7 @@
  * @memberOf app
  * @class pointObjectCtrl
  * @name pointObjectCtrl
- * @description pointObject is the contoller of the pointObject template. 
+ * @description pointObject is the contoller of the pointObject template.
  * It gathers all data belonging to a location in space. It becomes active
  * by setting box.type to 'pointObject' and is updated by broadcasting
  * 'newPointActive'. It reads and writes mapState.here.
@@ -40,7 +40,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * in space. It is updated after a users click. The pointObject
      * may have associated events and timeseries which are requested
      * from the server by the services.
-     * 
+     *
      * @return {object} empty pointObject.
      */
     createPointObject = function () {
@@ -78,7 +78,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
     /**
      * @function
      * @memberOf app.pointObjectCtrl
-     * @param  {L.LatLng} here  
+     * @param  {L.LatLng} here
      * @param  {object}   ?extra Optional extra info
      */
     fillPointObject = function (here, extra) {
@@ -93,10 +93,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
         ClickFeedbackService.drawClickInSpace(here);
         // Get attribute data from utf
         UtfGridService.getDataFromUTF(here)
-          .then(utfgridResponded(here, clickedOnEvents), _noUTF(here))
-          .then(function () {
-            getRasterForLocation();
-          });
+          .then(utfgridResponded(here, clickedOnEvents), _noUTF(here));
       }
 
     };
@@ -110,7 +107,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
       return function () {
         $scope.pointObject.attrs.active = false;
         ClickFeedbackService.drawArrowHere(here);
-        getRasterForLocation();
+        getRasterForLocation(here);
       };
     };
 
@@ -118,22 +115,22 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @function
      * @memberOf app.pointObjectCtrl
      * @description callback for utfgrid
-     *  
+     *
      * @summary Callback to handle utfGrid responses.
      *
-     * @description When utfGrid responded with data, this function tries to 
+     * @description When utfGrid responded with data, this function tries to
      * get object related data from the server. When an event layer is active,
      * showOnlyEvents is true and no object related data is retrieved from the
      * server.
      *
      * Objected related data retrieved from server:
-     * 
+     *
      * - Timeseries: EventService.getEvents()
      * - Events: getTimeSeriesForObject()
      *
      * @param {object} here - object with lattitude and longitude.
      * @param {boolean} showOnlyEvents - True if clicked on events
-     * @return {function} 
+     * @return {function}
      */
     utfgridResponded = function (here, showOnlyEvents) {
       return function (response) {
@@ -150,6 +147,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
 
           // Set here to location of object
           var geom = JSON.parse(response.data.geom);
+          // Snap the click to the center of the object
           here = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
           // Draw feedback around object.
           ClickFeedbackService.drawGeometry(
@@ -166,10 +164,13 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
           // Get timeseries belonging to object.
           getTimeSeriesForObject();
         } else {
-          // If not hit object, threaten it as a rain click, draw rain click
+          $scope.pointObject.attrs.active = false;
+          // If not hit object, treat it as a rain click, draw rain click
           // arrow.
           ClickFeedbackService.drawArrowHere(here);
         }
+        // Get raster data for the snapped here
+        getRasterForLocation(here);
       };
     };
 
@@ -180,12 +181,12 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * that is active. If there is none, nothing happens.
      * @return {void}
      */
-    getRasterForLocation = function () {
+    getRasterForLocation = function (here) {
       var layer, lIndex, stop, start;
       for (lIndex in $scope.mapState.layers) {
         layer = $scope.mapState.layers[lIndex];
         if (layer.active && layer.temporal) {
-          getRasterForLayer(layer);
+          getRasterForLayer(layer, here);
         }
       }
     };
@@ -198,7 +199,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @param  {object} layer Layer object, containing name, slug..
      * @return {void}
      */
-    getRasterForLayer = function (layer) {
+    getRasterForLayer = function (layer, here) {
       var stop = new Date($scope.timeState.end),
           start = new Date($scope.timeState.start);
       $scope.pointObject.temporalRaster.aggWindow =
@@ -208,7 +209,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
       RasterService.getTemporalRaster(
         start,
         stop,
-        $scope.mapState.here,
+        here,
         $scope.pointObject.temporalRaster.aggWindow,
         layer.slug)
         .then(rasterLayerResponded)
@@ -217,7 +218,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
           RasterService.getTemporalRaster(
             start,
             stop,
-            $scope.mapState.here,
+            here,
             $scope.pointObject.temporalRaster.aggWindow,
             layer.slug,
             'rrc')
@@ -287,7 +288,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @function
      * @memberOf app.pointObjectCtrl
      * @description returns data from UTFgrid
-     * @param {jsondata} data 
+     * @param {jsondata} data
      */
     attrsResponded = function (data) {
       // Return directly if no data is returned from the UTFgrid
@@ -367,9 +368,6 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return; }
 
-
-
-      // NOTE: how should we do this....?
       $scope.pointObject.attrs.active = $scope.mapState.layers.waterchain.active;
       $scope.pointObject.temporalRaster.active = $scope.mapState.layers['demo:radar'].active;
       $scope.pointObject.events.active = $scope.events.data.features.length > 0;
@@ -380,12 +378,11 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
           !$scope.pointObject.events.active) {
         $scope.box.type = 'extentAggregate';
       } else {
-        $scope.pointObject = createPointObject();
         fillPointObject($scope.mapState.here);
       }
     });
 
     $scope.mustShowRainCard = RasterService.mustShowRainCard;
   }
-  
+
 ]);
