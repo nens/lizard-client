@@ -205,9 +205,9 @@ describe('Testing graph', function () {
     var data = [[0, 0], [1, 3], [2, 1]],
     keys = {x: 0, y: 1},
     labels = {x: 'afstand', y: 'elevation'};
-    expect(graph.xy).toBe(undefined);
+    expect(graph._xy).toBe(undefined);
     graph.drawLine(data, keys, labels);
-    expect(graph.xy).not.toBe(undefined)
+    expect(graph._xy).not.toBe(undefined)
   });
 
   it('should have an xy with scales', function () {
@@ -217,10 +217,10 @@ describe('Testing graph', function () {
     height = dimensions.height - dimensions.padding.top - dimensions.padding.bottom
     width = dimensions.width - dimensions.padding.left - dimensions.padding.right
     graph.drawLine(data, keys, labels);
-    expect(graph.xy.x.scale(graph.xy.x.maxMin.max)).toBe(width);
-    expect(graph.xy.x.scale(0)).toBe(0);
-    expect(graph.xy.y.scale(graph.xy.y.maxMin.max)).toBe(0);
-    expect(graph.xy.y.scale(0)).toBe(height);
+    expect(graph._xy.x.scale(graph._xy.x.maxMin.max)).toBe(width);
+    expect(graph._xy.x.scale(0)).toBe(0);
+    expect(graph._xy.y.scale(graph._xy.y.maxMin.max)).toBe(0);
+    expect(graph._xy.y.scale(0)).toBe(height);
   });
 
   it('should have an xy with axes', function () {
@@ -228,8 +228,8 @@ describe('Testing graph', function () {
     keys = {x: 0, y: 1},
     labels = {x: 'afstand', y: 'elevation'},
     graph.drawLine(data, keys, labels);
-    expect(graph.xy.y.axis.name).toBe('axis');
-    expect(graph.xy.x.axis.name).toBe('axis');
+    expect(graph._xy.y.axis.name).toBe('axis');
+    expect(graph._xy.x.axis.name).toBe('axis');
   });
 
   it('should rescale the x when max or min changes', function () {
@@ -237,13 +237,13 @@ describe('Testing graph', function () {
     keys = {x: 0, y: 1},
     labels = {x: 'afstand', y: 'elevation'},
     graph.drawLine(data, keys, labels);
-    expect(graph.xy.x.maxMin.min).toBe(0);
-    expect(graph.xy.x.maxMin.max).toBe(2);
+    expect(graph._xy.x.maxMin.min).toBe(0);
+    expect(graph._xy.x.maxMin.max).toBe(2);
     data[0][0] = -1;
     data[2][0] = 3;
     graph.drawLine(data, keys, labels);
-    expect(graph.xy.x.maxMin.min).toBe(-1);
-    expect(graph.xy.x.maxMin.max).toBe(3);
+    expect(graph._xy.x.maxMin.min).toBe(-1);
+    expect(graph._xy.x.maxMin.max).toBe(3);
   });
 
   it('should rescale the y when max increase', function () {
@@ -251,10 +251,10 @@ describe('Testing graph', function () {
     keys = {x: 0, y: 1},
     labels = {x: 'afstand', y: 'elevation'},
     graph.drawLine(data, keys, labels);
-    expect(graph.xy.y.maxMin.max).toBe(3);
+    expect(graph._xy.y.maxMin.max).toBe(3);
     data[0][1] = 4;
     graph.drawLine(data, keys, labels);
-    expect(graph.xy.y.maxMin.max).toBe(4);
+    expect(graph._xy.y.maxMin.max).toBe(4);
   });
 
   it('should not rescale the y when max halves', function () {
@@ -262,10 +262,10 @@ describe('Testing graph', function () {
     keys = {x: 0, y: 1},
     labels = {x: 'afstand', y: 'elevation'},
     graph.drawLine(data, keys, labels);
-    expect(graph.xy.y.maxMin.max).toBe(3);
+    expect(graph._xy.y.maxMin.max).toBe(3);
     data[1][1] = 1.5;
     graph.drawLine(data, keys, labels);
-    expect(graph.xy.y.maxMin.max).toBe(3);
+    expect(graph._xy.y.maxMin.max).toBe(3);
   });
 
   it('should rescale the y when max diminishes', function () {
@@ -273,19 +273,11 @@ describe('Testing graph', function () {
     keys = {x: 0, y: 1},
     labels = {x: 'afstand', y: 'elevation'},
     graph.drawLine(data, keys, labels);
-    expect(graph.xy.y.maxMin.max).toBe(3);
+    expect(graph._xy.y.maxMin.max).toBe(3);
     data[1][1] = 0.2;
     data[2][1] = 0.2;
     graph.drawLine(data, keys, labels);
-    expect(graph.xy.y.maxMin.max).toBe(0.2);
-  });
-
-  it('should create a line', function () {
-    var data = [[0, 0], [1, 3], [2, 1]];
-    keys = {x: 0, y: 1},
-    labels = {x: 'afstand', y: 'elevation'};
-    graph.drawLine(data, keys, labels);
-    expect(graph._line).toBeDefined();
+    expect(graph._xy.y.maxMin.max).toBe(0.2);
   });
 
   it('should create a barchart with time on the x scale', function () {
@@ -293,15 +285,7 @@ describe('Testing graph', function () {
     keys = {x: 0, y: 1},
     labels = {x: 'afstand', y: 'elevation'};
     graph.drawBars(data, keys, labels);
-    expect(graph.xy.x.scale.domain()[0] instanceof Date).toBe(true)
-  });
-
-  it('should have a barWidth when drawing bars', function () {
-    var data = [[1409748900000, 0], [1409752500000, 1], [1409756100000, 3]];
-    keys = {x: 0, y: 1},
-    labels = {x: 'afstand', y: 'elevation'};
-    graph.drawBars(data, keys, labels);
-    expect(graph.xy.barWidth).toEqual(graph.xy.x.scale(data[1][0]) - graph.xy.x.scale(data[0][0]));
+    expect(graph._xy.x.scale.domain()[0] instanceof Date).toBe(true)
   });
 
   it('should draw a now element at the right place', function () {
@@ -311,7 +295,7 @@ describe('Testing graph', function () {
     graph.drawBars(data, keys, labels);
     graph.drawNow(data[1][0]);
     var indicator = graph._svg.select('g').select('#feature-group').select('.now-indicator');
-    expect(indicator.attr('x1')).toEqual(String(graph.xy.x.scale(data[1][0])));
+    expect(indicator.attr('x1')).toEqual(String(graph._xy.x.scale(data[1][0])));
   });
 
 });
