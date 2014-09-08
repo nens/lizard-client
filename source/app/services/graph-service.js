@@ -54,7 +54,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
         if (!this.dimensions.r || this._arc || this._pie) {
           this._donut = createDonut(this.dimensions);
         }
-        _drawDonut(this._svg, this.dimensions, this._donut, data);
+        drawPie(this._svg, this.dimensions, this._donut, data);
       }
     },
 
@@ -78,12 +78,12 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     drawLine: {
       value: function (data, keys, labels) {
         if (!this.xy) {
-          this.xy = createXYGraph(this._svg, this.dimensions, data, keys, labels);
+          this.xy = this._createXYGraph(data, keys, labels);
         } else {
           this.xy = rescale(this._svg, this.dimensions, this.xy, data, keys);
         }
         this._line = this._createLine(this.xy, keys);
-        this._path = _drawLine(this._svg, this._line, data, this._transTime, this._path);
+        this._path = drawPath(this._svg, this._line, data, this.transTime, this._path);
       }
     },
 
@@ -117,13 +117,12 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
               orientation: 'left'
             }
           };
-          this.xy = createXYGraph(this._svg, this.dimensions, data, keys, labels, options);
-          this.xy.barWidth = getBarWidth(this.xy.x, data, keys);
+          this.xy = this._createXYGraph(data, keys, labels, options);
         } else {
           this.xy = rescale(this._svg, this.dimensions, this.xy, data, keys);
-          this.xy.barWidth = getBarWidth(this.xy.x, data, keys);
         }
-        drawVerticalRects(this._svg, this.dimensions, this.xy, keys, data, this._transTime);
+        this.xy.barWidth = getBarWidth(this.xy.x.scale, data, keys);
+        drawVerticalRects(this._svg, this.dimensions, this.xy, keys, data, this.transTime);
       }
     },
 
@@ -149,6 +148,9 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
      */
     drawHorizontalStack: {
       value: function (data, keys, labels) {
+        if (!this.x) {
+          this.x = createXGraph(this._svg, this.dimensions, labels);
+        }
         // normalize data
         var total = d3.sum(data, function (d) {
           return Number(d[keys.x]);
@@ -156,10 +158,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
         angular.forEach(data, function (value, key) {
           value[keys.x] = value[keys.x] / total;
         });
-        if (!this.x) {
-          this.x = createXGraph(this._svg, this.dimensions, labels);
-        }
-        drawHorizontalRectss(this._svg, this.dimensions, this._transTime, this.x.scale, data, keys, labels);
+        drawHorizontalRectss(this._svg, this.dimensions, this.transTime, this.x.scale, data, keys, labels);
       }
     },
 
@@ -174,11 +173,11 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     followMouse: {
       value: function (callback) {
         var self = this;
-        var el = this._svg.select('g').select('#listeners');
-        el.on('mousemove', function () {
-          var pos = self.xy.x.scale.invert(d3.mouse(this)[0]);
-          callback(pos);
-        });
+        this._svg.select('g').select('#listeners')
+          .on('mousemove', function () {
+            var pos = self.xy.x.scale.invert(d3.mouse(this)[0]);
+            callback(pos);
+          });
       }
     },
 
@@ -191,11 +190,10 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
      */
     mouseExit: {
       value: function (callback) {
-        var self = this;
-        var el = this._svg.select('g').select('#listeners');
-        el.on('mouseout', function () {
-          callback();
-        });
+        this._svg.select('g').select('#listeners')
+          .on('mouseout', function () {
+            callback();
+          });
       }
     },
 
@@ -210,14 +208,42 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       value: function (now) {
         this._drawNow(now, this.xy.x.scale);
       }
+    },
+
+    _createXYGraph: {
+      value: function (data, keys, labels, options) {
+        if (!options) {
+          options = {
+            x: {
+              scale: 'linear',
+              orientation: 'bottom'
+            },
+            y: {
+              scale: 'linear',
+              orientation: 'left'
+            }
+          };
+        }
+        var xy = {x: {}, y: {}};
+        var self = this;
+        angular.forEach(xy, function (value, key) {
+          var y = key === 'y' ? true: false;
+          xy[key] = self._createD3Objects(data, keys[key], options[key], y);
+          drawAxes(self._svg, xy[key].axis, self.dimensions, y);
+          addLabel(self._svg, self.dimensions, labels[key], y);
+        });
+        return xy;
+      }
     }
   });
 
-  var createPie, createArc, _drawDonut, getDonutHeight, drawAxes, addLabel,
-  createD3Objects, toRescale, _drawLine, createXYGraph, setupLineGraph, createDonut,
+  var createPie, createArc, drawPie, drawAxes, addLabel, toRescale, drawPath, setupLineGraph, createDonut,
   getBarWidth, drawVerticalRects, drawHorizontalRectss, createXGraph, rescale;
 
   rescale = function (svg, dimensions, xy, data, keys) {
+    // Sensible limits to rescale. If the max
+    // of the y values is smaller than 0.1 of the max of the scale,
+    // update domain of the scale and redraw the axis.
     var limits = {
       x: 1,
       y: 0.1
@@ -226,12 +252,13 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       x: 'bottom',
       y: 'left'
     };
+    // Decide to rescale for each axis.
     angular.forEach(xy, function (value, key) {
       if (toRescale(data, keys[key], limits[key], value.maxMin)) {
-        value.maxMin = Graph.prototype._maxMin(data, keys[key])
+        value.maxMin = Graph.prototype._maxMin(data, keys[key]);
         value.scale.domain([0, value.maxMin.max]);
         value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
-        drawAxes(svg, value.axis, dimensions, key === 'y' ? true: false, Graph.prototype._transTime);
+        drawAxes(svg, value.axis, dimensions, key === 'y' ? true: false, Graph.prototype.transTime);
       }
     });
     return xy;
@@ -240,19 +267,21 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
   drawHorizontalRectss = function (svg, dimensions, duration, scale, data, keys, labels) {
     var width = Graph.prototype._getWidth(dimensions),
     height = Graph.prototype._getHeight(dimensions);
+    // Create a start and end for each rectangle.
     var previousCumu = 0;
     angular.forEach(data, function (value) {
       value.start = previousCumu;
-      previousCumu += value.data;
+      previousCumu += value[keys.x];
     });
+    // Data should be normalized between 0 and 1.
     var total = 1;
 
-    // Join new data with old elements, based on the timestamp.
+    // Join new data with old elements, based on the y key.
     var rects = svg.select('g').select('#feature-group').selectAll("rect")
       .data(data, function (d) { return d[keys.y]; });
 
     // UPDATE
-    // Update old elements as needed.
+    // Update elements start and width as needed.
     rects.transition()
       .duration(duration)
       .attr("x", function (d) { return scale(d.start); })
@@ -268,21 +297,24 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       .duration(duration)
       .attr('width', function (d) { return scale(total - d.start); });
     // EXIT
-    // Remove old elements as needed.
+    // Remove old elements as needed. First transition to width = 0
+    // and then remove.
     rects.exit()
       .transition()
       .duration(duration)
-      .attr("x", function (d) { return scale(total); })
       .attr('width', 0)
       .remove();
 
+    // Rects set their value on the label axis when hoovered
     rects.on('mousemove', function (d) {
       var labelstr = d.label.split('-'),
-      label = Math.round(d.data * 100) + '% ' + labelstr[labelstr.length - 1];
+      label = Math.round(d[keys.x] * 100) + '% ' + labelstr[labelstr.length - 1];
       svg.select('#xlabel')
         .text(label).attr("class", 'selected');
     });
 
+    // When the user moves the mouse away from the graph, put the original
+    // label back in place.
     rects.on('mouseout', function (d) {
       svg.select('#xlabel')
         .text(labels.x)
@@ -298,7 +330,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     y = xy.y,
     barWidth =  xy.barWidth,
 
-    // Join new data with old elements, based on the timestamp.
+    // Join new data with old elements, based on the x key.
     bar = svg.select('g').select('#feature-group').selectAll(".bar")
       .data(data, function (d) { return d[keys.x]; });
 
@@ -320,6 +352,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       .attr("height", 0)
       .transition()
       .duration(duration)
+      // Bring bars in one by one
       .delay(function (d, i) { return i * 0.1 * duration; })
       .attr("height", function (d) { return height - y.scale(d[keys.y]); })
       .attr("y", function (d) { return y.scale(d[keys.y]); });
@@ -327,23 +360,17 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     // EXIT
     // Remove old elements as needed.
     bar.exit()
-    .remove();
+      .transition()
+      .duration(duration)
+      // Remove bars one by one
+      .delay(function (d, i) { return i * 0.1 * duration; })
+      .attr("y", function (d) { return y.scale(0); })
+      .attr("height", 0)
+      .remove();
   };
 
-  getBarWidth = function (x, data, keys) {
-    return x.scale(data[1][keys.x]) - x.scale(data[0][keys.x]);
-  };
-
-  createDonut = function (dimensions) {
-    var donutHeight = getDonutHeight(dimensions);
-    dimensions.r = donutHeight / 2;
-    var pie = createPie(dimensions),
-    arc = createArc(dimensions);
-    return {
-      dimensions: dimensions,
-      arc: arc,
-      pie: pie
-    };
+  getBarWidth = function (scale, data, keys) {
+    return scale(data[1][keys.x]) - scale(data[0][keys.x]);
   };
 
   createXGraph = function (svg, dimensions, labels) {
@@ -356,37 +383,14 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     range = {min: 0, max: width},
     // Axis should run from zero to 100%
     domain = {min: 0, max: 1};
-    x.scale = Graph.prototype._makeScale(domain, range, {scale: 'linear'}),
+    x.scale = Graph.prototype._makeScale(domain, range, {scale: 'linear'});
     x.axis = Graph.prototype._makeAxis(x.scale, {orientation: 'bottom'});
     drawAxes(svg, x.axis, dimensions, false);
     addLabel(svg, dimensions, labels.x, false);
     return x;
   };
 
-  createXYGraph = function (svg, dimensions, data, keys, labels, options) {
-    if (!options) {
-      options = {
-        x: {
-          scale: 'linear',
-          orientation: 'bottom'
-        },
-        y: {
-          scale: 'linear',
-          orientation: 'left'
-        }
-      };
-    }
-    var x = createD3Objects(svg, dimensions, data, keys.x, options.x, false),
-    y = createD3Objects(svg, dimensions, data, keys.y, options.y, true);
-    addLabel(svg, dimensions, labels.x, false);
-    addLabel(svg, dimensions, labels.y, true);
-    return {
-      x: x,
-      y: y
-    };
-  };
-
-  _drawLine = function (svg, line, data, duration, path) {
+  drawPath = function (svg, line, data, duration, path) {
     if (!path) {
       path = svg.select('g').select('#feature-group').append("svg:path")
         .attr("class", "line");
@@ -412,22 +416,11 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     return rescale;
   };
 
-  createD3Objects = function (svg, dimensions, data, key, options, y) {
-    var width = Graph.prototype._getWidth(dimensions),
-    height = Graph.prototype._getHeight(dimensions),
-    d3Objects = {},
-    domain = y ? {max: 0, min: height}: {min: 0, max: width};
-
-    d3Objects.maxMin = Graph.prototype._maxMin(data, key);
-    d3Objects.scale = Graph.prototype._makeScale(d3Objects.maxMin, domain, options);
-    d3Objects.axis = Graph.prototype._makeAxis(d3Objects.scale, options);
-    drawAxes(svg, d3Objects.axis, dimensions, y);
-    return d3Objects;
-  };
-
   addLabel = function (svg, dimensions, label, y) {
     var width = Graph.prototype._getWidth(dimensions),
     height = Graph.prototype._getHeight(dimensions),
+    // Correct 1 pixel to make sure the labels fall
+    // completely within the svg
     PIXEL_CORRECTION = 1,
     el = svg.append("text")
       .attr('class', 'graph-text')
@@ -448,8 +441,10 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
   };
 
   drawAxes = function (svg, axis, dimensions, y, duration) {
+    // Create elements and draw axis using nxtD3 method
     Graph.prototype._drawAxes(svg, axis, dimensions, y, duration);
     var axisEl;
+    // Make graph specific changes to the x and y axis
     if (y) {
       axisEl = svg.select('#yaxis')
         .attr("class", "y-axis y axis")
@@ -468,24 +463,37 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     }
   };
 
+  createDonut = function (dimensions) {
+    var donutHeight = Graph.prototype._getHeight(dimensions);
+    dimensions.r = donutHeight / 2;
+    var pie = createPie(dimensions),
+    arc = createArc(dimensions);
+    return {
+      dimensions: dimensions,
+      arc: arc,
+      pie: pie
+    };
+  };
+
   createPie = function (dimensions) {
     return d3.layout.pie()
       .value(function (d) {
           return d.data;
         })
+      // Sorting messes with the transition
       .sort(null);
   };
 
   createArc = function (dimensions) {
-    var ARC_INNER_RADIUS = 0.4;
+    var ARC_INNER_RADIUS = 0.7;
     return d3.svg.arc()
       .innerRadius(dimensions.r * ARC_INNER_RADIUS)
       .outerRadius(dimensions.r);
   };
 
-  _drawDonut = function (svg, dimensions, donut, data) {
+  drawPie = function (svg, dimensions, donut, data) {
     var width = Graph.prototype._getWidth(dimensions),
-    donutHeight = getDonutHeight(dimensions),
+    donutHeight = Graph.prototype._getHeight(dimensions),
     pie = donut.pie,
     arc = donut.arc;
 
@@ -504,7 +512,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
 
     donutArcs
       .transition()
-      .duration(Graph.prototype._transTime)
+      .duration(Graph.prototype.transTime)
       .attrTween("d", arcTween); // redraw the arcs
 
     donutArcs.enter().append("path")
@@ -513,10 +521,6 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       .each(function (d) { this._current = d; }) // store the initial angles
       .attr("transform", "translate(" +
         donutHeight / 2 + ", " + donutHeight / 2 + ")");
-  };
-
-  getDonutHeight = function (dimensions) {
-    return dimensions.height - dimensions.padding.top;
   };
 
   return Graph;

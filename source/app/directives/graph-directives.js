@@ -91,8 +91,8 @@ app.directive('graph', ["Graph", function (Graph) {
      */
     scope.$watch('data', function (n, o) {
       if (n === o) { return true; }
-      var labels = {x: scope.xlabel, y: scope.ylabel};
-      graphCtrl.updateData.call(graphCtrl.graph, scope.data, scope.keys, labels);
+      graphCtrl.setData(scope);
+      graphCtrl.updateData.call(graphCtrl.graph, graphCtrl.data, graphCtrl.keys, graphCtrl.labels);
     });
 
     scope.$watch('now', function (n, o) {
@@ -110,13 +110,17 @@ app.directive('graph', ["Graph", function (Graph) {
    * @description       Stores the graph directives data and update functions
    */
   graphCtrl = function ($scope, Graph) {
-    // Provide defaults for backwards compatability
-    this.data = $scope.data || [];
-    this.keys = $scope.keys || {x: 0, y: 1};
-    this.labels = {
-      x: $scope.xlabel || '',
-      y: $scope.ylabel || ''
+    this.setData = function (scope) {
+      // Provide defaults for backwards compatability
+      this.data = scope.data || [];
+      this.keys = scope.keys || {x: 0, y: 1};
+      this.labels = {
+        x: scope.xlabel || '',
+        y: scope.ylabel || ''
+      };
     };
+    this.setData($scope);
+
     this.graph = {};
     this.yfilter = "";
     this.now = $scope.now;

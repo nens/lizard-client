@@ -314,6 +314,4 @@ describe('Testing graph', function () {
     expect(indicator.attr('x1')).toEqual(String(graph.xy.x.scale(data[1][0])));
   });
 
-
-
 });

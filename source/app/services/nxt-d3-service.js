@@ -1,6 +1,6 @@
 /**
- * @name NxtD3Service
- * @class app.NxtD3Service
+ * @name NxtD3
+ * @class app.NxtD3
  * @memberOf app
  *
  * @summary Service to create and update common d3 elements.
@@ -12,8 +12,18 @@
  */
 app.factory("NxtD3", [ function () {
 
-  var createCanvas, createElementForAxis, resizeCanvas, _createDrawingArea;
+  var createCanvas, createElementForAxis, resizeCanvas;
 
+  /**
+   * @constructor
+   * @memberOf app.NxtD3
+   *
+   * @param {object} element    svg element for the graph.
+   * @param {object} dimensions object containing, width, height and
+   *                            an object containing top,
+   *                            bottom, left and right padding.
+   *                            All values in px.
+   */
   function NxtD3(element, dimensions) {
     this.dimensions = angular.copy(dimensions);
     this._svg = createCanvas(element, this.dimensions);
@@ -23,7 +33,21 @@ app.factory("NxtD3", [ function () {
 
     constructor: NxtD3,
 
-    _transTime: 300,
+
+    /**
+     * @attribute
+     * @memberOf app.NxtD3
+     * @description        The duration of transitions in ms. Use(d)
+     *                     throughout the graphs and timeline.
+     */
+    transTime: 300,
+
+    /**
+     * @attribute
+     * @memberOf app.NxtD3
+     * @description        Locales. Used in the axes. Currently only Dutch
+     *                     is supported (and d3's default english).
+     */
     _localeFormatter: {
       'nl_NL': d3.locale({
         "decimal": ",",
@@ -34,18 +58,13 @@ app.factory("NxtD3", [ function () {
         "date": "%d-%m-%Y",
         "time": "%H:%M:%S",
         "periods": ["AM", "PM"],
-        "days": ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
-        "shortDays": ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"],
-        "months": ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"],
-        "shortMonths": ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"]
+        "days": ["zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag"],
+        "shortDays": ["zo", "ma", "di", "wo", "do", "vr", "za"],
+        "months": ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"],
+        "shortMonths": ["jan", "feb", "mar", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
       })
     },
 
-    resize: function (dimensions) {
-      this.dimensions = angular.copy(dimensions);
-      this._svg = resizeCanvas(this._svg, this.dimensions);
-      this._svg = this._createDrawingArea(this._svg, this.dimensions);
-    },
     _createDrawingArea: function (svg, dimensions) {
       var width = NxtD3.prototype._getWidth(dimensions),
       height = NxtD3.prototype._getHeight(dimensions);
@@ -71,8 +90,65 @@ app.factory("NxtD3", [ function () {
         .attr('id', 'feature-group');
       return svg;
     },
+
     /**
-     * Returns a max min object for a data object or array of arrays.
+     * @function
+     * @memberOf app.NxtD3
+     *
+     * @param {object} svg        d3 selection of an svg.
+     * @param {object} dimensions object containing, width, height and
+     *                            an object containing top,
+     *                            bottom, left and right padding.
+     *                            All values in px.
+     * @param {array} data        Array of data objects.
+     * @param {int or string} key key to the values for the scale and
+     *                            axis in the data element
+     * @param {object} options    options object that will be passed
+     *                            to the d3 scale and axis.
+     * @param {boolean} y         Determines whether to return a y scale.
+     * @description Computes and returns maxmin, scale and axis.
+     * @return {object} containing maxmin, d3 scale and d3 axis.
+     */
+    _createD3Objects: function (data, key, options, y) {
+      // Computes and returns maxmin scale and axis
+      var width = this._getWidth(this.dimensions),
+      height = this._getHeight(this.dimensions),
+      d3Objects = {},
+      // y domain runs from height till zero, x domain from 0 to width.
+      domain = y ? {max: 0, min: height}: {min: 0, max: width};
+
+      d3Objects.maxMin = this._maxMin(data, key);
+      d3Objects.scale = this._makeScale(d3Objects.maxMin, domain, options);
+      d3Objects.axis = this._makeAxis(d3Objects.scale, options);
+      return d3Objects;
+    },
+
+    /**
+     * @function
+     * @memberOf app.NxtD3
+     *
+     * @param {object} dimensions object containing, width, height and
+     *                            an object containing top,
+     *                            bottom, left and right padding.
+     *                            All values in px.
+     * @description Resizes the canvas and the updates the drawing
+     *              area. Does not resize the elements drawn on the
+     *              canvas.
+     */
+    resize: function (dimensions) {
+      this.dimensions = angular.copy(dimensions);
+      this._svg = resizeCanvas(this._svg, this.dimensions);
+      this._svg = this._createDrawingArea(this._svg, this.dimensions);
+    },
+
+    /**
+     * @function
+     * @memberOf app.NxtD3
+     *
+     * @param {array} data        Array of data objects.
+     * @param {int or string} key key to the value in the array or object.
+     * @description returns the maximum and minimum
+     * @return {object} containing the max and min
      */
     _maxMin: function (data, key) {
       var max = d3.max(data, function (d) {
@@ -89,7 +165,15 @@ app.factory("NxtD3", [ function () {
     },
 
     /**
-     * Returns a d3 scale.
+     * @function
+     * @memberOf app.NxtD3
+     *
+     * @param {object} minMax object containing the max and min
+     * @param {object} range object contaning from where to where
+     *                       the scale runs.
+     * @param {object} options object what kind of scale to return
+     * @description returns a d3 scale
+     * @return {object} d3 scale
      */
     _makeScale: function (minMax, range, options) {
       // Instantiate a d3 scale based on min max and
@@ -128,12 +212,12 @@ app.factory("NxtD3", [ function () {
       }
       if (scale.domain()[0] instanceof Date) {
         var tickFormat = this._localeFormatter['nl_NL'].timeFormat.multi([
-              ["%H:%M", function(d) { return d.getMinutes(); }],
-              ["%H:%M", function(d) { return d.getHours(); }],
-              ["%a %d", function(d) { return d.getDay() && d.getDate() != 1; }],
-              ["%b %d", function(d) { return d.getDate() != 1; }],
-              ["%B", function(d) { return d.getMonth(); }],
-              ["%Y", function() { return true; }]
+              ["%H:%M", function (d) { return d.getMinutes(); }],
+              ["%H:%M", function (d) { return d.getHours(); }],
+              ["%a %d", function (d) { return d.getDay() && d.getDate() != 1; }],
+              ["%b %d", function (d) { return d.getDate() != 1; }],
+              ["%B", function (d) { return d.getMonth(); }],
+              ["%Y", function () { return true; }]
             ]);
         axis.tickFormat(tickFormat);
       }
@@ -195,13 +279,9 @@ app.factory("NxtD3", [ function () {
 
       if (!nowIndicator[0][0]) {
         nowIndicator = this._svg.select('g').select('#feature-group').append('line')
-          .attr('class', 'now-indicator')
-          .attr('x1', x)
-          .attr('x2', x)
-          .attr('y1', height)
-          .attr('y2', 0);
+          .attr('class', 'now-indicator');
       }
-      nowIndicator.transition().duration(this._transTime)
+      nowIndicator.transition().duration(this.transTime)
         .attr('x1', x)
         .attr('x2', x)
         .attr('y1', height)
