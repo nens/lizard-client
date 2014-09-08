@@ -27,7 +27,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
    */
   function Graph(element, dimensions) {
     NxtD3.call(this, element, dimensions);
-    this._svg = this._createDrawingArea(this._svg, this.dimensions);
+    this._svg = this._createDrawingArea();
   }
 
   Graph.prototype = Object.create(NxtD3.prototype, {

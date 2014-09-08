@@ -65,14 +65,25 @@ app.factory("NxtD3", [ function () {
       })
     },
 
-    _createDrawingArea: function (svg, dimensions) {
-      var width = NxtD3.prototype._getWidth(dimensions),
-      height = NxtD3.prototype._getHeight(dimensions);
+
+    /**
+     * @function
+     * @memberOf app.NxtD3
+     *
+     * @description Creates or modifies a clippath and features-group
+     *              to the svg. Feature-group is to draw the features
+     *              in, clippath is to prevent drawing outside this
+     *              area.
+     * @return {object} svg with clip-area and feature-group
+     */
+    _createDrawingArea: function () {
+      var width = NxtD3.prototype._getWidth(this.dimensions),
+      height = NxtD3.prototype._getHeight(this.dimensions);
       // Add clippath to limit the drawing area to inside the graph
       // See: http://bost.ocks.org/mike/path/
-      var clip = svg.select('g').select("defs");
+      var clip = this._svg.select('g').select("defs");
       if (!clip[0][0]) {
-        svg.select('g').append('defs').append("svg:clipPath")
+        this._svg.select('g').append('defs').append("svg:clipPath")
           .attr("id", "clip")
           .append("svg:rect")
           .attr("id", "clip-rect")
@@ -82,13 +93,13 @@ app.factory("NxtD3", [ function () {
           .attr("height", height);
       }
       // Put the data in this group
-      var g = svg.select('g').select('g');
+      var g = this._svg.select('g').select('g');
       if (!g[0][0]) {
-        g = svg.select('g').append('g');
+        g = this._svg.select('g').append('g');
       }
       g.attr("clip-path", "url(#clip)")
         .attr('id', 'feature-group');
-      return svg;
+      return this._svg;
     },
 
     /**
@@ -101,7 +112,7 @@ app.factory("NxtD3", [ function () {
      *                            bottom, left and right padding.
      *                            All values in px.
      * @param {array} data        Array of data objects.
-     * @param {int or string} key key to the values for the scale and
+     * @param {int-or-string} key key to the values for the scale and
      *                            axis in the data element
      * @param {object} options    options object that will be passed
      *                            to the d3 scale and axis.
@@ -146,7 +157,7 @@ app.factory("NxtD3", [ function () {
      * @memberOf app.NxtD3
      *
      * @param {array} data        Array of data objects.
-     * @param {int or string} key key to the value in the array or object.
+     * @param {int-or-string} key key to the value in the array or object.
      * @description returns the maximum and minimum
      * @return {object} containing the max and min
      */
@@ -198,7 +209,15 @@ app.factory("NxtD3", [ function () {
     },
 
     /**
-     * Create a d3 axis based on scale.
+     * @function
+     * @memberOf app.NxtD3
+     *
+     * @param {object} scale d3 scale
+     * @param {object} options object containing the orientation
+     *                         (bottom/left/right/top) and optionally
+     *                         an overwrite for the default ticks (5).
+     * @description returns a d3 axis
+     * @return {object} d3 axis
      */
     _makeAxis: function (scale, options) {
       // Make an axis for d3 based on a scale
@@ -225,7 +244,15 @@ app.factory("NxtD3", [ function () {
     },
 
     /**
-     * Draws the given axis in the given svg
+     * @function
+     * @memberOf app.NxtD3
+     *
+     * @param {object} svg  d3 selection of svg
+     * @param {object} axis d3 axis
+     * @param {object} dimensions object containing dimensions
+     * @param {boolean} y to draw y-axis or not (x-axis)
+     * @description Creates axis group if necessary and draws
+     *              aixs
      */
     _drawAxes: function (svg, axis, dimensions, y, duration) {
       var id = y ? 'yaxis': 'xaxis';
@@ -245,7 +272,13 @@ app.factory("NxtD3", [ function () {
     },
 
     /**
-     * Retruns width from dimensions.
+     * @function
+     * @memberOf app.NxtD3
+     *
+     * @param {object} dimensions object containing dimensions
+     * @description Deducts the left and right padding to get
+     *              the actual width of the drawing area
+     * @return {int} width
      */
     _getWidth: function (dimensions) {
       return dimensions.width -
@@ -254,13 +287,29 @@ app.factory("NxtD3", [ function () {
     },
 
     /**
-     * Returns height from dimensions.
+     * @function
+     * @memberOf app.NxtD3
+     *
+     * @param {object} dimensions object containing dimensions
+     * @description Deducts the top and bottom padding to get
+     *              the actual height of the drawing area
+     * @return {int} height
      */
     _getHeight: function (dimensions) {
       return dimensions.height -
         dimensions.padding.top -
         dimensions.padding.bottom;
     },
+
+    /**
+     * @function
+     * @memberOf app.NxtD3
+     *
+     * @param {object} xy object containing y.scales and x.scale.
+     * @param {object} keys object containing y.key and x.key.
+     * @description returns a line definition for the provided scales.
+     * @return {object} line
+     */
     _createLine: function (xy, keys) {
       return d3.svg.line().interpolate('basis')
         .y(function (d) {
@@ -269,8 +318,18 @@ app.factory("NxtD3", [ function () {
         .x(function (d) {
           return xy.x.scale(d[keys.x]);
         })
+        // interrupt the line when no data
         .defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
     },
+
+    /**
+     * @function
+     * @memberOf app.NxtD3
+     *
+     * @param {int} now timestamp from epoch in ms
+     * @param {object} scale d3 scale for time
+     * @description draws a line.
+     */
     _drawNow: function (now, scale) {
       var height = this._getHeight(this.dimensions);
       var x = scale(now);
