@@ -65,7 +65,9 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
       );
 
       if (timeIndex !== undefined) {
-        previousTimeIndex = scope.timeState.animation.playing ? timeIndex : 0;
+
+        previousTimeIndex = 0;
+
         updateTVLayer(
           tvLayer,
           tvData,
@@ -203,7 +205,10 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
    * @returns {void}
    */
   var resetPreviousTimeIndex = function () {
-    this.previousTimeIndex = 0;
+
+    //previousTimeIndex = undefined;
+    //this.timeIndex = 0;
+    this.previousTimeIndex = undefined;
   };
 
   return {

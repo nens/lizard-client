@@ -134,10 +134,10 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
    * assignments in the method: _getPointsForArrow
    */
   _arrowConstants: {
-    X_VALS: [ 90,  90, 120, 60, 60,   0,  30,  30],
-    Y_VALS: [210, 100, 100,  0,  0, 100, 100, 210],
+    X_VALS: [ 90, 80, 115, 60, 60,   5, 40,  30, 60],
+    Y_VALS: [250, 90, 100,  0,  0, 100, 90, 250, 245],
     WIDTH: 120,  // max diff X_VALS_FOR_ARROW
-    HEIGHT: 210, // max diff Y_VALS_FOR_ARROW
+    HEIGHT: 250, // max diff Y_VALS_FOR_ARROW
   },
 
 
@@ -172,14 +172,14 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
       xCoord = Math.round(
         (
-          (this._arrowConstants.X_VALS[i] - this._arrowConstants.WIDTH  / 2 - 1)
+          (this._arrowConstants.X_VALS[i] - (this._arrowConstants.WIDTH / 2) - 2)
           * SCALE_FACTOR
         ) + cx
       );
 
       yCoord = Math.round(
         (
-          (this._arrowConstants.Y_VALS[i] - this._arrowConstants.HEIGHT / 2 - 1)
+          (this._arrowConstants.Y_VALS[i] - (this._arrowConstants.HEIGHT / 2) - 2)
           * SCALE_FACTOR
         ) + cy
       );
@@ -245,10 +245,15 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
          *                     color for the arrow.
          */
         _getFill = function (d) {
-          var relSpeed, shade;
+
+          var relSpeed, shadeR, shadeG, shadeB;
           relSpeed = d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED;
-          shade = 255 - Math.floor((relSpeed - 10e-6) * 256);
-          return "rgb(255, " + shade + ", " + shade + ")";
+
+          shadeR = 255 - Math.floor(relSpeed * (255 - 22));
+          shadeG = 255 - Math.floor(relSpeed * (255 - 160));
+          shadeB = 255 - Math.floor(relSpeed * (255 - 133));
+
+          return "rgb(" + shadeR + ", " + shadeG + ", " + shadeB + ")";
         };
 
     if (!this.g || this.g.empty()) {
@@ -262,7 +267,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
     features.enter()
       .append("svg:polygon")
         .attr("points", _getPoints)
-        .attr("stroke-width", 1)
+        .attr("stroke-width", 2)
         .attr("stroke", "white")
         .attr("fill", _getFill)
         .attr("class", function (feature) {

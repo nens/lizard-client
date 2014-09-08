@@ -165,6 +165,7 @@ app.factory("Timeline", [ function () {
         .attr("width", 2)
         .attr("style", "fill: #2980b9;");
       brushend();
+
     },
 
     removeBrush: function () {
@@ -534,6 +535,8 @@ app.factory("Timeline", [ function () {
       }
       brushFn(brush);
     };
+
+    console.log("brushed!");
     return brushed;
   };
 

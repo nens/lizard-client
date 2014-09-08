@@ -483,7 +483,11 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
           });
         }
 
-        TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
+        TemporalVectorService.getTimeIndexAndUpdate(
+          scope,
+          tvLayer,
+          tvData
+        );
       });
 
       scope.$watch('mapState.zoom', function (newVal, oldVal) {
@@ -506,6 +510,9 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
       });
 
       scope.$watch('timeState.animation.playing', function (newVal, oldVal) {
+
+        if (newVal === oldVal) { return; }
+
         TemporalVectorService.resetTimeIndex();
       });
     }
