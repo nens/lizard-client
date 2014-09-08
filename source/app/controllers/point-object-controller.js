@@ -12,6 +12,8 @@
  *
  * TODO:
  * - [ ] Include the click action on individual events into this paradigm.
+ * - [ ] Remove all hardcoded shit. Mirror extentaggregate and loop through
+ *       all layers and perform generic actions based on layer types.
  */
 
 app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
@@ -296,19 +298,6 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
       angular.extend($scope.pointObject.attrs.data, data.data);
     };
 
-    $scope.pointObject = createPointObject();
-    fillPointObject($scope.mapState.here);
-
-    $scope.$on('updatePointObject', function (msg, extra) {
-      fillPointObject($scope.mapState.here, extra);
-    });
-
-    $scope.$on('$destroy', function () {
-      ClickFeedbackService.emptyClickLayer();
-    });
-
-
-
     /**
      * @function
      * @memberOf app.pointObjectCtrl
@@ -361,7 +350,22 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
       }
     };
 
+    // Create point object and fill on controller creation
+    $scope.pointObject = createPointObject();
+    fillPointObject($scope.mapState.here);
+
+    // Upodate when user clicked again
+    $scope.$on('updatePointObject', function (msg, extra) {
+      fillPointObject($scope.mapState.here, extra);
+    });
+
+    // Clean up stuff when controller is destroyed
+    $scope.$on('$destroy', function () {
+      ClickFeedbackService.emptyClickLayer();
+    });
+
     // efficient $watches using a helper function.
+    // TODO: do not watch yourself.
     $scope.$watch('pointObject.attrs.active',  _watchAttrAndEventActivity);
     $scope.$watch('pointObject.events.active', _watchAttrAndEventActivity);
 
