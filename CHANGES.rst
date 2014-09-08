@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 unreleased
 ----------
 
+- Rain CSVs now get distinct columns for date + time
+
 - Refactor map directive into map service.
 
 - Animate intersection with dynamic raster data.

@@ -338,7 +338,10 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
      */
     $scope.formatCSVColumns = function (data) {
 
+      console.log("Ola!!");
+
       var i,
+          formattedDateTime,
           formattedData = [],
           lat = $scope.$parent.mapState.here.lat,
           lng = $scope.$parent.mapState.here.lng,
@@ -349,8 +352,14 @@ app.controller('pointObjectCtrl', ["$scope", "$filter", "CabinetService",
 
       for (i = 0; i< data.length; i++) {
 
+        formattedDateTime = _formatDate(data[i][0]);
+
+        console.log('[!!!] formattedDateTime:', formattedDateTime);
+
         formattedData.push([
-          _formatDate(data[i][0]),
+          // _formatDate(data[i][0]),
+          formattedDateTime[0],
+          formattedDateTime[1],
           data[i][1],
           lat,
           lng
