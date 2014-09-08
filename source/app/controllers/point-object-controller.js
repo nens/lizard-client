@@ -117,6 +117,8 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @function
      * @memberOf app.pointObjectCtrl
      * @description callback for utfgrid
+     * @param  {L.LatLng} here
+     * @param  {Boolean}  showOnlyEvents if events are clicked
      *
      * @summary Callback to handle utfGrid responses.
      *
@@ -129,9 +131,6 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      *
      * - Timeseries: EventService.getEvents()
      * - Events: getTimeSeriesForObject()
-     *
-     * @param {object} here - object with lattitude and longitude.
-     * @param {boolean} showOnlyEvents - True if clicked on events
      * @return {function}
      */
     utfgridResponded = function (here, showOnlyEvents) {
@@ -387,6 +386,35 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
     });
 
     $scope.mustShowRainCard = RasterService.mustShowRainCard;
+
+    /**
+     * Format the CSV (exporting rain data for a point in space/interval in
+     * time) in a way that makes it comprehensible for les autres.
+     *
+     */
+    $scope.formatCSVColumns = function (data) {
+
+      var i,
+          formattedData = [],
+          lat = $scope.$parent.mapState.here.lat,
+          lng = $scope.$parent.mapState.here.lng,
+          _formatDate = function (epoch) {
+            var unsplitted = new Date(parseInt(epoch));
+            return unsplitted.toString().split(' ').slice(0, 5).join(' ');
+          };
+
+      for (i = 0; i< data.length; i++) {
+
+        formattedData.push([
+          _formatDate(data[i][0]),
+          data[i][1],
+          lat,
+          lng
+        ]);
+      }
+
+      return formattedData;
+    };
   }
 
 ]);
