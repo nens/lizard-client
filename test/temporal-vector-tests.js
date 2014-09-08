@@ -35,7 +35,5 @@ describe('Testing TemporalVectorService', function () {
     expect(result).toBe(true);
   });
 
-  it('should ')
-
 });
 
