@@ -247,9 +247,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
      *
      * TODO: this is still hard coded to rain: setIntensityData
      */
-    scope.$watch('mapState.activeLayersChanged', function (n, o) {
-
-      if (n === o) { return true; }
+    scope.$watch('mapState.getActiveTemporalLayer()', function (n, o) {
       if (scope.mapState.getActiveTemporalLayer()) {
         getTemporalRasterData();
         timeline.addClickListener();
