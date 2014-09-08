@@ -121,7 +121,6 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
         } else {
           this.xy = rescale(this._svg, this.dimensions, this.xy, data, keys);
         }
-        this.xy.barWidth = getBarWidth(this.xy.x.scale, data, keys);
         drawVerticalRects(this._svg, this.dimensions, this.xy, keys, data, this.transTime);
       }
     },
@@ -328,7 +327,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     height = Graph.prototype._getHeight(dimensions),
     x = xy.x,
     y = xy.y,
-    barWidth =  xy.barWidth,
+    barWidth =  getBarWidth(xy.x.scale, data, keys),
 
     // Join new data with old elements, based on the x key.
     bar = svg.select('g').select('#feature-group').selectAll(".bar")
