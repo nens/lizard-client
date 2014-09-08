@@ -151,6 +151,9 @@ app.filter('aggWinToYLabel', function () {
     case 86400000:
       out = 'mm / dag';
       break;
+    case 2635200000:
+      out = 'mm / maand';
+      break;
     default:
       out = '...';
     }

@@ -41,9 +41,9 @@ app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
        * @memberOf hashSyncHelper
        *
        * @summary Sets the url hash with a {'key':'val'}.
-       * 
+       *
        * @description Loops over the incoming object and fill obj2 with it. Then
-       * extend the original hash object with the new hash object. Finally set 
+       * extend the original hash object with the new hash object. Finally set
        * the hash using angular location service.
        *
        * @param {object} obj - Object with key
@@ -125,7 +125,8 @@ app.service("UtilService", function () {
     // Available zoomlevels
     var zoomLvls = {fiveMinutes: 300000,
                     hour: 3600000,
-                    day: 86400000};
+                    day: 86400000,
+                    month: 2635200000};
     // ms per pixel
     var msPerPx = (stop - start) / drawingWidth;
     for (var zoomLvl in zoomLvls) {
