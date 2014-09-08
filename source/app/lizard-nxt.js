@@ -5,7 +5,6 @@
  * @module lizard-nxt
  */
 var app = angular.module("lizard-nxt", [
-  'graph',
   'omnibox',
   'restangular',
   'ngSanitize',
