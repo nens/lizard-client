@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 unreleased
 ----------
 
+- test temporal vector directive/layer
+
+- implement temporal vector directive/layer
+
 - Refactor map directive into map service.
 
 - Animate intersection with dynamic raster data.
