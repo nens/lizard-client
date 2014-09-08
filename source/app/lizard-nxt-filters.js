@@ -63,24 +63,6 @@ app.filter('lookupManholeMaterial', function () {
   };
 });
 
-app.filter('truncate', function () {
-  return function (text, length, end) {
-    if (isNaN(length)) {
-      length = 10;
-    }
-    if (end === undefined) {
-      end = "...";
-    }
-    if (text.length <= length || text.length - end.length <= length) {
-      return text;
-    }
-    else {
-      return String(text).substring(0, length - end.length) + end;
-    }
-  };
-});
-
-
 app.filter('allowedFlowDirection', function () {
   return function (input) {
     var out;
@@ -177,22 +159,25 @@ app.filter('aggWinToYLabel', function () {
 });
 
 /**
- * Truncates a string to have no more than MAX_LENGTH characters.
+ * Truncates a string to have no more than maxLength characters.
  * Used in the righthand menu for truncating lengthy layer names.
  *
+ * @param {integer} maxLength - Length at which string gets truncated.
  * @return {string} The truncated layer name
  */
 app.filter('truncate', function () {
 
-  var MAX_LENGTH = 20;
+  return function (input, maxLength) {
 
-  return function (input) {
+    var MAX_LENGTH = maxLength || 20;
 
     if (input.length > MAX_LENGTH) {
 
       return input.slice(0, MAX_LENGTH - 3) + "...";
 
-    } else return input;
+    } else {
+      return input;
+    }
   };
 });
 

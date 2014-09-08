@@ -21,32 +21,31 @@
  * elements are removed. Therefore new and old dimensions need to be compared
  * to delay the resize of elements the same amount as the canvas.
  */
-app.factory("Timeline", [ function () {
+app.factory("Timeline", ["NxtD3", function (NxtD3) {
 
   // The timeline
-  var svg;
-  var initialHeight;
+  var initialHeight,
 
   // D3 components
-  var xScale; // The only d3 scale for placement on the x axis within the whole
+  xScale, // The only d3 scale for placement on the x axis within the whole
               // timeline. Is only updated when zoomTo is called.
-  var xAxis;
-  var brush;
-  var ordinalYScale; // Scale used to place events in lines for each type
+  xAxis,
+  brush,
+  ordinalYScale, // Scale used to place events in lines for each type
 
   // Interaction functions
-  var clicked;
-  var zoomed;
-  var zoomend;
-  var brushed;
+  clicked,
+  zoomed,
+  zoomend,
+  brushed,
 
   // Timeline elements
-  var noDataIndicator;
-  var nowIndicator;
-  var brushg;
-  var circles; // events
-  var lines; // events start - end
-  var bars; // rain intensity
+  noDataIndicator,
+  nowIndicator,
+  brushg,
+  circles, // events
+  lines, // events start - end
+  bars; // rain intensity
 
   /**
    * @constructor
@@ -62,20 +61,20 @@ app.factory("Timeline", [ function () {
    *  for zoom, click and brush interaction with the rest of the app.
    */
   function Timeline(element, dimensions, start, end, interaction) {
-    this.dimensions = angular.copy(dimensions);
+    NxtD3.call(this, element, dimensions);
     initialHeight = dimensions.height;
-    svg = createCanvas(element, this.dimensions);
+    this._svg = addElementGroupsToCanvas(this._svg, this.dimensions);
     var width = dimensions.width -
                 dimensions.padding.left -
                 dimensions.padding.right;
-    xScale = makeScale({min: new Date(start), max: new Date(end)},
+    xScale = this._makeScale({min: start, max: end},
                             {min: 0, max: width},
-                            { type: 'time' });
-    xAxis = makeAxis(xScale, {orientation: "bottom", ticks: 5});
-    drawAxes(svg, xAxis);
+                            {scale: 'time' });
+    xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
+    this._drawAxes(this._svg, xAxis, dimensions);
     if (interaction) {
       if (interaction.zoomFn) {
-        zoomed = setZoomFunction(svg, this.dimensions, xScale, xAxis,
+        zoomed = setZoomFunction(this._svg, this.dimensions, xScale, xAxis,
           interaction.zoomFn);
       }
       if (interaction.clickFn) {
@@ -91,87 +90,77 @@ app.factory("Timeline", [ function () {
     }
   }
 
-  Timeline.prototype = {
+  Timeline.prototype = Object.create(NxtD3.prototype, {
 
     constructor: Timeline,
 
     // TODO: create real noDataIndicator, this is just legacy code
-    addNoDataIndicator: function () {
-      var width = this.dimensions.width -
-                  this.dimensions.padding.left -
-                  this.dimensions.padding.right,
-          height = this.dimensions.height -
-                   this.dimensions.padding.top -
-                   this.dimensions.padding.bottom;
+    addNoDataIndicator: {
+      value: function () {
+        var width = this._getWidth(this.dimensions),
+        height = this._getHeight(this.dimensions);
 
-      noDataIndicator = this.svg.select('g').append('rect')
-        .attr('height', height)
-        .attr('width', width)
-        .attr('id', 'nodata')
-        .attr('x', -4000) // make sure nodata bar is invisible at first
-        .style('fill', 'url(#lightstripe)');
+        noDataIndicator = this._svg.select('g').append('rect')
+          .attr('height', height)
+          .attr('width', width)
+          .attr('id', 'nodata')
+          .attr('x', -4000) // make sure nodata bar is invisible at first
+          .style('fill', 'url(#lightstripe)');
+      }
     },
 
-    // TODO: remove nowIndicator and add it to the brush
-    addNowIndicator: function () {
-      var height = this.dimensions.height -
-                   this.dimensions.padding.top -
-                   this.dimensions.padding.bottom;
-
-      // Create line for the timeState.at just out of sight
-      nowIndicator = svg.select('g').append('line')
-        .attr('class', 'now-indicator')
-        .attr('x1', - this.dimensions.padding.left - 5)
-        .attr('x2', - this.dimensions.padding.left - 5)
-        .attr('y1', height)
-        .attr('y2', 0);
+    addClickListener: {
+      value: function () {
+        this._svg.on("click", clicked);
+      }
     },
 
-    addClickListener: function () {
-      svg.on("click", clicked);
-    },
-
-    removeClickListener: function () {
-      svg.on("click", null);
+    removeClickListener: {
+      value: function () {
+        this._svg.on("click", null);
+      }
     },
 
     /**
      * Draws a brush from start to end
      */
-    drawBrush: function (start, end) {
-      brush = d3.svg.brush().x(xScale);
-      brush.on("brush", brushed);
-      brush.on('brushstart', function () {
-        svg.on('click', null);
-      });
-      //TODO: Snap the brush to nearest logical unit, 5min, hour, week etc.
-      brush.on("brushend", brushend);
+    drawBrush: {
+      value: function (start, end) {
+        brush = d3.svg.brush().x(xScale);
+        brush.on("brush", brushed);
+        var self = this;
+        brush.on('brushstart', function () {
+          self._svg.on('click', null);
+        });
+        //TODO: Snap the brush to nearest logical unit, 5min, hour, week etc.
+        brush.on("brushend", brushend);
 
-      brushg = svg.select('g').append("g")
-        .attr("class", "brushed");
-      var height = this.dimensions.height -
-                   this.dimensions.padding.top -
-                   this.dimensions.padding.bottom;
-      brushg.call(brush.extent([new Date(start), new Date(end)]));
-      brushg.selectAll("rect")
-        .attr("height", height)
-        .selectAll("rect")
-          .transition()
-          .delay(500)
-          .duration(500)
-          .attr("height", height);
-      brushg.select('.e').select('rect')
-        .attr("x", 0)
-        .attr("width", 2)
-        .attr("style", "fill: #2980b9;");
-      brushend();
+        brushg = this._svg.select('g').append("g")
+          .attr("class", "brushed");
+        var height = this._getHeight(this.dimensions);
+        brushg.call(brush.extent([new Date(start), new Date(end)]));
+        brushg.selectAll("rect")
+          .attr("height", height)
+          .selectAll("rect")
+            .transition()
+            .delay(500)
+            .duration(500)
+            .attr("height", height);
+        brushg.select('.e').select('rect')
+          .attr("x", 0)
+          .attr("width", 2)
+          .attr("style", "fill: #2980b9;");
+        brushend();
+      }
     },
 
-    removeBrush: function () {
-      if (brushg) {
-        brushg.remove();
+    removeBrush: {
+      value: function () {
+        if (brushg) {
+          brushg.remove();
+        }
+        this._svg.selectAll(".selected").classed("selected", false);
       }
-      svg.selectAll(".selected").classed("selected", false);
     },
 
     /**
@@ -186,13 +175,15 @@ app.factory("Timeline", [ function () {
      *  line of events, height per line of bars and an object containing top,
      *  bottom, left and right padding. All values in px.
      */
-    resize: function (dimensions) {
-      var oldDimensions = angular.copy(this.dimensions);
-      this.dimensions = dimensions;
-      this.updateElements(oldDimensions);
-      svg = updateCanvas(svg, oldDimensions, this.dimensions);
-      ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
-      drawAxes(svg, xAxis);
+    resize: {
+      value: function (dimensions) {
+        var oldDimensions = angular.copy(this.dimensions);
+        this.dimensions = dimensions;
+        this.updateElements(oldDimensions);
+        this._svg = updateCanvas(this._svg, oldDimensions, this.dimensions);
+        ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
+        this._drawAxes(this._svg, xAxis, dimensions);
+      }
     },
 
     /**
@@ -200,42 +191,35 @@ app.factory("Timeline", [ function () {
      *
      * @param  {object} oldDimensions copy of the old dimensions
      */
-    updateElements: function (oldDimensions) {
-      if (circles) {
-        updateCircleElements(circles, xScale);
-      }
-      if (bars && oldDimensions) {
-        updateRectangleElements(bars, xScale, oldDimensions, this.dimensions);
-      }
-      if (noDataIndicator) {
-        updateNoDataElement(noDataIndicator, xScale, this.dimensions);
-      }
-      if (nowIndicator) {
-        this.updateNowElement();
-      }
-      if (brushg) {
-        updateBrush(brushg, oldDimensions, this.dimensions);
+    updateElements: {
+      value: function (oldDimensions) {
+        if (circles) {
+          updateCircleElements(circles, xScale);
+        }
+        if (bars && oldDimensions) {
+          updateRectangleElements(bars, xScale, oldDimensions, this.dimensions);
+        }
+        if (noDataIndicator) {
+          updateNoDataElement(noDataIndicator, xScale, this.dimensions);
+        }
+        if (nowIndicator) {
+          this.updateNowElement();
+        }
+        if (brushg) {
+          updateBrush(brushg, oldDimensions, this.dimensions);
+        }
       }
     },
 
     /**
      * Updates the brush's extent and calls the brush function
      */
-    updateBrushExtent: function (start, end) {
-      brushg
-        .call(brush.extent([new Date(start), new Date(end)]));
-      brushed();
-    },
-
-    // TODO: remove nowIndicator and add it to the brush
-    updateNowElement: function (now) {
-      var height = this.dimensions.height -
-                   this.dimensions.padding.top -
-                   this.dimensions.padding.bottom;
-      nowIndicator
-        .attr('x1', - this.dimensions.padding.left - 5)
-        .attr('x2', - this.dimensions.padding.left - 5)
-        .attr('y1', height);
+    updateBrushExtent: {
+      value: function (start, end) {
+        brushg
+          .call(brush.extent([new Date(start), new Date(end)]));
+        brushed();
+      }
     },
 
     /**
@@ -247,14 +231,16 @@ app.factory("Timeline", [ function () {
      *                                        geometry.coordinates: [lat, lon],
      *                                        event_order: <int specifying the line of events>}]
      */
-    drawCircles: function (data) {
-      circles = drawCircleElements(
-        svg,
-        this.dimensions,
-        data,
-        xScale,
-        ordinalYScale
-      );
+    drawCircles: {
+      value: function (data) {
+        circles = drawCircleElements(
+          this._svg,
+          this.dimensions,
+          data,
+          xScale,
+          ordinalYScale
+        );
+      }
     },
 
     /**
@@ -267,14 +253,16 @@ app.factory("Timeline", [ function () {
      *                                        geometry.coordinates: [lat, lon],
      *                                        event_order: <int specifying the line of events>}]
      */
-    drawLines: function (data) {
-      lines = drawLineElements(
-        svg,
-        this.dimensions,
-        xScale,
-        ordinalYScale,
-        data
-      );
+    drawLines: {
+      value: function (data) {
+        lines = drawLineElements(
+          this._svg,
+          this.dimensions,
+          xScale,
+          ordinalYScale,
+          data
+        );
+      }
     },
 
     /**
@@ -282,24 +270,28 @@ app.factory("Timeline", [ function () {
      *
      * @param {array} data array of arrays [[bar_timestamp, bar_height]]
      */
-    drawBars: function (data) {
-      var height = initialHeight -
-                   this.dimensions.padding.top -
-                   this.dimensions.padding.bottom +
-                   this.dimensions.bars;
+    drawBars: {
+      value: function (data) {
+        var height = initialHeight -
+                     this.dimensions.padding.top -
+                     this.dimensions.padding.bottom +
+                     this.dimensions.bars;
 
-      var y = maxMin(data, '1');
-      var options = {scale: 'linear'};
-      var yScale = makeScale(
-        y,
-        {min: 0, max: height},
-        options);
-      bars = drawRectElements(svg, this.dimensions, data, xScale, yScale);
+        var y = this._maxMin(data, '1');
+        var options = {scale: 'linear'};
+        var yScale = this._makeScale(
+          y,
+          {min: 0, max: height},
+          options);
+        bars = drawRectElements(this._svg, this.dimensions, data, xScale, yScale);
+      }
     },
 
-    removeBars: function () {
-      drawRectElements(svg, this.dimensions, []);
-      bars = undefined;
+    removeBars: {
+      value: function () {
+        drawRectElements(this._svg, this.dimensions, []);
+        bars = undefined;
+      }
     },
 
     /**
@@ -309,20 +301,22 @@ app.factory("Timeline", [ function () {
      *
      * @param {object} bounds to filter events with
      */
-    drawEventsContainedInBounds: function (bounds) {
-      var latLng = [];
-      lines.classed("hidden", true);
-      lines.classed("selected", false);
-      lines
-        .classed("selected", function (d) {
-          latLng[0] = d.geometry.coordinates[1];
-          latLng[1] = d.geometry.coordinates[0];
-          var contained = bounds.contains(latLng);
-          // Some book keeping to count
-          d.inSpatExtent = contained;
-          return contained;
-        });
-      d3.selectAll(".selected").classed("hidden", false);
+    drawEventsContainedInBounds: {
+      value: function (bounds) {
+        var latLng = [];
+        lines.classed("hidden", true);
+        lines.classed("selected", false);
+        lines
+          .classed("selected", function (d) {
+            latLng[0] = d.geometry.coordinates[1];
+            latLng[1] = d.geometry.coordinates[0];
+            var contained = bounds.contains(latLng);
+            // Some book keeping to count
+            d.inSpatExtent = contained;
+            return contained;
+          });
+        d3.selectAll(".selected").classed("hidden", false);
+      }
     },
 
     /**
@@ -332,36 +326,42 @@ app.factory("Timeline", [ function () {
      * @param  {int} start in ms since epoch
      * @param  {int} end   in ms since epoch
      */
-    zoomTo: function (start, end) {
-      xScale.domain([new Date(start), new Date(end)]);
-      xAxis = makeAxis(xScale, {orientation: "bottom", ticks: 5});
-      this.updateElements();
-      drawAxes(svg, xAxis, 500);
-      this.addZoomListener();
+    zoomTo: {
+      value: function (start, end) {
+        xScale.domain([new Date(start), new Date(end)]);
+        xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
+        this.updateElements();
+        this._drawAxes(this._svg, xAxis, this.dimensions, 500);
+        this.addZoomListener();
+      }
     },
 
-    addZoomListener: function () {
-      svg.call(d3.behavior.zoom()
-        .x(xScale)
-        .on("zoom", zoomed)
-        .on("zoomend", zoomend)
-      );
+    addZoomListener: {
+      value: function () {
+        this._svg.call(d3.behavior.zoom()
+          .x(xScale)
+          .on("zoom", zoomed)
+          .on("zoomend", zoomend)
+        );
+      }
     },
 
     /**
      * Thorougly removes zoom listeners.
      */
-    removeZoomListener: function () {
-      svg.call(d3.behavior.zoom()
-        .x(xScale)
-        .on("zoom", null)
-      );
-      svg
-        .on("zoomend", null)
-        .on("zoom", null)
-        .on("mousedown.zoom", null);
+    removeZoomListener: {
+      value: function () {
+        this._svg.call(d3.behavior.zoom()
+          .x(xScale)
+          .on("zoom", null)
+        );
+        this._svg
+          .on("zoomend", null)
+          .on("zoom", null)
+          .on("mousedown.zoom", null);
+      }
     }
-  };
+  });
 
   /**
    * Creates groups according to dimensions to accomadete all timeline elements,
@@ -372,28 +372,9 @@ app.factory("Timeline", [ function () {
    *  bottom, left and right padding. All values in px.
    * @return {object} svg timeline svg.
    */
-  var createCanvas = function (svg, dimensions) {
-    var width = dimensions.width -
-                dimensions.padding.left -
-                dimensions.padding.right,
-        height = dimensions.height -
-                 dimensions.padding.top -
-                 dimensions.padding.bottom;
-
-    svg.attr('width', dimensions.width)
-      .attr('height', dimensions.height)
-      .style("margin-top", dimensions.padding.top)
-      .append("g")
-        .attr("transform", "translate(" + dimensions.padding.left + ", 0)")
-        .append("rect")
-          .attr("width", width)
-          .attr("height", height)
-          .attr("class", "plot-temporal");
-    // Create element for axis
-    svg.select('g').append("g")
-      .attr('class', 'x axis')
-      .attr('id', 'xaxis')
-      .attr("transform", "translate(0 ," + height + ")");
+  var addElementGroupsToCanvas = function (svg, dimensions) {
+    var width = Timeline.prototype._getWidth(dimensions),
+    height = Timeline.prototype._getHeight(dimensions);
     // Create group for rain bars
     svg.select('g').append('g')
       .attr('height', height)
@@ -414,8 +395,8 @@ app.factory("Timeline", [ function () {
    * becoming larger.
    */
   var updateCanvas = function (svg, oldDims, newDims) {
-    var width = newDims.width - newDims.padding.left - newDims.padding.right;
-    var height = newDims.height - newDims.padding.top - newDims.padding.bottom;
+    var width = Timeline.prototype._getWidth(newDims),
+    height = Timeline.prototype._getHeight(newDims);
 
     if (newDims.height < oldDims.height) {
       svg.transition()
@@ -459,7 +440,7 @@ app.factory("Timeline", [ function () {
    */
   var setZoomFunction = function (svg, dimensions, xScale, xAxis, zoomFn) {
     var zoomed = function () {
-      drawAxes(svg, xAxis);
+      Timeline.prototype._drawAxes(svg, xAxis, dimensions);
       if (circles) {
         circles.attr("cx", function (d) {
           return Math.round(xScale(d.properties.timestamp_end));
@@ -547,12 +528,6 @@ app.factory("Timeline", [ function () {
       brushg.call(brush);
     }
     brushed();
-    if (d3.event) {
-      if (d3.event.type === 'click') {
-        d3.event.preventDefault();
-        Timeline.prototype.addClickListener();
-      }
-    }
   };
 
   /**
@@ -573,7 +548,7 @@ app.factory("Timeline", [ function () {
    */
   var updateBrush = function (brushg, oldDim, newDim) {
     brushed();
-    var height = newDim.height - newDim.padding.top - newDim.padding.bottom;
+    var height = Timeline.prototype._getHeight(newDim);
     var delay = 0;
     if (oldDim.height > newDim.height) {
       delay = 500;
@@ -617,19 +592,17 @@ app.factory("Timeline", [ function () {
     // Update old elements as needed.
     if (rectangles[0].length > 0) {
       var barHeight = initialHeight - newDimensions.padding.top -
-                      newDimensions.padding.bottom + newDimensions.bars;
-      var y = maxMin(rectangles.data(), '1');
-      var options = {scale: 'linear'};
-      var newHeight = newDimensions.height - newDimensions.padding.top -
-                      newDimensions.padding.bottom;
-      var oldHeight = oldDimensions.height - oldDimensions.padding.top -
-                      oldDimensions.padding.bottom;
-      var heightDiff = newHeight - oldHeight;
-      var yScale = makeScale(
+                      newDimensions.padding.bottom + newDimensions.bars,
+      y = Timeline.prototype._maxMin(rectangles.data(), '1'),
+      options = {scale: 'linear'},
+      newHeight = Timeline.prototype._getHeight(newDimensions),
+      oldHeight = Timeline.prototype._getHeight(oldDimensions),
+      heightDiff = newHeight - oldHeight,
+      yScale = Timeline.prototype._makeScale(
         y,
         {min: 0, max: barHeight},
-        options);
-      var barWidth = Number(rectangles.attr('width'));
+        options),
+      barWidth = Number(rectangles.attr('width'));
       if (heightDiff < 0) {
         rectangles.transition()
           .duration(500)
@@ -655,14 +628,10 @@ app.factory("Timeline", [ function () {
 
   // TODO: legacy, implement real noDataIndicator.
   var updateNoDataElement = function (noDataIndicator, xScale, dimensions) {
-    var width = dimensions.width -
-                dimensions.padding.left -
-                dimensions.padding.right,
-        height = dimensions.height -
-                 dimensions.padding.top -
-                 dimensions.padding.bottom,
-      year2014 = 1388534400000, // in msecs, since epoch
-      x = xScale(year2014);
+    var width = Timeline.prototype._getWidth(dimensions),
+    height = Timeline.prototype._getHeight(dimensions),
+    year2014 = 1388534400000, // in msecs, since epoch
+    x = xScale(year2014);
 
     noDataIndicator
       .attr('height', height)
@@ -807,9 +776,7 @@ app.factory("Timeline", [ function () {
    * Draws bar elements according to a d3 update pattern.
    */
   var drawRectElements = function (svg, dimensions, data, xScale, yScale) {
-    var height = dimensions.height -
-                 dimensions.padding.top -
-                 dimensions.padding.bottom;
+    var height = Timeline.prototype._getHeight(dimensions),
     // Join new data with old elements, based on the timestamp.
     bars = svg.select("g").select('#rain-bar').selectAll('.bar-timeline')
         .data(data, function  (d) { return d[0]; });
@@ -860,52 +827,6 @@ app.factory("Timeline", [ function () {
   };
 
   /**
-   * Returns a max min object for a data object or array of arrays.
-   */
-  var maxMin = function (data, key) {
-    var max = d3.max(data, function (d) {
-            return Number(d[key]);
-          });
-
-    var min = d3.min(data, function (d) {
-            return Number(d[key]);
-          });
-    return {
-      max: max,
-      min: min
-    };
-  };
-
-  /**
-   * Returns a d3 scale.
-   */
-  var makeScale = function (minMax, range, options) {
-    // Instantiate a d3 scale based on min max and
-    // width and height of plot
-    var scale;
-    if (options.type === 'time') {
-      scale = d3.time.scale()
-        .domain([minMax.min, minMax.max])
-        .range([range.min, range.max]);
-    }
-    else {
-      if (options.scale === "ordinal") {
-        scale = d3.scale.ordinal()
-          .domain(function (d) {
-            return d3.set(d.properties.event_sub_type).values();
-          })
-          .range(options.colors[8]);
-      }
-      else if (options.scale === "linear") {
-        scale = d3.scale.linear()
-          .domain([minMax.min, minMax.max])
-          .range([range.min, range.max]);
-      }
-    }
-    return scale;
-  };
-
-  /**
    * Returns a d3 scale to place events vertically in lines above each other.
    *
    * @param  {int} iniH initial height of the timeline in px.
@@ -918,41 +839,6 @@ app.factory("Timeline", [ function () {
       return fromTop;
     };
     return yScale;
-  };
-
-  /**
-   * Create a d3 axis based on scale.
-   */
-  var makeAxis = function (scale, options) {
-    // Make an axis for d3 based on a scale
-    var axis;
-    if (options.ticks) {
-      axis = d3.svg.axis()
-              .scale(scale)
-              .orient(options.orientation)
-              .ticks(options.ticks);
-    } else {
-      axis = d3.svg.axis()
-            .scale(scale)
-            .orient(options.orientation)
-            .ticks(5);
-    }
-    return axis;
-  };
-
-  /**
-   * Draws the given axis in the given svg
-   */
-  var drawAxes = function (svg, xAxis, duration) {
-    if (duration) {
-      svg.select('g').select('#xaxis')
-        .transition()
-        .duration(duration)
-        .call(xAxis);
-    } else {
-      svg.select('g').select('#xaxis')
-        .call(xAxis);
-    }
   };
 
   return Timeline;

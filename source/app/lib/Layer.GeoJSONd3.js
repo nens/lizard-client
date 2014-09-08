@@ -5,7 +5,7 @@
  * from https://gist.github.com/ZJONSSON/5529395
  * plus code copied from http://bl.ocks.org/tnightingale/4718717
  * Cotributions from @jsmits, @fritzvd, @arjenvrielink and @ernstkui
- * 
+ *
  * Each feature gets it's id as a class attribute so you can easily select it
  * with d3
  *
@@ -46,11 +46,10 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
       var point = map.latLngToLayerPoint(new L.LatLng(d[1], d[0]));
       return [point.x, point.y];
     };
-    var self = this;
-    this._path = d3.geo.path().projection(self._projection);
+    this._path = d3.geo.path().projection(this._projection);
 
     this.overlapLocations = {};
-    this.g = this._renderG();
+    this.g = this._container.append("g").attr("class", "geojsonnontile");
     this._refreshData();
 
     // Call onmove to position the svg.
@@ -62,14 +61,13 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
   },
 
   _renderG: function () {
-    var self = this;
     return this._container.append("g")
       .attr("class", "geojsonnontile")
-      .attr("transform", "translate(" + self._left + "," + self._top + ")");
+      .attr("transform", "translate(" + this._left + "," + this._top + ")");
   },
 
   /**
-   * _renderData 
+   * _renderData
    * Renders geoJSON data in the svg container.
    * If the options has a 'selectorPrefix' property
    * your 'path' elements will be accessible with an id.
@@ -168,9 +166,9 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
   },
 
   /**
-   * Move event function. The svg is moved by the position of the bottomleft 
-   * corner of the map relative to the origin. The features within the svg 
-   * are moved in the opposite direction to keep the features at the same 
+   * Move event function. The svg is moved by the position of the bottomleft
+   * corner of the map relative to the origin. The features within the svg
+   * are moved in the opposite direction to keep the features at the same
    * position relative to the map.
    */
   _onMove: function () {
