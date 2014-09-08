@@ -38,38 +38,47 @@
 
   <div id="card-relatified-events"
        class="card active"
-       ng-class="{hidden: !pointObject.events.active}">
+       ng-class="{hidden: !pointObject.events.data.length > 0}">
 
     <div class="card-content"
          id="card-content-relatified-events">
 
       <table class="table table-hover table-condensed">
 
-        <thead>
-          <tr>
-            <th></th>
-            <th></th>
-            <th>Aantal</th>
-            <th>Totaal</th>
-          </tr>
-        </thead>
+        <tr ng-repeat="event in pointObject.events.data |
+                       filter:{inTemporalExtent: true} |
+                       orderBy:event.timestamp_start |
+                       limitTo:5">
 
-        <tbody>
-          <tr ng-repeat="eventSeries in pointObject.events"
-              ng-if="eventSeries.length > 0">
-
-            <td>
+            <td rel="tooltip"
+                data-placement="left"
+                title="<% event.category %>">
               <i class="fa fa-circle"
-                 ng-style="{color: events.types[eventSeries[0].event_series].color }">
+                 ng-style="{color: events.types[event.event_series].color }">
               </i>
             </td>
 
-            <td><% events.types[eventSeries[0].event_series].name %></td>
-            <td><strong><% eventSeries.length %></strong></td>
-            <td><% events.types[eventSeries[0].event_series].count %></td>
+            <td rel="tooltip"
+                data-placement="left"
+                title="start: <% event.timestamp_start | date:'dd/MM/yyyy' %>
+                       eind: <% event.timestamp_end | date:'dd/MM/yyyy' %>">
+                <% event.timestamp_start | date:'dd/MM/yyyy' %>
+            </td>
+            <td rel="tooltip"
+                data-placement="left"
+                title="<% event.value %>">
+              <% event.value | truncate:40 %>
+            </td>
 
           </tr>
-        </tbody>
+        <tr ng-if="pointObject.events.data.length > 5" >
+          <td colspan=3
+            rel="tooltip"
+            data-placement="left"
+            title="+ <% pointObject.events.data.length - 5 %>" >
+            ...
+          </td>
+        </tr>
 
       </table>
     </div>
