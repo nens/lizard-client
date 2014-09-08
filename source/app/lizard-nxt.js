@@ -112,7 +112,8 @@ app.config(function ($locationProvider) {
  */
 app.controller('MasterCtrl',
   ['$scope', '$http', '$q', '$filter', '$compile', 'CabinetService',
-   'RasterService', 'UtilService', 'EventService', 'TimeseriesService', 'MapService',
+   'RasterService', 'UtilService', 'EventService', 'TimeseriesService',
+   'MapService',
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, TimeseriesService, MapService) {
 
@@ -242,7 +243,8 @@ app.controller('MasterCtrl',
     } else {
 
       // for other than temporalRaster layers, we do stuff the old way
-      MapService.toggleLayer(layer, $scope.mapState.layers, $scope.mapState.bounds);
+      MapService.toggleLayer(layer, $scope.mapState.layers,
+        $scope.mapState.bounds);
       $scope.mapState.activeLayersChanged =
         !$scope.mapState.activeLayersChanged;
     }
@@ -255,13 +257,13 @@ app.controller('MasterCtrl',
       $scope.$apply(function () {
         if ($scope.box.type !== 'intersect') {
           $scope.box.type = 'pointObject';
-          $scope.$broadcast('newPointObject');
+          $scope.$broadcast('updatePointObject');
         }
       });
     } else {
       if ($scope.box.type !== 'intersect') {
         $scope.box.type = 'pointObject';
-        $scope.$broadcast('newPointObject');
+        $scope.$broadcast('updatePointObject');
       }
     }
   });
@@ -374,6 +376,8 @@ app.controller('MasterCtrl',
     if ($scope.timeState.hidden !== false) {
       $scope.toggleTimeline();
     }
+    $scope.mapState.activeLayersChanged =
+     !$scope.mapState.activeLayersChanged;
   };
 
   /**

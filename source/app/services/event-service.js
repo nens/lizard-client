@@ -45,7 +45,8 @@ app.service("EventService", ["Restangular", "$q",
    * currently on the map at inTempExtent attribute. This function sums it all
    * up.
    *
-   * @param {object} An Angular scope with mapState.bounds, timeState.start, timeState.end, mapState.eventTypes
+   * @param {object} An Angular scope with mapState.bounds, timeState.start,
+   *  timeState.end, mapState.eventTypes
    * @returns {void}
    */
   var countCurrentEvents = function (scope) {
@@ -67,7 +68,6 @@ app.service("EventService", ["Restangular", "$q",
     }
 
     for (i = 0; i < typeLength; i++) {
-
       eventType = eventTypes[i];
       events.types[eventType.event_series].currentCount = 0;
     }
@@ -87,6 +87,11 @@ app.service("EventService", ["Restangular", "$q",
         bounds
       );
 
+      scope.events.data.features[i].properties.inTemporalExtent =
+        inTemporalExtent;
+      scope.events.data.features[i].properties.inSpatialExtent =
+        inSpatialExtent;
+
       if (inTemporalExtent && inSpatialExtent) {
         events.types[feature.properties.event_series].currentCount++;
       }
@@ -98,8 +103,10 @@ app.service("EventService", ["Restangular", "$q",
    * Check whether an event is contained in the current temporal extent.
    *
    * @param {object} ev An event object
-   * @param {integer} tlStart epoch time representing the start of the current timeline
-   * @param {integer} tlEnd epoch time representing the end of the current timeline
+   * @param {integer} tlStart epoch time representing the start of the current
+   *  timeline
+   * @param {integer} tlEnd epoch time representing the end of the current
+   *  timeline
    *
    * @returns {boolean}
    */

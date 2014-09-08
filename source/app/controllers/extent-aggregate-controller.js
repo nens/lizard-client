@@ -1,19 +1,30 @@
-app.controller("ExtentAggregateCtrl", [
-  "$scope",
-  "RasterService",
+/**
+ * @ngdoc
+ * @class ExtentAggregateCtrl
+ * @memberOf app
+ * @name ExtentAggregateCtrl
+ * @description 
+ * ExtentAggregate is the object which collects different
+ * sets of aggregation data. If there is no activeObject,
+ * this is the default collection of data to be shown in the
+ * client.
+ *
+ * Contains data of all active layers with an aggregation_type
+ *
+ */
+app.controller('ExtentAggregateCtrl', [
+  '$scope',
+  'RasterService',
   function ($scope, RasterService) {
-    /**
-     * ExtentAggregate is the object which collects different
-     * sets of aggregation data. If there is no activeObject,
-     * this is the default collection of data to be shown in the
-     * client.
-     *
-     * Contains data of all active layers with an aggregation_type
-     *
-     */
+    var _updateExtentAgg, putDataOnscope, removeDataFromScope,
+        updateExtentAgg;
+
     $scope.extentAggregate = {};
 
     /**
+     * @function
+     * @memberOf app.ExtentAggregateCtrl
+     * @description
      * Loops over all layers to request aggregation data for all
      * active layers with an aggregation type.
      *
@@ -24,7 +35,7 @@ app.controller("ExtentAggregateCtrl", [
      * @param  {object} extentAggregate extentAggregate object of this
      *                                  ctrl
      */
-    var updateExtentAgg = function (bounds, layers, extentAggregate) {
+    updateExtentAgg = function (bounds, layers, extentAggregate) {
       angular.forEach(layers, function (layer, slug) {
         if (layer.active && layer.aggregation_type !== 'none') {
           var agg = extentAggregate[slug] || {};
@@ -38,13 +49,15 @@ app.controller("ExtentAggregateCtrl", [
     };
 
     /**
-     * Puts dat on extentAggregate when promise resolves or
+     * @function
+     * @memberOf app.ExtentAggregateCtrl
+     * @description Puts dat on extentAggregate when promise resolves or
      * removes item from extentAggregate when no data is returned.
      *
      * @param  {promise}               a promise with aggregated data and
      *                                 the slug
      */
-    var putDataOnscope = function (dataProm) {
+    putDataOnscope = function (dataProm) {
       dataProm
       .then(function (result) {
         if (result.agg.data.length > 0) {
@@ -56,12 +69,21 @@ app.controller("ExtentAggregateCtrl", [
       });
     };
 
-    var removeDataFromScope = function (slug) {
+    /**
+     * @function
+     * @memberOf app.ExtentAggregateCtrl
+     * @description removes data from scope again
+     * if it's no longer needed.
+     * @param  {string} slug 
+     */
+    removeDataFromScope = function (slug) {
       delete $scope.extentAggregate[slug];
     };
 
     /**
-     * Returns true/false according to whether any events are present in the
+     * @function
+     * @memberOf app.ExtentAggregateCtrl
+     * @description Returns true/false according to whether any events are present in the
      * current intersection of spatial and temporal extent. This is used to
      * determine whether the corresponding card (i.e. the Event summary card)
      * needs to be shown.
@@ -87,11 +109,12 @@ app.controller("ExtentAggregateCtrl", [
     };
 
     /**
-     * private function to eliminate redundancy: gets called
+     * @function
+     * @memberOf app.ExtentAggregateCtrl
+     * @description private function to eliminate redundancy: gets called
      * in multiple $watches declared locally.
      */
-
-    var _updateExtentAgg = function () {
+    _updateExtentAgg = function () {
       updateExtentAgg(
         $scope.mapState.bounds,
         $scope.mapState.layers,
