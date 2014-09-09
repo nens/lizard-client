@@ -483,48 +483,22 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
     link: function (scope, element, attrs) {
 
       var tvLayer,
-          tvData = TemporalVectorService.getTVData();
-
-
-      scope.$watch('timeState.at', function (newVal, oldVal) {
-
-        if (newVal === oldVal) { return; }
-
-        else if (scope.timeState.animation.playing
-          && (newVal > oldVal + TemporalVectorService.STEP_SIZE
-            || newVal < oldVal)) {
-
-          TemporalVectorService.resetTimeIndex();
-        }
-
-        if (!tvLayer && MapService.isMapDefined()) {
-          tvLayer = TemporalVectorService.createTVLayer(scope, {
-            type: "FeatureCollection",
-            features: []
-          });
-        }
-
-        TemporalVectorService.getTimeIndexAndUpdate(
-          scope,
-          tvLayer,
-          tvData
-        );
-      });
-
-
-      scope.$watch('mapState.zoom', function (newVal, oldVal) {
-
-        if (newVal === oldVal) { return; }
-
-        TemporalVectorService.clearTVLayer();
-        TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
-      });
+          tvData = TemporalVectorService.getTVData(),
+          setWatches,
+          watches = [];
 
 
       scope.$watch('mapState.layers.flow.active', function (newVal, oldVal) {
 
         if (newVal === oldVal) { return; }
-
+        if (newVal) {
+          watches = setWatches();
+        } else {
+          // De-register watches
+          angular.forEach(watches, function (watch) {
+            watch();
+          });
+        }
         TemporalVectorService.clearTVLayer();
         if (newVal && scope.timeState.hidden !== false) {
           scope.toggleTimeline();
@@ -532,13 +506,52 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
         TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
       });
 
+      setWatches = function () {
 
-      scope.$watch('timeState.animation.playing', function (newVal, oldVal) {
+        watches.push(scope.$watch('timeState.at', function (newVal, oldVal) {
 
-        if (newVal === oldVal) { return; }
+          if (newVal === oldVal) { return; }
 
-        TemporalVectorService.resetTimeIndex();
-      });
+          else if (scope.timeState.animation.playing
+            && (newVal > oldVal + TemporalVectorService.STEP_SIZE
+              || newVal < oldVal)) {
+
+            TemporalVectorService.resetTimeIndex();
+          }
+
+          if (!tvLayer && MapService.isMapDefined()) {
+            tvLayer = TemporalVectorService.createTVLayer(scope, {
+              type: "FeatureCollection",
+              features: []
+            });
+          }
+
+          TemporalVectorService.getTimeIndexAndUpdate(
+            scope,
+            tvLayer,
+            tvData
+          );
+        }))
+
+
+        watches.push(scope.$watch('mapState.zoom', function (newVal, oldVal) {
+
+          if (newVal === oldVal) { return; }
+
+          TemporalVectorService.clearTVLayer();
+          TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
+        }))
+
+
+        watches.push(scope.$watch('timeState.animation.playing', function (newVal, oldVal) {
+
+          if (newVal === oldVal) { return; }
+
+          TemporalVectorService.resetTimeIndex();
+        }))
+
+        return watches
+      }
     }
   };
 }]);

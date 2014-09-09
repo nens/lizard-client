@@ -77,9 +77,9 @@ app.service('TemporalVectorService', ['MapService',
 
       if (timeIndex !== undefined) {
 
-        // previousTimeIndex = 0;
+        previousTimeIndex = 0;
 
-        previousTimeIndex = timeIndex;
+        //previousTimeIndex = timeIndex;
 
         updateTVLayer(
           tvLayer,
