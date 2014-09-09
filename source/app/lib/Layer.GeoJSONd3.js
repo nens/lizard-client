@@ -9,7 +9,7 @@
  * Each feature gets it's id as a class attribute so you can easily select it
  * with d3
  *
- * NOTE: this a candidate to release as open source plugin for leaflet
+ * TODO: this is no longer a candidate to release as open source plugin for leaflet
  *
  */
 L.NonTiledGeoJSONd3 = L.Class.extend({
