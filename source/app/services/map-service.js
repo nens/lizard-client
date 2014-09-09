@@ -162,7 +162,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     case ('Vector'):
       break;
     default:
-      console.log('nonLeafLayer:', nonLeafLayer.slug);
       _initiateTMSLayer(nonLeafLayer);
       break;
     }
