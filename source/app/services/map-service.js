@@ -8,7 +8,7 @@
  * @requires LeafletService
  * @summary Wraps stuff around Leaflet Map objects
  * @description  Map service encapsulates all kinds of helper functions
- * for the map-directive. A wrapper of sorts for Leaflet stuff, 
+ * for the map-directive. A wrapper of sorts for Leaflet stuff,
  * the map object and mapState.
  *
  */
@@ -36,9 +36,11 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @description Creates a Leaflet map based on idString or Element.
    */
   createMap = function (mapElem, options) { // String or Element.
+
     var bounds = L.latLngBounds(
       L.latLng(data_bounds.all.south, data_bounds.all.east),
       L.latLng(data_bounds.all.north, data_bounds.all.west));
+
     _map = LeafletService.map(mapElem, {
       zoomControl: false,
       zoom: 12,
@@ -53,8 +55,11 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     }
 
     mapState.initiated = true;
-
     return _map;
+  };
+
+  var isMapDefined = function () {
+    return !!_map;
   };
 
   /**
@@ -114,7 +119,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @function
    * @memberof app.MapService
    * @param  {object} nonLeafLayer as served from backend
-   * @return {L.UtfGrid} utfgrid 
+   * @return {L.UtfGrid} utfgrid
    * @description Initiates layers that deliver interaction with the map
    */
   _initiateGridLayer = function (nonLeafLayer) {
@@ -154,6 +159,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       _initiateGridLayer(nonLeafLayer);
       _initiateTMSLayer(nonLeafLayer);
       break;
+    case ('Vector'):
+      break;
     default:
       _initiateTMSLayer(nonLeafLayer);
       break;
@@ -188,10 +195,10 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @description legacy function from map-directive 
+   * @description legacy function from map-directive
    * turns of all active baselayers.
    * @param  {string} id     id for layer.
-   * @param  {object} layers 
+   * @param  {object} layers
    */
   _turnOffAllOtherBaselayers = function (id, layers) {
     angular.forEach(layers, function (i) {
@@ -206,7 +213,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @function
    * @memberOf app.MapService
    * @description Updates opacity of different layers
-   * @param  {layersObject} 
+   * @param  {layersObject}
    */
   _updateOverLayers = function (layers) {
     var numLayers = 1;
@@ -228,7 +235,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
   /**
    * @function
    * @memberOf app.MapService
-   * @description Elevation can be rescaled according to extent 
+   * @description Elevation can be rescaled according to extent
    */
   _rescaleElevation = function () {
     var url, bounds, limits, styles;
@@ -541,6 +548,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   return {
     mapState: mapState,
+    isMapDefined: isMapDefined,
     createMap: createMap,
     createLayer: createLayer,
     addLayer: addLayer,

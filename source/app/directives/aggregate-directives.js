@@ -30,7 +30,7 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
       /**
        * Highlights and unhighlights event points.
        *
-       * Highlighting is done based on location. Every event with the same 
+       * Highlighting is done based on location. Every event with the same
        * location class gets highlighted.
        *
        * @param {string} locationId - Location class that should be highlighted.
@@ -41,7 +41,7 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
           .classed("highlighted-event", false)
           .attr("data-init-color", getEventColor)
           .attr("fill", getEventColor);
-        
+
         // highlight selected event
         d3.selectAll("." + locationId)
           .classed("highlighted-event", true)
@@ -200,9 +200,7 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
       var updateEventLayer = function (eventLayer, data) {
         eventLayer._data = data;
         eventLayer._refreshData();
-
         eventLayer._bindClick(eventClickHandler);
-
       };
 
       var removeEventLayer = function (eventLayer) {
@@ -339,7 +337,6 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
   };
 }]);
 
-
 /**
  * Impervious surface vector layer.
  *
@@ -469,6 +466,102 @@ app.directive('surfacelayer', ['MapService', function (MapService) {
           MapService.removeLayer(surfaceLayer);
         }
       });
+    }
+  };
+}]);
+
+/**
+ * Add non-tiled d3 vector layer for currents.
+ *
+ * Implemented as a layer to display current speed/direction on the map.
+ */
+app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVectorService',
+  function (UtilService, MapService, TemporalVectorService) {
+
+  return {
+    restrict: 'A',
+    link: function (scope, element, attrs) {
+
+      var tvLayer,
+          tvData = TemporalVectorService.getTVData(),
+          setWatches,
+          watches = [];
+
+      /**
+       * @description - Unconditional watch: is triggered normally, when the flow layer
+       *                doesn't exist this does NOT raise an error.
+       */
+      scope.$watch('mapState.layers.flow.active', function (newVal, oldVal) {
+
+        if (newVal === oldVal) { return; }
+        if (newVal) {
+
+          if (!tvLayer && MapService.isMapDefined()) {
+            tvLayer = TemporalVectorService.createTVLayer(scope, {
+              type: "FeatureCollection",
+              features: []
+            });
+          }
+          watches = setWatches();
+
+        } else {
+          // De-register watches
+          angular.forEach(watches, function (watch) {
+            watch();
+          });
+          return;
+        }
+        TemporalVectorService.clearTVLayer();
+        if (newVal && scope.timeState.hidden !== false) {
+          scope.toggleTimeline();
+        }
+        TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
+      });
+
+      /**
+       * @function
+       * @description - Makes watches only listen when applicable.
+       * @returns {object[]} - An array of watches, which are now toggable.
+       */
+      setWatches = function () {
+
+        watches.push(scope.$watch('timeState.at', function (newVal, oldVal) {
+
+          if (newVal === oldVal) { return; }
+
+          else if (scope.timeState.animation.playing
+            && (newVal > oldVal + TemporalVectorService.STEP_SIZE
+              || newVal < oldVal)) {
+
+            TemporalVectorService.resetTimeIndex();
+          }
+
+          TemporalVectorService.getTimeIndexAndUpdate(
+            scope,
+            tvLayer,
+            tvData
+          );
+        }));
+
+
+        watches.push(scope.$watch('mapState.zoom', function (newVal, oldVal) {
+
+          if (newVal === oldVal) { return; }
+
+          TemporalVectorService.clearTVLayer();
+          TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
+        }));
+
+
+        watches.push(scope.$watch('timeState.animation.playing', function (newVal, oldVal) {
+
+          if (newVal === oldVal) { return; }
+
+          TemporalVectorService.resetTimeIndex();
+        }));
+
+        return watches;
+      };
     }
   };
 }]);
