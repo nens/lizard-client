@@ -402,8 +402,15 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
           lat = $scope.$parent.mapState.here.lat,
           lng = $scope.$parent.mapState.here.lng,
           _formatDate = function (epoch) {
-            var unsplitted = new Date(parseInt(epoch));
-            return unsplitted.toString().split(' ').slice(0, 5).join(' ');
+
+            // var unsplitted = new Date(parseInt(epoch));
+            // var splitted1 = unsplitted.toString().split(' ').slice(0, 5).join(' ');
+
+            var d = new Date(parseInt(epoch));
+            var dateStamp = d.getDay() + "-" + d.getMonth() + "-" + d.getFullYear();
+            var timeStamp = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+
+            return [dateStamp, timeStamp];
           };
 
       for (i = 0; i< data.length; i++) {
