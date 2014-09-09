@@ -394,8 +394,6 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      */
     $scope.formatCSVColumns = function (data) {
 
-      console.log("Ola!!");
-
       var i,
           formattedDateTime,
           formattedData = [],
@@ -403,12 +401,11 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
           lng = $scope.$parent.mapState.here.lng,
           _formatDate = function (epoch) {
 
-            // var unsplitted = new Date(parseInt(epoch));
-            // var splitted1 = unsplitted.toString().split(' ').slice(0, 5).join(' ');
+            var d, dateStamp, timeStamp;
 
-            var d = new Date(parseInt(epoch));
-            var dateStamp = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear();
-            var timeStamp = d.getHours() + ":" + d.getMinutes() + ":" + (d.getSeconds() || "00");
+            d = new Date(parseInt(epoch));
+            dateStamp = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear();
+            timeStamp = d.getHours() + ":" + d.getMinutes() + ":" + (d.getSeconds() || "00");
 
             return [dateStamp, timeStamp];
           };
