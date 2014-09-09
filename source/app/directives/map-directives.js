@@ -37,27 +37,16 @@ app.directive('map', [
         attribution: osmAttrib
       });
       MapService.initiateMapEvents();
-
-      // Initialise layers
-      angular.forEach(MapService.mapState.layers, function (layer) {
-        MapService.mapState.activeLayersChanged =
-          !MapService.mapState.activeLayersChanged;
-        if (!layer.initiated) {
-          MapService.createLayer(layer);
-        }
-        if (layer.active) {
-          layer.active = false;
-          MapService.toggleLayer(layer, MapService.mapState.layers);
-        }
-      });
+      scope.mapState.layersNeedLoading = true;
+      
+      // Instantiate the controller that updates the hash url after creating the
+      // map and all its listeners.
+      $controller('hashGetterSetter', {$scope: scope});
 
       // initialize empty ClickLayer.
       // Otherwise click of events-aggregate and clicklayer
       ClickFeedbackService.drawClickInSpace(new L.LatLng(180.0, 90.0));
 
-      // Instantiate the controller that updates the hash url after creating the
-      // map and all its listeners.
-      $controller('hashGetterSetter', {$scope: scope});
 
     };
 
@@ -119,7 +108,6 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
        * TODO: check if this should go to the RasterService?
        */
       var getImages = function (timestamp) {
-
         nxtDate = UtilService.roundTimestamp(
           scope.timeState.at,
           step,
@@ -151,7 +139,6 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
       scope.$watch('mapState.activeLayersChanged', function (n, o) {
 
         var i, activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
-
         if (activeTemporalLayer) {
           for (i in imageOverlays) {
             MapService.addLayer(imageOverlays[i]);
@@ -229,8 +216,9 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
        */
       scope.$watch('timeState.at', function (newVal, oldVal) {
         if (newVal === oldVal) { return; }
-        if (!scope.timeState.animation.playing
-            && scope.mapState.getActiveTemporalLayer()) {
+        if (!scope.timeState.animation.playing &&
+            scope.mapState.getActiveTemporalLayer() &&
+            scope.mapState.initiated) {
           getImages(scope.timeState.at);
           imageOverlays[0].setOpacity(0.7);
           previousFrame = 0;

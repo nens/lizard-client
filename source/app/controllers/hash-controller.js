@@ -185,6 +185,22 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
             }
           }
         }
+        if ($scope.mapState.layersNeedLoading) {
+          // Initialise layers
+          angular.forEach(MapService.mapState.layers, function (layer) {
+            MapService.mapState.activeLayersChanged =
+              !MapService.mapState.activeLayersChanged;
+            if (!layer.initiated) {
+              MapService.createLayer(layer);
+            }
+
+            if (layer.active && layer.initiated) {
+              layer.active = false;
+              MapService.toggleLayer(layer, MapService.mapState.layers);
+            }
+          });
+          $scope.mapState.layersNeedLoading = false;
+        }
 
         startHash = hash.start;
         if (startHash !== undefined) {

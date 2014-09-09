@@ -26,14 +26,13 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
         bottom: 20,
         left: 30
       }
-    };
-    var start = scope.timeState.start;
-    var end = scope.timeState.end;
-    var el = d3.select(element[0])
-      .select("#timeline-svg-wrapper")
-      .select("svg");
+    },
+    start = scope.timeState.start,
+    end = scope.timeState.end,
 
-    var interaction = {
+    el = element[0].getElementsByTagName('svg')[0],
+
+    interaction = {
       /**
        * Update timeState on zoom
        *
@@ -248,9 +247,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
      *
      * TODO: this is still hard coded to rain: setIntensityData
      */
-    scope.$watch('mapState.activeLayersChanged', function (n, o) {
-
-      if (n === o) { return true; }
+    scope.$watch('mapState.getActiveTemporalLayer()', function (n, o) {
       if (scope.mapState.getActiveTemporalLayer()) {
         getTemporalRasterData();
         timeline.addClickListener();
