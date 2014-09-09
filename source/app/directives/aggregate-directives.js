@@ -485,9 +485,17 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
       var tvLayer,
           tvData = TemporalVectorService.getTVData();
 
+
       scope.$watch('timeState.at', function (newVal, oldVal) {
 
         if (newVal === oldVal) { return; }
+
+        else if (scope.timeState.animation.playing
+          && (newVal > oldVal + TemporalVectorService.STEP_SIZE
+            || newVal < oldVal)) {
+
+          TemporalVectorService.resetTimeIndex();
+        }
 
         if (!tvLayer && MapService.isMapDefined()) {
           tvLayer = TemporalVectorService.createTVLayer(scope, {
@@ -503,6 +511,7 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
         );
       });
 
+
       scope.$watch('mapState.zoom', function (newVal, oldVal) {
 
         if (newVal === oldVal) { return; }
@@ -510,6 +519,7 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
         TemporalVectorService.clearTVLayer();
         TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
       });
+
 
       scope.$watch('mapState.layers.flow.active', function (newVal, oldVal) {
 
@@ -521,6 +531,7 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
         }
         TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
       });
+
 
       scope.$watch('timeState.animation.playing', function (newVal, oldVal) {
 

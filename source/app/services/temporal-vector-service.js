@@ -66,7 +66,9 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
 
       if (timeIndex !== undefined) {
 
-        previousTimeIndex = 0;
+        // previousTimeIndex = 0;
+
+        previousTimeIndex = timeIndex;
 
         updateTVLayer(
           tvLayer,
@@ -206,12 +208,12 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
    */
   var resetPreviousTimeIndex = function () {
 
-    //previousTimeIndex = undefined;
-    //this.timeIndex = 0;
-    this.previousTimeIndex = undefined;
+    // this-prefix required for ng testing :/
+    this.previousTimeIndex = previousTimeIndex = undefined;
   };
 
   return {
+    STEP_SIZE: STEP_SIZE,
     createTVLayer: createTVLayer,
     resetPreviousTimeIndex: resetPreviousTimeIndex,
     clearTVLayer: clearTVLayer,

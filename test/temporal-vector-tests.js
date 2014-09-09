@@ -53,14 +53,13 @@ describe('Testing TemporalVectorService', function () {
 
   it('should reset the previousTimeIndex correctly', function () {
 
-    var initValue = 23,
-        endValue = 0;
+    var initValue = 23;
 
     TemporalVectorService.previousTimeIndex = initValue;
-    expect(initValue).toBe(TemporalVectorService.previousTimeIndex);
+    expect(TemporalVectorService.previousTimeIndex).toBe(initValue);
 
     TemporalVectorService.resetPreviousTimeIndex();
-    expect(endValue).toBe(TemporalVectorService.previousTimeIndex);
+    expect(TemporalVectorService.previousTimeIndex).toBe(undefined);
   });
 
 });

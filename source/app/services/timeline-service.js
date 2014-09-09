@@ -515,8 +515,6 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
       }
       brushFn(brush);
     };
-
-    console.log("brushed!");
     return brushed;
   };
 
