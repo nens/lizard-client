@@ -4,7 +4,6 @@ Changelog of lizard-nxt client
 unreleased
 ----------
 
-
 - Rain CSVs now get distinct columns for date + time
 
 - Rain bars are drawn and removed one by one
