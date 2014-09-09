@@ -487,6 +487,10 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
           setWatches,
           watches = [];
 
+      /**
+       * @description - Unconditional watch: is triggered normally, when the flow layer
+       *                doesn't exist this does NOT raise an error.
+       */
       scope.$watch('mapState.layers.flow.active', function (newVal, oldVal) {
 
         if (newVal === oldVal) { return; }
@@ -498,7 +502,6 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
               features: []
             });
           }
-
           watches = setWatches();
 
         } else {
@@ -506,6 +509,7 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
           angular.forEach(watches, function (watch) {
             watch();
           });
+          return;
         }
         TemporalVectorService.clearTVLayer();
         if (newVal && scope.timeState.hidden !== false) {
@@ -514,6 +518,11 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
         TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
       });
 
+      /**
+       * @function
+       * @description - Makes watches only listen when applicable.
+       * @returns {object[]} - An array of watches, which are now toggable.
+       */
       setWatches = function () {
 
         watches.push(scope.$watch('timeState.at', function (newVal, oldVal) {
@@ -526,13 +535,6 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
 
             TemporalVectorService.resetTimeIndex();
           }
-
-          // if (!tvLayer && MapService.isMapDefined()) {
-          //   tvLayer = TemporalVectorService.createTVLayer(scope, {
-          //     type: "FeatureCollection",
-          //     features: []
-          //   });
-          // }
 
           TemporalVectorService.getTimeIndexAndUpdate(
             scope,
@@ -559,7 +561,7 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
         }));
 
         return watches;
-      }
+      };
     }
   };
 }]);
