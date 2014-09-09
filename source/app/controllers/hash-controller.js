@@ -109,10 +109,17 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
      * @param {boolean} start   Set timeStart or timeState.end
      */
     var setTimeState = function (time, start) {
+      // Make browser independent
+      time = time.replace(/-/g, '/');
       var msTime = Date.parse(time);
+      // bail if time is not parsable
+      if (isNaN(msTime)) { return; }
       if (start) {
         $scope.timeState.start = msTime;
       } else {
+        if (msTime === $scope.timeState.start) {
+          msTime += 43200000; // half a day
+        }
         $scope.timeState.end = msTime;
       }
       $scope.timeState.at = $scope.timeState.start +
@@ -139,6 +146,9 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
 
     /**
      * Listener to update map view when user changes url
+     *
+     * $locationChangeSucces is broadcasted by angular
+     * when the hashSyncHelper in util-service changes the url
      *
      * updateUrl is set to false when the application updates
      * the url. Then, this listener is fired but does nothing but

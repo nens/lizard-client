@@ -249,13 +249,15 @@ app.factory("NxtD3", [ function () {
      *
      * @param {object} svg  d3 selection of svg
      * @param {object} axis d3 axis
-     * @param {object} dimensions object containing dimensions
-     * @param {boolean} y to draw y-axis or not (x-axis)
+     * @param {object} dimensions object containing dimensions.
+     * @param {boolean} y to draw y-axis or not (x-axis).
+     * @param {int} duration if specified, transitions the drawing.
      * @description Creates axis group if necessary and draws
-     *              aixs
+     *              axis.
      */
     _drawAxes: function (svg, axis, dimensions, y, duration) {
-      var id = y ? 'yaxis': 'xaxis';
+      if (typeof(y) !== 'boolean') { throw new Error('Invalid input: y is not a boolean'); }
+      var id = y === true ? 'yaxis': 'xaxis';
       var axisEl = svg.select('g').select('#' + id);
       if (!axisEl[0][0]) {
         axisEl = createElementForAxis(svg, id, dimensions, y);
