@@ -407,7 +407,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
             // var splitted1 = unsplitted.toString().split(' ').slice(0, 5).join(' ');
 
             var d = new Date(parseInt(epoch));
-            var dateStamp = d.getDate() + "-" + d.getMonth() + "-" + d.getFullYear();
+            var dateStamp = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear();
             var timeStamp = d.getHours() + ":" + d.getMinutes() + ":" + (d.getSeconds() || "00");
 
             return [dateStamp, timeStamp];
@@ -417,13 +417,10 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
 
         formattedDateTime = _formatDate(data[i][0]);
 
-        console.log('[!!!] formattedDateTime:', formattedDateTime);
-
         formattedData.push([
-          // _formatDate(data[i][0]),
           formattedDateTime[0],
           formattedDateTime[1],
-          data[i][1],
+          Math.floor(100 * data[i][1]) / 100,
           lat,
           lng
         ]);
