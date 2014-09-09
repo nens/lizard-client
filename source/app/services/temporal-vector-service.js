@@ -1,4 +1,6 @@
-app.service('TemporalVectorService', ['MapService', function (MapService) {
+
+app.service('TemporalVectorService', 'CabinetService', ['MapService',
+  function (MapService, CabinetService) {
 
   // declaring local vars
   var tvData,
@@ -15,8 +17,8 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
       previousTimeIndex,
       resetTimeindex,
       STEP_SIZE = 86400000,
-      API_URL = '/api/v1/tiles/location/5/16/10.geojson';
-
+      API_URL = '/api/v1/tiles/location/5/16/10.geojson',
+      USE_MOCKED_GEOJSON = true;
 
   /**
    * A synchronious call to retrieve the timeseries data from the API endpoint;
@@ -26,6 +28,10 @@ app.service('TemporalVectorService', ['MapService', function (MapService) {
    * @returns {object} - The geojson object with the timeseries data.
    */
   getTVData = function () {
+
+    if (USE_MOCKED_GEOJSON) {
+      return CabinetService.zettingsVloeiingsProefData;
+    }
 
     var response, request = new XMLHttpRequest();
     request.open("GET", API_URL, false);
