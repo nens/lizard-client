@@ -16,8 +16,7 @@ app.service('TemporalVectorService', 'CabinetService', ['MapService',
       previousTimeIndex,
       resetTimeindex,
       STEP_SIZE = 86400000,
-      API_URL = '/api/v1/tiles/location/5/16/10.geojson',
-      USE_MOCKED_GEOJSON = true;
+      API_URL = '/api/v1/tiles/location/5/16/10.geojson';
 
 
   /**
@@ -28,10 +27,6 @@ app.service('TemporalVectorService', 'CabinetService', ['MapService',
    * @returns {object} - The geojson object with the timeseries data.
    */
   getTVData = function () {
-
-    if (USE_MOCKED_GEOJSON) {
-      return CabinetService.zettingsVloeiingsProefData;
-    }
 
     var response, request = new XMLHttpRequest();
     request.open("GET", API_URL, false);
