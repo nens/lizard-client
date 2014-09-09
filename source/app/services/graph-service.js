@@ -119,7 +119,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
           };
           this._xy = this._createXYGraph(data, keys, labels, options);
         } else {
-          this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys);
+          this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys, {y: 0});
         }
         drawVerticalRects(this._svg, this.dimensions, this._xy, keys, data, this.transTime);
       }
@@ -242,7 +242,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
   var createPie, createArc, drawPie, drawAxes, addLabel, toRescale, drawPath, setupLineGraph, createDonut,
   getBarWidth, drawVerticalRects, drawHorizontalRectss, createXGraph, rescale;
 
-  rescale = function (svg, dimensions, xy, data, keys) {
+  rescale = function (svg, dimensions, xy, data, keys, origin) {
     // Sensible limits to rescale. If the max
     // of the y values is smaller than 0.1 of the max of the scale,
     // update domain of the scale and redraw the axis.
@@ -254,11 +254,13 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       x: 'bottom',
       y: 'left'
     };
+    origin = origin || {};
     // Decide to rescale for each axis.
     angular.forEach(xy, function (value, key) {
       if (toRescale(data, keys[key], limits[key], value.maxMin)) {
         value.maxMin = Graph.prototype._maxMin(data, keys[key]);
-        value.scale.domain([0, value.maxMin.max]);
+        // Start at the lowest value in the data or at the optionally specified origin value.
+        value.scale.domain([origin[key] || value.maxMin.min, value.maxMin.max]);
         value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
         drawAxes(svg, value.axis, dimensions, key === 'y' ? true: false, Graph.prototype.transTime);
       }
