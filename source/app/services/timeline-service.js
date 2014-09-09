@@ -71,7 +71,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
                             {min: 0, max: width},
                             {scale: 'time' });
     xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-    this._drawAxes(this._svg, xAxis, dimensions);
+    this._drawAxes(this._svg, xAxis, dimensions, false);
     if (interaction) {
       if (interaction.zoomFn) {
         zoomed = setZoomFunction(this._svg, this.dimensions, xScale, xAxis,
@@ -182,7 +182,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
         this._svg = updateCanvas(this._svg, oldDimensions, this.dimensions);
         this.updateElements(oldDimensions);
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
-        this._drawAxes(this._svg, xAxis, dimensions);
+        this._drawAxes(this._svg, xAxis, dimensions, false);
       }
     },
 
@@ -331,7 +331,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
         xScale.domain([new Date(start), new Date(end)]);
         xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
         this.updateElements();
-        this._drawAxes(this._svg, xAxis, this.dimensions, this.transTime);
+        this._drawAxes(this._svg, xAxis, this.dimensions, false, this.transTime);
         this.addZoomListener();
       }
     },
@@ -439,7 +439,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
    */
   var setZoomFunction = function (svg, dimensions, xScale, xAxis, zoomFn) {
     var zoomed = function () {
-      Timeline.prototype._drawAxes(svg, xAxis, dimensions);
+      Timeline.prototype._drawAxes(svg, xAxis, dimensions, false);
       if (circles) {
         circles.attr("cx", function (d) {
           return Math.round(xScale(d.properties.timestamp_end));
@@ -514,6 +514,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
       }
       brushFn(brush);
     };
+
     return brushed;
   };
 

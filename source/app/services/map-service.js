@@ -36,9 +36,11 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @description Creates a Leaflet map based on idString or Element.
    */
   createMap = function (mapElem, options) { // String or Element.
+
     var bounds = L.latLngBounds(
       L.latLng(data_bounds.all.south, data_bounds.all.east),
       L.latLng(data_bounds.all.north, data_bounds.all.west));
+
     _map = LeafletService.map(mapElem, {
       zoomControl: false,
       zoom: 12,
@@ -53,8 +55,11 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     }
 
     mapState.initiated = true;
-
     return _map;
+  };
+
+  var isMapDefined = function () {
+    return !!_map;
   };
 
   /**
@@ -155,6 +160,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     case ('ASSET'):
       _initiateGridLayer(nonLeafLayer);
       _initiateTMSLayer(nonLeafLayer);
+      break;
+    case ('Vector'):
       break;
     default:
       _initiateTMSLayer(nonLeafLayer);
@@ -543,6 +550,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   return {
     mapState: mapState,
+    isMapDefined: isMapDefined,
     createMap: createMap,
     createLayer: createLayer,
     addLayer: addLayer,
