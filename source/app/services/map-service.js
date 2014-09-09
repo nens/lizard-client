@@ -160,7 +160,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       _initiateTMSLayer(nonLeafLayer);
       break;
     case ('Vector'):
-      console.log("initated Vector layer!");
       break;
     default:
       console.log('nonLeafLayer:', nonLeafLayer.slug);
