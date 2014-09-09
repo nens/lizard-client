@@ -487,12 +487,20 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
           setWatches,
           watches = [];
 
-
       scope.$watch('mapState.layers.flow.active', function (newVal, oldVal) {
 
         if (newVal === oldVal) { return; }
         if (newVal) {
+
+          if (!tvLayer && MapService.isMapDefined()) {
+            tvLayer = TemporalVectorService.createTVLayer(scope, {
+              type: "FeatureCollection",
+              features: []
+            });
+          }
+
           watches = setWatches();
+
         } else {
           // De-register watches
           angular.forEach(watches, function (watch) {
@@ -519,19 +527,19 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
             TemporalVectorService.resetTimeIndex();
           }
 
-          if (!tvLayer && MapService.isMapDefined()) {
-            tvLayer = TemporalVectorService.createTVLayer(scope, {
-              type: "FeatureCollection",
-              features: []
-            });
-          }
+          // if (!tvLayer && MapService.isMapDefined()) {
+          //   tvLayer = TemporalVectorService.createTVLayer(scope, {
+          //     type: "FeatureCollection",
+          //     features: []
+          //   });
+          // }
 
           TemporalVectorService.getTimeIndexAndUpdate(
             scope,
             tvLayer,
             tvData
           );
-        }))
+        }));
 
 
         watches.push(scope.$watch('mapState.zoom', function (newVal, oldVal) {
@@ -540,7 +548,7 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
 
           TemporalVectorService.clearTVLayer();
           TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
-        }))
+        }));
 
 
         watches.push(scope.$watch('timeState.animation.playing', function (newVal, oldVal) {
@@ -548,9 +556,9 @@ app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVect
           if (newVal === oldVal) { return; }
 
           TemporalVectorService.resetTimeIndex();
-        }))
+        }));
 
-        return watches
+        return watches;
       }
     }
   };
