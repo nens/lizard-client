@@ -4,8 +4,6 @@ Changelog of lizard-nxt client
 unreleased
 ----------
 
-- test temporal vector directive/layer
-
 - implement temporal vector directive/layer
 
 - Rain bars are drawn and removed one by one
