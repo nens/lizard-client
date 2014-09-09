@@ -171,6 +171,9 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
      */
     followMouse: {
       value: function (callback) {
+         // Move listener rectangle to the front
+        var el = this._svg.select('g').select('#listeners').node();
+        el.parentNode.appendChild(el);
         var scale = this._xy.x.scale;
         this._svg.select('g').select('#listeners')
           .on('mousemove', function () {
