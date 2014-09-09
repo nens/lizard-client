@@ -407,8 +407,8 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
             // var splitted1 = unsplitted.toString().split(' ').slice(0, 5).join(' ');
 
             var d = new Date(parseInt(epoch));
-            var dateStamp = d.getDay() + "-" + d.getMonth() + "-" + d.getFullYear();
-            var timeStamp = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+            var dateStamp = d.getDate() + "-" + d.getMonth() + "-" + d.getFullYear();
+            var timeStamp = d.getHours() + ":" + d.getMinutes() + ":" + (d.getSeconds() || "00");
 
             return [dateStamp, timeStamp];
           };
