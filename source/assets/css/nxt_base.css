@@ -1036,11 +1036,11 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .button-list-link:hover {
-    color: rgb(77, 77, 77);
+    color: #34495e;
 }
 
 .button-list-link.active {
-    color: rgb(77, 77, 77);
+    color: #34495e;
 }
 
 .resize path {
