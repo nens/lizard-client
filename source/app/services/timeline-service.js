@@ -15,7 +15,7 @@
  * prefered above clicking: when a user zooms through dragging, no click is
  * fired.
  *
- * Everything in the timeline is animated for 500 milliseconds. To add new
+ * Everything in the timeline is animated for NxtD3.transTime milliseconds. To add new
  * elements to the timeline, make sure the elements are updated on zoom, brush
  * and resize. The timeline resizes before elements are added and after
  * elements are removed. Therefore new and old dimensions need to be compared
@@ -71,7 +71,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
                             {min: 0, max: width},
                             {scale: 'time' });
     xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-    this._drawAxes(this._svg, xAxis, dimensions);
+    this._drawAxes(this._svg, xAxis, dimensions, false);
     if (interaction) {
       if (interaction.zoomFn) {
         zoomed = setZoomFunction(this._svg, this.dimensions, xScale, xAxis,
@@ -143,8 +143,8 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
           .attr("height", height)
           .selectAll("rect")
             .transition()
-            .delay(500)
-            .duration(500)
+            .delay(this.transTime)
+            .duration(this.transTime)
             .attr("height", height);
         brushg.select('.e').select('rect')
           .attr("x", 0)
@@ -179,10 +179,10 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
       value: function (dimensions) {
         var oldDimensions = angular.copy(this.dimensions);
         this.dimensions = dimensions;
-        this.updateElements(oldDimensions);
         this._svg = updateCanvas(this._svg, oldDimensions, this.dimensions);
+        this.updateElements(oldDimensions);
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
-        this._drawAxes(this._svg, xAxis, dimensions);
+        this._drawAxes(this._svg, xAxis, dimensions, false);
       }
     },
 
@@ -331,7 +331,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
         xScale.domain([new Date(start), new Date(end)]);
         xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
         this.updateElements();
-        this._drawAxes(this._svg, xAxis, this.dimensions, 500);
+        this._drawAxes(this._svg, xAxis, this.dimensions, false, this.transTime);
         this.addZoomListener();
       }
     },
@@ -397,11 +397,10 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
   var updateCanvas = function (svg, oldDims, newDims) {
     var width = Timeline.prototype._getWidth(newDims),
     height = Timeline.prototype._getHeight(newDims);
-
     if (newDims.height < oldDims.height) {
       svg.transition()
-        .duration(500)
-        .delay(500)
+        .delay(Timeline.prototype.transTime)
+        .duration(Timeline.prototype.transTime)
         .attr('height', newDims.height)
         .attr('width', newDims.width)
         .select("g")
@@ -410,7 +409,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
         .attr("transform", "translate(0 ," + height + ")");
     } else {
       svg.transition()
-        .duration(500)
+        .duration(Timeline.prototype.transTime)
         .attr('height', newDims.height)
         .attr('width', newDims.width)
         .select("g")
@@ -440,7 +439,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
    */
   var setZoomFunction = function (svg, dimensions, xScale, xAxis, zoomFn) {
     var zoomed = function () {
-      Timeline.prototype._drawAxes(svg, xAxis, dimensions);
+      Timeline.prototype._drawAxes(svg, xAxis, dimensions, false);
       if (circles) {
         circles.attr("cx", function (d) {
           return Math.round(xScale(d.properties.timestamp_end));
@@ -515,6 +514,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
       }
       brushFn(brush);
     };
+
     return brushed;
   };
 
@@ -551,17 +551,17 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
     var height = Timeline.prototype._getHeight(newDim);
     var delay = 0;
     if (oldDim.height > newDim.height) {
-      delay = 500;
+      delay = Timeline.prototype.transTime;
     }
     brushg.selectAll("rect")
       .transition()
-      .duration(500)
+      .duration(Timeline.prototype.transTime)
       .delay(delay)
       .attr("height", height)
         .selectAll("rect")
           .transition()
-          .delay(500)
-          .duration(500)
+          .delay(Timeline.prototype.transTime)
+          .duration(Timeline.prototype.transTime)
           .attr("height", height);
   };
 
@@ -605,8 +605,8 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
       barWidth = Number(rectangles.attr('width'));
       if (heightDiff < 0) {
         rectangles.transition()
-          .duration(500)
-          .delay(500)
+          .duration(Timeline.prototype.transTime)
+          .delay(Timeline.prototype.transTime)
           .attr("y", function (d) {
             return newHeight - yScale(d[1]);
           })
@@ -615,7 +615,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
           });
       } else {
         rectangles.transition()
-          .duration(500)
+          .duration(Timeline.prototype.transTime)
           .attr("y", function (d) {
             return newHeight - yScale(d[1]);
           })
@@ -658,8 +658,8 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
     // Update old elements as needed.
     circles.attr("class", "event")
       .transition()
-      .delay(500)
-      .duration(500)
+      .delay(Timeline.prototype.transTime)
+      .duration(Timeline.prototype.transTime)
       .attr("fill", colorFunction)
       .attr("cy", yFunction)
       .attr("cx", xFunction);
@@ -674,8 +674,8 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
       .attr("r", 5)
       .attr("fill-opacity", 0)
       .transition()
-      .delay(500)
-      .duration(500)
+      .delay(Timeline.prototype.transTime)
+      .duration(Timeline.prototype.transTime)
       .attr("fill-opacity", 1);
 
     // EXIT
@@ -683,7 +683,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
     circles.exit()
       .transition()
       .delay(0)
-      .duration(500)
+      .duration(Timeline.prototype.transTime)
       .attr("cy", 0)
       .attr("cx", xFunction)
       .style("fill-opacity", 1e-6)
@@ -728,11 +728,13 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
           .data(data, function  (d) { return d.id; });
     }
 
+    var splitTranstime = Timeline.prototype.transTime / 2;
+
     // UPDATE
     // Update old elements as needed.
     lines.transition()
-      .delay(500)
-      .duration(500)
+      .delay(Timeline.prototype.transTime)
+      .duration(Timeline.prototype.transTime)
       .attr("stroke", colorFunction)
       .attr("d", dFunction);
 
@@ -746,13 +748,13 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
       .attr("stroke-opacity", 0)
       .attr("stroke-width", 0)
     .transition()
-      .delay(500)
-      .duration(500)
+      .delay(splitTranstime)
+      .duration(splitTranstime)
       .attr("stroke-width", 10)
       .attr("stroke-opacity", 0.8)
     .transition()
-      .delay(1000)
-      .duration(500)
+      .delay(Timeline.prototype.transTime)
+      .duration(splitTranstime)
       .attr("d", dFunction);
 
     // EXIT
@@ -760,11 +762,11 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
     lines.exit()
       .transition()
       .delay(0)
-      .duration(500)
+      .duration(splitTranstime)
       .attr("d", initialDFunction)
     .transition()
-      .delay(500)
-      .duration(500)
+      .delay(splitTranstime)
+      .duration(splitTranstime)
       .attr("stroke-width", 0)
       .style("fill-opacity", 0)
       .remove();
@@ -791,7 +793,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
     // // UPDATE
     // // Update old elements as needed.
     bars.transition()
-      .duration(500)
+      .duration(Timeline.prototype.transTime)
       .attr("x", function (d) { return xScale(d[0]) - 0.5 * barWidth; })
       .attr('width', barWidth)
       .attr("height", function (d) { return yScale(d[1]); })
@@ -806,8 +808,8 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
       .attr("height", 0)
       .attr("y", height)
       .transition()
-      .delay(500)
-      .duration(500)
+      .delay(Timeline.prototype.transTime)
+      .duration(Timeline.prototype.transTime)
       .attr("height", function (d) { return yScale(d[1]); })
       .attr("y", function (d) { return height - yScale(d[1]); });
 
@@ -815,7 +817,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
     // Remove old elements as needed.
     bars.exit()
       .transition()
-      .duration(500)
+      .duration(Timeline.prototype.transTime)
       .attr("y", height)
       .attr("height", 0)
       .remove();

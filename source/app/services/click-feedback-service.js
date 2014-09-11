@@ -193,12 +193,17 @@ app.service('ClickFeedbackService', ['$rootScope', 'MapService',
         drawLine;
 
     /**
-     * Wrapper for
+     * Wrapper for emptyClickLayer, as defined in the above
+     * Ctrl constructor.
      *
      */
     emptyClickLayer = function () {
       ctrl.emptyClickLayer();
     };
+
+    /**
+     * Remove the vibrator from the DOM.
+     */
 
     killVibrator = function () {
       d3.selectAll('.vibrator').remove();
