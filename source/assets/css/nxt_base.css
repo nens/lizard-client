@@ -257,19 +257,19 @@ label.layer-chooser:hover {
 }
 
 label.layer-chooser.active:hover > span.layer-text {
-    color: #2980b9;
+    color: #4d4d4d;
 }
 
 label.layer-chooser.active > span.layer-text {
-    color: #2980b9;
+    color: #4d4d4d;
 }
 
 label.layer-chooser.active {
-    border: solid 2px #2980b9;
+    border: solid 2px #4d4d4d;
 }
 
 label.layer-chooser.active:hover {
-    border: solid 2px #2980b9;
+    border: solid 2px #4d4d4d;
 }
 
 label.layer-chooser > span.layer-img {
@@ -581,7 +581,7 @@ ul.list-inline li.baselayer-icon label{
 
 
 .layer-switcher label {
-    color: #2c3e50;
+    color: #7f8c8d;
     font-style: normal;
     font-size: 14px;
     text-shadow: none;
@@ -595,7 +595,7 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .layer-switcher label:hover {
-    color: #2980b9;
+    color: #4d4d4d;
     font-size: 14px;
     text-shadow: none;
     margin-left: 0;
@@ -603,7 +603,7 @@ ul.list-inline li.baselayer-icon label{
 
 .layer-switcher label.active,
 .layer-switcher label.count {
-    color: #2980b9;
+    color: #4d4d4d;
     /*font-style: italic;*/
     font-size: 14px;
     text-shadow: none;
@@ -975,8 +975,8 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .selected{
-    color: #2980b9;
-    fill: #2980b9;
+    color: #4d4d4d;
+    fill: #4d4d4d;
 }
 
 .extent{
@@ -1032,15 +1032,15 @@ ul.list-inline li.baselayer-icon label{
     -moz-transition:.3s;
     -webkit-transition:.3s;
     transition:.3s;
-    color: rgb(52, 73, 94);
+    color: rgb(127, 140, 141);
 }
 
 .button-list-link:hover {
-    color: rgb(41, 128, 185);
+    color: rgb(77, 77, 77);
 }
 
 .button-list-link.active {
-    color: rgb(41, 128, 185);
+    color: rgb(77, 77, 77);
 }
 
 .resize path {
@@ -1425,7 +1425,7 @@ img.leaflet-image-layer {
 }
 
 .now-indicator {
-    stroke: #2980b9;
+    stroke: #4d4d4d;
     stroke-width: 2;
 }
 
