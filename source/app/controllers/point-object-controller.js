@@ -401,13 +401,12 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
           lng = $scope.$parent.mapState.here.lng,
           _formatDate = function (epoch) {
 
-            var d, dateStamp, timeStamp;
+            var d = new Date(parseInt(epoch));
 
-            d = new Date(parseInt(epoch));
-            dateStamp = d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear();
-            timeStamp = d.getHours() + ":" + d.getMinutes() + ":" + (d.getSeconds() || "00");
-
-            return [dateStamp, timeStamp];
+            return [
+              [d.getDate(), d.getMonth() + 1, d.getFullYear()].join('-'),
+              [d.getHours() || "00", d.getMinutes() || "00", d.getSeconds() || "00"].join(':')
+            ];
           };
 
       for (i = 0; i< data.length; i++) {
@@ -417,7 +416,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
         formattedData.push([
           formattedDateTime[0],
           formattedDateTime[1],
-          Math.floor(100 * data[i][1]) / 100,
+          Math.floor(100 * data[i][1]) / 100 || "0.00",
           lat,
           lng
         ]);
