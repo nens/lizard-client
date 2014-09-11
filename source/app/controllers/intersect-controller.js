@@ -201,7 +201,7 @@ app.controller('IntersectCtrl', [
         posLon = dLon + lon1;
         if (circle === undefined) {
           circle = L.circleMarker([posLat, posLon], {
-              color: '#2980b9',
+              color: '#34495e',
               opacity: 1,
               fillOpacity: 1,
               radius: 5

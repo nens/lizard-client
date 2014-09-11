@@ -46,12 +46,17 @@
 }
 
 rect {
-  fill: #95a5a6;
+fill: #95a5a6;
+}
+
+#listeners {
+  opacity: 0;
 }
 
 rect.bar {
   stroke-width: 1;
   stroke: white;
+  fill: #95a5a6;
 }
 
 .bar-timeline {

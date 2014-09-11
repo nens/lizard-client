@@ -5,11 +5,11 @@
  * from https://gist.github.com/ZJONSSON/5529395
  * plus code copied from http://bl.ocks.org/tnightingale/4718717
  * Cotributions from @jsmits, @fritzvd, @arjenvrielink and @ernstkui
- * 
+ *
  * Each feature gets it's id as a class attribute so you can easily select it
  * with d3
  *
- * NOTE: this a candidate to release as open source plugin for leaflet
+ * TODO: this is no longer a candidate to release as open source plugin for leaflet
  *
  */
 L.NonTiledGeoJSONd3 = L.Class.extend({
@@ -46,11 +46,10 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
       var point = map.latLngToLayerPoint(new L.LatLng(d[1], d[0]));
       return [point.x, point.y];
     };
-    var self = this;
-    this._path = d3.geo.path().projection(self._projection);
+    this._path = d3.geo.path().projection(this._projection);
 
     this.overlapLocations = {};
-    this.g = this._renderG();
+    this.g = this._container.append("g").attr("class", "geojsonnontile");
     this._refreshData();
 
     // Call onmove to position the svg.
@@ -62,14 +61,13 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
   },
 
   _renderG: function () {
-    var self = this;
     return this._container.append("g")
       .attr("class", "geojsonnontile")
-      .attr("transform", "translate(" + self._left + "," + self._top + ")");
+      .attr("transform", "translate(" + this._left + "," + this._top + ")");
   },
 
   /**
-   * _renderData 
+   * _renderData
    * Renders geoJSON data in the svg container.
    * If the options has a 'selectorPrefix' property
    * your 'path' elements will be accessible with an id.
@@ -78,7 +76,6 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
    * something could be done with paths:
    *        .append("path")
    *        .attr("d", self._path);
-   *
    */
   _refreshData: function () {
     var self = this;
@@ -91,7 +88,7 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
 
     features.enter()
       .append("svg:circle")
-        .attr("stroke-width", 1.8)
+        .attr("stroke-width", 1)
         .attr("stroke", "white")
         .attr("class", function (feature) {
           var classList = self.options.class;
@@ -128,6 +125,188 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
       self.options.applyStyle.call(this, features);
     }
   },
+
+
+  /**
+   * Constant for eliminating unneccesary repeated variable declarations and
+   * assignments in the method: _getPointsForArrow
+   */
+  _arrowConstants: {
+    X_VALS: [ 90, 80, 115, 60, 60,   5, 40,  30, 60],
+    Y_VALS: [250, 90, 100,  0,  0, 100, 90, 250, 245],
+    WIDTH: 120,  // max diff X_VALS_FOR_ARROW
+    HEIGHT: 250, // max diff Y_VALS_FOR_ARROW
+  },
+
+
+  /**
+   * Returns a set of points (as string), for drawing a SVG polygon.
+   *
+   * @param {integer[]} centerCoord - An X and Y value which represent the center af the arrow to be drawn
+   * @param {float} scaleFactor - A value [0 ... 1] representing the scaling
+   * @returns {string}
+   */
+  _getPointsForArrow: function (centerCoord, scaleFactor) {
+
+    var // the final result/return value we'll build in this method
+        result = "",
+
+        // the center for the arrow
+        cx = centerCoord[0],
+        cy = centerCoord[1],
+
+        // constant for scaling the arrow
+        SCALE_FACTOR = scaleFactor ? (scaleFactor * 0.75 + 0.25) : 0.75,
+
+        // declaring vars used (= repeatedly assigned) in loop-body, outside of
+        // the loop-body
+        xCoord,
+        yCoord,
+
+        // ..to eliminate unneccesary var keywords
+        i;
+
+    for (i = 0; i < this._arrowConstants.X_VALS.length; i++) {
+
+      xCoord = Math.round(
+        (
+          (this._arrowConstants.X_VALS[i] - (this._arrowConstants.WIDTH / 2) - 2)
+          * SCALE_FACTOR
+        ) + cx
+      );
+
+      yCoord = Math.round(
+        (
+          (this._arrowConstants.Y_VALS[i] - (this._arrowConstants.HEIGHT / 2) - 2)
+          * SCALE_FACTOR
+        ) + cy
+      );
+
+      result += xCoord + "," + yCoord + " ";
+    }
+
+    return result;
+  },
+
+
+  /**
+   * Renders geoJSON data (for displaying Currents) in the svg container.
+   *
+   * @param {integer} index - Denotes the value for n when we render the
+   * n-th point in time for a current. For every point in time this should be
+   * calculated only once, and this can subsequently be used for every current
+   * repr.
+   *
+   * @param {integer} index - The n-th step in time, used for animation
+   * @returns {void}
+   */
+  _refreshDataForCurrents: function (timeStepIndex) {
+
+    var self = this,
+
+        features,
+
+        // Optional: hardcode a value for an absolute max value (shared among
+        // timeseries), e.g: MAX_SPEED = 99.9. The current solution deduces the
+        // the value for MAX_SPEED from the 1st timeseries.
+        MAX_SPEED = Math.max.apply(
+          null,
+          self._data.features[0].properties.timeseries[1].data
+        ),
+
+        // Optional: hardcode a value for an absolute max value (shared among
+        // timeseries), e.g: MAX_DIRECTION = 123. Wolog, see MAX_SPEED above.
+        MAX_DIRECTION = Math.max.apply(
+          null,
+          self._data.features[0].properties.timeseries[2].data
+        ),
+
+        /**
+         * Helper used by each D3 datum, for the arrow dimensions.
+         *
+         * @param {object} d - A D3 datum
+         * @returns {string} - A scaled arrow (represented by a list of
+         *                     points, as used by a SVG polygon element)
+         */
+        _getPoints = function (d) {
+          return self._getPointsForArrow(
+            self._projection(d.geometry.coordinates),
+            d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED
+          );
+        },
+
+        /**
+         * Helper used by each D3 datum, for the arrow coloring.
+         *
+         * @param {object} d - A D3 datum
+         * @returns {string} - A scaled (based on the relative speed)
+         *                     color for the arrow.
+         */
+        _getFill = function (d) {
+
+          var relSpeed, shadeR, shadeG, shadeB;
+          relSpeed = d.properties.timeseries[1].data[timeStepIndex] / MAX_SPEED;
+
+          shadeR = 255 - Math.floor(relSpeed * (255 - 22));
+          shadeG = 255 - Math.floor(relSpeed * (255 - 160));
+          shadeB = 255 - Math.floor(relSpeed * (255 - 133));
+
+          return "rgb(" + shadeR + ", " + shadeG + ", " + shadeB + ")";
+        };
+
+    if (!this.g || this.g.empty()) {
+      this.g = this._renderG();
+    }
+
+    features = this.g.selectAll(".current-arrow")
+      .data(this._data.features, self.idExtractor);
+
+    // ENTER
+    features.enter()
+      .append("svg:polygon")
+        .attr("points", _getPoints)
+        .attr("stroke-width", 2)
+        .attr("stroke", "white")
+        .attr("fill", _getFill)
+        .attr("class", function (feature) {
+
+          var classList = self.options.class;
+
+          if (self.options.hasOwnProperty('selectorPrefix')) {
+            classList += " " + self.options.selectorPrefix
+                             + feature.properties.id;
+          }
+          return classList;
+        });
+
+    // UPDATE
+    //
+    // NB! We do not morph between two different shapes of the arrow, only their
+    // fill is animated. For an example what D3 does when using the default way of
+    // transitioning for rotation: http://jsfiddle.net/5ugtadxL/
+    features
+      .attr("points", _getPoints)
+      .attr("transform", function (d) {
+
+        var deg, cx, cy, projection;
+
+        deg = Math.floor(360 * (d.properties.timeseries[2].data[timeStepIndex] / MAX_DIRECTION));
+        projection = self._projection(d.geometry.coordinates);
+        cx = projection[0];
+        cy = projection[1];
+
+        return "rotate(" + deg + ", " + cx + ", " + cy + ")";
+      })
+      .transition()
+      .duration(200)
+      .attr("fill", _getFill);
+
+    // EXIT
+    features.exit()
+      .style("fill-opacity", 1e-6)
+      .remove();
+  },
+
 
   /**
    * Count overlapping locations.
@@ -168,9 +347,9 @@ L.NonTiledGeoJSONd3 = L.Class.extend({
   },
 
   /**
-   * Move event function. The svg is moved by the position of the bottomleft 
-   * corner of the map relative to the origin. The features within the svg 
-   * are moved in the opposite direction to keep the features at the same 
+   * Move event function. The svg is moved by the position of the bottomleft
+   * corner of the map relative to the origin. The features within the svg
+   * are moved in the opposite direction to keep the features at the same
    * position relative to the map.
    */
   _onMove: function () {
