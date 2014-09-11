@@ -155,6 +155,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     case ('WMS'):
       _initiateWMSLayer(nonLeafLayer);
       break;
+    case ('Vector'):
+      break;
     case ('ASSET'):
       _initiateGridLayer(nonLeafLayer);
       _initiateTMSLayer(nonLeafLayer);
