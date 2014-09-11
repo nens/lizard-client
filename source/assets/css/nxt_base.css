@@ -237,7 +237,7 @@ label.layer-chooser {
 }
 
 label.layer-chooser > span.layer-text {
-    background: rgba(255,255,255, 0.9);
+    background: rgba(239, 239, 239, 0.9);
     width: 60%;
     height: 29px;
     padding: 5px;
@@ -257,19 +257,19 @@ label.layer-chooser:hover {
 }
 
 label.layer-chooser.active:hover > span.layer-text {
-    color: #4d4d4d;
+    color: #34495e;
 }
 
 label.layer-chooser.active > span.layer-text {
-    color: #4d4d4d;
+    color: #34495e;
 }
 
 label.layer-chooser.active {
-    border: solid 2px #4d4d4d;
+    border: solid 2px #34495e;
 }
 
 label.layer-chooser.active:hover {
-    border: solid 2px #4d4d4d;
+    border: solid 2px #34495e;
 }
 
 label.layer-chooser > span.layer-img {
@@ -595,7 +595,7 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .layer-switcher label:hover {
-    color: #4d4d4d;
+    color: #34495e;
     font-size: 14px;
     text-shadow: none;
     margin-left: 0;
@@ -603,7 +603,7 @@ ul.list-inline li.baselayer-icon label{
 
 .layer-switcher label.active,
 .layer-switcher label.count {
-    color: #4d4d4d;
+    color: #34495e;
     /*font-style: italic;*/
     font-size: 14px;
     text-shadow: none;
@@ -975,8 +975,8 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .selected{
-    color: #4d4d4d;
-    fill: #4d4d4d;
+    color: #34495e;
+    fill: #34495e;
 }
 
 .extent{
@@ -1425,7 +1425,7 @@ img.leaflet-image-layer {
 }
 
 .now-indicator {
-    stroke: #4d4d4d;
+    stroke: #34495e;
     stroke-width: 2;
 }
 
