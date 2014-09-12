@@ -186,9 +186,20 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
         xScale.range([0, newDimensions.width]);
         this._drawAxes(this._svg, xAxis, newDimensions, false);
 
-        circles = d3.select('#timeline').selectAll('path.event');
+        //circles = d3.select('#timeline').selectAll('path.event');
 
+        // Ernst's update method (doesn't wort for circles/events)
         this.updateElements(oldDimensions);
+
+        // redraw the circle elements
+        // --------------------------------------------
+        this.removeCircles();
+        var that = this;
+        setTimeout(function () {
+          if (features) {
+            that.drawCircles(features);
+          }
+        }, this.transTime * 2);
       }
     },
 
@@ -257,15 +268,17 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
     removeCircles: {
       value: function () {
 
-        var paths = d3.select('#timeline').selectAll('path.event');
+        var circles = d3.select('#timeline').selectAll('circle.event');
 
-        paths
+        circles
           .transition()
           .duration(this.transTime)
           .style("opacity", 0);
 
-        paths
+        circles
           .remove();
+
+        d3.select('#timeline').selectAll('path.event').remove();
       }
     },
 
