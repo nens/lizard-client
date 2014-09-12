@@ -149,7 +149,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
         brushg.select('.e').select('rect')
           .attr("x", 0)
           .attr("width", 2)
-          .attr("style", "fill: #2980b9;");
+          .attr("style", "fill: #34495e;");
         brushend();
       }
     },
@@ -514,6 +514,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
       }
       brushFn(brush);
     };
+
     return brushed;
   };
 

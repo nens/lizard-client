@@ -19,7 +19,10 @@ app.directive("layerChooser", ['LeafletService', function (LeafletService) {
     });
 
     layer = scope.layer;
-    
+
+    if (layer.type === 'Vector') { return; }
+
+    // legacy if.. needs to be refactored
     if (!layer.temporal) {
       if (layer.type === 'WMS') {
         var options = {

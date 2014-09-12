@@ -61,7 +61,7 @@ app.service('ClickFeedbackService', ['$rootScope', 'MapService',
           var circleMarker = L.circleMarker(latlng, {
             radius: 0,
             weight: 12,
-            color: '#2980b9',
+            color: '#34495e',
             fill: false,
             zIndexOffset: 1000,
             clickable: false
@@ -79,7 +79,7 @@ app.service('ClickFeedbackService', ['$rootScope', 'MapService',
           "coordinates": [[first.lng, first.lat], [second.lng, second.lat]]
         };
         this.clickLayer.options.style = {
-          color: '#2980b9',
+          color: '#34495e',
           weight: 2,
           opacity: 1,
           smoothFactor: 1
@@ -127,7 +127,7 @@ app.service('ClickFeedbackService', ['$rootScope', 'MapService',
         this._circleMarker.setRadius(11);
         selection.select("path")
           .classed("vibrator", true)
-          .attr("stroke", "#1abc9c")
+          .attr("stroke", "#34495e")
           .transition().duration(150)
           .attr("stroke-width", 20)
           .transition().duration(150)
@@ -178,7 +178,7 @@ app.service('ClickFeedbackService', ['$rootScope', 'MapService',
           .attr("stroke-opacity", 1)
           .attr("stroke-width", 1.5)
           .attr("stroke", "white")
-          .attr("fill", "#2980b9")
+          .attr("fill", "#34495e")
           .attr("fill-opacity", "1");
       };
     };
@@ -193,12 +193,17 @@ app.service('ClickFeedbackService', ['$rootScope', 'MapService',
         drawLine;
 
     /**
-     * Wrapper for
+     * Wrapper for emptyClickLayer, as defined in the above
+     * Ctrl constructor.
      *
      */
     emptyClickLayer = function () {
       ctrl.emptyClickLayer();
     };
+
+    /**
+     * Remove the vibrator from the DOM.
+     */
 
     killVibrator = function () {
       d3.selectAll('.vibrator').remove();

@@ -13,7 +13,8 @@ app.service("CabinetService", ["$q", "Restangular",
       reverseGeocodeResource,
       apiLayerGroups,
       timeseriesLocationObjectResource,
-      timeseriesResource;
+      timeseriesResource,
+      flowResource;
 
   Restangular.setRequestSuffix('?page_size=0');
   geocodeResource = Restangular.one('api/v1/geocode/');
@@ -349,8 +350,6 @@ app.service("CabinetService", ["$q", "Restangular",
     baselayers: baselayers,
     overlayers: overlayers,
     eventTypes: eventTypes,
-    // termSearch: termSearchResource,
-    // bboxSearch: bboxSearchResource,
     geocode: geocodeResource,
     raster: rasterResource,
     reverseGeocode: reverseGeocodeResource,
