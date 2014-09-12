@@ -28,7 +28,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
 
   // D3 components
   xScale, // The only d3 scale for placement on the x axis within the whole
-              // timeline. Is only updated when zoomTo is called.
+          // timeline. Is only updated when zoomTo is called.
   xAxis,
   brush,
   ordinalYScale, // Scale used to place events in lines for each type
@@ -176,13 +176,19 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
      *  bottom, left and right padding. All values in px.
      */
     resize: {
-      value: function (dimensions) {
+      value: function (newDimensions, features) {
         var oldDimensions = angular.copy(this.dimensions);
-        this.dimensions = dimensions;
+        this.dimensions = newDimensions;
         this._svg = updateCanvas(this._svg, oldDimensions, this.dimensions);
         this.updateElements(oldDimensions);
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
-        this._drawAxes(this._svg, xAxis, dimensions, false);
+
+        xScale.range([0, newDimensions.width]);
+        this._drawAxes(this._svg, xAxis, newDimensions, false);
+
+        circles = d3.select('#timeline').selectAll('path.event');
+
+        this.updateElements(oldDimensions);
       }
     },
 
@@ -192,7 +198,12 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
      * @param  {object} oldDimensions copy of the old dimensions
      */
     updateElements: {
+
       value: function (oldDimensions) {
+
+        console.log('circles:', circles);
+        console.log('xScale.range():', xScale.range());
+
         if (circles) {
           updateCircleElements(circles, xScale);
         }
@@ -243,6 +254,21 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
       }
     },
 
+    removeCircles: {
+      value: function () {
+
+        var paths = d3.select('#timeline').selectAll('path.event');
+
+        paths
+          .transition()
+          .duration(this.transTime)
+          .style("opacity", 0);
+
+        paths
+          .remove();
+      }
+    },
+
     /**
      * Updates, adds or removes all lines in the data object
      *
@@ -272,6 +298,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
      */
     drawBars: {
       value: function (data) {
+
         var height = initialHeight -
                      this.dimensions.padding.top -
                      this.dimensions.padding.bottom +
@@ -282,7 +309,8 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
         var yScale = this._makeScale(
           y,
           {min: 0, max: height},
-          options);
+          options
+        );
         bars = drawRectElements(this._svg, this.dimensions, data, xScale, yScale);
       }
     },
@@ -570,8 +598,11 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
    * call drawCircles.
    */
   var updateCircleElements = function (circles, xScale) {
+
     var xFunction = function (d) {
-      return Math.round(xScale(d.properties.timestamp_end));
+      var result = Math.round(xScale(d.properties.timestamp_end));
+      console.log('result:', result);
+      return result;
     };
 
     // UPDATE

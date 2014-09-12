@@ -286,9 +286,12 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
     if (scope.mapState.getActiveTemporalLayer()) { getTemporalRasterData(); }
 
     window.onresize = function () {
-      var dimensions = timeline.dimensions;
-      dimensions.width = window.innerWidth;
-      timeline.resize(dimensions);
+
+      timeline.dimensions.width = window.innerWidth;
+      timeline.resize(
+        timeline.dimensions,
+        scope.events.data.features
+      );
     };
 
   };
@@ -300,3 +303,4 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
     templateUrl: 'templates/timeline.html'
   };
 }]);
+
