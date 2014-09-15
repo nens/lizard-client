@@ -20,6 +20,11 @@
  * and resize. The timeline resizes before elements are added and after
  * elements are removed. Therefore new and old dimensions need to be compared
  * to delay the resize of elements the same amount as the canvas.
+ *
+ * NB! Events used to be drawn as SVG circle elements, but are now drawn as
+ * lines. This makes sense since events now have both a start- and end-time.
+ * All methods related to "circles" are not used anymore, and are only
+ * there in case we'll ever need to draw circles again.
  */
 app.factory("Timeline", ["NxtD3", function (NxtD3) {
 
@@ -28,7 +33,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
 
   // D3 components
   xScale, // The only d3 scale for placement on the x axis within the whole
-          // timeline. Is only updated when zoomTo is called.
+          // timeline. Is only updated when zoomTo is called, or the window resizes.
   xAxis,
   brush,
   ordinalYScale, // Scale used to place events in lines for each type
@@ -180,26 +185,12 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
         var oldDimensions = angular.copy(this.dimensions);
         this.dimensions = newDimensions;
         this._svg = updateCanvas(this._svg, oldDimensions, this.dimensions);
-        this.updateElements(oldDimensions);
+        // this.updateElements(oldDimensions);
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
 
         xScale.range([0, newDimensions.width]);
         this._drawAxes(this._svg, xAxis, newDimensions, false);
-
-        //circles = d3.select('#timeline').selectAll('path.event');
-
-        // Ernst's update method (doesn't wort for circles/events)
-        this.updateElements(oldDimensions);
-
-        // redraw the circle elements
-        // --------------------------------------------
-        this.removeCircles();
-        var that = this;
-        setTimeout(function () {
-          if (features) {
-            that.drawCircles(features);
-          }
-        }, this.transTime * 2);
+        this.updateElements(oldDimensions, features);
       }
     },
 
@@ -210,11 +201,11 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
      */
     updateElements: {
 
-      value: function (oldDimensions) {
+      value: function (oldDimensions, data) {
 
-        console.log('circles:', circles);
-        console.log('xScale.range():', xScale.range());
-
+        if (lines) {
+          drawLineElements(this._svg, this.dimensions, xScale, ordinalYScale, data);
+        }
         if (circles) {
           updateCircleElements(circles, xScale);
         }
@@ -262,23 +253,6 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
           xScale,
           ordinalYScale
         );
-      }
-    },
-
-    removeCircles: {
-      value: function () {
-
-        var circles = d3.select('#timeline').selectAll('circle.event');
-
-        circles
-          .transition()
-          .duration(this.transTime)
-          .style("opacity", 0);
-
-        circles
-          .remove();
-
-        d3.select('#timeline').selectAll('path.event').remove();
       }
     },
 
@@ -528,10 +502,17 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
    * Create zoomend
    */
   var setZoomEndFunction = function (zoomEndFn) {
-    var zoomend = function () {
-      zoomEndFn();
-    };
-    return zoomend;
+
+    // why this obfuscation??
+    // --------------------------
+    // var zoomend = function () {
+    //   zoomEndFn();
+    // };
+    // return zoomend;
+
+    // non-obfuscated version
+    // ---------------------
+    return zoomEndFn;
   };
 
   /**
@@ -613,9 +594,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
   var updateCircleElements = function (circles, xScale) {
 
     var xFunction = function (d) {
-      var result = Math.round(xScale(d.properties.timestamp_end));
-      console.log('result:', result);
-      return result;
+      return Math.round(xScale(d.properties.timestamp_end));
     };
 
     // UPDATE
