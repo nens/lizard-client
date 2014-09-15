@@ -5,16 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Lizard</title>
-    <link rel="stylesheet" type="text/css" href="vendor/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="vendor/leaflet-dist/dist/leaflet.css" />
 
-    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="source/assets/css/omnibox.css" rel="stylesheet" />
-    <link href="source/assets/css/graph.css" rel="stylesheet" />
-    <link href="source/assets/css/nxt_base.css" rel="stylesheet" />
-    <link href="vendor/lizard-iconfont/lizard/dest/css/Lizard.css" rel="stylesheet" />
-    <link href="vendor/ng-table/ng-table.css?{{ random_string }}"></script>
-    <link href='//fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="dist/css/vendor.css" />
+    <link href='https://fonts.googleapis.com/css?family=Petit+Formal+Script|Kite+One|Roboto+Slab' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="dist/css/nxt.css" />
 
     <script>
 
@@ -160,51 +154,9 @@
       <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
     </div>
 
-    <script src="vendor/jquery/jquery.min.js?{{ random_string }}"></script>
-    <script src="vendor/raven-js/dist/raven.js?{{ random_string }}"></script>
-    <script src="vendor/leaflet-dist/dist/leaflet-src.js?{{ random_string }}"></script>
-    <script src="source/app/lib/TileLayer.GeoJSONd3.js?{{ random_string }}"></script>
-    <script src="source/app/lib/Layer.GeoJSONd3.js?{{ random_string }}"></script>
-    <script src="source/app/lib/leaflet-utfgrid-lizard.js?{{ random_string }}"></script>
-    <script src="vendor/angular/angular.js?{{ random_string }}"></script>
-    <script src="vendor/restangular/dist/restangular.min.js?{{ random_string }}"></script>
-    <script src="vendor/angular-sanitize/angular-sanitize.min.js?{{ random_string }}"></script>
-    <script src="vendor/ng-csv/build/ng-csv.js?{{ random_string }}"></script>
-    <script src="vendor/lodash/dist/lodash.min.js?{{ random_string }}"></script>
-    <script src="vendor/bootstrap/dist/js/bootstrap.js?{{ random_string }}"></script>
-    <script src="vendor/angular-ui-bootstrap/ui-bootstrap-tpls-0.10.0.min.js?{{ random_string }}"></script>
-    <script src="vendor/ui-utils/ui-utils.js?{{ random_string }}"></script>
-    <script src="source/app/lizard-nxt.js?{{ random_string }}"></script>
-    <script src="source/app/services/cabinet-service.js?{{ random_string }}"></script>
-    <script src="source/app/controllers/hash-controller.js?{{ random_string }}"></script>
-    <script src="source/app/services/util-service.js?{{ random_string }}"></script>
-    <script src="source/app/controllers/omnibox-controller.js?{{ random_string }}"></script>
-    <script src="source/app/services/raster-service.js?{{ random_string }}"></script>
-    <script src="source/app/services/leaflet-service.js?{{ random_string }}"></script>
-    <script src="source/app/services/map-service.js?{{ random_string }}"></script>
-    <script src="source/app/services/event-service.js?{{ random_string }}"></script>
-    <script src="source/app/services/nxt-d3-service.js?{{ random_string }}"></script>
-    <script src="source/app/services/timeline-service.js?{{ random_string }}"></script>
-    <script src="source/app/services/utfgrid-service.js?{{ random_string }}"></script>
-    <script src="source/app/services/click-feedback-service.js?{{ random_string }}"></script>
-    <script src="source/app/services/timeseries-service.js?{{ random_string }}"></script>
-    <script src="source/app/controllers/search-controller.js?{{ random_string }}"></script>
-    <script src="source/app/directives/map-directives.js?{{ random_string }}"></script>
-    <script src="source/app/directives/aggregate-directives.js?{{ random_string }}"></script>
-    <script src="source/app/directives/omnibox-directives.js?{{ random_string }}"></script>
-    <script src="source/app/services/graph-service.js?{{ random_string }}"></script>
-    <script src="source/app/directives/graph-directives.js?{{ random_string }}"></script>
-    <script src="source/app/directives/layer-chooser-directives.js?{{ random_string }}"></script>
-    <script src="source/app/directives/template-directives.js?{{ random_string }}"></script>
-    <script src="source/app/directives/timeline-directives.js?{{ random_string }}"></script>
-    <script src="source/app/controllers/point-object-controller.js?{{ random_string }}"></script>
-    <script src="source/app/controllers/timeline-controller.js?{{ random_string }}"></script>
-    <script src="source/app/controllers/extent-aggregate-controller.js?{{ random_string }}"></script>
-    <script src="source/app/controllers/intersect-controller.js?{{ random_string }}"></script>
-    <script src="source/app/templates/templates.js?{{ random_string }}"></script>
-    <script src="source/app/lib/utils.js?{{ random_string }}"></script>
-    <script src="vendor/d3/d3.js?{{ random_string }}"></script>
-    <script src="source/app/lizard-nxt-filters.js?{{ random_string }}"></script>
+    <script src="dist/js/ng.js"></script>
+    <script src="dist/js/vendor.js"></script>
+    <script src="dist/js/nxt.js?"></script>
 
   <script>
       // Set global constant "JS_DEBUG", to prevent debug info from reaching
