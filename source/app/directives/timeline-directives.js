@@ -236,8 +236,11 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.animation.enabled) {
+
         timeline.updateBrushExtent(
-          scope.timeState.animation.start, scope.timeState.at);
+          scope.timeState.animation.start,
+          scope.timeState.at
+        );
       }
     });
 
