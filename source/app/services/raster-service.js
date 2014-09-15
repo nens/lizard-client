@@ -11,8 +11,16 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    * @return {float[]} bounds in list of latlon list.
    */
   var _getImageBounds = function (layerName) {
-      return [[54.28458617998074, 1.324296158471368],
-              [49.82567047026146, 8.992548357936204]];
+      var bounds;
+      if (layerName === 'demo:radar') {
+        bounds = [[54.28458617998074, 1.324296158471368],
+                [49.82567047026146, 8.992548357936204]];
+      }
+      if (layerName === 'bath:westerschelde') {
+        bounds = [[51.41, 4.03],
+                  [51.36, 4.17]];
+      }
+      return bounds;
     };
 
   /**
@@ -25,14 +33,32 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    * @return {object} Returns hashtable with info for animation.
    */
   var rasterInfo = function (layerName) {
-    return {
-      "timeResolution": 300000,
-      "minTimeBetweenFrames": 250,
-      "imageUrlBase": 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=' + layerName + '&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=',
-      "imageBounds": _getImageBounds(layerName)
-    };
+    var info,
+    wmsUrl = 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&LAYERS=',
+    width = 500;
+    if (layerName === 'demo:radar') {
+      info =  {
+        "timeResolution": 300000,
+        "minTimeBetweenFrames": 250,
+        "imageBounds": _getImageBounds(layerName),
+        "imageUrlBase": wmsUrl + layerName + '&STYLES=transparent&TRANSPARENT=true&EFFECTS=radar%3A0%3A0.008'
+      };
+    }
+    if (layerName === 'bath:westerschelde') {
+      info = {
+        "timeResolution": 15768000000,
+        "minTimeBetweenFrames": 250,
+        "imageBounds": _getImageBounds(layerName),
+        "imageUrlBase": wmsUrl + layerName + '&STYLES=BrBG_r:-30:0&TRANSPARENT=false'
+      };
+      width = 2000;
+    }
+    var bbox = UtilService.latLng2meters([info.imageBounds[1][0], info.imageBounds[0][1]]).toString() +
+    ',' + UtilService.latLng2meters([info.imageBounds[0][0], info.imageBounds[1][1]]).toString(),
+    height = parseInt(width * ((info.imageBounds[0][0] - info.imageBounds[1][0]) / (info.imageBounds[1][1] - info.imageBounds[0][1])), 10);
+    info.imageUrlBase = info.imageUrlBase + '&HEIGHT=' + height + '&WIDTH=' + width + '&ZINDEX=26&SRS=EPSG%3A3857&BBOX=' + bbox + '&TIME=';
+    return info;
   };
-
   // Set by rain controller and get by timeline
   var intensityData;
 

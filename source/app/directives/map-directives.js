@@ -6,8 +6,8 @@
  * Overview
  * ========
  *
- * Defines the map. Directive does all the watching and DOM binding, MapDirCtrl 
- * holds all the testable logic. Ideally the directive has no logic and the 
+ * Defines the map. Directive does all the watching and DOM binding, MapDirCtrl
+ * holds all the testable logic. Ideally the directive has no logic and the
  * MapDirCtrl is independent of the rest of the application.
  *
  */
@@ -31,14 +31,14 @@ app.directive('map', [
       // instead of 'map' element here for testability
       var osmAttrib = '<a href="https://www.mapbox.com/about/maps/">&copy; Mapbox</a> <a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>';
       var bounds = window.data_bounds.all;
-      
+
       MapService.createMap(element[0], {
         bounds: bounds,
         attribution: osmAttrib
       });
       MapService.initiateMapEvents();
       scope.mapState.layersNeedLoading = true;
-      
+
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.
       $controller('hashGetterSetter', {$scope: scope});
@@ -69,9 +69,9 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
     link: function (scope, element, attrs) {
 
       var imageUrlBase;
-      var imageBounds = RasterService.rasterInfo().imageBounds;
+      var imageBounds = [];
       var utcFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
-      var step = RasterService.rasterInfo().timeResolution;
+      var step = [];
       var imageOverlays = {};
       var frameLookup = {};
       var numCachedFrames = 30;
@@ -81,13 +81,26 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
       var loadingRaster = 0;
       var restart = false;
 
-      /**
-       * Setup imageOverlays.
-       */
-      imageOverlays = RasterService.getImgOverlays(
-        numCachedFrames,
-        imageBounds
-      );
+      var start = function () {
+        imageBounds = RasterService.rasterInfo(scope.mapState.getActiveTemporalLayer().slug).imageBounds;
+        utcFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
+        step = RasterService.rasterInfo(scope.mapState.getActiveTemporalLayer().slug).timeResolution;
+        imageOverlays = {};
+        frameLookup = {};
+        numCachedFrames = 30;
+        previousFrame = 0;
+        loadingRaster = 0;
+        restart = false;
+
+        /**
+         * Setup imageOverlays.
+         */
+        imageOverlays = RasterService.getImgOverlays(
+          numCachedFrames,
+          imageBounds
+        );
+      };
+
 
       var addLoadListener = function (image, i, date) {
         image.on("load", function (e) {
@@ -140,6 +153,7 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
 
         var i, activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
         if (activeTemporalLayer) {
+          start();
           for (i in imageOverlays) {
             MapService.addLayer(imageOverlays[i]);
           }
