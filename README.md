@@ -33,6 +33,8 @@ Create dist files (optional) and templates (compulsory):
 
     grunt
 
+Point you browser to index.html for a client demo
+
 ### Using mr. developer
 
 Change dir to lizard nxt and run:
