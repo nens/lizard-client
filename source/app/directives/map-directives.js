@@ -46,8 +46,6 @@ app.directive('map', [
       // initialize empty ClickLayer.
       // Otherwise click of events-aggregate and clicklayer
       ClickFeedbackService.drawClickInSpace(new L.LatLng(180.0, 90.0));
-
-
     };
 
     return {
@@ -74,7 +72,9 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
       var step = [];
       var imageOverlays = {};
       var frameLookup = {};
-      var numCachedFrames = 30;
+      // numCachedFrames is now dynamic: the amt. of cached frames for mobile users
+      // is only half of that for non-mobile users.
+      var numCachedFrames = UtilService.serveToMobileDevice() ? 15 : 30;
       var previousFrame = 0;
       var previousDate;
       var nxtDate;
