@@ -72,6 +72,8 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
       var step = RasterService.rasterInfo().timeResolution;
       var imageOverlays = {};
       var frameLookup = {};
+      // numCachedFrames is now dynamic: the amt. of cached frames for mobile users
+      // is only half of that for non-mobile users.
       var numCachedFrames = UtilService.serveToMobileDevice() ? 15 : 30;
       var previousFrame = 0;
       var previousDate;
