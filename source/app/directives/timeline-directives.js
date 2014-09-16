@@ -268,7 +268,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       var bounds = scope.mapState.bounds;
       var activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
 
-      if (!!activeTemporalLayer) {
+      if (!!activeTemporalLayer && activeTemporalLayer.slug === 'demo:radar') {
         // width of timeline
         var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
         RasterService.getTemporalRaster(new Date(start),

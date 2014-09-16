@@ -41,7 +41,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
         "timeResolution": 300000,
         "minTimeBetweenFrames": 250,
         "imageBounds": _getImageBounds(layerName),
-        "imageUrlBase": wmsUrl + layerName + '&STYLES=transparent&TRANSPARENT=true&EFFECTS=radar%3A0%3A0.008'
+        "imageUrlBase": 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=' + layerName + '&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=',
       };
     }
     if (layerName === 'bath:westerschelde') {
@@ -51,12 +51,12 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
         "imageBounds": _getImageBounds(layerName),
         "imageUrlBase": wmsUrl + layerName + '&STYLES=BrBG_r:-30:0&TRANSPARENT=false'
       };
+      var bbox = [info.imageBounds[0][1], info.imageBounds[1][0]].toString() +
+      ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString(),
+      height = parseInt(width * ((info.imageBounds[0][0] - info.imageBounds[1][0]) / (info.imageBounds[1][1] - info.imageBounds[0][1])), 10);
+      info.imageUrlBase = info.imageUrlBase + '&HEIGHT=' + height + '&WIDTH=' + width + '&ZINDEX=26&BBOX=' + bbox + '&TIME=';
       width = 2000;
     }
-    var bbox = [info.imageBounds[0][1], info.imageBounds[1][0]].toString() +
-    ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString(),
-    height = parseInt(width * ((info.imageBounds[0][0] - info.imageBounds[1][0]) / (info.imageBounds[1][1] - info.imageBounds[0][1])), 10);
-    info.imageUrlBase = info.imageUrlBase + '&HEIGHT=' + height + '&WIDTH=' + width + '&ZINDEX=26&SRS=EPSG%3A3857&BBOX=' + bbox + '&TIME=';
     return info;
   };
   // Set by rain controller and get by timeline

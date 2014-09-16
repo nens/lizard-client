@@ -104,8 +104,8 @@
   </div>
   <!-- end: single card -->
   <div id="card-whatever"
-       ng-if="!!pointObject.temporalRaster.data"
-        class="card active">
+       ng-if="!!pointObject.temporalRaster.data && !mustShowRainCard(mapState, pointObject)"
+       class="card active">
     <div class="card-content" id="card-content-whatever">
       <graph line
              type="temporal"
@@ -114,6 +114,7 @@
              keys="{x: 0, y: 1}"
              now="timeState.at">
       </graph>
+    </div>
   </div>
 
 

@@ -221,6 +221,12 @@ app.directive('line', [function () {
       });
     });
 
+    if (temporal) {
+      graph.drawNow(graphCtrl.now);
+      // Function to call when timeState.at changes
+      graphCtrl.updateNow = graph.drawNow;
+    }
+
     // Function to call when data changes
     graphCtrl.updateData = graph.drawLine;
 
