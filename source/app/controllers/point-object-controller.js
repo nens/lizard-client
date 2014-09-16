@@ -134,7 +134,9 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @return {function}
      */
     utfgridResponded = function (here, showOnlyEvents) {
+
       return function (response) {
+
         if (!showOnlyEvents) {
           attrsResponded(response, $scope.pointObject);
         }
@@ -299,12 +301,12 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @function
      * @memberOf app.pointObjectCtrl
      * @description returns data from UTFgrid
-     * @param {jsondata} data
+     * @param {jsondata} response
      */
-    attrsResponded = function (data) {
+    attrsResponded = function (response) {
       // Return directly if no data is returned from the UTFgrid
-      if (!data.data) { return; }
-      angular.extend($scope.pointObject.attrs.data, data.data);
+      if (!response.data) { return; }
+      $scope.pointObject.attrs.data = response.data;
     };
 
     /**
