@@ -179,7 +179,7 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
        * with next frame; If frame is not in lookupFrame, get new images.
        */
       scope.$watch('timeState.at', function (newVal, oldVal) {
-        if (newVal === oldVal) { return; }
+        if (newVal === oldVal || !initiated) { return; }
         var currentDate = UtilService.roundTimestamp(newVal,
                                              step, false);
         var oldDate = UtilService.roundTimestamp(oldVal,

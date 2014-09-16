@@ -60,7 +60,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
           active: false,
           start: undefined,
           stop: undefined,
-          aggWindow: RasterService.rasterInfo($scope.mapState.getActiveTemporalLayer().slug).timeResolution,
+          aggWindow: 0,
           data: undefined,
           recurrenceTime: undefined
         },
