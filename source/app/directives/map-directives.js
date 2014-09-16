@@ -6,8 +6,8 @@
  * Overview
  * ========
  *
- * Defines the map. Directive does all the watching and DOM binding, MapDirCtrl 
- * holds all the testable logic. Ideally the directive has no logic and the 
+ * Defines the map. Directive does all the watching and DOM binding, MapDirCtrl
+ * holds all the testable logic. Ideally the directive has no logic and the
  * MapDirCtrl is independent of the rest of the application.
  *
  */
@@ -31,14 +31,14 @@ app.directive('map', [
       // instead of 'map' element here for testability
       var osmAttrib = '<a href="https://www.mapbox.com/about/maps/">&copy; Mapbox</a> <a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>';
       var bounds = window.data_bounds.all;
-      
+
       MapService.createMap(element[0], {
         bounds: bounds,
         attribution: osmAttrib
       });
       MapService.initiateMapEvents();
       scope.mapState.layersNeedLoading = true;
-      
+
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.
       $controller('hashGetterSetter', {$scope: scope});
@@ -46,8 +46,6 @@ app.directive('map', [
       // initialize empty ClickLayer.
       // Otherwise click of events-aggregate and clicklayer
       ClickFeedbackService.drawClickInSpace(new L.LatLng(180.0, 90.0));
-
-
     };
 
     return {
@@ -74,7 +72,7 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
       var step = RasterService.rasterInfo().timeResolution;
       var imageOverlays = {};
       var frameLookup = {};
-      var numCachedFrames = 30;
+      var numCachedFrames = UtilService.serveToMobileDevice() ? 15 : 30;
       var previousFrame = 0;
       var previousDate;
       var nxtDate;
