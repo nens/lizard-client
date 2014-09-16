@@ -67,9 +67,9 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
 
       // Divide by ten to make the movement in the timeline smooth.
 
-      timeStep = RasterService.rasterInfo().timeResolution / 10;
+      timeStep = RasterService.rasterInfo($scope.mapState.getActiveTemporalLayer().slug).timeResolution / 10;
       $scope.timeState.animation.minLag =
-        RasterService.rasterInfo().minTimeBetweenFrames / 10;
+        RasterService.rasterInfo($scope.mapState.getActiveTemporalLayer().slug).minTimeBetweenFrames / 10;
 
     } else {
 
