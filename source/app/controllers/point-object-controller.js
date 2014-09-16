@@ -207,27 +207,37 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
         UtilService.getAggWindow($scope.timeState.start,
                                  $scope.timeState.end,
                                  272);  // graph is 272 px wide
-      RasterService.getTemporalRaster(
-        start,
-        stop,
-        here,
-        $scope.pointObject.temporalRaster.aggWindow,
-        layer.slug)
-        .then(rasterLayerResponded)
-        .then(function () {
-          $scope.pointObject.temporalRaster.type = layer.slug;
-          RasterService.getTemporalRaster(
-            start,
-            stop,
-            here,
-            $scope.pointObject.temporalRaster.aggWindow,
-            layer.slug,
-            'rrc')
-              .then(function (response) {
-                $scope.pointObject.temporalRaster.recurrenceTime = response;
-              }
-          );
-        });
+      if (layer.slug === 'demo:radar') {
+        RasterService.getTemporalRaster(
+          start,
+          stop,
+          here,
+          $scope.pointObject.temporalRaster.aggWindow,
+          layer.slug)
+          .then(rasterLayerResponded)
+          .then(function () {
+            $scope.pointObject.temporalRaster.type = layer.slug;
+            RasterService.getTemporalRaster(
+              start,
+              stop,
+              here,
+              $scope.pointObject.temporalRaster.aggWindow,
+              layer.slug,
+              'rrc')
+                .then(function (response) {
+                  $scope.pointObject.temporalRaster.recurrenceTime = response;
+                }
+            );
+          });
+      } else {
+        RasterService.getTemporalRaster(
+          start,
+          stop,
+          here,
+          undefined,
+          layer.slug)
+          .then(rasterLayerResponded);
+      }
     };
 
     /**

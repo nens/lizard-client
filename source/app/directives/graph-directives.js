@@ -67,6 +67,7 @@ app.directive('graph', ["Graph", function (Graph) {
     el = element[0].firstChild;
 
     graphCtrl.yfilter = attrs.yfilter;
+    graphCtrl.type = attrs.type;
 
     // Create the graph and put it on the controller
     graphCtrl.graph = new Graph(el, dimensions);
@@ -122,8 +123,10 @@ app.directive('graph', ["Graph", function (Graph) {
     this.setData($scope);
 
     this.graph = {};
-    this.yfilter = "";
+    this.yfilter = '';
     this.now = $scope.now;
+    this.type = '';
+
     // Define data update function in attribute directives
     this.updateData = function () {};
     // Define timeState.now update function in attribute directives
@@ -201,9 +204,10 @@ app.directive('line', [function () {
 
     var data = graphCtrl.data,
     graph = graphCtrl.graph,
-    keys = graphCtrl.keys;
+    keys = graphCtrl.keys,
+    temporal = graphCtrl.type === 'temporal';
 
-    graph.drawLine(data, keys, graphCtrl.labels);
+    graph.drawLine(data, keys, graphCtrl.labels, temporal);
 
     graph.followMouse(function (position) {
       scope.$apply(function () {
