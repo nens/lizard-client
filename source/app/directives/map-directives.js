@@ -213,10 +213,10 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
             previousDate = currentDate;
             nxtDate += step;
           } else if (overlayIndex === undefined) {
-            if (JS_DEBUG) {
-              console.info("We will have to go get", currentDate,
-                           ". Get new images!");
-            }
+            // if (JS_DEBUG) {
+            //   console.info("We will have to go get", currentDate,
+            //                ". Get new images!");
+            // }
             if (scope.timeState.animation.playing) {
               restart = true;
             }

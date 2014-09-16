@@ -20,6 +20,11 @@
  * and resize. The timeline resizes before elements are added and after
  * elements are removed. Therefore new and old dimensions need to be compared
  * to delay the resize of elements the same amount as the canvas.
+ *
+ * NB! Events used to be drawn as SVG circle elements, but are now drawn as
+ * lines. This makes sense since events now have both a start- and end-time.
+ * All methods related to "circles" are not used anymore, and are only
+ * there in case we'll ever need to draw circles again.
  */
 app.factory("Timeline", ["NxtD3", function (NxtD3) {
 
@@ -28,7 +33,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
 
   // D3 components
   xScale, // The only d3 scale for placement on the x axis within the whole
-              // timeline. Is only updated when zoomTo is called.
+          // timeline. Is only updated when zoomTo is called, or the window resizes.
   xAxis,
   brush,
   ordinalYScale, // Scale used to place events in lines for each type
@@ -122,10 +127,64 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
     },
 
     /**
+     * @description - Redraws the brush given a certain proportion
+     * @param {float} widthFactor - The proportion between the old width
+     *   and the new width of the temporal extent.
+     */
+    redrawBrush: {
+      value: function (widthFactor) {
+
+        brush = d3.svg.brush().x(xScale);
+        brush.on("brush", brushed);
+        var self = this;
+        brush.on('brushstart', function () {
+          self._svg.on('click', null);
+        });
+        //TODO: Snap the brush to nearest logical unit, 5min, hour, week etc.
+        brush.on("brushend", brushend);
+        brushg = this._svg.select('g').append("g")
+          .attr("class", "brushed");
+
+        var start = brush.extent()[0].getTime();
+        var end = brush.extent()[1].getTime();
+
+        brushg.call(brush.extent([new Date(start), new Date(end)]));
+
+        var brushExtent = d3.select('g.brushed > rect.extent'),
+            brushEastEnd = d3.select('g.resize.e'),
+            oldX = brushExtent.attr("x"),
+            oldWidth = brushExtent.attr("width"),
+            newX = Math.floor(widthFactor * oldX),
+            newWidth = Math.floor(widthFactor * oldWidth),
+            newHeight = this._getHeight(this.dimensions);
+
+        brushExtent
+          .attr("x", newX)
+          .attr("width", newWidth)
+            .transition()
+            .duration(this.transTime)
+            .delay(this.transTime)
+            .attr("height", newHeight);
+
+        brushEastEnd
+          .attr("transform", "translate(" + (newX + newWidth) + ", 0)")
+          .attr("height", newHeight)
+          .select('rect')
+            .attr("x", 0)
+            .attr("width", 2)
+            .attr("height", newHeight)
+            .attr("style", "fill: #2980b9;");
+
+        brushend();
+      }
+    },
+
+    /**
      * Draws a brush from start to end
      */
     drawBrush: {
       value: function (start, end) {
+
         brush = d3.svg.brush().x(xScale);
         brush.on("brush", brushed);
         var self = this;
@@ -137,8 +196,11 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
 
         brushg = this._svg.select('g').append("g")
           .attr("class", "brushed");
+
         var height = this._getHeight(this.dimensions);
+
         brushg.call(brush.extent([new Date(start), new Date(end)]));
+
         brushg.selectAll("rect")
           .attr("height", height)
           .selectAll("rect")
@@ -146,6 +208,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
             .delay(this.transTime)
             .duration(this.transTime)
             .attr("height", height);
+
         brushg.select('.e').select('rect')
           .attr("x", 0)
           .attr("width", 2)
@@ -160,6 +223,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
           brushg.remove();
         }
         this._svg.selectAll(".selected").classed("selected", false);
+        brush = undefined;
       }
     },
 
@@ -176,13 +240,22 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
      *  bottom, left and right padding. All values in px.
      */
     resize: {
-      value: function (dimensions) {
+      value: function (newDimensions, features) {
+
         var oldDimensions = angular.copy(this.dimensions);
-        this.dimensions = dimensions;
+        this.dimensions = newDimensions;
         this._svg = updateCanvas(this._svg, oldDimensions, this.dimensions);
-        this.updateElements(oldDimensions);
+
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
-        this._drawAxes(this._svg, xAxis, dimensions, false);
+
+        var oldWidth = xScale.range()[1];
+        xScale.range([0, newDimensions.width]);
+
+        var newWidth = xScale.range()[1];
+        var widthFactor = newWidth / oldWidth;
+
+        this._drawAxes(this._svg, xAxis, newDimensions, false);
+        this.updateElements(oldDimensions, features, widthFactor);
       }
     },
 
@@ -192,21 +265,26 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
      * @param  {object} oldDimensions copy of the old dimensions
      */
     updateElements: {
-      value: function (oldDimensions) {
-        if (circles) {
-          updateCircleElements(circles, xScale);
+
+      value: function (oldDimensions, data, widthFactor) {
+
+        if (lines) {
+          drawLineElements(this._svg, this.dimensions, xScale, ordinalYScale, data);
         }
+        // if (circles) {
+        //   updateCircleElements(circles, xScale); // UNUSED, OLD
+        // }
         if (bars && oldDimensions) {
           updateRectangleElements(bars, xScale, oldDimensions, this.dimensions);
         }
         if (noDataIndicator) {
           updateNoDataElement(noDataIndicator, xScale, this.dimensions);
         }
-        if (nowIndicator) {
-          this.updateNowElement();
-        }
+        // if (nowIndicator) {
+        //   this.updateNowElement(); // METHOD IS NON_EXISTENT!?
+        // }
         if (brushg) {
-          updateBrush(brushg, oldDimensions, this.dimensions);
+          this.redrawBrush(widthFactor);
         }
       }
     },
@@ -272,6 +350,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
      */
     drawBars: {
       value: function (data) {
+
         var height = initialHeight -
                      this.dimensions.padding.top -
                      this.dimensions.padding.bottom +
@@ -282,7 +361,8 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
         var yScale = this._makeScale(
           y,
           {min: 0, max: height},
-          options);
+          options
+        );
         bars = drawRectElements(this._svg, this.dimensions, data, xScale, yScale);
       }
     },
@@ -330,7 +410,8 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
       value: function (start, end) {
         xScale.domain([new Date(start), new Date(end)]);
         xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-        this.updateElements();
+        // this.updateElements();
+        this.updateElements(this.dimensions);
         this._drawAxes(this._svg, xAxis, this.dimensions, false, this.transTime);
         this.addZoomListener();
       }
@@ -498,7 +579,9 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
    * callback.
    */
   var setBrushFunction = function (xScale, brushFn) {
+
     var brushed = function () {
+
       var s = brush.extent();
       if (circles) {
         circles.classed("selected", function (d) {
@@ -547,12 +630,13 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
    * Updates the visible brush element's vertical height.
    */
   var updateBrush = function (brushg, oldDim, newDim) {
+
     brushed();
     var height = Timeline.prototype._getHeight(newDim);
-    var delay = 0;
-    if (oldDim.height > newDim.height) {
-      delay = Timeline.prototype.transTime;
-    }
+    var delay = oldDim.height <= newDim.height
+      ? Timeline.prototype.transTime
+      : 0;
+
     brushg.selectAll("rect")
       .transition()
       .duration(Timeline.prototype.transTime)
@@ -570,6 +654,7 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
    * call drawCircles.
    */
   var updateCircleElements = function (circles, xScale) {
+
     var xFunction = function (d) {
       return Math.round(xScale(d.properties.timestamp_end));
     };
