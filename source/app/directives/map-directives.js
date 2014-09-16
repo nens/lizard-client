@@ -80,6 +80,7 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
       var nxtDate;
       var loadingRaster = 0;
       var restart = false;
+      var initiated = false;
 
       var start = function () {
         imageBounds = RasterService.rasterInfo(scope.mapState.getActiveTemporalLayer().slug).imageBounds;
@@ -99,6 +100,7 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
           numCachedFrames,
           imageBounds
         );
+        initiated = true;
       };
 
 
@@ -150,7 +152,6 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
        * the layer it gets disabled.
        */
       scope.$watch('mapState.activeLayersChanged', function (n, o) {
-
         var i, activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
         if (activeTemporalLayer) {
           start();
@@ -178,7 +179,7 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
        * with next frame; If frame is not in lookupFrame, get new images.
        */
       scope.$watch('timeState.at', function (newVal, oldVal) {
-        if (newVal === oldVal) { return true; }
+        if (newVal === oldVal) { return; }
         var currentDate = UtilService.roundTimestamp(newVal,
                                              step, false);
         var oldDate = UtilService.roundTimestamp(oldVal,
@@ -233,6 +234,7 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
         if (!scope.timeState.animation.playing &&
             scope.mapState.getActiveTemporalLayer() &&
             scope.mapState.initiated) {
+          if (!initiated) { return; }
           getImages(scope.timeState.at);
           imageOverlays[0].setOpacity(0.7);
           previousFrame = 0;

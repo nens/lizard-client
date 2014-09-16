@@ -202,13 +202,6 @@ app.service("UtilService", function () {
     return  (degrees * Math.PI) / 180 * 6371 * 1000;
   };
 
-  this.latLng2meters = function (Latlon) {
-    var x = Latlon[1] * 20037508.34 / 180;
-    var y = Math.log(Math.tan((90 + Latlon[0]) * Math.PI / 360)) / (Math.PI / 180);
-    y = y * 20037508.34 / 180;
-    return [x, y];
-  };
-
   /**
    * @function metersToDegs
    * @memberOf UtilService

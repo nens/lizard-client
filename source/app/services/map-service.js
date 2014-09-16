@@ -384,7 +384,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
   _getActiveTemporalLayer = function () {
 
     var i, temporalLayers = _getLayersByType('temporal');
-
     for (i = 0; i < temporalLayers.length; i++) {
       if (temporalLayers[i].active) {
         return temporalLayers[i];

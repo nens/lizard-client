@@ -192,6 +192,7 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
             if ((active && !$scope.mapState.layers[allSlugs[i]].active)
               || (!active && $scope.mapState.layers[allSlugs[i]].active)) {
               $scope.mapState.changeLayer($scope.mapState.layers[allSlugs[i]]);
+              $scope.mapState.activeLayersChanged = Date.now();
             }
           }
         }

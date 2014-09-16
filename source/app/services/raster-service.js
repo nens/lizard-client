@@ -34,7 +34,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    */
   var rasterInfo = function (layerName) {
     var info,
-    wmsUrl = 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&LAYERS=',
+    wmsUrl = 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&SRS=EPSG:4326&LAYERS=',
     width = 500;
     if (layerName === 'demo:radar') {
       info =  {
@@ -47,14 +47,14 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     if (layerName === 'bath:westerschelde') {
       info = {
         "timeResolution": 15768000000,
-        "minTimeBetweenFrames": 250,
+        "minTimeBetweenFrames": 1000,
         "imageBounds": _getImageBounds(layerName),
         "imageUrlBase": wmsUrl + layerName + '&STYLES=BrBG_r:-30:0&TRANSPARENT=false'
       };
       width = 2000;
     }
-    var bbox = UtilService.latLng2meters([info.imageBounds[1][0], info.imageBounds[0][1]]).toString() +
-    ',' + UtilService.latLng2meters([info.imageBounds[0][0], info.imageBounds[1][1]]).toString(),
+    var bbox = [info.imageBounds[0][1], info.imageBounds[1][0]].toString() +
+    ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString(),
     height = parseInt(width * ((info.imageBounds[0][0] - info.imageBounds[1][0]) / (info.imageBounds[1][1] - info.imageBounds[0][1])), 10);
     info.imageUrlBase = info.imageUrlBase + '&HEIGHT=' + height + '&WIDTH=' + width + '&ZINDEX=26&SRS=EPSG%3A3857&BBOX=' + bbox + '&TIME=';
     return info;
