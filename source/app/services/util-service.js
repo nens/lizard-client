@@ -274,17 +274,17 @@ app.service("UtilService", function () {
    *
    * @summary Create WKT line from two latlon objects.
    */
-   this.serveToMobileDevice = function () {
+  this.serveToMobileDevice = function () {
 
-    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent
-    )) {
-      console.log("mobile platform detected!");
-      return true;
-    } else {
-      console.log("non-mobile platform detected!");
-      return false;
+    var result = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|windows phone/i.test(
+      navigator.userAgent.toLowerCase()
+    );
+
+    if (JS_DEBUG) {
+      console.log((result ? '' : 'non-') + "mobile platform detected!");
     }
-   };
+
+    return result;
+  };
 
 });
