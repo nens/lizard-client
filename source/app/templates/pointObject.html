@@ -59,7 +59,7 @@
               <td><i class="fa fa-circle" ng-style="{color: events.types[pointObject.events.activeType]['color'] }"></i></td>
               <td><% events.types[pointObject.events.activeType]['name'] %></td>
               <td></td>
-              <td><% pointObject.events.data.length %></td>
+              <td><% (events.withinBounds < pointObject.events.data.length) ? events.withinBounds : pointObject.events.data.length %></td>
             </tr>
           </tbody>
         </table>

@@ -256,6 +256,7 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
             return !!contained;
           });
         var withinbounds = d3.selectAll(".circle.withinbounds");
+        scope.events.withinBounds = withinbounds[0].length;
 
         // hack to update radius of event circles on brush move
         // duplicate code with Layer.GeoJSONd3.js
