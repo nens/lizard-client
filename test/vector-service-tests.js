@@ -24,7 +24,10 @@ describe('Testing VectorService', function () {
       + bounds.getWest() + " " + bounds.getNorth() + ", "
       + bounds.getWest() + " " + bounds.getSouth()
       + "))";
-    VectorService.getData('jean', geom);
+    VectorService.getData('jean', geom).then(
+      function (response) {
+        console.log(response)
+      });
     expect(VectorService.dataStore).toBe(undefined);
   });
 

@@ -26,6 +26,8 @@ app.service('VectorService', ['Restangular',
      * @return {promise} 
      */
     getData = function (layer, geom, time) {
+      var start, stop;
+      
       if (time) {
         start = time.start;
         stop = time.stop;
@@ -37,7 +39,7 @@ app.service('VectorService', ['Restangular',
         geom: geom,
         start: start,
         stop: stop,
-        object: layer.object_type + '$' +layer.object_pk
+        object: layer.object_type + '$' + layer.object_pk
       });
     };
 
