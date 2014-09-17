@@ -46,8 +46,8 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
         d3.selectAll("." + locationId)
           .classed("highlighted-event", true)
           .transition()
-          .duration(200)
-          .attr("fill", "black");
+          .duration(200);
+          // .attr("fill", "black");
 
         // hacky hack is oooow soooo hacky
         setTimeout(function () {
@@ -246,7 +246,7 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
         //NOTE: not optimal class switching
         d3.selectAll(".circle").classed("hidden", true);
         d3.selectAll(".circle")
-          .classed("selected", function (d) {
+          .classed("withinbounds", function (d) {
             var s = [start, end];
             var time = d.properties.timestamp_end;
             var contained = s[0] <= time && time <= s[1];
@@ -255,14 +255,14 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
             d.inTempExtent = contained;
             return !!contained;
           });
-        var selected = d3.selectAll(".circle.selected");
+        var withinbounds = d3.selectAll(".circle.withinbounds");
 
         // hack to update radius of event circles on brush move
         // duplicate code with Layer.GeoJSONd3.js
         // TODO: refactor this code into above fill for update of d3 selection
         var overlapLocations = {};
-        selected.classed("hidden", false);
-        selected
+        withinbounds.classed("hidden", false);
+        withinbounds
           .attr("r", function (d) {
             var radius, overlaps;
             overlaps = _countOverlapLocations(overlapLocations, d);

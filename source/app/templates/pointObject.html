@@ -40,6 +40,33 @@
        class="card active"
        ng-class="{hidden: !pointObject.events.data.length > 0}">
 
+    <div class="card-content" id="card-content-summary">
+
+      <div class="event-aggregate-container">
+
+        <table class="table table-hover table-condensed">
+          <thead>
+            <tr>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th>Aantal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="recurrence_time">
+
+              <td><i class="fa fa-circle" ng-style="{color: events.types[pointObject.events.activeType]['color'] }"></i></td>
+              <td><% events.types[pointObject.events.activeType]['name'] %></td>
+              <td></td>
+              <td><% pointObject.events.data.length %></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
     <div class="card-content"
          id="card-content-relatified-events">
 

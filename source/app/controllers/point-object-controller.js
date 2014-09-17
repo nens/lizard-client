@@ -290,6 +290,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
       });
       if ($scope.pointObject.events.data.length > 0) {
         $scope.pointObject.events.active = true;
+        $scope.pointObject.events.activeType = $scope.pointObject.events.data[0].event_series;
         EventService.addColor($scope.events);
       }
       if (clickedOnEvents) {
