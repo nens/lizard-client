@@ -60,7 +60,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
           active: false,
           start: undefined,
           stop: undefined,
-          aggWindow: RasterService.rasterInfo().timeResolution,
+          aggWindow: 0,
           data: undefined,
           recurrenceTime: undefined
         },
@@ -134,7 +134,9 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @return {function}
      */
     utfgridResponded = function (here, showOnlyEvents) {
+
       return function (response) {
+
         if (!showOnlyEvents) {
           attrsResponded(response, $scope.pointObject);
         }
@@ -207,27 +209,37 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
         UtilService.getAggWindow($scope.timeState.start,
                                  $scope.timeState.end,
                                  272);  // graph is 272 px wide
-      RasterService.getTemporalRaster(
-        start,
-        stop,
-        here,
-        $scope.pointObject.temporalRaster.aggWindow,
-        layer.slug)
-        .then(rasterLayerResponded)
-        .then(function () {
-          $scope.pointObject.temporalRaster.type = layer.slug;
-          RasterService.getTemporalRaster(
-            start,
-            stop,
-            here,
-            $scope.pointObject.temporalRaster.aggWindow,
-            layer.slug,
-            'rrc')
-              .then(function (response) {
-                $scope.pointObject.temporalRaster.recurrenceTime = response;
-              }
-          );
-        });
+      if (layer.slug === 'demo:radar') {
+        RasterService.getTemporalRaster(
+          start,
+          stop,
+          here,
+          $scope.pointObject.temporalRaster.aggWindow,
+          layer.slug)
+          .then(rasterLayerResponded)
+          .then(function () {
+            $scope.pointObject.temporalRaster.type = layer.slug;
+            RasterService.getTemporalRaster(
+              start,
+              stop,
+              here,
+              $scope.pointObject.temporalRaster.aggWindow,
+              layer.slug,
+              'rrc')
+                .then(function (response) {
+                  $scope.pointObject.temporalRaster.recurrenceTime = response;
+                }
+            );
+          });
+      } else {
+        RasterService.getTemporalRaster(
+          start,
+          stop,
+          here,
+          undefined,
+          layer.slug)
+          .then(rasterLayerResponded);
+      }
     };
 
     /**
@@ -289,12 +301,12 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @function
      * @memberOf app.pointObjectCtrl
      * @description returns data from UTFgrid
-     * @param {jsondata} data
+     * @param {jsondata} response
      */
-    attrsResponded = function (data) {
+    attrsResponded = function (response) {
       // Return directly if no data is returned from the UTFgrid
-      if (!data.data) { return; }
-      angular.extend($scope.pointObject.attrs.data, data.data);
+      if (!response.data) { return; }
+      $scope.pointObject.attrs.data = response.data;
     };
 
     /**

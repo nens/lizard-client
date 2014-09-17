@@ -163,7 +163,6 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
         var map, svg, g, transform, path, bounds, featureSelection,
             projectPoint, reset;
 
-
         // if d3eventlayer does not exist create.
         if (d3eventLayer === undefined) {
           d3eventLayer = L.nonTiledGeoJSONd3(data, {

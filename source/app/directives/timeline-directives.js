@@ -236,8 +236,11 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.animation.enabled) {
+
         timeline.updateBrushExtent(
-          scope.timeState.animation.start, scope.timeState.at);
+          scope.timeState.animation.start,
+          scope.timeState.at
+        );
       }
     });
 
@@ -268,7 +271,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       var bounds = scope.mapState.bounds;
       var activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
 
-      if (!!activeTemporalLayer) {
+      if (!!activeTemporalLayer && activeTemporalLayer.slug === 'demo:radar') {
         // width of timeline
         var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
         RasterService.getTemporalRaster(new Date(start),
@@ -286,9 +289,12 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
     if (scope.mapState.getActiveTemporalLayer()) { getTemporalRasterData(); }
 
     window.onresize = function () {
-      var dimensions = timeline.dimensions;
-      dimensions.width = window.innerWidth;
-      timeline.resize(dimensions);
+
+      timeline.dimensions.width = window.innerWidth;
+      timeline.resize(
+        timeline.dimensions,
+        scope.events.data.features
+      );
     };
 
   };
@@ -300,3 +306,4 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
     templateUrl: 'templates/timeline.html'
   };
 }]);
+

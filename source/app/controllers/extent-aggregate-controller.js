@@ -3,7 +3,7 @@
  * @class ExtentAggregateCtrl
  * @memberOf app
  * @name ExtentAggregateCtrl
- * @description 
+ * @description
  * ExtentAggregate is the object which collects different
  * sets of aggregation data. If there is no activeObject,
  * this is the default collection of data to be shown in the
@@ -74,7 +74,7 @@ app.controller('ExtentAggregateCtrl', [
      * @memberOf app.ExtentAggregateCtrl
      * @description removes data from scope again
      * if it's no longer needed.
-     * @param  {string} slug 
+     * @param  {string} slug
      */
     removeDataFromScope = function (slug) {
       delete $scope.extentAggregate[slug];

@@ -70,15 +70,27 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
      *                        example: {x: 0, y: 1}
      * @param {object} labels Object {x: 'x label', y: 'y label'} will be
      *                        mapped to axis labels of the graph
+     * @param {boolean} temporal to draw an time axis or not
      * @description           Draws a line, if necessary sets up the graph,
      *                        if necessary modifies domain and redraws axis,
      *                        and draws the line according to the data object.
      *                        Currently only a linear scale on the x-axis is supported.
      */
     drawLine: {
-      value: function (data, keys, labels) {
+      value: function (data, keys, labels, temporal) {
         if (!this._xy) {
-          this._xy = this._createXYGraph(data, keys, labels);
+          var options = {
+            x: {
+              scale: 'time',
+              orientation: 'bottom'
+            },
+            y: {
+              scale: 'linear',
+              orientation: 'left'
+            }
+          };
+          // pass options for time graph or use defaults
+          this._xy = this._createXYGraph(data, keys, labels, temporal ? options: undefined);
         } else {
           this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys);
         }
@@ -397,7 +409,8 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
   drawPath = function (svg, line, data, duration, path) {
     if (!path) {
       path = svg.select('g').select('#feature-group').append("svg:path")
-        .attr("class", "line");
+        .attr("class", "line")
+        .style("stroke-width", 3);
     }
     path.datum(data)
       .transition()

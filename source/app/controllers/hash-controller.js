@@ -192,14 +192,14 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
             if ((active && !$scope.mapState.layers[allSlugs[i]].active)
               || (!active && $scope.mapState.layers[allSlugs[i]].active)) {
               $scope.mapState.changeLayer($scope.mapState.layers[allSlugs[i]]);
+              MapService.mapState.activeLayersChanged = Date.now();
             }
           }
         }
         if ($scope.mapState.layersNeedLoading) {
           // Initialise layers
           angular.forEach(MapService.mapState.layers, function (layer) {
-            MapService.mapState.activeLayersChanged =
-              !MapService.mapState.activeLayersChanged;
+            MapService.mapState.activeLayersChanged = Date.now();
             if (!layer.initiated) {
               MapService.createLayer(layer);
             }
