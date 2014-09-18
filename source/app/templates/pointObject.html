@@ -43,42 +43,44 @@
     <div class="card-content"
          id="card-content-relatified-events">
 
-      <table class="table table-hover table-condensed">
+      <table class="table table-hover table-condensed" >
+          <thead>
 
-        <tr ng-repeat="event in pointObject.events.data |
-                       filter:{inTemporalExtent: true} |
-                       orderBy:event.timestamp_start |
-                       limitTo:5">
+              <th><i class="fa fa-circle" ng-style="{color: events.types[pointObject.events.activeType]['color'] }"></i></th>
+              <th>Totaal</th>
+              <th><% filteredRes.length %></th>
+          </thead>
 
-            <td rel="tooltip"
-                data-placement="left"
-                title="<% event.category %>">
-              <i class="fa fa-circle"
-                 ng-style="{color: events.types[event.event_series].color }">
-              </i>
-            </td>
 
-            <td rel="tooltip"
-                data-placement="left"
-                title="start: <% event.timestamp_start | date:'dd/MM/yyyy' %>
-                       eind: <% event.timestamp_end | date:'dd/MM/yyyy' %>">
-                <% event.timestamp_start | date:'dd/MM/yyyy' %>
-            </td>
-            <td rel="tooltip"
-                data-placement="left"
-                title="<% event.value %>">
-              <% event.value | truncate:40 %>
-            </td>
+        <tbody>
 
-          </tr>
-        <tr ng-if="pointObject.events.data.length > 5" >
-          <td colspan=3
-            rel="tooltip"
-            data-placement="left"
-            title="+ <% pointObject.events.data.length - 5 %>" >
-            ...
-          </td>
-        </tr>
+          <tr ng-repeat="event in filteredRes = (pointObject.events.data |
+                         filter:{inTemporalExtent: true} |
+                         orderBy:event.timestamp_start |
+                         limitTo:5)">
+
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="<% event.category %>">
+                <i class="fa fa-circle"
+                   ng-style="{color: events.types[event.event_series].color }">
+                </i>
+              </td>
+
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="start: <% event.timestamp_start | date:'dd/MM/yyyy' %>
+                         eind: <% event.timestamp_end | date:'dd/MM/yyyy' %>">
+                  <% event.timestamp_start | date:'dd/MM/yyyy' %>
+              </td>
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="<% event.value %>">
+                <% event.value | truncate:40 %>
+              </td>
+
+            </tr>
+        </tbody>
 
       </table>
     </div>
@@ -104,7 +106,8 @@
   </div>
   <!-- end: single card -->
   <div id="card-not-rain"
-       ng-if="!!pointObject.temporalRaster.data && !mustShowRainCard(mapState, pointObject)"
+       ng-if="!!pointObject.temporalRaster.data && !mustShowRainCard(mapState, pointObject)
+       && pointObject.temporalRaster.active"
        class="card active">
     <div class="card-content" id="card-content-whatever">
       <graph line
