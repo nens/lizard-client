@@ -1,8 +1,13 @@
 Changelog of lizard-nxt client
 ==============================
 
-unreleased
+Unreleased
 ----------
+
+-
+
+Release 0.2b3
+-------------
 
 - Add rain per month aggregation
 
