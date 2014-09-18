@@ -6,7 +6,7 @@ Unreleased
 
 -
 
-Release 0.2b3
+Release 0.2b4
 -------------
 
 - Add rain per month aggregation
