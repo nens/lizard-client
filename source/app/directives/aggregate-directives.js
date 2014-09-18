@@ -397,7 +397,7 @@ app.directive('surfacelayer', ['MapService', function (MapService) {
       var highlightSurface = function (e) {
         if (e.data.impervious_surfaces !== undefined) {
           var surface_ids = JSON.parse(e.data.impervious_surfaces);
-          if (surface_ids.indexOf("null") === -1) {
+          if (surface_ids !== null && surface_ids.indexOf("null") === -1) {
             var selector = listToSelector(surface_ids);
             if (e.type === 'mousemove') {
               d3.selectAll(selector)
