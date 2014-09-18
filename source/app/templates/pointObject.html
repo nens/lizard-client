@@ -40,72 +40,47 @@
        class="card active"
        ng-class="{hidden: !pointObject.events.data.length > 0}">
 
-    <div class="card-content" id="card-content-summary">
-
-      <div class="event-aggregate-container">
-
-        <table class="table table-hover table-condensed">
-          <thead>
-            <tr>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th>Totaal</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="recurrence_time">
-
-              <td><i class="fa fa-circle" ng-style="{color: events.types[pointObject.events.activeType]['color'] }"></i></td>
-              <td><% events.types[pointObject.events.activeType]['name'] %></td>
-              <td></td>
-              <td><% (events.withinBounds < pointObject.events.data.length) ? events.withinBounds : pointObject.events.data.length %></td>
-            </tr>
-          </tbody>
-        </table>
-
-      </div>
-    </div>
-
     <div class="card-content"
          id="card-content-relatified-events">
 
-      <table class="table table-hover table-condensed">
+      <table class="table table-hover table-condensed" >
+          <thead>
 
-        <tr ng-repeat="event in pointObject.events.data |
-                       filter:{inTemporalExtent: true} |
-                       orderBy:event.timestamp_start |
-                       limitTo:5">
+              <th><i class="fa fa-circle" ng-style="{color: events.types[pointObject.events.activeType]['color'] }"></i></th>
+              <th>Totaal</th>
+              <th><% filteredRes.length %></th>
+          </thead>
 
-            <td rel="tooltip"
-                data-placement="left"
-                title="<% event.category %>">
-              <i class="fa fa-circle"
-                 ng-style="{color: events.types[event.event_series].color }">
-              </i>
-            </td>
 
-            <td rel="tooltip"
-                data-placement="left"
-                title="start: <% event.timestamp_start | date:'dd/MM/yyyy' %>
-                       eind: <% event.timestamp_end | date:'dd/MM/yyyy' %>">
-                <% event.timestamp_start | date:'dd/MM/yyyy' %>
-            </td>
-            <td rel="tooltip"
-                data-placement="left"
-                title="<% event.value %>">
-              <% event.value | truncate:40 %>
-            </td>
+        <tbody>
 
-          </tr>
-        <tr ng-if="pointObject.events.data.length > 5" >
-          <td colspan=3
-            rel="tooltip"
-            data-placement="left"
-            title="+ <% pointObject.events.data.length - 5 %>" >
-            ...
-          </td>
-        </tr>
+          <tr ng-repeat="event in filteredRes = (pointObject.events.data |
+                         filter:{inTemporalExtent: true} |
+                         orderBy:event.timestamp_start |
+                         limitTo:5)">
+
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="<% event.category %>">
+                <i class="fa fa-circle"
+                   ng-style="{color: events.types[event.event_series].color }">
+                </i>
+              </td>
+
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="start: <% event.timestamp_start | date:'dd/MM/yyyy' %>
+                         eind: <% event.timestamp_end | date:'dd/MM/yyyy' %>">
+                  <% event.timestamp_start | date:'dd/MM/yyyy' %>
+              </td>
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="<% event.value %>">
+                <% event.value | truncate:40 %>
+              </td>
+
+            </tr>
+        </tbody>
 
       </table>
     </div>
