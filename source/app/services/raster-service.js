@@ -57,9 +57,9 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
       };
       var bbox = [info.imageBounds[0][1], info.imageBounds[1][0]].toString() +
       ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString(),
+      width = 2000;
       height = parseInt(width * ((info.imageBounds[0][0] - info.imageBounds[1][0]) / (info.imageBounds[1][1] - info.imageBounds[0][1])), 10);
       info.imageUrlBase = info.imageUrlBase + '&HEIGHT=' + height + '&WIDTH=' + width + '&ZINDEX=26&BBOX=' + bbox + '&TIME=';
-      width = 16000;
     }
     if (layerName === 'westerschelde:diff') {
       info = {
@@ -70,9 +70,9 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
       };
       var bbox = [info.imageBounds[0][1], info.imageBounds[1][0]].toString() +
       ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString(),
+      width = 2000;
       height = parseInt(width * ((info.imageBounds[0][0] - info.imageBounds[1][0]) / (info.imageBounds[1][1] - info.imageBounds[0][1])), 10);
       info.imageUrlBase = info.imageUrlBase + '&HEIGHT=' + height + '&WIDTH=' + width + '&ZINDEX=26&BBOX=' + bbox + '&SUBTRACT=2012-02-15&TIME=';
-      width = 16000;
     }
     return info;
   };
