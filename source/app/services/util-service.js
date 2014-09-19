@@ -35,22 +35,23 @@ app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
       getHash: function () {
         var lookup = {
           0: 'location',
-          1: 'start',
-          2: 'end',
-          3: 'layers',
+          1: 'layers',
+          2: 'start',
+          3: 'end',
           4: 'fromHere',
           5: 'toHere'
         };
 
         var hash = {};
-        var path = $location.path().split('@');
-        path[path.length - 1].split('/').splice(-1, 1); //remove last element
+        var path = $location.path();
+        if (path === '') { return hash; }
+        path = path.split('@');
+        path = path[path.length - 1];
+        path = path.split('/');
         var i = 0;
         angular.forEach(lookup, function (value, key) {
           if (path[key]) {
             hash[value] = path[key];
-          } else {
-            hash[value] = undefined;
           }
         });
         return hash;
@@ -79,8 +80,6 @@ app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
         angular.forEach(oldhash, function (value) {
           if (value) {
             hashString += value + '/';
-          } else {
-            hashString += '/';
           }
         });
         $location.path(hashString);

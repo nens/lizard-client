@@ -12,23 +12,25 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
       updateLayersUrl = true,
       updateHere = true;
 
-    /**
-     * set layer(s) when these change.
-     */
-    $scope.$watch('mapState.activeLayersChanged', function (n, o) {
-      if (n === o) { return true; }
-      updateLayersUrl = false;
-      setLayersUrl($scope.mapState.layers);
-    });
+    // /**
+    //  * set layer(s) when these change.
+    //  */
+    // $scope.$watch('mapState.activeLayersChanged', function (n, o) {
+    //   if (n === o) { return true; }
+    //   updateLayersUrl = false;
+    //   console.log('setLayersUrl');
+    //   setLayersUrl($scope.mapState.layers);
+    // });
 
-    /**
-     * Set location hash when map moved.
-     */
-    $scope.$watch('mapState.moved', function (n, o) {
-      if (n === o) { return true; }
-      updateLocationUrl = false;
-      setCoordinatesUrl();
-    });
+    // /**
+    //  * Set location hash when map moved.
+    //  */
+    // $scope.$watch('mapState.moved', function (n, o) {
+    //   if (n === o) { return true; }
+    //   updateLocationUrl = false;
+    //   console.log('setCoordinatesUrl');
+    //   setCoordinatesUrl();
+    // });
 
     /**
      * Set start hash when timeState.start changed.
@@ -36,26 +38,19 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
     $scope.$watch('timeState.start', function (n, o) {
       if (n === o) { return true; }
       updateStartUrl = false;
-      setTimeStateUrl($scope.timeState.start, true);
+      console.log('setTimeStateUrl');
+      setTimeStateUrl($scope.timeState.start, $scope.timeState.end);
     });
 
-    /**
-     * Set end hash when timeState.end changed.
-     */
-    $scope.$watch('timeState.end', function (n, o) {
-      if (n === o) { return true; }
-      updateEndUrl = false;
-      setTimeStateUrl($scope.timeState.end, false);
-    });
-
-    /**
-     * Set fromHere or toHere when mapState.here changed.
-     */
-    $scope.$watch('mapState.here', function (n, o) {
-      if (n === o) { return true; }
-      updateHere = false;
-      setHereUrl($scope.mapState.here);
-    });
+    // /**
+    //  * Set fromHere or toHere when mapState.here changed.
+    //  */
+    // $scope.$watch('mapState.here', function (n, o) {
+    //   if (n === o) { return true; }
+    //   updateHere = false;
+    //   console.log('setHereUrl');
+    //   setHereUrl($scope.mapState.here);
+    // });
 
     var setHereUrl = function (here) {
       var COORD_PRECISION = 4;
@@ -75,17 +70,19 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
      * @param {int} time  to set in hash in ms from epoch
      * @param {boolean} start if true sets start else it sets end
      */
-    var setTimeStateUrl = function (time, start) {
-      var date = new Date(time);
-      var dateString = date.toDateString()
+    var setTimeStateUrl = function (start, end) {
+      var startDate = new Date(start);
+      var endDate = new Date(end);
+      var startDateString = startDate.toDateString()
         .slice(4) // Cut off day name
         .split(' ') // Replace spaces by hyphens
         .join('-');
-      if (start) {
-        hashSyncHelper.setHash({'start': dateString});
-      } else {
-        hashSyncHelper.setHash({'end': dateString});
-      }
+      var endDateString = endDate.toDateString()
+        .slice(4) // Cut off day name
+        .split(' ') // Replace spaces by hyphens
+        .join('-');
+      hashSyncHelper.setHash({'timeState': startDateString + ',' +
+        endDateString});
     };
 
     /**
@@ -167,14 +164,22 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
     (function setUrlHashWhenEmpty() {
       var hash = hashSyncHelper.getHash(),
           layersHash = hash.layers,
-          locationHash = hash.location;
-
+          locationHash = hash.location,
+          startHash = hash.start,
+          endHash = hash.end;
       if (!locationHash) {
         setCoordinatesUrl();
       }
-      if (!layersHash) {
-        setLayersUrl($scope.mapState.layers);
-      }
+      // if (!layersHash) {
+      //   setLayersUrl($scope.mapState.layers);
+      // }
+      // if (!startHash) {
+      //   setTimeState(startHash, true);
+      // }
+
+      // if (!endHash) {
+      //   setTimeState(endHash, false);
+      // }
     })();
 
     /**
@@ -188,11 +193,11 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
      * resetting the updateUrl back to true
      */
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-      var hash, locationHash, layersHash, startHash, endHash, fromHereHash, toHereHash;
+      console.log('$locationChangeSuccess');
+      var hash, locationHash, layersHash, timeHash, fromHereHash, toHereHash;
       hash = hashSyncHelper.getHash();
       if (updateLocationUrl
         && updateStartUrl
-        && updateEndUrl
         && updateLayersUrl
         && updateHere) {
 
@@ -246,14 +251,9 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
           $scope.mapState.layersNeedLoading = false;
         }
 
-        startHash = hash.start;
-        if (startHash !== undefined) {
-          setTimeState(startHash, true);
-        }
-
-        endHash = hash.end;
-        if (endHash !== undefined) {
-          setTimeState(endHash, false);
+        timeHash = hash.timeState;
+        if (timeHash !== undefined) {
+          setTimeState(timeHash);
         }
 
         fromHereHash = hash.fromHere
