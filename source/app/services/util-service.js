@@ -33,7 +33,27 @@ app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
        * @return {object}
        */
       getHash: function () {
-        return parseKeyValue($location.hash());
+        var lookup = {
+          0: 'location',
+          1: 'start',
+          2: 'end',
+          3: 'layers',
+          4: 'fromHere',
+          5: 'toHere'
+        };
+
+        var hash = {};
+        var path = $location.path().split('@');
+        path[path.length - 1].split('/').splice(-1, 1); //remove last element
+        var i = 0;
+        angular.forEach(lookup, function (value, key) {
+          if (path[key]) {
+            hash[value] = path[key];
+          } else {
+            hash[value] = undefined;
+          }
+        });
+        return hash;
       },
 
       /**
@@ -47,20 +67,23 @@ app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
        * the hash using angular location service.
        *
        * @param {object} obj - Object with key
-       * @param {boolean} replaceHistory - Replace history or not.
        */
-      setHash: function (obj, replaceHistory) {
-        if (!isDefined(replaceHistory)) { replaceHistory = true; }
+      setHash: function (obj) {
         var obj2 = {};
         var oldhash = this.getHash(); // Copy the current hash
         angular.forEach(obj, function (v, k) {
           if (v !== undefined) { obj2[k] = v; }
         });
         angular.extend(oldhash, obj2);
-        $location.hash(toKeyValue(oldhash));
-        if (replaceHistory) {
-          $location.replace();
-        }
+        var hashString = '/map@';
+        angular.forEach(oldhash, function (value) {
+          if (value) {
+            hashString += value + '/';
+          } else {
+            hashString += '/';
+          }
+        });
+        $location.path(hashString);
       }
     };
 

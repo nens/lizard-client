@@ -9,7 +9,8 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
     var updateLocationUrl = true,
       updateStartUrl = true,
       updateEndUrl = true,
-      updateLayersUrl = true;
+      updateLayersUrl = true,
+      updateHere = true;
 
     /**
      * set layer(s) when these change.
@@ -46,6 +47,27 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
       updateEndUrl = false;
       setTimeStateUrl($scope.timeState.end, false);
     });
+
+    /**
+     * Set fromHere or toHere when mapState.here changed.
+     */
+    $scope.$watch('mapState.here', function (n, o) {
+      if (n === o) { return true; }
+      updateHere = false;
+      setHereUrl($scope.mapState.here);
+    });
+
+    var setHereUrl = function (here) {
+      var COORD_PRECISION = 4;
+      var hereString = here.lat.toFixed(COORD_PRECISION) + ',' + here.lng.toFixed(COORD_PRECISION);
+      if ($scope.box.type === 'intersect' && hashSyncHelper.getHash().fromHere) {
+        hashSyncHelper.setHash({'toHere': hereString});
+      } else {
+        hashSyncHelper.setHash({'fromHere': hereString});
+      }
+    };
+
+
 
     /**
      * Updates hash with new time.
@@ -98,6 +120,17 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
       }
       hashSyncHelper.setHash({'layers': activeSlugs.toString()});
     };
+
+    var setHere = function (hereHash) {
+      var herel = hereHash.split(',');
+      MapService.mapState.here = L.latLng(herel[0], herel[1]);
+    }
+
+    var setFromHereToHere = function (from, to) {
+      $scope.box.type = 'intersect';
+      setHere(from);
+      setHere(to);
+    }
 
     /**
      * Sets the timeState on scope after locationChangeSucces.
@@ -155,12 +188,13 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
      * resetting the updateUrl back to true
      */
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-      var hash, locationHash, layersHash, startHash, endHash;
+      var hash, locationHash, layersHash, startHash, endHash, fromHereHash, toHereHash;
       hash = hashSyncHelper.getHash();
       if (updateLocationUrl
         && updateStartUrl
         && updateEndUrl
-        && updateLayersUrl) {
+        && updateLayersUrl
+        && updateHere) {
 
         locationHash = hash.location;
         if (locationHash !== undefined) {
@@ -221,11 +255,24 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
         if (endHash !== undefined) {
           setTimeState(endHash, false);
         }
+
+        fromHereHash = hash.fromHere
+        if (fromHereHash !== undefined) {
+          setHere(fromHereHash);
+        }
+
+        toHereHash = hash.toHere
+        if (toHereHash !== undefined) {
+          setFromHereToHere(fromHereHash, toHereHash);
+        }
+
+
       }
       updateLocationUrl = true;
       updateStartUrl = true;
       updateEndUrl = true;
       updateLayersUrl = true;
+      updateHere = true;
     });
 
   }

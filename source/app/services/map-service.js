@@ -109,6 +109,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     } else if (nonLeafLayer.slug === 'elevation') {
       _options.styles = 'BrBG_r';
       _options.effects = 'shade:0:3';
+    } else if (nonLeafLayer.slug === 'isahw:BOFEK2012') {
+      return; // Add no styling for soil layer
     } else { // Default, used by zettingsvloeiingsproef
       _options.styles = 'BrBG_r';
       _options.effects = 'shade:0:3';

@@ -52,7 +52,7 @@ app.config(function ($interpolateProvider) {
  * Set url fragment behavior to HTML5 mode (without hash in url).
  */
 app.config(function ($locationProvider) {
-  $locationProvider.html5Mode(true).hashPrefix('!');
+  $locationProvider.html5Mode(true);
 });
 
 /**
