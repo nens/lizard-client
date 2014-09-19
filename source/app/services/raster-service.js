@@ -20,6 +20,10 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
         bounds = [[51.41, 4.03],
                   [51.36, 4.17]];
       }
+      if (layerName === 'westerschelde:diff') {
+        bounds = [[51.41, 4.03],
+                  [51.36, 4.17]];
+      }
       return bounds;
     };
 
@@ -49,13 +53,26 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
         "timeResolution": 15768000000,
         "minTimeBetweenFrames": 1000,
         "imageBounds": _getImageBounds(layerName),
-        "imageUrlBase": wmsUrl + layerName + '&STYLES=BrBG_r:-30:0&TRANSPARENT=false'
+        "imageUrlBase": wmsUrl + layerName + '&STYLES=BrBG_r:-27:-2&TRANSPARENT=false'
       };
       var bbox = [info.imageBounds[0][1], info.imageBounds[1][0]].toString() +
       ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString(),
       height = parseInt(width * ((info.imageBounds[0][0] - info.imageBounds[1][0]) / (info.imageBounds[1][1] - info.imageBounds[0][1])), 10);
       info.imageUrlBase = info.imageUrlBase + '&HEIGHT=' + height + '&WIDTH=' + width + '&ZINDEX=26&BBOX=' + bbox + '&TIME=';
-      width = 2000;
+      width = 16000;
+    }
+    if (layerName === 'westerschelde:diff') {
+      info = {
+        "timeResolution": 15768000000,
+        "minTimeBetweenFrames": 1000,
+        "imageBounds": _getImageBounds(layerName),
+        "imageUrlBase": wmsUrl + 'bath:westerschelde&STYLES=jet_r:-10:10&TRANSPARENT=false'
+      };
+      var bbox = [info.imageBounds[0][1], info.imageBounds[1][0]].toString() +
+      ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString(),
+      height = parseInt(width * ((info.imageBounds[0][0] - info.imageBounds[1][0]) / (info.imageBounds[1][1] - info.imageBounds[0][1])), 10);
+      info.imageUrlBase = info.imageUrlBase + '&HEIGHT=' + height + '&WIDTH=' + width + '&ZINDEX=26&BBOX=' + bbox + '&SUBTRACT=2012-02-15&TIME=';
+      width = 16000;
     }
     return info;
   };
