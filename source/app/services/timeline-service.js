@@ -287,19 +287,16 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
         // }
         if (brushg) {
 
-          console.log('updateElements()');
-
           var that = this,
               extent = brush.extent(),
               start = extent[0].getTime(),
               stop = extent[1].getTime();
 
-          // this.redrawBrush(widthFactor);
           this.removeBrush();
 
           setTimeout(function () {
             that.drawBrush(start, stop);
-          }, that.transTime * 2);
+          }, that.transTime);
         }
       }
     },
