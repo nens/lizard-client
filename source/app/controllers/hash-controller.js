@@ -1,68 +1,109 @@
 'use strict';
 
-app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
-  function ($scope, hashSyncHelper, MapService) {
+app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
+  function ($scope, UrlSyncHelper, MapService) {
 
-    // Only set url when user changed it or on pageload
-    // Watches are asynchronous, so they all need their
-    // own update boolean.
-    var updateLocationUrl = true,
-      updateStartUrl = true,
-      updateEndUrl = true,
-      updateLayersUrl = true,
-      updateHere = true;
+    var state = {
+      context: {
+        value: 'map', // default, future support for contextSwitch
+        part: 'path',
+        index: 0,
+        update: true
+      },
+      boxType: {
+        part: 'path',
+        index: 1,
+        update: true
+      },
+      geom: {
+        part: 'path',
+        index: 2,
+        update: true
+      },
+      layers: {
+        part: 'path',
+        index: 3,
+        update: true
+      },
+      mapView: {
+        part: 'at',
+        index: 0,
+        update: true
+      },
+      timeState: {
+        part: 'at',
+        index: 1,
+        update: true
+      }
+    };
 
-    // /**
-    //  * set layer(s) when these change.
-    //  */
-    // $scope.$watch('mapState.activeLayersChanged', function (n, o) {
-    //   if (n === o) { return true; }
-    //   updateLayersUrl = false;
-    //   console.log('setLayersUrl');
-    //   setLayersUrl($scope.mapState.layers);
-    // });
+    /**
+     * set layer(s) when these change.
+     */
+    $scope.$watch('mapState.activeLayersChanged', function (n, o) {
+      if (n === o) { return true; }
+      state.layers.update = false;
+      setLayersUrl($scope.mapState.layers);
+    });
 
-    // /**
-    //  * Set location hash when map moved.
-    //  */
-    // $scope.$watch('mapState.moved', function (n, o) {
-    //   if (n === o) { return true; }
-    //   updateLocationUrl = false;
-    //   console.log('setCoordinatesUrl');
-    //   setCoordinatesUrl();
-    // });
+    /**
+     * Set location hash when map moved.
+     */
+    $scope.$watch('mapState.moved', function (n, o) {
+      if (n === o) { return true; }
+      state.mapView.update = false;
+      setCoordinatesUrl();
+    });
 
     /**
      * Set start hash when timeState.start changed.
      */
-    $scope.$watch('timeState.start', function (n, o) {
+    $scope.$watch('timeState.changedZoom', function (n, o) {
       if (n === o) { return true; }
-      updateStartUrl = false;
-      console.log('setTimeStateUrl');
+      state.timeState.update = false;
       setTimeStateUrl($scope.timeState.start, $scope.timeState.end);
     });
 
-    // /**
-    //  * Set fromHere or toHere when mapState.here changed.
-    //  */
-    // $scope.$watch('mapState.here', function (n, o) {
-    //   if (n === o) { return true; }
-    //   updateHere = false;
-    //   console.log('setHereUrl');
-    //   setHereUrl($scope.mapState.here);
-    // });
+    $scope.$watch('box.type', function (n, o) {
+      if (n === o) { return true; }
+      state.boxType.update = false;
+      // UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, '');
+      state.boxType.update = false;
+      UrlSyncHelper.setUrlValue(state.boxType.part, state.boxType.index, $scope.box.type);
+    });
 
-    var setHereUrl = function (here) {
-      var COORD_PRECISION = 4;
-      var hereString = here.lat.toFixed(COORD_PRECISION) + ',' + here.lng.toFixed(COORD_PRECISION);
-      if ($scope.box.type === 'intersect' && hashSyncHelper.getHash().fromHere) {
-        hashSyncHelper.setHash({'toHere': hereString});
-      } else {
-        hashSyncHelper.setHash({'fromHere': hereString});
+    /**
+     * Set geom when mapState.here changed.
+     */
+    $scope.$watch('mapState.here', function (n, o) {
+      if (n === o) { return true; }
+      state.geom.update = false;
+      setgeomUrl($scope.box.type, $scope.mapState.here);
+    });
+
+    var firstClick, secondClick;
+    var setgeomUrl = function (type, here) {
+      var COORD_PRECISION = 4,
+      herestring = here.lat.toFixed(COORD_PRECISION) + ',' + here.lng.toFixed(COORD_PRECISION);
+      console.log(herestring, type);
+      if (type === 'intersect') {
+        if (secondClick) {
+          firstClick = undefined;
+          secondClick = undefined;
+          UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, '');
+        } else {
+          if (firstClick) {
+            secondClick = herestring;
+            UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, firstClick + '-' + secondClick);
+          } else {
+            firstClick = herestring;
+            UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, firstClick);
+          }
+        }
+      } else if (type === 'point') {
+        UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, herestring);
       }
     };
-
-
 
     /**
      * Updates hash with new time.
@@ -76,13 +117,15 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
       var startDateString = startDate.toDateString()
         .slice(4) // Cut off day name
         .split(' ') // Replace spaces by hyphens
-        .join('-');
+        .join(',');
       var endDateString = endDate.toDateString()
         .slice(4) // Cut off day name
         .split(' ') // Replace spaces by hyphens
-        .join('-');
-      hashSyncHelper.setHash({'timeState': startDateString + ',' +
-        endDateString});
+        .join(',');
+      UrlSyncHelper.setUrlValue(
+        state.timeState.part,
+        state.timeState.index,
+        startDateString + '-' + endDateString);
     };
 
     /**
@@ -98,10 +141,16 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
       ].join(',');
       if (!$scope.$$phase) {
         $scope.$apply(function () {
-          hashSyncHelper.setHash({'location': newHash});
+          UrlSyncHelper.mapViewlValue(
+            state.mapView.part,
+            state.mapView.index,
+            newHash);
         });
       } else {
-        hashSyncHelper.setHash({'location': newHash});
+        UrlSyncHelper.setUrlValue(
+          state.mapView.part,
+          state.mapView.index,
+          newHash);
       }
     };
 
@@ -115,19 +164,11 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
           activeSlugs.push(slugs[i]);
         }
       }
-      hashSyncHelper.setHash({'layers': activeSlugs.toString()});
+      UrlSyncHelper.setUrlValue(
+        state.layers.part,
+        state.layers.index,
+        activeSlugs.toString());
     };
-
-    var setHere = function (hereHash) {
-      var herel = hereHash.split(',');
-      MapService.mapState.here = L.latLng(herel[0], herel[1]);
-    }
-
-    var setFromHereToHere = function (from, to) {
-      $scope.box.type = 'intersect';
-      setHere(from);
-      setHere(to);
-    }
 
     /**
      * Sets the timeState on scope after locationChangeSucces.
@@ -158,29 +199,64 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
       $scope.timeState.changedZoom = Date.now();
     };
 
+    var setMapView = function (mapView) {
+      var latlonzoom = mapView.split(',');
+      console.log(latlonzoom);
+      if (latlonzoom.length === 3) {
+        if (parseFloat(latlonzoom[0]) &&
+            parseFloat(latlonzoom[1]) &&
+            parseFloat(latlonzoom[2])) {
+          MapService.setView(
+            [latlonzoom[0], latlonzoom[1]],
+            latlonzoom[2],
+            {reset: true, animate: true}
+          );
+        }
+      }
+    };
+
+    var setBoxType = function (type) {
+      $scope.box.type = type;
+    };
+
+
     /**
      * Sets up the hash at creation of the controller.
      */
     (function setUrlHashWhenEmpty() {
-      var hash = hashSyncHelper.getHash(),
-          layersHash = hash.layers,
-          locationHash = hash.location,
-          startHash = hash.start,
-          endHash = hash.end;
-      if (!locationHash) {
+      if (!UrlSyncHelper.getUrlValue(state.context.part, state.context.index)) {
+        UrlSyncHelper.setUrlValue(
+          state.context.part,
+          state.context.index,
+          'map');
+      }
+      if (!UrlSyncHelper.getUrlValue(state.boxType.part, state.boxType.index)) {
+        UrlSyncHelper.setUrlValue(
+          state.boxType.part,
+          state.boxType.index,
+          $scope.box.type);
+      }
+      if (!UrlSyncHelper.getUrlValue(state.layers.part, state.layers.index)) {
+        setLayersUrl($scope.mapState.layers);
+      }
+      if (!UrlSyncHelper.getUrlValue(state.mapView.part, state.mapView.index)) {
         setCoordinatesUrl();
       }
-      // if (!layersHash) {
-      //   setLayersUrl($scope.mapState.layers);
-      // }
-      // if (!startHash) {
-      //   setTimeState(startHash, true);
-      // }
-
-      // if (!endHash) {
-      //   setTimeState(endHash, false);
-      // }
+      if (!UrlSyncHelper.getUrlValue(state.timeState.part, state.timeState.index)) {
+        setTimeStateUrl($scope.timeState.start, $scope.timeState.end);
+      }
     })();
+
+
+    var update = function () {
+      var u = true;
+      angular.forEach(state, function (value) {
+        if (!value.update) {
+          u = false;
+        }
+      });
+      return u;
+    };
 
     /**
      * Listener to update map view when user changes url
@@ -193,34 +269,20 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
      * resetting the updateUrl back to true
      */
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-      console.log('$locationChangeSuccess');
-      var hash, locationHash, layersHash, timeHash, fromHereHash, toHereHash;
-      hash = hashSyncHelper.getHash();
-      if (updateLocationUrl
-        && updateStartUrl
-        && updateLayersUrl
-        && updateHere) {
-
-        locationHash = hash.location;
-        if (locationHash !== undefined) {
-          var latlonzoom = locationHash.split(',');
-          // must have 3 parameters or don't setView here...
-          if (latlonzoom.length >= 3) {
-            if (parseFloat(latlonzoom[0]) &&
-                parseFloat(latlonzoom[1]) &&
-                parseFloat(latlonzoom[2])) {
-              MapService.setView(
-                [latlonzoom[0], latlonzoom[1]],
-                latlonzoom[2],
-                {reset: true, animate: true}
-              );
-            }
-          }
+      if (update()) {
+        var boxType = UrlSyncHelper.getUrlValue(state.boxType.part, state.boxType.index),
+        geom = UrlSyncHelper.getUrlValue(state.geom.part, state.geom.index),
+        layers = UrlSyncHelper.getUrlValue(state.layers.part, state.layers.index),
+        mapView = UrlSyncHelper.getUrlValue(state.mapView.part, state.mapView.index),
+        time = UrlSyncHelper.getUrlValue(state.timeState.part, state.timeState.index);
+        if (boxType) {
+          setBoxType(boxType);
         }
-
-        layersHash = hash.layers;
-        if (layersHash !== undefined) {
-          var activeSlugs = layersHash.split(','),
+        if (geom) {
+          // setGeom(geom);
+        }
+        if (layers) {
+          var activeSlugs = layers.split(','),
               allSlugs = Object.keys($scope.mapState.layers),
               i,
               active;
@@ -251,29 +313,17 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
           $scope.mapState.layersNeedLoading = false;
         }
 
-        timeHash = hash.timeState;
-        if (timeHash !== undefined) {
-          setTimeState(timeHash);
+        if (mapView) {
+          setMapView(mapView);
         }
-
-        fromHereHash = hash.fromHere
-        if (fromHereHash !== undefined) {
-          setHere(fromHereHash);
+        if (time) {
+          setTimeState(time);
         }
-
-        toHereHash = hash.toHere
-        if (toHereHash !== undefined) {
-          setFromHereToHere(fromHereHash, toHereHash);
-        }
-
 
       }
-      updateLocationUrl = true;
-      updateStartUrl = true;
-      updateEndUrl = true;
-      updateLayersUrl = true;
-      updateHere = true;
+      angular.forEach(state, function (value) {
+        value.update = true;
+      });
     });
-
   }
 ]);

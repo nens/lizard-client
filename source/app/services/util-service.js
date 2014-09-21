@@ -19,71 +19,57 @@
  * - **start:** start of timeline: `start=May-01-2014`.
  * - **end:** end of timeline: `end=Jun-29-2014`.
  */
-app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
+app.factory('UrlSyncHelper', ['$location', '$parse', '$rootScope',
   function ($location, $parse, $rootScope) {
 
-    var service = {
-      /**
-       * @function getHash
-       * @memberOf hashSyncHelper
-       *
-       * @summary Reads has fragment from angulars location service and
-       * returns it as key / value object.
-       *
-       * @return {object}
-       */
-      getHash: function () {
-        var lookup = {
-          0: 'location',
-          1: 'layers',
-          2: 'start',
-          3: 'end',
-          4: 'fromHere',
-          5: 'toHere'
-        };
+    var _getPath, _getPathParts,
 
-        var hash = {};
-        var path = $location.path();
-        if (path === '') { return hash; }
-        path = path.split('@');
-        path = path[path.length - 1];
-        path = path.split('/');
-        var i = 0;
-        angular.forEach(lookup, function (value, key) {
-          if (path[key]) {
-            hash[value] = path[key];
-          }
-        });
-        return hash;
+    service = {
+
+      getUrlValue: function (part, index) {
+        if (!(part === 'path' || part === 'at')) {
+          throw new Error('The provided part is not a supported part of the url');
+        }
+        var pathParts = _getPathParts(part);
+        return pathParts[index];
       },
 
-      /**
-       * @function setHash
-       * @memberOf hashSyncHelper
-       *
-       * @summary Sets the url hash with a {'key':'val'}.
-       *
-       * @description Loops over the incoming object and fill obj2 with it. Then
-       * extend the original hash object with the new hash object. Finally set
-       * the hash using angular location service.
-       *
-       * @param {object} obj - Object with key
-       */
-      setHash: function (obj) {
-        var obj2 = {};
-        var oldhash = this.getHash(); // Copy the current hash
-        angular.forEach(obj, function (v, k) {
-          if (v !== undefined) { obj2[k] = v; }
-        });
-        angular.extend(oldhash, obj2);
-        var hashString = '/map@';
-        angular.forEach(oldhash, function (value) {
-          if (value) {
-            hashString += value + '/';
-          }
-        });
-        $location.path(hashString);
+      setUrlValue: function (part, index, value) {
+        if (!(part === 'path' || part === 'at')) {
+          throw new Error('The provided part is not a supported part of the url');
+        }
+        if (!(typeof(value) === 'string' || typeof(value) === 'number')) {
+          throw new Error('The provided value cannot be set on the url');
+        }
+        var halfPath, otherHalf, parts = _getPathParts(part);
+        parts[index] = value;
+        halfPath = parts.join('/');
+        if (part === 'path') {
+          otherHalf = _getPath('at') ? '@' + _getPath('at') : '';
+          $location.path(halfPath + otherHalf);
+        } else {
+          otherHalf = _getPath('path') ? _getPath('path') + '@' : '';
+          $location.path(otherHalf + halfPath);
+        }
       }
+    };
+
+    _getPath = function (part) {
+      var paths, pathPart,
+      path = $location.path();
+      paths = path.split('@'); //splits path in two at the @.
+      pathPart = paths[part === 'path' ? 0: 1] || ''; //gets before @ when 'path' after when 'at'
+      // we do not want the first slash
+      pathPart = part === 'path' ? pathPart.slice(1): pathPart;
+      return pathPart;
+    };
+
+    _getPathParts = function (part) {
+      var pathPart = _getPath(part);
+      console.log(pathPart);
+      if (!pathPart || pathPart === '') { return []; }
+      var parts = pathPart.split('/');
+      return parts;
     };
 
     return service;
