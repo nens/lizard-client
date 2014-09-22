@@ -22,19 +22,39 @@ app.service("EventService", ["Restangular", "$q",
    * @param {object} eventTypes object with event ids.
    * @returns {object} eventTypesTemplate.
    */
-  var buildEventTypesTemplate = function (eventTypes) {
+  // var buildEventTypesTemplate = function (eventTypes) {
+
+  //   console.log('eventTypes:', eventTypes);
+
+  //   var eventTypesTemplate = {};
+
+  //   for (var i = 0; i < eventTypes.length; i++) {
+  //     eventTypesTemplate[eventTypes[i].event_series] = {};
+  //     eventTypesTemplate[
+  //       eventTypes[i].event_series].count = eventTypes[i].event_count;
+  //     eventTypesTemplate[eventTypes[i].event_series].name = eventTypes[i].type;
+  //   }
+
+  //   eventTypesTemplate.count = 0;
+  //   return eventTypesTemplate;
+  // };
+
+  var buildEventTypesTemplate = function (eventLayers) {
+
+    console.log('eventLayers:', eventLayers);
 
     var eventTypesTemplate = {};
-    for (var i = 0; i < eventTypes.length; i++) {
-      eventTypesTemplate[eventTypes[i].event_series] = {};
-      eventTypesTemplate[
-        eventTypes[i].event_series].count = eventTypes[i].event_count;
-      eventTypesTemplate[eventTypes[i].event_series].name = eventTypes[i].type;
-    }
-    eventTypesTemplate.count = 0;
 
+    for (var name in eventLayers) {
+
+      eventTypesTemplate[name] = {};
+      eventTypesTemplate[name].count = eventLayers[name].layers[0].summary;
+    }
+
+    eventTypesTemplate.count = 0;
     return eventTypesTemplate;
   };
+
 
   /**
    * Counts the events currently within the temporal and spatial extent
@@ -61,7 +81,7 @@ app.service("EventService", ["Restangular", "$q",
         timeStateEnd = scope.timeState.end,
         bounds = scope.mapState.bounds,
         typeLength = eventTypes.length;
-    
+
     if (scope.timeState.animation.enabled) {
       timeStateStart = scope.timeState.animation.start;
       timeStateEnd = scope.timeState.at;

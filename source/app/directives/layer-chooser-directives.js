@@ -2,7 +2,9 @@
 
 app.directive("layerChooser", ['LeafletService', function (LeafletService) {
   var link = function (scope, element, attrs) {
+
     var centroid, zoom, layerMap, layerLeafletLayer, layer, layerUrl, map;
+
     centroid = [52.39240447569775, 5.101776123046875];
     zoom = scope.mapState.zoom;
     layerMap = LeafletService.map(element.find('.layer-img')[0], {
@@ -18,42 +20,97 @@ app.directive("layerChooser", ['LeafletService', function (LeafletService) {
       attributionControl: false
     });
 
-    layer = scope.layer;
+    for (var i = 0; i < scope.layer.layers.length; i++) {
 
-    if (layer.type === 'Vector') { return; }
+      layer = scope.layer.layers[i];
 
-    // legacy if.. needs to be refactored
-    if (!layer.temporal) {
-      if (layer.type === 'WMS') {
-        var options = {
-          layers: layer.slug,
-          format: 'image/png',
-          version: '1.1.1',
-          minZoom: layer.min_zoom,
-          maxZoom: 19,
-          zIndex: layer.z_index
-        };
-        //NOTE ugly hack
-        if (layer.slug === 'landuse') {
-          options.styles = 'landuse';
-        } else if (layer.slug === 'elevation') {
-          options.styles = 'BrBG_r';
-          options.effects = 'shade:0:3';
+      if (layer.type === 'Vector') { continue; }
+
+      // legacy if.. needs to be refactored
+      if (!layer.temporal) {
+
+        console.log('--> not temporal');
+
+        if (layer.type === 'WMS') {
+
+          console.log('--> WMS');
+
+          var options = {
+            layers: layer.slug,
+            format: 'image/png',
+            version: '1.1.1',
+            minZoom: layer.min_zoom,
+            maxZoom: 19,
+            zIndex: layer.z_index
+          };
+          //NOTE ugly hack
+          if (layer.slug === 'landuse') {
+            options.styles = 'landuse';
+          } else if (layer.slug === 'elevation') {
+            options.styles = 'BrBG_r';
+            options.effects = 'shade:0:3';
+          }
+          layerLeafletLayer = LeafletService.tileLayer.wms(layer.url, options);
+        } else {
+
+          console.log('--> not WMS');
+
+          layerUrl = layer.url + '/' + layer.slug + '/{z}/{x}/{y}';
+          layerUrl += layer.type === 'TMS' ? '.png' : '';
+
+          layerLeafletLayer = LeafletService.tileLayer(layerUrl, {
+            ext: 'png',
+            slug: layer.slug,
+            name: layer.slug,
+            minZoom: layer.min_zoom,
+            maxZoom: 19,
+            zIndex: layer.z_index
+          });
         }
-        layerLeafletLayer = LeafletService.tileLayer.wms(layer.url, options);
-      } else {
-        layerUrl = (layer.type === 'TMS') ? layer.url + '.png' : layer.url;
-        layerLeafletLayer = LeafletService.tileLayer(layerUrl, {
-          ext: 'png',
-          slug: layer.slug,
-          name: layer.slug,
-          minZoom: layer.min_zoom,
-          maxZoom: 19,
-          zIndex: layer.z_index
-        });
+        console.log("in forloop, current layer:", layer);
+        console.log("in forloop, current layerLeafletLayer:", layerLeafletLayer);
+
+        layerMap.addLayer(layerLeafletLayer);
       }
-      layerMap.addLayer(layerLeafletLayer);
     }
+
+    // if (layer.type === 'Vector') { return; }
+
+    // // legacy if.. needs to be refactored
+    // if (!layer.temporal) {
+
+    //   if (layer.type === 'WMS') {
+    //     var options = {
+    //       layers: layer.slug,
+    //       format: 'image/png',
+    //       version: '1.1.1',
+    //       minZoom: layer.min_zoom,
+    //       maxZoom: 19,
+    //       zIndex: layer.z_index
+    //     };
+    //     //NOTE ugly hack
+    //     if (layer.slug === 'landuse') {
+    //       options.styles = 'landuse';
+    //     } else if (layer.slug === 'elevation') {
+    //       options.styles = 'BrBG_r';
+    //       options.effects = 'shade:0:3';
+    //     }
+    //     layerLeafletLayer = LeafletService.tileLayer.wms(layer.url, options);
+    //   } else {
+    //     layerUrl = (layer.type === 'TMS') ? layer.url + '.png' : layer.url;
+    //     layerLeafletLayer = LeafletService.tileLayer(layerUrl, {
+    //       ext: 'png',
+    //       slug: layer.slug,
+    //       name: layer.slug,
+    //       minZoom: layer.min_zoom,
+    //       maxZoom: 19,
+    //       zIndex: layer.z_index
+    //     });
+    //   }
+    //   layerMap.addLayer(layerLeafletLayer);
+    // }
+
+
     scope.$watch('mapState.bounds', function (n, v) {
       if (n === v) { return; }
       zoom = scope.mapState.zoom;

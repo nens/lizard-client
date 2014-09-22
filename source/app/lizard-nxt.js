@@ -319,17 +319,34 @@ app.controller('MasterCtrl',
 
   // EVENTS
 
+  var getEventTypes = function () {
+    // console.log('$scope.mapState:', $scope.mapState);
+    // return $scope.mapState.eventTypes;
+
+    var k, eventLayers = [];
+
+    for (k in $scope.mapState.layers) {
+      if (k === "alarms" || k === "messages") {
+        eventLayers.push($scope.mapState.layers[k]);
+      }
+    }
+
+    return eventLayers;
+  };
+
+
   // EVENTS MODEL
   $scope.events = {
     //TODO: refactor event meta data (remove eventTypes from mapState)
     //types: { count: 0, 1: {}, 2: {}, 3: {}, 4: {}, 5: {} }, // Metadata object
-    types: EventService.buildEventTypesTemplate($scope.mapState.eventTypes),
+    types: EventService.buildEventTypesTemplate(getEventTypes()),
     data: { type: "FeatureCollection",
             features: [] // Long format events data object
       },
     scale: d3.scale.ordinal().range(EventService.colors[8]),
     changed: Date.now()
   };
+
 
   /**
    * Zoom to event location

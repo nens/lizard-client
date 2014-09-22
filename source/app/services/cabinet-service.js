@@ -2,10 +2,10 @@ app.service("CabinetService", ["$q", "Restangular",
   function ($q, Restangular) {
 
   var layergroups = window.layerGroups;
-  var layers = window.layers;
+  var layers = window.data_layers;
   var baselayers = window.baseLayers;
   var overlayers = window.overLayers;
-  var eventTypes = window.event_types;
+  //var eventTypes = window.event_types;
 
   var termSearchResource,
       bboxSearchResource,
@@ -198,8 +198,8 @@ app.service("CabinetService", ["$q", "Restangular",
       rows: [
         {
           keyName: "Breedte",
-          attrName: "width",
-          ngBindValue: "pointObject.attrs.data.width | niceNumberOrEllipsis: 2",
+          attrName: "crest_width",
+          ngBindValue: "pointObject.attrs.data.crest_width | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
@@ -349,7 +349,7 @@ app.service("CabinetService", ["$q", "Restangular",
     layers: layers,
     baselayers: baselayers,
     overlayers: overlayers,
-    eventTypes: eventTypes,
+    //eventTypes: eventTypes,
     geocode: geocodeResource,
     raster: rasterResource,
     reverseGeocode: reverseGeocodeResource,
