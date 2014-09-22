@@ -29,11 +29,7 @@ app.directive("layerChooser", ['LeafletService', function (LeafletService) {
       // legacy if.. needs to be refactored
       if (!layer.temporal) {
 
-        console.log('--> not temporal');
-
         if (layer.type === 'WMS') {
-
-          console.log('--> WMS');
 
           var options = {
             layers: layer.slug,
@@ -53,8 +49,6 @@ app.directive("layerChooser", ['LeafletService', function (LeafletService) {
           layerLeafletLayer = LeafletService.tileLayer.wms(layer.url, options);
         } else {
 
-          console.log('--> not WMS');
-
           layerUrl = layer.url + '/' + layer.slug + '/{z}/{x}/{y}';
           layerUrl += layer.type === 'TMS' ? '.png' : '';
 
@@ -67,8 +61,6 @@ app.directive("layerChooser", ['LeafletService', function (LeafletService) {
             zIndex: layer.z_index
           });
         }
-        console.log("in forloop, current layer:", layer);
-        console.log("in forloop, current layerLeafletLayer:", layerLeafletLayer);
 
         layerMap.addLayer(layerLeafletLayer);
       }
