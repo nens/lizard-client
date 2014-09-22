@@ -186,7 +186,7 @@ app.service("CabinetService", ["$q", "Restangular",
     outlet: {
       rows: [
         {
-          keyName: "Maaiveld",
+          keyName: "Buitenwaterstand",
           attrName: "open_water_level_average",
           ngBindValue:
             "pointObject.attrs.data.open_water_level_average | niceNumberOrEllipsis: 2",
