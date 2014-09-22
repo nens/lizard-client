@@ -169,20 +169,20 @@ app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
      * @param {timeState} time  timeState with start and end.
      * @param {boolean} start   Set timeStart or timeState.end
      */
-    var setTimeState = function (time, start) {
-      // Make browser independent
-      time = time.replace(/-/g, '/');
-      var msTime = Date.parse(time);
+    var setTimeState = function (time) {
+      // Browser independent
+      var times = time.replace(/,/g, '/').split('-');
+      var msStartTime = Date.parse(times[0]);
       // bail if time is not parsable
-      if (isNaN(msTime)) { return; }
-      if (start) {
-        $scope.timeState.start = msTime;
-      } else {
-        if (msTime === $scope.timeState.start) {
-          msTime += 43200000; // half a day
-        }
-        $scope.timeState.end = msTime;
+      if (isNaN(msStartTime)) { return; }
+      $scope.timeState.start = msStartTime;
+
+      var msEndTime = Date.parse(times[1]);
+      if (isNaN(msEndTime)) { return; }
+      if (msEndTime === $scope.timeState.start) {
+        msEndTime += 43200000; // half a day
       }
+      $scope.timeState.end = msEndTime;
       $scope.timeState.at = $scope.timeState.start +
         ($scope.timeState.end - $scope.timeState.start) / 2;
       $scope.timeState.changeOrigin = 'hash';
