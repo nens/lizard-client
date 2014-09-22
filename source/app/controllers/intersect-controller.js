@@ -17,7 +17,7 @@ app.controller('IntersectCtrl', [
      */
     $scope.lineIntersect = {};
 
-    var firstClick, secondClick, updateLineIntersect, putDataOnscope,
+    var updateLineIntersect, putDataOnscope,
       removeDataFromScope, _updateLineIntersect;
 
     /**
@@ -108,20 +108,19 @@ app.controller('IntersectCtrl', [
      */
     $scope.$watch('mapState.here', function (n, o) {
       if (n === o) { return true; }
-      if (secondClick) {
-        firstClick = undefined;
-        secondClick = undefined;
+      if ($scope.mapState.points.length === 2) {
+        $scope.mapState.points = [];
         ClickFeedbackService.emptyClickLayer();
         // Empty data element since the line is gone
         $scope.lineIntersect = {};
       } else {
-        if (firstClick) {
-          secondClick = $scope.mapState.here;
-          _updateLineIntersect(firstClick, secondClick);
-          ClickFeedbackService.drawLine(firstClick, secondClick, false);
+        if ($scope.mapState.points.length === 1) {
+          $scope.mapState.points[1] = $scope.mapState.here;
+          _updateLineIntersect($scope.mapState.points[0], $scope.mapState.points[1]);
+          ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.points[1], false);
         } else {
-          firstClick = $scope.mapState.here;
-          ClickFeedbackService.drawLine(firstClick, $scope.mapState.userHere);
+          $scope.mapState.points[0] = $scope.mapState.here;
+          ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.userHere);
         }
       }
     });
@@ -131,8 +130,8 @@ app.controller('IntersectCtrl', [
      */
     $scope.$watch('mapState.userHere', function (n, o) {
       if (n === o) { return true; }
-      if (firstClick && !secondClick) {
-        ClickFeedbackService.drawLine(firstClick, $scope.mapState.userHere, true);
+      if ($scope.mapState.points[0] && !$scope.mapState.points[1]) {
+        ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.userHere, true);
       }
     });
 
@@ -141,8 +140,8 @@ app.controller('IntersectCtrl', [
      */
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return true; }
-      if (firstClick && secondClick) {
-        _updateLineIntersect(firstClick, secondClick);
+      if ($scope.mapState.points.length === 2) {
+        _updateLineIntersect($scope.mapState.points[0], $scope.mapState.points[1]);
       }
     });
 
@@ -163,8 +162,8 @@ app.controller('IntersectCtrl', [
     $scope.$watch('timeState.zoomEnded', function (n, o) {
 
       if (n === o) { return true; }
-      if (firstClick && secondClick) {
-        var line = UtilService.createLineWKT(firstClick, secondClick);
+      if ($scope.mapState.points.length === 2) {
+        var line = UtilService.createLineWKT($scope.mapState.points[0], $scope.mapState.points[1]);
         var dataProm;
         angular.forEach($scope.lineIntersect, function (intersect, slug) {
           if ($scope.mapState.layers[slug].temporal) {
@@ -188,10 +187,10 @@ app.controller('IntersectCtrl', [
         // local vars declaration.
         var lat1, lat2, lon1, lon2, maxD, d, r, dLat, dLon, posLat, posLon;
 
-        lat1 = firstClick.lat;
-        lat2 = secondClick.lat;
-        lon1 = firstClick.lng;
-        lon2 = secondClick.lng;
+        lat1 = $scope.mapState.points[0].lat;
+        lat2 = $scope.mapState.points[1].lat;
+        lon1 = $scope.mapState.points[0].lng;
+        lon2 = $scope.mapState.points[1].lng;
         maxD = Math.sqrt(Math.pow((lat2 - lat1), 2) + Math.pow((lon2 - lon1), 2));
         d = UtilService.metersToDegs($scope.box.mouseLoc);
         r = d / maxD;

@@ -81,26 +81,18 @@ app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
       setgeomUrl($scope.box.type, $scope.mapState.here);
     });
 
-    var firstClick, secondClick;
     var setgeomUrl = function (type, here) {
-      var COORD_PRECISION = 4,
-      herestring = here.lat.toFixed(COORD_PRECISION) + ',' + here.lng.toFixed(COORD_PRECISION);
-      console.log(herestring, type);
+      var COORD_PRECISION = 4;
       if (type === 'intersect') {
-        if (secondClick) {
-          firstClick = undefined;
-          secondClick = undefined;
-          UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, '');
-        } else {
-          if (firstClick) {
-            secondClick = herestring;
-            UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, firstClick + '-' + secondClick);
-          } else {
-            firstClick = herestring;
-            UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, firstClick);
-          }
-        }
-      } else if (type === 'point') {
+        var pointsStr = '';
+        angular.forEach($scope.mapState.points, function (point) {
+          pointsStr += point.lat.toFixed(COORD_PRECISION) + ',' + point.lng.toFixed(COORD_PRECISION) + '-';
+        });
+        console.log(pointsStr);
+        pointsStr.substring(0, pointsStr.length - 1); // cut the last - off
+        UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, pointsStr);
+      } else if (type === 'pointObject') {
+        var herestring = here.lat.toFixed(COORD_PRECISION) + ',' + here.lng.toFixed(COORD_PRECISION);
         UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, herestring);
       }
     };
@@ -219,11 +211,30 @@ app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
       $scope.box.type = type;
     };
 
+    var setGeom = function (geom) {
+      console.log(geom, $scope.box.type);
+      if ($scope.box.type === 'pointObject') {
+        var point = geom.split(',');
+        if (parseFloat(point[0]) &&
+            parseFloat(point[1])) {
+          $scope.mapState.here = L.latLng(point[0], point[1]);
+        }
+      } else if ($scope.box.type === 'intersect') {
+        var points = geom.split('-');
+        angular.forEach(points, function (pointStr) {
+          var point = pointStr.split(',');
+          if (parseFloat(point[0]) &&
+              parseFloat(point[1])) {
+            $scope.mapState.here = L.latLng(point[0], point[1]);
+          }
+        });
+      }
+    };
 
     /**
      * Sets up the hash at creation of the controller.
      */
-    (function setUrlHashWhenEmpty() {
+    var setUrlHashWhenEmpty = function () {
       if (!UrlSyncHelper.getUrlValue(state.context.part, state.context.index)) {
         UrlSyncHelper.setUrlValue(
           state.context.part,
@@ -245,7 +256,9 @@ app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
       if (!UrlSyncHelper.getUrlValue(state.timeState.part, state.timeState.index)) {
         setTimeStateUrl($scope.timeState.start, $scope.timeState.end);
       }
-    })();
+    };
+
+    setUrlHashWhenEmpty();
 
 
     var update = function () {
@@ -279,7 +292,7 @@ app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
           setBoxType(boxType);
         }
         if (geom) {
-          // setGeom(geom);
+          setGeom(geom);
         }
         if (layers) {
           var activeSlugs = layers.split(','),

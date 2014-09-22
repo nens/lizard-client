@@ -279,19 +279,12 @@ app.service("UtilService", function () {
   /**
    * @function hasMobileDevice
    * @memberOf UtilService
-   *
-   * @summary Create WKT line from two latlon objects.
    */
   this.serveToMobileDevice = function () {
 
     var result = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|windows phone/i.test(
       navigator.userAgent.toLowerCase()
     );
-
-    if (JS_DEBUG) {
-      console.log((result ? '' : 'non-') + "mobile platform detected!");
-    }
-
     return result;
   };
 

@@ -455,6 +455,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    */
   mapState = {
     here: null,
+    points: [], // History of here for drawing
     center: null,
     initiated: _initiated,
     layers: CabinetService.layers,
