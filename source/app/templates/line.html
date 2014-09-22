@@ -1,0 +1,21 @@
+<div ng-controller="lineCtrl">
+  <div ng-repeat="line in lineline" class="card active" id="card-<% line.name %>">
+    <div id="card-content-<% line.name %>" class="card-content">
+      <div ng-switch="line.name" class="card-content" id="card-content-<% agg.name %>">
+
+        <graph ng-switch-default
+          line
+          data="line.data"
+          ylabel="'hoogte [mNAP]'"
+          xlabel="'afstand in [m]'">
+        </graph>
+        <graph ng-switch-when="Regen"
+          line
+          data="line.data"
+          ylabel="'mm / 5 minuten'"
+          xlabel="'afstand in [m]'">
+        </graph>
+      </div>
+    </div>
+  </div>
+</div>
