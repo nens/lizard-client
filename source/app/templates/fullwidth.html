@@ -1,15 +1,15 @@
 <table class="fullwidth">
   <tbody>
-    <tr ng-repeat="obj in pointObject.attrs.wanted[box.type].rows">
+    <tr ng-repeat="obj in point.attrs.wanted[box.type].rows">
       <td class="fixed-width-card-table"><% obj.keyName %></td>
       <td
-        ng-show="pointObject.attrs.data[obj.attrName]">
+        ng-show="point.attrs.data[obj.attrName]">
         <span class="ng-binding">
           <% $eval(obj.ngBindValue) + obj.valueSuffix %>
         </span>
       </td>
-      <td ng-hide="pointObject.attrs.data[obj.attrName]" style="float:left;">
-        <% "..." %> 
+      <td ng-hide="point.attrs.data[obj.attrName]" style="float:left;">
+        <% "..." %>
       </td>
     </tr>
   </tbody>

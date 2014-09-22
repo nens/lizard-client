@@ -60,7 +60,7 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
        * Event click handler.
        *
        * Gets id's highlights events, matchesLocations and passes them to
-       * 'here' object. For pointObject to pick 'em up.
+       * 'here' object. For point to pick 'em up.
        *
        * @param {object} d - D3 bound data object.
        */
@@ -82,8 +82,8 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
         _highlightEvents(id);
 
         var setEventOnPoint = function () {
-          if (scope.box.type !== 'pointObject') {
-            scope.box.type = 'pointObject';
+          if (scope.box.type !== 'point') {
+            scope.box.type = 'point';
             scope.mapState.here = here;
           }
         };
@@ -94,7 +94,7 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
           setEventOnPoint();
         }
 
-        $rootScope.$broadcast('updatePointObject', eventDatastuff);
+        $rootScope.$broadcast('updatepoint', eventDatastuff);
       };
 
       /**

@@ -10,17 +10,17 @@ app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
         index: 0,
         update: true
       },
-      boxType: {
+      layers: {
         part: 'path',
         index: 1,
         update: true
       },
-      geom: {
+      boxType: {
         part: 'path',
         index: 2,
         update: true
       },
-      layers: {
+      geom: {
         part: 'path',
         index: 3,
         update: true
@@ -83,7 +83,7 @@ app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
 
     var setgeomUrl = function (type, here) {
       var COORD_PRECISION = 4;
-      if (type === 'intersect') {
+      if (type === 'line') {
         var pointsStr = '';
         angular.forEach($scope.mapState.points, function (point) {
           pointsStr += point.lat.toFixed(COORD_PRECISION) + ',' + point.lng.toFixed(COORD_PRECISION) + '-';
@@ -91,7 +91,7 @@ app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
         console.log(pointsStr);
         pointsStr.substring(0, pointsStr.length - 1); // cut the last - off
         UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, pointsStr);
-      } else if (type === 'pointObject') {
+      } else if (type === 'point') {
         var herestring = here.lat.toFixed(COORD_PRECISION) + ',' + here.lng.toFixed(COORD_PRECISION);
         UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, herestring);
       }
@@ -213,13 +213,13 @@ app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
 
     var setGeom = function (geom) {
       console.log(geom, $scope.box.type);
-      if ($scope.box.type === 'pointObject') {
+      if ($scope.box.type === 'point') {
         var point = geom.split(',');
         if (parseFloat(point[0]) &&
             parseFloat(point[1])) {
           $scope.mapState.here = L.latLng(point[0], point[1]);
         }
-      } else if ($scope.box.type === 'intersect') {
+      } else if ($scope.box.type === 'line') {
         var points = geom.split('-');
         angular.forEach(points, function (pointStr) {
           var point = pointStr.split(',');
@@ -239,7 +239,7 @@ app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
         UrlSyncHelper.setUrlValue(
           state.context.part,
           state.context.index,
-          'map');
+          state.context.value);
       }
       if (!UrlSyncHelper.getUrlValue(state.boxType.part, state.boxType.index)) {
         UrlSyncHelper.setUrlValue(
