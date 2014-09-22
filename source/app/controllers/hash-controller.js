@@ -200,6 +200,7 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
           // Initialise layers
           angular.forEach(MapService.mapState.layers, function (layer) {
             MapService.mapState.activeLayersChanged = Date.now();
+            layer.aggregation_type = layer.layers[0].aggregation_type;
             if (!layer.initiated) {
               MapService.createLayer(layer);
             }

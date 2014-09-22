@@ -41,14 +41,16 @@ app.service("EventService", ["Restangular", "$q",
 
   var buildEventTypesTemplate = function (eventLayers) {
 
-    console.log('eventLayers:', eventLayers);
+    var layer, i, name, eventTypesTemplate = {};
 
-    var eventTypesTemplate = {};
+    for (i in eventLayers) {
 
-    for (var name in eventLayers) {
+      layer = eventLayers[i];
+      name = layer.slug;
 
-      eventTypesTemplate[name] = {};
-      eventTypesTemplate[name].count = eventLayers[name].layers[0].summary;
+      eventTypesTemplate[i] = {};
+      eventTypesTemplate[i].count = eventLayers[i].layers[0].summary;
+      eventTypesTemplate[i].name = name;
     }
 
     eventTypesTemplate.count = 0;
@@ -80,7 +82,8 @@ app.service("EventService", ["Restangular", "$q",
         timeStateStart = scope.timeState.start,
         timeStateEnd = scope.timeState.end,
         bounds = scope.mapState.bounds,
-        typeLength = eventTypes.length;
+        // typeLength = eventTypes.length;
+        typeLength = scope.events.types.length;
 
     if (scope.timeState.animation.enabled) {
       timeStateStart = scope.timeState.animation.start;

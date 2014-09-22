@@ -1,8 +1,17 @@
 app.service("CabinetService", ["$q", "Restangular",
   function ($q, Restangular) {
 
-  var layergroups = window.layerGroups;
+  //var layergroups = window.data_layers;
+  // var layers = [];
+  // for (var k in layergroups) {
+
+  //   var newLayers = [];
+  //   layers = layers.concat(layergroups[k].layers);
+  // }
+  // console.log("initialized layers:", layers);
+
   var layers = window.data_layers;
+
   var baselayers = window.baseLayers;
   var overlayers = window.overLayers;
   //var eventTypes = window.event_types;
@@ -345,7 +354,7 @@ app.service("CabinetService", ["$q", "Restangular",
   };
 
   return {
-    layergroups: layergroups,
+    //layergroups: layergroups,
     layers: layers,
     baselayers: baselayers,
     overlayers: overlayers,

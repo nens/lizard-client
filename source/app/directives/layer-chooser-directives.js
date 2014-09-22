@@ -1,9 +1,10 @@
 //layer-directive.js
 
 app.directive("layerChooser", ['LeafletService', function (LeafletService) {
+
   var link = function (scope, element, attrs) {
 
-    var centroid, zoom, layerMap, layerLeafletLayer, layer, layerUrl, map;
+    var centroid, zoom, layerMap, layerLeafletLayer, layer, layerGroup, layerUrl, map;
 
     centroid = [52.39240447569775, 5.101776123046875];
     zoom = scope.mapState.zoom;
@@ -20,88 +21,60 @@ app.directive("layerChooser", ['LeafletService', function (LeafletService) {
       attributionControl: false
     });
 
-    for (var i = 0; i < scope.layer.layers.length; i++) {
+    layerGroup = scope.layer;
+    if (layerGroup.layers.length === 1) {
 
-      layer = scope.layer.layers[i];
+      // We make everything work for the layerGroups carrying only a single layer.
 
-      if (layer.type === 'Vector') { continue; }
+      var firstLayer = layerGroup.layers[0];
+      if (firstLayer.type === 'Vector') { return; }
 
       // legacy if.. needs to be refactored
-      if (!layer.temporal) {
+      if (!firstLayer.temporal) {
 
-        if (layer.type === 'WMS') {
+        if (firstLayer.type === 'WMS') {
 
           var options = {
-            layers: layer.slug,
+            layers: firstLayer.slug,
             format: 'image/png',
             version: '1.1.1',
-            minZoom: layer.min_zoom,
+            minZoom: firstLayer.min_zoom,
             maxZoom: 19,
-            zIndex: layer.z_index
+            zIndex: firstLayer.z_index,
+            id: layerGroup.id
           };
           //NOTE ugly hack
-          if (layer.slug === 'landuse') {
+          if (firstLayer.slug === 'landuse') {
             options.styles = 'landuse';
-          } else if (layer.slug === 'elevation') {
+          } else if (firstLayer.slug === 'elevation') {
             options.styles = 'BrBG_r';
             options.effects = 'shade:0:3';
           }
-          layerLeafletLayer = LeafletService.tileLayer.wms(layer.url, options);
+          layerLeafletLayer = LeafletService.tileLayer.wms(firstLayer.url, options);
+
         } else {
 
-          layerUrl = layer.url + '/' + layer.slug + '/{z}/{x}/{y}';
-          layerUrl += layer.type === 'TMS' ? '.png' : '';
+          layerUrl = firstLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
+          // console.log('layerUrl:', layerUrl);
+          //layerUrl += layer.type === 'TMS' ? '.png' : '';
 
           layerLeafletLayer = LeafletService.tileLayer(layerUrl, {
             ext: 'png',
-            slug: layer.slug,
-            name: layer.slug,
-            minZoom: layer.min_zoom,
+            slug: firstLayer.slug,
+            name: firstLayer.slug,
+            minZoom: firstLayer.min_zoom,
             maxZoom: 19,
-            zIndex: layer.z_index
+            zIndex: firstLayer.z_index,
+            id: layerGroup.id
           });
         }
 
         layerMap.addLayer(layerLeafletLayer);
       }
+    } else {
+      console.log("Encountered a composed layerGroup (i.e: layerGroup.layers.len > 1)");
+      return;
     }
-
-    // if (layer.type === 'Vector') { return; }
-
-    // // legacy if.. needs to be refactored
-    // if (!layer.temporal) {
-
-    //   if (layer.type === 'WMS') {
-    //     var options = {
-    //       layers: layer.slug,
-    //       format: 'image/png',
-    //       version: '1.1.1',
-    //       minZoom: layer.min_zoom,
-    //       maxZoom: 19,
-    //       zIndex: layer.z_index
-    //     };
-    //     //NOTE ugly hack
-    //     if (layer.slug === 'landuse') {
-    //       options.styles = 'landuse';
-    //     } else if (layer.slug === 'elevation') {
-    //       options.styles = 'BrBG_r';
-    //       options.effects = 'shade:0:3';
-    //     }
-    //     layerLeafletLayer = LeafletService.tileLayer.wms(layer.url, options);
-    //   } else {
-    //     layerUrl = (layer.type === 'TMS') ? layer.url + '.png' : layer.url;
-    //     layerLeafletLayer = LeafletService.tileLayer(layerUrl, {
-    //       ext: 'png',
-    //       slug: layer.slug,
-    //       name: layer.slug,
-    //       minZoom: layer.min_zoom,
-    //       maxZoom: 19,
-    //       zIndex: layer.z_index
-    //     });
-    //   }
-    //   layerMap.addLayer(layerLeafletLayer);
-    // }
-
 
     scope.$watch('mapState.bounds', function (n, v) {
       if (n === v) { return; }
@@ -110,7 +83,6 @@ app.directive("layerChooser", ['LeafletService', function (LeafletService) {
       layerMap.setView(centroid, zoom - 2);
     });
   };
-
 
   return {
     link: link,

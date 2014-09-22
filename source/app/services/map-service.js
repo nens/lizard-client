@@ -49,7 +49,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
     if (options) {
       _map.fitBounds(bounds);
-
       _map.attributionControl.addAttribution(options.attribution);
       _map.attributionControl.setPrefix('');
     }
@@ -70,19 +69,23 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @description Initiates a Leaflet Tilelayer
    */
   _initiateTMSLayer = function (nonLeafLayer) {
+    var slug = nonLeafLayer.slug;
+    var layerGroupUrl = nonLeafLayer.url + '/' + slug + '/{z}/{x}/{y}.{ext}';
     var layer = LeafletService.tileLayer(
-      nonLeafLayer.url + '.png', {
+      layerGroupUrl, {
         name: (nonLeafLayer.baselayer) ? 'Background': nonLeafLayer.slug,
-        slug: nonLeafLayer.slug,
+        slug: slug,
         minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom: 0,
         maxZoom: 19,
         detectRetina: true,
-        zIndex: nonLeafLayer.z_index
+        zIndex: nonLeafLayer.z_index,
+        ext: 'png'
       });
-    if (!nonLeafLayer.baselayer && nonLeafLayer.type === 'ASSET') {
-      layer._url = nonLeafLayer.url;
-      layer.options.ext = 'png';
-    }
+    // THIS CAN NO LONGER HAPPEN:
+    // if (!nonLeafLayer.baselayer && nonLeafLayer.type === 'ASSET') {
+    //   layer._url = layerGroupUrl;
+    //   layer.options.ext = 'png';
+    // }
     nonLeafLayer.leafletLayer = layer;
     nonLeafLayer.initiated = true;
   };
@@ -95,26 +98,30 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @description Initiates a Leaflet WMS layer
    */
   _initiateWMSLayer = function (nonLeafLayer) {
-    var layer, _options;
-    _options = {
-        layers: nonLeafLayer.slug,
-        format: 'image/png',
-        version: '1.1.1',
-        minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom: 0,
-        maxZoom: 19,
-        zIndex: nonLeafLayer.z_index
-      };
+
+    var _options = {
+      layers: nonLeafLayer.slug,
+      format: 'image/png',
+      version: '1.1.1',
+      minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom : 0,
+      maxZoom: 19,
+      zIndex: nonLeafLayer.z_index
+    };
+
     if (nonLeafLayer.slug === 'landuse') {
       _options.styles = 'landuse';
     } else if (nonLeafLayer.slug === 'elevation') {
       _options.styles = 'BrBG_r';
       _options.effects = 'shade:0:3';
+    } else if (nonLeafLayer.slug === 'isahw:BOFEK2012') {
+      _options.styles = '';
     } else { // Default, used by zettingsvloeiingsproef
       _options.styles = 'BrBG_r';
       _options.effects = 'shade:0:3';
     }
-    layer = LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
-    nonLeafLayer.leafletLayer = layer;
+
+    nonLeafLayer.leafletLayer =
+      LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
     nonLeafLayer.initiated = true;
   };
 
@@ -147,30 +154,108 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @param  {object} nonLeafLayer object from database
    * @description Throw in a layer as served from the backend
    */
-  createLayer = function (nonLeafLayer) {
-    // temporal layers should not be added to the map.
-    if (nonLeafLayer.temporal) { return; }
+  // createLayer = function (nonLeafLayer) {
 
-    switch (nonLeafLayer.type) {
-    case ('TMS'):
-      _initiateTMSLayer(nonLeafLayer);
-      break;
-    case ('WMS'):
-      _initiateWMSLayer(nonLeafLayer);
-      break;
-    case ('Vector'):
-      break;
-    case ('ASSET'):
-      _initiateGridLayer(nonLeafLayer);
-      _initiateTMSLayer(nonLeafLayer);
-      break;
-    case ('Vector'):
-      break;
-    default:
-      _initiateTMSLayer(nonLeafLayer);
-      break;
+  //   console.log('nonLeafLayer:', nonLeafLayer);
+
+  //   // temporal layers should not be added to the map.
+  //   if (nonLeafLayer.temporal) { return; }
+
+  //   switch (nonLeafLayer.type) {
+  //   case ('TMS'):
+  //     //_initiateTMSLayer(nonLeafLayer);
+  //     break;
+  //   case ('WMS'):
+  //     //_initiateWMSLayer(nonLeafLayer);
+  //     break;
+  //   case ('ASSET'):
+  //     // _initiateGridLayer(nonLeafLayer);
+  //     // _initiateTMSLayer(nonLeafLayer);
+  //     break;
+  //   case ('Vector'):
+  //     break;
+  //   default:
+  //     _initiateTMSLayer(nonLeafLayer);
+  //     break;
+  //   }
+  // };
+
+  createLayer = function (layerGroup) {
+
+    var nonLeafLayer, subLayer;
+
+    if (layerGroup.layers.length === 1) {
+
+      // Encountered: layergroup with only a single layer; we call the
+      // initiateXXXLayer after modifying it's argument 'layerGroup'.
+
+      nonLeafLayer = layerGroup;
+
+      nonLeafLayer.temporal = layerGroup.layers[0].temporal;
+      nonLeafLayer.type     = layerGroup.layers[0].type;
+      nonLeafLayer.slug     = layerGroup.layers[0].slug;
+      nonLeafLayer.url      = layerGroup.layers[0].url;
+      nonLeafLayer.z_index  = layerGroup.layers[0].z_index;
+
+      if (nonLeafLayer.temporal) { return; }
+
+      switch (nonLeafLayer.type) {
+
+        case ('Vector'):
+          break;
+
+        case ('TMS'):
+          _initiateTMSLayer(nonLeafLayer);
+          break;
+
+        case ('WMS'):
+          _initiateWMSLayer(nonLeafLayer);
+          break;
+
+        // ============== OLD STYLE =============
+        //case ('ASSET'):
+        //   _initiateGridLayer(nonLeafLayer);
+        //   _initiateTMSLayer(nonLeafLayer);
+        //   break;
+
+        default:
+          console.log('[E] This should never happen/print...');
+          // _initiateTMSLayer(nonLeafLayer);
+          break;
+      }
+
+    } else {
+
+      // Encountered: a composed layergroup with 1+ layers
+      //console.log('[!] Encountered composed layerGroup (i.e: \'waterchain\'):', layerGroup);
+
+      for (var i in layerGroup.layers) {
+
+        subLayer = layerGroup.layers[i];
+
+        switch (subLayer.type) {
+
+          case 'Vector':
+            break;
+
+          case 'TMS':
+            _initiateTMSLayer(subLayer);
+            break;
+
+          case 'UTFGrid':
+            _initiateGridLayer(subLayer);
+            break;
+
+          default:
+            console.log('[E] This should never happen/print...');
+            break;
+        }
+      }
     }
   };
+
+
+
 
   /**
    * @function
@@ -182,7 +267,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     if (layer instanceof L.Class) {
       _map.addLayer(layer);
     } else {
-      console.warn('layer not of type L.Class', layer);
+      console.warn('layer not of type L.Class; layer =', layer);
     }
   };
 

@@ -320,8 +320,6 @@ app.controller('MasterCtrl',
   // EVENTS
 
   var getEventTypes = function () {
-    // console.log('$scope.mapState:', $scope.mapState);
-    // return $scope.mapState.eventTypes;
 
     var k, eventLayers = [];
 
@@ -346,6 +344,8 @@ app.controller('MasterCtrl',
     scale: d3.scale.ordinal().range(EventService.colors[8]),
     changed: Date.now()
   };
+
+  console.log('$scope.events.types:', $scope.events.types);
 
 
   /**
