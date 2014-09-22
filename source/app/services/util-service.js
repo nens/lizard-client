@@ -38,11 +38,15 @@ app.factory('UrlSyncHelper', ['$location', '$parse', '$rootScope',
         if (!(part === 'path' || part === 'at')) {
           throw new Error('The provided part is not a supported part of the url');
         }
-        if (!(typeof(value) === 'string' || typeof(value) === 'number')) {
+        if (value && !(typeof(value) === 'string' || typeof(value) === 'number')) {
           throw new Error('The provided value cannot be set on the url');
         }
         var halfPath, otherHalf, parts = _getPathParts(part);
-        parts[index] = value;
+        if (value) {
+          parts[index] = value; //replace
+        } else {
+          parts.splice(index, 1); // remove
+        }
         halfPath = parts.join('/');
         if (part === 'path') {
           otherHalf = _getPath('at') ? '@' + _getPath('at') : '';
@@ -66,7 +70,6 @@ app.factory('UrlSyncHelper', ['$location', '$parse', '$rootScope',
 
     _getPathParts = function (part) {
       var pathPart = _getPath(part);
-      console.log(pathPart);
       if (!pathPart || pathPart === '') { return []; }
       var parts = pathPart.split('/');
       return parts;

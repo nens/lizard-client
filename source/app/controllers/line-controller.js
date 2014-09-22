@@ -125,6 +125,14 @@ app.controller('lineCtrl', [
       }
     });
 
+    var watchIfUrlCtrlSetsPoints = $scope.$watch('mapState.points', function (n, o) {
+      if ($scope.mapState.points.length === 2) {
+        _updateLineline($scope.mapState.points[0], $scope.mapState.points[1]);
+        ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.points[1]);
+        watchIfUrlCtrlSetsPoints();
+      }
+    });
+
     /**
      * Updates line according to geo-pos of mouse
      */
@@ -223,6 +231,7 @@ app.controller('lineCtrl', [
      */
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer();
+      $scope.mapState.points = [];
     });
 
   }

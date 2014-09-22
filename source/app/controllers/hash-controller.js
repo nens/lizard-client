@@ -64,12 +64,14 @@ app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
       setTimeStateUrl($scope.timeState.start, $scope.timeState.end);
     });
 
-    $scope.$watch('box.type', function (n, o) {
-      if (n === o) { return true; }
-      state.boxType.update = false;
-      // UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, '');
+    $scope.$watch('box.type', function (n, old) {
+      if (n === old) { return true; }
       state.boxType.update = false;
       UrlSyncHelper.setUrlValue(state.boxType.part, state.boxType.index, $scope.box.type);
+      if (old === 'point' || old === 'line') {
+        state.boxType.update = false;
+        UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, undefined);
+      }
     });
 
     /**
@@ -83,18 +85,14 @@ app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
 
     var setgeomUrl = function (type, here) {
       var COORD_PRECISION = 4;
+      var pointsStr = '';
       if (type === 'line') {
-        var pointsStr = '';
         angular.forEach($scope.mapState.points, function (point) {
           pointsStr += point.lat.toFixed(COORD_PRECISION) + ',' + point.lng.toFixed(COORD_PRECISION) + '-';
         });
-        console.log(pointsStr);
-        pointsStr.substring(0, pointsStr.length - 1); // cut the last - off
-        UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, pointsStr);
-      } else if (type === 'point') {
-        var herestring = here.lat.toFixed(COORD_PRECISION) + ',' + here.lng.toFixed(COORD_PRECISION);
-        UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, herestring);
       }
+      pointsStr += here.lat.toFixed(COORD_PRECISION) + ',' + here.lng.toFixed(COORD_PRECISION);
+      UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, pointsStr);
     };
 
     /**
@@ -193,7 +191,6 @@ app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
 
     var setMapView = function (mapView) {
       var latlonzoom = mapView.split(',');
-      console.log(latlonzoom);
       if (latlonzoom.length === 3) {
         if (parseFloat(latlonzoom[0]) &&
             parseFloat(latlonzoom[1]) &&
@@ -221,11 +218,11 @@ app.controller('hashGetterSetter', ['$scope', 'UrlSyncHelper', 'MapService',
         }
       } else if ($scope.box.type === 'line') {
         var points = geom.split('-');
-        angular.forEach(points, function (pointStr) {
+        angular.forEach(points, function (pointStr, key) {
           var point = pointStr.split(',');
           if (parseFloat(point[0]) &&
               parseFloat(point[1])) {
-            $scope.mapState.here = L.latLng(point[0], point[1]);
+            $scope.mapState.points[key] = L.latLng(point[0], point[1]);
           }
         });
       }
