@@ -134,6 +134,8 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
     redrawBrush: {
       value: function (widthFactor) {
 
+        this.removeBrush();
+
         brush = d3.svg.brush().x(xScale);
         brush.on("brush", brushed);
         var self = this;
@@ -284,7 +286,17 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
         //   this.updateNowElement(); // METHOD IS NON_EXISTENT!?
         // }
         if (brushg) {
-          this.redrawBrush(widthFactor);
+
+          var that = this,
+              extent = brush.extent(),
+              start = extent[0].getTime(),
+              stop = extent[1].getTime();
+
+          this.removeBrush();
+
+          setTimeout(function () {
+            that.drawBrush(start, stop);
+          }, that.transTime);
         }
       }
     },
