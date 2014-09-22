@@ -198,8 +198,8 @@ app.service("CabinetService", ["$q", "Restangular",
       rows: [
         {
           keyName: "Breedte",
-          attrName: "width",
-          ngBindValue: "point.attrs.data.width | niceNumberOrEllipsis: 2",
+          attrName: "crest_width",
+          ngBindValue: "pointObject.attrs.data.crest_width | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
