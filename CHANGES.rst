@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+
+Release 0.2b5
+-------------
+
 - Bug fix object attributes.
 
 Release 0.2b4
