@@ -10,6 +10,11 @@ Release 0.2b5
 
 - Bug fix object attributes.
 
+- Bug fix brush.
+
+- Increase westerschelde resolution.
+
+
 Release 0.2b4
 -------------
 
