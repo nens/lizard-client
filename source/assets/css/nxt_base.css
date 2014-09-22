@@ -974,7 +974,8 @@ ul.list-inline li.baselayer-icon label{
             filter: drop-shadow( -5px -5px 5px #000 );*/
 }
 
-.selected{
+.selected,
+.highlighted-event{
     color: #34495e;
     fill: #34495e;
 }

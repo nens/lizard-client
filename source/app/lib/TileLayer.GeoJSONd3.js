@@ -27,7 +27,7 @@ L.GeoJSONd3 = L.TileLayer.extend({
 
     var size = this._map.getPixelBounds().getSize();
 
-    this._container = d3.select(".leaflet-overlay-pane")
+    this._container = d3.select(map.getPanes().overlayPane)
       .append("svg")
       .attr("class", "leaflet-layer leaflet-zoom-hide")
       .attr("id", "geojson-d3")
