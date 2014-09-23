@@ -7,7 +7,6 @@ angular.module("omnibox", ["templates-main"])
     var getTemplate = function (scope, contentType) {
       if (contentType === undefined) {
         contentType = 'extentAggregate';
-        //contentType = 'empty';
       }
 
       var templateUrl = 'templates/' + contentType + '.html';
@@ -33,7 +32,7 @@ angular.module("omnibox", ["templates-main"])
 
       var finalizeTemplateRendering = function () {
         replaceTemplate();
-        scope.box.showCards = scope.box.type !== 'empty';
+        scope.box.showCards = scope.box.type !== 'extentAggregate';
       };
 
       scope.$watch('box.type', function (n, o) {
