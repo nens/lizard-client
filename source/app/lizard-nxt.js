@@ -428,8 +428,8 @@ app.controller('MasterCtrl',
         $scope.box.contextSwitchMode = false;
       } else {
         // Or else, reset the omnibox state
-        $scope.box.type = 'empty';
-        $scope.box.empty = null;
+        $scope.box.type = 'area';
+        // $scope.box.empty = null;
       }
     }
   };

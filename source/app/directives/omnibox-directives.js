@@ -7,7 +7,6 @@ angular.module("omnibox", ["templates-main"])
     var getTemplate = function (scope, contentType) {
       if (contentType === undefined) {
         contentType = 'area';
-        //contentType = 'empty';
       }
 
       var templateUrl = 'templates/' + contentType + '.html';
