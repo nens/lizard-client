@@ -90,26 +90,26 @@ app.service('VectorService', ['Restangular', 'LeafletService',
 
     /**
      * @memberof app.VectorService
-     * @function 
+     * @function
      * @description gets data from backend
-     * @param  {string} layer layername
+     * @param  {string} layer slug of layer
      * @param  {object} geom  geometry that it needs to get (e.g. bboxs)
      * @param  {object} time  start, stop object
-     * @return {promise} 
+     * @return {promise}
      */
-    var getData = function (layer, geomortime, time) {
+    var getData = function (layerSlug, geomortime, time) {
       // if only one extra argument it can be geom or time.
       if (!time && !(geomortime instanceof L.LatLngBounds)) {
-        return filterSet(vectorLayers[layer], undefined, geomortime);
+        return filterSet(vectorLayers[layerSlug], undefined, geomortime);
       }
-      return filterSet(vectorLayers[layer], geomortime, time);
+      return filterSet(vectorLayers[layerSlug], geomortime, time);
     };
 
-    var setData = function (layer, data) {
-      if (vectorLayers.hasOwnProperty(layer)) {
-        vectorLayers[layer].data = data;
+    var setData = function (layerSlug, data) {
+      if (vectorLayers.hasOwnProperty(layerSlug)) {
+        vectorLayers[layerSlug].data = data;
       } else {
-        vectorLayers[layer] = data;
+        vectorLayers[layerSlug] = data;
       }
     };
 
