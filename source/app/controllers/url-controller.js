@@ -49,7 +49,7 @@ app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
       }
     };
 
-    UrlState.setUrlHashWhenEmpty(state, MapService.mapState, $scope.timeState);
+    UrlState.setUrlHashWhenEmpty(state, $scope.box.type, MapService.mapState, $scope.timeState);
 
     /**
      * set layer(s) when these change.
@@ -96,13 +96,22 @@ app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
     });
 
     /**
-     * Set geom when mapState.here changed.
+     * Set geom when mapState.here changed and box.type is point.
      */
     $scope.$watch('mapState.here', function (n, o) {
-      if (n === o) { return true; }
+      if (n === o || $scope.box.type !== 'point') { return true; }
       state.geom.update = false;
       UrlState.setgeomUrl(state, $scope.box.type, $scope.mapState.here, $scope.mapState.points);
     });
+
+    /**
+     * Set geom when mapState.points changed and box.type is line.
+     */
+    $scope.$watch('mapState.points', function (n, o) {
+      if (n === o || $scope.box.type !== 'line') { return true; }
+      state.geom.update = false;
+      UrlState.setgeomUrl(state, $scope.box.type, $scope.mapState.here, $scope.mapState.points);
+    }, true);
 
     /**
      * Listener to update map view when user changes url
@@ -115,7 +124,7 @@ app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
      * resetting the updateUrl back to true
      */
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-      if (UrlState.update()) {
+      if (UrlState.update(state)) {
         var boxType = UrlSyncHelper.getUrlValue(state.boxType.part, state.boxType.index),
         geom = UrlSyncHelper.getUrlValue(state.geom.part, state.geom.index),
         layers = UrlSyncHelper.getUrlValue(state.layers.part, state.layers.index),
@@ -127,7 +136,7 @@ app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
           }
         }
         if (geom) {
-          $scope.mapState = UrlState.setGeom($scope.box.type, geom, MapService.mapState);
+          $scope.mapState = UrlState.parseGeom($scope.box.type, geom, MapService.mapState);
         }
 
         if (layers) {

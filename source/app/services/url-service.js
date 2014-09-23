@@ -26,10 +26,11 @@ app.service('UrlSyncHelper', ['$location', function ($location) {
       */
       getUrlValue: function (part, index) {
         if (!(part === 'path' || part === 'at')) {
-          throw new Error('The provided part is not a supported part of the url');
+          throw new Error(String(part) + ' is not a supported part of the url');
         }
         var pathParts = _getPathParts(part);
-        return pathParts[index];
+        var value = pathParts[index] === '' ? undefined : pathParts[index];
+        return value;
       },
 
      /**
@@ -42,10 +43,10 @@ app.service('UrlSyncHelper', ['$location', function ($location) {
       */
       setUrlValue: function (part, index, value) {
         if (!(part === 'path' || part === 'at')) {
-          throw new Error('The provided part is not a supported part of the url');
+          throw new Error(String(part) + ' is not a supported part of the url');
         }
         if (value && !(typeof(value) === 'string' || typeof(value) === 'number')) {
-          throw new Error('The provided value cannot be set on the url');
+          throw new Error(String(value) + ' cannot be set on the url');
         }
         var halfPath, otherHalf, parts = _getPathParts(part);
         if (value) {
@@ -101,10 +102,13 @@ app.service("UrlState", ["UrlSyncHelper", function (UrlSyncHelper) {
         var pointsStr = '';
         if (type === 'line') {
           angular.forEach(points, function (point) {
+            console.log(point);
             pointsStr += point.lat.toFixed(COORD_PRECISION) + ',' + point.lng.toFixed(COORD_PRECISION) + '-';
           });
+          pointsStr = pointsStr.substring(0, pointsStr.length - 1);
+        } else {
+          pointsStr = here.lat.toFixed(COORD_PRECISION) + ',' + here.lng.toFixed(COORD_PRECISION);
         }
-        pointsStr += here.lat.toFixed(COORD_PRECISION) + ',' + here.lng.toFixed(COORD_PRECISION);
         UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, pointsStr);
       },
       setTimeStateUrl: function (state, start, end) {
@@ -221,12 +225,13 @@ app.service("UrlState", ["UrlSyncHelper", function (UrlSyncHelper) {
           this.setLayersUrl(mapState.layers);
         }
         if (!UrlSyncHelper.getUrlValue(state.mapView.part, state.mapView.index)) {
-          this.setCoordinatesUrl(mapState.center.lat,
+          this.setCoordinatesUrl(state,
+            mapState.center.lat,
             mapState.center.lng,
             mapState.zoom);
         }
         if (!UrlSyncHelper.getUrlValue(state.timeState.part, state.timeState.index)) {
-          this.setTimeStateUrl(timeState.start, timeState.end);
+          this.setTimeStateUrl(state, timeState.start, timeState.end);
         }
       },
       update: function (state) {
