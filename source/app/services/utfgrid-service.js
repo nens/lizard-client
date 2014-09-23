@@ -8,12 +8,12 @@ app.service('UtfGridService', ['$q', '$rootScope', 'MapService',
 
     /**
      * Gets data from utf grid.
-     *  
+     *
      * @param  {object} latlng leaflet object specifying the location
      *                         of a click
-     * @return {promise} $rootScope.defferred.promise Containing a thennable 
+     * @return {promise} $rootScope.defferred.promise Containing a thennable
      *                         promise of an utf data object which is either
-     *                         immediately resolved or resolved when the 
+     *                         immediately resolved or resolved when the
      *                         the grid layer has finished loading
      */
     function getDataFromUTF(latlng) {
@@ -29,17 +29,17 @@ app.service('UtfGridService', ['$q', '$rootScope', 'MapService',
         var response = waterchainLayer._objectForEvent(e);
         // If empty and still loading it might be empty because
         // the grid was there but did not contain the tile containing
-        // this the latlng. 
+        // this the latlng.
         if (response.data === null && waterchainLayer.isLoading) {
           getDataFromUTFAsynchronous(e, deferred);
         } else {
-          // Resolve with response and update pointObject
+          // Resolve with response and update point
           deferred.resolve(response);
         }
       } else if (MapService.mapState.layers.waterchain.active) {
         getDataFromUTFAsynchronous(e, deferred);
       } else {
-        deferred.reject();  
+        deferred.reject();
       }
       return deferred.promise;
     }
@@ -47,14 +47,14 @@ app.service('UtfGridService', ['$q', '$rootScope', 'MapService',
     /**
      * Adds listener to the broadcast from map-directive messaging
      * that the utf grid has finished loading.
-     * 
-     * @param  {object} e containing e.latlng for the 
+     *
+     * @param  {object} e containing e.latlng for the
      *                                  location of the click
      */
     function getDataFromUTFAsynchronous(e, promise) {
       // If there is no grid layer it is probably still being
-      // loaded by the map-directive which will broadcast a 
-      // message when its loaded. 
+      // loaded by the map-directive which will broadcast a
+      // message when its loaded.
       if (on) {
         // cancel it
         on();
@@ -73,11 +73,11 @@ app.service('UtfGridService', ['$q', '$rootScope', 'MapService',
           // properly observed.
           $rootScope.$apply(function () {
             promise.resolve(response);
-          });          
+          });
         } else {
           $rootScope.$apply(function () {
             promise.reject();
-          });  
+          });
         }
 
       });

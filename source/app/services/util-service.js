@@ -1,74 +1,4 @@
 /**
- * @class hashSyncHelper
- * @memberOf app
- *
- * @summary Helper functions for hash sync.
- *
- * @description
- * Provides a setter and getter function to manipulate the url hash to keep the
- * url hash synchronised with the actual application state. That way you can
- * use the url to share application state.
- *
- * **Example:** https://nxt.lizard.net/#location=52.3663,5.1893,13&layers=topography&start=Dec-01-2013&end=Mar-12-2014
- *
- * where:
- *
- * - **location:** spatial extent with comma seperated latlon of centroid and
- * zoomlevel: `location=lat,lon,zoomlevel`.
- * - **layers:** comma seperated list of layer slugs: `layers=slug1,slug2`.
- * - **start:** start of timeline: `start=May-01-2014`.
- * - **end:** end of timeline: `end=Jun-29-2014`.
- */
-app.factory('hashSyncHelper', ['$location', '$parse', '$rootScope',
-  function ($location, $parse, $rootScope) {
-
-    var service = {
-      /**
-       * @function getHash
-       * @memberOf hashSyncHelper
-       *
-       * @summary Reads has fragment from angulars location service and
-       * returns it as key / value object.
-       *
-       * @return {object}
-       */
-      getHash: function () {
-        return parseKeyValue($location.hash());
-      },
-
-      /**
-       * @function setHash
-       * @memberOf hashSyncHelper
-       *
-       * @summary Sets the url hash with a {'key':'val'}.
-       *
-       * @description Loops over the incoming object and fill obj2 with it. Then
-       * extend the original hash object with the new hash object. Finally set
-       * the hash using angular location service.
-       *
-       * @param {object} obj - Object with key
-       * @param {boolean} replaceHistory - Replace history or not.
-       */
-      setHash: function (obj, replaceHistory) {
-        if (!isDefined(replaceHistory)) { replaceHistory = true; }
-        var obj2 = {};
-        var oldhash = this.getHash(); // Copy the current hash
-        angular.forEach(obj, function (v, k) {
-          if (v !== undefined) { obj2[k] = v; }
-        });
-        angular.extend(oldhash, obj2);
-        $location.hash(toKeyValue(oldhash));
-        if (replaceHistory) {
-          $location.replace();
-        }
-      }
-    };
-
-    return service;
-  }]);
-
-
-/**
  * @ngdoc service
  * @class UtilService
  * @name UtilService
@@ -271,19 +201,12 @@ app.service("UtilService", function () {
   /**
    * @function hasMobileDevice
    * @memberOf UtilService
-   *
-   * @summary Create WKT line from two latlon objects.
    */
   this.serveToMobileDevice = function () {
 
     var result = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|windows phone/i.test(
       navigator.userAgent.toLowerCase()
     );
-
-    if (JS_DEBUG) {
-      console.log((result ? '' : 'non-') + "mobile platform detected!");
-    }
-
     return result;
   };
 

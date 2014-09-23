@@ -222,7 +222,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    *
    * @param  {object} layer     nxt defition of a layer
    * @param  {str} slug               short description of layer
-   * @param  {object} agg             extentAggregate object of this
+   * @param  {object} agg             area object of this
    * @param  {object} bounds   mapState.bounds, containing
    * @return {promise}                a promise with aggregated data and
    *                                  the slug
@@ -255,18 +255,18 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    *
    * @returns {boolean}
    */
-  var mustShowRainCard = function (mapState, pointObject) {
+  var mustShowRainCard = function (mapState, point) {
 
     var activeTemporalLayer = mapState.getActiveTemporalLayer();
     var rainIsActive =
-           (pointObject.temporalRaster.type === 'demo:radar'
+           (point.temporalRaster.type === 'demo:radar'
               && activeTemporalLayer
               && activeTemporalLayer.slug === 'demo:radar'
             );
 
     if (rainIsActive) {
 
-      var i, rainData = pointObject.temporalRaster.data;
+      var i, rainData = point.temporalRaster.data;
 
       for (i = 0; i < rainData.length; i++) {
         if (rainData[i][1] !== null) {

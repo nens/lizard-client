@@ -1,34 +1,34 @@
-<div ng-controller="pointObjectCtrl">
+<div ng-controller="PointCtrl">
 
   <!-- details for HYDRO-OBJECT a.k.a. Kunstwerk -->
   <div id="card-kunstwerk"
        class="card active"
-       ng-class="{hidden: !pointObject.attrs.active}">
+       ng-class="{hidden: !point.attrs.active}">
 
     <div class="card-content"
          id="card-content-kunstwerk">
 
       <i id="icon-holder"
-         ng-if="pointObject.attrs.data.entity_name.split('_')[0] === 'bridge'"
+         ng-if="point.attrs.data.entity_name.split('_')[0] === 'bridge'"
          class="icon-bridge-fixed">
       </i>
       <i id="icon-holder"
-         ng-if="pointObject.attrs.data.entity_name.split('_')[0] !== 'bridge'"
-         class="icon-<% pointObject.attrs.data.entity_name.split('_')[0] %>">
+         ng-if="point.attrs.data.entity_name.split('_')[0] !== 'bridge'"
+         class="icon-<% point.attrs.data.entity_name.split('_')[0] %>">
       </i>
 
       <span class="kunstwerk-title">
         <span id="title-holder"
               class="card-title-text kunstwerk-title-text">
-          <% gettext(pointObject.attrs.data.entity_name) %>
+          <% gettext(point.attrs.data.entity_name) %>
         </span>
         &nbsp;
         <span class="kunstwerk-title-suffix">
-          <span ng-if="pointObject.attrs.data.code">(</span>
+          <span ng-if="point.attrs.data.code">(</span>
           <span class="truncateme ng-binding"
-                ng-bind="pointObject.attrs.data.code">
+                ng-bind="point.attrs.data.code">
           </span>
-          <span ng-if="pointObject.attrs.data.code">)</span>
+          <span ng-if="point.attrs.data.code">)</span>
         </span>
       </span>
 
@@ -38,7 +38,7 @@
 
   <div id="card-relatified-events"
        class="card active"
-       ng-class="{hidden: !pointObject.events.data.length > 0}">
+       ng-class="{hidden: !point.events.data.length > 0}">
 
     <div class="card-content"
          id="card-content-relatified-events">
@@ -46,7 +46,7 @@
       <table class="table table-hover table-condensed" >
           <thead>
 
-              <th><i class="fa fa-circle" ng-style="{color: events.types[pointObject.events.activeType]['color'] }"></i></th>
+              <th><i class="fa fa-circle" ng-style="{color: events.types[point.events.activeType]['color'] }"></i></th>
               <th>Totaal</th>
               <th><% filteredRes.length %></th>
           </thead>
@@ -54,7 +54,7 @@
 
         <tbody>
 
-          <tr ng-repeat="event in filteredRes = (pointObject.events.data |
+          <tr ng-repeat="event in filteredRes = (point.events.data |
                          filter:{inTemporalExtent: true} |
                          orderBy:event.timestamp_start |
                          limitTo:5)">
@@ -89,16 +89,16 @@
   <!-- begin: single card -->
   <div id="card-timeseries"
        class="card active"
-       ng-class="{hidden: !pointObject.timeseries.active}">
+       ng-class="{hidden: !point.timeseries.active}">
 
     <div class="card-content" id="card-content-timeseries">
       <select class="timeseries"
-              ng-model="pointObject.timeseries.selectedTimeseries"
-              ng-options="series as series.name for series in pointObject.timeseries.data">
+              ng-model="point.timeseries.selectedTimeseries"
+              ng-options="series as series.name for series in point.timeseries.data">
       </select>
 <!--       <graph line
-             data="pointObject.timeseries.selectedTimeseries.data"
-             ylabel="pointObject.selectedTimeseries.name"
+             data="point.timeseries.selectedTimeseries.data"
+             ylabel="point.selectedTimeseries.name"
              xlabel="n"
              keys="{x: 0, y: 1}">
        </graph> -->
@@ -106,13 +106,13 @@
   </div>
   <!-- end: single card -->
   <div id="card-not-rain"
-       ng-if="!!pointObject.temporalRaster.data && !mustShowRainCard(mapState, pointObject)
-       && pointObject.temporalRaster.active"
+       ng-if="!!point.temporalRaster.data && !mustShowRainCard(mapState, point)
+       && point.temporalRaster.active"
        class="card active">
     <div class="card-content" id="card-content-whatever">
       <graph line
              type="temporal"
-             data="pointObject.temporalRaster.data"
+             data="point.temporalRaster.data"
              ylabel="'hoogte [mNAP]'"
              keys="{x: 0, y: 1}"
              now="timeState.at">
@@ -123,13 +123,13 @@
 
   <div id="card-rain"
        class="card active"
-       ng-if="mustShowRainCard(mapState, pointObject)">
+       ng-if="mustShowRainCard(mapState, point)">
     <div class="card-content" id="card-content-rain">
       <a
         id="export-rain-csv-button"
         href="#"
         title="Data van deze infocard exporteren"
-        ng-csv="formatCSVColumns(pointObject.temporalRaster.data)"
+        ng-csv="formatCSVColumns(point.temporalRaster.data)"
         filename="neerslag.csv"
         csv-header="['Datestamp', 'Timestamp', 'Rain (mm)', 'Latitude', 'Longitude']" >
         <i class="fa fa-share-square-o"></i>
@@ -137,15 +137,15 @@
 
       <graph bar-chart
              class="xyGraph"
-             ng-if="!!pointObject.temporalRaster.data"
-             data="pointObject.temporalRaster.data"
-             ylabel="pointObject.temporalRaster.aggWindow"
+             ng-if="!!point.temporalRaster.data"
+             data="point.temporalRaster.data"
+             ylabel="point.temporalRaster.aggWindow"
              yfilter="aggWinToYLabel"
              keys="{x: 0, y: 1}"
              now="timeState.at">
       </graph>
       <div class="recurrence-time-container"
-           ng-if="!!pointObject.temporalRaster.recurrenceTime">
+           ng-if="!!point.temporalRaster.recurrenceTime">
 
         <table class="table table-hover table-condensed">
           <caption>Herhalingstijden</caption>
@@ -159,7 +159,7 @@
           </thead>
           <tbody>
             <tr class="recurrence_time"
-                ng-repeat="recurTime in pointObject.temporalRaster.recurrenceTime">
+                ng-repeat="recurTime in point.temporalRaster.recurrenceTime">
               <td><% recurTime.start | date : 'dd-MM-yyyy HH:mm' %></td>
               <td><% recurTime.td_window %></td>
               <td class="text-right"><% recurTime.max | number: 1 %></td>

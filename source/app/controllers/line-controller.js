@@ -1,4 +1,4 @@
-app.controller('IntersectCtrl', [
+app.controller('LineCtrl', [
   '$scope',
   'RasterService',
   'ClickFeedbackService',
@@ -7,36 +7,36 @@ app.controller('IntersectCtrl', [
   function ($scope, RasterService, ClickFeedbackService, MapService, UtilService) {
 
     /**
-     * lineIntersect is the object which collects different
-     * sets of line data. If the intersect tool is turned on,
-     * intersect is set to box.type and this controller becomes
+     * line is the object which collects different
+     * sets of line data. If the line tool is turned on,
+     * line is set to box.type and this controller becomes
      * active.
      *
      * Contains data of all active layers with a suitable aggregation_type
      *
      */
-    $scope.lineIntersect = {};
+    $scope.line = {};
 
-    var firstClick, secondClick, updateLineIntersect, putDataOnscope,
-      removeDataFromScope, _updateLineIntersect;
+    var updateLine, putDataOnscope,
+      removeDataFromScope, _updateLine;
 
     /**
-     * Loops over all layers to request intersection data for all
+     * Loops over all layers to request lineion data for all
      * active layers with a raster store path and an appropriate
      * aggregation_type type.
      *
      * @param  {wktstring}   line         str describing the line
      * @param  {object} layers   mapState.layers, containing
      *                                  nxt definition of layers
-     * @param  {object} lineIntersect   lineIntersect object of this
+     * @param  {object} line   line object of this
      *                                  ctrl
      */
-    updateLineIntersect = function (line, layers, lineIntersect) {
+    updateLine = function (line, layers, scopeLine) {
       angular.forEach(layers, function (layer, slug) {
         if (layer.active
           && layer.store_path
           && layer.aggregation_type !== 'counts') {
-          var agg = lineIntersect[slug] || {}, dataProm;
+          var agg = scopeLine[slug] || {}, dataProm;
           if (layer.temporal) {
             dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
           } else {
@@ -44,15 +44,15 @@ app.controller('IntersectCtrl', [
           }
           // Pass the promise to a function that handles the scope.
           putDataOnscope(dataProm, slug);
-        } else if (slug in lineIntersect && !layer.active) {
+        } else if (slug in scopeLine && !layer.active) {
           removeDataFromScope(slug);
         }
       });
     };
 
     /**
-     * Puts dat on lineIntersect when promise resolves or
-     * removes item from lineIntersect when no data is returned.
+     * Puts dat on line when promise resolves or
+     * removes item from line when no data is returned.
      *
      * @param  {promise}  dataProm       a promise with line data
      * @param  {str}      slug           slug name of layer
@@ -60,38 +60,38 @@ app.controller('IntersectCtrl', [
     putDataOnscope = function (dataProm, slug) {
       dataProm.then(function (result) {
         if (result.length > 0) {
-          $scope.lineIntersect[slug] = {};
+          $scope.line[slug] = {};
           // convert degrees result to meters to display properly.
           if ($scope.mapState.layers[slug].temporal) {
-            $scope.lineIntersect[slug].result = UtilService.dataConvertToMeters(result);
-            $scope.lineIntersect[slug].data = UtilService.createDataForTimeState($scope.lineIntersect[slug].result, $scope.timeState);
+            $scope.line[slug].result = UtilService.dataConvertToMeters(result);
+            $scope.line[slug].data = UtilService.createDataForTimeState($scope.line[slug].result, $scope.timeState);
           } else {
-            $scope.lineIntersect[slug].data = UtilService.dataConvertToMeters(result);
+            $scope.line[slug].data = UtilService.dataConvertToMeters(result);
           }
-          $scope.lineIntersect[slug].name = $scope.mapState.layers[slug].name;
-        } else if (slug in $scope.lineIntersect) {
+          $scope.line[slug].name = $scope.mapState.layers[slug].name;
+        } else if (slug in $scope.line) {
           removeDataFromScope(slug);
         }
       });
     };
 
     removeDataFromScope = function (slug) {
-      delete $scope.lineIntersect[slug];
+      delete $scope.line[slug];
     };
 
     /**
-     * calls updateLineIntersect with a wkt representation of
+     * calls updateLine with a wkt representation of
      * input
      *
      * @param {object} firstClick
      * @param {object} secondClick
      */
-    _updateLineIntersect = function (firstClick, secondClick) {
+    _updateLine = function (firstClick, secondClick) {
       var line = UtilService.createLineWKT(firstClick, secondClick);
-      updateLineIntersect(
+      updateLine(
         line,
         $scope.mapState.layers,
-        $scope.lineIntersect
+        $scope.line
       );
     };
 
@@ -108,21 +108,28 @@ app.controller('IntersectCtrl', [
      */
     $scope.$watch('mapState.here', function (n, o) {
       if (n === o) { return true; }
-      if (secondClick) {
-        firstClick = undefined;
-        secondClick = undefined;
+      if ($scope.mapState.points.length === 2) {
+        $scope.mapState.points = [];
         ClickFeedbackService.emptyClickLayer();
         // Empty data element since the line is gone
-        $scope.lineIntersect = {};
+        $scope.line = {};
       } else {
-        if (firstClick) {
-          secondClick = $scope.mapState.here;
-          _updateLineIntersect(firstClick, secondClick);
-          ClickFeedbackService.drawLine(firstClick, secondClick, false);
+        if ($scope.mapState.points.length === 1) {
+          $scope.mapState.points[1] = $scope.mapState.here;
+          _updateLine($scope.mapState.points[0], $scope.mapState.points[1]);
+          ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.points[1], false);
         } else {
-          firstClick = $scope.mapState.here;
-          ClickFeedbackService.drawLine(firstClick, $scope.mapState.userHere);
+          $scope.mapState.points[0] = $scope.mapState.here;
+          ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.userHere);
         }
+      }
+    });
+
+    var watchIfUrlCtrlSetsPoints = $scope.$watch('mapState.points', function (n, o) {
+      if ($scope.mapState.points.length === 2) {
+        _updateLine($scope.mapState.points[0], $scope.mapState.points[1]);
+        ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.points[1]);
+        watchIfUrlCtrlSetsPoints();
       }
     });
 
@@ -131,28 +138,28 @@ app.controller('IntersectCtrl', [
      */
     $scope.$watch('mapState.userHere', function (n, o) {
       if (n === o) { return true; }
-      if (firstClick && !secondClick) {
-        ClickFeedbackService.drawLine(firstClick, $scope.mapState.userHere, true);
+      if ($scope.mapState.points[0] && !$scope.mapState.points[1]) {
+        ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.userHere, true);
       }
     });
 
     /**
-     * Updates lineIntersect data when users changes layers.
+     * Updates line data when users changes layers.
      */
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return true; }
-      if (firstClick && secondClick) {
-        _updateLineIntersect(firstClick, secondClick);
+      if ($scope.mapState.points.length === 2) {
+        _updateLine($scope.mapState.points[0], $scope.mapState.points[1]);
       }
     });
 
     /**
-     * Updates lineIntersect of temporal layers when timeState.at changes.
+     * Updates line of temporal layers when timeState.at changes.
      */
     $scope.$watch('timeState.at', function (n, o) {
-      angular.forEach($scope.lineIntersect, function (intersect, slug) {
+      angular.forEach($scope.line, function (line, slug) {
         if ($scope.mapState.layers[slug].temporal) {
-          intersect.data = UtilService.createDataForTimeState(intersect.result, $scope.timeState);
+          line.data = UtilService.createDataForTimeState(line.result, $scope.timeState);
         }
       });
     });
@@ -163,10 +170,10 @@ app.controller('IntersectCtrl', [
     $scope.$watch('timeState.zoomEnded', function (n, o) {
 
       if (n === o) { return true; }
-      if (firstClick && secondClick) {
-        var line = UtilService.createLineWKT(firstClick, secondClick);
+      if ($scope.mapState.points.length === 2) {
+        var line = UtilService.createLineWKT($scope.mapState.points[0], $scope.mapState.points[1]);
         var dataProm;
-        angular.forEach($scope.lineIntersect, function (intersect, slug) {
+        angular.forEach($scope.line, function (line, slug) {
           if ($scope.mapState.layers[slug].temporal) {
             dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
             // Pass the promise to a function that handles the scope.
@@ -188,10 +195,10 @@ app.controller('IntersectCtrl', [
         // local vars declaration.
         var lat1, lat2, lon1, lon2, maxD, d, r, dLat, dLon, posLat, posLon;
 
-        lat1 = firstClick.lat;
-        lat2 = secondClick.lat;
-        lon1 = firstClick.lng;
-        lon2 = secondClick.lng;
+        lat1 = $scope.mapState.points[0].lat;
+        lat2 = $scope.mapState.points[1].lat;
+        lon1 = $scope.mapState.points[0].lng;
+        lon2 = $scope.mapState.points[1].lng;
         maxD = Math.sqrt(Math.pow((lat2 - lat1), 2) + Math.pow((lon2 - lon1), 2));
         d = UtilService.metersToDegs($scope.box.mouseLoc);
         r = d / maxD;
@@ -224,6 +231,7 @@ app.controller('IntersectCtrl', [
      */
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer();
+      $scope.mapState.points = [];
     });
 
   }

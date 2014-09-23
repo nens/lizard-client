@@ -1,4 +1,4 @@
-describe('Testing ExtentAggregateCtrl', function () {
+describe('Testing AreaCtrl', function () {
   var $scope,
     $rootScope,
     $controller,
@@ -53,7 +53,7 @@ describe('Testing ExtentAggregateCtrl', function () {
     };
 
     createController = function() {
-      $controller('ExtentAggregateCtrl', {
+      $controller('AreaCtrl', {
           '$scope': $scope,
           'RasterService': MockRasterService
       });
@@ -62,15 +62,15 @@ describe('Testing ExtentAggregateCtrl', function () {
 
   }));
 
-  it('should have an empty extentAggregate', function () {
+  it('should have an empty area', function () {
     createController();
-    expect($scope.extentAggregate).toBeDefined();
-    expect($scope.extentAggregate).toEqual({});
+    expect($scope.area).toBeDefined();
+    expect($scope.area).toEqual({});
   });
 
   it('should remove data from scope when layer is inactive', function () {
     createController();
-    $scope.extentAggregate = {
+    $scope.area = {
       landuse: {
         data: [1, 2, 3]
       }
@@ -81,7 +81,7 @@ describe('Testing ExtentAggregateCtrl', function () {
     $scope.mapState.bounds = [2];
     $scope.$digest();
 
-    expect($scope.extentAggregate.landuse).toBeUndefined();
+    expect($scope.area.landuse).toBeUndefined();
   });
 
   it('should add data to scope when layer is active and has an aggregation_type', function () {
@@ -89,7 +89,7 @@ describe('Testing ExtentAggregateCtrl', function () {
     $scope.mapState.layers.landuse.active = true;
     $scope.mapState.activeLayersChanged = false;
     $scope.$digest();
-    expect($scope.extentAggregate.landuse).toBeDefined();
+    expect($scope.area.landuse).toBeDefined();
   });
 
   it('should not add data to scope when layer is active without an aggregation_type', function () {
@@ -97,14 +97,14 @@ describe('Testing ExtentAggregateCtrl', function () {
     $scope.mapState.layers['isahw:BOFEK2012'].active = true;
     $scope.mapState.activeLayersChanged = false;
     $scope.$digest();
-    expect($scope.extentAggregate['isahw:BOFEK2012']).toBeUndefined();
+    expect($scope.area['isahw:BOFEK2012']).toBeUndefined();
   });
 
   it('should not add data to scope when layer is inactive with an aggregation_type', function () {
     createController();
     $scope.mapState.activeLayersChanged = false;
     $scope.$digest();
-    expect($scope.extentAggregate.elevation).toBeUndefined();
+    expect($scope.area.elevation).toBeUndefined();
   });
 
   it('should remove data from scope when layer with an aggregation_type is turned off', function () {
@@ -115,7 +115,7 @@ describe('Testing ExtentAggregateCtrl', function () {
     $scope.mapState.layers.landuse.active = false;
     $scope.mapState.activeLayersChanged = true;
     $scope.$digest();
-    expect($scope.extentAggregate.landuse).toBeUndefined();
+    expect($scope.area.landuse).toBeUndefined();
   });
 
 });
