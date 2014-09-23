@@ -384,7 +384,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return; }
 
-      $scope.pointObject.attrs.active = $scope.mapState.layers.waterchain.active;
+      $scope.pointObject.attrs.active = $scope.mapState.layers.waterchain_grid.active;
       $scope.pointObject.temporalRaster.active = $scope.mapState.layers['demo:radar'].active;
       $scope.pointObject.events.active = $scope.events.data.features.length > 0;
 

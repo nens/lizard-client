@@ -17,7 +17,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
   function ($rootScope, $filter, $http, CabinetService, LeafletService) {
 
       // private vars
-  var _map, createLayer, _initiateTMSLayer, _initiateWMSLayer,
+  var _map, _initiateTMSLayer, _initiateWMSLayer,
       _initiateAssetLayer, _turnOffAllOtherBaselayers, _rescaleElevation,
       _getActiveTemporalLayer, _getLayersByType, _clicked, _updateOverLayers,
       _moveEnded, _moveStarted, _mouseMoved, _dragEnded, _initiateGridLayer,
@@ -25,7 +25,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
       // public vars
       setView, fitBounds, mapState, initiateMapEvents, getLayer, latLngToLayerPoint,
-      newGeoJsonLayer, addLayer, removeLayer, createMap, toggleLayer;
+      newGeoJsonLayer, addLayer, removeLayer, createMap, toggleLayer, createLayer,
+      createLayerGroup, toggleLayerGroup;
 
   /**
    * @function
@@ -69,25 +70,30 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @description Initiates a Leaflet Tilelayer
    */
   _initiateTMSLayer = function (nonLeafLayer) {
-    var slug = nonLeafLayer.slug;
-    var layerGroupUrl = nonLeafLayer.url + '/' + slug + '/{z}/{x}/{y}.{ext}';
+
+    var layerGroupUrl = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
     var layer = LeafletService.tileLayer(
       layerGroupUrl, {
-        name: (nonLeafLayer.baselayer) ? 'Background': nonLeafLayer.slug,
-        slug: slug,
-        minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom: 0,
+        name: (nonLeafLayer.baselayer) ? 'Background' : nonLeafLayer.slug,
+        slug: nonLeafLayer.slug,
+        minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom : 0,
         maxZoom: 19,
         detectRetina: true,
         zIndex: nonLeafLayer.z_index,
         ext: 'png'
       });
+
     // THIS CAN NO LONGER HAPPEN:
     // if (!nonLeafLayer.baselayer && nonLeafLayer.type === 'ASSET') {
     //   layer._url = layerGroupUrl;
     //   layer.options.ext = 'png';
     // }
+
     nonLeafLayer.leafletLayer = layer;
     nonLeafLayer.initiated = true;
+
+    // console.log('[2] nonLeafLayer.leafletLayer =', nonLeafLayer.leafletLayer, '(instanceof L.Class: ' +
+    //   (nonLeafLayer.leafletLayer instanceof L.Class) + ')');
   };
 
   /**
@@ -133,7 +139,12 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @description Initiates layers that deliver interaction with the map
    */
   _initiateGridLayer = function (nonLeafLayer) {
-    var layer = new L.UtfGrid(nonLeafLayer.url, {
+
+    console.log('[F] _initiateGridLayer, arg \'nonLeafLayer\' =', nonLeafLayer);
+
+    var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
+
+    var layer = new L.UtfGrid(url, {
       ext: 'grid',
       slug: nonLeafLayer.slug,
       name: nonLeafLayer.slug,
@@ -154,106 +165,51 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @param  {object} nonLeafLayer object from database
    * @description Throw in a layer as served from the backend
    */
-  // createLayer = function (nonLeafLayer) {
-
-  //   console.log('nonLeafLayer:', nonLeafLayer);
-
-  //   // temporal layers should not be added to the map.
-  //   if (nonLeafLayer.temporal) { return; }
-
-  //   switch (nonLeafLayer.type) {
-  //   case ('TMS'):
-  //     //_initiateTMSLayer(nonLeafLayer);
-  //     break;
-  //   case ('WMS'):
-  //     //_initiateWMSLayer(nonLeafLayer);
-  //     break;
-  //   case ('ASSET'):
-  //     // _initiateGridLayer(nonLeafLayer);
-  //     // _initiateTMSLayer(nonLeafLayer);
-  //     break;
-  //   case ('Vector'):
-  //     break;
-  //   default:
-  //     _initiateTMSLayer(nonLeafLayer);
-  //     break;
-  //   }
-  // };
 
   createLayer = function (layerGroup) {
 
-    var nonLeafLayer, subLayer;
+    //console.log('layerGroup =', layerGroup);
 
-    if (layerGroup.layers.length === 1) {
+    var i, subLayer;
 
-      // Encountered: layergroup with only a single layer; we call the
-      // initiateXXXLayer after modifying it's argument 'layerGroup'.
+    for (i = 0; i < layerGroup.layers.length; i++) {
 
-      nonLeafLayer = layerGroup;
+      subLayer = layerGroup.layers[i];
 
-      nonLeafLayer.temporal = layerGroup.layers[0].temporal;
-      nonLeafLayer.type     = layerGroup.layers[0].type;
-      nonLeafLayer.slug     = layerGroup.layers[0].slug;
-      nonLeafLayer.url      = layerGroup.layers[0].url;
-      nonLeafLayer.z_index  = layerGroup.layers[0].z_index;
+      if (subLayer.temporal) { continue; }
 
-      if (nonLeafLayer.temporal) { return; }
+      subLayer.baselayer = layerGroup.baselayer;
+      subLayer.overlayer = layerGroup.overlayer;
+      subLayer.active    = layerGroup.active;
+      subLayer.name      = layerGroup.name;
+      subLayer.order     = layerGroup.order;
+      subLayer.id        = layerGroup.id;
 
-      switch (nonLeafLayer.type) {
+      switch (subLayer.type) {
 
-        case ('Vector'):
+        case 'Vector':
           break;
 
-        case ('TMS'):
-          _initiateTMSLayer(nonLeafLayer);
+        case 'TMS':
+          _initiateTMSLayer(subLayer);
           break;
 
-        case ('WMS'):
-          _initiateWMSLayer(nonLeafLayer);
+        case 'WMS':
+          _initiateWMSLayer(subLayer);
           break;
 
-        // ============== OLD STYLE =============
-        //case ('ASSET'):
-        //   _initiateGridLayer(nonLeafLayer);
-        //   _initiateTMSLayer(nonLeafLayer);
-        //   break;
+        case 'UTFGrid':
+          _initiateGridLayer(subLayer);
+          break;
 
         default:
           console.log('[E] This should never happen/print...');
-          // _initiateTMSLayer(nonLeafLayer);
           break;
       }
-
-    } else {
-
-      // Encountered: a composed layergroup with 1+ layers
-      //console.log('[!] Encountered composed layerGroup (i.e: \'waterchain\'):', layerGroup);
-
-      for (var i in layerGroup.layers) {
-
-        subLayer = layerGroup.layers[i];
-
-        switch (subLayer.type) {
-
-          case 'Vector':
-            break;
-
-          case 'TMS':
-            _initiateTMSLayer(subLayer);
-            break;
-
-          case 'UTFGrid':
-            _initiateGridLayer(subLayer);
-            break;
-
-          default:
-            console.log('[E] This should never happen/print...');
-            break;
-        }
-      }
     }
-  };
 
+    layerGroup.initiated = true;
+  };
 
 
 
@@ -290,11 +246,13 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @param  {string} id     id for layer.
    * @param  {object} layers
    */
-  _turnOffAllOtherBaselayers = function (id, layers) {
-    angular.forEach(layers, function (i) {
-      if (i.baselayer && i.id !== id && i.active) {
-        i.active = false;
-        removeLayer(i.leafletLayer);
+  _turnOffAllOtherBaselayers = function (id, layerGroups) {
+    angular.forEach(layerGroups, function (layerGroup) {
+      if (layerGroup.baselayer && layerGroup.id !== id && layerGroup.active) {
+        layerGroup.active = false;
+        angular.forEach(layerGroup.layers, function (layer) {
+          removeLayer(layer.leafletLayer);
+        });
       }
     });
   };
@@ -351,46 +309,91 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @param  {object} layer  single layer that needs to be toggled
    * @param  {object} layers all layers to switch off.
    */
-  toggleLayer = function (layer, layers) {
+  toggleLayer = function (layerGroup, layers) {
     // if (!layer.initiated) { return; }
-    if (layer.baselayer) {
-      _turnOffAllOtherBaselayers(layer.id, layers);
-      if (!layer.active) { layer.active = true; }
-      else if (layer.slug === 'elevation' && layer.active) {
+    if (layerGroup.baselayer) {
+      _turnOffAllOtherBaselayers(layerGroup.id, layers);
+      if (!layerGroup.active) {
+        layerGroup.active = true;
+      } else if (layerGroup.slug === 'elevation' && layerGroup.active) {
         _rescaleElevation();
       }
     } else {
-      layer.active = !layer.active;
+      layerGroup.active = !layerGroup.active;
     }
 
-    if (layer.active) {
-      addLayer(layer.leafletLayer);
-      if (layer.grid_layer) {
-        layer.leafletLayer.on('load', function () {
-          addLayer(layer.grid_layer);
+    if (layerGroup.active) {
 
-          layer.grid_layer.on('load', function () {
-            // Broadcast a load finished message to a.o. aggregate-directive
-            $rootScope.$broadcast(layer.slug + 'GridLoaded');
-          });
-        });
-        layer.leafletLayer.on('loading', function () {
-          // Temporarily remove all utfLayers for performance
-          removeLayer(layer.grid_layer);
-        });
+      for (var i = 0; i < layerGroup.layers.length; i++) {
+
+        var subLayer = layerGroup.layers[i];
+
+        switch (subLayer.type) {
+
+          case 'UTFGrid':
+            addLayer(subLayer.grid_layer);
+            break;
+
+          case 'TMS':
+            addLayer(subLayer.leafletLayer);
+            break;
+
+          case 'WMS':
+            addLayer(subLayer.leafletLayer);
+            break;
+
+          case 'Vector':
+            break;
+
+          default:
+            console.log('[E] This should never prindtdt');
+            break;
+
+        }
+
+        // addLayer(subLayer.leafletLayer);
+
+        // if (subLayer.grid_layer) {
+
+        //   subLayer.leafletLayer.on('load', function () {
+        //     addLayer(subLayer.grid_layer);
+        //     subLayer.grid_layer.on('load', function () {
+        //       $rootScope.$broadcast(layerGroup.slug + 'GridLoaded');
+        //     });
+        //   });
+
+        //   subLayer.leafletLayer.on('loading', function () {
+        //     removeLayer(subLayer.grid_layer);
+        //   });
+        // }
       }
+
     } else {
-      removeLayer(layer.leafletLayer);
-      if (layer.grid_layer) {
-        removeLayer(layer.grid_layer);
+
+      console.log('About to rm...');
+
+      for (var j = 0; j < layerGroup.layers.length; j++) {
+
+        var subLayer2 = layerGroup.layers[j];
+
+        removeLayer(subLayer2.leafletLayer);
+        if (subLayer2.grid_layer) {
+          removeLayer(subLayer2.grid_layer);
+        }
+
       }
+
+      // removeLayer(layerGroup.leafletLayer);
+      // if (layerGroup.grid_layer) {
+      //   removeLayer(layerGroup.grid_layer);
+      // }
     }
 
-
-    if (layer.overlayer) {
+    if (layerGroup.overlayer) {
       _updateOverLayers(layers);
     }
   };
+
 
   /**
    * @function
@@ -517,7 +520,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
     default:
       console.log('EXCEPTION-esque: tried to call getLayersByType() ' +
-                  'with unknown arggument "' + layerType + '"');
+                  'with unknown argument "' + layerType + '"');
     }
 
     return result;
@@ -640,10 +643,12 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     isMapDefined: isMapDefined,
     createMap: createMap,
     createLayer: createLayer,
+    createLayerGroup: createLayerGroup,
     addLayer: addLayer,
     removeLayer: removeLayer,
     getLayer: getLayer,
     toggleLayer: toggleLayer,
+    toggleLayerGroup: toggleLayerGroup,
     newGeoJsonLayer: newGeoJsonLayer,
     latLngToLayerPoint: latLngToLayerPoint,
     setView: setView,

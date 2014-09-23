@@ -55,9 +55,6 @@ app.directive("layerChooser", ['LeafletService', function (LeafletService) {
         } else {
 
           layerUrl = firstLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
-          // console.log('layerUrl:', layerUrl);
-          //layerUrl += layer.type === 'TMS' ? '.png' : '';
-
           layerLeafletLayer = LeafletService.tileLayer(layerUrl, {
             ext: 'png',
             slug: firstLayer.slug,
@@ -68,11 +65,10 @@ app.directive("layerChooser", ['LeafletService', function (LeafletService) {
             id: layerGroup.id
           });
         }
-
         layerMap.addLayer(layerLeafletLayer);
       }
     } else {
-      console.log("Encountered a composed layerGroup (i.e: layerGroup.layers.len > 1)");
+      console.log("Encountered a composed layerGroup (i.e: layerGroup.layers.len > 1), This layerGroup will not have a thumbnail added to the menu (for now...)");
       return;
     }
 

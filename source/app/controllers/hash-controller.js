@@ -155,6 +155,7 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
      * resetting the updateUrl back to true
      */
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
+
       var hash, locationHash, layersHash, startHash, endHash;
       hash = hashSyncHelper.getHash();
       if (updateLocationUrl
@@ -197,17 +198,21 @@ app.controller('hashGetterSetter', ['$scope', 'hashSyncHelper', 'MapService',
           }
         }
         if ($scope.mapState.layersNeedLoading) {
-          // Initialise layers
-          angular.forEach(MapService.mapState.layers, function (layer) {
-            MapService.mapState.activeLayersChanged = Date.now();
-            layer.aggregation_type = layer.layers[0].aggregation_type;
-            if (!layer.initiated) {
-              MapService.createLayer(layer);
-            }
 
-            if (layer.active && layer.initiated) {
-              layer.active = false;
-              MapService.toggleLayer(layer, MapService.mapState.layers);
+          // Initialise layers
+          angular.forEach(MapService.mapState.layers, function (layerGroup) {
+
+            MapService.mapState.activeLayersChanged = Date.now();
+            layerGroup.aggregation_type = layerGroup.layers[0].aggregation_type;
+            if (!layerGroup.initiated) {
+
+              /* OLD: */ MapService.createLayer(layerGroup);
+              /* NEW: */// MapService.createLayerGroup(layerGroup);
+
+              if (layerGroup.active && layerGroup.initiated) {
+                layerGroup.active = false;
+                MapService.toggleLayer(layerGroup, MapService.mapState.layers);
+              }
             }
           });
           $scope.mapState.layersNeedLoading = false;
