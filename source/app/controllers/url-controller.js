@@ -11,8 +11,8 @@
  * changes to url. At initial load of app, url leads. Afterwards the
  * state leads the url.
  */
-app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
-  'UrlState', function ($scope, UrlSyncHelper, MapService, UrlState) {
+app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
+  'UrlState', function ($scope, LocationGetterSetter, MapService, UrlState) {
 
     // Configuration object for url state.
     var state = {
@@ -87,11 +87,11 @@ app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
     $scope.$watch('box.type', function (n, old) {
       if (n === old) { return true; }
       state.boxType.update = false;
-      UrlSyncHelper.setUrlValue(state.boxType.part, state.boxType.index, $scope.box.type);
+      LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, $scope.box.type);
       if (old === 'point' || old === 'line') {
         // Remove geometry from url
         state.boxType.update = false;
-        UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, undefined);
+        LocationGetterSetter.setUrlValue(state.geom.part, state.geom.index, undefined);
       }
     });
 
@@ -113,6 +113,52 @@ app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
       UrlState.setgeomUrl(state, $scope.box.type, $scope.mapState.here, $scope.mapState.points);
     }, true);
 
+
+
+   /**
+    * @function
+    * @memberOf app.UrlController
+    * @summary Enables or disables layers on the basis of the url.
+    * @description Takes the layers as defined in the url to turn layers on
+    *              afterwards it initializes all other layers. This is done
+    *              here so MapService does not turn on layers which are
+    *              turned of later by this controller.
+    * @param {string} String representation of layers on url
+    */
+    var enableLayers = function (layers) {
+      if (layers) {
+        var activeSlugs = layers.split(','),
+            allSlugs = Object.keys($scope.mapState.layers),
+            i,
+            active;
+
+        for (i = 0; i < allSlugs.length; i++) {
+          // check if hash contains layers otherwise set to inactive;
+          active = (activeSlugs.indexOf(allSlugs[i]) >= 0);
+          if ((active && !$scope.mapState.layers[allSlugs[i]].active)
+            || (!active && $scope.mapState.layers[allSlugs[i]].active)) {
+            $scope.mapState.changeLayer($scope.mapState.layers[allSlugs[i]]);
+            MapService.mapState.activeLayersChanged = Date.now();
+          }
+        }
+      }
+      if ($scope.mapState.layersNeedLoading) {
+        // Initialise layers
+        angular.forEach(MapService.mapState.layers, function (layer) {
+          MapService.mapState.activeLayersChanged = Date.now();
+          if (!layer.initiated) {
+            MapService.createLayer(layer);
+          }
+
+          if (layer.active && layer.initiated) {
+            layer.active = false;
+            MapService.toggleLayer(layer, MapService.mapState.layers);
+          }
+        });
+        $scope.mapState.layersNeedLoading = false;
+      }
+    };
+
     /**
      * Listener to update map view when user changes url
      *
@@ -125,11 +171,11 @@ app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
      */
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
       if (UrlState.update(state)) {
-        var boxType = UrlSyncHelper.getUrlValue(state.boxType.part, state.boxType.index),
-        geom = UrlSyncHelper.getUrlValue(state.geom.part, state.geom.index),
-        layers = UrlSyncHelper.getUrlValue(state.layers.part, state.layers.index),
-        mapView = UrlSyncHelper.getUrlValue(state.mapView.part, state.mapView.index),
-        time = UrlSyncHelper.getUrlValue(state.timeState.part, state.timeState.index);
+        var boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
+        geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
+        layers = LocationGetterSetter.getUrlValue(state.layers.part, state.layers.index),
+        mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
+        time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index);
         if (boxType) {
           if (geom) { // Setting the box to anything but default requires geometry on url.
             $scope.box.type = boxType;
@@ -139,37 +185,7 @@ app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
           $scope.mapState = UrlState.parseGeom($scope.box.type, geom, MapService.mapState);
         }
 
-        if (layers) {
-          var activeSlugs = layers.split(','),
-              allSlugs = Object.keys($scope.mapState.layers),
-              i,
-              active;
-
-          for (i = 0; i < allSlugs.length; i++) {
-            // check if hash contains layers otherwise set to inactive;
-            active = (activeSlugs.indexOf(allSlugs[i]) >= 0);
-            if ((active && !$scope.mapState.layers[allSlugs[i]].active)
-              || (!active && $scope.mapState.layers[allSlugs[i]].active)) {
-              $scope.mapState.changeLayer($scope.mapState.layers[allSlugs[i]]);
-              MapService.mapState.activeLayersChanged = Date.now();
-            }
-          }
-        }
-        if ($scope.mapState.layersNeedLoading) {
-          // Initialise layers
-          angular.forEach(MapService.mapState.layers, function (layer) {
-            MapService.mapState.activeLayersChanged = Date.now();
-            if (!layer.initiated) {
-              MapService.createLayer(layer);
-            }
-
-            if (layer.active && layer.initiated) {
-              layer.active = false;
-              MapService.toggleLayer(layer, MapService.mapState.layers);
-            }
-          });
-          $scope.mapState.layersNeedLoading = false;
-        }
+        enableLayers(layers);
 
         if (mapView) {
           var view = UrlState.parseMapView(mapView);

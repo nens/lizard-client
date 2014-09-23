@@ -1,6 +1,6 @@
 
 /**
- * @class hashSyncHelper
+ * @class LocationGetterSetter
  * @memberOf app
  *
  * @summary Lower level service to set $location.
@@ -10,7 +10,7 @@
  * keep the url synchronised with the actual application state. That way
  * you can use the url to share application state.
  */
-app.service('UrlSyncHelper', ['$location', function ($location) {
+app.service('LocationGetterSetter', ['$location', function ($location) {
 
     var _getPath, _getPathParts,
 
@@ -18,8 +18,8 @@ app.service('UrlSyncHelper', ['$location', function ($location) {
 
      /**
       * @function
-      * @memberOf app.UrlSyncHelper
-      * @description returns the value in the path of url at the
+      * @memberOf app.LocationGetterSetter
+      * @description returns the value in the path of url at the specified part
       * @param {str} part, part url looking for currently <path | @>
       * @param {str} index location in the part
       * @return {str} value
@@ -35,11 +35,11 @@ app.service('UrlSyncHelper', ['$location', function ($location) {
 
      /**
       * @function
-      * @memberOf app.UrlSyncHelper
-      * @description returns the value in the path of url at the
+      * @memberOf app.LocationGetterSetter
+      * @description sets the value in the path of url at the specified part
       * @param {str} part, part url looking for currently <path | @>
       * @param {str} index location in the part
-      * @return {str} value
+      * @param {str} value
       */
       setUrlValue: function (part, index, value) {
         if (!(part === 'path' || part === 'at')) {
@@ -49,22 +49,29 @@ app.service('UrlSyncHelper', ['$location', function ($location) {
           throw new Error(String(value) + ' cannot be set on the url');
         }
         var halfPath, otherHalf, parts = _getPathParts(part);
-        if (value) {
-          parts[index] = value; //replace
+        if (!value && parts.length - 1 === index) {
+          parts.splice(index, 1); // remove if no value and index is last one.
         } else {
-          parts.splice(index, 1); // remove
+          parts[index] = value; //replace
         }
         halfPath = parts.join('/');
         if (part === 'path') {
           otherHalf = _getPath('at') ? '@' + _getPath('at') : '';
-          $location.path(halfPath + otherHalf);
+          $location.path('/' + halfPath + otherHalf);
         } else {
-          otherHalf = _getPath('path') ? _getPath('path') + '@' : '';
-          $location.path(otherHalf + halfPath);
+          otherHalf = _getPath('path') ? _getPath('path') + '@' : '@';
+          $location.path('/' + otherHalf + halfPath);
         }
       }
     };
 
+   /**
+    * @function
+    * @memberOf app.LocationGetterSetter
+    * @description returns the part of the path without first slash.
+    * @param {str} part, part url looking for currently <path | @>
+    * @return {str} the part the path.
+    */
     _getPath = function (part) {
       var paths, pathPart,
       path = $location.path();
@@ -75,6 +82,13 @@ app.service('UrlSyncHelper', ['$location', function ($location) {
       return pathPart;
     };
 
+   /**
+    * @function
+    * @memberOf app.LocationGetterSetter
+    * @description splits the part of the path further in individual values.
+    * @param {str} part of the path without first slash.
+    * @return {array} the values in the part of the path.
+    */
     _getPathParts = function (part) {
       var pathPart = _getPath(part);
       if (!pathPart || pathPart === '') { return []; }
@@ -92,25 +106,44 @@ app.service('UrlSyncHelper', ['$location', function ($location) {
  * @name UrlState
  * @description Higher level functions to parse and set URL.
  */
-app.service("UrlState", ["UrlSyncHelper", function (UrlSyncHelper) {
+app.service("UrlState", ["LocationGetterSetter", function (LocationGetterSetter) {
 
     // Amount of decimals of coordinates stored in url.
     var COORD_PRECISION = 4;
 
     var service = {
+
+     /**
+      * @function
+      * @memberOf app.UrlState
+      * @description Sets the points or the here on the url when
+      *              respectively point or line is specified as type.
+      * @param {object} state config object
+      * @param {str} type box.type
+      * @param {object} here leaflet LatLng object
+      * @param {array} points array of leaflet LatLng objects
+      */
       setgeomUrl: function (state, type, here, points) {
         var pointsStr = '';
         if (type === 'line') {
           angular.forEach(points, function (point) {
-            console.log(point);
             pointsStr += point.lat.toFixed(COORD_PRECISION) + ',' + point.lng.toFixed(COORD_PRECISION) + '-';
           });
           pointsStr = pointsStr.substring(0, pointsStr.length - 1);
         } else {
           pointsStr = here.lat.toFixed(COORD_PRECISION) + ',' + here.lng.toFixed(COORD_PRECISION);
         }
-        UrlSyncHelper.setUrlValue(state.geom.part, state.geom.index, pointsStr);
+        LocationGetterSetter.setUrlValue(state.geom.part, state.geom.index, pointsStr);
       },
+
+     /**
+      * @function
+      * @memberOf app.UrlState
+      * @description Sets the start and end epoch ms on the url
+      * @param {object} state config object
+      * @param {int} start time in ms
+      * @param {int} end time in ms
+      */
       setTimeStateUrl: function (state, start, end) {
         var startDate = new Date(start);
         var endDate = new Date(end);
@@ -122,11 +155,21 @@ app.service("UrlState", ["UrlSyncHelper", function (UrlSyncHelper) {
           .slice(4) // Cut off day name
           .split(' ') // Replace spaces by hyphens
           .join(',');
-        UrlSyncHelper.setUrlValue(
+        LocationGetterSetter.setUrlValue(
           state.timeState.part,
           state.timeState.index,
           startDateString + '-' + endDateString);
       },
+
+     /**
+      * @function
+      * @memberOf app.UrlState
+      * @description Sets the mapView coordinates on the url.
+      * @param {object} state config object
+      * @param {object} lat leaflet Latitude object
+      * @param {object} lng leaflet Lng object
+      * @param {int} zoom level
+      */
       setCoordinatesUrl: function (state, lat, lng, zoom) {
         var COORD_PRECISION = 4;
         var newHash = [
@@ -134,11 +177,19 @@ app.service("UrlState", ["UrlSyncHelper", function (UrlSyncHelper) {
           lng.toFixed(COORD_PRECISION),
           zoom
         ].join(',');
-        UrlSyncHelper.setUrlValue(
+        LocationGetterSetter.setUrlValue(
           state.mapView.part,
           state.mapView.index,
           newHash);
       },
+
+      /**
+       * @function
+       * @memberOf app.UrlState
+       * @description Sets the layer slugs on the url.
+       * @param {object} state config object
+       * @param {object} layers mapState.layer
+       */
       setLayersUrl: function (state, layers) {
         if (layers === undefined) { return; }
         var slugs = Object.keys(layers),
@@ -149,11 +200,19 @@ app.service("UrlState", ["UrlSyncHelper", function (UrlSyncHelper) {
             activeSlugs.push(slugs[i]);
           }
         }
-        UrlSyncHelper.setUrlValue(
+        LocationGetterSetter.setUrlValue(
           state.layers.part,
           state.layers.index,
           activeSlugs.toString());
       },
+      /**
+       * @function
+       * @memberOf app.UrlState
+       * @description Sets the layer slugs on the url.
+       * @param  {str} time time value of the url
+       * @param  {object} timeState nxt timeState
+       * @return {object} nxt timeState
+       */
       parseTimeState: function (time, timeState) {
         // Browser independent
         var times = time.replace(/,/g, '/').split('-');
@@ -174,6 +233,15 @@ app.service("UrlState", ["UrlSyncHelper", function (UrlSyncHelper) {
         timeState.changedZoom = Date.now();
         return timeState;
       },
+      /**
+       * @function
+       * @memberOf app.UrlState
+       * @description returns the mapview value parsed to
+       *              latlonzoom
+       * @param  {str} mapView
+       * @return {object_or_false} Lat lon zoom object or false
+       *                               when not valid.
+       */
       parseMapView: function (mapView) {
         var latlonzoom = mapView.split(',');
         if (latlonzoom.length === 3
@@ -181,8 +249,8 @@ app.service("UrlState", ["UrlSyncHelper", function (UrlSyncHelper) {
           && parseFloat(latlonzoom[1])
           && parseFloat(latlonzoom[2])) {
           return {
-            latLng: [latlonzoom[0], latlonzoom[1]],
-            zoom: latlonzoom[2],
+            latLng: [parseFloat(latlonzoom[0]), parseFloat(latlonzoom[1])],
+            zoom: parseFloat(latlonzoom[2]),
             options: {reset: true, animate: true}
           };
         } else {
@@ -209,28 +277,28 @@ app.service("UrlState", ["UrlSyncHelper", function (UrlSyncHelper) {
         return mapState;
       },
       setUrlHashWhenEmpty: function (state, type, mapState, timeState) {
-        if (!UrlSyncHelper.getUrlValue(state.context.part, state.context.index)) {
-          UrlSyncHelper.setUrlValue(
+        if (!LocationGetterSetter.getUrlValue(state.context.part, state.context.index)) {
+          LocationGetterSetter.setUrlValue(
             state.context.part,
             state.context.index,
             state.context.value);
         }
-        if (!UrlSyncHelper.getUrlValue(state.boxType.part, state.boxType.index)) {
-          UrlSyncHelper.setUrlValue(
+        if (!LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index)) {
+          LocationGetterSetter.setUrlValue(
             state.boxType.part,
             state.boxType.index,
             type);
         }
-        if (!UrlSyncHelper.getUrlValue(state.layers.part, state.layers.index)) {
+        if (!LocationGetterSetter.getUrlValue(state.layers.part, state.layers.index)) {
           this.setLayersUrl(mapState.layers);
         }
-        if (!UrlSyncHelper.getUrlValue(state.mapView.part, state.mapView.index)) {
+        if (!LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index)) {
           this.setCoordinatesUrl(state,
             mapState.center.lat,
             mapState.center.lng,
             mapState.zoom);
         }
-        if (!UrlSyncHelper.getUrlValue(state.timeState.part, state.timeState.index)) {
+        if (!LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index)) {
           this.setTimeStateUrl(state, timeState.start, timeState.end);
         }
       },

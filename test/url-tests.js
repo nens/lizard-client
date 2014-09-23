@@ -1,5 +1,5 @@
 
-describe('Testing UrlSyncHelper', function () {
+describe('Testing LocationGetterSetter', function () {
   var $location,
     service;
 
@@ -7,7 +7,7 @@ describe('Testing UrlSyncHelper', function () {
 
   beforeEach(inject(function ($injector) {
     $location = $injector.get('$location');
-    service = $injector.get('UrlSyncHelper');
+    service = $injector.get('LocationGetterSetter');
   }));
 
   it('should return the relevant part of the path', function () {
@@ -32,7 +32,7 @@ describe('Testing UrlSyncHelper', function () {
 
   it('should set values on the relevant part of the url', function () {
     $location.path('/first/second@1234,5678/november-18');
-    var value= 3;
+    var value = 3;
     service.setUrlValue('path', 1, value);
     expect(service.getUrlValue('path', 1)).toBe(String(value));
     service.setUrlValue('at', 3, value);
@@ -41,142 +41,238 @@ describe('Testing UrlSyncHelper', function () {
 
   it('should return undefined between set and non-set indexes', function () {
     $location.path('/first/second@1234,5678/november-18');
-    var value= 3;
+    var value = 3;
     service.setUrlValue('path', 3, value);
     expect(service.getUrlValue('path', 2)).toBeUndefined();
+  });
+
+  it('should set empty values on the url when provided undefined', function () {
+    $location.path('/first/second@1234,5678/november-18');
+    var value = undefined;
+    service.setUrlValue('path', 0, value);
+    expect($location.path()).toEqual('//second@1234,5678/november-18');
+    service.setUrlValue('at', 1, value);
+    expect($location.path()).toEqual('//second@1234,5678');
   });
 
 });
 
 
-// // hash-ctrl-tests.js
+describe('Testing UrlState', function () {
+  var $location,
+    service;
 
-// describe('Testing hash controller', function () {
-//   var $scope,
-//     $location,
-//     $rootScope,
-//     $controller,
-//     $browser,
-//     createController,
-//     hashSyncHelper;
+  var state = {
+    layers: {
+      part: 'path',
+      index: 1,
+      update: true
+    },
+    boxType: {
+      part: 'path',
+      index: 2,
+      update: true
+    },
+    geom: {
+      part: 'path',
+      index: 3,
+      update: true
+    },
+    mapView: {
+      part: 'at',
+      index: 0,
+      update: true
+    },
+    timeState: {
+      part: 'at',
+      index: 1,
+      update: true
+    }
+  };
 
-//   beforeEach(module('lizard-nxt'));
+  beforeEach(module('lizard-nxt'));
 
-//   beforeEach(inject(function ($injector) {
-//     $location = $injector.get('$location');
-//     $rootScope = $injector.get('$rootScope');
-//     $controller = $injector.get('$controller');
-//     $browser = $injector.get('$browser');
-//     $scope = $rootScope.$new();
-//     hashSyncHelper = $injector.get('hashSyncHelper');
+  beforeEach(inject(function ($injector) {
+    $location = $injector.get('$location');
+    service = $injector.get('UrlState');
+  }));
 
-//     // Mock MapService
-//     var mockMapService = {
-//         mapState: {
-//         center: {
-//             lat: 51.12345,
-//             lng: 6.12
-//           },
-//         activeLayersChanged: false,
-//         layers: {
-//           'testlayer': {
-//             active: true
-//           }
-//         },
-//       };
-//     }
+  it('should set the geom on the url', function () {
+    var here = {
+      lat: {
+        toFixed: function () { return 51.7; }
+      },
+      lng: {
+        toFixed: function () { return 6.2; }
+      }
+    };
+    service.setgeomUrl(state, 'point', here);
+    expect($location.path()).toEqual('////51.7,6.2');
+  });
 
-//     // Mock the mapState
-//     $scope.mapState = {
-//       center: {
-//           lat: 51.12345,
-//           lng: 6.12
-//         },
-//       activeLayersChanged: false,
-//       layers: {
-//         'testlayer': {
-//           active: true
-//         },
-//         'testlayer2': {
-//           active: false
-//         }
-//       },
-//       changeLayer: function (layer) {
-//         layer.active = !layer.active;
-//       }
-//     };
+  it('should set an array of points on the url', function () {
+    var here = {
+      lat: {
+        toFixed: function () { return 51.7; }
+      },
+      lng: {
+        toFixed: function () { return 6.2; }
+      }
+    };
+    var points = [here, here, here];
+    service.setgeomUrl(state, 'line', here, points);
+    expect($location.path()).toEqual('////51.7,6.2-51.7,6.2-51.7,6.2');
+  });
 
-//     // Mock initial time
-//     $scope.timeState = {start: 10};
+  it('should set an array of points on the url', function () {
+    var here = {
+      lat: {
+        toFixed: function () { return 51.7; }
+      },
+      lng: {
+        toFixed: function () { return 6.2; }
+      }
+    };
+    var points = [here, here, here];
+    service.setgeomUrl(state, 'line', here, points);
+    expect($location.path()).toEqual('////51.7,6.2-51.7,6.2-51.7,6.2');
+  });
 
-//     createController = function() {
-//       return $controller('hashGetterSetter', {
-//           '$scope': $scope,
-//           'hashSyncHelper': hashSyncHelper,
-//           'MapService': mockMapService
-//       });
-//     };
-//   }));
+  it('should set timeState on the url', function () {
+    var start = 1234;
+    var end = 5678000000;
+    service.setTimeStateUrl(state, start, end);
+    expect($location.path()).toEqual('/@/Jan,01,1970-Mar,07,1970');
+  });
 
-//   it('should should set location on hash at creation', function () {
-//     var controller = createController();
-//     var location = hashSyncHelper.getHash().location;
-//     expect(location).toBe('51.1234,6.1200,10');
-//   });
+  it('should set layers on the url', function () {
+    var layers = {topo: {active: true}, satte: {active: true}};
+    service.setLayersUrl(state, layers);
+    expect($location.path()).toEqual('//topo,satte');
+  });
 
-//   it('should should set layers on hash at creation', function () {
-//     var controller = createController();
-//     var layerHash = hashSyncHelper.getHash().layers;
-//     expect(layerHash).toBe('testlayer');
-//   });
+  it('should parse mapview', function () {
+    var mapView = '52.1263,5.3100,8';
+    var latLonZoom = service.parseMapView(mapView);
+    expect(latLonZoom.latLng[0]).toEqual(52.1263);
+    expect(latLonZoom.latLng[1]).toEqual(5.3100);
+    expect(latLonZoom.zoom).toEqual(8);
+    expect(latLonZoom.options.reset).toBe(true);
+    expect(latLonZoom.options.animate).toBe(true);
+  });
 
-//   it('should should not have start on hash at creation', function () {
-//     var controller = createController();
-//     $scope.$digest();
-//     var start = hashSyncHelper.getHash().start;
-//     expect(start).not.toBeDefined();
-//   });
+  it('should return false when invalid', function () {
+    var InvalidMapView = 'Purmerend,8';
+    var latLonZoom = service.parseMapView(InvalidMapView);
+    expect(latLonZoom).toBe(false);
+  });
 
-//   it('should should have start on hash after change', function () {
-//     var controller = createController();
-//     $scope.timeState.start = 1405086992000; // Fri, 11 Jul 2014 13:56:32 GMT
-//     $scope.$digest();
-//     var newStart = hashSyncHelper.getHash().start;
-//     expect(newStart).toBe('Jul-11-2014');
-//   });
+  it('should parse geom when point', function () {
+    var mapState = {here: {}, points: []};
+    var geom = '52.1065,5.9656';
+    var mapState = service.parseGeom('point', geom, mapState);
+    expect(mapState.here.lat).toBe(52.1065);
+  });
 
-//   it('should set timeState.at between start and end when setting timeState', function () {
-//     var controller = createController();
+  it('should parse geom when line', function () {
+    var mapState = {here: {}, points: []};
+    var geom = '52.5430,5.9216-52.0221,5.8173';
+    var mapState = service.parseGeom('line', geom, mapState);
+    expect(mapState.points[1].lat).toBe(52.0221);
+  });
 
-//     var start = new Date(1408627740686);
-//     var dateString = start.toDateString()
-//       .slice(4) // Cut off day name
-//       .split(' ') // Replace spaces by hyphens
-//       .join('-');
+  it('should give update when no changes', function () {
+    expect(service.update(state)).toBe(true);
+  });
 
-//     hashSyncHelper.setHash({'start': dateString});
+  it('should not update when one state says no', function () {
+    state.timeState.update = false;
+    expect(service.update(state)).toBe(false);
+  });
 
-//     var end = new Date(1408627748686);
-//     var dateString = start.toDateString()
-//       .slice(4) // Cut off day name
-//       .split(' ') // Replace spaces by hyphens
-//       .join('-');    hashSyncHelper.setHash({'end': dateString});
+});
 
-//     $scope.$broadcast('$locationChangeSuccess');
+describe('Testing hash controller', function () {
+  var $scope,
+    $location,
+    $rootScope,
+    $controller,
+    $browser,
+    createController,
+    LocationGetterSetter;
 
-//     expect($scope.timeState.at >= $scope.timeState.start
-//       && $scope.timeState.at <= $scope.timeState.end).toBe(true);
-//   });
+  beforeEach(module('lizard-nxt'));
 
-//   it('should deactivate layer when layerHash is defined but active layer is not on hash', function () {
-//     var controller = createController();
+  beforeEach(inject(function ($injector) {
+    $location = $injector.get('$location');
+    $rootScope = $injector.get('$rootScope');
+    $controller = $injector.get('$controller');
+    $browser = $injector.get('$browser');
+    $scope = $rootScope.$new();
+    LocationGetterSetter = $injector.get('LocationGetterSetter');
 
-//     hashSyncHelper.setHash({'layers': 'testlayer2'});
+    // Mock MapService
+    var mockMapService = {
+      mapState: {
+        center: {
+          lat: 51.12345,
+          lng: 6.12
+        },
+        points: [],
+        activeLayersChanged: false,
+        layers: {
+          'testlayer': {
+            active: true
+          },
+          'testlayer2': {
+            active: false
+          }
 
-//     $scope.$broadcast('$locationChangeSuccess');
+        }
+      }
+    };
+    mockMapService.setView = function (latlng, zoom, options) {
+      $scope.mapState.center.lat = latlng.lat;
+    };
 
-//     expect($scope.mapState.layers.testlayer.active).toBe(false);
-//     expect($scope.mapState.layers.testlayer2.active).toBe(true);
-//   })
+    // Mock the mapState
+    $scope.mapState = mockMapService.mapState;
+    $scope.mapState.changeLayer = function (layer) {
+      layer.active = !layer.active;
+    };
 
-// });
+    // Mock initial time
+    $scope.timeState = {start: 10};
+
+    // Mock the box
+    $scope.box = {type: 'area'};
+
+    createController = function () {
+      return $controller('UrlController', {
+          '$scope': $scope,
+          'LocationGetterSetter': LocationGetterSetter,
+          'MapService': mockMapService
+      });
+    };
+  }));
+
+  it('should deactivate layer when layers are defined on the url but active layer is not on url', function () {
+    var controller = createController();
+    $location.path('/map/testlayer2');
+
+    $scope.$broadcast('$locationChangeSuccess');
+    expect($scope.mapState.layers.testlayer.active).toBe(false);
+    expect($scope.mapState.layers.testlayer2.active).toBe(true);
+  });
+
+  it('should set boxType only when geometry is defined', function () {
+    var controller = createController();
+    $location.path('/map/testlayer2/line');
+    $scope.$broadcast('$locationChangeSuccess');
+    expect($scope.box.type).toBe('area');
+    $location.path('/map/testlayer2/line/53,6');
+    $scope.$broadcast('$locationChangeSuccess');
+    expect($scope.box.type).toBe('line');
+  });
+
+});
