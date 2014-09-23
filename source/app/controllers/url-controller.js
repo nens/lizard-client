@@ -179,6 +179,8 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
         if (boxType) {
           if (geom) { // Setting the box to anything but default requires geometry on url.
             $scope.box.type = boxType;
+          } else {
+            LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, $scope.box.type);
           }
         }
         if (geom) {
