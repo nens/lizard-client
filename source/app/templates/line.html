@@ -1,17 +1,17 @@
 <div ng-controller="LineCtrl">
-  <div ng-repeat="line in lineline" class="card active" id="card-<% line.name %>">
-    <div id="card-content-<% line.name %>" class="card-content">
-      <div ng-switch="line.name" class="card-content" id="card-content-<% agg.name %>">
+  <div ng-repeat="l in line" class="card active" id="card-<% l.name %>">
+    <div id="card-content-<% l.name %>" class="card-content">
+      <div ng-switch="l.name" class="card-content" id="card-content-<% agg.name %>">
 
         <graph ng-switch-default
           line
-          data="line.data"
+          data="l.data"
           ylabel="'hoogte [mNAP]'"
           xlabel="'afstand in [m]'">
         </graph>
         <graph ng-switch-when="Regen"
           line
-          data="line.data"
+          data="l.data"
           ylabel="'mm / 5 minuten'"
           xlabel="'afstand in [m]'">
         </graph>

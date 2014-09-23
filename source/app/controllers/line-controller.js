@@ -31,12 +31,12 @@ app.controller('LineCtrl', [
      * @param  {object} line   line object of this
      *                                  ctrl
      */
-    updateLine = function (line, layers, line) {
+    updateLine = function (line, layers, scopeLine) {
       angular.forEach(layers, function (layer, slug) {
         if (layer.active
           && layer.store_path
           && layer.aggregation_type !== 'counts') {
-          var agg = line[slug] || {}, dataProm;
+          var agg = scopeLine[slug] || {}, dataProm;
           if (layer.temporal) {
             dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
           } else {
@@ -44,7 +44,7 @@ app.controller('LineCtrl', [
           }
           // Pass the promise to a function that handles the scope.
           putDataOnscope(dataProm, slug);
-        } else if (slug in line && !layer.active) {
+        } else if (slug in scopeLine && !layer.active) {
           removeDataFromScope(slug);
         }
       });
