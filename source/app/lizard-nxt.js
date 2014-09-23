@@ -429,7 +429,7 @@ app.controller('MasterCtrl',
       } else {
         // Or else, reset the omnibox state
         $scope.box.type = 'extentAggregate';
-        $scope.box.empty = null;
+        // $scope.box.empty = null;
       }
     }
   };

@@ -32,7 +32,7 @@ angular.module("omnibox", ["templates-main"])
 
       var finalizeTemplateRendering = function () {
         replaceTemplate();
-        scope.box.showCards = scope.box.type !== 'extentAggregate';
+        scope.box.showCards = scope.box.type !== 'empty';
       };
 
       scope.$watch('box.type', function (n, o) {
