@@ -115,8 +115,7 @@ app.service('VectorService', ['Restangular', 'LeafletService',
 
     return {
       getData: getData,
-      setData: setData,
-      layers: vectorLayers
+      setData: setData
     };
   }
 ]);

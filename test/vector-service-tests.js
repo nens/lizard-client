@@ -12,7 +12,8 @@ describe('Testing VectorService', function () {
 
   it('should set data', function () {
     VectorService.setData('events', geoJson);
-    expect(VectorService.layers.events).toBe(geoJson);
+    var gotthis = VectorService.getData('events', geoJson);
+    expect(gotthis).toBe(geoJson);
   });
 
   it('should get all data', function () {
