@@ -57,7 +57,7 @@ app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return true; }
       state.layers.update = false;
-      UrlState.setLayersUrl($scope.mapState.layers);
+      UrlState.setLayersUrl(state, $scope.mapState.layers);
     });
 
     /**
@@ -66,7 +66,8 @@ app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
     $scope.$watch('mapState.moved', function (n, o) {
       if (n === o) { return true; }
       state.mapView.update = false;
-      UrlState.setCoordinatesUrl(MapService.mapState.center.lat,
+      UrlState.setCoordinatesUrl(state,
+        MapService.mapState.center.lat,
         MapService.mapState.center.lng,
         MapService.mapState.zoom);
     });
@@ -77,7 +78,7 @@ app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
     $scope.$watch('timeState.changedZoom', function (n, o) {
       if (n === o) { return true; }
       state.timeState.update = false;
-      UrlState.setTimeStateUrl($scope.timeState.start, $scope.timeState.end);
+      UrlState.setTimeStateUrl(state, $scope.timeState.start, $scope.timeState.end);
     });
 
     /*
@@ -100,7 +101,7 @@ app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
     $scope.$watch('mapState.here', function (n, o) {
       if (n === o) { return true; }
       state.geom.update = false;
-      UrlState.setgeomUrl($scope.box.type, $scope.mapState.here);
+      UrlState.setgeomUrl(state, $scope.box.type, $scope.mapState.here, $scope.mapState.points);
     });
 
     /**
@@ -126,7 +127,7 @@ app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
           }
         }
         if (geom) {
-          $scope.mapState = UrlState.setGeom(geom, $scope.box.type, MapService.mapState);
+          $scope.mapState = UrlState.setGeom($scope.box.type, geom, MapService.mapState);
         }
 
         if (layers) {
@@ -162,7 +163,7 @@ app.controller('UrlController', ['$scope', 'UrlSyncHelper', 'MapService',
         }
 
         if (mapView) {
-          var view = UrlState.setMapView(mapView);
+          var view = UrlState.parseMapView(mapView);
           if (view) {
             MapService.setView(view.latLng, view.zoom, view.options);
           }

@@ -16,6 +16,14 @@ app.service('UrlSyncHelper', ['$location', function ($location) {
 
     service = {
 
+     /**
+      * @function
+      * @memberOf app.UrlSyncHelper
+      * @description returns the value in the path of url at the
+      * @param {str} part, part url looking for currently <path | @>
+      * @param {str} index location in the part
+      * @return {str} value
+      */
       getUrlValue: function (part, index) {
         if (!(part === 'path' || part === 'at')) {
           throw new Error('The provided part is not a supported part of the url');
@@ -24,6 +32,14 @@ app.service('UrlSyncHelper', ['$location', function ($location) {
         return pathParts[index];
       },
 
+     /**
+      * @function
+      * @memberOf app.UrlSyncHelper
+      * @description returns the value in the path of url at the
+      * @param {str} part, part url looking for currently <path | @>
+      * @param {str} index location in the part
+      * @return {str} value
+      */
       setUrlValue: function (part, index, value) {
         if (!(part === 'path' || part === 'at')) {
           throw new Error('The provided part is not a supported part of the url');
@@ -169,7 +185,7 @@ app.service("UrlState", ["UrlSyncHelper", function (UrlSyncHelper) {
           return false;
         }
       },
-      setGeom: function (type, geom, mapState) {
+      parseGeom: function (type, geom, mapState) {
         if (type === 'point') {
           var point = geom.split(',');
           if (parseFloat(point[0]) &&

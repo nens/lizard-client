@@ -29,7 +29,7 @@ describe('Testing point object controller', function () {
     };
 
     createController = function () {
-      return $controller('pointObjectCtrl', {
+      return $controller('PointCtrl', {
           '$scope': $scope,
           'UtfGridService': UtfGridService,
           'ClickFeedbackService': ClickFeedbackService
@@ -40,7 +40,7 @@ describe('Testing point object controller', function () {
 
   it('should create a pointObject on scope at creation', function () {
     var controller = createController();
-    expect($scope.pointObject).toBeDefined();
+    expect($scope.point).toBeDefined();
   });
 
 });

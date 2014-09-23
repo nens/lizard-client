@@ -12,7 +12,7 @@
  * Contains data of all active layers with an aggregation_type
  *
  */
-app.controller('areaCtrl', [
+app.controller('AreaCtrl', [
   '$scope',
   'RasterService',
   function ($scope, RasterService) {

@@ -16,7 +16,7 @@
  *       all layers and perform generic actions based on layer types.
  */
 
-app.controller('pointCtrl', ['$scope', '$filter', 'CabinetService',
+app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
     'RasterService', 'EventService', 'TimeseriesService', 'UtilService',
     'UtfGridService', 'ClickFeedbackService',
   function ($scope,

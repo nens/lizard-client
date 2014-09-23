@@ -1,4 +1,4 @@
-app.controller('lineCtrl', [
+app.controller('LineCtrl', [
   '$scope',
   'RasterService',
   'ClickFeedbackService',
@@ -7,7 +7,7 @@ app.controller('lineCtrl', [
   function ($scope, RasterService, ClickFeedbackService, MapService, UtilService) {
 
     /**
-     * lineline is the object which collects different
+     * line is the object which collects different
      * sets of line data. If the line tool is turned on,
      * line is set to box.type and this controller becomes
      * active.
@@ -15,10 +15,10 @@ app.controller('lineCtrl', [
      * Contains data of all active layers with a suitable aggregation_type
      *
      */
-    $scope.lineline = {};
+    $scope.line = {};
 
-    var updateLineline, putDataOnscope,
-      removeDataFromScope, _updateLineline;
+    var updateLine, putDataOnscope,
+      removeDataFromScope, _updateLine;
 
     /**
      * Loops over all layers to request lineion data for all
@@ -28,15 +28,15 @@ app.controller('lineCtrl', [
      * @param  {wktstring}   line         str describing the line
      * @param  {object} layers   mapState.layers, containing
      *                                  nxt definition of layers
-     * @param  {object} lineline   lineline object of this
+     * @param  {object} line   line object of this
      *                                  ctrl
      */
-    updateLineline = function (line, layers, lineline) {
+    updateLine = function (line, layers, line) {
       angular.forEach(layers, function (layer, slug) {
         if (layer.active
           && layer.store_path
           && layer.aggregation_type !== 'counts') {
-          var agg = lineline[slug] || {}, dataProm;
+          var agg = line[slug] || {}, dataProm;
           if (layer.temporal) {
             dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
           } else {
@@ -44,15 +44,15 @@ app.controller('lineCtrl', [
           }
           // Pass the promise to a function that handles the scope.
           putDataOnscope(dataProm, slug);
-        } else if (slug in lineline && !layer.active) {
+        } else if (slug in line && !layer.active) {
           removeDataFromScope(slug);
         }
       });
     };
 
     /**
-     * Puts dat on lineline when promise resolves or
-     * removes item from lineline when no data is returned.
+     * Puts dat on line when promise resolves or
+     * removes item from line when no data is returned.
      *
      * @param  {promise}  dataProm       a promise with line data
      * @param  {str}      slug           slug name of layer
@@ -60,38 +60,38 @@ app.controller('lineCtrl', [
     putDataOnscope = function (dataProm, slug) {
       dataProm.then(function (result) {
         if (result.length > 0) {
-          $scope.lineline[slug] = {};
+          $scope.line[slug] = {};
           // convert degrees result to meters to display properly.
           if ($scope.mapState.layers[slug].temporal) {
-            $scope.lineline[slug].result = UtilService.dataConvertToMeters(result);
-            $scope.lineline[slug].data = UtilService.createDataForTimeState($scope.lineline[slug].result, $scope.timeState);
+            $scope.line[slug].result = UtilService.dataConvertToMeters(result);
+            $scope.line[slug].data = UtilService.createDataForTimeState($scope.line[slug].result, $scope.timeState);
           } else {
-            $scope.lineline[slug].data = UtilService.dataConvertToMeters(result);
+            $scope.line[slug].data = UtilService.dataConvertToMeters(result);
           }
-          $scope.lineline[slug].name = $scope.mapState.layers[slug].name;
-        } else if (slug in $scope.lineline) {
+          $scope.line[slug].name = $scope.mapState.layers[slug].name;
+        } else if (slug in $scope.line) {
           removeDataFromScope(slug);
         }
       });
     };
 
     removeDataFromScope = function (slug) {
-      delete $scope.lineline[slug];
+      delete $scope.line[slug];
     };
 
     /**
-     * calls updateLineline with a wkt representation of
+     * calls updateLine with a wkt representation of
      * input
      *
      * @param {object} firstClick
      * @param {object} secondClick
      */
-    _updateLineline = function (firstClick, secondClick) {
+    _updateLine = function (firstClick, secondClick) {
       var line = UtilService.createLineWKT(firstClick, secondClick);
-      updateLineline(
+      updateLine(
         line,
         $scope.mapState.layers,
-        $scope.lineline
+        $scope.line
       );
     };
 
@@ -112,11 +112,11 @@ app.controller('lineCtrl', [
         $scope.mapState.points = [];
         ClickFeedbackService.emptyClickLayer();
         // Empty data element since the line is gone
-        $scope.lineline = {};
+        $scope.line = {};
       } else {
         if ($scope.mapState.points.length === 1) {
           $scope.mapState.points[1] = $scope.mapState.here;
-          _updateLineline($scope.mapState.points[0], $scope.mapState.points[1]);
+          _updateLine($scope.mapState.points[0], $scope.mapState.points[1]);
           ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.points[1], false);
         } else {
           $scope.mapState.points[0] = $scope.mapState.here;
@@ -127,7 +127,7 @@ app.controller('lineCtrl', [
 
     var watchIfUrlCtrlSetsPoints = $scope.$watch('mapState.points', function (n, o) {
       if ($scope.mapState.points.length === 2) {
-        _updateLineline($scope.mapState.points[0], $scope.mapState.points[1]);
+        _updateLine($scope.mapState.points[0], $scope.mapState.points[1]);
         ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.points[1]);
         watchIfUrlCtrlSetsPoints();
       }
@@ -144,20 +144,20 @@ app.controller('lineCtrl', [
     });
 
     /**
-     * Updates lineline data when users changes layers.
+     * Updates line data when users changes layers.
      */
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return true; }
       if ($scope.mapState.points.length === 2) {
-        _updateLineline($scope.mapState.points[0], $scope.mapState.points[1]);
+        _updateLine($scope.mapState.points[0], $scope.mapState.points[1]);
       }
     });
 
     /**
-     * Updates lineline of temporal layers when timeState.at changes.
+     * Updates line of temporal layers when timeState.at changes.
      */
     $scope.$watch('timeState.at', function (n, o) {
-      angular.forEach($scope.lineline, function (line, slug) {
+      angular.forEach($scope.line, function (line, slug) {
         if ($scope.mapState.layers[slug].temporal) {
           line.data = UtilService.createDataForTimeState(line.result, $scope.timeState);
         }
@@ -173,7 +173,7 @@ app.controller('lineCtrl', [
       if ($scope.mapState.points.length === 2) {
         var line = UtilService.createLineWKT($scope.mapState.points[0], $scope.mapState.points[1]);
         var dataProm;
-        angular.forEach($scope.lineline, function (line, slug) {
+        angular.forEach($scope.line, function (line, slug) {
           if ($scope.mapState.layers[slug].temporal) {
             dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
             // Pass the promise to a function that handles the scope.
