@@ -30,11 +30,6 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
             ClickFeedbackService
   ) {
 
-    var createPointObject, fillPointObject, _noUTF, utfgridResponded,
-        getRasterForLocation, getRasterForLayer, rasterLayerResponded,
-        getTimeSeriesForObject, eventResponded, attrsResponded,
-        _watchAttrAndEventActivity, _recolorBlackEventFeature;
-
     /**
      * @function
      * @memberOf app.pointObjectCtrl
@@ -45,7 +40,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      *
      * @return {object} empty pointObject.
      */
-    createPointObject = function () {
+    var createPointObject = function () {
       var pointObject = {
         streetview: {
           active: false
@@ -78,12 +73,19 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
     };
 
     /**
-     * @function
-     * @memberOf app.pointObjectCtrl
+     * @description fills point Object
      * @param  {L.LatLng} here
      * @param  {object}   ?extra Optional extra info
+     * 
+     * @return {}
      */
-    fillPointObject = function (here, extra) {
+    var fillPointObject = function (here, extra) {
+
+      angular.forEach($scope.mapState.layers, function (layer, slug) {
+        if (layer.active) {
+
+        }
+      });
 
       var clickedOnEvents = extra && extra.type === 'events';
 
@@ -105,7 +107,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @memberOf app.pointObjectCtrl
      * @description errorcallback for UTFGrid
      */
-    _noUTF = function (here) {
+    var _noUTF = function (here) {
       return function () {
         $scope.pointObject.attrs.active = false;
         ClickFeedbackService.drawArrowHere(here);
@@ -133,7 +135,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * - Events: getTimeSeriesForObject()
      * @return {function}
      */
-    utfgridResponded = function (here, showOnlyEvents) {
+    var utfgridResponded = function (here, showOnlyEvents) {
 
       return function (response) {
 
@@ -184,7 +186,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * that is active. If there is none, nothing happens.
      * @return {void}
      */
-    getRasterForLocation = function (here) {
+    var getRasterForLocation = function (here) {
       var layer, lIndex, stop, start;
       for (lIndex in $scope.mapState.layers) {
         layer = $scope.mapState.layers[lIndex];
@@ -202,7 +204,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @param  {object} layer Layer object, containing name, slug..
      * @return {void}
      */
-    getRasterForLayer = function (layer, here) {
+    var getRasterForLayer = function (layer, here) {
       var stop = new Date($scope.timeState.end),
           start = new Date($scope.timeState.start);
       $scope.pointObject.temporalRaster.aggWindow =
@@ -249,7 +251,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @param  {object} response Response from rasterService. (data-array)
      * @return {void}
      */
-    rasterLayerResponded = function (response) {
+    var rasterLayerResponded = function (response) {
       $scope.pointObject.temporalRaster.active = true;
       $scope.pointObject.temporalRaster.data = response;
       $scope.pointObject.temporalRaster.end =
@@ -267,7 +269,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @description placeholder for now. Should fill data object
      * with timeseries information. (Draw graphs and such);
      */
-    getTimeSeriesForObject = function () {
+    var getTimeSeriesForObject = function () {
       // $scope.pointObject.timeseries.data =
       //   TimeseriesService.getRandomTimeseries();
       // $scope.pointObject.timeseries.selectedTimeseries =
@@ -283,7 +285,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      *
      * @param  {object} jsondata response
      */
-    eventResponded = function (response, clickedOnEvents) {
+    var eventResponded = function (response, clickedOnEvents) {
       $scope.pointObject.events.data = [];
       angular.forEach(response.features, function (feature) {
         $scope.pointObject.events.data.push(feature.properties);
@@ -304,7 +306,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @description returns data from UTFgrid
      * @param {jsondata} response
      */
-    attrsResponded = function (response) {
+    var attrsResponded = function (response) {
       // Return directly if no data is returned from the UTFgrid
       if (!response.data) { return; }
       $scope.pointObject.attrs.data = response.data;
@@ -317,7 +319,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      *
      * @returns {void}
      */
-    _recolorBlackEventFeature = function () {
+    var _recolorBlackEventFeature = function () {
 
       var feature = d3.select('.highlighted-event');
 
@@ -334,7 +336,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
      * @memberOf app.pointObjectCtrl
      * @description watch function
      */
-    _watchAttrAndEventActivity = function (n, o) {
+    var _watchAttrAndEventActivity = function (n, o) {
 
       var checkIfAttrsActive  = $scope.pointObject.attrs.active,
           checkIfEventsActive = $scope.pointObject.events.active;
@@ -422,7 +424,7 @@ app.controller('pointObjectCtrl', ['$scope', '$filter', 'CabinetService',
             ];
           };
 
-      for (i = 0; i< data.length; i++) {
+      for (i = 0; i < data.length; i++) {
 
         formattedDateTime = _formatDate(data[i][0]);
 

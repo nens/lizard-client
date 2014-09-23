@@ -1,8 +1,14 @@
 Changelog of lizard-nxt client
 ==============================
 
-unreleased
+Unreleased
 ----------
+
+- Point-Object refactoring.
+
+
+Release 0.2b4
+-------------
 
 - Add rain per month aggregation
 

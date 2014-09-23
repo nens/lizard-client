@@ -98,8 +98,12 @@ app.service('VectorService', ['Restangular', 'LeafletService',
      * @return {promise}
      */
     var getData = function (layerSlug, geomortime, time) {
+      // if geom is latlng coordinate, convert to bounds
+      if (geomortime instanceof LeafletService.LatLng) {
+        geomortime = LeafletService.latLngBounds(geomortime, geomortime);
+      }
       // if only one extra argument it can be geom or time.
-      if (!time && !(geomortime instanceof L.LatLngBounds)) {
+      if (!time && !(geomortime instanceof LeafletService.LatLngBounds)) {
         return filterSet(vectorLayers[layerSlug], undefined, geomortime);
       }
       return filterSet(vectorLayers[layerSlug], geomortime, time);
