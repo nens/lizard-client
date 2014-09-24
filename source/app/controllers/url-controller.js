@@ -147,7 +147,7 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
         angular.forEach(MapService.mapState.layers, function (layerGroup) {
           MapService.mapState.activeLayersChanged = Date.now();
           if (!layerGroup.initiated) {
-            MapService.createLayerGroup(layerGroup);
+            MapService.createLayer(layerGroup);
           }
 
           if (layerGroup.active && layerGroup.initiated) {

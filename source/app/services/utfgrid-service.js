@@ -19,7 +19,7 @@ app.service('UtfGridService', ['$q', '$rootScope', 'MapService',
     function getDataFromUTF(latlng) {
       var deferred = $q.defer();
       // Get waterchainLayer or false
-      var waterchainLayer = MapService.getLayer('grid', 'waterchain');
+      var waterchainLayer = MapService.getLayer('grid', 'waterchain_grid');
       // event object for utfgrid plugin
       var e = {
         latlng: latlng

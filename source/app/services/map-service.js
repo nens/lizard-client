@@ -28,6 +28,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       newGeoJsonLayer, addLayer, removeLayer, createMap, toggleLayer, createLayer,
       createLayerGroup, toggleLayerGroup;
 
+  var activeLayers = [];
+
   /**
    * @function
    * @memberof app.MapService
@@ -71,9 +73,9 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    */
   _initiateTMSLayer = function (nonLeafLayer) {
 
-    var layerGroupUrl = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
+    var layerUrl = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
     var layer = LeafletService.tileLayer(
-      layerGroupUrl, {
+      layerUrl, {
         name: (nonLeafLayer.baselayer) ? 'Background' : nonLeafLayer.slug,
         slug: nonLeafLayer.slug,
         minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom : 0,
@@ -83,17 +85,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
         ext: 'png'
       });
 
-    // THIS CAN NO LONGER HAPPEN:
-    // if (!nonLeafLayer.baselayer && nonLeafLayer.type === 'ASSET') {
-    //   layer._url = layerGroupUrl;
-    //   layer.options.ext = 'png';
-    // }
-
     nonLeafLayer.leafletLayer = layer;
     nonLeafLayer.initiated = true;
-
-    // console.log('[2] nonLeafLayer.leafletLayer =', nonLeafLayer.leafletLayer, '(instanceof L.Class: ' +
-    //   (nonLeafLayer.leafletLayer instanceof L.Class) + ')');
   };
 
   /**
@@ -156,7 +149,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       order: nonLeafLayer.z_index,
       zIndex: nonLeafLayer.z_index
     });
-    nonLeafLayer.grid_layer = layer;
+    nonLeafLayer.leafletLayer = layer;
     nonLeafLayer.initiated = true;
   };
 
@@ -169,45 +162,40 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   createLayer = function (layerGroup) {
 
-    //console.log('layerGroup =', layerGroup);
-
     var i, subLayer;
 
-    for (i = 0; i < layerGroup.layers.length; i++) {
+    angular.forEach(layerGroup.layers, function (layer) {
 
-      subLayer = layerGroup.layers[i];
+      if (layer.temporal) { return; }
 
-      if (subLayer.temporal) { continue; }
+      layer.baselayer = layerGroup.baselayer;
+      layer.overlayer = layerGroup.overlayer;
+      layer.active    = layerGroup.active;
+      layer.name      = layerGroup.name;
+      layer.order     = layerGroup.order;
+      layer.id        = layerGroup.id;
 
-      subLayer.baselayer = layerGroup.baselayer;
-      subLayer.overlayer = layerGroup.overlayer;
-      subLayer.active    = layerGroup.active;
-      subLayer.name      = layerGroup.name;
-      subLayer.order     = layerGroup.order;
-      subLayer.id        = layerGroup.id;
+      switch (layer.type) {
+      case 'Vector':
+        break;
 
-      switch (subLayer.type) {
+      case 'TMS':
+        _initiateTMSLayer(layer);
+        break;
 
-        case 'Vector':
-          break;
+      case 'WMS':
+        _initiateWMSLayer(layer);
+        break;
 
-        case 'TMS':
-          _initiateTMSLayer(subLayer);
-          break;
+      case 'UTFGrid':
+        _initiateGridLayer(layer);
+        break;
 
-        case 'WMS':
-          _initiateWMSLayer(subLayer);
-          break;
-
-        case 'UTFGrid':
-          _initiateGridLayer(subLayer);
-          break;
-
-        default:
-          console.log('[E] This should never happen/print...');
-          break;
+      default:
+        console.log('[E] This should never happen/print...');
+        break;
       }
-    }
+    });
 
     layerGroup.initiated = true;
   };
@@ -223,6 +211,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
   addLayer = function (layer) { // Leaflet Layer
     if (layer instanceof L.Class) {
       _map.addLayer(layer);
+      activeLayers.push(layer.slug);
     } else {
       console.warn('layer not of type L.Class; layer =', layer);
     }
@@ -237,6 +226,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
   removeLayer = function (layer) { // Leaflet Layer
     if (_map.hasLayer(layer)) {
       _map.removeLayer(layer);
+      activeLayers.splice(activeLayers.indexOf(layer.slug), 1);
     }
   };
 
@@ -324,35 +314,9 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     }
 
     if (layerGroup.active) {
-
-      for (var i = 0; i < layerGroup.layers.length; i++) {
-
-        var subLayer = layerGroup.layers[i];
-
-        switch (subLayer.type) {
-
-          case 'UTFGrid':
-            addLayer(subLayer.grid_layer);
-            break;
-
-          case 'TMS':
-            addLayer(subLayer.leafletLayer);
-            break;
-
-          case 'WMS':
-            addLayer(subLayer.leafletLayer);
-            break;
-
-          case 'Vector':
-            break;
-
-          default:
-            console.log('[E] This should never prindtdt');
-            break;
-
-        }
-
-        // addLayer(subLayer.leafletLayer);
+      angular.forEach(layerGroup.layers, function (layer) {
+        addLayer(layer.leafletLayer);
+      });
 
         // if (subLayer.grid_layer) {
 
@@ -367,27 +331,12 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
         //     removeLayer(subLayer.grid_layer);
         //   });
         // }
-      }
 
     } else {
 
-      console.log('About to rm...');
-
-      for (var j = 0; j < layerGroup.layers.length; j++) {
-
-        var subLayer2 = layerGroup.layers[j];
-
-        removeLayer(subLayer2.leafletLayer);
-        if (subLayer2.grid_layer) {
-          removeLayer(subLayer2.grid_layer);
-        }
-
-      }
-
-      // removeLayer(layerGroup.leafletLayer);
-      // if (layerGroup.grid_layer) {
-      //   removeLayer(layerGroup.grid_layer);
-      // }
+      angular.forEach(layerGroup.layers, function (layer) {
+        removeLayer(layer.leafletLayer);
+      });
     }
 
     if (layerGroup.overlayer) {
@@ -547,6 +496,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     initiated: _initiated,
     layers: CabinetService.layers,
     activeLayersChanged: false,
+    activeLayers: activeLayers,
     eventTypes: CabinetService.eventTypes,
     changed: Date.now(),
     moved: Date.now(),
