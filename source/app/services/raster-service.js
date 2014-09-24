@@ -1,8 +1,8 @@
 /**
  * Service to handle raster requests.
  */
-app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$q",
-  function (Restangular, UtilService, CabinetService, $q) {
+app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "MapService", "$q",
+  function (Restangular, UtilService, CabinetService, MapService, $q) {
 
   /**
    * Get latlon bounds for image.
@@ -12,7 +12,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    */
   var _getImageBounds = function (layerName) {
       var bounds;
-      if (layerName === 'demo:radar') {
+      if (layerName === 'rain') {
         bounds = [[54.28458617998074, 1.324296158471368],
                 [49.82567047026146, 8.992548357936204]];
       }
@@ -40,12 +40,12 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     var info,
     wmsUrl = 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&SRS=EPSG:4326&LAYERS=',
     width = 500;
-    if (layerName === 'demo:radar') {
+    if (layerName === 'rain') {
       info =  {
         "timeResolution": 300000,
         "minTimeBetweenFrames": 250,
         "imageBounds": _getImageBounds(layerName),
-        "imageUrlBase": 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=' + layerName + '&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=',
+        "imageUrlBase": 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=' + 'demo:radar' + '&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=',
       };
     }
     if (layerName === 'bath:westerschelde') {
@@ -130,6 +130,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    * @return {promise} returns a thennable promise which may resolve with temporal raster data on response
    */
   var getTemporalRaster = function (start, stop, geom, aggWindow, rasterNames, agg) {
+    var slug = MapService.mapState.layers[rasterNames].layers[0].slug;
     var stopString, startString, wkt;
     stopString = stop.toISOString().split('.')[0];
     startString = start.toISOString().split('.')[0];
@@ -146,7 +147,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
             + "))";
     }
     return CabinetService.raster().get({
-        raster_names: rasterNames,
+        raster_names: slug,
         geom: wkt,
         srs: 'EPSG:4326',
         start: startString,
@@ -259,9 +260,9 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
 
     var activeTemporalLayer = mapState.getActiveTemporalLayer();
     var rainIsActive =
-           (point.temporalRaster.type === 'demo:radar'
+           (point.temporalRaster.type === 'rain'
               && activeTemporalLayer
-              && activeTemporalLayer.slug === 'demo:radar'
+              && activeTemporalLayer.slug === 'rain'
             );
 
     if (rainIsActive) {

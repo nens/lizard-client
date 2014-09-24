@@ -17,18 +17,18 @@ describe('Testing map service', function () {
 
   it('should initiate a TMS layer ', function () {
     MapService.createLayer(layers.satellite);
-    expect(layers.satellite.leafletLayer instanceof L.TileLayer).toBe(true);
+    expect(layers.satellite.layers[0].leafletLayer instanceof L.TileLayer).toBe(true);
   });
 
   it('should initiate a WMS layer ', function () {
     MapService.createLayer(layers.landuse);
-    expect(layers.landuse.leafletLayer instanceof L.TileLayer.WMS).toBe(true);
+    expect(layers.landuse.layers[0].leafletLayer instanceof L.TileLayer.WMS).toBe(true);
   });
 
   it('should initiate an Asset layer ', function () {
     MapService.createLayer(layers.waterchain);
-    expect(layers.waterchain.grid_layer instanceof L.UtfGrid).toBe(true);
-    expect(layers.waterchain.leafletLayer instanceof L.TileLayer).toBe(true);
+    expect(layers.waterchain.layers[1]. instanceof L.UtfGrid).toBe(true);
+    expect(layers.waterchain.layers[2].leafletLayer instanceof L.TileLayer).toBe(true);
   });
 
   it('should add a Layer', function () {

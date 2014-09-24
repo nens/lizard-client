@@ -345,9 +345,6 @@ app.controller('MasterCtrl',
     changed: Date.now()
   };
 
-  console.log('$scope.events.types:', $scope.events.types);
-
-
   /**
    * Zoom to event location
    *

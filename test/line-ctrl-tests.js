@@ -54,10 +54,10 @@ describe('Testing LineCtrl', function () {
           "store_path": "use/wss",
           "active": false
         },
-        "demo:radar": {
+        "rain": {
           "aggregation_type": "none",
           "name": "Regen",
-          "slug": "demo:radar",
+          "slug": "rain",
           "store_path": "radar/basic",
           "temporal": true,
           "active": false
@@ -189,7 +189,7 @@ describe('Testing LineCtrl', function () {
 
   it('should add data to the scope when getting data for temporal raster', function () {
     createController();
-    $scope.mapState.layers['demo:radar'].active = true;
+    $scope.mapState.layers['rain'].active = true;
     $scope.mapState.here = {
       lat: 6,
       lng: 52
@@ -200,12 +200,12 @@ describe('Testing LineCtrl', function () {
       lng: 51
     };
     $scope.$digest();
-    expect($scope.line['demo:radar'].result).toBeDefined();
+    expect($scope.line['rain'].result).toBeDefined();
   });
 
   it('should add a specific subset to the data element when getting data for temporal raster', function () {
     createController();
-    $scope.mapState.layers['demo:radar'].active = true;
+    $scope.mapState.layers['rain'].active = true;
     $scope.mapState.here = {
       lat: 6,
       lng: 52
@@ -220,9 +220,9 @@ describe('Testing LineCtrl', function () {
     // and takes the second element from the list that's
     // returned by the mock (the second element corresponds
     // to the time of timeState.at relative to start and end)
-    expect($scope.line['demo:radar'].data[0][1]).toBe(result[0][1][1]);
-    expect($scope.line['demo:radar'].data[1][1]).toBe(result[1][1][1]);
-    expect($scope.line['demo:radar'].data[2][1]).toBe(result[2][1][1]);
+    expect($scope.line['rain'].data[0][1]).toBe(result[0][1][1]);
+    expect($scope.line['rain'].data[1][1]).toBe(result[1][1][1]);
+    expect($scope.line['rain'].data[2][1]).toBe(result[2][1][1]);
   });
 
 });

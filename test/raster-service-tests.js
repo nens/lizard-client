@@ -6,7 +6,7 @@ describe('Testing raster service', function () {
   mapState = {
     getActiveTemporalLayer: function () {
       return {
-        'slug': 'demo:radar'
+        'slug': 'rain'
       };
     }
   };
@@ -18,7 +18,7 @@ describe('Testing raster service', function () {
   }));
 
   it('should get Raster information', function () {
-    var rasterStuff = RasterService.rasterInfo('demo:radar');
+    var rasterStuff = RasterService.rasterInfo('rain');
     expect(rasterStuff.timeResolution).toBe(300000);
   });
 
@@ -33,7 +33,7 @@ describe('Testing raster service', function () {
         stop  = new Date("Sun Jan 19 2014 00:00:00 GMT+0100 (CET)"),
         geom  = new L.LatLng(52.50995268098114, 4.961357116699219),
         aggWindow = 86400000,
-        rasterNames = "demo:radar";
+        rasterNames = "rain";
     var result = RasterService.getTemporalRaster(start, stop, geom, aggWindow, rasterNames);
     expect(result.hasOwnProperty('then')).toBe(true);
   });
@@ -44,7 +44,7 @@ describe('Testing raster service', function () {
 
     pointObject = {
       temporalRaster: {
-        type: 'demo:radar',
+        type: 'rain',
         data: [[1000, null], [1001, null], [1002, null]]
       }
     };
@@ -59,7 +59,7 @@ describe('Testing raster service', function () {
 
     pointObject = {
       temporalRaster: {
-        type: 'demo:radar',
+        type: 'rain',
         data: [[1000, null], [1001, null], [1002, 0.000000000000000001]]
       }
     };

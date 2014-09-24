@@ -8,7 +8,228 @@ app.controller('DummyCtrl', ['$scope', function ($scope) {
 
 // bootstrapped stuff by Django does not exist in tests.
 // var layers = [{"type": "WMS", "aggregation_type": "none", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 4, "name": "Landgebruik", "url": "http://raster.lizard.net/wms", "slug": "landuse", "store_path": "use/wss", "temporal": false, "active": false, "order": 1, "z_index": 15, "baselayer": false, "overlayer": true}, {"type": "ASSET", "aggregation_type": "none", "min_zoom": 8, "min_zoom_click": 8, "sublayers": [{"asset": "impervioussurface", "min_zoom": 15, "min_zoom_click": null}, {"asset": "pumpeddrainagearea", "min_zoom": 12, "min_zoom_click": null}, {"asset": "pipe", "min_zoom": 14, "min_zoom_click": 14}, {"asset": "manhole", "min_zoom": 17, "min_zoom_click": 17}, {"asset": "overflow", "min_zoom": 16, "min_zoom_click": 16}, {"asset": "outlet", "min_zoom": 16, "min_zoom_click": 16}, {"asset": "pumpstation_sewerage", "min_zoom": 13, "min_zoom_click": 13}, {"asset": "pressurepipe", "min_zoom": 14, "min_zoom_click": 14}, {"asset": "culvert", "min_zoom": 16, "min_zoom_click": 16}, {"asset": "weir", "min_zoom": 15, "min_zoom_click": 15}, {"asset": "bridge", "min_zoom": 14, "min_zoom_click": 14}, {"asset": "pumpstation_non_sewerage", "min_zoom": 8, "min_zoom_click": 8}, {"asset": "belt_channel", "min_zoom": 8, "min_zoom_click": null}, {"asset": "primary_channel", "min_zoom": 12, "min_zoom_click": null}, {"asset": "secundary_channel", "min_zoom": 13, "min_zoom_click": null}, {"asset": "channelsurface", "min_zoom": 14, "min_zoom_click": null}, {"asset": "channel", "min_zoom": 14, "min_zoom_click": null}, {"asset": "fixeddrainagelevelarea", "min_zoom": 10, "min_zoom_click": null}], "id": 5, "name": "Waterketen", "url": "http://staging.nxt.lizard.net/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}", "slug": "waterchain", "store_path": null, "temporal": false, "active": true, "order": 2, "z_index": 20, "baselayer": false, "overlayer": false}, {"type": "WMS", "aggregation_type": "none", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 7, "name": "Regen", "url": "http://raster.lizard.net/wms", "slug": "demo:radar", "store_path": "radar/basic", "temporal": true, "active": false, "order": 3, "z_index": 25, "baselayer": false, "overlayer": false},{"type": "TMS", "aggregation_type": "none", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 1, "name": "Topografie", "url": "http://{s}.tiles.mapbox.com/v3/examples.map-szwdot65/{z}/{x}/{y}", "slug": "topography", "store_path": null, "temporal": false, "active": true, "order": 3, "z_index": 1, "baselayer": true, "overlayer": false}, {"type": "TMS", "aggregation_type": "none", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 2, "name": "Satelliet", "url": "http://khms1.google.com/kh/v=145&x={x}&y={y}&z={z}&s=&token=66417", "slug": "satellite", "store_path": null, "temporal": false, "active": false, "order": 2, "z_index": 1, "baselayer": true, "overlayer": false}, {"type": "WMS", "aggregation_type": "none", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 3, "name": "Hoogtekaart", "url": "http://raster.lizard.net/wms", "slug": "elevation", "store_path": "ahn2/wss", "temporal": false, "active": false, "order": 1, "z_index": 1, "baselayer": true, "overlayer": false}];
-var layers = {"satellite": {"type": "TMS", "aggregation_type": "none", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 2, "name": "Satelliet", "url": "https://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa79205/{z}/{x}/{y}", "slug": "satellite", "store_path": null, "temporal": false, "active": false, "order": 2, "z_index": 1, "baselayer": true, "overlayer": false}, "topography": {"type": "TMS", "aggregation_type": "none", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 1, "name": "Topografie", "url": "https://{s}.tiles.mapbox.com/v3/nelenschuurmans.iaa98k8k/{z}/{x}/{y}", "slug": "topography", "store_path": "", "temporal": false, "active": true, "order": 3, "z_index": 1, "baselayer": true, "overlayer": false}, "elevation": {"type": "WMS", "aggregation_type": "curve", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 3, "name": "Hoogtekaart", "url": "https://raster.lizard.net/wms", "slug": "elevation", "store_path": "ahn2/wss", "temporal": false, "active": false, "order": 1, "z_index": 1, "baselayer": true, "overlayer": false}, "waterchain": {"type": "ASSET", "aggregation_type": "none", "min_zoom": 8, "min_zoom_click": 8, "sublayers": [{"asset": "pumpeddrainagearea", "min_zoom": 12, "min_zoom_click": null}, {"asset": "pipe", "min_zoom": 14, "min_zoom_click": 14}, {"asset": "manhole", "min_zoom": 17, "min_zoom_click": 17}, {"asset": "overflow", "min_zoom": 16, "min_zoom_click": 16}, {"asset": "outlet", "min_zoom": 16, "min_zoom_click": 16}, {"asset": "pumpstation_sewerage", "min_zoom": 13, "min_zoom_click": 13}, {"asset": "pressurepipe", "min_zoom": 14, "min_zoom_click": 14}, {"asset": "culvert", "min_zoom": 16, "min_zoom_click": 16}, {"asset": "weir", "min_zoom": 15, "min_zoom_click": 15}, {"asset": "bridge", "min_zoom": 14, "min_zoom_click": 14}, {"asset": "pumpstation_non_sewerage", "min_zoom": 8, "min_zoom_click": 8}, {"asset": "belt_channel", "min_zoom": 8, "min_zoom_click": null}, {"asset": "primary_channel", "min_zoom": 12, "min_zoom_click": null}, {"asset": "secundary_channel", "min_zoom": 13, "min_zoom_click": null}, {"asset": "channelsurface", "min_zoom": 14, "min_zoom_click": null}, {"asset": "channel", "min_zoom": 14, "min_zoom_click": null}, {"asset": "fixeddrainagelevelarea", "min_zoom": 10, "min_zoom_click": null}, {"asset": "impervioussurface", "min_zoom": 15, "min_zoom_click": null}, {"asset": "measuringstation", "min_zoom": 8, "min_zoom_click": 8}], "id": 5, "name": "Water", "url": "https://nxt.lizard.net/api/v1/tiles/{slug}/{z}/{x}/{y}.{ext}", "slug": "waterchain", "store_path": "", "temporal": false, "active": true, "order": 2, "z_index": 20, "baselayer": false, "overlayer": false}, "isahw:BOFEK2012": {"type": "WMS", "aggregation_type": "none", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 7, "name": "Bodem", "url": "https://geoserver6.lizard.net/geoserver/isahw/wms", "slug": "isahw:BOFEK2012", "store_path": "", "temporal": false, "active": false, "order": 0, "z_index": 1, "baselayer": true, "overlayer": false}, "landuse": {"type": "WMS", "aggregation_type": "counts", "min_zoom": 0, "min_zoom_click": null, "sublayers": [], "id": 4, "name": "Landgebruik", "url": "https://raster.lizard.net/wms", "slug": "landuse", "store_path": "use/wss", "temporal": false, "active": false, "order": 1, "z_index": 15, "baselayer": false, "overlayer": true}};
+var layers = {
+    "satellite": {
+        "layers": [
+            {
+                "slug": "nelenschuurmans.iaa79205", 
+                "type": "TMS", 
+                "min_zoom": 0, 
+                "max_zoom": 31, 
+                "z_index": 0, 
+                "url": "http://{s}.tiles.mapbox.com/v3", 
+                "tiled": true, 
+                "temporal": false, 
+                "aggregation_type": "none"
+            }
+        ], 
+        "id": 2, 
+        "name": "Satelliet", 
+        "slug": "satellite", 
+        "active": false, 
+        "order": 2, 
+        "baselayer": true, 
+        "overlayer": false
+    }, 
+    "topography": {
+        "layers": [
+            {
+                "slug": "nelenschuurmans.iaa98k8k", 
+                "type": "TMS", 
+                "min_zoom": 0, 
+                "max_zoom": 31, 
+                "z_index": 0, 
+                "url": "http://{s}.tiles.mapbox.com/v3", 
+                "tiled": true, 
+                "temporal": false, 
+                "aggregation_type": "none"
+            }
+        ], 
+        "id": 1, 
+        "name": "Topografie", 
+        "slug": "topography", 
+        "active": true, 
+        "order": 3, 
+        "baselayer": true, 
+        "overlayer": false
+    }, 
+    "elevation": {
+        "layers": [
+            {
+                "slug": "elevation", 
+                "type": "WMS", 
+                "min_zoom": 0, 
+                "max_zoom": 31, 
+                "z_index": 0, 
+                "url": "http://raster.lizard.net/wms", 
+                "tiled": true, 
+                "temporal": false, 
+                "aggregation_type": "curve"
+            }
+        ], 
+        "id": 3, 
+        "name": "Hoogtekaart", 
+        "slug": "elevation", 
+        "active": false, 
+        "order": 1, 
+        "baselayer": true, 
+        "overlayer": false
+    }, 
+    "waterchain": {
+        "layers": [
+            {
+                "slug": "impervioussurface", 
+                "type": "Vector", 
+                "min_zoom": 19, 
+                "max_zoom": 31, 
+                "z_index": 5, 
+                "url": "/api/v1/tiles", 
+                "tiled": true, 
+                "temporal": false, 
+                "aggregation_type": "none"
+            }, 
+            {
+                "slug": "waterchain_grid", 
+                "type": "UTFGrid", 
+                "min_zoom": 7, 
+                "max_zoom": 31, 
+                "z_index": 4, 
+                "url": "/api/v1/tiles", 
+                "tiled": true, 
+                "temporal": false, 
+                "aggregation_type": "none"
+            }, 
+            {
+                "slug": "waterchain_png", 
+                "type": "TMS", 
+                "min_zoom": 7, 
+                "max_zoom": 31, 
+                "z_index": 3, 
+                "url": "/api/v1/tiles", 
+                "tiled": true, 
+                "temporal": false, 
+                "aggregation_type": "none"
+            }
+        ], 
+        "id": 5, 
+        "name": "Water", 
+        "slug": "waterchain", 
+        "active": true, 
+        "order": 2, 
+        "baselayer": false, 
+        "overlayer": false
+    }, 
+    "soil": {
+        "layers": [
+            {
+                "slug": "isahw:BOFEK2012", 
+                "type": "WMS", 
+                "min_zoom": 0, 
+                "max_zoom": 31, 
+                "z_index": 0, 
+                "url": "http://geoserver6.lizard.net/geoserver/isahw/wms", 
+                "tiled": true, 
+                "temporal": false, 
+                "aggregation_type": "none"
+            }
+        ], 
+        "id": 7, 
+        "name": "Bodem", 
+        "slug": "soil", 
+        "active": false, 
+        "order": 0, 
+        "baselayer": true, 
+        "overlayer": false
+    }, 
+    "messages": {
+        "layers": [
+            {
+                "min_zoom": 0, 
+                "z_index": 100, 
+                "tiled": false, 
+                "url": "/api/v1/events/?page_size=0&event_series=3", 
+                "max_zoom": 31, 
+                "temporal": true, 
+                "summary": 6, 
+                "type": "Vector", 
+                "slug": "messages", 
+                "aggregation_type": "none"
+            }
+        ], 
+        "name": "Meldingen", 
+        "slug": "messages", 
+        "overlayer": false, 
+        "active": false, 
+        "baselayer": false, 
+        "order": 4
+    }, 
+    "rain": {
+        "layers": [
+            {
+                "slug": "demo:radar", 
+                "type": "WMS", 
+                "min_zoom": 0, 
+                "max_zoom": 31, 
+                "z_index": 2, 
+                "url": "http://raster.lizard.net/wms", 
+                "tiled": false, 
+                "temporal": true, 
+                "aggregation_type": "none"
+            }
+        ], 
+        "id": 6, 
+        "name": "Regen", 
+        "slug": "rain", 
+        "active": false, 
+        "order": 3, 
+        "baselayer": false, 
+        "overlayer": false
+    }, 
+    "alarms": {
+        "layers": [
+            {
+                "min_zoom": 0, 
+                "z_index": 100, 
+                "tiled": false, 
+                "url": "/api/v1/events/?page_size=0&event_series=4", 
+                "max_zoom": 31, 
+                "temporal": true, 
+                "summary": 6, 
+                "type": "Vector", 
+                "slug": "alarms", 
+                "aggregation_type": "none"
+            }
+        ], 
+        "name": "Alarmen", 
+        "slug": "alarms", 
+        "overlayer": false, 
+        "active": false, 
+        "baselayer": false, 
+        "order": 5
+    }, 
+    "landuse": {
+        "layers": [
+            {
+                "slug": "landuse", 
+                "type": "WMS", 
+                "min_zoom": 0, 
+                "max_zoom": 31, 
+                "z_index": 1, 
+                "url": "http://raster.lizard.net/wms", 
+                "tiled": true, 
+                "temporal": false, 
+                "aggregation_type": "counts"
+            }
+        ], 
+        "id": 4, 
+        "name": "Landgebruik", 
+        "slug": "landuse", 
+        "active": false, 
+        "order": 1, 
+        "baselayer": false, 
+        "overlayer": true
+    }
+};
 var data_bounds = {"all": {"west": 3.04, "east": 7.58, "north": 53.63, "south": 50.57}};
 var event_types = [{"event_series": 1, "type": "Overstorten", "event_count": 202}];
 

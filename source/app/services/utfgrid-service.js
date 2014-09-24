@@ -59,13 +59,13 @@ app.service('UtfGridService', ['$q', '$rootScope', 'MapService',
         // cancel it
         on();
       }
-      on = $rootScope.$on('waterchainGridLoaded', function () {
+      on = $rootScope.$on('waterchain_gridGridLoaded', function () {
 
         // TODO: Must be implemented via ng watch, e.g.
         // $$rootScope.mapState.gridLoaded. Also, refactor map directive.
 
         on();
-        var waterchainLayer = MapService.getLayer('grid', 'waterchain');
+        var waterchainLayer = MapService.getLayer('grid', 'waterchain_grid');
         if (waterchainLayer) {
           var response = waterchainLayer._objectForEvent(e);
           // since this part executes async in a future turn of the event loop,

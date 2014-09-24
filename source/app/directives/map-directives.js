@@ -220,7 +220,6 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
             if (scope.timeState.animation.playing) {
               restart = true;
             }
-            console.log('scope.timeState.playPauseAnimation =', scope.timeState.playPauseAnimation);
             scope.timeState.playPauseAnimation('off');
           }
         }

@@ -97,7 +97,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @description Initiates a Leaflet WMS layer
    */
   _initiateWMSLayer = function (nonLeafLayer) {
-
     var _options = {
       layers: nonLeafLayer.slug,
       format: 'image/png',
@@ -134,8 +133,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    */
   _initiateGridLayer = function (nonLeafLayer) {
 
-    console.log('[F] _initiateGridLayer, arg \'nonLeafLayer\' =', nonLeafLayer);
-
     var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
 
     var layer = new L.UtfGrid(url, {
@@ -166,7 +163,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
     angular.forEach(layerGroup.layers, function (layer) {
 
-      if (layer.temporal) { return; }
+      if (layer.temporal) { layerGroup.temporal = true; return; }
 
       layer.baselayer = layerGroup.baselayer;
       layer.overlayer = layerGroup.overlayer;
@@ -301,7 +298,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @param  {object} layers all layers to switch off.
    */
   toggleLayer = function (layerGroup, layers) {
-    // if (!layer.initiated) { return; }
+    if (!layerGroup.initiated) { return; }
     if (layerGroup.baselayer) {
       _turnOffAllOtherBaselayers(layerGroup.id, layers);
       if (!layerGroup.active) {
@@ -316,6 +313,12 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     if (layerGroup.active) {
       angular.forEach(layerGroup.layers, function (layer) {
         addLayer(layer.leafletLayer);
+
+        if (layer.type === 'UTFGrid') {
+          layer.leafletLayer.on('load', function () {
+            $rootScope.$broadcast(layer.slug + 'GridLoaded');
+          });
+        }
       });
 
         // if (subLayer.grid_layer) {

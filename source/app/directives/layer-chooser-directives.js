@@ -68,7 +68,7 @@ app.directive("layerChooser", ['LeafletService', function (LeafletService) {
         layerMap.addLayer(layerLeafletLayer);
       }
     } else {
-      console.log("Encountered a composed layerGroup (i.e: layerGroup.layers.len > 1), This layerGroup will not have a thumbnail added to the menu (for now...)");
+      // console.debug("Encountered a composed layerGroup (i.e: layerGroup.layers.len > 1), This layerGroup will not have a thumbnail added to the menu (for now...)");
       return;
     }
 

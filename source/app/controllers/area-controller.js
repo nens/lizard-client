@@ -37,7 +37,9 @@ app.controller('AreaCtrl', [
      */
     updateExtentAgg = function (bounds, layers, area) {
       angular.forEach(layers, function (layer, slug) {
-        if (layer.active && layer.aggregation_type !== 'none') {
+        if (layer.active &&
+          (layer.aggregation_type !== 'none' &&
+           layer.aggregation_type)) {
           var agg = area[slug] || {};
           var dataProm = RasterService.getAggregationForActiveLayer(layer, slug, agg, bounds);
           // Pass the promise to a function that handles the scope.

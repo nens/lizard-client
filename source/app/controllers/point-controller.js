@@ -209,7 +209,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
         UtilService.getAggWindow($scope.timeState.start,
                                  $scope.timeState.end,
                                  272);  // graph is 272 px wide
-      if (layer.slug === 'demo:radar') {
+      if (layer.slug === 'rain') {
         RasterService.getTemporalRaster(
           start,
           stop,
