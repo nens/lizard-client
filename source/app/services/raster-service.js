@@ -130,7 +130,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "M
    * @return {promise} returns a thennable promise which may resolve with temporal raster data on response
    */
   var getTemporalRaster = function (start, stop, geom, aggWindow, rasterNames, agg) {
-    var slug = MapService.mapState.layers[rasterNames].layers[0].slug;
+    var slug = (MapService.mapState.layers) ? MapService.mapState.layers[rasterNames].layers[0].slug : rasterNames;
     var stopString, startString, wkt;
     stopString = stop.toISOString().split('.')[0];
     startString = start.toISOString().split('.')[0];
