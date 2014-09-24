@@ -1,18 +1,32 @@
 Changelog of lizard-nxt client
 ==============================
 
-unreleased
+Unreleased
 ----------
 
-- Add rain per month aggregation
 
-- Rain CSVs now get distinct columns for date + time
+Release 0.2b5
+-------------
 
-- implement temporal vector directive/layer
+- Bug fix object attributes.
 
-- Rain bars are drawn and removed one by one
+- Bug fix brush.
 
-- Converted land use donut to horizontal bar
+- Increase westerschelde resolution.
+
+
+Release 0.2b4
+-------------
+
+- Add rain per month aggregation.
+
+- Rain CSVs now get distinct columns for date + time.
+
+- implement temporal vector directive/layer.
+
+- Rain bars are drawn and removed one by one.
+
+- Converted land use donut to horizontal bar.
 
 - Refactor map directive into map service.
 
@@ -27,22 +41,22 @@ Release 0.1
 
 - Layer chooser is now a directive and has a background-image.
 
-- All clicks on the map result all data available to that location
+- All clicks on the map result all data available to that location.
 
 - ExtentAggregat is the default card displaying an extent summary of
-  all active data layers
+  all active data layers.
 
-- Layers are mentioned in slug of URL
+- Layers are mentioned in slug of URL.
 
-- DRY up HTML for cards
+- DRY up HTML for cards.
 
-- Events with start and end as line in timeline
+- Events with start and end as line in timeline.
 
 - Events circle radius is logarithmically scaled.
 
-- Include timeState in url hash
+- Include timeState in url hash.
 
-- Events with start and end as line in timeline
+- Events with start and end as line in timeline.
 
 - Events circles on map now don't increase with every redraw.
 
@@ -70,7 +84,7 @@ Release 0.1
 
 - Use diferent style for the elevation map and rescale when moved.
 
-- Add some quality cards to all entities except: [orifice, channel, csection, flda and csurface]
+- Add some quality cards to all entities except: [orifice, channel, csection, flda and csurface].
 
 - Loading utf layers only when the visible layer is already loaded.
 
@@ -92,17 +106,17 @@ Release 0.1
 
 - Bugfixes for elevation curve.
 
-- Rain data can be requested from the API and the front end
+- Rain data can be requested from the API and the front end.
 
-- Rain and timeseries are coupled with the temporal Extent
+- Rain and timeseries are coupled with the temporal Extent.
 
-- Removed angular-resource as dependency, replaced by Restangular
+- Removed angular-resource as dependency, replaced by Restangular.
 
-- Raster layers from raster.lizard.net/wms
+- Raster layers from raster.lizard.net/wms.
 
-- Refactor aggregation UI: aggregated box with controls to toggle timeline alerts
+- Refactor aggregation UI: aggregated box with controls to toggle timeline alerts.
 
-- Cleanup of depricated client side javascript code
+- Cleanup of depricated client side javascript code.
 
 - Added unit tests for timeline.
 
