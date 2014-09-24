@@ -153,7 +153,7 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
        */
       scope.$watch('mapState.activeLayersChanged', function (n, o) {
         var i, activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
-        if (activeTemporalLayer) {
+        if (activeTemporalLayer && activeTemporalLayer.layers[0].type === 'WMS') {
           start();
           for (i in imageOverlays) {
             MapService.addLayer(imageOverlays[i]);
