@@ -41,7 +41,7 @@ app.directive('map', [
 
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.
-      $controller('hashGetterSetter', {$scope: scope});
+      $controller('UrlController', {$scope: scope});
 
       // initialize empty ClickLayer.
       // Otherwise click of events-aggregate and clicklayer

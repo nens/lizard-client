@@ -20,19 +20,19 @@ describe('Testing MasterController', function () {
 
   }));
 
-  it('should set box type to intersect when tool is toggled to intersect', function () {
+  it('should set box type to line when tool is toggled to line', function () {
     createController();
-    $scope.toggleTool('intersect');
+    $scope.toggleTool('line');
     $scope.$digest();
-    expect($scope.box.type).toBe('intersect');
+    expect($scope.box.type).toBe('line');
   });
 
-  it('should set box type to extentAggregate when tool is toggled to intersect again', function () {
+  it('should set box type to area when tool is toggled to line again', function () {
     createController();
-    $scope.toggleTool('intersect');
+    $scope.toggleTool('line');
     $scope.$digest();
-    $scope.toggleTool('intersect');
-    expect($scope.box.type).toBe('extentAggregate');
+    $scope.toggleTool('line');
+    expect($scope.box.type).toBe('area');
   });
 
 });

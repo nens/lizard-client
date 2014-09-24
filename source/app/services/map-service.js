@@ -121,6 +121,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       _options.effects = 'shade:0:3';
     } else if (nonLeafLayer.slug === 'isahw:BOFEK2012') {
       _options.styles = '';
+      return; // Add no styling for soil layer
     } else { // Default, used by zettingsvloeiingsproef
       _options.styles = 'BrBG_r';
       _options.effects = 'shade:0:3';
@@ -541,6 +542,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    */
   mapState = {
     here: null,
+    points: [], // History of here for drawing
     center: null,
     initiated: _initiated,
     layers: CabinetService.layers,

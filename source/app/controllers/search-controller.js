@@ -30,7 +30,7 @@ app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
       nextTab = - 1;
       break;
     case KeyCodes.RETURNKEY:
-      $scope.box.type = 'extentAggregate'; // Hides the results
+      $scope.box.type = 'area'; // Hides the results
       e.preventDefault();
       break;
     case KeyCodes.DOWNARROW:
@@ -83,7 +83,7 @@ app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
       // therefore no need to call $rootScope.
       $scope.$broadcast('clean');
       $scope.box.query = null;
-      $scope.box.type = 'extentAggregate';
+      $scope.box.type = 'area';
       $scope.box.showCards = true;
       //console.log($scope);
     };

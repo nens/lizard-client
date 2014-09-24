@@ -1,6 +1,6 @@
-<div ng-controller="ExtentAggregateCtrl">
+<div ng-controller="AreaCtrl">
 
-  <div ng-repeat="agg in extentAggregate" class="card active" id="card-<% agg.name %>">
+  <div ng-repeat="agg in area" class="card active" id="card-<% agg.name %>">
 
     <div ng-switch="agg.type" class="card-content" id="card-content-<% agg.name %>">
       <graph ng-switch-when="curve" line xlabel="'[%]'" ylabel="'hoogte [mNAP]'" data="agg.data" keys="{x: 0, y: 1}"></graph>

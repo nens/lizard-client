@@ -52,7 +52,7 @@ app.config(function ($interpolateProvider) {
  * Set url fragment behavior to HTML5 mode (without hash in url).
  */
 app.config(function ($locationProvider) {
-  $locationProvider.html5Mode(true).hashPrefix('!');
+  $locationProvider.html5Mode(true);
 });
 
 /**
@@ -131,7 +131,7 @@ app.controller('MasterCtrl',
     contextSwitchMode: false, // Switch between card or fullscreen
     query: null, // Search bar query
     showCards: false,// Only used for search results
-    type: 'extentAggregate', // Default box type
+    type: 'area', // Default box type
     content: {}, // Inconsistently used to store data to display in box
     changed: Date.now(),
     mouseLoc: [] // Used to draw 'bolletje' on elevation profile
@@ -189,12 +189,12 @@ app.controller('MasterCtrl',
    *
    */
   $scope.toggleTool = function (name) {
-    if (name === 'intersect') {
-      $scope.box.type  = 'intersect';
+    if (name === 'line') {
+      $scope.box.type  = 'line';
     }
     if ($scope.tools.active === name) {
       $scope.tools.active = 'none';
-      $scope.box.type = 'extentAggregate';
+      $scope.box.type = 'area';
     } else {
       $scope.tools.active = name;
     }
@@ -255,15 +255,15 @@ app.controller('MasterCtrl',
     if (n === o) { return true; }
     if (!$scope.$$phase) {
       $scope.$apply(function () {
-        if ($scope.box.type !== 'intersect') {
-          $scope.box.type = 'pointObject';
-          $scope.$broadcast('updatePointObject');
+        if ($scope.box.type !== 'line') {
+          $scope.box.type = 'point';
+          $scope.$broadcast('updatepoint');
         }
       });
     } else {
-      if ($scope.box.type !== 'intersect') {
-        $scope.box.type = 'pointObject';
-        $scope.$broadcast('updatePointObject');
+      if ($scope.box.type !== 'line') {
+        $scope.box.type = 'point';
+        $scope.$broadcast('updatepoint');
       }
     }
   });
@@ -445,8 +445,8 @@ app.controller('MasterCtrl',
         $scope.box.contextSwitchMode = false;
       } else {
         // Or else, reset the omnibox state
-        $scope.box.type = 'empty';
-        $scope.box.empty = null;
+        $scope.box.type = 'area';
+        // $scope.box.empty = null;
       }
     }
   };

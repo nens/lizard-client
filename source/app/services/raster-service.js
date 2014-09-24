@@ -20,6 +20,10 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
         bounds = [[51.41, 4.03],
                   [51.36, 4.17]];
       }
+      if (layerName === 'westerschelde:diff') {
+        bounds = [[51.41, 4.03],
+                  [51.36, 4.17]];
+      }
       return bounds;
     };
 
@@ -49,13 +53,26 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
         "timeResolution": 15768000000,
         "minTimeBetweenFrames": 1000,
         "imageBounds": _getImageBounds(layerName),
-        "imageUrlBase": wmsUrl + layerName + '&STYLES=BrBG_r:-30:0&TRANSPARENT=false'
+        "imageUrlBase": wmsUrl + layerName + '&STYLES=BrBG_r:-27:-2&TRANSPARENT=false'
       };
       var bbox = [info.imageBounds[0][1], info.imageBounds[1][0]].toString() +
       ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString(),
+      width = 2000;
       height = parseInt(width * ((info.imageBounds[0][0] - info.imageBounds[1][0]) / (info.imageBounds[1][1] - info.imageBounds[0][1])), 10);
       info.imageUrlBase = info.imageUrlBase + '&HEIGHT=' + height + '&WIDTH=' + width + '&ZINDEX=26&BBOX=' + bbox + '&TIME=';
+    }
+    if (layerName === 'westerschelde:diff') {
+      info = {
+        "timeResolution": 15768000000,
+        "minTimeBetweenFrames": 1000,
+        "imageBounds": _getImageBounds(layerName),
+        "imageUrlBase": wmsUrl + 'bath:westerschelde&STYLES=jet_r:-10:10&TRANSPARENT=false'
+      };
+      var bbox = [info.imageBounds[0][1], info.imageBounds[1][0]].toString() +
+      ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString(),
       width = 2000;
+      height = parseInt(width * ((info.imageBounds[0][0] - info.imageBounds[1][0]) / (info.imageBounds[1][1] - info.imageBounds[0][1])), 10);
+      info.imageUrlBase = info.imageUrlBase + '&HEIGHT=' + height + '&WIDTH=' + width + '&ZINDEX=26&BBOX=' + bbox + '&SUBTRACT=2012-02-15&TIME=';
     }
     return info;
   };
@@ -205,7 +222,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    *
    * @param  {object} layer     nxt defition of a layer
    * @param  {str} slug               short description of layer
-   * @param  {object} agg             extentAggregate object of this
+   * @param  {object} agg             area object of this
    * @param  {object} bounds   mapState.bounds, containing
    * @return {promise}                a promise with aggregated data and
    *                                  the slug
@@ -238,18 +255,18 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    *
    * @returns {boolean}
    */
-  var mustShowRainCard = function (mapState, pointObject) {
+  var mustShowRainCard = function (mapState, point) {
 
     var activeTemporalLayer = mapState.getActiveTemporalLayer();
     var rainIsActive =
-           (pointObject.temporalRaster.type === 'demo:radar'
+           (point.temporalRaster.type === 'demo:radar'
               && activeTemporalLayer
               && activeTemporalLayer.slug === 'demo:radar'
             );
 
     if (rainIsActive) {
 
-      var i, rainData = pointObject.temporalRaster.data;
+      var i, rainData = point.temporalRaster.data;
 
       for (i = 0; i < rainData.length; i++) {
         if (rainData[i][1] !== null) {

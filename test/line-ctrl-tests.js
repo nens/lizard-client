@@ -1,4 +1,4 @@
-describe('Testing IntersectAggregateCtrl', function () {
+describe('Testing LineCtrl', function () {
   var $scope,
     $rootScope,
     $controller,
@@ -26,6 +26,7 @@ describe('Testing IntersectAggregateCtrl', function () {
         lat: 6,
         lng: 52
       },
+      points: [],
       userHere: {
         lat: 5,
         lng: 51
@@ -81,7 +82,7 @@ describe('Testing IntersectAggregateCtrl', function () {
     };
 
     createController = function () {
-      $controller('IntersectCtrl', {
+      $controller('LineCtrl', {
           '$scope': $scope,
           'RasterService': MockRasterService,
           'ClickFeedbackService': MockClickFeedbackService,
@@ -92,16 +93,16 @@ describe('Testing IntersectAggregateCtrl', function () {
 
   }));
 
-  it('should have an empty lineIntersect', function () {
+  it('should have an empty line', function () {
     createController();
-    expect($scope.lineIntersect).toBeDefined();
-    expect($scope.lineIntersect).toEqual({});
+    expect($scope.line).toBeDefined();
+    expect($scope.line).toEqual({});
   });
 
 
   it('should remove data from scope when layer is inactive', function () {
     createController();
-    $scope.lineIntersect = {
+    $scope.line = {
       elevation: {
         data: [1, 2, 3]
       }
@@ -112,7 +113,7 @@ describe('Testing IntersectAggregateCtrl', function () {
     $scope.mapState.activeLayersChanged = true;
     $scope.$digest();
 
-    expect($scope.lineIntersect.landuse).toBeUndefined();
+    expect($scope.line.landuse).toBeUndefined();
   });
 
   it('should add data to scope when user clicked twice and layer is active and has an aggregation_type', function () {
@@ -128,7 +129,7 @@ describe('Testing IntersectAggregateCtrl', function () {
       lng: 51
     };
     $scope.$digest();
-    expect($scope.lineIntersect.elevation).toBeDefined();
+    expect($scope.line.elevation).toBeDefined();
   });
 
   it('should add data to scope when user clicked twice and layer is active but without an aggregation_type', function () {
@@ -147,7 +148,7 @@ describe('Testing IntersectAggregateCtrl', function () {
     $scope.mapState.layers['isahw:BOFEK2012'].active = true;
     $scope.mapState.activeLayersChanged = false;
     $scope.$digest();
-    expect($scope.lineIntersect['isahw:BOFEK2012']).toBeUndefined();
+    expect($scope.line['isahw:BOFEK2012']).toBeUndefined();
   });
 
   it('should not add data to scope when user clicked twice and layer is inactive with an aggregation_type', function () {
@@ -163,7 +164,7 @@ describe('Testing IntersectAggregateCtrl', function () {
       lng: 51
     };
     $scope.$digest();
-    expect($scope.lineIntersect.elevation).toBeUndefined();
+    expect($scope.line.elevation).toBeUndefined();
   });
 
   it('should remove data from scope when layer with an aggregation_type is turned off', function () {
@@ -179,11 +180,11 @@ describe('Testing IntersectAggregateCtrl', function () {
       lng: 51
     };
     $scope.$digest();
-    expect($scope.lineIntersect.elevation).toBeDefined();
+    expect($scope.line.elevation).toBeDefined();
     $scope.mapState.layers.elevation.active = false;
     $scope.mapState.activeLayersChanged = false;
     $scope.$digest();
-    expect($scope.lineIntersect.elevation).toBeUndefined();
+    expect($scope.line.elevation).toBeUndefined();
   });
 
   it('should add data to the scope when getting data for temporal raster', function () {
@@ -199,7 +200,7 @@ describe('Testing IntersectAggregateCtrl', function () {
       lng: 51
     };
     $scope.$digest();
-    expect($scope.lineIntersect['demo:radar'].result).toBeDefined();
+    expect($scope.line['demo:radar'].result).toBeDefined();
   });
 
   it('should add a specific subset to the data element when getting data for temporal raster', function () {
@@ -219,9 +220,9 @@ describe('Testing IntersectAggregateCtrl', function () {
     // and takes the second element from the list that's
     // returned by the mock (the second element corresponds
     // to the time of timeState.at relative to start and end)
-    expect($scope.lineIntersect['demo:radar'].data[0][1]).toBe(result[0][1][1]);
-    expect($scope.lineIntersect['demo:radar'].data[1][1]).toBe(result[1][1][1]);
-    expect($scope.lineIntersect['demo:radar'].data[2][1]).toBe(result[2][1][1]);
+    expect($scope.line['demo:radar'].data[0][1]).toBe(result[0][1][1]);
+    expect($scope.line['demo:radar'].data[1][1]).toBe(result[1][1][1]);
+    expect($scope.line['demo:radar'].data[2][1]).toBe(result[2][1][1]);
   });
 
 });
