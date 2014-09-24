@@ -135,7 +135,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
     var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
 
-    var layer = new L.UtfGrid(url, {
+    var layer = new LeafletService.UtfGrid(url, {
       ext: 'grid',
       slug: nonLeafLayer.slug,
       name: nonLeafLayer.slug,
@@ -150,6 +150,23 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     nonLeafLayer.initiated = true;
   };
 
+  var _initiateVectorLayer = function (nonLeafLayer) {
+    var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
+    var dataLayer = new LeafletService.TileDataLayer(url,
+    {
+      dataCallback: function (featureCollection) {
+        if (!featureCollection) { return; }
+        if (featureCollection.features.length > 0) {
+          debugger
+        }
+      },
+      slug: nonLeafLayer.slug,
+      ext: 'geojson'
+    });
+
+    nonLeafLayer.leafletLayer = dataLayer;
+  }
+
   /**
    * @function
    * @memberof app.MapService
@@ -163,7 +180,12 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
     angular.forEach(layerGroup.layers, function (layer) {
 
-      if (layer.temporal) { layerGroup.temporal = true; return; }
+      if (layer.temporal) { 
+        layerGroup.temporal = true
+        if (layer.type === 'WMS');{
+           return;
+        }
+      }
 
       layer.baselayer = layerGroup.baselayer;
       layer.overlayer = layerGroup.overlayer;
@@ -174,6 +196,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
       switch (layer.type) {
       case 'Vector':
+        _initiateVectorLayer(layer);
         break;
 
       case 'TMS':
