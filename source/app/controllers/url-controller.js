@@ -137,6 +137,7 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
           active = (activeSlugs.indexOf(allSlugs[i]) >= 0);
           if ((active && !$scope.mapState.layers[allSlugs[i]].active)
             || (!active && $scope.mapState.layers[allSlugs[i]].active)) {
+            $scope.mapState.layers[allSlugs[i]].active = !$scope.mapState.layers[allSlugs[i]].active;
             $scope.mapState.changeLayer($scope.mapState.layers[allSlugs[i]]);
             MapService.mapState.activeLayersChanged = Date.now();
           }

@@ -330,7 +330,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
         _rescaleElevation();
       }
     } else {
-      console.log(layerGroup.name, layerGroup.active);
       layerGroup.active = !layerGroup.active;
     }
 
