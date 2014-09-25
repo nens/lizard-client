@@ -55,11 +55,6 @@ rect.bar {
   fill: #95a5a6;
 }
 
-.horizontal-rect {
-  stroke-width: 1;
-  stroke: #7f8c8d;
-}
-
 .bar-timeline {
   fill: #95a5a6;
   stroke-width: 1;
