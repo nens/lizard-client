@@ -95,7 +95,7 @@ module.exports = function (grunt) {
             '<%= appfiles %>',
             '<%= nxt_dir.test %>/**/*.js'
           ],
-          tasks: ['test', 'dox']
+          tasks: ['test', 'doxx']
         },
         styles: {
           files: ['<%= nxt_dir.src %>/assets/css/{,*/}*.css'],
