@@ -335,13 +335,28 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
     if (layerGroup.active) {
       angular.forEach(layerGroup.layers, function (layer) {
+        if (layer.type === 'UTFGrid' ||
+            layer.type === 'Vector') { return; }
         addLayer(layer.leafletLayer);
 
-        if (layer.type === 'UTFGrid') {
+        if (layer.slug === 'waterchain_png') {
+          var grid_layer = getLayerFromGroup(layerGroup, 'waterchain_grid');
+          layer.leafletLayer.on('load', function () {
+
+            addLayer(grid_layer.leafletLayer);
+            grid_layer.leafletLayer.on('load', function () {
+              $rootScope.$broadcast(layerGroup.slug + 'GridLoaded');
+            });
+          });
+
+          layer.leafletLayer.on('loading', function () {
+            removeLayer(grid_layer.leafletLayer);
+          });
           layer.leafletLayer.on('load', function () {
             $rootScope.$broadcast(layer.slug + 'GridLoaded');
           });
         }
+
       });
 
         // if (subLayer.grid_layer) {
@@ -397,6 +412,16 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       }
     }
     return false;
+  };
+
+  var getLayerFromGroup = function (layerGroup, slug) {
+    var wantedLayer;
+    angular.forEach(layerGroup.layers, function (layer) {
+      if (layer.slug === slug) {
+        wantedLayer = layer;
+      }
+    });
+    return wantedLayer;
   };
 
   /**
