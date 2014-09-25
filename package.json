@@ -45,6 +45,7 @@
     "grunt-connect-proxy": "~0.1.6",
     "grunt-notify": "~0.2.17",
     "grunt-template-jasmine-istanbul": "~0.3.0",
-    "grunt-jsdoc": "~0.5.6"
+    "grunt-jsdoc": "~0.5.6",
+    "grunt-doxx": "~0.1.1"
   }
 }
