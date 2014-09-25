@@ -54,11 +54,11 @@ app.directive('graph', ["Graph", function (Graph) {
 
     dimensions = {
       width: 370,
-      height: 150,
+      height: 160,
       padding: {
         top: 5,
         right: 5,
-        bottom: 50,
+        bottom: 60,
         left: 50
       }
     };

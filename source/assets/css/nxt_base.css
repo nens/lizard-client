@@ -1055,6 +1055,7 @@ ul.list-inline li.baselayer-icon label{
   fill: none;
   /*stroke: #000;*/
   shape-rendering: crispEdges;
+  display: none;
 }
 
 .timeline-axis text{
