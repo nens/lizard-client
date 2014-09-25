@@ -93,7 +93,10 @@ app.directive('graph', ["Graph", function (Graph) {
     scope.$watch('data', function (n, o) {
       if (n === o) { return true; }
       graphCtrl.setData(scope);
+      // Call graph with the new data
       graphCtrl.updateData.call(graphCtrl.graph, graphCtrl.data, graphCtrl.keys, graphCtrl.labels);
+      // Call the graph with the now
+      graphCtrl.updateNow.call(graphCtrl.graph, scope.now);
     });
 
     scope.$watch('now', function (n, o) {
