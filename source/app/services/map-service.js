@@ -178,8 +178,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   createLayer = function (layerGroup) {
 
-    var i, subLayer;
-
     angular.forEach(layerGroup.layers, function (layer) {
 
       if (layer.temporal) { 

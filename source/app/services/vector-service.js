@@ -93,7 +93,7 @@ app.service('VectorService', ['Restangular', 'LeafletService',
      * @function
      * @description gets data from backend
      * @param  {string} layer slug of layer
-     * @param  {object} geom  geometry that it needs to get (e.g. bboxs)
+     * @param  {object} geomortime  geometry or time that it needs to get (e.g. bboxs)
      * @param  {object} time  start, stop object
      * @return {promise}
      */

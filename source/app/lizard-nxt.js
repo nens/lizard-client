@@ -229,12 +229,12 @@ app.controller('MasterCtrl',
    */
   $scope.mapState.changeLayer = function (layer) {
 
-    if (layer.temporal) {
 
       $scope.mapState.activeLayersChanged =
         !$scope.mapState.activeLayersChanged;
       layer.active = !layer.active;
 
+    if (layer.temporal) {
       // toggle timeline if neccesary
       if ($scope.timeState.hidden !== false) {
         $scope.toggleTimeline();
