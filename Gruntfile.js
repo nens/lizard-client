@@ -95,7 +95,7 @@ module.exports = function (grunt) {
             '<%= appfiles %>',
             '<%= nxt_dir.test %>/**/*.js'
           ],
-          tasks: ['test', 'jsdoc']
+          tasks: ['test', 'dox']
         },
         styles: {
           files: ['<%= nxt_dir.src %>/assets/css/{,*/}*.css'],
@@ -139,14 +139,12 @@ module.exports = function (grunt) {
         }
       },
 
-      // produces docs
-      jsdoc: {
-        dist: {
-          src: ['<%= appfiles %>',
-                'README.md'],
-          options: {
-            destination: 'doc'
-          }
+
+        // produces docs
+      doxx: {
+        all: {
+          src: 'source/',
+          target: 'doc'
         }
       },
       // produces linting results
