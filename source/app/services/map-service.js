@@ -182,7 +182,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
       if (layer.temporal) { 
         layerGroup.temporal = true
-        if (layer.type === 'WMS');{
+        if (layer.type === 'WMS') {
            return;
         }
       }
@@ -330,20 +330,24 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
         _rescaleElevation();
       }
     } else {
+      console.log(layerGroup.name, layerGroup.active);
       layerGroup.active = !layerGroup.active;
     }
 
     if (layerGroup.active) {
       angular.forEach(layerGroup.layers, function (layer) {
+
+        // fugly hack for now.. 
+        // To prevent the utfgrid and vector layer belonging to water
+        // to load before the pngs.
         if (layer.type === 'UTFGrid' ||
-            layer.type === 'Vector') { return; }
+            layer.slug === 'impervioussurface') { return; }
+        
         addLayer(layer.leafletLayer);
 
         if (layer.slug === 'waterchain_png') {
           var grid_layer = getLayerFromGroup(layerGroup, 'waterchain_grid');
-          var vector_layer = getLayerFromGroup(layerGroup, 'impervioussurface');
           layer.leafletLayer.on('load', function () {
-            addLayer(vector_layer.leafletLayer);
             addLayer(grid_layer.leafletLayer);
             grid_layer.leafletLayer.on('load', function () {
               $rootScope.$broadcast(layerGroup.slug + 'GridLoaded');
@@ -359,20 +363,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
         }
 
       });
-
-        // if (subLayer.grid_layer) {
-
-        //   subLayer.leafletLayer.on('load', function () {
-        //     addLayer(subLayer.grid_layer);
-        //     subLayer.grid_layer.on('load', function () {
-        //       $rootScope.$broadcast(layerGroup.slug + 'GridLoaded');
-        //     });
-        //   });
-
-        //   subLayer.leafletLayer.on('loading', function () {
-        //     removeLayer(subLayer.grid_layer);
-        //   });
-        // }
 
     } else {
 
