@@ -422,7 +422,10 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
 
   drawPath = function (svg, line, data, duration, path) {
     if (!path) {
-      path = svg.select('g').select('#feature-group').append("svg:path")
+      var fg = svg.select('g').select('#feature-group');
+      // bring to front
+      fg.node().parentNode.appendChild(fg.node());
+      path = fg.append("svg:path")
         .attr("class", "line")
         .style("stroke-width", 3);
     }
