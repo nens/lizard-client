@@ -160,7 +160,12 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     drawHorizontalStack: {
       value: function (data, keys, labels) {
         if (!this._x) {
-          this._x = createXGraph(this._svg, this.dimensions, labels);
+          var options = {
+            scale: 'linear',
+            orientation: 'bottom',
+            tickFormat: d3.format(".0%") // Custom tickFomat in percentages
+          };
+          this._x = createXGraph(this._svg, this.dimensions, labels, options);
         }
         // normalize data
         var total = d3.sum(data, function (d) {
@@ -301,7 +306,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     rects.transition()
       .duration(duration)
       .attr("x", function (d) { return scale(d.start); })
-      .attr('width', function (d) { return scale(total - d.start); });
+      .attr('width', function (d) { return scale(d[keys.x]); });
     // ENTER
     // Create new elements as needed.
     rects.enter().append("rect")
@@ -311,7 +316,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       .attr("height", height)
       .transition()
       .duration(duration)
-      .attr('width', function (d) { return scale(total - d.start); });
+      .attr('width', function (d) { return scale(d[keys.x]); });
     // EXIT
     // Remove old elements as needed. First transition to width = 0
     // and then remove.
@@ -389,18 +394,20 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     return scale(data[1][keys.x]) - scale(data[0][keys.x]);
   };
 
-  createXGraph = function (svg, dimensions, labels) {
+  createXGraph = function (svg, dimensions, labels, options) {
     var x = {};
-    var options = {
-      scale: 'linear',
-      orientation: 'bottom'
-    },
-    width = Graph.prototype._getWidth(dimensions),
+    if (!options) {
+      options = {
+        scale: 'linear',
+        orientation: 'bottom'
+      };
+    }
+    var width = Graph.prototype._getWidth(dimensions),
     range = {min: 0, max: width},
     // Axis should run from zero to 100%
     domain = {min: 0, max: 1};
-    x.scale = Graph.prototype._makeScale(domain, range, {scale: 'linear'});
-    x.axis = Graph.prototype._makeAxis(x.scale, {orientation: 'bottom'});
+    x.scale = Graph.prototype._makeScale(domain, range, {scale: options.scale});
+    x.axis = Graph.prototype._makeAxis(x.scale, options);
     drawAxes(svg, x.axis, dimensions, false);
     addLabel(svg, dimensions, labels.x, false);
     return x;

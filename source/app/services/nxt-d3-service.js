@@ -240,6 +240,9 @@ app.factory("NxtD3", [ function () {
             ]);
         axis.tickFormat(tickFormat);
       }
+      if (options.tickFormat) {
+        axis.tickFormat(options.tickFormat);
+      }
       return axis;
     },
 
