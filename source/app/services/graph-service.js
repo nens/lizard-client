@@ -11,6 +11,8 @@
  * the graph through click and hover functions. Graph inherits from
  * NxtD3, a lower level d3 helper class.
  *
+ * NOTE: The donut code is currently not used anywhere in lizard-client.
+ *
  * Everything in the graphs is animated according to NxtD3.transTime.
  */
 app.factory("Graph", ["NxtD3", function (NxtD3) {
@@ -313,6 +315,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       .style("fill", function (d) { return d.color; })
       .attr("x", function (d) { return scale(d.start); })
       .attr("y", 0)
+      .attr('class', 'horizontal-rect')
       .attr("height", height)
       .transition()
       .duration(duration)

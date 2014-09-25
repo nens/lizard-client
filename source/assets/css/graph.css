@@ -59,6 +59,11 @@ rect.bar {
   fill: #95a5a6;
 }
 
+.horizontal-rect {
+  stroke-width: 1;
+  stroke: #7f8c8d;
+}
+
 .bar-timeline {
   fill: #95a5a6;
   stroke-width: 1;
@@ -79,7 +84,7 @@ text, axis text {
 }
 
 .graph-text {
-  fill: darkgray !important;
+  fill: #7f8c8d !important;
   stroke: none !important;
   font-size: 13px !important;
   font-family: sans-serif !important;
