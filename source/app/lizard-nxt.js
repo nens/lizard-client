@@ -238,11 +238,11 @@ app.controller('MasterCtrl',
         $scope.toggleTimeline();
       }
     }
-    if (!(layer.temporal && layer.type === 'WMS')) {
+    // if (!(layer.temporal && layer.type === 'WMS')) {
       // for other than temporalRaster layers, we do stuff the old way
       MapService.toggleLayer(layer, $scope.mapState.layers,
         $scope.mapState.bounds);
-    }
+    // }
 
   };
 
