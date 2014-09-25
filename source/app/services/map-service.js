@@ -13,8 +13,9 @@
  *
  */
 app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
-                           'LeafletService',
-  function ($rootScope, $filter, $http, CabinetService, LeafletService) {
+                           'VectorService', 'LeafletService',
+  function ($rootScope, $filter, $http, CabinetService,
+    VectorService, LeafletService) {
 
       // private vars
   var _map, _initiateTMSLayer, _initiateWMSLayer,
@@ -152,12 +153,13 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   var _initiateVectorLayer = function (nonLeafLayer) {
     var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
+    var slug = nonLeafLayer.slug;
     var dataLayer = new LeafletService.TileDataLayer(url,
     {
-      dataCallback: function (featureCollection) {
+      dataCallback: function (featureCollection, point) {
         if (!featureCollection) { return; }
         if (featureCollection.features.length > 0) {
-          debugger
+          VectorService.setData(slug, featureCollection.features, point.z);
         }
       },
       slug: nonLeafLayer.slug,
@@ -341,8 +343,9 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
         if (layer.slug === 'waterchain_png') {
           var grid_layer = getLayerFromGroup(layerGroup, 'waterchain_grid');
+          var vector_layer = getLayerFromGroup(layerGroup, 'impervioussurface');
           layer.leafletLayer.on('load', function () {
-
+            addLayer(vector_layer.leafletLayer);
             addLayer(grid_layer.leafletLayer);
             grid_layer.leafletLayer.on('load', function () {
               $rootScope.$broadcast(layerGroup.slug + 'GridLoaded');

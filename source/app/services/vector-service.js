@@ -100,16 +100,25 @@ app.service('VectorService', ['Restangular', 'LeafletService',
     var getData = function (layerSlug, geomortime, time) {
       // if only one extra argument it can be geom or time.
       if (!time && !(geomortime instanceof L.LatLngBounds)) {
-        return filterSet(vectorLayers[layerSlug], undefined, geomortime);
+        return filterSet(vectorLayers[layerSlug].data, undefined, geomortime);
       }
-      return filterSet(vectorLayers[layerSlug], geomortime, time);
+      return filterSet(vectorLayers[layerSlug].data, geomortime, time);
     };
 
-    var setData = function (layerSlug, data) {
-      if (vectorLayers.hasOwnProperty(layerSlug)) {
-        vectorLayers[layerSlug].data = data;
+    var replaceData = function (layerSlug, data, zoom) {
+      vectorLayers[layerSlug] = {
+          data: [],
+          zoom: zoom
+        };
+      Array.prototype.push.apply(vectorLayers[layerSlug].data, data);
+    };
+
+    var setData = function (layerSlug, data, zoom) {
+      if (vectorLayers.hasOwnProperty(layerSlug) &&
+          vectorLayers[layerSlug].zoom === zoom) {
+          Array.prototype.push.apply(vectorLayers[layerSlug].data, data);
       } else {
-        vectorLayers[layerSlug] = data;
+        replaceData.apply(this, arguments);
       }
     };
 

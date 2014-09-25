@@ -13,13 +13,13 @@ describe('Testing VectorService', function () {
   it('should set data', function () {
     VectorService.setData('events', geoJson);
     var gotthis = VectorService.getData('events', geoJson);
-    expect(gotthis).toBe(geoJson);
+    expect(gotthis).toEqual(geoJson);
   });
 
   it('should get all data', function () {
     VectorService.setData('events', geoJson);
     var gotthis = VectorService.getData('events');
-    expect(gotthis).toBe(geoJson);
+    expect(gotthis).toEqual(geoJson);
   });
 
   it('should get data after date', function () {
@@ -62,5 +62,16 @@ describe('Testing VectorService', function () {
     });
     expect(gotthis).toEqual([geoJson[geoJson.length - 3], geoJson[geoJson.length - 1]]);
   });
+
+  it('should append data if zoomlevel is the same', function () {
+    VectorService.setData('events', geoJson, 2);
+    VectorService.setData('events', ['henkie'], 2);
+
+    var gotthis = VectorService.getData('events');
+    var shouldbethis = [];
+    Array.prototype.push.apply(shouldbethis, geoJson);
+    Array.prototype.push.apply(shouldbethis, ['henkie']);
+    expect(gotthis).toEqual(shouldbethis);
+  })
 
 });
