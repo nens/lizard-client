@@ -134,6 +134,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
           this._xy = this._createXYGraph(data, keys, labels, options);
         } else {
           this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys, {y: 0});
+          drawLabel(this._svg, this.dimensions, labels.y, true);
         }
         drawVerticalRects(this._svg, this.dimensions, this._xy, keys, data, this.transTime);
       }
@@ -228,6 +229,9 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     drawNow: {
       value: function (now) {
         this._drawNow(now, this._xy.x.scale);
+        // move to the front
+        var el = this._svg.select('.now-indicator').node();
+        el.parentNode.appendChild(el);
       }
     },
 
@@ -251,14 +255,14 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
           var y = key === 'y' ? true: false;
           xy[key] = self._createD3Objects(data, keys[key], options[key], y);
           drawAxes(self._svg, xy[key].axis, self.dimensions, y);
-          addLabel(self._svg, self.dimensions, labels[key], y);
+          drawLabel(self._svg, self.dimensions, labels[key], y);
         });
         return xy;
       }
     }
   });
 
-  var createPie, createArc, drawPie, drawAxes, addLabel, toRescale, drawPath, setupLineGraph, createDonut,
+  var createPie, createArc, drawPie, drawAxes, drawLabel, toRescale, drawPath, setupLineGraph, createDonut,
   getBarWidth, drawVerticalRects, drawHorizontalRectss, createXGraph, rescale;
 
   rescale = function (svg, dimensions, xy, data, keys, origin) {
@@ -412,7 +416,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     x.scale = Graph.prototype._makeScale(domain, range, {scale: options.scale});
     x.axis = Graph.prototype._makeAxis(x.scale, options);
     drawAxes(svg, x.axis, dimensions, false);
-    addLabel(svg, dimensions, labels.x, false);
+    drawLabel(svg, dimensions, labels.x, false);
     return x;
   };
 
@@ -443,27 +447,31 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     return rescale;
   };
 
-  addLabel = function (svg, dimensions, label, y) {
+  drawLabel = function (svg, dimensions, label, y) {
     var width = Graph.prototype._getWidth(dimensions),
     height = Graph.prototype._getHeight(dimensions),
     // Correct 1 pixel to make sure the labels fall
     // completely within the svg
-    PIXEL_CORRECTION = 1,
-    el = svg.append("text")
-      .attr('class', 'graph-text')
-      .style("text-anchor", "middle")
-      .text(label);
-    if (y) {
-      el.attr('id', 'ylabel')
-        .attr('transform', 'rotate(-90)')
-        .attr('y', 0)
-        .attr('x', 0 - height / 2);
-      el.attr('dy', 0.5 * el.node().getBBox().height + PIXEL_CORRECTION);
-    } else {
-      el.attr('id', 'xlabel')
-        .attr('x', dimensions.padding.left + width / 2)
-        .attr('y', dimensions.height - PIXEL_CORRECTION);
-      el.attr('dy', - 0.5 * el.node().getBBox().height);
+    PIXEL_CORRECTION = 1;
+    var el = svg.select(y ? '#ylabel': '#xlabel');
+    if (!el.empty()) { el.text(label); }
+    else {
+      el = svg.append("text")
+        .attr('class', 'graph-text graph-label')
+        .style("text-anchor", "middle")
+        .text(label);
+      if (y) {
+        el.attr('id', 'ylabel')
+          .attr('transform', 'rotate(-90)')
+          .attr('y', 0)
+          .attr('x', 0 - height / 2);
+        el.attr('dy', 0.5 * el.node().getBBox().height + PIXEL_CORRECTION);
+      } else {
+        el.attr('id', 'xlabel')
+          .attr('x', dimensions.padding.left + width / 2)
+          .attr('y', dimensions.height - PIXEL_CORRECTION);
+        el.attr('dy', - 0.5 * el.node().getBBox().height);
+      }
     }
   };
 
