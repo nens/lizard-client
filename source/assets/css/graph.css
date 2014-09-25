@@ -78,16 +78,15 @@ rect.bar {
 }
 
 text, axis text {
-  fill: darkgray;
+  fill: #7f8c8d;
   stroke: none;
-  font-size: 0.8em;
+  font-size: 12px;
 }
 
 .graph-text {
-  fill: #7f8c8d !important;
-  stroke: none !important;
-  font-size: 13px !important;
-  font-family: sans-serif !important;
+  fill: #7f8c8d;
+  stroke: none;
+  font-size: 12px;
 }
 
 text.d3tooltip {
