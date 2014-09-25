@@ -476,8 +476,8 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       axisEl = svg.select('#yaxis')
         .attr("class", "y-axis y axis")
         .selectAll("text")
-        .style("text-anchor", "end")
-        .attr('class', 'graph-text');
+          .style("text-anchor", "end")
+          .attr('class', 'graph-text');
     } else {
       axisEl = svg.select('#xaxis')
         .attr("class", "x-axis x axis")
