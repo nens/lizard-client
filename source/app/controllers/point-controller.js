@@ -245,14 +245,12 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
     /**
      * @function
      * @memberOf app.pointCtrl
-     * @description placeholder for now. Should fill data object
-     * with timeseries information. (Draw graphs and such);
+     * @description gets timeseries from service
      */
     getTimeSeriesForObject = function (id) {
       TimeseriesService.getTimeseries(id, $scope.timeState)
       .then(function (result) {
         $scope.point.timeseries.active = true;
-        console.log(result);
         $scope.point.timeseries.data = result[0].events;
       });
     };
