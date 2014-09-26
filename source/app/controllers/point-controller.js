@@ -165,7 +165,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
               .then(eventResponded);
           }
           // Get timeseries belonging to object.
-          getTimeSeriesForObject();
+          getTimeSeriesForObject(entity + '$' + id);
         } else {
           $scope.point.attrs.active = false;
           // If not hit object, treat it as a rain click, draw rain click
@@ -245,6 +245,21 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
     /**
      * @function
      * @memberOf app.pointCtrl
+     * @description placeholder for now. Should fill data object
+     * with timeseries information. (Draw graphs and such);
+     */
+    getTimeSeriesForObject = function (id) {
+      TimeseriesService.getTimeseries(id, $scope.timeState)
+      .then(function (result) {
+        $scope.point.timeseries.active = true;
+        console.log(result);
+        $scope.point.timeseries.data = result[0].events;
+      });
+    };
+
+    /**
+     * @function
+     * @memberOf app.pointCtrl
      * @description Sets data attributes if a response returned properly
      * @param  {object} response Response from rasterService. (data-array)
      * @return {void}
@@ -259,20 +274,6 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
          .data[$scope.point.temporalRaster.data.length - 1][0];
       $scope.point.temporalRaster.start =
         $scope.point.temporalRaster.data[0][0];
-    };
-
-    /**
-     * @function
-     * @memberOf app.pointCtrl
-     * @description placeholder for now. Should fill data object
-     * with timeseries information. (Draw graphs and such);
-     */
-    getTimeSeriesForObject = function () {
-      // $scope.point.timeseries.data =
-      //   TimeseriesService.getRandomTimeseries();
-      // $scope.point.timeseries.selectedTimeseries =
-      //   $scope.point.timeseries.data[0];
-      // $scope.point.timeseries.active = true;
     };
 
     /**
