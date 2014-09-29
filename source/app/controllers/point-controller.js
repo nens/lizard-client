@@ -250,8 +250,14 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
     getTimeSeriesForObject = function (id) {
       TimeseriesService.getTimeseries(id, $scope.timeState)
       .then(function (result) {
-        $scope.point.timeseries.active = true;
-        $scope.point.timeseries.data = result[0].events;
+        if (result.length > 0) {
+          $scope.point.timeseries.active = true;
+          $scope.point.timeseries.data = result[0].events;
+          $scope.point.timeseries.name = result[0].name;
+        } else {
+          $scope.point.timeseries.active = false;
+          $scope.point.timeseries.data = [];
+        }
       });
     };
 
