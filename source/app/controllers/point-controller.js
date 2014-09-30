@@ -85,8 +85,15 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
      */
     fillpoint = function (here, extra) {
 
-
       console.log('[F] fillPoint');
+
+      var doneFn = function (response) { // response ::= True | False
+        console.log('[F] doneFn, arg \'response\' =', response);
+      };
+
+      var putDataOnScope = function (response) {
+        console.log('[F] putDataOnScope, arg \'response\' =', response);
+      };
 
       angular.forEach($scope.mapState.layergroups, function (layerGroup) {
 
@@ -97,16 +104,6 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
             putDataOnScope
           );
       });
-    };
-
-    var doneFn = function (response) { // response ::= True | False
-
-      console.log('[F] doneFn, arg \'response\' =', response);
-    };
-
-    var putDataOnScope = function (response) {
-
-      console.log('[F] putDataOnScope, arg \'response\' =', response);
     };
 
       // var clickedOnEvents = extra && extra.type === 'events';

@@ -20,7 +20,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       // private vars
   var _map, _rescaleElevation, _clicked,
       _moveEnded, _moveStarted, _mouseMoved, _dragEnded,
-      _layerGroups = [];
+      _layerGroups = {};
 
       // public vars
   var setView, fitBounds, initiateMapEvents, latLngToLayerPoint,
@@ -39,8 +39,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
     _map = LeafletService.map(mapElem, {
       zoomControl: false,
-      // zoom: 12,
-      // center: L.LatLng(52,4)
     });
 
     // TODO: fix the relative position of nav bar and map element to make the
@@ -83,9 +81,9 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @description Throw in a layer as served from the backend
    */
   createLayerGroups = function (serverSideLayerGroups) {
-    _layerGroups = [];
+    _layerGroups = {};
     angular.forEach(serverSideLayerGroups, function (sslg) {
-      _layerGroups.push(new LayerGroup(sslg));
+      _layerGroups[sslg.slug] = new LayerGroup(sslg);
     });
     return _layerGroups;
   };
@@ -97,29 +95,25 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @param  {object} layer  single layer that needs to be toggled
    * @param  {object} layers all layers to switch off.
    */
-  toggleLayerGroup = function (layerGroup) {
-
+  toggleLayerGroup = function (layerGroup, layerGroups) {
     if (layerGroup._slug === 'elevation' && layerGroup.isActive()) {
-
       rescaleElevation();
-
     } else {
+      layerGroup.toggle(_map, layerGroup._slug);
 
       if (layerGroup.baselayer) {
-        angular.forEach(_layerGroups, function (_layerGroup) {
-          if (_layerGroup.baselayer && _layerGroup.isActive()) {
-            _layerGroup.toggle(_map, layerGroup._slug);
+        angular.forEach(layerGroups, function (_layerGroup) {
+          if (_layerGroup.baselayer && _layerGroup !== layerGroup && _layerGroup.isActive()) {
+            layerGroup.toggle(_map, _layerGroup._slug);
           }
         });
       }
 
-      layerGroup.toggle(_map, layerGroup._slug);
     }
   };
 
   setLayerGoupsToDefault = function () {
     angular.forEach(_layerGroups, function (layerGroup) {
-      console.log('toggling', layerGroup.defaultActive, layerGroup.name);
       if (layerGroup.defaultActive) { layerGroup.toggle(_map); }
     });
   };

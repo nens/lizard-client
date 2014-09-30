@@ -132,7 +132,6 @@ app.factory('LayerGroup', [
             fn(map, layer.leafletLayer);
           }
         });
-
       },
 
       isActive: function () {
