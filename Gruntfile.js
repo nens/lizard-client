@@ -82,7 +82,11 @@ module.exports = function (grunt) {
           open: true,
           middleware: function (connect) {
             return [
-              modRewrite(['!\\.html|\\.js|\\.svg|\\.css|\\.png$ /index.html [L]']),
+              modRewrite([
+                // '/$ /index.html',
+                // '/map/$ /index.html [L]',
+                '!\\\/styles\/|\\\/scripts\/|\\.html|\\.js|\\.svg|\\.css|\\.png$ /index.html [L]'
+                ]),
               connect.static('.tmp'),
               connect().use(
                 '/vendor',
@@ -126,7 +130,11 @@ module.exports = function (grunt) {
       all: {
         src: [
           'Gruntfile.js',
-          '<%= yeoman.app %>/scripts/{,*/}*.js'
+          '<%= yeoman.app %>/scripts/{,*/}*.js',
+          '!<%= yeoman.app %>/lib/leaflet-utfgrid-lizard.js',
+          '!<%= yeoman.app %>/lib/leaflet.contours-layer.js',
+          '!<%= yeoman.app %>/lib/TileLayer.GeoJSONd3.js',
+          '!<%= yeoman.app %>/templates/templates.js'
         ]
       },
       test: {
