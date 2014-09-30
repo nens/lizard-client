@@ -192,12 +192,11 @@ app.service("UrlState", ["LocationGetterSetter", function (LocationGetterSetter)
        */
       setlayerGroupsUrl: function (state, layerGroups) {
         if (layerGroups === undefined) { return; }
-        var slugs = Object.keys(layerGroups),
-            i,
+        var i,
             activeSlugs = [];
-        for (i = 0; i < slugs.length; i++) {
-          if (layerGroups[slugs[i]].active) {
-            activeSlugs.push(slugs[i]);
+        for (var key in layerGroups) {
+          if (layerGroups[key].isActive()) {
+            activeSlugs.push(key);
           }
         }
         LocationGetterSetter.setUrlValue(

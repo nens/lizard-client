@@ -236,6 +236,11 @@ app.controller('MasterCtrl',
     });
   };
 
+  $scope.mapState.toggleLayerGroup = function (layerGroup) {
+    MapService.toggleLayerGroup(layerGroup, $scope.mapState.layerGroups);
+    $scope.mapState.layerGroupsChanged = Date.now();
+  };
+
   /**
    * @function
    * @memberof app.MasterCtrl
