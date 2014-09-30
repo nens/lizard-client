@@ -37,8 +37,8 @@ module.exports = function(config) {
       'vendor/raven-js/dist/raven.js',
       // endbower 
       'app/scripts/lizard-nxt.js',
+      'test/mocks/**/*.js',
       'app/scripts/**/*.js',
-      'test/mock/**/*.js',
       'test/spec/**/*.js'
 
     ],
