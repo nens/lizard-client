@@ -351,7 +351,7 @@ module.exports = function (grunt) {
     // produces docs
     doxx: {
       all: {
-        src: 'source/',
+        src: 'app/',
         target: 'doc'
       }
     },
@@ -424,7 +424,8 @@ module.exports = function (grunt) {
     'uglify',
     'filerev',
     'usemin',
-    'htmlmin'
+    'htmlmin',
+    'doxx'
   ]);
 
   grunt.registerTask('default', [
