@@ -213,13 +213,20 @@ app.controller('MasterCtrl',
     $scope.box.contextSwitchMode = !$scope.box.contextSwitchMode;
   };
 
-
-
   // MAP MODEL
-  // MOVE TO MAP CONTROL ?
-  //
-  // $scope.layers = MapService.layers;
-  $scope.mapState = MapService.mapState;
+  $scope.mapState = {
+    here: null,
+    points: [], // History of here for drawing
+    center: null,
+    layerGroups: MapService.createLayerGroups(CabinetService.layergroups),
+    activeLayersChanged: false,
+    changed: Date.now(),
+    moved: Date.now(),
+    baselayerChanged: Date.now(),
+    bounds: null,
+    userHere: null, // Geographical location of the users mouse
+    mapMoving: false
+  };
 
   /**
    * @function
@@ -231,6 +238,7 @@ app.controller('MasterCtrl',
 
     $scope.mapState.activeLayersChanged =
       !$scope.mapState.activeLayersChanged;
+
     if (layer.temporal) {
       // toggle timeline if neccesary
       if ($scope.timeState.hidden !== false) {

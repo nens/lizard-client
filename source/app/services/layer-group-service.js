@@ -10,8 +10,13 @@
  *              page. They can be toggled on/off and queried for data. Layergroup
  *              draws all its layers and returns data for all layers.
  */
-app.factory('LayerGroup', ['VectorService', 'RasterService', 'LeafletService', '$q',
-  function (VectorService, RasterService, LeafletService, $q) {
+app.factory('LayerGroup', [
+  'VectorService', 'RasterService', 'LeafletService', 'UtfGridService', '$q',
+  function (VectorService, RasterService, LeafletService, UtfGridService, $q) {
+
+  // app.factory('LayerGroup', [
+  //   'LeafletService', '$q',
+  //   function (LeafletService, $q) {
 
     ///////////////////////////////////////////////////////////////////////////
     // This constant declares which keys (for LayerGroup instances) shall have
@@ -55,86 +60,117 @@ app.factory('LayerGroup', ['VectorService', 'RasterService', 'LeafletService', '
       */
       getData: function (geom) {
 
-        var deferred = $q.defer();
+        var deferred = $q.defer(); //
 
         if (!this._active) { deferred.resolve(false); }
 
-        var promise = deferred.promise;
         var promiseCount = 0;
 
-        var buildSuccesCallback = function (layer) {
-
-          return function (data) {
-            deferred.notify({data: data, type: layer.type});
-            promiseCount--;
-            if (promiseCount === 0) { deferred.resolve(true); }
-          };
-        };
-
-        var buildErrorCallback = function (layer) {
-
-          return function (msg) {
-            deferred.notify({msg: msg, type: layer.type});
-            promiseCount--;
-            if (promiseCount === 0) { deferred.resolve(true); }
-          };
-        };
-
-        var buildPromise = function (layer) {
-
-          var wantedService = layer.type === 'Vector'
-            ? VectorService
-            : RasterService;
-
-          var prom = wantedService.getData(geom, layer.slug);
-          promiseCount++;
-          prom.then(
-            buildSuccesCallback(layer),
-            buildErrorCallback(layer)
-          );
-
-          return prom;
-        };
-
         angular.forEach(this._layers, function (layer) {
-
-          if (layer.type === 'Raster') {
-            var rasterProm = buildPromise(layer);
-
-          } else if (layer.type === 'Vector') {
-            var vectorProm =  buildPromise(layer);
-
-          } else {
-            deferred.resolve(true);
+          var wantedService;
+          if (layer.type === 'Vector') {
+            wantedService = VectorService;
+          } else if (layer.type === 'Store') {
+            wantedService = RasterService;
+          } else if (layer.type === 'UTFGrid') {
+            wantedService = UtfGridService;
           }
+          promiseCount = buildPromise(layer, geom, deferred, wantedService, promiseCount);
         });
 
-        return promise;
+        return deferred.promise;
       },
 
      /**
       * @function
       * @memberOf app.LayerGroup.prototype
       * @description
-      *
       */
-      toggle: function (slug) {
+      toggle: function (map, slug) {
 
         if (!this._initiated) {
           this._layers = _initiateLayers(this._layers);
           this._initiated = true;
         }
 
-        if (this._baselayer) {
-          this._active = slug === this._slug;
+        // if (slug === this._slug) {
+        //   this._active = !this._active;
+        // }
 
-        } else if (slug === this._slug) {
-          this._active = !this._active;
-        }
+        this._active = slug === this._slug;
+
+        // if (this.baselayer && this._slug === 'elevation') {
+        //   rescale(map);
+        // }
+
+        angular.forEach(this._layers, function (layer) {
+          if (this._active) {
+            addLayer(map, layer);
+          } else {
+            removeLayer(map, layer);
+          }
+        });
+      },
+
+      isActive: function () {
+        return this._active;
       }
     };
 
     ///////////////////////////////////////////////////////////////////////////
+
+    var buildPromise = function (layer, geom, deferred, wantedService, count) {
+
+      var buildSuccesCallback = function (layer) {
+        return function (data) {
+          deferred.notify({data: data, type: layer.type});
+          count--;
+          if (count === 0) { deferred.resolve(true); }
+        };
+      };
+
+      var buildErrorCallback = function (layer) {
+        return function (msg) {
+          deferred.notify({msg: msg, type: layer.type});
+          count--;
+          if (count === 0) { deferred.resolve(true); }
+        };
+      };
+
+      var prom = wantedService.getData(geom, layer.slug);
+      count++;
+      prom.then(
+        buildSuccesCallback(layer),
+        buildErrorCallback(layer)
+      );
+      return count;
+    };
+
+    /**
+     * @function
+     * @memberof app.MapService
+     * @param {L.Class} Leaflet layer.
+     * @description Adds layer to map
+     */
+    var addLayer = function (map, layer) { // Leaflet Layer
+      // Check if leaflet layer
+      if (layer instanceof L.Class) {
+        map.addLayer(layer);
+      }
+    };
+
+    /**
+     * @function
+     * @memberof app.MapService
+     * @param  {L.Class} Leaflet layer
+     * @description Removes layer from map
+     */
+    var removeLayer = function (map, layer) { // Leaflet Layer
+      // Check if leaflet layer
+      if (layer instanceof L.Class) {
+        map.removeLayer(layer);
+      }
+    };
 
     var _initiateLayers = function (layers) {
 
@@ -159,8 +195,7 @@ app.factory('LayerGroup', ['VectorService', 'RasterService', 'LeafletService', '
             break;
 
           default:
-            console.log('[E] This should never happen/print...');
-            break;
+            throw new Error(layer.type + ' is not a supported layer type');
         }
       });
 
@@ -197,26 +232,96 @@ app.factory('LayerGroup', ['VectorService', 'RasterService', 'LeafletService', '
 
       } else {
 
-        // Initiate Vector layer for events
-
-        hier waren wij
-
+        // Initiate (non-tiled) Vector layer, for e.g. events
+        return;
       }
     };
 
 
+    /**
+     * @function
+     * @memberof app.MapService
+     * @param  {object} layer as served from backend
+     * @return {L.TileLayer} leafletLayer
+     * @description Initiates a Leaflet Tilelayer
+     */
     var _initiateTMSLayer = function (nonLeafLayer) {
-      // this shall soon be implemented
+
+      var layerUrl = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
+      var layer = LeafletService.tileLayer(
+        layerUrl, {
+          name: (nonLeafLayer.baselayer) ? 'Background' : nonLeafLayer.slug,
+          slug: nonLeafLayer.slug,
+          minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom : 0,
+          maxZoom: 19,
+          detectRetina: true,
+          zIndex: nonLeafLayer.z_index,
+          ext: 'png'
+        });
+
+      nonLeafLayer.leafletLayer = layer;
+      nonLeafLayer.initiated = true;
     };
 
-
+    /**
+     * @function
+     * @memberof app.MapService
+     * @param  {object} nonLeafLayer as served from backend
+     * @return {L.TileLayer.WMS}              [description]
+     * @description Initiates a Leaflet WMS layer
+     */
     var _initiateWMSLayer = function (nonLeafLayer) {
-      // this shall soon be implemented
+      var _options = {
+        layers: nonLeafLayer.slug,
+        format: 'image/png',
+        version: '1.1.1',
+        minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom : 0,
+        maxZoom: 19,
+        zIndex: nonLeafLayer.z_index
+      };
+
+      if (nonLeafLayer.slug === 'landuse') {
+        _options.styles = 'landuse';
+      } else if (nonLeafLayer.slug === 'elevation') {
+        _options.styles = 'BrBG_r';
+        _options.effects = 'shade:0:3';
+      } else if (nonLeafLayer.slug === 'isahw:BOFEK2012') {
+        _options.styles = '';
+        return; // Add no styling for soil layer
+      } else { // Default, used by zettingsvloeiingsproef
+        _options.styles = 'BrBG_r';
+        _options.effects = 'shade:0:3';
+      }
+
+      nonLeafLayer.leafletLayer =
+        LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
+      nonLeafLayer.initiated = true;
     };
 
-
+    /**
+     * @function
+     * @memberof app.MapService
+     * @param  {object} nonLeafLayer as served from backend
+     * @return {L.UtfGrid} utfgrid
+     * @description Initiates layers that deliver interaction with the map
+     */
     var _initiateGridLayer = function (nonLeafLayer) {
-      // this shall soon be implemented
+
+      var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
+
+      var layer = new LeafletService.UtfGrid(url, {
+        ext: 'grid',
+        slug: nonLeafLayer.slug,
+        name: nonLeafLayer.slug,
+        useJsonP: false,
+        minZoom: (nonLeafLayer.min_zoom_click) ?
+          nonLeafLayer.min_zoom_click : 0,
+        maxZoom: 19,
+        order: nonLeafLayer.z_index,
+        zIndex: nonLeafLayer.z_index
+      });
+      nonLeafLayer.leafletLayer = layer;
+      nonLeafLayer.initiated = true;
     };
 
     ///////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 app.service("CabinetService", ["$q", "Restangular",
   function ($q, Restangular) {
 
-  var layers = window.data_layers;
+  var layergroups = window.data_layers;
 
   var baselayers = window.baseLayers;
   var overlayers = window.overLayers;
@@ -345,8 +345,7 @@ app.service("CabinetService", ["$q", "Restangular",
   };
 
   return {
-    //layergroups: layergroups,
-    layers: layers,
+    layergroups: layergroups,
     baselayers: baselayers,
     overlayers: overlayers,
     //eventTypes: eventTypes,

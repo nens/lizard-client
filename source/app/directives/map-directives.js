@@ -13,31 +13,65 @@
  */
 app.directive('map', [
   '$controller',
-  '$rootScope',
-  'UtilService',
   'ClickFeedbackService',
-  'RasterService',
   'MapService',
   function (
     $controller,
-    $rootScope,
-    UtilService,
     ClickFeedbackService,
-    RasterService,
     MapService
     ) {
+
     var link = function (scope, element, attrs) {
 
+       /**
+        * @function
+        * @memberOf app.MapService
+        * @description small clickhandler for leafletclicks
+        * @param  {event}  e Leaflet event object
+        */
+      var _clicked = function (e) {
+        scope.mapState.here = e.latlng;
+      };
+
+      /**
+       * @function
+       * @memberOf app.MapService
+       */
+      var _moveStarted = function (e) {
+        scope.mapState.mapMoving = true;
+      };
+
+      /**
+       * @function
+       * @memberOf app.MapService
+       */
+      var _mouseMoved = function (e) {
+        scope.mapState.userHere = e.latlng;
+      };
+
+      /**
+       * @function
+       * @memberOf app.MapService
+       */
+      var _moveEnded = function (e, map) {
+
+        scope.mapState.moved = Date.now();
+        scope.mapState.mapMoving = false;
+        scope.mapState.center = map.getCenter();
+        scope.mapState.zoom = map.getZoom();
+        scope.mapState.bounds = map.getBounds();
+      };
+
       // instead of 'map' element here for testability
-      var osmAttrib = '<a href="https://www.mapbox.com/about/maps/">&copy; Mapbox</a> <a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>';
+      var osmAttrib = '<a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>';
       var bounds = window.data_bounds.all;
 
       MapService.createMap(element[0], {
         bounds: bounds,
         attribution: osmAttrib
       });
-      MapService.initiateMapEvents();
-      scope.mapState.layersNeedLoading = true;
+
+      MapService.initiateMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
 
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.

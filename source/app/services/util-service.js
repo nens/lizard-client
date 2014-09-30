@@ -209,5 +209,4 @@ app.service("UtilService", function () {
     );
     return result;
   };
-
 });

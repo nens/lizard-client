@@ -1,17 +1,3 @@
-/**
- * Click layer
- *
- * Watches mapState.here to register a click on the map
- * Provides the tool-specific feedback by modifying the DOM. Click
- * layer feedback either is hardcoded bound to the tool or comes
- * from the utf grid.
- *
- *  TODO: What is now called MapClickController should become a service,
- *  the semi generic functions from the link function should be part of this
- *  service and the rest should form a controller.. Since there is no direct
- *  DOM modification. Probably.?
- */
-
 
 /**
  * Service to draw click feedback.

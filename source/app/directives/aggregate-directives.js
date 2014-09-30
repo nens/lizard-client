@@ -474,94 +474,94 @@ app.directive('surfacelayer', ['MapService', function (MapService) {
  * Add non-tiled d3 vector layer for currents.
  *
  * Implemented as a layer to display current speed/direction on the map.
- */
-app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVectorService',
-  function (UtilService, MapService, TemporalVectorService) {
+//  */
+// app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVectorService',
+//   function (UtilService, MapService, TemporalVectorService) {
 
-  return {
-    restrict: 'A',
-    link: function (scope, element, attrs) {
+//   return {
+//     restrict: 'A',
+//     link: function (scope, element, attrs) {
 
-      var tvLayer,
-          tvData = TemporalVectorService.getTVData(),
-          setWatches,
-          watches = [];
+//       var tvLayer,
+//           tvData = TemporalVectorService.getTVData(),
+//           setWatches,
+//           watches = [];
 
-      /**
-       * @description - Unconditional watch: is triggered normally, when the flow layer
-       *                doesn't exist this does NOT raise an error.
-       */
-      scope.$watch('mapState.layers.flow.active', function (newVal, oldVal) {
+//       /**
+//        * @description - Unconditional watch: is triggered normally, when the flow layer
+//        *                doesn't exist this does NOT raise an error.
+//        */
+//       scope.$watch('mapState.layers.flow.active', function (newVal, oldVal) {
 
-        if (newVal === oldVal) { return; }
-        if (newVal) {
+//         if (newVal === oldVal) { return; }
+//         if (newVal) {
 
-          if (!tvLayer && MapService.isMapDefined()) {
-            tvLayer = TemporalVectorService.createTVLayer(scope, {
-              type: "FeatureCollection",
-              features: []
-            });
-          }
-          watches = setWatches();
+//           if (!tvLayer && MapService.isMapDefined()) {
+//             tvLayer = TemporalVectorService.createTVLayer(scope, {
+//               type: "FeatureCollection",
+//               features: []
+//             });
+//           }
+//           watches = setWatches();
 
-        } else {
-          // De-register watches
-          angular.forEach(watches, function (watch) {
-            watch();
-          });
-          return;
-        }
-        TemporalVectorService.clearTVLayer();
-        if (newVal && scope.timeState.hidden !== false) {
-          scope.toggleTimeline();
-        }
-        TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
-      });
+//         } else {
+//           // De-register watches
+//           angular.forEach(watches, function (watch) {
+//             watch();
+//           });
+//           return;
+//         }
+//         TemporalVectorService.clearTVLayer();
+//         if (newVal && scope.timeState.hidden !== false) {
+//           scope.toggleTimeline();
+//         }
+//         TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
+//       });
 
-      /**
-       * @function
-       * @description - Makes watches only listen when applicable.
-       * @returns {object[]} - An array of watches, which are now toggable.
-       */
-      setWatches = function () {
+//       /**
+//        * @function
+//        * @description - Makes watches only listen when applicable.
+//        * @returns {object[]} - An array of watches, which are now toggable.
+//        */
+//       setWatches = function () {
 
-        watches.push(scope.$watch('timeState.at', function (newVal, oldVal) {
+//         watches.push(scope.$watch('timeState.at', function (newVal, oldVal) {
 
-          if (newVal === oldVal) { return; }
+//           if (newVal === oldVal) { return; }
 
-          else if (scope.timeState.animation.playing
-            && (newVal > oldVal + TemporalVectorService.STEP_SIZE
-              || newVal < oldVal)) {
+//           else if (scope.timeState.animation.playing
+//             && (newVal > oldVal + TemporalVectorService.STEP_SIZE
+//               || newVal < oldVal)) {
 
-            TemporalVectorService.resetTimeIndex();
-          }
+//             TemporalVectorService.resetTimeIndex();
+//           }
 
-          TemporalVectorService.getTimeIndexAndUpdate(
-            scope,
-            tvLayer,
-            tvData
-          );
-        }));
-
-
-        watches.push(scope.$watch('mapState.zoom', function (newVal, oldVal) {
-
-          if (newVal === oldVal) { return; }
-
-          TemporalVectorService.clearTVLayer();
-          TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
-        }));
+//           TemporalVectorService.getTimeIndexAndUpdate(
+//             scope,
+//             tvLayer,
+//             tvData
+//           );
+//         }));
 
 
-        watches.push(scope.$watch('timeState.animation.playing', function (newVal, oldVal) {
+//         watches.push(scope.$watch('mapState.zoom', function (newVal, oldVal) {
 
-          if (newVal === oldVal) { return; }
+//           if (newVal === oldVal) { return; }
 
-          TemporalVectorService.resetTimeIndex();
-        }));
+//           TemporalVectorService.clearTVLayer();
+//           TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
+//         }));
 
-        return watches;
-      };
-    }
-  };
-}]);
+
+//         watches.push(scope.$watch('timeState.animation.playing', function (newVal, oldVal) {
+
+//           if (newVal === oldVal) { return; }
+
+//           TemporalVectorService.resetTimeIndex();
+//         }));
+
+//         return watches;
+//       };
+//     }
+//   };
+// }]);
