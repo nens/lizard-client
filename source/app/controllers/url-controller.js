@@ -50,7 +50,7 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
       }
     };
 
-    UrlState.setUrlHashWhenEmpty(state, $scope.box.type, $scope.mapState, $scope.timeState);
+    // UrlState.setUrlHashWhenEmpty(state, $scope.box.type, $scope.mapState, $scope.timeState);
 
     /**
      * set layer(s) when these change.
