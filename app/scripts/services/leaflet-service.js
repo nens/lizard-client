@@ -7,7 +7,8 @@
  *
  * Perhaps in the future this can be done with CommonJS style requires.
  */
-app.service('LeafletService', [function () {
+angular.module('lizard-nxt')
+  .service('LeafletService', [function () {
   if (L) {
     // Leaflet global variable to speed up vector layer,
     // see: http://leafletjs.com/reference.html#path-canvas

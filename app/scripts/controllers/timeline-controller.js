@@ -1,7 +1,8 @@
 'use strict';
 
 /**
- * @class app.TimeLineCtrl
+ * @class angular.module('lizard-nxt')
+  .TimeLineCtrl
  * @memberOf app
  *
  * @summary TimeLine controller.
@@ -9,7 +10,8 @@
  * @desc Manipulates timeState model, animation controls.
  *
  */
-app.controller('TimeLine', ["$scope", "$q", "RasterService",
+angular.module('lizard-nxt')
+  .controller('TimeLine', ["$scope", "$q", "RasterService",
   function ($scope, $q, RasterService) {
 
   window.requestAnimationFrame = window.requestAnimationFrame ||
@@ -19,7 +21,8 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
 
   /**
    * @function
-   * @memberOf app.TimeLineCtrl
+   * @memberOf angular.module('lizard-nxt')
+  .TimeLineCtrl
    *
    * @summary Toggle animation state.
    *

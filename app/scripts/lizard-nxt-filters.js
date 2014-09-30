@@ -19,7 +19,8 @@
  * @return {string} when input is a number: returns a number
  * rounded to specified decimals else returns '-'
  */
-app.filter('niceNumberOrEllipsis', function () {
+angular.module('lizard-nxt')
+  .filter('niceNumberOrEllipsis', function () {
   return function (input, decimals) {
     var out;
     if (typeof(input) === 'number') {
@@ -35,7 +36,8 @@ app.filter('niceNumberOrEllipsis', function () {
   };
 });
 
-app.filter('lookupManholeShape', function () {
+angular.module('lizard-nxt')
+  .filter('lookupManholeShape', function () {
   return function (input) {
     var out;
     switch (input) {
@@ -55,7 +57,8 @@ app.filter('lookupManholeShape', function () {
   };
 });
 
-app.filter('lookupManholeMaterial', function () {
+angular.module('lizard-nxt')
+  .filter('lookupManholeMaterial', function () {
   return function (input) {
     var out;
     out = '...';
@@ -63,7 +66,8 @@ app.filter('lookupManholeMaterial', function () {
   };
 });
 
-app.filter('allowedFlowDirection', function () {
+angular.module('lizard-nxt')
+  .filter('allowedFlowDirection', function () {
   return function (input) {
     var out;
     if (input !== null && input !== undefined) {
@@ -75,7 +79,8 @@ app.filter('allowedFlowDirection', function () {
   };
 });
 
-app.filter('pipeTypeOrEllipsis', function () {
+angular.module('lizard-nxt')
+  .filter('pipeTypeOrEllipsis', function () {
   return function (input) {
     var out;
     switch (input) {
@@ -95,7 +100,8 @@ app.filter('pipeTypeOrEllipsis', function () {
   };
 });
 
-app.filter('lookupPipeShape', function () {
+angular.module('lizard-nxt')
+  .filter('lookupPipeShape', function () {
   return function (input) {
     var out;
     switch (input) {
@@ -118,7 +124,8 @@ app.filter('lookupPipeShape', function () {
   };
 });
 
-app.filter('pipeMaterialOrEllipsis', function () {
+angular.module('lizard-nxt')
+  .filter('pipeMaterialOrEllipsis', function () {
   return function (input) {
     var out;
     switch (input) {
@@ -138,7 +145,8 @@ app.filter('pipeMaterialOrEllipsis', function () {
   };
 });
 
-app.filter('aggWinToYLabel', function () {
+angular.module('lizard-nxt')
+  .filter('aggWinToYLabel', function () {
   return function (input) {
     var out;
     switch (input) {
@@ -168,7 +176,8 @@ app.filter('aggWinToYLabel', function () {
  * @param {integer} maxLength - Length at which string gets truncated.
  * @return {string} The truncated layer name
  */
-app.filter('truncate', function () {
+angular.module('lizard-nxt')
+  .filter('truncate', function () {
 
   return function (input, maxLength) {
 

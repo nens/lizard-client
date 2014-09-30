@@ -2,7 +2,8 @@
 
 window.JS_DEBUG = false;
 
-app.controller('DummyCtrl', ['$scope', function ($scope) {
+angular.module('lizard-nxt')
+  .controller('DummyCtrl', ['$scope', function ($scope) {
   $scope.dummy = {};
 }]);
 

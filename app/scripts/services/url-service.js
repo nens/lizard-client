@@ -10,7 +10,8 @@
  * keep the url synchronised with the actual application state. That way
  * you can use the url to share application state.
  */
-app.service('LocationGetterSetter', ['$location', function ($location) {
+angular.module('lizard-nxt')
+  .service('LocationGetterSetter', ['$location', function ($location) {
 
     var _getPath, _getPathParts,
 
@@ -18,7 +19,8 @@ app.service('LocationGetterSetter', ['$location', function ($location) {
 
      /**
       * @function
-      * @memberOf app.LocationGetterSetter
+      * @memberOf angular.module('lizard-nxt')
+  .LocationGetterSetter
       * @description returns the value in the path of url at the specified part
       * @param {str} part, part url looking for currently <path | @>
       * @param {str} index location in the part
@@ -35,7 +37,8 @@ app.service('LocationGetterSetter', ['$location', function ($location) {
 
      /**
       * @function
-      * @memberOf app.LocationGetterSetter
+      * @memberOf angular.module('lizard-nxt')
+  .LocationGetterSetter
       * @description sets the value in the path of url at the specified part
       * @param {str} part, part url looking for currently <path | @>
       * @param {str} index location in the part
@@ -67,7 +70,8 @@ app.service('LocationGetterSetter', ['$location', function ($location) {
 
    /**
     * @function
-    * @memberOf app.LocationGetterSetter
+    * @memberOf angular.module('lizard-nxt')
+  .LocationGetterSetter
     * @description returns the part of the path without first slash.
     * @param {str} part, part url looking for currently <path | @>
     * @return {str} the part the path.
@@ -84,7 +88,8 @@ app.service('LocationGetterSetter', ['$location', function ($location) {
 
    /**
     * @function
-    * @memberOf app.LocationGetterSetter
+    * @memberOf angular.module('lizard-nxt')
+  .LocationGetterSetter
     * @description splits the part of the path further in individual values.
     * @param {str} part of the path without first slash.
     * @return {array} the values in the part of the path.
@@ -106,7 +111,8 @@ app.service('LocationGetterSetter', ['$location', function ($location) {
  * @name UrlState
  * @description Higher level functions to parse and set URL.
  */
-app.service("UrlState", ["LocationGetterSetter", function (LocationGetterSetter) {
+angular.module('lizard-nxt')
+  .service("UrlState", ["LocationGetterSetter", function (LocationGetterSetter) {
 
     // Amount of decimals of coordinates stored in url.
     var COORD_PRECISION = 4;
@@ -115,7 +121,8 @@ app.service("UrlState", ["LocationGetterSetter", function (LocationGetterSetter)
 
      /**
       * @function
-      * @memberOf app.UrlState
+      * @memberOf angular.module('lizard-nxt')
+  .UrlState
       * @description Sets the points or the here on the url when
       *              respectively point or line is specified as type.
       * @param {object} state config object
@@ -138,7 +145,8 @@ app.service("UrlState", ["LocationGetterSetter", function (LocationGetterSetter)
 
      /**
       * @function
-      * @memberOf app.UrlState
+      * @memberOf angular.module('lizard-nxt')
+  .UrlState
       * @description Sets the start and end epoch ms on the url
       * @param {object} state config object
       * @param {int} start time in ms
@@ -163,7 +171,8 @@ app.service("UrlState", ["LocationGetterSetter", function (LocationGetterSetter)
 
      /**
       * @function
-      * @memberOf app.UrlState
+      * @memberOf angular.module('lizard-nxt')
+  .UrlState
       * @description Sets the mapView coordinates on the url.
       * @param {object} state config object
       * @param {object} lat leaflet Latitude object
@@ -185,7 +194,8 @@ app.service("UrlState", ["LocationGetterSetter", function (LocationGetterSetter)
 
       /**
        * @function
-       * @memberOf app.UrlState
+       * @memberOf angular.module('lizard-nxt')
+  .UrlState
        * @description Sets the layer slugs on the url.
        * @param {object} state config object
        * @param {object} layers mapState.layer
@@ -207,7 +217,8 @@ app.service("UrlState", ["LocationGetterSetter", function (LocationGetterSetter)
       },
       /**
        * @function
-       * @memberOf app.UrlState
+       * @memberOf angular.module('lizard-nxt')
+  .UrlState
        * @description Sets the layer slugs on the url.
        * @param  {str} time time value of the url
        * @param  {object} timeState nxt timeState
@@ -235,7 +246,8 @@ app.service("UrlState", ["LocationGetterSetter", function (LocationGetterSetter)
       },
       /**
        * @function
-       * @memberOf app.UrlState
+       * @memberOf angular.module('lizard-nxt')
+  .UrlState
        * @description returns the mapview value parsed to
        *              latlonzoom
        * @param  {str} mapView

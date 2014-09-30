@@ -1,4 +1,5 @@
-app.controller('LineCtrl', [
+angular.module('lizard-nxt')
+  .controller('LineCtrl', [
   '$scope',
   'RasterService',
   'ClickFeedbackService',

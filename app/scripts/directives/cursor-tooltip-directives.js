@@ -1,7 +1,8 @@
 // cursor-tooltip-directive.js
 
 'use strict';
-app.directive('cursorTooltip', function () {
+angular.module('lizard-nxt')
+  .directive('cursorTooltip', function () {
   var link = function (scope, element, attrs) {
     var locationWatch;
     scope.$watch('tools.cursorTooltip.enabled', function (newVal, oldVal) {

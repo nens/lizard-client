@@ -1,4 +1,5 @@
-app.controller("OmniboxCtrl", [
+angular.module('lizard-nxt')
+  .controller("OmniboxCtrl", [
   "$scope",
   "UtilService",
   function ($scope, UtilService) {

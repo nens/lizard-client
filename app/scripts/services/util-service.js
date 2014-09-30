@@ -5,7 +5,8 @@
  * @summary Generic util functions.
  * @description Generic util functions.
  */
-app.service("UtilService", function () {
+angular.module('lizard-nxt')
+  .service("UtilService", function () {
 
   /**
    * @function roundTimestamp

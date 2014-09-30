@@ -16,7 +16,8 @@
  *       all layers and perform generic actions based on layer types.
  */
 
-app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
+angular.module('lizard-nxt')
+  .controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
     'RasterService', 'EventService', 'TimeseriesService', 'UtilService',
     'UtfGridService', 'ClickFeedbackService',
   function ($scope,
@@ -37,7 +38,8 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
     /**
      * @function
-     * @memberOf app.pointCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .pointCtrl
      * @description point is the object which holds all data of a point
      * in space. It is updated after a users click. The point
      * may have associated events and timeseries which are requested
@@ -79,7 +81,8 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
     /**
      * @function
-     * @memberOf app.pointCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .pointCtrl
      * @param  {L.LatLng} here
      * @param  {object}   ?extra Optional extra info
      */
@@ -102,7 +105,8 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
     /**
      * @function
-     * @memberOf app.pointCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .pointCtrl
      * @description errorcallback for UTFGrid
      */
     _noUTF = function (here) {
@@ -115,7 +119,8 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
     /**
      * @function
-     * @memberOf app.pointCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .pointCtrl
      * @description callback for utfgrid
      * @param  {L.LatLng} here
      * @param  {Boolean}  showOnlyEvents if events are clicked
@@ -179,7 +184,8 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
     /**
      * @function
-     * @memberOf app.pointCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .pointCtrl
      * @description Goes through layers and selects the temporal layer
      * that is active. If there is none, nothing happens.
      * @return {void}
@@ -196,7 +202,8 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
     /**
      * @function
-     * @memberOf app.pointCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .pointCtrl
      * @description Gets a layer and retrieves data based
      * on temporal extent etc.
      * @param  {object} layer Layer object, containing name, slug..
@@ -244,7 +251,8 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
     /**
      * @function
-     * @memberOf app.pointCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .pointCtrl
      * @description Sets data attributes if a response returned properly
      * @param  {object} response Response from rasterService. (data-array)
      * @return {void}
@@ -263,7 +271,8 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
     /**
      * @function
-     * @memberOf app.pointCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .pointCtrl
      * @description placeholder for now. Should fill data object
      * with timeseries information. (Draw graphs and such);
      */
@@ -277,7 +286,8 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
     /**
      * @function
-     * @memberOf app.pointCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .pointCtrl
      *
      * @description fired when event API call responds
      *
@@ -300,7 +310,8 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
     /**
      * @function
-     * @memberOf app.pointCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .pointCtrl
      * @description returns data from UTFgrid
      * @param {jsondata} response
      */
@@ -312,7 +323,8 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
     /**
      * @function
-     * @memberOf app.pointCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .pointCtrl
      * @description Give the black event circle, if present, it's initial color.
      *
      * @returns {void}
@@ -331,7 +343,8 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
     /**
      * @function
-     * @memberOf app.pointCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .pointCtrl
      * @description watch function
      */
     _watchAttrAndEventActivity = function (n, o) {

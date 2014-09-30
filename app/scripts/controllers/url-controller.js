@@ -11,7 +11,8 @@
  * changes to url. At initial load of app, url leads. Afterwards the
  * state leads the url.
  */
-app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
+angular.module('lizard-nxt')
+  .controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
   'UrlState', function ($scope, LocationGetterSetter, MapService, UrlState) {
 
     // Configuration object for url state.
@@ -117,7 +118,8 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
 
    /**
     * @function
-    * @memberOf app.UrlController
+    * @memberOf angular.module('lizard-nxt')
+  .UrlController
     * @summary Enables or disables layers on the basis of the url.
     * @description Takes the layers as defined in the url to turn layers on
     *              afterwards it initializes all other layers. This is done

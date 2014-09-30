@@ -15,13 +15,15 @@
  *               object and puts it on the graphCtrl for further
  *               modifications by the subdirectives.
  */
-app.directive('graph', ["Graph", function (Graph) {
+angular.module('lizard-nxt')
+  .directive('graph', ["Graph", function (Graph) {
 
   var graphCtrl, preCompile, link;
 
   /**
    * @function
-   * @memberOf app.graph
+   * @memberOf angular.module('lizard-nxt')
+  .graph
    * @param {scope}     scope     local scope
    * @param {object}    element
    * @param {object}    attrs     data, keys, labels and now
@@ -75,7 +77,8 @@ app.directive('graph', ["Graph", function (Graph) {
 
   /**
    * @function
-   * @memberOf app.graph
+   * @memberOf angular.module('lizard-nxt')
+  .graph
    * @param {scope}     scope     local scope
    * @param {object}    element
    * @param {object}    attrs     data, keys, labels and now
@@ -105,7 +108,8 @@ app.directive('graph', ["Graph", function (Graph) {
 
   /**
    * @function
-   * @memberOf app.graph
+   * @memberOf angular.module('lizard-nxt')
+  .graph
    * @param {scope}     $scope    local scope
    * @param {Graph}     Graph     graph service
    * @description       Stores the graph directives data and update functions
@@ -161,12 +165,14 @@ app.directive('graph', ["Graph", function (Graph) {
 /**
  * @ngdoc directive
  * @class graph
- * @memberof app.graph
+ * @memberof angular.module('lizard-nxt')
+  .graph
  * @name donut
  * @requires graph
  * @description       Draws a donut graph. Currently not in use by nxt.
  */
-app.directive('donut', [function () {
+angular.module('lizard-nxt')
+  .directive('donut', [function () {
 
   var link = function (scope, element, attrs, graphCtrl) {
 
@@ -189,7 +195,8 @@ app.directive('donut', [function () {
 /**
  * @ngdoc directive
  * @class graph
- * @memberof app.graph
+ * @memberof angular.module('lizard-nxt')
+  .graph
  * @name line
  * @requires graph
  * @description       Draws a line. Additionally it sets the
@@ -198,7 +205,8 @@ app.directive('donut', [function () {
  *                    interction and maaiveldcurve.
  * @TODO: enhance its functionality to draw timeseries.
  */
-app.directive('line', [function () {
+angular.module('lizard-nxt')
+  .directive('line', [function () {
 
   var link = function (scope, element, attrs, graphCtrl) {
 
@@ -244,13 +252,15 @@ app.directive('line', [function () {
 /**
  * @ngdoc directive
  * @class graph
- * @memberof app.graph
+ * @memberof angular.module('lizard-nxt')
+  .graph
  * @name barChart
  * @requires graph
  * @description       Draws a barchart. With dynamic axis label.
  *                    Initially written for the rain graph.
  */
-app.directive('barChart', ['$filter', function ($filter) {
+angular.module('lizard-nxt')
+  .directive('barChart', ['$filter', function ($filter) {
 
   var link = function (scope, element, attrs, graphCtrl) {
 
@@ -296,13 +306,15 @@ app.directive('barChart', ['$filter', function ($filter) {
 /**
  * @ngdoc directive
  * @class graph
- * @memberof app.graph
+ * @memberof angular.module('lizard-nxt')
+  .graph
  * @name horizontal stack
  * @requires graph
  * @description       Draws a barchart. With dynamic axis label.
  *                    Initially written to substitute the landuse donut.
  */
-app.directive('horizontalStack', [function () {
+angular.module('lizard-nxt')
+  .directive('horizontalStack', [function () {
 
   var link = function (scope, element, attrs, graphCtrl) {
 

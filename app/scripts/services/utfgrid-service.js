@@ -1,7 +1,8 @@
 /**
  * Service to handle utf grid requests.
  */
-app.service('UtfGridService', ['$q', '$rootScope', 'MapService',
+angular.module('lizard-nxt')
+  .service('UtfGridService', ['$q', '$rootScope', 'MapService',
   function ($q, $rootScope, MapService) {
 
     var on;

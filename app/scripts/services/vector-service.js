@@ -11,12 +11,14 @@
  *
  */
 
-app.service('VectorService', ['Restangular', 'LeafletService',
+angular.module('lizard-nxt')
+  .service('VectorService', ['Restangular', 'LeafletService',
   function (Restangular, LeafletService) {
 
     /**
      * @function
-     * @memberOf app.VectorService
+     * @memberOf angular.module('lizard-nxt')
+  .VectorService
      * @description filters geojson array on spatial bounds.
      * @param  {L.LatLngBounds} spatial
      * @param  {featureArray}   sourceArray
@@ -35,7 +37,8 @@ app.service('VectorService', ['Restangular', 'LeafletService',
 
     /**
      * @function
-     * @memberOf app.VectorService
+     * @memberOf angular.module('lizard-nxt')
+  .VectorService
      * @description filters geojson array on temporal bounds.
      * @param  {object}         start end object
      * @param  {featureArray}   sourceArray
@@ -89,7 +92,8 @@ app.service('VectorService', ['Restangular', 'LeafletService',
     var vectorLayers = {};
 
     /**
-     * @memberof app.VectorService
+     * @memberof angular.module('lizard-nxt')
+  .VectorService
      * @function
      * @description gets data from backend
      * @param  {string} layer slug of layer

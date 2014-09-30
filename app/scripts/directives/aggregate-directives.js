@@ -6,7 +6,8 @@
  * time-interval (temporal extent, from timeline)
  *
  */
-app.directive('vectorlayer', ['EventService', '$rootScope',
+angular.module('lizard-nxt')
+  .directive('vectorlayer', ['EventService', '$rootScope',
   'ClickFeedbackService', 'MapService',
   function (EventService, $rootScope, ClickFeedbackService, MapService) {
 
@@ -347,7 +348,8 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
  * to make generic
  *
  */
-app.directive('surfacelayer', ['MapService', function (MapService) {
+angular.module('lizard-nxt')
+  .directive('surfacelayer', ['MapService', function (MapService) {
   return {
     restrict: 'A',
     link: function (scope, element, attrs) {
@@ -475,7 +477,8 @@ app.directive('surfacelayer', ['MapService', function (MapService) {
  *
  * Implemented as a layer to display current speed/direction on the map.
  */
-app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVectorService',
+angular.module('lizard-nxt')
+  .directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVectorService',
   function (UtilService, MapService, TemporalVectorService) {
 
   return {

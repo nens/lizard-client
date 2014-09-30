@@ -11,7 +11,8 @@
  * MapDirCtrl is independent of the rest of the application.
  *
  */
-app.directive('map', [
+angular.module('lizard-nxt')
+  .directive('map', [
   '$controller',
   '$rootScope',
   'UtilService',
@@ -61,7 +62,8 @@ app.directive('map', [
  * Show raster WMS images as overlay, animate overlays when animation is
  * playing.
  */
-app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
+angular.module('lizard-nxt')
+  .directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
   function (RasterService, UtilService, MapService) {
   return {
     link: function (scope, element, attrs) {

@@ -1,7 +1,8 @@
 /**
  * Service to handle events.
  */
-app.service("EventService", ["Restangular", "$q",
+angular.module('lizard-nxt')
+  .service("EventService", ["Restangular", "$q",
   function (Restangular, $q) {
 
   // COLOR MODEL

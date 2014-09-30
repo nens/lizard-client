@@ -1,6 +1,7 @@
 /**
  * @name Graph
- * @class app.Graph
+ * @class angular.module('lizard-nxt')
+  .Graph
  * @memberOf app
  *
  * @summary Service to create and update a graph
@@ -13,11 +14,13 @@
  *
  * Everything in the graphs is animated according to NxtD3.transTime.
  */
-app.factory("Graph", ["NxtD3", function (NxtD3) {
+angular.module('lizard-nxt')
+  .factory("Graph", ["NxtD3", function (NxtD3) {
 
   /**
    * @constructor
-   * @memberOf app.Graph
+   * @memberOf angular.module('lizard-nxt')
+  .Graph
    *
    * @param {object} element    svg element for the graph.
    * @param {object} dimensions object containing, width, height and
@@ -36,7 +39,8 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
 
     /**
      * @function
-     * @memberOf app.Graph
+     * @memberOf angular.module('lizard-nxt')
+  .Graph
      * @param {object}    data object. Currently supports the format:
      *                    [
      *                      {
@@ -60,7 +64,8 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
 
     /**
      * @function
-     * @memberOf app.Graph
+     * @memberOf angular.module('lizard-nxt')
+  .Graph
      * @param {object} data   Currently supports the format:
      *                        [
      *                          [value, value],
@@ -101,7 +106,8 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
 
     /**
      * @function
-     * @memberOf app.Graph
+     * @memberOf angular.module('lizard-nxt')
+  .Graph
      * @param {object} data   Currently supports the format:
      *                        [
      *                          [value, value],
@@ -139,7 +145,8 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
 
     /**
      * @function
-     * @memberOf app.Graph
+     * @memberOf angular.module('lizard-nxt')
+  .Graph
      * @param {object}    data object. Currently supports the format:
      *                    [
      *                      {
@@ -175,7 +182,8 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
 
     /**
      * @function
-     * @memberOf app.Graph
+     * @memberOf angular.module('lizard-nxt')
+  .Graph
      * @param {function} callback
      * @description      Sets a listener on the drawing rectangle
      *                   and on mousemove calls the callback with
@@ -197,7 +205,8 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
 
     /**
      * @function
-     * @memberOf app.Graph
+     * @memberOf angular.module('lizard-nxt')
+  .Graph
      * @param {function} callback
      * @description      Sets a listener on the drawing rectangle
      *                   and on mouseout calls the callback.
@@ -213,7 +222,8 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
 
     /**
      * @function
-     * @memberOf app.Graph
+     * @memberOf angular.module('lizard-nxt')
+  .Graph
      * @param {int}    draw   Timestamp in ms from epoch
      * @description           draws the now according the
      *                        current active scale.

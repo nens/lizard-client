@@ -2,14 +2,16 @@
 
 // Timeline for lizard.
 /**
- * @class app.TimeLineDirective
+ * @class angular.module('lizard-nxt')
+  .TimeLineDirective
  * @memberOf app
  *
  * @summary Timeline directive.
  *
  * @description Timeline directive.
  */
-app.directive('timeline', ["EventService", "RasterService", "UtilService",
+angular.module('lizard-nxt')
+  .directive('timeline', ["EventService", "RasterService", "UtilService",
                            "Timeline",
   function (EventService, RasterService, UtilService, Timeline) {
 

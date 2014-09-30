@@ -1,6 +1,7 @@
 //layer-directive.js
 
-app.directive("layerChooser", ['LeafletService', function (LeafletService) {
+angular.module('lizard-nxt')
+  .directive("layerChooser", ['LeafletService', function (LeafletService) {
   var link = function (scope, element, attrs) {
     var centroid, zoom, layerMap, layerLeafletLayer, layer, layerUrl, map;
     centroid = [52.39240447569775, 5.101776123046875];

@@ -16,7 +16,8 @@
 /**
  * Service to draw click feedback.
  */
-app.service('ClickFeedbackService', ['$rootScope', 'MapService',
+angular.module('lizard-nxt')
+  .service('ClickFeedbackService', ['$rootScope', 'MapService',
   function ($rootScope, MapService) {
     var Ctrl = function () {
 

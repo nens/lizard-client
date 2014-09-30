@@ -12,7 +12,8 @@
  * Contains data of all active layers with an aggregation_type
  *
  */
-app.controller('AreaCtrl', [
+angular.module('lizard-nxt')
+  .controller('AreaCtrl', [
   '$scope',
   'RasterService',
   function ($scope, RasterService) {
@@ -23,7 +24,8 @@ app.controller('AreaCtrl', [
 
     /**
      * @function
-     * @memberOf app.areaCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .areaCtrl
      * @description
      * Loops over all layers to request aggregation data for all
      * active layers with an aggregation type.
@@ -50,7 +52,8 @@ app.controller('AreaCtrl', [
 
     /**
      * @function
-     * @memberOf app.areaCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .areaCtrl
      * @description Puts dat on area when promise resolves or
      * removes item from area when no data is returned.
      *
@@ -71,7 +74,8 @@ app.controller('AreaCtrl', [
 
     /**
      * @function
-     * @memberOf app.areaCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .areaCtrl
      * @description removes data from scope again
      * if it's no longer needed.
      * @param  {string} slug
@@ -82,7 +86,8 @@ app.controller('AreaCtrl', [
 
     /**
      * @function
-     * @memberOf app.areaCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .areaCtrl
      * @description Returns true/false according to whether any events are present in the
      * current lineion of spatial and temporal extent. This is used to
      * determine whether the corresponding card (i.e. the Event summary card)
@@ -110,7 +115,8 @@ app.controller('AreaCtrl', [
 
     /**
      * @function
-     * @memberOf app.areaCtrl
+     * @memberOf angular.module('lizard-nxt')
+  .areaCtrl
      * @description private function to eliminate redundancy: gets called
      * in multiple $watches declared locally.
      */

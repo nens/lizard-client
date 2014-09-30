@@ -1,6 +1,7 @@
 /**
  * @name TimeLineService
- * @class app.TimeLineService
+ * @class angular.module('lizard-nxt')
+  .TimeLineService
  * @memberOf app
  *
  * @summary Service to create and update a timeline. Used by the
@@ -26,7 +27,8 @@
  * All methods related to "circles" are not used anymore, and are only
  * there in case we'll ever need to draw circles again.
  */
-app.factory("Timeline", ["NxtD3", function (NxtD3) {
+angular.module('lizard-nxt')
+  .factory("Timeline", ["NxtD3", function (NxtD3) {
 
   // The timeline
   var initialHeight,
@@ -54,7 +56,8 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
 
   /**
    * @constructor
-   * @memberOf app.TimeLineService
+   * @memberOf angular.module('lizard-nxt')
+  .TimeLineService
    *
    * @param {object} element svg element for the timeline.
    * @param {object} dimensions object containing, width, height, height per
@@ -63,7 +66,8 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
    * @param {integer} start begin value in milliseconds from epoch.
    * @param {integer} end end value in milliseconds from epoch.
    * @param {object} interaction  optional object containing callback functions
-   *  for zoom, click and brush interaction with the rest of the app.
+   *  for zoom, click and brush interaction with the rest of the angular.module('lizard-nxt')
+  .
    */
   function Timeline(element, dimensions, start, end, interaction) {
     NxtD3.call(this, element, dimensions);

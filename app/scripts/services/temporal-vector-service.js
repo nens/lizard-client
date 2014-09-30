@@ -1,5 +1,6 @@
 
-app.service('TemporalVectorService', ['MapService',
+angular.module('lizard-nxt')
+  .service('TemporalVectorService', ['MapService',
   function (MapService) {
 
   var tvData,

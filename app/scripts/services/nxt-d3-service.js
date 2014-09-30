@@ -1,6 +1,7 @@
 /**
  * @name NxtD3
- * @class app.NxtD3
+ * @class angular.module('lizard-nxt')
+  .NxtD3
  * @memberOf app
  *
  * @summary Service to create and update common d3 elements.
@@ -10,13 +11,15 @@
  * in the higher level graph and timeline services or use these methods
  * directly by calling NxtD3Service.<method>(<args>).
  */
-app.factory("NxtD3", [ function () {
+angular.module('lizard-nxt')
+  .factory("NxtD3", [ function () {
 
   var createCanvas, createElementForAxis, resizeCanvas;
 
   /**
    * @constructor
-   * @memberOf app.NxtD3
+   * @memberOf angular.module('lizard-nxt')
+  .NxtD3
    *
    * @param {object} element    svg element for the graph.
    * @param {object} dimensions object containing, width, height and
@@ -36,7 +39,8 @@ app.factory("NxtD3", [ function () {
 
     /**
      * @attribute
-     * @memberOf app.NxtD3
+     * @memberOf angular.module('lizard-nxt')
+  .NxtD3
      * @description        The duration of transitions in ms. Use(d)
      *                     throughout the graphs and timeline.
      */
@@ -44,7 +48,8 @@ app.factory("NxtD3", [ function () {
 
     /**
      * @attribute
-     * @memberOf app.NxtD3
+     * @memberOf angular.module('lizard-nxt')
+  .NxtD3
      * @description        Locales. Used in the axes. Currently only Dutch
      *                     is supported (and d3's default english).
      */
@@ -68,7 +73,8 @@ app.factory("NxtD3", [ function () {
 
     /**
      * @function
-     * @memberOf app.NxtD3
+     * @memberOf angular.module('lizard-nxt')
+  .NxtD3
      *
      * @description Creates or modifies a clippath and features-group
      *              to the svg. Feature-group is to draw the features
@@ -104,7 +110,8 @@ app.factory("NxtD3", [ function () {
 
     /**
      * @function
-     * @memberOf app.NxtD3
+     * @memberOf angular.module('lizard-nxt')
+  .NxtD3
      *
      * @param {object} svg        d3 selection of an svg.
      * @param {object} dimensions object containing, width, height and
@@ -136,7 +143,8 @@ app.factory("NxtD3", [ function () {
 
     /**
      * @function
-     * @memberOf app.NxtD3
+     * @memberOf angular.module('lizard-nxt')
+  .NxtD3
      *
      * @param {object} dimensions object containing, width, height and
      *                            an object containing top,
@@ -154,7 +162,8 @@ app.factory("NxtD3", [ function () {
 
     /**
      * @function
-     * @memberOf app.NxtD3
+     * @memberOf angular.module('lizard-nxt')
+  .NxtD3
      *
      * @param {array} data        Array of data objects.
      * @param {int-or-string} key key to the value in the array or object.
@@ -177,7 +186,8 @@ app.factory("NxtD3", [ function () {
 
     /**
      * @function
-     * @memberOf app.NxtD3
+     * @memberOf angular.module('lizard-nxt')
+  .NxtD3
      *
      * @param {object} minMax object containing the max and min
      * @param {object} range object contaning from where to where
@@ -210,7 +220,8 @@ app.factory("NxtD3", [ function () {
 
     /**
      * @function
-     * @memberOf app.NxtD3
+     * @memberOf angular.module('lizard-nxt')
+  .NxtD3
      *
      * @param {object} scale d3 scale
      * @param {object} options object containing the orientation
@@ -245,7 +256,8 @@ app.factory("NxtD3", [ function () {
 
     /**
      * @function
-     * @memberOf app.NxtD3
+     * @memberOf angular.module('lizard-nxt')
+  .NxtD3
      *
      * @param {object} svg  d3 selection of svg
      * @param {object} axis d3 axis
@@ -275,7 +287,8 @@ app.factory("NxtD3", [ function () {
 
     /**
      * @function
-     * @memberOf app.NxtD3
+     * @memberOf angular.module('lizard-nxt')
+  .NxtD3
      *
      * @param {object} dimensions object containing dimensions
      * @description Deducts the left and right padding to get
@@ -290,7 +303,8 @@ app.factory("NxtD3", [ function () {
 
     /**
      * @function
-     * @memberOf app.NxtD3
+     * @memberOf angular.module('lizard-nxt')
+  .NxtD3
      *
      * @param {object} dimensions object containing dimensions
      * @description Deducts the top and bottom padding to get
@@ -305,7 +319,8 @@ app.factory("NxtD3", [ function () {
 
     /**
      * @function
-     * @memberOf app.NxtD3
+     * @memberOf angular.module('lizard-nxt')
+  .NxtD3
      *
      * @param {object} xy object containing y.scales and x.scale.
      * @param {object} keys object containing y.key and x.key.
@@ -326,7 +341,8 @@ app.factory("NxtD3", [ function () {
 
     /**
      * @function
-     * @memberOf app.NxtD3
+     * @memberOf angular.module('lizard-nxt')
+  .NxtD3
      *
      * @param {int} now timestamp from epoch in ms
      * @param {object} scale d3 scale for time

@@ -1,17 +1,18 @@
 'use strict';
 
-/**
- * Initialise app.
- * @module lizard-nxt
- */
-var app = angular.module("lizard-nxt", [
-  'omnibox',
-  'restangular',
-  'ngSanitize',
-  'ngCsv',
-  'ui.bootstrap',
-  'ui.utils',
-]);
+// /**
+//  * Initialise angular.module('lizard-nxt')
+//   .
+//  * @module lizard-nxt
+//  */
+// angular.module("lizard-nxt", [
+//   'omnibox',
+//   'restangular',
+//   'ngSanitize',
+//   'ngCsv',
+//   'ui.bootstrap',
+//   'ui.utils',
+// ]);
 
 /**
  * Setup Raven if available.
@@ -28,7 +29,15 @@ if (window.Raven) {
 /**
  * Decorator for ngExceptionHandler to log exceptions to sentry
  */
-app.config(function ($provide) {
+angular.module("lizard-nxt", [
+  'omnibox',
+  'restangular',
+  'ngSanitize',
+  'ngCsv',
+  'ui.bootstrap',
+  'ui.utils',
+])
+  .config(function ($provide) {
   $provide.decorator("$exceptionHandler", function ($delegate) {
       return function (exception, cause) {
           $delegate(exception, cause);
@@ -42,7 +51,8 @@ app.config(function ($provide) {
 /**
  * Change default angular tags to prevent collision with Django tags.
  */
-app.config(function ($interpolateProvider) {
+angular.module('lizard-nxt')
+  .config(function ($interpolateProvider) {
   //To prevent Django and Angular Template hell
   $interpolateProvider.startSymbol('<%');
   $interpolateProvider.endSymbol('%>');
@@ -51,7 +61,8 @@ app.config(function ($interpolateProvider) {
 /**
  * Set url fragment behavior to HTML5 mode (without hash in url).
  */
-app.config(function ($locationProvider) {
+angular.module('lizard-nxt')
+  .config(function ($locationProvider) {
   $locationProvider.html5Mode(true);
 });
 
@@ -110,7 +121,8 @@ app.config(function ($locationProvider) {
  * - [+] Move animation logic to animation controller (on timeline tag)
 
  */
-app.controller('MasterCtrl',
+angular.module('lizard-nxt')
+  .controller('MasterCtrl',
   ['$scope', '$http', '$q', '$filter', '$compile', 'CabinetService',
    'RasterService', 'UtilService', 'EventService', 'TimeseriesService',
    'MapService',
@@ -119,7 +131,8 @@ app.controller('MasterCtrl',
 
   // BOX MODEL
   /**
-   * @memberOf app.MasterCtrl
+   * @memberOf angular.module('lizard-nxt')
+  .MasterCtrl
    * @summary Box model
    *
    * @description Box model holds properties to render the omnibox.
@@ -163,7 +176,8 @@ app.controller('MasterCtrl',
 
   /**
    * @function
-   * @memberOf app.MasterCtrl
+   * @memberOf angular.module('lizard-nxt')
+  .MasterCtrl
    *
    * @summary Get translation for text
    * @desc Get translation for text
@@ -178,7 +192,8 @@ app.controller('MasterCtrl',
 
   /**
    * @function
-   * @memberOf app.MasterCtrl
+   * @memberOf angular.module('lizard-nxt')
+  .MasterCtrl
    *
    * @summary Toggle tool from "name" to "none".
    *
@@ -223,7 +238,8 @@ app.controller('MasterCtrl',
 
   /**
    * @function
-   * @memberof app.MasterCtrl
+   * @memberof angular.module('lizard-nxt')
+  .MasterCtrl
    * @description changelayer function... legacy?
    * @param  {object} layer Layer object
    */

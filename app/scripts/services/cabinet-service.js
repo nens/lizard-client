@@ -1,4 +1,5 @@
-app.service("CabinetService", ["$q", "Restangular",
+angular.module('lizard-nxt')
+  .service("CabinetService", ["$q", "Restangular",
   function ($q, Restangular) {
 
   var layergroups = window.layerGroups;

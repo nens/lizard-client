@@ -1,7 +1,8 @@
 /**
  * Service to handle raster requests.
  */
-app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$q",
+angular.module('lizard-nxt')
+  .service("RasterService", ["Restangular", "UtilService", "CabinetService", "$q",
   function (Restangular, UtilService, CabinetService, $q) {
 
   /**

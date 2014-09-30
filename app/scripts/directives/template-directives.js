@@ -15,7 +15,8 @@
 /**
  * Event directive.
  */
-app.directive('event', [function () {
+angular.module('lizard-nxt')
+  .directive('event', [function () {
   return {
       restrict: 'E',
       templateUrl: 'templates/event.html'
@@ -25,7 +26,8 @@ app.directive('event', [function () {
 /**
  * Timeseries directive.
  */
-app.directive('timeseries', [function () {
+angular.module('lizard-nxt')
+  .directive('timeseries', [function () {
   return {
       restrict: 'E',
       templateUrl: 'templates/timeseries.html'
@@ -35,7 +37,8 @@ app.directive('timeseries', [function () {
 /**
  * Streetview directive.
  */
-app.directive('streetview', [function () {
+angular.module('lizard-nxt')
+  .directive('streetview', [function () {
   return {
       restrict: 'E',
       templateUrl: 'templates/streetview.html'
@@ -46,7 +49,8 @@ app.directive('streetview', [function () {
 /**
  * Cardtitle directive.
  */
-app.directive('cardtitle', [function () {
+angular.module('lizard-nxt')
+  .directive('cardtitle', [function () {
   return {
       restrict: 'E',
       templateUrl: 'templates/cardtitle.html'
@@ -56,7 +60,8 @@ app.directive('cardtitle', [function () {
 /**
  * Event aggregate directive.
  */
-app.directive('eventaggregate', [function () {
+angular.module('lizard-nxt')
+  .directive('eventaggregate', [function () {
   return {
       restrict: 'E',
       templateUrl: 'templates/event-aggregate.html'
@@ -66,35 +71,40 @@ app.directive('eventaggregate', [function () {
 /**
  * Actions directive.
  */
-app.directive('actions', [function () {
+angular.module('lizard-nxt')
+  .directive('actions', [function () {
   return {
     restrict: 'E',
     templateUrl: 'templates/actions.html'
   };
 }]);
 
-app.directive('cardattributes', [function () {
+angular.module('lizard-nxt')
+  .directive('cardattributes', [function () {
   return {
     restrict: 'E',
     templateUrl: 'templates/cardattributes.html'
   };
 }]);
 
-app.directive('detailswitch', [function () {
+angular.module('lizard-nxt')
+  .directive('detailswitch', [function () {
   return {
     restrict: 'E',
     templateUrl: 'templates/detailswitch.html'
   };
 }]);
 
-app.directive('datadetailcard', [function () {
+angular.module('lizard-nxt')
+  .directive('datadetailcard', [function () {
   return {
     restrict: 'E',
     templateUrl: 'templates/data-detail-card.html'
   };
 }]);
 
-app.directive('dataaggregationcard', [function () {
+angular.module('lizard-nxt')
+  .directive('dataaggregationcard', [function () {
   return {
     restrict: 'E',
     templateUrl: 'templates/data-aggregation-card.html'

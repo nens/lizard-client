@@ -1,7 +1,8 @@
 /**
  * Service to handle timeseries retrieval.
  */
-app.service("TimeseriesService", ["Restangular",
+angular.module('lizard-nxt')
+  .service("TimeseriesService", ["Restangular",
   function (Restangular) {
 
     var getRandomTimeseries = function () {

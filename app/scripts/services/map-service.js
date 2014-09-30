@@ -12,7 +12,8 @@
  * the map object and mapState.
  *
  */
-app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
+angular.module('lizard-nxt')
+  .service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
                            'LeafletService',
   function ($rootScope, $filter, $http, CabinetService, LeafletService) {
 
@@ -29,7 +30,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberof app.MapService
+   * @memberof angular.module('lizard-nxt')
+  .MapService
    * @param  {dynamic} mapElem can be string or Element.
    * @param  {options} Options (bounds, attribution etc.)
    * @return {L.Map}   Leaflet.Map instance
@@ -64,7 +66,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberof app.MapService
+   * @memberof angular.module('lizard-nxt')
+  .MapService
    * @param  {object} layer as served from backend
    * @return {L.TileLayer} leafletLayer
    * @description Initiates a Leaflet Tilelayer
@@ -89,7 +92,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberof app.MapService
+   * @memberof angular.module('lizard-nxt')
+  .MapService
    * @param  {object} nonLeafLayer as served from backend
    * @return {L.TileLayer.WMS}              [description]
    * @description Initiates a Leaflet WMS layer
@@ -122,7 +126,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberof app.MapService
+   * @memberof angular.module('lizard-nxt')
+  .MapService
    * @param  {object} nonLeafLayer as served from backend
    * @return {L.UtfGrid} utfgrid
    * @description Initiates layers that deliver interaction with the map
@@ -145,7 +150,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberof app.MapService
+   * @memberof angular.module('lizard-nxt')
+  .MapService
    * @param  {object} nonLeafLayer object from database
    * @description Throw in a layer as served from the backend
    */
@@ -176,7 +182,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberof app.MapService
+   * @memberof angular.module('lizard-nxt')
+  .MapService
    * @param {L.Class} Leaflet layer.
    * @description Adds layer to map
    */
@@ -190,7 +197,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberof app.MapService
+   * @memberof angular.module('lizard-nxt')
+  .MapService
    * @param  {L.Class} Leaflet layer
    * @description Removes layer from map
    */
@@ -218,7 +226,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    * @description Updates opacity of different layers
    * @param  {layersObject}
    */
@@ -241,7 +250,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    * @description Elevation can be rescaled according to extent
    */
   _rescaleElevation = function () {
@@ -263,7 +273,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    * @description legacy function from map-directive --> does too much!
    * @param  {object} layer  single layer that needs to be toggled
    * @param  {object} layers all layers to switch off.
@@ -311,7 +322,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    * @description Get layer from leaflet map object.
    *
    * Because leaflet doesn't supply a map method to get a layer by name or
@@ -339,7 +351,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    * @description wrapper for leaflet function.
    * @return {L.GeoJson} empty geojson layer.
    */
@@ -349,7 +362,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    * @description sets leaflet View based on panZoom
    * @param {object} panZoom Hashtable with, lat, lng, zoom
    */
@@ -366,7 +380,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    * @description fits leaflet to extent
    * @param  {array} extent Array with NW, NE, SW,SE
    */
@@ -376,7 +391,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    * @description Retrieves the (single) currently active layer which has a
    * temporal component. Returns undefined if no temporal raster layer is
    * currently active.
@@ -395,7 +411,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    * @description Retrieves layers by type (base | over | temporal). Used for
    * keeping the right-hand menu readable.
    *
@@ -448,7 +465,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
   };
 
   /**
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    * @type {Object}
    * @description mapState is the mother of everything spatial.
    * This is a central collection of the state the map is in.
@@ -480,7 +498,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    * @description small clickhandler for leafletclicks
    * @param  {event}  e Leaflet event object
    */
@@ -497,7 +516,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    */
   _moveStarted = function () {
     mapState.mapMoving = true;
@@ -505,7 +525,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    */
   _mouseMoved = function (e) {
     if (!$rootScope.$$phase) {
@@ -519,7 +540,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    */
   _moveEnded = function () {
     var finalizeMove = function () {
@@ -539,7 +561,8 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
   /**
    * @function
-   * @memberOf app.MapService
+   * @memberOf angular.module('lizard-nxt')
+  .MapService
    * @description Initiate map events
    * @return {void}
    */

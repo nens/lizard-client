@@ -1,4 +1,5 @@
-app.controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
+angular.module('lizard-nxt')
+  .controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
   /**
    * Refactor and design this cruft
    */
