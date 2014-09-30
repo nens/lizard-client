@@ -100,15 +100,17 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       rescaleElevation();
     } else {
       layerGroup.toggle(_map, layerGroup._slug);
-
-      if (layerGroup.baselayer) {
-        angular.forEach(layerGroups, function (_layerGroup) {
+      angular.forEach(layerGroups, function (_layerGroup) {
+        if (layerGroup.baselayer) {
           if (_layerGroup.baselayer && _layerGroup !== layerGroup && _layerGroup.isActive()) {
-            layerGroup.toggle(_map, _layerGroup._slug);
+            layerGroup.toggle(_map);
           }
-        });
-      }
-
+        } else if (layerGroup.temporal) {
+          if (_layerGroup.temporal && _layerGroup !== layerGroup && _layerGroup.isActive()) {
+            layerGroup.toggle(_map);
+          }
+        }
+      });
     }
   };
 
