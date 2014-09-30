@@ -85,20 +85,57 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
      */
     fillpoint = function (here, extra) {
 
-      var clickedOnEvents = extra && extra.type === 'events';
 
-      if (clickedOnEvents) {
-        ClickFeedbackService.emptyClickLayer();
-        eventResponded(extra.eventData, clickedOnEvents);
-      } else {
-        // Give feedback to user
-        ClickFeedbackService.drawClickInSpace(here);
-        // Get attribute data from utf
-        UtfGridService.getDataFromUTF(here)
-          .then(utfgridResponded(here, clickedOnEvents), _noUTF(here));
-      }
+      console.log('[F] fillPoint');
 
+      angular.forEach($scope.mapState.layergroups, function (layerGroup) {
+
+        layerGroup.getData(here)
+          .then(
+            doneFn,
+            null,
+            putDataOnScope
+          );
+      });
     };
+
+    var doneFn = function (response) { // response ::= True | False
+
+      console.log('[F] doneFn, arg \'response\' =', response);
+    };
+
+    var putDataOnScope = function (response) {
+
+      console.log('[F] putDataOnScope, arg \'response\' =', response);
+    };
+
+      // var clickedOnEvents = extra && extra.type === 'events';
+
+      // if (clickedOnEvents) {
+
+      //   //ClickFeedbackService.emptyClickLayer();
+      //   eventResponded(extra.eventData, clickedOnEvents);
+
+      // } else {
+
+      //   // Give feedback to user
+      //   //ClickFeedbackService.drawClickInSpace(here);
+
+      //   // Get attribute data from utf
+      //   // OLD:
+      //   // UtfGridService.getDataFromUTF(here)
+      //   //   .then(utfgridResponded(here, clickedOnEvents), _noUTF(here));
+
+      //   angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
+
+      //     if (layerGroup.isActive()) {
+
+      //       var promise = layerGroup.getData(here);
+
+      //     }
+      //   });
+      // }
+    //};
 
     /**
      * @function
@@ -133,7 +170,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
      * - Events: getTimeSeriesForObject()
      * @return {function}
      */
-    utfgridResponded = function (here, showOnlyEvents) {
+    utfgridResponded = function (here_, showOnlyEvents) {
 
       return function (response) {
 
@@ -151,7 +188,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
           // Set here to location of object
           var geom = JSON.parse(response.data.geom);
           // Snap the click to the center of the object
-          here = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
+          var here = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
           // Draw feedback around object.
           ClickFeedbackService.drawGeometry(
             response.data.geom,
@@ -167,6 +204,9 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
           // Get timeseries belonging to object.
           getTimeSeriesForObject();
         } else {
+
+          var here = here_;
+
           $scope.point.attrs.active = false;
           // If not hit object, treat it as a rain click, draw rain click
           // arrow.
@@ -366,7 +406,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
     $scope.point = createpoint();
     fillpoint($scope.mapState.here);
 
-    // Upodate when user clicked again
+    // Update when user clicked again
     $scope.$on('updatepoint', function (msg, extra) {
       fillpoint($scope.mapState.here, extra);
     });

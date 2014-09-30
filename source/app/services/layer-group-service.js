@@ -102,6 +102,8 @@ app.factory('LayerGroup', [
             wantedService = RasterService;
           } else if (layer.type === 'UTFGrid') {
             wantedService = UtfGridService;
+          } else {
+            console.log('Cannot build promise for layer:', layer);
           }
           promiseCount = buildPromise(layer, geom, deferred, wantedService, promiseCount);
         });
@@ -122,21 +124,15 @@ app.factory('LayerGroup', [
         }
 
         this._active = !this._active;
-        if (this._active) {
-          angular.forEach(this._layers, function (layer) {
-            if (layer.leafletLayer) {
-              console.log(layer.leafletLayer);
-              addLayer(map, layer.leafletLayer);
-            }
-          });
-        } else {
-          angular.forEach(this._layers, function (layer) {
-            if (layer.leafletLayer) {
-              console.log(layer.leafletLayer);
-              removeLayer(map, layer.leafletLayer);
-            }
-          });
-        }
+
+        var fn = this._active ? addLayer : removeLayer;
+
+        angular.forEach(this._layers, function (layer) {
+          if (layer.leafletLayer) {
+            fn(map, layer.leafletLayer);
+          }
+        });
+
       },
 
       isActive: function () {
@@ -198,18 +194,23 @@ app.factory('LayerGroup', [
       angular.forEach(layers, function (layer) {
 
         switch (layer.type) {
+
         case 'Vector':
           layer.leafletLayer = _initiateVectorLayer(layer);
           break;
+
         case 'TMS':
           layer.leafletLayer = _initiateTMSLayer(layer);
           break;
+
         case 'WMS':
           layer.leafletLayer = _initiateWMSLayer(layer);
           break;
+
         case 'UTFGrid':
           layer.leafletLayer = _initiateGridLayer(layer);
           break;
+
         default:
           throw new Error(layer.type + ' is not a supported layer type');
         }
@@ -221,13 +222,15 @@ app.factory('LayerGroup', [
 
     var _initiateVectorLayer = function (nonLeafLayer) {
 
+      var leafletLayer;
+
       if (nonLeafLayer._tiled) {
 
         // Initiate a tiled Vector layer
 
         var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
 
-        var leafletLayer = new LeafletService.TileDataLayer(url, {
+        leafletLayer = new LeafletService.TileDataLayer(url, {
 
           dataCallback: function (featureCollection, point) {
 
@@ -248,8 +251,8 @@ app.factory('LayerGroup', [
 
       } else {
 
-        // Initiate (non-tiled) Vector layer, for e.g. events
-        return;
+        //throw new Error('Initiate (non-tiled) Vector layer, for e.g. events');
+        return leafletLayer;
       }
       return leafletLayer;
     };

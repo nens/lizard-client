@@ -125,7 +125,7 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
     * @param {string} String representation of layerGroups on url
     */
     var enablelayerGroups = function (layerGroupString) {
-      console.log(layerGroupString);
+
       if (layerGroupString) {
         // Either layerGroups are on url
         var activeLayerSlugs = layerGroupString.split(',');

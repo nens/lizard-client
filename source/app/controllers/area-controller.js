@@ -16,6 +16,7 @@ app.controller('AreaCtrl', [
   '$scope',
   'RasterService',
   function ($scope, RasterService) {
+
     var _updateExtentAgg, putDataOnscope, removeDataFromScope,
         updateExtentAgg;
 
@@ -35,16 +36,19 @@ app.controller('AreaCtrl', [
      * @param  {object} area area object of this
      *                                  ctrl
      */
-    updateExtentAgg = function (bounds, layers, area) {
-      angular.forEach(layers, function (layer, slug) {
-        if (layer.active &&
-          (layer.aggregation_type !== 'none' &&
-           layer.aggregation_type)) {
-          var agg = area[slug] || {};
-          var dataProm = RasterService.getAggregationForActiveLayer(layer, slug, agg, bounds);
+    updateExtentAgg = function (bounds, layerGroups, area) {
+
+      angular.forEach(layerGroups, function (layerGroup, slug) {
+
+        if (layerGroup.isActive()
+          && layerGroup._initiated
+          && layerGroup._layers[0].aggregation_type !== 'none')
+        {
           // Pass the promise to a function that handles the scope.
-          putDataOnscope(dataProm);
-        } else if (slug in area && !layer.active) {
+          putDataOnscope(layerGroup.getData(bounds));
+        }
+        else if (!layerGroup.active && slug in area)
+        {
           removeDataFromScope(slug);
         }
       });
@@ -62,9 +66,11 @@ app.controller('AreaCtrl', [
     putDataOnscope = function (dataProm) {
       dataProm
       .then(function (result) {
+
         if (result.agg.data.length > 0) {
           $scope.area[result.slug] = result.agg;
-          $scope.area[result.slug].name = $scope.mapState.layers[result.slug].name;
+          $scope.area[result.slug].name = $scope.mapState.layerGroups[result.slug].name;
+
         } else if (result.slug in $scope.area) {
           removeDataFromScope(result.slug);
         }
@@ -119,7 +125,7 @@ app.controller('AreaCtrl', [
     _updateExtentAgg = function () {
       updateExtentAgg(
         $scope.mapState.bounds,
-        $scope.mapState.layers,
+        $scope.mapState.layerGroups,
         $scope.area
       );
     };
