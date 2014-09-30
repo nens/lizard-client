@@ -5,6 +5,7 @@ app.service("CabinetService", ["$q", "Restangular",
 
   var baselayers = window.baseLayers;
   var overlayers = window.overLayers;
+  var dataBounds = window.data_bounds;
   //var eventTypes = window.event_types;
 
   var termSearchResource,
@@ -354,6 +355,7 @@ app.service("CabinetService", ["$q", "Restangular",
     reverseGeocode: reverseGeocodeResource,
     timeseries: timeseriesResource,
     panZoom: null,
-    wantedAttrs: wantedAttrs
+    wantedAttrs: wantedAttrs,
+    dataBounds: dataBounds
   };
 }]);

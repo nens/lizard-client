@@ -1,8 +1,8 @@
 /**
  * Service to handle utf grid requests.
  */
-app.service('UtfGridService', ['$q', '$rootScope', 'MapService',
-  function ($q, $rootScope, MapService) {
+app.service('UtfGridService', ['$q', '$rootScope',
+  function ($q, $rootScope) {
 
     var on;
 

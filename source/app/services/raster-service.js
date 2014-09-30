@@ -1,8 +1,8 @@
 /**
  * Service to handle raster requests.
  */
-app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "MapService", "$q",
-  function (Restangular, UtilService, CabinetService, MapService, $q) {
+app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$q",
+  function (Restangular, UtilService, CabinetService, $q) {
 
   /**
    * Get latlon bounds for image.
@@ -130,6 +130,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "M
    * @return {promise} returns a thennable promise which may resolve with temporal raster data on response
    */
   var getTemporalRaster = function (start, stop, geom, aggWindow, rasterNames, agg) {
+    // TODO
     var slug = (MapService.mapState.layers) ? MapService.mapState.layers[rasterNames].layers[0].slug : rasterNames;
     var stopString, startString, wkt;
     stopString = stop.toISOString().split('.')[0];

@@ -22,6 +22,7 @@ app.factory('LayerGroup', [
     // This constant declares which keys (for LayerGroup instances) shall have
     // writable values; by default every value is read-only.
     var MUTABLE_KEYS = ['active', 'layers'];
+    var PUBLIC_KEYS =  ['temporal'];
 
     ///////////////////////////////////////////////////////////////////////////
     /*
@@ -32,14 +33,41 @@ app.factory('LayerGroup', [
      * @param  {object} layergroup definition
      */
     function LayerGroup(layerGroup) {
-
-      angular.forEach(layerGroup, function (value, key) {
-        Object.defineProperty(this, '_' + key, {
-          value: value,
-          write: (key in MUTABLE_KEYS),
-          configurable: true,
-          enumerable: false
-        });
+      Object.defineProperty(this, 'name', {
+        value: layerGroup.name,
+        writable: false,
+        configurable: false,
+        enumerable: false
+      });
+      Object.defineProperty(this, '_active', {
+        value: false,
+        writable: true,
+        configurable: true,
+        enumerable: false
+      });
+      Object.defineProperty(this, 'baselayer', {
+        value: layerGroup.baselayer,
+        writable: false,
+        configurable: false,
+        enumerable: false
+      });
+      Object.defineProperty(this, 'slug', {
+        value: layerGroup.slug,
+        writable: false,
+        configurable: false,
+        enumerable: false
+      });
+      Object.defineProperty(this, '_layers', {
+        value: layerGroup.layers,
+        writable: true,
+        configurable: true,
+        enumerable: false
+      });
+      Object.defineProperty(this, 'defaultActive', {
+        value: layerGroup.active,
+        writable: false,
+        configurable: false,
+        enumerable: false
       });
     }
 
@@ -86,30 +114,29 @@ app.factory('LayerGroup', [
       * @memberOf app.LayerGroup.prototype
       * @description
       */
-      toggle: function (map, slug) {
+      toggle: function (map) {
 
         if (!this._initiated) {
           this._layers = _initiateLayers(this._layers);
           this._initiated = true;
         }
 
-        // if (slug === this._slug) {
-        //   this._active = !this._active;
-        // }
-
-        this._active = slug === this._slug;
-
-        // if (this.baselayer && this._slug === 'elevation') {
-        //   rescale(map);
-        // }
-
-        angular.forEach(this._layers, function (layer) {
-          if (this._active) {
-            addLayer(map, layer);
-          } else {
-            removeLayer(map, layer);
-          }
-        });
+        this._active = !this._active;
+        if (this._active) {
+          angular.forEach(this._layers, function (layer) {
+            if (layer.leafletLayer) {
+              console.log(layer.leafletLayer);
+              addLayer(map, layer.leafletLayer);
+            }
+          });
+        } else {
+          angular.forEach(this._layers, function (layer) {
+            if (layer.leafletLayer) {
+              console.log(layer.leafletLayer);
+              removeLayer(map, layer.leafletLayer);
+            }
+          });
+        }
       },
 
       isActive: function () {
@@ -153,10 +180,7 @@ app.factory('LayerGroup', [
      * @description Adds layer to map
      */
     var addLayer = function (map, layer) { // Leaflet Layer
-      // Check if leaflet layer
-      if (layer instanceof L.Class) {
-        map.addLayer(layer);
-      }
+      map.addLayer(layer);
     };
 
     /**
@@ -166,10 +190,7 @@ app.factory('LayerGroup', [
      * @description Removes layer from map
      */
     var removeLayer = function (map, layer) { // Leaflet Layer
-      // Check if leaflet layer
-      if (layer instanceof L.Class) {
-        map.removeLayer(layer);
-      }
+      map.removeLayer(layer);
     };
 
     var _initiateLayers = function (layers) {
@@ -177,25 +198,20 @@ app.factory('LayerGroup', [
       angular.forEach(layers, function (layer) {
 
         switch (layer.type) {
-
-          case 'Vector':
-            _initiateVectorLayer(layer);
-            break;
-
-          case 'TMS':
-            _initiateTMSLayer(layer);
-            break;
-
-          case 'WMS':
-            _initiateWMSLayer(layer);
-            break;
-
-          case 'UTFGrid':
-            _initiateGridLayer(layer);
-            break;
-
-          default:
-            throw new Error(layer.type + ' is not a supported layer type');
+        case 'Vector':
+          layer.leafletLayer = _initiateVectorLayer(layer);
+          break;
+        case 'TMS':
+          layer.leafletLayer = _initiateTMSLayer(layer);
+          break;
+        case 'WMS':
+          layer.leafletLayer = _initiateWMSLayer(layer);
+          break;
+        case 'UTFGrid':
+          layer.leafletLayer = _initiateGridLayer(layer);
+          break;
+        default:
+          throw new Error(layer.type + ' is not a supported layer type');
         }
       });
 
@@ -211,7 +227,7 @@ app.factory('LayerGroup', [
 
         var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
 
-        nonLeafLayer.leafletLayer = new LeafletService.TileDataLayer(url, {
+        var leafletLayer = new LeafletService.TileDataLayer(url, {
 
           dataCallback: function (featureCollection, point) {
 
@@ -235,6 +251,7 @@ app.factory('LayerGroup', [
         // Initiate (non-tiled) Vector layer, for e.g. events
         return;
       }
+      return leafletLayer;
     };
 
 
@@ -250,17 +267,15 @@ app.factory('LayerGroup', [
       var layerUrl = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
       var layer = LeafletService.tileLayer(
         layerUrl, {
-          name: (nonLeafLayer.baselayer) ? 'Background' : nonLeafLayer.slug,
           slug: nonLeafLayer.slug,
-          minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom : 0,
+          minZoom: nonLeafLayer.min_zoom || 0,
           maxZoom: 19,
           detectRetina: true,
           zIndex: nonLeafLayer.z_index,
           ext: 'png'
         });
 
-      nonLeafLayer.leafletLayer = layer;
-      nonLeafLayer.initiated = true;
+      return layer;
     };
 
     /**
@@ -273,9 +288,10 @@ app.factory('LayerGroup', [
     var _initiateWMSLayer = function (nonLeafLayer) {
       var _options = {
         layers: nonLeafLayer.slug,
+        slug: nonLeafLayer.slug,
         format: 'image/png',
         version: '1.1.1',
-        minZoom: (nonLeafLayer.min_zoom) ? nonLeafLayer.min_zoom : 0,
+        minZoom: nonLeafLayer.min_zoom || 0,
         maxZoom: 19,
         zIndex: nonLeafLayer.z_index
       };
@@ -286,16 +302,13 @@ app.factory('LayerGroup', [
         _options.styles = 'BrBG_r';
         _options.effects = 'shade:0:3';
       } else if (nonLeafLayer.slug === 'isahw:BOFEK2012') {
-        _options.styles = '';
-        return; // Add no styling for soil layer
+        _options.styles = ''; // Add no styling for soil layer
       } else { // Default, used by zettingsvloeiingsproef
         _options.styles = 'BrBG_r';
         _options.effects = 'shade:0:3';
       }
 
-      nonLeafLayer.leafletLayer =
-        LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
-      nonLeafLayer.initiated = true;
+      return LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
     };
 
     /**
@@ -314,17 +327,16 @@ app.factory('LayerGroup', [
         slug: nonLeafLayer.slug,
         name: nonLeafLayer.slug,
         useJsonP: false,
-        minZoom: (nonLeafLayer.min_zoom_click) ?
-          nonLeafLayer.min_zoom_click : 0,
+        minZoom: nonLeafLayer.min_zoom_click || 0,
         maxZoom: 19,
         order: nonLeafLayer.z_index,
         zIndex: nonLeafLayer.z_index
       });
-      nonLeafLayer.leafletLayer = layer;
-      nonLeafLayer.initiated = true;
+      return layer;
     };
 
     ///////////////////////////////////////////////////////////////////////////
 
     return LayerGroup;
-}]);
+  }
+]);

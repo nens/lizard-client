@@ -25,7 +25,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
       // public vars
   var setView, fitBounds, initiateMapEvents, latLngToLayerPoint,
       newGeoJsonLayer, createMap, toggleLayerGroup,
-      createLayerGroups;
+      createLayerGroups, setLayerGoupsToDefault;
 
   /**
    * @function
@@ -37,21 +37,17 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    */
   createMap = function (mapElem, options) { // String or Element.
 
-    var bounds = L.latLngBounds(
-      L.latLng(data_bounds.all.south, data_bounds.all.east),
-      L.latLng(data_bounds.all.north, data_bounds.all.west));
-
     _map = LeafletService.map(mapElem, {
       zoomControl: false,
-      zoom: 12,
-      center: bounds.getCenter()
+      // zoom: 12,
+      // center: L.LatLng(52,4)
     });
 
-    if (options) {
-      _map.fitBounds(bounds);
-      _map.attributionControl.addAttribution(options.attribution);
-      _map.attributionControl.setPrefix('');
-    }
+    // TODO: fix the relative position of nav bar and map element to make the
+    // attribution visible.
+    // var osmAttrib = '<a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>';
+    // _map.attributionControl.addAttribution(options.attribution);
+    // _map.attributionControl.setPrefix('');
   };
 
   var isMapDefined = function () {
@@ -86,7 +82,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @param  {object} nonLeafLayer object from database
    * @description Throw in a layer as served from the backend
    */
-  var createLayerGroups = function (serverSideLayerGroups) {
+  createLayerGroups = function (serverSideLayerGroups) {
     _layerGroups = [];
     angular.forEach(serverSideLayerGroups, function (sslg) {
       _layerGroups.push(new LayerGroup(sslg));
@@ -110,7 +106,7 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     } else {
 
       if (layerGroup.baselayer) {
-        angular.forEach(_layerGroups, function(_layerGroup) {
+        angular.forEach(_layerGroups, function (_layerGroup) {
           if (_layerGroup.baselayer && _layerGroup.isActive()) {
             _layerGroup.toggle(_map, layerGroup._slug);
           }
@@ -119,6 +115,13 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
 
       layerGroup.toggle(_map, layerGroup._slug);
     }
+  };
+
+  setLayerGoupsToDefault = function () {
+    angular.forEach(_layerGroups, function (layerGroup) {
+      console.log('toggling', layerGroup.defaultActive, layerGroup.name);
+      if (layerGroup.defaultActive) { layerGroup.toggle(_map); }
+    });
   };
 
   /**
@@ -155,8 +158,14 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
    * @description fits leaflet to extent
    * @param  {array} extent Array with NW, NE, SW,SE
    */
-  fitBounds = function (extent) {
-    _map.fitBounds(extent);
+  fitBounds = function (bounds) {
+    if (!(bounds instanceof LeafletService.LatLngBounds)) {
+      _map.fitBounds(L.latLngBounds(
+        L.latLng(bounds.south, bounds.east),
+        L.latLng(bounds.north, bounds.west)));
+    } else {
+      _map.fitBounds(bounds);
+    }
   };
 
   /**
@@ -176,17 +185,17 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
   {
     var conditionalApply = function (fn, e) {
 
-      if ($rootScope.$$phase) {
+      if (!$rootScope.$$phase) {
         $rootScope.$apply(fn(e, _map));
       } else {
         fn(e, _map);
       }
     };
 
-    _map.on('click', function (e) { conditionalApply(clicked, e); } );
-    _map.on('movestart', function (e) { conditionalApply(moveStarted, e); } );
-    _map.on('mousemove', function (e) { conditionalApply(mouseMoved, e); } );
-    _map.on('moveend', function (e) { conditionalApply(moveEnded, e); } );
+    _map.on('click', function (e) { conditionalApply(clicked, e); });
+    _map.on('movestart', function (e) { conditionalApply(moveStarted, e); });
+    _map.on('mousemove', function (e) { conditionalApply(mouseMoved, e); });
+    _map.on('moveend', function (e) { conditionalApply(moveEnded, e); });
   };
 
 
@@ -200,5 +209,6 @@ app.service('MapService', ['$rootScope', '$filter', '$http', 'CabinetService',
     setView: setView,
     fitBounds: fitBounds,
     initiateMapEvents: initiateMapEvents,
+    setLayerGoupsToDefault: setLayerGoupsToDefault
   };
 }]);

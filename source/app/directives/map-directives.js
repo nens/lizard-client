@@ -54,7 +54,6 @@ app.directive('map', [
        * @memberOf app.MapService
        */
       var _moveEnded = function (e, map) {
-
         scope.mapState.moved = Date.now();
         scope.mapState.mapMoving = false;
         scope.mapState.center = map.getCenter();
@@ -62,14 +61,7 @@ app.directive('map', [
         scope.mapState.bounds = map.getBounds();
       };
 
-      // instead of 'map' element here for testability
-      var osmAttrib = '<a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>';
-      var bounds = window.data_bounds.all;
-
-      MapService.createMap(element[0], {
-        bounds: bounds,
-        attribution: osmAttrib
-      });
+      MapService.createMap(element[0]);
 
       MapService.initiateMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
 
@@ -79,7 +71,7 @@ app.directive('map', [
 
       // initialize empty ClickLayer.
       // Otherwise click of events-aggregate and clicklayer
-      ClickFeedbackService.drawClickInSpace(new L.LatLng(180.0, 90.0));
+      // ClickFeedbackService.drawClickInSpace(new L.LatLng(180.0, 90.0));
     };
 
     return {

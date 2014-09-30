@@ -188,21 +188,21 @@ app.service("UrlState", ["LocationGetterSetter", function (LocationGetterSetter)
        * @memberOf app.UrlState
        * @description Sets the layer slugs on the url.
        * @param {object} state config object
-       * @param {object} layers mapState.layer
+       * @param {object} layerGroups mapState.layer
        */
-      setLayersUrl: function (state, layers) {
-        if (layers === undefined) { return; }
-        var slugs = Object.keys(layers),
+      setlayerGroupsUrl: function (state, layerGroups) {
+        if (layerGroups === undefined) { return; }
+        var slugs = Object.keys(layerGroups),
             i,
             activeSlugs = [];
         for (i = 0; i < slugs.length; i++) {
-          if (layers[slugs[i]].active) {
+          if (layerGroups[slugs[i]].active) {
             activeSlugs.push(slugs[i]);
           }
         }
         LocationGetterSetter.setUrlValue(
-          state.layers.part,
-          state.layers.index,
+          state.layerGroups.part,
+          state.layerGroups.index,
           activeSlugs.toString());
       },
       /**
@@ -289,8 +289,8 @@ app.service("UrlState", ["LocationGetterSetter", function (LocationGetterSetter)
             state.boxType.index,
             type);
         }
-        if (!LocationGetterSetter.getUrlValue(state.layers.part, state.layers.index)) {
-          this.setLayersUrl(mapState.layers);
+        if (!LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index)) {
+          this.setlayerGroupsUrl(mapState.layerGroups);
         }
         if (!LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index)) {
           this.setCoordinatesUrl(state,

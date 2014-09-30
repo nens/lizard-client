@@ -12,7 +12,8 @@
  * state leads the url.
  */
 app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
-  'UrlState', function ($scope, LocationGetterSetter, MapService, UrlState) {
+  'UrlState', 'CabinetService',
+  function ($scope, LocationGetterSetter, MapService, UrlState, CabinetService) {
 
     // Configuration object for url state.
     var state = {
@@ -49,7 +50,7 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
       }
     };
 
-    UrlState.setUrlHashWhenEmpty(state, $scope.box.type, MapService.mapState, $scope.timeState);
+    UrlState.setUrlHashWhenEmpty(state, $scope.box.type, $scope.mapState, $scope.timeState);
 
     /**
      * set layer(s) when these change.
@@ -67,9 +68,9 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
       if (n === o) { return true; }
       state.mapView.update = false;
       UrlState.setCoordinatesUrl(state,
-        MapService.mapState.center.lat,
-        MapService.mapState.center.lng,
-        MapService.mapState.zoom);
+        $scope.mapState.center.lat,
+        $scope.mapState.center.lng,
+        $scope.mapState.zoom);
     });
 
     /**
@@ -113,8 +114,6 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
       UrlState.setgeomUrl(state, $scope.box.type, $scope.mapState.here, $scope.mapState.points);
     }, true);
 
-
-
    /**
     * @function
     * @memberOf app.UrlController
@@ -126,79 +125,36 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
     * @param {string} String representation of layerGroups on url
     */
     var enablelayerGroups = function (layerGroupString) {
+      console.log(layerGroupString);
+      if (layerGroupString) {
+        // Either layerGroups are on url
+        var activeLayerSlugs = layerGroupString.split(',');
 
-      // layerGroups are not on url, turn default layerGroups on
-      // if (layerGroupString === '') {
-
-      // } else {
-      //   // Either layerGroups are on url
-      //   var activeLayerSlugs = layerGroupString.split(',');
-
-      //   angular.forEach($scope.mapState.layerGroups, function (layergroup) {
-      //     if (layergroup.slug in activeLayerSlugs && !layergroup.isActive()) {
-      //       MapService.toggleLayerGroup(layergroup);
-      //     }
-      //   });
-      // }
-
-      var DEFAULT_LG_SLUGS = ['topography'];
-
-      var lgSlugsToBeActivated = layerGroupString === ''
-        ? DEFAULT_LG_SLUGS
-        : layerGroupString.split(',');
-
-      angular.forEach(lgSlugsToBeActivated, function (slug) {
-        //$scope.mapState.layerGroups[slug].activate();
-        MapService.toggleLayerGroup($scope.mapState.layerGroups[slug]);
-      });
-
-
-
-
-
-
-
-
-      // if (layerGroups) {
-
-      //   ,
-      //       allSlugs = Object.keys($scope.mapState.layerGroups),
-      //       i,
-      //       activeInUrl;
-
-      //   for (i = 0; i < allSlugs.length; i++) {
-      //     // check if hash contains layerGroups otherwise set to inactive;
-      //     activeInUrl = (activeSlugs.indexOf(allSlugs[i]) >= 0);
-      //     if ((activeInUrl && !$scope.mapState.layerGroups[allSlugs[i]].active)
-      //       || (!activeInUrl && $scope.mapState.layerGroups[allSlugs[i]].active)) {
-
-      //       $scope.mapState.layerGroups[allSlugs[i]].active = !$scope.mapState.layerGroups[allSlugs[i]].active;
-      //       $scope.mapState.changeLayer($scope.mapState.layerGroups[allSlugs[i]]);
-      //       MapService.mapState.activelayerGroupsChanged = Date.now();
-      //     }
-      //   }
-      // }
-
-      // if ($scope.mapState.layerGroupsNeedLoading) {
-      //   // Initialise layerGroups
-      //   angular.forEach(MapService.mapState.layerGroups, function (layerGroup) {
-      //     MapService.mapState.activelayerGroupsChanged = Date.now();
-      //     if (!layerGroup.initiated) {
-
-      //       console.log('layerGroup =', layerGroup);
-
-      //       // LayerGroup(layerGroup);
-      //       MapService.createLayer(layerGroup);
-      //     }
-
-      //     if (layerGroup.active && layerGroup.initiated) {
-      //       layerGroup.active = false;
-      //       MapService.toggleLayer(layerGroup, MapService.mapState.layerGroups);
-      //     }
-      //   });
-      //   $scope.mapState.layerGroupsNeedLoading = false;
-      // }
+        angular.forEach(activeLayerSlugs, function (layergroup) {
+          if (layergroup.slug in activeLayerSlugs && !layergroup.isActive()) {
+            MapService.toggleLayerGroup(layergroup);
+          }
+        });
+        // Or layerGroups are not on url, turn default layerGroups on
+      } else {
+        MapService.setLayerGoupsToDefault();
+      }
     };
+
+    var enableMapView = function (mapView) {
+      var fn = function () {
+        MapService.fitBounds(CabinetService.dataBounds.all);
+      };
+
+      if (mapView) {
+        var view = UrlState.parseMapView(mapView);
+        if (view) {
+          MapService.setView(view.latLng, view.zoom, view.options);
+        } else fn();
+      } else fn();
+    };
+
+
 
     /**
      * Listener to update map view when user changes url
@@ -211,12 +167,14 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
      * resetting the updateUrl back to true
      */
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
+
+      console.log('$locationChangeSuccess');
       if (UrlState.update(state)) {
         var boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
-        geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
-        layerGroupsFromURL = LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index),
-        mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
-        time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index);
+          geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
+          layerGroupsFromURL = LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index),
+          mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
+          time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index);
         if (boxType) {
           if (geom) { // Setting the box to anything but default requires geometry on url.
             $scope.box.type = boxType;
@@ -225,17 +183,12 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
           }
         }
         if (geom) {
-          $scope.mapState = UrlState.parseGeom($scope.box.type, geom, MapService.mapState);
+          $scope.mapState = UrlState.parseGeom($scope.box.type, geom, $scope.mapState);
         }
 
         enablelayerGroups(layerGroupsFromURL);
+        enableMapView(mapView);
 
-        if (mapView) {
-          var view = UrlState.parseMapView(mapView);
-          if (view) {
-            MapService.setView(view.latLng, view.zoom, view.options);
-          }
-        }
         if (time) {
           $scope.timeState = UrlState.parseTimeState(time, $scope.timeState);
         }
