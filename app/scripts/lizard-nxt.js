@@ -129,6 +129,10 @@ angular.module('lizard-nxt')
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, TimeseriesService, MapService) {
 
+
+  $scope.user = CabinetService.user;
+  $scope.versioning = CabinetService.versioning;
+
   // BOX MODEL
   /**
    * @memberOf angular.module('lizard-nxt')

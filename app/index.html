@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Lizard</title>
 
-    <script type="text/javascript" src="scripts/lizard-bs.js"></script>
+    <script type="text/javascript" src="/scripts/lizard-bs.js"></script>
 
     <!-- build:css(.) /styles/vendor.css -->
     <!-- bower:css -->
@@ -42,22 +42,23 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand"
-             href="/"
+          <a class="navbar-brand clickable"
              ng-dblclick="toggleVersionVisibility()">
              <span>Lizard</span>
           </a>
-          <a class="navbar-version" href="/" title="revision: f8f416d"><span>v.0.7b6-17-gf8f416d</span></a>
+          <a class="navbar-version clickable" title="<% versioning.revision %>"><span>v<% versioning.version %></span></a>
         </div>
 
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right" style="">
 
             
-              <li class="visible-xs">
-                <a class="user" href="https://sso.lizard.net/edit_profile/" title="Edit profile"><div class="" id="username"><i id="" class="fa fa-user"></i>&nbsp;&nbsp;Fritz</div></a>
+              <li ng-if="user.authenticated" class="visible-xs">
+                <a class="user" href="https://sso.lizard.net/edit_profile/" title="Edit profile"><div class="" id="username"><i id="" class="fa fa-user"></i>
+                <% user.firstName %></div></a>
               </li>
-              <li class="visible-sm visible-md visible-lg">
+              <li ng-if="user.authenticated" 
+                  class="visible-sm visible-md visible-lg">
                 <a class="user"
                    rel="tooltip"
                    data-toggle="tooltip"
@@ -65,12 +66,14 @@
                    title="Edit profile"
                    href="http://sso.lizard.net/edit_profile/">
                   <div class="" id="username">
-                    <i id="" class="fa fa-user" style="font-size:1.2em;"></i>&nbsp;&nbsp;Fritz
+                    <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
+                    <% user.firstName %>
                   </div>
                 </a>
               </li>
 
-              <li class="visible-xs">
+              <li ng-if="user.authenticated"
+                  class="visible-xs">
                 <a class="user logout"
                    href="#"
                    rel="tooltip"
@@ -89,7 +92,8 @@
                     </div>
                 </a>
               </li>
-              <li class="visible-sm visible-md visible-lg" style="width:63px;">
+              <li ng-if="user.authenticated"
+                  class="visible-sm visible-md visible-lg" style="width:63px;">
                 <a class="user logout"
                    rel="tooltip"
                    data-toggle="tooltip"
@@ -102,7 +106,10 @@
                   </div>
                 </a>
               </li>
-            
+              <li ng-if="!user.authenticated">
+                <a onclick="logIn()" title="Login">
+                <i id="" class="fa fa-user" style="font-size:1.2em;"></i></a>
+              </li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

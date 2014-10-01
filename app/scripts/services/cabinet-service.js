@@ -7,6 +7,8 @@ angular.module('lizard-nxt')
   var baselayers = window.baseLayers;
   var overlayers = window.overLayers;
   var eventTypes = window.event_types;
+  var user = window.user;
+  var versioning = window.versioning;
 
   var termSearchResource,
       bboxSearchResource,
@@ -356,6 +358,8 @@ angular.module('lizard-nxt')
     reverseGeocode: reverseGeocodeResource,
     timeseries: timeseriesResource,
     panZoom: null,
+    user: user,
+    versioning: versioning,
     wantedAttrs: wantedAttrs
   };
 }]);
