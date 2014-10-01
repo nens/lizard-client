@@ -50,7 +50,7 @@
     "grunt-karma": "~0.9.0",
     "karma-phantomjs-launcher": "~0.1.4",
     "grunt-connect-proxy": "~0.1.11",
-    "connect-modrewrite": "0.0.1"
+    "connect-modrewrite": "~0.7.9"
   },
   "engines": {
     "node": ">=0.10.0"
