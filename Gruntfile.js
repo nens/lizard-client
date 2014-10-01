@@ -16,11 +16,15 @@
 
 */
 
+var proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
+var modRewrite = require('connect-modrewrite');
+
 module.exports = function (grunt) {
   // loads all the grunt dependencies found in package.json
   require('load-grunt-tasks')(grunt);
   require('time-grunt')(grunt);
-  var modRewrite = require('connect-modrewrite');
+
+  grunt.loadNpmTasks('grunt-connect-proxy');
 
   var appConfig = {
     app: require('./bower.json').appPath,
@@ -80,11 +84,10 @@ module.exports = function (grunt) {
       livereload: {
         options: {
           open: true,
-          middleware: function (connect) {
+          middleware: function (connect, options) {
             return [
               modRewrite([
-                // '/$ /index.html',
-                // '/map/$ /index.html [L]',
+                '\\map\/|\\map$ /index.html [L]',
                 '!\\\/styles\/|\\\/scripts\/|\\.html|\\.js|\\.svg|\\.css|\\.png$ /index.html [L]'
                 ]),
               connect.static('.tmp'),
@@ -92,11 +95,20 @@ module.exports = function (grunt) {
                 '/vendor',
                 connect.static('./vendor')
               ),
-              connect.static(appConfig.app)
+              connect.static(appConfig.app),
+              proxySnippet
             ];
           }
         }
       },
+      proxies: [
+        {
+        context: '/',
+        host: '127.0.0.1',
+        port: 8000, // Django port goes here
+        xforward: true
+        }
+      ],
       test: {
         options: {
           port: 9001,
@@ -108,7 +120,8 @@ module.exports = function (grunt) {
                 '/vendor',
                 connect.static('./vendor')
               ),
-              connect.static(appConfig.app)
+              connect.static(appConfig.app),
+              proxySnippet
             ];
           }
         }
@@ -397,6 +410,7 @@ module.exports = function (grunt) {
     grunt.task.run([
       'clean:server',
       'wiredep',
+      'configureProxies',
       'concurrent:server',
       'autoprefixer',
       'connect:livereload',
