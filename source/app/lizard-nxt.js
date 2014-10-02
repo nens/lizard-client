@@ -212,19 +212,8 @@ app.controller('MasterCtrl',
     $scope.box.contextSwitchMode = !$scope.box.contextSwitchMode;
   };
 
-  // MAP MODEL
-  $scope.mapState = {
-    here: null,
-    points: [], // History of here for drawing
-    center: null,
-    activeLayersChanged: false,
-    changed: Date.now(),
-    moved: Date.now(),
-    baselayerChanged: Date.now(),
-    bounds: null,
-    userHere: null, // Geographical location of the users mouse
-    mapMoving: false
-  };
+  // MAP MODEL is set by the map-directive
+  $scope.mapState = {};
 
   $scope.mapState.getActiveTemporalLayer = function () {
     angular.forEach($scope.mapState.layerGroups, function (layerGroup) {

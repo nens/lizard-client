@@ -17,6 +17,17 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
     LeafletService, LayerGroup) {
 
     function NxtMap(element, serverSideLayerGroups, options) {
+      this.here = null;
+      this.points = []; // History of here for drawing
+      this.center = null;
+      this.activeLayersChanged = false;
+      this.changed = Date.now();
+      this.moved = Date.now();
+      this.baselayerChanged = Date.now();
+      this.bounds = null;
+      this.userHere = null; // Geographical location of the users mouse
+      this.mapMoving = false;
+
       this._map = createNxtMap(element, options);
       this.layerGroups = createLayerGroups(serverSideLayerGroups);
     }

@@ -72,20 +72,20 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter',
         });
         // Or layerGroups are not on url, turn default layerGroups on
       } else {
-        $scope.nxtMap.setLayerGoupsToDefault();
+        $scope.mapState.setLayerGoupsToDefault();
         $scope.mapState.layerGroupsChanged = Date.now();
       }
     };
 
     var enableMapView = function (mapView) {
       var fn = function () {
-        $scope.nxtMap.fitBounds(CabinetService.dataBounds.all);
+        $scope.mapState.fitBounds(CabinetService.dataBounds.all);
       };
 
       if (mapView) {
         var view = UrlState.parseMapView(mapView);
         if (view) {
-          $scope.nxtMap.setView(view.latLng, view.zoom, view.options);
+          $scope.mapState.setView(view.latLng, view.zoom, view.options);
         } else fn();
       } else fn();
     };
@@ -163,7 +163,6 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter',
      * resetting the updateUrl back to true
      */
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-      console.log(UrlState);
       if (UrlState.update(state)) {
         var boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
           geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
