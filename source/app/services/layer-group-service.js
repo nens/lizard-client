@@ -95,7 +95,9 @@ app.factory('LayerGroup', [
         var promiseCount = 0;
 
         angular.forEach(this._layers, function (layer) {
+
           var wantedService;
+
           if (layer.type === 'Vector') {
             wantedService = VectorService;
           } else if (layer.type === 'Store') {
@@ -105,7 +107,11 @@ app.factory('LayerGroup', [
           } else {
             console.log('Cannot build promise for layer:', layer);
           }
-          promiseCount = buildPromise(layer, geom, deferred, wantedService, promiseCount);
+
+          if (wantedService) {
+            debugger;
+            promiseCount = buildPromise(layer, geom, deferred, wantedService, promiseCount);
+          }
         });
 
         return deferred.promise;
