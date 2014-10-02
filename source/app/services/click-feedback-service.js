@@ -2,21 +2,21 @@
 /**
  * Service to draw click feedback.
  */
-app.service('ClickFeedbackService', ['$rootScope',
-  function ($rootScope, MapService) {
-    var Ctrl = function () {
+app.service('ClickFeedbackService', ['$rootScope', 'LeafletService',
+  function ($rootScope, LeafletService) {
+    var Ctrl = function (scope) {
 
       /**
        * Remove any existing click layers and creates a new empty one.
        *
        * @param {object} map
        */
-      this.emptyClickLayer = function () {
+      this.emptyClickLayer = function (mapState) {
         if (this.clickLayer) {
-          MapService.removeLayer(this.clickLayer);
+          mapState.removeLayer(this.clickLayer);
         }
-        this.clickLayer = MapService.newGeoJsonLayer();
-        MapService.addLayer(this.clickLayer);
+        this.clickLayer = LeafletService.geoJson();
+        mapState.addLayer(this.clickLayer);
         this.clickLayer.options.name = 'click';
         this.clickLayer.options.clickable = false;
       };
@@ -183,16 +183,8 @@ app.service('ClickFeedbackService', ['$rootScope',
      * Ctrl constructor.
      *
      */
-    emptyClickLayer = function () {
-      ctrl.emptyClickLayer();
-    };
-
-    /**
-     * Remove the vibrator from the DOM.
-     */
-
-    killVibrator = function () {
-      d3.selectAll('.vibrator').remove();
+    emptyClickLayer = function (mapState) {
+      ctrl.emptyClickLayer(mapState);
     };
 
     /**
@@ -205,8 +197,8 @@ app.service('ClickFeedbackService', ['$rootScope',
      * @param {object} latLng Leaflet object specifying the latitude
      * and longitude of a click
      */
-    drawClickInSpace = function (latlng) {
-      ctrl.emptyClickLayer();
+    drawClickInSpace = function (mapState, latlng) {
+      ctrl.emptyClickLayer(mapState);
       var geometry = {"type": "Point",
                       "coordinates": [latlng.lng, latlng.lat]};
       ctrl.drawFeature(geometry);
@@ -224,8 +216,8 @@ app.service('ClickFeedbackService', ['$rootScope',
      * @param {string} entityName Name of the object to give it custom
      *  styling
      */
-    drawGeometry = function (geom, entityName) {
-      ctrl.emptyClickLayer();
+    drawGeometry = function (mapState, geom, entityName) {
+      ctrl.emptyClickLayer(mapState);
       var geometry = angular.fromJson(geom);
       ctrl.drawFeature(geometry);
       ctrl.drawObject(entityName);
@@ -238,8 +230,8 @@ app.service('ClickFeedbackService', ['$rootScope',
      * @param {object} latLng Leaflet object specifying the latitude
      * and longitude of a click
      */
-    drawArrowHere = function (latlng) {
-      ctrl.emptyClickLayer();
+    drawArrowHere = function (mapState, latlng) {
+      ctrl.emptyClickLayer(mapState);
       var geometry = {"type": "Point",
                       "coordinates": [latlng.lng, latlng.lat]};
       ctrl.drawFeature(geometry);
@@ -251,8 +243,8 @@ app.service('ClickFeedbackService', ['$rootScope',
       ctrl.stopVibration();
     };
 
-    drawLine = function (first, second, dashed) {
-      emptyClickLayer();
+    drawLine = function (mapState, first, second, dashed) {
+      emptyClickLayer(mapState);
       ctrl.drawLineElement(first, second, dashed);
     };
 

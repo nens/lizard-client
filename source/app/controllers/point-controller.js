@@ -88,11 +88,11 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
       var clickedOnEvents = extra && extra.type === 'events';
 
       if (clickedOnEvents) {
-        ClickFeedbackService.emptyClickLayer();
+        ClickFeedbackService.emptyClickLayer($scope.mapState);
         eventResponded(extra.eventData, clickedOnEvents);
       } else {
         // Give feedback to user
-        ClickFeedbackService.drawClickInSpace(here);
+        ClickFeedbackService.drawClickInSpace($scope.mapState, here);
         // Get attribute data from utf
         UtfGridService.getDataFromUTF(here)
           .then(utfgridResponded(here, clickedOnEvents), _noUTF(here));
@@ -108,7 +108,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
     _noUTF = function (here) {
       return function () {
         $scope.point.attrs.active = false;
-        ClickFeedbackService.drawArrowHere(here);
+        ClickFeedbackService.drawArrowHere($scope.mapState, here);
         getRasterForLocation(here);
       };
     };
@@ -154,6 +154,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
           here = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
           // Draw feedback around object.
           ClickFeedbackService.drawGeometry(
+            $scope.mapState,
             response.data.geom,
             response.data.entity_name
           );
@@ -170,7 +171,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
           $scope.point.attrs.active = false;
           // If not hit object, treat it as a rain click, draw rain click
           // arrow.
-          ClickFeedbackService.drawArrowHere(here);
+          ClickFeedbackService.drawArrowHere($scope.mapState, here);
         }
         // Get raster data for the snapped here
         getRasterForLocation(here);
@@ -344,8 +345,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
         // Since we clearly clicked an event feature/circle,
         // we need to kill both the vibrator and the locationmarker:
 
-        ClickFeedbackService.killVibrator();
-        ClickFeedbackService.removeLocationMarker();
+        ClickFeedbackService.stopVibration();
 
       } else if (!checkIfEventsActive && checkIfAttrsActive) {
 
@@ -354,7 +354,6 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
         // it it's initial color.
 
         _recolorBlackEventFeature();
-        ClickFeedbackService.removeLocationMarker();
 
       } else if (!checkIfEventsActive && !checkIfAttrsActive) {
 
@@ -373,7 +372,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
-      ClickFeedbackService.emptyClickLayer();
+      ClickFeedbackService.emptyClickLayer($scope.mapState);
     });
 
     // efficient $watches using a helper function.

@@ -2,9 +2,8 @@ app.controller('LineCtrl', [
   '$scope',
   'RasterService',
   'ClickFeedbackService',
-  'MapService',
   'UtilService',
-  function ($scope, RasterService, ClickFeedbackService, MapService, UtilService) {
+  function ($scope, RasterService, ClickFeedbackService, UtilService) {
 
     /**
      * line is the object which collects different
@@ -110,17 +109,17 @@ app.controller('LineCtrl', [
       if (n === o) { return true; }
       if ($scope.mapState.points.length === 2) {
         $scope.mapState.points = [];
-        ClickFeedbackService.emptyClickLayer();
+        ClickFeedbackService.emptyClickLayer($scope.mapState);
         // Empty data element since the line is gone
         $scope.line = {};
       } else {
         if ($scope.mapState.points.length === 1) {
           $scope.mapState.points[1] = $scope.mapState.here;
           _updateLine($scope.mapState.points[0], $scope.mapState.points[1]);
-          ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.points[1], false);
+          ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.points[1], false);
         } else {
           $scope.mapState.points[0] = $scope.mapState.here;
-          ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.userHere);
+          ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.userHere);
         }
       }
     });
@@ -128,7 +127,7 @@ app.controller('LineCtrl', [
     var watchIfUrlCtrlSetsPoints = $scope.$watch('mapState.points', function (n, o) {
       if ($scope.mapState.points.length === 2) {
         _updateLine($scope.mapState.points[0], $scope.mapState.points[1]);
-        ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.points[1]);
+        ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.points[1]);
         watchIfUrlCtrlSetsPoints();
       }
     });
@@ -139,7 +138,7 @@ app.controller('LineCtrl', [
     $scope.$watch('mapState.userHere', function (n, o) {
       if (n === o) { return true; }
       if ($scope.mapState.points[0] && !$scope.mapState.points[1]) {
-        ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.userHere, true);
+        ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.userHere, true);
       }
     });
 
@@ -230,7 +229,7 @@ app.controller('LineCtrl', [
      * Clean up all drawings on box change.
      */
     $scope.$on('$destroy', function () {
-      ClickFeedbackService.emptyClickLayer();
+      ClickFeedbackService.emptyClickLayer($scope.mapState);
       $scope.mapState.points = [];
     });
 

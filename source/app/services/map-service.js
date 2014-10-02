@@ -72,16 +72,6 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
       /**
        * @function
        * @memberOf app.NxtMapService
-       * @description wrapper for leaflet function.
-       * @return {L.GeoJson} empty geojson layer.
-       */
-      newGeoJsonLayer: function () {
-        return LeafletService.geoJson();
-      },
-
-      /**
-       * @function
-       * @memberOf app.NxtMapService
        * @description sets leaflet View based on panZoom
        * @param {object} panZoom Hashtable with, lat, lng, zoom
        */
@@ -141,6 +131,14 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
         map.on('movestart', function (e) { conditionalApply(moveStarted, e); });
         map.on('mousemove', function (e) { conditionalApply(mouseMoved, e); });
         map.on('moveend', function (e) { conditionalApply(moveEnded, e); });
+      },
+
+      addLayer: function (layer) {
+        this._map.addLayer(layer);
+      },
+
+      removeLayer: function (layer) {
+        this._map.removeLayer(layer);
       }
     };
 
