@@ -120,14 +120,12 @@ app.factory('LayerGroup', [
         if (this._active) {
           angular.forEach(this._layers, function (layer) {
             if (layer.leafletLayer) {
-              console.log('Add', layer);
               addLayer(map, layer.leafletLayer);
             }
           });
         } else {
           angular.forEach(this._layers, function (layer) {
             if (layer.leafletLayer) {
-              console.log('Remove', layer);
               removeLayer(map, layer.leafletLayer);
             }
           });

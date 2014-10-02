@@ -20,13 +20,12 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
       this.here = null;
       this.points = []; // History of here for drawing
       this.center = null;
-      this.activeLayersChanged = false;
       this.changed = Date.now();
       this.moved = Date.now();
-      this.baselayerChanged = Date.now();
       this.bounds = null;
       this.userHere = null; // Geographical location of the users mouse
       this.mapMoving = false;
+      this.layerGroupsChanged = Date.now();
 
       this._map = createNxtMap(element, options);
       this.layerGroups = createLayerGroups(serverSideLayerGroups);
@@ -48,6 +47,7 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
           // turn layer group on
           if (!(layerGroup.baselayer && layerGroup.isActive())) {
             layerGroup.toggle(this._map, layerGroup._slug);
+            this.layerGroupsChanged = Date.now();
           }
           var map = this._map;
           if (layerGroup.baselayer || layerGroup.temporal) {
