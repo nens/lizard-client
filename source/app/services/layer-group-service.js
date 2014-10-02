@@ -14,17 +14,6 @@ app.factory('LayerGroup', [
   'VectorService', 'RasterService', 'LeafletService', 'UtfGridService', '$q',
   function (VectorService, RasterService, LeafletService, UtfGridService, $q) {
 
-  // app.factory('LayerGroup', [
-  //   'LeafletService', '$q',
-  //   function (LeafletService, $q) {
-
-    ///////////////////////////////////////////////////////////////////////////
-    // This constant declares which keys (for LayerGroup instances) shall have
-    // writable values; by default every value is read-only.
-    var MUTABLE_KEYS = ['active', 'layers'];
-    var PUBLIC_KEYS =  ['temporal'];
-
-    ///////////////////////////////////////////////////////////////////////////
     /*
      * @constructor
      * @memberOf app.LayerGroup
@@ -125,12 +114,14 @@ app.factory('LayerGroup', [
         if (this._active) {
           angular.forEach(this._layers, function (layer) {
             if (layer.leafletLayer) {
+              console.log('Add', layer);
               addLayer(map, layer.leafletLayer);
             }
           });
         } else {
           angular.forEach(this._layers, function (layer) {
             if (layer.leafletLayer) {
+              console.log('Remove', layer);
               removeLayer(map, layer.leafletLayer);
             }
           });
@@ -208,8 +199,6 @@ app.factory('LayerGroup', [
         case 'UTFGrid':
           layer.leafletLayer = _initiateGridLayer(layer);
           break;
-        default:
-          throw new Error(layer.type + ' is not a supported layer type');
         }
       });
 

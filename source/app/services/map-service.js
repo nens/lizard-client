@@ -45,18 +45,20 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
         if (layerGroup._slug === 'elevation' && layerGroup.isActive()) {
           rescaleElevation();
         } else {
-          layerGroup.toggle(this._map, layerGroup._slug);
-          angular.forEach(this.layerGroups, function (_layerGroup) {
-            if (layerGroup.baselayer) {
-              if (_layerGroup.baselayer && _layerGroup !== layerGroup && _layerGroup.isActive()) {
-                layerGroup.toggle(this._map);
+          // turn layer group on
+          if (!(layerGroup.baselayer && layerGroup.isActive())) {
+            layerGroup.toggle(this._map, layerGroup._slug);
+          }
+          var map = this._map;
+          if (layerGroup.baselayer || layerGroup.temporal) {
+            angular.forEach(this.layerGroups, function (_layerGroup) {
+              if (layerGroup.baselayer && _layerGroup.baselayer && _layerGroup.isActive() && _layerGroup.slug !== layerGroup.slug) {
+                _layerGroup.toggle(map);
+              } else if (layerGroup.temporal && _layerGroup.temporal && _layerGroup.isActive() && _layerGroup.slug !== layerGroup.slug) {
+                _layerGroup.toggle(map);
               }
-            } else if (layerGroup.temporal) {
-              if (_layerGroup.temporal && _layerGroup !== layerGroup && _layerGroup.isActive()) {
-                layerGroup.toggle(this._map);
-              }
-            }
-          });
+            });
+          }
         }
       },
 
@@ -168,9 +170,7 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
      */
     var createNxtMap = function (mapElem, options) { // String or Element.
 
-      var map = LeafletService.map(mapElem, {
-        zoomControl: false,
-      });
+      var map = LeafletService.map(mapElem, options);
 
       // TODO: fix the relative position of nav bar and map element to make the
       // attribution visible.

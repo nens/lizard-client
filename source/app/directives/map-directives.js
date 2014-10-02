@@ -58,7 +58,10 @@ app.directive('map', [
         scope.mapState.bounds = map.getBounds();
       };
 
-      scope.mapState = new NxtMap(element[0], CabinetService.layergroups);
+      scope.mapState = new NxtMap(element[0], CabinetService.layergroups, {
+          zoomControl: false,
+        }
+      );
 
       scope.mapState.initiateNxtMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
 
