@@ -7,7 +7,7 @@
  *
  */
 app.directive('vectorlayer', ['EventService', '$rootScope',
-  'ClickFeedbackService', 'MapService',
+  'ClickFeedbackService',
   function (EventService, $rootScope, ClickFeedbackService, MapService) {
 
   return {
@@ -347,7 +347,7 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
  * to make generic
  *
  */
-app.directive('surfacelayer', ['MapService', function (MapService) {
+app.directive('surfacelayer', [function (MapService) {
   return {
     restrict: 'A',
     link: function (scope, element, attrs) {

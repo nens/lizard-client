@@ -14,12 +14,9 @@
 app.directive('map', [
   '$controller',
   'ClickFeedbackService',
-  'MapService',
-  function (
-    $controller,
-    ClickFeedbackService,
-    MapService
-    ) {
+  'NxtMap',
+  'CabinetService',
+  function ($controller, ClickFeedbackService, NxtMap, CabinetService) {
 
     var link = function (scope, element, attrs) {
 
@@ -61,9 +58,9 @@ app.directive('map', [
         scope.mapState.bounds = map.getBounds();
       };
 
-      MapService.createMap(element[0]);
+      scope.nxtMap = new NxtMap(element[0], CabinetService.layergroups);
 
-      MapService.initiateMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
+      scope.nxtMap.initiateNxtMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
 
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.
@@ -87,7 +84,7 @@ app.directive('map', [
  * Show raster WMS images as overlay, animate overlays when animation is
  * playing.
  */
-app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
+app.directive('rasteranimation', ['RasterService', 'UtilService',
   function (RasterService, UtilService, MapService) {
   return {
     link: function (scope, element, attrs) {

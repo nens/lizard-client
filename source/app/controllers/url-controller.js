@@ -11,9 +11,9 @@
  * changes to url. At initial load of app, url leads. Afterwards the
  * state leads the url.
  */
-app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
+app.controller('UrlController', ['$scope', 'LocationGetterSetter',
   'UrlState', 'CabinetService',
-  function ($scope, LocationGetterSetter, MapService, UrlState, CabinetService) {
+  function ($scope, LocationGetterSetter, UrlState, CabinetService) {
 
     // Configuration object for url state.
     var state = {
@@ -72,20 +72,20 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
         });
         // Or layerGroups are not on url, turn default layerGroups on
       } else {
-        MapService.setLayerGoupsToDefault();
+        $scope.nxtMap.setLayerGoupsToDefault();
         $scope.mapState.layerGroupsChanged = Date.now();
       }
     };
 
     var enableMapView = function (mapView) {
       var fn = function () {
-        MapService.fitBounds(CabinetService.dataBounds.all);
+        $scope.nxtMap.fitBounds(CabinetService.dataBounds.all);
       };
 
       if (mapView) {
         var view = UrlState.parseMapView(mapView);
         if (view) {
-          MapService.setView(view.latLng, view.zoom, view.options);
+          $scope.nxtMap.setView(view.latLng, view.zoom, view.options);
         } else fn();
       } else fn();
     };
@@ -163,6 +163,7 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter', 'MapService',
      * resetting the updateUrl back to true
      */
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
+      console.log(UrlState);
       if (UrlState.update(state)) {
         var boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
           geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),

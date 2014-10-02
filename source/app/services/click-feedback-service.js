@@ -2,7 +2,7 @@
 /**
  * Service to draw click feedback.
  */
-app.service('ClickFeedbackService', ['$rootScope', 'MapService',
+app.service('ClickFeedbackService', ['$rootScope',
   function ($rootScope, MapService) {
     var Ctrl = function () {
 

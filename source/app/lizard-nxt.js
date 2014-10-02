@@ -113,7 +113,6 @@ app.config(function ($locationProvider) {
 app.controller('MasterCtrl',
   ['$scope', '$http', '$q', '$filter', '$compile', 'CabinetService',
    'RasterService', 'UtilService', 'EventService', 'TimeseriesService',
-   'MapService',
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, TimeseriesService, MapService) {
 
@@ -218,7 +217,6 @@ app.controller('MasterCtrl',
     here: null,
     points: [], // History of here for drawing
     center: null,
-    layerGroups: MapService.createLayerGroups(CabinetService.layergroups),
     activeLayersChanged: false,
     changed: Date.now(),
     moved: Date.now(),
@@ -261,7 +259,7 @@ app.controller('MasterCtrl',
 
     // we don't want the rain layer... ?)
     if (!(layer.temporal && layer.type === 'WMS')) {
-      MapService.toggleLayer(layer, $scope.mapState.layers,
+      MapService.toggleLayer(layer, $scope.mapState.layerGroups,
         $scope.mapState.bounds);
     }
 
