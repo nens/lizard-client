@@ -113,7 +113,6 @@ app.config(function ($locationProvider) {
 app.controller('MasterCtrl',
   ['$scope', '$http', '$q', '$filter', '$compile', 'CabinetService',
    'RasterService', 'UtilService', 'EventService', 'TimeseriesService',
-   'MapService',
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, TimeseriesService, MapService) {
 
@@ -213,20 +212,8 @@ app.controller('MasterCtrl',
     $scope.box.contextSwitchMode = !$scope.box.contextSwitchMode;
   };
 
-  // MAP MODEL
-  $scope.mapState = {
-    here: null,
-    points: [], // History of here for drawing
-    center: null,
-    layerGroups: MapService.createLayerGroups(CabinetService.layergroups),
-    activeLayersChanged: false,
-    changed: Date.now(),
-    moved: Date.now(),
-    baselayerChanged: Date.now(),
-    bounds: null,
-    userHere: null, // Geographical location of the users mouse
-    mapMoving: false
-  };
+  // MAP MODEL is set by the map-directive
+  $scope.mapState = {};
 
   $scope.mapState.getActiveTemporalLayer = function () {
     angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
@@ -261,7 +248,7 @@ app.controller('MasterCtrl',
 
     // we don't want the rain layer... ?)
     if (!(layer.temporal && layer.type === 'WMS')) {
-      MapService.toggleLayer(layer, $scope.mapState.layers,
+      MapService.toggleLayer(layer, $scope.mapState.layerGroups,
         $scope.mapState.bounds);
     }
 

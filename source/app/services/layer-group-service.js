@@ -14,17 +14,6 @@ app.factory('LayerGroup', [
   'VectorService', 'RasterService', 'LeafletService', 'UtfGridService', '$q',
   function (VectorService, RasterService, LeafletService, UtfGridService, $q) {
 
-  // app.factory('LayerGroup', [
-  //   'LeafletService', '$q',
-  //   function (LeafletService, $q) {
-
-    ///////////////////////////////////////////////////////////////////////////
-    // This constant declares which keys (for LayerGroup instances) shall have
-    // writable values; by default every value is read-only.
-    var MUTABLE_KEYS = ['active', 'layers'];
-    var PUBLIC_KEYS =  ['temporal'];
-
-    ///////////////////////////////////////////////////////////////////////////
     /*
      * @constructor
      * @memberOf app.LayerGroup
@@ -35,6 +24,12 @@ app.factory('LayerGroup', [
     function LayerGroup(layerGroup) {
       Object.defineProperty(this, 'name', {
         value: layerGroup.name,
+        writable: false,
+        configurable: false,
+        enumerable: false
+      });
+      Object.defineProperty(this, 'order', {
+        value: layerGroup.order,
         writable: false,
         configurable: false,
         enumerable: false
@@ -86,7 +81,7 @@ app.factory('LayerGroup', [
       * @return  {promise} - notifies with data per layer and resolves when all layers
       *                      returned data.
       */
-      getData: function (geom, start, end) {
+      getData: function (geom, startTime, endTime) {
 
         var deferred = $q.defer();
 
@@ -109,11 +104,12 @@ app.factory('LayerGroup', [
           } */
 
           if (wantedService) {
+
             promiseCount = buildPromise(
               layer,
               geom,
-              start,
-              end,
+              startTime,
+              endTime,
               deferred,
               wantedService,
               promiseCount
@@ -222,6 +218,9 @@ app.factory('LayerGroup', [
 
         case 'UTFGrid':
           layer.leafletLayer = _initiateGridLayer(layer);
+          break;
+
+        case 'Store':
           break;
 
         default:

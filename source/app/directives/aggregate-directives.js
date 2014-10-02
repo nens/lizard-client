@@ -7,7 +7,7 @@
  *
  */
 app.directive('vectorlayer', ['EventService', '$rootScope',
-  'ClickFeedbackService', 'MapService',
+  'ClickFeedbackService',
   function (EventService, $rootScope, ClickFeedbackService, MapService) {
 
   return {
@@ -337,138 +337,138 @@ app.directive('vectorlayer', ['EventService', '$rootScope',
   };
 }]);
 
-/**
- * Impervious surface vector layer.
- *
- * Load data with d3 geojson vector plugin L.TileLayer.GeoJSONd3 in ./lib
- * bind highlight function to mouseover and mouseout events.
- *
- * NOTE: this contains quite some hard coded stuff. Candidate for refactoring
- * to make generic
- *
- */
-app.directive('surfacelayer', ['MapService', function (MapService) {
-  return {
-    restrict: 'A',
-    link: function (scope, element, attrs) {
+// /**
+//  * Impervious surface vector layer.
+//  *
+//  * Load data with d3 geojson vector plugin L.TileLayer.GeoJSONd3 in ./lib
+//  * bind highlight function to mouseover and mouseout events.
+//  *
+//  * NOTE: this contains quite some hard coded stuff. Candidate for refactoring
+//  * to make generic
+//  *
+//  */
+// app.directive('surfacelayer', [function (MapService) {
+//   return {
+//     restrict: 'A',
+//     link: function (scope, element, attrs) {
 
-      var bottomLeft = {};
+//       var bottomLeft = {};
 
-      /**
-       * Style surface features.
-       *
-       * Function to style d3 features in d3 selection
-       *
-       * @param: features, d3 selection object
-       */
-      var surfaceStyle = function (features) {
-        features
-          .style("stroke-width", 0)
-          .style("fill-opacity", 0);
-      };
+//       /**
+//        * Style surface features.
+//        *
+//        * Function to style d3 features in d3 selection
+//        *
+//        * @param: features, d3 selection object
+//        */
+//       var surfaceStyle = function (features) {
+//         features
+//           .style("stroke-width", 0)
+//           .style("fill-opacity", 0);
+//       };
 
-      /**
-       * Convert list with values to d3 selector
-       *
-       * @param: list of values
-       * @returns: concatenated d3 suitable OR selector
-       */
-      var listToSelector = function (list) {
-        var selector = "";
-        for (var i in list) {
-          // prepend `.p` because classes can't start with an number
-          selector += ".p" + list[i] + ", ";
-        }
-        selector = selector.slice(0, -2);
+//       /**
+//        * Convert list with values to d3 selector
+//        *
+//        * @param: list of values
+//        * @returns: concatenated d3 suitable OR selector
+//        */
+//       var listToSelector = function (list) {
+//         var selector = "";
+//         for (var i in list) {
+//           // prepend `.p` because classes can't start with an number
+//           selector += ".p" + list[i] + ", ";
+//         }
+//         selector = selector.slice(0, -2);
 
-        return selector;
-      };
+//         return selector;
+//       };
 
-      /**
-       * Callback function to highlight surfaces connected to pipe
-       *
-       * Selects d3 objects based on ids in data property (in this case in
-       * `impervious_surfaces`. On 'mouseover' highlights features, on
-       * 'mouseout' fades features to transparant
-       *
-       * @param: e, event object, expects the data property to have a
-       * `impervious_surfaces` property
-       *
-       */
-      var highlightSurface = function (e) {
-        if (e.data.impervious_surfaces !== undefined) {
-          var surface_ids = JSON.parse(e.data.impervious_surfaces);
-          if (surface_ids !== null && surface_ids.indexOf("null") === -1) {
-            var selector = listToSelector(surface_ids);
-            if (e.type === 'mousemove') {
-              d3.selectAll(selector)
-                .style("fill", "#e74c3c")
-                .style("fill-opacity", 0.6)
-                .transition();
-            } else if (e.type === 'mouseout') {
-              d3.selectAll(selector)
-                .transition()
-                .duration(500)
-                .style("stroke-width", 0)
-                .style("fill-opacity", 0);
-            }
-          }
-        }
-      };
+//       /**
+//        * Callback function to highlight surfaces connected to pipe
+//        *
+//        * Selects d3 objects based on ids in data property (in this case in
+//        * `impervious_surfaces`. On 'mouseover' highlights features, on
+//        * 'mouseout' fades features to transparant
+//        *
+//        * @param: e, event object, expects the data property to have a
+//        * `impervious_surfaces` property
+//        *
+//        */
+//       var highlightSurface = function (e) {
+//         if (e.data.impervious_surfaces !== undefined) {
+//           var surface_ids = JSON.parse(e.data.impervious_surfaces);
+//           if (surface_ids !== null && surface_ids.indexOf("null") === -1) {
+//             var selector = listToSelector(surface_ids);
+//             if (e.type === 'mousemove') {
+//               d3.selectAll(selector)
+//                 .style("fill", "#e74c3c")
+//                 .style("fill-opacity", 0.6)
+//                 .transition();
+//             } else if (e.type === 'mouseout') {
+//               d3.selectAll(selector)
+//                 .transition()
+//                 .duration(500)
+//                 .style("stroke-width", 0)
+//                 .style("fill-opacity", 0);
+//             }
+//           }
+//         }
+//       };
 
-      var getLayer = MapService.getLayer;
+//       var getLayer = MapService.getLayer;
 
-      // Initialise geojson layer
-      var surfaceLayer = L.geoJSONd3(
-        'api/v1/tiles/impervioussurface/{z}/{x}/{y}.geojson',
-        {
-          applyStyle: surfaceStyle,
-          class: "impervious_surface"
-        });
+//       // Initialise geojson layer
+//       var surfaceLayer = L.geoJSONd3(
+//         'api/v1/tiles/impervioussurface/{z}/{x}/{y}.geojson',
+//         {
+//           applyStyle: surfaceStyle,
+//           class: "impervious_surface"
+//         });
 
-      /**
-       * Listen to tools model for pipe_surface tool to become active. Add
-       * geojson d3 layer and bind mousemove and mouseout events to
-       * highlight impervious surface.
-       *
-       */
-      scope.$watch('tools.active', function (n, o) {
-        if (n === o) { return true; }
-        var pipeLayer = {};
-        if (scope.tools.active === "pipeSurface") {
-          MapService.addLayer(surfaceLayer);
-          pipeLayer = getLayer('grid', 'waterchain');
-          // icon active
-          angular.element(".surface-info").addClass("icon-active");
-          if (pipeLayer) {
-            pipeLayer.on('mousemove', highlightSurface);
-            pipeLayer.on('mouseout', highlightSurface);
-          } else {
-            // If there is no grid layer it is probably still being
-            // loaded by the map-directive which will broadcast a
-            // message when its loaded.
-            scope.$on('waterchainGridLoaded', function () {
-              if (scope.tools.active === 'pipeSurface') {
-                pipeLayer = getLayer('grid', 'waterchain');
-                pipeLayer.on('mousemove', highlightSurface);
-                pipeLayer.on('mouseout', highlightSurface);
-              }
-            });
-          }
-        } else {
-          pipeLayer = getLayer('grid', 'pipe');
-          if (pipeLayer) {
-            // icon inactive
-            angular.element(".surface-info").removeClass("icon-active");
-            pipeLayer.off('mousemove', highlightSurface);
-            pipeLayer.off('mouseout', highlightSurface);
-          }
-          MapService.removeLayer(surfaceLayer);
-        }
-      });
-    }
-  };
-}]);
+//       /**
+//        * Listen to tools model for pipe_surface tool to become active. Add
+//        * geojson d3 layer and bind mousemove and mouseout events to
+//        * highlight impervious surface.
+//        *
+//        */
+//       scope.$watch('tools.active', function (n, o) {
+//         if (n === o) { return true; }
+//         var pipeLayer = {};
+//         if (scope.tools.active === "pipeSurface") {
+//           MapService.addLayer(surfaceLayer);
+//           pipeLayer = getLayer('grid', 'waterchain');
+//           // icon active
+//           angular.element(".surface-info").addClass("icon-active");
+//           if (pipeLayer) {
+//             pipeLayer.on('mousemove', highlightSurface);
+//             pipeLayer.on('mouseout', highlightSurface);
+//           } else {
+//             // If there is no grid layer it is probably still being
+//             // loaded by the map-directive which will broadcast a
+//             // message when its loaded.
+//             scope.$on('waterchainGridLoaded', function () {
+//               if (scope.tools.active === 'pipeSurface') {
+//                 pipeLayer = getLayer('grid', 'waterchain');
+//                 pipeLayer.on('mousemove', highlightSurface);
+//                 pipeLayer.on('mouseout', highlightSurface);
+//               }
+//             });
+//           }
+//         } else {
+//           pipeLayer = getLayer('grid', 'pipe');
+//           if (pipeLayer) {
+//             // icon inactive
+//             angular.element(".surface-info").removeClass("icon-active");
+//             pipeLayer.off('mousemove', highlightSurface);
+//             pipeLayer.off('mouseout', highlightSurface);
+//           }
+//           MapService.removeLayer(surfaceLayer);
+//         }
+//       });
+//     }
+//   };
+// }]);
 
 /**
  * Add non-tiled d3 vector layer for currents.

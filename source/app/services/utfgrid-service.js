@@ -14,8 +14,6 @@ app.service('UtfGridService', ['$q', '$rootScope',
 
       if (leafLayer) {
 
-        console.log('leafLayer.isLoading =', leafLayer.isLoading);
-
         response = leafLayer._objectForEvent(e);
 
         if (response.data === null && leafLayer.isLoading) {
