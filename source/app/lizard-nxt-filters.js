@@ -10,6 +10,24 @@
  *
  */
 
+/**
+ * Filter to order objects instead of angulars orderBy
+ * that only orders array
+ */
+app.filter('orderObjectBy', function() {
+  return function(items, field, reverse) {
+    var filtered = [];
+    angular.forEach(items, function(item) {
+      filtered.push(item);
+    });
+    filtered.sort(function (a, b) {
+      return (a[field] > b[field] ? 1 : -1);
+    });
+    if(reverse) filtered.reverse();
+    return filtered;
+  };
+});
+
 
 /**
  * Returns a rounded number or a '...' based on input type.

@@ -28,6 +28,12 @@ app.factory('LayerGroup', [
         configurable: false,
         enumerable: false
       });
+      Object.defineProperty(this, 'order', {
+        value: layerGroup.order,
+        writable: false,
+        configurable: false,
+        enumerable: false
+      });
       Object.defineProperty(this, '_active', {
         value: false,
         writable: true,
