@@ -97,12 +97,17 @@ app.service('VectorService', ['Restangular', 'LeafletService',
      * @param  {object} time  start, stop object
      * @return {promise}
      */
-    var getData = function (layerSlug, geomortime, time) {
-      // if only one extra argument it can be geom or time.
-      if (!time && !(geomortime instanceof L.LatLngBounds)) {
-        return filterSet(vectorLayers[layerSlug].data, undefined, geomortime);
-      }
-      return filterSet(vectorLayers[layerSlug].data, geomortime, time);
+    // var getData = function (layerSlug, geomortime, time) {
+    //   // if only one extra argument it can be geom or time.
+    //   if (!time && !(geomortime instanceof L.LatLngBounds)) {
+    //     return filterSet(vectorLayers[layerSlug].data, undefined, geomortime);
+    //   }
+    //   return filterSet(vectorLayers[layerSlug].data, geomortime, time);
+    // };
+
+
+    var getData = function (nonLeafLayer, geom, start, end, options) {
+      console.log('[F] VectorService.getData(...): @WIP');
     };
 
     var replaceData = function (layerSlug, data, zoom) {

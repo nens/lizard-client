@@ -86,9 +86,9 @@ app.factory('LayerGroup', [
       * @return  {promise} - notifies with data per layer and resolves when all layers
       *                      returned data.
       */
-      getData: function (geom) {
+      getData: function (geom, start, end) {
 
-        var deferred = $q.defer(); //
+        var deferred = $q.defer();
 
         if (!this._active) { deferred.resolve(false); }
 
@@ -98,19 +98,26 @@ app.factory('LayerGroup', [
 
           var wantedService;
 
-          if (layer.type === 'Vector') {
-            wantedService = VectorService;
-          } else if (layer.type === 'Store') {
+          if (layer.type === 'Store') {
             wantedService = RasterService;
           } else if (layer.type === 'UTFGrid') {
             wantedService = UtfGridService;
+          } /*else if (layer.type === 'Vector') {
+            wantedService = VectorService;
           } else {
-            console.log('Cannot build promise for layer:', layer);
-          }
+            console.log('[E] someService.getData() was called w/o finding \'wantedService\' where wantedService =', wantedService);
+          } */
 
           if (wantedService) {
-            debugger;
-            promiseCount = buildPromise(layer, geom, deferred, wantedService, promiseCount);
+            promiseCount = buildPromise(
+              layer,
+              geom,
+              start,
+              end,
+              deferred,
+              wantedService,
+              promiseCount
+            );
           }
         });
 
@@ -147,7 +154,7 @@ app.factory('LayerGroup', [
 
     ///////////////////////////////////////////////////////////////////////////
 
-    var buildPromise = function (layer, geom, deferred, wantedService, count) {
+    var buildPromise = function (layer, geom, start, end, deferred, wantedService, count) {
 
       var buildSuccesCallback = function (layer) {
         return function (data) {
@@ -165,7 +172,8 @@ app.factory('LayerGroup', [
         };
       };
 
-      var prom = wantedService.getData(geom, layer.slug);
+      //console.log('[F] buildPromise(), arg \'wantedService\' =', wantedService);
+      var prom = wantedService.getData(layer, geom, start, end, {});
       count++;
       prom.then(
         buildSuccesCallback(layer),

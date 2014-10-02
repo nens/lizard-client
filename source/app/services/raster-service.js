@@ -37,9 +37,12 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    * @return {object} Returns hashtable with info for animation.
    */
   var rasterInfo = function (layerName) {
+
     var info,
-    wmsUrl = 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&SRS=EPSG:4326&LAYERS=',
-    width = 500;
+        wmsUrl = 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&SRS=EPSG:4326&LAYERS=',
+        width = 500,
+        height;
+
     if (layerName === 'rain') {
       info =  {
         "timeResolution": 300000,
@@ -168,32 +171,78 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    * @param  {object} options     - Optional object with extra params
    * @return {promise}  Restangular.get promise
    */
-  var getRasterData = function (slug, geom, start, stop, options) {
-    var srs, agg, rasterService, canceler, stopString, startString;
-    if (stop && start) {
-      stopString = new Date(stop).toISOString().split('.')[0];
+  // var getRasterData = function (slug, geom, start, stop, options) {
+
+  //   var srs, agg, rasterService, canceler, stopString, startString;
+
+  //   if (stop && start) {
+  //     stopString = new Date(stop).toISOString().split('.')[0];
+  //     startString = new Date(start).toISOString().split('.')[0];
+  //   }
+
+  //   if (cancelers[slug]) {
+  //     cancelers[slug].resolve();
+  //   }
+
+  //   canceler = cancelers[slug] = $q.defer();
+
+  //   srs = options.srs ? options.srs : 'EPSG:4326';
+  //   agg = options.agg ? options.agg : '';
+
+  //   return CabinetService.raster(canceler).get({
+  //     raster_names: slug,
+  //     geom: geom,
+  //     srs: srs,
+  //     start: startString,
+  //     stop: stopString,
+  //     agg: agg
+  //   });
+  // };
+
+  var getData = function (layer, geom, start, end, options) {
+
+    var srs,
+        agg,
+        wkt,
+        canceler,
+        startString,
+        endString;
+
+    if (geom.lat && geom.lng) {
+      wkt = "POINT(" + geom.lng + " " + geom.lat + ")";
+
+    } else {
+      wkt = "POLYGON(("
+            + geom.getWest() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getSouth()
+            + "))";
+    }
+
+    if (start && end) {
+
       startString = new Date(start).toISOString().split('.')[0];
+      endString = new Date(end).toISOString().split('.')[0];
     }
 
-    if (cancelers[slug]) {
-      cancelers[slug].resolve();
+    if (cancelers[layer.slug]) {
+      cancelers[layer.slug].resolve();
     }
-
-    canceler = cancelers[slug] = $q.defer();
 
     srs = options.srs ? options.srs : 'EPSG:4326';
     agg = options.agg ? options.agg : '';
 
     return CabinetService.raster(canceler).get({
-      raster_names: slug,
-      geom: geom,
+      raster_names: layer.slug,
+      geom: wkt,
       srs: srs,
       start: startString,
-      stop: stopString,
+      stop: endString,
       agg: agg
     });
   };
-
 
   var getRasterDataForExtentData = function (aggType, agg, slug, bounds) {
 
@@ -261,7 +310,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
 
     var activeTemporalLayer = mapState.getActiveTemporalLayer();
     var rainIsActive =
-           (point.temporalRaster.type === 'rain'
+            (point.temporalRaster.type === 'rain'
               && activeTemporalLayer
               && activeTemporalLayer.slug === 'rain'
             );
@@ -283,11 +332,12 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     rasterInfo: rasterInfo,
     getIntensityData: getIntensityData,
     setIntensityData: setIntensityData,
-    getRasterData: getRasterData,
+    //getRasterData: getRasterData,
+    getData: getData,
     getTemporalRaster: getTemporalRaster,
     getImgOverlays: getImgOverlays,
     handleElevationCurve: handleElevationCurve,
-    getRasterDataForExtentData: getRasterDataForExtentData,
+    //getRasterDataForExtentData: getRasterDataForExtentData,
     getAggregationForActiveLayer: getAggregationForActiveLayer,
     mustShowRainCard: mustShowRainCard
   };

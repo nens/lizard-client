@@ -90,49 +90,49 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
       };
 
       var putDataOnScope = function (response) {
-        console.log('[F] putDataOnScope, arg \'response\' =', response);
+
+        if (!$scope.point) {
+          throw new Error('[E] $scope.point is falsy, so you cannot put data on it!');
+        }
+
+        switch (response.type) {
+
+          case 'UTFGrid':
+
+            if (response.data.data === null) {
+
+              $scope.point.attrs.active = false;
+              $scope.point.attrs.data = undefined;
+
+            } else {
+
+              $scope.point.attrs.active = true;
+              $scope.point.attrs.data = response.data.data;
+            }
+            break;
+
+          default:
+            break;
+        }
       };
 
       angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
 
-        console.log('[F] fillPoint');
+        layerGroup.getData
+        (
+          here,
+          $scope.timeState.start,
+          $scope.timeState.end
+        )
+        .then
+        (
+          doneFn,
+          null,
+          putDataOnScope
+        );
 
-        layerGroup.getData(here)
-          .then(
-            doneFn,
-            null,
-            putDataOnScope
-          );
       });
     };
-
-      // var clickedOnEvents = extra && extra.type === 'events';
-
-      // if (clickedOnEvents) {
-
-      //   //ClickFeedbackService.emptyClickLayer();
-      //   eventResponded(extra.eventData, clickedOnEvents);
-
-      // } else {
-
-      //   // Give feedback to user
-      //   //ClickFeedbackService.drawClickInSpace(here);
-
-      //   // Get attribute data from utf
-      //   // OLD:
-      //   // UtfGridService.getDataFromUTF(here)
-      //   //   .then(utfgridResponded(here, clickedOnEvents), _noUTF(here));
-
-      //   angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
-
-      //     if (layerGroup.isActive()) {
-
-      //       var promise = layerGroup.getData(here);
-
-      //     }
-      //   });
-      // }
-    //};
 
     /**
      * @function
@@ -171,6 +171,8 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
       return function (response) {
 
+        var here;
+
         if (!showOnlyEvents) {
           attrsResponded(response, $scope.point);
         }
@@ -185,7 +187,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
           // Set here to location of object
           var geom = JSON.parse(response.data.geom);
           // Snap the click to the center of the object
-          var here = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
+          here = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
           // Draw feedback around object.
           ClickFeedbackService.drawGeometry(
             response.data.geom,
@@ -202,7 +204,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
           getTimeSeriesForObject();
         } else {
 
-          var here = here_;
+          here = here_;
 
           $scope.point.attrs.active = false;
           // If not hit object, treat it as a rain click, draw rain click
@@ -252,22 +254,23 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
           stop,
           here,
           $scope.point.temporalRaster.aggWindow,
-          layer.slug)
-          .then(rasterLayerResponded)
-          .then(function () {
-            $scope.point.temporalRaster.type = layer.slug;
-            RasterService.getTemporalRaster(
-              start,
-              stop,
-              here,
-              $scope.point.temporalRaster.aggWindow,
-              layer.slug,
-              'rrc')
-                .then(function (response) {
-                  $scope.point.temporalRaster.recurrenceTime = response;
-                }
-            );
-          });
+          layer.slug
+        )
+        .then(rasterLayerResponded)
+        .then(function () {
+          $scope.point.temporalRaster.type = layer.slug;
+          RasterService.getTemporalRaster(
+            start,
+            stop,
+            here,
+            $scope.point.temporalRaster.aggWindow,
+            layer.slug,
+            'rrc')
+              .then(function (response) {
+                $scope.point.temporalRaster.recurrenceTime = response;
+              }
+          );
+        });
       } else {
         RasterService.getTemporalRaster(
           start,
@@ -419,6 +422,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
     $scope.$watch('point.events.active', _watchAttrAndEventActivity);
 
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
+
       if (n === o) { return; }
 
       $scope.point.attrs.active = $scope.mapState.layers.waterchain.active;
