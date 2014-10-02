@@ -178,6 +178,15 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
       return map;
     };
 
+
+  // $scope.mapState.getActiveTemporalLayer = function () {
+  //   angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
+  //     if (layerGroup.isActive() && layerGroup.temporal) {
+  //       return layerGroup;
+  //     }
+  //   });
+  // };
+
     /**
      * @function
      * @memberOf app.NxtMapService

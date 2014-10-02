@@ -127,7 +127,9 @@ app.service('ClickFeedbackService', ['$rootScope', 'LeafletService',
         // Entity specific modifications
         if (entityName.indexOf("pumpstation_non_sewerage") !== -1) {
           this._circleMarker.setRadius(13);
+
           if (MapService.mapState.zoom < 13) {
+          //if ($rootScope.mapState.zoom < 13) {
             this._circleMarker.setRadius(16);
           }
         } else if (entityName.indexOf("pumpstation_sewerage") !== -1) {

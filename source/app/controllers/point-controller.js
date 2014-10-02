@@ -85,19 +85,55 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
      */
     fillpoint = function (here, extra) {
 
-      var clickedOnEvents = extra && extra.type === 'events';
+      ClickFeedbackService.drawClickInSpace($scope.mapState, here);
 
-      if (clickedOnEvents) {
-        ClickFeedbackService.emptyClickLayer($scope.mapState);
-        eventResponded(extra.eventData, clickedOnEvents);
-      } else {
-        // Give feedback to user
-        ClickFeedbackService.drawClickInSpace($scope.mapState, here);
-        // Get attribute data from utf
-        UtfGridService.getDataFromUTF(here)
-          .then(utfgridResponded(here, clickedOnEvents), _noUTF(here));
-      }
+      var doneFn = function (response) { // response ::= True | False
+        console.log('[F] doneFn, arg \'response\' =', response);
+      };
 
+      var putDataOnScope = function (response) {
+
+        if (!$scope.point) {
+          throw new Error('[E] $scope.point is falsy, so you cannot put data on it!');
+        }
+
+        switch (response.type) {
+
+          case 'UTFGrid':
+
+            if (response.data.data === null) {
+
+              $scope.point.attrs.active = false;
+              $scope.point.attrs.data = undefined;
+
+            } else {
+
+              $scope.point.attrs.active = true;
+              $scope.point.attrs.data = response.data.data;
+            }
+            break;
+
+          default:
+            break;
+        }
+      };
+
+      angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
+
+        layerGroup.getData
+        (
+          here,
+          $scope.timeState.start,
+          $scope.timeState.end
+        )
+        .then
+        (
+          doneFn,
+          null,
+          putDataOnScope
+        );
+
+      });
     };
 
     /**
@@ -133,9 +169,11 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
      * - Events: getTimeSeriesForObject()
      * @return {function}
      */
-    utfgridResponded = function (here, showOnlyEvents) {
+    utfgridResponded = function (here_, showOnlyEvents) {
 
       return function (response) {
+
+        var here;
 
         if (!showOnlyEvents) {
           attrsResponded(response, $scope.point);
@@ -168,6 +206,9 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
           // Get timeseries belonging to object.
           getTimeSeriesForObject();
         } else {
+
+          here = here_;
+
           $scope.point.attrs.active = false;
           // If not hit object, treat it as a rain click, draw rain click
           // arrow.
@@ -216,22 +257,23 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
           stop,
           here,
           $scope.point.temporalRaster.aggWindow,
-          layer.slug)
-          .then(rasterLayerResponded)
-          .then(function () {
-            $scope.point.temporalRaster.type = layer.slug;
-            RasterService.getTemporalRaster(
-              start,
-              stop,
-              here,
-              $scope.point.temporalRaster.aggWindow,
-              layer.slug,
-              'rrc')
-                .then(function (response) {
-                  $scope.point.temporalRaster.recurrenceTime = response;
-                }
-            );
-          });
+          layer.slug
+        )
+        .then(rasterLayerResponded)
+        .then(function () {
+          $scope.point.temporalRaster.type = layer.slug;
+          RasterService.getTemporalRaster(
+            start,
+            stop,
+            here,
+            $scope.point.temporalRaster.aggWindow,
+            layer.slug,
+            'rrc')
+              .then(function (response) {
+                $scope.point.temporalRaster.recurrenceTime = response;
+              }
+          );
+        });
       } else {
         RasterService.getTemporalRaster(
           start,
@@ -365,7 +407,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
     $scope.point = createpoint();
     fillpoint($scope.mapState.here);
 
-    // Upodate when user clicked again
+    // Update when user clicked again
     $scope.$on('updatepoint', function (msg, extra) {
       fillpoint($scope.mapState.here, extra);
     });
@@ -381,6 +423,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
     $scope.$watch('point.events.active', _watchAttrAndEventActivity);
 
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
+
       if (n === o) { return; }
 
       $scope.point.attrs.active = $scope.mapState.layers.waterchain.active;

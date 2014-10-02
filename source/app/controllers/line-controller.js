@@ -25,29 +25,71 @@ app.controller('LineCtrl', [
      * aggregation_type type.
      *
      * @param  {wktstring}   line         str describing the line
-     * @param  {object} layers   mapState.layers, containing
+     * @param  {object} layers   mapState.layerGroups, containing
+     *                           nxt definition of layerGroups, e.g "waterchain"
+     * @param  {object} line   line object of this
+     *                                  ctrl
+     */
+    // updateLine = function (line, layerGroups, scopeLine) {
+
+    //   angular.forEach(layers, function (layer, slug) {
+    //     if (layer.active
+    //       && layer.store_path
+    //       && layer.aggregation_type !== 'counts') {
+    //       var agg = scopeLine[slug] || {}, dataProm;
+    //       if (layer.temporal) {
+    //         dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
+    //       } else {
+    //         dataProm = RasterService.getRasterData(slug, line, undefined, undefined, {});
+    //       }
+    //       // Pass the promise to a function that handles the scope.
+    //       putDataOnscope(dataProm, slug);
+    //     } else if (slug in scopeLine && !layer.active) {
+    //       removeDataFromScope(slug);
+    //     }
+    //   });
+    // };
+
+        /**
+     * Loops over all layers to request lineion data for all
+     * active layers with a raster store path and an appropriate
+     * aggregation_type type.
+     *
+     * @param  {wktstring}   line         str describing the line
+     * @param  {object} layers   mapState.layerGroups, containing
      *                                  nxt definition of layers
      * @param  {object} line   line object of this
      *                                  ctrl
      */
-    updateLine = function (line, layers, scopeLine) {
-      angular.forEach(layers, function (layer, slug) {
-        if (layer.active
-          && layer.store_path
-          && layer.aggregation_type !== 'counts') {
-          var agg = scopeLine[slug] || {}, dataProm;
-          if (layer.temporal) {
-            dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
-          } else {
-            dataProm = RasterService.getRasterData(slug, line, undefined, undefined, {});
-          }
+    updateLine = function (line, layerGroups, scopeLine) {
+
+      angular.forEach(layerGroups, function (layerGroup, slug) {
+        if (layerGroup.isActive()
+          && layerGroup.store_path
+          && layerGroup.aggregation_type
+          && layerGroup.aggregation_type !== 'counts')
+        {
+
+          // var agg = scopeLine[slug] || {},
+          //     dataProm,
+          //     startEnd = layerGroup.temporal
+          //       ? [$scope.timeState.start, $scope.timeState.end]
+          //       : [undefined, undefined];
+
+          //dataProm = RasterService.getRasterData(slug, line, startEnd[0], startEnd[1], {});
+          var dataProm = layerGroup.getData(line);
+
           // Pass the promise to a function that handles the scope.
           putDataOnscope(dataProm, slug);
-        } else if (slug in scopeLine && !layer.active) {
+        }
+        else if (slug in scopeLine && !layerGroup.isActive())
+        {
           removeDataFromScope(slug);
         }
       });
     };
+
+
 
     /**
      * Puts dat on line when promise resolves or
@@ -57,17 +99,19 @@ app.controller('LineCtrl', [
      * @param  {str}      slug           slug name of layer
      */
     putDataOnscope = function (dataProm, slug) {
+
       dataProm.then(function (result) {
+
         if (result.length > 0) {
           $scope.line[slug] = {};
           // convert degrees result to meters to display properly.
-          if ($scope.mapState.layers[slug].temporal) {
+          if ($scope.mapState.layerGroups[slug].temporal) {
             $scope.line[slug].result = UtilService.dataConvertToMeters(result);
             $scope.line[slug].data = UtilService.createDataForTimeState($scope.line[slug].result, $scope.timeState);
           } else {
             $scope.line[slug].data = UtilService.dataConvertToMeters(result);
           }
-          $scope.line[slug].name = $scope.mapState.layers[slug].name;
+          $scope.line[slug].name = $scope.mapState.layerGroups[slug].name;
         } else if (slug in $scope.line) {
           removeDataFromScope(slug);
         }
@@ -89,7 +133,7 @@ app.controller('LineCtrl', [
       var line = UtilService.createLineWKT(firstClick, secondClick);
       updateLine(
         line,
-        $scope.mapState.layers,
+        $scope.mapState.layerGroups,
         $scope.line
       );
     };
@@ -106,14 +150,20 @@ app.controller('LineCtrl', [
      *      the first to the second.
      */
     $scope.$watch('mapState.here', function (n, o) {
+
       if (n === o) { return true; }
+
       if ($scope.mapState.points.length === 2) {
+
         $scope.mapState.points = [];
         ClickFeedbackService.emptyClickLayer($scope.mapState);
         // Empty data element since the line is gone
         $scope.line = {};
+
       } else {
+
         if ($scope.mapState.points.length === 1) {
+
           $scope.mapState.points[1] = $scope.mapState.here;
           _updateLine($scope.mapState.points[0], $scope.mapState.points[1]);
           ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.points[1], false);
@@ -157,7 +207,7 @@ app.controller('LineCtrl', [
      */
     $scope.$watch('timeState.at', function (n, o) {
       angular.forEach($scope.line, function (line, slug) {
-        if ($scope.mapState.layers[slug].temporal) {
+        if ($scope.mapState.layerGroups[slug].temporal) {
           line.data = UtilService.createDataForTimeState(line.result, $scope.timeState);
         }
       });
@@ -171,10 +221,15 @@ app.controller('LineCtrl', [
       if (n === o) { return true; }
       if ($scope.mapState.points.length === 2) {
         var line = UtilService.createLineWKT($scope.mapState.points[0], $scope.mapState.points[1]);
-        var dataProm;
+        var dataProm, layerGroup;
         angular.forEach($scope.line, function (line, slug) {
-          if ($scope.mapState.layers[slug].temporal) {
-            dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
+
+          layerGroup = $scope.mapState.layerGroups[slug];
+          if (layerGroup.temporal) {
+
+            //dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
+            dataProm = layerGroup.getData(line);
+
             // Pass the promise to a function that handles the scope.
             putDataOnscope(dataProm, slug);
           }

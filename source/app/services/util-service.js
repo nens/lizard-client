@@ -199,7 +199,7 @@ app.service("UtilService", function () {
   };
 
   /**
-   * @function hasMobileDevice
+   * @function serveToMobileDevice
    * @memberOf UtilService
    */
   this.serveToMobileDevice = function () {
@@ -208,5 +208,27 @@ app.service("UtilService", function () {
       navigator.userAgent.toLowerCase()
     );
     return result;
+  };
+
+  /**
+   * @function geomToWkt
+   * @memberOf UtilService
+   */
+  this.geomToWkt = function (geom) {
+
+    if (geom.lat && geom.lng) {
+      // geom is a L.LatLng object
+      return "POINT(" + geom.lng + " " + geom.lat + ")";
+
+    } else {
+      // geom is a L.Bounds object
+      return "POLYGON(("
+            + geom.getWest() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getSouth() + ", "
+            + geom.getEast() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getNorth() + ", "
+            + geom.getWest() + " " + geom.getSouth()
+            + "))";
+    }
   };
 });

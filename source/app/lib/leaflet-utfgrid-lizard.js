@@ -35,7 +35,10 @@ L.Util.ajax = function (url, cb) {
 	};
 	request.send();
 };
+
+
 L.UtfGrid = L.Class.extend({
+
 	includes: L.Mixin.Events,
 	options: {
 		subdomains: 'abc',
@@ -132,6 +135,7 @@ L.UtfGrid = L.Class.extend({
 	},
 
 	_objectForEvent: function (e) {
+
 		var map = this._map,
 		    point = map.project(e.latlng),
 		    tileSize = this.options.tileSize,
@@ -140,7 +144,7 @@ L.UtfGrid = L.Class.extend({
 		    y = Math.floor(point.y / tileSize),
 		    gridX = Math.floor((point.x - (x * tileSize)) / resolution),
 		    gridY = Math.floor((point.y - (y * tileSize)) / resolution),
-			max = map.options.crs.scale(map.getZoom()) / tileSize;
+			  max = map.options.crs.scale(map.getZoom()) / tileSize;
 
 		x = (x + max) % max;
 		y = (y + max) % max;
@@ -164,6 +168,7 @@ L.UtfGrid = L.Class.extend({
 	//Load up all required json grid files
 	//TODO: Load from center etc
 	_update: function () {
+
 		this._tilesToload = 0;
 
 		var bounds = this._map.getPixelBounds(),
@@ -175,12 +180,14 @@ L.UtfGrid = L.Class.extend({
 		}
 
 		var nwTilePoint = new L.Point(
-				Math.floor(bounds.min.x / tileSize),
-				Math.floor(bounds.min.y / tileSize)),
-			seTilePoint = new L.Point(
-				Math.floor(bounds.max.x / tileSize),
-				Math.floor(bounds.max.y / tileSize)),
-				max = this._map.options.crs.scale(zoom) / tileSize;
+			Math.floor(bounds.min.x / tileSize),
+			Math.floor(bounds.min.y / tileSize)
+		),
+		seTilePoint = new L.Point(
+			Math.floor(bounds.max.x / tileSize),
+			Math.floor(bounds.max.y / tileSize)
+		),
+		max = this._map.options.crs.scale(zoom) / tileSize;
 
 		//Load all required ones
 		for (var x = nwTilePoint.x; x <= seTilePoint.x; x++) {
@@ -191,8 +198,8 @@ L.UtfGrid = L.Class.extend({
 
 				if (!this._cache.hasOwnProperty(key)) {
 					this._cache[key] = null;
-					
-					this._tilesToload = this._tilesToload + 1;
+
+					this._tilesToload += 1;
 
 					if (this.options.useJsonP) {
 						this._loadTileP(zoom, xw, yw);
@@ -202,6 +209,7 @@ L.UtfGrid = L.Class.extend({
 				}
 			}
 		}
+
 		if (this._tilesToload === 0) { this._tilesLoaded(); }
 		if (this._tilesToload > 0) { this.isLoading = true; }
 	},

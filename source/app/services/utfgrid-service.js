@@ -2,88 +2,73 @@
  * Service to handle utf grid requests.
  */
 app.service('UtfGridService', ['$q', '$rootScope',
+
   function ($q, $rootScope) {
 
-    var on;
+    var getData = function (nonLeafLayer, geom, start, end, options) {
 
-    /**
-     * Gets data from utf grid.
-     *
-     * @param  {object} latlng leaflet object specifying the location
-     *                         of a click
-     * @return {promise} $rootScope.defferred.promise Containing a thennable
-     *                         promise of an utf data object which is either
-     *                         immediately resolved or resolved when the
-     *                         the grid layer has finished loading
-     */
-    function getDataFromUTF(latlng) {
-      var deferred = $q.defer();
-      // Get waterchainLayer or false
-      var waterchainLayer = MapService.getLayer('grid', 'waterchain_grid');
-      // event object for utfgrid plugin
-      var e = {
-        latlng: latlng
-      };
-      if (waterchainLayer) {
-        // Make call to private function from utfgrid plugin
-        var response = waterchainLayer._objectForEvent(e);
-        // If empty and still loading it might be empty because
-        // the grid was there but did not contain the tile containing
-        // this the latlng.
-        if (response.data === null && waterchainLayer.isLoading) {
-          getDataFromUTFAsynchronous(e, deferred);
+      var leafLayer = nonLeafLayer && nonLeafLayer.leafletLayer,
+          deferred = $q.defer(),
+          e = { latlng: geom },
+          response;
+
+      if (leafLayer) {
+
+        response = leafLayer._objectForEvent(e);
+
+        if (response.data === null && leafLayer.isLoading) {
+          _getDataFromUTFAsynchronous(nonLeafLayer, e, deferred);
+
         } else {
-          // Resolve with response and update point
           deferred.resolve(response);
         }
-      } else if (MapService.mapState.layers.waterchain.active) {
-        getDataFromUTFAsynchronous(e, deferred);
+
+      } else if ($rootScope.mapState.layerGroups.waterchain.active) {
+        _getDataFromUTFAsynchronous(nonLeafLayer, e, deferred);
+
       } else {
-        deferred.reject();
+        // rejected!
+        //deferred.reject();
+
+        // rejected 2.0:
+        deferred.resolve(false);
       }
+
       return deferred.promise;
-    }
+    };
 
-    /**
-     * Adds listener to the broadcast from map-directive messaging
-     * that the utf grid has finished loading.
-     *
-     * @param  {object} e containing e.latlng for the
-     *                                  location of the click
-     */
-    function getDataFromUTFAsynchronous(e, promise) {
-      // If there is no grid layer it is probably still being
-      // loaded by the map-directive which will broadcast a
-      // message when its loaded.
-      if (on) {
-        // cancel it
-        on();
-      }
-      on = $rootScope.$on('waterchain_gridGridLoaded', function () {
 
-        // TODO: Must be implemented via ng watch, e.g.
-        // $$rootScope.mapState.gridLoaded. Also, refactor map directive.
+    var _getDataFromUTFAsynchronous = function (nonLeafLayer, e, promise) {
 
-        on();
-        var waterchainLayer = MapService.getLayer('grid', 'waterchain_grid');
-        if (waterchainLayer) {
-          var response = waterchainLayer._objectForEvent(e);
+      var leafLayer, response;
+
+      leafLayer = nonLeafLayer && nonLeafLayer.leafletLayer;
+
+      if (leafLayer) {
+
+        leafLayer.on('load', function () {
+
+          response = leafLayer._objectForEvent(e);
+
           // since this part executes async in a future turn of the event loop,
           // we need to wrap it into an $apply call so that the model changes are
-          // properly observed.
+          // properly observed:
+
           $rootScope.$apply(function () {
             promise.resolve(response);
           });
-        } else {
-          $rootScope.$apply(function () {
-            promise.reject();
-          });
-        }
+        });
 
-      });
-    }
+      } else {
 
-    return { getDataFromUTF: getDataFromUTF };
+        $rootScope.$apply(function () {
 
+          //promise.reject();
+          promise.resolve(false);
+        });
+      }
+    };
+
+    return { getData: getData };
   }
 ]);

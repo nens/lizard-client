@@ -215,46 +215,6 @@ app.controller('MasterCtrl',
   // MAP MODEL is set by the map-directive
   $scope.mapState = {};
 
-  $scope.mapState.getActiveTemporalLayer = function () {
-    angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
-      if (layerGroup.isActive() && layerGroup.temporal) {
-        return layerGroup;
-      }
-    });
-  };
-
-  $scope.mapState.toggleLayerGroup = function (layerGroup) {
-    MapService.toggleLayerGroup(layerGroup, $scope.mapState.layerGroups);
-    $scope.mapState.layerGroupsChanged = Date.now();
-  };
-
-  /**
-   * @function
-   * @memberof app.MasterCtrl
-   * @description changelayer function... legacy?
-   * @param  {object} layer Layer object
-   */
-  $scope.mapState.changeLayer = function (layer) {
-
-    $scope.mapState.activeLayersChanged =
-      !$scope.mapState.activeLayersChanged;
-
-    if (layer.temporal) {
-      // toggle timeline if neccesary
-      if ($scope.timeState.hidden !== false) {
-        $scope.toggleTimeline();
-      }
-    }
-
-    // we don't want the rain layer... ?)
-    if (!(layer.temporal && layer.type === 'WMS')) {
-      MapService.toggleLayer(layer, $scope.mapState.layerGroups,
-        $scope.mapState.bounds);
-    }
-
-  };
-
-
   $scope.$watch('mapState.here', function (n, o) {
     if (n === o) { return true; }
     if (!$scope.$$phase) {
