@@ -4,7 +4,7 @@
  */
 app.service('ClickFeedbackService', ['$rootScope', 'LeafletService',
   function ($rootScope, LeafletService) {
-    var Ctrl = function (scope) {
+    var Ctrl = function () {
 
       /**
        * Remove any existing click layers and creates a new empty one.
