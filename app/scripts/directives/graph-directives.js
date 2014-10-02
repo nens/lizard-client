@@ -56,11 +56,11 @@ angular.module('lizard-nxt')
 
     dimensions = {
       width: 370,
-      height: 150,
+      height: 160,
       padding: {
         top: 5,
         right: 5,
-        bottom: 50,
+        bottom: 60,
         left: 50
       }
     };
@@ -96,7 +96,10 @@ angular.module('lizard-nxt')
     scope.$watch('data', function (n, o) {
       if (n === o) { return true; }
       graphCtrl.setData(scope);
+      // Call graph with the new data
       graphCtrl.updateData.call(graphCtrl.graph, graphCtrl.data, graphCtrl.keys, graphCtrl.labels);
+      // Call the graph with the now
+      graphCtrl.updateNow.call(graphCtrl.graph, scope.now);
     });
 
     scope.$watch('now', function (n, o) {

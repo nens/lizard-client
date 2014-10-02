@@ -80,7 +80,7 @@ angular.module('lizard-nxt')
                             {min: 0, max: width},
                             {scale: 'time' });
     xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-    this._drawAxes(this._svg, xAxis, dimensions, false);
+    drawTimelineAxes(this._svg, xAxis, dimensions);
     if (interaction) {
       if (interaction.zoomFn) {
         zoomed = setZoomFunction(this._svg, this.dimensions, xScale, xAxis,
@@ -260,7 +260,7 @@ angular.module('lizard-nxt')
         var newWidth = xScale.range()[1];
         var widthFactor = newWidth / oldWidth;
 
-        this._drawAxes(this._svg, xAxis, newDimensions, false);
+        drawTimelineAxes(this._svg, xAxis, newDimensions);
         this.updateElements(oldDimensions, features, widthFactor);
       }
     },
@@ -277,19 +277,16 @@ angular.module('lizard-nxt')
         if (lines) {
           drawLineElements(this._svg, this.dimensions, xScale, ordinalYScale, data);
         }
-        // if (circles) {
-        //   updateCircleElements(circles, xScale); // UNUSED, OLD
-        // }
+        if (circles) {
+          updateCircleElements(circles, xScale);
+        }
         if (bars && oldDimensions) {
           updateRectangleElements(bars, xScale, oldDimensions, this.dimensions);
         }
         if (noDataIndicator) {
           updateNoDataElement(noDataIndicator, xScale, this.dimensions);
         }
-        // if (nowIndicator) {
-        //   this.updateNowElement(); // METHOD IS NON_EXISTENT!?
-        // }
-        if (brushg) {
+        if (brush) {
 
           var that = this,
               extent = brush.extent(),
@@ -428,7 +425,7 @@ angular.module('lizard-nxt')
         xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
         // this.updateElements();
         this.updateElements(this.dimensions);
-        this._drawAxes(this._svg, xAxis, this.dimensions, false, this.transTime);
+        drawTimelineAxes(this._svg, xAxis, this.dimensions, this.transTime);
         this.addZoomListener();
       }
     },
@@ -459,6 +456,13 @@ angular.module('lizard-nxt')
       }
     }
   });
+
+
+  var drawTimelineAxes = function (svg, xAxis, dimensions, duration) {
+    Timeline.prototype._drawAxes(svg, xAxis, dimensions, false, duration);
+    var axisEl = svg.select('#xaxis')
+        .attr("class", "x axis timeline-axis");
+  };
 
   /**
    * Creates groups according to dimensions to accomadete all timeline elements,
@@ -536,7 +540,7 @@ angular.module('lizard-nxt')
    */
   var setZoomFunction = function (svg, dimensions, xScale, xAxis, zoomFn) {
     var zoomed = function () {
-      Timeline.prototype._drawAxes(svg, xAxis, dimensions, false);
+      drawTimelineAxes(svg, xAxis, dimensions);
       if (circles) {
         circles.attr("cx", function (d) {
           return Math.round(xScale(d.properties.timestamp_end));
