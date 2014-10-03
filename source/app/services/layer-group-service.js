@@ -11,8 +11,10 @@
  *              draws all its layers and returns data for all layers.
  */
 app.factory('LayerGroup', [
-  'VectorService', 'RasterService', 'LeafletService', 'UtfGridService', '$q',
-  function (VectorService, RasterService, LeafletService, UtfGridService, $q) {
+  'LeafletService', 'VectorService', 'RasterService', 'UtfGridService',
+  'UtilService', '$q',
+  function (LeafletService, VectorService, RasterService, UtfGridService,
+    UtilService, $q) {
 
     /*
      * @constructor
@@ -94,9 +96,12 @@ app.factory('LayerGroup', [
           var wantedService;
 
           if (layer.type === 'Store') {
+            console.log('layer.type === Store');
             wantedService = RasterService;
+
           } else if (layer.type === 'UTFGrid') {
             wantedService = UtfGridService;
+
           } /*else if (layer.type === 'Vector') {
             wantedService = VectorService;
           } else {
@@ -107,7 +112,7 @@ app.factory('LayerGroup', [
 
             promiseCount = buildPromise(
               layer,
-              geom,
+              UtilService.geomToWkt(geom),
               startTime,
               endTime,
               deferred,
@@ -150,32 +155,66 @@ app.factory('LayerGroup', [
 
     ///////////////////////////////////////////////////////////////////////////
 
-    var buildPromise = function (layer, geom, start, end, deferred, wantedService, count) {
+    var buildPromise = function (
+      layer,
+      geom,
+      start,
+      end,
+      deferred,
+      wantedService,
+      count) {
 
-      var buildSuccesCallback = function (layer) {
+      var prom, buildSuccesCallback, buildErrorCallback;
+
+      buildSuccesCallback = function (layer) {
         return function (data) {
           deferred.notify({data: data, type: layer.type});
-          count--;
-          if (count === 0) { deferred.resolve(true); }
+          if (--count === 0) { deferred.resolve(true); }
         };
       };
 
-      var buildErrorCallback = function (layer) {
+      buildErrorCallback = function (layer) {
         return function (msg) {
           deferred.notify({msg: msg, type: layer.type});
-          count--;
-          if (count === 0) { deferred.resolve(true); }
+          if (--count === 0) { deferred.resolve(true); }
         };
       };
 
-      //console.log('[F] buildPromise(), arg \'wantedService\' =', wantedService);
-      var prom = wantedService.getData(layer, geom, start, end, {});
-      count++;
+      prom = wantedService.getData(
+        layer,
+        geom,
+        start,
+        end,
+        getOptsForLayer(layer)
+      );
+
       prom.then(
         buildSuccesCallback(layer),
         buildErrorCallback(layer)
       );
-      return count;
+
+      return ++count;
+    };
+
+    var getOptsForLayer = function (layer) {
+
+      // agg ::= 'none' | 'rrc' | 'sum' | 'counts'
+
+      switch (layer.slug) {
+
+        case 'radar/basic':
+          return {
+            agg: 'rrc'
+          };
+
+        case 'use/wss':
+          return {
+            agg: 'sum'
+          };
+
+        default:
+          return {};
+      }
     };
 
     /**

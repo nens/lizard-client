@@ -43,7 +43,9 @@ app.directive('map', [
        * @memberOf app.MapService
        */
       var _mouseMoved = function (e) {
-        scope.mapState.userHere = e.latlng;
+        if (scope.box.type === 'line') {
+          scope.mapState.userHere = e.latlng;
+        }
       };
 
       /**

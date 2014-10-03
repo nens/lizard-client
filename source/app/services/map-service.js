@@ -47,7 +47,6 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
           // turn layer group on
           if (!(layerGroup.baselayer && layerGroup.isActive())) {
             layerGroup.toggle(this._map, layerGroup._slug);
-            console.log('this.layerGroupsChanged');
             this.layerGroupsChanged = Date.now();
           }
           var map = this._map;
