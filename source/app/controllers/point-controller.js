@@ -100,21 +100,16 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
         switch (response.type) {
 
           case 'UTFGrid':
-
-            if (response.data.data === null) {
-
-              $scope.point.attrs.active = false;
-              $scope.point.attrs.data = undefined;
-
-            } else {
-
-              $scope.point.attrs.active = true;
-              $scope.point.attrs.data = response.data.data;
-            }
-            break;
-
-          default:
-            break;
+          if (response.data.data === null) {
+            $scope.point.attrs.active = false;
+            $scope.point.attrs.data = undefined;
+          } else {
+            $scope.point.attrs.active = true;
+            $scope.point.attrs.data = response.data.data;
+          }
+          break;
+        default:
+          break;
         }
       };
 

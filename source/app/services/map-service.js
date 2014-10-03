@@ -47,6 +47,7 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
           // turn layer group on
           if (!(layerGroup.baselayer && layerGroup.isActive())) {
             layerGroup.toggle(this._map, layerGroup._slug);
+            console.log('this.layerGroupsChanged');
             this.layerGroupsChanged = Date.now();
           }
           var map = this._map;
@@ -139,7 +140,23 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
 
       removeLayer: function (layer) {
         this._map.removeLayer(layer);
+      },
+
+      // TODO: move temporal property to the layerGroup in the backend
+      getActiveTemporalLayer: function () {
+        var activeTemporalLayer = false;
+        angular.forEach(this.layerGroups, function (layerGroup) {
+          if (layerGroup.isActive()) {
+            angular.forEach(layerGroup._layers, function (layer) {
+              if (!activeTemporalLayer && layer.temporal) {
+                activeTemporalLayer = layerGroup;
+              }
+            });
+          }
+        });
+        return activeTemporalLayer;
       }
+
     };
 
 
@@ -177,15 +194,6 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
       // this._map.attributionControl.setPrefix('');
       return map;
     };
-
-
-  // $scope.mapState.getActiveTemporalLayer = function () {
-  //   angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
-  //     if (layerGroup.isActive() && layerGroup.temporal) {
-  //       return layerGroup;
-  //     }
-  //   });
-  // };
 
     /**
      * @function

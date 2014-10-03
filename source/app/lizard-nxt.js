@@ -469,6 +469,18 @@ app.controller('MasterCtrl',
     }
   };
 
+  // Temporarily watch layergroups to turn timeline on
+  // Can be removed when we redo the timeline
+  var timelineToggler = $scope.$watch('mapState.layerGroupsChanged',  function () {
+    if ($scope.timeState.hidden === undefined
+      && $scope.mapState.getActiveTemporalLayer()) {
+      $scope.toggleTimeline();
+      // remove watch
+      timelineToggler();
+    }
+
+  });
+
   $scope.toggleVersionVisibility = function () {
     $('.navbar-version').toggle();
   };
