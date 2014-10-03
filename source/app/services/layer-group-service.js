@@ -85,7 +85,8 @@ app.factory('LayerGroup', [
       */
       getData: function (geom, startTime, endTime) {
 
-        var deferred = $q.defer();
+        var that = this,
+            deferred = $q.defer();
 
         if (!this._active) { deferred.resolve(false); }
 
@@ -95,14 +96,13 @@ app.factory('LayerGroup', [
 
           var wantedService;
 
-          if (layer.type === 'Store') {
-            console.log('layer.type === Store');
-            wantedService = RasterService;
-
-          } else if (layer.type === 'UTFGrid') {
+          if (layer.type === 'UTFGrid') {
             wantedService = UtfGridService;
 
-          } /*else if (layer.type === 'Vector') {
+          } /*else if (layer.type === 'Store') {
+            wantedService = RasterService;
+
+          } else if (layer.type === 'Vector') {
             wantedService = VectorService;
           } else {
             console.log('[E] someService.getData() was called w/o finding \'wantedService\' where wantedService =', wantedService);
@@ -111,8 +111,9 @@ app.factory('LayerGroup', [
           if (wantedService) {
 
             promiseCount = buildPromise(
+              that,
               layer,
-              UtilService.geomToWkt(geom),
+              geom,
               startTime,
               endTime,
               deferred,
@@ -156,6 +157,7 @@ app.factory('LayerGroup', [
     ///////////////////////////////////////////////////////////////////////////
 
     var buildPromise = function (
+      layerGroup,
       layer,
       geom,
       start,
@@ -167,15 +169,31 @@ app.factory('LayerGroup', [
       var prom, buildSuccesCallback, buildErrorCallback;
 
       buildSuccesCallback = function (layer) {
+
         return function (data) {
-          deferred.notify({data: data, type: layer.type});
+
+          deferred.notify({
+            data: data,
+            type: layer.type,
+            layerGroupSlug: layerGroup.slug,
+            layerSlug: layer.slug
+          });
+
           if (--count === 0) { deferred.resolve(true); }
         };
       };
 
       buildErrorCallback = function (layer) {
+
         return function (msg) {
-          deferred.notify({msg: msg, type: layer.type});
+
+          deferred.notify({
+            msg:  msg,
+            type: layer.type,
+            layerGroupSlug: layerGroup.slug,
+            layerSlug: layer.slug
+          });
+
           if (--count === 0) { deferred.resolve(true); }
         };
       };

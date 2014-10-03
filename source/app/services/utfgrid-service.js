@@ -9,7 +9,9 @@ app.service('UtfGridService', ['$q', '$rootScope',
 
       var leafLayer = nonLeafLayer && nonLeafLayer.leafletLayer,
           deferred = $q.defer(),
-          e = { latlng: geom },
+          e = {
+            latlng: geom
+          },
           response;
 
       if (leafLayer) {
@@ -27,10 +29,6 @@ app.service('UtfGridService', ['$q', '$rootScope',
         _getDataFromUTFAsynchronous(nonLeafLayer, e, deferred);
 
       } else {
-        // rejected!
-        //deferred.reject();
-
-        // rejected 2.0:
         deferred.resolve(false);
       }
 
@@ -62,8 +60,6 @@ app.service('UtfGridService', ['$q', '$rootScope',
       } else {
 
         $rootScope.$apply(function () {
-
-          //promise.reject();
           promise.resolve(false);
         });
       }

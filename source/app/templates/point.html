@@ -3,32 +3,32 @@
   <!-- details for HYDRO-OBJECT a.k.a. Kunstwerk -->
   <div id="card-kunstwerk"
        class="card active"
-       ng-class="{hidden: !point.attrs.active}">
+       ng-class="{hidden: !point.waterchain.active}">
 
     <div class="card-content"
          id="card-content-kunstwerk">
 
       <i id="icon-holder"
-         ng-if="point.attrs.data.entity_name.split('_')[0] === 'bridge'"
+         ng-if="point.waterchain.UTFGrid.data.entity_name.split(' ')[0] === 'bridge'"
          class="icon-bridge-fixed">
       </i>
       <i id="icon-holder"
-         ng-if="point.attrs.data.entity_name.split('_')[0] !== 'bridge'"
-         class="icon-<% point.attrs.data.entity_name.split('_')[0] %>">
+         ng-if="point.waterchain.UTFGrid.data.entity_name.split(' ')[0] !== 'bridge'"
+         class="icon-<% point.waterchain.UTFGrid.data.entity_name.split(' ')[0] %>">
       </i>
 
       <span class="kunstwerk-title">
         <span id="title-holder"
               class="card-title-text kunstwerk-title-text">
-          <% gettext(point.attrs.data.entity_name) %>
+          <% gettext(point.waterchain.UTFGrid.data.entity_name) %>
         </span>
         &nbsp;
         <span class="kunstwerk-title-suffix">
-          <span ng-if="point.attrs.data.code">(</span>
+          <span ng-if="point.waterchain.UTFGrid.data.code">(</span>
           <span class="truncateme ng-binding"
-                ng-bind="point.attrs.data.code">
+                ng-bind="point.waterchain.UTFGrid.data.code">
           </span>
-          <span ng-if="point.attrs.data.code">)</span>
+          <span ng-if="point.waterchain.UTFGrid.data.code">)</span>
         </span>
       </span>
 
@@ -36,6 +36,7 @@
     </div>
   </div>
 
+  <!--
   <div id="card-relatified-events"
        class="card active"
        ng-class="{hidden: !point.events.data.length > 0}">
@@ -85,8 +86,11 @@
       </table>
     </div>
   </div>
+  -->
+
 
   <!-- begin: single card -->
+  <!--
   <div id="card-timeseries"
        class="card active"
        ng-class="{hidden: !point.timeseries.active}">
@@ -96,15 +100,13 @@
               ng-model="point.timeseries.selectedTimeseries"
               ng-options="series as series.name for series in point.timeseries.data">
       </select>
-<!--       <graph line
-             data="point.timeseries.selectedTimeseries.data"
-             ylabel="point.selectedTimeseries.name"
-             xlabel="n"
-             keys="{x: 0, y: 1}">
-       </graph> -->
     </div>
   </div>
+  -->
+
+
   <!-- end: single card -->
+  <!--
   <div id="card-not-rain"
        ng-if="!!point.temporalRaster.data && !mustShowRainCard(mapState, point)
        && point.temporalRaster.active"
@@ -119,7 +121,6 @@
       </graph>
     </div>
   </div>
-
 
   <div id="card-rain"
        class="card active"

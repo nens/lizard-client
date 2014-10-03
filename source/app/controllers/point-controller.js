@@ -51,20 +51,14 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
       angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
 
-        point[layerGroup.slug] = {
-          active: false,
-          layerData: []
-        };
+        point[layerGroup.slug] = { active: false };
 
         angular.forEach(layerGroup._layers, function (layer) {
-
-          point[layerGroup.slug].layerData.push({
-            type: layer.type,
-            data: undefined
-          });
+          point[layerGroup.slug][layer.type] = { data: undefined };
         });
       });
 
+      point.wanted = CabinetService.wantedAttrs;
       return point;
     };
 
@@ -72,30 +66,26 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
      * @function
      * @memberOf app.pointCtrl
      * @param  {L.LatLng} here
-     * @param  {object}   ?extra Optional extra info
      */
-    fillpoint = function (here, extra) {
+    fillpoint = function (here) {
 
       var doneFn = function (response) { // response ::= True | False
-        console.log('[F] doneFn, arg \'response\' =', response);
       };
 
       var putDataOnScope = function (response) {
 
+        var pointLG = $scope.point[response.layerGroupSlug];
+
         if (response.data.data === null) {
 
-          $scope.point[response.layerGroupSlug].active = false;
-          $scope.point[response.layerGroupSlug][response.layerType].data
-            = undefined;
+          pointLG.active = false;
+          pointLG[response.type].data = undefined;
 
         } else {
 
-          $scope.point[response.layerGroupSlug].active = true;
-          $scope.point[response.layerGroupSlug][response.layerType].data
-            = response.data.data;
+          pointLG.active = true;
+          pointLG[response.type].data = response.data.data;
         }
-
-        console.log('putDataOnScope --> $scope.point =', $scope.point);
       };
 
       angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
@@ -339,17 +329,17 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
      *
      * @returns {void}
      */
-    _recolorBlackEventFeature = function () {
+    // _recolorBlackEventFeature = function () {
 
-      var feature = d3.select('.highlighted-event');
+    //   var feature = d3.select('.highlighted-event');
 
-      if (feature[0][0]) {
+    //   if (feature[0][0]) {
 
-        feature
-          .classed("highlighted-event", false)
-          .attr("fill", feature.attr("data-init-color"));
-      }
-    };
+    //     feature
+    //       .classed("highlighted-event", false)
+    //       .attr("fill", feature.attr("data-init-color"));
+    //   }
+    // };
 
     /**
      * @function
@@ -393,33 +383,33 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
       fillpoint($scope.mapState.here, extra);
     });
 
-    // Clean up stuff when controller is destroyed
-    $scope.$on('$destroy', function () {
-      ClickFeedbackService.emptyClickLayer();
-    });
+    // // Clean up stuff when controller is destroyed
+    // $scope.$on('$destroy', function () {
+    //   ClickFeedbackService.emptyClickLayer();
+    // });
 
-    // efficient $watches using a helper function.
-    // TODO: do not watch yourself.
-    $scope.$watch('point.attrs.active',  _watchAttrAndEventActivity);
-    $scope.$watch('point.events.active', _watchAttrAndEventActivity);
+    // // efficient $watches using a helper function.
+    // // TODO: do not watch yourself.
+    // $scope.$watch('point.attrs.active',  _watchAttrAndEventActivity);
+    // $scope.$watch('point.events.active', _watchAttrAndEventActivity);
 
-    $scope.$watch('mapState.activeLayersChanged', function (n, o) {
+    // $scope.$watch('mapState.activeLayersChanged', function (n, o) {
 
-      if (n === o) { return; }
+    //   if (n === o) { return; }
 
-      $scope.point.attrs.active = $scope.mapState.layers.waterchain.active;
-      $scope.point.temporalRaster.active = $scope.mapState.layers.rain.active;
-      $scope.point.events.active = $scope.events.data.features.length > 0;
+    //   $scope.point.attrs.active = $scope.mapState.layers.waterchain.active;
+    //   $scope.point.temporalRaster.active = $scope.mapState.layers.rain.active;
+    //   $scope.point.events.active = $scope.events.data.features.length > 0;
 
-      if (!$scope.point.temporalRaster.active &&
-          !$scope.point.attrs.active &&
-          !$scope.point.timeseries.active &&
-          !$scope.point.events.active) {
-        $scope.box.type = 'area';
-      } else {
-        fillpoint($scope.mapState.here);
-      }
-    });
+    //   if (!$scope.point.temporalRaster.active &&
+    //       !$scope.point.attrs.active &&
+    //       !$scope.point.timeseries.active &&
+    //       !$scope.point.events.active) {
+    //     $scope.box.type = 'area';
+    //   } else {
+    //     fillpoint($scope.mapState.here);
+    //   }
+    // });
 
     $scope.mustShowRainCard = RasterService.mustShowRainCard;
 
@@ -445,7 +435,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
             ];
           };
 
-      for (i = 0; i< data.length; i++) {
+      for (i = 0; i < data.length; i++) {
 
         formattedDateTime = _formatDate(data[i][0]);
 

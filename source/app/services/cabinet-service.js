@@ -28,28 +28,28 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Type",
           attrName: "type",
-          ngBindValue: "point.attrs.data.type",
+          ngBindValue: "point.waterchain.UTFGrid.data.type",
           valueSuffix: ""
         },
         {
           keyName: "Breedte",
           attrName: "width",
           ngBindValue:
-            "point.attrs.data.width | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.width | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Lengte",
           attrName: "length",
           ngBindValue:
-            "point.attrs.data.length | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.length | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Hoogte",
           attrName: "height",
           ngBindValue:
-            "point.attrs.data.height | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.height | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         }
       ]
@@ -59,13 +59,13 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Type",
           attrName: "type",
-          ngBindValue: "point.attrs.data.type | niceNumberOrEllipsis: 2",
+          ngBindValue: "point.waterchain.UTFGrid.data.type | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Lengte",
           attrName: "length",
-          ngBindValue: "point.attrs.data.length | niceNumberOrEllipsis: 2",
+          ngBindValue: "point.waterchain.UTFGrid.data.length | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         }
       ]
@@ -76,7 +76,7 @@ app.service("CabinetService", ["$q", "Restangular",
           keyName: "Type",
           attrName: "type",
           ngBindValue:
-            "point.attrs.data.type | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.type | niceNumberOrEllipsis: 2",
           valueSuffix: ""
         }
       ]
@@ -87,21 +87,21 @@ app.service("CabinetService", ["$q", "Restangular",
           keyName: "Type",
           attrName: "type",
           ngBindValue:
-            "point.attrs.data.type | truncate: 20",
+            "point.waterchain.UTFGrid.data.type | truncate: 20",
           valueSuffix: ""
         },
         {
           keyName: "Lengte",
           attrName: "length",
           ngBindValue:
-            "point.attrs.data.length | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.length | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Breedte",
           attrName: "width",
           ngBindValue:
-            "point.attrs.data.width | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.width | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         }
       ]
@@ -112,35 +112,35 @@ app.service("CabinetService", ["$q", "Restangular",
           keyName: "Maaiveld",
           attrName: "surface_level",
           ngBindValue:
-            "point.attrs.data.surface_level | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.surface_level | niceNumberOrEllipsis: 2",
           valueSuffix: " m NAP"
         },
         {
           keyName: "Breedte",
           attrName: "width",
           ngBindValue:
-            "point.attrs.data.width | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.width | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Vorm",
           attrName: "shape",
           ngBindValue:
-            "point.attrs.data.shape | lookupManholeShape",
+            "point.waterchain.UTFGrid.data.shape | lookupManholeShape",
           valueSuffix: ""
         },
         {
           keyName: "Putbodem",
           attrName: "bottom_level",
           ngBindValue:
-            "point.attrs.data.bottom_level | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.bottom_level | niceNumberOrEllipsis: 2",
           valueSuffix: " m NAP"
         },
         {
           keyName: "Materiaal",
           attrName: "material",
           ngBindValue:
-            "point.attrs.data.material | lookupManholeMaterial",
+            "point.waterchain.UTFGrid.data.material | lookupManholeMaterial",
           valueSuffix: ""
         }
       ],
@@ -150,25 +150,25 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Naam",
           attrName: "name",
-          ngBindValue: "point.attrs.data.name",
+          ngBindValue: "point.waterchain.UTFGrid.data.name",
           valueSuffix: ""
         },
         {
           keyName: "Regio",
           attrName: "region",
-          ngBindValue: "point.attrs.data.region",
+          ngBindValue: "point.waterchain.UTFGrid.data.region",
           valueSuffix: ""
         },
         {
           keyName: "Categorie",
           attrName: "category",
-          ngBindValue: "point.attrs.data.category",
+          ngBindValue: "point.waterchain.UTFGrid.data.category",
           valueSuffix: ""
         },
         {
           keyName: "Frequentie",
           attrName: "frequency",
-          ngBindValue: "point.attrs.data.frequency",
+          ngBindValue: "point.waterchain.UTFGrid.data.frequency",
           valueSuffix: ""
         }
       ]
@@ -190,7 +190,7 @@ app.service("CabinetService", ["$q", "Restangular",
           keyName: "Buitenwaterstand",
           attrName: "open_water_level_average",
           ngBindValue:
-            "point.attrs.data.open_water_level_average | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.open_water_level_average | niceNumberOrEllipsis: 2",
           valueSuffix: " m NAP"
         }
       ]
@@ -200,13 +200,14 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Breedte",
           attrName: "crest_width",
-          ngBindValue: "pointObject.attrs.data.crest_width | niceNumberOrEllipsis: 2",
+          ngBindValue:
+            "point.waterchain.UTFGrid.data.crest_width | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Overstorthoogte",
           attrName: "crest_level",
-          ngBindValue: "point.attrs.data.crest_level | niceNumberOrEllipsis: 2",
+          ngBindValue: "point.waterchain.UTFGrid.data.crest_level | niceNumberOrEllipsis: 2",
           valueSuffix: " m NAP"
         }
       ]
@@ -217,28 +218,28 @@ app.service("CabinetService", ["$q", "Restangular",
           keyName: "Lengte",
           attrName: "length",
           ngBindValue:
-            "point.attrs.data.length | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.length | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Breedte",
           attrName: "width",
           ngBindValue:
-            "point.attrs.data.width | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.width | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         },
         {
           keyName: "Vorm",
           attrName: "shape",
           ngBindValue:
-            "point.attrs.data.shape | lookupPipeShape",
+            "point.waterchain.UTFGrid.data.shape | lookupPipeShape",
           valueSuffix: ""
         },
         {
           keyName: "Materiaal",
           attrName: "material",
           ngBindValue:
-            "point.attrs.data.material | pipeMaterialOrEllipsis",
+            "point.waterchain.UTFGrid.data.material | pipeMaterialOrEllipsis",
           valueSuffix: ""
         }
       ]
@@ -248,28 +249,28 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Naam",
           attrName: "name",
-          ngBindValue: "point.attrs.data.name",
+          ngBindValue: "point.waterchain.UTFGrid.data.name",
           valueSuffix: ""
         },
         {
           keyName: "Aanslagpeil",
           attrName: "start_level",
           ngBindValue:
-            "point.attrs.data.start_level | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.start_level | niceNumberOrEllipsis: 2",
           valueSuffix: " m boven NAP"
         },
         {
           keyName: "Afslagpeil",
           attrName: "stop_level",
           ngBindValue:
-            "point.attrs.data.stop_level | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.stop_level | niceNumberOrEllipsis: 2",
           valueSuffix: " m boven NAP"
         },
         {
           keyName: "Capaciteit",
           attrName: "capacity",
           ngBindValue:
-            "point.attrs.data.capacity | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.capacity | niceNumberOrEllipsis: 2",
           valueSuffix: " l/s"
         }
       ]
@@ -279,21 +280,21 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Naam",
           attrName: "name",
-          ngBindValue: "point.attrs.data.name",
+          ngBindValue: "point.waterchain.UTFGrid.data.name",
           valueSuffix: ""
         },
         {
           keyName: "Aanslagpeil",
           attrName: "start_level",
           ngBindValue:
-            "point.attrs.data.start_level | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.start_level | niceNumberOrEllipsis: 2",
           valueSuffix: " m boven NAP"
         },
         {
           keyName: "Capaciteit",
           attrName: "capacity",
           ngBindValue:
-            "point.attrs.data.capacity | niceNumberOrEllipsis: 2",
+            "point.waterchain.UTFGrid.data.capacity | niceNumberOrEllipsis: 2",
           valueSuffix: " l/s"
         }
       ]
@@ -303,19 +304,19 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Type",
           attrName: "type",
-          ngBindValue: "point.attrs.data.type",
+          ngBindValue: "point.waterchain.UTFGrid.data.type",
           valueSuffix: ""
         },
         {
           keyName: "Breedte",
-          attrName: "width", // NB! this was set to "breedte" in the original code, which is supposedly erronious (?)
-          ngBindValue: "point.attrs.data.width | niceNumberOrEllipsis: 2", // see commnent above
+          attrName: "width",
+          ngBindValue: "point.waterchain.UTFGrid.data.width | niceNumberOrEllipsis: 2", // see commnent above
           valueSuffix: " m"
         },
         {
           keyName: "Hoogte",
           attrName: "height",
-          ngBindValue: "point.attrs.data.height | niceNumberOrEllipsis: 2",
+          ngBindValue: "point.waterchain.UTFGrid.data.height | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
         }
       ]
