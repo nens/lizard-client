@@ -83,12 +83,15 @@ app.factory('LayerGroup', [
       * @return  {promise} - notifies with data per layer and resolves when all layers
       *                      returned data.
       */
-      getData: function (geom, startTime, endTime) {
+      getData: function (options) {
 
-        var that = this,
+        var lgSlug = this.slug,
             deferred = $q.defer();
 
-        if (!this._active) { deferred.resolve(false); }
+        if (!this._active) {
+          deferred.resolve(false);
+          return deferred.promise;
+        }
 
         var promiseCount = 0;
 
@@ -98,22 +101,22 @@ app.factory('LayerGroup', [
 
           if (layer.type === 'Store') {
             wantedService = RasterService;
-          } else if (layer.type === 'UTFGrid') {
-            wantedService = UtfGridService;
-          } else if (layer.type === 'Vector') {
-            wantedService = VectorService;
-          } else {
-            console.log('[E] someService.getData() was called w/o finding \'wantedService\' where wantedService =', wantedService);
           }
+          else if (layer.type === 'UTFGrid') {
+            wantedService = UtfGridService;
+          }
+          /*else if (layer.type === 'Vector') {
+            wantedService = VectorService; */
+          // else {
+          //   console.log('[E] someService.getData() was called w/o finding \'wantedService\' where wantedService =', wantedService);
+          // }
 
           if (wantedService) {
 
             promiseCount = buildPromise(
-              that,
+              lgSlug,
               layer,
-              geom,
-              startTime,
-              endTime,
+              options,
               deferred,
               wantedService,
               promiseCount
@@ -155,11 +158,9 @@ app.factory('LayerGroup', [
     ///////////////////////////////////////////////////////////////////////////
 
     var buildPromise = function (
-      layerGroup,
+      lgSlug,
       layer,
-      geom,
-      start,
-      end,
+      options,
       deferred,
       wantedService,
       count) {
@@ -173,8 +174,7 @@ app.factory('LayerGroup', [
           deferred.notify({
             data: data,
             type: layer.type,
-            layerGroupSlug: layerGroup.slug,
-            layerSlug: layer.slug
+            layerGroupSlug: lgSlug
           });
 
           if (--count === 0) { deferred.resolve(true); }
@@ -188,20 +188,18 @@ app.factory('LayerGroup', [
           deferred.notify({
             msg:  msg,
             type: layer.type,
-            layerGroupSlug: layerGroup.slug,
-            layerSlug: layer.slug
+            layerGroupSlug: lgSlug
           });
 
           if (--count === 0) { deferred.resolve(true); }
         };
       };
 
+      options.agg = layer.aggregation_type;
+
       prom = wantedService.getData(
         layer,
-        geom,
-        start,
-        end,
-        getOptsForLayer(layer)
+        options
       );
 
       prom.then(

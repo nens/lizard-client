@@ -4,6 +4,36 @@
 app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$q",
   function (Restangular, UtilService, CabinetService, $q) {
 
+
+  var getData = function (layer, options) {
+
+    var srs = 'EPSG:4326',
+        agg = options.agg || '',
+        wkt = UtilService.geomToWkt(options.geom),
+        startString,
+        endString;
+
+    if (options.start && options.end) {
+      startString = new Date(options.start).toISOString().split('.')[0];
+      endString = new Date(options.end).toISOString().split('.')[0];
+    }
+
+    if (cancelers[layer.slug]) {
+      cancelers[layer.slug].resolve();
+    }
+
+    var canceler = cancelers[layer.slug] = $q.defer();
+    console.log('getting: ', layer.slug, wkt, srs, startString, endString, agg);
+    return CabinetService.raster(canceler).get({
+      raster_names: layer.slug,
+      geom: wkt,
+      srs: srs,
+      start: startString,
+      stop: endString,
+      agg: agg
+    });
+  };
+
   /**
    * Get latlon bounds for image.
    *
@@ -198,41 +228,6 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
   //     agg: agg
   //   });
   // };
-
-  var getData = function (layer, geom, start, end, options) {
-
-    var srs,
-        agg,
-        wkt,
-        canceler,
-        startString,
-        endString;
-
-    wkt = UtilService.geomToWkt(geom);
-
-    if (start && end) {
-      startString = new Date(start).toISOString().split('.')[0];
-      endString = new Date(end).toISOString().split('.')[0];
-    }
-
-    if (cancelers[layer.slug]) {
-      cancelers[layer.slug].resolve();
-    }
-
-    canceler = cancelers[layer.slug] = $q.defer();
-
-    srs = options.srs ? options.srs : 'EPSG:4326';
-    agg = options.agg ? options.agg : '';
-
-    return CabinetService.raster(canceler).get({
-      raster_names: layer.slug,
-      geom: wkt,
-      srs: srs,
-      start: startString,
-      stop: endString,
-      agg: agg
-    });
-  };
 
   var getRasterDataForExtentData = function (aggType, agg, slug, bounds) {
 

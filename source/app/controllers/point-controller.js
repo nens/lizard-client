@@ -78,7 +78,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
         var pointLG = $scope.point[response.layerGroupSlug];
 
-        if (response.data.data === null) {
+        if (response.data === null) {
 
           pointLG.active = false;
           pointLG[response.type].data = undefined;
@@ -86,24 +86,17 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
         } else {
 
           pointLG.active = true;
-          pointLG[response.type].data = response.data.data;
+          pointLG[response.type].data = response.data;
         }
+        console.log('point:', $scope.point);
       };
 
       angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
 
-        layerGroup.getData
-        (
-          here,
-          $scope.timeState.start,
-          $scope.timeState.end
-        )
-        .then
-        (
-          doneFn,
-          null,
-          putDataOnScope
-        );
+        layerGroup.getData({
+          geom: here
+        })
+          .then(doneFn, null, putDataOnScope);
 
       });
     };

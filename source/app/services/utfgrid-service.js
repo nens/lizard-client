@@ -5,14 +5,17 @@ app.service('UtfGridService', ['$q', '$rootScope',
 
   function ($q, $rootScope) {
 
-    var getData = function (nonLeafLayer, geom, start, end, options) {
+    var getData = function (nonLeafLayer, options) {
+      if (options.geom === undefined) {
+        throw new Error('Getting data for' + nonLeafLayer.slug + 'requires geom on options');
+      }
 
       var leafLayer = nonLeafLayer && nonLeafLayer.leafletLayer,
-          deferred = $q.defer(),
-          e = {
-            latlng: geom
-          },
-          response;
+        deferred = $q.defer(),
+        e = {
+          latlng: options.geom
+        },
+        response;
 
       if (leafLayer) {
 
@@ -22,7 +25,7 @@ app.service('UtfGridService', ['$q', '$rootScope',
           _getDataFromUTFAsynchronous(nonLeafLayer, e, deferred);
 
         } else {
-          deferred.resolve(response);
+          deferred.resolve(response.data);
         }
 
       } else if ($rootScope.mapState.layerGroups.waterchain.active) {
@@ -53,7 +56,7 @@ app.service('UtfGridService', ['$q', '$rootScope',
           // properly observed:
 
           $rootScope.$apply(function () {
-            promise.resolve(response);
+            promise.resolve(response.data);
           });
         });
 
