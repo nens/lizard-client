@@ -17,6 +17,11 @@ app.service('UtfGridService', ['$q', '$rootScope',
         },
         response;
 
+      if (!(options.geom instanceof L.LatLng)) {
+        deferred.reject();
+        return deferred.promise;
+      }
+
       if (leafLayer) {
 
         response = leafLayer._objectForEvent(e);

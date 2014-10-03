@@ -38,54 +38,33 @@ app.controller('AreaCtrl', [
      */
     updateExtentAgg = function (bounds, layerGroups, area) {
 
+      var putDataOnScope = function (response) {
+
+        var areaLG = $scope.area[response.layerGroupSlug]
+          || {};
+
+        areaLG[response.type] = areaLG[response.type] || {};
+
+        console.log(response);
+        if (response.data === null) {
+
+          areaLG.active = false;
+          areaLG[response.type].data = undefined;
+
+        } else {
+
+          areaLG.active = true;
+          areaLG[response.type].data = response.data;
+        }
+        $scope.area[response.layerGroupSlug] = areaLG;
+        console.log('area:', $scope.area);
+      };
+
       angular.forEach(layerGroups, function (layerGroup, slug) {
-
-        if (layerGroup.isActive()
-          && layerGroup._initiated
-          && layerGroup._layers[0].aggregation_type !== 'none')
-        {
-          // Pass the promise to a function that handles the scope.
-          putDataOnscope(layerGroup.getData(bounds));
-        }
-        else if (!layerGroup.active && slug in area)
-        {
-          removeDataFromScope(slug);
-        }
+        // Pass the promise to a function that handles the scope.
+        layerGroup.getData({geom: bounds})
+          .then(null, null, putDataOnScope);
       });
-    };
-
-    /**
-     * @function
-     * @memberOf app.areaCtrl
-     * @description Puts dat on area when promise resolves or
-     * removes item from area when no data is returned.
-     *
-     * @param  {promise}               a promise with aggregated data and
-     *                                 the slug
-     */
-    putDataOnscope = function (dataProm) {
-      dataProm
-      .then(function (result) {
-
-        if (result.agg.data.length > 0) {
-          $scope.area[result.slug] = result.agg;
-          $scope.area[result.slug].name = $scope.mapState.layerGroups[result.slug].name;
-
-        } else if (result.slug in $scope.area) {
-          removeDataFromScope(result.slug);
-        }
-      });
-    };
-
-    /**
-     * @function
-     * @memberOf app.areaCtrl
-     * @description removes data from scope again
-     * if it's no longer needed.
-     * @param  {string} slug
-     */
-    removeDataFromScope = function (slug) {
-      delete $scope.area[slug];
     };
 
     /**

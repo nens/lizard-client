@@ -186,7 +186,7 @@ app.factory('LayerGroup', [
         return function (msg) {
 
           deferred.notify({
-            msg:  msg,
+            data:  null,
             type: layer.type,
             layerGroupSlug: lgSlug
           });
