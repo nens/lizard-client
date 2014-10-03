@@ -7,9 +7,10 @@
     </tr>
   </thead>
   <tbody>
+
     <tr class="attr-row"
-        ng-repeat="obj in point.attrs.wanted[point.attrs.data.entity_name].rows"
-        ng-init="showCheck = point.attrs.data[obj.attrName]">
+        ng-repeat="obj in point.wanted[point.waterchain.UTFGrid.data.entity_name].rows"
+        ng-init="showCheck = point.waterchain.UTFGrid.data[obj.attrName]">
 
       <td class="fixed-width-card-table"><% obj.keyName %></td>
 
@@ -20,10 +21,8 @@
         </span>
       </td>
 
-      <td class="lineout" ng-if="!showCheck">
-        <% "..." %>
-      </td>
-
+      <td class="lineout" ng-if="!showCheck">...</td>
     </tr>
+
   </tbody>
 </table>

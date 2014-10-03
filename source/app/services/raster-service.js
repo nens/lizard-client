@@ -132,34 +132,34 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    * @param  {string} agg aggregation method eg. 'sum', 'rrc'
    * @return {promise} returns a thennable promise which may resolve with temporal raster data on response
    */
-  var getTemporalRaster = function (start, stop, geom, aggWindow, rasterNames, agg) {
-    // TODO
-    var slug = (MapService.mapState.layers) ? MapService.mapState.layers[rasterNames].layers[0].slug : rasterNames;
-    var stopString, startString, wkt;
-    stopString = stop.toISOString().split('.')[0];
-    startString = start.toISOString().split('.')[0];
-    if (geom.lat && geom.lng) {
-      // geom is a latLng object
-      wkt = "POINT(" + geom.lng + " " + geom.lat + ")";
-    } else {
-      wkt = "POLYGON(("
-            + geom.getWest() + " " + geom.getSouth() + ", "
-            + geom.getEast() + " " + geom.getSouth() + ", "
-            + geom.getEast() + " " + geom.getNorth() + ", "
-            + geom.getWest() + " " + geom.getNorth() + ", "
-            + geom.getWest() + " " + geom.getSouth()
-            + "))";
-    }
-    return CabinetService.raster().get({
-        raster_names: slug,
-        geom: wkt,
-        srs: 'EPSG:4326',
-        start: startString,
-        stop: stopString,
-        window: aggWindow,
-        agg: agg
-      });
-  };
+  // var getTemporalRaster = function (start, stop, geom, aggWindow, rasterNames, agg) {
+  //   // TODO
+  //   var slug = (MapService.mapState.layers) ? MapService.mapState.layers[rasterNames].layers[0].slug : rasterNames;
+  //   var stopString, startString, wkt;
+  //   stopString = stop.toISOString().split('.')[0];
+  //   startString = start.toISOString().split('.')[0];
+  //   if (geom.lat && geom.lng) {
+  //     // geom is a latLng object
+  //     wkt = "POINT(" + geom.lng + " " + geom.lat + ")";
+  //   } else {
+  //     wkt = "POLYGON(("
+  //           + geom.getWest() + " " + geom.getSouth() + ", "
+  //           + geom.getEast() + " " + geom.getSouth() + ", "
+  //           + geom.getEast() + " " + geom.getNorth() + ", "
+  //           + geom.getWest() + " " + geom.getNorth() + ", "
+  //           + geom.getWest() + " " + geom.getSouth()
+  //           + "))";
+  //   }
+  //   return CabinetService.raster().get({
+  //       raster_names: slug,
+  //       geom: wkt,
+  //       srs: 'EPSG:4326',
+  //       start: startString,
+  //       stop: stopString,
+  //       window: aggWindow,
+  //       agg: agg
+  //     });
+  // };
 
   var cancelers = {};
 
@@ -199,15 +199,16 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
   //   });
   // };
 
-  var getData = function (layer, wkt, start, end, options) {
+  var getData = function (layer, geom, start, end, options) {
 
     var srs,
         agg,
+        wkt,
         canceler,
         startString,
         endString;
 
-    //wkt = UtilService.geomToWkt(geom);
+    wkt = UtilService.geomToWkt(geom);
 
     if (start && end) {
       startString = new Date(start).toISOString().split('.')[0];
@@ -233,29 +234,29 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     });
   };
 
-  // var getRasterDataForExtentData = function (aggType, agg, slug, bounds) {
+  var getRasterDataForExtentData = function (aggType, agg, slug, bounds) {
 
-  //   var geom = "POLYGON(("
-  //     + bounds.getWest() + " " + bounds.getSouth() + ", "
-  //     + bounds.getEast() + " " + bounds.getSouth() + ", "
-  //     + bounds.getEast() + " " + bounds.getNorth() + ", "
-  //     + bounds.getWest() + " " + bounds.getNorth() + ", "
-  //     + bounds.getWest() + " " + bounds.getSouth()
-  //     + "))";
+    var geom = "POLYGON(("
+      + bounds.getWest() + " " + bounds.getSouth() + ", "
+      + bounds.getEast() + " " + bounds.getSouth() + ", "
+      + bounds.getEast() + " " + bounds.getNorth() + ", "
+      + bounds.getWest() + " " + bounds.getNorth() + ", "
+      + bounds.getWest() + " " + bounds.getSouth()
+      + "))";
 
-  //   if (cancelers[slug]) {
-  //     cancelers[slug].resolve();
-  //   }
+    if (cancelers[slug]) {
+      cancelers[slug].resolve();
+    }
 
-  //   cancelers[slug] = $q.defer();
+    cancelers[slug] = $q.defer();
 
-  //   var dataProm = getRasterData(slug, geom, undefined, undefined, {
-  //     agg: aggType,
-  //     q: cancelers[slug]
-  //   });
+    var dataProm = getRasterData(slug, geom, undefined, undefined, {
+      agg: aggType,
+      q: cancelers[slug]
+    });
 
-  //   return dataProm;
-  // };
+    return dataProm;
+  };
 
   /**
    * Requests data from raster service.
@@ -267,26 +268,26 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    * @return {promise}                a promise with aggregated data and
    *                                  the slug
    */
-  // var getAggregationForActiveLayer = function (layer, slug, agg, bounds) {
-  //   var dataProm = getRasterDataForExtentData(
-  //     layer.aggregation_type,
-  //     agg,
-  //     slug,
-  //     bounds)
-  //     .then(function (data) {
-  //       agg.data = data;
-  //       agg.type = layer.aggregation_type;
-  //       if (layer.aggregation_type === 'curve') {
-  //         // TODO: return data in a better way or rewrite graph directive
-  //         agg.data = handleElevationCurve(data);
-  //       }
-  //       return {
-  //         agg: agg,
-  //         slug: slug
-  //       };
-  //     });
-  //   return dataProm;
-  // };
+  var getAggregationForActiveLayer = function (layer, slug, agg, bounds) {
+    var dataProm = getRasterDataForExtentData(
+      layer.aggregation_type,
+      agg,
+      slug,
+      bounds)
+      .then(function (data) {
+        agg.data = data;
+        agg.type = layer.aggregation_type;
+        if (layer.aggregation_type === 'curve') {
+          // TODO: return data in a better way or rewrite graph directive
+          agg.data = handleElevationCurve(data);
+        }
+        return {
+          agg: agg,
+          slug: slug
+        };
+      });
+    return dataProm;
+  };
 
   /**
    * Checks whether rain data, retrieved from the back-end, contains at least
@@ -297,7 +298,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    */
   var mustShowRainCard = function (mapState, point) {
 
-    return true;
+    return false;
 
     // var activeTemporalLayer = mapState.getActiveTemporalLayer();
     // var rainIsActive =
@@ -325,7 +326,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     setIntensityData: setIntensityData,
     //getRasterData: getRasterData,
     getData: getData,
-    getTemporalRaster: getTemporalRaster,
+    //getTemporalRaster: getTemporalRaster,
     getImgOverlays: getImgOverlays,
     handleElevationCurve: handleElevationCurve,
     //getRasterDataForExtentData: getRasterDataForExtentData,
