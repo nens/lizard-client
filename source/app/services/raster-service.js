@@ -329,7 +329,6 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     getImgOverlays: getImgOverlays,
     handleElevationCurve: handleElevationCurve,
     //getRasterDataForExtentData: getRasterDataForExtentData,
-    getAggregationForActiveLayer: getAggregationForActiveLayer,
     mustShowRainCard: mustShowRainCard
   };
 

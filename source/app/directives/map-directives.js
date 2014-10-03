@@ -90,7 +90,7 @@ app.directive('map', [
  * playing.
  */
 app.directive('rasteranimation', ['RasterService', 'UtilService',
-  function (RasterService, UtilService, MapService) {
+  function (RasterService, UtilService) {
   return {
     link: function (scope, element, attrs) {
 
@@ -241,10 +241,6 @@ app.directive('rasteranimation', ['RasterService', 'UtilService',
             previousDate = currentDate;
             nxtDate += step;
           } else if (overlayIndex === undefined) {
-            // if (JS_DEBUG) {
-            //   console.info("We will have to go get", currentDate,
-            //                ". Get new images!");
-            // }
             if (scope.timeState.animation.playing) {
               restart = true;
             }

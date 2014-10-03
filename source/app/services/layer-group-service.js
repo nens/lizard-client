@@ -96,7 +96,6 @@ app.factory('LayerGroup', [
           var wantedService;
 
           if (layer.type === 'Store') {
-            console.log('layer.type === Store');
             wantedService = RasterService;
 
           } else if (layer.type === 'UTFGrid') {
@@ -133,7 +132,7 @@ app.factory('LayerGroup', [
       toggle: function (map) {
 
         if (!this._initiated) {
-          this._layers = _initiateLayers(this._layers);
+          this._layers = _initiateLayers(this._layers, this.temporal);
           this._initiated = true;
         }
 
@@ -196,24 +195,22 @@ app.factory('LayerGroup', [
       return ++count;
     };
 
+    // TODO: get this from the server
     var getOptsForLayer = function (layer) {
 
       // agg ::= 'none' | 'rrc' | 'sum' | 'counts'
 
       switch (layer.slug) {
-
-        case 'radar/basic':
-          return {
-            agg: 'rrc'
-          };
-
-        case 'use/wss':
-          return {
-            agg: 'sum'
-          };
-
-        default:
-          return {};
+      case 'radar/basic':
+        return {
+          agg: 'rrc'
+        };
+      case 'use/wss':
+        return {
+          agg: 'sum'
+        };
+      default:
+        return {};
       }
     };
 
@@ -237,36 +234,31 @@ app.factory('LayerGroup', [
       map.removeLayer(layer);
     };
 
-    var _initiateLayers = function (layers) {
+    var _initiateLayers = function (layers, temporal) {
 
-      angular.forEach(layers, function (layer) {
+      if (temporal) {
+        //TODO: initialize imageoverlays
+        return layers;
+      }
 
-        switch (layer.type) {
-
-        case 'Vector':
-          layer.leafletLayer = _initiateVectorLayer(layer);
-          break;
-
-        case 'TMS':
-          layer.leafletLayer = _initiateTMSLayer(layer);
-          break;
-
-        case 'WMS':
-          layer.leafletLayer = _initiateWMSLayer(layer);
-          break;
-
-        case 'UTFGrid':
-          layer.leafletLayer = _initiateGridLayer(layer);
-          break;
-
-        case 'Store':
-          break;
-
-        default:
-          throw new Error(layer.type + ' is not a supported layer type');
-        }
-      });
-
+      else {
+        angular.forEach(layers, function (layer) {
+          if (layer.type === 'Vector') {
+            layer.leafletLayer = _initiateVectorLayer(layer);
+          } else if (layer.type === 'TMS') {
+            layer.leafletLayer = _initiateTMSLayer(layer);
+          } else if (layer.type === 'UTFGrid') {
+            layer.leafletLayer = _initiateGridLayer(layer);
+          } else if (layer.type === 'WMS' && layer.tiled) {
+            layer.leafletLayer = _initiateWMSLayer(layer);
+          } else if (!layer.tiled) {
+            // TODO: initialise imageoverlay
+          } else if (layer.type !== 'Store') {
+            // this ain't right
+            throw new Error(layer.type + ' is not a supported layer type');
+          }
+        });
+      }
       return layers;
     };
 
