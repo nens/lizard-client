@@ -46,35 +46,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
      * @return {object} empty point.
      */
     createpoint = function () {
-      var point = {
-        streetview: {
-          active: false
-        },
-        attrs: {
-          active: false,
-          data: {},
-          wanted: CabinetService.wantedAttrs
-        },
-        temporalRaster: {
-          type: undefined,
-          active: false,
-          start: undefined,
-          stop: undefined,
-          aggWindow: 0,
-          data: undefined,
-          recurrenceTime: undefined
-        },
-        timeseries: {
-          active: false,
-          data: [],
-          selectedTimeseries: null
-        },
-        events: {
-          active: false,
-          data: []
-        }
-      };
-      return point;
+      return {};
     };
 
     /**
@@ -91,29 +63,28 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
       var putDataOnScope = function (response) {
 
-        if (!$scope.point) {
-          throw new Error('[E] $scope.point is falsy, so you cannot put data on it!');
+        $scope.point = {
+          'waterchain': {
+            'active': true,
+            'store': [], // response.data
+            'utfgrid': [] // other response.data
+          }
+
+        if (!$scope.point[response.LGslug]) {$scope.point[response.slug] = {}}
+
+        $scope.point[response.LGslug][response.type] = {};
+
+        if (response.data.data === null) {
+
+          $scope.point[response.slug][response.type].active = false;
+
+        } else {
+
+          $scope.point[response.type].active = true;
+          $scope.point[response.type].data = response.data.data;
         }
 
-        switch (response.type) {
-
-          case 'UTFGrid':
-
-            if (response.data.data === null) {
-
-              $scope.point.attrs.active = false;
-              $scope.point.attrs.data = undefined;
-
-            } else {
-
-              $scope.point.attrs.active = true;
-              $scope.point.attrs.data = response.data.data;
-            }
-            break;
-
-          default:
-            break;
-        }
+        console.log('putDataOnScope --> $scope.point =', $scope.point);
       };
 
       angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
@@ -139,13 +110,13 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
      * @memberOf app.pointCtrl
      * @description errorcallback for UTFGrid
      */
-    _noUTF = function (here) {
-      return function () {
-        $scope.point.attrs.active = false;
-        ClickFeedbackService.drawArrowHere(here);
-        getRasterForLocation(here);
-      };
-    };
+    // _noUTF = function (here) {
+    //   return function () {
+    //     $scope.point.attrs.active = false;
+    //     ClickFeedbackService.drawArrowHere(here);
+    //     getRasterForLocation(here);
+    //   };
+    // };
 
     /**
      * @function
@@ -167,188 +138,188 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
      * - Events: getTimeSeriesForObject()
      * @return {function}
      */
-    utfgridResponded = function (here_, showOnlyEvents) {
+    // utfgridResponded = function (here_, showOnlyEvents) {
 
-      return function (response) {
+    //   return function (response) {
 
-        var here;
+    //     var here;
 
-        if (!showOnlyEvents) {
-          attrsResponded(response, $scope.point);
-        }
+    //     if (!showOnlyEvents) {
+    //       attrsResponded(response, $scope.point);
+    //     }
 
-        // Either way, stop vibrating click feedback.
-        ClickFeedbackService.stopVibration();
+    //     // Either way, stop vibrating click feedback.
+    //     ClickFeedbackService.stopVibration();
 
-        if (response && response.data) {
+    //     if (response && response.data) {
 
-          $scope.point.attrs.active = !showOnlyEvents;
+    //       $scope.point.attrs.active = !showOnlyEvents;
 
-          // Set here to location of object
-          var geom = JSON.parse(response.data.geom);
-          // Snap the click to the center of the object
-          here = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
-          // Draw feedback around object.
-          ClickFeedbackService.drawGeometry(
-            response.data.geom,
-            response.data.entity_name
-          );
-          var entity = $scope.point.attrs.data.entity_name;
-          var id = $scope.point.attrs.data.id;
-          // Get events belonging to object.
-          if (!showOnlyEvents) {
-            EventService.getEvents({object: entity + '$' + id})
-              .then(eventResponded);
-          }
-          // Get timeseries belonging to object.
-          getTimeSeriesForObject();
-        } else {
+    //       // Set here to location of object
+    //       var geom = JSON.parse(response.data.geom);
+    //       // Snap the click to the center of the object
+    //       here = {lat: geom.coordinates[1], lng: geom.coordinates[0]};
+    //       // Draw feedback around object.
+    //       ClickFeedbackService.drawGeometry(
+    //         response.data.geom,
+    //         response.data.entity_name
+    //       );
+    //       var entity = $scope.point.attrs.data.entity_name;
+    //       var id = $scope.point.attrs.data.id;
+    //       // Get events belonging to object.
+    //       if (!showOnlyEvents) {
+    //         EventService.getEvents({object: entity + '$' + id})
+    //           .then(eventResponded);
+    //       }
+    //       // Get timeseries belonging to object.
+    //       getTimeSeriesForObject();
+    //     } else {
 
-          here = here_;
+    //       here = here_;
 
-          $scope.point.attrs.active = false;
-          // If not hit object, treat it as a rain click, draw rain click
-          // arrow.
-          ClickFeedbackService.drawArrowHere(here);
-        }
-        // Get raster data for the snapped here
-        getRasterForLocation(here);
-      };
-    };
+    //       $scope.point.attrs.active = false;
+    //       // If not hit object, treat it as a rain click, draw rain click
+    //       // arrow.
+    //       ClickFeedbackService.drawArrowHere(here);
+    //     }
+    //     // Get raster data for the snapped here
+    //     getRasterForLocation(here);
+    //   };
+    // };
 
-    /**
-     * @function
-     * @memberOf app.pointCtrl
-     * @description Goes through layers and selects the temporal layer
-     * that is active. If there is none, nothing happens.
-     * @return {void}
-     */
-    getRasterForLocation = function (here) {
-      var layer, lIndex, stop, start;
-      for (lIndex in $scope.mapState.layers) {
-        layer = $scope.mapState.layers[lIndex];
-        if (layer.active && layer.temporal) {
-          getRasterForLayer(layer, here);
-        }
-      }
-    };
+    // /**
+    //  * @function
+    //  * @memberOf app.pointCtrl
+    //  * @description Goes through layers and selects the temporal layer
+    //  * that is active. If there is none, nothing happens.
+    //  * @return {void}
+    //  */
+    // getRasterForLocation = function (here) {
+    //   var layer, lIndex, stop, start;
+    //   for (lIndex in $scope.mapState.layers) {
+    //     layer = $scope.mapState.layers[lIndex];
+    //     if (layer.active && layer.temporal) {
+    //       getRasterForLayer(layer, here);
+    //     }
+    //   }
+    // };
 
-    /**
-     * @function
-     * @memberOf app.pointCtrl
-     * @description Gets a layer and retrieves data based
-     * on temporal extent etc.
-     * @param  {object} layer Layer object, containing name, slug..
-     * @return {void}
-     */
-    getRasterForLayer = function (layer, here) {
-      var stop = new Date($scope.timeState.end),
-          start = new Date($scope.timeState.start);
-      $scope.point.temporalRaster.aggWindow =
-        UtilService.getAggWindow($scope.timeState.start,
-                                 $scope.timeState.end,
-                                 272);  // graph is 272 px wide
-      if (layer.slug === 'rain') {
-        RasterService.getTemporalRaster(
-          start,
-          stop,
-          here,
-          $scope.point.temporalRaster.aggWindow,
-          layer.slug
-        )
-        .then(rasterLayerResponded)
-        .then(function () {
-          $scope.point.temporalRaster.type = layer.slug;
-          RasterService.getTemporalRaster(
-            start,
-            stop,
-            here,
-            $scope.point.temporalRaster.aggWindow,
-            layer.slug,
-            'rrc')
-              .then(function (response) {
-                $scope.point.temporalRaster.recurrenceTime = response;
-              }
-          );
-        });
-      } else {
-        RasterService.getTemporalRaster(
-          start,
-          stop,
-          here,
-          undefined,
-          layer.slug)
-          .then(rasterLayerResponded);
-      }
-    };
+    // /**
+    //  * @function
+    //  * @memberOf app.pointCtrl
+    //  * @description Gets a layer and retrieves data based
+    //  * on temporal extent etc.
+    //  * @param  {object} layer Layer object, containing name, slug..
+    //  * @return {void}
+    //  */
+    // getRasterForLayer = function (layer, here) {
+    //   var stop = new Date($scope.timeState.end),
+    //       start = new Date($scope.timeState.start);
+    //   $scope.point.temporalRaster.aggWindow =
+    //     UtilService.getAggWindow($scope.timeState.start,
+    //                              $scope.timeState.end,
+    //                              272);  // graph is 272 px wide
+    //   if (layer.slug === 'rain') {
+    //     RasterService.getTemporalRaster(
+    //       start,
+    //       stop,
+    //       here,
+    //       $scope.point.temporalRaster.aggWindow,
+    //       layer.slug
+    //     )
+    //     .then(rasterLayerResponded)
+    //     .then(function () {
+    //       $scope.point.temporalRaster.type = layer.slug;
+    //       RasterService.getTemporalRaster(
+    //         start,
+    //         stop,
+    //         here,
+    //         $scope.point.temporalRaster.aggWindow,
+    //         layer.slug,
+    //         'rrc')
+    //           .then(function (response) {
+    //             $scope.point.temporalRaster.recurrenceTime = response;
+    //           }
+    //       );
+    //     });
+    //   } else {
+    //     RasterService.getTemporalRaster(
+    //       start,
+    //       stop,
+    //       here,
+    //       undefined,
+    //       layer.slug)
+    //       .then(rasterLayerResponded);
+    //   }
+    // };
 
-    /**
-     * @function
-     * @memberOf app.pointCtrl
-     * @description Sets data attributes if a response returned properly
-     * @param  {object} response Response from rasterService. (data-array)
-     * @return {void}
-     */
-    rasterLayerResponded = function (response) {
-      $scope.point.temporalRaster.active = true;
-      $scope.point.temporalRaster.data = response;
-      $scope.point.temporalRaster.end =
-        $scope
-         .point
-         .temporalRaster
-         .data[$scope.point.temporalRaster.data.length - 1][0];
-      $scope.point.temporalRaster.start =
-        $scope.point.temporalRaster.data[0][0];
-    };
+    // /**
+    //  * @function
+    //  * @memberOf app.pointCtrl
+    //  * @description Sets data attributes if a response returned properly
+    //  * @param  {object} response Response from rasterService. (data-array)
+    //  * @return {void}
+    //  */
+    // rasterLayerResponded = function (response) {
+    //   $scope.point.temporalRaster.active = true;
+    //   $scope.point.temporalRaster.data = response;
+    //   $scope.point.temporalRaster.end =
+    //     $scope
+    //      .point
+    //      .temporalRaster
+    //      .data[$scope.point.temporalRaster.data.length - 1][0];
+    //   $scope.point.temporalRaster.start =
+    //     $scope.point.temporalRaster.data[0][0];
+    // };
 
-    /**
-     * @function
-     * @memberOf app.pointCtrl
-     * @description placeholder for now. Should fill data object
-     * with timeseries information. (Draw graphs and such);
-     */
-    getTimeSeriesForObject = function () {
-      // $scope.point.timeseries.data =
-      //   TimeseriesService.getRandomTimeseries();
-      // $scope.point.timeseries.selectedTimeseries =
-      //   $scope.point.timeseries.data[0];
-      // $scope.point.timeseries.active = true;
-    };
+    // /**
+    //  * @function
+    //  * @memberOf app.pointCtrl
+    //  * @description placeholder for now. Should fill data object
+    //  * with timeseries information. (Draw graphs and such);
+    //  */
+    // getTimeSeriesForObject = function () {
+    //   // $scope.point.timeseries.data =
+    //   //   TimeseriesService.getRandomTimeseries();
+    //   // $scope.point.timeseries.selectedTimeseries =
+    //   //   $scope.point.timeseries.data[0];
+    //   // $scope.point.timeseries.active = true;
+    // };
 
-    /**
-     * @function
-     * @memberOf app.pointCtrl
-     *
-     * @description fired when event API call responds
-     *
-     * @param  {object} jsondata response
-     */
-    eventResponded = function (response, clickedOnEvents) {
-      $scope.point.events.data = [];
-      angular.forEach(response.features, function (feature) {
-        $scope.point.events.data.push(feature.properties);
-      });
-      if ($scope.point.events.data.length > 0) {
-        $scope.point.events.active = true;
-        $scope.point.events.activeType = $scope.point.events.data[0].event_series;
-        EventService.addColor($scope.events);
-      }
-      if (clickedOnEvents) {
-        $scope.$apply();
-      }
-    };
+    // /**
+    //  * @function
+    //  * @memberOf app.pointCtrl
+    //  *
+    //  * @description fired when event API call responds
+    //  *
+    //  * @param  {object} jsondata response
+    //  */
+    // eventResponded = function (response, clickedOnEvents) {
+    //   $scope.point.events.data = [];
+    //   angular.forEach(response.features, function (feature) {
+    //     $scope.point.events.data.push(feature.properties);
+    //   });
+    //   if ($scope.point.events.data.length > 0) {
+    //     $scope.point.events.active = true;
+    //     $scope.point.events.activeType = $scope.point.events.data[0].event_series;
+    //     EventService.addColor($scope.events);
+    //   }
+    //   if (clickedOnEvents) {
+    //     $scope.$apply();
+    //   }
+    // };
 
-    /**
-     * @function
-     * @memberOf app.pointCtrl
-     * @description returns data from UTFgrid
-     * @param {jsondata} response
-     */
-    attrsResponded = function (response) {
-      // Return directly if no data is returned from the UTFgrid
-      if (!response.data) { return; }
-      $scope.point.attrs.data = response.data;
-    };
+    // /**
+    //  * @function
+    //  * @memberOf app.pointCtrl
+    //  * @description returns data from UTFgrid
+    //  * @param {jsondata} response
+    //  */
+    // attrsResponded = function (response) {
+    //   // Return directly if no data is returned from the UTFgrid
+    //   if (!response.data) { return; }
+    //   $scope.point.attrs.data = response.data;
+    // };
 
     /**
      * @function
@@ -374,33 +345,33 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
      * @memberOf app.pointCtrl
      * @description watch function
      */
-    _watchAttrAndEventActivity = function (n, o) {
+    // _watchAttrAndEventActivity = function (n, o) {
 
-      var checkIfAttrsActive  = $scope.point.attrs.active,
-          checkIfEventsActive = $scope.point.events.active;
+    //   var checkIfAttrsActive  =
+    //       checkIfEventsActive = $scope.point.events.active;
 
-      if (checkIfEventsActive && !checkIfAttrsActive) {
+    //   if (checkIfEventsActive && !checkIfAttrsActive) {
 
-        // Since we clearly clicked an event feature/circle,
-        // we need to kill both the vibrator and the locationmarker:
+    //     // Since we clearly clicked an event feature/circle,
+    //     // we need to kill both the vibrator and the locationmarker:
 
-        ClickFeedbackService.killVibrator();
-        ClickFeedbackService.removeLocationMarker();
+    //     ClickFeedbackService.killVibrator();
+    //     ClickFeedbackService.removeLocationMarker();
 
-      } else if (!checkIfEventsActive && checkIfAttrsActive) {
+    //   } else if (!checkIfEventsActive && checkIfAttrsActive) {
 
-        // Since we clicked on something else than an event
-        // circle/feature, we go find the black one and give
-        // it it's initial color.
+    //     // Since we clicked on something else than an event
+    //     // circle/feature, we go find the black one and give
+    //     // it it's initial color.
 
-        _recolorBlackEventFeature();
-        ClickFeedbackService.removeLocationMarker();
+    //     _recolorBlackEventFeature();
+    //     ClickFeedbackService.removeLocationMarker();
 
-      } else if (!checkIfEventsActive && !checkIfAttrsActive) {
+    //   } else if (!checkIfEventsActive && !checkIfAttrsActive) {
 
-        _recolorBlackEventFeature();
-      }
-    };
+    //     _recolorBlackEventFeature();
+    //   }
+    // };
 
     // Create point object and fill on controller creation
     $scope.point = createpoint();
