@@ -46,7 +46,26 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
      * @return {object} empty point.
      */
     createpoint = function () {
-      return {};
+
+      var point = {};
+
+      angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
+
+        point[layerGroup.slug] = {
+          active: false,
+          layerData: []
+        };
+
+        angular.forEach(layerGroup._layers, function (layer) {
+
+          point[layerGroup.slug].layerData.push({
+            type: layer.type,
+            data: undefined
+          });
+        });
+      });
+
+      return point;
     };
 
     /**
@@ -63,25 +82,17 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
 
       var putDataOnScope = function (response) {
 
-        $scope.point = {
-          'waterchain': {
-            'active': true,
-            'store': [], // response.data
-            'utfgrid': [] // other response.data
-          }
-
-        if (!$scope.point[response.LGslug]) {$scope.point[response.slug] = {}}
-
-        $scope.point[response.LGslug][response.type] = {};
-
         if (response.data.data === null) {
 
-          $scope.point[response.slug][response.type].active = false;
+          $scope.point[response.layerGroupSlug].active = false;
+          $scope.point[response.layerGroupSlug][response.layerType].data
+            = undefined;
 
         } else {
 
-          $scope.point[response.type].active = true;
-          $scope.point[response.type].data = response.data.data;
+          $scope.point[response.layerGroupSlug].active = true;
+          $scope.point[response.layerGroupSlug][response.layerType].data
+            = response.data.data;
         }
 
         console.log('putDataOnScope --> $scope.point =', $scope.point);

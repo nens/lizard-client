@@ -233,29 +233,29 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     });
   };
 
-  // var getRasterDataForExtentData = function (aggType, agg, slug, bounds) {
+  var getRasterDataForExtentData = function (aggType, agg, slug, bounds) {
 
-  //   var geom = "POLYGON(("
-  //     + bounds.getWest() + " " + bounds.getSouth() + ", "
-  //     + bounds.getEast() + " " + bounds.getSouth() + ", "
-  //     + bounds.getEast() + " " + bounds.getNorth() + ", "
-  //     + bounds.getWest() + " " + bounds.getNorth() + ", "
-  //     + bounds.getWest() + " " + bounds.getSouth()
-  //     + "))";
+    var geom = "POLYGON(("
+      + bounds.getWest() + " " + bounds.getSouth() + ", "
+      + bounds.getEast() + " " + bounds.getSouth() + ", "
+      + bounds.getEast() + " " + bounds.getNorth() + ", "
+      + bounds.getWest() + " " + bounds.getNorth() + ", "
+      + bounds.getWest() + " " + bounds.getSouth()
+      + "))";
 
-  //   if (cancelers[slug]) {
-  //     cancelers[slug].resolve();
-  //   }
+    if (cancelers[slug]) {
+      cancelers[slug].resolve();
+    }
 
-  //   cancelers[slug] = $q.defer();
+    cancelers[slug] = $q.defer();
 
-  //   var dataProm = getRasterData(slug, geom, undefined, undefined, {
-  //     agg: aggType,
-  //     q: cancelers[slug]
-  //   });
+    var dataProm = getRasterData(slug, geom, undefined, undefined, {
+      agg: aggType,
+      q: cancelers[slug]
+    });
 
-  //   return dataProm;
-  // };
+    return dataProm;
+  };
 
   /**
    * Requests data from raster service.
@@ -267,26 +267,26 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    * @return {promise}                a promise with aggregated data and
    *                                  the slug
    */
-  // var getAggregationForActiveLayer = function (layer, slug, agg, bounds) {
-  //   var dataProm = getRasterDataForExtentData(
-  //     layer.aggregation_type,
-  //     agg,
-  //     slug,
-  //     bounds)
-  //     .then(function (data) {
-  //       agg.data = data;
-  //       agg.type = layer.aggregation_type;
-  //       if (layer.aggregation_type === 'curve') {
-  //         // TODO: return data in a better way or rewrite graph directive
-  //         agg.data = handleElevationCurve(data);
-  //       }
-  //       return {
-  //         agg: agg,
-  //         slug: slug
-  //       };
-  //     });
-  //   return dataProm;
-  // };
+  var getAggregationForActiveLayer = function (layer, slug, agg, bounds) {
+    var dataProm = getRasterDataForExtentData(
+      layer.aggregation_type,
+      agg,
+      slug,
+      bounds)
+      .then(function (data) {
+        agg.data = data;
+        agg.type = layer.aggregation_type;
+        if (layer.aggregation_type === 'curve') {
+          // TODO: return data in a better way or rewrite graph directive
+          agg.data = handleElevationCurve(data);
+        }
+        return {
+          agg: agg,
+          slug: slug
+        };
+      });
+    return dataProm;
+  };
 
   /**
    * Checks whether rain data, retrieved from the back-end, contains at least

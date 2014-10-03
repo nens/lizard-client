@@ -216,6 +216,8 @@ app.service("UtilService", function () {
    */
   this.geomToWkt = function (geom) {
 
+    console.log('geom:', geom);
+
     if (geom.lat && geom.lng) {
       // geom is a L.LatLng object
       return "POINT(" + geom.lng + " " + geom.lat + ")";
