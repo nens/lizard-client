@@ -124,6 +124,8 @@ app.factory('LayerGroup', [
           }
         });
 
+        if (promiseCount === 0) { deferred.resolve(true); }
+
         return deferred.promise;
       },
 
@@ -170,11 +172,11 @@ app.factory('LayerGroup', [
       buildSuccesCallback = function (layer) {
 
         return function (data) {
-
           deferred.notify({
             data: data,
             type: layer.type,
-            layerGroupSlug: lgSlug
+            layerGroupSlug: lgSlug,
+            layerSlug: layer.slug
           });
 
           if (--count === 0) { deferred.resolve(true); }
@@ -188,7 +190,8 @@ app.factory('LayerGroup', [
           deferred.notify({
             data:  null,
             type: layer.type,
-            layerGroupSlug: lgSlug
+            layerGroupSlug: lgSlug,
+            layerSlug: layer.slug
           });
 
           if (--count === 0) { deferred.resolve(true); }

@@ -6,10 +6,6 @@ app.service('UtfGridService', ['$q', '$rootScope',
   function ($q, $rootScope) {
 
     var getData = function (nonLeafLayer, options) {
-      if (options.geom === undefined) {
-        throw new Error('Getting data for' + nonLeafLayer.slug + 'requires geom on options');
-      }
-
       var leafLayer = nonLeafLayer && nonLeafLayer.leafletLayer,
         deferred = $q.defer(),
         e = {
@@ -17,7 +13,8 @@ app.service('UtfGridService', ['$q', '$rootScope',
         },
         response;
 
-      if (!(options.geom instanceof L.LatLng)) {
+      if (options.geom === undefined || !(options.geom instanceof L.LatLng)) {
+        // no geom is no data from utf
         deferred.reject();
         return deferred.promise;
       }
@@ -33,9 +30,6 @@ app.service('UtfGridService', ['$q', '$rootScope',
           deferred.resolve(response.data);
         }
 
-      } else if ($rootScope.mapState.layerGroups.waterchain.active) {
-        _getDataFromUTFAsynchronous(nonLeafLayer, e, deferred);
-
       } else {
         deferred.resolve(false);
       }
@@ -45,32 +39,20 @@ app.service('UtfGridService', ['$q', '$rootScope',
 
 
     var _getDataFromUTFAsynchronous = function (nonLeafLayer, e, promise) {
-
       var leafLayer, response;
 
-      leafLayer = nonLeafLayer && nonLeafLayer.leafletLayer;
+      leafLayer = nonLeafLayer.leafletLayer;
 
-      if (leafLayer) {
+      leafLayer.on('load', function () {
+        response = leafLayer._objectForEvent(e);
 
-        leafLayer.on('load', function () {
-
-          response = leafLayer._objectForEvent(e);
-
-          // since this part executes async in a future turn of the event loop,
-          // we need to wrap it into an $apply call so that the model changes are
-          // properly observed:
-
-          $rootScope.$apply(function () {
-            promise.resolve(response.data);
-          });
-        });
-
-      } else {
-
+        // since this part executes async in a future turn of the event loop,
+        // we need to wrap it into an $apply call so that the model changes are
+        // properly observed:
         $rootScope.$apply(function () {
-          promise.resolve(false);
+          promise.resolve(response.data);
         });
-      }
+      });
     };
 
     return { getData: getData };
