@@ -1051,13 +1051,14 @@ ul.list-inline li.baselayer-icon label{
   stroke-width: 1.5px;
 }
 
-.axis path, .axis line {
+.timeline-axis path, .timeline-axis line {
   fill: none;
   /*stroke: #000;*/
   shape-rendering: crispEdges;
+  display: none;
 }
 
-.axis text{
+.timeline-axis text{
   -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;

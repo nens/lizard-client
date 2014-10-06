@@ -90,20 +90,25 @@
 
 
   <!-- begin: single card -->
-  <!--
   <div id="card-timeseries"
        class="card active"
-       ng-class="{hidden: !point.timeseries.active}">
+       ng-if="point.timeseries.active">
 
     <div class="card-content" id="card-content-timeseries">
-      <select class="timeseries"
+<!--       <select class="timeseries"
               ng-model="point.timeseries.selectedTimeseries"
               ng-options="series as series.name for series in point.timeseries.data">
-      </select>
+      </select> -->
+      <graph line
+             type="temporal"
+             data="point.timeseries.data"
+             ylabel="point.timeseries.name"
+             xlabel="n"
+             keys="{x: 0, y: 1}"
+             now="timeState.at">
+       </graph>
     </div>
   </div>
-  -->
-
 
   <!-- end: single card -->
   <!--

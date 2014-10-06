@@ -4,6 +4,7 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- Timeseries are back
 
 Release 0.2b5
 -------------

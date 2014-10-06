@@ -16,25 +16,9 @@
  *       all layers and perform generic actions based on layer types.
  */
 
-app.controller('PointCtrl', ['$scope', '$filter', 'LeafletService', 'CabinetService',
-    'RasterService', 'EventService', 'TimeseriesService', 'UtilService',
-    'UtfGridService', 'ClickFeedbackService',
-  function ($scope,
-            $filter,
-            LeafletService,
-            CabinetService,
-            RasterService,
-            EventService,
-            TimeseriesService,
-            UtilService,
-            UtfGridService,
-            ClickFeedbackService
-  ) {
-
-    var createpoint, fillpoint, _noUTF, utfgridResponded,
-        getRasterForLocation, getRasterForLayer, rasterLayerResponded,
-        getTimeSeriesForObject, eventResponded, attrsResponded,
-        _watchAttrAndEventActivity, _recolorBlackEventFeature;
+app.controller('PointCtrl', ['$scope', 'LeafletService', 'CabinetService',
+    'TimeseriesService', 'ClickFeedbackService',
+  function ($scope, LeafletService, CabinetService, TimeseriesService, ClickFeedbackService) {
 
     $scope.point = {
       promCount: 0,
@@ -46,7 +30,7 @@ app.controller('PointCtrl', ['$scope', '$filter', 'LeafletService', 'CabinetServ
      * @memberOf app.pointCtrl
      * @param  {L.LatLng} here
      */
-    fillpoint = function (here) {
+    var fillpoint = function (here) {
 
       ClickFeedbackService.drawClickInSpace($scope.mapState, here);
 
@@ -61,27 +45,29 @@ app.controller('PointCtrl', ['$scope', '$filter', 'LeafletService', 'CabinetServ
         var pointL = $scope.point[response.layerSlug] || {};
 
         if (!response || response.data === null) {
-          pointL.active = false;
+          console.log(response);
+          pointL = undefined;
         } else {
-          pointL.active = true;
           pointL.type = response.type;
           pointL.layerGroup = response.layerGroupSlug;
           pointL.data = response.data;
 
           if (response.data) {
             if (response.data.id) {
-              getTimeSeriesForObject(response.data.id);
+              getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
             }
             if (response.data.geom) {
               // Draw feedback around object.
-              var geom = JSON.parse(response.data.geom);
-              ClickFeedbackService.drawGeometry($scope.mapState, geom, response.data.entity_name);
+              ClickFeedbackService.drawGeometry($scope.mapState, response.data.geom, response.data.entity_name);
               // If the geom from the response is different than mapState.here
               // redo request to get the exact data for the centroid of the object.
+              var geom = JSON.parse(response.data.geom);
               if (geom.coordinates[1] !== $scope.mapState.here.lat
                 || geom.coordinates[0] !== $scope.mapState.here.lng) {
                 $scope.mapState.here = LeafletService.latLng(geom.coordinates[1], geom.coordinates[0]);
               }
+            } else {
+              ClickFeedbackService.drawArrowHere($scope.mapState.here);
             }
           }
         }
@@ -99,19 +85,19 @@ app.controller('PointCtrl', ['$scope', '$filter', 'LeafletService', 'CabinetServ
     /**
      * @function
      * @memberOf app.pointCtrl
-     * @description placeholder for now. Should fill data object
-     * with timeseries information. (Draw graphs and such);
+     * @description gets timeseries from service
      */
-    getTimeSeriesForObject = function (id) {
+    var getTimeSeriesForObject = function (id) {
       TimeseriesService.getTimeseries(id, $scope.timeState)
-        .then(function (result) {
+      .then(function (result) {
+        $scope.point.timeseries = $scope.point.timeseries ? $scope.point.timeseries : {};
         if (result.length > 0) {
+          $scope.point.timeseries = $scope.point.timeseries ? $scope.point.timeseries : {};
           $scope.point.timeseries.active = true;
           $scope.point.timeseries.data = result[0].events;
           $scope.point.timeseries.name = result[0].name;
         } else {
-          $scope.point.timeseries.active = false;
-          $scope.point.timeseries.data = [];
+          $scope.point.timeseries = undefined;
         }
       });
     };
@@ -135,21 +121,20 @@ app.controller('PointCtrl', ['$scope', '$filter', 'LeafletService', 'CabinetServ
      *
      */
     $scope.formatCSVColumns = function (data) {
-
       var i,
-          formattedDateTime,
-          formattedData = [],
-          lat = $scope.$parent.mapState.here.lat,
-          lng = $scope.$parent.mapState.here.lng,
-          _formatDate = function (epoch) {
+        formattedDateTime,
+        formattedData = [],
+        lat = $scope.$parent.mapState.here.lat,
+        lng = $scope.$parent.mapState.here.lng,
+        _formatDate = function (epoch) {
 
-            var d = new Date(parseInt(epoch));
+          var d = new Date(parseInt(epoch, 1));
 
-            return [
-              [d.getDate(), d.getMonth() + 1, d.getFullYear()].join('-'),
-              [d.getHours() || "00", d.getMinutes() || "00", d.getSeconds() || "00"].join(':')
-            ];
-          };
+          return [
+            [d.getDate(), d.getMonth() + 1, d.getFullYear()].join('-'),
+            [d.getHours() || "00", d.getMinutes() || "00", d.getSeconds() || "00"].join(':')
+          ];
+        };
 
       for (i = 0; i < data.length; i++) {
 
@@ -166,6 +151,6 @@ app.controller('PointCtrl', ['$scope', '$filter', 'LeafletService', 'CabinetServ
 
       return formattedData;
     };
-  }
 
+  }
 ]);
