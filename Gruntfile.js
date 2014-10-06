@@ -50,6 +50,10 @@ module.exports = function (grunt) {
           livereload: '<%= connect.options.livereload %>'
         }
       },
+      jstemplates: {
+        files: ['<%= yeoman.app %>/scripts/templates/{,*/}*.html'],
+        tasks: ['html2js']
+      },
       jsTest: {
         files: ['test/spec/{,*/}*.js'],
         tasks: ['newer:jshint:test', 'karma']
@@ -138,6 +142,18 @@ module.exports = function (grunt) {
           base: '<%= yeoman.dist %>'
         }
       }
+    },
+
+    html2js: {
+      options: {
+        rename: function (moduleName) {
+          return moduleName.split('app/')[1];
+        }
+      },
+      main: {
+        src: ['<%= yeoman.app %>/scripts/templates/*.html'],
+        dest: '<%= yeoman.app %>/scripts/templates/templates.js'
+      },
     },
 
     // Make sure code styles are up to par and there are no obvious mistakes
