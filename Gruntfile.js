@@ -147,7 +147,7 @@ module.exports = function (grunt) {
     html2js: {
       options: {
         rename: function (moduleName) {
-          return moduleName.split('app/')[1];
+          return moduleName.split('scripts/')[1];
         }
       },
       main: {
