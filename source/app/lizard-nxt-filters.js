@@ -55,6 +55,43 @@ app.filter('lookupManholeShape', function () {
   };
 });
 
+app.filter('lookupLeveeType', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case 1:
+      out = 'Primair';
+      break;
+    case 2:
+      out = 'Regionaal';
+      break;
+    case 3:
+      out = 'c-type';
+      break;
+    default:
+      out = '...';
+    }
+    return out;
+  };
+});
+
+app.filter('lookupLeveeReferencePointType', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case 1:
+      out = 'Dijkpaal';
+      break;
+    case 2:
+      out = 'Virtueel';
+      break;
+    default:
+      out = '...';
+    }
+    return out;
+  };
+});
+
 app.filter('lookupManholeMaterial', function () {
   return function (input) {
     var out;

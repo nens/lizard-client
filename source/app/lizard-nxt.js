@@ -147,7 +147,7 @@ app.controller('MasterCtrl',
   // because all templates are now refactored
   $scope.translations = {
     'bridge': 'Brug',
-    'channel': 'Kanaal',
+    'channel': 'Watergang',
     'crossprofile': 'Kruisprofiel',
     'culvert': 'Duiker',
     'manhole': 'Put',
@@ -158,7 +158,11 @@ app.controller('MasterCtrl',
     'pipe': 'Gesloten Leiding',
     'pumpstation': 'Gemaal',
     'pumpstation_sewerage': 'Rioolgemaal',
-    'weir': 'Stuw'
+    'weir': 'Stuw',
+    'pressurepipe': 'Persleiding',
+    'sluice': 'Sluis',
+    'levee': 'Kering',
+    'leveereferencepoint': 'Referentiepunt kering'
   };
 
   /**

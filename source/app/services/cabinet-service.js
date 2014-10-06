@@ -58,7 +58,7 @@ app.service("CabinetService", ["$q", "Restangular",
         {
           keyName: "Type",
           attrName: "type",
-          ngBindValue: "point.attrs.data.type | niceNumberOrEllipsis: 2",
+          ngBindValue: "point.attrs.data.type",
           valueSuffix: " m"
         },
         {
@@ -102,6 +102,63 @@ app.service("CabinetService", ["$q", "Restangular",
           ngBindValue:
             "point.attrs.data.width | niceNumberOrEllipsis: 2",
           valueSuffix: " m"
+        }
+      ]
+    },
+    levee: {
+      rows: [
+        {
+          keyName: "Type",
+          attrName: "type",
+          ngBindValue:
+            "point.attrs.data.type | lookupLeveeType",
+          valueSuffix: ""
+        },
+        {
+          keyName: "Kruinhoogte",
+          attrName: "crest_height",
+          ngBindValue:
+            "point.attrs.data.crest_height | niceNumberOrEllipsis: 2",
+          valueSuffix: " m"
+        },
+        {
+          keyName: "Materiaal",
+          attrName: "material",
+          ngBindValue:
+            "point.attrs.data.material",
+          valueSuffix: " m"
+        },
+        {
+          keyName: "Coating",
+          attrName: "coating",
+          ngBindValue:
+            "point.attrs.data.coating",
+          valueSuffix: " m"
+        },
+        {
+          keyName: "Kruinhoogte",
+          attrName: "crest_height",
+          ngBindValue:
+            "point.attrs.data.crest_height | niceNumberOrEllipsis: 2",
+          valueSuffix: " m"
+        },
+        {
+          keyName: "Risico",
+          attrName: "recurrence_time",
+          ngBindValue:
+            "point.attrs.data.recurrence_time | niceNumberOrEllipsis: 2",
+          valueSuffix: " m"
+        }
+      ]
+    },
+    leveereferencepoint: {
+      rows: [
+        {
+          keyName: "Type",
+          attrName: "type",
+          ngBindValue:
+            "point.attrs.data.type | lookupLeveeReferencePointType",
+          valueSuffix: ""
         }
       ]
     },
@@ -242,6 +299,38 @@ app.service("CabinetService", ["$q", "Restangular",
         }
       ]
     },
+    pressurepipe: {
+      rows: [
+        {
+          keyName: "Lengte",
+          attrName: "length",
+          ngBindValue:
+            "point.attrs.data.length | niceNumberOrEllipsis: 2",
+          valueSuffix: " m"
+        },
+        {
+          keyName: "Diameter",
+          attrName: "diameter",
+          ngBindValue:
+            "point.attrs.data.diameter | niceNumberOrEllipsis: 2",
+          valueSuffix: " m"
+        },
+        {
+          keyName: "Vorm",
+          attrName: "shape",
+          ngBindValue:
+            "point.attrs.data.shape",
+          valueSuffix: ""
+        },
+        {
+          keyName: "Materiaal",
+          attrName: "material",
+          ngBindValue:
+            "point.attrs.data.material",
+          valueSuffix: ""
+        }
+      ]
+    },
     pumpstation_sewerage: {
       rows: [
         {
@@ -294,6 +383,17 @@ app.service("CabinetService", ["$q", "Restangular",
           ngBindValue:
             "point.attrs.data.capacity | niceNumberOrEllipsis: 2",
           valueSuffix: " l/s"
+        }
+      ]
+    },
+    sluice: {
+      rows: [
+        {
+          keyName: "Naam",
+          attrName: "name",
+          ngBindValue:
+            "point.attrs.data.name",
+          valueSuffix: " m NAP"
         }
       ]
     },
