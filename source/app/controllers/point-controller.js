@@ -90,7 +90,7 @@ app.controller('PointCtrl', ['$scope', 'LeafletService', 'CabinetService',
       .then(function (result) {
         $scope.point.timeseries = $scope.point.timeseries ? $scope.point.timeseries : {};
         if (result.length > 0) {
-          $scope.point.timeseries.type === 'timeseries';
+          $scope.point.timeseries.type = 'timeseries';
           $scope.point.timeseries.data = result[0].events;
           $scope.point.timeseries.name = result[0].name;
           $scope.point.timeseries.order = 9999;
@@ -112,43 +112,5 @@ app.controller('PointCtrl', ['$scope', 'LeafletService', 'CabinetService',
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer($scope.mapState);
     });
-
-    /**
-     * Format the CSV (exporting rain data for a point in space/interval in
-     * time) in a way that makes it comprehensible for les autres.
-     *
-     */
-    $scope.formatCSVColumns = function (data) {
-      var i,
-        formattedDateTime,
-        formattedData = [],
-        lat = $scope.$parent.mapState.here.lat,
-        lng = $scope.$parent.mapState.here.lng,
-        _formatDate = function (epoch) {
-
-          var d = new Date(parseInt(epoch, 1));
-
-          return [
-            [d.getDate(), d.getMonth() + 1, d.getFullYear()].join('-'),
-            [d.getHours() || "00", d.getMinutes() || "00", d.getSeconds() || "00"].join(':')
-          ];
-        };
-
-      for (i = 0; i < data.length; i++) {
-
-        formattedDateTime = _formatDate(data[i][0]);
-
-        formattedData.push([
-          formattedDateTime[0],
-          formattedDateTime[1],
-          Math.floor(100 * data[i][1]) / 100 || "0.00",
-          lat,
-          lng
-        ]);
-      }
-
-      return formattedData;
-    };
-
   }
 ]);
