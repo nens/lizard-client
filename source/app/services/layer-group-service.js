@@ -176,7 +176,6 @@ app.factory('LayerGroup', [
             data: data,
             type: layer.type,
             layerGroupSlug: lgSlug,
-            layerSlug: layer.slug
           });
 
           if (--count === 0) { deferred.resolve(true); }

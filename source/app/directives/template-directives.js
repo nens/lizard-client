@@ -76,6 +76,11 @@ app.directive('actions', [function () {
 app.directive('cardattributes', [function () {
   return {
     restrict: 'E',
+    scope: {
+      waterchain: '=',
+      wanted: '='
+    },
+    replace: true,
     templateUrl: 'templates/cardattributes.html'
   };
 }]);
