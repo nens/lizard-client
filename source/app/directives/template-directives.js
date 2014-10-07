@@ -66,12 +66,13 @@ app.directive('actions', [function () {
   };
 }]);
 
-app.directive('cardattributes', [function () {
+app.directive('cardattributes', ['WantedAttributes', function (WantedAttributes) {
   return {
+    link: function (scope) { scope.wanted = WantedAttributes;
+      console.log(scope.wanted); },
     restrict: 'E',
     scope: {
-      waterchain: '=',
-      wanted: '='
+      waterchain: '='
     },
     replace: true,
     templateUrl: 'templates/cardattributes.html'
@@ -121,8 +122,7 @@ app.directive('rain', [function () {
     },
     restrict: 'E',
     scope: {
-      rainQuantity: '=',
-      rainRc: '='
+      rain: '='
     },
     replace: true,
     templateUrl: 'templates/rain.html'
@@ -133,8 +133,7 @@ app.directive('defaultpoint', [function () {
   return {
     link: function (scope) {
 
-      var EXCLUDED = ['wanted', 'promCount', 'timeseries', 'rain', 'rainRc',
-      'waterchain'];
+      var EXCLUDED = ['wanted', 'promCount', 'timeseries', 'rain', 'waterchain'];
 
       scope.$watch('point', function () {
         scope.included = [];

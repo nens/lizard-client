@@ -40,6 +40,7 @@ app.filter('orderObjectBy', function() {
 app.filter('niceNumberOrEllipsis', function () {
   return function (input, decimals) {
     var out;
+    console.log(input);
     if (typeof(input) === 'number') {
       var factor = 1;
       if (decimals) {

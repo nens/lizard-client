@@ -14,53 +14,65 @@ app.controller('LineCtrl', [
      * Contains data of all active layers with a suitable aggregation_type
      *
      */
-    $scope.line = {};
-
-    var updateLine, putDataOnscope,
-      removeDataFromScope, _updateLine;
+    $scope.line = {
+      promCount: 0,
+    };
 
     /**
-     * Loops over all layers to request lineion data for all
-     * active layers with a raster store path and an appropriate
-     * aggregation_type type.
-     *
-     * @param  {wktstring}   line         str describing the line
-     * @param  {object} layers   mapState.layerGroups, containing
-     *                           nxt definition of layerGroups, e.g "waterchain"
-     * @param  {object} line   line object of this
-     *                                  ctrl
+     * @function
+     * @memberOf app.pointCtrl
+     * @param  {L.LatLng} here
      */
-    // updateLine = function (line, layerGroups, scopeLine) {
+    var fillpoint = function (here) {
 
-    //   angular.forEach(layers, function (layer, slug) {
-    //     if (layer.active
-    //       && layer.store_path
-    //       && layer.aggregation_type !== 'counts') {
-    //       var agg = scopeLine[slug] || {}, dataProm;
-    //       if (layer.temporal) {
-    //         dataProm = RasterService.getRasterData(slug, line, $scope.timeState.start, $scope.timeState.end, {});
-    //       } else {
-    //         dataProm = RasterService.getRasterData(slug, line, undefined, undefined, {});
-    //       }
-    //       // Pass the promise to a function that handles the scope.
-    //       putDataOnscope(dataProm, slug);
-    //     } else if (slug in scopeLine && !layer.active) {
-    //       removeDataFromScope(slug);
-    //     }
-    //   });
-    // };
+      var doneFn = function (response) { // response ::= True | False
+        $scope.point.promCount--;
+        if ($scope.point.promCount === 0) {
+          ClickFeedbackService.stopVibration();
+        }
+      };
 
-        /**
-     * Loops over all layers to request lineion data for all
-     * active layers with a raster store path and an appropriate
-     * aggregation_type type.
-     *
-     * @param  {wktstring}   line         str describing the line
-     * @param  {object} layers   mapState.layerGroups, containing
-     *                                  nxt definition of layers
-     * @param  {object} line   line object of this
-     *                                  ctrl
-     */
+      var putDataOnScope = function (response) {
+        var pointL = $scope.point[response.layerGroupSlug] || {};
+        if (!response || response.data === null) {
+          pointL = undefined;
+        } else {
+          pointL.type = response.type;
+          pointL.layerGroup = response.layerGroupSlug;
+          pointL.data = response.data;
+          pointL.order = $scope.mapState.layerGroups[pointL.layerGroup].order;
+          if (response.data) {
+            if (response.data.id) {
+              getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
+            }
+            if (response.data.geom) {
+              // Draw feedback around object.
+              ClickFeedbackService.drawGeometry($scope.mapState, response.data.geom, response.data.entity_name);
+              // If the geom from the response is different than mapState.here
+              // redo request to get the exact data for the centroid of the object.
+              var geom = JSON.parse(response.data.geom);
+              if (geom.type === 'Point' && (geom.coordinates[1] !== $scope.mapState.here.lat
+                || geom.coordinates[0] !== $scope.mapState.here.lng)) {
+                $scope.mapState.here = LeafletService.latLng(geom.coordinates[1], geom.coordinates[0]);
+              }
+            } else {
+              ClickFeedbackService.drawArrowHere($scope.mapState, $scope.mapState.here);
+            }
+          }
+        }
+        $scope.point[response.layerGroupSlug] = pointL;
+        console.log($scope.point);
+      };
+
+      ClickFeedbackService.drawClickInSpace($scope.mapState, here);
+
+      angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
+        $scope.point.promCount++;
+        layerGroup.getData({geom: here})
+          .then(doneFn, doneFn, putDataOnScope);
+      });
+    };
+
     updateLine = function (line, layerGroups, scopeLine) {
 
       angular.forEach(layerGroups, function (layerGroup, slug) {

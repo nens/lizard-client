@@ -16,14 +16,12 @@
  *       all layers and perform generic actions based on layer types.
  */
 
-app.controller('PointCtrl', ['$scope', 'LeafletService', 'CabinetService',
-    'TimeseriesService', 'ClickFeedbackService',
-  function ($scope, LeafletService, CabinetService, TimeseriesService, ClickFeedbackService) {
+app.controller('PointCtrl', ['$scope', 'LeafletService', 'TimeseriesService', 'ClickFeedbackService',
+  function ($scope, LeafletService, TimeseriesService, ClickFeedbackService) {
 
-    $scope.point = {
-      promCount: 0,
-      wanted: CabinetService.wantedAttrs,
-    };
+    var promCount;
+
+    $scope.point = {};
 
     /**
      * @function
@@ -33,8 +31,8 @@ app.controller('PointCtrl', ['$scope', 'LeafletService', 'CabinetService',
     var fillpoint = function (here) {
 
       var doneFn = function (response) { // response ::= True | False
-        $scope.point.promCount--;
-        if ($scope.point.promCount === 0) {
+        promCount--;
+        if (promCount === 0) {
           ClickFeedbackService.stopVibration();
         }
       };
@@ -44,11 +42,12 @@ app.controller('PointCtrl', ['$scope', 'LeafletService', 'CabinetService',
         if (!response || response.data === null) {
           pointL = undefined;
         } else {
-          pointL.type = response.type;
           pointL.layerGroup = response.layerGroupSlug;
-          pointL.data = response.data;
           pointL.order = $scope.mapState.layerGroups[pointL.layerGroup].order;
+          pointL[response.layerSlug] = pointL[response.layerSlug] || {};
+          pointL[response.layerSlug].type = response.type;
           if (response.data) {
+            pointL[response.layerSlug].data = response.data;
             if (response.data.id) {
               getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
             }
@@ -74,7 +73,7 @@ app.controller('PointCtrl', ['$scope', 'LeafletService', 'CabinetService',
       ClickFeedbackService.drawClickInSpace($scope.mapState, here);
 
       angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
-        $scope.point.promCount++;
+        promCount++;
         layerGroup.getData({geom: here})
           .then(doneFn, doneFn, putDataOnScope);
       });

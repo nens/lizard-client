@@ -14,7 +14,6 @@
  */
 app.controller('AreaCtrl', [
   '$scope',
-  'RasterService',
   function ($scope, RasterService) {
 
     var _updateExtentAgg, putDataOnscope, removeDataFromScope,
