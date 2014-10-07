@@ -12,9 +12,7 @@
  * Contains data of all active layers with an aggregation_type
  *
  */
-app.controller('AreaCtrl', [
-  '$scope',
-  function ($scope, RasterService) {
+app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterService) {
 
     $scope.area = {};
 
@@ -43,6 +41,10 @@ app.controller('AreaCtrl', [
           areaLG[response.layerSlug] = undefined;
         } else {
           areaLG[response.layerSlug].data = response.data;
+        }
+        // TODO: move formatting of data to server.
+        if (response.layerSlug === 'ahn2/wss') {
+          areaLG[response.layerSlug].data = RasterService.handleElevationCurve(response.data);
         }
         $scope.area[response.layerGroupSlug] = areaLG;
         console.log('area:', $scope.area);

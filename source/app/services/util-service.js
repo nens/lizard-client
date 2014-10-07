@@ -236,7 +236,7 @@ app.service("UtilService", function () {
     } else if (checkForLine(geom)) {
       var coords = [];
       angular.forEach(geom, function (latLng) {
-        coords.push(latLng.lng + ' ' + latLng.lat);
+        coords.push(latLng.lng + " " + latLng.lat);
       });
       return "LINESTRING(" + coords.join(',') + ")";
     } else {

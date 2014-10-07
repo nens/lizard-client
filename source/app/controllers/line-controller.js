@@ -23,19 +23,22 @@ app.controller('LineCtrl', [
      * @param  {L.LatLng} here
      */
     var fillLine = function (points) {
-      console.log(points);
       var putDataOnScope = function (response) {
         var lineL = $scope.line[response.layerGroupSlug] || {};
         if (!response || response.data === null) {
           lineL = undefined;
         } else {
-          lineL.type = response.type;
-          lineL.layerGroup = response.layerGroupSlug;
-          lineL.data = response.data;
-          lineL.order = $scope.mapState.layerGroups[lineL.layerGroup].order;
+          lineL[response.layerSlug] = lineL[response.layerSlug] || {};
+          lineL[response.layerSlug].type = response.type;
+          lineL[response.layerSlug].layerGroup = response.layerGroupSlug;
+          lineL[response.layerSlug].data = response.data;
+          lineL[response.layerSlug].order = $scope.mapState.layerGroups[response.layerGroupSlug].order;
+        }
+        // TODO: move formatting of data to server.
+        if (response.layerSlug === 'ahn2/wss') {
+          lineL[response.layerSlug].data = UtilService.dataConvertToMeters(response.data);
         }
         $scope.line[response.layerGroupSlug] = lineL;
-        console.log($scope.line);
       };
 
       angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
@@ -174,14 +177,14 @@ app.controller('LineCtrl', [
               fillOpacity: 1,
               radius: 5
             });
-          MapService.addLayer(circle);
+          $scope.mapState.addLayer(circle);
         } else {
           circle.setLatLng([posLat, posLon]);
         }
       }
       else {
         if (circle !== undefined) {
-          MapService.removeLayer(circle);
+          $scope.mapState.removeLayer(circle);
           circle = undefined;
         }
       }
