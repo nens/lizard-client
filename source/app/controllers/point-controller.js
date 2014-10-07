@@ -43,6 +43,7 @@ app.controller('PointCtrl', ['$scope', 'LeafletService', 'TimeseriesService', 'C
           pointL = undefined;
         } else {
           pointL.layerGroup = response.layerGroupSlug;
+          pointL.layerGroupName = $scope.mapState.layerGroups[pointL.layerGroup].name;
           pointL.order = $scope.mapState.layerGroups[pointL.layerGroup].order;
           pointL[response.layerSlug] = pointL[response.layerSlug] || {};
           pointL[response.layerSlug].type = response.type;

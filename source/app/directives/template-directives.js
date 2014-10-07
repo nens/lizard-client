@@ -68,8 +68,7 @@ app.directive('actions', [function () {
 
 app.directive('cardattributes', ['WantedAttributes', function (WantedAttributes) {
   return {
-    link: function (scope) { scope.wanted = WantedAttributes;
-      console.log(scope.wanted); },
+    link: function (scope) { scope.wanted = WantedAttributes; },
     restrict: 'E',
     scope: {
       waterchain: '='
@@ -133,7 +132,8 @@ app.directive('defaultpoint', [function () {
   return {
     link: function (scope) {
 
-      var EXCLUDED = ['wanted', 'promCount', 'timeseries', 'rain', 'waterchain'];
+      // These layergroups have dedicated markup
+      var EXCLUDED = ['timeseries', 'rain', 'waterchain'];
 
       scope.$watch('point', function () {
         scope.included = [];
