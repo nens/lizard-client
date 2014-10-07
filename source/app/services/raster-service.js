@@ -31,8 +31,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
       start: startString,
       stop: endString,
       agg: agg
-    })
-      .then(function (data) { return data[0]; });
+    });
 
     return prom;
   };

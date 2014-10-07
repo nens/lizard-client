@@ -16,9 +16,6 @@ app.controller('AreaCtrl', [
   '$scope',
   function ($scope, RasterService) {
 
-    var _updateExtentAgg, putDataOnscope, removeDataFromScope,
-        updateExtentAgg;
-
     $scope.area = {};
 
     /**
@@ -35,25 +32,17 @@ app.controller('AreaCtrl', [
      * @param  {object} area area object of this
      *                                  ctrl
      */
-    updateExtentAgg = function (bounds, layerGroups, area) {
+    var fillArea = function (bounds, layerGroups, area) {
 
       var putDataOnScope = function (response) {
 
-        var areaLG = $scope.area[response.layerGroupSlug]
-          || {};
-
-        areaLG[response.type] = areaLG[response.type] || {};
-
-        console.log(response);
+        var areaLG = $scope.area[response.layerGroupSlug] || {};
+        areaLG[response.layerSlug] = areaLG[response.layerSlug] || {};
+        areaLG[response.layerSlug].aggType = response.aggType;
         if (response.data === null) {
-
-          areaLG.active = false;
-          areaLG[response.type].data = undefined;
-
+          areaLG[response.layerSlug] = undefined;
         } else {
-
-          areaLG.active = true;
-          areaLG[response.type].data = response.data;
+          areaLG[response.layerSlug].data = response.data;
         }
         $scope.area[response.layerGroupSlug] = areaLG;
         console.log('area:', $scope.area);
@@ -67,53 +56,11 @@ app.controller('AreaCtrl', [
     };
 
     /**
-     * @function
-     * @memberOf app.areaCtrl
-     * @description Returns true/false according to whether any events are present in the
-     * current lineion of spatial and temporal extent. This is used to
-     * determine whether the corresponding card (i.e. the Event summary card)
-     * needs to be shown.
-     *
-     * @return {boolean} The boolean specifying whether there are any events
-     * present
-     */
-    $scope.eventsPresentInCurrentExtent = function () {
-
-      if ($scope.events.types.count > 0) {
-
-        var i, type;
-
-        for (i in $scope.events.types) {
-          type = $scope.events.types[i];
-          if (type.currentCount && type.currentCount > 0) {
-            return true;
-          }
-        }
-      }
-
-      return false;
-    };
-
-    /**
-     * @function
-     * @memberOf app.areaCtrl
-     * @description private function to eliminate redundancy: gets called
-     * in multiple $watches declared locally.
-     */
-    _updateExtentAgg = function () {
-      updateExtentAgg(
-        $scope.mapState.bounds,
-        $scope.mapState.layerGroups,
-        $scope.area
-      );
-    };
-
-    /**
      * Updates area when user moves map.
      */
     $scope.$watch('mapState.bounds', function (n, o) {
       if (n === o) { return true; }
-      _updateExtentAgg();
+      fillArea();
     });
 
     /**
@@ -121,11 +68,11 @@ app.controller('AreaCtrl', [
      */
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return true; }
-      _updateExtentAgg();
+      fillArea();
     });
 
     // Load data at initialization.
-    _updateExtentAgg();
+    fillArea();
 
   }
 ]);

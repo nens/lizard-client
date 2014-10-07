@@ -15,7 +15,6 @@ app.controller('LineCtrl', [
      *
      */
     $scope.line = {
-      promCount: 0,
     };
 
     /**
@@ -23,131 +22,26 @@ app.controller('LineCtrl', [
      * @memberOf app.pointCtrl
      * @param  {L.LatLng} here
      */
-    var fillpoint = function (here) {
-
-      var doneFn = function (response) { // response ::= True | False
-        $scope.point.promCount--;
-        if ($scope.point.promCount === 0) {
-          ClickFeedbackService.stopVibration();
-        }
-      };
-
+    var fillLine = function (points) {
+      console.log(points);
       var putDataOnScope = function (response) {
-        var pointL = $scope.point[response.layerGroupSlug] || {};
+        var lineL = $scope.line[response.layerGroupSlug] || {};
         if (!response || response.data === null) {
-          pointL = undefined;
+          lineL = undefined;
         } else {
-          pointL.type = response.type;
-          pointL.layerGroup = response.layerGroupSlug;
-          pointL.data = response.data;
-          pointL.order = $scope.mapState.layerGroups[pointL.layerGroup].order;
-          if (response.data) {
-            if (response.data.id) {
-              getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
-            }
-            if (response.data.geom) {
-              // Draw feedback around object.
-              ClickFeedbackService.drawGeometry($scope.mapState, response.data.geom, response.data.entity_name);
-              // If the geom from the response is different than mapState.here
-              // redo request to get the exact data for the centroid of the object.
-              var geom = JSON.parse(response.data.geom);
-              if (geom.type === 'Point' && (geom.coordinates[1] !== $scope.mapState.here.lat
-                || geom.coordinates[0] !== $scope.mapState.here.lng)) {
-                $scope.mapState.here = LeafletService.latLng(geom.coordinates[1], geom.coordinates[0]);
-              }
-            } else {
-              ClickFeedbackService.drawArrowHere($scope.mapState, $scope.mapState.here);
-            }
-          }
+          lineL.type = response.type;
+          lineL.layerGroup = response.layerGroupSlug;
+          lineL.data = response.data;
+          lineL.order = $scope.mapState.layerGroups[lineL.layerGroup].order;
         }
-        $scope.point[response.layerGroupSlug] = pointL;
-        console.log($scope.point);
+        $scope.line[response.layerGroupSlug] = lineL;
+        console.log($scope.line);
       };
-
-      ClickFeedbackService.drawClickInSpace($scope.mapState, here);
 
       angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
-        $scope.point.promCount++;
-        layerGroup.getData({geom: here})
-          .then(doneFn, doneFn, putDataOnScope);
+        layerGroup.getData({geom: points})
+          .then(null, null, putDataOnScope);
       });
-    };
-
-    updateLine = function (line, layerGroups, scopeLine) {
-
-      angular.forEach(layerGroups, function (layerGroup, slug) {
-        if (layerGroup.isActive()
-          && layerGroup.store_path
-          && layerGroup.aggregation_type
-          && layerGroup.aggregation_type !== 'counts')
-        {
-
-          // var agg = scopeLine[slug] || {},
-          //     dataProm,
-          //     startEnd = layerGroup.temporal
-          //       ? [$scope.timeState.start, $scope.timeState.end]
-          //       : [undefined, undefined];
-
-          //dataProm = RasterService.getRasterData(slug, line, startEnd[0], startEnd[1], {});
-          var dataProm = layerGroup.getData(line);
-
-          // Pass the promise to a function that handles the scope.
-          putDataOnscope(dataProm, slug);
-        }
-        else if (slug in scopeLine && !layerGroup.isActive())
-        {
-          removeDataFromScope(slug);
-        }
-      });
-    };
-
-
-
-    /**
-     * Puts dat on line when promise resolves or
-     * removes item from line when no data is returned.
-     *
-     * @param  {promise}  dataProm       a promise with line data
-     * @param  {str}      slug           slug name of layer
-     */
-    putDataOnscope = function (dataProm, slug) {
-
-      dataProm.then(function (result) {
-
-        if (result.length > 0) {
-          $scope.line[slug] = {};
-          // convert degrees result to meters to display properly.
-          if ($scope.mapState.layerGroups[slug].temporal) {
-            $scope.line[slug].result = UtilService.dataConvertToMeters(result);
-            $scope.line[slug].data = UtilService.createDataForTimeState($scope.line[slug].result, $scope.timeState);
-          } else {
-            $scope.line[slug].data = UtilService.dataConvertToMeters(result);
-          }
-          $scope.line[slug].name = $scope.mapState.layerGroups[slug].name;
-        } else if (slug in $scope.line) {
-          removeDataFromScope(slug);
-        }
-      });
-    };
-
-    removeDataFromScope = function (slug) {
-      delete $scope.line[slug];
-    };
-
-    /**
-     * calls updateLine with a wkt representation of
-     * input
-     *
-     * @param {object} firstClick
-     * @param {object} secondClick
-     */
-    _updateLine = function (firstClick, secondClick) {
-      var line = UtilService.createLineWKT(firstClick, secondClick);
-      updateLine(
-        line,
-        $scope.mapState.layerGroups,
-        $scope.line
-      );
     };
 
     /**
@@ -177,7 +71,7 @@ app.controller('LineCtrl', [
         if ($scope.mapState.points.length === 1) {
 
           $scope.mapState.points[1] = $scope.mapState.here;
-          _updateLine($scope.mapState.points[0], $scope.mapState.points[1]);
+          fillLine($scope.mapState.points);
           ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.points[1], false);
         } else {
           $scope.mapState.points[0] = $scope.mapState.here;
@@ -188,8 +82,9 @@ app.controller('LineCtrl', [
 
     var watchIfUrlCtrlSetsPoints = $scope.$watch('mapState.points', function (n, o) {
       if ($scope.mapState.points.length === 2) {
-        _updateLine($scope.mapState.points[0], $scope.mapState.points[1]);
+        fillLine($scope.mapState.points);
         ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.points[1]);
+        // Delete this watch
         watchIfUrlCtrlSetsPoints();
       }
     });
@@ -210,7 +105,7 @@ app.controller('LineCtrl', [
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return true; }
       if ($scope.mapState.points.length === 2) {
-        _updateLine($scope.mapState.points[0], $scope.mapState.points[1]);
+        fillLine($scope.mapState.points);
       }
     });
 

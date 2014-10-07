@@ -108,6 +108,13 @@ app.controller('PointCtrl', ['$scope', 'LeafletService', 'TimeseriesService', 'C
       fillpoint($scope.mapState.here);
     });
 
+    // Update when layergroups have changed
+    $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
+      if (n === o) { return; }
+      fillpoint($scope.mapState.here);
+    });
+
+
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer($scope.mapState);

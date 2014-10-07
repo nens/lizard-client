@@ -210,16 +210,35 @@ app.service("UtilService", function () {
     return result;
   };
 
+
+  var checkForLine = function (geom) {
+    var line = false;
+    if (geom.length > 1) {
+      line = true;
+      angular.forEach(geom, function (value) {
+        if (!(value instanceof L.LatLng)) {
+          line = false;
+        }
+      });
+    }
+    return line;
+  };
+
   /**
    * @function geomToWkt
    * @memberOf UtilService
    */
   this.geomToWkt = function (geom) {
 
-    if (geom.lat && geom.lng) {
+    if (geom instanceof L.LatLng) {
       // geom is a L.LatLng object
       return "POINT(" + geom.lng + " " + geom.lat + ")";
-
+    } else if (checkForLine(geom)) {
+      var coords = [];
+      angular.forEach(geom, function (latLng) {
+        coords.push(latLng.lng + ' ' + latLng.lat);
+      });
+      return "LINESTRING(" + coords.join(',') + ")";
     } else {
       // geom is a L.Bounds object
       return "POLYGON(("
