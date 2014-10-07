@@ -63,7 +63,7 @@ describe('Testing UrlState', function () {
     service;
 
   var state = {
-    layers: {
+    layerGroups: {
       part: 'path',
       index: 1,
       update: true
@@ -146,8 +146,15 @@ describe('Testing UrlState', function () {
   });
 
   it('should set layers on the url', function () {
-    var layers = {topo: {active: true}, satte: {active: true}};
-    service.setLayersUrl(state, layers);
+    var layergroups = {
+      topo: {
+        isActive: function () { return true; }
+      },
+      satte: {
+        isActive: function () { return true; }
+      }
+    };
+    service.setlayerGroupsUrl(state, layergroups);
     expect($location.path()).toEqual('//topo,satte');
   });
 
