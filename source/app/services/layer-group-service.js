@@ -105,11 +105,12 @@ app.factory('LayerGroup', [
           else if (layer.type === 'UTFGrid') {
             wantedService = UtfGridService;
           }
-          /*else if (layer.type === 'Vector') {
-            wantedService = VectorService; */
-          // else {
-          //   console.log('[E] someService.getData() was called w/o finding \'wantedService\' where wantedService =', wantedService);
-          // }
+          else if (layer.type === 'Vector') {
+            wantedService = VectorService;
+          }
+          else {
+            // console.log('[E] someService.getData() was called w/o finding \'wantedService\' where wantedService =', wantedService);
+          }
 
           if (wantedService) {
 
@@ -282,20 +283,15 @@ app.factory('LayerGroup', [
 
       var leafletLayer;
 
-      if (nonLeafLayer._tiled) {
-
+      if (nonLeafLayer.tiled) {
         // Initiate a tiled Vector layer
-
         var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
 
         leafletLayer = new LeafletService.TileDataLayer(url, {
-
           dataCallback: function (featureCollection, point) {
-
             if (!featureCollection) { return; }
 
             if (featureCollection.features.length > 0) {
-
               VectorService.setData(
                 nonLeafLayer.slug,
                 featureCollection.features,
@@ -307,9 +303,9 @@ app.factory('LayerGroup', [
           ext: 'geojson'
         });
 
+        });
       } else {
-
-        //throw new Error('Initiate (non-tiled) Vector layer, for e.g. events');
+        // throw new Error('Initiate (non-tiled) Vector layer, for e.g. events');
         return leafletLayer;
       }
       return leafletLayer;

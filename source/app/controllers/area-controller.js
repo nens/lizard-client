@@ -45,7 +45,6 @@ app.controller('AreaCtrl', [
 
         areaLG[response.type] = areaLG[response.type] || {};
 
-        console.log(response);
         if (response.data === null) {
 
           areaLG.active = false;
@@ -57,7 +56,6 @@ app.controller('AreaCtrl', [
           areaLG[response.type].data = response.data;
         }
         $scope.area[response.layerGroupSlug] = areaLG;
-        console.log('area:', $scope.area);
       };
 
       angular.forEach(layerGroups, function (layerGroup, slug) {

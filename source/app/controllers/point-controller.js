@@ -88,7 +88,6 @@ app.controller('PointCtrl', ['$scope', '$filter', 'CabinetService',
           pointLG.active = true;
           pointLG[response.type].data = response.data;
         }
-        console.log('point:', $scope.point);
       };
 
       angular.forEach($scope.mapState.layerGroups, function (layerGroup) {

@@ -11,8 +11,8 @@
  *
  */
 
-app.service('VectorService', ['Restangular', 'LeafletService',
-  function (Restangular, LeafletService) {
+app.service('VectorService', ['$q', 'Restangular', 'LeafletService',
+  function ($q, Restangular, LeafletService) {
 
     /**
      * @function
@@ -107,7 +107,8 @@ app.service('VectorService', ['Restangular', 'LeafletService',
 
 
     var getData = function (nonLeafLayer, geom, start, end, options) {
-      console.log('[F] VectorService.getData(...): @WIP');
+      // console.log('[F] VectorService.getData(...): @WIP');
+      return $q.defer().promise;
     };
 
     var replaceData = function (layerSlug, data, zoom) {

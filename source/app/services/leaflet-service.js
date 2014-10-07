@@ -13,6 +13,8 @@ app.service('LeafletService', [function () {
       this._map = map;
       this._requests = [];
 
+      this._tilesLoading = {};
+
       this.addTileData = this.options.dataCallback;
       
       L.TileLayer.prototype.onAdd.call(this, map);
@@ -42,6 +44,7 @@ app.service('LeafletService', [function () {
         if (req.readyState !== 4) {
             return;
         }
+
         var s = req.status;
         if ((s >= 200 && s < 300) || s === 304) {
             tile.datum = JSON.parse(req.responseText);
@@ -52,9 +55,10 @@ app.service('LeafletService', [function () {
       };
     },
     _loadTile: function (tile, tilePoint) {
+      var key = tilePoint.z + '_' + tilePoint.x '_' + tilePoint.y;
+      this._tilesLoading[key] = null;
       var self = this;
       this._adjustTilePoint(tilePoint);
-
       var layer = this;
       var req = new XMLHttpRequest();
       this._requests.push(req);
@@ -68,12 +72,14 @@ app.service('LeafletService', [function () {
             this._requests[i].abort();
         }
         this._requests = [];
+        this._tilesLoading = {};
     },
     _tileLoaded: function (tile, tilePoint) {
-        // L.TileLayer.Ajax.prototype._tileLoaded.apply(this, arguments);
+        var key = tilePoint.z + '_' + tilePoint.x '_' + tilePoint.y;
+        this._tilesLoading[key] = 'done';
         if (tile.datum === null) { return null; }
         this.addTileData(tile.datum, tilePoint);
-    },
+    }
   });
 
   if (L) {
