@@ -66,6 +66,11 @@ app.directive('map', [
       );
 
       scope.mapState.initiateNxtMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
+      scope.mapState.addGeoJsonLayer();
+
+      scope.$on('updateGeoJsonLayer', function () {
+        scope.mapState.redrawGeoJsonLayer();
+      });
 
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.

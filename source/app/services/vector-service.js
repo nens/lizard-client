@@ -11,8 +11,9 @@
  *
  */
 
-app.service('VectorService', ['$q', 'Restangular', 'LeafletService',
-  function ($q, Restangular, LeafletService) {
+app.service('VectorService', ['$q', '$rootScope', 'Restangular',
+  'UtilService', 'LeafletService',
+  function ($q, $rootScope, Restangular, UtilService, LeafletService) {
 
     /**
      * @function
@@ -24,11 +25,43 @@ app.service('VectorService', ['$q', 'Restangular', 'LeafletService',
      */
     var filterSpatial = function (sourceArray, spatial) {
       var filteredSet = [];
+
       sourceArray.forEach(function (feature) {
-        var withinBounds = spatial.contains(new LeafletService.LatLng(feature.geometry.coordinates[0], feature.geometry.coordinates[1]));
+        var withinBounds;
+        if (feature.type === "Polygon") {
+          var maxLat = feature.geometry.coordinates[0][0][0],
+              minLat = feature.geometry.coordinates[0][0][0],
+              minLon = feature.geometry.coordinates[0][0][1],
+              maxLon = feature.geometry.coordinates[0][0][1];
+          console.log(feature.geometry.coordinates)
+          window.feature = feature
+          feature.geometry.coordinates[0].forEach(function (coordinates) {
+            maxLon = Math.max(coordinates[1], maxLon);
+            maxLat = Math.max(coordinates[0], maxLat);
+            minLon = Math.min(coordinates[1], minLon);
+            minLat = Math.min(coordinates[0], minLat);
+          });
+          // if as much as one point is visible in extent draw it.
+          withinBounds = (
+            spatial.contains(new LeafletService.LatLng(maxLat, maxLon)) ||
+            spatial.contains(new LeafletService.LatLng(maxLat, minLon)) ||
+            spatial.contains(new LeafletService.LatLng(minLat, maxLon)) ||
+            spatial.contains(new LeafletService.LatLng(minLat, minLon))
+            )
+        } else if (feature.type === "MultiPolygon") {
+          // fuckall
+        } else if (feature.type === "Point") {
+          var latLng = new LeafletService.LatLng(
+            feature.geometry.coordinates[0],
+            feature.geometry.coordinates[1]
+            )
+          withinBounds = spatial.contains(latLng);
+        }
+
         if (withinBounds) {
           filteredSet.push(feature);
         }
+
       });
       return filteredSet;
     };
@@ -87,6 +120,7 @@ app.service('VectorService', ['$q', 'Restangular', 'LeafletService',
     };
 
     var vectorLayers = {};
+    var dataHash = null;
 
     /**
      * @memberof app.VectorService
@@ -97,18 +131,47 @@ app.service('VectorService', ['$q', 'Restangular', 'LeafletService',
      * @param  {object} time  start, stop object
      * @return {promise}
      */
-    // var getData = function (layerSlug, geomortime, time) {
-    //   // if only one extra argument it can be geom or time.
-    //   if (!time && !(geomortime instanceof L.LatLngBounds)) {
-    //     return filterSet(vectorLayers[layerSlug].data, undefined, geomortime);
-    //   }
-    //   return filterSet(vectorLayers[layerSlug].data, geomortime, time);
-    // };
+    var getData = function (nonLeafLayer, options) {
 
+      var deferred = $q.defer();
+      
+      if (!(options.geom instanceof LeafletService.LatLngBounds)) {
+        deferred.reject();
+        return deferred.promise;
+      }
 
-    var getData = function (nonLeafLayer, geom, start, end, options) {
-      // console.log('[F] VectorService.getData(...): @WIP');
-      return $q.defer().promise;
+      var layer = nonLeafLayer.leafletLayer
+
+      if (layer) {
+        if (layer.isLoading ||
+            vectorLayers[nonLeafLayer.slug] === undefined) {
+          getDataAsync(nonLeafLayer, options, deferred);
+        } else {
+          var set = filterSet(vectorLayers[nonLeafLayer.slug].data, 
+            options.geom, {
+              start: options.start,
+              end: options.end
+            });
+          console.log(set);
+          deferred.resolve(set);
+          return deferred.promise;
+        }
+      } else {
+        deferred.reject();
+        return deferred.promise;
+      }
+    };
+
+    var getDataAsync = function (nonLeafLayer, options, deferred) {
+      nonLeafLayer.leafletLayer.on('loadend', function () {
+        if (vectorLayers[nonLeafLayer.slug] !== undefined ) {
+          deferred.resolve(filterSet(vectorLayers[nonLeafLayer.slug], 
+            options.geom, {
+              start: options.start,
+              end: options.end
+            }));
+        }
+      })
     };
 
     var replaceData = function (layerSlug, data, zoom) {
@@ -117,6 +180,7 @@ app.service('VectorService', ['$q', 'Restangular', 'LeafletService',
           zoom: zoom
         };
       Array.prototype.push.apply(vectorLayers[layerSlug].data, data);
+      needsToBeDrawn();
     };
 
     var setData = function (layerSlug, data, zoom) {
@@ -126,6 +190,26 @@ app.service('VectorService', ['$q', 'Restangular', 'LeafletService',
       } else {
         replaceData.apply(this, arguments);
       }
+      needsToBeDrawn();
+    };
+
+    var needsToBeDrawn = function () {
+      var newHash = makeHash();
+      if (newHash !== dataHash) {
+        dataHash = newHash;
+        $rootScope.$broadcast('updateGeoJsonLayer');
+      } else {
+        // do nothing I guess
+      }
+    }
+
+    var makeHash = function () {
+      var hashable = new String();
+      for (var key in vectorLayers) {
+        hashable = hashable + key;
+        hashable = hashable + vectorLayers[key].toString();
+      }
+      return UtilService.createHash(hashable);
     };
 
     return {

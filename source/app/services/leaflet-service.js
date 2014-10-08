@@ -14,6 +14,7 @@ app.service('LeafletService', [function () {
       this._requests = [];
 
       this._tilesLoading = {};
+      this.isLoading = false;
 
       this.addTileData = this.options.dataCallback;
       
@@ -55,7 +56,8 @@ app.service('LeafletService', [function () {
       };
     },
     _loadTile: function (tile, tilePoint) {
-      var key = tilePoint.z + '_' + tilePoint.x '_' + tilePoint.y;
+      var key = 'key'
+      // var key = 'key' + tilePoint.z + '_' + tilePoint.x '_' + tilePoint.y;
       this._tilesLoading[key] = null;
       var self = this;
       this._adjustTilePoint(tilePoint);
@@ -75,10 +77,25 @@ app.service('LeafletService', [function () {
         this._tilesLoading = {};
     },
     _tileLoaded: function (tile, tilePoint) {
-        var key = tilePoint.z + '_' + tilePoint.x '_' + tilePoint.y;
+      var key = 'key'
+        // var key = 'key' + tilePoint.z + '_' + tilePoint.x '_' + tilePoint.y;
         this._tilesLoading[key] = 'done';
+        this.isLoading = false;
+
         if (tile.datum === null) { return null; }
         this.addTileData(tile.datum, tilePoint);
+        
+        for (var tile in this._tilesLoading) {
+          if (this._tilesLoading[tile] === null) {
+            this.isLoading = true;
+            break;
+          }
+        }
+
+
+        if (this.isLoading === false) {
+          this.fire('loadend');
+        }
     }
   });
 

@@ -12,7 +12,8 @@
  * the map object and mapState.
  *
  */
-app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'LeafletService', 'LayerGroup',
+app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 
+  'LeafletService', 'LayerGroup',
   function ($rootScope, $filter, $http, CabinetService,
     LeafletService, LayerGroup) {
 
@@ -154,6 +155,50 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
           }
         });
         return activeTemporalLayer;
+      },
+
+      /**
+       * @function
+       * @memberOf app.NxtMapService
+       * @description creates and adds empty geoJson layer
+       * for vectordata.
+       * @return {[type]} [description]
+       */
+      addGeoJsonLayer: function () {
+        this._vectorLayer = LeafletService.geoJson([], {
+          style: {
+            "color": "#ff7800",
+            "weight": 5,
+            "opacity": 0.65
+          }
+        });
+        this.addLayer(this._vectorLayer);
+      },
+
+      /**
+       * @function
+       * @memberOf app.NxtMapService
+       * @description redraws geojsonlayer.
+       * for vectordata.
+       * @return {[type]} [description]
+       */
+      redrawGeoJsonLayer: function () {
+        var that = this;
+        this.removeLayer(this._vectorLayer);
+        this.addGeoJsonLayer();
+        angular.forEach(this.layerGroups, function (lg) {
+          if (lg._active) {
+            lg.getData({
+              geom: that.bounds
+            }).then(function (response) {
+              console.log(response)
+              that._vectorLayer.addData(response);  
+            })
+          }
+          else {
+            return;
+          }
+        })
       }
 
     };

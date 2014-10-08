@@ -142,6 +142,7 @@ app.factory('LayerGroup', [
 
         this._active = !this._active;
 
+        // wtf is this.
         var fn = this._active ? addLayer : removeLayer;
 
         angular.forEach(this._layers, function (layer) {
@@ -232,7 +233,7 @@ app.factory('LayerGroup', [
 
     /**
      * @function
-     * @memberof app.MapService
+     * @memberof app.LayerGroup
      * @param {L.Class} Leaflet layer.
      * @description Adds layer to map
      */
@@ -242,7 +243,7 @@ app.factory('LayerGroup', [
 
     /**
      * @function
-     * @memberof app.MapService
+     * @memberof app.LayerGroup
      * @param  {L.Class} Leaflet layer
      * @description Removes layer from map
      */
@@ -302,8 +303,6 @@ app.factory('LayerGroup', [
           slug: nonLeafLayer.slug,
           ext: 'geojson'
         });
-
-        });
       } else {
         // throw new Error('Initiate (non-tiled) Vector layer, for e.g. events');
         return leafletLayer;
@@ -314,7 +313,7 @@ app.factory('LayerGroup', [
 
     /**
      * @function
-     * @memberof app.MapService
+     * @memberof app.LayerGroup
      * @param  {object} layer as served from backend
      * @return {L.TileLayer} leafletLayer
      * @description Initiates a Leaflet Tilelayer
@@ -337,7 +336,7 @@ app.factory('LayerGroup', [
 
     /**
      * @function
-     * @memberof app.MapService
+     * @memberof app.LayerGroup
      * @param  {object} nonLeafLayer as served from backend
      * @return {L.TileLayer.WMS}              [description]
      * @description Initiates a Leaflet WMS layer
@@ -370,7 +369,7 @@ app.factory('LayerGroup', [
 
     /**
      * @function
-     * @memberof app.MapService
+     * @memberof app.LayerGroup
      * @param  {object} nonLeafLayer as served from backend
      * @return {L.UtfGrid} utfgrid
      * @description Initiates layers that deliver interaction with the map
