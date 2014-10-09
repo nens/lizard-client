@@ -126,7 +126,6 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
       initiateNxtMapEvents: function (clicked, moveStarted, moveEnded, mouseMoved) {
         var map = this._map;
         var conditionalApply = function (fn, e) {
-
           if (!$rootScope.$$phase) {
             $rootScope.$apply(fn(e, map));
           } else {
@@ -193,11 +192,6 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
 
       var map = LeafletService.map(mapElem, options);
 
-      // TODO: fix the relative position of nav bar and map element to make the
-      // attribution visible.
-      // var osmAttrib = '<a href="http://www.openstreetmap.org/">&copy; OpenStreetNxtMap</a>';
-      // this._map.attributionControl.addAttribution(options.attribution);
-      // this._map.attributionControl.setPrefix('');
       return map;
     };
 
