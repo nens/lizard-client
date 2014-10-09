@@ -35,10 +35,10 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
 
       /**
        * @function
-       * @memberOf app.NxtMapService
-       * @description legacy function from map-directive --> does too much!
-       * @param  {object} layer  single layer that needs to be toggled
-       * @param  {object} layers all layers to switch off.
+       * @memberOf app.NxtMap
+       * @description Toggles a layergroup when layergroups should be toggled
+       *              takes into account that baselayers should toggle eachother
+       * @param  layerGroup layergroup that should be toggled
        */
       toggleLayerGroup: function (layerGroup) {
         if (layerGroup._slug === 'elevation' && layerGroup.isActive()) {
@@ -62,6 +62,13 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
         }
       },
 
+      /**
+       * @function
+       * @memberOf app.NxtMap
+       * @description Sets the layergroups to the state they came from the
+       *              server. Is called by the urlCtrl when no layergroup
+       *              info is found on the server
+       */
       setLayerGoupsToDefault: function () {
         var map = this._map;
         angular.forEach(this.layerGroups, function (layerGroup) {

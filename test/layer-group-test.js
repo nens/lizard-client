@@ -44,7 +44,7 @@ describe('Testing LayerGroup', function () {
     expect(lg.defaultActive).toEqual(false);
   });
 
-  it('should activate layergroup when toggled', function (){
+  it('should activate layergroup when toggled', function () {
     var el = angular.element('<div id="map"></div>');
     var map = L.map(el[0]);
     var lg = new LayerGroup(data_layers.satellite);
