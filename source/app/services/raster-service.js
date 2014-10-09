@@ -24,7 +24,7 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
 
     var canceler = cancelers[layer.slug] = $q.defer();
 
-    var prom = CabinetService.raster(canceler).get({
+    return CabinetService.raster(canceler).get({
       raster_names: layer.slug,
       geom: wkt,
       srs: srs,
@@ -32,8 +32,6 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
       stop: endString,
       agg: agg
     });
-
-    return prom;
   };
 
   /**

@@ -38,7 +38,7 @@ app.service('UtfGridService', ['$q', '$rootScope',
     };
 
 
-    var _getDataFromUTFAsynchronous = function (nonLeafLayer, e, promise) {
+    var _getDataFromUTFAsynchronous = function (nonLeafLayer, e, deferred) {
       var leafLayer, response;
 
       leafLayer = nonLeafLayer.leafletLayer;
@@ -50,7 +50,7 @@ app.service('UtfGridService', ['$q', '$rootScope',
         // we need to wrap it into an $apply call so that the model changes are
         // properly observed:
         $rootScope.$apply(function () {
-          promise.resolve(response.data);
+          deferred.resolve(response.data);
         });
       });
     };

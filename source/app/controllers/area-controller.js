@@ -30,7 +30,7 @@ app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterS
      * @param  {object} area area object of this
      *                                  ctrl
      */
-    var fillArea = function (bounds, layerGroups, area) {
+    var fillArea = function (bounds, layerGroups) {
 
       var putDataOnScope = function (response) {
 
@@ -62,7 +62,7 @@ app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterS
      */
     $scope.$watch('mapState.bounds', function (n, o) {
       if (n === o) { return true; }
-      fillArea();
+      fillArea($scope.mapState.bounds, $scope.mapState.layerGroups);
     });
 
     /**
@@ -70,11 +70,11 @@ app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterS
      */
     $scope.$watch('mapState.activeLayersChanged', function (n, o) {
       if (n === o) { return true; }
-      fillArea();
+      fillArea($scope.mapState.bounds, $scope.mapState.layerGroups);
     });
 
     // Load data at initialization.
-    fillArea();
+    fillArea($scope.mapState.bounds, $scope.mapState.layerGroups);
 
   }
 ]);

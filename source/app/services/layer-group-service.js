@@ -21,7 +21,7 @@ app.factory('LayerGroup', [
      * @memberOf app.LayerGroup
      * @description Instantiates a layerGroup with non-readable and
      *              non-configurable properties
-     * @param  {object} layergroup definition
+     * @param  {object} layergroup definition as coming from the server
      */
     function LayerGroup(layerGroup) {
       Object.defineProperty(this, 'name', {
@@ -75,13 +75,14 @@ app.factory('LayerGroup', [
      /**
       * @function
       * @memberOf app.LayerGroup.prototype
-      * @description - Returns a promise that notifies with data for every layer
-      *                of the layergroup that is appplicable (i.e: rain and several
-      *                vector layers). It resolves when all data is in.
-      * @param  {object} geom - latLng object with lat and lng properties or a list of
-      *                         such objects.
-      * @return  {promise} - notifies with data per layer and resolves when all layers
-      *                      returned data.
+      * @description Returns a promise that notifies with data for every layer
+      *              of the layergroup that is appplicable (i.e: rain and several
+      *              vector layers). It resolves when all data is in.
+      * @param  {object} geom latLng object with lat and lng properties or a list of
+      *                       such objects.
+      * @return  {promise} notifies with data per layer and resolves with value true
+      *                    when layergroup was active, or false when layergroup was
+      *                    inactive.
       */
       getData: function (options) {
 
@@ -93,7 +94,7 @@ app.factory('LayerGroup', [
           return deferred.promise;
         }
 
-        var promiseCount = 0;
+        var promises = [];
 
         angular.forEach(this._layers, function (layer) {
 
@@ -113,31 +114,37 @@ app.factory('LayerGroup', [
 
           if (wantedService) {
 
-            promiseCount = buildPromise(
+            promises.push(buildPromise(
               lgSlug,
               layer,
               options,
               deferred,
-              wantedService,
-              promiseCount
-            );
+              wantedService
+            ));
           }
         });
 
-        if (promiseCount === 0) { deferred.resolve(true); }
+        // Bear with me: the promises from the individual getData's(),
+        // notify() the defer from LayerGroup.getData() on resolve.
+        // When all the individual promises have resolved, this defer
+        // should be resolve. It resolves with 'true' to indicate activity
+        // of layer. No need to keep a counter of the individual promises.
+        $q.all(promises).then(function () { deferred.resolve(true); });
 
         return deferred.promise;
       },
 
+
      /**
       * @function
       * @memberOf app.LayerGroup.prototype
-      * @description
+      * @description toggles a layergroup on the given map.
+      * @param  {object} map Leaflet map to toggle this layer on
       */
       toggle: function (map) {
 
         if (!this._initiated) {
-          this._layers = _initiateLayers(this._layers, this.temporal);
+          this._layers = _initializeLeafletLayers(this._layers, this.temporal);
           this._initiated = true;
         }
 
@@ -159,107 +166,90 @@ app.factory('LayerGroup', [
 
     ///////////////////////////////////////////////////////////////////////////
 
+   /**
+    * @function
+    * @memberOf app.LayerGroup
+    * @description creates a promise for the given layer and the provided
+    *              service. The service should have a getData function that
+    *              returns a promise that is resolved when data is recieved.
+    * @param lgSlug layerGroup slug to include in the response.
+    * @param layer  nxtLayer definition.
+    * @param options options containing geometry or time.
+    * @param deffered deffered to notify when service.getData resolves.
+    * @param wantedService Service to getData from.
+    */
     var buildPromise = function (
       lgSlug,
       layer,
       options,
       deferred,
-      wantedService,
-      count) {
+      wantedService) {
 
-      var prom, buildSuccesCallback, buildErrorCallback;
-
-      buildSuccesCallback = function (layer) {
-
-        return function (data) {
-          deferred.notify({
-            data: data,
-            type: layer.type,
-            layerGroupSlug: lgSlug,
-            layerSlug: layer.slug,
-            aggType: layer.aggregation_type
-          });
-
-          if (--count === 0) { deferred.resolve(true); }
-        };
+      var buildSuccesCallback = function (data) {
+        deferred.notify({
+          data: data,
+          type: layer.type,
+          layerGroupSlug: lgSlug,
+          layerSlug: layer.slug,
+          aggType: layer.aggregation_type
+        });
       };
 
-      buildErrorCallback = function (layer) {
-
-        return function (msg) {
-
-          deferred.notify({
-            data:  null,
-            type: layer.type,
-            layerGroupSlug: lgSlug,
-            layerSlug: layer.slug
-          });
-
-          if (--count === 0) { deferred.resolve(true); }
-        };
+      var buildErrorCallback = function (msg) {
+        deferred.notify({
+          data:  null,
+          type: layer.type,
+          layerGroupSlug: lgSlug,
+          layerSlug: layer.slug
+        });
       };
 
+      if (!options) { options = {}; }
       options.agg = layer.aggregation_type;
 
-      prom = wantedService.getData(
-        layer,
-        options
-      );
-
-      prom.then(
-        buildSuccesCallback(layer),
-        buildErrorCallback(layer)
-      );
-
-      return ++count;
-    };
-
-    // TODO: get this from the server
-    var getOptsForLayer = function (layer) {
-
-      // agg ::= 'none' | 'rrc' | 'sum' | 'counts'
-
-      switch (layer.slug) {
-      case 'radar/basic':
-        return {
-          agg: 'rrc'
-        };
-      case 'use/wss':
-        return {
-          agg: 'sum'
-        };
-      default:
-        return {};
-      }
+      return wantedService.getData(layer, options)
+        .then(buildSuccesCallback, buildErrorCallback);
     };
 
     /**
      * @function
-     * @memberof app.MapService
+     * @memberof app.LayerGroup
      * @param {L.Class} Leaflet layer.
      * @description Adds layer to map
      */
     var addLayer = function (map, layer) { // Leaflet Layer
-      map.addLayer(layer);
+      if (map.hasLayer(layer)) {
+        throw new Error('Attempted to add layer' + layer._id + 'while it was already part of the map');
+      } else { map.addLayer(layer); }
     };
 
     /**
      * @function
-     * @memberof app.MapService
+     * @memberof app.LayerGroup
+     * @param  {L.Class} Leaflet map
      * @param  {L.Class} Leaflet layer
      * @description Removes layer from map
      */
     var removeLayer = function (map, layer) { // Leaflet Layer
-      map.removeLayer(layer);
+      if (map.hasLayer(layer)) { map.removeLayer(layer); }
+      else {
+        throw new Error('Attempted to remove layer' + layer._id + 'while it was not part of provided the map');
+      }
     };
 
-    var _initiateLayers = function (layers, temporal) {
-
+    /**
+     * @function
+     * @memberof app.LayerGroup
+     * @param  {L.Class} Leaflet layer
+     * @param temproal boolean describing whether the layer is temporal
+     * @description delegates initialization of leaflet layers to other
+     *              functions.
+     */
+    var _initializeLeafletLayers = function (layers, temporal) {
       if (temporal) {
         //TODO: initialize imageoverlays
         return layers;
       }
-
       else {
         angular.forEach(layers, function (layer) {
           if (layer.type === 'Vector') {
@@ -322,7 +312,7 @@ app.factory('LayerGroup', [
 
     /**
      * @function
-     * @memberof app.MapService
+     * @memberof app.LayerGroup
      * @param  {object} layer as served from backend
      * @return {L.TileLayer} leafletLayer
      * @description Initiates a Leaflet Tilelayer
@@ -345,7 +335,7 @@ app.factory('LayerGroup', [
 
     /**
      * @function
-     * @memberof app.MapService
+     * @memberof app.LayerGroup
      * @param  {object} nonLeafLayer as served from backend
      * @return {L.TileLayer.WMS}              [description]
      * @description Initiates a Leaflet WMS layer

@@ -70,10 +70,6 @@ app.directive('map', [
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.
       $controller('UrlController', {$scope: scope});
-
-      // initialize empty ClickLayer.
-      // Otherwise click of events-aggregate and clicklayer
-      // ClickFeedbackService.drawClickInSpace(new L.LatLng(180.0, 90.0));
     };
 
     return {

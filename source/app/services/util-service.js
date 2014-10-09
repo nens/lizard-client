@@ -175,30 +175,6 @@ app.service("UtilService", function () {
   };
 
   /**
-   * @function createLineWKT
-   * @memberOf UtilService
-   *
-   * @summary Create WKT line from two latlon objects.
-   *
-   * @param {object} firstClick - object with list of latlon.
-   * @param {object} secondClick - object with list of latlon.
-   * @return {string} - WKT string of line between firstClick and secondClick.
-   */
-  this.createLineWKT = function (firstClick, secondClick) {
-    return [
-      "LINESTRING(",
-      firstClick.lng,
-      " ",
-      firstClick.lat,
-      ",",
-      secondClick.lng,
-      " ",
-      secondClick.lat,
-      ")"
-    ].join('');
-  };
-
-  /**
    * @function serveToMobileDevice
    * @memberOf UtilService
    */
@@ -209,7 +185,6 @@ app.service("UtilService", function () {
     );
     return result;
   };
-
 
   var checkForLine = function (geom) {
     var line = false;
