@@ -264,6 +264,20 @@ module.exports = function (grunt) {
       }
     },
 
+    replace: {
+      dist: {
+        src: ['dist/*.html'],
+        overwrite: true,                 // overwrite matched source files
+        replacements: [{
+          from: '/styles/',
+          to: '/static/client/styles/'
+        },{
+          from: '/scripts/',
+          to: '/static/client/scripts/'
+        }]
+      }
+    },
+
     // Performs rewrites based on filerev and the useminPrepare configuration
     usemin: {
       html: ['<%= yeoman.dist %>/{,*/}*.html'],
@@ -381,7 +395,13 @@ module.exports = function (grunt) {
           cwd: '.tmp/images',
           dest: '<%= yeoman.dist %>/images',
           src: ['generated/*']
-        }]
+        }, {
+          expand: true,
+          cwd: 'vendor/font-awesome',
+          src: 'fonts/*',
+          dest: '<%= yeoman.dist %>'
+        }
+         ]
       },
       styles: {
         expand: true,
@@ -471,6 +491,7 @@ module.exports = function (grunt) {
     'filerev',
     'usemin',
     'htmlmin',
+    'replace',
     'doxx'
   ]);
 
