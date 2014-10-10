@@ -1,6 +1,6 @@
 <div ng-controller="LineCtrl">
   <div ng-repeat="lg in line" class="card active" id="card-<% l.name %>">
-    <div ng-repeat="l in lg" id="card-content-<% l.name %>" class="card-content">
+    <div ng-repeat="l in lg" id="card-content-<% l.name %>" class="card-content" ng-if="l.data">
       <div ng-switch="l.name" class="card-content" id="card-content-<% agg.name %>">
 
         <graph ng-switch-default

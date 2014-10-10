@@ -23,27 +23,36 @@ app.controller('LineCtrl', [
      * @param  {L.LatLng} here
      */
     var fillLine = function (points) {
+
+      var doneFn = function (response) {
+        if (response.active === false) {
+          $scope.line[response.slug] = undefined;
+        }
+      };
+
       var putDataOnScope = function (response) {
-        var lineL = $scope.line[response.layerGroupSlug] || {};
-        if (!response || response.data === null) {
-          lineL = undefined;
+        var lineL;
+        if (response.data === null) { lineL = undefined;
         } else {
+          lineL = $scope.line[response.layerGroupSlug] || {};
+          lineL.layerGroup = response.layerGroupSlug;
           lineL[response.layerSlug] = lineL[response.layerSlug] || {};
           lineL[response.layerSlug].type = response.type;
           lineL[response.layerSlug].layerGroup = response.layerGroupSlug;
           lineL[response.layerSlug].data = response.data;
           lineL[response.layerSlug].order = $scope.mapState.layerGroups[response.layerGroupSlug].order;
+          // TODO: move formatting of data to server.
+          if (response.layerSlug === 'ahn2/wss') {
+            lineL[response.layerSlug].data = UtilService.dataConvertToMeters(response.data);
+          }
         }
-        // TODO: move formatting of data to server.
-        if (response.layerSlug === 'ahn2/wss') {
-          lineL[response.layerSlug].data = UtilService.dataConvertToMeters(response.data);
-        }
+
         $scope.line[response.layerGroupSlug] = lineL;
       };
 
       angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
         layerGroup.getData({geom: points})
-          .then(null, null, putDataOnScope);
+          .then(doneFn, doneFn, putDataOnScope);
       });
     };
 
@@ -105,7 +114,7 @@ app.controller('LineCtrl', [
     /**
      * Updates line data when users changes layers.
      */
-    $scope.$watch('mapState.activeLayersChanged', function (n, o) {
+    $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
       if (n === o) { return true; }
       if ($scope.mapState.points.length === 2) {
         fillLine($scope.mapState.points);
