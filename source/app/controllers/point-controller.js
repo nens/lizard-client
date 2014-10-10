@@ -38,26 +38,26 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
       };
 
       var putDataOnScope = function (response) {
-        var pointL = $scope.point[response.layerGroupSlug] || {};
-        if (response && response.data !== null) {
+        var pointL;
+        if (response.data === null) { pointL = undefined;
+        } else {
+          pointL = $scope.point[response.layerGroupSlug] || {};
           pointL.layerGroup = response.layerGroupSlug;
-          pointL.layerGroupName = $scope.mapState.layerGroups[pointL.layerGroup].name;
-          pointL.order = $scope.mapState.layerGroups[pointL.layerGroup].order;
           pointL[response.layerSlug] = pointL[response.layerSlug] || {};
           pointL[response.layerSlug].type = response.type;
-          if (response.data) {
-            pointL[response.layerSlug].data = response.data;
-            if (response.data.id) {
-              getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
-            }
-            if (response.data.geom) {
-              // If the geom from the response is different than mapState.here
-              // redo request to get the exact data for the centroid of the object.
-              var geom = JSON.parse(response.data.geom);
-              if (geom.type === 'Point' && (geom.coordinates[1] !== $scope.mapState.here.lat
-                || geom.coordinates[0] !== $scope.mapState.here.lng)) {
-                $scope.mapState.here = LeafletService.latLng(geom.coordinates[1], geom.coordinates[0]);
-              }
+          pointL[response.layerSlug].data = response.data;
+          pointL.layerGroupName = $scope.mapState.layerGroups[pointL.layerGroup].name;
+          pointL.order = $scope.mapState.layerGroups[pointL.layerGroup].order;
+          if (response.data && response.data.id) {
+            getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
+          }
+          if (response.data.geom) {
+            // If the geom from the response is different than mapState.here
+            // redo request to get the exact data for the centroid of the object.
+            var geom = JSON.parse(response.data.geom);
+            if (geom.type === 'Point' && (geom.coordinates[1] !== $scope.mapState.here.lat
+              || geom.coordinates[0] !== $scope.mapState.here.lng)) {
+              $scope.mapState.here = LeafletService.latLng(geom.coordinates[1], geom.coordinates[0]);
             }
           }
         }
