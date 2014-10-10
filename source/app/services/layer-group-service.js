@@ -349,25 +349,13 @@ app.factory('LayerGroup', [
     var _initiateWMSLayer = function (nonLeafLayer) {
       var _options = {
         layers: nonLeafLayer.slug,
-        slug: nonLeafLayer.slug,
         format: 'image/png',
         version: '1.1.1',
         minZoom: nonLeafLayer.min_zoom || 0,
         maxZoom: 19,
         zIndex: nonLeafLayer.z_index
       };
-
-      if (nonLeafLayer.slug === 'landuse') {
-        _options.styles = 'landuse';
-      } else if (nonLeafLayer.slug === 'elevation') {
-        _options.styles = 'BrBG_r';
-        _options.effects = 'shade:0:3';
-      } else if (nonLeafLayer.slug === 'isahw:BOFEK2012') {
-        _options.styles = ''; // Add no styling for soil layer
-      } else { // Default, used by zettingsvloeiingsproef
-        _options.styles = 'BrBG_r';
-        _options.effects = 'shade:0:3';
-      }
+      _options = angular.extend(_options, nonLeafLayer.options);
 
       return LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
     };
