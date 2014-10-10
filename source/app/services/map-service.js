@@ -41,8 +41,8 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
        * @param  layerGroup layergroup that should be toggled
        */
       toggleLayerGroup: function (layerGroup) {
-        if (layerGroup._slug === 'elevation' && layerGroup.isActive()) {
-          rescaleElevation();
+        if (layerGroup.slug === 'elevation' && layerGroup.isActive()) {
+          this._rescaleElevation(layerGroup);
         } else {
           // turn layer group on
           if (!(layerGroup.baselayer && layerGroup.isActive())) {
@@ -160,6 +160,35 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
           }
         });
         return activeTemporalLayer;
+      },
+
+      /**
+       * @function
+       * @memberOf app.NxtMapService
+       * @description Elevation can be rescaled according to extent
+       */
+      _rescaleElevation: function (lg) {
+        var layer;
+        angular.forEach(lg._layers, function (value) {
+          if (value.type === 'WMS') {
+            layer = value;
+          }
+        });
+        if (!layer) { throw new Error('Attempted to rescale' + lg.slug + 'which does not have a wms'); }
+        var url, bounds, limits, styles;
+        bounds = this._map.getBounds();
+        // Make request to raster to get min and max of current bounds
+        url = 'https://raster.lizard.net/wms' +
+                  '?request=getlimits&layers=elevation' +
+                  '&width=16&height=16&srs=epsg:4326&bbox=' +
+                  bounds.toBBoxString();
+        $http.get(url).success(function (data) {
+          limits = ':' + data[0][0] + ':' + data[0][1];
+          styles = 'BrBG_r' + limits;
+          layer.leafletLayer.setParams(
+            {styles: styles}, true);
+          layer.leafletLayer.redraw();
+        });
       }
 
     };
@@ -193,28 +222,6 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
       var map = LeafletService.map(mapElem, options);
 
       return map;
-    };
-
-    /**
-     * @function
-     * @memberOf app.NxtMapService
-     * @description Elevation can be rescaled according to extent
-     */
-    var rescaleElevation = function () {
-      var url, bounds, limits, styles;
-      bounds = this._map.getBounds();
-      // Make request to raster to get min and max of current bounds
-      url = 'https://raster.lizard.net/wms' +
-                '?request=getlimits&layers=elevation' +
-                '&width=16&height=16&srs=epsg:4326&bbox=' +
-                bounds.toBBoxString();
-      $http.get(url).success(function (data) {
-        limits = ':' + data[0][0] + ':' + data[0][1];
-        styles = 'BrBG_r' + limits;
-        CabinetService.layers.elevation.leafletLayer.setParams(
-          {styles: styles}, true);
-        CabinetService.layers.elevation.leafletLayer.redraw();
-      });
     };
 
     return NxtMap;
