@@ -16,10 +16,9 @@
  *       all layers and perform generic actions based on layer types.
  */
 
-app.controller('PointCtrl', ['$scope', 'LeafletService', 'TimeseriesService', 'ClickFeedbackService',
-  function ($scope, LeafletService, TimeseriesService, ClickFeedbackService) {
+app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesService', 'ClickFeedbackService',
+  function ($scope, $q, LeafletService, TimeseriesService, ClickFeedbackService) {
 
-    var promCount;
 
     $scope.point = {};
 
@@ -30,18 +29,17 @@ app.controller('PointCtrl', ['$scope', 'LeafletService', 'TimeseriesService', 'C
      */
     var fillpoint = function (here) {
 
-      var doneFn = function (response) { // response ::= True | False
-        promCount--;
-        if (promCount === 0) {
-          ClickFeedbackService.stopVibration();
+      var promises = [];
+
+      var doneFn = function (response) {
+        if (response.active === false) {
+          $scope.point[response.slug] = undefined;
         }
       };
 
       var putDataOnScope = function (response) {
         var pointL = $scope.point[response.layerGroupSlug] || {};
-        if (!response || response.data === null) {
-          pointL = undefined;
-        } else {
+        if (response && response.data !== null) {
           pointL.layerGroup = response.layerGroupSlug;
           pointL.layerGroupName = $scope.mapState.layerGroups[pointL.layerGroup].name;
           pointL.order = $scope.mapState.layerGroups[pointL.layerGroup].order;
@@ -53,8 +51,6 @@ app.controller('PointCtrl', ['$scope', 'LeafletService', 'TimeseriesService', 'C
               getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
             }
             if (response.data.geom) {
-              // Draw feedback around object.
-              ClickFeedbackService.drawGeometry($scope.mapState, response.data.geom, response.data.entity_name);
               // If the geom from the response is different than mapState.here
               // redo request to get the exact data for the centroid of the object.
               var geom = JSON.parse(response.data.geom);
@@ -62,22 +58,34 @@ app.controller('PointCtrl', ['$scope', 'LeafletService', 'TimeseriesService', 'C
                 || geom.coordinates[0] !== $scope.mapState.here.lng)) {
                 $scope.mapState.here = LeafletService.latLng(geom.coordinates[1], geom.coordinates[0]);
               }
-            } else {
-              ClickFeedbackService.drawArrowHere($scope.mapState, $scope.mapState.here);
             }
           }
         }
         $scope.point[response.layerGroupSlug] = pointL;
-        console.log($scope.point);
       };
 
       ClickFeedbackService.drawClickInSpace($scope.mapState, here);
 
       angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
-        promCount++;
-        layerGroup.getData({geom: here})
-          .then(doneFn, doneFn, putDataOnScope);
+        promises.push(layerGroup.getData({geom: here})
+          .then(doneFn, doneFn, putDataOnScope));
       });
+
+      // Draw feedback when all promises resolved
+      $q.all(promises).then(drawFeedback);
+    };
+
+    var drawFeedback = function () {
+      ClickFeedbackService.stopVibration();
+      if ($scope.point.waterchain) {
+        ClickFeedbackService.drawGeometry($scope.mapState,
+          $scope.point.waterchain.waterchain_grid.data.geom,
+          $scope.point.waterchain.waterchain_grid.data.entity_name);
+      } else {
+        angular.forEach($scope.point, function (lg) {
+          if (lg) { ClickFeedbackService.drawArrowHere($scope.mapState, $scope.mapState.here); }
+        });
+      }
     };
 
     /**

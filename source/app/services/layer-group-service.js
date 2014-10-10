@@ -87,10 +87,12 @@ app.factory('LayerGroup', [
       getData: function (options) {
 
         var lgSlug = this.slug,
+            lgActive = this._active,
             deferred = $q.defer();
 
         if (!this._active) {
-          deferred.resolve(false);
+          console.log('inactive all');
+          deferred.resolve({slug: this.slug, active: this._active});
           return deferred.promise;
         }
 
@@ -127,9 +129,15 @@ app.factory('LayerGroup', [
         // Bear with me: the promises from the individual getData's(),
         // notify() the defer from LayerGroup.getData() on resolve.
         // When all the individual promises have resolved, this defer
-        // should be resolve. It resolves with 'true' to indicate activity
+        // should be resolved. It resolves with 'true' to indicate activity
         // of layer. No need to keep a counter of the individual promises.
-        $q.all(promises).then(function () { deferred.resolve(true); });
+        $q.all(promises).then(function () {
+          console.log('finished all');
+          deferred.resolve({
+            slug: lgSlug,
+            active: lgActive
+          });
+        });
 
         return deferred.promise;
       },
