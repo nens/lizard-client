@@ -12,12 +12,7 @@
  * Contains data of all active layers with an aggregation_type
  *
  */
-app.controller('AreaCtrl', [
-  '$scope',
-  'RasterService',
-  function ($scope, RasterService) {
-    var _updateExtentAgg, putDataOnscope, removeDataFromScope,
-        updateExtentAgg;
+app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterService) {
 
     $scope.area = {};
 
@@ -35,91 +30,34 @@ app.controller('AreaCtrl', [
      * @param  {object} area area object of this
      *                                  ctrl
      */
-    updateExtentAgg = function (bounds, layers, area) {
-      angular.forEach(layers, function (layer, slug) {
-        if (layer.active && layer.aggregation_type !== 'none') {
-          var agg = area[slug] || {};
-          var dataProm = RasterService.getAggregationForActiveLayer(layer, slug, agg, bounds);
-          // Pass the promise to a function that handles the scope.
-          putDataOnscope(dataProm);
-        } else if (slug in area && !layer.active) {
-          removeDataFromScope(slug);
+    var fillArea = function (bounds, layerGroups) {
+
+      var doneFn = function (response) {
+        if (response.active === false && $scope.area[response.slug]) {
+          $scope.area[response.slug] = undefined;
         }
-      });
-    };
+      };
 
-    /**
-     * @function
-     * @memberOf app.areaCtrl
-     * @description Puts dat on area when promise resolves or
-     * removes item from area when no data is returned.
-     *
-     * @param  {promise}               a promise with aggregated data and
-     *                                 the slug
-     */
-    putDataOnscope = function (dataProm) {
-      dataProm
-      .then(function (result) {
-        if (result.agg.data.length > 0) {
-          $scope.area[result.slug] = result.agg;
-          $scope.area[result.slug].name = $scope.mapState.layers[result.slug].name;
-        } else if (result.slug in $scope.area) {
-          removeDataFromScope(result.slug);
-        }
-      });
-    };
+      var putDataOnScope = function (response) {
 
-    /**
-     * @function
-     * @memberOf app.areaCtrl
-     * @description removes data from scope again
-     * if it's no longer needed.
-     * @param  {string} slug
-     */
-    removeDataFromScope = function (slug) {
-      delete $scope.area[slug];
-    };
-
-    /**
-     * @function
-     * @memberOf app.areaCtrl
-     * @description Returns true/false according to whether any events are present in the
-     * current lineion of spatial and temporal extent. This is used to
-     * determine whether the corresponding card (i.e. the Event summary card)
-     * needs to be shown.
-     *
-     * @return {boolean} The boolean specifying whether there are any events
-     * present
-     */
-    $scope.eventsPresentInCurrentExtent = function () {
-
-      if ($scope.events.types.count > 0) {
-
-        var i, type;
-
-        for (i in $scope.events.types) {
-          type = $scope.events.types[i];
-          if (type.currentCount && type.currentCount > 0) {
-            return true;
+        var areaLG = $scope.area[response.layerGroupSlug] || {};
+        areaLG[response.layerSlug] = areaLG[response.layerSlug] || {};
+        areaLG[response.layerSlug].aggType = response.aggType;
+        if (response.data !== null) {
+          areaLG[response.layerSlug].data = response.data;
+          // TODO: move formatting of data to server.
+          if (response.layerSlug === 'ahn2/wss') {
+            areaLG[response.layerSlug].data = RasterService.handleElevationCurve(response.data);
           }
         }
-      }
+        $scope.area[response.layerGroupSlug] = areaLG;
+      };
 
-      return false;
-    };
-
-    /**
-     * @function
-     * @memberOf app.areaCtrl
-     * @description private function to eliminate redundancy: gets called
-     * in multiple $watches declared locally.
-     */
-    _updateExtentAgg = function () {
-      updateExtentAgg(
-        $scope.mapState.bounds,
-        $scope.mapState.layers,
-        $scope.area
-      );
+      angular.forEach(layerGroups, function (layerGroup, slug) {
+        // Pass the promise to a function that handles the scope.
+        layerGroup.getData({geom: bounds})
+          .then(doneFn, doneFn, putDataOnScope);
+      });
     };
 
     /**
@@ -127,19 +65,19 @@ app.controller('AreaCtrl', [
      */
     $scope.$watch('mapState.bounds', function (n, o) {
       if (n === o) { return true; }
-      _updateExtentAgg();
+      fillArea($scope.mapState.bounds, $scope.mapState.layerGroups);
     });
 
     /**
      * Updates area when users changes layers.
      */
-    $scope.$watch('mapState.activeLayersChanged', function (n, o) {
+    $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
       if (n === o) { return true; }
-      _updateExtentAgg();
+      fillArea($scope.mapState.bounds, $scope.mapState.layerGroups);
     });
 
     // Load data at initialization.
-    _updateExtentAgg();
+    fillArea($scope.mapState.bounds, $scope.mapState.layerGroups);
 
   }
 ]);

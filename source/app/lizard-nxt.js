@@ -56,6 +56,22 @@ app.config(function ($locationProvider) {
 });
 
 /**
+ * @name dataLayers
+ * @memberOf app
+ * @description Contains the dataLayers set by the server. Used by the
+ *              map-directive and layer-chooser directive to build layer
+ *              groups.
+ */
+app.constant('dataLayers', window.data_layers);
+
+/**
+ * @name dataBounds
+ * @memberOf app
+ * @description Contains the bounds of the data set by the server at load
+ */
+app.constant('dataBounds', window.data_bounds);
+
+/**
  *
  * @name MasterController
  * @class MasterCtrl
@@ -113,7 +129,6 @@ app.config(function ($locationProvider) {
 app.controller('MasterCtrl',
   ['$scope', '$http', '$q', '$filter', '$compile', 'CabinetService',
    'RasterService', 'UtilService', 'EventService', 'TimeseriesService',
-   'MapService',
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, TimeseriesService, MapService) {
 
@@ -213,43 +228,8 @@ app.controller('MasterCtrl',
     $scope.box.contextSwitchMode = !$scope.box.contextSwitchMode;
   };
 
-
-
-  // MAP MODEL
-  // MOVE TO MAP CONTROL ?
-  //
-  // $scope.layers = MapService.layers;
-  $scope.mapState = MapService.mapState;
-
-  /**
-   * @function
-   * @memberof app.MasterCtrl
-   * @description changelayer function... legacy?
-   * @param  {object} layer Layer object
-   */
-  $scope.mapState.changeLayer = function (layer) {
-
-    if (layer.temporal) {
-
-      $scope.mapState.activeLayersChanged =
-        !$scope.mapState.activeLayersChanged;
-      layer.active = !layer.active;
-
-      // toggle timeline if neccesary
-      if ($scope.timeState.hidden !== false) {
-        $scope.toggleTimeline();
-      }
-
-    } else {
-
-      // for other than temporalRaster layers, we do stuff the old way
-      MapService.toggleLayer(layer, $scope.mapState.layers,
-        $scope.mapState.bounds);
-      $scope.mapState.activeLayersChanged =
-        !$scope.mapState.activeLayersChanged;
-    }
-  };
-
+  // MAP MODEL is set by the map-directive
+  $scope.mapState = {};
 
   $scope.$watch('mapState.here', function (n, o) {
     if (n === o) { return true; }
@@ -319,11 +299,25 @@ app.controller('MasterCtrl',
 
   // EVENTS
 
+  var getEventTypes = function () {
+
+    var k, eventLayers = [];
+
+    for (k in $scope.mapState.layers) {
+      if (k === "alarms" || k === "messages") {
+        eventLayers.push($scope.mapState.layers[k]);
+      }
+    }
+
+    return eventLayers;
+  };
+
+
   // EVENTS MODEL
   $scope.events = {
     //TODO: refactor event meta data (remove eventTypes from mapState)
     //types: { count: 0, 1: {}, 2: {}, 3: {}, 4: {}, 5: {} }, // Metadata object
-    types: EventService.buildEventTypesTemplate($scope.mapState.eventTypes),
+    types: EventService.buildEventTypesTemplate(getEventTypes()),
     data: { type: "FeatureCollection",
             features: [] // Long format events data object
       },
@@ -490,6 +484,18 @@ app.controller('MasterCtrl',
       $scope.timeState.hidden = false;
     }
   };
+
+  // Temporarily watch layergroups to turn timeline on
+  // Can be removed when we redo the timeline
+  var timelineToggler = $scope.$watch('mapState.layerGroupsChanged',  function () {
+    if ($scope.timeState.hidden === undefined
+      && $scope.mapState.getActiveTemporalLayer()) {
+      $scope.toggleTimeline();
+      // remove watch
+      timelineToggler();
+    }
+
+  });
 
   $scope.toggleVersionVisibility = function () {
     $('.navbar-version').toggle();

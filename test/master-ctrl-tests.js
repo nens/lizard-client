@@ -11,10 +11,13 @@ describe('Testing MasterController', function () {
     $rootScope = $injector.get('$rootScope');
     $scope = $rootScope.$new();
 
-    createController = function() {
+    createController = function () {
       $controller('MasterCtrl', {
-          '$scope': $scope
+        '$scope': $scope
       });
+
+      $scope.mapState.getActiveTemporalLayer = function () {};
+
       $scope.$digest();
     };
 

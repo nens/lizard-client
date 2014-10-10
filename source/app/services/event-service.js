@@ -22,19 +22,41 @@ app.service("EventService", ["Restangular", "$q",
    * @param {object} eventTypes object with event ids.
    * @returns {object} eventTypesTemplate.
    */
-  var buildEventTypesTemplate = function (eventTypes) {
+  // var buildEventTypesTemplate = function (eventTypes) {
 
-    var eventTypesTemplate = {};
-    for (var i = 0; i < eventTypes.length; i++) {
-      eventTypesTemplate[eventTypes[i].event_series] = {};
-      eventTypesTemplate[
-        eventTypes[i].event_series].count = eventTypes[i].event_count;
-      eventTypesTemplate[eventTypes[i].event_series].name = eventTypes[i].type;
+  //   console.log('eventTypes:', eventTypes);
+
+  //   var eventTypesTemplate = {};
+
+  //   for (var i = 0; i < eventTypes.length; i++) {
+  //     eventTypesTemplate[eventTypes[i].event_series] = {};
+  //     eventTypesTemplate[
+  //       eventTypes[i].event_series].count = eventTypes[i].event_count;
+  //     eventTypesTemplate[eventTypes[i].event_series].name = eventTypes[i].type;
+  //   }
+
+  //   eventTypesTemplate.count = 0;
+  //   return eventTypesTemplate;
+  // };
+
+  var buildEventTypesTemplate = function (eventLayers) {
+
+    var layer, i, name, eventTypesTemplate = {};
+
+    for (i in eventLayers) {
+
+      layer = eventLayers[i];
+      name = layer.slug;
+
+      eventTypesTemplate[i] = {};
+      eventTypesTemplate[i].count = eventLayers[i].layers[0].summary;
+      eventTypesTemplate[i].name = name;
     }
-    eventTypesTemplate.count = 0;
 
+    eventTypesTemplate.count = 0;
     return eventTypesTemplate;
   };
+
 
   /**
    * Counts the events currently within the temporal and spatial extent
@@ -60,8 +82,9 @@ app.service("EventService", ["Restangular", "$q",
         timeStateStart = scope.timeState.start,
         timeStateEnd = scope.timeState.end,
         bounds = scope.mapState.bounds,
-        typeLength = eventTypes.length;
-    
+        // typeLength = eventTypes.length;
+        typeLength = scope.events.types.length;
+
     if (scope.timeState.animation.enabled) {
       timeStateStart = scope.timeState.animation.start;
       timeStateEnd = scope.timeState.at;
