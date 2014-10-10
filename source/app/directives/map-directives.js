@@ -22,7 +22,7 @@ app.directive('map', [
 
        /**
         * @function
-        * @memberOf app.MapService
+        * @memberOf app.map
         * @description small clickhandler for leafletclicks
         * @param  {event}  e Leaflet event object
         */
@@ -32,7 +32,7 @@ app.directive('map', [
 
       /**
        * @function
-       * @memberOf app.MapService
+       * @memberOf app.map
        */
       var _moveStarted = function (e) {
         scope.mapState.mapMoving = true;
@@ -40,7 +40,7 @@ app.directive('map', [
 
       /**
        * @function
-       * @memberOf app.MapService
+       * @memberOf app.map
        */
       var _mouseMoved = function (e) {
         if (scope.box.type === 'line') {
@@ -50,7 +50,7 @@ app.directive('map', [
 
       /**
        * @function
-       * @memberOf app.MapService
+       * @memberOf app.map
        */
       var _moveEnded = function (e, map) {
         scope.mapState.moved = Date.now();
@@ -61,7 +61,7 @@ app.directive('map', [
       };
 
       scope.mapState = new NxtMap(element[0], CabinetService.layergroups, {
-          zoomControl: false,
+          zoomControl: true,
         }
       );
 
