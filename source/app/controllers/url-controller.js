@@ -89,7 +89,7 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter',
     */
     var enableMapView = function (mapView) {
       var fn = function () {
-        $scope.mapState.fitBounds(dataBounds.all);
+        $scope.mapState.fitBounds(dataBounds);
       };
 
       if (mapView) {
