@@ -1,11 +1,6 @@
 app.service("CabinetService", ["$q", "Restangular",
   function ($q, Restangular) {
 
-  var layergroups = window.data_layers;
-
-  var baselayers = window.baseLayers;
-  var overlayers = window.overLayers;
-  var dataBounds = window.data_bounds;
   //var eventTypes = window.event_types;
 
   var termSearchResource,
@@ -46,15 +41,11 @@ app.service("CabinetService", ["$q", "Restangular",
   };
 
   return {
-    layergroups: layergroups,
-    baselayers: baselayers,
-    overlayers: overlayers,
     //eventTypes: eventTypes,
     geocode: geocodeResource,
     raster: rasterResource,
     reverseGeocode: reverseGeocodeResource,
     timeseries: timeseriesResource,
     panZoom: null,
-    dataBounds: dataBounds
   };
 }]);

@@ -12,8 +12,8 @@
  * state leads the url.
  */
 app.controller('UrlController', ['$scope', 'LocationGetterSetter',
-  'UrlState', 'CabinetService',
-  function ($scope, LocationGetterSetter, UrlState, CabinetService) {
+  'UrlState', 'dataBounds',
+  function ($scope, LocationGetterSetter, UrlState, dataBounds) {
 
     // Configuration object for url state.
     var state = {
@@ -79,7 +79,7 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter',
 
     var enableMapView = function (mapView) {
       var fn = function () {
-        $scope.mapState.fitBounds(CabinetService.dataBounds.all);
+        $scope.mapState.fitBounds(dataBounds.all);
       };
 
       if (mapView) {

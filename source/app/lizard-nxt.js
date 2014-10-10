@@ -55,6 +55,8 @@ app.config(function ($locationProvider) {
   $locationProvider.html5Mode(true);
 });
 
+app.constant('dataLayers', window.data_layers);
+app.constant('dataBounds', window.data_bounds);
 /**
  *
  * @name MasterController

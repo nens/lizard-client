@@ -15,8 +15,8 @@ app.directive('map', [
   '$controller',
   'ClickFeedbackService',
   'NxtMap',
-  'CabinetService',
-  function ($controller, ClickFeedbackService, NxtMap, CabinetService) {
+  'dataLayers',
+  function ($controller, ClickFeedbackService, NxtMap, dataLayers) {
 
     var link = function (scope, element, attrs) {
 
@@ -60,8 +60,8 @@ app.directive('map', [
         scope.mapState.bounds = map.getBounds();
       };
 
-      scope.mapState = new NxtMap(element[0], CabinetService.layergroups, {
-          zoomControl: true,
+      scope.mapState = new NxtMap(element[0], dataLayers, {
+          zoomControl: false,
         }
       );
 
