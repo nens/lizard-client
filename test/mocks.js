@@ -6,7 +6,7 @@
 window.JS_DEBUG = false;
 
 // bootstrapped stuff by Django does not exist in tests.
-var data_layers = {
+window.data_layers = {
   "satellite": {
     "layers": [
       {
@@ -167,7 +167,7 @@ var data_layers = {
   }
 };
 
-var data_bounds = {
+window.data_bounds = {
   "all": {
     "west": 3.04,
     "east": 7.58,

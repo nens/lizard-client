@@ -8,8 +8,9 @@ describe('Testing map service', function () {
     var elem = document.querySelector('body').appendChild(
       document.createElement('div')
     );
-    data_layers.satellite.active = true;
-    map = new NxtMap(elem, data_layers);
+    var dataLayers = window.data_layers;
+    dataLayers.satellite.active = true;
+    map = new NxtMap(elem, dataLayers);
   }));
 
   it('should create a map object', function () {

@@ -1,5 +1,5 @@
 describe('Testing LayerGroup', function () {
-  var LayerGroup, mockedGetData;
+  var LayerGroup, mockedGetData, dataLayers;
 
   beforeEach(module('lizard-nxt'));
 
@@ -23,23 +23,25 @@ describe('Testing LayerGroup', function () {
       defer.resolve(4);
       return defer.promise;
     };
+    dataLayers = window.data_layers;
     LayerGroup = $injector.get('LayerGroup');
   }));
 
 
+
   it('Has a default active equal to the active on the serverside layergroup', function () {
-    var lg = new LayerGroup(data_layers.satellite);
+    var lg = new LayerGroup(dataLayers.satellite);
     expect(lg.defaultActive).toBe(false);
   });
 
   it('Has _active on false', function () {
-    var lg = new LayerGroup(data_layers.satellite);
+    var lg = new LayerGroup(dataLayers.satellite);
     expect(lg._active).toEqual(false);
     expect(lg.isActive()).toEqual(false);
   });
 
   it('Has read-only public properties', function () {
-    var lg = new LayerGroup(data_layers.satellite);
+    var lg = new LayerGroup(dataLayers.satellite);
     lg.defaultActive = 'gekke gerrit';
     expect(lg.defaultActive).toEqual(false);
   });
@@ -47,7 +49,7 @@ describe('Testing LayerGroup', function () {
   it('should activate layergroup when toggled', function () {
     var el = angular.element('<div id="map"></div>');
     var map = L.map(el[0]);
-    var lg = new LayerGroup(data_layers.satellite);
+    var lg = new LayerGroup(dataLayers.satellite);
     lg.toggle(map);
     expect(lg.isActive()).toEqual(true);
   });
@@ -55,7 +57,7 @@ describe('Testing LayerGroup', function () {
   it('should initialize and add layers to map when toggled', function () {
     var el = angular.element('<div id="map"></div>');
     var map = L.map(el[0]);
-    var lg = new LayerGroup(data_layers.satellite);
+    var lg = new LayerGroup(dataLayers.satellite);
     lg.toggle(map);
     expect(lg._layers[0].leafletLayer instanceof L.TileLayer).toEqual(true);
     expect(map.hasLayer(lg._layers[0].leafletLayer)).toBe(true);
@@ -64,7 +66,7 @@ describe('Testing LayerGroup', function () {
   it('should remove layers from map when toggled again', function () {
     var el = angular.element('<div id="map"></div>');
     var map = L.map(el[0]);
-    var lg = new LayerGroup(data_layers.satellite);
+    var lg = new LayerGroup(dataLayers.satellite);
     lg.toggle(map);
     expect(lg._layers[0].leafletLayer instanceof L.TileLayer).toEqual(true);
     lg.toggle(map);
@@ -74,7 +76,7 @@ describe('Testing LayerGroup', function () {
   it('should return a promise that resolves to false when layergroup is inactive', inject(function($rootScope) {
     var el = angular.element('<div id="map"></div>');
     var map = L.map(el[0]);
-    var lg = new LayerGroup(data_layers.waterchain);
+    var lg = new LayerGroup(dataLayers.waterchain);
     lg.toggle(map); // on and initialized
     lg.toggle(map); // off
     lg.getData({geom: L.LatLng(51, 6)})
