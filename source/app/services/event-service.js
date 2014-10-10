@@ -16,29 +16,6 @@ app.service("EventService", ["Restangular", "$q",
         "#c0392b", "#16a085"]
   };
 
-  /**
-   * Build object template to hold information per event type.
-   *
-   * @param {object} eventTypes object with event ids.
-   * @returns {object} eventTypesTemplate.
-   */
-  // var buildEventTypesTemplate = function (eventTypes) {
-
-  //   console.log('eventTypes:', eventTypes);
-
-  //   var eventTypesTemplate = {};
-
-  //   for (var i = 0; i < eventTypes.length; i++) {
-  //     eventTypesTemplate[eventTypes[i].event_series] = {};
-  //     eventTypesTemplate[
-  //       eventTypes[i].event_series].count = eventTypes[i].event_count;
-  //     eventTypesTemplate[eventTypes[i].event_series].name = eventTypes[i].type;
-  //   }
-
-  //   eventTypesTemplate.count = 0;
-  //   return eventTypesTemplate;
-  // };
-
   var buildEventTypesTemplate = function (eventLayers) {
 
     var layer, i, name, eventTypesTemplate = {};
