@@ -122,7 +122,6 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
       fillpoint($scope.mapState.here);
     });
 
-
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer($scope.mapState);

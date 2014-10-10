@@ -79,7 +79,8 @@ describe('Testing LayerGroup', function () {
     lg.toggle(map); // off
     lg.getData({geom: L.LatLng(51, 6)})
       .then(function (response) {
-        expect(response).toEqual(false);
+        expect(response.active).toBe(false);
+        expect(response.slug).toBe('waterchain');
       });
     $rootScope.$digest(); // resolves promise
   }));

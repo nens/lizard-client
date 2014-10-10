@@ -4,6 +4,7 @@
 
     <div
       ng-repeat="agg in layerGroup"
+      ng-if="!!agg && agg.data"
       ng-switch="agg.aggType"
       class="card-content"
       id="card-content-<% agg.name %>">

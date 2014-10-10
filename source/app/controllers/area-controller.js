@@ -32,28 +32,31 @@ app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterS
      */
     var fillArea = function (bounds, layerGroups) {
 
+      var doneFn = function (response) {
+        if (response.active === false && $scope.area[response.slug]) {
+          $scope.area[response.slug] = undefined;
+        }
+      };
+
       var putDataOnScope = function (response) {
 
         var areaLG = $scope.area[response.layerGroupSlug] || {};
         areaLG[response.layerSlug] = areaLG[response.layerSlug] || {};
         areaLG[response.layerSlug].aggType = response.aggType;
-        if (response.data === null) {
-          areaLG[response.layerSlug] = undefined;
-        } else {
+        if (response.data !== null) {
           areaLG[response.layerSlug].data = response.data;
-        }
-        // TODO: move formatting of data to server.
-        if (response.layerSlug === 'ahn2/wss') {
-          areaLG[response.layerSlug].data = RasterService.handleElevationCurve(response.data);
+          // TODO: move formatting of data to server.
+          if (response.layerSlug === 'ahn2/wss') {
+            areaLG[response.layerSlug].data = RasterService.handleElevationCurve(response.data);
+          }
         }
         $scope.area[response.layerGroupSlug] = areaLG;
-        console.log('area:', $scope.area);
       };
 
       angular.forEach(layerGroups, function (layerGroup, slug) {
         // Pass the promise to a function that handles the scope.
         layerGroup.getData({geom: bounds})
-          .then(null, null, putDataOnScope);
+          .then(doneFn, doneFn, putDataOnScope);
       });
     };
 
@@ -68,7 +71,7 @@ app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterS
     /**
      * Updates area when users changes layers.
      */
-    $scope.$watch('mapState.activeLayersChanged', function (n, o) {
+    $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
       if (n === o) { return true; }
       fillArea($scope.mapState.bounds, $scope.mapState.layerGroups);
     });
