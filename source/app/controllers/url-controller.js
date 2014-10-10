@@ -77,6 +77,16 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter',
       }
     };
 
+
+   /**
+    * @function
+    * @memberOf app.UrlController
+    * @summary Sets the mapView on the url or the url on the mapView
+    * @description If mapView as string from the url is a parseable
+    *              mapView, the map is set to this view. Else the map
+    *              is set to bounds of data as defined by the server.
+    * @param {string} String representation of mapView on url
+    */
     var enableMapView = function (mapView) {
       var fn = function () {
         $scope.mapState.fitBounds(dataBounds.all);
