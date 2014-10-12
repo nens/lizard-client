@@ -4,6 +4,36 @@
 app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$q",
   function (Restangular, UtilService, CabinetService, $q) {
 
+
+  var getData = function (layer, options) {
+
+    var srs = 'EPSG:4326',
+        agg = options.agg || '',
+        wkt = UtilService.geomToWkt(options.geom),
+        startString,
+        endString;
+
+    if (options.start && options.end) {
+      startString = new Date(options.start).toISOString().split('.')[0];
+      endString = new Date(options.end).toISOString().split('.')[0];
+    }
+
+    if (cancelers[layer.slug]) {
+      cancelers[layer.slug].resolve();
+    }
+
+    var canceler = cancelers[layer.slug] = $q.defer();
+
+    return CabinetService.raster(canceler).get({
+      raster_names: layer.slug,
+      geom: wkt,
+      srs: srs,
+      start: startString,
+      stop: endString,
+      agg: agg
+    });
+  };
+
   /**
    * Get latlon bounds for image.
    *
@@ -12,9 +42,9 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    */
   var _getImageBounds = function (layerName) {
       var bounds;
-      if (layerName === 'demo:radar') {
+      if (layerName === 'rain') {
         bounds = [[54.28458617998074, 1.324296158471368],
-                [49.82567047026146, 8.992548357936204]];
+                  [49.82567047026146, 8.992548357936204]];
       }
       if (layerName === 'bath:westerschelde') {
         bounds = [[51.41, 4.03],
@@ -37,15 +67,18 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    * @return {object} Returns hashtable with info for animation.
    */
   var rasterInfo = function (layerName) {
+
     var info,
-    wmsUrl = 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&SRS=EPSG:4326&LAYERS=',
-    width = 500;
-    if (layerName === 'demo:radar') {
+        wmsUrl = 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&SRS=EPSG:4326&LAYERS=',
+        width = 500,
+        height;
+
+    if (layerName === 'rain') {
       info =  {
         "timeResolution": 300000,
         "minTimeBetweenFrames": 250,
         "imageBounds": _getImageBounds(layerName),
-        "imageUrlBase": 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=' + layerName + '&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=',
+        "imageUrlBase": 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=' + 'demo:radar' + '&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=',
       };
     }
     if (layerName === 'bath:westerschelde') {
@@ -129,32 +162,34 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    * @param  {string} agg aggregation method eg. 'sum', 'rrc'
    * @return {promise} returns a thennable promise which may resolve with temporal raster data on response
    */
-  var getTemporalRaster = function (start, stop, geom, aggWindow, rasterNames, agg) {
-    var stopString, startString, wkt;
-    stopString = stop.toISOString().split('.')[0];
-    startString = start.toISOString().split('.')[0];
-    if (geom.lat && geom.lng) {
-      // geom is a latLng object
-      wkt = "POINT(" + geom.lng + " " + geom.lat + ")";
-    } else {
-      wkt = "POLYGON(("
-            + geom.getWest() + " " + geom.getSouth() + ", "
-            + geom.getEast() + " " + geom.getSouth() + ", "
-            + geom.getEast() + " " + geom.getNorth() + ", "
-            + geom.getWest() + " " + geom.getNorth() + ", "
-            + geom.getWest() + " " + geom.getSouth()
-            + "))";
-    }
-    return CabinetService.raster().get({
-        raster_names: rasterNames,
-        geom: wkt,
-        srs: 'EPSG:4326',
-        start: startString,
-        stop: stopString,
-        window: aggWindow,
-        agg: agg
-      });
-  };
+  // var getTemporalRaster = function (start, stop, geom, aggWindow, rasterNames, agg) {
+  //   // TODO
+  //   var slug = (MapService.mapState.layers) ? MapService.mapState.layers[rasterNames].layers[0].slug : rasterNames;
+  //   var stopString, startString, wkt;
+  //   stopString = stop.toISOString().split('.')[0];
+  //   startString = start.toISOString().split('.')[0];
+  //   if (geom.lat && geom.lng) {
+  //     // geom is a latLng object
+  //     wkt = "POINT(" + geom.lng + " " + geom.lat + ")";
+  //   } else {
+  //     wkt = "POLYGON(("
+  //           + geom.getWest() + " " + geom.getSouth() + ", "
+  //           + geom.getEast() + " " + geom.getSouth() + ", "
+  //           + geom.getEast() + " " + geom.getNorth() + ", "
+  //           + geom.getWest() + " " + geom.getNorth() + ", "
+  //           + geom.getWest() + " " + geom.getSouth()
+  //           + "))";
+  //   }
+  //   return CabinetService.raster().get({
+  //       raster_names: slug,
+  //       geom: wkt,
+  //       srs: 'EPSG:4326',
+  //       start: startString,
+  //       stop: stopString,
+  //       window: aggWindow,
+  //       agg: agg
+  //     });
+  // };
 
   var cancelers = {};
 
@@ -166,32 +201,33 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
    * @param  {object} options     - Optional object with extra params
    * @return {promise}  Restangular.get promise
    */
-  var getRasterData = function (slug, geom, start, stop, options) {
-    var srs, agg, rasterService, canceler, stopString, startString;
-    if (stop && start) {
-      stopString = new Date(stop).toISOString().split('.')[0];
-      startString = new Date(start).toISOString().split('.')[0];
-    }
+  // var getRasterData = function (slug, geom, start, stop, options) {
 
-    if (cancelers[slug]) {
-      cancelers[slug].resolve();
-    }
+  //   var srs, agg, rasterService, canceler, stopString, startString;
 
-    canceler = cancelers[slug] = $q.defer();
+  //   if (stop && start) {
+  //     stopString = new Date(stop).toISOString().split('.')[0];
+  //     startString = new Date(start).toISOString().split('.')[0];
+  //   }
 
-    srs = options.srs ? options.srs : 'EPSG:4326';
-    agg = options.agg ? options.agg : '';
+  //   if (cancelers[slug]) {
+  //     cancelers[slug].resolve();
+  //   }
 
-    return CabinetService.raster(canceler).get({
-      raster_names: slug,
-      geom: geom,
-      srs: srs,
-      start: startString,
-      stop: stopString,
-      agg: agg
-    });
-  };
+  //   canceler = cancelers[slug] = $q.defer();
 
+  //   srs = options.srs ? options.srs : 'EPSG:4326';
+  //   agg = options.agg ? options.agg : '';
+
+  //   return CabinetService.raster(canceler).get({
+  //     raster_names: slug,
+  //     geom: geom,
+  //     srs: srs,
+  //     start: startString,
+  //     stop: stopString,
+  //     agg: agg
+  //   });
+  // };
 
   var getRasterDataForExtentData = function (aggType, agg, slug, bounds) {
 
@@ -210,9 +246,9 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     cancelers[slug] = $q.defer();
 
     var dataProm = getRasterData(slug, geom, undefined, undefined, {
-        agg: aggType,
-        q: cancelers[slug]
-      });
+      agg: aggType,
+      q: cancelers[slug]
+    });
 
     return dataProm;
   };
@@ -248,46 +284,17 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     return dataProm;
   };
 
-  /**
-   * Checks whether rain data, retrieved from the back-end, contains at least
-   * one other value than null, so we know that data is available, and allow
-   * the app to show the card.
-   *
-   * @returns {boolean}
-   */
-  var mustShowRainCard = function (mapState, point) {
-
-    var activeTemporalLayer = mapState.getActiveTemporalLayer();
-    var rainIsActive =
-           (point.temporalRaster.type === 'demo:radar'
-              && activeTemporalLayer
-              && activeTemporalLayer.slug === 'demo:radar'
-            );
-
-    if (rainIsActive) {
-
-      var i, rainData = point.temporalRaster.data;
-
-      for (i = 0; i < rainData.length; i++) {
-        if (rainData[i][1] !== null) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
 
   return {
     rasterInfo: rasterInfo,
     getIntensityData: getIntensityData,
     setIntensityData: setIntensityData,
-    getRasterData: getRasterData,
-    getTemporalRaster: getTemporalRaster,
+    //getRasterData: getRasterData,
+    getData: getData,
+    //getTemporalRaster: getTemporalRaster,
     getImgOverlays: getImgOverlays,
     handleElevationCurve: handleElevationCurve,
-    getRasterDataForExtentData: getRasterDataForExtentData,
-    getAggregationForActiveLayer: getAggregationForActiveLayer,
-    mustShowRainCard: mustShowRainCard
+    //getRasterDataForExtentData: getRasterDataForExtentData,
   };
 
 }]);

@@ -28,20 +28,13 @@ app.directive('event', [function () {
 app.directive('timeseries', [function () {
   return {
       restrict: 'E',
+      scope: {
+        timeseries: '=',
+      },
+      replace: true,
       templateUrl: 'templates/timeseries.html'
     };
 }]);
-
-/**
- * Streetview directive.
- */
-app.directive('streetview', [function () {
-  return {
-      restrict: 'E',
-      templateUrl: 'templates/streetview.html'
-    };
-}]);
-
 
 /**
  * Cardtitle directive.
@@ -73,10 +66,58 @@ app.directive('actions', [function () {
   };
 }]);
 
-app.directive('cardattributes', [function () {
+app.directive('cardattributes', ['WantedAttributes', function (WantedAttributes) {
+  return {
+    link: function (scope) { scope.wanted = WantedAttributes; },
+    restrict: 'E',
+    scope: {
+      waterchain: '='
+    },
+    replace: true,
+    templateUrl: 'templates/cardattributes.html'
+  };
+}]);
+
+app.directive('rain', [function () {
   return {
     restrict: 'E',
-    templateUrl: 'templates/cardattributes.html'
+    scope: {
+      rain: '='
+    },
+    replace: true,
+    templateUrl: 'templates/rain.html'
+  };
+}]);
+
+app.directive('defaultpoint', [function () {
+  return {
+    link: function (scope) {
+
+      // These layergroups have dedicated markup
+      var EXCLUDED = ['timeseries', 'rain', 'waterchain'];
+
+      scope.$watch('point', function () {
+        scope.included = [];
+        angular.forEach(scope.point, function (value, key) {
+          if (EXCLUDED.indexOf(key) === -1) {
+            if (value) {
+              value.slug = key;
+              scope.included.push(value);
+            }
+          }
+        });
+
+      }, true);
+
+
+    },
+    restrict: 'E',
+    scope: {
+      point: '=',
+      mapstate: '='
+    },
+    replace: true,
+    templateUrl: 'templates/defaultpoint.html'
   };
 }]);
 
@@ -84,19 +125,5 @@ app.directive('detailswitch', [function () {
   return {
     restrict: 'E',
     templateUrl: 'templates/detailswitch.html'
-  };
-}]);
-
-app.directive('datadetailcard', [function () {
-  return {
-    restrict: 'E',
-    templateUrl: 'templates/data-detail-card.html'
-  };
-}]);
-
-app.directive('dataaggregationcard', [function () {
-  return {
-    restrict: 'E',
-    templateUrl: 'templates/data-aggregation-card.html'
   };
 }]);

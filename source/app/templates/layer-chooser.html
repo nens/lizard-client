@@ -1,10 +1,10 @@
 <li>
-  <label class="ng-class: {active: layer.active}; layer-chooser"
-         for="<% layer.id %>-layer"
-         ng-click="mapState.changeLayer(layer)"
+  <label class="ng-class: {active: layergroup.isActive()}; layer-chooser"
+         for="<% layergroup.id %>-layer"
+         ng-click="mapState.toggleLayerGroup(layergroup)"
          >
-    <span class="layer-text" ng-bind="layer.name"></span>
-    <span class="layer-img" class="layer-chooser" ng-style="layer.imageStyle">
+    <span class="layer-text" ng-bind="layergroup.name"></span>
+    <span class="layer-img" class="layer-chooser" ng-style="layergroup.imageStyle">
 
     </span>
   </label>

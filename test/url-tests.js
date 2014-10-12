@@ -63,7 +63,7 @@ describe('Testing UrlState', function () {
     service;
 
   var state = {
-    layers: {
+    layerGroups: {
       part: 'path',
       index: 1,
       update: true
@@ -146,8 +146,15 @@ describe('Testing UrlState', function () {
   });
 
   it('should set layers on the url', function () {
-    var layers = {topo: {active: true}, satte: {active: true}};
-    service.setLayersUrl(state, layers);
+    var layergroups = {
+      topo: {
+        isActive: function () { return true; }
+      },
+      satte: {
+        isActive: function () { return true; }
+      }
+    };
+    service.setlayerGroupsUrl(state, layergroups);
     expect($location.path()).toEqual('//topo,satte');
   });
 
@@ -212,31 +219,30 @@ describe('Testing hash controller', function () {
     LocationGetterSetter = $injector.get('LocationGetterSetter');
 
     // Mock MapService
-    var mockMapService = {
-      mapState: {
-        center: {
-          lat: 51.12345,
-          lng: 6.12
+    var mapState = {
+      center: {
+        lat: 51.12345,
+        lng: 6.12
+      },
+      points: [],
+      toggleLayerGroup: function (layerGroup) { layerGroup._active = !layerGroup._active; },
+      fitBounds: function () {},
+      activeLayersChanged: false,
+      layerGroups: {
+        'testlayer': {
+          _active: true
         },
-        points: [],
-        activeLayersChanged: false,
-        layers: {
-          'testlayer': {
-            active: true
-          },
-          'testlayer2': {
-            active: false
-          }
-
+        'testlayer2': {
+          _active: false
         }
       }
     };
-    mockMapService.setView = function (latlng, zoom, options) {
+    mapState.setView = function (latlng, zoom, options) {
       $scope.mapState.center.lat = latlng.lat;
     };
 
     // Mock the mapState
-    $scope.mapState = mockMapService.mapState;
+    $scope.mapState = mapState;
     $scope.mapState.changeLayer = function (layer) {
       layer.active = !layer.active;
     };
@@ -250,19 +256,17 @@ describe('Testing hash controller', function () {
     createController = function () {
       return $controller('UrlController', {
           '$scope': $scope,
-          'LocationGetterSetter': LocationGetterSetter,
-          'MapService': mockMapService
+          'LocationGetterSetter': LocationGetterSetter
       });
     };
   }));
 
-  it('should deactivate layer when layers are defined on the url but active layer is not on url', function () {
+  it('should activate layer when layer is defined on the url', function () {
     var controller = createController();
     $location.path('/map/testlayer2');
 
     $scope.$broadcast('$locationChangeSuccess');
-    expect($scope.mapState.layers.testlayer.active).toBe(false);
-    expect($scope.mapState.layers.testlayer2.active).toBe(true);
+    expect($scope.mapState.layerGroups.testlayer2._active).toBe(true);
   });
 
   it('should set boxType only when geometry is defined', function () {

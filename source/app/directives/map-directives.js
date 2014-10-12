@@ -13,39 +13,63 @@
  */
 app.directive('map', [
   '$controller',
-  '$rootScope',
-  'UtilService',
   'ClickFeedbackService',
-  'RasterService',
-  'MapService',
-  function (
-    $controller,
-    $rootScope,
-    UtilService,
-    ClickFeedbackService,
-    RasterService,
-    MapService
-    ) {
+  'NxtMap',
+  'dataLayers',
+  function ($controller, ClickFeedbackService, NxtMap, dataLayers) {
+
     var link = function (scope, element, attrs) {
 
-      // instead of 'map' element here for testability
-      var osmAttrib = '<a href="https://www.mapbox.com/about/maps/">&copy; Mapbox</a> <a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>';
-      var bounds = window.data_bounds.all;
+       /**
+        * @function
+        * @memberOf app.map
+        * @description small clickhandler for leafletclicks
+        * @param  {event}  e Leaflet event object
+        */
+      var _clicked = function (e) {
+        scope.mapState.here = e.latlng;
+      };
 
-      MapService.createMap(element[0], {
-        bounds: bounds,
-        attribution: osmAttrib
-      });
-      MapService.initiateMapEvents();
-      scope.mapState.layersNeedLoading = true;
+      /**
+       * @function
+       * @memberOf app.map
+       */
+      var _moveStarted = function (e) {
+        scope.mapState.mapMoving = true;
+      };
+
+      /**
+       * @function
+       * @memberOf app.map
+       */
+      var _mouseMoved = function (e) {
+        if (scope.box.type === 'line') {
+          scope.mapState.userHere = e.latlng;
+        }
+      };
+
+      /**
+       * @function
+       * @memberOf app.map
+       */
+      var _moveEnded = function (e, map) {
+        scope.mapState.moved = Date.now();
+        scope.mapState.mapMoving = false;
+        scope.mapState.center = map.getCenter();
+        scope.mapState.zoom = map.getZoom();
+        scope.mapState.bounds = map.getBounds();
+      };
+
+      scope.mapState = new NxtMap(element[0], dataLayers, {
+          zoomControl: false,
+        }
+      );
+
+      scope.mapState.initiateNxtMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
 
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.
       $controller('UrlController', {$scope: scope});
-
-      // initialize empty ClickLayer.
-      // Otherwise click of events-aggregate and clicklayer
-      ClickFeedbackService.drawClickInSpace(new L.LatLng(180.0, 90.0));
     };
 
     return {
@@ -61,8 +85,8 @@ app.directive('map', [
  * Show raster WMS images as overlay, animate overlays when animation is
  * playing.
  */
-app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
-  function (RasterService, UtilService, MapService) {
+app.directive('rasteranimation', ['RasterService', 'UtilService',
+  function (RasterService, UtilService) {
   return {
     link: function (scope, element, attrs) {
 
@@ -153,7 +177,7 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
        */
       scope.$watch('mapState.activeLayersChanged', function (n, o) {
         var i, activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
-        if (activeTemporalLayer) {
+        if (activeTemporalLayer && activeTemporalLayer.layers[0].type === 'WMS') {
           start();
           for (i in imageOverlays) {
             MapService.addLayer(imageOverlays[i]);
@@ -213,14 +237,12 @@ app.directive('rasteranimation', ['RasterService', 'UtilService', 'MapService',
             previousDate = currentDate;
             nxtDate += step;
           } else if (overlayIndex === undefined) {
-            // if (JS_DEBUG) {
-            //   console.info("We will have to go get", currentDate,
-            //                ". Get new images!");
-            // }
             if (scope.timeState.animation.playing) {
               restart = true;
             }
-            scope.timeState.playPauseAnimation('off');
+            if (scope.timeState.playPauseAnimation) {
+              scope.timeState.playPauseAnimation('off');
+            }
           }
         }
       });
