@@ -24,15 +24,14 @@ app.service('LeafletService', [function () {
       this._map.on('moveend', this._onMove, this);
       this._map.on('resize', this._onResize, this);
 
-      this.on('tileunload', function (d) {
-        if (d.tile.xhr) {
-          d.tile.xhr.abort();
-        }
-        if (d.tile.nodes) {
-          // d.tile.nodes.remove();
-        }
-        d.tile.xhr = null;
-      }) 
+      this.on('remove', this._onRemove, this);
+
+      this.geojsonLayer = L.geoJson().addTo(map);
+      this._map.addLayer(this.geojsonLayer);
+
+    },
+    _onRemove: function () {
+      this._map.removeLayer(this.geojsonLayer);
     },
     _onMove: function () {
       var bottomLeft = this._map.getPixelBounds().getBottomLeft();
@@ -55,12 +54,15 @@ app.service('LeafletService', [function () {
         }
       };
     },
+
     _loadTile: function (tile, tilePoint) {
-      var key = 'key'
-      // var key = 'key' + tilePoint.z + '_' + tilePoint.x '_' + tilePoint.y;
-      this._tilesLoading[key] = null;
       var self = this;
+
       this._adjustTilePoint(tilePoint);
+
+      var key = 'key_' + tilePoint.z + '_' + tilePoint.x + '_' + tilePoint.y;
+      this._tilesLoading[key] = 'busy';
+
       var layer = this;
       var req = new XMLHttpRequest();
       this._requests.push(req);
@@ -75,27 +77,40 @@ app.service('LeafletService', [function () {
         }
         this._requests = [];
         this._tilesLoading = {};
+        if (this.geojsonLayer) {
+          this._resetgeoJson();
+        }
+    },
+    _resetgeoJson: function () {
+      this._map.removeLayer(this.geojsonLayer);
+      this.geojsonLayer = L.geoJson().addTo(this._map);
+      this._map.addLayer(this.geojsonLayer);
+    },
+    drawTheThings: function (data) {
+      if (!data) { return; }
+      if (data.features.length > 0) {
+        this.geojsonLayer.addData(data);
+      }
+
     },
     _tileLoaded: function (tile, tilePoint) {
-      var key = 'key'
-        // var key = 'key' + tilePoint.z + '_' + tilePoint.x '_' + tilePoint.y;
-        this._tilesLoading[key] = 'done';
-        this.isLoading = false;
+      // var key = 'key'
+      var key = 'key_' + tilePoint.z + '_' + tilePoint.x + '_' + tilePoint.y;
+      this._tilesLoading[key] = 'done';
 
-        if (tile.datum === null) { return null; }
-        this.addTileData(tile.datum, tilePoint);
-        
-        for (var tile in this._tilesLoading) {
-          if (this._tilesLoading[tile] === null) {
-            this.isLoading = true;
-            break;
-          }
+      this.isLoading = false;
+
+      if (tile.datum === null) { return null; }
+      
+      this.addTileData(tile.datum, tilePoint);
+      this.drawTheThings(tile.datum, tilePoint);
+      
+      for (var tile in this._tilesLoading) {
+        if (this._tilesLoading[tile] === null) {
+          this.isLoading = true;
+          break;
         }
-
-
-        if (this.isLoading === false) {
-          this.fire('loadend');
-        }
+      }
     }
   });
 
@@ -109,6 +124,6 @@ app.service('LeafletService', [function () {
     
     return L;
   } else {
-    return 'He\'s dead Jim';
+    throw new Error('Leaflet can not be found');
   }
 }]);

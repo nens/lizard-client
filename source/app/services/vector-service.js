@@ -28,29 +28,30 @@ app.service('VectorService', ['$q', '$rootScope', 'Restangular',
 
       sourceArray.forEach(function (feature) {
         var withinBounds;
-        if (feature.type === "Polygon") {
-          var maxLat = feature.geometry.coordinates[0][0][0],
-              minLat = feature.geometry.coordinates[0][0][0],
-              minLon = feature.geometry.coordinates[0][0][1],
-              maxLon = feature.geometry.coordinates[0][0][1];
-          console.log(feature.geometry.coordinates)
-          window.feature = feature
-          feature.geometry.coordinates[0].forEach(function (coordinates) {
-            maxLon = Math.max(coordinates[1], maxLon);
-            maxLat = Math.max(coordinates[0], maxLat);
-            minLon = Math.min(coordinates[1], minLon);
-            minLat = Math.min(coordinates[0], minLat);
-          });
-          // if as much as one point is visible in extent draw it.
-          withinBounds = (
-            spatial.contains(new LeafletService.LatLng(maxLat, maxLon)) ||
-            spatial.contains(new LeafletService.LatLng(maxLat, minLon)) ||
-            spatial.contains(new LeafletService.LatLng(minLat, maxLon)) ||
-            spatial.contains(new LeafletService.LatLng(minLat, minLon))
-            )
-        } else if (feature.type === "MultiPolygon") {
-          // fuckall
-        } else if (feature.type === "Point") {
+        // if (feature.type === "Polygon") {
+        //   var maxLat = feature.geometry.coordinates[0][0][0],
+        //       minLat = feature.geometry.coordinates[0][0][0],
+        //       minLon = feature.geometry.coordinates[0][0][1],
+        //       maxLon = feature.geometry.coordinates[0][0][1];
+        //   console.log(feature.geometry.coordinates)
+        //   window.feature = feature
+        //   feature.geometry.coordinates[0].forEach(function (coordinates) {
+        //     maxLon = Math.max(coordinates[1], maxLon);
+        //     maxLat = Math.max(coordinates[0], maxLat);
+        //     minLon = Math.min(coordinates[1], minLon);
+        //     minLat = Math.min(coordinates[0], minLat);
+        //   });
+        //   // if as much as one point is visible in extent draw it.
+        //   withinBounds = (
+        //     spatial.contains(new LeafletService.LatLng(maxLat, maxLon)) ||
+        //     spatial.contains(new LeafletService.LatLng(maxLat, minLon)) ||
+        //     spatial.contains(new LeafletService.LatLng(minLat, maxLon)) ||
+        //     spatial.contains(new LeafletService.LatLng(minLat, minLon))
+        //     )
+        // } else if (feature.type === "MultiPolygon") {
+        //   // fuckall
+        // } else 
+        if (feature.type === "Point") {
           var latLng = new LeafletService.LatLng(
             feature.geometry.coordinates[0],
             feature.geometry.coordinates[1]
@@ -152,7 +153,6 @@ app.service('VectorService', ['$q', '$rootScope', 'Restangular',
               start: options.start,
               end: options.end
             });
-          console.log(set);
           deferred.resolve(set);
           return deferred.promise;
         }
@@ -165,7 +165,7 @@ app.service('VectorService', ['$q', '$rootScope', 'Restangular',
     var getDataAsync = function (nonLeafLayer, options, deferred) {
       nonLeafLayer.leafletLayer.on('loadend', function () {
         if (vectorLayers[nonLeafLayer.slug] !== undefined ) {
-          deferred.resolve(filterSet(vectorLayers[nonLeafLayer.slug], 
+          deferred.resolve(filterSet(vectorLayers[nonLeafLayer.slug].data, 
             options.geom, {
               start: options.start,
               end: options.end

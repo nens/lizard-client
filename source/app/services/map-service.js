@@ -165,14 +165,14 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService',
        * @return {[type]} [description]
        */
       addGeoJsonLayer: function () {
-        this._vectorLayer = LeafletService.geoJson([], {
-          style: {
-            "color": "#ff7800",
-            "weight": 5,
-            "opacity": 0.65
-          }
-        });
-        this.addLayer(this._vectorLayer);
+        // this._vectorLayer = LeafletService.geoJson([], {
+        //   style: {
+        //     "color": "#ff7800",
+        //     "weight": 5,
+        //     "opacity": 0.65
+        //   }
+        // });
+        // this.addLayer(this._vectorLayer);
       },
 
       /**
@@ -183,22 +183,28 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService',
        * @return {[type]} [description]
        */
       redrawGeoJsonLayer: function () {
-        var that = this;
-        this.removeLayer(this._vectorLayer);
-        this.addGeoJsonLayer();
-        angular.forEach(this.layerGroups, function (lg) {
-          if (lg._active) {
-            lg.getData({
-              geom: that.bounds
-            }).then(function (response) {
-              console.log(response)
-              that._vectorLayer.addData(response);  
-            })
-          }
-          else {
-            return;
-          }
-        })
+        // var that = this;
+        // this.removeLayer(this._vectorLayer);
+        // this.addGeoJsonLayer();
+        // angular.forEach(this.layerGroups, function (lg) {
+        //   if (lg.isActive()) {
+        //     angular.forEach(lg._layers, function (layer) {
+        //       if (layer.type === 'Vector') {var vector = true;}
+        //     })
+        //     if (!vector) { return;}
+        //     lg.getData({
+        //       geom: that.bounds
+        //     }).then(function (response) { console.log(response)}, 
+        //       null,
+        //       function (response) {
+        //         console.log(response)
+        //         that._vectorLayer.addData(response);  
+        //       })
+        //   }
+        //   else {
+        //     return;
+        //   }
+        // })
       }
 
     };
