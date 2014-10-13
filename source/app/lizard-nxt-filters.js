@@ -202,3 +202,28 @@ app.filter('truncate', function () {
   };
 });
 
+
+app.filter('objectTitle', function () {
+
+  return function (input) {
+
+    return {
+      'bridge': 'Brug',
+      'channel': 'Kanaal',
+      'crossprofile': 'Kruisprofiel',
+      'culvert': 'Duiker',
+      'manhole': 'Put',
+      'measuringstation': 'Meetstation',
+      'orifice': 'Doorlaat',
+      'outlet': 'Uitlaat met keerklep',
+      'overflow': 'Overstort',
+      'pipe': 'Gesloten Leiding',
+      'pumpstation': 'Gemaal',
+      'pumpstation_sewerage': 'Rioolgemaal',
+      'weir': 'Stuw'
+
+    }[input] || input;
+  };
+
+});
+
