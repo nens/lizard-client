@@ -90,7 +90,6 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
         );
 
       } else {
-
         angular.forEach($scope.point, function (lg) {
           if (lg) {
             ClickFeedbackService.drawArrowHere($scope.mapState);
