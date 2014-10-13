@@ -666,6 +666,12 @@
   margin: 15px 0 0 0;
 }
 
+.card-title-text {
+  position: relative;
+  top: -2px;
+
+}
+
 .empty-card-content {
   height: 40px;
   color: #7f8c8d;
@@ -701,7 +707,7 @@ select.timeseries {
 /*  float: left;
   margin-left: 5px;*/
   position: relative;
-  top: -3px;
+  top: -2px;
   left: 5px;
 }
 

@@ -126,12 +126,5 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer($scope.mapState);
     });
-
-    // debug purposes
-    var sayHi = function () {
-      var result = 'PointCtrl says hi!';
-      console.log(result);
-      return result;
-    };
   }
 ]);

@@ -203,7 +203,7 @@ app.filter('truncate', function () {
 });
 
 
-app.filter('getText', function () {
+app.filter('objectTitle', function () {
 
   return function (input) {
 
@@ -221,6 +221,7 @@ app.filter('getText', function () {
       'pumpstation': 'Gemaal',
       'pumpstation_sewerage': 'Rioolgemaal',
       'weir': 'Stuw'
+
     }[input] || input;
   };
 
