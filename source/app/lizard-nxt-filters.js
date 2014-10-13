@@ -73,6 +73,43 @@ app.filter('lookupManholeShape', function () {
   };
 });
 
+app.filter('lookupLeveeType', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case 1:
+      out = 'Primair';
+      break;
+    case 2:
+      out = 'Regionaal';
+      break;
+    case 3:
+      out = 'c-type';
+      break;
+    default:
+      out = '...';
+    }
+    return out;
+  };
+});
+
+app.filter('lookupLeveeReferencePointType', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case 1:
+      out = 'Dijkpaal';
+      break;
+    case 2:
+      out = 'Virtueel';
+      break;
+    default:
+      out = '...';
+    }
+    return out;
+  };
+});
+
 app.filter('lookupManholeMaterial', function () {
   return function (input) {
     var out;
@@ -209,7 +246,7 @@ app.filter('objectTitle', function () {
 
     return {
       'bridge': 'Brug',
-      'channel': 'Kanaal',
+      'channel': 'Watergang',
       'crossprofile': 'Kruisprofiel',
       'culvert': 'Duiker',
       'manhole': 'Put',
@@ -220,8 +257,11 @@ app.filter('objectTitle', function () {
       'pipe': 'Gesloten Leiding',
       'pumpstation': 'Gemaal',
       'pumpstation_sewerage': 'Rioolgemaal',
-      'weir': 'Stuw'
-
+      'weir': 'Stuw',
+      'pressurepipe': 'Persleiding',
+      'sluice': 'Sluis',
+      'levee': 'Kering',
+      'leveereferencepoint': 'Referentiepunt kering'
     }[input] || input;
   };
 
