@@ -132,6 +132,7 @@ app.factory('LayerGroup', [
         // should be resolved. It resolves with 'true' to indicate activity
         // of layer. No need to keep a counter of the individual promises.
         $q.all(promises).then(function () {
+          console.log(promises.length, 'sup dude, heres some lengths');
           deferred.resolve({
             slug: lgSlug,
             active: lgActive
@@ -282,6 +283,10 @@ app.factory('LayerGroup', [
 
     var _initiateVectorLayer = function (nonLeafLayer) {
 
+
+      // ["#27ae60", "#2980b9", "#8e44ad", "#7f8c8d", "#f39c12", "#d35400",
+      //   "#c0392b", "#16a085"];
+
       var leafletLayer;
 
       if (nonLeafLayer.tiled) {
@@ -291,6 +296,7 @@ app.factory('LayerGroup', [
         leafletLayer = new LeafletService.TileDataLayer(url, {
           minZoom: nonLeafLayer.min_zoom,
           maxZoom: nonLeafLayer.max_zoom,
+          color: '#8e44ad',
           dataCallback: function (featureCollection, point) {
             if (!featureCollection) { return; }
 

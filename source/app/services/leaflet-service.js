@@ -16,7 +16,22 @@ app.service('LeafletService', [function () {
       this._tilesLoading = {};
       this.isLoading = false;
 
+      var color = this.options.color;
       this.addTileData = this.options.dataCallback;
+      this.drawOptions = {
+        pointToLayer: function (feature, latlng) {
+
+          var geojsonMarkerOptions = {
+              radius: 8,
+              fillColor: color,
+              color: "#000",
+              weight: 1,
+              opacity: 1,
+              fillOpacity: 0.8
+          };
+          return L.circleMarker(latlng, geojsonMarkerOptions);
+        }
+      };
       
       L.TileLayer.prototype.onAdd.call(this, map);
       var size = this._map.getPixelBounds().getSize();
@@ -26,7 +41,7 @@ app.service('LeafletService', [function () {
 
       this.on('remove', this._onRemove, this);
 
-      this.geojsonLayer = L.geoJson().addTo(map);
+      this.geojsonLayer = L.geoJson(null, this.drawOptions).addTo(map);
       this._map.addLayer(this.geojsonLayer);
 
     },
@@ -83,11 +98,8 @@ app.service('LeafletService', [function () {
     },
     _resetgeoJson: function () {
       this._map.removeLayer(this.geojsonLayer);
-      this.geojsonLayer = L.geoJson({
-        pointToLayer: function (feature, latlng) {
-          return L.circleMarker(latlng, geojsonMarkerOptions);
-        }
-      }).addTo(this._map);
+      this.geojsonLayer = L.geoJson(null, this.drawOptions)
+        .addTo(this._map);
       this._map.addLayer(this.geojsonLayer);
     },
     drawTheThings: function (data) {
@@ -98,7 +110,6 @@ app.service('LeafletService', [function () {
 
     },
     _tileLoaded: function (tile, tilePoint) {
-      // var key = 'key'
       var key = 'key_' + tilePoint.z + '_' + tilePoint.x + '_' + tilePoint.y;
       this._tilesLoading[key] = 'done';
 
@@ -110,7 +121,7 @@ app.service('LeafletService', [function () {
       this.drawTheThings(tile.datum, tilePoint);
       
       for (var tile in this._tilesLoading) {
-        if (this._tilesLoading[tile] === null) {
+        if (this._tilesLoading[tile] === 'busy') {
           this.isLoading = true;
           break;
         }

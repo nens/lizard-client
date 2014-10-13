@@ -136,7 +136,8 @@ app.service('VectorService', ['$q', '$rootScope', 'Restangular',
 
       var deferred = $q.defer();
       
-      if (!(options.geom instanceof LeafletService.LatLngBounds)) {
+      if (!(options.geom instanceof LeafletService.LatLngBounds) && 
+          !(options.geom instanceof LeafletService.LatLng)) {
         deferred.reject();
         return deferred.promise;
       }
@@ -147,18 +148,17 @@ app.service('VectorService', ['$q', '$rootScope', 'Restangular',
         if (layer.isLoading ||
             vectorLayers[nonLeafLayer.slug] === undefined) {
           getDataAsync(nonLeafLayer, options, deferred);
+
         } else {
-          var set = filterSet(vectorLayers[nonLeafLayer.slug].data, 
+            var set = filterSet(vectorLayers[nonLeafLayer.slug].data, 
             options.geom, {
               start: options.start,
               end: options.end
             });
           deferred.resolve(set);
-          return deferred.promise;
         }
       } else {
         deferred.reject();
-        return deferred.promise;
       }
 
       return deferred.promise;
