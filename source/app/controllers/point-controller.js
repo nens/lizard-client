@@ -75,10 +75,20 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
       $q.all(promises).then(drawFeedback);
     };
 
+    /**
+     * @function
+     * @memberOf app.pointCtrl
+     * @description Wrapper to improve readability
+     */
     var fillPointHere = function () {
       fillpoint($scope.mapState.here);
     };
 
+    /**
+     * @function
+     * @memberOf app.pointCtrl
+     * @description Draw visual feedback after client clicked on the map
+     */
     var drawFeedback = function () {
       ClickFeedbackService.stopVibration();
       if ($scope.point.waterchain) {
@@ -113,16 +123,6 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
 
         if (result.length > 0) {
 
-          // NXT 1.0 style
-          // -------------
-          // $scope.point.timeseries.type = 'timeseries';
-          // $scope.point.timeseries.data = result[0].events;
-          // $scope.point.timeseries.name = result[0].name;
-          // $scope.point.timeseries.order = 9999;
-
-
-          // NXT 2.0 style
-          // -------------
           angular.extend($scope.point.timeseries, {
 
             type  : 'timeseries',
