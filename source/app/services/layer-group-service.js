@@ -289,6 +289,8 @@ app.factory('LayerGroup', [
         var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
 
         leafletLayer = new LeafletService.TileDataLayer(url, {
+          minZoom: nonLeafLayer.min_zoom,
+          maxZoom: nonLeafLayer.max_zoom,
           dataCallback: function (featureCollection, point) {
             if (!featureCollection) { return; }
 

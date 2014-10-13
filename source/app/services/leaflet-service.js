@@ -83,7 +83,11 @@ app.service('LeafletService', [function () {
     },
     _resetgeoJson: function () {
       this._map.removeLayer(this.geojsonLayer);
-      this.geojsonLayer = L.geoJson().addTo(this._map);
+      this.geojsonLayer = L.geoJson({
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, geojsonMarkerOptions);
+        }
+      }).addTo(this._map);
       this._map.addLayer(this.geojsonLayer);
     },
     drawTheThings: function (data) {
@@ -110,6 +114,10 @@ app.service('LeafletService', [function () {
           this.isLoading = true;
           break;
         }
+      }
+
+      if (!this.isLoading) {
+        this.fire('loadend');
       }
     }
   });

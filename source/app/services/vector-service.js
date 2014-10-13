@@ -160,6 +160,8 @@ app.service('VectorService', ['$q', '$rootScope', 'Restangular',
         deferred.reject();
         return deferred.promise;
       }
+
+      return deferred.promise;
     };
 
     var getDataAsync = function (nonLeafLayer, options, deferred) {
