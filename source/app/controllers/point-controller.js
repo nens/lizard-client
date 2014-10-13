@@ -75,15 +75,28 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
       $q.all(promises).then(drawFeedback);
     };
 
+    var fillPointHere = function () {
+      fillpoint($scope.mapState.here);
+    };
+
     var drawFeedback = function () {
       ClickFeedbackService.stopVibration();
       if ($scope.point.waterchain) {
-        ClickFeedbackService.drawGeometry($scope.mapState,
+
+        ClickFeedbackService.drawGeometry(
+          $scope.mapState,
           $scope.point.waterchain.waterchain_grid.data.geom,
-          $scope.point.waterchain.waterchain_grid.data.entity_name);
+          $scope.point.waterchain.waterchain_grid.data.entity_name
+        );
+
       } else {
+
         angular.forEach($scope.point, function (lg) {
-          if (lg) { ClickFeedbackService.drawArrowHere($scope.mapState, $scope.mapState.here); }
+          if (lg) {
+            ClickFeedbackService.drawArrowHere($scope.mapState);
+            // return immediately to skip unneccesary loop iterations, kthxbai <3
+            return;
+          }
         });
       }
     };
@@ -96,30 +109,48 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
     var getTimeSeriesForObject = function (id) {
       TimeseriesService.getTimeseries(id, $scope.timeState)
       .then(function (result) {
-        $scope.point.timeseries = $scope.point.timeseries ? $scope.point.timeseries : {};
+
+        $scope.point.timeseries = $scope.point.timeseries || {};
+
         if (result.length > 0) {
-          $scope.point.timeseries.type = 'timeseries';
-          $scope.point.timeseries.data = result[0].events;
-          $scope.point.timeseries.name = result[0].name;
-          $scope.point.timeseries.order = 9999;
+
+          // NXT 1.0 style
+          // -------------
+          // $scope.point.timeseries.type = 'timeseries';
+          // $scope.point.timeseries.data = result[0].events;
+          // $scope.point.timeseries.name = result[0].name;
+          // $scope.point.timeseries.order = 9999;
+
+
+          // NXT 2.0 style
+          // -------------
+          angular.extend($scope.point.timeseries, {
+
+            type  : 'timeseries',
+            data  : result[0].events,
+            name  : result[0].name,
+            order : 9999
+          });
+
+
         } else {
           $scope.point.timeseries = undefined;
         }
       });
     };
 
-    fillpoint($scope.mapState.here);
+    fillPointHere();
 
     // Update when user clicked again
     $scope.$watch('mapState.here', function (n, o) {
       if (n === o) { return; }
-      fillpoint($scope.mapState.here);
+      fillPointHere();
     });
 
     // Update when layergroups have changed
     $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
       if (n === o) { return; }
-      fillpoint($scope.mapState.here);
+      fillPointHere();
     });
 
     // Clean up stuff when controller is destroyed

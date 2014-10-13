@@ -232,14 +232,34 @@ app.service('ClickFeedbackService', ['$rootScope', 'LeafletService',
      * @param {object} latLng Leaflet object specifying the latitude
      * and longitude of a click
      */
-    drawArrowHere = function (mapState, latlng) {
+    // drawArrowHere = function (mapState, latlng) {
+    //   ctrl.emptyClickLayer(mapState);
+    //   var geometry = {"type": "Point",
+    //                   "coordinates": [latlng.lng, latlng.lat]};
+    //   ctrl.drawFeature(geometry);
+    //   var px = mapState.latLngToLayerPoint(latlng);
+    //   ctrl.addLocationMarker(px);
+    // };
+
+    /**
+     * Draws an arrow at specified location to indicate click.
+     * Used to indicate location of rain graph
+     *
+     * @param {object} latLng Leaflet object specifying the latitude
+     * and longitude of a click
+     */
+    drawArrowHere = function (mapState) {
+      var geometry, px;
       ctrl.emptyClickLayer(mapState);
-      var geometry = {"type": "Point",
-                      "coordinates": [latlng.lng, latlng.lat]};
+      geometry = {
+                   "type": "Point",
+                   "coordinates": [mapState.here.lng, mapState.here.lat]
+                 };
       ctrl.drawFeature(geometry);
-      var px = mapState.latLngToLayerPoint(latlng);
+      px = mapState.latLngToLayerPoint(mapState.here);
       ctrl.addLocationMarker(px);
     };
+
 
     stopVibration = function () {
       ctrl.stopVibration();
