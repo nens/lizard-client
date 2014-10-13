@@ -249,7 +249,9 @@ app.service('ClickFeedbackService', ['$rootScope', 'LeafletService',
      * and longitude of a click
      */
     drawArrowHere = function (mapState) {
+
       var geometry, px;
+
       ctrl.emptyClickLayer(mapState);
       geometry = {
                    "type": "Point",

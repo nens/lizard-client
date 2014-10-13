@@ -132,7 +132,6 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
             order : 9999
           });
 
-
         } else {
           $scope.point.timeseries = undefined;
         }
