@@ -274,11 +274,8 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       if (!!activeTemporalLayer && activeTemporalLayer.slug === 'rain') {
         // width of timeline
         var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
-        RasterService.getTemporalRaster(new Date(start),
-                                        new Date(stop),
-                                        bounds,
-                                        aggWindow,
-                                        activeTemporalLayer.slug)
+        scope.mapState.layerGroups['rain'].getData(
+          {geom: bounds, start: start, end: stop, aggWindow: aggWindow})
         .then(function (response) {
           RasterService.setIntensityData(response);
           scope.raster.changed = Date.now();

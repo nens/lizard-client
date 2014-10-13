@@ -12,7 +12,8 @@
  * Contains data of all active layers with an aggregation_type
  *
  */
-app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterService) {
+app.controller('AreaCtrl', ['$scope', 'RasterService',
+  function ($scope, RasterService) {
 
     $scope.area = {};
 
@@ -47,7 +48,8 @@ app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterS
           areaLG[response.layerSlug].data = response.data;
           // TODO: move formatting of data to server.
           if (response.layerSlug === 'ahn2/wss') {
-            areaLG[response.layerSlug].data = RasterService.handleElevationCurve(response.data);
+            areaLG[response.layerSlug].data =
+              RasterService.handleElevationCurve(response.data);
           }
         }
         $scope.area[response.layerGroupSlug] = areaLG;
@@ -55,7 +57,9 @@ app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterS
 
       angular.forEach(layerGroups, function (layerGroup, slug) {
         // Pass the promise to a function that handles the scope.
-        layerGroup.getData({geom: bounds})
+        layerGroup.getData({geom: bounds,
+                            start: $scope.timeState.start,
+                            end: $scope.timeState.end})
           .then(doneFn, doneFn, putDataOnScope);
       });
     };
