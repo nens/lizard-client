@@ -10,9 +10,12 @@
        class="icon-<% waterchain.waterchain_grid.data.entity_name.split(' ')[0] %>">
     </i>
     <span class="kunstwerk-title">
+
       <span id="title-holder"
             class="card-title-text kunstwerk-title-text">
-        <% gettext(waterchain.waterchain_grid.data.entity_name) %>
+
+        <% waterchain.waterchain_grid.data.entity_name | getText %>
+
       </span>
       &nbsp;
       <span ng-if= "waterchain.waterchain_grid.data.code"
@@ -24,6 +27,7 @@
         <span>)</span>
       </span>
     </span>
+
     <table id="kunstwerk-table" class="table table-condensed table-hover">
       <thead>
         <tr>

@@ -187,9 +187,15 @@ app.controller('MasterCtrl',
    * @returns {string} text - Translated text.
    */
   $scope.gettext = function (text) {
-    return $scope.translations[text];
+    var result = $scope.translations[text] || 'unknown';
+    return result;
   };
 
+  $scope.sayHi = function () {
+    var result = 'MainCtrl says hi!';
+    console.log(result);
+    return result;
+  };
 
   /**
    * @function

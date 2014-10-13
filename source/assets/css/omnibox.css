@@ -698,8 +698,11 @@ select.timeseries {
 }
 
 #icon-holder {
-  float: left;
-  margin-left: 5px;
+/*  float: left;
+  margin-left: 5px;*/
+  position: relative;
+  top: -3px;
+  left: 5px;
 }
 
 .relatified-events-header:hover {
