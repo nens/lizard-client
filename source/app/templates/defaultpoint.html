@@ -1,0 +1,16 @@
+<div id="card"
+  class="card active"
+  ng-if="included.length > 0"
+  ng-repeat="point in included">
+  <div class="card-content" id="card-content">
+    <table class="table table-condensed table-hover">
+      <tbody>
+        <tr>
+          <td><% point.layerGroupName %></td>
+          <td><% point['ahn2/wss'].data[0][0] %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+

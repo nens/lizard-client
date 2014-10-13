@@ -12,8 +12,8 @@
  * state leads the url.
  */
 app.controller('UrlController', ['$scope', 'LocationGetterSetter',
-  'UrlState', 'CabinetService',
-  function ($scope, LocationGetterSetter, UrlState, CabinetService) {
+  'UrlState', 'dataBounds',
+  function ($scope, LocationGetterSetter, UrlState, dataBounds) {
 
     // Configuration object for url state.
     var state = {
@@ -77,9 +77,19 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter',
       }
     };
 
+
+   /**
+    * @function
+    * @memberOf app.UrlController
+    * @summary Sets the mapView on the url or the url on the mapView
+    * @description If mapView as string from the url is a parseable
+    *              mapView, the map is set to this view. Else the map
+    *              is set to bounds of data as defined by the server.
+    * @param {string} String representation of mapView on url
+    */
     var enableMapView = function (mapView) {
       var fn = function () {
-        $scope.mapState.fitBounds(CabinetService.dataBounds.all);
+        $scope.mapState.fitBounds(dataBounds);
       };
 
       if (mapView) {

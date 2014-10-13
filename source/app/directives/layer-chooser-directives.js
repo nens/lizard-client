@@ -1,12 +1,12 @@
 //layer-directive.js
 
-app.directive("layerChooser", ['NxtMap', 'CabinetService',
-  function (NxtMap, CabinetService) {
+app.directive("layerChooser", ['NxtMap', 'dataLayers',
+  function (NxtMap, dataLayers) {
 
   var link = function (scope, element, attrs) {
     // Scope gets the mapState layerGroup, here we create a new layerGroup which
     // goes into its own NxtMap to always be turned on
-    var layerGroup = CabinetService.layergroups[scope.layergroup.slug];
+    var layerGroup = dataLayers[scope.layergroup.slug];
     var chooser = new NxtMap(element.find('.layer-img')[0], [layerGroup], {
       center: [52.39240447569775, 5.101776123046875],
       zoom: 6,

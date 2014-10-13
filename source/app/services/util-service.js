@@ -175,30 +175,6 @@ app.service("UtilService", function () {
   };
 
   /**
-   * @function createLineWKT
-   * @memberOf UtilService
-   *
-   * @summary Create WKT line from two latlon objects.
-   *
-   * @param {object} firstClick - object with list of latlon.
-   * @param {object} secondClick - object with list of latlon.
-   * @return {string} - WKT string of line between firstClick and secondClick.
-   */
-  this.createLineWKT = function (firstClick, secondClick) {
-    return [
-      "LINESTRING(",
-      firstClick.lng,
-      " ",
-      firstClick.lat,
-      ",",
-      secondClick.lng,
-      " ",
-      secondClick.lat,
-      ")"
-    ].join('');
-  };
-
-  /**
    * @function serveToMobileDevice
    * @memberOf UtilService
    */
@@ -210,18 +186,34 @@ app.service("UtilService", function () {
     return result;
   };
 
+  var checkForLine = function (geom) {
+    var line = false;
+    if (geom.length > 1) {
+      line = true;
+      angular.forEach(geom, function (value) {
+        if (!(value instanceof L.LatLng)) {
+          line = false;
+        }
+      });
+    }
+    return line;
+  };
+
   /**
    * @function geomToWkt
    * @memberOf UtilService
    */
   this.geomToWkt = function (geom) {
 
-    console.log('geom:', geom);
-
-    if (geom.lat && geom.lng) {
+    if (geom instanceof L.LatLng) {
       // geom is a L.LatLng object
       return "POINT(" + geom.lng + " " + geom.lat + ")";
-
+    } else if (checkForLine(geom)) {
+      var coords = [];
+      angular.forEach(geom, function (latLng) {
+        coords.push(latLng.lng + " " + latLng.lat);
+      });
+      return "LINESTRING(" + coords.join(',') + ")";
     } else {
       // geom is a L.Bounds object
       return "POLYGON(("

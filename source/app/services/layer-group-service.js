@@ -21,7 +21,7 @@ app.factory('LayerGroup', [
      * @memberOf app.LayerGroup
      * @description Instantiates a layerGroup with non-readable and
      *              non-configurable properties
-     * @param  {object} layergroup definition
+     * @param  {object} layergroup definition as coming from the server
      */
     function LayerGroup(layerGroup) {
       Object.defineProperty(this, 'name', {
@@ -75,25 +75,27 @@ app.factory('LayerGroup', [
      /**
       * @function
       * @memberOf app.LayerGroup.prototype
-      * @description - Returns a promise that notifies with data for every layer
-      *                of the layergroup that is appplicable (i.e: rain and several
-      *                vector layers). It resolves when all data is in.
-      * @param  {object} geom - latLng object with lat and lng properties or a list of
-      *                         such objects.
-      * @return  {promise} - notifies with data per layer and resolves when all layers
-      *                      returned data.
+      * @description Returns a promise that notifies with data for every layer
+      *              of the layergroup that is appplicable (i.e: rain and several
+      *              vector layers). It resolves when all data is in.
+      * @param  {object} geom latLng object with lat and lng properties or a list of
+      *                       such objects.
+      * @return  {promise} notifies with data per layer and resolves with value true
+      *                    when layergroup was active, or false when layergroup was
+      *                    inactive.
       */
       getData: function (options) {
 
         var lgSlug = this.slug,
+            lgActive = this._active,
             deferred = $q.defer();
 
         if (!this._active) {
-          deferred.resolve(false);
+          deferred.resolve({slug: this.slug, active: this._active});
           return deferred.promise;
         }
 
-        var promiseCount = 0;
+        var promises = [];
 
         angular.forEach(this._layers, function (layer) {
 
@@ -114,29 +116,42 @@ app.factory('LayerGroup', [
 
           if (wantedService) {
 
-            promiseCount = buildPromise(
+            promises.push(buildPromise(
               lgSlug,
               layer,
               options,
               deferred,
-              wantedService,
-              promiseCount
-            );
+              wantedService
+            ));
           }
+        });
+
+        // Bear with me: the promises from the individual getData's(),
+        // notify() the defer from LayerGroup.getData() on resolve.
+        // When all the individual promises have resolved, this defer
+        // should be resolved. It resolves with 'true' to indicate activity
+        // of layer. No need to keep a counter of the individual promises.
+        $q.all(promises).then(function () {
+          deferred.resolve({
+            slug: lgSlug,
+            active: lgActive
+          });
         });
 
         return deferred.promise;
       },
 
+
      /**
       * @function
       * @memberOf app.LayerGroup.prototype
-      * @description
+      * @description toggles a layergroup on the given map.
+      * @param  {object} map Leaflet map to toggle this layer on
       */
       toggle: function (map) {
 
         if (!this._initiated) {
-          this._layers = _initiateLayers(this._layers, this.temporal);
+          this._layers = _initializeLeafletLayers(this._layers, this.temporal);
           this._initiated = true;
         }
 
@@ -159,76 +174,49 @@ app.factory('LayerGroup', [
 
     ///////////////////////////////////////////////////////////////////////////
 
+   /**
+    * @function
+    * @memberOf app.LayerGroup
+    * @description creates a promise for the given layer and the provided
+    *              service. The service should have a getData function that
+    *              returns a promise that is resolved when data is recieved.
+    * @param lgSlug layerGroup slug to include in the response.
+    * @param layer  nxtLayer definition.
+    * @param options options containing geometry or time.
+    * @param deffered deffered to notify when service.getData resolves.
+    * @param wantedService Service to getData from.
+    */
     var buildPromise = function (
       lgSlug,
       layer,
       options,
       deferred,
-      wantedService,
-      count) {
+      wantedService) {
 
-      var prom, buildSuccesCallback, buildErrorCallback;
-
-      buildSuccesCallback = function (layer) {
-
-        return function (data) {
-
-          deferred.notify({
-            data: data,
-            type: layer.type,
-            layerGroupSlug: lgSlug
-          });
-
-          if (--count === 0) { deferred.resolve(true); }
-        };
+      var buildSuccesCallback = function (data) {
+        deferred.notify({
+          data: data,
+          type: layer.type,
+          layerGroupSlug: lgSlug,
+          layerSlug: layer.slug,
+          aggType: layer.aggregation_type
+        });
       };
 
-      buildErrorCallback = function (layer) {
-
-        return function (msg) {
-
-          deferred.notify({
-            data:  null,
-            type: layer.type,
-            layerGroupSlug: lgSlug
-          });
-
-          if (--count === 0) { deferred.resolve(true); }
-        };
+      var buildErrorCallback = function (msg) {
+        deferred.notify({
+          data:  null,
+          type: layer.type,
+          layerGroupSlug: lgSlug,
+          layerSlug: layer.slug
+        });
       };
 
+      if (!options) { options = {}; }
       options.agg = layer.aggregation_type;
 
-      prom = wantedService.getData(
-        layer,
-        options
-      );
-
-      prom.then(
-        buildSuccesCallback(layer),
-        buildErrorCallback(layer)
-      );
-
-      return ++count;
-    };
-
-    // TODO: get this from the server
-    var getOptsForLayer = function (layer) {
-
-      // agg ::= 'none' | 'rrc' | 'sum' | 'counts'
-
-      switch (layer.slug) {
-      case 'radar/basic':
-        return {
-          agg: 'rrc'
-        };
-      case 'use/wss':
-        return {
-          agg: 'sum'
-        };
-      default:
-        return {};
-      }
+      return wantedService.getData(layer, options)
+        .then(buildSuccesCallback, buildErrorCallback);
     };
 
     /**
@@ -238,26 +226,38 @@ app.factory('LayerGroup', [
      * @description Adds layer to map
      */
     var addLayer = function (map, layer) { // Leaflet Layer
-      map.addLayer(layer);
+      if (map.hasLayer(layer)) {
+        throw new Error('Attempted to add layer' + layer._id + 'while it was already part of the map');
+      } else { map.addLayer(layer); }
+    };
+
+    /**
+     * @function
+     * @memberof app.LayerGroup
+     * @param  {L.Class} Leaflet map
+     * @param  {L.Class} Leaflet layer
+     * @description Removes layer from map
+     */
+    var removeLayer = function (map, layer) { // Leaflet Layer
+      if (map.hasLayer(layer)) { map.removeLayer(layer); }
+      else {
+        throw new Error('Attempted to remove layer' + layer._id + 'while it was not part of provided the map');
+      }
     };
 
     /**
      * @function
      * @memberof app.LayerGroup
      * @param  {L.Class} Leaflet layer
-     * @description Removes layer from map
+     * @param temproal boolean describing whether the layer is temporal
+     * @description delegates initialization of leaflet layers to other
+     *              functions.
      */
-    var removeLayer = function (map, layer) { // Leaflet Layer
-      map.removeLayer(layer);
-    };
-
-    var _initiateLayers = function (layers, temporal) {
-
+    var _initializeLeafletLayers = function (layers, temporal) {
       if (temporal) {
         //TODO: initialize imageoverlays
         return layers;
       }
-
       else {
         angular.forEach(layers, function (layer) {
           if (layer.type === 'Vector') {
@@ -344,25 +344,13 @@ app.factory('LayerGroup', [
     var _initiateWMSLayer = function (nonLeafLayer) {
       var _options = {
         layers: nonLeafLayer.slug,
-        slug: nonLeafLayer.slug,
         format: 'image/png',
         version: '1.1.1',
         minZoom: nonLeafLayer.min_zoom || 0,
         maxZoom: 19,
         zIndex: nonLeafLayer.z_index
       };
-
-      if (nonLeafLayer.slug === 'landuse') {
-        _options.styles = 'landuse';
-      } else if (nonLeafLayer.slug === 'elevation') {
-        _options.styles = 'BrBG_r';
-        _options.effects = 'shade:0:3';
-      } else if (nonLeafLayer.slug === 'isahw:BOFEK2012') {
-        _options.styles = ''; // Add no styling for soil layer
-      } else { // Default, used by zettingsvloeiingsproef
-        _options.styles = 'BrBG_r';
-        _options.effects = 'shade:0:3';
-      }
+      _options = angular.extend(_options, nonLeafLayer.options);
 
       return LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
     };

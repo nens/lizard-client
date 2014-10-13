@@ -36,14 +36,14 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService',
 
       /**
        * @function
-       * @memberOf app.NxtMapService
-       * @description legacy function from map-directive --> does too much!
-       * @param  {object} layer  single layer that needs to be toggled
-       * @param  {object} layers all layers to switch off.
+       * @memberOf app.NxtMap
+       * @description Toggles a layergroup when layergroups should be toggled
+       *              takes into account that baselayers should toggle eachother
+       * @param  layerGroup layergroup that should be toggled
        */
       toggleLayerGroup: function (layerGroup) {
-        if (layerGroup._slug === 'elevation' && layerGroup.isActive()) {
-          rescaleElevation();
+        if (layerGroup.slug === 'elevation' && layerGroup.isActive()) {
+          this._rescaleElevation(layerGroup);
         } else {
           // turn layer group on
           if (!(layerGroup.baselayer && layerGroup.isActive())) {
@@ -63,6 +63,13 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService',
         }
       },
 
+      /**
+       * @function
+       * @memberOf app.NxtMap
+       * @description Sets the layergroups to the state they came from the
+       *              server. Is called by the urlCtrl when no layergroup
+       *              info is found on the server
+       */
       setLayerGoupsToDefault: function () {
         var map = this._map;
         angular.forEach(this.layerGroups, function (layerGroup) {
@@ -120,7 +127,6 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService',
       initiateNxtMapEvents: function (clicked, moveStarted, moveEnded, mouseMoved) {
         var map = this._map;
         var conditionalApply = function (fn, e) {
-
           if (!$rootScope.$$phase) {
             $rootScope.$apply(fn(e, map));
           } else {
@@ -178,33 +184,30 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService',
       /**
        * @function
        * @memberOf app.NxtMapService
-       * @description redraws geojsonlayer.
-       * for vectordata.
-       * @return {[type]} [description]
+       * @description Elevation can be rescaled according to extent
        */
-      redrawGeoJsonLayer: function () {
-        // var that = this;
-        // this.removeLayer(this._vectorLayer);
-        // this.addGeoJsonLayer();
-        // angular.forEach(this.layerGroups, function (lg) {
-        //   if (lg.isActive()) {
-        //     angular.forEach(lg._layers, function (layer) {
-        //       if (layer.type === 'Vector') {var vector = true;}
-        //     })
-        //     if (!vector) { return;}
-        //     lg.getData({
-        //       geom: that.bounds
-        //     }).then(function (response) { console.log(response)}, 
-        //       null,
-        //       function (response) {
-        //         console.log(response)
-        //         that._vectorLayer.addData(response);  
-        //       })
-        //   }
-        //   else {
-        //     return;
-        //   }
-        // })
+      _rescaleElevation: function (lg) {
+        var layer;
+        angular.forEach(lg._layers, function (value) {
+          if (value.type === 'WMS') {
+            layer = value;
+          }
+        });
+        if (!layer) { throw new Error('Attempted to rescale' + lg.slug + 'which does not have a wms'); }
+        var url, bounds, limits, styles;
+        bounds = this._map.getBounds();
+        // Make request to raster to get min and max of current bounds
+        url = 'https://raster.lizard.net/wms' +
+                  '?request=getlimits&layers=elevation' +
+                  '&width=16&height=16&srs=epsg:4326&bbox=' +
+                  bounds.toBBoxString();
+        $http.get(url).success(function (data) {
+          limits = ':' + data[0][0] + ':' + data[0][1];
+          styles = 'BrBG_r' + limits;
+          layer.leafletLayer.setParams(
+            {styles: styles}, true);
+          layer.leafletLayer.redraw();
+        });
       }
 
     };
@@ -237,34 +240,7 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService',
 
       var map = LeafletService.map(mapElem, options);
 
-      // TODO: fix the relative position of nav bar and map element to make the
-      // attribution visible.
-      // var osmAttrib = '<a href="http://www.openstreetmap.org/">&copy; OpenStreetNxtMap</a>';
-      // this._map.attributionControl.addAttribution(options.attribution);
-      // this._map.attributionControl.setPrefix('');
       return map;
-    };
-
-    /**
-     * @function
-     * @memberOf app.NxtMapService
-     * @description Elevation can be rescaled according to extent
-     */
-    var rescaleElevation = function () {
-      var url, bounds, limits, styles;
-      bounds = this._map.getBounds();
-      // Make request to raster to get min and max of current bounds
-      url = 'https://raster.lizard.net/wms' +
-                '?request=getlimits&layers=elevation' +
-                '&width=16&height=16&srs=epsg:4326&bbox=' +
-                bounds.toBBoxString();
-      $http.get(url).success(function (data) {
-        limits = ':' + data[0][0] + ':' + data[0][1];
-        styles = 'BrBG_r' + limits;
-        CabinetService.layers.elevation.leafletLayer.setParams(
-          {styles: styles}, true);
-        CabinetService.layers.elevation.leafletLayer.redraw();
-      });
     };
 
     return NxtMap;

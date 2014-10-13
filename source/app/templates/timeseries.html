@@ -1,0 +1,18 @@
+<div id="card-timeseries"
+  class="card active"
+  ng-if="timeseries">
+  <div class="card-content" id="card-content-timeseries">
+    <!-- <select class="timeseries"
+    ng-model="point.timeseries.selectedTimeseries"
+    ng-options="series as series.name for series in point.timeseries.data">
+    </select> -->
+    <graph line
+      type="temporal"
+      data="timeseries.data"
+      ylabel="timeseries.name"
+      xlabel="n"
+      keys="{x: 0, y: 1}"
+      now="timeState.at">
+    </graph>
+  </div>
+</div>

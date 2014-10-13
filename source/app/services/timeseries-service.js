@@ -1,25 +1,18 @@
 /**
  * Service to handle timeseries retrieval.
  */
-app.service("TimeseriesService", ["Restangular",
-  function (Restangular) {
+app.service("TimeseriesService", ['CabinetService', function (CabinetService) {
 
-    var getRandomTimeseries = function () {
-      var timeseries = [
-        {name: 'Debiet', data: []},
-        {name: 'Zuurstofmeting', data: []},
-        {name: 'Energieverbruik', data: []}
-      ];
-      angular.forEach(timeseries, function (series) {
-        for (var i = 0; i < 25; i++) {
-          series.data.push([i, Math.round(Math.random() * 10)]);
-        }
+    var getTimeseries = function (id, timeState) {
+      return CabinetService.timeseries.get({
+        object: id,
+        start: timeState.start,
+        end: timeState.end
       });
-      return timeseries;
     };
 
     return {
-      getRandomTimeseries: getRandomTimeseries
+      getTimeseries: getTimeseries
     };
 
   }

@@ -56,6 +56,22 @@ app.config(function ($locationProvider) {
 });
 
 /**
+ * @name dataLayers
+ * @memberOf app
+ * @description Contains the dataLayers set by the server. Used by the
+ *              map-directive and layer-chooser directive to build layer
+ *              groups.
+ */
+app.constant('dataLayers', window.data_layers);
+
+/**
+ * @name dataBounds
+ * @memberOf app
+ * @description Contains the bounds of the data set by the server at load
+ */
+app.constant('dataBounds', window.data_bounds);
+
+/**
  *
  * @name MasterController
  * @class MasterCtrl

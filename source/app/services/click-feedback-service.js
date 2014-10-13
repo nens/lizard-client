@@ -107,7 +107,7 @@ app.service('ClickFeedbackService', ['$rootScope', 'LeafletService',
       };
 
 
-      this.drawObject = function (entityName) {
+      this.drawObject = function (mapState, entityName) {
 
         var selection = this._getSelection(this.clickLayer);
         this._circleMarker.setRadius(11);
@@ -128,7 +128,7 @@ app.service('ClickFeedbackService', ['$rootScope', 'LeafletService',
         if (entityName.indexOf("pumpstation_non_sewerage") !== -1) {
           this._circleMarker.setRadius(13);
 
-          if (MapService.mapState.zoom < 13) {
+          if (mapState.zoom < 13) {
           //if ($rootScope.mapState.zoom < 13) {
             this._circleMarker.setRadius(16);
           }
@@ -222,7 +222,7 @@ app.service('ClickFeedbackService', ['$rootScope', 'LeafletService',
       ctrl.emptyClickLayer(mapState);
       var geometry = angular.fromJson(geom);
       ctrl.drawFeature(geometry);
-      ctrl.drawObject(entityName);
+      ctrl.drawObject(mapState, entityName);
     };
 
     /**
@@ -237,7 +237,7 @@ app.service('ClickFeedbackService', ['$rootScope', 'LeafletService',
       var geometry = {"type": "Point",
                       "coordinates": [latlng.lng, latlng.lat]};
       ctrl.drawFeature(geometry);
-      var px = MapService.latLngToLayerPoint(latlng);
+      var px = mapState.latLngToLayerPoint(latlng);
       ctrl.addLocationMarker(px);
     };
 

@@ -15,14 +15,14 @@ app.directive('map', [
   '$controller',
   'ClickFeedbackService',
   'NxtMap',
-  'CabinetService',
-  function ($controller, ClickFeedbackService, NxtMap, CabinetService) {
+  'dataLayers',
+  function ($controller, ClickFeedbackService, NxtMap, dataLayers) {
 
     var link = function (scope, element, attrs) {
 
        /**
         * @function
-        * @memberOf app.MapService
+        * @memberOf app.map
         * @description small clickhandler for leafletclicks
         * @param  {event}  e Leaflet event object
         */
@@ -32,7 +32,7 @@ app.directive('map', [
 
       /**
        * @function
-       * @memberOf app.MapService
+       * @memberOf app.map
        */
       var _moveStarted = function (e) {
         scope.mapState.mapMoving = true;
@@ -40,7 +40,7 @@ app.directive('map', [
 
       /**
        * @function
-       * @memberOf app.MapService
+       * @memberOf app.map
        */
       var _mouseMoved = function (e) {
         if (scope.box.type === 'line') {
@@ -50,7 +50,7 @@ app.directive('map', [
 
       /**
        * @function
-       * @memberOf app.MapService
+       * @memberOf app.map
        */
       var _moveEnded = function (e, map) {
         scope.mapState.moved = Date.now();
@@ -60,7 +60,7 @@ app.directive('map', [
         scope.mapState.bounds = map.getBounds();
       };
 
-      scope.mapState = new NxtMap(element[0], CabinetService.layergroups, {
+      scope.mapState = new NxtMap(element[0], dataLayers, {
           zoomControl: false,
         }
       );
@@ -75,10 +75,6 @@ app.directive('map', [
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.
       $controller('UrlController', {$scope: scope});
-
-      // initialize empty ClickLayer.
-      // Otherwise click of events-aggregate and clicklayer
-      // ClickFeedbackService.drawClickInSpace(new L.LatLng(180.0, 90.0));
     };
 
     return {

@@ -11,6 +11,8 @@
  * the graph through click and hover functions. Graph inherits from
  * NxtD3, a lower level d3 helper class.
  *
+ * NOTE: The donut code is currently not used anywhere in lizard-client.
+ *
  * Everything in the graphs is animated according to NxtD3.transTime.
  */
 app.factory("Graph", ["NxtD3", function (NxtD3) {
@@ -132,6 +134,7 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
           this._xy = this._createXYGraph(data, keys, labels, options);
         } else {
           this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys, {y: 0});
+          drawLabel(this._svg, this.dimensions, labels.y, true);
         }
         drawVerticalRects(this._svg, this.dimensions, this._xy, keys, data, this.transTime);
       }
@@ -160,7 +163,12 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     drawHorizontalStack: {
       value: function (data, keys, labels) {
         if (!this._x) {
-          this._x = createXGraph(this._svg, this.dimensions, labels);
+          var options = {
+            scale: 'linear',
+            orientation: 'bottom',
+            tickFormat: d3.format(".0%") // Custom tickFomat in percentages
+          };
+          this._x = createXGraph(this._svg, this.dimensions, labels, options);
         }
         // normalize data
         var total = d3.sum(data, function (d) {
@@ -221,6 +229,9 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     drawNow: {
       value: function (now) {
         this._drawNow(now, this._xy.x.scale);
+        // move to the front
+        var el = this._svg.select('.now-indicator').node();
+        el.parentNode.appendChild(el);
       }
     },
 
@@ -244,14 +255,14 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
           var y = key === 'y' ? true: false;
           xy[key] = self._createD3Objects(data, keys[key], options[key], y);
           drawAxes(self._svg, xy[key].axis, self.dimensions, y);
-          addLabel(self._svg, self.dimensions, labels[key], y);
+          drawLabel(self._svg, self.dimensions, labels[key], y);
         });
         return xy;
       }
     }
   });
 
-  var createPie, createArc, drawPie, drawAxes, addLabel, toRescale, drawPath, setupLineGraph, createDonut,
+  var createPie, createArc, drawPie, drawAxes, drawLabel, toRescale, drawPath, setupLineGraph, createDonut,
   getBarWidth, drawVerticalRects, drawHorizontalRectss, createXGraph, rescale;
 
   rescale = function (svg, dimensions, xy, data, keys, origin) {
@@ -301,17 +312,18 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     rects.transition()
       .duration(duration)
       .attr("x", function (d) { return scale(d.start); })
-      .attr('width', function (d) { return scale(total - d.start); });
+      .attr('width', function (d) { return scale(d[keys.x]); });
     // ENTER
     // Create new elements as needed.
     rects.enter().append("rect")
       .style("fill", function (d) { return d.color; })
       .attr("x", function (d) { return scale(d.start); })
       .attr("y", 0)
+      .attr('class', 'horizontal-rect')
       .attr("height", height)
       .transition()
       .duration(duration)
-      .attr('width', function (d) { return scale(total - d.start); });
+      .attr('width', function (d) { return scale(d[keys.x]); });
     // EXIT
     // Remove old elements as needed. First transition to width = 0
     // and then remove.
@@ -389,26 +401,31 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     return scale(data[1][keys.x]) - scale(data[0][keys.x]);
   };
 
-  createXGraph = function (svg, dimensions, labels) {
+  createXGraph = function (svg, dimensions, labels, options) {
     var x = {};
-    var options = {
-      scale: 'linear',
-      orientation: 'bottom'
-    },
-    width = Graph.prototype._getWidth(dimensions),
+    if (!options) {
+      options = {
+        scale: 'linear',
+        orientation: 'bottom'
+      };
+    }
+    var width = Graph.prototype._getWidth(dimensions),
     range = {min: 0, max: width},
     // Axis should run from zero to 100%
     domain = {min: 0, max: 1};
-    x.scale = Graph.prototype._makeScale(domain, range, {scale: 'linear'});
-    x.axis = Graph.prototype._makeAxis(x.scale, {orientation: 'bottom'});
+    x.scale = Graph.prototype._makeScale(domain, range, {scale: options.scale});
+    x.axis = Graph.prototype._makeAxis(x.scale, options);
     drawAxes(svg, x.axis, dimensions, false);
-    addLabel(svg, dimensions, labels.x, false);
+    drawLabel(svg, dimensions, labels.x, false);
     return x;
   };
 
   drawPath = function (svg, line, data, duration, path) {
     if (!path) {
-      path = svg.select('g').select('#feature-group').append("svg:path")
+      var fg = svg.select('g').select('#feature-group');
+      // bring to front
+      fg.node().parentNode.appendChild(fg.node());
+      path = fg.append("svg:path")
         .attr("class", "line")
         .style("stroke-width", 3);
     }
@@ -433,27 +450,31 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
     return rescale;
   };
 
-  addLabel = function (svg, dimensions, label, y) {
+  drawLabel = function (svg, dimensions, label, y) {
     var width = Graph.prototype._getWidth(dimensions),
     height = Graph.prototype._getHeight(dimensions),
     // Correct 1 pixel to make sure the labels fall
     // completely within the svg
-    PIXEL_CORRECTION = 1,
-    el = svg.append("text")
-      .attr('class', 'graph-text')
-      .style("text-anchor", "middle")
-      .text(label);
-    if (y) {
-      el.attr('id', 'ylabel')
-        .attr('transform', 'rotate(-90)')
-        .attr('y', 0)
-        .attr('x', 0 - height / 2);
-      el.attr('dy', 0.5 * el.node().getBBox().height + PIXEL_CORRECTION);
-    } else {
-      el.attr('id', 'xlabel')
-        .attr('x', dimensions.padding.left + width / 2)
-        .attr('y', dimensions.height - PIXEL_CORRECTION);
-      el.attr('dy', - 0.5 * el.node().getBBox().height);
+    PIXEL_CORRECTION = 1;
+    var el = svg.select(y ? '#ylabel': '#xlabel');
+    if (!el.empty()) { el.text(label); }
+    else {
+      el = svg.append("text")
+        .attr('class', 'graph-text graph-label')
+        .style("text-anchor", "middle")
+        .text(label);
+      if (y) {
+        el.attr('id', 'ylabel')
+          .attr('transform', 'rotate(-90)')
+          .attr('y', 0)
+          .attr('x', 0 - height / 2);
+        el.attr('dy', 0.5 * el.node().getBBox().height + PIXEL_CORRECTION);
+      } else {
+        el.attr('id', 'xlabel')
+          .attr('x', dimensions.padding.left + width / 2)
+          .attr('y', dimensions.height - PIXEL_CORRECTION);
+        el.attr('dy', - 0.5 * el.node().getBBox().height);
+      }
     }
   };
 
@@ -466,8 +487,8 @@ app.factory("Graph", ["NxtD3", function (NxtD3) {
       axisEl = svg.select('#yaxis')
         .attr("class", "y-axis y axis")
         .selectAll("text")
-        .style("text-anchor", "end")
-        .attr('class', 'graph-text');
+          .style("text-anchor", "end")
+          .attr('class', 'graph-text');
     } else {
       axisEl = svg.select('#xaxis')
         .attr("class", "x-axis x axis")

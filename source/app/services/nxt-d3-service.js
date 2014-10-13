@@ -88,9 +88,10 @@ app.factory("NxtD3", [ function () {
           .append("svg:rect")
           .attr("id", "clip-rect")
           .attr("x", "0")
-          .attr("y", "0")
+          .attr("y", 0 - 2)
           .attr("width", width)
-          .attr("height", height);
+          // give some space to draw full stroke-width.
+          .attr("height", height + 4);
       }
       // Put the data in this group
       var g = this._svg.select('g').select('g');
@@ -127,7 +128,6 @@ app.factory("NxtD3", [ function () {
       d3Objects = {},
       // y domain runs from height till zero, x domain from 0 to width.
       domain = y ? {max: 0, min: height}: {min: 0, max: width};
-
       d3Objects.maxMin = this._maxMin(data, key);
       d3Objects.scale = this._makeScale(d3Objects.maxMin, domain, options);
       d3Objects.axis = this._makeAxis(d3Objects.scale, options);
@@ -239,6 +239,9 @@ app.factory("NxtD3", [ function () {
               ["%Y", function () { return true; }]
             ]);
         axis.tickFormat(tickFormat);
+      }
+      if (options.tickFormat) {
+        axis.tickFormat(options.tickFormat);
       }
       return axis;
     },

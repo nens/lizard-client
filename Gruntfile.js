@@ -257,7 +257,8 @@ module.exports = function (grunt) {
     'cssmin',
     'html2js',
     'concat',
-    'copy:dist'
+    'copy:dist',
+    'doxx'
   ]);
   grunt.registerTask('plakhetaanelkaar', [
     'clean:dist',
