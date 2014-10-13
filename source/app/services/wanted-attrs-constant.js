@@ -234,7 +234,7 @@ app.constant("WantedAttributes", {
   overflow: {
     rows: [
       {
-        keyName: "Breedte",
+        keyName: "Overstortbreedte",
         attrName: "crest_width",
         ngBindValue:
           "waterchain.waterchain_grid.data.crest_width | niceNumberOrEllipsis: 2",
