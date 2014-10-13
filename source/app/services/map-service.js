@@ -166,24 +166,6 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService',
       /**
        * @function
        * @memberOf app.NxtMapService
-       * @description creates and adds empty geoJson layer
-       * for vectordata.
-       * @return {[type]} [description]
-       */
-      addGeoJsonLayer: function () {
-        // this._vectorLayer = LeafletService.geoJson([], {
-        //   style: {
-        //     "color": "#ff7800",
-        //     "weight": 5,
-        //     "opacity": 0.65
-        //   }
-        // });
-        // this.addLayer(this._vectorLayer);
-      },
-
-      /**
-       * @function
-       * @memberOf app.NxtMapService
        * @description Elevation can be rescaled according to extent
        */
       _rescaleElevation: function (lg) {

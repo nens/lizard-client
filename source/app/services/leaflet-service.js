@@ -18,11 +18,12 @@ app.service('LeafletService', [function () {
 
       var color = this.options.color;
       this.addTileData = this.options.dataCallback;
+
       this.drawOptions = {
         pointToLayer: function (feature, latlng) {
 
           var geojsonMarkerOptions = {
-              radius: 8,
+              radius: 4,
               fillColor: color,
               color: "#000",
               weight: 1,
@@ -34,7 +35,8 @@ app.service('LeafletService', [function () {
           circle.on('click', function (e) {
             // simulate click on map instead of this event;
             this._map.fire('click', {
-              latlng: e.latlng
+              latlng: new L.LatLng(e.target.feature.geometry.coordinates[1], 
+                e.target.feature.geometry.coordinates[0])
             });
           });
 
@@ -113,14 +115,12 @@ app.service('LeafletService', [function () {
       this._map.removeLayer(this.geojsonLayer);
       this.geojsonLayer = L.geoJson(null, this.drawOptions)
         .addTo(this._map);
-      this._map.addLayer(this.geojsonLayer);
     },
     drawTheThings: function (data) {
       if (!data) { return; }
       if (data.features.length > 0) {
         this.geojsonLayer.addData(data);
       }
-
     },
     _tileLoaded: function (tile, tilePoint) {
       var key = 'key_' + tilePoint.z + '_' + tilePoint.x + '_' + tilePoint.y;
