@@ -119,7 +119,7 @@ app.service('LeafletService', [function () {
     countOverlapping: function (data) {
       var overlapLocations = [];
       var filteredData = []
-      data.features.forEach(function (d, index) {
+      data.forEach(function (d, index) {
         d.properties.radius = 6;
         var key = "x:" + d.geometry.coordinates[0] +
                   "y:" + d.geometry.coordinates[1];
@@ -136,7 +136,11 @@ app.service('LeafletService', [function () {
     drawTheThings: function (data) {
       if (!data) { return; }
       if (data.features.length > 0) {
-        var filteredData = this.countOverlapping(data);
+        if (data.hasOwnProperty('features')) {
+          var filteredData = this.countOverlapping(data.features);
+        } else if (data instanceof Array) {
+          var filteredData = this.countOverlapping(data);
+        }
         this.geojsonLayer.addData(filteredData);
       }
     },
