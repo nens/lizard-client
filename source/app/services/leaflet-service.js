@@ -29,7 +29,16 @@ app.service('LeafletService', [function () {
               opacity: 1,
               fillOpacity: 0.8
           };
-          return L.circleMarker(latlng, geojsonMarkerOptions);
+
+          var circle = L.circleMarker(latlng, geojsonMarkerOptions);
+          circle.on('click', function (e) {
+            // simulate click on map instead of this event;
+            this._map.fire('click', {
+              latlng: e.latlng
+            });
+          });
+
+          return circle;
         }
       };
       
@@ -39,14 +48,18 @@ app.service('LeafletService', [function () {
       this._map.on('moveend', this._onMove, this);
       this._map.on('resize', this._onResize, this);
 
-      this.on('remove', this._onRemove, this);
 
       this.geojsonLayer = L.geoJson(null, this.drawOptions).addTo(map);
-      this._map.addLayer(this.geojsonLayer);
-
     },
-    _onRemove: function () {
-      this._map.removeLayer(this.geojsonLayer);
+    onRemove: function (map) {
+      map.removeLayer(this.geojsonLayer);
+      this.geojsonLayer = false;
+      this._reset();
+
+      this._map.off('moveend', this._onMove, this);
+      this._map.off('resize', this._onResize, this);
+      // debugger
+      L.TileLayer.prototype.onRemove.call(this, map);
     },
     _onMove: function () {
       var bottomLeft = this._map.getPixelBounds().getBottomLeft();
