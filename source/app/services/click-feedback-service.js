@@ -229,24 +229,8 @@ app.service('ClickFeedbackService', ['$rootScope', 'LeafletService',
      * Draws an arrow at specified location to indicate click.
      * Used to indicate location of rain graph
      *
-     * @param {object} latLng Leaflet object specifying the latitude
-     * and longitude of a click
-     */
-    // drawArrowHere = function (mapState, latlng) {
-    //   ctrl.emptyClickLayer(mapState);
-    //   var geometry = {"type": "Point",
-    //                   "coordinates": [latlng.lng, latlng.lat]};
-    //   ctrl.drawFeature(geometry);
-    //   var px = mapState.latLngToLayerPoint(latlng);
-    //   ctrl.addLocationMarker(px);
-    // };
-
-    /**
-     * Draws an arrow at specified location to indicate click.
-     * Used to indicate location of rain graph
-     *
-     * @param {object} latLng Leaflet object specifying the latitude
-     * and longitude of a click
+     * @param {object} mapState - the mapState object, which assumes the key
+     *   'here' to have a unundefined value.
      */
     drawArrowHere = function (mapState) {
 
