@@ -90,42 +90,42 @@ app.constant("WantedAttributes", {
         keyName: "Type",
         attrName: "type",
         ngBindValue:
-          "point.attrs.data.type | lookupLeveeType",
+          "waterchain.waterchain_grid.data.type | lookupLeveeType",
         valueSuffix: ""
       },
       {
         keyName: "Kruinhoogte",
         attrName: "crest_height",
         ngBindValue:
-          "point.attrs.data.crest_height | niceNumberOrEllipsis: 2",
+          "waterchain.waterchain_grid.data.crest_height | niceNumberOrEllipsis: 2",
         valueSuffix: " m"
       },
       {
         keyName: "Materiaal",
         attrName: "material",
         ngBindValue:
-          "point.attrs.data.material",
+          "waterchain.waterchain_grid.data.material",
         valueSuffix: " m"
       },
       {
         keyName: "Coating",
         attrName: "coating",
         ngBindValue:
-          "point.attrs.data.coating",
+          "waterchain.waterchain_grid.data.coating",
         valueSuffix: " m"
       },
       {
         keyName: "Kruinhoogte",
         attrName: "crest_height",
         ngBindValue:
-          "point.attrs.data.crest_height | niceNumberOrEllipsis: 2",
+          "waterchain.waterchain_grid.data.crest_height | niceNumberOrEllipsis: 2",
         valueSuffix: " m"
       },
       {
         keyName: "Risico",
         attrName: "recurrence_time",
         ngBindValue:
-          "point.attrs.data.recurrence_time | niceNumberOrEllipsis: 2",
+          "waterchain.waterchain_grid.data.recurrence_time | niceNumberOrEllipsis: 2",
         valueSuffix: " m"
       }
     ]
@@ -136,7 +136,7 @@ app.constant("WantedAttributes", {
         keyName: "Type",
         attrName: "type",
         ngBindValue:
-          "point.attrs.data.type | lookupLeveeReferencePointType",
+          "waterchain.waterchain_grid.data.type | lookupLeveeReferencePointType",
         valueSuffix: ""
       }
     ]
@@ -342,7 +342,7 @@ app.constant("WantedAttributes", {
         keyName: "Naam",
         attrName: "name",
         ngBindValue:
-          "point.attrs.data.name",
+          "waterchain.waterchain_grid.data.name",
         valueSuffix: " m NAP"
       }
     ]

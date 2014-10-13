@@ -19,7 +19,6 @@
 app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesService', 'ClickFeedbackService',
   function ($scope, $q, LeafletService, TimeseriesService, ClickFeedbackService) {
 
-
     $scope.point = {};
 
     /**
@@ -39,7 +38,8 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
 
       var putDataOnScope = function (response) {
         var pointL;
-        if (response.data === null) { pointL = undefined;
+        if (response.data === null) {
+          pointL = undefined;
         } else {
           pointL = $scope.point[response.layerGroupSlug] || {};
           pointL.layerGroup = response.layerGroupSlug;
