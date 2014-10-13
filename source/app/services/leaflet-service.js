@@ -56,7 +56,7 @@ app.service('LeafletService', [function () {
       this.geojsonLayer = false;
       this._reset();
 
-      this._map.off('moveend', this._onMove, this);
+      this._map.off('moveend',  this._onMove, this);
       this._map.off('resize', this._onResize, this);
       // debugger
       L.TileLayer.prototype.onRemove.call(this, map);
