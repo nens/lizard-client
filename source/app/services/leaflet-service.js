@@ -23,7 +23,7 @@ app.service('LeafletService', [function () {
         pointToLayer: function (feature, latlng) {
 
           var geojsonMarkerOptions = {
-              radius: 4,
+              radius: (feature.properties.radius) ? feature.properties.radius: 6,
               fillColor: color,
               color: "#000",
               weight: 1,
@@ -116,10 +116,28 @@ app.service('LeafletService', [function () {
       this.geojsonLayer = L.geoJson(null, this.drawOptions)
         .addTo(this._map);
     },
+    countOverlapping: function (data) {
+      var overlapLocations = [];
+      var filteredData = []
+      data.features.forEach(function (d, index) {
+        d.properties.radius = 6;
+        var key = "x:" + d.geometry.coordinates[0] +
+                  "y:" + d.geometry.coordinates[1];
+        var coord = overlapLocations[key];
+        if (coord === undefined) {
+          overlapLocations[key] = index;
+          filteredData.push(d);
+        } else {
+          filteredData[overlapLocations[key]].properties.radius += 1;
+        }
+      });
+      return filteredData;
+    },
     drawTheThings: function (data) {
       if (!data) { return; }
       if (data.features.length > 0) {
-        this.geojsonLayer.addData(data);
+        var filteredData = this.countOverlapping(data);
+        this.geojsonLayer.addData(filteredData);
       }
     },
     _tileLoaded: function (tile, tilePoint) {
