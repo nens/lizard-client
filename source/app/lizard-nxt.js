@@ -337,6 +337,8 @@ app.controller('MasterCtrl',
     if ($scope.timeState.hidden !== false) {
       $scope.toggleTimeline();
     }
+
+    console.log('toggleEvents');
     $scope.mapState.activeLayersChanged =
      !$scope.mapState.activeLayersChanged;
   };
@@ -456,7 +458,8 @@ app.controller('MasterCtrl',
   // Can be removed when we redo the timeline
   var timelineToggler = $scope.$watch('mapState.layerGroupsChanged',  function () {
     if ($scope.timeState.hidden === undefined
-      && $scope.mapState.getActiveTemporalLayer()) {
+      && $scope.mapState.getActiveTemporalLayerGroup()) {
+
       $scope.toggleTimeline();
       // remove watch
       timelineToggler();

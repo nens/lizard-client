@@ -148,18 +148,41 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
       },
 
       // TODO: move temporal property to the layerGroup in the backend
-      getActiveTemporalLayer: function () {
-        var activeTemporalLayer = false;
+      // getActiveTemporalLayer: function () {
+      //   var activeTemporalLayer = false;
+      //   angular.forEach(this.layerGroups, function (layerGroup) {
+      //     if (layerGroup.isActive()) {
+      //       angular.forEach(layerGroup._layers, function (layer) {
+      //         if (!activeTemporalLayer && layer.temporal) {
+      //           activeTemporalLayer = layerGroup;
+      //         }
+      //       });
+      //     }
+      //   });
+      //   return activeTemporalLayer;
+      // },
+
+      getActiveTemporalLayerGroup: function () {
+
+        var result;
+
         angular.forEach(this.layerGroups, function (layerGroup) {
-          if (layerGroup.isActive()) {
+          if (!result && layerGroup.isActive()) {
             angular.forEach(layerGroup._layers, function (layer) {
-              if (!activeTemporalLayer && layer.temporal) {
-                activeTemporalLayer = layerGroup;
+              if (!result && layer.temporal) {
+                if (layer.type === 'WMS') {
+                  result = layerGroup;
+                } else if (layer.type === 'Vector') {
+                  // TO BE DE-COMMENTED IN THE FORESEEABLE FUTURE:
+                  //return layerGroup;
+                  console.log('[!] getActiveTemporalLayerGroup() currently doesn\'t handle type \'Vector\'');
+                }
               }
             });
           }
         });
-        return activeTemporalLayer;
+
+        return result;
       },
 
       /**
@@ -218,10 +241,7 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
      * @description Creates a Leaflet map based on idString or Element.
      */
     var createNxtMap = function (mapElem, options) { // String or Element.
-
-      var map = LeafletService.map(mapElem, options);
-
-      return map;
+      return LeafletService.map(mapElem, options);
     };
 
     return NxtMap;

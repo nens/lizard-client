@@ -1,9 +1,62 @@
 /**
  * Service to handle raster requests.
+
+ -- TMP ---------------------------------------
+ RAIN; BOOTSTRAPPED FROM BACK-END:
+
+     "rain": {
+        "layers": [
+            {
+                "slug": "demo:radar",
+                "type": "WMS",
+                "min_zoom": 0,
+                "max_zoom": 31,
+                "z_index": 2,
+                "url": "http://raster.lizard.net/wms",
+                "tiled": false,
+                "temporal": true,
+                "aggregation_type": "none",
+                "opacity": 1.0,
+                "options": {
+                    "styles": "BrBG_r:-27:-2",
+                    "transparent": false,
+                    "effects": "radar:0:0.008"
+                },
+                "bounds": {
+                    "west": 1.324296158471368,
+                    "east": 8.992548357936204,
+                    "north": 54.28458617998074,
+                    "south": 49.82567047026146
+                }
+            },
+            {
+                "slug": "radar/basic",
+                "type": "Store",
+                "min_zoom": 0,
+                "max_zoom": 31,
+                "z_index": 2,
+                "url": "/api/v1/rasters",
+                "tiled": false,
+                "temporal": true,
+                "aggregation_type": "none",
+                "opacity": 1.0,
+                "options": {},
+                "bounds": {}
+            }
+        ],
+        "id": 6,
+        "name": "Regen",
+        "slug": "rain",
+        "active": false,
+        "order": 3,
+        "baselayer": false
+    },
  */
 app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$q",
   function (Restangular, UtilService, CabinetService, $q) {
 
+  var intensityData,
+      cancelers = {};
 
   var getData = function (layer, options) {
 
@@ -34,83 +87,8 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     });
   };
 
-  /**
-   * Get latlon bounds for image.
-   *
-   * @param {object} layerName name of layer.
-   * @return {float[]} bounds in list of latlon list.
-   */
-  var _getImageBounds = function (layerName) {
-      var bounds;
-      if (layerName === 'rain') {
-        bounds = [[54.28458617998074, 1.324296158471368],
-                  [49.82567047026146, 8.992548357936204]];
-      }
-      if (layerName === 'bath:westerschelde') {
-        bounds = [[51.41, 4.03],
-                  [51.36, 4.17]];
-      }
-      if (layerName === 'westerschelde:diff') {
-        bounds = [[51.41, 4.03],
-                  [51.36, 4.17]];
-      }
-      return bounds;
-    };
-
-  /**
-   * Hard coded raster variables.
-   *
-   * timeResolution: smallest time resolution for rain in ms (5 min.)
-   * minTimeBetweenFrames: minimum time between frames in ms.
-   * imageUrlBase: url to  get WMS images.
-   * @param {string} layerName Name of layer on raster server
-   * @return {object} Returns hashtable with info for animation.
-   */
-  var rasterInfo = function (layerName) {
-
-    var info,
-        wmsUrl = 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&SRS=EPSG:4326&LAYERS=',
-        width = 500,
-        height;
-
-    if (layerName === 'rain') {
-      info =  {
-        "timeResolution": 300000,
-        "minTimeBetweenFrames": 250,
-        "imageBounds": _getImageBounds(layerName),
-        "imageUrlBase": 'https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=' + 'demo:radar' + '&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=',
-      };
-    }
-    if (layerName === 'bath:westerschelde') {
-      info = {
-        "timeResolution": 15768000000,
-        "minTimeBetweenFrames": 1000,
-        "imageBounds": _getImageBounds(layerName),
-        "imageUrlBase": wmsUrl + layerName + '&STYLES=BrBG_r:-27:-2&TRANSPARENT=false'
-      };
-      var bbox = [info.imageBounds[0][1], info.imageBounds[1][0]].toString() +
-      ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString(),
-      width = 2000,
-      height = parseInt(width * ((info.imageBounds[0][0] - info.imageBounds[1][0]) / (info.imageBounds[1][1] - info.imageBounds[0][1])), 10);
-      info.imageUrlBase = info.imageUrlBase + '&HEIGHT=' + height + '&WIDTH=' + width + '&ZINDEX=26&BBOX=' + bbox + '&TIME=';
-    }
-    if (layerName === 'westerschelde:diff') {
-      info = {
-        "timeResolution": 15768000000,
-        "minTimeBetweenFrames": 1000,
-        "imageBounds": _getImageBounds(layerName),
-        "imageUrlBase": wmsUrl + 'bath:westerschelde&STYLES=jet_r:-10:10&TRANSPARENT=false'
-      };
-      var bbox = [info.imageBounds[0][1], info.imageBounds[1][0]].toString() +
-      ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString(),
-      width = 2000;
-      height = parseInt(width * ((info.imageBounds[0][0] - info.imageBounds[1][0]) / (info.imageBounds[1][1] - info.imageBounds[0][1])), 10);
-      info.imageUrlBase = info.imageUrlBase + '&HEIGHT=' + height + '&WIDTH=' + width + '&ZINDEX=26&BBOX=' + bbox + '&SUBTRACT=2012-02-15&TIME=';
-    }
-    return info;
-  };
   // Set by rain controller and get by timeline
-  var intensityData;
+  //var intensityData;
 
   var setIntensityData = function (data) {
     intensityData = data;
@@ -152,146 +130,35 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     return formatted;
   };
 
-  /**
-   * Gets temporal raster data from server.
-   *
-   * @param  {int} start    start of temporal extent
-   * @param  {int} stop     end of temporal extent
-   * @param  {object} geom   location of temporal extent in {lat: int, lng: int} or leaflet bounds object
-   * @param  {int} aggWindow width of the aggregation
-   * @param  {string} agg aggregation method eg. 'sum', 'rrc'
-   * @return {promise} returns a thennable promise which may resolve with temporal raster data on response
-   */
-  // var getTemporalRaster = function (start, stop, geom, aggWindow, rasterNames, agg) {
-  //   // TODO
-  //   var slug = (MapService.mapState.layers) ? MapService.mapState.layers[rasterNames].layers[0].slug : rasterNames;
-  //   var stopString, startString, wkt;
-  //   stopString = stop.toISOString().split('.')[0];
-  //   startString = start.toISOString().split('.')[0];
-  //   if (geom.lat && geom.lng) {
-  //     // geom is a latLng object
-  //     wkt = "POINT(" + geom.lng + " " + geom.lat + ")";
-  //   } else {
-  //     wkt = "POLYGON(("
-  //           + geom.getWest() + " " + geom.getSouth() + ", "
-  //           + geom.getEast() + " " + geom.getSouth() + ", "
-  //           + geom.getEast() + " " + geom.getNorth() + ", "
-  //           + geom.getWest() + " " + geom.getNorth() + ", "
-  //           + geom.getWest() + " " + geom.getSouth()
-  //           + "))";
-  //   }
-  //   return CabinetService.raster().get({
-  //       raster_names: slug,
-  //       geom: wkt,
-  //       srs: 'EPSG:4326',
-  //       start: startString,
-  //       stop: stopString,
-  //       window: aggWindow,
-  //       agg: agg
-  //     });
-  // };
+  var getTimeResolution = function (layerGroup) {
 
-  var cancelers = {};
+    switch (layerGroup.slug) {
 
-  /**
-   * getRasterData gets different types of raster data from
-   * the `/api/v1/raster` endpoint.
-   * @param  {string} slug - String with requested raster
-   * @param  {object} geom        - Object -> Leaflet.Bounds
-   * @param  {object} options     - Optional object with extra params
-   * @return {promise}  Restangular.get promise
-   */
-  // var getRasterData = function (slug, geom, start, stop, options) {
+    case 'rain':
+      return 300000;
 
-  //   var srs, agg, rasterService, canceler, stopString, startString;
+    case 'bath:westerschelde':
+      return 15768000000;
 
-  //   if (stop && start) {
-  //     stopString = new Date(stop).toISOString().split('.')[0];
-  //     startString = new Date(start).toISOString().split('.')[0];
-  //   }
+    case 'westerschelde:diff':
+      return 15768000000;
 
-  //   if (cancelers[slug]) {
-  //     cancelers[slug].resolve();
-  //   }
-
-  //   canceler = cancelers[slug] = $q.defer();
-
-  //   srs = options.srs ? options.srs : 'EPSG:4326';
-  //   agg = options.agg ? options.agg : '';
-
-  //   return CabinetService.raster(canceler).get({
-  //     raster_names: slug,
-  //     geom: geom,
-  //     srs: srs,
-  //     start: startString,
-  //     stop: stopString,
-  //     agg: agg
-  //   });
-  // };
-
-  var getRasterDataForExtentData = function (aggType, agg, slug, bounds) {
-
-    var geom = "POLYGON(("
-      + bounds.getWest() + " " + bounds.getSouth() + ", "
-      + bounds.getEast() + " " + bounds.getSouth() + ", "
-      + bounds.getEast() + " " + bounds.getNorth() + ", "
-      + bounds.getWest() + " " + bounds.getNorth() + ", "
-      + bounds.getWest() + " " + bounds.getSouth()
-      + "))";
-
-    if (cancelers[slug]) {
-      cancelers[slug].resolve();
+    default:
+      throw new Error(
+        'Tried to call RasterService.getTimeResolution() for unsupported layerGroup, i.e:',
+        layerGroup
+      );
     }
-
-    cancelers[slug] = $q.defer();
-
-    var dataProm = getRasterData(slug, geom, undefined, undefined, {
-      agg: aggType,
-      q: cancelers[slug]
-    });
-
-    return dataProm;
   };
-
-  /**
-   * Requests data from raster service.
-   *
-   * @param  {object} layer     nxt defition of a layer
-   * @param  {str} slug               short description of layer
-   * @param  {object} agg             area object of this
-   * @param  {object} bounds   mapState.bounds, containing
-   * @return {promise}                a promise with aggregated data and
-   *                                  the slug
-   */
-  var getAggregationForActiveLayer = function (layer, slug, agg, bounds) {
-    var dataProm = getRasterDataForExtentData(
-      layer.aggregation_type,
-      agg,
-      slug,
-      bounds)
-      .then(function (data) {
-        agg.data = data;
-        agg.type = layer.aggregation_type;
-        if (layer.aggregation_type === 'curve') {
-          // TODO: return data in a better way or rewrite graph directive
-          agg.data = handleElevationCurve(data);
-        }
-        return {
-          agg: agg,
-          slug: slug
-        };
-      });
-    return dataProm;
-  };
-
 
   return {
-    rasterInfo: rasterInfo,
+    getTimeResolution: getTimeResolution,
+    // rasterInfo: rasterInfo,
     getIntensityData: getIntensityData,
     setIntensityData: setIntensityData,
     //getRasterData: getRasterData,
     getData: getData,
-    //getTemporalRaster: getTemporalRaster,
+    // getTemporalRaster: getTemporalRaster,
     getImgOverlays: getImgOverlays,
     handleElevationCurve: handleElevationCurve,
     //getRasterDataForExtentData: getRasterDataForExtentData,

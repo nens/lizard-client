@@ -50,7 +50,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
        * Update zoomEnded to trigger new call for raster aggregate.
        */
       zoomEndFn: function () {
-        if (scope.mapState.getActiveTemporalLayer()) {
+        if (scope.mapState.getActiveTemporalLayerGroup()) {
           getTemporalRasterData();
         }
         scope.$apply(function () {
@@ -93,7 +93,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
     // Activate zoom listener
     timeline.addZoomListener();
 
-    if (scope.mapState.getActiveTemporalLayer()) {
+    if (scope.mapState.getActiveTemporalLayerGroup()) {
       // Activate click listener
       timeline.addClickListener();
     }
@@ -103,7 +103,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
      */
     var updateTimelineHeight = function (newDim, dim, nEventTypes) {
       var eventHeight;
-      if (scope.mapState.getActiveTemporalLayer()) {
+      if (scope.mapState.getActiveTemporalLayerGroup()) {
         eventHeight = nEventTypes * dim.events;
         eventHeight = eventHeight > 0 ? eventHeight: 0; // Default to 0px
         newDim.height = dim.height +
@@ -146,7 +146,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
      */
     scope.$watch('raster.changed', function (n, o) {
       if (n === o) { return true; }
-      if (scope.mapState.getActiveTemporalLayer()) {
+      if (scope.mapState.getActiveTemporalLayerGroup()) {
         updateTimelineHeight(angular.copy(timeline.dimensions),
           dimensions, scope.events.types.count);
         timeline.drawBars(RasterService.getIntensityData());
@@ -177,7 +177,7 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       if (scope.events.data.features.length > 0) {
         timeline.drawEventsContainedInBounds(scope.mapState.bounds);
         EventService.countCurrentEvents(scope);
-        getTemporalRasterData();
+        //getTemporalRasterData();
       }
     });
 
@@ -250,9 +250,9 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
      *
      * TODO: this is still hard coded to rain: setIntensityData
      */
-    scope.$watch('mapState.getActiveTemporalLayer()', function (n, o) {
-      if (scope.mapState.getActiveTemporalLayer()) {
-        getTemporalRasterData();
+    scope.$watch('mapState.getActiveTemporalLayerGroup()', function (n, o) {
+      if (scope.mapState.getActiveTemporalLayerGroup()) {
+        //getTemporalRasterData();
         timeline.addClickListener();
       } else {
         timeline.removeClickListener();
@@ -265,28 +265,32 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
     /**
      * Get aggregate data for current temporal raster.
      */
-    var getTemporalRasterData = function () {
-      var start = scope.timeState.start;
-      var stop = scope.timeState.end;
-      var bounds = scope.mapState.bounds;
-      var activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
+    // var getTemporalRasterData = function () {
+    //   var start = scope.timeState.start;
+    //   var stop = scope.timeState.end;
+    //   var bounds = scope.mapState.bounds;
+    //   var activeTemporalLG = scope.mapState.getActiveTemporalLayer();
 
-      if (!!activeTemporalLayer && activeTemporalLayer.slug === 'rain') {
-        // width of timeline
-        var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
-        RasterService.getTemporalRaster(new Date(start),
-                                        new Date(stop),
-                                        bounds,
-                                        aggWindow,
-                                        activeTemporalLayer.slug)
-        .then(function (response) {
-          RasterService.setIntensityData(response);
-          scope.raster.changed = Date.now();
-        });
-      }
-    };
+    //   if (!!activeTemporalLG && activeTemporalLG.slug === 'rain') {
 
-    if (scope.mapState.getActiveTemporalLayer()) { getTemporalRasterData(); }
+    //     var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
+
+    //     RasterService.getTemporalRaster(
+    //       new Date(start),
+    //       new Date(stop),
+    //       bounds,
+    //       aggWindow,
+    //       activeTemporalLG.slug,
+    //       undefined,
+    //       scope.mapState)
+    //     .then(function (response) {
+    //       RasterService.setIntensityData(response);
+    //       scope.raster.changed = Date.now();
+    //     });
+    //   }
+    // };
+
+    //if (scope.mapState.getActiveTemporalLayer()) { getTemporalRasterData(); }
 
     window.onresize = function () {
 

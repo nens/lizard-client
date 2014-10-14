@@ -165,8 +165,107 @@ app.factory('LayerGroup', [
         });
       },
 
+      /**
+       *
+       */
       isActive: function () {
         return this._active;
+      },
+
+      /**
+       *
+       */
+      adhereToTime: function (timeState) {
+
+        if (!this._hasTemporalWMSLayer()) { return; }
+
+        console.log('[F] adhereToTime');
+        console.log('---- layerGroup.slug =', this.slug);
+        console.log('---- timeState =', timeState);
+      },
+
+      _animState: {
+
+        imageUrlBase    : undefined,
+        imageBounds     : [],
+        utcFormatter    : d3.time.format.utc("%Y-%m-%dT%H:%M:%S"),
+        step            : [],
+        imageoverlays   : {},
+        frameLookup     : {},
+        numCachedFrames : UtilService.serveToMobileDevice() ? 15 : 30,
+        previousFrame   : 0,
+        previousDate    : undefined,
+        nxtDate         : undefined,
+        loadingRaster   : 0,
+        restart         : false,
+        initiated       : false
+      },
+
+      _animStart: function () {
+
+        var s = this._animState;
+
+        s.imageBounds     = this.bounds;
+        s.utcFormatter    = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
+        s.step            = RasterService.getTimeResolution(this);
+        s.frameLookup     = {};
+        s.numCachedFrames = 30;
+        s.previousFrame   = 0;
+        s.loadingRaster   = 0;
+        s.restart         = false;
+        s.initiated       = true;
+        s.imageOverlays   = RasterService.getImgOverlays(
+          s.numCachedFrames,
+          s.imageBounds
+        );
+      },
+
+      _animAddLoadListener: function (image, index, date, timeState) {
+
+        var s = this._animState;
+
+        image.on("load", function (e) {
+          s.loadingRaster -= 1;
+          s.frameLookup[date] = index;
+          if (s.restart && s.loadingRaster === 0) {
+            s.restart = false;
+            timeState.playPauseAnimation();
+          }
+        });
+      },
+
+      _animGetImages: function (timeState) {
+
+        var i, s = this._animState;
+
+        s.nxtDate = UtilService.roundTimestamp(timeState.at, s.step, false);
+        s.previousDate = s.nxtDate; // shift the date
+        s.loadingRaster = 0;        // reset the loading raster count
+        s.frameLookup = {};         // All frames are going to load new ones, empty lookup
+
+        for (i in s.imageOverlays) {
+
+          s.loadingRaster++;
+          s.imageOverlays[i].setOpacity(0);
+          s.imageOverlays[i].off('load');
+          s.addLoadListener(s.imageOverlays[i], i, s.nxtDate);
+          s.imageOverlays[i].setUrl(
+            s.imageUrlBase + s.utcFormatter(new Date(s.nxtDate))
+          );
+          s.nxtDate += s.step;
+        }
+      },
+
+      _hasTemporalWMSLayer: function () {
+
+        var i, currentLayer;
+
+        for (i = 0; i < this._layers.length; i++) {
+          currentLayer = this._layers[i];
+          if (currentLayer.temporal && currentLayer.type === 'WMS') {
+            return true;
+          }
+        }
       }
     };
 
@@ -223,10 +322,14 @@ app.factory('LayerGroup', [
      * @param {L.Class} Leaflet layer.
      * @description Adds layer to map
      */
-    var addLayer = function (map, layer) { // Leaflet Layer
-      if (map.hasLayer(layer)) {
-        throw new Error('Attempted to add layer' + layer._id + 'while it was already part of the map');
-      } else { map.addLayer(layer); }
+    var addLayer = function (map, leafletLayer) { // Leaflet Layer
+
+      if (map.hasLayer(leafletLayer)) {
+        throw new Error(
+          'Attempted to add layer' + leafletLayer._id
+          + 'while it was already part of the map'
+        );
+      } else { map.addLayer(leafletLayer); }
     };
 
     /**
@@ -236,10 +339,15 @@ app.factory('LayerGroup', [
      * @param  {L.Class} Leaflet layer
      * @description Removes layer from map
      */
-    var removeLayer = function (map, layer) { // Leaflet Layer
-      if (map.hasLayer(layer)) { map.removeLayer(layer); }
-      else {
-        throw new Error('Attempted to remove layer' + layer._id + 'while it was not part of provided the map');
+    var removeLayer = function (map, leafletLayer) { // Leaflet Layer
+
+      if (map.hasLayer(leafletLayer)) {
+        map.removeLayer(leafletLayer);
+      } else {
+        throw new Error(
+          'Attempted to remove layer' + leafletLayer._id
+          + 'while it was NOT part of provided the map'
+        );
       }
     };
 

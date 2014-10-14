@@ -1,4 +1,4 @@
-app.controller("rain", ['$scope', function ($scope) {
+app.controller("RainCtrl", ['$scope', function ($scope) {
 
   /**
    * Format the CSV (exporting rain data for a point in space/interval in
