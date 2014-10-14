@@ -225,4 +225,5 @@ app.service("UtilService", function () {
             + "))";
     }
   };
+
 });
