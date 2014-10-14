@@ -12,7 +12,8 @@
  * the map object and mapState.
  *
  */
-app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'LeafletService', 'LayerGroup',
+app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 
+  'LeafletService', 'LayerGroup',
   function ($rootScope, $filter, $http, CabinetService,
     LeafletService, LayerGroup) {
 
