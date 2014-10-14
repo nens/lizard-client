@@ -186,18 +186,18 @@ app.service("UtilService", function () {
     return result;
   };
 
+
   var checkForLine = function (geom) {
-    var line = false;
     if (geom.length > 1) {
-      line = true;
       angular.forEach(geom, function (value) {
         if (!(value instanceof L.LatLng)) {
-          line = false;
+          return false;
         }
       });
+      return true;
     }
-    return line;
   };
+
 
   /**
    * @function geomToWkt
@@ -209,6 +209,7 @@ app.service("UtilService", function () {
       // geom is a L.LatLng object
       return "POINT(" + geom.lng + " " + geom.lat + ")";
     } else if (checkForLine(geom)) {
+      // geom represents a line
       var coords = [];
       angular.forEach(geom, function (latLng) {
         coords.push(latLng.lng + " " + latLng.lat);

@@ -107,6 +107,7 @@ app.directive('rasteranimation', ['RasterService', 'UtilService',
       var initiated = false;
 
       var start = function () {
+
         imageBounds = RasterService.rasterInfo(scope.mapState.getActiveTemporalLayer().slug).imageBounds;
         utcFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
         step = RasterService.rasterInfo(scope.mapState.getActiveTemporalLayer().slug).timeResolution;
