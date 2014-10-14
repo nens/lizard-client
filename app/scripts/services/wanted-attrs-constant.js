@@ -1,4 +1,5 @@
-app.constant("WantedAttributes", {
+angular.module('lizard-nxt')
+  .constant("WantedAttributes", {
   bridge: {
     rows: [
       {

@@ -128,16 +128,8 @@
             <ul class="nav">
               <li class="nav-header">
                 <ul class="list-group">
-                  <li ng-repeat="layer in mapState.getLayersByType('base')">
-                    <layer-chooser layer="layer"></layer-chooser>
-                  </li>
-                  <br>
-                  <li ng-repeat="layer in mapState.getLayersByType('over')">
-                    <layer-chooser layer="layer"></layer-chooser>
-                  </li>
-                  <br>
-                  <li ng-repeat="layer in mapState.getLayersByType('temporal')">
-                    <layer-chooser layer="layer"></layer-chooser>
+                  <li ng-repeat="layergroup in mapState.layerGroups | orderObjectBy: 'order': false">
+                    <layer-chooser layergroup="layergroup"></layer-chooser>
                   </li>
                 </ul>
               </li>
@@ -256,9 +248,13 @@
     <script src="/scripts/services/raster-service.js"></script>
     <script src="/scripts/services/leaflet-service.js"></script>
     <script src="/scripts/services/map-service.js"></script>
+    <script src="/scripts/services/layer-group-service.js"></script>
     <script src="/scripts/services/event-service.js"></script>
+    <script src="/scripts/services/vector-service.js"></script>
+    <script src="/scripts/services/temporal-vector-service.js"></script>
     <script src="/scripts/services/nxt-d3-service.js"></script>
     <script src="/scripts/services/timeline-service.js"></script>
+    <script src="/scripts/services/wanted-attrs-constant.js"></script>
     <script src="/scripts/services/temporal-vector-service.js"></script>
     <script src="/scripts/services/utfgrid-service.js"></script>
     <script src="/scripts/services/click-feedback-service.js"></script>
@@ -274,6 +270,7 @@
     <script src="/scripts/directives/timeline-directives.js"></script>
     <script src="/scripts/controllers/timeline-controller.js"></script>
     <script src="/scripts/controllers/point-controller.js"></script>
+    <script src="/scripts/controllers/rain-controller.js"></script>
     <script src="/scripts/controllers/line-controller.js"></script>
     <script src="/scripts/controllers/area-controller.js"></script>
     <script src="/scripts/templates/templates.js"></script>

@@ -92,7 +92,7 @@ module.exports = function (grunt) {
             return [
               modRewrite([
                 // '\\map\/|\\map$ / [L]'
-                '!\\api\/|\\\/scripts\/|\\.html|\\.js|\\.svg|\\.css|\\.png$ /index.html [L]'
+                '!\\api\/|\\\/scripts\/|\\.html|\\.js|\\.svg|\\.css|\\.woff|\\.png$ /index.html [L]'
                 ]),
               connect.static('.tmp'),
               connect().use(
@@ -113,7 +113,7 @@ module.exports = function (grunt) {
         xforward: true
         },
        {
-        context: '/scripts/lizard-bs.js',
+        context: '/lizard-bs.js',
         host: '127.0.0.1',
         port: 8000, // Django port goes here
         xforward: true
@@ -127,7 +127,7 @@ module.exports = function (grunt) {
               connect.static('.tmp'),
               connect.static('test'),
               connect().use(
-                '/vendor',
+                'vendor',
                 connect.static('./vendor')
               ),
               connect.static(appConfig.app),

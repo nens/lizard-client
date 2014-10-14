@@ -75,14 +75,32 @@ angular.module('lizard-nxt')
  *              map-directive and layer-chooser directive to build layer
  *              groups.
  */
-app.constant('dataLayers', window.data_layers);
+angular.module('lizard-nxt')
+  .constant('dataLayers', window.data_layers);
 
 /**
  * @name dataBounds
  * @memberOf app
  * @description Contains the bounds of the data set by the server at load
  */
-app.constant('dataBounds', window.data_bounds);
+angular.module('lizard-nxt')
+  .constant('dataBounds', window.data_bounds);
+
+/**
+ * @name user
+ * @memberOf app
+ * @description User and auth stuff
+ */
+angular.module('lizard-nxt')
+  .constant('user', window.user);
+
+/**
+ * @name versioning
+ * @memberOf app
+ * @description User and auth stuff
+ */
+angular.module('lizard-nxt')
+  .constant('versioning', window.versioning);
 
 /**
  *
@@ -143,12 +161,12 @@ angular.module('lizard-nxt')
   .controller('MasterCtrl',
   ['$scope', '$http', '$q', '$filter', '$compile', 'CabinetService',
    'RasterService', 'UtilService', 'EventService', 'TimeseriesService',
+   'user', 'versioning',
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, EventService, TimeseriesService, MapService) {
+            UtilService, EventService, TimeseriesService, user, versioning) {
 
-
-  $scope.user = CabinetService.user;
-  $scope.versioning = CabinetService.versioning;
+  $scope.user = user;
+  $scope.versioning = versioning;
 
   // BOX MODEL
   /**

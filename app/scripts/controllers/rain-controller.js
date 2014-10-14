@@ -1,4 +1,5 @@
-app.controller("rain", ['$scope', function ($scope) {
+angular.module('lizard-nxt')
+  .controller("rain", ['$scope', function ($scope) {
 
   /**
    * Format the CSV (exporting rain data for a point in space/interval in

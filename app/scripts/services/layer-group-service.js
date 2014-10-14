@@ -10,7 +10,8 @@
  *              page. They can be toggled on/off and queried for data. Layergroup
  *              draws all its layers and returns data for all layers.
  */
-app.factory('LayerGroup', [
+angular.module('lizard-nxt')
+  .factory('LayerGroup', [
   'LeafletService', 'VectorService', 'RasterService', 'UtfGridService',
   'UtilService', '$q',
   function (LeafletService, VectorService, RasterService, UtfGridService,
