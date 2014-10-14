@@ -273,7 +273,7 @@ angular.module('lizard-nxt')
       var bounds = scope.mapState.bounds;
       var activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
 
-      if (!!activeTemporalLayer && activeTemporalLayer.slug === 'demo:radar') {
+      if (!!activeTemporalLayer && activeTemporalLayer.slug === 'rain') {
         // width of timeline
         var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
         RasterService.getTemporalRaster(new Date(start),

@@ -7,6 +7,20 @@
     // Predefined globals whom JSHint will ignore.
     "browser"       : true,   // Standard browser globals e.g. `window`, `document`.
 
+    "globals": {
+        "$": false,
+        "jasmine": false,
+        "it": false,
+        "describe": false,
+        "expect": false,
+        "beforeEach": false,
+        "afterEach": false,
+        "spyOn": false,
+        "runs": false,
+        "module": false,
+        "inject": false
+    },
+
     "node"          : true,
     "rhino"         : false,
     "couch"         : false,

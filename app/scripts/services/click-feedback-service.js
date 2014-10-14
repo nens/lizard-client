@@ -1,24 +1,10 @@
-/**
- * Click layer
- *
- * Watches mapState.here to register a click on the map
- * Provides the tool-specific feedback by modifying the DOM. Click
- * layer feedback either is hardcoded bound to the tool or comes
- * from the utf grid.
- *
- *  TODO: What is now called MapClickController should become a service,
- *  the semi generic functions from the link function should be part of this
- *  service and the rest should form a controller.. Since there is no direct
- *  DOM modification. Probably.?
- */
-
 
 /**
  * Service to draw click feedback.
  */
 angular.module('lizard-nxt')
-  .service('ClickFeedbackService', ['$rootScope', 'MapService',
-  function ($rootScope, MapService) {
+  .service('ClickFeedbackService', ['$rootScope', 'LeafletService',
+  function ($rootScope, LeafletService) {
     var Ctrl = function () {
 
       /**
@@ -26,12 +12,12 @@ angular.module('lizard-nxt')
        *
        * @param {object} map
        */
-      this.emptyClickLayer = function () {
+      this.emptyClickLayer = function (mapState) {
         if (this.clickLayer) {
-          MapService.removeLayer(this.clickLayer);
+          mapState.removeLayer(this.clickLayer);
         }
-        this.clickLayer = MapService.newGeoJsonLayer();
-        MapService.addLayer(this.clickLayer);
+        this.clickLayer = LeafletService.geoJson();
+        mapState.addLayer(this.clickLayer);
         this.clickLayer.options.name = 'click';
         this.clickLayer.options.clickable = false;
       };
@@ -122,7 +108,7 @@ angular.module('lizard-nxt')
       };
 
 
-      this.drawObject = function (entityName) {
+      this.drawObject = function (mapState, entityName) {
 
         var selection = this._getSelection(this.clickLayer);
         this._circleMarker.setRadius(11);
@@ -142,7 +128,9 @@ angular.module('lizard-nxt')
         // Entity specific modifications
         if (entityName.indexOf("pumpstation_non_sewerage") !== -1) {
           this._circleMarker.setRadius(13);
-          if (MapService.mapState.zoom < 13) {
+
+          if (mapState.zoom < 13) {
+          //if ($rootScope.mapState.zoom < 13) {
             this._circleMarker.setRadius(16);
           }
         } else if (entityName.indexOf("pumpstation_sewerage") !== -1) {
@@ -198,16 +186,8 @@ angular.module('lizard-nxt')
      * Ctrl constructor.
      *
      */
-    emptyClickLayer = function () {
-      ctrl.emptyClickLayer();
-    };
-
-    /**
-     * Remove the vibrator from the DOM.
-     */
-
-    killVibrator = function () {
-      d3.selectAll('.vibrator').remove();
+    emptyClickLayer = function (mapState) {
+      ctrl.emptyClickLayer(mapState);
     };
 
     /**
@@ -220,8 +200,8 @@ angular.module('lizard-nxt')
      * @param {object} latLng Leaflet object specifying the latitude
      * and longitude of a click
      */
-    drawClickInSpace = function (latlng) {
-      ctrl.emptyClickLayer();
+    drawClickInSpace = function (mapState, latlng) {
+      ctrl.emptyClickLayer(mapState);
       var geometry = {"type": "Point",
                       "coordinates": [latlng.lng, latlng.lat]};
       ctrl.drawFeature(geometry);
@@ -239,35 +219,41 @@ angular.module('lizard-nxt')
      * @param {string} entityName Name of the object to give it custom
      *  styling
      */
-    drawGeometry = function (geom, entityName) {
-      ctrl.emptyClickLayer();
+    drawGeometry = function (mapState, geom, entityName) {
+      ctrl.emptyClickLayer(mapState);
       var geometry = angular.fromJson(geom);
       ctrl.drawFeature(geometry);
-      ctrl.drawObject(entityName);
+      ctrl.drawObject(mapState, entityName);
     };
 
     /**
      * Draws an arrow at specified location to indicate click.
      * Used to indicate location of rain graph
      *
-     * @param {object} latLng Leaflet object specifying the latitude
-     * and longitude of a click
+     * @param {object} mapState - the mapState object, which assumes the key
+     *   'here' to have a unundefined value.
      */
-    drawArrowHere = function (latlng) {
-      ctrl.emptyClickLayer();
-      var geometry = {"type": "Point",
-                      "coordinates": [latlng.lng, latlng.lat]};
+    drawArrowHere = function (mapState) {
+
+      var geometry, px;
+
+      ctrl.emptyClickLayer(mapState);
+      geometry = {
+                   "type": "Point",
+                   "coordinates": [mapState.here.lng, mapState.here.lat]
+                 };
       ctrl.drawFeature(geometry);
-      var px = MapService.latLngToLayerPoint(latlng);
+      px = mapState.latLngToLayerPoint(mapState.here);
       ctrl.addLocationMarker(px);
     };
+
 
     stopVibration = function () {
       ctrl.stopVibration();
     };
 
-    drawLine = function (first, second, dashed) {
-      emptyClickLayer();
+    drawLine = function (mapState, first, second, dashed) {
+      emptyClickLayer(mapState);
       ctrl.drawLineElement(first, second, dashed);
     };
 

@@ -1406,7 +1406,7 @@ a {
 
 
 /* Leaflet override*/
-img.leaflet-image-layer {
+img {
     image-rendering: optimizeSpeed;             /*                     */
     image-rendering: -moz-crisp-edges;          /* Firefox             */
     image-rendering: -o-crisp-edges;            /* Opera               */

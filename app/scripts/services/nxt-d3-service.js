@@ -135,7 +135,6 @@ angular.module('lizard-nxt')
       d3Objects = {},
       // y domain runs from height till zero, x domain from 0 to width.
       domain = y ? {max: 0, min: height}: {min: 0, max: width};
-
       d3Objects.maxMin = this._maxMin(data, key);
       d3Objects.scale = this._makeScale(d3Objects.maxMin, domain, options);
       d3Objects.axis = this._makeAxis(d3Objects.scale, options);

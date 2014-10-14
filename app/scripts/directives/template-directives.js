@@ -30,21 +30,13 @@ angular.module('lizard-nxt')
   .directive('timeseries', [function () {
   return {
       restrict: 'E',
+      scope: {
+        timeseries: '=',
+      },
+      replace: true,
       templateUrl: 'templates/timeseries.html'
     };
 }]);
-
-/**
- * Streetview directive.
- */
-angular.module('lizard-nxt')
-  .directive('streetview', [function () {
-  return {
-      restrict: 'E',
-      templateUrl: 'templates/streetview.html'
-    };
-}]);
-
 
 /**
  * Cardtitle directive.
@@ -80,10 +72,61 @@ angular.module('lizard-nxt')
 }]);
 
 angular.module('lizard-nxt')
-  .directive('cardattributes', [function () {
+  .directive('cardattributes', ['WantedAttributes',
+    function (WantedAttributes) {
+  return {
+    link: function (scope) { scope.wanted = WantedAttributes; },
+    restrict: 'E',
+    scope: {
+      waterchain: '='
+    },
+    replace: true,
+    templateUrl: 'templates/cardattributes.html'
+  };
+}]);
+
+angular.module('lizard-nxt')
+  .directive('rain', [function () {
   return {
     restrict: 'E',
-    templateUrl: 'templates/cardattributes.html'
+    scope: {
+      rain: '='
+    },
+    replace: true,
+    templateUrl: 'templates/rain.html'
+  };
+}]);
+
+angular.module('lizard-nxt')
+  .directive('defaultpoint', [function () {
+  return {
+    link: function (scope) {
+
+      // These layergroups have dedicated markup
+      var EXCLUDED = ['timeseries', 'rain', 'waterchain'];
+
+      scope.$watch('point', function () {
+        scope.included = [];
+        angular.forEach(scope.point, function (value, key) {
+          if (EXCLUDED.indexOf(key) === -1) {
+            if (value) {
+              value.slug = key;
+              scope.included.push(value);
+            }
+          }
+        });
+
+      }, true);
+
+
+    },
+    restrict: 'E',
+    scope: {
+      point: '=',
+      mapstate: '='
+    },
+    replace: true,
+    templateUrl: 'templates/defaultpoint.html'
   };
 }]);
 
@@ -92,21 +135,5 @@ angular.module('lizard-nxt')
   return {
     restrict: 'E',
     templateUrl: 'templates/detailswitch.html'
-  };
-}]);
-
-angular.module('lizard-nxt')
-  .directive('datadetailcard', [function () {
-  return {
-    restrict: 'E',
-    templateUrl: 'templates/data-detail-card.html'
-  };
-}]);
-
-angular.module('lizard-nxt')
-  .directive('dataaggregationcard', [function () {
-  return {
-    restrict: 'E',
-    templateUrl: 'templates/data-aggregation-card.html'
   };
 }]);

@@ -10,6 +10,25 @@
  *
  */
 
+/**
+ * Filter to order objects instead of angulars orderBy
+ * that only orders array
+ */
+angular.module('lizard-nxt')
+  .filter('orderObjectBy', function() {
+  return function (items, field, reverse) {
+    var filtered = [];
+    angular.forEach(items, function (item) {
+      filtered.push(item);
+    });
+    filtered.sort(function (a, b) {
+      return (a[field] > b[field] ? 1 : -1);
+    });
+    if (reverse) { filtered.reverse(); }
+    return filtered;
+  };
+});
+
 
 /**
  * Returns a rounded number or a '...' based on input type.
@@ -49,6 +68,45 @@ angular.module('lizard-nxt')
       break;
     case '2.0':
       out = 'rechthoekig';
+      break;
+    default:
+      out = '...';
+    }
+    return out;
+  };
+});
+
+angular.module('lizard-nxt')
+  .filter('lookupLeveeType', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case 1:
+      out = 'Primair';
+      break;
+    case 2:
+      out = 'Regionaal';
+      break;
+    case 3:
+      out = 'c-type';
+      break;
+    default:
+      out = '...';
+    }
+    return out;
+  };
+});
+
+angular.module('lizard-nxt')
+  .filter('lookupLeveeReferencePointType', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case 1:
+      out = 'Dijkpaal';
+      break;
+    case 2:
+      out = 'Virtueel';
       break;
     default:
       out = '...';
@@ -191,5 +249,34 @@ angular.module('lizard-nxt')
       return input;
     }
   };
+});
+
+
+angular.module('lizard-nxt')
+  .filter('objectTitle', function () {
+
+  return function (input) {
+
+    return {
+      'bridge': 'Brug',
+      'channel': 'Watergang',
+      'crossprofile': 'Kruisprofiel',
+      'culvert': 'Duiker',
+      'manhole': 'Put',
+      'measuringstation': 'Meetstation',
+      'orifice': 'Doorlaat',
+      'outlet': 'Uitlaat met keerklep',
+      'overflow': 'Overstort',
+      'pipe': 'Gesloten Leiding',
+      'pumpstation': 'Gemaal',
+      'pumpstation_sewerage': 'Rioolgemaal',
+      'weir': 'Stuw',
+      'pressurepipe': 'Persleiding',
+      'sluice': 'Sluis',
+      'levee': 'Kering',
+      'leveereferencepoint': 'Referentiepunt kering'
+    }[input] || input;
+  };
+
 });
 

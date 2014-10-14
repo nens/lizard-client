@@ -8,7 +8,7 @@
  */
 angular.module('lizard-nxt')
   .directive('vectorlayer', ['EventService', '$rootScope',
-  'ClickFeedbackService', 'MapService',
+  'ClickFeedbackService',
   function (EventService, $rootScope, ClickFeedbackService, MapService) {
 
   return {
@@ -338,233 +338,231 @@ angular.module('lizard-nxt')
   };
 }]);
 
-/**
- * Impervious surface vector layer.
- *
- * Load data with d3 geojson vector plugin L.TileLayer.GeoJSONd3 in ./lib
- * bind highlight function to mouseover and mouseout events.
- *
- * NOTE: this contains quite some hard coded stuff. Candidate for refactoring
- * to make generic
- *
- */
-angular.module('lizard-nxt')
-  .directive('surfacelayer', ['MapService', function (MapService) {
-  return {
-    restrict: 'A',
-    link: function (scope, element, attrs) {
+// /**
+//  * Impervious surface vector layer.
+//  *
+//  * Load data with d3 geojson vector plugin L.TileLayer.GeoJSONd3 in ./lib
+//  * bind highlight function to mouseover and mouseout events.
+//  *
+//  * NOTE: this contains quite some hard coded stuff. Candidate for refactoring
+//  * to make generic
+//  *
+//  */
+// app.directive('surfacelayer', [function (MapService) {
+//   return {
+//     restrict: 'A',
+//     link: function (scope, element, attrs) {
 
-      var bottomLeft = {};
+//       var bottomLeft = {};
 
-      /**
-       * Style surface features.
-       *
-       * Function to style d3 features in d3 selection
-       *
-       * @param: features, d3 selection object
-       */
-      var surfaceStyle = function (features) {
-        features
-          .style("stroke-width", 0)
-          .style("fill-opacity", 0);
-      };
+//       /**
+//        * Style surface features.
+//        *
+//        * Function to style d3 features in d3 selection
+//        *
+//        * @param: features, d3 selection object
+//        */
+//       var surfaceStyle = function (features) {
+//         features
+//           .style("stroke-width", 0)
+//           .style("fill-opacity", 0);
+//       };
 
-      /**
-       * Convert list with values to d3 selector
-       *
-       * @param: list of values
-       * @returns: concatenated d3 suitable OR selector
-       */
-      var listToSelector = function (list) {
-        var selector = "";
-        for (var i in list) {
-          // prepend `.p` because classes can't start with an number
-          selector += ".p" + list[i] + ", ";
-        }
-        selector = selector.slice(0, -2);
+//       /**
+//        * Convert list with values to d3 selector
+//        *
+//        * @param: list of values
+//        * @returns: concatenated d3 suitable OR selector
+//        */
+//       var listToSelector = function (list) {
+//         var selector = "";
+//         for (var i in list) {
+//           // prepend `.p` because classes can't start with an number
+//           selector += ".p" + list[i] + ", ";
+//         }
+//         selector = selector.slice(0, -2);
 
-        return selector;
-      };
+//         return selector;
+//       };
 
-      /**
-       * Callback function to highlight surfaces connected to pipe
-       *
-       * Selects d3 objects based on ids in data property (in this case in
-       * `impervious_surfaces`. On 'mouseover' highlights features, on
-       * 'mouseout' fades features to transparant
-       *
-       * @param: e, event object, expects the data property to have a
-       * `impervious_surfaces` property
-       *
-       */
-      var highlightSurface = function (e) {
-        if (e.data.impervious_surfaces !== undefined) {
-          var surface_ids = JSON.parse(e.data.impervious_surfaces);
-          if (surface_ids !== null && surface_ids.indexOf("null") === -1) {
-            var selector = listToSelector(surface_ids);
-            if (e.type === 'mousemove') {
-              d3.selectAll(selector)
-                .style("fill", "#e74c3c")
-                .style("fill-opacity", 0.6)
-                .transition();
-            } else if (e.type === 'mouseout') {
-              d3.selectAll(selector)
-                .transition()
-                .duration(500)
-                .style("stroke-width", 0)
-                .style("fill-opacity", 0);
-            }
-          }
-        }
-      };
+//       /**
+//        * Callback function to highlight surfaces connected to pipe
+//        *
+//        * Selects d3 objects based on ids in data property (in this case in
+//        * `impervious_surfaces`. On 'mouseover' highlights features, on
+//        * 'mouseout' fades features to transparant
+//        *
+//        * @param: e, event object, expects the data property to have a
+//        * `impervious_surfaces` property
+//        *
+//        */
+//       var highlightSurface = function (e) {
+//         if (e.data.impervious_surfaces !== undefined) {
+//           var surface_ids = JSON.parse(e.data.impervious_surfaces);
+//           if (surface_ids !== null && surface_ids.indexOf("null") === -1) {
+//             var selector = listToSelector(surface_ids);
+//             if (e.type === 'mousemove') {
+//               d3.selectAll(selector)
+//                 .style("fill", "#e74c3c")
+//                 .style("fill-opacity", 0.6)
+//                 .transition();
+//             } else if (e.type === 'mouseout') {
+//               d3.selectAll(selector)
+//                 .transition()
+//                 .duration(500)
+//                 .style("stroke-width", 0)
+//                 .style("fill-opacity", 0);
+//             }
+//           }
+//         }
+//       };
 
-      var getLayer = MapService.getLayer;
+//       var getLayer = MapService.getLayer;
 
-      // Initialise geojson layer
-      var surfaceLayer = L.geoJSONd3(
-        'api/v1/tiles/impervioussurface/{z}/{x}/{y}.geojson',
-        {
-          applyStyle: surfaceStyle,
-          class: "impervious_surface"
-        });
+//       // Initialise geojson layer
+//       var surfaceLayer = L.geoJSONd3(
+//         'api/v1/tiles/impervioussurface/{z}/{x}/{y}.geojson',
+//         {
+//           applyStyle: surfaceStyle,
+//           class: "impervious_surface"
+//         });
 
-      /**
-       * Listen to tools model for pipe_surface tool to become active. Add
-       * geojson d3 layer and bind mousemove and mouseout events to
-       * highlight impervious surface.
-       *
-       */
-      scope.$watch('tools.active', function (n, o) {
-        if (n === o) { return true; }
-        var pipeLayer = {};
-        if (scope.tools.active === "pipeSurface") {
-          MapService.addLayer(surfaceLayer);
-          pipeLayer = getLayer('grid', 'waterchain');
-          // icon active
-          angular.element(".surface-info").addClass("icon-active");
-          if (pipeLayer) {
-            pipeLayer.on('mousemove', highlightSurface);
-            pipeLayer.on('mouseout', highlightSurface);
-          } else {
-            // If there is no grid layer it is probably still being
-            // loaded by the map-directive which will broadcast a
-            // message when its loaded.
-            scope.$on('waterchainGridLoaded', function () {
-              if (scope.tools.active === 'pipeSurface') {
-                pipeLayer = getLayer('grid', 'waterchain');
-                pipeLayer.on('mousemove', highlightSurface);
-                pipeLayer.on('mouseout', highlightSurface);
-              }
-            });
-          }
-        } else {
-          pipeLayer = getLayer('grid', 'pipe');
-          if (pipeLayer) {
-            // icon inactive
-            angular.element(".surface-info").removeClass("icon-active");
-            pipeLayer.off('mousemove', highlightSurface);
-            pipeLayer.off('mouseout', highlightSurface);
-          }
-          MapService.removeLayer(surfaceLayer);
-        }
-      });
-    }
-  };
-}]);
+//       /**
+//        * Listen to tools model for pipe_surface tool to become active. Add
+//        * geojson d3 layer and bind mousemove and mouseout events to
+//        * highlight impervious surface.
+//        *
+//        */
+//       scope.$watch('tools.active', function (n, o) {
+//         if (n === o) { return true; }
+//         var pipeLayer = {};
+//         if (scope.tools.active === "pipeSurface") {
+//           MapService.addLayer(surfaceLayer);
+//           pipeLayer = getLayer('grid', 'waterchain');
+//           // icon active
+//           angular.element(".surface-info").addClass("icon-active");
+//           if (pipeLayer) {
+//             pipeLayer.on('mousemove', highlightSurface);
+//             pipeLayer.on('mouseout', highlightSurface);
+//           } else {
+//             // If there is no grid layer it is probably still being
+//             // loaded by the map-directive which will broadcast a
+//             // message when its loaded.
+//             scope.$on('waterchainGridLoaded', function () {
+//               if (scope.tools.active === 'pipeSurface') {
+//                 pipeLayer = getLayer('grid', 'waterchain');
+//                 pipeLayer.on('mousemove', highlightSurface);
+//                 pipeLayer.on('mouseout', highlightSurface);
+//               }
+//             });
+//           }
+//         } else {
+//           pipeLayer = getLayer('grid', 'pipe');
+//           if (pipeLayer) {
+//             // icon inactive
+//             angular.element(".surface-info").removeClass("icon-active");
+//             pipeLayer.off('mousemove', highlightSurface);
+//             pipeLayer.off('mouseout', highlightSurface);
+//           }
+//           MapService.removeLayer(surfaceLayer);
+//         }
+//       });
+//     }
+//   };
+// }]);
 
 /**
  * Add non-tiled d3 vector layer for currents.
  *
  * Implemented as a layer to display current speed/direction on the map.
- */
-angular.module('lizard-nxt')
-  .directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVectorService',
-  function (UtilService, MapService, TemporalVectorService) {
+//  */
+// app.directive('temporalVectorLayer', ['UtilService', 'MapService', 'TemporalVectorService',
+//   function (UtilService, MapService, TemporalVectorService) {
 
-  return {
-    restrict: 'A',
-    link: function (scope, element, attrs) {
+//   return {
+//     restrict: 'A',
+//     link: function (scope, element, attrs) {
 
-      var tvLayer,
-          tvData = TemporalVectorService.getTVData(),
-          setWatches,
-          watches = [];
+//       var tvLayer,
+//           tvData = TemporalVectorService.getTVData(),
+//           setWatches,
+//           watches = [];
 
-      /**
-       * @description - Unconditional watch: is triggered normally, when the flow layer
-       *                doesn't exist this does NOT raise an error.
-       */
-      scope.$watch('mapState.layers.flow.active', function (newVal, oldVal) {
+//       /**
+//        * @description - Unconditional watch: is triggered normally, when the flow layer
+//        *                doesn't exist this does NOT raise an error.
+//        */
+//       scope.$watch('mapState.layers.flow.active', function (newVal, oldVal) {
 
-        if (newVal === oldVal) { return; }
-        if (newVal) {
+//         if (newVal === oldVal) { return; }
+//         if (newVal) {
 
-          if (!tvLayer && MapService.isMapDefined()) {
-            tvLayer = TemporalVectorService.createTVLayer(scope, {
-              type: "FeatureCollection",
-              features: []
-            });
-          }
-          watches = setWatches();
+//           if (!tvLayer && MapService.isMapDefined()) {
+//             tvLayer = TemporalVectorService.createTVLayer(scope, {
+//               type: "FeatureCollection",
+//               features: []
+//             });
+//           }
+//           watches = setWatches();
 
-        } else {
-          // De-register watches
-          angular.forEach(watches, function (watch) {
-            watch();
-          });
-          return;
-        }
-        TemporalVectorService.clearTVLayer();
-        if (newVal && scope.timeState.hidden !== false) {
-          scope.toggleTimeline();
-        }
-        TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
-      });
+//         } else {
+//           // De-register watches
+//           angular.forEach(watches, function (watch) {
+//             watch();
+//           });
+//           return;
+//         }
+//         TemporalVectorService.clearTVLayer();
+//         if (newVal && scope.timeState.hidden !== false) {
+//           scope.toggleTimeline();
+//         }
+//         TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
+//       });
 
-      /**
-       * @function
-       * @description - Makes watches only listen when applicable.
-       * @returns {object[]} - An array of watches, which are now toggable.
-       */
-      setWatches = function () {
+//       /**
+//        * @function
+//        * @description - Makes watches only listen when applicable.
+//        * @returns {object[]} - An array of watches, which are now toggable.
+//        */
+//       setWatches = function () {
 
-        watches.push(scope.$watch('timeState.at', function (newVal, oldVal) {
+//         watches.push(scope.$watch('timeState.at', function (newVal, oldVal) {
 
-          if (newVal === oldVal) { return; }
+//           if (newVal === oldVal) { return; }
 
-          else if (scope.timeState.animation.playing
-            && (newVal > oldVal + TemporalVectorService.STEP_SIZE
-              || newVal < oldVal)) {
+//           else if (scope.timeState.animation.playing
+//             && (newVal > oldVal + TemporalVectorService.STEP_SIZE
+//               || newVal < oldVal)) {
 
-            TemporalVectorService.resetTimeIndex();
-          }
+//             TemporalVectorService.resetTimeIndex();
+//           }
 
-          TemporalVectorService.getTimeIndexAndUpdate(
-            scope,
-            tvLayer,
-            tvData
-          );
-        }));
-
-
-        watches.push(scope.$watch('mapState.zoom', function (newVal, oldVal) {
-
-          if (newVal === oldVal) { return; }
-
-          TemporalVectorService.clearTVLayer();
-          TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
-        }));
+//           TemporalVectorService.getTimeIndexAndUpdate(
+//             scope,
+//             tvLayer,
+//             tvData
+//           );
+//         }));
 
 
-        watches.push(scope.$watch('timeState.animation.playing', function (newVal, oldVal) {
+//         watches.push(scope.$watch('mapState.zoom', function (newVal, oldVal) {
 
-          if (newVal === oldVal) { return; }
+//           if (newVal === oldVal) { return; }
 
-          TemporalVectorService.resetTimeIndex();
-        }));
+//           TemporalVectorService.clearTVLayer();
+//           TemporalVectorService.getTimeIndexAndUpdate(scope, tvLayer, tvData);
+//         }));
 
-        return watches;
-      };
-    }
-  };
-}]);
+
+//         watches.push(scope.$watch('timeState.animation.playing', function (newVal, oldVal) {
+
+//           if (newVal === oldVal) { return; }
+
+//           TemporalVectorService.resetTimeIndex();
+//         }));
+
+//         return watches;
+//       };
+//     }
+//   };
+// }]);

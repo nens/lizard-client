@@ -1,14 +1,16 @@
 //layer-directive.js
 
 angular.module('lizard-nxt')
-  .directive("layerChooser", ['LeafletService', function (LeafletService) {
+  .directive("layerChooser", ['NxtMap', 'dataLayers',
+  function (NxtMap, dataLayers) {
+
   var link = function (scope, element, attrs) {
-    var centroid, zoom, layerMap, layerLeafletLayer, layer, layerUrl, map;
-    centroid = [52.39240447569775, 5.101776123046875];
-    zoom = scope.mapState.zoom;
-    layerMap = LeafletService.map(element.find('.layer-img')[0], {
-      center: centroid,
-      zoom: zoom - 2,
+    // Scope gets the mapState layerGroup, here we create a new layerGroup which
+    // goes into its own NxtMap to always be turned on
+    var layerGroup = dataLayers[scope.layergroup.slug];
+    var chooser = new NxtMap(element.find('.layer-img')[0], [layerGroup], {
+      center: [52.39240447569775, 5.101776123046875],
+      zoom: 6,
       dragging: false,
       touchZoom: false,
       doubleClickzoom: false,
@@ -19,50 +21,16 @@ angular.module('lizard-nxt')
       attributionControl: false
     });
 
-    layer = scope.layer;
+    chooser.toggleLayerGroup(chooser.layerGroups[Object.keys(chooser.layerGroups)[0]]);
 
-    if (layer.type === 'Vector') { return; }
-
-    // legacy if.. needs to be refactored
-    if (!layer.temporal) {
-      if (layer.type === 'WMS') {
-        var options = {
-          layers: layer.slug,
-          format: 'image/png',
-          version: '1.1.1',
-          minZoom: layer.min_zoom,
-          maxZoom: 19,
-          zIndex: layer.z_index
-        };
-        //NOTE ugly hack
-        if (layer.slug === 'landuse') {
-          options.styles = 'landuse';
-        } else if (layer.slug === 'elevation') {
-          options.styles = 'BrBG_r';
-          options.effects = 'shade:0:3';
-        }
-        layerLeafletLayer = LeafletService.tileLayer.wms(layer.url, options);
-      } else {
-        layerUrl = (layer.type === 'TMS') ? layer.url + '.png' : layer.url;
-        layerLeafletLayer = LeafletService.tileLayer(layerUrl, {
-          ext: 'png',
-          slug: layer.slug,
-          name: layer.slug,
-          minZoom: layer.min_zoom,
-          maxZoom: 19,
-          zIndex: layer.z_index
-        });
-      }
-      layerMap.addLayer(layerLeafletLayer);
-    }
     scope.$watch('mapState.bounds', function (n, v) {
       if (n === v) { return; }
-      zoom = scope.mapState.zoom;
-      centroid = scope.mapState.bounds.getCenter();
-      layerMap.setView(centroid, zoom - 2);
+      var zoom = scope.mapState.zoom;
+      var centroid = scope.mapState.bounds.getCenter();
+      chooser.setView(centroid, zoom - 2);
     });
-  };
 
+  };
 
   return {
     link: link,

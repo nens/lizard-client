@@ -2,6 +2,7 @@ describe('Testing AreaCtrl', function () {
   var $scope,
     $rootScope,
     $controller,
+    NxtMap,
     createController;
 
   beforeEach(module('lizard-nxt'));
@@ -10,31 +11,10 @@ describe('Testing AreaCtrl', function () {
     $controller = $injector.get('$controller');
     $rootScope = $injector.get('$rootScope');
     $scope = $rootScope.$new();
-
-    $scope.mapState = {
-      activeLayersChanged: true,
-      bounds: [0],
-      layers : {
-        "elevation": {
-          "aggregation_type": "curve",
-          "name": "Hoogtekaart",
-          "slug": "elevation",
-          "active": false
-        },
-        "isahw:BOFEK2012": {
-          "aggregation_type": "none",
-          "name": "Bodem",
-          "slug": "isahw:BOFEK2012",
-          "active": false,
-        },
-        "landuse": {
-          "aggregation_type": "counts",
-          "name": "Landgebruik",
-          "slug": "landuse",
-          "active": false
-        }
-      }
-    };
+    NxtMap = $injector.get('NxtMap');
+    $scope.mapState = new NxtMap(angular.element('<div></div>')[0], data_layers, {
+      zoomControl: false
+    });
 
     var MockRasterService = {
       getAggregationForActiveLayer: function (layer, slug, agg, bounds) {
@@ -66,56 +46,6 @@ describe('Testing AreaCtrl', function () {
     createController();
     expect($scope.area).toBeDefined();
     expect($scope.area).toEqual({});
-  });
-
-  it('should remove data from scope when layer is inactive', function () {
-    createController();
-    $scope.area = {
-      landuse: {
-        data: [1, 2, 3]
-      }
-    };
-
-    $scope.mapState.bounds = [1];
-    $scope.$digest();
-    $scope.mapState.bounds = [2];
-    $scope.$digest();
-
-    expect($scope.area.landuse).toBeUndefined();
-  });
-
-  it('should add data to scope when layer is active and has an aggregation_type', function () {
-    createController();
-    $scope.mapState.layers.landuse.active = true;
-    $scope.mapState.activeLayersChanged = false;
-    $scope.$digest();
-    expect($scope.area.landuse).toBeDefined();
-  });
-
-  it('should not add data to scope when layer is active without an aggregation_type', function () {
-    createController();
-    $scope.mapState.layers['isahw:BOFEK2012'].active = true;
-    $scope.mapState.activeLayersChanged = false;
-    $scope.$digest();
-    expect($scope.area['isahw:BOFEK2012']).toBeUndefined();
-  });
-
-  it('should not add data to scope when layer is inactive with an aggregation_type', function () {
-    createController();
-    $scope.mapState.activeLayersChanged = false;
-    $scope.$digest();
-    expect($scope.area.elevation).toBeUndefined();
-  });
-
-  it('should remove data from scope when layer with an aggregation_type is turned off', function () {
-    createController();
-    $scope.mapState.layers.landuse.active = true;
-    $scope.mapState.activeLayersChanged = false;
-    $scope.$digest();
-    $scope.mapState.layers.landuse.active = false;
-    $scope.mapState.activeLayersChanged = true;
-    $scope.$digest();
-    expect($scope.area.landuse).toBeUndefined();
   });
 
 });

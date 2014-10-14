@@ -27,7 +27,8 @@ if (window.Raven) {
 }
 
 /**
- * Decorator for ngExceptionHandler to log exceptions to sentry
+ * Initialise angular.module('lizard-nxt')
+ * 
  */
 angular.module("lizard-nxt", [
   'omnibox',
@@ -37,6 +38,7 @@ angular.module("lizard-nxt", [
   'ui.bootstrap',
   'ui.utils',
 ])
+// Decorator for ngExceptionHandler to log exceptions to sentry
   .config(function ($provide) {
   $provide.decorator("$exceptionHandler", function ($delegate) {
       return function (exception, cause) {
@@ -65,6 +67,22 @@ angular.module('lizard-nxt')
   .config(function ($locationProvider) {
   $locationProvider.html5Mode(true);
 });
+
+/**
+ * @name dataLayers
+ * @memberOf app
+ * @description Contains the dataLayers set by the server. Used by the
+ *              map-directive and layer-chooser directive to build layer
+ *              groups.
+ */
+app.constant('dataLayers', window.data_layers);
+
+/**
+ * @name dataBounds
+ * @memberOf app
+ * @description Contains the bounds of the data set by the server at load
+ */
+app.constant('dataBounds', window.data_bounds);
 
 /**
  *
@@ -125,7 +143,6 @@ angular.module('lizard-nxt')
   .controller('MasterCtrl',
   ['$scope', '$http', '$q', '$filter', '$compile', 'CabinetService',
    'RasterService', 'UtilService', 'EventService', 'TimeseriesService',
-   'MapService',
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
             UtilService, EventService, TimeseriesService, MapService) {
 
@@ -159,40 +176,6 @@ angular.module('lizard-nxt')
   $scope.tools = {
     active: 'none', //NOTE: make list?
   };
-
-  // START placeholder translations for django i8n
-  // because all templates are now refactored
-  $scope.translations = {
-    'bridge': 'Brug',
-    'channel': 'Kanaal',
-    'crossprofile': 'Kruisprofiel',
-    'culvert': 'Duiker',
-    'manhole': 'Put',
-    'measuringstation': 'Meetstation',
-    'orifice': 'Doorlaat',
-    'outlet': 'Uitlaat met keerklep',
-    'overflow': 'Overstort',
-    'pipe': 'Gesloten Leiding',
-    'pumpstation': 'Gemaal',
-    'pumpstation_sewerage': 'Rioolgemaal',
-    'weir': 'Stuw'
-  };
-
-  /**
-   * @function
-   * @memberOf angular.module('lizard-nxt')
-  .MasterCtrl
-   *
-   * @summary Get translation for text
-   * @desc Get translation for text
-   *
-   * @param {string} text - Text to translate.
-   * @returns {string} text - Translated text.
-   */
-  $scope.gettext = function (text) {
-    return $scope.translations[text];
-  };
-
 
   /**
    * @function
@@ -232,44 +215,8 @@ angular.module('lizard-nxt')
     $scope.box.contextSwitchMode = !$scope.box.contextSwitchMode;
   };
 
-
-
-  // MAP MODEL
-  // MOVE TO MAP CONTROL ?
-  //
-  // $scope.layers = MapService.layers;
-  $scope.mapState = MapService.mapState;
-
-  /**
-   * @function
-   * @memberof angular.module('lizard-nxt')
-  .MasterCtrl
-   * @description changelayer function... legacy?
-   * @param  {object} layer Layer object
-   */
-  $scope.mapState.changeLayer = function (layer) {
-
-    if (layer.temporal) {
-
-      $scope.mapState.activeLayersChanged =
-        !$scope.mapState.activeLayersChanged;
-      layer.active = !layer.active;
-
-      // toggle timeline if neccesary
-      if ($scope.timeState.hidden !== false) {
-        $scope.toggleTimeline();
-      }
-
-    } else {
-
-      // for other than temporalRaster layers, we do stuff the old way
-      MapService.toggleLayer(layer, $scope.mapState.layers,
-        $scope.mapState.bounds);
-      $scope.mapState.activeLayersChanged =
-        !$scope.mapState.activeLayersChanged;
-    }
-  };
-
+  // MAP MODEL is set by the map-directive
+  $scope.mapState = {};
 
   $scope.$watch('mapState.here', function (n, o) {
     if (n === o) { return true; }
@@ -339,11 +286,25 @@ angular.module('lizard-nxt')
 
   // EVENTS
 
+  var getEventTypes = function () {
+
+    var k, eventLayers = [];
+
+    for (k in $scope.mapState.layers) {
+      if (k === "alarms" || k === "messages") {
+        eventLayers.push($scope.mapState.layers[k]);
+      }
+    }
+
+    return eventLayers;
+  };
+
+
   // EVENTS MODEL
   $scope.events = {
     //TODO: refactor event meta data (remove eventTypes from mapState)
     //types: { count: 0, 1: {}, 2: {}, 3: {}, 4: {}, 5: {} }, // Metadata object
-    types: EventService.buildEventTypesTemplate($scope.mapState.eventTypes),
+    types: EventService.buildEventTypesTemplate(getEventTypes()),
     data: { type: "FeatureCollection",
             features: [] // Long format events data object
       },
@@ -510,6 +471,18 @@ angular.module('lizard-nxt')
       $scope.timeState.hidden = false;
     }
   };
+
+  // Temporarily watch layergroups to turn timeline on
+  // Can be removed when we redo the timeline
+  var timelineToggler = $scope.$watch('mapState.layerGroupsChanged',  function () {
+    if ($scope.timeState.hidden === undefined
+      && $scope.mapState.getActiveTemporalLayer()) {
+      $scope.toggleTimeline();
+      // remove watch
+      timelineToggler();
+    }
+
+  });
 
   $scope.toggleVersionVisibility = function () {
     $('.navbar-version').toggle();
