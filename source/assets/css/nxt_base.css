@@ -928,7 +928,7 @@ ul.list-inline li.baselayer-icon label{
     padding: 15px;
 }
 
-.btn {
+.btn, .noselect {
     -ms-user-select: none;
     -moz-user-select: none;
     -khtml-user-select: none;

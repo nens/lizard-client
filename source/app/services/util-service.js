@@ -35,6 +35,40 @@ app.service("UtilService", function () {
     return roundedTimestamp;
   };
 
+
+  /**
+   * @function fixTouch
+   * @memberOf UtilService
+   * @summary sets x and y for touch event.
+   * @description webkit has a bug with touches.
+   * this fixes the x and y coordinates of the touch.
+   */
+  this.fixTouch = function (touch) {
+    var winPageX = window.pageXOffset,
+        winPageY = window.pageYOffset,
+        x = touch.clientX,
+        y = touch.clientY;
+
+    if (touch.pageY === 0 && Math.floor(y) > Math.floor(touch.pageY) ||
+        touch.pageX === 0 && Math.floor(x) > Math.floor(touch.pageX)) {
+        // iOS4 clientX/clientY have the value that should have been
+        // in pageX/pageY. While pageX/page/ have the value 0
+        x = x - winPageX;
+        y = y - winPageY;
+    } else if (y < (touch.pageY - winPageY) || x < (touch.pageX - winPageX) ) {
+        // Some Android browsers have totally bogus values for clientX/Y
+        // when scrolling/zooming a page. Detectable since clientX/clientY
+        // should never be smaller than pageX/pageY minus page scroll
+        x = touch.pageX - winPageX;
+        y = touch.pageY - winPageY;
+    }
+
+    return {
+        clientX:    x,
+        clientY:    y
+    };
+
+
   /**
    * @function getAggWindow
    * @memberOf UtilService

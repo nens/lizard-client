@@ -1,7 +1,7 @@
 //layer-directive.js
 
-app.directive("layerChooser", ['NxtMap', 'dataLayers',
-  function (NxtMap, dataLayers) {
+app.directive("layerChooser", ['NxtMap', 'UtilService', 'dataLayers',
+  function (NxtMap, UtilService, dataLayers) {
 
   var link = function (scope, element, attrs) {
     // Scope gets the mapState layerGroup, here we create a new layerGroup which
@@ -12,7 +12,7 @@ app.directive("layerChooser", ['NxtMap', 'dataLayers',
       zoom: 6,
       dragging: false,
       touchZoom: false,
-      doubleClickzoom: false,
+      doubleClickZoom: false,
       tap: false,
       scrollWheelZoom: false,
       animate: true,
@@ -28,6 +28,38 @@ app.directive("layerChooser", ['NxtMap', 'dataLayers',
       var centroid = scope.mapState.bounds.getCenter();
       chooser.setView(centroid, zoom - 2);
     });
+
+    var localClick, mouseMove;
+
+    var startClick = function (e) {
+      localClick = e.clientX;
+    };
+
+    var onMove = function (e) {
+      if (localClick) {
+        mouseMove = true;
+      } else {
+        mouseMove = false;
+      }
+    };
+
+    
+    var thismuch;
+  
+    var endClick = function (e) {
+      debugger
+      thismuch = e.clientX - localClick;
+      console.log(thismuch);
+      localClick = null;
+    };
+
+    element.bind('mousedown', startClick);
+    element.bind('mousemove', onMove);
+    element.bind('mouseup', endClick);
+
+    element.bind('touchstart', startClick);
+    element.bind('touchmove', onMove);
+    element.bind('touchend', endClick);
 
   };
 
