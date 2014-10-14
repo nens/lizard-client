@@ -158,39 +158,6 @@ app.controller('MasterCtrl',
     active: 'none', //NOTE: make list?
   };
 
-  // START placeholder translations for django i8n
-  // because all templates are now refactored
-  $scope.translations = {
-    'bridge': 'Brug',
-    'channel': 'Kanaal',
-    'crossprofile': 'Kruisprofiel',
-    'culvert': 'Duiker',
-    'manhole': 'Put',
-    'measuringstation': 'Meetstation',
-    'orifice': 'Doorlaat',
-    'outlet': 'Uitlaat met keerklep',
-    'overflow': 'Overstort',
-    'pipe': 'Gesloten Leiding',
-    'pumpstation': 'Gemaal',
-    'pumpstation_sewerage': 'Rioolgemaal',
-    'weir': 'Stuw'
-  };
-
-  /**
-   * @function
-   * @memberOf app.MasterCtrl
-   *
-   * @summary Get translation for text
-   * @desc Get translation for text
-   *
-   * @param {string} text - Text to translate.
-   * @returns {string} text - Translated text.
-   */
-  $scope.gettext = function (text) {
-    return $scope.translations[text];
-  };
-
-
   /**
    * @function
    * @memberOf app.MasterCtrl

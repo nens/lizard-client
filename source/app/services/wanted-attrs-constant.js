@@ -35,13 +35,15 @@ app.constant("WantedAttributes", {
       {
         keyName: "Type",
         attrName: "type",
-        ngBindValue: "waterchain.waterchain_grid.data.type | niceNumberOrEllipsis: 2",
+        ngBindValue:
+          "waterchain.waterchain_grid.data.type | niceNumberOrEllipsis: 2",
         valueSuffix: " m"
       },
       {
         keyName: "Lengte",
         attrName: "length",
-        ngBindValue: "waterchain.waterchain_grid.data.length | niceNumberOrEllipsis: 2",
+        ngBindValue:
+          "waterchain.waterchain_grid.data.length | niceNumberOrEllipsis: 2",
         valueSuffix: " m"
       }
     ]
@@ -79,6 +81,63 @@ app.constant("WantedAttributes", {
         ngBindValue:
           "waterchain.waterchain_grid.data.width | niceNumberOrEllipsis: 2",
         valueSuffix: " m"
+      }
+    ]
+  },
+  levee: {
+    rows: [
+      {
+        keyName: "Type",
+        attrName: "type",
+        ngBindValue:
+          "waterchain.waterchain_grid.data.type | lookupLeveeType",
+        valueSuffix: ""
+      },
+      {
+        keyName: "Kruinhoogte",
+        attrName: "crest_height",
+        ngBindValue:
+          "waterchain.waterchain_grid.data.crest_height | niceNumberOrEllipsis: 2",
+        valueSuffix: " m"
+      },
+      {
+        keyName: "Materiaal",
+        attrName: "material",
+        ngBindValue:
+          "waterchain.waterchain_grid.data.material",
+        valueSuffix: " m"
+      },
+      {
+        keyName: "Coating",
+        attrName: "coating",
+        ngBindValue:
+          "waterchain.waterchain_grid.data.coating",
+        valueSuffix: " m"
+      },
+      {
+        keyName: "Kruinhoogte",
+        attrName: "crest_height",
+        ngBindValue:
+          "waterchain.waterchain_grid.data.crest_height | niceNumberOrEllipsis: 2",
+        valueSuffix: " m"
+      },
+      {
+        keyName: "Risico",
+        attrName: "recurrence_time",
+        ngBindValue:
+          "waterchain.waterchain_grid.data.recurrence_time | niceNumberOrEllipsis: 2",
+        valueSuffix: " m"
+      }
+    ]
+  },
+  leveereferencepoint: {
+    rows: [
+      {
+        keyName: "Type",
+        attrName: "type",
+        ngBindValue:
+          "waterchain.waterchain_grid.data.type | lookupLeveeReferencePointType",
+        valueSuffix: ""
       }
     ]
   },
@@ -149,7 +208,8 @@ app.constant("WantedAttributes", {
       }
     ]
   },
-  /*orifice: { // NB! The info table needs more data: "lengte * breedte" is undefined atm.
+  /*orifice: { // NB! The info table needs more data:
+   * "lengte * breedte" is undefined atm.
     rows: [
       {
         keyName: "Lengte x Breedte",
@@ -174,7 +234,7 @@ app.constant("WantedAttributes", {
   overflow: {
     rows: [
       {
-        keyName: "Breedte",
+        keyName: "Overstortbreedte",
         attrName: "crest_width",
         ngBindValue:
           "waterchain.waterchain_grid.data.crest_width | niceNumberOrEllipsis: 2",
@@ -183,7 +243,8 @@ app.constant("WantedAttributes", {
       {
         keyName: "Overstorthoogte",
         attrName: "crest_level",
-        ngBindValue: "waterchain.waterchain_grid.data.crest_level | niceNumberOrEllipsis: 2",
+        ngBindValue:
+          "waterchain.waterchain_grid.data.crest_level | niceNumberOrEllipsis: 2",
         valueSuffix: " m NAP"
       }
     ]
@@ -275,6 +336,17 @@ app.constant("WantedAttributes", {
       }
     ]
   },
+  sluice: {
+    rows: [
+      {
+        keyName: "Naam",
+        attrName: "name",
+        ngBindValue:
+          "waterchain.waterchain_grid.data.name",
+        valueSuffix: " m NAP"
+      }
+    ]
+  },
   weir: {
     rows: [
       {
@@ -286,7 +358,7 @@ app.constant("WantedAttributes", {
       {
         keyName: "Breedte",
         attrName: "width",
-        ngBindValue: "waterchain.waterchain_grid.data.width | niceNumberOrEllipsis: 2", // see commnent above
+        ngBindValue: "waterchain.waterchain_grid.data.width | niceNumberOrEllipsis: 2",
         valueSuffix: " m"
       },
       {
@@ -297,5 +369,4 @@ app.constant("WantedAttributes", {
       }
     ]
   }
-
 });

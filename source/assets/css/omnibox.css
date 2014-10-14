@@ -666,6 +666,11 @@
   margin: 15px 0 0 0;
 }
 
+.card-title-text {
+  position: relative;
+  top: -2px;
+}
+
 .empty-card-content {
   height: 40px;
   color: #7f8c8d;
@@ -678,7 +683,6 @@
 #export-rain-csv-button {
   float: right;
   position: relative;
-/*  right: 10px;*/
   top: -1px;
   color: #95a5a6;
 }
@@ -698,8 +702,9 @@ select.timeseries {
 }
 
 #icon-holder {
-  float: left;
-  margin-left: 5px;
+  position: relative;
+  top: -2px;
+  left: 5px;
 }
 
 .relatified-events-header:hover {

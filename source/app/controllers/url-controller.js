@@ -96,8 +96,12 @@ app.controller('UrlController', ['$scope', 'LocationGetterSetter',
         var view = UrlState.parseMapView(mapView);
         if (view) {
           $scope.mapState.setView(view.latLng, view.zoom, view.options);
-        } else fn();
-      } else fn();
+        } else {
+          fn();
+        }
+      } else {
+        fn();
+      }
     };
 
     /**
