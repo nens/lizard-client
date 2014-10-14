@@ -157,7 +157,6 @@ app.factory('LayerGroup', [
 
         this._active = !this._active;
 
-        // wtf is this.
         var fn = this._active ? addLayer : removeLayer;
 
         angular.forEach(this._layers, function (layer) {
