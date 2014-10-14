@@ -26,11 +26,8 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
    * @desc Set $scope.timeState.animation.enabled to true or false.
    */
   $scope.timeState.enableAnimation = function (toggle) {
-    if ($scope.timeState.animation.enabled || toggle === "off") {
-      $scope.timeState.animation.enabled = false;
-    } else {
-      $scope.timeState.animation.enabled = true;
-    }
+    $scope.timeState.animation.enabled =
+      !($scope.timeState.animation.enabled || toggle === "off");
   };
 
   /**
