@@ -30,7 +30,6 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     }
 
     var canceler = cancelers[layer.slug] = $q.defer();
-    console.log(layer.slug);
 
     return CabinetService.raster(canceler).get({
       raster_names: layer.slug,
@@ -126,7 +125,6 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
   };
 
   var getIntensityData = function () {
-    console.log("return data");
     return intensityData;
   };
 

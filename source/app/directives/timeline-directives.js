@@ -177,6 +177,9 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       if (scope.events.data.features.length > 0) {
         timeline.drawEventsContainedInBounds(scope.mapState.bounds);
         EventService.countCurrentEvents(scope);
+      }
+      // TODO: don't check a function, check a boolean.
+      if (scope.mapState.getActiveTemporalLayer()) {
         getTemporalRasterData();
       }
     });
@@ -274,8 +277,8 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       if (!!activeTemporalLayer && activeTemporalLayer.slug === 'rain') {
         // width of timeline
         var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
-        scope.mapState.layerGroups['rain'].getData(
-          {geom: bounds, start: start, end: stop, aggWindow: aggWindow})
+        RasterService.getData(activeTemporalLayer._layers[1],
+          {geom: bounds, start: start, end: stop, agg: 'none', aggWindow: aggWindow})
         .then(function (response) {
           RasterService.setIntensityData(response);
           scope.raster.changed = Date.now();

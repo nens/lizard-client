@@ -359,7 +359,6 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
      */
     drawBars: {
       value: function (data) {
-        console.log(data);
 
         var height = initialHeight -
                      this.dimensions.padding.top -
