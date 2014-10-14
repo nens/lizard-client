@@ -277,7 +277,9 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       if (!!activeTemporalLayer && activeTemporalLayer.slug === 'rain') {
         // width of timeline
         var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
-        RasterService.getData(activeTemporalLayer._layers[1],
+        // TODO: temporal hack to make cumulative rain graph working;
+        // refactored with timeline update
+        RasterService.getData(activeTemporalLayer._layers[2],
           {geom: bounds, start: start, end: stop, agg: 'none', aggWindow: aggWindow})
         .then(function (response) {
           RasterService.setIntensityData(response);
