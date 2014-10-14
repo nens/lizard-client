@@ -6,6 +6,14 @@ Unreleased
 
 - Timeseries are back
 
+- Vectors (events, or whatever) are now stored in vector service
+
+- Vectors are received through tiling mechanism
+
+- Vectors are drawn by leaflet
+
+- Clicks on vectors are delegated to Angular in stead of through obscure click handlers
+
 Release 0.2b5
 -------------
 
