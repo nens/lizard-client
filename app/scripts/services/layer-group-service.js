@@ -108,11 +108,12 @@ angular.module('lizard-nxt')
           else if (layer.type === 'UTFGrid') {
             wantedService = UtfGridService;
           }
-          /*else if (layer.type === 'Vector') {
-            wantedService = VectorService; */
-          // else {
-          //   console.log('[E] someService.getData() was called w/o finding \'wantedService\' where wantedService =', wantedService);
-          // }
+          else if (layer.type === 'Vector') {
+            wantedService = VectorService;
+          }
+          else {
+            // console.log('[E] someService.getData() was called w/o finding \'wantedService\' where wantedService =', wantedService);
+          }
 
           if (wantedService) {
 
@@ -281,22 +282,21 @@ angular.module('lizard-nxt')
 
     var _initiateVectorLayer = function (nonLeafLayer) {
 
-      var leafletLayer;
 
-      if (nonLeafLayer._tiled) {
+     var leafletLayer;
 
+      if (nonLeafLayer.tiled) {
         // Initiate a tiled Vector layer
-
         var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
 
         leafletLayer = new LeafletService.TileDataLayer(url, {
-
+          minZoom: nonLeafLayer.min_zoom,
+          maxZoom: nonLeafLayer.max_zoom,
+          color: '#333',
           dataCallback: function (featureCollection, point) {
-
             if (!featureCollection) { return; }
 
             if (featureCollection.features.length > 0) {
-
               VectorService.setData(
                 nonLeafLayer.slug,
                 featureCollection.features,
@@ -307,10 +307,8 @@ angular.module('lizard-nxt')
           slug: nonLeafLayer.slug,
           ext: 'geojson'
         });
-
       } else {
-
-        //throw new Error('Initiate (non-tiled) Vector layer, for e.g. events');
+        // throw new Error('Initiate (non-tiled) Vector layer, for e.g. events');
         return leafletLayer;
       }
       return leafletLayer;

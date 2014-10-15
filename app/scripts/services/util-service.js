@@ -226,4 +226,5 @@ angular.module('lizard-nxt')
             + "))";
     }
   };
+
 });
