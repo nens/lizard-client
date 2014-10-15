@@ -15,6 +15,7 @@ describe('Testing AreaCtrl', function () {
     $scope.mapState = new NxtMap(angular.element('<div></div>')[0], data_layers, {
       zoomControl: false
     });
+    $scope.timeState = {start: '', end: ''};
 
     var MockRasterService = {
       getAggregationForActiveLayer: function (layer, slug, agg, bounds) {
