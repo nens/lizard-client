@@ -33,6 +33,10 @@ app.directive("layerChooser", ['NxtMap', 'UtilService', 'dataLayers',
 
     var startClick = function (e) {
       localClick = e.clientX;
+      if (localClick === undefined) {
+        var touchFix = UtilService.fixTouch(e.originalEvent.changedTouches[0]);
+        localClick = e.originalEvent.changedTouches[0].clientX;
+      }
     };
 
     var onMove = function (e) {
@@ -47,9 +51,10 @@ app.directive("layerChooser", ['NxtMap', 'UtilService', 'dataLayers',
     var thismuch;
   
     var endClick = function (e) {
-      debugger
-      thismuch = e.clientX - localClick;
-      console.log(thismuch);
+      ng-click="mapState.toggleLayerGroup(layergroup)"
+      
+      var releaseX = (e.clientX) ? e.clientX : e.originalEvent.changedTouches[0].clientX;
+      thismuch = releaseX - localClick;
       localClick = null;
     };
 

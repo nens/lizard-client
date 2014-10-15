@@ -66,6 +66,7 @@ app.service("UtilService", function () {
     return {
         clientX:    x,
         clientY:    y
+      };
     };
 
 
