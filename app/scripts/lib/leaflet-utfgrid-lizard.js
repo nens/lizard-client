@@ -203,7 +203,7 @@
     _tileLoaded: function () {
       var isLoading = false;
       for (var i in this._cache) {
-        if (this._cache[i] === null) { isLoading = true}
+        if (this._cache[i] === null) { isLoading = true; }
       }
       this.isLoading = isLoading;
       if (!this.isLoading) { this.fireEvent('load'); }

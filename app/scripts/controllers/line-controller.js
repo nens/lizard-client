@@ -151,7 +151,7 @@ angular.module('lizard-nxt')
             dataProm = layerGroup.getData(line);
 
             // Pass the promise to a function that handles the scope.
-            putDataOnscope(dataProm, slug);
+            putDataOnScope(dataProm, slug);
           }
         });
       }

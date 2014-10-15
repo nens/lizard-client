@@ -161,8 +161,10 @@ L.ContoursLayer = L.Class.extend({
         var nw = this._project([d3_bounds[0][0], d3_bounds[1][1]]),
             se = this._project([d3_bounds[1][0], d3_bounds[0][1]]);
 
-        nw[0] -= padding, nw[1] -= padding;
-        se[0] += padding, se[1] += padding;
+        nw[0] -= padding;
+        nw[1] -= padding;
+        se[0] += padding; 
+        se[1] += padding;
 
         return L.bounds(nw, se);
     }

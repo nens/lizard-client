@@ -57,7 +57,7 @@ angular.module('lizard-nxt')
           var latLng = new LeafletService.LatLng(
             feature.geometry.coordinates[0],
             feature.geometry.coordinates[1]
-            )
+            );
           withinBounds = spatial.contains(latLng);
         }
 
@@ -146,7 +146,7 @@ angular.module('lizard-nxt')
         return deferred.promise;
       }
 
-      var layer = nonLeafLayer.leafletLayer
+      var layer = nonLeafLayer.leafletLayer;
 
       if (layer) {
         if (layer.isLoading ||
@@ -177,7 +177,7 @@ angular.module('lizard-nxt')
               end: options.end
             }));
         }
-      })
+      });
     };
 
     var replaceData = function (layerSlug, data, zoom) {
@@ -186,7 +186,6 @@ angular.module('lizard-nxt')
           zoom: zoom
         };
       Array.prototype.push.apply(vectorLayers[layerSlug].data, data);
-      needsToBeDrawn();
     };
 
     var setData = function (layerSlug, data, zoom) {
@@ -196,27 +195,8 @@ angular.module('lizard-nxt')
       } else {
         replaceData.apply(this, arguments);
       }
-      needsToBeDrawn();
     };
 
-    var needsToBeDrawn = function () {
-      var newHash = makeHash();
-      if (newHash !== dataHash) {
-        dataHash = newHash;
-        $rootScope.$broadcast('updateGeoJsonLayer');
-      } else {
-        // do nothing I guess
-      }
-    }
-
-    var makeHash = function () {
-      var hashable = new String();
-      for (var key in vectorLayers) {
-        hashable = hashable + key;
-        hashable = hashable + vectorLayers[key].toString();
-      }
-      return UtilService.createHash(hashable);
-    };
 
     return {
       getData: getData,

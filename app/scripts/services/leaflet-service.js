@@ -119,7 +119,7 @@ angular.module('lizard-nxt')
     },
     countOverlapping: function (data) {
       var overlapLocations = [];
-      var filteredData = []
+      var filteredData = [];
       data.forEach(function (d, index) {
         d.properties.radius = 6;
         var key = "x:" + d.geometry.coordinates[0] +
@@ -137,10 +137,11 @@ angular.module('lizard-nxt')
     drawTheThings: function (data) {
       if (!data) { return; }
       if (data.features.length > 0) {
+        var filteredData;
         if (data.hasOwnProperty('features')) {
-          var filteredData = this.countOverlapping(data.features);
+          filteredData = this.countOverlapping(data.features);
         } else if (data instanceof Array) {
-          var filteredData = this.countOverlapping(data);
+          filteredData = this.countOverlapping(data);
         }
         this.geojsonLayer.addData(filteredData);
       }
@@ -156,8 +157,8 @@ angular.module('lizard-nxt')
       this.addTileData(tile.datum, tilePoint);
       this.drawTheThings(tile.datum, tilePoint);
       
-      for (var tile in this._tilesLoading) {
-        if (this._tilesLoading[tile] === 'busy') {
+      for (var _tile in this._tilesLoading) {
+        if (this._tilesLoading[_tile] === 'busy') {
           this.isLoading = true;
           break;
         }

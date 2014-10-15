@@ -1,25 +1,11 @@
 'use strict';
 
-// /**
-//  * Initialise angular.module('lizard-nxt')
-//   .
-//  * @module lizard-nxt
-//  */
-// angular.module("lizard-nxt", [
-//   'omnibox',
-//   'restangular',
-//   'ngSanitize',
-//   'ngCsv',
-//   'ui.bootstrap',
-//   'ui.utils',
-// ]);
-
 /**
  * Setup Raven if available.
  * Raven is responsible for logging to https://sentry.lizard.net
  */
 if (window.Raven) {
-  Raven.config('https://ceb01dd84c6941c8aa20e16f83bdb55e@sentry.lizard.net/19',
+  window.Raven.config('https://ceb01dd84c6941c8aa20e16f83bdb55e@sentry.lizard.net/19',
   {
     // limits logging to staging and prd
     whitelistUrls: [/nxt\.lizard\.net/, /staging\.lizard\.net/]
@@ -43,7 +29,7 @@ angular.module("lizard-nxt", [
   $provide.decorator("$exceptionHandler", function ($delegate) {
       return function (exception, cause) {
           $delegate(exception, cause);
-          Raven.captureException(exception, {
+          window.Raven.captureException(exception, {
             extra: {cause: cause}
           });
         };
