@@ -1,7 +1,7 @@
 
-<div ng-controller="rain-controller" id="card-rain"
+<div ng-controller="rain" id="card-rain"
   class="card active"
-  ng-if="rain">
+  ng-if="rain['radar/basic'].data">
   <div class="card-content" id="card-content-rain">
     <a
       id="export-rain-csv-button"
@@ -12,7 +12,7 @@
       csv-header="['Datestamp', 'Timestamp', 'Rain (mm)', 'Latitude', 'Longitude']" >
       <i class="fa fa-share-square-o"></i>
     </a>
-    <graph bar-chart
+    <graph ng-if="rain['radar/basic'].data[0][0] !== null" bar-chart
       class="xyGraph"
       data="rain['radar/basic'].data"
       ylabel="rain['radar/basic'].aggWindow"
@@ -21,7 +21,7 @@
       now="timeState.at">
     </graph>
   <div class="recurrence-time-container"
-    ng-if="rainRc">
+    ng-if="rain['rrc'].data">
     <table class="table table-hover table-condensed">
       <caption>Herhalingstijden</caption>
       <thead>
@@ -34,7 +34,7 @@
       </thead>
       <tbody>
         <tr class="recurrence_time"
-          ng-repeat="recurTime in rainRc.recurrenceTime">
+          ng-repeat="recurTime in rain['rrc'].data">
           <td><% recurTime.start | date : 'dd-MM-yyyy HH:mm' %></td>
           <td><% recurTime.td_window %></td>
           <td class="text-right"><% recurTime.max | number: 1 %></td>
