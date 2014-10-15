@@ -12,7 +12,7 @@
       csv-header="['Datestamp', 'Timestamp', 'Rain (mm)', 'Latitude', 'Longitude']" >
       <i class="fa fa-share-square-o"></i>
     </a>
-    <graph bar-chart
+    <graph ng-if="rain['radar/basic'].data[0][0] !== null" bar-chart
       class="xyGraph"
       data="rain['radar/basic'].data"
       ylabel="rain['radar/basic'].aggWindow"
