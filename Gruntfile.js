@@ -468,6 +468,7 @@ module.exports = function (grunt) {
     'clean:dist',
     'wiredep',
     'useminPrepare',
+    'html2js',
     'concurrent:dist',
     'autoprefixer',
     'concat',
