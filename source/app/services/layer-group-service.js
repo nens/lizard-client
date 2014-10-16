@@ -156,7 +156,7 @@ app.factory('LayerGroup', [
 
         this._active = !this._active;
 
-        var fn = this._active ? addLayer : removeLayer;
+        var fn = this._active ? addLeafletLayer : removeLeafletLayer;
 
         angular.forEach(this._layers, function (layer) {
           if (layer.leafletLayer) {
@@ -175,13 +175,43 @@ app.factory('LayerGroup', [
       /**
        *
        */
-      adhereToTime: function (timeState) {
+      adhereToTime: function (mapState, timeState, oldTime, newTime) {
 
-        if (!this._hasTemporalWMSLayer()) { return; }
+        var temporalWMSLayer = this._getTemporalWMSLayer();
+
+        if (oldTime === newTime || !temporalWMSLayer) { return; }
+
+        var i, overlays;
 
         console.log('[F] adhereToTime');
         console.log('---- layerGroup.slug =', this.slug);
         console.log('---- timeState =', timeState);
+        console.log('---- oldTime =', oldTime);
+        console.log('---- newTime =', newTime);
+
+        if (this._animState.initiated) {
+
+          // Possibility 1: we progress the animation to the next frame:
+          console.log('Anim progressing!');
+
+        } else {
+
+          // Possibility 2: we (re-)start the animation:
+          console.log('Anim startUp!');
+
+          this._animStart(temporalWMSLayer);
+          overlays = this._animState.imageOverlays;
+
+          for (i in overlays) {
+            addLeafletLayer(mapState._map, overlays[i]);
+          }
+
+          // imgUrlBase equals full URL w/o TIME key/value
+          this._animState.imageUrlBase
+            = RasterService.buildURLforWMS(temporalWMSLayer);
+
+          //this._animGetImages(timeState.at);
+        }
       },
 
       _animState: {
@@ -190,7 +220,7 @@ app.factory('LayerGroup', [
         imageBounds     : [],
         utcFormatter    : d3.time.format.utc("%Y-%m-%dT%H:%M:%S"),
         step            : [],
-        imageoverlays   : {},
+        imageOverlays   : {},
         frameLookup     : {},
         numCachedFrames : UtilService.serveToMobileDevice() ? 15 : 30,
         previousFrame   : 0,
@@ -201,11 +231,19 @@ app.factory('LayerGroup', [
         initiated       : false
       },
 
-      _animStart: function () {
+      _animStart: function (temporalWMSLayer) {
 
-        var s = this._animState;
+        var s = this._animState,
+            southWest = L.latLng(
+              temporalWMSLayer.bounds.south,
+              temporalWMSLayer.bounds.west
+            ),
+            northEast = L.latLng(
+              temporalWMSLayer.bounds.north,
+              temporalWMSLayer.bounds.east
+            );
 
-        s.imageBounds     = this.bounds;
+        s.imageBounds     = L.latLngBounds(southWest, northEast);
         s.utcFormatter    = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
         s.step            = RasterService.getTimeResolution(this);
         s.frameLookup     = {};
@@ -225,7 +263,7 @@ app.factory('LayerGroup', [
         var s = this._animState;
 
         image.on("load", function (e) {
-          s.loadingRaster -= 1;
+          s.loadingRaster--;
           s.frameLookup[date] = index;
           if (s.restart && s.loadingRaster === 0) {
             s.restart = false;
@@ -248,7 +286,7 @@ app.factory('LayerGroup', [
           s.loadingRaster++;
           s.imageOverlays[i].setOpacity(0);
           s.imageOverlays[i].off('load');
-          s.addLoadListener(s.imageOverlays[i], i, s.nxtDate);
+          this._animAddLoadListener(s.imageOverlays[i], i, s.nxtDate);
           s.imageOverlays[i].setUrl(
             s.imageUrlBase + s.utcFormatter(new Date(s.nxtDate))
           );
@@ -256,14 +294,14 @@ app.factory('LayerGroup', [
         }
       },
 
-      _hasTemporalWMSLayer: function () {
+      _getTemporalWMSLayer: function () {
 
         var i, currentLayer;
 
         for (i = 0; i < this._layers.length; i++) {
           currentLayer = this._layers[i];
           if (currentLayer.temporal && currentLayer.type === 'WMS') {
-            return true;
+            return currentLayer;
           }
         }
       }
@@ -322,14 +360,16 @@ app.factory('LayerGroup', [
      * @param {L.Class} Leaflet layer.
      * @description Adds layer to map
      */
-    var addLayer = function (map, leafletLayer) { // Leaflet Layer
+    var addLeafletLayer = function (map, leafletLayer) { // Leaflet Layer
 
       if (map.hasLayer(leafletLayer)) {
         throw new Error(
           'Attempted to add layer' + leafletLayer._id
           + 'while it was already part of the map'
         );
-      } else { map.addLayer(leafletLayer); }
+      } else {
+        map.addLayer(leafletLayer);
+      }
     };
 
     /**
@@ -339,7 +379,7 @@ app.factory('LayerGroup', [
      * @param  {L.Class} Leaflet layer
      * @description Removes layer from map
      */
-    var removeLayer = function (map, leafletLayer) { // Leaflet Layer
+    var removeLeafletLayer = function (map, leafletLayer) { // Leaflet Layer
 
       if (map.hasLayer(leafletLayer)) {
         map.removeLayer(leafletLayer);

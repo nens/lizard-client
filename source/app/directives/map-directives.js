@@ -174,7 +174,7 @@ app.directive('rasteranimation', ['RasterService', 'UtilService',
 
       /**
        * When a temporal raster is enabled, add imageOverlay layer, and remove
-       * the layer it gets disabled.
+       * the layer that gets disabled.
        */
       // scope.$watch('mapState.layerGroupsChanged', function (n, o) {
 
@@ -207,27 +207,31 @@ app.directive('rasteranimation', ['RasterService', 'UtilService',
       //   }
       // });
 
-      var _adhereToTimeWrapper = function () {
-        angular.forEach(scope.mapState.layerGroups, function (layerGroup) {
-          layerGroup.adhereToTime(scope.timeState);
+      var _adhereToTimeWrapper = function (newTime, oldTime) {
+        angular.forEach(scope.mapState.layerGroups, function (lg) {
+          lg.adhereToTime(scope.mapState, scope.timeState, oldTime, newTime);
         });
       };
 
       scope.$watch('mapState.layerGroupsChanged', function (n, o) {
-        _adhereToTimeWrapper();
+        if (n === o) { return; }
+        _adhereToTimeWrapper(scope.timeState.at, undefined);
       });
 
       scope.$watch('timeState.at', function (n, o) {
-        _adhereToTimeWrapper();
+        if (n === o) { return; }
+        _adhereToTimeWrapper(n, o);
       });
 
 
       /**
        * Animator; watch for timeState.at, show corresponding frame.
        *
-       * Lookup timeState.at in frameLookup, set opacity of previous frame
-       * to 0, set opacity of currentFrame to 1. Replace previous frame
-       * with next frame; If frame is not in lookupFrame, get new images.
+       * 1 - Lookup timeState.at in frameLookup,
+       * 2 - set opacity of previous frame to 0,
+       * 3 - set opacity of currentFrame to 1.
+       * 4 - Replace previous frame
+       *     with next frame; If frame is not in lookupFrame, get new images.
        */
       // scope.$watch('timeState.at', function (newVal, oldVal) {
 
