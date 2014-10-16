@@ -196,22 +196,22 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
      * https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=demo:radar&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=2014-01-25T22:00:00
      */
 
-    var slug = wmsLayer.slug,
-        imgBounds = [
+    var imgBounds = [
           [wmsLayer.bounds.north, wmsLayer.bounds.west],
           [wmsLayer.bounds.south, wmsLayer.bounds.east]
         ],
-        bbox = _buildBbox(imgBounds),
         opts = wmsLayer.options,
         result = wmsLayer.url
-          + '?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng&SRS=EPSG%3A4326';
+          + '?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng'
+          + '&SRS=EPSG%3A4326&LAYERS=' + wmsLayer.slug
+          + '&BBOX=' + _buildBbox(imgBounds);
 
     angular.forEach(opts, function (v, k) {
       result += '&' + k.toUpperCase() + '=' + v;
     });
 
-    result += '&LAYERS=' + wmsLayer.slug;
-    result += '&BBOX=' + bbox + '&TIME=2014-01-25T22:00:00';
+    // hardcoded...
+    result += '&TIME=2014-01-25T22:00:00';
 
     console.log('Finish building URL for WMS:', result);
     return result;
