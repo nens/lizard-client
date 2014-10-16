@@ -199,7 +199,8 @@ angular.module('lizard-nxt')
           type: layer.type,
           layerGroupSlug: lgSlug,
           layerSlug: layer.slug,
-          aggType: layer.aggregation_type
+          aggType: layer.aggregation_type,
+          summary: layer.summary
         });
       };
 

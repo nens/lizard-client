@@ -12,7 +12,8 @@
  * Contains data of all active layers with an aggregation_type
  *
  */
-app.controller('AreaCtrl', ['$scope', 'RasterService', '$q', function ($scope, RasterService, $q) {
+angular.module('lizard-nxt')
+  .controller('AreaCtrl', ['$scope', 'RasterService', '$q', function ($scope, RasterService, $q) {
 
     $scope.box.content = {};
 
@@ -35,7 +36,6 @@ app.controller('AreaCtrl', ['$scope', 'RasterService', '$q', function ($scope, R
       var promises = $scope.fillBox(bounds);
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
-          console.log(response);
           if (response.data && response.layerSlug === 'ahn2/wss') {
             $scope.box.content[response.layerGroupSlug]
               .layers[response.layerSlug]

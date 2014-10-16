@@ -16,7 +16,6 @@ angular.module('lizard-nxt')
       var promises = [];
 
       var doneFn = function (response) {
-        console.log($scope.box.type, $scope.box.content);
         if (response.active === false) {
           delete $scope.box.content[response.slug];
         }
@@ -35,6 +34,7 @@ angular.module('lizard-nxt')
           lGContent.layers[response.layerSlug].aggType = response.aggType;
           lGContent.layers[response.layerSlug].type = response.type;
           lGContent.layers[response.layerSlug].data = response.data;
+          lGContent.layers[response.layerSlug].summary = response.summary;
 
           /**
            * lGContent now looks like: {
