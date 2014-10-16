@@ -1,81 +1,52 @@
-<!--
-<table class="table table-condensed table-hover">
-  <thead>
-    <tr>
-      <th></th>
-      <th></th>
-      <th>Aantal</th>
-      <th>Totaal</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr class="recurrence_time" ng-repeat="type in events.types">
-      <td><i class="fa fa-circle" ng-style="{color: type.color }"></i></td>
-      <td><% type.name %></td>
-      <td>
-        <% type.currentCount %>
-      </td>
-      <td><% type %></td>
-    </tr>
-</table>
--->
+
+  <div id="card-events"
+       class="card active"
+       ng-repeat="lg in point"
+       ng-class="{hidden: !point.events.data.length > 0}">
+
+    <div class="card-content"
+         id="card-content-relatified-events">
+
+      <table class="table table-hover table-condensed" >
+          <thead>
+
+              <th><i class="fa fa-circle" ng-style="{color: events.types[point.events.activeType]['color'] }"></i></th>
+              <th>Totaal</th>
+              <th><% filteredRes.length %></th>
+          </thead>
 
 
-<!--
-<div class="event-container"
-     ng-class="{hidden: !point.events.active}">
+        <tbody>
 
-  <table ng-table="point.eventTableParams"
-        class="table table-condensed table-hover"
-        template-pagination="custom/pager">
+          <tr ng-repeat="event in filteredRes = (point.events.data |
+                         filter:{inTemporalExtent: true} |
+                         orderBy:event.timestamp_start |
+                         limitTo:5)">
 
-    <tbody ng-repeat="group in $groups">
-    <tr class="ng-table-group relatified-events-header"
-        ng-click="group.$hideRows = !group.$hideRows">
-      <td colspan="<% $columns.length %>">
-        <a href="#"
-           ng-style="{color: events.scale(group.data[0].event_series) }">
-          <span class="glyphicon"
-                ng-class="{'glyphicon-chevron-right': !group.$hideRows,
-                           'glyphicon-chevron-down': group.$hideRows}">
-          </span>
-          <strong><% group.value %> (<% group.data.length %>)</strong>
-        </a>
-      </td>
-    </tr>
-    <tr ng-hide="!group.$hideRows"
-        ng-repeat="event in group.data">
-      <td data-title="'Waarde'"
-          sortable="'value'">
-          <% event.value | limitTo: 32  %>
-      </td>
-      <td data-title="'Start'"
-          sortable="'timestamp_start'">
-          <% event.timestamp_start | date: 'yyyy-MM-dd HH:mm' %>
-      </td>
-      <td data-title="'Eind'"
-          sortable="'timestamp_end'">
-          <% event.timestamp_end | date: 'yyyy-MM-dd HH:mm' %>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="<% event.category %>">
+                <i class="fa fa-circle"
+                   ng-style="{color: events.types[event.event_series].color }">
+                </i>
+              </td>
 
-</div>
--->
-<!-- ngTable template
-<script type="text/ng-template"
-        id="custom/pager">
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="start: <% event.timestamp_start | date:'dd/MM/yyyy' %>
+                         eind: <% event.timestamp_end | date:'dd/MM/yyyy' %>">
+                  <% event.timestamp_start | date:'dd/MM/yyyy' %>
+              </td>
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="<% event.value %>">
+                <% event.value | truncate:40 %>
+              </td>
 
-  <ul class="pager ng-cloak" ng-if="pages.length > 0" >
-    <li ng-repeat="page in pages"
-        ng-class="{'disabled': !page.active, 'previous': page.type == 'prev', 'next': page.type == 'next'}"
-        ng-show="page.type == 'prev' || page.type == 'next'" ng-switch="page.type">
-      <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo;</a>
-      <a ng-switch-when="next" ng-click="params.page(page.number)" href="">&raquo;</a>
-    </li>
-  </ul>
-</script>
+            </tr>
+        </tbody>
 
--->
+      </table>
+    </div>
+  </div>v
 

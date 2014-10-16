@@ -32,36 +32,45 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
 
       var doneFn = function (response) {
         if (response.active === false) {
-          $scope.point[response.slug] = undefined;
+          delete $scope.point[response.slug];
         }
+        console.log(response);
       };
 
       var putDataOnScope = function (response) {
-        var pointL;
+        console.log(response);
+        var pointLg = $scope.point[response.layerGroupSlug] || {layers: {}};
+        pointLg.layers[response.layerSlug] = pointLg.layers[response.layerSlug] || {};
+        pointLg.layerGroupName = $scope.mapState.layerGroups[response.layerGroupSlug].name;
+        pointLg.order = $scope.mapState.layerGroups[response.layerGroupSlug].order;
         if (response.data === null) {
-          pointL = undefined;
+          pointLg.layers[response.layerSlug].data = undefined;
         } else {
-          pointL = $scope.point[response.layerGroupSlug] || {};
-          pointL.layerGroup = response.layerGroupSlug;
-          pointL[response.layerSlug] = pointL[response.layerSlug] || {};
-          pointL[response.layerSlug].type = response.type;
-          pointL[response.layerSlug].data = response.data;
-          pointL.layerGroupName = $scope.mapState.layerGroups[pointL.layerGroup].name;
-          pointL.order = $scope.mapState.layerGroups[pointL.layerGroup].order;
-          if (response.data && response.data.id) {
-            getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
-          }
-          if (response.data.geom) {
-            // If the geom from the response is different than mapState.here
-            // redo request to get the exact data for the centroid of the object.
-            var geom = JSON.parse(response.data.geom);
-            if (geom.type === 'Point' && (geom.coordinates[1] !== $scope.mapState.here.lat
-              || geom.coordinates[0] !== $scope.mapState.here.lng)) {
-              $scope.mapState.here = LeafletService.latLng(geom.coordinates[1], geom.coordinates[0]);
-            }
-          }
+          pointLg.layers[response.layerSlug].type = response.type;
+          pointLg.layers[response.layerSlug].data = response.data;
+
+          /**
+           * pointLg now looks like: {
+           *   layerGroup: <slug>,
+           *   layerGroupName: <name>,
+           *   order: <order>,
+           *   layers: {
+           *     <layerSlug>: {
+           *       data: <layer.data>,
+           *       type: <layer.type>
+           *     },
+           *
+           *     ...,
+           *
+           *   }
+           * }
+           */
+
         }
-        $scope.point[response.layerGroupSlug] = pointL;
+        if (response.data && response.data.id && response.data.entity_name) {
+          getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
+        }
+        $scope.point[response.layerGroupSlug] = pointLg;
       };
 
       ClickFeedbackService.drawClickInSpace($scope.mapState, here);
@@ -90,21 +99,29 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
      * @description Draw visual feedback after client clicked on the map
      */
     var drawFeedback = function () {
+      var feedbackDrawn = false;
       ClickFeedbackService.stopVibration();
+      console.log($scope.point);
+      angular.forEach($scope.point, function (lg) {
+        if (lg && lg.layers) {
+          angular.forEach(lg.layers, function (layer) {
+            if (layer.type === 'Vector') {
+              // draw it
+              feedbackDrawn = true;
+            }
+          });
+        }
+      });
       if ($scope.point.waterchain) {
-
         ClickFeedbackService.drawGeometry(
           $scope.mapState,
-          $scope.point.waterchain.waterchain_grid.data.geom,
-          $scope.point.waterchain.waterchain_grid.data.entity_name
+          $scope.point.waterchain.layers.waterchain_grid.data.geom,
+          $scope.point.waterchain.layers.waterchain_grid.data.entity_name
         );
-
-      } else {
+      } else if (!feedbackDrawn) {
         angular.forEach($scope.point, function (lg) {
           if (lg) {
             ClickFeedbackService.drawArrowHere($scope.mapState);
-            // return immediately to skip unneccesary loop iterations, kthxbai <3
-            return;
           }
         });
       }

@@ -36,6 +36,7 @@ app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterS
         if (response.active === false && $scope.area[response.slug]) {
           $scope.area[response.slug] = undefined;
         }
+        console.log($scope.area);
       };
 
       var putDataOnScope = function (response) {

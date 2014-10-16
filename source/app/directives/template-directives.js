@@ -31,7 +31,7 @@ app.directive('timeseries', [function () {
       scope: {
         timeseries: '=',
       },
-      replace: true,
+      // replace: true,
       templateUrl: 'templates/timeseries.html'
     };
 }]);
@@ -81,9 +81,6 @@ app.directive('cardattributes', ['WantedAttributes', function (WantedAttributes)
 app.directive('rain', [function () {
   return {
     restrict: 'E',
-    scope: {
-      rain: '='
-    },
     replace: true,
     templateUrl: 'templates/rain.html'
   };
@@ -91,26 +88,7 @@ app.directive('rain', [function () {
 
 app.directive('defaultpoint', [function () {
   return {
-    link: function (scope) {
-
-      // These layergroups have dedicated markup
-      var EXCLUDED = ['timeseries', 'rain', 'waterchain'];
-
-      scope.$watch('point', function () {
-        scope.included = [];
-        angular.forEach(scope.point, function (value, key) {
-          if (EXCLUDED.indexOf(key) === -1) {
-            if (value) {
-              value.slug = key;
-              scope.included.push(value);
-            }
-          }
-        });
-
-      }, true);
-
-
-    },
+    link: function (scope) { debugger},
     restrict: 'E',
     scope: {
       point: '=',

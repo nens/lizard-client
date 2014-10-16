@@ -25,10 +25,10 @@ app.service('VectorService', ['$q', '$rootScope', 'Restangular',
      */
     var filterSpatial = function (sourceArray, spatial) {
       var filteredSet = [];
-
+      var query = spatial instanceof LeafletService.LatLngBounds ? 'contains' : 'equals';
       sourceArray.forEach(function (feature) {
         var withinBounds;
-        // if (feature.type === "Polygon") {
+        // if (feature.geometry.type === "Polygon") {
         //   var maxLat = feature.geometry.coordinates[0][0][0],
         //       minLat = feature.geometry.coordinates[0][0][0],
         //       minLon = feature.geometry.coordinates[0][0][1],
@@ -48,21 +48,20 @@ app.service('VectorService', ['$q', '$rootScope', 'Restangular',
         //     spatial.contains(new LeafletService.LatLng(minLat, maxLon)) ||
         //     spatial.contains(new LeafletService.LatLng(minLat, minLon))
         //     )
-        // } else if (feature.type === "MultiPolygon") {
+        // } else if (feature.geometry.type === "MultiPolygon") {
         //   // fuckall
-        // } else 
-        if (feature.type === "Point") {
+        // } else
+        if (feature.geometry.type === "Point") {
           var latLng = new LeafletService.LatLng(
-            feature.geometry.coordinates[0],
-            feature.geometry.coordinates[1]
-            )
-          withinBounds = spatial.contains(latLng);
+            feature.geometry.coordinates[1],
+            feature.geometry.coordinates[0]
+            );
+          withinBounds = spatial[query](latLng);
         }
 
         if (withinBounds) {
           filteredSet.push(feature);
         }
-
       });
       return filteredSet;
     };
@@ -105,23 +104,30 @@ app.service('VectorService', ['$q', '$rootScope', 'Restangular',
       if (!spatial && !temporal) { return sourceArray; }
 
       var filteredSet = [];
-      if (spatial instanceof LeafletService.LatLngBounds) {
+
+      // First filter spatially.
+      if (spatial instanceof LeafletService.LatLngBounds
+        || spatial instanceof LeafletService.LatLng) {
         filteredSet = filterSpatial(sourceArray, spatial);
-      } else {
+      } else if (spatial === undefined) {
         filteredSet = sourceArray;
+      } else {
+        throw new Error(spatial + "is an invalid geometry to query VectorService");
       }
 
-      if (!temporal) { return filteredSet; }
-
+      // Further refine spatially filtered by temporal filter.
       if (temporal.hasOwnProperty('start') || temporal.hasOwnProperty('end')) {
         filteredSet = filterTemporal(filteredSet, temporal);
+      } else if (temporal === undefined) {
+        return filteredSet;
+      } else {
+        throw new Error(temporal + "is an invalid time to query VectorService");
       }
 
       return filteredSet;
     };
 
     var vectorLayers = {};
-    var dataHash = null;
 
     /**
      * @memberof app.VectorService
@@ -133,31 +139,22 @@ app.service('VectorService', ['$q', '$rootScope', 'Restangular',
      * @return {promise}
      */
     var getData = function (nonLeafLayer, options) {
-
       var deferred = $q.defer();
-      
-      if (!(options.geom instanceof LeafletService.LatLngBounds) && 
-          !(options.geom instanceof LeafletService.LatLng)) {
-        deferred.reject();
-        return deferred.promise;
+
+      var layer = nonLeafLayer.leafletLayer || deferred.reject();
+
+      if (layer.isLoading) {
+        getDataAsync(nonLeafLayer, options, deferred);
+
+      } else if (vectorLayers[nonLeafLayer.slug]) {
+        var set = filterSet(vectorLayers[nonLeafLayer.slug].data,
+        options.geom, {
+          start: options.start,
+          end: options.end
+        });
+        deferred.resolve(set);
       }
-
-      var layer = nonLeafLayer.leafletLayer
-
-      if (layer) {
-        if (layer.isLoading ||
-            vectorLayers[nonLeafLayer.slug] === undefined) {
-          getDataAsync(nonLeafLayer, options, deferred);
-
-        } else {
-            var set = filterSet(vectorLayers[nonLeafLayer.slug].data, 
-            options.geom, {
-              start: options.start,
-              end: options.end
-            });
-          deferred.resolve(set);
-        }
-      } else {
+      else {
         deferred.reject();
       }
 
@@ -166,14 +163,15 @@ app.service('VectorService', ['$q', '$rootScope', 'Restangular',
 
     var getDataAsync = function (nonLeafLayer, options, deferred) {
       nonLeafLayer.leafletLayer.on('loadend', function () {
-        if (vectorLayers[nonLeafLayer.slug] !== undefined ) {
-          deferred.resolve(filterSet(vectorLayers[nonLeafLayer.slug].data, 
+        if (vectorLayers[nonLeafLayer.slug] !== undefined) {
+          deferred.resolve(filterSet(vectorLayers[nonLeafLayer.slug].data,
             options.geom, {
               start: options.start,
               end: options.end
-            }));
+            }
+          ));
         }
-      })
+      });
     };
 
     var replaceData = function (layerSlug, data, zoom) {
@@ -181,37 +179,16 @@ app.service('VectorService', ['$q', '$rootScope', 'Restangular',
           data: [],
           zoom: zoom
         };
-      Array.prototype.push.apply(vectorLayers[layerSlug].data, data);
-      needsToBeDrawn();
+      vectorLayers[layerSlug].data = vectorLayers[layerSlug].data.concat(data);
     };
 
     var setData = function (layerSlug, data, zoom) {
-      if (vectorLayers.hasOwnProperty(layerSlug) &&
-          vectorLayers[layerSlug].zoom === zoom) {
-          Array.prototype.push.apply(vectorLayers[layerSlug].data, data);
+      if (vectorLayers.hasOwnProperty(layerSlug)
+        && vectorLayers[layerSlug].zoom === zoom) {
+        vectorLayers[layerSlug].data = vectorLayers[layerSlug].data.concat(data);
       } else {
         replaceData.apply(this, arguments);
       }
-      needsToBeDrawn();
-    };
-
-    var needsToBeDrawn = function () {
-      var newHash = makeHash();
-      if (newHash !== dataHash) {
-        dataHash = newHash;
-        $rootScope.$broadcast('updateGeoJsonLayer');
-      } else {
-        // do nothing I guess
-      }
-    }
-
-    var makeHash = function () {
-      var hashable = new String();
-      for (var key in vectorLayers) {
-        hashable = hashable + key;
-        hashable = hashable + vectorLayers[key].toString();
-      }
-      return UtilService.createHash(hashable);
     };
 
     return {
