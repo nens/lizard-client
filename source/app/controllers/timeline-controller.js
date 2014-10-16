@@ -36,13 +36,16 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
    * Set $scope.timeState.animation.playing to true or false.
    */
   $scope.timeState.playPauseAnimation = function (toggle) {
-    if ($scope.timeState.animation.playing || toggle === "off") {
-      $scope.timeState.animation.playing = false;
+
+    var anim = $scope.timeState.animation;
+
+    if (anim.playing || toggle === "off") {
+      anim.playing = false;
     } else {
-      if (!$scope.timeState.animation.enabled) {
+      if (!anim.enabled) {
         $scope.timeState.enableAnimation();
       }
-      $scope.timeState.animation.playing = true;
+      anim.playing = true;
       window.requestAnimationFrame(step);
     }
   };
@@ -60,24 +63,27 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
 
     // hack to slow down animation for rasters to min resolution
 
-    if ($scope.mapState.getActiveTemporalLayerGroup()) {
+    timeStep = 300000;
+    $scope.timeState.animation.minLag = 50;
 
-      // Divide by ten to make the movement in the timeline smooth.
+    // if ($scope.mapState.getActiveTemporalLayerGroup()) {
 
-      timeStep = RasterService.rasterInfo(
-        $scope.mapState.getActiveTemporalLayerGroup().slug
-      ).timeResolution / 10;
+    //   // Divide by ten to make the movement in the timeline smooth.
 
-      $scope.timeState.animation.minLag =
-        RasterService.rasterInfo(
-          $scope.mapState.getActiveTemporalLayerGroup().slug
-        ).minTimeBetweenFrames / 10;
+    //   timeStep = RasterService.rasterInfo(
+    //     $scope.mapState.getActiveTemporalLayerGroup().slug
+    //   ).timeResolution / 10;
 
-    } else {
+    //   $scope.timeState.animation.minLag =
+    //     RasterService.rasterInfo(
+    //       $scope.mapState.getActiveTemporalLayerGroup().slug
+    //     ).minTimeBetweenFrames / 10;
 
-      timeStep = currentInterval / $scope.timeState.animation.stepSize;
-      $scope.timeState.animation.minLag = 50;
-    }
+    // } else {
+
+    //   timeStep = currentInterval / $scope.timeState.animation.stepSize;
+    //   $scope.timeState.animation.minLag = 50;
+    // }
 
     $scope.$apply(function () {
       $scope.timeState.animation.start += timeStep;

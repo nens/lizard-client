@@ -1,57 +1,7 @@
 /**
  * Service to handle raster requests.
-
- -- TMP ---------------------------------------
- RAIN; BOOTSTRAPPED FROM BACK-END:
-
-     "rain": {
-        "layers": [
-            {
-                "slug": "demo:radar",
-                "type": "WMS",
-                "min_zoom": 0,
-                "max_zoom": 31,
-                "z_index": 2,
-                "url": "http://raster.lizard.net/wms",
-                "tiled": false,
-                "temporal": true,
-                "aggregation_type": "none",
-                "opacity": 1.0,
-                "options": {
-                    "styles": "BrBG_r:-27:-2",
-                    "transparent": false,
-                    "effects": "radar:0:0.008"
-                },
-                "bounds": {
-                    "west": 1.324296158471368,
-                    "east": 8.992548357936204,
-                    "north": 54.28458617998074,
-                    "south": 49.82567047026146
-                }
-            },
-            {
-                "slug": "radar/basic",
-                "type": "Store",
-                "min_zoom": 0,
-                "max_zoom": 31,
-                "z_index": 2,
-                "url": "/api/v1/rasters",
-                "tiled": false,
-                "temporal": true,
-                "aggregation_type": "none",
-                "opacity": 1.0,
-                "options": {},
-                "bounds": {}
-            }
-        ],
-        "id": 6,
-        "name": "Regen",
-        "slug": "rain",
-        "active": false,
-        "order": 3,
-        "baselayer": false
-    },
  */
+
 app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$q",
   function (Restangular, UtilService, CabinetService, $q) {
 
@@ -98,70 +48,6 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     return intensityData;
   };
 
-  /**
-   * Get latlon bounds for image.
-   *
-   * @param {object} layerName name of layer.
-   * @return {float[]} bounds in list of latlon list.
-   */
-  // var _getImageBounds = function (layerName) {
-  //   if (layerName === 'rain') {
-  //     return [[54.28458617998074, 1.324296158471368],
-  //             [49.82567047026146, 8.992548357936204]];
-  //   }
-  //   else if (
-  //     layerName === 'bath:westerschelde'
-  //     || layerName === 'westerschelde:diff'
-  //   )
-  //   {
-  //     return [[51.41, 4.03],
-  //             [51.36, 4.17]];
-  //   }
-  // };
-
-  // var _getHeight = function (width, imgBounds) {
-  //   return parseInt(
-  //     width * (
-  //       (imgBounds[0][0] - imgBounds[1][0]) / (imgBounds[1][1] - imgBounds[0][1])
-  //     ), 10
-  //   );
-  // };
-
-  // var _getOptsForWMS = function (lgSlug) {
-
-  //   var imgBounds;
-
-  //   switch (lgSlug) {
-
-  //   case 'rain':
-  //     return {
-  //       'LAYERS': 'demo:radar',
-  //       'SRS': 'EPSG:28992',
-  //       'STYLES': 'transparent',
-  //       'TRANSPARENT': true,
-  //       'WIDTH': 525,
-  //       'HEIGHT': 497,
-  //       'ZINDEX': 20,
-  //       'EFFECTS': 'radar:0:0:008',
-  //       'BBOX': '147419.974,6416139.595,1001045.904,7224238.809',
-  //       'TIME': undefined
-  //     };
-
-  //   case 'bath:westerschelde':
-  //     imgBounds = _getImageBounds('bath:westerschelde');
-  //     return {
-  //       'LAYERS': 'bath:westerschelde',
-  //       'STYLES': 'BrBG_r:-27',
-  //       'TRANSPARENT': false,
-  //       'WIDTH': 2000,
-  //       'HEIGHT': _getHeight(2000, imgBounds),
-  //       'ZINDEX': 26,
-  //       'BBOX': _buildBbox(imgBounds),
-  //       'TIME': undefined
-  //     };
-  //   }
-  // };
-
     /**
    * Build the bounding box given an imageBounds
    */
@@ -171,30 +57,6 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
   };
 
   var buildURLforWMS = function (wmsLayer) {
-
-    /**
-     * valid URL (for rain):
-     *
-     * https://raster.lizard.net/wms
-     * ?SERVICE=WMS
-     * &REQUEST=GetMap
-     * &VERSION=1.1.1
-     * &LAYERS=demo:radar
-     * &STYLES=transparent
-     * &FORMAT=image%2Fpng
-     * &SRS=EPSG%3A3857
-     * &TRANSPARENT=true
-     * &HEIGHT=497
-     * &WIDTH=525
-     * &ZINDEX=20
-     * &SRS=EPSG%3A28992
-     * &EFFECTS=radar%3A0%3A0.008
-     * &BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809
-     * &TIME=2014-01-25T22:00:00
-     *
-     * full:
-     * https://raster.lizard.net/wms?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=demo:radar&STYLES=transparent&FORMAT=image%2Fpng&SRS=EPSG%3A3857&TRANSPARENT=true&HEIGHT=497&WIDTH=525&ZINDEX=20&SRS=EPSG%3A28992&EFFECTS=radar%3A0%3A0.008&BBOX=147419.974%2C6416139.595%2C1001045.904%2C7224238.809&TIME=2014-01-25T22:00:00
-     */
 
     var imgBounds = [
           [wmsLayer.bounds.north, wmsLayer.bounds.west],
@@ -210,10 +72,10 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
       result += '&' + k.toUpperCase() + '=' + v;
     });
 
-    // hardcoded...
-    result += '&TIME=2014-01-25T22:00:00';
+    // key TIME needs to come last, so we can subsequently append it's value
+    // for every frame in the animation:
+    result += '&TIME=';
 
-    console.log('Finish building URL for WMS:', result);
     return result;
   };
 

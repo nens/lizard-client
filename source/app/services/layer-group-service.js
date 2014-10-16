@@ -12,9 +12,9 @@
  */
 app.factory('LayerGroup', [
   'LeafletService', 'VectorService', 'RasterService', 'UtfGridService',
-  'UtilService', '$q',
+  'UtilService', '$q', '$rootScope',
   function (LeafletService, VectorService, RasterService, UtfGridService,
-    UtilService, $q) {
+    UtilService, $q, $rootScope) {
 
     /*
      * @constructor
@@ -159,6 +159,7 @@ app.factory('LayerGroup', [
         var fn = this._active ? addLeafletLayer : removeLeafletLayer;
 
         angular.forEach(this._layers, function (layer) {
+
           if (layer.leafletLayer) {
             fn(map, layer.leafletLayer);
           }
@@ -172,45 +173,112 @@ app.factory('LayerGroup', [
         return this._active;
       },
 
+      _mkTimeStamp: function (t) {
+        return UtilService.roundTimestamp(t, this._animState.step, false);
+      },
+
       /**
        *
        */
       adhereToTime: function (mapState, timeState, oldTime, newTime) {
 
-        var temporalWMSLayer = this._getTemporalWMSLayer();
+        var i,
+            overlays,
+            temporalWMSLayer = this._getTemporalWMSLayer(),
+            s = this._animState;
 
         if (oldTime === newTime || !temporalWMSLayer) { return; }
 
-        var i, overlays;
+        if (this.isActive()) {
 
-        console.log('[F] adhereToTime');
-        console.log('---- layerGroup.slug =', this.slug);
-        console.log('---- timeState =', timeState);
-        console.log('---- oldTime =', oldTime);
-        console.log('---- newTime =', newTime);
+          if (this._animState.initiated) {
 
-        if (this._animState.initiated) {
+            // Possibility 1: we progress the animation to the next frame:
+            console.log('Anim progressing!');
 
-          // Possibility 1: we progress the animation to the next frame:
-          console.log('Anim progressing!');
+            var currentDate  = this._mkTimeStamp(newTime),
+                oldDate      = this._mkTimeStamp(oldTime),
+                overlayIndex = s.frameLookup[currentDate];
 
-        } else {
+            if (overlayIndex !== undefined && overlayIndex !== s.previousFrame) {
 
-          // Possibility 2: we (re-)start the animation:
-          console.log('Anim startUp!');
+              var oldOverlay = s.imageOverlays[s.previousFrame],
+                  newOverlay = s.imageOverlays[overlayIndex];
 
-          this._animStart(temporalWMSLayer);
-          overlays = this._animState.imageOverlays;
+              // Turn off old frame
+              oldOverlay.setOpacity(0);
 
-          for (i in overlays) {
-            addLeafletLayer(mapState._map, overlays[i]);
+              // Turn on new frame
+              newOverlay.setOpacity(0.7);
+
+              // Delete the old overlay from the lookup, it is gone.
+              delete s.frameLookup[currentDate];
+
+              // Remove old listener
+              oldOverlay.off('load');
+
+              // Add listener to asynchronously update loadingRaster and framelookup:
+              this._animAddLoadListener(
+                oldOverlay,
+                s.previousFrame,
+                s.nxtDate,
+                timeState
+              );
+
+              // We are now waiting for one extra raster
+              s.loadingRaster++;
+
+              // Tell the old overlay to get out and get a new image.
+              oldOverlay.setUrl(
+                s.imageUrlBase + s.utcFormatter(new Date(s.nxtDate))
+              );
+
+              s.previousFrame = overlayIndex;
+              s.previousDate = currentDate;
+              s.nxtDate += s.step;
+
+            } else if (overlayIndex === undefined) {
+
+              if (timeState.animation.playing) {
+                s.restart = timeState.animation.playing;
+              }
+
+              if (timeState.playPauseAnimation) {
+                timeState.playPauseAnimation('off');
+              }
+            }
+
+          } else {
+
+            // Possibility 2: we (re-)start the animation:
+            console.log('Anim startUp!');
+
+            this._animStart(temporalWMSLayer);
+            overlays = this._animState.imageOverlays;
+
+            for (i in overlays) {
+              addLeafletLayer(mapState._map, overlays[i]);
+            }
+
+            // imgUrlBase equals full URL w/o TIME part
+            this._animState.imageUrlBase
+              = RasterService.buildURLforWMS(temporalWMSLayer);
+
+            this._animGetImages(timeState);
           }
+        } else {
+          console.log('KILL ANIM!..');
 
-          // imgUrlBase equals full URL w/o TIME key/value
-          this._animState.imageUrlBase
-            = RasterService.buildURLforWMS(temporalWMSLayer);
+          this._animState.initiated = false;
 
-          //this._animGetImages(timeState.at);
+          // first, check whether we have added the first overlay to the map
+          // (this implies a complete fixed-size set has been retrieved from API).
+          if (mapState._map.hasLayer(s.imageOverlays[0])) {
+            // if so, we remove (all) the overlays:
+            for (i in s.imageOverlays) {
+              removeLeafletLayer(mapState._map, s.imageOverlays[i]);
+            }
+          }
         }
       },
 
@@ -286,12 +354,15 @@ app.factory('LayerGroup', [
           s.loadingRaster++;
           s.imageOverlays[i].setOpacity(0);
           s.imageOverlays[i].off('load');
-          this._animAddLoadListener(s.imageOverlays[i], i, s.nxtDate);
+          this._animAddLoadListener(s.imageOverlays[i], i, s.nxtDate, timeState);
+
           s.imageOverlays[i].setUrl(
             s.imageUrlBase + s.utcFormatter(new Date(s.nxtDate))
           );
           s.nxtDate += s.step;
         }
+
+        s.imageOverlays[0].setOpacity(0.7);
       },
 
       _getTemporalWMSLayer: function () {
@@ -347,7 +418,7 @@ app.factory('LayerGroup', [
         });
       };
 
-      if (!options) { options = {}; }
+      options = options || {};
       options.agg = layer.aggregation_type;
 
       return wantedService.getData(layer, options)

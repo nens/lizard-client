@@ -50,9 +50,22 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
        * Update zoomEnded to trigger new call for raster aggregate.
        */
       zoomEndFn: function () {
-        if (scope.mapState.getActiveTemporalLayerGroup()) {
-          getTemporalRasterData();
-        }
+
+        // WHY WOULD THIS BE NECCESARY IF ZOOM NEVER CHANGES TIMESTATE.AT???
+
+        // if (scope.mapState.getActiveTemporalLayerGroup()) {
+        //   getTemporalRasterData();
+        // }
+
+        // angular.forEach(scope.mapState.layerGroups, function (lg) {
+        //   lg.adhereToTime(
+        //     scope.mapState,
+        //     scope.timeState,
+        //     undefined,
+        //     scope.timeState.at
+        //   );
+        // });
+
         scope.$apply(function () {
           scope.timeState.zoomEnded = Date.now();
         });
@@ -235,13 +248,13 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
      */
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
-      if (scope.timeState.animation.enabled) {
+      //if (scope.timeState.animation.enabled) {
 
         timeline.updateBrushExtent(
           scope.timeState.animation.start,
           scope.timeState.at
         );
-      }
+      //}
     });
 
 
