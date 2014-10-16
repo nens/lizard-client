@@ -74,7 +74,7 @@ module.exports = function (grunt) {
           '.tmp/styles/{,*/}*.css',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
-      }
+       }
     },
 
     // The actual grunt server settings
@@ -91,34 +91,22 @@ module.exports = function (grunt) {
           middleware: function (connect, options) {
             return [
               modRewrite([
-                // '\\map\/|\\map$ / [L]'
-                '!\\api\/|\\\/scripts\/|\\.html|\\.js|\\.svg|\\.css|\\.woff|\\.png$ /index.html [L]'
+                '!\\api|\\accounts|\\lizard-bs\.js|\\\/scripts\/|\\.html|\\.js|\\.svg|\\.css|\\.woff|\\.png$ /index.html [L]',
+                '^/api/ http://localhost:8000/api/ [P]',
+                '^/accounts/ http://localhost:8000/accounts/ [P]',
+                '^/lizard-bs.js http://localhost:8000/lizard-bs.js [P]',
                 ]),
               connect.static('.tmp'),
               connect().use(
                 '/vendor',
                 connect.static('./vendor')
               ),
-              connect.static(appConfig.app),
-              proxySnippet
+              connect.static(appConfig.app)
             ];
           }
         }
       },
-      proxies: [
-        {
-        context: '/api',
-        host: '127.0.0.1',
-        port: 8000, // Django port goes here
-        xforward: true
-        },
-       {
-        context: '/lizard-bs.js',
-        host: '127.0.0.1',
-        port: 8000, // Django port goes here
-        xforward: true
-        }
-      ],
+
       test: {
         options: {
           port: 9001,
