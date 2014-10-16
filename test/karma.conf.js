@@ -65,10 +65,17 @@ module.exports = function(config) {
     plugins: [
       'karma-phantomjs-launcher',
       'karma-jasmine',
-      'karma-coverage'
+      'karma-coverage',
+      'karma-junit-reporter'
     ],
 
-    reporters: ['progress', 'coverage'],
+    reporters: ['progress', 'coverage', 'junit'],
+
+    junitReporter: {
+      outputFile: 'qa/junit.xml',
+      suite: ''
+    },
+
     coverageReporter: {
       reporters: [
         {type: 'html', dir: 'qa/coverage/html'},
