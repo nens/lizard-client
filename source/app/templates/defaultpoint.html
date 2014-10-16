@@ -1,5 +1,5 @@
 <div>
-  <div ng-repeat="l in point.layers track by $index">
+  <div ng-repeat="l in lg.layers track by $index">
     <div ng-switch="l.type">
 
       <div ng-switch-when="Store">
@@ -17,7 +17,7 @@
       <table class="table table-hover table-condensed" >
         <thead>
             <th><i class="fa fa-circle"></i></th>
-            <th>Totaal</th>
+            <th><% lg.layerGroupName %></th>
             <th><% filteredRes.length %></th>
         </thead>
         <tbody>

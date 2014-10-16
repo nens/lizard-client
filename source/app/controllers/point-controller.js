@@ -19,7 +19,8 @@
 app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesService', 'ClickFeedbackService',
   function ($scope, $q, LeafletService, TimeseriesService, ClickFeedbackService) {
 
-    $scope.point = {};
+
+    $scope.box.content = {};
 
     /**
      * @function
@@ -27,59 +28,15 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
      * @param  {L.LatLng} here
      */
     var fillpoint = function (here) {
-
-      var promises = [];
-
-      var doneFn = function (response) {
-        if (response.active === false) {
-          delete $scope.point[response.slug];
-        }
-        console.log(response);
-      };
-
-      var putDataOnScope = function (response) {
-        console.log(response);
-        var pointLg = $scope.point[response.layerGroupSlug] || {layers: {}};
-        pointLg.layers[response.layerSlug] = pointLg.layers[response.layerSlug] || {};
-        pointLg.layerGroupName = $scope.mapState.layerGroups[response.layerGroupSlug].name;
-        pointLg.order = $scope.mapState.layerGroups[response.layerGroupSlug].order;
-        if (response.data === null) {
-          pointLg.layers[response.layerSlug].data = undefined;
-        } else {
-          pointLg.layers[response.layerSlug].type = response.type;
-          pointLg.layers[response.layerSlug].data = response.data;
-
-          /**
-           * pointLg now looks like: {
-           *   layerGroup: <slug>,
-           *   layerGroupName: <name>,
-           *   order: <order>,
-           *   layers: {
-           *     <layerSlug>: {
-           *       data: <layer.data>,
-           *       type: <layer.type>
-           *     },
-           *
-           *     ...,
-           *
-           *   }
-           * }
-           */
-
-        }
-        if (response.data && response.data.id && response.data.entity_name) {
-          getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
-        }
-        $scope.point[response.layerGroupSlug] = pointLg;
-      };
-
       ClickFeedbackService.drawClickInSpace($scope.mapState, here);
-
-      angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
-        promises.push(layerGroup.getData({geom: here})
-          .then(doneFn, doneFn, putDataOnScope));
+      var promises = $scope.fillBox(here);
+      angular.forEach(promises, function (promise) {
+        promise.then(null, null, function (response) {
+          if (response.data && response.data.id && response.data.entity_name) {
+            getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
+          }
+        });
       });
-
       // Draw feedback when all promises resolved
       $q.all(promises).then(drawFeedback);
     };
@@ -101,8 +58,7 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
     var drawFeedback = function () {
       var feedbackDrawn = false;
       ClickFeedbackService.stopVibration();
-      console.log($scope.point);
-      angular.forEach($scope.point, function (lg) {
+      angular.forEach($scope.box.content, function (lg) {
         if (lg && lg.layers) {
           angular.forEach(lg.layers, function (layer) {
             if (layer.type === 'Vector') {
@@ -112,14 +68,14 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
           });
         }
       });
-      if ($scope.point.waterchain) {
+      if ($scope.box.content.waterchain && $scope.box.content.waterchain.layers.waterchain_grid) {
         ClickFeedbackService.drawGeometry(
           $scope.mapState,
-          $scope.point.waterchain.layers.waterchain_grid.data.geom,
-          $scope.point.waterchain.layers.waterchain_grid.data.entity_name
+          $scope.box.content.waterchain.layers.waterchain_grid.data.geom,
+          $scope.box.content.waterchain.layers.waterchain_grid.data.entity_name
         );
       } else if (!feedbackDrawn) {
-        angular.forEach($scope.point, function (lg) {
+        angular.forEach($scope.box.content, function (lg) {
           if (lg) {
             ClickFeedbackService.drawArrowHere($scope.mapState);
           }
@@ -136,11 +92,11 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
       TimeseriesService.getTimeseries(id, $scope.timeState)
       .then(function (result) {
 
-        $scope.point.timeseries = $scope.point.timeseries || {};
+        $scope.box.content.timeseries = $scope.box.content.timeseries || {};
 
         if (result.length > 0) {
 
-          angular.extend($scope.point.timeseries, {
+          angular.extend($scope.box.content.timeseries, {
 
             type  : 'timeseries',
             data  : result[0].events,
@@ -149,7 +105,7 @@ app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesServic
           });
 
         } else {
-          $scope.point.timeseries = undefined;
+          delete $scope.box.content.timeseries;
         }
       });
     };

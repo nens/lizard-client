@@ -88,10 +88,9 @@ app.directive('rain', [function () {
 
 app.directive('defaultpoint', [function () {
   return {
-    link: function (scope) { debugger},
     restrict: 'E',
     scope: {
-      point: '=',
+      lg: '=',
       mapstate: '='
     },
     replace: true,

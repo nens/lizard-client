@@ -12,9 +12,9 @@
  * Contains data of all active layers with an aggregation_type
  *
  */
-app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterService) {
+app.controller('AreaCtrl', ['$scope', 'RasterService', '$q', function ($scope, RasterService, $q) {
 
-    $scope.area = {};
+    $scope.box.content = {};
 
     /**
      * @function
@@ -30,35 +30,21 @@ app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterS
      * @param  {object} area area object of this
      *                                  ctrl
      */
-    var fillArea = function (bounds, layerGroups) {
-
-      var doneFn = function (response) {
-        if (response.active === false && $scope.area[response.slug]) {
-          $scope.area[response.slug] = undefined;
-        }
-        console.log($scope.area);
-      };
-
-      var putDataOnScope = function (response) {
-
-        var areaLG = $scope.area[response.layerGroupSlug] || {};
-        areaLG[response.layerSlug] = areaLG[response.layerSlug] || {};
-        areaLG[response.layerSlug].aggType = response.aggType;
-        if (response.data !== null) {
-          areaLG[response.layerSlug].data = response.data;
-          // TODO: move formatting of data to server.
-          if (response.layerSlug === 'ahn2/wss') {
-            areaLG[response.layerSlug].data = RasterService.handleElevationCurve(response.data);
+    var fillArea = function (bounds) {
+      //TODO draw feedback when loading data
+      var promises = $scope.fillBox(bounds);
+      angular.forEach(promises, function (promise) {
+        promise.then(null, null, function (response) {
+          console.log(response);
+          if (response.data && response.layerSlug === 'ahn2/wss') {
+            $scope.box.content[response.layerGroupSlug]
+              .layers[response.layerSlug]
+              .data = RasterService.handleElevationCurve(response.data);
           }
-        }
-        $scope.area[response.layerGroupSlug] = areaLG;
-      };
-
-      angular.forEach(layerGroups, function (layerGroup, slug) {
-        // Pass the promise to a function that handles the scope.
-        layerGroup.getData({geom: bounds})
-          .then(doneFn, doneFn, putDataOnScope);
+        });
       });
+      // Draw feedback when all promises resolved
+      //$q.all(promises).then(drawFeedback);
     };
 
     /**
@@ -66,7 +52,7 @@ app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterS
      */
     $scope.$watch('mapState.bounds', function (n, o) {
       if (n === o) { return true; }
-      fillArea($scope.mapState.bounds, $scope.mapState.layerGroups);
+      fillArea($scope.mapState.bounds);
     });
 
     /**
@@ -74,11 +60,11 @@ app.controller('AreaCtrl', ['$scope', 'RasterService', function ($scope, RasterS
      */
     $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
       if (n === o) { return true; }
-      fillArea($scope.mapState.bounds, $scope.mapState.layerGroups);
+      fillArea($scope.mapState.bounds);
     });
 
     // Load data at initialization.
-    fillArea($scope.mapState.bounds, $scope.mapState.layerGroups);
+    fillArea($scope.mapState.bounds);
 
   }
 ]);

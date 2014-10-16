@@ -1,10 +1,10 @@
 <div ng-controller="PointCtrl">
-  <div ng-repeat="(slug, lg) in point" id="card" class="card active">
+  <div ng-repeat="(slug, lg) in box.content" id="card" class="card active">
     <div class="card-content" id="card-content" ng-switch="slug">
       <cardattributes ng-switch-when="waterchain" waterchain="lg"></cardattributes>
       <timeseries ng-switch-when="timeseries" timeserires="lg"></timeseries>
       <rain ng-switch-when="rain" rain="lg"></rain>
-      <defaultpoint ng-switch-default point="lg" map-state="mapState"></defaultpoint>
+      <defaultpoint ng-switch-default lg="lg" map-state="mapState"></defaultpoint>
     </div>
   </div>
 </div>
