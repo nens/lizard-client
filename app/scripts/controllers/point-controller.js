@@ -16,7 +16,8 @@
  *       all layers and perform generic actions based on layer types.
  */
 
-app.controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesService', 'ClickFeedbackService',
+angular.module('lizard-nxt')
+  .controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesService', 'ClickFeedbackService',
   function ($scope, $q, LeafletService, TimeseriesService, ClickFeedbackService) {
 
 
