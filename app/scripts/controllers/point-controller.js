@@ -56,18 +56,23 @@ angular.module('lizard-nxt')
           pointL[response.layerSlug] = pointL[response.layerSlug] || {};
           pointL[response.layerSlug].type = response.type;
           pointL[response.layerSlug].data = response.data;
-          pointL.layerGroupName = $scope.mapState.layerGroups[pointL.layerGroup].name;
+          pointL.layerGroupName = $scope.mapState.layerGroups[
+            pointL.layerGroup].name;
           pointL.order = $scope.mapState.layerGroups[pointL.layerGroup].order;
           if (response.data && response.data.id) {
-            getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
+            getTimeSeriesForObject(response.data.entity_name + '$' +
+                                   response.data.id);
           }
           if (response.data.geom) {
             // If the geom from the response is different than mapState.here
-            // redo request to get the exact data for the centroid of the object.
+            // redo request to get the exact data for the centroid of the 
+            // object.
             var geom = JSON.parse(response.data.geom);
-            if (geom.type === 'Point' && (geom.coordinates[1] !== $scope.mapState.here.lat
-              || geom.coordinates[0] !== $scope.mapState.here.lng)) {
-              $scope.mapState.here = LeafletService.latLng(geom.coordinates[1], geom.coordinates[0]);
+            if (geom.type === 'Point' &&
+                (geom.coordinates[1] !== $scope.mapState.here.lat ||
+                 geom.coordinates[0] !== $scope.mapState.here.lng)) {
+              $scope.mapState.here = LeafletService.latLng(geom.coordinates[1],
+                                                           geom.coordinates[0]);
             }
           }
         }
@@ -77,7 +82,9 @@ angular.module('lizard-nxt')
       ClickFeedbackService.drawClickInSpace($scope.mapState, here);
 
       angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
-        promises.push(layerGroup.getData({geom: here})
+        promises.push(layerGroup.getData({geom: here,
+                                          start: $scope.timeState.start,
+                                          end: $scope.timeState.end})
           .then(doneFn, doneFn, putDataOnScope));
       });
 
@@ -113,7 +120,8 @@ angular.module('lizard-nxt')
         angular.forEach($scope.point, function (lg) {
           if (lg) {
             ClickFeedbackService.drawArrowHere($scope.mapState);
-            // return immediately to skip unneccesary loop iterations, kthxbai <3
+            // return immediately to skip unneccesary loop iterations,
+            // kthxbai <3
             return;
           }
         });

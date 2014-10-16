@@ -8,16 +8,23 @@ angular.module('lizard-nxt')
 
   var getData = function (layer, options) {
 
+    // TODO: get this from somewhere
+    var GRAPH_WIDTH = 600;
+
     var srs = 'EPSG:4326',
         agg = options.agg || '',
         wkt = UtilService.geomToWkt(options.geom),
         startString,
-        endString;
+        endString,
+        aggWindow;
 
     if (options.start && options.end) {
       startString = new Date(options.start).toISOString().split('.')[0];
       endString = new Date(options.end).toISOString().split('.')[0];
     }
+    
+    aggWindow = options.aggWindow || UtilService.getAggWindow(options.start,
+      options.end, GRAPH_WIDTH);
 
     if (cancelers[layer.slug]) {
       cancelers[layer.slug].resolve();
@@ -31,7 +38,8 @@ angular.module('lizard-nxt')
       srs: srs,
       start: startString,
       stop: endString,
-      agg: agg
+      agg: agg,
+      window: aggWindow
     });
   };
 
@@ -90,8 +98,8 @@ angular.module('lizard-nxt')
         "imageUrlBase": wmsUrl + layerName + '&STYLES=BrBG_r:-27:-2&TRANSPARENT=false'
       };
       var bbox = [info.imageBounds[0][1], info.imageBounds[1][0]].toString() +
-      ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString(),
-      width = 2000,
+      ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString();
+      width = 2000;
       height = parseInt(width * ((info.imageBounds[0][0] - info.imageBounds[1][0]) / (info.imageBounds[1][1] - info.imageBounds[0][1])), 10);
       info.imageUrlBase = info.imageUrlBase + '&HEIGHT=' + height + '&WIDTH=' + width + '&ZINDEX=26&BBOX=' + bbox + '&TIME=';
     }
@@ -103,7 +111,7 @@ angular.module('lizard-nxt')
         "imageUrlBase": wmsUrl + 'bath:westerschelde&STYLES=jet_r:-10:10&TRANSPARENT=false'
       };
       var bbox = [info.imageBounds[0][1], info.imageBounds[1][0]].toString() +
-      ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString(),
+      ',' + [info.imageBounds[1][1], info.imageBounds[0][0]].toString();
       width = 2000;
       height = parseInt(width * ((info.imageBounds[0][0] - info.imageBounds[1][0]) / (info.imageBounds[1][1] - info.imageBounds[0][1])), 10);
       info.imageUrlBase = info.imageUrlBase + '&HEIGHT=' + height + '&WIDTH=' + width + '&ZINDEX=26&BBOX=' + bbox + '&SUBTRACT=2012-02-15&TIME=';
