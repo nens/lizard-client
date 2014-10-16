@@ -162,12 +162,12 @@ module.exports = function (grunt) {
           '!<%= yeoman.app %>/templates/templates.js'
         ]
       },
-      test: {
-        options: {
-          jshintrc: 'test/.jshintrc'
-        },
-        src: ['test/spec/{,*/}*.js']
-      }
+      // test: {
+      //   options: {
+      //     jshintrc: 'test/.jshintrc'
+      //   },
+      //   src: ['test/spec/{,*/}*.js']
+      // }
     },
 
     // Empties folders to start fresh

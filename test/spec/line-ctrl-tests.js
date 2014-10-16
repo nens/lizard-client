@@ -1,3 +1,5 @@
+"use strict";
+
 describe('Testing LineCtrl', function () {
   var $scope,
     $rootScope,
@@ -47,7 +49,7 @@ describe('Testing LineCtrl', function () {
           'RasterService': MockRasterService,
           'ClickFeedbackService': MockClickFeedbackService,
           'UtilService': UtilService
-      });
+        });
       $scope.$digest();
     };
 
