@@ -287,17 +287,36 @@ app.directive('rasteranimation', ['RasterService', 'UtilService',
        * Get new set of images when animation stops playing
        * (resets rasterLoading to 0)
        */
-      // scope.$watch('timeState.at', function (newVal, oldVal) {
-      //   if (newVal === oldVal) { return; }
-      //   if (!scope.timeState.animation.playing &&
-      //       scope.mapState.getActiveTemporalLayerGroup() &&
-      //       scope.mapState.initiated) {
-      //     if (!initiated) { return; }
-      //     getImages(scope.timeState.at);
-      //     imageOverlays[0].setOpacity(0.7);
-      //     previousFrame = 0;
-      //   }
-      // });
+      scope.$watch('timeState.at', function (newVal, oldVal) {
+
+        console.log('debug 1');
+
+        if (newVal === oldVal) { return; }
+
+        console.log('debug 2: scope.timeState.animation.playing =', scope.timeState.animation.playing,
+          '; scope.mapState.initiated =', scope.mapState.initiated
+        );
+
+        if (!scope.timeState.animation.playing // &&
+            //scope.mapState.getActiveTemporalLayerGroup() &&
+            //scope.mapState.initiated
+          ) {
+
+          console.log('debug 3');
+
+
+          angular.forEach(scope.mapState.layerGroups, function(lg) {
+            lg.stopAnimation(scope.timeState);
+          });
+
+
+          // if (!initiated) { return; }
+
+          // getImages(scope.timeState.at);
+          // imageOverlays[0].setOpacity(0.7);
+          // previousFrame = 0;
+        }
+      });
     }
   };
 }]);

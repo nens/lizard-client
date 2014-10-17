@@ -52,9 +52,20 @@ app.service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService', 'Leaf
           var map = this._map;
           if (layerGroup.baselayer || layerGroup.temporal) {
             angular.forEach(this.layerGroups, function (_layerGroup) {
-              if (layerGroup.baselayer && _layerGroup.baselayer && _layerGroup.isActive() && _layerGroup.slug !== layerGroup.slug) {
+
+              if (layerGroup.baselayer
+                  && _layerGroup.baselayer
+                  && _layerGroup.isActive()
+                  && _layerGroup.slug !== layerGroup.slug
+                )
+              {
                 _layerGroup.toggle(map);
-              } else if (layerGroup.temporal && _layerGroup.temporal && _layerGroup.isActive() && _layerGroup.slug !== layerGroup.slug) {
+
+              } else if (layerGroup.temporal
+                && _layerGroup.temporal
+                && _layerGroup.isActive()
+                && _layerGroup.slug !== layerGroup.slug) {
+
                 _layerGroup.toggle(map);
               }
             });

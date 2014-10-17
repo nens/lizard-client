@@ -64,7 +64,7 @@ app.controller('TimeLine', ["$scope", "$q", "RasterService",
     // hack to slow down animation for rasters to min resolution
 
     timeStep = 300000;
-    $scope.timeState.animation.minLag = 50;
+    $scope.timeState.animation.minLag = 100;
 
     // if ($scope.mapState.getActiveTemporalLayerGroup()) {
 

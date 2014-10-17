@@ -189,16 +189,16 @@ app.factory('LayerGroup', [
 
         if (oldTime === newTime || !temporalWMSLayer) { return; }
 
+        var currentDate  = this._mkTimeStamp(newTime),
+            oldDate      = this._mkTimeStamp(oldTime),
+            overlayIndex = s.frameLookup[currentDate];
+
         if (this.isActive()) {
 
-          if (this._animState.initiated) {
+          if (s.initiated) {
 
             // Possibility 1: we progress the animation to the next frame:
             console.log('Anim progressing!');
-
-            var currentDate  = this._mkTimeStamp(newTime),
-                oldDate      = this._mkTimeStamp(oldTime),
-                overlayIndex = s.frameLookup[currentDate];
 
             if (overlayIndex !== undefined && overlayIndex !== s.previousFrame) {
 
@@ -239,6 +239,8 @@ app.factory('LayerGroup', [
 
             } else if (overlayIndex === undefined) {
 
+              console.log('????');
+
               if (timeState.animation.playing) {
                 s.restart = timeState.animation.playing;
               }
@@ -270,6 +272,7 @@ app.factory('LayerGroup', [
           console.log('KILL ANIM!..');
 
           this._animState.initiated = false;
+          overlayIndex = undefined;
 
           // first, check whether we have added the first overlay to the map
           // (this implies a complete fixed-size set has been retrieved from API).
@@ -362,7 +365,7 @@ app.factory('LayerGroup', [
           s.nxtDate += s.step;
         }
 
-        s.imageOverlays[0].setOpacity(0.7);
+        //s.imageOverlays[0].setOpacity(0.7);
       },
 
       _getTemporalWMSLayer: function () {
@@ -375,6 +378,18 @@ app.factory('LayerGroup', [
             return currentLayer;
           }
         }
+      },
+
+      stopAnimation: function (timeState) {
+        // gets a fresh set of images when the animation stops
+
+        console.log('[F] stopAnimation()');
+
+        if (!this._animState.initiated) { return; }
+
+        this._animGetImages(timeState);
+        this._animState.imageOverlays[0].setOpacity(0.7);
+        this._animState.previousFrame = 0;
       }
     };
 
