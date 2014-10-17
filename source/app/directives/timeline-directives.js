@@ -50,22 +50,6 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
        * Update zoomEnded to trigger new call for raster aggregate.
        */
       zoomEndFn: function () {
-
-        // WHY WOULD THIS BE NECCESARY IF ZOOM NEVER CHANGES TIMESTATE.AT???
-
-        // if (scope.mapState.getActiveTemporalLayerGroup()) {
-        //   getTemporalRasterData();
-        // }
-
-        // angular.forEach(scope.mapState.layerGroups, function (lg) {
-        //   lg.adhereToTime(
-        //     scope.mapState,
-        //     scope.timeState,
-        //     undefined,
-        //     scope.timeState.at
-        //   );
-        // });
-
         scope.$apply(function () {
           scope.timeState.zoomEnded = Date.now();
         });
@@ -118,13 +102,13 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
       var eventHeight;
       if (scope.mapState.getActiveTemporalLayerGroup()) {
         eventHeight = nEventTypes * dim.events;
-        eventHeight = eventHeight > 0 ? eventHeight: 0; // Default to 0px
+        eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
         newDim.height = dim.height +
                                dim.bars +
                                eventHeight;
       } else {
         eventHeight = (nEventTypes - 1) * dim.events;
-        eventHeight = eventHeight > 0 ? eventHeight: 0; // Default to 0px
+        eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
         newDim.height = dim.height + eventHeight;
       }
       timeline.resize(newDim);
@@ -224,14 +208,15 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
           end = scope.timeState.at;
         } else {
           var buffer = (scope.timeState.end - scope.timeState.start) / 100;
-          end = scope.timeState.at;
           start = scope.timeState.at - buffer;
+          end = scope.timeState.at;
         }
 
         // Draw the brush
         timeline.drawBrush(start, end);
-      }
-      if (!scope.timeState.animation.enabled) {
+
+      } else {
+
         scope.timeState.animation.playing = false;
         timeline.removeBrush();
         timeline.addZoomListener();
@@ -248,13 +233,13 @@ app.directive('timeline', ["EventService", "RasterService", "UtilService",
      */
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
-      //if (scope.timeState.animation.enabled) {
+      if (scope.timeState.animation.enabled) {
 
         timeline.updateBrushExtent(
           scope.timeState.animation.start,
           scope.timeState.at
         );
-      //}
+      }
     });
 
 
