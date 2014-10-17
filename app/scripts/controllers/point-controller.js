@@ -30,7 +30,11 @@ angular.module('lizard-nxt')
      */
     var fillpoint = function (here) {
       ClickFeedbackService.drawClickInSpace($scope.mapState, here);
-      var promises = $scope.fillBox(here);
+      var promises = $scope.fillBox(
+        here,
+        $scope.timeState.start,
+        $scope.timeState.end
+      );
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
           if (response.data && response.data.id && response.data.entity_name) {

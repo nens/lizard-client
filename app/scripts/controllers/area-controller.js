@@ -27,7 +27,11 @@ angular.module('lizard-nxt')
      */
     var fillArea = function (bounds) {
       //TODO draw feedback when loading data
-      var promises = $scope.fillBox(bounds);
+      var promises = $scope.fillBox(
+        bounds,
+        $scope.timeState.start,
+        $scope.timeState.end
+      );
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
           if (response.data && response.layerSlug === 'ahn2/wss') {
