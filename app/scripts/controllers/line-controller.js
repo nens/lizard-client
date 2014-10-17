@@ -6,55 +6,36 @@ angular.module('lizard-nxt')
   'UtilService',
   function ($scope, RasterService, ClickFeedbackService, UtilService) {
 
-    /**
-     * line is the object which collects different
-     * sets of line data. If the line tool is turned on,
-     * line is set to box.type and this controller becomes
-     * active.
-     *
-     * Contains data of all active layers with a suitable aggregation_type
-     *
-     */
-    $scope.line = {
-    };
+    $scope.box.content = {};
 
     /**
      * @function
-     * @memberOf app.pointCtrl
-     * @param  {L.LatLng} here
+     * @memberOf app.areaCtrl
+     * @description
+     * Loops over all layers to request aggregation data for all
+     * active layers with an aggregation type.
+     *
+     * @param  {object} bounds   mapState.bounds, containing
+     *                                  leaflet bounds
+     * @param  {object} layers   mapState.layers, containing
+     *                                  nxt definition of layers
+     * @param  {object} area area object of this
+     *                                  ctrl
      */
-    var fillLine = function (points) {
-
-      var doneFn = function (response) {
-        if (response.active === false) {
-          $scope.line[response.slug] = undefined;
-        }
-      };
-
-      var putDataOnScope = function (response) {
-        var lineL;
-        if (response.data === null) { lineL = undefined;
-        } else {
-          lineL = $scope.line[response.layerGroupSlug] || {};
-          lineL.layerGroup = response.layerGroupSlug;
-          lineL[response.layerSlug] = lineL[response.layerSlug] || {};
-          lineL[response.layerSlug].type = response.type;
-          lineL[response.layerSlug].layerGroup = response.layerGroupSlug;
-          lineL[response.layerSlug].data = response.data;
-          lineL[response.layerSlug].order = $scope.mapState.layerGroups[response.layerGroupSlug].order;
-          // TODO: move formatting of data to server.
-          if (response.layerSlug === 'ahn2/wss') {
-            lineL[response.layerSlug].data = UtilService.dataConvertToMeters(response.data);
+    var fillLine = function (line) {
+      //TODO draw feedback when loading data
+      var promises = $scope.fillBox(line);
+      angular.forEach(promises, function (promise) {
+        promise.then(null, null, function (response) {
+          if (response.data && response.layerSlug === 'ahn2/wss') {
+            $scope.box.content[response.layerGroupSlug]
+              .layers[response.layerSlug]
+              .data = UtilService.dataConvertToMeters(response.data);
           }
-        }
-
-        $scope.line[response.layerGroupSlug] = lineL;
-      };
-
-      angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
-        layerGroup.getData({geom: points})
-          .then(doneFn, doneFn, putDataOnScope);
+        });
       });
+      // Draw feedback when all promises are resolved
+      //$q.all(promises).then(drawFeedback);
     };
 
     /**
