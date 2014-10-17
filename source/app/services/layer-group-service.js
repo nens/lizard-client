@@ -12,9 +12,9 @@
  */
 app.factory('LayerGroup', [
   'LeafletService', 'VectorService', 'RasterService', 'UtfGridService',
-  'UtilService', '$q', '$rootScope',
+  'UtilService', '$q',
   function (LeafletService, VectorService, RasterService, UtfGridService,
-    UtilService, $q, $rootScope) {
+    UtilService, $q) {
 
     /*
      * @constructor
@@ -182,8 +182,6 @@ app.factory('LayerGroup', [
        */
       adhereToTime: function (mapState, timeState, oldTime, newTime) {
 
-        console.log('debug:');
-
         var i,
             overlays,
             temporalWMSLayer = this._getTemporalWMSLayer(),
@@ -197,14 +195,9 @@ app.factory('LayerGroup', [
 
         if (this.isActive()) {
 
-          console.log('debug 1');
-
           if (s.initiated) {
 
-            console.log('debug 2');
-
             if (!timeState.animation.playing) {
-              console.log('debug 3');
               this.stopAnimation(timeState);
 
             } else if (overlayIndex !== undefined && overlayIndex !== s.previousFrame) {
@@ -323,7 +316,6 @@ app.factory('LayerGroup', [
         s.utcFormatter    = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
         s.step            = RasterService.getTimeResolution(this);
         s.frameLookup     = {};
-        //s.numCachedFrames = 30;
         s.previousFrame   = 0;
         s.loadingRaster   = 0;
         s.restart         = false;
@@ -386,14 +378,14 @@ app.factory('LayerGroup', [
       stopAnimation: function (timeState) {
         // gets a fresh set of images when the animation stops
 
-        console.log('[F] stopAnimation()');
-
         if (!this._animState.initiated) { return; }
 
         this._animGetImages(timeState);
-        this._animState.imageOverlays[0].setOpacity(0.7);
-        this._animState.previousFrame = 0;
 
+        if (!timeState.animation.playing) {
+          this._animState.imageOverlays[0].setOpacity(0.7);
+        }
+        this._animState.previousFrame = 0;
       }
     };
 

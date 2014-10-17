@@ -132,8 +132,19 @@ app.service("RasterService", ["Restangular", "UtilService", "CabinetService", "$
     }
   };
 
+  var getMinTimeBetweenFrames = function (layerGroup) {
+
+    if (layerGroup.slug === 'rain') {
+      return 100;
+    } else {
+      return 1000;
+    }
+
+  };
+
   return {
     getTimeResolution: getTimeResolution,
+    getMinTimeBetweenFrames: getMinTimeBetweenFrames,
     buildURLforWMS: buildURLforWMS,
     // rasterInfo: rasterInfo,
     getIntensityData: getIntensityData,
