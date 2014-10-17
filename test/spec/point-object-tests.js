@@ -1,46 +1,41 @@
 // point-object-ctrl-tests.js
 
 describe('Testing point object controller', function () {
-  var $scope,
+  var boxScope,
     $rootScope,
-    $controller,
-    $q,
-    createController,
-    UtfGridService,
-    ClickFeedbackService
+    pointScope,
+    $controller;
 
   beforeEach(module('lizard-nxt'));
   beforeEach(inject(function ($injector) {
     $rootScope = $injector.get('$rootScope');
     $controller = $injector.get('$controller');
-    $q = $injector.get('$q');
-    $scope = $rootScope.$new();
 
-    // Mock a map on $scope
-    $scope.map = {};
-    $scope.mapState = {
-      here: {lat: 52, lng: 6}
+    boxScope = $rootScope.$new();
+
+    boxScope.box = {
+      content: undefined,
+      type: 'point'
     };
-    UtfGridService = {
-      getDataFromUTF: function (map, here) {return $q.defer().promise; }
+
+    boxScope.mapState = {
+      here: L.LatLng(51, 6)
     };
-    ClickFeedbackService = {
+
+    var ClickFeedbackService = {
       drawClickInSpace: function (map, here) {return true; }
     };
 
-    createController = function () {
-      return $controller('PointCtrl', {
-          '$scope': $scope,
-          'UtfGridService': UtfGridService,
-          'ClickFeedbackService': ClickFeedbackService
-        });
-    };
-
+    $controller('OmniboxCtrl', {$scope: boxScope});
+    pointScope = boxScope.$new();
+    $controller('PointCtrl', {
+      $scope: pointScope,
+      ClickFeedbackService: ClickFeedbackService
+    });
   }));
 
   it('should create a pointObject on scope at creation', function () {
-    var controller = createController();
-    expect($scope.point).toBeDefined();
+    expect(pointScope.box.content).toBeDefined();
   });
 
 });

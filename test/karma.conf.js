@@ -35,7 +35,7 @@ module.exports = function(config) {
       'vendor/angular-sanitize/angular-sanitize.js',
       'vendor/ng-csv/build/ng-csv.min.js',
       'vendor/raven-js/dist/raven.js',
-      // endbower 
+      // endbower
       'app/scripts/lizard-nxt.js',
       'test/mocks/**/*.js',
       'app/scripts/**/*.js',
@@ -64,6 +64,7 @@ module.exports = function(config) {
     // Which plugins to enable
     plugins: [
       'karma-phantomjs-launcher',
+      'karma-chrome-launcher',
       'karma-jasmine',
       'karma-coverage',
       'karma-junit-reporter'

@@ -13,56 +13,38 @@
  *
  */
 angular.module('lizard-nxt')
-  .controller('AreaCtrl', ['$scope', 'RasterService',
-  function ($scope, RasterService) {
+  .controller('AreaCtrl', ['$scope', 'RasterService', '$q', function ($scope, RasterService, $q) {
 
-    $scope.area = {};
+    $scope.box.content = {};
 
     /**
      * @function
      * @memberOf app.areaCtrl
      * @description
-     * Loops over all layers to request aggregation data for all
-     * active layers with an aggregation type.
-     *
+     * Loops over all layergroups to get data.
      * @param  {object} bounds   mapState.bounds, containing
-     *                                  leaflet bounds
-     * @param  {object} layers   mapState.layers, containing
-     *                                  nxt definition of layers
-     * @param  {object} area area object of this
-     *                                  ctrl
+     *                                  leaflet bounds.
      */
-    var fillArea = function (bounds, layerGroups) {
-
-      var doneFn = function (response) {
-        if (response.active === false && $scope.area[response.slug]) {
-          $scope.area[response.slug] = undefined;
-        }
-      };
-
-      var putDataOnScope = function (response) {
-
-        var areaLG = $scope.area[response.layerGroupSlug] || {};
-        areaLG[response.layerSlug] = areaLG[response.layerSlug] || {};
-        areaLG[response.layerSlug].aggType = response.aggType;
-        if (response.data !== null) {
-          areaLG[response.layerSlug].data = response.data;
-          // TODO: move formatting of data to server.
-          if (response.layerSlug === 'ahn2/wss') {
-            areaLG[response.layerSlug].data =
-              RasterService.handleElevationCurve(response.data);
-          }
-        }
-        $scope.area[response.layerGroupSlug] = areaLG;
-      };
-
-      angular.forEach(layerGroups, function (layerGroup, slug) {
-        // Pass the promise to a function that handles the scope.
-        layerGroup.getData({geom: bounds,
-                            start: $scope.timeState.start,
-                            end: $scope.timeState.end})
-          .then(doneFn, doneFn, putDataOnScope);
+    var fillArea = function (bounds) {
+      //TODO draw feedback when loading data
+      var promises = $scope.fillBox({
+        geom: bounds,
+        start: $scope.timeState.start,
+        end: $scope.timeState.end
       });
+      angular.forEach(promises, function (promise) {
+        promise.then(null, null, function (response) {
+          if (response.data && response.layerSlug === 'ahn2/wss') {
+            $scope.box.content[response.layerGroupSlug]
+              .layers[response.layerSlug]
+              // Since the data is not properly formatted in the back
+              // we convert it from degrees to meters here
+              .data = RasterService.handleElevationCurve(response.data);
+          }
+        });
+      });
+      // Draw feedback when all promises resolved
+      //$q.all(promises).then(drawFeedback);
     };
 
     /**
@@ -70,7 +52,7 @@ angular.module('lizard-nxt')
      */
     $scope.$watch('mapState.bounds', function (n, o) {
       if (n === o) { return true; }
-      fillArea($scope.mapState.bounds, $scope.mapState.layerGroups);
+      fillArea($scope.mapState.bounds);
     });
 
     /**
@@ -78,11 +60,11 @@ angular.module('lizard-nxt')
      */
     $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
       if (n === o) { return true; }
-      fillArea($scope.mapState.bounds, $scope.mapState.layerGroups);
+      fillArea($scope.mapState.bounds);
     });
 
     // Load data at initialization.
-    fillArea($scope.mapState.bounds, $scope.mapState.layerGroups);
+    fillArea($scope.mapState.bounds);
 
   }
 ]);

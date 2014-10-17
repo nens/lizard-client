@@ -142,8 +142,8 @@ angular.module('lizard-nxt')
         } else if (entityName.indexOf("pipe") !== -1 ||
                    entityName.indexOf("culvert") !== -1) {
           selection.select("path").transition().delay(450).duration(150)
-          .attr("stroke-opacity", 0.6)
-          .attr("stroke-width", 10);
+            .attr("stroke-opacity", 0.6)
+            .attr("stroke-width", 10);
         } else if (entityName === 'manhole') {
           this._circleMarker.setRadius(7.5);
         }
@@ -239,9 +239,9 @@ angular.module('lizard-nxt')
 
       ctrl.emptyClickLayer(mapState);
       geometry = {
-                   "type": "Point",
-                   "coordinates": [mapState.here.lng, mapState.here.lat]
-                 };
+        "type": "Point",
+        "coordinates": [mapState.here.lng, mapState.here.lat]
+       };
       ctrl.drawFeature(geometry);
       px = mapState.latLngToLayerPoint(mapState.here);
       ctrl.addLocationMarker(px);
@@ -265,7 +265,7 @@ angular.module('lizard-nxt')
       stopVibration: stopVibration,
       killVibrator: killVibrator,
       drawLine: drawLine,
-      removeLocationMarker: ctrl.removeLocationMarker
+      removeLocationMarker: ctrl.removeLocationMarker,
     };
   }
 ]);

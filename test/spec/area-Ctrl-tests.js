@@ -1,52 +1,37 @@
 describe('Testing AreaCtrl', function () {
-  var $scope,
+  var boxScope,
     $rootScope,
-    $controller,
+    areaScope,
     NxtMap,
-    createController;
+    $controller;
 
   beforeEach(module('lizard-nxt'));
 
   beforeEach(inject(function ($injector) {
     $controller = $injector.get('$controller');
     $rootScope = $injector.get('$rootScope');
-    $scope = $rootScope.$new();
     NxtMap = $injector.get('NxtMap');
-    $scope.mapState = new NxtMap(angular.element('<div></div>')[0], data_layers, {
+
+    boxScope = $rootScope.$new();
+
+    boxScope.box = {
+      content: undefined,
+      type: 'area'
+    };
+
+    boxScope.mapState = new NxtMap(angular.element('<div></div>')[0], data_layers, {
       zoomControl: false
     });
-    $scope.timeState = {start: '', end: ''};
 
-    var MockRasterService = {
-      getAggregationForActiveLayer: function (layer, slug, agg, bounds) {
-        var dataProm = {};
-        dataProm.then = function (callback) {
-          var result = {
-            slug: layer.slug,
-            agg: {
-              data: [1, 2, 3, 4]
-            }
-          };
-          callback(result);
-        };
-        return dataProm;
-      }
-    };
-
-    createController = function() {
-      $controller('AreaCtrl', {
-          '$scope': $scope,
-          'RasterService': MockRasterService
-      });
-      $scope.$digest();
-    };
-
+    $controller('OmniboxCtrl', {$scope: boxScope});
+    areaScope = boxScope.$new();
+    $controller('AreaCtrl', {
+      $scope: areaScope,
+    });
   }));
 
   it('should have an empty area', function () {
-    createController();
-    expect($scope.area).toBeDefined();
-    expect($scope.area).toEqual({});
+    expect(areaScope.box.content).toBeDefined();
   });
 
 });

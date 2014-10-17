@@ -9,7 +9,7 @@ angular.module('lizard-nxt')
   var getData = function (layer, options) {
 
     // TODO: get this from somewhere
-    var GRAPH_WIDTH = 600;
+    var GRAPH_WIDTH = window.innerwidth;
 
     var srs = 'EPSG:4326',
         agg = options.agg || '',
@@ -22,7 +22,7 @@ angular.module('lizard-nxt')
       startString = new Date(options.start).toISOString().split('.')[0];
       endString = new Date(options.end).toISOString().split('.')[0];
     }
-    
+
     aggWindow = options.aggWindow || UtilService.getAggWindow(options.start,
       options.end, GRAPH_WIDTH);
 
