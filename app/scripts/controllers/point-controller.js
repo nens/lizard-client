@@ -42,7 +42,9 @@ angular.module('lizard-nxt')
           if (response.data && response.data.id && response.data.entity_name) {
             getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
           }
-          $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
+          if (response.layerSlug === 'radar/basic' && response.data !== null) {
+            $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
+          }
         });
       });
       // Draw feedback when all promises resolved
