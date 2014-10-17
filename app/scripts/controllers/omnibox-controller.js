@@ -8,8 +8,8 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf app.pointCtrl
-     * @param  {L.LatLng} here
+     * @memberOf app.omnibox
+     * @param  {L.LatLng} here | L.Bounds | [L.LatLng]
      */
     $scope.fillBox = function (geom) {
 
