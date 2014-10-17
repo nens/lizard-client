@@ -303,9 +303,11 @@ app.factory("Timeline", ["NxtD3", function (NxtD3) {
      */
     updateBrushExtent: {
       value: function (start, end) {
-        brushg
-          .call(brush.extent([new Date(start), new Date(end)]));
-        brushed();
+        if (brush) {
+          brushg
+            .call(brush.extent([new Date(start), new Date(end)]));
+          brushed();
+        }
       }
     },
 

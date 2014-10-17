@@ -197,10 +197,10 @@ app.factory('LayerGroup', [
 
           if (s.initiated) {
 
-            // Possibility 1: we progress the animation to the next frame:
-            console.log('Anim progressing!');
+            if (!timeState.animation.playing) {
+              this.stopAnimation(timeState);
 
-            if (overlayIndex !== undefined && overlayIndex !== s.previousFrame) {
+            } else if (overlayIndex !== undefined && overlayIndex !== s.previousFrame) {
 
               var oldOverlay = s.imageOverlays[s.previousFrame],
                   newOverlay = s.imageOverlays[overlayIndex];
@@ -239,10 +239,9 @@ app.factory('LayerGroup', [
 
             } else if (overlayIndex === undefined) {
 
-              console.log('????');
-
               if (timeState.animation.playing) {
-                s.restart = timeState.animation.playing;
+                s.restart = true;
+                s.loadingRaster = 0;
               }
 
               if (timeState.playPauseAnimation) {
@@ -253,7 +252,6 @@ app.factory('LayerGroup', [
           } else {
 
             // Possibility 2: we (re-)start the animation:
-            console.log('Anim startUp!');
 
             this._animStart(temporalWMSLayer);
             overlays = this._animState.imageOverlays;
@@ -269,7 +267,6 @@ app.factory('LayerGroup', [
             this._animGetImages(timeState);
           }
         } else {
-          console.log('KILL ANIM!..');
 
           this._animState.initiated = false;
           overlayIndex = undefined;
@@ -364,8 +361,6 @@ app.factory('LayerGroup', [
           );
           s.nxtDate += s.step;
         }
-
-        //s.imageOverlays[0].setOpacity(0.7);
       },
 
       _getTemporalWMSLayer: function () {
@@ -390,6 +385,7 @@ app.factory('LayerGroup', [
         this._animGetImages(timeState);
         this._animState.imageOverlays[0].setOpacity(0.7);
         this._animState.previousFrame = 0;
+
       }
     };
 
