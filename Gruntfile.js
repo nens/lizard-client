@@ -16,260 +16,479 @@
 
 */
 
+var proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
+var modRewrite = require('connect-modrewrite');
+
 module.exports = function (grunt) {
   // loads all the grunt dependencies found in package.json
   require('load-grunt-tasks')(grunt);
   require('time-grunt')(grunt);
 
-  var lizard_nxt_dir = '';
+  grunt.loadNpmTasks('grunt-connect-proxy');
+
+  var appConfig = {
+    app: require('./bower.json').appPath,
+    dist: 'dist'
+  };
 
 
   // Project configuration.
   grunt.initConfig({
-    nxt_dir: {
-      base: lizard_nxt_dir,
-      test: lizard_nxt_dir + 'test',
-      vendor: lizard_nxt_dir + 'vendor',
-      src: lizard_nxt_dir + 'source',
-      dist: lizard_nxt_dir + 'dist'
+
+    yeoman: appConfig,
+
+    // Watches files for changes and runs tasks based on the changed files
+    watch: {
+      bower: {
+        files: ['bower.json'],
+        tasks: ['wiredep']
+      },
+      js: {
+        files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
+        tasks: ['newer:jshint:all'],
+        options: {
+          livereload: '<%= connect.options.livereload %>'
+        }
+      },
+      jstemplates: {
+        files: ['<%= yeoman.app %>/scripts/templates/{,*/}*.html'],
+        tasks: ['html2js']
+      },
+      jsTest: {
+        files: ['test/spec/{,*/}*.js'],
+        tasks: ['newer:jshint:test', 'karma']
+      },
+      styles: {
+        files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
+        tasks: ['newer:copy:styles', 'autoprefixer']
+      },
+      gruntfile: {
+        files: ['Gruntfile.js']
+      },
+      livereload: {
+        options: {
+          livereload: '<%= connect.options.livereload %>'
+        },
+        files: [
+          '<%= yeoman.app %>/{,*/}*.html',
+          '.tmp/styles/{,*/}*.css',
+          '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+        ]
+       }
     },
-  // converts html templates to Angular modules
+
+    // The actual grunt server settings
+    connect: {
+      options: {
+        port: 9000,
+        // Change this to '0.0.0.0' to access the server from outside.
+        hostname: 'localhost',
+        livereload: 35729
+      },
+      livereload: {
+        options: {
+          open: true,
+          middleware: function (connect, options) {
+            return [
+              modRewrite([
+                '!\\api|\\accounts|\\lizard-bs\.js|\\\/scripts\/|\\.html|\\.js|\\.svg|\\.css|\\.woff|\\.png$ /index.html [L]',
+                '^/api/ http://localhost:8000/api/ [P]',
+                '^/accounts/ http://localhost:8000/accounts/ [P]',
+                '^/lizard-bs.js http://localhost:8000/lizard-bs.js [P]',
+                ]),
+              connect.static('.tmp'),
+              connect().use(
+                '/vendor',
+                connect.static('./vendor')
+              ),
+              connect.static(appConfig.app)
+            ];
+          }
+        }
+      },
+
+      test: {
+        options: {
+          port: 9001,
+          middleware: function (connect) {
+            return [
+              connect.static('.tmp'),
+              connect.static('test'),
+              connect().use(
+                'vendor',
+                connect.static('./vendor')
+              ),
+              connect.static(appConfig.app),
+              proxySnippet
+            ];
+          }
+        }
+      },
+      dist: {
+        options: {
+          open: true,
+          base: '<%= yeoman.dist %>'
+        }
+      }
+    },
+
     html2js: {
       options: {
         rename: function (moduleName) {
-          return moduleName.split('app/')[1];
+          return moduleName.split('scripts/')[1];
         }
       },
       main: {
-        src: ['<%= nxt_dir.src %>/app/templates/*.html'],
-        dest: '<%= nxt_dir.src %>/app/templates/templates.js'
+        src: ['<%= yeoman.app %>/scripts/templates/*.html'],
+        dest: '<%= yeoman.app %>/scripts/templates/templates.js'
       },
     },
-    // variables to be used in other parts of grunt file
-    vendorfiles:
-      [
-        //'<%= nxt_dir.vendor %>/bootstrap/bootstrap.js',  // TYPO?!
-        '<%= nxt_dir.vendor %>/bootstrap/js/bootstrap.js', // CORRECTION
-        '<%= nxt_dir.vendor %>/d3/d3.js',
-        '<%= nxt_dir.vendor %>/leaflet-dist/dist/leaflet.js',
-        '<%= nxt_dir.vendor %>/angular-ui-bootstrap/ui-bootstrap-tpls-0.10.0.min.js',
-        '<%= nxt_dir.vendor %>/lodash/dist/lodash.min.js',
-        '<%= nxt_dir.vendor %>/raven-js/dist/raven.min.js'
-      ],
-      testfiles: [
-        '<%= nxt_dir.vendor %>/angular-mocks/angular-mocks.js',
-        '<%= nxt_dir.test %>/mocks.js'
-      ],
-      angularfiles:
-      [
-        '<%= nxt_dir.vendor %>/jquery/jquery.js',
-        '<%= nxt_dir.vendor %>/angular/angular.js',
-        '<%= nxt_dir.vendor %>/restangular/dist/restangular.min.js',
-        '<%= nxt_dir.vendor %>/ui-utils/ui-utils.js',
-        '<%= nxt_dir.vendor %>/angular-sanitize/angular-sanitize.min.js',
-        '<%= nxt_dir.vendor %>/ng-csv/build/ng-csv.min.js',
-        '<%= nxt_dir.vendor %>/ng-table/ng-table.min.js',
-      ],
-      appfiles: [
-        '<%= nxt_dir.src %>/app/lizard-nxt.js',
-        '<%= nxt_dir.src %>/app/services/**/*.js',
-        '<%= nxt_dir.src %>/app/lizard-nxt-filters.js',
-        '<%= nxt_dir.src %>/app/directives/**/*.js',
-        '<%= nxt_dir.src %>/app/controllers/**/*.js',
-        '<%= nxt_dir.src %>/app/templates/templates.js',
-        '<%= nxt_dir.src %>/app/lib/TileLayer.GeoJSONd3.js',
-        '<%= nxt_dir.src %>/app/lib/Layer.GeoJSONd3.js',
-        '<%= nxt_dir.src %>/app/lib/leaflet-utfgrid-lizard.js',
-        '<%= nxt_dir.src %>/app/lib/utils.js',
-      ],
-      /*
-      can be run while developing
-      watches:
-        * JS appfiles and specs -> runs tests
-        * CSS files -> runs minification
-        * HTML files -> runs html2js
-      */
-      watch: {
-        tests: {
-          files: [
-            '<%= appfiles %>',
-            '<%= nxt_dir.test %>/**/*.js'
-          ],
-          tasks: ['test', 'doxx']
-        },
-        styles: {
-          files: ['<%= nxt_dir.src %>/assets/css/{,*/}*.css'],
-          tasks: ['cssmin:dist']
-        },
-        jstemplates: {
-          files: ['<%= nxt_dir.src %>/app/templates/{,*/}*.html'],
-          tasks: ['html2js']
-        }
+
+    // Make sure code styles are up to par and there are no obvious mistakes
+    jshint: {
+      options: {
+        jshintrc: '.jshintrc',
+        reporter: 'jslint',
+        reporterOutput: 'qa/jshint.xml',
+        force: true
       },
-      // destroys dist folder (e.g. before regenerating it)
-      clean: {
-        dist: {
-          files: [{
-            dot: true,
-            src: [
-              '.tmp',
-              '<%= nxt_dir.dist %>/*',
-              '!<%= nxt_dir.dist %>/.git*'
-            ]
-          }]
-        }
+      all: {
+        src: [
+          'Gruntfile.js',
+          '<%= yeoman.app %>/scripts/{,*/}*.js',
+          '!<%= yeoman.app %>/lib/leaflet-utfgrid-lizard.js',
+          '!<%= yeoman.app %>/lib/leaflet.contours-layer.js',
+          '!<%= yeoman.app %>/lib/TileLayer.GeoJSONd3.js',
+          '!<%= yeoman.app %>/templates/templates.js'
+        ]
       },
-      // minifies all the css
-      cssmin: {
-        dist: {
-          files: {
-            '<%= nxt_dir.dist %>/css/nxt.css' : [
-              '<%= nxt_dir.src %>/assets/css/graph.css',
-              '<%= nxt_dir.src %>/assets/css/omnibox.css',
-              '<%= nxt_dir.src %>/assets/css/nxt_base.css'
-            ],
-            '<%= nxt_dir.dist %>/css/vendor.css' : [
-              '<%= nxt_dir.vendor %>/bootstrap/dist/css/bootstrap.css',
-              '<%= nxt_dir.vendor %>/leaflet-dist/dist/leaflet.css',
-              '<%= nxt_dir.vendor %>/font-awesome/css/font-awesome.min.css',
-              '<%= nxt_dir.vendor %>/ng-table/ng-table.min.css',
-              '<%= nxt_dir.vendor %>/lizard-iconfont/lizard/dest/css/Lizard.css'
-            ]
+      // test: {
+      //   options: {
+      //     jshintrc: 'test/.jshintrc'
+      //   },
+      //   src: ['test/spec/{,*/}*.js']
+      // }
+    },
+
+    // Empties folders to start fresh
+    clean: {
+      dist: {
+        files: [{
+          dot: true,
+          src: [
+            '.tmp',
+            '<%= yeoman.dist %>/{,*/}*',
+            '!<%= yeoman.dist %>/.git*'
+          ]
+        }]
+      },
+      server: '.tmp'
+    },
+
+    // Add vendor prefixed styles
+    autoprefixer: {
+      options: {
+        browsers: ['last 1 version']
+      },
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '.tmp/styles/',
+          src: '{,*/}*.css',
+          dest: '.tmp/styles/'
+        }]
+      }
+    },
+
+    // Automatically inject Bower components into the app
+    wiredep: {
+      app: {
+        src: ['<%= yeoman.app %>/index.html'],
+        ignorePath:  /\.\./
+      },
+      test: {
+        src: 'test/karma.conf.js',
+        ignorePath:  /\.\.\//,
+        fileTypes: {
+          js: {
+            block: /(([\s\t]*)\/\/\s*bower:*(\S*))(\n|\r|.)*?(\/\/\s*endbower)/gi,
+            detect: {
+              js: /'(.*\.js)'/gi
+            },
+            replace: {
+              js: '\'{{filePath}}\','
+            }
           }
         }
-      },
+      }
+    },
 
+    // Renames files for browser caching purposes
+    filerev: {
+      dist: {
+        src: [
+          '<%= yeoman.dist %>/scripts/{,*/}*.js',
+          '<%= yeoman.dist %>/styles/{,*/}*.css',
+          '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+          '<%= yeoman.dist %>/styles/fonts/*'
+        ]
+      }
+    },
 
-        // produces docs
-      doxx: {
-        all: {
-          src: 'source/',
-          target: 'doc'
+    // Reads HTML for usemin blocks to enable smart builds that automatically
+    // concat, minify and revision files. Creates configurations in memory so
+    // additional tasks can operate on them
+    useminPrepare: {
+      html: '<%= yeoman.app %>/index.html',
+      options: {
+        dest: '<%= yeoman.dist %>',
+        flow: {
+          html: {
+            steps: {
+              js: ['concat'],
+              css: ['cssmin']
+            },
+            post: {}
+          }
         }
-      },
-      // produces linting results
-      jshint: {
-        all: [
-          // 'Gruntfile.js',
-          '<%= nxt_dir.src %>/app/**/*.js',
-          '!<%= nxt_dir.src %>/app/lib/leaflet-utfgrid-lizard.js',
-          '!<%= nxt_dir.src %>/app/lib/leaflet.contours-layer.js',
-          '!<%= nxt_dir.src %>/app/lib/TileLayer.GeoJSONd3.js',
-          '!<%= nxt_dir.src %>/app/templates/templates.js'
-        ],
+      }
+    },
+
+    replace: {
+      dist: {
+        src: ['dist/*.html'],
+        overwrite: true,                 // overwrite matched source files
+        replacements: [{
+          from: '/styles/',
+          to: '/static/client/styles/'
+        },{
+          from: '/scripts/',
+          to: '/static/client/scripts/'
+        }]
+      }
+    },
+
+    // Performs rewrites based on filerev and the useminPrepare configuration
+    usemin: {
+      html: ['<%= yeoman.dist %>/{,*/}*.html'],
+      css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
+      options: {
+        assetsDirs: ['<%= yeoman.dist %>','<%= yeoman.dist %>/images']
+      }
+    },
+
+
+    // The following *-min tasks will produce minified files in the dist folder
+    // By default, your `index.html`'s <!-- Usemin block --> will take care of
+    // minification. These next options are pre-configured if you do not wish
+    // to use the Usemin blocks.
+    // cssmin: {
+    //   dist: {
+    //     files: {
+    //       '<%= yeoman.dist %>/styles/main.css': [
+    //         '.tmp/styles/{,*/}*.css'
+    //       ]
+    //     }
+    //   }
+    // },
+    // uglify: {
+    //   dist: {
+    //     files: {
+    //       '<%= yeoman.dist %>/scripts/scripts.js': [
+    //         '<%= yeoman.dist %>/scripts/scripts.js'
+    //       ]
+    //     }
+    //   }
+    // },
+    // concat: {
+    //   dist: {}
+    // },
+
+    imagemin: {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.app %>/images',
+          src: '{,*/}*.{png,jpg,jpeg,gif}',
+          dest: '<%= yeoman.dist %>/images'
+        }]
+      }
+    },
+
+    svgmin: {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.app %>/images',
+          src: '{,*/}*.svg',
+          dest: '<%= yeoman.dist %>/images'
+        }]
+      }
+    },
+
+    htmlmin: {
+      dist: {
         options: {
-          jshintrc: '.jshintrc',
-          reporter: 'jslint',
-          reporterOutput: 'qa/jshint.xml',
-          force: true // finishes jshint instead of `failing`.
+          collapseWhitespace: true,
+          conservativeCollapse: true,
+          collapseBooleanAttributes: true,
+          removeCommentsFromCDATA: true,
+          removeOptionalTags: true
+        },
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.dist %>',
+          src: ['*.html', 'views/{,*/}*.html'],
+          dest: '<%= yeoman.dist %>'
+        }]
+      }
+    },
+
+    // ng-annotate tries to make the code safe for minification automatically
+    // by using the Angular long form for dependency injection.
+    ngAnnotate: {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '.tmp/concat/scripts',
+          src: ['*.js', '!oldieshim.js'],
+          dest: '.tmp/concat/scripts'
+        }]
+      }
+    },
+
+    // Replace Google CDN references
+    cdnify: {
+      dist: {
+        html: ['<%= yeoman.dist %>/*.html']
+      }
+    },
+
+    // Copies remaining files to places other tasks can use
+    copy: {
+      dist: {
+        files: [{
+          expand: true,
+          dot: true,
+          cwd: '<%= yeoman.app %>',
+          dest: '<%= yeoman.dist %>',
+          src: [
+            '*.{ico,png,txt}',
+            '.htaccess',
+            '*.html',
+            'views/{,*/}*.html',
+            'images/{,*/}*.{webp}',
+            'fonts/*'
+          ]
+        }, {
+          expand: true,
+          cwd: '.tmp/images',
+          dest: '<%= yeoman.dist %>/images',
+          src: ['generated/*']
+        }, {
+          expand: true,
+          cwd: 'vendor/font-awesome',
+          src: 'fonts/*',
+          dest: '<%= yeoman.dist %>'
         }
+         ]
       },
-      // test suite (suite is pronounced as sweet, not suit)
-      jasmine: {
-        pivotal: {
-          src: ['<%= angularfiles %>',
-                '<%= vendorfiles %>',
-                '<%= appfiles %>',
-                '<%= testfiles %>'
-              ],
-          options: {
-            specs: [
-              '<%= nxt_dir.test %>/**/*.js',
-              '!<%= nxt_dir.test %>/mocks.js'
-            ],
-            junit: {
-              path: 'qa/junit'
-            }
-          }
-        },
-        // istanbul produces coverage reports in xml (cobertura)
-        // needs the same input as jasmine stuff
-        istanbul: {
-          src: '<%= jasmine.pivotal.src %>',
-          options: {
-            specs: '<%= jasmine.pivotal.options.specs %>',
-            template: require('grunt-template-jasmine-istanbul'),
-            templateOptions: {
-              coverage: 'qa/coverage/json/coverage.json',
-              report: [
-                  {type: 'html', options: {dir: 'qa/coverage/html'}},
-                  {type: 'cobertura', options: {dir: 'qa/'}},
-                  {type: 'text-summary'}
-                ]
-              }
-            }
-          },
-        },
-        concat: {
-          dist: {
-            files: {
-              '<%= nxt_dir.dist %>/js/nxt.js': [
-                '<%= appfiles %>'
-              ],
-              '<%= nxt_dir.dist %>/js/ng.js': [
-                '<%= angularfiles %>'
-              ],
-              '<%= nxt_dir.dist %>/js/vendor.js': [
-                '<%= vendorfiles %>'
-              ]
-            }
-          }
-        },
-        copy: {
-          dist: {
-            files: [{
-              expand: true,
-              dot: true,
-              cwd: '<%= nxt_dir.vendor %>/font-awesome/fonts/',
-              dest: '<%= nxt_dir.dist %>/fonts',
-              src: [
-                '*.*'
-              ]
-            }, {
-              expand: true,
-              dot: true,
-              cwd: '<%= nxt_dir.vendor %>/lizard-iconfont/lizard/dest/fonts/',
-              dest: '<%= nxt_dir.dist %>/fonts',
-              src: [
-                '*.*'
-              ]
-            }, {
-              expand: true,
-              cwd: '<%= nxt_dir.src %>/assets/images',
-              dest: '<%= nxt_dir.dist %>/images',
-              src: [
-                '*'
-              ]
-            }]
-          }
-        }
-      });
+      styles: {
+        expand: true,
+        cwd: '<%= yeoman.app %>/styles',
+        dest: '.tmp/styles/',
+        src: '{,*/}*.css'
+      }
+    },
+
+    // produces docs
+    doxx: {
+      all: {
+        src: 'app/',
+        target: 'doc'
+      }
+    },
+
+    // Run some tasks in parallel to speed up the build process
+    concurrent: {
+      server: [
+        'copy:styles'
+      ],
+      test: [
+        'copy:styles'
+      ],
+      dist: [
+        'copy:styles',
+        'imagemin',
+        'svgmin'
+      ]
+    },
+
+    // Test settings
+    karma: {
+      unit: {
+        configFile: 'test/karma.conf.js',
+        singleRun: true,
+      },
+    }
+  });
+
+
+  grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
+    if (target === 'dist') {
+      return grunt.task.run(['build', 'connect:dist:keepalive']);
+    }
+
+    grunt.task.run([
+      'clean:server',
+      'html2js',
+      'wiredep',
+      'configureProxies',
+      'concurrent:server',
+      'autoprefixer',
+      'connect:livereload',
+      'watch'
+    ]);
+  });
+
+
+  grunt.registerTask('server', 'DEPRECATED TASK. Use the "serve" task instead', function (target) {
+    grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
+    grunt.task.run(['serve:' + target]);
+  });
 
   grunt.registerTask('test', [
     'html2js',
-    'jasmine'
+    'clean:server',
+    'concurrent:test',
+    'autoprefixer',
+    'connect:test',
+    'karma'
   ]);
-  grunt.registerTask('coverage', [
-    'jasmine:istanbul'
-  ]);
+
   grunt.registerTask('build', [
     'clean:dist',
-    'cssmin',
+    'wiredep',
+    'useminPrepare',
     'html2js',
+    'concurrent:dist',
+    'autoprefixer',
     'concat',
+    'ngAnnotate',
     'copy:dist',
+    'cdnify',
+    'cssmin',
+    // 'uglify',
+    'filerev',
+    'usemin',
+    'htmlmin',
+    'replace',
     'doxx'
   ]);
-  grunt.registerTask('plakhetaanelkaar', [
-    'clean:dist',
-    'cssmin',
-    'concat',
-    'copy:dist'
-  ]);
-  grunt.registerTask('dev', [
-    'watch'
-  ]);
+
   grunt.registerTask('default', [
+    'newer:jshint',
+    'test',
     'build'
   ]);
 };
