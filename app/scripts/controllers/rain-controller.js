@@ -1,8 +1,6 @@
 angular.module('lizard-nxt')
   .controller("rain", ['$scope', function ($scope) {
 
-  $scope.rain = $scope.point.rain;
-
   /**
    * Format the CSV (exporting rain data for a point in space/interval in
    * time) in a way that makes it comprehensible for les autres.

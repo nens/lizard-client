@@ -2,8 +2,8 @@
   <div ng-repeat="(slug, lg) in box.content" id="card" class="card active">
     <div class="card-content" id="card-content" ng-switch="slug">
       <cardattributes ng-switch-when="waterchain" waterchain="lg"></cardattributes>
-      <timeseries ng-switch-when="timeseries" timeserires="lg"></timeseries>
-      <rain ng-switch-when="rain" rain="lg"></rain>
+      <timeseries ng-switch-when="timeseries" timeseries="lg"></timeseries>
+      <rain ng-switch-when="rain"></rain>
       <defaultpoint ng-switch-default lg="lg" map-state="mapState"></defaultpoint>
     </div>
   </div>
