@@ -18,7 +18,7 @@ angular.module('lizard-nxt')
    *              logic in the child controllers.
      * @param  {L.LatLng} here | L.Bounds | [L.LatLng]
      */
-    $scope.fillBox = function (geom, start, end) {
+    $scope.fillBox = function (options) {
 
       var promises = [];
 
@@ -67,7 +67,7 @@ angular.module('lizard-nxt')
       };
 
       angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
-        promises.push(layerGroup.getData({geom: geom, start: start, end: end})
+        promises.push(layerGroup.getData(options)
           .then(doneFn, doneFn, putDataOnScope));
       });
 

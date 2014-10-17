@@ -17,10 +17,10 @@
  */
 
 angular.module('lizard-nxt')
-  .controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesService', 'ClickFeedbackService',
-  function ($scope, $q, LeafletService, TimeseriesService, ClickFeedbackService) {
+  .controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesService', 'ClickFeedbackService', 'UtilService',
+  function ($scope, $q, LeafletService, TimeseriesService, ClickFeedbackService, UtilService) {
 
-
+    var GRAPH_WIDTH = 600;
     $scope.box.content = {};
 
     /**
@@ -30,16 +30,19 @@ angular.module('lizard-nxt')
      */
     var fillpoint = function (here) {
       ClickFeedbackService.drawClickInSpace($scope.mapState, here);
-      var promises = $scope.fillBox(
-        here,
-        $scope.timeState.start,
-        $scope.timeState.end
-      );
+      var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, GRAPH_WIDTH);
+      var promises = $scope.fillBox({
+        geom: here,
+        start: $scope.timeState.start,
+        end: $scope.timeState.end,
+        aggWindow: aggWindow
+      });
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
           if (response.data && response.data.id && response.data.entity_name) {
             getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
           }
+          $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
         });
       });
       // Draw feedback when all promises resolved
