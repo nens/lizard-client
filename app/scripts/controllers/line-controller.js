@@ -10,17 +10,9 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf app.areaCtrl
-     * @description
-     * Loops over all layers to request aggregation data for all
-     * active layers with an aggregation type.
-     *
-     * @param  {object} bounds   mapState.bounds, containing
-     *                                  leaflet bounds
-     * @param  {object} layers   mapState.layers, containing
-     *                                  nxt definition of layers
-     * @param  {object} area area object of this
-     *                                  ctrl
+     * @memberOf app.lineCtrl
+     * @description Loops over all layergroups to request data
+     * @param  array of L.LatLng objects describing the line.
      */
     var fillLine = function (line) {
       //TODO draw feedback when loading data
@@ -30,6 +22,8 @@ angular.module('lizard-nxt')
           if (response.data && response.layerSlug === 'ahn2/wss') {
             $scope.box.content[response.layerGroupSlug]
               .layers[response.layerSlug]
+              // Since the data is not properly formatted in the back
+              // we convert it from degrees to meters here
               .data = UtilService.dataConvertToMeters(response.data);
           }
         });

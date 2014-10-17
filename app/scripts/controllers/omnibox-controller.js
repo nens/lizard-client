@@ -9,6 +9,13 @@ angular.module('lizard-nxt')
     /**
      * @function
      * @memberOf app.omnibox
+     * @description Loops over all layergroups to request data
+     *              for the provided geom. When finished $scope.
+     *              box.content contains an object for every
+     *              active layergroup and an item in box.content
+     *              .<layergroup>.layer for every piece of data.
+     *              The promises are returned to add specific
+   *              logic in the child controllers.
      * @param  {L.LatLng} here | L.Bounds | [L.LatLng]
      */
     $scope.fillBox = function (geom) {
