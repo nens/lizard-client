@@ -268,7 +268,6 @@ angular.module('lizard-nxt')
     /**
      * Get aggregate data for current temporal raster.
      */
-<<<<<<< HEAD:source/app/directives/timeline-directives.js
     // var getTemporalRasterData = function () {
     //   var start = scope.timeState.start;
     //   var stop = scope.timeState.end;
@@ -293,27 +292,6 @@ angular.module('lizard-nxt')
     //     });
     //   }
     // };
-=======
-    var getTemporalRasterData = function () {
-      var start = scope.timeState.start;
-      var stop = scope.timeState.end;
-      var bounds = scope.mapState.bounds;
-      var activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
-
-      if (!!activeTemporalLayer && activeTemporalLayer.slug === 'rain') {
-        // width of timeline
-        var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
-        // TODO: temporal hack to make cumulative rain graph working;
-        // refactored with timeline update
-        RasterService.getData(activeTemporalLayer._layers[2],
-          {geom: bounds, start: start, end: stop, agg: 'none', aggWindow: aggWindow})
-        .then(function (response) {
-          RasterService.setIntensityData(response);
-          scope.raster.changed = Date.now();
-        });
-      }
-    };
->>>>>>> d244903058a0f4f82ff99a6950bc99894d77e78d:app/scripts/directives/timeline-directives.js
 
     //if (scope.mapState.getActiveTemporalLayer()) { getTemporalRasterData(); }
 
