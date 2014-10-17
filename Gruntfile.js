@@ -148,7 +148,9 @@ module.exports = function (grunt) {
     jshint: {
       options: {
         jshintrc: '.jshintrc',
-        reporter: require('jshint-stylish')
+        reporter: 'jslint',
+        reporterOutput: 'qa/jshint.xml',
+        force: true
       },
       all: {
         src: [
@@ -160,12 +162,12 @@ module.exports = function (grunt) {
           '!<%= yeoman.app %>/templates/templates.js'
         ]
       },
-      test: {
-        options: {
-          jshintrc: 'test/.jshintrc'
-        },
-        src: ['test/spec/{,*/}*.js']
-      }
+      // test: {
+      //   options: {
+      //     jshintrc: 'test/.jshintrc'
+      //   },
+      //   src: ['test/spec/{,*/}*.js']
+      // }
     },
 
     // Empties folders to start fresh
@@ -467,6 +469,7 @@ module.exports = function (grunt) {
     'clean:dist',
     'wiredep',
     'useminPrepare',
+    'html2js',
     'concurrent:dist',
     'autoprefixer',
     'concat',

@@ -65,8 +65,25 @@ module.exports = function(config) {
     plugins: [
       'karma-phantomjs-launcher',
       'karma-chrome-launcher',
-      'karma-jasmine'
+      'karma-jasmine',
+      'karma-coverage',
+      'karma-junit-reporter'
     ],
+
+    reporters: ['progress', 'coverage', 'junit'],
+
+    junitReporter: {
+      outputFile: 'qa/junit.xml',
+      suite: ''
+    },
+
+    coverageReporter: {
+      reporters: [
+        {type: 'html', dir: 'qa/coverage/html'},
+        {type: 'cobertura', dir: 'qa/'},
+        {type: 'text-summary', dir: 'qa/'}
+      ]
+    },
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit

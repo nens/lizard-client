@@ -1,3 +1,5 @@
+"use strict";
+
 describe('Testing LineCtrl', function () {
   var $rootScope,
     $controller,
@@ -36,14 +38,6 @@ describe('Testing LineCtrl', function () {
     var MockClickFeedbackService = {
       emptyClickLayer: function () {return true; },
       drawLine: function () {return true; }
-    };
-
-    boxScope.mapState.layerGroups.getData = function (bounds) {
-      var dataProm = {};
-      dataProm.then = function (arg, anotherarg, callback) {
-        callback(result);
-      };
-      return dataProm;
     };
 
     $controller('OmniboxCtrl', {$scope: boxScope});
