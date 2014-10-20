@@ -29,11 +29,8 @@ angular.module('lizard-nxt')
    * @desc Set $scope.timeState.animation.enabled to true or false.
    */
   $scope.timeState.enableAnimation = function (toggle) {
-    if ($scope.timeState.animation.enabled || toggle === "off") {
-      $scope.timeState.animation.enabled = false;
-    } else {
-      $scope.timeState.animation.enabled = true;
-    }
+    $scope.timeState.animation.enabled =
+      !($scope.timeState.animation.enabled || toggle === "off");
   };
 
   /**
@@ -42,13 +39,16 @@ angular.module('lizard-nxt')
    * Set $scope.timeState.animation.playing to true or false.
    */
   $scope.timeState.playPauseAnimation = function (toggle) {
-    if ($scope.timeState.animation.playing || toggle === "off") {
-      $scope.timeState.animation.playing = false;
+
+    var anim = $scope.timeState.animation;
+
+    if (anim.playing || toggle === "off") {
+      anim.playing = false;
     } else {
-      if (!$scope.timeState.animation.enabled) {
+      if (!anim.enabled) {
         $scope.timeState.enableAnimation();
       }
-      $scope.timeState.animation.playing = true;
+      anim.playing = true;
       window.requestAnimationFrame(step);
     }
   };
@@ -63,16 +63,17 @@ angular.module('lizard-nxt')
 
     var currentInterval = $scope.timeState.end - $scope.timeState.start;
     var timeStep;
+    var activeTemporalLG = $scope.mapState.getActiveTemporalLayerGroup();
 
     // hack to slow down animation for rasters to min resolution
 
-    if ($scope.mapState.getActiveTemporalLayer()) {
+    if (activeTemporalLG) {
 
       // Divide by ten to make the movement in the timeline smooth.
 
-      timeStep = RasterService.rasterInfo($scope.mapState.getActiveTemporalLayer().slug).timeResolution / 10;
+      timeStep = RasterService.getTimeResolution(activeTemporalLG);
       $scope.timeState.animation.minLag =
-        RasterService.rasterInfo($scope.mapState.getActiveTemporalLayer().slug).minTimeBetweenFrames / 10;
+        RasterService.getMinTimeBetweenFrames(activeTemporalLG);
 
     } else {
 

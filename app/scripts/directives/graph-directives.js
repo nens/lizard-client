@@ -248,7 +248,6 @@ angular.module('lizard-nxt')
     link: link,
     restrict: 'A'
   };
-
 }]);
 
 
@@ -268,10 +267,10 @@ angular.module('lizard-nxt')
   var link = function (scope, element, attrs, graphCtrl) {
 
     var data = graphCtrl.data,
-    labels = graphCtrl.labels,
-    filter = graphCtrl.yfilter,
-    graph = graphCtrl.graph,
-    keys = graphCtrl.keys;
+        labels = graphCtrl.labels,
+        filter = graphCtrl.yfilter,
+        graph = graphCtrl.graph,
+        keys = graphCtrl.keys;
 
     // Apply the filter on the ylabel to go from aggWindow
     // in ms to a nice 'mm/dag' label. This could be migrated

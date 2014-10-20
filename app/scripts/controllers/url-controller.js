@@ -68,7 +68,7 @@ angular.module('lizard-nxt')
         angular.forEach(activeLayerSlugs, function (layerGroupSlug) {
           var lg = $scope.mapState.layerGroups[layerGroupSlug];
           if (lg) {
-            $scope.mapState.toggleLayerGroup(lg, $scope.mapState.layerGroups);
+            $scope.mapState.toggleLayerGroup(lg);
           }
         });
         // Or layerGroups are not on url, turn default layerGroups on
@@ -77,7 +77,6 @@ angular.module('lizard-nxt')
         $scope.mapState.layerGroupsChanged = Date.now();
       }
     };
-
 
    /**
     * @function

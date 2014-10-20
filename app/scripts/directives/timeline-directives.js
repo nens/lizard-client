@@ -52,9 +52,6 @@ angular.module('lizard-nxt')
        * Update zoomEnded to trigger new call for raster aggregate.
        */
       zoomEndFn: function () {
-        if (scope.mapState.getActiveTemporalLayer()) {
-          getTemporalRasterData();
-        }
         scope.$apply(function () {
           scope.timeState.zoomEnded = Date.now();
         });
@@ -95,7 +92,7 @@ angular.module('lizard-nxt')
     // Activate zoom listener
     timeline.addZoomListener();
 
-    if (scope.mapState.getActiveTemporalLayer()) {
+    if (scope.mapState.getActiveTemporalLayerGroup()) {
       // Activate click listener
       timeline.addClickListener();
     }
@@ -105,15 +102,15 @@ angular.module('lizard-nxt')
      */
     var updateTimelineHeight = function (newDim, dim, nEventTypes) {
       var eventHeight;
-      if (scope.mapState.getActiveTemporalLayer()) {
+      if (scope.mapState.getActiveTemporalLayerGroup()) {
         eventHeight = nEventTypes * dim.events;
-        eventHeight = eventHeight > 0 ? eventHeight: 0; // Default to 0px
+        eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
         newDim.height = dim.height +
                                dim.bars +
                                eventHeight;
       } else {
         eventHeight = (nEventTypes - 1) * dim.events;
-        eventHeight = eventHeight > 0 ? eventHeight: 0; // Default to 0px
+        eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
         newDim.height = dim.height + eventHeight;
       }
       timeline.resize(newDim);
@@ -148,7 +145,7 @@ angular.module('lizard-nxt')
      */
     scope.$watch('raster.changed', function (n, o) {
       if (n === o) { return true; }
-      if (scope.mapState.getActiveTemporalLayer()) {
+      if (scope.mapState.getActiveTemporalLayerGroup()) {
         updateTimelineHeight(angular.copy(timeline.dimensions),
           dimensions, scope.events.types.count);
         timeline.drawBars(RasterService.getIntensityData());
@@ -180,10 +177,12 @@ angular.module('lizard-nxt')
         timeline.drawEventsContainedInBounds(scope.mapState.bounds);
         EventService.countCurrentEvents(scope);
       }
+
       // TODO: don't check a function, check a boolean.
-      if (scope.mapState.getActiveTemporalLayer()) {
-        getTemporalRasterData();
-      }
+      // var lg = scope.mapState.getActiveTemporalLayerGroup();
+      // if (lg) {
+      //   getTemporalRasterData();
+      // }
     });
 
     /**
@@ -205,7 +204,6 @@ angular.module('lizard-nxt')
       if (scope.timeState.animation.enabled) {
         // Cancel zoom behavior
         timeline.removeZoomListener();
-
         var start;
         var end;
         if (scope.timeState.animation.start !== undefined
@@ -216,14 +214,12 @@ angular.module('lizard-nxt')
           end = scope.timeState.at;
         } else {
           var buffer = (scope.timeState.end - scope.timeState.start) / 100;
-          end = scope.timeState.at;
           start = scope.timeState.at - buffer;
+          end = scope.timeState.at;
         }
-
         // Draw the brush
         timeline.drawBrush(start, end);
-      }
-      if (!scope.timeState.animation.enabled) {
+      } else {
         scope.timeState.animation.playing = false;
         timeline.removeBrush();
         timeline.addZoomListener();
@@ -255,9 +251,9 @@ angular.module('lizard-nxt')
      *
      * TODO: this is still hard coded to rain: setIntensityData
      */
-    scope.$watch('mapState.getActiveTemporalLayer()', function (n, o) {
-      if (scope.mapState.getActiveTemporalLayer()) {
-        getTemporalRasterData();
+    scope.$watch('mapState.getActiveTemporalLayerGroup()', function (n, o) {
+      if (scope.mapState.getActiveTemporalLayerGroup()) {
+        // getTemporalRasterData();
         timeline.addClickListener();
       } else {
         timeline.removeClickListener();
@@ -274,23 +270,42 @@ angular.module('lizard-nxt')
       var start = scope.timeState.start;
       var stop = scope.timeState.end;
       var bounds = scope.mapState.bounds;
-      var activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
-
-      if (!!activeTemporalLayer && activeTemporalLayer.slug === 'rain') {
+      var activeTemporalLG = scope.mapState.getActiveTemporalLayerGroup();
+      if (!!activeTemporalLG && activeTemporalLG.slug === 'rain') {
         // width of timeline
         var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
         // TODO: temporal hack to make cumulative rain graph working;
         // refactored with timeline update
-        RasterService.getData(activeTemporalLayer._layers[2],
-          {geom: bounds, start: start, end: stop, agg: 'none', aggWindow: aggWindow})
-        .then(function (response) {
+
+        var wantedLayer;
+        angular.forEach(activeTemporalLG._layers, function (layer) {
+          console.log('checking layers, current:', layer)
+          if (layer.slug === 'demo:radar') {
+            console.log('..thats the one!');
+            wantedLayer = layer;
+          }
+        });
+
+        RasterService.getData(
+          wantedLayer,
+          {
+            geom: bounds,
+            start: start,
+            end: stop,
+            agg: 'none',
+            aggWindow: aggWindow
+          }
+        ).then(function (response) {
+
+          console.log('response:', response);
+
           RasterService.setIntensityData(response);
           scope.raster.changed = Date.now();
         });
       }
     };
 
-    if (scope.mapState.getActiveTemporalLayer()) { getTemporalRasterData(); }
+    //if (scope.mapState.getActiveTemporalLayer()) { getTemporalRasterData(); }
 
     window.onresize = function () {
 
