@@ -87,8 +87,6 @@ angular.module('lizard-nxt')
       */
       getData: function (options) {
 
-        console.log('[F] getData(), aoptions arg =', options);
-
         var lgSlug = this.slug,
             lgActive = this._active,
             deferred = $q.defer();
@@ -171,18 +169,22 @@ angular.module('lizard-nxt')
       },
 
       /**
-       *
+       * Returns true is the current layerGroup (i.e. "this") is active and false
+       * otherwise.
        */
       isActive: function () {
         return this._active;
       },
 
+      /**
+       * Local helper that returns a rounded timestamp
+       */
       _mkTimeStamp: function (t) {
         return UtilService.roundTimestamp(t, this._animState.step, false);
       },
 
       /**
-       *
+       * Make layerGroup ("this") adhere to current timestate
        */
       adhereToTime: function (mapState, timeState, oldTime, newTime) {
 
@@ -448,7 +450,6 @@ angular.module('lizard-nxt')
      * @description Adds layer to map
      */
     var addLeafletLayer = function (map, leafletLayer) { // Leaflet Layer
-
       if (map.hasLayer(leafletLayer)) {
         throw new Error(
           'Attempted to add layer' + leafletLayer._id
@@ -467,7 +468,6 @@ angular.module('lizard-nxt')
      * @description Removes layer from map
      */
     var removeLeafletLayer = function (map, leafletLayer) { // Leaflet Layer
-
       if (map.hasLayer(leafletLayer)) {
         map.removeLayer(leafletLayer);
       } else {
@@ -515,8 +515,7 @@ angular.module('lizard-nxt')
 
     var _initiateVectorLayer = function (nonLeafLayer) {
 
-
-     var leafletLayer;
+      var leafletLayer;
 
       if (nonLeafLayer.tiled) {
         // Initiate a tiled Vector layer

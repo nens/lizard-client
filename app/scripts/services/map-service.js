@@ -55,11 +55,10 @@ angular.module('lizard-nxt')
           var map = this._map;
           if (layerGroup.baselayer || layerGroup.temporal) {
             angular.forEach(this.layerGroups, function (_layerGroup) {
-
               if (layerGroup.baselayer
-                  && _layerGroup.baselayer
-                  && _layerGroup.isActive()
-                  && _layerGroup.slug !== layerGroup.slug
+                && _layerGroup.baselayer
+                && _layerGroup.isActive()
+                && _layerGroup.slug !== layerGroup.slug
                 )
               {
                 _layerGroup.toggle(map);

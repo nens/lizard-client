@@ -132,8 +132,7 @@ angular.module('lizard-nxt')
 
     default:
       throw new Error(
-        'Tried to call RasterService.getTimeResolution() for unsupported layerGroup, i.e:',
-        layerGroup
+        layerGroup.slug + 'is not supported by RasterService.getTimeResolution()'
       );
     }
   };

@@ -95,7 +95,7 @@ angular.module('lizard-nxt')
   return {
     link: function (scope, element, attrs) {
 
-      var _adhereToTimeWrapper = function (newTime, oldTime) {
+      var adhereToTimeWrapper = function (newTime, oldTime) {
         angular.forEach(scope.mapState.layerGroups, function (lg) {
           lg.adhereToTime(scope.mapState, scope.timeState, oldTime, newTime);
         });
@@ -103,12 +103,12 @@ angular.module('lizard-nxt')
 
       scope.$watch('mapState.layerGroupsChanged', function (n, o) {
         if (n === o) { return; }
-        _adhereToTimeWrapper(scope.timeState.at, undefined);
+        adhereToTimeWrapper(scope.timeState.at, undefined);
       });
 
       scope.$watch('timeState.at', function (n, o) {
         if (n === o) { return; }
-        _adhereToTimeWrapper(n, o);
+        adhereToTimeWrapper(n, o);
       });
 
       /**

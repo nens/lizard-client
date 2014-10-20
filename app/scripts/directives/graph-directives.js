@@ -248,7 +248,6 @@ angular.module('lizard-nxt')
     link: link,
     restrict: 'A'
   };
-
 }]);
 
 
