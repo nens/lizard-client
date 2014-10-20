@@ -11,6 +11,7 @@ qa/
 
 tmp/
 tmp
+.tmp/
 dist/
 templates.js
 doc/

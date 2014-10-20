@@ -1,0 +1,61 @@
+<div ng-controller="AreaCtrl">
+  <div ng-repeat="(slug, lg) in box.content" class="card active" id="card-<% slug %>">
+
+    <div
+      ng-repeat="(lslug, l) in lg.layers"
+      ng-if="!!l && l.data"
+      ng-switch="l.aggType"
+      class="card-content"
+      id="card-content-<% l.name %>">
+
+      <graph
+        ng-switch-when="curve"
+        line xlabel="'[%]'"
+        ylabel="'hoogte [mNAP]'"
+        data="l.data"
+        keys="{x: 0, y: 1}">
+      </graph>
+
+      <graph
+        ng-switch-when="counts"
+        horizontal-stack
+        data="l.data"
+        keys="{x: 'data', y: 'label'}"
+        xlabel="'[%]'"
+        dimensions="{height: 80, padding: {left: 0, right: 0, top: 5, bottom: 50}}">
+      </graph>
+
+      <div ng-switch-default ng-switch="l.type">
+
+        <graph
+          ng-switch-when="Store"
+          line
+          data="l.data">
+        </graph>
+
+        <div ng-switch-when="Vector">
+          <table class="table table-hover table-condensed" >
+            <thead>
+                <th><i class="fa fa-circle"></i></th>
+                <th><% lg.layerGroupName %></th>
+            </thead>
+            <tbody>
+              <tr>
+                <td rel="tooltip"
+                    title="l.data.length">
+                  <% l.data.length %>
+                </td>
+                <td rel="tooltip"
+                    title="l.summary">
+                  <% l.summary %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

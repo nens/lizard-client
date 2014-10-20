@@ -25,22 +25,22 @@
   "dependencies": {
     "angular": "1.2.9",
     "angular-mocks": "1.2.0",
-    "angular-ui-bootstrap": "git://github.com/angular-ui/bootstrap.git#gh-pages",
+    "angular-ui-bootstrap-bower": "0.11",
     "bootstrap": "~3.1.1",
     "d3": "~3.4.11",
-    "font-awesome": "~4.0.3",
     "jquery": "~1.10.1",
     "jquery-ui": "~1.10.3",
     "leaflet-dist": "git@github.com:Leaflet/Leaflet.git",
-    "nens-carto": "git@github.com:nens/nens-carto.git",
-    "lizard-iconfont": "git@github.com:nens/lizard-iconfont.git",
+    "lizard-iconfont": "0.1",
     "restangular": "~1.4.0",
     "ui-utils": "~0.1.1",
     "ng-table": "~0.3.2",
     "ng-csv": "~0.2.1",
-    "raven-js": "~1.1.16"
+    "raven-js": "~1.1.16",
+    "components-font-awesome": "~4.2.0"
   },
   "resolutions": {
     "angular": "1.2.9"
-  }
+  },
+  "appPath": "app"
 }

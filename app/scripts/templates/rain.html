@@ -1,0 +1,41 @@
+<div ng-controller="rain">
+  <a
+    id="export-rain-csv-button"
+    href="#"
+    title="Data van deze infocard exporteren"
+    ng-csv="formatCSVColumns(lg.layers['radar/basic'].data)"
+    filename="neerslag.csv"
+    csv-header="['Datestamp', 'Timestamp', 'Rain (mm)', 'Latitude', 'Longitude']" >
+    <i class="fa fa-share-square-o"></i>
+  </a>
+  <graph ng-if="lg.layers['radar/basic']" bar-chart
+    class="xyGraph"
+    data="lg.layers['radar/basic'].data"
+    ylabel="lg.layers['radar/basic'].aggWindow"
+    yfilter="aggWinToYLabel"
+    keys="{x: 0, y: 1}"
+    now="timeState.at">
+  </graph>
+<div class="recurrence-time-container"
+  ng-if="lg.layers['rrc']">
+  <table class="table table-hover table-condensed">
+    <caption>Herhalingstijden</caption>
+    <thead>
+      <tr>
+        <th>Start</th>
+        <th>Duur</th>
+        <th class="text-right">mm</th>
+        <th>Herhalingstijd</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="recurrence_time"
+        ng-repeat="recurTime in lg.layers['rrc'].data">
+        <td><% recurTime.start | date : 'dd-MM-yyyy HH:mm' %></td>
+        <td><% recurTime.td_window %></td>
+        <td class="text-right"><% recurTime.max | number: 1 %></td>
+        <td><% recurTime.t %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

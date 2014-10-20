@@ -1,0 +1,52 @@
+
+  <div id="card-events"
+       class="card active"
+       ng-repeat="lg in point"
+       ng-class="{hidden: !point.events.data.length > 0}">
+
+    <div class="card-content"
+         id="card-content-relatified-events">
+
+      <table class="table table-hover table-condensed" >
+          <thead>
+
+              <th><i class="fa fa-circle" ng-style="{color: events.types[point.events.activeType]['color'] }"></i></th>
+              <th>Totaal</th>
+              <th><% filteredRes.length %></th>
+          </thead>
+
+
+        <tbody>
+
+          <tr ng-repeat="event in filteredRes = (point.events.data |
+                         filter:{inTemporalExtent: true} |
+                         orderBy:event.timestamp_start |
+                         limitTo:5)">
+
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="<% event.category %>">
+                <i class="fa fa-circle"
+                   ng-style="{color: events.types[event.event_series].color }">
+                </i>
+              </td>
+
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="start: <% event.timestamp_start | date:'dd/MM/yyyy' %>
+                         eind: <% event.timestamp_end | date:'dd/MM/yyyy' %>">
+                  <% event.timestamp_start | date:'dd/MM/yyyy' %>
+              </td>
+              <td rel="tooltip"
+                  data-placement="left"
+                  title="<% event.value %>">
+                <% event.value | truncate:40 %>
+              </td>
+
+            </tr>
+        </tbody>
+
+      </table>
+    </div>
+  </div>v
+

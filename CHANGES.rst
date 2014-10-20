@@ -4,7 +4,19 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- Vector data is summarized in box
+
+- Scope.box.content now follows a uniform data structure
+
 - Timeseries are back
+
+- Vectors (events, or whatever) are now stored in vector service
+
+- Vectors are received through tiling mechanism
+
+- Vectors are drawn by leaflet
+
+- Clicks on vectors are delegated to Angular in stead of through obscure click handlers
 
 Release 0.2b5
 -------------
