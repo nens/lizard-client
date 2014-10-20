@@ -184,12 +184,86 @@ angular.module('lizard-nxt')
       },
 
       /**
+       * stop anim
+       */
+      _animStop: function (s, timeState) {
+        if (timeState.animation.playing) {
+          s.restart = true;
+          s.loadingRaster = 0;
+        }
+        if (timeState.playPauseAnimation) {
+          timeState.playPauseAnimation('off');
+        }
+      },
+
+      /**
+       * restart anim
+       */
+      _animRestart: function (s, mapState, timeState, temporalWMSLayer) {
+        this._animStart(temporalWMSLayer);
+        var overlays = this._animState.imageOverlays;
+
+        for (var i in overlays) {
+          addLeafletLayer(mapState._map, overlays[i]);
+        }
+
+        // imgUrlBase equals full URL w/o TIME part
+        this._animState.imageUrlBase
+          = RasterService.buildURLforWMS(temporalWMSLayer);
+
+        this._animGetImages(timeState);
+        s.imageOverlays[0].setOpacity(0.7);
+      },
+
+      /**
+       * progress anim
+       */
+      _animProgressOverlays: function (s, overlayIndex, currentDate, timeState) {
+
+        var oldOverlay = s.imageOverlays[s.previousFrame],
+            newOverlay = s.imageOverlays[overlayIndex];
+
+        // Turn off old frame
+        oldOverlay.setOpacity(0);
+
+        // Turn on new frame
+        newOverlay.setOpacity(0.7);
+
+        // Delete the old overlay from the lookup, it is gone.
+        delete s.frameLookup[currentDate];
+
+        // Remove old listener
+        oldOverlay.off('load');
+
+        // Add listener to asynchronously update loadingRaster and framelookup:
+        this._animAddLoadListener(
+          oldOverlay,
+          s.previousFrame,
+          s.nxtDate,
+          timeState
+        );
+
+        // We are now waiting for one extra raster
+        s.loadingRaster++;
+
+        // Tell the old overlay to get out and get a new image.
+        oldOverlay.setUrl(
+          s.imageUrlBase + s.utcFormatter(new Date(s.nxtDate))
+        );
+
+        s.previousFrame = overlayIndex;
+        s.previousDate = currentDate;
+        s.nxtDate += s.step;
+      },
+
+      /**
        * Make layerGroup ("this") adhere to current timestate
        */
-      adhereToTime: function (mapState, timeState, oldTime, newTime) {
+      adhereToTime: function (mapState, timeState, oldTime) {
 
         var i,
             overlays,
+            newTime = timeState.at,
             temporalWMSLayer = this._getTemporalWMSLayer(),
             s = this._animState;
 
@@ -207,71 +281,16 @@ angular.module('lizard-nxt')
               this.stopAnimation(timeState);
 
             } else if (overlayIndex !== undefined && overlayIndex !== s.previousFrame) {
-
-              var oldOverlay = s.imageOverlays[s.previousFrame],
-                  newOverlay = s.imageOverlays[overlayIndex];
-
-              // Turn off old frame
-              oldOverlay.setOpacity(0);
-
-              // Turn on new frame
-              newOverlay.setOpacity(0.7);
-
-              // Delete the old overlay from the lookup, it is gone.
-              delete s.frameLookup[currentDate];
-
-              // Remove old listener
-              oldOverlay.off('load');
-
-              // Add listener to asynchronously update loadingRaster and framelookup:
-              this._animAddLoadListener(
-                oldOverlay,
-                s.previousFrame,
-                s.nxtDate,
-                timeState
-              );
-
-              // We are now waiting for one extra raster
-              s.loadingRaster++;
-
-              // Tell the old overlay to get out and get a new image.
-              oldOverlay.setUrl(
-                s.imageUrlBase + s.utcFormatter(new Date(s.nxtDate))
-              );
-
-              s.previousFrame = overlayIndex;
-              s.previousDate = currentDate;
-              s.nxtDate += s.step;
+              this._animProgressOverlays(s, overlayIndex, currentDate, timeState);
 
             } else if (overlayIndex === undefined) {
-
-              if (timeState.animation.playing) {
-                s.restart = true;
-                s.loadingRaster = 0;
-              }
-
-              if (timeState.playPauseAnimation) {
-                timeState.playPauseAnimation('off');
-              }
+              this._animStop(s, timeState);
             }
 
           } else {
 
             // Possibility 2: we (re-)start the animation:
-
-            this._animStart(temporalWMSLayer);
-            overlays = this._animState.imageOverlays;
-
-            for (i in overlays) {
-              addLeafletLayer(mapState._map, overlays[i]);
-            }
-
-            // imgUrlBase equals full URL w/o TIME part
-            this._animState.imageUrlBase
-              = RasterService.buildURLforWMS(temporalWMSLayer);
-
-            this._animGetImages(timeState);
-            s.imageOverlays[0].setOpacity(0.7);
+            this._animRestart(s, mapState, timeState, temporalWMSLayer);
           }
         } else {
 
