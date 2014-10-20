@@ -177,9 +177,15 @@ angular.module('lizard-nxt')
         timeline.drawEventsContainedInBounds(scope.mapState.bounds);
         EventService.countCurrentEvents(scope);
       }
+
+      console.log('map moved! building opts for call-to-service....');
+      console.log('scope.mapState:', scope.mapState);
+
       // TODO: don't check a function, check a boolean.
-      if (scope.mapState.getActiveTemporalLayer()) {
-        getTemporalRasterData();
+      var lg = scope.mapState.getActiveTemporalLayerGroup();
+      if (lg) {
+        // getTemporalRasterData();
+        lg.getData({geom: scope.mapState.here});
       }
     });
 

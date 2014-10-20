@@ -267,33 +267,33 @@ angular.module('lizard-nxt')
 
   var link = function (scope, element, attrs, graphCtrl) {
 
-    // var data = graphCtrl.data,
-    //     labels = graphCtrl.labels,
-    //     filter = graphCtrl.yfilter,
-    //     graph = graphCtrl.graph,
-    //     keys = graphCtrl.keys;
+    var data = graphCtrl.data,
+        labels = graphCtrl.labels,
+        filter = graphCtrl.yfilter,
+        graph = graphCtrl.graph,
+        keys = graphCtrl.keys;
 
-    // // Apply the filter on the ylabel to go from aggWindow
-    // // in ms to a nice 'mm/dag' label. This could be migrated
-    // // to the html, but filtering from the DOM is expensive
-    // // in angular.
-    // if (filter) {
-    //   labels.y = $filter(filter)(labels.y);
-    // }
+    // Apply the filter on the ylabel to go from aggWindow
+    // in ms to a nice 'mm/dag' label. This could be migrated
+    // to the html, but filtering from the DOM is expensive
+    // in angular.
+    if (filter) {
+      labels.y = $filter(filter)(labels.y);
+    }
 
-    // graph.drawBars(data, keys, labels);
-    // graph.drawNow(graphCtrl.now);
+    graph.drawBars(data, keys, labels);
+    graph.drawNow(graphCtrl.now);
 
-    // // Function to call when data changes
-    // graphCtrl.updateData = function (data, keys, labels) {
-    //   if (filter) {
-    //     labels.y = $filter(filter)(labels.y);
-    //   }
-    //   this.drawBars(data, keys, labels);
-    // };
+    // Function to call when data changes
+    graphCtrl.updateData = function (data, keys, labels) {
+      if (filter) {
+        labels.y = $filter(filter)(labels.y);
+      }
+      this.drawBars(data, keys, labels);
+    };
 
-    // // Function to call when timeState.at changes
-    // graphCtrl.updateNow = graph.drawNow;
+    // Function to call when timeState.at changes
+    graphCtrl.updateNow = graph.drawNow;
 
   };
 

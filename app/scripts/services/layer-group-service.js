@@ -87,6 +87,8 @@ angular.module('lizard-nxt')
       */
       getData: function (options) {
 
+        console.log('[F] getData(), aoptions arg =', options);
+
         var lgSlug = this.slug,
             lgActive = this._active,
             deferred = $q.defer();

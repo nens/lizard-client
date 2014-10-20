@@ -78,7 +78,6 @@ angular.module('lizard-nxt')
       }
     };
 
-
    /**
     * @function
     * @memberOf app.UrlController
