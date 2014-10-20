@@ -169,6 +169,26 @@ angular.module('lizard-nxt')
 
       isActive: function () {
         return this._active;
+      },
+
+      /**
+       * @function
+       * @memberof app.LayerGroup
+       * @param {float} new opacity value
+       * @return {void}
+       * @description Changes opacity in layers that have
+       * an opacity to be set
+       */
+      setOpacity: function (newOpacity) {
+        if (typeof newOpacity !== 'number' ||
+            newOpacity < 0 && newOpacity > 1) {
+          return;
+        }
+        this._layers.forEach(function (layer) {
+          if (layer.type === 'WMS' || layer.type === 'TMS') {
+            layer.leafletLayer.setOpacity(newOpacity);
+          }
+        });
       }
     };
 
@@ -284,7 +304,7 @@ angular.module('lizard-nxt')
     var _initiateVectorLayer = function (nonLeafLayer) {
 
 
-     var leafletLayer;
+      var leafletLayer;
 
       if (nonLeafLayer.tiled) {
         // Initiate a tiled Vector layer
@@ -353,6 +373,7 @@ angular.module('lizard-nxt')
         version: '1.1.1',
         minZoom: nonLeafLayer.min_zoom || 0,
         maxZoom: 19,
+        opacity: nonLeafLayer.opacity,
         zIndex: nonLeafLayer.z_index
       };
       _options = angular.extend(_options, nonLeafLayer.options);

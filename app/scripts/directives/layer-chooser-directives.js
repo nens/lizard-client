@@ -35,7 +35,6 @@ angular.module('lizard-nxt')
     var startClick = function (e) {
       localClick = e.clientX;
       if (localClick === undefined) {
-        var touchFix = UtilService.fixTouch(e.originalEvent.changedTouches[0]);
         localClick = e.originalEvent.changedTouches[0].clientX;
       }
     };
@@ -48,14 +47,22 @@ angular.module('lizard-nxt')
       }
     };
 
-    
     var thismuch;
-  
+
     var endClick = function (e) {
-      ng-click="mapState.toggleLayerGroup(layergroup)"
       
       var releaseX = (e.clientX) ? e.clientX : e.originalEvent.changedTouches[0].clientX;
       thismuch = releaseX - localClick;
+      var ratio = thismuch / e.target.clientWidth;
+      var newOpacity;
+      if (ratio > 1) {
+        newOpacity = 1;
+      } else if (ratio < -1) {
+        newOpacity = -1;
+      } else {
+        newOpacity = newOpacity;
+      }
+      scope.layergroup.setOpacity(newOpacity);
       localClick = null;
     };
 
