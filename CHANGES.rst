@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- Vector data is summarized in box
+
+- Scope.box.content now follows a uniform data structure
+
 - Timeseries are back
 
 - Vectors (events, or whatever) are now stored in vector service

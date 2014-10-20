@@ -24,19 +24,19 @@ angular.module('lizard-nxt')
         pointToLayer: function (feature, latlng) {
 
           var geojsonMarkerOptions = {
-              radius: (feature.properties.radius) ? feature.properties.radius: 6,
-              fillColor: color,
-              color: "#000",
-              weight: 1,
-              opacity: 1,
-              fillOpacity: 0.8
+            radius: (feature.properties.radius) ? feature.properties.radius: 6,
+            fillColor: color,
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
           };
 
           var circle = L.circleMarker(latlng, geojsonMarkerOptions);
           circle.on('click', function (e) {
             // simulate click on map instead of this event;
             this._map.fire('click', {
-              latlng: new L.LatLng(e.target.feature.geometry.coordinates[1], 
+              latlng: new L.LatLng(e.target.feature.geometry.coordinates[1],
                 e.target.feature.geometry.coordinates[0])
             });
           });
@@ -44,7 +44,7 @@ angular.module('lizard-nxt')
           return circle;
         }
       };
-      
+
       L.TileLayer.prototype.onAdd.call(this, map);
       var size = this._map.getPixelBounds().getSize();
 
@@ -153,12 +153,11 @@ angular.module('lizard-nxt')
       this.isLoading = false;
 
       if (tile.datum === null) { return null; }
-      
+
       this.addTileData(tile.datum, tilePoint);
       this.drawTheThings(tile.datum, tilePoint);
-      
-      for (var _tile in this._tilesLoading) {
-        if (this._tilesLoading[_tile] === 'busy') {
+      for (var tile in this._tilesLoading) {
+        if (this._tilesLoading[tile] === 'busy') {
           this.isLoading = true;
           break;
         }
@@ -175,9 +174,14 @@ angular.module('lizard-nxt')
     // see: http://leafletjs.com/reference.html#path-canvas
     window.L_PREFER_CANVAS = true;
 
+    // Set max margin of latLng.equals method. This way
+    // the vectorservice is able to return the features
+    // within 0.0001 degree of the click.
+    L.LatLng.MAX_MARGIN = 0.0001;
+
     // bind our own TileDataLayer.
     L.TileDataLayer = TileDataLayer;
-    
+
     return L;
   } else {
     throw new Error('Leaflet can not be found');

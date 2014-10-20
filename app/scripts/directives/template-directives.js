@@ -33,7 +33,7 @@ angular.module('lizard-nxt')
       scope: {
         timeseries: '=',
       },
-      replace: true,
+      // replace: true,
       templateUrl: 'templates/timeseries.html'
     };
 }]);
@@ -89,9 +89,6 @@ angular.module('lizard-nxt')
   .directive('rain', [function () {
   return {
     restrict: 'E',
-    scope: {
-      rain: '='
-    },
     replace: true,
     templateUrl: 'templates/rain.html'
   };
@@ -100,29 +97,9 @@ angular.module('lizard-nxt')
 angular.module('lizard-nxt')
   .directive('defaultpoint', [function () {
   return {
-    link: function (scope) {
-
-      // These layergroups have dedicated markup
-      var EXCLUDED = ['timeseries', 'rain', 'waterchain'];
-
-      scope.$watch('point', function () {
-        scope.included = [];
-        angular.forEach(scope.point, function (value, key) {
-          if (EXCLUDED.indexOf(key) === -1) {
-            if (value) {
-              value.slug = key;
-              scope.included.push(value);
-            }
-          }
-        });
-
-      }, true);
-
-
-    },
     restrict: 'E',
     scope: {
-      point: '=',
+      lg: '=',
       mapstate: '='
     },
     replace: true,

@@ -1,59 +1,56 @@
-<div id="card-kunstwerk"
-     class="card active">
-  <div ng-if="waterchain && waterchain.waterchain_grid" class="card-content">
-    <i id="icon-holder"
-       ng-if="waterchain.waterchain_grid.data.entity_name.split(' ')[0] === 'bridge'"
-       class="icon-bridge-fixed">
-    </i>
-    <i id="icon-holder"
-       ng-if="waterchain.waterchain_grid.data.entity_name.split(' ')[0] !== 'bridge'"
-       class="icon-<% waterchain.waterchain_grid.data.entity_name.split(' ')[0] %>">
-    </i>
-    <span class="kunstwerk-title">
+<div>
+  <i id="icon-holder"
+     ng-if="waterchain.layers.waterchain_grid.data.entity_name.split(' ')[0] === 'bridge'"
+     class="icon-bridge-fixed">
+  </i>
+  <i id="icon-holder"
+     ng-if="waterchain.layers.waterchain_grid.data.entity_name.split(' ')[0] !== 'bridge'"
+     class="icon-<% waterchain.layers.waterchain_grid.data.entity_name.split(' ')[0] %>">
+  </i>
+  <span class="kunstwerk-title">
 
-      <span id="title-holder"
-            class="card-title-text kunstwerk-title-text">
+    <span id="title-holder"
+          class="card-title-text kunstwerk-title-text">
 
-        <% waterchain.waterchain_grid.data.entity_name | objectTitle %>
+      <% waterchain.layers.waterchain_grid.data.entity_name | objectTitle %>
 
-      </span>
-      &nbsp;
-      <span ng-if= "waterchain.waterchain_grid.data.code"
-            class="kunstwerk-title-suffix">
-        <span>(</span>
-        <span class="truncateme ng-binding"
-              ng-bind="waterchain.waterchain_grid.data.code">
-        </span>
-        <span>)</span>
-      </span>
     </span>
+    &nbsp;
+    <span ng-if= "waterchain.layers.waterchain_grid.data.code"
+          class="kunstwerk-title-suffix">
+      <span>(</span>
+      <span class="truncateme ng-binding"
+            ng-bind="waterchain.layers.waterchain_grid.data.code">
+      </span>
+      <span>)</span>
+    </span>
+  </span>
 
-    <table id="kunstwerk-table" class="table table-condensed table-hover">
-      <thead>
-        <tr>
-          <th>Attribuut</th>
-          <th>Waarde</th>
-        </tr>
-      </thead>
-      <tbody>
+  <table id="kunstwerk-table" class="table table-condensed table-hover">
+    <thead>
+      <tr>
+        <th>Attribuut</th>
+        <th>Waarde</th>
+      </tr>
+    </thead>
+    <tbody>
 
-        <tr class="attr-row"
-            ng-repeat="obj in wanted[waterchain.waterchain_grid.data.entity_name].rows">
+      <tr class="attr-row"
+          ng-repeat="obj in wanted[waterchain.layers.waterchain_grid.data.entity_name].rows">
 
-          <td class="fixed-width-card-table"><% obj.keyName %></td>
+        <td class="fixed-width-card-table"><% obj.keyName %></td>
 
-          <td class="lineout"
-              ng-if="waterchain.waterchain_grid.data[obj.attrName]">
-            <span class="ng-binding">
-              <% $eval(obj.ngBindValue) + obj.valueSuffix %>
-            </span>
-          </td>
+        <td class="lineout"
+            ng-if="waterchain.layers.waterchain_grid.data[obj.attrName]">
+          <span class="ng-binding">
+            <% $eval(obj.ngBindValue) + obj.valueSuffix %>
+          </span>
+        </td>
 
-          <td class="lineout" ng-if="!waterchain.waterchain_grid.data[obj.attrName]">...</td>
-        </tr>
+        <td class="lineout" ng-if="!waterchain.layers.waterchain_grid.data[obj.attrName]">...</td>
+      </tr>
 
-      </tbody>
-    </table>
-  </div>
+    </tbody>
+  </table>
 </div>
 

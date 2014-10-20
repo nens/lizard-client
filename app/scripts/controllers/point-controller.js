@@ -17,19 +17,11 @@
  */
 
 angular.module('lizard-nxt')
-  .controller('PointCtrl', [
-  '$scope',
-  '$q',
-  'LeafletService',
-  'TimeseriesService',
-  'ClickFeedbackService',
-  function ($scope,
-            $q,
-            LeafletService,
-            TimeseriesService,
-            ClickFeedbackService) {
+  .controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesService', 'ClickFeedbackService', 'UtilService',
+  function ($scope, $q, LeafletService, TimeseriesService, ClickFeedbackService, UtilService) {
 
-    $scope.point = {};
+    var GRAPH_WIDTH = 600;
+    $scope.box.content = {};
 
     /**
      * @function
@@ -37,57 +29,24 @@ angular.module('lizard-nxt')
      * @param  {L.LatLng} here
      */
     var fillpoint = function (here) {
-
-      var promises = [];
-
-      var doneFn = function (response) {
-        if (response.active === false) {
-          $scope.point[response.slug] = undefined;
-        }
-      };
-
-      var putDataOnScope = function (response) {
-        var pointL;
-        if (response.data === null) {
-          pointL = undefined;
-        } else {
-          pointL = $scope.point[response.layerGroupSlug] || {};
-          pointL.layerGroup = response.layerGroupSlug;
-          pointL[response.layerSlug] = pointL[response.layerSlug] || {};
-          pointL[response.layerSlug].type = response.type;
-          pointL[response.layerSlug].data = response.data;
-          pointL.layerGroupName = $scope.mapState.layerGroups[
-            pointL.layerGroup].name;
-          pointL.order = $scope.mapState.layerGroups[pointL.layerGroup].order;
-          if (response.data && response.data.id) {
-            getTimeSeriesForObject(response.data.entity_name + '$' +
-                                   response.data.id);
-          }
-          if (response.data.geom) {
-            // If the geom from the response is different than mapState.here
-            // redo request to get the exact data for the centroid of the 
-            // object.
-            var geom = JSON.parse(response.data.geom);
-            if (geom.type === 'Point' &&
-                (geom.coordinates[1] !== $scope.mapState.here.lat ||
-                 geom.coordinates[0] !== $scope.mapState.here.lng)) {
-              $scope.mapState.here = LeafletService.latLng(geom.coordinates[1],
-                                                           geom.coordinates[0]);
-            }
-          }
-        }
-        $scope.point[response.layerGroupSlug] = pointL;
-      };
-
       ClickFeedbackService.drawClickInSpace($scope.mapState, here);
-
-      angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
-        promises.push(layerGroup.getData({geom: here,
-                                          start: $scope.timeState.start,
-                                          end: $scope.timeState.end})
-          .then(doneFn, doneFn, putDataOnScope));
+      var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, GRAPH_WIDTH);
+      var promises = $scope.fillBox({
+        geom: here,
+        start: $scope.timeState.start,
+        end: $scope.timeState.end,
+        aggWindow: aggWindow
       });
-
+      angular.forEach(promises, function (promise) {
+        promise.then(null, null, function (response) {
+          if (response.data && response.data.id && response.data.entity_name) {
+            getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
+          }
+          if (response.layerSlug === 'radar/basic' && response.data !== null) {
+            $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
+          }
+        });
+      });
       // Draw feedback when all promises resolved
       $q.all(promises).then(drawFeedback);
     };
@@ -107,22 +66,28 @@ angular.module('lizard-nxt')
      * @description Draw visual feedback after client clicked on the map
      */
     var drawFeedback = function () {
+      var feedbackDrawn = false;
       ClickFeedbackService.stopVibration();
-      if ($scope.point.waterchain) {
-
+      angular.forEach($scope.box.content, function (lg) {
+        if (lg && lg.layers) {
+          angular.forEach(lg.layers, function (layer) {
+            if (layer.type === 'Vector') {
+              // draw it
+              feedbackDrawn = true;
+            }
+          });
+        }
+      });
+      if ($scope.box.content.waterchain && $scope.box.content.waterchain.layers.waterchain_grid) {
         ClickFeedbackService.drawGeometry(
           $scope.mapState,
-          $scope.point.waterchain.waterchain_grid.data.geom,
-          $scope.point.waterchain.waterchain_grid.data.entity_name
+          $scope.box.content.waterchain.layers.waterchain_grid.data.geom,
+          $scope.box.content.waterchain.layers.waterchain_grid.data.entity_name
         );
-
-      } else {
-        angular.forEach($scope.point, function (lg) {
+      } else if (!feedbackDrawn) {
+        angular.forEach($scope.box.content, function (lg) {
           if (lg) {
             ClickFeedbackService.drawArrowHere($scope.mapState);
-            // return immediately to skip unneccesary loop iterations,
-            // kthxbai <3
-            return;
           }
         });
       }
@@ -137,11 +102,11 @@ angular.module('lizard-nxt')
       TimeseriesService.getTimeseries(id, $scope.timeState)
       .then(function (result) {
 
-        $scope.point.timeseries = $scope.point.timeseries || {};
+        $scope.box.content.timeseries = $scope.box.content.timeseries || {};
 
         if (result.length > 0) {
 
-          angular.extend($scope.point.timeseries, {
+          angular.extend($scope.box.content.timeseries, {
 
             type  : 'timeseries',
             data  : result[0].events,
@@ -150,7 +115,7 @@ angular.module('lizard-nxt')
           });
 
         } else {
-          $scope.point.timeseries = undefined;
+          delete $scope.box.content.timeseries;
         }
       });
     };

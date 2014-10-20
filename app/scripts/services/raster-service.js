@@ -12,7 +12,7 @@ angular.module('lizard-nxt')
   var getData = function (layer, options) {
 
     // TODO: get this from somewhere
-    var GRAPH_WIDTH = 600;
+    var GRAPH_WIDTH = window.innerwidth;
 
     var srs = 'EPSG:4326',
         agg = options.agg || '',
