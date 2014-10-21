@@ -1482,6 +1482,11 @@ img {
   height: 33px;
   line-height: 33px;
   border-left: 1px solid #fff;
+
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .leaflet-bar a:first-child {
