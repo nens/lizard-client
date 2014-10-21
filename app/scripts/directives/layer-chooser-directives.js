@@ -30,20 +30,20 @@ angular.module('lizard-nxt')
       chooser.setView(centroid, zoom - 2);
     });
 
-    var localClick, mouseMove;
+    var localClick, mouseMove, clickTime;
 
     var startClick = function (e) {
       localClick = e.clientX;
+      clickTime = e.timeStamp;
       if (localClick === undefined) {
         localClick = e.originalEvent.changedTouches[0].clientX;
       }
+      mouseMove = false;
     };
 
     var onMove = function (e) {
-      if (localClick) {
+      if (e.timeStamp - clickTime > 500) {
         mouseMove = true;
-      } else {
-        mouseMove = false;
       }
     };
 
@@ -51,23 +51,30 @@ angular.module('lizard-nxt')
 
     var endClick = function (e) {
       if (!mouseMove) {
-        scope.mapState.toggleLayerGroup(scope.layergroup);
+        console.log('mouse not move', scope$$phase)
+        if (!scope.$$phase) {
+          scope.mapState.toggleLayerGroup(scope.layergroup); 
+        }
         return;
       }     
       var releaseX = (e.clientX) ? e.clientX : e.originalEvent.changedTouches[0].clientX;
       thismuch = releaseX - localClick;
-      var ratio = thismuch / e.target.clientWidth;
+      var ratio = ((thismuch / 100) + 1) / 2;
       var newOpacity;
       if (ratio > 1) {
         newOpacity = 1;
-      } else if (ratio < -1) {
-        newOpacity = -1;
+      } else if (ratio < 0.1) {
+        newOpacity = 0.1;
       } else {
-        newOpacity = newOpacity;
+        newOpacity = ratio;
       }
-      scope.layergroup.setOpacity(newOpacity);
+      
+      console.log(newOpacity);
+      if (scope.layergroup._active) {
+        scope.layergroup.setOpacity(newOpacity);
+      }
       localClick = null;
-      mouseMove = null;
+      clickTime = null;
     };
 
     element.bind('mousedown', startClick);
