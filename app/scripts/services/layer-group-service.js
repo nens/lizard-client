@@ -184,7 +184,7 @@ angular.module('lizard-nxt')
             newOpacity < 0 && newOpacity > 1) {
           return;
         }
-        this._layers.forEach(function (layer) {
+        angular.forEach(this._layers, function (layer) {
           if (layer.type === 'WMS' || layer.type === 'TMS') {
             layer.leafletLayer.setOpacity(newOpacity);
           }

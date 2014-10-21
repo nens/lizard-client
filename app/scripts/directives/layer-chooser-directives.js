@@ -50,7 +50,10 @@ angular.module('lizard-nxt')
     var thismuch;
 
     var endClick = function (e) {
-      
+      if (!mouseMove) {
+        scope.mapState.toggleLayerGroup(scope.layergroup);
+        return;
+      }     
       var releaseX = (e.clientX) ? e.clientX : e.originalEvent.changedTouches[0].clientX;
       thismuch = releaseX - localClick;
       var ratio = thismuch / e.target.clientWidth;
@@ -64,6 +67,7 @@ angular.module('lizard-nxt')
       }
       scope.layergroup.setOpacity(newOpacity);
       localClick = null;
+      mouseMove = null;
     };
 
     element.bind('mousedown', startClick);
