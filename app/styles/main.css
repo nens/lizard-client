@@ -1494,8 +1494,6 @@ img {
   border-bottom-right-radius: 2px;
   line-height: 32px;
   height: 32px;
-  min-height: 32px;
-  max-height: 32px;
 }
 
 .leaflet-container a {
