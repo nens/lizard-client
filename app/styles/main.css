@@ -1461,3 +1461,49 @@ img {
   cursor: pointer;
   cursor: -webkit-grab;
 }
+
+.leaflet-control-zoom {
+  display: inline-block;
+  position: relative;
+  left: 478px;
+  top: 6px;
+  box-shadow: 0 0 0 #000;
+
+  width: 200px;
+  height: 50px;
+  /*background-color: #f00;*/
+}
+
+.leaflet-bar a:last-child,
+.leaflet-bar a:first-child {
+  position: absolute;
+  border-radius: 0;
+  width: 72px;
+  height: 33px;
+  line-height: 33px;
+  border-left: 1px solid #fff;
+}
+
+.leaflet-bar a:first-child {
+  left: 0;
+}
+
+.leaflet-bar a:last-child {
+  left: 72px;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  line-height: 32px;
+  height: 32px;
+  min-height: 32px;
+  max-height: 32px;
+}
+
+.leaflet-container a {
+  color: #fff;
+  background-color: #16a085;
+}
+
+.leaflet-container a:hover {
+  color: #fff;
+  background-color: #1abc9c;
+}
