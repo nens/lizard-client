@@ -16,7 +16,7 @@ describe('Testing MasterController', function () {
         '$scope': $scope
       });
 
-      $scope.mapState.getActiveTemporalLayer = function () {};
+      $scope.mapState.getActiveTemporalLayerGroup = function () {};
 
       $scope.$digest();
     };
