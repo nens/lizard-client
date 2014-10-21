@@ -1478,18 +1478,18 @@ img {
 .leaflet-bar a:first-child {
   position: absolute;
   border-radius: 0;
-  width: 72px;
+  width: 34px;
   height: 33px;
   line-height: 33px;
   border-left: 1px solid #fff;
 }
 
 .leaflet-bar a:first-child {
-  left: 0;
+  left: -38px;
 }
 
 .leaflet-bar a:last-child {
-  left: 72px;
+  left: -4px;
   border-top-right-radius: 2px;
   border-bottom-right-radius: 2px;
   line-height: 32px;
