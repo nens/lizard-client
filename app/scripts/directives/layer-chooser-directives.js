@@ -51,10 +51,8 @@ angular.module('lizard-nxt')
 
     var endClick = function (e) {
       if (!mouseMove) {
-        console.log('mouse not move', scope$$phase)
-        if (!scope.$$phase) {
-          scope.mapState.toggleLayerGroup(scope.layergroup); 
-        }
+        scope.$apply();
+        scope.mapState.toggleLayerGroup(scope.layergroup); 
         return;
       }     
       var releaseX = (e.clientX) ? e.clientX : e.originalEvent.changedTouches[0].clientX;
@@ -69,7 +67,7 @@ angular.module('lizard-nxt')
         newOpacity = ratio;
       }
       
-      console.log(newOpacity);
+      console.log('this is now active:', scope.layergroup._active);
       if (scope.layergroup._active) {
         scope.layergroup.setOpacity(newOpacity);
       }
