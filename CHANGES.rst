@@ -4,6 +4,11 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- 
+
+Release 0.2b8
+-------------
+
 - Vector data is summarized in box
 
 - Scope.box.content now follows a uniform data structure
