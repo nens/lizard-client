@@ -30,59 +30,6 @@ angular.module('lizard-nxt')
       chooser.setView(centroid, zoom - 2);
     });
 
-    var localClick, mouseMove, clickTime;
-
-    var startClick = function (e) {
-      localClick = e.clientX;
-      clickTime = e.timeStamp;
-      if (localClick === undefined) {
-        localClick = e.originalEvent.changedTouches[0].clientX;
-      }
-      mouseMove = false;
-    };
-
-    var onMove = function (e) {
-      if (e.timeStamp - clickTime > 500) {
-        mouseMove = true;
-      }
-    };
-
-    var thismuch;
-
-    var endClick = function (e) {
-      if (!mouseMove) {
-        scope.$apply();
-        scope.mapState.toggleLayerGroup(scope.layergroup); 
-        return;
-      }     
-      var releaseX = (e.clientX) ? e.clientX : e.originalEvent.changedTouches[0].clientX;
-      thismuch = releaseX - localClick;
-      var ratio = ((thismuch / 100) + 1) / 2;
-      var newOpacity;
-      if (ratio > 1) {
-        newOpacity = 1;
-      } else if (ratio < 0.1) {
-        newOpacity = 0.1;
-      } else {
-        newOpacity = ratio;
-      }
-      
-      console.log('this is now active:', scope.layergroup._active);
-      if (scope.layergroup._active) {
-        scope.layergroup.setOpacity(newOpacity);
-      }
-      localClick = null;
-      clickTime = null;
-    };
-
-    element.bind('mousedown', startClick);
-    element.bind('mousemove', onMove);
-    element.bind('mouseup', endClick);
-
-    element.bind('touchstart', startClick);
-    element.bind('touchmove', onMove);
-    element.bind('touchend', endClick);
-
   };
 
   return {
