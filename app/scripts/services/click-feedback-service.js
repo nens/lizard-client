@@ -115,8 +115,7 @@ angular.module('lizard-nxt')
       this.vibrateFeatures = function () {
         var sel = this._selection = this._getSelection(this.clickLayer);
         clearInterval(this._vibration);
-
-        this._vibration = setInterval(vibrate(sel, false), 400);
+        this._vibration = setInterval(function () {vibrate(sel, false)}, 400);
       };
 
       var vibrate = function (sel, remove) {
@@ -145,7 +144,7 @@ angular.module('lizard-nxt')
         d3.select(".location-marker").remove();
       };
 
-      this.addLocationMarker = function (mapState, latlng) {
+      this.addLocationMarker = function (mapState, latLng) {
         var point = mapState.latLngToLayerPoint(latLng);
         var selection = this._getSelection(this.clickLayer);
         // This is a location marker
@@ -217,7 +216,7 @@ angular.module('lizard-nxt')
     drawArrow = function (mapState, latLng) {
       var geometry = {
         "type": "Point",
-        "coordinates": [mapState.here.lng, mapState.here.lat]
+        "coordinates": [latLng.lng, latLng.lat]
       };
       clickLayer.drawFeature(geometry);
       clickLayer.addLocationMarker(mapState, latLng);
