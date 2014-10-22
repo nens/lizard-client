@@ -33,10 +33,10 @@ angular.module('lizard-nxt')
     });
   
     var toggleLayer = function () {
-      scope.mapState.toggleLayerGroups(scope.layergroup);
+      scope.mapState.toggleLayerGroup(scope.layergroup);
     };
 
-    element.bind('click', toggleLayer);
+    //element.find('label').bind('click', toggleLayer);
   };
 
   return {

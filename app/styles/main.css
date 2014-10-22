@@ -290,8 +290,24 @@ label.layer-chooser > div.layer-img:hover {
 
 /* Bootstrap Overrides for progress bar */
 .progress {
-  /*height: 2px;*/
+  height: 4px;
   margin-bottom: 5px;
+  margin-top: -5px;
+  z-index: 100;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -ms-box-shadow: none;
+  -o-box-shadow: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.progress-bar {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -ms-box-shadow: none;
+  -o-box-shadow: none;
+  box-shadow: none;
 }
 
 ul.list-inline li.baselayer-icon {

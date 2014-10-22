@@ -128,7 +128,7 @@
             <ul class="nav">
               <li class="nav-header">
                 <ul class="list-group">
-                  <li ng-repeat="layergroup in mapState.layerGroups | orderObjectBy: 'order': false" ng-click="mapState.toggleLayerGroup(layergroup)">
+                  <li ng-repeat="layergroup in mapState.layerGroups | orderObjectBy: 'order': false">
                     <layer-chooser layergroup="layergroup"></layer-chooser>
                   </li>
                 </ul>
