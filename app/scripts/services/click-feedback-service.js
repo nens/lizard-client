@@ -40,7 +40,7 @@ angular.module('lizard-nxt')
           style: function (feature) {
             return {
               name: 'click',
-              clickable: false,
+              clickable: true,
               color: '#34495e',
               stroke: '#34495e',
               opacity: 0.8,
@@ -107,18 +107,18 @@ angular.module('lizard-nxt')
       };
 
       this.vibrateFeatures = function () {
-
         var sel = this._selection = this._getSelection(this.clickLayer);
         clearInterval(this._vibration);
 
+        var width = Number(sel.select('path').attr("stroke-width"));
         this._vibration = setInterval(function () {
           sel.select("path")
             .classed("vibrator", true)
-            .attr("stroke-width", 15)
+            .attr("stroke-width", function () { return width * 2; })
             .transition().duration(200)
-            .attr("stroke-width", 20)
+            .attr("stroke-width", function () { return width * 3; })
             .transition().duration(200)
-            .attr("stroke-width", 15);
+            .attr("stroke-width", function () { return width; });
         }, 400);
       };
 

@@ -4,7 +4,8 @@ angular.module('lizard-nxt')
   'RasterService',
   'ClickFeedbackService',
   'UtilService',
-  function ($scope, RasterService, ClickFeedbackService, UtilService) {
+  '$q',
+  function ($scope, RasterService, ClickFeedbackService, UtilService, $q) {
 
     $scope.box.content = {};
 
@@ -15,6 +16,7 @@ angular.module('lizard-nxt')
      * @param  array of L.LatLng objects describing the line.
      */
     var fillLine = function (line) {
+      ClickFeedbackService.startVibration($scope.mapState);
       //TODO draw feedback when loading data
       var promises = $scope.fillBox({
         geom: line,
@@ -33,7 +35,23 @@ angular.module('lizard-nxt')
         });
       });
       // Draw feedback when all promises are resolved
-      //$q.all(promises).then(drawFeedback);
+      $q.all(promises).then(function () {
+        var feedbackDrawn = false;
+        angular.angular.forEach($scope.box.content, function (lg) {
+          if (lg && lg.isActive() && lg.layers) {
+            angular.forEach(lg.layers, function (layer) {
+              if (layer && layer.data) {
+                console.log('stop');
+                ClickFeedbackService.stopVibration();
+                feedbackDrawn = true;
+              }
+            });
+          }
+        });
+        if (!feedbackDrawn) {
+          ClickFeedbackService.vibrateOnce();
+        }
+      });
     };
 
     /**
@@ -48,26 +66,20 @@ angular.module('lizard-nxt')
      *      the first to the second.
      */
     $scope.$watch('mapState.here', function (n, o) {
-
       if (n === o) { return true; }
-
+      ClickFeedbackService.emptyClickLayer($scope.mapState);
       if ($scope.mapState.points.length === 2) {
-
         $scope.mapState.points = [];
-        ClickFeedbackService.emptyClickLayer($scope.mapState);
         // Empty data element since the line is gone
-        $scope.line = {};
-
+        $scope.box.content = {};
       } else {
-
         if ($scope.mapState.points.length === 1) {
-
           $scope.mapState.points[1] = $scope.mapState.here;
+          ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.points[1], true);
           fillLine($scope.mapState.points);
-          ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.points[1], false);
         } else {
           $scope.mapState.points[0] = $scope.mapState.here;
-          ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.userHere);
+          ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.userHere, true);
         }
       }
     });
@@ -75,7 +87,7 @@ angular.module('lizard-nxt')
     var watchIfUrlCtrlSetsPoints = $scope.$watch('mapState.points', function (n, o) {
       if ($scope.mapState.points.length === 2) {
         fillLine($scope.mapState.points);
-        ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.points[1]);
+        ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.points[1], true);
         // Delete this watch
         watchIfUrlCtrlSetsPoints();
       }
@@ -87,6 +99,7 @@ angular.module('lizard-nxt')
     $scope.$watch('mapState.userHere', function (n, o) {
       if (n === o) { return true; }
       if ($scope.mapState.points[0] && !$scope.mapState.points[1]) {
+        ClickFeedbackService.emptyClickLayer($scope.mapState);
         ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.userHere, true);
       }
     });
