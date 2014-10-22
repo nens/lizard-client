@@ -65,7 +65,7 @@ angular.module('lizard-nxt')
         element[0],
         dataLayers,
         {
-          zoomControl: false
+          zoomControl: true
         }
       );
 
