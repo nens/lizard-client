@@ -67,24 +67,23 @@
 
 .searchbutton {
     background-color: #16a085; /*#20b2aa*/
-    /*background-color: #177d89;*/
-    /*background-image: -webkit-linear-gradient(top,#177d89,#115e67);*/
-    /*background-color: rgb(-13, 166, 215);*/
     border: 0;
-    border-radius: 0 2px 2px 0;
     height: 32px;
     left: 400px;
     position: absolute;
     text-align: center;
     top: 0;
     vertical-align: top;
-    width: 72px;
+    width: 34px;
     z-index: -1;
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .searchbutton:hover {
     background-color: #48c9b0;
-    /*background-image: -webkit-linear-gradient(top,#177d89,#115e67);*/
 }
 
 .searchbutton:focus {
@@ -124,54 +123,6 @@
     outline: none;
 }
 
-/*.card {
-    padding: 15px;
-    margin: 5px 0 0 0;
-    position: relative;
-    overflow:hidden;
-    white-space: nowrap;
-    text-overflow:ellipsis;
-    background: #FFF;
-    background: rgba(255,255,255,0.9);
-    border-radius: 2px;
-    backface-visibility: hidden;
-    z-index:10;
-    width: 400px;
-    top:0px;
-    transition: all .3s ease-out;
-    -webkit-transition: all .3s ease-out;
-
-    border: 1px sild #00f;
-}
-*/
-
-
-/*
-.card.large {
-    width:600px;
-    transition: all .3s ease;
-    -webkit-transition: all .3s ease;
-}
-.card-hidden {
-    opacity: 0.5;
-    transition: all .2s ease;
-    -webkit-transition: all .2s ease;
-    transform: translateY(-95%);
-    -webkit-transform: translateY(-95%);
-    -webkit-transition-delay:1s;
-    transition-delay:1s;
-}
-
-
-.card {
-    vertical-align: middle;
-}
-
-.card p {
-    color: #777;
-    white-space: normal;
-}
-*/
 .searchbox input {
     vertical-align: middle;
     background-color: transparent;
@@ -194,17 +145,6 @@
     clip: rect(0px,400px,1000px,0px);
 }
 
-/*.card .card-title span {
-    font-size: 1em;
-    margin-bottom: 3em;
-}
-
-.card .card-title img {
-    width: 20px;
-    height: 20px;
-    margin-right: 1em;
-}*/
-
 .card i[class*='icon-'] {
     color: #E74C3C;
     font-size: 1.5em;
@@ -212,11 +152,6 @@
     position: relative;
     left: 0;
 }
-
-/*
-.card .card-title .title-text {
-    margin-left: 38px;
-}*/
 
 .card .flip-button, .card .flip-button a {
     position: absolute;
@@ -279,10 +214,6 @@
     color: gray;
 }
 
-/*.card .timeseries{
-    width: 300px;
-}
-*/
 .card .nxt-box-overflow {
     overflow: auto;
 }

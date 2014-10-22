@@ -55,9 +55,19 @@ angular.module('lizard-nxt')
           var map = this._map;
           if (layerGroup.baselayer || layerGroup.temporal) {
             angular.forEach(this.layerGroups, function (_layerGroup) {
-              if (layerGroup.baselayer && _layerGroup.baselayer && _layerGroup.isActive() && _layerGroup.slug !== layerGroup.slug) {
+              if (layerGroup.baselayer
+                && _layerGroup.baselayer
+                && _layerGroup.isActive()
+                && _layerGroup.slug !== layerGroup.slug
+                )
+              {
                 _layerGroup.toggle(map);
-              } else if (layerGroup.temporal && _layerGroup.temporal && _layerGroup.isActive() && _layerGroup.slug !== layerGroup.slug) {
+
+              } else if (layerGroup.temporal
+                && _layerGroup.temporal
+                && _layerGroup.isActive()
+                && _layerGroup.slug !== layerGroup.slug) {
+
                 _layerGroup.toggle(map);
               }
             });
@@ -150,19 +160,24 @@ angular.module('lizard-nxt')
         this._map.removeLayer(layer);
       },
 
-      // TODO: move temporal property to the layerGroup in the backend
-      getActiveTemporalLayer: function () {
-        var activeTemporalLayer = false;
+      getActiveTemporalLayerGroup: function () {
+        var result;
         angular.forEach(this.layerGroups, function (layerGroup) {
-          if (layerGroup.isActive()) {
+          if (!result && layerGroup.isActive()) {
             angular.forEach(layerGroup._layers, function (layer) {
-              if (!activeTemporalLayer && layer.temporal) {
-                activeTemporalLayer = layerGroup;
+              if (!result && layer.temporal) {
+                if (layer.type === 'WMS') {
+                  result = layerGroup;
+                } else if (layer.type === 'Vector') {
+                  // TO BE DE-COMMENTED IN THE FORESEEABLE FUTURE:
+                  //return layerGroup;
+                  throw new Error('getActiveTemporalLayerGroup() currently doesn\'t handle type \'Vector\'');
+                }
               }
             });
           }
         });
-        return activeTemporalLayer;
+        return result;
       },
 
       /**
@@ -221,10 +236,7 @@ angular.module('lizard-nxt')
      * @description Creates a Leaflet map based on idString or Element.
      */
     var createNxtMap = function (mapElem, options) { // String or Element.
-
-      var map = LeafletService.map(mapElem, options);
-
-      return map;
+      return LeafletService.map(mapElem, options);
     };
 
     return NxtMap;

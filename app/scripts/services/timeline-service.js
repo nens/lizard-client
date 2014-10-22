@@ -307,9 +307,11 @@ angular.module('lizard-nxt')
      */
     updateBrushExtent: {
       value: function (start, end) {
-        brushg
-          .call(brush.extent([new Date(start), new Date(end)]));
-        brushed();
+        if (brush) {
+          brushg
+            .call(brush.extent([new Date(start), new Date(end)]));
+          brushed();
+        }
       }
     },
 

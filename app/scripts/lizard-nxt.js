@@ -14,7 +14,7 @@ if (window.Raven) {
 
 /**
  * Initialise angular.module('lizard-nxt')
- * 
+ *
  */
 angular.module("lizard-nxt", [
   'omnibox',
@@ -239,15 +239,6 @@ angular.module('lizard-nxt')
     }
   });
 
-  $scope.$watch('mapState.panZoom', function (n, o) {
-    if (n === o) { return true; }
-    if ($scope.mapState.panZoom.isValid()) {
-      MapService.fitBounds($scope.mapState.panZoom);
-    } else {
-      MapService.panZoomTo($scope.mapState.panZoom);
-    }
-  });
-
   var now = Date.now();
   var day = 24 * 60 * 60 * 1000;
 
@@ -291,15 +282,12 @@ angular.module('lizard-nxt')
   // EVENTS
 
   var getEventTypes = function () {
-
     var k, eventLayers = [];
-
     for (k in $scope.mapState.layers) {
       if (k === "alarms" || k === "messages") {
         eventLayers.push($scope.mapState.layers[k]);
       }
     }
-
     return eventLayers;
   };
 
@@ -406,7 +394,6 @@ angular.module('lizard-nxt')
     $scope.keyIsPressed = !$scope.keyIsPressed;
     $scope.keyPressed = $event.which;
     $scope.keyTarget = $event.target;
-
     if ($event.which === 27) {
       // If detailMode is active, close that
       if ($scope.box.contextSwitchMode) {
@@ -456,16 +443,13 @@ angular.module('lizard-nxt')
    * Initial state of the timeState.hidden is 'undefined'.
    */
   $scope.toggleTimeline = function () {
-
     if ($scope.timeState.hidden === true) {
       $scope.timeState.hidden = false;
       angular.element('#timeline').css('bottom', 0);
-
     } else if ($scope.timeState.hidden === false) {
       $scope.timeState.hidden = true;
       angular.element('#timeline').css(
         'bottom', 0 - angular.element('#timeline').height());
-
     } else if ($scope.timeState.hidden === undefined) {
       // Create timeline element when needed and no earlier
       var timeline = angular.element(
@@ -480,7 +464,7 @@ angular.module('lizard-nxt')
   // Can be removed when we redo the timeline
   var timelineToggler = $scope.$watch('mapState.layerGroupsChanged',  function () {
     if ($scope.timeState.hidden === undefined
-      && $scope.mapState.getActiveTemporalLayer()) {
+      && $scope.mapState.getActiveTemporalLayerGroup()) {
       $scope.toggleTimeline();
       // remove watch
       timelineToggler();

@@ -21,7 +21,9 @@ angular.module('lizard-nxt')
       attributionControl: false
     });
 
-    chooser.toggleLayerGroup(chooser.layerGroups[Object.keys(chooser.layerGroups)[0]]);
+    chooser.toggleLayerGroup(
+      chooser.layerGroups[Object.keys(chooser.layerGroups)[0]]
+    );
 
     scope.$watch('mapState.bounds', function (n, v) {
       if (n === v) { return; }

@@ -61,8 +61,11 @@ angular.module('lizard-nxt')
         scope.mapState.bounds = map.getBounds();
       };
 
-      scope.mapState = new NxtMap(element[0], dataLayers, {
-          zoomControl: false,
+      scope.mapState = new NxtMap(
+        element[0],
+        dataLayers,
+        {
+          zoomControl: true
         }
       );
 
@@ -92,176 +95,34 @@ angular.module('lizard-nxt')
   return {
     link: function (scope, element, attrs) {
 
-      var imageUrlBase;
-      var imageBounds = [];
-      var utcFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
-      var step = [];
-      var imageOverlays = {};
-      var frameLookup = {};
-      // numCachedFrames is now dynamic: the amt. of cached frames for mobile users
-      // is only half of that for non-mobile users.
-      var numCachedFrames = UtilService.serveToMobileDevice() ? 15 : 30;
-      var previousFrame = 0;
-      var previousDate;
-      var nxtDate;
-      var loadingRaster = 0;
-      var restart = false;
-      var initiated = false;
-
-      var start = function () {
-        imageBounds = RasterService.rasterInfo(scope.mapState.getActiveTemporalLayer().slug).imageBounds;
-        utcFormatter = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
-        step = RasterService.rasterInfo(scope.mapState.getActiveTemporalLayer().slug).timeResolution;
-        imageOverlays = {};
-        frameLookup = {};
-        numCachedFrames = 30;
-        previousFrame = 0;
-        loadingRaster = 0;
-        restart = false;
-
-        /**
-         * Setup imageOverlays.
-         */
-        imageOverlays = RasterService.getImgOverlays(
-          numCachedFrames,
-          imageBounds
-        );
-        initiated = true;
-      };
-
-
-      var addLoadListener = function (image, i, date) {
-        image.on("load", function (e) {
-          loadingRaster -= 1;
-          frameLookup[date] = i;
-          if (restart && loadingRaster === 0) {
-            restart = false;
-            scope.timeState.playPauseAnimation();
-          }
+      var adhereToTimeWrapper = function (newTime, oldTime) {
+        angular.forEach(scope.mapState.layerGroups, function (lg) {
+          lg.adhereToTime(scope.mapState, scope.timeState, oldTime, newTime);
         });
       };
 
-      /**
-       * Get next x images from timestamp;
-       *
-       * @param: {integer} timestamp - javascript timestamp in ms
-       *
-       * TODO: check if this should go to the RasterService?
-       */
-      var getImages = function (timestamp) {
-        nxtDate = UtilService.roundTimestamp(
-          scope.timeState.at,
-          step,
-          false
-        );
-        // writing outer-scope variables..
-        previousDate = nxtDate;
-        loadingRaster = 0;
-        // All frames are going to load new ones, empty lookup
-        frameLookup = {};
-
-        for (var i in imageOverlays) {
-
-          loadingRaster += 1;
-          imageOverlays[i].setOpacity(0);
-          // Remove old listener
-          imageOverlays[i].off('load');
-          addLoadListener(imageOverlays[i], i, nxtDate);
-          imageOverlays[i].setUrl(imageUrlBase +
-                        utcFormatter(new Date(nxtDate)));
-          nxtDate += step;
-        }
-      };
-
-      /**
-       * When a temporal raster is enabled, add imageOverlay layer, and remove
-       * the layer it gets disabled.
-       */
-      scope.$watch('mapState.activeLayersChanged', function (n, o) {
-        var i, activeTemporalLayer = scope.mapState.getActiveTemporalLayer();
-        if (activeTemporalLayer && activeTemporalLayer.layers[0].type === 'WMS') {
-          start();
-          for (i in imageOverlays) {
-            MapService.addLayer(imageOverlays[i]);
-          }
-          imageUrlBase = RasterService
-                          .rasterInfo(activeTemporalLayer.slug)
-                          .imageUrlBase;
-          getImages(scope.timeState.at);
-
-        } else {
-          for (i in imageOverlays) {
-            MapService.removeLayer(imageOverlays[i]);
-          }
-        }
+      scope.$watch('mapState.layerGroupsChanged', function (n, o) {
+        if (n === o) { return; }
+        adhereToTimeWrapper(scope.timeState.at, undefined);
       });
 
-
-      /**
-       * Animator; watch for timeState.at, show corresponding frame.
-       *
-       * Lookup timeState.at in frameLookup, set opacity of previous frame
-       * to 0, set opacity of currentFrame to 1. Replace previous frame
-       * with next frame; If frame is not in lookupFrame, get new images.
-       */
-      scope.$watch('timeState.at', function (newVal, oldVal) {
-        if (newVal === oldVal || !initiated) { return; }
-        var currentDate = UtilService.roundTimestamp(newVal,
-                                             step, false);
-        var oldDate = UtilService.roundTimestamp(oldVal,
-                                             step, false);
-        if (currentDate === oldDate) { return; }
-        if (scope.mapState.getActiveTemporalLayer()) {
-
-          var overlayIndex = frameLookup[currentDate];
-          if (overlayIndex !== undefined &&
-              overlayIndex !== previousFrame) {
-            // Turn off old frame
-            imageOverlays[previousFrame].setOpacity(0);
-            // Turn on new frame
-            imageOverlays[overlayIndex].setOpacity(0.7);
-            // Delete the old overlay from the lookup, it is gone.
-            delete frameLookup[currentDate];
-            // Remove old listener
-            imageOverlays[previousFrame].off('load');
-            // Add listener to asynchronously update loadingRaster and
-            // framelookup
-            addLoadListener(imageOverlays[previousFrame],
-                            previousFrame,
-                            nxtDate);
-            // We are now waiting for one extra raster
-            loadingRaster += 1;
-            // Tell the old overlay to go and get a new image.
-            imageOverlays[previousFrame].setUrl(imageUrlBase +
-              utcFormatter(new Date(nxtDate)));
-
-            previousFrame = overlayIndex;
-            previousDate = currentDate;
-            nxtDate += step;
-          } else if (overlayIndex === undefined) {
-            if (scope.timeState.animation.playing) {
-              restart = true;
-            }
-            if (scope.timeState.playPauseAnimation) {
-              scope.timeState.playPauseAnimation('off');
-            }
-          }
-        }
+      scope.$watch('timeState.at', function (n, o) {
+        if (n === o) { return; }
+        adhereToTimeWrapper(n, o);
       });
 
       /**
        * Get new set of images when animation stops playing
        * (resets rasterLoading to 0)
        */
-      scope.$watch('timeState.at', function (newVal, oldVal) {
-        if (newVal === oldVal) { return; }
-        if (!scope.timeState.animation.playing &&
-            scope.mapState.getActiveTemporalLayer() &&
-            scope.mapState.initiated) {
-          if (!initiated) { return; }
-          getImages(scope.timeState.at);
-          imageOverlays[0].setOpacity(0.7);
-          previousFrame = 0;
+      scope.$watch('timeState.animation.playing', function (n, o) {
+
+        if (n === o) { return; }
+
+        if (!n) {
+          angular.forEach(scope.mapState.layerGroups, function(lg) {
+            lg.stopAnimation(scope.timeState);
+          });
         }
       });
     }

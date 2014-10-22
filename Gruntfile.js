@@ -16,7 +16,6 @@
 
 */
 
-var proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
 var modRewrite = require('connect-modrewrite');
 
 module.exports = function (grunt) {
@@ -46,9 +45,6 @@ module.exports = function (grunt) {
       js: {
         files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
         tasks: ['newer:jshint:all', 'karma'],
-        options: {
-          livereload: '<%= connect.options.livereload %>'
-        }
       },
       jstemplates: {
         files: ['<%= yeoman.app %>/scripts/templates/{,*/}*.html'],
@@ -119,7 +115,6 @@ module.exports = function (grunt) {
                 connect.static('./vendor')
               ),
               connect.static(appConfig.app),
-              proxySnippet
             ];
           }
         }
