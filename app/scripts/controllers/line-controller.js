@@ -85,7 +85,7 @@ angular.module('lizard-nxt')
       } else {
         if ($scope.mapState.points.length === 1) {
           $scope.mapState.points[1] = $scope.mapState.here;
-          ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.points[1], true);
+          ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.points[1], false);
           fillLine($scope.mapState.points);
         } else {
           $scope.mapState.points[0] = $scope.mapState.here;
@@ -97,7 +97,7 @@ angular.module('lizard-nxt')
     var watchIfUrlCtrlSetsPoints = $scope.$watch('mapState.points', function (n, o) {
       if ($scope.mapState.points.length === 2) {
         ClickFeedbackService.emptyClickLayer($scope.mapState);
-        ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.points[1], true);
+        ClickFeedbackService.drawLine($scope.mapState, $scope.mapState.points[0], $scope.mapState.points[1], false);
         fillLine($scope.mapState.points);
         // Delete this watch
         watchIfUrlCtrlSetsPoints();
