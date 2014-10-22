@@ -9,6 +9,11 @@ angular.module('lizard-nxt')
     scope.percOpacity = opacity * 100;
     
     var localClick;
+    /**
+     * @description captures the location of click
+     * and calculates the percentage of the width.
+     * @params {event} jQuery event.
+     */
     var adjustOpacity = function (e) {
       e.preventDefault();
       localClick = e.offsetX;
