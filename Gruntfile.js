@@ -44,7 +44,7 @@ module.exports = function (grunt) {
       },
       js: {
         files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
-        tasks: ['newer:jshint:all', 'karma'],
+        tasks: ['newer:jshint:all', 'karma:dev'],
       },
       jstemplates: {
         files: ['<%= yeoman.app %>/scripts/templates/{,*/}*.html'],
@@ -52,7 +52,7 @@ module.exports = function (grunt) {
       },
       jsTest: {
         files: ['test/spec/{,*/}*.js'],
-        tasks: ['newer:jshint:test', 'karma']
+        tasks: ['newer:jshint:test', 'karma:dev']
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
@@ -202,7 +202,7 @@ module.exports = function (grunt) {
         ignorePath:  /\.\./
       },
       test: {
-        src: 'test/karma.conf.js',
+        src: ['test/karma.conf.js', 'test/karma.conf.dev.js'],
         ignorePath:  /\.\.\//,
         fileTypes: {
           js: {
@@ -421,6 +421,9 @@ module.exports = function (grunt) {
 
     // Test settings
     karma: {
+      dev: {
+        configFile: 'test/karma.conf.dev.js',
+      },
       unit: {
         configFile: 'test/karma.conf.js',
       }
