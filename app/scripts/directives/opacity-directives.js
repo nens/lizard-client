@@ -1,20 +1,33 @@
 
 
 angular.module('lizard-nxt')
-  .directive('OpacitySlider', function () {
+  .directive('opacitySlider', function () {
     
   var link = function (scope, element, attrs) {
+    var opacity = scope.layergroup.getOpacity();
+    scope.percOpacity = opacity * 100;
+    
+    var localClick;
+    var adjustOpacity = function (e) {
+      e.preventDefault();
+      localClick = e.offsetX;
+
+      console.log(localClick, e);
+      if (localClick === undefined) {
+        localClick = e.originalEvent.changedTouches[0].offsetX;
+      }
+      var newOpacity = localClick / e.target.clientWidth;
+      scope.percOpacity = newOpacity * 100;
+      console.log(newOpacity);
+      scope.layergroup.setOpacity(newOpacity);
+
+    }
+
+    element.bind('mousedown', adjustOpacity);
 /*    var localClick, mouseMove, clickTime;*/
 
     //var startClick = function (e) {
-      //e.preventDefault();
-      //localClick = e.clientX;
-      //clickTime = e.timeStamp;
-      //if (localClick === undefined) {
-        //localClick = e.originalEvent.changedTouches[0].clientX;
-      //}
-      //mouseMove = false;
-    //};
+   //};
 
     //var onMove = function (e) {
       //console.log(e.timeStamp - clickTime, localClick, clickTime)

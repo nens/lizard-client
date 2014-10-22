@@ -197,6 +197,27 @@ angular.module('lizard-nxt')
       },
 
       /**
+       * @function
+       * @member app.LayerGroup
+       * @return {float} opacity from 0 to 1.
+       * @description retrieve opacity from layer
+       */
+      getOpacity: function () {
+        var opacity;
+        angular.forEach(this._layers, function (layer) {
+          if (layer.type === 'WMS' || layer.type === 'TMS') {
+            if (layer.leafletLayer) {
+              opacity = layer.leafletLayer.options.opacity;
+            } else {
+              opacity = layer.opacity;
+            }
+          }
+        });
+        return opacity;
+      },
+
+
+      /**
        *
        * Local helper that returns a rounded timestamp
        */

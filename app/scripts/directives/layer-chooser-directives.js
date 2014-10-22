@@ -31,7 +31,12 @@ angular.module('lizard-nxt')
       var centroid = scope.mapState.bounds.getCenter();
       chooser.setView(centroid, zoom - 2);
     });
+  
+    var toggleLayer = function () {
+      scope.mapState.toggleLayerGroups(scope.layergroup);
+    };
 
+    element.bind('click', toggleLayer);
   };
 
   return {
