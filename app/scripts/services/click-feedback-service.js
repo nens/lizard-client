@@ -115,7 +115,7 @@ angular.module('lizard-nxt')
       this.vibrateFeatures = function () {
         var sel = this._selection = this._getSelection(this.clickLayer);
         clearInterval(this._vibration);
-        this._vibration = setInterval(function () {vibrate(sel, false)}, 400);
+        this._vibration = setInterval(function () {vibrate(sel, false) }, 400);
       };
 
       var vibrate = function (sel, remove) {
@@ -145,22 +145,22 @@ angular.module('lizard-nxt')
       };
 
       this.addLocationMarker = function (mapState, latLng) {
-        var point = mapState.latLngToLayerPoint(latLng);
-        var selection = this._getSelection(this.clickLayer);
-        // This is a location marker
-        var path = "M" + point.x + " " + (point.y - 32) +
-                   "c-5.523 0-10 4.477-10 10 0 10 10 22 10 " +
-                   " 22s10-12 10-22c0-5.523-4.477-10-10-10z" +
-                   "M" + point.x + " " + (point.y - 16) +
-                   "c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z";
-        selection.select("path")
-          .classed("location-marker", true)
-          .attr("d", path)
-          .attr("stroke-opacity", 1)
-          .attr("stroke-width", 1.5)
-          .attr("stroke", "white")
-          .attr("fill", "#34495e")
-          .attr("fill-opacity", "1");
+        var divIcon = L.divIcon({
+          iconAnchor: [10, 48],
+          html: '<svg width=20 height=48><path d="M10,16'
+            + 'c-5.523 0-10 4.477-10 10 0 10 10 22 10 22'
+            + 's10-12 10-22c0-5.523-4.477-10-10-10z M10,32'
+            + ' c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686'
+            + ' 6 6-2.686 6-6 6z" style="fill: #34495e"></path></svg>'
+        });
+
+        this.clickLayer.options.pointToLayer = function (feature, latlng) {
+          return L.marker(latlng, {
+            icon: divIcon,
+            clickable: true
+          });
+        };
+
       };
     };
 
@@ -211,15 +211,16 @@ angular.module('lizard-nxt')
      * Used to indicate location of rain graph
      *
      * @param {object} mapState - the mapState object, which assumes the key
-     *   'here' to have a unundefined value.
+     *   'here' to be defined.
      */
     drawArrow = function (mapState, latLng) {
+      clickLayer.emptyClickLayer(mapState);
       var geometry = {
         "type": "Point",
         "coordinates": [latLng.lng, latLng.lat]
       };
-      clickLayer.drawFeature(geometry);
       clickLayer.addLocationMarker(mapState, latLng);
+      clickLayer.drawFeature(geometry);
     };
 
     drawLine = function (mapState, first, second, dashed) {
