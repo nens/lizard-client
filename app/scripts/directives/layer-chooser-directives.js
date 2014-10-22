@@ -1,8 +1,8 @@
 //layer-directive.js
 
 angular.module('lizard-nxt')
-  .directive("layerChooser", ['NxtMap', 'UtilService', 'dataLayers',
-    function (NxtMap, UtilService, dataLayers) {
+  .directive("layerChooser", ['NxtMap',  'dataLayers',
+    function (NxtMap, dataLayers) {
 
   var link = function (scope, element, attrs) {
     // Scope gets the mapState layerGroup, here we create a new layerGroup which

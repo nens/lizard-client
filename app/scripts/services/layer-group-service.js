@@ -430,136 +430,131 @@ angular.module('lizard-nxt')
 
         if (!timeState.animation.playing) {
           this._animState.imageOverlays[0].setOpacity(0.7);
-        }
-        this._animState.previousFrame = 0;
->>>>>>> e2d6fb839984b50ebcf21b3c03db8796d82332ca
-      }
-    };
-
-    ///////////////////////////////////////////////////////////////////////////
-
-   /**
-    * @function
-    * @memberOf app.LayerGroup
-    * @description creates a promise for the given layer and the provided
-    *              service. The service should have a getData function that
-    *              returns a promise that is resolved when data is recieved.
-    * @param lgSlug layerGroup slug to include in the response.
-    * @param layer  nxtLayer definition.
-    * @param options options containing geometry or time.
-    * @param deffered deffered to notify when service.getData resolves.
-    * @param wantedService Service to getData from.
-    */
-    var buildPromise = function (
-      lgSlug,
-      layer,
-      options,
-      deferred,
-      wantedService) {
-
-      var buildSuccesCallback = function (data) {
-        deferred.notify({
-          data: data,
-          type: layer.type,
-          layerGroupSlug: lgSlug,
-          layerSlug: layer.slug,
-          aggType: layer.aggregation_type,
-          summary: layer.summary
-        });
-      };
-
-      var buildErrorCallback = function (msg) {
-        deferred.notify({
-          data:  null,
-          type: layer.type,
-          layerGroupSlug: lgSlug,
-          layerSlug: layer.slug
-        });
-      };
-
-      options = options || {};
-      options.agg = layer.aggregation_type;
-
-      return wantedService.getData(layer, options)
-        .then(buildSuccesCallback, buildErrorCallback);
-    };
-
-    /**
-     * @function
-     * @memberof app.LayerGroup
-     * @param {L.Class} Leaflet layer.
-     * @description Adds layer to map
-     */
-    var addLeafletLayer = function (map, leafletLayer) { // Leaflet Layer
-      if (map.hasLayer(leafletLayer)) {
-        throw new Error(
-          'Attempted to add layer' + leafletLayer._id
-          + 'while it was already part of the map'
-        );
-      } else {
-        map.addLayer(leafletLayer);
-      }
-    };
-
-    /**
-     * @function
-     * @memberof app.LayerGroup
-     * @param  {L.Class} Leaflet map
-     * @param  {L.Class} Leaflet layer
-     * @description Removes layer from map
-     */
-    var removeLeafletLayer = function (map, leafletLayer) { // Leaflet Layer
-      if (map.hasLayer(leafletLayer)) {
-        map.removeLayer(leafletLayer);
-      } else {
-        throw new Error(
-          'Attempted to remove layer' + leafletLayer._id
-          + 'while it was NOT part of provided the map'
-        );
-      }
-    };
-
-    /**
-     * @function
-     * @memberof app.LayerGroup
-     * @param  {L.Class} Leaflet layer
-     * @param temproal boolean describing whether the layer is temporal
-     * @description delegates initialization of leaflet layers to other
-     *              functions.
-     */
-    var _initializeLeafletLayers = function (layers, temporal) {
-      if (temporal) {
-        //TODO: initialize imageoverlays
-        return layers;
-      }
-      else {
-        angular.forEach(layers, function (layer) {
-          if (layer.type === 'Vector') {
-            layer.leafletLayer = _initiateVectorLayer(layer);
-          } else if (layer.type === 'TMS') {
-            layer.leafletLayer = _initiateTMSLayer(layer);
-          } else if (layer.type === 'UTFGrid') {
-            layer.leafletLayer = _initiateGridLayer(layer);
-          } else if (layer.type === 'WMS' && layer.tiled) {
-            layer.leafletLayer = _initiateWMSLayer(layer);
-          } else if (!layer.tiled) {
-            // TODO: initialise imageoverlay
-          } else if (layer.type !== 'Store') {
-            // this ain't right
-            throw new Error(layer.type + ' is not a supported layer type');
           }
-        });
-      }
-      return layers;
-    };
+          this._animState.previousFrame = 0;
+        }
+      };
+
+      ///////////////////////////////////////////////////////////////////////////
+
+     /**
+      * @function
+      * @memberOf app.LayerGroup
+      * @description creates a promise for the given layer and the provided
+      *              service. The service should have a getData function that
+      *              returns a promise that is resolved when data is recieved.
+      * @param lgSlug layerGroup slug to include in the response.
+      * @param layer  nxtLayer definition.
+      * @param options options containing geometry or time.
+      * @param deffered deffered to notify when service.getData resolves.
+      * @param wantedService Service to getData from.
+      */
+      var buildPromise = function (
+        lgSlug,
+        layer,
+        options,
+        deferred,
+        wantedService) {
+
+        var buildSuccesCallback = function (data) {
+          deferred.notify({
+            data: data,
+            type: layer.type,
+            layerGroupSlug: lgSlug,
+            layerSlug: layer.slug,
+            aggType: layer.aggregation_type,
+            summary: layer.summary
+          });
+        };
+
+        var buildErrorCallback = function (msg) {
+          deferred.notify({
+            data:  null,
+            type: layer.type,
+            layerGroupSlug: lgSlug,
+            layerSlug: layer.slug
+          });
+        };
+
+        options = options || {};
+        options.agg = layer.aggregation_type;
+
+        return wantedService.getData(layer, options)
+          .then(buildSuccesCallback, buildErrorCallback);
+      };
+
+      /**
+       * @function
+       * @memberof app.LayerGroup
+       * @param {L.Class} Leaflet layer.
+       * @description Adds layer to map
+       */
+      var addLeafletLayer = function (map, leafletLayer) { // Leaflet Layer
+        if (map.hasLayer(leafletLayer)) {
+          throw new Error(
+            'Attempted to add layer' + leafletLayer._id
+            + 'while it was already part of the map'
+          );
+        } else {
+          map.addLayer(leafletLayer);
+        }
+      };
+
+      /**
+       * @function
+       * @memberof app.LayerGroup
+       * @param  {L.Class} Leaflet map
+       * @param  {L.Class} Leaflet layer
+       * @description Removes layer from map
+       */
+      var removeLeafletLayer = function (map, leafletLayer) { // Leaflet Layer
+        if (map.hasLayer(leafletLayer)) {
+          map.removeLayer(leafletLayer);
+        } else {
+          throw new Error(
+            'Attempted to remove layer' + leafletLayer._id
+            + 'while it was NOT part of provided the map'
+          );
+        }
+      };
+
+      /**
+       * @function
+       * @memberof app.LayerGroup
+       * @param  {L.Class} Leaflet layer
+       * @param temproal boolean describing whether the layer is temporal
+       * @description delegates initialization of leaflet layers to other
+       *              functions.
+       */
+      var _initializeLeafletLayers = function (layers, temporal) {
+        if (temporal) {
+          //TODO: initialize imageoverlays
+          return layers;
+        }
+        else {
+          angular.forEach(layers, function (layer) {
+            if (layer.type === 'Vector') {
+              layer.leafletLayer = _initiateVectorLayer(layer);
+            } else if (layer.type === 'TMS') {
+              layer.leafletLayer = _initiateTMSLayer(layer);
+            } else if (layer.type === 'UTFGrid') {
+              layer.leafletLayer = _initiateGridLayer(layer);
+            } else if (layer.type === 'WMS' && layer.tiled) {
+              layer.leafletLayer = _initiateWMSLayer(layer);
+            } else if (!layer.tiled) {
+              // TODO: initialise imageoverlay
+            } else if (layer.type !== 'Store') {
+              // this ain't right
+              throw new Error(layer.type + ' is not a supported layer type');
+            }
+          });
+        }
+        return layers;
+      };
 
 
-    var _initiateVectorLayer = function (nonLeafLayer) {
+      var _initiateVectorLayer = function (nonLeafLayer) {
 
-<<<<<<< HEAD
-
-=======
->>>>>>> e2d6fb839984b50ebcf21b3c03db8796d82332ca
       var leafletLayer;
 
       if (nonLeafLayer.tiled) {
