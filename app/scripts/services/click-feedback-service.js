@@ -57,11 +57,17 @@ angular.module('lizard-nxt')
             weight: 5,
             fill: false,
             zIndexOffset: 1000,
-            clickable: false
+            clickable: true
           });
           self._circleMarker = circleMarker;
           return circleMarker;
         };
+
+        // Hack to make click on the clicklayer bubble down to the map
+        this.clickLayer.on('click', function (e) {
+            this._map.fire('click', e);
+          }
+        );
 
         mapState.addLayer(this.clickLayer);
       };
@@ -110,34 +116,29 @@ angular.module('lizard-nxt')
         var sel = this._selection = this._getSelection(this.clickLayer);
         clearInterval(this._vibration);
 
+        this._vibration = setInterval(vibrate(sel, false), 400);
+      };
+
+      var vibrate = function (sel, remove) {
         var width = Number(sel.select('path').attr("stroke-width"));
-        this._vibration = setInterval(function () {
-          sel.select("path")
-            .classed("vibrator", true)
-            .attr("stroke-width", function () { return width * 2; })
-            .transition().duration(200)
-            .attr("stroke-width", function () { return width * 3; })
-            .transition().duration(200)
-            .attr("stroke-width", function () { return width; });
-        }, 400);
+        sel.select("path")
+          .classed("vibrator", true)
+          .attr("stroke-width", function () { return width * 2; })
+          .transition().duration(200)
+          .attr("stroke-width", function () { return width * 3; })
+          .transition().duration(200)
+          .attr("stroke-width", function () { return remove ? 0 : width; });
       };
 
       this.vibrateOnce = function (geojson) {
         var sel = this._selection = this._getSelection(this.clickLayer);
-        if (!sel && geojson) {
+        var remove = false;
+        if (geojson) {
           this.clickLayer.addData(geojson);
           sel = this._selection = this._getSelection(this.clickLayer);
-          var remove = true;
+          remove = true;
         }
-        sel.select("path")
-          .classed("vibrator", true)
-          .attr("stroke-width", 15)
-          .transition().duration(200)
-          .attr("stroke-width", 20)
-          .transition().duration(200)
-          .attr("stroke-width", function () {
-            return remove ? 0 : 5;
-          });
+        vibrate(sel, remove);
       };
 
       this.removeLocationMarker = function () {
@@ -232,7 +233,7 @@ angular.module('lizard-nxt')
 
     vibrateOnce = function (geojson) {
       clickLayer.vibrateOnce(geojson);
-    }
+    };
 
     return {
       emptyClickLayer: emptyClickLayer,
