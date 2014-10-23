@@ -45,6 +45,11 @@ angular.module('lizard-nxt')
       * @param {str} value
       */
       setUrlValue: function (part, index, value) {
+        console.log('setUrlValue()');
+        console.log('-- part:', part);
+        console.log('-- index:', value);
+        console.log('-- value:', value);
+
         if (!(part === 'path' || part === 'at')) {
           throw new Error(String(part) + ' is not a supported part of the url');
         }
