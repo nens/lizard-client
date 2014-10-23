@@ -656,3 +656,13 @@ td.lineout {
   color: #7f8c8d;
   margin-left: 10px;
 }
+
+.structure-image-wrapper {
+  margin-bottom: 10px;
+}
+
+.structure-image {
+  width: 370px;
+  height: 200px;
+  margin: 5px;
+}
