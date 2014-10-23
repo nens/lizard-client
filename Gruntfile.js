@@ -24,6 +24,7 @@ module.exports = function (grunt) {
   require('time-grunt')(grunt);
 
   grunt.loadNpmTasks('grunt-connect-proxy');
+  grunt.loadNpmTasks('grunt-semantic-release');
 
   var appConfig = {
     app: require('./bower.json').appPath,
@@ -211,19 +212,13 @@ module.exports = function (grunt) {
 
     release: {
       bump: {
-        files: ['package.json', 'bower.json']
-        commitmessage: 'released v%version%'
-        pushTo: 'origin integration'
+        files: ['package.json', 'bower.json'],
+        commitmessage: 'released v%version%',
+        pushTo: 'origin integration',
+        tagName: '%VERSION%'
       },
       email: 'info@nelen-schuurmans.nl',
       name: 'Nelen & Schuurmans B.V.',
-      payload: function(payload, cb) {
-        payload.body += '\nvery release'
-          payload.body += '\n     such consistent'
-          payload.body += '\n  much information'
-          payload.body += '\nwow'
-          cb(payload);
-      }
     },
 
     // Automatically inject Bower components into the app
