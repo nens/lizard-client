@@ -190,9 +190,7 @@ angular.module('lizard-nxt')
           return;
         }
         angular.forEach(this._layers, function (layer) {
-          if (layer.type === 'WMS' || layer.type === 'TMS') {
-            layer.leafletLayer.setOpacity(newOpacity);
-          }
+          layer.leafletLayer.setOpacity(newOpacity);
         });
       },
 
@@ -205,12 +203,10 @@ angular.module('lizard-nxt')
       getOpacity: function () {
         var opacity;
         angular.forEach(this._layers, function (layer) {
-          if (layer.type === 'WMS' || layer.type === 'TMS') {
-            if (layer.leafletLayer) {
-              opacity = layer.leafletLayer.options.opacity;
-            } else {
-              opacity = layer.opacity;
-            }
+          if (layer.leafletLayer) {
+            opacity = layer.leafletLayer.options.opacity;
+          } else {
+            opacity = layer.opacity;
           }
         });
         return opacity;

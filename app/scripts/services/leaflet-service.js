@@ -20,6 +20,8 @@ angular.module('lizard-nxt')
       var color = this.options.color;
       this.addTileData = this.options.dataCallback;
 
+      this.options['opacity'] = 0.8;
+ 
       this.drawOptions = {
         pointToLayer: function (feature, latlng) {
 
@@ -133,6 +135,9 @@ angular.module('lizard-nxt')
         }
       });
       return filteredData;
+    },
+    setOpacity: function (opacity) {
+      this.geojsonLayer.setStyle({ fillOpacity: opacity });
     },
     drawTheThings: function (data) {
       if (!data) { return; }
