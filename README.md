@@ -25,13 +25,17 @@ Run NPM install (see [Node Package Manager]( https://www.npmjs.org/ )):
 
     npm install
 
+If you don't have the bower and grunt-cli do this too:
+    
+    (sudo) npm install -g bower grunt-cli
+
 Install vendor files:
 
     bower install
 
 Create dist files (optional) and templates (compulsory):
 
-    grunt
+    grunt build
 
 Point you browser to index.html for a client demo
 
@@ -52,18 +56,22 @@ Install vendor files:
 
 Create dist files (optional) and templates (compulsory):
 
-    grunt
-  
-Django's staticfiles_dirs setting should point to src/lizard-client to serve the files from django runserver. Now change dir to lizard-nxt root
-and runserver:
+    grunt build
 
+Django serves a REST API which also bootstraps the data for the client. Tiles and stuff also come from Lizard-NXT django site:
+    
+    cd to/wherever/this/may/be/lizard-nxt
     bin/django runserver <ip>:<port>
 
 ## Use
 
 Use Grunt to simplify development in the client. When developing the client the easiest way to test and watch your files is by running:
   
-    bin/grunt watch
+    bin/grunt serve
+
+Doing a release for your package is easy. There is a grunt task to tag and push tags to github:
+
+    grunt release
 
 Whenever files change, grunt triggers the `test` and the `compile` scripts that compile all the html templates to a js file and run the jasmine tests. The failing tests show up in your notification area.
 

@@ -6,7 +6,9 @@ Unreleased
 
 - Point and line give visual feedback on the map when loading and recieving data.
 
-- Images for structures added to omnibox
+- Images for structures added to omnibox.
+
+- Added semver bumper.
 
 Release 0.2b8
 -------------
