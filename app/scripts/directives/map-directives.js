@@ -121,7 +121,7 @@ angular.module('lizard-nxt')
 
         if (!n) {
           angular.forEach(scope.mapState.layerGroups, function(lg) {
-            lg.stopAnimation(scope.timeState);
+            lg.animationStop(scope.timeState);
           });
         }
       });
