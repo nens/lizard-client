@@ -169,7 +169,7 @@ angular.module('lizard-nxt')
     contextSwitchMode: false, // Switch between card or fullscreen
     query: null, // Search bar query
     showCards: false,// Only used for search results
-    type: 'area', // Default box type
+    type: 'point', // Default box type
     content: {}, // Inconsistently used to store data to display in box
     changed: Date.now(),
     mouseLoc: [] // Used to draw 'bolletje' on elevation profile
@@ -195,15 +195,16 @@ angular.module('lizard-nxt')
    *
    */
   $scope.toggleTool = function (name) {
+
     if (name === 'line') {
-      $scope.box.type  = 'line';
-    }
-    if ($scope.tools.active === name) {
-      $scope.tools.active = 'none';
+      $scope.box.type = 'line';
+    } else if (name === 'point') {
+      $scope.box.type = 'point';
+    } else if (name === 'area') {
       $scope.box.type = 'area';
-    } else {
-      $scope.tools.active = name;
     }
+
+    $scope.tools.active = name;
   };
 
   /**

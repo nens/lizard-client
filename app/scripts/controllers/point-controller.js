@@ -120,8 +120,6 @@ angular.module('lizard-nxt')
       });
     };
 
-    fillPointHere();
-
     // Update when user clicked again
     $scope.$watch('mapState.here', function (n, o) {
       if (n === o) { return; }
@@ -131,7 +129,9 @@ angular.module('lizard-nxt')
     // Update when layergroups have changed
     $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
       if (n === o) { return; }
-      fillPointHere();
+      if ($scope.mapState.here) {
+        fillPointHere();
+      }
     });
 
     // Clean up stuff when controller is destroyed
