@@ -1,7 +1,7 @@
 //layer-directive.js
 
 angular.module('lizard-nxt')
-  .directive("layerChooser", ['NxtMap',  'dataLayers',
+  .directive("layerChooser", ['NxtMap', 'dataLayers',
     function (NxtMap, dataLayers) {
 
   var link = function (scope, element, attrs) {
