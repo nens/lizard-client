@@ -186,12 +186,11 @@ angular.module('lizard-nxt')
         });
       }
 
-
     };
 
     ///////////////////////////////////////////////////////////////////////////
 
-    var toggleLeafletLayers = function (map, layers, active) {
+    var toggleLayers = function (map, layers, active) {
       var method = active ? 'add' : 'remove';
       angular.forEach(layers, function (layer) {
         layer[method](map);
