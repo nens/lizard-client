@@ -90,9 +90,6 @@ angular.module('lizard-nxt')
         clicked = setClickFunction(xScale, this.dimensions,
           interaction.clickFn);
       }
-      if (interaction.brushFn) {
-        brushed = setBrushFunction(xScale, interaction.brushFn);
-      }
       if (interaction.zoomEndFn) {
         zoomend = setZoomEndFunction(interaction.zoomEndFn);
       }
@@ -147,7 +144,6 @@ angular.module('lizard-nxt')
           self._svg.on('click', null);
         });
         //TODO: Snap the brush to nearest logical unit, 5min, hour, week etc.
-        brush.on("brushend", brushend);
         brushg = this._svg.select('g').append("g")
           .attr("class", "brushed");
 
@@ -181,7 +177,6 @@ angular.module('lizard-nxt')
             .attr("height", newHeight)
             .attr("style", "fill: #2980b9;");
 
-        brushend();
       }
     },
 
@@ -197,8 +192,6 @@ angular.module('lizard-nxt')
         brush.on('brushstart', function () {
           self._svg.on('click', null);
         });
-        //TODO: Snap the brush to nearest logical unit, 5min, hour, week etc.
-        brush.on("brushend", brushend);
 
         brushg = this._svg.select('g').append("g")
           .attr("class", "brushed");
@@ -219,7 +212,6 @@ angular.module('lizard-nxt')
           .attr("x", 0)
           .attr("width", 2)
           .attr("style", "fill: #34495e;");
-        brushend();
       }
     },
 
@@ -597,45 +589,6 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Create brush function that does all the brush selection and call the
-   * callback.
-   */
-  var setBrushFunction = function (xScale, brushFn) {
-
-    var brushed = function () {
-
-      var s = brush.extent();
-      if (circles) {
-        circles.classed("selected", function (d) {
-          var t = new Date(d.properties.timestamp_end);
-          return s[0] <= t && t <= s[1];
-        });
-      }
-      if (bars) {
-        bars.classed("selected", function (d) {
-          var t = new Date(d[0]);
-          return s[0] <= t && t <= s[1];
-        });
-      }
-      brushFn(brush);
-    };
-
-    return brushed;
-  };
-
-  var brushend = function () {
-    var extent = brush.extent();
-    var size = xScale(extent[1].getTime()) - xScale(extent[0].getTime());
-    if (size < 1) {
-      var start = xScale.invert(xScale(extent[1].getTime()) - 1);
-      var now = extent[1];
-      brush.extent([start, now]);
-      brushg.call(brush);
-    }
-    brushed();
-  };
-
-  /**
    * Creates click function. If default is prevented, the click was a zoom.
    */
   var setClickFunction = function (xScale, dimensions, clickFn) {
@@ -653,7 +606,6 @@ angular.module('lizard-nxt')
    */
   var updateBrush = function (brushg, oldDim, newDim) {
 
-    brushed();
     var height = Timeline.prototype._getHeight(newDim);
     var delay = oldDim.height <= newDim.height
       ? Timeline.prototype.transTime

@@ -35,6 +35,7 @@ angular.module('lizard-nxt')
     el = element[0].getElementsByTagName('svg')[0],
 
     interaction = {
+
       /**
        * Update timeState on zoom
        *
@@ -48,6 +49,7 @@ angular.module('lizard-nxt')
           scope.timeState.changedZoom = Date.now();
         });
       },
+
       /**
        * Update zoomEnded to trigger new call for raster aggregate.
        */
@@ -70,20 +72,22 @@ angular.module('lizard-nxt')
         scope.timeState.at = timeClicked;
         scope.$digest();
       },
+
       /**
        * Update timeState on brush
        *
        * Receives the d3 brush
        */
-      brushFn: function (brush) {
-        var s = brush.extent();
-        var sSorted = [s[0].getTime(), s[1].getTime()].sort();
-        scope.timeState.animation.start = sSorted[0];
-        scope.timeState.at = sSorted[1];
-        if (!scope.timeState.animation.playing && !scope.$$phase) {
-          scope.$apply();
-        }
-      }
+      // TODO: delete candidate.
+      //brushFn: function (brush) {
+        //var s = brush.extent();
+        //var sSorted = [s[0].getTime(), s[1].getTime()].sort();
+        //scope.timeState.animation.start = sSorted[0];
+        //scope.timeState.at = sSorted[1];
+        //if (!scope.timeState.animation.playing && !scope.$$phase) {
+          //scope.$apply();
+        //}
+      //}
     };
 
     // Move timeline element into sight
@@ -95,6 +99,7 @@ angular.module('lizard-nxt')
     // Activate zoom listener
     timeline.addZoomListener();
 
+    // TODO: WTF is this?
     if (scope.mapState.getActiveTemporalLayerGroup()) {
       // Activate click listener
       timeline.addClickListener();
@@ -204,8 +209,6 @@ angular.module('lizard-nxt')
     scope.$watch('timeState.animation.enabled', function (newVal, oldVal) {
       if (newVal === oldVal) { return true; }
       if (scope.timeState.animation.enabled) {
-        // Cancel zoom behavior
-        timeline.removeZoomListener();
         var start;
         var end;
         if (scope.timeState.animation.start !== undefined
@@ -220,11 +223,12 @@ angular.module('lizard-nxt')
           end = scope.timeState.at;
         }
         // Draw the brush
-        timeline.drawBrush(start, end);
+        //timeline.drawBrush(start, end);
+        timeline.drawNow(start);
       } else {
         scope.timeState.animation.playing = false;
-        timeline.removeBrush();
-        timeline.addZoomListener();
+        //timeline.removeBrush();
+        //timeline.addZoomListener();
         scope.timeState.changeOrigin = 'timeline';
         scope.timeState.changedZoom = Date.now();
       }

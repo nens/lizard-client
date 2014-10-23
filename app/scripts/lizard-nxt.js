@@ -215,10 +215,6 @@ angular.module('lizard-nxt')
     $scope.box.context = context;
   };
 
-  $scope.toggleContextSwitchMode = function () {
-    $scope.box.contextSwitchMode = !$scope.box.contextSwitchMode;
-  };
-
   // MAP MODEL is set by the map-directive
   $scope.mapState = {};
 
@@ -405,72 +401,6 @@ angular.module('lizard-nxt')
       }
     }
   };
-
-  $scope.$watch('keyPressed', function (newVal, oldVal) {
-    if (newVal === 51) {
-      $scope.mapState.activeBaselayer = 3;
-      $scope.mapState.changeBaselayer();
-    } else if (newVal === 52) {
-      $scope.mapState.activeBaselayer = 4;
-      $scope.mapState.changeBaselayer();
-    } else if (newVal === 49) {
-      $scope.mapState.activeBaselayer = 1;
-      $scope.mapState.changeBaselayer();
-    } else if (newVal === 50) {
-      $scope.mapState.activeBaselayer = 2;
-      $scope.mapState.changeBaselayer();
-    }
-  });
-
-  $scope.toggleLayerInfo = function (layername) {
-    if (layername === 'Hoogtekaart') {
-      $scope.keyPressed = 51;
-    } else if (layername === 'Landgebruik') {
-      $scope.keyPressed = 52;
-    }
-  };
-
-  //END KEYPRESS
-
-  /**
-   * Switch timeline on or off.
-   *
-   * Uses 3 way logic: true, false and undefined:
-   *   undefined: timeline element doesn't exist yet.
-   *   false: timeline exists but is hidden.
-   *   true: timeline exists and is shown.
-   *
-   * Initial state of the timeState.hidden is 'undefined'.
-   */
-  $scope.toggleTimeline = function () {
-    if ($scope.timeState.hidden === true) {
-      $scope.timeState.hidden = false;
-      angular.element('#timeline').css('bottom', 0);
-    } else if ($scope.timeState.hidden === false) {
-      $scope.timeState.hidden = true;
-      angular.element('#timeline').css(
-        'bottom', 0 - angular.element('#timeline').height());
-    } else if ($scope.timeState.hidden === undefined) {
-      // Create timeline element when needed and no earlier
-      var timeline = angular.element(
-        '<timeline class="navbar timeline navbar-fixed-bottom"></timeline>');
-      var el = $compile(timeline)($scope);
-      angular.element('#master').append(timeline);
-      $scope.timeState.hidden = false;
-    }
-  };
-
-  // Temporarily watch layergroups to turn timeline on
-  // Can be removed when we redo the timeline
-  var timelineToggler = $scope.$watch('mapState.layerGroupsChanged',  function () {
-    if ($scope.timeState.hidden === undefined
-      && $scope.mapState.getActiveTemporalLayerGroup()) {
-      $scope.toggleTimeline();
-      // remove watch
-      timelineToggler();
-    }
-
-  });
 
   $scope.toggleVersionVisibility = function () {
     $('.navbar-version').toggle();

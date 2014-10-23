@@ -21,8 +21,7 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @memberOf angular.module('lizard-nxt')
-  .TimeLineCtrl
+   * @memberOf angular.module('lizard-nxt').TimeLineCtrl
    *
    * @summary Toggle animation state.
    *
@@ -100,48 +99,6 @@ angular.module('lizard-nxt')
       setTimeout(function () {
         window.requestAnimationFrame(step);
       }, $scope.timeState.animation.minLag);
-    }
-  };
-
-  /**
-   * Toggle fast-forward.
-   *
-   * Speed up animation by a factor 4.
-   */
-  var animationWasOn;
-  $scope.timeState.animation.toggleAnimateFastForward = function (toggle) {
-
-    if (toggle) {
-
-      $scope.timeState.animation.stepSize /= 4;
-      animationWasOn = $scope.timeState.animation.playing;
-      if (!$scope.timeState.animation.playing) {
-        $scope.timeState.playPauseAnimation();
-      }
-
-    } else {
-
-      $scope.timeState.animation.stepSize *= 4;
-      if (!animationWasOn) {
-        $scope.timeState.playPauseAnimation('off');
-      }
-    }
-  };
-
-  /**
-   * Step back function.
-   */
-  $scope.timeState.animation.stepBack = function () {
-    var stepBack = ($scope.timeState.end - $scope.timeState.start) / 10;
-    var wasOn = $scope.timeState.animation.playing;
-    $scope.timeState.animation.start = $scope.timeState.animation.start -
-                                       stepBack;
-    $scope.timeState.at = $scope.timeState.at - stepBack;
-    $scope.timeState.playPauseAnimation('off');
-    if (!$scope.timeState.animation.playing && wasOn) {
-      setTimeout(function () {
-        $scope.timeState.playPauseAnimation();
-      }, 500);
     }
   };
 
