@@ -36,7 +36,6 @@ angular.module('lizard-nxt')
       scope.mapState.toggleLayerGroup(scope.layergroup);
     };
 
-    //element.find('label').bind('click', toggleLayer);
   };
 
   return {
