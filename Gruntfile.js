@@ -215,7 +215,7 @@ module.exports = function (grunt) {
         files: ['package.json', 'bower.json'],
         commitmessage: 'released v%version%',
         pushTo: 'origin integration',
-        tagName: '%VERSION%'
+        tagName: ''
       },
       email: 'info@nelen-schuurmans.nl',
       name: 'Nelen & Schuurmans B.V.',

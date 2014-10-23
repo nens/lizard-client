@@ -57,7 +57,7 @@
     "karma-coverage": "~0.2.6",
     "karma-junit-reporter": "~0.2.2",
     "karma-mocha-reporter": "~0.3.1",
-    "grunt-semantic-release": "~0.2.1"
+    "grunt-semantic-release": "git://github.com/fritzvd/grunt-semantic-release#patch-1"
   },
   "engines": {
     "node": ">=0.10.0"
