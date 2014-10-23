@@ -6,6 +6,8 @@ Unreleased
 
 - Point and line give visual feedback on the map when loading and recieving data.
 
+- Images for structures added to omnibox
+
 Release 0.2b8
 -------------
 
