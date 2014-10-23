@@ -1,6 +1,6 @@
 {
-  "name": "lizard-nxt",
-  "version": "0.0.0",
+  "name": "lizard-client",
+  "version": "0.2.7-beta",
   "description": "Front-end of lizard-nxt, a Geographic Web Application that connects water data to locations",
   "main": "",
   "directories": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/nens/lizard-nxt.git"
+    "url": "git://github.com/nens/lizard-client.git"
   },
   "keywords": [
     "water",
@@ -56,7 +56,8 @@
     "karma-chrome-launcher": "~0.1.5",
     "karma-coverage": "~0.2.6",
     "karma-junit-reporter": "~0.2.2",
-    "karma-mocha-reporter": "~0.3.1"
+    "karma-mocha-reporter": "~0.3.1",
+    "grunt-semantic-release": "~0.2.1"
   },
   "engines": {
     "node": ">=0.10.0"
