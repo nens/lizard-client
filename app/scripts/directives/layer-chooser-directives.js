@@ -32,11 +32,6 @@ angular.module('lizard-nxt')
       chooser.setView(centroid, zoom - 2);
     });
   
-    var toggleLayer = function () {
-      scope.mapState.toggleLayerGroup(scope.layergroup);
-    };
-
-    //element.find('label').bind('click', toggleLayer);
   };
 
   return {

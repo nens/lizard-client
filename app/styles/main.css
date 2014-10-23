@@ -291,8 +291,7 @@ label.layer-chooser > div.layer-img:hover {
 /* Bootstrap Overrides for progress bar */
 .progress {
   height: 4px;
-  margin-bottom: 5px;
-  margin-top: -5px;
+  margin: 0 4px;
   z-index: 100;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
@@ -725,9 +724,14 @@ ul.list-inline li.baselayer-icon label{
 /*}*/
 
 .layer-switcher ul li{
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
     list-style-type: none;
+    line-height: 1;
 }
-
 
 #content{
     position: absolute;

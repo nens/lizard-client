@@ -9,6 +9,7 @@ angular.module('lizard-nxt')
     scope.percOpacity = opacity * 100;
     
     var localClick;
+
     /**
      * @description captures the location of click
      * and calculates the percentage of the width.
@@ -16,8 +17,7 @@ angular.module('lizard-nxt')
      */
     var adjustOpacity = function (e) {
       e.preventDefault();
-      localClick = e.offsetX;
-
+      localClick = (e.originalEvent.layerX < 0) ? e.offsetX : e.originalEvent.layerX;
       if (localClick === undefined) {
         localClick = e.originalEvent.changedTouches[0].offsetX;
       }
@@ -30,7 +30,8 @@ angular.module('lizard-nxt')
 
     }
 
-    element.bind('mousedown', adjustOpacity);
+    element.bind('mouseup', adjustOpacity);
+    element.bind('touchend', adjustOpacity);
   };
 
   return {
