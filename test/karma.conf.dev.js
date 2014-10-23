@@ -64,25 +64,14 @@ module.exports = function(config) {
     // Which plugins to enable
     plugins: [
       'karma-phantomjs-launcher',
+      'karma-chrome-launcher',
+      'karma-mocha-reporter',
       'karma-jasmine',
       'karma-coverage',
       'karma-junit-reporter'
     ],
 
-    reporters: ['progress', 'coverage', 'junit'],
-
-    junitReporter: {
-      outputFile: 'qa/junit.xml',
-      suite: ''
-    },
-
-    coverageReporter: {
-      reporters: [
-        {type: 'html', dir: 'qa/coverage/html'},
-        {type: 'cobertura', dir: 'qa/'},
-        {type: 'text-summary', dir: 'qa/'}
-      ]
-    },
+    reporters: ['mocha'],
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
@@ -92,7 +81,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-    logLevel: config.LOG_WARN,
+    logLevel: config.LOG_INFO,
 
     // Uncomment the following lines if you are using grunt's server to run the tests
     // proxies: {

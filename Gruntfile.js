@@ -44,7 +44,7 @@ module.exports = function (grunt) {
       },
       js: {
         files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
-        tasks: ['newer:jshint:all', 'karma'],
+        tasks: ['newer:jshint:dev', 'karma:dev'],
       },
       jstemplates: {
         files: ['<%= yeoman.app %>/scripts/templates/{,*/}*.html'],
@@ -52,7 +52,7 @@ module.exports = function (grunt) {
       },
       jsTest: {
         files: ['test/spec/{,*/}*.js'],
-        tasks: ['newer:jshint:test', 'karma']
+        tasks: ['newer:jshint:test', 'karma:dev']
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
@@ -157,6 +157,20 @@ module.exports = function (grunt) {
           '!<%= yeoman.app %>/templates/templates.js'
         ]
       },
+      dev: {
+        options: {
+          reporter: require('jshint-stylish'),
+          reporterOutput: null
+        },
+        src: [
+         'Gruntfile.js',
+         '<%= yeoman.app %>/scripts/{,*/}*.js',
+         '!<%= yeoman.app %>/lib/leaflet-utfgrid-lizard.js',
+         '!<%= yeoman.app %>/lib/leaflet.contours-layer.js',
+         '!<%= yeoman.app %>/lib/TileLayer.GeoJSONd3.js',
+         '!<%= yeoman.app %>/templates/templates.js'
+       ]
+      }
       // test: {
       //   options: {
       //     jshintrc: 'test/.jshintrc'
@@ -202,7 +216,7 @@ module.exports = function (grunt) {
         ignorePath:  /\.\./
       },
       test: {
-        src: 'test/karma.conf.js',
+        src: ['test/karma.conf.js', 'test/karma.conf.dev.js'],
         ignorePath:  /\.\.\//,
         fileTypes: {
           js: {
@@ -421,6 +435,9 @@ module.exports = function (grunt) {
 
     // Test settings
     karma: {
+      dev: {
+        configFile: 'test/karma.conf.dev.js',
+      },
       unit: {
         configFile: 'test/karma.conf.js',
       }
@@ -457,7 +474,7 @@ module.exports = function (grunt) {
     'concurrent:test',
     'autoprefixer',
     'connect:test',
-    'karma'
+    'karma:unit'
   ]);
 
   grunt.registerTask('build', [
