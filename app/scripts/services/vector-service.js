@@ -114,6 +114,10 @@ angular.module('lizard-nxt')
         filteredSet = filterSpatial(sourceArray, spatial);
       } else if (spatial === undefined) {
         filteredSet = sourceArray;
+      } else if (spatial instanceof Array
+        && spatial[0] instanceof LeafletService.LatLng) {
+        // TODO: implement line intersect with vector data
+        filteredSet = [];
       } else {
         throw new Error(spatial + "is an invalid geometry to query VectorService");
       }

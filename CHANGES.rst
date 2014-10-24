@@ -4,19 +4,28 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
-- Vector data is summarized in box
+- Point and line give visual feedback on the map when loading and recieving data.
 
-- Scope.box.content now follows a uniform data structure
+- Images for structures added to omnibox.
 
-- Timeseries are back
+- Added semver bumper.
 
-- Vectors (events, or whatever) are now stored in vector service
+Release 0.2b8
+-------------
 
-- Vectors are received through tiling mechanism
+- Vector data is summarized in box.
 
-- Vectors are drawn by leaflet
+- Scope.box.content now follows a uniform data structure.
 
-- Clicks on vectors are delegated to Angular in stead of through obscure click handlers
+- Timeseries are back.
+
+- Vectors (events, or whatever) are now stored in vector service.
+
+- Vectors are received through tiling mechanism.
+
+- Vectors are drawn by leaflet.
+
+- Clicks on vectors are delegated to Angular in stead of through obscure click handlers.
 
 Release 0.2b5
 -------------
