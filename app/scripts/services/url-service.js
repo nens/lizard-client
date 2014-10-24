@@ -19,8 +19,7 @@ angular.module('lizard-nxt')
 
      /**
       * @function
-      * @memberOf angular.module('lizard-nxt')
-  .LocationGetterSetter
+      * @memberOf angular.module('lizard-nxt').LocationGetterSetter
       * @description returns the value in the path of url at the specified part
       * @param {str} part, part url looking for currently <path | @>
       * @param {str} index location in the part
@@ -37,19 +36,13 @@ angular.module('lizard-nxt')
 
      /**
       * @function
-      * @memberOf angular.module('lizard-nxt')
-  .LocationGetterSetter
+      * @memberOf angular.module('lizard-nxt').LocationGetterSetter
       * @description sets the value in the path of url at the specified part
       * @param {str} part, part url looking for currently <path | @>
       * @param {str} index location in the part
       * @param {str} value
       */
       setUrlValue: function (part, index, value) {
-        console.log('setUrlValue()');
-        console.log('-- part:', part);
-        console.log('-- index:', value);
-        console.log('-- value:', value);
-
         if (!(part === 'path' || part === 'at')) {
           throw new Error(String(part) + ' is not a supported part of the url');
         }
@@ -82,12 +75,15 @@ angular.module('lizard-nxt')
     * @return {str} the part the path.
     */
     _getPath = function (part) {
-      var paths, pathPart,
-      path = $location.path();
+
+      var paths,
+          pathPart,
+          path = $location.path();
+
       paths = path.split('@'); //splits path in two at the @.
-      pathPart = paths[part === 'path' ? 0: 1] || ''; //gets before @ when 'path' after when 'at'
+      pathPart = paths[part === 'path' ? 0 : 1] || ''; //gets before @ when 'path' after when 'at'
       // we do not want the first slash
-      pathPart = part === 'path' ? pathPart.slice(1): pathPart;
+      pathPart = part === 'path' ? pathPart.slice(1) : pathPart;
       return pathPart;
     };
 
@@ -101,11 +97,9 @@ angular.module('lizard-nxt')
     */
     _getPathParts = function (part) {
       var pathPart = _getPath(part);
-      if (!pathPart || pathPart === '') { return []; }
-      var parts = pathPart.split('/');
-      return parts;
+      if (!pathPart) { return []; }
+      return pathPart.split('/');
     };
-
     return service;
   }]);
 
@@ -217,7 +211,8 @@ angular.module('lizard-nxt')
         LocationGetterSetter.setUrlValue(
           state.layerGroups.part,
           state.layerGroups.index,
-          activeSlugs.toString());
+          activeSlugs.toString()
+        );
       },
       /**
        * @function
@@ -293,12 +288,14 @@ angular.module('lizard-nxt')
         return mapState;
       },
       setUrlHashWhenEmpty: function (state, type, mapState, timeState) {
+
         if (!LocationGetterSetter.getUrlValue(state.context.part, state.context.index)) {
           LocationGetterSetter.setUrlValue(
             state.context.part,
             state.context.index,
             state.context.value);
         }
+
         if (!LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index)) {
           LocationGetterSetter.setUrlValue(
             state.boxType.part,

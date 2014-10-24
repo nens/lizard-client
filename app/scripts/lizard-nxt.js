@@ -170,6 +170,7 @@ angular.module('lizard-nxt')
     query: null, // Search bar query
     showCards: false,// Only used for search results
     type: 'point', // Default box type
+    //type: undefined, // Should this be set via the hashGetterSetter????
     content: {}, // Inconsistently used to store data to display in box
     changed: Date.now(),
     mouseLoc: [] // Used to draw 'bolletje' on elevation profile
@@ -178,7 +179,7 @@ angular.module('lizard-nxt')
 
   // TOOLS
   $scope.tools = {
-    active: 'none', //NOTE: make list?
+    active: 'point', //NOTE: make list?
   };
 
   /**
@@ -225,18 +226,18 @@ angular.module('lizard-nxt')
 
   $scope.$watch('mapState.here', function (n, o) {
     if (n === o) { return true; }
-    if (!$scope.$$phase) {
-      $scope.$apply(function () {
-        if ($scope.box.type !== 'line') {
-          $scope.box.type = 'point';
-          $scope.$broadcast('updatepoint');
-        }
-      });
-    } else {
-      if ($scope.box.type !== 'line') {
+
+    var fn = function () {
+      if ($scope.box.type === 'point') {
         $scope.box.type = 'point';
         $scope.$broadcast('updatepoint');
       }
+    };
+
+    if (!$scope.$$phase) {
+      $scope.$apply(fn);
+    } else {
+      fn();
     }
   });
 
@@ -338,7 +339,7 @@ angular.module('lizard-nxt')
         $scope.events.data = EventService.removeEvents($scope.events.types,
                                                        $scope.events.data,
                                                        eventSeriesId);
-        $scope.events.types.count = $scope.events.types.count - 1;
+        $scope.events.types.count--;
         EventService.addColor($scope.events);
         $scope.events.changed = Date.now();
       } else {
@@ -369,7 +370,7 @@ angular.module('lizard-nxt')
                                                eventSeriesId);
         $scope.events.data = dataOrder.data;
         $scope.events.types[eventSeriesId].event_type = dataOrder.order;
-        $scope.events.types.count = $scope.events.types.count + 1;
+        $scope.events.types.count++;
         EventService.addColor($scope.events);
         $scope.events.types[eventSeriesId].active = true;
         $scope.events.changed = Date.now();
@@ -408,18 +409,9 @@ angular.module('lizard-nxt')
   };
 
   $scope.$watch('keyPressed', function (newVal, oldVal) {
-    if (newVal === 51) {
-      $scope.mapState.activeBaselayer = 3;
-      $scope.mapState.changeBaselayer();
-    } else if (newVal === 52) {
-      $scope.mapState.activeBaselayer = 4;
-      $scope.mapState.changeBaselayer();
-    } else if (newVal === 49) {
-      $scope.mapState.activeBaselayer = 1;
-      $scope.mapState.changeBaselayer();
-    } else if (newVal === 50) {
-      $scope.mapState.activeBaselayer = 2;
-      $scope.mapState.changeBaselayer();
+    if (49 >= newVal && 52 <= newVal) {
+      $scope.mapState.activeBaselayer = newVal - 48;
+      $scope.mapState.changeBaselayer()
     }
   });
 
@@ -476,5 +468,6 @@ angular.module('lizard-nxt')
   $scope.toggleVersionVisibility = function () {
     $('.navbar-version').toggle();
   };
+
 
 }]);
