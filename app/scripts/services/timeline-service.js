@@ -16,9 +16,9 @@
  * prefered above clicking: when a user zooms through dragging, no click is
  * fired.
  *
- * Everything in the timeline is animated for NxtD3.transTime milliseconds. To add new
- * elements to the timeline, make sure the elements are updated on zoom, brush
- * and resize. The timeline resizes before elements are added and after
+ * Everything in the timeline is animated for NxtD3.transTime milliseconds. To
+ * add new elements to the timeline, make sure the elements are updated on zoom,
+ * brush and resize. The timeline resizes before elements are added and after
  * elements are removed. Therefore new and old dimensions need to be compared
  * to delay the resize of elements the same amount as the canvas.
  *
@@ -35,21 +35,20 @@ angular.module('lizard-nxt')
 
   // D3 components
   xScale, // The only d3 scale for placement on the x axis within the whole
-          // timeline. Is only updated when zoomTo is called, or the window resizes.
+          // timeline. Is only updated when zoomTo is called, or the window
+          // resizes.
   xAxis,
-  brush,
   ordinalYScale, // Scale used to place events in lines for each type
 
   // Interaction functions
   clicked,
   zoomed,
   zoomend,
-  brushed,
 
   // Timeline elements
   noDataIndicator,
   nowIndicator,
-  brushg,
+  aggWindow, // aggregation window
   circles, // events
   lines, // events start - end
   bars; // rain intensity
@@ -66,7 +65,8 @@ angular.module('lizard-nxt')
    * @param {integer} start begin value in milliseconds from epoch.
    * @param {integer} end end value in milliseconds from epoch.
    * @param {object} interaction  optional object containing callback functions
-   *  for zoom, click and brush interaction with the rest of the angular.module('lizard-nxt')
+   *  for zoom, click and brush interaction with the rest of the
+   *  angular.module('lizard-nxt')
   .
    */
   function Timeline(element, dimensions, start, end, interaction) {
@@ -77,8 +77,8 @@ angular.module('lizard-nxt')
                 dimensions.padding.left -
                 dimensions.padding.right;
     xScale = this._makeScale({min: start, max: end},
-                            {min: 0, max: width},
-                            {scale: 'time' });
+                             {min: 0, max: width},
+                             {scale: 'time' });
     xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
     drawTimelineAxes(this._svg, xAxis, dimensions);
     if (interaction) {
@@ -127,101 +127,45 @@ angular.module('lizard-nxt')
       }
     },
 
-    /**
-     * @description - Redraws the brush given a certain proportion
-     * @param {float} widthFactor - The proportion between the old width
-     *   and the new width of the temporal extent.
-     */
-    redrawBrush: {
-      value: function (widthFactor) {
-
-        this.removeBrush();
-
-        brush = d3.svg.brush().x(xScale);
-        brush.on("brush", brushed);
-        var self = this;
-        brush.on('brushstart', function () {
-          self._svg.on('click', null);
-        });
-        //TODO: Snap the brush to nearest logical unit, 5min, hour, week etc.
-        brushg = this._svg.select('g').append("g")
-          .attr("class", "brushed");
-
-        var start = brush.extent()[0].getTime();
-        var end = brush.extent()[1].getTime();
-
-        brushg.call(brush.extent([new Date(start), new Date(end)]));
-
-        var brushExtent = d3.select('g.brushed > rect.extent'),
-            brushEastEnd = d3.select('g.resize.e'),
-            oldX = brushExtent.attr("x"),
-            oldWidth = brushExtent.attr("width"),
-            newX = Math.floor(widthFactor * oldX),
-            newWidth = Math.floor(widthFactor * oldWidth),
-            newHeight = this._getHeight(this.dimensions);
-
-        brushExtent
-          .attr("x", newX)
-          .attr("width", newWidth)
-            .transition()
-            .duration(this.transTime)
-            .delay(this.transTime)
-            .attr("height", newHeight);
-
-        brushEastEnd
-          .attr("transform", "translate(" + (newX + newWidth) + ", 0)")
-          .attr("height", newHeight)
-          .select('rect')
-            .attr("x", 0)
-            .attr("width", 2)
-            .attr("height", newHeight)
-            .attr("style", "fill: #2980b9;");
-
-      }
-    },
 
     /**
-     * Draws a brush from start to end
+     * Draws an aggWindow at timestamp
      */
-    drawBrush: {
-      value: function (start, end) {
+    drawAggWindow: {
+      value: function (timestamp, interval) {
 
-        brush = d3.svg.brush().x(xScale);
-        brush.on("brush", brushed);
-        var self = this;
-        brush.on('brushstart', function () {
-          self._svg.on('click', null);
-        });
-
-        brushg = this._svg.select('g').append("g")
-          .attr("class", "brushed");
+        aggWindow = this._svg.select("g").append("g")
+          .attr("class", "aggwindow");
 
         var height = this._getHeight(this.dimensions);
+        var width = xScale(new Date(timestamp + (interval))) -
+          xScale(new Date(timestamp));
 
-        brushg.call(brush.extent([new Date(start), new Date(end)]));
+        console.log("NOTE: get width in pixels based on interval.",
+          interval, width);
 
-        brushg.selectAll("rect")
+        aggWindow.append("rect")
+          .attr("class", "aggwindow")
           .attr("height", height)
-          .selectAll("rect")
-            .transition()
-            .delay(this.transTime)
-            .duration(this.transTime)
-            .attr("height", height);
-
-        brushg.select('.e').select('rect')
-          .attr("x", 0)
-          .attr("width", 2)
+          .attr("x", function () {return xScale(new Date(timestamp)); })
+          .attr("y", 0)
+          .attr("width", width)
           .attr("style", "fill: #34495e;");
+
       }
     },
 
-    removeBrush: {
+    removeAggWindow: {
       value: function () {
-        if (brushg) {
-          brushg.remove();
+        console.log("remove agg window");
+        if (aggWindow) {
+          aggWindow.remove();
+        } else {
+          aggWindow = this._svg.select(".aggwindow");
         }
+        aggWindow.remove();
         this._svg.selectAll(".selected").classed("selected", false);
-        brush = undefined;
+        aggWindow = undefined;
       }
     },
 
@@ -238,7 +182,7 @@ angular.module('lizard-nxt')
      *  bottom, left and right padding. All values in px.
      */
     resize: {
-      value: function (newDimensions, features) {
+      value: function (newDimensions, timestamp, features) {
 
         var oldDimensions = angular.copy(this.dimensions);
         this.dimensions = newDimensions;
@@ -250,10 +194,9 @@ angular.module('lizard-nxt')
         xScale.range([0, newDimensions.width]);
 
         var newWidth = xScale.range()[1];
-        var widthFactor = newWidth / oldWidth;
 
         drawTimelineAxes(this._svg, xAxis, newDimensions);
-        this.updateElements(oldDimensions, features, widthFactor);
+        this.updateElements(oldDimensions, timestamp, features);
       }
     },
 
@@ -264,10 +207,11 @@ angular.module('lizard-nxt')
      */
     updateElements: {
 
-      value: function (oldDimensions, data, widthFactor) {
+      value: function (oldDimensions, timestamp, interval, data) {
 
         if (lines) {
-          drawLineElements(this._svg, this.dimensions, xScale, ordinalYScale, data);
+          drawLineElements(
+            this._svg, this.dimensions, xScale, ordinalYScale, data);
         }
         if (circles) {
           updateCircleElements(circles, xScale);
@@ -275,35 +219,29 @@ angular.module('lizard-nxt')
         if (bars && oldDimensions) {
           updateRectangleElements(bars, xScale, oldDimensions, this.dimensions);
         }
+
         if (noDataIndicator) {
           updateNoDataElement(noDataIndicator, xScale, this.dimensions);
         }
-        if (brush) {
 
-          var that = this,
-              extent = brush.extent(),
-              start = extent[0].getTime(),
-              stop = extent[1].getTime();
-
-          this.removeBrush();
-
+        if (aggWindow) {
+          var that = this;
+          that.removeAggWindow();
           setTimeout(function () {
-            that.drawBrush(start, stop);
-          }, that.transTime);
+            that.drawAggWindow(timestamp, interval);
+          }, this.transTime);
         }
       }
     },
 
     /**
-     * Updates the brush's extent and calls the brush function
+     * Updates the aggregation window position.
      */
-    updateBrushExtent: {
-      value: function (start, end) {
-        if (brush) {
-          brushg
-            .call(brush.extent([new Date(start), new Date(end)]));
-          brushed();
-        }
+    updateAggWindow: {
+      value: function (timestamp, interval) {
+        // TODO: make nice with d3 enter, update, remove etc.
+        this.removeAggWindow();
+        this.drawAggWindow(timestamp, interval);
       }
     },
 
@@ -370,7 +308,8 @@ angular.module('lizard-nxt')
           {min: 0, max: height},
           options
         );
-        bars = drawRectElements(this._svg, this.dimensions, data, xScale, yScale);
+        bars = drawRectElements(
+          this._svg, this.dimensions, data, xScale, yScale);
       }
     },
 
@@ -414,13 +353,14 @@ angular.module('lizard-nxt')
      * @param  {int} end   in ms since epoch
      */
     zoomTo: {
-      value: function (start, end) {
+      value: function (start, end, interval) {
         xScale.domain([new Date(start), new Date(end)]);
         xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-        // this.updateElements();
-        this.updateElements(this.dimensions);
+        this.updateElements(this.dimensions, start);
         drawTimelineAxes(this._svg, xAxis, this.dimensions, this.transTime);
         this.addZoomListener();
+        this.removeAggWindow();
+        this.drawAggWindow(start, interval);
       }
     },
 
@@ -599,28 +539,6 @@ angular.module('lizard-nxt')
       }
     };
     return clicked;
-  };
-
-  /**
-   * Updates the visible brush element's vertical height.
-   */
-  var updateBrush = function (brushg, oldDim, newDim) {
-
-    var height = Timeline.prototype._getHeight(newDim);
-    var delay = oldDim.height <= newDim.height
-      ? Timeline.prototype.transTime
-      : 0;
-
-    brushg.selectAll("rect")
-      .transition()
-      .duration(Timeline.prototype.transTime)
-      .delay(delay)
-      .attr("height", height)
-        .selectAll("rect")
-          .transition()
-          .delay(Timeline.prototype.transTime)
-          .duration(Timeline.prototype.transTime)
-          .attr("height", height);
   };
 
   /**

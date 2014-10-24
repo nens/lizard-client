@@ -19,13 +19,13 @@ angular.module('lizard-nxt')
 
     var dimensions = {
       width: window.innerWidth,
-      height: 65,
-      events: 40,
-      bars: 40,
+      height: 40,
+      events: 20,
+      bars: 20,
       padding: {
         top: 3,
         right: 30,
-        bottom: 20,
+        bottom: 30,
         left: 30
       }
     },
@@ -42,6 +42,7 @@ angular.module('lizard-nxt')
        * Recieves the xScale as the first argument
        */
       zoomFn: function (scale) {
+        console.log("zooming time", scope.timeState.at);
         scope.$apply(function () {
           scope.timeState.start = scale.domain()[0].getTime();
           scope.timeState.end = scale.domain()[1].getTime();
@@ -55,6 +56,13 @@ angular.module('lizard-nxt')
        */
       zoomEndFn: function () {
         scope.$apply(function () {
+          console.log("zoomend", scope.timeState.at);
+          console.log(scope.timeState.resolution);
+          scope.timeState.aggWindow = UtilService.getAggWindow(
+            scope.timeState.start, scope.timeState.end, window.innerWidth);
+          scope.timeState.resolution = (
+            scope.timeState.end - scope.timeState.start) /  window.innerWidth;
+          console.log(scope.timeState.resolution);
           var lg = scope.mapState.getActiveTemporalLayerGroup();
           if (lg) {
             getTemporalRasterData();
@@ -72,22 +80,6 @@ angular.module('lizard-nxt')
         scope.timeState.at = timeClicked;
         scope.$digest();
       },
-
-      /**
-       * Update timeState on brush
-       *
-       * Receives the d3 brush
-       */
-      // TODO: delete candidate.
-      //brushFn: function (brush) {
-        //var s = brush.extent();
-        //var sSorted = [s[0].getTime(), s[1].getTime()].sort();
-        //scope.timeState.animation.start = sSorted[0];
-        //scope.timeState.at = sSorted[1];
-        //if (!scope.timeState.animation.playing && !scope.$$phase) {
-          //scope.$apply();
-        //}
-      //}
     };
 
     // Move timeline element into sight
@@ -99,11 +91,8 @@ angular.module('lizard-nxt')
     // Activate zoom listener
     timeline.addZoomListener();
 
-    // TODO: WTF is this?
-    if (scope.mapState.getActiveTemporalLayerGroup()) {
-      // Activate click listener
-      timeline.addClickListener();
-    }
+    // Activate click listener
+    timeline.addClickListener();
 
     /**
      * Redetermines dimensions of timeline and calls resize.
@@ -121,7 +110,7 @@ angular.module('lizard-nxt')
         eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
         newDim.height = dim.height + eventHeight;
       }
-      timeline.resize(newDim);
+      timeline.resize(newDim, scope.timeState.at);
     };
 
     /**
@@ -193,7 +182,7 @@ angular.module('lizard-nxt')
     });
 
     /**
-     * Adds or removes brush when animation is toggled.
+     * Adds or removes aggregation window when animation is toggled.
      *
      * When animation is enabled,
      * zoom functionality is disabled,
@@ -209,44 +198,25 @@ angular.module('lizard-nxt')
     scope.$watch('timeState.animation.enabled', function (newVal, oldVal) {
       if (newVal === oldVal) { return true; }
       if (scope.timeState.animation.enabled) {
-        var start;
-        var end;
-        if (scope.timeState.animation.start !== undefined
-          && scope.timeState.at !== undefined
-          && scope.timeState.animation.start > scope.timeState.start
-          && scope.timeState.at < scope.timeState.end) {
-          start = scope.timeState.animation.start;
-          end = scope.timeState.at;
-        } else {
-          var buffer = (scope.timeState.end - scope.timeState.start) / 100;
-          start = scope.timeState.at - buffer;
-          end = scope.timeState.at;
-        }
-        // Draw the brush
-        //timeline.drawBrush(start, end);
-        timeline.drawNow(start);
+        timeline.drawAggWindow(scope.timeState.at, scope.timeState.aggWindow);
       } else {
         scope.timeState.animation.playing = false;
-        //timeline.removeBrush();
-        //timeline.addZoomListener();
         scope.timeState.changeOrigin = 'timeline';
         scope.timeState.changedZoom = Date.now();
       }
     });
 
     /**
-     * Update brush and "Now" elements.
+     * Update aggWindow.
      *
-     * If animation is enabled, update brush element; if raster animation is
-     * enabled as well, update "Now" element.
+     * If animation is enabled, update aggWindow element.
      */
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.animation.enabled) {
-
-        timeline.updateBrushExtent(
-          scope.timeState.animation.start,
-          scope.timeState.at
+        timeline.updateAggWindow(
+          scope.timeState.at,
+          scope.timeState.aggWindow
         );
       }
     });
@@ -279,7 +249,8 @@ angular.module('lizard-nxt')
       var activeTemporalLG = scope.mapState.getActiveTemporalLayerGroup();
       if (!!activeTemporalLG && activeTemporalLG.slug === 'rain') {
         // width of timeline
-        var aggWindow = UtilService.getAggWindow(start, stop, window.innerWidth);
+        //var aggWindow = UtilService.getAggWindow(
+          //start, stop, window.innerWidth);
         // TODO: temporal hack to make cumulative rain graph working;
         // refactored with timeline update
 
@@ -297,7 +268,7 @@ angular.module('lizard-nxt')
             start: start,
             end: stop,
             agg: 'none',
-            aggWindow: aggWindow
+            aggWindow: scope.timeState.aggWindow
           }
         ).then(function (response) {
             RasterService.setIntensityData(response);
@@ -313,6 +284,8 @@ angular.module('lizard-nxt')
       timeline.dimensions.width = window.innerWidth;
       timeline.resize(
         timeline.dimensions,
+        scope.timeState.at,
+        // TODO: pass data from point object on scope?
         scope.events.data.features
       );
     };

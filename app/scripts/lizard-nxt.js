@@ -5,7 +5,8 @@
  * Raven is responsible for logging to https://sentry.lizard.net
  */
 if (window.Raven) {
-  window.Raven.config('https://ceb01dd84c6941c8aa20e16f83bdb55e@sentry.lizard.net/19',
+  window.Raven.config(
+    'https://ceb01dd84c6941c8aa20e16f83bdb55e@sentry.lizard.net/19',
   {
     // limits logging to staging and prd
     whitelistUrls: [/nxt\.lizard\.net/, /staging\.lizard\.net/]
@@ -241,10 +242,10 @@ angular.module('lizard-nxt')
   // TIME MODEL
   $scope.timeState = {
     start: now - 2 * day,
-    end: now + day,
+    // resolution in seconds / pixel
+    end: now + day, //  TODO: refactor to function
     changedZoom: Date.now(),
     zoomEnded: null,
-    hidden: undefined,
     animation: {
       start: undefined,
       playing: false,
@@ -257,6 +258,11 @@ angular.module('lizard-nxt')
   };
   // initialise 'now'
   $scope.timeState.at = $scope.timeState.start;
+  $scope.timeState.resolution = ($scope.timeState.end - $scope.timeState.start)
+                                 / window.innerWidth;
+  $scope.timeState.aggWindow = UtilService.getAggWindow($scope.timeState.start,
+                                                        $scope.timeState.end,
+                                                        window.innerWidth);
 
 // END TIME MODEL
 
@@ -341,9 +347,6 @@ angular.module('lizard-nxt')
       }
     } else {
       getEvents(eventSeriesId);
-    }
-    if ($scope.timeState.hidden !== false) {
-      $scope.toggleTimeline();
     }
     $scope.mapState.activeLayersChanged =
      !$scope.mapState.activeLayersChanged;

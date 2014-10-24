@@ -52,7 +52,7 @@ angular.module('lizard-nxt')
    */
   this.getAggWindow = function (start, stop, drawingWidth) {
     var aggWindow;
-    var minPx = 3; // Minimum width of a bar
+    var minPx = 4; // Minimum width of a bar
     // Available zoomlevels
     var zoomLvls = {fiveMinutes: 300000,
                     hour: 3600000,

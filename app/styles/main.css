@@ -374,15 +374,7 @@ ul.list-inline li.baselayer-icon label{
     top: -20px;
     left: 5px;
 }
-.ribbon-icon-timeline {
-    position: relative;
-    color: #C0392B;
-    margin: auto;
-    z-index: 10;
-    font-size: 22px;
-    top: 0px;
-    left: -20px;
-}
+
 .icon-time {
     top: -0px;
     right: 20px;
@@ -630,12 +622,6 @@ ul.list-inline li.baselayer-icon label{
     float: right;
 }
 
-#timeline-ribbon {
-    top: -120px;
-    left: 16px;
-    float: left;
-}
-
 /*combine this class with next to DRY*/
 .arrow {
     position: relative;
@@ -850,46 +836,39 @@ ul.list-inline li.baselayer-icon label{
     border-color: rgba(26, 188, 156, 0.6);
 }
 
-/*timeline stuff
-* Timeline is hidden on defeault
-*/
+/*
+ * Timeline stuff
+ */
+.navbar-fixed-bottom {
+  min-height:20px;
+}
+
 .timeline {
-    min-height: 0;
-    bottom: -94px;
     background-color: rgba(255, 255, 255, 0.9);
     -o-transition:.3s;
     -ms-transition:.3s;
     -moz-transition:.3s;
     -webkit-transition:.3s;
     transition:.3s;
+    width: 100%;
 }
 
 .timeline-svg-wrapper {
-    margin-top: 3px;
+  margin-top: 3px;
 }
 
-.timeline.show {
-    bottom: 0;
-}
-
-.timeline.closed {
-    height: 70px;
-}
-
-.timeline.open {
-    height: 200px;
-    resize: vertical;
-}
-
-.bovenbalk{
-    background-color: rgba(236, 240, 241,1.0);
-    height: 40px;
-    line-height: 40px;
+.time-controls {
+  float: left;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 10px;
 }
 
 .middle {
     vertical-align: middle;
     height: 40px;
+    display: table-cell;
+
 }
 
 /*.navbar .nav > li > a:focus,*/
@@ -913,7 +892,7 @@ ul.list-inline li.baselayer-icon label{
     -moz-transition:.3s;
     -webkit-transition:.3s;
     transition:.3s;
-    font-size: 17px;
+    font-size: 35px;
 }
 
 .nxt-font {
@@ -991,11 +970,6 @@ ul.list-inline li.baselayer-icon label{
   stroke-width: 1.5px;
 }
 
-.brush .extent {
-  fill-opacity: .125;
-  shape-rendering: crispEdges;
-}
-
 .selecting circle {
   fill-opacity: 0.8;
   stroke-width: 10px;
@@ -1064,17 +1038,11 @@ ul.list-inline li.baselayer-icon label{
   -moz-user-select: none;
   user-select: none;
   font-family: 'Roboto Slab', serif;
-text-transform: none;
-font-size: 13px;
-fill: #2c3e50;
-text-shadow: none;
+  text-transform: none;
+  font-size: 13px;
+  fill: #2c3e50;
+  text-shadow: none;
 }
-
-.brush .extent {
-  fill-opacity: .125;
-  shape-rendering: crispEdges;
-}
-
 
 /* end timeline stuff*/
 
@@ -1471,7 +1439,6 @@ img {
 
   width: 200px;
   height: 50px;
-  /*background-color: #f00;*/
 }
 
 .leaflet-bar a:last-child,
@@ -1509,4 +1476,17 @@ img {
 .leaflet-container a:hover {
   color: #fff;
   background-color: #1abc9c;
+}
+
+/**
+ * DEBUG colors
+ */
+.green {
+  background-color: #0F0;  
+}
+.red {
+  background-color: #F00;  
+}
+.blue {
+  background-color: #00F;  
 }
