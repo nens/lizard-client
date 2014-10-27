@@ -49,7 +49,6 @@ angular.module('lizard-nxt')
   noDataIndicator,
   nowIndicator,
   aggWindow, // aggregation window
-  circles, // events
   lines, // events start - end
   bars; // rain intensity
 
@@ -213,9 +212,6 @@ angular.module('lizard-nxt')
           drawLineElements(
             this._svg, this.dimensions, xScale, ordinalYScale, data);
         }
-        if (circles) {
-          updateCircleElements(circles, xScale);
-        }
         if (bars && oldDimensions) {
           updateRectangleElements(bars, xScale, oldDimensions, this.dimensions);
         }
@@ -242,27 +238,6 @@ angular.module('lizard-nxt')
         // TODO: make nice with d3 enter, update, remove etc.
         this.removeAggWindow();
         this.drawAggWindow(timestamp, interval);
-      }
-    },
-
-    /**
-     * Updates, adds or removes all circles in the data object
-     *
-     * @param {array} data array of objects [{properties.timestamp: timestamp,
-     *                                        id: <id>,
-     *                                        color: <color code>,
-     *                                        geometry.coordinates: [lat, lon],
-     *                                        event_order: <int specifying the line of events>}]
-     */
-    drawCircles: {
-      value: function (data) {
-        circles = drawCircleElements(
-          this._svg,
-          this.dimensions,
-          data,
-          xScale,
-          ordinalYScale
-        );
       }
     },
 
@@ -475,11 +450,6 @@ angular.module('lizard-nxt')
   var setZoomFunction = function (svg, dimensions, xScale, xAxis, zoomFn) {
     var zoomed = function () {
       drawTimelineAxes(svg, xAxis, dimensions);
-      if (circles) {
-        circles.attr("cx", function (d) {
-          return Math.round(xScale(d.properties.timestamp_end));
-        });
-      }
       if (lines) {
         var xOneFunction = function (d) {
             return xScale(d.properties.timestamp_end);
@@ -539,21 +509,6 @@ angular.module('lizard-nxt')
       }
     };
     return clicked;
-  };
-
-  /**
-   * Updates horizontal position of circles. To update height, get the data and
-   * call drawCircles.
-   */
-  var updateCircleElements = function (circles, xScale) {
-
-    var xFunction = function (d) {
-      return Math.round(xScale(d.properties.timestamp_end));
-    };
-
-    // UPDATE
-    // Update old elements as needed.
-    circles.attr("cx", xFunction);
   };
 
   /**
@@ -617,58 +572,6 @@ angular.module('lizard-nxt')
         return Math.round(x - noDataIndicator.attr('width'));
       });
   };
-
-  /**
-   * Draws circle elements according to a d3 update pattern.
-   */
-  var drawCircleElements = function (svg, dimensions, data, xScale, yScale) {
-    var xFunction = function (d) { return xScale(d.properties.timestamp_end); };
-    var yFunction = function (d) { return yScale(d.event_order); };
-    var colorFunction = function (d) { return d.properties.color; };
-
-    // DATA JOIN
-    // Join new data with old elements, based on the id value.
-    circles = svg.select('g').select('#circle-group').selectAll("circle")
-        .data(data, function  (d) { return d.id; });
-
-    // UPDATE
-    // Update old elements as needed.
-    circles.attr("class", "event")
-      .transition()
-      .delay(Timeline.prototype.transTime)
-      .duration(Timeline.prototype.transTime)
-      .attr("fill", colorFunction)
-      .attr("cy", yFunction)
-      .attr("cx", xFunction);
-
-    // ENTER
-    // Create new elements as needed.
-    circles.enter().append("circle")
-      .attr("cx", xFunction)
-      .attr("class", "event")
-      .attr("cy", yFunction)
-      .attr("fill", colorFunction)
-      .attr("r", 5)
-      .attr("fill-opacity", 0)
-      .transition()
-      .delay(Timeline.prototype.transTime)
-      .duration(Timeline.prototype.transTime)
-      .attr("fill-opacity", 1);
-
-    // EXIT
-    // Remove old elements as needed.
-    circles.exit()
-      .transition()
-      .delay(0)
-      .duration(Timeline.prototype.transTime)
-      .attr("cy", 0)
-      .attr("cx", xFunction)
-      .style("fill-opacity", 1e-6)
-      .remove();
-
-    return circles;
-  };
-
 
   /**
    * Draws horizontal line elements according to a d3 update pattern.

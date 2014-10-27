@@ -85,13 +85,11 @@ angular.module('lizard-nxt')
     // Move timeline element into sight
     d3.select(element[0]).transition().duration(300).style('bottom', 0);
 
-    // Create the timeline
+    // Initialise timeline
     var timeline = new Timeline(el, dimensions, start, end, interaction);
 
-    // Activate zoom listener
+    // Activate zoom and click listener
     timeline.addZoomListener();
-
-    // Activate click listener
     timeline.addClickListener();
 
     /**
@@ -124,6 +122,7 @@ angular.module('lizard-nxt')
      */
     scope.$watch('events.changed', function (n, o) {
       if (n === o) { return true; }
+      console.log("events changed");
       updateTimelineHeight(angular.copy(timeline.dimensions), dimensions,
         scope.events.types.count);
       var data = scope.events.data.features;
@@ -142,6 +141,7 @@ angular.module('lizard-nxt')
      */
     scope.$watch('raster.changed', function (n, o) {
       if (n === o) { return true; }
+      console.log("raster changed");
       if (scope.mapState.getActiveTemporalLayerGroup()) {
         updateTimelineHeight(angular.copy(timeline.dimensions),
           dimensions, scope.events.types.count);
@@ -171,6 +171,7 @@ angular.module('lizard-nxt')
     scope.$watch('mapState.moved', function (n, o) {
       if (n === o) { return true; }
       if (scope.events.data.features.length > 0) {
+        console.log("map moved, redraw events");
         timeline.drawEventsContainedInBounds(scope.mapState.bounds);
         EventService.countCurrentEvents(scope);
       }
@@ -230,9 +231,7 @@ angular.module('lizard-nxt')
     scope.$watch('mapState.getActiveTemporalLayerGroup()', function (n, o) {
       if (scope.mapState.getActiveTemporalLayerGroup()) {
         getTemporalRasterData();
-        timeline.addClickListener();
       } else {
-        timeline.removeClickListener();
         RasterService.setIntensityData([]);
       }
       scope.raster.changed = Date.now();

@@ -212,13 +212,14 @@ angular.module('lizard-nxt')
    *
    * @param {string} context - Context name to switch to
    */
-  $scope.switchContext = function (context) {
-    $scope.box.context = context;
-  };
+  //$scope.switchContext = function (context) {
+    //$scope.box.context = context;
+  //};
 
   // MAP MODEL is set by the map-directive
   $scope.mapState = {};
 
+  // TODO: check what this does
   $scope.$watch('mapState.here', function (n, o) {
     if (n === o) { return true; }
     if (!$scope.$$phase) {
@@ -283,28 +284,37 @@ angular.module('lizard-nxt')
 
   // EVENTS
 
-  var getEventTypes = function () {
-    var k, eventLayers = [];
-    for (k in $scope.mapState.layers) {
-      if (k === "alarms" || k === "messages") {
-        eventLayers.push($scope.mapState.layers[k]);
-      }
-    }
-    return eventLayers;
-  };
+  //var getEventTypes = function () {
+    //var k, eventLayers = [];
+    //for (k in $scope.mapState.layers) {
+      //if (k === "alarms" || k === "messages") {
+        //eventLayers.push($scope.mapState.layers[k]);
+      //}
+    //}
+    //return eventLayers;
+  //};
 
 
   // EVENTS MODEL
-  $scope.events = {
+  
+  var eventsModel = {
+    changed: false,
+    data: false, //  geojson data object
+    types: {count: 0}
+  };
+
+  $scope.events = eventsModel;
+
+  //$scope.events = {
     //TODO: refactor event meta data (remove eventTypes from mapState)
     //types: { count: 0, 1: {}, 2: {}, 3: {}, 4: {}, 5: {} }, // Metadata object
-    types: EventService.buildEventTypesTemplate(getEventTypes()),
-    data: { type: "FeatureCollection",
-            features: [] // Long format events data object
-      },
-    scale: d3.scale.ordinal().range(EventService.colors[8]),
-    changed: Date.now()
-  };
+    //types: EventService.buildEventTypesTemplate(getEventTypes()),
+    //data: { type: "FeatureCollection",
+            //features: [] // Long format events data object
+      //},
+    //scale: d3.scale.ordinal().range(EventService.colors[8]),
+    //changed: Date.now()
+  //};
 
   /**
    * Zoom to event location
@@ -313,15 +323,15 @@ angular.module('lizard-nxt')
    *
    * @param {object} geometry Object wit a list of lon, lat
    */
-  $scope.events.zoomTo = function (geometry) {
-    var panZoom = {
-      lng: geometry.coordinates[0],
-      lat: geometry.coordinates[1],
-      zoom: 15
-    };
-    $scope.panZoom = panZoom;
-    $scope.mapState.moved = Date.now();
-  };
+  //$scope.events.zoomTo = function (geometry) {
+    //var panZoom = {
+      //lng: geometry.coordinates[0],
+      //lat: geometry.coordinates[1],
+      //zoom: 15
+    //};
+    //$scope.panZoom = panZoom;
+    //$scope.mapState.moved = Date.now();
+  //};
 
   /**
    * Turns event types on or off.
@@ -332,25 +342,25 @@ angular.module('lizard-nxt')
    *
    * @param: str containing the type of the event type to toggle
    */
-  $scope.events.toggleEvents = function (eventSeriesId) {
-    if ($scope.events.types[eventSeriesId]) {
-      if ($scope.events.types[eventSeriesId].active) {
-        $scope.events.types[eventSeriesId].active = false;
-        $scope.events.data = EventService.removeEvents($scope.events.types,
-                                                       $scope.events.data,
-                                                       eventSeriesId);
-        $scope.events.types.count = $scope.events.types.count - 1;
-        EventService.addColor($scope.events);
-        $scope.events.changed = Date.now();
-      } else {
-        getEvents(eventSeriesId);
-      }
-    } else {
-      getEvents(eventSeriesId);
-    }
-    $scope.mapState.activeLayersChanged =
-     !$scope.mapState.activeLayersChanged;
-  };
+  //$scope.events.toggleEvents = function (eventSeriesId) {
+    //if ($scope.events.types[eventSeriesId]) {
+      //if ($scope.events.types[eventSeriesId].active) {
+        //$scope.events.types[eventSeriesId].active = false;
+        //$scope.events.data = EventService.removeEvents($scope.events.types,
+                                                       //$scope.events.data,
+                                                       //eventSeriesId);
+        //$scope.events.types.count = $scope.events.types.count - 1;
+        //EventService.addColor($scope.events);
+        //$scope.events.changed = Date.now();
+      //} else {
+        //getEvents(eventSeriesId);
+      //}
+    //} else {
+      //getEvents(eventSeriesId);
+    //}
+    //$scope.mapState.activeLayersChanged =
+     //!$scope.mapState.activeLayersChanged;
+  //};
 
   /**
    * Downloads events and asynchronously fires callback.
@@ -360,19 +370,19 @@ angular.module('lizard-nxt')
    *
    * @param: int containing the id of the event series to download
    */
-  var getEvents = function (eventSeriesId) {
-    EventService.getEvents({event_series: eventSeriesId})
-      .then(function (response) {
-        var dataOrder = EventService.addEvents($scope.events.data, response,
-                                               eventSeriesId);
-        $scope.events.data = dataOrder.data;
-        $scope.events.types[eventSeriesId].event_type = dataOrder.order;
-        $scope.events.types.count = $scope.events.types.count + 1;
-        EventService.addColor($scope.events);
-        $scope.events.types[eventSeriesId].active = true;
-        $scope.events.changed = Date.now();
-      });
-  };
+  //var getEvents = function (eventSeriesId) {
+    //EventService.getEvents({event_series: eventSeriesId})
+      //.then(function (response) {
+        //var dataOrder = EventService.addEvents($scope.events.data, response,
+                                               //eventSeriesId);
+        //$scope.events.data = dataOrder.data;
+        //$scope.events.types[eventSeriesId].event_type = dataOrder.order;
+        //$scope.events.types.count = $scope.events.types.count + 1;
+        //EventService.addColor($scope.events);
+        //$scope.events.types[eventSeriesId].active = true;
+        //$scope.events.changed = Date.now();
+      //});
+  //};
   // END EVENTS
 
   //TODO: move to raster-service ?

@@ -30,6 +30,7 @@ angular.module('lizard-nxt')
      */
     var fillpoint = function (here) {
       ClickFeedbackService.drawClickInSpace($scope.mapState, here);
+      // TODO: get aggWindow from timeState.
       var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, GRAPH_WIDTH);
       var promises = $scope.fillBox({
         geom: here,
