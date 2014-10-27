@@ -1,12 +1,11 @@
 {
-  "name": "lizard-nxt-client",
-  "version": "0.0.0",
-  "homepage": "https://github.com/nens/lizard-nxt",
+  "name": "lizard-client",
+  "version": "0.2.8",
+  "homepage": "https://lizard.net",
   "authors": [
-    "fritzvd <fritz.vandeventer@nelen-schuurmans.nl>"
   ],
   "description": "Client for Lizard-NxT",
-  "main": "./lizard_nxt/client/static/js/nxt-map.js",
+  "main": "./index.html",
   "keywords": [
     "map",
     "geographic",

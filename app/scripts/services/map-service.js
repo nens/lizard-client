@@ -171,7 +171,6 @@ angular.module('lizard-nxt')
                 } else if (layer.type === 'Vector') {
                   // TO BE DE-COMMENTED IN THE FORESEEABLE FUTURE:
                   //return layerGroup;
-                  throw new Error('getActiveTemporalLayerGroup() currently doesn\'t handle type \'Vector\'');
                 }
               }
             });
