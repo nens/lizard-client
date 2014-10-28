@@ -107,7 +107,7 @@ angular.module('lizard-nxt')
 
         this._active = !this._active;
 
-        toggleLayers(map, this._layers, this._active);
+        this._toggleLayers(map, this._layers, this._active);
       },
 
       /**
@@ -443,19 +443,17 @@ angular.module('lizard-nxt')
         });
       },
 
+      _toggleLayers: function (map, layers, active) {
+        var method = active ? 'add' : 'remove';
+        angular.forEach(layers, function (layer) {
+          layer[method](map);
+        });
+        if (this._opacity) {
+          this.setOpacity(this._opacity);
+        }
+      }
+
     };
-
-
-    ///////////////////////////////////////////////////////////////////////////
-
-    var toggleLayers = function (map, layers, active) {
-      var method = active ? 'add' : 'remove';
-      angular.forEach(layers, function (layer) {
-        layer[method](map);
-      });
-    };
-
-    ///////////////////////////////////////////////////////////////////////////
 
     return LayerGroup;
   }

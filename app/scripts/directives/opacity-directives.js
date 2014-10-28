@@ -7,7 +7,7 @@ angular.module('lizard-nxt')
   var link = function (scope, element, attrs) {
     var opacity = scope.layergroup.getOpacity();
     scope.percOpacity = opacity * 100;
-    layerChooserWidth = element.width();
+    layerChooserWidth = 170; // chrome is the new IE
     var localClick;
 
     /**

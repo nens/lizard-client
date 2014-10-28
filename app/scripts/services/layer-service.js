@@ -140,26 +140,27 @@ angular.module('lizard-nxt')
          * @description rescales layer and updates url
          */
         rescale: function (bounds) {
+          console.log(this);
           // TODO: we should not need *rescalable* in the options of a layer
-          if (this.options.rescalable) {
+          if (this.rescalable) {
             var url = 'https://raster.lizard.net/wms' +
               '?request=getlimits&layers=' + this.slug +
               '&width=16&height=16&srs=epsg:4326&bbox=' +
               bounds.toBBoxString();
-
+            var self = this;
             $http.get(url).success(function (data) {
-              this.limits = ':' + data[0][0] + ':' + data[0][1];
-              this.leafletLayer.setParams({
-                styles: this.options.styles + this.limits
+              self.limits = ':' + data[0][0] + ':' + data[0][1];
+              self._leafletLayer.setParams({
+                styles: self.options.styles + self.limits
               });
-              this.leafletLayer.redraw();
+              self.leafletLayer.redraw();
             });
           }
         },
 
         setOpacity: function (opacity) {
-          if (this.leafletLayer && this.leafletLayer.setOpacity) {
-            this.leafletLayer.setOpacity(opacity);
+          if (this._leafletLayer && this._leafletLayer.setOpacity) {
+            this._leafletLayer.setOpacity(opacity);
           }
         },
 
@@ -300,7 +301,7 @@ angular.module('lizard-nxt')
             minZoom: nonLeafLayer.min_zoom || 0,
             maxZoom: 19,
             detectRetina: true,
-            zIndex: nonLeafLayer.z_index,
+            zIndex: nonLeafLayer.zIndex,
             ext: 'png'
           });
 
@@ -322,7 +323,7 @@ angular.module('lizard-nxt')
           minZoom: nonLeafLayer.min_zoom || 0,
           maxZoom: 19,
           opacity: nonLeafLayer.opacity,
-          zIndex: nonLeafLayer.z_index
+          zIndex: nonLeafLayer.zIndex
         };
         _options = angular.extend(_options, nonLeafLayer.options);
 
@@ -347,8 +348,8 @@ angular.module('lizard-nxt')
           useJsonP: false,
           minZoom: nonLeafLayer.min_zoom_click || 0,
           maxZoom: 19,
-          order: nonLeafLayer.z_index,
-          zIndex: nonLeafLayer.z_index
+          order: nonLeafLayer.zIndex,
+          zIndex: nonLeafLayer.zIndex
         });
         return layer;
       };
