@@ -2,6 +2,7 @@
   <label class="ng-class: {active: layergroup.isActive()}; layer-chooser"
          for="<% layergroup.id %>-layer"
          ng-click="mapState.toggleLayerGroup(layergroup)"
+		 ng-dblclick="layergroup.rescaleRaster(mapState.bounds)"
          >
     <span class="layer-text" ng-bind="layergroup.name"></span>
     <span class="layer-img" class="layer-chooser" ng-style="layergroup.imageStyle">

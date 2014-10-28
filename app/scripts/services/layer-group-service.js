@@ -13,9 +13,9 @@
 angular.module('lizard-nxt')
   .factory('LayerGroup', [
   'LeafletService', 'VectorService', 'RasterService', 'UtfGridService',
-  'UtilService', '$q',
+  'UtilService', '$q', '$http',
   function (LeafletService, VectorService, RasterService, UtfGridService,
-    UtilService, $q) {
+    UtilService, $q, $http) {
 
     /*
      * @constructor
@@ -411,8 +411,44 @@ angular.module('lizard-nxt')
           this._animState.imageOverlays[0].setOpacity(0.7);
         }
         this._animState.previousFrame = 0;
-      }
-    };
+      },
+  		/**
+			 *
+			 * Will move to layer-service or become obslote.. here for now
+			 * @function
+			 * @memberof app.LayerGroup
+			 * @param {object} layer passed
+			 * @description determine if raster layer can be rescaled
+			 */
+			rescaleRaster: function (bounds) {
+				angular.forEach(this._layers, function (layer) {
+					if (layer.options.rescalable) {
+						this._rescale(layer, bounds);
+					}
+				}, this);
+			},
+
+			/**
+			 * Will be moved to layer-service
+			 * @function
+			 * @description rescales layer and updates url
+			 */
+			_rescale: function (layer, bounds) {
+				var url = 'https://raster.lizard.net/wms' +
+					'?request=getlimits&layers=' + layer.slug +
+					'&width=16&height=16&srs=epsg:4326&bbox=' +
+					bounds.toBBoxString();
+
+				$http.get(url).success(function (data) {
+					layer.limits = ':' + data[0][0] + ':' + data[0][1];
+					layer.leafletLayer.setParams({
+						styles: layer.options.styles + layer.limits
+					});
+					layer.leafletLayer.redraw();
+				});
+			}
+	 
+		};
 
     ///////////////////////////////////////////////////////////////////////////
 
