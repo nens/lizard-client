@@ -44,34 +44,30 @@ angular.module('lizard-nxt')
        * @param  layerGroup layergroup that should be toggled
        */
       toggleLayerGroup: function (layerGroup) {
-        if (layerGroup.slug === 'elevation' && layerGroup.isActive()) {
-          //this._rescaleElevation(layerGroup);
-        } else {
-          // turn layer group on
-          if (!(layerGroup.baselayer && layerGroup.isActive())) {
-            layerGroup.toggle(this._map);
-            this.layerGroupsChanged = Date.now();
-          }
-          var map = this._map;
-          if (layerGroup.baselayer || layerGroup.temporal) {
-            angular.forEach(this.layerGroups, function (_layerGroup) {
-              if (layerGroup.baselayer
-                && _layerGroup.baselayer
-                && _layerGroup.isActive()
-                && _layerGroup.slug !== layerGroup.slug
-                )
-              {
-                _layerGroup.toggle(map);
+        // turn layer group on
+        if (!(layerGroup.baselayer && layerGroup.isActive())) {
+          layerGroup.toggle(this._map);
+          this.layerGroupsChanged = Date.now();
+        }
+        var map = this._map;
+        if (layerGroup.baselayer || layerGroup.temporal) {
+          angular.forEach(this.layerGroups, function (_layerGroup) {
+            if (layerGroup.baselayer
+              && _layerGroup.baselayer
+              && _layerGroup.isActive()
+              && _layerGroup.slug !== layerGroup.slug
+              )
+            {
+              _layerGroup.toggle(map);
 
-              } else if (layerGroup.temporal
-                && _layerGroup.temporal
-                && _layerGroup.isActive()
-                && _layerGroup.slug !== layerGroup.slug) {
+            } else if (layerGroup.temporal
+              && _layerGroup.temporal
+              && _layerGroup.isActive()
+              && _layerGroup.slug !== layerGroup.slug) {
 
-                _layerGroup.toggle(map);
-              }
-            });
-          }
+              _layerGroup.toggle(map);
+            }
+          });
         }
       },
 

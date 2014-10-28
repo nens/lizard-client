@@ -153,7 +153,7 @@ angular.module('lizard-nxt')
               self._leafletLayer.setParams({
                 styles: self.options.styles + self.limits
               });
-              self.leafletLayer.redraw();
+              self._leafletLayer.redraw();
             });
           }
         },
