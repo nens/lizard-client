@@ -242,7 +242,7 @@ label.layer-chooser > span.layer-text {
     background: rgba(239, 239, 239, 0.9);
     width: 60%;
     height: 24px;
-    padding: 3px 5px;
+    padding: 4px 5px;
     z-index: 1;
     position: absolute;
     color: #7f8c8d;
@@ -289,21 +289,31 @@ label.layer-chooser > div.layer-img:hover {
 }
 
 /* Bootstrap Overrides for progress bar */
-.inactive {
-  display: none;  
+.progress {
+	height: 4px;
+	margin: 4px 0 6px 0;
+	z-index: 100;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	-ms-box-shadow: none;
+	-o-box-shadow: none;
+	box-shadow: none;
+	border-radius: 0;
+    -o-transition: .3s ease;
+    -ms-transition: .3s ease;
+    -moz-transition: .3s ease;
+    -webkit-transition: .3s ease;
 }
 
-.progress {
-  height: 4px;
-  margin: 4px 0 6px 0;
-  z-index: 100;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  -ms-box-shadow: none;
-  -o-box-shadow: none;
-  box-shadow: none;
-  border-radius: 0;
+.inactive {
+	height: 0px;
+    -o-transition: .3s ease;
+    -ms-transition: .3s ease;
+    -moz-transition: .3s ease;
+    -webkit-transition: .3s ease;
+    transition: .3s ease;
 }
+
 
 .progress-bar {
   -webkit-box-shadow: none;
