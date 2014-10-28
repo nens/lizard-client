@@ -9,8 +9,10 @@
  */
 angular.module('lizard-nxt')
   .factory('NxtLayer', [
-    'LeafletService', 'VectorService', 'RasterService', 'UtfGridService', 'UtilService',
-    function (LeafletService, VectorService, RasterService, UtfGridService, UtilService) {
+    'LeafletService', 'VectorService', 'RasterService',
+    'UtfGridService', 'UtilService', '$http',
+    function (LeafletService, VectorService, RasterService,
+      UtfGridService, UtilService, $http) {
 
       /*
        * @constructor
@@ -48,14 +50,6 @@ angular.module('lizard-nxt')
           value: layer.tiled,
           writable: false,
         });
-        Object.defineProperty(this, 'temporal', {
-          value: layer.temporal,
-          writable: false,
-        });
-        Object.defineProperty(this, 'opacity', {
-          value: layer.opacity,
-          writable: true,
-        });
         Object.defineProperty(this, 'aggregationType', {
           value: layer.aggregation_type,
           writable: false,
@@ -64,12 +58,16 @@ angular.module('lizard-nxt')
           value: layer.options,
           writable: false,
         });
+        Object.defineProperty(this, 'rescalable', {
+          value: layer.rescalable,
+          writable: false,
+        });
         Object.defineProperty(this, 'bounds', {
           value: layer.bounds,
           writable: false,
         });
         Object.defineProperty(this, '_leafletLayer', {
-          value: {},
+          value: undefined,
           writable: true,
         });
       }
@@ -134,6 +132,34 @@ angular.module('lizard-nxt')
             && !this.tiled) {
             //TODO: see layergroup comments
             //this._adhereWMSLayerToTime(this, mapState, timeState, oldTime);
+          }
+        },
+
+        /**
+         * @function
+         * @description rescales layer and updates url
+         */
+        rescale: function (bounds) {
+          // TODO: we should not need *rescalable* in the options of a layer
+          if (this.options.rescalable) {
+            var url = 'https://raster.lizard.net/wms' +
+              '?request=getlimits&layers=' + this.slug +
+              '&width=16&height=16&srs=epsg:4326&bbox=' +
+              bounds.toBBoxString();
+
+            $http.get(url).success(function (data) {
+              this.limits = ':' + data[0][0] + ':' + data[0][1];
+              this.leafletLayer.setParams({
+                styles: this.options.styles + this.limits
+              });
+              this.leafletLayer.redraw();
+            });
+          }
+        },
+
+        setOpacity: function (opacity) {
+          if (this.leafletLayer && this.leafletLayer.setOpacity) {
+            this.leafletLayer.setOpacity(opacity);
           }
         },
 

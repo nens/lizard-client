@@ -43,6 +43,10 @@ angular.module('lizard-nxt')
      * @param  {object} layergroup definition as coming from the server
      */
     function LayerGroup(layerGroup) {
+      Object.defineProperty(this, 'temporal', {
+        value: layerGroup.temporal,
+        writable: false,
+      });
       Object.defineProperty(this, 'name', {
         value: layerGroup.name,
         writable: false,
@@ -50,10 +54,6 @@ angular.module('lizard-nxt')
       Object.defineProperty(this, 'order', {
         value: layerGroup.order,
         writable: false,
-      });
-      Object.defineProperty(this, '_active', {
-        value: false,
-        writable: true,
       });
       Object.defineProperty(this, 'baselayer', {
         value: layerGroup.baselayer,
@@ -63,13 +63,21 @@ angular.module('lizard-nxt')
         value: layerGroup.slug,
         writable: false,
       });
+      Object.defineProperty(this, 'defaultActive', {
+        value: layerGroup.active,
+        writable: false,
+      });
       Object.defineProperty(this, '_layers', {
         value: [],
         writable: true,
       });
-      Object.defineProperty(this, 'defaultActive', {
-        value: layerGroup.active,
-        writable: false,
+      Object.defineProperty(this, '_opacity', {
+        value: layerGroup.opacity,
+        writable: true,
+      });
+      Object.defineProperty(this, '_active', {
+        value: false,
+        writable: true,
       });
 
       // Instantiate a Layer for every servserside layer of
@@ -161,12 +169,10 @@ angular.module('lizard-nxt')
        * @param {object} layer passed
        * @description determine if raster layer can be rescaled
        */
-      rescaleRaster: function (bounds) {
+      rescaleContinuousData: function (bounds) {
         angular.forEach(this._layers, function (layer) {
-          if (layer.options.rescalable) {
-            this._rescale(layer, bounds);
-          }
-        }, this);
+          layer.rescale(bounds);
+        });
       },
 
       /**
@@ -180,13 +186,13 @@ angular.module('lizard-nxt')
       setOpacity: function (newOpacity) {
         if (typeof newOpacity !== 'number' ||
             newOpacity < 0 && newOpacity > 1) {
-          return;
+          throw new Error(newOpacity + "is not a valid opacity value, it is"
+            + "either of the wrong type or not between 0 and 1");
         }
         angular.forEach(this._layers, function (layer) {
-          if (layer.leafletLayer && layer.leafletLayer.setOpacity) {
-            layer.leafletLayer.setOpacity(newOpacity);
-          }
+          layer.setOpacity(newOpacity);
         });
+        this._opacity = newOpacity;
       },
 
       /**
@@ -196,15 +202,7 @@ angular.module('lizard-nxt')
        * @description retrieve opacity from layer
        */
       getOpacity: function () {
-        var opacity;
-        angular.forEach(this._layers, function (layer) {
-          if (layer.leafletLayer) {
-            opacity = layer.leafletLayer.options.opacity;
-          } else {
-            opacity = layer.opacity;
-          }
-        });
-        return opacity;
+        return this._opacity;
       },
 
       /**
@@ -218,7 +216,7 @@ angular.module('lizard-nxt')
           layer.adhereToTime(mapState, timeState, oldTime);
           // TODO: Ideally we delegate the adhering to time of a layer to the
           // layer class. This is legacy:
-          if (layer.temporal
+          if (this.temporal
             && layer.type === 'WMS'
             && !layer.tiled) {
             this._adhereWMSLayerToTime(layer, mapState, timeState, oldTime);
@@ -444,26 +442,6 @@ angular.module('lizard-nxt')
           layer.initializeLayer();
         });
       },
-
-      /**
-       * Will be moved to layer-service
-       * @function
-       * @description rescales layer and updates url
-       */
-      _rescale: function (layer, bounds) {
-        var url = 'https://raster.lizard.net/wms' +
-          '?request=getlimits&layers=' + layer.slug +
-          '&width=16&height=16&srs=epsg:4326&bbox=' +
-          bounds.toBBoxString();
-
-        $http.get(url).success(function (data) {
-          layer.limits = ':' + data[0][0] + ':' + data[0][1];
-          layer.leafletLayer.setParams({
-            styles: layer.options.styles + layer.limits
-          });
-          layer.leafletLayer.redraw();
-        });
-      }
 
     };
 
