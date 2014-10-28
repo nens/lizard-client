@@ -45,7 +45,7 @@ angular.module('lizard-nxt')
        */
       toggleLayerGroup: function (layerGroup) {
         if (layerGroup.slug === 'elevation' && layerGroup.isActive()) {
-          this._rescaleElevation(layerGroup);
+          //this._rescaleElevation(layerGroup);
         } else {
           // turn layer group on
           if (!(layerGroup.baselayer && layerGroup.isActive())) {
