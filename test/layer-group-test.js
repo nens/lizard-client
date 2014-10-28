@@ -87,4 +87,11 @@ describe('Testing LayerGroup', function () {
     $rootScope.$digest(); // resolves promise
   }));
 
+  it('should set opacity on layergroup.layers', function () {
+    var lg = new LayerGroup(dataLayers.waterchain);
+    var oldOpacity = lg._layers[2].options.opacity;
+    lg.setOpacity(0.2);
+    var newOpacity = lg._layers[2].options.opacity;
+    expect(newOpacity).toBe(0.3);
+  });
 });

@@ -4,24 +4,30 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
-- 
+- Layergroups have an opacity slider that sets opacity on all leaflet layers.
+
+- Point and line give visual feedback on the map when loading and recieving data.
+
+- Images for structures added to omnibox.
+
+- Added semver bumper.
 
 Release 0.2b8
 -------------
 
-- Vector data is summarized in box
+- Vector data is summarized in box.
 
-- Scope.box.content now follows a uniform data structure
+- Scope.box.content now follows a uniform data structure.
 
-- Timeseries are back
+- Timeseries are back.
 
-- Vectors (events, or whatever) are now stored in vector service
+- Vectors (events, or whatever) are now stored in vector service.
 
-- Vectors are received through tiling mechanism
+- Vectors are received through tiling mechanism.
 
-- Vectors are drawn by leaflet
+- Vectors are drawn by leaflet.
 
-- Clicks on vectors are delegated to Angular in stead of through obscure click handlers
+- Clicks on vectors are delegated to Angular in stead of through obscure click handlers.
 
 Release 0.2b5
 -------------

@@ -5,21 +5,55 @@
 angular.module('lizard-nxt')
   .service('ClickFeedbackService', ['$rootScope', 'LeafletService',
   function ($rootScope, LeafletService) {
-    var Ctrl = function () {
+    var ClickLayer = function () {
 
       /**
-       * Remove any existing click layers and creates a new empty one.
-       *
-       * @param {object} map
+       * @description Removes clicklayer, adds a new one.
+       *              Clicklayer has a default color, opacity
+       *              and a way to transform points.
+       * @param {object} mapState
        */
       this.emptyClickLayer = function (mapState) {
         if (this.clickLayer) {
           mapState.removeLayer(this.clickLayer);
         }
-        this.clickLayer = LeafletService.geoJson();
+
+        this.clickLayer = LeafletService.geoJson(null, {
+          style: function (feature) {
+            return {
+              name: 'click',
+              clickable: true,
+              color: '#34495e',
+              stroke: '#34495e',
+              opacity: 0.8,
+              'stroke-opacity': 0.8,
+              radius: getRadius(feature),
+            };
+          }
+        });
+
+        var self = this;
+        // Explain leaflet to draw points as circlemarkers.
+        this.clickLayer.options.pointToLayer = function (feature, latlng) {
+          var circleMarker = L.circleMarker(latlng, {
+            radius: 0,
+            weight: 5,
+            fill: false,
+            zIndexOffset: 1000,
+            clickable: true
+          });
+          self._circleMarker = circleMarker;
+          return circleMarker;
+        };
+
+        // Hack to make click on the clicklayer bubble down to the map it is
+        // part of.
+        this.clickLayer.on('click', function (e) {
+            this._map.fire('click', e);
+          }
+        );
+
         mapState.addLayer(this.clickLayer);
-        this.clickLayer.options.name = 'click';
-        this.clickLayer.options.clickable = false;
       };
 
       /**
@@ -40,25 +74,19 @@ angular.module('lizard-nxt')
         return selection;
       };
 
-      this.drawFeature = function (feature) {
-        var geojsonFeature = { "type": "Feature" };
-        geojsonFeature.geometry = feature;
-        var self = this;
-        this.clickLayer.options.pointToLayer = function (feature, latlng) {
-          var circleMarker = L.circleMarker(latlng, {
-            radius: 0,
-            weight: 12,
-            color: '#34495e',
-            fill: false,
-            zIndexOffset: 1000,
-            clickable: false
-          });
-          self._circleMarker = circleMarker;
-          return circleMarker;
-        };
-        this.clickLayer.addData(geojsonFeature);
+      /**
+       * @description add data to the clicklayer
+       */
+      this.drawFeature = function (geojson) {
+        this.clickLayer.addData(geojson);
       };
 
+      /**
+       * Draws a line between the given points
+       * @param  {L.LatLng} first  start of the line
+       * @param  {L.LatLng} seocnd  end of the line
+       * @param  {boolean} dashed when true draws a dashed line
+       */
       this.drawLineElement = function (first, second, dashed) {
         var geojsonFeature = { "type": "Feature" };
         geojsonFeature.geometry = {
@@ -77,153 +105,141 @@ angular.module('lizard-nxt')
         this.clickLayer.addData(geojsonFeature);
       };
 
-      this.vibrateFeature = function () {
-
+      /**
+       * @description vibrates the features in the clickLayer.
+       */
+      this.vibrateFeatures = function () {
         var sel = this._selection = this._getSelection(this.clickLayer);
         clearInterval(this._vibration);
-
-        this._vibration = setInterval(function () {
-          sel.select("path")
-            .classed("vibrator", true)
-            .attr("stroke-width", 15)
-            .transition().duration(200)
-            .attr("stroke-width", 20)
-            .transition().duration(200)
-            .attr("stroke-width", 15);
-        }, 400);
+        this._vibration = setInterval(function () {vibrate(sel, false); }, 400);
       };
 
-      this.stopVibration = function () {
-        clearInterval(this._vibration);
-        this._selection.select("path")
-          .classed("vibrator", true)
-          .attr("stroke-width", 15)
-          .transition().duration(200)
-          .attr("stroke-width", 20)
-          .transition().duration(200)
-          .attr("stroke-width", 15)
-          .transition().ease("out").duration(200)
-          .attr("stroke-width", 30)
-          .attr("stroke-opacity", 0);
-      };
-
-
-      this.drawObject = function (mapState, entityName) {
-
-        var selection = this._getSelection(this.clickLayer);
-        this._circleMarker.setRadius(11);
-        selection.select("path")
-          .classed("vibrator", true)
-          .attr("stroke", "#34495e")
-          .transition().duration(150)
-          .attr("stroke-width", 20)
-          .transition().duration(150)
-          .attr("stroke-width", 5)
-          .transition().duration(150)
-          .attr("stroke-width", 15)
-          .transition().duration(150)
-          .attr("stroke-opacity", 0.8)
-          .attr("stroke-width", 5);
-
-        // Entity specific modifications
-        if (entityName.indexOf("pumpstation_non_sewerage") !== -1) {
-          this._circleMarker.setRadius(13);
-
-          if (mapState.zoom < 13) {
-          //if ($rootScope.mapState.zoom < 13) {
-            this._circleMarker.setRadius(16);
-          }
-        } else if (entityName.indexOf("pumpstation_sewerage") !== -1) {
-          this._circleMarker.setRadius(11);
-        } else if (entityName.indexOf("weir") !== -1) {
-          this._circleMarker.setRadius(11);
-        } else if (entityName.indexOf("bridge") !== -1) {
-          this._circleMarker.setRadius(14);
-        } else if (entityName.indexOf("pipe") !== -1 ||
-                   entityName.indexOf("culvert") !== -1) {
-          selection.select("path").transition().delay(450).duration(150)
-            .attr("stroke-opacity", 0.6)
-            .attr("stroke-width", 10);
-        } else if (entityName === 'manhole') {
-          this._circleMarker.setRadius(7.5);
+      /**
+       * @describtion Vibrate the features in the clicklayer once.
+       *
+       * @param  {geojson} geojson if provided draws the features in
+       *                           the geojson, vibrates it and removes it.
+       */
+      this.vibrateOnce = function (geojson) {
+        var sel = this._selection = this._getSelection(this.clickLayer);
+        var remove = false;
+        if (geojson) {
+          this.clickLayer.addData(geojson);
+          sel = this._selection = this._getSelection(this.clickLayer);
+          remove = true;
         }
+        vibrate(sel, remove);
       };
 
-      this.removeLocationMarker = function () {
-        d3.select(".location-marker").remove();
+      /**
+       * @description add a locationMarker as a leaflet marker with
+       *              a leaflet divIcon. Overwrites the pointTolayer
+       *              of the clicklayer.
+       * @param {object} mapState nxt mapState
+       * @param {L.latLng} latLng location of marker
+       */
+      this.addLocationMarker = function (mapState, latLng) {
+        var divIcon = L.divIcon({
+          className: 'selected',
+          iconAnchor: [10, 48],
+          html: '<svg width=20 height=48><path d="M10,16'
+            + 'c-5.523 0-10 4.477-10 10 0 10 10 22 10 22'
+            + 's10-12 10-22c0-5.523-4.477-10-10-10z M10,32'
+            + ' c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686'
+            + ' 6 6-2.686 6-6 6z"></path></svg>'
+        });
+
+        this.clickLayer.options.pointToLayer = function (feature, latlng) {
+          return L.marker(latlng, {
+            icon: divIcon,
+            clickable: true
+          });
+        };
+
       };
 
-      this.addLocationMarker = function (point) {
-        var selection = this._getSelection(this.clickLayer);
-        // This is a location marker
-        var path = "M" + point.x + " " + (point.y - 32) +
-                   "c-5.523 0-10 4.477-10 10 0 10 10 22 10 " +
-                   " 22s10-12 10-22c0-5.523-4.477-10-10-10z" +
-                   "M" + point.x + " " + (point.y - 16) +
-                   "c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z";
-        selection.select("path")
-          .classed("location-marker", true)
-          .attr("d", path)
-          .attr("stroke-opacity", 1)
-          .attr("stroke-width", 1.5)
-          .attr("stroke", "white")
-          .attr("fill", "#34495e")
-          .attr("fill-opacity", "1");
+      /**
+       * @description returns specific radius for water-objects coming from
+       *              the utfGrid
+       * @param  {geojson feature} feature containing the entity_name of the
+       *                           water-object
+       * @return {int}             radius
+       */
+      var getRadius = function (feature) {
+        var entityName = feature.properties.entity_name;
+        var radius = feature.properties.radius || 0;
+        if (entityName) {
+          radius = 12;
+          if (entityName.indexOf("pumpstation_non_sewerage") !== -1) {
+            radius =  13;
+          } else if (entityName.indexOf("pumpstation_sewerage") !== -1
+            || entityName.indexOf("weir") !== -1) {
+            radius =  11;
+          } else if (entityName.indexOf("bridge") !== -1) {
+            radius =  14;
+          } else if (entityName === 'manhole') {
+            radius =  14;
+          }
+        }
+        return radius;
+      };
+
+      /**
+       * @descriptions vibretes a selection.paths by varying the stroke-width
+       * @param  {d3 selection} sel selection contaning a path.
+       * @param  {boolean} remove to remove or not. When true, stroke-widh
+       *                          is set to 0 at the end the vibration.
+       */
+      var vibrate = function (sel, remove) {
+        var width = Number(sel.select('path').attr("stroke-width"));
+        sel.selectAll("path")
+          .classed("vibrator", true)
+          .attr("stroke-width", function () { return width * 2; })
+          .transition().duration(200)
+          .attr("stroke-width", function () { return width * 3; })
+          .transition().duration(200)
+          .attr("stroke-width", function () { return remove ? 0 : width; });
       };
     };
 
-    var ctrl = new Ctrl(),
-        drawClickInSpace,
-        drawGeometry,
-        drawArrowHere,
+    var clickLayer = new ClickLayer(),
         emptyClickLayer,
-        killVibrator,
-        stopVibration,
-        drawLine;
+        drawCircle,
+        drawArrow,
+        drawLine,
+        drawGeometry,
+        startVibration,
+        vibrateOnce;
+
 
     /**
-     * Wrapper for emptyClickLayer, as defined in the above
-     * Ctrl constructor.
-     *
+     * @description empties the clicklayer.
      */
     emptyClickLayer = function (mapState) {
-      ctrl.emptyClickLayer(mapState);
+      clickLayer.emptyClickLayer(mapState);
     };
 
     /**
      * Draws visible feedback on the map after a click.
      *
      * Removes possible click feedback layer and creates a new clickLayer
-     * containing a circle. The circle is than vibrated to attract attention.
-     * You will need to manully call ctrl.stopVibrating or remove the layer.
+     * containing a circle.
      *
      * @param {object} latLng Leaflet object specifying the latitude
      * and longitude of a click
      */
-    drawClickInSpace = function (mapState, latlng) {
-      ctrl.emptyClickLayer(mapState);
-      var geometry = {"type": "Point",
-                      "coordinates": [latlng.lng, latlng.lat]};
-      ctrl.drawFeature(geometry);
-      ctrl.vibrateFeature();
+    drawCircle = function (mapState, latlng) {
+      clickLayer.emptyClickLayer(mapState);
+      var geometry = {
+        "type": "Point",
+        "coordinates":
+          [latlng.lng, latlng.lat]
+      };
+      clickLayer.drawFeature(geometry);
     };
 
-    /**
-     * Draws a circle around an object on click.
-     *
-     * Removes possible click feedback layer and creates a new clickLayer
-     * containing a circle around the clicked object. The circle is vibrated
-     * to attract attention.
-     *
-     * @param {object} geom Geojson compliant geometry object
-     * @param {string} entityName Name of the object to give it custom
-     *  styling
-     */
-    drawGeometry = function (mapState, geom, entityName) {
-      ctrl.emptyClickLayer(mapState);
-      var geometry = angular.fromJson(geom);
-      ctrl.drawFeature(geometry);
-      ctrl.drawObject(mapState, entityName);
+    drawGeometry = function (mapState, geometry, entityName) {
+      clickLayer.drawFeature(geometry);
     };
 
     /**
@@ -231,41 +247,38 @@ angular.module('lizard-nxt')
      * Used to indicate location of rain graph
      *
      * @param {object} mapState - the mapState object, which assumes the key
-     *   'here' to have a unundefined value.
+     *   'here' to be defined.
      */
-    drawArrowHere = function (mapState) {
-
-      var geometry, px;
-
-      ctrl.emptyClickLayer(mapState);
-      geometry = {
+    drawArrow = function (mapState, latLng) {
+      clickLayer.emptyClickLayer(mapState);
+      var geometry = {
         "type": "Point",
-        "coordinates": [mapState.here.lng, mapState.here.lat]
-       };
-      ctrl.drawFeature(geometry);
-      px = mapState.latLngToLayerPoint(mapState.here);
-      ctrl.addLocationMarker(px);
+        "coordinates": [latLng.lng, latLng.lat]
+      };
+      clickLayer.addLocationMarker(mapState, latLng);
+      clickLayer.drawFeature(geometry);
     };
 
-
-    stopVibration = function () {
-      ctrl.stopVibration();
+    drawLine = function (first, second, dashed) {
+      clickLayer.drawLineElement(first, second, dashed);
     };
 
-    drawLine = function (mapState, first, second, dashed) {
-      emptyClickLayer(mapState);
-      ctrl.drawLineElement(first, second, dashed);
+    startVibration = function () {
+      clickLayer.vibrateFeatures();
+    };
+
+    vibrateOnce = function (geojson) {
+      clickLayer.vibrateOnce(geojson);
     };
 
     return {
       emptyClickLayer: emptyClickLayer,
-      drawArrowHere: drawArrowHere,
+      drawArrow: drawArrow,
+      drawCircle: drawCircle,
       drawGeometry: drawGeometry,
-      drawClickInSpace: drawClickInSpace,
-      stopVibration: stopVibration,
-      killVibrator: killVibrator,
+      startVibration: startVibration,
       drawLine: drawLine,
-      removeLocationMarker: ctrl.removeLocationMarker,
+      vibrateOnce: vibrateOnce
     };
   }
 ]);
