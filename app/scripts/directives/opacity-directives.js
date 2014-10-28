@@ -7,7 +7,7 @@ angular.module('lizard-nxt')
   var link = function (scope, element, attrs) {
     var opacity = scope.layergroup.getOpacity();
     scope.percOpacity = opacity * 100;
-    
+    layerChooserWidth = element.width();
     var localClick;
 
     /**
@@ -21,7 +21,7 @@ angular.module('lizard-nxt')
       if (localClick === undefined) {
         localClick = e.originalEvent.changedTouches[0].offsetX;
       }
-      var newOpacity = localClick / 170;
+      var newOpacity = localClick / layerChooserWidth;
       scope.$apply(function () {
         scope.percOpacity = newOpacity * 100;
       });

@@ -20,7 +20,7 @@ angular.module('lizard-nxt')
       var color = this.options.color;
       this.addTileData = this.options.dataCallback;
 
-      this.options['opacity'] = 0.8;
+      this.options.opacity = 0.8; // default opacity for events
  
       this.drawOptions = {
         pointToLayer: function (feature, latlng) {
