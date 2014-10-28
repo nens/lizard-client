@@ -67,14 +67,10 @@ angular.module('lizard-nxt')
         Object.defineProperty(this, 'bounds', {
           value: layer.bounds,
           writable: false,
-          configurable: false,
-          enumerable: false
         });
-        Object.defineProperty(this, 'leafletLayer', {
+        Object.defineProperty(this, '_leafletLayer', {
           value: {},
           writable: true,
-          configurable: true,
-          enumerable: false
         });
       }
 
