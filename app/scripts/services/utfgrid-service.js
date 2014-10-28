@@ -7,7 +7,7 @@ angular.module('lizard-nxt')
   function ($q, $rootScope) {
 
     var getData = function (nonLeafLayer, options) {
-      var leafLayer = nonLeafLayer && nonLeafLayer.leafletLayer,
+      var leafLayer = nonLeafLayer && nonLeafLayer._leafletLayer,
         deferred = $q.defer(),
         e = {
           latlng: options.geom

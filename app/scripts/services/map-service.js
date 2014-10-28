@@ -168,10 +168,6 @@ angular.module('lizard-nxt')
               if (!result && layer.temporal) {
                 if (layer.type === 'WMS') {
                   result = layerGroup;
-                } else if (layer.type === 'Vector') {
-                  // TO BE DE-COMMENTED IN THE FORESEEABLE FUTURE:
-                  //return layerGroup;
-                  throw new Error('getActiveTemporalLayerGroup() currently doesn\'t handle type \'Vector\'');
                 }
               }
             });

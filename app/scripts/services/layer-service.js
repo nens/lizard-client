@@ -83,10 +83,7 @@ angular.module('lizard-nxt')
         constructor: NxtLayer,
 
         initializeLayer: function () {
-          if (this.temporal) {
-            //TODO: initialize imageoverlays
-            return;
-          } else if (this.type === 'Vector') {
+          if (this.type === 'Vector') {
             this._leafletLayer = initializeVectorLayer(this);
           } else if (this.type === 'TMS') {
             this._leafletLayer = initializeTMSLayer(this);
@@ -161,7 +158,6 @@ angular.module('lizard-nxt')
         * @param wantedService Service to getData from.
         */
         _buildPromise: function (lgSlug, options, deferred, wantedService) {
-          console.log(lgSlug);
 
           var type = this.type,
               aggType = this.aggregationType,
