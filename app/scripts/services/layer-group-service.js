@@ -190,7 +190,9 @@ angular.module('lizard-nxt')
           return;
         }
         angular.forEach(this._layers, function (layer) {
-          layer.leafletLayer.setOpacity(newOpacity);
+          if (layer.leafletLayer && layer.leafletLayer.setOpacity) {
+            layer.leafletLayer.setOpacity(newOpacity);
+          }
         });
       },
 
