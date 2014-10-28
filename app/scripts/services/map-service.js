@@ -45,7 +45,7 @@ angular.module('lizard-nxt')
        */
       toggleLayerGroup: function (layerGroup) {
         if (layerGroup.slug === 'elevation' && layerGroup.isActive()) {
-          this._rescaleElevation(layerGroup);
+          //this._rescaleElevation(layerGroup);
         } else {
           // turn layer group on
           if (!(layerGroup.baselayer && layerGroup.isActive())) {
@@ -171,7 +171,6 @@ angular.module('lizard-nxt')
                 } else if (layer.type === 'Vector') {
                   // TO BE DE-COMMENTED IN THE FORESEEABLE FUTURE:
                   //return layerGroup;
-                  throw new Error('getActiveTemporalLayerGroup() currently doesn\'t handle type \'Vector\'');
                 }
               }
             });
