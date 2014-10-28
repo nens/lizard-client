@@ -49,6 +49,7 @@ angular.module('lizard-nxt')
           scope.timeState.changeOrigin = 'timeline';
           scope.timeState.changedZoom = Date.now();
         });
+        timeline.drawAggWindow(scope.timeState.at, scope.timeState.aggWindow);
       },
 
       /**
@@ -215,10 +216,7 @@ angular.module('lizard-nxt')
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.animation.enabled) {
-        timeline.updateAggWindow(
-          scope.timeState.at,
-          scope.timeState.aggWindow
-        );
+        timeline.drawAggWindow(scope.timeState.at, scope.timeState.aggWindow);
       }
     });
 

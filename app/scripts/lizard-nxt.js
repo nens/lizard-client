@@ -284,15 +284,15 @@ angular.module('lizard-nxt')
 
   // EVENTS
 
-  //var getEventTypes = function () {
-    //var k, eventLayers = [];
-    //for (k in $scope.mapState.layers) {
-      //if (k === "alarms" || k === "messages") {
-        //eventLayers.push($scope.mapState.layers[k]);
-      //}
-    //}
-    //return eventLayers;
-  //};
+  var getEventTypes = function () {
+    var k, eventLayers = [];
+    for (k in $scope.mapState.layers) {
+      if (k === "alarms" || k === "messages") {
+        eventLayers.push($scope.mapState.layers[k]);
+      }
+    }
+    return eventLayers;
+  };
 
 
   // EVENTS MODEL
@@ -305,16 +305,16 @@ angular.module('lizard-nxt')
 
   $scope.events = eventsModel;
 
-  //$scope.events = {
+  $scope.events = {
     //TODO: refactor event meta data (remove eventTypes from mapState)
     //types: { count: 0, 1: {}, 2: {}, 3: {}, 4: {}, 5: {} }, // Metadata object
-    //types: EventService.buildEventTypesTemplate(getEventTypes()),
-    //data: { type: "FeatureCollection",
-            //features: [] // Long format events data object
-      //},
-    //scale: d3.scale.ordinal().range(EventService.colors[8]),
-    //changed: Date.now()
-  //};
+    types: EventService.buildEventTypesTemplate(getEventTypes()),
+    data: { type: "FeatureCollection",
+            features: [] // Long format events data object
+      },
+    scale: d3.scale.ordinal().range(EventService.colors[8]),
+    changed: Date.now()
+  };
 
   /**
    * Zoom to event location

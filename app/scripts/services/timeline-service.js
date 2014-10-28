@@ -133,38 +133,41 @@ angular.module('lizard-nxt')
     drawAggWindow: {
       value: function (timestamp, interval) {
 
-        aggWindow = this._svg.select("g").append("g")
-          .attr("class", "aggwindow");
-
         var height = this._getHeight(this.dimensions);
         var width = xScale(new Date(timestamp + (interval))) -
           xScale(new Date(timestamp));
 
-        console.log("NOTE: get width in pixels based on interval.",
-          interval, width);
+        console.log("draw agg window");
+        // DATA JOIN
+        if (timestamp) {
+          aggWindow = this._svg.select("g").select("g").selectAll("rect")
+            .attr("class", "aggwindow")
+            .data([timestamp], function (d) {return d; });
+        }
 
-        aggWindow.append("rect")
+
+        // ENTER
+        aggWindow.enter().append("rect")
           .attr("class", "aggwindow")
           .attr("height", height)
-          .attr("x", function () {return xScale(new Date(timestamp)); })
+          .attr("x", 0)
           .attr("y", 0)
           .attr("width", width)
           .attr("style", "fill: #34495e;");
 
-      }
-    },
+        // UPDATE
+        aggWindow
+          .attr("x", function (d) {return xScale(new Date(d)); })
+          .attr("width", width);
+        
+        // EXIT
+        aggWindow.exit()
+          .transition()
+          .delay(200)
+          .duration(200)
+          .style("fill", "#FFF")
+          .remove();
 
-    removeAggWindow: {
-      value: function () {
-        console.log("remove agg window");
-        if (aggWindow) {
-          aggWindow.remove();
-        } else {
-          aggWindow = this._svg.select(".aggwindow");
-        }
-        aggWindow.remove();
-        this._svg.selectAll(".selected").classed("selected", false);
-        aggWindow = undefined;
       }
     },
 
@@ -222,22 +225,11 @@ angular.module('lizard-nxt')
 
         if (aggWindow) {
           var that = this;
-          that.removeAggWindow();
+          //that.removeAggWindow();
           setTimeout(function () {
             that.drawAggWindow(timestamp, interval);
           }, this.transTime);
         }
-      }
-    },
-
-    /**
-     * Updates the aggregation window position.
-     */
-    updateAggWindow: {
-      value: function (timestamp, interval) {
-        // TODO: make nice with d3 enter, update, remove etc.
-        this.removeAggWindow();
-        this.drawAggWindow(timestamp, interval);
       }
     },
 
@@ -334,7 +326,7 @@ angular.module('lizard-nxt')
         this.updateElements(this.dimensions, start);
         drawTimelineAxes(this._svg, xAxis, this.dimensions, this.transTime);
         this.addZoomListener();
-        this.removeAggWindow();
+        //this.removeAggWindow();
         this.drawAggWindow(start, interval);
       }
     },
