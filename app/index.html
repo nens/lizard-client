@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="/vendor/components-font-awesome/css/font-awesome.css" />
     <!-- endbower -->
     <!-- endbuild -->
-    
+
     <link href='//fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
 
     <!-- build:css(.tmp) /styles/main.css -->
@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="/styles/main.css">
     <!-- endbuild -->
 
-  
+
   </head>
 
   <body>
@@ -52,12 +52,12 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right" style="">
 
-            
+
               <li ng-if="user.authenticated" class="visible-xs">
                 <a class="user" href="https://sso.lizard.net/edit_profile/" title="Edit profile"><div class="" id="username"><i id="" class="fa fa-user"></i>
                 <% user.firstName %></div></a>
               </li>
-              <li ng-if="user.authenticated" 
+              <li ng-if="user.authenticated"
                   class="visible-sm visible-md visible-lg">
                 <a class="user"
                    rel="tooltip"
@@ -115,7 +115,7 @@
       </div>
     </div>
 
-    
+
 
     <div id="text-mode-scrollable">
 
@@ -212,7 +212,7 @@
       <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
     </div>
 
-    
+
 
     <!-- build:js(.) /scripts/vendor.js -->
     <!-- bower:js -->
@@ -234,7 +234,7 @@
     <script src="/vendor/raven-js/dist/raven.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
-    
+
     <!-- build:js({.tmp,app}) /scripts/scripts.js -->
     <script src="/scripts/lib/TileLayer.GeoJSONd3.js"></script>
     <script src="/scripts/lib/Layer.GeoJSONd3.js"></script>
@@ -276,7 +276,7 @@
     <script src="/scripts/templates/templates.js"></script>
     <script src="/scripts/lib/utils.js"></script>
     <script src="/scripts/lizard-nxt-filters.js"></script>
-    <script src="scripts/services/layer.js"></script>
+    <script src="/scripts/services/layer-service.js"></script>
     <!-- endbuild -->
 
 

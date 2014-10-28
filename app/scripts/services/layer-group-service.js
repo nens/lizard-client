@@ -21,15 +21,19 @@
  * - [ ] AnimState should not have to contain any state other than the time it is
  *       adhering and the leafletLayers (frames) it currently has.
  *
- * - [ ] Temporal layergroups should initiate when toggled to active for the first
+ * - [ ] Temporal layergroups should initialize when toggled to active for the first
  *       time. There should not be a _animState.initiated since the layergroup
  *       already has an initiated property.
+ *
+ * - [ ] Adhering of a WMS layer to a timeState is the responsibility of the
+ *       NxtLayer. The app calls layergroup.adhereToTime > the layerGroup tells
+ *       all its layers to adhere to this time.
  *
  */
 angular.module('lizard-nxt')
   .factory('LayerGroup', [
-  'Layer', 'UtilService', '$q',
-  function (Layer, UtilService, $q) {
+  'NxtLayer', 'UtilService', '$q', 'RasterService',
+  function (NxtLayer, UtilService, $q, RasterService) {
 
     /*
      * @constructor
@@ -42,50 +46,37 @@ angular.module('lizard-nxt')
       Object.defineProperty(this, 'name', {
         value: layerGroup.name,
         writable: false,
-        configurable: false,
-        enumerable: false
       });
       Object.defineProperty(this, 'order', {
         value: layerGroup.order,
         writable: false,
-        configurable: false,
-        enumerable: false
       });
       Object.defineProperty(this, '_active', {
         value: false,
         writable: true,
-        configurable: true,
-        enumerable: false
       });
       Object.defineProperty(this, 'baselayer', {
         value: layerGroup.baselayer,
         writable: false,
-        configurable: false,
-        enumerable: false
       });
       Object.defineProperty(this, 'slug', {
         value: layerGroup.slug,
         writable: false,
-        configurable: false,
-        enumerable: false
       });
       Object.defineProperty(this, '_layers', {
         value: [],
         writable: true,
-        configurable: true,
-        enumerable: false
       });
       Object.defineProperty(this, 'defaultActive', {
         value: layerGroup.active,
         writable: false,
-        configurable: false,
-        enumerable: false
       });
 
       // Instantiate a Layer for every servserside layer of
-      // the layergroup. Talk to the _layers from here on.
+      // the layergroup.
+      var layers = this._layers;
       angular.forEach(layerGroup.layers, function (layer) {
-        this._layers.push(new Layer(layer));
+        layers.push(new NxtLayer(layer));
       });
 
     }
@@ -102,13 +93,13 @@ angular.module('lizard-nxt')
       */
       toggle: function (map) {
         if (!this._initiated) {
-          this._initializeLeafletLayers(this._layers, this.temporal);
+          this._initializeLayers(this._layers, this.temporal);
           this._initiated = true;
         }
 
         this._active = !this._active;
 
-        this.toggleLayers(this._layers, this._active);
+        toggleLayers(map, this._layers, this._active);
       },
 
       /**
@@ -143,7 +134,7 @@ angular.module('lizard-nxt')
         }
         else {
           angular.forEach(this._layers, function (layer) {
-            promises.push(layer.getData(options, deferred));
+            promises.push(layer.getData(lgSlug, options, deferred));
           });
         }
 
@@ -166,10 +157,226 @@ angular.module('lizard-nxt')
        * Make layerGroup adhere to current timestate
        */
       adhereToTime: function (mapState, timeState, oldTime) {
-        if (oldTime === timeState.at) { return; }
-        angular.forEach(this._layers, function (layer) {
+        if (oldTime === timeState.at
+          && !this._active) { return; }
+        for (var i in this._layers) {
+          var layer = this._layers[i];
           layer.adhereToTime(mapState, timeState, oldTime);
+          // TODO: Ideally we delegate the adhering to time of a layer to the
+          // layer class. This is legacy:
+          if (layer.temporal
+            && layer.type === 'WMS'
+            && !layer.tiled) {
+            this._adhereWMSLayerToTime(layer, mapState, timeState, oldTime);
+          }
+        }
+      },
+
+      _adhereWMSLayerToTime: function (temporalWMSLayer, mapState, timeState, oldTime) {
+        var overlays,
+            newTime = timeState.at,
+            s = this._animState;
+
+        if (!temporalWMSLayer) { return; }
+        var currentDate  = this._mkTimeStamp(newTime),
+            oldDate      = this._mkTimeStamp(oldTime),
+            overlayIndex = s.frameLookup[currentDate];
+
+        if (this.isActive()) {
+          if (s.initiated) {
+            if (!timeState.animation.playing) {
+              this.animationStop(timeState);
+            }
+            else if (overlayIndex !== undefined && overlayIndex !== s.previousFrame) {
+              this._animProgressOverlays(s, overlayIndex, currentDate, timeState);
+            }
+            else if (overlayIndex === undefined) {
+              this._stopAnim(s, timeState);
+            }
+          } else {
+            // Possibility 2: we (re-)start the animation:
+            this._animRestart(s, mapState, timeState, temporalWMSLayer);
+          }
+        } else {
+          this._animState.initiated = false;
+          overlayIndex = undefined;
+          // first, check whether we have added the first overlay to the map
+          // (this implies a complete fixed-size set has been retrieved from API).
+          if (mapState._map.hasLayer(s.imageOverlays[0])) {
+            // if so, we remove (all) the overlays:
+            for (var i in s.imageOverlays) {
+              removeLeafletLayer(mapState._map, s.imageOverlays[i]);
+            }
+          }
+        }
+      },
+
+      animationStop: function (timeState) {
+        // gets a fresh set of images when the animation stops
+        if (!this._animState.initiated) { return; }
+
+        this._animGetImages(timeState);
+
+        if (!timeState.animation.playing) {
+          this._animState.imageOverlays[0].setOpacity(0.7);
+        }
+        this._animState.previousFrame = 0;
+      },
+
+      _animState: {
+        imageUrlBase    : undefined,
+        imageBounds     : [],
+        utcFormatter    : d3.time.format.utc("%Y-%m-%dT%H:%M:%S"),
+        step            : [],
+        imageOverlays   : {},
+        frameLookup     : {},
+        numCachedFrames : UtilService.serveToMobileDevice() ? 15 : 30,
+        previousFrame   : 0,
+        previousDate    : undefined,
+        nxtDate         : undefined,
+        loadingRaster   : 0,
+        restart         : false,
+        initiated       : false
+      },
+
+
+      /**
+       *
+       * Local helper that returns a rounded timestamp
+       */
+      _mkTimeStamp: function (t) {
+        return UtilService.roundTimestamp(t, this._animState.step, false);
+      },
+
+      /**
+       * stop anim
+       */
+      _stopAnim: function (s, timeState) {
+        if (timeState.animation.playing) {
+          s.restart = true;
+          s.loadingRaster = 0;
+        }
+        if (timeState.playPauseAnimation) {
+          timeState.playPauseAnimation('off');
+        }
+      },
+
+      /**
+       * restart anim
+       */
+      _animRestart: function (s, mapState, timeState, temporalWMSLayer) {
+        this._animStart(temporalWMSLayer);
+        var overlays = this._animState.imageOverlays;
+
+        for (var i in overlays) {
+          addLeafletLayer(mapState._map, overlays[i]);
+        }
+
+        // imgUrlBase equals full URL w/o TIME part
+        this._animState.imageUrlBase
+          = RasterService.buildURLforWMS(temporalWMSLayer);
+
+        this._animGetImages(timeState);
+        s.imageOverlays[0].setOpacity(0.7);
+      },
+
+      /**
+       * progress anim
+       */
+      _animProgressOverlays: function (s, overlayIndex, currentDate, timeState) {
+
+        var oldOverlay = s.imageOverlays[s.previousFrame],
+            newOverlay = s.imageOverlays[overlayIndex];
+
+        // Turn off old frame
+        oldOverlay.setOpacity(0);
+        // Turn on new frame
+        newOverlay.setOpacity(0.7);
+
+        // Delete the old overlay from the lookup, it is gone.
+        delete s.frameLookup[currentDate];
+
+        // Remove old listener
+        oldOverlay.off('load');
+        // Add listener to asynchronously update loadingRaster and framelookup:
+        this._animAddLoadListener(
+          oldOverlay,
+          s.previousFrame,
+          s.nxtDate,
+          timeState
+        );
+        // We are now waiting for one extra raster
+        s.loadingRaster++;
+
+        // Tell the old overlay to get out and get a new image.
+        oldOverlay.setUrl(
+          s.imageUrlBase + s.utcFormatter(new Date(s.nxtDate))
+        );
+
+        s.previousFrame = overlayIndex;
+        s.previousDate = currentDate;
+        s.nxtDate += s.step;
+      },
+
+      _animStart: function (temporalWMSLayer) {
+
+        var s = this._animState,
+            southWest = L.latLng(
+              temporalWMSLayer.bounds.south,
+              temporalWMSLayer.bounds.west
+            ),
+            northEast = L.latLng(
+              temporalWMSLayer.bounds.north,
+              temporalWMSLayer.bounds.east
+            );
+
+        s.imageBounds     = L.latLngBounds(southWest, northEast);
+        s.utcFormatter    = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
+        s.step            = RasterService.getTimeResolution(this);
+        s.frameLookup     = {};
+        s.previousFrame   = 0;
+        s.loadingRaster   = 0;
+        s.restart         = false;
+        s.initiated       = true;
+        s.imageOverlays   = RasterService.getImgOverlays(
+          s.numCachedFrames,
+          s.imageBounds
+        );
+      },
+
+      _animAddLoadListener: function (image, index, date, timeState) {
+
+        var s = this._animState;
+
+        image.on("load", function (e) {
+          s.loadingRaster--;
+          s.frameLookup[date] = index;
+          if (s.restart && s.loadingRaster === 0) {
+            s.restart = false;
+            timeState.playPauseAnimation();
+          }
         });
+      },
+
+      _animGetImages: function (timeState) {
+
+        var i, s = this._animState;
+
+        s.nxtDate = UtilService.roundTimestamp(timeState.at, s.step, false);
+        s.previousDate = s.nxtDate; // shift the date
+        s.loadingRaster = 0;        // reset the loading raster count
+        s.frameLookup = {};         // All frames are going to load new ones, empty lookup
+
+        for (i in s.imageOverlays) {
+          s.loadingRaster++;
+          s.imageOverlays[i].setOpacity(0);
+          s.imageOverlays[i].off('load');
+          this._animAddLoadListener(s.imageOverlays[i], i, s.nxtDate, timeState);
+          s.imageOverlays[i].setUrl(
+            s.imageUrlBase + s.utcFormatter(new Date(s.nxtDate))
+          );
+          s.nxtDate += s.step;
+        }
       },
 
       /**

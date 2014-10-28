@@ -4,13 +4,13 @@
  * @ngdoc service
  * @name lizard-nxt.Layer
  * @description
- * # Layer
+ * # NxtLayer
  * Factory in the lizard-nxt.
  */
 angular.module('lizard-nxt')
-  .factory('Layer', [
-    'LeafletService', 'VectorService', 'RasterService', 'UtfGridService',
-    function (LeafletService, VectorService, RasterService, UtfGridService) {
+  .factory('NxtLayer', [
+    'LeafletService', 'VectorService', 'RasterService', 'UtfGridService', 'UtilService',
+    function (LeafletService, VectorService, RasterService, UtfGridService, UtilService) {
 
       /*
        * @constructor
@@ -19,80 +19,58 @@ angular.module('lizard-nxt')
        *              non-configurable properties
        * @param  {object} layergroup definition as coming from the server
        */
-      function Layer(layer) {
+      function NxtLayer(layer) {
         Object.defineProperty(this, 'slug', {
           value: layer.slug,
           writable: false,
-          configurable: false,
-          enumerable: false
         });
         Object.defineProperty(this, 'type', {
           value: layer.type,
           writable: false,
-          configurable: false,
-          enumerable: false
         });
-        Object.defineProperty(this, '_minZoom', {
+        Object.defineProperty(this, 'minZoom', {
           value: layer.min_zoom,
           writable: false,
-          configurable: true,
-          enumerable: false
         });
-        Object.defineProperty(this, '_maxZoom', {
+        Object.defineProperty(this, 'maxZoom', {
           value: layer.max_zoom,
           writable: false,
-          configurable: false,
-          enumerable: false
         });
-        Object.defineProperty(this, '_zIndex', {
+        Object.defineProperty(this, 'zIndex', {
           value: layer.z_index,
           writable: false,
-          configurable: false,
-          enumerable: false
         });
-        Object.defineProperty(this, '_url', {
+        Object.defineProperty(this, 'url', {
           value: layer.url,
           writable: false,
-          configurable: false,
-          enumerable: false
         });
-        Object.defineProperty(this, '_tiled', {
+        Object.defineProperty(this, 'tiled', {
           value: layer.tiled,
           writable: false,
-          configurable: false,
-          enumerable: false
         });
-        Object.defineProperty(this, '_temporal', {
+        Object.defineProperty(this, 'temporal', {
           value: layer.temporal,
           writable: false,
-          configurable: false,
-          enumerable: false
         });
-        Object.defineProperty(this, '_opacity', {
+        Object.defineProperty(this, 'opacity', {
           value: layer.opacity,
           writable: true,
-          configurable: true,
-          enumerable: false
         });
-        Object.defineProperty(this, '_aggregationType', {
+        Object.defineProperty(this, 'aggregationType', {
           value: layer.aggregation_type,
           writable: false,
-          configurable: false,
-          enumerable: false
         });
-        Object.defineProperty(this, '_options', {
+        Object.defineProperty(this, 'options', {
           value: layer.options,
           writable: false,
-          configurable: false,
-          enumerable: false
         });
-        Object.defineProperty(this, '_bounds', {
+        Object.defineProperty(this, 'bounds', {
           value: layer.bounds,
           writable: false,
           configurable: false,
           enumerable: false
         });
-        Object.defineProperty(this, '_leafletLayer', {
+        Object.defineProperty(this, 'leafletLayer', {
           value: {},
           writable: true,
           configurable: true,
@@ -100,22 +78,22 @@ angular.module('lizard-nxt')
         });
       }
 
-      Layer.prototype = {
+      NxtLayer.prototype = {
 
-        constructor: Layer,
+        constructor: NxtLayer,
 
         initializeLayer: function () {
           if (this.temporal) {
             //TODO: initialize imageoverlays
             return;
           } else if (this.type === 'Vector') {
-            this._leafletLayer = initializeVectorLayer(this.layer);
+            this._leafletLayer = initializeVectorLayer(this);
           } else if (this.type === 'TMS') {
-            this._leafletLayer = initializeTMSLayer(this.layer);
+            this._leafletLayer = initializeTMSLayer(this);
           } else if (this.type === 'UTFGrid') {
-            this._leafletLayer = initializeGridLayer(this.layer);
+            this._leafletLayer = initializeGridLayer(this);
           } else if (this.type === 'WMS' && this.tiled) {
-            this._leafletLayer = initializeWMSLayer(this.layer);
+            this._leafletLayer = initializeWMSLayer(this);
           } else if (!this.tiled) {
             // TODO: initialise imageoverlay
           } else if (this.type !== 'Store') {
@@ -136,7 +114,7 @@ angular.module('lizard-nxt')
           }
         },
 
-        getData: function (lg, options, deferred) {
+        getData: function (lgSlug, options, deferred) {
           var wantedService;
           if (this.type === 'Store') {
             wantedService = RasterService;
@@ -149,7 +127,7 @@ angular.module('lizard-nxt')
           }
 
           if (wantedService) {
-            return this._buildPromise(lg, options, deferred, wantedService);
+            return this._buildPromise(lgSlug, options, deferred, wantedService);
           } else {
             return;
           }
@@ -161,215 +139,13 @@ angular.module('lizard-nxt')
           } else if (this.temporal
             && this.type === 'WMS'
             && !this.tiled) {
-            this._adhereWMSLayerToTime(this, mapState, timeState, oldTime);
+            //TODO: see layergroup comments
+            //this._adhereWMSLayerToTime(this, mapState, timeState, oldTime);
           }
         },
 
-        animationStop: function (timeState) {
-          // gets a fresh set of images when the animation stops
-          if (!this._animState.initiated) { return; }
-
-          this._animGetImages(timeState);
-
-          if (!timeState.animation.playing) {
-            this._animState.imageOverlays[0].setOpacity(0.7);
-          }
-          this._animState.previousFrame = 0;
-        },
-
-        _animState: {
-          imageUrlBase    : undefined,
-          imageBounds     : [],
-          utcFormatter    : d3.time.format.utc("%Y-%m-%dT%H:%M:%S"),
-          step            : [],
-          imageOverlays   : {},
-          frameLookup     : {},
-          numCachedFrames : UtilService.serveToMobileDevice() ? 15 : 30,
-          previousFrame   : 0,
-          previousDate    : undefined,
-          nxtDate         : undefined,
-          loadingRaster   : 0,
-          restart         : false,
-          initiated       : false
-        },
-
-        _adhereWMSLayerToTime: function (temporalWMSLayer, mapState, timeState, oldTime) {
-          var overlays,
-              newTime = timeState.at,
-              s = this._animState;
-
-          if (!temporalWMSLayer) { return; }
-
-          var currentDate  = this._mkTimeStamp(newTime),
-              oldDate      = this._mkTimeStamp(oldTime),
-              overlayIndex = s.frameLookup[currentDate];
-
-          if (this.isActive()) {
-            if (s.initiated) {
-              if (!timeState.animation.playing) {
-                this.animationStop(timeState);
-              }
-              else if (overlayIndex !== undefined && overlayIndex !== s.previousFrame) {
-                this._animProgressOverlays(s, overlayIndex, currentDate, timeState);
-              }
-              else if (overlayIndex === undefined) {
-                this._stopAnim(s, timeState);
-              }
-            } else {
-              // Possibility 2: we (re-)start the animation:
-              this._animRestart(s, mapState, timeState, temporalWMSLayer);
-            }
-          } else {
-            this._animState.initiated = false;
-            overlayIndex = undefined;
-            // first, check whether we have added the first overlay to the map
-            // (this implies a complete fixed-size set has been retrieved from API).
-            if (mapState._map.hasLayer(s.imageOverlays[0])) {
-              // if so, we remove (all) the overlays:
-              for (var i in s.imageOverlays) {
-                removeLeafletLayer(mapState._map, s.imageOverlays[i]);
-              }
-            }
-          }
-        },
-
-        /**
-         *
-         * Local helper that returns a rounded timestamp
-         */
-        _mkTimeStamp: function (t) {
-          return UtilService.roundTimestamp(t, this._animState.step, false);
-        },
-
-        /**
-         * stop anim
-         */
-        _stopAnim: function (s, timeState) {
-          if (timeState.animation.playing) {
-            s.restart = true;
-            s.loadingRaster = 0;
-          }
-          if (timeState.playPauseAnimation) {
-            timeState.playPauseAnimation('off');
-          }
-        },
-
-        /**
-         * restart anim
-         */
-        _animRestart: function (s, mapState, timeState, temporalWMSLayer) {
-          this._animStart(temporalWMSLayer);
-          var overlays = this._animState.imageOverlays;
-
-          for (var i in overlays) {
-            addLeafletLayer(mapState._map, overlays[i]);
-          }
-
-          // imgUrlBase equals full URL w/o TIME part
-          this._animState.imageUrlBase
-            = RasterService.buildURLforWMS(temporalWMSLayer);
-
-          this._animGetImages(timeState);
-          s.imageOverlays[0].setOpacity(0.7);
-        },
-
-        /**
-         * progress anim
-         */
-        _animProgressOverlays: function (s, overlayIndex, currentDate, timeState) {
-
-          var oldOverlay = s.imageOverlays[s.previousFrame],
-              newOverlay = s.imageOverlays[overlayIndex];
-
-          // Turn off old frame
-          oldOverlay.setOpacity(0);
-          // Turn on new frame
-          newOverlay.setOpacity(0.7);
-
-          // Delete the old overlay from the lookup, it is gone.
-          delete s.frameLookup[currentDate];
-
-          // Remove old listener
-          oldOverlay.off('load');
-          // Add listener to asynchronously update loadingRaster and framelookup:
-          this._animAddLoadListener(
-            oldOverlay,
-            s.previousFrame,
-            s.nxtDate,
-            timeState
-          );
-          // We are now waiting for one extra raster
-          s.loadingRaster++;
-
-          // Tell the old overlay to get out and get a new image.
-          oldOverlay.setUrl(
-            s.imageUrlBase + s.utcFormatter(new Date(s.nxtDate))
-          );
-
-          s.previousFrame = overlayIndex;
-          s.previousDate = currentDate;
-          s.nxtDate += s.step;
-        },
-
-        _animStart: function (temporalWMSLayer) {
-
-          var s = this._animState,
-              southWest = L.latLng(
-                temporalWMSLayer.bounds.south,
-                temporalWMSLayer.bounds.west
-              ),
-              northEast = L.latLng(
-                temporalWMSLayer.bounds.north,
-                temporalWMSLayer.bounds.east
-              );
-
-          s.imageBounds     = L.latLngBounds(southWest, northEast);
-          s.utcFormatter    = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
-          s.step            = RasterService.getTimeResolution(this);
-          s.frameLookup     = {};
-          s.previousFrame   = 0;
-          s.loadingRaster   = 0;
-          s.restart         = false;
-          s.initiated       = true;
-          s.imageOverlays   = RasterService.getImgOverlays(
-            s.numCachedFrames,
-            s.imageBounds
-          );
-        },
-
-        _animAddLoadListener: function (image, index, date, timeState) {
-
-          var s = this._animState;
-
-          image.on("load", function (e) {
-            s.loadingRaster--;
-            s.frameLookup[date] = index;
-            if (s.restart && s.loadingRaster === 0) {
-              s.restart = false;
-              timeState.playPauseAnimation();
-            }
-          });
-        },
-
-        _animGetImages: function (timeState) {
-
-          var i, s = this._animState;
-
-          s.nxtDate = UtilService.roundTimestamp(timeState.at, s.step, false);
-          s.previousDate = s.nxtDate; // shift the date
-          s.loadingRaster = 0;        // reset the loading raster count
-          s.frameLookup = {};         // All frames are going to load new ones, empty lookup
-
-          for (i in s.imageOverlays) {
-            s.loadingRaster++;
-            s.imageOverlays[i].setOpacity(0);
-            s.imageOverlays[i].off('load');
-            this._animAddLoadListener(s.imageOverlays[i], i, s.nxtDate, timeState);
-            s.imageOverlays[i].setUrl(
-              s.imageUrlBase + s.utcFormatter(new Date(s.nxtDate))
-            );
-            s.nxtDate += s.step;
-          }
+        _adhereVectorLayerToTime: function (layer, mapState, timeState, oldTime) {
+          return true;
         },
 
        /**
@@ -384,25 +160,31 @@ angular.module('lizard-nxt')
         * @param deffered deffered to notify when service.getData resolves.
         * @param wantedService Service to getData from.
         */
-        _buildPromise: function (lg, options, deferred, wantedService) {
+        _buildPromise: function (lgSlug, options, deferred, wantedService) {
+          console.log(lgSlug);
+
+          var type = this.type,
+              aggType = this.aggregationType,
+              slug = this.slug,
+              summary = this.summary;
 
           var buildSuccesCallback = function (data) {
             deferred.notify({
               data: data,
-              type: this.type,
-              layerGroupSlug: lg,
-              layerSlug: this.slug,
-              aggType: this.aggregation_type,
-              summary: this.summary
+              type: type,
+              layerGroupSlug: lgSlug,
+              layerSlug: slug,
+              aggType: aggType,
+              summary: summary
             });
           };
 
           var buildErrorCallback = function (msg) {
             deferred.notify({
               data:  null,
-              type: this.type,
-              layerGroupSlug: lg,
-              layerSlug: this.slug
+              type: type,
+              layerGroupSlug: lgSlug,
+              layerSlug: slug
             });
           };
 
@@ -422,7 +204,7 @@ angular.module('lizard-nxt')
        * @param {L.Class} Leaflet layer.
        * @description Adds layer to map
        */
-      var addLeafletLayer = function (map, leafletLayer) { // Leaflet Layer
+      var addLeafletLayer = function (map, leafletLayer) { // Leaflet NxtLayer
         if (map.hasLayer(leafletLayer)) {
           throw new Error(
             'Attempted to add layer' + leafletLayer._id
@@ -440,7 +222,7 @@ angular.module('lizard-nxt')
        * @param  {L.Class} Leaflet layer
        * @description Removes layer from map
        */
-      var removeLeafletLayer = function (map, leafletLayer) { // Leaflet Layer
+      var removeLeafletLayer = function (map, leafletLayer) { // Leaflet NxtLayer
         if (map.hasLayer(leafletLayer)) {
           map.removeLayer(leafletLayer);
         } else {
@@ -552,6 +334,8 @@ angular.module('lizard-nxt')
         });
         return layer;
       };
+
+      return NxtLayer;
 
     }
   ]);
