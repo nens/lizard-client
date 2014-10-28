@@ -21,7 +21,7 @@ angular.module('lizard-nxt')
       this.addTileData = this.options.dataCallback;
 
       this.options.opacity = 0.8; // default opacity for events
- 
+
       this.drawOptions = {
         pointToLayer: function (feature, latlng) {
 
@@ -104,15 +104,15 @@ angular.module('lizard-nxt')
       req.send();
     },
     _reset: function () {
-        L.TileLayer.prototype._reset.apply(this, arguments);
-        for (var i in this._requests) {
-            this._requests[i].abort();
-        }
-        this._requests = [];
-        this._tilesLoading = {};
-        if (this.geojsonLayer) {
-          this._resetgeoJson();
-        }
+      L.TileLayer.prototype._reset.apply(this, arguments);
+      for (var i in this._requests) {
+        this._requests[i].abort();
+      }
+      this._requests = [];
+      this._tilesLoading = {};
+      if (this.geojsonLayer) {
+        this._resetgeoJson();
+      }
     },
     _resetgeoJson: function () {
       this._map.removeLayer(this.geojsonLayer);
