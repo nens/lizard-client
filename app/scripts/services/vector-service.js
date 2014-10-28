@@ -182,17 +182,17 @@ angular.module('lizard-nxt')
       });
     };
 
-    var replaceData = function (layerSlug, data, zoom) {
+    var replaceData = function (layerSlug, data, zxy) {
       vectorLayers[layerSlug] = {
           data: [],
-          zoom: zoom
+          zxy: zxy
         };
       vectorLayers[layerSlug].data = vectorLayers[layerSlug].data.concat(data);
     };
 
-    var setData = function (layerSlug, data, zoom) {
+    var setData = function (layerSlug, data, zxy) {
       if (vectorLayers.hasOwnProperty(layerSlug)
-        && vectorLayers[layerSlug].zoom === zoom) {
+        && vectorLayers[layerSlug].zxy === zxy) {
         vectorLayers[layerSlug].data = vectorLayers[layerSlug].data.concat(data);
       } else {
         replaceData.apply(this, arguments);
