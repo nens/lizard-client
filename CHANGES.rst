@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- Layergroups have an opacity slider that sets opacity on all leaflet layers.
+
 - Point and line give visual feedback on the map when loading and recieving data.
 
 - Images for structures added to omnibox.
