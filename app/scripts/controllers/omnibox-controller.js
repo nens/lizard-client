@@ -29,6 +29,7 @@ angular.module('lizard-nxt')
       };
 
       var putDataOnScope = function (response) {
+        console.log(response);
         var lGContent = $scope.box.content[response.layerGroupSlug] || {layers: {}};
         lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
         lGContent.layerGroupName = $scope.mapState.layerGroups[response.layerGroupSlug].name;

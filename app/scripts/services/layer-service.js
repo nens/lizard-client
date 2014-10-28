@@ -230,6 +230,7 @@ angular.module('lizard-nxt')
             + 'while it was already part of the map'
           );
         } else {
+          console.log(leafletLayer, map);
           map.addLayer(leafletLayer);
         }
       };

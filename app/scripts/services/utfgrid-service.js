@@ -42,7 +42,7 @@ angular.module('lizard-nxt')
     var _getDataFromUTFAsynchronous = function (nonLeafLayer, e, deferred) {
       var leafLayer, response;
 
-      leafLayer = nonLeafLayer.leafletLayer;
+      leafLayer = nonLeafLayer._leafletLayer;
 
       leafLayer.on('load', function () {
         response = leafLayer._objectForEvent(e);
