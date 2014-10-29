@@ -86,9 +86,10 @@ angular.module('lizard-nxt')
           } else if (this.type === 'WMS' && this.tiled) {
             this._leafletLayer = initializeWMSLayer(this);
           }
-          // else if (!this.tiled) {
-          //   // TODO: initialise imageoverlay
-          // }
+          else if (!this.tiled) {
+            // TODO: initialise imageoverlay
+            return;
+          }
           else if (this.type !== 'Store') {
             // this ain't right
             throw new Error(this.type + ' is not a supported layer type');
