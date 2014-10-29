@@ -5,7 +5,7 @@
  * @memberOf app
  * @class pointCtrl
  * @name pointCtrl
- * @description point is the contoller of the point template.
+ * @description point is the controller of the point template.
  * It gathers all data belonging to a location in space. It becomes active
  * by setting box.type to 'point' and is updated by broadcasting
  * 'newPointActive'. It reads and writes mapState.here.
@@ -29,8 +29,10 @@ angular.module('lizard-nxt')
      * @param  {L.LatLng} here
      */
     var fillpoint = function (here) {
-      ClickFeedbackService.drawClickInSpace($scope.mapState, here);
-      // TODO: get aggWindow from timeState.
+      if ($scope.box.type !== 'point') { return; }
+
+      ClickFeedbackService.drawCircle($scope.mapState, here);
+      ClickFeedbackService.startVibration($scope.mapState);
       var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, GRAPH_WIDTH);
       var promises = $scope.fillBox({
         geom: here,
@@ -58,7 +60,9 @@ angular.module('lizard-nxt')
      * @description Wrapper to improve readability
      */
     var fillPointHere = function () {
-      fillpoint($scope.mapState.here);
+      if ($scope.box.type === 'point' && $scope.mapState.here) {
+        fillpoint($scope.mapState.here);
+      }
     };
 
     /**
@@ -68,28 +72,64 @@ angular.module('lizard-nxt')
      */
     var drawFeedback = function () {
       var feedbackDrawn = false;
-      ClickFeedbackService.stopVibration();
-      angular.forEach($scope.box.content, function (lg) {
-        if (lg && lg.layers) {
-          angular.forEach(lg.layers, function (layer) {
-            if (layer.type === 'Vector') {
-              // draw it
-              feedbackDrawn = true;
+      var drawVectorFeedback = function (content) {
+        angular.forEach(content, function (lg) {
+          if (lg && lg.layers) {
+            angular.forEach(lg.layers, function (layer) {
+              if (layer.type === 'Vector' && layer.data.length > 0) {
+                ClickFeedbackService.drawGeometry(
+                  $scope.mapState,
+                  layer.data
+                );
+                ClickFeedbackService.vibrateOnce();
+                feedbackDrawn = true;
+              }
+            });
+          }
+        });
+      };
+
+      var drawUTFGridFeedback = function (content) {
+        if (content.waterchain && content.waterchain.layers.waterchain_grid) {
+          var feature = {
+            type: 'Feature',
+            geometry: angular.fromJson(content.waterchain.layers.waterchain_grid.data.geom),
+            properties: {
+              entity_name: content.waterchain.layers.waterchain_grid.data.entity_name
+            }
+          };
+          ClickFeedbackService.drawGeometry(
+            $scope.mapState,
+            feature
+          );
+          ClickFeedbackService.vibrateOnce();
+          feedbackDrawn = true;
+        }
+      };
+
+      var drawStoreFeedback = function (content) {
+        if (!feedbackDrawn) {
+          angular.forEach(content, function (lg) {
+            if (lg && lg.layers) {
+              angular.forEach(lg.layers, function (layer) {
+                if (layer.type === 'Store' && layer.data.length > 0) {
+                  ClickFeedbackService.drawArrow($scope.mapState, $scope.mapState.here);
+                  feedbackDrawn = true;
+                }
+              });
             }
           });
         }
-      });
-      if ($scope.box.content.waterchain && $scope.box.content.waterchain.layers.waterchain_grid) {
-        ClickFeedbackService.drawGeometry(
-          $scope.mapState,
-          $scope.box.content.waterchain.layers.waterchain_grid.data.geom,
-          $scope.box.content.waterchain.layers.waterchain_grid.data.entity_name
-        );
-      } else if (!feedbackDrawn) {
-        angular.forEach($scope.box.content, function (lg) {
-          if (lg) {
-            ClickFeedbackService.drawArrowHere($scope.mapState);
-          }
+      };
+
+      ClickFeedbackService.emptyClickLayer($scope.mapState);
+      drawVectorFeedback($scope.box.content);
+      drawUTFGridFeedback($scope.box.content);
+      drawStoreFeedback($scope.box.content);
+      if (!feedbackDrawn) {
+        ClickFeedbackService.vibrateOnce({
+          type: 'Point',
+          coordinates: [$scope.mapState.here.lng, $scope.mapState.here.lat]
         });
       }
     };
@@ -120,8 +160,6 @@ angular.module('lizard-nxt')
         }
       });
     };
-
-    fillPointHere();
 
     // Update when user clicked again
     $scope.$watch('mapState.here', function (n, o) {

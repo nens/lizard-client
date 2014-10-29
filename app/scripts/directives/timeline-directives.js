@@ -146,7 +146,7 @@ angular.module('lizard-nxt')
       if (scope.mapState.getActiveTemporalLayerGroup()) {
         updateTimelineHeight(angular.copy(timeline.dimensions),
           dimensions, scope.events.types.count);
-        timeline.drawBars(RasterService.getIntensityData());
+        // timeline.drawBars(RasterService.getIntensityData());
       } else {
         timeline.removeBars();
         updateTimelineHeight(angular.copy(timeline.dimensions),

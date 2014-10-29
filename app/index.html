@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="/vendor/components-font-awesome/css/font-awesome.css" />
     <!-- endbower -->
     <!-- endbuild -->
-    
+
     <link href='//fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
 
     <!-- build:css(.tmp) /styles/main.css -->
@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="/styles/main.css">
     <!-- endbuild -->
 
-  
+
   </head>
 
   <body>
@@ -51,12 +51,12 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right" style="">
 
-            
+
               <li ng-if="user.authenticated" class="visible-xs">
                 <a class="user" href="https://sso.lizard.net/edit_profile/" title="Edit profile"><div class="" id="username"><i id="" class="fa fa-user"></i>
                 <% user.firstName %></div></a>
               </li>
-              <li ng-if="user.authenticated" 
+              <li ng-if="user.authenticated"
                   class="visible-sm visible-md visible-lg">
                 <a class="user"
                    rel="tooltip"
@@ -127,7 +127,7 @@
       </div>
     </div>
 
-    
+
 
     <div id="text-mode-scrollable">
 
@@ -145,31 +145,6 @@
                   </li>
                 </ul>
               </li>
-              <!-- Temporary item to enable events -->
-              <li id="events" class="nav-header">
-              <ul class="list-group">
-                <li ng-repeat="event in mapState.eventTypes">
-                  <i class="fa fa-circle" ng-style="{color: events.scale(event.event_series)}"> </i>
-                  <!-- The wanted label if we do NOT truncate the event category name -->
-                  <label ng-if="((event.type | truncate).length === event.type.length)"
-                         class="ng-class: {active: events.types[event.event_series].active};"
-                         ng-bind="event.type"
-                         ng-click="events.toggleEvents(event.event_series);">
-                  </label>
-                  <!-- The wanted label if we want truncate the event category name -->
-                  <label ng-if="((event.type | truncate).length !== event.type.length)"
-                         class="ng-class: {active: events.types[event.event_series].active};"
-                         ng-bind="event.type | truncate"
-                         ng-click="events.toggleEvents(event.event_series);"
-                         rel="tooltip"
-                         data-placement="left"
-                         title="<% event.type %>">
-                  </label>
-                </li>
-              </ul>
-              </li>
-              <li class="nav-header">
-              </li>
             </ul>
           </div>
           <div id="ribbon"
@@ -184,7 +159,22 @@
             </div>
           </div>
           <div class="button-list-container" id="">
-            <div class="button-list-item">
+
+            <div class="button-list-item"
+                 style="cursor: pointer">
+              <a ng-click="toggleTool('point')"
+                 class="button-list-link"
+                 title="point tool"
+                 ng-class="{'active': tools.active === 'point'}"
+                 data-toggle="tooltip"
+                 data-placement="left"
+                 rel="tooltip">
+                 <i class="fa fa-dot-circle-o"></i>
+              </a>
+            </div>
+
+            <div class="button-list-item"
+                 style="cursor: pointer">
               <a ng-click="toggleTool('line')"
                  class="button-list-link"
                  title="line tool"
@@ -195,17 +185,20 @@
                  <i class="fa fa-expand"></i>
               </a>
             </div>
-            <div class="button-list-item">
-              <a ng-click="toggleTool('pipeSurface')"
+
+            <div class="button-list-item"
+                 style="cursor: pointer">
+              <a ng-click="toggleTool('area')"
                  class="button-list-link"
-                 title="impervious surface"
-                 ng-class="{'active': tools.active === 'pipeSurface'}"
+                 title="area tool"
+                 ng-class="{'active': tools.active === 'area'}"
                  data-toggle="tooltip"
                  data-placement="left"
                  rel="tooltip">
-                 <i class="fa fa-code-fork"></i>
+                 <i class="fa fa-square-o"></i>
               </a>
             </div>
+
           </div>
         </div>
 
@@ -226,7 +219,6 @@
 
     <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
     
-
     <!-- build:js(.) /scripts/vendor.js -->
     <!-- bower:js -->
     <script src="/vendor/jquery/jquery.js"></script>
@@ -247,7 +239,7 @@
     <script src="/vendor/raven-js/dist/raven.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
-    
+
     <!-- build:js({.tmp,app}) /scripts/scripts.js -->
     <script src="/scripts/lib/TileLayer.GeoJSONd3.js"></script>
     <script src="/scripts/lib/Layer.GeoJSONd3.js"></script>
@@ -278,7 +270,9 @@
     <script src="/scripts/directives/omnibox-directives.js"></script>
     <script src="/scripts/services/graph-service.js"></script>
     <script src="/scripts/directives/graph-directives.js"></script>
+    <script src="/scripts/directives/single-click-directive.js"></script>
     <script src="/scripts/directives/layer-chooser-directives.js"></script>
+    <script src="/scripts/directives/opacity-directives.js"></script>
     <script src="/scripts/directives/template-directives.js"></script>
     <script src="/scripts/directives/timeline-directives.js"></script>
     <script src="/scripts/controllers/timeline-controller.js"></script>
@@ -289,6 +283,7 @@
     <script src="/scripts/templates/templates.js"></script>
     <script src="/scripts/lib/utils.js"></script>
     <script src="/scripts/lizard-nxt-filters.js"></script>
+    <script src="/scripts/services/layer-service.js"></script>
     <!-- endbuild -->
 
 

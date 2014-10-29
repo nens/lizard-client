@@ -114,6 +114,10 @@ angular.module('lizard-nxt')
         filteredSet = filterSpatial(sourceArray, spatial);
       } else if (spatial === undefined) {
         filteredSet = sourceArray;
+      } else if (spatial instanceof Array
+        && spatial[0] instanceof LeafletService.LatLng) {
+        // TODO: implement line intersect with vector data
+        filteredSet = [];
       } else {
         throw new Error(spatial + "is an invalid geometry to query VectorService");
       }
@@ -145,7 +149,7 @@ angular.module('lizard-nxt')
     var getData = function (nonLeafLayer, options) {
       var deferred = $q.defer();
 
-      var layer = nonLeafLayer.leafletLayer || deferred.reject();
+      var layer = nonLeafLayer._leafletLayer || deferred.reject();
 
       if (layer.isLoading) {
         getDataAsync(nonLeafLayer, options, deferred);
@@ -166,7 +170,7 @@ angular.module('lizard-nxt')
     };
 
     var getDataAsync = function (nonLeafLayer, options, deferred) {
-      nonLeafLayer.leafletLayer.on('loadend', function () {
+      nonLeafLayer._leafletLayer.on('loadend', function () {
         if (vectorLayers[nonLeafLayer.slug] !== undefined) {
           deferred.resolve(filterSet(vectorLayers[nonLeafLayer.slug].data,
             options.geom, {

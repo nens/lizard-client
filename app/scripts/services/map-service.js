@@ -44,34 +44,30 @@ angular.module('lizard-nxt')
        * @param  layerGroup layergroup that should be toggled
        */
       toggleLayerGroup: function (layerGroup) {
-        if (layerGroup.slug === 'elevation' && layerGroup.isActive()) {
-          this._rescaleElevation(layerGroup);
-        } else {
-          // turn layer group on
-          if (!(layerGroup.baselayer && layerGroup.isActive())) {
-            layerGroup.toggle(this._map, layerGroup._slug);
-            this.layerGroupsChanged = Date.now();
-          }
-          var map = this._map;
-          if (layerGroup.baselayer || layerGroup.temporal) {
-            angular.forEach(this.layerGroups, function (_layerGroup) {
-              if (layerGroup.baselayer
-                && _layerGroup.baselayer
-                && _layerGroup.isActive()
-                && _layerGroup.slug !== layerGroup.slug
-                )
-              {
-                _layerGroup.toggle(map);
+        // turn layer group on
+        if (!(layerGroup.baselayer && layerGroup.isActive())) {
+          layerGroup.toggle(this._map);
+          this.layerGroupsChanged = Date.now();
+        }
+        var map = this._map;
+        if (layerGroup.baselayer || layerGroup.temporal) {
+          angular.forEach(this.layerGroups, function (_layerGroup) {
+            if (layerGroup.baselayer
+              && _layerGroup.baselayer
+              && _layerGroup.isActive()
+              && _layerGroup.slug !== layerGroup.slug
+              )
+            {
+              _layerGroup.toggle(map);
 
-              } else if (layerGroup.temporal
-                && _layerGroup.temporal
-                && _layerGroup.isActive()
-                && _layerGroup.slug !== layerGroup.slug) {
+            } else if (layerGroup.temporal
+              && _layerGroup.temporal
+              && _layerGroup.isActive()
+              && _layerGroup.slug !== layerGroup.slug) {
 
-                _layerGroup.toggle(map);
-              }
-            });
-          }
+              _layerGroup.toggle(map);
+            }
+          });
         }
       },
 
@@ -163,51 +159,12 @@ angular.module('lizard-nxt')
       getActiveTemporalLayerGroup: function () {
         var result;
         angular.forEach(this.layerGroups, function (layerGroup) {
-          if (!result && layerGroup.isActive()) {
-            angular.forEach(layerGroup._layers, function (layer) {
-              if (!result && layer.temporal) {
-                if (layer.type === 'WMS') {
-                  result = layerGroup;
-                } else if (layer.type === 'Vector') {
-                  // TO BE DE-COMMENTED IN THE FORESEEABLE FUTURE:
-                  //return layerGroup;
-                  throw new Error('getActiveTemporalLayerGroup() currently doesn\'t handle type \'Vector\'');
-                }
-              }
-            });
+          if (layerGroup.temporal && layerGroup.isActive()) {
+            result = layerGroup;
           }
         });
         return result;
       },
-
-      /**
-       * @function
-       * @memberOf app.NxtMapService
-       * @description Elevation can be rescaled according to extent
-       */
-      _rescaleElevation: function (lg) {
-        var layer;
-        angular.forEach(lg._layers, function (value) {
-          if (value.type === 'WMS') {
-            layer = value;
-          }
-        });
-        if (!layer) { throw new Error('Attempted to rescale' + lg.slug + 'which does not have a wms'); }
-        var url, bounds, limits, styles;
-        bounds = this._map.getBounds();
-        // Make request to raster to get min and max of current bounds
-        url = 'https://raster.lizard.net/wms' +
-                  '?request=getlimits&layers=elevation' +
-                  '&width=16&height=16&srs=epsg:4326&bbox=' +
-                  bounds.toBBoxString();
-        $http.get(url).success(function (data) {
-          limits = ':' + data[0][0] + ':' + data[0][1];
-          styles = 'BrBG_r' + limits;
-          layer.leafletLayer.setParams(
-            {styles: styles}, true);
-          layer.leafletLayer.redraw();
-        });
-      }
 
     };
 
