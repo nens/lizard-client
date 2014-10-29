@@ -126,6 +126,7 @@ angular.module('lizard-nxt')
 
         syncTime: function (mapState, timeState, oldTime) {
           if (this.temporal && this.type === 'Vector') {
+          console.log('sadfasfsadf');
             this._syncVectorToTime(this.layer, mapState, timeState, oldTime);
           } else if (this.temporal
             && this.type === 'WMS'
