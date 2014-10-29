@@ -182,18 +182,33 @@ angular.module('lizard-nxt')
       });
     };
 
-    var replaceData = function (layerSlug, data, zxy) {
+    var replaceData = function (layerSlug, data, zoom) {
       vectorLayers[layerSlug] = {
           data: [],
-          zxy: zxy
+          zoom: zoom
         };
       vectorLayers[layerSlug].data = vectorLayers[layerSlug].data.concat(data);
     };
 
-    var setData = function (layerSlug, data, zxy) {
+    var getUnion = function (arr1, arr2, uniqueKey) {
+      var union = arr1.concat(arr2);
+
+      for (var i = 0; i < union.length; i++) {
+        for (var j = i+1; j < union.length; j++) {
+          if (union[i][uniqueKey] === union[j][uniqueKey])
+            union.splice(i, 1);
+        }
+      }
+      return union;
+    };
+
+
+    var setData = function (layerSlug, data, zoom) {
       if (vectorLayers.hasOwnProperty(layerSlug)
-        && vectorLayers[layerSlug].zxy === zxy) {
-        vectorLayers[layerSlug].data = vectorLayers[layerSlug].data.concat(data);
+        && vectorLayers[layerSlug].zoom === zoom) {
+        
+        vectorLayers[layerSlug].data = getUnion(data, vectorLayers[layerSlug].data, 'id');
+        console.log(vectorLayers[layerSlug].data);
       } else {
         replaceData.apply(this, arguments);
       }

@@ -626,7 +626,7 @@ angular.module('lizard-nxt')
               VectorService.setData(
                 nonLeafLayer.slug,
                 featureCollection.features,
-                point.z + '_' + point.x + '_' + point.y
+                point.z
               );
             }
           },
