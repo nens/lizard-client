@@ -125,9 +125,8 @@ angular.module('lizard-nxt')
         },
 
         syncTime: function (mapState, timeState, oldTime) {
-          if (this.temporal && this.type === 'Vector') {
-          console.log('sadfasfsadf');
-            this._syncVectorToTime(this.layer, mapState, timeState, oldTime);
+          if (this.type === 'Vector' ) {
+            this._syncVectorToTime(this, mapState, timeState, oldTime);
           } else if (this.temporal
             && this.type === 'WMS'
             && !this.tiled) {
@@ -163,8 +162,18 @@ angular.module('lizard-nxt')
           }
         },
 
+        /**
+         * Fetches data from service and redraws based on this data.
+         */
         _syncVectorToTime: function (layer, mapState, timeState, oldTime) {
-          console.log('asdfsadf');
+          VectorService.getData(layer, {
+            geom: mapState.bounds,
+            start: timeState.start,
+            end: timeState.end
+          }).then(function (data) {
+            layer._leafletLayer._resetgeoJson();
+            layer._leafletLayer.drawTheThings(data);
+          });
           return;
         },
 

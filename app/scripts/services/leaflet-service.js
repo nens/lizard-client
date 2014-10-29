@@ -153,13 +153,14 @@ angular.module('lizard-nxt')
     },
     drawTheThings: function (data) {
       if (!data) { return; }
-      if (data.features.length > 0) {
-        var filteredData;
-        if (data.hasOwnProperty('features')) {
-          filteredData = this.countOverlapping(data.features);
-        } else if (data instanceof Array) {
-          filteredData = this.countOverlapping(data);
-        }
+
+      var filteredData;
+      if (data.hasOwnProperty('features')) {
+        filteredData = this.countOverlapping(data.features);
+      } else if (data instanceof Array) {
+        filteredData = this.countOverlapping(data);
+      }
+      if (data.length > 0) {
         this.geojsonLayer.addData(filteredData);
       }
     },

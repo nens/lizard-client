@@ -78,6 +78,7 @@ angular.module('lizard-nxt')
 
       var syncTimeWrapper = function (newTime, oldTime) {
         angular.forEach(scope.mapState.layerGroups, function (lg) {
+
           lg.syncTime(scope.mapState, scope.timeState, oldTime, newTime);
         });
       };
