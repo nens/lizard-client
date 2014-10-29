@@ -9,6 +9,17 @@
  */
 angular.module('lizard-nxt')
   .service('LeafletService', [function () {
+
+  /**
+   * Leaflet does not have a tiled geojson layer.
+   * So.. we made it.
+   * 
+   * It uses the tiling mechanism to retrieve data. Which when loaded
+   * fires a dataCallback (defined in layer options). 
+   *
+   * For every tile that comes in it draws data in a geojsonLayer. 
+   *
+   */
   var TileDataLayer = L.TileLayer.extend({
     onAdd: function (map) {
       this._map = map;
