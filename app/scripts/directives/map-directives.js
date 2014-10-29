@@ -74,7 +74,25 @@ angular.module('lizard-nxt')
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.
       $controller('UrlController', {$scope: scope});
-    };
+
+
+      var syncTimeWrapper = function (newTime, oldTime) {
+        angular.forEach(scope.mapState.layerGroups, function (lg) {
+          lg.syncTime(scope.mapState, scope.timeState, oldTime, newTime);
+        });
+      };
+
+      scope.$watch('mapState.layerGroupsChanged', function (n, o) {
+        if (n === o) { return; }
+        syncTimeWrapper(scope.timeState.at, undefined);
+      });
+
+      scope.$watch('timeState.at', function (n, o) {
+        if (n === o) { return; }
+        syncTimeWrapper(n, o);
+      });
+
+  };
 
     return {
       restrict: 'E',
@@ -95,23 +113,7 @@ angular.module('lizard-nxt')
   return {
     link: function (scope, element, attrs) {
 
-      var syncTimeWrapper = function (newTime, oldTime) {
-        angular.forEach(scope.mapState.layerGroups, function (lg) {
-          lg.syncTime(scope.mapState, scope.timeState, oldTime, newTime);
-        });
-      };
-
-      scope.$watch('mapState.layerGroupsChanged', function (n, o) {
-        if (n === o) { return; }
-        syncTimeWrapper(scope.timeState.at, undefined);
-      });
-
-      scope.$watch('timeState.at', function (n, o) {
-        if (n === o) { return; }
-        syncTimeWrapper(n, o);
-      });
-
-      /**
+        /**
        * Get new set of images when animation stops playing
        * (resets rasterLoading to 0)
        */

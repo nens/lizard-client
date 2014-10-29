@@ -126,7 +126,7 @@ angular.module('lizard-nxt')
 
         syncTime: function (mapState, timeState, oldTime) {
           if (this.temporal && this.type === 'Vector') {
-            this._adhereVectorLayerToTime(this.layer, mapState, timeState, oldTime);
+            this._syncVectorToTime(this.layer, mapState, timeState, oldTime);
           } else if (this.temporal
             && this.type === 'WMS'
             && !this.tiled) {
@@ -162,7 +162,8 @@ angular.module('lizard-nxt')
           }
         },
 
-        _adhereVectorLayerToTime: function (layer, mapState, timeState, oldTime) {
+        _syncVectorToTime: function (layer, mapState, timeState, oldTime) {
+          console.log('asdfsadf');
           return;
         },
 
