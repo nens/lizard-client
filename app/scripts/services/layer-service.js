@@ -85,9 +85,12 @@ angular.module('lizard-nxt')
             this._leafletLayer = initializeGridLayer(this);
           } else if (this.type === 'WMS' && this.tiled) {
             this._leafletLayer = initializeWMSLayer(this);
-          } else if (!this.tiled) {
+          }
+          else if (!this.tiled) {
             // TODO: initialise imageoverlay
-          } else if (this.type !== 'Store') {
+            return;
+          }
+          else if (this.type !== 'Store') {
             // this ain't right
             throw new Error(this.type + ' is not a supported layer type');
           }
@@ -127,12 +130,13 @@ angular.module('lizard-nxt')
         syncTime: function (mapState, timeState, oldTime) {
           if (this.temporal && this.type === 'Vector') {
             this._adhereVectorLayerToTime(this.layer, mapState, timeState, oldTime);
-          } else if (this.temporal
-            && this.type === 'WMS'
-            && !this.tiled) {
-            //TODO: see layergroup comments
-            //this._adhereWMSLayerToTime(this, mapState, timeState, oldTime);
           }
+          // else if (this.temporal
+          //   && this.type === 'WMS'
+          //   && !this.tiled) {
+          //   TODO: see layergroup comments
+          //   this._adhereWMSLayerToTime(this, mapState, timeState, oldTime);
+          // }
         },
 
         /**
