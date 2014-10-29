@@ -11,9 +11,8 @@
  * @description Timeline directive.
  */
 angular.module('lizard-nxt')
-  .directive('timeline', ["EventService", "RasterService", "UtilService",
-                           "Timeline",
-  function (EventService, RasterService, UtilService, Timeline) {
+  .directive('timeline', ["RasterService", "UtilService", "Timeline", "VectorService",
+  function (RasterService, UtilService, Timeline, VectorService) {
 
   var link = function (scope, element, attrs, timelineCtrl, $timeout) {
 
@@ -64,10 +63,7 @@ angular.module('lizard-nxt')
           scope.timeState.resolution = (
             scope.timeState.end - scope.timeState.start) /  window.innerWidth;
           console.log(scope.timeState.resolution);
-          var lg = scope.mapState.getActiveTemporalLayerGroup();
-          if (lg) {
-            getTemporalRasterData();
-          }
+          getTimeLineData();
         });
       },
       /**
@@ -93,6 +89,8 @@ angular.module('lizard-nxt')
     timeline.addZoomListener();
     timeline.addClickListener();
 
+    // HELPER FUNCTIONS
+
     /**
      * Redetermines dimensions of timeline and calls resize.
      */
@@ -113,128 +111,30 @@ angular.module('lizard-nxt')
     };
 
     /**
-     * Timeline is updated when new events are added.
+     * Temporary function to get data for events and rain
      *
-     * Resizes timeline,
-     * redraws existing events,
-     * adds new events,
-     * draws only those in the spatial extent of the map,
-     * and counts the currently visible events.
      */
-    scope.$watch('events.changed', function (n, o) {
-      if (n === o) { return true; }
-      console.log("events changed");
-      updateTimelineHeight(angular.copy(timeline.dimensions), dimensions,
-        scope.events.types.count);
-      var data = scope.events.data.features;
-      timeline.drawLines(data);
-      timeline.drawEventsContainedInBounds(scope.mapState.bounds);
-      EventService.countCurrentEvents(scope);
-    });
-
-    /**
-     * Timeline is updated when new aggregated raster data is available.
-     *
-     * Resizes timeline,
-     * redraws existing bars,
-     * adds new bars,
-     * and removes old bars.
-     */
-    scope.$watch('raster.changed', function (n, o) {
-      if (n === o) { return true; }
-      console.log("raster changed");
-      if (scope.mapState.getActiveTemporalLayerGroup()) {
-        updateTimelineHeight(angular.copy(timeline.dimensions),
-          dimensions, scope.events.types.count);
-        // timeline.drawBars(RasterService.getIntensityData());
-      } else {
-        timeline.removeBars();
-        updateTimelineHeight(angular.copy(timeline.dimensions),
-          dimensions, scope.events.types.count);
-      }
-    });
-
-
-    /**
-     * Timeline is updated when something other than the timeline
-     * updates the temporal extent.
-     */
-    scope.$watch('timeState.changedZoom', function (n, o) {
-      if (n === o) { return true; }
-      if (scope.timeState.changeOrigin !== 'timeline') {
-        timeline.zoomTo(scope.timeState.start, scope.timeState.end);
-      }
-    });
-
-    /**
-     * Draws only those events that are in the spatial extent of the map.
-     */
-    scope.$watch('mapState.moved', function (n, o) {
-      if (n === o) { return true; }
-      if (scope.events.data.features.length > 0) {
-        console.log("map moved, redraw events");
-        timeline.drawEventsContainedInBounds(scope.mapState.bounds);
-        EventService.countCurrentEvents(scope);
-      }
-
-      var lg = scope.mapState.getActiveTemporalLayerGroup();
-      if (lg) {
-        getTemporalRasterData();
-      }
-    });
-
-    /**
-     * Adds or removes aggregation window when animation is toggled.
-     *
-     * When animation is enabled,
-     * zoom functionality is disabled,
-     * animation extent is set when not undefined or outside of temporal extent,
-     * brush is drawn.
-     *
-     * When animation is disabled,
-     * animation is paused,
-     * brush is removed,
-     * zoom functionality is added,
-     * changedZoom is called to re-add all events on timeline to the map
-     */
-    scope.$watch('timeState.animation.enabled', function (newVal, oldVal) {
-      if (newVal === oldVal) { return true; }
-      if (scope.timeState.animation.enabled) {
-        timeline.drawAggWindow(scope.timeState.at, scope.timeState.aggWindow);
-      } else {
-        scope.timeState.animation.playing = false;
-        scope.timeState.changeOrigin = 'timeline';
-        scope.timeState.changedZoom = Date.now();
-      }
-    });
-
-    /**
-     * Update aggWindow.
-     *
-     * If animation is enabled, update aggWindow element.
-     */
-    scope.$watch('timeState.at', function (n, o) {
-      if (n === o) { return true; }
-      if (scope.timeState.animation.enabled) {
-        timeline.drawAggWindow(scope.timeState.at, scope.timeState.aggWindow);
-      }
-    });
-
-
-    /**
-     * Add click listener when raster animation is on.
-     *
-     * TODO: this is still hard coded to rain: setIntensityData
-     */
-    scope.$watch('mapState.getActiveTemporalLayerGroup()', function (n, o) {
-      if (scope.mapState.getActiveTemporalLayerGroup()) {
-        getTemporalRasterData();
-      } else {
-        RasterService.setIntensityData([]);
-      }
-      scope.raster.changed = Date.now();
-    });
-
+    var getTimeLineData = function () {
+      console.log("Getting data for timeline");
+      var eventLayer = scope.mapState.layerGroups.alarms._layers[0];
+      // loop over LayerGroups and get vector layers and raster Layers.
+      var eventData = VectorService.getData(
+        eventLayer,
+        {
+          geom: scope.mapState.bounds,
+          start: scope.timeState.start,
+          end: scope.timeState.stop
+        }
+      );
+      eventData.then(function (response) {console.log(response); });
+      // TODO: draw events
+      //updateTimelineHeight();
+      //var data = scope.events.data.features;
+      //timeline.drawLines(data);
+      //timeline.drawEventsContainedInBounds(scope.mapState.bounds);
+      console.log("getting rain data");
+      getTemporalRasterData();
+    };
 
     /**
      * Get aggregate data for current temporal raster.
@@ -268,13 +168,64 @@ angular.module('lizard-nxt')
             aggWindow: scope.timeState.aggWindow
           }
         ).then(function (response) {
-            RasterService.setIntensityData(response);
-            scope.raster.changed = Date.now();
+            console.log("raster response received");
+            updateTimelineHeight(angular.copy(timeline.dimensions),
+              dimensions, 0);
+            timeline.drawBars(response);
           });
+      } else {
+        timeline.removeBars();
+        updateTimelineHeight(angular.copy(timeline.dimensions),
+          dimensions, 0);
       }
     };
 
-    //if (scope.mapState.getActiveTemporalLayer()) { getTemporalRasterData(); }
+    // END HELPER FUNCTIONS
+
+    // WATCHES
+
+    /**
+     * Updates area when user moves map.
+     */
+    scope.$watch('mapState.bounds', function (n, o) {
+      if (n === o) { return true; }
+      console.log("bounds changed, update events");
+      getTimeLineData();
+    });
+
+    /**
+     * Updates area when users changes layers.
+     */
+    scope.$watch('mapState.layerGroupsChanged', function (n, o) {
+      if (n === o) { return true; }
+      console.log("layergroups changed, update events");
+      getTimeLineData();
+    });
+
+    /**
+     * Timeline is updated when something other than the timeline
+     * updates the temporal extent.
+     *
+     * TODO: check if this is still relevant
+     */
+    scope.$watch('timeState.changedZoom', function (n, o) {
+      if (n === o) { return true; }
+      if (scope.timeState.changeOrigin !== 'timeline') {
+        timeline.zoomTo(scope.timeState.start, scope.timeState.end);
+      }
+    });
+
+    /**
+     * Update aggWindow.
+     *
+     * If animation is enabled, update aggWindow element.
+     */
+    scope.$watch('timeState.at', function (n, o) {
+      if (n === o) { return true; }
+      timeline.drawAggWindow(scope.timeState.at, scope.timeState.aggWindow);
+    });
+
+    // END WATCHES
 
     window.onresize = function () {
 
@@ -283,6 +234,7 @@ angular.module('lizard-nxt')
         timeline.dimensions,
         scope.timeState.at,
         // TODO: pass data from point object on scope?
+        // TODO: data.features doesn't exist anymore?
         scope.events.data.features
       );
     };

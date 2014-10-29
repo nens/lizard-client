@@ -148,10 +148,10 @@ angular.module('lizard-nxt')
 angular.module('lizard-nxt')
   .controller('MasterCtrl',
   ['$scope', '$http', '$q', '$filter', '$compile', 'CabinetService',
-   'RasterService', 'UtilService', 'EventService', 'TimeseriesService',
+   'RasterService', 'UtilService', 'TimeseriesService',
    'user', 'versioning',
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, EventService, TimeseriesService, user, versioning) {
+            UtilService, TimeseriesService, user, versioning) {
 
   $scope.user = user;
   $scope.versioning = versioning;
@@ -287,37 +287,41 @@ angular.module('lizard-nxt')
 
   // EVENTS
 
-  var getEventTypes = function () {
-    var k, eventLayers = [];
-    for (k in $scope.mapState.layers) {
-      if (k === "alarms" || k === "messages") {
-        eventLayers.push($scope.mapState.layers[k]);
-      }
-    }
-    return eventLayers;
-  };
+  //var getEventTypes = function () {
+    //var k, eventLayers = [];
+    //for (k in $scope.mapState.layers) {
+      //if (k === "alarms" || k === "messages") {
+        //eventLayers.push($scope.mapState.layers[k]);
+      //}
+    //}
+    //return eventLayers;
+  //};
 
 
   // EVENTS MODEL
   
-  var eventsModel = {
-    changed: false,
-    data: false, //  geojson data object
-    types: {count: 0}
-  };
+  //var eventsModel = {
+    //changed: false,
+    //data: { type: "FeatureCollection",
+            //features: [] // Long format events data object
+      //},
+    //types: {count: 0, 1: {}, 2: {}}
+  //};
 
-  $scope.events = eventsModel;
+  //$scope.events = eventsModel;
 
-  $scope.events = {
+  // Load events from vector service
+
+  //$scope.events = {
     //TODO: refactor event meta data (remove eventTypes from mapState)
     //types: { count: 0, 1: {}, 2: {}, 3: {}, 4: {}, 5: {} }, // Metadata object
-    types: EventService.buildEventTypesTemplate(getEventTypes()),
-    data: { type: "FeatureCollection",
-            features: [] // Long format events data object
-      },
-    scale: d3.scale.ordinal().range(EventService.colors[8]),
-    changed: Date.now()
-  };
+    //types: EventService.buildEventTypesTemplate(getEventTypes()),
+    //data: { type: "FeatureCollection",
+            //features: [] // Long format events data object
+      //},
+    //scale: d3.scale.ordinal().range(EventService.colors[8]),
+    //changed: Date.now()
+  //};
 
   /**
    * Zoom to event location

@@ -139,34 +139,38 @@ angular.module('lizard-nxt')
 
         console.log("draw agg window");
         // DATA JOIN
-        if (timestamp) {
-          aggWindow = this._svg.select("g").select("g").selectAll("rect")
+        if (!aggWindow) {
+          aggWindow = this._svg.append("g").append("rect")
             .attr("class", "aggwindow")
-            .data([timestamp], function (d) {return d; });
+            .attr("height", height)
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width)
+            .attr("style", "fill: #34495e;");
         }
 
 
         // ENTER
-        aggWindow.enter().append("rect")
-          .attr("class", "aggwindow")
-          .attr("height", height)
-          .attr("x", 0)
-          .attr("y", 0)
-          .attr("width", width)
-          .attr("style", "fill: #34495e;");
+        //aggWindow.enter().append("g").append("rect")
+          //.attr("class", "aggwindow")
+          //.attr("height", height)
+          //.attr("x", 0)
+          //.attr("y", 0)
+          //.attr("width", width)
+          //.attr("style", "fill: #34495e;");
 
         // UPDATE
         aggWindow
-          .attr("x", function (d) {return xScale(new Date(d)); })
+          .attr("x", function () {return xScale(new Date(timestamp)); })
           .attr("width", width);
         
         // EXIT
-        aggWindow.exit()
-          .transition()
-          .delay(200)
-          .duration(200)
-          .style("fill", "#FFF")
-          .remove();
+        //aggWindow.exit()
+          //.transition()
+          //.delay(200)
+          //.duration(200)
+          //.style("fill", "#FFF")
+          //.remove();
 
       }
     },
@@ -224,10 +228,8 @@ angular.module('lizard-nxt')
         }
 
         if (aggWindow) {
-          var that = this;
-          //that.removeAggWindow();
           setTimeout(function () {
-            that.drawAggWindow(timestamp, interval);
+            this.drawAggWindow(timestamp, interval);
           }, this.transTime);
         }
       }
