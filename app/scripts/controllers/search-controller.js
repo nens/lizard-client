@@ -84,9 +84,8 @@ angular.module('lizard-nxt')
       // therefore no need to call $rootScope.
       $scope.$broadcast('clean');
       $scope.box.query = null;
-      $scope.box.type = 'area';
+      $scope.box.type = 'point';
       $scope.box.showCards = true;
-      //console.log($scope);
     };
 
   $scope.showDetails = function (obj) {
