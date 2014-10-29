@@ -3,7 +3,7 @@
  */
 angular.module('lizard-nxt')
   .directive('opacitySlider', function () {
-    
+
   var link = function (scope, element, attrs) {
     var opacity = scope.layergroup.getOpacity();
     scope.percOpacity = opacity * 100;
@@ -28,7 +28,7 @@ angular.module('lizard-nxt')
 
       scope.layergroup.setOpacity(newOpacity);
 
-    }
+    };
 
     element.bind('mouseup', adjustOpacity);
     element.bind('touchend', adjustOpacity);

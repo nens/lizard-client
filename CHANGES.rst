@@ -4,6 +4,12 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- Layer logic lives in its own class.
+
+- Double click performs rescale.
+
+- Clicks in the data menu wait 300 ms for a doubleclick.
+
 - Layergroups have an opacity slider that sets opacity on all leaflet layers.
 
 - Point and line give visual feedback on the map when loading and recieving data.
