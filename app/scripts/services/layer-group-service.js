@@ -620,7 +620,8 @@ angular.module('lizard-nxt')
           maxZoom: nonLeafLayer.max_zoom,
           color: '#333',
           dataCallback: function (featureCollection, point) {
-            if (!featureCollection) { return; }
+            if (!featureCollection ||
+                this._map.options.forChooser) { return; }
 
             if (featureCollection.features.length > 0) {
               VectorService.setData(
