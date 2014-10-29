@@ -13,9 +13,9 @@
 angular.module('lizard-nxt')
   .factory('LayerGroup', [
   'LeafletService', 'VectorService', 'RasterService', 'UtfGridService',
-  'UtilService', '$q',
+  'UtilService', '$q', '$http',
   function (LeafletService, VectorService, RasterService, UtfGridService,
-    UtilService, $q) {
+    UtilService, $q, $http) {
 
     /*
      * @constructor
@@ -177,6 +177,46 @@ angular.module('lizard-nxt')
       },
 
       /**
+       * @function
+       * @memberof app.LayerGroup
+       * @param {float} new opacity value
+       * @return {void}
+       * @description Changes opacity in layers that have
+       * an opacity to be set
+       */
+      setOpacity: function (newOpacity) {
+        if (typeof newOpacity !== 'number' ||
+            newOpacity < 0 && newOpacity > 1) {
+          return;
+        }
+        angular.forEach(this._layers, function (layer) {
+          if (layer.leafletLayer && layer.leafletLayer.setOpacity) {
+            layer.leafletLayer.setOpacity(newOpacity);
+          }
+        });
+      },
+
+      /**
+       * @function
+       * @member app.LayerGroup
+       * @return {float} opacity from 0 to 1.
+       * @description retrieve opacity from layer
+       */
+      getOpacity: function () {
+        var opacity;
+        angular.forEach(this._layers, function (layer) {
+          if (layer.leafletLayer) {
+            opacity = layer.leafletLayer.options.opacity;
+          } else {
+            opacity = layer.opacity;
+          }
+        });
+        return opacity;
+      },
+
+
+      /**
+       *
        * Local helper that returns a rounded timestamp
        */
       _mkTimeStamp: function (t) {
@@ -411,10 +451,45 @@ angular.module('lizard-nxt')
           this._animState.imageOverlays[0].setOpacity(0.7);
         }
         this._animState.previousFrame = 0;
-      }
-    };
+      },
 
-    ///////////////////////////////////////////////////////////////////////////
+      /**
+       *
+       * Will move to layer-service or become obslote.. here for now
+       * @function
+       * @memberof app.LayerGroup
+       * @param {object} layer passed
+       * @description determine if raster layer can be rescaled
+       */
+      rescaleRaster: function (bounds) {
+        angular.forEach(this._layers, function (layer) {
+          if (layer.options.rescalable) {
+            this._rescale(layer, bounds);
+          }
+        }, this);
+      },
+
+      /**
+       * Will be moved to layer-service
+       * @function
+       * @description rescales layer and updates url
+       */
+      _rescale: function (layer, bounds) {
+        var url = 'https://raster.lizard.net/wms' +
+          '?request=getlimits&layers=' + layer.slug +
+          '&width=16&height=16&srs=epsg:4326&bbox=' +
+          bounds.toBBoxString();
+
+        $http.get(url).success(function (data) {
+          layer.limits = ':' + data[0][0] + ':' + data[0][1];
+          layer.leafletLayer.setParams({
+            styles: layer.options.styles + layer.limits
+          });
+          layer.leafletLayer.redraw();
+        });
+      }
+
+    };
 
    /**
     * @function
@@ -603,6 +678,7 @@ angular.module('lizard-nxt')
         version: '1.1.1',
         minZoom: nonLeafLayer.min_zoom || 0,
         maxZoom: 19,
+        opacity: nonLeafLayer.opacity,
         zIndex: nonLeafLayer.z_index
       };
       _options = angular.extend(_options, nonLeafLayer.options);
