@@ -20,8 +20,6 @@ angular.module('lizard-nxt')
       var color = this.options.color;
       this.addTileData = this.options.dataCallback;
 
-      this.options.opacity = 0.8; // default opacity for events
-
       this.drawOptions = {
         pointToLayer: function (feature, latlng) {
 
@@ -30,7 +28,6 @@ angular.module('lizard-nxt')
             fillColor: color,
             color: "#000",
             weight: 1,
-            opacity: 1,
             fillOpacity: 0.8
           };
 
@@ -137,7 +134,11 @@ angular.module('lizard-nxt')
       return filteredData;
     },
     setOpacity: function (opacity) {
-      this.geojsonLayer.setStyle({ fillOpacity: opacity });
+      // TODO: figure out why it is possible to call setOpacity while there is
+      // no geojsonlayer.
+      if (this.geojsonLayer) {
+        this.geojsonLayer.setStyle({ fillOpacity: opacity });
+      }
     },
     drawTheThings: function (data) {
       if (!data) { return; }
