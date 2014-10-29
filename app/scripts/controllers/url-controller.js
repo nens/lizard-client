@@ -184,11 +184,11 @@ angular.module('lizard-nxt')
           mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
           time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
           context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
-        if (context) {
-          // switchContext
-        } else {
-          LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
-        }
+        // if (context) {
+        //   // switchContext
+        // } else {
+        LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
+        // }
         if (boxType) {
           if (geom) { // Setting the box to anything but default requires geometry on url.
             $scope.box.type = boxType;
