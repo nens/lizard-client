@@ -130,12 +130,12 @@ angular.module('lizard-nxt')
           if (this.temporal && this.type === 'Vector') {
             this._adhereVectorLayerToTime(this.layer, mapState, timeState, oldTime);
           }
-          // else if (this.temporal
-          //   && this.type === 'WMS'
-          //   && !this.tiled) {
-          //   //TODO: see layergroup comments
-          //   //this._adhereWMSLayerToTime(this, mapState, timeState, oldTime);
-          // }
+          else if (this.temporal
+            && this.type === 'WMS'
+            && !this.tiled) {
+            //TODO: see layergroup comments
+            this._adhereWMSLayerToTime(this, mapState, timeState, oldTime);
+          }
         },
 
         /**
