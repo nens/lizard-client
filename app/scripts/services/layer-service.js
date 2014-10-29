@@ -124,7 +124,7 @@ angular.module('lizard-nxt')
           }
         },
 
-        adhereToTime: function (mapState, timeState, oldTime) {
+        syncTime: function (mapState, timeState, oldTime) {
           if (this.temporal && this.type === 'Vector') {
             this._adhereVectorLayerToTime(this.layer, mapState, timeState, oldTime);
           } else if (this.temporal
@@ -141,7 +141,7 @@ angular.module('lizard-nxt')
          */
         rescale: function (bounds) {
           if (this.rescalable) {
-            var url = 'https://raster.lizard.net/wms' +
+            var url = this.url +
               '?request=getlimits&layers=' + this.slug +
               '&width=16&height=16&srs=epsg:4326&bbox=' +
               bounds.toBBoxString();

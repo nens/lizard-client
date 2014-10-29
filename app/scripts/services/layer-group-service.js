@@ -26,7 +26,7 @@
  *       already has an initiated property.
  *
  * - [ ] Adhering of a WMS layer to a timeState is the responsibility of the
- *       NxtLayer. The app calls layergroup.adhereToTime > the layerGroup tells
+ *       NxtLayer. The app calls layergroup.syncTime > the layerGroup tells
  *       all its layers to adhere to this time.
  *
  */
@@ -208,12 +208,12 @@ angular.module('lizard-nxt')
       /**
        * Make layerGroup adhere to current timestate
        */
-      adhereToTime: function (mapState, timeState, oldTime) {
+      syncTime: function (mapState, timeState, oldTime) {
         if (oldTime === timeState.at
           && !this._active) { return; }
         for (var i in this._layers) {
           var layer = this._layers[i];
-          layer.adhereToTime(mapState, timeState, oldTime);
+          layer.syncTime(mapState, timeState, oldTime);
           // TODO: Ideally we delegate the adhering to time of a layer to the
           // layer class. This is legacy:
           if (this.temporal

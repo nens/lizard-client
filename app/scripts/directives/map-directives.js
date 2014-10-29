@@ -95,20 +95,20 @@ angular.module('lizard-nxt')
   return {
     link: function (scope, element, attrs) {
 
-      var adhereToTimeWrapper = function (newTime, oldTime) {
+      var syncTimeWrapper = function (newTime, oldTime) {
         angular.forEach(scope.mapState.layerGroups, function (lg) {
-          lg.adhereToTime(scope.mapState, scope.timeState, oldTime, newTime);
+          lg.syncTime(scope.mapState, scope.timeState, oldTime, newTime);
         });
       };
 
       scope.$watch('mapState.layerGroupsChanged', function (n, o) {
         if (n === o) { return; }
-        adhereToTimeWrapper(scope.timeState.at, undefined);
+        syncTimeWrapper(scope.timeState.at, undefined);
       });
 
       scope.$watch('timeState.at', function (n, o) {
         if (n === o) { return; }
-        adhereToTimeWrapper(n, o);
+        syncTimeWrapper(n, o);
       });
 
       /**
