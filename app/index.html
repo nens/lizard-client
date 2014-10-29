@@ -147,7 +147,22 @@
             </div>
           </div>
           <div class="button-list-container" id="">
-            <div class="button-list-item">
+
+            <div class="button-list-item"
+                 style="cursor: pointer">
+              <a ng-click="toggleTool('point')"
+                 class="button-list-link"
+                 title="point tool"
+                 ng-class="{'active': tools.active === 'point'}"
+                 data-toggle="tooltip"
+                 data-placement="left"
+                 rel="tooltip">
+                 <i class="fa fa-dot-circle-o"></i>
+              </a>
+            </div>
+
+            <div class="button-list-item"
+                 style="cursor: pointer">
               <a ng-click="toggleTool('line')"
                  class="button-list-link"
                  title="line tool"
@@ -158,17 +173,20 @@
                  <i class="fa fa-expand"></i>
               </a>
             </div>
-            <div class="button-list-item">
-              <a ng-click="toggleTool('pipeSurface')"
+
+            <div class="button-list-item"
+                 style="cursor: pointer">
+              <a ng-click="toggleTool('area')"
                  class="button-list-link"
-                 title="impervious surface"
-                 ng-class="{'active': tools.active === 'pipeSurface'}"
+                 title="area tool"
+                 ng-class="{'active': tools.active === 'area'}"
                  data-toggle="tooltip"
                  data-placement="left"
                  rel="tooltip">
-                 <i class="fa fa-code-fork"></i>
+                 <i class="fa fa-square-o"></i>
               </a>
             </div>
+
           </div>
         </div>
 
