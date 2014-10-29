@@ -189,9 +189,11 @@ angular.module('lizard-nxt')
           throw new Error(newOpacity + "is not a valid opacity value, it is"
             + "either of the wrong type or not between 0 and 1");
         }
-        angular.forEach(this._layers, function (layer) {
-          layer.setOpacity(newOpacity);
-        });
+        if (this._active) {
+          angular.forEach(this._layers, function (layer) {
+            layer.setOpacity(newOpacity);
+          });
+        }
         this._opacity = newOpacity;
       },
 
@@ -231,7 +233,7 @@ angular.module('lizard-nxt')
         this._animGetImages(timeState);
 
         if (!timeState.animation.playing) {
-          this._animState.imageOverlays[0].setOpacity(0.7);
+          this._animState.imageOverlays[0].setOpacity(this._opacity);
         }
         this._animState.previousFrame = 0;
       },

@@ -163,7 +163,7 @@ angular.module('lizard-nxt')
         },
 
         _adhereVectorLayerToTime: function (layer, mapState, timeState, oldTime) {
-          return true;
+          return;
         },
 
        /**
