@@ -285,7 +285,7 @@ angular.module('lizard-nxt')
           if (mapState._map.hasLayer(s.imageOverlays[0])) {
             // if so, we remove (all) the overlays:
             for (var i in s.imageOverlays) {
-              removeLeafletLayer(mapState._map, s.imageOverlays[i]);
+              mapState._map.removeLayer(s.imageOverlays[i]);
             }
           }
         }
@@ -319,7 +319,7 @@ angular.module('lizard-nxt')
         var overlays = this._animState.imageOverlays;
 
         for (var i in overlays) {
-          addLeafletLayer(mapState._map, overlays[i]);
+          mapState._map.addLayer(overlays[i]);
         }
 
         // imgUrlBase equals full URL w/o TIME part
@@ -327,7 +327,7 @@ angular.module('lizard-nxt')
           = RasterService.buildURLforWMS(temporalWMSLayer);
 
         this._animGetImages(timeState);
-        s.imageOverlays[0].setOpacity(0.7);
+        s.imageOverlays[0].setOpacity(this._opacity);
       },
 
       /**
@@ -341,7 +341,7 @@ angular.module('lizard-nxt')
         // Turn off old frame
         oldOverlay.setOpacity(0);
         // Turn on new frame
-        newOverlay.setOpacity(0.7);
+        newOverlay.setOpacity(this._opacity);
 
         // Delete the old overlay from the lookup, it is gone.
         delete s.frameLookup[currentDate];

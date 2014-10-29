@@ -140,8 +140,6 @@ angular.module('lizard-nxt')
          * @description rescales layer and updates url
          */
         rescale: function (bounds) {
-          console.log(this);
-          // TODO: we should not need *rescalable* in the options of a layer
           if (this.rescalable) {
             var url = 'https://raster.lizard.net/wms' +
               '?request=getlimits&layers=' + this.slug +
@@ -230,7 +228,6 @@ angular.module('lizard-nxt')
             + 'while it was already part of the map'
           );
         } else {
-          console.log(leafletLayer, map);
           map.addLayer(leafletLayer);
         }
       };
