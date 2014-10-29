@@ -149,7 +149,11 @@ angular.module('lizard-nxt')
     var getData = function (nonLeafLayer, options) {
       var deferred = $q.defer();
 
-      var layer = nonLeafLayer._leafletLayer || deferred.reject();
+      var layer = nonLeafLayer._leafletLayer;
+
+      if (!layer) {
+        deferred.reject();
+      }
 
       if (layer.isLoading) {
         getDataAsync(nonLeafLayer, options, deferred);
