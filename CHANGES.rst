@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- Vector data is synced with time
+
 - Layer logic lives in its own class.
 
 - Double click performs rescale.
