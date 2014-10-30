@@ -78,17 +78,23 @@ angular.module('lizard-nxt')
 
       var syncTimeWrapper = function (newTime, oldTime) {
         angular.forEach(scope.mapState.layerGroups, function (lg) {
-
-          lg.syncTime(scope.mapState, scope.timeState, oldTime, newTime);
+          if (!scope.$$phase) {
+            scope.$apply(function () {
+              lg.syncTime(scope.mapState, scope.timeState, oldTime, newTime);
+            });
+          } else {
+            lg.syncTime(scope.mapState, scope.timeState, oldTime, newTime);
+          }
         });
       };
 
       scope.$watch('mapState.layerGroupsChanged', function (n, o) {
         if (n === o) { return; }
+        console.log('sadf')
         syncTimeWrapper(scope.timeState.at, undefined);
       });
 
-      scope.$watch('timeState.at', function (n, o) {
+      scope.$watch('timeState.start', function (n, o) {
         if (n === o) { return; }
         syncTimeWrapper(n, o);
       });
