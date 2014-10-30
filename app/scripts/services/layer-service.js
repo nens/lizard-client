@@ -128,9 +128,9 @@ angular.module('lizard-nxt')
         },
 
         syncTime: function (mapState, timeState, oldTime) {
-          if (this.type === 'Vector' ) {
+          if (this.type === 'Vector') {
             this._syncVectorToTime(this, mapState, timeState, oldTime);
-          } 
+          }
           //else if (this.temporal
           //  && this.type === 'WMS'
           //  && !this.tiled) {
