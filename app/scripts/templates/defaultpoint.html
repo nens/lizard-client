@@ -3,46 +3,48 @@
     <div ng-switch="l.type">
 
       <div ng-switch-when="Store">
-      <table class="table table-condensed table-hover">
-        <tbody>
-          <tr>
+        <table class="table table-condensed table-hover single-row-table">
+          <thead ng-if="l.aggType === 'curve'">
+            <td><% lg.layerGroupName %> </td>
+            <td><% l.data[0][0] | number : 2 %> m</td>
+          </thead>
+          <thead ng-if="l.aggType !== 'curve'">
             <td><% lg.layerGroupName %></td>
             <td><% l.data[0][0] %></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+          </thead>
+        </table>
+      </div>
 
-    <div ng-switch-when="Vector">
-      <table class="table table-hover table-condensed" >
-        <thead>
-            <th><i class="fa fa-circle"></i></th>
-            <th><% lg.layerGroupName %></th>
-            <th><% filteredRes.length %></th>
-        </thead>
-        <tbody>
-          <tr ng-repeat="event in l.data">
-              <td rel="tooltip"
-                  data-placement="left"
-                  title="<% event.properties.category %>">
-                <i class="fa fa-circle">
-                </i>
-              </td>
-              <td rel="tooltip"
-                  data-placement="left"
-                  title="start: <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
-                         eind: <% event.properties.timestamp_end | date:'dd/MM/yyyy' %>">
-                  <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
-              </td>
-              <td rel="tooltip"
-                  data-placement="left"
-                  title="<% event.properties.value %>">
-                <% event.properties.value | truncate:40 %>
-              </td>
-            </tr>
-        </tbody>
-      </table>
+      <div ng-switch-when="Vector">
+        <table class="table table-hover table-condensed" >
+          <thead>
+              <th><i class="fa fa-circle"></i></th>
+              <th><% lg.layerGroupName %></th>
+              <th><% filteredRes.length %></th>
+          </thead>
+          <tbody>
+            <tr ng-repeat="event in l.data">
+                <td rel="tooltip"
+                    data-placement="left"
+                    title="<% event.properties.category %>">
+                  <i class="fa fa-circle">
+                  </i>
+                </td>
+                <td rel="tooltip"
+                    data-placement="left"
+                    title="start: <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
+                           eind: <% event.properties.timestamp_end | date:'dd/MM/yyyy' %>">
+                    <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
+                </td>
+                <td rel="tooltip"
+                    data-placement="left"
+                    title="<% event.properties.value %>">
+                  <% event.properties.value | truncate:40 %>
+                </td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-
   </div>
 </div>
