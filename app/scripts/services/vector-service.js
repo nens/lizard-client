@@ -144,7 +144,7 @@ angular.module('lizard-nxt')
     var getData = function (nonLeafLayer, options) {
       var deferred = $q.defer();
 
-      var layer = nonLeafLayer.leafletLayer || deferred.reject();
+      var layer = nonLeafLayer._leafletLayer || deferred.reject();
 
       if (layer.isLoading) {
         getDataAsync(nonLeafLayer, options, deferred);
@@ -171,7 +171,7 @@ angular.module('lizard-nxt')
      * @param {promise}
      */
     var getDataAsync = function (nonLeafLayer, options, deferred) {
-      nonLeafLayer.leafletLayer.on('loadend', function () {
+      nonLeafLayer._leafletLayer.on('loadend', function () {
         if (vectorLayers[nonLeafLayer.slug] !== undefined) {
           deferred.resolve(filterSet(vectorLayers[nonLeafLayer.slug].data,
             options.geom, {

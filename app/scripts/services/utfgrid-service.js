@@ -7,7 +7,7 @@ angular.module('lizard-nxt')
   function ($q, $rootScope) {
 
     var getData = function (nonLeafLayer, options) {
-      var leafLayer = nonLeafLayer && nonLeafLayer.leafletLayer,
+      var leafLayer = nonLeafLayer && nonLeafLayer._leafletLayer,
         deferred = $q.defer(),
         e = {
           latlng: options.geom
@@ -42,7 +42,7 @@ angular.module('lizard-nxt')
     var _getDataFromUTFAsynchronous = function (nonLeafLayer, e, deferred) {
       var leafLayer, response;
 
-      leafLayer = nonLeafLayer.leafletLayer;
+      leafLayer = nonLeafLayer._leafletLayer;
 
       leafLayer.on('load', function () {
         response = leafLayer._objectForEvent(e);

@@ -5,7 +5,7 @@
  * @memberOf app
  * @class pointCtrl
  * @name pointCtrl
- * @description point is the contoller of the point template.
+ * @description point is the controller of the point template.
  * It gathers all data belonging to a location in space. It becomes active
  * by setting box.type to 'point' and is updated by broadcasting
  * 'newPointActive'. It reads and writes mapState.here.
@@ -29,6 +29,9 @@ angular.module('lizard-nxt')
      * @param  {L.LatLng} here
      */
     var fillpoint = function (here) {
+
+      if ($scope.box.type !== 'point') { return; }
+
       ClickFeedbackService.drawCircle($scope.mapState, here);
       ClickFeedbackService.startVibration($scope.mapState);
       var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, GRAPH_WIDTH);
@@ -58,7 +61,9 @@ angular.module('lizard-nxt')
      * @description Wrapper to improve readability
      */
     var fillPointHere = function () {
-      fillpoint($scope.mapState.here);
+      if ($scope.box.type === 'point' && $scope.mapState.here) {
+        fillpoint($scope.mapState.here);
+      }
     };
 
     /**
@@ -156,8 +161,6 @@ angular.module('lizard-nxt')
         }
       });
     };
-
-    fillPointHere();
 
     // Update when user clicked again
     $scope.$watch('mapState.here', function (n, o) {
