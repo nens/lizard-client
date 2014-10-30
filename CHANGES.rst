@@ -1,8 +1,10 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased
-----------
+Release 0.2b9 (2014-10-30)
+--------------------------
+
+- Fix for double data with tiled vector layers.
 
 - Layer logic lives in its own class.
 
