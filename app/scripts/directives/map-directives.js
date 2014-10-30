@@ -90,7 +90,6 @@ angular.module('lizard-nxt')
 
       scope.$watch('mapState.layerGroupsChanged', function (n, o) {
         if (n === o) { return; }
-        console.log('sadf')
         syncTimeWrapper(scope.timeState.at, undefined);
       });
 
