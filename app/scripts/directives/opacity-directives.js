@@ -7,7 +7,7 @@ angular.module('lizard-nxt')
   var link = function (scope, element, attrs) {
     var opacity = scope.layergroup.getOpacity();
     scope.percOpacity = opacity * 100;
-    layerChooserWidth = 170; // chrome is the new IE
+    var layerChooserWidth = 170; // chrome is the new IE
     var localClick;
 
     /**
@@ -38,5 +38,5 @@ angular.module('lizard-nxt')
     link: link,
     templateUrl: 'templates/opacity.html',
     restrict: 'E'
-  }
+  };
 });
