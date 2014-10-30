@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- Fix for double data with tiled vector layers.
+
 - Layer logic lives in its own class.
 
 - Double click performs rescale.

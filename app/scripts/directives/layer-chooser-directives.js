@@ -18,7 +18,8 @@ angular.module('lizard-nxt')
       scrollWheelZoom: false,
       animate: true,
       zoomControl: false,
-      attributionControl: false
+      attributionControl: false,
+      forChooser: true
     });
 
     chooser.toggleLayerGroup(

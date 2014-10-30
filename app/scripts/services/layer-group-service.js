@@ -454,7 +454,6 @@ angular.module('lizard-nxt')
           this.setOpacity(this._opacity);
         }
       }
-
     };
 
     return LayerGroup;
