@@ -166,21 +166,8 @@ angular.module('lizard-nxt')
 
       // vector data (for now only events)
       if (timelineLayers.events.length > 0) {
-        var eventData = VectorService.getData(
-          timelineLayers.events[0],
-          {
-            geom: scope.mapState.bounds,
-            start: scope.timeState.start,
-            end: scope.timeState.stop
-          }
-        );
-        eventData.then(function (response) {
-          updateTimelineHeight(angular.copy(timeline.dimensions),
-            dimensions, timelineLayers.events.length, response);
-          // TODO: somehow administer event order
-          //response.eventOrder = 1;
-          timeline.drawLines(response);
-        });
+        angular.forEach(timelineLayers.events, getEventData,
+                        timelineLayers.events);
       }
 
       // raster data (for now only rain)
@@ -188,11 +175,35 @@ angular.module('lizard-nxt')
         console.log("getting rain data");
         getTemporalRasterData(timelineLayers.rain,
                               timelineLayers.events.length);
-      } //else {
-        //timeline.removeBars();
-        //updateTimelineHeight(angular.copy(timeline.dimensions),
-          //dimensions, timelineLayers.events.length);
-      //}
+      } else {
+        timeline.removeBars();
+        updateTimelineHeight(angular.copy(timeline.dimensions),
+          dimensions, timelineLayers.events.length);
+      }
+    };
+
+    /**
+     * @function
+     * @description get data for event layers and update timeline
+     */
+    var getEventData = function (eventLayer) {
+      var eventData = VectorService.getData(
+        eventLayer,
+        {
+          geom: scope.mapState.bounds,
+          start: scope.timeState.start,
+          end: scope.timeState.stop
+        }
+      );
+
+      var nEvents = this.length;
+      eventData.then(function (response) {
+        updateTimelineHeight(angular.copy(timeline.dimensions),
+          dimensions, nEvents, response);
+        // TODO: somehow administer event order
+        //response.eventOrder = 1;
+        timeline.drawLines(response);
+      });
     };
 
     /**
