@@ -1,20 +1,26 @@
 <div ng-controller="LineCtrl">
   <div ng-repeat="lg in box.content" class="card active" id="card-<% l.name %>">
-    <div ng-repeat="l in lg.layers" id="card-content-<% l.name %>" class="card-content" ng-if="l.data">
-      <div ng-switch="l.name" class="card-content" id="card-content-<% agg.name %>">
+    <div ng-repeat="l in lg.layers"
+      id="card-content-<% l.name %>"
+      class="card-content"
+      ng-if="l.data">
+      <div class="card-content" id="card-content-<% agg.name %>">
 
-        <graph ng-switch-default
+        <graph ng-if="l.scale === 'interval' || l.scale === 'ratio'"
           line
           data="l.data"
-          ylabel="'hoogte [mNAP]'"
-          xlabel="'afstand in [m]'">
+          ylabel="l.quantity + ' [' + l.unit + ']'"
+          xlabel="'Afstand in [m]'">
         </graph>
-        <graph ng-switch-when="Regen"
-          line
+
+        <graph ng-if="l.scale === 'nominal'"
+          horizontal-stack
           data="l.data"
-          ylabel="'mm / 5 minuten'"
-          xlabel="'afstand in [m]'">
+          keys="{x: 'data', y: 'label'}"
+          xlabel="'[%]'"
+          dimensions="{height: 80, padding: {left: 0, right: 0, top: 5, bottom: 50}}">
         </graph>
+
       </div>
     </div>
   </div>
