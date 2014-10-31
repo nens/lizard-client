@@ -4,13 +4,9 @@
 
       <div ng-switch-when="Store">
         <table class="table table-condensed table-hover single-row-table">
-          <thead ng-if="l.aggType === 'curve'">
-            <td><% lg.layerGroupName %> </td>
-            <td><% l.data[0][0] | number : 2 %> m</td>
-          </thead>
-          <thead ng-if="l.aggType !== 'curve'">
-            <td><% lg.layerGroupName %></td>
-            <td><% l.data[0][0] %></td>
+          <thead ng-if="l.scale === 'interval' || l.scale === 'ratio' ">
+            <td><% l.quantity %> </td>
+            <td><% l.data[0][0] | number : 2 %> <% l.unit %></td>
           </thead>
         </table>
       </div>
