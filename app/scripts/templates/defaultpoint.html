@@ -1,5 +1,6 @@
 <div>
-  <div ng-repeat="l in lg.layers track by $index">
+  <div ng-repeat="l in lg.layers track by $index"
+       ng-if="l.scale === 'interval' || l.scale === 'ratio'">
     <div ng-switch="l.type">
 
       <div ng-switch-when="Store">
@@ -9,6 +10,13 @@
             <td><% l.data[0][0] | number : 2 %> <% l.unit %></td>
           </thead>
         </table>
+<!--    TODO: get proper response from server when asking for point of nominal
+              or ordinal data and decomment these lines
+        <table class="table table-condensed table-hover single-row-table">
+          <thead ng-if="l.scale === 'nominal' || l.scale === 'ordinal' ">
+            <td><% l.data[0][0]%></td>
+          </thead>
+        </table> -->
       </div>
 
       <div ng-switch-when="Vector">
