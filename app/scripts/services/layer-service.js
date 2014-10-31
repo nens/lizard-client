@@ -66,6 +66,18 @@ angular.module('lizard-nxt')
           value: layer.bounds,
           writable: false,
         });
+        Object.defineProperty(this, 'scale', {
+          value: layer.scale,
+          writable: false,
+        });
+        Object.defineProperty(this, 'quantity', {
+          value: layer.quantity,
+          writable: false,
+        });
+        Object.defineProperty(this, 'unit', {
+          value: layer.unit,
+          writable: false,
+        });
         Object.defineProperty(this, '_leafletLayer', {
           value: undefined,
           writable: true,
@@ -187,7 +199,10 @@ angular.module('lizard-nxt')
           var type = this.type,
               aggType = this.aggregationType,
               slug = this.slug,
-              summary = this.summary;
+              summary = this.summary,
+              scale = this.scale,
+              quantity = this.quantity,
+              unit = this.unit;
 
           var buildSuccesCallback = function (data) {
             deferred.notify({
@@ -196,7 +211,10 @@ angular.module('lizard-nxt')
               layerGroupSlug: lgSlug,
               layerSlug: slug,
               aggType: aggType,
-              summary: summary
+              summary: summary,
+              scale: scale,
+              quantity: quantity,
+              unit: unit
             });
           };
 
