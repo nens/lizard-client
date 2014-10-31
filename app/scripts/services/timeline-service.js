@@ -137,8 +137,6 @@ angular.module('lizard-nxt')
         var width = xScale(new Date(timestamp + (interval))) -
           xScale(new Date(timestamp));
 
-        console.log("draw agg window");
-        // DATA JOIN
         if (!aggWindow) {
           aggWindow = this._svg.append("g").append("rect")
             .attr("class", "aggwindow")
@@ -146,32 +144,14 @@ angular.module('lizard-nxt')
             .attr("x", 0)
             .attr("y", 0)
             .attr("width", width)
+            .attr("opacity", 0.6)
             .attr("style", "fill: #34495e;");
         }
 
-
-        // ENTER
-        //aggWindow.enter().append("g").append("rect")
-          //.attr("class", "aggwindow")
-          //.attr("height", height)
-          //.attr("x", 0)
-          //.attr("y", 0)
-          //.attr("width", width)
-          //.attr("style", "fill: #34495e;");
-
         // UPDATE
         aggWindow
-          .attr("x", function () {return xScale(new Date(timestamp)); })
+          .attr("x", function () {return 30 + xScale(new Date(timestamp)); })
           .attr("width", width);
-        
-        // EXIT
-        //aggWindow.exit()
-          //.transition()
-          //.delay(200)
-          //.duration(200)
-          //.style("fill", "#FFF")
-          //.remove();
-
       }
     },
 
@@ -188,7 +168,7 @@ angular.module('lizard-nxt')
      *  bottom, left and right padding. All values in px.
      */
     resize: {
-      value: function (newDimensions, timestamp, features) {
+      value: function (newDimensions, timestamp, interval, features) {
 
         var oldDimensions = angular.copy(this.dimensions);
         this.dimensions = newDimensions;
@@ -202,7 +182,7 @@ angular.module('lizard-nxt')
         var newWidth = xScale.range()[1];
 
         drawTimelineAxes(this._svg, xAxis, newDimensions);
-        this.updateElements(oldDimensions, timestamp, features);
+        this.updateElements(oldDimensions, timestamp, interval, features);
       }
     },
 
@@ -228,9 +208,9 @@ angular.module('lizard-nxt')
         }
 
         if (aggWindow) {
-          setTimeout(function () {
+          setTimeout((function () {
             this.drawAggWindow(timestamp, interval);
-          }, this.transTime);
+          }).call(this), this.transTime);
         }
       }
     },
@@ -290,31 +270,6 @@ angular.module('lizard-nxt')
     },
 
     /**
-     * Takes a leaflet bounds object and filters all circles whether their
-     * geographic location falls within the bounds. Candidate to be refactored,
-     * since this service is specific to events.
-     *
-     * @param {object} bounds to filter events with
-     */
-    drawEventsContainedInBounds: {
-      value: function (bounds) {
-        var latLng = [];
-        lines.classed("hidden", true);
-        lines.classed("selected", false);
-        lines
-          .classed("selected", function (d) {
-            latLng[0] = d.geometry.coordinates[1];
-            latLng[1] = d.geometry.coordinates[0];
-            var contained = bounds.contains(latLng);
-            // Some book keeping to count
-            d.inSpatExtent = contained;
-            return contained;
-          });
-        d3.selectAll(".selected").classed("hidden", false);
-      }
-    },
-
-    /**
      * Update domain of scale and call functions to update timeline to new
      * scale.
      *
@@ -325,10 +280,9 @@ angular.module('lizard-nxt')
       value: function (start, end, interval) {
         xScale.domain([new Date(start), new Date(end)]);
         xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-        this.updateElements(this.dimensions, start);
+        this.updateElements(this.dimensions, start, interval);
         drawTimelineAxes(this._svg, xAxis, this.dimensions, this.transTime);
         this.addZoomListener();
-        //this.removeAggWindow();
         this.drawAggWindow(start, interval);
       }
     },
@@ -444,6 +398,7 @@ angular.module('lizard-nxt')
   var setZoomFunction = function (svg, dimensions, xScale, xAxis, zoomFn) {
     var zoomed = function () {
       drawTimelineAxes(svg, xAxis, dimensions);
+
       if (lines) {
         var xOneFunction = function (d) {
             return xScale(d.properties.timestamp_end);
@@ -451,7 +406,8 @@ angular.module('lizard-nxt')
         var xTwoFunction = function (d) {
           return xScale(d.properties.timestamp_start);
         };
-        var yFunction = function (d) { return ordinalYScale(d.event_order); };
+        // TODO: ordinal scale set
+        var yFunction = function (d) { return ordinalYScale(1); };
         var dFunction = function (d) {
           var path =
             "M " + xOneFunction(d) + " " + yFunction(d)
@@ -460,6 +416,7 @@ angular.module('lizard-nxt')
         };
         lines.attr("d", dFunction);
       }
+
       if (bars) {
         var barData = bars.data();
         var newWidth = xScale(barData[1][0]) - xScale(barData[0][0]);
@@ -467,6 +424,7 @@ angular.module('lizard-nxt')
           .attr("x", function (d) { return xScale(d[0]) - 0.5 * newWidth; })
           .attr('width', newWidth);
       }
+
       if (noDataIndicator) {
         var year2014 = 1388534400000; // in msecs, since epoch
         var x = xScale(year2014);
@@ -577,8 +535,9 @@ angular.module('lizard-nxt')
     var xTwoFunction = function (d) {
       return xScale(d.properties.timestamp_start);
     };
-    var yFunction = function (d) { return yScale(d.event_order); };
-    var colorFunction = function (d) { return d.properties.color; };
+    var yFunction = function (d) { return yScale(1); };
+    // TODO: get color from backend
+    var colorFunction = function (d) { return "#F00"; };
     var dFunction = function (d) {
       // Draws a small line from the end of the event to start
       var path =
@@ -599,7 +558,7 @@ angular.module('lizard-nxt')
       // DATA JOIN
       // Join new data with old elements, based on the id value.
       lines = svg.select('g').select('#circle-group').selectAll("path")
-          .data(data, function  (d) { return d.id; });
+          .data(data, function  (d) { return d.properties.id; });
     }
 
     var splitTranstime = Timeline.prototype.transTime / 2;
@@ -615,7 +574,7 @@ angular.module('lizard-nxt')
     // ENTER
     // Create new elements as needed.
     lines.enter().append("path")
-      .attr("class", "event")
+      .attr("class", "event selected")
       .attr("stroke", colorFunction)
       .attr("d", initialDFunction)
       .attr("stroke-linecap", "round")
