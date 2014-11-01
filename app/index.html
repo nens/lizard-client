@@ -45,6 +45,7 @@
              ng-dblclick="toggleVersionVisibility()">
              <span>Lizard</span>
           </a>
+          <span><% timeState.at | date:'d MMM y - HH:mm' %> </span>
         </div>
 
         <div class="navbar-collapse collapse">
@@ -108,9 +109,6 @@
                 <a onclick="logIn()" title="Login">
                 <i id="" class="fa fa-user" style="font-size:1.2em;"></i></a>
               </li>
-            <li>
-              <% timeState.at | date:'d MMM y - HH:mm' %> 
-            </li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -205,6 +203,7 @@
     <div class="container" ng-controller="SearchCtrl">
       <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
     </div>
+
 
     <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
     

@@ -527,6 +527,7 @@ angular.module('lizard-nxt')
     var xTwoFunction = function (d) {
       return xScale(d.properties.timestamp_start);
     };
+    // TODO: get yScale from order
     var yFunction = function (d) { return yScale(1); };
     // TODO: get color from backend
     var colorFunction = function (d) { return "#F00"; };
