@@ -903,7 +903,15 @@ ul.list-inline li.baselayer-icon label{
   float: left;
   position: absolute;
   bottom: 0;
-  margin-bottom: 10px;
+  margin-bottom: 3px;
+}
+
+.time-controls-right {
+  float: right;  
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin-bottom: 5px;
 }
 
 .middle {

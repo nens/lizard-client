@@ -117,4 +117,33 @@ angular.module('lizard-nxt')
     $scope.timeState.changedZoom = Date.now();
   };
 
+  /**
+   * @function
+   * @summary Zooms time in or out.
+   * @description multiplies or divides current time resolution by
+   * ZOOMFACTOR depending on zooming in or out. Updates start and end
+   * of timeState accordingly and sets new resolution on timeState.
+   *
+   * @param {string} action - 'in' or 'out'
+   */
+  $scope.timeState.zoom = function (action) {
+    console.log("zoom time ", action, $scope.timeState.resolution);
+    var ZOOMFACTOR = 2;
+    var newResolution;
+
+    if (action === 'in') {
+      newResolution = $scope.timeState.resolution / ZOOMFACTOR;
+    } else if (action === 'out') {
+      newResolution = $scope.timeState.resolution * ZOOMFACTOR;
+    }
+
+    var milliseconds = window.innerWidth * newResolution;
+
+    $scope.timeState.start = $scope.timeState.at - milliseconds;
+    $scope.timeState.end = $scope.timeState.at + milliseconds;
+    $scope.timeState.resolution = newResolution;
+    $scope.timeState.changeOrigin = 'user';
+    $scope.timeState.changedZoom = Date.now();
+  };
+
 }]);

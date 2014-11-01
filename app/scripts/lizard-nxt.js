@@ -246,7 +246,6 @@ angular.module('lizard-nxt')
   // TIME MODEL
   $scope.timeState = {
     start: now - 2 * day,
-    // resolution in seconds / pixel
     end: now + day, //  TODO: refactor to function
     changedZoom: Date.now(),
     zoomEnded: null,
@@ -262,6 +261,7 @@ angular.module('lizard-nxt')
   };
   // initialise 'now'
   $scope.timeState.at = $scope.timeState.start;
+  // get time resolution in ms per pixel
   $scope.timeState.resolution = ($scope.timeState.end - $scope.timeState.start)
                                  / window.innerWidth;
   $scope.timeState.aggWindow = UtilService.getAggWindow($scope.timeState.start,

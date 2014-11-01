@@ -76,9 +76,12 @@ angular.module('lizard-nxt')
         });
       },
       /**
-       * Enable animation on click
+       * Move timeState.at to click location in timebar.
        *
        * Recieves d3.event, scale and timeline dimensions
+       * @param {object} event - d3 event
+       * @param {object} scale - d3 scale
+       * @param {object} dimensions - object with timeline dimensions
        */
       clickFn: function (event, scale, dimensions) {
         var timeClicked = +(scale.invert(event.x - dimensions.padding.left));

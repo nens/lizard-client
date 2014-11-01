@@ -295,22 +295,6 @@ angular.module('lizard-nxt')
           .on("zoomend", zoomend)
         );
       }
-    },
-
-    /**
-     * Thorougly removes zoom listeners.
-     */
-    removeZoomListener: {
-      value: function () {
-        this._svg.call(d3.behavior.zoom()
-          .x(xScale)
-          .on("zoom", null)
-        );
-        this._svg
-          .on("zoomend", null)
-          .on("zoom", null)
-          .on("mousedown.zoom", null);
-      }
     }
   });
 
@@ -675,6 +659,21 @@ angular.module('lizard-nxt')
     };
     return yScale;
   };
+
+  /**
+   * Callback functions for zoom buttons.
+   */
+  d3.select("#timezoomin").on('click', function () {
+    d3.event.preventDefault();
+    console.log("zoom in");
+    zoomed();
+  });
+
+  d3.select("#timezoomout").on('click', function () {
+    d3.event.preventDefault();
+    console.log("zoom out");
+    zoomed();
+  });
 
   return Timeline;
 
