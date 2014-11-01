@@ -46,7 +46,6 @@ angular.module('lizard-nxt')
   zoomend,
 
   // Timeline elements
-  noDataIndicator,
   nowIndicator,
   aggWindow, // aggregation window
   lines, // events start - end
@@ -99,18 +98,24 @@ angular.module('lizard-nxt')
 
     constructor: Timeline,
 
-    // TODO: create real noDataIndicator, this is just legacy code
-    addNoDataIndicator: {
+    /**
+     * @function
+     * @summary Adds a now indicator to timeline.
+     * @description From 'now' the background of the timeline gets a different
+     * style.
+     */
+    addNowIndicator: {
       value: function () {
         var width = this._getWidth(this.dimensions),
         height = this._getHeight(this.dimensions);
 
-        noDataIndicator = this._svg.select('g').append('rect')
-          .attr('height', height)
-          .attr('width', width)
-          .attr('id', 'nodata')
-          .attr('x', -4000) // make sure nodata bar is invisible at first
-          .style('fill', 'url(#lightstripe)');
+        nowIndicator = this._svg.select("g").append("rect")
+          .attr("height", height)
+          .attr("width", width)
+          .attr("id", "nodata")
+          .attr("x", function () {return xScale(Date.now()); })
+          .attr("opacity", 0.8)
+          .style("fill", "#EEE");
       }
     },
 
@@ -203,8 +208,8 @@ angular.module('lizard-nxt')
           updateRectangleElements(bars, xScale, oldDimensions, this.dimensions);
         }
 
-        if (noDataIndicator) {
-          updateNoDataElement(noDataIndicator, xScale, this.dimensions);
+        if (nowIndicator) {
+          updateNowElement(nowIndicator, xScale, this.dimensions);
         }
 
         if (aggWindow) {
@@ -409,12 +414,10 @@ angular.module('lizard-nxt')
           .attr('width', newWidth);
       }
 
-      if (noDataIndicator) {
-        var year2014 = 1388534400000; // in msecs, since epoch
-        var x = xScale(year2014);
-        noDataIndicator
-          .attr('x', function (d) {
-            return Math.round(x - noDataIndicator.attr('width'));
+      if (nowIndicator) {
+        nowIndicator
+          .attr('x', function () {
+            return xScale(Date.now());
           });
       }
       if (zoomFn) {
@@ -494,18 +497,23 @@ angular.module('lizard-nxt')
     }
   };
 
-  // TODO: legacy, implement real noDataIndicator.
-  var updateNoDataElement = function (noDataIndicator, xScale, dimensions) {
+  /**
+   * @function
+   * @summary update now indicator element
+   *
+   * @param {object} nowIndicator - d3 selection
+   * @param {object} xScale - d3 scale
+   * @param {object} dimensions - d3 dimension
+   */
+  var updateNowElement = function (nowIndicator, xScale, dimensions) {
     var width = Timeline.prototype._getWidth(dimensions),
-    height = Timeline.prototype._getHeight(dimensions),
-    year2014 = 1388534400000, // in msecs, since epoch
-    x = xScale(year2014);
+        height = Timeline.prototype._getHeight(dimensions);
 
-    noDataIndicator
-      .attr('height', height)
-      .attr('width', width)
-      .attr('x', function (d) {
-        return Math.round(x - noDataIndicator.attr('width'));
+    nowIndicator
+     .attr('height', height)
+     .attr('width', width)
+     .attr('x', function () {
+        return xScale(Date.now());
       });
   };
 

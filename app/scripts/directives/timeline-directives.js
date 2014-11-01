@@ -100,6 +100,7 @@ angular.module('lizard-nxt')
     // Activate zoom and click listener
     timeline.addZoomListener();
     timeline.addClickListener();
+    timeline.addNowIndicator();
 
     // HELPER FUNCTIONS
 
