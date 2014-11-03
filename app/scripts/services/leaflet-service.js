@@ -160,9 +160,7 @@ angular.module('lizard-nxt')
       } else if (data instanceof Array) {
         filteredData = this.countOverlapping(data);
       }
-      if (data.length > 0) {
         this.geojsonLayer.addData(filteredData);
-      }
     },
     _tileLoaded: function (tile, tilePoint) {
       var key = 'key_' + tilePoint.z + '_' + tilePoint.x + '_' + tilePoint.y;

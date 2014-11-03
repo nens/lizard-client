@@ -87,17 +87,14 @@ angular.module('lizard-nxt')
           }
         });
       };
-
-      scope.$watch('mapState.layerGroupsChanged', function (n, o) {
-        if (n === o) { return; }
-        console.log('sadf')
-        syncTimeWrapper(scope.timeState.at, undefined);
-      });
-
-      scope.$watch('timeState.start', function (n, o) {
+      
+      var syncer = function (n, o) {
         if (n === o) { return; }
         syncTimeWrapper(n, o);
-      });
+      };
+      scope.$watch('mapState.layerGroupsChanged', syncer);
+      scope.$watch('timeState.start', syncer);
+      scope.$watch('mapState.bounds', syncer);
 
   };
 
