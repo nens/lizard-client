@@ -1,5 +1,6 @@
 <div id="timeline" ng-controller="TimeLine">
 
+  <div class="row">
   <div class="time-controls">
     <div class="btn-group">
       <a ng-click="timeState.playPauseAnimation()"
@@ -15,11 +16,11 @@
     </div>
   </div>
   <div id="timeline-svg-wrapper" class="timeline-svg-wrapper">
-   <svg></svg>
+    <svg></svg>
   </div>
   <div class="time-controls-right">
     <div class="btn-group-vertical">
-        <a class="btn btn-default btn-xs" ng-click="timeState.zoom('in')"
+        <a class="btn btn-default btn-xss" ng-click="timeState.zoom('in')"
           class="extra-padding timeline-button"
           rel="tooltip"
           data-toggle="tooltip"
@@ -28,16 +29,7 @@
           data-original-title="Zoom in">
           <i class="fa fa-plus"></i>
         </a>
-        <a class="btn btn-default btn-xs" ng-click="timeState.zoom('out')"
-          class="extra-padding timeline-button"
-          rel="tooltip"
-          data-toggle="tooltip"
-          data-placement="top"
-          title=""
-          data-original-title="Zoom uit">
-          <i class="fa fa-minus"></i>
-        </a>
-        <a class="btn btn-default btn-xs" ng-mousedown="timeState.zoomToNow()"
+        <a class="btn btn-default btn-xss" ng-mousedown="timeState.zoomToNow()"
           class="extra-padding timeline-button"
           rel="tooltip"
           data-toggle="tooltip"
@@ -46,6 +38,28 @@
           data-original-title="Naar nu">
           <i class="fa fa-clock-o"></i>
         </a>
+        <a class="btn btn-default btn-xss" ng-click="timeState.zoom('out')"
+          class="extra-padding timeline-button"
+          rel="tooltip"
+          data-toggle="tooltip"
+          data-placement="top"
+          title=""
+          data-original-title="Zoom uit">
+          <i class="fa fa-minus"></i>
+        </a>
+    </div>
+  </div>
+  </div>
+
+  <div class="row time-start-now-end">
+    <div class="col-md-3">
+      <p><% timeState.start | date:'d MMMM y - HH:mm' %></p>
+    </div>
+    <div class="col-md-6">
+      <p class="text-center"><% timeState.at | date:'d MMMM y - HH:mm' %></p>
+    </div>
+    <div class="col-md-3">
+      <p class="text-right"><% timeState.end | date:'d MMMM y - HH:mm' %> </p>
     </div>
   </div>
 

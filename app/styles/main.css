@@ -881,6 +881,17 @@ ul.list-inline li.baselayer-icon label{
 /*
  * Timeline stuff
  */
+
+/**
+ * extra small bootstrap buttons
+ */ 
+.btn-xss {
+  padding: 1px 4px;
+  font-size: 9px;
+  line-height: 1.1;
+  border-radius: 2px;
+}
+
 .navbar-fixed-bottom {
   min-height:20px;
 }
@@ -896,22 +907,29 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .timeline-svg-wrapper {
-  margin-top: 3px;
+  margin-top: 2px;
 }
 
 .time-controls {
   float: left;
   position: absolute;
   bottom: 0;
-  margin-bottom: 3px;
+  margin-bottom: 15px;
+  z-index: 999;
 }
 
 .time-controls-right {
   float: right;  
   position: absolute;
-  bottom: 0;
+  top: 1px;
   right: 0;
-  margin-bottom: 5px;
+  margin-bottom: 20px;
+  z-index: 999;
+}
+
+.time-start-now-end p {
+  margin: 0; 
+  height: 20px;
 }
 
 .middle {

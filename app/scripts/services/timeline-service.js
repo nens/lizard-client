@@ -153,9 +153,12 @@ angular.module('lizard-nxt')
             .attr("style", "fill: #34495e;");
         }
 
+        var offset = this.dimensions.padding.left;
         // UPDATE
         aggWindow
-          .attr("x", function () {return 30 + xScale(new Date(timestamp)); })
+          .attr("x", function () {
+            return (offset + xScale(new Date(timestamp)));
+          })
           .transition()
           .duration(this.transTime)
           .attr("height", height)
@@ -565,7 +568,10 @@ angular.module('lizard-nxt')
       // DATA JOIN
       // Join new data with old elements, based on the id value.
       console.log(data);
-      var group = svg.select("g").select("#circle-group").select("#g" + data[0].properties.event_series_id)
+      var group = svg
+                    .select("g")
+                    .select("#circle-group")
+                    .select("#g" + data[0].properties.event_series_id);
       if (!group[0][0]) {
         group = svg.select("g").select("#circle-group").append("g")
           .attr("id", "g" + data[0].properties.event_series_id);
