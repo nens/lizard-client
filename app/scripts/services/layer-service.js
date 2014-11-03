@@ -80,6 +80,13 @@ angular.module('lizard-nxt')
 
         constructor: NxtLayer,
 
+
+       /**
+        * @function
+        * @memberOf app.Layer
+        * @description Abstract method to be overridden by the layers that
+        *              implement Layer and do something on initialization.
+        */
         initializeLayer: function () {
           if (!this.tiled) {
             // TODO: initialise imageoverlay
@@ -91,37 +98,83 @@ angular.module('lizard-nxt')
           }
         },
 
+       /**
+        * @function
+        * @memberOf app.Layer
+        * @description Abstract method to be overridden by the layers that
+        *              implement Layer and do something on add (like adding
+        *              the leafletLayer to the map).
+        * @param map leaflet map to add to.
+        */
         add: function (map) {
           return;
         },
 
+       /**
+        * @function
+        * @memberOf app.Layer
+        * @description Abstract method to be overridden by the layers that
+        *              implement Layer and do something on remove (like removing
+        *              the leafletLayer from the map).
+        * @param map leaflet map to add to.
+        */
         remove: function (map) {
           return;
         },
 
+       /**
+        * @function
+        * @memberOf app.Layer
+        * @description Abstract method to be overridden by the layers that
+        *              implement Layer can return data (Store and vector).
+        * @param lgSlug slug of the layer.
+        * @param options options object with geom and time.
+        * @param deferred the defer to resolve when getting data.
+        */
         getData: function (lgSlug, options, deferred) {
           return;
         },
 
+       /**
+        * @function
+        * @memberOf app.Layer
+        * @description Abstract method to be overridden by the layers that
+        *              implement Layer and can sync to timestate (vector and
+        *              wms, currently).
+        * @param mapState nxt mapState.
+        * @param timeState nxt timeState.
+        * @param oldTime previous time in ms from epoch.
+        */
         syncTime: function (mapState, timeState, oldTime) {
           return;
         },
 
-        /**
-         * @function
-         * @description rescales layer and updates url
-         */
+       /**
+        * @function
+        * @memberOf app.Layer
+        * @description Abstract method to be overridden by the layers that
+        *              implement Layer could rescale (wms, tms and vector).
+        * @param bounds map bounds object.
+        */
         rescale: function (bounds) {
           return;
         },
 
+       /**
+        * @function
+        * @memberOf app.Layer
+        * @description Abstract method to be overridden by the layers that
+        *              implement Layer and can change the opacity of the
+        *              leafletLayer.
+        * @param opacity between 0 and 1.
+        */
         setOpacity: function (opacity) {
           return;
         },
 
        /**
         * @function
-        * @memberOf app.LayerGroup
+        * @memberOf app.Layer
         * @description creates a promise for the given layer and the provided
         *              service. The service should have a getData function that
         *              returns a promise that is resolved when data is recieved.
