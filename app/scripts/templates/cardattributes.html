@@ -1,31 +1,27 @@
 <div class="card-content">
 
   <i id="icon-holder"
-     ng-if="waterchain.layers.waterchain_grid.data.entity_name.split(' ')[0] === 'bridge'"
-     class="icon-bridge-fixed">
-  </i>
-
-  <i id="icon-holder"
-     ng-if="waterchain.layers.waterchain_grid.data.entity_name.split(' ')[0] !== 'bridge'"
-     class="icon-<% waterchain.layers.waterchain_grid.data.entity_name.split(' ')[0] %>">
+     ng-class="$parent.getIconClass(waterchain.layers.waterchain_grid.data.entity_name)">
   </i>
 
   <span class="kunstwerk-title">
+
+    <!-- <span><% $parent.getIconClass(waterchain.layers.waterchain_grid.data.entity_name) || "no data returned" %></span> -->
 
     <span id="title-holder"
           class="card-title-text kunstwerk-title-text">
 
       <% waterchain.layers.waterchain_grid.data.entity_name | objectTitle %>
 
-    </span>
-    &nbsp;
-    <span ng-if= "waterchain.layers.waterchain_grid.data.code"
-          class="kunstwerk-title-suffix">
-      <span>(</span>
-      <span class="truncateme ng-binding"
-            ng-bind="waterchain.layers.waterchain_grid.data.code">
+      <span ng-if= "waterchain.layers.waterchain_grid.data.code"
+            class="kunstwerk-title-suffix">
+        <span>(</span>
+        <span class="truncateme ng-binding"
+              ng-bind="waterchain.layers.waterchain_grid.data.code">
+        </span>
+        <span>)</span>
       </span>
-      <span>)</span>
+
     </span>
   </span>
 
