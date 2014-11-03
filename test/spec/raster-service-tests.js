@@ -22,12 +22,6 @@ describe('Testing raster service', function () {
     expect(timeRes).toBe(300000);
   });
 
-  it('should return the given value on set/getIntensityData', function () {
-    var thisun = 'intensityData';
-    RasterService.setIntensityData(thisun);
-    expect(RasterService.getIntensityData()).toEqual(thisun);
-  });
-
   it('should return a CabinetService get promise', function () {
     var geom = new L.LatLng(52.50995268098114, 4.961357116699219);
     var result = RasterService.getData({'layer': 'layer'}, {'geom': geom});

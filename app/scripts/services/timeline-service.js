@@ -67,7 +67,7 @@ angular.module('lizard-nxt')
    *  angular.module('lizard-nxt')
   .
    */
-  function Timeline(element, dimensions, start, end, interaction) {
+  function Timeline(element, dimensions, start, end, interaction, nEvents) {
     NxtD3.call(this, element, dimensions);
     initialHeight = dimensions.height;
     this._svg = addElementGroupsToCanvas(this._svg, this.dimensions);
@@ -82,7 +82,7 @@ angular.module('lizard-nxt')
     if (interaction) {
       if (interaction.zoomFn) {
         zoomed = setZoomFunction(this._svg, this.dimensions, xScale, xAxis,
-          interaction.zoomFn);
+          interaction.zoomFn, nEvents);
       }
       if (interaction.clickFn) {
         clicked = setClickFunction(xScale, this.dimensions,
@@ -115,7 +115,7 @@ angular.module('lizard-nxt')
           .attr("id", "nodata")
           .attr("x", function () {return xScale(Date.now()); })
           .attr("opacity", 0.8)
-          .style("fill", "#EEE");
+          .style("fill", "#DDD");
       }
     },
 
@@ -156,6 +156,9 @@ angular.module('lizard-nxt')
         // UPDATE
         aggWindow
           .attr("x", function () {return 30 + xScale(new Date(timestamp)); })
+          .transition()
+          .duration(this.transTime)
+          .attr("height", height)
           .attr("width", width);
       }
     },
@@ -173,7 +176,7 @@ angular.module('lizard-nxt')
      *  bottom, left and right padding. All values in px.
      */
     resize: {
-      value: function (newDimensions, timestamp, interval, features) {
+      value: function (newDimensions, timestamp, interval, features, nEvents) {
 
         var oldDimensions = angular.copy(this.dimensions);
         this.dimensions = newDimensions;
@@ -187,7 +190,8 @@ angular.module('lizard-nxt')
         var newWidth = xScale.range()[1];
 
         drawTimelineAxes(this._svg, xAxis, newDimensions);
-        this.updateElements(oldDimensions, timestamp, interval, features);
+        this.updateElements(
+          oldDimensions, timestamp, interval, features, nEvents);
       }
     },
 
@@ -198,11 +202,12 @@ angular.module('lizard-nxt')
      */
     updateElements: {
 
-      value: function (oldDimensions, timestamp, interval, data) {
+      value: function (oldDimensions, timestamp, interval, data, nEvents) {
+        console.log("update elements");
 
         if (lines) {
           drawLineElements(
-            this._svg, this.dimensions, xScale, ordinalYScale, data);
+            this._svg, this.dimensions, xScale, ordinalYScale, data, nEvents);
         }
         if (bars && oldDimensions) {
           updateRectangleElements(bars, xScale, oldDimensions, this.dimensions);
@@ -231,13 +236,14 @@ angular.module('lizard-nxt')
      *                                        event_order: <int specifying the line of events>}]
      */
     drawLines: {
-      value: function (data) {
+      value: function (data, order) {
         lines = drawLineElements(
           this._svg,
           this.dimensions,
           xScale,
           ordinalYScale,
-          data
+          data,
+          order
         );
       }
     },
@@ -282,10 +288,10 @@ angular.module('lizard-nxt')
      * @param  {int} end   in ms since epoch
      */
     zoomTo: {
-      value: function (start, end, interval) {
+      value: function (start, end, interval, nEvents) {
         xScale.domain([new Date(start), new Date(end)]);
         xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-        this.updateElements(this.dimensions, start, interval);
+        this.updateElements(this.dimensions, start, interval, nEvents);
         drawTimelineAxes(this._svg, xAxis, this.dimensions, this.transTime);
         this.addZoomListener();
         this.drawAggWindow(start, interval);
@@ -384,7 +390,8 @@ angular.module('lizard-nxt')
    * Put all scope specific in the zoom callback from the directive, all the
    * standard (re-)placement of elements in here.
    */
-  var setZoomFunction = function (svg, dimensions, xScale, xAxis, zoomFn) {
+  var setZoomFunction = function (
+    svg, dimensions, xScale, xAxis, zoomFn, nEvents) {
     var zoomed = function () {
       drawTimelineAxes(svg, xAxis, dimensions);
 
@@ -396,7 +403,8 @@ angular.module('lizard-nxt')
           return xScale(d.properties.timestamp_start);
         };
         // TODO: ordinal scale set
-        var yFunction = function (d) { return ordinalYScale(1); };
+        console.log("nEvents", nEvents);
+        var yFunction = function (d) { return ordinalYScale(nEvents); };
         var dFunction = function (d) {
           var path =
             "M " + xOneFunction(d) + " " + yFunction(d)
@@ -464,20 +472,22 @@ angular.module('lizard-nxt')
     if (rectangles[0].length > 0) {
       var barHeight = initialHeight - newDimensions.padding.top -
                       newDimensions.padding.bottom + newDimensions.bars,
-      y = Timeline.prototype._maxMin(rectangles.data(), '1'),
-      options = {scale: 'linear'},
-      newHeight = Timeline.prototype._getHeight(newDimensions),
-      oldHeight = Timeline.prototype._getHeight(oldDimensions),
-      heightDiff = newHeight - oldHeight,
-      yScale = Timeline.prototype._makeScale(
-        y,
-        {min: 0, max: barHeight},
-        options),
-      barWidth = Number(rectangles.attr('width'));
+          y = Timeline.prototype._maxMin(rectangles.data(), '1'),
+          options = {scale: 'linear'},
+          newHeight = Timeline.prototype._getHeight(newDimensions),
+          oldHeight = Timeline.prototype._getHeight(oldDimensions),
+          heightDiff = newHeight - oldHeight,
+          yScale = Timeline.prototype._makeScale(
+            y,
+            {min: 0, max: barHeight},
+            options),
+            barWidth = Number(rectangles.attr('width'));
+
       if (heightDiff < 0) {
         rectangles.transition()
           .duration(Timeline.prototype.transTime)
           .delay(Timeline.prototype.transTime)
+          .attr("height", function (d) {return yScale(d[1]); })
           .attr("y", function (d) {
             return newHeight - yScale(d[1]);
           })
@@ -487,6 +497,7 @@ angular.module('lizard-nxt')
       } else {
         rectangles.transition()
           .duration(Timeline.prototype.transTime)
+          .attr("height", function (d) {return yScale(d[1]); })
           .attr("y", function (d) {
             return newHeight - yScale(d[1]);
           })
@@ -520,7 +531,10 @@ angular.module('lizard-nxt')
   /**
    * Draws horizontal line elements according to a d3 update pattern.
    */
-  var drawLineElements = function (svg, dimensions, xScale, yScale, data) {
+  var drawLineElements = function (
+    svg, dimensions, xScale, yScale, data, order) {
+    console.log("order", order);
+
     var xOneFunction = function (d) {
       return xScale(d.properties.timestamp_end);
     };
@@ -528,7 +542,7 @@ angular.module('lizard-nxt')
       return xScale(d.properties.timestamp_start);
     };
     // TODO: get yScale from order
-    var yFunction = function (d) { return yScale(1); };
+    var yFunction = function (d) { return yScale(order); };
     // TODO: get color from backend
     var colorFunction = function (d) { return "#F00"; };
     var dFunction = function (d) {
@@ -547,11 +561,18 @@ angular.module('lizard-nxt')
       return path;
     };
 
-    if (data) {
+    if (data[0]) {
       // DATA JOIN
       // Join new data with old elements, based on the id value.
-      lines = svg.select('g').select('#circle-group').selectAll("path")
-          .data(data, function  (d) { return d.properties.id; });
+      console.log(data);
+      var group = svg.select("g").select("#circle-group").select("#g" + data[0].properties.event_series_id)
+      if (!group[0][0]) {
+        group = svg.select("g").select("#circle-group").append("g")
+          .attr("id", "g" + data[0].properties.event_series_id);
+      }
+
+      lines = group.selectAll("path")
+        .data(data, function  (d) { return d.properties.id; });
     }
 
     var splitTranstime = Timeline.prototype.transTime / 2;
@@ -566,6 +587,7 @@ angular.module('lizard-nxt')
 
     // ENTER
     // Create new elements as needed.
+    lines.append("g");
     lines.enter().append("path")
       .attr("class", "event selected")
       .attr("stroke", colorFunction)
@@ -668,21 +690,6 @@ angular.module('lizard-nxt')
     };
     return yScale;
   };
-
-  /**
-   * Callback functions for zoom buttons.
-   */
-  d3.select("#timezoomin").on('click', function () {
-    d3.event.preventDefault();
-    console.log("zoom in");
-    zoomed();
-  });
-
-  d3.select("#timezoomout").on('click', function () {
-    d3.event.preventDefault();
-    console.log("zoom out");
-    zoomed();
-  });
 
   return Timeline;
 

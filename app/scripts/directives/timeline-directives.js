@@ -25,8 +25,8 @@ angular.module('lizard-nxt')
     var dimensions = {
       width: window.innerWidth,
       height: 40,
-      events: 40,
-      bars: 20,
+      events: 20,
+      bars: 25,
       padding: {
         top: 5,
         right: 30,
@@ -36,6 +36,7 @@ angular.module('lizard-nxt')
     },
     start = scope.timeState.start,
     end = scope.timeState.end,
+    nEvents = 0,
 
     el = element[0].getElementsByTagName('svg')[0],
 
@@ -95,7 +96,8 @@ angular.module('lizard-nxt')
     d3.select(element[0]).transition().duration(300).style('bottom', 0);
 
     // Initialise timeline
-    var timeline = new Timeline(el, dimensions, start, end, interaction);
+    var timeline = new Timeline(
+      el, dimensions, start, end, interaction, nEvents);
 
     // Activate zoom and click listener
     timeline.addZoomListener();
@@ -123,7 +125,8 @@ angular.module('lizard-nxt')
       timeline.resize(newDim,
                       scope.timeState.at,
                       scope.timeState.aggWindow,
-                      features);
+                      features,
+                      nEventTypes);
     };
 
     /** 
@@ -165,18 +168,21 @@ angular.module('lizard-nxt')
      *
      */
     var getTimeLineData = function () {
-      console.log("Getting data for timeline");
       var timelineLayers = getTimelineLayers(scope.mapState.layerGroups);
 
       // vector data (for now only events)
       if (timelineLayers.events.length > 0) {
+        var eventOrder = {eventOrder: 1,
+                          nEvents: timelineLayers.events.length};
         angular.forEach(timelineLayers.events, getEventData,
-                        timelineLayers.events);
+                        eventOrder);
       }
 
       // raster data (for now only rain)
       if (timelineLayers.rain !== undefined) {
         console.log("getting rain data");
+        updateTimelineHeight(angular.copy(timeline.dimensions),
+          dimensions, 0);
         getTemporalRasterData(timelineLayers.rain,
                               timelineLayers.events.length);
       } else {
@@ -200,13 +206,12 @@ angular.module('lizard-nxt')
         }
       );
 
-      var nEvents = this.length;
+      var that = this;
       eventData.then(function (response) {
         updateTimelineHeight(angular.copy(timeline.dimensions),
-          dimensions, nEvents, response);
-        // TODO: somehow administer event order
-        //response.eventOrder = 1;
-        timeline.drawLines(response);
+          dimensions, that.nEvents, response);
+        timeline.drawLines(response, that.eventOrder);
+        that.eventOrder += 1;
       });
     };
 
@@ -234,8 +239,6 @@ angular.module('lizard-nxt')
         }
       ).then(function (response) {
           timeline.drawBars(response);
-          updateTimelineHeight(angular.copy(timeline.dimensions),
-            dimensions, nEvents);
         });
     };
 
@@ -308,7 +311,8 @@ angular.module('lizard-nxt')
         scope.timeState.aggWindow,
         // TODO: pass data from point object on scope?
         // TODO: data.features doesn't exist anymore?
-        scope.events.data.features
+        scope.events.data.features,
+        scope.events.nEvents
       );
     };
 
