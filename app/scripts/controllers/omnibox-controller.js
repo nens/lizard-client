@@ -76,8 +76,5 @@ angular.module('lizard-nxt')
 
       return promises;
     };
-
-    $scope.toggleThisCard = UtilService.toggleThisCard;
-
   }
 ]);

@@ -1563,6 +1563,10 @@ img {
   cursor: pointer !important;
 }
 
-.button-list-link.active {
+.dummy-attr-value {
+  color: #bdc3c7;
+}
 
+#kunstwerk-table {
+  max-width: 90%;
 }
