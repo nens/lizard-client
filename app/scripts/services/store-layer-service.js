@@ -2,8 +2,8 @@
 
 /**
  * @ngdoc service
- * @name lizard-nxt.Laye
-r * @description
+ * @name lizard-nxt.Layer
+ * @description
  * # NxtLayer
  * Factory in the lizard-nxt.
  */
