@@ -1,6 +1,12 @@
 Changelog of lizard-nxt client
 ==============================
 
+Unreleased
+----------
+
+- Fix point data for interval and ratio data.
+
+
 Release 0.2b9 (2014-10-30)
 --------------------------
 

@@ -162,9 +162,13 @@
 .card .flip-button a:hover{
     color: gray;
 }
+.single-row-table td,
+.single-row-table th {
+    border: 0 !important;
+}
 
 .card table, .card-events {
-    margin-top: 0.5em;
+    margin: 6px 0 6px 11px;
     line-height: 15px;
     font-size: 0.9em;
     list-style: none;
@@ -593,8 +597,7 @@
 }
 
 .card-content {
-  padding: 0 10px 0 10px;
-  margin: 15px 0 0 0;
+  margin: 10px;
 }
 
 .card-title-text {
