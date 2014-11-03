@@ -21,8 +21,7 @@ angular.module('lizard-nxt')
 
         getData: {
           value: function (lgSlug, options, deferred) {
-            console.log('getting Store data');
-            this._buildPromise(lgSlug, options, deferred, RasterService);
+            return this._buildPromise(lgSlug, options, deferred, RasterService);
           }
         }
 

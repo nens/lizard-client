@@ -65,6 +65,7 @@ angular.module('lizard-nxt')
 
           $scope.box.content[response.layerGroupSlug] = lGContent;
         }
+        console.log($scope.box.content);
         // Accomadate chaining in child controllers
         return response;
       };

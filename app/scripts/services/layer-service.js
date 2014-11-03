@@ -142,7 +142,6 @@ angular.module('lizard-nxt')
               unit = this.unit;
 
           var buildSuccesCallback = function (data) {
-            console.log('got data')
             deferred.notify({
               data: data,
               type: type,

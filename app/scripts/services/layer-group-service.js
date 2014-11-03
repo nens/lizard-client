@@ -464,7 +464,6 @@ angular.module('lizard-nxt')
        */
       _initializeLayers: function () {
         angular.forEach(this._layers, function (layer) {
-          console.log(layer, layer.initializeLayer);
           layer.initializeLayer();
         });
       },
