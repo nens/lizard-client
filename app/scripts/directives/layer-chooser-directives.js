@@ -2,7 +2,7 @@
 
 angular.module('lizard-nxt')
   .directive("layerChooser", ['NxtMap', 'dataLayers',
-  function (NxtMap, dataLayers) {
+    function (NxtMap, dataLayers) {
 
   var link = function (scope, element, attrs) {
     // Scope gets the mapState layerGroup, here we create a new layerGroup which
@@ -13,12 +13,13 @@ angular.module('lizard-nxt')
       zoom: 6,
       dragging: false,
       touchZoom: false,
-      doubleClickzoom: false,
+      doubleClickZoom: false,
       tap: false,
       scrollWheelZoom: false,
       animate: true,
       zoomControl: false,
-      attributionControl: false
+      attributionControl: false,
+      forChooser: true
     });
 
     chooser.toggleLayerGroup(
@@ -31,7 +32,7 @@ angular.module('lizard-nxt')
       var centroid = scope.mapState.bounds.getCenter();
       chooser.setView(centroid, zoom - 2);
     });
-
+  
   };
 
   return {

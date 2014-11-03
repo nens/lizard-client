@@ -140,7 +140,10 @@ angular.module('lizard-nxt')
     $scope.$watch('box.type', function (n, old) {
       if (n === old) { return true; }
       state.boxType.update = false;
-      LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, $scope.box.type);
+      LocationGetterSetter.setUrlValue(
+        state.boxType.part, state.boxType.index, $scope.box.type
+      );
+
       if (old === 'point' || old === 'line') {
         // Remove geometry from url
         state.boxType.update = false;
@@ -184,11 +187,11 @@ angular.module('lizard-nxt')
           mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
           time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
           context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
-        if (context) {
-          // switchContext
-        } else {
-          LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
-        }
+        // if (context) {
+        //   // switchContext
+        // } else {
+        LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
+        // }
         if (boxType) {
           if (geom) { // Setting the box to anything but default requires geometry on url.
             $scope.box.type = boxType;

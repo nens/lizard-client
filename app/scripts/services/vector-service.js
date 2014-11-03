@@ -18,8 +18,6 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt')
-  .VectorService
      * @description filters geojson array on spatial bounds.
      * @param  {L.LatLngBounds} spatial
      * @param  {featureArray}   sourceArray
@@ -70,8 +68,6 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt')
-  .VectorService
      * @description filters geojson array on temporal bounds.
      * @param  {object}         start end object
      * @param  {featureArray}   sourceArray
@@ -137,11 +133,10 @@ angular.module('lizard-nxt')
     var vectorLayers = {};
 
     /**
-     * @memberof angular.module('lizard-nxt')
-  .VectorService
+     * @memberof app.VectorService
      * @function
      * @description gets data from backend
-     * @param  {string} layer slug of layer
+     * @param  {layer} layer as defined by layer-service
      * @param  {object} geomortime  geometry or time that it needs to get (e.g. bboxs)
      * @param  {object} time  start, stop object
      * @return {promise}
@@ -149,7 +144,11 @@ angular.module('lizard-nxt')
     var getData = function (nonLeafLayer, options) {
       var deferred = $q.defer();
 
-      var layer = nonLeafLayer.leafletLayer || deferred.reject();
+      var layer = nonLeafLayer._leafletLayer;
+
+      if (!layer) {
+        deferred.reject();
+      }
 
       if (layer.isLoading) {
         getDataAsync(nonLeafLayer, options, deferred);
@@ -169,8 +168,14 @@ angular.module('lizard-nxt')
       return deferred.promise;
     };
 
+    /**
+     * @description Same as getData but waits for data to finish loading
+     * @param {layer}
+     * @param {options}
+     * @param {promise}
+     */
     var getDataAsync = function (nonLeafLayer, options, deferred) {
-      nonLeafLayer.leafletLayer.on('loadend', function () {
+      nonLeafLayer._leafletLayer.on('loadend', function () {
         if (vectorLayers[nonLeafLayer.slug] !== undefined) {
           deferred.resolve(filterSet(vectorLayers[nonLeafLayer.slug].data,
             options.geom, {
@@ -182,6 +187,9 @@ angular.module('lizard-nxt')
       });
     };
 
+    /**
+     * @description redefines data if zoom level changed
+     */
     var replaceData = function (layerSlug, data, zoom) {
       vectorLayers[layerSlug] = {
           data: [],
@@ -190,10 +198,30 @@ angular.module('lizard-nxt')
       vectorLayers[layerSlug].data = vectorLayers[layerSlug].data.concat(data);
     };
 
+    /**
+     * @description gets unique values and tosses duplicates
+     * part of PostGis.js (ಠ_ಠ)
+     */
+    var getUnion = function (arr1, arr2, uniqueKey) {
+      var union = arr1.concat(arr2);
+
+      for (var i = 0; i < union.length; i++) {
+        for (var j = i+1; j < union.length; j++) {
+          if (union[i].properties[uniqueKey] === union[j].properties[uniqueKey])
+            union.splice(i, 1);
+        }
+      }
+      return union;
+    };
+
+    /**
+     * @description appends data if zoom level hasn't changed
+     * 
+     */
     var setData = function (layerSlug, data, zoom) {
       if (vectorLayers.hasOwnProperty(layerSlug)
         && vectorLayers[layerSlug].zoom === zoom) {
-        vectorLayers[layerSlug].data = vectorLayers[layerSlug].data.concat(data);
+        vectorLayers[layerSlug].data = getUnion(vectorLayers[layerSlug].data, data, 'id');
       } else {
         replaceData.apply(this, arguments);
       }

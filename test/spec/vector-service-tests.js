@@ -44,14 +44,14 @@ describe('Testing VectorService', function () {
   ];
 
   var nonLeaflayer = {
-    leafletLayer: {
+    _leafletLayer: {
       isLoading: false
     },
     slug: 'events'
   };
 
   it('should set and get data', function () {
-    VectorService.setData('events', geoJson, 4);
+    VectorService.setData(nonLeaflayer.slug, geoJson, 4);
     VectorService.getData(nonLeaflayer, {})
       .then(function (gotthis) {
         expect(gotthis[0].id).toBe(geoJson[0].id);

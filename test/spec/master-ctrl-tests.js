@@ -30,12 +30,12 @@ describe('Testing MasterController', function () {
     expect($scope.box.type).toBe('line');
   });
 
-  it('should set box type to area when tool is toggled to line again', function () {
+  it('should set box type to point when tool is toggled to point again', function () {
     createController();
     $scope.toggleTool('line');
     $scope.$digest();
-    $scope.toggleTool('line');
-    expect($scope.box.type).toBe('area');
+    $scope.toggleTool('point');
+    expect($scope.box.type).toBe('point');
   });
 
 });

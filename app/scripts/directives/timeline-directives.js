@@ -53,7 +53,10 @@ angular.module('lizard-nxt')
        */
       zoomEndFn: function () {
         scope.$apply(function () {
-          scope.timeState.zoomEnded = Date.now();
+          var lg = scope.mapState.getActiveTemporalLayerGroup();
+          if (lg) {
+            getTemporalRasterData();
+          }
         });
       },
       /**
@@ -148,7 +151,7 @@ angular.module('lizard-nxt')
       if (scope.mapState.getActiveTemporalLayerGroup()) {
         updateTimelineHeight(angular.copy(timeline.dimensions),
           dimensions, scope.events.types.count);
-        timeline.drawBars(RasterService.getIntensityData());
+        // timeline.drawBars(RasterService.getIntensityData());
       } else {
         timeline.removeBars();
         updateTimelineHeight(angular.copy(timeline.dimensions),
@@ -178,11 +181,10 @@ angular.module('lizard-nxt')
         EventService.countCurrentEvents(scope);
       }
 
-      // TODO: don't check a function, check a boolean.
-      // var lg = scope.mapState.getActiveTemporalLayerGroup();
-      // if (lg) {
-      //   getTemporalRasterData();
-      // }
+      var lg = scope.mapState.getActiveTemporalLayerGroup();
+      if (lg) {
+        getTemporalRasterData();
+      }
     });
 
     /**
@@ -253,13 +255,13 @@ angular.module('lizard-nxt')
      */
     scope.$watch('mapState.getActiveTemporalLayerGroup()', function (n, o) {
       if (scope.mapState.getActiveTemporalLayerGroup()) {
-        // getTemporalRasterData();
+        getTemporalRasterData();
         timeline.addClickListener();
       } else {
         timeline.removeClickListener();
         RasterService.setIntensityData([]);
-        scope.raster.changed = Date.now();
       }
+      scope.raster.changed = Date.now();
     });
 
 
@@ -279,9 +281,7 @@ angular.module('lizard-nxt')
 
         var wantedLayer;
         angular.forEach(activeTemporalLG._layers, function (layer) {
-          console.log('checking layers, current:', layer)
-          if (layer.slug === 'demo:radar') {
-            console.log('..thats the one!');
+          if (layer.slug === 'radar/basic') {
             wantedLayer = layer;
           }
         });
@@ -296,12 +296,9 @@ angular.module('lizard-nxt')
             aggWindow: aggWindow
           }
         ).then(function (response) {
-
-          console.log('response:', response);
-
-          RasterService.setIntensityData(response);
-          scope.raster.changed = Date.now();
-        });
+            RasterService.setIntensityData(response);
+            scope.raster.changed = Date.now();
+          });
       }
     };
 

@@ -4,11 +4,13 @@
  * Setup Raven if available.
  * Raven is responsible for logging to https://sentry.lizard.net
  */
-if (window.Raven) {
-  window.Raven.config('https://ceb01dd84c6941c8aa20e16f83bdb55e@sentry.lizard.net/19',
+if (window.RavenEnvironment) {
+  window.Raven.config(window.RavenEnvironment,
   {
     // limits logging to staging and prd
-    whitelistUrls: [/nxt\.lizard\.net/, /staging\.lizard\.net/]
+    whitelistUrls: [/integration\.nxt\.lizard\.net/,
+                    /nxt\.lizard\.net/,
+                    /staging\.nxt\.lizard\.net/]
   }).install();
 }
 
@@ -169,7 +171,8 @@ angular.module('lizard-nxt')
     contextSwitchMode: false, // Switch between card or fullscreen
     query: null, // Search bar query
     showCards: false,// Only used for search results
-    type: 'area', // Default box type
+    type: 'point', // Default box type
+    //type: undefined, // Should this be set via the hashGetterSetter????
     content: {}, // Inconsistently used to store data to display in box
     changed: Date.now(),
     mouseLoc: [] // Used to draw 'bolletje' on elevation profile
@@ -178,7 +181,7 @@ angular.module('lizard-nxt')
 
   // TOOLS
   $scope.tools = {
-    active: 'none', //NOTE: make list?
+    active: 'point', //NOTE: make list?
   };
 
   /**
@@ -195,15 +198,16 @@ angular.module('lizard-nxt')
    *
    */
   $scope.toggleTool = function (name) {
+
     if (name === 'line') {
-      $scope.box.type  = 'line';
-    }
-    if ($scope.tools.active === name) {
-      $scope.tools.active = 'none';
+      $scope.box.type = 'line';
+    } else if (name === 'point') {
+      $scope.box.type = 'point';
+    } else if (name === 'area') {
       $scope.box.type = 'area';
-    } else {
-      $scope.tools.active = name;
     }
+
+    $scope.tools.active = name;
   };
 
   /**
@@ -224,18 +228,18 @@ angular.module('lizard-nxt')
 
   $scope.$watch('mapState.here', function (n, o) {
     if (n === o) { return true; }
-    if (!$scope.$$phase) {
-      $scope.$apply(function () {
-        if ($scope.box.type !== 'line') {
-          $scope.box.type = 'point';
-          $scope.$broadcast('updatepoint');
-        }
-      });
-    } else {
-      if ($scope.box.type !== 'line') {
+
+    var fn = function () {
+      if ($scope.box.type === 'point') {
         $scope.box.type = 'point';
         $scope.$broadcast('updatepoint');
       }
+    };
+
+    if (!$scope.$$phase) {
+      $scope.$apply(fn);
+    } else {
+      fn();
     }
   });
 
@@ -337,7 +341,7 @@ angular.module('lizard-nxt')
         $scope.events.data = EventService.removeEvents($scope.events.types,
                                                        $scope.events.data,
                                                        eventSeriesId);
-        $scope.events.types.count = $scope.events.types.count - 1;
+        $scope.events.types.count--;
         EventService.addColor($scope.events);
         $scope.events.changed = Date.now();
       } else {
@@ -368,7 +372,7 @@ angular.module('lizard-nxt')
                                                eventSeriesId);
         $scope.events.data = dataOrder.data;
         $scope.events.types[eventSeriesId].event_type = dataOrder.order;
-        $scope.events.types.count = $scope.events.types.count + 1;
+        $scope.events.types.count++;
         EventService.addColor($scope.events);
         $scope.events.types[eventSeriesId].active = true;
         $scope.events.changed = Date.now();
@@ -407,18 +411,9 @@ angular.module('lizard-nxt')
   };
 
   $scope.$watch('keyPressed', function (newVal, oldVal) {
-    if (newVal === 51) {
-      $scope.mapState.activeBaselayer = 3;
-      $scope.mapState.changeBaselayer();
-    } else if (newVal === 52) {
-      $scope.mapState.activeBaselayer = 4;
-      $scope.mapState.changeBaselayer();
-    } else if (newVal === 49) {
-      $scope.mapState.activeBaselayer = 1;
-      $scope.mapState.changeBaselayer();
-    } else if (newVal === 50) {
-      $scope.mapState.activeBaselayer = 2;
-      $scope.mapState.changeBaselayer();
+    if (49 >= newVal && 52 <= newVal) {
+      $scope.mapState.activeBaselayer = newVal - 48;
+      $scope.mapState.changeBaselayer()
     }
   });
 
@@ -475,5 +470,6 @@ angular.module('lizard-nxt')
   $scope.toggleVersionVisibility = function () {
     $('.navbar-version').toggle();
   };
+
 
 }]);
