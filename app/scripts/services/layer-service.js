@@ -8,7 +8,7 @@ r * @description
  * Factory in the lizard-nxt.
  */
 angular.module('lizard-nxt')
-  .factory('NxtLayer', [function () {
+  .factory('NxtLayer', ['$q', function ($q) {
 
       /*
        * @constructor
@@ -74,6 +74,10 @@ angular.module('lizard-nxt')
           value: layer.unit,
           writable: false,
         });
+        Object.defineProperty(this, 'loadOrder', {
+          value: layer.load_order,
+          writable: false,
+        });
       }
 
       NxtLayer.prototype = {
@@ -107,7 +111,9 @@ angular.module('lizard-nxt')
         * @param map leaflet map to add to.
         */
         add: function (map) {
-          return;
+          var defer = $q.defer();
+          defer.resolve();
+          return defer.promise;
         },
 
        /**

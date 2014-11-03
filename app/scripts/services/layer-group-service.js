@@ -32,9 +32,9 @@
  */
 angular.module('lizard-nxt')
   .factory('LayerGroup', [
-  'NxtTMSLayer', 'NxtWMSLayer', 'NxtVectorLayer', 'NxtUTFLayer', 'StoreLayer',
+  'NxtLayer', 'NxtTMSLayer', 'NxtWMSLayer', 'NxtVectorLayer', 'NxtUTFLayer', 'StoreLayer',
   'UtilService', '$q', 'RasterService', '$http',
-  function (NxtTMSLayer, NxtWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, UtilService, $q, RasterService, $http) {
+  function (NxtLayer, NxtTMSLayer, NxtWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, UtilService, $q, RasterService, $http) {
 
     /*
      * @constructor
@@ -101,14 +101,16 @@ angular.module('lizard-nxt')
           layers.push(new StoreLayer(layer));
         }
         else if (!this.tiled) {
-          // TODO: initialise imageoverlay
-          return;
+          layers.push(new NxtLayer(layer));
         }
         else {
           // this ain't right
           throw new Error(this.type + ' is not a supported layer type');
         }
       });
+
+      // Sort them
+      this._layers = sortLayers(layers);
 
     }
 
@@ -469,14 +471,44 @@ angular.module('lizard-nxt')
       },
 
       _toggleLayers: function (map, layers, active) {
-        var method = active ? 'add' : 'remove';
-        angular.forEach(layers, function (layer) {
-          layer[method](map);
-        });
+        if (active) {
+          addLayersRecursively(map, layers, 0);
+        }
+        else {
+          angular.forEach(layers, function (layer) {
+            layer.remove(map);
+          });
+        }
         if (this._opacity) {
           this.setOpacity(this._opacity);
         }
       }
+    };
+
+    var sortLayers = function (layers) {
+      layers.sort(function (a, b) {
+        if (a.loadOrder > b.loadOrder) {
+          return -1;
+        }
+        if (a.loadOrder < b.loadOrder
+          || a.loadOrder === null) {
+          return 1;
+        }
+        // a must be equal to b
+        return 0;
+      });
+      return layers;
+    };
+
+
+    var addLayersRecursively = function (map, layers, i) {
+      layers[i].add(map)
+        .then(function () {
+          i++;
+          if (i < layers.length) {
+            addLayersRecursively(map, layers, i);
+          }
+        });
     };
 
     return LayerGroup;
