@@ -32,8 +32,9 @@
  */
 angular.module('lizard-nxt')
   .factory('LayerGroup', [
-  'NxtLayer', 'UtilService', '$q', 'RasterService', '$http',
-  function (NxtLayer, UtilService, $q, RasterService, $http) {
+  'NxtTMSLayer', 'NxtWMSLayer', 'NxtVectorLayer', 'NxtUTFLayer', 'StoreLayer',
+  'UtilService', '$q', 'RasterService', '$http',
+  function (NxtTMSLayer, NxtWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, UtilService, $q, RasterService, $http) {
 
     /*
      * @constructor
@@ -84,7 +85,29 @@ angular.module('lizard-nxt')
       // the layergroup.
       var layers = this._layers;
       angular.forEach(layerGroup.layers, function (layer) {
-        layers.push(new NxtLayer(layer));
+        if (layer.type === 'TMS') {
+          layers.push(new NxtTMSLayer(layer));
+        }
+        else if (layer.type === 'WMS' && layer.tiled) {
+          layers.push(new NxtWMSLayer(layer));
+        }
+        else if (layer.type === 'UTFGrid') {
+          layers.push(new NxtUTFLayer(layer));
+        }
+        else if (layer.type === 'Vector') {
+          layers.push(new NxtVectorLayer(layer));
+        }
+        else if (layer.type === 'Store') {
+          layers.push(new StoreLayer(layer));
+        }
+        else if (!this.tiled) {
+          // TODO: initialise imageoverlay
+          return;
+        }
+        else {
+          // this ain't right
+          throw new Error(this.type + ' is not a supported layer type');
+        }
       });
 
     }
@@ -441,6 +464,7 @@ angular.module('lizard-nxt')
        */
       _initializeLayers: function () {
         angular.forEach(this._layers, function (layer) {
+          console.log(layer, layer.initializeLayer);
           layer.initializeLayer();
         });
       },

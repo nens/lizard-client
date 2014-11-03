@@ -2,24 +2,20 @@
 
 /**
  * @ngdoc service
- * @name lizard-nxt.Layer
- * @description
+ * @name lizard-nxt.Laye
+r * @description
  * # NxtLayer
  * Factory in the lizard-nxt.
  */
 angular.module('lizard-nxt')
-  .factory('NxtLayer', [
-    'LeafletService', 'VectorService', 'RasterService',
-    'UtfGridService', 'UtilService', '$http',
-    function (LeafletService, VectorService, RasterService,
-      UtfGridService, UtilService, $http) {
+  .factory('NxtLayer', [function () {
 
       /*
        * @constructor
-       * @memberOf app.LayerGroup
-       * @description Instantiates a layerGroup with non-readable and
+       * @memberOf app.Layer
+       * @description Instantiates a layer with non-readable and
        *              non-configurable properties
-       * @param  {object} layergroup definition as coming from the server
+       * @param  {object} layer definition as coming from the server
        */
       function NxtLayer(layer) {
         Object.defineProperty(this, 'slug', {
@@ -78,10 +74,6 @@ angular.module('lizard-nxt')
           value: layer.unit,
           writable: false,
         });
-        Object.defineProperty(this, '_leafletLayer', {
-          value: undefined,
-          writable: true,
-        });
       }
 
       NxtLayer.prototype = {
@@ -89,16 +81,7 @@ angular.module('lizard-nxt')
         constructor: NxtLayer,
 
         initializeLayer: function () {
-          if (this.type === 'Vector') {
-            this._leafletLayer = initializeVectorLayer(this);
-          } else if (this.type === 'TMS') {
-            this._leafletLayer = initializeTMSLayer(this);
-          } else if (this.type === 'UTFGrid') {
-            this._leafletLayer = initializeGridLayer(this);
-          } else if (this.type === 'WMS' && this.tiled) {
-            this._leafletLayer = initializeWMSLayer(this);
-          }
-          else if (!this.tiled) {
+          if (!this.tiled) {
             // TODO: initialise imageoverlay
             return;
           }
@@ -109,46 +92,19 @@ angular.module('lizard-nxt')
         },
 
         add: function (map) {
-          if (this._leafletLayer) {
-            addLeafletLayer(map, this._leafletLayer);
-          }
+          return;
         },
 
         remove: function (map) {
-          if (this._leafletLayer) {
-            removeLeafletLayer(map, this._leafletLayer);
-          }
+          return;
         },
 
         getData: function (lgSlug, options, deferred) {
-          var wantedService;
-          if (this.type === 'Store') {
-            wantedService = RasterService;
-          }
-          else if (this.type === 'UTFGrid') {
-            wantedService = UtfGridService;
-          }
-          else if (this.type === 'Vector') {
-            wantedService = VectorService;
-          }
-
-          if (wantedService) {
-            return this._buildPromise(lgSlug, options, deferred, wantedService);
-          } else {
-            return;
-          }
+          return;
         },
 
         syncTime: function (mapState, timeState, oldTime) {
-          if (this.temporal && this.type === 'Vector') {
-            this._adhereVectorLayerToTime(this.layer, mapState, timeState, oldTime);
-          }
-          // else if (this.temporal
-          //   && this.type === 'WMS'
-          //   && !this.tiled) {
-          //   TODO: see layergroup comments
-          //   this._adhereWMSLayerToTime(this, mapState, timeState, oldTime);
-          // }
+          return;
         },
 
         /**
@@ -156,29 +112,10 @@ angular.module('lizard-nxt')
          * @description rescales layer and updates url
          */
         rescale: function (bounds) {
-          if (this.rescalable) {
-            var url = this.url +
-              '?request=getlimits&layers=' + this.slug +
-              '&width=16&height=16&srs=epsg:4326&bbox=' +
-              bounds.toBBoxString();
-            var self = this;
-            $http.get(url).success(function (data) {
-              self.limits = ':' + data[0][0] + ':' + data[0][1];
-              self._leafletLayer.setParams({
-                styles: self.options.styles + self.limits
-              });
-              self._leafletLayer.redraw();
-            });
-          }
+          return;
         },
 
         setOpacity: function (opacity) {
-          if (this._leafletLayer && this._leafletLayer.setOpacity) {
-            this._leafletLayer.setOpacity(opacity);
-          }
-        },
-
-        _adhereVectorLayerToTime: function (layer, mapState, timeState, oldTime) {
           return;
         },
 
@@ -205,6 +142,7 @@ angular.module('lizard-nxt')
               unit = this.unit;
 
           var buildSuccesCallback = function (data) {
+            console.log('got data')
             deferred.notify({
               data: data,
               type: type,
@@ -234,144 +172,6 @@ angular.module('lizard-nxt')
             .then(buildSuccesCallback, buildErrorCallback);
         }
 
-      };
-
-
-      /**
-       * @function
-       * @memberof app.LayerGroup
-       * @param {L.Class} Leaflet layer.
-       * @description Adds layer to map
-       */
-      var addLeafletLayer = function (map, leafletLayer) { // Leaflet NxtLayer
-        if (map.hasLayer(leafletLayer)) {
-          throw new Error(
-            'Attempted to add layer' + leafletLayer._id
-            + 'while it was already part of the map'
-          );
-        } else {
-          map.addLayer(leafletLayer);
-        }
-      };
-
-      /**
-       * @function
-       * @memberof app.LayerGroup
-       * @param  {L.Class} Leaflet map
-       * @param  {L.Class} Leaflet layer
-       * @description Removes layer from map
-       */
-      var removeLeafletLayer = function (map, leafletLayer) { // Leaflet NxtLayer
-        if (map.hasLayer(leafletLayer)) {
-          map.removeLayer(leafletLayer);
-        } else {
-          throw new Error(
-            'Attempted to remove layer' + leafletLayer._id
-            + 'while it was NOT part of provided the map'
-          );
-        }
-      };
-
-      var initializeVectorLayer = function (nonLeafLayer) {
-        var leafletLayer;
-
-        if (nonLeafLayer.tiled) {
-          // Initiate a tiled Vector layer
-          var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
-
-          leafletLayer = new LeafletService.TileDataLayer(url, {
-            minZoom: nonLeafLayer.min_zoom,
-            maxZoom: nonLeafLayer.max_zoom,
-            color: '#333',
-            dataCallback: function (featureCollection, point) {
-              if (!featureCollection) { return; }
-
-              if (featureCollection.features.length > 0) {
-                VectorService.setData(
-                  nonLeafLayer.slug,
-                  featureCollection.features,
-                  point.z
-                );
-              }
-            },
-            slug: nonLeafLayer.slug,
-            ext: 'geojson'
-          });
-        } else {
-          // throw new Error('Initiate (non-tiled) Vector layer, for e.g. events');
-          return leafletLayer;
-        }
-        return leafletLayer;
-      };
-
-
-      /**
-       * @function
-       * @memberof app.LayerGroup
-       * @param  {object} layer as served from backend
-       * @return {L.TileLayer} leafletLayer
-       * @description Initiates a Leaflet Tilelayer
-       */
-      var initializeTMSLayer = function (nonLeafLayer) {
-
-        var layerUrl = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
-        var layer = LeafletService.tileLayer(
-          layerUrl, {
-            slug: nonLeafLayer.slug,
-            minZoom: nonLeafLayer.min_zoom || 0,
-            maxZoom: 19,
-            detectRetina: true,
-            zIndex: nonLeafLayer.zIndex,
-            ext: 'png'
-          });
-
-        return layer;
-      };
-
-      /**
-       * @function
-       * @memberof app.LayerGroup
-       * @param  {object} nonLeafLayer as served from backend
-       * @return {L.TileLayer.WMS}              [description]
-       * @description Initiates a Leaflet WMS layer
-       */
-      var initializeWMSLayer = function (nonLeafLayer) {
-        var _options = {
-          layers: nonLeafLayer.slug,
-          format: 'image/png',
-          version: '1.1.1',
-          minZoom: nonLeafLayer.min_zoom || 0,
-          maxZoom: 19,
-          opacity: nonLeafLayer.opacity,
-          zIndex: nonLeafLayer.zIndex
-        };
-        _options = angular.extend(_options, nonLeafLayer.options);
-
-        return LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
-      };
-
-      /**
-       * @function
-       * @memberof app.LayerGroup
-       * @param  {object} nonLeafLayer as served from backend
-       * @return {L.UtfGrid} utfgrid
-       * @description Initiates layers that deliver interaction with the map
-       */
-      var initializeGridLayer = function (nonLeafLayer) {
-
-        var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
-
-        var layer = new LeafletService.UtfGrid(url, {
-          ext: 'grid',
-          slug: nonLeafLayer.slug,
-          name: nonLeafLayer.slug,
-          useJsonP: false,
-          minZoom: nonLeafLayer.min_zoom_click || 0,
-          maxZoom: 19,
-          order: nonLeafLayer.zIndex,
-          zIndex: nonLeafLayer.zIndex
-        });
-        return layer;
       };
 
       return NxtLayer;
