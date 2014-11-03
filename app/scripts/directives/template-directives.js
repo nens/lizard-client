@@ -95,8 +95,10 @@ angular.module('lizard-nxt')
 }]);
 
 angular.module('lizard-nxt')
-  .directive('defaultpoint', [function () {
+  .directive('defaultpoint', ['LanduseLookup',
+    function (LanduseLookup) {
   return {
+    link: function (scope) { scope.landuseLookup = LanduseLookup; },
     restrict: 'E',
     scope: {
       lg: '=',
