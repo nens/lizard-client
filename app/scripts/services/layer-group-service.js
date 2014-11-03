@@ -32,9 +32,9 @@
  */
 angular.module('lizard-nxt')
   .factory('LayerGroup', [
-  'NxtTMSLayer', 'NxtWMSLayer', 'NxtVectorLayer', 'NxtUTFLayer', 'StoreLayer',
+  'NxtTMSLayer', 'NxtWMSLayer', 'NxtVectorLayer', 'NxtUTFLayer', 'StoreLayer', 'NxtLayer',
   'UtilService', '$q', 'RasterService', '$http',
-  function (NxtTMSLayer, NxtWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, UtilService, $q, RasterService, $http) {
+  function (NxtTMSLayer, NxtWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, NxtLayer, UtilService, $q, RasterService, $http) {
 
     /*
      * @constructor
@@ -93,6 +93,7 @@ angular.module('lizard-nxt')
           layers.push(new NxtTMSLayer(layer));
         }
         else if (layer.type === 'WMS' && layer.tiled) {
+          console.log('encountered WMS layer:', layer);
           layers.push(new NxtWMSLayer(layer));
         }
         else if (layer.type === 'UTFGrid') {
@@ -106,7 +107,7 @@ angular.module('lizard-nxt')
         }
         else if (!this.tiled) {
           // TODO: initialise imageoverlay
-          return;
+          layers.push(new NxtLayer(layer));
         }
         else {
           // this ain't right

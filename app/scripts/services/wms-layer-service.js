@@ -132,12 +132,9 @@ angular.module('lizard-nxt')
           zIndex: nonLeafLayer.zIndex
         };
         _options = angular.extend(_options, nonLeafLayer.options);
-        console.log('initializeWMSLayer');
-
         return LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
       };
 
       return NxtWMSLayer;
-
     }
   ]);
