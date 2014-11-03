@@ -148,6 +148,7 @@ angular.module('lizard-nxt')
 
       if (!layer) {
         deferred.reject();
+        return deferred.promise;
       }
 
       if (layer.isLoading) {
