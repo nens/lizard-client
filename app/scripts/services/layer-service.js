@@ -147,7 +147,7 @@ angular.module('lizard-nxt')
         */
         syncTime: function (mapState, timeState, oldTime) {
          return;
-        },
+       },
 
        /**
         * @function
