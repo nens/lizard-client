@@ -151,9 +151,8 @@ angular.module('lizard-nxt')
         return deferred.promise;
       }
 
-      if (layer.isLoading) {
+      if (layer.isLoading || !vectorLayers[nonLeafLayer.slug]) {
         getDataAsync(nonLeafLayer, options, deferred);
-
       } else if (vectorLayers[nonLeafLayer.slug]) {
         var set = filterSet(vectorLayers[nonLeafLayer.slug].data,
         options.geom, {

@@ -164,6 +164,8 @@ angular.module('lizard-nxt')
         if (coord === undefined) {
           overlapLocations[key] = index;
           filteredData.push(d);
+        } else if (!filteredData[overlapLocations[key]]){
+          return undefined;
         } else {
           filteredData[overlapLocations[key]].properties.radius += 1;
         }
