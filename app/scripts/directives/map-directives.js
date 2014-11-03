@@ -77,6 +77,7 @@ angular.module('lizard-nxt')
 
 
       var syncTimeWrapper = function (newTime, oldTime) {
+        //if (newTime === oldTime) { return; }
         angular.forEach(scope.mapState.layerGroups, function (lg) {
           if (!scope.$$phase) {
             scope.$apply(function () {
@@ -88,13 +89,9 @@ angular.module('lizard-nxt')
         });
       };
       
-      var syncer = function (n, o) {
-        if (n === o) { return; }
-        syncTimeWrapper(n, o);
-      };
-      scope.$watch('mapState.layerGroupsChanged', syncer);
-      scope.$watch('timeState.start', syncer);
-      scope.$watch('mapState.bounds', syncer);
+      scope.$watch('mapState.layerGroupsChanged', syncTimeWrapper);
+      scope.$watch('timeState.start', syncTimeWrapper);
+      scope.$watch('mapState.bounds', syncTimeWrapper);
 
   };
 

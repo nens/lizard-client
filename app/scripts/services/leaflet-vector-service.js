@@ -243,7 +243,6 @@ angular.module('lizard-nxt')
       if (tile.datum === null) { return null; }
 
       this.addTileData(tile.datum, tilePoint);
-      //this.drawTheThings(tile.datum, tilePoint);
       for (var tile in this._tilesLoading) {
         if (this._tilesLoading[tile] === 'busy') {
           this.isLoading = true;
