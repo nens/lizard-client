@@ -48,6 +48,10 @@ angular.module('lizard-nxt')
         value: layerGroup.temporal,
         writable: false,
       });
+      Object.defineProperty(this, 'temporalResolution', {
+        value: layerGroup.temporal_resolution,
+        writable: false,
+      });
       Object.defineProperty(this, 'name', {
         value: layerGroup.name,
         writable: false,
@@ -407,7 +411,7 @@ angular.module('lizard-nxt')
 
         s.imageBounds     = L.latLngBounds(southWest, northEast);
         s.utcFormatter    = d3.time.format.utc("%Y-%m-%dT%H:%M:%S");
-        s.step            = RasterService.getTimeResolution(this);
+        s.step            = this.temporalResolution;
         s.frameLookup     = {};
         s.previousFrame   = 0;
         s.loadingRaster   = 0;

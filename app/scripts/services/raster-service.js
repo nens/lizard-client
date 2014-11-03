@@ -117,26 +117,6 @@ angular.module('lizard-nxt')
     return formatted;
   };
 
-  var getTimeResolution = function (layerGroup) {
-
-    switch (layerGroup.slug) {
-
-    case 'rain':
-      return 300000;
-
-    case 'bath:westerschelde':
-      return 15768000000;
-
-    case 'westerschelde:diff':
-      return 15768000000;
-
-    default:
-      throw new Error(
-        layerGroup.slug + 'is not supported by RasterService.getTimeResolution()'
-      );
-    }
-  };
-
   var getMinTimeBetweenFrames = function (layerGroup) {
 
     if (layerGroup.slug === 'rain') {
@@ -148,7 +128,6 @@ angular.module('lizard-nxt')
   };
 
   return {
-    getTimeResolution: getTimeResolution,
     getMinTimeBetweenFrames: getMinTimeBetweenFrames,
     buildURLforWMS: buildURLforWMS,
     // rasterInfo: rasterInfo,
