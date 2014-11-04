@@ -502,53 +502,72 @@ angular.module('lizard-nxt')
 
     var addLayersRecursively = function (map, layers, i) {
       var currentLoadOrder = layers[i].loadOrder;
-      var promises = [];
-      // Add all layers with the current load order
-      while (i < layers.length
-        && layers[i].loadOrder === currentLoadOrder) {
-        console.log('adding:', layers[i].slug, layers[i].loadOrder);
-        promises.push(layers[i].add(map));
-        i++;
-      }
+      var wrap = loadLayersByLoadOrder(map, layers, i, currentLoadOrder);
       // If there is more, wait for these layers to resolve
       // and start over with the remaining layers.
-      if (i < layers.length) {
-        $q.all(promises).then(function () {
-          addLayersRecursively(map, layers, i);
-        });
+      if (wrap.i < layers.length) {
+        startOverWhenDone(wrap.promises, map, layers, wrap.i);
       }
-      // Add listener to the first layer that is drawn on the map.
+      // When done, add listener to the first layer that is drawn on the map.
       else if (layers.length > 1) {
-        for (var j = 0; j < layers.length; j++) {
-          if (layers[j].tiled) {
-            console.log('Leading layer:', layers[j].slug);
-            addLoadListenersToLayer(map, layers, j);
-            break;
-          }
+        var index = getIndexOfLeadingLayer(layers);
+        if (typeof(index) === 'number') {
+          addLoadListenersToLayer(map, layers, index);
         }
       }
     };
 
+    var loadLayersByLoadOrder = function (map, layers, i, loadOrder) {
+      // Add all layers with the current load order
+      var promises = [];
+      while (i < layers.length
+        && layers[i].loadOrder === loadOrder) {
+        promises.push(layers[i].add(map));
+        i++;
+      }
+      return {
+        i: i,
+        promises: promises
+      };
+    };
+
+    var getIndexOfLeadingLayer = function (layers) {
+      var index;
+      var highestLoadingOrder = 0;
+      for (var i = 0; i < layers.length; i++) {
+        if (layers[i].tiled
+          && (layers[i].loadOrder > highestLoadingOrder
+          || layers[i].loadOrder === highestLoadingOrder)) {
+          index = i;
+          highestLoadingOrder = index;
+        }
+      }
+      return index;
+    };
+
+    var startOverWhenDone = function (promises, map, layers, i) {
+      $q.all(promises).then(function () {
+        addLayersRecursively(map, layers, i);
+      });
+    };
+
     var addLoadListenersToLayer = function (map, layers, i) {
       var layer = layers[i];
-      console.log('adding load listeners to: ', layer.slug);
       var j = i + 1;
 
-      var removeAllButI = function () {
+      var removeAllAfterI = function () {
         for (j; j < layers.length; j++) {
-          console.log('Temporarily removing:', layers[j].slug, layers[j].loadOrder);
           layers[j].remove(map);
         }
       };
 
       var reAdd = function () {
-        console.log('Adding onwards from:', i + 1);
         addLayersRecursively(map, layers, i + 1);
       };
 
       layer._leafletLayer.off('load');
       layer._leafletLayer.off('loading');
-      layer._leafletLayer.on('loading', removeAllButI);
+      layer._leafletLayer.on('loading', removeAllAfterI);
       layer._leafletLayer.on('load', reAdd);
     };
 
