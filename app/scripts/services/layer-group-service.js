@@ -32,9 +32,15 @@
  */
 angular.module('lizard-nxt')
   .factory('LayerGroup', [
+<<<<<<< HEAD
   'NxtLayer', 'NxtTMSLayer', 'NxtWMSLayer', 'NxtVectorLayer', 'NxtUTFLayer', 'StoreLayer',
   'UtilService', '$q', 'RasterService', '$http',
   function (NxtLayer, NxtTMSLayer, NxtWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, UtilService, $q, RasterService, $http) {
+=======
+  'NxtTMSLayer', 'NxtWMSLayer', 'NxtVectorLayer', 'NxtUTFLayer', 'StoreLayer', 'NxtLayer',
+  'UtilService', '$q', 'RasterService', '$http',
+  function (NxtTMSLayer, NxtWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, NxtLayer, UtilService, $q, RasterService, $http) {
+>>>>>>> e5356931088034372b560d8d11292c7a38706f42
 
     /*
      * @constructor
@@ -100,7 +106,8 @@ angular.module('lizard-nxt')
         else if (layer.type === 'Store') {
           layers.push(new StoreLayer(layer));
         }
-        else if (!this.tiled) {
+        else if (!layer.tiled) {
+          // TODO: initialise imageoverlay
           layers.push(new NxtLayer(layer));
         }
         else {
