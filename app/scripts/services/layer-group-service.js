@@ -500,15 +500,17 @@ angular.module('lizard-nxt')
       return layers;
     };
 
-
     var addLayersRecursively = function (map, layers, i) {
-      layers[i].add(map)
-        .then(function () {
-          i++;
-          if (i < layers.length) {
-            addLayersRecursively(map, layers, i);
-          }
-        });
+      var currentLoadOrder = layers[i].loadOrder;
+      var promises;
+      while (i < layers.length
+        && layers[i].loadOrder === currentLoadOrder) {
+        promises.push(layers[i].add(map));
+        i++;
+      }
+      $q.all(promises).then(function () {
+        addLayersRecursively(map, layers, i);
+      });
     };
 
     return LayerGroup;
