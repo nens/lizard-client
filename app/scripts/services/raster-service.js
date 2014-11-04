@@ -74,8 +74,9 @@ angular.module('lizard-nxt')
           + '&SRS=EPSG%3A4326&LAYERS=' + wmsLayer.slug
           + '&BBOX=' + _buildBbox(imgBounds);
 
+
     angular.forEach(opts, function (v, k) {
-      result += '&' + k.toUpperCase() + '=' + v;
+      result += UtilService.buildString('&', k.toUpperCase(), "=", v);
     });
 
     // key TIME needs to come last, so we can subsequently append it's value
