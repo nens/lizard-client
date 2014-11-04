@@ -471,5 +471,4 @@ angular.module('lizard-nxt')
     $('.navbar-version').toggle();
   };
 
-
 }]);

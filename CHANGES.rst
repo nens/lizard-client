@@ -3,9 +3,9 @@ Changelog of lizard-nxt client
 
 Unreleased
 ----------
-
 - Fix point data for interval and ratio data.
 
+- Vector data is synced with time
 
 Release 0.2b9 (2014-10-30)
 --------------------------

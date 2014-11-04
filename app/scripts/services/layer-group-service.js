@@ -32,15 +32,9 @@
  */
 angular.module('lizard-nxt')
   .factory('LayerGroup', [
-<<<<<<< HEAD
-  'NxtLayer', 'NxtTMSLayer', 'NxtWMSLayer', 'NxtVectorLayer', 'NxtUTFLayer', 'StoreLayer',
-  'UtilService', '$q', 'RasterService', '$http',
-  function (NxtLayer, NxtTMSLayer, NxtWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, UtilService, $q, RasterService, $http) {
-=======
   'NxtTMSLayer', 'NxtWMSLayer', 'NxtVectorLayer', 'NxtUTFLayer', 'StoreLayer', 'NxtLayer',
   'UtilService', '$q', 'RasterService', '$http',
   function (NxtTMSLayer, NxtWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, NxtLayer, UtilService, $q, RasterService, $http) {
->>>>>>> e5356931088034372b560d8d11292c7a38706f42
 
     /*
      * @constructor
@@ -244,7 +238,7 @@ angular.module('lizard-nxt')
        */
       syncTime: function (mapState, timeState, oldTime) {
         if (oldTime === timeState.at
-          && !this._active) { return; }
+          || !this._active) { return; }
         for (var i in this._layers) {
           var layer = this._layers[i];
           layer.syncTime(mapState, timeState, oldTime);

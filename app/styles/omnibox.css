@@ -597,7 +597,7 @@
 }
 
 .card-content {
-  margin: 10px;
+  margin: 5%;
 }
 
 .card-title-text {
@@ -627,6 +627,7 @@ select.timeseries {
 
 .kunstwerk-title {
   line-height: 33px;
+  margin-left: 8px;
 }
 
 .kunstwerk-title-text {
@@ -646,9 +647,7 @@ select.timeseries {
 }
 
 td.lineout {
-  border-top: 1px solid #ddd;
-  width: 100%;
-  float: left;
+  color: #7f8c8d !important;
 }
 
 .attr-row:first-of-type td:nth-of-type(2) {
@@ -657,7 +656,6 @@ td.lineout {
 
 .kunstwerk-title-suffix {
   color: #7f8c8d;
-  margin-left: 10px;
 }
 
 .structure-image-wrapper {
@@ -669,4 +667,3 @@ td.lineout {
   max-height: 247px;
   margin: 5px;
 }
-
