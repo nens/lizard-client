@@ -72,7 +72,6 @@ angular.module('lizard-nxt')
      * @param {object} instance of Leaflet.Map
      */
     onRemove: function (map) {
-      this.geojsonLayer = false;
       this._reset();
       map.removeLayer(this.geojsonLayer);
 
