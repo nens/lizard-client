@@ -8,8 +8,9 @@
  * Factory in the lizard-nxt.
  */
 angular.module('lizard-nxt')
-  .factory('NxtVectorLayer', ['NxtLayer', 'LeafletVectorService', 'VectorService',
-  function (NxtLayer, LeafletVectorService, VectorService) {
+  .factory('NxtVectorLayer', ['$q', 'NxtLayer', 
+      'LeafletVectorService', 'VectorService',
+  function ($q, NxtLayer, LeafletVectorService, VectorService) {
 
       function NxtVectorLayer(layer) {
         NxtLayer.call(this, layer);
