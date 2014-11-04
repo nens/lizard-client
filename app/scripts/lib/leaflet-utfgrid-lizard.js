@@ -134,8 +134,13 @@
 
     _objectForEvent: function (e) {
 
-      var map = this._map,
-        point = map.project(e.latlng),
+      var map = this._map;
+      if (!map) {
+        // This layer has not been not added to the map yet
+        return { latlng: e.latlng, data: null };
+      }
+
+      var point = map.project(e.latlng),
         tileSize = this.options.tileSize,
         resolution = this.options.resolution,
         x = Math.floor(point.x / tileSize),
