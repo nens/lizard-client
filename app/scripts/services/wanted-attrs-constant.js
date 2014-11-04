@@ -401,7 +401,7 @@ angular.module('lizard-nxt')
         defaultValue: "0-986"
       },
       {
-        keyName: "invert_level_start_point",
+        keyName: "BOB Beginpunt",
         attrName: "invert_level_start_point",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.invert_level_start_point | niceNumberOrEllipsis: 2",
@@ -409,7 +409,7 @@ angular.module('lizard-nxt')
         defaultValue: "-3.1"
       },
       {
-        keyName: "invert_level_end_point",
+        keyName: "BOB eindpunt",
         attrName: "invert_level_end_point",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.invert_level_end_point | niceNumberOrEllipsis: 2",
