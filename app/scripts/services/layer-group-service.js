@@ -485,6 +485,14 @@ angular.module('lizard-nxt')
       }
     };
 
+    /**
+     * @function
+     * @memberof app.LayerGroup
+     * @param  {array} Array of nxt layers
+     * @return {array} Array of object sorted by property loadOrder in
+     *                 descending order.
+     * @description Sorts layers by descending loadOrder
+     */
     var sortLayers = function (layers) {
       layers.sort(function (a, b) {
         if (a.loadOrder > b.loadOrder) {
@@ -500,15 +508,28 @@ angular.module('lizard-nxt')
       return layers;
     };
 
+    /**
+     * @function
+     * @memberof app.LayerGroup
+     * @param  {object} map Leaflet map to add layers to
+     * @param  {array} Array of nxt layers
+     * @param  {int} i index to start from
+     * @description Adds the layers with the loadorder of layers[i]. Catches
+     *              the returned promises and calls itself with the nxt index.
+     *              When all layers are loaded it adds a listener to the last
+     *              layer with the highest loadOrder.
+     */
     var addLayersRecursively = function (map, layers, i) {
       var currentLoadOrder = layers[i].loadOrder;
+      // Wrap contains the promises and the nxt index.
       var wrap = loadLayersByLoadOrder(map, layers, i, currentLoadOrder);
       // If there is more, wait for these layers to resolve
       // and start over with the remaining layers.
       if (wrap.i < layers.length) {
         startOverWhenDone(wrap.promises, map, layers, wrap.i);
       }
-      // When done, add listener to the first layer that is drawn on the map.
+      // When done, add listener to the last layer with the max loadOrder
+      // that is drawn on the map.
       else if (layers.length > 1) {
         var index = getIndexOfLeadingLayer(layers);
         if (typeof(index) === 'number') {
@@ -517,6 +538,21 @@ angular.module('lizard-nxt')
       }
     };
 
+
+    /**
+     * @function
+     * @memberof app.LayerGroup
+     * @param  {object} map Leaflet map to add layers to.
+     * @param  {array} layers Array of nxt layers.
+     * @param  {int} i index to start from.
+     * @param  {inte} loadOrder Current load order to add layers.
+     * @return {object} next index and list of promises that resolve when layer
+     *                       is fully loaded.
+     * @description Adds the layers from index i with the given loadorder to the
+     *              map. Returns the current index and a list of promises for
+     *              all the added layers when a layer with a lower loadorder is
+     *              found.
+     */
     var loadLayersByLoadOrder = function (map, layers, i, loadOrder) {
       // Add all layers with the current load order
       var promises = [];
@@ -531,6 +567,14 @@ angular.module('lizard-nxt')
       };
     };
 
+    /**
+     * @function
+     * @memberof app.LayerGroup
+     * @param  {array} layers Array of nxt layers.
+     * @return {int} Index of the last layer with the highest loadOrder.
+     * @description Loops through the sorted layers and returns the index of the
+     *              last layer in the array with the highest loadOrder.
+     */
     var getIndexOfLeadingLayer = function (layers) {
       var index;
       var highestLoadingOrder = 0;
@@ -545,12 +589,33 @@ angular.module('lizard-nxt')
       return index;
     };
 
+    /**
+     * @function
+     * @memberof app.LayerGroup
+     * @param  {array} Array of promises.
+     * @param  {object} map Leaflet map to add layers to.
+     * @param  {array} layers Array of nxt layers.
+     * @param  {int} i index to start from.
+     * @description Takes a list of promises and calls addLayersRecursively when
+     *              all promises have resolved.
+     */
     var startOverWhenDone = function (promises, map, layers, i) {
       $q.all(promises).then(function () {
         addLayersRecursively(map, layers, i);
       });
     };
 
+    /**
+     * @function
+     * @memberof app.LayerGroup
+     * @param  {object} map Leaflet map to add layers to.
+     * @param  {array} layers Array of nxt layers.
+     * @param  {int} i index to start from.
+     * @description Adds listeners that call when load starts and finished to
+     *              the layer at index i of layers. Callbacks remove layers of
+     *              the map after index i when load starts and adds layers after
+     *              index i recursively when load finishes.
+     */
     var addLoadListenersToLayer = function (map, layers, i) {
       var layer = layers[i];
       var j = i + 1;
@@ -570,7 +635,6 @@ angular.module('lizard-nxt')
       layer._leafletLayer.on('loading', removeAllAfterI);
       layer._leafletLayer.on('load', reAdd);
     };
-
 
     return LayerGroup;
   }

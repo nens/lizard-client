@@ -36,7 +36,6 @@ angular.module('lizard-nxt')
     // To speed-up initial load of the app layerchooser layers are toggled
     // after 3000 ms.
     setTimeout(function () {
-      console.log('turn layer chooser on');
       chooser.toggleLayerGroup(
         chooser.layerGroups[Object.keys(chooser.layerGroups)[0]]
       );
