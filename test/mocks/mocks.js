@@ -200,3 +200,89 @@ var rasterMock = [
   ]
 ];
 
+angular.module('lizard-nxt')
+  .constant('geoJsonMock', {
+  type: "FeatureCollection",
+    features: [
+    {
+      geometry: {
+        type: "Point",
+        coordinates: [
+          4.954955496434113,
+        52.50137913061751
+          ]
+      },
+      type: "Feature",
+      properties: {
+        category: "STANKOVERLAST",
+        object_id: null,
+        timestamp_start: 1389902400000,
+        value: "Rioolverstopping",
+        object_type_id: null,
+        event_series_id: 4,
+        timestamp_end: 1389909600000,
+        id: 3504
+      }
+    },
+    {
+      geometry: {
+        type: "Point",
+        coordinates: [
+          4.954955496434113,
+        52.50137913061751
+          ]
+      },
+      type: "Feature",
+      properties: {
+        category: "STANKOVERLAST",
+        object_id: null,
+        timestamp_start: 1389798000000,
+        value: "Rioolverstopping",
+        object_type_id: null,
+        event_series_id: 4,
+        timestamp_end: 1389823200000,
+        id: 3503
+      }
+    },
+    {
+      geometry: {
+        type: "Point",
+        coordinates: [
+          4.944908089363328,
+        52.494730987484054
+          ]
+      },
+      type: "Feature",
+      properties: {
+        category: "STANKOVERLAST",
+        object_id: null,
+        timestamp_start: 1389729600000,
+        value: "Rioolverstopping",
+        object_type_id: null,
+        event_series_id: 4,
+        timestamp_end: 1389736800000,
+        id: 3502
+      }
+    },
+    {
+      geometry: {
+        type: "Point",
+        coordinates: [
+          4.944908089363328,
+        52.494730987484054
+          ]
+      },
+      type: "Feature",
+      properties: {
+        category: "STANKOVERLAST",
+        object_id: null,
+        timestamp_start: 1389650100000,
+        value: "Rioolverstopping",
+        object_type_id: null,
+        event_series_id: 4,
+        timestamp_end: 1389650400000,
+        id: 3501
+      }
+    }
+  ]
+});

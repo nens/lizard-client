@@ -146,8 +146,8 @@ angular.module('lizard-nxt')
         * @param oldTime previous time in ms from epoch.
         */
         syncTime: function (mapState, timeState, oldTime) {
-          return;
-        },
+         return;
+       },
 
        /**
         * @function

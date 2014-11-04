@@ -235,7 +235,7 @@ angular.module('lizard-nxt')
        */
       syncTime: function (mapState, timeState, oldTime) {
         if (oldTime === timeState.at
-          && !this._active) { return; }
+          || !this._active) { return; }
         for (var i in this._layers) {
           var layer = this._layers[i];
           layer.syncTime(mapState, timeState, oldTime);
