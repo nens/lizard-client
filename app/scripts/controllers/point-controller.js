@@ -178,5 +178,33 @@ angular.module('lizard-nxt')
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer($scope.mapState);
     });
+
+
+    $scope.getIconClass = function (str) {
+
+      console.log('[F] $scope.sayHello(str) WHERE str =', str);
+
+      switch (str) {
+
+      case 'overflow':
+        return 'icon-overflow';
+
+      case 'pumpstation_sewerage':
+        return 'icon-pumpstation-diesel';
+
+      case 'bridge':
+        return 'icon-bridge';
+
+      case 'bridge-draw':
+        return 'icon-bridge';
+
+      case 'bridge-fixed':
+        return 'icon-bridge';
+
+      default:
+        return 'icon-' + str;
+
+      }
+    };
   }
 ]);
