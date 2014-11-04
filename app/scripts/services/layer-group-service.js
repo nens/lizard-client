@@ -126,7 +126,7 @@ angular.module('lizard-nxt')
       */
       toggle: function (map) {
         if (!this._initiated) {
-          this._initializeLayers(this._layers, this.temporal);
+          this._initializeLayers(this._layers);
           this._initiated = true;
         }
 
@@ -464,14 +464,14 @@ angular.module('lizard-nxt')
        * @description delegates initialization of leaflet layers to other
        *              functions.
        */
-      _initializeLayers: function () {
-        angular.forEach(this._layers, function (layer) {
+      _initializeLayers: function (layers) {
+        angular.forEach(layers, function (layer) {
           layer.initializeLayer();
         });
       },
 
       _toggleLayers: function (map, layers, active) {
-        if (active) {
+        if (active && layers.length > 0) {
           addLayersRecursively(map, layers, 0);
         }
         else {
@@ -502,16 +502,56 @@ angular.module('lizard-nxt')
 
     var addLayersRecursively = function (map, layers, i) {
       var currentLoadOrder = layers[i].loadOrder;
-      var promises;
+      var promises = [];
+      // Add all layers with the current load order
       while (i < layers.length
         && layers[i].loadOrder === currentLoadOrder) {
+        console.log('adding:', layers[i].slug, layers[i].loadOrder);
         promises.push(layers[i].add(map));
         i++;
       }
-      $q.all(promises).then(function () {
-        addLayersRecursively(map, layers, i);
-      });
+      // If there is more, wait for these layers to resolve
+      // and start over with the remaining layers.
+      if (i < layers.length) {
+        $q.all(promises).then(function () {
+          addLayersRecursively(map, layers, i);
+        });
+      }
+      // Add listener to the first layer that is drawn on the map.
+      else if (layers.length > 1) {
+        for (var j = 0; j < layers.length; j++) {
+          if (layers[j].tiled) {
+            console.log('Leading layer:', layers[j].slug);
+            addLoadListenersToLayer(map, layers, j);
+            break;
+          }
+        }
+      }
     };
+
+    var addLoadListenersToLayer = function (map, layers, i) {
+      var layer = layers[i];
+      console.log('adding load listeners to: ', layer.slug);
+      var j = i + 1;
+
+      var removeAllButI = function () {
+        for (j; j < layers.length; j++) {
+          console.log('Temporarily removing:', layers[j].slug, layers[j].loadOrder);
+          layers[j].remove(map);
+        }
+      };
+
+      var reAdd = function () {
+        console.log('Adding onwards from:', i + 1);
+        addLayersRecursively(map, layers, i + 1);
+      };
+
+      layer._leafletLayer.off('load');
+      layer._leafletLayer.off('loading');
+      layer._leafletLayer.on('loading', removeAllButI);
+      layer._leafletLayer.on('load', reAdd);
+    };
+
 
     return LayerGroup;
   }
