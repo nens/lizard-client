@@ -3,6 +3,9 @@ Changelog of lizard-nxt client
 
 Unreleased
 ----------
+
+- Respect load leaflet layers according to their loadorder.
+
 - Fix point data for interval and ratio data.
 
 - Vector data is synced with time
