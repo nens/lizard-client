@@ -564,7 +564,6 @@ angular.module('lizard-nxt')
    */
   var drawLineElements = function (
     svg, dimensions, xScale, yScale, data, order, slug) {
-    console.log("nEvents", order, data, slug);
 
     var xOneFunction = function (d) {
       return xScale(d.properties.timestamp_end);

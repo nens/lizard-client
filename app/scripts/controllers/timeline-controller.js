@@ -131,7 +131,6 @@ angular.module('lizard-nxt')
    * @param {string} action - 'in' or 'out'.
    */
   $scope.timeState.zoom = function (action) {
-    console.log("zoom time ", action, $scope.timeState.resolution);
     var ZOOMFACTOR = 2;
     var newResolution;
 

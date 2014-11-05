@@ -118,7 +118,6 @@ angular.module('lizard-nxt')
      */
     var updateTimelineHeight = function (newDim, dim, nEventTypes) {
       var eventHeight;
-      console.log("update tl", nEventTypes);
       if (scope.mapState.getActiveTemporalLayerGroup()) {
         eventHeight = nEventTypes * dim.events;
         eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
@@ -181,7 +180,6 @@ angular.module('lizard-nxt')
           context = {eventOrder: 1,
                      nEvents: scope.events.nEvents};
 
-      console.log(scope.events.slugs, timelineLayers.events.slugs);
       // vector data (for now only events)
       if (timelineLayers.events.layers.length > 0) {
         scope.events.nEvents = timelineLayers.events.layers.length;
