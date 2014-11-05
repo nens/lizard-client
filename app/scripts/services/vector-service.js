@@ -148,11 +148,11 @@ angular.module('lizard-nxt')
 
       if (!layer) {
         deferred.reject();
+        return deferred.promise;
       }
 
-      if (layer.isLoading) {
+      if (layer.isLoading || !vectorLayers[nonLeafLayer.slug]) {
         getDataAsync(nonLeafLayer, options, deferred);
-
       } else if (vectorLayers[nonLeafLayer.slug]) {
         var set = filterSet(vectorLayers[nonLeafLayer.slug].data,
         options.geom, {
@@ -203,12 +203,16 @@ angular.module('lizard-nxt')
      * part of PostGis.js (ಠ_ಠ)
      */
     var getUnion = function (arr1, arr2, uniqueKey) {
-      var union = arr1.concat(arr2);
+      var union = arr1;
+      var ids = [];
 
-      for (var i = 0; i < union.length; i++) {
-        for (var j = i+1; j < union.length; j++) {
-          if (union[i].properties[uniqueKey] === union[j].properties[uniqueKey])
-            union.splice(i, 1);
+      for (var j = 0; j < union.length; j++) {
+          ids.push(union[j].properties[uniqueKey]);
+      }
+
+      for (var i = 0; i < arr2.length; i++) {
+        if (ids.indexOf(arr2[i].properties[uniqueKey]) < 0) {
+          union.push(arr2[i]);
         }
       }
       return union;

@@ -8,8 +8,8 @@
  * Factory in the lizard-nxt.
  */
 angular.module('lizard-nxt')
-  .factory('NxtWMSLayer', ['NxtLayer', 'LeafletService', '$http',
-  function (NxtLayer, LeafletService, $http) {
+  .factory('NxtWMSLayer', ['NxtLayer', 'LeafletService', '$http', '$q',
+  function (NxtLayer, LeafletService, $http, $q) {
 
       function NxtWMSLayer(layer) {
         NxtLayer.call(this, layer);
@@ -32,9 +32,17 @@ angular.module('lizard-nxt')
 
         add: {
           value: function (map) {
+            var defer = $q.defer();
             if (this._leafletLayer) {
               addLeafletLayer(map, this._leafletLayer);
+              this._leafletLayer.on('load', function () {
+                defer.resolve();
+              });
             }
+            else {
+              defer.resolve();
+            }
+            return defer.promise;
           }
         },
 
@@ -132,12 +140,9 @@ angular.module('lizard-nxt')
           zIndex: nonLeafLayer.zIndex
         };
         _options = angular.extend(_options, nonLeafLayer.options);
-        console.log('initializeWMSLayer');
 
         return LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
       };
-
       return NxtWMSLayer;
-
     }
   ]);

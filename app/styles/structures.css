@@ -32,6 +32,8 @@
 
 /* Icons */
 
+/* IS THIS STILL USED?
+
 .icon-bridge-draw:before {
 	content:"\e001";
 }
@@ -99,6 +101,8 @@
 .icon-weir:before {
 	content:"\e011";
 }
+
+*/
 
 .fullwidth-key {
 	width: 170px;

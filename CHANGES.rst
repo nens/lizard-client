@@ -6,8 +6,11 @@ Unreleased
 
 - Refactored timeline.
 
+- Respect load leaflet layers according to their loadorder.
+
 - Fix point data for interval and ratio data.
 
+- Vector data is synced with time
 
 Release 0.2b9 (2014-10-30)
 --------------------------

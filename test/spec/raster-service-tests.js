@@ -17,11 +17,6 @@ describe('Testing raster service', function () {
     RasterService = $injector.get('RasterService');
   }));
 
-  it('should get Raster information', function () {
-    var timeRes = RasterService.getTimeResolution(mapState.getActiveTemporalLayerGroup());
-    expect(timeRes).toBe(300000);
-  });
-
   it('should return a CabinetService get promise', function () {
     var geom = new L.LatLng(52.50995268098114, 4.961357116699219);
     var result = RasterService.getData({'layer': 'layer'}, {'geom': geom});

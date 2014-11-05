@@ -66,8 +66,9 @@ angular.module('lizard-nxt')
       + '&SRS=EPSG%3A4326&LAYERS=' + wmsLayer.slug
       + '&BBOX=' + _buildBbox(imgBounds);
 
+
     angular.forEach(opts, function (v, k) {
-      result += '&' + k.toUpperCase() + '=' + v;
+      result += UtilService.buildString('&', k.toUpperCase(), "=", v);
     });
 
     // key TIME needs to come last, so we can subsequently append it's value
@@ -109,27 +110,6 @@ angular.module('lizard-nxt')
     return formatted;
   };
 
-  var getTimeResolution = function (layerGroup) {
-
-    switch (layerGroup.slug) {
-
-    case 'rain':
-      return 300000;
-
-    case 'bath:westerschelde':
-      return 15768000000;
-
-    case 'westerschelde:diff':
-      return 15768000000;
-
-    default:
-      throw new Error(
-        layerGroup.slug +
-          'is not supported by RasterService.getTimeResolution()'
-      );
-    }
-  };
-
   var getMinTimeBetweenFrames = function (layerGroup) {
 
     if (layerGroup.slug === 'rain') {
@@ -141,7 +121,6 @@ angular.module('lizard-nxt')
   };
 
   return {
-    getTimeResolution: getTimeResolution,
     getMinTimeBetweenFrames: getMinTimeBetweenFrames,
     buildURLforWMS: buildURLforWMS,
     // rasterInfo: rasterInfo,
