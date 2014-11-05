@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- Event categories/series can be differentiated by color and icon.
+
 - Respect load leaflet layers according to their loadorder.
 
 - Fix point data for interval and ratio data.
