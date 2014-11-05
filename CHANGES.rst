@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- Refactored timeline.
+
 - Fix point data for interval and ratio data.
 
 

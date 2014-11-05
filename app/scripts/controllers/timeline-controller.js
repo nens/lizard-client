@@ -22,10 +22,11 @@ angular.module('lizard-nxt')
   /**
    * @function
    * @memberOf angular.module('lizard-nxt').TimeLineCtrl
-   *
    * @summary Toggle animation state.
-   *
    * @desc Set $scope.timeState.animation.enabled to true or false.
+   *
+   * @param {} toggle - .
+   *
    */
   $scope.timeState.enableAnimation = function (toggle) {
     $scope.timeState.animation.enabled =
@@ -33,9 +34,11 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Toggle animation playing.
+   * @function
+   * @summary Toggle animation playing.
+   * @description Set $scope.timeState.animation.playing to true or false.
    *
-   * Set $scope.timeState.animation.playing to true or false.
+   * @param {} toggle - .
    */
   $scope.timeState.playPauseAnimation = function (toggle) {
 
@@ -53,10 +56,11 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Push animation 1 step forward.
-   *
-   * Set new timeState.at based on stepSize. If current timeSate.at is outside
-   * current temporal extent, start animation at start of temporal extent.
+   * @function
+   * @summary Push animation 1 step forward.
+   * @description Set new timeState.at based on stepSize. If current
+   * timeSate.at is outside current temporal extent, start animation at start
+   * of temporal extent.
    */
   var step =  function () {
 
@@ -85,12 +89,11 @@ angular.module('lizard-nxt')
       $scope.timeState.at += timeStep;
     });
 
+    // reset timeState.at if out of temporal bounds
     if ($scope.timeState.at >= $scope.timeState.end ||
         $scope.timeState.at < $scope.timeState.start) {
       $scope.$apply(function () {
-        $scope.timeState.at = $scope.timeState.at -
-                                         $scope.timeState.animation.start +
-                                         $scope.timeState.start;
+        $scope.timeState.at = $scope.timeState.start;
         $scope.timeState.animation.start = $scope.timeState.start;
       });
     }
@@ -103,7 +106,8 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Move timeState.end to now.
+   * @function
+   * @summary Move timeState.end to now.
    */
   $scope.timeState.zoomToNow = function () {
     var now = Date.now();
@@ -124,7 +128,7 @@ angular.module('lizard-nxt')
    * ZOOMFACTOR depending on zooming in or out. Updates start and end
    * of timeState accordingly and sets new resolution on timeState.
    *
-   * @param {string} action - 'in' or 'out'
+   * @param {string} action - 'in' or 'out'.
    */
   $scope.timeState.zoom = function (action) {
     console.log("zoom time ", action, $scope.timeState.resolution);

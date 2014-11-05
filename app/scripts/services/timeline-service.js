@@ -4,33 +4,23 @@
   .TimeLineService
  * @memberOf app
  *
- * @summary Service to create and update a timeline. Used by the
- * timeline-directive.
+ * @summary Service to create and update a timeline. Used by timeline-directive.
  *
  * @description Inject "Timeline" and call new timeline(<args>) to create a
- * timeline. Currently the timeline supports circles (events), vertical bars
- * (rain intensity) and a brush (selection tool). The user may interact with
- * the app through click, zoom and brush functions. Brush and zoom is mutually
- * exclusive. When you add brush functionality, zoom functionality has to be
- * removed manually by calling removeZoomListener() and vice versa. Zooming is
- * prefered above clicking: when a user zooms through dragging, no click is
- * fired.
+ * timeline. Currently the timeline supports lines (events) and vertical bars
+ * (rain intensity). The user may interact with the timeline through click and
+ * zoom functions. 
  *
  * Everything in the timeline is animated for NxtD3.transTime milliseconds. To
  * add new elements to the timeline, make sure the elements are updated on zoom,
- * brush and resize. The timeline resizes before elements are added and after
+ * and resize. The timeline resizes before elements are added and after
  * elements are removed. Therefore new and old dimensions need to be compared
  * to delay the resize of elements the same amount as the canvas.
- *
- * NB! Events used to be drawn as SVG circle elements, but are now drawn as
- * lines. This makes sense since events now have both a start- and end-time.
- * All methods related to "circles" are not used anymore, and are only
- * there in case we'll ever need to draw circles again.
  */
 angular.module('lizard-nxt')
   .factory("Timeline", ["NxtD3", function (NxtD3) {
 
-  // The timeline
+  // Timeline
   var initialHeight,
 
   // D3 components
@@ -54,22 +44,23 @@ angular.module('lizard-nxt')
   /**
    * @constructor
    * @memberOf angular.module('lizard-nxt')
-  .TimeLineService
+   * TimeLineService
    *
-   * @param {object} element svg element for the timeline.
-   * @param {object} dimensions object containing, width, height, height per
+   * @param {object} element - svg element for the timeline.
+   * @param {object} dimensions - object containing, width, height, height per
    *  line of events, height per line of bars and an object containing top,
    *  bottom, left and right padding. All values in px.
-   * @param {integer} start begin value in milliseconds from epoch.
-   * @param {integer} end end value in milliseconds from epoch.
-   * @param {object} interaction  optional object containing callback functions
-   *  for zoom, click and brush interaction with the rest of the
+   * @param {integer} start - begin value in milliseconds from epoch.
+   * @param {integer} end - end value in milliseconds from epoch.
+   * @param {object} interaction  - optional object containing callback
+   * functions for zoom, click and brush interaction with the rest of the
    *  angular.module('lizard-nxt')
-  .
+   * @param {integer} nEvents - number of event types (event series).
    */
   function Timeline(element, dimensions, start, end, interaction, nEvents) {
     NxtD3.call(this, element, dimensions);
     initialHeight = dimensions.height;
+    this.nEvents = nEvents;
     this._svg = addElementGroupsToCanvas(this._svg, this.dimensions);
     var width = dimensions.width -
                 dimensions.padding.left -
@@ -82,7 +73,7 @@ angular.module('lizard-nxt')
     if (interaction) {
       if (interaction.zoomFn) {
         zoomed = setZoomFunction(this._svg, this.dimensions, xScale, xAxis,
-          interaction.zoomFn, nEvents);
+          interaction.zoomFn);
       }
       if (interaction.clickFn) {
         clicked = setClickFunction(xScale, this.dimensions,
@@ -133,7 +124,10 @@ angular.module('lizard-nxt')
 
 
     /**
-     * Draws an aggWindow at timestamp
+     * @function
+     * @summary Draws an aggWindow at timestamp.
+     * @description Left of aggWindow is timeState.at, size is dependent on 
+     * current aggWindow interval on timeState.
      */
     drawAggWindow: {
       value: function (timestamp, interval) {
@@ -154,6 +148,7 @@ angular.module('lizard-nxt')
         }
 
         var offset = this.dimensions.padding.left;
+        
         // UPDATE
         aggWindow
           .attr("x", function () {
@@ -167,19 +162,21 @@ angular.module('lizard-nxt')
     },
 
     /**
-     * Resizes the timeline.
-     *
-     * Makes a deep copy of the old dimensions,
-     * updates canvas,
-     * updates all elements,
-     * redraws the axis.
+     * @function
+     * @summary Resizes the timeline.
+     * @description Makes a deep copy of the old dimensions, updates canvas,
+     * updates all elements, redraws axis.
      *
      * @param {object} dimensions object containing, width, height, height per
      *  line of events, height per line of bars and an object containing top,
      *  bottom, left and right padding. All values in px.
+     * @param {int} timestamp - timestamp in milliseconds since epoch.
+     * @param {interval} interval - aggregation interval in ms.
+     * @param {object} features - geojson object with event features.
+     * @param {int} nEvents - number of event types (event series).
      */
     resize: {
-      value: function (newDimensions, timestamp, interval, features, nEvents) {
+      value: function (newDimensions, timestamp, interval, nEvents) {
 
         var oldDimensions = angular.copy(this.dimensions);
         this.dimensions = newDimensions;
@@ -194,24 +191,22 @@ angular.module('lizard-nxt')
 
         drawTimelineAxes(this._svg, xAxis, newDimensions);
         this.updateElements(
-          oldDimensions, timestamp, interval, features, nEvents);
+          oldDimensions, timestamp, interval);
       }
     },
 
     /**
-     * Update all elements to accomadate new dimensions.
+     * @function
+     * @summary Update all elements to accomadate new dimensions.
      *
-     * @param  {object} oldDimensions copy of the old dimensions
+     * @param {object} oldDimensions - copy of the old dimensions
+     * @param {int} timestamp - timestamp in milliseconds since epoch.
+     * @param {interval} interval - aggregation interval in ms.
      */
     updateElements: {
 
-      value: function (oldDimensions, timestamp, interval, data, nEvents) {
-        console.log("update elements");
+      value: function (oldDimensions, timestamp, interval) {
 
-        if (lines) {
-          drawLineElements(
-            this._svg, this.dimensions, xScale, ordinalYScale, data, nEvents);
-        }
         if (bars && oldDimensions) {
           updateRectangleElements(bars, xScale, oldDimensions, this.dimensions);
         }
@@ -229,32 +224,41 @@ angular.module('lizard-nxt')
     },
 
     /**
-     * Updates, adds or removes all lines in the data object
+     * @function
+     * @summary Updates, adds or removes all lines in the data object.
      *
-     * @param {array} data array of objects [{properties.timestamp_end: timestamp,
-     *                                        properties.timestamp_start: timestamp,
-     *                                        id: <id>,
-     *                                        color: <color code>,
-     *                                        geometry.coordinates: [lat, lon],
-     *                                        event_order: <int specifying the line of events>}]
+     * @param {array} data array of objects:
+     *   [{properties.timestamp_end: timestamp,
+     *     properties.timestamp_start: timestamp,
+     *     properties.event_series_id: event_series id,
+     *     TODO: should maybe be style? check with branch Fritz styling events.
+     *     properties.color: <color code>,
+     *     geometry.coordinates: [lat, lon]}]
+     * @param {integer} order - Order of events.
      */
     drawLines: {
       value: function (data, order) {
-        lines = drawLineElements(
-          this._svg,
-          this.dimensions,
-          xScale,
-          ordinalYScale,
-          data,
-          order
-        );
+        //TODO: write wrapper around data array
+        console.log(data);
+        data = data;
+        angular.forEach(data, function (dataEntry) {
+          lines = drawLineElements(
+            this._svg,
+            this.dimensions,
+            xScale,
+            ordinalYScale,
+            dataEntry,
+            order
+          );
+        }, this);
       }
     },
 
     /**
-     * Updates, adds or removes all bars in the data object
+     * @function
+     * @summary Updates, adds or removes all bars in the data object.
      *
-     * @param {array} data array of arrays [[bar_timestamp, bar_height]]
+     * @param {array} data - array of arrays [[bar_timestamp, bar_height]]
      */
     drawBars: {
       value: function (data) {
@@ -276,6 +280,10 @@ angular.module('lizard-nxt')
       }
     },
 
+    /**
+     * @function
+     * @summary Remove bars from timeline.
+     */
     removeBars: {
       value: function () {
         drawRectElements(this._svg, this.dimensions, []);
@@ -284,17 +292,18 @@ angular.module('lizard-nxt')
     },
 
     /**
-     * Update domain of scale and call functions to update timeline to new
-     * scale.
+     * @function
+     * @summary Update domain of scale and call functions to update timeline to
+     * new scale.
      *
-     * @param  {int} start in ms since epoch
-     * @param  {int} end   in ms since epoch
+     * @param {int} start - timestamp in ms since epoch.
+     * @param {int} end - timestamp in ms since epoch.
+     * @param {int} interval - aggregation window in ms.
      */
     zoomTo: {
-      value: function (start, end, interval, nEvents) {
+      value: function (start, end, interval) {
         xScale.domain([new Date(start), new Date(end)]);
         xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-        this.updateElements(this.dimensions, start, interval, nEvents);
         drawTimelineAxes(this._svg, xAxis, this.dimensions, this.transTime);
         this.addZoomListener();
         this.drawAggWindow(start, interval);
@@ -313,6 +322,15 @@ angular.module('lizard-nxt')
   });
 
 
+  /**
+   * @function
+   * @summary Draw timeline axes.
+   *
+   * @param {object} svg - timeline svg elements.
+   * @param {object} xAxis - D3 axis object.
+   * @param {object} dimensions - dimensions object.
+   * @param {int} duration - duration in ms.
+   */
   var drawTimelineAxes = function (svg, xAxis, dimensions, duration) {
     Timeline.prototype._drawAxes(svg, xAxis, dimensions, false, duration);
     var axisEl = svg.select('#xaxis')
@@ -320,13 +338,15 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Creates groups according to dimensions to accomadete all timeline elements,
+   * @function
+   * @summary Creates groups according to dimensions to accomodate all timeline
+   * elements
    *
    * @param  {object} svg element to create timeline.
    * @param  {object} dimensions object containing, width, height, height per
    *  line of events, height per line of bars and an object containing top,
    *  bottom, left and right padding. All values in px.
-   * @return {object} svg timeline svg.
+   * @returns {object} svg timeline svg.
    */
   var addElementGroupsToCanvas = function (svg, dimensions) {
     var width = Timeline.prototype._getWidth(dimensions),
@@ -336,7 +356,7 @@ angular.module('lizard-nxt')
       .attr('height', height)
       .attr('width', width)
       .attr('id', 'rain-bar');
-    // Create group for circles
+    // Create group for lines
     svg.select('g').append('g')
       .attr('height', height)
       .attr('width', width)
@@ -347,8 +367,15 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Updates the timeline svg. With a delay when getting smaller, without when
-   * becoming larger.
+   * @function
+   * @summary Updates the timeline svg. With a delay when getting smaller,
+   * without delay when becoming larger.
+   *
+   * @param  {object} svg - element to create timeline.
+   * @param  {object} oldDims - object containing, width, height, height per
+   *  line of events, height per line of bars and an object containing top,
+   *  bottom, left and right padding. All values in px.
+   *  @param {object} newDims - new dimensions, same structure as oldDims.
    */
   var updateCanvas = function (svg, oldDims, newDims) {
     var width = Timeline.prototype._getWidth(newDims),
@@ -388,34 +415,37 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Create function that updates all elements to zoom action and calls zoomFn.
-   *
-   * Put all scope specific in the zoom callback from the directive, all the
-   * standard (re-)placement of elements in here.
+   * @function
+   * @summary Create function that updates all elements to zoom action and
+   * calls zoomFn.
+   * @description Put all scope specific in the zoom callback from the
+   * directive, all the standard (re-)placement of elements in here.
    */
   var setZoomFunction = function (
-    svg, dimensions, xScale, xAxis, zoomFn, nEvents) {
+    svg, dimensions, xScale, xAxis, zoomFn) {
     var zoomed = function () {
       drawTimelineAxes(svg, xAxis, dimensions);
 
-      if (lines) {
-        var xOneFunction = function (d) {
-            return xScale(d.properties.timestamp_end);
-          };
-        var xTwoFunction = function (d) {
-          return xScale(d.properties.timestamp_start);
-        };
-        // TODO: ordinal scale set
-        console.log("nEvents", nEvents);
-        var yFunction = function (d) { return ordinalYScale(nEvents); };
-        var dFunction = function (d) {
-          var path =
-            "M " + xOneFunction(d) + " " + yFunction(d)
-            + " L " + (xTwoFunction(d) + 0.5) + " " + yFunction(d);
-          return path;
-        };
-        lines.attr("d", dFunction);
-      }
+      // NOTE: if we leave out the zoomfunction for lines,
+      // everything works fine?
+
+      //if (lines) {
+        //var xOneFunction = function (d) {
+            //return xScale(d.properties.timestamp_end);
+          //};
+        //var xTwoFunction = function (d) {
+          //return xScale(d.properties.timestamp_start);
+        //};
+        //console.log("events on zoom", nEvents);
+        //var yFunction = function (d) { return ordinalYScale(nEvents); };
+        //var dFunction = function (d) {
+          //var path =
+            //"M " + xOneFunction(d) + " " + yFunction(d)
+            //+ " L " + (xTwoFunction(d) + 0.5) + " " + yFunction(d);
+          //return path;
+        //};
+        //lines.attr("d", dFunction);
+      //}
 
       if (bars) {
         var barData = bars.data();
@@ -439,7 +469,8 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Create zoomend
+   * @function
+   * @summary Create zoomend.
    */
   var setZoomEndFunction = function (zoomEndFn) {
     var zoomend = function () {
@@ -449,7 +480,10 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Creates click function. If default is prevented, the click was a zoom.
+   * @function
+   * @summary Creates click function.
+   * @description Creates click function. If default is prevented, the click
+   * was a zoom.
    */
   var setClickFunction = function (xScale, dimensions, clickFn) {
     var clicked = function () {
@@ -462,8 +496,10 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Moves rectangle elements to right position relative to the timeline svg
-   * and xaxis. Everything to the svg is relative to the top left corner, so if
+   * @function
+   * @summary Moves rectangle elements to right position relative to the
+   * timeline svg and xaxis.
+   * @description Everything to the svg is relative to the top left corner, if
    * the timeline grows, the bars need to move further down. The amount is
    * computed from the difference between the old and new dimensions and the
    * move is delayed depending on the growth or shrinkage of the timeline.
@@ -515,9 +551,9 @@ angular.module('lizard-nxt')
    * @function
    * @summary update now indicator element
    *
-   * @param {object} nowIndicator - d3 selection
-   * @param {object} xScale - d3 scale
-   * @param {object} dimensions - d3 dimension
+   * @param {object} nowIndicator - D3 selection.
+   * @param {object} xScale - D3 scale.
+   * @param {object} dimensions - timeline dimensions object.
    */
   var updateNowElement = function (nowIndicator, xScale, dimensions) {
     var width = Timeline.prototype._getWidth(dimensions),
@@ -532,11 +568,25 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Draws horizontal line elements according to a d3 update pattern.
+   * @function
+   * @summary Draws horizontal line elements according to a d3 update pattern.
+   *
+   * @param {object} svg - timeline svg object.
+   * @param {object} dimensions - timeline dimensions object.
+   * @param {object} xScale - D3 scale object.
+   * @param {object} yScale - D3 scale object.
+   * @param {object} data - geojson data structure:
+   *   [{properties.timestamp_end: timestamp,
+   *     properties.timestamp_start: timestamp,
+   *     properties.event_series_id: event_series id,
+   *     TODO: should maybe be style? check with branch Fritz styling events.
+   *     properties.color: <color code>,
+   *     geometry.coordinates: [lat, lon]}]
+   * @param {int} order - Order of data (which level to draw in timeline).
    */
   var drawLineElements = function (
     svg, dimensions, xScale, yScale, data, order) {
-    console.log("order", order);
+    console.log("nEvents", order, data);
 
     var xOneFunction = function (d) {
       return xScale(d.properties.timestamp_end);
@@ -544,7 +594,6 @@ angular.module('lizard-nxt')
     var xTwoFunction = function (d) {
       return xScale(d.properties.timestamp_start);
     };
-    // TODO: get yScale from order
     var yFunction = function (d) { return yScale(order); };
     // TODO: get color from backend
     var colorFunction = function (d) { return "#F00"; };
@@ -563,11 +612,11 @@ angular.module('lizard-nxt')
         + " L " + (xOneFunction(d) + 0.5) + " " + yFunction(d);
       return path;
     };
+    var splitTranstime = Timeline.prototype.transTime / 2;
 
-    if (data[0]) {
-      // DATA JOIN
-      // Join new data with old elements, based on the id value.
-      console.log(data);
+    // if data exists, check if group is available for this series and create
+    // if no data, remove lines
+    if (data !== undefined && data[0]) {
       var group = svg
                     .select("g")
                     .select("#circle-group")
@@ -577,11 +626,15 @@ angular.module('lizard-nxt')
           .attr("id", "g" + data[0].properties.event_series_id);
       }
 
+      // DATA JOIN
+      // Join new data with old elements, based on the id value.
       lines = group.selectAll("path")
         .data(data, function  (d) { return d.properties.id; });
+    } else if (data === undefined) {
+      // if no data is defined, remove all groups
+      var groups = svg.select("g").select("#circle-group").selectAll("g");
+      groups.remove();
     }
-
-    var splitTranstime = Timeline.prototype.transTime / 2;
 
     // UPDATE
     // Update old elements as needed.
@@ -629,7 +682,8 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Draws bar elements according to a d3 update pattern.
+   * @function
+   * @summary Draws bar elements according to a d3 update pattern.
    */
   var drawRectElements = function (svg, dimensions, data, xScale, yScale) {
     var height = Timeline.prototype._getHeight(dimensions),
@@ -682,8 +736,11 @@ angular.module('lizard-nxt')
     return bars;
   };
 
+
   /**
-   * Returns a d3 scale to place events vertically in lines above each other.
+   * @function
+   * @summary Returns a d3 scale to place events vertically in lines above each
+   * other.
    *
    * @param  {int} iniH initial height of the timeline in px.
    * @param  {object} dims current dimensions of the timeline.

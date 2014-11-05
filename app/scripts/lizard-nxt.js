@@ -261,6 +261,7 @@ angular.module('lizard-nxt')
   };
   // initialise 'now'
   $scope.timeState.at = $scope.timeState.start;
+  $scope.timeState.animation.start = $scope.timeState.start;
   // get time resolution in ms per pixel
   $scope.timeState.resolution = ($scope.timeState.end - $scope.timeState.start)
                                  / window.innerWidth;

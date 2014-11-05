@@ -1,8 +1,7 @@
 'use strict';
 
-// Timeline for lizard.
 /**
-  .TimeLineDirective
+ * TimeLineDirective
  * @memberOf app
  *
  * @summary Timeline directive.
@@ -36,19 +35,18 @@ angular.module('lizard-nxt')
     },
     start = scope.timeState.start,
     end = scope.timeState.end,
-    nEvents = 0,
 
     el = element[0].getElementsByTagName('svg')[0],
 
     interaction = {
 
       /**
-       * Update timeState on zoom
+       * @function
+       * @summary Update timeState on zoom.
        *
-       * Recieves the xScale as the first argument
+       * @param {object}  scale D3 xScale.
        */
       zoomFn: function (scale) {
-        console.log("zooming time", scope.timeState.at);
         scope.$apply(function () {
           scope.timeState.start = scale.domain()[0].getTime();
           scope.timeState.end = scale.domain()[1].getTime();
@@ -61,28 +59,29 @@ angular.module('lizard-nxt')
       },
 
       /**
-       * Update zoomEnded to trigger new call for raster aggregate.
+       * @function
+       * @summary Update zoomEnded to trigger new call for new timeline data.
        */
       zoomEndFn: function () {
         scope.$apply(function () {
-          console.log("zoomend", scope.timeState.at);
           scope.timeState.resolution = (
             scope.timeState.end - scope.timeState.start) /  window.innerWidth;
           // snap timeState.at to nearest interval
-          console.log(scope.timeState.at);
           scope.timeState.at = UtilService.roundTimestamp(
             scope.timeState.at, scope.timeState.aggWindow, false);
-          console.log(scope.timeState.at);
           getTimeLineData();
         });
       },
+
       /**
-       * Move timeState.at to click location in timebar.
+       * @function
+       * @summary Move timeState.at to click location in timebar.
+       * @description Update timeState.at to click location in timebar. Snaps
+       * time to closest interval.
        *
-       * Recieves d3.event, scale and timeline dimensions
-       * @param {object} event - d3 event
-       * @param {object} scale - d3 scale
-       * @param {object} dimensions - object with timeline dimensions
+       * @param {object} event - D3 event.
+       * @param {object} scale - D3 scale.
+       * @param {object} dimensions - object with timeline dimensions.
        */
       clickFn: function (event, scale, dimensions) {
         var timeClicked = +(scale.invert(event.x - dimensions.padding.left));
@@ -92,12 +91,15 @@ angular.module('lizard-nxt')
       },
     };
 
+    // keep track of events in this scope
+    scope.events = {events: 0, data: []};
+
     // Move timeline element into sight
     d3.select(element[0]).transition().duration(300).style('bottom', 0);
 
     // Initialise timeline
     var timeline = new Timeline(
-      el, dimensions, start, end, interaction, nEvents);
+      el, dimensions, start, end, interaction, scope.events.nEvents);
 
     // Activate zoom and click listener
     timeline.addZoomListener();
@@ -109,10 +111,14 @@ angular.module('lizard-nxt')
     /**
      * @function
      * @description Redetermines dimensions of timeline and calls resize.
+     *
+     * @param {object} newDim - object with new timeline dimensions.
+     * @param {object} dim - object with old timeline dimensions.
+     * @param {int} nEventTypes - number of event types (event series).
      */
-    var updateTimelineHeight = function (newDim, dim, nEventTypes, features) {
+    var updateTimelineHeight = function (newDim, dim, nEventTypes) {
       var eventHeight;
-      console.log("update timeline height");
+      console.log("update tl", nEventTypes);
       if (scope.mapState.getActiveTemporalLayerGroup()) {
         eventHeight = nEventTypes * dim.events;
         eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
@@ -125,7 +131,6 @@ angular.module('lizard-nxt')
       timeline.resize(newDim,
                       scope.timeState.at,
                       scope.timeState.aggWindow,
-                      features,
                       nEventTypes);
     };
 
@@ -137,10 +142,10 @@ angular.module('lizard-nxt')
      * the vector and rain intensity layer. Those layers are used to draw data 
      * in the timeline.
      *
-     * NOTE: now we loop over layerGroups; later we refactor so data is set on
-     * the parent / master scope and this directive watches that data.
+     * TODO: refactor to query layerGroups by data type (event, raster, object)
      *
-     * @returns {object} events (list of layers) and rain layer (nxtLayer)
+     * @param {object} layerGroups - NXT layerGroups object.
+     * @returns {object} with: events (list of layers) and rain (nxtLayer).
      */
     var getTimelineLayers = function (layerGroups) {
       var timelineLayers = {events: [], rain: undefined};
@@ -161,40 +166,45 @@ angular.module('lizard-nxt')
 
     /**
      * @function
+     * @summary Get data for events and rain.
      * @description Get data for events and rain. If data exists (relevant
      * layers are active), data is drawn in timeline. Timelineheight is updated
-     * accordingly.NOTE: Now data is fetched via layerGroup loop logic
-     * (getTimelineLayers). That will change later when we set data.
+     * accordingly.
      *
+     * TODO: Now data is fetched via layerGroup loop logic (getTimelineLayers).
+     * That will change later when we set data.
      */
     var getTimeLineData = function () {
-      var timelineLayers = getTimelineLayers(scope.mapState.layerGroups);
+      var timelineLayers = getTimelineLayers(scope.mapState.layerGroups),
+          context = {nEvents: scope.events.nEvents};
 
       // vector data (for now only events)
       if (timelineLayers.events.length > 0) {
-        var eventOrder = {eventOrder: 1,
-                          nEvents: timelineLayers.events.length};
+        scope.events.nEvents = timelineLayers.events.length;
+        context = {eventOrder: 1, nEvents: scope.events.nEvents};
         angular.forEach(timelineLayers.events, getEventData,
-                        eventOrder);
+                        context);
       }
 
       // raster data (for now only rain)
       if (timelineLayers.rain !== undefined) {
-        console.log("getting rain data");
         updateTimelineHeight(angular.copy(timeline.dimensions),
-          dimensions, 0);
+          dimensions, scope.events.nEvents);
         getTemporalRasterData(timelineLayers.rain,
                               timelineLayers.events.length);
       } else {
         timeline.removeBars();
         updateTimelineHeight(angular.copy(timeline.dimensions),
-          dimensions, timelineLayers.events.length);
+          dimensions, scope.events.nEvents);
       }
     };
 
     /**
      * @function
-     * @description get data for event layers and update timeline
+     * @summary get data for event layers and update timeline.
+     * @description get data for event layers and update timeline.
+     *
+     * @param {object} eventLayer - NXT eventLayer object.
      */
     var getEventData = function (eventLayer) {
       var eventData = VectorService.getData(
@@ -208,21 +218,25 @@ angular.module('lizard-nxt')
 
       var that = this;
       eventData.then(function (response) {
-        updateTimelineHeight(angular.copy(timeline.dimensions),
-          dimensions, that.nEvents, response);
-        timeline.drawLines(response, that.eventOrder);
-        that.eventOrder += 1;
+        if (response !== undefined) {
+          updateTimelineHeight(angular.copy(timeline.dimensions),
+            dimensions, that.nEvents);
+          scope.events.data[response[0].properties.event_series_id] = response;
+          console.log(scope.events.data);
+          timeline.drawLines(scope.events.data, that.eventOrder);
+          that.eventOrder += 1;
+        }
       });
     };
 
     /**
      * @function
-     * @description  aggregate data for current temporal raster. If it gets a
-     * response updates timeline height and draws bars in timeline.
+     * @summary get data for temporal raster layers.
+     * @description  get data for temporal raster. If it gets a response updates
+     * timeline height and draws bars in timeline.
      *
-     * @param {nxtLayer} rasterLayer object
-     * @param {integer} nEvents number of events
-     * @returns {response}
+     * @param {object} rasterLayer - rasterLayer object.
+     * @param {integer} nEvents - number of events.
      */
     var getTemporalRasterData = function (rasterLayer, nEvents) {
       var start = scope.timeState.start;
@@ -251,7 +265,6 @@ angular.module('lizard-nxt')
      */
     scope.$watch('mapState.bounds', function (n, o) {
       if (n === o) { return true; }
-      console.log("bounds changed, update events");
       getTimeLineData();
     });
 
@@ -260,29 +273,27 @@ angular.module('lizard-nxt')
      */
     scope.$watch('mapState.layerGroupsChanged', function (n, o) {
       if (n === o) { return true; }
-      console.log("layergroups changed, update events");
       getTimeLineData();
     });
 
     /**
      * Timeline is updated when something other than the timeline
      * updates the temporal extent.
-     *
-     * TODO: check if this is still relevant
      */
     scope.$watch('timeState.changedZoom', function (n, o) {
       if (n === o) { return true; }
       if (scope.timeState.changeOrigin !== 'timeline') {
+        scope.timeState.aggWindow = UtilService.getAggWindow(
+          scope.timeState.start, scope.timeState.end, window.innerWidth);
         timeline.zoomTo(scope.timeState.start,
                         scope.timeState.end,
                         scope.timeState.aggWindow);
+        getTimeLineData();
       }
     });
 
     /**
-     * Update aggWindow.
-     *
-     * If animation is enabled, update aggWindow element.
+     * Update aggWindow element when timeState.at changes.
      */
     scope.$watch('timeState.at', function (n, o) {
       if (n === o) { return true; }
@@ -290,9 +301,7 @@ angular.module('lizard-nxt')
     });
 
     /**
-     * Update aggWindow.
-     *
-     * If animation is enabled, update aggWindow element.
+     * Update timeState.at when animation playing is toggled.
      */
     scope.$watch('timeState.animation.playing', function (n, o) {
       if (n === o) { return true; }
@@ -300,8 +309,9 @@ angular.module('lizard-nxt')
         scope.timeState.at, scope.timeState.aggWindow, false);
     });
 
-    // END WATCHES
-
+    /**
+     * Update timeline when browser window is resized.
+     */
     window.onresize = function () {
 
       timeline.dimensions.width = window.innerWidth;
@@ -309,12 +319,11 @@ angular.module('lizard-nxt')
         timeline.dimensions,
         scope.timeState.at,
         scope.timeState.aggWindow,
-        // TODO: pass data from point object on scope?
-        // TODO: data.features doesn't exist anymore?
-        scope.events.data.features,
-        scope.events.nEvents
+        scope.events.nEvents // TODO: get nEvents from somewhere
       );
     };
+
+    // END WATCHES
 
   };
 
