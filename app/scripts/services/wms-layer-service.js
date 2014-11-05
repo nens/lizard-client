@@ -143,8 +143,6 @@ angular.module('lizard-nxt')
 
         return LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
       };
-
       return NxtWMSLayer;
-
     }
   ]);
