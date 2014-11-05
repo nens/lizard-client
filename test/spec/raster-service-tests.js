@@ -17,11 +17,6 @@ describe('Testing raster service', function () {
     RasterService = $injector.get('RasterService');
   }));
 
-  it('should get Raster information', function () {
-    var timeRes = RasterService.getTimeResolution(mapState.getActiveTemporalLayerGroup());
-    expect(timeRes).toBe(300000);
-  });
-
   it('should return the given value on set/getIntensityData', function () {
     var thisun = 'intensityData';
     RasterService.setIntensityData(thisun);

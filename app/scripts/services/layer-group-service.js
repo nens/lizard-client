@@ -93,7 +93,6 @@ angular.module('lizard-nxt')
           layers.push(new NxtTMSLayer(layer));
         }
         else if (layer.type === 'WMS' && layer.tiled) {
-          console.log('encountered WMS layer:', layer);
           layers.push(new NxtWMSLayer(layer));
         }
         else if (layer.type === 'UTFGrid') {
