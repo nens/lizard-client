@@ -263,4 +263,17 @@ angular.module('lizard-nxt')
     }
   };
 
+  /**
+   * @function buildString
+   * @memberof UtilService
+   * @description Glues all of it's arguments to a single string
+   */
+  this.buildString = function () {
+    var i, result = "";
+    for (i = 0; i < arguments.length; i++) {
+      result += arguments[i];
+    }
+    return result;
+  };
+
 });

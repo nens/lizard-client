@@ -71,7 +71,7 @@ angular.module('lizard-nxt')
 
       // Divide by ten to make the movement in the timeline smooth.
 
-      timeStep = RasterService.getTimeResolution(activeTemporalLG);
+      timeStep = activeTemporalLG.temporalResolution;
       $scope.timeState.animation.minLag =
         RasterService.getMinTimeBetweenFrames(activeTemporalLG);
 
