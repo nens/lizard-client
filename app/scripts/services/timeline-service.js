@@ -237,20 +237,16 @@ angular.module('lizard-nxt')
      * @param {integer} order - Order of events.
      */
     drawLines: {
-      value: function (data, order) {
-        //TODO: write wrapper around data array
-        console.log(data);
-        data = data;
-        angular.forEach(data, function (dataEntry) {
-          lines = drawLineElements(
-            this._svg,
-            this.dimensions,
-            xScale,
-            ordinalYScale,
-            dataEntry,
-            order
-          );
-        }, this);
+      value: function (data, order, series_ids) {
+        lines = drawLineElements(
+          this._svg,
+          this.dimensions,
+          xScale,
+          ordinalYScale,
+          data,
+          order,
+          series_ids
+        );
       }
     },
 
@@ -426,33 +422,14 @@ angular.module('lizard-nxt')
     var zoomed = function () {
       drawTimelineAxes(svg, xAxis, dimensions);
 
-      // NOTE: if we leave out the zoomfunction for lines,
-      // everything works fine?
-
-      //if (lines) {
-        //var xOneFunction = function (d) {
-            //return xScale(d.properties.timestamp_end);
-          //};
-        //var xTwoFunction = function (d) {
-          //return xScale(d.properties.timestamp_start);
-        //};
-        //console.log("events on zoom", nEvents);
-        //var yFunction = function (d) { return ordinalYScale(nEvents); };
-        //var dFunction = function (d) {
-          //var path =
-            //"M " + xOneFunction(d) + " " + yFunction(d)
-            //+ " L " + (xTwoFunction(d) + 0.5) + " " + yFunction(d);
-          //return path;
-        //};
-        //lines.attr("d", dFunction);
-      //}
-
       if (bars) {
         var barData = bars.data();
-        var newWidth = xScale(barData[1][0]) - xScale(barData[0][0]);
-        bars
-          .attr("x", function (d) { return xScale(d[0]) - 0.5 * newWidth; })
-          .attr('width', newWidth);
+        if (barData[0] !== undefined) {
+          var newWidth = xScale(barData[1][0]) - xScale(barData[0][0]);
+          bars
+            .attr("x", function (d) { return xScale(d[0]) - 0.5 * newWidth; })
+            .attr('width', newWidth);
+        }
       }
 
       if (nowIndicator) {
@@ -583,10 +560,11 @@ angular.module('lizard-nxt')
    *     properties.color: <color code>,
    *     geometry.coordinates: [lat, lon]}]
    * @param {int} order - Order of data (which level to draw in timeline).
+   * @param {string} slug - slug of event series.
    */
   var drawLineElements = function (
-    svg, dimensions, xScale, yScale, data, order) {
-    console.log("nEvents", order, data);
+    svg, dimensions, xScale, yScale, data, order, slug) {
+    console.log("nEvents", order, data, slug);
 
     var xOneFunction = function (d) {
       return xScale(d.properties.timestamp_end);
@@ -616,14 +594,14 @@ angular.module('lizard-nxt')
 
     // if data exists, check if group is available for this series and create
     // if no data, remove lines
-    if (data !== undefined && data[0]) {
+    if (data !== undefined) {
       var group = svg
                     .select("g")
                     .select("#circle-group")
-                    .select("#g" + data[0].properties.event_series_id);
+                    .select("#" + slug);
       if (!group[0][0]) {
         group = svg.select("g").select("#circle-group").append("g")
-          .attr("id", "g" + data[0].properties.event_series_id);
+          .attr("id", slug);
       }
 
       // DATA JOIN
@@ -634,6 +612,8 @@ angular.module('lizard-nxt')
       // if no data is defined, remove all groups
       var groups = svg.select("g").select("#circle-group").selectAll("g");
       groups.remove();
+
+      return;
     }
 
     // UPDATE

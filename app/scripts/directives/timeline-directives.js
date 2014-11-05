@@ -92,7 +92,7 @@ angular.module('lizard-nxt')
     };
 
     // keep track of events in this scope
-    scope.events = {events: 0, data: []};
+    scope.events = {events: 0, slugs: []};
 
     // Move timeline element into sight
     d3.select(element[0]).transition().duration(300).style('bottom', 0);
@@ -148,12 +148,14 @@ angular.module('lizard-nxt')
      * @returns {object} with: events (list of layers) and rain (nxtLayer).
      */
     var getTimelineLayers = function (layerGroups) {
-      var timelineLayers = {events: [], rain: undefined};
+      var timelineLayers = {events: {layers: [], slugs: []},
+                            rain: undefined};
       angular.forEach(layerGroups, function (layergroup) {
         if (layergroup.isActive()) {
           angular.forEach(layergroup._layers, function (layer) {
             if (layer.type === "Vector") {
-              timelineLayers.events.push(layer);
+              timelineLayers.events.layers.push(layer);
+              timelineLayers.events.slugs.push(layer.slug);
             } else if (layer.type === "Store" && layer.slug === "radar/basic") {
               timelineLayers.rain = layer;
             }
@@ -176,27 +178,44 @@ angular.module('lizard-nxt')
      */
     var getTimeLineData = function () {
       var timelineLayers = getTimelineLayers(scope.mapState.layerGroups),
-          context = {nEvents: scope.events.nEvents};
+          context = {eventOrder: 1,
+                     nEvents: scope.events.nEvents};
 
+      console.log(scope.events.slugs, timelineLayers.events.slugs);
       // vector data (for now only events)
-      if (timelineLayers.events.length > 0) {
-        scope.events.nEvents = timelineLayers.events.length;
-        context = {eventOrder: 1, nEvents: scope.events.nEvents};
-        angular.forEach(timelineLayers.events, getEventData,
-                        context);
+      if (timelineLayers.events.layers.length > 0) {
+        scope.events.nEvents = timelineLayers.events.layers.length;
+
+        // update inactive groups with nodata so update function is called
+        // appropriately.
+        angular.forEach(scope.events.slugs, function (slug) {
+          if (timelineLayers.events.slugs.indexOf(slug) === -1) {
+            timeline.drawLines([], scope.events.nEvents, slug);
+          }
+        });
+        
+        // update slugs on scope for housekeeping
+        scope.events.slugs = timelineLayers.events.slugs;
+        // create context for callback function, reset eventOrder to 1.
+        context = {eventOrder: 1,
+                   nEvents: scope.events.nEvents,
+                   slugs: scope.events.slugs};
+        angular.forEach(timelineLayers.events.layers, getEventData, context);
+      } else {
+        scope.events.nEvents = 0;
+        timeline.drawLines(undefined, scope.events.nEvents);
       }
 
       // raster data (for now only rain)
       if (timelineLayers.rain !== undefined) {
-        updateTimelineHeight(angular.copy(timeline.dimensions),
-          dimensions, scope.events.nEvents);
         getTemporalRasterData(timelineLayers.rain,
                               timelineLayers.events.length);
       } else {
         timeline.removeBars();
-        updateTimelineHeight(angular.copy(timeline.dimensions),
-          dimensions, scope.events.nEvents);
       }
+
+      updateTimelineHeight(angular.copy(timeline.dimensions),
+        dimensions, scope.events.nEvents);
     };
 
     /**
@@ -219,11 +238,8 @@ angular.module('lizard-nxt')
       var that = this;
       eventData.then(function (response) {
         if (response !== undefined) {
-          updateTimelineHeight(angular.copy(timeline.dimensions),
-            dimensions, that.nEvents);
-          scope.events.data[response[0].properties.event_series_id] = response;
-          console.log(scope.events.data);
-          timeline.drawLines(scope.events.data, that.eventOrder);
+          timeline.drawLines(response, that.eventOrder,
+                             eventLayer.slug);
           that.eventOrder += 1;
         }
       });
