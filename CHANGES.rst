@@ -4,6 +4,11 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+-
+
+Release 0.2b10 (2014-11-06)
+---------------------------
+
 - Refactored timeline.
 
 - Respect load leaflet layers according to their loadorder.
