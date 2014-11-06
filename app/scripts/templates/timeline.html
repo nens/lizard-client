@@ -1,29 +1,8 @@
 <div id="timeline" ng-controller="TimeLine">
-  <div id="timeline-ribbon" class="ribbon" rel="tooltip"
-         data-toggle="tooltip"
-         data-placement="right"
-         title=""
-         data-original-title="Tijdlijn aan/uit">
-    <div class="arrow arrow-left" ng-click="toggleTimeline()">
-    </div>
-    <div class="arrow arrow-right" ng-click="toggleTimeline()"><i class="fa fa-clock-o ribbon-icon-timeline"></i>
-    </div>
-  </div>
 
-  <div id="timeline-svg-wrapper" class="timeline-svg-wrapper">
-   <svg></svg>
-  </div>
-
-  <div class="bovenbalk">
-    <div class="btn-group" >
-      <a ng-click="timeState.enableAnimation()"
-         class="extra-padding timeline-button"
-         rel="tooltip"
-         data-toggle="tooltip"
-         data-placement="top"
-         title=""
-         data-original-title="Tijdlijnselectie">
-        <i ng-class="{'fa-fw fa fa-crop': !timeState.animation.enabled, 'fa-fw fa fa-arrows-h': timeState.animation.enabled }"></i></a>
+  <div class="row">
+  <div class="time-controls">
+    <div class="btn-group">
       <a ng-click="timeState.playPauseAnimation()"
          class="extra-padding timeline-button"
          ng-class="{'active': timeState.animation.playing}"
@@ -32,17 +11,56 @@
          data-placement="top"
          title=""
          data-original-title="Afspelen/pauzeren">
-        <i ng-class="{'fa-fw fa fa-play': !timeState.animation.playing, 'fa-fw fa fa-pause active': timeState.animation.playing }"></i></a>
-      <a ng-mousedown="timeState.zoomToNow()"
-         class="extra-padding timeline-button"
-         rel="tooltip"
-         data-toggle="tooltip"
-         data-placement="top"
-         title=""
-         data-original-title="Naar nu">
-        <i class="fa fa-clock-o"></i></a>
+        <i ng-class="{'fa-fw fa fa-play': !timeState.animation.playing, 'fa-fw fa fa-pause active': timeState.animation.playing }"></i>
+      </a>
     </div>
-    <span class="nxt-font"> | <% timeState.start | date:'d MMM y' %> - <% timeState.end | date:'d MMM y' %> ( <% timeState.at | date:'d MMM y - HH:mm' %> )</span>
+  </div>
+  <div id="timeline-svg-wrapper" class="timeline-svg-wrapper">
+    <svg></svg>
+  </div>
+  <div class="time-controls-right">
+    <div class="btn-group-vertical">
+        <a class="btn btn-default btn-xss" ng-click="timeState.zoom('in')"
+          class="extra-padding timeline-button"
+          rel="tooltip"
+          data-toggle="tooltip"
+          data-placement="top"
+          title=""
+          data-original-title="Zoom in">
+          <i class="fa fa-plus"></i>
+        </a>
+        <a class="btn btn-default btn-xss" ng-mousedown="timeState.zoomToNow()"
+          class="extra-padding timeline-button"
+          rel="tooltip"
+          data-toggle="tooltip"
+          data-placement="top"
+          title=""
+          data-original-title="Naar nu">
+          <i class="fa fa-clock-o"></i>
+        </a>
+        <a class="btn btn-default btn-xss" ng-click="timeState.zoom('out')"
+          class="extra-padding timeline-button"
+          rel="tooltip"
+          data-toggle="tooltip"
+          data-placement="top"
+          title=""
+          data-original-title="Zoom uit">
+          <i class="fa fa-minus"></i>
+        </a>
+    </div>
+  </div>
   </div>
 
+  <div class="row time-start-now-end">
+    <div class="col-md-3">
+      <p><% timeState.start | date:'d MMMM y - HH:mm' %></p>
+    </div>
+    <div class="col-md-6">
+      <p class="text-center"><% timeState.at | date:'d MMMM y - HH:mm' %></p>
+    </div>
+    <div class="col-md-3">
+      <p class="text-right"><% timeState.end | date:'d MMMM y - HH:mm' %> </p>
+    </div>
   </div>
+
+</div>

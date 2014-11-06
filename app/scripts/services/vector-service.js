@@ -33,7 +33,6 @@ angular.module('lizard-nxt')
         //       minLat = feature.geometry.coordinates[0][0][0],
         //       minLon = feature.geometry.coordinates[0][0][1],
         //       maxLon = feature.geometry.coordinates[0][0][1];
-        //   console.log(feature.geometry.coordinates)
         //   window.feature = feature
         //   feature.geometry.coordinates[0].forEach(function (coordinates) {
         //     maxLon = Math.max(coordinates[1], maxLon);
