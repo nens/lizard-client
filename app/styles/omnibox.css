@@ -600,6 +600,10 @@
   margin: 5%;
 }
 
+#card-content-timeseries {
+  margin-bottom: 0;
+}
+
 .card-title-text {
   position: relative;
   top: -2px;
@@ -621,9 +625,26 @@
   color: #95a5a6;
 }
 
-select.timeseries {
+.timeseries-header-container {
+  display: inline-block;
   width: 100%;
+  min-width: 100%;
+  margin-bottom: -10px;
 }
+
+  .timeseries-header-text {
+    width: 20%;
+    float: left;
+    color: #7f8c8d;
+  }
+
+  select.timeseries {
+    width: 80%;
+    margin-bottom: 20px;
+    float: right;
+    position: relative;
+    top: -5px;
+  }
 
 .kunstwerk-title {
   line-height: 33px;
@@ -666,4 +687,9 @@ td.lineout {
   max-width: 370px;
   max-height: 247px;
   margin: 5px;
+}
+
+.graph-svg-wrapper {
+  position: relative;
+  left: -10px;
 }

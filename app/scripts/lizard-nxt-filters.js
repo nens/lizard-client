@@ -251,6 +251,21 @@ angular.module('lizard-nxt')
   };
 });
 
+angular.module('lizard-nxt')
+  .filter('rmSingleDatumTimeseries', function () {
+
+  return function (input) {
+    var result = [];
+    angular.forEach(input, function (datum) {
+      if (datum.events.length > 1) { result.push(datum); }
+    });
+    return result;
+  };
+});
+
+
+
+
 
 angular.module('lizard-nxt')
   .filter('objectTitle', function () {
