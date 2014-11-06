@@ -24,7 +24,8 @@ angular.module('lizard-nxt')
 
         response = leafLayer._objectForEvent(e);
 
-        if (response.data === null && leafLayer.isLoading) {
+        if ((response.data === null && leafLayer.isLoading)
+          || !leafLayer._map || !leafLayer._map.hasLayer(leafLayer)) {
           _getDataFromUTFAsynchronous(nonLeafLayer, e, deferred);
 
         } else {

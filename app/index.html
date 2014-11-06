@@ -45,7 +45,6 @@
              ng-dblclick="toggleVersionVisibility()">
              <span>Lizard</span>
           </a>
-          <a class="navbar-version clickable" title="<% versioning.revision %>"><span>v<% versioning.version %></span></a>
         </div>
 
         <div class="navbar-collapse collapse">
@@ -205,7 +204,8 @@
     </div>
 
 
-
+    <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
+    
     <!-- build:js(.) /scripts/vendor.js -->
     <!-- bower:js -->
     <script src="/vendor/jquery/jquery.js"></script>
@@ -241,7 +241,6 @@
     <script src="/scripts/services/leaflet-service.js"></script>
     <script src="/scripts/services/map-service.js"></script>
     <script src="/scripts/services/layer-group-service.js"></script>
-    <script src="/scripts/services/event-service.js"></script>
     <script src="/scripts/services/vector-service.js"></script>
     <script src="/scripts/services/temporal-vector-service.js"></script>
     <script src="/scripts/services/nxt-d3-service.js"></script>
@@ -254,7 +253,6 @@
     <script src="/scripts/services/timeseries-service.js"></script>
     <script src="/scripts/controllers/search-controller.js"></script>
     <script src="/scripts/directives/map-directives.js"></script>
-    <script src="/scripts/directives/aggregate-directives.js"></script>
     <script src="/scripts/directives/omnibox-directives.js"></script>
     <script src="/scripts/services/graph-service.js"></script>
     <script src="/scripts/directives/graph-directives.js"></script>
@@ -277,6 +275,7 @@
     <script src="/scripts/services/utf-layer-service.js"></script>
     <script src="/scripts/services/store-layer-service.js"></script>
     <script src="/scripts/services/vector-layer-service.js"></script>
+    <script src="/scripts/services/leaflet-vector-service.js"></script>
     <!-- endbuild -->
 
 

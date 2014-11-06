@@ -148,10 +148,10 @@ angular.module('lizard-nxt')
 angular.module('lizard-nxt')
   .controller('MasterCtrl',
   ['$scope', '$http', '$q', '$filter', '$compile', 'CabinetService',
-   'RasterService', 'UtilService', 'EventService', 'TimeseriesService',
+   'RasterService', 'UtilService', 'TimeseriesService',
    'user', 'versioning',
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, EventService, TimeseriesService, user, versioning) {
+            UtilService, TimeseriesService, user, versioning) {
 
   $scope.user = user;
   $scope.versioning = versioning;
@@ -215,17 +215,14 @@ angular.module('lizard-nxt')
    *
    * @param {string} context - Context name to switch to
    */
-  $scope.switchContext = function (context) {
-    $scope.box.context = context;
-  };
-
-  $scope.toggleContextSwitchMode = function () {
-    $scope.box.contextSwitchMode = !$scope.box.contextSwitchMode;
-  };
+  //$scope.switchContext = function (context) {
+    //$scope.box.context = context;
+  //};
 
   // MAP MODEL is set by the map-directive
   $scope.mapState = {};
 
+  // TODO: check what this does
   $scope.$watch('mapState.here', function (n, o) {
     if (n === o) { return true; }
 
@@ -249,10 +246,9 @@ angular.module('lizard-nxt')
   // TIME MODEL
   $scope.timeState = {
     start: now - 2 * day,
-    end: now + day,
+    end: now + day, //  TODO: refactor to function
     changedZoom: Date.now(),
     zoomEnded: null,
-    hidden: undefined,
     animation: {
       start: undefined,
       playing: false,
@@ -265,6 +261,13 @@ angular.module('lizard-nxt')
   };
   // initialise 'now'
   $scope.timeState.at = $scope.timeState.start;
+  $scope.timeState.animation.start = $scope.timeState.start;
+  // get time resolution in ms per pixel
+  $scope.timeState.resolution = ($scope.timeState.end - $scope.timeState.start)
+                                 / window.innerWidth;
+  $scope.timeState.aggWindow = UtilService.getAggWindow($scope.timeState.start,
+                                                        $scope.timeState.end,
+                                                        window.innerWidth);
 
 // END TIME MODEL
 
@@ -282,103 +285,6 @@ angular.module('lizard-nxt')
       $scope.timeState.end = 2208988800000;
     }
   });
-
-  // EVENTS
-
-  var getEventTypes = function () {
-    var k, eventLayers = [];
-    for (k in $scope.mapState.layers) {
-      if (k === "alarms" || k === "messages") {
-        eventLayers.push($scope.mapState.layers[k]);
-      }
-    }
-    return eventLayers;
-  };
-
-
-  // EVENTS MODEL
-  $scope.events = {
-    //TODO: refactor event meta data (remove eventTypes from mapState)
-    //types: { count: 0, 1: {}, 2: {}, 3: {}, 4: {}, 5: {} }, // Metadata object
-    types: EventService.buildEventTypesTemplate(getEventTypes()),
-    data: { type: "FeatureCollection",
-            features: [] // Long format events data object
-      },
-    scale: d3.scale.ordinal().range(EventService.colors[8]),
-    changed: Date.now()
-  };
-
-  /**
-   * Zoom to event location
-   *
-   * Used by the aggregate template under the 'screenshot' icon
-   *
-   * @param {object} geometry Object wit a list of lon, lat
-   */
-  $scope.events.zoomTo = function (geometry) {
-    var panZoom = {
-      lng: geometry.coordinates[0],
-      lat: geometry.coordinates[1],
-      zoom: 15
-    };
-    $scope.panZoom = panZoom;
-    $scope.mapState.moved = Date.now();
-  };
-
-  /**
-   * Turns event types on or off.
-   *
-   * When an event type is off, it is passed to getEvents.
-   * When an event type is on, it is passed to removeEvents and the remaining
-   * events are recolored.
-   *
-   * @param: str containing the type of the event type to toggle
-   */
-  $scope.events.toggleEvents = function (eventSeriesId) {
-    if ($scope.events.types[eventSeriesId]) {
-      if ($scope.events.types[eventSeriesId].active) {
-        $scope.events.types[eventSeriesId].active = false;
-        $scope.events.data = EventService.removeEvents($scope.events.types,
-                                                       $scope.events.data,
-                                                       eventSeriesId);
-        $scope.events.types.count--;
-        EventService.addColor($scope.events);
-        $scope.events.changed = Date.now();
-      } else {
-        getEvents(eventSeriesId);
-      }
-    } else {
-      getEvents(eventSeriesId);
-    }
-    if ($scope.timeState.hidden !== false) {
-      $scope.toggleTimeline();
-    }
-    $scope.mapState.activeLayersChanged =
-     !$scope.mapState.activeLayersChanged;
-  };
-
-  /**
-   * Downloads events and asynchronously fires callback.
-   *
-   * Callback passes the response to addEvents, recolors the event data object,
-   * Does bookkeeping and triggers watches by updating events.changed
-   *
-   * @param: int containing the id of the event series to download
-   */
-  var getEvents = function (eventSeriesId) {
-    EventService.getEvents({event_series: eventSeriesId})
-      .then(function (response) {
-        var dataOrder = EventService.addEvents($scope.events.data, response,
-                                               eventSeriesId);
-        $scope.events.data = dataOrder.data;
-        $scope.events.types[eventSeriesId].event_type = dataOrder.order;
-        $scope.events.types.count++;
-        EventService.addColor($scope.events);
-        $scope.events.types[eventSeriesId].active = true;
-        $scope.events.changed = Date.now();
-      });
-  };
-  // END EVENTS
 
   //TODO: move to raster-service ?
 
@@ -410,66 +316,8 @@ angular.module('lizard-nxt')
     }
   };
 
-  $scope.$watch('keyPressed', function (newVal, oldVal) {
-    if (49 >= newVal && 52 <= newVal) {
-      $scope.mapState.activeBaselayer = newVal - 48;
-      $scope.mapState.changeBaselayer()
-    }
-  });
-
-  $scope.toggleLayerInfo = function (layername) {
-    if (layername === 'Hoogtekaart') {
-      $scope.keyPressed = 51;
-    } else if (layername === 'Landgebruik') {
-      $scope.keyPressed = 52;
-    }
-  };
-
-  //END KEYPRESS
-
-  /**
-   * Switch timeline on or off.
-   *
-   * Uses 3 way logic: true, false and undefined:
-   *   undefined: timeline element doesn't exist yet.
-   *   false: timeline exists but is hidden.
-   *   true: timeline exists and is shown.
-   *
-   * Initial state of the timeState.hidden is 'undefined'.
-   */
-  $scope.toggleTimeline = function () {
-    if ($scope.timeState.hidden === true) {
-      $scope.timeState.hidden = false;
-      angular.element('#timeline').css('bottom', 0);
-    } else if ($scope.timeState.hidden === false) {
-      $scope.timeState.hidden = true;
-      angular.element('#timeline').css(
-        'bottom', 0 - angular.element('#timeline').height());
-    } else if ($scope.timeState.hidden === undefined) {
-      // Create timeline element when needed and no earlier
-      var timeline = angular.element(
-        '<timeline class="navbar timeline navbar-fixed-bottom"></timeline>');
-      var el = $compile(timeline)($scope);
-      angular.element('#master').append(timeline);
-      $scope.timeState.hidden = false;
-    }
-  };
-
-  // Temporarily watch layergroups to turn timeline on
-  // Can be removed when we redo the timeline
-  var timelineToggler = $scope.$watch('mapState.layerGroupsChanged',  function () {
-    if ($scope.timeState.hidden === undefined
-      && $scope.mapState.getActiveTemporalLayerGroup()) {
-      $scope.toggleTimeline();
-      // remove watch
-      timelineToggler();
-    }
-
-  });
-
   $scope.toggleVersionVisibility = function () {
     $('.navbar-version').toggle();
   };
-
 
 }]);

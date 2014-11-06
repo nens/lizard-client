@@ -2,14 +2,15 @@
 
 /**
  * @ngdoc service
- * @name lizard-nxt.Laye
-r * @description
+ * @name lizard-nxt.Layer
+ * @description
  * # NxtLayer
  * Factory in the lizard-nxt.
  */
 angular.module('lizard-nxt')
-  .factory('NxtVectorLayer', ['NxtLayer', 'LeafletService', 'VectorService',
-  function (NxtLayer, LeafletService, VectorService) {
+  .factory('NxtVectorLayer', ['$q', 'NxtLayer', 
+      'LeafletVectorService', 'VectorService',
+  function ($q, NxtLayer, LeafletVectorService, VectorService) {
 
       function NxtVectorLayer(layer) {
         NxtLayer.call(this, layer);
@@ -32,9 +33,17 @@ angular.module('lizard-nxt')
 
         add: {
           value: function (map) {
+            var defer = $q.defer();
             if (this._leafletLayer) {
               addLeafletLayer(map, this._leafletLayer);
+              this._leafletLayer.on('load', function () {
+                defer.resolve();
+              });
             }
+            else {
+              defer.resolve();
+            }
+            return defer.promise;
           }
         },
 
@@ -54,10 +63,8 @@ angular.module('lizard-nxt')
 
         syncTime: {
           value: function (mapState, timeState, oldTime) {
-            if (this.temporal && this.type === 'Vector') {
-              //TODO
-              return;
-            }
+            this._leafletLayer.redraw(this, mapState, timeState);
+            return;
           }
         },
         setOpacity: {
@@ -112,24 +119,14 @@ angular.module('lizard-nxt')
           // Initiate a tiled Vector layer
           var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
 
-          leafletLayer = new LeafletService.TileDataLayer(url, {
+          leafletLayer = new LeafletVectorService(url, {
             minZoom: nonLeafLayer.min_zoom,
             maxZoom: nonLeafLayer.max_zoom,
             color: '#333',
-            dataCallback: function (featureCollection, point) {
-              if (!featureCollection) { return; }
-
-              if (featureCollection.features.length > 0) {
-                VectorService.setData(
-                  nonLeafLayer.slug,
-                  featureCollection.features,
-                  point.z
-                );
-              }
-            },
             slug: nonLeafLayer.slug,
             ext: 'geojson'
           });
+
         } else {
           // throw new Error('Initiate (non-tiled) Vector layer, for e.g. events');
           return leafletLayer;

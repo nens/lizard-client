@@ -74,7 +74,30 @@ angular.module('lizard-nxt')
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.
       $controller('UrlController', {$scope: scope});
-    };
+
+
+      var syncTimeWrapper = function (newTime, oldTime) {
+        //if (newTime === oldTime) { return; }
+        angular.forEach(scope.mapState.layerGroups, function (lg) {
+          if (!scope.$$phase) {
+            scope.$apply(function () {
+              lg.syncTime(scope.mapState, scope.timeState, oldTime, newTime);
+            });
+          } else {
+            lg.syncTime(scope.mapState, scope.timeState, oldTime, newTime);
+          }
+        });
+      };
+      
+      scope.$watch('timeState.start', syncTimeWrapper);
+      // TODO: check if this is the way
+      scope.$watch('timeState.at', syncTimeWrapper);
+      // TODO: not sure if timewrapper should be called on these changes?
+      // time wrapper only updates time related stuff?
+      scope.$watch('mapState.bounds', syncTimeWrapper);
+      scope.$watch('mapState.layerGroupsChanged', syncTimeWrapper);
+
+  };
 
     return {
       restrict: 'E',
@@ -95,23 +118,7 @@ angular.module('lizard-nxt')
   return {
     link: function (scope, element, attrs) {
 
-      var syncTimeWrapper = function (newTime, oldTime) {
-        angular.forEach(scope.mapState.layerGroups, function (lg) {
-          lg.syncTime(scope.mapState, scope.timeState, oldTime, newTime);
-        });
-      };
-
-      scope.$watch('mapState.layerGroupsChanged', function (n, o) {
-        if (n === o) { return; }
-        syncTimeWrapper(scope.timeState.at, undefined);
-      });
-
-      scope.$watch('timeState.at', function (n, o) {
-        if (n === o) { return; }
-        syncTimeWrapper(n, o);
-      });
-
-      /**
+        /**
        * Get new set of images when animation stops playing
        * (resets rasterLoading to 0)
        */

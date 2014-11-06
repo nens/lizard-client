@@ -46,15 +46,7 @@ angular.module('lizard-nxt')
     });
   };
 
-  var setIntensityData = function (data) {
-    intensityData = data;
-  };
-
-  var getIntensityData = function () {
-    return intensityData;
-  };
-
-    /**
+  /**
    * Build the bounding box given an imageBounds
    */
   var _buildBbox = function (imgBounds) {
@@ -65,17 +57,18 @@ angular.module('lizard-nxt')
   var buildURLforWMS = function (wmsLayer) {
 
     var imgBounds = [
-          [wmsLayer.bounds.north, wmsLayer.bounds.west],
-          [wmsLayer.bounds.south, wmsLayer.bounds.east]
-        ],
-        opts = wmsLayer.options,
-        result = wmsLayer.url
-          + '?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng'
-          + '&SRS=EPSG%3A4326&LAYERS=' + wmsLayer.slug
-          + '&BBOX=' + _buildBbox(imgBounds);
+      [wmsLayer.bounds.north, wmsLayer.bounds.west],
+      [wmsLayer.bounds.south, wmsLayer.bounds.east]
+    ],
+    opts = wmsLayer.options,
+    result = wmsLayer.url
+      + '?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng'
+      + '&SRS=EPSG%3A4326&LAYERS=' + wmsLayer.slug
+      + '&BBOX=' + _buildBbox(imgBounds);
+
 
     angular.forEach(opts, function (v, k) {
-      result += '&' + k.toUpperCase() + '=' + v;
+      result += UtilService.buildString('&', k.toUpperCase(), "=", v);
     });
 
     // key TIME needs to come last, so we can subsequently append it's value
@@ -117,26 +110,6 @@ angular.module('lizard-nxt')
     return formatted;
   };
 
-  var getTimeResolution = function (layerGroup) {
-
-    switch (layerGroup.slug) {
-
-    case 'rain':
-      return 300000;
-
-    case 'bath:westerschelde':
-      return 15768000000;
-
-    case 'westerschelde:diff':
-      return 15768000000;
-
-    default:
-      throw new Error(
-        layerGroup.slug + 'is not supported by RasterService.getTimeResolution()'
-      );
-    }
-  };
-
   var getMinTimeBetweenFrames = function (layerGroup) {
 
     if (layerGroup.slug === 'rain') {
@@ -148,12 +121,9 @@ angular.module('lizard-nxt')
   };
 
   return {
-    getTimeResolution: getTimeResolution,
     getMinTimeBetweenFrames: getMinTimeBetweenFrames,
     buildURLforWMS: buildURLforWMS,
     // rasterInfo: rasterInfo,
-    getIntensityData: getIntensityData,
-    setIntensityData: setIntensityData,
     //getRasterData: getRasterData,
     getData: getData,
     // getTemporalRaster: getTemporalRaster,
