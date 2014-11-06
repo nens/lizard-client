@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- Refactored timeline.
+
 - Respect load leaflet layers according to their loadorder.
 
 - Fix point data for interval and ratio data.

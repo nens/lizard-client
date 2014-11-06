@@ -21,12 +21,12 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @memberOf angular.module('lizard-nxt')
-  .TimeLineCtrl
-   *
+   * @memberOf angular.module('lizard-nxt').TimeLineCtrl
    * @summary Toggle animation state.
-   *
    * @desc Set $scope.timeState.animation.enabled to true or false.
+   *
+   * @param {} toggle - .
+   *
    */
   $scope.timeState.enableAnimation = function (toggle) {
     $scope.timeState.animation.enabled =
@@ -34,9 +34,11 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Toggle animation playing.
+   * @function
+   * @summary Toggle animation playing.
+   * @description Set $scope.timeState.animation.playing to true or false.
    *
-   * Set $scope.timeState.animation.playing to true or false.
+   * @param {} toggle - .
    */
   $scope.timeState.playPauseAnimation = function (toggle) {
 
@@ -54,10 +56,11 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Push animation 1 step forward.
-   *
-   * Set new timeState.at based on stepSize. If current timeSate.at is outside
-   * current temporal extent, start animation at start of temporal extent.
+   * @function
+   * @summary Push animation 1 step forward.
+   * @description Set new timeState.at based on stepSize. If current
+   * timeSate.at is outside current temporal extent, start animation at start
+   * of temporal extent.
    */
   var step =  function () {
 
@@ -86,12 +89,11 @@ angular.module('lizard-nxt')
       $scope.timeState.at += timeStep;
     });
 
+    // reset timeState.at if out of temporal bounds
     if ($scope.timeState.at >= $scope.timeState.end ||
         $scope.timeState.at < $scope.timeState.start) {
       $scope.$apply(function () {
-        $scope.timeState.at = $scope.timeState.at -
-                                         $scope.timeState.animation.start +
-                                         $scope.timeState.start;
+        $scope.timeState.at = $scope.timeState.start;
         $scope.timeState.animation.start = $scope.timeState.start;
       });
     }
@@ -104,49 +106,8 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Toggle fast-forward.
-   *
-   * Speed up animation by a factor 4.
-   */
-  var animationWasOn;
-  $scope.timeState.animation.toggleAnimateFastForward = function (toggle) {
-
-    if (toggle) {
-
-      $scope.timeState.animation.stepSize /= 4;
-      animationWasOn = $scope.timeState.animation.playing;
-      if (!$scope.timeState.animation.playing) {
-        $scope.timeState.playPauseAnimation();
-      }
-
-    } else {
-
-      $scope.timeState.animation.stepSize *= 4;
-      if (!animationWasOn) {
-        $scope.timeState.playPauseAnimation('off');
-      }
-    }
-  };
-
-  /**
-   * Step back function.
-   */
-  $scope.timeState.animation.stepBack = function () {
-    var stepBack = ($scope.timeState.end - $scope.timeState.start) / 10;
-    var wasOn = $scope.timeState.animation.playing;
-    $scope.timeState.animation.start = $scope.timeState.animation.start -
-                                       stepBack;
-    $scope.timeState.at = $scope.timeState.at - stepBack;
-    $scope.timeState.playPauseAnimation('off');
-    if (!$scope.timeState.animation.playing && wasOn) {
-      setTimeout(function () {
-        $scope.timeState.playPauseAnimation();
-      }, 500);
-    }
-  };
-
-  /**
-   * Move timeState.end to now.
+   * @function
+   * @summary Move timeState.end to now.
    */
   $scope.timeState.zoomToNow = function () {
     var now = Date.now();
@@ -156,6 +117,34 @@ angular.module('lizard-nxt')
     $scope.timeState.start = sevenDaysAgo;
     $scope.timeState.end = tomorrow;
     $scope.timeState.at = now;
+    $scope.timeState.changeOrigin = 'user';
+    $scope.timeState.changedZoom = Date.now();
+  };
+
+  /**
+   * @function
+   * @summary Zooms time in or out.
+   * @description multiplies or divides current time resolution by
+   * ZOOMFACTOR depending on zooming in or out. Updates start and end
+   * of timeState accordingly and sets new resolution on timeState.
+   *
+   * @param {string} action - 'in' or 'out'.
+   */
+  $scope.timeState.zoom = function (action) {
+    var ZOOMFACTOR = 2;
+    var newResolution;
+
+    if (action === 'in') {
+      newResolution = $scope.timeState.resolution / ZOOMFACTOR;
+    } else if (action === 'out') {
+      newResolution = $scope.timeState.resolution * ZOOMFACTOR;
+    }
+
+    var milliseconds = window.innerWidth * newResolution;
+
+    $scope.timeState.start = $scope.timeState.at - milliseconds;
+    $scope.timeState.end = $scope.timeState.at + milliseconds;
+    $scope.timeState.resolution = newResolution;
     $scope.timeState.changeOrigin = 'user';
     $scope.timeState.changedZoom = Date.now();
   };

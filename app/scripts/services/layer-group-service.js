@@ -275,7 +275,7 @@ angular.module('lizard-nxt')
         step            : [],
         imageOverlays   : {},
         frameLookup     : {},
-        numCachedFrames : UtilService.serveToMobileDevice() ? 15 : 30,
+        numCachedFrames : UtilService.serveToMobileDevice() ? 10 : 15,
         previousFrame   : 0,
         previousDate    : undefined,
         nxtDate         : undefined,

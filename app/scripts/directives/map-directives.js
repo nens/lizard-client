@@ -89,9 +89,13 @@ angular.module('lizard-nxt')
         });
       };
       
-      scope.$watch('mapState.layerGroupsChanged', syncTimeWrapper);
       scope.$watch('timeState.start', syncTimeWrapper);
+      // TODO: check if this is the way
+      scope.$watch('timeState.at', syncTimeWrapper);
+      // TODO: not sure if timewrapper should be called on these changes?
+      // time wrapper only updates time related stuff?
       scope.$watch('mapState.bounds', syncTimeWrapper);
+      scope.$watch('mapState.layerGroupsChanged', syncTimeWrapper);
 
   };
 
