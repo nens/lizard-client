@@ -70,6 +70,10 @@ angular.module('lizard-nxt')
           value: layer.quantity,
           writable: false,
         });
+        Object.defineProperty(this, 'color', {
+          value: layer.color,
+          writable: false,
+        });
         Object.defineProperty(this, 'unit', {
           value: layer.unit,
           writable: false,
@@ -192,16 +196,18 @@ angular.module('lizard-nxt')
         */
         _buildPromise: function (lgSlug, options, deferred, wantedService) {
 
-          var type = this.type,
-              aggType = this.aggregationType,
+          var aggType = this.aggregationType,
+              color = this.color,
+              scale = this.scale,
               slug = this.slug,
               summary = this.summary,
-              scale = this.scale,
+              type = this.type,
               quantity = this.quantity,
               unit = this.unit;
 
           var buildSuccesCallback = function (data) {
             deferred.notify({
+              color: color,
               data: data,
               type: type,
               layerGroupSlug: lgSlug,
