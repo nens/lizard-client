@@ -8,7 +8,7 @@ r * @description
  * Factory in the lizard-nxt.
  */
 angular.module('lizard-nxt')
-  .factory('NxtLayer', [function () {
+  .factory('NxtLayer', ['$q', function ($q) {
 
       /*
        * @constructor
@@ -70,8 +70,16 @@ angular.module('lizard-nxt')
           value: layer.quantity,
           writable: false,
         });
+        Object.defineProperty(this, 'color', {
+          value: layer.color,
+          writable: false,
+        });
         Object.defineProperty(this, 'unit', {
           value: layer.unit,
+          writable: false,
+        });
+        Object.defineProperty(this, 'loadOrder', {
+          value: layer.load_order,
           writable: false,
         });
       }
@@ -107,7 +115,9 @@ angular.module('lizard-nxt')
         * @param map leaflet map to add to.
         */
         add: function (map) {
-          return;
+          var defer = $q.defer();
+          defer.resolve();
+          return defer.promise;
         },
 
        /**
@@ -186,16 +196,18 @@ angular.module('lizard-nxt')
         */
         _buildPromise: function (lgSlug, options, deferred, wantedService) {
 
-          var type = this.type,
-              aggType = this.aggregationType,
+          var aggType = this.aggregationType,
+              color = this.color,
+              scale = this.scale,
               slug = this.slug,
               summary = this.summary,
-              scale = this.scale,
+              type = this.type,
               quantity = this.quantity,
               unit = this.unit;
 
           var buildSuccesCallback = function (data) {
             deferred.notify({
+              color: color,
               data: data,
               type: type,
               layerGroupSlug: lgSlug,

@@ -8,8 +8,9 @@
  * Factory in the lizard-nxt.
  */
 angular.module('lizard-nxt')
-  .factory('NxtVectorLayer', ['NxtLayer', 'LeafletVectorService', 'VectorService',
-  function (NxtLayer, LeafletVectorService, VectorService) {
+  .factory('NxtVectorLayer', ['$q', 'NxtLayer', 
+      'LeafletVectorService', 'VectorService',
+  function ($q, NxtLayer, LeafletVectorService, VectorService) {
 
       function NxtVectorLayer(layer) {
         NxtLayer.call(this, layer);
@@ -32,9 +33,17 @@ angular.module('lizard-nxt')
 
         add: {
           value: function (map) {
+            var defer = $q.defer();
             if (this._leafletLayer) {
               addLeafletLayer(map, this._leafletLayer);
+              this._leafletLayer.on('load', function () {
+                defer.resolve();
+              });
             }
+            else {
+              defer.resolve();
+            }
+            return defer.promise;
           }
         },
 
@@ -113,7 +122,7 @@ angular.module('lizard-nxt')
           leafletLayer = new LeafletVectorService(url, {
             minZoom: nonLeafLayer.min_zoom,
             maxZoom: nonLeafLayer.max_zoom,
-            color: '#333',
+            color: nonLeafLayer.color,
             slug: nonLeafLayer.slug,
             ext: 'geojson'
           });

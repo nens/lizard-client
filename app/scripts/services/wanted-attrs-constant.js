@@ -222,8 +222,8 @@ angular.module('lizard-nxt')
       },
       {
         keyName: "Naam",
-        attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        attrName: "display_name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "KNMI"
       },
@@ -478,8 +478,8 @@ angular.module('lizard-nxt')
     rows: [
       {
         keyName: "Naam",
-        attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        attrName: "display_name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "Rioolgemaal"
       },
@@ -513,8 +513,8 @@ angular.module('lizard-nxt')
     rows: [
       {
         keyName: "Naam",
-        attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        attrName: "display_name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "persleiding"
       },
@@ -580,8 +580,8 @@ angular.module('lizard-nxt')
     rows: [
       {
         keyName: "Naam",
-        attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        attrName: "display_name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "gemaal"
       },
@@ -630,8 +630,8 @@ angular.module('lizard-nxt')
     rows: [
       {
         keyName: "Naam",
-        attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        attrName: "display_name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "Gemaalpomp"
       },
@@ -688,8 +688,8 @@ angular.module('lizard-nxt')
     rows: [
       {
         keyName: "Naam",
-        attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        attrName: "display_name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "Bemalingsgebied"
       },
@@ -718,8 +718,8 @@ angular.module('lizard-nxt')
     rows: [ //Afvalwaterzuiveringsinstallatie
       {
         keyName: "Naam",
-        attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        attrName: "display_name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "Groote Lucht"
       },

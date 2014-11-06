@@ -3,6 +3,16 @@ Changelog of lizard-nxt client
 
 Unreleased
 ----------
+- Event categories/series can be differentiated by color and icon.
+
+
+Release 0.2b10 (2014-11-06)
+---------------------------
+
+- Refactored timeline.
+
+- Respect load leaflet layers according to their loadorder.
+
 - Fix point data for interval and ratio data.
 
 - Vector data is synced with time

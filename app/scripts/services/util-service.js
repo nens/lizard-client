@@ -87,7 +87,7 @@ angular.module('lizard-nxt')
    */
   this.getAggWindow = function (start, stop, drawingWidth) {
     var aggWindow;
-    var minPx = 3; // Minimum width of a bar
+    var minPx = 4; // Minimum width of a bar
     // Available zoomlevels
     var zoomLvls = {fiveMinutes: 300000,
                     hour: 3600000,
@@ -261,6 +261,19 @@ angular.module('lizard-nxt')
             + geom.getWest() + " " + geom.getSouth()
             + "))";
     }
+  };
+
+  /**
+   * @function buildString
+   * @memberof UtilService
+   * @description Glues all of it's arguments to a single string
+   */
+  this.buildString = function () {
+    var i, result = "";
+    for (i = 0; i < arguments.length; i++) {
+      result += arguments[i];
+    }
+    return result;
   };
 
 });

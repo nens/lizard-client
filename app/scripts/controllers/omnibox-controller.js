@@ -45,6 +45,7 @@ angular.module('lizard-nxt')
           lGContent.layers[response.layerSlug].scale = response.scale;
           lGContent.layers[response.layerSlug].quantity = response.quantity;
           lGContent.layers[response.layerSlug].unit = response.unit;
+          lGContent.layers[response.layerSlug].color = response.color;
 
           /**
            * lGContent now looks like: {
