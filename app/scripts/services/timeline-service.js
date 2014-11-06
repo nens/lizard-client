@@ -9,7 +9,7 @@
  * @description Inject "Timeline" and call new timeline(<args>) to create a
  * timeline. Currently the timeline supports lines (events) and vertical bars
  * (rain intensity). The user may interact with the timeline through click and
- * zoom functions. 
+ * zoom functions.
  *
  * Everything in the timeline is animated for NxtD3.transTime milliseconds. To
  * add new elements to the timeline, make sure the elements are updated on zoom,
@@ -126,7 +126,7 @@ angular.module('lizard-nxt')
     /**
      * @function
      * @summary Draws an aggWindow at timestamp.
-     * @description Left of aggWindow is timeState.at, size is dependent on 
+     * @description Left of aggWindow is timeState.at, size is dependent on
      * current aggWindow interval on timeState.
      */
     drawAggWindow: {
@@ -148,7 +148,7 @@ angular.module('lizard-nxt')
         }
 
         var offset = this.dimensions.padding.left;
-        
+
         // UPDATE
         aggWindow
           .attr("x", function () {
@@ -677,8 +677,8 @@ angular.module('lizard-nxt')
       barWidth = 0;
     }
 
-    // // UPDATE
-    // // Update old elements as needed.
+    // UPDATE
+    // Update old elements as needed.
     bars.transition()
       .duration(Timeline.prototype.transTime)
       .attr("x", function (d) { return xScale(d[0]) - 0.5 * barWidth; })
