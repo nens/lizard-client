@@ -18,16 +18,16 @@ angular.module('lizard-nxt')
    *
    * @param {integer} timestamp - javascript timestamp in ms.
    * @param {integer} coefficient - coefficient to round to in ms.
-   * @param {boolean} tzOffset - true if you want to correct for timezone
+   * @param {boolean} needTzOffset - true if you want to correct for timezone
    * offset.
    * @returns {integer} roundedTimestamp - timestamp rounded to nearest
    * coefficient.
    */
-  this.roundTimestamp = function (timestamp, coefficient, tzOffset) {
+  this.roundTimestamp = function (timestamp, coefficient, needTzOffset) {
     var roundedTimestamp = parseInt((timestamp + (coefficient / 2)) /
                                     coefficient, 10) * coefficient;
 
-    if (!!tzOffset) {
+    if (!!needTzOffset) {
       var timeZoneOffset = (new Date(roundedTimestamp)).getTimezoneOffset() *
         1000 * 60;
       roundedTimestamp = roundedTimestamp - timeZoneOffset;
