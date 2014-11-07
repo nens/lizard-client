@@ -251,6 +251,13 @@ angular.module('lizard-nxt')
   };
 });
 
+/**
+ * For the n timeseries related to a structure, remove the ones with an insufficient
+ * amount of measurements to be able draw a graph.
+ *
+ * @param {Object[]} A list of timeseries
+ * @return  {Object[]} A list of timeseries with sufficient data
+ */
 angular.module('lizard-nxt')
   .filter('rmSingleDatumTimeseries', function () {
 
