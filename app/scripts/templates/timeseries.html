@@ -1,13 +1,19 @@
-<div class="card-content" id="card-content-timeseries">
-  <!-- <select class="timeseries"
-  ng-model="point.timeseries.selectedTimeseries"
-  ng-options="series as series.name for series in point.timeseries.data">
-  </select> -->
+<div class="card-content"
+     id="card-content-timeseries">
+
+  <div class="timeseries-header-container">
+    <div class="timeseries-header-text">Tijdserie:</div>
+    <select class="timeseries"
+            ng-model="$parent.box.content.timeseries.selectedTimeseries"
+            ng-options="series.name for series in $parent.box.content.timeseries.data | rmSingleDatumTimeseries">
+    </select>
+  </div>
+
   <graph line
     type="temporal"
-    data="timeseries.data"
-    ylabel="timeseries.name"
-    xlabel="n"
+    data="$parent.box.content.timeseries.selectedTimeseries.events"
+    ylabel=""
+    xlabel=""
     keys="{x: 0, y: 1}"
     now="timeState.at">
   </graph>
