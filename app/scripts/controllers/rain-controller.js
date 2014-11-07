@@ -8,8 +8,6 @@ angular.module('lizard-nxt')
    */
   $scope.formatCSVColumns = function (data) {
 
-    console.log('[F] formatCSVColumns, arg \'data\' =', data);
-
     var i,
         formattedDateTime,
         formattedData = [],
