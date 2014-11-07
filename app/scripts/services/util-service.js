@@ -86,8 +86,12 @@ angular.module('lizard-nxt')
    * @return {int} aggWindow in ms.
    */
   this.getAggWindow = function (start, stop, drawingWidth) {
+
+    // TODO: Called both by omnibox and timeline, should be called only by timeline,
+    // while omnibox subsequently syncs to timeState.aggWindow
+
     var aggWindow;
-    var minPx = 4; // Minimum width of a bar
+    var MIN_PX = 4; // Minimum width of a bar
     // Available zoomlevels
     var zoomLvls = {fiveMinutes: 300000,
                     hour: 3600000,
@@ -97,10 +101,11 @@ angular.module('lizard-nxt')
     var msPerPx = (stop - start) / drawingWidth;
     for (var zoomLvl in zoomLvls) {
       aggWindow = zoomLvls[zoomLvl];
-      if (aggWindow > minPx * msPerPx) {
+      if (aggWindow > MIN_PX * msPerPx) {
         break; // If zoomlevel is sufficient to get enough width in the bars
       }
     }
+
     return aggWindow;
   };
 
