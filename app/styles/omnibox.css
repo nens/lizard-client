@@ -693,3 +693,10 @@ td.lineout {
   position: relative;
   left: -10px;
 }
+
+.leaflet-control-zoom-in, .leaflet-control-zoom-out, #search-button {
+
+  border-bottom: 0 !important;
+  height: 32px;
+  max-height: 32px;
+}
