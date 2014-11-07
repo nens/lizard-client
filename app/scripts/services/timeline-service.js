@@ -97,7 +97,7 @@ angular.module('lizard-nxt')
      */
     addNowIndicator: {
       value: function () {
-        var width = this._getWidth(this.dimensions),
+        var width = 20000,
         height = this._getHeight(this.dimensions);
 
         nowIndicator = this._svg.select("g").append("rect")
@@ -534,12 +534,10 @@ angular.module('lizard-nxt')
    * @param {object} dimensions - timeline dimensions object.
    */
   var updateNowElement = function (nowIndicator, xScale, dimensions) {
-    var width = Timeline.prototype._getWidth(dimensions),
-        height = Timeline.prototype._getHeight(dimensions);
+    var height = Timeline.prototype._getHeight(dimensions);
 
     nowIndicator
      .attr('height', height)
-     .attr('width', width)
      .attr('x', function () {
         return xScale(Date.now());
       });
