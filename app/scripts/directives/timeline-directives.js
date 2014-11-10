@@ -84,9 +84,12 @@ angular.module('lizard-nxt')
        * @param {object} dimensions - object with timeline dimensions.
        */
       clickFn: function (event, scale, dimensions) {
-        var timeClicked = +(scale.invert(event.x - dimensions.padding.left));
+        var timeClicked = +(scale.invert(event.pageX - dimensions.padding.left));
         scope.timeState.at = UtilService.roundTimestamp(
-          timeClicked, scope.timeState.aggWindow, false);
+          timeClicked,
+          scope.timeState.aggWindow,
+          false
+        );
         scope.$digest();
       },
     };
@@ -147,6 +150,7 @@ angular.module('lizard-nxt')
      * @returns {object} with: events (list of layers) and rain (nxtLayer).
      */
     var getTimelineLayers = function (layerGroups) {
+      console.log('[F] dir: getTimelineLayers()');
       var timelineLayers = {events: {layers: [], slugs: []},
                             rain: undefined};
       angular.forEach(layerGroups, function (layergroup) {
@@ -238,7 +242,7 @@ angular.module('lizard-nxt')
         if (response !== undefined) {
           timeline.drawLines(response, that.eventOrder,
                              eventLayer.slug);
-          that.eventOrder += 1;
+          that.eventOrder++;
         }
       });
     };
@@ -254,9 +258,9 @@ angular.module('lizard-nxt')
      */
     var getTemporalRasterData = function (rasterLayer, nEvents) {
 
-      var start = scope.timeState.start;
-      var stop = scope.timeState.end;
-      var bounds = scope.mapState.bounds;
+      var start = scope.timeState.start,
+          stop = scope.timeState.end,
+          bounds = scope.mapState.bounds;
 
       RasterService.getData(
         rasterLayer,
