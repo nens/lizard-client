@@ -133,12 +133,12 @@ angular.module('lizard-nxt')
                       nEventTypes);
     };
 
-    /** 
+    /**
      * @function
      * @summary Temporary function to get relevant timeline layers from active
      *  layers.
      * @description Loops over layergroups and gets for each active layergroup
-     * the vector and rain intensity layer. Those layers are used to draw data 
+     * the vector and rain intensity layer. Those layers are used to draw data
      * in the timeline.
      *
      * TODO: refactor to query layerGroups by data type (event, raster, object)
@@ -161,7 +161,7 @@ angular.module('lizard-nxt')
           });
         }
       });
-      
+
       return timelineLayers;
     };
 
@@ -191,7 +191,7 @@ angular.module('lizard-nxt')
             timeline.drawLines([], scope.events.nEvents, slug);
           }
         });
-        
+
         // update slugs on scope for housekeeping
         scope.events.slugs = timelineLayers.events.slugs;
         // create context for callback function, reset eventOrder to 1.
@@ -315,10 +315,10 @@ angular.module('lizard-nxt')
     });
 
     /**
-     * Update timeState.at when animation playing is toggled.
+     * Round timeState.at when animation stops.
      */
     scope.$watch('timeState.animation.playing', function (n, o) {
-      if (n === o) { return true; }
+      if (n === o || n) { return true; }
       scope.timeState.at = UtilService.roundTimestamp(
         scope.timeState.at, scope.timeState.aggWindow, false);
     });
