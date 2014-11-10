@@ -73,6 +73,7 @@ angular.module('lizard-nxt')
             [$scope.mapState.points[1].lng, $scope.mapState.points[1].lat]
           ]
         });
+        $scope.mapState.points = [];
       }
     };
 
