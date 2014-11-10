@@ -329,14 +329,15 @@ angular.module('lizard-nxt')
   /**
    * @function
    * @memberOf UtilService
-   * @description - checks whether API response has enough (non-null) data
-   *                to actually put it on the scope.
+   * @description - Checks whether API response from the raster store has enough
+   *                (non-null) data to actually put it on the scope.
    * @param {Object[]} response - An API response
    * @return {boolean}
    */
   this.isSufficientlyRichData = function (data) {
 
     if (this.nullOrNestedNull(data)) {
+
       // kill: null AND [null] AND [[null]] etc
       return false;
 
@@ -383,6 +384,8 @@ angular.module('lizard-nxt')
    * @return {boolean}
    */
   this.nullOrNestedNull = function (x) {
+
+    console.log('[F] nullOrNestedNull(x) WHERE x =', x);
 
     if (x === null) {
       return true;
