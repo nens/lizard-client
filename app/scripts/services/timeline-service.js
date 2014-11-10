@@ -36,7 +36,7 @@ angular.module('lizard-nxt')
   zoomend,
 
   // Timeline elements
-  nowIndicator,
+  futureIndicator,
   aggWindow, // aggregation window
   lines, // events start - end
   bars; // rain intensity
@@ -95,12 +95,12 @@ angular.module('lizard-nxt')
      * @description From 'now' the background of the timeline gets a different
      * style.
      */
-    addNowIndicator: {
+    addFutureIndicator: {
       value: function () {
         var width = 20000,
         height = this._getHeight(this.dimensions);
 
-        nowIndicator = this._svg.select("g").append("rect")
+        futureIndicator = this._svg.select("g").append("rect")
           .attr("height", height)
           .attr("width", width)
           .attr("id", "nodata")
@@ -211,8 +211,8 @@ angular.module('lizard-nxt')
           updateRectangleElements(bars, xScale, oldDimensions, this.dimensions);
         }
 
-        if (nowIndicator) {
-          updateNowElement(nowIndicator, xScale, this.dimensions);
+        if (futureIndicator) {
+          updateFutureIndicator(futureIndicator, xScale, this.dimensions);
         }
 
         if (aggWindow) {
@@ -441,8 +441,8 @@ angular.module('lizard-nxt')
         }
       }
 
-      if (nowIndicator) {
-        nowIndicator
+      if (futureIndicator) {
+        futureIndicator
           .attr('x', function () {
             return xScale(Date.now());
           });
@@ -535,20 +535,21 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @summary update now indicator element
+   * @summary update future indicator.
    *
-   * @param {object} nowIndicator - D3 selection.
+   * @param {object} futureIndicator - D3 selection.
    * @param {object} xScale - D3 scale.
    * @param {object} dimensions - timeline dimensions object.
    */
-  var updateNowElement = function (nowIndicator, xScale, dimensions) {
+  var updateFutureIndicator = function (futureIndicator, xScale, dimensions) {
     var height = Timeline.prototype._getHeight(dimensions);
 
-    nowIndicator
-     .attr('height', height)
+    futureIndicator
      .attr('x', function () {
         return xScale(Date.now());
-      });
+      })
+     .transition()
+     .attr('height', height);
   };
 
   /**
