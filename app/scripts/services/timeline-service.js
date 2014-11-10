@@ -231,13 +231,13 @@ angular.module('lizard-nxt')
      *   [{properties.timestamp_end: timestamp,
      *     properties.timestamp_start: timestamp,
      *     properties.event_series_id: event_series id,
-     *     TODO: should maybe be style? check with branch Fritz styling events.
-     *     properties.color: <color code>,
      *     geometry.coordinates: [lat, lon]}]
      * @param {integer} order - Order of events.
+     * @param {string} slug - Slug of event layer.
+     * @param {string} color - Hex color code.
      */
     drawLines: {
-      value: function (data, order, series_ids) {
+      value: function (data, order, slug, color) {
         lines = drawLineElements(
           this._svg,
           this.dimensions,
@@ -245,7 +245,8 @@ angular.module('lizard-nxt')
           ordinalYScale,
           data,
           order,
-          series_ids
+          slug,
+          color
         );
       }
     },
@@ -556,14 +557,13 @@ angular.module('lizard-nxt')
    *   [{properties.timestamp_end: timestamp,
    *     properties.timestamp_start: timestamp,
    *     properties.event_series_id: event_series id,
-   *     TODO: should maybe be style? check with branch Fritz styling events.
-   *     properties.color: <color code>,
    *     geometry.coordinates: [lat, lon]}]
    * @param {int} order - Order of data (which level to draw in timeline).
    * @param {string} slug - slug of event series.
+   * @param {string} color - Hex color code.
    */
   var drawLineElements = function (
-    svg, dimensions, xScale, yScale, data, order, slug) {
+    svg, dimensions, xScale, yScale, data, order, slug, color) {
 
     var xOneFunction = function (d) {
       return xScale(d.properties.timestamp_end);
@@ -572,8 +572,7 @@ angular.module('lizard-nxt')
       return xScale(d.properties.timestamp_start);
     };
     var yFunction = function (d) { return yScale(order); };
-    // TODO: get color from backend
-    var colorFunction = function (d) { return "#F00"; };
+    var colorFunction = function (d) { return color; };
     var dFunction = function (d) {
       // Draws a small line from the end of the event to start
       var path =

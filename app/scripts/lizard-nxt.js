@@ -263,13 +263,13 @@ angular.module('lizard-nxt')
   $scope.timeState.at = $scope.timeState.start;
   $scope.timeState.animation.start = $scope.timeState.start;
   // get time resolution in ms per pixel
-  $scope.timeState.resolution = ($scope.timeState.end - $scope.timeState.start)
-                                 / window.innerWidth;
+  $scope.timeState.resolution =
+    ($scope.timeState.end - $scope.timeState.start) / window.innerWidth;
+
   $scope.timeState.aggWindow = UtilService.getAggWindow($scope.timeState.start,
                                                         $scope.timeState.end,
                                                         window.innerWidth);
-
-// END TIME MODEL
+  // END TIME MODEL
 
   /**
    * Watch to restrict values of timeState.

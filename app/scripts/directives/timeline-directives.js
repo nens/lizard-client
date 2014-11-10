@@ -237,7 +237,7 @@ angular.module('lizard-nxt')
       eventData.then(function (response) {
         if (response !== undefined) {
           timeline.drawLines(response, that.eventOrder,
-                             eventLayer.slug);
+                             eventLayer.slug, eventLayer.color);
           that.eventOrder += 1;
         }
       });

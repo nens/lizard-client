@@ -3,7 +3,10 @@ Changelog of lizard-nxt client
 
 Unreleased
 ----------
-- Event categories/series can be differentiated by color and icon.
+
+- Events series in timeline are colored.
+
+- Event series can be differentiated by color.
 
 
 Release 0.2b10 (2014-11-06)
