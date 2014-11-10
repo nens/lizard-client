@@ -1,3 +1,5 @@
+[![Build Status](http://buildbot.lizardsystem.nl/jenkins/job/Lizard-Client%20Integration%202.%20Deploy/badge/icon)](http://buildbot.lizardsystem.nl/jenkins/job/Lizard-Client%20Integration%202.%20Deploy/)
+
 # Lizard client
 
 Angular/leaflet/d3 app that visualizes (geo-)information specific for the water sector. It is the front-end in the lizard-nxt ecosystem, with the closed source lizard-nxt django app as an API to the hydra-core db.
