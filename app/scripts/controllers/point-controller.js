@@ -33,7 +33,7 @@ angular.module('lizard-nxt')
 
       ClickFeedbackService.drawCircle($scope.mapState, here);
       ClickFeedbackService.startVibration($scope.mapState);
-      var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, GRAPH_WIDTH);
+      var aggWindow = $scope.timeState.aggWindow;
       var promises = $scope.fillBox({
         geom: here,
         start: $scope.timeState.start,
@@ -43,7 +43,9 @@ angular.module('lizard-nxt')
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
           if (response.data && response.data.id && response.data.entity_name) {
-            getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
+            getTimeSeriesForObject(
+              response.data.entity_name + '$' + response.data.id
+            );
           }
           if (response.layerSlug === 'radar/basic' && response.data !== null) {
             $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
@@ -139,22 +141,16 @@ angular.module('lizard-nxt')
      * @memberOf app.pointCtrl
      * @description gets timeseries from service
      */
-    var getTimeSeriesForObject = function (id) {
-      TimeseriesService.getTimeseries(id, $scope.timeState)
+    var getTimeSeriesForObject = function (objectId) {
+
+      TimeseriesService.getTimeseries(objectId, $scope.timeState)
       .then(function (result) {
 
         $scope.box.content.timeseries = $scope.box.content.timeseries || {};
 
         if (result.length > 0) {
-
-          angular.extend($scope.box.content.timeseries, {
-
-            type  : 'timeseries',
-            data  : result[0].events,
-            name  : result[0].name,
-            order : 9999
-          });
-
+          $scope.box.content.timeseries.data = result;
+          $scope.box.content.timeseries.selectedTimeseries = result[0];
         } else {
           delete $scope.box.content.timeseries;
         }

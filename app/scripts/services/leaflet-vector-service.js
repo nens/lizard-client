@@ -8,7 +8,7 @@
  * Creates a Tiled Layer for retrieving and drawing vector data. 
  */
 angular.module('lizard-nxt')
-  .service('LeafletVectorService', ["LeafletService", "VectorService", 
+  .service('LeafletVectorService', ["LeafletService", "VectorService",
       function (LeafletService, VectorService) {
 
   /**
@@ -42,16 +42,18 @@ angular.module('lizard-nxt')
           var geojsonMarkerOptions = {
             radius: (feature.properties.radius) ? feature.properties.radius: 6,
             fillColor: color,
-            color: "#000",
-            weight: 1,
-            fillOpacity: 0.8
+            color: "#FFF",
+            weight: 2,
+            fillOpacity: 1
           };
 
-          var circle = LeafletService.circleMarker(latlng, geojsonMarkerOptions);
+          var circle = LeafletService.circleMarker(
+            latlng, geojsonMarkerOptions);
           circle.on('click', function (e) {
             // simulate click on map instead of this event;
             this._map.fire('click', {
-              latlng: new LeafletService.LatLng(e.target.feature.geometry.coordinates[1],
+              latlng: new LeafletService.LatLng(
+                e.target.feature.geometry.coordinates[1],
                 e.target.feature.geometry.coordinates[0])
             });
           });
@@ -63,7 +65,8 @@ angular.module('lizard-nxt')
       LeafletService.TileLayer.prototype.onAdd.call(this, map);
       var size = this._map.getPixelBounds().getSize();
 
-      this.geojsonLayer = LeafletService.geoJson(null, this.drawOptions).addTo(map);
+      this.geojsonLayer = LeafletService.geoJson(
+        null, this.drawOptions).addTo(map);
       this._map.on('moveend', this._onMove, this);
     },
     /**
@@ -99,15 +102,15 @@ angular.module('lizard-nxt')
     _xhrHandler: function (req, layer, tile, tilePoint) {
       return function () {
         if (req.readyState !== 4) {
-            return;
+          return;
         }
 
         var s = req.status;
         if ((s >= 200 && s < 300) || s === 304) {
-            tile.datum = JSON.parse(req.responseText);
-            layer._tileLoaded(tile, tilePoint);
+          tile.datum = JSON.parse(req.responseText);
+          layer._tileLoaded(tile, tilePoint);
         } else {
-            layer._tileLoaded(tile, tilePoint);
+          layer._tileLoaded(tile, tilePoint);
         }
       };
     },
@@ -173,7 +176,7 @@ angular.module('lizard-nxt')
         if (coord === undefined) {
           overlapLocations[key] = index;
           filteredData.push(d);
-        } else if (!filteredData[overlapLocations[key]]){
+        } else if (!filteredData[overlapLocations[key]]) {
           return undefined;
         } else {
           filteredData[overlapLocations[key]].properties.radius += 1;
@@ -207,7 +210,7 @@ angular.module('lizard-nxt')
       } else if (data instanceof Array) {
         filteredData = self.countOverlapping(data);
       }
-        self.geojsonLayer.addData(filteredData);
+      self.geojsonLayer.addData(filteredData);
     },
     /**
      * @function
@@ -276,4 +279,4 @@ angular.module('lizard-nxt')
   
   return TileDataLayer;
 
- }]);
+}]);
