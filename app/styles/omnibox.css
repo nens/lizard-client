@@ -623,6 +623,7 @@
   position: relative;
   top: -1px;
   color: #95a5a6;
+  z-index: 9999;
 }
 
 .timeseries-header-container {
