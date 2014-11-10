@@ -7,20 +7,19 @@ angular.module('lizard-nxt')
    *
    */
   $scope.formatCSVColumns = function (data) {
+
     var i,
-      formattedDateTime,
-      formattedData = [],
-      lat = $scope.mapState.here.lat,
-      lng = $scope.mapState.here.lng,
-      _formatDate = function (epoch) {
-
-        var d = new Date(parseInt(epoch, 1));
-
-        return [
-          [d.getDate(), d.getMonth() + 1, d.getFullYear()].join('-'),
-          [d.getHours() || "00", d.getMinutes() || "00", d.getSeconds() || "00"].join(':')
-        ];
-      };
+        formattedDateTime,
+        formattedData = [],
+        lat = $scope.mapState.here.lat,
+        lng = $scope.mapState.here.lng,
+        _formatDate = function (epoch) {
+          var d = new Date(parseInt(epoch, 1));
+          return [
+            [d.getDate(), d.getMonth() + 1, d.getFullYear()].join('-'),
+            [d.getHours() || "00", d.getMinutes() || "00", d.getSeconds() || "00"].join(':')
+          ];
+        };
 
     for (i = 0; i < data.length; i++) {
 
@@ -34,6 +33,8 @@ angular.module('lizard-nxt')
         lng
       ]);
     }
+
+    return formattedData;
   };
 
 }]);

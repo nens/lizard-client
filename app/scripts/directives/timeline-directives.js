@@ -84,9 +84,12 @@ angular.module('lizard-nxt')
        * @param {object} dimensions - object with timeline dimensions.
        */
       clickFn: function (event, scale, dimensions) {
-        var timeClicked = +(scale.invert(event.x - dimensions.padding.left));
+        var timeClicked = +(scale.invert(event.pageX - dimensions.padding.left));
         scope.timeState.at = UtilService.roundTimestamp(
-          timeClicked, scope.timeState.aggWindow, false);
+          timeClicked,
+          scope.timeState.aggWindow,
+          false
+        );
         scope.$digest();
       },
     };
@@ -195,9 +198,11 @@ angular.module('lizard-nxt')
         // update slugs on scope for housekeeping
         scope.events.slugs = timelineLayers.events.slugs;
         // create context for callback function, reset eventOrder to 1.
-        context = {eventOrder: 1,
-                   nEvents: scope.events.nEvents,
-                   slugs: scope.events.slugs};
+        context = {
+          eventOrder: 1,
+          nEvents: scope.events.nEvents,
+          slugs: scope.events.slugs
+        };
         angular.forEach(timelineLayers.events.layers, getEventData, context);
       } else {
         scope.events.nEvents = 0;
@@ -236,9 +241,13 @@ angular.module('lizard-nxt')
       var that = this;
       eventData.then(function (response) {
         if (response !== undefined) {
-          timeline.drawLines(response, that.eventOrder,
-                             eventLayer.slug, eventLayer.color);
-          that.eventOrder += 1;
+          timeline.drawLines(
+            response,
+            that.eventOrder,
+            eventLayer.slug,
+            eventLayer.color
+          );
+          that.eventOrder++;
         }
       });
     };
@@ -253,9 +262,11 @@ angular.module('lizard-nxt')
      * @param {integer} nEvents - number of events.
      */
     var getTemporalRasterData = function (rasterLayer, nEvents) {
-      var start = scope.timeState.start;
-      var stop = scope.timeState.end;
-      var bounds = scope.mapState.bounds;
+
+      var start = scope.timeState.start,
+          stop = scope.timeState.end,
+          bounds = scope.mapState.bounds;
+
       RasterService.getData(
         rasterLayer,
         {
@@ -266,8 +277,8 @@ angular.module('lizard-nxt')
           aggWindow: scope.timeState.aggWindow
         }
       ).then(function (response) {
-          timeline.drawBars(response);
-        });
+        timeline.drawBars(response);
+      });
     };
 
     // END HELPER FUNCTIONS
@@ -299,9 +310,11 @@ angular.module('lizard-nxt')
       if (scope.timeState.changeOrigin !== 'timeline') {
         scope.timeState.aggWindow = UtilService.getAggWindow(
           scope.timeState.start, scope.timeState.end, window.innerWidth);
-        timeline.zoomTo(scope.timeState.start,
-                        scope.timeState.end,
-                        scope.timeState.aggWindow);
+        timeline.zoomTo(
+          scope.timeState.start,
+          scope.timeState.end,
+          scope.timeState.aggWindow
+        );
         getTimeLineData();
       }
     });
@@ -320,7 +333,8 @@ angular.module('lizard-nxt')
     scope.$watch('timeState.animation.playing', function (n, o) {
       if (n === o || n) { return true; }
       scope.timeState.at = UtilService.roundTimestamp(
-        scope.timeState.at, scope.timeState.aggWindow, false);
+        scope.timeState.at, scope.timeState.aggWindow, false
+      );
     });
 
     /**

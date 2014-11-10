@@ -29,6 +29,7 @@ angular.module('lizard-nxt')
      * @param  {L.LatLng} here
      */
     var fillpoint = function (here) {
+
       if ($scope.box.type !== 'point') { return; }
 
       ClickFeedbackService.drawCircle($scope.mapState, here);
@@ -40,6 +41,7 @@ angular.module('lizard-nxt')
         end: $scope.timeState.end,
         aggWindow: aggWindow
       });
+
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
           if (response.data && response.data.id && response.data.entity_name) {
@@ -149,8 +151,40 @@ angular.module('lizard-nxt')
         $scope.box.content.timeseries = $scope.box.content.timeseries || {};
 
         if (result.length > 0) {
-          $scope.box.content.timeseries.data = result;
-          $scope.box.content.timeseries.selectedTimeseries = result[0];
+
+          // We retrieved data for one-or-more timeseries, but do these actually
+          // contain measurements, or just metadata? We filter out the timeseries
+          // with too little measurements...
+
+          var filteredResult = [];
+
+          angular.forEach(result, function (value) {
+            if (value.events.length > 1) {
+              filteredResult.push(value);
+            }
+          });
+
+          if (filteredResult.length > 0) {
+
+            // IF we retrieve at least one timeseries with actual measurements,
+            // we put the retrieved data on the $scope:
+
+            $scope.box.content.timeseries.data = filteredResult;
+            $scope.box.content.timeseries.selectedTimeseries = filteredResult[0];
+          } else {
+
+            // ELSE, we delete the container object for timeseries:
+
+            delete $scope.box.content.timeseries;
+
+            if (JS_DEBUG) {
+              console.log('[!] Retrieved timeseries for object ' + objectId +
+                ', but it doesn\'t hold any actual measurements! So we rm the' +
+                'timeseries-part from the omnibox'
+              );
+            }
+          }
+
         } else {
           delete $scope.box.content.timeseries;
         }

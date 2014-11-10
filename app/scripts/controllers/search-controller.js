@@ -79,14 +79,9 @@ angular.module('lizard-nxt')
   };
 
   $scope.resetQuery = function () {
-      // clean stuff..
-      // Search Ctrl is the parent of omnibox cards
-      // therefore no need to call $rootScope.
-      $scope.$broadcast('clean');
-      $scope.box.query = null;
-      $scope.box.type = 'point';
-      $scope.box.showCards = true;
-    };
+    $scope.box.query = null;
+    $scope.box.content = {};
+  };
 
   $scope.showDetails = function (obj) {
     if (obj.boundingbox) {

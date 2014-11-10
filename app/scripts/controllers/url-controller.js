@@ -122,7 +122,12 @@ angular.module('lizard-nxt')
       UrlState.setCoordinatesUrl(state,
         $scope.mapState.center.lat,
         $scope.mapState.center.lng,
-        $scope.mapState.zoom);
+        $scope.mapState.zoom
+      );
+      setTimeout(function () {
+        var cards = d3.selectAll(".card");
+        cards.style("opacity", 1);
+      }, 50);
     });
 
     /**

@@ -884,7 +884,7 @@ ul.list-inline li.baselayer-icon label{
 
 /**
  * extra small bootstrap buttons
- */ 
+ */
 .btn-xss {
   padding: 1px 4px;
   font-size: 9px;
@@ -919,7 +919,7 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .time-controls-right {
-  float: right;  
+  float: right;
   position: absolute;
   top: 1px;
   right: 0;
@@ -928,7 +928,7 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .time-start-now-end p {
-  margin: 0; 
+  margin: 0;
   height: 20px;
 }
 
@@ -1516,7 +1516,7 @@ img {
   position: absolute;
   border-radius: 0;
   width: 34px;
-  height: 33px;
+  height: 32px;
   line-height: 33px;
   border-left: 1px solid #fff;
 
@@ -1552,10 +1552,10 @@ img {
  * DEBUG colors
  */
 .green {
-  background-color: #0F0;  
+  background-color: #0F0;
 }
 .red {
-  background-color: #F00;  
+  background-color: #F00;
 }
 .blue {
   background-color: #00F;
