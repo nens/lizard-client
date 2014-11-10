@@ -21,7 +21,8 @@ angular.module('lizard-nxt')
       var promises = $scope.fillBox({
         geom: line,
         start: $scope.timeState.start,
-        end: $scope.timeState.end
+        end: $scope.timeState.end,
+        aggWindow: $scope.timeState.aggWindow
       });
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
@@ -84,7 +85,6 @@ angular.module('lizard-nxt')
             [$scope.mapState.points[1].lng, $scope.mapState.points[1].lat]
           ]
         });
-        $scope.mapState.points = [];
       }
     };
 
