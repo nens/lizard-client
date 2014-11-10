@@ -52,8 +52,12 @@
 
 
               <li ng-if="user.authenticated" class="visible-xs">
-                <a class="user" href="https://sso.lizard.net/edit_profile/" title="Edit profile"><div class="" id="username"><i id="" class="fa fa-user"></i>
-                <% user.firstName %></div></a>
+                <a class="user" href="https://sso.lizard.net/edit_profile/" title="Edit profile">
+                    <div class="" id="username" ng-cloak>
+                        <i id="" class="fa fa-user"></i>
+                        <% user.firstName %>
+                    </div>
+                </a>
               </li>
               <li ng-if="user.authenticated"
                   class="visible-sm visible-md visible-lg">
