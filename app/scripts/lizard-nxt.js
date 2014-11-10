@@ -314,6 +314,12 @@ angular.module('lizard-nxt')
         // $scope.box.empty = null;
       }
     }
+
+    // play pause timeline
+    if ($event.which === 32) {
+      $scope.timeState.playPauseAnimation();
+    }
+
   };
 
   $scope.toggleVersionVisibility = function () {
