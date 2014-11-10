@@ -447,6 +447,20 @@ angular.module('lizard-nxt')
             return xScale(Date.now());
           });
       }
+
+      if (lines) {
+        var xOneFunction = function (d) {
+          return xScale(d.properties.timestamp_end);
+        };
+        var xTwoFunction = function (d) {
+          return xScale(d.properties.timestamp_start);
+        };
+
+        d3.select("#circle-group").selectAll("line")
+          .attr("x1", xOneFunction)
+          .attr("x2", xTwoFunction);
+      }
+
       if (zoomFn) {
         zoomFn(xScale);
       }
@@ -580,21 +594,6 @@ angular.module('lizard-nxt')
     };
     var yFunction = function (d) { return yScale(order); };
     var colorFunction = function (d) { return color; };
-    var dFunction = function (d) {
-      // Draws a small line from the end of the event to start
-      var path =
-        "M " + xOneFunction(d) + " " + yFunction(d)
-        + " L " + (xTwoFunction(d) + 0.5) + " " + yFunction(d);
-      return path;
-    };
-    var initialDFunction = function (d) {
-      // Draws a mimimal line from end to just next to the end to create a
-      // circle + 0.5 is to prevent flickering in browsers when transitioning
-      var path =
-        "M " + xOneFunction(d) + " " + yFunction(d)
-        + " L " + (xOneFunction(d) + 0.5) + " " + yFunction(d);
-      return path;
-    };
     var splitTranstime = Timeline.prototype.transTime / 2;
 
     // if data exists, check if group is available for this series and create
@@ -611,7 +610,7 @@ angular.module('lizard-nxt')
 
       // DATA JOIN
       // Join new data with old elements, based on the id value.
-      lines = group.selectAll("path")
+      lines = group.selectAll("line")
         .data(data, function  (d) { return d.properties.id; });
     } else if (data === undefined) {
       // if no data is defined, remove all groups
@@ -627,15 +626,17 @@ angular.module('lizard-nxt')
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
       .attr("stroke", colorFunction)
-      .attr("d", dFunction);
+      .attr("x1", xOneFunction)
+      .attr("x2", xTwoFunction)
+      .attr("y1", yFunction)
+      .attr("y2", yFunction);
 
     // ENTER
     // Create new elements as needed.
     lines.append("g");
-    lines.enter().append("path")
+    lines.enter().append("line")
       .attr("class", "event selected")
       .attr("stroke", colorFunction)
-      .attr("d", initialDFunction)
       .attr("stroke-linecap", "round")
       .attr("stroke-opacity", 0)
       .attr("stroke-width", 0)
@@ -647,7 +648,10 @@ angular.module('lizard-nxt')
     .transition()
       .delay(Timeline.prototype.transTime)
       .duration(splitTranstime)
-      .attr("d", dFunction);
+      .attr("x1", xOneFunction)
+      .attr("x2", xTwoFunction)
+      .attr("y1", yFunction)
+      .attr("y2", yFunction);
 
     // EXIT
     // Remove old elements as needed.
@@ -655,7 +659,6 @@ angular.module('lizard-nxt')
       .transition()
       .delay(0)
       .duration(splitTranstime)
-      .attr("d", initialDFunction)
     .transition()
       .delay(splitTranstime)
       .duration(splitTranstime)
