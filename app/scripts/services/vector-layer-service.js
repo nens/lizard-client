@@ -63,8 +63,16 @@ angular.module('lizard-nxt')
 
         syncTime: {
           value: function (mapState, timeState, oldTime) {
-            this._leafletLayer.setTime(this, timeState);
+            if (timeState.animation.playing) {
+              this._leafletLayer.setTime(this, {
+                start: timeState.at,
+                end: timeState.at + timeState.aggWindow
+              });
+            } else {
+              this._leafletLayer.setTime(this, timeState);
+            }
             return;
+
           }
         },
         setOpacity: {
