@@ -117,12 +117,18 @@ angular.module('lizard-nxt')
      * Set location when map moved.
      */
     $scope.$watch('mapState.moved', function (n, o) {
+      console.log('triggered??');
       if (n === o) { return true; }
       state.mapView.update = false;
       UrlState.setCoordinatesUrl(state,
         $scope.mapState.center.lat,
         $scope.mapState.center.lng,
-        $scope.mapState.zoom);
+        $scope.mapState.zoom
+      );
+      setTimeout(function () {
+        var cards = d3.selectAll(".card");
+        cards.style("opacity", 1);
+      }, 50);
     });
 
     /**

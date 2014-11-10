@@ -101,7 +101,7 @@ angular.module('lizard-nxt')
           if ($scope.box.content[response.layerGroupSlug]) {
 
             if (response.layerGroupSlug === 'waterchain') {
-              delete $scope.box.content['waterchain'];
+              delete $scope.box.content.waterchain;
               delete $scope.box.content.timeseries;
 
             } else {
