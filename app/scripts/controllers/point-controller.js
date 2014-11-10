@@ -34,8 +34,7 @@ angular.module('lizard-nxt')
 
       ClickFeedbackService.drawCircle($scope.mapState, here);
       ClickFeedbackService.startVibration($scope.mapState);
-
-      var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, GRAPH_WIDTH);
+      var aggWindow = $scope.timeState.aggWindow;
       var promises = $scope.fillBox({
         geom: here,
         start: $scope.timeState.start,

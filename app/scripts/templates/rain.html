@@ -8,7 +8,8 @@
     csv-header="['Datestamp', 'Timestamp', 'Rain (mm)', 'Latitude', 'Longitude']" >
     <i class="fa fa-share-square-o"></i>
   </a>
-  <graph ng-if="lg.layers['radar/basic']" bar-chart
+  <graph ng-if="lg.layers['radar/basic']"
+    bar-chart
     class="xyGraph"
     data="lg.layers['radar/basic'].data"
     ylabel="lg.layers['radar/basic'].aggWindow"

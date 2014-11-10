@@ -150,7 +150,6 @@ angular.module('lizard-nxt')
      * @returns {object} with: events (list of layers) and rain (nxtLayer).
      */
     var getTimelineLayers = function (layerGroups) {
-      console.log('[F] dir: getTimelineLayers()');
       var timelineLayers = {events: {layers: [], slugs: []},
                             rain: undefined};
       angular.forEach(layerGroups, function (layergroup) {
@@ -240,8 +239,12 @@ angular.module('lizard-nxt')
       var that = this;
       eventData.then(function (response) {
         if (response !== undefined) {
-          timeline.drawLines(response, that.eventOrder,
-                             eventLayer.slug);
+          timeline.drawLines(
+            response,
+            that.eventOrder,
+            eventLayer.slug,
+            eventLayer.color
+          );
           that.eventOrder++;
         }
       });

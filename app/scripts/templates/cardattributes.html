@@ -25,28 +25,28 @@
 
   <table id="kunstwerk-table" class="table table-condensed table-hover">
 
-      <tr class="attr-row"
-          ng-repeat="obj in wanted[waterchain.layers.waterchain_grid.data.entity_name].rows">
+    <tr class="attr-row"
+        ng-repeat="obj in wanted[waterchain.layers.waterchain_grid.data.entity_name].rows">
 
-        <td class="fixed-width-card-table"><% obj.keyName %></td>
+      <td class="fixed-width-card-table"><% obj.keyName %></td>
 
-        <td class="lineout"
-            ng-if="waterchain.layers.waterchain_grid.data[obj.attrName]">
-          <span class="ng-binding">
-            <% $eval(obj.ngBindValue) + obj.valueSuffix %>
-          </span>
-        </td>
+      <td class="lineout"
+          ng-if="waterchain.layers.waterchain_grid.data[obj.attrName]">
+        <span class="ng-binding">
+          <% $eval(obj.ngBindValue) + obj.valueSuffix %>
+        </span>
+      </td>
 
-        <td class="lineout"
-            ng-if="!waterchain.layers.waterchain_grid.data[obj.attrName]"
-            rel="tooltip"
-            data-toggle="tooltip"
-            title="Dit is een voorbeeld waarde">
-          <span class="ng-binding dummy-attr-value">
-            <% obj.defaultValue + obj.valueSuffix %>
-          </span>
-        </td>
-      </tr>
+      <td class="lineout"
+          ng-if="!waterchain.layers.waterchain_grid.data[obj.attrName]"
+          rel="tooltip"
+          data-toggle="tooltip"
+          title="Dit is een voorbeeld waarde">
+        <span class="ng-binding dummy-attr-value">
+          <% obj.defaultValue + obj.valueSuffix %>
+        </span>
+      </td>
+    </tr>
 
   </table>
 
