@@ -67,6 +67,7 @@ angular.module('lizard-nxt')
 
       this.geojsonLayer = LeafletService.geoJson(
         null, this.drawOptions).addTo(map);
+      this._map.on('moveend', this._onMove, this);
     },
     /**
      * @function
@@ -76,9 +77,18 @@ angular.module('lizard-nxt')
      */
     onRemove: function (map) {
       this._reset();
+      this._map.off('moveend', this._onMove);
       map.removeLayer(this.geojsonLayer);
 
       LeafletService.TileLayer.prototype.onRemove.call(this, map);
+    },
+    /**
+     * @function
+     * @description handler for move events,
+     * triggers a redraw etc.
+     */
+    _onMove: function () {
+      this.redraw();
     },
     /**
      * @function
@@ -218,18 +228,25 @@ angular.module('lizard-nxt')
             );
       }
     },
+    setTime: function (layer, timeState) {
+      //this.options.layer = layer;
+      this.options.start = timeState.start;
+      this.options.end = timeState.end;
+      this.redraw();
+    },
     
-    redraw: function (layer, mapState, timeState) {
+    redraw: function () {
       var self = this;
       VectorService.getData(
-        layer, {
-          geom: mapState.bounds,
-          start: timeState.start,
-          end: timeState.end
-        }).then(function (response) {
-          self._resetgeoJson();
-          self.drawTheThings(response, self);
-        });
+          self.options.slug, {
+            layer: self,
+            geom: self._map.getBounds(),
+            start: self.options.start,
+            end: self.options.end
+          }).then(function (response) {
+            self._resetgeoJson();
+            self.drawTheThings(response, self);
+          }); 
     },
 
     /**
