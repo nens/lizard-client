@@ -4,6 +4,12 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- Transition on events in timeline.
+
+- Height of future indicator has transition.
+
+- Timeline doesn't throw error when nodata is received from rain.
+
 - Events series in timeline are colored.
 
 - Event series can be differentiated by color.
