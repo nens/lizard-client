@@ -31,6 +31,22 @@ angular.module('lizard-nxt')
               // Since the data is not properly formatted in the back
               // we convert it from degrees to meters here
               .data = UtilService.dataConvertToMeters(response.data);
+          } else if (response.data && response.data !== 'null'
+            && response.type === 'Store'
+            && (response.scale === 'ratio' || response.scale === 'interval')
+            && $scope.mapState.layerGroups[response.layerGroupSlug].temporal) {
+            // in other words, its rain..
+            $scope.box.content[response.layerGroupSlug]
+              .layers[response.layerSlug]
+              .temporalData = UtilService.dataConvertToMeters(response.data);
+            $scope.box.content[response.layerGroupSlug]
+              .layers[response.layerSlug]
+              .data = UtilService.createDataForTimeState(
+                $scope.box.content[response.layerGroupSlug]
+                  .layers[response.layerSlug]
+                  .temporalData,
+                $scope.timeState
+              );
           }
         });
       });
@@ -68,6 +84,7 @@ angular.module('lizard-nxt')
             [$scope.mapState.points[1].lng, $scope.mapState.points[1].lat]
           ]
         });
+        $scope.mapState.points = [];
       }
     };
 
@@ -141,8 +158,9 @@ angular.module('lizard-nxt')
       angular.forEach($scope.box.content, function (lg, slug) {
         if ($scope.mapState.layerGroups[slug].temporal) {
           angular.forEach(lg.layers, function (layer) {
-            if (layer.type === 'Store') {
-              layer.data = UtilService.createDataForTimeState(layer.data, $scope.timeState);
+            if (layer.type === 'Store'
+              && (layer.scale === 'ratio' || layer.scale === 'interval')) {
+              layer.data = UtilService.createDataForTimeState(layer.temporalData, $scope.timeState);
             }
           });
         }
