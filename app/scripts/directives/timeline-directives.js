@@ -133,12 +133,12 @@ angular.module('lizard-nxt')
                       nEventTypes);
     };
 
-    /** 
+    /**
      * @function
      * @summary Temporary function to get relevant timeline layers from active
      *  layers.
      * @description Loops over layergroups and gets for each active layergroup
-     * the vector and rain intensity layer. Those layers are used to draw data 
+     * the vector and rain intensity layer. Those layers are used to draw data
      * in the timeline.
      *
      * TODO: refactor to query layerGroups by data type (event, raster, object)
@@ -161,7 +161,7 @@ angular.module('lizard-nxt')
           });
         }
       });
-      
+
       return timelineLayers;
     };
 
@@ -191,7 +191,7 @@ angular.module('lizard-nxt')
             timeline.drawLines([], scope.events.nEvents, slug);
           }
         });
-        
+
         // update slugs on scope for housekeeping
         scope.events.slugs = timelineLayers.events.slugs;
         // create context for callback function, reset eventOrder to 1.
@@ -253,9 +253,11 @@ angular.module('lizard-nxt')
      * @param {integer} nEvents - number of events.
      */
     var getTemporalRasterData = function (rasterLayer, nEvents) {
+
       var start = scope.timeState.start;
       var stop = scope.timeState.end;
       var bounds = scope.mapState.bounds;
+
       RasterService.getData(
         rasterLayer,
         {
@@ -266,8 +268,8 @@ angular.module('lizard-nxt')
           aggWindow: scope.timeState.aggWindow
         }
       ).then(function (response) {
-          timeline.drawBars(response);
-        });
+        timeline.drawBars(response);
+      });
     };
 
     // END HELPER FUNCTIONS
@@ -299,9 +301,11 @@ angular.module('lizard-nxt')
       if (scope.timeState.changeOrigin !== 'timeline') {
         scope.timeState.aggWindow = UtilService.getAggWindow(
           scope.timeState.start, scope.timeState.end, window.innerWidth);
-        timeline.zoomTo(scope.timeState.start,
-                        scope.timeState.end,
-                        scope.timeState.aggWindow);
+        timeline.zoomTo(
+          scope.timeState.start,
+          scope.timeState.end,
+          scope.timeState.aggWindow
+        );
         getTimeLineData();
       }
     });
@@ -320,7 +324,8 @@ angular.module('lizard-nxt')
     scope.$watch('timeState.animation.playing', function (n, o) {
       if (n === o) { return true; }
       scope.timeState.at = UtilService.roundTimestamp(
-        scope.timeState.at, scope.timeState.aggWindow, false);
+        scope.timeState.at, scope.timeState.aggWindow, false
+      );
     });
 
     /**
