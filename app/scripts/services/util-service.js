@@ -274,11 +274,55 @@ angular.module('lizard-nxt')
    * @description Glues all of it's arguments to a single string
    */
   this.buildString = function () {
+
     var i, result = "";
+
     for (i = 0; i < arguments.length; i++) {
       result += arguments[i];
     }
+
     return result;
   };
 
+  /**
+   * @function all
+   * @memberof UtilService
+   * @description - Checks whether ALL elements of the input satisfy the predicate
+   * @param {arr} - An enumerable/iterable datastructure, e.g. Array
+   * @param {predicate_} - A predicate, e.g. 'even': function (x) { x % 2 === 0 };
+   * @return {boolean}
+   */
+  this.all = function (arr, predicate_) {
+
+    var i,
+        result = true,
+        predicate = predicate_ || function (x) { return x === true; };
+
+    for (i = 0; i < arr.length; i++) {
+      result = result && predicate(arr[i]);
+    }
+
+    return result;
+  };
+
+  /**
+   * @function any
+   * @memberof UtilService
+   * @description - Checks whether ANY element of the input satisfies the predicate
+   * @param {arr} - An enumerable/iterable datastructure, e.g. Array
+   * @param {predicate_} - A predicate, e.g. 'even': function (x) { x % 2 === 0 };
+   * @return {boolean}
+   */
+  this.any = function (arr, predicate_) {
+
+    var i,
+        result = false,
+        predicate = predicate_ || function (x) { return x === true; };
+
+    for (i = 0; i < arr.length; i++) {
+      result = result || predicate(arr[i]);
+    }
+
+    return result;
+  };
 });

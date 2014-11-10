@@ -29,8 +29,12 @@ angular.module('lizard-nxt')
       };
 
       /**
+       * @function
+       * @memberOf app.omnibox
        * @description - checks whether API response has enough (non-null) data
        *                to actually put it on the scope.
+       * @param {Object[]} response - An API response
+       * @return {boolean}
        */
       var isSufficientlyRichData = function (response) {
 
@@ -44,26 +48,22 @@ angular.module('lizard-nxt')
             // kill: []
             return false;
 
-          } else if (response.every(function (x) { x === null })) {
+          } else if (UtilService.all(response, function (x) { return x === null; })) {
             // kill: [null, null, ..., null]
             return false;
 
           } else if (response[0].constructor === 'Array') {
             // kill: [[x0, null], [x1, null], ..., [xn, null]]
 
-            var onlyNullsFor2ndArgument = true;
-            angular.forEach(response, function (arr) {
-              onlyNullsFor2ndArgument = onlyNullsFor2ndArgument && arr[1] === null;
+            return UtilService.all(response, function (elem) {
+              return elem[1] === null;
             });
-            return !onlyNullsFor2ndArgument;
           }
         }
         return true;
       };
 
       var putDataOnScope = function (response) {
-
-        console.log('[F] putDataOnScope(resp) WHERE resp =', response);
 
         var lGContent = $scope.box.content[response.layerGroupSlug] || {layers: {}};
         lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};

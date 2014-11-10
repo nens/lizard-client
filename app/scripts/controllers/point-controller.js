@@ -158,7 +158,7 @@ angular.module('lizard-nxt')
 
           var filteredResult = [];
 
-          angular.forEach(result, function (value, key) {
+          angular.forEach(result, function (value) {
             if (value.events.length > 1) {
               filteredResult.push(value);
             }
@@ -178,7 +178,7 @@ angular.module('lizard-nxt')
             delete $scope.box.content.timeseries;
 
             if (JS_DEBUG) {
-              console.log('[!] Retrieved timeseries for object #' + objectId +
+              console.log('[!] Retrieved timeseries for object ' + objectId +
                 ', but it doesn\'t hold any actual measurements! So we rm the' +
                 'timeseries-part from the omnibox'
               );
