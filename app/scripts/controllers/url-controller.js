@@ -117,7 +117,6 @@ angular.module('lizard-nxt')
      * Set location when map moved.
      */
     $scope.$watch('mapState.moved', function (n, o) {
-      console.log('triggered??');
       if (n === o) { return true; }
       state.mapView.update = false;
       UrlState.setCoordinatesUrl(state,
