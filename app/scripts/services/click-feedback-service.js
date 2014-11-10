@@ -14,6 +14,8 @@ angular.module('lizard-nxt')
        * @param {object} mapState
        */
       this.emptyClickLayer = function (mapState) {
+        clearInterval(this._vibration);
+
         if (this.clickLayer) {
           mapState.removeLayer(this.clickLayer);
         }
@@ -37,7 +39,7 @@ angular.module('lizard-nxt')
         this.clickLayer.options.pointToLayer = function (feature, latlng) {
           var circleMarker = L.circleMarker(latlng, {
             radius: 0,
-            weight: 5,
+            weight: self.strokeWidth,
             fill: false,
             zIndexOffset: 1000,
             clickable: true
@@ -78,6 +80,7 @@ angular.module('lizard-nxt')
        * @description add data to the clicklayer
        */
       this.drawFeature = function (geojson) {
+        this.strokeWidth = 5;
         this.clickLayer.addData(geojson);
       };
 
@@ -88,6 +91,8 @@ angular.module('lizard-nxt')
        * @param  {boolean} dashed when true draws a dashed line
        */
       this.drawLineElement = function (first, second, dashed) {
+        this.strokeWidth = 2;
+
         var geojsonFeature = { "type": "Feature" };
         geojsonFeature.geometry = {
           "type": "LineString",
@@ -95,7 +100,7 @@ angular.module('lizard-nxt')
         };
         this.clickLayer.options.style = {
           color: '#34495e',
-          weight: 2,
+          weight: this.strokeWidth,
           opacity: 1,
           smoothFactor: 1
         };
@@ -111,7 +116,9 @@ angular.module('lizard-nxt')
       this.vibrateFeatures = function () {
         var sel = this._selection = this._getSelection(this.clickLayer);
         clearInterval(this._vibration);
-        this._vibration = setInterval(function () {vibrate(sel, false); }, 400);
+        var vibrate = this.vibrate;
+        var self = this;
+        this._vibration = setInterval(function () { vibrate.call(self, sel, false); }, 400);
       };
 
       /**
@@ -128,7 +135,7 @@ angular.module('lizard-nxt')
           sel = this._selection = this._getSelection(this.clickLayer);
           remove = true;
         }
-        vibrate(sel, remove);
+        this.vibrate(sel, remove);
       };
 
       /**
@@ -159,6 +166,24 @@ angular.module('lizard-nxt')
       };
 
       /**
+       * @descriptions vibretes a selection.paths by varying the stroke-width
+       * @param  {d3 selection} sel selection contaning a path.
+       * @param  {boolean} remove to remove or not. When true, stroke-widh
+       *                          is set to 0 at the end the vibration.
+       */
+      this.vibrate = function (sel, remove) {
+        var width = this.strokeWidth;
+
+        sel.selectAll("path")
+          .classed("vibrator", true)
+          .attr("stroke-width", function () { return width * 2; })
+          .transition().duration(200)
+          .attr("stroke-width", function () { return width * 3; })
+          .transition().duration(200)
+          .attr("stroke-width", function () { return remove ? 0 : width; });
+      };
+
+      /**
        * @description returns specific radius for water-objects coming from
        *              the utfGrid
        * @param  {geojson feature} feature containing the entity_name of the
@@ -184,22 +209,6 @@ angular.module('lizard-nxt')
         return radius;
       };
 
-      /**
-       * @descriptions vibretes a selection.paths by varying the stroke-width
-       * @param  {d3 selection} sel selection contaning a path.
-       * @param  {boolean} remove to remove or not. When true, stroke-widh
-       *                          is set to 0 at the end the vibration.
-       */
-      var vibrate = function (sel, remove) {
-        var width = Number(sel.select('path').attr("stroke-width"));
-        sel.selectAll("path")
-          .classed("vibrator", true)
-          .attr("stroke-width", function () { return width * 2; })
-          .transition().duration(200)
-          .attr("stroke-width", function () { return width * 3; })
-          .transition().duration(200)
-          .attr("stroke-width", function () { return remove ? 0 : width; });
-      };
     };
 
     var clickLayer = new ClickLayer(),
