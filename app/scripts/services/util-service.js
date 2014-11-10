@@ -296,7 +296,7 @@ angular.module('lizard-nxt')
 
     var i,
         result = true,
-        predicate = predicate_ || function (x) { return x === true; };
+        predicate = predicate_ || function (x) { return !!x; };
 
     for (i = 0; i < arr.length; i++) {
       result = result && predicate(arr[i]);
@@ -317,7 +317,7 @@ angular.module('lizard-nxt')
 
     var i,
         result = false,
-        predicate = predicate_ || function (x) { return x === true; };
+        predicate = predicate_ || function (x) { return !!x; };
 
     for (i = 0; i < arr.length; i++) {
       result = result || predicate(arr[i]);
