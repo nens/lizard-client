@@ -336,24 +336,8 @@ angular.module('lizard-nxt')
    */
   this.isSufficientlyRichData = function (data) {
 
-    if (data === null // <-- check for 'null'
-         || // check for '[null]':
-         (
-           data.constructor === Array
-           && data.length === 1
-           && data[0] === null
-         )
-         || // check for '[[null]]':
-         (
-           data.constructor === Array
-           && data.length === 1
-           && data[0].constructor === Array
-           && data[0].length === 1
-           && data[0][0] === null
-          )
-        ) {
-
-      // kill: null AND [null] AND [[null]]
+    if (this.nullOrNestedNull(data)) {
+      // kill: null AND [null] AND [[null]] etc
       return false;
 
     } else if (data.constructor === Array) {
@@ -388,5 +372,18 @@ angular.module('lizard-nxt')
       }
     }
     return true;
+  };
+
+  this.nullOrNestedNull = function (x) {
+
+    if (x === null) {
+      return true;
+
+    } else if (x.constructor === Array && x.length === 1) {
+      return this.nullOrNestedNull(x[0]);
+
+    } else {
+      return false;
+    }
   };
 });
