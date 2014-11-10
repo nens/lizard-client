@@ -250,7 +250,8 @@ angular.module('lizard-nxt')
           // layer class. This is legacy:
           if (this.temporal
             && layer.type === 'WMS'
-            && !layer.tiled) {
+            && !layer.tiled
+            && !this._animState.buffering) {
             this._adhereWMSLayerToTime(layer, mapState, timeState, oldTime);
           }
         }
@@ -278,6 +279,7 @@ angular.module('lizard-nxt')
         numCachedFrames : UtilService.serveToMobileDevice() ? 10 : 15,
         previousFrame   : 0,
         previousDate    : undefined,
+        buffering       : false,
         nxtDate         : undefined,
         loadingRaster   : 0,
         restart         : false,
@@ -433,9 +435,12 @@ angular.module('lizard-nxt')
         image.on("load", function (e) {
           s.loadingRaster--;
           s.frameLookup[date] = index;
-          if (s.restart && s.loadingRaster === 0) {
-            s.restart = false;
-            timeState.playPauseAnimation();
+          if (s.loadingRaster === 0) {
+            s.buffering = false;
+            if (s.restart) {
+              s.restart = false;
+              timeState.playPauseAnimation();
+            }
           }
         });
       },
@@ -448,6 +453,8 @@ angular.module('lizard-nxt')
         s.previousDate = s.nxtDate; // shift the date
         s.loadingRaster = 0;        // reset the loading raster count
         s.frameLookup = {};         // All frames are going to load new ones, empty lookup
+        s.buffering = true;         // Animation is buffering, no syncing time
+                                    // till the buffer is finished.
 
         for (i in s.imageOverlays) {
           s.loadingRaster++;
