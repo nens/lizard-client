@@ -671,7 +671,7 @@ td.lineout {
   color: #7f8c8d !important;
 }
 
-.attr-row:first-of-type td:nth-of-type(2) {
+.attr-row:first-of-type td {
   border-top: 0 !important;
 }
 

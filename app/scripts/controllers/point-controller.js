@@ -29,10 +29,12 @@ angular.module('lizard-nxt')
      * @param  {L.LatLng} here
      */
     var fillpoint = function (here) {
+
       if ($scope.box.type !== 'point') { return; }
 
       ClickFeedbackService.drawCircle($scope.mapState, here);
       ClickFeedbackService.startVibration($scope.mapState);
+
       var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, GRAPH_WIDTH);
       var promises = $scope.fillBox({
         geom: here,
@@ -40,6 +42,7 @@ angular.module('lizard-nxt')
         end: $scope.timeState.end,
         aggWindow: aggWindow
       });
+
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
           if (response.data && response.data.id && response.data.entity_name) {
