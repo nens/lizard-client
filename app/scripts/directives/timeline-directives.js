@@ -328,10 +328,10 @@ angular.module('lizard-nxt')
     });
 
     /**
-     * Update timeState.at when animation playing is toggled.
+     * Round timeState.at when animation stops.
      */
     scope.$watch('timeState.animation.playing', function (n, o) {
-      if (n === o) { return true; }
+      if (n === o || n) { return true; }
       scope.timeState.at = UtilService.roundTimestamp(
         scope.timeState.at, scope.timeState.aggWindow, false
       );
