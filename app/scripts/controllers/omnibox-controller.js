@@ -63,6 +63,8 @@ angular.module('lizard-nxt')
 
       var putDataOnScope = function (response) {
 
+        console.log('[F] putDataOnScope(resp) WHERE resp =', response);
+
         var lGContent = $scope.box.content[response.layerGroupSlug] || {layers: {}};
         lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
         lGContent.layerGroupName = $scope.mapState.layerGroups[response.layerGroupSlug].name;
@@ -93,6 +95,8 @@ angular.module('lizard-nxt')
            *   }
            * }
            */
+
+           // kill timeseries
 
           $scope.box.content[response.layerGroupSlug] = lGContent;
 

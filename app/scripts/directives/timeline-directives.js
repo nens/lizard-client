@@ -198,9 +198,11 @@ angular.module('lizard-nxt')
         // update slugs on scope for housekeeping
         scope.events.slugs = timelineLayers.events.slugs;
         // create context for callback function, reset eventOrder to 1.
-        context = {eventOrder: 1,
-                   nEvents: scope.events.nEvents,
-                   slugs: scope.events.slugs};
+        context = {
+          eventOrder: 1,
+          nEvents: scope.events.nEvents,
+          slugs: scope.events.slugs
+        };
         angular.forEach(timelineLayers.events.layers, getEventData, context);
       } else {
         scope.events.nEvents = 0;
