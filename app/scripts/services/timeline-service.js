@@ -260,6 +260,14 @@ angular.module('lizard-nxt')
     drawBars: {
       value: function (data) {
 
+        
+        /**
+         * candidate to replace with Dirk's null checker function.
+         */
+        if (data === 'null') {
+          return false;
+        }
+
         var height = initialHeight -
                      this.dimensions.padding.top -
                      this.dimensions.padding.bottom +
