@@ -8,7 +8,7 @@
  * Factory in the lizard-nxt.
  */
 angular.module('lizard-nxt')
-  .factory('NxtVectorLayer', ['$q', 'NxtLayer', 
+  .factory('NxtVectorLayer', ['$q', 'NxtLayer',
       'LeafletVectorService', 'VectorService',
   function ($q, NxtLayer, LeafletVectorService, VectorService) {
 
@@ -63,8 +63,10 @@ angular.module('lizard-nxt')
 
         syncTime: {
           value: function (mapState, timeState, oldTime) {
+            var defer = $q.defer();
             this._leafletLayer.redraw(this, mapState, timeState);
-            return;
+            defer.resolve();
+            return defer.promise;
           }
         },
         setOpacity: {

@@ -193,7 +193,6 @@
              vectorlayer
              temporal-vector-layer
              surfacelayer
-             rasteranimation
              ng-class="{'crosshair': tools.active === 'profile'}">
          </map>
       </div>
@@ -205,7 +204,7 @@
 
 
     <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
-    
+
     <!-- build:js(.) /scripts/vendor.js -->
     <!-- bower:js -->
     <script src="/vendor/jquery/jquery.js"></script>
@@ -272,6 +271,7 @@
     <script src="/scripts/services/layer-service.js"></script>
     <script src="/scripts/services/tms-layer-service.js"></script>
     <script src="/scripts/services/wms-layer-service.js"></script>
+    <script src="/scripts/services/non-tiled-wms-layer-service.js"></script>
     <script src="/scripts/services/utf-layer-service.js"></script>
     <script src="/scripts/services/store-layer-service.js"></script>
     <script src="/scripts/services/vector-layer-service.js"></script>

@@ -32,9 +32,9 @@
  */
 angular.module('lizard-nxt')
   .factory('LayerGroup', [
-  'NxtTMSLayer', 'NxtWMSLayer', 'NxtVectorLayer', 'NxtUTFLayer', 'StoreLayer', 'NxtLayer',
+  'NxtTMSLayer', 'NxtWMSLayer', 'NxtNonTiledWMSLayer', 'NxtVectorLayer', 'NxtUTFLayer', 'StoreLayer', 'NxtLayer',
   'UtilService', '$q', 'RasterService', '$http',
-  function (NxtTMSLayer, NxtWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, NxtLayer, UtilService, $q, RasterService, $http) {
+  function (NxtTMSLayer, NxtWMSLayer, NxtNonTiledWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, NxtLayer, UtilService, $q, RasterService, $http) {
 
     /*
      * @constructor
@@ -95,6 +95,9 @@ angular.module('lizard-nxt')
         else if (layer.type === 'WMS' && layer.tiled) {
           layers.push(new NxtWMSLayer(layer));
         }
+        else if (layer.type === 'WMS' && !layer.tiled) {
+          layers.push(new NxtNonTiledWMSLayer(layer, this.temporalResolution));
+        }
         else if (layer.type === 'UTFGrid') {
           layers.push(new NxtUTFLayer(layer));
         }
@@ -103,10 +106,6 @@ angular.module('lizard-nxt')
         }
         else if (layer.type === 'Store') {
           layers.push(new StoreLayer(layer));
-        }
-        else if (!layer.tiled) {
-          // TODO: initialise imageoverlay
-          layers.push(new NxtLayer(layer));
         }
         else {
           // this ain't right
@@ -240,25 +239,26 @@ angular.module('lizard-nxt')
       /**
        * Make layerGroup adhere to current timestate
        */
-      syncTime: function (mapState, timeState, oldTime) {
-        if (oldTime === timeState.at
-          || !this._active) { return; }
-        for (var i in this._layers) {
-          var layer = this._layers[i];
-          layer.syncTime(mapState, timeState, oldTime);
-          // TODO: Ideally we delegate the adhering to time of a layer to the
-          // layer class. This is legacy:
-          if (this.temporal
-            && layer.type === 'WMS'
-            && !layer.tiled) {
-            this._adhereWMSLayerToTime(layer, mapState, timeState, oldTime);
-          }
+      syncTime: function (mapState, timeState) {
+        var defer = $q.defer();
+        if (!this._active) {
+          defer.resolve();
         }
+        else {
+          var promises = [];
+          for (var i in this._layers) {
+            var layer = this._layers[i];
+            promises.push(layer.syncTime(mapState, timeState));
+          }
+          $q.all(promises).then(defer.resolve());
+        }
+        return defer.promise;
       },
 
-      animationStop: function (timeState) {
+      _animationStop: function (timeState) {
+        console.log('Called animstop');
         // gets a fresh set of images when the animation stops
-        if (!this._animState.initiated) { return; }
+        if (!this._animState.initiated || !this.temporal) { return; }
 
         this._animGetImages(timeState);
 
@@ -279,7 +279,7 @@ angular.module('lizard-nxt')
         previousFrame   : 0,
         previousDate    : undefined,
         nxtDate         : undefined,
-        loadingRaster   : 0,
+        nLoadingRasters   : 0,
         restart         : false,
         initiated       : false
       },
@@ -293,16 +293,17 @@ angular.module('lizard-nxt')
         var currentDate  = this._mkTimeStamp(newTime),
             oldDate      = this._mkTimeStamp(oldTime),
             overlayIndex = s.frameLookup[currentDate];
+            console.log(overlayIndex, s.frameLookup);
 
         if (this.isActive()) {
           if (s.initiated) {
-            if (!timeState.animation.playing) {
-              this.animationStop(timeState);
-            }
-            else if (overlayIndex !== undefined && overlayIndex !== s.previousFrame) {
+            // if (!timeState.animation.playing) {
+            //   this._animationStop(timeState);
+            // }
+            if (overlayIndex !== undefined && overlayIndex !== s.previousFrame) {
               this._animProgressOverlays(s, overlayIndex, currentDate, timeState);
             }
-            else if (overlayIndex === undefined) {
+            else if (overlayIndex === undefined && s.nLoadingRasters === 0) {
               this._stopAnim(s, timeState);
             }
           } else {
@@ -323,12 +324,6 @@ angular.module('lizard-nxt')
         }
       },
 
-      /**
-       * Local helper that returns a rounded timestamp
-       */
-      _mkTimeStamp: function (t) {
-        return UtilService.roundTimestamp(t, this._animState.step, false);
-      },
 
       /**
        * stop anim
@@ -336,17 +331,17 @@ angular.module('lizard-nxt')
       _stopAnim: function (s, timeState) {
         if (timeState.animation.playing) {
           s.restart = true;
-          s.loadingRaster = 0;
         }
-        if (timeState.playPauseAnimation) {
-          timeState.playPauseAnimation('off');
-        }
+        console.log('Pause');
+        timeState.playPauseAnimation('off');
       },
 
       /**
-       * restart anim
+       * (re-)start anim
        */
       _animRestart: function (s, mapState, timeState, temporalWMSLayer) {
+        console.log('Called animRestart');
+
         this._animStart(temporalWMSLayer);
         var overlays = this._animState.imageOverlays;
 
@@ -380,7 +375,7 @@ angular.module('lizard-nxt')
 
         // Remove old listener
         oldOverlay.off('load');
-        // Add listener to asynchronously update loadingRaster and framelookup:
+        // Add listener to asynchronously update nLoadingRasters and framelookup:
         this._animAddLoadListener(
           oldOverlay,
           s.previousFrame,
@@ -388,7 +383,7 @@ angular.module('lizard-nxt')
           timeState
         );
         // We are now waiting for one extra raster
-        s.loadingRaster++;
+        s.nLoadingRasters++;
 
         // Tell the old overlay to get out and get a new image.
         oldOverlay.setUrl(
@@ -417,7 +412,7 @@ angular.module('lizard-nxt')
         s.step            = this.temporalResolution;
         s.frameLookup     = {};
         s.previousFrame   = 0;
-        s.loadingRaster   = 0;
+        s.nLoadingRasters = 0;
         s.restart         = false;
         s.initiated       = true;
         s.imageOverlays   = RasterService.getImgOverlays(
@@ -431,9 +426,10 @@ angular.module('lizard-nxt')
         var s = this._animState;
 
         image.on("load", function (e) {
-          s.loadingRaster--;
-          s.frameLookup[date] = index;
-          if (s.restart && s.loadingRaster === 0) {
+          s.nLoadingRasters--;
+          s.frameLookup[date] = String(index);
+          console.log('- loaded new image:', new Date(date), s.nLoadingRasters);
+          if (s.restart && s.nLoadingRasters === 0) {
             s.restart = false;
             timeState.playPauseAnimation();
           }
@@ -441,19 +437,20 @@ angular.module('lizard-nxt')
       },
 
       _animGetImages: function (timeState) {
-
+        console.log('!!! >>> getting new images', this.slug);
         var i, s = this._animState;
 
         s.nxtDate = UtilService.roundTimestamp(timeState.at, s.step, false);
         s.previousDate = s.nxtDate; // shift the date
-        s.loadingRaster = 0;        // reset the loading raster count
+        s.nLoadingRasters = 0;        // reset the loading raster count
         s.frameLookup = {};         // All frames are going to load new ones, empty lookup
 
         for (i in s.imageOverlays) {
-          s.loadingRaster++;
+          s.nLoadingRasters++;
           s.imageOverlays[i].setOpacity(0);
           s.imageOverlays[i].off('load');
           this._animAddLoadListener(s.imageOverlays[i], i, s.nxtDate, timeState);
+          console.log('+ loading new image:', new Date(s.nxtDate), s.nLoadingRasters);
           s.imageOverlays[i].setUrl(
             s.imageUrlBase + s.utcFormatter(new Date(s.nxtDate))
           );

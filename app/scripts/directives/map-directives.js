@@ -88,7 +88,7 @@ angular.module('lizard-nxt')
           }
         });
       };
-      
+
       scope.$watch('timeState.start', syncTimeWrapper);
       // TODO: check if this is the way
       scope.$watch('timeState.at', syncTimeWrapper);
@@ -108,30 +108,30 @@ angular.module('lizard-nxt')
   }
 ]);
 
-/**
- * Show raster WMS images as overlay, animate overlays when animation is
- * playing.
- */
-angular.module('lizard-nxt')
-  .directive('rasteranimation', ['RasterService', 'UtilService',
-  function (RasterService, UtilService) {
-  return {
-    link: function (scope, element, attrs) {
+// /**
+//  * Show raster WMS images as overlay, animate overlays when animation is
+//  * playing.
+//  */
+// angular.module('lizard-nxt')
+//   .directive('rasteranimation', ['RasterService', 'UtilService',
+//   function (RasterService, UtilService) {
+//   return {
+//     link: function (scope, element, attrs) {
 
-        /**
-       * Get new set of images when animation stops playing
-       * (resets rasterLoading to 0)
-       */
-      scope.$watch('timeState.animation.playing', function (n, o) {
+//         *
+//        * Get new set of images when animation stops playing
+//        * (resets rasterLoading to 0)
 
-        if (n === o) { return; }
+//       scope.$watch('timeState.animation.playing', function (n, o) {
+//         if (n === o) { return; }
 
-        if (!n) {
-          angular.forEach(scope.mapState.layerGroups, function(lg) {
-            lg.animationStop(scope.timeState);
-          });
-        }
-      });
-    }
-  };
-}]);
+//         if (!n) {
+//           console.log('animation stopped');
+//           angular.forEach(scope.mapState.layerGroups, function(lg) {
+//             lg.animationStop(scope.timeState);
+//           });
+//         }
+//       });
+//     }
+//   };
+// }]);
