@@ -15,7 +15,7 @@ angular.module('lizard-nxt')
      *              active layergroup and an item in box.content
      *              .<layergroup>.layer for every piece of data.
      *              The promises are returned to add specific
-   *              logic in the child controllers.
+     *              logic in the child controllers.
      * @param  {L.LatLng} here | L.Bounds | [L.LatLng]
      */
     $scope.fillBox = function (options) {
