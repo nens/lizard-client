@@ -63,7 +63,7 @@ angular.module('lizard-nxt')
 
         syncTime: {
           value: function (mapState, timeState, oldTime) {
-            this._leafletLayer.redraw(this, mapState, timeState);
+            this._leafletLayer.setTime(this, timeState);
             return;
           }
         },
