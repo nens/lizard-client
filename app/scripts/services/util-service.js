@@ -325,4 +325,68 @@ angular.module('lizard-nxt')
 
     return result;
   };
+
+  /**
+   * @function
+   * @memberOf app.omnibox
+   * @description - checks whether API response has enough (non-null) data
+   *                to actually put it on the scope.
+   * @param {Object[]} response - An API response
+   * @return {boolean}
+   */
+  this.isSufficientlyRichData = function (data) {
+
+    if (data === null // <-- check for 'null'
+         || // check for '[null]':
+         (
+           data.constructor === Array
+           && data.length === 1
+           && data[0] === null
+         )
+         || // check for '[[null]]':
+         (
+           data.constructor === Array
+           && data.length === 1
+           && data[0].constructor === Array
+           && data[0].length === 1
+           && data[0][0] === null
+          )
+        ) {
+
+      // kill: null AND [null] AND [[null]]
+      return false;
+
+    } else if (data.constructor === Array) {
+
+      if (data.length === 0) {
+
+        // kill: []
+        return false;
+
+      } else if (this.all(data, function (x) { return x === null; })) {
+
+        // kill: [null, null, ..., null]
+        return false;
+
+      } else if (data[0].constructor === Array) {
+
+        if (data[0][1].constructor === Array) {
+
+          // kill: [[x0, [null]], [x1, [null]], ..., [xn, [null]]]
+          return !this.all(data, function (elem) {
+            return elem[1].length === 1 && elem[1][0] === null;
+          });
+
+        } else {
+
+          // kill: [[x0, null], [x1, null], ..., [xn, null]]
+          return !this.all(data, function (elem) {
+            return elem[1] === null;
+          });
+
+        }
+      }
+    }
+    return true;
+  };
 });
