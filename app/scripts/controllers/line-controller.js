@@ -25,7 +25,12 @@ angular.module('lizard-nxt')
       });
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
-          if (response.data && response.layerSlug === 'ahn2/wss') {
+          if (response.data
+             && response.layerSlug === 'ahn2/wss'
+             // Prevent trying to fill $scope.box.content[response.layerGroupSlug]
+             // when retrieved data wasn't rich enough for it's initialization:
+             && $scope.box.content[response.layerGroupSlug]
+          ) {
             $scope.box.content[response.layerGroupSlug]
               .layers[response.layerSlug]
               // Since the data is not properly formatted in the back
