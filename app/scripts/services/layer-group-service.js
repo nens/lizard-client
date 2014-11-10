@@ -241,11 +241,9 @@ angular.module('lizard-nxt')
        * Make layerGroup adhere to current timestate
        */
       syncTime: function (mapState, timeState, oldTime) {
-        if (oldTime === timeState.at
-          || !this._active) { return; }
+        if (oldTime === timeState.at) { return; }
         for (var i in this._layers) {
           var layer = this._layers[i];
-          layer.syncTime(mapState, timeState, oldTime);
           // TODO: Ideally we delegate the adhering to time of a layer to the
           // layer class. This is legacy:
           if (this.temporal
@@ -253,6 +251,9 @@ angular.module('lizard-nxt')
             && !layer.tiled
             && !this._animState.buffering) {
             this._adhereWMSLayerToTime(layer, mapState, timeState, oldTime);
+          }
+          if (this.isActive()){
+            layer.syncTime(mapState, timeState, oldTime);
           }
         }
       },
