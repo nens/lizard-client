@@ -336,7 +336,14 @@ angular.module('lizard-nxt')
    */
   this.isSufficientlyRichData = function (data) {
 
-    if (this.nullOrNestedNull(data)) {
+    console.log('[F] isSufficientlyRichData WHERE data =', data);
+
+    if (data === 'null') {
+
+      console.log('[WTF] API call returned the string \'null\', so either JSON doesn\'t like null OR something is wrong in the backend..');
+      return false;
+
+    } else if (this.nullOrNestedNull(data)) {
 
       // kill: null AND [null] AND [[null]] etc
       return false;
@@ -355,21 +362,33 @@ angular.module('lizard-nxt')
 
       } else if (data[0].constructor === Array) {
 
-        if (data[0][1].constructor === Array) {
+        if (data[0] === []) {
 
-          // kill: [[x0, [null]], [x1, [null]], ..., [xn, [null]]]
-          return !this.all(data, function (elem) {
-            return elem[1].length === 1 && elem[1][0] === null;
-          });
+          return false;
 
-        } else {
+        } else if (data[0].length === 1) {
 
-          // kill: [[x0, null], [x1, null], ..., [xn, null]]
-          return !this.all(data, function (elem) {
-            return elem[1] === null;
-          });
+          return true;
 
+        } else if (data[0].length > 1) {
+
+          if (data[0][1].constructor === Array) {
+
+            // kill: [[x0, [null]], [x1, [null]], ..., [xn, [null]]]
+            return !this.all(data, function (elem) {
+              return elem[1].length === 1 && elem[1][0] === null;
+            });
+
+          } else {
+
+            // kill: [[x0, null], [x1, null], ..., [xn, null]]
+            return !this.all(data, function (elem) {
+              return elem[1] === null;
+            });
+          }
         }
+
+
       }
     }
     return true;
@@ -384,8 +403,6 @@ angular.module('lizard-nxt')
    * @return {boolean}
    */
   this.nullOrNestedNull = function (x) {
-
-    console.log('[F] nullOrNestedNull(x) WHERE x =', x);
 
     if (x === null) {
       return true;
