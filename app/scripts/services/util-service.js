@@ -328,7 +328,7 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @memberOf app.omnibox
+   * @memberOf UtilService
    * @description - checks whether API response has enough (non-null) data
    *                to actually put it on the scope.
    * @param {Object[]} response - An API response
@@ -374,6 +374,14 @@ angular.module('lizard-nxt')
     return true;
   };
 
+  /**
+   * @function
+   * @memberOf UtilService
+   * @description - checks whether passed in argument is null or nested null,
+                    e.g: null, [null], [[null]] etc
+   * @param {anything}
+   * @return {boolean}
+   */
   this.nullOrNestedNull = function (x) {
 
     if (x === null) {
