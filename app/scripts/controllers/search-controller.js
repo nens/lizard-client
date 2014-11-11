@@ -1,5 +1,5 @@
 angular.module('lizard-nxt')
-  .controller('SearchCtrl', function ($scope, $timeout, CabinetService, ClickFeedbackService) {
+  .controller('SearchCtrl', function ($scope, $timeout, CabinetService) {
   /**
    * Refactor and design this cruft
    */
@@ -81,7 +81,6 @@ angular.module('lizard-nxt')
   $scope.resetQuery = function () {
     $scope.box.query = null;
     $scope.box.content = {};
-    ClickFeedbackService.emptyClickLayer($scope.mapState);
   };
 
   $scope.showDetails = function (obj) {
