@@ -1576,3 +1576,21 @@ img {
 #kunstwerk-table {
   max-width: 90%;
 }
+
+/*#timeline {
+  cursor: grab;
+}
+*/
+.timeline-button {
+  cursor: pointer;
+}
+
+.time-start-now-end {
+  cursor: not-allowed;
+}
+
+#timeline-svg-wrapper,
+#timeline-svg-wrapper #nodata,
+#timeline-svg-wrapper #xaxis {
+  cursor: grab;
+}

@@ -65,16 +65,23 @@ angular.module('lizard-nxt')
         element[0],
         dataLayers,
         {
-          zoomControl: true
+          zoomControl: false,
+          addZoomTitles: true,
+          zoomInTitle: scope.tooltips.zoomInMap,
+          zoomOutTitle: scope.tooltips.zoomOutMap
         }
       );
+
+      // L.control.zoom({
+      //   zoomInTitle: 'foo',
+      //   zoomOutTitle: 'bar'
+      // }).addTo(scope.mapState._map);
 
       scope.mapState.initiateNxtMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
 
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.
       $controller('UrlController', {$scope: scope});
-
 
       var syncTimeWrapper = function (newTime, oldTime) {
         //if (newTime === oldTime) { return; }
@@ -88,7 +95,7 @@ angular.module('lizard-nxt')
           }
         });
       };
-      
+
       scope.$watch('timeState.start', syncTimeWrapper);
       // TODO: check if this is the way
       scope.$watch('timeState.at', syncTimeWrapper);

@@ -185,13 +185,14 @@ angular.module('lizard-nxt')
   };
 
   $scope.tooltips = {};
-  $scope.tooltips.login = "inloggen";
-  $scope.tooltips.logout = "uitloggen";
-  $scope.tooltips.profile = "profiel aanpassen";
-  $scope.tooltips.version = "klik voor de lizard versie";
+  $scope.tooltips.login = "inloggen"; // ok
+  $scope.tooltips.logout = "uitloggen"; // ok
+  $scope.tooltips.profile = "profiel aanpassen"; // ok
+  $scope.tooltips.version = "dubbelklik voor de Lizard versie"; // ok, but where is the HTML for it????
 
-  $scope.tooltips.openMenu = "datamenu openen";
-  $scope.tooltips.closeMenu = "datamenu sluiten";
+  $scope.tooltips.openMenu = "datamenu openen"; //ok
+  $scope.tooltips.closeMenu = "datamenu sluiten"; //ok
+
   $scope.tooltips.sat = "satelliet";
   $scope.tooltips.topo = "topografie";
   $scope.tooltips.ahn = "hoogtekaart (klik voor herschalen)";
@@ -199,6 +200,7 @@ angular.module('lizard-nxt')
   $scope.tooltips.soil = "bodeminformatie";
   $scope.tooltips.water = "waterinformatie";
   $scope.tooltips.rain = "Nationale Regen Radar";
+
   $scope.tooltips.events = "gebeurtenissen";
   $scope.tooltips.transparency = "transparantie aanpassen";
 
@@ -208,10 +210,18 @@ angular.module('lizard-nxt')
 
   $scope.tooltips.resetQuery = "resultaatvenster sluiten";
   $scope.tooltips.search = "zoeken";
-  $scope.tooltips.zoomIn = "zoom in";
-  $scope.tooltips.zoomOut = "zoom uit";
+  $scope.tooltips.zoomInMap = "zoom in op de kaart";
+  $scope.tooltips.zoomOutMap = "zoom uit op de kaart";
 
+  $scope.tooltips.zoomInTimeline = "zoom in op de tijdlijn";
+  $scope.tooltips.goToNow = "ga naar het heden op de tijdlijn";
+  $scope.tooltips.zoomOutTimeline = "zoom uit op de tijdlijn";
 
+  $scope.tooltips.startAnim = "start de animatie";
+  $scope.tooltips.stopAnim = "stop de animatie";
+  $scope.tooltips.timelineStart = "het begin van de huidige tijdlijn";
+  $scope.tooltips.timelineAt = "het 'nu' op de tijdlijn";
+  $scope.tooltips.timelineEnd = "het einde van de huidige tijdlijn";
 
   /**
    * @function
