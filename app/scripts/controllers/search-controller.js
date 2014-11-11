@@ -82,7 +82,6 @@ angular.module('lizard-nxt')
     $scope.box.query = null;
     $scope.box.content = {};
     ClickFeedbackService.emptyClickLayer($scope.mapState);
-    // emptyClickLayer
   };
 
   $scope.showDetails = function (obj) {
