@@ -144,7 +144,7 @@ angular.module('lizard-nxt')
             .attr("y", 0)
             .attr("width", width)
             .attr("opacity", 0.6)
-            .attr("style", "fill: #34495e;");
+            .attr("style", "fill: #c0392b;");
         }
 
         var offset = this.dimensions.padding.left;
@@ -260,7 +260,7 @@ angular.module('lizard-nxt')
     drawBars: {
       value: function (data) {
 
-        
+
         /**
          * candidate to replace with Dirk's null checker function.
          */

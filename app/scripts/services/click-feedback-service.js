@@ -23,8 +23,8 @@ angular.module('lizard-nxt')
             return {
               name: 'click',
               clickable: true,
-              color: '#34495e',
-              stroke: '#34495e',
+              color: '#c0392b',
+              stroke: '#c0392b',
               opacity: 0.8,
               'stroke-opacity': 0.8,
               radius: getRadius(feature),
@@ -94,7 +94,7 @@ angular.module('lizard-nxt')
           "coordinates": [[first.lng, first.lat], [second.lng, second.lat]]
         };
         this.clickLayer.options.style = {
-          color: '#34495e',
+          color: '#c0392b',
           weight: 2,
           opacity: 1,
           smoothFactor: 1
