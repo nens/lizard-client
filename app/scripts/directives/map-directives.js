@@ -72,11 +72,6 @@ angular.module('lizard-nxt')
         }
       );
 
-      // L.control.zoom({
-      //   zoomInTitle: 'foo',
-      //   zoomOutTitle: 'bar'
-      // }).addTo(scope.mapState._map);
-
       scope.mapState.initiateNxtMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
 
       // Instantiate the controller that updates the hash url after creating the

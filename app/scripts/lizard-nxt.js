@@ -151,7 +151,7 @@ angular.module('lizard-nxt')
    'RasterService', 'UtilService', 'TimeseriesService',
    'user', 'versioning',
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, TimeseriesService, user, versioning) {
+            UtilService, TimeseriesService, user, versioning ) {
 
   $scope.user = user;
   $scope.versioning = versioning;
@@ -184,44 +184,7 @@ angular.module('lizard-nxt')
     active: 'point', //NOTE: make list?
   };
 
-  $scope.tooltips = {};
-  $scope.tooltips.login = "inloggen"; // ok
-  $scope.tooltips.logout = "uitloggen"; // ok
-  $scope.tooltips.profile = "profiel aanpassen"; // ok
-  $scope.tooltips.version = "dubbelklik voor de Lizard versie"; // ok, but where is the HTML for it????
-
-  $scope.tooltips.openMenu = "datamenu openen"; //ok
-  $scope.tooltips.closeMenu = "datamenu sluiten"; //ok
-
-  $scope.tooltips.sat = "satelliet";
-  $scope.tooltips.topo = "topografie";
-  $scope.tooltips.ahn = "hoogtekaart (klik voor herschalen)";
-  $scope.tooltips.land = "landgebruik";
-  $scope.tooltips.soil = "bodeminformatie";
-  $scope.tooltips.water = "waterinformatie";
-  $scope.tooltips.rain = "Nationale Regen Radar";
-
-  $scope.tooltips.events = "gebeurtenissen";
-  $scope.tooltips.transparency = "transparantie aanpassen";
-
-  $scope.tooltips.pointTool = "punt selectie";
-  $scope.tooltips.lineTool = "lijn selectie";
-  $scope.tooltips.areaTool = "scherm selectie";
-
-  $scope.tooltips.resetQuery = "resultaatvenster sluiten";
-  $scope.tooltips.search = "zoeken";
-  $scope.tooltips.zoomInMap = "zoom in op de kaart";
-  $scope.tooltips.zoomOutMap = "zoom uit op de kaart";
-
-  $scope.tooltips.zoomInTimeline = "zoom in op de tijdlijn";
-  $scope.tooltips.goToNow = "ga naar het heden op de tijdlijn";
-  $scope.tooltips.zoomOutTimeline = "zoom uit op de tijdlijn";
-
-  $scope.tooltips.startAnim = "start de animatie";
-  $scope.tooltips.stopAnim = "stop de animatie";
-  $scope.tooltips.timelineStart = "het begin van de huidige tijdlijn";
-  $scope.tooltips.timelineAt = "het 'nu' op de tijdlijn";
-  $scope.tooltips.timelineEnd = "het einde van de huidige tijdlijn";
+  $scope.tooltips = CabinetService.tooltips;
 
   /**
    * @function
