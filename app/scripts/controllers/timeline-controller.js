@@ -41,9 +41,7 @@ angular.module('lizard-nxt')
    * @param {} toggle - .
    */
   $scope.timeState.playPauseAnimation = function (toggle) {
-
     var anim = $scope.timeState.animation;
-
     if (anim.playing || toggle === "off") {
       anim.playing = false;
     } else {
@@ -63,7 +61,6 @@ angular.module('lizard-nxt')
    * of temporal extent.
    */
   var step =  function () {
-
     var currentInterval = $scope.timeState.end - $scope.timeState.start;
     var timeStep;
     var activeTemporalLG = $scope.mapState.getActiveTemporalLayerGroup();
