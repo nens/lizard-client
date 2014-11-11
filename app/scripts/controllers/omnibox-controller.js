@@ -2,9 +2,22 @@ angular.module('lizard-nxt')
   .controller("OmniboxCtrl", [
   "$scope",
   "UtilService",
-  function ($scope, UtilService) {
+  "ClickFeedbackService",
+  function ($scope, UtilService, ClickFeedbackService) {
 
     $scope.box.content = {};
+
+    /**
+     * Click function for the X in the searchbar
+     * @description Removes all content from box, empties the search box,
+     *              empties the clickfeedback and removes line points.
+     */
+    $scope.resetBox = function () {
+      $scope.box.query = null;
+      $scope.box.content = {};
+      ClickFeedbackService.emptyClickLayer($scope.mapState);
+      $scope.mapState.points = [];
+    };
 
     /**
      * @function
