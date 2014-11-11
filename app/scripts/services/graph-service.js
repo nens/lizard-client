@@ -483,7 +483,6 @@ angular.module('lizard-nxt')
         el.attr('id', 'xlabel')
           .attr('x', dimensions.padding.left + width / 2)
           .attr('y', dimensions.height - PIXEL_CORRECTION);
-        el.attr('dy', - 0.5 * el.node().getBBox().height);
       }
     }
   };
@@ -507,7 +506,7 @@ angular.module('lizard-nxt')
           .attr("dy", ".15em")
           .style("text-anchor", "end")
           .attr('class', 'graph-text')
-          .attr("transform", "rotate(-45)");
+          .attr("transform", "rotate(-25)");
     }
   };
 
