@@ -45,7 +45,7 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand clickable"
-             ng-attr-title="<% tooltips.version %>"
+             title="<% tooltips.version %>"
              ng-dblclick="toggleVersionVisibility()">
              <span>Lizard</span>
           </a>
@@ -66,7 +66,7 @@
                   class="visible-sm visible-md visible-lg">
                 <a class="user"
 
-                   ng-attr-title="<% tooltips.profile %>"
+                   title="<% tooltips.profile %>"
 
                    href="http://sso.lizard.net/edit_profile/">
                   <div class="" ng-cloak id="username">
@@ -86,7 +86,7 @@
                    title="Logout"
                    onclick="return logOut()">
                     <div class=""
-                         ng-attr-title="<% tooltips.logout %>"
+                         title="<% tooltips.logout %>"
                          rel="tooltip"
                          data-toggle="tooltip"
                          data-placement="left"
@@ -108,7 +108,7 @@
                    onclick="return logOut()">
                   <div class="pull-right"
                        id="username"
-                       ng-attr-title="<% tooltips.logout %>">
+                       title="<% tooltips.logout %>">
                     <i id="" style="font-size:1.2em;" class="fa fa-power-off"></i>
                   </div>
                 </a>
@@ -116,7 +116,7 @@
 
               <li ng-if="!user.authenticated">
                 <a onclick="logIn()"
-                   ng-attr-title="<% tooltips.login %>">
+                   title="<% tooltips.login %>">
                 <i id="" class="fa fa-user" style="font-size:1.2em;"></i></a>
               </li>
 
@@ -147,7 +147,7 @@
           </div>
           <div id="ribbon"
                class="ribbon"
-               ng-attr-title="<% mapState.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
+               title="<% mapState.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
             <div class="arrow arrow-up" ng-click="mapState.enabled = !mapState.enabled">
             </div>
             <div class="arrow arrow-down" ng-click="mapState.enabled = !mapState.enabled"><i class="fa fa-compass ribbon-icon"></i>
