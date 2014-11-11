@@ -6,6 +6,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Lizard</title>
 
+    <link rel="SHORTCUT ICON"
+              href="/images/favicon.png?v=1" />
+
     <!-- build:css(.) /styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="/vendor/bootstrap/dist/css/bootstrap.css" />
@@ -53,10 +56,10 @@
 
               <li ng-if="user.authenticated" class="visible-xs">
                 <a class="user" href="https://sso.lizard.net/edit_profile/" title="Edit profile">
-                    <div class="" id="username" ng-cloak>
-                        <i id="" class="fa fa-user"></i>
-                        <% user.firstName %>
-                    </div>
+                  <div class="" id="username" ng-cloak>
+                    <i id="" class="fa fa-user"></i>
+                    <% user.firstName %>
+                  </div>
                 </a>
               </li>
               <li ng-if="user.authenticated"

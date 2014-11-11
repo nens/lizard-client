@@ -128,8 +128,8 @@ angular.module('lizard-nxt')
           var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
 
           leafletLayer = new LeafletVectorService(url, {
-            minZoom: nonLeafLayer.min_zoom,
-            maxZoom: nonLeafLayer.max_zoom,
+            minZoom: nonLeafLayer.minZoom,
+            maxZoom: nonLeafLayer.maxZoom,
             color: nonLeafLayer.color,
             slug: nonLeafLayer.slug,
             ext: 'geojson'

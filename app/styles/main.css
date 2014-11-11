@@ -259,19 +259,19 @@ label.layer-chooser:hover {
 }
 
 label.layer-chooser.active:hover > span.layer-text {
-    color: #34495e;
+    color: #2c3e50;
 }
 
 label.layer-chooser.active > span.layer-text {
-    color: #34495e;
+    color: #2c3e50;
 }
 
 label.layer-chooser.active {
-    border: solid 2px #34495e;
+    border: solid 2px #2c3e50;
 }
 
 label.layer-chooser.active:hover {
-    border: solid 2px #34495e;
+    border: solid 2px #2c3e50;
 }
 
 label.layer-chooser > div.layer-img {
@@ -288,10 +288,14 @@ label.layer-chooser > div.layer-img:hover {
     cursor: pointer !important;
 }
 
+.list-group {
+    margin-bottom: 0;
+}
+
 /* Bootstrap Overrides for progress bar */
 .progress {
-	height: 4px;
-	margin: 4px 0 6px 0;
+	height: 10px;
+	margin: -2px 0 10px 0;
 	z-index: 100;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
@@ -321,6 +325,7 @@ label.layer-chooser > div.layer-img:hover {
   -ms-box-shadow: none;
   -o-box-shadow: none;
   box-shadow: none;
+  background-color: #1abc9c;
 }
 
 ul.list-inline li.baselayer-icon {
@@ -331,7 +336,7 @@ ul.list-inline li.baselayer-icon {
     width:50px;
     height:50px;
     overflow:hidden;
-    border: 2px solid #34495e;
+    border: 2px solid #c0392b;
 }
 ul.list-inline li.baselayer-icon#Topografie {
     /*background-image: url('../images/baselayerbackgrounds/topo.png');*/
@@ -624,7 +629,7 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .layer-switcher label:hover {
-    color: #34495e;
+    color: #c0392b;
     font-size: 14px;
     text-shadow: none;
     margin-left: 0;
@@ -632,7 +637,7 @@ ul.list-inline li.baselayer-icon label{
 
 .layer-switcher label.active,
 .layer-switcher label.count {
-    color: #34495e;
+    color: #c0392b;
     /*font-style: italic;*/
     font-size: 14px;
     text-shadow: none;
@@ -830,7 +835,7 @@ ul.list-inline li.baselayer-icon label{
 /* whole path is needed to make this work */
 .navbar .nav > li > a.active {
    cursor: default;
-   color: #34495e;
+   color: #c0392b;
 }
 
 .navbar .divider-vertical {
@@ -1023,8 +1028,8 @@ ul.list-inline li.baselayer-icon label{
 
 .selected,
 .highlighted-event{
-    color: #34495e;
-    fill: #34495e;
+    color: #c0392b;
+    fill: #c0392b;
 }
 
 .extent{
@@ -1081,11 +1086,11 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .button-list-link:hover {
-    color: #34495e;
+    color: #c0392b;
 }
 
 .button-list-link.active {
-    color: #34495e;
+    color: #c0392b;
 }
 
 .resize path {
@@ -1209,7 +1214,7 @@ header {
 
 /*.navbar .nav > li > a:focus,*/
 .navbar .nav > li > a:hover {
-    color: #34495e;
+    color: #c0392b;
     text-decoration: none;
 }
 
@@ -1465,7 +1470,7 @@ img {
 }
 
 .now-indicator {
-    stroke: #34495e;
+    stroke: #c0392b;
     stroke-width: 2;
 }
 
