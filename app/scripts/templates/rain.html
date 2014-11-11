@@ -23,19 +23,19 @@
     <caption>Herhalingstijden</caption>
     <thead>
       <tr>
-        <th>Start</th>
-        <th>Duur</th>
-        <th class="text-right">mm</th>
-        <th>Herhalingstijd</th>
+        <td class="fixed-width-card-table">Start</th>
+        <td class="fixed-width-card-table">Duur</th>
+        <td class="fixed-width-card-table text-right">mm</th>
+        <td class="fixed-width-card-table">Herhalingstijd</th>
       </tr>
     </thead>
     <tbody>
       <tr class="recurrence_time"
         ng-repeat="recurTime in lg.layers['rrc'].data">
-        <td><% recurTime.start | date : 'dd-MM-yyyy HH:mm' %></td>
-        <td><% recurTime.td_window %></td>
-        <td class="text-right"><% recurTime.max | number: 1 %></td>
-        <td><% recurTime.t %></td>
+        <td class="fixed-width-card-table"><% recurTime.start | date : 'dd-MM-yyyy HH:mm' %></td>
+        <td class="fixed-width-card-table"><% recurTime.td_window %></td>
+        <td class="fixed-width-card-table text-right"><% recurTime.max | number: 1 %></td>
+        <td class="fixed-width-card-table"><% recurTime.t %></td>
       </tr>
     </tbody>
   </table>
