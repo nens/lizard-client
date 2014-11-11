@@ -127,7 +127,6 @@ angular.module('lizard-nxt')
           // Initiate a tiled Vector layer
           var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
 
-          console.log(nonLeafLayer);
           leafletLayer = new LeafletVectorService(url, {
             minZoom: nonLeafLayer.minZoom,
             maxZoom: nonLeafLayer.maxZoom,
