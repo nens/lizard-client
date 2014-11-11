@@ -701,3 +701,19 @@ td.lineout {
   height: 32px;
   max-height: 32px;
 }
+
+.show-structure-attrs-link {
+  position: relative;
+  left: 105px;
+}
+
+.show-structure-attrs-text {
+  font-style: italic;
+  font-size: 12px;
+  cursor: pointer;
+  color: #bdc3c7;
+}
+
+.show-structure-attrs-text:hover {
+  color: #7f8c8d;
+}

@@ -5,6 +5,17 @@ angular.module('lizard-nxt')
   function ($scope, UtilService) {
 
     $scope.box.content = {};
+    $scope.box.showFullTable = false;
+    $scope.box.MIN_ROW_COUNT_FOR_TABLE = 2;
+    $scope.box.toggleFullTable = function () {
+
+      $scope.box.showFullTable = !$scope.box.showFullTable;
+      d3.selectAll('tr.attr-row')
+        .classed('hidden', function (d, i) {
+          return (i > $scope.box.MIN_ROW_COUNT_FOR_TABLE
+                  && !$scope.box.showFullTable);
+        });
+    };
 
     /**
      * @function
@@ -34,6 +45,8 @@ angular.module('lizard-nxt')
         lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
         lGContent.layerGroupName = $scope.mapState.layerGroups[response.layerGroupSlug].name;
         lGContent.order = $scope.mapState.layerGroups[response.layerGroupSlug].order;
+
+        $scope.box.showFullTable = false;
 
         if (UtilService.isSufficientlyRichData(response.data)) {
 
