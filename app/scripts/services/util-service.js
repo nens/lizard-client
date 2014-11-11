@@ -336,22 +336,16 @@ angular.module('lizard-nxt')
    */
   this.isSufficientlyRichData = function (data) {
 
-    console.log('[F] isSufficientlyRichData WHERE data =', data);
-
     if (data === 'null') {
-
-      console.log('[WTF] API call returned the string \'null\', so either JSON doesn\'t like null OR something is wrong in the backend..');
       return false;
 
     } else if (this.nullOrNestedNull(data)) {
-
       // kill: null AND [null] AND [[null]] etc
       return false;
 
     } else if (data.constructor === Array) {
 
       if (data.length === 0) {
-
         // kill: []
         return false;
 
@@ -363,11 +357,9 @@ angular.module('lizard-nxt')
       } else if (data[0].constructor === Array) {
 
         if (data[0] === []) {
-
           return false;
 
-        } else if (data[0].length === 1) {
-
+        } else if (data[0].length === 1 && data[0][0] !== null) {
           return true;
 
         } else if (data[0].length > 1) {
