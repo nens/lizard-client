@@ -184,6 +184,35 @@ angular.module('lizard-nxt')
     active: 'point', //NOTE: make list?
   };
 
+  $scope.tooltips = {};
+  $scope.tooltips.login = "inloggen";
+  $scope.tooltips.logout = "uitloggen";
+  $scope.tooltips.profile = "profiel aanpassen";
+  $scope.tooltips.version = "klik voor de lizard versie";
+
+  $scope.tooltips.openMenu = "datamenu openen";
+  $scope.tooltips.closeMenu = "datamenu sluiten";
+  $scope.tooltips.sat = "satelliet";
+  $scope.tooltips.topo = "topografie";
+  $scope.tooltips.ahn = "hoogtekaart (klik voor herschalen)";
+  $scope.tooltips.land = "landgebruik";
+  $scope.tooltips.soil = "bodeminformatie";
+  $scope.tooltips.water = "waterinformatie";
+  $scope.tooltips.rain = "Nationale Regen Radar";
+  $scope.tooltips.events = "gebeurtenissen";
+  $scope.tooltips.transparency = "transparantie aanpassen";
+
+  $scope.tooltips.pointTool = "punt selectie";
+  $scope.tooltips.lineTool = "lijn selectie";
+  $scope.tooltips.areaTool = "scherm selectie";
+
+  $scope.tooltips.resetQuery = "resultaatvenster sluiten";
+  $scope.tooltips.search = "zoeken";
+  $scope.tooltips.zoomIn = "zoom in";
+  $scope.tooltips.zoomOut = "zoom uit";
+
+
+
   /**
    * @function
    * @memberOf angular.module('lizard-nxt')
