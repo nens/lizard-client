@@ -207,7 +207,7 @@ angular.module('lizard-nxt')
         posLon = dLon + lon1;
         if (circle === undefined) {
           circle = L.circleMarker([posLat, posLon], {
-              color: '#34495e',
+              color: '#c0392b',
               opacity: 1,
               fillOpacity: 1,
               radius: 5
