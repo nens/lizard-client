@@ -55,12 +55,12 @@ angular.module('lizard-nxt')
     var dimensions, el;
 
     dimensions = {
-      width: 370,
+      width: 375,
       height: 160,
       padding: {
         top: 5,
         right: 5,
-        bottom: 60,
+        bottom: 50,
         left: 50
       }
     };

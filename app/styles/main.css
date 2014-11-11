@@ -63,7 +63,8 @@ h1, h2, h3, h4, h5 {
   .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
     border: none !important;
   }
-  #username{
+
+  #username {
     float: none !important;
   }
   .navbar-brand span {
@@ -1214,12 +1215,12 @@ header {
 
 /*.navbar .nav > li > a:focus,*/
 .navbar .nav > li > a:hover {
-    color: #c0392b;
+    color: #2c3e50;
     text-decoration: none;
 }
 
 .navbar .nav > li > a.logout:hover {
-    color: #C0392B;
+    color: #e74c3c;
     text-decoration: none;
 }
 
@@ -1263,16 +1264,6 @@ header {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-}
-
-#last-visit {
-    font-family: 'Roboto Slab', sans-serif !important;
-    font-size: 14px;
-    color: #fff ;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    margin-right: 10px;
-    margin-top: 15px;
 }
 
 #user-icon {
@@ -1474,10 +1465,6 @@ img {
     stroke-width: 2;
 }
 
-.recurrence-time-container {
-  padding-top: 5px;
-}
-
 .leaflet-overlay-pane svg {
   z-index: 1000;
 }
@@ -1577,15 +1564,10 @@ img {
 .dummy-attr-value {
   color: #bdc3c7;
 }
-
 #kunstwerk-table {
   max-width: 90%;
 }
 
-/*#timeline {
-  cursor: grab;
-}
-*/
 .timeline-button {
   cursor: pointer;
 }
