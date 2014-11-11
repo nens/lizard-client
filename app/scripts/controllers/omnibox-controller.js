@@ -5,6 +5,7 @@ angular.module('lizard-nxt')
   function ($scope, UtilService) {
 
     $scope.box.content = {};
+
     $scope.box.showFullTable = false;
     $scope.box.MIN_ROW_COUNT_FOR_TABLE = 2;
     $scope.box.toggleFullTable = function () {
