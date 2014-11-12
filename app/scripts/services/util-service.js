@@ -338,7 +338,7 @@ angular.module('lizard-nxt')
 
 
     if (data === 'null') {
-      console.log('[WTF] API call returned the string \'null\', so either JSON doesn\'t like null OR something is wrong in the backend..');
+      //console.log('API call returned the string \'null\', so either JSON doesn\'t like null OR something is wrong in the backend..');
       return false;
 
     } else if (this.nullOrNestedNull(data)) {
