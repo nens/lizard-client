@@ -14,14 +14,21 @@
                                ng-keydown="onKeydown(undefined, $event)"
                                spellcheck="false">
                         <a href=""
-                           ng-click="resetBox()"
+                           ng-click="resetQuery()"
+                           title="<% tooltips.resetQuery %>"
                            id="clear" ></a>
                     </td>
                 </tr>
             </tbody>
         </table>
     </form>
-    <button id="search-button" class="searchbutton" ng-click="search($event)" aria-label="Search"></button>
+    <button
+      id="search-button"
+      class="searchbutton"
+      ng-click="search($event)"
+      aria-label="Search"
+      title="<% tooltips.search %>">
+    </button>
 </div>
 
 <div id="cards" class="pullDown cardbox" ng-show="box.showCards"></div>

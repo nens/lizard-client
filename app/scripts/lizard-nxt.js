@@ -151,7 +151,7 @@ angular.module('lizard-nxt')
    'RasterService', 'UtilService', 'TimeseriesService',
    'user', 'versioning',
   function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, TimeseriesService, user, versioning) {
+            UtilService, TimeseriesService, user, versioning ) {
 
   $scope.user = user;
   $scope.versioning = versioning;
@@ -183,6 +183,8 @@ angular.module('lizard-nxt')
   $scope.tools = {
     active: 'point', //NOTE: make list?
   };
+
+  $scope.tooltips = CabinetService.tooltips;
 
   /**
    * @function
