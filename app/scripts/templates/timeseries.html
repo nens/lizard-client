@@ -8,8 +8,23 @@
             ng-options="series.name for series in $parent.box.content.timeseries.data | rmSingleDatumTimeseries">
     </select>
   </div>
-
-  <graph line
+  <!--waterchain.layers.waterchain_grid.data.entity_nam-->
+  
+ <graph 
+  ng-if="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name === 'measuringstation'"
+    bar-chart
+    type="temporal"
+    data="$parent.box.content.timeseries.selectedTimeseries.events"
+    ylabel=""
+    yfilter="aggWinToYLabel"
+    xlabel=""
+    keys="{x: 0, y: 1}"
+    now="timeState.at">
+  </graph>
+ 
+  <graph 
+  ng-if="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name !== 'measuringstation'"
+    line
     type="temporal"
     data="$parent.box.content.timeseries.selectedTimeseries.events"
     ylabel=""
