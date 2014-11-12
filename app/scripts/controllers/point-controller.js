@@ -50,7 +50,6 @@ angular.module('lizard-nxt')
             );
           }
           if (response.layerSlug === 'radar/basic' && response.data !== null) {
-            if ($scope.box.content[response.layerGroupSlug] === undefined) { return; }
             $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
           }
         });

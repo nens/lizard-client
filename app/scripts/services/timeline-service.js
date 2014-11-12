@@ -104,7 +104,6 @@ angular.module('lizard-nxt')
           .attr("height", height)
           .attr("width", width)
           .attr("id", "nodata")
-          .attr("title", "het gedeelte van de tijdlijn dat in de toekomst ligt")
           .attr("x", function () {return xScale(Date.now()); })
           .attr("opacity", 0.8)
           .style("fill", "#DDD");
