@@ -71,6 +71,24 @@ describe('Testing omniboxCtrl', function () {
     expect(boxScope.fillBox(new L.LatLng(51,6)).length).toEqual(Object.keys(data_layers).length);
   });
 
+  it('should remove content from box when calling resetBox', function () {
+    boxScope.box.content = {reset: 'content'};
+    boxScope.resetBox();
+    expect(boxScope.box.content).toBeDefined();
+    expect(boxScope.box.content.reset).toBeUndefined();
+  });
+
+  it('should remove content from box when calling resetBox', function () {
+    boxScope.box.query = 'I am in the middle of a sear...';
+    boxScope.mapState.points = [123, 567];
+    boxScope.box.content = {reset: 'content'};
+    boxScope.box.content = {reset: 'content'};
+    boxScope.resetBox();
+    expect(boxScope.box.content).toBeDefined();
+    expect(boxScope.box.content.reset).toBeUndefined();
+    expect(boxScope.box.query).toBe(null);
+    expect(boxScope.mapState.points.length).toEqual(0);
+  });
 
   // TODO: make mock layergroup.getData and enable this function
   // it('should add data to box.content for active layergroups', function () {
