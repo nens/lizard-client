@@ -35,6 +35,78 @@ angular.module('lizard-nxt')
       }
     ]
   },
+  belt_channel: {
+    rows: [
+      {
+        keyName: "Type",
+        attrName: "type",
+        ngBindValue:
+          "waterchain.layers.waterchain_grid.data.type",
+        valueSuffix: " (m)",
+        defaultValue: "hoofdwatergang"
+      },
+      {
+        keyName: "bed_level",
+        attrName: "bed_level",
+        ngBindValue:
+          "waterchain.layers.waterchain_grid.data.bed_level | niceNumberOrEllipsis: 2",
+        valueSuffix: " (m NAP)",
+        defaultValue: "-2.2"
+      },
+      {
+        keyName: "talud_left",
+        attrName: "talud_left",
+        ngBindValue:
+          "waterchain.layers.waterchain_grid.data.talud_left",
+        valueSuffix: "",
+        defaultValue: "1:2"
+      },
+      {
+        keyName: "talud_right",
+        attrName: "talud_right",
+        ngBindValue:
+          "waterchain.layers.waterchain_grid.data.talud_right",
+        valueSuffix: "",
+        defaultValue: "1:2"
+      }
+    ]
+  },
+  primary_channel: {
+    rows: [
+      {
+        keyName: "Type",
+        attrName: "type",
+        ngBindValue:
+          "waterchain.layers.waterchain_grid.data.type",
+        valueSuffix: " (m)",
+        defaultValue: "hoofdwatergang"
+      },
+      {
+        keyName: "bed_level",
+        attrName: "bed_level",
+        ngBindValue:
+          "waterchain.layers.waterchain_grid.data.bed_level | niceNumberOrEllipsis: 2",
+        valueSuffix: " (m NAP)",
+        defaultValue: "-2.2"
+      },
+      {
+        keyName: "talud_left",
+        attrName: "talud_left",
+        ngBindValue:
+          "waterchain.layers.waterchain_grid.data.talud_left",
+        valueSuffix: "",
+        defaultValue: "1:2"
+      },
+      {
+        keyName: "talud_right",
+        attrName: "talud_right",
+        ngBindValue:
+          "waterchain.layers.waterchain_grid.data.talud_right",
+        valueSuffix: "",
+        defaultValue: "1:2"
+      }
+    ]
+  },
   channel: {
     rows: [
       {
