@@ -45,20 +45,14 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand clickable"
-             title="<% tooltips.version %>"
              ng-dblclick="toggleVersionVisibility()">
              <span>Lizard</span>
-          </a>
-          <a class="navbar-version"
-            title="<% versioning.revision %>"
-            href="#"
-            style="display: none;">
-            <span ng-bind="versioning.version"></span>
           </a>
         </div>
 
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right" style="">
+
 
               <li ng-if="user.authenticated" class="visible-xs">
                 <a class="user" href="https://sso.lizard.net/edit_profile/" title="Edit profile">
@@ -71,9 +65,10 @@
               <li ng-if="user.authenticated"
                   class="visible-sm visible-md visible-lg">
                 <a class="user"
-
-                   title="<% tooltips.profile %>"
-
+                   rel="tooltip"
+                   data-toggle="tooltip"
+                   data-placement="left"
+                   title="Edit profile"
                    href="http://sso.lizard.net/edit_profile/">
                   <div class="" ng-cloak id="username">
                     <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
@@ -92,7 +87,7 @@
                    title="Logout"
                    onclick="return logOut()">
                     <div class=""
-                         title="<% tooltips.logout %>"
+                         title="Logout"
                          rel="tooltip"
                          data-toggle="tooltip"
                          data-placement="left"
@@ -102,7 +97,6 @@
                     </div>
                 </a>
               </li>
-
               <li ng-if="user.authenticated"
                   class="visible-sm visible-md visible-lg" style="width:63px;">
                 <a class="user logout"
@@ -112,20 +106,15 @@
                    href="/accounts/logout/?next=/"
                    title="Logout"
                    onclick="return logOut()">
-                  <div class="pull-right"
-                       id="username"
-                       title="<% tooltips.logout %>">
+                  <div class="pull-right" id="username">
                     <i id="" style="font-size:1.2em;" class="fa fa-power-off"></i>
                   </div>
                 </a>
               </li>
-
               <li ng-if="!user.authenticated">
-                <a onclick="logIn()"
-                   title="<% tooltips.login %>">
+                <a onclick="logIn()" title="Login">
                 <i id="" class="fa fa-user" style="font-size:1.2em;"></i></a>
               </li>
-
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -153,7 +142,10 @@
           </div>
           <div id="ribbon"
                class="ribbon"
-               title="<% mapState.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
+               rel="tooltip"
+               data-toggle="tooltip"
+               data-placement="left"
+               title="Kaartlagen">
             <div class="arrow arrow-up" ng-click="mapState.enabled = !mapState.enabled">
             </div>
             <div class="arrow arrow-down" ng-click="mapState.enabled = !mapState.enabled"><i class="fa fa-compass ribbon-icon"></i>
@@ -165,8 +157,11 @@
                  style="cursor: pointer">
               <a ng-click="toggleTool('point')"
                  class="button-list-link"
-                 title="punt selectie"
-                 ng-class="{'active': tools.active === 'point'}">
+                 title="point tool"
+                 ng-class="{'active': tools.active === 'point'}"
+                 data-toggle="tooltip"
+                 data-placement="left"
+                 rel="tooltip">
                  <i class="fa fa-dot-circle-o"></i>
               </a>
             </div>
@@ -175,8 +170,11 @@
                  style="cursor: pointer">
               <a ng-click="toggleTool('line')"
                  class="button-list-link"
-                 title="lijn selectie"
-                 ng-class="{'active': tools.active === 'line'}">
+                 title="line tool"
+                 ng-class="{'active': tools.active === 'line'}"
+                 data-toggle="tooltip"
+                 data-placement="left"
+                 rel="tooltip">
                  <i class="fa fa-expand"></i>
               </a>
             </div>
@@ -185,8 +183,11 @@
                  style="cursor: pointer">
               <a ng-click="toggleTool('area')"
                  class="button-list-link"
-                 title="scherm selectie"
-                 ng-class="{'active': tools.active === 'area'}">
+                 title="area tool"
+                 ng-class="{'active': tools.active === 'area'}"
+                 data-toggle="tooltip"
+                 data-placement="left"
+                 rel="tooltip">
                  <i class="fa fa-square-o"></i>
               </a>
             </div>

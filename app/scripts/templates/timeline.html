@@ -6,7 +6,10 @@
       <a ng-click="timeState.playPauseAnimation()"
          class="extra-padding timeline-button"
          ng-class="{'active': timeState.animation.playing}"
-         title="<% timeState.animation.playing ? tooltips.stopAnim : tooltips.startAnim %>"
+         rel="tooltip"
+         data-toggle="tooltip"
+         data-placement="top"
+         title=""
          data-original-title="Afspelen/pauzeren">
         <i ng-class="{'fa-fw fa fa-play': !timeState.animation.playing, 'fa-fw fa fa-pause active': timeState.animation.playing }"></i>
       </a>
@@ -19,17 +22,29 @@
     <div class="btn-group-vertical">
         <a class="btn btn-default btn-xss" ng-click="timeState.zoom('in')"
           class="extra-padding timeline-button"
-          title="<% tooltips.zoomInTimeline %>">
+          rel="tooltip"
+          data-toggle="tooltip"
+          data-placement="top"
+          title=""
+          data-original-title="Zoom in">
           <i class="fa fa-plus"></i>
         </a>
         <a class="btn btn-default btn-xss" ng-mousedown="timeState.zoomToNow()"
           class="extra-padding timeline-button"
-          title="<% tooltips.goToNow %>">
+          rel="tooltip"
+          data-toggle="tooltip"
+          data-placement="top"
+          title=""
+          data-original-title="Naar nu">
           <i class="fa fa-clock-o"></i>
         </a>
         <a class="btn btn-default btn-xss" ng-click="timeState.zoom('out')"
           class="extra-padding timeline-button"
-          title="<% tooltips.zoomOutTimeline %>">
+          rel="tooltip"
+          data-toggle="tooltip"
+          data-placement="top"
+          title=""
+          data-original-title="Zoom uit">
           <i class="fa fa-minus"></i>
         </a>
     </div>
@@ -37,18 +52,15 @@
   </div>
 
   <div class="row time-start-now-end">
-    <div class="col-md-3"
-        title="<% tooltips.timelineStart %>">
+    <div class="col-md-3">
       <p><% timeState.start | date:'d MMMM y - HH:mm' %></p>
     </div>
 
-    <div class="col-md-6"
-         title="<% tooltips.timelineAt %>">
+    <div class="col-md-6">
       <p class="text-center"><% timeState.at | date:'d MMMM y - HH:mm' %></p>
     </div>
 
-    <div class="col-md-3"
-         title="<% tooltips.timelineEnd %>">
+    <div class="col-md-3">
       <p class="text-right"><% timeState.end | date:'d MMMM y - HH:mm' %> </p>
     </div>
   </div>
