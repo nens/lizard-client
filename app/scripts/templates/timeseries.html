@@ -9,12 +9,29 @@
     </select>
   </div>
 
-  <graph line
-    type="temporal"
-    data="$parent.box.content.timeseries.selectedTimeseries.events"
-    ylabel=""
-    xlabel=""
-    keys="{x: 0, y: 1}"
-    now="timeState.at">
-  </graph>
+
+    <div
+        ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name === 'measuringstation'">
+     <graph
+        bar-chart
+        type="temporal"
+        data="$parent.box.content.timeseries.selectedTimeseries.events"
+        ylabel=""
+        xlabel=""
+        keys="{x: 0, y: 1}"
+        now="timeState.at">
+      </graph>
+    </div>
+
+    <div ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name !== 'measuringstation'">
+      <graph
+        line
+        type="temporal"
+        data="$parent.box.content.timeseries.selectedTimeseries.events"
+        ylabel=""
+        xlabel=""
+        keys="{x: 0, y: 1}"
+        now="timeState.at">
+      </graph>
+    </div>
 </div>

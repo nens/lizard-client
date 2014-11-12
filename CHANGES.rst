@@ -14,6 +14,11 @@ Unreleased
 
 - Event series can be differentiated by color.
 
+- Measuring stations show timeseries with bar chart.
+
+- Space starts/pauses animation.
+
+- Animation when buffering shows loading circle.
 
 Release 0.2b10 (2014-11-06)
 ---------------------------

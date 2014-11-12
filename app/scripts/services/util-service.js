@@ -336,11 +336,8 @@ angular.module('lizard-nxt')
    */
   this.isSufficientlyRichData = function (data) {
 
-    console.log('[F] isSufficientlyRichData WHERE data =', data);
-
     if (data === 'null') {
-
-      console.log('[WTF] API call returned the string \'null\', so either JSON doesn\'t like null OR something is wrong in the backend..');
+      // backend did not return valid data.. log as ERROR?
       return false;
 
     } else if (this.nullOrNestedNull(data)) {
