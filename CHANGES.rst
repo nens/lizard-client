@@ -4,6 +4,11 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+-
+
+Release 0.2b11 (2014-11-12)
+---------------------------
+
 - Transition on events in timeline.
 
 - Height of future indicator has transition.
