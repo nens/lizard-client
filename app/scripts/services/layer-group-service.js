@@ -404,6 +404,7 @@ angular.module('lizard-nxt')
       },
 
       _animStart: function (temporalWMSLayer) {
+        console.log(temporalWMSLayer)
 
         var s = this._animState,
             southWest = L.latLng(
@@ -438,6 +439,7 @@ angular.module('lizard-nxt')
           s.frameLookup[date] = index;
           if (s.loadingRaster === 0) {
             s.buffering = false;
+            timeState.setTimeStateBuffering(false);
             if (s.restart) {
               s.restart = false;
               timeState.playPauseAnimation();
@@ -447,6 +449,8 @@ angular.module('lizard-nxt')
       },
 
       _animGetImages: function (timeState) {
+        // at least get rid of non-temporals.
+        if (!this.temporal) { return };
 
         var i, s = this._animState;
 
@@ -456,6 +460,7 @@ angular.module('lizard-nxt')
         s.frameLookup = {};         // All frames are going to load new ones, empty lookup
         s.buffering = true;         // Animation is buffering, no syncing time
                                     // till the buffer is finished.
+        timeState.setTimeStateBuffering(true);
 
         for (i in s.imageOverlays) {
           s.loadingRaster++;
