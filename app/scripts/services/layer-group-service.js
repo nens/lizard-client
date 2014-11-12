@@ -404,7 +404,6 @@ angular.module('lizard-nxt')
       },
 
       _animStart: function (temporalWMSLayer) {
-        console.log(temporalWMSLayer)
 
         var s = this._animState,
             southWest = L.latLng(
