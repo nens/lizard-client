@@ -432,7 +432,6 @@ angular.module('lizard-nxt')
       _animAddLoadListener: function (image, index, date, timeState) {
 
         var s = this._animState;
-        var slug = this.slug;
 
         image.on("load", function (e) {
           s.loadingRaster--;
