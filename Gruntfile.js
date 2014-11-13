@@ -285,6 +285,9 @@ module.exports = function (grunt) {
         },{
           from: '/scripts/',
           to: '/static/client/scripts/'
+        }, {
+          from: '/images/',
+          to: '/static/client/images/'
         }]
       }
     },
@@ -408,7 +411,7 @@ module.exports = function (grunt) {
           src: ['generated/*']
         }, {
           expand: true,
-          cwd: 'vendor/font-awesome',
+          cwd: 'vendor/components-font-awesome',
           src: 'fonts/*',
           dest: '<%= yeoman.dist %>'
         }

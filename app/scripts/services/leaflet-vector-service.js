@@ -77,7 +77,7 @@ angular.module('lizard-nxt')
      */
     onRemove: function (map) {
       this._reset();
-      this._map.off('moveend', this._onMove);
+      this._map.off('moveend', this._onMove, this);
       map.removeLayer(this.geojsonLayer);
 
       LeafletService.TileLayer.prototype.onRemove.call(this, map);

@@ -22,6 +22,7 @@ angular.module('lizard-nxt')
 
     var GRAPH_WIDTH = 600;
     $scope.box.content = {};
+    $scope.box.showFullTable = false;
 
     /**
      * @function
@@ -79,6 +80,7 @@ angular.module('lizard-nxt')
      * @description Draw visual feedback after client clicked on the map
      */
     var drawFeedback = function () {
+      $scope.box.showFullTable = false;
       var feedbackDrawn = false;
       var drawVectorFeedback = function (content) {
         angular.forEach(content, function (lg) {
@@ -180,13 +182,6 @@ angular.module('lizard-nxt')
             // ELSE, we delete the container object for timeseries:
 
             delete $scope.box.content.timeseries;
-
-            if (JS_DEBUG) {
-              console.log('[!] Retrieved timeseries for object ' + objectId +
-                ', but it doesn\'t hold any actual measurements! So we rm the' +
-                'timeseries-part from the omnibox'
-              );
-            }
           }
 
         } else {
@@ -212,7 +207,11 @@ angular.module('lizard-nxt')
       ClickFeedbackService.emptyClickLayer($scope.mapState);
     });
 
-
+    /**
+     * @function
+     * @memberOf app.pointCtrl
+     * @description Get correct icon for structure
+     */
     $scope.getIconClass = function (str) {
       switch (str) {
       case 'overflow':
@@ -228,6 +227,21 @@ angular.module('lizard-nxt')
       default:
         return 'icon-' + str;
       }
+    };
+
+
+    /**
+     * @function
+     * @memberOf app.pointCtrl
+     * @description Toggling the view on the table for structure attributes;
+     *              Either show the first 3 attributes, OR show all of them
+     */
+    $scope.box.toggleFullTable = function () {
+      $scope.box.showFullTable = !$scope.box.showFullTable;
+      d3.selectAll('tr.attr-row')
+        .classed('hidden', function (_, i) {
+          return i > 2 && !$scope.box.showFullTable;
+        });
     };
   }
 ]);

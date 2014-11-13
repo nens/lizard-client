@@ -30,13 +30,14 @@ angular.module('lizard-nxt')
 
     };
 
-    element.bind('mouseup', adjustOpacity);
-    element.bind('touchend', adjustOpacity);
+    element.bind('click', adjustOpacity);
+    element.bind('touch', adjustOpacity);
   };
 
   return {
     link: link,
     templateUrl: 'templates/opacity.html',
-    restrict: 'E'
+    restrict: 'E',
+    replace: true
   };
 });
