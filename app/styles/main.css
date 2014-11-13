@@ -19,10 +19,10 @@ h1, h2, h3, h4, h5 {
 }
 
 #map {
-    top: 0px;
+    top: 50px;
     z-index: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 50px);
     position: absolute;
 }
 
@@ -1497,7 +1497,7 @@ img {
   display: inline-block;
   position: relative;
   left: 478px;
-  top: 56px;
+  top: 6px;
   box-shadow: 0 0 0 #000;
 
   width: 200px;
