@@ -22,6 +22,15 @@ angular.module('lizard-nxt')
 
     var GRAPH_WIDTH = 600;
     $scope.box.content = {};
+    $scope.box.showFullTable = false;
+
+    $scope.box.toggleFullTable = function () {
+      $scope.box.showFullTable = !$scope.box.showFullTable;
+      d3.selectAll('tr.attr-row')
+        .classed('hidden', function (_, i) {
+          return i > 2 && !$scope.box.showFullTable;
+        });
+    };
 
     /**
      * @function
@@ -75,6 +84,7 @@ angular.module('lizard-nxt')
      * @description Draw visual feedback after client clicked on the map
      */
     var drawFeedback = function () {
+      $scope.box.showFullTable = false;
       var feedbackDrawn = false;
       var drawVectorFeedback = function (content) {
         angular.forEach(content, function (lg) {
