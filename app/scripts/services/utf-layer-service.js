@@ -70,9 +70,9 @@ angular.module('lizard-nxt')
        */
       var addLeafletLayer = function (map, leafletLayer) { // Leaflet NxtLayer
         if (map.hasLayer(leafletLayer)) {
-          console.log(
-            'Attempted to add layer' + leafletLayer._id
-            + 'while it was already part of the map'
+          throw new Error(
+            'Attempted to add layer ' + leafletLayer._id
+            + ' while it was already part of the map'
           );
         } else {
           map.addLayer(leafletLayer);
@@ -90,10 +90,9 @@ angular.module('lizard-nxt')
         if (map.hasLayer(leafletLayer)) {
           map.removeLayer(leafletLayer);
         } else {
-          // fail silenlty
-          console.log(
-            'Attempted to remove layer' + leafletLayer._id
-            + 'while it was NOT part of provided the map'
+          throw new Error(
+            'Attempted to remove layer ' + leafletLayer._id
+            + ' while it was NOT part of provided the map'
           );
         }
       };
