@@ -176,13 +176,6 @@ angular.module('lizard-nxt')
             // ELSE, we delete the container object for timeseries:
 
             delete $scope.box.content.timeseries;
-
-            if (JS_DEBUG) {
-              console.log('[!] Retrieved timeseries for object ' + objectId +
-                ', but it doesn\'t hold any actual measurements! So we rm the' +
-                'timeseries-part from the omnibox'
-              );
-            }
           }
 
         } else {
