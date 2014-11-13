@@ -24,14 +24,6 @@ angular.module('lizard-nxt')
     $scope.box.content = {};
     $scope.box.showFullTable = false;
 
-    $scope.box.toggleFullTable = function () {
-      $scope.box.showFullTable = !$scope.box.showFullTable;
-      d3.selectAll('tr.attr-row')
-        .classed('hidden', function (_, i) {
-          return i > 2 && !$scope.box.showFullTable;
-        });
-    };
-
     /**
      * @function
      * @memberOf app.pointCtrl
@@ -222,7 +214,11 @@ angular.module('lizard-nxt')
       ClickFeedbackService.emptyClickLayer($scope.mapState);
     });
 
-
+    /**
+     * @function
+     * @memberOf app.pointCtrl
+     * @description Get correct icon for structure
+     */
     $scope.getIconClass = function (str) {
       switch (str) {
       case 'overflow':
@@ -238,6 +234,21 @@ angular.module('lizard-nxt')
       default:
         return 'icon-' + str;
       }
+    };
+
+
+    /**
+     * @function
+     * @memberOf app.pointCtrl
+     * @description Toggling the view on the table for structure attributes;
+     *              Either show the first 3 attributes, OR show all of them
+     */
+    $scope.box.toggleFullTable = function () {
+      $scope.box.showFullTable = !$scope.box.showFullTable;
+      d3.selectAll('tr.attr-row')
+        .classed('hidden', function (_, i) {
+          return i > 2 && !$scope.box.showFullTable;
+        });
     };
   }
 ]);
