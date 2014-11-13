@@ -33,8 +33,7 @@
 
       <td class="lineout"
           ng-if="waterchain.layers.waterchain_grid.data[obj.attrName]">
-        <span class="ng-binding">
-          <% $eval(obj.ngBindValue) + obj.valueSuffix %>
+        <span ng-bind-html="$eval(obj.ngBindValue) + obj.valueSuffix">
         </span>
       </td>
 

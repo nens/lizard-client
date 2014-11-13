@@ -337,6 +337,7 @@ angular.module('lizard-nxt')
   this.isSufficientlyRichData = function (data) {
 
     if (data === 'null') {
+      // backend did not return valid data.. log as ERROR?
       return false;
 
     } else if (this.nullOrNestedNull(data)) {

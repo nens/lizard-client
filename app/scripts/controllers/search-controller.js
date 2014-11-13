@@ -78,12 +78,6 @@ angular.module('lizard-nxt')
     });
   };
 
-  $scope.resetQuery = function () {
-    $scope.box.query = null;
-    $scope.box.content = {};
-    ClickFeedbackService.emptyClickLayer($scope.mapState);
-  };
-
   $scope.showDetails = function (obj) {
     if (obj.boundingbox) {
       var southWest = new L.LatLng(obj.boundingbox[0], obj.boundingbox[2]);
