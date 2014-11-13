@@ -575,8 +575,8 @@ angular.module('lizard-nxt')
         keyName: "Capaciteit",
         attrName: "capacity",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.capacity | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m^3 p/uur)",
+          "waterchain.layers.waterchain_grid.data.capacity * 3.6 | niceNumberOrEllipsis: 2",
+        valueSuffix: " (m<sup>3</sup> / uur)",
         defaultValue: "54"
       }
     ]
@@ -692,8 +692,8 @@ angular.module('lizard-nxt')
         keyName: "Capaciteit",
         attrName: "capacity",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.capacity | niceNumberOrEllipsis: 2",
-        valueSuffix: "  (m^3 p/uur)",
+          "waterchain.layers.waterchain_grid.data.capacity * 3.6| niceNumberOrEllipsis: 2",
+        valueSuffix: "  (m<sup>3</sup> / uur)",
         defaultValue: "54"
       }
     ]
