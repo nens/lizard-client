@@ -42,8 +42,7 @@
           rel="tooltip"
           data-toggle="tooltip"
           title="Dit is een voorbeeld waarde">
-        <span class="ng-binding dummy-attr-value">
-          <% obj.defaultValue + obj.valueSuffix %>
+        <span ng-bind-html="obj.defaultValue + obj.valueSuffix" class="dummy-attr-value">
         </span>
       </td>
     </tr>
