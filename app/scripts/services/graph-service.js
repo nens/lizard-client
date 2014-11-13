@@ -463,9 +463,9 @@ angular.module('lizard-nxt')
   drawLabel = function (svg, dimensions, label, y) {
     var width = Graph.prototype._getWidth(dimensions),
     height = Graph.prototype._getHeight(dimensions),
-    // Correct 1 pixel to make sure the labels fall
+    // Correct 2 pixels to make sure the labels fall
     // completely within the svg
-    PIXEL_CORRECTION = 1;
+    PIXEL_CORRECTION = 2;
     var el = svg.select(y ? '#ylabel': '#xlabel');
     if (!el.empty()) { el.text(label); }
     else {
@@ -483,6 +483,7 @@ angular.module('lizard-nxt')
         el.attr('id', 'xlabel')
           .attr('x', dimensions.padding.left + width / 2)
           .attr('y', dimensions.height - PIXEL_CORRECTION);
+        el.attr('dy', - PIXEL_CORRECTION);
       }
     }
   };

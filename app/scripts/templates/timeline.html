@@ -11,7 +11,11 @@
          data-placement="top"
          title=""
          data-original-title="Afspelen/pauzeren">
-        <i ng-class="{'fa-fw fa fa-play': !timeState.animation.playing, 'fa-fw fa fa-pause active': timeState.animation.playing }"></i>
+        <i class="fa-fw fa"  ng-class="{
+            'fa-play': !timeState.animation.playing,
+            'fa-pause active': (timeState.animation.playing && !timeState.buffering),
+            'fa-circle-o-notch fa-spin' : timeState.buffering
+            }"></i>
       </a>
     </div>
   </div>

@@ -269,6 +269,10 @@ angular.module('lizard-nxt')
   $scope.timeState.aggWindow = UtilService.getAggWindow($scope.timeState.start,
                                                         $scope.timeState.end,
                                                         window.innerWidth);
+  
+  $scope.timeState.setTimeStateBuffering = function (buffering) {
+    $scope.timeState.buffering = buffering;
+   };
   // END TIME MODEL
 
   /**

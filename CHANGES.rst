@@ -4,6 +4,11 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+-
+
+Release 0.2b11 (2014-11-12)
+---------------------------
+
 - Transition on events in timeline.
 
 - Height of future indicator has transition.
@@ -14,6 +19,11 @@ Unreleased
 
 - Event series can be differentiated by color.
 
+- Measuring stations show timeseries with bar chart.
+
+- Space starts/pauses animation.
+
+- Animation when buffering shows loading circle.
 
 Release 0.2b10 (2014-11-06)
 ---------------------------

@@ -15,7 +15,7 @@
  * that only orders array
  */
 angular.module('lizard-nxt')
-  .filter('orderObjectBy', function() {
+  .filter('orderObjectBy', function () {
   return function (items, field, reverse) {
     var filtered = [];
     angular.forEach(items, function (item) {
@@ -252,8 +252,8 @@ angular.module('lizard-nxt')
 });
 
 /**
- * For the n timeseries related to a structure, remove the ones with an insufficient
- * amount of measurements to be able draw a graph.
+ * For the n timeseries related to a structure, remove the ones with an
+ * insufficient amount of measurements to be able draw a graph.
  *
  * @param {Object[]} A list of timeseries
  * @return  {Object[]} A list of timeseries with sufficient data
@@ -282,6 +282,8 @@ angular.module('lizard-nxt')
     return {
       'bridge': 'Brug',
       'channel': 'Watergang',
+      'belt_channel': 'Boezem',
+      'primary_channel': 'Hoofdwatergang',
       'crossprofile': 'Kruisprofiel',
       'culvert': 'Duiker',
       'manhole': 'Put',
@@ -292,6 +294,7 @@ angular.module('lizard-nxt')
       'pipe': 'Gesloten Leiding',
       'pumpstation': 'Gemaal',
       'pumpstation_sewerage': 'Rioolgemaal',
+      'pumpstation_non_sewerage': 'Gemaal',
       'weir': 'Stuw',
       'pressurepipe': 'Persleiding',
       'sluice': 'Sluis',
