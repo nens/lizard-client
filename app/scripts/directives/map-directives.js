@@ -75,9 +75,10 @@ angular.module('lizard-nxt')
       // map and all its listeners.
       $controller('UrlController', {$scope: scope});
 
-
       var syncTimeWrapper = function (newTime, oldTime) {
-        //if (newTime === oldTime) { return; }
+
+        if (newTime === oldTime) { return; }
+
         angular.forEach(scope.mapState.layerGroups, function (lg) {
           if (!scope.$$phase) {
             scope.$apply(function () {
@@ -88,14 +89,35 @@ angular.module('lizard-nxt')
           }
         });
       };
-      
+
       scope.$watch('timeState.start', syncTimeWrapper);
       // TODO: check if this is the way
       scope.$watch('timeState.at', syncTimeWrapper);
+
       // TODO: not sure if timewrapper should be called on these changes?
       // time wrapper only updates time related stuff?
-      scope.$watch('mapState.bounds', syncTimeWrapper);
       scope.$watch('mapState.layerGroupsChanged', syncTimeWrapper);
+
+      scope.$watch('mapState.bounds', function (newBounds, oldBounds) {
+
+        if (newBounds === oldBounds) { return; }
+
+        angular.forEach(scope.mapState.layerGroups, function (lg) {
+
+          // We check whether the current lg is purely for a vector layer, else no
+          // adhering-to-time needs to take place (in response to changing bounds):
+
+          if (lg.layers.length === 1 && lg.layers[0].type === 'Vector') {
+            if (!scope.$$phase) {
+              scope.$apply(function () {
+                lg.syncTime(scope.mapState, scope.timeState, oldBounds, newBounds);
+              });
+            } else {
+              lg.syncTime(scope.mapState, scope.timeState, oldBounds, newBounds);
+            }
+          }
+        });
+      });
 
   };
 
