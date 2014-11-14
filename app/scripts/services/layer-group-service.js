@@ -33,8 +33,8 @@
 angular.module('lizard-nxt')
   .factory('LayerGroup', [
   'NxtTMSLayer', 'NxtWMSLayer', 'NxtVectorLayer', 'NxtUTFLayer', 'StoreLayer', 'NxtLayer',
-  'UtilService', '$q', 'RasterService', '$http',
-  function (NxtTMSLayer, NxtWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, NxtLayer, UtilService, $q, RasterService, $http) {
+  'UtilService', '$q', 'RasterService', '$http', '$rootScope',
+  function (NxtTMSLayer, NxtWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, NxtLayer, UtilService, $q, RasterService, $http, $rootScope) {
 
     /*
      * @constructor
@@ -252,7 +252,7 @@ angular.module('lizard-nxt')
             && !this._animState.buffering) {
             this._adhereWMSLayerToTime(layer, mapState, timeState, oldTime);
           }
-          if (this.isActive()){
+          if (this.isActive()) {
             layer.syncTime(mapState, timeState, oldTime);
           }
         }
@@ -277,7 +277,7 @@ angular.module('lizard-nxt')
         step            : [],
         imageOverlays   : {},
         frameLookup     : {},
-        numCachedFrames : UtilService.serveToMobileDevice() ? 10 : 15,
+        numCachedFrames : UtilService.serveToMobileDevice() ? 5 : 10,
         previousFrame   : 0,
         previousDate    : undefined,
         buffering       : false,
@@ -438,18 +438,20 @@ angular.module('lizard-nxt')
           s.frameLookup[date] = index;
           if (s.loadingRaster === 0) {
             s.buffering = false;
-            timeState.setTimeStateBuffering(false);
-            if (s.restart) {
-              s.restart = false;
-              timeState.playPauseAnimation();
-            }
+            $rootScope.$apply(function () {
+              timeState.setTimeStateBuffering(false);
+              if (s.restart) {
+                s.restart = false;
+                timeState.playPauseAnimation();
+              }
+            });
           }
         });
       },
 
       _animGetImages: function (timeState) {
         // at least get rid of non-temporals.
-        if (!this.temporal) { return };
+        if (!this.temporal) { return; }
 
         var i, s = this._animState;
 
@@ -493,6 +495,8 @@ angular.module('lizard-nxt')
         }
         else {
           angular.forEach(layers, function (layer) {
+            layer._leafletLayer.off('load');
+            layer._leafletLayer.off('loading');
             layer.remove(map);
           });
         }

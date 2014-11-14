@@ -22,7 +22,7 @@ h1, h2, h3, h4, h5 {
     top: 50px;
     z-index: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 50px);
     position: absolute;
 }
 
@@ -296,7 +296,7 @@ label.layer-chooser > div.layer-img:hover {
 /* Bootstrap Overrides for progress bar */
 .progress {
 	height: 10px;
-	margin: -2px 0 10px 0;
+	margin: 0 0 10px 0;
 	z-index: 100;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
@@ -627,6 +627,7 @@ ul.list-inline li.baselayer-icon label{
     transition:.6s;
     margin-left: 0;
     cursor: pointer;
+    line-height: 1;
 }
 
 .layer-switcher label:hover {
@@ -736,7 +737,7 @@ ul.list-inline li.baselayer-icon label{
     -o-user-select: none;
     user-select: none;
     list-style-type: none;
-    line-height: 1;
+    line-height: 0;
 }
 
 #content{
