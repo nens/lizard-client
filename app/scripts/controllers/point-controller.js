@@ -23,7 +23,6 @@ angular.module('lizard-nxt')
     var GRAPH_WIDTH = 600;
     $scope.box.content = {};
     $scope.box.showFullTable = false;
-    $scope.box.minRowCount = 3;
 
     /**
      * @function
