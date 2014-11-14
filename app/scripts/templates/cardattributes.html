@@ -23,10 +23,25 @@
     </span>
   </span>
 
+<!--   <pre>
+    <% waterchain.layers.waterchain_grid.data | json %>
+  </pre> -->
+
   <table id="kunstwerk-table" class="table table-condensed table-hover">
 
+
+    <!-- HAcK alert! we overwrite the "name" kv with the "display_name" kv.
+    This will lead to a situation where we can allways print either one. Which one
+    is printed is specified in the wantedAttrs.
+
+    Future: we only use the "name" keyword: we substitute it in the backend.
+    -->
     <tr class="attr-row"
-        ng-repeat="obj in wanted[waterchain.layers.waterchain_grid.data.entity_name].rows">
+        ng-repeat="obj in wanted[waterchain.layers.waterchain_grid.data.entity_name].rows"
+        ng-init="waterchain.layers.waterchain_grid.data['name'] =
+             (waterchain.layers.waterchain_grid.data['display_name'] !== undefined && waterchain.layers.waterchain_grid.data['display_name'] !== '')
+             ? waterchain.layers.waterchain_grid.data['display_name']
+             : waterchain.layers.waterchain_grid.data['name']">
 
       <td class="fixed-width-card-table"><% obj.keyName %></td>
 

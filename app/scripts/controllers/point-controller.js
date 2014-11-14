@@ -219,6 +219,8 @@ angular.module('lizard-nxt')
         return 'icon-overflow';
       case 'pumpstation_sewerage':
         return 'icon-pumpstation-diesel';
+      case 'pumpstation_non_sewerage':
+        return 'icon-pumpstation';
       case 'bridge':
         return 'icon-bridge';
       case 'bridge-draw':

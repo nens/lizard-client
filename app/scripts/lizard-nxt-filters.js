@@ -55,6 +55,8 @@ angular.module('lizard-nxt')
   };
 });
 
+// lookups: manhole
+
 angular.module('lizard-nxt')
   .filter('lookupManholeShape', function () {
   return function (input) {
@@ -70,11 +72,23 @@ angular.module('lizard-nxt')
       out = 'rechthoekig';
       break;
     default:
-      out = '...';
+      out = 'Afwijkende vorm';
     }
     return out;
   };
 });
+
+angular.module('lizard-nxt')
+  .filter('lookupManholeMaterial', function () {
+  return function (input) {
+    var out;
+    out = '...';
+    return out;
+  };
+});
+
+
+// lookups: levee
 
 angular.module('lizard-nxt')
   .filter('lookupLeveeType', function () {
@@ -91,7 +105,7 @@ angular.module('lizard-nxt')
       out = 'c-type';
       break;
     default:
-      out = '...';
+      out = 'Afwijkend type';
     }
     return out;
   };
@@ -109,20 +123,12 @@ angular.module('lizard-nxt')
       out = 'Virtueel';
       break;
     default:
-      out = '...';
+      out = 'Afwijkend type';
     }
     return out;
   };
 });
 
-angular.module('lizard-nxt')
-  .filter('lookupManholeMaterial', function () {
-  return function (input) {
-    var out;
-    out = '...';
-    return out;
-  };
-});
 
 angular.module('lizard-nxt')
   .filter('allowedFlowDirection', function () {
@@ -137,8 +143,33 @@ angular.module('lizard-nxt')
   };
 });
 
+
 angular.module('lizard-nxt')
-  .filter('pipeTypeOrEllipsis', function () {
+  .filter('lookupPumpStationType', function () {
+  return function (input) {
+      switch (input) {
+      case 'HOUSEHOLD':
+        return 'Drukgemaal';
+      case 'SEWER':
+        return 'Rioolgemaal';
+      case 'TRANSPORT':
+        return 'Transportgemaal';
+      case 'UNDER':
+        return 'Onderbemaling';
+      case 'POLDER':
+        return 'Poldergemaal';
+      case 'BOSOM':
+        return 'Boezemgemaal';
+      case 'OTHER':
+        return 'Gemaaltype afwijkend';
+      default:
+        return 'Gemaaltype onbekend';
+    }
+  };
+});
+
+angular.module('lizard-nxt')
+  .filter('lookupPipeType', function () {
   return function (input) {
     var out;
     switch (input) {
@@ -151,8 +182,23 @@ angular.module('lizard-nxt')
     case '02':
       out = 'Vuilwaterleiding';
       break;
+    case '03':
+      out = 'Transportleiding';
+      break;
+    case '04':
+      out = 'Overstortleiding';
+      break;
+    case '05':
+      out = 'Zinker';
+      break;
+    case '06':
+      out = 'Bergingsleiding';
+      break;
+    case '07':
+      out = 'Berg-/Bezinkleiding';
+      break;
     default:
-      out = 'Gesloten leiding';
+      out = 'Leidingtype afwijkend';
     }
     return out;
   };
@@ -176,7 +222,28 @@ angular.module('lizard-nxt')
       out = 'vierkant';
       break;
     default:
-      out = '...';
+      out = 'Vorm afwijkend';
+    }
+    return out;
+  };
+});
+
+angular.module('lizard-nxt')
+  .filter('lookupPressurePipeType', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case '1':
+      out = 'Drukriolering';
+      break;
+    case '2':
+      out = 'Persleiding';
+      break;
+    case '3':
+      out = 'Pers-/transportleiding';
+      break;
+    default:
+      out = 'Persleidingtype afwijkend';
     }
     return out;
   };
@@ -197,7 +264,7 @@ angular.module('lizard-nxt')
       out = 'gres';
       break;
     default:
-      out = '...';
+      out = 'Materiaal afwijkend';
     }
     return out;
   };
@@ -242,7 +309,6 @@ angular.module('lizard-nxt')
     var MAX_LENGTH = maxLength || 20;
 
     if (input.length > MAX_LENGTH) {
-
       return input.slice(0, MAX_LENGTH - 3) + "...";
 
     } else {
@@ -271,9 +337,6 @@ angular.module('lizard-nxt')
 });
 
 
-
-
-
 angular.module('lizard-nxt')
   .filter('objectTitle', function () {
 
@@ -289,9 +352,9 @@ angular.module('lizard-nxt')
       'manhole': 'Put',
       'measuringstation': 'Meetstation',
       'orifice': 'Doorlaat',
-      'outlet': 'Uitlaat met keerklep',
+      'outlet': 'Uitlaat',
       'overflow': 'Overstort',
-      'pipe': 'Gesloten Leiding',
+      'pipe': 'Rioolleiding',
       'pumpstation': 'Gemaal',
       'pumpstation_sewerage': 'Rioolgemaal',
       'pumpstation_non_sewerage': 'Gemaal',
