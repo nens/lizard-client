@@ -185,7 +185,7 @@ angular.module('lizard-nxt')
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
 
         var oldWidth = xScale.range()[1];
-        xScale.range([0, newDimensions.width]);
+        xScale.range([0, this._getWidth(newDimensions)]);
 
         var newWidth = xScale.range()[1];
 
