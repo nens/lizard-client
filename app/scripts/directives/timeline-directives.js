@@ -23,13 +23,13 @@ angular.module('lizard-nxt')
 
     var dimensions = {
       width: window.innerWidth,
-      height: 35,
+      height: 60,
       events: 20,
       bars: 25,
       padding: {
         top: 5,
-        right: 60,
-        bottom: 15,
+        right: 30,
+        bottom: 20,
         left: 30
       }
     },

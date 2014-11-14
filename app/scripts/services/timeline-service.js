@@ -39,7 +39,10 @@ angular.module('lizard-nxt')
   futureIndicator,
   aggWindow, // aggregation window
   lines, // events start - end
-  bars; // rain intensity
+  bars, // rain intensity
+
+  // Space on the xAxis reserved for the start and stop labels
+  START_STOP_WIDTH = 170;
 
   /**
    * @constructor
@@ -66,7 +69,7 @@ angular.module('lizard-nxt')
                 dimensions.padding.left -
                 dimensions.padding.right;
     xScale = this._makeScale({min: start, max: end},
-                             {min: 0, max: width},
+                             {min: START_STOP_WIDTH, max: width - START_STOP_WIDTH},
                              {scale: 'time' });
     xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
     drawTimelineAxes(this._svg, xAxis, dimensions);
@@ -185,7 +188,8 @@ angular.module('lizard-nxt')
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
 
         var oldWidth = xScale.range()[1];
-        xScale.range([0, this._getWidth(newDimensions)]);
+        xScale.range([START_STOP_WIDTH,
+          newDimensions.width - START_STOP_WIDTH - newDimensions.padding.right]);
 
         var newWidth = xScale.range()[1];
 
@@ -340,6 +344,46 @@ angular.module('lizard-nxt')
     Timeline.prototype._drawAxes(svg, xAxis, dimensions, false, duration);
     var axisEl = svg.select('#xaxis')
         .attr("class", "x axis timeline-axis");
+    drawStartStop(svg, axisEl, xAxis, dimensions, duration);
+  };
+
+  var drawStartStop = function (svg, axisEl, axis, dimensions, duration) {
+    var locale = Timeline.prototype._localeFormatter.nl_NL;
+    var format = locale.timeFormat("%a %e %b %Y %X");
+    var height = Timeline.prototype._getHeight(dimensions);
+    var width = Timeline.prototype._getWidth(dimensions);
+    var startEl = svg.select('.timeline-start-stop').select('.tick-start').select('text');
+    var stopEl = svg.select('.timeline-start-stop').select('.tick-stop').select('text');
+    if (!startEl[0][0]) {
+      startEl = svg
+        .append('g')
+        .attr('class', 'timeline-start-stop timeline-axis')
+        .attr("transform", "translate(0, " + height + ")")
+          .append('g')
+          .attr('class', 'tick tick-start')
+          .append('text')
+            .attr('y', 9)
+            .attr('x', dimensions.padding.left)
+            .attr('dy', '.71em')
+            .style('text-align', 'left')
+            .style('font-weight', 'bold')
+            .style('opacity', '1');
+      stopEl = svg.select('.timeline-start-stop')
+        .append('g')
+          .attr('class', 'tick tick-stop')
+          .append('text')
+            .attr('y', 9)
+            .attr('dy', '.71em')
+            .style('text-align', 'right')
+            .style('font-weight', 'bold')
+            .style('opacity', '1');
+    }
+
+    startEl
+      .text(format(new Date(axis.scale().domain()[0].getTime())));
+    stopEl
+      .text(format(new Date(axis.scale().domain()[1].getTime())))
+      .attr('x', dimensions.width - stopEl.node().getBBox().width);
   };
 
   /**
@@ -395,6 +439,11 @@ angular.module('lizard-nxt')
         .attr("transform", "translate(" + newDims.padding.left + ", 0)")
         .select('#xaxis')
         .attr("transform", "translate(0 ," + height + ")");
+      svg.select('.timeline-start-stop')
+        .transition()
+        .delay(Timeline.prototype.transTime)
+        .duration(Timeline.prototype.transTime)
+        .attr("transform", "translate(0, " + height + ")");
     } else {
       svg.transition()
         .duration(Timeline.prototype.transTime)
@@ -404,6 +453,10 @@ angular.module('lizard-nxt')
         .attr("transform", "translate(" + newDims.padding.left + ", 0)")
         .select('#xaxis')
         .attr("transform", "translate(0 ," + height + ")");
+      svg.select('.timeline-start-stop')
+        .transition()
+        .duration(Timeline.prototype.transTime)
+        .attr("transform", "translate(0, " + height + ")");
     }
     svg.select("g").select(".plot-temporal")
       .attr("height", height)
