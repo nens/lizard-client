@@ -490,6 +490,7 @@ angular.module('lizard-nxt')
       },
 
       _toggleLayers: function (map, layers, active) {
+
         if (active && layers.length > 0) {
           addLayersRecursively(map, layers, 0);
         }
