@@ -91,7 +91,6 @@ angular.module('lizard-nxt')
       };
 
       scope.$watch('timeState.start', syncTimeWrapper);
-      // TODO: check if this is the way
       scope.$watch('timeState.at', syncTimeWrapper);
 
       // TODO: not sure if timewrapper should be called on these changes?
