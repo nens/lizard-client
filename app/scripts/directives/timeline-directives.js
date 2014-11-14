@@ -21,22 +21,25 @@ angular.module('lizard-nxt')
 
   var link = function (scope, element, attrs, timelineCtrl, $timeout) {
 
+    var margin = 30;
     var dimensions = {
-      width: window.innerWidth,
+      width: window.innerWidth - 2 * margin,
       height: 35,
       events: 20,
       bars: 25,
       padding: {
         top: 5,
-        right: 30,
+        right: 0,
         bottom: 15,
-        left: 30
+        left: 0
       }
     },
     start = scope.timeState.start,
     end = scope.timeState.end,
 
-    el = element[0].getElementsByTagName('svg')[0],
+    el = element.find('svg')
+      .css('padding-right', margin)
+      .css('padding-left', margin),
 
     interaction = {
 
@@ -97,12 +100,9 @@ angular.module('lizard-nxt')
     // keep track of events in this scope
     scope.events = {events: 0, slugs: []};
 
-    // Move timeline element into sight
-    d3.select(element[0]).transition().duration(300).style('bottom', 0);
-
     // Initialise timeline
     var timeline = new Timeline(
-      el, dimensions, start, end, interaction, scope.events.nEvents);
+      el[0], dimensions, start, end, interaction, scope.events.nEvents);
 
     // Activate zoom and click listener
     timeline.addZoomListener();
