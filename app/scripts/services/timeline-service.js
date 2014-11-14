@@ -140,17 +140,71 @@ angular.module('lizard-nxt')
           xScale(new Date(timestamp));
 
         if (!aggWindow) {
-          aggWindow = this._svg.append("g").append("rect")
-            .attr("class", "aggwindow")
-            .attr("height", height)
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", width)
-            .attr("opacity", 0.6)
-            .attr("style", "fill: #c0392b;");
+          aggWindow = this._svg.append("g")
+            .attr('class', 'agg-window-group')
+            .append("rect")
+              .attr("class", "aggwindow")
+              .attr("height", height)
+              .attr("x", 0)
+              .attr("y", 0)
+              .attr("width", width)
+              .attr("opacity", 0.6)
+              .attr("style", "fill: #c0392b;");
+        }
+
+        if (!d3.select(this._svg.node().parentNode).select('.now-svg')[0][0]) {
+          var label = d3.select(this._svg.node().parentNode).append('svg')
+            .attr('class', 'now-svg')
+            .style('position', 'fixed')
+            .style('bottom', this.dimensions.height)
+            .style('left', 0)
+            .attr('width', this.dimensions.width)
+            .attr('height', 30)
+              .append('g')
+              .attr('class', 'now-svg timeline-axis');
+
+          label.append('rect')
+            .style('fill', 'rgba(255, 255, 255, 0.9)')
+            .attr('width', 150)
+            .attr('rx', 15)
+            .attr('ry', 15)
+            .attr('height', 50);
+
+          label.append('text')
+            .attr('y', 10);
         }
 
         var offset = this.dimensions.padding.left;
+
+        var locale = Timeline.prototype._localeFormatter.nl_NL;
+        var format = locale.timeFormat("%a %e %b %Y %X");
+
+        var atLabel = d3.select(this._svg.node().parentNode)
+          .select('.now-svg')
+          .select('g')
+          .select('text');
+
+
+        var background = d3.select(this._svg.node().parentNode)
+          .select('.now-svg')
+          .select('g')
+          .select('rect');
+
+        atLabel
+          .text(format(new Date(timestamp)))
+          .attr("x", function () {
+            return (offset + xScale(new Date(timestamp)) - atLabel.node().getBBox().width / 2);
+          });
+
+        background.attr("x", function () {
+            return (offset + xScale(new Date(timestamp)) - atLabel.node().getBBox().width / 2);
+          });
+
+
+
+
+        // debugger
+
 
         // UPDATE
         aggWindow
