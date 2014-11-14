@@ -495,8 +495,10 @@ angular.module('lizard-nxt')
         }
         else {
           angular.forEach(layers, function (layer) {
-            layer._leafletLayer.off('load');
-            layer._leafletLayer.off('loading');
+            if (layer._leafletLayer) {
+              layer._leafletLayer.off('load');
+              layer._leafletLayer.off('loading');
+            }
             layer.remove(map);
           });
         }
