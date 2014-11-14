@@ -21,25 +21,23 @@ angular.module('lizard-nxt')
 
   var link = function (scope, element, attrs, timelineCtrl, $timeout) {
 
-    var margin = 30;
     var dimensions = {
-      width: window.innerWidth - 2 * margin,
+      width: window.innerWidth,
       height: 35,
       events: 20,
       bars: 25,
       padding: {
         top: 5,
-        right: 0,
+        right: 60,
         bottom: 15,
-        left: 0
+        left: 30
       }
     },
+
     start = scope.timeState.start,
     end = scope.timeState.end,
 
-    el = element.find('svg')
-      .css('padding-right', margin)
-      .css('padding-left', margin),
+    el = element.find('svg'),
 
     interaction = {
 
