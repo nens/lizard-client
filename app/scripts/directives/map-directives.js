@@ -104,10 +104,12 @@ angular.module('lizard-nxt')
 
         angular.forEach(scope.mapState.layerGroups, function (lg) {
 
+          console.log('lg =', lg);
+
           // We check whether the current lg is purely for a vector layer, else no
           // adhering-to-time needs to take place (in response to changing bounds):
 
-          if (lg.layers.length === 1 && lg.layers[0].type === 'Vector') {
+          if (lg._layers.length === 1 && lg._layers[0].type === 'Vector') {
             if (!scope.$$phase) {
               scope.$apply(function () {
                 lg.syncTime(scope.mapState, scope.timeState, oldBounds, newBounds);
@@ -116,19 +118,17 @@ angular.module('lizard-nxt')
               lg.syncTime(scope.mapState, scope.timeState, oldBounds, newBounds);
             }
           }
-        });
       });
-
+    });
   };
 
-    return {
-      restrict: 'E',
-      replace: true,
-      template: '<div id="map"></div>',
-      link: link
-    };
-  }
-]);
+  return {
+    restrict: 'E',
+    replace: true,
+    template: '<div id="map"></div>',
+    link: link
+  };
+}]);
 
 /**
  * Show raster WMS images as overlay, animate overlays when animation is
