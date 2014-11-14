@@ -104,8 +104,6 @@ angular.module('lizard-nxt')
 
         angular.forEach(scope.mapState.layerGroups, function (lg) {
 
-          console.log('lg =', lg);
-
           // We check whether the current lg is purely for a vector layer, else no
           // adhering-to-time needs to take place (in response to changing bounds):
 
