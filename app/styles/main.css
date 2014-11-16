@@ -1113,6 +1113,7 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .timeline-axis text{
+  shape-rendering: crispEdges;
   -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;

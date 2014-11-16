@@ -25,10 +25,9 @@ angular.module('lizard-nxt')
   var initialHeight,
 
   // D3 components
-  xScale, // The only d3 scale for placement on the x axis within the whole
+  xScale, // The d3 scale for placement on the x axis within the whole
           // timeline. Is only updated when zoomTo is called, or the window
           // resizes.
-  xAxis,
   ordinalYScale, // Scale used to place events in lines for each type
 
   // Interaction functions
@@ -70,13 +69,12 @@ angular.module('lizard-nxt')
                 dimensions.padding.left -
                 dimensions.padding.right;
     xScale = this._makeScale({min: start, max: end},
-                             {min: START_STOP_WIDTH, max: width - START_STOP_WIDTH},
+                             {min: 0, max: width},
                              {scale: 'time' });
-    xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-    drawTimelineAxes(this._svg, xAxis, dimensions);
+    drawTimelineAxes(this._svg, xScale, dimensions);
     if (interaction) {
       if (interaction.zoomFn) {
-        zoomed = setZoomFunction(this._svg, this.dimensions, xScale, xAxis,
+        zoomed = setZoomFunction(this._svg, this.dimensions, xScale,
           interaction.zoomFn);
       }
       if (interaction.clickFn) {
@@ -92,6 +90,14 @@ angular.module('lizard-nxt')
   Timeline.prototype = Object.create(NxtD3.prototype, {
 
     constructor: Timeline,
+
+    /**
+     * @attribute
+     * @type function to be used to format datetime.
+     */
+    format: {
+      value: NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%a %e %b %Y %X")
+    },
 
     /**
      * @function
@@ -142,89 +148,49 @@ angular.module('lizard-nxt')
 
         if (!aggWindow) {
           aggWindow = this._svg.append("g")
-            .attr('class', 'agg-window-group')
+            .attr('class', 'agg-window-group');
+          aggWindow
             .append("rect")
-              .attr("class", "aggwindow")
+              .attr("class", "aggwindow-rect")
               .attr("height", height)
               .attr("x", 0)
               .attr("y", 0)
               .attr("width", width)
               .attr("opacity", 0.6)
               .attr("style", "fill: #c0392b;");
-        }
-
-        if (!d3.select(this._svg.node().parentNode).select('.now-svg')[0][0]) {
-          var label = d3.select(this._svg.node().parentNode).append('svg')
-            .attr('class', 'now-svg')
-            .style('position', 'fixed')
-            .style('bottom', this.dimensions.height)
-            .style('left', 0)
-            .attr('width', this.dimensions.width)
-            .attr('height', 30)
-              .append('g')
-              .attr('class', 'now-svg timeline-axis');
-
-          label.append('rect')
-            .style('fill', 'rgba(255, 255, 255, 0.9)')
-            .attr('width', 150)
-            .attr('rx', 15)
-            .attr('ry', 15)
-            .attr('height', 50);
-
-          label.append('text')
-            .attr('y', 10);
+          aggWindow
+            .append('g')
+              .attr('class', 'timeline-axis')
+              .append('text')
+                .attr('class', 'aggwindow-label')
+                .attr('y', 12);
         }
 
         var offset = this.dimensions.padding.left;
 
-        var locale = Timeline.prototype._localeFormatter.nl_NL;
-        var format = locale.timeFormat("%a %e %b %Y %X");
-
-        var atLabel = d3.select(this._svg.node().parentNode)
-          .select('.now-svg')
-          .select('g')
-          .select('text');
-
-
-        var background = d3.select(this._svg.node().parentNode)
-          .select('.now-svg')
-          .select('g')
-          .select('rect');
-
         // UPDATE
-        atLabel
-          .text(format(new Date(timestamp)))
+        aggWindow.select('.aggwindow-label')
+          .text(this.format(new Date(timestamp)))
           .attr("x", function () {
-            return (offset + xScale(new Date(timestamp)) - atLabel.node().getBBox().width / 2);
+            return (offset + xScale(new Date(timestamp)) -
+              aggWindow.select('.aggwindow-label').node().getBBox().width)
+            - 2;
           });
 
-        background.attr("x", function () {
-            return (offset + xScale(new Date(timestamp)) - atLabel.node().getBBox().width / 2);
-          });
-
-        aggWindow
+        aggWindow.select('.aggwindow-rect')
           .attr("x", function () {
             return (offset + xScale(new Date(timestamp)));
           });
 
         if (oldDimensions && this.dimensions.height < oldDimensions.height) {
-          this._svg.select('.timeline-start-stop')
-            .transition()
-            .delay(this.transTime)
-            .duration(this.transTime)
-            .attr("transform", "translate(0, " + height + ")");
-          this._svg.select('.agg-window-group').select('rect')
+          this._svg.select('.agg-window-group').select('.aggwindow-rect')
             .transition()
             .delay(this.transTime)
             .duration(this.transTime)
             .attr("height", height)
             .attr("width", width);
         } else {
-          this._svg.select('.timeline-start-stop')
-            .transition()
-            .duration(this.transTime)
-            .attr("transform", "translate(0, " + height + ")");
-          this._svg.select('.agg-window-group').select('rect')
+          this._svg.select('.agg-window-group').select('.aggwindow-rect')
             .transition()
             .duration(this.transTime)
             .attr("height", height)
@@ -256,13 +222,9 @@ angular.module('lizard-nxt')
 
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
 
-        var oldWidth = xScale.range()[1];
-        xScale.range([START_STOP_WIDTH,
-          newDimensions.width - START_STOP_WIDTH - newDimensions.padding.right]);
+        xScale.range([0, newDimensions.width - newDimensions.padding.right]);
 
-        var newWidth = xScale.range()[1];
-
-        drawTimelineAxes(this._svg, xAxis, newDimensions);
+        drawTimelineAxes(this._svg, xScale, newDimensions);
         this.updateElements(
           oldDimensions, timestamp, interval);
       }
@@ -336,7 +298,6 @@ angular.module('lizard-nxt')
     drawBars: {
       value: function (data) {
 
-
         /**
          * candidate to replace with Dirk's null checker function.
          */
@@ -344,10 +305,7 @@ angular.module('lizard-nxt')
           return false;
         }
 
-        var height = initialHeight -
-                     this.dimensions.padding.top -
-                     this.dimensions.padding.bottom +
-                     this.dimensions.bars;
+        var height = this.dimensions.bars;
 
         var y = this._maxMin(data, '1');
         var options = {scale: 'linear'};
@@ -384,8 +342,6 @@ angular.module('lizard-nxt')
     zoomTo: {
       value: function (start, end, interval) {
         xScale.domain([new Date(start), new Date(end)]);
-        xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-        drawTimelineAxes(this._svg, xAxis, this.dimensions, this.transTime);
         this.addZoomListener();
         this.drawAggWindow(start, interval);
       }
@@ -412,20 +368,31 @@ angular.module('lizard-nxt')
    * @param {object} dimensions - dimensions object.
    * @param {int} duration - duration in ms.
    */
-  var drawTimelineAxes = function (svg, xAxis, dimensions, duration) {
+  var drawTimelineAxes = function (svg, xScale, dimensions, duration) {
+    var width = Timeline.prototype._getWidth(dimensions);
+    // The actual d3-axis is smaller than the timeline. The scale is copied
+    // and transformed to an axis with a restricted range and domain.
+    var xAxisScale = xScale.copy();
+    xAxisScale
+      .domain([xScale.invert(START_STOP_WIDTH), xScale.invert(width - START_STOP_WIDTH)])
+      .range([START_STOP_WIDTH, width - START_STOP_WIDTH]);
+    var xAxis = Timeline.prototype._makeAxis(xAxisScale, {orientation: "bottom", ticks: 5});
+
     Timeline.prototype._drawAxes(svg, xAxis, dimensions, false, duration);
     var axisEl = svg.select('#xaxis')
         .attr("class", "x axis timeline-axis");
-    drawStartStop(svg, axisEl, xAxis, dimensions, duration);
+    drawStartStop(svg, xScale, dimensions, duration);
   };
 
-  var drawStartStop = function (svg, axisEl, axis, dimensions, duration) {
-    var locale = Timeline.prototype._localeFormatter.nl_NL;
-    var format = locale.timeFormat("%a %e %b %Y %X");
-    var height = Timeline.prototype._getHeight(dimensions);
-    var width = Timeline.prototype._getWidth(dimensions);
-    var startEl = svg.select('.timeline-start-stop').select('.tick-start').select('text');
-    var stopEl = svg.select('.timeline-start-stop').select('.tick-stop').select('text');
+  var drawStartStop = function (svg, xScale, dimensions, duration) {
+    var format = Timeline.prototype.format,
+        height = Timeline.prototype._getHeight(dimensions),
+        width = Timeline.prototype._getWidth(dimensions),
+        startEl = svg.select('.timeline-start-stop')
+          .select('.tick-start').select('text'),
+        stopEl = svg.select('.timeline-start-stop')
+          .select('.tick-stop').select('text');
+
     if (!startEl[0][0]) {
       startEl = svg
         .append('g')
@@ -452,9 +419,9 @@ angular.module('lizard-nxt')
     }
 
     startEl
-      .text(format(new Date(axis.scale().domain()[0].getTime())));
+      .text(format(xScale.domain()[0]));
     stopEl
-      .text(format(new Date(axis.scale().domain()[1].getTime())))
+      .text(format(xScale.domain()[1]))
       .attr('x', dimensions.width - stopEl.node().getBBox().width);
   };
 
@@ -516,12 +483,6 @@ angular.module('lizard-nxt')
         .delay(Timeline.prototype.transTime)
         .duration(Timeline.prototype.transTime)
         .attr("transform", "translate(0, " + height + ")");
-      svg.select('.agg-window-group').select('rect')
-        .transition()
-        .delay(Timeline.prototype.transTime)
-        .duration(Timeline.prototype.transTime)
-        .attr("height", height)
-        .attr("width", width);
     } else {
       svg.transition()
         .duration(Timeline.prototype.transTime)
@@ -535,11 +496,6 @@ angular.module('lizard-nxt')
         .transition()
         .duration(Timeline.prototype.transTime)
         .attr("transform", "translate(0, " + height + ")");
-      svg.select('.agg-window-group').select('rect')
-        .transition()
-        .duration(Timeline.prototype.transTime)
-        .attr("height", height)
-        .attr("width", width);
     }
     svg.select("g").select(".plot-temporal")
       .attr("height", height)
@@ -563,9 +519,10 @@ angular.module('lizard-nxt')
    * directive, all the standard (re-)placement of elements in here.
    */
   var setZoomFunction = function (
-    svg, dimensions, xScale, xAxis, zoomFn) {
+    svg, dimensions, xScale, zoomFn) {
     var zoomed = function () {
-      drawTimelineAxes(svg, xAxis, dimensions);
+
+      drawTimelineAxes(svg, xScale, dimensions);
 
       if (bars) {
         var barData = bars.data();
@@ -645,8 +602,7 @@ angular.module('lizard-nxt')
     // UPDATE
     // Update old elements as needed.
     if (rectangles[0].length > 0) {
-      var barHeight = initialHeight - newDimensions.padding.top -
-                      newDimensions.padding.bottom + newDimensions.bars,
+      var barHeight = newDimensions.bars,
           y = Timeline.prototype._maxMin(rectangles.data(), '1'),
           options = {scale: 'linear'},
           newHeight = Timeline.prototype._getHeight(newDimensions),

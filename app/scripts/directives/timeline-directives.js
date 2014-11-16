@@ -23,11 +23,11 @@ angular.module('lizard-nxt')
 
     var dimensions = {
       width: window.innerWidth,
-      height: 60,
+      height: 75,
       events: 20,
-      bars: 25,
+      bars: 35,
       padding: {
-        top: 5,
+        top: 12,
         right: 30,
         bottom: 20,
         left: 30
@@ -119,15 +119,16 @@ angular.module('lizard-nxt')
      */
     var updateTimelineHeight = function (newDim, dim, nEventTypes) {
       var eventHeight;
-      if (scope.mapState.getActiveTemporalLayerGroup()) {
-        eventHeight = nEventTypes * dim.events;
+      if (scope.mapState.getActiveTemporalLayerGroup() && nEventTypes > 0) {
+        eventHeight = (nEventTypes - 2) * dim.events;
         eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
         newDim.height = dim.height + dim.bars + eventHeight;
       } else {
-        eventHeight = (nEventTypes) * dim.events;
+        eventHeight = (nEventTypes - 2) * dim.events;
         eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
         newDim.height = dim.height + eventHeight;
       }
+
       timeline.resize(newDim,
                       scope.timeState.at,
                       scope.timeState.aggWindow,
