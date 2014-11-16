@@ -381,10 +381,18 @@ angular.module('lizard-nxt')
     Timeline.prototype._drawAxes(svg, xAxis, dimensions, false, duration);
     var axisEl = svg.select('#xaxis')
         .attr("class", "x axis timeline-axis");
-    drawStartStop(svg, xScale, dimensions, duration);
+    drawStartStop(svg, xScale, dimensions);
   };
 
-  var drawStartStop = function (svg, xScale, dimensions, duration) {
+  /**
+   * Draw start stop draws the fixed text labels displaying start and stop of
+   * the domain.
+   *
+   * @param  {svg}    svg
+   * @param  {scale}  xScale
+   * @param  {object} dimensions
+   */
+  var drawStartStop = function (svg, xScale, dimensions) {
     var format = Timeline.prototype.format,
         height = Timeline.prototype._getHeight(dimensions),
         width = Timeline.prototype._getWidth(dimensions),
