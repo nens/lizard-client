@@ -13,9 +13,10 @@
  *
  * Everything in the timeline is animated for NxtD3.transTime milliseconds. To
  * add new elements to the timeline, make sure the elements are updated on zoom,
- * and resize. The timeline resizes before elements are added and after
- * elements are removed. Therefore new and old dimensions need to be compared
- * to delay the resize of elements the same amount as the canvas.
+ * and resize. The timeline resizes *before* elements are added and *after*
+ * elements are removed. Therefore resize transitions should be delayed with
+ * NxtD3.transTime when the timeline is shrinking, as is happening in
+ * updateCanvas.
  */
 angular.module('lizard-nxt')
   .factory("Timeline", ["NxtD3", function (NxtD3) {
@@ -133,7 +134,7 @@ angular.module('lizard-nxt')
      * current aggWindow interval on timeState.
      */
     drawAggWindow: {
-      value: function (timestamp, interval) {
+      value: function (timestamp, interval, oldDimensions) {
 
         var height = this._getHeight(this.dimensions);
         var width = xScale(new Date(timestamp + (interval))) -
@@ -190,6 +191,7 @@ angular.module('lizard-nxt')
           .select('g')
           .select('rect');
 
+        // UPDATE
         atLabel
           .text(format(new Date(timestamp)))
           .attr("x", function () {
@@ -200,21 +202,34 @@ angular.module('lizard-nxt')
             return (offset + xScale(new Date(timestamp)) - atLabel.node().getBBox().width / 2);
           });
 
-
-
-
-        // debugger
-
-
-        // UPDATE
         aggWindow
           .attr("x", function () {
             return (offset + xScale(new Date(timestamp)));
-          })
-          .transition()
-          .duration(this.transTime)
-          .attr("height", height)
-          .attr("width", width);
+          });
+
+        if (oldDimensions && this.dimensions.height < oldDimensions.height) {
+          this._svg.select('.timeline-start-stop')
+            .transition()
+            .delay(this.transTime)
+            .duration(this.transTime)
+            .attr("transform", "translate(0, " + height + ")");
+          this._svg.select('.agg-window-group').select('rect')
+            .transition()
+            .delay(this.transTime)
+            .duration(this.transTime)
+            .attr("height", height)
+            .attr("width", width);
+        } else {
+          this._svg.select('.timeline-start-stop')
+            .transition()
+            .duration(this.transTime)
+            .attr("transform", "translate(0, " + height + ")");
+          this._svg.select('.agg-window-group').select('rect')
+            .transition()
+            .duration(this.transTime)
+            .attr("height", height)
+            .attr("width", width);
+        }
       }
     },
 
@@ -270,13 +285,16 @@ angular.module('lizard-nxt')
         }
 
         if (futureIndicator) {
-          updateFutureIndicator(futureIndicator, xScale, this.dimensions);
+          updateFutureIndicator(
+            futureIndicator,
+            xScale,
+            oldDimensions,
+            this.dimensions
+          );
         }
 
         if (aggWindow) {
-          setTimeout((function () {
-            this.drawAggWindow(timestamp, interval);
-          }).call(this), this.transTime);
+          this.drawAggWindow(timestamp, interval, oldDimensions);
         }
       }
     },
@@ -498,6 +516,12 @@ angular.module('lizard-nxt')
         .delay(Timeline.prototype.transTime)
         .duration(Timeline.prototype.transTime)
         .attr("transform", "translate(0, " + height + ")");
+      svg.select('.agg-window-group').select('rect')
+        .transition()
+        .delay(Timeline.prototype.transTime)
+        .duration(Timeline.prototype.transTime)
+        .attr("height", height)
+        .attr("width", width);
     } else {
       svg.transition()
         .duration(Timeline.prototype.transTime)
@@ -511,6 +535,11 @@ angular.module('lizard-nxt')
         .transition()
         .duration(Timeline.prototype.transTime)
         .attr("transform", "translate(0, " + height + ")");
+      svg.select('.agg-window-group').select('rect')
+        .transition()
+        .duration(Timeline.prototype.transTime)
+        .attr("height", height)
+        .attr("width", width);
     }
     svg.select("g").select(".plot-temporal")
       .attr("height", height)
@@ -660,17 +689,35 @@ angular.module('lizard-nxt')
    *
    * @param {object} futureIndicator - D3 selection.
    * @param {object} xScale - D3 scale.
+   * @param {object} oldDimensions - previous timeline dimensions object.
    * @param {object} dimensions - timeline dimensions object.
    */
-  var updateFutureIndicator = function (futureIndicator, xScale, dimensions) {
+  var updateFutureIndicator = function (
+    futureIndicator,
+    xScale,
+    oldDimensions,
+    dimensions
+    ) {
+
     var height = Timeline.prototype._getHeight(dimensions);
 
     futureIndicator
      .attr('x', function () {
         return xScale(Date.now());
-      })
-     .transition()
-     .attr('height', height);
+      });
+
+    if (dimensions.height < oldDimensions.height) {
+      futureIndicator
+       .transition()
+       .delay(Timeline.prototype.transTime)
+       .duration(Timeline.prototype.transTime)
+       .attr('height', height);
+    } else {
+      futureIndicator
+       .transition()
+       .duration(Timeline.prototype.transTime)
+       .attr('height', height);
+    }
   };
 
   /**
