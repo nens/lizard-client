@@ -184,6 +184,8 @@ angular.module('lizard-nxt')
     active: 'point', //NOTE: make list?
   };
 
+  $scope.tooltips = CabinetService.tooltips;
+
   /**
    * @function
    * @memberOf angular.module('lizard-nxt')
@@ -240,13 +242,13 @@ angular.module('lizard-nxt')
     }
   });
 
-  var now = Date.now();
-  var day = 24 * 60 * 60 * 1000;
+  var now = Date.now(),
+      hour = 60 * 60 * 1000;
 
   // TIME MODEL
   $scope.timeState = {
-    start: now - 2 * day,
-    end: now + day, //  TODO: refactor to function
+    start: now - 4 * hour,
+    end: now + hour,
     changedZoom: Date.now(),
     zoomEnded: null,
     animation: {
@@ -269,7 +271,7 @@ angular.module('lizard-nxt')
   $scope.timeState.aggWindow = UtilService.getAggWindow($scope.timeState.start,
                                                         $scope.timeState.end,
                                                         window.innerWidth);
-  
+
   $scope.timeState.setTimeStateBuffering = function (buffering) {
     $scope.timeState.buffering = buffering;
    };

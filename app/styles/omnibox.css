@@ -378,7 +378,7 @@
 
 :root input[type="checkbox"].ios-switch + div:before,
 :root input[type="checkbox"].ios-switch + div:after {
-    font: bold 60%/1.9 sans-serif;
+    font: bold 60%/1.9 'Roboto', Helvetica, Arial, sans-serif;
     text-transform: uppercase;
 }
 
@@ -408,7 +408,7 @@
 #box-awesome-search input {
     padding-left: 10px !important;
     font-size: 1em;
-  font-family: 'Roboto', sans-serif !important;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
     padding-right: 0;
     width: 100%;
     outline: 0;

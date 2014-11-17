@@ -490,13 +490,16 @@ angular.module('lizard-nxt')
       },
 
       _toggleLayers: function (map, layers, active) {
+
         if (active && layers.length > 0) {
           addLayersRecursively(map, layers, 0);
         }
         else {
           angular.forEach(layers, function (layer) {
-            layer._leafletLayer.off('load');
-            layer._leafletLayer.off('loading');
+            if (layer._leafletLayer) {
+              layer._leafletLayer.off('load');
+              layer._leafletLayer.off('loading');
+            }
             layer.remove(map);
           });
         }

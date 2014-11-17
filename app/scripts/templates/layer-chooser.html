@@ -3,9 +3,10 @@
     class="ng-class: {active: layergroup.isActive()}; layer-chooser"
     for="<% layergroup.id %>-layer"
     single-click="mapState.toggleLayerGroup(layergroup)"
-		ng-dblclick="layergroup.rescaleContinuousData(mapState.bounds)">
+		ng-dblclick="layergroup.rescaleContinuousData(mapState.bounds)"
+    title="<% layergroup.name %>">
     <span class="layer-text" ng-bind="layergroup.name"></span>
     <div class="layer-img" class="layer-chooser" ng-style="layergroup.imageStyle"></div>
   </label>
 </li>
-<opacity-slider></opacity-slider>
+<opacity-slider title="<% tooltips.transparency %>"></opacity-slider>
