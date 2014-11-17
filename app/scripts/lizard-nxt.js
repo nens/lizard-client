@@ -184,6 +184,8 @@ angular.module('lizard-nxt')
     active: 'point', //NOTE: make list?
   };
 
+  $scope.tooltips = CabinetService.tooltips;
+
   /**
    * @function
    * @memberOf angular.module('lizard-nxt')
