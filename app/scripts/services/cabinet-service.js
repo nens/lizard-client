@@ -40,28 +40,28 @@ angular.module('lizard-nxt')
   };
 
   var tooltips = {
-    login: "inloggen",
-    logout: "uitloggen",
-    profile: "profiel aanpassen",
-    version: "dubbelklik voor de Lizard versie", // ok, but where is the HTML for it????
-    openMenu: "datamenu openen",
-    closeMenu: "datamenu sluiten",
-    transparency: "transparantie aanpassen",
-    pointTool: "punt selectie",
-    lineTool: "lijn selectie",
-    areaTool: "scherm selectie",
-    resetQuery: "resultaatvenster sluiten",
-    search: "zoeken",
-    zoomInMap: "zoom in op de kaart",
-    zoomOutMap: "zoom uit op de kaart",
-    zoomInTimeline: "zoom in op de tijdlijn",
-    goToNow: "ga naar het heden op de tijdlijn",
-    zoomOutTimeline: "zoom uit op de tijdlijn",
-    startAnim: "start de animatie",
-    stopAnim: "stop de animatie",
-    timelineStart: "het begin van de huidige tijdlijn",
-    timelineAt:"het 'nu' op de tijdlijn",
-    timelineEnd: "het einde van de huidige tijdlijn"
+    login: "Inloggen",
+    logout: "Uitloggen",
+    profile: "Profiel aanpassen",
+    version: "Dubbelklik voor de Lizard versie", // ok, but where is the HTML for it????
+    openMenu: "Datamenu openen",
+    closeMenu: "Datamenu sluiten",
+    transparency: "Transparantie aanpassen",
+    pointTool: "Puntselectie",
+    lineTool: "Lijnselectie",
+    areaTool: "Scherm selectie",
+    resetQuery: "Resultaatvenster sluiten",
+    search: "Zoeken",
+    zoomInMap: "Zoom in op de kaart",
+    zoomOutMap: "Zoom uit op de kaart",
+    zoomInTimeline: "Zoom in op de tijdlijn",
+    goToNow: "Ga naar het heden op de tijdlijn",
+    zoomOutTimeline: "Zoom uit op de tijdlijn",
+    startAnim: "Start de animatie",
+    stopAnim: "Stop de animatie",
+    timelineStart: "Het begin van de huidige tijdlijn",
+    timelineAt:"Het 'nu' op de tijdlijn",
+    timelineEnd: "Het einde van de huidige tijdlijn"
   };
 
   return {
