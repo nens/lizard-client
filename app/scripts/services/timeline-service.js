@@ -179,7 +179,8 @@ angular.module('lizard-nxt')
 
         aggWindow.select('.aggwindow-rect')
           .attr("x", function () {
-            return (offset + xScale(new Date(timestamp))) - width / 2;
+            var widthMultiplier = interval > 3600000 ? (7/40) : 0.5;
+            return Math.round((offset + xScale(new Date(timestamp))) - (width * widthMultiplier));
           })
           .transition()
           .duration(this.transTime)
