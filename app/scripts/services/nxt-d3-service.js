@@ -44,14 +44,14 @@ angular.module('lizard-nxt')
      * @description        The duration of transitions in ms. Use(d)
      *                     throughout the graphs and timeline.
      */
-    transTime: 300,
+    transTime: 120,
 
     /**
      * @attribute
      * @memberOf angular.module('lizard-nxt')
   .NxtD3
      * @description        Locales. Used in the axes. Currently only Dutch
-     *                     is supported (and d3's default english).
+     *                     is supported (and d3's default english/US en_US).
      */
     _localeFormatter: {
       'nl_NL': d3.locale({
