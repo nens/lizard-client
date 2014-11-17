@@ -7,7 +7,6 @@
     <title>Lizard</title>
 
     <link rel="icon"
-              type="image/png"
               href="/images/favicon.png" />
 
     <!-- build:css(.) /styles/vendor.css -->
@@ -46,17 +45,25 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand clickable"
+             title="<% tooltips.version %>"
              ng-dblclick="toggleVersionVisibility()">
              <span>Lizard</span>
+          </a>
+          <a class="navbar-version"
+            title="<% versioning.revision %>"
+            href="#"
+            style="display: none;">
+            <span ng-bind="versioning.version"></span>
           </a>
         </div>
 
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right" style="">
 
-
               <li ng-if="user.authenticated" class="visible-xs">
-                <a class="user" href="https://sso.lizard.net/edit_profile/" title="Edit profile">
+                <a class="user"
+                   href="https://sso.lizard.net/edit_profile/"
+                   title="Edit profile">
                   <div class="" id="username" ng-cloak>
                     <i id="" class="fa fa-user"></i>
                     <% user.firstName %>
@@ -66,10 +73,7 @@
               <li ng-if="user.authenticated"
                   class="visible-sm visible-md visible-lg">
                 <a class="user"
-                   rel="tooltip"
-                   data-toggle="tooltip"
-                   data-placement="left"
-                   title="Edit profile"
+                   title="<% tooltips.profile %>"
                    href="http://sso.lizard.net/edit_profile/">
                   <div class="" ng-cloak id="username">
                     <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
@@ -82,49 +86,43 @@
                   class="visible-xs">
                 <a class="user logout"
                    href="#"
-                   rel="tooltip"
-                   data-toggle="tooltip"
-                   data-placement="left"
-                   title="Logout"
+                   title="<% tooltips.logout %>"
                    onclick="return logOut()">
                     <div class=""
-                         title="Logout"
-                         rel="tooltip"
-                         data-toggle="tooltip"
-                         data-placement="left"
+                         title="<% tooltips.logout %>"
                          id="username">
                       <i id=""
                          class="fa fa-power-off"></i>&nbsp;&nbsp;Uitloggen
                     </div>
                 </a>
               </li>
+
               <li ng-if="user.authenticated"
                   class="visible-sm visible-md visible-lg" style="width:63px;">
                 <a class="user logout"
-                   rel="tooltip"
-                   data-toggle="tooltip"
-                   data-placement="left"
                    href="/accounts/logout/?next=/"
-                   title="Logout"
+                   title="<% tooltips.logout %>"
                    onclick="return logOut()">
-                  <div class="pull-right" id="username">
+                  <div class="pull-right"
+                       id="username"
+                       title="<% tooltips.logout %>">
                     <i id="" style="font-size:1.2em;" class="fa fa-power-off"></i>
                   </div>
                 </a>
               </li>
+
               <li ng-if="!user.authenticated">
-                <a onclick="logIn()" title="Login">
+                <a onclick="logIn()"
+                   title="<% tooltips.login %>">
                 <i id="" class="fa fa-user" style="font-size:1.2em;"></i></a>
               </li>
+
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </div>
 
-
-
     <div id="text-mode-scrollable">
-
     </div>
 
     <div id="master">
@@ -143,10 +141,7 @@
           </div>
           <div id="ribbon"
                class="ribbon"
-               rel="tooltip"
-               data-toggle="tooltip"
-               data-placement="left"
-               title="Kaartlagen">
+               title="<% mapState.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
             <div class="arrow arrow-up" ng-click="mapState.enabled = !mapState.enabled">
             </div>
             <div class="arrow arrow-down" ng-click="mapState.enabled = !mapState.enabled"><i class="fa fa-compass ribbon-icon"></i>
@@ -158,11 +153,8 @@
                  style="cursor: pointer">
               <a ng-click="toggleTool('point')"
                  class="button-list-link"
-                 title="point tool"
-                 ng-class="{'active': tools.active === 'point'}"
-                 data-toggle="tooltip"
-                 data-placement="left"
-                 rel="tooltip">
+                 title="punt selectie"
+                 ng-class="{'active': tools.active === 'point'}">
                  <i class="fa fa-dot-circle-o"></i>
               </a>
             </div>
@@ -171,11 +163,8 @@
                  style="cursor: pointer">
               <a ng-click="toggleTool('line')"
                  class="button-list-link"
-                 title="line tool"
-                 ng-class="{'active': tools.active === 'line'}"
-                 data-toggle="tooltip"
-                 data-placement="left"
-                 rel="tooltip">
+                 title="lijn selectie"
+                 ng-class="{'active': tools.active === 'line'}">
                  <i class="fa fa-expand"></i>
               </a>
             </div>
@@ -184,11 +173,8 @@
                  style="cursor: pointer">
               <a ng-click="toggleTool('area')"
                  class="button-list-link"
-                 title="area tool"
-                 ng-class="{'active': tools.active === 'area'}"
-                 data-toggle="tooltip"
-                 data-placement="left"
-                 rel="tooltip">
+                 title="scherm selectie"
+                 ng-class="{'active': tools.active === 'area'}">
                  <i class="fa fa-square-o"></i>
               </a>
             </div>
@@ -285,7 +271,6 @@
     <script src="/scripts/services/vector-layer-service.js"></script>
     <script src="/scripts/services/leaflet-vector-service.js"></script>
     <!-- endbuild -->
-
 
   <script>
       // Set global constant "JS_DEBUG", to prevent debug info from reaching
