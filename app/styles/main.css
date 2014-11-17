@@ -15,7 +15,7 @@ html, body{
 
 
 h1, h2, h3, h4, h5 {
-    font-family: 'Roboto', sans-serif !important;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
 }
 
 #map {
@@ -372,7 +372,7 @@ ul.list-inline li.baselayer-icon span{
     position: absolute;
     bottom: 0;
     font-size: 10px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, Helvetica, Arial, sans-serif;
 }
 ul.list-inline li.baselayer-icon.active {
     border: 2px solid red;
@@ -556,7 +556,7 @@ ul.list-inline li.baselayer-icon label{
 
 
 .error-text{
-    font-family: 'Roboto Slab', serif;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
     text-transform: none;
     font-size: 1.5em;
     color: rgba(253, 253, 253, 1);
@@ -579,7 +579,7 @@ ul.list-inline li.baselayer-icon label{
 
 
 .nav-header {
-    font-family: 'Roboto Slab', serif;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
     text-transform: none;
     font-size: 17px;
     color: #2c3e50;
@@ -593,7 +593,7 @@ ul.list-inline li.baselayer-icon label{
     -webkit-border-radius: 4px;
     border-radius: 4px;
     color: #fff;
-    font: 12px/18px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font: 12px/18px "Helvetica Neue", Arial, Helvetica, Helvetica, Arial, sans-serif;
     margin-left: 20px;
     margin-top: -21px;
     padding: 4px 8px;
@@ -826,7 +826,7 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .navbar {
-    font-family: 'Roboto Slab', sans-serif !important;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
     font-size: 14px !important;
 }
 
@@ -922,7 +922,8 @@ ul.list-inline li.baselayer-icon label{
   float: left;
   position: absolute;
   bottom: 0;
-  margin-bottom: 15px;
+  margin-bottom: 21px;
+  margin-left: 15px;
   z-index: 999;
 }
 
@@ -931,7 +932,8 @@ ul.list-inline li.baselayer-icon label{
   position: absolute;
   top: 1px;
   right: 0;
-  margin-bottom: 20px;
+  margin-bottom: 21px;
+  margin-left: 15px;
   z-index: 999;
 }
 
@@ -972,7 +974,7 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .nxt-font {
-    font-family: 'Roboto Slab', serif;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
     text-transform: none;
     font-size: 15px !important;
     color: #2c3e50;
@@ -1111,11 +1113,12 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .timeline-axis text{
+  shape-rendering: crispEdges;
   -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
-  font-family: 'Roboto Slab', serif;
+  font-family: 'Roboto', Helvetica, Arial, sans-serif;
   text-transform: none;
   font-size: 13px;
   fill: #2c3e50;
@@ -1150,7 +1153,7 @@ header {
 #box-awesome-search input {
     padding-left: 10px!important;
     font-size: 1em;
-    font-family: 'Roboto', sans-serif !important;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
     padding-right: 0;
     width: 100%;
     outline: 0;
@@ -1258,7 +1261,7 @@ header {
 }
 
 #username {
-    font-family: 'Roboto Slab', sans-serif !important;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
     font-size: 14px;
     float: right;
     margin-left: 7px;
@@ -1305,7 +1308,7 @@ header {
     text-align:center;
     list-style: none;
     cursor: pointer;
-    font-family: 'Roboto Slab';
+    font-family: 'Roboto';
     color: #2980b9;
     padding-left: 20px;
     padding-right: 20px;
@@ -1351,7 +1354,7 @@ li.recommendation > a {
     max-width: 302px;
     list-style: none;
     font-size: 14px;
-    font-family: 'Roboto Slab';
+    font-family: 'Roboto';
     color: #7f8c8d;
     padding-right: 20px;
     padding-top: 4px;
@@ -1565,4 +1568,18 @@ img {
 
 .dummy-attr-value {
   color: #bdc3c7;
+}
+
+.timeline-button {
+  cursor: pointer;
+}
+
+.time-start-now-end {
+  cursor: not-allowed;
+}
+
+#timeline-svg-wrapper,
+#timeline-svg-wrapper #nodata,
+#timeline-svg-wrapper #xaxis {
+  cursor: grab;
 }

@@ -65,7 +65,10 @@ angular.module('lizard-nxt')
         element[0],
         dataLayers,
         {
-          zoomControl: true
+          zoomControl: false,
+          addZoomTitles: true,
+          zoomInTitle: scope.tooltips.zoomInMap,
+          zoomOutTitle: scope.tooltips.zoomOutMap
         }
       );
 

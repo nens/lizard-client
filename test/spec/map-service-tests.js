@@ -10,10 +10,11 @@ describe('Testing map service', function () {
     );
     var dataLayers = window.data_layers;
     dataLayers.satellite.active = true;
-    map = new NxtMap(elem, dataLayers);
+    map = new NxtMap(elem, dataLayers, {});
   }));
 
   it('should create a map object', function () {
+    console.info(map);
     expect(map._map instanceof L.Map).toBe(true);
   });
 

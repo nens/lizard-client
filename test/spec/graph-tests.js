@@ -51,7 +51,7 @@ describe('Testing graph directives', function () {
   it('should include a rect of the right size', function () {
     var rect = d3.select(element[0]).select('svg').select('g').select('rect');
     expect(rect.attr('width')).toBe(String(dimensions.width - dimensions.padding.left - dimensions.padding.right));
-    expect(rect.attr('height')).toBe(String(dimensions.height - dimensions.padding.top - dimensions.padding.bottom));
+    expect(rect.attr('height')).toBe(String(dimensions.height - dimensions.padding.bottom));
   });
 
   it('should have a rect which does not have "fill:none" cause that breaks the listeners', function () {
@@ -207,14 +207,14 @@ describe('Testing graph', function () {
     labels = {x: 'afstand', y: 'elevation'};
     expect(graph._xy).toBe(undefined);
     graph.drawLine(data, keys, labels);
-    expect(graph._xy).not.toBe(undefined)
+    expect(graph._xy).not.toBe(undefined);
   });
 
   it('should have an xy with scales', function () {
     var data = [[0, 0], [1, 3], [2, 1]];
     keys = {x: 0, y: 1},
     labels = {x: 'afstand', y: 'elevation'},
-    height = dimensions.height - dimensions.padding.top - dimensions.padding.bottom
+    height = dimensions.height - dimensions.padding.bottom
     width = dimensions.width - dimensions.padding.left - dimensions.padding.right
     graph.drawLine(data, keys, labels);
     expect(graph._xy.x.scale(graph._xy.x.maxMin.max)).toBe(width);
