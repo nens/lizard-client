@@ -141,7 +141,7 @@ text.d3tooltip:after {
   text-anchor: middle;
   fill: #7f8c8d;
   font-size: 14px;
-  font-family: 'Roboto Slab', serif;
+  font-family: 'Roboto', Helvetica, Arial, sans-serif;
 }
 
 .donutGraph {
