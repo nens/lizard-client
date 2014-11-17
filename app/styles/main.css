@@ -1566,3 +1566,17 @@ img {
 .dummy-attr-value {
   color: #bdc3c7;
 }
+
+.timeline-button {
+  cursor: pointer;
+}
+
+.time-start-now-end {
+  cursor: not-allowed;
+}
+
+#timeline-svg-wrapper,
+#timeline-svg-wrapper #nodata,
+#timeline-svg-wrapper #xaxis {
+  cursor: grab;
+}
