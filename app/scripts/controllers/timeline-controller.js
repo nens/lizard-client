@@ -107,12 +107,14 @@ angular.module('lizard-nxt')
    * @summary Move timeState.end to now.
    */
   $scope.timeState.zoomToNow = function () {
-    var now = Date.now();
-    var day = 24 * 60 * 60 * 1000;
-    var tomorrow = now + day;
-    var sevenDaysAgo = now - 7 * day;
-    $scope.timeState.start = sevenDaysAgo;
-    $scope.timeState.end = tomorrow;
+
+    var now = Date.now(),
+        fullInterval = $scope.timeState.end - $scope.timeState.start,
+        oneFifthInterval = Math.round(fullInterval * 0.2),
+        fourFifthInterval = Math.round(fullInterval * 0.8);
+
+    $scope.timeState.start = now - fourFifthInterval;
+    $scope.timeState.end = now + oneFifthInterval;
     $scope.timeState.at = now;
     $scope.timeState.changeOrigin = 'user';
     $scope.timeState.changedZoom = Date.now();
