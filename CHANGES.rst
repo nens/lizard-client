@@ -4,6 +4,11 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+-
+
+Release 0.2b12 (2014-11-17)
+---------------------------
+
 - Timeline axis displays start and end of timeState in bold.
 
 - Various visual updates on the timeline.
