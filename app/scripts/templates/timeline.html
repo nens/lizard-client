@@ -8,7 +8,7 @@
          ng-class="{'active': timeState.animation.playing}"
          title="<% timeState.animation.playing ? tooltips.stopAnim : tooltips.startAnim %>"
          data-original-title="Afspelen/pauzeren">
-        <i class="fa-fw fa"  ng-class="{
+        <i class="fa"  ng-class="{
             'fa-play': !timeState.animation.playing,
             'fa-pause active': (timeState.animation.playing && !timeState.buffering),
             'fa-circle-o-notch fa-spin' : timeState.buffering
@@ -42,22 +42,4 @@
     </div>
   </div>
   </div>
-
-  <div class="row time-start-now-end">
-    <div class="col-md-3"
-         title="<% tooltips.timelineStart %>">
-      <p><% timeState.start | date:'d MMMM y - HH:mm' %></p>
-    </div>
-
-    <div class="col-md-6"
-         title="<% tooltips.timelineAt %>">
-      <p class="text-center"><% timeState.at | date:'d MMMM y - HH:mm' %></p>
-    </div>
-
-    <div class="col-md-3"
-         title="<% tooltips.timelineEnd %>">
-      <p class="text-right"><% timeState.end | date:'d MMMM y - HH:mm' %> </p>
-    </div>
-  </div>
-
 </div>

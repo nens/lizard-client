@@ -310,13 +310,12 @@ angular.module('lizard-nxt')
   .NxtD3
      *
      * @param {object} dimensions object containing dimensions
-     * @description Deducts the top and bottom padding to get
+     * @description Deducts the bottom padding to get
      *              the actual height of the drawing area
      * @return {int} height
      */
     _getHeight: function (dimensions) {
       return dimensions.height -
-        dimensions.padding.top -
         dimensions.padding.bottom;
     },
 
