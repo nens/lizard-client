@@ -152,7 +152,7 @@ angular.module('lizard-nxt')
         // UPDATE
         aggWindow
           .attr("x", function () {
-            return (offset + xScale(new Date(timestamp)));
+            return (offset + xScale(new Date(timestamp))) - width / 2;
           })
           .transition()
           .duration(this.transTime)

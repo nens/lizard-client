@@ -47,6 +47,7 @@ angular.module('lizard-nxt')
        * @param {object}  scale D3 xScale.
        */
       zoomFn: function (scale) {
+
         scope.$apply(function () {
           scope.timeState.start = scale.domain()[0].getTime();
           scope.timeState.end = scale.domain()[1].getTime();
@@ -55,6 +56,7 @@ angular.module('lizard-nxt')
           scope.timeState.changeOrigin = 'timeline';
           scope.timeState.changedZoom = Date.now();
         });
+
         timeline.drawAggWindow(scope.timeState.at, scope.timeState.aggWindow);
       },
 
