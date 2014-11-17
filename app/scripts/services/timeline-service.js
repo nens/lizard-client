@@ -133,7 +133,6 @@ angular.module('lizard-nxt')
       }
     },
 
-
     /**
      * @function
      * @summary Draws an aggWindow at timestamp.
@@ -180,8 +179,13 @@ angular.module('lizard-nxt')
 
         aggWindow.select('.aggwindow-rect')
           .attr("x", function () {
-            return (offset + xScale(new Date(timestamp)));
-          });
+            var widthMultiplier = interval > 3600000 ? (7/40) : 0.5;
+            return Math.round((offset + xScale(new Date(timestamp))) - (width * widthMultiplier));
+          })
+          .transition()
+          .duration(this.transTime)
+          .attr("height", height)
+          .attr("width", width);
 
         if (oldDimensions && this.dimensions.height < oldDimensions.height) {
           this._svg.select('.agg-window-group').select('.aggwindow-rect')

@@ -26,7 +26,6 @@ angular.module('lizard-nxt')
   this.roundTimestamp = function (timestamp, coefficient, needTzOffset) {
     var roundedTimestamp = parseInt((timestamp + (coefficient / 2)) /
                                     coefficient, 10) * coefficient;
-
     if (!!needTzOffset) {
       var timeZoneOffset = (new Date(roundedTimestamp)).getTimezoneOffset() *
         1000 * 60;
