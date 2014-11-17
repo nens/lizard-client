@@ -31,9 +31,9 @@ angular.module('lizard-nxt')
   ordinalYScale, // Scale used to place events in lines for each type
 
   // Interaction functions
-  clicked,
-  zoomed,
-  zoomend,
+  clicked = null,
+  zoomed = null,
+  zoomend = null,
 
   // Timeline elements
   futureIndicator,
@@ -60,31 +60,18 @@ angular.module('lizard-nxt')
    *  angular.module('lizard-nxt')
    * @param {integer} nEvents - number of event types (event series).
    */
-  function Timeline(element, dimensions, start, end, interaction, nEvents) {
+  function Timeline(element, dimensions, start, end, interaction) {
     NxtD3.call(this, element, dimensions);
     initialHeight = dimensions.height;
-    this.nEvents = nEvents;
     this._svg = addElementGroupsToCanvas(this._svg, this.dimensions);
-    var width = dimensions.width -
-                dimensions.padding.left -
-                dimensions.padding.right;
-    xScale = this._makeScale({min: start, max: end},
-                             {min: 0, max: width},
-                             {scale: 'time' });
+    xScale = this._makeScale(
+      {min: start, max: end},
+      {min: 0, max: this._getWidth(dimensions)},
+      {scale: 'time' }
+    );
     drawTimelineAxes(this._svg, xScale, dimensions);
-    if (interaction) {
-      if (interaction.zoomFn) {
-        zoomed = setZoomFunction(this._svg, this.dimensions, xScale,
-          interaction.zoomFn);
-      }
-      if (interaction.clickFn) {
-        clicked = setClickFunction(xScale, this.dimensions,
-          interaction.clickFn);
-      }
-      if (interaction.zoomEndFn) {
-        zoomend = setZoomEndFunction(interaction.zoomEndFn);
-      }
-    }
+    this.addFutureIndicator();
+    this.addInteraction(interaction);
   }
 
   Timeline.prototype = Object.create(NxtD3.prototype, {
@@ -121,7 +108,10 @@ angular.module('lizard-nxt')
     },
 
     addClickListener: {
-      value: function () {
+      value: function (clickFn) {
+        if (clickFn) {
+          clicked = setClickFunction(xScale, this.dimensions, clickFn);
+        }
         this._svg.on("click", clicked);
       }
     },
@@ -132,6 +122,13 @@ angular.module('lizard-nxt')
       }
     },
 
+    addInteraction: {
+      value: function (interaction) {
+        if (!interaction) { return; }
+        this.addZoomListener(interaction.zoomFn, interaction.zoomEndFn);
+        this.addClickListener(interaction.clickFn);
+      }
+    },
 
     /**
      * @function
@@ -174,7 +171,7 @@ angular.module('lizard-nxt')
           .attr("x", function () {
             return (offset + xScale(new Date(timestamp)) -
               aggWindow.select('.aggwindow-label').node().getBBox().width)
-            - 2;
+            - 2; // Place the label 2 px behind the aggWindow rectangle
           });
 
         aggWindow.select('.aggwindow-rect')
@@ -239,13 +236,10 @@ angular.module('lizard-nxt')
      * @param {interval} interval - aggregation interval in ms.
      */
     updateElements: {
-
       value: function (oldDimensions, timestamp, interval) {
-
         if (bars && oldDimensions) {
           updateRectangleElements(bars, xScale, oldDimensions, this.dimensions);
         }
-
         if (futureIndicator) {
           updateFutureIndicator(
             futureIndicator,
@@ -254,7 +248,6 @@ angular.module('lizard-nxt')
             this.dimensions
           );
         }
-
         if (aggWindow) {
           this.drawAggWindow(timestamp, interval, oldDimensions);
         }
@@ -348,7 +341,18 @@ angular.module('lizard-nxt')
     },
 
     addZoomListener: {
-      value: function () {
+      value: function (zoomFn, zoomEndFn) {
+        if (zoomFn) {
+          zoomed = setZoomFunction(
+            this._svg,
+            this.dimensions,
+            xScale,
+            zoomFn
+          );
+        }
+        if (zoomEndFn) {
+          zoomend = setZoomEndFunction(zoomEndFn);
+        }
         this._svg.call(d3.behavior.zoom()
           .x(xScale)
           .on("zoom", zoomed)
@@ -374,9 +378,15 @@ angular.module('lizard-nxt')
     // and transformed to an axis with a restricted range and domain.
     var xAxisScale = xScale.copy();
     xAxisScale
-      .domain([xScale.invert(START_STOP_WIDTH), xScale.invert(width - START_STOP_WIDTH)])
+      .domain([
+        xScale.invert(START_STOP_WIDTH),
+        xScale.invert(width - START_STOP_WIDTH)
+      ])
       .range([START_STOP_WIDTH, width - START_STOP_WIDTH]);
-    var xAxis = Timeline.prototype._makeAxis(xAxisScale, {orientation: "bottom", ticks: 5});
+    var xAxis = Timeline.prototype._makeAxis(
+      xAxisScale,
+      {orientation: "bottom", ticks: 5}
+    );
 
     Timeline.prototype._drawAxes(svg, xAxis, dimensions, false, duration);
     var axisEl = svg.select('#xaxis')
@@ -561,7 +571,6 @@ angular.module('lizard-nxt')
           .attr("x1", xOneFunction)
           .attr("x2", xTwoFunction);
       }
-
       if (zoomFn) {
         zoomFn(xScale);
       }
