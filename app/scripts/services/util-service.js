@@ -18,16 +18,15 @@ angular.module('lizard-nxt')
    *
    * @param {integer} timestamp - javascript timestamp in ms.
    * @param {integer} coefficient - coefficient to round to in ms.
-   * @param {boolean} tzOffset - true if you want to correct for timezone
+   * @param {boolean} needTzOffset - true if you want to correct for timezone
    * offset.
    * @returns {integer} roundedTimestamp - timestamp rounded to nearest
    * coefficient.
    */
-  this.roundTimestamp = function (timestamp, coefficient, tzOffset) {
+  this.roundTimestamp = function (timestamp, coefficient, needTzOffset) {
     var roundedTimestamp = parseInt((timestamp + (coefficient / 2)) /
                                     coefficient, 10) * coefficient;
-
-    if (!!tzOffset) {
+    if (!!needTzOffset) {
       var timeZoneOffset = (new Date(roundedTimestamp)).getTimezoneOffset() *
         1000 * 60;
       roundedTimestamp = roundedTimestamp - timeZoneOffset;
@@ -86,8 +85,12 @@ angular.module('lizard-nxt')
    * @return {int} aggWindow in ms.
    */
   this.getAggWindow = function (start, stop, drawingWidth) {
+
+    // TODO: Called both by omnibox and timeline, should be called only by timeline,
+    // while omnibox subsequently syncs to timeState.aggWindow
+
     var aggWindow;
-    var minPx = 4; // Minimum width of a bar
+    var MIN_PX = 4; // Minimum width of a bar
     // Available zoomlevels
     var zoomLvls = {fiveMinutes: 300000,
                     hour: 3600000,
@@ -97,10 +100,11 @@ angular.module('lizard-nxt')
     var msPerPx = (stop - start) / drawingWidth;
     for (var zoomLvl in zoomLvls) {
       aggWindow = zoomLvls[zoomLvl];
-      if (aggWindow > minPx * msPerPx) {
+      if (aggWindow > MIN_PX * msPerPx) {
         break; // If zoomlevel is sufficient to get enough width in the bars
       }
     }
+
     return aggWindow;
   };
 
@@ -269,11 +273,137 @@ angular.module('lizard-nxt')
    * @description Glues all of it's arguments to a single string
    */
   this.buildString = function () {
+
     var i, result = "";
+
     for (i = 0; i < arguments.length; i++) {
       result += arguments[i];
     }
+
     return result;
   };
 
+  /**
+   * @function all
+   * @memberof UtilService
+   * @description - Checks whether ALL elements of the input satisfy the predicate
+   * @param {arr} - An enumerable/iterable datastructure, e.g. Array
+   * @param {predicate_} - A predicate, e.g. 'even': function (x) { x % 2 === 0 };
+   * @return {boolean}
+   */
+  this.all = function (arr, predicate_) {
+
+    var i,
+        result = true,
+        predicate = predicate_ || function (x) { return !!x; };
+
+    for (i = 0; i < arr.length; i++) {
+      result = result && predicate(arr[i]);
+    }
+
+    return result;
+  };
+
+  /**
+   * @function any
+   * @memberof UtilService
+   * @description - Checks whether ANY element of the input satisfies the predicate
+   * @param {arr} - An enumerable/iterable datastructure, e.g. Array
+   * @param {predicate_} - A predicate, e.g. 'even': function (x) { x % 2 === 0 };
+   * @return {boolean}
+   */
+  this.any = function (arr, predicate_) {
+
+    var i,
+        result = false,
+        predicate = predicate_ || function (x) { return !!x; };
+
+    for (i = 0; i < arr.length; i++) {
+      result = result || predicate(arr[i]);
+    }
+
+    return result;
+  };
+
+  /**
+   * @function
+   * @memberOf UtilService
+   * @description - Checks whether API response from the raster store has enough
+   *                (non-null) data to actually put it on the scope.
+   * @param {Object[]} response - An API response
+   * @return {boolean}
+   */
+  this.isSufficientlyRichData = function (data) {
+
+    if (data === 'null') {
+      // backend did not return valid data.. log as ERROR?
+      return false;
+
+    } else if (this.nullOrNestedNull(data)) {
+      // kill: null AND [null] AND [[null]] etc
+      return false;
+
+    } else if (data.constructor === Array) {
+
+      if (data.length === 0) {
+        // kill: []
+        return false;
+
+      } else if (this.all(data, function (x) { return x === null; })) {
+
+        // kill: [null, null, ..., null]
+        return false;
+
+      } else if (data[0].constructor === Array) {
+
+        if (data[0] === []) {
+          return false;
+
+        } else if (data[0].length === 1 && data[0][0] !== null) {
+          return true;
+
+        } else if (data[0].length > 1) {
+
+          if (data[0][0].constructor === Array) {
+
+            // kill: [[x0, [null]], [x1, [null]], ..., [xn, [null]]]
+            return !this.all(data, function (elem) {
+              return elem[1].length === 1 && elem[1][0] === null;
+            });
+
+          } else {
+
+            // kill: [[x0, null], [x1, null], ..., [xn, null]]
+            return !this.all(data, function (elem) {
+              return elem[1] === null;
+            });
+          }
+        }
+
+
+      }
+    }
+    return true;
+  };
+
+  /**
+   * @function
+   * @memberOf UtilService
+   * @description - checks whether passed in argument is null or nested null,
+                    e.g: null, [null], [[null]] etc
+   * @param {anything}
+   * @return {boolean}
+   */
+  this.nullOrNestedNull = function (x) {
+
+    if (x === null) {
+      return true;
+
+    } else if (x.constructor === Array && x.length === 1) {
+      return this.nullOrNestedNull(x[0]);
+
+    } else {
+      return false;
+    }
+  };
 });

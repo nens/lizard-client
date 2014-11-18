@@ -3,8 +3,34 @@ Changelog of lizard-nxt client
 
 Unreleased
 ----------
-- Event categories/series can be differentiated by color and icon.
 
+-
+
+Release 0.2b12 (2014-11-17)
+---------------------------
+
+- Timeline axis displays start and end of timeState in bold.
+
+- Various visual updates on the timeline.
+
+Release 0.2b11 (2014-11-12)
+---------------------------
+
+- Transition on events in timeline.
+
+- Height of future indicator has transition.
+
+- Timeline doesn't throw error when nodata is received from rain.
+
+- Events series in timeline are colored.
+
+- Event series can be differentiated by color.
+
+- Measuring stations show timeseries with bar chart.
+
+- Space starts/pauses animation.
+
+- Animation when buffering shows loading circle.
 
 Release 0.2b10 (2014-11-06)
 ---------------------------

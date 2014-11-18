@@ -277,11 +277,11 @@ angular.module('lizard-nxt')
 
   rescale = function (svg, dimensions, xy, data, keys, origin) {
     // Sensible limits to rescale. If the max
-    // of the y values is smaller than 0.1 of the max of the scale,
+    // of the y values is smaller than 0.2 (or 20 %) of the max of the scale,
     // update domain of the scale and redraw the axis.
     var limits = {
       x: 1,
-      y: 0.1
+      y: 0.2
     },
     orientation = {
       x: 'bottom',
@@ -366,7 +366,7 @@ angular.module('lizard-nxt')
     height = Graph.prototype._getHeight(dimensions),
     x = xy.x,
     y = xy.y,
-    barWidth =  getBarWidth(xy.x.scale, data, keys),
+    barWidth = getBarWidth(xy.x.scale, data, keys, dimensions),
 
     // Join new data with old elements, based on the x key.
     bar = svg.select('g').select('#feature-group').selectAll(".bar")
@@ -407,8 +407,9 @@ angular.module('lizard-nxt')
       .remove();
   };
 
-  getBarWidth = function (scale, data, keys) {
-    return scale(data[1][keys.x]) - scale(data[0][keys.x]);
+  getBarWidth = function (scale, data, keys, dimensions) {
+    return (dimensions.width - dimensions.padding.left - dimensions.padding.right) / data.length;
+    //return scale(data[1][keys.x]) - scale(data[0][keys.x]);
   };
 
   createXGraph = function (svg, dimensions, labels, options) {
@@ -463,9 +464,9 @@ angular.module('lizard-nxt')
   drawLabel = function (svg, dimensions, label, y) {
     var width = Graph.prototype._getWidth(dimensions),
     height = Graph.prototype._getHeight(dimensions),
-    // Correct 1 pixel to make sure the labels fall
+    // Correct 2 pixels to make sure the labels fall
     // completely within the svg
-    PIXEL_CORRECTION = 1;
+    PIXEL_CORRECTION = 2;
     var el = svg.select(y ? '#ylabel': '#xlabel');
     if (!el.empty()) { el.text(label); }
     else {
@@ -483,7 +484,7 @@ angular.module('lizard-nxt')
         el.attr('id', 'xlabel')
           .attr('x', dimensions.padding.left + width / 2)
           .attr('y', dimensions.height - PIXEL_CORRECTION);
-        el.attr('dy', - 0.5 * el.node().getBBox().height);
+        el.attr('dy', - PIXEL_CORRECTION);
       }
     }
   };
@@ -507,7 +508,7 @@ angular.module('lizard-nxt')
           .attr("dy", ".15em")
           .style("text-anchor", "end")
           .attr('class', 'graph-text')
-          .attr("transform", "rotate(-45)");
+          .attr("transform", "rotate(-25)");
     }
   };
 

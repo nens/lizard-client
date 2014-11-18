@@ -62,9 +62,16 @@ angular.module('lizard-nxt')
         },
 
         syncTime: {
-          value: function (mapState, timeState, oldTime) {
+          value: function (map, timeState) {
             var defer = $q.defer();
-            this._leafletLayer.redraw(this, mapState, timeState);
+            if (timeState.animation.playing) {
+              this._leafletLayer.setTime(this, {
+                start: timeState.at,
+                end: timeState.at + timeState.aggWindow
+              });
+            } else {
+              this._leafletLayer.setTime(this, timeState);
+            }
             defer.resolve();
             return defer.promise;
           }
@@ -122,8 +129,8 @@ angular.module('lizard-nxt')
           var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
 
           leafletLayer = new LeafletVectorService(url, {
-            minZoom: nonLeafLayer.min_zoom,
-            maxZoom: nonLeafLayer.max_zoom,
+            minZoom: nonLeafLayer.minZoom,
+            maxZoom: nonLeafLayer.maxZoom,
             color: nonLeafLayer.color,
             slug: nonLeafLayer.slug,
             ext: 'geojson'

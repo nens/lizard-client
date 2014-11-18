@@ -141,19 +141,28 @@ angular.module('lizard-nxt')
      * @return {promise}
      */
     var getData = function (nonLeafLayer, options) {
-      var deferred = $q.defer();
+      var deferred = $q.defer(),
+          layerSlug, layer;
 
-      var layer = nonLeafLayer._leafletLayer;
+      // leaflet knows nothing, so sends slug and leaflayer
+      if (typeof nonLeafLayer === 'string') {
+        layerSlug = nonLeafLayer;
+        layer = options.layer;
+      } else {
+        layer = nonLeafLayer._leafletLayer;
+        layerSlug = nonLeafLayer.slug
+      }
+
 
       if (!layer) {
         deferred.reject();
         return deferred.promise;
       }
 
-      if (layer.isLoading || !vectorLayers[nonLeafLayer.slug]) {
-        getDataAsync(nonLeafLayer, options, deferred);
-      } else if (vectorLayers[nonLeafLayer.slug]) {
-        var set = filterSet(vectorLayers[nonLeafLayer.slug].data,
+      if (layer.isLoading || !vectorLayers[layerSlug]) {
+        getDataAsync(layerSlug, layer, options, deferred);
+      } else if (vectorLayers[layerSlug]) {
+        var set = filterSet(vectorLayers[layerSlug].data,
         options.geom, {
           start: options.start,
           end: options.end
@@ -173,10 +182,10 @@ angular.module('lizard-nxt')
      * @param {options}
      * @param {promise}
      */
-    var getDataAsync = function (nonLeafLayer, options, deferred) {
-      nonLeafLayer._leafletLayer.on('loadend', function () {
-        if (vectorLayers[nonLeafLayer.slug] !== undefined) {
-          deferred.resolve(filterSet(vectorLayers[nonLeafLayer.slug].data,
+    var getDataAsync = function (layerSlug, layer, options, deferred) {
+      layer.on('loadend', function () {
+        if (vectorLayers[layerSlug] !== undefined) {
+          deferred.resolve(filterSet(vectorLayers[layerSlug].data,
             options.geom, {
               start: options.start,
               end: options.end

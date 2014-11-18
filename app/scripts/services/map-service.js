@@ -202,7 +202,17 @@ angular.module('lizard-nxt')
      * @description Creates a Leaflet map based on idString or Element.
      */
     var createNxtMap = function (mapElem, options) { // String or Element.
-      return LeafletService.map(mapElem, options);
+
+      var leafletMap = LeafletService.map(mapElem, options);
+
+      if (options.addZoomTitles) {
+        LeafletService.control.zoom({
+          zoomInTitle: options.zoomInTitle,
+          zoomOutTitle: options.zoomOutTitle
+        }).addTo(leafletMap);
+      }
+
+      return leafletMap;
     };
 
     return NxtMap;

@@ -22,6 +22,7 @@ angular.module('lizard-nxt')
 
     var GRAPH_WIDTH = 600;
     $scope.box.content = {};
+    $scope.box.showFullTable = false;
 
     /**
      * @function
@@ -29,23 +30,31 @@ angular.module('lizard-nxt')
      * @param  {L.LatLng} here
      */
     var fillpoint = function (here) {
+
       if ($scope.box.type !== 'point') { return; }
 
       ClickFeedbackService.drawCircle($scope.mapState, here);
       ClickFeedbackService.startVibration($scope.mapState);
-      var aggWindow = UtilService.getAggWindow($scope.timeState.start, $scope.timeState.end, GRAPH_WIDTH);
+      var aggWindow = $scope.timeState.aggWindow;
       var promises = $scope.fillBox({
         geom: here,
         start: $scope.timeState.start,
         end: $scope.timeState.end,
         aggWindow: aggWindow
       });
+
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
           if (response.data && response.data.id && response.data.entity_name) {
-            getTimeSeriesForObject(response.data.entity_name + '$' + response.data.id);
+            getTimeSeriesForObject(
+              response.data.entity_name + '$' + response.data.id
+            );
           }
           if (response.layerSlug === 'radar/basic' && response.data !== null) {
+            // this logs incessant errors.
+            if ($scope.box.content[response.layerGroupSlug] === undefined) { return; }
+            if (!$scope.box.content[response.layerGroupSlug].layers.hasOwnProperty(response.layerSlug)) { return; }
+
             $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
           }
         });
@@ -71,6 +80,7 @@ angular.module('lizard-nxt')
      * @description Draw visual feedback after client clicked on the map
      */
     var drawFeedback = function () {
+      $scope.box.showFullTable = false;
       var feedbackDrawn = false;
       var drawVectorFeedback = function (content) {
         angular.forEach(content, function (lg) {
@@ -139,21 +149,40 @@ angular.module('lizard-nxt')
      * @memberOf app.pointCtrl
      * @description gets timeseries from service
      */
-    var getTimeSeriesForObject = function (id) {
-      TimeseriesService.getTimeseries(id, $scope.timeState)
+    var getTimeSeriesForObject = function (objectId) {
+
+      TimeseriesService.getTimeseries(objectId, $scope.timeState)
       .then(function (result) {
 
         $scope.box.content.timeseries = $scope.box.content.timeseries || {};
 
         if (result.length > 0) {
 
-          angular.extend($scope.box.content.timeseries, {
+          // We retrieved data for one-or-more timeseries, but do these actually
+          // contain measurements, or just metadata? We filter out the timeseries
+          // with too little measurements...
 
-            type  : 'timeseries',
-            data  : result[0].events,
-            name  : result[0].name,
-            order : 9999
+          var filteredResult = [];
+
+          angular.forEach(result, function (value) {
+            if (value.events.length > 1) {
+              filteredResult.push(value);
+            }
           });
+
+          if (filteredResult.length > 0) {
+
+            // IF we retrieve at least one timeseries with actual measurements,
+            // we put the retrieved data on the $scope:
+
+            $scope.box.content.timeseries.data = filteredResult;
+            $scope.box.content.timeseries.selectedTimeseries = filteredResult[0];
+          } else {
+
+            // ELSE, we delete the container object for timeseries:
+
+            delete $scope.box.content.timeseries;
+          }
 
         } else {
           delete $scope.box.content.timeseries;
@@ -178,13 +207,19 @@ angular.module('lizard-nxt')
       ClickFeedbackService.emptyClickLayer($scope.mapState);
     });
 
-
+    /**
+     * @function
+     * @memberOf app.pointCtrl
+     * @description Get correct icon for structure
+     */
     $scope.getIconClass = function (str) {
       switch (str) {
       case 'overflow':
         return 'icon-overflow';
       case 'pumpstation_sewerage':
         return 'icon-pumpstation-diesel';
+      case 'pumpstation_non_sewerage':
+        return 'icon-pumpstation';
       case 'bridge':
         return 'icon-bridge';
       case 'bridge-draw':
@@ -194,6 +229,22 @@ angular.module('lizard-nxt')
       default:
         return 'icon-' + str;
       }
+    };
+
+    /**
+     * @function
+     * @memberOf app.pointCtrl
+     * @description Toggling the view on the table for structure attributes;
+     *              Either show the first 3 attributes, OR show all of them
+     */
+    $scope.box.toggleFullTable = function () {
+
+      $scope.box.showFullTable = !$scope.box.showFullTable;
+
+      d3.selectAll('tr.attr-row')
+        .classed('hidden', function (_, i) {
+          return i > 2 && !$scope.box.showFullTable;
+        });
     };
   }
 ]);

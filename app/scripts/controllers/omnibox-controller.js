@@ -2,9 +2,22 @@ angular.module('lizard-nxt')
   .controller("OmniboxCtrl", [
   "$scope",
   "UtilService",
-  function ($scope, UtilService) {
+  "ClickFeedbackService",
+  function ($scope, UtilService, ClickFeedbackService) {
 
     $scope.box.content = {};
+
+    /**
+     * Click function for the X in the searchbar
+     * @description Removes all content from box, empties the search box,
+     *              empties the clickfeedback and removes line points.
+     */
+    $scope.resetBox = function () {
+      $scope.box.query = null;
+      $scope.box.content = {};
+      ClickFeedbackService.emptyClickLayer($scope.mapState);
+      $scope.mapState.points = [];
+    };
 
     /**
      * @function
@@ -15,7 +28,7 @@ angular.module('lizard-nxt')
      *              active layergroup and an item in box.content
      *              .<layergroup>.layer for every piece of data.
      *              The promises are returned to add specific
-   *              logic in the child controllers.
+     *              logic in the child controllers.
      * @param  {L.LatLng} here | L.Bounds | [L.LatLng]
      */
     $scope.fillBox = function (options) {
@@ -29,23 +42,20 @@ angular.module('lizard-nxt')
       };
 
       var putDataOnScope = function (response) {
+
         var lGContent = $scope.box.content[response.layerGroupSlug] || {layers: {}};
         lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
         lGContent.layerGroupName = $scope.mapState.layerGroups[response.layerGroupSlug].name;
         lGContent.order = $scope.mapState.layerGroups[response.layerGroupSlug].order;
-        if (response.data === null) {
-          if ($scope.box.content[response.layerGroupSlug]) {
-            delete $scope.box.content[response.layerGroupSlug].layers[response.layerSlug];
-          }
-        } else {
-          lGContent.layers[response.layerSlug].aggType = response.aggType;
-          lGContent.layers[response.layerSlug].type = response.type;
-          lGContent.layers[response.layerSlug].data = response.data;
-          lGContent.layers[response.layerSlug].summary = response.summary;
-          lGContent.layers[response.layerSlug].scale = response.scale;
-          lGContent.layers[response.layerSlug].quantity = response.quantity;
-          lGContent.layers[response.layerSlug].unit = response.unit;
-          lGContent.layers[response.layerSlug].color = response.color;
+
+        if (UtilService.isSufficientlyRichData(response.data)) {
+
+          var sharedKeys = ['aggType', 'type', 'data', 'summary', 'scale',
+            'quantity', 'unit', 'color'];
+
+          angular.forEach(sharedKeys, function (key) {
+            lGContent.layers[response.layerSlug][key] = response[key];
+          });
 
           /**
            * lGContent now looks like: {
@@ -64,7 +74,22 @@ angular.module('lizard-nxt')
            * }
            */
 
+           // kill timeseries
+
           $scope.box.content[response.layerGroupSlug] = lGContent;
+
+        } else {
+
+          if ($scope.box.content[response.layerGroupSlug]) {
+
+            if (response.layerGroupSlug === 'waterchain') {
+              delete $scope.box.content.waterchain;
+              delete $scope.box.content.timeseries;
+
+            } else {
+              delete $scope.box.content[response.layerGroupSlug].layers[response.layerSlug];
+            }
+          }
         }
         // Accomadate chaining in child controllers
         return response;

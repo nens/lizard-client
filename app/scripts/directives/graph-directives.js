@@ -55,12 +55,12 @@ angular.module('lizard-nxt')
     var dimensions, el;
 
     dimensions = {
-      width: 370,
+      width: 375,
       height: 160,
       padding: {
         top: 5,
         right: 5,
-        bottom: 60,
+        bottom: 50,
         left: 50
       }
     };
@@ -118,7 +118,9 @@ angular.module('lizard-nxt')
    * @description       Stores the graph directives data and update functions
    */
   graphCtrl = function ($scope, Graph) {
+
     this.setData = function (scope) {
+
       // Provide defaults for backwards compatability
       this.data = scope.data || [];
       this.keys = scope.keys || {x: 0, y: 1};
@@ -127,6 +129,7 @@ angular.module('lizard-nxt')
         y: scope.ylabel || ''
       };
     };
+
     this.setData($scope);
 
     this.graph = {};

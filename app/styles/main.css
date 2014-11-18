@@ -15,14 +15,15 @@ html, body{
 
 
 h1, h2, h3, h4, h5 {
-    font-family: 'Roboto', sans-serif !important;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
 }
 
 #map {
     top: 50px;
     z-index: 0;
     width: 100%;
-    height: 100%;
+    height: 100%; /* fallback for browsers that don't support calc() */
+    height: calc(100% - 50px);
     position: absolute;
 }
 
@@ -63,7 +64,8 @@ h1, h2, h3, h4, h5 {
   .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
     border: none !important;
   }
-  #username{
+
+  #username {
     float: none !important;
   }
   .navbar-brand span {
@@ -259,19 +261,19 @@ label.layer-chooser:hover {
 }
 
 label.layer-chooser.active:hover > span.layer-text {
-    color: #34495e;
+    color: #2c3e50;
 }
 
 label.layer-chooser.active > span.layer-text {
-    color: #34495e;
+    color: #2c3e50;
 }
 
 label.layer-chooser.active {
-    border: solid 2px #34495e;
+    border: solid 2px #2c3e50;
 }
 
 label.layer-chooser.active:hover {
-    border: solid 2px #34495e;
+    border: solid 2px #2c3e50;
 }
 
 label.layer-chooser > div.layer-img {
@@ -288,10 +290,14 @@ label.layer-chooser > div.layer-img:hover {
     cursor: pointer !important;
 }
 
+.list-group {
+    margin-bottom: 0;
+}
+
 /* Bootstrap Overrides for progress bar */
 .progress {
-	height: 4px;
-	margin: 4px 0 6px 0;
+	height: 10px;
+	margin: 0 0 10px 0;
 	z-index: 100;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
@@ -321,6 +327,7 @@ label.layer-chooser > div.layer-img:hover {
   -ms-box-shadow: none;
   -o-box-shadow: none;
   box-shadow: none;
+  background-color: #1abc9c;
 }
 
 ul.list-inline li.baselayer-icon {
@@ -331,7 +338,7 @@ ul.list-inline li.baselayer-icon {
     width:50px;
     height:50px;
     overflow:hidden;
-    border: 2px solid #34495e;
+    border: 2px solid #c0392b;
 }
 ul.list-inline li.baselayer-icon#Topografie {
     /*background-image: url('../images/baselayerbackgrounds/topo.png');*/
@@ -365,7 +372,7 @@ ul.list-inline li.baselayer-icon span{
     position: absolute;
     bottom: 0;
     font-size: 10px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, Helvetica, Arial, sans-serif;
 }
 ul.list-inline li.baselayer-icon.active {
     border: 2px solid red;
@@ -549,7 +556,7 @@ ul.list-inline li.baselayer-icon label{
 
 
 .error-text{
-    font-family: 'Roboto Slab', serif;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
     text-transform: none;
     font-size: 1.5em;
     color: rgba(253, 253, 253, 1);
@@ -572,7 +579,7 @@ ul.list-inline li.baselayer-icon label{
 
 
 .nav-header {
-    font-family: 'Roboto Slab', serif;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
     text-transform: none;
     font-size: 17px;
     color: #2c3e50;
@@ -586,7 +593,7 @@ ul.list-inline li.baselayer-icon label{
     -webkit-border-radius: 4px;
     border-radius: 4px;
     color: #fff;
-    font: 12px/18px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font: 12px/18px "Helvetica Neue", Arial, Helvetica, Helvetica, Arial, sans-serif;
     margin-left: 20px;
     margin-top: -21px;
     padding: 4px 8px;
@@ -621,10 +628,11 @@ ul.list-inline li.baselayer-icon label{
     transition:.6s;
     margin-left: 0;
     cursor: pointer;
+    line-height: 1;
 }
 
 .layer-switcher label:hover {
-    color: #34495e;
+    color: #c0392b;
     font-size: 14px;
     text-shadow: none;
     margin-left: 0;
@@ -632,7 +640,7 @@ ul.list-inline li.baselayer-icon label{
 
 .layer-switcher label.active,
 .layer-switcher label.count {
-    color: #34495e;
+    color: #c0392b;
     /*font-style: italic;*/
     font-size: 14px;
     text-shadow: none;
@@ -730,7 +738,7 @@ ul.list-inline li.baselayer-icon label{
     -o-user-select: none;
     user-select: none;
     list-style-type: none;
-    line-height: 1;
+    line-height: 0;
 }
 
 #content{
@@ -818,7 +826,7 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .navbar {
-    font-family: 'Roboto Slab', sans-serif !important;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
     font-size: 14px !important;
 }
 
@@ -830,7 +838,7 @@ ul.list-inline li.baselayer-icon label{
 /* whole path is needed to make this work */
 .navbar .nav > li > a.active {
    cursor: default;
-   color: #34495e;
+   color: #c0392b;
 }
 
 .navbar .divider-vertical {
@@ -884,7 +892,7 @@ ul.list-inline li.baselayer-icon label{
 
 /**
  * extra small bootstrap buttons
- */ 
+ */
 .btn-xss {
   padding: 1px 4px;
   font-size: 9px;
@@ -914,21 +922,23 @@ ul.list-inline li.baselayer-icon label{
   float: left;
   position: absolute;
   bottom: 0;
-  margin-bottom: 15px;
+  margin-bottom: 21px;
+  margin-left: 15px;
   z-index: 999;
 }
 
 .time-controls-right {
-  float: right;  
+  float: right;
   position: absolute;
   top: 1px;
   right: 0;
-  margin-bottom: 20px;
+  margin-bottom: 21px;
+  margin-left: 15px;
   z-index: 999;
 }
 
 .time-start-now-end p {
-  margin: 0; 
+  margin: 0;
   height: 20px;
 }
 
@@ -964,7 +974,7 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .nxt-font {
-    font-family: 'Roboto Slab', serif;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
     text-transform: none;
     font-size: 15px !important;
     color: #2c3e50;
@@ -1023,8 +1033,8 @@ ul.list-inline li.baselayer-icon label{
 
 .selected,
 .highlighted-event{
-    color: #34495e;
-    fill: #34495e;
+    color: #c0392b;
+    fill: #c0392b;
 }
 
 .extent{
@@ -1081,11 +1091,11 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .button-list-link:hover {
-    color: #34495e;
+    color: #c0392b;
 }
 
 .button-list-link.active {
-    color: #34495e;
+    color: #c0392b;
 }
 
 .resize path {
@@ -1103,11 +1113,12 @@ ul.list-inline li.baselayer-icon label{
 }
 
 .timeline-axis text{
+  shape-rendering: crispEdges;
   -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
-  font-family: 'Roboto Slab', serif;
+  font-family: 'Roboto', Helvetica, Arial, sans-serif;
   text-transform: none;
   font-size: 13px;
   fill: #2c3e50;
@@ -1142,7 +1153,7 @@ header {
 #box-awesome-search input {
     padding-left: 10px!important;
     font-size: 1em;
-    font-family: 'Roboto', sans-serif !important;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
     padding-right: 0;
     width: 100%;
     outline: 0;
@@ -1209,12 +1220,12 @@ header {
 
 /*.navbar .nav > li > a:focus,*/
 .navbar .nav > li > a:hover {
-    color: #34495e;
+    color: #2c3e50;
     text-decoration: none;
 }
 
 .navbar .nav > li > a.logout:hover {
-    color: #C0392B;
+    color: #e74c3c;
     text-decoration: none;
 }
 
@@ -1250,7 +1261,7 @@ header {
 }
 
 #username {
-    font-family: 'Roboto Slab', sans-serif !important;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
     font-size: 14px;
     float: right;
     margin-left: 7px;
@@ -1258,16 +1269,6 @@ header {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-}
-
-#last-visit {
-    font-family: 'Roboto Slab', sans-serif !important;
-    font-size: 14px;
-    color: #fff ;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    margin-right: 10px;
-    margin-top: 15px;
 }
 
 #user-icon {
@@ -1307,7 +1308,7 @@ header {
     text-align:center;
     list-style: none;
     cursor: pointer;
-    font-family: 'Roboto Slab';
+    font-family: 'Roboto';
     color: #2980b9;
     padding-left: 20px;
     padding-right: 20px;
@@ -1353,7 +1354,7 @@ li.recommendation > a {
     max-width: 302px;
     list-style: none;
     font-size: 14px;
-    font-family: 'Roboto Slab';
+    font-family: 'Roboto';
     color: #7f8c8d;
     padding-right: 20px;
     padding-top: 4px;
@@ -1465,12 +1466,8 @@ img {
 }
 
 .now-indicator {
-    stroke: #34495e;
+    stroke: #c0392b;
     stroke-width: 2;
-}
-
-.recurrence-time-container {
-  padding-top: 5px;
 }
 
 .leaflet-overlay-pane svg {
@@ -1516,7 +1513,7 @@ img {
   position: absolute;
   border-radius: 0;
   width: 34px;
-  height: 33px;
+  height: 32px;
   line-height: 33px;
   border-left: 1px solid #fff;
 
@@ -1552,10 +1549,10 @@ img {
  * DEBUG colors
  */
 .green {
-  background-color: #0F0;  
+  background-color: #0F0;
 }
 .red {
-  background-color: #F00;  
+  background-color: #F00;
 }
 .blue {
   background-color: #00F;
@@ -1573,6 +1570,16 @@ img {
   color: #bdc3c7;
 }
 
-#kunstwerk-table {
-  max-width: 90%;
+.timeline-button {
+  cursor: pointer;
+}
+
+.time-start-now-end {
+  cursor: not-allowed;
+}
+
+#timeline-svg-wrapper,
+#timeline-svg-wrapper #nodata,
+#timeline-svg-wrapper #xaxis {
+  cursor: grab;
 }

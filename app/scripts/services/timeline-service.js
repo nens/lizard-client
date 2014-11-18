@@ -13,9 +13,10 @@
  *
  * Everything in the timeline is animated for NxtD3.transTime milliseconds. To
  * add new elements to the timeline, make sure the elements are updated on zoom,
- * and resize. The timeline resizes before elements are added and after
- * elements are removed. Therefore new and old dimensions need to be compared
- * to delay the resize of elements the same amount as the canvas.
+ * and resize. The timeline resizes *before* elements are added and *after*
+ * elements are removed. Therefore resize transitions should be delayed with
+ * NxtD3.transTime when the timeline is shrinking, as is happening in
+ * updateCanvas.
  */
 angular.module('lizard-nxt')
   .factory("Timeline", ["NxtD3", function (NxtD3) {
@@ -24,10 +25,9 @@ angular.module('lizard-nxt')
   var initialHeight,
 
   // D3 components
-  xScale, // The only d3 scale for placement on the x axis within the whole
+  xScale, // The d3 scale for placement on the x axis within the whole
           // timeline. Is only updated when zoomTo is called, or the window
           // resizes.
-  xAxis,
   ordinalYScale, // Scale used to place events in lines for each type
 
   // Interaction functions
@@ -36,10 +36,13 @@ angular.module('lizard-nxt')
   zoomend,
 
   // Timeline elements
-  nowIndicator,
+  futureIndicator,
   aggWindow, // aggregation window
   lines, // events start - end
-  bars; // rain intensity
+  bars, // rain intensity
+
+  // Space on the xAxis reserved for the start and stop labels
+  START_STOP_WIDTH = 170;
 
   /**
    * @constructor
@@ -68,11 +71,10 @@ angular.module('lizard-nxt')
     xScale = this._makeScale({min: start, max: end},
                              {min: 0, max: width},
                              {scale: 'time' });
-    xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-    drawTimelineAxes(this._svg, xAxis, dimensions);
+    drawTimelineAxes(this._svg, xScale, dimensions);
     if (interaction) {
       if (interaction.zoomFn) {
-        zoomed = setZoomFunction(this._svg, this.dimensions, xScale, xAxis,
+        zoomed = setZoomFunction(this._svg, this.dimensions, xScale,
           interaction.zoomFn);
       }
       if (interaction.clickFn) {
@@ -90,19 +92,28 @@ angular.module('lizard-nxt')
     constructor: Timeline,
 
     /**
+     * @attribute
+     * @type function to be used to format datetime.
+     */
+    format: {
+      value: NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%a %e %b %Y %X")
+    },
+
+    /**
      * @function
      * @summary Adds a now indicator to timeline.
      * @description From 'now' the background of the timeline gets a different
      * style.
      */
-    addNowIndicator: {
+    addFutureIndicator: {
       value: function () {
-        var width = this._getWidth(this.dimensions),
+        var width = 20000,
         height = this._getHeight(this.dimensions);
 
-        nowIndicator = this._svg.select("g").append("rect")
+        futureIndicator = this._svg.select("g").append("rect")
           .attr("height", height)
           .attr("width", width)
+          .attr('title', 'Het gedeelte van de tijdlijn dat in de toekomst ligt')
           .attr("id", "nodata")
           .attr("x", function () {return xScale(Date.now()); })
           .attr("opacity", 0.8)
@@ -122,7 +133,6 @@ angular.module('lizard-nxt')
       }
     },
 
-
     /**
      * @function
      * @summary Draws an aggWindow at timestamp.
@@ -130,34 +140,67 @@ angular.module('lizard-nxt')
      * current aggWindow interval on timeState.
      */
     drawAggWindow: {
-      value: function (timestamp, interval) {
+      value: function (timestamp, interval, oldDimensions) {
 
         var height = this._getHeight(this.dimensions);
         var width = xScale(new Date(timestamp + (interval))) -
           xScale(new Date(timestamp));
 
         if (!aggWindow) {
-          aggWindow = this._svg.append("g").append("rect")
-            .attr("class", "aggwindow")
-            .attr("height", height)
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", width)
-            .attr("opacity", 0.6)
-            .attr("style", "fill: #34495e;");
+          aggWindow = this._svg.append("g")
+            .attr('class', 'agg-window-group');
+          aggWindow
+            .append("rect")
+              .attr("class", "aggwindow-rect")
+              .attr("height", height)
+              .attr("x", 0)
+              .attr("y", 0)
+              .attr("width", width)
+              .attr("opacity", 0.6)
+              .attr("style", "fill: #c0392b;");
+          aggWindow
+            .append('g')
+              .attr('class', 'timeline-axis')
+              .append('text')
+                .attr('class', 'aggwindow-label')
+                .attr('y', 12);
         }
 
         var offset = this.dimensions.padding.left;
 
         // UPDATE
-        aggWindow
+        aggWindow.select('.aggwindow-label')
+          .text(this.format(new Date(timestamp)))
           .attr("x", function () {
-            return (offset + xScale(new Date(timestamp)));
+            return (offset + xScale(new Date(timestamp)) -
+              aggWindow.select('.aggwindow-label').node().getBBox().width)
+            - 2;
+          });
+
+        aggWindow.select('.aggwindow-rect')
+          .attr("x", function () {
+            var widthMultiplier = interval > 3600000 ? (7/40) : 0.5;
+            return Math.round((offset + xScale(new Date(timestamp))) - (width * widthMultiplier));
           })
           .transition()
           .duration(this.transTime)
           .attr("height", height)
           .attr("width", width);
+
+        if (oldDimensions && this.dimensions.height < oldDimensions.height) {
+          this._svg.select('.agg-window-group').select('.aggwindow-rect')
+            .transition()
+            .delay(this.transTime)
+            .duration(this.transTime)
+            .attr("height", height)
+            .attr("width", width);
+        } else {
+          this._svg.select('.agg-window-group').select('.aggwindow-rect')
+            .transition()
+            .duration(this.transTime)
+            .attr("height", height)
+            .attr("width", width);
+        }
       }
     },
 
@@ -184,12 +227,9 @@ angular.module('lizard-nxt')
 
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
 
-        var oldWidth = xScale.range()[1];
-        xScale.range([0, newDimensions.width]);
+        xScale.range([0, newDimensions.width - newDimensions.padding.right]);
 
-        var newWidth = xScale.range()[1];
-
-        drawTimelineAxes(this._svg, xAxis, newDimensions);
+        drawTimelineAxes(this._svg, xScale, newDimensions);
         this.updateElements(
           oldDimensions, timestamp, interval);
       }
@@ -211,14 +251,17 @@ angular.module('lizard-nxt')
           updateRectangleElements(bars, xScale, oldDimensions, this.dimensions);
         }
 
-        if (nowIndicator) {
-          updateNowElement(nowIndicator, xScale, this.dimensions);
+        if (futureIndicator) {
+          updateFutureIndicator(
+            futureIndicator,
+            xScale,
+            oldDimensions,
+            this.dimensions
+          );
         }
 
         if (aggWindow) {
-          setTimeout((function () {
-            this.drawAggWindow(timestamp, interval);
-          }).call(this), this.transTime);
+          this.drawAggWindow(timestamp, interval, oldDimensions);
         }
       }
     },
@@ -231,13 +274,13 @@ angular.module('lizard-nxt')
      *   [{properties.timestamp_end: timestamp,
      *     properties.timestamp_start: timestamp,
      *     properties.event_series_id: event_series id,
-     *     TODO: should maybe be style? check with branch Fritz styling events.
-     *     properties.color: <color code>,
      *     geometry.coordinates: [lat, lon]}]
      * @param {integer} order - Order of events.
+     * @param {string} slug - Slug of event layer.
+     * @param {string} color - Hex color code.
      */
     drawLines: {
-      value: function (data, order, series_ids) {
+      value: function (data, order, slug, color) {
         lines = drawLineElements(
           this._svg,
           this.dimensions,
@@ -245,7 +288,8 @@ angular.module('lizard-nxt')
           ordinalYScale,
           data,
           order,
-          series_ids
+          slug,
+          color
         );
       }
     },
@@ -259,10 +303,14 @@ angular.module('lizard-nxt')
     drawBars: {
       value: function (data) {
 
-        var height = initialHeight -
-                     this.dimensions.padding.top -
-                     this.dimensions.padding.bottom +
-                     this.dimensions.bars;
+        /**
+         * candidate to replace with Dirk's null checker function.
+         */
+        if (data === 'null') {
+          return false;
+        }
+
+        var height = this.dimensions.bars;
 
         var y = this._maxMin(data, '1');
         var options = {scale: 'linear'};
@@ -299,8 +347,6 @@ angular.module('lizard-nxt')
     zoomTo: {
       value: function (start, end, interval) {
         xScale.domain([new Date(start), new Date(end)]);
-        xAxis = this._makeAxis(xScale, {orientation: "bottom", ticks: 5});
-        drawTimelineAxes(this._svg, xAxis, this.dimensions, this.transTime);
         this.addZoomListener();
         this.drawAggWindow(start, interval);
       }
@@ -327,10 +373,69 @@ angular.module('lizard-nxt')
    * @param {object} dimensions - dimensions object.
    * @param {int} duration - duration in ms.
    */
-  var drawTimelineAxes = function (svg, xAxis, dimensions, duration) {
+  var drawTimelineAxes = function (svg, xScale, dimensions, duration) {
+    var width = Timeline.prototype._getWidth(dimensions);
+    // The actual d3-axis is smaller than the timeline. The scale is copied
+    // and transformed to an axis with a restricted range and domain.
+    var xAxisScale = xScale.copy();
+    xAxisScale
+      .domain([xScale.invert(START_STOP_WIDTH), xScale.invert(width - START_STOP_WIDTH)])
+      .range([START_STOP_WIDTH, width - START_STOP_WIDTH]);
+    var xAxis = Timeline.prototype._makeAxis(xAxisScale, {orientation: "bottom", ticks: 5});
+
     Timeline.prototype._drawAxes(svg, xAxis, dimensions, false, duration);
     var axisEl = svg.select('#xaxis')
         .attr("class", "x axis timeline-axis");
+    drawStartStop(svg, xScale, dimensions);
+  };
+
+  /**
+   * Draw start stop draws the fixed text labels displaying start and stop of
+   * the domain.
+   *
+   * @param  {svg}    svg
+   * @param  {scale}  xScale
+   * @param  {object} dimensions
+   */
+  var drawStartStop = function (svg, xScale, dimensions) {
+    var format = Timeline.prototype.format,
+        height = Timeline.prototype._getHeight(dimensions),
+        width = Timeline.prototype._getWidth(dimensions),
+        startEl = svg.select('.timeline-start-stop')
+          .select('.tick-start').select('text'),
+        stopEl = svg.select('.timeline-start-stop')
+          .select('.tick-stop').select('text');
+
+    if (!startEl[0][0]) {
+      startEl = svg
+        .append('g')
+        .attr('class', 'timeline-start-stop timeline-axis')
+        .attr("transform", "translate(0, " + height + ")")
+          .append('g')
+          .attr('class', 'tick tick-start')
+          .append('text')
+            .attr('y', 9)
+            .attr('x', dimensions.padding.left)
+            .attr('dy', '.71em')
+            .style('text-align', 'left')
+            .style('font-weight', 'bold')
+            .style('opacity', '1');
+      stopEl = svg.select('.timeline-start-stop')
+        .append('g')
+          .attr('class', 'tick tick-stop')
+          .append('text')
+            .attr('y', 9)
+            .attr('dy', '.71em')
+            .style('text-align', 'right')
+            .style('font-weight', 'bold')
+            .style('opacity', '1');
+    }
+
+    startEl
+      .text(format(xScale.domain()[0]));
+    stopEl
+      .text(format(xScale.domain()[1]))
+      .attr('x', dimensions.width - stopEl.node().getBBox().width);
   };
 
   /**
@@ -386,6 +491,11 @@ angular.module('lizard-nxt')
         .attr("transform", "translate(" + newDims.padding.left + ", 0)")
         .select('#xaxis')
         .attr("transform", "translate(0 ," + height + ")");
+      svg.select('.timeline-start-stop')
+        .transition()
+        .delay(Timeline.prototype.transTime)
+        .duration(Timeline.prototype.transTime)
+        .attr("transform", "translate(0, " + height + ")");
     } else {
       svg.transition()
         .duration(Timeline.prototype.transTime)
@@ -395,6 +505,10 @@ angular.module('lizard-nxt')
         .attr("transform", "translate(" + newDims.padding.left + ", 0)")
         .select('#xaxis')
         .attr("transform", "translate(0 ," + height + ")");
+      svg.select('.timeline-start-stop')
+        .transition()
+        .duration(Timeline.prototype.transTime)
+        .attr("transform", "translate(0, " + height + ")");
     }
     svg.select("g").select(".plot-temporal")
       .attr("height", height)
@@ -418,9 +532,10 @@ angular.module('lizard-nxt')
    * directive, all the standard (re-)placement of elements in here.
    */
   var setZoomFunction = function (
-    svg, dimensions, xScale, xAxis, zoomFn) {
+    svg, dimensions, xScale, zoomFn) {
     var zoomed = function () {
-      drawTimelineAxes(svg, xAxis, dimensions);
+
+      drawTimelineAxes(svg, xScale, dimensions);
 
       if (bars) {
         var barData = bars.data();
@@ -432,12 +547,26 @@ angular.module('lizard-nxt')
         }
       }
 
-      if (nowIndicator) {
-        nowIndicator
+      if (futureIndicator) {
+        futureIndicator
           .attr('x', function () {
             return xScale(Date.now());
           });
       }
+
+      if (lines) {
+        var xOneFunction = function (d) {
+          return xScale(d.properties.timestamp_end);
+        };
+        var xTwoFunction = function (d) {
+          return xScale(d.properties.timestamp_start);
+        };
+
+        d3.select("#circle-group").selectAll("line")
+          .attr("x1", xOneFunction)
+          .attr("x2", xTwoFunction);
+      }
+
       if (zoomFn) {
         zoomFn(xScale);
       }
@@ -486,8 +615,7 @@ angular.module('lizard-nxt')
     // UPDATE
     // Update old elements as needed.
     if (rectangles[0].length > 0) {
-      var barHeight = initialHeight - newDimensions.padding.top -
-                      newDimensions.padding.bottom + newDimensions.bars,
+      var barHeight = newDimensions.bars,
           y = Timeline.prototype._maxMin(rectangles.data(), '1'),
           options = {scale: 'linear'},
           newHeight = Timeline.prototype._getHeight(newDimensions),
@@ -526,22 +654,39 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @summary update now indicator element
+   * @summary update future indicator.
    *
-   * @param {object} nowIndicator - D3 selection.
+   * @param {object} futureIndicator - D3 selection.
    * @param {object} xScale - D3 scale.
+   * @param {object} oldDimensions - previous timeline dimensions object.
    * @param {object} dimensions - timeline dimensions object.
    */
-  var updateNowElement = function (nowIndicator, xScale, dimensions) {
-    var width = Timeline.prototype._getWidth(dimensions),
-        height = Timeline.prototype._getHeight(dimensions);
+  var updateFutureIndicator = function (
+    futureIndicator,
+    xScale,
+    oldDimensions,
+    dimensions
+    ) {
 
-    nowIndicator
-     .attr('height', height)
-     .attr('width', width)
+    var height = Timeline.prototype._getHeight(dimensions);
+
+    futureIndicator
      .attr('x', function () {
         return xScale(Date.now());
       });
+
+    if (dimensions.height < oldDimensions.height) {
+      futureIndicator
+       .transition()
+       .delay(Timeline.prototype.transTime)
+       .duration(Timeline.prototype.transTime)
+       .attr('height', height);
+    } else {
+      futureIndicator
+       .transition()
+       .duration(Timeline.prototype.transTime)
+       .attr('height', height);
+    }
   };
 
   /**
@@ -556,14 +701,13 @@ angular.module('lizard-nxt')
    *   [{properties.timestamp_end: timestamp,
    *     properties.timestamp_start: timestamp,
    *     properties.event_series_id: event_series id,
-   *     TODO: should maybe be style? check with branch Fritz styling events.
-   *     properties.color: <color code>,
    *     geometry.coordinates: [lat, lon]}]
    * @param {int} order - Order of data (which level to draw in timeline).
    * @param {string} slug - slug of event series.
+   * @param {string} color - Hex color code.
    */
   var drawLineElements = function (
-    svg, dimensions, xScale, yScale, data, order, slug) {
+    svg, dimensions, xScale, yScale, data, order, slug, color) {
 
     var xOneFunction = function (d) {
       return xScale(d.properties.timestamp_end);
@@ -572,23 +716,7 @@ angular.module('lizard-nxt')
       return xScale(d.properties.timestamp_start);
     };
     var yFunction = function (d) { return yScale(order); };
-    // TODO: get color from backend
-    var colorFunction = function (d) { return "#F00"; };
-    var dFunction = function (d) {
-      // Draws a small line from the end of the event to start
-      var path =
-        "M " + xOneFunction(d) + " " + yFunction(d)
-        + " L " + (xTwoFunction(d) + 0.5) + " " + yFunction(d);
-      return path;
-    };
-    var initialDFunction = function (d) {
-      // Draws a mimimal line from end to just next to the end to create a
-      // circle + 0.5 is to prevent flickering in browsers when transitioning
-      var path =
-        "M " + xOneFunction(d) + " " + yFunction(d)
-        + " L " + (xOneFunction(d) + 0.5) + " " + yFunction(d);
-      return path;
-    };
+    var colorFunction = function (d) { return color; };
     var splitTranstime = Timeline.prototype.transTime / 2;
 
     // if data exists, check if group is available for this series and create
@@ -605,7 +733,7 @@ angular.module('lizard-nxt')
 
       // DATA JOIN
       // Join new data with old elements, based on the id value.
-      lines = group.selectAll("path")
+      lines = group.selectAll("line")
         .data(data, function  (d) { return d.properties.id; });
     } else if (data === undefined) {
       // if no data is defined, remove all groups
@@ -621,15 +749,17 @@ angular.module('lizard-nxt')
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
       .attr("stroke", colorFunction)
-      .attr("d", dFunction);
+      .attr("x1", xOneFunction)
+      .attr("x2", xTwoFunction)
+      .attr("y1", yFunction)
+      .attr("y2", yFunction);
 
     // ENTER
     // Create new elements as needed.
     lines.append("g");
-    lines.enter().append("path")
+    lines.enter().append("line")
       .attr("class", "event selected")
       .attr("stroke", colorFunction)
-      .attr("d", initialDFunction)
       .attr("stroke-linecap", "round")
       .attr("stroke-opacity", 0)
       .attr("stroke-width", 0)
@@ -641,7 +771,10 @@ angular.module('lizard-nxt')
     .transition()
       .delay(Timeline.prototype.transTime)
       .duration(splitTranstime)
-      .attr("d", dFunction);
+      .attr("x1", xOneFunction)
+      .attr("x2", xTwoFunction)
+      .attr("y1", yFunction)
+      .attr("y2", yFunction);
 
     // EXIT
     // Remove old elements as needed.
@@ -649,7 +782,6 @@ angular.module('lizard-nxt')
       .transition()
       .delay(0)
       .duration(splitTranstime)
-      .attr("d", initialDFunction)
     .transition()
       .delay(splitTranstime)
       .duration(splitTranstime)

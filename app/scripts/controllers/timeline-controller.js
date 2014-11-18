@@ -41,9 +41,7 @@ angular.module('lizard-nxt')
    * @param {} toggle - .
    */
   $scope.timeState.playPauseAnimation = function (toggle) {
-
     var anim = $scope.timeState.animation;
-
     if (anim.playing || toggle === "off") {
       anim.playing = false;
     } else {
@@ -63,7 +61,6 @@ angular.module('lizard-nxt')
    * of temporal extent.
    */
   var step =  function () {
-
     var currentInterval = $scope.timeState.end - $scope.timeState.start;
     var timeStep;
     var activeTemporalLG = $scope.mapState.getActiveTemporalLayerGroup();
@@ -98,9 +95,18 @@ angular.module('lizard-nxt')
       });
     }
 
+    var promise = $scope.mapState.syncTime($scope.timeState);
+
     if ($scope.timeState.animation.playing) {
+      // when the minlag has passed.
       setTimeout(function () {
-        window.requestAnimationFrame(step);
+        // And the layergroups are all ready
+        promise.then(function () {
+          // And the browser is ready.
+          // Make a new step.
+          window.requestAnimationFrame(step);
+        });
+
       }, $scope.timeState.animation.minLag);
     }
   };
@@ -110,12 +116,14 @@ angular.module('lizard-nxt')
    * @summary Move timeState.end to now.
    */
   $scope.timeState.zoomToNow = function () {
-    var now = Date.now();
-    var day = 24 * 60 * 60 * 1000;
-    var tomorrow = now + day;
-    var sevenDaysAgo = now - 7 * day;
-    $scope.timeState.start = sevenDaysAgo;
-    $scope.timeState.end = tomorrow;
+
+    var now = Date.now(),
+        fullInterval = $scope.timeState.end - $scope.timeState.start,
+        oneFifthInterval = Math.round(fullInterval * 0.2),
+        fourFifthInterval = Math.round(fullInterval * 0.8);
+
+    $scope.timeState.start = now - fourFifthInterval;
+    $scope.timeState.end = now + oneFifthInterval;
     $scope.timeState.at = now;
     $scope.timeState.changeOrigin = 'user';
     $scope.timeState.changedZoom = Date.now();

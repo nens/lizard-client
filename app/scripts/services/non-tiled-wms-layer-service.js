@@ -150,6 +150,12 @@ angular.module('lizard-nxt')
 
         setOpacity: {
           value: function (opacity) {
+            this._opacity = opacity;
+            angular.forEach(this.frameLookup, function (key, frameIndex) {
+              if (this.imageOverlays[frameIndex].getOpacity() !== 0) {
+                this._imageOverlaysp[frameIndex].setOpacity(this._opacity);
+              }
+            }, this);
             return;
           }
         },
