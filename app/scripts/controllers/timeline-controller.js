@@ -11,13 +11,63 @@
  *
  */
 angular.module('lizard-nxt')
-  .controller('TimeLine', ["$scope", "$q", "RasterService",
-  function ($scope, $q, RasterService) {
+  .controller('TimeLine', ["$scope", "$q", "RasterService", 'UtilService',
+  function ($scope, $q, RasterService, UtilService) {
 
   window.requestAnimationFrame = window.requestAnimationFrame ||
                                  window.mozRequestAnimationFrame ||
                                  window.webkitRequestAnimationFrame ||
                                  window.msRequestAnimationFrame;
+
+
+  var now = Date.now(),
+      hour = 60 * 60 * 1000;
+
+  // TIME MODEL
+  $scope.timeState = {
+    start: now - 4 * hour,
+    end: now + hour,
+    at: now - 4 * hour,
+    changedZoom: Date.now(),
+    zoomEnded: null,
+    aggWindow: 1000 * 60 * 5,
+    animation: {
+      playing: false,
+      enabled: false,
+    }
+  };
+
+  $scope.timeState.aggWindow = UtilService.getAggWindow(
+    $scope.timeState.start,
+    $scope.timeState.end,
+    window.innerWidth
+  );
+  // END TIME MODEL
+
+  var DEFAULT_NUMBER_OF_STEPS = 1000;
+  var currentInterval = $scope.timeState.end - $scope.timeState.start;
+  var timeStep = 1000 * 60 * 5;  //currentInterval / DEFAULT_NUMBER_OF_STEPS;
+  var minLag = 500;
+
+  $scope.$watch('mapState.layerGroupsChanged', function () {
+    currentInterval = $scope.timeState.end - $scope.timeState.start;
+    timeStep = currentInterval / DEFAULT_NUMBER_OF_STEPS;
+    minLag = 50;
+
+    angular.forEach($scope.mapState.layerGroups, function (lg) {
+      console.log(lg.slug, lg.temporalResolution, timeStep);
+      if (lg.isActive()
+        && lg.temporalResolution < timeStep
+        && lg.temporalResolution > 0) {
+        timeStep = lg.temporalResolution;
+
+        minLag = 200;
+      }
+    });
+
+    if (timeStep > 3600000) { minLag = 500; }
+    console.log(timeStep);
+  });
 
   /**
    * @function
@@ -53,6 +103,8 @@ angular.module('lizard-nxt')
     }
   };
 
+
+
   /**
    * @function
    * @summary Push animation 1 step forward.
@@ -61,26 +113,7 @@ angular.module('lizard-nxt')
    * of temporal extent.
    */
   var step =  function () {
-    var currentInterval = $scope.timeState.end - $scope.timeState.start;
-    var timeStep;
-    var activeTemporalLG = $scope.mapState.getActiveTemporalLayerGroup();
-
-    // hack to slow down animation for rasters to min resolution
-
-    if (activeTemporalLG) {
-
-      // Divide by ten to make the movement in the timeline smooth.
-
-      timeStep = activeTemporalLG.temporalResolution;
-      $scope.timeState.animation.minLag =
-        RasterService.getMinTimeBetweenFrames(activeTemporalLG);
-
-    } else {
-
-      timeStep = currentInterval / $scope.timeState.animation.stepSize;
-      $scope.timeState.animation.minLag = 50;
-    }
-
+    // Make a new step.
     $scope.$apply(function () {
       $scope.timeState.animation.start += timeStep;
       $scope.timeState.at += timeStep;
@@ -102,12 +135,15 @@ angular.module('lizard-nxt')
       setTimeout(function () {
         // And the layergroups are all ready
         promise.then(function () {
+          console.log('nxt step!');
+          $scope.timeState.buffering = false;
           // And the browser is ready.
-          // Make a new step.
           window.requestAnimationFrame(step);
         });
-
-      }, $scope.timeState.animation.minLag);
+        $scope.$apply(function () {
+          $scope.timeState.buffering = true;
+        });
+      }, minLag);
     }
   };
 

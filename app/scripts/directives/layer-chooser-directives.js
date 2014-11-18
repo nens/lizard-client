@@ -17,9 +17,9 @@ angular.module('lizard-nxt')
     angular.forEach(layerGroup.layers, function (layer) {
       if (layer.type === 'WMS' ||
           layer.type === 'TMS') {
-          needsPreviewMap = true;
+        needsPreviewMap = true;
       } else {
-          layerCopy.splice(layerGroup.layers.indexOf(layer), 1);
+        layerCopy.splice(layerGroup.layers.indexOf(layer), 1);
       }
 
       if (layer.type === 'Vector') {
@@ -30,19 +30,18 @@ angular.module('lizard-nxt')
     layerGroup.layers = layerCopy;
 
     if (needsPreviewMap) {
-
       var chooser = new NxtMap(element.find('.layer-img')[0], [layerGroup], {
         center: [52.39240447569775, 5.101776123046875],
-          zoom: 6,
-          dragging: false,
-          touchZoom: false,
-          doubleClickZoom: false,
-          tap: false,
-          scrollWheelZoom: false,
-          animate: true,
-          zoomControl: false,
-          attributionControl: false,
-          forChooser: true
+        zoom: 6,
+        dragging: false,
+        touchZoom: false,
+        doubleClickZoom: false,
+        tap: false,
+        scrollWheelZoom: false,
+        animate: true,
+        zoomControl: false,
+        attributionControl: false,
+        forChooser: true
       });
 
 

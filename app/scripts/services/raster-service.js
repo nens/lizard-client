@@ -90,26 +90,10 @@ angular.module('lizard-nxt')
     return formatted;
   };
 
-  var getMinTimeBetweenFrames = function (layerGroup) {
-
-    if (layerGroup.slug === 'rain') {
-      return 100;
-    } else {
-      return 1000;
-    }
-
-  };
-
   return {
-    getMinTimeBetweenFrames: getMinTimeBetweenFrames,
     buildURLforWMS: buildURLforWMS,
-    // rasterInfo: rasterInfo,
-    //getRasterData: getRasterData,
     getData: getData,
-    // getTemporalRaster: getTemporalRaster,
-    getImgOverlays: getImgOverlays,
     handleElevationCurve: handleElevationCurve,
-    //getRasterDataForExtentData: getRasterDataForExtentData,
   };
 
 }]);

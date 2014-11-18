@@ -84,7 +84,7 @@ angular.module('lizard-nxt')
         });
         Object.defineProperty(this, 'timeState', {
           value: 0,
-          writable: false
+          writable: true
         });
       }
 

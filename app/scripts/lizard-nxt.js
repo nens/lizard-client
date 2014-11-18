@@ -242,41 +242,6 @@ angular.module('lizard-nxt')
     }
   });
 
-  var now = Date.now(),
-      hour = 60 * 60 * 1000;
-
-  // TIME MODEL
-  $scope.timeState = {
-    start: now - 4 * hour,
-    end: now + hour,
-    changedZoom: Date.now(),
-    zoomEnded: null,
-    animation: {
-      start: undefined,
-      playing: false,
-      enabled: false,
-      currentFrame: 0,
-      lenght: 0,
-      minLag: 50, // Time in ms between frames
-      stepSize: 1000
-    }
-  };
-  // initialise 'now'
-  $scope.timeState.at = $scope.timeState.start;
-  $scope.timeState.animation.start = $scope.timeState.start;
-  // get time resolution in ms per pixel
-  $scope.timeState.resolution =
-    ($scope.timeState.end - $scope.timeState.start) / window.innerWidth;
-
-  $scope.timeState.aggWindow = UtilService.getAggWindow($scope.timeState.start,
-                                                        $scope.timeState.end,
-                                                        window.innerWidth);
-
-  $scope.timeState.setTimeStateBuffering = function (buffering) {
-    $scope.timeState.buffering = buffering;
-   };
-  // END TIME MODEL
-
   /**
    * Watch to restrict values of timeState.
    */

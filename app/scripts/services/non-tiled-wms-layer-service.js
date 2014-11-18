@@ -54,6 +54,10 @@ angular.module('lizard-nxt')
           value: {},
           writable: true,
         });
+        Object.defineProperty(this, 'nLoadingRasters', {
+          value: 0,
+          writable: true,
+        });
       }
 
       NxtWMSLayer.prototype = Object.create(NxtLayer.prototype, {
@@ -77,25 +81,25 @@ angular.module('lizard-nxt')
 
         add: {
           value: function (map) {
-            var defer = $q.defer();
-            var imageUrl;
+            var defer = $q.defer(),
+                imageUrl = '',
+                opacity = this._opacity,
+                date = new Date(this._mkTimeStamp(this.timeState.at));
 
             imageUrl = this._imageUrlBase +
               this.formatter(new Date(this._mkTimeStamp(this.timeState.at)));
 
-            if (!this._imageOverlays[0]) {
-              this._imageOverlays.push(LeafletService.imageOverlay());
-            }
+            this._imageOverlays = [
+              LeafletService.imageOverlay(
+                imageUrl,
+                this.imageBounds,
+                {opacity: opacity}
+              )
+            ];
 
-            this._imageOverlays[0]
-              .setImageUrl(imageUrl)
-              .setOpacity(this._opacity)
-              .setBounds(this.imageBounds)
-              .on('load', function () {
-                defer.resolve();
-              });
+            var layer = this._imageOverlays[0].addTo(map);
 
-            addLeafletLayer(this._imageOverlays[0], map);
+            this._addLoadListener(layer, this.timeState.at, defer);
 
             return defer.promise;
           }
@@ -113,11 +117,12 @@ angular.module('lizard-nxt')
               this._imageOverlay = createImageOverlays(
                 map,
                 this._imageOverlays,
+                this.imageBounds,
                 this.BUFFER_LENGTH
               );
             }
 
-            if (!currentOverlayIndex) {
+            if (currentOverlayIndex === undefined) {
               // Ran out of buffered frames
               this._imageOverlays = this._fetchNewFrames(
                 currentDate,
@@ -145,14 +150,15 @@ angular.module('lizard-nxt')
                 map.removeLayer(this._imageOverlays[i]);
               }
             }
+            this._imageOverlays = [];
           }
         },
 
         setOpacity: {
           value: function (opacity) {
             this._opacity = opacity;
-            angular.forEach(this.frameLookup, function (key, frameIndex) {
-              if (this.imageOverlays[frameIndex].getOpacity() !== 0) {
+            angular.forEach(this._frameLookup, function (key, frameIndex) {
+              if (this.imageOverlays[frameIndex].options.opacity !== 0) {
                 this._imageOverlaysp[frameIndex].setOpacity(this._opacity);
               }
             }, this);
@@ -171,20 +177,29 @@ angular.module('lizard-nxt')
 
         _progressFrame : {
           value: function (currentDate, currentOverlayIndex) {
-            angular.forEach(this.frameLookup, function (key, frameIndex) {
-              if (this.imageOverlays[frameIndex].getOpacity() !== 0) {
-                var oldFrame = this.imageOverlays[frameIndex];
+            angular.forEach(this._frameLookup, function (frameIndex, key) {
+              if (this._imageOverlays[frameIndex].options.opacity !== 0
+                && frameIndex !== currentOverlayIndex) {
+                var oldFrame = this._imageOverlays[frameIndex];
+
                 // Delete the old overlay from the lookup, it is gone.
-                delete this.frameLookup[key];
-                this._animAddLoadListener(
+                delete this._frameLookup[key];
+                this._addLoadListener(
                   oldFrame,
-                  currentDate
+                  this._nxtDate
                 );
 
                 oldFrame
                   .setOpacity(0)
                   .off('load')
-                  .setUrl(this.imageUrlBase + this.formatter(new Date(currentDate)));
+                  .setUrl(this._imageUrlBase + this.formatter(new Date(this._nxtDate)));
+
+                this._addLoadListener(
+                  oldFrame,
+                  this._nxtDate
+                );
+
+                this._nxtDate += this.temporalResolution;
               }
             }, this);
 
@@ -196,44 +211,54 @@ angular.module('lizard-nxt')
 
         _fetchNewFrames: {
           value: function (currentDate, overlays, defer) {
-            var nxtDate = currentDate;
-            overlays.forEach(function (overlay) {
-              overlay.setOpacity(0);
-              overlay.off('load');
-              this._addLoadListener(
-                overlay,
-                currentDate,
-                defer
-              );
-              overlay.setUrl(
-                this._imageUrlBase + this.formatter(new Date(nxtDate))
-              );
-              nxtDate += this.temporalResolution;
+            this._nxtDate = currentDate;
+            this._frameLookup = {};
+            this.nLoadingRasters = 0;
+
+            angular.forEach(overlays, function (overlay) {
+              var url = this._imageUrlBase + this.formatter(new Date(this._nxtDate));
+              if (url !== overlay._url) {
+                overlay.setOpacity(0);
+                overlay.off('load');
+                this._addLoadListener(
+                  overlay,
+                  this._nxtDate,
+                  defer
+                );
+                overlay.setUrl(url);
+              }
+
+              else {
+                console.log('!!!!, url equaled url');
+              }
+
+              this._nxtDate += this.temporalResolution;
             }, this);
             return overlays;
           }
         },
 
-        _animAddLoadListener: {
+        _addLoadListener: {
           value: function (overlay, date, defer) {
             this.nLoadingRasters++;
 
             overlay.on("load", function () {
               this.nLoadingRasters--;
-              this.frameLookup[date] = String(this._imageOverlays.indexOf(overlay));
+              this._frameLookup[date] = this._imageOverlays.indexOf(overlay);
               if (defer && this.nLoadingRasters === 0) {
                 defer.resolve();
               }
-            });
+              console.log(this._frameLookup);
+            }, this);
           }
         }
       });
 
 
-      var createImageOverlays = function (map, overlays, buffer) {
+      var createImageOverlays = function (map, overlays, bounds, buffer) {
         for (var i = overlays.length - 1; i < buffer; i++) {
           overlays.push(
-            addLeafletLayer(map, L.imageOverlay('', this.imageBounds))
+            addLeafletLayer(map, L.imageOverlay('', bounds))
           );
         }
       };
@@ -274,27 +299,6 @@ angular.module('lizard-nxt')
         }
       };
 
-      /**
-       * @function
-       * @memberof app.LayerGroup
-       * @param  {object} nonLeafLayer as served from backend
-       * @return {L.TileLayer.WMS}              [description]
-       * @description Initiates a Leaflet WMS layer
-       */
-      var initializeWMSLayer = function (nonLeafLayer) {
-        var _options = {
-          layers: nonLeafLayer.slug,
-          format: 'image/png',
-          version: '1.1.1',
-          minZoom: nonLeafLayer.min_zoom || 0,
-          maxZoom: 19,
-          opacity: nonLeafLayer.opacity,
-          zIndex: nonLeafLayer.zIndex
-        };
-        _options = angular.extend(_options, nonLeafLayer.options);
-
-        return LeafletService.tileLayer.wms(nonLeafLayer.url, _options);
-      };
       return NxtWMSLayer;
     }
   ]);
