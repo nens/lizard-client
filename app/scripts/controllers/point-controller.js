@@ -231,8 +231,6 @@ angular.module('lizard-nxt')
       }
     };
 
-    var INIT_ROW_HEIGHT = 29;
-
     /**
      * @function
      * @memberOf app.pointCtrl
@@ -242,22 +240,11 @@ angular.module('lizard-nxt')
     $scope.box.toggleFullTable = function () {
 
       $scope.box.showFullTable = !$scope.box.showFullTable;
-      // var INIT_ROW_HEIGHT = $($('tr.attr-row')[0]).height();
-      // console.log('INIT_ROW_HEIGHT:', INIT_ROW_HEIGHT);
 
       d3.selectAll('tr.attr-row')
         .classed('hidden', function (_, i) {
           return i > 2 && !$scope.box.showFullTable;
         });
-
-      // d3.selectAll('tr.attr-row')
-      //   .transition()
-      //   .duration(200)
-      //   .style('height', function (_, i) {
-      //     return $scope.box.showFullTable || i < 3
-      //       ? INIT_ROW_HEIGHT + 'px'
-      //       : 0;
-      //   });
     };
   }
 ]);

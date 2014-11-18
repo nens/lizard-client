@@ -680,3 +680,9 @@ td.lineout {
 .show-structure-attrs-text:hover {
   color: #7f8c8d;
 }
+
+.table-toggler {
+  font-size: 18px;
+  margin-left: 77px;
+  color: #bdc3c7;
+}
