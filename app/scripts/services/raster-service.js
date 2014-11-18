@@ -78,26 +78,6 @@ angular.module('lizard-nxt')
     return result;
   };
 
-  /**
-   * Get a list of Leaflet imageOverlays. This is used for rasters with a
-   * temporal component.
-   *
-   * @param {integer} numCachedFrames
-   * @param {float[]} imgBounds
-   *
-   * @return {Object[]}
-   */
-  var getImgOverlays = function (numCachedFrames, imgBounds) {
-
-    var i, imgOverlays = {};
-
-    for (i = 0; i < numCachedFrames; i++) {
-      imgOverlays[i] = L.imageOverlay('', imgBounds, {opacity: 0});
-    }
-
-    return imgOverlays;
-  };
-
   var handleElevationCurve = function (data) {
     var datarow,
         i,

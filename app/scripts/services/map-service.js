@@ -2,7 +2,7 @@
 
 /**
  * @ngdoc service
- * @class NxtMap
+ * @class NxtMap / TODO: rename to what it is, like NxtDataHub
  * @memberof app
  * @name NxtMapService
  * @requires LeafletService
@@ -14,9 +14,9 @@
  */
 
 angular.module('lizard-nxt')
-  .service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService',
+  .service('NxtMap', ['$rootScope', '$filter', '$http', '$q', 'CabinetService',
   'LeafletService', 'LayerGroup',
-  function ($rootScope, $filter, $http, CabinetService,
+  function ($rootScope, $filter, $http, $q, CabinetService,
     LeafletService, LayerGroup) {
 
     function NxtMap(element, serverSideLayerGroups, options) {
@@ -69,6 +69,15 @@ angular.module('lizard-nxt')
             }
           });
         }
+      },
+
+      syncTime: function (timeState) {
+        var defer = $q.defer();
+        var promises = [];
+        this.layerGroups.forEach(function (layerGroup) {
+          promises.push(layerGroup.syncTime(timeState, this._map));
+        }, this);
+        $q.all(promises).then(defer.resolve());
       },
 
       /**

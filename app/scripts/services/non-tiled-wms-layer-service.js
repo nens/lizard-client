@@ -34,7 +34,6 @@ angular.module('lizard-nxt')
           value: [],
           writable: true,
         });
-        // imgUrlBase equals full URL w/o TIME part
         Object.defineProperty(this, '_imageUrlBase', {
           value: RasterService.buildURLforWMS(this),
           writable: true,
@@ -44,6 +43,14 @@ angular.module('lizard-nxt')
           writable: true,
         });
         Object.defineProperty(this, '_frameLookup', {
+          value: {},
+          writable: true,
+        });
+        Object.defineProperty(this, 'BUFFER_LENGTH', {
+          value: 10,
+          writable: false,
+        });
+        Object.defineProperty(this, 'imageBounds', {
           value: {},
           writable: true,
         });
@@ -65,7 +72,6 @@ angular.module('lizard-nxt')
               this.bounds.east
             );
             this.imageBounds = L.latLngBounds(southWest, northEast);
-
           }
         },
 
@@ -74,72 +80,60 @@ angular.module('lizard-nxt')
             var defer = $q.defer();
             var imageUrl;
 
-            if (!this._timeState) {
-              imageUrl = this._imageUrlBase.split('&TIME=')[0];
-            }
-            else {
-              imageUrl = this._imageUrlBase +
-                this.formatter(new Date(this._mkTimeStamp(this._timeState.at)));
-            }
+            imageUrl = this._imageUrlBase +
+              this.formatter(new Date(this._mkTimeStamp(this.timeState.at)));
 
             if (!this._imageOverlays[0]) {
-              this._imageOverlays.push(LeafletService.imageOverlay(
-                imageUrl,
-                this.imageBounds,
-                { opacity: 1 }
-                )
-              );
+              this._imageOverlays.push(LeafletService.imageOverlay());
             }
 
-            this._imageOverlays[0].on('load', function () {
-              defer.resolve();
-            });
+            this._imageOverlays[0]
+              .setImageUrl(imageUrl)
+              .setOpacity(this._opacity)
+              .setBounds(this.imageBounds)
+              .on('load', function () {
+                defer.resolve();
+              });
 
-            this._imageOverlays[0].addTo(map);
+            addLeafletLayer(this._imageOverlays[0], map);
 
             return defer.promise;
           }
         },
 
         syncTime: {
-          value: function (mapState, timeState) {
+          value: function (timeState, map) {
+            this.timeState = timeState;
             var defer = $q.defer();
             var currentDate = this._mkTimeStamp(timeState.at),
-                overlayIndex = this._frameLookup[currentDate];
+                currentOverlayIndex = this._frameLookup[currentDate];
 
-            if (this._imageOverlays.length < 1) {
-              // This is the first and only time we come here
-              this._imageOverlays = RasterService.getImgOverlays(
-                this.numCachedFrames,
-                this.imageBounds
+            if (this._imageOverlays.length < this.BUFFER_LENGTH) {
+              // add leaflet layers to fill up the buffer
+              this._imageOverlay = createImageOverlays(
+                map,
+                this._imageOverlays,
+                this.BUFFER_LENGTH
               );
-
-              for (var i in this._imageOverlays) {
-                mapState._map.addLayer(this._imageOverlays[i]);
-                this.nLoadingRasters++;
-                this._imageOverlays.imageOverlays[i].setOpacity(0);
-                this._imageOverlays.imageOverlays[i].off('load');
-                this._animAddLoadListener(s.imageOverlays[i], i, s.nxtDate, timeState);
-                this._imageOverlays.imageOverlays[i].setUrl(
-                  this._imageUrlBase + s.utcFormatter(new Date(s.nxtDate))
-                );
-                s.nxtDate += s.step;
-              }
-
-              this._imageOverlays[0].setOpacity(this._opacity);
             }
 
-            if (!overlayIndex) {}
+            if (!currentOverlayIndex) {
+              // Ran out of buffered frames
+              this._imageOverlays = this._fetchNewFrames(
+                currentDate,
+                this._imageOverlays,
+                defer,
+                this._imageUrlBase,
+                this.formatter
+              );
+            }
 
-            if () {}
+            else {
+              this._progressFrame(currentDate, currentOverlayIndex);
+              // Done!
+              defer.resolve();
+            }
 
-
-
-
-            // for (var i in this._imageOverlays) {
-            //   var a = map.addLayer(this._imageOverlays[i]);
-            //   console.log(a);
-            // }
             return defer.promise;
           }
         },
@@ -169,7 +163,74 @@ angular.module('lizard-nxt')
           }
         },
 
+        _progressFrame : {
+          value: function (currentDate, currentOverlayIndex) {
+            angular.forEach(this.frameLookup, function (key, frameIndex) {
+              if (this.imageOverlays[frameIndex].getOpacity() !== 0) {
+                var oldFrame = this.imageOverlays[frameIndex];
+                // Delete the old overlay from the lookup, it is gone.
+                delete this.frameLookup[key];
+                this._animAddLoadListener(
+                  oldFrame,
+                  currentDate
+                );
+
+                oldFrame
+                  .setOpacity(0)
+                  .off('load')
+                  .setUrl(this.imageUrlBase + this.formatter(new Date(currentDate)));
+              }
+            }, this);
+
+            var newFrame = this._imageOverlays[currentOverlayIndex];
+            // Turn on new frame
+            newFrame.setOpacity(this._opacity);
+          }
+        },
+
+        _fetchNewFrames: {
+          value: function (currentDate, overlays, defer) {
+            var nxtDate = currentDate;
+            overlays.forEach(function (overlay) {
+              overlay.setOpacity(0);
+              overlay.off('load');
+              this._addLoadListener(
+                overlay,
+                currentDate,
+                defer
+              );
+              overlay.setUrl(
+                this._imageUrlBase + this.formatter(new Date(nxtDate))
+              );
+              nxtDate += this.temporalResolution;
+            }, this);
+            return overlays;
+          }
+        },
+
+        _animAddLoadListener: {
+          value: function (overlay, date, defer) {
+            this.nLoadingRasters++;
+
+            overlay.on("load", function () {
+              this.nLoadingRasters--;
+              this.frameLookup[date] = String(this._imageOverlays.indexOf(overlay));
+              if (defer && this.nLoadingRasters === 0) {
+                defer.resolve();
+              }
+            });
+          }
+        }
       });
+
+
+      var createImageOverlays = function (map, overlays, buffer) {
+        for (var i = overlays.length - 1; i < buffer; i++) {
+          overlays.push(
+            addLeafletLayer(map, L.imageOverlay('', this.imageBounds))
+          );
+        }
+      };
 
       /**
        * @function
@@ -186,6 +247,7 @@ angular.module('lizard-nxt')
         } else {
           map.addLayer(leafletLayer);
         }
+        return leafletLayer;
       };
 
       /**

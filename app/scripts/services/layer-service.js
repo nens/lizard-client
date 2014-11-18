@@ -2,8 +2,8 @@
 
 /**
  * @ngdoc service
- * @name lizard-nxt.Laye
-r * @description
+ * @name lizard-nxt.Layer
+ * @description
  * # NxtLayer
  * Factory in the lizard-nxt.
  */
@@ -82,6 +82,10 @@ angular.module('lizard-nxt')
           value: layer.load_order,
           writable: false,
         });
+        Object.defineProperty(this, 'timeState', {
+          value: 0,
+          writable: false
+        });
       }
 
       NxtLayer.prototype = {
@@ -155,7 +159,7 @@ angular.module('lizard-nxt')
         * @param timeState nxt timeState.
         * @param oldTime previous time in ms from epoch.
         */
-        syncTime: function (mapState, timeState, oldTime) {
+        syncTime: function (timeState, map) {
           var defer = $q.defer();
           defer.resolve();
           return defer.promise;
