@@ -153,7 +153,7 @@
               <a ng-click="toggleTool('point')"
                  class="button-list-link"
                  title="punt selectie"
-                 ng-class="{'active': tools.active === 'point'}">
+                 ng-class="{'active': box.type === 'point'}">
                  <i class="fa fa-dot-circle-o"></i>
               </a>
             </div>
@@ -163,7 +163,7 @@
               <a ng-click="toggleTool('line')"
                  class="button-list-link"
                  title="lijn selectie"
-                 ng-class="{'active': tools.active === 'line'}">
+                 ng-class="{'active': box.type === 'line'}">
                  <i class="fa fa-expand"></i>
               </a>
             </div>
@@ -173,7 +173,7 @@
               <a ng-click="toggleTool('area')"
                  class="button-list-link"
                  title="scherm selectie"
-                 ng-class="{'active': tools.active === 'area'}">
+                 ng-class="{'active': box.type === 'area'}">
                  <i class="fa fa-square-o"></i>
               </a>
             </div>
@@ -187,7 +187,7 @@
              temporal-vector-layer
              surfacelayer
              rasteranimation
-             ng-class="{'crosshair': tools.active === 'profile'}">
+             ng-class="{'crosshair': box.type === 'line'}">
          </map>
       </div>
     </div>

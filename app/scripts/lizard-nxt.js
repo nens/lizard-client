@@ -196,20 +196,18 @@ angular.module('lizard-nxt')
    * @desc Sets tool.active model on scope to name of the tool if tool disabled
    * or "none" if tool is already enabled.
    *
-   * @param {string} name name of the tool to toggle
+   * @param {string} newTool name of the tool to toggle
    *
    */
-  $scope.toggleTool = function (name) {
+  $scope.toggleTool = function (newTool) {
 
-    if (name === 'line') {
-      $scope.box.type = 'line';
-    } else if (name === 'point') {
-      $scope.box.type = 'point';
-    } else if (name === 'area') {
-      $scope.box.type = 'area';
+    if (name in ['point', 'line', 'area']) {
+      $scope.box.type = newTool;
+    } else {
+      throw new Error(
+        'Tried to call toggleTool() with an invalid argument: "' + newTool + '"!'
+      );
     }
-
-    $scope.tools.active = name;
   };
 
   /**
