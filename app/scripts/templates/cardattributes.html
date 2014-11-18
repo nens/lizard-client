@@ -30,12 +30,16 @@
              : waterchain.layers.waterchain_grid.data['name']"
         ng-class="{'hidden': $index > 2}">
 
-      <td class="fixed-width-card-table"><% obj.keyName %></td>
+      <td class="fixed-width-card-table">
+        <div class="attr-row-content">
+          <% obj.keyName %>
+        </div>
+      </td>
 
       <td class="lineout"
           ng-if="waterchain.layers.waterchain_grid.data[obj.attrName]">
-        <span ng-bind-html="$eval(obj.ngBindValue) + obj.valueSuffix">
-        </span>
+        <div class="attr-row-content" ng-bind-html="$eval(obj.ngBindValue) + obj.valueSuffix">
+        </div>
       </td>
 
       <td class="lineout"
@@ -43,8 +47,8 @@
           rel="tooltip"
           data-toggle="tooltip"
           title="Dit is een voorbeeld waarde">
-        <span ng-bind-html="obj.defaultValue + obj.valueSuffix" class="dummy-attr-value">
-        </span>
+        <div ng-bind-html="obj.defaultValue + obj.valueSuffix" class="attr-row-content dummy-attr-value">
+        </div>
       </td>
     </tr>
   </table>
@@ -55,13 +59,13 @@
     <span class="show-structure-attrs-text"
           ng-if="$parent.box.showFullTable
             && wanted[waterchain.layers.waterchain_grid.data.entity_name].rows.length > 3">
-          - toon minder attributen -
+      <i class="fa fa-lg fa-caret-up table-toggler"></i>
     </span>
 
     <span class="show-structure-attrs-text"
           ng-if="!$parent.box.showFullTable
             && wanted[waterchain.layers.waterchain_grid.data.entity_name].rows.length > 3">
-          - toon alle attributen -
+      <i class="fa fa-lg fa-caret-down table-toggler"></i>
     </span>
   </div>
 
