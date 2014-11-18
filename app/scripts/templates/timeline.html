@@ -6,12 +6,9 @@
       <a ng-click="timeState.playPauseAnimation()"
          class="extra-padding timeline-button"
          ng-class="{'active': timeState.animation.playing}"
-         rel="tooltip"
-         data-toggle="tooltip"
-         data-placement="top"
-         title=""
+         title="<% timeState.animation.playing ? tooltips.stopAnim : tooltips.startAnim %>"
          data-original-title="Afspelen/pauzeren">
-        <i class="fa-fw fa"  ng-class="{
+        <i class="fa"  ng-class="{
             'fa-play': !timeState.animation.playing,
             'fa-pause active': (timeState.animation.playing && !timeState.buffering),
             'fa-circle-o-notch fa-spin' : timeState.buffering
@@ -26,47 +23,23 @@
     <div class="btn-group-vertical">
         <a class="btn btn-default btn-xss" ng-click="timeState.zoom('in')"
           class="extra-padding timeline-button"
-          rel="tooltip"
-          data-toggle="tooltip"
-          data-placement="top"
-          title=""
+          title="<% tooltips.zoomInTimeline %>"
           data-original-title="Zoom in">
           <i class="fa fa-plus"></i>
         </a>
         <a class="btn btn-default btn-xss" ng-mousedown="timeState.zoomToNow()"
           class="extra-padding timeline-button"
-          rel="tooltip"
-          data-toggle="tooltip"
-          data-placement="top"
-          title=""
+          title="<% tooltips.goToNow %>"
           data-original-title="Naar nu">
           <i class="fa fa-clock-o"></i>
         </a>
         <a class="btn btn-default btn-xss" ng-click="timeState.zoom('out')"
           class="extra-padding timeline-button"
-          rel="tooltip"
-          data-toggle="tooltip"
-          data-placement="top"
-          title=""
+          title="<% tooltips.zoomOutTimeline %>"
           data-original-title="Zoom uit">
           <i class="fa fa-minus"></i>
         </a>
     </div>
   </div>
   </div>
-
-  <div class="row time-start-now-end">
-    <div class="col-md-3">
-      <p><% timeState.start | date:'d MMMM y - HH:mm' %></p>
-    </div>
-
-    <div class="col-md-6">
-      <p class="text-center"><% timeState.at | date:'d MMMM y - HH:mm' %></p>
-    </div>
-
-    <div class="col-md-3">
-      <p class="text-right"><% timeState.end | date:'d MMMM y - HH:mm' %> </p>
-    </div>
-  </div>
-
 </div>

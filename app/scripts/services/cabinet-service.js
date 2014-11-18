@@ -39,8 +39,34 @@ angular.module('lizard-nxt')
       .withHttpConfig({timeout: localPromise.promise});
   };
 
+  var tooltips = {
+    login: "Inloggen",
+    logout: "Uitloggen",
+    profile: "Profiel aanpassen",
+    version: "Dubbelklik voor de Lizard versie", // ok, but where is the HTML for it????
+    openMenu: "Datamenu openen",
+    closeMenu: "Datamenu sluiten",
+    transparency: "Transparantie aanpassen",
+    pointTool: "Puntselectie",
+    lineTool: "Lijnselectie",
+    areaTool: "Scherm selectie",
+    resetQuery: "Resultaatvenster sluiten",
+    search: "Zoeken",
+    zoomInMap: "Zoom in op de kaart",
+    zoomOutMap: "Zoom uit op de kaart",
+    zoomInTimeline: "Zoom in op de tijdlijn",
+    goToNow: "Ga naar het heden op de tijdlijn",
+    zoomOutTimeline: "Zoom uit op de tijdlijn",
+    startAnim: "Start de animatie",
+    stopAnim: "Stop de animatie",
+    timelineStart: "Het begin van de huidige tijdlijn",
+    timelineAt:"Het 'nu' op de tijdlijn",
+    timelineEnd: "Het einde van de huidige tijdlijn"
+  };
+
   return {
     //eventTypes: eventTypes,
+    tooltips: tooltips,
     geocode: geocodeResource,
     raster: rasterResource,
     reverseGeocode: reverseGeocodeResource,

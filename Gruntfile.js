@@ -414,8 +414,12 @@ module.exports = function (grunt) {
           cwd: 'vendor/components-font-awesome',
           src: 'fonts/*',
           dest: '<%= yeoman.dist %>'
-        }
-         ]
+        }, {
+          expand: true,
+          cwd: 'vendor/lizard-iconfont/lizard/dest',
+          src: 'fonts/*',
+          dest: '<%= yeoman.dist %>'
+        }]
       },
       styles: {
         expand: true,

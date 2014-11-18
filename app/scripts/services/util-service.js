@@ -26,7 +26,6 @@ angular.module('lizard-nxt')
   this.roundTimestamp = function (timestamp, coefficient, needTzOffset) {
     var roundedTimestamp = parseInt((timestamp + (coefficient / 2)) /
                                     coefficient, 10) * coefficient;
-
     if (!!needTzOffset) {
       var timeZoneOffset = (new Date(roundedTimestamp)).getTimezoneOffset() *
         1000 * 60;
@@ -365,7 +364,7 @@ angular.module('lizard-nxt')
 
         } else if (data[0].length > 1) {
 
-          if (data[0][1].constructor === Array) {
+          if (data[0][0].constructor === Array) {
 
             // kill: [[x0, [null]], [x1, [null]], ..., [xn, [null]]]
             return !this.all(data, function (elem) {

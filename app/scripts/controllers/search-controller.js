@@ -83,7 +83,7 @@ angular.module('lizard-nxt')
       var southWest = new L.LatLng(obj.boundingbox[0], obj.boundingbox[2]);
       var northEast = new L.LatLng(obj.boundingbox[1], obj.boundingbox[3]);
       var bounds = new L.LatLngBounds(southWest, northEast);
-      $scope.mapState.panZoom = bounds;
+      $scope.mapState.fitBounds(bounds);
     } else {
       if (window.JS_DEBUG) {
         console.error('Oops, no boundingbox on this result - TODO: show a proper message instead of this console error...');

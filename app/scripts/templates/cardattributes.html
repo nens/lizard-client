@@ -11,30 +11,35 @@
 
       <% waterchain.layers.waterchain_grid.data.entity_name | objectTitle %>
 
-      <span ng-if= "waterchain.layers.waterchain_grid.data.code"
-            class="kunstwerk-title-suffix">
-        <span>(</span>
-        <span class="truncateme ng-binding"
-              ng-bind="waterchain.layers.waterchain_grid.data.code">
-        </span>
-        <span>)</span>
-      </span>
-
     </span>
   </span>
 
   <table id="kunstwerk-table" class="table table-condensed table-hover">
 
+    <!-- HAcK alert! we overwrite the "name" kv with the "display_name" kv.
+    This will lead to a situation where we can allways print either one. Which one
+    is printed is specified in the wantedAttrs.
+
+    Future: we only use the "name" keyword: we will substitute it in the backend.
+    -->
     <tr class="attr-row"
         ng-repeat="obj in wanted[waterchain.layers.waterchain_grid.data.entity_name].rows"
+        ng-init="waterchain.layers.waterchain_grid.data['name'] =
+             (waterchain.layers.waterchain_grid.data['display_name'] !== undefined && waterchain.layers.waterchain_grid.data['display_name'] !== '')
+             ? waterchain.layers.waterchain_grid.data['display_name']
+             : waterchain.layers.waterchain_grid.data['name']"
         ng-class="{'hidden': $index > 2}">
 
-      <td class="fixed-width-card-table"><% obj.keyName %></td>
+      <td class="fixed-width-card-table">
+        <div class="attr-row-content">
+          <% obj.keyName %>
+        </div>
+      </td>
 
       <td class="lineout"
           ng-if="waterchain.layers.waterchain_grid.data[obj.attrName]">
-        <span ng-bind-html="$eval(obj.ngBindValue) + obj.valueSuffix">
-        </span>
+        <div class="attr-row-content" ng-bind-html="$eval(obj.ngBindValue) + obj.valueSuffix">
+        </div>
       </td>
 
       <td class="lineout"
@@ -42,8 +47,8 @@
           rel="tooltip"
           data-toggle="tooltip"
           title="Dit is een voorbeeld waarde">
-        <span ng-bind-html="obj.defaultValue + obj.valueSuffix" class="dummy-attr-value">
-        </span>
+        <div ng-bind-html="obj.defaultValue + obj.valueSuffix" class="attr-row-content dummy-attr-value">
+        </div>
       </td>
     </tr>
   </table>
@@ -52,13 +57,15 @@
         ng-click="$parent.box.toggleFullTable()">
 
     <span class="show-structure-attrs-text"
-          ng-if="$parent.box.showFullTable">
-          - toon minder attributen -
+          ng-if="$parent.box.showFullTable
+            && wanted[waterchain.layers.waterchain_grid.data.entity_name].rows.length > 3">
+      <i class="fa fa-lg fa-caret-up table-toggler"></i>
     </span>
 
     <span class="show-structure-attrs-text"
-          ng-if="!$parent.box.showFullTable">
-          - toon alle attributen -
+          ng-if="!$parent.box.showFullTable
+            && wanted[waterchain.layers.waterchain_grid.data.entity_name].rows.length > 3">
+      <i class="fa fa-lg fa-caret-down table-toggler"></i>
     </span>
   </div>
 

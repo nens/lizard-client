@@ -218,6 +218,8 @@ angular.module('lizard-nxt')
         return 'icon-overflow';
       case 'pumpstation_sewerage':
         return 'icon-pumpstation-diesel';
+      case 'pumpstation_non_sewerage':
+        return 'icon-pumpstation';
       case 'bridge':
         return 'icon-bridge';
       case 'bridge-draw':
@@ -229,7 +231,6 @@ angular.module('lizard-nxt')
       }
     };
 
-
     /**
      * @function
      * @memberOf app.pointCtrl
@@ -237,7 +238,9 @@ angular.module('lizard-nxt')
      *              Either show the first 3 attributes, OR show all of them
      */
     $scope.box.toggleFullTable = function () {
+
       $scope.box.showFullTable = !$scope.box.showFullTable;
+
       d3.selectAll('tr.attr-row')
         .classed('hidden', function (_, i) {
           return i > 2 && !$scope.box.showFullTable;

@@ -378,7 +378,7 @@
 
 :root input[type="checkbox"].ios-switch + div:before,
 :root input[type="checkbox"].ios-switch + div:after {
-    font: bold 60%/1.9 sans-serif;
+    font: bold 60%/1.9 'Roboto', Helvetica, Arial, sans-serif;
     text-transform: uppercase;
 }
 
@@ -408,7 +408,7 @@
 #box-awesome-search input {
     padding-left: 10px !important;
     font-size: 1em;
-  font-family: 'Roboto', sans-serif !important;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
     padding-right: 0;
     width: 100%;
     outline: 0;
@@ -672,7 +672,6 @@ td.lineout {
 }
 
 .show-structure-attrs-text {
-  font-style: italic;
   font-size: 12px;
   cursor: pointer;
   color: #bdc3c7;
@@ -680,4 +679,10 @@ td.lineout {
 
 .show-structure-attrs-text:hover {
   color: #7f8c8d;
+}
+
+.table-toggler {
+  font-size: 18px;
+  margin-left: 77px;
+  color: #bdc3c7;
 }
