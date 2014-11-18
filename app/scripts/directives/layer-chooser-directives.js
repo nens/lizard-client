@@ -11,16 +11,23 @@ angular.module('lizard-nxt')
 
     var needsPreviewMap;
     // Remove unnecessary datalayers before going further
+    // but first copying the layer array, otherwise the
+    // iterator gets confused.
+    var layerCopy = angular.copy(layerGroup.layers);
     angular.forEach(layerGroup.layers, function (layer) {
-      if (layer.type !== 'WMS'
-        && layer.type !== 'TMS') {
-        needsPreviewMap = true;
-        layerGroup.layers.splice(layerGroup.layers.indexOf(layer), 1);
+      if (layer.type === 'WMS' ||
+          layer.type === 'TMS') {
+          needsPreviewMap = true;
+      } else {
+          layerCopy.splice(layerGroup.layers.indexOf(layer), 1);
       }
+
       if (layer.type === 'Vector') {
         element.find('.layer-img')[0].style.backgroundColor = layer.color;
       }
     });
+
+    layerGroup.layers = layerCopy;
 
     if (needsPreviewMap) {
 
