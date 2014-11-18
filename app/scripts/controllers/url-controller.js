@@ -143,18 +143,17 @@ angular.module('lizard-nxt')
      * Set boxType when box.type changed
      */
     $scope.$watch('box.type', function (n, old) {
-      console.log('$scope.$watch(\'box.type\'...n =', n, ', old =', old);
       if (n === old) { return true; }
-      // state.boxType.update = false;
-      // LocationGetterSetter.setUrlValue(
-      //   state.boxType.part, state.boxType.index, $scope.box.type
-      // );
+      state.boxType.update = false;
+      LocationGetterSetter.setUrlValue(
+        state.boxType.part, state.boxType.index, $scope.box.type
+      );
 
-      // if (old === 'point' || old === 'line') {
-      //   // Remove geometry from url
-      //   state.boxType.update = false;
-      //   LocationGetterSetter.setUrlValue(state.geom.part, state.geom.index, undefined);
-      // }
+      if (old === 'point' || old === 'line') {
+        // Remove geometry from url
+        state.boxType.update = false;
+        LocationGetterSetter.setUrlValue(state.geom.part, state.geom.index, undefined);
+      }
     });
 
     /**

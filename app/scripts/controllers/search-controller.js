@@ -16,7 +16,10 @@ angular.module('lizard-nxt')
     DOWNARROW : 40,
   };
 
-  var boxTypeBeforeSearching = $scope.box.type;
+  var boxTypeBeforeSearching; // To keep track of the scope.box.type before temporary
+                              // switching that value to 'location', so after user
+                              // clicks a returned search result we can reset
+                              // scope.box.type back to it's initial value.
 
   $scope.onKeydown = function (item, $event) {
     var e = $event;
@@ -33,7 +36,7 @@ angular.module('lizard-nxt')
       nextTab = - 1;
       break;
     case KeyCodes.RETURNKEY:
-      //$scope.box.type = 'area'; // Hides the results
+      $scope.box.type = boxTypeBeforeSearching || 'point'; // Hides the results
       e.preventDefault();
       break;
     case KeyCodes.DOWNARROW:
@@ -54,17 +57,14 @@ angular.module('lizard-nxt')
 
   $scope.searchMarkers = [];
   $scope.search = function ($event) {
-    console.log('[F] search');
     if ($scope.box.query.length > 1) {
 
       CabinetService.geocode.get({q: $scope.box.query}).then(function (data) {
-        console.log('received response from CabSvc.geocode; data =', data);
+        boxTypeBeforeSearching = $scope.box.type;
         $scope.box.type = "location";
         $scope.box.content = data;
         angular.element('#searchboxinput')[0].focus();
-        //console.log('---- $scope.box =', $scope.box);
       });
-      // $scope.box.type = "location";
     }
   };
 

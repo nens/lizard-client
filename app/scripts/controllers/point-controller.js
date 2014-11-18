@@ -31,8 +31,6 @@ angular.module('lizard-nxt')
      */
     var fillpoint = function (here) {
 
-      console.log('[F] fillpoint');
-
       if ($scope.box.type !== 'point') { return; }
 
       ClickFeedbackService.drawCircle($scope.mapState, here);
@@ -71,11 +69,6 @@ angular.module('lizard-nxt')
      * @description Wrapper to improve readability
      */
     var fillPointHere = function () {
-
-      if ($scope.box.type === 'location') {
-        console.log('this should NEVER print!');
-      }
-
       if ($scope.box.type === 'point' && $scope.mapState.here) {
         fillpoint($scope.mapState.here);
       }
