@@ -7,7 +7,7 @@ angular.module('lizard-nxt')
   var link = function (scope, element, attrs) {
     // Scope gets the mapState layerGroup, here we create a new layerGroup which
     // goes into its own NxtMap to always be turned on
-    var layerGroup = dataLayers[scope.layergroup.slug];
+    var layerGroup = angular.copy(dataLayers[scope.layergroup.slug]);
 
     var needsPreviewMap;
     // Remove unnecessary datalayers before going further
