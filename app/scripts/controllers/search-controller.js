@@ -16,11 +16,6 @@ angular.module('lizard-nxt')
     DOWNARROW : 40,
   };
 
-  var boxTypeBeforeSearching; // To keep track of the scope.box.type before temporary
-                              // switching that value to 'location', so after user
-                              // clicks a returned search result we can reset
-                              // scope.box.type back to it's initial value.
-
   $scope.onKeydown = function (item, $event) {
     var e = $event;
     var $target = $(e.target);
@@ -36,7 +31,7 @@ angular.module('lizard-nxt')
       nextTab = - 1;
       break;
     case KeyCodes.RETURNKEY:
-      $scope.box.type = boxTypeBeforeSearching || 'point'; // Hides the results
+      $scope.box.type = $scope.boxTypeBeforeSearching || 'point'; // Hides the results
       e.preventDefault();
       break;
     case KeyCodes.DOWNARROW:
@@ -57,10 +52,9 @@ angular.module('lizard-nxt')
 
   $scope.searchMarkers = [];
   $scope.search = function ($event) {
+    $scope.boxTypeBeforeSearching = $scope.box.type;
     if ($scope.box.query.length > 1) {
-
       CabinetService.geocode.get({q: $scope.box.query}).then(function (data) {
-        boxTypeBeforeSearching = $scope.box.type;
         $scope.box.type = "location";
         $scope.box.content = data;
         angular.element('#searchboxinput')[0].focus();
@@ -91,15 +85,13 @@ angular.module('lizard-nxt')
       var northEast = new L.LatLng(obj.boundingbox[1], obj.boundingbox[3]);
       var bounds = new L.LatLngBounds(southWest, northEast);
       $scope.mapState.fitBounds(bounds);
-
-      $scope.box.type = $scope.tools.active;
-      delete $scope.box.content;
-
     } else {
       if (window.JS_DEBUG) {
         console.error('Oops, no boundingbox on this result - TODO: show a proper message instead of this console error...');
       }
     }
+    $scope.box.type = $scope.boxTypeBeforeSearching;
+    delete $scope.box.content;
   };
 
   // Note: Watch is called too often

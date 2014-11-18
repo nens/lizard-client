@@ -13,7 +13,9 @@ angular.module('lizard-nxt')
      *              empties the clickfeedback and removes line points.
      */
     $scope.resetBox = function (previousBoxType) {
-      $scope.box.type = previousBoxType === 'location' ? 'point' : previousBoxType;
+      $scope.box.type = previousBoxType === 'location'
+        ? 'point'
+        : previousBoxType;
       $scope.box.query = null;
       $scope.box.content = {};
       ClickFeedbackService.emptyClickLayer($scope.mapState);
