@@ -31,7 +31,7 @@ angular.module('lizard-nxt')
       nextTab = - 1;
       break;
     case KeyCodes.RETURNKEY:
-      $scope.box.type = 'area'; // Hides the results
+      $scope.box.type = $scope.boxTypeBeforeSearching || 'point'; // Hides the results
       e.preventDefault();
       break;
     case KeyCodes.DOWNARROW:
@@ -52,12 +52,13 @@ angular.module('lizard-nxt')
 
   $scope.searchMarkers = [];
   $scope.search = function ($event) {
+    $scope.boxTypeBeforeSearching = $scope.box.type;
     if ($scope.box.query.length > 1) {
       CabinetService.geocode.get({q: $scope.box.query}).then(function (data) {
+        $scope.box.type = "location";
         $scope.box.content = data;
         angular.element('#searchboxinput')[0].focus();
       });
-      $scope.box.type = "location";
     }
   };
 
@@ -89,6 +90,7 @@ angular.module('lizard-nxt')
         console.error('Oops, no boundingbox on this result - TODO: show a proper message instead of this console error...');
       }
     }
+    $scope.resetBox($scope.boxTypeBeforeSearching);
   };
 
   // Note: Watch is called too often
