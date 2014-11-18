@@ -14,7 +14,6 @@ describe('Testing map service', function () {
   }));
 
   it('should create a map object', function () {
-    console.info(map);
     expect(map._map instanceof L.Map).toBe(true);
   });
 
