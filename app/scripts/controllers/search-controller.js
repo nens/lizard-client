@@ -90,8 +90,10 @@ angular.module('lizard-nxt')
         console.error('Oops, no boundingbox on this result - TODO: show a proper message instead of this console error...');
       }
     }
-    $scope.box.type = $scope.boxTypeBeforeSearching;
-    delete $scope.box.content;
+
+    $scope.resetBox($scope.boxTypeBeforeSearching);
+    // $scope.box.type = $scope.boxTypeBeforeSearching;
+    // delete $scope.box.content;
   };
 
   // Note: Watch is called too often
