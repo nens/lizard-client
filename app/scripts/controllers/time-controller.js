@@ -81,7 +81,6 @@ angular.module('lizard-nxt')
 
     // If no temporal layers were found, set to a default amount.
     if (timeStep === Infinity) { timeStep = currentInterval / DEFAULT_NUMBER_OF_STEPS; }
-    console.log(timeStep, minLag);
   };
 
   /**
