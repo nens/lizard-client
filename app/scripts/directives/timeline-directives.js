@@ -69,9 +69,6 @@ angular.module('lizard-nxt')
         scope.$apply(function () {
           scope.timeState.resolution = (
             scope.timeState.end - scope.timeState.start) /  window.innerWidth;
-          // snap timeState.at to nearest interval
-          scope.timeState.at = UtilService.roundTimestamp(
-            scope.timeState.at, scope.timeState.aggWindow, false);
           getTimeLineData();
         });
       },
@@ -87,12 +84,13 @@ angular.module('lizard-nxt')
        * @param {object} dimensions - object with timeline dimensions.
        */
       clickFn: function (event, scale, dimensions) {
-        var timeClicked = +(scale.invert(event.pageX - dimensions.padding.left));
+        var timeClicked = +(scale.invert(event.x - dimensions.padding.left));
         scope.timeState.at = UtilService.roundTimestamp(
           timeClicked,
           scope.timeState.aggWindow,
           false
         );
+
         scope.$digest();
       },
     };
@@ -103,7 +101,6 @@ angular.module('lizard-nxt')
     // Initialise timeline
     var timeline = new Timeline(
       el[0], dimensions, start, end, interaction);
-
 
     // HELPER FUNCTIONS
 
