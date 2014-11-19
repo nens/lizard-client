@@ -40,18 +40,6 @@ angular.module("omnibox", ["templates-main"])
         finalizeTemplateRendering();
       });
 
-      scope.$watch('mapState.mapMoving', function (n, o) {
-        if (n === o) { return true; }
-        if (n)
-          UtilService.fadeCurrentCards(scope);
-        else {
-          // Snap away from current card fade-in/out practices:
-          // make cards visible again, unconditionally and w/o possible
-          // setTimeout() conflicts.
-          d3.selectAll(".card").transition(200).style("opacity", 1);
-        }
-      });
-
       finalizeTemplateRendering();
     };
 

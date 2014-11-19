@@ -1,4 +1,9 @@
 <div ng-controller="PointCtrl">
+  
+  <div class="card active"
+       ng-if="box.content.location">
+    <location></location>
+  </div>
 
   <div class="card active"
       ng-if="box.content.waterchain">

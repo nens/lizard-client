@@ -116,3 +116,12 @@ angular.module('lizard-nxt')
     templateUrl: 'templates/detailswitch.html'
   };
 }]);
+
+angular.module('lizard-nxt')
+  .directive('location', [function () {
+  return {
+    restrict: 'E',
+    templateUrl: 'templates/location.html'
+  };
+}]);
+
