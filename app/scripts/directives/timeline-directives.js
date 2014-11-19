@@ -102,12 +102,8 @@ angular.module('lizard-nxt')
 
     // Initialise timeline
     var timeline = new Timeline(
-      el[0], dimensions, start, end, interaction, scope.events.nEvents);
+      el[0], dimensions, start, end, interaction);
 
-    // Activate zoom and click listener
-    timeline.addZoomListener();
-    timeline.addClickListener();
-    timeline.addFutureIndicator();
 
     // HELPER FUNCTIONS
 
