@@ -11,7 +11,7 @@
  *
  */
 angular.module('lizard-nxt')
-  .controller('TimeLine', ["$scope", "$q", "RasterService", 'UtilService',
+  .controller('TimeCtrl', ["$scope", "$q", "RasterService", 'UtilService',
   function ($scope, $q, RasterService, UtilService) {
 
   window.requestAnimationFrame = window.requestAnimationFrame ||
@@ -19,55 +19,70 @@ angular.module('lizard-nxt')
                                  window.webkitRequestAnimationFrame ||
                                  window.msRequestAnimationFrame;
 
+  var DEFAULT_NUMBER_OF_STEPS = 2000, // Small for humans to percieve as smooth.
+      currentInterval = $scope.timeState.end - $scope.timeState.start,
+      timeStep = Infinity, // Will be overwritten to
+                           // currentInterval / DEFAULT_NUMBER_OF_STEPS
+                           // Or the smallest temporalResolution of an active
+                           // temporal layer.
+      minLag = 0, // Let the browser determine the max speed using
+                  // requestAnimationFrame.
+      promise, // Is created when syncing time and resolves when all datalayers
+               // finished buffering and redrawing;
+      timeOut; // runs for minLag of milliseconds before waiting for the promise
+               // to resolve and re-syncing the data layers to the new time and
+               // making a new step when animation is playing.
 
-  var now = Date.now(),
-      hour = 60 * 60 * 1000;
 
-  // TIME MODEL
-  $scope.timeState = {
-    start: now - 4 * hour,
-    end: now + hour,
-    at: now - 4 * hour,
-    changedZoom: Date.now(),
-    zoomEnded: null,
-    aggWindow: 1000 * 60 * 5,
-    animation: {
-      playing: false,
-      enabled: false,
-    }
-  };
+  /**
+   * Keep an eye out for temporal layers that require the animation to go
+   * with a lower speed so wms requests can keep up and run more smooth if the
+   * temporalResolution equals or is a multiplication of  the stepSize.
+   */
+  $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
+    if (n === o) { return; }
+    configAnimation();
+  });
 
-  $scope.timeState.aggWindow = UtilService.getAggWindow(
-    $scope.timeState.start,
-    $scope.timeState.end,
-    window.innerWidth
-  );
-  // END TIME MODEL
+  /**
+   * sync data layers to new timestate and redo the animation configuration
+   * since currentInterval has changed.
+   */
+  $scope.$watch('timeState.start', function (n, o) {
+    if (n === o) { return; }
+    configAnimation();
+    syncTimeWrapper($scope.timeState);
+  });
 
-  var DEFAULT_NUMBER_OF_STEPS = 1000;
-  var currentInterval = $scope.timeState.end - $scope.timeState.start;
-  var timeStep = 1000 * 60 * 5;  //currentInterval / DEFAULT_NUMBER_OF_STEPS;
-  var minLag = 500;
+  /**
+   * Sync to new time and trigger a new step when animation.playing is true.
+   */
+  $scope.$watch('timeState.at', function (n, o) {
+    if (n === o) { return; }
+    syncTimeWrapper($scope.timeState);
+  });
 
-  $scope.$watch('mapState.layerGroupsChanged', function () {
+  var configAnimation = function () {
     currentInterval = $scope.timeState.end - $scope.timeState.start;
-    timeStep = currentInterval / DEFAULT_NUMBER_OF_STEPS;
+    timeStep = Infinity;
     minLag = 50;
 
     angular.forEach($scope.mapState.layerGroups, function (lg) {
-      console.log(lg.slug, lg.temporalResolution, timeStep);
-      if (lg.isActive()
-        && lg.temporalResolution < timeStep
-        && lg.temporalResolution > 0) {
+      if (lg.isActive() && lg.temporal && lg.temporalResolution < timeStep) {
         timeStep = lg.temporalResolution;
-
-        minLag = 200;
+        minLag = 333;
+        // When the stepsize is very large, increase minLag to take 5 seconds for
+        // the whole animation.
+        if (timeStep > 3600000) {
+          minLag = 5000 / (currentInterval / timeStep);
+        }
       }
     });
 
-    if (timeStep > 3600000) { minLag = 500; }
-    console.log(timeStep);
-  });
+    // If no temporal layers were found, set to a default amount.
+    if (timeStep === Infinity) { timeStep = currentInterval / DEFAULT_NUMBER_OF_STEPS; }
+    console.log(timeStep, minLag);
+  };
 
   /**
    * @function
@@ -103,11 +118,9 @@ angular.module('lizard-nxt')
     }
   };
 
-
-
   /**
    * @function
-   * @summary Push animation 1 step forward.
+   * @summary Push animation 1 step forward when Nxt is ready.
    * @description Set new timeState.at based on stepSize. If current
    * timeSate.at is outside current temporal extent, start animation at start
    * of temporal extent.
@@ -127,25 +140,42 @@ angular.module('lizard-nxt')
         $scope.timeState.animation.start = $scope.timeState.start;
       });
     }
+  };
 
-    var promise = $scope.mapState.syncTime($scope.timeState);
-
-    if ($scope.timeState.animation.playing) {
-      // when the minlag has passed.
-      setTimeout(function () {
-        // And the layergroups are all ready
-        promise.then(function () {
-          console.log('nxt step!');
-          $scope.timeState.buffering = false;
-          // And the browser is ready.
-          window.requestAnimationFrame(step);
-        });
-        $scope.$apply(function () {
-          $scope.timeState.buffering = true;
-        });
-      }, minLag);
+  var syncTimeWrapper = function (timeState) {
+    console.log(timeState.at);
+    if (promise) {
+      promise.then(function () {
+        promise = $scope.mapState.syncTime(timeState);
+      });
+      if ($scope.timeState.animation.playing) {
+        progressAnimation(promise);
+      }
+    }
+    else {
+      promise = $scope.mapState.syncTime(timeState);
     }
   };
+
+  var progressAnimation = function (finish) {
+    // Remove any old timeout
+    clearTimeout(timeOut);
+    // when the minLag has passed.
+    timeOut = setTimeout(function () {
+      // And the layergroups are all ready
+      finish.then(function () {
+        $scope.timeState.buffering = false;
+        // And the browser is ready.
+        window.requestAnimationFrame(step);
+      });
+      // When we get here, the animator is waiting for the layergroups
+      // to finish syncing.
+      $scope.$apply(function () {
+        $scope.timeState.buffering = true;
+      });
+    }, minLag);
+  };
+
 
   /**
    * @function

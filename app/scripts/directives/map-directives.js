@@ -73,12 +73,6 @@ angular.module('lizard-nxt')
 
       scope.mapState.initiateNxtMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
 
-      scope.$watch('timeState', function (timeState) {
-        if (timeState.animation.playing === false) {
-          scope.mapState.syncTime(timeState);
-        }
-      });
-
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.
       $controller('UrlController', {$scope: scope});

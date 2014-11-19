@@ -242,6 +242,30 @@ angular.module('lizard-nxt')
     }
   });
 
+  // TIME MODEL
+  var now = Date.now(),
+      hour = 60 * 60 * 1000;
+
+  $scope.timeState = {
+    start: now - 4 * hour,
+    end: now + hour,
+    at: now - 2 * hour,
+    changedZoom: Date.now(),
+    zoomEnded: null,
+    aggWindow: 1000 * 60 * 5,
+    animation: {
+      playing: false,
+      enabled: false,
+    }
+  };
+
+  $scope.timeState.aggWindow = UtilService.getAggWindow(
+    $scope.timeState.start,
+    $scope.timeState.end,
+    window.innerWidth
+  );
+  // END TIME MODEL
+
   /**
    * Watch to restrict values of timeState.
    */

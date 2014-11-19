@@ -11,20 +11,12 @@ angular.module('lizard-nxt')
   .factory('NxtNonTiledWMSLayer', ['NxtLayer', 'LeafletService', 'RasterService', 'UtilService', '$http', '$q',
   function (NxtLayer, LeafletService, RasterService, UtilService, $http, $q) {
 
-      function NxtWMSLayer(layer, temporalResolution) {
+      function NxtNonTiledWMSLayer(layer, temporalResolution) {
         NxtLayer.call(this, layer);
 
-        Object.defineProperty(this, '_currentDate', {
-          value: undefined,
-          writable: true,
-        });
         Object.defineProperty(this, '_imageOverlays', {
           value: {},
           writable: true,
-        });
-        Object.defineProperty(this, 'numCachedFrames', {
-          value: 15,
-          writable: false,
         });
         Object.defineProperty(this, 'temporalResolution', {
           value: temporalResolution,
@@ -54,15 +46,15 @@ angular.module('lizard-nxt')
           value: {},
           writable: true,
         });
-        Object.defineProperty(this, 'nLoadingRasters', {
+        Object.defineProperty(this, '_nLoadingRasters', {
           value: 0,
           writable: true,
         });
       }
 
-      NxtWMSLayer.prototype = Object.create(NxtLayer.prototype, {
+      NxtNonTiledWMSLayer.prototype = Object.create(NxtLayer.prototype, {
 
-        constructor: NxtWMSLayer,
+        constructor: NxtNonTiledWMSLayer,
 
         initializeLayer: {
           value: function () {
@@ -111,7 +103,6 @@ angular.module('lizard-nxt')
             var defer = $q.defer();
             var currentDate = this._mkTimeStamp(timeState.at),
                 currentOverlayIndex = this._frameLookup[currentDate];
-
             if (this._imageOverlays.length < this.BUFFER_LENGTH) {
               // add leaflet layers to fill up the buffer
               this._imageOverlay = createImageOverlays(
@@ -151,15 +142,16 @@ angular.module('lizard-nxt')
               }
             }
             this._imageOverlays = [];
+            this._frameLookup = {};
           }
         },
 
         setOpacity: {
           value: function (opacity) {
             this._opacity = opacity;
-            angular.forEach(this._frameLookup, function (key, frameIndex) {
-              if (this.imageOverlays[frameIndex].options.opacity !== 0) {
-                this._imageOverlaysp[frameIndex].setOpacity(this._opacity);
+            angular.forEach(this._frameLookup, function (frameIndex) {
+              if (this._imageOverlays[frameIndex].options.opacity !== 0) {
+                this._imageOverlays[frameIndex].setOpacity(this._opacity);
               }
             }, this);
             return;
@@ -194,10 +186,7 @@ angular.module('lizard-nxt')
                   .off('load')
                   .setUrl(this._imageUrlBase + this.formatter(new Date(this._nxtDate)));
 
-                this._addLoadListener(
-                  oldFrame,
-                  this._nxtDate
-                );
+                this._addLoadListener(oldFrame, this._nxtDate);
 
                 this._nxtDate += this.temporalResolution;
               }
@@ -213,12 +202,12 @@ angular.module('lizard-nxt')
           value: function (currentDate, overlays, defer) {
             this._nxtDate = currentDate;
             this._frameLookup = {};
-            this.nLoadingRasters = 0;
+            this._nLoadingRasters = 0;
 
             angular.forEach(overlays, function (overlay) {
               var url = this._imageUrlBase + this.formatter(new Date(this._nxtDate));
+              overlay.setOpacity(0);
               if (url !== overlay._url) {
-                overlay.setOpacity(0);
                 overlay.off('load');
                 this._addLoadListener(
                   overlay,
@@ -229,7 +218,10 @@ angular.module('lizard-nxt')
               }
 
               else {
-                console.log('!!!!, url equaled url');
+                this._frameLookup[this._nxtDate] = this._imageOverlays.indexOf(overlay);
+                if (this._imageOverlays.indexOf(overlay) === 0) {
+                  this._imageOverlays[0].setOpacity(this._opacity);
+                }
               }
 
               this._nxtDate += this.temporalResolution;
@@ -240,15 +232,18 @@ angular.module('lizard-nxt')
 
         _addLoadListener: {
           value: function (overlay, date, defer) {
-            this.nLoadingRasters++;
+            this._nLoadingRasters++;
 
             overlay.on("load", function () {
-              this.nLoadingRasters--;
-              this._frameLookup[date] = this._imageOverlays.indexOf(overlay);
-              if (defer && this.nLoadingRasters === 0) {
+              this._nLoadingRasters--;
+              var index = this._imageOverlays.indexOf(overlay);
+              this._frameLookup[date] = index;
+              if (defer && index === 0) {
+                this._imageOverlays[0].setOpacity(this._opacity);
+              }
+              if (defer && this._nLoadingRasters === 0) {
                 defer.resolve();
               }
-              console.log(this._frameLookup);
             }, this);
           }
         }
@@ -299,6 +294,6 @@ angular.module('lizard-nxt')
         }
       };
 
-      return NxtWMSLayer;
+      return NxtNonTiledWMSLayer;
     }
   ]);
