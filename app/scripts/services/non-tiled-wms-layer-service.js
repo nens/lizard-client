@@ -4,8 +4,12 @@
  * @ngdoc service
  * @name lizard-nxt.Layer
  * @description
- * # NxtLayer
- * Factory in the lizard-nxt.
+ *
+ * Non tiled wms layers use a bounding box to make request to a wms for one tile
+ * which is displayed as leaflet image overlay. Nxt-non-tiled-wms-layer is used
+ * to create a wms layer that is animatable. When synced to time, it will use
+ * three-way logic to build a buffer of images, fill the buffer with new
+ * images or turn one of the images from the buffer on.
  */
 angular.module('lizard-nxt')
   .factory('NxtNonTiledWMSLayer', ['NxtLayer', 'LeafletService', 'RasterService', 'UtilService', '$http', '$q',
@@ -14,38 +18,42 @@ angular.module('lizard-nxt')
       function NxtNonTiledWMSLayer(layer, temporalResolution) {
         NxtLayer.call(this, layer);
 
-        Object.defineProperty(this, '_imageOverlays', {
-          value: {},
-          writable: true,
-        });
-        Object.defineProperty(this, 'temporalResolution', {
+        // Time in millieseconds between frames
+        Object.defineProperty(this, '_temporalResolution', {
           value: temporalResolution,
           writable: false,
         });
+        // Array of imageoverlays used as buffer
         Object.defineProperty(this, '_imageOverlays', {
           value: [],
           writable: true,
         });
+        // Base of the image url without the time
         Object.defineProperty(this, '_imageUrlBase', {
           value: RasterService.buildURLforWMS(this),
           writable: true,
         });
+        // Formatter used to format a data object
         Object.defineProperty(this, 'formatter', {
           value: d3.time.format.utc("%Y-%m-%dT%H:%M:%S"),
           writable: true,
         });
+        // Lookup to store which data correspond to which imageOverlay
         Object.defineProperty(this, '_frameLookup', {
           value: {},
           writable: true,
         });
-        Object.defineProperty(this, 'BUFFER_LENGTH', {
-          value: 10,
-          writable: false,
+        // Length of the buffer, set in the initialization
+        Object.defineProperty(this, 'bufferLength', {
+          value: 0,
+          writable: true,
         });
+        // Geographic bounds of the image
         Object.defineProperty(this, 'imageBounds', {
           value: {},
           writable: true,
         });
+        // Number of rasters currently underway
         Object.defineProperty(this, '_nLoadingRasters', {
           value: 0,
           writable: true,
@@ -58,7 +66,6 @@ angular.module('lizard-nxt')
 
         initializeLayer: {
           value: function () {
-
             var southWest = L.latLng(
               this.bounds.south,
               this.bounds.west
@@ -68,18 +75,19 @@ angular.module('lizard-nxt')
               this.bounds.east
             );
             this.imageBounds = L.latLngBounds(southWest, northEast);
+
+            // When having a very sparse resolution, animation will also move
+            // slowly, so there is no need for a big buffer.
+            this.bufferLength = this._temporalResolution >= 3600000 ? 2 : 10;
           }
         },
 
         add: {
           value: function (map) {
             var defer = $q.defer(),
-                imageUrl = '',
                 opacity = this._opacity,
-                date = new Date(this._mkTimeStamp(this.timeState.at));
-
-            imageUrl = this._imageUrlBase +
-              this.formatter(new Date(this._mkTimeStamp(this.timeState.at)));
+                date = new Date(this._mkTimeStamp(this.timeState.at)),
+                imageUrl = this._imageUrlBase + this.formatter(date);
 
             this._imageOverlays = [
               LeafletService.imageOverlay(
@@ -89,9 +97,11 @@ angular.module('lizard-nxt')
               )
             ];
 
-            var layer = this._imageOverlays[0].addTo(map);
-
-            this._addLoadListener(layer, this.timeState.at, defer);
+            this._addLoadListener(
+              this._imageOverlays[0].addTo(map),
+              this.timeState.at,
+              defer
+            );
 
             return defer.promise;
           }
@@ -100,16 +110,18 @@ angular.module('lizard-nxt')
         syncTime: {
           value: function (timeState, map) {
             this.timeState = timeState;
-            var defer = $q.defer();
-            var currentDate = this._mkTimeStamp(timeState.at),
+
+            var defer = $q.defer(),
+                currentDate = this._mkTimeStamp(timeState.at),
                 currentOverlayIndex = this._frameLookup[currentDate];
-            if (this._imageOverlays.length < this.BUFFER_LENGTH) {
+
+            if (this._imageOverlays.length < this.bufferLength) {
               // add leaflet layers to fill up the buffer
-              this._imageOverlay = createImageOverlays(
+              this._imageOverlays = createImageOverlays(
                 map,
                 this._imageOverlays,
                 this.imageBounds,
-                this.BUFFER_LENGTH
+                this.bufferLength
               );
             }
 
@@ -164,7 +176,7 @@ angular.module('lizard-nxt')
          */
         _mkTimeStamp: {
           value: function (t) {
-            return UtilService.roundTimestamp(t, this.temporalResolution, false);
+            return UtilService.roundTimestamp(t, this._temporalResolution, false);
           }
         },
 
@@ -189,7 +201,7 @@ angular.module('lizard-nxt')
 
                 this._addLoadListener(oldFrame, this._nxtDate);
 
-                this._nxtDate += this.temporalResolution;
+                this._nxtDate += this._temporalResolution;
               }
             }, this);
 
@@ -225,7 +237,7 @@ angular.module('lizard-nxt')
                 }
               }
 
-              this._nxtDate += this.temporalResolution;
+              this._nxtDate += this._temporalResolution;
             }, this);
             return overlays;
           }
