@@ -138,6 +138,7 @@ angular.module('lizard-nxt')
           value: function (map) {
             for (var i in this._imageOverlays) {
               if (map.hasLayer(this._imageOverlays[i])) {
+                this._imageOverlays[i].off('load');
                 map.removeLayer(this._imageOverlays[i]);
               }
             }
