@@ -545,6 +545,7 @@ angular.module('lizard-nxt')
   var setZoomFunction = function (
     svg, dimensions, xScale, zoomFn) {
     var zoomed = function () {
+      d3.event.sourceEvent.preventDefault();
 
       drawTimelineAxes(svg, xScale, dimensions);
 
