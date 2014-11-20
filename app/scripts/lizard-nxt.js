@@ -310,10 +310,6 @@ angular.module('lizard-nxt')
     }
 
    
-/*    $scope.keyispressed = !$scope.keyispressed;*/
-    //$scope.keypressed = $event.which;
-
-    $scope.keyTarget = $event.target;
     if ($event.which === 27) {
       // If detailMode is active, close that
       if ($scope.box.contextSwitchMode) {
