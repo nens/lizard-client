@@ -142,7 +142,6 @@ angular.module('lizard-nxt')
   };
 
   var syncTimeWrapper = function (timeState) {
-    console.log(timeState.at);
     if (promise) {
       promise.then(function () {
         promise = $scope.mapState.syncTime(timeState);

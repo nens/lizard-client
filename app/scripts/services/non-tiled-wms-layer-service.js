@@ -6,10 +6,11 @@
  * @description
  *
  * Non tiled wms layers use a bounding box to make request to a wms for one tile
- * which is displayed as leaflet image overlay. Nxt-non-tiled-wms-layer is used
- * to create a wms layer that is animatable. When synced to time, it will use
- * three-way logic to build a buffer of images, fill the buffer with new
- * images or turn one of the images from the buffer on.
+ * which is displayed as a leaflet image overlay. Nxt-non-tiled-wms-layer is
+ * used to create a wms layer that is animatable. When synced to time, it uses
+ * three-way logic to build a buffer of images, fill the buffer with new images
+ * or turn one of the images from the buffer on and start loading a new image
+ * in the place of the previous.
  */
 angular.module('lizard-nxt')
   .factory('NxtNonTiledWMSLayer', ['NxtLayer', 'LeafletService', 'RasterService', 'UtilService', '$http', '$q',
@@ -217,7 +218,7 @@ angular.module('lizard-nxt')
             this._frameLookup = {};
             this._nLoadingRasters = 0;
 
-            angular.forEach(overlays, function (overlay) {
+            angular.forEach(overlays, function (overlay, i) {
               var url = this._imageUrlBase + this.formatter(new Date(this._nxtDate));
               overlay.setOpacity(0);
               if (url !== overlay._url) {
@@ -231,9 +232,9 @@ angular.module('lizard-nxt')
               }
 
               else {
-                this._frameLookup[this._nxtDate] = this._imageOverlays.indexOf(overlay);
-                if (this._imageOverlays.indexOf(overlay) === 0) {
-                  this._imageOverlays[0].setOpacity(this._opacity);
+                this._frameLookup[this._nxtDate] = overlays.indexOf(overlay);
+                if (overlays.indexOf(overlay) === 0) {
+                  overlays[0].setOpacity(this._opacity);
                 }
               }
 
@@ -269,6 +270,7 @@ angular.module('lizard-nxt')
             addLeafletLayer(map, L.imageOverlay('', bounds))
           );
         }
+        return overlays;
       };
 
       /**
