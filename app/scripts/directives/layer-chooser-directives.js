@@ -18,8 +18,7 @@ angular.module('lizard-nxt')
       if (layer.type === 'WMS' ||
           layer.type === 'TMS') {
         needsPreviewMap = true;
-      } else {
-        layerCopy.splice(layerGroup.layers.indexOf(layer), 1);
+        layerCopy = [layer];
       }
 
       if (layer.type === 'Vector') {
