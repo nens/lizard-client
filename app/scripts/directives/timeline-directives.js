@@ -97,8 +97,10 @@ angular.module('lizard-nxt')
       },
     };
 
-    // keep track of events in this scope
-    scope.events = {events: 0, slugs: []};
+    // keep track of events in this scope -- BUG: scope.events.events is, hereafter,
+    // never used anymore....
+    // What is (presumably) meant:
+    scope.events = {nEvents: 0, slugs: []};
 
     // Initialise timeline
     var timeline = new Timeline(
