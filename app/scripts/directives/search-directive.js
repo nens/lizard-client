@@ -1,10 +1,10 @@
 angular.module('lizard-nxt')
-  .directive('search', function (LocationService) {
+  .directive('search', ['LocationService', function (LocationService) {
     
   var link = function (scope, element, attrs) {
     
     // 13 refers to the RETURN key.
-    scope.searchKeyPress = function () {
+    scope.searchKeyPress = function ($event) {
       if ($event.target.id === "searchboxinput" &&
           $event.which === 13) {
         scope.box.content.location = {};
@@ -41,6 +41,7 @@ angular.module('lizard-nxt')
         }
       }
       destroyLocationModel();
+      scope.cleanInput();
     };
 
 
@@ -48,8 +49,10 @@ angular.module('lizard-nxt')
 
   return {
     link: link,
-    restrict: 'A',
+    restrict: 'E',
+    replace: true,
     templateUrl: 'templates/search.html'
   };
 
-});
+}]);
+
