@@ -2,9 +2,10 @@
  * Service to handle raster requests.
  */
 angular.module('lizard-nxt')
-  .service("RasterService", ["Restangular", "UtilService", "CabinetService", "$q",
+  .service("RasterService", ["Restangular", "UtilService", "CabinetService",
+    "$q", "LeafletService",
 
-  function (Restangular, UtilService, CabinetService, $q) {
+  function (Restangular, UtilService, CabinetService, $q, LeafletService) {
 
   var intensityData,
       cancelers = {};
@@ -49,23 +50,24 @@ angular.module('lizard-nxt')
   /**
    * Build the bounding box given an imageBounds
    */
-  var _buildBbox = function (imgBounds) {
-    return [imgBounds[0][1], imgBounds[1][0]].toString() +
-      ',' + [imgBounds[1][1], imgBounds[0][0]].toString();
+  var _buildBbox = function (bounds) {
+    var northWest = LeafletService.CRS.EPSG3857.project(new LeafletService.LatLng(
+          bounds.north, bounds.west
+        )),
+        southEast = LeafletService.CRS.EPSG3857.project(new LeafletService.LatLng(
+          bounds.south, bounds.east
+        ));
+
+    return [northWest.x, northWest.y].toString() +
+      ',' + [southEast.x, southEast.y].toString();
   };
 
   var buildURLforWMS = function (wmsLayer) {
-
-    var imgBounds = [
-      [wmsLayer.bounds.north, wmsLayer.bounds.west],
-      [wmsLayer.bounds.south, wmsLayer.bounds.east]
-    ],
-    opts = wmsLayer.options,
-    result = wmsLayer.url
-      + '?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng'
-      + '&SRS=EPSG%3A4326&LAYERS=' + wmsLayer.slug
-      + '&BBOX=' + _buildBbox(imgBounds);
-
+    var opts = wmsLayer.options,
+        result = wmsLayer.url
+          + '?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng'
+          + '&SRS=EPSG%3A3857&LAYERS=' + wmsLayer.slug
+          + '&BBOX=' + _buildBbox(wmsLayer.bounds);
 
     angular.forEach(opts, function (v, k) {
       result += UtilService.buildString('&', k.toUpperCase(), "=", v);
