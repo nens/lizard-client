@@ -108,43 +108,42 @@ angular.module('lizard-nxt')
 
         // We process the feature iff one of the following is true:
 
-        // 1) The event starts before tl start && the event ends after tl start:
+        // (1) The event starts before tl start && the event ends after tl start:
         //                      <--extent-->
         // kruik <----------oooo[oooo------]--------------------> eind der tijd
         // kruik <----------oooo[oooooooooo]oooo----------------> eind der tijd
         if (eventStartBeforeTLStart
             && eventEndAfterTLStart) { filteredSet.push(feature); }
 
-        // 2) The event starts within tl bounds:
+        // (2) The event starts within tl bounds:
         //                      <--extent-->
         // kruik <--------------[--oooooooo]oooo----------------> eind der tijd
         // kruik <--------------[--oooooo--]--------------------> eind der tijd
-        /*
-            A B C D | A and B | (A or C) and (B or D)
-            --------+---------+----------------------
-            0 0 0 0 |    0    |     0     0     0
-            0 0 0 1 |    0    |     0     0     1
-            0 0 1 0 |    0    |     1     0     0
-            0 0 1 1 |    0    |     1     1     1
-            0 1 0 0 |    0    |     0     0     1
-            0 1 0 1 |    0    |     0     0     1
-            0 1 1 0 |    0    |     1     1     1
-            0 1 1 1 |    0    |     1     1     1
-            --------+---------+-----------------------
-            1 0 0 0 |    0    |     1     0     0
-            1 0 0 1 |    0    |     1     1     1
-            1 0 1 0 |    0    |     1     0     0
-            1 0 1 1 |    0    |     1     1     1
-            1 1 0 0 |    1    |     1     1     1
-            1 1 0 1 |    1    |     1     1     1
-            1 1 1 0 |    1    |     1     1     1
-            1 1 1 1 |    1    |     1     1     1
 
-         */
-        // explicit code for (2) is redundant when viewing code for (3): since
+        // Explicit code for (2) is redundant when viewing code for (3): since
         // (3) |= (2) (see table)
 
-        // code for (2), for explicitness' sake:
+        //  A B C D | A and B | (A or C) and (B or D)
+        //  --------+---------+----------------------
+        //  0 0 0 0 |    0    |     0     0     0
+        //  0 0 0 1 |    0    |     0     0     1
+        //  0 0 1 0 |    0    |     1     0     0
+        //  0 0 1 1 |    0    |     1     1     1
+        //  0 1 0 0 |    0    |     0     0     1
+        //  0 1 0 1 |    0    |     0     0     1
+        //  0 1 1 0 |    0    |     1     1     1
+        //  0 1 1 1 |    0    |     1     1     1
+        //  --------+---------+-----------------------
+        //  1 0 0 0 |    0    |     1     0     0
+        //  1 0 0 1 |    0    |     1     1     1
+        //  1 0 1 0 |    0    |     1     0     0
+        //  1 0 1 1 |    0    |     1     1     1
+        //  1 1 0 0 |    1    |     1     1     1
+        //  1 1 0 1 |    1    |     1     1     1
+        //  1 1 1 0 |    1    |     1     1     1
+        //  1 1 1 1 |    1    |     1     1     1
+
+        // unused code for (2), for explicitness' sake:
         // else if (eventStartAfterTLStart
         //          && eventStartBeforeTLEnd) { filteredSet.push(feature); }
 
