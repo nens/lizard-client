@@ -12,7 +12,7 @@ angular.module('lizard-nxt')
  
     this.search = function (searchString) {
       if (searchString.length > 1) {
-       return CabinetService.geocode.get({q: searchString})
+       return CabinetService.geocode.get({q: searchString});
      }
     };
 

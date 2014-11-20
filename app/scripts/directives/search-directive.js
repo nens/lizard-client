@@ -32,7 +32,7 @@ angular.module('lizard-nxt')
           .then(function (response) {
             scope.cleanInput();
             scope.box.content.location = {};
-            return scope.box.content.location.data = response;
+            scope.box.content.location.data = response;
         });
     };
 
