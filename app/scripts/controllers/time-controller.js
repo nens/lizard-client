@@ -62,6 +62,11 @@ angular.module('lizard-nxt')
     syncTimeWrapper($scope.timeState);
   });
 
+  /**
+   * @description sets the timeStep and minLag on the basis of layergroups and
+   *              their temporalResolution. The temporal layer with the smallest
+   *              temporalResolution is leading.
+   */
   var configAnimation = function () {
     currentInterval = $scope.timeState.end - $scope.timeState.start;
     timeStep = Infinity;
@@ -71,8 +76,8 @@ angular.module('lizard-nxt')
       if (lg.isActive() && lg.temporal && lg.temporalResolution < timeStep) {
         timeStep = lg.temporalResolution;
         minLag = 250;
-        // When the stepsize is very large, increase minLag to take 5 seconds for
-        // the whole animation.
+        // When the stepsize is very large, increase minLag to take 5 seconds
+        // for the whole animation.
         if (timeStep > 3600000) {
           minLag = 5000 / (currentInterval / timeStep);
         }
@@ -80,7 +85,9 @@ angular.module('lizard-nxt')
     });
 
     // If no temporal layers were found, set to a default amount.
-    if (timeStep === Infinity) { timeStep = currentInterval / DEFAULT_NUMBER_OF_STEPS; }
+    if (timeStep === Infinity) {
+      timeStep = currentInterval / DEFAULT_NUMBER_OF_STEPS;
+    }
   };
 
   /**
@@ -141,6 +148,11 @@ angular.module('lizard-nxt')
     }
   };
 
+  /**
+   * @description creates a promise by calling syncTime or calls syncTime when
+   *              the promise is already there.
+   * @param  {object} timeState nxt timeState object
+   */
   var syncTimeWrapper = function (timeState) {
     if (promise) {
       promise.then(function () {
@@ -155,6 +167,12 @@ angular.module('lizard-nxt')
     }
   };
 
+  /**
+   * @description progresses animation when provided promiss finishes and the
+   *              minLag has passed. Sets buffering when he promise is not re-
+   *              solved after minLag.
+   * @param  {promise} finish
+   */
   var progressAnimation = function (finish) {
     // Remove any old timeout
     clearTimeout(timeOut);
