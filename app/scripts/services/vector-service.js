@@ -75,28 +75,19 @@ angular.module('lizard-nxt')
     var filterTemporal = function (sourceArray, temporal) {
 
       var filteredSet = [],
-
           eventStartBeforeTLStart,
           eventStartAfterTLStart,
-          eventStartBeforeTLEnd,
-          eventStartAfterTLEnd,
-
           eventEndBeforeTLStart,
           eventEndAfterTLStart,
-          eventEndBeforeTLEnd,
-          eventEndAfterTLEnd;
+          eventEndBeforeTLEnd;
 
       sourceArray.forEach(function (feature) {
 
         eventStartBeforeTLStart = false;
         eventStartAfterTLStart = false;
-        eventStartBeforeTLEnd = false;
-        eventStartAfterTLEnd = false;
-
         eventEndBeforeTLStart = false;
         eventEndAfterTLStart = false;
         eventEndBeforeTLEnd = false;
-        eventEndAfterTLEnd = false;
 
         if (temporal.start) {
           // we can set the 4 booleans related to ..TLStart:
@@ -111,32 +102,51 @@ angular.module('lizard-nxt')
         }
 
         if (temporal.end) {
-          // we can set the 4 booleans related to ..TLEnd:
-          eventStartBeforeTLEnd
-            = feature.properties.timestamp_start < temporal.end;
-          eventStartAfterTLEnd
-            = !eventStartAfterTLEnd;
           eventEndBeforeTLEnd
-            = feature.properties.timestamp_end < temporal.end;
-          eventEndAfterTLEnd
-            = !eventEndBeforeTLEnd;
+            = feature.properties.timestamp_end < temporal.end;// chk
         }
 
         // We process the feature iff one of the following is true:
 
         // 1) The event starts before tl start && the event ends after tl start:
         //                      <--extent-->
-        // kruik <----------oooo[oooo------]--------------------- eind der tijd
-        // kruik <----------oooo[oooooooooo]oooo----------------- eind der tijd
+        // kruik <----------oooo[oooo------]--------------------> eind der tijd
+        // kruik <----------oooo[oooooooooo]oooo----------------> eind der tijd
         if (eventStartBeforeTLStart
             && eventEndAfterTLStart) { filteredSet.push(feature); }
 
-        // 2) The event starts within tl bounds && the event ends after the tl ends:
+        // 2) The event starts within tl bounds:
         //                      <--extent-->
-        // kruik ---------------[------oooo]oooo----------------- eind der tijd
-        // kruik ---------------[--oooooo--]--------------------- eind der tijd
-        else if (eventStartAfterTLStart
-                 && eventStartBeforeTLEnd) { filteredSet.push(feature); }
+        // kruik <--------------[--oooooooo]oooo----------------> eind der tijd
+        // kruik <--------------[--oooooo--]--------------------> eind der tijd
+        /*
+            A B C D | A and B | (A or C) and (B or D)
+            --------+---------+----------------------
+            0 0 0 0 |    0    |     0     0     0
+            0 0 0 1 |    0    |     0     0     1
+            0 0 1 0 |    0    |     1     0     0
+            0 0 1 1 |    0    |     1     1     1
+            0 1 0 0 |    0    |     0     0     1
+            0 1 0 1 |    0    |     0     0     1
+            0 1 1 0 |    0    |     1     1     1
+            0 1 1 1 |    0    |     1     1     1
+            --------+---------+-----------------------
+            1 0 0 0 |    0    |     1     0     0
+            1 0 0 1 |    0    |     1     1     1
+            1 0 1 0 |    0    |     1     0     0
+            1 0 1 1 |    0    |     1     1     1
+            1 1 0 0 |    1    |     1     1     1
+            1 1 0 1 |    1    |     1     1     1
+            1 1 1 0 |    1    |     1     1     1
+            1 1 1 1 |    1    |     1     1     1
+
+         */
+        // explicit code for (2) is redundant when viewing code for (3): since
+        // (3) |= (2) (see table)
+
+        // code for (2), for explicitness' sake:
+        // else if (eventStartAfterTLStart
+        //          && eventStartBeforeTLEnd) { filteredSet.push(feature); }
 
         // 3) Also, deal with undefined start/end values:
         else if (
