@@ -260,11 +260,9 @@ angular.module('lizard-nxt')
 
               if (this._imageOverlays[frameIndex].options.opacity !== 0
                 && frameIndex !== currentOverlayIndex) {
-
-                var oldFrame = this._imageOverlays[frameIndex];
                 // Delete the old overlay from the lookup, it is gone.
                 delete this._frameLookup[key];
-                this._replaceUrlFromFrame(oldFrame);
+                this._replaceUrlFromFrame(frameIndex);
               }
             }, this);
 
@@ -288,16 +286,15 @@ angular.module('lizard-nxt')
          *                      and _nLoadingRasters === 0.
          */
         _replaceUrlFromFrame: {
-          value: function (frame, defer) {
-            var url = this._imageUrlBase +
-              this._formatter(new Date(this._nxtDate));
+          value: function (frameIndex, defer) {
+            var url = this._imageUrlBase + this._formatter(new Date(this._nxtDate));
+            var frame = this._imageOverlays[frameIndex];
 
+            frame.off('load');
             frame.setOpacity(0);
             if (url !== frame._url) {
-              frame
-                .off('load')
-                .setUrl(url);
               this._addLoadListener(frame, this._nxtDate, defer);
+              frame.setUrl(url);
             }
             else {
               var index = this._imageOverlays.indexOf(frame);
@@ -327,7 +324,7 @@ angular.module('lizard-nxt')
             this._nLoadingRasters = 0;
 
             angular.forEach(overlays, function (overlay, i) {
-              this._replaceUrlFromFrame(overlay, defer);
+              this._replaceUrlFromFrame(i, defer);
             }, this);
 
             return overlays;
@@ -346,10 +343,11 @@ angular.module('lizard-nxt')
          */
         _addLoadListener: {
           value: function (overlay, date, defer) {
-            this._nLoadingRasters++;
 
-            overlay.on("load", function () {
+            this._nLoadingRasters++;
+            overlay.addOneTimeEventListener("load", function () {
               this._nLoadingRasters--;
+
               var index = this._imageOverlays.indexOf(overlay);
               this._frameLookup[date] = index;
               if (defer && index === 0) {

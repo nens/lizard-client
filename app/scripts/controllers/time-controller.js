@@ -75,12 +75,10 @@ angular.module('lizard-nxt')
     angular.forEach($scope.mapState.layerGroups, function (lg) {
       if (lg.isActive() && lg.temporal && lg.temporalResolution < timeStep) {
         timeStep = lg.temporalResolution;
-        minLag = 250;
-        // When the stepsize is very large, increase minLag to take 5 seconds
-        // for the whole animation.
-        if (timeStep > 3600000) {
-          minLag = 5000 / (currentInterval / timeStep);
-        }
+        // equals to 250 ms for 5 minutes, increases for larger timeSteps untill
+        // it reaches 1 second between frames for timeSteps of > 20 minutes.
+        minLag = timeStep / 1200 > 240 ? timeStep / 1200 : 250;
+        minLag = minLag > 1000 ? 1000 : minLag;
       }
     });
 

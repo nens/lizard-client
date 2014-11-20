@@ -44,6 +44,8 @@ angular.module('lizard-nxt')
         forChooser: true
       });
 
+      chooser.syncTime(scope.timeState);
+
 
       // To speed-up initial load of the app layerchooser layers are toggled
       // after 3000 ms.

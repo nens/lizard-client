@@ -59,13 +59,6 @@ angular.module('lizard-nxt')
               )
             {
               _layerGroup.toggle(map);
-
-            } else if (layerGroup.temporal
-              && _layerGroup.temporal
-              && _layerGroup.isActive()
-              && _layerGroup.slug !== layerGroup.slug) {
-
-              _layerGroup.toggle(map);
             }
           });
         }
