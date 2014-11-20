@@ -7,7 +7,6 @@ angular.module('lizard-nxt')
     scope.searchKeyPress = function ($event) {
       if ($event.target.id === "searchboxinput" &&
           $event.which === 13) {
-        scope.box.content.location = {};
         scope.search();
      }
       element.focus();
@@ -17,6 +16,7 @@ angular.module('lizard-nxt')
       LocationService.search(scope.geoquery)
           .then(function (response) {
             scope.cleanInput();
+            scope.box.content.location = {};
             return scope.box.content.location.data = response;
         });
     };

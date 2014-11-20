@@ -1,4 +1,9 @@
 <div ng-controller="LineCtrl">
+  <div class="card active"
+    ng-if="box.content.location">
+    <location></location>
+  </div>
+
   <div ng-repeat="lg in box.content" class="card active" id="card-<% l.name %>">
     <div ng-repeat="l in lg.layers"
       id="card-content-<% l.name %>"

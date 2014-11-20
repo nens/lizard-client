@@ -1,11 +1,11 @@
 <div ng-controller="AreaCtrl">
+  <div class="card active"
+    ng-if="box.content.location">
+    <location></location>
+  </div>
+
   <div ng-repeat="(slug, lg) in box.content" class="card active" id="card-<% slug %>">
     
-    <div class="card active"
-      ng-if="box.content.location">
-      <location></location>
-    </div>
-
     <div
       ng-repeat="(lslug, l) in lg.layers"
       ng-if="!!l && l.data"

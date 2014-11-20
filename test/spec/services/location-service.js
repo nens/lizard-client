@@ -11,8 +11,9 @@ describe('Service: LocationService', function () {
     LocationService = _LocationService_;
   }));
 
-  it('should do something', function () {
-    expect(!!LocationService).toBe(true);
+  it('should return a CabinetService promise ', function () {
+    var result = LocationService.search('testQuery');
+    expect(result.hasOwnProperty('then')).toBe(true);
   });
 
 });
