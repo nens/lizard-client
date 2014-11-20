@@ -317,7 +317,6 @@ angular.module('lizard-nxt')
      * Update aggWindow element when timeState.at changes.
      */
     scope.$watch('timeState.at', function (n, o) {
-      if (n === o) { return true; }
       timeline.drawAggWindow(scope.timeState.at, scope.timeState.aggWindow);
     });
 
