@@ -76,7 +76,7 @@ angular.module('lizard-nxt')
           layers.push(new NxtWMSLayer(layer));
         }
         else if (layer.type === 'WMS' && !layer.tiled) {
-          layers.push(new NxtNonTiledWMSLayer(layer, this.temporalResolution));
+          layers.push(new NxtNonTiledWMSLayer(layer, layerGroup.temporal_resolution));
         }
         else if (layer.type === 'UTFGrid') {
           layers.push(new NxtUTFLayer(layer));
@@ -222,6 +222,9 @@ angular.module('lizard-nxt')
       syncTime: function (timeState, map) {
         var defer = $q.defer();
         if (!this._active) {
+          angular.forEach(this._layers, function (layer) {
+            layer.timeState = timeState;
+          });
           defer.resolve();
         }
         else {
@@ -230,7 +233,7 @@ angular.module('lizard-nxt')
             var layer = this._layers[i];
             promises.push(layer.syncTime(timeState, map));
           }
-          $q.all(promises).then(defer.resolve());
+          $q.all(promises).then(function () { defer.resolve(); });
         }
         return defer.promise;
       },
@@ -250,7 +253,6 @@ angular.module('lizard-nxt')
       },
 
       _toggleLayers: function (map, layers, active) {
-
         if (active && layers.length > 0) {
           addLayersRecursively(map, layers, 0);
         }

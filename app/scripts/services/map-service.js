@@ -59,13 +59,6 @@ angular.module('lizard-nxt')
               )
             {
               _layerGroup.toggle(map);
-
-            } else if (layerGroup.temporal
-              && _layerGroup.temporal
-              && _layerGroup.isActive()
-              && _layerGroup.slug !== layerGroup.slug) {
-
-              _layerGroup.toggle(map);
             }
           });
         }
@@ -74,10 +67,11 @@ angular.module('lizard-nxt')
       syncTime: function (timeState) {
         var defer = $q.defer();
         var promises = [];
-        this.layerGroups.forEach(function (layerGroup) {
+        angular.forEach(this.layerGroups, function (layerGroup) {
           promises.push(layerGroup.syncTime(timeState, this._map));
         }, this);
-        $q.all(promises).then(defer.resolve());
+        $q.all(promises).then(function () { defer.resolve(); });
+        return defer.promise;
       },
 
       /**

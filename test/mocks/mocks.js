@@ -136,6 +136,12 @@ window.data_layers = {
         "z_index": 2,
         "url": "http://raster.lizard.net/wms",
         "tiled": false,
+        "bounds": {
+          "west": 1.324296158471368,
+          "east": 8.992548357936204,
+          "north": 54.28458617998074,
+          "south": 49.82567047026146
+        },
         "temporal": true,
         "aggregation_type": "none",
         "opacity": 1.0
