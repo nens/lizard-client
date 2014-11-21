@@ -107,7 +107,7 @@ angular.module('lizard-nxt')
     //getRasterData: getRasterData,
     getData: getData,
     // getTemporalRaster: getTemporalRaster,
-    getImgOverlays: getImgOverlays,
+    //getImgOverlays: getImgOverlays,
     handleElevationCurve: handleElevationCurve,
     //getRasterDataForExtentData: getRasterDataForExtentData,
   };
