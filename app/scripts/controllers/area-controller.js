@@ -26,7 +26,7 @@ angular.module('lizard-nxt')
      *                                  leaflet bounds.
      */
     var fillArea = function (bounds) {
-      //TODO draw feedback when loading data
+     //TODO draw feedback when loading data
       var promises = $scope.fillBox({
         geom: bounds,
         start: $scope.timeState.start,

@@ -68,26 +68,92 @@ angular.module('lizard-nxt')
     /**
      * @function
      * @description filters geojson array on temporal bounds.
-     * @param  {object}         start end object
-     * @param  {featureArray}   sourceArray
-     * @return {filteredSet}    filtered set of features.
+     * @param  {object}      start end object
+     * @param  {feature[]}   sourceArray
+     * @return {filteredSet} filtered set of features.
      */
     var filterTemporal = function (sourceArray, temporal) {
-      var filteredSet = [];
+
+      var filteredSet = [],
+          eventStartBeforeTLStart,
+          eventStartAfterTLStart,
+          eventEndBeforeTLStart,
+          eventEndAfterTLStart,
+          eventEndBeforeTLEnd;
+
       sourceArray.forEach(function (feature) {
-        var afterStart = false;
-        var beforeEnd = false;
+
+        eventStartBeforeTLStart = false;
+        eventStartAfterTLStart = false;
+        eventEndBeforeTLStart = false;
+        eventEndAfterTLStart = false;
+        eventEndBeforeTLEnd = false;
+
         if (temporal.start) {
-          afterStart = feature.properties.timestamp_start >= temporal.start;
-        }
-        if (temporal.end) {
-          beforeEnd = feature.properties.timestamp_end <= temporal.end;
+          // we can set the 4 booleans related to ..TLStart:
+          eventStartBeforeTLStart
+            = feature.properties.timestamp_start < temporal.start;
+          eventStartAfterTLStart
+            = !eventStartBeforeTLStart;
+          eventEndBeforeTLStart
+            = feature.properties.timestamp_end < temporal.start;
+          eventEndAfterTLStart
+            = !eventEndBeforeTLStart;
         }
 
-        if ((afterStart || temporal.start === undefined) &&
-            (beforeEnd || temporal.end === undefined)) {
-          filteredSet.push(feature);
+        if (temporal.end) {
+          eventEndBeforeTLEnd
+            = feature.properties.timestamp_end < temporal.end;// chk
         }
+
+        // We process the feature iff one of the following is true:
+
+        // (1) The event starts before tl start && the event ends after tl start:
+        //                      <--extent-->
+        // kruik <----------oooo[oooo------]--------------------> eind der tijd
+        // kruik <----------oooo[oooooooooo]oooo----------------> eind der tijd
+        if (eventStartBeforeTLStart
+            && eventEndAfterTLStart) { filteredSet.push(feature); }
+
+        // (2) The event starts within tl bounds:
+        //                      <--extent-->
+        // kruik <--------------[--oooooooo]oooo----------------> eind der tijd
+        // kruik <--------------[--oooooo--]--------------------> eind der tijd
+
+        // Explicit code for (2) is redundant when viewing code for (3): since
+        // (3) |= (2) (see table)
+
+        //  A B C D | A and B | (A or C) and (B or D)
+        //  --------+---------+----------------------
+        //  0 0 0 0 |    0    |     0     0     0
+        //  0 0 0 1 |    0    |     0     0     1
+        //  0 0 1 0 |    0    |     1     0     0
+        //  0 0 1 1 |    0    |     1     1     1
+        //  0 1 0 0 |    0    |     0     0     1
+        //  0 1 0 1 |    0    |     0     0     1
+        //  0 1 1 0 |    0    |     1     1     1
+        //  0 1 1 1 |    0    |     1     1     1
+        //  --------+---------+-----------------------
+        //  1 0 0 0 |    0    |     1     0     0
+        //  1 0 0 1 |    0    |     1     1     1
+        //  1 0 1 0 |    0    |     1     0     0
+        //  1 0 1 1 |    0    |     1     1     1
+        //  1 1 0 0 |    1    |     1     1     1
+        //  1 1 0 1 |    1    |     1     1     1
+        //  1 1 1 0 |    1    |     1     1     1
+        //  1 1 1 1 |    1    |     1     1     1
+
+        // unused code for (2), for explicitness' sake:
+        // else if (eventStartAfterTLStart
+        //          && eventStartBeforeTLEnd) { filteredSet.push(feature); }
+
+        // 3) Also, deal with undefined start/end values:
+        else if (
+                  (temporal.start === undefined || eventStartAfterTLStart)
+                  && (temporal.end === undefined || eventEndBeforeTLEnd)
+                )
+                { filteredSet.push(feature); }
+
       });
       return filteredSet;
     };
@@ -150,7 +216,7 @@ angular.module('lizard-nxt')
         layer = options.layer;
       } else {
         layer = nonLeafLayer._leafletLayer;
-        layerSlug = nonLeafLayer.slug
+        layerSlug = nonLeafLayer.slug;
       }
 
 
@@ -228,7 +294,7 @@ angular.module('lizard-nxt')
 
     /**
      * @description appends data if zoom level hasn't changed
-     * 
+     *
      */
     var setData = function (layerSlug, data, zoom) {
       if (vectorLayers.hasOwnProperty(layerSlug)

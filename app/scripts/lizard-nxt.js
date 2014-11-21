@@ -293,12 +293,12 @@ angular.module('lizard-nxt')
   // NOTE: This fires the watches too often
   $scope.keyPress = function ($event) {
     if ($event.target.nodeName === "INPUT" &&
-      ($event.which !== 27 && $event.which !== 13)) {
+      ($event.which !== 27 && $event.which !== 13
+       && $event.which !== 32)) {
       return;
     }
-    $scope.keyIsPressed = !$scope.keyIsPressed;
-    $scope.keyPressed = $event.which;
-    $scope.keyTarget = $event.target;
+
+   
     if ($event.which === 27) {
       // If detailMode is active, close that
       if ($scope.box.contextSwitchMode) {
@@ -309,8 +309,8 @@ angular.module('lizard-nxt')
         // $scope.box.empty = null;
       }
     }
-
-    // play pause timeline
+    
+    // play pause timeline with Space.
     if ($event.which === 32) {
       $scope.timeState.playPauseAnimation();
     }
