@@ -98,7 +98,7 @@ angular.module('lizard-nxt')
     };
 
     // keep track of events in this scope
-    scope.events = {events: 0, slugs: []};
+    scope.events = {nEvents: 0, slugs: []};
 
     // Initialise timeline
     var timeline = new Timeline(
