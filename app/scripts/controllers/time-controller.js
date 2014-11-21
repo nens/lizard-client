@@ -56,9 +56,11 @@ angular.module('lizard-nxt')
 
   /**
    * Sync to new time and trigger a new step when animation.playing is true.
+   *
+   * Layergroups need a time synced to them before being toggled. Therefore, no
+   * n === o return here.
    */
-  $scope.$watch('timeState.at', function (n, o) {
-    if (n === o) { return; }
+  $scope.$watch('timeState.at', function () {
     syncTimeWrapper($scope.timeState);
   });
 
@@ -146,22 +148,41 @@ angular.module('lizard-nxt')
     }
   };
 
+  var turnBufferOff = function () {
+    if (!$scope.$$phase) {
+      $scope.$apply(function () {
+        $scope.timeState.buffering = false;
+      });
+    }
+    else { $scope.timeState.buffering = false; }
+  };
+
   /**
    * @description creates a promise by calling syncTime or calls syncTime when
    *              the promise is already there.
    * @param  {object} timeState nxt timeState object
    */
   var syncTimeWrapper = function (timeState) {
-    if (promise) {
-      promise.then(function () {
-        promise = $scope.mapState.syncTime(timeState);
+    var finish;
+    $scope.timeState.buffering = true;
+    if (promise === undefined) {
+      promise = $scope.mapState.syncTime(timeState);
+      finish = promise.then(function () {
+        turnBufferOff();
+        promise = undefined;
       });
-      if ($scope.timeState.animation.playing) {
-        progressAnimation(promise);
-      }
     }
     else {
-      promise = $scope.mapState.syncTime(timeState);
+      finish = promise.then(function () {
+        turnBufferOff();
+        promise = $scope.mapState.syncTime(timeState);
+        promise.then(function () {
+          promise = undefined;
+        });
+      });
+    }
+    if ($scope.timeState.animation.playing) {
+      progressAnimation(finish);
     }
   };
 
@@ -178,14 +199,8 @@ angular.module('lizard-nxt')
     timeOut = setTimeout(function () {
       // And the layergroups are all ready
       finish.then(function () {
-        $scope.timeState.buffering = false;
         // And the browser is ready.
         window.requestAnimationFrame(step);
-      });
-      // When we get here, the animator is waiting for the layergroups
-      // to finish syncing.
-      $scope.$apply(function () {
-        $scope.timeState.buffering = true;
       });
     }, minLag);
   };
