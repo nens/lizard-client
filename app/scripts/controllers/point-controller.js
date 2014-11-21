@@ -31,11 +31,6 @@ angular.module('lizard-nxt')
      */
     var fillpoint = function (here) {
 
-      // if geocode query has been used it needs to be destroyed now
-      if ($scope.box.content.hasOwnProperty('location')) {
-        delete $scope.box.content.location;
-      }
-
       if ($scope.box.type !== 'point') { return; }
 
       ClickFeedbackService.drawCircle($scope.mapState, here);

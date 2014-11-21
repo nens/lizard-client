@@ -2,4 +2,13 @@
   <search></search>
 </div>
 
-<div id="cards" class="pullDown cardbox" ng-show="box.showCards"></div>
+<div id="cards" class="pullDown cardbox" ng-show="box.showCards">
+
+  <div class="card active"
+       ng-if="box.content.location">
+    <location></location>
+  </div>
+
+  <div id="box-type-cards"></div>
+
+</div>

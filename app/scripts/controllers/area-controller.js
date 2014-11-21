@@ -26,11 +26,6 @@ angular.module('lizard-nxt')
      *                                  leaflet bounds.
      */
     var fillArea = function (bounds) {
-      // if geocode query has been used it needs to be destroyed now
-      if ($scope.box.content.hasOwnProperty('location')) {
-        delete $scope.box.content.location;
-      }
-
      //TODO draw feedback when loading data
       var promises = $scope.fillBox({
         geom: bounds,
