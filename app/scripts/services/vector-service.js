@@ -216,7 +216,7 @@ angular.module('lizard-nxt')
         layer = options.layer;
       } else {
         layer = nonLeafLayer._leafletLayer;
-        layerSlug = nonLeafLayer.slug
+        layerSlug = nonLeafLayer.slug;
       }
 
 
