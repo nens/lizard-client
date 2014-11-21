@@ -6,13 +6,13 @@
  */
 angular.module('lizard-nxt')
   .directive('search', ['LocationService', function (LocationService) {
-    
+
   var link = function (scope, element, attrs) {
-    
+
     /**
      * @description event handler for key presses.
      * checks if enter is pressed, does search.
-     * @param {event} event that is fired. 
+     * @param {event} event that is fired.
      * 13 refers to the RETURN key.
      */
     scope.searchKeyPress = function ($event) {
@@ -28,12 +28,18 @@ angular.module('lizard-nxt')
      * with the right query and puts in on the scope.
      */
     scope.search = function () {
-      LocationService.search(scope.geoquery)
+      if (scope.geoquery && scope.geoquery.length > 1) {
+        LocationService.search(scope.geoquery)
           .then(function (response) {
             scope.cleanInput();
             scope.box.content.location = {};
             scope.box.content.location.data = response;
-        });
+          }
+        );
+      }
+      else {
+        scope.cleanInput();
+      }
     };
 
     /**
@@ -42,7 +48,7 @@ angular.module('lizard-nxt')
     var destroyLocationModel = function () {
       delete scope.box.content.location;
     };
-    
+
     /**
      * @description resets input field
      * on scope, because also needs to trigger on reset button,
@@ -51,7 +57,7 @@ angular.module('lizard-nxt')
     scope.cleanInput = function () {
       scope.geoquery = "";
     };
-   
+
     /**
      * @description zooms to search result
      * @param {object} one search result.

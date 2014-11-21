@@ -8,12 +8,13 @@
  * Service in the lizardClientApp.
  */
 angular.module('lizard-nxt')
-  .service('LocationService', function LocationService (CabinetService) {
- 
+  .service('LocationService', ['CabinetService', function LocationService(CabinetService) {
+
     this.search = function (searchString) {
       if (searchString.length > 1) {
-       return CabinetService.geocode.get({q: searchString});
-     }
+        return CabinetService.geocode.get({q: searchString});
+      }
     };
 
-  });
+  }
+]);
