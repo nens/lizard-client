@@ -101,10 +101,6 @@ angular.module('lizard-nxt')
                 date = new Date(this._mkTimeStamp(this.timeState.at)),
                 imageUrl = this._imageUrlBase + this._formatter(date);
 
-            console.log('[F] NxtNonTiledWMSLayer.add()');
-            console.log('---- date =', date);
-            console.log('---- imageUrl =', imageUrl);
-
             this._imageOverlays = [
               LeafletService.imageOverlay(
                 imageUrl,
@@ -295,8 +291,6 @@ angular.module('lizard-nxt')
           value: function (frameIndex, defer) {
             var url = this._imageUrlBase + this._formatter(new Date(this._nxtDate));
             var frame = this._imageOverlays[frameIndex];
-            console.log('_replaceUrlFromFrame()');
-            console.log('---- url =', url);
             frame.off('load');
             frame.setOpacity(0);
             if (url !== frame._url) {

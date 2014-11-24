@@ -25,11 +25,6 @@ angular.module('lizard-nxt')
    */
   this.roundTimestamp = function (timestamp, coefficient, needTzOffset) {
 
-    console.log('[F] UtilSvc.roundTimestamp()');
-    console.log('---> timestamp =', timestamp);
-    console.log('---> coefficient =', coefficient);
-    console.log('---> needTzOffset =', needTzOffset);
-
     var roundedTimestamp = parseInt((timestamp + (coefficient / 2)) /
                                     coefficient, 10) * coefficient;
     if (!!needTzOffset) {
@@ -38,7 +33,6 @@ angular.module('lizard-nxt')
       roundedTimestamp = roundedTimestamp - timeZoneOffset;
     }
 
-    console.log('<--- roundedTimestamp =', roundedTimestamp);
     return roundedTimestamp;
   };
 
