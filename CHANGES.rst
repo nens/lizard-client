@@ -4,6 +4,11 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+-
+
+Release 0.2b15 (2014-11-24)
+---------------------------
+
 - Bars end at the provided value from the api.
 
 - X labels come from the backend again.
