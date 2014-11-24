@@ -35,7 +35,7 @@ angular.module('lizard-nxt')
       });
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
-          if (response.data && response.layerSlug === 'ahn2/wss') {
+          if (response.data && response.layerSlug === 'dem/nl') {
             $scope.box.content[response.layerGroupSlug]
               .layers[response.layerSlug]
               // Since the data is not properly formatted in the back
