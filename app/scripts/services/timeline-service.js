@@ -554,7 +554,7 @@ angular.module('lizard-nxt')
         if (barData[0] !== undefined) {
           var newWidth = xScale(barData[1][0]) - xScale(barData[0][0]);
           bars
-            .attr("x", function (d) { return xScale(d[0]) - 0.5 * newWidth; })
+            .attr("x", function (d) { return xScale(d[0]) - newWidth; })
             .attr('width', newWidth);
         }
       }
@@ -647,7 +647,7 @@ angular.module('lizard-nxt')
             return newHeight - yScale(d[1]);
           })
           .attr("x", function (d) {
-            return xScale(d[0]) - 0.5 * barWidth;
+            return xScale(d[0]) - barWidth;
           });
       } else {
         rectangles.transition()
@@ -657,7 +657,7 @@ angular.module('lizard-nxt')
             return newHeight - yScale(d[1]);
           })
           .attr("x", function (d) {
-            return xScale(d[0]) - 0.5 * barWidth;
+            return xScale(d[0]) - barWidth;
           });
       }
     }
@@ -818,7 +818,7 @@ angular.module('lizard-nxt')
     // Update old elements as needed.
     bars.transition()
       .duration(Timeline.prototype.transTime)
-      .attr("x", function (d) { return xScale(d[0]) - 0.5 * barWidth; })
+      .attr("x", function (d) { return xScale(d[0]) - barWidth; })
       .attr('width', barWidth)
       .attr("height", function (d) { return yScale(d[1]); })
       .attr("y", function (d) { return height - yScale(d[1]); });
@@ -827,7 +827,7 @@ angular.module('lizard-nxt')
     // Create new elements as needed.
     bars.enter().append("rect")
       .attr("class", "bar-timeline")
-      .attr("x", function (d) { return xScale(d[0]) - 0.5 * barWidth; })
+      .attr("x", function (d) { return xScale(d[0]) - barWidth; })
       .attr('width', barWidth)
       .attr("height", 0)
       .attr("y", height)

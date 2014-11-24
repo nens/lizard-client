@@ -4,7 +4,9 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
-- X labels come from the backend again
+- Bars end at the provided value from the api.
+
+- X labels come from the backend again.
 
 - Added ability to animate multiple rasters with different timeSteps.
 
