@@ -253,11 +253,12 @@ angular.module('lizard-nxt')
           ["%Y", function () { return true; }]
         ]);
         axis.tickFormat(tickFormat);
-      }
-      if (options.tickFormat) {
-        axis.tickFormat(options.tickFormat);
       } else {
-        axis.tickFormat(this._localeFormatter.nl_NL.numberFormat());
+        if (options.tickFormat) {
+          axis.tickFormat(options.tickFormat);
+        } else {
+          axis.tickFormat(this._localeFormatter.nl_NL.numberFormat());
+        }
       }
       return axis;
     },
