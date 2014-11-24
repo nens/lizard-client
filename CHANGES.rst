@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- Changed slug of ahn2 elevation wms layer.
+
 -
 
 Release 0.2b12 (2014-11-17)
