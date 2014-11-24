@@ -27,7 +27,7 @@ angular.module('lizard-nxt')
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
           if (response.data
-             && response.layerSlug === 'ahn2/wss'
+             && response.layerSlug === 'dem/nl'
              // Prevent trying to fill $scope.box.content[response.layerGroupSlug]
              // when retrieved data wasn't rich enough for it's initialization:
              && $scope.box.content[response.layerGroupSlug]
