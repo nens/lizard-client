@@ -4,9 +4,15 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
-- Changed slug of ahn2 elevation wms layer.
+- Added ability to animate multiple rasters with different timeSteps.
 
--
+- TimeStep and time between frames are dependant on temporalresolution of
+  layergroups.
+
+- Layegroups return promises when syncing to time. Animation only progresses
+  when promises are resolved.
+
+- Changed slug of ahn2 elevation wms layer.
 
 Release 0.2b12 (2014-11-17)
 ---------------------------

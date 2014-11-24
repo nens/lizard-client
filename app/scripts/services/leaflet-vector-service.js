@@ -5,7 +5,7 @@
  * @name LeafletVectorService
  * @description
  * # LeafletVector
- * Creates a Tiled Layer for retrieving and drawing vector data. 
+ * Creates a Tiled Layer for retrieving and drawing vector data.
  */
 angular.module('lizard-nxt')
   .service('LeafletVectorService', ["LeafletService", "VectorService",
@@ -14,17 +14,17 @@ angular.module('lizard-nxt')
   /**
    * Leaflet does not have a tiled geojson layer.
    * So.. we made it.
-   * 
-   * It uses the tiling mechanism to retrieve data. Which when loaded
-   * fires a dataCallback (defined in layer options). 
    *
-   * For every tile that comes in it draws data in a geojsonLayer. 
+   * It uses the tiling mechanism to retrieve data. Which when loaded
+   * fires a dataCallback (defined in layer options).
+   *
+   * For every tile that comes in it draws data in a geojsonLayer.
    *
    */
   var TileDataLayer = LeafletService.TileLayer.extend({
     /**
-     * @function 
-     * @description adds functionality to original Add function 
+     * @function
+     * @description adds functionality to original Add function
      * of Leaflet.
      */
     onAdd: function (map) {
@@ -152,7 +152,7 @@ angular.module('lizard-nxt')
       }
     },
     /**
-     * @function 
+     * @function
      * @description empties and re-adds geojsonlayer to the map
      */
     _resetgeoJson: function () {
@@ -161,7 +161,7 @@ angular.module('lizard-nxt')
         .addTo(this._map);
     },
     /**
-     * @function 
+     * @function
      * @description counts all the data for the same point
      * @param {object} geojson features array
      */
@@ -215,7 +215,7 @@ angular.module('lizard-nxt')
     /**
      * @function
      * @description this passes the received data on to the
-     * VectorService 
+     * VectorService
      */
     addTileData: function (featureCollection, point) {
       if (!featureCollection) { return; }
@@ -228,25 +228,25 @@ angular.module('lizard-nxt')
             );
       }
     },
-    setTime: function (layer, timeState) {
+    syncTime: function (layer, timeState) {
       //this.options.layer = layer;
       this.options.start = timeState.start;
       this.options.end = timeState.end;
       this.redraw();
     },
-    
+
     redraw: function () {
       var self = this;
       VectorService.getData(
-          self.options.slug, {
-            layer: self,
-            geom: self._map.getBounds(),
-            start: self.options.start,
-            end: self.options.end
-          }).then(function (response) {
-            self._resetgeoJson();
-            self.drawTheThings(response, self);
-          }); 
+        self.options.slug, {
+          layer: self,
+          geom: self._map.getBounds(),
+          start: self.options.start,
+          end: self.options.end
+        }).then(function (response) {
+          self._resetgeoJson();
+          self.drawTheThings(response, self);
+        });
     },
 
     /**
@@ -274,9 +274,11 @@ angular.module('lizard-nxt')
       if (!this.isLoading) {
         this.fire('loadend');
       }
+
+      this.redraw();
     }
   });
-  
+
   return TileDataLayer;
 
 }]);
