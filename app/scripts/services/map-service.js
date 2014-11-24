@@ -2,7 +2,7 @@
 
 /**
  * @ngdoc service
- * @class NxtMap
+ * @class NxtMap / TODO: rename to what it is, like NxtDataHub
  * @memberof app
  * @name NxtMapService
  * @requires LeafletService
@@ -14,9 +14,9 @@
  */
 
 angular.module('lizard-nxt')
-  .service('NxtMap', ['$rootScope', '$filter', '$http', 'CabinetService',
+  .service('NxtMap', ['$rootScope', '$filter', '$http', '$q', 'CabinetService',
   'LeafletService', 'LayerGroup',
-  function ($rootScope, $filter, $http, CabinetService,
+  function ($rootScope, $filter, $http, $q, CabinetService,
     LeafletService, LayerGroup) {
 
     function NxtMap(element, serverSideLayerGroups, options) {
@@ -59,16 +59,19 @@ angular.module('lizard-nxt')
               )
             {
               _layerGroup.toggle(map);
-
-            } else if (layerGroup.temporal
-              && _layerGroup.temporal
-              && _layerGroup.isActive()
-              && _layerGroup.slug !== layerGroup.slug) {
-
-              _layerGroup.toggle(map);
             }
           });
         }
+      },
+
+      syncTime: function (timeState) {
+        var defer = $q.defer();
+        var promises = [];
+        angular.forEach(this.layerGroups, function (layerGroup) {
+          promises.push(layerGroup.syncTime(timeState, this._map));
+        }, this);
+        $q.all(promises).then(function () { defer.resolve(); });
+        return defer.promise;
       },
 
       /**
@@ -154,17 +157,7 @@ angular.module('lizard-nxt')
 
       removeLayer: function (layer) {
         this._map.removeLayer(layer);
-      },
-
-      getActiveTemporalLayerGroup: function () {
-        var result;
-        angular.forEach(this.layerGroups, function (layerGroup) {
-          if (layerGroup.temporal && layerGroup.isActive()) {
-            result = layerGroup;
-          }
-        });
-        return result;
-      },
+      }
 
     };
 
