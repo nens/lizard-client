@@ -4,7 +4,7 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
--
+- X labels come from the backend again
 
 Release 0.2b12 (2014-11-17)
 ---------------------------
