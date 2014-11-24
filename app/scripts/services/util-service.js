@@ -215,18 +215,6 @@ angular.module('lizard-nxt')
     return dataForTimeState;
   };
 
-  // /**
-  //  * @function serveToMobileDevice
-  //  * @memberOf UtilService
-  //  */
-  // this.serveToMobileDevice = function () {
-
-  //   var result = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|windows phone/i.test(
-  //     navigator.userAgent.toLowerCase()
-  //   );
-  //   return result;
-  // };
-
   /**
    * @function serveToOldIE
    * @memberOf UtilService
@@ -248,8 +236,8 @@ angular.module('lizard-nxt')
       }
       return rv;
     }
-
-    return getInternetExplorerVersion() < 10;
+    var version = getInternetExplorerVersion();
+    return version !== -1 && version < 10;
   };
 
 
@@ -430,6 +418,14 @@ angular.module('lizard-nxt')
 
     } else {
       return false;
+    }
+  };
+
+  this.preventOldIEUsage = function () {
+    if (this.serveToOldIE()) {
+      document.querySelector("#dark-overlay").style.display = "block";
+      // explicitly HIDE the layerMenu
+      document.querySelector(".layer-switcher-wrapper").style.display = "none";
     }
   };
 });
