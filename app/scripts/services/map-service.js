@@ -157,17 +157,7 @@ angular.module('lizard-nxt')
 
       removeLayer: function (layer) {
         this._map.removeLayer(layer);
-      },
-
-      getActiveTemporalLayerGroup: function () {
-        var result;
-        angular.forEach(this.layerGroups, function (layerGroup) {
-          if (layerGroup.temporal && layerGroup.isActive()) {
-            result = layerGroup;
-          }
-        });
-        return result;
-      },
+      }
 
     };
 

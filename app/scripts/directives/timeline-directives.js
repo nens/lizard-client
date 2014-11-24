@@ -102,6 +102,7 @@ angular.module('lizard-nxt')
     var timeline = new Timeline(
       el[0], dimensions, start, end, interaction);
 
+    setTimeout(interaction.zoomEndFn, 250);
     // HELPER FUNCTIONS
 
     /**
@@ -114,7 +115,7 @@ angular.module('lizard-nxt')
      */
     var updateTimelineHeight = function (newDim, dim, nEventTypes) {
       var eventHeight;
-      if (scope.mapState.getActiveTemporalLayerGroup() && nEventTypes > 0) {
+      if (getTimelineLayers(scope.mapState.layerGroups).rain && nEventTypes > 0) {
         eventHeight = (nEventTypes - 2) * dim.events;
         eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
         newDim.height = dim.height + dim.bars + eventHeight;
