@@ -377,14 +377,14 @@ angular.module('lizard-nxt')
     bar.transition()
       .duration(duration)
       .attr("height", function (d) { return height - y.scale(d[keys.y]); })
-      .attr("x", function (d) { return x.scale(d[keys.x]) - 0.5 * barWidth; })
+      .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
       .attr('width', function (d) { return barWidth; })
       .attr("y", function (d) { return y.scale(d[keys.y]); });
     // ENTER
     // Create new elements as needed.
     bar.enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function (d) { return x.scale(d[keys.x]) - 0.5 * barWidth; })
+      .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
       .attr('width', function (d) { return barWidth; })
       .attr("y", function (d) { return y.scale(0); })
       .attr("height", 0)
