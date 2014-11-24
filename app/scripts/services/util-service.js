@@ -380,8 +380,6 @@ angular.module('lizard-nxt')
             });
           }
         }
-
-
       }
     }
     return true;
