@@ -16,6 +16,7 @@ Unreleased
 
 - Changed slug of ahn2 elevation wms layer.
 
+- Y axes are scaled correctly, by filtering nulls.
 
 Release 0.2b12 (2014-11-17)
 ---------------------------
