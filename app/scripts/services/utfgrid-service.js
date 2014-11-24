@@ -7,12 +7,13 @@ angular.module('lizard-nxt')
   function ($q, $rootScope) {
 
     var getData = function (nonLeafLayer, options) {
+
       var leafLayer = nonLeafLayer && nonLeafLayer._leafletLayer,
-        deferred = $q.defer(),
-        e = {
-          latlng: options.geom
-        },
-        response;
+          deferred = $q.defer(),
+          e = {
+            latlng: options.geom
+          },
+          response;
 
       if (options.geom === undefined || !(options.geom instanceof L.LatLng)) {
         // no geom is no data from utf
@@ -25,13 +26,18 @@ angular.module('lizard-nxt')
         response = leafLayer._objectForEvent(e);
 
         if ((response.data === null && leafLayer.isLoading)
-          || !leafLayer._map || !leafLayer._map.hasLayer(leafLayer)) {
-          _getDataFromUTFAsynchronous(nonLeafLayer, e, deferred);
+          || !leafLayer._map
+          || !leafLayer._map.hasLayer(leafLayer)) {
+
+          if (!window.loaded || leafLayer.isLoading) {
+            _getDataFromUTFAsynchronous(nonLeafLayer, e, deferred);
+          } else {
+            deferred.resolve(leafLayer._objectForEvent(e).data);
+          }
 
         } else {
           deferred.resolve(response.data);
         }
-
       } else {
         deferred.resolve(false);
       }
@@ -39,15 +45,10 @@ angular.module('lizard-nxt')
       return deferred.promise;
     };
 
-
     var _getDataFromUTFAsynchronous = function (nonLeafLayer, e, deferred) {
-      var leafLayer, response;
-
-      leafLayer = nonLeafLayer._leafletLayer;
-
+      var response, leafLayer = nonLeafLayer._leafletLayer;
       leafLayer.on('load', function () {
         response = leafLayer._objectForEvent(e);
-
         // since this part executes async in a future turn of the event loop,
         // we need to wrap it into an $apply call so that the model changes are
         // properly observed:
