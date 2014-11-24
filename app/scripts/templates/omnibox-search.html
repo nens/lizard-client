@@ -1,33 +1,16 @@
 <div class="searchbox" id="searchbox" tabindex="-1" role="search">
-    <form id="searchbox_form">
-        <table cellspacing="0" cellpadding="0" id="" class="searchboxinput">
-            <tbody>
-                <tr>
-                    <td>
-                        <input ng-model="box.query"
-                               ng-focus id="searchboxinput"
-                               name="q"
-                               tabindex="-1"
-                               placeholder="Zoeken op plaats, stad, ..."
-                               autocomplete="off"
-                               dir="ltr"
-                               ng-keydown="onKeydown(undefined, $event)"
-                               spellcheck="false">
-                        <a href=""
-                           title="<% tooltips.resetQuery %>"
-                           ng-click="resetBox()"
-                           id="clear" ></a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </form>
-    <button id="search-button"
-            class="searchbutton"
-            ng-click="search($event)"
-            aria-label="Search"
-            title="<% tooltips.search %>">
-    </button>
+  <search></search>
 </div>
 
-<div id="cards" class="pullDown cardbox" ng-show="box.showCards"></div>
+<div id="cards" class="pullDown cardbox" ng-show="box.showCards">
+
+  <!-- Search results go here -->
+  <div class="card active"
+       ng-if="box.content.location">
+    <location></location>
+  </div>
+
+  <!-- Point/Line/Area box content goes here  -->
+  <div id="box-type-cards"></div>
+
+</div>

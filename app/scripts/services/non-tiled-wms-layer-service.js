@@ -350,11 +350,9 @@ angular.module('lizard-nxt')
          */
         _addLoadListener: {
           value: function (overlay, date, defer) {
-
             this._nLoadingRasters++;
             overlay.addOneTimeEventListener("load", function () {
               this._nLoadingRasters--;
-
               var index = this._imageOverlays.indexOf(overlay);
               this._frameLookup[date] = index;
               if (defer && index === 0) {

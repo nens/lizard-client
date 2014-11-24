@@ -4,7 +4,13 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
--
+- Added ability to animate multiple rasters with different timeSteps.
+
+- TimeStep and time between frames are dependant on temporalresolution of
+  layergroups.
+
+- Layegroups return promises when syncing to time. Animation only progresses
+  when promises are resolved.
 
 Release 0.2b12 (2014-11-17)
 ---------------------------

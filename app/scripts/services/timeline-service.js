@@ -728,7 +728,6 @@ angular.module('lizard-nxt')
     };
     var yFunction = function (d) { return yScale(order); };
     var colorFunction = function (d) { return color; };
-    var splitTranstime = Timeline.prototype.transTime / 2;
 
     // if data exists, check if group is available for this series and create
     // if no data, remove lines
@@ -772,16 +771,11 @@ angular.module('lizard-nxt')
       .attr("class", "event selected")
       .attr("stroke", colorFunction)
       .attr("stroke-linecap", "round")
-      .attr("stroke-opacity", 0)
-      .attr("stroke-width", 0)
-    .transition()
-      .delay(splitTranstime)
-      .duration(splitTranstime)
-      .attr("stroke-width", 10)
       .attr("stroke-opacity", 0.8)
+      .attr("stroke-width", 10)
     .transition()
       .delay(Timeline.prototype.transTime)
-      .duration(splitTranstime)
+      .duration(Timeline.prototype.transTime)
       .attr("x1", xOneFunction)
       .attr("x2", xTwoFunction)
       .attr("y1", yFunction)
@@ -792,10 +786,10 @@ angular.module('lizard-nxt')
     lines.exit()
       .transition()
       .delay(0)
-      .duration(splitTranstime)
+      .duration(Timeline.prototype.transTime)
     .transition()
-      .delay(splitTranstime)
-      .duration(splitTranstime)
+      .delay(Timeline.prototype.transTime)
+      .duration(Timeline.prototype.transTime)
       .attr("stroke-width", 0)
       .style("fill-opacity", 0)
       .remove();

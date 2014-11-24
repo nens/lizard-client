@@ -84,7 +84,7 @@ angular.module('lizard-nxt')
        * @param {object} dimensions - object with timeline dimensions.
        */
       clickFn: function (event, scale, dimensions) {
-        var timeClicked = +(scale.invert(event.x - dimensions.padding.left));
+        var timeClicked = +(scale.invert(event.pageX - dimensions.padding.left));
         scope.timeState.at = UtilService.roundTimestamp(
           timeClicked,
           scope.timeState.aggWindow,
@@ -96,7 +96,7 @@ angular.module('lizard-nxt')
     };
 
     // keep track of events in this scope
-    scope.events = {events: 0, slugs: []};
+    scope.events = {nEvents: 0, slugs: []};
 
     // Initialise timeline
     var timeline = new Timeline(
