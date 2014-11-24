@@ -215,16 +215,41 @@ angular.module('lizard-nxt')
     return dataForTimeState;
   };
 
-  /**
-   * @function serveToMobileDevice
-   * @memberOf UtilService
-   */
-  this.serveToMobileDevice = function () {
+  // /**
+  //  * @function serveToMobileDevice
+  //  * @memberOf UtilService
+  //  */
+  // this.serveToMobileDevice = function () {
 
-    var result = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|windows phone/i.test(
-      navigator.userAgent.toLowerCase()
-    );
-    return result;
+  //   var result = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|windows phone/i.test(
+  //     navigator.userAgent.toLowerCase()
+  //   );
+  //   return result;
+  // };
+
+  /**
+   * @function serveToOldIE
+   * @memberOf UtilService
+   * @description Check whether the client uses IE10+/non-IE browser (return false),
+   *   OR that she uses an older IE version (return true)
+   */
+  this.serveToOldIE = function () {
+
+    function getInternetExplorerVersion() {
+      // Returns the version of Internet Explorer or -1
+      // (indicating the use of another browser).
+
+      var rv = -1, // Return value assumes failure.
+          ua = navigator.userAgent,
+          re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+
+      if (re.exec(ua) !== null) {
+        rv = parseFloat(RegExp.$1);
+      }
+      return rv;
+    }
+
+    return getInternetExplorerVersion() < 10;
   };
 
 

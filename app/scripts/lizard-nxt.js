@@ -298,7 +298,7 @@ angular.module('lizard-nxt')
       return;
     }
 
-   
+
     if ($event.which === 27) {
       // If detailMode is active, close that
       if ($scope.box.contextSwitchMode) {
@@ -309,7 +309,7 @@ angular.module('lizard-nxt')
         // $scope.box.empty = null;
       }
     }
-    
+
     // play pause timeline with Space.
     if ($event.which === 32) {
       $scope.timeState.playPauseAnimation();
@@ -320,5 +320,32 @@ angular.module('lizard-nxt')
   $scope.toggleVersionVisibility = function () {
     $('.navbar-version').toggle();
   };
+
+  /*
+  if (UtilService.serveToOldIE()) {
+
+    console.log("serving to IE v9.x or older -- we should prevent user from doing stuff");
+
+    // create/append overlay:
+    var overlay = document.createElement("div"),
+        modal = document.createElement("div"),
+        DELAY = 1000;
+
+    overlay.className = "overlay";
+    //modal.setAttribute("id", "mymodal");
+    document.querySelector("body").appendChild(overlay);
+    //document.querySelector("body").appendChild(modal);
+
+    // explicitly HIDE the layerMenu
+    document.querySelector(".layer-switcher-wrapper").style.display = "none";
+
+    // give message after timeout!
+    // setTimeout(function () {
+
+    //   document.querySelector("#mymodal").style.display = "block";
+
+    // }, DELAY);
+
+  }*/
 
 }]);
