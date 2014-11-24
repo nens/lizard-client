@@ -26,7 +26,7 @@ angular.module('lizard-nxt')
      *                                  leaflet bounds.
      */
     var fillArea = function (bounds) {
-      //TODO draw feedback when loading data
+     //TODO draw feedback when loading data
       var promises = $scope.fillBox({
         geom: bounds,
         start: $scope.timeState.start,
@@ -35,7 +35,7 @@ angular.module('lizard-nxt')
       });
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
-          if (response.data && response.layerSlug === 'ahn2/wss') {
+          if (response.data && response.layerSlug === 'dem/nl') {
             $scope.box.content[response.layerGroupSlug]
               .layers[response.layerSlug]
               // Since the data is not properly formatted in the back

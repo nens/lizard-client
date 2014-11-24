@@ -6,6 +6,17 @@ Unreleased
 
 - X labels come from the backend again
 
+- Added ability to animate multiple rasters with different timeSteps.
+
+- TimeStep and time between frames are dependant on temporalresolution of
+  layergroups.
+
+- Layegroups return promises when syncing to time. Animation only progresses
+  when promises are resolved.
+
+- Changed slug of ahn2 elevation wms layer.
+
+
 Release 0.2b12 (2014-11-17)
 ---------------------------
 

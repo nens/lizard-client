@@ -24,6 +24,7 @@ angular.module('lizard-nxt')
    * coefficient.
    */
   this.roundTimestamp = function (timestamp, coefficient, needTzOffset) {
+
     var roundedTimestamp = parseInt((timestamp + (coefficient / 2)) /
                                     coefficient, 10) * coefficient;
     if (!!needTzOffset) {

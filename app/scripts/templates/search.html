@@ -1,0 +1,21 @@
+<div class="searchboxinput">
+  <input ng-focus id="searchboxinput"
+    tabindex="-1"
+    placeholder="Zoeken op plaats, stad, ..."
+    autocomplete="off"
+    dir="ltr"
+    ng-model="geoquery"
+    ng-keydown="searchKeyPress($event)"
+    spellcheck="false">
+  <div
+    title="<% tooltips.resetQuery %>"
+    ng-click="resetBox()"
+    id="clear" class="clickable" ></div>
+  <button id="search-button"
+    class="searchbutton clickable"
+    ng-click="search()"
+    aria-label="Search"
+    title="<% tooltips.search %>">
+  </button>
+</div>
+

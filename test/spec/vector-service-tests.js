@@ -59,11 +59,11 @@ describe('Testing VectorService', function () {
     $rootScope.$digest();
   });
 
-  it('should get data after date', function () {
+  it('should get all data that is happening on AND after the start date', function () {
     VectorService.setData('events', geoJson, 4);
     VectorService.getData(nonLeaflayer, {start: 1358470000000})
       .then(function (gotthis) {
-        expect(gotthis.length).toBe(1);
+        expect(gotthis.length).toBe(2);
       });
     $rootScope.$digest();
   });

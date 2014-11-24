@@ -69,9 +69,6 @@ angular.module('lizard-nxt')
         scope.$apply(function () {
           scope.timeState.resolution = (
             scope.timeState.end - scope.timeState.start) /  window.innerWidth;
-          // snap timeState.at to nearest interval
-          scope.timeState.at = UtilService.roundTimestamp(
-            scope.timeState.at, scope.timeState.aggWindow, false);
           getTimeLineData();
         });
       },
@@ -93,22 +90,19 @@ angular.module('lizard-nxt')
           scope.timeState.aggWindow,
           false
         );
+
         scope.$digest();
       },
     };
 
     // keep track of events in this scope
-    scope.events = {events: 0, slugs: []};
+    scope.events = {nEvents: 0, slugs: []};
 
     // Initialise timeline
     var timeline = new Timeline(
-      el[0], dimensions, start, end, interaction, scope.events.nEvents);
+      el[0], dimensions, start, end, interaction);
 
-    // Activate zoom and click listener
-    timeline.addZoomListener();
-    timeline.addClickListener();
-    timeline.addFutureIndicator();
-
+    setTimeout(interaction.zoomEndFn, 250);
     // HELPER FUNCTIONS
 
     /**
@@ -121,7 +115,7 @@ angular.module('lizard-nxt')
      */
     var updateTimelineHeight = function (newDim, dim, nEventTypes) {
       var eventHeight;
-      if (scope.mapState.getActiveTemporalLayerGroup() && nEventTypes > 0) {
+      if (getTimelineLayers(scope.mapState.layerGroups).rain && nEventTypes > 0) {
         eventHeight = (nEventTypes - 2) * dim.events;
         eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
         newDim.height = dim.height + dim.bars + eventHeight;
@@ -324,7 +318,6 @@ angular.module('lizard-nxt')
      * Update aggWindow element when timeState.at changes.
      */
     scope.$watch('timeState.at', function (n, o) {
-      if (n === o) { return true; }
       timeline.drawAggWindow(scope.timeState.at, scope.timeState.aggWindow);
     });
 

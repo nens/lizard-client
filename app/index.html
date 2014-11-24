@@ -153,7 +153,7 @@
               <a ng-click="toggleTool('point')"
                  class="button-list-link"
                  title="punt selectie"
-                 ng-class="{'active': tools.active === 'point'}">
+                 ng-class="{'active': box.type === 'point'}">
                  <i class="fa fa-dot-circle-o"></i>
               </a>
             </div>
@@ -163,7 +163,7 @@
               <a ng-click="toggleTool('line')"
                  class="button-list-link"
                  title="lijn selectie"
-                 ng-class="{'active': tools.active === 'line'}">
+                 ng-class="{'active': box.type === 'line'}">
                  <i class="fa fa-expand"></i>
               </a>
             </div>
@@ -173,7 +173,7 @@
               <a ng-click="toggleTool('area')"
                  class="button-list-link"
                  title="scherm selectie"
-                 ng-class="{'active': tools.active === 'area'}">
+                 ng-class="{'active': box.type === 'area'}">
                  <i class="fa fa-square-o"></i>
               </a>
             </div>
@@ -186,13 +186,12 @@
              vectorlayer
              temporal-vector-layer
              surfacelayer
-             rasteranimation
-             ng-class="{'crosshair': tools.active === 'profile'}">
+             ng-class="{'crosshair': box.type === 'profile'}">
          </map>
       </div>
     </div>
 
-    <div class="container" ng-controller="SearchCtrl">
+    <div class="container">
       <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
     </div>
 
@@ -244,7 +243,7 @@
     <script src="/scripts/services/utfgrid-service.js"></script>
     <script src="/scripts/services/click-feedback-service.js"></script>
     <script src="/scripts/services/timeseries-service.js"></script>
-    <script src="/scripts/controllers/search-controller.js"></script>
+    <script src="/scripts/directives/search-directive.js"></script>
     <script src="/scripts/directives/map-directives.js"></script>
     <script src="/scripts/directives/omnibox-directives.js"></script>
     <script src="/scripts/services/graph-service.js"></script>
@@ -254,7 +253,7 @@
     <script src="/scripts/directives/opacity-directives.js"></script>
     <script src="/scripts/directives/template-directives.js"></script>
     <script src="/scripts/directives/timeline-directives.js"></script>
-    <script src="/scripts/controllers/timeline-controller.js"></script>
+    <script src="/scripts/controllers/time-controller.js"></script>
     <script src="/scripts/controllers/point-controller.js"></script>
     <script src="/scripts/controllers/rain-controller.js"></script>
     <script src="/scripts/controllers/line-controller.js"></script>
@@ -265,10 +264,12 @@
     <script src="/scripts/services/layer-service.js"></script>
     <script src="/scripts/services/tms-layer-service.js"></script>
     <script src="/scripts/services/wms-layer-service.js"></script>
+    <script src="/scripts/services/non-tiled-wms-layer-service.js"></script>
     <script src="/scripts/services/utf-layer-service.js"></script>
     <script src="/scripts/services/store-layer-service.js"></script>
     <script src="/scripts/services/vector-layer-service.js"></script>
     <script src="/scripts/services/leaflet-vector-service.js"></script>
+    <script src="/scripts/services/location-service.js"></script>
     <!-- endbuild -->
 
   <script>
