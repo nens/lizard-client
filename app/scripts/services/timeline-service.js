@@ -156,7 +156,6 @@ angular.module('lizard-nxt')
           // in the timeline.
 
         if (!aggWindow) {
-          console.log("!aggWindow");
           aggWindow = this._svg.append("g")
             .attr('class', 'agg-window-group');
           aggWindow
