@@ -298,7 +298,7 @@ angular.module('lizard-nxt')
       return;
     }
 
-   
+
     if ($event.which === 27) {
       // If detailMode is active, close that
       if ($scope.box.contextSwitchMode) {
@@ -309,7 +309,7 @@ angular.module('lizard-nxt')
         // $scope.box.empty = null;
       }
     }
-    
+
     // play pause timeline with Space.
     if ($event.which === 32) {
       $scope.timeState.playPauseAnimation();
@@ -320,5 +320,11 @@ angular.module('lizard-nxt')
   $scope.toggleVersionVisibility = function () {
     $('.navbar-version').toggle();
   };
+
+  UtilService.preventOldIEUsage();
+  // catch window.load event
+  window.addEventListener("load", function () {
+    window.loaded = true;
+  });
 
 }]);
