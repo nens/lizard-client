@@ -25,20 +25,18 @@ angular.module('lizard-nxt')
 
         response = leafLayer._objectForEvent(e);
 
-        if ((response.data === null && leafLayer.isLoading)
+        if (!window.loaded
+          || leafLayer.isLoading
           || !leafLayer._map
-          || !leafLayer._map.hasLayer(leafLayer)) {
-
-          if (!window.loaded || leafLayer.isLoading) {
-            _getDataFromUTFAsynchronous(nonLeafLayer, e, deferred);
-          } else {
-            deferred.resolve(leafLayer._objectForEvent(e).data);
-          }
-
-        } else {
+          || !leafLayer._map.hasLayer(leafLayer)
+        ) {
+          _getDataFromUTFAsynchronous(nonLeafLayer, e, deferred);
+        }
+        else {
           deferred.resolve(response.data);
         }
-      } else {
+      }
+      else {
         deferred.resolve(false);
       }
 
@@ -52,9 +50,13 @@ angular.module('lizard-nxt')
         // since this part executes async in a future turn of the event loop,
         // we need to wrap it into an $apply call so that the model changes are
         // properly observed:
-        $rootScope.$apply(function () {
+        if ($rootScope.$$phase) {
           deferred.resolve(response.data);
-        });
+        } else {
+          $rootScope.$apply(function () {
+            deferred.resolve(response.data);
+          });
+        }
       });
     };
 

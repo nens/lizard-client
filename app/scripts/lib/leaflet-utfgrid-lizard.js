@@ -88,12 +88,14 @@
       var zoom = this._map.getZoom();
 
       if (zoom > this.options.maxZoom || zoom < this.options.minZoom) {
-          return;
+        return;
       }
 
       map.on('click', this._click, this);
       map.on('mousemove', this._move, this);
       map.on('moveend', this._update, this);
+
+      this._tileLoaded(); // Check whether more tiles need loading
     },
 
     onRemove: function () {
