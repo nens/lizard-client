@@ -136,6 +136,15 @@ angular.module('lizard-nxt')
      * @summary Draws an aggWindow at timestamp.
      * @description Left of aggWindow is timeState.at, size is dependent on
      * current aggWindow interval on timeState.
+     *
+     * TODO: Rasterstore's "day-level aggregated rain intensity data" has discrete
+     * one-day/24h intervals (=good), however those intervals are from 8:00 GMT
+     * (in the morning) to the next day's 8:00 GMT in the morning (=bad).
+     *
+     * This doens't play nice with the aggWindow to be drawn, since (for 24h
+     * aggregation) this preferably starts on 00:00, and ends 24h later, again
+     * on 00:00.
+     *
      */
     drawAggWindow: {
       value: function (timestamp, interval, oldDimensions) {
@@ -147,6 +156,7 @@ angular.module('lizard-nxt')
           // in the timeline.
 
         if (!aggWindow) {
+          console.log("!aggWindow");
           aggWindow = this._svg.append("g")
             .attr('class', 'agg-window-group');
           aggWindow
@@ -166,19 +176,20 @@ angular.module('lizard-nxt')
                 .attr('y', 12);
         }
 
-        var offset = this.dimensions.padding.left;
-
-        var bboxWidth = aggWindow.select('.aggwindow-label').node().getBBox().width;
-
-        var aggWindowLabelXpos = (offset + xScale(new Date(timestamp)) - bboxWidth) - 2;
+        var bboxWidth,
+            offset = this.dimensions.padding.left;
 
         // UPDATE
         aggWindow.select('.aggwindow-label')
           .text(this.format(new Date(timestamp)))
-          .attr("x", aggWindowLabelXpos);
+          .attr("x", function () {
+            bboxWidth = aggWindow.select('.aggwindow-label').node().getBBox().width;
+            return offset + xScale(new Date(timestamp)) - bboxWidth - 2;
+          });
 
         aggWindow.select('.aggwindow-rect')
           .attr("x", function () {
+            console.log("UPDATE .aggwindow-rect");
             return Math.round(offset + xScale(new Date(timestamp)));
           })
           .transition()
@@ -828,7 +839,9 @@ angular.module('lizard-nxt')
     // Create new elements as needed.
     bars.enter().append("rect")
       .attr("class", "bar-timeline")
-      .attr("x", function (d) { return xScale(d[0]) - barWidth; })
+      .attr("x", function (d) {
+        return xScale(d[0]) - barWidth;
+      })
       .attr('width', barWidth)
       .attr("height", 0)
       .attr("y", height)
