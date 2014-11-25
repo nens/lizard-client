@@ -195,8 +195,18 @@
       <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
     </div>
 
-
     <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
+
+    <div id="dark-overlay">
+      <div id="mymodal">
+        <p>U gebruikt een verouderde browser die niet meer door Lizard wordt ondersteund.</p>
+        <p> U dient Internet Explorer versie 10 of nieuwer te gebruiken,
+        of een van de hieronder genoemde alternatieven.</p>
+        <ul>
+          <li><a href="http://www.google.com/chrome/">Google Chrome</a></li>
+          <li><a href="https://www.mozilla.org/nl/firefox/new/">Mozilla Firefox</a></li>
+      </div>
+    </div>
 
     <!-- build:js(.) /scripts/vendor.js -->
     <!-- bower:js -->
@@ -272,13 +282,13 @@
     <script src="/scripts/services/location-service.js"></script>
     <!-- endbuild -->
 
-  <script>
-      // Set global constant "JS_DEBUG", to prevent debug info from reaching
-      // the client when the current environment shouldn't allow it.
+    <script>
+        // Set global constant "JS_DEBUG", to prevent debug info from reaching
+        // the client when the current environment shouldn't allow it.
 
-      // NB! This is a proper illustration of passing data from back-end to
-      // front-end in a minimal fashion.
-      window.JS_DEBUG = "True" === "True";
-  </script>
+        // NB! This is a proper illustration of passing data from back-end to
+        // front-end in a minimal fashion.
+        window.JS_DEBUG = "True" === "True";
+    </script>
   </body>
 </html>

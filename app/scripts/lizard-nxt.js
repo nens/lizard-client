@@ -321,6 +321,7 @@ angular.module('lizard-nxt')
     $('.navbar-version').toggle();
   };
 
+  UtilService.preventOldIEUsage();
   // catch window.load event
   window.addEventListener("load", function () {
     window.loaded = true;

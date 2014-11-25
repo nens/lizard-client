@@ -4,7 +4,7 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
--
+- Internet Explorer 9 and lower gets error message.
 
 
 Release 0.2b15 (2014-11-24)
