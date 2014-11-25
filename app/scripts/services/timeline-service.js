@@ -188,7 +188,6 @@ angular.module('lizard-nxt')
 
         aggWindow.select('.aggwindow-rect')
           .attr("x", function () {
-            console.log("UPDATE .aggwindow-rect");
             return Math.round(offset + xScale(new Date(timestamp)));
           })
           .transition()
