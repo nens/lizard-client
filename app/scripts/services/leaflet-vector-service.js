@@ -79,7 +79,7 @@ angular.module('lizard-nxt')
       this._reset();
       this._map.off('moveend', this._onMove, this);
       map.removeLayer(this.geojsonLayer);
-
+      this.isLoading = false;
       LeafletService.TileLayer.prototype.onRemove.call(this, map);
     },
     /**
