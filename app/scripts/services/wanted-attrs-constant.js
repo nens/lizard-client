@@ -516,7 +516,7 @@ angular.module('lizard-nxt')
         attrName: "type",
         ngBindValue: "waterchain.layers.waterchain_grid.data.type | lookupPumpStationType",
         valueSuffix: "",
-        defaultValue: "niet aangeleverd"
+        defaultValue: "onbekend"
       },
       {
         keyName: "Aanslagpeil",
@@ -547,7 +547,7 @@ angular.module('lizard-nxt')
         attrName: "name",
         ngBindValue: "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
-        defaultValue: "niet aangeleverd"
+        defaultValue: "onbekend"
       },
     ]
   },
@@ -640,7 +640,7 @@ angular.module('lizard-nxt')
         attrName: "name",
         ngBindValue: "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
-        defaultValue: "niet aangeleverd"
+        defaultValue: "onbekend"
       },
       {
         keyName: "Code",
@@ -680,7 +680,7 @@ angular.module('lizard-nxt')
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
-        defaultValue: 'niet aangeleverd'
+        defaultValue: 'onbekend'
       }
     ]
   },
@@ -691,7 +691,7 @@ angular.module('lizard-nxt')
         attrName: "name",
         ngBindValue: "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
-        defaultValue: "niet aangeleverd"
+        defaultValue: "onbekend"
       },
     ]
   },
