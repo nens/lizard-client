@@ -192,18 +192,14 @@ angular.module('lizard-nxt')
           mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
           time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
           context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
-        // if (context) {
-        //   // switchContext
-        // } else {
+        // When we start making a 'context switch' we will also want to use
+        // State.contex, for now we always set it.
         LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
-        // }
         if (boxType) {
-          if (geom) { // Setting the box to anything but default requires geometry on url.
-            $scope.box.type = boxType;
-          } else {
-            LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, $scope.box.type);
-          }
-        } else { LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, $scope.box.type); }
+          $scope.box.type = boxType;
+        } else {
+          LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, $scope.box.type);
+        }
         if (geom) {
           $scope.mapState = UrlState.parseGeom($scope.box.type, geom, $scope.mapState);
         }
