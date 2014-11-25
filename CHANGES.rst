@@ -6,6 +6,7 @@ Unreleased
 
 - Internet Explorer 9 and lower gets error message.
 
+- Timeline does not interfere with initial point/line rain request
 
 Release 0.2b15 (2014-11-24)
 ---------------------------
