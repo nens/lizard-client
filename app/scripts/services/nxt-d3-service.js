@@ -245,17 +245,20 @@ angular.module('lizard-nxt')
       }
       if (scale.domain()[0] instanceof Date) {
         var tickFormat = this._localeFormatter.nl_NL.timeFormat.multi([
-              ["%H:%M", function (d) { return d.getMinutes(); }],
-              ["%H:%M", function (d) { return d.getHours(); }],
-              ["%a %d", function (d) { return d.getDay() && d.getDate() !== 1; }],
-              ["%b %d", function (d) { return d.getDate() !== 1; }],
-              ["%B", function (d) { return d.getMonth(); }],
-              ["%Y", function () { return true; }]
-            ]);
+          ["%H:%M", function (d) { return d.getMinutes(); }],
+          ["%H:%M", function (d) { return d.getHours(); }],
+          ["%a %d", function (d) { return d.getDay() && d.getDate() !== 1; }],
+          ["%b %d", function (d) { return d.getDate() !== 1; }],
+          ["%B", function (d) { return d.getMonth(); }],
+          ["%Y", function () { return true; }]
+        ]);
         axis.tickFormat(tickFormat);
-      }
-      if (options.tickFormat) {
-        axis.tickFormat(options.tickFormat);
+      } else {
+        if (options.tickFormat) {
+          axis.tickFormat(options.tickFormat);
+        } else {
+          axis.tickFormat(this._localeFormatter.nl_NL.numberFormat());
+        }
       }
       return axis;
     },
