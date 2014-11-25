@@ -314,7 +314,7 @@ angular.module('lizard-nxt')
     var total = 1;
 
     // Join new data with old elements, based on the y key.
-    var rects = svg.select('g').select('#feature-group').selectAll("rect")
+    var rects = svg.select('g').select('#feature-group').selectAll(".horizontal-rect")
       .data(data, function (d) { return d[keys.y]; });
 
     // UPDATE
