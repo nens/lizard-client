@@ -13,8 +13,8 @@
 angular.module('lizard-nxt')
   .factory('LayerGroup', [
   'NxtTMSLayer', 'NxtWMSLayer', 'NxtNonTiledWMSLayer', 'NxtVectorLayer', 'NxtUTFLayer', 'StoreLayer', 'NxtLayer',
-  'UtilService', '$q', 'RasterService', '$http',
-  function (NxtTMSLayer, NxtWMSLayer, NxtNonTiledWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, NxtLayer, UtilService, $q, RasterService, $http) {
+  'UtilService', '$q', '$http',
+  function (NxtTMSLayer, NxtWMSLayer, NxtNonTiledWMSLayer, NxtVectorLayer, NxtUTFLayer, StoreLayer, NxtLayer, UtilService, $q, $http) {
 
     /*
      * @constructor

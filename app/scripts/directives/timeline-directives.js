@@ -10,16 +10,18 @@
  */
 angular.module('lizard-nxt')
   .directive('timeline',
-             ["RasterService",
+             ["$q",
+              "RasterService",
               "UtilService",
               "Timeline",
               "VectorService",
-              function (RasterService,
+              function ($q,
+                        RasterService,
                         UtilService,
                         Timeline,
                         VectorService) {
 
-  var link = function (scope, element, attrs, timelineCtrl, $timeout) {
+  var link = function (scope, element, attrs, timelineCtrl) {
 
     var dimensions = {
       width: window.innerWidth,
@@ -262,6 +264,8 @@ angular.module('lizard-nxt')
           stop = scope.timeState.end,
           bounds = scope.mapState.bounds;
 
+      // Has it's own deferrer to not conflict with
+      // other deferrers with the same layerSlug
       RasterService.getData(
         rasterLayer,
         {
@@ -269,7 +273,11 @@ angular.module('lizard-nxt')
           start: start,
           end: stop,
           agg: 'none',
-          aggWindow: scope.timeState.aggWindow
+          aggWindow: scope.timeState.aggWindow,
+          deferrer: {
+            origin: 'timeline_' + rasterLayer,
+            deferred: $q.defer()
+          }
         }
       ).then(function (response) {
         timeline.drawBars(response);
