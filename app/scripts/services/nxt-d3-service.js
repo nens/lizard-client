@@ -87,10 +87,14 @@ angular.module('lizard-nxt')
       height = NxtD3.prototype._getHeight(this.dimensions);
       // Add clippath to limit the drawing area to inside the graph
       // See: http://bost.ocks.org/mike/path/
+      //
+      // NOTE: we append the height to the clippath to prevent assocating a
+      // clippath with the wrong rect element. What used to happen was: the
+      // elevation graph gets clipped by the clippath of the horizontalstack.
       var clip = this._svg.select('g').select("defs");
       if (!clip[0][0]) {
         this._svg.select('g').append('defs').append("svg:clipPath")
-          .attr("id", "clip")
+          .attr("id", "clip" + height)
           .append("svg:rect")
           .attr("id", "clip-rect")
           .attr("x", "0")
@@ -104,7 +108,7 @@ angular.module('lizard-nxt')
       if (!g[0][0]) {
         g = this._svg.select('g').append('g');
       }
-      g.attr("clip-path", "url(#clip)")
+      g.attr("clip-path", "url(#clip" + height + ")")
         .attr('id', 'feature-group');
       return this._svg;
     },
