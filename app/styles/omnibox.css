@@ -659,13 +659,6 @@ td.lineout {
   margin: 5px;
 }
 
-.leaflet-control-zoom-in, .leaflet-control-zoom-out, #search-button {
-
-  border-bottom: 0 !important;
-  height: 32px;
-  max-height: 32px;
-}
-
 .show-structure-attrs-link {
   position: relative;
   left: 105px;
