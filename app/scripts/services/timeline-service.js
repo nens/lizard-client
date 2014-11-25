@@ -142,7 +142,9 @@ angular.module('lizard-nxt')
 
         var height = this._getHeight(this.dimensions);
         var width = xScale(new Date(timestamp + (interval))) -
-          xScale(new Date(timestamp));
+          xScale(new Date(timestamp)) - 1; // minus 1 px for visual tightness;
+          // aggWindow should be the *exact* same width as the rain bars drawn
+          // in the timeline.
 
         if (!aggWindow) {
           aggWindow = this._svg.append("g")
@@ -166,19 +168,18 @@ angular.module('lizard-nxt')
 
         var offset = this.dimensions.padding.left;
 
+        var bboxWidth = aggWindow.select('.aggwindow-label').node().getBBox().width;
+
+        var aggWindowLabelXpos = (offset + xScale(new Date(timestamp)) - bboxWidth) - 2;
+
         // UPDATE
         aggWindow.select('.aggwindow-label')
           .text(this.format(new Date(timestamp)))
-          .attr("x", function () {
-            return (offset + xScale(new Date(timestamp)) -
-              aggWindow.select('.aggwindow-label').node().getBBox().width)
-            - 2; // Place the label 2 px behind the aggWindow rectangle
-          });
+          .attr("x", aggWindowLabelXpos);
 
         aggWindow.select('.aggwindow-rect')
           .attr("x", function () {
-            var widthMultiplier = interval > 3600000 ? (7/40) : 0.5;
-            return Math.round((offset + xScale(new Date(timestamp))) - (width * widthMultiplier));
+            return Math.round(offset + xScale(new Date(timestamp)));
           })
           .transition()
           .duration(this.transTime)
