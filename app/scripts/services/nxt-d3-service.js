@@ -171,11 +171,14 @@ angular.module('lizard-nxt')
      * @return {object} containing the max and min
      */
     _maxMin: function (data, key) {
-      var max = d3.max(data, function (d) {
+      // min max of d3 does not filter nulls for some reason
+      // y axis is way off sometimes.
+      var filtered = data.filter(function (d) { return !isNaN(parseFloat(d[key])); });
+      var max = d3.max(filtered, function (d) {
               return Number(d[key]);
             });
 
-      var min = d3.min(data, function (d) {
+      var min = d3.min(filtered, function (d) {
               return Number(d[key]);
             });
       return {
@@ -242,17 +245,20 @@ angular.module('lizard-nxt')
       }
       if (scale.domain()[0] instanceof Date) {
         var tickFormat = this._localeFormatter.nl_NL.timeFormat.multi([
-              ["%H:%M", function (d) { return d.getMinutes(); }],
-              ["%H:%M", function (d) { return d.getHours(); }],
-              ["%a %d", function (d) { return d.getDay() && d.getDate() !== 1; }],
-              ["%b %d", function (d) { return d.getDate() !== 1; }],
-              ["%B", function (d) { return d.getMonth(); }],
-              ["%Y", function () { return true; }]
-            ]);
+          ["%H:%M", function (d) { return d.getMinutes(); }],
+          ["%H:%M", function (d) { return d.getHours(); }],
+          ["%a %d", function (d) { return d.getDay() && d.getDate() !== 1; }],
+          ["%b %d", function (d) { return d.getDate() !== 1; }],
+          ["%B", function (d) { return d.getMonth(); }],
+          ["%Y", function () { return true; }]
+        ]);
         axis.tickFormat(tickFormat);
-      }
-      if (options.tickFormat) {
-        axis.tickFormat(options.tickFormat);
+      } else {
+        if (options.tickFormat) {
+          axis.tickFormat(options.tickFormat);
+        } else {
+          axis.tickFormat(this._localeFormatter.nl_NL.numberFormat());
+        }
       }
       return axis;
     },

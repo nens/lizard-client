@@ -4,6 +4,16 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- Internet Explorer 9 and lower gets error message.
+
+
+Release 0.2b15 (2014-11-24)
+---------------------------
+
+- Bars end at the provided value from the api.
+
+- X labels come from the backend again.
+
 - Added ability to animate multiple rasters with different timeSteps.
 
 - TimeStep and time between frames are dependant on temporalresolution of
@@ -13,6 +23,8 @@ Unreleased
   when promises are resolved.
 
 - Changed slug of ahn2 elevation wms layer.
+
+- Y axes are scaled correctly, by filtering nulls.
 
 Release 0.2b12 (2014-11-17)
 ---------------------------
