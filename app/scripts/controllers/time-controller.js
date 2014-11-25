@@ -252,8 +252,4 @@ angular.module('lizard-nxt')
     $scope.timeState.changedZoom = Date.now();
   };
 
-
-
-
-
 }]);
