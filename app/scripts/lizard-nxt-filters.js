@@ -361,6 +361,7 @@ angular.module('lizard-nxt')
       'weir': 'Stuw',
       'pressurepipe': 'Persleiding',
       'sluice': 'Sluis',
+      'wastewatertreatmentplant': 'Rioolwaterzuiveringsinstallatie',
       'levee': 'Kering',
       'leveereferencepoint': 'Referentiepunt kering'
     }[input] || input;

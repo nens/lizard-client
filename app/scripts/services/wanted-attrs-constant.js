@@ -551,7 +551,7 @@ angular.module('lizard-nxt')
       },
     ]
   },
-  pressure_pipe: {
+  pressurepipe: {
     rows: [
       {
         keyName: "Type",
@@ -684,7 +684,7 @@ angular.module('lizard-nxt')
       }
     ]
   },
-  waste_water_treatment_plant: {
+  wastewatertreatmentplant: {
     rows: [ //Afvalwaterzuiveringsinstallatie
       {
         keyName: "Naam",
