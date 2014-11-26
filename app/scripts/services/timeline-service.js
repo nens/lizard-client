@@ -456,7 +456,8 @@ angular.module('lizard-nxt')
       .text(format(xScale.domain()[0]));
     stopEl
       .text(format(xScale.domain()[1]))
-      .attr('x', dimensions.width - stopEl.node().getBBox().width);
+      .attr('x', dimensions.width - dimensions.padding.right
+        - stopEl.node().getBBox().width);
   };
 
   /**
