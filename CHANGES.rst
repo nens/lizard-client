@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased
 ----------
 
+- Fix timeline svg margin bug.
+
 - Fix rain area aggregation shows up in box.
 
 - Fixed bug where clippath of landuse graph is associated with elevation graph.
