@@ -322,6 +322,7 @@ angular.module('lizard-nxt')
   };
 
   UtilService.preventOldIEUsage();
+
   // catch window.load event
   window.addEventListener("load", function () {
     window.loaded = true;
