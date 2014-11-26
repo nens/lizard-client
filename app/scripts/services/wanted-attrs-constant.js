@@ -278,6 +278,13 @@ angular.module('lizard-nxt')
   measuringstation: {
     rows: [
       {
+        keyName: "Naam",
+        attrName: "name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        valueSuffix: "",
+        defaultValue: "KNMI"
+      },
+      {
         keyName: "Categorie",
         attrName: "category",
         ngBindValue: "waterchain.layers.waterchain_grid.data.category",
@@ -299,14 +306,6 @@ angular.module('lizard-nxt')
         valueSuffix: "",
         defaultValue: "6278"
       }
-      /*
-      {
-        keyName: "Naam",
-        attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
-        valueSuffix: "",
-        defaultValue: "KNMI"
-      }*/
     ]
   },
   orifice: {
