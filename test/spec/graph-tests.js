@@ -192,7 +192,8 @@ describe('Testing graph', function () {
 
   it('should create a clippath drawing area ', function () {
     var clippath = graph._svg.select('g').select('g').attr('clip-path');
-    expect(clippath).toBe('url(#clip)');
+    var height = dimensions.height - dimensions.padding.bottom;
+    expect(clippath).toBe('url(#clip' + height + ')');
   });
 
   it('should transform the drawing area to create a padding', function () {
