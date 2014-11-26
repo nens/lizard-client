@@ -269,14 +269,4 @@ describe('Testing hash controller', function () {
     expect($scope.mapState.layerGroups.testlayer2._active).toBe(true);
   });
 
-  it('should set boxType only when geometry is defined', function () {
-    var controller = createController();
-    $location.path('/map/testlayer2/line');
-    $scope.$broadcast('$locationChangeSuccess');
-    expect($scope.box.type).toBe('area');
-    $location.path('/map/testlayer2/line/53,6');
-    $scope.$broadcast('$locationChangeSuccess');
-    expect($scope.box.type).toBe('line');
-  });
-
 });

@@ -136,13 +136,24 @@ angular.module('lizard-nxt')
      * @summary Draws an aggWindow at timestamp.
      * @description Left of aggWindow is timeState.at, size is dependent on
      * current aggWindow interval on timeState.
+     *
+     * TODO: Rasterstore's "day-level aggregated rain intensity data" has discrete
+     * one-day/24h intervals (=good), however those intervals are from 8:00 GMT
+     * (in the morning) to the next day's 8:00 GMT in the morning (=bad).
+     *
+     * This doens't play nice with the aggWindow to be drawn, since (for 24h
+     * aggregation) this preferably starts on 00:00, and ends 24h later, again
+     * on 00:00.
+     *
      */
     drawAggWindow: {
       value: function (timestamp, interval, oldDimensions) {
 
         var height = this._getHeight(this.dimensions);
         var width = xScale(new Date(timestamp + (interval))) -
-          xScale(new Date(timestamp));
+          xScale(new Date(timestamp)) - 1; // minus 1 px for visual tightness;
+          // aggWindow should be the *exact* same width as the rain bars drawn
+          // in the timeline.
 
         if (!aggWindow) {
           aggWindow = this._svg.append("g")
@@ -164,21 +175,20 @@ angular.module('lizard-nxt')
                 .attr('y', 12);
         }
 
-        var offset = this.dimensions.padding.left;
+        var bboxWidth,
+            offset = this.dimensions.padding.left;
 
         // UPDATE
         aggWindow.select('.aggwindow-label')
           .text(this.format(new Date(timestamp)))
           .attr("x", function () {
-            return (offset + xScale(new Date(timestamp)) -
-              aggWindow.select('.aggwindow-label').node().getBBox().width)
-            - 2; // Place the label 2 px behind the aggWindow rectangle
+            bboxWidth = aggWindow.select('.aggwindow-label').node().getBBox().width;
+            return offset + xScale(new Date(timestamp)) - bboxWidth - 2;
           });
 
         aggWindow.select('.aggwindow-rect')
           .attr("x", function () {
-            var widthMultiplier = interval > 3600000 ? (7/40) : 0.5;
-            return Math.round((offset + xScale(new Date(timestamp))) - (width * widthMultiplier));
+            return Math.round(offset + xScale(new Date(timestamp)));
           })
           .transition()
           .duration(this.transTime)
@@ -827,7 +837,9 @@ angular.module('lizard-nxt')
     // Create new elements as needed.
     bars.enter().append("rect")
       .attr("class", "bar-timeline")
-      .attr("x", function (d) { return xScale(d[0]) - barWidth; })
+      .attr("x", function (d) {
+        return xScale(d[0]) - barWidth;
+      })
       .attr('width', barWidth)
       .attr("height", 0)
       .attr("y", height)

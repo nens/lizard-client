@@ -422,6 +422,7 @@ angular.module('lizard-nxt')
   this.preventOldIEUsage = function () {
     if (this.serveToOldIE()) {
       document.querySelector("#dark-overlay").style.display = "block";
+      document.querySelector("#mymodal").style.display = "block";
       // explicitly HIDE the layerMenu
       document.querySelector(".layer-switcher-wrapper").style.display = "none";
     }
