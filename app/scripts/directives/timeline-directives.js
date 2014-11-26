@@ -30,9 +30,9 @@ angular.module('lizard-nxt')
       bars: 35,
       padding: {
         top: 12,
-        right: 30,
+        right: 15,
         bottom: 20,
-        left: 30
+        left: 15
       }
     },
 
@@ -86,14 +86,14 @@ angular.module('lizard-nxt')
        * @param {object} dimensions - object with timeline dimensions.
        */
       clickFn: function (event, scale, dimensions) {
-        var timeClicked = +(scale.invert(event.pageX - dimensions.padding.left));
-        scope.timeState.at = UtilService.roundTimestamp(
-          timeClicked,
-          scope.timeState.aggWindow,
-          false
-        );
-
-        scope.$digest();
+        scope.$apply(function () {
+          var timeClicked = +(scale.invert(event.pageX - dimensions.padding.left));
+          scope.timeState.at = UtilService.roundTimestamp(
+            timeClicked,
+            scope.timeState.aggWindow,
+            false
+          );
+        });
       },
     };
 
