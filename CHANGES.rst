@@ -1,8 +1,13 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased
-----------
+Unreleased ()
+-------------
+
+-
+
+Release 0.2b16 (2014-11-26)
+---------------------------
 
 - Fix timeline svg margin bug.
 
