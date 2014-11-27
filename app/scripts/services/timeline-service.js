@@ -83,7 +83,10 @@ angular.module('lizard-nxt')
      * @type function to be used to format datetime.
      */
     format: {
-      value: NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%a %e %b %Y %X")
+      value: NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%a %e %b %Y %H:%M")
+    },
+    format_aggwindow: {
+      value: NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%e %b %H:%M")
     },
 
     /**
@@ -180,7 +183,7 @@ angular.module('lizard-nxt')
 
         // UPDATE
         aggWindow.select('.aggwindow-label')
-          .text(this.format(new Date(timestamp)))
+          .text(this.format_aggwindow(new Date(timestamp)))
           .attr("x", function () {
             bboxWidth = aggWindow.select('.aggwindow-label').node().getBBox().width;
             return offset + xScale(new Date(timestamp)) - bboxWidth - 2;
