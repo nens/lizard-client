@@ -8,18 +8,6 @@ angular.module('lizard-nxt')
     $scope.box.content = {};
 
     /**
-     * Click function for the X in the searchbar
-     * @description Removes all content from box, empties the search box,
-     *              empties the clickfeedback and removes line points.
-     */
-    // $scope.resetBox = function () {
-    //   $scope.box.query = null;
-    //   $scope.box.content = {};
-    //   ClickFeedbackService.emptyClickLayer($scope.mapState);
-    //   $scope.mapState.points = [];
-    // };
-
-    /**
      * @function
      * @memberOf app.omnibox
      * @description Loops over all layergroups to request data
