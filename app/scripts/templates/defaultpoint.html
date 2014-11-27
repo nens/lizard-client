@@ -3,17 +3,20 @@
     <div ng-switch="l.type">
 
       <div ng-switch-when="Store">
-        <table class="table table-condensed table-hover single-row-table">
-          <thead ng-if="l.scale === 'interval' || l.scale === 'ratio' ">
-            <td><% l.quantity %> </td>
-            <td><% l.data[0][0] | number : 2 %> <% l.unit %></td>
+        <table ng-if="l.scale === 'interval' || l.scale === 'ratio' "
+          class="table table-condensed table-hover single-row-table">
+          <thead>
+            <td class="half-width-td"><% l.quantity %> </td>
+            <td class="half-width-td"><% l.data[0][0] | number : 2 %> <% l.unit %></td>
           </thead>
         </table>
 <!--    TODO: get proper response from server when asking for point of nominal
               or ordinal data-->
-        <table class="table table-condensed table-hover single-row-table">
-          <thead ng-if="l.scale === 'nominal' || l.scale === 'ordinal' ">
-            <td><% landuseLookup[l.data[0][0]] %></td>
+        <table ng-if="l.scale === 'nominal' || l.scale === 'ordinal' "
+          class="table table-condensed table-hover single-row-table">
+          <thead>
+            <td class="half-width-td"><% landuseLookup[l.data[0][0]] | landuseLanduseType %></td>
+            <td class="half-width-td"><% landuseLookup[l.data[0][0]] | landuseSource %></td>
           </thead>
         </table>
       </div>

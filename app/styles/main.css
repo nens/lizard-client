@@ -1451,7 +1451,7 @@ img {
     image-rendering: -webkit-optimize-contrast; /* Chrome (and Safari) */
     image-rendering: optimize-contrast;         /* CSS3 Proposed       */
     -ms-interpolation-mode: nearest-neighbor;   /* IE8+                */
-    }
+}
 
 /* Leaflet override */
 .leaflet-container img.leaflet-image-layer {
@@ -1610,3 +1610,8 @@ img {
   color: #000;
   display: none;
 }
+
+.half-width-td {
+    width: 50%;
+}
+
