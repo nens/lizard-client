@@ -25,7 +25,6 @@ angular.module('lizard-nxt')
           $event.originalEvent.stopPropagation();
         }
       }
-      element.focus();
     };
 
     /**
