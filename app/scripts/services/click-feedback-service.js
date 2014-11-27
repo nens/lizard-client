@@ -118,7 +118,8 @@ angular.module('lizard-nxt')
         clearInterval(this._vibration);
         var vibrate = this.vibrate;
         var self = this;
-        this._vibration = setInterval(function () { vibrate.call(self, sel, false); }, 400);
+        this._vibration = setInterval(
+          function () { vibrate.call(self, sel, false); }, 400);
       };
 
       /**
@@ -191,18 +192,16 @@ angular.module('lizard-nxt')
        * @return {int}             radius
        */
       var getRadius = function (feature) {
-        var entityName = feature.properties.entity_name;
+        var entityName = feature.properties.entity_name,
+            entityType = feature.properties.type;
         var radius = feature.properties.radius || 0;
         if (entityName) {
           radius = 12;
-          if (entityName.indexOf("pumpstation_non_sewerage") !== -1) {
+          if (entityName === "pumpstation" && entityType !== "Rioolgemaal") {
             radius =  13;
-          } else if (entityName.indexOf("pumpstation_sewerage") !== -1
-            || entityName.indexOf("weir") !== -1) {
+          } else if (entityType === "Rioolgemaal" || entityName === "weir") {
             radius =  11;
-          } else if (entityName.indexOf("bridge") !== -1) {
-            radius =  14;
-          } else if (entityName === 'manhole') {
+          } else if (entityName === "bridge" || entityName === "manhole") {
             radius =  14;
           }
         }

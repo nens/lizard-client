@@ -35,95 +35,22 @@ angular.module('lizard-nxt')
       }
     ]
   },
-  belt_channel: {
+  channel_Boezem: {
     rows: [
       {
-        keyName: "Bodemhoogte",
-        attrName: "bed_level",
-        ngBindValue:
-          "waterchain.layers.waterchain_grid.data.bed_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
-        defaultValue: "-2.2"
-      },
-      {
-        keyName: "Talud (links)",
-        attrName: "talud_left",
-        ngBindValue:
-          "waterchain.layers.waterchain_grid.data.talud_left",
+        keyName: "Naam",
+        attrName: "display_name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
-        defaultValue: "1:2"
+        defaultValue: "Watergang"
       },
-      {
-        keyName: "Talud (rechts)",
-        attrName: "talud_right",
-        ngBindValue:
-          "waterchain.layers.waterchain_grid.data.talud_right",
-        valueSuffix: "",
-        defaultValue: "1:2"
-      }
-    ]
-  },
-  primary_channel: {
-    rows: [
-      {
-        keyName: "Bodemhoogte",
-        attrName: "bed_level",
-        ngBindValue:
-          "waterchain.layers.waterchain_grid.data.bed_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
-        defaultValue: "-2.2"
-      },
-      {
-        keyName: "Talud (links)",
-        attrName: "talud_left",
-        ngBindValue:
-          "waterchain.layers.waterchain_grid.data.talud_left",
-        valueSuffix: "",
-        defaultValue: "1:2"
-      },
-      {
-        keyName: "Talud (rechts)",
-        attrName: "talud_right",
-        ngBindValue:
-          "waterchain.layers.waterchain_grid.data.talud_right",
-        valueSuffix: "",
-        defaultValue: "1:2"
-      }
-    ]
-  },
-  channel: {
-    rows: [
       {
         keyName: "Type",
         attrName: "type",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.type",
-        valueSuffix: " (m)",
-        defaultValue: "Secundaire watergang"
-      },
-      {
-        keyName: "Bodemhoogte",
-        attrName: "bed_level",
-        ngBindValue:
-          "waterchain.layers.waterchain_grid.data.bed_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
-        defaultValue: "-2.2"
-      },
-      {
-        keyName: "Talud (links)",
-        attrName: "talud_left",
-        ngBindValue:
-          "waterchain.layers.waterchain_grid.data.talud_left",
         valueSuffix: "",
-        defaultValue: "1:2"
-      },
-      {
-        keyName: "Talud (rechts)",
-        attrName: "talud_right",
-        ngBindValue:
-          "waterchain.layers.waterchain_grid.data.talud_right",
-        valueSuffix: "",
-        defaultValue: "1:2"
+        defaultValue: "Boezem"
       }
     ]
   },
@@ -508,48 +435,6 @@ angular.module('lizard-nxt')
       // }
     ]
   },
-  pumpstation_sewerage: {
-    rows: [
-      {
-        keyName: "Type",
-        attrName: "type",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.type | lookupPumpStationType",
-        valueSuffix: "",
-        defaultValue: "onbekend"
-      },
-      {
-        keyName: "Aanslagpeil",
-        attrName: "start_level",
-        ngBindValue:
-          "waterchain.layers.waterchain_grid.data.start_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
-        defaultValue: "-2.2"
-      },
-      {
-        keyName: "Afslagpeil",
-        attrName: "stop_level",
-        ngBindValue:
-          "waterchain.layers.waterchain_grid.data.stop_level | niceNumberOrEllipsis: 2",
-        valueSuffix: " (mNAP)",
-        defaultValue: "-2.8"
-      },
-      {
-        keyName: "Capaciteit",
-        attrName: "capacity",
-        ngBindValue:
-          "waterchain.layers.waterchain_grid.data.capacity * 3.6 | niceNumberOrEllipsis: 2",
-        valueSuffix: " (m3/uur)",
-        defaultValue: "54"
-      },
-      {
-        keyName: "Naam",
-        attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
-        valueSuffix: "",
-        defaultValue: "onbekend"
-      },
-    ]
-  },
   pressurepipe: {
     rows: [
       {
@@ -617,12 +502,12 @@ angular.module('lizard-nxt')
       }
     ]
   },
-  pumpstation_non_sewerage: {
+  pumpstation: {
     rows: [
       {
         keyName: "Type",
         attrName: "type",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.type | lookupPumpStationType",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.type",
         valueSuffix: "",
         defaultValue: "gemaal"
       },
