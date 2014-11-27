@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Shorter time label in time line.
+
 - Update ylabel for timeseries graph.
 
 - Fix bug with date parsing from url in IE.
