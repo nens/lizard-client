@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Fix opacity slider in IE.
+
 - Shorter time label in time line.
 
 - Update ylabel for timeseries graph.
