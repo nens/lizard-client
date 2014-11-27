@@ -29,11 +29,24 @@ angular.module('lizard-nxt')
     aggWindow = options.aggWindow || UtilService.getAggWindow(options.start,
       options.end, GRAPH_WIDTH);
 
-    if (cancelers[layer.slug]) {
-      cancelers[layer.slug].resolve();
-    }
+    // getData can have own deferrer to prevent conflicts
+    if (options.deferrer) {
+      var deferSlug = options.deferrer.origin,
+          canceler = options.deferrer.deferred;
+      if (cancelers[options.deferrer.origin]) {
+        cancelers[options.deferrer.origin].resolve();
+      }
+      cancelers[options.deferrer.origin] = canceler;
+    } 
+    // if it doesn't have a deferrer in the options
+    // use the layer slug..
+      else {
+      if (cancelers[layer.slug]) {
+        cancelers[layer.slug].resolve();
+      }
 
-    var canceler = cancelers[layer.slug] = $q.defer();
+      var canceler = cancelers[layer.slug] = $q.defer();
+    }
 
     return CabinetService.raster(canceler).get({
       raster_names: layer.slug,

@@ -1,10 +1,32 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased
-----------
+Unreleased ()
+-------------
 
 -
+
+Release 0.2b16 (2014-11-26)
+---------------------------
+
+- Fix timeline svg margin bug.
+
+- Fix rain area aggregation shows up in box.
+
+- Fixed bug where clippath of landuse graph is associated with elevation graph.
+
+- Fixed snapping of aggWindow.
+
+- Fixed resolving of getData for utf and vector layers.
+
+- Fixed timeseries name and labels with hack.
+
+- Fixed bug with search and hitting spacebar.
+
+- Internet Explorer 9 and lower gets error message.
+
+- Timeline does not interfere with initial point/line request with a
+  pre-existing layerSlug request
 
 
 Release 0.2b15 (2014-11-24)

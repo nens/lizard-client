@@ -148,41 +148,35 @@ angular.module('lizard-nxt')
     }
   };
 
-  var turnBufferOff = function () {
+  /**
+   * @param  {boolean} onOff boolean to control timeState.buffering
+   */
+  var toggleBuffer = function (onOff) {
     if (!$scope.$$phase) {
       $scope.$apply(function () {
-        $scope.timeState.buffering = false;
+        $scope.timeState.buffering = onOff;
       });
     }
-    else { $scope.timeState.buffering = false; }
+    else { $scope.timeState.buffering = onOff; }
   };
 
   /**
-   * @description creates a promise by calling syncTime or calls syncTime when
-   *              the promise is already there.
+   * @description creates a promise by calling syncTime and toggles buffer state
+   *              accordingly.
    * @param  {object} timeState nxt timeState object
    */
   var syncTimeWrapper = function (timeState) {
-    var finish;
-    $scope.timeState.buffering = true;
-    if (promise === undefined) {
-      promise = $scope.mapState.syncTime(timeState);
-      finish = promise.then(function () {
-        turnBufferOff();
-        promise = undefined;
-      });
+    promise = $scope.mapState.syncTime(timeState);
+    if ($scope.timeState.animation.playing) {
+      progressAnimation(promise);
     }
     else {
-      finish = promise.then(function () {
-        turnBufferOff();
-        promise = $scope.mapState.syncTime(timeState);
-        promise.then(function () {
-          promise = undefined;
-        });
+      // If promise is resolved buffering is set to false. If this does not
+      // happpen instantly, buffering is set to true.
+      promise.then(function () {
+        toggleBuffer(false);
       });
-    }
-    if ($scope.timeState.animation.playing) {
-      progressAnimation(finish);
+      toggleBuffer(true);
     }
   };
 
@@ -199,9 +193,11 @@ angular.module('lizard-nxt')
     timeOut = setTimeout(function () {
       // And the layergroups are all ready
       finish.then(function () {
+        toggleBuffer(false);
         // And the browser is ready.
         window.requestAnimationFrame(step);
       });
+      toggleBuffer(true);
     }, minLag);
   };
 

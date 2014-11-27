@@ -16,10 +16,15 @@ angular.module('lizard-nxt')
      * 13 refers to the RETURN key.
      */
     scope.searchKeyPress = function ($event) {
-      if ($event.target.id === "searchboxinput" &&
-          $event.which === 13) {
-        scope.search();
-     }
+      if ($event.target.id === "searchboxinput") {
+        if ($event.which === 13) {
+          // User hits [enter] -> do search;
+          scope.search();
+        } else if ($event.which === 32) {
+          // user hits [space] -> prevent anim. start/stop
+          $event.originalEvent.stopPropagation();
+        }
+      }
       element.focus();
     };
 

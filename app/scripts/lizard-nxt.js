@@ -290,14 +290,18 @@ angular.module('lizard-nxt')
    * Watch to restrict values of timeState.
    */
   $scope.$watch('timeState.changedZoom', function (n, o) {
+    // 6 months in advance
+    var max = Date.now() + 6 * 30.5 * 24 * 3600 * 1000;
+    // 4 years back
+    var min = Date.now() - 4 * 365 * 24 * 3600 * 1000;
     if (n === o || $scope.timeState.changeOrigin === 'master') { return true; }
-    if ($scope.timeState.start < -315619200000) {
+    if ($scope.timeState.start < min) {
       $scope.timeState.changeOrigin = 'master';
-      $scope.timeState.start = -315619200000;
+      $scope.timeState.start = min;
     }
-    if ($scope.timeState.end > 2208988800000) {
+    if ($scope.timeState.end > max) {
       $scope.timeState.changeOrigin = 'master';
-      $scope.timeState.end = 2208988800000;
+      $scope.timeState.end = max;
     }
   });
 
@@ -349,5 +353,12 @@ angular.module('lizard-nxt')
   $scope.toggleVersionVisibility = function () {
     $('.navbar-version').toggle();
   };
+
+  UtilService.preventOldIEUsage();
+
+  // catch window.load event
+  window.addEventListener("load", function () {
+    window.loaded = true;
+  });
 
 }]);

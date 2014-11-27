@@ -219,13 +219,12 @@ angular.module('lizard-nxt')
         layerSlug = nonLeafLayer.slug;
       }
 
-
       if (!layer) {
         deferred.reject();
         return deferred.promise;
       }
 
-      if (layer.isLoading || !vectorLayers[layerSlug]) {
+      if (layer.isLoading) {
         getDataAsync(layerSlug, layer, options, deferred);
       } else if (vectorLayers[layerSlug]) {
         var set = filterSet(vectorLayers[layerSlug].data,
@@ -234,8 +233,12 @@ angular.module('lizard-nxt')
           end: options.end
         });
         deferred.resolve(set);
-      }
-      else {
+      } else if (!vectorLayers[layerSlug]) {
+        // Store that there is no data for this layer
+        vectorLayers[layerSlug] = {
+          data: [],
+        };
+      } else {
         deferred.reject();
       }
 
@@ -250,14 +253,12 @@ angular.module('lizard-nxt')
      */
     var getDataAsync = function (layerSlug, layer, options, deferred) {
       layer.on('loadend', function () {
-        if (vectorLayers[layerSlug] !== undefined) {
-          deferred.resolve(filterSet(vectorLayers[layerSlug].data,
-            options.geom, {
-              start: options.start,
-              end: options.end
-            }
-          ));
-        }
+        deferred.resolve(filterSet(vectorLayers[layerSlug].data,
+          options.geom, {
+            start: options.start,
+            end: options.end
+          }
+        ));
       });
     };
 
@@ -281,7 +282,7 @@ angular.module('lizard-nxt')
       var ids = [];
 
       for (var j = 0; j < union.length; j++) {
-          ids.push(union[j].properties[uniqueKey]);
+        ids.push(union[j].properties[uniqueKey]);
       }
 
       for (var i = 0; i < arr2.length; i++) {

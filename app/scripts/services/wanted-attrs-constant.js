@@ -278,6 +278,13 @@ angular.module('lizard-nxt')
   measuringstation: {
     rows: [
       {
+        keyName: "Naam",
+        attrName: "name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        valueSuffix: "",
+        defaultValue: "KNMI"
+      },
+      {
         keyName: "Categorie",
         attrName: "category",
         ngBindValue: "waterchain.layers.waterchain_grid.data.category",
@@ -299,14 +306,6 @@ angular.module('lizard-nxt')
         valueSuffix: "",
         defaultValue: "6278"
       }
-      /*
-      {
-        keyName: "Naam",
-        attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
-        valueSuffix: "",
-        defaultValue: "KNMI"
-      }*/
     ]
   },
   orifice: {
@@ -516,7 +515,7 @@ angular.module('lizard-nxt')
         attrName: "type",
         ngBindValue: "waterchain.layers.waterchain_grid.data.type | lookupPumpStationType",
         valueSuffix: "",
-        defaultValue: "niet aangeleverd"
+        defaultValue: "onbekend"
       },
       {
         keyName: "Aanslagpeil",
@@ -547,11 +546,11 @@ angular.module('lizard-nxt')
         attrName: "name",
         ngBindValue: "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
-        defaultValue: "niet aangeleverd"
+        defaultValue: "onbekend"
       },
     ]
   },
-  pressure_pipe: {
+  pressurepipe: {
     rows: [
       {
         keyName: "Type",
@@ -640,7 +639,7 @@ angular.module('lizard-nxt')
         attrName: "name",
         ngBindValue: "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
-        defaultValue: "niet aangeleverd"
+        defaultValue: "onbekend"
       },
       {
         keyName: "Code",
@@ -680,18 +679,18 @@ angular.module('lizard-nxt')
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
-        defaultValue: 'niet aangeleverd'
+        defaultValue: 'onbekend'
       }
     ]
   },
-  waste_water_treatment_plant: {
+  wastewatertreatmentplant: {
     rows: [ //Afvalwaterzuiveringsinstallatie
       {
         keyName: "Naam",
         attrName: "name",
         ngBindValue: "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
-        defaultValue: "niet aangeleverd"
+        defaultValue: "onbekend"
       },
     ]
   },

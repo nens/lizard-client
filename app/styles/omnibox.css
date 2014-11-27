@@ -212,7 +212,6 @@
 
 #cards .location {
     padding: 10px;
-    background-color: #fff;
     width:400px;
     white-space:nowrap;
     overflow:hidden;
@@ -657,13 +656,6 @@ td.lineout {
   max-width: 370px;
   max-height: 247px;
   margin: 5px;
-}
-
-.leaflet-control-zoom-in, .leaflet-control-zoom-out, #search-button {
-
-  border-bottom: 0 !important;
-  height: 32px;
-  max-height: 32px;
 }
 
 .show-structure-attrs-link {
