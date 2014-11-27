@@ -12,12 +12,12 @@ angular.module('lizard-nxt')
      * @description Removes all content from box, empties the search box,
      *              empties the clickfeedback and removes line points.
      */
-    $scope.resetBox = function () {
-      $scope.box.query = null;
-      $scope.box.content = {};
-      ClickFeedbackService.emptyClickLayer($scope.mapState);
-      $scope.mapState.points = [];
-    };
+    // $scope.resetBox = function () {
+    //   $scope.box.query = null;
+    //   $scope.box.content = {};
+    //   ClickFeedbackService.emptyClickLayer($scope.mapState);
+    //   $scope.mapState.points = [];
+    // };
 
     /**
      * @function

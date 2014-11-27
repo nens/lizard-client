@@ -147,11 +147,32 @@ angular.module('lizard-nxt')
  */
 angular.module('lizard-nxt')
   .controller('MasterCtrl',
-  ['$scope', '$http', '$q', '$filter', '$compile', 'CabinetService',
-   'RasterService', 'UtilService', 'TimeseriesService',
-   'user', 'versioning',
-  function ($scope, $http, $q, $filter, $compile, CabinetService, RasterService,
-            UtilService, TimeseriesService, user, versioning) {
+
+  ['$scope',
+   '$http',
+   '$q',
+   '$filter',
+   '$compile',
+   'CabinetService',
+   'RasterService',
+   'UtilService',
+   'TimeseriesService',
+   'ClickFeedbackService',
+   'user',
+   'versioning',
+
+  function ($scope,
+            $http,
+            $q,
+            $filter,
+            $compile,
+            CabinetService,
+            RasterService,
+            UtilService,
+            TimeseriesService,
+            ClickFeedbackService,
+            user,
+            versioning) {
 
   $scope.user = user;
   $scope.versioning = versioning;
@@ -201,15 +222,14 @@ angular.module('lizard-nxt')
    */
   $scope.toggleTool = function (name) {
 
-    if (name === 'line') {
-      $scope.box.type = 'line';
-    } else if (name === 'point') {
-      $scope.box.type = 'point';
-    } else if (name === 'area') {
-      $scope.box.type = 'area';
+    if (["point", "line", "area"].indexOf(name) > -1) {
+      $scope.box.type = name;
+    } else {
+      throw new Error("Attemped to assign an illegal value ('"
+        + name
+        + "') to $scope.box.type. Only 'point', 'line' and 'area' are accepted values."
+      );
     }
-
-    $scope.tools.active = name;
   };
 
   /**
@@ -292,24 +312,33 @@ angular.module('lizard-nxt')
   // If escape is pressed close box
   // NOTE: This fires the watches too often
   $scope.keyPress = function ($event) {
+
+    console.log('[F] $scope.keyPress');
+
     if ($event.target.nodeName === "INPUT" &&
       ($event.which !== 27 && $event.which !== 13
        && $event.which !== 32)) {
       return;
     }
 
-   
     if ($event.which === 27) {
       // If detailMode is active, close that
       if ($scope.box.contextSwitchMode) {
+        // this shouldn't happen until 01-12-2014
         $scope.box.contextSwitchMode = false;
       } else {
         // Or else, reset the omnibox state
-        $scope.box.type = 'area';
-        // $scope.box.empty = null;
+        console.log("So ya hit [ESC]");
+
+        $scope.box.type = 'point';
+        $scope.box.query = null;
+        $scope.box.content = {};
+        $scope.mapState.here = undefined;
+        $scope.mapState.points = [];
+        ClickFeedbackService.emptyClickLayer($scope.mapState);
       }
     }
-    
+
     // play pause timeline with Space.
     if ($event.which === 32) {
       $scope.timeState.playPauseAnimation();
