@@ -231,7 +231,7 @@ angular.module('lizard-nxt')
         {
           geom: scope.mapState.bounds,
           start: scope.timeState.start,
-          end: scope.timeState.stop
+          end: scope.timeState.stop,
         }
       );
 
@@ -248,6 +248,7 @@ angular.module('lizard-nxt')
         }
       });
     };
+
 
     /**
      * @function
@@ -337,6 +338,22 @@ angular.module('lizard-nxt')
       scope.timeState.at = UtilService.roundTimestamp(
         scope.timeState.at, scope.timeState.aggWindow, false
       );
+    });
+
+    /**
+     * The timeline can be too early on initialization.
+     * The leaflet events are not even started loading, 
+     * so the call returns an empty array.
+     *
+     * If nobody touches nothing, that means the timeline
+     * won't show events, whilst they are being drawn
+     * on the map.
+     *
+     * This evenListener ensures a retrieval of data
+     * after the browser is done doing requests.
+     */
+    window.addEventListener('load', function () {
+      getTimeLineData();
     });
 
     /**
