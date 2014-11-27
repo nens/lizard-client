@@ -225,16 +225,14 @@ angular.module('lizard-nxt')
        * @return {object} nxt timeState
        */
       parseTimeState: function (time, timeState) {
-        // Browser independent
-        var times = time.replace(/,/g, '/').split('-');
-        // IE requires datestrings in a certain format. Just passing string
-        // is not sufficient.
-        var msStartTime = Date.parse(times[0].split('/').join(' '));
+        // Browser independent. IE requires datestrings in a certain format.
+        var times = time.replace(/,/g, ' ').split('-');
+        var msStartTime = Date.parse(times[0]);
         // bail if time is not parsable, but return timeState
         if (isNaN(msStartTime)) { return timeState; }
         timeState.start = msStartTime;
 
-        var msEndTime = Date.parse(times[1].split('/').join(' '));
+        var msEndTime = Date.parse(times[1]);
         if (isNaN(msEndTime)) { return timeState; }
         if (msEndTime === timeState.start) {
           msEndTime += 43200000; // half a day
