@@ -317,8 +317,6 @@ angular.module('lizard-nxt')
   // NOTE: This fires the watches too often
   $scope.keyPress = function ($event) {
 
-    console.log('[F] $scope.keyPress');
-
     if ($event.target.nodeName === "INPUT" &&
       ($event.which !== 27 && $event.which !== 13
        && $event.which !== 32)) {
@@ -328,18 +326,22 @@ angular.module('lizard-nxt')
     if ($event.which === 27) {
       // If detailMode is active, close that
       if ($scope.box.contextSwitchMode) {
-        // this shouldn't happen until 01-12-2014
+        // this shouldn't matter until dates gte 01-12-2014
         $scope.box.contextSwitchMode = false;
       } else {
-        // Or else, reset the omnibox state
-        console.log("So ya hit [ESC]");
+        // Or else, reset the omnibox AND searchbar state:
 
-        $scope.box.type = 'point';
-        $scope.box.query = null;
+        $scope.box.type = "point";
         $scope.box.content = {};
         $scope.mapState.here = undefined;
         $scope.mapState.points = [];
         ClickFeedbackService.emptyClickLayer($scope.mapState);
+
+        // This does NOT work, thnx to Angular scoping:
+        // $scope.geoquery = "";
+        //
+        // ...circumventing-angular-weirdness teknique:
+        document.querySelector("#searchboxinput").value = "";
       }
     }
 

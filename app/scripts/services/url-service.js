@@ -120,8 +120,7 @@ angular.module('lizard-nxt')
 
      /**
       * @function
-      * @memberOf angular.module('lizard-nxt')
-  .UrlState
+      * @memberOf angular.module('lizard-nxt').UrlState
       * @description Sets the points or the here on the url when
       *              respectively point or line is specified as type.
       * @param {object} state config object
@@ -137,7 +136,9 @@ angular.module('lizard-nxt')
           });
           pointsStr = pointsStr.substring(0, pointsStr.length - 1);
         } else {
-          pointsStr = here.lat.toFixed(COORD_PRECISION) + ',' + here.lng.toFixed(COORD_PRECISION);
+          pointsStr = here === undefined
+            ? ''
+            : here.lat.toFixed(COORD_PRECISION) + ',' + here.lng.toFixed(COORD_PRECISION);
         }
         LocationGetterSetter.setUrlValue(state.geom.part, state.geom.index, pointsStr);
       },
