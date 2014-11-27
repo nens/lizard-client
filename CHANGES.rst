@@ -4,7 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
--
+- Escape and x-button in search box reset box, points and remove points from
+  url.
 
 Release 0.2b16 (2014-11-26)
 ---------------------------
