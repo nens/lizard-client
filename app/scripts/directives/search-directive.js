@@ -71,7 +71,7 @@ angular.module('lizard-nxt')
      * (1) - Reset box.type to it's default value, "point";
      * (2) - Reset the search query to the empty string;
      * (3) - Reset box.content to an empty object;
-     * (4) - Clear mapState.points arr (used for updating the Url;
+     * (4) - Clear mapState.points arr (used for updating the Url);
      * (5) - Clear the click feedback.
      */
     scope.cleanInput = function () {
