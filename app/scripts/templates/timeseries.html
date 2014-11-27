@@ -2,7 +2,6 @@
      id="card-content-timeseries">
 
   <div class="timeseries-header-container">
-    <div class="timeseries-header-text">Tijdserie:</div>
     <select class="timeseries"
             ng-model="$parent.box.content.timeseries.selectedTimeseries"
             ng-options="series.name for series in $parent.box.content.timeseries.data | rmSingleDatumTimeseries">
@@ -10,28 +9,28 @@
   </div>
 
 
-    <div
-        ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name === 'measuringstation'">
-     <graph
-        bar-chart
-        type="temporal"
-        data="$parent.box.content.timeseries.selectedTimeseries.events"
-        ylabel="$parent.box.content.timeseries.selectedTimeseries.unit"
-        xlabel=""
-        keys="{x: 0, y: 1}"
-        now="$parent.timeState.at">
-      </graph>
-    </div>
+  <div
+      ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name === 'measuringstation'">
+   <graph
+      bar-chart
+      type="temporal"
+      data="$parent.box.content.timeseries.selectedTimeseries.events"
+      ylabel="$parent.box.content.timeseries.selectedTimeseries.unit"
+      xlabel=""
+      keys="{x: 0, y: 1}"
+      now="$parent.timeState.at">
+    </graph>
+  </div>
 
-    <div ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name !== 'measuringstation'">
-      <graph
-        line
-        type="temporal"
-        data="$parent.box.content.timeseries.selectedTimeseries.events"
-        ylabel="$parent.box.content.timeseries.selectedTimeseries.unit"
-        xlabel=""
-        keys="{x: 0, y: 1}"
-        now="$parent.timeState.at">
-      </graph>
-    </div>
+  <div ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name !== 'measuringstation'">
+    <graph
+      line
+      type="temporal"
+      data="$parent.box.content.timeseries.selectedTimeseries.events"
+      ylabel="$parent.box.content.timeseries.selectedTimeseries.unit"
+      xlabel=""
+      keys="{x: 0, y: 1}"
+      now="$parent.timeState.at">
+    </graph>
+  </div>
 </div>
