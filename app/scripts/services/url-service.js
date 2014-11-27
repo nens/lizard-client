@@ -227,6 +227,8 @@ angular.module('lizard-nxt')
       parseTimeState: function (time, timeState) {
         // Browser independent
         var times = time.replace(/,/g, '/').split('-');
+        // IE requires datestrings in a certain format. Just passing string
+        // is not sufficient.
         var msStartTime = Date.parse(times[0].split('/').join(' '));
         // bail if time is not parsable, but return timeState
         if (isNaN(msStartTime)) { return timeState; }
