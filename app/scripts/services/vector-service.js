@@ -224,6 +224,7 @@ angular.module('lizard-nxt')
         return deferred.promise;
       }
 
+
       if (layer.isLoading) {
         getDataAsync(layerSlug, layer, options, deferred);
       } else if (vectorLayers[layerSlug]) {
@@ -236,7 +237,7 @@ angular.module('lizard-nxt')
       } else if (!vectorLayers[layerSlug]) {
         // Store that there is no data for this layer
         vectorLayers[layerSlug] = {
-          data: [],
+          data: []
         };
       } else {
         deferred.reject();
