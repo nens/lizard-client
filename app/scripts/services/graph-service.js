@@ -363,14 +363,15 @@ angular.module('lizard-nxt')
 
   drawVerticalRects = function (svg, dimensions, xy, keys, data, duration) {
     var width = Graph.prototype._getWidth(dimensions),
-    height = Graph.prototype._getHeight(dimensions),
-    x = xy.x,
-    y = xy.y,
-    barWidth = getBarWidth(xy.x.scale, data, keys, dimensions),
+        height = Graph.prototype._getHeight(dimensions),
+        x = xy.x,
+        y = xy.y,
+        barWidth = Math.max(1, getBarWidth(xy.x.scale, data, keys, dimensions)),
+        strokeWidth = barWidth === 1 ? 0 : 1,
 
-    // Join new data with old elements, based on the x key.
-    bar = svg.select('g').select('#feature-group').selectAll(".bar")
-      .data(data, function (d) { return d[keys.x]; });
+        // Join new data with old elements, based on the x key.
+        bar = svg.select('g').select('#feature-group').selectAll(".bar")
+          .data(data, function (d) { return d[keys.x]; });
 
     // UPDATE
     // Update old elements as needed.
@@ -393,7 +394,9 @@ angular.module('lizard-nxt')
       // Bring bars in one by one
       .delay(function (d, i) { return i * 0.1 * duration; })
       .attr("height", function (d) { return height - y.scale(d[keys.y]); })
-      .attr("y", function (d) { return y.scale(d[keys.y]); });
+      .attr("y", function (d) { return y.scale(d[keys.y]); })
+      .attr("stroke-width", strokeWidth)
+      ;
 
     // EXIT
     // Remove old elements as needed.
