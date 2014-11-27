@@ -289,6 +289,9 @@
         // NB! This is a proper illustration of passing data from back-end to
         // front-end in a minimal fashion.
         window.JS_DEBUG = "True" === "True";
+        if (window.gauges) {
+          gauges();
+        }
     </script>
   </body>
 </html>
