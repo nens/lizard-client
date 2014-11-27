@@ -4,7 +4,10 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Fix pumpstation and channel new entity types.
+
 - Point clicks now have proper alignment for raster response.
+
 
 Release 0.2b16 (2014-11-26)
 ---------------------------

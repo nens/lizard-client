@@ -105,7 +105,8 @@ angular.module('lizard-nxt')
             type: 'Feature',
             geometry: angular.fromJson(content.waterchain.layers.waterchain_grid.data.geom),
             properties: {
-              entity_name: content.waterchain.layers.waterchain_grid.data.entity_name
+              entity_name: content.waterchain.layers.waterchain_grid.data.entity_name,
+              type: content.waterchain.layers.waterchain_grid.data.type || ''
             }
           };
           ClickFeedbackService.drawGeometry(
@@ -216,10 +217,8 @@ angular.module('lizard-nxt')
       switch (str) {
       case 'overflow':
         return 'icon-overflow';
-      case 'pumpstation_sewerage':
+      case 'pumpstation':
         return 'icon-pumpstation-diesel';
-      case 'pumpstation_non_sewerage':
-        return 'icon-pumpstation';
       case 'bridge':
         return 'icon-bridge';
       case 'bridge-draw':
