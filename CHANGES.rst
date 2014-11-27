@@ -4,6 +4,9 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Escape and x-button in search box reset box, points and remove points from
+  url.
+
 - Fix pumpstation and channel new entity types.
 
 - Point clicks now have proper alignment for raster response.
