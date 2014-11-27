@@ -369,3 +369,17 @@ angular.module('lizard-nxt')
 
 });
 
+angular.module('lizard-nxt')
+  .filter('landuseLanduseType', function () {
+  return function (input) {
+    return input.split(' - ')[2];
+  };
+});
+
+angular.module('lizard-nxt')
+  .filter('landuseSource', function () {
+  return function (input) {
+    return input.split(' - ')[1];
+  };
+});
+
