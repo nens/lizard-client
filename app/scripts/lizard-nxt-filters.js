@@ -164,8 +164,8 @@ angular.module('lizard-nxt')
         return 'Gemaaltype afwijkend';
       default:
         return 'Gemaaltype onbekend';
-    }
-  };
+      }
+    };
 });
 
 angular.module('lizard-nxt')
@@ -345,8 +345,8 @@ angular.module('lizard-nxt')
     return {
       'bridge': 'Brug',
       'channel': 'Watergang',
-      'belt_channel': 'Boezem',
-      'primary_channel': 'Hoofdwatergang',
+      'channel_Boezem': 'Boezemkanaal',
+      'channel_Primair': 'Primaire watergang',
       'crossprofile': 'Kruisprofiel',
       'culvert': 'Duiker',
       'manhole': 'Put',
@@ -356,8 +356,6 @@ angular.module('lizard-nxt')
       'overflow': 'Overstort',
       'pipe': 'Rioolleiding',
       'pumpstation': 'Gemaal',
-      'pumpstation_sewerage': 'Rioolgemaal',
-      'pumpstation_non_sewerage': 'Gemaal',
       'weir': 'Stuw',
       'pressurepipe': 'Persleiding',
       'sluice': 'Sluis',
