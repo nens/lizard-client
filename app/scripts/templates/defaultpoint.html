@@ -6,8 +6,9 @@
         <table ng-if="l.scale === 'interval' || l.scale === 'ratio' "
           class="table table-condensed table-hover single-row-table">
           <thead>
-            <td class="half-width-td"><% l.quantity %> </td>
-            <td class="half-width-td"><% l.data[0][0] | number : 2 %> <% l.unit %></td>
+            <td class="third-width-td"><% l.quantity %> </td>
+            <td class="third-width-td"><% l.data[0][0] | number : 2 %> <% l.unit %></td>
+            <td class="third-width-td"></td>
           </thead>
         </table>
 <!--    TODO: get proper response from server when asking for point of nominal
@@ -15,8 +16,9 @@
         <table ng-if="l.scale === 'nominal' || l.scale === 'ordinal' "
           class="table table-condensed table-hover single-row-table">
           <thead>
-            <td class="half-width-td"><% landuseLookup[l.data[0][0]] | landuseLanduseType %></td>
-            <td class="half-width-td"><% landuseLookup[l.data[0][0]] | landuseSource %></td>
+            <td class="third-width-td">Landgebruik</td>
+            <td class="third-width-td"><% landuseLookup[l.data[0][0]] | landuseLanduseType %></td>
+            <td class="third-width-td"><% landuseLookup[l.data[0][0]] | landuseSource %></td>
           </thead>
         </table>
       </div>
