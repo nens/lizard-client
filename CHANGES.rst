@@ -6,8 +6,14 @@ Unreleased ()
 
 - Fix bug with date parsing from url in IE.
 
+- IE fix for search bar.
+
 - Escape and x-button in search box reset box, points and remove points from
   url.
+
+
+Release 0.2b17 (2014-11-27)
+---------------------------
 
 - Fix pumpstation and channel new entity types.
 

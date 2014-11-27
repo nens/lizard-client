@@ -28,8 +28,6 @@ angular.module('lizard-nxt')
           $event.originalEvent.stopPropagation();
         }
       }
-
-      element.focus();
     };
 
     /**
@@ -41,7 +39,7 @@ angular.module('lizard-nxt')
         LocationService.search(scope.geoquery)
           .then(function (response) {
             scope.geoquery = "";
-            if(response.length !== 0) {
+            if (response.length !== 0) {
               scope.box.content.location = {
                 data: response
               };
@@ -103,8 +101,7 @@ angular.module('lizard-nxt')
       scope.cleanInput();
     };
 
-
-   };
+  };
 
   return {
     link: link,
