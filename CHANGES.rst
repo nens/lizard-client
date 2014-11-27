@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Fix bug with date parsing from url in IE.
+
 - IE fix for search bar.
 
 - Escape and x-button in search box reset box, points and remove points from
