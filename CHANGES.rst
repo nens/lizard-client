@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Update ylabel for timeseries graph.
+
 - Fix bug with date parsing from url in IE.
 
 - IE fix for search bar.
