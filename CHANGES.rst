@@ -4,7 +4,7 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
--
+- Point clicks now have proper alignment for raster response.
 
 Release 0.2b16 (2014-11-26)
 ---------------------------
