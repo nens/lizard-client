@@ -6,6 +6,9 @@ Unreleased ()
 
 - Fix pumpstation and channel new entity types.
 
+- Point clicks now have proper alignment for raster response.
+
+
 Release 0.2b16 (2014-11-26)
 ---------------------------
 
@@ -27,6 +30,8 @@ Release 0.2b16 (2014-11-26)
 
 - Timeline does not interfere with initial point/line request with a
   pre-existing layerSlug request
+
+- Timeline shows events on startup.
 
 
 Release 0.2b15 (2014-11-24)
