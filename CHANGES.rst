@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- fixate minimum width for rain bars
+
 - IE fix for search bar.
 
 - Escape and x-button in search box reset box, points and remove points from
