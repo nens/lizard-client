@@ -366,8 +366,12 @@ angular.module('lizard-nxt')
         height = Graph.prototype._getHeight(dimensions),
         x = xy.x,
         y = xy.y,
-        barWidth = Math.max(1, Math.floor(getBarWidth(xy.x.scale, data, keys, dimensions))),
-        strokeWidth = barWidth === 1 ? 0 : 1,
+        MIN_BAR_WIDTH = 2,
+        barWidth = Math.max(
+          MIN_BAR_WIDTH,
+          Math.floor(getBarWidth(xy.x.scale, data, keys, dimensions))
+        ),
+        strokeWidth = barWidth === MIN_BAR_WIDTH ? 0 : 1,
 
         // Join new data with old elements, based on the x key.
         bar = svg.select('g').select('#feature-group').selectAll(".bar")
