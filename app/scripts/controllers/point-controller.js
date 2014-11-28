@@ -80,7 +80,6 @@ angular.module('lizard-nxt')
      * @description Draw visual feedback after client clicked on the map
      */
     var drawFeedback = function () {
-      // $scope.box.showFullTable = false;
       var feedbackDrawn = false;
       var drawVectorFeedback = function (content) {
         angular.forEach(content, function (lg) {
