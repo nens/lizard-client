@@ -4,6 +4,12 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- 
+
+
+Release 1.0rc1 (2014-11-28)
+---------------------------
+
 - Fixed aggWindow snapping in all cases, always.
 
 - Prettier zoom buttons in timeline.
