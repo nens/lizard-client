@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Prettier zoom buttons in timeline.
+
 - Fixed onload error accessing layers before availability.
 
 - fixate minimum width for rain bars
