@@ -6,6 +6,11 @@ Unreleased ()
 
 - 
 
+Release 1.0rc2 (2014-11-28)
+---------------------------
+
+- Fix date export rain.csv.
+
 
 Release 1.0rc1 (2014-11-28)
 ---------------------------
