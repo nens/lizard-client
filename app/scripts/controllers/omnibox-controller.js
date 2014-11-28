@@ -1,9 +1,15 @@
 angular.module('lizard-nxt')
   .controller("OmniboxCtrl", [
+
   "$scope",
   "UtilService",
   "ClickFeedbackService",
-  function ($scope, UtilService, ClickFeedbackService) {
+
+  function (
+
+    $scope,
+    UtilService,
+    ClickFeedbackService) {
 
     $scope.box.content = {};
 

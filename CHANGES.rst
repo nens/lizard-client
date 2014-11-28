@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- fixate minimum width for rain bars
+
 - Fix opacity slider in IE.
 
 - Shorter time label in time line.
