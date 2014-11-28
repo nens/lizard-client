@@ -29,12 +29,10 @@ angular.module('lizard-nxt')
     }
     if (coefficient == 2635200000) { // One month
       var format = NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%m/01/%Y");
-      var date = format(new Date(timestamp));
-      return new Date(date).getTime();
+      return new Date(format(new Date(timestamp))).getTime();
     } else if (coefficient == 86400000) { // One day
       var format = NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%m/%d/%Y");
-      var date = format(new Date(timestamp));
-      return new Date(date).getTime();
+      return new Date(format(new Date(timestamp))).getTime();
     }
     var roundedTimestamp = parseInt(timestamp / coefficient, 10) * coefficient;
 
