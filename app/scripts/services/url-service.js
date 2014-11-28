@@ -111,7 +111,7 @@ angular.module('lizard-nxt')
  * @description Higher level functions to parse and set URL.
  */
 angular.module('lizard-nxt')
-  .service("UrlState", ["LocationGetterSetter", function (LocationGetterSetter) {
+  .service("UrlState", ["LocationGetterSetter", "UtilService", function (LocationGetterSetter, UtilService) {
 
     // Amount of decimals of coordinates stored in url.
     var COORD_PRECISION = 4;
@@ -238,8 +238,17 @@ angular.module('lizard-nxt')
           msEndTime += 43200000; // half a day
         }
         timeState.end = msEndTime;
-        timeState.at = timeState.start +
-          (timeState.end - timeState.start) / 2;
+        timeState.aggWindow = UtilService.getAggWindow(
+          timeState.start,
+          timeState.end,
+          window.innerWidth
+        );
+        var timeAt = timeState.start + (timeState.end - timeState.start) / 2;
+        timeState.at = UtilService.roundTimestamp(
+          timeAt,
+          timeState.aggWindow,
+          true
+        );
         timeState.changeOrigin = 'hash';
         timeState.changedZoom = Date.now();
         return timeState;

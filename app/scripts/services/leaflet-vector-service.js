@@ -237,16 +237,18 @@ angular.module('lizard-nxt')
 
     redraw: function () {
       var self = this;
-      VectorService.getData(
-        self.options.slug, {
-          layer: self,
-          geom: self._map.getBounds(),
-          start: self.options.start,
-          end: self.options.end
-        }).then(function (response) {
-          self._resetgeoJson();
-          self.drawTheThings(response, self);
-        });
+      if (self._map !== undefined) {
+        VectorService.getData(
+          self.options.slug, {
+            layer: self,
+            geom: self._map.getBounds(),
+            start: self.options.start,
+            end: self.options.end
+          }).then(function (response) {
+            self._resetgeoJson();
+            self.drawTheThings(response, self);
+          });
+      }
     },
 
     /**

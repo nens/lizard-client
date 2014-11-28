@@ -56,6 +56,11 @@ angular.module('lizard-nxt')
           scope.timeState.end = scale.domain()[1].getTime();
           scope.timeState.aggWindow = UtilService.getAggWindow(
             scope.timeState.start, scope.timeState.end, window.innerWidth);
+          scope.timeState.at = UtilService.roundTimestamp(
+            scope.timeState.at,
+            scope.timeState.aggWindow,
+            false
+          );
           scope.timeState.changeOrigin = 'timeline';
           scope.timeState.changedZoom = Date.now();
         });
@@ -90,8 +95,7 @@ angular.module('lizard-nxt')
           var timeClicked = +(scale.invert(event.pageX - dimensions.padding.left));
           scope.timeState.at = UtilService.roundTimestamp(
             timeClicked,
-            scope.timeState.aggWindow,
-            false
+            scope.timeState.aggWindow
           );
         });
       },
@@ -336,7 +340,9 @@ angular.module('lizard-nxt')
     scope.$watch('timeState.animation.playing', function (n, o) {
       if (n === o || n) { return true; }
       scope.timeState.at = UtilService.roundTimestamp(
-        scope.timeState.at, scope.timeState.aggWindow, false
+        scope.timeState.at + scope.timeState.aggWindow / 2,
+        scope.timeState.aggWindow,
+        false
       );
     });
 

@@ -4,6 +4,12 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Fixed aggWindow snapping in all cases, always.
+
+- Prettier zoom buttons in timeline.
+
+- Fixed onload error accessing layers before availability.
+
 - fixate minimum width for rain bars
 
 - Fix opacity slider in IE.
