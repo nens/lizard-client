@@ -6,6 +6,14 @@ Unreleased ()
 
 - fixate minimum width for rain bars
 
+- Fix opacity slider in IE.
+
+- Shorter time label in time line.
+
+- Update ylabel for timeseries graph.
+
+- Fix bug with date parsing from url in IE.
+
 - IE fix for search bar.
 
 - Escape and x-button in search box reset box, points and remove points from

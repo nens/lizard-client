@@ -100,6 +100,7 @@ angular.module('lizard-nxt')
           this._xy = this._createXYGraph(data, keys, labels, temporal ? options: undefined);
         } else {
           this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys);
+          drawLabel(this._svg, this.dimensions, labels.y, true);
         }
         var line = this._createLine(this._xy, keys);
         this._path = drawPath(this._svg, line, data, this.transTime, this._path);
