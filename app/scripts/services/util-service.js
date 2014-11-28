@@ -6,7 +6,7 @@
  * @description Generic util functions.
  */
 angular.module('lizard-nxt')
-  .service("UtilService", function () {
+  .service("UtilService", ["NxtD3", function (NxtD3) {
 
   /**
    * @function roundTimestamp
@@ -18,20 +18,25 @@ angular.module('lizard-nxt')
    *
    * @param {integer} timestamp - javascript timestamp in ms.
    * @param {integer} coefficient - coefficient to round to in ms.
-   * @param {boolean} needTzOffset - true if you want to correct for timezone
+   * @param {boolean} up - true if you want to round instead of floor.
    * offset.
    * @returns {integer} roundedTimestamp - timestamp rounded to nearest
    * coefficient.
    */
-  this.roundTimestamp = function (timestamp, coefficient, needTzOffset) {
-
-    var roundedTimestamp = parseInt((timestamp + (coefficient / 2)) /
-                                    coefficient, 10) * coefficient;
-    if (!!needTzOffset) {
-      var timeZoneOffset = (new Date(roundedTimestamp)).getTimezoneOffset() *
-        1000 * 60;
-      roundedTimestamp = roundedTimestamp - timeZoneOffset;
+  this.roundTimestamp = function (timestamp, coefficient, up) {
+    if (up) {
+      timestamp += coefficient / 2;
     }
+    if (coefficient == 2635200000) { // One month
+      var format = NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%m/01/%Y");
+      var date = format(new Date(timestamp));
+      return new Date(date).getTime();
+    } else if (coefficient == 86400000) { // One day
+      var format = NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%m/%d/%Y");
+      var date = format(new Date(timestamp));
+      return new Date(date).getTime();
+    }
+    var roundedTimestamp = parseInt(timestamp / coefficient, 10) * coefficient;
 
     return roundedTimestamp;
   };
@@ -427,4 +432,4 @@ angular.module('lizard-nxt')
       document.querySelector(".layer-switcher-wrapper").style.display = "none";
     }
   };
-});
+}]);

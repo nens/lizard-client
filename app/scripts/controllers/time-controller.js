@@ -195,7 +195,9 @@ angular.module('lizard-nxt')
       finish.then(function () {
         toggleBuffer(false);
         // And the browser is ready.
-        window.requestAnimationFrame(step);
+        if ($scope.timeState.animation.playing) {
+          window.requestAnimationFrame(step);
+        }
       });
       toggleBuffer(true);
     }, minLag);
@@ -215,7 +217,7 @@ angular.module('lizard-nxt')
 
     $scope.timeState.start = now - fourFifthInterval;
     $scope.timeState.end = now + oneFifthInterval;
-    $scope.timeState.at = now;
+    $scope.timeState.at = UtilService.roundTimestamp(now, $scope.timeState.aggWindow, false);
     $scope.timeState.changeOrigin = 'user';
     $scope.timeState.changedZoom = Date.now();
   };
