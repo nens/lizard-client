@@ -593,7 +593,7 @@
   }
 
   select.timeseries {
-    width: 80%;
+    width: 100%;
     margin-bottom: 20px;
     float: right;
     position: relative;
