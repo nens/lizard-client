@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Fixate max range for temporal extent.
+
 - Fix name / display_name discrepancy in cards.
 
 - Fonts in selectors, input etc
