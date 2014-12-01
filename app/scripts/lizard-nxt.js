@@ -177,6 +177,9 @@ angular.module('lizard-nxt')
   $scope.user = user;
   $scope.versioning = versioning;
 
+  var MIN_TIME_FOR_EXTENT = (new Date(2014, 0, 0, 0, 0, 0, 0)).getTime();
+  var MAX_TIME_FOR_EXTENT = (new Date(2015, 0, 0, 0, 0, 0, 0)).getTime();
+
   // BOX MODEL
   /**
    * @memberOf angular.module('lizard-nxt')
@@ -291,18 +294,14 @@ angular.module('lizard-nxt')
    * Watch to restrict values of timeState.
    */
   $scope.$watch('timeState.changedZoom', function (n, o) {
-    // 6 months in advance
-    var max = Date.now() + 6 * 30.5 * 24 * 3600 * 1000;
-    // 4 years back
-    var min = Date.now() - 4 * 365 * 24 * 3600 * 1000;
     if (n === o || $scope.timeState.changeOrigin === 'master') { return true; }
-    if ($scope.timeState.start < min) {
+    if ($scope.timeState.start < MIN_TIME_FOR_EXTENT) {
       $scope.timeState.changeOrigin = 'master';
-      $scope.timeState.start = min;
+      $scope.timeState.start = MIN_TIME_FOR_EXTENT;
     }
-    if ($scope.timeState.end > max) {
+    if ($scope.timeState.end > MAX_TIME_FOR_EXTENT) {
       $scope.timeState.changeOrigin = 'master';
-      $scope.timeState.end = max;
+      $scope.timeState.end = MAX_TIME_FOR_EXTENT;
     }
   });
 
