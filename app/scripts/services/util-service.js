@@ -430,4 +430,18 @@ angular.module('lizard-nxt')
       document.querySelector(".layer-switcher-wrapper").style.display = "none";
     }
   };
+
+  this.fixUTFNameData = function (obj) {
+    console.log('utf-data (pre-fix):', obj);
+    if (obj.display_name === '' || obj.display_name === undefined) {
+      // If the to-be printed key (obj.display_name) has no value...
+      if (obj.name !== '' && obj.name !== undefined) {
+        // ..and it's alternative (obj.name) does have one,
+        // we simply copy the alt value.
+        obj.display_name = obj.name;
+      }
+    }
+    console.log('utf-data (post-fix):', obj);
+    return obj;
+  };
 }]);
