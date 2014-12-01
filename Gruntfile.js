@@ -259,6 +259,7 @@ module.exports = function (grunt) {
           '<%= yeoman.dist %>/styles/main.css': '<%=yeoman.app %>/styles/main.scss'
         }
       }
+    },
     
     // Renames files for browser caching purposes
     filerev: {
