@@ -56,6 +56,12 @@ angular.module('lizard-nxt')
             lGContent.layers[response.layerSlug][key] = response[key];
           });
 
+          // plakband for hydra_core discrepancy: name vs. display_name
+          if (lGContent.layers.waterchain_grid.data) {
+            lGContent.layers.waterchain_grid.data =
+              UtilService.fixUTFNameData(lGContent.layers.waterchain_grid.data);
+          }
+
           /**
            * lGContent now looks like: {
            *   layerGroup: <slug>,

@@ -4,7 +4,7 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
-- 
+- Fix name / display_name discrepancy in cards.
 
 Release 1.0rc2 (2014-11-28)
 ---------------------------
