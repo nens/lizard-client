@@ -16,6 +16,8 @@ Unreleased ()
 
 - Fix bug for undefined utf grid layer.
 
+- Fix navbar login width, and z-index for responsive platforms.
+
 - Fonts in selectors, input etc
 
 
