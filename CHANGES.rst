@@ -6,6 +6,12 @@ Unreleased ()
 
 - Fix name / display_name discrepancy in cards.
 
+- Seperate card rrc.
+
+- RRC template renders message if rrc returns message.
+
+- Fix bug for undefined utf grid layer.
+
 Release 1.0rc2 (2014-11-28)
 ---------------------------
 
