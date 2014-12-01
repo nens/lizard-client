@@ -267,7 +267,7 @@ angular.module('lizard-nxt')
       hour = 60 * 60 * 1000;
 
   $scope.timeState = {
-    start: now - 4 * hour,
+    start: now - 6 * hour,
     end: now + hour,
     at: now - 2 * hour,
     changedZoom: Date.now(),
