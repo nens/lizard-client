@@ -428,6 +428,16 @@ angular.module('lizard-nxt')
       document.querySelector("#mymodal").style.display = "block";
       // explicitly HIDE the layerMenu
       document.querySelector(".layer-switcher-wrapper").style.display = "none";
+      // explicitly setZindex of a few items. This should NOT be in main.css
+      // breaks functionality:
+      var node = document.createElement('style');
+      node.innerHTML = '#timeline, #searchbox, .container-fluid,'
+        + '.navbar, #omnibox, .layer-menu-container,'
+        + '.ribbon {'
+        + ' z-index: 0;'
+        + '}';
+      document.body.appendChild(node);
+
     }
   };
 
