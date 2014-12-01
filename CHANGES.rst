@@ -6,6 +6,8 @@ Unreleased ()
 
 - Fix name / display_name discrepancy in cards.
 
+- Fix navbar login width, and z-index for responsive platforms.
+
 Release 1.0rc2 (2014-11-28)
 ---------------------------
 
