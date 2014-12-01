@@ -8,6 +8,8 @@ Unreleased ()
 
 - Fix navbar login width, and z-index for responsive platforms.
 
+- Fonts in selectors, input etc
+
 Release 1.0rc2 (2014-11-28)
 ---------------------------
 
