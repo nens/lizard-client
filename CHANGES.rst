@@ -4,7 +4,7 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
-- 
+-  Fix initial temporal extent: [now - 6 days] <---> [now + 1 day]
 
 Release 1.0rc2 (2014-11-28)
 ---------------------------
