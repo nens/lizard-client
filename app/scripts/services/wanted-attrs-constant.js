@@ -206,8 +206,8 @@ angular.module('lizard-nxt')
     rows: [
       {
         keyName: "Naam",
-        attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        attrName: "display_name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "KNMI"
       },
@@ -479,8 +479,8 @@ angular.module('lizard-nxt')
       },
       // {
       //   keyName: "Naam",
-      //   attrName: "name",
-      //   ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+      //   attrName: "display_name",
+      //   ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
       //   valueSuffix: "",
       //   defaultValue: "persleiding"
       // },
@@ -521,8 +521,8 @@ angular.module('lizard-nxt')
       },
       {
         keyName: "Naam",
-        attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        attrName: "display_name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "onbekend"
       },
@@ -560,9 +560,9 @@ angular.module('lizard-nxt')
     rows: [
       {
         keyName: "Naam",
-        attrName: "name",
+        attrName: "display_name",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.name",
+          "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: 'onbekend'
       }
@@ -572,8 +572,8 @@ angular.module('lizard-nxt')
     rows: [ //Afvalwaterzuiveringsinstallatie
       {
         keyName: "Naam",
-        attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        attrName: "display_name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "onbekend"
       },
