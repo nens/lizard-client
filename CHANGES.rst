@@ -10,6 +10,8 @@ Unreleased ()
 
 - Fix name / display_name discrepancy in cards.
 
+- Fix navbar login width, and z-index for responsive platforms.
+
 - Fonts in selectors, input etc
 
 

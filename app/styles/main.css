@@ -14,6 +14,10 @@ html, body{
 /* Fix for angular-ui bootstrap - see http://angular-ui.github.io/bootstrap/ */
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
+/* fix for navbar in responsive mode, so it doesn't have a default scrollbar */
+.navbar-collapse.in {
+    overflow-y: inherit;
+}
 
 h1, h2, h3, h4, h5 {
     font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
@@ -42,8 +46,9 @@ h1, h2, h3, h4, h5 {
   .navbar {
     border: none !important;
   }
+
   .navbar-header {
-    width: 200px;
+    min-width: 200px;
   }
   .navbar-brand {
     width: 90px;
@@ -1592,11 +1597,6 @@ img {
   top: 0;
   left: 0;
   display: none;
-}
-
-#timeline, #searchbox, .container-fluid, .navbar, #omnibox, .layer-menu-container,
-.ribbon {
-  z-index: 0;
 }
 
 #mymodal {
