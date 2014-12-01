@@ -4,7 +4,7 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
--
+- User name interpolation is now done with ng-bind also for big screens
 
 Release 1.0.0 (2014-12-01)
 ---------------------------
