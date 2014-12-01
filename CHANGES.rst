@@ -6,6 +6,8 @@ Unreleased ()
 
 - Fix name / display_name discrepancy in cards.
 
+- Fonts in selectors, input etc
+
 Release 1.0rc2 (2014-11-28)
 ---------------------------
 
