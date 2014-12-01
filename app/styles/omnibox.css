@@ -553,6 +553,10 @@
   margin: 15px 8px 8px 8px;
 }
 
+.card-content-message {
+  margin: 8px;
+}
+
 #card-content-timeseries {
   margin-bottom: 0;
 }
@@ -662,4 +666,10 @@ td.lineout {
   font-size: 18px;
   margin-left: 77px;
   color: #bdc3c7;
+}
+
+.message {
+  vertical-align: middle;
+  font-size: 0.95em;
+  color: #777;
 }

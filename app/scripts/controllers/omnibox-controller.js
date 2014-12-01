@@ -57,7 +57,10 @@ angular.module('lizard-nxt')
           });
 
           // plakband for hydra_core discrepancy: name vs. display_name
-          if (lGContent.layers.waterchain_grid.data) {
+          if (lGContent &&
+              lGContent.layers &&
+              lGContent.layers.waterchain_grid &&
+              lGContent.layers.waterchain_grid.data) {
             lGContent.layers.waterchain_grid.data =
               UtilService.fixUTFNameData(lGContent.layers.waterchain_grid.data);
           }
