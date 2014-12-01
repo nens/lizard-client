@@ -56,7 +56,7 @@ module.exports = function (grunt) {
         tasks: ['newer:jshint', 'karma:dev']
       },
       styles: {
-        files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
+        files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass'],
         tasks: ['newer:copy:styles', 'autoprefixer']
       },
       gruntfile: {
@@ -227,6 +227,10 @@ module.exports = function (grunt) {
         src: ['<%= yeoman.app %>/index.html'],
         ignorePath:  /\.\./
       },
+      sass: {
+        src: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
+        ignorePath: /(\.\.\/){1,2}bower_components\//
+      },
       test: {
         src: ['test/karma.conf.js', 'test/karma.conf.dev.js'],
         ignorePath:  /\.\.\//,
@@ -244,6 +248,18 @@ module.exports = function (grunt) {
       }
     },
 
+    // Node Sass is faster than Compass
+    sass: {
+      options: {
+        sourceMap: true,
+        outputStyle: 'compressed'
+      },
+      dist: {
+        files: {
+          '<%= yeoman.dist %>/styles/main.css': '<%=yeoman.app %>/styles/main.scss'
+        }
+      }
+    
     // Renames files for browser caching purposes
     filerev: {
       dist: {
