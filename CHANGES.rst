@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Fix initial temporal extent: [now - 6 days] <---> [now + 1 day]
+
+- Fixate max range for temporal extent.
+
 - Fix name / display_name discrepancy in cards.
 
 - Seperate card rrc.
@@ -11,6 +15,9 @@ Unreleased ()
 - RRC template renders message if rrc returns message.
 
 - Fix bug for undefined utf grid layer.
+
+- Fonts in selectors, input etc
+
 
 Release 1.0rc2 (2014-11-28)
 ---------------------------
