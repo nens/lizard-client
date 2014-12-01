@@ -4,6 +4,11 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+-
+
+Release 1.0rc3 (2014-12-01)
+---------------------------
+
 - Fix initial temporal extent: [now - 6 days] <---> [now + 1 day]
 
 - Fixate max range for temporal extent.
