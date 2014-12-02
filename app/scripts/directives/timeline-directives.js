@@ -23,23 +23,32 @@ angular.module('lizard-nxt')
 
   var link = function (scope, element, attrs, timelineCtrl) {
 
-    var dimensions = {
-      width: window.innerWidth,
-      height: 75,
-      events: 20,
-      bars: 35,
-      padding: {
-        top: 12,
-        right: 15,
-        bottom: 20,
-        left: 15
-      }
-    },
+    // console.log(angular.element("#timeline-svg-wrapper svg")[0].style.left);
 
-    start = scope.timeState.start,
-    end = scope.timeState.end,
+    var LEFT_MARGIN = 60,
+        RIGHT_MARGIN = 40,
 
-    el = element.find('svg'),
+        getCurrentWidth = function () {
+          return window.innerWidth - (LEFT_MARGIN + RIGHT_MARGIN);
+        },
+
+        dimensions = {
+          width: getCurrentWidth(),
+          height: 75,
+          events: 20,
+          bars: 35,
+          padding: {
+            top: 12,
+            right: 0,
+            bottom: 20,
+            left: 0
+          }
+        },
+
+        start = scope.timeState.start,
+        end = scope.timeState.end,
+
+        el = element.find('svg'),
 
     interaction = {
 
@@ -92,7 +101,7 @@ angular.module('lizard-nxt')
        */
       clickFn: function (event, scale, dimensions) {
         scope.$apply(function () {
-          var timeClicked = +(scale.invert(event.pageX - dimensions.padding.left));
+          var timeClicked = +(scale.invert(event.pageX - dimensions.padding.left - LEFT_MARGIN));
           scope.timeState.at = UtilService.roundTimestamp(
             timeClicked,
             scope.timeState.aggWindow
@@ -100,6 +109,9 @@ angular.module('lizard-nxt')
         });
       },
     };
+
+    // shift timeline's SVG element using it's CSS - set here by JS too stop stuff becoming unsyncable
+    angular.element("#timeline-svg-wrapper svg")[0].style.left = LEFT_MARGIN + "px";
 
     // keep track of events in this scope
     scope.events = {nEvents: 0, slugs: []};
@@ -317,7 +329,7 @@ angular.module('lizard-nxt')
       if (n === o) { return true; }
       if (scope.timeState.changeOrigin !== 'timeline') {
         scope.timeState.aggWindow = UtilService.getAggWindow(
-          scope.timeState.start, scope.timeState.end, window.innerWidth);
+          scope.timeState.start, scope.timeState.end, getCurrentWidth())
         timeline.zoomTo(
           scope.timeState.start,
           scope.timeState.end,
@@ -348,7 +360,7 @@ angular.module('lizard-nxt')
 
     /**
      * The timeline can be too early on initialization.
-     * The leaflet events are not even started loading, 
+     * The leaflet events are not even started loading,
      * so the call returns an empty array.
      *
      * If nobody touches nothing, that means the timeline
@@ -367,7 +379,7 @@ angular.module('lizard-nxt')
      */
     window.onresize = function () {
 
-      timeline.dimensions.width = window.innerWidth;
+      timeline.dimensions.width = getCurrentWidth()
       timeline.resize(
         timeline.dimensions,
         scope.timeState.at,

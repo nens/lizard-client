@@ -452,4 +452,8 @@ angular.module('lizard-nxt')
     }
     return obj;
   };
+
+  this.pxToInt = function (str) {
+    return parseInt(str.replace("px", ""));
+  };
 }]);
