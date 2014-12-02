@@ -61,8 +61,9 @@
                 <a class="user"
                    href="https://sso.lizard.net/edit_profile/"
                    title="Edit profile">
-                  <div class="" id="username" ng-cloak ng-bind="user.firstName">
+                  <div class="" id="username" ng-cloak> 
                     <i id="" class="fa fa-user"></i>
+                    <span ng-bind="user.firstName"></span>
                   </div>
                 </a>
               </li>
@@ -71,8 +72,9 @@
                 <a class="user"
                    title="<% tooltips.profile %>"
                    href="http://sso.lizard.net/edit_profile/">
-                  <div class="" ng-cloak id="username" ng-bind="user.firstName">
+                  <div class="" ng-cloak id="username" >
                     <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
+                    <span ng-bind="user.firstName"></span>
                   </div>
                 </a>
               </li>
@@ -288,6 +290,31 @@
         if (window.gauges) {
           gauges();
         }
+
+        if (!window.JS_DEBUG) {
+          var asciiArray = [
+            "                                       o$o    o$$                   ",
+            "                                      *          *$                 ",
+            "                                     o           o$$                ",
+            "                                                 o$$$               ",
+            "                                               o$$$$                ",
+            "                                              oo$$   $$$*$          ",
+            "                                              o*$$     $ !          ",
+            "                                           o  oo$$$$$$$$ $$$ *      ",
+            "                                         !oo!oooo$$$$$  $$$$$       ",
+            "                                          ooooooooo$$$$$$$$$$$$$$$$!",
+            "                                             !  oooooo$$$$$$$$$$ooo ",
+            " *$     $$  $$$$$    $$$    $$*$¿   $$ $$        ooooooooooooooooo  ",
+            " *$     $$    $$    $$ $*   $$_$$   $   $$             ooooo        ",
+            " *$     $$   $$     $$$$$   $$ $!   $   $$            ooo           ",
+            " $$$$$!!$$$ $$$$$$ $$$ $$$ $$$$ $$ $$$$$$             o o           ",
+            "",
+            "Interesse?                                                  ",
+            "http://www.nelen-schuurmans.nl/NL/bedrijfsprofiel/carriere "
+            ];
+            var hiring = asciiArray.join('\n');
+            console.log(hiring);
+          }
     </script>
   </body>
 </html>

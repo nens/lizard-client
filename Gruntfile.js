@@ -56,7 +56,7 @@ module.exports = function (grunt) {
         tasks: ['newer:jshint', 'karma:dev']
       },
       styles: {
-        files: ['<%= yeoman.app %>/styles/{,*/}*.{scss}'],
+        files: ['<%= yeoman.app %>/styles/{,*/}*.scss'],
         tasks: ['newer:sass:watch', 'newer:copy:styles', 'autoprefixer']
       },
       gruntfile: {

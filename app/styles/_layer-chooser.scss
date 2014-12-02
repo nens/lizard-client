@@ -1,0 +1,62 @@
+.layer-switcher-wrapper {
+    position: absolute;
+    right: -200px;
+    top: 50px;
+    transition: .3s ease;
+    width: $width6;
+    z-index: 15000;
+}
+
+label.layer-chooser {
+    border: solid 2px rgba(0,0,0,0);
+    height: $height15;
+    margin-bottom: 0;
+    position: relative;
+    transition: .3s ease;
+    width: $width19;
+    &:hover {
+        border: 2px solid $asbestos;
+    }
+
+}
+
+label.layer-chooser > span.layer-text {
+    background: rgba(239, 239, 239, 0.9);
+    color: $asbestos;
+    height: 24px;
+    padding: 4px 5px;
+    position: absolute;
+    transition: .3s ease;
+    width: 60%;
+    z-index: 1;
+}
+
+label.layer-chooser.active {
+    border: solid 2px $midnightblue;
+    &:hover > span.layer-text {
+        color: $midnightblue;
+    }
+
+    &:hover {
+        border: solid 2px $midnightblue;
+    }
+
+}
+
+label.layer-chooser.active > span.layer-text {
+    color: $midnightblue;
+}
+
+label.layer-chooser > div.layer-img {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: $height9;
+    position: absolute;
+    right: 0;
+    width: $width19;
+    &:hover {
+        cursor: pointer !important;
+    }
+
+}
