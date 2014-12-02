@@ -259,10 +259,30 @@ a {
 
 }
 
+
+/* Bootstrap Overrides for progress bar */
+
+.progress {
+    height: 10px;
+    margin: 0 0 10px 0;
+    z-index: 100;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    -ms-box-shadow: none;
+    -o-box-shadow: none;
+    box-shadow: none;
+    border-radius: 0;
+    -o-transition: .3s ease;
+    -ms-transition: .3s ease;
+    -moz-transition: .3s ease;
+    -webkit-transition: .3s ease;
+}
+
 .inactive {
     height: $height20;
     transition: .3s ease;
 }
+
 
 .progress-bar {
     -ms-box-shadow: none;
