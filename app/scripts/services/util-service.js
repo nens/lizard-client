@@ -452,4 +452,21 @@ angular.module('lizard-nxt')
     }
     return obj;
   };
+
+  /**
+   * @description - This add a <style> tag + it's contents to the <head> of the
+   *                page. Adding more will subsitute the oprevious addition.
+   * @param {string} newStyle - A string representing the to-be-added CSS
+   */
+  this.addNewStyle = function (newStyle) {
+    var styleElement = document.getElementById('styles_js');
+    if (!styleElement) {
+        styleElement = document.createElement('style');
+        styleElement.type = 'text/css';
+        styleElement.id = 'styles_js';
+        document.getElementsByTagName('head')[0].appendChild(styleElement);
+    }
+    styleElement.innerHTML = "";
+    styleElement.appendChild(document.createTextNode(newStyle));
+  };
 }]);
