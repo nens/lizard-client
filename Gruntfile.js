@@ -56,8 +56,8 @@ module.exports = function (grunt) {
         tasks: ['newer:jshint', 'karma:dev']
       },
       styles: {
-        files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass'],
-        tasks: ['newer:copy:styles', 'autoprefixer']
+        files: ['<%= yeoman.app %>/styles/{,*/}*.{scss}'],
+        tasks: ['sass:watch', 'newer:copy:styles', 'autoprefixer']
       },
       gruntfile: {
         files: ['Gruntfile.js']
@@ -227,10 +227,6 @@ module.exports = function (grunt) {
         src: ['<%= yeoman.app %>/index.html'],
         ignorePath:  /\.\./
       },
-      sass: {
-        src: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
-        ignorePath: /(\.\.\/){1,2}bower_components\//
-      },
       test: {
         src: ['test/karma.conf.js', 'test/karma.conf.dev.js'],
         ignorePath:  /\.\.\//,
@@ -252,11 +248,19 @@ module.exports = function (grunt) {
     sass: {
       options: {
         sourceMap: true,
-        outputStyle: 'compressed'
+        outputStyle: 'expanded'
       },
       dist: {
         files: {
-          '<%= yeoman.dist %>/styles/main.css': '<%=yeoman.app %>/styles/main.scss'
+          '.tmp/styles/main.css': '<%=yeoman.app %>/styles/main.scss'
+        },
+        options: {
+          outputStyle: 'compressed'
+        }
+      },
+      watch: {
+        files: {
+          '.tmp/styles/main.css': '<%= yeoman.app %>/styles/main.scss'
         }
       }
     },
@@ -492,6 +496,7 @@ module.exports = function (grunt) {
       'wiredep',
       'configureProxies',
       'concurrent:server',
+      'sass:watch',
       'autoprefixer',
       'connect:livereload',
       'watch'
@@ -518,6 +523,7 @@ module.exports = function (grunt) {
     'wiredep',
     'useminPrepare',
     'html2js',
+    'sass',
     'concurrent:dist',
     'autoprefixer',
     'concat',
