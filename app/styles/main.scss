@@ -12,8 +12,8 @@
  *                                                 !oo!oooo$$$$$  $$$$$                
  *                                                  ooooooooo$$$$$$$$$$$$$$$$!         
  *                                                     !  oooooo$$$$$$$$$$ooo          
- *         *$     $$  $$  $    $$$    $$ *$   $  $$        ooooooooooooooooo           
- *         *$     $$    $$    $$ $*   $$$$$   $   $$             ooooo                 
+ *         *$     $$  $$$$$    $$$    $$*$$   $$ $$        ooooooooooooooooo           
+ *         *$     $$    $$    $$ $*   $$_$$   $   $$             ooooo                 
  *         *$     $$   $$     $$$$$   $$ $!   $   $$            ooo                    
  *         $$$$$!!$$$ $$$$$$ $$$ $$$ $$$$ $$ $$$$$$             o o                    
  *                                                                                  
@@ -35,7 +35,7 @@
 @import 'graph';
 
 // Most colors come from flat ui.. why don't all?
-$alizarin: #e74c3c;
+$alizarin: #e74c3c; // Light red
 $asbestos: #7f8c8d;
 $belize-hole: #2980b9;
 $black: #000000;
@@ -46,8 +46,8 @@ $darkgray: #333333;
 $greensea: #16a085;
 $greenseaish: #138a72;
 $midnightblue: #2c3e50;
-$pomegranate: #c0392b; 
-$turquoise: #1abc9c;
+$pomegranate: #c0392b; // Darker red
+$turquoise: #1abc9c; // Blue/Greenish
 $white1: #fbfbfb;
 $white: #ffffff; 
 
@@ -77,6 +77,13 @@ $height15: 28px; // Appears 2 times
 $height16: 15px; // Appears 3 times
 $height19: 5px; // Appears 3 times
 $height20: 0; // Appears 2 times
+
+
+/**
+ *
+ * Start of main
+ *
+ */
 
 @font-face {
     font-family: "Kunstwerk";
