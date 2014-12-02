@@ -130,6 +130,16 @@ label.layer-chooser > div.layer-img {
     top: 16px;
 }
 
+.ribbon-icon {
+    color: $pomegranate;
+    font-size: 22px;
+    left: 5px;
+    margin: auto;
+    position: relative;
+    top: -20px;
+    z-index: 10;
+}
+
 .arrow {
     cursor: pointer;
     position: relative;
