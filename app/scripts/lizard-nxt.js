@@ -306,16 +306,10 @@ angular.module('lizard-nxt')
   });
 
   $scope.$watch('box.type', function (n, o) {
-    console.log($scope.mapState.points);
     UtilService.addNewStyle(
       "#map * {cursor:" + (n === "line" ? "crosshair" : "") + ";}"
     );
   });
-
-  $('#map').on('click', function (e) {
-    console.log("clicked!");
-  });
-
 
   //TODO: move to raster-service ?
 

@@ -105,8 +105,11 @@ angular.module('lizard-nxt')
      *      the first to the second.
      */
     $scope.$watch('mapState.here', function (n, o) {
+
       if (n === o) { return true; }
+
       ClickFeedbackService.emptyClickLayer($scope.mapState);
+
       if ($scope.mapState.points.length === 2) {
         $scope.mapState.points = [];
         // Empty data element since the line is gone
