@@ -180,7 +180,6 @@ angular.module('lizard-nxt')
           } else {
 
             // ELSE, we delete the container object for timeseries:
-
             delete $scope.box.content.timeseries;
           }
 
