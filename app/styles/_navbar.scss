@@ -1,3 +1,15 @@
+/**
+ * Navigation layout
+ */
+
+@media (min-width: 767px)
+    {
+        .navbar-nav.navbar-right:last-child { 
+            margin-right: 0px !important;
+        }
+
+    }
+
 
 .navbar {
     border: none !important;
@@ -123,4 +135,10 @@
     min-height:$height8;
 }
 
+
+.navbar-version {
+    display: none;
+    left: 92px;
+    position: absolute;
+}
 
