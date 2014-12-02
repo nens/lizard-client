@@ -455,8 +455,10 @@ angular.module('lizard-nxt')
 
   /**
    * @description - This add a <style> tag + it's contents to the <head> of the
-   *                page. Adding more will subsitute the oprevious addition.
+   *                page. Adding more will iteratively subsitute the most recent
+   *                addition.
    * @param {string} newStyle - A string representing the to-be-added CSS
+   * @return {void}
    */
   this.addNewStyle = function (newStyle) {
     var styleElement = document.getElementById('styles_js');

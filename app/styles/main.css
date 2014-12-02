@@ -394,7 +394,7 @@ ul.list-inline li.baselayer-icon label{
     color: #16a085;
 }
 
-.crosshair, .crosshair > * {
+.crosshair {
     cursor: crosshair;
 }
 
