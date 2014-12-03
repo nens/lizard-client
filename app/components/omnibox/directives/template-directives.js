@@ -21,7 +21,7 @@ angular.module('lizard-nxt')
         timeseries: '=',
       },
       // replace: true,
-      templateUrl: 'templates/timeseries.html'
+      templateUrl: 'omnibox/templates/timeseries.html'
     };
 }]);
 
@@ -35,7 +35,7 @@ angular.module('lizard-nxt')
       waterchain: '='
     },
     replace: true,
-    templateUrl: 'templates/cardattributes.html'
+    templateUrl: 'omnibox/templates/cardattributes.html'
   };
 }]);
 
@@ -44,7 +44,7 @@ angular.module('lizard-nxt')
   return {
     restrict: 'E',
     replace: true,
-    templateUrl: 'templates/rain.html'
+    templateUrl: 'omnibox/templates/rain.html'
   };
 }]);
 
@@ -59,7 +59,7 @@ angular.module('lizard-nxt')
       mapstate: '='
     },
     replace: true,
-    templateUrl: 'templates/defaultpoint.html'
+    templateUrl: 'omnibox/templates/defaultpoint.html'
   };
 }]);
 
@@ -67,7 +67,7 @@ angular.module('lizard-nxt')
   .directive('detailswitch', [function () {
   return {
     restrict: 'E',
-    templateUrl: 'templates/detailswitch.html'
+    templateUrl: 'omnibox/templates/detailswitch.html'
   };
 }]);
 
@@ -75,7 +75,7 @@ angular.module('lizard-nxt')
   .directive('location', [function () {
   return {
     restrict: 'E',
-    templateUrl: 'templates/location.html'
+    templateUrl: 'omnibox/templates/location.html'
   };
 }]);
 

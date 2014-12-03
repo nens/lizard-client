@@ -28,12 +28,12 @@ module.exports = function (grunt) {
 
   var appConfig = {
     app: require('./bower.json').appPath,
-    dist: 'dist'
+    dist: 'dist',
+    // Templates that need to be converted reside in components and core
+    templateFileDirs: '{components, core}/*/{,*/}*.html',
+    // Files reside in components, lib or core and in several subdirectories.
+    jsFileDirs: '{components, lib, core}/{,*/}*.js'
   };
-
-  // Files reside in components, lib or core and in several subdirectories
-  var jsFileDirs = '{components, lib, core}/{,*/}*.js';
-
 
   // Project configuration.
   grunt.initConfig({
@@ -47,11 +47,11 @@ module.exports = function (grunt) {
         tasks: ['wiredep']
       },
       js: {
-        files: ['<%= yeoman.app %>/<%= jsFileDirs %>'],
+        files: ['<%= yeoman.app %>/<%= yeoman.jsFileDirs %>'],
         tasks: ['newer:jshint:dev', 'karma:dev'],
       },
       jstemplates: {
-        files: ['<%= yeoman.app %>/scripts/templates/{,*/}*.html'],
+        files: ['<%= yeoman.app %>/<%= yeoman.templateFileDirs %>'],
         tasks: ['html2js']
       },
       jsTest: {
@@ -69,12 +69,16 @@ module.exports = function (grunt) {
         options: {
           livereload: '<%= connect.options.livereload %>'
         },
+        // Files that trigger livereload
         files: [
+          // anything html
           '<%= yeoman.app %>/{,*/}*.html',
+          // CSS created from sass files
           '.tmp/styles/{,*/}*.css',
+          // All images
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
-       }
+      }
     },
 
     // The actual grunt server settings
@@ -134,12 +138,15 @@ module.exports = function (grunt) {
     html2js: {
       options: {
         rename: function (moduleName) {
-          return moduleName.split('scripts/')[1];
+          // Rename templates to just the name of the componente with the
+          // file, so <componentName>/<templateName>.html or
+          // <componentName>/templates/<templateName>.html.
+          return moduleName.split('components/')[1];
         }
       },
       main: {
-        src: ['<%= yeoman.app %>/scripts/templates/*.html'],
-        dest: '<%= yeoman.app %>/scripts/templates/templates.js'
+        src: ['<%= yeoman.app %>/<%= yeoman.templateFileDirs %>'],
+        dest: '<%= yeoman.app %>/templates.js'
       },
     },
 
@@ -147,18 +154,16 @@ module.exports = function (grunt) {
     jshint: {
       options: {
         jshintrc: '.jshintrc',
-        reporter: 'jslint',
-        reporterOutput: 'qa/jshint.xml',
         force: true
       },
-      all: {
+      build: {
+        options: {
+          reporter: 'jslint',
+          reporterOutput: 'qa/jshint.xml',
+        },
         src: [
           'Gruntfile.js',
-          '<%= yeoman.app %>/scripts/{,*/}*.js',
-          '!<%= yeoman.app %>/lib/leaflet-utfgrid-lizard.js',
-          '!<%= yeoman.app %>/lib/leaflet.contours-layer.js',
-          '!<%= yeoman.app %>/lib/TileLayer.GeoJSONd3.js',
-          '!<%= yeoman.app %>/templates/templates.js'
+          '<%= yeoman.app %>/<%= yeoman.jsFileDirs %>'
         ]
       },
       dev: {
@@ -167,20 +172,10 @@ module.exports = function (grunt) {
           reporterOutput: null
         },
         src: [
-         'Gruntfile.js',
-         '<%= yeoman.app %>/scripts/{,*/}*.js',
-         '!<%= yeoman.app %>/lib/leaflet-utfgrid-lizard.js',
-         '!<%= yeoman.app %>/lib/leaflet.contours-layer.js',
-         '!<%= yeoman.app %>/lib/TileLayer.GeoJSONd3.js',
-         '!<%= yeoman.app %>/templates/templates.js'
-       ]
+          'Gruntfile.js',
+          '<%= yeoman.app %>/<%= yeoman.jsFileDirs %>',
+        ]
       }
-      // test: {
-      //   options: {
-      //     jshintrc: 'test/.jshintrc'
-      //   },
-      //   src: ['test/spec/{,*/}*.js']
-      // }
     },
 
     // Empties folders to start fresh
@@ -190,8 +185,7 @@ module.exports = function (grunt) {
           dot: true,
           src: [
             '.tmp',
-            '<%= yeoman.dist %>/{,*/}*',
-            '!<%= yeoman.dist %>/.git*'
+            '<%= yeoman.dist %>/{,*/}*'
           ]
         }]
       },
@@ -267,12 +261,12 @@ module.exports = function (grunt) {
         }
       }
     },
-    
+
     // Renames files for browser caching purposes
     filerev: {
       dist: {
         src: [
-          '<%= yeoman.dist %>/scripts/{,*/}*.js',
+          '<%= yeoman.dist %>/<%= yeoman.jsFileDirs %>',
           '<%= yeoman.dist %>/styles/{,*/}*.css',
           '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
           '<%= yeoman.dist %>/styles/fonts/*'
@@ -299,6 +293,8 @@ module.exports = function (grunt) {
       }
     },
 
+    // Nginx serves from /static/client/, so in production we replace script
+    // tags to point to /static/client
     replace: {
       dist: {
         src: ['dist/*.html'],
@@ -306,7 +302,7 @@ module.exports = function (grunt) {
         replacements: [{
           from: '/styles/',
           to: '/static/client/styles/'
-        },{
+        }, {
           from: '/scripts/',
           to: '/static/client/scripts/'
         }, {
@@ -321,7 +317,7 @@ module.exports = function (grunt) {
       html: ['<%= yeoman.dist %>/{,*/}*.html'],
       css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
       options: {
-        assetsDirs: ['<%= yeoman.dist %>','<%= yeoman.dist %>/images']
+        assetsDirs: ['<%= yeoman.dist %>', '<%= yeoman.dist %>/images']
       }
     },
 
