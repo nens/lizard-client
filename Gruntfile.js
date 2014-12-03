@@ -31,6 +31,9 @@ module.exports = function (grunt) {
     dist: 'dist'
   };
 
+  // Files reside in components, lib or core and in several subdirectories
+  var jsFileDirs = '{components, lib, core}/{,*/}*.js';
+
 
   // Project configuration.
   grunt.initConfig({
@@ -44,7 +47,7 @@ module.exports = function (grunt) {
         tasks: ['wiredep']
       },
       js: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
+        files: ['<%= yeoman.app %>/<%= jsFileDirs %>'],
         tasks: ['newer:jshint:dev', 'karma:dev'],
       },
       jstemplates: {
