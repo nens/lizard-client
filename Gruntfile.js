@@ -59,8 +59,8 @@ module.exports = function (grunt) {
         tasks: ['newer:jshint', 'karma:dev']
       },
       styles: {
-        files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
-        tasks: ['newer:copy:styles', 'autoprefixer']
+        files: ['<%= yeoman.app %>/styles/{,*/}*.scss'],
+        tasks: ['newer:sass:watch', 'newer:copy:styles', 'autoprefixer']
       },
       gruntfile: {
         files: ['Gruntfile.js']
@@ -247,6 +247,27 @@ module.exports = function (grunt) {
       }
     },
 
+    // Node Sass is faster than Compass
+    sass: {
+      options: {
+        sourceMap: true,
+        outputStyle: 'expanded'
+      },
+      dist: {
+        files: {
+          '.tmp/styles/main.css': '<%=yeoman.app %>/styles/main.scss'
+        },
+        options: {
+          outputStyle: 'compressed'
+        }
+      },
+      watch: {
+        files: {
+          '.tmp/styles/main.css': '<%= yeoman.app %>/styles/main.scss'
+        }
+      }
+    },
+    
     // Renames files for browser caching purposes
     filerev: {
       dist: {
@@ -478,6 +499,7 @@ module.exports = function (grunt) {
       'wiredep',
       'configureProxies',
       'concurrent:server',
+      'sass:watch',
       'autoprefixer',
       'connect:livereload',
       'watch'
@@ -504,6 +526,7 @@ module.exports = function (grunt) {
     'wiredep',
     'useminPrepare',
     'html2js',
+    'sass',
     'concurrent:dist',
     'autoprefixer',
     'concat',
