@@ -26,13 +26,21 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-connect-proxy');
   grunt.loadNpmTasks('grunt-semantic-release');
 
+
   var appConfig = {
     app: require('./bower.json').appPath,
     dist: 'dist',
     // Templates that need to be converted reside in components and core
-    templateFileDirs: '{components, core}/*/{,*/}*.html',
-    // Files reside in components, lib or core and in several subdirectories.
-    jsFileDirs: '{components, lib, core}/{,*/}*.js'
+    templateFileDirs: '{components}/*/{,*/}*.html',
+    // TODO: 
+    // lib and lizard-nxt.js are still a swamp. Needs to be
+    // * restructured
+    // * refactored.
+    // * Cut up in modules etc.
+    //
+    //
+    // Files reside in components, lib and in several subdirectories.
+    jsFileDirs: '{components, lib}/{,*/}*.js'
   };
 
   // Project configuration.
