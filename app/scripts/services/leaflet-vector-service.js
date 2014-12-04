@@ -38,13 +38,13 @@ angular.module('lizard-nxt')
 
       this.drawOptions = {
         pointToLayer: function (feature, latlng) {
-
           var geojsonMarkerOptions = {
-            radius: (feature.properties.radius) ? feature.properties.radius: 6,
+            radius: (feature.properties.radius || 6),
             fillColor: color,
             color: "#FFF",
             weight: 2,
-            fillOpacity: 1
+            fillOpacity: 1,
+            opacity: 1
           };
 
           var circle = LeafletService.circleMarker(
@@ -166,10 +166,11 @@ angular.module('lizard-nxt')
      * @param {object} geojson features array
      */
     countOverlapping: function (data) {
+      var minimumRadius = 6;
       var overlapLocations = [];
       var filteredData = [];
       data.forEach(function (d, index) {
-        d.properties.radius = 6;
+        d.properties.radius = minimumRadius;
         var key = "x:" + d.geometry.coordinates[0] +
                   "y:" + d.geometry.coordinates[1];
         var coord = overlapLocations[key];
@@ -193,7 +194,10 @@ angular.module('lizard-nxt')
       // TODO: figure out why it is possible to call setOpacity while there is
       // no geojsonlayer.
       if (this.geojsonLayer) {
-        this.geojsonLayer.setStyle({ fillOpacity: opacity });
+        this.geojsonLayer.setStyle({
+          opacity: opacity,
+          fillOpacity: opacity
+        });
       }
     },
     /**
