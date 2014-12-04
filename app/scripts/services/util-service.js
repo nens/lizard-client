@@ -452,4 +452,13 @@ angular.module('lizard-nxt')
     }
     return obj;
   };
+
+
+  this.lin2log = function (value, minValue, maxValue) {
+    var scale = d3.scale.log()
+      .domain([minValue, maxValue])
+      .range([minValue, maxValue]);
+    return scale(value);
+  };
+
 }]);

@@ -8,17 +8,8 @@
  * Creates a Tiled Layer for retrieving and drawing vector data.
  */
 angular.module('lizard-nxt')
-  .service('LeafletVectorService', ["LeafletService", "VectorService",
-      function (LeafletService, VectorService) {
-
-  var lin2log = function (value, minValue, maxValue) {
-
-    var scale = d3.scale.log()
-      .domain([minValue, maxValue])
-      .range([minValue, maxValue]);
-
-    return scale(value);
-  };
+  .service('LeafletVectorService', ["LeafletService", "VectorService", "UtilService",
+      function (LeafletService, VectorService, UtilService) {
 
   /**
    * Leaflet does not have a tiled geojson layer.
@@ -48,7 +39,7 @@ angular.module('lizard-nxt')
       this.drawOptions = {
         pointToLayer: function (feature, latlng) {
           var geojsonMarkerOptions = {
-            radius: lin2log((feature.properties.radius || 6), 6, 16),
+            radius: UtilService.lin2log((feature.properties.radius || 6), 6, 16),
             fillColor: color,
             color: "#FFF",
             weight: 2,
