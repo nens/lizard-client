@@ -441,6 +441,10 @@ angular.module('lizard-nxt')
     }
   };
 
+  /*
+   * @description - Replace the display_name value with name value, if applicable
+   * @param {string} str - The string to be converted.
+   */
   this.fixUTFNameData = function (obj) {
     if (obj.display_name === '' || obj.display_name === undefined) {
       // If the to-be printed key (obj.display_name) has no value...
@@ -451,5 +455,14 @@ angular.module('lizard-nxt')
       }
     }
     return obj;
+  };
+
+  /*
+   * @description - Convert string ending in px to the value, expressed in pixels,
+   *                it denotes.
+   * @param {string} str - The string to be converted.
+   */
+  this.pxToInt = function (str) {
+    return parseInt(str.replace("px", ""));
   };
 }]);
