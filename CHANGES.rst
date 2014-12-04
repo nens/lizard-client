@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Improved timeline controls: buttons no longer overlap timeline itself.
+
 - Restructured file directory.
 
 - Hide timeseries card when toggling waterchain off.
