@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Event aggregate service.
+
 - Restructured file directory.
 
 - Hide timeseries card when toggling waterchain off.
