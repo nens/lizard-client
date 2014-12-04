@@ -65,7 +65,7 @@ angular.module('lizard-nxt')
 
   return {
     link: link,
-    templateUrl: 'templates/layer-chooser.html',
+    templateUrl: 'layer-chooser/layer-chooser.html',
     restrict: 'E'
   };
 

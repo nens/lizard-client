@@ -22,9 +22,6 @@
     <link href='//fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
     <!-- build:css(.tmp) /styles/main.css -->
-
-    <link href="/styles/omnibox.css" rel="stylesheet" />
-    <link href="/styles/graph.css" rel="stylesheet" />
     <link rel="stylesheet" href="/styles/main.css">
     <!-- endbuild -->
 
@@ -64,8 +61,9 @@
                 <a class="user"
                    href="https://sso.lizard.net/edit_profile/"
                    title="Edit profile">
-                  <div class="" id="username" ng-cloak ng-bind="user.firstName">
+                  <div class="" id="username" ng-cloak>
                     <i id="" class="fa fa-user"></i>
+                    <span ng-bind="user.firstName"></span>
                   </div>
                 </a>
               </li>
@@ -74,8 +72,9 @@
                 <a class="user"
                    title="<% tooltips.profile %>"
                    href="http://sso.lizard.net/edit_profile/">
-                  <div class="" ng-cloak id="username" ng-bind="user.firstName">
+                  <div class="" ng-cloak id="username" >
                     <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
+                    <span ng-bind="user.firstName"></span>
                   </div>
                 </a>
               </li>
@@ -229,57 +228,64 @@
     <!-- endbuild -->
 
     <!-- build:js({.tmp,app}) /scripts/scripts.js -->
-    <script src="/scripts/lib/TileLayer.GeoJSONd3.js"></script>
-    <script src="/scripts/lib/Layer.GeoJSONd3.js"></script>
-    <script src="/scripts/lib/leaflet-utfgrid-lizard.js"></script>
-    <script src="/scripts/lizard-nxt.js"></script>
-    <script src="/scripts/services/cabinet-service.js"></script>
-    <script src="/scripts/controllers/url-controller.js"></script>
-    <script src="/scripts/services/url-service.js"></script>
-    <script src="/scripts/services/util-service.js"></script>
-    <script src="/scripts/controllers/omnibox-controller.js"></script>
-    <script src="/scripts/services/raster-service.js"></script>
-    <script src="/scripts/services/leaflet-service.js"></script>
-    <script src="/scripts/services/map-service.js"></script>
-    <script src="/scripts/services/layer-group-service.js"></script>
-    <script src="/scripts/services/vector-service.js"></script>
-    <script src="/scripts/services/temporal-vector-service.js"></script>
-    <script src="/scripts/services/nxt-d3-service.js"></script>
-    <script src="/scripts/services/timeline-service.js"></script>
-    <script src="/scripts/services/wanted-attrs-constant.js"></script>
-    <script src="/scripts/services/landuse-lookup-constant.js"></script>
-    <script src="/scripts/services/temporal-vector-service.js"></script>
-    <script src="/scripts/services/utfgrid-service.js"></script>
-    <script src="/scripts/services/click-feedback-service.js"></script>
-    <script src="/scripts/services/timeseries-service.js"></script>
-    <script src="/scripts/directives/search-directive.js"></script>
-    <script src="/scripts/directives/map-directives.js"></script>
-    <script src="/scripts/directives/omnibox-directives.js"></script>
-    <script src="/scripts/services/graph-service.js"></script>
-    <script src="/scripts/directives/graph-directives.js"></script>
-    <script src="/scripts/directives/single-click-directive.js"></script>
-    <script src="/scripts/directives/layer-chooser-directives.js"></script>
-    <script src="/scripts/directives/full-details-directive.js"></script>
-    <script src="/scripts/directives/opacity-directives.js"></script>
-    <script src="/scripts/directives/template-directives.js"></script>
-    <script src="/scripts/directives/timeline-directives.js"></script>
-    <script src="/scripts/controllers/time-controller.js"></script>
-    <script src="/scripts/controllers/point-controller.js"></script>
-    <script src="/scripts/controllers/rain-controller.js"></script>
-    <script src="/scripts/controllers/line-controller.js"></script>
-    <script src="/scripts/controllers/area-controller.js"></script>
-    <script src="/scripts/templates/templates.js"></script>
-    <script src="/scripts/lib/utils.js"></script>
-    <script src="/scripts/lizard-nxt-filters.js"></script>
-    <script src="/scripts/services/layer-service.js"></script>
-    <script src="/scripts/services/tms-layer-service.js"></script>
-    <script src="/scripts/services/wms-layer-service.js"></script>
-    <script src="/scripts/services/non-tiled-wms-layer-service.js"></script>
-    <script src="/scripts/services/utf-layer-service.js"></script>
-    <script src="/scripts/services/store-layer-service.js"></script>
-    <script src="/scripts/services/vector-layer-service.js"></script>
-    <script src="/scripts/services/leaflet-vector-service.js"></script>
-    <script src="/scripts/services/location-service.js"></script>
+
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/leaflet-utfgrid-lizard.js"></script>
+
+    <script src="/lizard-nxt.js"></script>
+
+    <script src="/lib/cabinet-service.js"></script>
+    <script src="/lib/util-service.js"></script>
+    <script src="/lib/raster-service.js"></script>
+    <script src="/lib/vector-service.js"></script>
+    <script src="/lib/nxt-d3-service.js"></script>
+    <script src="/lib/utfgrid-service.js"></script>
+    <script src="/lib/click-feedback-service.js"></script>
+    <script src="/lib/timeseries-service.js"></script>
+    <script src="/lizard-nxt-filters.js"></script>
+
+    <script src="/components/url/url-controller.js"></script>
+    <script src="/components/url/url-service.js"></script>
+
+    <script src="/components/leaflet/leaflet-service.js"></script>
+    <script src="/components/leaflet/leaflet-vector-service.js"></script>
+
+    <script src="/components/map/services/map-service.js"></script>
+    <script src="/components/map/services/layer-group-service.js"></script>
+    <script src="/components/map/services/layer-service.js"></script>
+    <script src="/components/map/services/tms-layer-service.js"></script>
+    <script src="/components/map/services/wms-layer-service.js"></script>
+    <script src="/components/map/services/non-tiled-wms-layer-service.js"></script>
+    <script src="/components/map/services/utf-layer-service.js"></script>
+    <script src="/components/map/services/store-layer-service.js"></script>
+    <script src="/components/map/services/vector-layer-service.js"></script>
+    <script src="/components/map/map-directives.js"></script>
+
+    <script src="/components/omnibox/controllers/omnibox-controller.js"></script>
+    <script src="/components/omnibox/wanted-attrs-constant.js"></script>
+    <script src="/components/omnibox/landuse-lookup-constant.js"></script>
+    <script src="/components/omnibox/location-service.js"></script>
+    <script src="/components/omnibox/controllers/point-controller.js"></script>
+    <script src="/components/omnibox/controllers/rain-controller.js"></script>
+    <script src="/components/omnibox/controllers/line-controller.js"></script>
+    <script src="/components/omnibox/controllers/area-controller.js"></script>
+    <script src="/components/omnibox/directives/template-directives.js"></script>
+    <script src="/components/omnibox/directives/search-directive.js"></script>
+    <script src="/components/omnibox/directives/omnibox-directives.js"></script>
+    <script src="/components/omnibox/directives/full-details.js"></script>
+
+    <script src="/components/timeline/timeline-service.js"></script>
+    <script src="/components/timeline/timeline-directives.js"></script>
+    <script src="/components/timeline/time-controller.js"></script>
+
+    <script src="/components/graph/graph-service.js"></script>
+    <script src="/components/graph/graph-directives.js"></script>
+
+    <script src="/components/single-click/single-click-directive.js"></script>
+    <script src="/components/layer-chooser/layer-chooser-directives.js"></script>
+    <script src="/components/opacity/opacity-directives.js"></script>
+
+    <script src="/templates.js"></script>
     <!-- endbuild -->
 
     <script>
@@ -292,6 +298,31 @@
         if (window.gauges) {
           gauges();
         }
+
+        if (!window.JS_DEBUG) {
+          var asciiArray = [
+            "                                       o$o    o$$                   ",
+            "                                      *          *$                 ",
+            "                                     o           o$$                ",
+            "                                                 o$$$               ",
+            "                                               o$$$$                ",
+            "                                              oo$$   $$$*$          ",
+            "                                              o*$$     $ !          ",
+            "                                           o  oo$$$$$$$$ $$$ *      ",
+            "                                         !oo!oooo$$$$$  $$$$$       ",
+            "                                          ooooooooo$$$$$$$$$$$$$$$$!",
+            "                                             !  oooooo$$$$$$$$$$ooo ",
+            " *$     $$  $$$$$    $$$    $$*$¿   $$ $$        ooooooooooooooooo  ",
+            " *$     $$    $$    $$ $*   $$_$$   $   $$             ooooo        ",
+            " *$     $$   $$     $$$$$   $$ $!   $   $$            ooo           ",
+            " $$$$$!!$$$ $$$$$$ $$$ $$$ $$$$ $$ $$$$$$             o o           ",
+            "",
+            "Interesse?                                                  ",
+            "http://www.nelen-schuurmans.nl/NL/bedrijfsprofiel/carriere "
+            ];
+            var hiring = asciiArray.join('\n');
+            console.log(hiring);
+          }
     </script>
   </body>
 </html>
