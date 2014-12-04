@@ -462,6 +462,11 @@
     cursor: pointer;
 }
 
+/* table view messess up float: right */
+.table-details-toggler {
+    left: -10px;
+}
+
 .hidden-details {
     opacity: 0;
     max-height: 0;

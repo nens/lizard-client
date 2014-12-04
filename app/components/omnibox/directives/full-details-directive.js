@@ -21,6 +21,7 @@ angular.module('lizard-nxt')
         }
       };
 
+      scope.$parent.box.minimizeCards();
       element.bind('click', toggleDetails);
 
     };

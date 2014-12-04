@@ -124,6 +124,22 @@ angular.module('lizard-nxt')
           $scope.box.fullDetailCards.timeseries = true;
         }
       });
+      $scope.box.minimizeCards();
     };
+
+    $scope.box.minimizeCards = function () {
+      var searchNav = 81; // height of search and nav combined
+      var heights = $('#cards').height() + searchNav + 
+         $('#timeline').height() > $('body').height();
+      // jquery is good at this stuff alternative version would be:
+      // document.querySelector('#cards').clientHeight etc...
+      if (heights) {
+         angular.forEach(Object.keys($scope.box.fullDetailCards),
+           function (layer) {
+             $scope.box.fullDetailCards[layer] = false;
+         });
+      }
+    };
+    
   }
 ]);

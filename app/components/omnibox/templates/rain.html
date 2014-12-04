@@ -5,9 +5,10 @@
 
      <full-details></full-details>
      <span class="card-title-text" ng-class="{hidden: fullDetails}" >Regen</span>
-     <graph ng-if="lg.layers['radar/basic'] && fullDetails"
+     <graph ng-if="lg.layers['radar/basic']"
       bar-chart
       class="xyGraph"
+      ng-class="{hidden: fullDetails}"
       data="lg.layers['radar/basic'].data"
       ylabel="lg.layers['radar/basic'].aggWindow"
       yfilter="aggWinToYLabel"
@@ -15,7 +16,7 @@
       now="timeState.at">
       </graph>
       <a
-        ng-if="fullDetails"
+        ng-class="{hidden: fullDetails}" 
         id="export-rain-csv-button"
         href="#"
         title="Data van deze infocard exporteren"
