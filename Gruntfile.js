@@ -31,7 +31,7 @@ module.exports = function (grunt) {
     app: require('./bower.json').appPath,
     dist: 'dist',
     // Templates that need to be converted reside in components and core
-    templateFileDirs: '{components}/*/{,*/}*.html',
+    templateFileDirs: 'components/**/{,*/}*.html',
     // TODO: 
     // lib and lizard-nxt.js are still a swamp. Needs to be
     // * restructured
