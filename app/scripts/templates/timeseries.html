@@ -1,7 +1,16 @@
 <div class="card-content"
      id="card-content-timeseries">
 
-  <div class="timeseries-header-container">
+  <div ng-if="!fullDetails">
+    <span id="title-holder"
+          class="card-title-text kunstwerk-title-text">
+      Tijdreeksen
+    </span>
+    <span full-details class="full-details-toggle pull-right">
+    </span>
+  </div>
+
+  <div ng-if="fullDetails" class="timeseries-header-container">
     <select class="timeseries"
             ng-model="$parent.box.content.timeseries.selectedTimeseries"
             ng-options="series.name for series in $parent.box.content.timeseries.data | rmSingleDatumTimeseries">
@@ -9,7 +18,7 @@
   </div>
 
 
-  <div
+  <div ng-if="fullDetails"
       ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name === 'measuringstation'">
    <graph
       bar-chart
@@ -22,7 +31,8 @@
     </graph>
   </div>
 
-  <div ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name !== 'measuringstation'">
+  <div  ng-if="fullDetails"
+    ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name !== 'measuringstation'">
     <graph
       line
       type="temporal"

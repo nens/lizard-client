@@ -649,7 +649,7 @@ td.lineout {
 
 .show-structure-attrs-link {
   position: relative;
-  left: 105px;
+  text-align: center;
 }
 
 .show-structure-attrs-text {
@@ -664,7 +664,6 @@ td.lineout {
 
 .table-toggler {
   font-size: 18px;
-  margin-left: 77px;
   color: #bdc3c7;
 }
 

@@ -1,12 +1,10 @@
 angular.module('lizard-nxt')
   .controller("OmniboxCtrl", [
-
   "$scope",
   "UtilService",
   "ClickFeedbackService",
 
   function (
-
     $scope,
     UtilService,
     ClickFeedbackService) {
@@ -110,5 +108,10 @@ angular.module('lizard-nxt')
 
       return promises;
     };
+
+    $scope.cardsFit = function () {
+      return false;
+    };
+
   }
 ]);

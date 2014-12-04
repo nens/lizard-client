@@ -10,10 +10,12 @@
           class="card-title-text kunstwerk-title-text">
       <% waterchain.layers.waterchain_grid.data.entity_name | objectTitle %>
     </span>
+    <span full-details class="full-details-toggle pull-right">
+    </span>
   </span>
 
 
-  <table id="kunstwerk-table" class="table table-condensed table-hover">
+  <table ng-if="fullDetails" id="kunstwerk-table" class="table table-condensed table-hover">
 
     <tr class="attr-row"
         ng-repeat="obj in wanted[waterchain.layers.waterchain_grid.data.entity_name].rows"
@@ -42,7 +44,7 @@
     </tr>
   </table>
 
-  <div  class="show-structure-attrs-link"
+  <div class="show-structure-attrs-link" ng-class="{hidden: !fullDetails}"
         ng-click="$parent.box.toggleFullTable()">
 
     <span class="show-structure-attrs-text"
@@ -58,7 +60,7 @@
     </span>
   </div>
 
-  <div class="structure-image-wrapper text-center"
+  <div ng-if="fullDetails" class="structure-image-wrapper text-center"
        ng-if="!!waterchain.layers.waterchain_grid.data.image_url">
 
       <img class="structure-image"
