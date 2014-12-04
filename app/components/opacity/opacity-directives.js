@@ -36,7 +36,7 @@ angular.module('lizard-nxt')
 
   return {
     link: link,
-    templateUrl: 'templates/opacity.html',
+    templateUrl: 'opacity/opacity.html',
     restrict: 'E',
     replace: true
   };
