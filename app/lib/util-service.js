@@ -453,7 +453,13 @@ angular.module('lizard-nxt')
     return obj;
   };
 
-
+  /*
+   * @description - Convert lin to log scale, given the following 3 args.
+   * @param {number} value - the value to convert
+   * @param {number} minValue - the start of the scale
+   * @param {number} maxValue - the end of the scale
+   * @return {number} - The converted value
+   */
   this.lin2log = function (value, minValue, maxValue) {
     var scale = d3.scale.log()
       .domain([minValue, maxValue])
