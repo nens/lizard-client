@@ -396,7 +396,7 @@ angular.module('lizard-nxt')
     replace: true,
     restrict: 'E',
     link: link,
-    templateUrl: 'templates/timeline.html'
+    templateUrl: 'timeline/timeline.html'
   };
 }]);
 

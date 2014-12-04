@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Restructured file directory.
+
 - Hide timeseries card when toggling waterchain off.
 
 - Zap console.logs in utilservice

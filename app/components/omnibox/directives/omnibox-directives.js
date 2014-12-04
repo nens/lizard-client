@@ -9,7 +9,7 @@ angular.module("omnibox", ["templates-main"])
         contentType = 'area';
       }
 
-      var templateUrl = 'templates/' + contentType + '.html';
+      var templateUrl = 'omnibox/templates/' + contentType + '.html';
       return $templateCache.get(templateUrl);
     };
 
@@ -51,7 +51,7 @@ angular.module("omnibox", ["templates-main"])
     return {
       restrict: 'E',
       link: linker,
-      templateUrl: 'templates/omnibox-search.html'
+      templateUrl: 'omnibox/templates/omnibox-search.html'
     };
   }]);
 
