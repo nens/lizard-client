@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Line-tool has distinct cursor (crosshair).
+
 - Restructured file directory.
 
 - Hide timeseries card when toggling waterchain off.
