@@ -129,13 +129,13 @@ angular.module('lizard-nxt')
      */
     drawBars: {
       value: function (data, keys, labels) {
-        // data = [{"timestamp":"1338501600000","category":"Wateroverlast binnenshuis","count":2},{"timestamp":"1338501600000","category":"Riolering","count":8},{"timestamp":"1338501600000","category":"Wateroverlast buitenshuis","count":4},{"timestamp":"1341093600000","category":"Riolering","count":31},{"timestamp":"1341093600000","category":"Wateroverlast binnenshuis","count":4},{"timestamp":"1341093600000","category":"Wateroverlast buitenshuis","count":24},{"timestamp":"1343772000000","category":"Riolering","count":45},{"timestamp":"1343772000000","category":"Wateroverlast buitenshuis","count":37},{"timestamp":"1343772000000","category":"Wateroverlast binnenshuis","count":1},{"timestamp":"1346450400000","category":"Wateroverlast buitenshuis","count":10},{"timestamp":"1346450400000","category":"Riolering","count":11},{"timestamp":"1346450400000","category":"Wateroverlast binnenshuis","count":4},{"timestamp":"1349042400000","category":"Riolering","count":38},{"timestamp":"1349042400000","category":"Wateroverlast buitenshuis","count":17},{"timestamp":"1349042400000","category":"Wateroverlast binnenshuis","count":5},{"timestamp":"1351724400000","category":"Wateroverlast buitenshuis","count":10},{"timestamp":"1351724400000","category":"Riolering","count":10},{"timestamp":"1351724400000","category":"Wateroverlast binnenshuis","count":3},{"timestamp":"1354316400000","category":"Wateroverlast buitenshuis","count":23},{"timestamp":"1354316400000","category":"Riolering","count":39},{"timestamp":"1354316400000","category":"Wateroverlast binnenshuis","count":7},{"timestamp":"1356994800000","category":"Riolering","count":28},{"timestamp":"1356994800000","category":"Wateroverlast buitenshuis","count":10},{"timestamp":"1356994800000","category":"Wateroverlast binnenshuis","count":2},{"timestamp":"1359673200000","category":"Wateroverlast buitenshuis","count":7},{"timestamp":"1359673200000","category":"Riolering","count":21},{"timestamp":"1362092400000","category":"Riolering","count":20},{"timestamp":"1362092400000","category":"Wateroverlast binnenshuis","count":1},{"timestamp":"1364767200000","category":"Riolering","count":14},{"timestamp":"1364767200000","category":"Wateroverlast buitenshuis","count":1},{"timestamp":"1367359200000","category":"Wateroverlast buitenshuis","count":5},{"timestamp":"1367359200000","category":"Wateroverlast binnenshuis","count":5},{"timestamp":"1367359200000","category":"Riolering","count":10},{"timestamp":"1370037600000","category":"Riolering","count":15},{"timestamp":"1372629600000","category":"Riolering","count":13},{"timestamp":"1372629600000","category":"Wateroverlast buitenshuis","count":1},{"timestamp":"1377986400000","category":"Riolering","count":22},{"timestamp":"1377986400000","category":"Wateroverlast buitenshuis","count":9},{"timestamp":"1380578400000","category":"Riolering","count":21},{"timestamp":"1380578400000","category":"Wateroverlast buitenshuis","count":19},{"timestamp":"1380578400000","category":"Wateroverlast binnenshuis","count":3},{"timestamp":"1383260400000","category":"Riolering","count":60},{"timestamp":"1383260400000","category":"Wateroverlast buitenshuis","count":13},{"timestamp":"1383260400000","category":"Wateroverlast binnenshuis","count":3},{"timestamp":"1385852400000","category":"Riolering","count":15},{"timestamp":"1385852400000","category":"Wateroverlast buitenshuis","count":7},{"timestamp":"1388530800000","category":"Riolering","count":27},{"timestamp":"1388530800000","category":"Wateroverlast buitenshuis","count":10},{"timestamp":"1391209200000","category":"Wateroverlast buitenshuis","count":4},{"timestamp":"1391209200000","category":"Riolering","count":15},{"timestamp":"1393628400000","category":"Riolering","count":14},{"timestamp":"1396303200000","category":"Riolering","count":15},{"timestamp":"1396303200000","category":"Wateroverlast buitenshuis","count":1},{"timestamp":"1398895200000","category":"Wateroverlast buitenshuis","count":7},{"timestamp":"1398895200000","category":"Riolering","count":6},{"timestamp":"1404165600000","category":"Wateroverlast buitenshuis","count":15},{"timestamp":"1404165600000","category":"Riolering","count":17},{"timestamp":"1406844000000","category":"Riolering","count":40},{"timestamp":"1406844000000","category":"Wateroverlast buitenshuis","count":11},{"timestamp":"1375308000000","category":"Riolering","count":5},{"timestamp":"1375308000000","category":"Wateroverlast binnenshuis","count":3},{"timestamp":"1401573600000","category":"Riolering","count":6}]
-        // keys = {x: 'timestamp', y: 'count', category: 'category'};
+        data = [{"timestamp":"1338501600000","category":"Wateroverlast binnenshuis","count":2},{"timestamp":"1338501600000","category":"Riolering","count":8},{"timestamp":"1338501600000","category":"Wateroverlast buitenshuis","count":4},{"timestamp":"1341093600000","category":"Riolering","count":31},{"timestamp":"1341093600000","category":"Wateroverlast binnenshuis","count":4},{"timestamp":"1341093600000","category":"Wateroverlast buitenshuis","count":24},{"timestamp":"1343772000000","category":"Riolering","count":45},{"timestamp":"1343772000000","category":"Wateroverlast buitenshuis","count":37},{"timestamp":"1343772000000","category":"Wateroverlast binnenshuis","count":1},{"timestamp":"1346450400000","category":"Wateroverlast buitenshuis","count":10},{"timestamp":"1346450400000","category":"Riolering","count":11},{"timestamp":"1346450400000","category":"Wateroverlast binnenshuis","count":4},{"timestamp":"1349042400000","category":"Riolering","count":38},{"timestamp":"1349042400000","category":"Wateroverlast buitenshuis","count":17},{"timestamp":"1349042400000","category":"Wateroverlast binnenshuis","count":5},{"timestamp":"1351724400000","category":"Wateroverlast buitenshuis","count":10},{"timestamp":"1351724400000","category":"Riolering","count":10},{"timestamp":"1351724400000","category":"Wateroverlast binnenshuis","count":3},{"timestamp":"1354316400000","category":"Wateroverlast buitenshuis","count":23},{"timestamp":"1354316400000","category":"Riolering","count":39},{"timestamp":"1354316400000","category":"Wateroverlast binnenshuis","count":7},{"timestamp":"1356994800000","category":"Riolering","count":28},{"timestamp":"1356994800000","category":"Wateroverlast buitenshuis","count":10},{"timestamp":"1356994800000","category":"Wateroverlast binnenshuis","count":2},{"timestamp":"1359673200000","category":"Wateroverlast buitenshuis","count":7},{"timestamp":"1359673200000","category":"Riolering","count":21},{"timestamp":"1362092400000","category":"Riolering","count":20},{"timestamp":"1362092400000","category":"Wateroverlast binnenshuis","count":1},{"timestamp":"1364767200000","category":"Riolering","count":14},{"timestamp":"1364767200000","category":"Wateroverlast buitenshuis","count":1},{"timestamp":"1367359200000","category":"Wateroverlast buitenshuis","count":5},{"timestamp":"1367359200000","category":"Wateroverlast binnenshuis","count":5},{"timestamp":"1367359200000","category":"Riolering","count":10},{"timestamp":"1370037600000","category":"Riolering","count":15},{"timestamp":"1372629600000","category":"Riolering","count":13},{"timestamp":"1372629600000","category":"Wateroverlast buitenshuis","count":1},{"timestamp":"1377986400000","category":"Riolering","count":22},{"timestamp":"1377986400000","category":"Wateroverlast buitenshuis","count":9},{"timestamp":"1380578400000","category":"Riolering","count":21},{"timestamp":"1380578400000","category":"Wateroverlast buitenshuis","count":19},{"timestamp":"1380578400000","category":"Wateroverlast binnenshuis","count":3},{"timestamp":"1383260400000","category":"Riolering","count":60},{"timestamp":"1383260400000","category":"Wateroverlast buitenshuis","count":13},{"timestamp":"1383260400000","category":"Wateroverlast binnenshuis","count":3},{"timestamp":"1385852400000","category":"Riolering","count":15},{"timestamp":"1385852400000","category":"Wateroverlast buitenshuis","count":7},{"timestamp":"1388530800000","category":"Riolering","count":27},{"timestamp":"1388530800000","category":"Wateroverlast buitenshuis","count":10},{"timestamp":"1391209200000","category":"Wateroverlast buitenshuis","count":4},{"timestamp":"1391209200000","category":"Riolering","count":15},{"timestamp":"1393628400000","category":"Riolering","count":14},{"timestamp":"1396303200000","category":"Riolering","count":15},{"timestamp":"1396303200000","category":"Wateroverlast buitenshuis","count":1},{"timestamp":"1398895200000","category":"Wateroverlast buitenshuis","count":7},{"timestamp":"1398895200000","category":"Riolering","count":6},{"timestamp":"1404165600000","category":"Wateroverlast buitenshuis","count":15},{"timestamp":"1404165600000","category":"Riolering","count":17},{"timestamp":"1406844000000","category":"Riolering","count":40},{"timestamp":"1406844000000","category":"Wateroverlast buitenshuis","count":11},{"timestamp":"1375308000000","category":"Riolering","count":5},{"timestamp":"1375308000000","category":"Wateroverlast binnenshuis","count":3},{"timestamp":"1401573600000","category":"Riolering","count":6}]
+        keys = {x: 'timestamp', y: 'count', category: 'category'};
         if (keys.category) {
           var cumulativeData = [];
           // Group by x value
           d3.nest().key(function (d) {
-            return d.x;
+            return d[keys.x];
           })
           .entries(data)
           // Compute y values for every group
@@ -143,8 +143,8 @@ angular.module('lizard-nxt')
             var y0 = 0;
             group.values = group.values.map(function (d) {
               d.y0 = y0;
-              d.y += y0;
-              y0 = d.y;
+              d[keys.y] += y0;
+              y0 = d[keys.y];
               cumulativeData.push(d);
             });
           });
@@ -162,6 +162,7 @@ angular.module('lizard-nxt')
             }
           };
           this._xy = this._createXYGraph(data, keys, labels, options);
+          this._xy.y.scale.domain([0, this._xy.y.maxMin.max]);
         } else {
           this._xy = rescale(
             this._svg,
@@ -414,13 +415,12 @@ angular.module('lizard-nxt')
         bar = svg.select('g').select('#feature-group').selectAll(".bar")
           .data(data);
 
-    console.log(data);
     // UPDATE
     // Update old elements as needed.
     bar.transition()
       .duration(duration)
       .attr("height", function (d) {
-        return (y.scale(d.y0) || height - y.scale(d[keys.y]));
+        return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
       })
       .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
       .attr('width', function (d) { return barWidth; })
@@ -439,7 +439,7 @@ angular.module('lizard-nxt')
       // Bring bars in one by one
       .delay(function (d, i) { return i * 0.1 * duration; })
       .attr("height", function (d) {
-        return (y.scale(d.y0) || height - y.scale(d[keys.y]));
+        return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
       })
       .attr("y", function (d) { return y.scale(d[keys.y]); })
       .attr("stroke-width", strokeWidth);
