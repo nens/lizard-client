@@ -97,6 +97,10 @@ angular.module('lizard-nxt')
             }
           }
         }
+
+        // reset detail cards, based on new content models.
+        resetDetailCards();
+
         // Accomadate chaining in child controllers
         return response;
       };
@@ -109,9 +113,17 @@ angular.module('lizard-nxt')
       return promises;
     };
 
-    $scope.cardsFit = function () {
-      return false;
+    /**
+     *  This resets the detailed card model
+     */
+    var resetDetailCards = function () {
+      $scope.box.fullDetailCards = {};
+      angular.forEach(Object.keys($scope.box.content), function (key) {
+        $scope.box.fullDetailCards[key] = true;
+        if (key === 'waterchain') {
+          $scope.box.fullDetailCards.timeseries = true;
+        }
+      });
     };
-
   }
 ]);

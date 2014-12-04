@@ -18,7 +18,8 @@ angular.module('lizard-nxt')
   return {
       restrict: 'E',
       scope: {
-        timeseries: '=',
+        fullDetails: '=',
+        timeseries: '='
       },
       // replace: true,
       templateUrl: 'omnibox/templates/timeseries.html'
@@ -32,6 +33,7 @@ angular.module('lizard-nxt')
     link: function (scope) { scope.wanted = WantedAttributes; },
     restrict: 'E',
     scope: {
+      fullDetails: '=',
       waterchain: '='
     },
     replace: true,
@@ -55,6 +57,7 @@ angular.module('lizard-nxt')
     link: function (scope) { scope.landuseLookup = LanduseLookup; },
     restrict: 'E',
     scope: {
+      fullDetails: '=',
       lg: '=',
       mapstate: '='
     },
