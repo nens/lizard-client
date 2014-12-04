@@ -11,6 +11,15 @@ angular.module('lizard-nxt')
   .service('LeafletVectorService', ["LeafletService", "VectorService",
       function (LeafletService, VectorService) {
 
+  var lin2log = function (value, minValue, maxValue) {
+
+    var scale = d3.scale.log()
+      .domain([minValue, maxValue])
+      .range([minValue, maxValue]);
+
+    return scale(value);
+  };
+
   /**
    * Leaflet does not have a tiled geojson layer.
    * So.. we made it.
@@ -39,7 +48,7 @@ angular.module('lizard-nxt')
       this.drawOptions = {
         pointToLayer: function (feature, latlng) {
           var geojsonMarkerOptions = {
-            radius: (feature.properties.radius || 6),
+            radius: lin2log((feature.properties.radius || 6), 6, 16),
             fillColor: color,
             color: "#FFF",
             weight: 2,
@@ -51,6 +60,8 @@ angular.module('lizard-nxt')
             latlng, geojsonMarkerOptions);
           circle.on('click', function (e) {
             // simulate click on map instead of this event;
+            console.log("init radius:", feature.properties.radius);
+            console.log("log circle:", circle._radius);
             this._map.fire('click', {
               latlng: new LeafletService.LatLng(
                 e.target.feature.geometry.coordinates[1],
