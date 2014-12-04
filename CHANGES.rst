@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Single-line omnibox cards have same height as searchbar.
+
 - Restructured file directory.
 
 - Hide timeseries card when toggling waterchain off.
