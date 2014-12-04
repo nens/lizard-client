@@ -109,24 +109,44 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt')
-  .Graph
-     * @param {object} data   Currently supports the format:
-     *                        [
-     *                          [value, value],
-     *                          ...,
-     *                        ]
-     * @param {object} keys   Mapping between x and y values of data object:
-     *                        example: {x: 0, y: 1}
+     * @memberOf angular.module('lizard-nxt').Graph
+     * @param {object} data   Currently supports arrays of arrays or objects
+     *                        with x value, y value, <optional> color and
+     *                        <optional> category.
+     * @param {object} keys   Mapping between x, y and optional color, and
+     *                        category values of data object: example:
+     *                        {x: 0, y: 1} or:
+     *                        {x: 'xValue', y: 'yValue', color: 'eventColor',
+     *                        categoy: 'cat'};
      * @param {object} labels Object {x: 'x label', y: 'y label'} will be
      *                        mapped to axis labels of the graph
      * @description           Draws a barchart, if necessary sets up the graph,
      *                        if necessary modifies domain and redraws axis,
      *                        and draws the line according to the data object.
-     *                        Currently only a time scale on the x-axis is supported.
+     *                        Currently only a time scale on the x-axis is
+     *                        supported. It assumes that every segment has a
+     *                        data element.
      */
     drawBars: {
       value: function (data, keys, labels) {
+        if (keys.category) {
+          // Group by x value
+          data = d3.nest().key(function (d) {
+            return d.x;
+          })
+          .entries(data)
+          // Compute y values for every group
+          .forEach(function (group) {
+            var y0 = 0;
+            return group.values.map(function (d) {
+              d.y0 = y0;
+              d.y += y0;
+              y0 = d.y;
+            });
+          })
+          // Ungroup
+          .flat();
+        }
         if (!this._xy) {
           var options = {
             x: {
@@ -140,17 +160,30 @@ angular.module('lizard-nxt')
           };
           this._xy = this._createXYGraph(data, keys, labels, options);
         } else {
-          this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys, {y: 0});
+          this._xy = rescale(
+            this._svg,
+            this.dimensions,
+            this._xy,
+            data,
+            keys,
+            {y: 0}
+          );
           drawLabel(this._svg, this.dimensions, labels.y, true);
         }
-        drawVerticalRects(this._svg, this.dimensions, this._xy, keys, data, this.transTime);
+        drawVerticalRects(
+          this._svg,
+          this.dimensions,
+          this._xy,
+          keys,
+          data,
+          this.transTime
+        );
       }
     },
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt')
-  .Graph
+     * @memberOf angular.module('lizard-nxt').Graph
      * @param {object}    data object. Currently supports the format:
      *                    [
      *                      {
@@ -400,8 +433,7 @@ angular.module('lizard-nxt')
       .delay(function (d, i) { return i * 0.1 * duration; })
       .attr("height", function (d) { return height - y.scale(d[keys.y]); })
       .attr("y", function (d) { return y.scale(d[keys.y]); })
-      .attr("stroke-width", strokeWidth)
-      ;
+      .attr("stroke-width", strokeWidth);
 
     // EXIT
     // Remove old elements as needed.
@@ -417,7 +449,6 @@ angular.module('lizard-nxt')
 
   getBarWidth = function (scale, data, keys, dimensions) {
     return (dimensions.width - dimensions.padding.left - dimensions.padding.right) / data.length;
-    //return scale(data[1][keys.x]) - scale(data[0][keys.x]);
   };
 
   createXGraph = function (svg, dimensions, labels, options) {
