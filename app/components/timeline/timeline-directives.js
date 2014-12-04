@@ -348,7 +348,7 @@ angular.module('lizard-nxt')
 
     /**
      * The timeline can be too early on initialization.
-     * The leaflet events are not even started loading, 
+     * The leaflet events are not even started loading,
      * so the call returns an empty array.
      *
      * If nobody touches nothing, that means the timeline
@@ -384,7 +384,7 @@ angular.module('lizard-nxt')
     replace: true,
     restrict: 'E',
     link: link,
-    templateUrl: 'templates/timeline.html'
+    templateUrl: 'timeline/timeline.html'
   };
 }]);
 
