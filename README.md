@@ -88,6 +88,17 @@ adding the --save option. Always check your bower.json afterwards. e.g.:
     bin/bower search leaflet-dist
     bin/bower install leaflet-dist --save
 
+## Source files
+Files are grouped per component, mini angular apps doing one thing. Timeline is currently our most straightforward example. It has a template, a directive, a controller and a service under `app/components/timeline`.
+
+There are still 3 todo's for this example:
+1. Preferably the component also contains its own css or sass file with a proper component namespace 
+2. It contains unit-tests.
+3. The component is a seperate angular module
+
+The components can include other components and should be used by a *core* module. NOTE: this is a major todo, even the term *core* is under debate. But what is agreed on is that components should be grouped in modules (like mapView and dashboardView modules) Core modules are included by the app's module which resides in the root of `/app`.
+
+`app/lib` contains low level services and non-angular files. These do not make up a component but contain individual pieces of logic that are used by components or *core* modules.
 
 ## Browser compatibility chart
 
