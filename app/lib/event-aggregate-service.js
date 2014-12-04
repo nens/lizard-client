@@ -14,9 +14,9 @@ angular.module('lizard-nxt')
      * @summary helper function to get value property of geojson feature.
      *
      * @param {object} d - geojson feature.
-     * @returns {} value field of properties.
+     * @returns {float} value field of properties.
      */
-    var _getValue = function (d) {return d.properties.value; };
+    var _getValue = function (d) {return parseFloat(d.properties.value); };
 
     /**
      * @function _getTimeInterval
