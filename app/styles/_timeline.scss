@@ -10,6 +10,9 @@
 
 .timeline-svg-wrapper {
     margin-top: 2px;
+    svg {
+        position: relative;
+    }
 }
 
 .time-controls {
@@ -28,6 +31,15 @@
     right: 0;
     top: 1px;
     z-index: 999;
+
+    .btn-xss {
+        background-color: #fff;
+        &:hover {
+            color: rgba(127, 140, 141,1.0);
+            text-decoration: none;
+            background-color: #fff;
+        }
+    }
 }
 
 .time-start-now-end {
@@ -187,5 +199,3 @@
     stroke-width: 2;
     stroke: $pomegranate;
 }
-
-
