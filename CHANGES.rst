@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Event radius has logarithmic scale.
+
+- Event circle stroke/fill now get same transparency.
+
 - Restructured file directory.
 
 - Hide timeseries card when toggling waterchain off.
