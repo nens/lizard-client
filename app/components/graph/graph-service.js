@@ -132,23 +132,7 @@ angular.module('lizard-nxt')
         data = [{"timestamp":"1338501600000","category":"Wateroverlast binnenshuis","count":2},{"timestamp":"1338501600000","category":"Riolering","count":8},{"timestamp":"1338501600000","category":"Wateroverlast buitenshuis","count":4},{"timestamp":"1341093600000","category":"Riolering","count":31},{"timestamp":"1341093600000","category":"Wateroverlast binnenshuis","count":4},{"timestamp":"1341093600000","category":"Wateroverlast buitenshuis","count":24},{"timestamp":"1343772000000","category":"Riolering","count":45},{"timestamp":"1343772000000","category":"Wateroverlast buitenshuis","count":37},{"timestamp":"1343772000000","category":"Wateroverlast binnenshuis","count":1},{"timestamp":"1346450400000","category":"Wateroverlast buitenshuis","count":10},{"timestamp":"1346450400000","category":"Riolering","count":11},{"timestamp":"1346450400000","category":"Wateroverlast binnenshuis","count":4},{"timestamp":"1349042400000","category":"Riolering","count":38},{"timestamp":"1349042400000","category":"Wateroverlast buitenshuis","count":17},{"timestamp":"1349042400000","category":"Wateroverlast binnenshuis","count":5},{"timestamp":"1351724400000","category":"Wateroverlast buitenshuis","count":10},{"timestamp":"1351724400000","category":"Riolering","count":10},{"timestamp":"1351724400000","category":"Wateroverlast binnenshuis","count":3},{"timestamp":"1354316400000","category":"Wateroverlast buitenshuis","count":23},{"timestamp":"1354316400000","category":"Riolering","count":39},{"timestamp":"1354316400000","category":"Wateroverlast binnenshuis","count":7},{"timestamp":"1356994800000","category":"Riolering","count":28},{"timestamp":"1356994800000","category":"Wateroverlast buitenshuis","count":10},{"timestamp":"1356994800000","category":"Wateroverlast binnenshuis","count":2},{"timestamp":"1359673200000","category":"Wateroverlast buitenshuis","count":7},{"timestamp":"1359673200000","category":"Riolering","count":21},{"timestamp":"1362092400000","category":"Riolering","count":20},{"timestamp":"1362092400000","category":"Wateroverlast binnenshuis","count":1},{"timestamp":"1364767200000","category":"Riolering","count":14},{"timestamp":"1364767200000","category":"Wateroverlast buitenshuis","count":1},{"timestamp":"1367359200000","category":"Wateroverlast buitenshuis","count":5},{"timestamp":"1367359200000","category":"Wateroverlast binnenshuis","count":5},{"timestamp":"1367359200000","category":"Riolering","count":10},{"timestamp":"1370037600000","category":"Riolering","count":15},{"timestamp":"1372629600000","category":"Riolering","count":13},{"timestamp":"1372629600000","category":"Wateroverlast buitenshuis","count":1},{"timestamp":"1377986400000","category":"Riolering","count":22},{"timestamp":"1377986400000","category":"Wateroverlast buitenshuis","count":9},{"timestamp":"1380578400000","category":"Riolering","count":21},{"timestamp":"1380578400000","category":"Wateroverlast buitenshuis","count":19},{"timestamp":"1380578400000","category":"Wateroverlast binnenshuis","count":3},{"timestamp":"1383260400000","category":"Riolering","count":60},{"timestamp":"1383260400000","category":"Wateroverlast buitenshuis","count":13},{"timestamp":"1383260400000","category":"Wateroverlast binnenshuis","count":3},{"timestamp":"1385852400000","category":"Riolering","count":15},{"timestamp":"1385852400000","category":"Wateroverlast buitenshuis","count":7},{"timestamp":"1388530800000","category":"Riolering","count":27},{"timestamp":"1388530800000","category":"Wateroverlast buitenshuis","count":10},{"timestamp":"1391209200000","category":"Wateroverlast buitenshuis","count":4},{"timestamp":"1391209200000","category":"Riolering","count":15},{"timestamp":"1393628400000","category":"Riolering","count":14},{"timestamp":"1396303200000","category":"Riolering","count":15},{"timestamp":"1396303200000","category":"Wateroverlast buitenshuis","count":1},{"timestamp":"1398895200000","category":"Wateroverlast buitenshuis","count":7},{"timestamp":"1398895200000","category":"Riolering","count":6},{"timestamp":"1404165600000","category":"Wateroverlast buitenshuis","count":15},{"timestamp":"1404165600000","category":"Riolering","count":17},{"timestamp":"1406844000000","category":"Riolering","count":40},{"timestamp":"1406844000000","category":"Wateroverlast buitenshuis","count":11},{"timestamp":"1375308000000","category":"Riolering","count":5},{"timestamp":"1375308000000","category":"Wateroverlast binnenshuis","count":3},{"timestamp":"1401573600000","category":"Riolering","count":6}]
         keys = {x: 'timestamp', y: 'count', category: 'category'};
         if (keys.category) {
-          var cumulativeData = [];
-          // Group by x value
-          d3.nest().key(function (d) {
-            return d[keys.x];
-          })
-          .entries(data)
-          // Compute y values for every group
-          .forEach(function (group) {
-            var y0 = 0;
-            group.values = group.values.map(function (d) {
-              d.y0 = y0;
-              d[keys.y] += y0;
-              y0 = d[keys.y];
-              cumulativeData.push(d);
-            });
-          });
-          data = cumulativeData;
+          data = createYValuesForCumulativeData(data, keys);
         }
         if (!this._xy) {
           var options = {
@@ -311,7 +295,34 @@ angular.module('lizard-nxt')
   });
 
   var createPie, createArc, drawPie, drawAxes, drawLabel, toRescale, drawPath, setupLineGraph, createDonut,
-  getBarWidth, drawVerticalRects, drawHorizontalRectss, createXGraph, rescale;
+  getBarWidth, drawVerticalRects, drawHorizontalRectss, createXGraph, rescale, createYValuesForCumulativeData;
+
+  /**
+   * Creates y cumulatie y values for elements on the same x value.
+   *
+   * @param  {array} data array of objects.
+   * @param  {object} keys mapping between x, y and keys in the data.
+   * @return {array} with added y0 value and cumulative y value.
+   */
+  createYValuesForCumulativeData = function (data, keys) {
+    var cumulativeData = [];
+    // Group by x value
+    d3.nest().key(function (d) {
+      return d[keys.x];
+    })
+    .entries(data)
+    // Compute y values for every group
+    .forEach(function (group) {
+      var y0 = 0;
+      group.values = group.values.map(function (d) {
+        d.y0 = y0;
+        d[keys.y] += y0;
+        y0 = d[keys.y];
+        cumulativeData.push(d);
+      });
+    });
+    return cumulativeData;
+  }
 
   rescale = function (svg, dimensions, xy, data, keys, origin) {
     // Sensible limits to rescale. If the max
