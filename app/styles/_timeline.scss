@@ -32,14 +32,20 @@
     top: 1px;
     z-index: 999;
 
-    .btn-xss {
-        color: #2c3e50;;
-        background-color: #fff;
-        &:hover {
-            color: rgba(127, 140, 141,1.0);
-            text-decoration: none;
+    .btn-group-vertical {
+
+        margin-right: 8px;
+
+        .btn-xss {
+            color: #2c3e50;
             background-color: #fff;
+            &:hover {
+                color: rgba(127, 140, 141,1.0);
+                text-decoration: none;
+                background-color: #fff;
+            }
         }
+
     }
 }
 
