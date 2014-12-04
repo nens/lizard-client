@@ -36,9 +36,16 @@ module.exports = function(config) {
       'vendor/ng-csv/build/ng-csv.min.js',
       'vendor/raven-js/dist/raven.js',
       // endbower
-      'app/scripts/lizard-nxt.js',
+
+      // application
+      'app/lizard-nxt.js',
+      'app/*.js',
       'test/mocks/**/*.js',
-      'app/scripts/**/*.js',
+      'app/lib/*.js',
+      'app/components/**/{controllers/,directives/,services/,*}.js',
+      // end application
+
+      // tests
       'test/spec/**/*.js'
 
     ],

@@ -4,11 +4,15 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Restructured file directory.
+
 - Hide timeseries card when toggling waterchain off.
 
 - Zap console.logs in utilservice
 
 - User name interpolation is now done with ng-bind also for big screens
+
+- CSS is now preprocessed with SASS, fmbo of structure and clarity.
 
 Release 1.0.0 (2014-12-01)
 ---------------------------

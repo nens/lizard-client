@@ -107,7 +107,7 @@ angular.module('lizard-nxt')
     link: link,
     restrict: 'E',
     replace: true,
-    templateUrl: 'templates/search.html'
+    templateUrl: 'omnibox/templates/search.html'
   };
 
 }]);

@@ -1,0 +1,85 @@
+/**
+ * Leaflet overrides.
+ */
+
+.leaflet-overlay-pane {
+    svg {
+        z-index: 1000;
+    }
+
+}
+
+.leaflet-div-icon {
+    background: none;
+    border: none;
+}
+
+
+.leaflet-control-zoom {
+    box-shadow: 0 0 0 $black;
+    display: inline-block;
+    left: 478px;
+    position: relative;
+    top: 6px;
+}
+
+.leaflet-bar {
+    a {
+        &:last-child {
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-user-select: none;
+            border-bottom-right-radius: 2px;
+            border-bottom: 0;
+            border-left: 1px solid $white;
+            border-radius: 0;
+            border-top-right-radius: 2px;
+            height: $height14;
+            height: $height14;
+            left: -4px;
+            line-height: $height14;
+            line-height: $height14;
+            position: absolute;
+            user-select: none;
+            width: $width12;
+        }
+
+        &:first-child {
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-user-select: none;
+            border-bottom: 0;
+            border-left: 1px solid $white;
+            border-radius: 0;
+            height: $height14;
+            left: -38px;
+            line-height: $height14;
+            position: absolute;
+            user-select: none;
+            width: $width12;
+        }
+
+    }
+
+}
+
+.leaflet-container {
+    background: #efefef;
+    a {
+        background-color: $greensea;
+        color: $white;
+        &:hover {
+            background-color: $turquoise;
+            color: $white;
+        }
+
+    }
+
+    img.leaflet-image-layer {
+        -webkit-filter: contrast(200%);
+        filter: contrast(200%);
+        max-width: none !important;
+    }
+
+}
+

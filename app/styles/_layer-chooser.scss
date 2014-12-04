@@ -1,0 +1,189 @@
+/**
+ * Layer switcher layout
+ */
+
+.layer-switcher-wrapper {
+    position: absolute;
+    right: -200px;
+    top: 50px;
+    transition: .3s ease;
+    width: $width6;
+    z-index: 15000;
+}
+
+label.layer-chooser {
+    border: solid 2px rgba(0,0,0,0);
+    height: $height15;
+    margin-bottom: 0;
+    position: relative;
+    transition: .3s ease;
+    width: $width19;
+    &:hover {
+        border: 2px solid $asbestos;
+    }
+
+}
+
+label.layer-chooser > span.layer-text {
+    background: rgba(239, 239, 239, 0.9);
+    color: $asbestos;
+    height: 24px;
+    padding: 4px 5px;
+    position: absolute;
+    transition: .3s ease;
+    width: 60%;
+    z-index: 1;
+}
+
+label.layer-chooser.active {
+    border: solid 2px $midnightblue;
+    &:hover > span.layer-text {
+        color: $midnightblue;
+    }
+
+    &:hover {
+        border: solid 2px $midnightblue;
+    }
+
+}
+
+label.layer-chooser.active > span.layer-text {
+    color: $midnightblue;
+}
+
+label.layer-chooser > div.layer-img {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: $height9;
+    position: absolute;
+    right: 0;
+    width: $width19;
+    &:hover {
+        cursor: pointer !important;
+    }
+
+}
+
+.layer-switcher {
+    background: $white;
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom-left-radius: 2px;
+    list-style-type: none;
+    overflow: hidden;
+    padding: 15px 15px 0 15px;
+    top: 0;
+    z-index: 2;
+    label {
+        color: $asbestos;
+        cursor: pointer;
+        font-size: 14px;
+        font-style: normal;
+        line-height: 1;
+        margin-left: 0;
+        text-shadow: none;
+        transition:.6s;
+        &:hover {
+            color: $pomegranate;
+            font-size: 14px;
+            margin-left: 0;
+            text-shadow: none;
+        }
+
+    }
+    label.active {
+        color: $pomegranate;
+        font-size: 14px;
+        margin-left: 0;
+        text-shadow: none;
+    }
+
+    label.count {
+        color: $pomegranate;
+        font-size: 14px;
+        margin-left: 0;
+        text-shadow: none;
+    }
+
+    ul {
+        li {
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -o-user-select: none;
+            -webkit-user-select: none;
+            line-height: $height20;
+            list-style-type: none;
+            user-select:
+            none;
+        }
+
+    }
+
+}
+
+.ribbon {
+    overflow: hidden;
+    position: absolute;
+    z-index: 10;
+}
+
+#ribbon {
+    float: right;
+    height: $height12;
+    left: -60px;
+    top: 16px;
+}
+
+.ribbon-icon {
+    color: $pomegranate;
+    font-size: 22px;
+    left: 5px;
+    margin: auto;
+    position: relative;
+    top: -20px;
+    z-index: 10;
+}
+
+.arrow {
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+}
+
+.arrow-up {
+    border-bottom: 30px solid $alizarin;
+    border-left: 20px solid transparent;
+    border-right: 0 solid transparent;
+    height: $height20;
+    top: 10px;
+    width: $width17;
+}
+
+.arrow-down {
+    border-left: 20px solid rgba(231, 76, 60, 0);
+    border-right: 0 solid transparent;
+    border-top: 30px solid $alizarin;
+    height: $height7;
+    top: -30px;
+    width: $width17;
+}
+
+.arrow-left {
+    border-bottom: 0px solid transparent;
+    border-right:30px solid $alizarin;
+    border-top: 20px solid transparent;
+    height: $height7;
+    left: -10px;
+    opacity: 1;
+    top: 60px;
+}
+
+.arrow-right {
+    border-bottom: 0px solid transparent;
+    border-left: 30px solid $alizarin;
+    border-top: 20px solid transparent;
+    height: $height7;
+    top: 0px;
+}
+
+
