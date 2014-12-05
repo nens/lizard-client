@@ -314,7 +314,6 @@ describe('Testing graph', function () {
     var bars = graph._svg.select('g').select('#feature-group').selectAll(".bar");
     var yValue = Number(bars[0][0].getAttribute('y'));
     var yValue2 = Number(bars[0][1].getAttribute('y')) - Number(bars[0][1].getAttribute('height'));
-    console.info(yValue2);
     expect(yValue).toEqual(yValue2);
   });
 
