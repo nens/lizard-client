@@ -320,7 +320,7 @@ angular.module('lizard-nxt')
       });
     });
     return cumulativeData;
-  }
+  };
 
   rescale = function (svg, dimensions, xy, data, keys, origin) {
     // Sensible limits to rescale. If the max
