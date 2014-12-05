@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Event radius has logarithmic scale.
+
+- Event circle stroke/fill now get same transparency.
+
 - Single-line omnibox cards have same height as searchbar.
 
 - Line-tool has distinct cursor (crosshair).
