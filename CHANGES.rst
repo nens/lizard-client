@@ -4,7 +4,7 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
-- Bar chart supports stacked bars
+- Bar chart supports stacked bars.
 
 - Restructured file directory.
 
