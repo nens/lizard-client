@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Single-line omnibox cards have same height as searchbar.
+
 - Line-tool has distinct cursor (crosshair).
 
 - Improved timeline controls: buttons no longer overlap timeline itself.
