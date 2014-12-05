@@ -8,6 +8,12 @@ Unreleased ()
 
 - Event circle stroke/fill now get same transparency.
 
+- Single-line omnibox cards have same height as searchbar.
+
+- Line-tool has distinct cursor (crosshair).
+
+- Improved timeline controls: buttons no longer overlap timeline itself.
+
 - Restructured file directory.
 
 - Hide timeseries card when toggling waterchain off.
