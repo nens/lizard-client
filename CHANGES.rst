@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Bar chart supports stacked bars.
+
 - Event radius has logarithmic scale.
 
 - Event circle stroke/fill now get same transparency.
