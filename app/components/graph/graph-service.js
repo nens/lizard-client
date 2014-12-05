@@ -109,24 +109,29 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt')
-  .Graph
-     * @param {object} data   Currently supports the format:
-     *                        [
-     *                          [value, value],
-     *                          ...,
-     *                        ]
-     * @param {object} keys   Mapping between x and y values of data object:
-     *                        example: {x: 0, y: 1}
+     * @memberOf angular.module('lizard-nxt').Graph
+     * @param {object} data   Currently supports arrays of arrays or objects
+     *                        with x value, y value, <optional> color and
+     *                        <optional> category.
+     * @param {object} keys   Mapping between x, y and optional color, and
+     *                        category values of data object: example:
+     *                        {x: 0, y: 1} or:
+     *                        {x: 'xValue', y: 'yValue', color: 'eventColor',
+     *                        categoy: 'cat'};
      * @param {object} labels Object {x: 'x label', y: 'y label'} will be
      *                        mapped to axis labels of the graph
      * @description           Draws a barchart, if necessary sets up the graph,
      *                        if necessary modifies domain and redraws axis,
      *                        and draws the line according to the data object.
-     *                        Currently only a time scale on the x-axis is supported.
+     *                        Currently only a time scale on the x-axis is
+     *                        supported. It assumes that every segment has a
+     *                        data element.
      */
     drawBars: {
       value: function (data, keys, labels) {
+        if (keys.category) {
+          data = createYValuesForCumulativeData(data, keys);
+        }
         if (!this._xy) {
           var options = {
             x: {
@@ -139,18 +144,32 @@ angular.module('lizard-nxt')
             }
           };
           this._xy = this._createXYGraph(data, keys, labels, options);
+          this._xy.y.scale.domain([0, this._xy.y.maxMin.max]);
         } else {
-          this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys, {y: 0});
+          this._xy = rescale(
+            this._svg,
+            this.dimensions,
+            this._xy,
+            data,
+            keys,
+            {y: 0}
+          );
           drawLabel(this._svg, this.dimensions, labels.y, true);
         }
-        drawVerticalRects(this._svg, this.dimensions, this._xy, keys, data, this.transTime);
+        drawVerticalRects(
+          this._svg,
+          this.dimensions,
+          this._xy,
+          keys,
+          data,
+          this.transTime
+        );
       }
     },
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt')
-  .Graph
+     * @memberOf angular.module('lizard-nxt').Graph
      * @param {object}    data object. Currently supports the format:
      *                    [
      *                      {
@@ -274,7 +293,34 @@ angular.module('lizard-nxt')
   });
 
   var createPie, createArc, drawPie, drawAxes, drawLabel, toRescale, drawPath, setupLineGraph, createDonut,
-  getBarWidth, drawVerticalRects, drawHorizontalRectss, createXGraph, rescale;
+  getBarWidth, drawVerticalRects, drawHorizontalRectss, createXGraph, rescale, createYValuesForCumulativeData;
+
+  /**
+   * Creates y cumulatie y values for elements on the same x value.
+   *
+   * @param  {array} data array of objects.
+   * @param  {object} keys mapping between x, y and keys in the data.
+   * @return {array} with added y0 value and cumulative y value.
+   */
+  createYValuesForCumulativeData = function (data, keys) {
+    var cumulativeData = [];
+    // Group by x value
+    d3.nest().key(function (d) {
+      return d[keys.x];
+    })
+    .entries(data)
+    // Compute y values for every group
+    .forEach(function (group) {
+      var y0 = 0;
+      group.values = group.values.map(function (d) {
+        d.y0 = y0;
+        d[keys.y] += y0;
+        y0 = d[keys.y];
+        cumulativeData.push(d);
+      });
+    });
+    return cumulativeData;
+  };
 
   rescale = function (svg, dimensions, xy, data, keys, origin) {
     // Sensible limits to rescale. If the max
@@ -376,13 +422,15 @@ angular.module('lizard-nxt')
 
         // Join new data with old elements, based on the x key.
         bar = svg.select('g').select('#feature-group').selectAll(".bar")
-          .data(data, function (d) { return d[keys.x]; });
+          .data(data);
 
     // UPDATE
     // Update old elements as needed.
     bar.transition()
       .duration(duration)
-      .attr("height", function (d) { return height - y.scale(d[keys.y]); })
+      .attr("height", function (d) {
+        return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
+      })
       .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
       .attr('width', function (d) { return barWidth; })
       .attr("y", function (d) { return y.scale(d[keys.y]); });
@@ -394,14 +442,16 @@ angular.module('lizard-nxt')
       .attr('width', function (d) { return barWidth; })
       .attr("y", function (d) { return y.scale(0); })
       .attr("height", 0)
+      .style("fill", function (d) { return d.color || ''; })
       .transition()
       .duration(duration)
       // Bring bars in one by one
       .delay(function (d, i) { return i * 0.1 * duration; })
-      .attr("height", function (d) { return height - y.scale(d[keys.y]); })
+      .attr("height", function (d) {
+        return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
+      })
       .attr("y", function (d) { return y.scale(d[keys.y]); })
-      .attr("stroke-width", strokeWidth)
-      ;
+      .attr("stroke-width", strokeWidth);
 
     // EXIT
     // Remove old elements as needed.
@@ -416,8 +466,13 @@ angular.module('lizard-nxt')
   };
 
   getBarWidth = function (scale, data, keys, dimensions) {
-    return (dimensions.width - dimensions.padding.left - dimensions.padding.right) / data.length;
-    //return scale(data[1][keys.x]) - scale(data[0][keys.x]);
+    var uniques = [];
+    data.forEach(function (item, i , arr) {
+      if (uniques.indexOf(item[keys.x]) === -1) {
+        uniques.push(item[keys.x]);
+      }
+    });
+    return Graph.prototype._getWidth(dimensions) / uniques.length;
   };
 
   createXGraph = function (svg, dimensions, labels, options) {

@@ -6,6 +6,8 @@ Unreleased ()
 
 - Event aggregate service.
 
+- Bar chart supports stacked bars.
+
 - Event radius has logarithmic scale.
 
 - Event circle stroke/fill now get same transparency.
