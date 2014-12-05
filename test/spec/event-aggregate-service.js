@@ -1,4 +1,4 @@
-// raster-service-tests.js
+// event-aggregate-service-tests.js
 
 describe('Testing event aggregate service', function () {
   var $scope, $rootScope, EventAggregateService, timeState;
@@ -20,7 +20,7 @@ describe('Testing event aggregate service', function () {
     EventAggregateService = $injector.get('EventAggregateService');
   }));
 
-  it("should return an array with property 'count' is 12 for the first element", function () {
+  it("should return an array with property 'count' is 1 for the first element", function () {
     var data = geojsonmock.features;
     var result = EventAggregateService.aggregate(data, timeState.aggWindow);
     expect(result[0].count).toBe(1);
@@ -39,7 +39,7 @@ describe('Testing event aggregate service', function () {
     expect(result[0].mean).toBe(3);
   });
 
-  it("should return an array with property 'count' is 12 for the first element", function () {
+  it("should return an array with property 'count' is 3 for the first element", function () {
     var data = eventsMock.features;
     var result = EventAggregateService.aggregate(data, timeState.aggWindow);
     expect(result[0].count).toBe(3);
