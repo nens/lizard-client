@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Bar chart supports stacked bars
+
 - Restructured file directory.
 
 - Hide timeseries card when toggling waterchain off.
