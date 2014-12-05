@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Event aggregate service.
+
 - Bar chart supports stacked bars.
 
 - Event radius has logarithmic scale.
