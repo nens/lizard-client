@@ -66,6 +66,12 @@
     text-decoration: none;
     text-shadow: none;
     transition:.3s;
+
+    .fa {
+        position: relative;
+        top: 7px;
+    }
+
     &:hover {
         color: rgba(127, 140, 141,1.0);
         text-decoration: none;
