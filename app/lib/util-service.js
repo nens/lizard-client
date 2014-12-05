@@ -24,14 +24,16 @@ angular.module('lizard-nxt')
    * coefficient.
    */
   this.roundTimestamp = function (timestamp, coefficient, up) {
+    var format;
+
     if (up) {
       timestamp += coefficient / 2;
     }
-    if (coefficient == 2635200000) { // One month
-      var format = NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%m/01/%Y");
+    if (coefficient === 2635200000) { // One month
+      format = NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%m/01/%Y");
       return new Date(format(new Date(timestamp))).getTime();
-    } else if (coefficient == 86400000) { // One day
-      var format = NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%m/%d/%Y");
+    } else if (coefficient === 86400000) { // One day
+      format = NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%m/%d/%Y");
       return new Date(format(new Date(timestamp))).getTime();
     }
     var roundedTimestamp = parseInt(timestamp / coefficient, 10) * coefficient;
@@ -55,23 +57,23 @@ angular.module('lizard-nxt')
 
     if (touch.pageY === 0 && Math.floor(y) > Math.floor(touch.pageY) ||
         touch.pageX === 0 && Math.floor(x) > Math.floor(touch.pageX)) {
-        // iOS4 clientX/clientY have the value that should have been
-        // in pageX/pageY. While pageX/page/ have the value 0
-        x = x - winPageX;
-        y = y - winPageY;
-    } else if (y < (touch.pageY - winPageY) || x < (touch.pageX - winPageX) ) {
-        // Some Android browsers have totally bogus values for clientX/Y
-        // when scrolling/zooming a page. Detectable since clientX/clientY
-        // should never be smaller than pageX/pageY minus page scroll
-        x = touch.pageX - winPageX;
-        y = touch.pageY - winPageY;
+      // iOS4 clientX/clientY have the value that should have been
+      // in pageX/pageY. While pageX/page/ have the value 0
+      x = x - winPageX;
+      y = y - winPageY;
+    } else if (y < (touch.pageY - winPageY) || x < (touch.pageX - winPageX)) {
+      // Some Android browsers have totally bogus values for clientX/Y
+      // when scrolling/zooming a page. Detectable since clientX/clientY
+      // should never be smaller than pageX/pageY minus page scroll
+      x = touch.pageX - winPageX;
+      y = touch.pageY - winPageY;
     }
 
     return {
         clientX:    x,
         clientY:    y
       };
-    };
+  };
 
 
   /**
@@ -90,8 +92,8 @@ angular.module('lizard-nxt')
    */
   this.getAggWindow = function (start, stop, drawingWidth) {
 
-    // TODO: Called both by omnibox and timeline, should be called only by timeline,
-    // while omnibox subsequently syncs to timeState.aggWindow
+    // TODO: Called both by omnibox and timeline, should be called only by
+    // timeline, while omnibox subsequently syncs to timeState.aggWindow
 
     var aggWindow;
     var MIN_PX = 4; // Minimum width of a bar
@@ -221,8 +223,8 @@ angular.module('lizard-nxt')
   /**
    * @function serveToOldIE
    * @memberOf UtilService
-   * @description Check whether the client uses IE10+/non-IE browser (return false),
-   *   OR that she uses an older IE version (return true)
+   * @description Check whether the client uses IE10+/non-IE browser 
+   *   (return false) OR that she uses an older IE version (return true)
    */
   this.serveToOldIE = function () {
 
@@ -324,9 +326,11 @@ angular.module('lizard-nxt')
   /**
    * @function any
    * @memberof UtilService
-   * @description - Checks whether ANY element of the input satisfies the predicate
+   * @description - Checks whether ANY element of the input satisfies the
+   *   predicate
    * @param {arr} - An enumerable/iterable datastructure, e.g. Array
-   * @param {predicate_} - A predicate, e.g. 'even': function (x) { x % 2 === 0 };
+   * @param {predicate_} - A predicate, e.g. 'even':
+   *   function (x) { x % 2 === 0 };
    * @return {boolean}
    */
   this.any = function (arr, predicate_) {
@@ -441,6 +445,10 @@ angular.module('lizard-nxt')
     }
   };
 
+  /*
+   * @description - Replace display_name value with name value, if applicable
+   * @param {string} str - The string to be converted.
+   */
   this.fixUTFNameData = function (obj) {
     if (obj.display_name === '' || obj.display_name === undefined) {
       // If the to-be printed key (obj.display_name) has no value...
@@ -463,12 +471,21 @@ angular.module('lizard-nxt')
   this.addNewStyle = function (newStyle) {
     var styleElement = document.getElementById('styles_js');
     if (!styleElement) {
-        styleElement = document.createElement('style');
-        styleElement.type = 'text/css';
-        styleElement.id = 'styles_js';
-        document.getElementsByTagName('head')[0].appendChild(styleElement);
+      styleElement = document.createElement('style');
+      styleElement.type = 'text/css';
+      styleElement.id = 'styles_js';
+      document.getElementsByTagName('head')[0].appendChild(styleElement);
     }
     styleElement.innerHTML = "";
     styleElement.appendChild(document.createTextNode(newStyle));
+  };
+
+  /*
+   * @description - Convert string ending in px to value expressed in pixels,
+   *                it denotes.
+   * @param {string} str - The string to be converted.
+   */
+  this.pxToInt = function (str) {
+    return parseInt(str.replace("px", ""));
   };
 }]);
