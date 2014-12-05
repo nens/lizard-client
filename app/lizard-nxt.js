@@ -21,7 +21,7 @@ if (window.RavenEnvironment) {
 angular.module("lizard-nxt", [
   'omnibox',
   'restangular',
-  'ngSanitize',
+  'dashboard',
   'ngCsv',
   'ui.bootstrap',
   'ui.utils'
@@ -177,7 +177,7 @@ angular.module('lizard-nxt')
   $scope.user = user;
   $scope.versioning = versioning;
 
-  var MIN_TIME_FOR_EXTENT = (new Date(2014, 0, 0, 0, 0, 0, 0)).getTime();
+  var MIN_TIME_FOR_EXTENT = (new Date(2010, 0, 0, 0, 0, 0, 0)).getTime();
   var MAX_TIME_FOR_EXTENT = (new Date(2015, 0, 0, 0, 0, 0, 0)).getTime();
 
   // BOX MODEL
@@ -192,11 +192,9 @@ angular.module('lizard-nxt')
    * @property {boolean} box.detailMode - Detail mode, defaults to false.
    */
   $scope.box = {
-    contextSwitchMode: false, // Switch between card or fullscreen
     query: null, // Search bar query
     showCards: false,// Only used for search results
     type: 'point', // Default box type
-    //type: undefined, // Should this be set via the hashGetterSetter????
     content: {}, // Inconsistently used to store data to display in box
     changed: Date.now(),
     mouseLoc: [] // Used to draw 'bolletje' on elevation profile
@@ -235,6 +233,8 @@ angular.module('lizard-nxt')
     }
   };
 
+  // CONTEXT
+
   /**
    * Switch between contexts.
    *
@@ -243,6 +243,16 @@ angular.module('lizard-nxt')
   //$scope.switchContext = function (context) {
     //$scope.box.context = context;
   //};
+
+  $scope.context = 'map';
+
+  $scope.$watch('context', function (n, o) {
+    if (n === o) { return true; }
+
+    console.log($scope.context);
+  });
+  // END CONTEXT
+
 
   // MAP MODEL is set by the map-directive
   $scope.mapState = {};

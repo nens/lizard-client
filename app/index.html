@@ -181,11 +181,6 @@
       </div>
     </div>
 
-    <div ng-if="context === map">
-      <div class="container">
-        <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
-      </div>
-
       <map layers="mapState.layers"
          rasterprofile="disabled"
          vectorlayer
@@ -193,9 +188,16 @@
          surfacelayer
          ng-class="{'crosshair': box.type === 'profile'}">
       </map>
+
+    <div ng-if="context === 'map'">
+
+      <div class="container">
+        <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
+      </div>
+
     </div>
 
-    <div ng-if="context === db">
+    <div ng-if="context === 'db'">
       <dashboard></dashboard>
     </div>
 
@@ -285,6 +287,9 @@
 
     <script src="/components/graph/graph-service.js"></script>
     <script src="/components/graph/graph-directives.js"></script>
+
+    <script src="/components/dashboard/dashboard.js"></script>
+    <script src="/components/dashboard/dashboard-directive.js"></script>
 
     <script src="/components/single-click/single-click-directive.js"></script>
     <script src="/components/layer-chooser/layer-chooser-directives.js"></script>

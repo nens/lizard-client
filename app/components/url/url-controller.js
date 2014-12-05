@@ -19,7 +19,7 @@ angular.module('lizard-nxt')
     // Configuration object for url state.
     var state = {
       context: { // Locally used name for the state
-        value: 'map', // Default to accomodate future support for contextSwitch
+        value: 'map', // Default
         part: 'path', // Part of the url where this state is stored,
         index: 0, // Position of the state in the part
         update: true // When false, $locationChangeSucces is cancelled
@@ -55,10 +55,10 @@ angular.module('lizard-nxt')
     * @function
     * @memberOf app.UrlController
     * @summary Enables or disables layerGroups on the basis of the url.
-    * @description Takes the layerGroups as defined in the url to turn layerGroups on
-    *              afterwards it initializes all other layerGroups. This is done
-    *              here so MapService does not turn on layerGroups which are
-    *              turned of later by this controller.
+    * @description Takes the layerGroups as defined in the url to turn
+    *              layerGroups on afterwards it initializes all other
+    *              layerGroups. This is done here so MapService does not turn
+    *              on layerGroups which are turned of later by this controller.
     * @param {string} String representation of layerGroups on url
     */
     var enablelayerGroups = function (layerGroupString) {
@@ -136,7 +136,8 @@ angular.module('lizard-nxt')
     $scope.$watch('timeState.changedZoom', function (n, o) {
       if (n === o) { return true; }
       state.timeState.update = false;
-      UrlState.setTimeStateUrl(state, $scope.timeState.start, $scope.timeState.end);
+      UrlState.setTimeStateUrl(
+        state, $scope.timeState.start, $scope.timeState.end);
     });
 
     /*
@@ -152,7 +153,8 @@ angular.module('lizard-nxt')
       if (old === 'point' || old === 'line') {
         // Remove geometry from url
         state.boxType.update = false;
-        LocationGetterSetter.setUrlValue(state.geom.part, state.geom.index, undefined);
+        LocationGetterSetter.setUrlValue(
+          state.geom.part, state.geom.index, undefined);
       }
     });
 
@@ -162,7 +164,8 @@ angular.module('lizard-nxt')
     $scope.$watch('mapState.here', function (n, o) {
       if (n === o || $scope.box.type !== 'point') { return true; }
       state.geom.update = false;
-      UrlState.setgeomUrl(state, $scope.box.type, $scope.mapState.here, $scope.mapState.points);
+      UrlState.setgeomUrl(
+        state, $scope.box.type, $scope.mapState.here, $scope.mapState.points);
     });
 
     /**
@@ -171,7 +174,8 @@ angular.module('lizard-nxt')
     $scope.$watch('mapState.points', function (n, o) {
       if (n === o || $scope.box.type !== 'line') { return true; }
       state.geom.update = false;
-      UrlState.setgeomUrl(state, $scope.box.type, $scope.mapState.here, $scope.mapState.points);
+      UrlState.setgeomUrl(
+        state, $scope.box.type, $scope.mapState.here, $scope.mapState.points);
     }, true);
 
     /**
@@ -186,22 +190,35 @@ angular.module('lizard-nxt')
      */
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
       if (UrlState.update(state)) {
-        var boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
-          geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
-          layerGroupsFromURL = LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index),
-          mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
-          time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
-          context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
-        // When we start making a 'context switch' we will also want to use
-        // State.contex, for now we always set it.
-        LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
+        var boxType = LocationGetterSetter.getUrlValue(
+          state.boxType.part, state.boxType.index),
+          geom = LocationGetterSetter.getUrlValue(
+            state.geom.part, state.geom.index),
+          layerGroupsFromURL = LocationGetterSetter.getUrlValue(
+            state.layerGroups.part, state.layerGroups.index),
+          mapView = LocationGetterSetter.getUrlValue(
+            state.mapView.part, state.mapView.index),
+          time = LocationGetterSetter.getUrlValue(
+            state.timeState.part, state.timeState.index),
+          context = LocationGetterSetter.getUrlValue(
+            state.context.part, state.context.index);
+
+        if (context) {
+          $scope.context = context;
+        } else {
+          LocationGetterSetter.setUrlValue(
+            state.context.part, state.context.index, state.context.value);
+        }
+
         if (boxType) {
           $scope.box.type = boxType;
         } else {
-          LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, $scope.box.type);
+          LocationGetterSetter.setUrlValue(
+            state.boxType.part, state.boxType.index, $scope.box.type);
         }
         if (geom) {
-          $scope.mapState = UrlState.parseGeom($scope.box.type, geom, $scope.mapState);
+          $scope.mapState = UrlState.parseGeom(
+            $scope.box.type, geom, $scope.mapState);
         }
 
         enablelayerGroups(layerGroupsFromURL);
@@ -211,10 +228,13 @@ angular.module('lizard-nxt')
           $scope.timeState = UrlState.parseTimeState(time, $scope.timeState);
         } else {
           state.timeState.update = false;
-          UrlState.setTimeStateUrl(state, $scope.timeState.start, $scope.timeState.end);
+          UrlState.setTimeStateUrl(state,
+                                   $scope.timeState.start,
+                                   $scope.timeState.end);
         }
 
       }
+
       angular.forEach(state, function (value) {
         value.update = true;
       });

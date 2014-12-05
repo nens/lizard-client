@@ -18,7 +18,7 @@
 
 angular.module('lizard-nxt')
   .service('NxtMap', ['$rootScope', '$filter', '$http', '$q', 'CabinetService',
-  'LeafletService', 'LayerGroup', 'StateService',
+  'LeafletService', 'LayerGroup',
   function ($rootScope, $filter, $http, $q, CabinetService,
     LeafletService, LayerGroup) {
 
