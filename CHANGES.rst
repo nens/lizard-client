@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Line-tool has distinct cursor (crosshair).
+
 - Improved timeline controls: buttons no longer overlap timeline itself.
 
 - Restructured file directory.
