@@ -228,7 +228,8 @@ angular.module('lizard-nxt')
     } else {
       throw new Error("Attemped to assign an illegal value ('"
         + name
-        + "') to $scope.box.type. Only 'point', 'line' and 'area' are accepted values."
+        + "') to $scope.box.type. Only 'point', 'line' and 'area'"
+        + "are accepted values."
       );
     }
   };
@@ -240,19 +241,14 @@ angular.module('lizard-nxt')
    *
    * @param {string} context - Context name to switch to
    */
-  //$scope.switchContext = function (context) {
-    //$scope.box.context = context;
-  //};
+  $scope.switchContext = function (context) {
+    $scope.context = context;
+  };
 
+  // default context
   $scope.context = 'map';
 
-  $scope.$watch('context', function (n, o) {
-    if (n === o) { return true; }
-
-    console.log($scope.context);
-  });
   // END CONTEXT
-
 
   // MAP MODEL is set by the map-directive
   $scope.mapState = {};

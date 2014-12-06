@@ -158,6 +158,17 @@ angular.module('lizard-nxt')
       }
     });
 
+    /*
+     * Set context when context changed
+     */
+    $scope.$watch('context', function (n, old) {
+      if (n === old) { return true; }
+      state.context.update = false;
+      LocationGetterSetter.setUrlValue(
+        state.context.part, state.context.index, $scope.context
+      );
+    });
+
     /**
      * Set geom when mapState.here changed and box.type is point.
      */
