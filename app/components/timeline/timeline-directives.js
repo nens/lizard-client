@@ -254,6 +254,7 @@ angular.module('lizard-nxt')
       var that = this;
       eventData.then(function (response) {
         if (response !== undefined) {
+          scope.tmp = response;
           timeline.drawLines(
             response,
             that.eventOrder,

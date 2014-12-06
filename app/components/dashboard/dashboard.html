@@ -1,7 +1,24 @@
-<div class="row">
-  <div class="col-md-12">
-    <div class="dashboard">
-      <h1>DASHBOARD</h1>
+<div class="dashboard-wrapper" ng-controller="DashboardCtrl">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-1">
+        <p>spatial tree nav</p>
+      </div>
+      <div class="col-md-10"
+           ng-bind="event = eventAggs">
+        <h1>DASHBOARD</h1>
+        <graph ng-if="event"
+               bar-chart
+               class="xyGraph"
+               data="event"
+               ylabel="Meldingen"
+               keys="{x: 'timestamp', y: 'max', color: 'grey', category: 'count'}"
+               now="timeState.at">
+        </graph>
+      </div>
+      <div class="col-md-1">
+        <p>right column</p>
+      </div>
     </div>
   </div>
 </div>

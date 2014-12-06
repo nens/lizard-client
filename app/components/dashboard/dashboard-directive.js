@@ -7,20 +7,47 @@ angular.module('dashboard')
               function (EventAggregateService) {
 
   //  NxtData.getData(options);
-  // Watch layergroups
-  // get data for active event layergroups
-  // aggregate it using eventaggregate service
   // draw full screen graph
-  // watch time and get more data and aggregate using eventaggregate service
-  //
+
   var link = function (scope, element, attrs) {
-    console.log(attrs);
-    //EventAggregateService.aggregate(response, scope.timeState.aggWindow);
+
+    console.log(scope.eventAggs);
+    /**
+     * Updates dashboard when user pans or zooms map.
+     */
+    scope.$watch('mapState.bounds', function (n, o) {
+      if (n === o) { return true; }
+      // get data for active event layergroups
+      scope.eventAggs =
+        EventAggregateService.aggregate(scope.tmp, scope.timeState.aggWindow);
+    });
+
+    /**
+     * Updates dashboard when layers are added or removed.
+     */
+    scope.$watch('mapState.layerGroupsChanged', function (n, o) {
+      if (n === o) { return true; }
+      // get data for active event layergroups
+      scope.eventAggs =
+        EventAggregateService.aggregate(scope.tmp, scope.timeState.aggWindow);
+    });
+
+    /**
+     * Updates dashboard when time zoom changes.
+     */
+    scope.$watch('timeState.changedZoom', function (n, o) {
+      if (n === o) { return true; }
+      // get data for active event layergroups
+      scope.eventAggs =
+        EventAggregateService.aggregate(scope.tmp, scope.timeState.aggWindow);
+      console.log(scope.eventAggs);
+    });
   };
 
   return {
     link: link,
     templateUrl: 'dashboard/dashboard.html',
+    replace: true,
     restrict: 'E'
   };
 

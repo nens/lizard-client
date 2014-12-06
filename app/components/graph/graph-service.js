@@ -156,6 +156,7 @@ angular.module('lizard-nxt')
           );
           drawLabel(this._svg, this.dimensions, labels.y, true);
         }
+        console.log(this._svg);
         drawVerticalRects(
           this._svg,
           this.dimensions,
