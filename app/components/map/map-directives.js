@@ -14,13 +14,14 @@
 angular.module('lizard-nxt')
   .directive('map', [
   '$controller',
-  'ClickFeedbackService',
+  'MapService',
   'NxtMap',
-  'dataLayers',
-  function ($controller, ClickFeedbackService, NxtMap, dataLayers) {
+  'State',
+  function ($controller, MapService, NxtMap, State) {
 
     var link = function (scope, element, attrs) {
 
+      var mapSetsBounds = false;
        /**
         * @function
         * @memberOf app.map
@@ -54,16 +55,12 @@ angular.module('lizard-nxt')
        * @memberOf app.map
        */
       var _moveEnded = function (e, map) {
-        scope.mapState.moved = Date.now();
         scope.mapState.mapMoving = false;
-        scope.mapState.center = map.getCenter();
-        scope.mapState.zoom = map.getZoom();
+        mapSetsBounds = true;
         scope.mapState.bounds = map.getBounds();
       };
 
-      scope.mapState = new NxtMap(
-        element[0],
-        dataLayers, {
+      MapService.map = new NxtMap(element[0], {
           zoomControl: false,
           addZoomTitles: true,
           zoomInTitle: scope.tooltips.zoomInMap,
@@ -71,7 +68,18 @@ angular.module('lizard-nxt')
         }
       );
 
-      scope.mapState.initiateNxtMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
+      MapService.map.initiateNxtMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
+
+      /**
+       * Watch bounds of state and update map bounds when state is changed.
+       */
+      $scope.$watch('State.spatial.bounds', function () {
+        if (!mapSetsBounds) {
+          MapService.map.fitBounds(State.spatial.bounds);
+        } else {
+          mapSetsBounds = false;
+        }
+      });
 
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.

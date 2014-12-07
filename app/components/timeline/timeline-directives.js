@@ -23,8 +23,6 @@ angular.module('lizard-nxt')
 
   var link = function (scope, element, attrs, timelineCtrl) {
 
-    // console.log(angular.element("#timeline-svg-wrapper svg")[0].style.left);
-
     var LEFT_MARGIN = 60,
         RIGHT_MARGIN = 40,
 

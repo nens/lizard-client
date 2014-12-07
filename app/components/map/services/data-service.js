@@ -14,6 +14,8 @@
  */
 
 angular.module('lizard-nxt')
-  .Service('MapService', [function () {
-    this.map = {};
-  }]);
+  .Factory('DataService', ['dataLayers', 'NxtData', 'MapService',
+    function (dataLayers, NxtData, MapService) {
+      return new NxtData(dataLayers, MapService.map);
+    }
+  ]);

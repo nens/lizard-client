@@ -181,19 +181,19 @@
       </div>
     </div>
 
-    <div ng-if="context === map">
-      <div class="container">
-        <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
-      </div>
-
+    <!-- <div ng-if="context === map"> -->
       <map layers="mapState.layers"
          ng-class="{'crosshair': box.type === 'profile'}">
       </map>
-    </div>
 
-    <div ng-if="context === db">
+      <div class="container">
+        <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
+      </div>
+   <!-- </div> -->
+
+    <!-- <div ng-if="context === db"> -->
       <dashboard></dashboard>
-    </div>
+    <!-- </div> -->
 
     <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
 
@@ -235,6 +235,7 @@
 
     <script src="/lizard-nxt.js"></script>
 
+    <script src="/lib/state-service.js"></script>
     <script src="/lib/cabinet-service.js"></script>
     <script src="/lib/util-service.js"></script>
     <script src="/lib/raster-service.js"></script>

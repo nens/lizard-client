@@ -1,15 +1,86 @@
 /**
- * Lizard-client global state object. Uses getter and setters.
+ * Lizard-client global state object.
  */
 angular.module('lizard-nxt')
-  .service('State', [function () {
+  .service('State', ['DataService', 'UtilService', 'dataLayers',
+    function (DataService, UtilService, dataLayers) {
+
+    var _context = 'map';
+    var VALUES = ['map', 'db'];
+    Object.defineProperty(this, 'context', {
+      get: function () { return _context; },
+      set: function (context) {
+        if (VALUES.indexOf(context) > -1) {
+          _context = context;
+        } else {
+          throw new Error("Attemped to assign an illegal value ('"
+            + context
+            + "') to state.context. Only ["
+            + VALUES.join(',')
+            + "] are accepted values."
+          );
+        }
+      }
+    })
+
+    // State of data layer groups
+    var _layerGroups = Object.keys(dataLayers);
+
+    this.layerGroups: {};
+    Object.defineProperty(this.layerGroups, 'all', {
+      value: _layerGroups,
+      write: false,
+    });
+    Object.defineProperty(this.layerGroups, 'active', {
+      get: function () {
+        return _layerGroups.filter(function (layerGroup) {
+          return DataService.layerGroups[layerGroup].isActive();
+        });
+      }
+      set: function (layerGroups) {
+        var _active = [];
+        angular.forEach(_layerGroups, function (_layerGroup){
+          if (layergroups.indexOf(_layergroup) !== -1) {
+            _active.push(_layergroup);
+          }
+        });
+        return _active;
+      }
+    })
+    Object.defineProperty(this.layerGroups, 'inactive', {})
+
+
+    // Box
+    this.box = {
+      content: {}, // The data currently displayed in  the box
+      mouseLoc: [] // To draw 'bolletje' on elevation profile
+    };
+
+    var _type = 'point'; // Default box type
+    var VALUES = ["point", "line", "area"];
+    Object.defineProperty(this.box, 'type', {
+      get: function () { return _type; },
+      set: function (type) {
+        if (VALUES.indexOf(type) > -1) {
+          _type = type;
+        } else {
+          throw new Error("Attemped to assign an illegal value ('"
+            + type
+            + "') to state.box.type. Only ["
+            + VALUES.join(',')
+            + "] are accepted values."
+          );
+        }
+        UtilService.addNewStyle(
+          "#map * {cursor:" + (n === "line" ? "crosshair" : "") + ";}"
+        );
+      }
+    });
 
     // Spatial
     this.spatial = {
       here: {};
       points = []; // History of here for drawing and creating line and polygons
-      changedAt = Date.now();
-      movedAt = Date.now();
       bounds = {};
       userHere = {}; // Geographical location of the users mouse
       mapMoving = false;
@@ -23,13 +94,10 @@ angular.module('lizard-nxt')
         MAX_TIME_FOR_EXTENT = (new Date(2015, 0, 0, 0, 0, 0, 0)).getTime();
 
     this.temporal = {
-      changedZoom: Date.now(),
-      zoomEnded: null,
       aggWindow: 1000 * 60 * 5,
-      animation: {
-        playing: false,
-        enabled: false,
-      }
+      buffering: false,
+      resolution: null,
+      playing: false,
     };
 
     var _start = now - 6 * day;
@@ -63,20 +131,5 @@ angular.module('lizard-nxt')
       $scope.timeState.end,
       window.innerWidth
     );
-
-    // Data layer groups
-    this.data = {}
-
-    // Box
-    this.box = {
-      showCards: false,// Only used for search results
-      type: 'point', // Default box type
-      //type: undefined, // Should this be set via the hashGetterSetter????
-      content: {}, // Inconsistently used to store data to display in box
-      changed: Date.now(),
-      mouseLoc: [] // Used to draw 'bolletje' on elevation profile
-    };
-
-    this.context = '';
 
   }]);

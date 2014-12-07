@@ -72,7 +72,7 @@ angular.module('lizard-nxt')
   var configAnimation = function () {
     currentInterval = $scope.timeState.end - $scope.timeState.start;
     timeStep = Infinity;
-    minLag = 50;
+    minLag = 0;
 
     angular.forEach($scope.mapState.layerGroups, function (lg) {
       if (lg.isActive() && lg.temporal && lg.temporalResolution < timeStep) {
@@ -88,20 +88,6 @@ angular.module('lizard-nxt')
     if (timeStep === Infinity) {
       timeStep = currentInterval / DEFAULT_NUMBER_OF_STEPS;
     }
-  };
-
-  /**
-   * @function
-   * @memberOf angular.module('lizard-nxt').TimeLineCtrl
-   * @summary Toggle animation state.
-   * @desc Set $scope.timeState.animation.enabled to true or false.
-   *
-   * @param {} toggle - .
-   *
-   */
-  $scope.timeState.enableAnimation = function (toggle) {
-    $scope.timeState.animation.enabled =
-      !($scope.timeState.animation.enabled || toggle === "off");
   };
 
   /**
@@ -134,7 +120,6 @@ angular.module('lizard-nxt')
   var step =  function () {
     // Make a new step.
     $scope.$apply(function () {
-      $scope.timeState.animation.start += timeStep;
       $scope.timeState.at += timeStep;
     });
 
@@ -143,7 +128,6 @@ angular.module('lizard-nxt')
         $scope.timeState.at < $scope.timeState.start) {
       $scope.$apply(function () {
         $scope.timeState.at = $scope.timeState.start;
-        $scope.timeState.animation.start = $scope.timeState.start;
       });
     }
   };
