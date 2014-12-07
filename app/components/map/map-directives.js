@@ -81,6 +81,12 @@ angular.module('lizard-nxt')
         }
       });
 
+      $scope.$watch('State.box.type', function (n, o) {
+        UtilService.addNewStyle(
+          "#map * {cursor:" + (n === "line" ? "crosshair" : "") + ";}"
+        );
+      });
+
       // Instantiate the controller that updates the hash url after creating the
       // map and all its listeners.
       $controller('UrlController', {$scope: scope});

@@ -71,9 +71,6 @@ angular.module('lizard-nxt')
             + "] are accepted values."
           );
         }
-        UtilService.addNewStyle(
-          "#map * {cursor:" + (n === "line" ? "crosshair" : "") + ";}"
-        );
       }
     });
 
