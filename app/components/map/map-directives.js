@@ -61,7 +61,7 @@ angular.module('lizard-nxt')
         State.spatial.bounds = map.getBounds();
       };
 
-      MapService.map = new NxtMap(element[0], {
+      MapService.globalNxtMapInstance = new NxtMap(element[0], {
           zoomControl: false,
           addZoomTitles: true,
           zoomInTitle: scope.tooltips.zoomInMap,

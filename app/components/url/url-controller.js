@@ -13,8 +13,8 @@
  */
 angular.module('lizard-nxt')
   .controller('UrlController', ['$scope', 'LocationGetterSetter',
-  'UrlState', 'dataBounds',
-  function ($scope, LocationGetterSetter, UrlState, dataBounds) {
+  'UrlState', 'dataBounds', 'DataService', 'MapService', 'State',
+  function ($scope, LocationGetterSetter, UrlState, dataBounds, DataService, MapService, State) {
 
     // Configuration object for url state.
     var state = {
@@ -66,15 +66,14 @@ angular.module('lizard-nxt')
         // Either layerGroups are on url
         var activeLayerSlugs = layerGroupString.split(',');
         angular.forEach(activeLayerSlugs, function (layerGroupSlug) {
-          var lg = $scope.mapState.layerGroups[layerGroupSlug];
-          if (lg) {
-            $scope.mapState.toggleLayerGroup(lg);
+          var lg = State.layerGroups.all.indexOf(layerGroupSlug);
+          if (lg !== -1) {
+            DataService.toggleLayerGroup(lg);
           }
         });
         // Or layerGroups are not on url, turn default layerGroups on
       } else {
-        $scope.mapState.setLayerGoupsToDefault();
-        $scope.mapState.layerGroupsChanged = Date.now();
+        DataService.setLayerGoupsToDefault();
       }
     };
 
@@ -89,13 +88,13 @@ angular.module('lizard-nxt')
     */
     var enableMapView = function (mapView) {
       var fn = function () {
-        $scope.mapState.fitBounds(dataBounds);
+        MapService.fitBounds(dataBounds);
       };
 
       if (mapView) {
         var view = UrlState.parseMapView(mapView);
         if (view) {
-          $scope.mapState.setView(view.latLng, view.zoom, view.options);
+          State.spatial.setView(view.latLng, view.zoom, view.options);
         } else {
           fn();
         }
@@ -107,42 +106,38 @@ angular.module('lizard-nxt')
     /**
      * set layer(s) when these change.
      */
-    $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
+    $scope.$watch('State.layerGroups.active', function (n, o) {
       if (n === o) { return true; }
       state.layerGroups.update = false;
-      UrlState.setlayerGroupsUrl(state, $scope.mapState.layerGroups);
+      UrlState.setlayerGroupsUrl(state, state.layerGroups.active);
     });
 
     /**
      * Set location when map moved.
      */
-    $scope.$watch('mapState.moved', function (n, o) {
+    $scope.$watch('State.spatial.bounds', function (n, o) {
       if (n === o) { return true; }
       state.mapView.update = false;
       UrlState.setCoordinatesUrl(state,
-        $scope.mapState.center.lat,
-        $scope.mapState.center.lng,
-        $scope.mapState.zoom
+        State.spatial.bounds.getCenter().lat,
+        State.spatial.bounds.getCenter().lng,
+        State.spatial.zoom
       );
-      setTimeout(function () {
-        var cards = d3.selectAll(".card");
-        cards.style("opacity", 1);
-      }, 50);
     });
 
     /**
      * Set timeState when timeState changed.
      */
-    $scope.$watch('timeState.changedZoom', function (n, o) {
+    $scope.$watch('State.temporal.changedZoom', function (n, o) {
       if (n === o) { return true; }
       state.timeState.update = false;
-      UrlState.setTimeStateUrl(state, $scope.timeState.start, $scope.timeState.end);
+      UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
     });
 
     /*
      * Set boxType when box.type changed
      */
-    $scope.$watch('box.type', function (n, old) {
+    $scope.$watch('State.box.type', function (n, old) {
       if (n === old) { return true; }
       state.boxType.update = false;
       LocationGetterSetter.setUrlValue(
@@ -159,19 +154,19 @@ angular.module('lizard-nxt')
     /**
      * Set geom when mapState.here changed and box.type is point.
      */
-    $scope.$watch('mapState.here', function (n, o) {
+    $scope.$watch('State.spatial.here', function (n, o) {
       if (n === o || $scope.box.type !== 'point') { return true; }
       state.geom.update = false;
-      UrlState.setgeomUrl(state, $scope.box.type, $scope.mapState.here, $scope.mapState.points);
+      UrlState.setgeomUrl(state, $scope.box.type, State.spatial.here, State.spatial.points);
     });
 
     /**
      * Set geom when mapState.points changed and box.type is line.
      */
-    $scope.$watch('mapState.points', function (n, o) {
+    $scope.$watch('State.spatial.points', function (n, o) {
       if (n === o || $scope.box.type !== 'line') { return true; }
       state.geom.update = false;
-      UrlState.setgeomUrl(state, $scope.box.type, $scope.mapState.here, $scope.mapState.points);
+      UrlState.setgeomUrl(state, $scope.box.type, State.spatial.here, State.spatial.points);
     }, true);
 
     /**
@@ -211,7 +206,7 @@ angular.module('lizard-nxt')
           $scope.timeState = UrlState.parseTimeState(time, $scope.timeState);
         } else {
           state.timeState.update = false;
-          UrlState.setTimeStateUrl(state, $scope.timeState.start, $scope.timeState.end);
+          UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
         }
 
       }
