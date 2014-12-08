@@ -16,8 +16,9 @@ angular.module('lizard-nxt')
   '$controller',
   'MapService',
   'NxtMap',
+  'UtilService',
   'State',
-  function ($controller, MapService, NxtMap, State) {
+  function ($controller, MapService, NxtMap, UtilService, State) {
 
     var link = function (scope, element, attrs) {
 
@@ -29,7 +30,7 @@ angular.module('lizard-nxt')
         * @param  {event}  e Leaflet event object
         */
       var _clicked = function (e) {
-        scope.mapState.here = e.latlng;
+        State.spatial.here = e.latlng;
       };
 
       /**
@@ -37,7 +38,7 @@ angular.module('lizard-nxt')
        * @memberOf app.map
        */
       var _moveStarted = function (e) {
-        scope.mapState.mapMoving = true;
+        State.spatial.mapMoving = true;
       };
 
       /**
@@ -46,7 +47,7 @@ angular.module('lizard-nxt')
        */
       var _mouseMoved = function (e) {
         if (scope.box.type === 'line') {
-          scope.mapState.userHere = e.latlng;
+          State.spatial.userHere = e.latlng;
         }
       };
 
@@ -55,9 +56,9 @@ angular.module('lizard-nxt')
        * @memberOf app.map
        */
       var _moveEnded = function (e, map) {
-        scope.mapState.mapMoving = false;
+        State.spatial.mapMoving = false;
         mapSetsBounds = true;
-        scope.mapState.bounds = map.getBounds();
+        State.spatial.bounds = map.getBounds();
       };
 
       MapService.map = new NxtMap(element[0], {
@@ -73,7 +74,7 @@ angular.module('lizard-nxt')
       /**
        * Watch bounds of state and update map bounds when state is changed.
        */
-      $scope.$watch('State.spatial.bounds', function () {
+      scope.$watch('State.spatial.bounds', function () {
         if (!mapSetsBounds) {
           MapService.map.fitBounds(State.spatial.bounds);
         } else {
@@ -81,7 +82,7 @@ angular.module('lizard-nxt')
         }
       });
 
-      $scope.$watch('State.box.type', function (n, o) {
+      scope.$watch('State.box.type', function (n, o) {
         UtilService.addNewStyle(
           "#map * {cursor:" + (n === "line" ? "crosshair" : "") + ";}"
         );
