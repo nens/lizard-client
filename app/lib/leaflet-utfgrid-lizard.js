@@ -217,8 +217,13 @@
       }
 
       //console.log("after _update(), this._extentCache looks like:", this._extentCache);
-      console.log("after _update(), getDataFromExtentCache():", this.getDataFromExtentCache());
-
+      console.log("after _update(), we call getUniqueStructuresForExtent()...");
+      var self = this;
+      setTimeout(function () {
+        console.log("...but we do so after a 1 sec delay! (Else UTF tiles aren't finished loading)");
+        var structs = self.getUniqueStructuresForExtent();
+        console.log("structs:", structs);
+      }, 1000);
     },
 
     _tileLoaded: function () {
@@ -246,7 +251,7 @@
 
       L.Util.ajax(url, function (data) {
         self._cache[key] = data;
-        self._extentCache = data;
+        self._extentCache[key] = data;
         self._tileLoaded();
       });
     },
@@ -261,36 +266,57 @@
       return c - 32;
     },
 
-    getDataFromExtentCache: function (keys) {
+    // getDataFromExtentCache: function () {
 
-      // 1st, flatten the datastructure since we don't care about the tiles themselves:
+    //   var tile,
+    //       tileSlug,
+    //       extentData = {};
+
+    //   for (tileSlug in this._extentCache) {
+    //     tile = this._extentCache[tileSlug];
+    //     if (tile && tile.data) {
+    //       for (var datumSlug in tile.data) {
+    //         extentData[datumSlug] = tile.data[datumSlug];
+    //       }
+    //     }
+    //   }
+    //   return extentData;
+    // }
+
+    _getUniqueStructureId: function (structureData) {
+      try {
+        return structureData.entity_name + "$" + structureData.id;
+      } catch (e) {
+        console.log("[E] Tried to derive a unique structure ID from incomplete data: its not gonna w0rk");
+      }
+    },
+
+    getUniqueStructuresForExtent: function () {
 
       var tile,
-          extentData = {};
+          tileSlug,
+          uniqueStructures = {};
 
-      for (var tileSlug in this._extentCache) {
+      for (tileSlug in this._extentCache) {
         tile = this._extentCache[tileSlug];
         if (tile && tile.data) {
-          for (var datumSlug in tile.data) {
-            extentData[datumSlug] = tile.data[datumSlug];
+
+          var datum,
+              datumSlug,
+              structureKey;
+
+          for (datumSlug in tile.data) {
+            datum = tile.data[datumSlug];
+            structureKey = this._getUniqueStructureId(datum);
+            if (!uniqueStructures[structureKey]) {
+              uniqueStructures[structureKey] = datum;
+            }
           }
+        } else {
+          console.log("[!] invalid tileSlug:", tileSlug, " --> nothing found in _extentCache for this slug! (Maybe this was called before UTF tiles were loaded?)");
         }
       }
-
-      // If the keys arg was given, filter the selection based on that:
-
-      if (keys) {
-        var filteredExtentData = {};
-        for (var i in keys) {
-          for (var datumSlug_ in extentData) {
-            filteredExtentData[datumSlug_] = filteredExtentData[datumSlug_] || {};
-            filteredExtentData[datumSlug_][keys[i]] = extentData[datumSlug_][keys[i]];
-          }
-        }
-        return filteredExtentData;
-      }
-
-      return extentData;
+      return uniqueStructures;
     }
 
   });
