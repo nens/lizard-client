@@ -1,5 +1,4 @@
 
-
 angular.module('dashboard')
   //.directive('dashboard', ['NxtData', function (NxtData) {
   .directive('dashboard',
