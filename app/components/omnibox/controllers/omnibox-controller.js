@@ -98,10 +98,9 @@ angular.module('lizard-nxt')
           }
         }
 
-        // reset detail cards, based on new content models.
-        resetDetailCards();
 
-        // Accomadate chaining in child controllers
+        resetDetailCards();
+        // Accomodate chaining in child controllers
         return response;
       };
 
@@ -110,6 +109,8 @@ angular.module('lizard-nxt')
           .then(doneFn, doneFn, putDataOnScope));
       });
 
+      // reset detail cards, based on new content models.
+      resetDetailCards();
       return promises;
     };
 
@@ -124,11 +125,15 @@ angular.module('lizard-nxt')
           $scope.box.fullDetailCards.timeseries = true;
         }
       });
-      $scope.box.minimizeCards();
     };
 
+    /**
+     * Resizes if cards, navbar and timeline are larger
+     * then the window size.
+     */
     $scope.box.minimizeCards = function () {
-      var searchNav = 81; // height of search and nav combined
+      // height of search and nav combined
+      var searchNav = $('#searchboxinput').offset().top + $('#searchboxinput').height();
       var heights = $('#cards').height() + searchNav + 
          $('#timeline').height() > $('body').height();
       // jquery is good at this stuff alternative version would be:
@@ -141,5 +146,6 @@ angular.module('lizard-nxt')
       }
     };
     
+    window.addEventListener('resize', $scope.box.minimizeCards);
   }
 ]);

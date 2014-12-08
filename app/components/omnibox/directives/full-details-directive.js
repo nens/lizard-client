@@ -8,7 +8,9 @@ angular.module('lizard-nxt')
     
     var link = function (scope, element, attrs) {
 
-      scope.fullDetails = true;
+      if (scope.fullDetails === undefined) {
+        scope.fullDetails = true;
+      }
       
       // does the actual toggling.
       var toggleDetails = function () {
@@ -21,7 +23,7 @@ angular.module('lizard-nxt')
         }
       };
 
-      scope.$parent.box.minimizeCards();
+      //scope.$parent.box.minimizeCards();
       element.bind('click', toggleDetails);
 
     };
