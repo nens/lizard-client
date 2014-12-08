@@ -4,13 +4,12 @@
       <div class="col-md-1">
         <p>spatial tree nav</p>
       </div>
-      <div class="col-md-10"
-           ng-bind="event = eventAggs">
+      <div class="col-md-10">
         <h1>DASHBOARD</h1>
-        <graph ng-if="event"
+        <graph ng-if="eventAggs"
                bar-chart
                class="xyGraph"
-               data="event"
+               data="eventAggs"
                ylabel="Meldingen"
                keys="{x: 'timestamp', y: 'max', color: 'grey', category: 'count'}"
                now="timeState.at">
