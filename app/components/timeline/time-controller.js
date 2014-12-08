@@ -7,6 +7,9 @@
  *
  * @summary TimeLine controller.
  *
+ * @TODO : Isolate scope. Use scope for data binding to DOM elements. No need to
+ *         do this on master scope.
+ *
  * @desc Manipulates timeState model, animation controls.
  *
  */
@@ -104,7 +107,7 @@ angular.module('lizard-nxt')
      *
      * @param {} toggle - .
      */
-    State.temporal.playPauseAnimation = function (toggle) {
+    $scope.timeState.playPauseAnimation = function (toggle) {
       var anim = State.temporal.animation;
       if (anim.playing || toggle === "off") {
         anim.playing = false;
@@ -199,7 +202,7 @@ angular.module('lizard-nxt')
      * @function
      * @summary Move timeState.end to now.
      */
-    State.temporal.zoomToNow = function () {
+    $scope.timeState.zoomToNow = function () {
 
       var now = Date.now(),
           fullInterval = State.temporal.end - State.temporal.start,
@@ -222,7 +225,7 @@ angular.module('lizard-nxt')
      *
      * @param {string} action - 'in' or 'out'.
      */
-    State.temporal.zoom = function (action) {
+    $scope.timeState.zoom = function (action) {
       var ZOOMFACTOR = 2;
       var newResolution;
 

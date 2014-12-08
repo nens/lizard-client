@@ -51,10 +51,7 @@ angular.module('lizard-nxt')
 
 
     // Box
-    this.box = {
-      content: {}, // The data currently displayed in  the box
-      mouseLoc: [] // To draw 'bolletje' on elevation profile
-    };
+    this.box = {};
 
     var _type = 'point'; // Default box type
     var VALUES = ["point", "line", "area"];
@@ -91,8 +88,10 @@ angular.module('lizard-nxt')
         MAX_TIME_FOR_EXTENT = (new Date(2015, 0, 0, 0, 0, 0, 0)).getTime();
 
     this.temporal = {
+      at: Math.round(now - 2.5 * day),
       aggWindow: 1000 * 60 * 5,
       buffering: false,
+      timelineMoving: false,
       resolution: null,
       playing: false,
     };
@@ -104,6 +103,7 @@ angular.module('lizard-nxt')
         start > MIN_TIME_FOR_EXTENT
           ? _start = start
           : _start = MIN_TIME_FOR_EXTENT;
+        this.changedZoom = !this.changedZoom;
       }
     });
 
@@ -114,13 +114,8 @@ angular.module('lizard-nxt')
         end < MAX_TIME_FOR_EXTENT
           ? _end = end
           : _end = MAX_TIME_FOR_EXTENT;
+        this.changedZoom = !this.changedZoom;
       }
-    });
-
-    var _at = Math.round(now - 2.5 * day);
-    Object.defineProperty(this.temporal, 'at', {
-      get: function () { return _at; },
-      set: function (at) { _at = at; }
     });
 
     this.temporal.aggWindow = UtilService.getAggWindow(

@@ -1,17 +1,19 @@
-angular.module('lizard-nxt')
+angular.module('omnibox')
   .controller("OmniboxCtrl", [
 
   "$scope",
   "UtilService",
   "ClickFeedbackService",
+  "State",
+  "DataService",
 
   function (
 
     $scope,
     UtilService,
-    ClickFeedbackService) {
-
-    $scope.box.content = {};
+    ClickFeedbackService,
+    State,
+    DataService) {
 
     /**
      * @function
@@ -103,7 +105,8 @@ angular.module('lizard-nxt')
         return response;
       };
 
-      angular.forEach($scope.mapState.layerGroups, function (layerGroup) {
+      angular.forEach(State.layerGroups.all, function (layerGroupSlug) {
+        var layerGroup = DataService.layerGroups[layerGroupSlug];
         promises.push(layerGroup.getData(options)
           .then(doneFn, doneFn, putDataOnScope));
       });

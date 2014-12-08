@@ -16,4 +16,5 @@
 angular.module('lizard-nxt')
   .Service('MapService', [function () {
     this.map = {};
+    return this.map;
   }]);

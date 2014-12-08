@@ -13,7 +13,7 @@
  *
  */
 angular.module('lizard-nxt')
-  .controller('AreaCtrl', ['$scope', 'RasterService', '$q', function ($scope, RasterService, $q) {
+  .controller('AreaCtrl', ['$scope', 'RasterService', '$q', 'State', function ($scope, RasterService, $q, State) {
 
     $scope.box.content = {};
 
@@ -51,21 +51,21 @@ angular.module('lizard-nxt')
     /**
      * Updates area when user moves map.
      */
-    $scope.$watch('mapState.bounds', function (n, o) {
+    $scope.$watch('State.spatial.bounds', function (n, o) {
       if (n === o) { return true; }
-      fillArea($scope.mapState.bounds);
+      fillArea(State.spatial.bounds);
     });
 
     /**
      * Updates area when users changes layers.
      */
-    $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
+    $scope.$watch('State.layerGroups.active', function (n, o) {
       if (n === o) { return true; }
-      fillArea($scope.mapState.bounds);
+      fillArea(State.spatial.bounds);
     });
 
     // Load data at initialization.
-    fillArea($scope.mapState.bounds);
+    fillArea(State.spatial.bounds);
 
   }
 ]);
