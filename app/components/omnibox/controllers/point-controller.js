@@ -206,27 +206,7 @@ angular.module('lizard-nxt')
       ClickFeedbackService.emptyClickLayer($scope.mapState);
     });
 
-    /**
-     * @function
-     * @memberOf app.pointCtrl
-     * @description Get correct icon for structure
-     */
-    $scope.getIconClass = function (str) {
-      switch (str) {
-      case 'overflow':
-        return 'icon-overflow';
-      case 'pumpstation':
-        return 'icon-pumpstation-diesel';
-      case 'bridge':
-        return 'icon-bridge';
-      case 'bridge-draw':
-        return 'icon-bridge';
-      case 'bridge-fixed':
-        return 'icon-bridge';
-      default:
-        return 'icon-' + str;
-      }
-    };
+    // $scope.getIconClass = UtilService.getIconClass;
 
     /**
      * @function

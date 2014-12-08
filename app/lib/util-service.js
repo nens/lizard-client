@@ -352,7 +352,10 @@ angular.module('lizard-nxt')
    */
   this.isSufficientlyRichData = function (data) {
 
-    if (data === 'null') {
+    if (data === undefined) {
+      return false;
+
+    } else if (data === 'null') {
       // backend did not return valid data.. log as ERROR?
       return false;
 
@@ -451,5 +454,65 @@ angular.module('lizard-nxt')
       }
     }
     return obj;
+  };
+
+  /**
+   * @description - Deduce the wanted geometry-type from the passed in geomOpts
+   * @param {object} geomOpts - the options.geom object
+   * @return {string} - "POINT" | "LINE" | "AREA" | throw new Error!
+   *
+   * NB! In the foreseeable future, we need to take care of non-rectangle
+   *     polygons, and we'll need to adjust this code accordingly.
+   *     When will then be now? soon.
+   */
+  this.getGeomType = function (geomOpts) {
+
+    if (geomOpts instanceof L.LatLng) {
+      return "POINT";
+
+    } else if (geomOpts._southWest && geomOpts._northEast) {
+      return "AREA";
+
+    } else if (geomOpts.length === 2
+      && geomOpts[0] instanceof L.LatLng
+      && geomOpts[1] instanceof L.LatLng) {
+      return "LINE";
+
+    } else {
+      throw new Error(
+        "getGeomType could not deduce a valid geometry type from the passed in arg: 'geomOpts' =", geomOpts
+      );
+    }
+  };
+
+  /**
+   * @description - Count all keys for an object (we can't do this vanilla.js style in Angular template)
+   * @param {object} obj - The object for which we want to know the amount of keys.
+   * @return {integer} - The amount of keys.
+   */
+  this.countKeys = function (obj) {
+    return Object.keys(obj).length;
+  };
+
+  /**
+   * @function
+   * @description Get correct icon for structure
+   */
+  this.getIconClass = function (str, small) {
+    var prefix = small === undefined ? "" : "small-";
+    switch (str) {
+    case 'overflow':
+      return prefix + 'icon-overflow';
+    case 'pumpstation':
+      return prefix + 'icon-pumpstation-diesel';
+    case 'bridge':
+      return prefix + 'icon-bridge';
+    case 'bridge-draw':
+      return prefix + 'icon-bridge';
+    case 'bridge-fixed':
+      return prefix + 'icon-bridge';
+    default:
+      return prefix + 'icon-' + str;
+    }
   };
 }]);

@@ -217,13 +217,13 @@
       }
 
       //console.log("after _update(), this._extentCache looks like:", this._extentCache);
-      console.log("after _update(), we call getUniqueStructuresForExtent()...");
-      var self = this;
-      setTimeout(function () {
-        console.log("...but we do so after a 1 sec delay! (Else UTF tiles aren't finished loading)");
-        var structs = self.getUniqueStructuresForExtent();
-        console.log("structs:", structs);
-      }, 1000);
+      // console.log("after _update(), we call getUniqueStructuresForExtent()...");
+      // var self = this;
+      // setTimeout(function () {
+      //   console.log("...but we do so after a 1 sec delay! (Else UTF tiles aren't finished loading)");
+      //   var structs = self.getUniqueStructuresForExtent();
+      //   console.log("structs:", structs);
+      // }, 1000);
     },
 
     _tileLoaded: function () {
@@ -266,28 +266,11 @@
       return c - 32;
     },
 
-    // getDataFromExtentCache: function () {
-
-    //   var tile,
-    //       tileSlug,
-    //       extentData = {};
-
-    //   for (tileSlug in this._extentCache) {
-    //     tile = this._extentCache[tileSlug];
-    //     if (tile && tile.data) {
-    //       for (var datumSlug in tile.data) {
-    //         extentData[datumSlug] = tile.data[datumSlug];
-    //       }
-    //     }
-    //   }
-    //   return extentData;
-    // }
-
     _getUniqueStructureId: function (structureData) {
       try {
         return structureData.entity_name + "$" + structureData.id;
       } catch (e) {
-        console.log("[E] Tried to derive a unique structure ID from incomplete data: its not gonna w0rk");
+        console.log("[E] Tried to derive a unique structure ID from incomplete data: its not gonna w0rk. Error 'e' =", e);
       }
     },
 
@@ -295,7 +278,7 @@
 
       var tile,
           tileSlug,
-          uniqueStructures = {};
+          uniqueStructures = { data: {} };
 
       for (tileSlug in this._extentCache) {
         tile = this._extentCache[tileSlug];
@@ -308,17 +291,14 @@
           for (datumSlug in tile.data) {
             datum = tile.data[datumSlug];
             structureKey = this._getUniqueStructureId(datum);
-            if (!uniqueStructures[structureKey]) {
-              uniqueStructures[structureKey] = datum;
+            if (!uniqueStructures.data[structureKey]) {
+              uniqueStructures.data[structureKey] = datum;
             }
           }
-        } else {
-          console.log("[!] invalid tileSlug:", tileSlug, " --> nothing found in _extentCache for this slug! (Maybe this was called before UTF tiles were loaded?)");
         }
       }
       return uniqueStructures;
     }
-
   });
 
   L.utfGrid = function (url, options) {
