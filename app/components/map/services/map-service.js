@@ -14,7 +14,7 @@
  */
 
 angular.module('lizard-nxt')
-  .Service('MapService', [function () {
+  .service('MapService', [function () {
     this.globalNxtMapInstance = {};
     return this.globalNxtMapInstance;
   }]);

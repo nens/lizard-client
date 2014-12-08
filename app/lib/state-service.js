@@ -26,7 +26,7 @@ angular.module('lizard-nxt')
     // State of data layer groups
     var _layerGroups = Object.keys(dataLayers);
 
-    this.layerGroups: {};
+    this.layerGroups = {};
     Object.defineProperty(this.layerGroups, 'all', {
       value: _layerGroups,
       write: false,
@@ -36,7 +36,7 @@ angular.module('lizard-nxt')
         return _layerGroups.filter(function (layerGroup) {
           return DataService.layerGroups[layerGroup].isActive();
         });
-      }
+      },
       set: function (layerGroups) {
         var _active = [];
         angular.forEach(_layerGroups, function (_layerGroup){
@@ -73,11 +73,11 @@ angular.module('lizard-nxt')
 
     // Spatial
     this.spatial = {
-      here: {};
-      points = []; // History of here for drawing and creating line and polygons
-      bounds = {};
-      userHere = {}; // Geographical location of the users mouse
-      mapMoving = false;
+      here: {},
+      points: [], // History of here for drawing and creating line and polygons
+      bounds: {},
+      userHere: {}, // Geographical location of the users mouse
+      mapMoving: false
     };
 
     // TIME MODEL

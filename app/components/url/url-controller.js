@@ -141,7 +141,7 @@ angular.module('lizard-nxt')
       if (n === old) { return true; }
       state.boxType.update = false;
       LocationGetterSetter.setUrlValue(
-        state.boxType.part, state.boxType.index, $scope.box.type
+        state.boxType.part, state.boxType.index, State.box.type
       );
 
       if (old === 'point' || old === 'line') {
@@ -157,7 +157,7 @@ angular.module('lizard-nxt')
     $scope.$watch('State.spatial.here', function (n, o) {
       if (n === o || $scope.box.type !== 'point') { return true; }
       state.geom.update = false;
-      UrlState.setgeomUrl(state, $scope.box.type, State.spatial.here, State.spatial.points);
+      UrlState.setgeomUrl(state, State.box.type, State.spatial.here, State.spatial.points);
     });
 
     /**
@@ -166,7 +166,7 @@ angular.module('lizard-nxt')
     $scope.$watch('State.spatial.points', function (n, o) {
       if (n === o || $scope.box.type !== 'line') { return true; }
       state.geom.update = false;
-      UrlState.setgeomUrl(state, $scope.box.type, State.spatial.here, State.spatial.points);
+      UrlState.setgeomUrl(state, State.box.type, State.spatial.here, State.spatial.points);
     }, true);
 
     /**
@@ -191,19 +191,19 @@ angular.module('lizard-nxt')
         // State.contex, for now we always set it.
         LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
         if (boxType) {
-          $scope.box.type = boxType;
+          State.box.type = boxType;
         } else {
-          LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, $scope.box.type);
+          LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, State.box.type);
         }
         if (geom) {
-          $scope.mapState = UrlState.parseGeom($scope.box.type, geom, $scope.mapState);
+          State.spatial = UrlState.parseGeom(State.box.type, geom, State.mapState);
         }
 
         enablelayerGroups(layerGroupsFromURL);
         enableMapView(mapView);
 
         if (time) {
-          $scope.timeState = UrlState.parseTimeState(time, $scope.timeState);
+          State.temporal = UrlState.parseTimeState(time, State.temporal);
         } else {
           state.timeState.update = false;
           UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
