@@ -63,6 +63,9 @@
 
       this._url = url;
       this._cache = {};
+      // We keep track of the tiles which are at least partially within
+      // the current spatial extent.
+      this._extentCache = {};
 
       //Find a unique id in window we can use for our callbacks
       //Required for jsonP
@@ -175,22 +178,24 @@
     _update: function () {
 
       var bounds = this._map.getPixelBounds(),
-        zoom = this._map.getZoom(),
-        tileSize = this.options.tileSize;
+          zoom = this._map.getZoom(),
+          tileSize = this.options.tileSize;
 
       if (zoom > this.options.maxZoom || zoom < this.options.minZoom) {
         return;
       }
 
       var nwTilePoint = new L.Point(
-        Math.floor(bounds.min.x / tileSize),
-        Math.floor(bounds.min.y / tileSize)
-      ),
-      seTilePoint = new L.Point(
-        Math.floor(bounds.max.x / tileSize),
-        Math.floor(bounds.max.y / tileSize)
-      ),
-      max = this._map.options.crs.scale(zoom) / tileSize;
+            Math.floor(bounds.min.x / tileSize),
+            Math.floor(bounds.min.y / tileSize)
+          ),
+          seTilePoint = new L.Point(
+            Math.floor(bounds.max.x / tileSize),
+            Math.floor(bounds.max.y / tileSize)
+          ),
+          max = this._map.options.crs.scale(zoom) / tileSize;
+
+      this._extentCache = {}; // empty the _extentCache
 
       //Load all required ones
       for (var x = nwTilePoint.x; x <= seTilePoint.x; x++) {
@@ -200,11 +205,20 @@
           var key = zoom + '_' + xw + '_' + yw;
 
           if (!this._cache.hasOwnProperty(key)) {
+            // We prepare the new tiles that are to be rendered:
             this._cache[key] = null;
+            this._extentCache[key] = null;
             this._loadTile(zoom, xw, yw);
+          } else {
+            // We keep the old tiles that are still rendered:
+            this._extentCache[key] = this._cache[key];
           }
         }
       }
+
+      //console.log("after _update(), this._extentCache looks like:", this._extentCache);
+      console.log("after _update(), getDataFromExtentCache():", this.getDataFromExtentCache());
+
     },
 
     _tileLoaded: function () {
@@ -232,6 +246,7 @@
 
       L.Util.ajax(url, function (data) {
         self._cache[key] = data;
+        self._extentCache = data;
         self._tileLoaded();
       });
     },
@@ -244,6 +259,38 @@
         c--;
       }
       return c - 32;
+    },
+
+    getDataFromExtentCache: function (keys) {
+
+      // 1st, flatten the datastructure since we don't care about the tiles themselves:
+
+      var tile,
+          extentData = {};
+
+      for (var tileSlug in this._extentCache) {
+        tile = this._extentCache[tileSlug];
+        if (tile && tile.data) {
+          for (var datumSlug in tile.data) {
+            extentData[datumSlug] = tile.data[datumSlug];
+          }
+        }
+      }
+
+      // If the keys arg was given, filter the selection based on that:
+
+      if (keys) {
+        var filteredExtentData = {};
+        for (var i in keys) {
+          for (var datumSlug_ in extentData) {
+            filteredExtentData[datumSlug_] = filteredExtentData[datumSlug_] || {};
+            filteredExtentData[datumSlug_][keys[i]] = extentData[datumSlug_][keys[i]];
+          }
+        }
+        return filteredExtentData;
+      }
+
+      return extentData;
     }
 
   });
