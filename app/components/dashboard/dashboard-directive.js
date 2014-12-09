@@ -10,15 +10,26 @@ angular.module('dashboard')
 
   var link = function (scope, element, attrs) {
 
-    console.log(scope.eventAggs);
+    var getData = function () {
+      scope.mapState.getData({
+        type: 'event',
+        geom: scope.mapState.bounds,
+        start: scope.timeState.start,
+        end: scope.timeState.end,
+        aggWindow: scope.timeState.aggWindow
+      }).then(function (response) {
+        scope.eventAggs = EventAggregateService
+          .aggregate(response.data, scope.timeState.aggWindow);
+      });
+    };
+
     /**
      * Updates dashboard when user pans or zooms map.
      */
     scope.$watch('mapState.bounds', function (n, o) {
       if (n === o) { return true; }
       // get data for active event layergroups
-      scope.eventAggs =
-        EventAggregateService.aggregate(scope.tmp, scope.timeState.aggWindow);
+      getData();
     });
 
     /**
@@ -27,8 +38,7 @@ angular.module('dashboard')
     scope.$watch('mapState.layerGroupsChanged', function (n, o) {
       if (n === o) { return true; }
       // get data for active event layergroups
-      scope.eventAggs =
-        EventAggregateService.aggregate(scope.tmp, scope.timeState.aggWindow);
+      getData();
     });
 
     /**
@@ -37,9 +47,7 @@ angular.module('dashboard')
     scope.$watch('timeState.changedZoom', function (n, o) {
       if (n === o) { return true; }
       // get data for active event layergroups
-      scope.eventAggs =
-        EventAggregateService.aggregate(scope.tmp, scope.timeState.aggWindow);
-      console.log(scope.eventAggs);
+      getData();
     });
   };
 
