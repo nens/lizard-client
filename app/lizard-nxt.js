@@ -305,6 +305,12 @@ angular.module('lizard-nxt')
     }
   });
 
+  $scope.$watch('box.type', function (n, o) {
+    UtilService.addNewStyle(
+      "#map * {cursor:" + (n === "line" ? "crosshair" : "") + ";}"
+    );
+  });
+
   //TODO: move to raster-service ?
 
   $scope.raster = {

@@ -138,10 +138,6 @@
 .card .flip-button a:hover{
     color: gray;
 }
-.single-row-table td,
-.single-row-table th {
-    border: 0 !important;
-}
 
 .card table, .card-events {
     margin: 6px 0 6px 11px;
@@ -152,12 +148,12 @@
     max-width: 350px;
 }
 
+
 .card .left{
     float: left;
     width: 150px;
     margin-left: 37px;
 }
-
 
 .card .right{
     width: 150px;
@@ -683,4 +679,16 @@ td.lineout {
   vertical-align: middle;
   font-size: 0.95em;
   color: #777;
+}
+
+.card .single-row-table {
+    max-height: 30px;
+    min-height: 30px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.card .single-row-table td,
+.card .single-row-table th {
+    border: 0 !important;
 }
