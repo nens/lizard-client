@@ -156,7 +156,6 @@ angular.module('lizard-nxt')
           );
           drawLabel(this._svg, this.dimensions, labels.y, true);
         }
-        console.log(this._svg);
         drawVerticalRects(
           this._svg,
           this.dimensions,
@@ -320,6 +319,7 @@ angular.module('lizard-nxt')
         cumulativeData.push(d);
       });
     });
+    cumulativeData.sort(function (a, b) { return a[keys.x] - b[keys.x]; });
     return cumulativeData;
   };
 
@@ -417,7 +417,7 @@ angular.module('lizard-nxt')
         MIN_BAR_WIDTH = 2,
         barWidth = Math.max(
           MIN_BAR_WIDTH,
-          Math.floor(getBarWidth(xy.x.scale, data, keys, dimensions))
+          Math.floor(getBarWidth(xy.x.scale, data, keys))
         ),
         strokeWidth = barWidth === MIN_BAR_WIDTH ? 0 : 1,
 
@@ -466,14 +466,17 @@ angular.module('lizard-nxt')
       .remove();
   };
 
-  getBarWidth = function (scale, data, keys, dimensions) {
-    var uniques = [];
-    data.forEach(function (item, i , arr) {
-      if (uniques.indexOf(item[keys.x]) === -1) {
-        uniques.push(item[keys.x]);
+  getBarWidth = function (scale, data, keys) {
+    var barWidth = Infinity;
+    data.forEach(function (item, i) {
+      if (data[i + 1]) {
+        var widthBetweenTheseBars = scale(data[i + 1][keys.x] - item[keys.x]);
+        if (widthBetweenTheseBars < barWidth) {
+          barWidth = widthBetweenTheseBars;
+        }
       }
     });
-    return Graph.prototype._getWidth(dimensions) / uniques.length;
+    return barWidth;
   };
 
   createXGraph = function (svg, dimensions, labels, options) {
