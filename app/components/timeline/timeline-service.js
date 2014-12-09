@@ -64,6 +64,7 @@ angular.module('lizard-nxt')
     NxtD3.call(this, element, dimensions);
     initialHeight = dimensions.height;
     this._svg = addElementGroupsToCanvas(this._svg, this.dimensions);
+    this._initDimensions = dimensions;
     xScale = this._makeScale(
       {min: start, max: end},
       {min: 0, max: this._getWidth(dimensions)},
@@ -98,7 +99,7 @@ angular.module('lizard-nxt')
     addFutureIndicator: {
       value: function () {
         var width = 20000,
-        height = this._getHeight(this.dimensions);
+            height = this._getHeight(this.dimensions);
 
         futureIndicator = this._svg.select("g").append("rect")
           .attr("height", height)

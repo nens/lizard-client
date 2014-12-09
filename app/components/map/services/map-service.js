@@ -145,10 +145,10 @@ angular.module('lizard-nxt')
           }
         };
 
-        map.on('click', function (e) { conditionalApply(clicked, e); });
+        map.on('click',     function (e) { conditionalApply(clicked, e) ;});
         map.on('movestart', function (e) { conditionalApply(moveStarted, e); });
         map.on('mousemove', function (e) { conditionalApply(mouseMoved, e); });
-        map.on('moveend', function (e) { conditionalApply(moveEnded, e); });
+        map.on('moveend',   function (e) { conditionalApply(moveEnded, e); });
       },
 
       addLayer: function (layer) {
