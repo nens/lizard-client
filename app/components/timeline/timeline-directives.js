@@ -210,13 +210,7 @@ angular.module('lizard-nxt')
 
         // update slugs on scope for housekeeping
         scope.events.slugs = timelineLayers.events.slugs;
-        // create context for callback function, reset eventOrder to 1.
-        context = {
-          eventOrder: 1,
-          nEvents: scope.events.nEvents,
-          slugs: scope.events.slugs
-        };
-        angular.forEach(timelineLayers.events.layers, getEventData, context);
+        getEventData();
       } else {
         scope.events.nEvents = 0;
         timeline.drawLines(undefined, scope.events.nEvents);
@@ -238,30 +232,32 @@ angular.module('lizard-nxt')
      * @function
      * @summary get data for event layers and update timeline.
      * @description get data for event layers and update timeline.
-     *
-     * @param {object} eventLayer - NXT eventLayer object.
      */
-    var getEventData = function (eventLayer) {
-      var eventData = VectorService.getData(
-        eventLayer,
-        {
+    var getEventData = function () {
+      // create context for callback function, reset eventOrder to 1.
+      var context = {
+        eventOrder: 1,
+        nEvents: scope.events.nEvents,
+        slugs: scope.events.slugs
+      };
+      angular.forEach(scope.mapState.layerGroups, function (lg) {
+        lg.getData({
           geom: scope.mapState.bounds,
           start: scope.timeState.start,
           end: scope.timeState.stop,
-        }
-      );
-
-      var that = this;
-      eventData.then(function (response) {
-        if (response !== undefined) {
-          timeline.drawLines(
-            response,
-            that.eventOrder,
-            eventLayer.slug,
-            eventLayer.color
-          );
-          that.eventOrder++;
-        }
+          type: 'Event'
+        }).then(null, null, function (response) {
+          console.log(response);
+          if (response && response.data) {
+            timeline.drawLines(
+              response.data,
+              context.eventOrder,
+              response.layerGroupSlug,
+              response.color
+            );
+            context.eventOrder++;
+          }
+        });
       });
     };
 
