@@ -1,0 +1,24 @@
+<div class="dashboard-wrapper" ng-controller="DashboardCtrl">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-1">
+        <p>spatial tree nav</p>
+      </div>
+      <div class="col-md-10">
+        <h1>DASHBOARD</h1>
+        <graph ng-if="eventAggs"
+               bar-chart
+               class="xyGraph"
+               data="eventAggs"
+               ylabel="'Meldingen'"
+               keys="{x: 'timestamp', y: 'max', color: 'grey', category: 'count'}"
+               now="timeState.at"
+               dimensions="{width: 600, height: 400}">
+        </graph>
+      </div>
+      <div class="col-md-1">
+        <p>right column</p>
+      </div>
+    </div>
+  </div>
+</div>

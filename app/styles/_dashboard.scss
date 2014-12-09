@@ -1,0 +1,10 @@
+/*
+ * Dashboard style definition
+ */
+
+.dashboard-wrapper {
+  transition: .3s ease;
+  top: $navbarheight;
+  z-index: 1000;
+  background-color: red; 
+}

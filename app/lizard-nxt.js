@@ -21,7 +21,7 @@ if (window.RavenEnvironment) {
 angular.module("lizard-nxt", [
   'omnibox',
   'restangular',
-  'ngSanitize',
+  'dashboard',
   'ngCsv',
   'ui.bootstrap',
   'ui.utils'
@@ -177,7 +177,7 @@ angular.module('lizard-nxt')
   $scope.user = user;
   $scope.versioning = versioning;
 
-  var MIN_TIME_FOR_EXTENT = (new Date(2014, 0, 0, 0, 0, 0, 0)).getTime();
+  var MIN_TIME_FOR_EXTENT = (new Date(2010, 0, 0, 0, 0, 0, 0)).getTime();
   var MAX_TIME_FOR_EXTENT = (new Date(2015, 0, 0, 0, 0, 0, 0)).getTime();
 
   // BOX MODEL
@@ -192,11 +192,9 @@ angular.module('lizard-nxt')
    * @property {boolean} box.detailMode - Detail mode, defaults to false.
    */
   $scope.box = {
-    contextSwitchMode: false, // Switch between card or fullscreen
     query: null, // Search bar query
     showCards: false,// Only used for search results
     type: 'point', // Default box type
-    //type: undefined, // Should this be set via the hashGetterSetter????
     content: {}, // Inconsistently used to store data to display in box
     changed: Date.now(),
     mouseLoc: [] // Used to draw 'bolletje' on elevation profile
@@ -230,19 +228,30 @@ angular.module('lizard-nxt')
     } else {
       throw new Error("Attemped to assign an illegal value ('"
         + name
-        + "') to $scope.box.type. Only 'point', 'line' and 'area' are accepted values."
+        + "') to $scope.box.type. Only 'point', 'line' and 'area'"
+        + "are accepted values."
       );
     }
   };
+
+  // CONTEXT
 
   /**
    * Switch between contexts.
    *
    * @param {string} context - Context name to switch to
    */
-  //$scope.switchContext = function (context) {
-    //$scope.box.context = context;
-  //};
+  $scope.switchContext = function (context) {
+    $scope.context = context;
+  };
+
+  // default context
+  $scope.context = 'map';
+
+  // temp helper
+  $scope.tmp = {};
+
+  // END CONTEXT
 
   // MAP MODEL is set by the map-directive
   $scope.mapState = {};

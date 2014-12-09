@@ -38,7 +38,7 @@ angular.module('lizard-nxt')
               // we convert it from degrees to meters here
               .data = UtilService.dataConvertToMeters(response.data);
           } else if (response.data && response.data !== 'null'
-            && response.type === 'Store'
+            && response.format === 'Store'
             && (response.scale === 'ratio' || response.scale === 'interval')
             && $scope.mapState.layerGroups[response.layerGroupSlug].temporal) {
             // in other words, its rain..
@@ -163,7 +163,7 @@ angular.module('lizard-nxt')
       angular.forEach($scope.box.content, function (lg, slug) {
         if ($scope.mapState.layerGroups[slug].temporal) {
           angular.forEach(lg.layers, function (layer) {
-            if (layer.type === 'Store'
+            if (layer.format === 'Store'
               && (layer.scale === 'ratio' || layer.scale === 'interval')) {
               layer.data = UtilService.createDataForTimeState(layer.temporalData, $scope.timeState);
             }

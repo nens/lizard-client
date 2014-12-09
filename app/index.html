@@ -124,7 +124,8 @@
 
     <div id="master">
       <div class="layer-menu-container">
-        <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': mapState.enabled}">
+        <div class="layer-switcher-wrapper pull-right"
+             ng-class="{'slide-left': mapState.enabled}">
           <div class="layer-switcher slide-left">
             <ul class="nav">
               <li class="nav-header">
@@ -141,7 +142,8 @@
                title="<% mapState.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
             <div class="arrow arrow-up" ng-click="mapState.enabled = !mapState.enabled">
             </div>
-            <div class="arrow arrow-down" ng-click="mapState.enabled = !mapState.enabled"><i class="fa fa-compass ribbon-icon"></i>
+            <div class="arrow arrow-down" ng-click="mapState.enabled = !mapState.enabled">
+                <i class="fa fa-compass ribbon-icon"></i>
             </div>
           </div>
           <div class="button-list-container" id="">
@@ -176,20 +178,45 @@
               </a>
             </div>
 
+            <div class="button-list-item"
+                 style="cursor: pointer">
+              <a ng-click="switchContext('db')"
+                 class="button-list-link"
+                 title="switch to dashboard"
+                 ng-if="context === 'map'">
+                 <i class="fa fa-dashboard"></i>
+              </a>
+              <a ng-click="switchContext('map')"
+                 class="button-list-link"
+                 title="switch to map"
+                 ng-if="context === 'db'">
+                 <i class="fa fa-paper-plane-o"></i>
+              </a>
+            </div>
+
           </div>
         </div>
-
-        <map layers="mapState.layers"
-             rasterprofile="disabled"
-             vectorlayer
-             temporal-vector-layer
-             surfacelayer>
-         </map>
       </div>
     </div>
 
-    <div class="container">
-      <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
+      <map layers="mapState.layers"
+         rasterprofile="disabled"
+         vectorlayer
+         temporal-vector-layer
+         surfacelayer
+         ng-class="{'crosshair': box.type === 'profile'}">
+      </map>
+
+    <div ng-if="context === 'map'">
+
+      <div class="container">
+        <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
+      </div>
+
+    </div>
+
+    <div ng-if="context === 'db'">
+      <dashboard></dashboard>
     </div>
 
     <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
@@ -278,6 +305,10 @@
 
     <script src="/components/graph/graph-service.js"></script>
     <script src="/components/graph/graph-directives.js"></script>
+
+    <script src="/components/dashboard/dashboard.js"></script>
+    <script src="/components/dashboard/dashboard-controller.js"></script>
+    <script src="/components/dashboard/dashboard-directive.js"></script>
 
     <script src="/components/single-click/single-click-directive.js"></script>
     <script src="/components/layer-chooser/layer-chooser-directives.js"></script>

@@ -168,10 +168,10 @@ angular.module('lizard-nxt')
       angular.forEach(layerGroups, function (layergroup) {
         if (layergroup.isActive()) {
           angular.forEach(layergroup._layers, function (layer) {
-            if (layer.type === "Vector") {
+            if (layer.format === "Vector") {
               timelineLayers.events.layers.push(layer);
               timelineLayers.events.slugs.push(layer.slug);
-            } else if (layer.type === "Store" && layer.slug === "radar/basic") {
+            } else if (layer.format === "Store" && layer.slug === "radar/basic") {
               timelineLayers.rain = layer;
             }
           });
@@ -254,6 +254,7 @@ angular.module('lizard-nxt')
       var that = this;
       eventData.then(function (response) {
         if (response !== undefined) {
+          scope.tmp = response;
           timeline.drawLines(
             response,
             that.eventOrder,

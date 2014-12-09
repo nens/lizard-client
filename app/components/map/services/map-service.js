@@ -2,7 +2,7 @@
 
 /**
  * @ngdoc service
- * @class NxtMap / TODO: rename to what it is, like NxtDataHub
+ * @class NxtMap /
  * @memberof app
  * @name NxtMapService
  * @requires LeafletService
@@ -10,6 +10,9 @@
  * @description  NxtMap service encapsulates all kinds of helper functions
  * for the map-directive. A wrapper of sorts for Leaflet stuff,
  * the map object and mapState.
+ *
+ * TODO:
+ * - [ ] Split map specific from data-layers specific to a NxtData.
  *
  */
 
@@ -69,6 +72,17 @@ angular.module('lizard-nxt')
         var promises = [];
         angular.forEach(this.layerGroups, function (layerGroup) {
           promises.push(layerGroup.syncTime(timeState, this._map));
+        }, this);
+        $q.all(promises).then(function () { defer.resolve(); });
+        return defer.promise;
+      },
+
+      // Options contains geom, time and [event, timeseries, rain, waterchain]
+      getData: function (options) {
+        var defer = $q.defer();
+        var promises = [];
+        angular.forEach(this.layerGroups, function (layerGroup) {
+          promises.push(layerGroup.getData(options));
         }, this);
         $q.all(promises).then(function () { defer.resolve(); });
         return defer.promise;
