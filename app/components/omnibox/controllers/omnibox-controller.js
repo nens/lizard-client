@@ -99,7 +99,6 @@ angular.module('lizard-nxt')
         }
 
 
-        resetDetailCards();
         // Accomodate chaining in child controllers
         return response;
       };
@@ -109,43 +108,7 @@ angular.module('lizard-nxt')
           .then(doneFn, doneFn, putDataOnScope));
       });
 
-      // reset detail cards, based on new content models.
-      resetDetailCards();
       return promises;
     };
-
-    /**
-     *  This resets the detailed card model
-     */
-    var resetDetailCards = function () {
-      $scope.box.fullDetailCards = {};
-      angular.forEach(Object.keys($scope.box.content), function (key) {
-        $scope.box.fullDetailCards[key] = true;
-        if (key === 'waterchain') {
-          $scope.box.fullDetailCards.timeseries = true;
-        }
-      });
-    };
-
-    /**
-     * Resizes if cards, navbar and timeline are larger
-     * then the window size.
-     */
-    $scope.box.minimizeCards = function () {
-      // height of search and nav combined
-      var searchNav = $('#searchboxinput').offset().top + $('#searchboxinput').height();
-      var heights = $('#cards').height() + searchNav + 
-         $('#timeline').height() > $('body').height();
-      // jquery is good at this stuff alternative version would be:
-      // document.querySelector('#cards').clientHeight etc...
-      if (heights) {
-         angular.forEach(Object.keys($scope.box.fullDetailCards),
-           function (layer) {
-             $scope.box.fullDetailCards[layer] = false;
-         });
-      }
-    };
-    
-    window.addEventListener('resize', $scope.box.minimizeCards);
   }
 ]);

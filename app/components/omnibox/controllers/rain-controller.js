@@ -1,6 +1,12 @@
 angular.module('lizard-nxt')
   .controller("rain", ['$scope', function ($scope) {
 
+  /*
+   * @description
+   * angular isolate scope is messed with
+   * when you using ng-if. This looks to parent
+   * model and sets the local fullDetails.
+   */ 
   $scope.$watch('box.fullDetails.rain', function (n) {
     $scope.fullDetails = n;
   });
