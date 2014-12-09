@@ -132,6 +132,7 @@ angular.module('lizard-nxt')
         if (keys.category) {
           data = createYValuesForCumulativeData(data, keys);
         }
+        data.sort(function (a, b) { return a[keys.x] - b[keys.x]; });
         if (!this._xy) {
           var options = {
             x: {
@@ -319,7 +320,6 @@ angular.module('lizard-nxt')
         cumulativeData.push(d);
       });
     });
-    cumulativeData.sort(function (a, b) { return a[keys.x] - b[keys.x]; });
     return cumulativeData;
   };
 
