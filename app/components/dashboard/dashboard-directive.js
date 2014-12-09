@@ -10,7 +10,17 @@ angular.module('dashboard')
 
   var link = function (scope, element, attrs) {
 
-    console.log(scope.eventAggs);
+    var getWidth = function () {
+      return element.find('.col-md-9').width();
+    };
+    
+    var getHeight = function () {
+      return element.height();
+    }
+
+    scope.dimensions.width = getWidth();
+    scope.dimensions.height = getHeight();
+
     /**
      * Updates dashboard when user pans or zooms map.
      */
@@ -39,7 +49,6 @@ angular.module('dashboard')
       // get data for active event layergroups
       scope.eventAggs =
         EventAggregateService.aggregate(scope.tmp, scope.timeState.aggWindow);
-      console.log(scope.eventAggs);
     });
   };
 

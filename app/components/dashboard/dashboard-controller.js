@@ -3,4 +3,8 @@ angular.module('dashboard')
 
   $scope.eventAggs = undefined;
 
+  // dimensions are dependent on screen size.
+  // this is calculated in directive.
+  $scope.dimensions = {};
+
 }]);

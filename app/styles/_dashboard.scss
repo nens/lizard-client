@@ -4,7 +4,20 @@
 
 .dashboard-wrapper {
   transition: .3s ease;
-  top: $navbarheight;
+  margin-top: $navbarheight;
   z-index: 1000;
-  background-color: red; 
+  height: 70%;
+  // interpolation inside mixin expression of variable
+  // apparently not working. 132px is navbar and timeline
+  height: calc(100% - 132px);
+  width: 100%;
+  position: absolute;
+  background-color: $white;
+}
+
+.dashboard-table {
+    height: 70%;
+    height: calc(100% - 132px);
+    overflow: auto;
+    position: relative;
 }

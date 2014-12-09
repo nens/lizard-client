@@ -51,10 +51,24 @@ $height20: 0; // Appears 2 times
 
 // NXT defined variables.
 $navbarheight: 50px; // Appears 8 times
+$navbarandtimeline: 50px + 82px;
 
 @import 'colors';
 
 // END variables
+
+
+// START FUNCTIONS & MIXINS
+
+@mixin calc($property, $expression) {
+    #{$property}: -webkit-calc(#{$expression});
+    #{$property}: -ms-calc(#{$expression});
+    #{$property}: -o-calc(#{$expression});
+    #{$property}: -moz-calc(#{$expression});
+    #{$property}: calc(#{$expression});
+}
+
+// END FUNCTIONS
 
 /**
  *

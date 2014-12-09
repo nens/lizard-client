@@ -1,22 +1,35 @@
 <div class="dashboard-wrapper" ng-controller="DashboardCtrl">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-1">
-        <p>spatial tree nav</p>
-      </div>
-      <div class="col-md-10">
-        <h1>DASHBOARD</h1>
+     <div class="col-md-9">
         <graph ng-if="eventAggs"
                bar-chart
                class="xyGraph"
                data="eventAggs"
                ylabel="Meldingen"
                keys="{x: 'timestamp', y: 'max', color: 'grey', category: 'count'}"
+               dimensions="dimensions"
                now="timeState.at">
         </graph>
       </div>
-      <div class="col-md-1">
-        <p>right column</p>
+      <div class="col-md-3 dashboard-table">
+        <table class="table table-hover table-condensed" >
+         <tbody>
+            <tr ng-repeat="event in eventAggs">
+                <td rel="tooltip"
+                    data-placement="left">
+                    <% event.timestamp | date:'dd/MM/yyyy' %>
+                </td>
+                <td rel="tooltip"
+                    data-placement="left"
+                    title="<% event.category %>">
+                  <% event.category | truncate:40 %>
+                </td>
+              </tr>
+          </tbody>
+        </table>
+
+
       </div>
     </div>
   </div>
