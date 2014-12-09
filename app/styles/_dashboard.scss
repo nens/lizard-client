@@ -17,7 +17,7 @@
 
 .dashboard-table {
     height: 70%;
-    height: calc(100% - 132px);
+    max-height: calc(100% - 132px);
     overflow: auto;
     position: relative;
 }
