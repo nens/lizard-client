@@ -215,15 +215,6 @@
           }
         }
       }
-
-      //console.log("after _update(), this._extentCache looks like:", this._extentCache);
-      // console.log("after _update(), we call getUniqueStructuresForExtent()...");
-      // var self = this;
-      // setTimeout(function () {
-      //   console.log("...but we do so after a 1 sec delay! (Else UTF tiles aren't finished loading)");
-      //   var structs = self.getUniqueStructuresForExtent();
-      //   console.log("structs:", structs);
-      // }, 1000);
     },
 
     _tileLoaded: function () {

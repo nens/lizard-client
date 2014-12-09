@@ -1,6 +1,6 @@
 <div ng-controller="AreaCtrl">
 
-  <div ng-if="box.content.waterchain"
+  <div ng-if="countKeys(box.content.waterchain.layers.waterchain_grid.data) > 0"
        class="card active"
        id="card-waterchain">
 
@@ -9,15 +9,19 @@
           ng-repeat="(entityName, entityData) in box.content.waterchain.layers.waterchain_grid.data">
 
         <td class="col-md-2">
-          <i id="icon-holder"
-             style="font-size: 14px;"
+          <i class="small-icon-holder"
+             style="position: relative; top: -1px; font-size: 14px;"
              ng-class="$parent.getIconClass(entityName)">
           </i>
         </td>
 
-        <td class="col-md-4"><% entityName %></td>
+        <td class="col-md-4">
+          <% entityName %>
+        </td>
 
-        <td><% countKeys(entityData) %></td>
+        <td>
+          <% countKeys(entityData) %>
+        </td>
       </tr>
     </table>
 
