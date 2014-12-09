@@ -206,8 +206,6 @@ angular.module('lizard-nxt')
       ClickFeedbackService.emptyClickLayer($scope.mapState);
     });
 
-    // $scope.getIconClass = UtilService.getIconClass;
-
     /**
      * @function
      * @memberOf app.pointCtrl
