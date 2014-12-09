@@ -135,14 +135,6 @@ angular.module('lizard-nxt')
         );
       }
 
-      for (var i in aggregatedArray) {
-        for (var j = 0; j < 100; j++) { 
-          var jan = angular.copy(aggregatedArray[i]);
-          jan.category = " dingen " + Math.random().toString();
-          aggregatedArray.push(jan);
-        }
-      }
-
       return aggregatedArray;
     };
 
