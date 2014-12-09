@@ -112,6 +112,7 @@ angular.module('lizard-nxt')
       return promises;
     };
 
+    // Make UtilSvc.getIconClass available in Angular templates
     $scope.getIconClass = UtilService.getIconClass;
   }
 ]);

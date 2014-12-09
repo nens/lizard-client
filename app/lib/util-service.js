@@ -465,7 +465,6 @@ angular.module('lizard-nxt')
   };
 
   /**
-<<<<<<< HEAD
    * @description - Deduce the wanted geometry-type from the passed in geomOpts
    * @param {object} geomOpts - the options.geom object
    * @return {string} - "POINT" | "LINE" | "AREA" | throw new Error!
@@ -508,21 +507,18 @@ angular.module('lizard-nxt')
    * @function
    * @description Get correct icon for structure
    */
-  this.getIconClass = function (str, small) {
-    var prefix = small === undefined ? "" : "small-";
+  this.getIconClass = function (str) {
     switch (str) {
-    case 'overflow':
-      return prefix + 'icon-overflow';
     case 'pumpstation':
-      return prefix + 'icon-pumpstation-diesel';
+      return 'icon-pumpstation-diesel';
     case 'bridge':
-      return prefix + 'icon-bridge';
+      return 'icon-bridge';
     case 'bridge-draw':
-      return prefix + 'icon-bridge';
+      return 'icon-bridge';
     case 'bridge-fixed':
-      return prefix + 'icon-bridge';
+      return 'icon-bridge';
     default:
-      return prefix + 'icon-' + str;
+      return 'icon-' + str;
     }
   };
 
