@@ -70,51 +70,6 @@ angular.module('lizard-nxt')
       }
     };
 
-    var _lineIntersect = function (line1, line2) {
-
-      var x1 = line1[0][0],
-          y1 = line1[0][1],
-          x2 = line1[1][0],
-          y2 = line1[1][1],
-
-          x3 = line2[0][0],
-          y3 = line2[0][1],
-          x4 = line2[1][0],
-          y4 = line2[1][1],
-
-          x = ((x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4)),
-          y = ((x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
-
-      if (isNaN(x)||isNaN(y)) {
-        return false;
-
-      } else {
-
-        if (x1>=x2) {
-          if (!(x2<=x&&x<=x1)) { return false; }
-        } else {
-          if (!(x1<=x&&x<=x2)) { return false; }
-        }
-        if (y1>=y2) {
-          if (!(y2<=y&&y<=y1)) { return false; }
-        } else {
-          if (!(y1<=y&&y<=y2)) { return false; }
-        }
-        if (x3>=x4) {
-          if (!(x4<=x&&x<=x3)) { return false; }
-        } else {
-          if (!(x3<=x&&x<=x4)) { return false; }
-        }
-        if (y3>=y4) {
-          if (!(y4<=y&&y<=y3)) { return false; }
-        } else {
-          if (!(y3<=y&&y<=y4)) { return false; }
-        }
-      }
-
-      return true;
-    };
-
     var _isWithinExtent = function (structureGeom, leafletBounds) {
 
       switch (structureGeom.type) {
@@ -125,76 +80,21 @@ angular.module('lizard-nxt')
           ));
 
         case "LineString":
-          console.log("--> linestring; we need some.. MAGIC!");
-
           var lineStart = L.latLng(
                 structureGeom.coordinates[0][1],
                 structureGeom.coordinates[0][0]
               ),
-
               lineEnd = L.latLng(
                 structureGeom.coordinates[1][1],
                 structureGeom.coordinates[1][0]
-              ),
+              );
 
-              northLongitude = leafletBounds._northEast.lng,
-              southLongitude = leafletBounds._southWest.lng,
-              westLatitude = leafletBounds._southWest.lat,
-              eastLatitude = leafletBounds._northEast.lat,
+          // TODO: Fix detection of lines that overlap the extent, but that do
+          // not start nor end within the extent. It negligable for now.
+          return leafletBounds.contains(lineStart) || leafletBounds.contains(lineEnd);
 
-              borderNorth = [
-                [northLongitude, westLatitude],
-                [northLongitude, eastLatitude]
-              ],
-              borderSouth = [
-                [southLongitude, westLatitude],
-                [southLongitude, eastLatitude]
-              ],
-              borderWest = [
-                [northLongitude, westLatitude],
-                [southLongitude, westLatitude]
-              ],
-              borderEast = [
-                [northLongitude, eastLatitude],
-                [southLongitude, eastLatitude]
-              ];
-
-          /*
-          Conditions for checking whether the line is (at least) partially within
-          a boundingbox (only one needs to be true):
-
-          - line starts in box
-          - line ends in box
-          - line intersects N border
-          - line intersects E border
-          - line intersects S border
-          - line intersects W border
-          */
-
-          if (leafletBounds.contains(lineStart) || leafletBounds.contains(lineEnd)) {
-            // line starts or ends in box;
-            console.log("line starts/ends in extent");
-            return true;
-          } else if (_lineIntersect(structureGeom.coordinates, borderNorth)) {
-            console.log("line intersects N");
-            return true;
-          } else if (_lineIntersect(structureGeom.coordinates, borderSouth)) {
-            console.log("line intersects S");
-            return true;
-          } else if (_lineIntersect(structureGeom.coordinates, borderWest)) {
-            console.log("line intersects W");
-            return true;
-          } else if (_lineIntersect(structureGeom.coordinates, borderEast)) {
-            console.log("line intersects E");
-            return true;
-          } else {
-            console.log("line is NOT in extent");
-            return false;
-          }
-
-          break;
         default:
-          throw new Error("[E] Did not found valid geom type:", structureGeom.type);
+          throw new Error("Did not found valid geom type:", structureGeom.type);
       }
     };
 
@@ -217,7 +117,8 @@ angular.module('lizard-nxt')
         }
 
         currentEntityName = structure.entity_name;
-        groupedStructures.data[currentEntityName] = groupedStructures.data[currentEntityName] || {};
+        groupedStructures.data[currentEntityName]
+          = groupedStructures.data[currentEntityName] || {};
         groupedStructures.data[currentEntityName][uniqueId] = structure;
       }
       return groupedStructures;
