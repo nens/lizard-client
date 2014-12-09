@@ -240,6 +240,7 @@ angular.module('lizard-nxt')
         nEvents: scope.events.nEvents,
         slugs: scope.events.slugs
       };
+      // Get data from all layegroups with type === 'Event'
       angular.forEach(scope.mapState.layerGroups, function (lg) {
         lg.getData({
           geom: scope.mapState.bounds,
@@ -247,8 +248,9 @@ angular.module('lizard-nxt')
           end: scope.timeState.stop,
           type: 'Event'
         }).then(null, null, function (response) {
-          console.log(response);
+
           if (response && response.data) {
+            // Add it to the timeline
             timeline.drawLines(
               response.data,
               context.eventOrder,
