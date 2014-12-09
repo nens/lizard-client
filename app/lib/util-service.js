@@ -486,12 +486,13 @@ angular.module('lizard-nxt')
   };
 
   /**
+   * @function
    * @description - Count all keys for an object (we can't do this vanilla.js style in Angular template)
    * @param {object} obj - The object for which we want to know the amount of keys.
    * @return {integer} - The amount of keys.
    */
   this.countKeys = function (obj) {
-    return Object.keys(obj).length;
+    return obj === undefined ? 0 : Object.keys(obj).length;
   };
 
   /**

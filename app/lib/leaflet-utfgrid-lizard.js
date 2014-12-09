@@ -282,7 +282,8 @@
           for (datumSlug in tile.data) {
             datum = tile.data[datumSlug];
             structureKey = this._getUniqueStructureId(datum);
-            if (!uniqueStructures.data[structureKey]) {
+            if (!uniqueStructures.data[structureKey])
+            {
               uniqueStructures.data[structureKey] = datum;
             }
           }
