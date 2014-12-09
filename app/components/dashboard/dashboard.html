@@ -10,9 +10,10 @@
                bar-chart
                class="xyGraph"
                data="eventAggs"
-               ylabel="Meldingen"
+               ylabel="'Meldingen'"
                keys="{x: 'timestamp', y: 'max', color: 'grey', category: 'count'}"
-               now="timeState.at">
+               now="timeState.at"
+               dimensions="{width: 600, height: 400}">
         </graph>
       </div>
       <div class="col-md-1">
