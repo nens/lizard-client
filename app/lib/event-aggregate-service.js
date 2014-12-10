@@ -10,11 +10,11 @@ angular.module('lizard-nxt')
   .service("EventAggregateService", ["UtilService", function (UtilService) {
 
     var COLOR_MAP = {
-      'Riolering': '#3498db',
-      'Wateroverlast buitenshuis': '#2ecc71',
+      'Riolering': '#2ecc71',
+      'Wateroverlast buitenshuis': '#3498db',
       'Wateroverlast binnenshuis': '#2980b9',
-      'Oppervlaktewater': '#2c3e50',
-      'Overig': '#2c3e50',
+      'Oppervlaktewater': '#34495e',
+      'Overig': '#95a5a6',
     };
 
     this.COLOR_MAP = COLOR_MAP;

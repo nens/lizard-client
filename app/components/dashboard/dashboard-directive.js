@@ -67,6 +67,9 @@ angular.module('dashboard')
 
     // init
     aggregateEvents();
+
+    // hack to get color map for legend
+    scope.colormap = EventAggregateService.COLOR_MAP;
   };
 
   return {

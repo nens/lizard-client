@@ -1,7 +1,7 @@
 <div class="dashboard-wrapper" ng-controller="DashboardCtrl">
   <div class="container-fluid">
     <div class="row">
-     <div class="col-md-12 dashboard-inner">
+     <div class="col-md-10 dashboard-inner">
        <div class="row">
          <graph ng-if="eventAggs"
                 bar-chart
@@ -28,8 +28,8 @@
       <div class="col-md-2 dashboard-table">
         <table class="table table-hover table-condensed">
           <tbody>
-          <tr>
-            <td>legend categories</td>
+          <tr ng-repeat="(category, color) in colormap">
+            <td><i class="fa fa-square" style='color: <% color %> '></i></td><td><% category %></td>
           </tr>
           </tbody>
         </table>
