@@ -1,7 +1,7 @@
 <div id="timeline" ng-controller="TimeCtrl">
 
   <div>
-  <div class="time-controls">
+  <div class="time-controls" ng-if="context === 'map'">
     <div class="btn-group">
       <a ng-click="timeState.playPauseAnimation()"
          class="extra-padding timeline-button"

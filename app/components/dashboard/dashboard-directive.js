@@ -19,7 +19,8 @@ angular.module('dashboard')
     };
 
     scope.dimensions.width = getWidth();
-    scope.dimensions.height = (getHeight() / 2) - 5;
+    // 2 graphs and some margin on top
+    scope.dimensions.height = (getHeight() / 2) - 20;
 
     var aggregateEvents = function () {
       angular.forEach(scope.mapState.layerGroups, function (lg) {

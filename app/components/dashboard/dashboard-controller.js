@@ -11,4 +11,8 @@ angular.module('dashboard')
   // this is calculated in directive.
   $scope.dimensions = {};
 
+  $scope.ylabels = {
+    duration: 'Afhandeltijd',
+    reports: 'Meldingen'
+  };
 }]);
