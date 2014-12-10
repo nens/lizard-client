@@ -18,7 +18,7 @@ angular.module('dashboard')
       return element.height();
     };
 
-    scope.dimensions.width = getWidth();
+    scope.dimensions.width = getWidth() - 10;
     // 2 graphs and some margin on top
     scope.dimensions.height = (getHeight() / 2) - 20;
 
