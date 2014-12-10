@@ -13,179 +13,247 @@ window.JS_DEBUG = false;
 // bootstrapped stuff by Django does not exist in tests.
 window.data_layers = {
   "satellite": {
+    "name": "Satelliet", 
+    "slug": "satellite", 
+    "active": false, 
+    "temporal": false, 
+    "temporal_resolution": 0, 
+    "opacity": 1.0, 
+    "order": 0, 
+    "baselayer": true, 
     "layers": [
-      {
-        "slug": "nelenschuurmans.iaa79205",
-        "type": "TMS",
-        "min_zoom": 0,
-        "max_zoom": 31,
-        "z_index": 0,
-        "url": "http://{s}.tiles.mapbox.com/v3",
-        "tiled": true,
-        "temporal": false,
-        "aggregation_type": "none",
-        "opacity": 1.0
-      }
-    ],
-    "id": 2,
-    "name": "Satelliet",
-    "slug": "satellite",
-    "active": false,
-    "order": 2,
-    "baselayer": true
-  },
+    {
+      "slug": "nelenschuurmans.iaa79205", 
+      "type": "Raster", 
+      "format": "TMS", 
+      "min_zoom": 0, 
+      "max_zoom": 31, 
+      "z_index": 0, 
+      "url": "http://{s}.tiles.mapbox.com/v3", 
+      "tiled": true, 
+      "rescalable": false, 
+      "scale": "nominal", 
+      "quantity": null, 
+      "unit": null, 
+      "aggregation_type": "none", 
+      "load_order": null, 
+      "options": {}, 
+      "bounds": {}, 
+      "color": "", 
+      "event_count": 0
+    }
+    ]
+  }, 
+  "topography": {
+    "name": "Topografie", 
+    "slug": "topography", 
+    "active": true, 
+    "temporal": false, 
+    "temporal_resolution": 0, 
+    "opacity": 1.0, 
+    "order": 1, 
+    "baselayer": true, 
+    "layers": [
+    {
+      "slug": "nelenschuurmans.iaa98k8k", 
+      "type": "Raster", 
+      "format": "TMS", 
+      "min_zoom": 0, 
+      "max_zoom": 31, 
+      "z_index": 0, 
+      "url": "http://{s}.tiles.mapbox.com/v3", 
+      "tiled": true, 
+      "rescalable": false, 
+      "scale": "nominal", 
+      "quantity": null, 
+      "unit": null, 
+      "aggregation_type": "none", 
+      "load_order": null, 
+      "options": {}, 
+      "bounds": {}, 
+      "color": "", 
+      "event_count": 0
+    }
+    ]
+  }, 
   "elevation": {
+    "name": "Hoogtekaart", 
+    "slug": "elevation", 
+    "active": false, 
+    "temporal": false, 
+    "temporal_resolution": 0, 
+    "opacity": 1.0, 
+    "order": 2, 
+    "baselayer": false, 
     "layers": [
-      {
-        "slug": "ahn2/wss",
-        "type": "Store",
-        "min_zoom": 0,
-        "max_zoom": 31,
-        "z_index": 0,
-        "url": "/api/v1/rasters",
-        "tiled": true,
-        "temporal": false,
-        "aggregation_type": "curve",
-        "opacity": 1.0
-      },
-      {
-        "slug": "elevation",
-        "type": "WMS",
-        "min_zoom": 0,
-        "max_zoom": 31,
-        "z_index": 0,
-        "url": "http://raster.lizard.net/wms",
-        "tiled": true,
-        "temporal": false,
-        "aggregation_type": "curve",
-        "opacity": 1.0
-      }
-    ],
-    "id": 3,
-    "name": "Hoogtekaart",
-    "slug": "elevation",
-    "active": false,
-    "order": 1,
-    "baselayer": true
-  },
+    {
+      "slug": "dem:nl", 
+      "type": "Raster", 
+      "format": "WMS", 
+      "min_zoom": 0, 
+      "max_zoom": 31, 
+      "z_index": 1, 
+      "url": "https://raster.lizard.net/wms", 
+      "tiled": true, 
+      "rescalable": true, 
+      "scale": "nominal", 
+      "quantity": null, 
+      "unit": null, 
+      "aggregation_type": "curve", 
+      "load_order": null, 
+      "options": {
+        "styles": "BrBG_r", 
+        "effects": "shade:0:3"
+      }, 
+      "bounds": {}, 
+      "color": "", 
+      "event_count": 0
+    }, 
+    {
+      "slug": "dem/nl", 
+      "type": "Raster", 
+      "format": "Store", 
+      "min_zoom": 0, 
+      "max_zoom": 31, 
+      "z_index": 0, 
+      "url": "/api/v1/rasters", 
+      "tiled": true, 
+      "rescalable": false, 
+      "scale": "interval", 
+      "quantity": "Hoogte", 
+      "unit": "m NAP", 
+      "aggregation_type": "curve", 
+      "load_order": null, 
+      "options": {}, 
+      "bounds": {}, 
+      "color": "", 
+      "event_count": 0
+    }
+    ]
+  }, 
   "waterchain": {
+    "name": "Water", 
+    "slug": "waterchain", 
+    "active": true, 
+    "temporal": false, 
+    "temporal_resolution": 0, 
+    "opacity": 1.0, 
+    "order": 5, 
+    "baselayer": false, 
     "layers": [
-      {
-        "slug": "impervioussurface",
-        "type": "Vector",
-        "min_zoom": 19,
-        "max_zoom": 31,
-        "z_index": 5,
-        "url": "/api/v1/tiles",
-        "tiled": true,
-        "temporal": false,
-        "aggregation_type": "none",
-        "opacity": 1.0
-      },
-      {
-        "slug": "waterchain_grid",
-        "type": "UTFGrid",
-        "min_zoom": 7,
-        "max_zoom": 31,
-        "z_index": 4,
-        "url": "/api/v1/tiles",
-        "tiled": true,
-        "temporal": false,
-        "aggregation_type": "none",
-        "opacity": 1.0
-      },
-      {
-        "slug": "waterchain_png",
-        "type": "TMS",
-        "min_zoom": 7,
-        "max_zoom": 31,
-        "z_index": 3,
-        "url": "/api/v1/tiles",
-        "tiled": true,
-        "temporal": false,
-        "aggregation_type": "none",
-        "opacity": 1.0
-      }
-    ],
-    "id": 5,
-    "name": "Water",
-    "slug": "waterchain",
-    "active": true,
-    "order": 2,
-    "baselayer": false
-  },
-  "rain": {
+    {
+      "slug": "waterchain_png", 
+      "type": "Asset", 
+      "format": "TMS", 
+      "min_zoom": 7, 
+      "max_zoom": 31, 
+      "z_index": 3, 
+      "url": "/api/v1/tiles", 
+      "tiled": true, 
+      "rescalable": false, 
+      "scale": "nominal", 
+      "quantity": null, 
+      "unit": null, 
+      "aggregation_type": "none", 
+      "load_order": 100, 
+      "options": {}, 
+      "bounds": {}, 
+      "color": "", 
+      "event_count": 0
+    }, 
+    {
+      "slug": "waterchain_grid", 
+      "type": "Asset", 
+      "format": "UTFGrid", 
+      "min_zoom": 7, 
+      "max_zoom": 31, 
+      "z_index": 4, 
+      "url": "/api/v1/tiles", 
+      "tiled": true, 
+      "rescalable": false, 
+      "scale": "nominal", 
+      "quantity": null, 
+      "unit": null, 
+      "aggregation_type": "none", 
+      "load_order": null, 
+      "options": {}, 
+      "bounds": {}, 
+      "color": "", 
+      "event_count": 0
+    }
+    ]
+  }, 
+  "soil": {
+    "name": "Bodem", 
+    "slug": "soil", 
+    "active": false, 
+    "temporal": false, 
+    "temporal_resolution": 0, 
+    "opacity": 1.0, 
+    "order": 4, 
+    "baselayer": false, 
     "layers": [
-      {
-        "slug": "radar/basic",
-        "type": "Store",
-        "min_zoom": 0,
-        "max_zoom": 31,
-        "z_index": 2,
-        "url": "/api/v1/rasters",
-        "tiled": false,
-        "temporal": true,
-        "aggregation_type": "none",
-        "opacity": 1.0
-      },
-      {
-        "slug": "demo:radar",
-        "type": "WMS",
-        "min_zoom": 0,
-        "max_zoom": 31,
-        "z_index": 2,
-        "url": "http://raster.lizard.net/wms",
-        "tiled": false,
-        "bounds": {
-          "west": 1.324296158471368,
-          "east": 8.992548357936204,
-          "north": 54.28458617998074,
-          "south": 49.82567047026146
-        },
-        "temporal": true,
-        "aggregation_type": "none",
-        "opacity": 1.0
-      }
-    ],
-    "id": 6,
-    "name": "Regen",
-    "slug": "rain",
-    "active": false,
-    "order": 3,
-    "baselayer": false
-  },
-  "alarms": {
+    {
+      "slug": "isahw:BOFEK2012", 
+      "type": "Raster", 
+      "format": "WMS", 
+      "min_zoom": 0, 
+      "max_zoom": 31, 
+      "z_index": 0, 
+      "url": "http://geoserver6.lizard.net/geoserver/isahw/wms", 
+      "tiled": true, 
+      "rescalable": false, 
+      "scale": "nominal", 
+      "quantity": null, 
+      "unit": null, 
+      "aggregation_type": "none", 
+      "load_order": null, 
+      "options": {
+        "styles": "", 
+        "transparent": "true", 
+        "tiled": "true"
+      }, 
+      "bounds": {}, 
+      "color": "", 
+      "event_count": 0
+    }
+    ]
+  }, 
+  "alarm": {
+    "name": "Alarm", 
+    "slug": "alarm", 
+    "active": false, 
+    "temporal": false, 
+    "temporal_resolution": 0, 
+    "opacity": 1.0, 
+    "order": 7, 
+    "baselayer": false, 
     "layers": [
-      {
-        "opacity": 1.0,
-        "max_zoom": 31,
-        "min_zoom": 0,
-        "tiled": true,
-        "slug": "alarms",
-        "z_index": 100,
-        "aggregation_type": "none",
-        "url": "/api/v1/tiles",
-        "temporal": true,
-        "summary": 6,
-        "type": "Vector"
-      }
-    ],
-    "name": "Alarmen",
-    "slug": "alarms",
-    "active": false,
-    "baselayer": false,
-    "order": 5
-  }
+    {
+      "slug": "alarm", 
+      "type": "Event", 
+      "format": "Vector", 
+      "min_zoom": 11, 
+      "max_zoom": 31, 
+      "z_index": null, 
+      "url": "/api/v1/tiles", 
+      "tiled": true, 
+      "rescalable": false, 
+      "scale": "nominal", 
+      "quantity": "", 
+      "unit": "", 
+      "aggregation_type": "none", 
+      "load_order": null, 
+      "options": {}, 
+      "bounds": {}, 
+      "color": "#c0392b", 
+      "event_count": 6
+    }
+    ]
+  } 
 };
 
-window.data_bounds = {
-  "all": {
-    "west": 3.04,
-    "east": 7.58,
-    "north": 53.63,
-    "south": 50.57
-  }
-};
+
 
 var rasterMock = [
   [

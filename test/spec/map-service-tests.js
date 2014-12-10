@@ -28,8 +28,8 @@ describe('Testing map service', function () {
 
   it('should toggle baselayerGroups on and other baselayerGroups off', function () {
     map.toggleLayerGroup(map.layerGroups.satellite);
-    map.toggleLayerGroup(map.layerGroups.elevation);
-    expect(map.layerGroups.elevation.isActive()).toBe(true);
+    map.toggleLayerGroup(map.layerGroups.topography);
+    expect(map.layerGroups.topography.isActive()).toBe(true);
     expect(map.layerGroups.satellite.isActive()).toBe(false);
   });
 
