@@ -248,9 +248,6 @@ angular.module('lizard-nxt')
   // default context
   $scope.context = 'map';
 
-  // temp helper
-  $scope.tmp = {};
-
   // END CONTEXT
 
   // MAP MODEL is set by the map-directive

@@ -374,7 +374,7 @@ angular.module('lizard-nxt')
     // ENTER
     // Create new elements as needed.
     rects.enter().append("rect")
-      .style("fill", function (d) { return d.color; })
+      .style("fill", function (d) { return d[keys.color]; })
       .attr("x", function (d) { return scale(d.start); })
       .attr("y", 0)
       .attr('class', 'horizontal-rect')
@@ -443,7 +443,7 @@ angular.module('lizard-nxt')
       .attr('width', function (d) { return barWidth; })
       .attr("y", function (d) { return y.scale(0); })
       .attr("height", 0)
-      .style("fill", function (d) { return d.color || ''; })
+      .style("fill", function (d) { return d[keys.color] || ''; })
       .transition()
       .duration(duration)
       // Bring bars in one by one

@@ -1,31 +1,50 @@
 <div class="dashboard-wrapper" ng-controller="DashboardCtrl">
   <div class="container-fluid">
     <div class="row">
-     <div class="col-md-9">
-        <graph ng-if="eventAggs"
-               bar-chart
-               class="xyGraph"
-               data="eventAggs"
-               ylabel="Meldingen"
-               keys="{x: 'timestamp', y: 'max', color: 'grey', category: 'count'}"
-               dimensions="dimensions"
-               now="timeState.at">
-        </graph>
+     <div class="col-md-1">
+      spatial navigation
+     </div>
+     <div class="col-md-8 dashboard-inner">
+       <div class="row">
+         <graph ng-if="eventAggs"
+                bar-chart
+                class="xyGraph"
+                data="eventAggs"
+                ylabel="Meldingen"
+                keys="{x: 'timestamp', y: 'count', color: 'color', category: 'category'}"
+                dimensions="dimensions"
+                now="timeState.at">
+          </graph>
+       </div>
+       <div class="row">
+         <graph ng-if="eventAggs"
+                bar-chart
+                class="xyGraph"
+                data="eventAggs"
+                ylabel="Afhandeltijd"
+                keys="{x: 'timestamp', y: 'mean_duration', color: 'color', category: 'category'}"
+                dimensions="dimensions"
+                now="timeState.at">
+          </graph>
+        </div>
       </div>
-      <div class="col-md-3 dashboard-table">
+      <div class="col-md-2 dashboard-table">
         <table class="table table-hover table-condensed" >
          <tbody>
-            <tr ng-repeat="event in eventAggs" ng-mouseover="changeTimeState(event.timestamp)">
-                <td rel="tooltip"
-                    data-placement="left">
-                    <% event.timestamp | date:'dd/MM/yyyy' %>
-                </td>
-                <td rel="tooltip"
-                    data-placement="left"
-                    title="<% event.category %>">
-                  <% event.category | truncate:40 %>
-                </td>
-              </tr>
+         <tr>
+           <td>legend categories</td>
+         </tr>
+            <!--<tr ng-repeat="event in eventAggs" ng-mouseover="changeTimeState(event.timestamp)">-->
+                <!--<td rel="tooltip"-->
+                    <!--data-placement="left">-->
+                    <!--<% event.timestamp | date:'dd/MM/yyyy' %>-->
+                <!--</td>-->
+                <!--<td rel="tooltip"-->
+                    <!--data-placement="left"-->
+                    <!--title="<% event.category %>">-->
+                  <!--<% event.category | truncate:40 %>-->
+                <!--</td>-->
+              <!--</tr>-->
           </tbody>
         </table>
 

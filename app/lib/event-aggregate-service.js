@@ -9,6 +9,36 @@
 angular.module('lizard-nxt')
   .service("EventAggregateService", ["UtilService", function (UtilService) {
 
+    var COLOR_MAP = {
+      'Riolering': '#3498db',
+      'Wateroverlast buitenshuis': '#2ecc71',
+      'Wateroverlast binnenshuis': '#2980b9',
+      'a': '#2c3e50',
+    };
+
+    this.COLOR_MAP = COLOR_MAP;
+
+    /**
+     * @function timeCatComparator
+     * @summary comparator function to use for javascript array sort.
+     *
+     * @description Sorts arrays of object on properties timestamp and category
+     */
+    var timeCatComparator = d3.comparator()
+      .order(d3.ascending, function (d) { return d.timestamp; })
+      .order(d3.ascending, function (d) { return d.category; });
+
+    /**
+     * @function _getColor
+     * @summary helper function to get color for category
+     *
+     * @param {string} category - Category name.
+     * @returns {string} HTML HEX color code.
+     */
+    var _getColor = function (category) {
+      return COLOR_MAP[category] || '#7f8c8d';
+    };
+
     /**
      * @function _getValue
      * @summary helper function to get value property of geojson feature.
@@ -19,15 +49,16 @@ angular.module('lizard-nxt')
     var _getValue = function (d) {return parseFloat(d.properties.value); };
 
     /**
-     * @function _getTimeInterval
+     * @function _getTimeIntervalDats
      * @summary helper function to get difference between timestamp_end and
      * timestamp_start
      *
      * @param {object} d - geojson feature.
-     * @returns {integer} time interval in ms.
+     * @returns {integer} time interval in days.
      */
-    var _getTimeInterval = function (d) {
-      return d.properties.timestamp_end - d.properties.timestamp_start;
+    var _getTimeIntervalDays = function (d) {
+      return (d.properties.timestamp_end - d.properties.timestamp_start) /
+              1000 / 60 / 60 / 24;
     };
 
     /**
@@ -77,7 +108,7 @@ angular.module('lizard-nxt')
           .rollup(function (leaves) {
             var stats = {
               "count": leaves.length,
-              "mean_duration": d3.mean(leaves, _getTimeInterval)
+              "mean_duration": d3.mean(leaves, _getTimeIntervalDays)
             };
 
             return stats;
@@ -92,11 +123,15 @@ angular.module('lizard-nxt')
               tmpObj = {"timestamp": timestamp,
                         "category": category,
                         "mean_duration": value.mean_duration,
+                        "color": _getColor(category),
                         "count": value.count};
               aggregatedArray.push(tmpObj);
             });
           }
         );
+
+        // sort array by timestamp and category
+        aggregatedArray.sort(timeCatComparator);
       } else {
 
         nestedData = d3.nest()
@@ -112,7 +147,7 @@ angular.module('lizard-nxt')
               "mean": d3.mean(leaves, _getValue),
               "median": d3.median(leaves, _getValue),
               "sum": d3.sum(leaves, _getValue),
-              "mean_duration": d3.mean(leaves, _getTimeInterval)
+              "mean_duration": d3.mean(leaves, _getTimeIntervalDays)
             };
 
             return stats;
