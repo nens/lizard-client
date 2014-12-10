@@ -63,6 +63,9 @@ angular.module('dashboard')
       if (n === o) { return true; }
       aggregateEvents();
     });
+
+    // init
+    aggregateEvents();
   };
 
   return {

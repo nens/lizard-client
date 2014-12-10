@@ -9,6 +9,25 @@
 angular.module('lizard-nxt')
   .service("EventAggregateService", ["UtilService", function (UtilService) {
 
+    var COLOR_MAP = {
+      'Riolering': '#3498db',
+      'Wateroverlast buitenshuis': '#2ecc71',
+      'Wateroverlast binnenshuis': '#2980b9',
+      'a': '#2c3e50',
+    };
+
+    this.COLOR_MAP = COLOR_MAP;
+
+    /**
+     * @function timeCatComparator
+     * @summary comparator function to use for javascript array sort.
+     *
+     * @description Sorts arrays of object on properties timestamp and category
+     */
+    var timeCatComparator = d3.comparator()
+      .order(d3.ascending, function (d) { return d.timestamp; })
+      .order(d3.ascending, function (d) { return d.category; });
+
     /**
      * @function _getColor
      * @summary helper function to get color for category
@@ -17,13 +36,6 @@ angular.module('lizard-nxt')
      * @returns {string} HTML HEX color code.
      */
     var _getColor = function (category) {
-      var COLOR_MAP = {
-        'Riolering': '#3498db',
-        'Wateroverlast buitenshuis': '#2ecc71',
-        'Wateroverlast binnenshuis': '#2980b9',
-        'a': '#2c3e50',
-      };
-
       return COLOR_MAP[category] || '#7f8c8d';
     };
 
@@ -117,6 +129,9 @@ angular.module('lizard-nxt')
             });
           }
         );
+
+        // sort array by timestamp and category
+        aggregatedArray.sort(timeCatComparator);
       } else {
 
         nestedData = d3.nest()
