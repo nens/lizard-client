@@ -56,6 +56,7 @@ angular.module('lizard-nxt')
 
         getData: {
           value: function (lgSlug, options, deferred) {
+            if (options.type && options.type !== this.type) { return; }
             return this._buildPromise(lgSlug, options, deferred, UtfGridService);
           }
         },
