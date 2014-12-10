@@ -13,7 +13,8 @@ angular.module('lizard-nxt')
       'Riolering': '#3498db',
       'Wateroverlast buitenshuis': '#2ecc71',
       'Wateroverlast binnenshuis': '#2980b9',
-      'a': '#2c3e50',
+      'Oppervlaktewater': '#2c3e50',
+      'Overig': '#2c3e50',
     };
 
     this.COLOR_MAP = COLOR_MAP;
