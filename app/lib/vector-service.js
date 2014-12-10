@@ -12,8 +12,8 @@
  */
 
 angular.module('lizard-nxt')
-  .service('VectorService', ['$q', '$rootScope', 'LeafletService',
-  function ($q, $rootScope, LeafletService) {
+  .service('VectorService', ['$q', '$rootScope', 'LeafletService', 'UtilService',
+  function ($q, $rootScope, LeafletService, UtilService) {
 
     /**
      * @function
@@ -277,21 +277,9 @@ angular.module('lizard-nxt')
      * @description gets unique values and tosses duplicates
      * part of PostGis.js (ಠ_ಠ)
      */
-    var getUnion = function (arr1, arr2, uniqueKey) {
-      var union = arr1;
-      var ids = [];
-
-      for (var j = 0; j < union.length; j++) {
-        ids.push(union[j].properties[uniqueKey]);
-      }
-
-      for (var i = 0; i < arr2.length; i++) {
-        if (ids.indexOf(arr2[i].properties[uniqueKey]) < 0) {
-          union.push(arr2[i]);
-        }
-      }
-      return union;
-    };
+    var getUnion = function (arr1, arr2) {
+      return UtilService.union(arr1, arr2);
+   };
 
     /**
      * @description appends data if zoom level hasn't changed
@@ -300,7 +288,7 @@ angular.module('lizard-nxt')
     var setData = function (layerSlug, data, zoom) {
       if (vectorLayers.hasOwnProperty(layerSlug)
         && vectorLayers[layerSlug].zoom === zoom) {
-        vectorLayers[layerSlug].data = getUnion(vectorLayers[layerSlug].data, data, 'id');
+        vectorLayers[layerSlug].data = getUnion(vectorLayers[layerSlug].data, data);
       } else {
         replaceData.apply(this, arguments);
       }

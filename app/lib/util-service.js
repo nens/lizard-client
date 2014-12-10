@@ -502,4 +502,16 @@ angular.module('lizard-nxt')
   this.pxToInt = function (str) {
     return parseInt(str.replace("px", ""));
   };
+
+ 
+  /*
+   * @function
+   * @description wrapper around lodash.union function
+   * which works better than our own implementation..
+   * Could be more efficient to call from api in a batch
+   * instead of tiled/geojson stuff.
+   *
+   */
+  this.union = _.union;
+
 }]);
