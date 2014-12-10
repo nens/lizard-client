@@ -37,6 +37,7 @@ module.exports = function(config) {
       'vendor/raven-js/dist/raven.js',
       'vendor/d3-comparator/d3-comparator.js',
       // endbower
+      'app/components/dashboard/dashboard.js',
       'app/lizard-nxt.js',
       'app/*.js',
       'test/mocks/**/*.js',

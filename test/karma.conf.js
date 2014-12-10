@@ -39,6 +39,7 @@ module.exports = function(config) {
       // endbower
 
       // application
+      'app/components/dashboard/dashboard.js',
       'app/lizard-nxt.js',
       'app/*.js',
       'test/mocks/**/*.js',
