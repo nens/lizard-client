@@ -434,7 +434,8 @@ angular.module('lizard-nxt')
       })
       .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
       .attr('width', function (d) { return barWidth; })
-      .attr("y", function (d) { return y.scale(d[keys.y]); });
+      .attr("y", function (d) { return y.scale(d[keys.y]); })
+      .style("fill", function (d) { return d[keys.color] || ''; })
     // ENTER
     // Create new elements as needed.
     bar.enter().append("rect")
