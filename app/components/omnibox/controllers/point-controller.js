@@ -206,21 +206,4 @@ angular.module('lizard-nxt')
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer($scope.mapState);
     });
-
-    /**
-     * @function
-     * @memberOf app.pointCtrl
-     * @description Toggling the view on the table for structure attributes;
-     *              Either show the first 3 attributes, OR show all of them
-     */
-    $scope.box.toggleFullTable = function () {
-
-      $scope.box.showFullTable = !$scope.box.showFullTable;
-
-      d3.selectAll('tr.attr-row')
-        .classed('hidden', function (_, i) {
-          return i > 2 && !$scope.box.showFullTable;
-        });
-    };
-  }
 ]);

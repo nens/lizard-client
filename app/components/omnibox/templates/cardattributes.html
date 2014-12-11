@@ -43,22 +43,6 @@
     </tr>
   </table>
 
-  <div class="show-structure-attrs-link" ng-class="{hidden: !fullDetails}"
-        ng-click="$parent.box.toggleFullTable()">
-
-    <span class="show-structure-attrs-text"
-          ng-if="$parent.box.showFullTable
-            && wanted[waterchain.layers.waterchain_grid.data.entity_name].rows.length > 3">
-      <i class="fa fa-lg fa-caret-up table-toggler"></i>
-    </span>
-
-    <span class="show-structure-attrs-text"
-          ng-if="!$parent.box.showFullTable
-            && wanted[waterchain.layers.waterchain_grid.data.entity_name].rows.length > 3">
-      <i class="fa fa-lg fa-caret-down table-toggler"></i>
-    </span>
-  </div>
-
   <div class="structure-image-wrapper text-center"
        ng-if="!!waterchain.layers.waterchain_grid.data.image_url && fullDetails">
 
