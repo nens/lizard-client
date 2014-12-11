@@ -85,7 +85,7 @@ angular.module('lizard-nxt')
         angular.forEach(content, function (lg) {
           if (lg && lg.layers) {
             angular.forEach(lg.layers, function (layer) {
-              if (layer.type === 'Vector' && layer.data.length > 0) {
+              if (layer.format === 'Vector' && layer.data.length > 0) {
                 ClickFeedbackService.drawGeometry(
                   $scope.mapState,
                   layer.data
@@ -122,7 +122,7 @@ angular.module('lizard-nxt')
           angular.forEach(content, function (lg) {
             if (lg && lg.layers) {
               angular.forEach(lg.layers, function (layer) {
-                if (layer.type === 'Store' && layer.data.length > 0) {
+                if (layer.format === 'Store' && layer.data.length > 0) {
                   ClickFeedbackService.drawArrow($scope.mapState, $scope.mapState.here);
                   feedbackDrawn = true;
                 }
