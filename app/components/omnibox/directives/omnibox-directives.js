@@ -60,15 +60,16 @@ angular.module("omnibox", ["templates-main"])
       scope.box.minimizeCards = function () {
         // height of search and nav combined
         var searchNav = $('#searchboxinput').offset().top + $('#searchboxinput').height();
-        var heights = $('#cards').height() + searchNav + 
+        var cardsTooHigh = $('#cards').height() + searchNav +
           $('#timeline').height() > $('body').height();
         // jquery is good at this stuff alternative version would be:
         // document.querySelector('#cards').clientHeight etc...
-        if (heights) {
+        if (cardsTooHigh) {
           angular.forEach(Object.keys(scope.box.fullDetailCards),
-              function (layer) {
-                scope.box.fullDetailCards[layer] = false;
-              });
+            function (layer) {
+              scope.box.fullDetailCards[layer] = false;
+            }
+          );
         }
       };
 
