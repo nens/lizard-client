@@ -63,6 +63,9 @@
 
       this._url = url;
       this._cache = {};
+      // We keep track of the tiles which are at least partially within
+      // the current spatial extent.
+      this._extentCache = {};
 
       //Find a unique id in window we can use for our callbacks
       //Required for jsonP
@@ -175,22 +178,24 @@
     _update: function () {
 
       var bounds = this._map.getPixelBounds(),
-        zoom = this._map.getZoom(),
-        tileSize = this.options.tileSize;
+          zoom = this._map.getZoom(),
+          tileSize = this.options.tileSize;
 
       if (zoom > this.options.maxZoom || zoom < this.options.minZoom) {
         return;
       }
 
       var nwTilePoint = new L.Point(
-        Math.floor(bounds.min.x / tileSize),
-        Math.floor(bounds.min.y / tileSize)
-      ),
-      seTilePoint = new L.Point(
-        Math.floor(bounds.max.x / tileSize),
-        Math.floor(bounds.max.y / tileSize)
-      ),
-      max = this._map.options.crs.scale(zoom) / tileSize;
+            Math.floor(bounds.min.x / tileSize),
+            Math.floor(bounds.min.y / tileSize)
+          ),
+          seTilePoint = new L.Point(
+            Math.floor(bounds.max.x / tileSize),
+            Math.floor(bounds.max.y / tileSize)
+          ),
+          max = this._map.options.crs.scale(zoom) / tileSize;
+
+      this._extentCache = {}; // empty the _extentCache
 
       //Load all required ones
       for (var x = nwTilePoint.x; x <= seTilePoint.x; x++) {
@@ -200,8 +205,13 @@
           var key = zoom + '_' + xw + '_' + yw;
 
           if (!this._cache.hasOwnProperty(key)) {
+            // We prepare the new tiles that are to be rendered:
             this._cache[key] = null;
+            this._extentCache[key] = null;
             this._loadTile(zoom, xw, yw);
+          } else {
+            // We keep the old tiles that are still rendered:
+            this._extentCache[key] = this._cache[key];
           }
         }
       }
@@ -232,6 +242,7 @@
 
       L.Util.ajax(url, function (data) {
         self._cache[key] = data;
+        self._extentCache[key] = data;
         self._tileLoaded();
       });
     },
@@ -244,8 +255,42 @@
         c--;
       }
       return c - 32;
-    }
+    },
 
+    _getUniqueStructureId: function (structureData) {
+      try {
+        return structureData.entity_name + "$" + structureData.id;
+      } catch (e) {
+        throw new Error("Tried to derive a unique structure ID from incomplete data: its not gonna w0rk. Error 'e' =", e);
+      }
+    },
+
+    getUniqueStructuresForExtent: function () {
+
+      var tile,
+          tileSlug,
+          uniqueStructures = { data: {} };
+
+      for (tileSlug in this._extentCache) {
+        tile = this._extentCache[tileSlug];
+        if (tile && tile.data) {
+
+          var datum,
+              datumSlug,
+              structureKey;
+
+          for (datumSlug in tile.data) {
+            datum = tile.data[datumSlug];
+            structureKey = this._getUniqueStructureId(datum);
+            if (!uniqueStructures.data[structureKey])
+            {
+              uniqueStructures.data[structureKey] = datum;
+            }
+          }
+        }
+      }
+      return uniqueStructures;
+    }
   });
 
   L.utfGrid = function (url, options) {

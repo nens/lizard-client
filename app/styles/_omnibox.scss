@@ -129,6 +129,22 @@
     left: 0;
 }
 
+.card table i[class*='icon-'] {
+    position: relative;
+    top: -1px;
+    font-size: 1em;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+
+    /* this needs to be merged with minimize version.. 
+     * this is for the table version in area aggreagation 
+     */
+    .card table i[class*='icon-'] {
+        top: 7px;
+    }
+}
+
 .card .flip-button, .card .flip-button a {
     position: absolute;
     bottom: 5px;

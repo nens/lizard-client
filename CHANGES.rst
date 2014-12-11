@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- UTFGrid aggregation: get all structures for spatial extent.
+
 - Event aggregate service.
 
 - Bar chart supports stacked bars.
