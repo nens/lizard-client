@@ -206,4 +206,6 @@ angular.module('lizard-nxt')
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer($scope.mapState);
     });
+
+  };
 ]);
