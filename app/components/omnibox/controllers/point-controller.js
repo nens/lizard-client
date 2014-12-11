@@ -207,5 +207,5 @@ angular.module('lizard-nxt')
       ClickFeedbackService.emptyClickLayer($scope.mapState);
     });
 
-  };
+  }
 ]);
