@@ -223,7 +223,7 @@ angular.module('lizard-nxt')
   /**
    * @function serveToOldIE
    * @memberOf UtilService
-   * @description Check whether the client uses IE10+/non-IE browser 
+   * @description Check whether the client uses IE10+/non-IE browser
    *   (return false) OR that she uses an older IE version (return true)
    */
   this.serveToOldIE = function () {
@@ -356,7 +356,10 @@ angular.module('lizard-nxt')
    */
   this.isSufficientlyRichData = function (data) {
 
-    if (data === 'null') {
+    if (data === undefined) {
+      return false;
+
+    } else if (data === 'null') {
       // backend did not return valid data.. log as ERROR?
       return false;
 
@@ -462,7 +465,64 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * @description - Convert lin to log scale, given the following 3 args.
+   * @description - Deduce the wanted geometry-type from the passed in geomOpts
+   * @param {object} geomOpts - the options.geom object
+   * @return {string} - "POINT" | "LINE" | "AREA" | throw new Error!
+   *
+   * NB! In the foreseeable future, we need to take care of non-rectangle
+   *     polygons, and we'll need to adjust this code accordingly.
+   *     When will then be now? soon.
+   */
+  this.getGeomType = function (geomOpts) {
+
+    if (geomOpts instanceof L.LatLng) {
+      return "POINT";
+
+    } else if (geomOpts._southWest && geomOpts._northEast) {
+      return "AREA";
+
+    } else if (geomOpts.length === 2
+      && geomOpts[0] instanceof L.LatLng
+      && geomOpts[1] instanceof L.LatLng) {
+      return "LINE";
+
+    } else {
+      throw new Error(
+        "getGeomType could not deduce a valid geometry type from the passed in arg: 'geomOpts' =", geomOpts
+      );
+    }
+  };
+
+  /**
+   * @function
+   * @description - Count all keys for an object (we can't do this vanilla.js style in Angular template)
+   * @param {object} obj - The object for which we want to know the amount of keys.
+   * @return {integer} - The amount of keys.
+   */
+  this.countKeys = function (obj) {
+    return obj === undefined ? 0 : Object.keys(obj).length;
+  };
+
+  /**
+   * @function
+   * @description Get correct icon for structure
+   */
+  this.getIconClass = function (str) {
+    switch (str) {
+    case 'pumpstation':
+      return 'icon-pumpstation-diesel';
+    case 'bridge':
+      return 'icon-bridge';
+    case 'bridge-draw':
+      return 'icon-bridge';
+    case 'bridge-fixed':
+      return 'icon-bridge';
+    default:
+      return 'icon-' + str;
+    }
+  };
+
+  /* @description - Convert lin to log scale, given the following 3 args.
    * @param {number} value - the value to convert
    * @param {number} minValue - the start of the scale
    * @param {number} maxValue - the end of the scale
@@ -500,6 +560,11 @@ angular.module('lizard-nxt')
    * @param {string} str - The string to be converted.
    */
   this.pxToInt = function (str) {
-    return parseInt(str.replace("px", ""));
+    try {
+      return parseInt(str.replace("px", ""));
+    } catch (e) {
+      throw new Error("Could not extract integer from string: '" + str + "'");
+    }
   };
+
 }]);

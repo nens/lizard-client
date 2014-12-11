@@ -177,7 +177,7 @@ angular.module('lizard-nxt')
   $scope.user = user;
   $scope.versioning = versioning;
 
-  var MIN_TIME_FOR_EXTENT = (new Date(2014, 0, 0, 0, 0, 0, 0)).getTime();
+  var MIN_TIME_FOR_EXTENT = (new Date(2010, 0, 0, 0, 0, 0, 0)).getTime();
   var MAX_TIME_FOR_EXTENT = (new Date(2015, 0, 0, 0, 0, 0, 0)).getTime();
 
   // BOX MODEL

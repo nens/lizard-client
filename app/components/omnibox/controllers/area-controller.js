@@ -13,7 +13,21 @@
  *
  */
 angular.module('lizard-nxt')
-  .controller('AreaCtrl', ['$scope', 'RasterService', '$q', function ($scope, RasterService, $q) {
+  .controller('AreaCtrl', [
+
+    '$scope',
+    'RasterService',
+    'UtilService',
+    '$q',
+
+    function (
+
+      $scope,
+      RasterService,
+      UtilService,
+      $q
+
+    ) {
 
     $scope.box.content = {};
 
@@ -67,5 +81,7 @@ angular.module('lizard-nxt')
     // Load data at initialization.
     fillArea($scope.mapState.bounds);
 
+    // Make UtilSvc.countKeys available in Angular templates
+    $scope.countKeys = UtilService.countKeys;
   }
 ]);

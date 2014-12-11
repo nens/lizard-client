@@ -24,13 +24,14 @@
       </div>
 
       <div ng-switch-when="Vector">
+        <full-details class="table-details-toggler"></full-details>
         <table class="table table-hover table-condensed" >
           <thead>
               <th><i class="fa fa-circle" ng-style="{'color': l.color }"></i></th>
               <th><% lg.layerGroupName %></th>
-              <th><% filteredRes.length %></th>
+              <th><% l.data.length %></th>
           </thead>
-          <tbody>
+          <tbody ng-if="fullDetails">
             <tr ng-repeat="event in l.data">
                 <td rel="tooltip"
                     data-placement="left"

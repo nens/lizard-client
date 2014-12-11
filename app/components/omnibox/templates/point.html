@@ -2,12 +2,12 @@
 
   <div class="card active"
       ng-if="box.content.waterchain">
-    <cardattributes waterchain="box.content.waterchain"></cardattributes>
+    <cardattributes waterchain="box.content.waterchain" full-details="box.fullDetailCards.waterchain"></cardattributes>
   </div>
 
   <div class="card active"
        ng-if="box.content.waterchain && box.content.timeseries">
-    <timeseries timeseries="box.content.timeseries"></timeseries>
+    <timeseries timeseries="box.content.timeseries" full-details="box.fullDetailCards.timeseries"></timeseries>
   </div>
 
   <div ng-if="box.content.rain">

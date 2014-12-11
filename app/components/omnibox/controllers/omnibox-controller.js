@@ -1,12 +1,10 @@
 angular.module('lizard-nxt')
   .controller("OmniboxCtrl", [
-
   "$scope",
   "UtilService",
   "ClickFeedbackService",
 
   function (
-
     $scope,
     UtilService,
     ClickFeedbackService) {
@@ -57,10 +55,13 @@ angular.module('lizard-nxt')
           });
 
           // plakband for hydra_core discrepancy: name vs. display_name
-          if (lGContent &&
+          if ($scope.box.type === 'point' &&
+              lGContent &&
               lGContent.layers &&
               lGContent.layers.waterchain_grid &&
-              lGContent.layers.waterchain_grid.data) {
+              lGContent.layers.waterchain_grid.data
+              ) {
+
             lGContent.layers.waterchain_grid.data =
               UtilService.fixUTFNameData(lGContent.layers.waterchain_grid.data);
           }
@@ -82,8 +83,6 @@ angular.module('lizard-nxt')
            * }
            */
 
-           // kill timeseries
-
           $scope.box.content[response.layerGroupSlug] = lGContent;
 
         } else {
@@ -99,7 +98,9 @@ angular.module('lizard-nxt')
             }
           }
         }
-        // Accomadate chaining in child controllers
+
+
+        // Accomodate chaining in child controllers
         return response;
       };
 
@@ -110,5 +111,8 @@ angular.module('lizard-nxt')
 
       return promises;
     };
+
+    // Make UtilSvc.getIconClass available in Angular templates
+    $scope.getIconClass = UtilService.getIconClass;
   }
 ]);

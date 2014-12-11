@@ -1,6 +1,30 @@
 <div ng-controller="AreaCtrl">
+
+  <div ng-if="countKeys(box.content.waterchain.layers.waterchain_grid.data) > 0"
+       class="card active"
+       id="card-waterchain">
+    <table class="table table-condensed table-hover">
+      <tr class="attr-row"
+          ng-repeat="(entityName, entityData) in box.content.waterchain.layers.waterchain_grid.data">
+
+        <td class="col-md-1 sm-icon">
+          <i ng-class="$parent.getIconClass(entityName)">
+          </i>
+        </td>
+
+        <td class="col-md-4">
+          <% entityName %>
+        </td>
+
+        <td>
+          <% countKeys(entityData) %>
+        </td>
+      </tr>
+    </table>
+  </div>
+
   <div ng-repeat="(slug, lg) in box.content"
-       ng-if="slug !== 'rain'"
+       ng-if="slug !== 'rain' && slug !== 'waterchain'"
        class="card active" id="card-<% slug %>">
 
     <div
