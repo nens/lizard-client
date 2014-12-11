@@ -7,16 +7,13 @@ angular.module('lizard-nxt')
 
     var state = {};
 
-    // returns a getter function for the provided attribute of the state.
-    state.get = function (stateStr) {
-      return function () {
-        var property = state;
-        debugger
-        angular.forEach(stateStr.split('.'), function (accessor) {
-          property = property[accessor];
-        });
-        return property;
-      };
+    // returns a string representation of the provided attribute of the state.
+    state.toString = function (stateStr) {
+      var property = state;
+      angular.forEach(stateStr.split('.'), function (accessor) {
+        property = property[accessor];
+      });
+      return JSON.stringify(property);
     };
 
     var _context = 'map';
