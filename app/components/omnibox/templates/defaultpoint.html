@@ -1,6 +1,6 @@
 <div>
   <div ng-repeat="l in lg.layers track by $index">
-    <div ng-switch="l.type">
+    <div ng-switch="l.format">
 
       <div ng-switch-when="Store">
         <table ng-if="l.scale === 'interval' || l.scale === 'ratio' "
