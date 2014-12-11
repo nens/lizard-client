@@ -84,6 +84,7 @@ angular.module('lizard-nxt')
       setLayerGoupsToDefault: function () {
         var map = this._map;
         angular.forEach(this.layerGroups, function (layerGroup) {
+          console.log("layerGroup:", layerGroup);
           if (layerGroup.defaultActive) { layerGroup.toggle(map); }
         });
       },
@@ -171,6 +172,7 @@ angular.module('lizard-nxt')
     var createLayerGroups = function (serverSideLayerGroups) {
       var layerGroups = {};
       angular.forEach(serverSideLayerGroups, function (sslg) {
+        console.log("sslg:", sslg);
         layerGroups[sslg.slug] = new LayerGroup(sslg);
       });
       return layerGroups;
