@@ -15,19 +15,21 @@ angular.module('lizard-nxt')
               "UtilService",
               "Timeline",
               "VectorService",
+              "DataService",
               "State",
               function ($q,
                         RasterService,
                         UtilService,
                         Timeline,
                         VectorService,
+                        DataService,
                         State) {
 
   var link = function (scope, element, attrs, timelineCtrl) {
 
     var LEFT_MARGIN = 60,
         RIGHT_MARGIN = 40,
-        timelineSetsTime = false;
+        timelineSetsTime = false,
 
         getCurrentWidth = function () {
           return window.innerWidth - (LEFT_MARGIN + RIGHT_MARGIN);
@@ -135,7 +137,7 @@ angular.module('lizard-nxt')
      */
     var updateTimelineHeight = function (newDim, dim, nEventTypes) {
       var eventHeight;
-      if (getTimelineLayers(scope.mapState.layerGroups).rain && nEventTypes > 0) {
+      if (getTimelineLayers(DataService.layerGroups).rain && nEventTypes > 0) {
         eventHeight = (nEventTypes - 2) * dim.events;
         eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
         newDim.height = dim.height + dim.bars + eventHeight;
@@ -194,7 +196,7 @@ angular.module('lizard-nxt')
      * That will change later when we set data.
      */
     var getTimeLineData = function () {
-      var timelineLayers = getTimelineLayers(scope.mapState.layerGroups),
+      var timelineLayers = getTimelineLayers(DataService.layerGroups),
           context = {eventOrder: 1,
                      nEvents: scope.events.nEvents};
 
@@ -247,7 +249,7 @@ angular.module('lizard-nxt')
       var eventData = VectorService.getData(
         eventLayer,
         {
-          geom: scope.mapState.bounds,
+          geom: State.spatial.bounds,
           start: State.temporal.start,
           end: State.temporal.stop,
         }

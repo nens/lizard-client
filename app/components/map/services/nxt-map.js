@@ -16,11 +16,17 @@ angular.module('lizard-nxt')
   .factory('NxtMap', ['$rootScope', '$q', 'LeafletService',
   function ($rootScope, $q, LeafletService) {
 
-    function NxtMap(element, options) {
-      this._map = createNxtMap(element, options);
+    function NxtMap() {
+      this._map = {};
     }
 
     NxtMap.prototype = {
+
+      createMap: function (element, options) {
+        console.log('creating map');
+        this._map = createNxtMap(element, options);
+      },
+
       /**
        * @function
        * @memberOf app.NxtMapService

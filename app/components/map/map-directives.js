@@ -46,7 +46,7 @@ angular.module('lizard-nxt')
        * @memberOf app.map
        */
       var _mouseMoved = function (e) {
-        if (scope.box.type === 'line') {
+        if (State.box.type === 'line') {
           State.spatial.userHere = e.latlng;
         }
       };
@@ -61,7 +61,7 @@ angular.module('lizard-nxt')
         State.spatial.bounds = map.getBounds();
       };
 
-      MapService.globalNxtMapInstance = new NxtMap(element[0], {
+      MapService.createMap(element[0], {
           zoomControl: false,
           addZoomTitles: true,
           zoomInTitle: scope.tooltips.zoomInMap,
@@ -69,14 +69,17 @@ angular.module('lizard-nxt')
         }
       );
 
-      MapService.map.initiateNxtMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
+      MapService.initiateNxtMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
+
+      $controller('UrlController', {$scope: scope});
 
       /**
        * Watch bounds of state and update map bounds when state is changed.
        */
-      scope.$watch('State.spatial.bounds', function () {
+      scope.$watch('State.spatial.bounds', function (n, o) {
+        if (n === o) { return; }
         if (!mapSetsBounds) {
-          MapService.map.fitBounds(State.spatial.bounds);
+          MapService.fitBounds(State.spatial.bounds);
         } else {
           mapSetsBounds = false;
         }
@@ -87,10 +90,6 @@ angular.module('lizard-nxt')
           "#map * {cursor:" + (n === "line" ? "crosshair" : "") + ";}"
         );
       });
-
-      // Instantiate the controller that updates the hash url after creating the
-      // map and all its listeners.
-      $controller('UrlController', {$scope: scope});
 
     };
 

@@ -41,7 +41,7 @@ angular.module('lizard-nxt')
         timeOut; // runs for minLag of milliseconds before waiting for the promise
                  // to resolve and re-syncing the data layers to the new time and
                  // making a new step when animation is playing.
-
+    $scope.timeState = {};
 
     /**
      * Keep an eye out for temporal layers that require the animation to go

@@ -6,22 +6,22 @@ angular.module('lizard-nxt')
     function (DataService, UtilService, dataLayers) {
 
     var _context = 'map';
-    var VALUES = ['map', 'db'];
+    var CONTEXT_VALUES = ['map', 'db'];
     Object.defineProperty(this, 'context', {
       get: function () { return _context; },
       set: function (context) {
-        if (VALUES.indexOf(context) > -1) {
+        if (CONTEXT_VALUES.indexOf(context) > -1) {
           _context = context;
         } else {
           throw new Error("Attemped to assign an illegal value ('"
             + context
             + "') to state.context. Only ["
-            + VALUES.join(',')
+            + CONTEXT_VALUES.join(',')
             + "] are accepted values."
           );
         }
       }
-    })
+    });
 
     // State of data layer groups
     var _layerGroups = Object.keys(dataLayers);
@@ -39,32 +39,30 @@ angular.module('lizard-nxt')
       },
       set: function (layerGroups) {
         var _active = [];
-        angular.forEach(_layerGroups, function (_layerGroup){
-          if (layergroups.indexOf(_layergroup) !== -1) {
-            _active.push(_layergroup);
+        angular.forEach(_layerGroups, function (_layerGroup) {
+          if (layerGroups.indexOf(_layerGroup) !== -1) {
+            _active.push(_layerGroup);
           }
         });
         return _active;
       }
-    })
-    Object.defineProperty(this.layerGroups, 'inactive', {})
-
+    });
 
     // Box
     this.box = {};
 
     var _type = 'point'; // Default box type
-    var VALUES = ["point", "line", "area"];
+    var TYPE_VALUES = ["point", "line", "area"];
     Object.defineProperty(this.box, 'type', {
       get: function () { return _type; },
       set: function (type) {
-        if (VALUES.indexOf(type) > -1) {
+        if (TYPE_VALUES.indexOf(type) > -1) {
           _type = type;
         } else {
           throw new Error("Attemped to assign an illegal value ('"
             + type
             + "') to state.box.type. Only ["
-            + VALUES.join(',')
+            + TYPE_VALUES.join(',')
             + "] are accepted values."
           );
         }
@@ -100,9 +98,7 @@ angular.module('lizard-nxt')
     Object.defineProperty(this.temporal, 'start', {
       get: function () { return _start; },
       set: function (start) {
-        start > MIN_TIME_FOR_EXTENT
-          ? _start = start
-          : _start = MIN_TIME_FOR_EXTENT;
+        _start = Math.max(start, MIN_TIME_FOR_EXTENT);
         this.changedZoom = !this.changedZoom;
       }
     });
@@ -111,16 +107,14 @@ angular.module('lizard-nxt')
     Object.defineProperty(this.temporal, 'end', {
       get: function () { return _end; },
       set: function (end) {
-        end < MAX_TIME_FOR_EXTENT
-          ? _end = end
-          : _end = MAX_TIME_FOR_EXTENT;
+        _end = Math.min(end, MAX_TIME_FOR_EXTENT);
         this.changedZoom = !this.changedZoom;
       }
     });
 
     this.temporal.aggWindow = UtilService.getAggWindow(
-      $scope.timeState.start,
-      $scope.timeState.end,
+      this.temporal.start,
+      this.temporal.end,
       window.innerWidth
     );
 

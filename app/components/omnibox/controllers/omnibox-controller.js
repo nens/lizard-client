@@ -15,6 +15,7 @@ angular.module('omnibox')
     State,
     DataService) {
 
+    $scope.box = {};
     /**
      * @function
      * @memberOf app.omnibox

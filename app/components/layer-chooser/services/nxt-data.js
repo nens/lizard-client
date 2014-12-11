@@ -1,10 +1,18 @@
 angular.module('lizard-nxt')
-  .factory('NxtData', ['$q', 'LayerGroup', function ($q, LayerGroup) {
+  .factory('NxtData', ['$q', '$injector', 'NxtMap', 'LayerGroup', function ($q, $injector, NxtMap, LayerGroup) {
 
+    // Layergroups are hard-coupled to the leaflet map, therefore NxtData keeps
+    // a reference to the leaflet map. This reference is provided by the
+    // data-service or a NxtMap instance by the layer-chooser directive.
+    var mapProvider = {};
 
     function NxtData(serverSideLayerGroups, map) {
       this.layerGroups = createLayerGroups(serverSideLayerGroups);
-      this._map = map._map;
+      if (map instanceof NxtMap) {
+        mapProvider = map;
+      } else { // Map is a string pointing to a service containing the map
+        mapProvider = $injector.get(map);
+      }
     }
 
     NxtData.prototype = {
@@ -19,10 +27,10 @@ angular.module('lizard-nxt')
       toggleLayerGroup: function (layerGroup) {
         // turn layer group on
         if (!(layerGroup.baselayer && layerGroup.isActive())) {
-          layerGroup.toggle(this._map);
+          layerGroup.toggle(mapProvider._map);
           this.layerGroupsChanged = Date.now();
         }
-        var map = this._map;
+        var map = mapProvider._map;
         if (layerGroup.baselayer || layerGroup.temporal) {
           angular.forEach(this.layerGroups, function (_layerGroup) {
             if (layerGroup.baselayer
@@ -41,7 +49,7 @@ angular.module('lizard-nxt')
         var defer = $q.defer();
         var promises = [];
         angular.forEach(this.layerGroups, function (layerGroup) {
-          promises.push(layerGroup.syncTime(timeState, this._map));
+          promises.push(layerGroup.syncTime(timeState, mapProvider._map));
         }, this);
         $q.all(promises).then(function () { defer.resolve(); });
         return defer.promise;
@@ -66,9 +74,13 @@ angular.module('lizard-nxt')
        *              info is found on the server
        */
       setLayerGoupsToDefault: function () {
-        var map = this._map;
+        var map = mapProvider._map;
         angular.forEach(this.layerGroups, function (layerGroup) {
-          if (layerGroup.defaultActive) { layerGroup.toggle(map); }
+          if (layerGroup.defaultActive && !layerGroup.isActive()) {
+            layerGroup.toggle(map);
+          } else if (!layerGroup.defaultActive && layerGroup.isActive()) {
+            layerGroup.toggle(map);
+          }
         });
       }
     };
