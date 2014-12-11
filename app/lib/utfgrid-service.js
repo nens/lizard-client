@@ -94,7 +94,7 @@ angular.module('lizard-nxt')
           return leafletBounds.contains(lineStart) || leafletBounds.contains(lineEnd);
 
         default:
-          throw new Error("Did not found valid geom type:", structureGeom.type);
+          throw new Error("Did not find valid geom type:", structureGeom.type);
       }
     };
 

@@ -261,7 +261,7 @@
       try {
         return structureData.entity_name + "$" + structureData.id;
       } catch (e) {
-        console.log("[E] Tried to derive a unique structure ID from incomplete data: its not gonna w0rk. Error 'e' =", e);
+        throw new Error("Tried to derive a unique structure ID from incomplete data: its not gonna w0rk. Error 'e' =", e);
       }
     },
 

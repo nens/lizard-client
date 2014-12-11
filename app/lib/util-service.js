@@ -563,7 +563,7 @@ angular.module('lizard-nxt')
     try {
       return parseInt(str.replace("px", ""));
     } catch (e) {
-      console.log("[E] could not extract integer from string: '" + str + "'");
+      throw new Error("Could not extract integer from string: '" + str + "'");
     }
   };
 
