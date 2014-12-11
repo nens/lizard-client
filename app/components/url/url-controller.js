@@ -104,11 +104,11 @@ angular.module('lizard-nxt')
     };
 
     $scope.state = State;
-    debugger
+
     /**
      * set layer(s) when these change.
      */
-    $scope.$watch(state.layerGroups.active,
+    $scope.$watch(State.get('layerGroups.active'),
       function (n, o) {
         console.log(State.layerGroups.active);
         state.layerGroups.update = false;
@@ -119,7 +119,7 @@ angular.module('lizard-nxt')
     /**
      * Set location when map moved.
      */
-    $scope.$watch('state.spatial.bounds', function (n, o) {
+    $scope.$watch(State.get('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
       state.mapView.update = false;
       UrlState.setCoordinatesUrl(state,
@@ -132,7 +132,7 @@ angular.module('lizard-nxt')
     /**
      * Set timeState when timeState changed.
      */
-    $scope.$watch('state.temporal.changedZoom', function (n, o) {
+    $scope.$watch(State.get('temporal.changedZoom'), function (n, o) {
       if (n === o) { return true; }
       state.timeState.update = false;
       UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
@@ -141,7 +141,7 @@ angular.module('lizard-nxt')
     /*
      * Set boxType when box.type changed
      */
-    $scope.$watch('state.box.type', function (n, old) {
+    $scope.$watch(State.get('box.type'), function (n, old) {
       if (n === old) { return true; }
       state.boxType.update = false;
       LocationGetterSetter.setUrlValue(
@@ -158,7 +158,7 @@ angular.module('lizard-nxt')
     /**
      * Set geom when mapState.here changed and box.type is point.
      */
-    $scope.$watch('state.spatial.here', function (n, o) {
+    $scope.$watch(State.get('spatial.here'), function (n, o) {
       if (n === o || $scope.box.type !== 'point') { return true; }
       state.geom.update = false;
       UrlState.setgeomUrl(state, State.box.type, State.spatial.here, State.spatial.points);
@@ -167,7 +167,7 @@ angular.module('lizard-nxt')
     /**
      * Set geom when mapState.points changed and box.type is line.
      */
-    $scope.$watch('state.spatial.points', function (n, o) {
+    $scope.$watch(State.get('spatial.points'), function (n, o) {
       if (n === o || $scope.box.type !== 'line') { return true; }
       state.geom.update = false;
       UrlState.setgeomUrl(state, State.box.type, State.spatial.here, State.spatial.points);
@@ -183,7 +183,7 @@ angular.module('lizard-nxt')
      * the url. Then, this listener is fired but does nothing but
      * resetting the updateUrl back to true
      */
-    $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
+    $scope.$on('$locationChangeSuccess'), function (e, oldurl, newurl) {
       if (UrlState.update(state)) {
         var boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
           geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
