@@ -12,9 +12,8 @@
  */
 
 angular.module('lizard-nxt')
-  .service('VectorService', ['$q', '$rootScope', 'Restangular',
-  'UtilService', 'LeafletService',
-  function ($q, $rootScope, Restangular, UtilService, LeafletService) {
+  .service('VectorService', ['$q', '$rootScope', 'LeafletService',
+  function ($q, $rootScope, LeafletService) {
 
     /**
      * @function
@@ -247,7 +246,7 @@ angular.module('lizard-nxt')
     };
 
     /**
-     * @description Same as getData but waits for data to finish loading
+     * @description Triggers resolve callback on loaded data.
      * @param {layer}
      * @param {options}
      * @param {promise}

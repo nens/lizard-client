@@ -23,23 +23,32 @@ angular.module('lizard-nxt')
 
   var link = function (scope, element, attrs, timelineCtrl) {
 
-    var dimensions = {
-      width: window.innerWidth,
-      height: 75,
-      events: 20,
-      bars: 35,
-      padding: {
-        top: 12,
-        right: 15,
-        bottom: 20,
-        left: 15
-      }
-    },
+    // console.log(angular.element("#timeline-svg-wrapper svg")[0].style.left);
 
-    start = scope.timeState.start,
-    end = scope.timeState.end,
+    var LEFT_MARGIN = 60,
+        RIGHT_MARGIN = 40,
 
-    el = element.find('svg'),
+        getCurrentWidth = function () {
+          return window.innerWidth - (LEFT_MARGIN + RIGHT_MARGIN);
+        },
+
+        dimensions = {
+          width: getCurrentWidth(),
+          height: 75,
+          events: 20,
+          bars: 35,
+          padding: {
+            top: 12,
+            right: 0,
+            bottom: 20,
+            left: 0
+          }
+        },
+
+        start = scope.timeState.start,
+        end = scope.timeState.end,
+
+        el = element.find('svg'),
 
     interaction = {
 
@@ -92,7 +101,7 @@ angular.module('lizard-nxt')
        */
       clickFn: function (event, scale, dimensions) {
         scope.$apply(function () {
-          var timeClicked = +(scale.invert(event.pageX - dimensions.padding.left));
+          var timeClicked = +(scale.invert(event.pageX - dimensions.padding.left - LEFT_MARGIN));
           scope.timeState.at = UtilService.roundTimestamp(
             timeClicked,
             scope.timeState.aggWindow
@@ -100,6 +109,9 @@ angular.module('lizard-nxt')
         });
       },
     };
+
+    // shift timeline's SVG element using it's CSS - set here by JS too stop stuff becoming unsyncable
+    angular.element("#timeline-svg-wrapper svg")[0].style.left = LEFT_MARGIN + "px";
 
     // keep track of events in this scope
     scope.events = {nEvents: 0, slugs: []};
@@ -156,10 +168,10 @@ angular.module('lizard-nxt')
       angular.forEach(layerGroups, function (layergroup) {
         if (layergroup.isActive()) {
           angular.forEach(layergroup._layers, function (layer) {
-            if (layer.type === "Vector") {
+            if (layer.format === "Vector") {
               timelineLayers.events.layers.push(layer);
               timelineLayers.events.slugs.push(layer.slug);
-            } else if (layer.type === "Store" && layer.slug === "radar/basic") {
+            } else if (layer.format === "Store" && layer.slug === "radar/basic") {
               timelineLayers.rain = layer;
             }
           });
@@ -198,13 +210,7 @@ angular.module('lizard-nxt')
 
         // update slugs on scope for housekeeping
         scope.events.slugs = timelineLayers.events.slugs;
-        // create context for callback function, reset eventOrder to 1.
-        context = {
-          eventOrder: 1,
-          nEvents: scope.events.nEvents,
-          slugs: scope.events.slugs
-        };
-        angular.forEach(timelineLayers.events.layers, getEventData, context);
+        getEventData();
       } else {
         scope.events.nEvents = 0;
         timeline.drawLines(undefined, scope.events.nEvents);
@@ -226,30 +232,34 @@ angular.module('lizard-nxt')
      * @function
      * @summary get data for event layers and update timeline.
      * @description get data for event layers and update timeline.
-     *
-     * @param {object} eventLayer - NXT eventLayer object.
      */
-    var getEventData = function (eventLayer) {
-      var eventData = VectorService.getData(
-        eventLayer,
-        {
+    var getEventData = function () {
+      // create context for callback function, reset eventOrder to 1.
+      var context = {
+        eventOrder: 1,
+        nEvents: scope.events.nEvents,
+        slugs: scope.events.slugs
+      };
+      // Get data from all layegroups with type === 'Event'
+      angular.forEach(scope.mapState.layerGroups, function (lg) {
+        lg.getData({
           geom: scope.mapState.bounds,
           start: scope.timeState.start,
           end: scope.timeState.stop,
-        }
-      );
+          type: 'Event'
+        }).then(null, null, function (response) {
 
-      var that = this;
-      eventData.then(function (response) {
-        if (response !== undefined) {
-          timeline.drawLines(
-            response,
-            that.eventOrder,
-            eventLayer.slug,
-            eventLayer.color
-          );
-          that.eventOrder++;
-        }
+          if (response && response.data) {
+            // Add it to the timeline
+            timeline.drawLines(
+              response.data,
+              context.eventOrder,
+              response.layerGroupSlug,
+              response.color
+            );
+            context.eventOrder++;
+          }
+        });
       });
     };
 
@@ -317,7 +327,7 @@ angular.module('lizard-nxt')
       if (n === o) { return true; }
       if (scope.timeState.changeOrigin !== 'timeline') {
         scope.timeState.aggWindow = UtilService.getAggWindow(
-          scope.timeState.start, scope.timeState.end, window.innerWidth);
+          scope.timeState.start, scope.timeState.end, getCurrentWidth())
         timeline.zoomTo(
           scope.timeState.start,
           scope.timeState.end,
@@ -367,7 +377,7 @@ angular.module('lizard-nxt')
      */
     window.onresize = function () {
 
-      timeline.dimensions.width = window.innerWidth;
+      timeline.dimensions.width = getCurrentWidth()
       timeline.resize(
         timeline.dimensions,
         scope.timeState.at,

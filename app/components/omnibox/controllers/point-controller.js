@@ -86,7 +86,7 @@ angular.module('lizard-nxt')
         angular.forEach(content, function (lg) {
           if (lg && lg.layers) {
             angular.forEach(lg.layers, function (layer) {
-              if (layer.type === 'Vector' && layer.data.length > 0) {
+              if (layer.format === 'Vector' && layer.data.length > 0) {
                 ClickFeedbackService.drawGeometry(
                   $scope.mapState,
                   layer.data
@@ -123,7 +123,7 @@ angular.module('lizard-nxt')
           angular.forEach(content, function (lg) {
             if (lg && lg.layers) {
               angular.forEach(lg.layers, function (layer) {
-                if (layer.type === 'Store' && layer.data.length > 0) {
+                if (layer.format === 'Store' && layer.data.length > 0) {
                   ClickFeedbackService.drawArrow($scope.mapState, $scope.mapState.here);
                   feedbackDrawn = true;
                 }
@@ -206,28 +206,6 @@ angular.module('lizard-nxt')
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer($scope.mapState);
     });
-
-    /**
-     * @function
-     * @memberOf app.pointCtrl
-     * @description Get correct icon for structure
-     */
-    $scope.getIconClass = function (str) {
-      switch (str) {
-      case 'overflow':
-        return 'icon-overflow';
-      case 'pumpstation':
-        return 'icon-pumpstation-diesel';
-      case 'bridge':
-        return 'icon-bridge';
-      case 'bridge-draw':
-        return 'icon-bridge';
-      case 'bridge-fixed':
-        return 'icon-bridge';
-      default:
-        return 'icon-' + str;
-      }
-    };
 
     /**
      * @function

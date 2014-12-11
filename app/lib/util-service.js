@@ -24,14 +24,16 @@ angular.module('lizard-nxt')
    * coefficient.
    */
   this.roundTimestamp = function (timestamp, coefficient, up) {
+    var format;
+
     if (up) {
       timestamp += coefficient / 2;
     }
-    if (coefficient == 2635200000) { // One month
-      var format = NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%m/01/%Y");
+    if (coefficient === 2635200000) { // One month
+      format = NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%m/01/%Y");
       return new Date(format(new Date(timestamp))).getTime();
-    } else if (coefficient == 86400000) { // One day
-      var format = NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%m/%d/%Y");
+    } else if (coefficient === 86400000) { // One day
+      format = NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%m/%d/%Y");
       return new Date(format(new Date(timestamp))).getTime();
     }
     var roundedTimestamp = parseInt(timestamp / coefficient, 10) * coefficient;
@@ -55,23 +57,23 @@ angular.module('lizard-nxt')
 
     if (touch.pageY === 0 && Math.floor(y) > Math.floor(touch.pageY) ||
         touch.pageX === 0 && Math.floor(x) > Math.floor(touch.pageX)) {
-        // iOS4 clientX/clientY have the value that should have been
-        // in pageX/pageY. While pageX/page/ have the value 0
-        x = x - winPageX;
-        y = y - winPageY;
-    } else if (y < (touch.pageY - winPageY) || x < (touch.pageX - winPageX) ) {
-        // Some Android browsers have totally bogus values for clientX/Y
-        // when scrolling/zooming a page. Detectable since clientX/clientY
-        // should never be smaller than pageX/pageY minus page scroll
-        x = touch.pageX - winPageX;
-        y = touch.pageY - winPageY;
+      // iOS4 clientX/clientY have the value that should have been
+      // in pageX/pageY. While pageX/page/ have the value 0
+      x = x - winPageX;
+      y = y - winPageY;
+    } else if (y < (touch.pageY - winPageY) || x < (touch.pageX - winPageX)) {
+      // Some Android browsers have totally bogus values for clientX/Y
+      // when scrolling/zooming a page. Detectable since clientX/clientY
+      // should never be smaller than pageX/pageY minus page scroll
+      x = touch.pageX - winPageX;
+      y = touch.pageY - winPageY;
     }
 
     return {
         clientX:    x,
         clientY:    y
       };
-    };
+  };
 
 
   /**
@@ -90,8 +92,8 @@ angular.module('lizard-nxt')
    */
   this.getAggWindow = function (start, stop, drawingWidth) {
 
-    // TODO: Called both by omnibox and timeline, should be called only by timeline,
-    // while omnibox subsequently syncs to timeState.aggWindow
+    // TODO: Called both by omnibox and timeline, should be called only by
+    // timeline, while omnibox subsequently syncs to timeState.aggWindow
 
     var aggWindow;
     var MIN_PX = 4; // Minimum width of a bar
@@ -221,8 +223,8 @@ angular.module('lizard-nxt')
   /**
    * @function serveToOldIE
    * @memberOf UtilService
-   * @description Check whether the client uses IE10+/non-IE browser (return false),
-   *   OR that she uses an older IE version (return true)
+   * @description Check whether the client uses IE10+/non-IE browser
+   *   (return false) OR that she uses an older IE version (return true)
    */
   this.serveToOldIE = function () {
 
@@ -324,9 +326,11 @@ angular.module('lizard-nxt')
   /**
    * @function any
    * @memberof UtilService
-   * @description - Checks whether ANY element of the input satisfies the predicate
+   * @description - Checks whether ANY element of the input satisfies the
+   *   predicate
    * @param {arr} - An enumerable/iterable datastructure, e.g. Array
-   * @param {predicate_} - A predicate, e.g. 'even': function (x) { x % 2 === 0 };
+   * @param {predicate_} - A predicate, e.g. 'even':
+   *   function (x) { x % 2 === 0 };
    * @return {boolean}
    */
   this.any = function (arr, predicate_) {
@@ -352,7 +356,10 @@ angular.module('lizard-nxt')
    */
   this.isSufficientlyRichData = function (data) {
 
-    if (data === 'null') {
+    if (data === undefined) {
+      return false;
+
+    } else if (data === 'null') {
       // backend did not return valid data.. log as ERROR?
       return false;
 
@@ -441,6 +448,10 @@ angular.module('lizard-nxt')
     }
   };
 
+  /*
+   * @description - Replace display_name value with name value, if applicable
+   * @param {string} str - The string to be converted.
+   */
   this.fixUTFNameData = function (obj) {
     if (obj.display_name === '' || obj.display_name === undefined) {
       // If the to-be printed key (obj.display_name) has no value...
@@ -452,4 +463,108 @@ angular.module('lizard-nxt')
     }
     return obj;
   };
+
+  /**
+   * @description - Deduce the wanted geometry-type from the passed in geomOpts
+   * @param {object} geomOpts - the options.geom object
+   * @return {string} - "POINT" | "LINE" | "AREA" | throw new Error!
+   *
+   * NB! In the foreseeable future, we need to take care of non-rectangle
+   *     polygons, and we'll need to adjust this code accordingly.
+   *     When will then be now? soon.
+   */
+  this.getGeomType = function (geomOpts) {
+
+    if (geomOpts instanceof L.LatLng) {
+      return "POINT";
+
+    } else if (geomOpts._southWest && geomOpts._northEast) {
+      return "AREA";
+
+    } else if (geomOpts.length === 2
+      && geomOpts[0] instanceof L.LatLng
+      && geomOpts[1] instanceof L.LatLng) {
+      return "LINE";
+
+    } else {
+      throw new Error(
+        "getGeomType could not deduce a valid geometry type from the passed in arg: 'geomOpts' =", geomOpts
+      );
+    }
+  };
+
+  /**
+   * @function
+   * @description - Count all keys for an object (we can't do this vanilla.js style in Angular template)
+   * @param {object} obj - The object for which we want to know the amount of keys.
+   * @return {integer} - The amount of keys.
+   */
+  this.countKeys = function (obj) {
+    return obj === undefined ? 0 : Object.keys(obj).length;
+  };
+
+  /**
+   * @function
+   * @description Get correct icon for structure
+   */
+  this.getIconClass = function (str) {
+    switch (str) {
+    case 'pumpstation':
+      return 'icon-pumpstation-diesel';
+    case 'bridge':
+      return 'icon-bridge';
+    case 'bridge-draw':
+      return 'icon-bridge';
+    case 'bridge-fixed':
+      return 'icon-bridge';
+    default:
+      return 'icon-' + str;
+    }
+  };
+
+  /* @description - Convert lin to log scale, given the following 3 args.
+   * @param {number} value - the value to convert
+   * @param {number} minValue - the start of the scale
+   * @param {number} maxValue - the end of the scale
+   * @return {number} - The converted value
+   */
+  this.lin2log = function (value, minValue, maxValue) {
+    var scale = d3.scale.log()
+      .domain([minValue, maxValue])
+      .range([minValue, maxValue]);
+    return scale(value);
+  };
+
+  /**
+   * @description - This add a <style> tag + it's contents to the <head> of the
+   *                page. Adding more will iteratively subsitute the most recent
+   *                addition.
+   * @param {string} newStyle - A string representing the to-be-added CSS
+   * @return {void}
+   */
+  this.addNewStyle = function (newStyle) {
+    var styleElement = document.getElementById('styles_js');
+    if (!styleElement) {
+      styleElement = document.createElement('style');
+      styleElement.type = 'text/css';
+      styleElement.id = 'styles_js';
+      document.getElementsByTagName('head')[0].appendChild(styleElement);
+    }
+    styleElement.innerHTML = "";
+    styleElement.appendChild(document.createTextNode(newStyle));
+  };
+
+  /*
+   * @description - Convert string ending in px to value expressed in pixels,
+   *                it denotes.
+   * @param {string} str - The string to be converted.
+   */
+  this.pxToInt = function (str) {
+    try {
+      return parseInt(str.replace("px", ""));
+    } catch (e) {
+      throw new Error("Could not extract integer from string: '" + str + "'");
+    }
+  };
+
 }]);

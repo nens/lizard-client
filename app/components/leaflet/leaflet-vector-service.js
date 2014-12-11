@@ -8,8 +8,8 @@
  * Creates a Tiled Layer for retrieving and drawing vector data.
  */
 angular.module('lizard-nxt')
-  .service('LeafletVectorService', ["LeafletService", "VectorService",
-      function (LeafletService, VectorService) {
+  .service('LeafletVectorService', ["LeafletService", "VectorService", "UtilService",
+      function (LeafletService, VectorService, UtilService) {
 
   /**
    * Leaflet does not have a tiled geojson layer.
@@ -38,19 +38,21 @@ angular.module('lizard-nxt')
 
       this.drawOptions = {
         pointToLayer: function (feature, latlng) {
-
           var geojsonMarkerOptions = {
-            radius: (feature.properties.radius) ? feature.properties.radius: 6,
+            radius: UtilService.lin2log((feature.properties.radius || 6), 6, 16),
             fillColor: color,
             color: "#FFF",
             weight: 2,
-            fillOpacity: 1
+            fillOpacity: 1,
+            opacity: 1
           };
 
           var circle = LeafletService.circleMarker(
             latlng, geojsonMarkerOptions);
           circle.on('click', function (e) {
             // simulate click on map instead of this event;
+            console.log("init radius:", feature.properties.radius);
+            console.log("log circle:", circle._radius);
             this._map.fire('click', {
               latlng: new LeafletService.LatLng(
                 e.target.feature.geometry.coordinates[1],
@@ -166,10 +168,11 @@ angular.module('lizard-nxt')
      * @param {object} geojson features array
      */
     countOverlapping: function (data) {
+      var minimumRadius = 6;
       var overlapLocations = [];
       var filteredData = [];
       data.forEach(function (d, index) {
-        d.properties.radius = 6;
+        d.properties.radius = minimumRadius;
         var key = "x:" + d.geometry.coordinates[0] +
                   "y:" + d.geometry.coordinates[1];
         var coord = overlapLocations[key];
@@ -193,7 +196,10 @@ angular.module('lizard-nxt')
       // TODO: figure out why it is possible to call setOpacity while there is
       // no geojsonlayer.
       if (this.geojsonLayer) {
-        this.geojsonLayer.setStyle({ fillOpacity: opacity });
+        this.geojsonLayer.setStyle({
+          opacity: opacity,
+          fillOpacity: opacity
+        });
       }
     },
     /**
