@@ -9,19 +9,19 @@ angular.module('lizard-nxt')
     // goes into its own NxtMap to always be turned on
     // var layerGroup = angular.copy(dataLayers[scope.layergroup.slug]);
 
-    // var needsPreviewMap;
-    // // Remove unnecessary datalayers before going further
-    // // but first copying the layer array, otherwise the
-    // // iterator gets confused.
+    var needsPreviewMap;
+    // Remove unnecessary datalayers before going further
+    // but first copying the layer array, otherwise the
+    // iterator gets confused.
     // var layerCopy = angular.copy(layerGroup.layers);
     // angular.forEach(layerGroup.layers, function (layer) {
-    //   if (layer.type === 'WMS' ||
-    //       layer.type === 'TMS') {
+    //   if (layer.format === 'WMS' ||
+    //       layer.format === 'TMS') {
     //     needsPreviewMap = true;
     //     layerCopy = [layer];
     //   }
 
-    //   if (layer.type === 'Vector') {
+    //   if (layer.format === 'Vector') {
     //     element.find('.layer-img')[0].style.backgroundColor = layer.color;
     //   }
     // });

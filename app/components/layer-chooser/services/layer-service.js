@@ -26,6 +26,10 @@ angular.module('lizard-nxt')
           value: layer.type,
           writable: false,
         });
+        Object.defineProperty(this, 'format', {
+          value: layer.format,
+          writable: false,
+        });
         Object.defineProperty(this, 'minZoom', {
           value: layer.min_zoom,
           writable: false,
@@ -104,9 +108,9 @@ angular.module('lizard-nxt')
             // TODO: initialise imageoverlay
             return;
           }
-          else if (this.type !== 'Store') {
+          else if (this.format !== 'Store') {
             // this ain't right
-            throw new Error(this.type + ' is not a supported layer type');
+            throw new Error(this.format + ' is not a supported layer format');
           }
         },
 
@@ -207,7 +211,7 @@ angular.module('lizard-nxt')
               scale = this.scale,
               slug = this.slug,
               summary = this.summary,
-              type = this.type,
+              format = this.format,
               quantity = this.quantity,
               unit = this.unit;
 
@@ -215,7 +219,7 @@ angular.module('lizard-nxt')
             deferred.notify({
               color: color,
               data: data,
-              type: type,
+              format: format,
               layerGroupSlug: lgSlug,
               layerSlug: slug,
               aggType: aggType,

@@ -52,7 +52,7 @@ angular.module('omnibox')
 
         if (UtilService.isSufficientlyRichData(response.data)) {
 
-          var sharedKeys = ['aggType', 'type', 'data', 'summary', 'scale',
+          var sharedKeys = ['aggType', 'format', 'data', 'summary', 'scale',
             'quantity', 'unit', 'color'];
 
           angular.forEach(sharedKeys, function (key) {
@@ -76,7 +76,7 @@ angular.module('omnibox')
            *   layers: {
            *     <layerSlug>: {
            *       data: <layer.data>,
-           *       type: <layer.type>
+           *       format: <layer.format>
            *     },
            *
            *     ...,

@@ -172,10 +172,10 @@ angular.module('lizard-nxt')
       angular.forEach(layerGroups, function (layergroup) {
         if (layergroup.isActive()) {
           angular.forEach(layergroup._layers, function (layer) {
-            if (layer.type === "Vector") {
+            if (layer.format === "Vector") {
               timelineLayers.events.layers.push(layer);
               timelineLayers.events.slugs.push(layer.slug);
-            } else if (layer.type === "Store" && layer.slug === "radar/basic") {
+            } else if (layer.format === "Store" && layer.slug === "radar/basic") {
               timelineLayers.rain = layer;
             }
           });
@@ -214,13 +214,7 @@ angular.module('lizard-nxt')
 
         // update slugs on scope for housekeeping
         scope.events.slugs = timelineLayers.events.slugs;
-        // create context for callback function, reset eventOrder to 1.
-        context = {
-          eventOrder: 1,
-          nEvents: scope.events.nEvents,
-          slugs: scope.events.slugs
-        };
-        angular.forEach(timelineLayers.events.layers, getEventData, context);
+        getEventData();
       } else {
         scope.events.nEvents = 0;
         timeline.drawLines(undefined, scope.events.nEvents);
@@ -242,30 +236,34 @@ angular.module('lizard-nxt')
      * @function
      * @summary get data for event layers and update timeline.
      * @description get data for event layers and update timeline.
-     *
-     * @param {object} eventLayer - NXT eventLayer object.
      */
-    var getEventData = function (eventLayer) {
-      var eventData = VectorService.getData(
-        eventLayer,
-        {
-          geom: State.spatial.bounds,
-          start: State.temporal.start,
-          end: State.temporal.stop,
-        }
-      );
+    var getEventData = function () {
+      // create context for callback function, reset eventOrder to 1.
+      var context = {
+        eventOrder: 1,
+        nEvents: scope.events.nEvents,
+        slugs: scope.events.slugs
+      };
+      // Get data from all layegroups with type === 'Event'
+      angular.forEach(scope.mapState.layerGroups, function (lg) {
+        lg.getData({
+          geom: scope.mapState.bounds,
+          start: scope.timeState.start,
+          end: scope.timeState.stop,
+          type: 'Event'
+        }).then(null, null, function (response) {
 
-      var that = this;
-      eventData.then(function (response) {
-        if (response !== undefined) {
-          timeline.drawLines(
-            response,
-            that.eventOrder,
-            eventLayer.slug,
-            eventLayer.color
-          );
-          that.eventOrder++;
-        }
+          if (response && response.data) {
+            // Add it to the timeline
+            timeline.drawLines(
+              response.data,
+              context.eventOrder,
+              response.layerGroupSlug,
+              response.color
+            );
+            context.eventOrder++;
+          }
+        });
       });
     };
 
