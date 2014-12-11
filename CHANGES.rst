@@ -32,6 +32,8 @@ Unreleased ()
 
 - CSS is now preprocessed with SASS, fmbo of structure and clarity.
 
+- Minimize cards based on screen size and size of cards.
+
 Release 1.0.0 (2014-12-01)
 ---------------------------
 

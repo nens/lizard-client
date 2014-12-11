@@ -1,12 +1,10 @@
 angular.module('lizard-nxt')
   .controller("OmniboxCtrl", [
-
   "$scope",
   "UtilService",
   "ClickFeedbackService",
 
   function (
-
     $scope,
     UtilService,
     ClickFeedbackService) {
@@ -100,7 +98,9 @@ angular.module('lizard-nxt')
             }
           }
         }
-        // Accomadate chaining in child controllers
+
+
+        // Accomodate chaining in child controllers
         return response;
       };
 
