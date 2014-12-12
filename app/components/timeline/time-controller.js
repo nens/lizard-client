@@ -66,10 +66,12 @@ angular.module('lizard-nxt')
      * sync data layers to new timestate and redo the animation configuration
      * since currentInterval has changed.
      */
-    $scope.$watch(State.toString('temporal.changedZoom'), function (n, o) {
-      if (n === o) { return; }
-      configAnimation();
-      syncTimeWrapper(State.temporal);
+    $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
+      if (n === o) { return true; }
+      if (!State.temporal.timelineMoving) {
+        configAnimation();
+        syncTimeWrapper(State.temporal);
+      }
     });
 
     /**
@@ -220,8 +222,6 @@ angular.module('lizard-nxt')
       State.temporal.start = now - fourFifthInterval;
       State.temporal.end = now + oneFifthInterval;
       State.temporal.at = UtilService.roundTimestamp(now, State.temporal.aggWindow, false);
-      State.temporal.changeOrigin = 'user';
-      State.temporal.changedZoom = Date.now();
     };
 
     /**
@@ -245,11 +245,11 @@ angular.module('lizard-nxt')
 
       var milliseconds = window.innerWidth * newResolution;
 
+      State.temporal.timelineMoving = true;
       State.temporal.start = State.temporal.at - milliseconds;
       State.temporal.end = State.temporal.at + milliseconds;
       State.temporal.resolution = newResolution;
-      State.temporal.changeOrigin = 'user';
-      State.temporal.changedZoom = Date.now();
+      State.temporal.timelineMoving = false;
     };
 
   }

@@ -242,8 +242,6 @@ angular.module('lizard-nxt')
           timeState.aggWindow,
           true
         );
-        timeState.changeOrigin = 'hash';
-        timeState.changedZoom = Date.now();
         return timeState;
       },
       /**

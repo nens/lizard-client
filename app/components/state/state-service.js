@@ -15,7 +15,7 @@ angular.module('global-state')
           property = property[accessor];
         });
         return JSON.stringify(property);
-      }
+      };
     };
 
     var _context = 'map';
@@ -101,7 +101,6 @@ angular.module('global-state')
 
     state.temporal = {
       at: Math.round(now - 2.5 * day),
-      changedZoom: false, // Used to trigger watches when either start or end changed. Switches value on change.
       aggWindow: 1000 * 60 * 5,
       buffering: false,
       timelineMoving: false,
@@ -114,7 +113,6 @@ angular.module('global-state')
       get: function () { return _start; },
       set: function (start) {
         _start = Math.max(start, MIN_TIME_FOR_EXTENT);
-        state.changedZoom = !state.changedZoom;
       }
     });
 
@@ -123,7 +121,6 @@ angular.module('global-state')
       get: function () { return _end; },
       set: function (end) {
         _end = Math.min(end, MAX_TIME_FOR_EXTENT);
-        state.changedZoom = !state.changedZoom;
       }
     });
 

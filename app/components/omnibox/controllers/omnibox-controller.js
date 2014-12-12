@@ -102,7 +102,6 @@ angular.module('omnibox')
             }
           }
         }
-        console.log($scope.box.content);
         // Accomadate chaining in child controllers
         return response;
       };

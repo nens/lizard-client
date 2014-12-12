@@ -327,19 +327,21 @@ angular.module('lizard-nxt')
      * Timeline is updated when something other than the timeline
      * updates the temporal extent.
      */
-    scope.$watch(State.toString('temporal.changedZoom'), function (n, o) {
+    scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
-      if (!timelineSetsTime) {
-        State.temporal.aggWindow = UtilService.getAggWindow(
-          State.temporal.start, State.temporal.end, getCurrentWidth())
-        timeline.zoomTo(
-          State.temporal.start,
-          State.temporal.end,
-          State.temporal.aggWindow
-        );
-        getTimeLineData();
-      } else {
-        timelineSetsTime = false;
+      if (!State.temporal.timelineMoving) {
+        if (!timelineSetsTime) {
+          State.temporal.aggWindow = UtilService.getAggWindow(
+            State.temporal.start, State.temporal.end, getCurrentWidth())
+          timeline.zoomTo(
+            State.temporal.start,
+            State.temporal.end,
+            State.temporal.aggWindow
+          );
+          getTimeLineData();
+        } else {
+          timelineSetsTime = false;
+        }
       }
     });
 

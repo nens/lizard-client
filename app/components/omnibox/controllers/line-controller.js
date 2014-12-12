@@ -109,7 +109,7 @@ angular.module('lizard-nxt')
      */
     $scope.$watch(State.toString('spatial.here'), function (n, o) {
       if (n === o) { return true; }
-      ClickFeedbackService.emptyClickLayer(State.spatial);
+      ClickFeedbackService.emptyClickLayer(MapService);
       if (State.spatial.points.length === 2) {
         State.spatial.points = [];
         // Empty data element since the line is gone
@@ -153,7 +153,7 @@ angular.module('lizard-nxt')
     $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return true; }
       if (State.spatial.points.length === 2) {
-        ClickFeedbackService.emptyClickLayer(State.spatial);
+        ClickFeedbackService.emptyClickLayer(MapService);
         ClickFeedbackService.drawLine(State.spatial.points[0], State.spatial.points[1], false);
         fillLine(State.spatial.points);
       }

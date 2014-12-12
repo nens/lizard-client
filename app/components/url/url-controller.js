@@ -130,10 +130,12 @@ angular.module('lizard-nxt')
     /**
      * Set timeState when timeState changed.
      */
-    $scope.$watch(State.toString('temporal.changedZoom'), function (n, o) {
+    $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
-      state.timeState.update = false;
-      UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
+      if (!State.temporal.timelineMoving) {
+        state.timeState.update = false;
+        UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
+      }
     });
 
     /*
@@ -166,7 +168,7 @@ angular.module('lizard-nxt')
      * Set geom when mapState.points changed and box.type is line.
      */
     $scope.$watch(State.toString('spatial.points'), function (n, o) {
-      if (n === o || $scope.box.type !== 'line') { return true; }
+      if (n === o || State.box.type !== 'line') { return true; }
       state.geom.update = false;
       UrlState.setgeomUrl(state, State.box.type, State.spatial.here, State.spatial.points);
     }, true);
@@ -206,9 +208,10 @@ angular.module('lizard-nxt')
           State.temporal = UrlState.parseTimeState(time, State.temporal);
         } else {
           state.timeState.update = false;
+          State.temporal.timelineMoving = true;
           UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
+          State.temporal.timelineMoving = false;
         }
-
       }
       angular.forEach(state, function (value) {
         value.update = true;
