@@ -66,7 +66,7 @@ angular.module('lizard-nxt')
       });
     }
 
-    scope.toggleLayerGroup = DataService.toggleLayerGroup;
+    scope.data = DataService;
   };
 
   return {

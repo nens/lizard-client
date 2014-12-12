@@ -26,12 +26,10 @@ angular.module('lizard-nxt')
         var map = optionalMap || mapProvider._map;
         if (!(layerGroup.baselayer && layerGroup.isActive())) {
           layerGroup.toggle(map);
-          this.layerGroupsChanged = Date.now();
         }
-        if (layerGroup.baselayer || layerGroup.temporal) {
+        if (layerGroup.baselayer) {
           angular.forEach(this.layerGroups, function (_layerGroup) {
-            if (layerGroup.baselayer
-              && _layerGroup.baselayer
+            if (_layerGroup.baselayer
               && _layerGroup.isActive()
               && _layerGroup.slug !== layerGroup.slug
               )

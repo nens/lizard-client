@@ -2,7 +2,7 @@
   <label
     class="ng-class: {active: layergroup.isActive()}; layer-chooser"
     for="<% layergroup.id %>-layer"
-    single-click="toggleLayerGroup(layergroup)"
+    single-click="data.toggleLayerGroup(layergroup)"
 		ng-dblclick="layergroup.rescaleContinuousData(bounds)"
     title="<% layergroup.name %>">
     <span class="layer-text" ng-bind="layergroup.name"></span>

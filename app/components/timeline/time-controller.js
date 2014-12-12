@@ -41,7 +41,7 @@ angular.module('lizard-nxt')
         timeOut; // runs for minLag of milliseconds before waiting for the promise
                  // to resolve and re-syncing the data layers to the new time and
                  // making a new step when animation is playing.
-    $scope.timeState = {};
+    $scope.timeState = State.temporal;
 
     State.temporal.aggWindow = UtilService.getAggWindow(
       State.temporal.start,
@@ -125,7 +125,7 @@ angular.module('lizard-nxt')
         State.temporal.playing = true;
         window.requestAnimationFrame(step);
       }
-      $scope.timeState.playing = State.temporal.playing;
+      // $scope.timeState.playing = State.temporal.playing;
     };
 
     /**
@@ -157,11 +157,9 @@ angular.module('lizard-nxt')
       if (!$scope.$$phase) {
         $scope.$apply(function () {
           State.temporal.buffering = onOff;
-          $scope.timeState.buffering = State.temporal.buffering;
         });
       }
       else { State.temporal.buffering = onOff; }
-      $scope.timeState.buffering = State.temporal.buffering;
     };
 
     /**

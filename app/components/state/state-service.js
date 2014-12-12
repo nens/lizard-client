@@ -50,15 +50,15 @@ angular.module('global-state')
           return DataService.layerGroups[layerGroup].isActive();
         });
       },
-      set: function (layerGroups) {
-        var _active = [];
-        angular.forEach(_layerGroups, function (_layerGroup) {
-          if (layerGroups.indexOf(_layerGroup) !== -1) {
-            _active.push(_layerGroup);
-          }
-        });
-        return _active;
-      }
+      // set: function (layerGroups) {
+      //   var _active = [];
+      //   angular.forEach(_layerGroups, function (_layerGroup) {
+      //     if (layerGroups.indexOf(_layerGroup) !== -1) {
+      //       _active.push(_layerGroup);
+      //     }
+      //   });
+      //   return _active;
+      // }
     });
 
     // Box
