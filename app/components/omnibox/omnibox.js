@@ -1,1 +1,4 @@
-angular.module("omnibox", ["templates-main"]);
+angular.module('omnibox', [
+  'templates-main',
+  'global-state'
+]);

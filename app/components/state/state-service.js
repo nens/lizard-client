@@ -1,7 +1,7 @@
 /**
  * Lizard-client global state object.
  */
-angular.module('lizard-nxt')
+angular.module('global-state')
   .service('State', ['DataService', 'UtilService', 'dataLayers',
     function (DataService, UtilService, dataLayers) {
 
