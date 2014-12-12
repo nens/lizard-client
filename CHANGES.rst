@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Force cursor behaviour in point, line and area mode.
+
 - Time extent from 2010.
 
 - UTFGrid aggregation: get all structures for spatial extent.

@@ -230,7 +230,8 @@ angular.module('lizard-nxt')
     } else {
       throw new Error("Attemped to assign an illegal value ('"
         + name
-        + "') to $scope.box.type. Only 'point', 'line' and 'area' are accepted values."
+        + "') to $scope.box.type. Only 'point', 'line' and 'area'"
+        + " are accepted values."
       );
     }
   };
@@ -305,10 +306,30 @@ angular.module('lizard-nxt')
     }
   });
 
+  /**
+   * Watch box.type to force cursor behaviour.
+   *
+   * When `line` cursor is crosshair, when `area` cursor is default.
+   */
   $scope.$watch('box.type', function (n, o) {
-    UtilService.addNewStyle(
-      "#map * {cursor:" + (n === "line" ? "crosshair" : "") + ";}"
-    );
+
+    if (n === o) { return true; }
+
+    var selector;
+    switch (n) {
+      case "point":
+        selector = "";
+        break;
+      case "line":
+        selector = "#map * {cursor: crosshair;}";
+        break;
+      case "area":
+        selector = "#map * {cursor: hand;}";
+        break;
+      default:
+        return;
+    }
+    UtilService.addNewStyle(selector);
   });
 
   //TODO: move to raster-service ?
