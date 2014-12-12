@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Clean up dependencies.
+
 - Time extent from 2010.
 
 - UTFGrid aggregation: get all structures for spatial extent.
