@@ -64,6 +64,7 @@ angular.module('lizard-nxt')
         left: 50
       }
     };
+    // Overwrite anything provided by dimensions attr on element
     angular.extend(dimensions, scope.dimensions);
 
     el = element[0].firstChild;

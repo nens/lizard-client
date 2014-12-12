@@ -122,64 +122,7 @@
     <div id="text-mode-scrollable">
     </div>
 
-    <div id="master">
-      <div class="layer-menu-container">
-        <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': mapState.enabled}">
-          <div class="layer-switcher slide-left">
-            <ul class="nav">
-              <li class="nav-header">
-                <ul class="list-group">
-                  <li ng-repeat="layergroup in mapState.layerGroups | orderObjectBy: 'order': false">
-                    <layer-chooser layergroup="layergroup"></layer-chooser>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-          <div id="ribbon"
-               class="ribbon"
-               title="<% mapState.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
-            <div class="arrow arrow-up" ng-click="mapState.enabled = !mapState.enabled">
-            </div>
-            <div class="arrow arrow-down" ng-click="mapState.enabled = !mapState.enabled"><i class="fa fa-compass ribbon-icon"></i>
-            </div>
-          </div>
-          <div class="button-list-container" id="">
-
-            <div class="button-list-item"
-                 style="cursor: pointer">
-              <a ng-click="toggleTool('point')"
-                 class="button-list-link"
-                 title="punt selectie"
-                 ng-class="{'active': box.type === 'point'}">
-                 <i class="fa fa-dot-circle-o"></i>
-              </a>
-            </div>
-
-            <div class="button-list-item"
-                 style="cursor: pointer">
-              <a ng-click="toggleTool('line')"
-                 class="button-list-link"
-                 title="lijn selectie"
-                 ng-class="{'active': box.type === 'line'}">
-                 <i class="fa fa-expand"></i>
-              </a>
-            </div>
-
-            <div class="button-list-item"
-                 style="cursor: pointer">
-              <a ng-click="toggleTool('area')"
-                 class="button-list-link"
-                 title="scherm selectie"
-                 ng-class="{'active': box.type === 'area'}">
-                 <i class="fa fa-square-o"></i>
-              </a>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
+    <datamenu></datamenu>
 
     <!-- <div ng-if="context === map"> -->
       <map layers="mapState.layers"
@@ -256,6 +199,9 @@
     <script src="/components/map/services/nxt-map.js"></script>
     <script src="/components/map/services/map-service.js"></script>
     <script src="/components/map/map-directives.js"></script>
+
+    <script src="/components/data-menu/data-menu-controller.js"></script>
+    <script src="/components/data-menu/data-menu-directive.js"></script>
 
     <script src="/components/layer-chooser/services/tms-layer-service.js"></script>
     <script src="/components/layer-chooser/services/wms-layer-service.js"></script>

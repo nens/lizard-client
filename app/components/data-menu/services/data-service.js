@@ -14,7 +14,7 @@
  */
 
 angular.module('lizard-nxt')
-  .factory('DataService', ['dataLayers', 'NxtData',
+  .service('DataService', ['dataLayers', 'NxtData',
     function (dataLayers, NxtData) {
       return new NxtData(dataLayers, 'MapService');
     }

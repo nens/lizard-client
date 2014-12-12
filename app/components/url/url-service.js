@@ -198,21 +198,14 @@ angular.module('lizard-nxt')
   .UrlState
        * @description Sets the layer slugs on the url.
        * @param {object} state config object
-       * @param {object} layerGroups mapState.layer
+       * @param {object} layerGroups list
        */
       setlayerGroupsUrl: function (state, layerGroups) {
         if (layerGroups === undefined) { return; }
-        var i,
-            activeSlugs = [];
-        for (var key in layerGroups) {
-          if (layerGroups[key].isActive()) {
-            activeSlugs.push(key);
-          }
-        }
         LocationGetterSetter.setUrlValue(
           state.layerGroups.part,
           state.layerGroups.index,
-          activeSlugs.toString()
+          layerGroups.toString()
         );
       },
       /**

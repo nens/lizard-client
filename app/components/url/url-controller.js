@@ -94,7 +94,7 @@ angular.module('lizard-nxt')
       if (mapView) {
         var view = UrlState.parseMapView(mapView);
         if (view) {
-          State.spatial.setView(view.latLng, view.zoom, view.options);
+          MapService.setView(view.latLng, view.zoom, view.options);
         } else {
           fn();
         }
@@ -103,24 +103,21 @@ angular.module('lizard-nxt')
       }
     };
 
-    $scope.state = State;
-    State.layerGroups.active
     /**
      * set layer(s) when these change.
      */
     $scope.$watch(State.toString('layerGroups.active'),
       function (n, o) {
-        console.log(State.layerGroups.active);
-        // state.layerGroups.update = false;
-        debugger
-        // UrlState.setlayerGroupsUrl(state, state.layerGroups.active);
+        if (n === o) { return true; }
+        state.layerGroups.update = false;
+        UrlState.setlayerGroupsUrl(state, State.layerGroups.active);
       }
     );
 
-    // /**
-    //  * Set location when map moved.
-    //  */
-    $scope.$watch(State.get('spatial.bounds'), function (n, o) {
+    /**
+     * Set location when map moved.
+     */
+    $scope.$watch(State.toString('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
       state.mapView.update = false;
       UrlState.setCoordinatesUrl(state,
@@ -130,49 +127,49 @@ angular.module('lizard-nxt')
       );
     }, true);
 
-    // /**
-    //  * Set timeState when timeState changed.
-    //  */
-    // $scope.$watch(State.get('temporal.changedZoom'), function (n, o) {
-    //   if (n === o) { return true; }
-    //   state.timeState.update = false;
-    //   UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
-    // });
+    /**
+     * Set timeState when timeState changed.
+     */
+    $scope.$watch(State.toString('temporal.changedZoom'), function (n, o) {
+      if (n === o) { return true; }
+      state.timeState.update = false;
+      UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
+    });
 
-    // /*
-    //  * Set boxType when box.type changed
-    //  */
-    // $scope.$watch(State.get('box.type'), function (n, old) {
-    //   if (n === old) { return true; }
-    //   state.boxType.update = false;
-    //   LocationGetterSetter.setUrlValue(
-    //     state.boxType.part, state.boxType.index, State.box.type
-    //   );
+    /*
+     * Set boxType when box.type changed
+     */
+    $scope.$watch(State.toString('box.type'), function (n, old) {
+      if (n === old) { return true; }
+      state.boxType.update = false;
+      LocationGetterSetter.setUrlValue(
+        state.boxType.part, state.boxType.index, State.box.type
+      );
 
-    //   if (old === 'point' || old === 'line') {
-    //     // Remove geometry from url
-    //     state.boxType.update = false;
-    //     LocationGetterSetter.setUrlValue(state.geom.part, state.geom.index, undefined);
-    //   }
-    // });
+      if (old === 'point' || old === 'line') {
+        // Remove geometry from url
+        state.boxType.update = false;
+        LocationGetterSetter.setUrlValue(state.geom.part, state.geom.index, undefined);
+      }
+    });
 
-    // /**
-    //  * Set geom when mapState.here changed and box.type is point.
-    //  */
-    // $scope.$watch(State.get('spatial.here'), function (n, o) {
-    //   if (n === o || $scope.box.type !== 'point') { return true; }
-    //   state.geom.update = false;
-    //   UrlState.setgeomUrl(state, State.box.type, State.spatial.here, State.spatial.points);
-    // });
+    /**
+     * Set geom when mapState.here changed and box.type is point.
+     */
+    $scope.$watch(State.toString('spatial.here'), function (n, o) {
+      if (n === o || $scope.box.type !== 'point') { return true; }
+      state.geom.update = false;
+      UrlState.setgeomUrl(state, State.box.type, State.spatial.here, State.spatial.points);
+    });
 
-    // /**
-    //  * Set geom when mapState.points changed and box.type is line.
-    //  */
-    // $scope.$watch(State.get('spatial.points'), function (n, o) {
-    //   if (n === o || $scope.box.type !== 'line') { return true; }
-    //   state.geom.update = false;
-    //   UrlState.setgeomUrl(state, State.box.type, State.spatial.here, State.spatial.points);
-    // }, true);
+    /**
+     * Set geom when mapState.points changed and box.type is line.
+     */
+    $scope.$watch(State.toString('spatial.points'), function (n, o) {
+      if (n === o || $scope.box.type !== 'line') { return true; }
+      state.geom.update = false;
+      UrlState.setgeomUrl(state, State.box.type, State.spatial.here, State.spatial.points);
+    }, true);
 
     /**
      * Listener to update map view when user changes url
@@ -184,40 +181,38 @@ angular.module('lizard-nxt')
      * the url. Then, this listener is fired but does nothing but
      * resetting the updateUrl back to true
      */
-    // $scope.$on('$locationChangeSuccess'), function (e, oldurl, newurl) {
-    //   if (UrlState.update(state)) {
-    //     var boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
-    //       geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
-    //       layerGroupsFromURL = LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index),
-    //       mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
-    //       time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
-    //       context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
-    //     // When we start making a 'context switch' we will also want to use
-    //     // State.contex, for now we always set it.
-    //     LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
-    //     if (boxType) {
-    //       State.box.type = boxType;
-    //     } else {
-    //       LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, State.box.type);
-    //     }
-    //     if (geom) {
-    //       State.spatial = UrlState.parseGeom(State.box.type, geom, State.mapState);
-    //     }
+    $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
+      if (UrlState.update(state)) {
+        var boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
+          geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
+          layerGroupsFromURL = LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index),
+          mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
+          time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
+          context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
 
-    //     enablelayerGroups(layerGroupsFromURL);
-    //     enableMapView(mapView);
+        LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
+        if (boxType) {
+          State.box.type = boxType;
+        } else {
+          LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, State.box.type);
+        }
+        if (geom) {
+          State.spatial = UrlState.parseGeom(State.box.type, geom, State.mapState);
+        }
+        enablelayerGroups(layerGroupsFromURL);
+        enableMapView(mapView);
 
-    //     if (time) {
-    //       State.temporal = UrlState.parseTimeState(time, State.temporal);
-    //     } else {
-    //       state.timeState.update = false;
-    //       UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
-    //     }
+        if (time) {
+          State.temporal = UrlState.parseTimeState(time, State.temporal);
+        } else {
+          state.timeState.update = false;
+          UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
+        }
 
-    //   }
-    //   angular.forEach(state, function (value) {
-    //     value.update = true;
-    //   });
-    // });
+      }
+      angular.forEach(state, function (value) {
+        value.update = true;
+      });
+    });
   }
 ]);

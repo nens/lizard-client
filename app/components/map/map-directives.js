@@ -59,6 +59,8 @@ angular.module('lizard-nxt')
         State.spatial.mapMoving = false;
         mapSetsBounds = true;
         State.spatial.bounds = map.getBounds();
+        State.spatial.zoom = map.getZoom();
+        console.log(State.spatial.bounds);
       };
 
       MapService.createMap(element[0], {

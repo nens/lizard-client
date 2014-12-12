@@ -23,8 +23,7 @@ angular.module('lizard-nxt')
     NxtMap.prototype = {
 
       createMap: function (element, options) {
-        console.log('creating map');
-        this._map = createNxtMap(element, options);
+        this._map = createLeafletMap(element, options);
       },
 
       /**
@@ -108,7 +107,7 @@ angular.module('lizard-nxt')
      * @return {L.NxtMap}   Leaflet.NxtMap instance
      * @description Creates a Leaflet map based on idString or Element.
      */
-    var createNxtMap = function (mapElem, options) { // String or Element.
+    var createLeafletMap = function (mapElem, options) { // String or Element.
 
       var leafletMap = LeafletService.map(mapElem, options);
 

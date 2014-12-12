@@ -8,11 +8,8 @@ angular.module('lizard-nxt')
 
     function NxtData(serverSideLayerGroups, map) {
       this.layerGroups = createLayerGroups(serverSideLayerGroups);
-      if (map instanceof NxtMap) {
-        mapProvider = map;
-      } else { // Map is a string pointing to a service containing the map
-        mapProvider = $injector.get(map);
-      }
+      // Map is a string pointing to a service containing the map
+      if (map) { mapProvider = $injector.get(map); }
     }
 
     NxtData.prototype = {
@@ -24,13 +21,13 @@ angular.module('lizard-nxt')
        *              takes into account that baselayers should toggle eachother
        * @param  layerGroup layergroup that should be toggled
        */
-      toggleLayerGroup: function (layerGroup) {
+      toggleLayerGroup: function (layerGroup, optionalMap) {
         // turn layer group on
+        var map = optionalMap || mapProvider._map;
         if (!(layerGroup.baselayer && layerGroup.isActive())) {
-          layerGroup.toggle(mapProvider._map);
+          layerGroup.toggle(map);
           this.layerGroupsChanged = Date.now();
         }
-        var map = mapProvider._map;
         if (layerGroup.baselayer || layerGroup.temporal) {
           angular.forEach(this.layerGroups, function (_layerGroup) {
             if (layerGroup.baselayer

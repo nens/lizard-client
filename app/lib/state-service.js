@@ -9,11 +9,13 @@ angular.module('lizard-nxt')
 
     // returns a string representation of the provided attribute of the state.
     state.toString = function (stateStr) {
-      var property = state;
-      angular.forEach(stateStr.split('.'), function (accessor) {
-        property = property[accessor];
-      });
-      return JSON.stringify(property);
+      return function () {
+        var property = state;
+        angular.forEach(stateStr.split('.'), function (accessor) {
+          property = property[accessor];
+        });
+        return JSON.stringify(property);
+      }
     };
 
     var _context = 'map';
@@ -85,6 +87,7 @@ angular.module('lizard-nxt')
       here: {},
       points: [], // History of here for drawing and creating line and polygons
       bounds: {},
+      zoom: {},
       userHere: {}, // Geographical location of the users mouse
       mapMoving: false
     };
