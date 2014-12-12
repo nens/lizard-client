@@ -47,13 +47,13 @@ angular.module('omnibox')
 
         var lGContent = $scope.box.content[response.layerGroupSlug] || {layers: {}};
         lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
-        lGContent.layerGroupName = $scope.mapState.layerGroups[response.layerGroupSlug].name;
-        lGContent.order = $scope.mapState.layerGroups[response.layerGroupSlug].order;
+        lGContent.layerGroupName = DataService.layerGroups[response.layerGroupSlug].name;
+        lGContent.order = DataService.layerGroups[response.layerGroupSlug].order;
 
         if (UtilService.isSufficientlyRichData(response.data)) {
 
           var sharedKeys = ['aggType', 'format', 'data', 'summary', 'scale',
-            'quantity', 'unit', 'color'];
+            'quantity', 'unit', 'color', 'type'];
 
           angular.forEach(sharedKeys, function (key) {
             lGContent.layers[response.layerSlug][key] = response[key];
@@ -102,6 +102,7 @@ angular.module('omnibox')
             }
           }
         }
+        console.log($scope.box.content);
         // Accomadate chaining in child controllers
         return response;
       };

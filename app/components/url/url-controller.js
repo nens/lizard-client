@@ -66,9 +66,9 @@ angular.module('lizard-nxt')
         // Either layerGroups are on url
         var activeLayerSlugs = layerGroupString.split(',');
         angular.forEach(activeLayerSlugs, function (layerGroupSlug) {
-          var lg = State.layerGroups.all.indexOf(layerGroupSlug);
-          if (lg !== -1) {
-            DataService.toggleLayerGroup(lg);
+          var lgI = State.layerGroups.all.indexOf(layerGroupSlug);
+          if (lgI !== -1) {
+            DataService.toggleLayerGroup(DataService.layerGroups[layerGroupSlug]);
           }
         });
         // Or layerGroups are not on url, turn default layerGroups on
@@ -157,7 +157,7 @@ angular.module('lizard-nxt')
      * Set geom when mapState.here changed and box.type is point.
      */
     $scope.$watch(State.toString('spatial.here'), function (n, o) {
-      if (n === o || $scope.box.type !== 'point') { return true; }
+      if (n === o || State.box.type !== 'point') { return true; }
       state.geom.update = false;
       UrlState.setgeomUrl(state, State.box.type, State.spatial.here, State.spatial.points);
     });
@@ -197,7 +197,7 @@ angular.module('lizard-nxt')
           LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, State.box.type);
         }
         if (geom) {
-          State.spatial = UrlState.parseGeom(State.box.type, geom, State.mapState);
+          State.spatial = UrlState.parseGeom(State.box.type, geom, State.spatial);
         }
         enablelayerGroups(layerGroupsFromURL);
         enableMapView(mapView);

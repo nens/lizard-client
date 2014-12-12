@@ -192,15 +192,17 @@ angular.module('lizard-nxt')
     };
 
     // Update when user clicked again
-    $scope.$watch('State.spatial.here', function (n, o) {
+    $scope.$watch(State.toString('spatial.here'), function (n, o) {
       if (n === o) { return; }
       fillPointHere();
     });
 
     // Update when layergroups have changed
-    $scope.$watch('State.layerGroups.active', function (n, o) {
+    $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return; }
-      fillPointHere();
+      if (State.spatial.here.lat && State.spatial.here.lng) {
+        fillPointHere();
+      }
     });
 
     // Clean up stuff when controller is destroyed

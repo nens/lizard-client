@@ -107,7 +107,7 @@ angular.module('lizard-nxt')
      *   3. Sets the second click and draws the lne from
      *      the first to the second.
      */
-    $scope.$watch('State.spatial.here', function (n, o) {
+    $scope.$watch(State.toString('spatial.here'), function (n, o) {
       if (n === o) { return true; }
       ClickFeedbackService.emptyClickLayer(State.spatial);
       if (State.spatial.points.length === 2) {
@@ -126,7 +126,7 @@ angular.module('lizard-nxt')
       }
     });
 
-    var watchIfUrlCtrlSetsPoints = $scope.$watch('State.spatial.points', function (n, o) {
+    var watchIfUrlCtrlSetsPoints = $scope.$watch(State.toString('spatial.points'), function (n, o) {
       if (State.spatial.points.length === 2) {
         ClickFeedbackService.emptyClickLayer(MapService);
         ClickFeedbackService.drawLine(State.spatial.points[0], State.spatial.points[1], false);
@@ -139,7 +139,7 @@ angular.module('lizard-nxt')
     /**
      * Updates line according to geo-pos of mouse
      */
-    $scope.$watch('State.spatial.userHere', function (n, o) {
+    $scope.$watch(State.toString('spatial.userHere'), function (n, o) {
       if (n === o) { return true; }
       if (State.spatial.points[0] && !State.spatial.points[1]) {
         ClickFeedbackService.emptyClickLayer(MapService);
@@ -150,7 +150,7 @@ angular.module('lizard-nxt')
     /**
      * Updates line data when users changes layers.
      */
-    $scope.$watch('State.layerGroups.active', function (n, o) {
+    $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return true; }
       if (State.spatial.points.length === 2) {
         ClickFeedbackService.emptyClickLayer(State.spatial);
@@ -162,7 +162,7 @@ angular.module('lizard-nxt')
     /**
      * Updates line of temporal layers when timeState.at changes.
      */
-    $scope.$watch('State.temporal.at', function (n, o) {
+    $scope.$watch(State.toString('temporal.at'), function (n, o) {
       angular.forEach($scope.box.content, function (lg, slug) {
         if (DataService.layerGroups[slug].temporal) {
           angular.forEach(lg.layers, function (layer) {
@@ -178,7 +178,7 @@ angular.module('lizard-nxt')
     /**
      * Reload data from temporal rasters when temporal zoomended.
      */
-    $scope.$watch('State.temporal.timelineMoving', function (n, o) {
+    $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
       if (!State.temporal.timelineMoving
         && State.spatial.points.length === 2) {

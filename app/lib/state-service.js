@@ -101,6 +101,7 @@ angular.module('lizard-nxt')
 
     state.temporal = {
       at: Math.round(now - 2.5 * day),
+      changedZoom: false, // Used to trigger watches when either start or end changed. Switches value on change.
       aggWindow: 1000 * 60 * 5,
       buffering: false,
       timelineMoving: false,
@@ -125,12 +126,6 @@ angular.module('lizard-nxt')
         state.changedZoom = !state.changedZoom;
       }
     });
-
-    state.temporal.aggWindow = UtilService.getAggWindow(
-      state.temporal.start,
-      state.temporal.end,
-      window.innerWidth
-    );
 
     return state;
   }]);

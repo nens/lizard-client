@@ -43,12 +43,21 @@ angular.module('lizard-nxt')
                  // making a new step when animation is playing.
     $scope.timeState = {};
 
+    State.temporal.aggWindow = UtilService.getAggWindow(
+      State.temporal.start,
+      State.temporal.end,
+      window.innerWidth
+    );
+
+    $scope.timeState.playing = State.temporal.playing;
+    $scope.timeState.buffering = State.temporal.buffering;
+
     /**
      * Keep an eye out for temporal layers that require the animation to go
      * with a lower speed so wms requests can keep up and run more smooth if the
      * temporalResolution equals or is a multiplication of  the stepSize.
      */
-    $scope.$watch('State.layerGroups.active', function (n, o) {
+    $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return; }
       configAnimation();
     });
@@ -57,7 +66,7 @@ angular.module('lizard-nxt')
      * sync data layers to new timestate and redo the animation configuration
      * since currentInterval has changed.
      */
-    $scope.$watch('State.temporal.changedZoom', function (n, o) {
+    $scope.$watch(State.toString('temporal.changedZoom'), function (n, o) {
       if (n === o) { return; }
       configAnimation();
       syncTimeWrapper(State.temporal);
@@ -69,7 +78,7 @@ angular.module('lizard-nxt')
      * Layergroups need a time synced to them before being toggled. Therefore, no
      * n === o return here.
      */
-    $scope.$watch('State.temporal.at', function () {
+    $scope.$watch(State.toString('temporal.at'), function () {
       syncTimeWrapper(State.temporal);
     });
 
@@ -108,16 +117,13 @@ angular.module('lizard-nxt')
      * @param {} toggle - .
      */
     $scope.timeState.playPauseAnimation = function (toggle) {
-      var anim = State.temporal.animation;
-      if (anim.playing || toggle === "off") {
-        anim.playing = false;
+      if (State.temporal.playing || toggle === "off") {
+        State.temporal.playing = false;
       } else {
-        if (!anim.enabled) {
-          State.temporal.enableAnimation();
-        }
-        anim.playing = true;
+        State.temporal.playing = true;
         window.requestAnimationFrame(step);
       }
+      $scope.timeState.playing = State.temporal.playing;
     };
 
     /**
@@ -149,9 +155,11 @@ angular.module('lizard-nxt')
       if (!$scope.$$phase) {
         $scope.$apply(function () {
           State.temporal.buffering = onOff;
+          $scope.timeState.buffering = State.temporal.buffering;
         });
       }
       else { State.temporal.buffering = onOff; }
+      $scope.timeState.buffering = State.temporal.buffering;
     };
 
     /**

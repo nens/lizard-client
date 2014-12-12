@@ -60,7 +60,6 @@ angular.module('lizard-nxt')
         mapSetsBounds = true;
         State.spatial.bounds = map.getBounds();
         State.spatial.zoom = map.getZoom();
-        console.log(State.spatial.bounds);
       };
 
       MapService.createMap(element[0], {
@@ -78,7 +77,7 @@ angular.module('lizard-nxt')
       /**
        * Watch bounds of state and update map bounds when state is changed.
        */
-      scope.$watch('State.spatial.bounds', function (n, o) {
+      scope.$watch(State.toString('spatial.bounds'), function (n, o) {
         if (n === o) { return; }
         if (!mapSetsBounds) {
           MapService.fitBounds(State.spatial.bounds);
@@ -87,7 +86,7 @@ angular.module('lizard-nxt')
         }
       });
 
-      scope.$watch('State.box.type', function (n, o) {
+      scope.$watch(State.toString('box.type'), function (n, o) {
         UtilService.addNewStyle(
           "#map * {cursor:" + (n === "line" ? "crosshair" : "") + ";}"
         );

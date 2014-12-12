@@ -40,7 +40,7 @@ angular.module("omnibox")
         scope.box.showCards = State.box.type !== 'empty';
       };
 
-      scope.$watch('State.box.type', function (n, o) {
+      scope.$watch(State.toString('box.type'), function (n, o) {
         if (n === o) { return true; }
         finalizeTemplateRendering();
       });

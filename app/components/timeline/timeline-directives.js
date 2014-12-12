@@ -281,7 +281,7 @@ angular.module('lizard-nxt')
 
       var start = State.temporal.start,
           stop = State.temporal.end,
-          bounds = scope.mapState.bounds;
+          bounds = State.spatial.bounds;
 
       // Has it's own deferrer to not conflict with
       // other deferrers with the same layerSlug
@@ -310,7 +310,7 @@ angular.module('lizard-nxt')
     /**
      * Updates area when user moves map.
      */
-    scope.$watch('State.spatial.bounds', function (n, o) {
+    scope.$watch(State.toString('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
       getTimeLineData();
     });
@@ -318,7 +318,7 @@ angular.module('lizard-nxt')
     /**
      * Updates area when users changes layers.
      */
-    scope.$watch('State.layerGroups.active', function (n, o) {
+    scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return true; }
       getTimeLineData();
     });
@@ -327,7 +327,7 @@ angular.module('lizard-nxt')
      * Timeline is updated when something other than the timeline
      * updates the temporal extent.
      */
-    scope.$watch('State.temporal.changedZoom', function (n, o) {
+    scope.$watch(State.toString('temporal.changedZoom'), function (n, o) {
       if (n === o) { return true; }
       if (!timelineSetsTime) {
         State.temporal.aggWindow = UtilService.getAggWindow(
@@ -346,14 +346,14 @@ angular.module('lizard-nxt')
     /**
      * Update aggWindow element when timeState.at changes.
      */
-    scope.$watch('State.temporal.at', function (n, o) {
+    scope.$watch(State.toString('temporal.at'), function (n, o) {
       timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
     });
 
     /**
      * Round timeState.at when animation stops.
      */
-    scope.$watch('State.temporal.playing', function (n, o) {
+    scope.$watch(State.toString('temporal.playing'), function (n, o) {
       if (n === o || n) { return true; }
       State.temporal.at = UtilService.roundTimestamp(
         State.temporal.at + State.temporal.aggWindow / 2,

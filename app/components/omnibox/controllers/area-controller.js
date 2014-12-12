@@ -51,7 +51,7 @@ angular.module('lizard-nxt')
     /**
      * Updates area when user moves map.
      */
-    $scope.$watch('State.spatial.bounds', function (n, o) {
+    $scope.$watch(State.toString('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
       fillArea(State.spatial.bounds);
     });
@@ -59,7 +59,7 @@ angular.module('lizard-nxt')
     /**
      * Updates area when users changes layers.
      */
-    $scope.$watch('State.layerGroups.active', function (n, o) {
+    $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return true; }
       fillArea(State.spatial.bounds);
     });
