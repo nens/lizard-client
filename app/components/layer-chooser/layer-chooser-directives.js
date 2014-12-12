@@ -62,6 +62,7 @@ angular.module('lizard-nxt')
         var zoom = State.spatial.zoom;
         var centroid = State.spatial.bounds.getCenter();
         previewMap.setView(centroid, zoom - 2);
+        scope.bounds = State.spatial.bounds;
       });
     }
 
