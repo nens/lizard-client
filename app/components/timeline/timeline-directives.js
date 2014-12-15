@@ -332,7 +332,7 @@ angular.module('lizard-nxt')
       if (!State.temporal.timelineMoving) {
         if (!timelineSetsTime) {
           State.temporal.aggWindow = UtilService.getAggWindow(
-            State.temporal.start, State.temporal.end, getCurrentWidth())
+            State.temporal.start, State.temporal.end, getCurrentWidth());
           timeline.zoomTo(
             State.temporal.start,
             State.temporal.end,
@@ -385,7 +385,7 @@ angular.module('lizard-nxt')
      */
     window.onresize = function () {
 
-      timeline.dimensions.width = getCurrentWidth()
+      timeline.dimensions.width = getCurrentWidth();
       timeline.resize(
         timeline.dimensions,
         State.temporal.at,
