@@ -30,6 +30,7 @@ angular.module('lizard-nxt')
     ) {
 
     $scope.box.content = {};
+    $scope.filteredRainDataPerKilometer = undefined;
 
     /**
      * @function
@@ -60,7 +61,12 @@ angular.module('lizard-nxt')
             case "radar/basic":
               $scope.box.content.rain.layers["radar/basic"].data
                 = response.data;
-              _setFilteredRainData();
+              $scope.filteredRainDataPerKilometer
+                = UtilService.getFilteredRainDataPerKM(
+                    response.data,
+                    $scope.mapState.bounds,
+                    $scope.timeState
+                  );
               break;
             }
           }
@@ -99,43 +105,5 @@ angular.module('lizard-nxt')
 
     // Make UtilSvc functions available in Angular templates
     $scope.countKeys = UtilService.countKeys;
-
-    var _resetFilteredRainData = function () {
-      $scope.filteredRainDataPerKilometer = undefined;
-    };
-
-    var _setFilteredRainData = function () {
-
-      _resetFilteredRainData();
-      data = $scope.box.content.rain.layers["radar/basic"].data;
-
-      if (!data) {
-        return;
-      }
-
-      var filteredData = [],
-          currentTimestamp,
-          currentVal,
-          aggWindowStart = $scope.timeState.at,
-          aggWindowEnd = aggWindowStart + $scope.timeState.aggWindow,
-          squareKilometers = UtilService.extent2kilometers($scope.mapState.bounds),
-          DECIMAL_RESOLUTION = 100;
-
-      for (var i = 0; i < data.length; i++) {
-        currentTimestamp = data[i][0];
-        currentVal = data[i][1];
-        if (currentTimestamp > aggWindowStart && currentTimestamp <= aggWindowEnd) {
-          $scope.filteredRainDataPerKilometer
-            = Math.round((currentVal / squareKilometers) * DECIMAL_RESOLUTION) / DECIMAL_RESOLUTION
-            || "0.00";
-          return;
-        }
-      }
-
-      // If a value was found for the current timeState.at/aggWindow combo,
-      // this line is never reached:
-      _resetFilteredRainData();
-    };
-
   }
 ]);

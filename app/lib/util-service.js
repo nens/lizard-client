@@ -599,8 +599,38 @@ angular.module('lizard-nxt')
    * which works better than our own implementation..
    * Could be more efficient to call from api in a batch
    * instead of tiled/geojson stuff.
-   *
    */
   this.union = _.union;
 
+
+  /*
+   * @function
+   * @description - return the average rain per square kilometer, given:
+   * @param {obj[]} data - the raw data
+   * @param {obj} bounds- leaflet bounds object, the current spatial extent
+   * @param {obj} timeState - the app's timeState
+   * @return {number || undefined}
+   */
+  this.getFilteredRainDataPerKM = function (data, bounds, timeState) {
+
+    if (!data) { return; }
+
+    var i,
+        currentTimestamp,
+        currentVal,
+        aggWindowStart = timeState.at,
+        aggWindowEnd = aggWindowStart + timeState.aggWindow,
+        squareKilometers = this.extent2kilometers(bounds),
+        DECIMAL_RESOLUTION = 100;
+
+    for (i = 0; i < data.length; i++) {
+      currentTimestamp = data[i][0];
+      currentVal = data[i][1];
+      if (currentTimestamp > aggWindowStart && currentTimestamp <= aggWindowEnd) {
+        return  Math.round(
+                  (currentVal / squareKilometers) * DECIMAL_RESOLUTION
+                ) / DECIMAL_RESOLUTION || "0.00";
+      }
+    }
+  };
 }]);
