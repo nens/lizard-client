@@ -568,12 +568,14 @@ angular.module('lizard-nxt')
 
   this.extent2kilometers = function (leafletBounds) {
 
-    var west  = leafletBounds._southWest.lat,
-        east  = leafletBounds._northEast.lat,
-        north = leafletBounds._northEast.lng,
-        south = leafletBounds._southWest.lng,
-        northWest = L.latLng({lat:west, lng:north}),
-        southEast = L.latLng({lat:east, lng:south}),
+    var northWest = L.latLng({
+          lat: leafletBounds._southWest.lat,
+          lng: leafletBounds._northEast.lng
+        }),
+        southEast = L.latLng({
+          lat: leafletBounds._northEast.lat,
+          lng: leafletBounds._southWest.lng
+        }),
         latDistance = leafletBounds._southWest.distanceTo(southEast) / 1000,
         lngDistance = leafletBounds._northEast.distanceTo(northWest) / 1000;
 
