@@ -12,7 +12,10 @@
  */
 
 angular.module('lizard-nxt')
-  .service('VectorService', ['$q', '$rootScope', 'LeafletService', 'UtilService',
+  .service('VectorService', ['$q',
+                             '$rootScope',
+                             'LeafletService',
+                             'UtilService',
   function ($q, $rootScope, LeafletService, UtilService) {
 
     /**
@@ -107,7 +110,8 @@ angular.module('lizard-nxt')
 
         // We process the feature iff one of the following is true:
 
-        // (1) The event starts before tl start && the event ends after tl start:
+        // (1) The event starts before tl start && the event ends after tl
+        // start:
         //                      <--extent-->
         // kruik <----------oooo[oooo------]--------------------> eind der tijd
         // kruik <----------oooo[oooooooooo]oooo----------------> eind der tijd
@@ -160,7 +164,8 @@ angular.module('lizard-nxt')
     /**
      * @description filters data on time and spatial extent
      * @param  {L.LatLngBounds} spatial  Leaflet Bounds object
-     * @param  {object}         temporal object with start and end in epoch timestamp
+     * @param  {object}         temporal object with start and end in epoch
+     *                          timestamp
      * @return {filteredSet}    Array with points within extent.
      */
     var filterSet = function (sourceArray, spatial, temporal) {
@@ -179,7 +184,8 @@ angular.module('lizard-nxt')
         // TODO: implement line intersect with vector data
         filteredSet = [];
       } else {
-        throw new Error(spatial + "is an invalid geometry to query VectorService");
+        throw new Error(
+          spatial + "is an invalid geometry to query VectorService");
       }
 
       // Further refine spatially filtered by temporal filter.
@@ -201,7 +207,8 @@ angular.module('lizard-nxt')
      * @function
      * @description gets data from backend
      * @param  {layer} layer as defined by layer-service
-     * @param  {object} geomortime  geometry or time that it needs to get (e.g. bboxs)
+     * @param  {object} geomortime  geometry or time that it needs to get
+     *                  (e.g. bboxs)
      * @param  {object} time  start, stop object
      * @return {promise}
      */
@@ -279,7 +286,7 @@ angular.module('lizard-nxt')
      */
     var getUnion = function (arr1, arr2) {
       return UtilService.union(arr1, arr2);
-   };
+    };
 
     /**
      * @description appends data if zoom level hasn't changed
@@ -288,7 +295,8 @@ angular.module('lizard-nxt')
     var setData = function (layerSlug, data, zoom) {
       if (vectorLayers.hasOwnProperty(layerSlug)
         && vectorLayers[layerSlug].zoom === zoom) {
-        vectorLayers[layerSlug].data = getUnion(vectorLayers[layerSlug].data, data);
+        vectorLayers[layerSlug].data = getUnion(
+          vectorLayers[layerSlug].data, data);
       } else {
         replaceData.apply(this, arguments);
       }
