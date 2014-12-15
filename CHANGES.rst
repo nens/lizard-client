@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Clean up dependencies.
+
 - Store global state in seperate module.
 
 - Split map from data.
