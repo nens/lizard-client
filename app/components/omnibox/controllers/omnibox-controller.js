@@ -1,6 +1,5 @@
 angular.module('omnibox')
   .controller("OmniboxCtrl", [
-
   "$scope",
   "UtilService",
   "ClickFeedbackService",
@@ -8,7 +7,6 @@ angular.module('omnibox')
   "DataService",
 
   function (
-
     $scope,
     UtilService,
     ClickFeedbackService,
@@ -60,10 +58,13 @@ angular.module('omnibox')
           });
 
           // plakband for hydra_core discrepancy: name vs. display_name
-          if (lGContent &&
+          if ($scope.box.type === 'point' &&
+              lGContent &&
               lGContent.layers &&
               lGContent.layers.waterchain_grid &&
-              lGContent.layers.waterchain_grid.data) {
+              lGContent.layers.waterchain_grid.data
+              ) {
+
             lGContent.layers.waterchain_grid.data =
               UtilService.fixUTFNameData(lGContent.layers.waterchain_grid.data);
           }
@@ -85,8 +86,6 @@ angular.module('omnibox')
            * }
            */
 
-           // kill timeseries
-
           $scope.box.content[response.layerGroupSlug] = lGContent;
 
         } else {
@@ -102,7 +101,9 @@ angular.module('omnibox')
             }
           }
         }
-        // Accomadate chaining in child controllers
+
+
+        // Accomodate chaining in child controllers
         return response;
       };
 
@@ -114,5 +115,8 @@ angular.module('omnibox')
 
       return promises;
     };
+
+    // Make UtilSvc.getIconClass available in Angular templates
+    $scope.getIconClass = UtilService.getIconClass;
   }
 ]);

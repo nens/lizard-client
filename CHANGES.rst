@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Time extent from 2010.
+
+- UTFGrid aggregation: get all structures for spatial extent.
+
 - Event aggregate service.
 
 - Bar chart supports stacked bars.
@@ -27,6 +31,8 @@ Unreleased ()
 - User name interpolation is now done with ng-bind also for big screens
 
 - CSS is now preprocessed with SASS, fmbo of structure and clarity.
+
+- Minimize cards based on screen size and size of cards.
 
 Release 1.0.0 (2014-12-01)
 ---------------------------

@@ -2,28 +2,34 @@
   <div class="card active">
     <div class="card-content"
       ng-init="lg = box.content.rain">
-      <a
-        id="export-rain-csv-button"
-        href="#"
-        title="Data van deze infocard exporteren"
-        ng-csv="formatCSVColumns(lg.layers['radar/basic'].data)"
-        filename="neerslag.csv"
-        csv-header="['Datestamp', 'Timestamp', 'Rain (mm)', 'Latitude', 'Longitude']" >
-        <i class="fa fa-share-square-o"></i>
-      </a>
-      <graph ng-if="lg.layers['radar/basic']"
-      bar-chart
-      class="xyGraph"
-      data="lg.layers['radar/basic'].data"
-      ylabel="lg.layers['radar/basic'].aggWindow"
-      yfilter="aggWinToYLabel"
-      keys="{x: 0, y: 1}"
-      now="timeState.at">
-      </graph>
-    </div>
+
+     <full-details></full-details>
+     <span class="card-title-text" ng-class="{hidden: fullDetails}" >Regen</span>
+     <div ng-class="{hidden: !fullDetails}">
+       <graph ng-if="lg.layers['radar/basic']"
+       bar-chart
+       class="xyGraph"
+       data="lg.layers['radar/basic'].data"
+       ylabel="lg.layers['radar/basic'].aggWindow"
+       yfilter="aggWinToYLabel"
+       keys="{x: 0, y: 1}"
+       now="timeState.at">
+       </graph>
+       <a
+         id="export-rain-csv-button"
+         href="#"
+         title="Data van deze infocard exporteren"
+         ng-csv="formatCSVColumns(lg.layers['radar/basic'].data)"
+         filename="neerslag.csv"
+         csv-header="['Datestamp', 'Timestamp', 'Rain (mm)', 'Latitude', 'Longitude']" >
+         <small>Exporteer</small>
+         <i class="fa fa-share-square-o"></i>
+       </a>
+     </div>
+   </div>
   </div>
 
-  <div class="card active">
+  <div class="card active ng-class: {hidden: !fullDetails}">
     <div class="card-content-message"
       ng-init="lg = box.content.rain">
       <div class="recurrence-time-container"

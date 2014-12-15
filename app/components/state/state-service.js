@@ -109,7 +109,7 @@ angular.module('global-state')
     var now = Date.now(),
         hour = 60 * 60 * 1000,
         day = 24 * hour,
-        MIN_TIME_FOR_EXTENT = (new Date(2014, 0, 0, 0, 0, 0, 0)).getTime(),
+        MIN_TIME_FOR_EXTENT = (new Date(2010, 0, 0, 0, 0, 0, 0)).getTime(),
         MAX_TIME_FOR_EXTENT = (new Date(2015, 0, 0, 0, 0, 0, 0)).getTime();
 
     state.temporal = {

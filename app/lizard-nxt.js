@@ -178,8 +178,6 @@ angular.module('lizard-nxt')
   $scope.user = user;
   $scope.versioning = versioning;
 
-  $scope.tooltips = CabinetService.tooltips;
-
   // KEYPRESS
 
   // If escape is pressed close box

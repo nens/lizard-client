@@ -214,6 +214,7 @@ angular.module('lizard-nxt')
               format = this.format,
               type = this.type,
               quantity = this.quantity,
+              type = this.type,
               unit = this.unit;
 
           var buildSuccesCallback = function (data) {
