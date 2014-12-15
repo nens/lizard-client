@@ -172,7 +172,6 @@ angular.module('lizard-nxt')
     var createLayerGroups = function (serverSideLayerGroups) {
       var layerGroups = {};
       angular.forEach(serverSideLayerGroups, function (sslg) {
-        console.log("sslg:", sslg);
         layerGroups[sslg.slug] = new LayerGroup(sslg);
       });
       return layerGroups;

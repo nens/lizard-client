@@ -1,5 +1,6 @@
-<div ng-controller="AreaCtrl">
+<div ng-controller="AreaCtrl"
 
+  <!-- area card for: layerGroup=waterchain; layer=waterchain_grid -->
   <div ng-if="countKeys(box.content.waterchain.layers.waterchain_grid.data) > 0"
        class="card active"
        id="card-waterchain">
@@ -21,6 +22,21 @@
         </td>
       </tr>
     </table>
+  </div>
+
+  <!-- area card for: layerGroup=rain; layer=radar/basic -->
+  <div id="card-rain"
+       class="card active"
+       ng-if="filteredRainData || filteredRainData === 0">
+
+    <table class="table table-condensed table-hover single-row-table">
+      <tr class="attr-row">
+        <td>gebiedsgemiddelde neerslag:&nbsp;
+          <% filteredRainDataPerKilometer %> mm
+          </td>
+      <tr>
+    </table>
+
   </div>
 
   <div ng-repeat="(slug, lg) in box.content"

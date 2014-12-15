@@ -444,7 +444,6 @@ angular.module('lizard-nxt')
         + ' z-index: 0;'
         + '}';
       document.body.appendChild(node);
-
     }
   };
 
@@ -567,4 +566,34 @@ angular.module('lizard-nxt')
     }
   };
 
+  this.extent2kilometers = function (leafletBounds) {
+
+    var west  = leafletBounds._southWest.lat,
+        east  = leafletBounds._northEast.lat,
+        north = leafletBounds._northEast.lng,
+        south = leafletBounds._southWest.lng,
+        northWest = L.latLng({lat:west, lng:north}),
+        southEast = L.latLng({lat:east, lng:south}),
+        latDistance = leafletBounds._southWest.distanceTo(southEast) / 1000,
+        lngDistance = leafletBounds._northEast.distanceTo(northWest) / 1000;
+
+    return Math.max(1, latDistance * lngDistance);
+  };
+
+  this.getHumanReadableAggWindow = function (aggWindow) {
+
+    switch (aggWindow) {
+    case 300000:
+      return "5 minuten";
+    case 3600000:
+      return "uur";
+    case 86400000:
+      return "dag";
+    case 2635200000:
+      return "maand";
+    default:
+      return "???";
+    }
+
+  };
 }]);
