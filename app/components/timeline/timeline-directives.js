@@ -65,7 +65,7 @@ angular.module('lizard-nxt')
 
         scope.$apply(function () {
           timelineSetsTime = true;
-          State.timelineMoving = true;
+          State.temporal.timelineMoving = true;
           State.temporal.start = scale.domain()[0].getTime();
           State.temporal.end = scale.domain()[1].getTime();
           State.temporal.aggWindow = UtilService.getAggWindow(
@@ -89,7 +89,7 @@ angular.module('lizard-nxt')
           State.temporal.resolution = (
             State.temporal.end - State.temporal.start) /  window.innerWidth;
           getTimeLineData();
-          State.timelineMoving = false;
+          State.temporal.timelineMoving = false;
         });
       },
 
