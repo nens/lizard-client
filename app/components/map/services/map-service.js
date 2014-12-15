@@ -2,15 +2,11 @@
 
 /**
  * @ngdoc service
- * TODO : doc
- * @class NxtMap /
+ * @class MapService
  * @memberof app
- * @name NxtMap
- * @requires LeafletService
- * @summary stores the map
- * @description  NxtMap service encapsulates all kinds of helper functions
- * for the map-directive. A wrapper of sorts for Leaflet stuff,
- * the map object and mapState.
+ * @name MapService
+ * @requires NxtMap
+ * @summary stores global NxtMap instance of the app.
  */
 
 angular.module('lizard-nxt')

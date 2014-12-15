@@ -45,9 +45,9 @@ angular.module('lizard-nxt')
        //TODO draw feedback when loading data
         var promises = $scope.fillBox({
           geom: bounds,
-          start: $scope.timeState.start,
-          end: $scope.timeState.end,
-          aggWindow: $scope.timeState.aggWindow
+          start: State.temporal.start,
+          end: State.temporal.end,
+          aggWindow: State.temporal.aggWindow
         });
         angular.forEach(promises, function (promise) {
           promise.then(null, null, function (response) {

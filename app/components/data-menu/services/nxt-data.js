@@ -1,3 +1,22 @@
+
+
+/**
+ * @ngdoc service
+ * @class NxtData /
+ * @memberof app
+ * @name NxtData
+ * @requires $q, $injector, NxtMap and LayerGroup
+ * @summary Encapsulates layergroups
+ * @description NxtData service encapsulates layergroups from the server side
+ *              configuration of layergroups. It enables to perform actions
+ *              on all layergroups simultaneously. When provided with a string
+ *              representation of the service containing the global map it
+ *              it performs these actions on the map from this service, else
+ *              it needs a map object when calling toggleLayerGroup and
+ *              syncTime.
+ */
+
+
 angular.module('lizard-nxt')
   .factory('NxtData', ['$q', '$injector', 'NxtMap', 'LayerGroup', function ($q, $injector, NxtMap, LayerGroup) {
 
