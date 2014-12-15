@@ -845,7 +845,6 @@ angular.module('lizard-nxt')
       .attr("x", function (d) {
         return xScale(d[0]) - barWidth;
       })
-      .attr("data-value", function (d) { return d; })
       .attr('width', barWidth)
       .attr("height", 0)
       .attr("y", height)

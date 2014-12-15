@@ -577,23 +577,8 @@ angular.module('lizard-nxt')
         latDistance = leafletBounds._southWest.distanceTo(southEast) / 1000,
         lngDistance = leafletBounds._northEast.distanceTo(northWest) / 1000;
 
+    // On high zoomlevels, we limit the area to 1km^2 since that's the
+    // spatial resolution ("pixel") for radar data in the rasterstore.
     return Math.max(1, latDistance * lngDistance);
-  };
-
-  this.getHumanReadableAggWindow = function (aggWindow) {
-
-    switch (aggWindow) {
-    case 300000:
-      return "5 minuten";
-    case 3600000:
-      return "uur";
-    case 86400000:
-      return "dag";
-    case 2635200000:
-      return "maand";
-    default:
-      return "???";
-    }
-
   };
 }]);
