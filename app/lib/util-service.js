@@ -567,4 +567,14 @@ angular.module('lizard-nxt')
     }
   };
 
+  /*
+   * @function
+   * @description wrapper around lodash.union function
+   * which works better than our own implementation..
+   * Could be more efficient to call from api in a batch
+   * instead of tiled/geojson stuff.
+   *
+   */
+  this.union = _.union;
+
 }]);
