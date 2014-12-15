@@ -7,17 +7,25 @@ angular.module('global-state')
 
     var state = {};
 
-    // returns a string representation of the provided attribute of the state.
+    /**
+     * returns a function that returns a string representation of the provided
+     * attribute of the state. When the state. does not exist, it returns a
+     * function that returns "undefined".  Useful to $watch the state.
+     */
     state.toString = function (stateStr) {
       return function () {
         var property = state;
         angular.forEach(stateStr.split('.'), function (accessor) {
-          property = property[accessor];
+          if (property) {
+            property = property[accessor];
+          }
         });
         return JSON.stringify(property);
       };
     };
 
+    // Context. State.context returns 'map' or 'db', it can only be set with
+    // either one of those values.
     var _context = 'map';
     var CONTEXT_VALUES = ['map', 'db'];
     Object.defineProperty(state, 'context', {
@@ -36,13 +44,17 @@ angular.module('global-state')
       }
     });
 
-    // State of data layer groups
+    // State of data layer groups, stores slugs of all and the active
+    // layergroups.
     var _layerGroups = Object.keys(dataLayers);
 
     state.layerGroups = {};
+
+    // Immutable representation of all layergroups
     Object.defineProperty(state.layerGroups, 'all', {
       value: _layerGroups,
-      write: false,
+      writeable: false,
+      configurable: false
     });
     Object.defineProperty(state.layerGroups, 'active', {
       get: function () {
@@ -50,6 +62,7 @@ angular.module('global-state')
           return DataService.layerGroups[layerGroup].isActive();
         });
       },
+      // TODO: make layergroups two-way like all other State attributes.
       // set: function (layerGroups) {
       //   var _active = [];
       //   angular.forEach(_layerGroups, function (_layerGroup) {
@@ -57,7 +70,6 @@ angular.module('global-state')
       //       _active.push(_layerGroup);
       //     }
       //   });
-      //   return _active;
       // }
     });
 
@@ -88,11 +100,12 @@ angular.module('global-state')
       points: [], // History of here for drawing and creating line and polygons
       bounds: {},
       zoom: {},
-      userHere: {}, // Geographical location of the users mouse
+      userHere: {}, // Geographical location of the users mouse only set by
+                    // map-directive when box type is 'line'
       mapMoving: false
     };
 
-    // TIME MODEL
+    // Temporal
     var now = Date.now(),
         hour = 60 * 60 * 1000,
         day = 24 * hour,
@@ -108,6 +121,7 @@ angular.module('global-state')
       playing: false,
     };
 
+    // State.temporal.start must be higher than MIN_TIME_FOR_EXTENT
     var _start = now - 6 * day;
     Object.defineProperty(state.temporal, 'start', {
       get: function () { return _start; },
@@ -116,6 +130,7 @@ angular.module('global-state')
       }
     });
 
+    // State.temporal.end must be lower than MAX_TIME_FOR_EXTENT
     var _end = now + day;
     Object.defineProperty(state.temporal, 'end', {
       get: function () { return _end; },
