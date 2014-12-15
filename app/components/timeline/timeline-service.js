@@ -84,7 +84,8 @@ angular.module('lizard-nxt')
      * @type function to be used to format datetime.
      */
     format: {
-      value: NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%a %e %b %Y %H:%M")
+      value: NxtD3
+        .prototype._localeFormatter.nl_NL.timeFormat("%a %e %b %Y %H:%M")
     },
     format_aggwindow: {
       value: NxtD3.prototype._localeFormatter.nl_NL.timeFormat("%e %b %-H:%M")
@@ -141,9 +142,10 @@ angular.module('lizard-nxt')
      * @description Left of aggWindow is timeState.at, size is dependent on
      * current aggWindow interval on timeState.
      *
-     * TODO: Rasterstore's "day-level aggregated rain intensity data" has discrete
-     * one-day/24h intervals (=good), however those intervals are from 8:00 GMT
-     * (in the morning) to the next day's 8:00 GMT in the morning (=bad).
+     * TODO: Rasterstore's "day-level aggregated rain intensity data" has
+     * discrete one-day/24h intervals (=good), however those intervals are
+     * from 8:00 GMT (in the morning) to the next day's 8:00 GMT in the morning
+     * (=bad).
      *
      * This doens't play nice with the aggWindow to be drawn, since (for 24h
      * aggregation) this preferably starts on 00:00, and ends 24h later, again
@@ -186,7 +188,8 @@ angular.module('lizard-nxt')
         aggWindow.select('.aggwindow-label')
           .text(this.format_aggwindow(new Date(timestamp)))
           .attr("x", function () {
-            bboxWidth = aggWindow.select('.aggwindow-label').node().getBBox().width;
+            bboxWidth = aggWindow.select('.aggwindow-label').node()
+              .getBBox().width;
             return offset + xScale(new Date(timestamp)) - bboxWidth - 2;
           });
 

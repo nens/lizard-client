@@ -19,7 +19,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       // bower:js
-      'vendor/jquery/jquery.js',
+      'vendor/jquery/dist/jquery.js',
       'vendor/angular/angular.js',
       'vendor/angular-mocks/angular-mocks.js',
       'vendor/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js',
@@ -35,6 +35,7 @@ module.exports = function(config) {
       'vendor/angular-sanitize/angular-sanitize.js',
       'vendor/ng-csv/build/ng-csv.min.js',
       'vendor/raven-js/dist/raven.js',
+      'vendor/d3-comparator/d3-comparator.js',
       // endbower
 
       // application

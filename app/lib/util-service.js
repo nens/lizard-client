@@ -566,6 +566,15 @@ angular.module('lizard-nxt')
     }
   };
 
+  /**
+   * @function
+   * @description - Get amount of Km^2 in the current spatial extent
+   *                (bottom-limit = 1)
+   * @param {latLngBounds} leafletBounds - A leaflet bounds object denoting the current
+   *                                       spatial extent.
+   * @return {number} - A number denoting the extent's corresponding perimeter
+   *                   (expressed in Km^2)
+   */
   this.extent2kilometers = function (leafletBounds) {
 
     var northWest = L.latLng({
@@ -583,4 +592,15 @@ angular.module('lizard-nxt')
     // spatial resolution ("pixel") for radar data in the rasterstore.
     return Math.max(1, latDistance * lngDistance);
   };
+
+  /*
+   * @function
+   * @description wrapper around lodash.union function
+   * which works better than our own implementation..
+   * Could be more efficient to call from api in a batch
+   * instead of tiled/geojson stuff.
+   *
+   */
+  this.union = _.union;
+
 }]);

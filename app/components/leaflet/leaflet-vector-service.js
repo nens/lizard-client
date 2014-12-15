@@ -22,6 +22,7 @@ angular.module('lizard-nxt')
    *
    */
   var TileDataLayer = LeafletService.TileLayer.extend({
+
     /**
      * @function
      * @description adds functionality to original Add function
@@ -69,6 +70,7 @@ angular.module('lizard-nxt')
         null, this.drawOptions).addTo(map);
       this._map.on('moveend', this._onMove, this);
     },
+
     /**
      * @function
      * @description Remove geojson sublayer
@@ -82,6 +84,7 @@ angular.module('lizard-nxt')
       this.isLoading = false;
       LeafletService.TileLayer.prototype.onRemove.call(this, map);
     },
+
     /**
      * @function
      * @description handler for move events,
@@ -90,6 +93,7 @@ angular.module('lizard-nxt')
     _onMove: function () {
       this.redraw();
     },
+
     /**
      * @function
      * @description Handles what happens with xhr requests.
@@ -114,6 +118,7 @@ angular.module('lizard-nxt')
         }
       };
     },
+
     /**
      * @function
      * @description does the actual request and sets
@@ -136,6 +141,7 @@ angular.module('lizard-nxt')
       req.open('GET', this.getTileUrl(tilePoint), true);
       req.send();
     },
+
     /**
      * @function
      * @description aborts requests and triggers reset for geojson layer
@@ -151,6 +157,7 @@ angular.module('lizard-nxt')
         this._resetgeoJson();
       }
     },
+
     /**
      * @function
      * @description empties and re-adds geojsonlayer to the map
@@ -160,6 +167,7 @@ angular.module('lizard-nxt')
       this.geojsonLayer = LeafletService.geoJson(null, this.drawOptions)
         .addTo(this._map);
     },
+
     /**
      * @function
      * @description counts all the data for the same point
@@ -185,6 +193,7 @@ angular.module('lizard-nxt')
       });
       return filteredData;
     },
+
     /**
      * @function
      * @description Implements opacity handler like other TileLayers
@@ -200,6 +209,7 @@ angular.module('lizard-nxt')
         });
       }
     },
+
     /**
      * @function
      * @description Draws the data in the geojsonlayer
@@ -216,6 +226,7 @@ angular.module('lizard-nxt')
       }
       self.geojsonLayer.addData(filteredData);
     },
+
     /**
      * @function
      * @description this passes the received data on to the
@@ -232,6 +243,12 @@ angular.module('lizard-nxt')
             );
       }
     },
+
+
+    /**
+     * @function
+     * @description sync the time
+     */
     syncTime: function (layer, timeState) {
       //this.options.layer = layer;
       this.options.start = timeState.start;
@@ -239,6 +256,10 @@ angular.module('lizard-nxt')
       this.redraw();
     },
 
+    /**
+     * @function
+     * @description redraw all the things.
+     */
     redraw: function () {
       var self = this;
       if (self._map !== undefined) {
