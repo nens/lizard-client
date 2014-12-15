@@ -212,6 +212,7 @@ angular.module('lizard-nxt')
               slug = this.slug,
               summary = this.summary,
               format = this.format,
+              type = this.type,
               quantity = this.quantity,
               type = this.type,
               unit = this.unit;

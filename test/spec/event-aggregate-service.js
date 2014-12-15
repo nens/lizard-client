@@ -29,7 +29,6 @@ describe('Testing event aggregate service', function () {
   it("should return an array with property 'min' is 2 for the first element", function () {
     var data = eventsMock.features;
     var result = EventAggregateService.aggregate(data, timeState.aggWindow);
-    console.log(result);
     expect(result[0].min).toBe(2);
   });
 

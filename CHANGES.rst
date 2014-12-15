@@ -6,6 +6,14 @@ Unreleased ()
 
 - Force cursor behaviour in point, line and area mode.
 
+- Clean up dependencies.
+
+- Store global state in seperate module.
+
+- Split map from data.
+
+- Update Angular coding guidelines.
+
 - Time extent from 2010.
 
 - UTFGrid aggregation: get all structures for spatial extent.

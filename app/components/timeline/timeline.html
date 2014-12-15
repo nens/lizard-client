@@ -5,12 +5,12 @@
     <div class="btn-group">
       <a ng-click="timeState.playPauseAnimation()"
          class="extra-padding timeline-button"
-         ng-class="{'active': timeState.animation.playing}"
-         title="<% timeState.animation.playing ? tooltips.stopAnim : tooltips.startAnim %>"
+         ng-class="{'active': timeState.playing}"
+         title="<% timeState.playing ? tooltips.stopAnim : tooltips.startAnim %>"
          data-original-title="Afspelen/pauzeren">
         <i class="fa"  ng-class="{
-            'fa-play': !timeState.animation.playing,
-            'fa-pause active': (timeState.animation.playing && !timeState.buffering),
+            'fa-play': !timeState.playing,
+            'fa-pause active': (timeState.playing && !timeState.buffering),
             'fa-circle-o-notch fa-spin' : timeState.buffering
             }"></i>
       </a>

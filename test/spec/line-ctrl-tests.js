@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 describe('Testing LineCtrl', function () {
   var $rootScope,
@@ -30,10 +30,6 @@ describe('Testing LineCtrl', function () {
       content: undefined,
       type: 'point'
     };
-
-    boxScope.mapState = new NxtMap(angular.element('<div></div>')[0], data_layers, {
-      zoomControl: false
-    });
 
     var MockClickFeedbackService = {
       emptyClickLayer: function () {return true; },
