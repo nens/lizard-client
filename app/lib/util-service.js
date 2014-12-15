@@ -148,6 +148,7 @@ angular.module('lizard-nxt')
     }
   };
 
+
   /**
    * @function dataConvertToMeters
    * @memberOf UtilService
@@ -164,6 +165,8 @@ angular.module('lizard-nxt')
     }
     return data;
   };
+
+
   /**
    * @function degToMeters
    * @memberOf UtilService
@@ -177,6 +180,7 @@ angular.module('lizard-nxt')
   this.degToMeters = function (degrees) {
     return  (degrees * Math.PI) / 180 * 6371 * 1000;
   };
+
 
   /**
    * @function metersToDegs
@@ -219,6 +223,7 @@ angular.module('lizard-nxt')
     });
     return dataForTimeState;
   };
+
 
   /**
    * @function serveToOldIE
@@ -263,7 +268,6 @@ angular.module('lizard-nxt')
    * @memberOf UtilService
    */
   this.geomToWkt = function (geom) {
-
     if (geom instanceof L.LatLng) {
       // geom is a L.LatLng object
       return "POINT(" + geom.lng + " " + geom.lat + ")";
@@ -286,21 +290,20 @@ angular.module('lizard-nxt')
     }
   };
 
+
   /**
    * @function buildString
    * @memberof UtilService
    * @description Glues all of it's arguments to a single string
    */
   this.buildString = function () {
-
     var i, result = "";
-
     for (i = 0; i < arguments.length; i++) {
       result += arguments[i];
     }
-
     return result;
   };
+
 
   /**
    * @function all
@@ -311,17 +314,15 @@ angular.module('lizard-nxt')
    * @return {boolean}
    */
   this.all = function (arr, predicate_) {
-
     var i,
         result = true,
         predicate = predicate_ || function (x) { return !!x; };
-
     for (i = 0; i < arr.length; i++) {
       result = result && predicate(arr[i]);
     }
-
     return result;
   };
+
 
   /**
    * @function any
@@ -334,17 +335,15 @@ angular.module('lizard-nxt')
    * @return {boolean}
    */
   this.any = function (arr, predicate_) {
-
     var i,
         result = false,
         predicate = predicate_ || function (x) { return !!x; };
-
     for (i = 0; i < arr.length; i++) {
       result = result || predicate(arr[i]);
     }
-
     return result;
   };
+
 
   /**
    * @function
@@ -408,6 +407,7 @@ angular.module('lizard-nxt')
     return true;
   };
 
+
   /**
    * @function
    * @memberOf UtilService
@@ -429,6 +429,7 @@ angular.module('lizard-nxt')
     }
   };
 
+
   this.preventOldIEUsage = function () {
     if (this.serveToOldIE()) {
       document.querySelector("#dark-overlay").style.display = "block";
@@ -447,6 +448,7 @@ angular.module('lizard-nxt')
     }
   };
 
+
   /*
    * @description - Replace display_name value with name value, if applicable
    * @param {string} str - The string to be converted.
@@ -462,6 +464,7 @@ angular.module('lizard-nxt')
     }
     return obj;
   };
+
 
   /**
    * @description - Deduce the wanted geometry-type from the passed in geomOpts
@@ -492,6 +495,7 @@ angular.module('lizard-nxt')
     }
   };
 
+
   /**
    * @function
    * @description - Count all keys for an object (we can't do this vanilla.js style in Angular template)
@@ -501,6 +505,7 @@ angular.module('lizard-nxt')
   this.countKeys = function (obj) {
     return obj === undefined ? 0 : Object.keys(obj).length;
   };
+
 
   /**
    * @function
@@ -521,6 +526,7 @@ angular.module('lizard-nxt')
     }
   };
 
+
   /* @description - Convert lin to log scale, given the following 3 args.
    * @param {number} value - the value to convert
    * @param {number} minValue - the start of the scale
@@ -533,6 +539,7 @@ angular.module('lizard-nxt')
       .range([minValue, maxValue]);
     return scale(value);
   };
+
 
   /**
    * @description - This add a <style> tag + it's contents to the <head> of the
@@ -553,6 +560,7 @@ angular.module('lizard-nxt')
     styleElement.appendChild(document.createTextNode(newStyle));
   };
 
+
   /*
    * @description - Convert string ending in px to value expressed in pixels,
    *                it denotes.
@@ -565,6 +573,7 @@ angular.module('lizard-nxt')
       throw new Error("Could not extract integer from string: '" + str + "'");
     }
   };
+
 
   /**
    * @function
@@ -592,6 +601,7 @@ angular.module('lizard-nxt')
     // spatial resolution ("pixel") for radar data in the rasterstore.
     return Math.max(1, latDistance * lngDistance);
   };
+
 
   /*
    * @function
