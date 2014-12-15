@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Store global state in seperate module.
+
+- Split map from data.
+
 - Time extent from 2010.
 
 - UTFGrid aggregation: get all structures for spatial extent.
