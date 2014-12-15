@@ -5,7 +5,10 @@ angular.module('lizard-nxt')
   'ClickFeedbackService',
   'UtilService',
   '$q',
-  function ($scope, RasterService, ClickFeedbackService, UtilService, $q) {
+  'MapService',
+  'DataService',
+  'State',
+  function ($scope, RasterService, ClickFeedbackService, UtilService, $q, MapService, DataService, State) {
 
     $scope.box.content = {};
 
@@ -16,13 +19,13 @@ angular.module('lizard-nxt')
      * @param  array of L.LatLng objects describing the line.
      */
     var fillLine = function (line) {
-      ClickFeedbackService.startVibration($scope.mapState);
+      ClickFeedbackService.startVibration(MapService);
       //TODO draw feedback when loading data
       var promises = $scope.fillBox({
         geom: line,
-        start: $scope.timeState.start,
-        end: $scope.timeState.end,
-        aggWindow: $scope.timeState.aggWindow
+        start: State.temporal.start,
+        end: State.temporal.end,
+        aggWindow: State.temporal.aggWindow
       });
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
@@ -40,7 +43,7 @@ angular.module('lizard-nxt')
           } else if (response.data && response.data !== 'null'
             && response.format === 'Store'
             && (response.scale === 'ratio' || response.scale === 'interval')
-            && $scope.mapState.layerGroups[response.layerGroupSlug].temporal) {
+            && DataService.layerGroups[response.layerGroupSlug].temporal) {
             // in other words, its rain..
             $scope.box.content[response.layerGroupSlug]
               .layers[response.layerSlug]
@@ -51,7 +54,7 @@ angular.module('lizard-nxt')
                 $scope.box.content[response.layerGroupSlug]
                   .layers[response.layerSlug]
                   .temporalData,
-                $scope.timeState
+                State.temporal
               );
           }
         });
@@ -73,8 +76,8 @@ angular.module('lizard-nxt')
         if (lg && lg.layers) {
           angular.forEach(lg.layers, function (layer) {
             if (layer && layer.data && layer.data.length > 0) {
-              ClickFeedbackService.emptyClickLayer($scope.mapState);
-              ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.points[1], false);
+              ClickFeedbackService.emptyClickLayer(MapService);
+              ClickFeedbackService.drawLine(State.spatial.points[0], State.spatial.points[1], false);
               ClickFeedbackService.vibrateOnce();
               feedbackDrawn = true;
             }
@@ -82,12 +85,12 @@ angular.module('lizard-nxt')
         }
       });
       if (!feedbackDrawn) {
-        ClickFeedbackService.emptyClickLayer($scope.mapState);
+        ClickFeedbackService.emptyClickLayer(MapService);
         ClickFeedbackService.vibrateOnce({
           type: 'LineString',
           coordinates: [
-            [$scope.mapState.points[0].lng, $scope.mapState.points[0].lat],
-            [$scope.mapState.points[1].lng, $scope.mapState.points[1].lat]
+            [State.spatial.points[0].lng, State.spatial.points[0].lat],
+            [State.spatial.points[1].lng, State.spatial.points[1].lat]
           ]
         });
       }
@@ -104,30 +107,30 @@ angular.module('lizard-nxt')
      *   3. Sets the second click and draws the lne from
      *      the first to the second.
      */
-    $scope.$watch('mapState.here', function (n, o) {
+    $scope.$watch(State.toString('spatial.here'), function (n, o) {
       if (n === o) { return true; }
-      ClickFeedbackService.emptyClickLayer($scope.mapState);
-      if ($scope.mapState.points.length === 2) {
-        $scope.mapState.points = [];
+      ClickFeedbackService.emptyClickLayer(MapService);
+      if (State.spatial.points.length === 2) {
+        State.spatial.points = [];
         // Empty data element since the line is gone
         $scope.box.content = {};
       } else {
-        if ($scope.mapState.points.length === 1) {
-          $scope.mapState.points[1] = $scope.mapState.here;
-          ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.points[1], false);
-          fillLine($scope.mapState.points);
+        if (State.spatial.points.length === 1) {
+          State.spatial.points[1] = State.spatial.here;
+          ClickFeedbackService.drawLine(State.spatial.points[0], State.spatial.points[1], false);
+          fillLine(State.spatial.points);
         } else {
-          $scope.mapState.points[0] = $scope.mapState.here;
-          ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.userHere, true);
+          State.spatial.points[0] = State.spatial.here;
+          ClickFeedbackService.drawLine(State.spatial.points[0], State.spatial.userHere, true);
         }
       }
     });
 
-    var watchIfUrlCtrlSetsPoints = $scope.$watch('mapState.points', function (n, o) {
-      if ($scope.mapState.points.length === 2) {
-        ClickFeedbackService.emptyClickLayer($scope.mapState);
-        ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.points[1], false);
-        fillLine($scope.mapState.points);
+    var watchIfUrlCtrlSetsPoints = $scope.$watch(State.toString('spatial.points'), function (n, o) {
+      if (State.spatial.points.length === 2) {
+        ClickFeedbackService.emptyClickLayer(MapService);
+        ClickFeedbackService.drawLine(State.spatial.points[0], State.spatial.points[1], false);
+        fillLine(State.spatial.points);
         // Delete this watch
         watchIfUrlCtrlSetsPoints();
       }
@@ -136,36 +139,36 @@ angular.module('lizard-nxt')
     /**
      * Updates line according to geo-pos of mouse
      */
-    $scope.$watch('mapState.userHere', function (n, o) {
+    $scope.$watch(State.toString('spatial.userHere'), function (n, o) {
       if (n === o) { return true; }
-      if ($scope.mapState.points[0] && !$scope.mapState.points[1]) {
-        ClickFeedbackService.emptyClickLayer($scope.mapState);
-        ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.userHere, true);
+      if (State.spatial.points[0] && !State.spatial.points[1]) {
+        ClickFeedbackService.emptyClickLayer(MapService);
+        ClickFeedbackService.drawLine(State.spatial.points[0], State.spatial.userHere, true);
       }
     });
 
     /**
      * Updates line data when users changes layers.
      */
-    $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
+    $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return true; }
-      if ($scope.mapState.points.length === 2) {
-        ClickFeedbackService.emptyClickLayer($scope.mapState);
-        ClickFeedbackService.drawLine($scope.mapState.points[0], $scope.mapState.points[1], false);
-        fillLine($scope.mapState.points);
+      if (State.spatial.points.length === 2) {
+        ClickFeedbackService.emptyClickLayer(MapService);
+        ClickFeedbackService.drawLine(State.spatial.points[0], State.spatial.points[1], false);
+        fillLine(State.spatial.points);
       }
     });
 
     /**
      * Updates line of temporal layers when timeState.at changes.
      */
-    $scope.$watch('timeState.at', function (n, o) {
+    $scope.$watch(State.toString('temporal.at'), function (n, o) {
       angular.forEach($scope.box.content, function (lg, slug) {
-        if ($scope.mapState.layerGroups[slug].temporal) {
+        if (DataService.layerGroups[slug].temporal) {
           angular.forEach(lg.layers, function (layer) {
             if (layer.format === 'Store'
               && (layer.scale === 'ratio' || layer.scale === 'interval')) {
-              layer.data = UtilService.createDataForTimeState(layer.temporalData, $scope.timeState);
+              layer.data = UtilService.createDataForTimeState(layer.temporalData, State.temporal);
             }
           });
         }
@@ -175,10 +178,11 @@ angular.module('lizard-nxt')
     /**
      * Reload data from temporal rasters when temporal zoomended.
      */
-    $scope.$watch('timeState.zoomEnded', function (n, o) {
+    $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
-      if ($scope.mapState.points.length === 2) {
-        fillLine($scope.mapState.points);
+      if (!State.temporal.timelineMoving
+        && State.spatial.points.length === 2) {
+        fillLine(State.spatial.points);
       }
     });
 
@@ -194,10 +198,10 @@ angular.module('lizard-nxt')
         // local vars declaration.
         var lat1, lat2, lon1, lon2, maxD, d, r, dLat, dLon, posLat, posLon;
 
-        lat1 = $scope.mapState.points[0].lat;
-        lat2 = $scope.mapState.points[1].lat;
-        lon1 = $scope.mapState.points[0].lng;
-        lon2 = $scope.mapState.points[1].lng;
+        lat1 = State.spatial.points[0].lat;
+        lat2 = State.spatial.points[1].lat;
+        lon1 = State.spatial.points[0].lng;
+        lon2 = State.spatial.points[1].lng;
         maxD = Math.sqrt(Math.pow((lat2 - lat1), 2) + Math.pow((lon2 - lon1), 2));
         d = UtilService.metersToDegs($scope.box.mouseLoc);
         r = d / maxD;
@@ -212,14 +216,14 @@ angular.module('lizard-nxt')
               fillOpacity: 1,
               radius: 5
             });
-          $scope.mapState.addLayer(circle);
+          MapService.addLayer(circle);
         } else {
           circle.setLatLng([posLat, posLon]);
         }
       }
       else {
         if (circle !== undefined) {
-          $scope.mapState.removeLayer(circle);
+          MapService.removeLayer(circle);
           circle = undefined;
         }
       }
@@ -229,8 +233,8 @@ angular.module('lizard-nxt')
      * Clean up all drawings on box change.
      */
     $scope.$on('$destroy', function () {
-      ClickFeedbackService.emptyClickLayer($scope.mapState);
-      $scope.mapState.points = [];
+      ClickFeedbackService.emptyClickLayer(MapService);
+      State.spatial.points = [];
     });
 
   }

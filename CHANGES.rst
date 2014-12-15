@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Store global state in seperate module.
+
+- Split map from data.
+
 - Update Angular coding guidelines.
 
 - Time extent from 2010.

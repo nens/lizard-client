@@ -37,13 +37,21 @@ module.exports = function(config) {
       'vendor/raven-js/dist/raven.js',
       'vendor/d3-comparator/d3-comparator.js',
       // endbower
-      'app/lizard-nxt.js',
-      'app/*.js',
-      'test/mocks/**/*.js',
-      'app/lib/*.js',
-      'app/components/**/{controllers/,directives/,services/,*}.js',
-      'test/spec/**/*.js'
 
+      // application
+      'test/mocks/beforeModuleMocks.js',
+      'app/components/state/state.js', // Load these first to prevent dep clash
+      'app/templates.js',
+      'app/components/omnibox/omnibox.js',
+      'app/lizard-nxt.js',
+      'test/mocks/**/*.js',
+      'app/lib/**/*.js',
+      'app/*.js',
+      'app/components/**/{controllers/,directives/,services/,*}.js',
+      // end application
+
+      // tests
+      'test/spec/**/*.js'
     ],
 
     // list of files / patterns to exclude
