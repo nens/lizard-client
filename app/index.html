@@ -178,18 +178,21 @@
 
           </div>
         </div>
-
-        <map layers="mapState.layers"
-             rasterprofile="disabled"
-             vectorlayer
-             temporal-vector-layer
-             surfacelayer>
-         </map>
       </div>
     </div>
 
-    <div class="container">
-      <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
+    <div ng-if="context === map">
+      <div class="container">
+        <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
+      </div>
+
+      <map layers="mapState.layers"
+         ng-class="{'crosshair': box.type === 'profile'}">
+      </map>
+    </div>
+
+    <div ng-if="context === db">
+      <dashboard></dashboard>
     </div>
 
     <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
