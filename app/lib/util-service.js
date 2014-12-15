@@ -570,8 +570,8 @@ angular.module('lizard-nxt')
    * @function
    * @description - Get amount of Km^2 in the current spatial extent
    *                (bottom-limit = 1)
-   * @param {latLngBounds} leafletBounds - A leaflet bounds object denoting the current
-   *                                       spatial extent.
+   * @param {latLngBounds} leafletBounds - A leaflet bounds object denoting the
+   *                                       current spatial extent.
    * @return {number} - A number denoting the extent's corresponding perimeter
    *                   (expressed in Km^2)
    */
