@@ -5,8 +5,8 @@
  * and makes sure the right services are called.
  */
 angular.module('lizard-nxt')
-  .directive('search', ['LocationService', 'ClickFeedbackService',
-  function (LocationService,   ClickFeedbackService) {
+  .directive('search', ['LocationService', 'ClickFeedbackService', 'MapService', 'State',
+  function (LocationService, ClickFeedbackService, MapService, State) {
 
   var link = function (scope, element, attrs) {
 
@@ -74,12 +74,12 @@ angular.module('lizard-nxt')
      */
     scope.cleanInput = function () {
 
-      scope.box.type = "point";
+      State.box.type = "point";
       scope.geoquery = "";
       scope.box.content = {};
-      scope.mapState.points = [];
-      scope.mapState.here = undefined;
-      ClickFeedbackService.emptyClickLayer(scope.mapState);
+      State.spatial.points = [];
+      State.spatial.here = undefined;
+      ClickFeedbackService.emptyClickLayer(MapService);
     };
 
     /**
@@ -91,7 +91,7 @@ angular.module('lizard-nxt')
         var southWest = new L.LatLng(obj.boundingbox[0], obj.boundingbox[2]);
         var northEast = new L.LatLng(obj.boundingbox[1], obj.boundingbox[3]);
         var bounds = new L.LatLngBounds(southWest, northEast);
-        scope.mapState.fitBounds(bounds);
+        MapService.fitBounds(bounds);
       } else {
         if (window.JS_DEBUG) {
           throw new Error('Oops, no boundingbox on this result - TODO: show a proper message instead of this console error...');

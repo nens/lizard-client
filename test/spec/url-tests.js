@@ -146,14 +146,7 @@ describe('Testing UrlState', function () {
   });
 
   it('should set layers on the url', function () {
-    var layergroups = {
-      topo: {
-        isActive: function () { return true; }
-      },
-      satte: {
-        isActive: function () { return true; }
-      }
-    };
+    var layergroups = "topo,satte";
     service.setlayerGroupsUrl(state, layergroups);
     expect($location.path()).toEqual('//topo,satte');
   });
@@ -206,7 +199,8 @@ describe('Testing hash controller', function () {
     $controller,
     $browser,
     createController,
-    LocationGetterSetter;
+    LocationGetterSetter,
+    DataService;
 
   beforeEach(module('lizard-nxt'));
 
@@ -216,6 +210,11 @@ describe('Testing hash controller', function () {
     $controller = $injector.get('$controller');
     $browser = $injector.get('$browser');
     $scope = $rootScope.$new();
+    DataService = $injector.get('DataService');
+    var MapService = $injector.get('MapService');
+    var el = angular.element('<div></div>');
+    MapService.createMap(el[0], {});
+    MapService.fitBounds = function (bounds) {};
     LocationGetterSetter = $injector.get('LocationGetterSetter');
 
     // Mock MapService
@@ -241,12 +240,6 @@ describe('Testing hash controller', function () {
       $scope.mapState.center.lat = latlng.lat;
     };
 
-    // Mock the mapState
-    $scope.mapState = mapState;
-    $scope.mapState.changeLayer = function (layer) {
-      layer.active = !layer.active;
-    };
-
     // Mock initial time
     $scope.timeState = {start: 10};
 
@@ -263,10 +256,9 @@ describe('Testing hash controller', function () {
 
   it('should activate layer when layer is defined on the url', function () {
     var controller = createController();
-    $location.path('/map/testlayer2');
-
+    $location.path('/map/satellite');
     $scope.$broadcast('$locationChangeSuccess');
-    expect($scope.mapState.layerGroups.testlayer2._active).toBe(true);
+    expect(DataService.layerGroups.satellite._active).toBe(true);
   });
 
 });

@@ -36,13 +36,21 @@ module.exports = function(config) {
       'vendor/ng-csv/build/ng-csv.min.js',
       'vendor/raven-js/dist/raven.js',
       // endbower
-      'app/lizard-nxt.js',
-      'app/*.js',
-      'test/mocks/**/*.js',
-      'app/lib/*.js',
-      'app/components/**/{controllers/,directives/,services/,*}.js',
-      'test/spec/**/*.js'
 
+      // application
+      'test/mocks/beforeModuleMocks.js',
+      'app/components/state/state.js', // Load these first to prevent dep clash
+      'app/templates.js',
+      'app/components/omnibox/omnibox.js',
+      'app/lizard-nxt.js',
+      'test/mocks/**/*.js',
+      'app/lib/**/*.js',
+      'app/*.js',
+      'app/components/**/{controllers/,directives/,services/,*}.js',
+      // end application
+
+      // tests
+      'test/spec/**/*.js'
     ],
 
     // list of files / patterns to exclude

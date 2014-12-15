@@ -65,8 +65,6 @@ angular.module('lizard-nxt')
       MapService.createMap(element[0], {
           zoomControl: false,
           addZoomTitles: true,
-          zoomInTitle: scope.tooltips.zoomInMap,
-          zoomOutTitle: scope.tooltips.zoomOutMap
         }
       );
 

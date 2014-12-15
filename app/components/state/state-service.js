@@ -10,7 +10,7 @@ angular.module('global-state')
     /**
      * returns a function that returns a string representation of the provided
      * attribute of the state. When the state. does not exist, it returns a
-     * function that returns "undefined".  Useful to $watch the state.
+     * function that returns "undefined". Useful to $watch the state.
      */
     state.toString = function (stateStr) {
       return function () {
@@ -44,8 +44,8 @@ angular.module('global-state')
       }
     });
 
-    // State of data layer groups, stores slugs of all and the active
-    // layergroups.
+    // State of data layer groups, stores slugs of all layergroups and the
+    // active layergroups.
     var _layerGroups = Object.keys(dataLayers);
 
     state.layerGroups = {};

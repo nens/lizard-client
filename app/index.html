@@ -124,19 +124,14 @@
 
     <datamenu></datamenu>
 
-    <!-- <div ng-if="context === map"> -->
-      <map layers="mapState.layers"
-         ng-class="{'crosshair': box.type === 'profile'}">
-      </map>
+    <map layers="mapState.layers"
+       ng-class="{'crosshair': box.type === 'profile'}">
+    </map>
 
-      <div class="container">
-        <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
-      </div>
+    <div class="container">
+      <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
+    </div>
    <!-- </div> -->
-
-    <!-- <div ng-if="context === db"> -->
-      <dashboard></dashboard>
-    <!-- </div> -->
 
     <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
 
