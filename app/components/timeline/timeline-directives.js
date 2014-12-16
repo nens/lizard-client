@@ -15,16 +15,21 @@ angular.module('lizard-nxt')
               "UtilService",
               "Timeline",
               "VectorService",
+              "DataService",
+              "State",
               function ($q,
                         RasterService,
                         UtilService,
                         Timeline,
-                        VectorService) {
+                        VectorService,
+                        DataService,
+                        State) {
 
   var link = function (scope, element, attrs, timelineCtrl) {
 
     var LEFT_MARGIN = 60,
         RIGHT_MARGIN = 40,
+        timelineSetsTime = false,
 
         getCurrentWidth = function () {
           return window.innerWidth - (LEFT_MARGIN + RIGHT_MARGIN);
@@ -43,12 +48,12 @@ angular.module('lizard-nxt')
           }
         },
 
-        start = scope.timeState.start,
-        end = scope.timeState.end,
+        start = State.temporal.start,
+        end = State.temporal.end,
 
-        el = element.find('svg'),
+        el = element.find('svg');
 
-    interaction = {
+    var interaction = {
 
       /**
        * @function
@@ -59,20 +64,20 @@ angular.module('lizard-nxt')
       zoomFn: function (scale) {
 
         scope.$apply(function () {
-          scope.timeState.start = scale.domain()[0].getTime();
-          scope.timeState.end = scale.domain()[1].getTime();
-          scope.timeState.aggWindow = UtilService.getAggWindow(
-            scope.timeState.start, scope.timeState.end, window.innerWidth);
-          scope.timeState.at = UtilService.roundTimestamp(
-            scope.timeState.at,
-            scope.timeState.aggWindow,
+          timelineSetsTime = true;
+          State.temporal.timelineMoving = true;
+          State.temporal.start = scale.domain()[0].getTime();
+          State.temporal.end = scale.domain()[1].getTime();
+          State.temporal.aggWindow = UtilService.getAggWindow(
+            State.temporal.start, State.temporal.end, window.innerWidth);
+          State.temporal.at = UtilService.roundTimestamp(
+            State.temporal.at,
+            State.temporal.aggWindow,
             false
           );
-          scope.timeState.changeOrigin = 'timeline';
-          scope.timeState.changedZoom = Date.now();
         });
 
-        timeline.drawAggWindow(scope.timeState.at, scope.timeState.aggWindow);
+        timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
       },
 
       /**
@@ -81,9 +86,10 @@ angular.module('lizard-nxt')
        */
       zoomEndFn: function () {
         scope.$apply(function () {
-          scope.timeState.resolution = (
-            scope.timeState.end - scope.timeState.start) /  window.innerWidth;
+          State.temporal.resolution = (
+            State.temporal.end - State.temporal.start) /  window.innerWidth;
           getTimeLineData();
+          State.temporal.timelineMoving = false;
         });
       },
 
@@ -100,9 +106,9 @@ angular.module('lizard-nxt')
       clickFn: function (event, scale, dimensions) {
         scope.$apply(function () {
           var timeClicked = +(scale.invert(event.pageX - dimensions.padding.left - LEFT_MARGIN));
-          scope.timeState.at = UtilService.roundTimestamp(
+          State.temporal.at = UtilService.roundTimestamp(
             timeClicked,
-            scope.timeState.aggWindow
+            State.temporal.aggWindow
           );
         });
       },
@@ -131,7 +137,7 @@ angular.module('lizard-nxt')
      */
     var updateTimelineHeight = function (newDim, dim, nEventTypes) {
       var eventHeight;
-      if (getTimelineLayers(scope.mapState.layerGroups).rain && nEventTypes > 0) {
+      if (getTimelineLayers(DataService.layerGroups).rain && nEventTypes > 0) {
         eventHeight = (nEventTypes - 2) * dim.events;
         eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
         newDim.height = dim.height + dim.bars + eventHeight;
@@ -142,8 +148,8 @@ angular.module('lizard-nxt')
       }
 
       timeline.resize(newDim,
-                      scope.timeState.at,
-                      scope.timeState.aggWindow,
+                      State.temporal.at,
+                      State.temporal.aggWindow,
                       nEventTypes);
     };
 
@@ -190,7 +196,7 @@ angular.module('lizard-nxt')
      * That will change later when we set data.
      */
     var getTimeLineData = function () {
-      var timelineLayers = getTimelineLayers(scope.mapState.layerGroups),
+      var timelineLayers = getTimelineLayers(DataService.layerGroups),
           context = {eventOrder: 1,
                      nEvents: scope.events.nEvents};
 
@@ -273,9 +279,9 @@ angular.module('lizard-nxt')
      */
     var getTemporalRasterData = function (rasterLayer, nEvents) {
 
-      var start = scope.timeState.start,
-          stop = scope.timeState.end,
-          bounds = scope.mapState.bounds;
+      var start = State.temporal.start,
+          stop = State.temporal.end,
+          bounds = State.spatial.bounds;
 
       // Has it's own deferrer to not conflict with
       // other deferrers with the same layerSlug
@@ -286,7 +292,7 @@ angular.module('lizard-nxt')
           start: start,
           end: stop,
           agg: 'none',
-          aggWindow: scope.timeState.aggWindow,
+          aggWindow: State.temporal.aggWindow,
           deferrer: {
             origin: 'timeline_' + rasterLayer,
             deferred: $q.defer()
@@ -304,7 +310,7 @@ angular.module('lizard-nxt')
     /**
      * Updates area when user moves map.
      */
-    scope.$watch('mapState.bounds', function (n, o) {
+    scope.$watch(State.toString('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
       getTimeLineData();
     });
@@ -312,7 +318,7 @@ angular.module('lizard-nxt')
     /**
      * Updates area when users changes layers.
      */
-    scope.$watch('mapState.layerGroupsChanged', function (n, o) {
+    scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return true; }
       getTimeLineData();
     });
@@ -321,35 +327,39 @@ angular.module('lizard-nxt')
      * Timeline is updated when something other than the timeline
      * updates the temporal extent.
      */
-    scope.$watch('timeState.changedZoom', function (n, o) {
+    scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
-      if (scope.timeState.changeOrigin !== 'timeline') {
-        scope.timeState.aggWindow = UtilService.getAggWindow(
-          scope.timeState.start, scope.timeState.end, getCurrentWidth())
-        timeline.zoomTo(
-          scope.timeState.start,
-          scope.timeState.end,
-          scope.timeState.aggWindow
-        );
-        getTimeLineData();
+      if (!State.temporal.timelineMoving) {
+        if (!timelineSetsTime) {
+          State.temporal.aggWindow = UtilService.getAggWindow(
+            State.temporal.start, State.temporal.end, getCurrentWidth());
+          timeline.zoomTo(
+            State.temporal.start,
+            State.temporal.end,
+            State.temporal.aggWindow
+          );
+          getTimeLineData();
+        } else {
+          timelineSetsTime = false;
+        }
       }
     });
 
     /**
      * Update aggWindow element when timeState.at changes.
      */
-    scope.$watch('timeState.at', function (n, o) {
-      timeline.drawAggWindow(scope.timeState.at, scope.timeState.aggWindow);
+    scope.$watch(State.toString('temporal.at'), function (n, o) {
+      timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
     });
 
     /**
      * Round timeState.at when animation stops.
      */
-    scope.$watch('timeState.animation.playing', function (n, o) {
+    scope.$watch(State.toString('temporal.playing'), function (n, o) {
       if (n === o || n) { return true; }
-      scope.timeState.at = UtilService.roundTimestamp(
-        scope.timeState.at + scope.timeState.aggWindow / 2,
-        scope.timeState.aggWindow,
+      State.temporal.at = UtilService.roundTimestamp(
+        State.temporal.at + State.temporal.aggWindow / 2,
+        State.temporal.aggWindow,
         false
       );
     });
@@ -375,11 +385,11 @@ angular.module('lizard-nxt')
      */
     window.onresize = function () {
 
-      timeline.dimensions.width = getCurrentWidth()
+      timeline.dimensions.width = getCurrentWidth();
       timeline.resize(
         timeline.dimensions,
-        scope.timeState.at,
-        scope.timeState.aggWindow,
+        State.temporal.at,
+        State.temporal.aggWindow,
         scope.events.nEvents // TODO: get nEvents from somewhere
       );
     };
