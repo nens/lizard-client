@@ -2,7 +2,16 @@ Changelog of lizard-nxt client
 ==============================
 
 Unreleased ()
--------------
+------------
+
+Release 1.0.2 (2014-12-16)
+--------------------------
+
+- Help button
+
+
+Release 1.0.1 (2014-12-10)
+--------------------------
 
 - Hide timeseries card when toggling waterchain off.
 
