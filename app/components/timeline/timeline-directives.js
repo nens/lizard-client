@@ -328,7 +328,6 @@ angular.module('lizard-nxt')
      * updates the temporal extent.
      */
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
-      console.log('watch triggered');
       if (n === o) { return true; }
       if (!State.temporal.timelineMoving) {
         if (!timelineSetsTime) {
@@ -345,7 +344,6 @@ angular.module('lizard-nxt')
         }
       }
     });
-    console.log('watch initialized');
 
     /**
      * Update aggWindow element when timeState.at changes.
