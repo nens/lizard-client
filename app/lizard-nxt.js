@@ -157,6 +157,8 @@ angular.module('lizard-nxt')
    'ClickFeedbackService',
    'user',
    'versioning',
+   'State',
+   'MapService',
 
   function ($scope,
             $http,
@@ -169,7 +171,9 @@ angular.module('lizard-nxt')
             TimeseriesService,
             ClickFeedbackService,
             user,
-            versioning) {
+            versioning,
+            State,
+            MapService) {
 
   $scope.user = user;
   $scope.versioning = versioning;
@@ -186,32 +190,25 @@ angular.module('lizard-nxt')
       return;
     }
 
+    // pressed ESC
     if ($event.which === 27) {
-      // If detailMode is active, close that
-      if ($scope.box.contextSwitchMode) {
-        // this shouldn't matter until dates gte 01-12-2014
-        $scope.box.contextSwitchMode = false;
-      } else {
-        // Or else, reset the omnibox AND searchbar state:
 
-        $scope.box.type = "point";
-        $scope.box.content = {};
-        $scope.mapState.here = undefined;
-        $scope.mapState.points = [];
-        ClickFeedbackService.emptyClickLayer($scope.mapState);
+      State.box.type = "point";
+      State.spatial.here = undefined;
+      State.spatial.points = [];
+      ClickFeedbackService.emptyClickLayer(MapService);
 
-        // This does NOT work, thnx to Angular scoping:
-        // $scope.geoquery = "";
-        //
-        // ...circumventing-angular-weirdness teknique:
-        document.querySelector("#searchboxinput").value = "";
-      }
+      // This does NOT work, thnx to Angular scoping:
+      // $scope.geoquery = "";
+      //
+      // ...circumventing-angular-weirdness teknique:
+      document.querySelector("#searchboxinput").value = "";
     }
-
-    // play pause timeline with Space.
-    if ($event.which === 32) {
-      $scope.timeState.playPauseAnimation();
-    }
+    // TODO: move
+    // // play pause timeline with Space.
+    // if ($event.which === 32) {
+    //   $scope.timeState.playPauseAnimation();
+    // }
 
   };
 
