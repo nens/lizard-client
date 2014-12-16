@@ -247,9 +247,9 @@ angular.module('lizard-nxt')
       // Get data from all layegroups with type === 'Event'
       angular.forEach(scope.mapState.layerGroups, function (lg) {
         lg.getData({
-          geom: scope.mapState.bounds,
-          start: scope.timeState.start,
-          end: scope.timeState.stop,
+          geom: State.spatial.bounds,
+          start: State.temporal.start,
+          end: State.temporal.stop,
           type: 'Event'
         }).then(null, null, function (response) {
 
@@ -328,6 +328,7 @@ angular.module('lizard-nxt')
      * updates the temporal extent.
      */
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
+      console.log('watch triggered');
       if (n === o) { return true; }
       if (!State.temporal.timelineMoving) {
         if (!timelineSetsTime) {
@@ -344,6 +345,7 @@ angular.module('lizard-nxt')
         }
       }
     });
+    console.log('watch initialized');
 
     /**
      * Update aggWindow element when timeState.at changes.

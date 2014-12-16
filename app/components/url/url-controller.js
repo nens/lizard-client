@@ -13,8 +13,8 @@
  */
 angular.module('lizard-nxt')
   .controller('UrlController', ['$scope', 'LocationGetterSetter',
-  'UrlState', 'dataBounds', 'DataService', 'MapService', 'State',
-  function ($scope, LocationGetterSetter, UrlState, dataBounds, DataService, MapService, State) {
+  'UrlState', 'dataBounds', 'DataService', 'MapService', 'State', '$rootScope',
+  function ($scope, LocationGetterSetter, UrlState, dataBounds, DataService, MapService, State, $rootScope) {
 
     // Configuration object for url state.
     var state = {
@@ -183,6 +183,13 @@ angular.module('lizard-nxt')
      * the url. Then, this listener is fired but does nothing but
      * resetting the updateUrl back to true
      */
+
+    // $locationChangeSuccess is fired once when this controller is initialized.
+    // We might move the time, so we set it to true, and the $on
+    // $locationChangeSuccess sets it back to false to trigger the the rest of
+    // the app to update to the time of the url.
+    State.temporal.timelineMoving = true;
+
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
       if (UrlState.update(state)) {
         var boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
@@ -208,11 +215,10 @@ angular.module('lizard-nxt')
           State.temporal = UrlState.parseTimeState(time, State.temporal);
         } else {
           state.timeState.update = false;
-          State.temporal.timelineMoving = true;
           UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
-          State.temporal.timelineMoving = false;
         }
       }
+      State.temporal.timelineMoving = false;
       angular.forEach(state, function (value) {
         value.update = true;
       });

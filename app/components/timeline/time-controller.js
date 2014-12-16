@@ -41,7 +41,6 @@ angular.module('lizard-nxt')
         timeOut; // runs for minLag of milliseconds before waiting for the promise
                  // to resolve and re-syncing the data layers to the new time and
                  // making a new step when animation is playing.
-    $scope.timeState = State.temporal;
 
     State.temporal.aggWindow = UtilService.getAggWindow(
       State.temporal.start,
@@ -49,8 +48,7 @@ angular.module('lizard-nxt')
       window.innerWidth
     );
 
-    $scope.timeState.playing = State.temporal.playing;
-    $scope.timeState.buffering = State.temporal.buffering;
+    this.state = State.temporal;
 
     /**
      * Keep an eye out for temporal layers that require the animation to go
@@ -118,14 +116,13 @@ angular.module('lizard-nxt')
      *
      * @param {} toggle - .
      */
-    $scope.timeState.playPauseAnimation = function (toggle) {
+    this.playPauseAnimation = function (toggle) {
       if (State.temporal.playing || toggle === "off") {
         State.temporal.playing = false;
       } else {
         State.temporal.playing = true;
         window.requestAnimationFrame(step);
       }
-      // $scope.timeState.playing = State.temporal.playing;
     };
 
     /**
@@ -169,7 +166,7 @@ angular.module('lizard-nxt')
      */
     var syncTimeWrapper = function (timeState) {
       promise = DataService.syncTime(timeState);
-      if (State.temporal.playing) {
+      if (timeState.playing) {
         progressAnimation(promise);
       }
       else {
@@ -210,7 +207,7 @@ angular.module('lizard-nxt')
      * @function
      * @summary Move timeState.end to now.
      */
-    $scope.timeState.zoomToNow = function () {
+    this.zoomToNow = function () {
 
       var now = Date.now(),
           fullInterval = State.temporal.end - State.temporal.start,
@@ -231,7 +228,7 @@ angular.module('lizard-nxt')
      *
      * @param {string} action - 'in' or 'out'.
      */
-    $scope.timeState.zoom = function (action) {
+    this.zoom = function (action) {
       var ZOOMFACTOR = 2;
       var newResolution;
 
