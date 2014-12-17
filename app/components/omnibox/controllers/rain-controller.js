@@ -13,14 +13,42 @@ angular.module('lizard-nxt')
     $scope.fullDetails = n;
   });
 
+
+  $scope.rrc = {
+    active: false
+  };
+
+  $scope.recurrenceTimeToggle = function () {
+    if (!$scope.$$phase) {
+      $scope.$apply(function () {
+        $scope.rrc.active = !$scope.rrc.active;
+        $scope.lg.layers['radar/basic'].changed = !$scope.lg.layers['radar/basic'].changed; 
+      });
+    } else {
+      $scope.rrc.active = !$scope.rrc.active;
+      $scope.lg.layers['radar/basic'].changed = !$scope.lg.layers['radar/basic'].changed; 
+    }
+  };
+
+
+  $scope.$watch("lg.layers['radar/basic'].changed", function (n, o) {
+    if (n === o || !$scope.rrc.active) { return; }
+    getRecurrenceTime();
+  });
+
   var getRecurrenceTime = function () {
-    var data = [{"max": 28.139999894425273, "end": 1418413200000.0, "t": "T <= 1", "td_window": "2 dag(en)", "start": 1418240400000.0}, {"max": 22.94999991171062, "end": 1418386800000.0, "t": "T <= 1", "td_window": "1 dag(en)", "start": 1418300400000.0}, {"max": 8.579999996349216, "end": 1418349600000.0, "t": "T <= 1", "td_window": "3 uur", "start": 1418338800000.0}, {"max": 3.800000010058284, "end": 1418349300000.0, "t": "T <= 1", "td_window": "1 uur", "start": 1418345700000.0}];
-    
-    RasterService.getData({
+    $scope.rrc.data = null;
+
+    // TODO: refactor this shit 
+    RasterService.getData(
+     {slug: 'radar/basic'}, {
       agg: 'rrc',
-      start: 1 
+      geom: State.spatial.here,
+      start: State.temporal.start,
+      end: State.temporal.end
+    }).then(function (response) {
+      $scope.rrc.data = response;
     });
-    return data;
   };
 
   /**
