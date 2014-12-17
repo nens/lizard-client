@@ -119,6 +119,8 @@ angular.module('global-state')
       timelineMoving: false,
       resolution: null,
       playing: false,
+      start: null, // defined below
+      end: null // defined below
     };
 
     // State.temporal.start must be higher than MIN_TIME_FOR_EXTENT
