@@ -4,7 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (1.2.dev) (XXXX-XX-XX)
 ---------------------------------
 
+- Removed unused images.
+
 -
+
 
 Release 1.1.0 (2014-12-17)
 --------------------------
