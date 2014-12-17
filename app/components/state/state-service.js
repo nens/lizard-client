@@ -20,7 +20,11 @@ angular.module('global-state')
             property = property[accessor];
           }
         });
-        return JSON.stringify(property);
+        if (typeof property === 'string') {
+          return property;
+        } else {
+          return JSON.stringify(property);
+        }
       };
     };
 

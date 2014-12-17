@@ -85,9 +85,22 @@ angular.module('lizard-nxt')
       });
 
       scope.$watch(State.toString('box.type'), function (n, o) {
-        UtilService.addNewStyle(
-          "#map * {cursor:" + (n === "line" ? "crosshair" : "") + ";}"
-        );
+        if (n === o) { return true; }
+        var selector;
+        switch (n) {
+          case "point":
+            selector = "";
+            break;
+          case "line":
+            selector = "#map * {cursor: crosshair;}";
+            break;
+          case "area":
+            selector = "#map * {cursor: -webkit-grab; cursor: -moz-grab; cursor: grab; cursor: hand;}";
+            break;
+          default:
+            return;
+        }
+        UtilService.addNewStyle(selector);
       });
 
     };
