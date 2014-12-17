@@ -4,6 +4,9 @@ Changelog of lizard-nxt client
 Unreleased ()
 ------------
 
+- Rain recurrence time is optional
+
+
 Release 1.0.2 (2014-12-16)
 --------------------------
 
