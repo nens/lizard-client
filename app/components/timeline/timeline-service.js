@@ -185,13 +185,13 @@ angular.module('lizard-nxt')
             offset = this.dimensions.padding.left;
 
         // UPDATE
-        aggWindow.select('.aggwindow-label')
-          .text(this.format_aggwindow(new Date(timestamp)))
-          .attr("x", function () {
-            bboxWidth = aggWindow.select('.aggwindow-label').node()
-              .getBBox().width;
-            return offset + xScale(new Date(timestamp)) - bboxWidth - 2;
-          });
+/*        aggWindow.select('.aggwindow-label')*/
+          //.text(this.format_aggwindow(new Date(timestamp)))
+          //.attr("x", function () {
+            //bboxWidth = aggWindow.select('.aggwindow-label').node()
+              //.getBBox().width;
+            //return offset + xScale(new Date(timestamp)) - bboxWidth - 2;
+          /*});*/
 
         aggWindow.select('.aggwindow-rect')
           .attr("x", function () {

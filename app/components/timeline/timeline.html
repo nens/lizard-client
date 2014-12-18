@@ -1,5 +1,10 @@
 <div id="timeline" ng-controller="TimeCtrl as timeline">
 
+  <div class="clock-wrapper">
+    <div class="clock-time" ng-bind="timeline.state.at | date: 'dd-MM-yyyy HH:mm'">
+    </div>  
+  </div>
+
   <div>
   <div class="time-controls">
     <div class="btn-group">
