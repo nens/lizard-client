@@ -19,13 +19,15 @@ angular.module('lizard-nxt')
     'RasterService',
     'UtilService',
     '$q',
+    'State',
 
     function (
 
       $scope,
       RasterService,
       UtilService,
-      $q
+      $q,
+      State
 
     ) {
 
@@ -44,9 +46,9 @@ angular.module('lizard-nxt')
      //TODO draw feedback when loading data
       var promises = $scope.fillBox({
         geom: bounds,
-        start: $scope.timeState.start,
-        end: $scope.timeState.end,
-        aggWindow: $scope.timeState.aggWindow
+        start: State.temporal.start,
+        end: State.temporal.end,
+        aggWindow: State.temporal.aggWindow
       });
       angular.forEach(promises, function (promise) {
         promise.then(null, null, function (response) {
@@ -64,46 +66,52 @@ angular.module('lizard-nxt')
               $scope.filteredRainDataPerKilometer
                 = UtilService.getFilteredRainDataPerKM(
                     response.data,
-                    $scope.mapState.bounds,
-                    $scope.timeState
+                    State.spatial.bounds,
+                    State.temporal
                   );
               break;
             }
           }
         });
+        // Draw feedback when all promises resolved
+        //$q.all(promises).then(drawFeedback);
       });
     };
 
-    /**
-     * Updates area when user moves map.
-     */
-    $scope.$watch('mapState.bounds', function (n, o) {
-      if (n === o) { return true; }
-      fillArea($scope.mapState.bounds);
-    });
+      /**
+       * Updates area when user moves map.
+       */
+      $scope.$watch(State.toString('spatial.bounds'), function (n, o) {
+        if (n === o) { return true; }
+        fillArea(State.spatial.bounds);
+      });
 
-    $scope.$watch('timeState.at', function (n, o) {
-      if (n === o) { return true; }
-      fillArea($scope.mapState.bounds);
-    });
+      /**
+       * Updates area when users changes layers.
+       */
+      $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
+        if (n === o) { return true; }
+        fillArea(State.spatial.bounds);
+      });
 
-    $scope.$watch('timeState.aggWindow', function (n, o) {
-      if (n === o) { return true; }
-      fillArea($scope.mapState.bounds);
-    });
+      $scope.$watch(State.toString('temporal.at'),
+          function (n, o) {
+        if (n === o) { return true; }
+        fillArea(State.spatial.bounds);
+      });
 
-    /**
-     * Updates area when users changes layers.
-     */
-    $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
-      if (n === o) { return true; }
-      fillArea($scope.mapState.bounds);
-    });
+      $scope.$watch(State.toString('temporal.aggWindow'),
+          function (n, o) {
+        if (n === o) { return true; }
+        fillArea(State.spatial.bounds);
+      });
 
-    // Load data at initialization.
-    fillArea($scope.mapState.bounds);
+
+      // Load data at initialization.
+      fillArea(State.spatial.bounds);
 
     // Make UtilSvc functions available in Angular templates
     $scope.countKeys = UtilService.countKeys;
   }
 ]);
+

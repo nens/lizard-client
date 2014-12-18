@@ -65,7 +65,7 @@ angular.module('lizard-nxt')
         syncTime: {
           value: function (timeState, map) {
             var defer = $q.defer();
-            if (timeState.animation.playing) {
+            if (timeState.playing) {
               this._leafletLayer.syncTime(this, {
                 start: timeState.at,
                 end: timeState.at + timeState.aggWindow

@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module("omnibox", ["templates-main"])
-  .directive("omnibox", ["$compile", "$templateCache", "UtilService",
-    function ($compile, $templateCache, UtilService) {
+angular.module("omnibox")
+  .directive("omnibox", ["$compile", "$templateCache", "UtilService", "State",
+    function ($compile, $templateCache, UtilService, State) {
 
     var getTemplate = function (scope, contentType) {
       if (contentType === undefined) {
@@ -18,7 +18,7 @@ angular.module("omnibox", ["templates-main"])
       var oldScope;
 
       var replaceTemplate = function () {
-        var template = getTemplate(scope, scope.box.type);
+        var template = getTemplate(scope, State.box.type);
         // we don't want the dynamic template to overwrite the search box.
         // NOTE: the reason for selecting the specific child is jqLite does
         // not support selectors. So an element is created of the second child
@@ -37,7 +37,7 @@ angular.module("omnibox", ["templates-main"])
 
       var finalizeTemplateRendering = function () {
         replaceTemplate();
-        scope.box.showCards = scope.box.type !== 'empty';
+        scope.box.showCards = State.box.type !== 'empty';
       };
 
       /**
@@ -80,7 +80,7 @@ angular.module("omnibox", ["templates-main"])
         scope.box.minimizeCards();
       });
 
-      scope.$watch('box.type', function (n, o) {
+      scope.$watch(State.toString('box.type'), function (n, o) {
         if (n === o) { return true; }
         finalizeTemplateRendering();
       });

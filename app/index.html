@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="/vendor/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="/vendor/leaflet-dist/dist/leaflet.css" />
     <link rel="stylesheet" href="/vendor/lizard-iconfont/lizard/dest/css/Lizard.css" />
-    <link rel="stylesheet" href="/vendor/ng-table/ng-table.css" />
     <link rel="stylesheet" href="/vendor/components-font-awesome/css/font-awesome.css" />
     <!-- endbower -->
     <!-- endbuild -->
@@ -55,7 +54,10 @@
         </div>
 
         <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right" style="">
+         <ul class="nav navbar-nav navbar-right" style="">
+           <li>
+              <a href="https://www.lizard.net/support" target="_blank"><i class="fa fa-question" style="font-size: 1.2em"></i></a>
+            </li>
 
               <li ng-if="user.authenticated" class="visible-xs">
                 <a class="user"
@@ -122,75 +124,15 @@
     <div id="text-mode-scrollable">
     </div>
 
-    <div id="master">
-      <div class="layer-menu-container">
-        <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': mapState.enabled}">
-          <div class="layer-switcher slide-left">
-            <ul class="nav">
-              <li class="nav-header">
-                <ul class="list-group">
-                  <li ng-repeat="layergroup in mapState.layerGroups | orderObjectBy: 'order': false">
-                    <layer-chooser layergroup="layergroup"></layer-chooser>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-          <div id="ribbon"
-               class="ribbon"
-               title="<% mapState.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
-            <div class="arrow arrow-up" ng-click="mapState.enabled = !mapState.enabled">
-            </div>
-            <div class="arrow arrow-down" ng-click="mapState.enabled = !mapState.enabled"><i class="fa fa-compass ribbon-icon"></i>
-            </div>
-          </div>
-          <div class="button-list-container" id="">
+    <datamenu></datamenu>
 
-            <div class="button-list-item"
-                 style="cursor: pointer">
-              <a ng-click="toggleTool('point')"
-                 class="button-list-link"
-                 title="punt selectie"
-                 ng-class="{'active': box.type === 'point'}">
-                 <i class="fa fa-dot-circle-o"></i>
-              </a>
-            </div>
-
-            <div class="button-list-item"
-                 style="cursor: pointer">
-              <a ng-click="toggleTool('line')"
-                 class="button-list-link"
-                 title="lijn selectie"
-                 ng-class="{'active': box.type === 'line'}">
-                 <i class="fa fa-expand"></i>
-              </a>
-            </div>
-
-            <div class="button-list-item"
-                 style="cursor: pointer">
-              <a ng-click="toggleTool('area')"
-                 class="button-list-link"
-                 title="scherm selectie"
-                 ng-class="{'active': box.type === 'area'}">
-                 <i class="fa fa-square-o"></i>
-              </a>
-            </div>
-
-          </div>
-        </div>
-
-        <map layers="mapState.layers"
-             rasterprofile="disabled"
-             vectorlayer
-             temporal-vector-layer
-             surfacelayer>
-         </map>
-      </div>
-    </div>
+    <map layers="mapState.layers">
+    </map>
 
     <div class="container">
       <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
     </div>
+   <!-- </div> -->
 
     <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
 
@@ -207,21 +149,15 @@
 
     <!-- build:js(.) /scripts/vendor.js -->
     <!-- bower:js -->
-    <script src="/vendor/jquery/jquery.js"></script>
+    <script src="/vendor/jquery/dist/jquery.js"></script>
     <script src="/vendor/angular/angular.js"></script>
     <script src="/vendor/angular-mocks/angular-mocks.js"></script>
-    <script src="/vendor/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js"></script>
     <script src="/vendor/bootstrap/dist/js/bootstrap.js"></script>
     <script src="/vendor/d3/d3.js"></script>
-    <script src="/vendor/jquery-ui/ui/jquery-ui.js"></script>
     <script src="/vendor/leaflet-dist/dist/leaflet.js"></script>
     <script src="/vendor/leaflet-dist/dist/leaflet-src.js"></script>
     <script src="/vendor/lodash/dist/lodash.compat.js"></script>
     <script src="/vendor/restangular/dist/restangular.js"></script>
-    <script src="/vendor/ui-utils/ui-utils.js"></script>
-    <script src="/vendor/ng-table/ng-table.js"></script>
-    <script src="/vendor/angular-sanitize/angular-sanitize.js"></script>
-    <script src="/vendor/ng-csv/build/ng-csv.min.js"></script>
     <script src="/vendor/raven-js/dist/raven.js"></script>
     <script src="/vendor/d3-comparator/d3-comparator.js"></script>
     <!-- endbower -->
@@ -230,38 +166,49 @@
     <!-- build:js({.tmp,app}) /scripts/scripts.js -->
 
     <script src="/lib/utils.js"></script>
-    <script src="/lib/leaflet-utfgrid-lizard.js"></script>
 
     <script src="/lizard-nxt.js"></script>
 
+    <script src="/components/state/state.js"></script>
+    <script src="/components/state/state-service.js"></script>
     <script src="/lib/cabinet-service.js"></script>
     <script src="/lib/util-service.js"></script>
+    <script src="/lib/utfgrid-service.js"></script>
     <script src="/lib/raster-service.js"></script>
     <script src="/lib/vector-service.js"></script>
     <script src="/lib/nxt-d3-service.js"></script>
-    <script src="/lib/utfgrid-service.js"></script>
     <script src="/lib/click-feedback-service.js"></script>
     <script src="/lib/timeseries-service.js"></script>
     <script src="/lib/event-aggregate-service.js"></script>
     <script src="/lizard-nxt-filters.js"></script>
 
+    <script src="/lib/leaflet/leaflet-service.js"></script>
+    <script src="/lib/leaflet/leaflet-utfgrid-lizard.js"></script>
+    <script src="/lib/leaflet/leaflet-vector-service.js"></script>
+
     <script src="/components/url/url-controller.js"></script>
     <script src="/components/url/url-service.js"></script>
 
-    <script src="/components/leaflet/leaflet-service.js"></script>
-    <script src="/components/leaflet/leaflet-vector-service.js"></script>
-
+    <script src="/components/map/services/nxt-map.js"></script>
     <script src="/components/map/services/map-service.js"></script>
-    <script src="/components/map/services/layer-group-service.js"></script>
-    <script src="/components/map/services/layer-service.js"></script>
-    <script src="/components/map/services/tms-layer-service.js"></script>
-    <script src="/components/map/services/wms-layer-service.js"></script>
-    <script src="/components/map/services/non-tiled-wms-layer-service.js"></script>
-    <script src="/components/map/services/utf-layer-service.js"></script>
-    <script src="/components/map/services/store-layer-service.js"></script>
-    <script src="/components/map/services/vector-layer-service.js"></script>
     <script src="/components/map/map-directives.js"></script>
 
+    <script src="/components/data-menu/data-menu-controller.js"></script>
+    <script src="/components/data-menu/data-menu-directive.js"></script>
+    <script src="/components/data-menu/services/tms-layer-service.js"></script>
+    <script src="/components/data-menu/services/wms-layer-service.js"></script>
+    <script src="/components/data-menu/services/non-tiled-wms-layer-service.js"></script>
+    <script src="/components/data-menu/services/utf-layer-service.js"></script>
+    <script src="/components/data-menu/services/store-layer-service.js"></script>
+    <script src="/components/data-menu/services/vector-layer-service.js"></script>
+    <script src="/components/data-menu/services/layer-service.js"></script>
+    <script src="/components/data-menu/services/layer-group-service.js"></script>
+    <script src="/components/data-menu/services/nxt-data.js"></script>
+    <script src="/components/data-menu/services/data-service.js"></script>
+
+    <script src="/components/layer-chooser/layer-chooser-directives.js"></script>
+
+    <script src="/components/omnibox/omnibox.js"></script>
     <script src="/components/omnibox/controllers/omnibox-controller.js"></script>
     <script src="/components/omnibox/wanted-attrs-constant.js"></script>
     <script src="/components/omnibox/landuse-lookup-constant.js"></script>
@@ -283,7 +230,6 @@
     <script src="/components/graph/graph-directives.js"></script>
 
     <script src="/components/single-click/single-click-directive.js"></script>
-    <script src="/components/layer-chooser/layer-chooser-directives.js"></script>
     <script src="/components/opacity/opacity-directives.js"></script>
 
     <script src="/templates.js"></script>

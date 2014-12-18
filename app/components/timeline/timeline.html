@@ -1,17 +1,17 @@
-<div id="timeline" ng-controller="TimeCtrl">
+<div id="timeline" ng-controller="TimeCtrl as timeline">
 
   <div>
   <div class="time-controls">
     <div class="btn-group">
-      <a ng-click="timeState.playPauseAnimation()"
+      <a ng-click="timeline.playPauseAnimation()"
          class="extra-padding timeline-button"
-         ng-class="{'active': timeState.animation.playing}"
-         title="<% timeState.animation.playing ? tooltips.stopAnim : tooltips.startAnim %>"
+         ng-class="{'active': timeline.state.playing}"
+         title="<% timeline.state.playing ? tooltips.stopAnim : tooltips.startAnim %>"
          data-original-title="Afspelen/pauzeren">
         <i class="fa"  ng-class="{
-            'fa-play': !timeState.animation.playing,
-            'fa-pause active': (timeState.animation.playing && !timeState.buffering),
-            'fa-circle-o-notch fa-spin' : timeState.buffering
+            'fa-play': !timeline.state.playing,
+            'fa-pause active': (timeline.state.playing && !timeline.state.buffering),
+            'fa-circle-o-notch fa-spin' : timeline.state.buffering
             }"></i>
       </a>
     </div>
@@ -21,19 +21,19 @@
   </div>
   <div class="time-controls-right">
     <div class="btn-group-vertical">
-        <a class="btn btn-default btn-xss" ng-click="timeState.zoom('in')"
+        <a class="btn btn-default btn-xss" ng-click="timeline.zoom('in')"
           class="extra-padding timeline-button"
           title="<% tooltips.zoomInTimeline %>"
           data-original-title="Zoom in">
           <i class="fa fa-plus"></i>
         </a>
-        <a class="btn btn-default btn-xss" ng-mousedown="timeState.zoomToNow()"
+        <a class="btn btn-default btn-xss" ng-mousedown="timeline.zoomToNow()"
           class="extra-padding timeline-button"
           title="<% tooltips.goToNow %>"
           data-original-title="Naar nu">
           <i class="fa fa-clock-o"></i>
         </a>
-        <a class="btn btn-default btn-xss" ng-click="timeState.zoom('out')"
+        <a class="btn btn-default btn-xss" ng-click="timeline.zoom('out')"
           class="extra-padding timeline-button"
           title="<% tooltips.zoomOutTimeline %>"
           data-original-title="Zoom uit">

@@ -1,15 +1,15 @@
 //layer-directive.js
 
 angular.module('lizard-nxt')
-  .directive("layerChooser", ['NxtMap', 'dataLayers',
-    function (NxtMap, dataLayers) {
+  .directive("layerChooser", ['NxtMap', 'NxtData', 'dataLayers', 'State', 'DataService',
+    function (NxtMap, NxtData, dataLayers, State, DataService) {
 
   var link = function (scope, element, attrs) {
     // Scope gets the mapState layerGroup, here we create a new layerGroup which
     // goes into its own NxtMap to always be turned on
     var layerGroup = angular.copy(dataLayers[scope.layergroup.slug]);
 
-    var needsPreviewMap;
+    var needsPreviewMap = true;
     // Remove unnecessary datalayers before going further
     // but first copying the layer array, otherwise the
     // iterator gets confused.
@@ -29,7 +29,8 @@ angular.module('lizard-nxt')
     layerGroup.layers = layerCopy;
 
     if (needsPreviewMap) {
-      var chooser = new NxtMap(element.find('.layer-img')[0], [layerGroup], {
+      var previewMap = new NxtMap();
+      previewMap.createMap(element.find('.layer-img')[0], {
         center: [52.39240447569775, 5.101776123046875],
         zoom: 6,
         dragging: false,
@@ -43,30 +44,34 @@ angular.module('lizard-nxt')
         forChooser: true
       });
 
-      chooser.syncTime(scope.timeState);
+      var data = new NxtData([layerGroup]);
 
+      data.syncTime(State.temporal);
 
       // To speed-up initial load of the app layerchooser layers are toggled
       // after 3000 ms.
       setTimeout(function () {
-        chooser.toggleLayerGroup(
-          chooser.layerGroups[Object.keys(chooser.layerGroups)[0]]
+        data.toggleLayerGroup(
+          data.layerGroups[Object.keys(data.layerGroups)[0]], previewMap._map
           );
       }, 3000);
 
-      scope.$watch('mapState.bounds', function (n, v) {
+      scope.$watch(State.toString('spatial.bounds'), function (n, v) {
         if (n === v) { return; }
-        var zoom = scope.mapState.zoom;
-        var centroid = scope.mapState.bounds.getCenter();
-        chooser.setView(centroid, zoom - 2);
+        var zoom = State.spatial.zoom;
+        var centroid = State.spatial.bounds.getCenter();
+        previewMap.setView(centroid, zoom - 2);
+        scope.bounds = State.spatial.bounds;
       });
     }
+
+    scope.data = DataService;
   };
 
   return {
     link: link,
     templateUrl: 'layer-chooser/layer-chooser.html',
-    restrict: 'E'
+    restrict: 'E',
   };
 
 }]);
