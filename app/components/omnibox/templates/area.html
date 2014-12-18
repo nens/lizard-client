@@ -14,7 +14,7 @@
         </td>
 
         <td class="col-md-4">
-          <% entityName %>
+          <% entityName | objectTitle %>
         </td>
 
         <td>
@@ -31,9 +31,13 @@
 
     <table class="table table-condensed table-hover single-row-table">
       <tr class="attr-row">
-        <td>gebiedsgemiddelde neerslag:&nbsp;
+        <td> <i class="fa fa-umbrella"> </i></td>
+        <td>
+           gebiedsgemiddelde neerslag
+        </td>
+        <td>
           <% filteredRainDataPerKilometer %> mm
-          </td>
+        </td>
       <tr>
     </table>
 
