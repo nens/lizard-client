@@ -108,21 +108,10 @@ angular.module('lizard-nxt')
       graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
     });
 
-    scope.$watch("temporal.start", function (n, o) {
-      if (n === o) { return true; }
+    scope.$watch('temporal.timelineMoving', function (n, o) {
+      if (n || n === o) { return true; }
       _temporalWatchHelper();
     });
-
-    scope.$watch("temporal.end", function (n, o) {
-      if (n === o) { return true; }
-      _temporalWatchHelper();
-    });
-
-    // scope.$watch("temporal.aggWindow", function (n, o) {
-    //   if (n === o) { return true; }
-    //   console.log("changed:", scope.temporal.aggWindow);
-    //   _temporalWatchHelper();
-    // });
 
     var _temporalWatchHelper = function () {
       graphCtrl.setData(scope);
