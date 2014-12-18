@@ -30,6 +30,8 @@ module.exports = function(config) {
       'vendor/restangular/dist/restangular.js',
       'vendor/raven-js/dist/raven.js',
       'vendor/d3-comparator/d3-comparator.js',
+      'vendor/angular-sanitize/angular-sanitize.js',
+      'vendor/ng-csv/build/ng-csv.min.js',
       // endbower
 
       // application

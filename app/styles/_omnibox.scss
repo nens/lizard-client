@@ -506,8 +506,7 @@ table tr td:last-child {
     margin-left: 38px;
 }
 
-.fixed-width-card-table {
-  width: 170px;
+.larger-font-card-table {
   font-size: 12px;
   color: $asbestos;
 }
@@ -599,12 +598,16 @@ table tr td:last-child {
   cursor: pointer;
 }
 
-#export-rain-csv-button {
+.card-tools {
   float: right;
   position: relative;
   top: -1px;
-  color: #95a5a6;
   z-index: 9999;
+  margin-bottom: 5px;
+}
+
+.card-tools a.btn-default {
+  color: #95a5a6;
 }
 
 .timeseries-header-container {
