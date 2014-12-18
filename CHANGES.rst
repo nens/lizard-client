@@ -4,7 +4,9 @@ Changelog of lizard-nxt client
 Unreleased (1.2.dev) (XXXX-XX-XX)
 ---------------------------------
 
-- Rain recurrence time is optional
+- Conditional play button.
+
+- Rain recurrence time is optional.
 
 - Clock in the middle.
 
