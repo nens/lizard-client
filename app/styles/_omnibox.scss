@@ -474,6 +474,10 @@
     left: -10px;
 }
 
+table tr td:last-child {
+    text-align: right;
+}
+
 .hidden-details {
     opacity: 0;
     max-height: 0;

@@ -22,6 +22,8 @@ Release 1.1.0 (2014-12-17)
 
 - Update Angular coding guidelines.
 
+- Rain aggregation: gebiedsgemiddelde neerslag in omnibox
+
 - Time extent from 2010.
 
 - UTFGrid aggregation: get all structures for spatial extent.
