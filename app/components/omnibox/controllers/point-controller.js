@@ -56,6 +56,9 @@ angular.module('lizard-nxt')
             if ($scope.box.content[response.layerGroupSlug] === undefined) { return; }
             if (!$scope.box.content[response.layerGroupSlug].layers.hasOwnProperty(response.layerSlug)) { return; }
 
+            // This could probably be different.
+            $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed = 
+              !$scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed;
             $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
           }
           $scope.box.minimizeCards();
