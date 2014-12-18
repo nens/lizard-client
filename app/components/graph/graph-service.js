@@ -468,7 +468,7 @@ angular.module('lizard-nxt')
     // ;
 
 
-    // UPDATE  (phase 1 - bar removal)
+    // UPDATE
     bar
       .transition()
       .duration(duration)
@@ -504,7 +504,7 @@ angular.module('lizard-nxt')
       .transition()
       .duration(duration * 2)
         // Bring bars in one by one
-        .delay(function (d, i) { return i * 0.1 * duration * 2; })
+        // .delay(function (d, i) { return i * 0.1 * duration * 2; })
         .attr("height", function (d) {
           return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
         })
@@ -516,9 +516,7 @@ angular.module('lizard-nxt')
     bar.exit()
       .transition()
       .duration(duration)
-      // Remove bars one by one
-      .delay(function (d, i) { return i * 0.1 * duration; })
-      .attr("y", height) //function (d) { return y.scale(0); })
+      .attr("y", height)
       .attr("height", 0)
       .remove();
   };
