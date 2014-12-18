@@ -206,10 +206,30 @@ angular.module('lizard-nxt')
       }
     });
 
+    // $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
+    //   //console.log("[W] temporal.timelineMoving'");
+    //   if (n || n === o) { return; } // return if: still moving OR no change in move state
+    //   console.log("moving finished? State.temporal.timelineMoving =", State.temporal.timelineMoving);
+    //   fillPointHere();
+    // });
+
+    // Angular v1.3+ allows the following handy konstrukt
+    // --------------------------------------------------
+    // $scope.$watchGroup(
+    //   [
+    //     State.toString("temporal.start"),
+    //     State.toString("temporal.end"),
+    //   ],
+    //   function (n, o)
+    //   {
+    //     if (n === o) { return; }
+    //     fillPointHere();
+    //   }
+    // );
+
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer(MapService);
     });
-
   }
 ]);

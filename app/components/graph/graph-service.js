@@ -30,9 +30,10 @@ angular.module('lizard-nxt')
    *                            bottom, left and right padding.
    *                            All values in px.
    */
-  function Graph(element, dimensions) {
-    NxtD3.call(this, element, dimensions);
+  function Graph(element, dimensions, timeState) {
+    NxtD3.call(this, element, dimensions, timeState);
     this._svg = this._createDrawingArea();
+    this._yLabel;
   }
 
   Graph.prototype = Object.create(NxtD3.prototype, {
@@ -152,7 +153,8 @@ angular.module('lizard-nxt')
             this._xy,
             data,
             keys,
-            {y: 0}
+            {y: 0},
+            this.timeState
           );
           drawLabel(this._svg, this.dimensions, labels.y, true);
         }
@@ -162,7 +164,8 @@ angular.module('lizard-nxt')
           this._xy,
           keys,
           data,
-          this.transTime
+          this.transTime,
+          this.timeState
         );
       }
     },
@@ -266,7 +269,7 @@ angular.module('lizard-nxt')
     },
 
     _createXYGraph: {
-      value: function (data, keys, labels, options) {
+      value: function (data, keys, labels, options, tlStart, tlEnd) {
         if (!options) {
           options = {
             x: {
@@ -281,8 +284,9 @@ angular.module('lizard-nxt')
         }
         var xy = {x: {}, y: {}};
         var self = this;
+
         angular.forEach(xy, function (value, key) {
-          var y = key === 'y' ? true: false;
+          var y = key === 'y';
           xy[key] = self._createD3Objects(data, keys[key], options[key], y);
           drawAxes(self._svg, xy[key].axis, self.dimensions, y);
           drawLabel(self._svg, self.dimensions, labels[key], y);
@@ -322,27 +326,39 @@ angular.module('lizard-nxt')
     return cumulativeData;
   };
 
-  rescale = function (svg, dimensions, xy, data, keys, origin) {
+  needToRescale = function (data, key, limit, old, timeState) {
+    var newDomain = key === "y"
+      ? Graph.prototype._maxMin(data, "y")
+      : { min: timeState.start, max: timeState.end };
+    return (
+      newDomain.max > old.max ||
+      newDomain.max < (limit * old.max) ||
+      newDomain.min !== old.min
+    );
+  };
+
+  rescale = function (svg, dimensions, xy, data, keys, origin, timeState) {
     // Sensible limits to rescale. If the max
     // of the y values is smaller than 0.2 (or 20 %) of the max of the scale,
     // update domain of the scale and redraw the axis.
     var limits = {
-      x: 1,
-      y: 0.2
-    },
-    orientation = {
-      x: 'bottom',
-      y: 'left'
-    };
+        x: 1,
+        y: 0.2
+        },
+        orientation = {
+          x: 'bottom',
+          y: 'left'
+        };
     origin = origin || {};
     // Decide to rescale for each axis.
     angular.forEach(xy, function (value, key) {
-      if (toRescale(data, keys[key], limits[key], value.maxMin)) {
-        value.maxMin = Graph.prototype._maxMin(data, keys[key]);
-        // Start at the lowest value in the data or at the optionally specified origin value.
+      if (needToRescale(data, keys[key], limits[key], value.maxMin, timeState)) {
+        value.maxMin = key === "x"
+          ? { min: timeState.start, max: timeState.end }
+          : Graph.prototype._maxMin(data, keys[key]);
         value.scale.domain([origin[key] || value.maxMin.min, value.maxMin.max]);
         value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
-        drawAxes(svg, value.axis, dimensions, key === 'y' ? true: false, Graph.prototype.transTime);
+        drawAxes(svg, value.axis, dimensions, key === 'y' ? true : false, Graph.prototype.transTime);
       }
     });
     return xy;
@@ -405,35 +421,77 @@ angular.module('lizard-nxt')
         .text(labels.x)
         .classed({"selected": false});
     });
-
   };
 
-  drawVerticalRects = function (svg, dimensions, xy, keys, data, duration) {
+  drawVerticalRects = function (svg, dimensions, xy, keys, data, duration, timeState) {
+
+    console.log("[F] drawVerticalRects");
+
+    // We update the domain for X
+    xy.x.scale.domain([timeState.start, timeState.end]);
+
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         x = xy.x,
         y = xy.y,
         MIN_BAR_WIDTH = 2,
+        maxBarCount = (timeState.end - timeState.start) / timeState.aggWindow,
         barWidth = Math.max(
           MIN_BAR_WIDTH,
-          Math.floor(getBarWidth(xy.x.scale, data, keys, dimensions))
+          Math.floor(
+            getBarWidth(xy.x.scale, data, keys, dimensions, maxBarCount)
+          )
         ),
-        strokeWidth = barWidth === MIN_BAR_WIDTH ? 0 : 1,
+        strokeWidth = barWidth === MIN_BAR_WIDTH ? 0.5 : 1,
 
         // Join new data with old elements, based on the x key.
         bar = svg.select('g').select('#feature-group').selectAll(".bar")
-          .data(data);
+          .data(data),
+        duration = Graph.prototype.transTime;
+
+    /*
+    // UPDATE
+    // Update old elements as needed.
+    */
 
     // UPDATE
     // Update old elements as needed.
-    bar.transition()
+    // bar.transition()
+    //   .duration(duration)
+    //   // .attr("height", function (d) {
+    //   //   return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
+    //   // })
+    //   // .attr("y", function (d) { return y.scale(d[keys.y]); })
+
+    //   .attr("x", function (d) { console.log("UPDATE x"); return x.scale(d[keys.x]) - barWidth; })
+    //   .attr('width', function (d) { console.log("UPDATE width"); return barWidth; })
+    // ;
+
+
+    // UPDATE  (phase 1 - bar removal)
+    bar
+      .transition()
       .duration(duration)
-      .attr("height", function (d) {
-        return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
-      })
-      .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
-      .attr('width', function (d) { return barWidth; })
-      .attr("y", function (d) { return y.scale(d[keys.y]); });
+        .attr("y", height) // hide bars (step 1)
+        .attr("height", 0) // hide bars (step 2)
+        .attr("fill", "#f00")
+          .transition()
+          .duration(1)
+          .delay(duration)
+            // change x when bar is invisible:
+            .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
+            // change width when bar is invisible:
+            .attr('width', function (d) { return barWidth; })
+              .transition()
+              .duration(duration)
+              .delay(duration * 4)
+                .attr("height", function (d) {
+                  return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
+                })
+                .attr("y", function (d) { return y.scale(d[keys.y]); })
+    ;
+
+
     // ENTER
     // Create new elements as needed.
     bar.enter().append("rect")
@@ -444,14 +502,14 @@ angular.module('lizard-nxt')
       .attr("height", 0)
       .style("fill", function (d) { return d.color || ''; })
       .transition()
-      .duration(duration)
-      // Bring bars in one by one
-      .delay(function (d, i) { return i * 0.1 * duration; })
-      .attr("height", function (d) {
-        return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
-      })
-      .attr("y", function (d) { return y.scale(d[keys.y]); })
-      .attr("stroke-width", strokeWidth);
+      .duration(duration * 2)
+        // Bring bars in one by one
+        .delay(function (d, i) { return i * 0.1 * duration * 2; })
+        .attr("height", function (d) {
+          return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
+        })
+        .attr("y", function (d) { return y.scale(d[keys.y]); })
+        .attr("stroke-width", strokeWidth);
 
     // EXIT
     // Remove old elements as needed.
@@ -460,19 +518,13 @@ angular.module('lizard-nxt')
       .duration(duration)
       // Remove bars one by one
       .delay(function (d, i) { return i * 0.1 * duration; })
-      .attr("y", function (d) { return y.scale(0); })
+      .attr("y", height) //function (d) { return y.scale(0); })
       .attr("height", 0)
       .remove();
   };
 
-  getBarWidth = function (scale, data, keys, dimensions) {
-    var uniques = [];
-    data.forEach(function (item, i , arr) {
-      if (uniques.indexOf(item[keys.x]) === -1) {
-        uniques.push(item[keys.x]);
-      }
-    });
-    return Graph.prototype._getWidth(dimensions) / uniques.length;
+  getBarWidth = function (scale, data, keys, dimensions, maxBarCount) {
+    return Graph.prototype._getWidth(dimensions) / maxBarCount;
   };
 
   createXGraph = function (svg, dimensions, labels, options) {
@@ -511,17 +563,6 @@ angular.module('lizard-nxt')
         return line(d) || "M0, 0";
       });
     return path;
-  };
-
-  toRescale = function (data, key, limit, old) {
-    var rescale = false,
-    n = Graph.prototype._maxMin(data, key);
-    if (n.max > old.max
-      || n.max < (limit * old.max)
-      || n.min !== old.min) {
-      rescale = true;
-    }
-    return rescale;
   };
 
   drawLabel = function (svg, dimensions, label, y) {

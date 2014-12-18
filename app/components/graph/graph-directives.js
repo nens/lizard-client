@@ -16,7 +16,7 @@
  *               modifications by the subdirectives.
  */
 angular.module('lizard-nxt')
-  .directive('graph', ["Graph", function (Graph) {
+  .directive('graph', ["Graph", "State", function (Graph, State) {
 
   var graphCtrl, preCompile, link;
 
@@ -73,7 +73,7 @@ angular.module('lizard-nxt')
     graphCtrl.type = attrs.type;
 
     // Create the graph and put it on the controller
-    graphCtrl.graph = new Graph(el, dimensions);
+    graphCtrl.graph = new Graph(el, dimensions, scope.temporal);
   };
 
   /**
@@ -100,14 +100,35 @@ angular.module('lizard-nxt')
       // Call graph with the new data
       graphCtrl.updateData.call(graphCtrl.graph, graphCtrl.data, graphCtrl.keys, graphCtrl.labels);
       // Call the graph with the now
-      graphCtrl.updateNow.call(graphCtrl.graph, scope.now);
+      graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
     });
 
-    scope.$watch('now', function (n, o) {
+    scope.$watch('temporal.at', function (n, o) {
       if (n === o) { return true; }
-      graphCtrl.updateNow.call(graphCtrl.graph, scope.now);
+      graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
     });
 
+    scope.$watch("temporal.start", function (n, o) {
+      if (n === o) { return true; }
+      _temporalWatchHelper();
+    });
+
+    scope.$watch("temporal.end", function (n, o) {
+      if (n === o) { return true; }
+      _temporalWatchHelper();
+    });
+
+    // scope.$watch("temporal.aggWindow", function (n, o) {
+    //   if (n === o) { return true; }
+    //   console.log("changed:", scope.temporal.aggWindow);
+    //   _temporalWatchHelper();
+    // });
+
+    var _temporalWatchHelper = function () {
+      graphCtrl.setData(scope);
+      graphCtrl.updateData.call(graphCtrl.graph, graphCtrl.data, graphCtrl.keys, graphCtrl.labels);
+      graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
+    };
   };
 
   /**
@@ -124,7 +145,7 @@ angular.module('lizard-nxt')
 
       // Provide defaults for backwards compatability
       this.data = scope.data || [];
-      this.keys = scope.keys || {x: 0, y: 1};
+      this.keys = scope.keys || { x: 0, y: 1 };
       this.labels = {
         x: scope.xlabel || '',
         y: scope.ylabel || ''
@@ -135,7 +156,7 @@ angular.module('lizard-nxt')
 
     this.graph = {};
     this.yfilter = '';
-    this.now = $scope.now;
+    this.now = $scope.temporal.at;
     this.type = '';
 
     // Define data update function in attribute directives
@@ -158,8 +179,8 @@ angular.module('lizard-nxt')
       ylabel: '=',
       keys: '=',
       yfilter: '=',
-      now: '=',
-      dimensions: '='
+      dimensions: '=',
+      temporal: '='
     },
     restrict: 'E',
     replace: true,

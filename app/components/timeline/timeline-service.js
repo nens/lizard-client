@@ -657,6 +657,7 @@ angular.module('lizard-nxt')
             barWidth = Number(rectangles.attr('width'));
 
       if (heightDiff < 0) {
+
         rectangles.transition()
           .duration(Timeline.prototype.transTime)
           .delay(Timeline.prototype.transTime)
@@ -667,6 +668,7 @@ angular.module('lizard-nxt')
           .attr("x", function (d) {
             return xScale(d[0]) - barWidth;
           });
+
       } else {
         rectangles.transition()
           .duration(Timeline.prototype.transTime)

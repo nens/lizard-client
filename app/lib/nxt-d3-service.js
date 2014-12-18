@@ -27,8 +27,9 @@ angular.module('lizard-nxt')
    *                            bottom, left and right padding.
    *                            All values in px.
    */
-  function NxtD3(element, dimensions) {
+  function NxtD3(element, dimensions, timeState) {
     this.dimensions = angular.copy(dimensions);
+    this.timeState = timeState;
     this._svg = createCanvas(element, this.dimensions);
   }
 
@@ -36,11 +37,9 @@ angular.module('lizard-nxt')
 
     constructor: NxtD3,
 
-
     /**
      * @attribute
      * @memberOf angular.module('lizard-nxt')
-  .NxtD3
      * @description        The duration of transitions in ms. Use(d)
      *                     throughout the graphs and timeline.
      */
@@ -133,13 +132,22 @@ angular.module('lizard-nxt')
      * @return {object} containing maxmin, d3 scale and d3 axis.
      */
     _createD3Objects: function (data, key, options, y) {
+
       // Computes and returns maxmin scale and axis
       var width = this._getWidth(this.dimensions),
-      height = this._getHeight(this.dimensions),
-      d3Objects = {},
-      // y range runs from height till zero, x domain from 0 to width.
-      range = y ? {max: 0, min: height}: {min: 0, max: width};
-      d3Objects.maxMin = this._maxMin(data, key);
+          height = this._getHeight(this.dimensions),
+          d3Objects = {},
+          // y range runs from height till zero, x domain from 0 to width.
+          range;
+
+      if (y) {
+        range = { max: 0, min: height }
+        d3Objects.maxMin = this._maxMin(data, key);
+      } else {
+        range = { min: 0, max: width };
+        d3Objects.maxMin = { min: this.timeState.start, max: this.timeState.end }
+      }
+
       d3Objects.scale = this._makeScale(d3Objects.maxMin, range, options);
       d3Objects.axis = this._makeAxis(d3Objects.scale, options);
       return d3Objects;
@@ -395,9 +403,11 @@ angular.module('lizard-nxt')
    * @return {object} svg         svg.
    */
   createCanvas = function (element, dimensions) {
+
     var width = NxtD3.prototype._getWidth(dimensions),
-    height = NxtD3.prototype._getHeight(dimensions),
-    svg = d3.select(element);
+        height = NxtD3.prototype._getHeight(dimensions),
+        svg = d3.select(element);
+
     // Create the svg as big as the dimensions
     svg.attr('width', dimensions.width)
       .attr('height', dimensions.height)
