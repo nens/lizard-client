@@ -1,19 +1,18 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased ()
-------------
+Unreleased (1.2.dev) (XXXX-XX-XX)
+---------------------------------
 
 - Rain recurrence time is optional
 
 
 Release 1.0.2 (2014-12-16)
 --------------------------
+- Removed unused images.
 
-- Help button
 
-
-Release 1.0.1 (2014-12-10)
+Release 1.1.0 (2014-12-17)
 --------------------------
 
 - Force cursor behaviour in point, line and area mode.
@@ -55,6 +54,13 @@ Release 1.0.1 (2014-12-10)
 - CSS is now preprocessed with SASS, fmbo of structure and clarity.
 
 - Minimize cards based on screen size and size of cards.
+
+
+Release 1.0.2 (2014-12-16)
+--------------------------
+
+- Help button
+
 
 Release 1.0.0 (2014-12-01)
 ---------------------------
