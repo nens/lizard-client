@@ -28,7 +28,7 @@ angular.module('lizard-nxt')
                                    window.webkitRequestAnimationFrame ||
                                    window.msRequestAnimationFrame;
 
-    var DEFAULT_NUMBER_OF_STEPS = 2000, // Small for humans to percieve as smooth.
+    var DEFAULT_NUMBER_OF_STEPS = 2000, // Small for humans to perceive as smooth.
         currentInterval = State.temporal.end - State.temporal.start,
         timeStep = Infinity, // Will be overwritten to
                              // currentInterval / DEFAULT_NUMBER_OF_STEPS
@@ -57,7 +57,7 @@ angular.module('lizard-nxt')
      */
     $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return; }
-      configAnimation();
+      configAnimation.call(this);
     });
 
     /**
@@ -92,8 +92,17 @@ angular.module('lizard-nxt')
       timeStep = Infinity;
       minLag = 0;
 
+      var activeTemporalLgs = [];
+
       angular.forEach(State.layerGroups.active, function (lgSlug) {
         var lg = DataService.layerGroups[lgSlug];
+
+        if (lg.temporal) {
+          // add some empty stuff to determine
+          // whether animation is possible.
+          activeTemporalLgs.push(null);
+        }
+
         if (lg.temporal && lg.temporalResolution < timeStep) {
           timeStep = lg.temporalResolution;
           // equals to 250 ms for 5 minutes, increases for larger timeSteps untill
@@ -102,6 +111,8 @@ angular.module('lizard-nxt')
           minLag = minLag > 1000 ? 1000 : minLag;
         }
       });
+
+      $scope.timeline.animatable = activeTemporalLgs.length > 0;
 
       // If no temporal layers were found, set to a default amount.
       if (timeStep === Infinity) {
