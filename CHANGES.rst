@@ -6,9 +6,6 @@ Unreleased (1.2.dev) (XXXX-XX-XX)
 
 - Rain recurrence time is optional
 
-
-Release 1.0.2 (2014-12-16)
---------------------------
 - Removed unused images.
 
 
