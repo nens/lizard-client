@@ -1,5 +1,7 @@
 angular.module('lizard-nxt')
-  .controller("rain", ['$scope', function ($scope) {
+  .controller("rain",
+      ['RasterService', 'State', '$scope',
+  function (RasterService, State, $scope) {
 
   /*
    * @description
@@ -11,18 +13,55 @@ angular.module('lizard-nxt')
     $scope.fullDetails = n;
   });
 
+
+  $scope.rrc = {
+    active: false
+  };
+
+  $scope.recurrenceTimeToggle = function () {
+    if (!$scope.$$phase) {
+      $scope.$apply(function () {
+        $scope.rrc.active = !$scope.rrc.active;
+        $scope.lg.layers['radar/basic'].changed = !$scope.lg.layers['radar/basic'].changed; 
+      });
+    } else {
+      $scope.rrc.active = !$scope.rrc.active;
+      $scope.lg.layers['radar/basic'].changed = !$scope.lg.layers['radar/basic'].changed; 
+    }
+  };
+
+
+  $scope.$watch("lg.layers['radar/basic'].changed", function (n, o) {
+    if (n === o || !$scope.rrc.active) { return; }
+    getRecurrenceTime();
+  });
+
+  var getRecurrenceTime = function () {
+    $scope.rrc.data = null;
+
+    // TODO: refactor this shit 
+    RasterService.getData(
+     {slug: 'radar/basic'}, {
+      agg: 'rrc',
+      geom: State.spatial.here,
+      start: State.temporal.start,
+      end: State.temporal.end
+    }).then(function (response) {
+      $scope.rrc.data = response;
+    });
+  };
+
   /**
    * Format the CSV (exporting rain data for a point in space/interval in
    * time) in a way that makes it comprehensible for les autres.
    *
    */
   $scope.formatCSVColumns = function (data) {
-
     var i,
         formattedDateTime,
         formattedData = [],
-        lat = $scope.mapState.here.lat,
-        lng = $scope.mapState.here.lng,
+        lat = State.spatial.here.lat,
+        lng = State.spatial.here.lng,
         _formatDate = function (epoch) {
           var d = new Date(parseInt(epoch));
           return [

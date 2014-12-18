@@ -245,7 +245,7 @@ angular.module('lizard-nxt')
         slugs: scope.events.slugs
       };
       // Get data from all layegroups with type === 'Event'
-      angular.forEach(scope.mapState.layerGroups, function (lg) {
+      angular.forEach(DataService.layerGroups, function (lg) {
         lg.getData({
           geom: State.spatial.bounds,
           start: State.temporal.start,
