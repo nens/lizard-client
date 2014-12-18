@@ -6,7 +6,7 @@ Unreleased (1.2.dev) (XXXX-XX-XX)
 
 - Removed unused images.
 
--
+- Clock in the middle.
 
 
 Release 1.1.0 (2014-12-17)
