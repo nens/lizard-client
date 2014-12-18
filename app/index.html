@@ -56,7 +56,9 @@
         <div class="navbar-collapse collapse">
          <ul class="nav navbar-nav navbar-right" style="">
            <li>
-              <a href="https://www.lizard.net/support" target="_blank"><i class="fa fa-question" style="font-size: 1.2em"></i></a>
+              <a href="https://www.lizard.net/support" title="Vragen en handleiding" target="_blank">
+                <i class="fa fa-question" style="font-size: 1.2em"></i>
+              </a>
             </li>
 
               <li ng-if="user.authenticated" class="visible-xs">
@@ -126,13 +128,11 @@
 
     <datamenu></datamenu>
 
-    <map layers="mapState.layers">
-    </map>
+    <map></map>
 
     <div class="container">
       <omnibox id="omnibox" ng-controller="OmniboxCtrl"></omnibox>
-    </div>
-   <!-- </div> -->
+    </div>  <!-- container -->
 
     <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
 
@@ -160,6 +160,8 @@
     <script src="/vendor/restangular/dist/restangular.js"></script>
     <script src="/vendor/raven-js/dist/raven.js"></script>
     <script src="/vendor/d3-comparator/d3-comparator.js"></script>
+    <script src="/vendor/angular-sanitize/angular-sanitize.js"></script>
+    <script src="/vendor/ng-csv/build/ng-csv.min.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 

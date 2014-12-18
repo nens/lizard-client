@@ -21,7 +21,9 @@ if (window.RavenEnvironment) {
 angular.module("lizard-nxt", [
   'omnibox',
   'restangular',
-  'global-state'
+  'global-state',
+  'ngSanitize',
+  'ngCsv'
 ])
 // Decorator for ngExceptionHandler to log exceptions to sentry
   .config(function ($provide) {
