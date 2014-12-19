@@ -1,11 +1,16 @@
 <div id="timeline" ng-controller="TimeCtrl as timeline">
 
+  <div class="clock-wrapper">
+    <div class="clock-time" ng-bind="timeline.state.at | date: 'dd-MM-yyyy HH:mm'">
+    </div>
+  </div>
+
   <div>
   <div class="time-controls">
     <div class="btn-group">
       <a ng-click="timeline.playPauseAnimation()"
          class="extra-padding timeline-button"
-         ng-class="{'active': timeline.state.playing}"
+         ng-class="{'active': timeline.state.playing, 'hidden': !timeline.animatable}"
          title="<% timeline.state.playing ? tooltips.stopAnim : tooltips.startAnim %>"
          data-original-title="Afspelen/pauzeren">
         <i class="fa"  ng-class="{

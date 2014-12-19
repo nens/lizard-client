@@ -1,4 +1,4 @@
-'use strict';
+\'use strict';
 
 /**
  * @ngdoc service
@@ -15,4 +15,3 @@ angular.module('lizard-nxt')
       return new NxtMap();
     }
   ]);
-

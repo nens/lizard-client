@@ -9,7 +9,7 @@ angular.module('lizard-nxt')
     // goes into its own NxtMap to always be turned on
     var layerGroup = angular.copy(dataLayers[scope.layergroup.slug]);
 
-    var needsPreviewMap = true;
+    var needsPreviewMap = false;
     // Remove unnecessary datalayers before going further
     // but first copying the layer array, otherwise the
     // iterator gets confused.

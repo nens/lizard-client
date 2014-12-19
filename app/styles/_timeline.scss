@@ -208,7 +208,15 @@
 
 }
 
-.now-indicator {
-    stroke-width: 2;
-    stroke: $pomegranate;
+.clock-wrapper {
+    position: absolute;
+    top: -20px;
+    left: calc(50% - 50px);
+    background: none;
+}
+
+.clock-time {
+    background: white;
+    padding: 3px;
+    width:100%;
 }

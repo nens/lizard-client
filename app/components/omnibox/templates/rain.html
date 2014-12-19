@@ -15,49 +15,54 @@
        keys="{x: 0, y: 1}"
        now="timeState.at">
        </graph>
-       <a
-         id="export-rain-csv-button"
-         href="#"
-         title="Data van deze infocard exporteren"
-         ng-csv="formatCSVColumns(lg.layers['radar/basic'].data)"
-         filename="neerslag.csv"
-         csv-header="['Datestamp', 'Timestamp', 'Rain (mm)', 'Latitude', 'Longitude']" >
-         <small>Exporteer</small>
-         <i class="fa fa-share-square-o"></i>
-       </a>
+       <div class="card-tools">
+         <a ng-click="recurrenceTimeToggle()"
+            ng-class="{'active': rrc.active}" class="btn btn-default btn-xs"
+            title="Extra statistieken, herhalingstijden">
+            Statistiek
+          </a>
+         <a
+           class="btn btn-default btn-xs"
+           title="Data van deze infocard exporteren"
+           ng-csv="formatCSVColumns(lg.layers['radar/basic'].data)"
+           filename="neerslag.csv"
+           csv-header="['Datestamp', 'Timestamp', 'Rain (mm)', 'Latitude', 'Longitude']" >
+           <i class="fa fa-share-square-o"></i>
+           Exporteer
+         </a>
+       </div>
      </div>
    </div>
   </div>
 
-  <div class="card active ng-class: {hidden: !fullDetails}">
+  <div class="card active ng-class: {hidden: !fullDetails}" ng-if="rrc.active">
     <div class="card-content-message"
       ng-init="lg = box.content.rain">
-      <div class="recurrence-time-container"
-        ng-if="lg.layers['rrc']">
-        <div ng-if="!lg.layers['rrc'].data.message">
+      <div class="recurrence-time-container">
+        <div ng-if="!rrc.data.message">
           <table class="table table-hover table-condensed">
-            <caption>Herhalingstijden</caption>
+            <caption>Herhalingstijden (HT)</caption>
             <thead>
               <tr>
-                <td class="fixed-width-card-table">Start</th>
-                <td class="fixed-width-card-table">Duur</th>
-                <td class="fixed-width-card-table text-right">mm</th>
-                <td class="fixed-width-card-table">Herhalingstijd</th>
+                <td class="larger-font-card-table">Start</th>
+                <td class="larger-font-card-table">Duur</th>
+                <td class="larger-font-card-table text-right">mm</th>
+                <td class="larger-font-card-table">HT</th>
               </tr>
             </thead>
             <tbody>
             <tr class="recurrence_time"
-              ng-repeat="recurTime in lg.layers['rrc'].data">
-              <td class="fixed-width-card-table"><% recurTime.start | date : 'dd-MM-yyyy HH:mm' %></td>
-              <td class="fixed-width-card-table"><% recurTime.td_window %></td>
-              <td class="fixed-width-card-table text-right"><% recurTime.max | number: 1 %></td>
-              <td class="fixed-width-card-table"><% recurTime.t %></td>
+              ng-repeat="recurTime in rrc.data">
+              <td class="larger-font-card-table"><% recurTime.start | date : 'dd-MM-yyyy HH:mm' %></td>
+              <td class="larger-font-card-table"><% recurTime.td_window %></td>
+              <td class="larger-font-card-table text-right"><% recurTime.max | number: 1 %></td>
+              <td class="larger-font-card-table"><% recurTime.t %></td>
             </tr>
             </tbody>
           </table>
         </div>
-        <div ng-if="lg.layers['rrc'].data.message">
-          <span class="message"><% lg.layers['rrc'].data.message %></span>
+        <div ng-if="rrc.data.message">
+          <span class="message"><% rrc.data.message %></span>
         </div>
       </div>
     </div>
