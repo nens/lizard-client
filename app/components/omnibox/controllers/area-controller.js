@@ -38,7 +38,7 @@ angular.module('lizard-nxt')
      * @function
      * @memberOf app.areaCtrl
      * @description
-     * Loops over all layergroups to get data.
+     * Gets data from DataService.
      * @param  {object} bounds   mapState.bounds, containing
      *                                  leaflet bounds.
      */
