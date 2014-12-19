@@ -1,8 +1,8 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased ()
-------------
+Unreleased (1.0.3dev) (XXXX-XX-XX)
+-----------------------------------
 
 - Fix 'Cannot read property 'lng' of undefined'.
 
@@ -17,14 +17,55 @@ Release 1.0.2 (2014-12-16)
 - Help button.
 
 
-Release 1.0.1 (2014-12-10)
+Release 1.1.0 (2014-12-17)
 --------------------------
+
+- Force cursor behaviour in point, line and area mode.
+
+- Clean up dependencies.
+
+- Store global state in seperate module.
+
+- Split map from data.
+
+- Update Angular coding guidelines.
+
+- Time extent from 2010.
+
+- UTFGrid aggregation: get all structures for spatial extent.
+
+- Event aggregate service.
+
+- Bar chart supports stacked bars.
+
+- Event radius has logarithmic scale.
+
+- Event circle stroke/fill now get same transparency.
+
+- Single-line omnibox cards have same height as searchbar.
+
+- Line-tool has distinct cursor (crosshair).
+
+- Improved timeline controls: buttons no longer overlap timeline itself.
+
+- Restructured file directory.
 
 - Hide timeseries card when toggling waterchain off.
 
 - Zap console.logs in utilservice
 
 - User name interpolation is now done with ng-bind also for big screens
+
+- CSS is now preprocessed with SASS, fmbo of structure and clarity.
+
+- Minimize cards based on screen size and size of cards.
+
+
+Release 1.0.2 (2014-12-16)
+--------------------------
+
+- Help button
+
 
 Release 1.0.0 (2014-12-01)
 ---------------------------

@@ -1,0 +1,59 @@
+<div>
+  <div ng-repeat="l in lg.layers track by $index">
+    <div ng-switch="l.format">
+
+      <div ng-switch-when="Store">
+        <table ng-if="l.scale === 'interval' || l.scale === 'ratio' "
+          class="table table-condensed table-hover single-row-table">
+          <thead>
+            <td class="third-width-td"><% l.quantity %> </td>
+            <td class="third-width-td"><% l.data[0][0] | number : 2 %> <% l.unit %></td>
+            <td class="third-width-td"></td>
+          </thead>
+        </table>
+<!--    TODO: get proper response from server when asking for point of nominal
+              or ordinal data-->
+        <table ng-if="l.scale === 'nominal' || l.scale === 'ordinal' "
+          class="table table-condensed table-hover single-row-table">
+          <thead>
+            <td class="third-width-td">Landgebruik</td>
+            <td class="third-width-td"><% landuseLookup[l.data[0][0]] | landuseLanduseType %></td>
+            <td class="third-width-td"><% landuseLookup[l.data[0][0]] | landuseSource %></td>
+          </thead>
+        </table>
+      </div>
+
+      <div ng-switch-when="Vector">
+        <full-details class="table-details-toggler"></full-details>
+        <table class="table table-hover table-condensed" >
+          <thead>
+              <th><i class="fa fa-circle" ng-style="{'color': l.color }"></i></th>
+              <th><% lg.layerGroupName %></th>
+              <th><% l.data.length %></th>
+          </thead>
+          <tbody ng-if="fullDetails">
+            <tr ng-repeat="event in l.data">
+                <td rel="tooltip"
+                    data-placement="left"
+                    title="<% event.properties.category %>">
+                    <i class="fa fa-circle" ng-style="{'color': l.color }">
+                  </i>
+                </td>
+                <td rel="tooltip"
+                    data-placement="left"
+                    title="start: <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
+                           eind: <% event.properties.timestamp_end | date:'dd/MM/yyyy' %>">
+                    <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
+                </td>
+                <td rel="tooltip"
+                    data-placement="left"
+                    title="<% event.properties.value %>">
+                  <% event.properties.value | truncate:40 %>
+                </td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

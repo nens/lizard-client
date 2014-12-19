@@ -1,16 +1,21 @@
 'use strict';
 
 describe('Directives: Search', function () {
-
+  var MapService, State;
   // load the service's module
   beforeEach(module('lizard-nxt'));
 
+  beforeEach(module('global-state'));
   // instantiate serviced,
   var scope, element;
   beforeEach(inject(function ($rootScope, $compile, $injector) {
     scope = $rootScope;
     element = angular.element('<search></search>');
     $compile(element)($rootScope);
+    MapService = $injector.get('MapService');
+    State = $injector.get('State');
+    var el = angular.element('<div></div>');
+    MapService.createMap(el[0], {});
     scope.$digest();
     // create empty object to destroy
     scope.box = {
@@ -18,11 +23,7 @@ describe('Directives: Search', function () {
         location: {}
       }
     };
-    var NxtMap = $injector.get('NxtMap');
 
-    scope.mapState = new NxtMap(angular.element('<div></div>')[0], data_layers, {
-      zoomControl: false
-    });
   }));
 
   it('should build query from input field', function () {
@@ -39,10 +40,10 @@ describe('Directives: Search', function () {
 
   it('should remove content from box when calling cleanInput', function () {
     scope.box.content = {reset: 'content'};
-    scope.mapState.points = [123, 567];
+    State.spatial.points = [123, 567];
     scope.cleanInput();
     expect(scope.box.content).toBeDefined();
-    expect(scope.mapState.points.length).toEqual(0);
+    expect(State.spatial.points.length).toEqual(0);
     expect(scope.box.content.reset).toBeUndefined();
   });
 

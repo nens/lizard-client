@@ -19,28 +19,33 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       // bower:js
-      'vendor/jquery/jquery.js',
+      'vendor/jquery/dist/jquery.js',
       'vendor/angular/angular.js',
       'vendor/angular-mocks/angular-mocks.js',
-      'vendor/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js',
       'vendor/bootstrap/dist/js/bootstrap.js',
       'vendor/d3/d3.js',
-      'vendor/jquery-ui/ui/jquery-ui.js',
       'vendor/leaflet-dist/dist/leaflet.js',
       'vendor/leaflet-dist/dist/leaflet-src.js',
       'vendor/lodash/dist/lodash.compat.js',
       'vendor/restangular/dist/restangular.js',
-      'vendor/ui-utils/ui-utils.js',
-      'vendor/ng-table/ng-table.js',
-      'vendor/angular-sanitize/angular-sanitize.js',
-      'vendor/ng-csv/build/ng-csv.min.js',
       'vendor/raven-js/dist/raven.js',
+      'vendor/d3-comparator/d3-comparator.js',
       // endbower
-      'app/scripts/lizard-nxt.js',
-      'test/mocks/**/*.js',
-      'app/scripts/**/*.js',
-      'test/spec/**/*.js'
 
+      // application
+      'test/mocks/beforeModuleMocks.js',
+      'app/components/state/state.js', // Load these first to prevent dep clash
+      'app/templates.js',
+      'app/components/omnibox/omnibox.js',
+      'app/lizard-nxt.js',
+      'test/mocks/**/*.js',
+      'app/lib/**/*.js',
+      'app/*.js',
+      'app/components/**/{controllers/,directives/,services/,*}.js',
+      // end application
+
+      // tests
+      'test/spec/**/*.js'
     ],
 
     // list of files / patterns to exclude
