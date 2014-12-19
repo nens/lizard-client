@@ -28,7 +28,8 @@ angular.module('lizard-nxt')
 
       var state = {
         timeIsSyncing: false,
-        gettingData: false
+        gettingData: false,
+        isLoading: false
       };
 
       this.state = state;
