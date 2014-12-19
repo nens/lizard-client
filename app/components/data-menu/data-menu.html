@@ -22,8 +22,8 @@
         <div class="arrow arrow-down" ng-click="menu.enabled = !menu.enabled">
 
           <span class="fa ribbon-icon" ng-class="{
-            'fa-compass': !menu.state.isLoading,
-            'fa-spinner fa-spin': menu.state.isLoading
+            'fa-spinner fa-spin': menu.state.gettingData,
+            'fa-compass': !menu.state.gettingData
           }"></span>
 
         </div>

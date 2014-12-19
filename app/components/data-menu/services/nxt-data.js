@@ -20,19 +20,25 @@
 angular.module('lizard-nxt')
   .factory('NxtData', ['$q', '$injector', 'NxtMap', 'LayerGroup', function ($q, $injector, NxtMap, LayerGroup) {
 
-    // Layergroups are hard-coupled to the leaflet map, therefore NxtData keeps
-    // a reference to the leaflet map. This reference is provided by the
-    // data-service or a NxtMap instance by the layer-chooser directive.
-    var mapProvider = {};
 
     function NxtData(serverSideLayerGroups, map) {
       var layerGroups = createLayerGroups(serverSideLayerGroups);
 
       this.layerGroups = layerGroups;
 
-      this.state = {
-        isLoading: false
+      var state = {
+        timeIsSyncing: false,
+        gettingData: false
       };
+
+      this.state = state;
+
+      // Immutable representation of all layergroups
+      Object.defineProperty(this.state, 'isLoading', {
+        get: function () {
+          return state.timeIsSyncing || state.gettingData;
+        }
+      });
 
       // Immutable representation of all layergroups
       Object.defineProperty(this.state, 'all', {
@@ -46,11 +52,11 @@ angular.module('lizard-nxt')
           return Object.keys(layerGroups).filter(function (layerGroup) {
             return layerGroups[layerGroup].isActive();
           });
-        },
+        }
       });
 
       // Map is a string pointing to a service containing the map
-      if (map) { mapProvider = $injector.get(map); }
+      if (map) { this.mapProvider = $injector.get(map); }
     }
 
     NxtData.prototype = {
@@ -64,7 +70,7 @@ angular.module('lizard-nxt')
        */
       toggleLayerGroup: function (layerGroup, optionalMap) {
         // turn layer group on
-        var map = optionalMap || mapProvider._map;
+        var map = optionalMap || this.mapProvider._map;
         if (!(layerGroup.baselayer && layerGroup.isActive())) {
           layerGroup.toggle(map);
         }
@@ -81,18 +87,20 @@ angular.module('lizard-nxt')
         }
       },
 
-      syncTime: function (timeState) {
+      syncTime: function (timeState, optionalMap) {
+        var map = optionalMap || this.mapProvider._map;
         var defer = $q.defer();
         var promises = [];
         angular.forEach(this.layerGroups, function (layerGroup) {
-          promises.push(layerGroup.syncTime(timeState, mapProvider._map));
+          promises.push(layerGroup.syncTime(timeState, map));
         }, this);
-        this.state.isLoading = true;
         var that = this;
         $q.all(promises).then(function () {
-          that.state.isLoading = false;
+          that.state.timeIsSyncing = false;
           defer.resolve();
+          return defer.promise;
         });
+        this.state.timeIsSyncing = true;
         return defer.promise;
       },
 
@@ -106,12 +114,13 @@ angular.module('lizard-nxt')
               defer.notify(response);
             }));
         }, this);
-        this.state.isLoading = true;
         var that = this;
         $q.all(promises).then(function () {
-          that.state.isLoading = false;
+          that.state.gettingData = false;
           defer.resolve();
+          return defer.promise;
         });
+        this.state.gettingData = true;
         return defer.promise;
       },
 

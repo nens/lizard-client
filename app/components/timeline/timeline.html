@@ -15,8 +15,8 @@
          data-original-title="Afspelen/pauzeren">
         <span class="fa"  ng-class="{
             'fa-play': !timeline.state.playing,
-            'fa-pause active': (timeline.state.playing && !timeline.state.buffering),
-            'fa-circle-o-notch fa-spin' : timeline.state.buffering
+            'fa-pause active': timeline.state.playing,
+            'fa-circle-o-notch fa-spin' : timeline.layerGroups.timeIsSyncing
             }"></span>
       </a>
     </div>
