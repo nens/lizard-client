@@ -13,7 +13,8 @@ angular.module('lizard-nxt')
   .service('DataService', ['dataLayers', 'NxtData', 'State',
     function (dataLayers, NxtData, State) {
       var nxtData = new NxtData(dataLayers, 'MapService');
-      State.layergroups = nxtData.state;
+      State.layerGroups = nxtData.state;
+      console.log(State.layerGroups);
       return nxtData;
     }
   ]);

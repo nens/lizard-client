@@ -1,5 +1,6 @@
 
 <div id="master" ng-controller="DatamenuController as menu">
+  <div><% menu.state.isLoading %></div>
   <div class="layer-menu-container">
     <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': menu.enabled}">
       <div class="layer-switcher slide-left">
@@ -18,7 +19,13 @@
            title="<% menu.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
         <div class="arrow arrow-up" ng-click="menu.enabled = !menu.enabled">
         </div>
-        <div class="arrow arrow-down" ng-click="menu.enabled = !menu.enabled"><i class="fa fa-compass ribbon-icon"></i>
+        <div class="arrow arrow-down" ng-click="menu.enabled = !menu.enabled">
+
+          <span class="fa ribbon-icon" ng-class="{
+            'fa-compass': !menu.state.isLoading,
+            'fa-spinner fa-spin': menu.state.isLoading
+          }"></span>
+
         </div>
       </div>
       <div class="button-list-container" id="">

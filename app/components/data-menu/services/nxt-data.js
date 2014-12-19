@@ -26,23 +26,25 @@ angular.module('lizard-nxt')
     var mapProvider = {};
 
     function NxtData(serverSideLayerGroups, map) {
-      this.layerGroups = createLayerGroups(serverSideLayerGroups);
+      var layerGroups = createLayerGroups(serverSideLayerGroups);
+
+      this.layerGroups = layerGroups;
 
       this.state = {
         isLoading: false
       };
 
       // Immutable representation of all layergroups
-      Object.defineProperty(this.state.layerGroups, 'all', {
-        value: Object.keys(this.layerGroups),
+      Object.defineProperty(this.state, 'all', {
+        value: Object.keys(layerGroups),
         writeable: false,
         configurable: false
       });
 
-      Object.defineProperty(this.state.layerGroups, 'active', {
+      Object.defineProperty(this.state, 'active', {
         get: function () {
-          return this.layerGroups.filter(function (layerGroup) {
-            return layerGroup.isActive();
+          return Object.keys(layerGroups).filter(function (layerGroup) {
+            return layerGroups[layerGroup].isActive();
           });
         },
       });
@@ -85,9 +87,10 @@ angular.module('lizard-nxt')
         angular.forEach(this.layerGroups, function (layerGroup) {
           promises.push(layerGroup.syncTime(timeState, mapProvider._map));
         }, this);
-        this.isLoading = true;
+        this.state.isLoading = true;
+        var that = this;
         $q.all(promises).then(function () {
-          this.isLoading = false;
+          that.state.isLoading = false;
           defer.resolve();
         });
         return defer.promise;
@@ -103,9 +106,10 @@ angular.module('lizard-nxt')
               defer.notify(response);
             }));
         }, this);
-        this.isLoading = true;
+        this.state.isLoading = true;
+        var that = this;
         $q.all(promises).then(function () {
-          this.isLoading = false;
+          this.state.isLoading = false;
           defer.resolve();
         });
         return defer.promise;
@@ -125,7 +129,7 @@ angular.module('lizard-nxt')
           } else if (!layerGroup.defaultActive && layerGroup.isActive()) {
             this.toggleLayerGroup(layerGroup);
           }
-        });
+        }, this);
       }
     };
 
