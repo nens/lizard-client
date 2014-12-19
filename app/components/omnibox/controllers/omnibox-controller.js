@@ -19,13 +19,14 @@ angular.module('omnibox')
     /**
      * @function
      * @memberOf app.omnibox
-     * @description Loops over all layergroups to request data
-     *              for the provided geom. When finished $scope.
-     *              box.content contains an object for every
-     *              active layergroup and an item in box.content
-     *              .<layergroup>.layer for every piece of data.
-     *              The promises are returned to add specific
-     *              logic in the child controllers.
+     * @description Fills box by requesting data from DataService
+     *              When finished $scope.box.content contains an
+     *              object for every active layergroup and an item
+     *              in box.content.<layergroup>.layer for every
+     *              piece of data.The promises are returned to
+     *              add specific logic in the child controllers.
+     * @param {type} string of box type to prevent asynchronously
+     *               setting data of wrong box type
      * @param  {L.LatLng} here | L.Bounds | [L.LatLng]
      */
     $scope.fillBox = function (type, options) {
