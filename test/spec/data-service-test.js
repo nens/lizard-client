@@ -11,7 +11,6 @@ describe('Testing nxt data', function () {
       document.createElement('div')
     );
     var dataLayers = $injector.get('mockDataLayers');
-    dataLayers.satellite.active = true;
     var MapService = $injector.get('MapService');
     var el = angular.element('<div></div>');
     MapService.createMap(el[0], {});
@@ -38,7 +37,7 @@ describe('Testing nxt data', function () {
   it('should set layerGroups to default', function () {
     DataService.setLayerGoupsToDefault();
     expect(DataService.layerGroups.elevation.isActive()).toBe(false);
-    expect(DataService.layerGroups.satellite.isActive()).toBe(true);
+    expect(DataService.layerGroups.waterchain.isActive()).toBe(true);
   });
 
 });
