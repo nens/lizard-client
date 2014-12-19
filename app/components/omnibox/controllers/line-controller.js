@@ -21,46 +21,43 @@ angular.module('lizard-nxt')
     var fillLine = function (line) {
       ClickFeedbackService.startVibration(MapService);
       //TODO draw feedback when loading data
-      var promises = $scope.fillBox({
+      var promise = $scope.fillBox({
         geom: line,
         start: State.temporal.start,
         end: State.temporal.end,
         aggWindow: State.temporal.aggWindow
       });
-      angular.forEach(promises, function (promise) {
-        promise.then(null, null, function (response) {
-          if (response.data
-             && response.layerSlug === 'dem/nl'
-             // Prevent trying to fill $scope.box.content[response.layerGroupSlug]
-             // when retrieved data wasn't rich enough for it's initialization:
-             && $scope.box.content[response.layerGroupSlug]
-          ) {
-            $scope.box.content[response.layerGroupSlug]
-              .layers[response.layerSlug]
-              // Since the data is not properly formatted in the back
-              // we convert it from degrees to meters here
-              .data = UtilService.dataConvertToMeters(response.data);
-          } else if (response.data && response.data !== 'null'
-            && response.format === 'Store'
-            && (response.scale === 'ratio' || response.scale === 'interval')
-            && DataService.layerGroups[response.layerGroupSlug].temporal) {
-            // in other words, its rain..
-            $scope.box.content[response.layerGroupSlug]
-              .layers[response.layerSlug]
-              .temporalData = UtilService.dataConvertToMeters(response.data);
-            $scope.box.content[response.layerGroupSlug]
-              .layers[response.layerSlug]
-              .data = UtilService.createDataForTimeState(
-                $scope.box.content[response.layerGroupSlug]
-                  .layers[response.layerSlug]
-                  .temporalData,
-                State.temporal
-              );
-          }
-        });
-      });
       // Draw feedback when all promises are resolved
-      $q.all(promises).then(drawFeedback);
+      promise.then(drawFeedback, drawFeedback, function (response) {
+        if (response.data
+           && response.layerSlug === 'dem/nl'
+           // Prevent trying to fill $scope.box.content[response.layerGroupSlug]
+           // when retrieved data wasn't rich enough for it's initialization:
+           && $scope.box.content[response.layerGroupSlug]
+        ) {
+          $scope.box.content[response.layerGroupSlug]
+            .layers[response.layerSlug]
+            // Since the data is not properly formatted in the back
+            // we convert it from degrees to meters here
+            .data = UtilService.dataConvertToMeters(response.data);
+        } else if (response.data && response.data !== 'null'
+          && response.format === 'Store'
+          && (response.scale === 'ratio' || response.scale === 'interval')
+          && DataService.layerGroups[response.layerGroupSlug].temporal) {
+          // in other words, its rain..
+          $scope.box.content[response.layerGroupSlug]
+            .layers[response.layerSlug]
+            .temporalData = UtilService.dataConvertToMeters(response.data);
+          $scope.box.content[response.layerGroupSlug]
+            .layers[response.layerSlug]
+            .data = UtilService.createDataForTimeState(
+              $scope.box.content[response.layerGroupSlug]
+                .layers[response.layerSlug]
+                .temporalData,
+              State.temporal
+            );
+        }
+      });
     };
 
     /**

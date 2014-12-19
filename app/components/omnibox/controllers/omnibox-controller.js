@@ -35,16 +35,15 @@ angular.module('omnibox')
         delete $scope.box.content.location;
       }
 
-      var promises = [];
-
-      var doneFn = function (response) {
-        if (response.active === false) {
-          delete $scope.box.content[response.slug];
-        }
+      var doneFn = function () {
+        angular.forEach($scope.box.content, function (value, key) {
+          if (State.layerGroups.active.indexOf(key) === -1) {
+            delete $scope.box.content[key];
+          }
+        });
       };
 
       var putDataOnScope = function (response) {
-
         var lGContent = $scope.box.content[response.layerGroupSlug] || {layers: {}};
         lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
         lGContent.layerGroupName = DataService.layerGroups[response.layerGroupSlug].name;
@@ -103,19 +102,11 @@ angular.module('omnibox')
             }
           }
         }
-
-
         // Accomodate chaining in child controllers
         return response;
       };
 
-      angular.forEach(State.layerGroups.all, function (layerGroupSlug) {
-        var layerGroup = DataService.layerGroups[layerGroupSlug];
-        promises.push(layerGroup.getData(options)
-          .then(doneFn, doneFn, putDataOnScope));
-      });
-
-      return promises;
+      return DataService.getData(options).then(doneFn, doneFn, putDataOnScope);
     };
 
     // Make UtilSvc.getIconClass available in Angular templates

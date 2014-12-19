@@ -109,7 +109,7 @@ angular.module('lizard-nxt')
         this.state.isLoading = true;
         var that = this;
         $q.all(promises).then(function () {
-          this.state.isLoading = false;
+          that.state.isLoading = false;
           defer.resolve();
         });
         return defer.promise;
