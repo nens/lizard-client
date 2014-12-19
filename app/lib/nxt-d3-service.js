@@ -27,9 +27,10 @@ angular.module('lizard-nxt')
    *                            bottom, left and right padding.
    *                            All values in px.
    */
-  function NxtD3(element, dimensions, timeState) {
+  function NxtD3(element, dimensions, xDomainStart, xDomainEnd) {
     this.dimensions = angular.copy(dimensions);
-    this.timeState = timeState;
+    this._xDomainStart = xDomainStart;
+    this._xDoaminEnd = xDomainEnd;
     this._svg = createCanvas(element, this.dimensions);
   }
 
@@ -145,7 +146,7 @@ angular.module('lizard-nxt')
         d3Objects.maxMin = this._maxMin(data, key);
       } else {
         range = { min: 0, max: width };
-        d3Objects.maxMin = { min: this.timeState.start, max: this.timeState.end }
+        d3Objects.maxMin = { min: this._xDomainStart, max: this._xDomainEnd }
       }
 
       d3Objects.scale = this._makeScale(d3Objects.maxMin, range, options);

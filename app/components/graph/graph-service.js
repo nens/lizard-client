@@ -31,9 +31,16 @@ angular.module('lizard-nxt')
    *                            All values in px.
    */
   function Graph(element, dimensions, timeState) {
-    NxtD3.call(this, element, dimensions, timeState);
+
+    this._xDomainStart = timeState.start;
+    this._xDomainEnd = timeState.end;
+    this._xDomainAggWindow = timeState.aggWindow;
+    this._xDomainAt = timeState.at;
+
+    this.timeState = timeState;
+
+    NxtD3.call(this, element, dimensions, this._xDomainStart, this._xDomainEnd);
     this._svg = this._createDrawingArea();
-    this._yLabel;
   }
 
   Graph.prototype = Object.create(NxtD3.prototype, {

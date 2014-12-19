@@ -73,7 +73,11 @@ angular.module('lizard-nxt')
     graphCtrl.type = attrs.type;
 
     // Create the graph and put it on the controller
-    graphCtrl.graph = new Graph(el, dimensions, scope.temporal);
+    graphCtrl.graph = new Graph(
+      el,
+      dimensions,
+      scope.temporal
+    );
   };
 
   /**
