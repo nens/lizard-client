@@ -262,13 +262,21 @@ angular.module('lizard-nxt')
     };
 
     /**
-     * Draws an arrow at specified location to indicate click.
-     * Used to indicate location of rain graph
+     * @function drawArrow
+     * @memberof ClickFeedbackService
+     * @summary Draws an arrow at latLng.
+     * @description Draws arrow at specified location to indicate click. Used
+     * to indicate location of rain graph. Returns void if latLng doesn't exist.
      *
      * @param {object} mapState - the mapState object, which assumes the key
      *   'here' to be defined.
      */
     drawArrow = function (mapState, latLng) {
+
+      if (latLng === undefined) {
+        return;
+      }
+
       clickLayer.emptyClickLayer(mapState);
       var geometry = {
         "type": "Point",
