@@ -16,7 +16,7 @@
  *               modifications by the subdirectives.
  */
 angular.module('lizard-nxt')
-  .directive('graph', ["Graph", "State", function (Graph, State) {
+  .directive('graph', ["Graph", function (Graph) {
 
   var graphCtrl, preCompile, link;
 

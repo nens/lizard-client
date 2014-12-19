@@ -30,7 +30,7 @@ angular.module('lizard-nxt')
   function NxtD3(element, dimensions, xDomainStart, xDomainEnd) {
     this.dimensions = angular.copy(dimensions);
     this._xDomainStart = xDomainStart;
-    this._xDoaminEnd = xDomainEnd;
+    this._xDomainEnd = xDomainEnd;
     this._svg = createCanvas(element, this.dimensions);
   }
 
