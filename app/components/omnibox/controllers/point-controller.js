@@ -57,7 +57,7 @@ angular.module('lizard-nxt')
             if (!$scope.box.content[response.layerGroupSlug].layers.hasOwnProperty(response.layerSlug)) { return; }
 
             // This could probably be different.
-            $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed = 
+            $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed =
               !$scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed;
             $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
           }
@@ -210,10 +210,14 @@ angular.module('lizard-nxt')
     });
 
     $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
-      console.log("[W] temporal.timelineMoving'; n =", n, "; o =", o);
-      if (n === o) { return; } // return if: still moving OR no change in move state
-      console.log("moving finished? State.temporal.timelineMoving =", State.temporal.timelineMoving);
-      fillPointHere();
+      // console.log("[W] temporal.timelineMoving'; n =", n, "; o =", o);
+      // if (n === o) { return; } // return if: still moving OR no change in move state
+      // console.log("moving finished? State.temporal.timelineMoving =", State.temporal.timelineMoving);
+
+      if (n === "false" && o === "true") {
+        console.log("Timeline stopped moving, getting new Data!");
+        fillPointHere();
+      }
     });
 
     // Angular v1.3+ allows the following handy konstrukt

@@ -107,17 +107,6 @@ angular.module('lizard-nxt')
       if (n === o) { return true; }
       graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
     });
-
-    scope.$watch('temporal.timelineMoving', function (n, o) {
-      if (n || n === o) { return true; }
-      _temporalWatchHelper();
-    });
-
-    var _temporalWatchHelper = function () {
-      graphCtrl.setData(scope);
-      graphCtrl.updateData.call(graphCtrl.graph, graphCtrl.data, graphCtrl.keys, graphCtrl.labels);
-      graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
-    };
   };
 
   /**
