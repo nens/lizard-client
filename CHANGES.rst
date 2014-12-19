@@ -4,10 +4,14 @@ Changelog of lizard-nxt client
 Unreleased ()
 ------------
 
+- Fix 'Cannot read property 'lng' of undefined'.
+
+- 
+
 Release 1.0.2 (2014-12-16)
 --------------------------
 
-- Help button
+- Help button.
 
 
 Release 1.0.1 (2014-12-10)

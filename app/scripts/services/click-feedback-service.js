@@ -85,12 +85,23 @@ angular.module('lizard-nxt')
       };
 
       /**
-       * Draws a line between the given points
-       * @param  {L.LatLng} first  start of the line
-       * @param  {L.LatLng} seocnd  end of the line
-       * @param  {boolean} dashed when true draws a dashed line
+       * @function drawLineElement
+       * @memberof clickFeedbackService
+       * @summary Draws a line between the given points.
+       * @description Draws a line between `first` and `second`. If `first` or
+       * `second` don't exist, return. If `dashed` is `true`, draw a dashed
+       * line.
+       *
+       * @param  {L.LatLng} first - start of the line
+       * @param  {L.LatLng} second - end of the line
+       * @param  {boolean} dashed - when true draws a dashed line
        */
       this.drawLineElement = function (first, second, dashed) {
+
+        if (first === undefined || second === undefined) {
+          return;
+        }
+
         this.strokeWidth = 2;
 
         var geojsonFeature = { "type": "Feature" };

@@ -191,6 +191,12 @@ angular.module('lizard-nxt')
     $scope.$watch('box.mouseLoc', function (n, o) {
       if (n === o) { return true; }
       if ($scope.box.mouseLoc) {
+
+        if ($scope.mapState.points[0] === undefined ||
+            $scope.mapState.points[1] === undefined) {
+          return;
+        }
+
         // local vars declaration.
         var lat1, lat2, lon1, lon2, maxD, d, r, dLat, dLon, posLat, posLon;
 
@@ -198,7 +204,8 @@ angular.module('lizard-nxt')
         lat2 = $scope.mapState.points[1].lat;
         lon1 = $scope.mapState.points[0].lng;
         lon2 = $scope.mapState.points[1].lng;
-        maxD = Math.sqrt(Math.pow((lat2 - lat1), 2) + Math.pow((lon2 - lon1), 2));
+        maxD = Math.sqrt(Math.pow((lat2 - lat1), 2) +
+                         Math.pow((lon2 - lon1), 2));
         d = UtilService.metersToDegs($scope.box.mouseLoc);
         r = d / maxD;
         dLat = (lat2 - lat1) * r;
