@@ -31,12 +31,9 @@ angular.module('lizard-nxt')
    *                            All values in px.
    */
   function Graph(element, dimensions, xDomainInfo) {
-
-    this._xDomainInfo = xDomainInfo;
-
-
-    if (this._xDomainInfo && this._xDomainInfo.start && this._xDomainInfo.end) {
-      NxtD3.call(this, element, dimensions, this._xDomainInfo.start, this._xDomainInfo.end);
+    if (xDomainInfo && xDomainInfo.start && xDomainInfo.end) {
+      NxtD3.call(this, element, dimensions, xDomainInfo.start, xDomainInfo.end);
+      this._xDomainInfo = xDomainInfo;
     } else {
       NxtD3.call(this, element, dimensions);
     }
@@ -105,7 +102,7 @@ angular.module('lizard-nxt')
             }
           };
           // pass options for time graph or use defaults
-          this._xy = this._createXYGraph(data, keys, labels, temporal ? options: undefined);
+          this._xy = this._createXYGraph(data, keys, labels, temporal ? options : undefined);
         } else {
           this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys);
           drawLabel(this._svg, this.dimensions, labels.y, true);
@@ -336,9 +333,14 @@ angular.module('lizard-nxt')
   };
 
   needToRescale = function (data, key, limit, old, xDomainInfo) {
-    var newDomain = key === "y"
-      ? Graph.prototype._maxMin(data, "y")
-      : { min: xDomainInfo.start, max: xDomainInfo.end };
+    var newDomain;
+    if (key === "y") {
+      newDomain = Graph.prototype._maxMin(data, "y");
+    } else {
+      newDomain = xDomainInfo
+        ? { min: xDomainInfo.start, max: xDomainInfo.end }
+        : Graph.prototype._maxMin(data, key);
+    }
     return (
       newDomain.max > old.max ||
       newDomain.max < (limit * old.max) ||
@@ -362,9 +364,11 @@ angular.module('lizard-nxt')
     // Decide to rescale for each axis.
     angular.forEach(xy, function (value, key) {
       if (needToRescale(data, keys[key], limits[key], value.maxMin, xDomainInfo)) {
-        value.maxMin = key === "x"
+
+        value.maxMin = key === "x" && xDomainInfo
           ? { min: xDomainInfo.start, max: xDomainInfo.end }
           : Graph.prototype._maxMin(data, keys[key]);
+
         value.scale.domain([origin[key] || value.maxMin.min, value.maxMin.max]);
         value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
         drawAxes(svg, value.axis, dimensions, key === 'y' ? true : false, Graph.prototype.transTime);

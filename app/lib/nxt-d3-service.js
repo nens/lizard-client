@@ -155,6 +155,7 @@ angular.module('lizard-nxt')
       return d3Objects;
     },
 
+
     /**
      * @function
      * @memberOf angular.module('lizard-nxt')

@@ -254,9 +254,11 @@ describe('Testing graph', function () {
   });
 
   it('should rescale the y when max increase', function () {
-    var data = [[0, 0], [1, 3], [2, 1]];
-    keys = {x: 0, y: 1},
-    labels = {x: 'afstand', y: 'elevation'},
+
+    var data = [[0, 0], [1, 3], [2, 1]],
+        keys = {x: 0, y: 1},
+        labels = {x: 'afstand', y: 'elevation'};
+
     graph.drawLine(data, keys, labels);
     expect(graph._xy.y.maxMin.max).toBe(3);
     data[0][1] = 4;
@@ -265,13 +267,17 @@ describe('Testing graph', function () {
   });
 
   it('should not rescale the y when max halves', function () {
-    var data = [[0, 0], [1, 3], [2, 1]];
-    keys = {x: 0, y: 1},
-    labels = {x: 'afstand', y: 'elevation'},
+
+    var data = [[0, 0], [1, 3], [2, 1]],
+        keys = {x: 0, y: 1},
+        labels = {x: 'afstand', y: 'elevation'};
+
     graph.drawLine(data, keys, labels);
     expect(graph._xy.y.maxMin.max).toBe(3);
     data[1][1] = 1.5;
+
     graph.drawLine(data, keys, labels);
+
     expect(graph._xy.y.maxMin.max).toBe(3);
   });
 
