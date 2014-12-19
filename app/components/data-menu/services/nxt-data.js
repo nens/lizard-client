@@ -34,7 +34,7 @@ angular.module('lizard-nxt')
 
       this.state = state;
 
-      // Immutable representation of all layergroups
+      // Combination of data and time syncing
       Object.defineProperty(this.state, 'isLoading', {
         get: function () {
           return state.timeIsSyncing || state.gettingData;
