@@ -13,7 +13,12 @@
  * previous.
  */
 angular.module('lizard-nxt')
-  .factory('NxtNonTiledWMSLayer', ['NxtLayer', 'LeafletService', 'RasterService', 'UtilService', '$http', '$q',
+  .factory('NxtNonTiledWMSLayer', ['NxtLayer',
+                                   'LeafletService',
+                                   'RasterService',
+                                   'UtilService',
+                                   '$http',
+                                   '$q',
   function (NxtLayer, LeafletService, RasterService, UtilService, $http, $q) {
 
       function NxtNonTiledWMSLayer(layer, temporalResolution) {
@@ -120,8 +125,8 @@ angular.module('lizard-nxt')
         },
 
         /**
-         * @summary    Sets the new timeState on the layer. And updates the layer
-         *             to the new time.
+         * @summary    Sets the new timeState on the layer. And updates the 
+         *             layer to the new time.
          *
          * @decription When there are not enough imageOverlays, more overlays
          *             are added to the map. The curent timeState.at is rounded
@@ -243,7 +248,8 @@ angular.module('lizard-nxt')
          */
         _mkTimeStamp: {
           value: function (t) {
-            var result = UtilService.roundTimestamp(t, this._temporalResolution, false);
+            var result = UtilService.roundTimestamp(
+              t, this._temporalResolution, false);
             return result;
           }
         },
@@ -289,7 +295,8 @@ angular.module('lizard-nxt')
          */
         _replaceUrlFromFrame: {
           value: function (frameIndex, defer) {
-            var url = this._imageUrlBase + this._formatter(new Date(this._nxtDate));
+            var url = this._imageUrlBase +
+                      this._formatter(new Date(this._nxtDate));
             var frame = this._imageOverlays[frameIndex];
             frame.off('load');
             frame.setOpacity(0);
@@ -378,12 +385,20 @@ angular.module('lizard-nxt')
       };
 
       /**
-       * @function
+       * @function addLeafletLayer
        * @memberof app.LayerGroup
+       * @summary Adds layer to map.
+       * @description Adds layer to map. Returns void if `leafletLayer` is 
+       * `undefined`.
+       *
        * @param {L.Class} Leaflet layer.
-       * @description Adds layer to map
        */
       var addLeafletLayer = function (map, leafletLayer) { // Leaflet NxtLayer
+
+        if (leafletLayer === undefined) {
+          return;
+        }
+
         if (map.hasLayer(leafletLayer)) {
           throw new Error(
             'Attempted to add layer' + leafletLayer._id
@@ -396,13 +411,14 @@ angular.module('lizard-nxt')
       };
 
       /**
-       * @function
+       * @function removeLeafletLayer
        * @memberof app.LayerGroup
+       * @summary Removes layer from map
+       *
        * @param  {L.Class} Leaflet map
        * @param  {L.Class} Leaflet layer
-       * @description Removes layer from map
        */
-      var removeLeafletLayer = function (map, leafletLayer) { // Leaflet NxtLayer
+      var removeLeafletLayer = function (map, leafletLayer) {
         if (map.hasLayer(leafletLayer)) {
           map.removeLayer(leafletLayer);
         } else {
