@@ -87,6 +87,13 @@ angular.module('lizard-nxt')
         }
       },
 
+      /**
+       * Syncs all layer groups to provided timeState object.
+       * @param  {object} timeState   State.temporal object, containing start,
+       *                              end, at and aggwindow.
+       * @param  {leaflet map} optionalMap map object to sync the data to.
+       * @return {promise}             promise that resolves layergroups synced.
+       */
       syncTime: function (timeState, optionalMap) {
         var map = optionalMap || this.mapProvider._map;
         var defer = $q.defer();
@@ -104,7 +111,13 @@ angular.module('lizard-nxt')
         return defer.promise;
       },
 
-      // Options contains geom, time and [event, timeseries, rain, waterchain]
+      /**
+       * Gets data from all layergroups.
+       *
+       * @param  {object} options
+       * @return {promise} notifies with data from layergroup and resolves when
+       *                            all layergroups returned data.
+       */
       getData: function (options) {
         var defer = $q.defer();
         var promises = [];
