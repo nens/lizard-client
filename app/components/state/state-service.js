@@ -2,8 +2,8 @@
  * Lizard-client global state object.
  */
 angular.module('global-state')
-  .service('State', ['DataService', 'UtilService', 'dataLayers',
-    function (DataService, UtilService, dataLayers) {
+  .service('State', ['dataLayers',
+    function (dataLayers) {
 
     var state = {};
 
@@ -50,32 +50,11 @@ angular.module('global-state')
 
     // State of data layer groups, stores slugs of all layergroups and the
     // active layergroups.
-    var _layerGroups = Object.keys(dataLayers);
-
-    state.layerGroups = {};
-
-    // Immutable representation of all layergroups
-    Object.defineProperty(state.layerGroups, 'all', {
-      value: _layerGroups,
-      writeable: false,
-      configurable: false
-    });
-    Object.defineProperty(state.layerGroups, 'active', {
-      get: function () {
-        return _layerGroups.filter(function (layerGroup) {
-          return DataService.layerGroups[layerGroup].isActive();
-        });
-      },
-      // TODO: make layergroups two-way like all other State attributes.
-      // set: function (layerGroups) {
-      //   var _active = [];
-      //   angular.forEach(_layerGroups, function (_layerGroup) {
-      //     if (layerGroups.indexOf(_layerGroup) !== -1) {
-      //       _active.push(_layerGroup);
-      //     }
-      //   });
-      // }
-    });
+    state.layerGroups = {
+      all: [], // Immutable representation of all layergroups
+      active: [],
+      isLoading: false
+    };
 
     // Box
     state.box = {};

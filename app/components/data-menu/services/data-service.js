@@ -10,8 +10,10 @@
  */
 
 angular.module('lizard-nxt')
-  .service('DataService', ['dataLayers', 'NxtData',
-    function (dataLayers, NxtData) {
-      return new NxtData(dataLayers, 'MapService');
+  .service('DataService', ['dataLayers', 'NxtData', 'State',
+    function (dataLayers, NxtData, State) {
+      var nxtData = new NxtData(dataLayers, 'MapService');
+      State.layergroups = nxtData.state;
+      return nxtData;
     }
   ]);

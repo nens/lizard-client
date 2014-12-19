@@ -27,6 +27,26 @@ angular.module('lizard-nxt')
 
     function NxtData(serverSideLayerGroups, map) {
       this.layerGroups = createLayerGroups(serverSideLayerGroups);
+
+      this.state = {
+        isLoading: false
+      };
+
+      // Immutable representation of all layergroups
+      Object.defineProperty(this.state.layerGroups, 'all', {
+        value: Object.keys(this.layerGroups),
+        writeable: false,
+        configurable: false
+      });
+
+      Object.defineProperty(this.state.layerGroups, 'active', {
+        get: function () {
+          return this.layerGroups.filter(function (layerGroup) {
+            return layerGroup.isActive();
+          });
+        },
+      });
+
       // Map is a string pointing to a service containing the map
       if (map) { mapProvider = $injector.get(map); }
     }
@@ -65,7 +85,11 @@ angular.module('lizard-nxt')
         angular.forEach(this.layerGroups, function (layerGroup) {
           promises.push(layerGroup.syncTime(timeState, mapProvider._map));
         }, this);
-        $q.all(promises).then(function () { defer.resolve(); });
+        this.isLoading = true;
+        $q.all(promises).then(function () {
+          this.isLoading = false;
+          defer.resolve();
+        });
         return defer.promise;
       },
 
@@ -74,9 +98,16 @@ angular.module('lizard-nxt')
         var defer = $q.defer();
         var promises = [];
         angular.forEach(this.layerGroups, function (layerGroup) {
-          promises.push(layerGroup.getData(options));
+          promises.push(
+            layerGroup.getData(options).then(null, null, function (response) {
+              defer.notify(response);
+            }));
         }, this);
-        $q.all(promises).then(function () { defer.resolve(); });
+        this.isLoading = true;
+        $q.all(promises).then(function () {
+          this.isLoading = false;
+          defer.resolve();
+        });
         return defer.promise;
       },
 
@@ -88,12 +119,11 @@ angular.module('lizard-nxt')
        *              info is found on the server
        */
       setLayerGoupsToDefault: function () {
-        var map = mapProvider._map;
         angular.forEach(this.layerGroups, function (layerGroup) {
           if (layerGroup.defaultActive && !layerGroup.isActive()) {
-            layerGroup.toggle(map);
+            this.toggleLayerGroup(layerGroup);
           } else if (!layerGroup.defaultActive && layerGroup.isActive()) {
-            layerGroup.toggle(map);
+            this.toggleLayerGroup(layerGroup);
           }
         });
       }
