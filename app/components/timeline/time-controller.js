@@ -49,6 +49,7 @@ angular.module('lizard-nxt')
     );
 
     this.state = State.temporal;
+    this.layerGroups = State.layerGroups;
 
     /**
      * Keep an eye out for temporal layers that require the animation to go
@@ -68,7 +69,6 @@ angular.module('lizard-nxt')
       if (n === o) { return true; }
       if (!State.temporal.timelineMoving) {
         configAnimation();
-        syncTimeWrapper(State.temporal);
       }
     });
 
@@ -78,7 +78,8 @@ angular.module('lizard-nxt')
      * Layergroups need a time synced to them before being toggled. Therefore, no
      * n === o return here.
      */
-    $scope.$watch(State.toString('temporal.at'), function () {
+    $scope.$watch(State.toString('temporal.at'), function (n, o) {
+      if (n === o) { return true; }
       syncTimeWrapper(State.temporal);
     });
 
@@ -159,18 +160,6 @@ angular.module('lizard-nxt')
     };
 
     /**
-     * @param  {boolean} onOff boolean to control timeState.buffering
-     */
-    var toggleBuffer = function (onOff) {
-      if (!$scope.$$phase) {
-        $scope.$apply(function () {
-          State.temporal.buffering = onOff;
-        });
-      }
-      else { State.temporal.buffering = onOff; }
-    };
-
-    /**
      * @description creates a promise by calling syncTime and toggles buffer state
      *              accordingly.
      * @param  {object} timeState nxt timeState object
@@ -179,14 +168,6 @@ angular.module('lizard-nxt')
       promise = DataService.syncTime(timeState);
       if (timeState.playing) {
         progressAnimation(promise);
-      }
-      else {
-        // If promise is resolved buffering is set to false. If this does not
-        // happpen instantly, buffering is set to true.
-        promise.then(function () {
-          toggleBuffer(false);
-        });
-        toggleBuffer(true);
       }
     };
 
@@ -203,13 +184,11 @@ angular.module('lizard-nxt')
       timeOut = setTimeout(function () {
         // And the layergroups are all ready
         finish.then(function () {
-          toggleBuffer(false);
           // And the browser is ready.
           if (State.temporal.playing) {
             window.requestAnimationFrame(step);
           }
         });
-        toggleBuffer(true);
       }, minLag);
     };
 
