@@ -114,6 +114,10 @@ angular.module('lizard-nxt')
       });
 
       $scope.timeline.animatable = activeTemporalLgs.length > 0;
+      // Do not continue animating when there is nothing to animate.
+      if (!$scope.timeline.animatable) {
+        State.temporal.playing  = false;
+      }
 
       // If no temporal layers were found, set to a default amount.
       if (timeStep === Infinity) {
