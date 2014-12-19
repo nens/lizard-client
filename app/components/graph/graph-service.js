@@ -456,30 +456,12 @@ angular.module('lizard-nxt')
             getBarWidth(xy.x.scale, data, keys, dimensions, maxBarCount)
           )
         ),
-        strokeWidth = barWidth === MIN_BAR_WIDTH ? 0.5 : 1,
+        strokeWidth = barWidth === MIN_BAR_WIDTH ? 0 : 1,
 
         // Join new data with old elements, based on the x key.
         bar = svg.select('g').select('#feature-group').selectAll(".bar")
           .data(data);
         // duration = Graph.prototype.transTime;
-
-    /*
-    // UPDATE
-    // Update old elements as needed.
-    */
-
-    // UPDATE
-    // Update old elements as needed.
-    // bar.transition()
-    //   .duration(duration)
-    //   // .attr("height", function (d) {
-    //   //   return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
-    //   // })
-    //   // .attr("y", function (d) { return y.scale(d[keys.y]); })
-
-    //   .attr("x", function (d) { console.log("UPDATE x"); return x.scale(d[keys.x]) - barWidth; })
-    //   .attr('width', function (d) { console.log("UPDATE width"); return barWidth; })
-    // ;
 
 
     // UPDATE
