@@ -53,7 +53,9 @@ angular.module('global-state')
     state.layerGroups = {
       all: [], // Immutable representation of all layergroups
       active: [],
-      isLoading: false
+      isLoading: false, // Either gettingData or syncingTime, DataService is busy
+      gettingData: false, // Making server requests through DataService
+      syncingTime: false // Getting new layers and so on
     };
 
     // Box
