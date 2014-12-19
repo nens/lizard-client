@@ -44,14 +44,14 @@ angular.module('lizard-nxt')
      */
     var fillArea = function (bounds) {
      //TODO draw feedback when loading data
-      var promise = $scope.fillBox({
+      var promise = $scope.fillBox('area', {
         geom: bounds,
         start: State.temporal.start,
         end: State.temporal.end,
         aggWindow: State.temporal.aggWindow
       });
       promise.then(null, null, function (response) {
-        if (response.data && response.data !== "null") {
+        if (response && response.data && response.data !== "null") {
           switch (response.layerSlug) {
           case "dem/nl":
             // Since the data is not properly formatted in the back

@@ -37,7 +37,7 @@ angular.module('lizard-nxt')
       ClickFeedbackService.drawCircle(MapService, here);
       ClickFeedbackService.startVibration(MapService);
       var aggWindow = State.temporal.aggWindow;
-      var promise = $scope.fillBox({
+      var promise = $scope.fillBox('point', {
         geom: here,
         start: State.temporal.start,
         end: State.temporal.end,
@@ -46,7 +46,7 @@ angular.module('lizard-nxt')
 
       // Draw feedback when all promises resolved
       promise.then(drawFeedback, null, function (response) {
-        if (response.data && response.data.id && response.data.entity_name) {
+        if (response && response.data && response.data.id && response.data.entity_name) {
           getTimeSeriesForObject(
             response.data.entity_name + '$' + response.data.id
           );

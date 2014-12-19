@@ -21,7 +21,7 @@ angular.module('lizard-nxt')
     var fillLine = function (line) {
       ClickFeedbackService.startVibration(MapService);
       //TODO draw feedback when loading data
-      var promise = $scope.fillBox({
+      var promise = $scope.fillBox('line', {
         geom: line,
         start: State.temporal.start,
         end: State.temporal.end,
@@ -29,7 +29,7 @@ angular.module('lizard-nxt')
       });
       // Draw feedback when all promises are resolved
       promise.then(drawFeedback, drawFeedback, function (response) {
-        if (response.data
+        if (response && response.data
            && response.layerSlug === 'dem/nl'
            // Prevent trying to fill $scope.box.content[response.layerGroupSlug]
            // when retrieved data wasn't rich enough for it's initialization:

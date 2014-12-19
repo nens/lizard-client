@@ -28,7 +28,7 @@ angular.module('omnibox')
      *              logic in the child controllers.
      * @param  {L.LatLng} here | L.Bounds | [L.LatLng]
      */
-    $scope.fillBox = function (options) {
+    $scope.fillBox = function (type, options) {
 
       // if geocode query has been used it needs to be destroyed now
       if ($scope.box.content.hasOwnProperty('location')) {
@@ -44,6 +44,7 @@ angular.module('omnibox')
       };
 
       var putDataOnScope = function (response) {
+        if (type !== State.box.type) { return; }
         var lGContent = $scope.box.content[response.layerGroupSlug] || {layers: {}};
         lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
         lGContent.layerGroupName = DataService.layerGroups[response.layerGroupSlug].name;
