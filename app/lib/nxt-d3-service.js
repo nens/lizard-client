@@ -142,13 +142,14 @@ angular.module('lizard-nxt')
           range;
 
       if (y) {
-        range = { max: 0, min: height }
+        range = { max: 0, min: height };
         d3Objects.maxMin = this._maxMin(data, key);
       } else {
         range = { min: 0, max: width };
-        d3Objects.maxMin = { min: this._xDomainStart, max: this._xDomainEnd }
+        d3Objects.maxMin = (this._xDomainStart && this._xDomainEnd)
+          ? { min: this._xDomainStart, max: this._xDomainEnd }
+          : this._maxMin(data, key) ;
       }
-
       d3Objects.scale = this._makeScale(d3Objects.maxMin, range, options);
       d3Objects.axis = this._makeAxis(d3Objects.scale, options);
       return d3Objects;
@@ -372,7 +373,6 @@ angular.module('lizard-nxt')
     _drawNow: function (now, scale) {
       var height = this._getHeight(this.dimensions);
       var x = scale(now);
-
       var nowIndicator = this._svg.select('g').select('#feature-group').select('.now-indicator');
 
       if (!nowIndicator[0][0]) {

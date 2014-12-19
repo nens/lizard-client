@@ -31,8 +31,15 @@ angular.module('lizard-nxt')
    *                            All values in px.
    */
   function Graph(element, dimensions, xDomainInfo) {
+
     this._xDomainInfo = xDomainInfo;
-    NxtD3.call(this, element, dimensions, this._xDomainInfo.start, this._xDomainInfo.end);
+
+
+    if (this._xDomainInfo && this._xDomainInfo.start && this._xDomainInfo.end) {
+      NxtD3.call(this, element, dimensions, this._xDomainInfo.start, this._xDomainInfo.end);
+    } else {
+      NxtD3.call(this, element, dimensions);
+    }
     this._svg = this._createDrawingArea();
   }
 
@@ -261,6 +268,8 @@ angular.module('lizard-nxt')
      */
     drawNow: {
       value: function (now) {
+        // console.log("[F] drawNow: now =", new Date(now));
+        // console.log("---> now (scaled)", this._xy.x.scale(now));
         this._drawNow(now, this._xy.x.scale);
         // move to the front
         var el = this._svg.select('.now-indicator').node();
@@ -269,7 +278,7 @@ angular.module('lizard-nxt')
     },
 
     _createXYGraph: {
-      value: function (data, keys, labels, options, tlStart, tlEnd) {
+      value: function (data, keys, labels, options) {
         if (!options) {
           options = {
             x: {
@@ -424,15 +433,19 @@ angular.module('lizard-nxt')
   };
 
   drawVerticalRects = function (svg, dimensions, xy, keys, data, duration, xDomainInfo) {
-    // We update the domain for X
-    xy.x.scale.domain([xDomainInfo.start, xDomainInfo.end]);
+    // We update the domain for X, if xDomainInfo was set...
+    if (xDomainInfo && xDomainInfo.start && xDomainInfo.end) {
+      xy.x.scale.domain([xDomainInfo.start, xDomainInfo.end]);
+    }
 
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         x = xy.x,
         y = xy.y,
         MIN_BAR_WIDTH = 2,
-        maxBarCount = (xDomainInfo.end - xDomainInfo.start) / xDomainInfo.aggWindow,
+        maxBarCount = xDomainInfo
+          ? (xDomainInfo.end - xDomainInfo.start) / xDomainInfo.aggWindow
+          : data.length,
         barWidth = Math.max(
           MIN_BAR_WIDTH,
           Math.floor(

@@ -210,12 +210,7 @@ angular.module('lizard-nxt')
     });
 
     $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
-      // console.log("[W] temporal.timelineMoving'; n =", n, "; o =", o);
-      // if (n === o) { return; } // return if: still moving OR no change in move state
-      // console.log("moving finished? State.temporal.timelineMoving =", State.temporal.timelineMoving);
-
       if (n === "false" && o === "true") {
-        console.log("Timeline stopped moving, getting new Data!");
         fillPointHere();
       }
     });

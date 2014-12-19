@@ -47,8 +47,6 @@ angular.module('omnibox')
 
       var putDataOnScope = function (response) {
 
-        console.log("[F] putDataOnScope");
-
         var lGContent = $scope.box.content[response.layerGroupSlug] || {layers: {}};
           lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
           lGContent.layerGroupName = DataService.layerGroups[response.layerGroupSlug].name;

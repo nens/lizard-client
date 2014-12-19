@@ -138,7 +138,7 @@ angular.module('lizard-nxt')
 
     this.graph = {};
     this.yfilter = '';
-    this.now = $scope.temporal.at;
+    this.now = $scope.temporal ? $scope.temporal.at : undefined;
     this.type = '';
 
     // Define data update function in attribute directives
@@ -146,6 +146,7 @@ angular.module('lizard-nxt')
     // Define timeState.now update function in attribute directives
     this.updateNow = function () {};
   };
+
 
   return {
     controller: graphCtrl,
