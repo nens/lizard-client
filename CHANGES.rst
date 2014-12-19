@@ -6,7 +6,10 @@ Unreleased ()
 
 - Fix 'Cannot read property 'lng' of undefined'.
 
+- Fix 'this._map is null'.
+
 - 
+
 
 Release 1.0.2 (2014-12-16)
 --------------------------
