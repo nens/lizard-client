@@ -15,7 +15,7 @@ angular.module('lizard-nxt')
     /**
      * @function
      * @memberOf app.lineCtrl
-     * @description Loops over all layergroups to request data
+     * @description Gets data from DataService
      * @param  array of L.LatLng objects describing the line.
      */
     var fillLine = function (line) {
