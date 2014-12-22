@@ -64,13 +64,7 @@ angular.module('lizard-nxt')
     var enablelayerGroups = function (layerGroupString) {
       if (layerGroupString) {
         // Either layerGroups are on url
-        var activeLayerSlugs = layerGroupString.split(',');
-        angular.forEach(activeLayerSlugs, function (layerGroupSlug) {
-          var lgI = State.layerGroups.all.indexOf(layerGroupSlug);
-          if (lgI !== -1) {
-            DataService.toggleLayerGroup(DataService.layerGroups[layerGroupSlug]);
-          }
-        });
+        State.layerGroups.active = layerGroupString.split(',');
         // Or layerGroups are not on url, turn default layerGroups on
       } else {
         DataService.setLayerGoupsToDefault();

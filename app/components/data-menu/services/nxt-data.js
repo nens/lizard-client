@@ -48,11 +48,21 @@ angular.module('lizard-nxt')
         configurable: false
       });
 
+      var instance = this;
       Object.defineProperty(this.state, 'active', {
         get: function () {
           return Object.keys(layerGroups).filter(function (layerGroup) {
             return layerGroups[layerGroup].isActive();
           });
+        },
+        set: function (newActivelayerGroups) {
+          angular.forEach(layerGroups, function (_lg, slug) {
+            if (newActivelayerGroups.indexOf(slug) !== -1 && !_lg.isActive()) {
+              this.toggleLayerGroup(_lg);
+            } else if (_lg.isActive()) {
+              this.toggleLayerGroup(_lg);
+            }
+          }, instance);
         }
       });
 
