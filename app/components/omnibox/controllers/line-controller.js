@@ -227,9 +227,10 @@ angular.module('lizard-nxt')
     });
 
     /**
-     * Clean up all drawings on box change.
+     * Clean up all drawings on box change and reject data.
      */
     $scope.$on('$destroy', function () {
+      DataService.reject();
       ClickFeedbackService.emptyClickLayer(MapService);
       State.spatial.points = [];
     });

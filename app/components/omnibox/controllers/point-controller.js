@@ -20,9 +20,10 @@ angular.module('lizard-nxt')
   'ClickFeedbackService',
   'UtilService',
   'MapService',
+  'DataService',
   'State',
 
-  function ($scope, $q, LeafletService, TimeseriesService, ClickFeedbackService, UtilService, MapService, State) {
+  function ($scope, $q, LeafletService, TimeseriesService, ClickFeedbackService, UtilService, MapService, DataService, State) {
 
     var GRAPH_WIDTH = 600;
     $scope.box.content = {};
@@ -217,6 +218,7 @@ angular.module('lizard-nxt')
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer(MapService);
+      DataService.reject();
     });
   }
 ]);

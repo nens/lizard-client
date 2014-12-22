@@ -19,6 +19,7 @@ angular.module('lizard-nxt')
   'RasterService',
   'UtilService',
   '$q',
+  'DataService',
   'State',
 
   function (
@@ -27,6 +28,7 @@ angular.module('lizard-nxt')
     RasterService,
     UtilService,
     $q,
+    DataService,
     State
 
   ) {
@@ -43,7 +45,6 @@ angular.module('lizard-nxt')
      *                                  leaflet bounds.
      */
     var fillArea = function (bounds) {
-     //TODO draw feedback when loading data
       var promise = $scope.fillBox('area', {
         geom: bounds,
         start: State.temporal.start,
@@ -108,6 +109,11 @@ angular.module('lizard-nxt')
 
     // Make UtilSvc functions available in Angular templates
     $scope.countKeys = UtilService.countKeys;
+
+    // Clean up stuff when controller is destroyed
+    $scope.$on('$destroy', function () {
+      DataService.reject();
+    });
   }
 ]);
 
