@@ -120,6 +120,7 @@ angular.module('lizard-nxt')
        *                            all layergroups returned data.
        */
       getData: function (options) {
+        this.reject();
         this._dataDefer = $q.defer();
         var defer = this._dataDefer;
         var promises = [];
@@ -140,7 +141,7 @@ angular.module('lizard-nxt')
       },
 
       /**
-       * Rejects call for data and set loading to false.
+       * Rejects call for data and sets loading to false.
        */
       reject: function () {
         this.state.gettingData = false;

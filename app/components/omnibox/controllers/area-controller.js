@@ -45,7 +45,7 @@ angular.module('lizard-nxt')
      *                                  leaflet bounds.
      */
     var fillArea = function (bounds) {
-      var promise = $scope.fillBox('area', {
+      var promise = $scope.fillBox({
         geom: bounds,
         start: State.temporal.start,
         end: State.temporal.end,
@@ -103,7 +103,6 @@ angular.module('lizard-nxt')
       fillArea(State.spatial.bounds);
     });
 
-
     // Load data at initialization.
     fillArea(State.spatial.bounds);
 
@@ -113,6 +112,7 @@ angular.module('lizard-nxt')
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
       DataService.reject();
+      $scope.box.content = {};
     });
   }
 ]);

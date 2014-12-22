@@ -27,11 +27,9 @@ angular.module('omnibox')
      *              in box.content.<layergroup>.layer for every
      *              piece of data.The promises are returned to
      *              add specific logic in the child controllers.
-     * @param {type} string of box type to prevent asynchronously
-     *               setting data of wrong box type
      * @param  {L.LatLng} here | L.Bounds | [L.LatLng]
      */
-    $scope.fillBox = function (type, options) {
+    $scope.fillBox = function (options) {
 
       // if geocode query has been used it needs to be destroyed now
       if ($scope.box.content.hasOwnProperty('location')) {
@@ -47,7 +45,6 @@ angular.module('omnibox')
       };
 
       var putDataOnScope = function (response) {
-        if (type !== State.box.type) { return; }
         var lGContent = $scope.box.content[response.layerGroupSlug] || {layers: {}};
           lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
           lGContent.layerGroupName = DataService.layerGroups[response.layerGroupSlug].name;

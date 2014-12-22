@@ -27,7 +27,6 @@ angular.module('lizard-nxt')
 
     var GRAPH_WIDTH = 600;
     $scope.box.content = {};
-    $scope.box.showFullTable = false;
 
     /**
      * @function
@@ -38,7 +37,7 @@ angular.module('lizard-nxt')
       ClickFeedbackService.drawCircle(MapService, here);
       ClickFeedbackService.startVibration(MapService);
       var aggWindow = State.temporal.aggWindow;
-      var promise = $scope.fillBox('point', {
+      var promise = $scope.fillBox({
         geom: here,
         start: State.temporal.start,
         end: State.temporal.end,
@@ -217,8 +216,9 @@ angular.module('lizard-nxt')
 
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
-      ClickFeedbackService.emptyClickLayer(MapService);
       DataService.reject();
+      $scope.box.content = {};
+      ClickFeedbackService.emptyClickLayer(MapService);
     });
   }
 ]);
