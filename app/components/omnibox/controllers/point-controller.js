@@ -37,35 +37,32 @@ angular.module('lizard-nxt')
       ClickFeedbackService.drawCircle(MapService, here);
       ClickFeedbackService.startVibration(MapService);
       var aggWindow = State.temporal.aggWindow;
-      var promises = $scope.fillBox({
+      var promise = $scope.fillBox('point', {
         geom: here,
         start: State.temporal.start,
         end: State.temporal.end,
         aggWindow: aggWindow
       });
 
-      angular.forEach(promises, function (promise) {
-        promise.then(null, null, function (response) {
-          if (response.data && response.data.id && response.data.entity_name) {
-            getTimeSeriesForObject(
-              response.data.entity_name + '$' + response.data.id
-            );
-          }
-          if (response.layerSlug === 'radar/basic' && response.data !== null) {
-            // this logs incessant errors.
-            if ($scope.box.content[response.layerGroupSlug] === undefined) { return; }
-            if (!$scope.box.content[response.layerGroupSlug].layers.hasOwnProperty(response.layerSlug)) { return; }
-
-            // This could probably be different.
-            $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed = 
-              !$scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed;
-            $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
-          }
-          $scope.box.minimizeCards();
-        });
-      });
       // Draw feedback when all promises resolved
-      $q.all(promises).then(drawFeedback);
+      promise.then(drawFeedback, null, function (response) {
+        if (response && response.data && response.data.id && response.data.entity_name) {
+          getTimeSeriesForObject(
+            response.data.entity_name + '$' + response.data.id
+          );
+        }
+        if (response.layerSlug === 'radar/basic' && response.data !== null) {
+          // this logs incessant errors.
+          if ($scope.box.content[response.layerGroupSlug] === undefined) { return; }
+          if (!$scope.box.content[response.layerGroupSlug].layers.hasOwnProperty(response.layerSlug)) { return; }
+
+          // This could probably be different.
+          $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed =
+            !$scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed;
+          $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
+        }
+        $scope.box.minimizeCards();
+      });
     };
 
     /**

@@ -20,15 +20,44 @@
 angular.module('lizard-nxt')
   .factory('NxtData', ['$q', '$injector', 'NxtMap', 'LayerGroup', function ($q, $injector, NxtMap, LayerGroup) {
 
-    // Layergroups are hard-coupled to the leaflet map, therefore NxtData keeps
-    // a reference to the leaflet map. This reference is provided by the
-    // data-service or a NxtMap instance by the layer-chooser directive.
-    var mapProvider = {};
 
     function NxtData(serverSideLayerGroups, map) {
-      this.layerGroups = createLayerGroups(serverSideLayerGroups);
+      var layerGroups = createLayerGroups(serverSideLayerGroups);
+
+      this.layerGroups = layerGroups;
+
+      var state = {
+        timeIsSyncing: false,
+        gettingData: false,
+        isLoading: false
+      };
+
+      this.state = state;
+
+      // Combination of data and time syncing
+      Object.defineProperty(this.state, 'isLoading', {
+        get: function () {
+          return state.timeIsSyncing || state.gettingData;
+        }
+      });
+
+      // Immutable representation of all layergroups
+      Object.defineProperty(this.state, 'all', {
+        value: Object.keys(layerGroups),
+        writeable: false,
+        configurable: false
+      });
+
+      Object.defineProperty(this.state, 'active', {
+        get: function () {
+          return Object.keys(layerGroups).filter(function (layerGroup) {
+            return layerGroups[layerGroup].isActive();
+          });
+        }
+      });
+
       // Map is a string pointing to a service containing the map
-      if (map) { mapProvider = $injector.get(map); }
+      if (map) { this.mapProvider = $injector.get(map); }
     }
 
     NxtData.prototype = {
@@ -42,7 +71,7 @@ angular.module('lizard-nxt')
        */
       toggleLayerGroup: function (layerGroup, optionalMap) {
         // turn layer group on
-        var map = optionalMap || mapProvider._map;
+        var map = optionalMap || this.mapProvider._map;
         if (!(layerGroup.baselayer && layerGroup.isActive())) {
           layerGroup.toggle(map);
         }
@@ -59,24 +88,53 @@ angular.module('lizard-nxt')
         }
       },
 
-      syncTime: function (timeState) {
+      /**
+       * Syncs all layer groups to provided timeState object.
+       * @param  {object} timeState   State.temporal object, containing start,
+       *                              end, at and aggwindow.
+       * @param  {leaflet map} optionalMap map object to sync the data to.
+       * @return {promise}             promise that resolves layergroups synced.
+       */
+      syncTime: function (timeState, optionalMap) {
+        var map = optionalMap || this.mapProvider._map;
         var defer = $q.defer();
         var promises = [];
         angular.forEach(this.layerGroups, function (layerGroup) {
-          promises.push(layerGroup.syncTime(timeState, mapProvider._map));
+          promises.push(layerGroup.syncTime(timeState, map));
         }, this);
-        $q.all(promises).then(function () { defer.resolve(); });
+        var that = this;
+        $q.all(promises).then(function () {
+          that.state.timeIsSyncing = false;
+          defer.resolve();
+          return defer.promise;
+        });
+        this.state.timeIsSyncing = true;
         return defer.promise;
       },
 
-      // Options contains geom, time and [event, timeseries, rain, waterchain]
+      /**
+       * Gets data from all layergroups.
+       *
+       * @param  {object} options
+       * @return {promise} notifies with data from layergroup and resolves when
+       *                            all layergroups returned data.
+       */
       getData: function (options) {
         var defer = $q.defer();
         var promises = [];
         angular.forEach(this.layerGroups, function (layerGroup) {
-          promises.push(layerGroup.getData(options));
+          promises.push(
+            layerGroup.getData(options).then(null, null, function (response) {
+              defer.notify(response);
+            }));
         }, this);
-        $q.all(promises).then(function () { defer.resolve(); });
+        var that = this;
+        $q.all(promises).then(function () {
+          that.state.gettingData = false;
+          defer.resolve();
+          return defer.promise;
+        });
+        this.state.gettingData = true;
         return defer.promise;
       },
 
@@ -88,14 +146,13 @@ angular.module('lizard-nxt')
        *              info is found on the server
        */
       setLayerGoupsToDefault: function () {
-        var map = mapProvider._map;
         angular.forEach(this.layerGroups, function (layerGroup) {
           if (layerGroup.defaultActive && !layerGroup.isActive()) {
-            layerGroup.toggle(map);
+            this.toggleLayerGroup(layerGroup);
           } else if (!layerGroup.defaultActive && layerGroup.isActive()) {
-            layerGroup.toggle(map);
+            this.toggleLayerGroup(layerGroup);
           }
-        });
+        }, this);
       }
     };
 

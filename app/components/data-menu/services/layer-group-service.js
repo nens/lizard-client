@@ -221,7 +221,7 @@ angular.module('lizard-nxt')
        */
       syncTime: function (timeState, map) {
         var defer = $q.defer();
-        if (!this._active) {
+        if (!this._active || !this.temporal) {
           angular.forEach(this._layers, function (layer) {
             layer.timeState = timeState;
           });

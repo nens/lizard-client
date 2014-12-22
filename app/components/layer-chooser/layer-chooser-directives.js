@@ -46,7 +46,7 @@ angular.module('lizard-nxt')
 
       var data = new NxtData([layerGroup]);
 
-      data.syncTime(State.temporal);
+      data.syncTime(State.temporal, previewMap._map);
 
       // To speed-up initial load of the app layerchooser layers are toggled
       // after 3000 ms.

@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.dev) (XXXX-XX-XX)
 ---------------------------------
 
+- Show whether the app is getting data from server in menu ribbon.
+
 - Conditional play button.
 
 - Rain recurrence time is optional.

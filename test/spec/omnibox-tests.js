@@ -28,8 +28,8 @@ describe('Testing omniboxCtrl', function () {
     expect(boxScope.fillBox).toBeDefined();
   });
 
-  it('should return a promise for every data_layer', function () {
-    expect(boxScope.fillBox(new L.LatLng(51,6)).length).toEqual(Object.keys(data_layers).length);
+  it('should return one promise', function () {
+    expect(boxScope.fillBox().then).toBeDefined();
   });
 
 

@@ -12,11 +12,11 @@
          ng-class="{'active': timeline.state.playing, 'hidden': !timeline.animatable}"
          title="<% timeline.state.playing ? tooltips.stopAnim : tooltips.startAnim %>"
          data-original-title="Afspelen/pauzeren">
-        <i class="fa"  ng-class="{
+        <span class="fa"  ng-class="{
             'fa-play': !timeline.state.playing,
-            'fa-pause active': (timeline.state.playing && !timeline.state.buffering),
-            'fa-circle-o-notch fa-spin' : timeline.state.buffering
-            }"></i>
+            'fa-pause active': timeline.state.playing,
+            'fa-circle-o-notch fa-spin' : timeline.layerGroups.timeIsSyncing
+            }"></span>
       </a>
     </div>
   </div>

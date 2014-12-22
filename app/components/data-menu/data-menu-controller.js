@@ -21,6 +21,8 @@ angular.module('lizard-nxt')
       this.box = State.box;
 
       this.enabled = false;
+
+      this.state = State.layerGroups;
     }
   ]);
 
