@@ -15,13 +15,22 @@
  */
 angular.module('lizard-nxt')
 .controller('TimeCtrl', [
+
   "$scope",
   "$q",
   "RasterService",
   'UtilService',
   'DataService',
   'State',
-  function ($scope, $q, RasterService, UtilService, DataService, State) {
+
+  function (
+
+    $scope,
+    $q,
+    RasterService,
+    UtilService,
+    DataService,
+    State) {
 
     window.requestAnimationFrame = window.requestAnimationFrame ||
                                    window.mozRequestAnimationFrame ||
@@ -223,21 +232,21 @@ angular.module('lizard-nxt')
      * @param {string} action - 'in' or 'out'.
      */
     this.zoom = function (action) {
-      var ZOOMFACTOR = 2;
-      var newResolution;
 
-      if (action === 'in') {
-        newResolution = State.temporal.resolution / ZOOMFACTOR;
-      } else if (action === 'out') {
-        newResolution = State.temporal.resolution * ZOOMFACTOR;
-      }
+      var ZOOMFACTOR = 2,
+          newResolution;
+
+      newResolution = action === "in"
+        ? State.temporal.resolution / ZOOMFACTOR
+        : State.temporal.resolution * ZOOMFACTOR;
 
       var milliseconds = window.innerWidth * newResolution;
 
-      State.temporal.timelineMoving = true;
       State.temporal.start = State.temporal.at - milliseconds;
       State.temporal.end = State.temporal.at + milliseconds;
       State.temporal.resolution = newResolution;
+
+      $scope.$broadcast("$timelineZoomSuccess");
       State.temporal.timelineMoving = false;
     };
 

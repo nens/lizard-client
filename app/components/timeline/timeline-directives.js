@@ -301,6 +301,25 @@ angular.module('lizard-nxt')
       });
     };
 
+    var timelineZoomHelper = function () {
+      console.log("timelineZoomHelper()");
+      if (!State.temporal.timelineMoving) {
+        if (!timelineSetsTime) {
+          State.temporal.aggWindow = UtilService.getAggWindow(
+            State.temporal.start, State.temporal.end, getCurrentWidth()
+          );
+          timeline.zoomTo(
+            State.temporal.start,
+            State.temporal.end,
+            State.temporal.aggWindow
+          );
+          getTimeLineData();
+        } else {
+          timelineSetsTime = false;
+        }
+      }
+    };
+
     // END HELPER FUNCTIONS
 
     // WATCHES
@@ -327,20 +346,11 @@ angular.module('lizard-nxt')
      */
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
-      if (!State.temporal.timelineMoving) {
-        if (!timelineSetsTime) {
-          State.temporal.aggWindow = UtilService.getAggWindow(
-            State.temporal.start, State.temporal.end, getCurrentWidth());
-          timeline.zoomTo(
-            State.temporal.start,
-            State.temporal.end,
-            State.temporal.aggWindow
-          );
-          getTimeLineData();
-        } else {
-          timelineSetsTime = false;
-        }
-      }
+      timelineZoomHelper();
+    });
+
+    scope.$on("$timelineZoomSuccess", function () {
+      timelineZoomHelper();
     });
 
     /**
