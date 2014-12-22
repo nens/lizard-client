@@ -19,6 +19,11 @@ angular.module("omnibox")
 
       var replaceTemplate = function () {
         var template = getTemplate(scope, State.box.type);
+        // We need to manually destroy scopes here when switching templates.
+        // It is necessary to do this *before* withching templates. Otherwise
+        // the new scope is active while the previous on is to and they affect
+        // each other.
+        if (oldScope) { oldScope.$destroy(); }
         // we don't want the dynamic template to overwrite the search box.
         // NOTE: the reason for selecting the specific child is jqLite does
         // not support selectors. So an element is created of the second child
@@ -30,8 +35,7 @@ angular.module("omnibox")
         ).replaceWith(template);
         var newScope = scope.$new();
         $compile(element.contents())(newScope);
-        // We need to manually destroy scopes here when switching templates.
-        if (oldScope) { oldScope.$destroy(); }
+
         oldScope = newScope;
       };
 
