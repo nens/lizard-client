@@ -29,6 +29,7 @@ angular.module('lizard-nxt')
    *                            an object containing top,
    *                            bottom, left and right padding.
    *                            All values in px.
+   * @param {object} xDomainInfo - override the domain for the graphs.
    */
   function Graph(element, dimensions, xDomainInfo) {
     if (xDomainInfo && xDomainInfo.start && xDomainInfo.end) {

@@ -26,6 +26,8 @@ angular.module('lizard-nxt')
    *                            an object containing top,
    *                            bottom, left and right padding.
    *                            All values in px.
+   * @param {int} xDomainStart  unix-time; start of wanted domain
+   * @param {int} xDomainEnd    unix-time; end of wanted domain
    */
   function NxtD3(element, dimensions, xDomainStart, xDomainEnd) {
     this.dimensions = angular.copy(dimensions);

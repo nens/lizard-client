@@ -104,12 +104,16 @@ angular.module('lizard-nxt')
       // Call graph with the new data
       graphCtrl.updateData.call(graphCtrl.graph, graphCtrl.data, graphCtrl.keys, graphCtrl.labels);
       // Call the graph with the now
-      graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
+      if (scope.temporal && scope.temporal.at) {
+        graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
+      }
     });
 
     scope.$watch('temporal.at', function (n, o) {
       if (n === o) { return true; }
-      graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
+      if (scope.temporal && scope.temporal.at) {
+        graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
+      }
     });
   };
 
