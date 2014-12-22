@@ -213,7 +213,7 @@ angular.module('lizard-nxt')
       if (n === "false" && o === "true") {
         if (State.spatial.here.lat && State.spatial.here.lng) {
           fillPointHere();
-        };
+        }
       }
     });
 
