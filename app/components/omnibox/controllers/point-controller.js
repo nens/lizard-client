@@ -206,10 +206,17 @@ angular.module('lizard-nxt')
       }
     });
 
+    $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
+      if (n === "false" && o === "true") {
+        if (State.spatial.here.lat && State.spatial.here.lng) {
+          fillPointHere();
+        }
+      }
+    });
+
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
       ClickFeedbackService.emptyClickLayer(MapService);
     });
-
   }
 ]);

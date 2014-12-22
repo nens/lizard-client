@@ -26,9 +26,13 @@ angular.module('lizard-nxt')
    *                            an object containing top,
    *                            bottom, left and right padding.
    *                            All values in px.
+   * @param {int} xDomainStart  unix-time; start of wanted domain
+   * @param {int} xDomainEnd    unix-time; end of wanted domain
    */
-  function NxtD3(element, dimensions) {
+  function NxtD3(element, dimensions, xDomainStart, xDomainEnd) {
     this.dimensions = angular.copy(dimensions);
+    this._xDomainStart = xDomainStart;
+    this._xDomainEnd = xDomainEnd;
     this._svg = createCanvas(element, this.dimensions);
   }
 
@@ -36,11 +40,9 @@ angular.module('lizard-nxt')
 
     constructor: NxtD3,
 
-
     /**
      * @attribute
      * @memberOf angular.module('lizard-nxt')
-  .NxtD3
      * @description        The duration of transitions in ms. Use(d)
      *                     throughout the graphs and timeline.
      */
@@ -133,17 +135,28 @@ angular.module('lizard-nxt')
      * @return {object} containing maxmin, d3 scale and d3 axis.
      */
     _createD3Objects: function (data, key, options, y) {
+
       // Computes and returns maxmin scale and axis
       var width = this._getWidth(this.dimensions),
-      height = this._getHeight(this.dimensions),
-      d3Objects = {},
-      // y range runs from height till zero, x domain from 0 to width.
-      range = y ? {max: 0, min: height}: {min: 0, max: width};
-      d3Objects.maxMin = this._maxMin(data, key);
+          height = this._getHeight(this.dimensions),
+          d3Objects = {},
+          // y range runs from height till zero, x domain from 0 to width.
+          range;
+
+      if (y) {
+        range = { max: 0, min: height };
+        d3Objects.maxMin = this._maxMin(data, key);
+      } else {
+        range = { min: 0, max: width };
+        d3Objects.maxMin = (this._xDomainStart && this._xDomainEnd)
+          ? { min: this._xDomainStart, max: this._xDomainEnd }
+          : this._maxMin(data, key) ;
+      }
       d3Objects.scale = this._makeScale(d3Objects.maxMin, range, options);
       d3Objects.axis = this._makeAxis(d3Objects.scale, options);
       return d3Objects;
     },
+
 
     /**
      * @function
@@ -363,19 +376,20 @@ angular.module('lizard-nxt')
     _drawNow: function (now, scale) {
       var height = this._getHeight(this.dimensions);
       var x = scale(now);
-
       var nowIndicator = this._svg.select('g').select('#feature-group').select('.now-indicator');
 
       if (!nowIndicator[0][0]) {
         nowIndicator = this._svg.select('g').select('#feature-group').append('line')
           .attr('class', 'now-indicator')
+          .style("stroke", "#c0392b") // pommegranate
+          .style("stroke-width", 2)
           // create without transition
           .attr('x1', x)
           .attr('x2', x)
           .attr('y1', height)
           .attr('y2', 0);
       }
-      nowIndicator.transition().duration(this.transTime)
+      nowIndicator.transition().duration(2 * this.transTime)
         .attr('x1', x)
         .attr('x2', x)
         .attr('y1', height)
@@ -395,9 +409,11 @@ angular.module('lizard-nxt')
    * @return {object} svg         svg.
    */
   createCanvas = function (element, dimensions) {
+
     var width = NxtD3.prototype._getWidth(dimensions),
-    height = NxtD3.prototype._getHeight(dimensions),
-    svg = d3.select(element);
+        height = NxtD3.prototype._getHeight(dimensions),
+        svg = d3.select(element);
+
     // Create the svg as big as the dimensions
     svg.attr('width', dimensions.width)
       .attr('height', dimensions.height)

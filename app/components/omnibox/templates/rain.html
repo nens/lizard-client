@@ -1,19 +1,20 @@
 <div ng-controller="rain">
+
   <div class="card active">
     <div class="card-content"
       ng-init="lg = box.content.rain">
 
      <full-details></full-details>
      <span class="card-title-text" ng-class="{hidden: fullDetails}" >Regen</span>
-     <div ng-class="{hidden: !fullDetails}">
-       <graph ng-if="lg.layers['radar/basic']"
-       bar-chart
-       class="xyGraph"
-       data="lg.layers['radar/basic'].data"
-       ylabel="lg.layers['radar/basic'].aggWindow"
-       yfilter="aggWinToYLabel"
-       keys="{x: 0, y: 1}"
-       now="timeState.at">
+     <div ng-class="{ hidden: !fullDetails }">
+       <graph
+         bar-chart
+         class="xyGraph"
+         data="lg.layers['radar/basic'].data"
+         ylabel="lg.layers['radar/basic'].aggWindow"
+         yfilter="aggWinToYLabel"
+         keys="{x: 0, y: 1}"
+         temporal="omnibox.state.temporal">
        </graph>
        <div class="card-tools">
          <a ng-click="recurrenceTimeToggle()"
@@ -39,7 +40,8 @@
     <div class="card-content-message"
       ng-init="lg = box.content.rain">
       <div class="recurrence-time-container">
-        <div ng-if="!rrc.data.message">
+        <div ng-if="!lg.layers['rrc'].data.message">
+        <!--<div ng-if="!rrc.data.message">-->
           <table class="table table-hover table-condensed">
             <caption>Herhalingstijden (HT)</caption>
             <thead>

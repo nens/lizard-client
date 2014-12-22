@@ -13,6 +13,8 @@ angular.module('omnibox')
     State,
     DataService) {
 
+    this.state = { temporal: State.temporal };
+
     $scope.box = {
       content: {}
     };
@@ -47,9 +49,9 @@ angular.module('omnibox')
       var putDataOnScope = function (response) {
         if (type !== State.box.type) { return; }
         var lGContent = $scope.box.content[response.layerGroupSlug] || {layers: {}};
-        lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
-        lGContent.layerGroupName = DataService.layerGroups[response.layerGroupSlug].name;
-        lGContent.order = DataService.layerGroups[response.layerGroupSlug].order;
+          lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
+          lGContent.layerGroupName = DataService.layerGroups[response.layerGroupSlug].name;
+          lGContent.order = DataService.layerGroups[response.layerGroupSlug].order;
 
         if (UtilService.isSufficientlyRichData(response.data)) {
 
