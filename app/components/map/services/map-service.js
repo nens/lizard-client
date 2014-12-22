@@ -14,4 +14,4 @@ angular.module('lizard-nxt')
     function (NxtMap) {
       return new NxtMap();
     }
-]);
+  ]);
