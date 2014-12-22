@@ -21,32 +21,33 @@ angular.module('omnibox')
     /**
      * @function
      * @memberOf app.omnibox
-     * @description Loops over all layergroups to request data
-     *              for the provided geom. When finished $scope.
-     *              box.content contains an object for every
-     *              active layergroup and an item in box.content
-     *              .<layergroup>.layer for every piece of data.
-     *              The promises are returned to add specific
-     *              logic in the child controllers.
+     * @description Fills box by requesting data from DataService
+     *              When finished $scope.box.content contains an
+     *              object for every active layergroup and an item
+     *              in box.content.<layergroup>.layer for every
+     *              piece of data.The promises are returned to
+     *              add specific logic in the child controllers.
+     * @param {type} string of box type to prevent asynchronously
+     *               setting data of wrong box type
      * @param  {L.LatLng} here | L.Bounds | [L.LatLng]
      */
-    $scope.fillBox = function (options) {
+    $scope.fillBox = function (type, options) {
 
       // if geocode query has been used it needs to be destroyed now
       if ($scope.box.content.hasOwnProperty('location')) {
         delete $scope.box.content.location;
       }
 
-      var promises = [];
-
-      var doneFn = function (response) {
-        if (response.active === false) {
-          delete $scope.box.content[response.slug];
-        }
+      var doneFn = function () {
+        angular.forEach($scope.box.content, function (value, key) {
+          if (State.layerGroups.active.indexOf(key) === -1) {
+            delete $scope.box.content[key];
+          }
+        });
       };
 
       var putDataOnScope = function (response) {
-
+        if (type !== State.box.type) { return; }
         var lGContent = $scope.box.content[response.layerGroupSlug] || {layers: {}};
           lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
           lGContent.layerGroupName = DataService.layerGroups[response.layerGroupSlug].name;
@@ -105,19 +106,11 @@ angular.module('omnibox')
             }
           }
         }
-
-
         // Accomodate chaining in child controllers
         return response;
       };
 
-      angular.forEach(State.layerGroups.all, function (layerGroupSlug) {
-        var layerGroup = DataService.layerGroups[layerGroupSlug];
-        promises.push(layerGroup.getData(options)
-          .then(doneFn, doneFn, putDataOnScope));
-      });
-
-      return promises;
+      return DataService.getData(options).then(doneFn, doneFn, putDataOnScope);
     };
 
     // Make UtilSvc.getIconClass available in Angular templates

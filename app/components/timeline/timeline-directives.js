@@ -244,26 +244,24 @@ angular.module('lizard-nxt')
         nEvents: scope.events.nEvents,
         slugs: scope.events.slugs
       };
-      // Get data from all layegroups with type === 'Event'
-      angular.forEach(DataService.layerGroups, function (lg) {
-        lg.getData({
-          geom: State.spatial.bounds,
-          start: State.temporal.start,
-          end: State.temporal.stop,
-          type: 'Event'
-        }).then(null, null, function (response) {
+      // Get data with type === 'Event'
+      DataService.getData({
+        geom: State.spatial.bounds,
+        start: State.temporal.start,
+        end: State.temporal.stop,
+        type: 'Event'
+      }).then(null, null, function (response) {
 
-          if (response && response.data) {
-            // Add it to the timeline
-            timeline.drawLines(
-              response.data,
-              context.eventOrder,
-              response.layerGroupSlug,
-              response.color
-            );
-            context.eventOrder++;
-          }
-        });
+        if (response && response.data) {
+          // Add it to the timeline
+          timeline.drawLines(
+            response.data,
+            context.eventOrder,
+            response.layerGroupSlug,
+            response.color
+          );
+          context.eventOrder++;
+        }
       });
     };
 
