@@ -19,6 +19,19 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       // bower:js
+      'vendor/jquery/dist/jquery.js',
+      'vendor/angular/angular.js',
+      'vendor/angular-mocks/angular-mocks.js',
+      'vendor/bootstrap/dist/js/bootstrap.js',
+      'vendor/d3/d3.js',
+      'vendor/leaflet-dist/dist/leaflet.js',
+      'vendor/leaflet-dist/dist/leaflet-src.js',
+      'vendor/lodash/dist/lodash.compat.js',
+      'vendor/restangular/dist/restangular.js',
+      'vendor/raven-js/dist/raven.js',
+      'vendor/d3-comparator/d3-comparator.js',
+      'vendor/angular-sanitize/angular-sanitize.js',
+      'vendor/ng-csv/build/ng-csv.min.js',
       // endbower
 
       // application
