@@ -2,11 +2,6 @@ Changelog of lizard-nxt client
 ==============================
 
 Unreleased (1.2.dev) (XXXX-XX-XX)
----------------------------------
--
-
-
-Release 1.1.1 (2014-12-23)
 ---------------------
 
 - Omnibox rain graph syncs x-axis to timeline.
