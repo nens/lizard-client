@@ -33,7 +33,7 @@ angular.module('lizard-nxt')
           value: function (map) {
             var defer = $q.defer();
             if (this._leafletLayer) {
-              addLeafletLayer(map, this._leafletLayer);
+              this._addLeafletLayer(map, this._leafletLayer);
               this._leafletLayer.on('load', function () {
                 defer.resolve();
               });
@@ -48,7 +48,7 @@ angular.module('lizard-nxt')
         remove: {
           value: function (map) {
             if (this._leafletLayer) {
-              removeLeafletLayer(map, this._leafletLayer);
+              this._removeLeafletLayer(map, this._leafletLayer);
             }
           }
         },
@@ -84,41 +84,6 @@ angular.module('lizard-nxt')
           }
         },
       });
-
-      /**
-       * @function
-       * @memberof app.LayerGroup
-       * @param {L.Class} Leaflet layer.
-       * @description Adds layer to map
-       */
-      var addLeafletLayer = function (map, leafletLayer) { // Leaflet NxtLayer
-        if (map.hasLayer(leafletLayer)) {
-          throw new Error(
-            'Attempted to add layer' + leafletLayer._id
-            + 'while it was already part of the map'
-          );
-        } else {
-          map.addLayer(leafletLayer);
-        }
-      };
-
-      /**
-       * @function
-       * @memberof app.LayerGroup
-       * @param  {L.Class} Leaflet map
-       * @param  {L.Class} Leaflet layer
-       * @description Removes layer from map
-       */
-      var removeLeafletLayer = function (map, leafletLayer) { // Leaflet NxtLayer
-        if (map.hasLayer(leafletLayer)) {
-          map.removeLayer(leafletLayer);
-        } else {
-          throw new Error(
-            'Attempted to remove layer' + leafletLayer._id
-            + 'while it was NOT part of provided the map'
-          );
-        }
-      };
 
       /**
        * @function

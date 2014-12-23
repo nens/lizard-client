@@ -21,7 +21,7 @@ angular.module('lizard-nxt')
     var fillLine = function (line) {
       ClickFeedbackService.startVibration(MapService);
       //TODO draw feedback when loading data
-      var promise = $scope.fillBox('line', {
+      var promise = $scope.fillBox({
         geom: line,
         start: State.temporal.start,
         end: State.temporal.end,
@@ -227,11 +227,13 @@ angular.module('lizard-nxt')
     });
 
     /**
-     * Clean up all drawings on box change.
+     * Clean up all drawings on box change and reject data.
      */
     $scope.$on('$destroy', function () {
-      ClickFeedbackService.emptyClickLayer(MapService);
+      DataService.reject();
+      $scope.box.content = {};
       State.spatial.points = [];
+      ClickFeedbackService.emptyClickLayer(MapService);
     });
 
   }

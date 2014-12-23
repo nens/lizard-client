@@ -6,6 +6,8 @@ Unreleased (1.2.dev) (XXXX-XX-XX)
 
 - Omnibox rain graph syncs x-axis to timeline.
 
+- Grunt release script.
+
 - Show whether the app is getting data from server in menu ribbon.
 
 - Conditional play button.

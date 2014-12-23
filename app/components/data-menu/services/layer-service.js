@@ -246,7 +246,39 @@ angular.module('lizard-nxt')
 
           return wantedService.getData(this, options)
             .then(buildSuccesCallback, buildErrorCallback);
-        }
+        },
+
+        /**
+         * @function
+         * @memberof app.layerService
+         * @param  {L.Class} Leaflet map
+         * @param  {L.Class} Leaflet layer
+         * @description Removes layer from map
+         */
+        _addLeafletLayer: function (map, leafletLayer) {
+          if (map.hasLayer(leafletLayer)) {
+            throw new Error(
+              'Attempted to add layer' + leafletLayer._id
+              + 'while it was already part of the map'
+            );
+          } else {
+            map.addLayer(leafletLayer);
+          }
+        },
+
+        /**
+         * @function
+         * @memberof app.layerService
+         * @param  {L.Class} Leaflet map
+         * @param  {L.Class} Leaflet layer
+         * @description Removes layer from map
+         */
+        _removeLeafletLayer: function (map, leafletLayer) { // Leaflet NxtLayer
+          if (map.hasLayer(leafletLayer)) {
+            map.removeLayer(leafletLayer);
+          }
+        },
+
 
       };
 
