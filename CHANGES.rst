@@ -16,6 +16,7 @@ Unreleased (1.2.dev) (XXXX-XX-XX)
 
 - Removed unused images.
 
+- Raster animation on day images.
 
 Release 1.1.0 (2014-12-17)
 --------------------------
