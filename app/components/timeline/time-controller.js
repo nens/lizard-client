@@ -54,7 +54,7 @@ angular.module('lizard-nxt')
     State.temporal.aggWindow = UtilService.getAggWindow(
       State.temporal.start,
       State.temporal.end,
-      window.innerWidth
+      UtilService.getCurrentWidth()
     );
 
     this.state = State.temporal;
@@ -240,7 +240,7 @@ angular.module('lizard-nxt')
         ? State.temporal.resolution / ZOOMFACTOR
         : State.temporal.resolution * ZOOMFACTOR;
 
-      var milliseconds = window.innerWidth * newResolution;
+      var milliseconds = UtilService.getCurrentWidth() * newResolution;
 
       State.temporal.start = State.temporal.at - milliseconds;
       State.temporal.end = State.temporal.at + milliseconds;

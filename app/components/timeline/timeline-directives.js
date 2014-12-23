@@ -27,16 +27,10 @@ angular.module('lizard-nxt')
 
   var link = function (scope, element, attrs, timelineCtrl) {
 
-    var LEFT_MARGIN = 60,
-        RIGHT_MARGIN = 40,
-        timelineSetsTime = false,
-
-        getCurrentWidth = function () {
-          return window.innerWidth - (LEFT_MARGIN + RIGHT_MARGIN);
-        },
+    var timelineSetsTime = false,
 
         dimensions = {
-          width: getCurrentWidth(),
+          width: UtilService.getCurrentWidth(),
           height: 75,
           events: 20,
           bars: 35,
@@ -69,7 +63,10 @@ angular.module('lizard-nxt')
           State.temporal.start = scale.domain()[0].getTime();
           State.temporal.end = scale.domain()[1].getTime();
           State.temporal.aggWindow = UtilService.getAggWindow(
-            State.temporal.start, State.temporal.end, window.innerWidth);
+            State.temporal.start,
+            State.temporal.end,
+            UtilService.getCurrentWidth()
+          );
           State.temporal.at = UtilService.roundTimestamp(
             State.temporal.at,
             State.temporal.aggWindow,
@@ -87,7 +84,7 @@ angular.module('lizard-nxt')
       zoomEndFn: function () {
         scope.$apply(function () {
           State.temporal.resolution = (
-            State.temporal.end - State.temporal.start) /  window.innerWidth;
+            State.temporal.end - State.temporal.start) /  UtilService.getCurrentWidth();
           getTimeLineData();
           State.temporal.timelineMoving = false;
         });
@@ -105,7 +102,9 @@ angular.module('lizard-nxt')
        */
       clickFn: function (event, scale, dimensions) {
         scope.$apply(function () {
-          var timeClicked = +(scale.invert(event.pageX - dimensions.padding.left - LEFT_MARGIN));
+          var timeClicked = +(scale.invert(
+            event.pageX - dimensions.padding.left - UtilService.TIMELINE_LEFT_MARGIN
+          ));
           State.temporal.at = UtilService.roundTimestamp(
             timeClicked,
             State.temporal.aggWindow
@@ -115,7 +114,8 @@ angular.module('lizard-nxt')
     };
 
     // shift timeline's SVG element using it's CSS - set here by JS too stop stuff becoming unsyncable
-    angular.element("#timeline-svg-wrapper svg")[0].style.left = LEFT_MARGIN + "px";
+    angular.element("#timeline-svg-wrapper svg")[0].style.left
+      = UtilService.TIMELINE_LEFT_MARGIN + "px";
 
     // keep track of events in this scope
     scope.events = {nEvents: 0, slugs: []};
@@ -302,11 +302,12 @@ angular.module('lizard-nxt')
     };
 
     var timelineZoomHelper = function () {
-      console.log("timelineZoomHelper()");
       if (!State.temporal.timelineMoving) {
         if (!timelineSetsTime) {
           State.temporal.aggWindow = UtilService.getAggWindow(
-            State.temporal.start, State.temporal.end, getCurrentWidth()
+            State.temporal.start,
+            State.temporal.end,
+            UtilService.getCurrentWidth()
           );
           timeline.zoomTo(
             State.temporal.start,
@@ -393,7 +394,7 @@ angular.module('lizard-nxt')
      */
     window.onresize = function () {
 
-      timeline.dimensions.width = getCurrentWidth();
+      timeline.dimensions.width = UtilService.getCurrentWidth();
       timeline.resize(
         timeline.dimensions,
         State.temporal.at,
