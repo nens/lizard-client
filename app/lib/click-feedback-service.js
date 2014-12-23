@@ -85,12 +85,23 @@ angular.module('lizard-nxt')
       };
 
       /**
-       * Draws a line between the given points
-       * @param  {L.LatLng} first  start of the line
-       * @param  {L.LatLng} seocnd  end of the line
-       * @param  {boolean} dashed when true draws a dashed line
+       * @function drawLineElement
+       * @memberof clickFeedbackService
+       * @summary Draws a line between the given points.
+       * @description Draws a line between `first` and `second`. If `first` or
+       * `second` don't exist, return. If `dashed` is `true`, draw a dashed
+       * line.
+       *
+       * @param  {L.LatLng} first - start of the line
+       * @param  {L.LatLng} second - end of the line
+       * @param  {boolean} dashed - when true draws a dashed line
        */
       this.drawLineElement = function (first, second, dashed) {
+
+        if (first === undefined || second === undefined) {
+          return;
+        }
+
         this.strokeWidth = 2;
 
         var geojsonFeature = { "type": "Feature" };
@@ -251,13 +262,21 @@ angular.module('lizard-nxt')
     };
 
     /**
-     * Draws an arrow at specified location to indicate click.
-     * Used to indicate location of rain graph
+     * @function drawArrow
+     * @memberof ClickFeedbackService
+     * @summary Draws an arrow at latLng.
+     * @description Draws arrow at specified location to indicate click. Used
+     * to indicate location of rain graph. Returns void if latLng doesn't exist.
      *
      * @param {object} mapState - the mapState object, which assumes the key
      *   'here' to be defined.
      */
     drawArrow = function (mapState, latLng) {
+
+      if (latLng === undefined) {
+        return;
+      }
+
       clickLayer.emptyClickLayer(mapState);
       var geometry = {
         "type": "Point",
