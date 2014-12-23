@@ -12,7 +12,7 @@ angular.module('lizard-nxt')
   var getData = function (layer, options) {
 
     // TODO: get this from somewhere
-    var GRAPH_WIDTH = window.innerwidth;
+    var GRAPH_WIDTH = UtilService.getCurrentWidth();
 
     var srs = 'EPSG:4326',
         agg = options.agg || '',
@@ -37,7 +37,7 @@ angular.module('lizard-nxt')
         cancelers[options.deferrer.origin].resolve();
       }
       cancelers[options.deferrer.origin] = canceler;
-    } 
+    }
     // if it doesn't have a deferrer in the options
     // use the layer slug..
       else {

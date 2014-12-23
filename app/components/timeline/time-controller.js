@@ -15,13 +15,22 @@
  */
 angular.module('lizard-nxt')
 .controller('TimeCtrl', [
+
   "$scope",
   "$q",
   "RasterService",
   'UtilService',
   'DataService',
   'State',
-  function ($scope, $q, RasterService, UtilService, DataService, State) {
+
+  function (
+
+    $scope,
+    $q,
+    RasterService,
+    UtilService,
+    DataService,
+    State) {
 
     window.requestAnimationFrame = window.requestAnimationFrame ||
                                    window.mozRequestAnimationFrame ||
@@ -45,7 +54,7 @@ angular.module('lizard-nxt')
     State.temporal.aggWindow = UtilService.getAggWindow(
       State.temporal.start,
       State.temporal.end,
-      window.innerWidth
+      UtilService.getCurrentWidth()
     );
 
     this.state = State.temporal;
@@ -223,21 +232,21 @@ angular.module('lizard-nxt')
      * @param {string} action - 'in' or 'out'.
      */
     this.zoom = function (action) {
-      var ZOOMFACTOR = 2;
-      var newResolution;
 
-      if (action === 'in') {
-        newResolution = State.temporal.resolution / ZOOMFACTOR;
-      } else if (action === 'out') {
-        newResolution = State.temporal.resolution * ZOOMFACTOR;
-      }
+      var ZOOMFACTOR = 2,
+          newResolution;
 
-      var milliseconds = window.innerWidth * newResolution;
+      newResolution = action === "in"
+        ? State.temporal.resolution / ZOOMFACTOR
+        : State.temporal.resolution * ZOOMFACTOR;
 
-      State.temporal.timelineMoving = true;
+      var milliseconds = UtilService.getCurrentWidth() * newResolution;
+
       State.temporal.start = State.temporal.at - milliseconds;
       State.temporal.end = State.temporal.at + milliseconds;
       State.temporal.resolution = newResolution;
+
+      $scope.$broadcast("$timelineZoomSuccess");
       State.temporal.timelineMoving = false;
     };
 
