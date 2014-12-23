@@ -27,7 +27,7 @@ module.exports = function (grunt) {
 
 
   var appConfig = {
-    app: require('./bower.json').appPath.path,
+    app: require('./bower.json').appPath,
     dist: 'dist',
     // Templates that need to be converted reside in components and core
     templateFileDirs: 'components/**/{,*/}*.html',
