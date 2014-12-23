@@ -22,6 +22,8 @@ Release 1.1.0 (2014-12-17)
 
 - Force cursor behaviour in point, line and area mode.
 
+- Grunt release script.
+
 - Clean up dependencies.
 
 - Store global state in seperate module.
