@@ -14,7 +14,7 @@ angular.module('lizard-nxt')
   Restangular.setRequestSuffix('?page_size=0');
   geocodeResource = Restangular.one('api/v1/geocode/');
   reverseGeocodeResource = Restangular.one('api/v1/reversegeocode/');
-  timeseriesResource = Restangular.one('api/v1/timeseries/');
+  timeseriesResource = Restangular.one('http://integration.nxt.lizard.net/api/v1/timeseries/');
 
   /**
    * Raster resource, last stop to the server

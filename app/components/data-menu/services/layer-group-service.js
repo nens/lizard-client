@@ -52,7 +52,7 @@ angular.module('lizard-nxt')
         value: layerGroup.active,
         writable: false,
       });
-      Object.defineProperty(this, '_layers', {
+      Object.defineProperty(this, 'layers', {
         value: [],
         writable: true,
       });
@@ -67,18 +67,18 @@ angular.module('lizard-nxt')
 
       // Instantiate a Layer for every servserside layer of
       // the layergroup.
-      var layers = this._layers;
+      var layers = this.layers;
       angular.forEach(layerGroup.layers, function (layer) {
-        if (layer.format === 'TMS') {
-          layers.push(new NxtTMSLayer(layer));
-        }
-        else if (layer.format === 'WMS' && layer.tiled) {
-          layers.push(new NxtWMSLayer(layer));
-        }
-        else if (layer.format === 'WMS' && !layer.tiled) {
-          layers.push(new NxtNonTiledWMSLayer(layer, layerGroup.temporal_resolution));
-        }
-        else if (layer.format === 'UTFGrid') {
+        // if (layer.format === 'TMS') {
+        //   layers.push(new NxtTMSLayer(layer));
+        // }
+        // else if (layer.format === 'WMS' && layer.tiled) {
+        //   layers.push(new NxtWMSLayer(layer));
+        // }
+        // else if (layer.format === 'WMS' && !layer.tiled) {
+        //   layers.push(new NxtNonTiledWMSLayer(layer, layerGroup.temporal_resolution));
+        // }
+        if (layer.format === 'UTFGrid') {
           layers.push(new NxtUTFLayer(layer));
         }
         else if (layer.format === 'Vector') {
@@ -94,7 +94,7 @@ angular.module('lizard-nxt')
       });
 
       // Sort them
-      this._layers = sortLayers(layers);
+      this.layers = sortLayers(layers);
 
     }
 
@@ -110,13 +110,13 @@ angular.module('lizard-nxt')
       */
       toggle: function (map) {
         if (!this._initiated) {
-          this._initializeLayers(this._layers);
+          this._initializeLayers(this.layers);
           this._initiated = true;
         }
 
         this._active = !this._active;
 
-        this._toggleLayers(map, this._layers, this._active);
+        this._toggleLayers(map, this.layers, this._active);
       },
 
       /**
@@ -150,7 +150,7 @@ angular.module('lizard-nxt')
           return deferred.promise;
         }
         else {
-          angular.forEach(this._layers, function (layer) {
+          angular.forEach(this.layers, function (layer) {
             promises.push(layer.getData(lgSlug, options, deferred));
           });
         }
@@ -179,7 +179,7 @@ angular.module('lizard-nxt')
        * @description determine if raster layer can be rescaled
        */
       rescaleContinuousData: function (bounds) {
-        angular.forEach(this._layers, function (layer) {
+        angular.forEach(this.layers, function (layer) {
           layer.rescale(bounds);
         });
       },
@@ -199,7 +199,7 @@ angular.module('lizard-nxt')
             + "either of the wrong type or not between 0 and 1");
         }
         if (this._active) {
-          angular.forEach(this._layers, function (layer) {
+          angular.forEach(this.layers, function (layer) {
             layer.setOpacity(newOpacity);
           });
         }
@@ -222,15 +222,15 @@ angular.module('lizard-nxt')
       syncTime: function (timeState, map) {
         var defer = $q.defer();
         if (!this._active || !this.temporal) {
-          angular.forEach(this._layers, function (layer) {
+          angular.forEach(this.layers, function (layer) {
             layer.timeState = timeState;
           });
           defer.resolve();
         }
         else {
           var promises = [];
-          for (var i in this._layers) {
-            var layer = this._layers[i];
+          for (var i in this.layers) {
+            var layer = this.layers[i];
             promises.push(layer.syncTime(timeState, map));
           }
           $q.all(promises).then(function () { defer.resolve(); });
