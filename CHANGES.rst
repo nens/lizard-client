@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased ()
 -------------
 
+- Grunt release script.
+
 - Clean up dependencies.
 
 - Store global state in seperate module.

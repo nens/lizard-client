@@ -71,10 +71,6 @@ Use Grunt to simplify development in the client. When developing the client the 
   
     bin/grunt serve
 
-Doing a release for your package is easy. There is a grunt task to tag and push tags to github:
-
-    grunt release
-
 Whenever files change, grunt triggers the `test` and the `compile` scripts that compile all the html templates to a js file and run the jasmine tests. The failing tests show up in your notification area.
 
 This error: `Waiting...Fatal error: watch ENOSPC` (on Ubuntu/OS X) when runnning the watch command, means inotify is tracking too many files. Possibly because of Dropbox or other filewatchers. Either switch those off, or increase the amount of files that can be watched by `inotify`:
@@ -87,6 +83,21 @@ adding the --save option. Always check your bower.json afterwards. e.g.:
 
     bin/bower search leaflet-dist
     bin/bower install leaflet-dist --save
+
+### Release
+
+Doing a release for your package is easy. There is a grunt task to tag and push tags to github:
+
+    grunt release
+
+**NOTE:** grunt release expects:
+
+* There is a CHANGES.rst with `Unreleased ()` as a header.
+* There is a package.json.
+* There is a bower.json.
+* You release from `integration` branch.
+* There is a `dist` folder where the build will be released.
+
 
 ## Source files
 Files are grouped per component, mini angular apps doing one thing. Timeline is currently our most straightforward example. It has a template, a directive, a controller and a service under `app/components/timeline`.
