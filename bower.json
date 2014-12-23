@@ -65,5 +65,8 @@
   },
   "scripts": {
     "test": "grunt test"
+  },
+  "appPath": {
+    "path": "app"
   }
 }
