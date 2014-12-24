@@ -242,6 +242,9 @@ angular.module('lizard-nxt')
           };
 
           options = options || {};
+          
+          // Pass layer options to the services making the request.
+          // RasterServices uses this to add options.styles.
           angular.extend(options, this.options);
           options.agg = this.aggregationType;
 
