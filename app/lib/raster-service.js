@@ -2,8 +2,10 @@
  * Service to handle raster requests.
  */
 angular.module('lizard-nxt')
-  .service("RasterService", ["Restangular", "UtilService", "CabinetService", "$q",
-
+  .service("RasterService", ["Restangular",
+                             "UtilService",
+                             "CabinetService",
+                             "$q",
   function (Restangular, UtilService, CabinetService, $q) {
 
   var intensityData,
@@ -29,10 +31,11 @@ angular.module('lizard-nxt')
     aggWindow = options.aggWindow || UtilService.getAggWindow(options.start,
       options.end, GRAPH_WIDTH);
 
+    var canceler;
     // getData can have own deferrer to prevent conflicts
     if (options.deferrer) {
-      var deferSlug = options.deferrer.origin,
-          canceler = options.deferrer.deferred;
+      var deferSlug = options.deferrer.origin;
+      canceler = options.deferrer.deferred;
       if (cancelers[options.deferrer.origin]) {
         cancelers[options.deferrer.origin].resolve();
       }
@@ -45,7 +48,7 @@ angular.module('lizard-nxt')
         cancelers[layer.slug].resolve();
       }
 
-      var canceler = cancelers[layer.slug] = $q.defer();
+      canceler = cancelers[layer.slug] = $q.defer();
     }
 
     return CabinetService.raster(canceler).get({
@@ -55,6 +58,7 @@ angular.module('lizard-nxt')
       start: startString,
       stop: endString,
       agg: agg,
+      styles: options.styles,
       window: aggWindow
     });
   };
@@ -116,13 +120,8 @@ angular.module('lizard-nxt')
   return {
     getMinTimeBetweenFrames: getMinTimeBetweenFrames,
     buildURLforWMS: buildURLforWMS,
-    // rasterInfo: rasterInfo,
-    //getRasterData: getRasterData,
     getData: getData,
-    // getTemporalRaster: getTemporalRaster,
-    // getImgOverlays: getImgOverlays,
     handleElevationCurve: handleElevationCurve,
-    //getRasterDataForExtentData: getRasterDataForExtentData,
   };
 
 }]);

@@ -2,7 +2,13 @@ Changelog of lizard-nxt client
 ==============================
 
 Unreleased (1.2.dev) (XXXX-XX-XX)
----------------------------------
+----------------------------------
+
+- Pass layer options through all services.
+
+
+Release 1.1.1 (2014-12-23)
+--------------------------
 
 - timeline: it's "netto width" is made available through UtilService.
 
