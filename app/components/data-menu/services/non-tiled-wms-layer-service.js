@@ -322,21 +322,21 @@ angular.module('lizard-nxt')
          */
         _determineStore: {
           value: function (timeState) {
-            var resolutionDays = (timeState.end - timeState.start) / 60 / 60 / 24 /1000;
+            var resolutionHours = (timeState.aggWindow) / 60 / 60 / 1000;
 
             var aggType = this.slug.split('/');
 
-            if (resolutionDays > 30.5) {
+            if (resolutionHours === 24) {
               aggType[1] = 'day';
-            } else if (resolutionDays > 1) {
+            } else if (resolutionHours === 1) {
               aggType[1] = 'hour';
             } else {
               aggType[1] = '5min';
             }
             var resolutions = {
                     '5min': 300000,
-                    hour: 3600000,
-                    day: 86400000
+                    'hour': 3600000,
+                    'day': 86400000
             }; 
 
             return {

@@ -111,6 +111,8 @@ angular.module('lizard-nxt')
               layerRes = layer._temporalResolution;
             } else { return; }
           });
+          // if the layer has a temporal resolution
+          // chances are it's more up to date (e.g. rain)
           timeStep = layerRes || lg.temporalResolution;
           // equals to 250 ms for 5 minutes, increases for larger timeSteps untill
           // it reaches 1 second between frames for timeSteps of > 20 minutes.
