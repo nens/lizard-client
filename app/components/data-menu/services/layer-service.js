@@ -242,6 +242,7 @@ angular.module('lizard-nxt')
           };
 
           options = options || {};
+          angular.extend(options, this.options);
           options.agg = this.aggregationType;
 
           return wantedService.getData(this, options)
