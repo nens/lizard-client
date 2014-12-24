@@ -22,7 +22,7 @@ angular.module('lizard-nxt')
         // Physical time in millieseconds between frames.
         Object.defineProperty(this, '_temporalResolution', {
           value: temporalResolution,
-          writable: false,
+          writable: true,
         });
         // Array of imageoverlays used as buffer.
         Object.defineProperty(this, '_imageOverlays', {
@@ -165,6 +165,12 @@ angular.module('lizard-nxt')
         syncTime: {
           value: function (timeState, map) {
             this.timeState = timeState;
+            // change image url based on timestate.
+            this._imageUrlBase = RasterService.buildURLforWMS(
+                this,
+                this._determineStore(timeState).name
+                );
+            this._temporalResolution = this._determineStore(timeState).resolution;
 
             var defer = $q.defer(),
                 currentDate = this._mkTimeStamp(timeState.at),
@@ -306,6 +312,39 @@ angular.module('lizard-nxt')
             }
             this._nxtDate += this._temporalResolution;
           }
+        },
+
+        /**
+         * @description based on the temporal window. The time between
+         * timestate.start and timestate.end determines which store is to be used.
+         * This only works for radar stuff.
+         *
+         */
+        _determineStore: {
+          value: function (timeState) {
+            var resolutionDays = (timeState.end - timeState.start) / 60 / 60 / 24 /1000;
+
+            var aggType = this.slug.split('/');
+
+            if (resolutionDays > 30.5) {
+              aggType[1] = 'day';
+            } else if (resolutionDays > 1) {
+              aggType[1] = 'hour';
+            } else {
+              aggType[1] = '5min';
+            }
+            var resolutions = {
+                    '5min': 300000,
+                    hour: 3600000,
+                    day: 86400000
+            }; 
+
+            return {
+              name: aggType.join('/'),
+              resolution: resolutions[aggType[1]]
+            }
+          }
+
         },
 
         /**

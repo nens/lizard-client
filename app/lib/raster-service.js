@@ -67,7 +67,8 @@ angular.module('lizard-nxt')
       ',' + [imgBounds[1][1], imgBounds[0][0]].toString();
   };
 
-  var buildURLforWMS = function (wmsLayer) {
+  var buildURLforWMS = function (wmsLayer, store) {
+    var layerName = store || wmsLayer.slug;
 
     var imgBounds = [
       [wmsLayer.bounds.north, wmsLayer.bounds.west],
@@ -76,7 +77,7 @@ angular.module('lizard-nxt')
     opts = wmsLayer.options,
     result = wmsLayer.url
       + '?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng'
-      + '&SRS=EPSG%3A4326&LAYERS=' + wmsLayer.slug
+      + '&SRS=EPSG%3A4326&LAYERS=' + layerName
       + '&BBOX=' + _buildBbox(imgBounds);
 
 

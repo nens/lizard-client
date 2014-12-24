@@ -105,7 +105,13 @@ angular.module('lizard-nxt')
         }
 
         if (lg.temporal && lg.temporalResolution < timeStep) {
-          timeStep = lg.temporalResolution;
+          var layerRes;
+          lg._layers.forEach(function (layer) {
+            if (layer.hasOwnProperty('_temporalResolution')) {
+              layerRes = layer._temporalResolution;
+            } else { return; }
+          });
+          timeStep = layerRes || lg.temporalResolution;
           // equals to 250 ms for 5 minutes, increases for larger timeSteps untill
           // it reaches 1 second between frames for timeSteps of > 20 minutes.
           minLag = timeStep / 1200 > 240 ? timeStep / 1200 : 250;
