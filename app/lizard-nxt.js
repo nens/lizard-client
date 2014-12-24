@@ -191,7 +191,8 @@ angular.module('lizard-nxt')
   $scope.switchContext = function (context) {
     $scope.context = context;
     if ($scope.context !== 'map') {
-      $scope.mapState.enabled = false;
+      console.log('not map');
+      //mapState.enabled = false;
     }
   };
 

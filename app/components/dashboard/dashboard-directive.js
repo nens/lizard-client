@@ -1,13 +1,10 @@
 
 angular.module('dashboard')
-  //.directive('dashboard', ['NxtData', function (NxtData) {
   .directive('dashboard',
-             ["EventAggregateService",
-              function (EventAggregateService) {
+             ["EventAggregateService", "State", "DataService",
+              function (EventAggregateService, State, DataService) {
 
-  //  NxtData.getData(options);
   // draw full screen graph
-
   var link = function (scope, element, attrs) {
 
     var getWidth = function () {
@@ -23,11 +20,11 @@ angular.module('dashboard')
     scope.dimensions.height = (getHeight() / 2) - 20;
 
     var aggregateEvents = function () {
-      angular.forEach(scope.mapState.layerGroups, function (lg) {
+      angular.forEach(DataService.layerGroups, function (lg) {
         lg.getData({
-          geom: scope.mapState.bounds,
-          start: scope.timeState.start,
-          end: scope.timeState.stop,
+          geom: State.spatial.bounds,
+          start: State.temporal.start,
+          end: State.temporal.end,
           type: 'Event'
         }).then(null, null, function (response) {
 
@@ -35,7 +32,7 @@ angular.module('dashboard')
             // aggregate response
             scope.eventAggs =
               EventAggregateService.aggregate(response.data,
-                                              scope.timeState.aggWindow);
+                                              State.temporal.aggWindow);
           }
         });
       });
@@ -44,7 +41,7 @@ angular.module('dashboard')
     /**
      * Updates dashboard when user pans or zooms map.
      */
-    scope.$watch('mapState.bounds', function (n, o) {
+    scope.$watch(State.toString('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
       aggregateEvents();
     });
@@ -52,15 +49,15 @@ angular.module('dashboard')
     /**
      * Updates dashboard when layers are added or removed.
      */
-    scope.$watch('mapState.layerGroupsChanged', function (n, o) {
-      if (n === o) { return true; }
-      aggregateEvents();
-    });
+    //scope.$watch(State.toString('layerGroups.'), function (n, o) {
+      //if (n === o) { return true; }
+      //aggregateEvents();
+    //});
 
     /**
      * Updates dashboard when time zoom changes.
      */
-    scope.$watch('timeState.changedZoom', function (n, o) {
+    scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
       aggregateEvents();
     });
