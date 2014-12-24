@@ -19,6 +19,7 @@ if (window.RavenEnvironment) {
  *
  */
 angular.module("lizard-nxt", [
+  'data-menu',
   'omnibox',
   'restangular',
   'global-state',

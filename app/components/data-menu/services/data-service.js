@@ -9,10 +9,10 @@
  * @summary stores the global NxtData instance of the app.
  */
 
-angular.module('lizard-nxt')
+angular.module('data-menu')
   .service('DataService', ['dataLayers', 'NxtData', 'State',
     function (dataLayers, NxtData, State) {
-      var nxtData = new NxtData(dataLayers, 'MapService');
+      var nxtData = new NxtData(dataLayers);
       State.layerGroups = nxtData.state;
       return nxtData;
     }

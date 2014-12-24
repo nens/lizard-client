@@ -197,6 +197,7 @@ angular.module('lizard-nxt')
      */
     drawHorizontalStack: {
       value: function (data, keys, labels) {
+        console.log(data);
         if (!this._x) {
           var options = {
             scale: 'linear',

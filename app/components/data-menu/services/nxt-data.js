@@ -17,11 +17,11 @@
  */
 
 
-angular.module('lizard-nxt')
+angular.module('data-menu')
   .factory('NxtData', ['$q', '$injector', 'NxtMap', 'LayerGroup', function ($q, $injector, NxtMap, LayerGroup) {
 
 
-    function NxtData(serverSideLayerGroups, map) {
+    function NxtData(serverSideLayerGroups) {
       var layerGroups = createLayerGroups(serverSideLayerGroups);
 
       this.layerGroups = layerGroups;
@@ -66,8 +66,6 @@ angular.module('lizard-nxt')
         }
       });
 
-      // Map is a string pointing to a service containing the map
-      if (map) { this.mapProvider = $injector.get(map); }
     }
 
     NxtData.prototype = {

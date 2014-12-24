@@ -19,11 +19,6 @@ angular.module('lizard-nxt')
       function NxtNonTiledWMSLayer(layer, temporalResolution) {
         NxtLayer.call(this, layer);
 
-        // Physical time in millieseconds between frames.
-        Object.defineProperty(this, '_temporalResolution', {
-          value: temporalResolution,
-          writable: false,
-        });
         // Array of imageoverlays used as buffer.
         Object.defineProperty(this, '_imageOverlays', {
           value: [],
