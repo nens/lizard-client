@@ -9,6 +9,10 @@ Unreleased (1.2.dev) (XXXX-XX-XX)
 Release 1.1.1 (2014-12-23)
 ---------------------
 
+- timeline: it's "netto width" is made available through UtilService.
+
+- timeline: zoom buttons working.
+
 - Omnibox rain graph syncs x-axis to timeline.
 
 - Grunt release script.
