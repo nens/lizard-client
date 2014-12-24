@@ -212,7 +212,9 @@ angular.module('lizard-nxt')
               slug = this.slug,
               summary = this.summary,
               format = this.format,
+              type = this.type,
               quantity = this.quantity,
+              type = this.type,
               unit = this.unit;
 
           var buildSuccesCallback = function (data) {
@@ -240,11 +242,47 @@ angular.module('lizard-nxt')
           };
 
           options = options || {};
+          
+          // Pass layer options to the services making the request.
+          // RasterServices uses this to add options.styles.
+          angular.extend(options, this.options);
           options.agg = this.aggregationType;
 
           return wantedService.getData(this, options)
             .then(buildSuccesCallback, buildErrorCallback);
-        }
+        },
+
+        /**
+         * @function
+         * @memberof app.layerService
+         * @param  {L.Class} Leaflet map
+         * @param  {L.Class} Leaflet layer
+         * @description Removes layer from map
+         */
+        _addLeafletLayer: function (map, leafletLayer) {
+          if (map.hasLayer(leafletLayer)) {
+            throw new Error(
+              'Attempted to add layer' + leafletLayer._id
+              + 'while it was already part of the map'
+            );
+          } else {
+            map.addLayer(leafletLayer);
+          }
+        },
+
+        /**
+         * @function
+         * @memberof app.layerService
+         * @param  {L.Class} Leaflet map
+         * @param  {L.Class} Leaflet layer
+         * @description Removes layer from map
+         */
+        _removeLeafletLayer: function (map, leafletLayer) { // Leaflet NxtLayer
+          if (map.hasLayer(leafletLayer)) {
+            map.removeLayer(leafletLayer);
+          }
+        },
+
 
       };
 

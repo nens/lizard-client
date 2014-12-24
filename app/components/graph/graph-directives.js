@@ -64,6 +64,7 @@ angular.module('lizard-nxt')
         left: 50
       }
     };
+    // Overwrite anything provided by dimensions attr on element
     angular.extend(dimensions, scope.dimensions);
 
     el = element[0].firstChild;
@@ -72,7 +73,11 @@ angular.module('lizard-nxt')
     graphCtrl.type = attrs.type;
 
     // Create the graph and put it on the controller
-    graphCtrl.graph = new Graph(el, dimensions);
+    graphCtrl.graph = new Graph(
+      el,
+      dimensions,
+      scope.temporal
+    );
   };
 
   /**
@@ -99,14 +104,17 @@ angular.module('lizard-nxt')
       // Call graph with the new data
       graphCtrl.updateData.call(graphCtrl.graph, graphCtrl.data, graphCtrl.keys, graphCtrl.labels);
       // Call the graph with the now
-      graphCtrl.updateNow.call(graphCtrl.graph, scope.now);
+      if (scope.temporal && scope.temporal.at) {
+        graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
+      }
     });
 
-    scope.$watch('now', function (n, o) {
+    scope.$watch('temporal.at', function (n, o) {
       if (n === o) { return true; }
-      graphCtrl.updateNow.call(graphCtrl.graph, scope.now);
+      if (scope.temporal && scope.temporal.at) {
+        graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
+      }
     });
-
   };
 
   /**
@@ -123,7 +131,7 @@ angular.module('lizard-nxt')
 
       // Provide defaults for backwards compatability
       this.data = scope.data || [];
-      this.keys = scope.keys || {x: 0, y: 1};
+      this.keys = scope.keys || { x: 0, y: 1 };
       this.labels = {
         x: scope.xlabel || '',
         y: scope.ylabel || ''
@@ -134,7 +142,7 @@ angular.module('lizard-nxt')
 
     this.graph = {};
     this.yfilter = '';
-    this.now = $scope.now;
+    this.now = $scope.temporal ? $scope.temporal.at : undefined;
     this.type = '';
 
     // Define data update function in attribute directives
@@ -142,6 +150,7 @@ angular.module('lizard-nxt')
     // Define timeState.now update function in attribute directives
     this.updateNow = function () {};
   };
+
 
   return {
     controller: graphCtrl,
@@ -157,8 +166,8 @@ angular.module('lizard-nxt')
       ylabel: '=',
       keys: '=',
       yfilter: '=',
-      now: '=',
-      dimensions: '='
+      dimensions: '=',
+      temporal: '='
     },
     restrict: 'E',
     replace: true,

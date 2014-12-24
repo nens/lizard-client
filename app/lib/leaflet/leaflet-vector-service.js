@@ -52,7 +52,7 @@ angular.module('lizard-nxt')
             latlng, geojsonMarkerOptions);
           circle.on('click', function (e) {
             // simulate click on map instead of this event;
-           this._map.fire('click', {
+            this._map.fire('click', {
               latlng: new LeafletService.LatLng(
                 e.target.feature.geometry.coordinates[1],
                 e.target.feature.geometry.coordinates[0])

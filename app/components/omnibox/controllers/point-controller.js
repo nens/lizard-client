@@ -7,22 +7,26 @@
  * @name pointCtrl
  * @description point is the controller of the point template.
  * It gathers all data belonging to a location in space. It becomes active
- * by setting box.type to 'point' and is updated by broadcasting
- * 'newPointActive'. It reads and writes mapState.here.
- *
- * TODO:
- * - [ ] Include the click action on individual events into this paradigm.
- * - [ ] Remove all hardcoded shit. Mirror area and loop through
- *       all layers and perform generic actions based on layer types.
+ * by setting box.type to 'point' and is updated by when State.spatila.here
+ * changes
  */
 
 angular.module('lizard-nxt')
-  .controller('PointCtrl', ['$scope', '$q', 'LeafletService', 'TimeseriesService', 'ClickFeedbackService', 'UtilService',
-  function ($scope, $q, LeafletService, TimeseriesService, ClickFeedbackService, UtilService) {
+.controller('PointCtrl', [
+  '$scope',
+  '$q',
+  'LeafletService',
+  'TimeseriesService',
+  'ClickFeedbackService',
+  'UtilService',
+  'MapService',
+  'DataService',
+  'State',
+
+  function ($scope, $q, LeafletService, TimeseriesService, ClickFeedbackService, UtilService, MapService, DataService, State) {
 
     var GRAPH_WIDTH = 600;
     $scope.box.content = {};
-    $scope.box.showFullTable = false;
 
     /**
      * @function
@@ -30,37 +34,35 @@ angular.module('lizard-nxt')
      * @param  {L.LatLng} here
      */
     var fillpoint = function (here) {
-
-      if ($scope.box.type !== 'point') { return; }
-
-      ClickFeedbackService.drawCircle($scope.mapState, here);
-      ClickFeedbackService.startVibration($scope.mapState);
-      var aggWindow = $scope.timeState.aggWindow;
-      var promises = $scope.fillBox({
+      ClickFeedbackService.drawCircle(MapService, here);
+      ClickFeedbackService.startVibration(MapService);
+      var aggWindow = State.temporal.aggWindow;
+      var promise = $scope.fillBox({
         geom: here,
-        start: $scope.timeState.start,
-        end: $scope.timeState.end,
+        start: State.temporal.start,
+        end: State.temporal.end,
         aggWindow: aggWindow
       });
 
-      angular.forEach(promises, function (promise) {
-        promise.then(null, null, function (response) {
-          if (response.data && response.data.id && response.data.entity_name) {
-            getTimeSeriesForObject(
-              response.data.entity_name + '$' + response.data.id
-            );
-          }
-          if (response.layerSlug === 'radar/basic' && response.data !== null) {
-            // this logs incessant errors.
-            if ($scope.box.content[response.layerGroupSlug] === undefined) { return; }
-            if (!$scope.box.content[response.layerGroupSlug].layers.hasOwnProperty(response.layerSlug)) { return; }
-
-            $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
-          }
-        });
-      });
       // Draw feedback when all promises resolved
-      $q.all(promises).then(drawFeedback);
+      promise.then(drawFeedback, null, function (response) {
+        if (response && response.data && response.data.id && response.data.entity_name) {
+          getTimeSeriesForObject(
+            response.data.entity_name + '$' + response.data.id
+          );
+        }
+        if (response.layerSlug === 'radar/basic' && response.data !== null) {
+          // this logs incessant errors.
+          if ($scope.box.content[response.layerGroupSlug] === undefined) { return; }
+          if (!$scope.box.content[response.layerGroupSlug].layers.hasOwnProperty(response.layerSlug)) { return; }
+
+          // This could probably be different.
+          $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed =
+            !$scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed;
+          $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
+        }
+        $scope.box.minimizeCards();
+      });
     };
 
     /**
@@ -69,8 +71,8 @@ angular.module('lizard-nxt')
      * @description Wrapper to improve readability
      */
     var fillPointHere = function () {
-      if ($scope.box.type === 'point' && $scope.mapState.here) {
-        fillpoint($scope.mapState.here);
+      if (State.spatial.here) {
+        fillpoint(State.spatial.here);
       }
     };
 
@@ -81,13 +83,14 @@ angular.module('lizard-nxt')
      */
     var drawFeedback = function () {
       var feedbackDrawn = false;
+
       var drawVectorFeedback = function (content) {
         angular.forEach(content, function (lg) {
           if (lg && lg.layers) {
             angular.forEach(lg.layers, function (layer) {
               if (layer.format === 'Vector' && layer.data.length > 0) {
                 ClickFeedbackService.drawGeometry(
-                  $scope.mapState,
+                  MapService,
                   layer.data
                 );
                 ClickFeedbackService.vibrateOnce();
@@ -109,7 +112,7 @@ angular.module('lizard-nxt')
             }
           };
           ClickFeedbackService.drawGeometry(
-            $scope.mapState,
+            MapService,
             feature
           );
           ClickFeedbackService.vibrateOnce();
@@ -123,7 +126,7 @@ angular.module('lizard-nxt')
             if (lg && lg.layers) {
               angular.forEach(lg.layers, function (layer) {
                 if (layer.format === 'Store' && layer.data.length > 0) {
-                  ClickFeedbackService.drawArrow($scope.mapState, $scope.mapState.here);
+                  ClickFeedbackService.drawArrow(MapService, State.spatial.here);
                   feedbackDrawn = true;
                 }
               });
@@ -132,14 +135,14 @@ angular.module('lizard-nxt')
         }
       };
 
-      ClickFeedbackService.emptyClickLayer($scope.mapState);
+      ClickFeedbackService.emptyClickLayer(MapService);
       drawVectorFeedback($scope.box.content);
       drawUTFGridFeedback($scope.box.content);
       drawStoreFeedback($scope.box.content);
       if (!feedbackDrawn) {
         ClickFeedbackService.vibrateOnce({
           type: 'Point',
-          coordinates: [$scope.mapState.here.lng, $scope.mapState.here.lat]
+          coordinates: [State.spatial.here.lng, State.spatial.here.lat]
         });
       }
     };
@@ -151,7 +154,7 @@ angular.module('lizard-nxt')
      */
     var getTimeSeriesForObject = function (objectId) {
 
-      TimeseriesService.getTimeseries(objectId, $scope.timeState)
+      TimeseriesService.getTimeseries(objectId, State.temporal)
       .then(function (result) {
 
         $scope.box.content.timeseries = $scope.box.content.timeseries || {};
@@ -190,58 +193,32 @@ angular.module('lizard-nxt')
     };
 
     // Update when user clicked again
-    $scope.$watch('mapState.here', function (n, o) {
+    $scope.$watch(State.toString('spatial.here'), function (n, o) {
       if (n === o) { return; }
       fillPointHere();
     });
 
     // Update when layergroups have changed
-    $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
+    $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return; }
-      fillPointHere();
+      if (State.spatial.here.lat && State.spatial.here.lng) {
+        fillPointHere();
+      }
+    });
+
+    $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
+      if (n === "false" && o === "true") {
+        if (State.spatial.here.lat && State.spatial.here.lng) {
+          fillPointHere();
+        }
+      }
     });
 
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
-      ClickFeedbackService.emptyClickLayer($scope.mapState);
+      DataService.reject();
+      $scope.box.content = {};
+      ClickFeedbackService.emptyClickLayer(MapService);
     });
-
-    /**
-     * @function
-     * @memberOf app.pointCtrl
-     * @description Get correct icon for structure
-     */
-    $scope.getIconClass = function (str) {
-      switch (str) {
-      case 'overflow':
-        return 'icon-overflow';
-      case 'pumpstation':
-        return 'icon-pumpstation-diesel';
-      case 'bridge':
-        return 'icon-bridge';
-      case 'bridge-draw':
-        return 'icon-bridge';
-      case 'bridge-fixed':
-        return 'icon-bridge';
-      default:
-        return 'icon-' + str;
-      }
-    };
-
-    /**
-     * @function
-     * @memberOf app.pointCtrl
-     * @description Toggling the view on the table for structure attributes;
-     *              Either show the first 3 attributes, OR show all of them
-     */
-    $scope.box.toggleFullTable = function () {
-
-      $scope.box.showFullTable = !$scope.box.showFullTable;
-
-      d3.selectAll('tr.attr-row')
-        .classed('hidden', function (_, i) {
-          return i > 2 && !$scope.box.showFullTable;
-        });
-    };
   }
 ]);

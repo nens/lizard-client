@@ -1,6 +1,6 @@
 {
   "name": "lizard-client",
-  "version": "1.0.1",
+  "version": "1.1.2",
   "description": "Front-end of lizard-nxt, a Geographic Web Application that connects water data to locations",
   "main": "",
   "directories": {
@@ -45,7 +45,7 @@
     "grunt-newer": "^0.7.0",
     "grunt-ng-annotate": "^0.3.0",
     "grunt-sass": "^0.16.1",
-    "grunt-semantic-release": "git://github.com/fritzvd/grunt-semantic-release#patch-1",
+    "grunt-lizard-release": "git://github.com/fritzvd/grunt-lizard-release",
     "grunt-svgmin": "^0.4.0",
     "grunt-text-replace": "~0.3.12",
     "grunt-usemin": "^2.1.1",

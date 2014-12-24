@@ -14,13 +14,15 @@
 angular.module('lizard-nxt')
   .directive('map', [
   '$controller',
-  'ClickFeedbackService',
+  'MapService',
   'NxtMap',
-  'dataLayers',
-  function ($controller, ClickFeedbackService, NxtMap, dataLayers) {
+  'UtilService',
+  'State',
+  function ($controller, MapService, NxtMap, UtilService, State) {
 
     var link = function (scope, element, attrs) {
 
+      var mapSetsBounds = false;
        /**
         * @function
         * @memberOf app.map
@@ -28,7 +30,7 @@ angular.module('lizard-nxt')
         * @param  {event}  e Leaflet event object
         */
       var _clicked = function (e) {
-        scope.mapState.here = e.latlng;
+        State.spatial.here = e.latlng;
       };
 
       /**
@@ -36,7 +38,7 @@ angular.module('lizard-nxt')
        * @memberOf app.map
        */
       var _moveStarted = function (e) {
-        scope.mapState.mapMoving = true;
+        State.spatial.mapMoving = true;
       };
 
       /**
@@ -44,8 +46,8 @@ angular.module('lizard-nxt')
        * @memberOf app.map
        */
       var _mouseMoved = function (e) {
-        if (scope.box.type === 'line') {
-          scope.mapState.userHere = e.latlng;
+        if (State.box.type === 'line') {
+          State.spatial.userHere = e.latlng;
         }
       };
 
@@ -54,28 +56,52 @@ angular.module('lizard-nxt')
        * @memberOf app.map
        */
       var _moveEnded = function (e, map) {
-        scope.mapState.moved = Date.now();
-        scope.mapState.mapMoving = false;
-        scope.mapState.center = map.getCenter();
-        scope.mapState.zoom = map.getZoom();
-        scope.mapState.bounds = map.getBounds();
+        State.spatial.mapMoving = false;
+        mapSetsBounds = true;
+        State.spatial.bounds = map.getBounds();
+        State.spatial.zoom = map.getZoom();
       };
 
-      scope.mapState = new NxtMap(
-        element[0],
-        dataLayers, {
+      MapService.createMap(element[0], {
           zoomControl: false,
           addZoomTitles: true,
-          zoomInTitle: scope.tooltips.zoomInMap,
-          zoomOutTitle: scope.tooltips.zoomOutMap
         }
       );
 
-      scope.mapState.initiateNxtMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
+      MapService.initiateNxtMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
 
-      // Instantiate the controller that updates the hash url after creating the
-      // map and all its listeners.
       $controller('UrlController', {$scope: scope});
+
+      /**
+       * Watch bounds of state and update map bounds when state is changed.
+       */
+      scope.$watch(State.toString('spatial.bounds'), function (n, o) {
+        if (n === o) { return; }
+        if (!mapSetsBounds) {
+          MapService.fitBounds(State.spatial.bounds);
+        } else {
+          mapSetsBounds = false;
+        }
+      });
+
+      scope.$watch(State.toString('box.type'), function (n, o) {
+        if (n === o) { return true; }
+        var selector;
+        switch (n) {
+          case "point":
+            selector = "";
+            break;
+          case "line":
+            selector = "#map * {cursor: crosshair;}";
+            break;
+          case "area":
+            selector = "#map * {cursor: -webkit-grab; cursor: -moz-grab; cursor: grab; cursor: hand;}";
+            break;
+          default:
+            return;
+        }
+        UtilService.addNewStyle(selector);
+      });
 
     };
 

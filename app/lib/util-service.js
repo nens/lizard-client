@@ -148,6 +148,7 @@ angular.module('lizard-nxt')
     }
   };
 
+
   /**
    * @function dataConvertToMeters
    * @memberOf UtilService
@@ -164,6 +165,8 @@ angular.module('lizard-nxt')
     }
     return data;
   };
+
+
   /**
    * @function degToMeters
    * @memberOf UtilService
@@ -177,6 +180,7 @@ angular.module('lizard-nxt')
   this.degToMeters = function (degrees) {
     return  (degrees * Math.PI) / 180 * 6371 * 1000;
   };
+
 
   /**
    * @function metersToDegs
@@ -220,10 +224,11 @@ angular.module('lizard-nxt')
     return dataForTimeState;
   };
 
+
   /**
    * @function serveToOldIE
    * @memberOf UtilService
-   * @description Check whether the client uses IE10+/non-IE browser 
+   * @description Check whether the client uses IE10+/non-IE browser
    *   (return false) OR that she uses an older IE version (return true)
    */
   this.serveToOldIE = function () {
@@ -263,7 +268,6 @@ angular.module('lizard-nxt')
    * @memberOf UtilService
    */
   this.geomToWkt = function (geom) {
-
     if (geom instanceof L.LatLng) {
       // geom is a L.LatLng object
       return "POINT(" + geom.lng + " " + geom.lat + ")";
@@ -286,21 +290,20 @@ angular.module('lizard-nxt')
     }
   };
 
+
   /**
    * @function buildString
    * @memberof UtilService
    * @description Glues all of it's arguments to a single string
    */
   this.buildString = function () {
-
     var i, result = "";
-
     for (i = 0; i < arguments.length; i++) {
       result += arguments[i];
     }
-
     return result;
   };
+
 
   /**
    * @function all
@@ -311,17 +314,15 @@ angular.module('lizard-nxt')
    * @return {boolean}
    */
   this.all = function (arr, predicate_) {
-
     var i,
         result = true,
         predicate = predicate_ || function (x) { return !!x; };
-
     for (i = 0; i < arr.length; i++) {
       result = result && predicate(arr[i]);
     }
-
     return result;
   };
+
 
   /**
    * @function any
@@ -334,17 +335,15 @@ angular.module('lizard-nxt')
    * @return {boolean}
    */
   this.any = function (arr, predicate_) {
-
     var i,
         result = false,
         predicate = predicate_ || function (x) { return !!x; };
-
     for (i = 0; i < arr.length; i++) {
       result = result || predicate(arr[i]);
     }
-
     return result;
   };
+
 
   /**
    * @function
@@ -356,7 +355,10 @@ angular.module('lizard-nxt')
    */
   this.isSufficientlyRichData = function (data) {
 
-    if (data === 'null') {
+    if (data === undefined) {
+      return false;
+
+    } else if (data === 'null') {
       // backend did not return valid data.. log as ERROR?
       return false;
 
@@ -405,6 +407,7 @@ angular.module('lizard-nxt')
     return true;
   };
 
+
   /**
    * @function
    * @memberOf UtilService
@@ -426,6 +429,7 @@ angular.module('lizard-nxt')
     }
   };
 
+
   this.preventOldIEUsage = function () {
     if (this.serveToOldIE()) {
       document.querySelector("#dark-overlay").style.display = "block";
@@ -441,9 +445,9 @@ angular.module('lizard-nxt')
         + ' z-index: 0;'
         + '}';
       document.body.appendChild(node);
-
     }
   };
+
 
   /*
    * @description - Replace display_name value with name value, if applicable
@@ -461,8 +465,69 @@ angular.module('lizard-nxt')
     return obj;
   };
 
+
   /**
-   * @description - Convert lin to log scale, given the following 3 args.
+   * @description - Deduce the wanted geometry-type from the passed in geomOpts
+   * @param {object} geomOpts - the options.geom object
+   * @return {string} - "POINT" | "LINE" | "AREA" | throw new Error!
+   *
+   * NB! In the foreseeable future, we need to take care of non-rectangle
+   *     polygons, and we'll need to adjust this code accordingly.
+   *     When will then be now? soon.
+   */
+  this.getGeomType = function (geomOpts) {
+
+    if (geomOpts instanceof L.LatLng) {
+      return "POINT";
+
+    } else if (geomOpts._southWest && geomOpts._northEast) {
+      return "AREA";
+
+    } else if (geomOpts.length === 2
+      && geomOpts[0] instanceof L.LatLng
+      && geomOpts[1] instanceof L.LatLng) {
+      return "LINE";
+
+    } else {
+      throw new Error(
+        "getGeomType could not deduce a valid geometry type from the passed in arg: 'geomOpts' =", geomOpts
+      );
+    }
+  };
+
+
+  /**
+   * @function
+   * @description - Count all keys for an object (we can't do this vanilla.js style in Angular template)
+   * @param {object} obj - The object for which we want to know the amount of keys.
+   * @return {integer} - The amount of keys.
+   */
+  this.countKeys = function (obj) {
+    return obj === undefined ? 0 : Object.keys(obj).length;
+  };
+
+
+  /**
+   * @function
+   * @description Get correct icon for structure
+   */
+  this.getIconClass = function (str) {
+    switch (str) {
+    case 'pumpstation':
+      return 'icon-pumpstation-diesel';
+    case 'bridge':
+      return 'icon-bridge';
+    case 'bridge-draw':
+      return 'icon-bridge';
+    case 'bridge-fixed':
+      return 'icon-bridge';
+    default:
+      return 'icon-' + str;
+    }
+  };
+
+
+  /* @description - Convert lin to log scale, given the following 3 args.
    * @param {number} value - the value to convert
    * @param {number} minValue - the start of the scale
    * @param {number} maxValue - the end of the scale
@@ -474,6 +539,7 @@ angular.module('lizard-nxt')
       .range([minValue, maxValue]);
     return scale(value);
   };
+
 
   /**
    * @description - This add a <style> tag + it's contents to the <head> of the
@@ -494,24 +560,124 @@ angular.module('lizard-nxt')
     styleElement.appendChild(document.createTextNode(newStyle));
   };
 
+
   /*
    * @description - Convert string ending in px to value expressed in pixels,
    *                it denotes.
    * @param {string} str - The string to be converted.
    */
   this.pxToInt = function (str) {
-    return parseInt(str.replace("px", ""));
+    try {
+      return parseInt(str.replace("px", ""));
+    } catch (e) {
+      throw new Error("Could not extract integer from string: '" + str + "'");
+    }
   };
 
- 
+
+  /**
+   * @function
+   * @description - Get amount of Km^2 in the current spatial extent
+   *                (bottom-limit = 1)
+   * @param {latLngBounds} leafletBounds - A leaflet bounds object denoting the
+   *                                       current spatial extent.
+   * @return {number} - A number denoting the extent's corresponding perimeter
+   *                   (expressed in Km^2)
+   */
+  this.extent2kilometers = function (leafletBounds) {
+
+    var northWest = L.latLng({
+          lat: leafletBounds._southWest.lat,
+          lng: leafletBounds._northEast.lng
+        }),
+        southEast = L.latLng({
+          lat: leafletBounds._northEast.lat,
+          lng: leafletBounds._southWest.lng
+        }),
+        latDistance = leafletBounds._southWest.distanceTo(southEast) / 1000,
+        lngDistance = leafletBounds._northEast.distanceTo(northWest) / 1000;
+
+    // On high zoomlevels, we limit the area to 1km^2 since that's the
+    // spatial resolution ("pixel") for radar data in the rasterstore.
+    return Math.max(1, latDistance * lngDistance);
+  };
+
   /*
    * @function
    * @description wrapper around lodash.union function
    * which works better than our own implementation..
    * Could be more efficient to call from api in a batch
    * instead of tiled/geojson stuff.
-   *
    */
   this.union = _.union;
+
+  /*
+   * @function
+   * @description - return the average rain per square kilometer, given:
+   * @param {obj[]} data - the raw data
+   * @param {obj} bounds- leaflet bounds object, the current spatial extent
+   * @param {obj} timeState - the app's timeState
+   * @return {number || undefined}
+   */
+  this.getFilteredRainDataPerKM = function (data, bounds, timeState) {
+
+    if (!data) { return; }
+
+    var i,
+        currentTimestamp,
+        currentVal,
+        aggWindowStart = timeState.at,
+        aggWindowEnd = aggWindowStart + timeState.aggWindow,
+        squareKilometers = this.extent2kilometers(bounds),
+        DECIMAL_RESOLUTION = 100;
+
+    for (i = 0; i < data.length; i++) {
+      currentTimestamp = data[i][0];
+      currentVal = data[i][1];
+      if (currentTimestamp > aggWindowStart && currentTimestamp <= aggWindowEnd) {
+        return  Math.round(
+                  (currentVal / squareKilometers) * DECIMAL_RESOLUTION
+                ) / DECIMAL_RESOLUTION || "0.00";
+      }
+    }
+  };
+
+  this.TIMELINE_LEFT_MARGIN = 60;
+  this.TIMELINE_RIGHT_MARGIN = 40;
+
+  this.getCurrentWidth = function () {
+    return window.innerWidth - (
+      this.TIMELINE_LEFT_MARGIN + this.TIMELINE_RIGHT_MARGIN
+    );
+  };
+
+
+  // Add comparator to sort lists on multiple properties to D3.
+  (function () {
+    d3.comparator = function () {
+      var cmps = [], accessors = [];
+
+      var comparator = function (a, b) {
+        var i = -1,
+            n = cmps.length,
+            result;
+        while (++i < n) {
+          result = cmps[i](accessors[i](a), accessors[i](b));
+          if (result !== 0) return result;
+        }
+        return 0;
+      };
+
+      comparator.order = function (cmp, accessor) {
+        cmps.push(cmp);
+        accessors.push(accessor || identity);
+        return comparator;
+      };
+
+      return comparator;
+    };
+
+    function identity(d) { return d; }
+  })();
 
 }]);

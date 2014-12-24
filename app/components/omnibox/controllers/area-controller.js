@@ -13,59 +13,107 @@
  *
  */
 angular.module('lizard-nxt')
-  .controller('AreaCtrl', ['$scope', 'RasterService', '$q', function ($scope, RasterService, $q) {
+.controller('AreaCtrl', [
+
+  '$scope',
+  'RasterService',
+  'UtilService',
+  '$q',
+  'DataService',
+  'State',
+
+  function (
+
+    $scope,
+    RasterService,
+    UtilService,
+    $q,
+    DataService,
+    State
+
+  ) {
 
     $scope.box.content = {};
+    $scope.filteredRainDataPerKilometer = undefined;
 
     /**
      * @function
      * @memberOf app.areaCtrl
      * @description
-     * Loops over all layergroups to get data.
+     * Gets data from DataService.
      * @param  {object} bounds   mapState.bounds, containing
      *                                  leaflet bounds.
      */
     var fillArea = function (bounds) {
-     //TODO draw feedback when loading data
-      var promises = $scope.fillBox({
+      var promise = $scope.fillBox({
         geom: bounds,
-        start: $scope.timeState.start,
-        end: $scope.timeState.end,
-        aggWindow: $scope.timeState.aggWindow
+        start: State.temporal.start,
+        end: State.temporal.end,
+        aggWindow: State.temporal.aggWindow
       });
-      angular.forEach(promises, function (promise) {
-        promise.then(null, null, function (response) {
-          if (response.data && response.layerSlug === 'dem/nl') {
-            $scope.box.content[response.layerGroupSlug]
-              .layers[response.layerSlug]
-              // Since the data is not properly formatted in the back
-              // we convert it from degrees to meters here
-              .data = RasterService.handleElevationCurve(response.data);
+      promise.then(null, null, function (response) {
+        if (response && response.data && response.data !== "null") {
+          switch (response.layerSlug) {
+          case "dem/nl":
+            // Since the data is not properly formatted in the back
+            // we convert it from degrees to meters here
+            $scope.box.content.elevation.layers["dem/nl"].data
+              = RasterService.handleElevationCurve(response.data);
+            break;
+          case "radar/basic":
+            $scope.box.content.rain.layers["radar/basic"].data
+              = response.data;
+            $scope.filteredRainDataPerKilometer
+              = UtilService.getFilteredRainDataPerKM(
+                  response.data,
+                  State.spatial.bounds,
+                  State.temporal
+                );
+            break;
           }
-        });
+        }
       });
-      // Draw feedback when all promises resolved
-      //$q.all(promises).then(drawFeedback);
     };
 
     /**
      * Updates area when user moves map.
      */
-    $scope.$watch('mapState.bounds', function (n, o) {
+    $scope.$watch(State.toString('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
-      fillArea($scope.mapState.bounds);
+      fillArea(State.spatial.bounds);
     });
 
     /**
      * Updates area when users changes layers.
      */
-    $scope.$watch('mapState.layerGroupsChanged', function (n, o) {
+    $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return true; }
-      fillArea($scope.mapState.bounds);
+      fillArea(State.spatial.bounds);
+    });
+
+    $scope.$watch(State.toString('temporal.at'),
+        function (n, o) {
+      if (n === o) { return true; }
+      fillArea(State.spatial.bounds);
+    });
+
+    $scope.$watch(State.toString('temporal.aggWindow'),
+        function (n, o) {
+      if (n === o) { return true; }
+      fillArea(State.spatial.bounds);
     });
 
     // Load data at initialization.
-    fillArea($scope.mapState.bounds);
+    fillArea(State.spatial.bounds);
 
+    // Make UtilSvc functions available in Angular templates
+    $scope.countKeys = UtilService.countKeys;
+
+    // Clean up stuff when controller is destroyed
+    $scope.$on('$destroy', function () {
+      DataService.reject();
+      $scope.box.content = {};
+    });
   }
 ]);
+
