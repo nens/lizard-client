@@ -189,15 +189,19 @@ angular.module('lizard-nxt')
    * @param {string} context - Context name to switch to
    */
   $scope.switchContext = function (context) {
-    $scope.context = context;
-    if ($scope.context !== 'map') {
-      console.log('not map');
-      //mapState.enabled = false;
-    }
+    State.context = context;
   };
 
-  // default context
-  $scope.context = 'map';
+  /*
+   * Set context on scope.
+   */
+  $scope.$watch(State.toString('context'), function (n, o) {
+    if (n === o) { return true; }
+    $scope.context = State.context;
+  });
+
+  // initialise context.
+  $scope.context = State.context;
 
   // END CONTEXT
 

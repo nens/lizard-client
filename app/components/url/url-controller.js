@@ -14,12 +14,19 @@
 angular.module('lizard-nxt')
   .controller('UrlController', ['$scope', 'LocationGetterSetter',
   'UrlState', 'dataBounds', 'DataService', 'MapService', 'State', '$rootScope',
-  function ($scope, LocationGetterSetter, UrlState, dataBounds, DataService, MapService, State, $rootScope) {
+  function ($scope,
+            LocationGetterSetter,
+            UrlState,
+            dataBounds,
+            DataService,
+            MapService,
+            State,
+            $rootScope) {
 
     // Configuration object for url state.
     var state = {
       context: { // Locally used name for the state
-        value: 'map', // Default
+        value: 'map', // default
         part: 'path', // Part of the url where this state is stored,
         index: 0, // Position of the state in the part
         update: true // When false, $locationChangeSucces is cancelled
@@ -68,7 +75,8 @@ angular.module('lizard-nxt')
         angular.forEach(activeLayerSlugs, function (layerGroupSlug) {
           var lgI = State.layerGroups.all.indexOf(layerGroupSlug);
           if (lgI !== -1) {
-            DataService.toggleLayerGroup(DataService.layerGroups[layerGroupSlug]);
+            DataService.toggleLayerGroup(
+              DataService.layerGroups[layerGroupSlug]);
           }
         });
         // Or layerGroups are not on url, turn default layerGroups on
@@ -134,7 +142,9 @@ angular.module('lizard-nxt')
       if (n === o) { return true; }
       if (!State.temporal.timelineMoving) {
         state.timeState.update = false;
-        UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
+        UrlState.setTimeStateUrl(state,
+                                 State.temporal.start,
+                                 State.temporal.end);
       }
     });
 
@@ -159,7 +169,7 @@ angular.module('lizard-nxt')
     /*
      * Set context when context changed
      */
-    $scope.$watch('context', function (n, old) {
+    $scope.$watch(State.toString('context'), function (n, old) {
       if (n === old) { return true; }
       state.context.update = false;
       LocationGetterSetter.setUrlValue(
@@ -173,7 +183,10 @@ angular.module('lizard-nxt')
     $scope.$watch(State.toString('spatial.here'), function (n, o) {
       if (n === o || State.box.type !== 'point') { return true; }
       state.geom.update = false;
-      UrlState.setgeomUrl(state, State.box.type, State.spatial.here, State.spatial.points);
+      UrlState.setgeomUrl(state,
+                          State.box.type,
+                          State.spatial.here,
+                          State.spatial.points);
     });
 
     /**
@@ -182,7 +195,10 @@ angular.module('lizard-nxt')
     $scope.$watch(State.toString('spatial.points'), function (n, o) {
       if (n === o || State.box.type !== 'line') { return true; }
       state.geom.update = false;
-      UrlState.setgeomUrl(state, State.box.type, State.spatial.here, State.spatial.points);
+      UrlState.setgeomUrl(state,
+                          State.box.type,
+                          State.spatial.here,
+                          State.spatial.points);
     }, true);
 
     /**
@@ -204,21 +220,31 @@ angular.module('lizard-nxt')
 
     $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
       if (UrlState.update(state)) {
-        var boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
-          geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
-          layerGroupsFromURL = LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index),
-          mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
-          time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
-          context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
+        var boxType = LocationGetterSetter.getUrlValue(state.boxType.part,
+                                                       state.boxType.index),
+          geom = LocationGetterSetter.getUrlValue(state.geom.part,
+                                                  state.geom.index),
+          layerGroupsFromURL = LocationGetterSetter.getUrlValue(
+            state.layerGroups.part, state.layerGroups.index),
+          mapView = LocationGetterSetter.getUrlValue(state.mapView.part,
+                                                     state.mapView.index),
+          time = LocationGetterSetter.getUrlValue(state.timeState.part,
+                                                  state.timeState.index),
+          context = LocationGetterSetter.getUrlValue(state.context.part,
+                                                     state.context.index);
 
-        LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
+        LocationGetterSetter.setUrlValue(state.context.part,
+                                         state.context.index,
+                                         state.context.value);
         if (boxType) {
           State.box.type = boxType;
         } else {
-          LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, State.box.type);
+          LocationGetterSetter.setUrlValue(
+            state.boxType.part, state.boxType.index, State.box.type);
         }
         if (geom) {
-          State.spatial = UrlState.parseGeom(State.box.type, geom, State.spatial);
+          State.spatial = UrlState.parseGeom(
+            State.box.type, geom, State.spatial);
         }
         enablelayerGroups(layerGroupsFromURL);
         enableMapView(mapView);
@@ -227,7 +253,12 @@ angular.module('lizard-nxt')
           State.temporal = UrlState.parseTimeState(time, State.temporal);
         } else {
           state.timeState.update = false;
-          UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
+          UrlState.setTimeStateUrl(
+            state, State.temporal.start, State.temporal.end);
+        }
+
+        if (context) {
+          State.context = context;
         }
       }
       State.temporal.timelineMoving = false;
