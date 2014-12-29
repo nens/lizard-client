@@ -683,4 +683,14 @@ angular.module('lizard-nxt')
     return Math.min(MAX_TIME, currentTime);
   };
 
+  this.TIMELINE_LEFT_MARGIN = 60;
+  this.TIMELINE_RIGHT_MARGIN = 40;
+
+  this.getCurrentWidth = function () {
+    return window.innerWidth - (
+      this.TIMELINE_LEFT_MARGIN + this.TIMELINE_RIGHT_MARGIN
+    );
+  };
+
+
 }]);
