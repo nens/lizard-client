@@ -80,18 +80,23 @@ angular.module('data-menu')
 
       instantiateLayers: function (layers, tempRes) {
         // Instantiate a Layer for every servserside layer of
-        // the layergroup.
+        // the layergroup. There are layers that are drawn on the
+        // map by the map-servie that go in mapLayers, layers that
+        // are just used for data purposes are put in dataLayers
+        // and layers that do both.
         angular.forEach(layers, function (layer) {
-          if (layer.format === 'TMS'
-            || layer.format === 'WMS'
-            || layer.format === 'UTFGrid'
-            || layer.format === 'Vector') {
-            this.mapLayers.push(new NxtLayer(layer, tempRes));
-          }
           if (layer.format === 'UTFGrid'
-            || layer.format === 'Vector'
-            || layer.format === 'Store') {
+            || layer.format === 'Vector') {
+            var nxtLayer = new NxtDataLayer(layer, tempRes);
+            this._dataLayers.push(nxtLayer);
+            this.mapLayers.push(nxtLayer);
+          }
+          else if (layer.format === 'Store') {
             this._dataLayers.push(new NxtDataLayer(layer, tempRes));
+          }
+          else if (layer.format === 'TMS'
+            || layer.format === 'WMS') {
+            this.mapLayers.push(new NxtLayer(layer, tempRes));
           }
         }, this);
       },

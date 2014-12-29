@@ -50,70 +50,58 @@ angular.module('data-menu')
         *              service. The service should have a getData function that
         *              returns a promise that is resolved when data is recieved.
         * @param lg layerGroup slug to include in the response.
-        * @param layer  nxtLayer definition.
+        * @param layer nxtLayer definition.
         * @param options options containing geometry or time.
         * @param deffered deffered to notify when service.getData resolves.
         * @param wantedService Service to getData from.
         */
+        _buildPromise: {
+          value: function (lgSlug, options, deferred, wantedService) {
 
-       /**
-        * @function
-        * @memberOf app.Layer
-        * @description creates a promise for the given layer and the provided
-        *              service. The service should have a getData function that
-        *              returns a promise that is resolved when data is recieved.
-        * @param lg layerGroup slug to include in the response.
-        * @param layer  nxtLayer definition.
-        * @param options options containing geometry or time.
-        * @param deffered deffered to notify when service.getData resolves.
-        * @param wantedService Service to getData from.
-        */
-        _buildPromise: function (lgSlug, options, deferred, wantedService) {
+            var aggType = this.aggregationType,
+                color = this.color,
+                scale = this.scale,
+                slug = this.slug,
+                summary = this.summary,
+                format = this.format,
+                type = this.type,
+                quantity = this.quantity,
+                unit = this.unit;
 
-          var aggType = this.aggregationType,
-              color = this.color,
-              scale = this.scale,
-              slug = this.slug,
-              summary = this.summary,
-              format = this.format,
-              type = this.type,
-              quantity = this.quantity,
-              type = this.type,
-              unit = this.unit;
+            var buildSuccesCallback = function (data) {
+              deferred.notify({
+                color: color,
+                data: data,
+                format: format,
+                layerGroupSlug: lgSlug,
+                layerSlug: slug,
+                aggType: aggType,
+                summary: summary,
+                scale: scale,
+                quantity: quantity,
+                unit: unit
+              });
+            };
 
-          var buildSuccesCallback = function (data) {
-            deferred.notify({
-              color: color,
-              data: data,
-              format: format,
-              layerGroupSlug: lgSlug,
-              layerSlug: slug,
-              aggType: aggType,
-              summary: summary,
-              scale: scale,
-              quantity: quantity,
-              unit: unit
-            });
-          };
+            var buildErrorCallback = function (msg) {
+              deferred.notify({
+                data:  null,
+                type: type,
+                layerGroupSlug: lgSlug,
+                layerSlug: slug
+              });
+            };
 
-          var buildErrorCallback = function (msg) {
-            deferred.notify({
-              data:  null,
-              type: type,
-              layerGroupSlug: lgSlug,
-              layerSlug: slug
-            });
-          };
+            options = options || {};
 
-          options = options || {};
+            // Pass layer options to the services making the request.
+            // RasterServices uses this to add options.styles.
+            angular.extend(options, this.options);
+            options.agg = this.aggregationType;
 
-          // Pass layer options to the services making the request.
-          // RasterServices uses this to add options.styles.
-          angular.extend(options, this.options);
-          options.agg = this.aggregationType;
-
-          return wantedService.getData(this, options)
-            .then(buildSuccesCallback, buildErrorCallback);
+            return wantedService.getData(this, options)
+              .then(buildSuccesCallback, buildErrorCallback);
+          }
         }
 
       });
