@@ -11,6 +11,10 @@
  * a buffer of images, fills the buffer with new images or turns one of the
  * images from the buffer on and start loading a new image in the place of the
  * previous.
+ * 
+ * Usage: add animation functionality to an instance NxtLayer by using
+ * NxtNonTiledWMSLayer.create(<layer>);
+ * 
  */
 angular.module('map')
 .factory('NxtNonTiledWMSLayer', [
