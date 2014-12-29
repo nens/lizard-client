@@ -2,9 +2,21 @@ Changelog of lizard-nxt client
 ==============================
 
 Unreleased (1.2.dev) (XXXX-XX-XX)
----------------------------------
+----------------------------------
+
+- Pass layer options through all services.
+
+
+Release 1.1.1 (2014-12-23)
+--------------------------
+
+- timeline: it's "netto width" is made available through UtilService.
+
+- timeline: zoom buttons working.
 
 - Omnibox rain graph syncs x-axis to timeline.
+
+- Grunt release script.
 
 - Show whether the app is getting data from server in menu ribbon.
 
