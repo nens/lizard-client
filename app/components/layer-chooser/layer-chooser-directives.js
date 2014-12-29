@@ -1,6 +1,6 @@
 //layer-directive.js
 
-angular.module('lizard-nxt')
+angular.module('data-menu')
   .directive("layerChooser", ['State', 'LeafletService',
     function (State, LeafletService) {
 
@@ -63,7 +63,6 @@ angular.module('lizard-nxt')
         var zoom = State.spatial.zoom;
         var centroid = State.spatial.bounds.getCenter();
         map.setView(centroid, zoom - 2);
-        scope.bounds = State.spatial.bounds;
       });
     }
 

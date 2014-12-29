@@ -18,6 +18,8 @@ angular.module('data-menu')
 
       this.layerGroups = DataService.layerGroups;
 
+      this.toggleLayerGroup = DataService.toggleLayerGroup;
+
       this.box = State.box;
 
       this.enabled = false;

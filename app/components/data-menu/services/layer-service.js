@@ -15,7 +15,8 @@ angular.module('data-menu')
        * @memberOf app.Layer
        * @description Instantiates a layer with non-readable and
        *              non-configurable properties
-       * @param  {object} layer definition as coming from the server
+       * @param  {object} layer definition as coming from the server.
+       * @param  {object} temporal resolution from the parent layergroup.
        */
       function NxtLayer(layer, temporalResolution) {
         Object.defineProperty(this, 'slug', {
@@ -92,12 +93,6 @@ angular.module('data-menu')
           writable: false,
         });
       }
-
-      NxtLayer.prototype = {
-
-        constructor: NxtLayer,
-
-      };
 
       return NxtLayer;
 
