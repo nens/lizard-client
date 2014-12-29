@@ -2,10 +2,10 @@
 
 /**
  * @ngdoc service
- * @name lizard-nxt.Layer
+ * @name map.Layer
  * @description
  * # NxtLayer
- * Factory in the lizard-nxt.
+ * Additional methods used to extend nxtLayer with leaflet/map specific methods.
  */
 angular.module('map')
   .factory('NxtMapLayer', ['$q', '$http', function ($q, $http) {

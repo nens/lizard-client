@@ -18,6 +18,12 @@ angular.module('map')
       _map: {}, // exposure is legacy, we should not mingle with the leaflet
                 // map instance outside of the map component.
 
+      /**
+       * Initializes the map service
+       * @param  {DOMelement} element      used by leaflet as the map container.
+       * @param  {object} mapOptions       passed to leaflet for the map
+       * @param  {object} eventCallbackFns used on leaflet map events [onmove etc]
+       */
       initializeMap: function (element, mapOptions, eventCallbackFns) {
         service._map = createLeafletMap(element, mapOptions);
         initializeLayers(State.temporal);
@@ -62,7 +68,7 @@ angular.module('map')
 
       /**
        * @function
-       * @memberOf app.NxtMapService
+       * @memberOf map.MapService
        * @description sets leaflet View based on panZoom
        * @param {object} panZoom Hashtable with, lat, lng, zoom
        */
@@ -80,7 +86,7 @@ angular.module('map')
 
       /**
        * @function
-       * @memberOf app.NxtMapService
+       * @memberOf map.MapService
        * @description fits leaflet to extent
        * @param  {array} extent Array with NW, NE, SW,SE
        */
@@ -103,7 +109,7 @@ angular.module('map')
 
       /**
        * @function
-       * @memberOf app.NxtMapService
+       * @memberOf map.MapService
        * @description Initiate map events
        * @return {void}
        */
@@ -125,7 +131,7 @@ angular.module('map')
 
       /**
        * @function
-       * @memberof app.layerService
+       * @memberOf map.MapService
        * @param  {L.Class} Leaflet map
        * @param  {L.Class} Leaflet layer
        * @description Removes layer from map
@@ -143,7 +149,7 @@ angular.module('map')
 
       /**
        * @function
-       * @memberof app.layerService
+       * @memberOf map.MapService
        * @param  {L.Class} Leaflet map
        * @param  {L.Class} Leaflet layer
        * @description Removes layer from map
@@ -176,10 +182,7 @@ angular.module('map')
       },
 
       /**
-       *
-       * Will move to layer-service or become obslote.. here for now
-       * @function
-       * @memberof app.LayerGroup
+       * @memberOf map.MapService
        * @param {object} layer passed
        * @description determine if raster layer can be rescaled
        */
@@ -193,7 +196,7 @@ angular.module('map')
 
       /**
        * @function
-       * @memberof app.LayerGroup
+       * @memberOf map.MapService
        * @param {float} new opacity value
        * @return {void}
        * @description Changes opacity in layers that have
@@ -213,7 +216,7 @@ angular.module('map')
 
     /**
      * @function
-     * @memberof app.LayerGroup
+     * @memberOf map.MapService
      * @param  {array} Array of nxt layers
      * @return {array} Array of object sorted by property loadOrder in
      *                 descending order.
@@ -236,7 +239,7 @@ angular.module('map')
 
     /**
      * @function
-     * @memberof app.LayerGroup
+     * @memberOf map.MapService
      * @param  {object} map Leaflet map to add layers to
      * @param  {array} Array of nxt layers
      * @param  {int} i index to start from
@@ -267,7 +270,7 @@ angular.module('map')
 
     /**
      * @function
-     * @memberof app.LayerGroup
+     * @memberOf map.MapService
      * @param  {object} map Leaflet map to add layers to.
      * @param  {array} layers Array of nxt layers.
      * @param  {int} i index to start from.
@@ -295,7 +298,7 @@ angular.module('map')
 
     /**
      * @function
-     * @memberof app.LayerGroup
+     * @memberOf map.MapService
      * @param  {array} layers Array of nxt layers.
      * @return {int} Index of the last layer with the highest loadOrder.
      * @description Loops through the sorted layers and returns the index of the
@@ -317,7 +320,7 @@ angular.module('map')
 
     /**
      * @function
-     * @memberof app.LayerGroup
+     * @memberOf map.MapService
      * @param  {array} Array of promises.
      * @param  {object} map Leaflet map to add layers to.
      * @param  {array} layers Array of nxt layers.
@@ -333,7 +336,7 @@ angular.module('map')
 
     /**
      * @function
-     * @memberof app.LayerGroup
+     * @memberOf map.MapService
      * @param  {object} map Leaflet map to add layers to.
      * @param  {array} layers Array of nxt layers.
      * @param  {int} i index to start from.
@@ -364,7 +367,7 @@ angular.module('map')
 
     /**
      * @function
-     * @memberof app.NxtMapService
+     * @memberOf map.MapService
      * @param  {dynamic} mapElem can be string or Element.
      * @param  {options} Options (bounds, attribution etc.)
      * @return {L.NxtMap}   Leaflet.NxtMap instance
@@ -384,7 +387,10 @@ angular.module('map')
       return leafletMap;
     };
 
-
+    /**
+     * Initializes map layers for every layergroup.mapLayers.
+     * @param  {object} timeState used to set an initial time on layers
+     */
     var initializeLayers = function (timeState) {
       angular.forEach(DataService.layerGroups, function (lg, lgSlug) {
         sortLayers(lg.mapLayers);
@@ -400,6 +406,9 @@ angular.module('map')
       });
     };
 
+    /**
+     * Initializers for every layer format
+     */
     var initializers = {
 
       TMS: function (nonLeafLayer) {
