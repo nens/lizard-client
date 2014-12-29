@@ -28,9 +28,7 @@ angular.module('data-menu')
       // and on layerGroupToggled callback functions.
       Object.defineProperty(this, 'eventCallbacks', {
         set: function (newCallBacks) {
-          angular.forEach(this.layerGroups, function (lg) {
-            lg.callbackFns = newCallBacks;
-          });
+          DataLayerGroup.prototype.callbackFns = newCallBacks;
         }
       });
 
@@ -43,11 +41,7 @@ angular.module('data-menu')
       this.createLayerGroups = function (serverSideLayerGroups) {
         var layerGroups = {};
         angular.forEach(serverSideLayerGroups, function (sslg) {
-          layerGroups[sslg.slug] = new DataLayerGroup(sslg, {
-            onToggleLayerGroup: this.onToggleLayerGroup,
-            onOpacityChange: this.onOpacityChange,
-            onDblClick: this.onDblClick
-          });
+          layerGroups[sslg.slug] = new DataLayerGroup(sslg);
         }, this);
         return layerGroups;
       };

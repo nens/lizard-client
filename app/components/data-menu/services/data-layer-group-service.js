@@ -68,8 +68,6 @@ angular.module('data-menu')
         writable: true,
       });
 
-      this.callbackFns = callbackFns;
-
       this.instantiateLayers(layerGroup.layers, layerGroup.temporal_resolution);
 
     }
