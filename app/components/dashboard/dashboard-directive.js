@@ -16,10 +16,10 @@ angular.module('dashboard')
     };
 
     scope.dimensions.width = getWidth() - 10;
-    // 2 graphs and some margin on top
-    scope.dimensions.height = (getHeight() / 2) - 20;
 
     var aggregateEvents = function () {
+      // reset eventAggs
+      scope.eventAggs = [];
       angular.forEach(DataService.layerGroups, function (lg) {
         lg.getData({
           geom: State.spatial.bounds,
@@ -30,9 +30,11 @@ angular.module('dashboard')
 
           if (response && response.data) {
             // aggregate response
-            scope.eventAggs =
+            scope.eventAggs.push(
               EventAggregateService.aggregate(response.data,
-                                              State.temporal.aggWindow);
+                                              State.temporal.aggWindow));
+            // calculate new dimensions
+            scope.dimensions.height = (getHeight() / scope.eventAggs.length) - 20;
           }
         });
       });
@@ -49,10 +51,10 @@ angular.module('dashboard')
     /**
      * Updates dashboard when layers are added or removed.
      */
-    //scope.$watch(State.toString('layerGroups.'), function (n, o) {
-      //if (n === o) { return true; }
-      //aggregateEvents();
-    //});
+    scope.$watch(State.toString('layerGroups.active'), function (n, o) {
+      if (n === o) { return true; }
+      aggregateEvents();
+    });
 
     /**
      * Updates dashboard when time zoom changes.

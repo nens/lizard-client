@@ -469,24 +469,20 @@ angular.module('lizard-nxt')
     // UPDATE
     bar
       .transition()
-      .duration(duration)
-        .attr("y", height) // hide bars (step 1)
-        .attr("height", 0) // hide bars (step 2)
+      .duration(1)
+      .delay(duration)
+        // change x when bar is invisible:
+        .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
+        // change width when bar is invisible:
+        .attr('width', function (d) { return barWidth; })
         .style("fill", function (d) { return d[keys.color] || ''; })
           .transition()
-          .duration(1)
-          .delay(duration)
-            // change x when bar is invisible:
-            .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
-            // change width when bar is invisible:
-            .attr('width', function (d) { return barWidth; })
-              .transition()
-              .duration(duration)
-              .delay(duration * 4)
-                .attr("height", function (d) {
-                  return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
-                })
-                .attr("y", function (d) { return y.scale(d[keys.y]); })
+          .duration(duration)
+          .delay(duration * 4)
+            .attr("height", function (d) {
+              return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
+            })
+            .attr("y", function (d) { return y.scale(d[keys.y]); })
     ;
 
     // ENTER

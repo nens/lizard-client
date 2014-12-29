@@ -2,28 +2,26 @@
   <div class="container-fluid">
     <div class="row">
      <div class="col-md-10 dashboard-inner">
-       <div class="row">
-         <graph ng-if="eventAggs"
-                bar-chart
+       <div class="row" ng-repeat="eventAgg in eventAggs">
+         <graph bar-chart
                 class="xyGraph"
-                data="eventAggs"
+                data="eventAgg"
                 ylabel="ylabels.reports"
                 keys="{x: 'timestamp', y: 'count', color: 'color', category: 'category'}"
                 dimensions="dimensions"
-                now="timeState.at">
+                temporal="state.temporal">
           </graph>
        </div>
-       <div class="row">
-         <graph ng-if="eventAggs"
-                bar-chart
-                class="xyGraph"
-                data="eventAggs"
-                ylabel="ylabels.duration"
-                keys="{x: 'timestamp', y: 'mean_duration', color: 'color', category: 'category'}"
-                dimensions="dimensions"
-                now="timeState.at">
-          </graph>
-        </div>
+       <!--<div class="row">-->
+         <!--<graph bar-chart-->
+                <!--class="xyGraph"-->
+                <!--data="eventAgg"-->
+                <!--ylabel="ylabels.duration"-->
+                <!--keys="{x: 'timestamp', y: 'mean_duration', color: 'color', category: 'category'}"-->
+                <!--dimensions="dimensions"-->
+                <!--temporal="state.temporal">-->
+          <!--</graph>-->
+        <!--</div>-->
       </div>
       <div class="col-md-2 dashboard-table">
         <table class="table table-hover table-condensed">
