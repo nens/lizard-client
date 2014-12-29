@@ -113,17 +113,21 @@ angular.module('global-state')
     Object.defineProperty(state.temporal, 'start', {
       get: function () { return _start; },
       set: function (start) {
-        _start = Math.max(start, MIN_TIME_FOR_EXTENT);
+        _start = start;
       }
+      // set: function (start) {
+      //   _start = Math.max(start, MIN_TIME_FOR_EXTENT);
+      // }
     });
 
     // State.temporal.end must be lower than MAX_TIME_FOR_EXTENT
     var _end = now + day;
     Object.defineProperty(state.temporal, 'end', {
       get: function () { return _end; },
-      set: function (end) {
-        _end = Math.min(end, MAX_TIME_FOR_EXTENT);
-      }
+      set: function (end) { _end = end; }
+      // set: function (end) {
+      //   _end = Math.min(end, MAX_TIME_FOR_EXTENT);
+      // }
     });
 
     return state;
