@@ -109,7 +109,7 @@ angular.module('data-menu')
       */
       toggle: function (map) {
         this._active = !this._active;
-        if (this.callbackFns.onToggleLayerGroup) {
+        if (this.callbackFns && this.callbackFns.onToggleLayerGroup) {
           this.callbackFns.onToggleLayerGroup(this);
         }
       },
@@ -181,7 +181,9 @@ angular.module('data-menu')
             + "either of the wrong type or not between 0 and 1");
         }
         this._opacity = newOpacity;
-        this.callbackFns.onOpacityChange(this);
+        if (this.callbackFns && this.callbackFns.onOpacityChange) {
+          this.callbackFns.onOpacityChange(this);
+        }
       },
 
       /**
@@ -194,8 +196,14 @@ angular.module('data-menu')
         return this._opacity;
       },
 
+      /**
+       * calls double click callback function when layergroup item in menu
+       * is double clicked. Used by the map to rescale.
+       */
       dblClick: function () {
-        this.callbackFns.onDblClick(this);
+        if (this.callbackFns && this.callbackFns.onDblClick) {
+          this.callbackFns.onDblClick(this);
+        }
       }
 
     };

@@ -21,6 +21,11 @@ angular.module('data-menu')
   .service('DataService', ['$q', 'dataLayers', 'DataLayerGroup', 'State',
     function ($q, dataLayers, DataLayerGroup, State) {
 
+      // Attributes ////////////////////////////////////////////////////////////
+
+      // Event callbacks are used to performa actions on the map when the
+      // state of layergroups changes, may contain a onOpacityChange, OnDblClick
+      // and on layerGroupToggled callback functions.
       Object.defineProperty(this, 'eventCallbacks', {
         set: function (newCallBacks) {
           angular.forEach(this.layerGroups, function (lg) {
@@ -51,15 +56,14 @@ angular.module('data-menu')
 
       this.layerGroups = layerGroups;
 
-      State.layerGroups.gettingData = false;
-
-      // Immutable representation of all layergroups
+      // Immutable representation of all layergroups set on State.layerGroups
       Object.defineProperty(State.layerGroups, 'all', {
         value: Object.keys(layerGroups),
         writeable: false,
         configurable: false
       });
 
+      // List of slugs of active layerGroups, two-way.
       var instance = this;
       Object.defineProperty(State.layerGroups, 'active', {
         get: function () {
@@ -77,6 +81,9 @@ angular.module('data-menu')
           }, instance);
         }
       });
+
+
+      // Methods //////////////////////////////////////////////////////////////
 
       /**
        * @function
