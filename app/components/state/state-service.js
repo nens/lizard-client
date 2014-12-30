@@ -53,10 +53,17 @@ angular.module('global-state')
     state.layerGroups = {
       all: [], // Immutable representation of all layergroups
       active: [],
-      isLoading: false, // Either gettingData or syncingTime, DataService is busy
+      isLoading: null, // Either gettingData or syncingTime
       gettingData: false, // Making server requests through DataService
       syncingTime: false // Getting new layers and so on
     };
+
+    // Combination of data and time syncing
+    Object.defineProperty(state.layerGroups, 'isLoading', {
+      get: function () {
+        return state.layerGroups.timeIsSyncing || state.layerGroups.gettingData;
+      }
+    });
 
     // Box
     state.box = {};
@@ -112,12 +119,7 @@ angular.module('global-state')
     var _start = now - 6 * day;
     Object.defineProperty(state.temporal, 'start', {
       get: function () { return _start; },
-      set: function (start) {
-        _start = start;
-      }
-      // set: function (start) {
-      //   _start = Math.max(start, MIN_TIME_FOR_EXTENT);
-      // }
+      set: function (start) { _start = start; }
     });
 
     // State.temporal.end must be lower than MAX_TIME_FOR_EXTENT
@@ -125,9 +127,6 @@ angular.module('global-state')
     Object.defineProperty(state.temporal, 'end', {
       get: function () { return _end; },
       set: function (end) { _end = end; }
-      // set: function (end) {
-      //   _end = Math.min(end, MAX_TIME_FOR_EXTENT);
-      // }
     });
 
     return state;

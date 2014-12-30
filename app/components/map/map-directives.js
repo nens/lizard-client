@@ -11,14 +11,14 @@
  * MapDirCtrl is independent of the rest of the application.
  *
  */
-angular.module('lizard-nxt')
+angular.module('map')
   .directive('map', [
   '$controller',
   'MapService',
-  'NxtMap',
+  'DataService',
   'UtilService',
   'State',
-  function ($controller, MapService, NxtMap, UtilService, State) {
+  function ($controller, MapService, DataService, UtilService, State) {
 
     var link = function (scope, element, attrs) {
 
@@ -45,7 +45,7 @@ angular.module('lizard-nxt')
        * @function
        * @memberOf app.map
        */
-      var _mouseMoved = function (e) {
+      var _mouseMove = function (e) {
         if (State.box.type === 'line') {
           State.spatial.userHere = e.latlng;
         }
@@ -62,13 +62,15 @@ angular.module('lizard-nxt')
         State.spatial.zoom = map.getZoom();
       };
 
-      MapService.createMap(element[0], {
+      MapService.initializeMap(element[0], {
           zoomControl: false,
           addZoomTitles: true,
-        }
-      );
-
-      MapService.initiateNxtMapEvents(_clicked, _moveStarted, _moveEnded, _mouseMoved);
+        }, {
+          onClick: _clicked,
+          onMoveStart: _moveStarted,
+          onMoveEnd: _moveEnded,
+          onMouseMove: _mouseMove
+        });
 
       $controller('UrlController', {$scope: scope});
 
