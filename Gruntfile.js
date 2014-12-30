@@ -536,8 +536,8 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('release', [
-    'test',
-    'build',
+    //'test',
+    //'build',
     'releaser'
   ]);
 
