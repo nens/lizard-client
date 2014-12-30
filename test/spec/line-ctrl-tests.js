@@ -14,7 +14,6 @@ describe('Testing LineCtrl', function () {
     $controller = $injector.get('$controller');
     $rootScope = $injector.get('$rootScope');
     UtilService = $injector.get('UtilService');
-    var NxtMap = $injector.get('NxtMap');
 
     result = [[1, [2, 3, 4]], [2, [3, 4, 5]], [3, [4, 5, 6]]];
 

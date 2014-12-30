@@ -8,7 +8,7 @@ describe('Testing click feedback service', function () {
     ClickFeedbackService = $injector.get('ClickFeedbackService');
     MapService = $injector.get('MapService');
     var el = angular.element('<div></div>');
-    MapService.createMap(el[0], {});
+    MapService.initializeMap(el[0], {});
   }));
 
   it('should create a clicklayer', function () {
