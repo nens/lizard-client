@@ -7,7 +7,7 @@
  * # locationService
  * Service in the lizardClientApp.
  */
-angular.module('lizard-nxt')
+angular.module('omnibox')
   .service('LocationService', ['CabinetService', function LocationService(CabinetService) {
 
     this.search = function (searchString) {
