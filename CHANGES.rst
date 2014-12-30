@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (1.2.dev) (XXXX-XX-XX)
 ----------------------------------
 
+- Limit extent 1970 - 2016
+
+- Fix zoomToNow.
+
 - Pass layer options through all services.
 
 - Seperated data-menu from map component.
