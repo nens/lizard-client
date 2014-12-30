@@ -13,8 +13,8 @@
  */
 angular.module('lizard-nxt')
   .controller('UrlController', ['$scope', 'LocationGetterSetter',
-  'UrlState', 'dataBounds', 'DataService', 'MapService', 'State', '$rootScope',
-  function ($scope, LocationGetterSetter, UrlState, dataBounds, DataService, MapService, State, $rootScope) {
+  'UrlState', 'dataBounds', 'DataService', 'MapService', 'State', '$rootScope', 'LeafletService', '$compile',
+  function ($scope, LocationGetterSetter, UrlState, dataBounds, DataService, MapService, State, $rootScope, LeafletService, $compile) {
 
     // Configuration object for url state.
     var state = {
@@ -81,20 +81,29 @@ angular.module('lizard-nxt')
     * @param {string} String representation of mapView on url
     */
     var enableMapView = function (mapView) {
+      var map = LeafletService.map('url-temp-map');
       var fn = function () {
-        MapService.fitBounds(dataBounds);
+        map.fitBounds(LeafletService.latLngBounds(
+          L.latLng(dataBounds.south, dataBounds.east),
+          L.latLng(dataBounds.north, dataBounds.west)
+        ));
       };
 
       if (mapView) {
         var view = UrlState.parseMapView(mapView);
         if (view) {
-          MapService.setView(view.latLng, view.zoom, view.options);
+          map.setView(view.latLng, view.zoom, view.options);
         } else {
           fn();
         }
       } else {
         fn();
       }
+      State.spatial.bounds =  map.getBounds();
+      State.spatial.zoom =  map.getZoom();
+      map.remove();
+      var tempMap = document.getElementById('url-temp-map');
+      tempMap.parentNode.removeChild(tempMap);
     };
 
     /**

@@ -72,8 +72,6 @@ angular.module('map')
           onMouseMove: _mouseMove
         });
 
-      $controller('UrlController', {$scope: scope});
-
       /**
        * Watch bounds of state and update map bounds when state is changed.
        */
