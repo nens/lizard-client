@@ -20,6 +20,8 @@ Release 1.0.2 (2014-12-16)
 Release 1.1.2 (2014-12-24)
 ---------------------
 
+- handle API response for discrete rasters (same format for point/area mode)
+
 - Limit extent 1970 - 2016
 
 - Fix zoomToNow.
