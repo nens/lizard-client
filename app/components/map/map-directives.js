@@ -86,6 +86,14 @@ angular.module('map')
         }
       });
 
+      /**
+       * Watch temporal.at of app and update maplayers accordingly.
+       */
+      scope.$watch(State.toString('temporal.at'), function (n, o) {
+        if (n === o) { return; }
+        MapService.syncTime(State.temporal);
+      });
+
       scope.$watch(State.toString('box.type'), function (n, o) {
         if (n === o) { return true; }
         var selector;
