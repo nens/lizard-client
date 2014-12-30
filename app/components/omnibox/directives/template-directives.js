@@ -51,10 +51,8 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
-  .directive('defaultpoint', ['LanduseLookup',
-    function (LanduseLookup) {
+  .directive('defaultpoint', [function () {
   return {
-    link: function (scope) { scope.landuseLookup = LanduseLookup; },
     restrict: 'E',
     scope: {
       fullDetails: '=',
