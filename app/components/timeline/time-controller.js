@@ -21,6 +21,7 @@ angular.module('lizard-nxt')
   "RasterService",
   'UtilService',
   'DataService',
+  'MapService',
   'State',
 
   function (
@@ -30,6 +31,7 @@ angular.module('lizard-nxt')
     RasterService,
     UtilService,
     DataService,
+    MapService,
     State) {
 
     window.requestAnimationFrame = window.requestAnimationFrame ||
@@ -178,7 +180,7 @@ angular.module('lizard-nxt')
      * @param  {object} timeState nxt timeState object
      */
     var syncTimeWrapper = function (timeState) {
-      promise = DataService.syncTime(timeState);
+      promise = MapService.syncTime(timeState);
       if (timeState.playing) {
         progressAnimation(promise);
       }
@@ -220,6 +222,9 @@ angular.module('lizard-nxt')
       State.temporal.start = now - fourFifthInterval;
       State.temporal.end = now + oneFifthInterval;
       State.temporal.at = UtilService.roundTimestamp(now, State.temporal.aggWindow, false);
+
+      // Without this $broadcast, timeline will not sync to State.temporal:
+      $scope.$broadcast("$timelineZoomSuccess");
     };
 
     /**
@@ -246,8 +251,8 @@ angular.module('lizard-nxt')
       State.temporal.end = State.temporal.at + milliseconds;
       State.temporal.resolution = newResolution;
 
+      // Without this $broadcast, timeline will not sync to State.temporal:
       $scope.$broadcast("$timelineZoomSuccess");
-      State.temporal.timelineMoving = false;
     };
 
   }

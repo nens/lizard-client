@@ -15,7 +15,7 @@ describe('Directives: Search', function () {
     MapService = $injector.get('MapService');
     State = $injector.get('State');
     var el = angular.element('<div></div>');
-    MapService.createMap(el[0], {});
+    MapService.initializeMap(el[0], {});
     scope.$digest();
     // create empty object to destroy
     scope.box = {
