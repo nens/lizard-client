@@ -21,6 +21,7 @@ angular.module('lizard-nxt')
   "RasterService",
   'UtilService',
   'DataService',
+  'MapService',
   'State',
 
   function (
@@ -30,6 +31,7 @@ angular.module('lizard-nxt')
     RasterService,
     UtilService,
     DataService,
+    MapService,
     State) {
 
     window.requestAnimationFrame = window.requestAnimationFrame ||
@@ -178,7 +180,7 @@ angular.module('lizard-nxt')
      * @param  {object} timeState nxt timeState object
      */
     var syncTimeWrapper = function (timeState) {
-      promise = DataService.syncTime(timeState);
+      promise = MapService.syncTime(timeState);
       if (timeState.playing) {
         progressAnimation(promise);
       }

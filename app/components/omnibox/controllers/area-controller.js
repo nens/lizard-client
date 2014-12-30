@@ -12,7 +12,7 @@
  * Contains data of all active layers with an aggregation_type
  *
  */
-angular.module('lizard-nxt')
+angular.module('omnibox')
 .controller('AreaCtrl', [
 
   '$scope',

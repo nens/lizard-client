@@ -53,10 +53,17 @@ angular.module('global-state')
     state.layerGroups = {
       all: [], // Immutable representation of all layergroups
       active: [],
-      isLoading: false, // Either gettingData or syncingTime, DataService is busy
+      isLoading: null, // Either gettingData or syncingTime
       gettingData: false, // Making server requests through DataService
       syncingTime: false // Getting new layers and so on
     };
+
+    // Combination of data and time syncing
+    Object.defineProperty(state.layerGroups, 'isLoading', {
+      get: function () {
+        return state.layerGroups.timeIsSyncing || state.layerGroups.gettingData;
+      }
+    });
 
     // Box
     state.box = {};

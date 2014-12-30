@@ -12,11 +12,13 @@
  * Contains data of all active layers with an aggregation_type
  *
  */
-angular.module('lizard-nxt')
+angular.module('data-menu')
   .controller('DatamenuController', ['$scope', 'DataService', 'State',
     function ($scope, DataService, State) {
 
       this.layerGroups = DataService.layerGroups;
+
+      this.toggleLayerGroup = DataService.toggleLayerGroup;
 
       this.box = State.box;
 

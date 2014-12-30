@@ -10,6 +10,8 @@ Unreleased (1.2.dev) (XXXX-XX-XX)
 
 - Pass layer options through all services.
 
+- Seperated data-menu from map component.
+
 
 Release 1.1.1 (2014-12-23)
 --------------------------
