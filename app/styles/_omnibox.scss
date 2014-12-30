@@ -707,3 +707,17 @@ td.lineout {
 .card .single-row-table th {
     border: 0 !important;
 }
+
+
+.discrete-raster-color-indicator {
+
+  background-color: #0f0; /* to be set dynamically */
+
+  border-radius: 2px;
+  position: relative;
+  left: -8px;
+  width: 40px;
+  height: 18px;
+  max-height: 18px;
+  min-height: 18px;
+}
