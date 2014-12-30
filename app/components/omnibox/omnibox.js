@@ -1,4 +1,5 @@
 angular.module('omnibox', [
   'templates-main',
-  'global-state'
+  'global-state',
+  'data-menu'
 ]);

@@ -1,7 +1,7 @@
 /**
  * Opacity slider for layer-chooser.
  */
-angular.module('lizard-nxt')
+angular.module('data-menu')
   .directive('opacitySlider', function () {
 
   var link = function (scope, element, attrs) {
