@@ -34,7 +34,8 @@ angular.module('dashboard')
               EventAggregateService.aggregate(response.data,
                                               State.temporal.aggWindow));
             // calculate new dimensions
-            scope.dimensions.height = (getHeight() / scope.eventAggs.length) - 20;
+            scope.dimensions.height =
+              (getHeight() / scope.eventAggs.length) - 20;
           }
         });
       });

@@ -28,35 +28,41 @@
 
         </div>
       </div>
+
       <div class="button-list-container" id="">
-        <div class="button-list-item"
-             style="cursor: pointer">
-          <a ng-click="menu.box.type = 'point'"
-             class="button-list-link"
-             title="punt selectie"
-             ng-class="{'active': menu.box.type === 'point'}">
-             <i class="fa fa-dot-circle-o"></i>
-          </a>
-        </div>
 
-        <div class="button-list-item"
-             style="cursor: pointer">
-          <a ng-click="menu.box.type = 'line'"
-             class="button-list-link"
-             title="lijn selectie"
-             ng-class="{'active': menu.box.type === 'line'}">
-             <i class="fa fa-expand"></i>
-          </a>
-        </div>
+        <div ng-if="context === 'map'">
 
-        <div class="button-list-item"
-             style="cursor: pointer">
-          <a ng-click="menu.box.type = 'area'"
-             class="button-list-link"
-             title="scherm selectie"
-             ng-class="{'active': menu.box.type === 'area'}">
-             <i class="fa fa-square-o"></i>
-          </a>
+          <div class="button-list-item"
+               style="cursor: pointer">
+            <a ng-click="menu.box.type = 'point'"
+               class="button-list-link"
+               title="punt selectie"
+               ng-class="{'active': menu.box.type === 'point'}">
+               <i class="fa fa-dot-circle-o"></i>
+            </a>
+          </div>
+
+          <div class="button-list-item"
+               style="cursor: pointer">
+            <a ng-click="menu.box.type = 'line'"
+               class="button-list-link"
+               title="lijn selectie"
+               ng-class="{'active': menu.box.type === 'line'}">
+               <i class="fa fa-expand"></i>
+            </a>
+          </div>
+
+          <div class="button-list-item"
+               style="cursor: pointer">
+            <a ng-click="menu.box.type = 'area'"
+               class="button-list-link"
+               title="scherm selectie"
+               ng-class="{'active': menu.box.type === 'area'}">
+               <i class="fa fa-square-o"></i>
+            </a>
+          </div>
+
         </div>
 
         <div class="button-list-item"
