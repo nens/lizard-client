@@ -36,7 +36,10 @@ module.exports = function(config) {
 
       // application
       'test/mocks/beforeModuleMocks.js',
-      'app/components/state/state.js',
+      'app/components/state/state.js', // Load these first to prevent dep clash
+      'app/components/data-menu/data-menu.js', // Load these first to prevent dep clash
+      'app/components/map/map.js', // Load these first to prevent dep clash
+      'app/templates.js',
       'app/components/omnibox/omnibox.js',
       'app/components/state/state.js',
       'app/components/dashboard/dashboard.js',

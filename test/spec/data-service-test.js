@@ -6,16 +6,10 @@ describe('Testing nxt data', function () {
   beforeEach(module('lizard-nxt'));
   beforeEach(inject(function ($injector, $compile) {
     $rootScope = $injector.get('$rootScope');
-    var NxtMap = $injector.get('NxtMap');
-    var elem = document.querySelector('body').appendChild(
-      document.createElement('div')
-    );
-    var dataLayers = $injector.get('mockDataLayers');
     var MapService = $injector.get('MapService');
     var el = angular.element('<div></div>');
-    MapService.createMap(el[0], {});
-    var NxtData = $injector.get('NxtData');
-    DataService = new NxtData(dataLayers, 'MapService');
+    MapService.initializeMap(el[0], {});
+    DataService = $injector.get('DataService');
   }));
 
   it('should add LayerGroups', function () {

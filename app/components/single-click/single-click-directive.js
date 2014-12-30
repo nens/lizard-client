@@ -1,4 +1,4 @@
-angular.module('lizard-nxt')
+angular.module('data-menu')
   .directive('singleClick', ['$parse', function ($parse) {
     return {
       restrict: 'A',

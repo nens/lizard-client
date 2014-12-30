@@ -8,7 +8,7 @@
  *
  * Defines the data menu.
  */
-angular.module('lizard-nxt')
+angular.module('data-menu')
   .directive('datamenu', [function () {
 
     var link = function (scope, element, attrs) {

@@ -8,7 +8,13 @@ Unreleased (1.2.dev) (XXXX-XX-XX)
 Release 1.1.2 (2014-12-24)
 ---------------------
 
+- Limit extent 1970 - 2016
+
+- Fix zoomToNow.
+
 - Pass layer options through all services.
+
+- Seperated data-menu from map component.
 
 
 Release 1.1.1 (2014-12-23)
