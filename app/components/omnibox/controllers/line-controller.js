@@ -1,4 +1,4 @@
-angular.module('lizard-nxt')
+angular.module('omnibox')
   .controller('LineCtrl', [
   '$scope',
   'RasterService',
