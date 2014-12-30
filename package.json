@@ -45,7 +45,7 @@
     "grunt-newer": "^0.7.0",
     "grunt-ng-annotate": "^0.3.0",
     "grunt-sass": "^0.16.1",
-    "grunt-lizard-release": "git://github.com/fritzvd/grunt-lizard-release#arjen_tag_dev_branch",
+    "grunt-lizard-release": "git://github.com/fritzvd/grunt-lizard-release",
     "grunt-svgmin": "^0.4.0",
     "grunt-text-replace": "~0.3.12",
     "grunt-usemin": "^2.1.1",
