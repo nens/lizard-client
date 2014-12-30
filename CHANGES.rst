@@ -17,8 +17,24 @@ Release 1.0.2 (2014-12-16)
 - Help button.
 
 
-Release 1.1.1 (2014-12-23)
+Release 1.1.2 (2014-12-24)
 ---------------------
+
+- Limit extent 1970 - 2016
+
+- Fix zoomToNow.
+
+- Pass layer options through all services.
+
+- Seperated data-menu from map component.
+
+
+Release 1.1.1 (2014-12-23)
+--------------------------
+
+- timeline: it's "netto width" is made available through UtilService.
+
+- timeline: zoom buttons working.
 
 - Omnibox rain graph syncs x-axis to timeline.
 

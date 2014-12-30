@@ -11,7 +11,7 @@
  * changes
  */
 
-angular.module('lizard-nxt')
+angular.module('omnibox')
 .controller('PointCtrl', [
   '$scope',
   '$q',

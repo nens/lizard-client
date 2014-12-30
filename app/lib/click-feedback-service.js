@@ -17,7 +17,7 @@ angular.module('lizard-nxt')
         clearInterval(this._vibration);
 
         if (this.clickLayer) {
-          mapState.removeLayer(this.clickLayer);
+          mapState.removeLeafletLayer(this.clickLayer);
         }
 
         this.clickLayer = LeafletService.geoJson(null, {
@@ -55,7 +55,7 @@ angular.module('lizard-nxt')
           }
         );
 
-        mapState.addLayer(this.clickLayer);
+        mapState.addLeafletLayer(this.clickLayer);
       };
 
       /**

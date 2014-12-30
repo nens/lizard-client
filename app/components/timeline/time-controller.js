@@ -15,13 +15,24 @@
  */
 angular.module('lizard-nxt')
 .controller('TimeCtrl', [
+
   "$scope",
   "$q",
   "RasterService",
   'UtilService',
   'DataService',
+  'MapService',
   'State',
-  function ($scope, $q, RasterService, UtilService, DataService, State) {
+
+  function (
+
+    $scope,
+    $q,
+    RasterService,
+    UtilService,
+    DataService,
+    MapService,
+    State) {
 
     window.requestAnimationFrame = window.requestAnimationFrame ||
                                    window.mozRequestAnimationFrame ||
@@ -45,7 +56,7 @@ angular.module('lizard-nxt')
     State.temporal.aggWindow = UtilService.getAggWindow(
       State.temporal.start,
       State.temporal.end,
-      window.innerWidth
+      UtilService.getCurrentWidth()
     );
 
     this.state = State.temporal;
@@ -169,7 +180,7 @@ angular.module('lizard-nxt')
      * @param  {object} timeState nxt timeState object
      */
     var syncTimeWrapper = function (timeState) {
-      promise = DataService.syncTime(timeState);
+      promise = MapService.syncTime(timeState);
       if (timeState.playing) {
         progressAnimation(promise);
       }
@@ -211,6 +222,9 @@ angular.module('lizard-nxt')
       State.temporal.start = now - fourFifthInterval;
       State.temporal.end = now + oneFifthInterval;
       State.temporal.at = UtilService.roundTimestamp(now, State.temporal.aggWindow, false);
+
+      // Without this $broadcast, timeline will not sync to State.temporal:
+      $scope.$broadcast("$timelineZoomSuccess");
     };
 
     /**
@@ -223,22 +237,22 @@ angular.module('lizard-nxt')
      * @param {string} action - 'in' or 'out'.
      */
     this.zoom = function (action) {
-      var ZOOMFACTOR = 2;
-      var newResolution;
 
-      if (action === 'in') {
-        newResolution = State.temporal.resolution / ZOOMFACTOR;
-      } else if (action === 'out') {
-        newResolution = State.temporal.resolution * ZOOMFACTOR;
-      }
+      var ZOOMFACTOR = 2,
+          newResolution;
 
-      var milliseconds = window.innerWidth * newResolution;
+      newResolution = action === "in"
+        ? State.temporal.resolution / ZOOMFACTOR
+        : State.temporal.resolution * ZOOMFACTOR;
 
-      State.temporal.timelineMoving = true;
+      var milliseconds = UtilService.getCurrentWidth() * newResolution;
+
       State.temporal.start = State.temporal.at - milliseconds;
       State.temporal.end = State.temporal.at + milliseconds;
       State.temporal.resolution = newResolution;
-      State.temporal.timelineMoving = false;
+
+      // Without this $broadcast, timeline will not sync to State.temporal:
+      $scope.$broadcast("$timelineZoomSuccess");
     };
 
   }
