@@ -121,7 +121,6 @@ angular.module('global-state')
       get: function () { return _start; },
       set: function (start) {
         _start = Math.max(Math.min(start, _end), MIN_TIME_FOR_EXTENT);
-        console.log(new Date(_start));
       }
     });
 
