@@ -21,6 +21,21 @@ angular.module('data-menu')
   .service('DataService', ['$q', 'dataLayers', 'DataLayerGroup', 'State',
     function ($q, dataLayers, DataLayerGroup, State) {
 
+
+      /**
+       * @function
+       * @memberof app.NxtMapService
+       * @param  {object} nonLeafLayer object from database
+       * @description Throw in a layer as served from the backend
+       */
+      var createLayerGroups = function (serverSideLayerGroups) {
+        var layerGroups = {};
+        angular.forEach(serverSideLayerGroups, function (sslg) {
+          layerGroups[sslg.slug] = new DataLayerGroup(sslg);
+        });
+        return layerGroups;
+      };
+
       // Attributes ////////////////////////////////////////////////////////////
 
       // Event callbacks are used to performa actions on the map when the
@@ -32,21 +47,7 @@ angular.module('data-menu')
         }
       });
 
-      /**
-       * @function
-       * @memberof app.NxtMapService
-       * @param  {object} nonLeafLayer object from database
-       * @description Throw in a layer as served from the backend
-       */
-      this.createLayerGroups = function (serverSideLayerGroups) {
-        var layerGroups = {};
-        angular.forEach(serverSideLayerGroups, function (sslg) {
-          layerGroups[sslg.slug] = new DataLayerGroup(sslg);
-        }, this);
-        return layerGroups;
-      };
-
-      var layerGroups = this.createLayerGroups(dataLayers);
+      var layerGroups = createLayerGroups(dataLayers);
 
       this.layerGroups = layerGroups;
 
