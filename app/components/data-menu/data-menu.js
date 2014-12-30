@@ -1,1 +1,3 @@
-angular.module('data-menu', []);
+angular.module('data-menu', [
+  'global-state'
+]);
