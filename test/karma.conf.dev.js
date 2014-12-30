@@ -34,6 +34,9 @@ module.exports = function(config) {
       'vendor/ng-csv/build/ng-csv.min.js',
       // endbower
       // application
+      'test/mocks/beforeModuleMocks.js',
+      'app/components/omnibox/omnibox.js',
+      'app/components/state/state.js',
       'app/components/dashboard/dashboard.js',
       'app/lizard-nxt.js',
       'test/mocks/**/*.js',
