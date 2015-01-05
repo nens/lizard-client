@@ -259,6 +259,19 @@ module.exports = function (grunt) {
       }
     },
 
+    // Profiling
+    phantomas: {
+      gruntSite: {
+        options: {
+          indexPath: 'qa/phantomas/',
+          numberOfRuns: 5,
+          output: ['json'],
+          url: 'http://integration.nxt.lizard.net',
+          buildUi: true
+        }
+      }
+    },
+
     // Renames files for browser caching purposes
     filerev: {
       dist: {
