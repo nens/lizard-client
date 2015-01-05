@@ -12,21 +12,27 @@
  * state leads the url.
  */
 angular.module('lizard-nxt')
-  .controller('UrlController', ['$scope', 'LocationGetterSetter',
-<<<<<<< HEAD
-  'UrlState', 'dataBounds', 'DataService', 'MapService', 'State', '$rootScope',
-  function ($scope,
-            LocationGetterSetter,
-            UrlState,
-            dataBounds,
-            DataService,
-            MapService,
-            State,
-            $rootScope) {
-=======
-  'UrlState', 'dataBounds', 'DataService', 'MapService', 'State', '$rootScope', 'LeafletService', '$compile',
-  function ($scope, LocationGetterSetter, UrlState, dataBounds, DataService, MapService, State, $rootScope, LeafletService, $compile) {
->>>>>>> 4f71f7ebbbdde6ac56830fbc2bdd46476b4e890e
+.controller('UrlController', [
+  '$scope',
+  'LocationGetterSetter',
+  'UrlState',
+  'dataBounds',
+  'DataService',
+  'MapService',
+  'State',
+  '$rootScope',
+  'LeafletService',
+  function (
+    $scope,
+    LocationGetterSetter,
+    UrlState,
+    dataBounds,
+    DataService,
+    MapService,
+    State,
+    $rootScope,
+    LeafletService
+  ) {
 
     // Configuration object for url state.
     var state = {
