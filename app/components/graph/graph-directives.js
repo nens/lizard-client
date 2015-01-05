@@ -133,7 +133,6 @@ angular.module('lizard-nxt')
       this.data = scope.data || [];
       this.keys = scope.keys || { x: 0, y: 1 };
       this.labels = {
-        //x: scope.xlabel || '',
         x: scope.xlabel || '',
         y: scope.ylabel || ''
       };
