@@ -179,7 +179,8 @@ angular.module('lizard-nxt')
             if (layer.format === "Vector") {
               timelineLayers.events.layers.push(layer);
               timelineLayers.events.slugs.push(layer.slug);
-            } else if (layer.format === "Store" && layer.slug === "radar/basic") {
+            } else if (layer.format === "Store" &&
+                       layer.slug === "radar/basic") {
               timelineLayers.rain = layer;
             }
           });

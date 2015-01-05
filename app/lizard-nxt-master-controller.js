@@ -23,6 +23,7 @@ angular.module('lizard-nxt')
    'user',
    'versioning',
    'State',
+   'MapService',
 
   function ($scope,
             $controller,
@@ -31,7 +32,8 @@ angular.module('lizard-nxt')
             ClickFeedbackService,
             user,
             versioning,
-            State) {
+            State,
+            MapService) {
 
   $scope.user = user;
   $scope.versioning = versioning;
@@ -60,7 +62,6 @@ angular.module('lizard-nxt')
   $scope.context = State.context;
 
   // END CONTEXT
-
 
   // KEYPRESS
 

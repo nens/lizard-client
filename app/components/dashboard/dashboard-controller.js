@@ -9,8 +9,10 @@ angular.module('dashboard')
   // this is calculated in directive.
   $scope.dimensions = {};
 
-  $scope.ylabels = {
-    duration: 'Afhandeltijd',
-    reports: 'Meldingen'
-  };
+  // statistics (maybe get dynamically from event aggregation service?)
+  $scope.stats = ['max', 'min', 'mean', 'sum', 'median', 'count'];
+
+  // default selection
+  $scope.selectedStat = $scope.stats[2];
+
 }]);
