@@ -8,12 +8,26 @@
     </div>
     <div class="row" ng-repeat="eventAgg in eventAggs">
      <div class="col-md-10 dashboard-inner">
-       <div class="row">
+       <div class="row" ng-if="!eventAgg.data[0].hasOwnProperty('category')">
          <graph bar-chart
                 class="xyGraph"
-                data="eventAgg"
-                ylabel="ylabels.reports"
-                keys="{x: 'timestamp', y: 'count', color: 'color', category: 'category'}"
+                data="eventAgg.data"
+                ylabel="eventAgg.ylabel"
+                keys="{x: 'timestamp',
+                       y: selectedStat}"
+                dimensions="dimensions"
+                temporal="state.temporal">
+          </graph>
+       </div>
+       <div class="row" ng-if="eventAgg.data[0].hasOwnProperty('category')">
+         <graph bar-chart
+                class="xyGraph"
+                data="eventAgg.data"
+                ylabel="eventAgg.ylabel"
+                keys="{x: 'timestamp',
+                       y: 'count',
+                       color: 'color',
+                       category: 'category'}"
                 dimensions="dimensions"
                 temporal="state.temporal">
           </graph>
@@ -21,16 +35,24 @@
        <!--<div class="row">-->
          <!--<graph bar-chart-->
                 <!--class="xyGraph"-->
-                <!--data="eventAgg"-->
-                <!--ylabel="ylabels.duration"-->
-                <!--keys="{x: 'timestamp', y: 'mean_duration', color: 'color', category: 'category'}"-->
+                <!--data="eventAgg.data"-->
+                <!--ylabel="Gemiddelde duur"-->
+                <!--keys="{x: 'timestamp',-->
+                           <!--y: 'mean_duration',-->
+                           <!--color: 'color',-->
+                           <!--category: 'category'}"-->
                 <!--dimensions="dimensions"-->
                 <!--temporal="state.temporal">-->
           <!--</graph>-->
         <!--</div>-->
       </div>
       <div class="col-md-2 dashboard-table">
-        <table class="table table-hover table-condensed">
+        <select ng-model="$parent.selectedStat"
+                ng-options="stat for stat in stats"
+                ng-if="!eventAgg.data[0].hasOwnProperty('category')">
+        </select>
+        <table class="table table-hover table-condensed"
+               ng-if="eventAgg.data[0].hasOwnProperty('category')">
           <tbody>
           <tr ng-repeat="(category, color) in colormap">
             <td><i class="fa fa-square" style='color: <% color %> '></i></td>

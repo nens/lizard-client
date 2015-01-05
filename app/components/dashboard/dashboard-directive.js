@@ -18,6 +18,7 @@ angular.module('dashboard')
     scope.dimensions.width = getWidth() - 10;
 
     var aggregateEvents = function () {
+      var eventAgg;
       // reset eventAggs
       scope.eventAggs = [];
       angular.forEach(DataService.layerGroups, function (lg) {
@@ -30,9 +31,12 @@ angular.module('dashboard')
 
           if (response && response.data) {
             // aggregate response
-            scope.eventAggs.push(
-              EventAggregateService.aggregate(response.data,
-                                              State.temporal.aggWindow));
+            eventAgg = {
+              'data': EventAggregateService.aggregate(response.data,
+                                                      State.temporal.aggWindow),
+              'ylabel': lg.name
+            };
+            scope.eventAggs.push(eventAgg);
             // calculate new dimensions
             scope.dimensions.height =
               (getHeight() / scope.eventAggs.length) - 20;
