@@ -227,7 +227,11 @@ angular.module('lizard-nxt')
         time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
         context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
 
-      LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
+      if (context) {
+        State.context = context;
+      } else {
+        LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
+      }
       if (boxType) {
         State.box.type = boxType;
       } else {

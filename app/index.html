@@ -123,28 +123,20 @@
       </div>
     </div>
 
-    <div id="text-mode-scrollable">
-    </div>
-
-    <datamenu></datamenu>
-
-    <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
-
     <div id="url-temp-map" class="map"></div>
 
     <div ng-if="context === 'map'">
-
       <map></map>
-
-      <div class="container">
-        <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
-      </div>
-
+      <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
     </div>
 
     <div ng-if="context === 'db'">
       <dashboard></dashboard>
     </div>
+
+    <datamenu></datamenu>
+
+    <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
 
     <div id="dark-overlay">
       <div id="mymodal">
