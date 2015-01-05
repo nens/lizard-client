@@ -234,7 +234,7 @@ angular.module('lizard-nxt')
         timeState.aggWindow = UtilService.getAggWindow(
           timeState.start,
           timeState.end,
-          window.innerWidth
+          UtilService.getCurrentWidth()
         );
         var timeAt = timeState.start + (timeState.end - timeState.start) / 2;
         timeState.at = UtilService.roundTimestamp(

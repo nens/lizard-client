@@ -13,7 +13,7 @@
 /**
  * Timeseries directive.
  */
-angular.module('lizard-nxt')
+angular.module('omnibox')
   .directive('timeseries', [function () {
   return {
       restrict: 'E',
@@ -26,7 +26,7 @@ angular.module('lizard-nxt')
     };
 }]);
 
-angular.module('lizard-nxt')
+angular.module('omnibox')
   .directive('cardattributes', ['WantedAttributes',
     function (WantedAttributes) {
   return {
@@ -41,7 +41,7 @@ angular.module('lizard-nxt')
   };
 }]);
 
-angular.module('lizard-nxt')
+angular.module('omnibox')
   .directive('rain', [function () {
   return {
     restrict: 'E',
@@ -50,11 +50,9 @@ angular.module('lizard-nxt')
   };
 }]);
 
-angular.module('lizard-nxt')
-  .directive('defaultpoint', ['LanduseLookup',
-    function (LanduseLookup) {
+angular.module('omnibox')
+  .directive('defaultpoint', [function () {
   return {
-    link: function (scope) { scope.landuseLookup = LanduseLookup; },
     restrict: 'E',
     scope: {
       fullDetails: '=',
@@ -66,7 +64,7 @@ angular.module('lizard-nxt')
   };
 }]);
 
-angular.module('lizard-nxt')
+angular.module('omnibox')
   .directive('detailswitch', [function () {
   return {
     restrict: 'E',
@@ -74,7 +72,7 @@ angular.module('lizard-nxt')
   };
 }]);
 
-angular.module('lizard-nxt')
+angular.module('omnibox')
   .directive('location', [function () {
   return {
     restrict: 'E',

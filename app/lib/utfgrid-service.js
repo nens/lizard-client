@@ -19,19 +19,15 @@ angular.module('lizard-nxt')
         return deferred.promise;
       }
 
-      if (leafLayer) {
-        response = _getResponseForGeomType(leafLayer, geomType, e, options.geom);
-        if (!window.loaded
-          || leafLayer.isLoading
-          || !leafLayer._map
-          || !leafLayer._map.hasLayer(leafLayer)
-        ){
-          _getDataFromUTFAsynchronous(nonLeafLayer, e, deferred, geomType, options.geom);
-        } else {
-          deferred.resolve(response.data);
-        }
+      response = _getResponseForGeomType(leafLayer, geomType, e, options.geom);
+      if (!window.loaded
+        || leafLayer.isLoading
+        || !leafLayer._map
+        || !leafLayer._map.hasLayer(leafLayer)
+      ) {
+        _getDataFromUTFAsynchronous(nonLeafLayer, e, deferred, geomType, options.geom);
       } else {
-        deferred.resolve(false);
+        deferred.resolve(response.data);
       }
 
       return deferred.promise;
