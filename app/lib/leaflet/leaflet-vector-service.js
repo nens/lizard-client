@@ -250,7 +250,6 @@ angular.module('lizard-nxt')
      * @description sync the time
      */
     syncTime: function (layer, timeState) {
-      //this.options.layer = layer;
       this.options.start = timeState.start;
       this.options.end = timeState.end;
       this.redraw();
@@ -262,7 +261,7 @@ angular.module('lizard-nxt')
      */
     redraw: function () {
       var self = this;
-      if (self._map !== undefined) {
+      if (self._map !== undefined && self._map !== null) {
         VectorService.getData(
           self.options.slug, {
             layer: self,
@@ -270,8 +269,10 @@ angular.module('lizard-nxt')
             start: self.options.start,
             end: self.options.end
           }).then(function (response) {
-            self._resetgeoJson();
-            self.drawTheThings(response, self);
+            if (self._map !== undefined && self._map !== null) {
+              self._resetgeoJson();
+              self.drawTheThings(response, self);
+            }
           });
       }
     },
@@ -291,8 +292,9 @@ angular.module('lizard-nxt')
       if (tile.datum === null) { return null; }
 
       this.addTileData(tile.datum, tilePoint);
-      for (var tile in this._tilesLoading) {
-        if (this._tilesLoading[tile] === 'busy') {
+
+      for (var tileNr in this._tilesLoading) {
+        if (this._tilesLoading[tileNr] === 'busy') {
           this.isLoading = true;
           break;
         }

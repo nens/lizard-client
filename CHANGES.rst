@@ -2,7 +2,30 @@ Changelog of lizard-nxt client
 ==============================
 
 Unreleased (1.2.dev) (XXXX-XX-XX)
-----------------------------------
+---------------------
+-
+
+
+Release 1.1.3 (2014-12-30)
+---------------------
+
+- Fix 'Cannot read property 'lng' of undefined'.
+
+- Fix 'this._map is null'.
+
+- Fix 'Attempted to add layer undefined while it was already part of the map'
+
+
+Release 1.0.2 (2014-12-16)
+--------------------------
+
+- Help button.
+
+
+Release 1.1.2 (2014-12-24)
+---------------------
+
+- handle API response for discrete rasters (same format for point/area mode)
 
 - Limit extent 1970 - 2016
 
