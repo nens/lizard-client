@@ -41,10 +41,8 @@ angular.module('lizard-nxt')
             left: 0
           }
         },
-
         start = State.temporal.start,
         end = State.temporal.end,
-
         el = element.find('svg');
 
     var interaction = {
@@ -175,7 +173,7 @@ angular.module('lizard-nxt')
                             rain: undefined};
       angular.forEach(layerGroups, function (layergroup) {
         if (layergroup.isActive()) {
-          angular.forEach(layergroup._layers, function (layer) {
+          angular.forEach(layergroup._dataLayers, function (layer) {
             if (layer.format === "Vector") {
               timelineLayers.events.layers.push(layer);
               timelineLayers.events.slugs.push(layer.slug);
