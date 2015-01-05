@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.dev) (XXXX-XX-XX)
 ---------------------
--
+
+- Added full screen graph.
 
 
 Release 1.1.3 (2014-12-30)
