@@ -9,15 +9,11 @@
 angular.module('lizard-nxt')
   .service("EventAggregateService", ["UtilService", function (UtilService) {
 
-    var COLOR_MAP = {
-      'Riolering': '#2ecc71',
-      'Wateroverlast buitenshuis': '#3498db',
-      'Wateroverlast binnenshuis': '#2980b9',
-      'Oppervlaktewater': '#34495e',
-      'Overig': '#95a5a6',
-    };
+    this.colorMap = {};
 
-    this.COLOR_MAP = COLOR_MAP;
+    this.colorScale = {};
+
+    var that = this;
 
     /**
      * @function timeCatComparator
@@ -30,14 +26,42 @@ angular.module('lizard-nxt')
       .order(d3.ascending, function (d) { return d.category; });
 
     /**
+     * @function _buildColorScale
+     * @summary TODO
+     * @description TODO
+     *
+     * @param {string} baseColor - hex color.
+     * @returns {array[]} list of hex colors.
+     */
+    this._buildColorScale = function (baseColor) {
+
+      var MAXCATS = 7;
+
+      var colorScale = ['#00F', '#DDD', '#0F0'];
+
+      return colorScale;
+    };
+
+    /**
      * @function _getColor
      * @summary helper function to get color for category
      *
      * @param {string} category - Category name.
+     * @param {string} baseColor - hex color.
      * @returns {string} HTML HEX color code.
      */
-    var _getColor = function (category) {
-      return COLOR_MAP[category] || '#7f8c8d';
+    var _getColor = function (category, baseColor) {
+
+      if (!that.colorScale.hasOwnProperty(baseColor)) {
+        that.colorScale[baseColor] = that._buildColorScale(baseColor);
+      }
+
+      if (!that.colorMap.hasOwnProperty(category)) {
+        var numCategories = Object.keys(that.colorMap).length;
+        that.colorMap[category] = that.colorScale[baseColor][numCategories - 1];
+      }
+
+      return that.colorMap[category];
     };
 
     /**
@@ -78,7 +102,8 @@ angular.module('lizard-nxt')
      *
      * @param {object[]} data - list of event geojson features.
      * @param {integer} aggWindow - aggregation window in ms.
-     * @param {array} - array of objects with keys
+     * @param {string} baseColor - hex color.
+     * @returns {array} - array of objects with keys
      *   for ordinal en nominal:
      *     timestamp, category, count, mean_duration
      *
@@ -86,7 +111,7 @@ angular.module('lizard-nxt')
      *     timestamp, mean, min, max, 
      *
      */
-    this.aggregate = function (data, aggWindow) {
+    this.aggregate = function (data, aggWindow, baseColor) {
 
       if (data.length === 0) {
         return [];
@@ -121,11 +146,11 @@ angular.module('lizard-nxt')
           .forEach(function (timestamp, value) {
             var tmpObj;
             value.forEach(function (category, value) {
-              tmpObj = {"timestamp": timestamp,
-                        "category": category,
-                        "mean_duration": value.mean_duration,
-                        "color": _getColor(category),
-                        "count": value.count};
+              tmpObj = {timestamp: timestamp,
+                        category: category,
+                        mean_duration: value.mean_duration,
+                        color: _getColor(category, baseColor),
+                        count: value.count};
               aggregatedArray.push(tmpObj);
             });
           }
@@ -142,13 +167,13 @@ angular.module('lizard-nxt')
           })
           .rollup(function (leaves) {
             var stats = {
-              "count": leaves.length,
-              "min": d3.min(leaves, _getValue),
-              "max": d3.max(leaves, _getValue),
-              "mean": d3.mean(leaves, _getValue),
-              "median": d3.median(leaves, _getValue),
-              "sum": d3.sum(leaves, _getValue),
-              "mean_duration": d3.mean(leaves, _getTimeIntervalDays)
+              count: leaves.length,
+              min: d3.min(leaves, _getValue),
+              max: d3.max(leaves, _getValue),
+              mean: d3.mean(leaves, _getValue),
+              median: d3.median(leaves, _getValue),
+              sum: d3.sum(leaves, _getValue),
+              mean_duration: d3.mean(leaves, _getTimeIntervalDays),
             };
 
             return stats;
@@ -158,14 +183,17 @@ angular.module('lizard-nxt')
         // rewrite d3 nested map to array of flat objects
         nestedData
           .forEach(function (timestamp, value) {
-            var tmpObj = {"timestamp": timestamp,
-                      "mean_duration": value.mean_duration,
-                      "min": value.min,
-                      "max": value.max,
-                      "mean": value.mean,
-                      "median": value.median,
-                      "sum": value.sum,
-                      "count": value.count};
+            var tmpObj = {
+              color: baseColor,
+              timestamp: timestamp,
+              mean_duration: value.mean_duration,
+              min: value.min,
+              max: value.max,
+              mean: value.mean,
+              median: value.median,
+              sum: value.sum,
+              count: value.count
+            };
             aggregatedArray.push(tmpObj);
           }
         );

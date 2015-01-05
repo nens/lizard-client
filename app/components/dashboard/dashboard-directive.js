@@ -32,9 +32,10 @@ angular.module('dashboard')
           if (response && response.data) {
             // aggregate response
             eventAgg = {
-              'data': EventAggregateService.aggregate(response.data,
-                                                      State.temporal.aggWindow),
-              'ylabel': lg.name
+              data: EventAggregateService.aggregate(response.data,
+                                                      State.temporal.aggWindow,
+                                                      lg.mapLayers[0].color),
+              ylabel: lg.name,
             };
             scope.eventAggs.push(eventAgg);
             // calculate new dimensions
@@ -73,7 +74,7 @@ angular.module('dashboard')
     aggregateEvents();
 
     // hack to get color map for legend
-    scope.colormap = EventAggregateService.COLOR_MAP;
+    scope.colormap = EventAggregateService.colorMap;
   };
 
   return {

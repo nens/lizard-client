@@ -331,6 +331,7 @@ angular.module('lizard-nxt')
         cumulativeData.push(d);
       });
     });
+
     return cumulativeData;
   };
 

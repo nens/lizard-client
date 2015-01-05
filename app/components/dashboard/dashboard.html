@@ -8,13 +8,16 @@
     </div>
     <div class="row" ng-repeat="eventAgg in eventAggs">
      <div class="col-md-10 dashboard-inner">
+       <p> <% eventAgg.color %> </p>
        <div class="row" ng-if="!eventAgg.data[0].hasOwnProperty('category')">
          <graph bar-chart
                 class="xyGraph"
                 data="eventAgg.data"
                 ylabel="eventAgg.ylabel"
                 keys="{x: 'timestamp',
-                       y: selectedStat}"
+                       y: selectedStat,
+                       color: 'color',
+                       category: 'none'}"
                 dimensions="dimensions"
                 temporal="state.temporal">
           </graph>
