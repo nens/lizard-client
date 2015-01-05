@@ -31,7 +31,7 @@ module.exports = function (grunt) {
     dist: 'dist',
     // Templates that need to be converted reside in components and core
     templateFileDirs: 'components/**/{,*/}*.html',
-    // TODO: 
+    // TODO:
     // lib and lizard-nxt.js are still a swamp. Needs to be
     // * restructured
     // * refactored.
@@ -39,7 +39,7 @@ module.exports = function (grunt) {
     //
     //
     // Files reside in components, lib and in several subdirectories.
-    jsFileDirs: '{components, lib}/{,*/}*.js'
+    jsFileDirs: '{,components, lib}/{,*/}*.js'
   };
 
   // Project configuration.
@@ -83,7 +83,9 @@ module.exports = function (grunt) {
           // CSS created from sass files
           '.tmp/styles/{,*/}*.css',
           // All images
-          '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+          '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+          // All js files
+          '<%= yeoman.app %>/<%= yeoman.jsFileDirs %>'
         ]
       }
     },
@@ -214,7 +216,7 @@ module.exports = function (grunt) {
       }
     },
 
-    
+
     // Automatically inject Bower components into the app
     wiredep: {
       app: {

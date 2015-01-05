@@ -40,32 +40,26 @@ angular.module('lizard-nxt')
         value: 'map', // default
         part: 'path', // Part of the url where this state is stored,
         index: 0, // Position of the state in the part
-        update: true // When false, $locationChangeSucces is cancelled
       },
       layerGroups: {
         part: 'path',
         index: 1,
-        update: true
       },
       boxType: {
         part: 'path',
         index: 2,
-        update: true
       },
       geom: {
         part: 'path',
         index: 3,
-        update: true
       },
       mapView: {
         part: 'at',
         index: 0,
-        update: true
       },
       timeState: {
         part: 'at',
         index: 1,
-        update: true
       }
     };
 
@@ -110,7 +104,7 @@ angular.module('lizard-nxt')
       if (mapView) {
         var view = UrlState.parseMapView(mapView);
         if (view) {
-          map.setView(view.latLng, view.zoom, view.options);
+          map.setView(view.latLng, view.zoom, {});
         } else {
           fn();
         }
@@ -130,7 +124,6 @@ angular.module('lizard-nxt')
     $scope.$watch(State.toString('layerGroups.active'),
       function (n, o) {
         if (n === o) { return true; }
-        state.layerGroups.update = false;
         UrlState.setlayerGroupsUrl(state, State.layerGroups.active);
       }
     );
@@ -140,13 +133,12 @@ angular.module('lizard-nxt')
      */
     $scope.$watch(State.toString('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
-      state.mapView.update = false;
       UrlState.setCoordinatesUrl(state,
         State.spatial.bounds.getCenter().lat,
         State.spatial.bounds.getCenter().lng,
         State.spatial.zoom
       );
-    }, true);
+    });
 
     /**
      * Set timeState when timeState changed.
@@ -154,10 +146,11 @@ angular.module('lizard-nxt')
     $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
       if (!State.temporal.timelineMoving) {
-        state.timeState.update = false;
-        UrlState.setTimeStateUrl(state,
-                                 State.temporal.start,
-                                 State.temporal.end);
+        UrlState.setTimeStateUrl(
+          state,
+          State.temporal.start,
+          State.temporal.end
+        );
       }
     });
 
@@ -166,7 +159,6 @@ angular.module('lizard-nxt')
      */
     $scope.$watch(State.toString('box.type'), function (n, old) {
       if (n === old) { return true; }
-      state.boxType.update = false;
       LocationGetterSetter.setUrlValue(
         state.boxType.part, state.boxType.index, State.box.type
       );
@@ -207,22 +199,18 @@ angular.module('lizard-nxt')
      */
     $scope.$watch(State.toString('spatial.points'), function (n, o) {
       if (n === o || State.box.type !== 'line') { return true; }
-      state.geom.update = false;
       UrlState.setgeomUrl(state,
-                          State.box.type,
-                          State.spatial.here,
-                          State.spatial.points);
-    }, true);
+        State.box.type,
+        State.spatial.here,
+        State.spatial.points
+      );
+    });
 
     /**
      * Listener to update map view when user changes url
      *
      * $locationChangeSucces is broadcasted by angular
      * when the hashSyncHelper in util-service changes the url
-     *
-     * updateUrl is set to false when the application updates
-     * the url. Then, this listener is fired but does nothing but
-     * resetting the updateUrl back to true
      */
 
     // $locationChangeSuccess is fired once when this controller is initialized.
@@ -231,53 +219,36 @@ angular.module('lizard-nxt')
     // the app to update to the time of the url.
     State.temporal.timelineMoving = true;
 
-    $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-      if (UrlState.update(state)) {
-        var boxType = LocationGetterSetter.getUrlValue(state.boxType.part,
-                                                       state.boxType.index),
-          geom = LocationGetterSetter.getUrlValue(state.geom.part,
-                                                  state.geom.index),
-          layerGroupsFromURL = LocationGetterSetter.getUrlValue(
-            state.layerGroups.part, state.layerGroups.index),
-          mapView = LocationGetterSetter.getUrlValue(state.mapView.part,
-                                                     state.mapView.index),
-          time = LocationGetterSetter.getUrlValue(state.timeState.part,
-                                                  state.timeState.index),
-          context = LocationGetterSetter.getUrlValue(state.context.part,
-                                                     state.context.index);
+    var listener = $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
+      var boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
+        geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
+        layerGroupsFromURL = LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index),
+        mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
+        time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
+        context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
 
-        LocationGetterSetter.setUrlValue(state.context.part,
-                                         state.context.index,
-                                         state.context.value);
-        if (boxType) {
-          State.box.type = boxType;
-        } else {
-          LocationGetterSetter.setUrlValue(
-            state.boxType.part, state.boxType.index, State.box.type);
-        }
-        if (geom) {
-          State.spatial = UrlState.parseGeom(
-            State.box.type, geom, State.spatial);
-        }
-        enablelayerGroups(layerGroupsFromURL);
-        enableMapView(mapView);
+      LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
+      if (boxType) {
+        State.box.type = boxType;
+      } else {
+        LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, State.box.type);
+      }
+      if (geom) {
+        State.spatial = UrlState.parseGeom(State.box.type, geom, State.spatial);
+      }
+      enablelayerGroups(layerGroupsFromURL);
+      enableMapView(mapView);
 
-        if (time) {
-          State.temporal = UrlState.parseTimeState(time, State.temporal);
-        } else {
-          state.timeState.update = false;
-          UrlState.setTimeStateUrl(
-            state, State.temporal.start, State.temporal.end);
-        }
-
-        if (context) {
-          State.context = context;
-        }
+      if (time) {
+        State.temporal = UrlState.parseTimeState(time, State.temporal);
+      } else {
+        state.timeState.update = false;
+        UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
       }
       State.temporal.timelineMoving = false;
-      angular.forEach(state, function (value) {
-        value.update = true;
-      });
+
+      listener(); // remove this listener
     });
+
   }
 ]);

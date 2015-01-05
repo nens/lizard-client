@@ -116,7 +116,7 @@ angular.module('map')
     return {
       restrict: 'E',
       replace: true,
-      template: '<div id="map"></div>',
+      template: '<div id="map" class="map"></div>',
       link: link
     };
   }

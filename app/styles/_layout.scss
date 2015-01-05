@@ -1,5 +1,5 @@
 /*
- * Layout and global stuff.. 
+ * Layout and global stuff..
  * needs some refactoring
  */
 
@@ -17,22 +17,13 @@ html {
 }
 
 body {
-    font-family: $font-family; 
+    font-family: $font-family;
     height: $height9;
     margin: 0;
     overflow:hidden;
     width: $width19;
 }
 
-
-#map {
-    height: $height9;
-    height: calc($height9 - 50px);
-    position: absolute;
-    top: 50px;
-    width: $width19;
-    z-index: 0;
-}
 font-face {
     font-family: "Kunstwerk";
     src: url("../font/Kunstwerk Regular.ttf") format('truetype');
@@ -46,7 +37,7 @@ html {
 }
 
 body {
-    font-family: $font-family; 
+    font-family: $font-family;
     height: $height9;
     margin: 0;
     overflow:hidden;
@@ -54,9 +45,9 @@ body {
 }
 
 
-#map {
+.map {
     height: $height9;
-    height: calc($height9 - 50px);
+    height: calc(100% - 50px);
     position: absolute;
     top: 50px;
     width: $width19;
