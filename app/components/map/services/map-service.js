@@ -33,6 +33,10 @@ angular.module('map')
           onOpacityChange: this._setOpacity,
           onDblClick: this._rescaleContinuousData
         };
+        // Turn active layergroups on.
+        angular.forEach(State.layerGroups.active, function (lgSlug) {
+          this._toggleLayers(DataService.layerGroups[lgSlug]);
+        }, this);
       },
 
       /**
@@ -91,12 +95,18 @@ angular.module('map')
        * @param  {array} extent Array with NW, NE, SW,SE
        */
       fitBounds: function (bounds) {
-        if (!(bounds instanceof LeafletService.LatLngBounds)) {
-          service._map.fitBounds(L.latLngBounds(
-            L.latLng(bounds.south, bounds.east),
-            L.latLng(bounds.north, bounds.west)));
-        } else {
-          service._map.fitBounds(bounds);
+        if (service._map instanceof LeafletService.Map) {
+          if (bounds instanceof LeafletService.LatLngBounds) {
+            service._map.fitBounds(bounds);
+          }
+          else if (bounds.hasOwnProperty('south')
+            && bounds.hasOwnProperty('north')
+            && bounds.hasOwnProperty('east')
+            && bounds.hasOwnProperty('west')) {
+            service._map.fitBounds(L.latLngBounds(
+              L.latLng(bounds.south, bounds.east),
+              L.latLng(bounds.north, bounds.west)));
+          }
         }
       },
 
