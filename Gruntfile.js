@@ -31,7 +31,7 @@ module.exports = function (grunt) {
     dist: 'dist',
     // Templates that need to be converted reside in components and core
     templateFileDirs: 'components/**/{,*/}*.html',
-    // TODO: 
+    // TODO:
     // lib and lizard-nxt.js are still a swamp. Needs to be
     // * restructured
     // * refactored.
@@ -93,7 +93,7 @@ module.exports = function (grunt) {
       options: {
         port: 9000,
         // Change this to '0.0.0.0' to access the server from outside.
-        hostname: 'localhost',
+        hostname: '0.0.0.0',
         livereload: 35729
       },
       livereload: {
