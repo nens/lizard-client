@@ -13,6 +13,7 @@
  */
 angular.module('lizard-nxt')
   .controller('UrlController', ['$scope', 'LocationGetterSetter',
+<<<<<<< HEAD
   'UrlState', 'dataBounds', 'DataService', 'MapService', 'State', '$rootScope',
   function ($scope,
             LocationGetterSetter,
@@ -22,6 +23,10 @@ angular.module('lizard-nxt')
             MapService,
             State,
             $rootScope) {
+=======
+  'UrlState', 'dataBounds', 'DataService', 'MapService', 'State', '$rootScope', 'LeafletService', '$compile',
+  function ($scope, LocationGetterSetter, UrlState, dataBounds, DataService, MapService, State, $rootScope, LeafletService, $compile) {
+>>>>>>> 4f71f7ebbbdde6ac56830fbc2bdd46476b4e890e
 
     // Configuration object for url state.
     var state = {
@@ -71,14 +76,7 @@ angular.module('lizard-nxt')
     var enablelayerGroups = function (layerGroupString) {
       if (layerGroupString) {
         // Either layerGroups are on url
-        var activeLayerSlugs = layerGroupString.split(',');
-        angular.forEach(activeLayerSlugs, function (layerGroupSlug) {
-          var lgI = State.layerGroups.all.indexOf(layerGroupSlug);
-          if (lgI !== -1) {
-            DataService.toggleLayerGroup(
-              DataService.layerGroups[layerGroupSlug]);
-          }
-        });
+        State.layerGroups.active = layerGroupString.split(',');
         // Or layerGroups are not on url, turn default layerGroups on
       } else {
         DataService.setLayerGoupsToDefault();
@@ -95,20 +93,29 @@ angular.module('lizard-nxt')
     * @param {string} String representation of mapView on url
     */
     var enableMapView = function (mapView) {
+      var map = LeafletService.map('url-temp-map');
       var fn = function () {
-        MapService.fitBounds(dataBounds);
+        map.fitBounds(LeafletService.latLngBounds(
+          L.latLng(dataBounds.south, dataBounds.east),
+          L.latLng(dataBounds.north, dataBounds.west)
+        ));
       };
 
       if (mapView) {
         var view = UrlState.parseMapView(mapView);
         if (view) {
-          MapService.setView(view.latLng, view.zoom, view.options);
+          map.setView(view.latLng, view.zoom, view.options);
         } else {
           fn();
         }
       } else {
         fn();
       }
+      State.spatial.bounds =  map.getBounds();
+      State.spatial.zoom =  map.getZoom();
+      map.remove();
+      var tempMap = document.getElementById('url-temp-map');
+      tempMap.parentNode.removeChild(tempMap);
     };
 
     /**

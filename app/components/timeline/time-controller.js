@@ -178,9 +178,23 @@ angular.module('lizard-nxt')
      * @param  {object} timeState nxt timeState object
      */
     var syncTimeWrapper = function (timeState) {
-      promise = DataService.syncTime(timeState);
+      var defer = $q.defer();
+
       if (timeState.playing) {
-        progressAnimation(promise);
+        progressAnimation(defer.promise);
+      }
+      if (State.layerGroups.timeIsSyncing) {
+        var watch = $scope.$watch(
+          function () { return State.layerGroups.timeIsSyncing; },
+          function (loading) {
+            if (loading === false) {
+              defer.resolve();
+              watch();
+            }
+          }
+        );
+      } else {
+        defer.resolve();
       }
     };
 
@@ -195,10 +209,11 @@ angular.module('lizard-nxt')
       clearTimeout(timeOut);
       // when the minLag has passed.
       timeOut = setTimeout(function () {
-        // And the layergroups are all ready
+        // And the layergroups are all ready.
         finish.then(function () {
-          // And the browser is ready.
+          // And we are still animating.
           if (State.temporal.playing) {
+            // And the browser is ready. GO!
             window.requestAnimationFrame(step);
           }
         });
@@ -220,6 +235,9 @@ angular.module('lizard-nxt')
       State.temporal.start = now - fourFifthInterval;
       State.temporal.end = now + oneFifthInterval;
       State.temporal.at = UtilService.roundTimestamp(now, State.temporal.aggWindow, false);
+
+      // Without this $broadcast, timeline will not sync to State.temporal:
+      $scope.$broadcast("$timelineZoomSuccess");
     };
 
     /**
@@ -246,8 +264,8 @@ angular.module('lizard-nxt')
       State.temporal.end = State.temporal.at + milliseconds;
       State.temporal.resolution = newResolution;
 
+      // Without this $broadcast, timeline will not sync to State.temporal:
       $scope.$broadcast("$timelineZoomSuccess");
-      State.temporal.timelineMoving = false;
     };
 
   }

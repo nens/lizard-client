@@ -19,6 +19,8 @@ if (window.RavenEnvironment) {
  *
  */
 angular.module("lizard-nxt", [
+  'data-menu',
+  'map',
   'omnibox',
   'restangular',
   'dashboard',
@@ -57,24 +59,6 @@ angular.module('lizard-nxt')
 });
 
 /**
- * @name dataLayers
- * @memberOf app
- * @description Contains the dataLayers set by the server. Used by the
- *              map-directive and layer-chooser directive to build layer
- *              groups.
- */
-angular.module('lizard-nxt')
-  .constant('dataLayers', window.data_layers);
-
-/**
- * @name dataBounds
- * @memberOf app
- * @description Contains the bounds of the data set by the server at load
- */
-angular.module('lizard-nxt')
-  .constant('dataBounds', window.data_bounds);
-
-/**
  * @name user
  * @memberOf app
  * @description User and auth stuff
@@ -89,6 +73,7 @@ angular.module('lizard-nxt')
  */
 angular.module('lizard-nxt')
   .constant('versioning', window.versioning);
+<<<<<<< HEAD
 
 /**
  *
@@ -253,3 +238,5 @@ angular.module('lizard-nxt')
   });
 
 }]);
+=======
+>>>>>>> 4f71f7ebbbdde6ac56830fbc2bdd46476b4e890e

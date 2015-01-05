@@ -58,10 +58,12 @@ angular.module('lizard-nxt')
       zoomFn: function (scale) {
 
         scope.$apply(function () {
+
           timelineSetsTime = true;
           State.temporal.timelineMoving = true;
-          State.temporal.start = scale.domain()[0].getTime();
-          State.temporal.end = scale.domain()[1].getTime();
+          State.temporal.start = UtilService.getMinTime( scale.domain()[0].getTime() );
+          State.temporal.end   = UtilService.getMaxTime( scale.domain()[1].getTime() );
+
           State.temporal.aggWindow = UtilService.getAggWindow(
             State.temporal.start,
             State.temporal.end,
@@ -87,6 +89,8 @@ angular.module('lizard-nxt')
             State.temporal.end - State.temporal.start) /  UtilService.getCurrentWidth();
           getTimeLineData();
           State.temporal.timelineMoving = false;
+
+          scope.$broadcast("$timelineZoomSuccess");
         });
       },
 
@@ -171,7 +175,7 @@ angular.module('lizard-nxt')
                             rain: undefined};
       angular.forEach(layerGroups, function (layergroup) {
         if (layergroup.isActive()) {
-          angular.forEach(layergroup._layers, function (layer) {
+          angular.forEach(layergroup._dataLayers, function (layer) {
             if (layer.format === "Vector") {
               timelineLayers.events.layers.push(layer);
               timelineLayers.events.slugs.push(layer.slug);

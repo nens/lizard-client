@@ -1,4 +1,4 @@
-angular.module('lizard-nxt')
+angular.module('omnibox')
   .controller("rain",
       ['RasterService', 'State', '$scope',
   function (RasterService, State, $scope) {
@@ -8,7 +8,7 @@ angular.module('lizard-nxt')
    * angular isolate scope is messed with
    * when you using ng-if. This looks to parent
    * model and sets the local fullDetails.
-   */ 
+   */
   $scope.$watch('box.fullDetails.rain', function (n) {
     $scope.fullDetails = n;
   });
@@ -22,11 +22,11 @@ angular.module('lizard-nxt')
     if (!$scope.$$phase) {
       $scope.$apply(function () {
         $scope.rrc.active = !$scope.rrc.active;
-        $scope.lg.layers['radar/basic'].changed = !$scope.lg.layers['radar/basic'].changed; 
+        $scope.lg.layers['radar/basic'].changed = !$scope.lg.layers['radar/basic'].changed;
       });
     } else {
       $scope.rrc.active = !$scope.rrc.active;
-      $scope.lg.layers['radar/basic'].changed = !$scope.lg.layers['radar/basic'].changed; 
+      $scope.lg.layers['radar/basic'].changed = !$scope.lg.layers['radar/basic'].changed;
     }
   };
 
@@ -39,7 +39,7 @@ angular.module('lizard-nxt')
   var getRecurrenceTime = function () {
     $scope.rrc.data = null;
 
-    // TODO: refactor this shit 
+    // TODO: refactor this shit
     RasterService.getData(
      {slug: 'radar/basic'}, {
       agg: 'rrc',

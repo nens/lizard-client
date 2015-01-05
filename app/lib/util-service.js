@@ -642,16 +642,6 @@ angular.module('lizard-nxt')
     }
   };
 
-  this.TIMELINE_LEFT_MARGIN = 60;
-  this.TIMELINE_RIGHT_MARGIN = 40;
-
-  this.getCurrentWidth = function () {
-    return window.innerWidth - (
-      this.TIMELINE_LEFT_MARGIN + this.TIMELINE_RIGHT_MARGIN
-    );
-  };
-
-
   // Add comparator to sort lists on multiple properties to D3.
   (function () {
     d3.comparator = function () {
@@ -680,4 +670,22 @@ angular.module('lizard-nxt')
     function identity(d) { return d; }
   })();
 
+  this.MIN_TIME = (new Date("Jan 01, 1970")).getTime();
+  this.MAX_TIME = (new Date("Jan 01, 2016")).getTime();
+  this.TIMELINE_LEFT_MARGIN = 60;
+  this.TIMELINE_RIGHT_MARGIN = 40;
+
+  this.getMinTime = function (currentTime) {
+    return Math.max(this.MIN_TIME, currentTime);
+  };
+
+  this.getMaxTime = function (currentTime) {
+    return Math.min(this.MAX_TIME, currentTime);
+  };
+
+  this.getCurrentWidth = function () {
+    return window.innerWidth - (
+      this.TIMELINE_LEFT_MARGIN + this.TIMELINE_RIGHT_MARGIN
+    );
+  };
 }]);
