@@ -10,7 +10,7 @@ angular.module('dashboard')
     var getWidth = function () {
       return element.find('.dashboard-inner').width();
     };
-    
+
     var getHeight = function () {
       return element.height();
     };
@@ -32,11 +32,14 @@ angular.module('dashboard')
           if (response && response.data) {
             // aggregate response
             eventAgg = {
-              data: EventAggregateService.aggregate(response.data,
-                                                      State.temporal.aggWindow,
-                                                      lg.mapLayers[0].color),
+              data: EventAggregateService.aggregate(
+                      response.data,
+                      State.temporal.aggWindow,
+                      lg.mapLayers[0].color
+                    ),
               ylabel: lg.name,
             };
+
             scope.eventAggs.push(eventAgg);
             // calculate new dimensions
             scope.dimensions.height =
@@ -75,6 +78,19 @@ angular.module('dashboard')
 
     // hack to get color map for legend
     scope.colormap = EventAggregateService.colorMap;
+    // // console.log("EventAggregateService.colorMap:", EventAggregateService.colorMap);
+
+    // // setTimeout(function () {
+    // //   console.log("EventAggregateService.colorMap (after 10000ms):", EventAggregateService.colorMap);
+    // // }, 10000);
+
+    // scope.getColorMap = function () {
+    //   var result = EventAggregateService.getColorMap();
+    //   console.log("[F] scope.getColorMap; result =", result);
+    //   return result;
+    // };
+
+    // scope.colorMap = EventAggregateService.colorMap;
   };
 
   return {

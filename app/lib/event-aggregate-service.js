@@ -10,8 +10,7 @@ angular.module('lizard-nxt')
   .service("EventAggregateService", ["UtilService", function (UtilService) {
 
     this.colorMap = {};
-
-    this.colorScale = {};
+    this.colorScales = {};
 
     var that = this;
 
@@ -33,13 +32,35 @@ angular.module('lizard-nxt')
      * @param {string} baseColor - hex color.
      * @returns {array[]} list of hex colors.
      */
-    this._buildColorScale = function (baseColor) {
+    var _buildColorScale = function (baseColor, categoryCount) {
 
-      var MAXCATS = 7;
+      var MAX_CATS = 7;
+      categoryCount = Math.min(categoryCount, MAX_CATS);
 
-      var colorScale = ['#00F', '#DDD', '#0F0'];
+      // first, we check whether the passed-in arg already has an has a color
+      // scale, which should never happen:
+      if (this.colorScales[baseColor]) {
+        throw new Error("THIS SHOULD NOT PRINT");
 
-      return colorScale;
+      } else {
+
+        var i,
+            derivedColors = [],
+            baseColorTriple = UtilService.hexColorToDecimalTriple(baseColor);
+
+        var rShift = Math.round((255 - baseColorTriple[0]) / categoryCount),
+            bShift = Math.round((255 - baseColorTriple[1]) / categoryCount),
+            gShift = Math.round((255 - baseColorTriple[2]) / categoryCount);
+
+        for (i = 0; i < categoryCount; i++) {
+          derivedColors.push([
+            baseColorTriple[0] + i * rShift,
+            baseColorTriple[1] + i * gShift,
+            baseColorTriple[2] + i * bShift,
+          ]);
+        }
+        return derivedColors.map(UtilService.decimalTripleToHexColor);
+      }
     };
 
     /**
@@ -50,18 +71,45 @@ angular.module('lizard-nxt')
      * @param {string} baseColor - hex color.
      * @returns {string} HTML HEX color code.
      */
-    var _getColor = function (category, baseColor) {
+    // var _getColor = function (category, baseColor) {
 
-      if (!that.colorScale.hasOwnProperty(baseColor)) {
-        that.colorScale[baseColor] = that._buildColorScale(baseColor);
+    //   console.log("[F3] _getColor");\
+    //        return "#aaf";
+
+    //   if (!that.colorScale.hasOwnProperty(baseColor)) {
+    //     that.colorScale[baseColor] = that._buildColorScale(baseColor);
+    //   }
+
+    //   if (!that.colorMap.hasOwnProperty(category)) {
+    //     var numCategories = Object.keys(that.colorMap).length;
+    //     that.colorMap[category] = that.colorScale[baseColor][numCategories - 1];
+    //   }
+    //   return that.colorMap[category];
+    // };
+    var _getColor = function (
+
+      categoryName,
+      categoryIndex,
+      categoryCount,
+      baseColor
+
+      ) {
+
+      var colorScaleForEventSeries;
+      this.colorScales = this.colorScales || {};
+      this.colorMap = this.colorMap || {};
+
+      if (!this.colorScales.hasOwnProperty(baseColor)) {
+        colorScaleForEventSeries
+          = this.colorScales[baseColor]
+          = _buildColorScale(baseColor, categoryCount);
+      } else {
+        colorScaleForEventSeries = this.colorScales[baseColor];
       }
 
-      if (!that.colorMap.hasOwnProperty(category)) {
-        var numCategories = Object.keys(that.colorMap).length;
-        that.colorMap[category] = that.colorScale[baseColor][numCategories - 1];
-      }
-
-      return that.colorMap[category];
+      that.colorMap[categoryName] = colorScaleForEventSeries[categoryIndex];
+      console.log("in the svc, this.colorMap now looks like:", this.colorMap);
+      return colorScaleForEventSeries[categoryIndex];
     };
 
     /**
@@ -108,7 +156,7 @@ angular.module('lizard-nxt')
      *     timestamp, category, count, mean_duration
      *
      *   for ratio and interval:
-     *     timestamp, mean, min, max, 
+     *     timestamp, mean, min, max,
      *
      */
     this.aggregate = function (data, aggWindow, baseColor) {
@@ -119,7 +167,9 @@ angular.module('lizard-nxt')
 
       var isString = isNaN(parseFloat(data[0].properties.value)),
           nestedData = {},
-          aggregatedArray = [];
+          aggregatedArray = [],
+          categoryCount,
+          categoryIndex = 0;
 
       // if value is string, data is nominal or ordinal, calculate counts
       // per cateogry
@@ -136,20 +186,22 @@ angular.module('lizard-nxt')
               "count": leaves.length,
               "mean_duration": d3.mean(leaves, _getTimeIntervalDays)
             };
-
             return stats;
           })
           .map(data, d3.map);
-        
+
+        // since we have nestedData, we can get the amount of categories:
+        categoryCount = Object.keys(nestedData).length;
+
         // rewrite d3 nested map to array of flat objects
         nestedData
           .forEach(function (timestamp, value) {
             var tmpObj;
-            value.forEach(function (category, value) {
+            value.forEach(function (category, value, i) {
               tmpObj = {timestamp: timestamp,
                         category: category,
                         mean_duration: value.mean_duration,
-                        color: _getColor(category, baseColor),
+                        color: _getColor(category, categoryIndex++, categoryCount, baseColor),
                         count: value.count};
               aggregatedArray.push(tmpObj);
             });
@@ -179,7 +231,7 @@ angular.module('lizard-nxt')
             return stats;
           })
           .map(data, d3.map);
-        
+
         // rewrite d3 nested map to array of flat objects
         nestedData
           .forEach(function (timestamp, value) {
