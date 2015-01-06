@@ -177,7 +177,7 @@ angular.module('lizard-nxt')
         nestedData
           .forEach(function (timestamp, value) {
             var tmpObj;
-            value.forEach(function (category, value, i) {
+            value.forEach(function (category, value) {
               tmpObj = {timestamp: timestamp,
                         category: category,
                         mean_duration: value.mean_duration,
