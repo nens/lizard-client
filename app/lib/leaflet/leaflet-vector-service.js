@@ -23,15 +23,16 @@ angular.module('lizard-nxt')
       LeafletService.MarkerClusterGroup.prototype.onAdd.call(this, map);
 
       var color = this.options.color;
+
       var layer = this;
       VectorService.getData(this.options.slug, {})
       .then(function (response) {
-        var pxSize = 8;
+        var pxSize = 4;
         var icon = L.divIcon({
           iconAnchor: [pxSize, pxSize],
           html: '<svg height="' + (pxSize * 2) + '" width="' + (pxSize * 2) + '">'
                 + '<circle cx="' + pxSize + '" cy="' + pxSize + '" r="' + pxSize + '" '
-                + 'fill-opacity="1" fill="' + color + '" />'
+                + 'fill-opacity="0.9" fill="' + color + '" />'
                 + '</svg>'
         });
         response.forEach(function (f) {

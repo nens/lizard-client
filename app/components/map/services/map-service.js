@@ -462,6 +462,7 @@ angular.module('map')
       Vector: function (nonLeafLayer) {
         var leafletLayer = new LeafletVectorService({
           slug: nonLeafLayer.slug,
+          color: nonLeafLayer.color,
           showCoverageOnHover: false,  // When you mouse over a cluster it shows
                                        // the bounds of its markers.
           zoomToBoundsOnClick: true,   // When you click a cluster we zoom to
