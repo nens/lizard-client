@@ -62,6 +62,7 @@ angular.module('map')
 
 
         syncTime: function (timeState) {
+          return;
           if (this.format !== 'Vector') { return; }
           var defer = $q.defer();
           if (timeState.playing) {
