@@ -16,7 +16,8 @@ angular.module('lizard-nxt')
                              '$rootScope',
                              'LeafletService',
                              'UtilService',
-  function ($q, $rootScope, LeafletService, UtilService) {
+                             'CabinetService',
+  function ($q, $rootScope, LeafletService, UtilService, CabinetService) {
 
     /**
      * @function
@@ -219,34 +220,19 @@ angular.module('lizard-nxt')
       // leaflet knows nothing, so sends slug and leaflayer
       if (typeof nonLeafLayer === 'string') {
         layerSlug = nonLeafLayer;
-        layer = options.layer;
       } else {
-        layer = nonLeafLayer._leafletLayer;
         layerSlug = nonLeafLayer.slug;
       }
 
-      if (!layer) {
-        deferred.reject();
-        return deferred.promise;
-      }
-
-
-      if (layer.isLoading) {
+      if (!vectorLayers[layerSlug] || vectorLayers[layerSlug].isLoading) {
         getDataAsync(layerSlug, layer, options, deferred);
-      } else if (vectorLayers[layerSlug]) {
+      } else {
         var set = filterSet(vectorLayers[layerSlug].data,
         options.geom, {
           start: options.start,
           end: options.end
         });
         deferred.resolve(set);
-      } else if (!vectorLayers[layerSlug]) {
-        // Store that there is no data for this layer
-        vectorLayers[layerSlug] = {
-          data: []
-        };
-      } else {
-        deferred.reject();
       }
 
       return deferred.promise;
@@ -259,7 +245,24 @@ angular.module('lizard-nxt')
      * @param {promise}
      */
     var getDataAsync = function (layerSlug, layer, options, deferred) {
-      layer.on('loadend', function () {
+      if (!vectorLayers[layerSlug]) {
+
+        vectorLayers[layerSlug] = {
+          data: [],
+          isLoading: true,
+          promise: {}
+        };
+
+        vectorLayers[layerSlug].promise = CabinetService.tiles
+        .one(layerSlug + '/0/0/0.geojson')
+        .get().then(function (response) {
+          vectorLayers[layerSlug].isLoading = false;
+          setData(layerSlug, response.features, 1);
+        });
+
+      }
+
+      vectorLayers[layerSlug].promise.then(function () {
         deferred.resolve(filterSet(vectorLayers[layerSlug].data,
           options.geom, {
             start: options.start,
@@ -267,6 +270,7 @@ angular.module('lizard-nxt')
           }
         ));
       });
+
     };
 
     /**

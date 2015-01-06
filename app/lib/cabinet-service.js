@@ -9,12 +9,14 @@ angular.module('lizard-nxt')
       apiLayerGroups,
       timeseriesLocationObjectResource,
       timeseriesResource,
-      flowResource;
+      flowResource,
+      tiles;
 
   Restangular.setRequestSuffix('?page_size=0');
   geocodeResource = Restangular.one('api/v1/geocode/');
   reverseGeocodeResource = Restangular.one('api/v1/reversegeocode/');
   timeseriesResource = Restangular.one('api/v1/timeseries/');
+  tiles = Restangular.one('api/v1/tiles/');
 
   /**
    * Raster resource, last stop to the server
@@ -66,6 +68,7 @@ angular.module('lizard-nxt')
 
   return {
     //eventTypes: eventTypes,
+    tiles: tiles,
     tooltips: tooltips,
     geocode: geocodeResource,
     raster: rasterResource,
