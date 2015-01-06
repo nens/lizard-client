@@ -57,8 +57,7 @@
         <table class="table table-hover table-condensed"
                ng-if="eventAgg.data[0].hasOwnProperty('category')">
           <tbody>
-          <!-- <tr ng-repeat="(category, color) in colormap"> -->
-          <tr ng-repeat="(category, color) in colormap">
+          <tr ng-repeat="(category, color) in getColorMap(eventAgg.data[eventAgg.data.length - 1].color)">
             <td><i class="fa fa-square" style='color: <% color %> '></i></td>
             <td><% category %></td>
           </tr>

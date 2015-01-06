@@ -77,20 +77,7 @@ angular.module('dashboard')
     aggregateEvents();
 
     // hack to get color map for legend
-    scope.colormap = EventAggregateService.colorMap;
-    // // console.log("EventAggregateService.colorMap:", EventAggregateService.colorMap);
-
-    // // setTimeout(function () {
-    // //   console.log("EventAggregateService.colorMap (after 10000ms):", EventAggregateService.colorMap);
-    // // }, 10000);
-
-    // scope.getColorMap = function () {
-    //   var result = EventAggregateService.getColorMap();
-    //   console.log("[F] scope.getColorMap; result =", result);
-    //   return result;
-    // };
-
-    // scope.colorMap = EventAggregateService.colorMap;
+    scope.getColorMap = EventAggregateService.getColorMap;
   };
 
   return {

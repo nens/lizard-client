@@ -9,10 +9,13 @@
 angular.module('lizard-nxt')
   .service("EventAggregateService", ["UtilService", function (UtilService) {
 
-    this.colorMap = {};
-    this.colorScales = {};
+    var that = this; // the mind's a terrible thing to taste 8)
 
-    var that = this;
+    this.colorScales = {};
+    this.colorMaps = {};
+    this.getColorMap = function (baseColor) {
+      return that.colorMaps[baseColor];
+    };
 
     /**
      * @function timeCatComparator
@@ -37,55 +40,32 @@ angular.module('lizard-nxt')
       var MAX_CATS = 7;
       categoryCount = Math.min(categoryCount, MAX_CATS);
 
-      // first, we check whether the passed-in arg already has an has a color
-      // scale, which should never happen:
-      if (this.colorScales[baseColor]) {
-        throw new Error("THIS SHOULD NOT PRINT");
+      var i,
+          derivedColors = [],
+          baseColorTriple = UtilService.hexColorToDecimalTriple(baseColor),
+          shifts = _.map([0, 1, 2], function (i) {
+            return Math.round((255 - baseColorTriple[i]) / categoryCount);
+          });
 
-      } else {
+      _.each(_.range(categoryCount), function (i) {
+        derivedColors.push(_.map([0, 1, 2], function (j) {
+          return baseColorTriple[j] + i * shifts[j];
+        }));
+      });
 
-        var i,
-            derivedColors = [],
-            baseColorTriple = UtilService.hexColorToDecimalTriple(baseColor);
-
-        var rShift = Math.round((255 - baseColorTriple[0]) / categoryCount),
-            bShift = Math.round((255 - baseColorTriple[1]) / categoryCount),
-            gShift = Math.round((255 - baseColorTriple[2]) / categoryCount);
-
-        for (i = 0; i < categoryCount; i++) {
-          derivedColors.push([
-            baseColorTriple[0] + i * rShift,
-            baseColorTriple[1] + i * gShift,
-            baseColorTriple[2] + i * bShift,
-          ]);
-        }
-        return derivedColors.map(UtilService.decimalTripleToHexColor);
-      }
+      return derivedColors.map(UtilService.decimalTripleToHexColor);
     };
 
     /**
      * @function _getColor
      * @summary helper function to get color for category
      *
-     * @param {string} category - Category name.
-     * @param {string} baseColor - hex color.
+     * @param {string} categoryName  - Name of the current category.
+     * @param {string} categoryIndex - Index of the current category.
+     * @param {string} categoryCount - Total amt of categories.
+     * @param {string} baseColor     - Hex color.
      * @returns {string} HTML HEX color code.
      */
-    // var _getColor = function (category, baseColor) {
-
-    //   console.log("[F3] _getColor");\
-    //        return "#aaf";
-
-    //   if (!that.colorScale.hasOwnProperty(baseColor)) {
-    //     that.colorScale[baseColor] = that._buildColorScale(baseColor);
-    //   }
-
-    //   if (!that.colorMap.hasOwnProperty(category)) {
-    //     var numCategories = Object.keys(that.colorMap).length;
-    //     that.colorMap[category] = that.colorScale[baseColor][numCategories - 1];
-    //   }
-    //   return that.colorMap[category];
-    // };
     var _getColor = function (
 
       categoryName,
@@ -97,7 +77,7 @@ angular.module('lizard-nxt')
 
       var colorScaleForEventSeries;
       this.colorScales = this.colorScales || {};
-      this.colorMap = this.colorMap || {};
+      this.colorMaps = this.colorMaps || {};
 
       if (!this.colorScales.hasOwnProperty(baseColor)) {
         colorScaleForEventSeries
@@ -107,8 +87,8 @@ angular.module('lizard-nxt')
         colorScaleForEventSeries = this.colorScales[baseColor];
       }
 
-      that.colorMap[categoryName] = colorScaleForEventSeries[categoryIndex];
-      console.log("in the svc, this.colorMap now looks like:", this.colorMap);
+      that.colorMaps[baseColor] = that.colorMaps[baseColor] || {};
+      that.colorMaps[baseColor][categoryName] = colorScaleForEventSeries[categoryIndex];
       return colorScaleForEventSeries[categoryIndex];
     };
 
