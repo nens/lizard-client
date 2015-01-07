@@ -3,6 +3,9 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.dev) (XXXX-XX-XX)
 ---------------------
+
+- Fix client side handling of discrete rasters.
+
 -
 
 
