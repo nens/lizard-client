@@ -79,7 +79,11 @@ module.exports = function(config) {
       'karma-junit-reporter'
     ],
 
-    reporters: ['progress', 'coverage', 'junit'],
+    preprocessors: {
+      'app/**/*.js': ['coverage']  
+    },
+
+    reporters: ['progress', 'coverage'],
 
     junitReporter: {
       outputFile: 'qa/junit.xml',
@@ -88,9 +92,9 @@ module.exports = function(config) {
 
     coverageReporter: {
       reporters: [
-        {type: 'html', dir: 'qa/coverage/html'},
-        {type: 'cobertura', dir: 'qa/'},
-        {type: 'text-summary', dir: 'qa/'}
+        {type: 'html', dir: 'qa/', subdir: 'coverage/'},
+        {type: 'cobertura', dir: 'qa/', subdir: 'coverage/'},
+        {type: 'text-summary'}
       ]
     },
 
