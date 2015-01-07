@@ -212,13 +212,16 @@ angular.module('map')
             syncTime: function (timeState, map) {
               this.timeState = timeState;
 
-              // change image url based on timestate.
-              this._imageUrlBase = RasterService.buildURLforWMS(
-                  this,
-                  this._determineStore(timeState).name
-                  );
-              this._temporalResolution = this._determineStore(timeState).resolution;
-
+              // this only works for stores with different aggregation levels
+              // for now this is only for the radar stores
+              if (this.slug.split('/')[0] === 'radar') {
+                // change image url based on timestate.
+                this._imageUrlBase = RasterService.buildURLforWMS(
+                    this,
+                    this._determineStore(timeState).name
+                    );
+                this._temporalResolution = this._determineStore(timeState).resolution;
+              }
 
               var defer = $q.defer(),
                   currentDate = this._mkTimeStamp(timeState.at),
@@ -306,9 +309,9 @@ angular.module('map')
 
               var aggType = this.slug.split('/');
 
-              if (resolutionHours === 24) {
+              if (resolutionHours >= 24) {
                 aggType[1] = 'day';
-              } else if (resolutionHours === 1) {
+              } else if (resolutionHours >= 1 && resolutionHours < 24) {
                 aggType[1] = 'hour';
               } else {
                 aggType[1] = '5min';
