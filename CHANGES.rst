@@ -1,13 +1,23 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.2.dev) (XXXX-XX-XX)
+Unreleased (1.1.4) (XXXX-XX-XX)
+-------------------------------
+-
+
+
+Release 1.1.5 (2015-1-7)
 ---------------------
+
+- Fix category 'Overig' in hori. stacked bar charts
+
+- Fix client side handling of discrete rasters.
+
 -
 
 
 Release 1.1.3 (2014-12-30)
----------------------
+--------------------------
 
 - Fix 'Cannot read property 'lng' of undefined'.
 
@@ -23,7 +33,7 @@ Release 1.0.2 (2014-12-16)
 
 
 Release 1.1.2 (2014-12-24)
----------------------
+--------------------------
 
 - handle API response for discrete rasters (same format for point/area mode)
 
