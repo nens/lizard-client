@@ -1,12 +1,45 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.2.dev) (XXXX-XX-XX)
-----------------------------------
--
+Unreleased (1.1.4) (XXXX-XX-XX)
+-------------------------------
+
+- Zapped patches for display_name vs name.
+
+
+Release 1.1.6 (2015-1-7)
+------------------------
+
+- Fix 'TODO' label for source in discrete raster point click.
+
+
+Release 1.1.5 (2015-1-7)
+------------------------
+
+- Fix category 'Overig' in hori. stacked bar charts
+
+- Fix client side handling of discrete rasters.
+
+
+Release 1.1.3 (2014-12-30)
+--------------------------
+
+- Fix 'Cannot read property 'lng' of undefined'.
+
+- Fix 'this._map is null'.
+
+- Fix 'Attempted to add layer undefined while it was already part of the map'
+
+
+Release 1.0.2 (2014-12-16)
+--------------------------
+
+- Help button.
 
 Release 1.1.2 (2014-12-24)
----------------------
+--------------------------
+
+- handle API response for discrete rasters (same format for point/area mode)
 
 - Limit extent 1970 - 2016
 
@@ -38,6 +71,7 @@ Release 1.1.1 (2014-12-23)
 
 - Removed unused images.
 
+- Raster animation on day images.
 
 Release 1.1.0 (2014-12-17)
 --------------------------

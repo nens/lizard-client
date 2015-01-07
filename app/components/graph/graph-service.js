@@ -424,10 +424,17 @@ angular.module('lizard-nxt')
 
     // Rects set their value on the label axis when hoovered
     rects.on('mousemove', function (d) {
-      var labelstr = d.label.split('-'),
-      label = Math.round(d[keys.x] * 100) + '% ' + labelstr[labelstr.length - 1];
+      var label;
+      if (d.label === -1) {
+        label = Math.round(d[keys.x] * 100) + '% ' + "overig";
+      } else {
+        var labelstr = d.label.split('-');
+        label = Math.round(d[keys.x] * 100) + '% ' + labelstr[labelstr.length - 1];
+      }
+
       svg.select('#xlabel')
-        .text(label).attr("class", 'selected');
+        .text(label)
+        .attr("class", "selected");
     });
 
     // When the user moves the mouse away from the graph, put the original

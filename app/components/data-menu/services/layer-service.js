@@ -46,7 +46,7 @@ angular.module('data-menu')
         // Physical time in millieseconds between frames.
         Object.defineProperty(this, '_temporalResolution', {
           value: temporalResolution,
-          writable: false,
+          writable: true,
         });
         Object.defineProperty(this, 'bounds', {
           value: layer.bounds,

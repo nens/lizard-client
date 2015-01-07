@@ -200,7 +200,9 @@ describe('Testing hash controller', function () {
     $browser,
     createController,
     LocationGetterSetter,
-    DataService;
+    DataService,
+    State,
+    $compile;
 
   beforeEach(module('lizard-nxt'));
 
@@ -208,13 +210,8 @@ describe('Testing hash controller', function () {
     $location = $injector.get('$location');
     $rootScope = $injector.get('$rootScope');
     $controller = $injector.get('$controller');
-    $browser = $injector.get('$browser');
     $scope = $rootScope.$new();
-    DataService = $injector.get('DataService');
-    var MapService = $injector.get('MapService');
-    var el = angular.element('<div></div>');
-    MapService.initializeMap(el[0], {});
-    MapService.fitBounds = function (bounds) {};
+    State = $injector.get('State')
     LocationGetterSetter = $injector.get('LocationGetterSetter');
 
     // Mock MapService
@@ -246,7 +243,7 @@ describe('Testing hash controller', function () {
     // Mock the box
     $scope.box = {type: 'area'};
 
-    createController = function () {
+    createController = function (scope) {
       return $controller('UrlController', {
         '$scope': $scope,
         'LocationGetterSetter': LocationGetterSetter

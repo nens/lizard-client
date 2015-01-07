@@ -41,10 +41,8 @@ angular.module('lizard-nxt')
             left: 0
           }
         },
-
         start = State.temporal.start,
         end = State.temporal.end,
-
         el = element.find('svg');
 
     var interaction = {
