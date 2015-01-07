@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.1.4) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.1.6 (2015-1-7)
+---------------------
 
 - Fix 'TODO' label for source in discrete raster point click.
 
