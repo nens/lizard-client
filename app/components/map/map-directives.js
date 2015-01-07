@@ -72,8 +72,6 @@ angular.module('map')
           onMouseMove: _mouseMove
         });
 
-      $controller('UrlController', {$scope: scope});
-
       /**
        * Watch bounds of state and update map bounds when state is changed.
        */
@@ -84,6 +82,14 @@ angular.module('map')
         } else {
           mapSetsBounds = false;
         }
+      });
+
+      /**
+       * Watch temporal.at of app and update maplayers accordingly.
+       */
+      scope.$watch(State.toString('temporal.at'), function (n, o) {
+        if (n === o) { return; }
+        MapService.syncTime(State.temporal);
       });
 
       scope.$watch(State.toString('box.type'), function (n, o) {
@@ -110,7 +116,7 @@ angular.module('map')
     return {
       restrict: 'E',
       replace: true,
-      template: '<div id="map"></div>',
+      template: '<div id="map" class="map"></div>',
       link: link
     };
   }
