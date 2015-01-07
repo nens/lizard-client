@@ -63,6 +63,7 @@ angular.module('map')
       };
 
       MapService.initializeMap(element[0], {
+          attributionControl: false,
           zoomControl: false,
           addZoomTitles: true,
         }, {
@@ -76,7 +77,6 @@ angular.module('map')
        * Watch bounds of state and update map bounds when state is changed.
        */
       scope.$watch(State.toString('spatial.bounds'), function (n, o) {
-        if (n === o) { return; }
         if (!mapSetsBounds) {
           MapService.fitBounds(State.spatial.bounds);
         } else {

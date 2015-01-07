@@ -23,6 +23,7 @@ angular.module("lizard-nxt", [
   'map',
   'omnibox',
   'restangular',
+  'dashboard',
   'global-state',
   'ngSanitize',
   'ngCsv'

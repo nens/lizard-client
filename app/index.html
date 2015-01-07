@@ -123,18 +123,18 @@
       </div>
     </div>
 
-    <div id="text-mode-scrollable">
+    <div id="url-temp-map" class="map"></div>
+
+    <div ng-if="context === 'map'">
+      <map></map>
+      <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
+    </div>
+
+    <div ng-if="context === 'db'">
+      <dashboard></dashboard>
     </div>
 
     <datamenu></datamenu>
-
-    <map></map>
-
-    <div id="url-temp-map" class="map"></div>
-
-    <div class="container">
-      <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
-    </div>
 
     <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
 
@@ -232,6 +232,10 @@
 
     <script src="/components/graph/graph-service.js"></script>
     <script src="/components/graph/graph-directives.js"></script>
+
+    <script src="/components/dashboard/dashboard.js"></script>
+    <script src="/components/dashboard/dashboard-controller.js"></script>
+    <script src="/components/dashboard/dashboard-directive.js"></script>
 
     <script src="/components/single-click/single-click-directive.js"></script>
     <script src="/components/opacity/opacity-directives.js"></script>

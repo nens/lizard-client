@@ -6,6 +6,8 @@ Unreleased (1.1.4) (XXXX-XX-XX)
 
 - Zapped patches for display_name vs name.
 
+- Beta dashboard implementation for events.
+
 
 Release 1.1.6 (2015-1-7)
 ------------------------
@@ -35,7 +37,6 @@ Release 1.0.2 (2014-12-16)
 --------------------------
 
 - Help button.
-
 
 Release 1.1.2 (2014-12-24)
 --------------------------

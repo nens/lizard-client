@@ -102,7 +102,23 @@ angular.module('lizard-nxt')
       if (n === o) { return true; }
       graphCtrl.setData(scope);
       // Call graph with the new data
-      graphCtrl.updateData.call(graphCtrl.graph, graphCtrl.data, graphCtrl.keys, graphCtrl.labels);
+      graphCtrl.updateData.call(graphCtrl.graph, graphCtrl.data,
+                                graphCtrl.keys, graphCtrl.labels);
+      // Call the graph with the now
+      if (scope.temporal && scope.temporal.at) {
+        graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
+      }
+    });
+
+    /**
+     * Calls updateGraph when keys changes.
+     */
+    scope.$watch('keys', function (n, o) {
+      if (n === o) { return true; }
+      graphCtrl.setData(scope);
+      // Call graph with the new data
+      graphCtrl.updateData.call(graphCtrl.graph, graphCtrl.data,
+                                graphCtrl.keys, graphCtrl.labels);
       // Call the graph with the now
       if (scope.temporal && scope.temporal.at) {
         graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);

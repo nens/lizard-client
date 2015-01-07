@@ -41,6 +41,8 @@ module.exports = function(config) {
       'app/components/map/map.js', // Load these first to prevent dep clash
       'app/templates.js',
       'app/components/omnibox/omnibox.js',
+      'app/components/state/state.js',
+      'app/components/dashboard/dashboard.js',
       'app/lizard-nxt.js',
       'test/mocks/**/*.js',
       'app/lib/**/*.js',

@@ -33,7 +33,6 @@ module.exports = function(config) {
       'vendor/angular-sanitize/angular-sanitize.js',
       'vendor/ng-csv/build/ng-csv.min.js',
       // endbower
-
       // application
       'test/mocks/beforeModuleMocks.js',
       'app/components/state/state.js', // Load these first to prevent dep clash
@@ -42,6 +41,8 @@ module.exports = function(config) {
       'app/components/state/state.js', // Load these first to prevent dep clash
       'app/templates.js',
       'app/components/omnibox/omnibox.js',
+      'app/components/state/state.js',
+      'app/components/dashboard/dashboard.js',
       'app/lizard-nxt.js',
       'test/mocks/**/*.js',
       'app/lib/**/*.js',

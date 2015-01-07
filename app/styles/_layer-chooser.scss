@@ -5,7 +5,7 @@
 .layer-switcher-wrapper {
     position: absolute;
     right: -200px;
-    top: 50px;
+    top: $navbarheight;
     transition: .3s ease;
     width: $width6;
     z-index: 15000;

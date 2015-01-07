@@ -23,6 +23,7 @@ angular.module('lizard-nxt')
    'user',
    'versioning',
    'State',
+   'MapService',
 
   function ($scope,
             $controller,
@@ -31,11 +32,36 @@ angular.module('lizard-nxt')
             ClickFeedbackService,
             user,
             versioning,
-            State) {
+            State,
+            MapService) {
 
   $scope.user = user;
   $scope.versioning = versioning;
   $scope.tooltips = CabinetService.tooltips;
+
+  // CONTEXT
+
+  /**
+   * Switch between contexts.
+   *
+   * @param {string} context - Context name to switch to
+   */
+  $scope.switchContext = function (context) {
+    State.context = context;
+  };
+
+  /*
+   * Set context on scope.
+   */
+  $scope.$watch(State.toString('context'), function (n, o) {
+    if (n === o) { return true; }
+    $scope.context = State.context;
+  });
+
+  // initialise context.
+  $scope.context = State.context;
+
+  // END CONTEXT
 
   // KEYPRESS
 

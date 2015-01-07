@@ -163,6 +163,7 @@ angular.module('lizard-nxt')
           );
           drawLabel(this._svg, this.dimensions, labels.y, true);
         }
+
         drawVerticalRects(
           this._svg,
           this.dimensions,
@@ -330,6 +331,7 @@ angular.module('lizard-nxt')
         cumulativeData.push(d);
       });
     });
+
     return cumulativeData;
   };
 
@@ -403,7 +405,7 @@ angular.module('lizard-nxt')
     // ENTER
     // Create new elements as needed.
     rects.enter().append("rect")
-      .style("fill", function (d) { return d.color; })
+      .style("fill", function (d) { return d[keys.color]; })
       .attr("x", function (d) { return scale(d.start); })
       .attr("y", 0)
       .attr('class', 'horizontal-rect')
@@ -475,25 +477,21 @@ angular.module('lizard-nxt')
     // UPDATE
     bar
       .transition()
-      .duration(duration)
-        .attr("y", height) // hide bars (step 1)
-        .attr("height", 0) // hide bars (step 2)
+      .duration(1)
+      .delay(duration)
+        // change x when bar is invisible:
+        .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
+        // change width when bar is invisible:
+        .attr('width', function (d) { return barWidth; })
+        .style("fill", function (d) { return d[keys.color] || ''; })
           .transition()
-          .duration(1)
-          .delay(duration)
-            // change x when bar is invisible:
-            .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
-            // change width when bar is invisible:
-            .attr('width', function (d) { return barWidth; })
-              .transition()
-              .duration(duration)
-              .delay(duration * 4)
-                .attr("height", function (d) {
-                  return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
-                })
-                .attr("y", function (d) { return y.scale(d[keys.y]); })
+          .duration(duration)
+          .delay(duration * 4)
+            .attr("height", function (d) {
+              return y.scale(d.y0) - y.scale(d[keys.y]) || height - y.scale(d[keys.y]);
+            })
+            .attr("y", function (d) { return y.scale(d[keys.y]); })
     ;
-
 
     // ENTER
     // Create new elements as needed.
@@ -503,7 +501,7 @@ angular.module('lizard-nxt')
       .attr('width', function (d) { return barWidth; })
       .attr("y", function (d) { return y.scale(0); })
       .attr("height", 0)
-      .style("fill", function (d) { return d.color || ''; })
+      .style("fill", function (d) { return d[keys.color] || ''; })
       .transition()
       .duration(duration * 2)
         // Bring bars in one by one

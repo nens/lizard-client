@@ -12,14 +12,32 @@
  * state leads the url.
  */
 angular.module('lizard-nxt')
-  .controller('UrlController', ['$scope', 'LocationGetterSetter',
-  'UrlState', 'dataBounds', 'DataService', 'MapService', 'State', '$rootScope', 'LeafletService', '$compile',
-  function ($scope, LocationGetterSetter, UrlState, dataBounds, DataService, MapService, State, $rootScope, LeafletService, $compile) {
+.controller('UrlController', [
+  '$scope',
+  'LocationGetterSetter',
+  'UrlState',
+  'dataBounds',
+  'DataService',
+  'MapService',
+  'State',
+  '$rootScope',
+  'LeafletService',
+  function (
+    $scope,
+    LocationGetterSetter,
+    UrlState,
+    dataBounds,
+    DataService,
+    MapService,
+    State,
+    $rootScope,
+    LeafletService
+  ) {
 
     // Configuration object for url state.
     var state = {
       context: { // Locally used name for the state
-        value: 'map', // Default to accomodate future support for contextSwitch
+        value: 'map', // default
         part: 'path', // Part of the url where this state is stored,
         index: 0, // Position of the state in the part
       },
@@ -49,10 +67,10 @@ angular.module('lizard-nxt')
     * @function
     * @memberOf app.UrlController
     * @summary Enables or disables layerGroups on the basis of the url.
-    * @description Takes the layerGroups as defined in the url to turn layerGroups on
-    *              afterwards it initializes all other layerGroups. This is done
-    *              here so MapService does not turn on layerGroups which are
-    *              turned of later by this controller.
+    * @description Takes the layerGroups as defined in the url to turn
+    *              layerGroups on afterwards it initializes all other
+    *              layerGroups. This is done here so MapService does not turn
+    *              on layerGroups which are turned of later by this controller.
     * @param {string} String representation of layerGroups on url
     */
     var enablelayerGroups = function (layerGroupString) {
@@ -128,7 +146,11 @@ angular.module('lizard-nxt')
     $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
       if (!State.temporal.timelineMoving) {
-        UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
+        UrlState.setTimeStateUrl(
+          state,
+          State.temporal.start,
+          State.temporal.end
+        );
       }
     });
 
@@ -144,8 +166,20 @@ angular.module('lizard-nxt')
       if (old === 'point' || old === 'line') {
         // Remove geometry from url
         state.boxType.update = false;
-        LocationGetterSetter.setUrlValue(state.geom.part, state.geom.index, undefined);
+        LocationGetterSetter.setUrlValue(
+          state.geom.part, state.geom.index, undefined);
       }
+    });
+
+    /*
+     * Set context when context changed
+     */
+    $scope.$watch(State.toString('context'), function (n, old) {
+      if (n === old) { return true; }
+      state.context.update = false;
+      LocationGetterSetter.setUrlValue(
+        state.context.part, state.context.index, $scope.context
+      );
     });
 
     /**
@@ -154,7 +188,10 @@ angular.module('lizard-nxt')
     $scope.$watch(State.toString('spatial.here'), function (n, o) {
       if (n === o || State.box.type !== 'point') { return true; }
       state.geom.update = false;
-      UrlState.setgeomUrl(state, State.box.type, State.spatial.here, State.spatial.points);
+      UrlState.setgeomUrl(state,
+                          State.box.type,
+                          State.spatial.here,
+                          State.spatial.points);
     });
 
     /**
@@ -162,7 +199,11 @@ angular.module('lizard-nxt')
      */
     $scope.$watch(State.toString('spatial.points'), function (n, o) {
       if (n === o || State.box.type !== 'line') { return true; }
-      UrlState.setgeomUrl(state, State.box.type, State.spatial.here, State.spatial.points);
+      UrlState.setgeomUrl(state,
+        State.box.type,
+        State.spatial.here,
+        State.spatial.points
+      );
     });
 
     /**
@@ -186,7 +227,11 @@ angular.module('lizard-nxt')
         time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
         context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
 
-      LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
+      if (context) {
+        State.context = context;
+      } else {
+        LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
+      }
       if (boxType) {
         State.box.type = boxType;
       } else {

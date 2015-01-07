@@ -9,4 +9,9 @@
     <div class="layer-img" class="layer-chooser" ng-style="layergroup.imageStyle"></div>
   </label>
 </li>
-<opacity-slider title="<% tooltips.transparency %>"></opacity-slider>
+
+<div ng-if="context === 'map'">
+
+  <opacity-slider title="<% tooltips.transparency %>"></opacity-slider>
+
+</div>
