@@ -38,6 +38,7 @@ angular.module('dashboard')
                       lg.mapLayers[0].color
                     ),
               ylabel: lg.name,
+              baseColor: lg.mapLayers[0].color
             };
 
             scope.eventAggs.push(eventAgg);
