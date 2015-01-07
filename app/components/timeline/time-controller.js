@@ -21,7 +21,6 @@ angular.module('lizard-nxt')
   "RasterService",
   'UtilService',
   'DataService',
-  'MapService',
   'State',
 
   function (
@@ -31,7 +30,6 @@ angular.module('lizard-nxt')
     RasterService,
     UtilService,
     DataService,
-    MapService,
     State) {
 
     window.requestAnimationFrame = window.requestAnimationFrame ||
@@ -188,9 +186,23 @@ angular.module('lizard-nxt')
      * @param  {object} timeState nxt timeState object
      */
     var syncTimeWrapper = function (timeState) {
-      promise = MapService.syncTime(timeState);
+      var defer = $q.defer();
+
       if (timeState.playing) {
-        progressAnimation(promise);
+        progressAnimation(defer.promise);
+      }
+      if (State.layerGroups.timeIsSyncing) {
+        var watch = $scope.$watch(
+          function () { return State.layerGroups.timeIsSyncing; },
+          function (loading) {
+            if (loading === false) {
+              defer.resolve();
+              watch();
+            }
+          }
+        );
+      } else {
+        defer.resolve();
       }
     };
 
@@ -205,10 +217,11 @@ angular.module('lizard-nxt')
       clearTimeout(timeOut);
       // when the minLag has passed.
       timeOut = setTimeout(function () {
-        // And the layergroups are all ready
+        // And the layergroups are all ready.
         finish.then(function () {
-          // And the browser is ready.
+          // And we are still animating.
           if (State.temporal.playing) {
+            // And the browser is ready. GO!
             window.requestAnimationFrame(step);
           }
         });

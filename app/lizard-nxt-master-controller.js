@@ -16,6 +16,7 @@ angular.module('lizard-nxt')
   .controller('MasterCtrl',
 
   ['$scope',
+   '$controller',
    'CabinetService',
    'UtilService',
    'ClickFeedbackService',
@@ -24,6 +25,7 @@ angular.module('lizard-nxt')
    'State',
 
   function ($scope,
+            $controller,
             CabinetService,
             UtilService,
             ClickFeedbackService,
@@ -78,6 +80,10 @@ angular.module('lizard-nxt')
   // catch window.load event
   window.addEventListener("load", function () {
     window.loaded = true;
+    $scope.$apply(function () {
+      $controller('UrlController', {$scope: $scope});
+    });
   });
+
 
 }]);

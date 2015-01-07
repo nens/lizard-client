@@ -4,7 +4,7 @@
  * @description directive that displays search
  * and makes sure the right services are called.
  */
-angular.module('lizard-nxt')
+angular.module('omnibox')
   .directive('search', ['LocationService', 'ClickFeedbackService', 'MapService', 'State',
   function (LocationService, ClickFeedbackService, MapService, State) {
 
