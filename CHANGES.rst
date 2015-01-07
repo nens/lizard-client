@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.1.4) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.1.5 (2015-1-7)
+---------------------
 
 - Fix category 'Overig' in hori. stacked bar charts
 
