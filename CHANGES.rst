@@ -6,6 +6,8 @@ Unreleased (1.1.4) (XXXX-XX-XX)
 
 - Zapped patches for display_name vs name.
 
+- Beta dashboard implementation for events.
+
 
 Release 1.1.6 (2015-1-7)
 ------------------------
