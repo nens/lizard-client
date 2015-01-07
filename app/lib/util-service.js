@@ -449,23 +449,6 @@ angular.module('lizard-nxt')
   };
 
 
-  /*
-   * @description - Replace display_name value with name value, if applicable
-   * @param {string} str - The string to be converted.
-   */
-  this.fixUTFNameData = function (obj) {
-    if (obj.display_name === '' || obj.display_name === undefined) {
-      // If the to-be printed key (obj.display_name) has no value...
-      if (obj.name !== '' && obj.name !== undefined) {
-        // ..and it's alternative (obj.name) does have one,
-        // we simply copy the alt value.
-        obj.display_name = obj.name;
-      }
-    }
-    return obj;
-  };
-
-
   /**
    * @description - Deduce the wanted geometry-type from the passed in geomOpts
    * @param {object} geomOpts - the options.geom object
