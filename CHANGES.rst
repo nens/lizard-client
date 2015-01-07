@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (1.1.4) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix 'TODO' label for source in discrete raster point click.
 
 
 Release 1.1.5 (2015-1-7)
@@ -12,8 +13,6 @@ Release 1.1.5 (2015-1-7)
 - Fix category 'Overig' in hori. stacked bar charts
 
 - Fix client side handling of discrete rasters.
-
--
 
 
 Release 1.1.3 (2014-12-30)
