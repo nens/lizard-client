@@ -381,7 +381,7 @@ angular.module('lizard-nxt')
   return function (input) {
     return input.match(/^.*-.*-.*$/g)
       ? input.split(' - ')[1]
-      : "TODO"; // return dummy source for non-verbose labeling (e.g 'soil')
+      : ""; // if no source is given, return empty string
   };
 });
 
