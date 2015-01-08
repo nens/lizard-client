@@ -69,31 +69,22 @@ angular.module('lizard-nxt')
     };
 
     /**
-     * @function
-     * @description filters geojson array on temporal bounds.
-     * @param  {object}      start end object
-     * @param  {feature[]}   sourceArray
-     * @return {filteredSet} filtered set of features.
+     * @description - Checks whether a single feature must be drawn given
+     *                a certain timeState.
      */
-    var filterTemporal = function (sourceArray, temporal) {
+    var isInTempExtent = function (feature, temporal) {
 
-      var filteredSet = [],
-          eventStartBeforeTLStart,
-          eventStartAfterTLStart,
-          eventEndBeforeTLStart,
-          eventEndAfterTLStart,
-          eventEndBeforeTLEnd;
+      // console.log("feature.properties.timestamp_start:", feature.properties.timestamp_start);
+      // console.log("temporal.start:", temporal.start);
+      // console.log("---------------------");
 
-      sourceArray.forEach(function (feature) {
-
-        eventStartBeforeTLStart = false;
-        eventStartAfterTLStart = false;
-        eventEndBeforeTLStart = false;
-        eventEndAfterTLStart = false;
-        eventEndBeforeTLEnd = false;
+      var eventStartBeforeTLStart = false,
+          eventStartAfterTLStart = false,
+          eventEndBeforeTLStart = false,
+          eventEndAfterTLStart = false,
+          eventEndBeforeTLEnd = false;
 
         if (temporal.start) {
-          // we can set the 4 booleans related to ..TLStart:
           eventStartBeforeTLStart
             = feature.properties.timestamp_start < temporal.start;
           eventStartAfterTLStart
@@ -106,58 +97,34 @@ angular.module('lizard-nxt')
 
         if (temporal.end) {
           eventEndBeforeTLEnd
-            = feature.properties.timestamp_end < temporal.end;// chk
+            = feature.properties.timestamp_end < temporal.end;
         }
 
-        // We process the feature iff one of the following is true:
-
-        // (1) The event starts before tl start && the event ends after tl
-        // start:
-        //                      <--extent-->
-        // kruik <----------oooo[oooo------]--------------------> eind der tijd
-        // kruik <----------oooo[oooooooooo]oooo----------------> eind der tijd
         if (eventStartBeforeTLStart
-            && eventEndAfterTLStart) { filteredSet.push(feature); }
-
-        // (2) The event starts within tl bounds:
-        //                      <--extent-->
-        // kruik <--------------[--oooooooo]oooo----------------> eind der tijd
-        // kruik <--------------[--oooooo--]--------------------> eind der tijd
-
-        // Explicit code for (2) is redundant when viewing code for (3): since
-        // (3) |= (2) (see table)
-
-        //  A B C D | A and B | (A or C) and (B or D)
-        //  --------+---------+----------------------
-        //  0 0 0 0 |    0    |     0     0     0
-        //  0 0 0 1 |    0    |     0     0     1
-        //  0 0 1 0 |    0    |     1     0     0
-        //  0 0 1 1 |    0    |     1     1     1
-        //  0 1 0 0 |    0    |     0     0     1
-        //  0 1 0 1 |    0    |     0     0     1
-        //  0 1 1 0 |    0    |     1     1     1
-        //  0 1 1 1 |    0    |     1     1     1
-        //  --------+---------+-----------------------
-        //  1 0 0 0 |    0    |     1     0     0
-        //  1 0 0 1 |    0    |     1     1     1
-        //  1 0 1 0 |    0    |     1     0     0
-        //  1 0 1 1 |    0    |     1     1     1
-        //  1 1 0 0 |    1    |     1     1     1
-        //  1 1 0 1 |    1    |     1     1     1
-        //  1 1 1 0 |    1    |     1     1     1
-        //  1 1 1 1 |    1    |     1     1     1
-
-        // unused code for (2), for explicitness' sake:
-        // else if (eventStartAfterTLStart
-        //          && eventStartBeforeTLEnd) { filteredSet.push(feature); }
-
-        // 3) Also, deal with undefined start/end values:
+            && eventEndAfterTLStart) { return true; }
         else if (
                   (temporal.start === undefined || eventStartAfterTLStart)
                   && (temporal.end === undefined || eventEndBeforeTLEnd)
                 )
-                { filteredSet.push(feature); }
+                { return true; }
+        else {
+          return false;
+        }
+    };
 
+    /**
+     * @function
+     * @description filters geojson array on temporal bounds.
+     * @param  {object}      start end object
+     * @param  {feature[]}   sourceArray
+     * @return {filteredSet} filtered set of features.
+     */
+    var filterTemporal = function (sourceArray, temporal) {
+      var filteredSet = [];
+      sourceArray.forEach(function (feature) {
+        if (isInTempExtent(feature, temporal)) {
+          filteredSet.push(feature);
+        }
       });
       return filteredSet;
     };
@@ -308,7 +275,8 @@ angular.module('lizard-nxt')
 
     return {
       getData: getData,
-      setData: setData
+      setData: setData,
+      isInTempExtent: isInTempExtent
     };
   }
 ]);

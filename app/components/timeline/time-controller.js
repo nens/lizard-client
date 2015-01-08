@@ -90,6 +90,7 @@ angular.module('lizard-nxt')
      * n === o return here.
      */
     $scope.$watch(State.toString('temporal.at'), function (n, o) {
+      console.log("[W] TimeCtrl -> temporal.at");
       if (n === o) { return true; }
       syncTimeWrapper(State.temporal);
     });
@@ -180,6 +181,7 @@ angular.module('lizard-nxt')
      * @param  {object} timeState nxt timeState object
      */
     var syncTimeWrapper = function (timeState) {
+      console.log("[F] MapService.syncTimeWrapper");
       promise = MapService.syncTime(timeState);
       if (timeState.playing) {
         progressAnimation(promise);

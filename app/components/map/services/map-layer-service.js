@@ -10,7 +10,6 @@
 angular.module('map')
   .factory('NxtMapLayer', ['$q', '$http', function ($q, $http) {
 
-
       return {
 
         add: function (map) {
@@ -60,9 +59,9 @@ angular.module('map')
           }
         },
 
-
         syncTime: function (timeState) {
-          return;
+          console.log("[F] MapLayerSvc.syncTime");
+          // return;
           if (this.format !== 'Vector') { return; }
           var defer = $q.defer();
           if (timeState.playing) {
