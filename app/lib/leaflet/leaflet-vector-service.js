@@ -13,6 +13,12 @@ angular.module('lizard-nxt')
 
   var MarkerClusterLayer = LeafletService.MarkerClusterGroup.extend({
 
+    // Define aliasses that makes sense in the nxt world
+    addMarker: this.addLayer,
+    removeMarker: this.removeLayer,
+    markers: [],
+    removedMarkers: [],
+
     /**
      * @function
      * @description adds functionality to original Add function
@@ -35,11 +41,17 @@ angular.module('lizard-nxt')
                 + 'fill-opacity="0.9" fill="' + color + '" />'
                 + '</svg>'
         });
+        var marker;
         response.forEach(function (f) {
-          var marker = L.marker(
+          marker = L.marker(
             [f.geometry.coordinates[1], f.geometry.coordinates[0]],
-            {icon: icon});
-          layer.addLayer(marker);
+            {
+              icon: icon,
+              start: f.properties.start,
+              end: f.properties.end
+            });
+          layer.addMarker(marker);
+          layer.markers.push(marker);
         });
       });
 
@@ -68,6 +80,17 @@ angular.module('lizard-nxt')
      * @description sync the time
      */
     syncTime: function (layer, timeState) {
+      var start = timeState.at,
+          end = timeState.at + timeState.aggWindow;
+      // remove all markers outside temp bound
+      this.markers.forEach(function (marker) {
+        var toRm = marker.options.start > start || marker.options.end < end;
+        if (toRm && this.hasMarker(marker)) { this.removeMarker(marker); }
+        if (!toRm && !this.hasMarker(marker)) { this.addMarker(marker); }
+        return;
+      }, this)
+      //
+      // add all markers that were outside of the temp bounds
       this.options.start = timeState.start;
       this.options.end = timeState.end;
       this.redraw();
