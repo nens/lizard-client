@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.1.4) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.2.1 (2015-1-8)
+---------------------
 
 - Zapped patches for display_name vs name.
 
