@@ -115,7 +115,7 @@ angular.module('lizard-nxt')
           activeTemporalLgs.push(null);
         }
 
-        if (lg.temporal && lg.temporalResolution < timeStep) {
+        if (lg.temporal && lg.temporalResolution !== 0 && lg.temporalResolution < timeStep) {
           timeStep = lg.temporalResolution;
           // equals to 250 ms for 5 minutes, increases for larger timeSteps untill
           // it reaches 1 second between frames for timeSteps of > 20 minutes.
