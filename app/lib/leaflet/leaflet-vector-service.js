@@ -13,18 +13,6 @@ angular.module('lizard-nxt')
 
   var MarkerClusterLayer = LeafletService.MarkerClusterGroup.extend({
 
-    // Define aliasses that makes sense in the nxt world
-    markers: [],
-
-    // Define aliasses that makes sense in the nxt world
-    addMarkerToLayer: function (marker) {
-      this.addLayer(marker);
-    },
-
-    removeMarkerFromLayer: function (marker) {
-      this.removeLayer(marker);
-    },
-
     /**
      * @function
      * @description adds functionality to original Add function
@@ -33,13 +21,17 @@ angular.module('lizard-nxt')
     onAdd: function (map) {
       LeafletService.MarkerClusterGroup.prototype.onAdd.call(this, map);
 
-      this._map = map;
+      this.addMarker = this.addLayer;
+      this.removeMarker = this.removeLayer;
+      this.hasMarker = this.hasLayer;
 
       var color = this.options.color,
           layer = this;
 
       VectorService.getData(this.options.slug, {})
       .then(function (response) {
+        layer.markers = [];
+
         var pxSize = 4,
             marker;
 
@@ -59,11 +51,25 @@ angular.module('lizard-nxt')
               timestamp_start: f.properties.timestamp_start,
               timestamp_end: f.properties.timestamp_end
             });
-          layer.addMarkerToLayer(marker);
+          layer.addMarker(marker);
           layer.markers.push(marker);
         });
+
         layer.syncTime();
       });
+    },
+
+
+    /**
+     * @function
+     * @description Remove geojson sublayer
+     * plus call original onremove event
+     * @param {object} instance of Leaflet.Map
+     */
+    onRemove: function (map) {
+      LeafletService.MarkerClusterGroup.prototype.onRemove.call(this, map);
+      this.markers.forEach(function (marker) { this.removeMarker(marker); }, this);
+      this.markers = [];
     },
 
     /**
@@ -86,16 +92,16 @@ angular.module('lizard-nxt')
      * @function
      * @description sync the time
      */
-    syncTime: function (timeState, map) {
+    syncTime: function (timeState) {
+      if (timeState) {
+        this.timeState = timeState;
+      }
 
-      this.options.start = timeState.start;
-      this.options.end = timeState.end;
-
-      if (this.markers.length > 0) {
-        var start = timeState.playing ? timeState.at : timeState.start,
-          end = timeState.playing
-            ? timeState.at + timeState.aggWindow
-            : timeState.end,
+      if (this.markers && this.markers.length > 0) {
+        var start = this.timeState.playing ? this.timeState.at : this.timeState.start,
+            end = this.timeState.playing
+            ? this.timeState.at + this.timeState.aggWindow
+            : this.timeState.end,
           markerTimeObject,
           mustRemoveMarker;
 
@@ -106,11 +112,11 @@ angular.module('lizard-nxt')
             timestamp_end: marker.options.timestamp_end
           };
 
-          mustRemoveMarker = !VectorService.isInTempExtent(markerTimeObject, timeState);
-          if (this.hasLayer(marker) && mustRemoveMarker) {
-            this.removeMarkerFromLayer(marker);
-          } else if (!this.hasLayer(marker) && !mustRemoveMarker) {
-            this.addMarkerToLayer(marker);
+          mustRemoveMarker = !VectorService.isInTempExtent(markerTimeObject, {start: start, end: end});
+          if (this.hasMarker(marker) && mustRemoveMarker) {
+            this.removeMarker(marker);
+          } else if (!this.hasMarker(marker) && !mustRemoveMarker) {
+            this.addMarker(marker);
           }
         }, this);
       }

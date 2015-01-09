@@ -92,6 +92,22 @@ angular.module('map')
         MapService.syncTime(State.temporal);
       });
 
+      /**
+       * Watch timelineMoving to maplayers to time domain.
+       */
+      scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
+        if (n === o) { return; }
+        MapService.syncTime(State.temporal);
+      });
+
+      /**
+       * Watch timelineMoving to maplayers to time domain.
+       */
+      scope.$watch(State.toString('temporal.playing'), function (n, o) {
+        if (n === o) { return; }
+        MapService.syncTime(State.temporal);
+      });
+
       scope.$watch(State.toString('box.type'), function (n, o) {
         if (n === o) { return true; }
         var selector;
