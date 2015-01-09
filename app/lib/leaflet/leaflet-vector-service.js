@@ -14,32 +14,14 @@ angular.module('lizard-nxt')
   var MarkerClusterLayer = LeafletService.MarkerClusterGroup.extend({
 
     // Define aliasses that makes sense in the nxt world
-    //addMarker: this.addLayer,
-    //removeMarker: this.removeLayer,
-    //markers: [],
-    // displayedMarkers: [],
-    // removedMarkers: [],
     allMarkers: [],
 
     // Define aliasses that makes sense in the nxt world
     addMarkerToLayer: function (marker) {
-      //this.markers.push(marker);
       this.addLayer(marker);
-
-      // We need to rm this marker from the list 'removedMarkers'; expensive,
-      // but undoable any other way?
-
-      // var tmpRemovedMarkers = [];
-      // this.removedMarkers.forEach(function (removedMarker) {
-      //   if (JSON.stringify(marker) !== JSON.stringify(removedMarker)) {
-      //     tmpRemovedMarkers.push(removedMarker);
-      //   }
-      // });
-      // this.removedMarkers = tmpRemovedMarkers;
     },
 
     removeMarkerFromLayer: function (marker) {
-      //this.removedMarkers.push(marker);
       this.removeLayer(marker);
     },
 
@@ -65,15 +47,20 @@ angular.module('lizard-nxt')
         });
         var marker;
         response.forEach(function (f) {
+          if (f.properties.timestamp_start === undefined) {
+            console.log("[E] Tried to built marker w/o available attr: timestamp_start");
+            throw new Error("abort.");
+          } else {
+            console.log("[+] f.properties.timestamp_start =", f.properties.timestamp_start);
+          }
           marker = L.marker(
             [f.geometry.coordinates[1], f.geometry.coordinates[0]],
             {
               icon: icon,
-              start: f.properties.start,
-              end: f.properties.end
+              timestamp_start: f.properties.timestamp_start,
+              timestamp_end: f.properties.timestamp_end
             });
           layer.addMarkerToLayer(marker);
-          //layer.displayedMarkers.push(marker);
           layer.allMarkers.push(marker);
         });
       });
@@ -104,11 +91,23 @@ angular.module('lizard-nxt')
 
       var start = timeState.at,
           end = timeState.at + timeState.aggWindow,
-          that = this;
+          that = this,
+          markerTimeObject,
+          mustRemoveMarker;
 
       that.allMarkers.forEach(function (marker) {
 
-        var mustRemoveMarker = !VectorService.isInTempExtent(marker.toGeoJSON(), timeState);
+        console.log("marker.options.timestamp_start = ", marker.options.timestamp_start);
+
+        markerTimeObject = {
+          timestamp_start: marker.options.timestamp_start,
+          timestamp_end: marker.options.timestamp_end
+        };
+
+        if (markerTimeObject.timestamp_start === undefined)
+          throw new Error("[E] Found marker w/o timestamp_start");
+
+        mustRemoveMarker = !VectorService.isInTempExtent(markerTimeObject, timeState);
         if (that.hasLayer(marker) && mustRemoveMarker) {
           that.removeMarkerFromLayer(marker);
         } else if (!that.hasLayer(marker) && !mustRemoveMarker) {
@@ -119,7 +118,6 @@ angular.module('lizard-nxt')
       this.options.start = timeState.start;
       this.options.end = timeState.end;
     },
-
   });
 
   return MarkerClusterLayer;

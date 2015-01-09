@@ -74,7 +74,7 @@ angular.module('lizard-nxt')
      */
     var isInTempExtent = function (feature, temporal) {
 
-      console.log("timestamp_start:", feature.properties.timestamp_start);
+      console.log("timestamp_start:", feature.timestamp_start);
       console.log("temporal.start:", temporal.start);
       console.log("temporal.end:", temporal.end);
       console.log("---------------------");
@@ -87,30 +87,34 @@ angular.module('lizard-nxt')
 
         if (temporal.start) {
           eventStartBeforeTLStart
-            = feature.properties.timestamp_start < temporal.start;
+            = feature.timestamp_start < temporal.start;
           eventStartAfterTLStart
             = !eventStartBeforeTLStart;
           eventEndBeforeTLStart
-            = feature.properties.timestamp_end < temporal.start;
+            = feature.timestamp_end < temporal.start;
           eventEndAfterTLStart
             = !eventEndBeforeTLStart;
         }
 
         if (temporal.end) {
           eventEndBeforeTLEnd
-            = feature.properties.timestamp_end < temporal.end;
+            = feature.timestamp_end < temporal.end;
         }
 
+        var result;
         if (eventStartBeforeTLStart
-            && eventEndAfterTLStart) { return true; }
+            && eventEndAfterTLStart) { result =true; }
         else if (
                   (temporal.start === undefined || eventStartAfterTLStart)
                   && (temporal.end === undefined || eventEndBeforeTLEnd)
                 )
-                { return true; }
+                { result = true; }
         else {
-          return false;
+          result = false;
         }
+
+        console.log("marker in extent?", result);
+        return result;
     };
 
     /**
