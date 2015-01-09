@@ -16,7 +16,7 @@ angular.module('lizard-nxt')
   geocodeResource = Restangular.one('api/v1/geocode/');
   reverseGeocodeResource = Restangular.one('api/v1/reversegeocode/');
   timeseriesResource = Restangular.one('api/v1/timeseries/');
-  tiles = Restangular.one('api/v1/tiles/');
+  events = Restangular.one('api/v1/events/');
 
   /**
    * Raster resource, last stop to the server
@@ -68,7 +68,7 @@ angular.module('lizard-nxt')
 
   return {
     //eventTypes: eventTypes,
-    tiles: tiles,
+    events: events,
     tooltips: tooltips,
     geocode: geocodeResource,
     raster: rasterResource,

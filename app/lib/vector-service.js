@@ -217,9 +217,8 @@ angular.module('lizard-nxt')
           promise: {}
         };
 
-        vectorLayers[layerSlug].promise = CabinetService.tiles
-        .one(layerSlug + '/0/0/0.geojson')
-        .get().then(function (response) {
+        vectorLayers[layerSlug].promise = CabinetService.events
+        .get({'event_series__layer__slug': layerSlug}).then(function (response) {
           vectorLayers[layerSlug].isLoading = false;
           setData(layerSlug, response.features, 1);
         });
