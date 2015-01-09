@@ -47,12 +47,6 @@ angular.module('lizard-nxt')
         });
         var marker;
         response.forEach(function (f) {
-          if (f.properties.timestamp_start === undefined) {
-            console.log("[E] Tried to built marker w/o available attr: timestamp_start");
-            throw new Error("abort.");
-          } else {
-            console.log("[+] f.properties.timestamp_start =", f.properties.timestamp_start);
-          }
           marker = L.marker(
             [f.geometry.coordinates[1], f.geometry.coordinates[0]],
             {
@@ -96,8 +90,6 @@ angular.module('lizard-nxt')
           mustRemoveMarker;
 
       that.allMarkers.forEach(function (marker) {
-
-        console.log("marker.options.timestamp_start = ", marker.options.timestamp_start);
 
         markerTimeObject = {
           timestamp_start: marker.options.timestamp_start,

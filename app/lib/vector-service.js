@@ -74,47 +74,41 @@ angular.module('lizard-nxt')
      */
     var isInTempExtent = function (feature, temporal) {
 
-      console.log("timestamp_start:", feature.timestamp_start);
-      console.log("temporal.start:", temporal.start);
-      console.log("temporal.end:", temporal.end);
-      console.log("---------------------");
-
       var eventStartBeforeTLStart = false,
           eventStartAfterTLStart = false,
           eventEndBeforeTLStart = false,
           eventEndAfterTLStart = false,
           eventEndBeforeTLEnd = false;
 
-        if (temporal.start) {
-          eventStartBeforeTLStart
-            = feature.timestamp_start < temporal.start;
-          eventStartAfterTLStart
-            = !eventStartBeforeTLStart;
-          eventEndBeforeTLStart
-            = feature.timestamp_end < temporal.start;
-          eventEndAfterTLStart
-            = !eventEndBeforeTLStart;
-        }
+      if (temporal.start) {
+        eventStartBeforeTLStart
+          = feature.timestamp_start < temporal.start;
+        eventStartAfterTLStart
+          = !eventStartBeforeTLStart;
+        eventEndBeforeTLStart
+          = feature.timestamp_end < temporal.start;
+        eventEndAfterTLStart
+          = !eventEndBeforeTLStart;
+      }
 
-        if (temporal.end) {
-          eventEndBeforeTLEnd
-            = feature.timestamp_end < temporal.end;
-        }
+      if (temporal.end) {
+        eventEndBeforeTLEnd
+          = feature.timestamp_end < temporal.end;
+      }
 
-        var result;
-        if (eventStartBeforeTLStart
-            && eventEndAfterTLStart) { result =true; }
-        else if (
-                  (temporal.start === undefined || eventStartAfterTLStart)
-                  && (temporal.end === undefined || eventEndBeforeTLEnd)
-                )
-                { result = true; }
-        else {
-          result = false;
-        }
+      var result;
+      if (eventStartBeforeTLStart
+          && eventEndAfterTLStart) { result =true; }
+      else if (
+                (temporal.start === undefined || eventStartAfterTLStart)
+                && (temporal.end === undefined || eventEndBeforeTLEnd)
+              )
+              { result = true; }
+      else {
+        result = false;
+      }
 
-        console.log("marker in extent?", result);
-        return result;
+      return result;
     };
 
     /**
