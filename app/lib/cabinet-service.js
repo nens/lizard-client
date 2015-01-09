@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('lizard-nxt')
   .service("CabinetService", ["$q", "Restangular",
   function ($q, Restangular) {
@@ -10,7 +12,7 @@ angular.module('lizard-nxt')
       timeseriesLocationObjectResource,
       timeseriesResource,
       flowResource,
-      tiles;
+      events;
 
   Restangular.setRequestSuffix('?page_size=0');
   geocodeResource = Restangular.one('api/v1/geocode/');
