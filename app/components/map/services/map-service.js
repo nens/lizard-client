@@ -43,7 +43,6 @@ angular.module('map')
        * @return {promise}             promise that resolves layergroups synced.
        */
       syncTime: function (timeState) {
-        console.log("[F] MapService.syncTime");
         var defer = $q.defer();
         var promises = [];
         angular.forEach(DataService.layerGroups, function (layerGroup) {

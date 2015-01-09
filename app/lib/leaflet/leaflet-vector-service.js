@@ -16,12 +16,14 @@ angular.module('lizard-nxt')
     // Define aliasses that makes sense in the nxt world
     //addMarker: this.addLayer,
     //removeMarker: this.removeLayer,
-    markers: [],
-    removedMarkers: [],
+    //markers: [],
+    // displayedMarkers: [],
+    // removedMarkers: [],
+    allMarkers: [],
 
     // Define aliasses that makes sense in the nxt world
     addMarkerToLayer: function (marker) {
-      this.markers.push(marker);
+      //this.markers.push(marker);
       this.addLayer(marker);
 
       // We need to rm this marker from the list 'removedMarkers'; expensive,
@@ -37,7 +39,7 @@ angular.module('lizard-nxt')
     },
 
     removeMarkerFromLayer: function (marker) {
-      this.removedMarkers.push(marker);
+      //this.removedMarkers.push(marker);
       this.removeLayer(marker);
     },
 
@@ -49,9 +51,7 @@ angular.module('lizard-nxt')
     onAdd: function (map) {
       this._map = map;
       LeafletService.MarkerClusterGroup.prototype.onAdd.call(this, map);
-
       var color = this.options.color;
-
       var layer = this;
       VectorService.getData(this.options.slug, {})
       .then(function (response) {
@@ -73,10 +73,11 @@ angular.module('lizard-nxt')
               end: f.properties.end
             });
           layer.addMarkerToLayer(marker);
+          //layer.displayedMarkers.push(marker);
+          layer.allMarkers.push(marker);
         });
       });
       var size = this._map.getPixelBounds().getSize();
-
     },
 
     /**
@@ -100,44 +101,21 @@ angular.module('lizard-nxt')
      * @description sync the time
      */
     syncTime: function (layer, timeState) {
-      console.log("[F] LeafVectorSvc.syncTime: this.markers =", this.markers);
+
       var start = timeState.at,
-          end = timeState.at + timeState.aggWindow;
-      // remove all markers outside temp bound
-      var allMarkers = _.union(this.markers, this.removedMarkers);
-      console.log("-- allMarkers.length:", allMarkers.length);
-      console.log("-- this.markers.length:", this.markers.length);
-      console.log("-- this.removedMarkers.length:", this.removedMarkers.length);
+          end = timeState.at + timeState.aggWindow,
+          that = this;
 
-      this.markers.forEach(function (marker) {
+      that.allMarkers.forEach(function (marker) {
 
-        //var mustRemoveMarker = !VectorService.isInTempExtent(marker.toGeoJSON(), timeState);
-        var mustRemoveMarker = Math.random() > 0.5;
-        console.log("-- mustRemoveMarker =", mustRemoveMarker);
-
-        if (mustRemoveMarker && this.hasLayer(marker)) {
-          this.removeMarkerFromLayer(marker);
-        } else if (!mustRemoveMarker && !this.hasLayer(marker)) {
-          this.addMarkerToLayer(marker);
+        var mustRemoveMarker = !VectorService.isInTempExtent(marker.toGeoJSON(), timeState);
+        if (that.hasLayer(marker) && mustRemoveMarker) {
+          that.removeMarkerFromLayer(marker);
+        } else if (!that.hasLayer(marker) && !mustRemoveMarker) {
+          that.addMarkerToLayer(marker);
         }
-      }, this);
+      });
 
-      this.markers = [];
-
-      this.removedMarkers.forEach(function (marker) {
-        //var mustRemoveMarker = !VectorService.isInTempExtent(marker.toGeoJSON(), timeState);
-        var mustRemoveMarker = Math.random() > 0.5;
-        console.log("-- mustRemoveMarker =", mustRemoveMarker);
-        if (!mustRemoveMarker) {
-          this.addMarkerToLayer(marker);
-        }
-      }, this);
-
-      //this.removedMarkers = [];
-
-
-      //
-      // add all markers that were outside of the temp bounds
       this.options.start = timeState.start;
       this.options.end = timeState.end;
     },

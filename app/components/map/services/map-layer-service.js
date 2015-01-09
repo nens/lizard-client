@@ -60,7 +60,6 @@ angular.module('map')
         },
 
         syncTime: function (timeState) {
-          console.log("[F] MapLayerSvc.syncTime");
           // return;
           if (this.format !== 'Vector') { return; }
           var defer = $q.defer();

@@ -74,9 +74,10 @@ angular.module('lizard-nxt')
      */
     var isInTempExtent = function (feature, temporal) {
 
-      // console.log("feature.properties.timestamp_start:", feature.properties.timestamp_start);
-      // console.log("temporal.start:", temporal.start);
-      // console.log("---------------------");
+      console.log("timestamp_start:", feature.properties.timestamp_start);
+      console.log("temporal.start:", temporal.start);
+      console.log("temporal.end:", temporal.end);
+      console.log("---------------------");
 
       var eventStartBeforeTLStart = false,
           eventStartAfterTLStart = false,
