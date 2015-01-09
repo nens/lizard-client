@@ -73,12 +73,13 @@ angular.module('lizard-nxt')
      *                a certain timeState.
      */
     var isInTempExtent = function (feature, temporal) {
-
       var eventStartBeforeTLStart = false,
           eventStartAfterTLStart = false,
           eventEndBeforeTLStart = false,
           eventEndAfterTLStart = false,
           eventEndBeforeTLEnd = false;
+
+      if (feature.properties) { feature = feature.properties; }
 
       if (temporal.start) {
         eventStartBeforeTLStart
@@ -98,7 +99,7 @@ angular.module('lizard-nxt')
 
       var result;
       if (eventStartBeforeTLStart
-          && eventEndAfterTLStart) { result =true; }
+          && eventEndAfterTLStart) { result = true; }
       else if (
                 (temporal.start === undefined || eventStartAfterTLStart)
                 && (temporal.end === undefined || eventEndBeforeTLEnd)
@@ -119,13 +120,9 @@ angular.module('lizard-nxt')
      * @return {filteredSet} filtered set of features.
      */
     var filterTemporal = function (sourceArray, temporal) {
-      var filteredSet = [];
-      sourceArray.forEach(function (feature) {
-        if (isInTempExtent(feature, temporal)) {
-          filteredSet.push(feature);
-        }
+      return sourceArray.filter(function (feature) {
+        return isInTempExtent(feature, temporal);
       });
-      return filteredSet;
     };
 
     /**
@@ -198,6 +195,7 @@ angular.module('lizard-nxt')
           start: options.start,
           end: options.end
         });
+
         deferred.resolve(set);
       }
 

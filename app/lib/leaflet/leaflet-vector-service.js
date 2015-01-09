@@ -21,6 +21,8 @@ angular.module('lizard-nxt')
     onAdd: function (map) {
       LeafletService.MarkerClusterGroup.prototype.onAdd.call(this, map);
 
+      this._map = map;
+
       this.addMarker = this.addLayer;
       this.removeMarker = this.removeLayer;
       this.hasMarker = this.hasLayer;
@@ -57,6 +59,22 @@ angular.module('lizard-nxt')
 
         layer.syncTime();
       });
+
+      // simulate click on map instead of this event;
+      var fireMapClick = function (e) {
+        layer._map.fire('click', {
+          latlng: e.latlng,
+        });
+      };
+
+      this.on('clusterclick', function (e) {
+        fireMapClick(e);
+      });
+
+      this.on('click', function (e) {
+        fireMapClick(e);
+      });
+
     },
 
 

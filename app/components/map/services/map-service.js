@@ -480,10 +480,14 @@ angular.module('map')
           spiderfyOnMaxZoom: false,    // When you click a cluster at the bottom
                                        // zoom level we  do not spiderfy it
                                        // so you can see all of its markers.
-          maxClusterRadius: 80,       // The maximum radius that a cluster will
+          maxClusterRadius: 80,        // The maximum radius that a cluster will
                                        // cover from the central marker
                                        // (in pixels). Default 80. Decreasing
-                                       // will make more smaller clusters.
+                                       // will make more and smaller clusters.
+                                       // Set to 1 for clustering only when
+                                       // events are on the same spot.
+          animateAddingMarkers: false, // Enable for cool animations but its
+                                       // too slow for > 1000 events.
           iconCreateFunction: function (cluster) {
             var size = cluster.getAllChildMarkers().length;
             var pxSize = 12;
