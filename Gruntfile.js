@@ -32,7 +32,7 @@ module.exports = function (grunt) {
     // Templates that need to be converted reside in components and core
     templateFileDirs: 'components/**/{,*/}*.html',
     // Files reside in components, lib and in several subdirectories.
-    jsFileDirs: '{components, lib}/{,*/}*.js'
+    jsFileDirs: '{,components, lib}/{,*/}*.js'
   };
 
   // Project configuration.
@@ -76,7 +76,9 @@ module.exports = function (grunt) {
           // CSS created from sass files
           '.tmp/styles/{,*/}*.css',
           // All images
-          '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+          '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+          // All js files
+          '<%= yeoman.app %>/<%= yeoman.jsFileDirs %>'
         ]
       }
     },
@@ -248,6 +250,19 @@ module.exports = function (grunt) {
       watch: {
         files: {
           '.tmp/styles/main.css': '<%= yeoman.app %>/styles/main.scss'
+        }
+      }
+    },
+
+    // Profiling
+    phantomas: {
+      gruntSite: {
+        options: {
+          indexPath: 'qa/phantomas/',
+          numberOfRuns: 5,
+          output: ['json'],
+          url: 'http://integration.nxt.lizard.net',
+          buildUi: true
         }
       }
     },

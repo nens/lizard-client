@@ -28,34 +28,56 @@
 
         </div>
       </div>
+
       <div class="button-list-container" id="">
-        <div class="button-list-item"
-             style="cursor: pointer">
-          <a ng-click="menu.box.type = 'point'"
-             class="button-list-link"
-             title="punt selectie"
-             ng-class="{'active': menu.box.type === 'point'}">
-             <i class="fa fa-dot-circle-o"></i>
-          </a>
+
+        <div ng-if="context === 'map'">
+
+          <div class="button-list-item"
+               style="cursor: pointer">
+            <a ng-click="menu.box.type = 'point'"
+               class="button-list-link"
+               title="punt selectie"
+               ng-class="{'active': menu.box.type === 'point'}">
+               <i class="fa fa-dot-circle-o"></i>
+            </a>
+          </div>
+
+          <div class="button-list-item"
+               style="cursor: pointer">
+            <a ng-click="menu.box.type = 'line'"
+               class="button-list-link"
+               title="lijn selectie"
+               ng-class="{'active': menu.box.type === 'line'}">
+               <i class="fa fa-expand"></i>
+            </a>
+          </div>
+
+          <div class="button-list-item"
+               style="cursor: pointer">
+            <a ng-click="menu.box.type = 'area'"
+               class="button-list-link"
+               title="scherm selectie"
+               ng-class="{'active': menu.box.type === 'area'}">
+               <i class="fa fa-square-o"></i>
+            </a>
+          </div>
+
         </div>
 
         <div class="button-list-item"
              style="cursor: pointer">
-          <a ng-click="menu.box.type = 'line'"
+          <a ng-click="switchContext('db')"
              class="button-list-link"
-             title="lijn selectie"
-             ng-class="{'active': menu.box.type === 'line'}">
-             <i class="fa fa-expand"></i>
+             title="switch to dashboard"
+             ng-if="context === 'map'">
+             <i class="fa fa-dashboard"></i>
           </a>
-        </div>
-
-        <div class="button-list-item"
-             style="cursor: pointer">
-          <a ng-click="menu.box.type = 'area'"
+          <a ng-click="switchContext('map')"
              class="button-list-link"
-             title="scherm selectie"
-             ng-class="{'active': menu.box.type === 'area'}">
-             <i class="fa fa-square-o"></i>
+             title="switch to map"
+             ng-if="context === 'db'">
+             <i class="fa fa-close"></i>
           </a>
         </div>
 

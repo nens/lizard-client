@@ -359,6 +359,26 @@ angular.module('lizard-nxt')
         timestamp_end: 1389650400000,
         id: 3501
       }
+    },
+    {
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          4.944908089363328,
+        52.494730987484054
+          ]
+      },
+      type: 'Feature',
+      properties: {
+        category: 'RIOOLVERSTOPPING',
+        object_id: null,
+        timestamp_start: 1389650100000,
+        value: 'Rioolverstopping',
+        object_type_id: null,
+        event_series_id: 4,
+        timestamp_end: 1389650400000,
+        id: 3501
+      }
     }
   ]
 })

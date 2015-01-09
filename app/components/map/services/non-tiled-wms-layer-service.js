@@ -212,6 +212,17 @@ angular.module('map')
             syncTime: function (timeState, map) {
               this.timeState = timeState;
 
+              // this only works for stores with different aggregation levels
+              // for now this is only for the radar stores
+              if (this.slug.split('/')[0] === 'radar') {
+                // change image url based on timestate.
+                this._imageUrlBase = RasterService.buildURLforWMS(
+                    this,
+                    this._determineStore(timeState).name
+                    );
+                this._temporalResolution = this._determineStore(timeState).resolution;
+              }
+
               var defer = $q.defer(),
                   currentDate = this._mkTimeStamp(timeState.at),
                   currentOverlayIndex = this._frameLookup[currentDate];
@@ -286,6 +297,38 @@ angular.module('map')
               var result = UtilService.roundTimestamp(t, this._temporalResolution, false);
               return result;
             },
+            
+            /**
+             * @description based on the temporal window. The time between
+             * timestate.start and timestate.end determines which store is to be used.
+             * This only works for radar stuff.
+             *
+             */
+            _determineStore: function (timeState) {
+              var resolutionHours = (timeState.aggWindow) / 60 / 60 / 1000;
+
+              var aggType = this.slug.split('/');
+
+              if (resolutionHours >= 24) {
+                aggType[1] = 'day';
+              } else if (resolutionHours >= 1 && resolutionHours < 24) {
+                aggType[1] = 'hour';
+              } else {
+                aggType[1] = '5min';
+              }
+              var resolutions = {
+                '5min': 300000,
+                'hour': 3600000,
+                'day': 86400000
+              }; 
+
+              return {
+                name: aggType.join('/'),
+                  resolution: resolutions[aggType[1]]
+              }
+
+            },
+
 
             /**
              * @description Removes old frame by looking for a frame that has an

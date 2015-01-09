@@ -22,26 +22,47 @@ describe('Testing event aggregate service', function () {
 
   it("should return an array with property 'count' is 1 for the first element", function () {
     var data = geojsonmock.features;
-    var result = EventAggregateService.aggregate(data, timeState.aggWindow);
+
+    var result = EventAggregateService.aggregate(data,
+                                                timeState.aggWindow,
+                                                "#f00");
     expect(result[0].count).toBe(1);
   });
 
   it("should return an array with property 'min' is 2 for the first element", function () {
     var data = eventsMock.features;
-    var result = EventAggregateService.aggregate(data, timeState.aggWindow);
+    var result = EventAggregateService.aggregate(data,
+                                                 timeState.aggWindow,
+                                                 "#f00");
     expect(result[0].min).toBe(2);
   });
 
   it("should return an array with property 'mean' is 3 for the first element", function () {
     var data = eventsMock.features;
-    var result = EventAggregateService.aggregate(data, timeState.aggWindow);
+    var result = EventAggregateService.aggregate(data,
+                                                timeState.aggWindow,
+                                                "#f00");
     expect(result[0].mean).toBe(3);
   });
 
   it("should return an array with property 'count' is 3 for the first element", function () {
     var data = eventsMock.features;
-    var result = EventAggregateService.aggregate(data, timeState.aggWindow);
+    var result = EventAggregateService.aggregate(data,
+                                                timeState.aggWindow,
+                                                "#f00");
     expect(result[0].count).toBe(3);
+  });
+
+  it("should have built colorScales.", function () {
+    var data = geojsonmock.features,
+        baseColor = '#f00',
+        result = EventAggregateService.aggregate(data,
+                                                 timeState.aggWindow,
+                                                 baseColor),
+        expectedResult = {STANKOVERLAST: "#ff0000",
+                          RIOOLVERSTOPPING: '#ff2424'},
+        colorMap = EventAggregateService.getColorMap(baseColor);
+    expect(colorMap).toEqual(expectedResult);
   });
 
 });

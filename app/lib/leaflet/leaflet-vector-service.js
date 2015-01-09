@@ -14,7 +14,7 @@ angular.module('lizard-nxt')
   var MarkerClusterLayer = LeafletService.MarkerClusterGroup.extend({
 
     // Define aliasses that makes sense in the nxt world
-    allMarkers: [],
+    markers: [],
 
     // Define aliasses that makes sense in the nxt world
     addMarkerToLayer: function (marker) {
@@ -31,13 +31,18 @@ angular.module('lizard-nxt')
      * of Leaflet.
      */
     onAdd: function (map) {
-      this._map = map;
       LeafletService.MarkerClusterGroup.prototype.onAdd.call(this, map);
-      var color = this.options.color;
-      var layer = this;
+
+      this._map = map;
+
+      var color = this.options.color,
+          layer = this;
+
       VectorService.getData(this.options.slug, {})
       .then(function (response) {
-        var pxSize = 4;
+        var pxSize = 4,
+            marker;
+
         var icon = L.divIcon({
           iconAnchor: [pxSize, pxSize],
           html: '<svg height="' + (pxSize * 2) + '" width="' + (pxSize * 2) + '">'
@@ -45,7 +50,7 @@ angular.module('lizard-nxt')
                 + 'fill-opacity="0.9" fill="' + color + '" />'
                 + '</svg>'
         });
-        var marker;
+
         response.forEach(function (f) {
           marker = L.marker(
             [f.geometry.coordinates[1], f.geometry.coordinates[0]],
@@ -55,10 +60,10 @@ angular.module('lizard-nxt')
               timestamp_end: f.properties.timestamp_end
             });
           layer.addMarkerToLayer(marker);
-          layer.allMarkers.push(marker);
+          layer.markers.push(marker);
         });
+        layer.syncTime();
       });
-      var size = this._map.getPixelBounds().getSize();
     },
 
     /**
@@ -81,34 +86,35 @@ angular.module('lizard-nxt')
      * @function
      * @description sync the time
      */
-    syncTime: function (layer, timeState) {
-
-      var start = timeState.at,
-          end = timeState.at + timeState.aggWindow,
-          that = this,
-          markerTimeObject,
-          mustRemoveMarker;
-
-      that.allMarkers.forEach(function (marker) {
-
-        markerTimeObject = {
-          timestamp_start: marker.options.timestamp_start,
-          timestamp_end: marker.options.timestamp_end
-        };
-
-        if (markerTimeObject.timestamp_start === undefined)
-          throw new Error("[E] Found marker w/o timestamp_start");
-
-        mustRemoveMarker = !VectorService.isInTempExtent(markerTimeObject, timeState);
-        if (that.hasLayer(marker) && mustRemoveMarker) {
-          that.removeMarkerFromLayer(marker);
-        } else if (!that.hasLayer(marker) && !mustRemoveMarker) {
-          that.addMarkerToLayer(marker);
-        }
-      });
+    syncTime: function (timeState, map) {
 
       this.options.start = timeState.start;
       this.options.end = timeState.end;
+
+      if (this.markers.length > 0) {
+        var start = timeState.playing ? timeState.at : timeState.start,
+          end = timeState.playing
+            ? timeState.at + timeState.aggWindow
+            : timeState.end,
+          markerTimeObject,
+          mustRemoveMarker;
+
+        this.markers.forEach(function (marker) {
+
+          markerTimeObject = {
+            timestamp_start: marker.options.timestamp_start,
+            timestamp_end: marker.options.timestamp_end
+          };
+
+          mustRemoveMarker = !VectorService.isInTempExtent(markerTimeObject, timeState);
+          if (this.hasLayer(marker) && mustRemoveMarker) {
+            this.removeMarkerFromLayer(marker);
+          } else if (!this.hasLayer(marker) && !mustRemoveMarker) {
+            this.addMarkerToLayer(marker);
+          }
+        }, this);
+      }
+
     },
   });
 

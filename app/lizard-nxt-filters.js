@@ -370,14 +370,18 @@ angular.module('lizard-nxt')
 angular.module('lizard-nxt')
   .filter('discreteRasterType', function () {
   return function (input) {
-    return input.split(' - ')[2];
+    return input.match(/^.*-.*-.*$/g)
+      ? input.split(' - ')[2]
+      : input; // return full label for non-verbose labeling (e.g 'soil')
   };
 });
 
 angular.module('lizard-nxt')
   .filter('discreteRasterSource', function () {
   return function (input) {
-    return input.split(' - ')[1];
+    return input.match(/^.*-.*-.*$/g)
+      ? input.split(' - ')[1]
+      : ""; // if no source is given, return empty string
   };
 });
 

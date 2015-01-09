@@ -42,6 +42,8 @@ module.exports = function(config) {
       'app/components/map/map.js', // Load these first to prevent dep clash
       'app/templates.js',
       'app/components/omnibox/omnibox.js',
+      'app/components/state/state.js',
+      'app/components/dashboard/dashboard.js',
       'app/lizard-nxt.js',
       'test/mocks/**/*.js',
       'app/lib/**/*.js',
@@ -80,7 +82,11 @@ module.exports = function(config) {
       'karma-junit-reporter'
     ],
 
-    reporters: ['progress', 'coverage', 'junit'],
+    preprocessors: {
+      'app/**/*.js': ['coverage']  
+    },
+
+    reporters: ['progress', 'coverage'],
 
     junitReporter: {
       outputFile: 'qa/junit.xml',
@@ -89,9 +95,9 @@ module.exports = function(config) {
 
     coverageReporter: {
       reporters: [
-        {type: 'html', dir: 'qa/coverage/html'},
-        {type: 'cobertura', dir: 'qa/'},
-        {type: 'text-summary', dir: 'qa/'}
+        {type: 'html', dir: 'qa/', subdir: 'coverage/'},
+        {type: 'cobertura', dir: 'qa/', subdir: 'coverage/'},
+        {type: 'text-summary'}
       ]
     },
 

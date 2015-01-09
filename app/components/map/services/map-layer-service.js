@@ -60,17 +60,9 @@ angular.module('map')
         },
 
         syncTime: function (timeState) {
-          // return;
           if (this.format !== 'Vector') { return; }
           var defer = $q.defer();
-          if (timeState.playing) {
-            this._leafletLayer.syncTime(this, {
-              start: timeState.at,
-              end: timeState.at + timeState.aggWindow
-            });
-          } else {
-            this._leafletLayer.syncTime(this, timeState);
-          }
+          this._leafletLayer.syncTime();
           defer.resolve();
           return defer.promise;
         },

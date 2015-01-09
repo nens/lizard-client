@@ -16,24 +16,52 @@ angular.module('lizard-nxt')
   .controller('MasterCtrl',
 
   ['$scope',
+   '$controller',
    'CabinetService',
    'UtilService',
    'ClickFeedbackService',
    'user',
    'versioning',
    'State',
+   'MapService',
 
   function ($scope,
+            $controller,
             CabinetService,
             UtilService,
             ClickFeedbackService,
             user,
             versioning,
-            State) {
+            State,
+            MapService) {
 
   $scope.user = user;
   $scope.versioning = versioning;
   $scope.tooltips = CabinetService.tooltips;
+
+  // CONTEXT
+
+  /**
+   * Switch between contexts.
+   *
+   * @param {string} context - Context name to switch to
+   */
+  $scope.switchContext = function (context) {
+    State.context = context;
+  };
+
+  /*
+   * Set context on scope.
+   */
+  $scope.$watch(State.toString('context'), function (n, o) {
+    if (n === o) { return true; }
+    $scope.context = State.context;
+  });
+
+  // initialise context.
+  $scope.context = State.context;
+
+  // END CONTEXT
 
   // KEYPRESS
 
@@ -78,6 +106,10 @@ angular.module('lizard-nxt')
   // catch window.load event
   window.addEventListener("load", function () {
     window.loaded = true;
+    $scope.$apply(function () {
+      $controller('UrlController', {$scope: $scope});
+    });
   });
+
 
 }]);

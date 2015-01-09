@@ -449,23 +449,6 @@ angular.module('lizard-nxt')
   };
 
 
-  /*
-   * @description - Replace display_name value with name value, if applicable
-   * @param {string} str - The string to be converted.
-   */
-  this.fixUTFNameData = function (obj) {
-    if (obj.display_name === '' || obj.display_name === undefined) {
-      // If the to-be printed key (obj.display_name) has no value...
-      if (obj.name !== '' && obj.name !== undefined) {
-        // ..and it's alternative (obj.name) does have one,
-        // we simply copy the alt value.
-        obj.display_name = obj.name;
-      }
-    }
-    return obj;
-  };
-
-
   /**
    * @description - Deduce the wanted geometry-type from the passed in geomOpts
    * @param {object} geomOpts - the options.geom object
@@ -602,7 +585,6 @@ angular.module('lizard-nxt')
     return Math.max(1, latDistance * lngDistance);
   };
 
-
   /*
    * @function
    * @description wrapper around lodash.union function
@@ -688,5 +670,49 @@ angular.module('lizard-nxt')
     return window.innerWidth - (
       this.TIMELINE_LEFT_MARGIN + this.TIMELINE_RIGHT_MARGIN
     );
+  };
+
+  this.hexColorToDecimalTriple = function (rgbString) {
+
+    var rInt, gInt, bInt;
+
+    if (rgbString.charAt(0) === "#")
+      rgbString = rgbString.substring(1, rgbString.length);
+
+    if (rgbString.length === 3) {
+      rInt = parseInt(rgbString.charAt(0) + rgbString.charAt(0), 16);
+      gInt = parseInt(rgbString.charAt(1) + rgbString.charAt(1), 16);
+      bInt = parseInt(rgbString.charAt(2) + rgbString.charAt(2), 16);
+
+    } else if (rgbString.length === 6) {
+      rInt = parseInt(rgbString.substring(0, 2), 16);
+      gInt = parseInt(rgbString.substring(2, 4), 16);
+      bInt = parseInt(rgbString.substring(4, 6), 16);
+
+    } else {
+      throw new Error("This is not a valid color-string: '" + rgbString + "'");
+    }
+
+    return [rInt, gInt, bInt];
+  };
+
+  this.decimalTripleToHexColor = function (rgbTriple) {
+
+    if (rgbTriple && rgbTriple.length === 3) {
+      var rgbString = "#",
+          currentHexString;
+      rgbTriple.forEach(function (elem) {
+        currentHexString = elem.toString(16);
+        if (currentHexString.length === 1) {
+          currentHexString = "0" + currentHexString;
+        }
+        rgbString += currentHexString;
+      });
+      return rgbString;
+
+    } else {
+      throw new Error("This aint a valid triple to convert into rgbString: " + rgbTriple);
+    }
+
   };
 }]);

@@ -49,9 +49,26 @@ $height16: 15px; // Appears 3 times
 $height19: 5px; // Appears 3 times
 $height20: 0; // Appears 2 times
 
+// NXT defined variables.
+$navbarheight: 50px; // Appears 8 times
+$navbarandtimeline: 50px + 82px;
+
 @import 'colors';
 
 // END variables
+
+
+// START FUNCTIONS & MIXINS
+
+@mixin calc($property, $expression) {
+    #{$property}: -webkit-calc(#{$expression});
+    #{$property}: -ms-calc(#{$expression});
+    #{$property}: -o-calc(#{$expression});
+    #{$property}: -moz-calc(#{$expression});
+    #{$property}: calc(#{$expression});
+}
+
+// END FUNCTIONS
 
 /**
  *
@@ -67,6 +84,7 @@ $height20: 0; // Appears 2 times
 @import 'layout';
 @import 'timeline';
 @import 'tools';
+@import 'dashboard';
 @import 'leaflet-overrides';
 
 
