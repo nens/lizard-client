@@ -418,7 +418,7 @@ angular.module('lizard-nxt')
     // ------------------------------------------
 
     // [WYTZE] replacement code - start ------------------------
-    var XAXIS_PADDING = 100;
+    var XAXIS_PADDING = 50;
 
     xAxisScale
       .domain([
