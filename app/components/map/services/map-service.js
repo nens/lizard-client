@@ -498,14 +498,22 @@ angular.module('map')
             if (size > 200) { pxSize = 22; }
             if (size > 500) { pxSize = 26; }
             if (size > 1000) { pxSize = 30; }
+
+            // Return two circles, an opaque big one with a smaller one on top
+            // and white text in the middle. With radius = pxSize.
             return L.divIcon({
               iconAnchor: [pxSize, pxSize],
-              html: '<svg height="' + (pxSize * 2) + '" width="' + (pxSize * 2) + '">'
-                    + '<circle cx="' + (pxSize) + '" cy="' + (pxSize) + '" r="' + pxSize + '" '
-                    + 'fill-opacity="0.4" fill="' + nonLeafLayer.color + '" />'
-                    + '<circle cx="' + (pxSize) + '" cy="' + (pxSize) + '" r="' + (pxSize - 2) + '" '
-                    + 'fill-opacity="1" fill="' + nonLeafLayer.color + '" />'
-                    + '<text x="' + pxSize + '" y="' + (pxSize + 5) + '" style="text-anchor: middle; fill: white;">' + size + '</text>'
+              html: '<svg height="' + (pxSize * 2) + '" width="' + (pxSize * 2)
+                    + '">'
+                    + '<circle cx="' + pxSize + '" cy="' + pxSize
+                    + '" r="' + pxSize + '" fill-opacity="0.4" fill="'
+                    + nonLeafLayer.color + '" />'
+                    + '<circle cx="' + pxSize + '" cy="' + pxSize + '" r="'
+                    + (pxSize - 2) + '" fill-opacity="1" fill="'
+                    + nonLeafLayer.color + '" />'
+                    + '<text x="' + pxSize + '" y="' + (pxSize + 5)
+                    + '" style="text-anchor: middle; fill: white;">'
+                    + size + '</text>'
                     + '</svg>'
             });
           }
