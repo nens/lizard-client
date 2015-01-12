@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.1.4) (XXXX-XX-XX)
 -------------------------------
 
+- Add ability to show histograms as barchart.
+
 - Zapped patches for display_name vs name.
 
 - Beta dashboard implementation for events.
