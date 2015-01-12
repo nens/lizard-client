@@ -122,7 +122,7 @@ angular.module('lizard-nxt')
     getMinTimeBetweenFrames: getMinTimeBetweenFrames,
     buildURLforWMS: buildURLforWMS,
     getData: getData,
-    handleElevationCurve: handleElevationCurve,
+    handleElevationCurve: handleElevationCurve
   };
 
 }]);

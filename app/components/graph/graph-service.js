@@ -126,6 +126,9 @@ angular.module('lizard-nxt')
      *                        categoy: 'cat'};
      * @param {object} labels Object {x: 'x label', y: 'y label'} will be
      *                        mapped to axis labels of the graph
+     * @param {string} scale  Whether the graph has a scale other than temporal.
+     *                        If it is of a temporal nature the x-axis will by 
+     *                        default be the temporal axis.
      * @description           Draws a barchart, if necessary sets up the graph,
      *                        if necessary modifies domain and redraws axis,
      *                        and draws the line according to the data object.
@@ -134,14 +137,14 @@ angular.module('lizard-nxt')
      *                        data element.
      */
     drawBars: {
-      value: function (data, keys, labels) {
+      value: function (data, keys, labels, scale) {
         if (keys.category) {
           data = createYValuesForCumulativeData(data, keys);
         }
         if (!this._xy) {
           var options = {
             x: {
-              scale: 'time',
+              scale: (scale === 'linear' || scale === 'time') ? scale : 'time',
               orientation: 'bottom'
             },
             y: {
