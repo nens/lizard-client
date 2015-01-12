@@ -5,10 +5,13 @@ angular.module('data-menu')
     function (State, LeafletService) {
 
   var link = function (scope, element, attrs) {
+
+    /* [WYTZE] - does not want this file's functionality (i.e. mini-maps in
+       righthand menu)
+
     // Scope gets the mapState layerGroup, here we create a new layerGroup which
     // goes into its own NxtMap to always be turned on
     var layerGroup = scope.layergroup;
-
     var leafletLayers = [];
 
     angular.forEach(layerGroup.mapLayers, function (layer) {
@@ -66,12 +69,20 @@ angular.module('data-menu')
       });
     }
 
+    */
   };
 
+  /*
   return {
     link: link,
     templateUrl: 'layer-chooser/layer-chooser.html',
     restrict: 'E',
   };
+  */
 
+  return {
+    link: function () {},
+    templateUrl: 'layer-chooser/layer-chooser.html',
+    restrict: 'E',
+  };
 }]);
