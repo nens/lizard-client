@@ -9,6 +9,8 @@ Unreleased (1.1.4) (XXXX-XX-XX)
 Release 1.2.1 (2015-1-8)
 ---------------------
 
+- Add ability to show histograms as barchart.
+
 - Zapped patches for display_name vs name.
 
 - Beta dashboard implementation for events.
