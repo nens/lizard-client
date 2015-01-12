@@ -127,7 +127,7 @@ angular.module('lizard-nxt')
      * @param {object} labels Object {x: 'x label', y: 'y label'} will be
      *                        mapped to axis labels of the graph
      * @param {string} scale  Whether the graph has a scale other than temporal.
-     *                        If it is of a temporal nature the x-axis will by 
+     *                        If it is of a temporal nature the x-axis will by
      *                        default be the temporal axis.
      * @description           Draws a barchart, if necessary sets up the graph,
      *                        if necessary modifies domain and redraws axis,
@@ -144,7 +144,7 @@ angular.module('lizard-nxt')
         if (!this._xy) {
           var options = {
             x: {
-              scale: (scale === 'linear' || scale === 'time') ? scale : 'time',
+              scale: scale,
               orientation: 'bottom'
             },
             y: {

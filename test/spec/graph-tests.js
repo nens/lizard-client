@@ -294,35 +294,38 @@ describe('Testing graph', function () {
   });
 
   it('should create a barchart with time on the x scale', function () {
-    var data = [[1409748900000, 0], [1409752500000, 1], [1409756100000, 3]];
-    keys = {x: 0, y: 1},
-    labels = {x: 'afstand', y: 'elevation'};
-    graph.drawBars(data, keys, labels);
-    expect(graph._xy.x.scale.domain()[0] instanceof Date).toBe(true)
+    var data = [[1409748900000, 0], [1409752500000, 1], [1409756100000, 3]],
+        keys = {x: 0, y: 1},
+        labels = {x: 'afstand', y: 'elevation'},
+        quantity = 'time';
+    graph.drawBars(data, keys, labels, quantity);
+    expect(graph._xy.x.scale.domain()[0] instanceof Date).toBe(true);
   });
 
   it('should draw bars on the same x location for stacked barchart', function () {
-    data = [
-      {"timestamp":"1338501600000","category":"Wateroverlast binnenshuis","count":2},
-      {"timestamp":"1338501600000","category":"Riolering","count":8},
-      {"timestamp":"1338501600000","category":"Wateroverlast buitenshuis","count":4}
-    ];
-    keys = {x: 'timestamp', y: 'count', category: 'category'};
-    labels = {x: 'afstand', y: 'elevation'};
-    graph.drawBars(data, keys, labels);
+    var data = [
+        {"timestamp":"1338501600000","category":"Wateroverlast binnenshuis","count":2},
+        {"timestamp":"1338501600000","category":"Riolering","count":8},
+        {"timestamp":"1338501600000","category":"Wateroverlast buitenshuis","count":4}
+      ],
+      keys = {x: 'timestamp', y: 'count', category: 'category'},
+      labels = {x: 'afstand', y: 'elevation'},
+      quantity = 'time';
+    graph.drawBars(data, keys, labels, quantity);
     var bars = graph._svg.select('g').select('#feature-group').selectAll(".bar");
     expect(bars[0][0].getAttribute('x')).toEqual(bars[0][2].getAttribute('x'));
   });
 
   it('should draw bars on top of other bars for stacked barchart', function () {
-    data = [
-      {"timestamp":"1338501600000","category":"Wateroverlast binnenshuis","count":2},
-      {"timestamp":"1338501600000","category":"Riolering","count":8},
-      {"timestamp":"1338501600000","category":"Wateroverlast buitenshuis","count":4}
-    ];
-    keys = {x: 'timestamp', y: 'count', category: 'category'};
-    labels = {x: 'afstand', y: 'elevation'};
-    graph.drawBars(data, keys, labels);
+      var data = [
+          {"timestamp":"1338501600000","category":"Wateroverlast binnenshuis","count":2},
+          {"timestamp":"1338501600000","category":"Riolering","count":8},
+          {"timestamp":"1338501600000","category":"Wateroverlast buitenshuis","count":4}
+        ],
+      keys = {x: 'timestamp', y: 'count', category: 'category'},
+      labels = {x: 'afstand', y: 'elevation'},
+      quantity = 'time';
+    graph.drawBars(data, keys, labels, quantity);
     var bars = graph._svg.select('g').select('#feature-group').selectAll(".bar");
     var yValue = Number(bars[0][0].getAttribute('y'));
     var yValue2 = Number(bars[0][1].getAttribute('y')) - Number(bars[0][1].getAttribute('height'));
@@ -330,10 +333,11 @@ describe('Testing graph', function () {
   });
 
   it('should draw a now element at the right place', function () {
-    var data = [[1409748900000, 0], [1409752500000, 1], [1409756100000, 3]];
-    keys = {x: 0, y: 1},
-    labels = {x: 'afstand', y: 'elevation'};
-    graph.drawBars(data, keys, labels);
+    var data = [[1409748900000, 0], [1409752500000, 1], [1409756100000, 3]],
+      keys = {x: 0, y: 1},
+      labels = {x: 'afstand', y: 'elevation'},
+      quantity = 'time';
+    graph.drawBars(data, keys, labels, quantity);
     graph.drawNow(data[1][0]);
     var indicator = graph._svg.select('g').select('#feature-group').select('.now-indicator');
     expect(indicator.attr('x1')).toEqual(String(graph._xy.x.scale(data[1][0])));
