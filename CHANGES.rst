@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (1.1.4) (XXXX-XX-XX)
 -------------------------------
--
+
+- Cluster events to get better performance.
 
 
 Release 1.2.1 (2015-1-8)
