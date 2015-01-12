@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.1.4) (XXXX-XX-XX)
 -------------------------------
 
+- Dashboard button moved to omnibox.
+
 - Improved behaviour of timeline zoom.
 
 
