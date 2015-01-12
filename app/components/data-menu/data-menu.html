@@ -7,7 +7,13 @@
           <li class="nav-header">
             <ul class="list-group">
               <li ng-repeat="layergroup in menu.layerGroups | orderObjectBy: 'order': false">
-                <layer-chooser layergroup="layergroup"></layer-chooser>
+                <layer-chooser
+                  ng-if="!layergroup.baselayer"
+                  layergroup="layergroup">
+                </layer-chooser>
+              </li>
+              <li>
+                <baselayer-chooser></baselayer-chooser>
               </li>
             </ul>
           </li>

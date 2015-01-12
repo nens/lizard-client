@@ -1,4 +1,6 @@
 <li class="noselect">
+
+  <!-- normal, "overlayer" menu-items (plural): -->
   <label
     class="ng-class: {active: layergroup.isActive()}; layer-chooser"
     for="<% layergroup.id %>-layer"
@@ -11,7 +13,5 @@
 </li>
 
 <div ng-if="context === 'map'">
-
   <opacity-slider title="<% tooltips.transparency %>"></opacity-slider>
-
 </div>
