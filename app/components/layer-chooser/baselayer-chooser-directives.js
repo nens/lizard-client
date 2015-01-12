@@ -9,7 +9,7 @@ function (State, LeafletService)
     console.log("[!] Linking start...");
 
     // ...
-    var allBaselayers = State.layerGroups;
+    var allBaselayers = State.layerGroups.all;
 
     console.log("allBaselayers =", allBaselayers);
 
