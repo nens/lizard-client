@@ -86,6 +86,8 @@ angular.module('map')
 
       /**
        * Watch temporal.at of app and update maplayers accordingly.
+       *
+       * Used for animation and clicks on timeline or changes from url-ctrl.
        */
       scope.$watch(State.toString('temporal.at'), function (n, o) {
         if (n === o) { return; }
@@ -93,7 +95,9 @@ angular.module('map')
       });
 
       /**
-       * Watch timelineMoving to maplayers to time domain.
+       * Watch timelineMoving to update maplayers to new time domain when.
+       *
+       * Used for drag of timeline or changes from url-ctrl.
        */
       scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
         if (n === o) { return; }
@@ -102,9 +106,11 @@ angular.module('map')
 
       /**
        * Watch timelineMoving to maplayers to time domain.
+       *
+       * Used to turn maplayers to a none animating state. When animation stops.
        */
-      scope.$watch(State.toString('temporal.playing'), function (n, o) {
-        if (n === o) { return; }
+      scope.$watch(State.toString('temporal.playing'), function (newValue) {
+        if (newValue) { return; }
         MapService.syncTime(State.temporal);
       });
 
