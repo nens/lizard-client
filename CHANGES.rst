@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (1.1.4) (XXXX-XX-XX)
 -------------------------------
--
+
+- Improved behaviour of timeline zoom.
 
 
 Release 1.2.1 (2015-1-8)
