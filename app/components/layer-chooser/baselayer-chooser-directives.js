@@ -20,7 +20,6 @@ function (
     var allBaselayers = DataService.baselayerGroups;
 
     console.log("allBaselayers =", allBaselayers);
-
     console.log("[!] Linking finished.");
   };
 
