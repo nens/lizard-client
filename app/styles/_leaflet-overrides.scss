@@ -83,3 +83,34 @@
 
 }
 
+
+.marker-cluster {
+  background-clip: padding-box;
+  border-radius: 20px;
+
+  opacity: 0; /* parent gets fully transparent */
+  }
+.marker-cluster div {
+  color: white;
+  width: 30px;
+  height: 30px;
+  margin-left: 5px;
+  margin-top: 5px;
+
+  text-align: center;
+  border-radius: 15px;
+  font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+
+  opacity: 1; /* child becomes fully non-transparent; */
+  border: 4px solid; /* child gets border; */
+  }
+.marker-cluster span {
+  line-height: 28px;
+  }
+
+.leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {
+  -webkit-transition: -webkit-transform 0.3s ease-out, opacity 0.3s ease-in;
+  -moz-transition: -moz-transform 0.3s ease-out, opacity 0.3s ease-in;
+  -o-transition: -o-transform 0.3s ease-out, opacity 0.3s ease-in;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-in;
+  }
