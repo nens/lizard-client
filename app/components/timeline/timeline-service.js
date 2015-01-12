@@ -414,7 +414,9 @@ angular.module('lizard-nxt')
     Timeline.prototype._drawAxes(svg, xAxis, dimensions, false, duration);
     var axisEl = svg.select('#xaxis')
         .attr("class", "x axis timeline-axis");
-    drawStartStop(svg, xScale, dimensions);
+
+    // [WYTZE] disable: drawing start- & stop-label in timeline
+    // drawStartStop(svg, xScale, dimensions);
   };
 
   /**
