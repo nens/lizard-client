@@ -1,15 +1,23 @@
 //layer-directive.js
 
 angular.module('data-menu')
-.directive("baselayerChooser", ['State', 'LeafletService',
-function (State, LeafletService)
+.directive("baselayerChooser", [
+  'State',
+  'LeafletService',
+  'DataService',
+
+function (
+  State,
+  LeafletService,
+  DataService
+)
 {
 
   var link = function (scope, element, attrs) {
     console.log("[!] Linking start...");
 
     // ...
-    var allBaselayers = State.layerGroups.all;
+    var allBaselayers = DataService.baselayerGroups;
 
     console.log("allBaselayers =", allBaselayers);
 

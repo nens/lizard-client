@@ -48,8 +48,16 @@ angular.module('data-menu')
       });
 
       var layerGroups = createLayerGroups(dataLayers);
-
       this.layerGroups = layerGroups;
+
+      // this.baselayerGroups = layerGroups.filter(function (lg) {
+      //   return lg.baselayer;
+      // });
+
+      this.baselayerGroups = _.filter(layerGroups, function (lgValue, lgKey) {
+        return lgValue.baselayer;
+      });
+
 
       // Immutable representation of all layergroups set on State.layerGroups
       Object.defineProperty(State.layerGroups, 'all', {
