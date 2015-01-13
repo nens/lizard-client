@@ -3,7 +3,10 @@ Changelog of lizard-nxt client
 
 Unreleased (1.1.4) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fixed bug where API response "message" was treated as "data".
+
+- Improved behaviour of timeline zoom.
 
 
 Release 1.2.1 (2015-1-8)
