@@ -57,6 +57,16 @@ angular.module('lizard-nxt')
       UtilService.getCurrentWidth()
     );
 
+
+    // Wytze wants the timeline visibility toggable:
+    // ---------------------------------------------
+    // [WYTZE] start
+    this.displayTimeline = true;
+    this.toggleTimelineVisiblity = function () {
+      this.displayTimeline = !this.displayTimeline;
+    };
+    // [WYTZE] end
+
     this.state = State.temporal;
     this.layerGroups = State.layerGroups;
 

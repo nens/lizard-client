@@ -39,10 +39,12 @@ angular.module('lizard-nxt')
   futureIndicator,
   aggWindow, // aggregation window
   lines, // events start - end
-  bars, // rain intensity
+  bars; // rain intensity
 
+  // [WYTZE] orig code -------------------------
   // Space on the xAxis reserved for the start and stop labels
-  START_STOP_WIDTH = 170;
+  // START_STOP_WIDTH = 170;
+  // -----------------------------------------
 
   /**
    * @constructor
@@ -400,21 +402,45 @@ angular.module('lizard-nxt')
     // The actual d3-axis is smaller than the timeline. The scale is copied
     // and transformed to an axis with a restricted range and domain.
     var xAxisScale = xScale.copy();
+
+    // [WYTZE] original code - start
+    // -------------------------------------
+    // xAxisScale
+    //   .domain([
+    //     xScale.invert(START_STOP_WIDTH),
+    //     xScale.invert(width - START_STOP_WIDTH)
+    //   ])
+    //   .range([START_STOP_WIDTH, width - START_STOP_WIDTH]);
+
+    // var xAxis = Timeline.prototype._makeAxis(
+    //   xAxisScale,
+    //   {orientation: "bottom", ticks: 5}
+    // );
+    // [WYTZE] end
+    // ------------------------------------------
+
+    // [WYTZE] replacement code - start ------------------------
+    var XAXIS_PADDING = 50;
+
     xAxisScale
       .domain([
-        xScale.invert(START_STOP_WIDTH),
-        xScale.invert(width - START_STOP_WIDTH)
+        xScale.invert(XAXIS_PADDING),
+        xScale.invert(width - XAXIS_PADDING)
       ])
-      .range([START_STOP_WIDTH, width - START_STOP_WIDTH]);
+      .range([XAXIS_PADDING, width - XAXIS_PADDING]);
+
     var xAxis = Timeline.prototype._makeAxis(
       xAxisScale,
-      {orientation: "bottom", ticks: 5}
+      {orientation: "bottom", ticks: 7}
     );
+    // [WYTZE] end ----------------------------------------------
 
     Timeline.prototype._drawAxes(svg, xAxis, dimensions, false, duration);
     var axisEl = svg.select('#xaxis')
         .attr("class", "x axis timeline-axis");
-    drawStartStop(svg, xScale, dimensions);
+
+    // [WYTZE] disable: drawing start- & stop-label in timeline
+    // drawStartStop(svg, xScale, dimensions);
   };
 
   /**
