@@ -79,10 +79,27 @@
         </graph>
 
         <div ng-switch-when="Vector">
+
           <table class="table table-hover table-condensed" >
             <thead>
-                <th><i class="fa fa-circle" ng-style="{'color': l.color }"></i></th>
-                <th><% lg.layerGroupName %></th>
+
+                <th class="col-xs-1">
+                  <i class="fa fa-circle" ng-style="{'color': l.color }"></i>
+                </th>
+
+                <th class="col-xs-10">
+                  <% lg.layerGroupName %>
+                </th>
+
+                <th class="col-xs-1">
+                    <a ng-click="switchContext('db')"
+                      class="button-list-link"
+                      title="Toon dashboard."
+                      ng-if="context === 'map'"
+                      style="cursor: pointer;">
+                      <i class="fa fa-dashboard"></i>
+                    </a>
+                </th>
             </thead>
             <tbody>
               <tr>

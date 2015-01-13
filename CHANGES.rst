@@ -6,6 +6,16 @@ Unreleased (1.1.4) (XXXX-XX-XX)
 
 - Baselayergroups now share a single button in datamenu.
 
+- Dashboard button moved to omnibox.
+
+- Timeline visibility toggle.
+
+- Timeline start end labels zapped.
+
+- Simplified layergroup-menu (rm colors/minimaps)
+
+- Fixed bug where API response "message" was treated as "data".
+
 - Improved behaviour of timeline zoom.
 
 
