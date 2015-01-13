@@ -6,6 +6,8 @@ Unreleased (1.1.4) (XXXX-XX-XX)
 
 - Simplified layergroup-menu (rm colors/minimaps)
 
+- Fixed bug where API response "message" was treated as "data".
+
 - Improved behaviour of timeline zoom.
 
 
