@@ -848,6 +848,12 @@ angular.module('lizard-nxt')
    * @summary Draws bar elements according to a d3 update pattern.
    */
   var drawRectElements = function (svg, dimensions, data, xScale, yScale) {
+
+    // Fix for attempted draw at init load, when not having enough data:
+    if (!data || !data[0] || !data[1]) {
+      return;
+    }
+
     var height = Timeline.prototype._getHeight(dimensions),
     // Join new data with old elements, based on the timestamp.
     bars = svg.select("g").select('#rain-bar').selectAll('.bar-timeline')
