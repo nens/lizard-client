@@ -31,7 +31,7 @@ angular.module('global-state')
     // Context. State.context returns 'map' or 'db', it can only be set with
     // either one of those values.
     var _context = 'map'; // The default
-    var CONTEXT_VALUES = ['map', 'db'];
+    var CONTEXT_VALUES = ['map', 'db', 'scenarios'];
     Object.defineProperty(state, 'context', {
       get: function () { return _context; },
       set: function (context) {
