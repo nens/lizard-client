@@ -1,7 +1,8 @@
 
 <div id="master" ng-controller="DatamenuController as menu">
   <div class="layer-menu-container">
-    <div class="layer-switcher-wrapper pull-right" ng-class="{'slide-left': menu.enabled}">
+    <div  class="layer-switcher-wrapper pull-right"
+         ng-class="{'slide-left': menu.enabled && context === 'map'}">
       <div class="layer-switcher slide-left">
         <ul class="nav">
           <li class="nav-header">
@@ -66,17 +67,12 @@
         </div>
 
         <div class="button-list-item"
-             style="cursor: pointer">
-          <a ng-click="switchContext('db')"
-             class="button-list-link"
-             title="switch to dashboard"
-             ng-if="context === 'map'">
-             <i class="fa fa-dashboard"></i>
-          </a>
+             style="cursor: pointer"
+             ng-if="context === 'db'">
+
           <a ng-click="switchContext('map')"
              class="button-list-link"
-             title="switch to map"
-             ng-if="context === 'db'">
+             title="Toon kaart.">
              <i class="fa fa-close"></i>
           </a>
         </div>

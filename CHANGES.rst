@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.1.4) (XXXX-XX-XX)
 -------------------------------
 
+- Dashboard button moved to omnibox.
+
 - Timeline visibility toggle.
 
 - Timeline start end labels zapped.
