@@ -1,0 +1,17 @@
+<li class="noselect"
+    style="background-color: #2c3e50; margin-bottom: 10px;">
+
+  <!-- special, "baselayer" menu-item (singular): -->
+  <label class="layer-chooser"
+         ng-click="menu.toggleLayerGroup(getNextInactiveBLG())"
+         title="Basislaag.">
+    <span class="layer-text"
+          style="color: #2c3e50">
+      <% getNextInactiveBLG().name %>
+    </span>
+    <div class="layer-img layer-chooser"
+         ng-style="getNextInactiveBLG().imageStyle">
+    </div>
+  </label>
+
+</li>
