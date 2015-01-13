@@ -39,10 +39,12 @@ angular.module('lizard-nxt')
   futureIndicator,
   aggWindow, // aggregation window
   lines, // events start - end
-  bars, // rain intensity
+  bars; // rain intensity
 
+  // [WYTZE] orig code -------------------------
   // Space on the xAxis reserved for the start and stop labels
-  START_STOP_WIDTH = 170;
+  // START_STOP_WIDTH = 170;
+  // -----------------------------------------
 
   /**
    * @constructor
