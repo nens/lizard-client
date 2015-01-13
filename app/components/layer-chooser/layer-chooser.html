@@ -20,7 +20,6 @@
 
 <li class="noselect">
   <label
-    style="margin-bottom: 10px;"
     class="ng-class: {active: layergroup.isActive()}; layer-chooser-wytze"
     for="<% layergroup.id %>-layer"
     single-click="menu.toggleLayerGroup(layergroup)"
@@ -32,6 +31,7 @@
   </label>
 </li>
 
-<div ng-if="context === 'map'">
-  <opacity-slider title="<% tooltips.transparency %>"></opacity-slider>
+<div ng-if="context === 'map'" style="margin-top: -10px;">
+  <opacity-slider title="<% tooltips.transparency %>">
+  </opacity-slider>
 </div>
