@@ -61,7 +61,7 @@ angular.module('lizard-nxt')
     // Wytze wants the timeline visibility toggable:
     // ---------------------------------------------
     // [WYTZE] start
-    this.displayTimeline = true;
+    this.displayTimeline = false;
     this.toggleTimelineVisiblity = function () {
       this.displayTimeline = !this.displayTimeline;
     };
