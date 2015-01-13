@@ -3,7 +3,7 @@
 angular.module('data-menu')
 .directive("baselayerChooser", ['DataService', function (DataService)
 {
-  var link = function (scope, element, attrs) {
+  var link = function (scope) {
 
     window.onload = function () {
 
