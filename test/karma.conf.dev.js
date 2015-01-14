@@ -43,6 +43,7 @@ module.exports = function(config) {
       'app/components/omnibox/omnibox.js',
       'app/components/state/state.js',
       'app/components/dashboard/dashboard.js',
+      'app/components/scenarios/scenarios.js',
       'app/lizard-nxt.js',
       'test/mocks/**/*.js',
       'app/lib/**/*.js',

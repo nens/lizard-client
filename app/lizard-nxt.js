@@ -24,6 +24,7 @@ angular.module("lizard-nxt", [
   'omnibox',
   'restangular',
   'dashboard',
+  'scenarios',
   'global-state',
   'ngSanitize',
   'ngCsv'
