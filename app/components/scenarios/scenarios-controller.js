@@ -10,6 +10,10 @@ angular.module('scenarios')
     }); 
   
 
+  /**
+   * @description Selects or deselects scenario.
+   *
+   */
   $scope.select = function (scenario) {
     if ($scope.selectedScenario === null) {
       $scope.selectedScenario = scenario;
