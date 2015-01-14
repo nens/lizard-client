@@ -498,12 +498,14 @@ module.exports = function (grunt) {
       ghpages: {
         options: {
           upstream: 'gh-pages',
-          tag: false
+          tag: false,
+          changelog: false
         }
       },
       dist: {
         options: {
           upstream: 'dist',
+          changelog: true,
           tag: true
         }
       }
