@@ -12,11 +12,12 @@
           </thead>
           <tbody if="scenarios.length > 0">
             <tr ng-repeat="scenario in scenarios | filter: search" 
-              class="clickable" 
-              ng-class="{'selected-scenario': selectedScenario === scenario}"
-              ng-click="select(scenario)">
-              <td><% scenario.name %></td>
-              <td><% scenario.created | date: 'MMM d, y HH:mm:ss a' %><td>
+              ng-class="{'selected-scenario': selectedScenario === scenario}">
+              <td ng-click="select(scenario)" ><i class="fa clickable"
+                  ng-class="{'fa-chevron-right': selectedScenario != scenario,
+                             'fa-chevron-down': selectedScenario === scenario}"></i></td>
+              <td ng-click="select(scenario)" class="clickable" ><% scenario.name %></td>
+              <td ng-click="select(scenario)" class="clickable" ><% scenario.created | date: 'MMM d, y HH:mm:ss a' %><td>
               <table class="table table-condensed result-table"
                 ng-if="selectedScenario === 
                     scenario && scenario.result_set.length > 0">
