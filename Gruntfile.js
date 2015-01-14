@@ -492,6 +492,21 @@ module.exports = function (grunt) {
       unit: {
         configFile: 'test/karma.conf.js',
       }
+    },
+
+    releaser: {
+      ghpages: {
+        options: {
+          upstream: 'gh-pages',
+          tag: false
+        }
+      },
+      dist: {
+        options: {
+          upstream: 'dist',
+          tag: true
+        }
+      }
     }
   });
 
@@ -553,7 +568,11 @@ module.exports = function (grunt) {
   grunt.registerTask('release', [
     'test',
     'build',
-    'releaser'
+    'releaser:dist'
+  ]);
+
+  grunt.registerTask('sandbox', [
+      'releaser:ghpages'
   ]);
 
   grunt.registerTask('default', [

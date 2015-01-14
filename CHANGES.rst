@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.1.4) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.2.2 (2015-1-14)
+---------------------
 
 - Fixed bug where API response "message" was treated as "data".
 
