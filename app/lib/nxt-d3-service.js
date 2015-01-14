@@ -150,7 +150,7 @@ angular.module('lizard-nxt')
         range = { min: 0, max: width };
         d3Objects.maxMin = (this._xDomainStart && this._xDomainEnd)
           ? { min: this._xDomainStart, max: this._xDomainEnd }
-          : this._maxMin(data, key) ;
+          : this._maxMin(data, key);
       }
       d3Objects.scale = this._makeScale(d3Objects.maxMin, range, options);
       d3Objects.axis = this._makeAxis(d3Objects.scale, options);
@@ -234,6 +234,8 @@ angular.module('lizard-nxt')
         scale = d3.scale.linear()
           .domain([minMax.min, minMax.max])
           .range([range.min, range.max]);
+      } else {
+        throw new Error(options.scale + ' is not a valid d3 scale');
       }
       return scale;
     },

@@ -6,9 +6,15 @@ Unreleased (1.1.4) (XXXX-XX-XX)
 
 - Cluster events to get better performance.
 
+- Fixed bug where API response "message" was treated as "data".
+
+- Improved behaviour of timeline zoom.
+
 
 Release 1.2.1 (2015-1-8)
 ---------------------
+
+- Add ability to show histograms as barchart.
 
 - Zapped patches for display_name vs name.
 

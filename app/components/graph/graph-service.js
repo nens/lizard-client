@@ -126,6 +126,9 @@ angular.module('lizard-nxt')
      *                        categoy: 'cat'};
      * @param {object} labels Object {x: 'x label', y: 'y label'} will be
      *                        mapped to axis labels of the graph
+     * @param {string} scale  Whether the graph has a scale other than temporal.
+     *                        If it is of a temporal nature the x-axis will by
+     *                        default be the temporal axis.
      * @description           Draws a barchart, if necessary sets up the graph,
      *                        if necessary modifies domain and redraws axis,
      *                        and draws the line according to the data object.
@@ -134,14 +137,14 @@ angular.module('lizard-nxt')
      *                        data element.
      */
     drawBars: {
-      value: function (data, keys, labels) {
+      value: function (data, keys, labels, scale) {
         if (keys.category) {
           data = createYValuesForCumulativeData(data, keys);
         }
         if (!this._xy) {
           var options = {
             x: {
-              scale: 'time',
+              scale: scale,
               orientation: 'bottom'
             },
             y: {
@@ -382,9 +385,11 @@ angular.module('lizard-nxt')
 
   drawHorizontalRectss = function (svg, dimensions, duration, scale, data, keys, labels) {
     var width = Graph.prototype._getWidth(dimensions),
-    height = Graph.prototype._getHeight(dimensions);
+        height = Graph.prototype._getHeight(dimensions),
+        DEFAULT_BAR_COLOR = "#7f8c8d", // $asbestos is the default color for bars
+        previousCumu = 0;
+
     // Create a start and end for each rectangle.
-    var previousCumu = 0;
     angular.forEach(data, function (value) {
       value.start = previousCumu;
       previousCumu += value[keys.x];
@@ -405,7 +410,7 @@ angular.module('lizard-nxt')
     // ENTER
     // Create new elements as needed.
     rects.enter().append("rect")
-      .style("fill", function (d) { return d[keys.color]; })
+      .style("fill", function (d) { return d.color || DEFAULT_BAR_COLOR; })
       .attr("x", function (d) { return scale(d.start); })
       .attr("y", 0)
       .attr('class', 'horizontal-rect')
@@ -426,7 +431,7 @@ angular.module('lizard-nxt')
     rects.on('mousemove', function (d) {
       var label;
       if (d.label === -1) {
-        label = Math.round(d[keys.x] * 100) + '% ' + "overig";
+        label = Math.round(d[keys.x] * 100) + "% overig";
       } else {
         var labelstr = d.label.split('-');
         label = Math.round(d[keys.x] * 100) + '% ' + labelstr[labelstr.length - 1];
