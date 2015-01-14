@@ -574,6 +574,8 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('sandbox', [
+      'test',
+      'build',
       'releaser:ghpages'
   ]);
 
