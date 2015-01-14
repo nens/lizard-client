@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.1.4) (XXXX-XX-XX)
 -------------------------------
 
+- Limit timeline min and max zoom.
+
 - Baselayergroups now share a single button in datamenu.
 
 - Dashboard button moved to omnibox.
