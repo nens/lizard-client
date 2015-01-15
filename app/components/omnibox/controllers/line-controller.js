@@ -193,18 +193,18 @@ angular.module('omnibox')
       if (n === o) { return true; }
       if ($scope.box.mouseLoc) {
 
-        if ($scope.mapState.points[0] === undefined ||
-            $scope.mapState.points[1] === undefined) {
+        if (State.spatial.points[0] === undefined ||
+            State.spatial.points[1] === undefined) {
           return;
         }
 
         // local vars declaration.
         var lat1, lat2, lon1, lon2, maxD, d, r, dLat, dLon, posLat, posLon;
 
-        lat1 = $scope.mapState.points[0].lat;
-        lat2 = $scope.mapState.points[1].lat;
-        lon1 = $scope.mapState.points[0].lng;
-        lon2 = $scope.mapState.points[1].lng;
+        lat1 = State.spatial.points[0].lat;
+        lat2 = State.spatial.points[1].lat;
+        lon1 = State.spatial.points[0].lng;
+        lon2 = State.spatial.points[1].lng;
         maxD = Math.sqrt(Math.pow((lat2 - lat1), 2) +
                          Math.pow((lon2 - lon1), 2));
         d = UtilService.metersToDegs($scope.box.mouseLoc);
@@ -220,7 +220,7 @@ angular.module('omnibox')
               fillOpacity: 1,
               radius: 5
             });
-          MapService.addLayer(circle);
+          MapService.addLeafletLayer(circle);
         } else {
           circle.setLatLng([posLat, posLon]);
         }
