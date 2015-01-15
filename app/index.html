@@ -134,9 +134,15 @@
       <dashboard></dashboard>
     </div>
 
-    <datamenu></datamenu>
+    <div ng-if="context === 'scenarios'">
+      <scenarios></scenarios>
+    </div>
 
-    <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
+    <div ng-if="context !== 'scenarios'">
+      <datamenu></datamenu>
+
+      <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
+    </div>
 
     <div id="dark-overlay">
       <div id="mymodal">
@@ -237,6 +243,10 @@
     <script src="/components/dashboard/dashboard.js"></script>
     <script src="/components/dashboard/dashboard-controller.js"></script>
     <script src="/components/dashboard/dashboard-directive.js"></script>
+
+    <script src="/components/scenarios/scenarios.js"></script>
+    <script src="/components/scenarios/scenarios-controller.js"></script>
+    <script src="/components/scenarios/scenarios-directive.js"></script>
 
     <script src="/components/single-click/single-click-directive.js"></script>
     <script src="/components/opacity/opacity-directives.js"></script>

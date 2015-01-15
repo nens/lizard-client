@@ -24,6 +24,7 @@ angular.module("lizard-nxt", [
   'omnibox',
   'restangular',
   'dashboard',
+  'scenarios',
   'global-state',
   'ngSanitize',
   'ngCsv'
@@ -55,7 +56,10 @@ angular.module('lizard-nxt')
  */
 angular.module('lizard-nxt')
   .config(function ($locationProvider) {
-  $locationProvider.html5Mode(true);
+  // We want to release to gh-pages for demo purposes or whatever
+  // But github.io doesn't rewrite the urls beautifully like we do.
+  var html5Mode = (window.location.host !== 'nens.github.io');
+  $locationProvider.html5Mode(html5Mode);
 });
 
 /**

@@ -1,4 +1,4 @@
-[![Build Status](http://buildbot.lizardsystem.nl/jenkins/buildStatus/icon?job=Lizard-Client Integration 2. Deploy)](http://buildbot.lizardsystem.nl/jenkins/job/Lizard-Client%20Integration%202.%20Deploy/)
+![Build Status](http://buildbot.lizardsystem.nl/jenkins/buildStatus/icon?job=Lizard-Client Integration 2. Deploy)
 
 # Lizard client
 

@@ -14,6 +14,10 @@ angular.module('lizard-nxt')
       flowResource,
       events;
 
+  // for the wizard demo's
+  if (window.location.host === 'nens.github.io') {
+    Restangular.setBaseUrl('https://nxt.lizard.net/');
+  }
   Restangular.setRequestSuffix('?page_size=0');
   geocodeResource = Restangular.one('api/v1/geocode/');
   reverseGeocodeResource = Restangular.one('api/v1/reversegeocode/');
@@ -47,7 +51,7 @@ angular.module('lizard-nxt')
     login: "Inloggen",
     logout: "Uitloggen",
     profile: "Profiel aanpassen",
-    version: "Dubbelklik voor de Lizard versie", // ok, but where is the HTML for it????
+    version: "Dubbelklik voor de Lizard versie",
     openMenu: "Datamenu openen",
     closeMenu: "Datamenu sluiten",
     transparency: "Transparantie aanpassen",
