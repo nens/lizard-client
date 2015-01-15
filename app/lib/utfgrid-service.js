@@ -76,18 +76,26 @@ angular.module('lizard-nxt')
           ));
 
         case "LineString":
-          var lineStart = L.latLng(
-                structureGeom.coordinates[0][1],
-                structureGeom.coordinates[0][0]
-              ),
-              lineEnd = L.latLng(
-                structureGeom.coordinates[1][1],
-                structureGeom.coordinates[1][0]
-              );
+
+          // For now (15-01-2015), don't take into account structures with a geom
+          // type other than POINT. Since this will probably be reverted some time
+          // in the foreseeable future, we simply comment the relevant code and
+          // return false.
+
+          // var lineStart = L.latLng(
+          //       structureGeom.coordinates[0][1],
+          //       structureGeom.coordinates[0][0]
+          //     ),
+          //     lineEnd = L.latLng(
+          //       structureGeom.coordinates[1][1],
+          //       structureGeom.coordinates[1][0]
+          //     );
 
           // TODO: Fix detection of lines that overlap the extent, but that do
           // not start nor end within the extent. It negligable for now.
-          return leafletBounds.contains(lineStart) || leafletBounds.contains(lineEnd);
+          //return leafletBounds.contains(lineStart) || leafletBounds.contains(lineEnd);
+
+          return false;
 
         default:
           throw new Error("Did not find valid geom type:", structureGeom.type);
