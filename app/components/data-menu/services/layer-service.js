@@ -41,7 +41,8 @@ angular.module('data-menu')
         });
         Object.defineProperty(this, 'url', {
           value: layer.url,
-          writable: false,
+          // on github.io it needs to be prepended to nxt.lizard.net
+          writable: (window.location.host === 'nens.github.io'),
         });
         // Physical time in millieseconds between frames.
         Object.defineProperty(this, '_temporalResolution', {
@@ -92,6 +93,14 @@ angular.module('data-menu')
           value: layer.load_order,
           writable: false,
         });
+
+        // this allows for the demo's to be run from github.io
+        if (this.url.indexOf('api/v1') > -1 &&
+            window.location.host === 'nens.github.io') {
+          this.url = "https://nxt.lizard.net/".concat(this.url);
+        }
+
+
       }
 
       return NxtLayer;

@@ -1,8 +1,12 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.1.4) (XXXX-XX-XX)
+Unreleased (1.2.2) (XXXX-XX-XX)
 -------------------------------
+
+- Add stuff for demo branch to be released on gh-pages
+
+- Add result scenarios to front-end.
 
 - Fixed bug where API response "message" was treated as "data".
 
