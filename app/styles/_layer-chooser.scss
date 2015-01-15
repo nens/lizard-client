@@ -230,3 +230,10 @@ label.layer-chooser > div.layer-img {
 }
 
 
+.eventLGIndicator {
+    width: 40%;
+    height: 100%;
+    background-color: #000; /* is set dynamically */
+    z-index: 9000;
+    float: right;
+}

@@ -26,8 +26,13 @@
     ng-dblclick="layergroup.dblClick()"
     title="<% layergroup.name %>">
     <span class="layer-text-wytze"
-          ng-bind="layergroup.name">
+          ng-bind="layergroup.name"
+          style="width: <% layergroup.isEventLayerGroup() ? '60%' : '100%' %>">
     </span>
+    <div ng-if="layergroup.isEventLayerGroup()"
+         class="layer-img layer-chooser eventLGIndicator"
+         style="background-color: <% layergroup.getColorForEventLayerGroup() %>;">
+    </div>
   </label>
 </li>
 
