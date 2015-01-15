@@ -42,7 +42,7 @@ angular.module('data-menu')
         Object.defineProperty(this, 'url', {
           value: layer.url,
           // on github.io it needs to be prepended to nxt.lizard.net
-          writable: (window.location.host !== 'nens.github.io'),
+          writable: (window.location.host === 'nens.github.io'),
         });
         // Physical time in millieseconds between frames.
         Object.defineProperty(this, '_temporalResolution', {
