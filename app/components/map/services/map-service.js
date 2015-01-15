@@ -489,15 +489,26 @@ angular.module('map')
           animateAddingMarkers: false, // Enable for cool animations but its
                                        // too slow for > 1000 events.
           iconCreateFunction: function (cluster) {
-            var size = cluster.getAllChildMarkers().length;
-            var pxSize = 12;
-            if (size > 9) { pxSize = 14; }
-            if (size > 20) { pxSize = 16; }
-            if (size > 40) { pxSize = 18; }
-            if (size > 80) { pxSize = 20; }
-            if (size > 200) { pxSize = 22; }
-            if (size > 500) { pxSize = 26; }
-            if (size > 1000) { pxSize = 30; }
+            var size = cluster.getAllChildMarkers().length,
+                pxSize;
+
+            if (size > 1000) {
+              pxSize = 30;
+            } else if (size > 500) {
+              pxSize = 26;
+            } else if (size > 200) {
+              pxSize = 22;
+            } else if (size > 80) {
+              pxSize = 20;
+            } else if (size > 40) {
+              pxSize = 18;
+            } else if (size > 20) {
+              pxSize = 16;
+            } else if (size > 9) {
+              pxSize = 14;
+            } else {
+              pxSize = 12;
+            }
 
             // Return two circles, an opaque big one with a smaller one on top
             // and white text in the middle. With radius = pxSize.
