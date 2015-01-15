@@ -405,12 +405,6 @@ angular.module('map')
       angular.forEach(DataService.layerGroups, function (lg, lgSlug) {
         sortLayers(lg.mapLayers);
         angular.forEach(lg.mapLayers, function (layer, lSlug) {
-          // this allows for the demo's to be run from github.io
-          if (layer.url.indexOf('api/v1') > -1 &&
-              window.location.host === 'nens.github.io') {
-            layer.url = "https://nxt.lizard.net/".concat(layer.url);
-          }
-
           if (layer.tiled) {
             layer._leafletLayer = initializers[layer.format](layer);
             angular.extend(layer, NxtMapLayer);

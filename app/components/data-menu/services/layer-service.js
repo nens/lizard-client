@@ -93,6 +93,14 @@ angular.module('data-menu')
           value: layer.load_order,
           writable: false,
         });
+
+        // this allows for the demo's to be run from github.io
+        if (this.url.indexOf('api/v1') > -1 &&
+            window.location.host === 'nens.github.io') {
+          this.url = "https://nxt.lizard.net/".concat(this.url);
+        }
+
+
       }
 
       return NxtLayer;
