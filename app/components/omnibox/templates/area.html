@@ -23,25 +23,6 @@
     </table>
   </div>
 
-  <!-- area card for: layerGroup=rain; layer=radar/basic -->
-  <div id="card-rain"
-       class="card active"
-       ng-if="filteredRainDataPerKilometer">
-
-    <table class="table table-condensed table-hover single-row-table">
-      <tr class="attr-row">
-        <td> <i class="fa fa-umbrella"> </i></td>
-        <td>
-           gebiedsgemiddelde neerslag
-        </td>
-        <td>
-          <% filteredRainDataPerKilometer %> mm
-        </td>
-      <tr>
-    </table>
-
-  </div>
-
   <div ng-repeat="(slug, lg) in box.content"
        ng-if="slug !== 'rain' && slug !== 'waterchain'"
        class="card active" id="card-<% slug %>">
