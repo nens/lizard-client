@@ -31,7 +31,7 @@ angular.module('lizard-nxt')
 
         dimensions = {
           width: UtilService.getCurrentWidth(),
-          height: 75,
+          height: 60,
           events: 20,
           bars: 35,
           padding: {
@@ -140,11 +140,11 @@ angular.module('lizard-nxt')
     var updateTimelineHeight = function (newDim, dim, nEventTypes) {
       var eventHeight;
       if (getTimelineLayers(DataService.layerGroups).rain && nEventTypes > 0) {
-        eventHeight = (nEventTypes - 2) * dim.events;
+        eventHeight = (nEventTypes - 1) * dim.events;
         eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
         newDim.height = dim.height + dim.bars + eventHeight;
       } else {
-        eventHeight = (nEventTypes - 2) * dim.events;
+        eventHeight = (nEventTypes - 1) * dim.events;
         eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
         newDim.height = dim.height + eventHeight;
       }
