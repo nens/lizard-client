@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.2) (XXXX-XX-XX)
 -------------------------------
 
+- Cluster events to get better performance.
+
 - Add stuff for demo branch to be released on gh-pages
 
 - Add result scenarios to front-end.

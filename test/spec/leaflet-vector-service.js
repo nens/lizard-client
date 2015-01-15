@@ -20,13 +20,7 @@ describe('Service: LeafletVectorService', function () {
 
   it('should create a Leaflet Class instance', function () {
     var lvs = new LeafletVectorService();
-    expect(lvs instanceof LeafletService.TileLayer).toBe(true); 
+    expect(lvs instanceof LeafletService.MarkerClusterGroup).toBe(true);
   });
-
-  it('should count overlapping dots', function () {
-    var lvs = new LeafletVectorService();
-    var overlaps = lvs.countOverlapping(geojsonmock.features);
-    expect(overlaps.length < geojsonmock.features.length).toBe(true);
-  }); 
 
 });

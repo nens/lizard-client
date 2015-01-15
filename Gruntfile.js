@@ -31,13 +31,6 @@ module.exports = function (grunt) {
     dist: 'dist',
     // Templates that need to be converted reside in components and core
     templateFileDirs: 'components/**/{,*/}*.html',
-    // TODO:
-    // lib and lizard-nxt.js are still a swamp. Needs to be
-    // * restructured
-    // * refactored.
-    // * Cut up in modules etc.
-    //
-    //
     // Files reside in components, lib and in several subdirectories.
     jsFileDirs: '{,components, lib}/{,*/}*.js'
   };

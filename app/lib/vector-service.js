@@ -16,7 +16,8 @@ angular.module('lizard-nxt')
                              '$rootScope',
                              'LeafletService',
                              'UtilService',
-  function ($q, $rootScope, LeafletService, UtilService) {
+                             'CabinetService',
+  function ($q, $rootScope, LeafletService, UtilService, CabinetService) {
 
     /**
      * @function
@@ -68,6 +69,50 @@ angular.module('lizard-nxt')
     };
 
     /**
+     * @description - Checks whether a single feature must be drawn given
+     *                a certain timeState.
+     */
+    var isInTempExtent = function (feature, temporal) {
+      var eventStartBeforeTLStart = false,
+          eventStartAfterTLStart = false,
+          eventEndBeforeTLStart = false,
+          eventEndAfterTLStart = false,
+          eventEndBeforeTLEnd = false;
+
+      if (feature.properties) { feature = feature.properties; }
+
+      if (temporal.start) {
+        eventStartBeforeTLStart
+          = feature.timestamp_start < temporal.start;
+        eventStartAfterTLStart
+          = !eventStartBeforeTLStart;
+        eventEndBeforeTLStart
+          = feature.timestamp_end < temporal.start;
+        eventEndAfterTLStart
+          = !eventEndBeforeTLStart;
+      }
+
+      if (temporal.end) {
+        eventEndBeforeTLEnd
+          = feature.timestamp_end < temporal.end;
+      }
+
+      var result;
+      if (eventStartBeforeTLStart
+          && eventEndAfterTLStart) { result = true; }
+      else if (
+                (temporal.start === undefined || eventStartAfterTLStart)
+                && (temporal.end === undefined || eventEndBeforeTLEnd)
+              )
+              { result = true; }
+      else {
+        result = false;
+      }
+
+      return result;
+    };
+
+    /**
      * @function
      * @description filters geojson array on temporal bounds.
      * @param  {object}      start end object
@@ -75,90 +120,9 @@ angular.module('lizard-nxt')
      * @return {filteredSet} filtered set of features.
      */
     var filterTemporal = function (sourceArray, temporal) {
-
-      var filteredSet = [],
-          eventStartBeforeTLStart,
-          eventStartAfterTLStart,
-          eventEndBeforeTLStart,
-          eventEndAfterTLStart,
-          eventEndBeforeTLEnd;
-
-      sourceArray.forEach(function (feature) {
-
-        eventStartBeforeTLStart = false;
-        eventStartAfterTLStart = false;
-        eventEndBeforeTLStart = false;
-        eventEndAfterTLStart = false;
-        eventEndBeforeTLEnd = false;
-
-        if (temporal.start) {
-          // we can set the 4 booleans related to ..TLStart:
-          eventStartBeforeTLStart
-            = feature.properties.timestamp_start < temporal.start;
-          eventStartAfterTLStart
-            = !eventStartBeforeTLStart;
-          eventEndBeforeTLStart
-            = feature.properties.timestamp_end < temporal.start;
-          eventEndAfterTLStart
-            = !eventEndBeforeTLStart;
-        }
-
-        if (temporal.end) {
-          eventEndBeforeTLEnd
-            = feature.properties.timestamp_end < temporal.end;// chk
-        }
-
-        // We process the feature iff one of the following is true:
-
-        // (1) The event starts before tl start && the event ends after tl
-        // start:
-        //                      <--extent-->
-        // kruik <----------oooo[oooo------]--------------------> eind der tijd
-        // kruik <----------oooo[oooooooooo]oooo----------------> eind der tijd
-        if (eventStartBeforeTLStart
-            && eventEndAfterTLStart) { filteredSet.push(feature); }
-
-        // (2) The event starts within tl bounds:
-        //                      <--extent-->
-        // kruik <--------------[--oooooooo]oooo----------------> eind der tijd
-        // kruik <--------------[--oooooo--]--------------------> eind der tijd
-
-        // Explicit code for (2) is redundant when viewing code for (3): since
-        // (3) |= (2) (see table)
-
-        //  A B C D | A and B | (A or C) and (B or D)
-        //  --------+---------+----------------------
-        //  0 0 0 0 |    0    |     0     0     0
-        //  0 0 0 1 |    0    |     0     0     1
-        //  0 0 1 0 |    0    |     1     0     0
-        //  0 0 1 1 |    0    |     1     1     1
-        //  0 1 0 0 |    0    |     0     0     1
-        //  0 1 0 1 |    0    |     0     0     1
-        //  0 1 1 0 |    0    |     1     1     1
-        //  0 1 1 1 |    0    |     1     1     1
-        //  --------+---------+-----------------------
-        //  1 0 0 0 |    0    |     1     0     0
-        //  1 0 0 1 |    0    |     1     1     1
-        //  1 0 1 0 |    0    |     1     0     0
-        //  1 0 1 1 |    0    |     1     1     1
-        //  1 1 0 0 |    1    |     1     1     1
-        //  1 1 0 1 |    1    |     1     1     1
-        //  1 1 1 0 |    1    |     1     1     1
-        //  1 1 1 1 |    1    |     1     1     1
-
-        // unused code for (2), for explicitness' sake:
-        // else if (eventStartAfterTLStart
-        //          && eventStartBeforeTLEnd) { filteredSet.push(feature); }
-
-        // 3) Also, deal with undefined start/end values:
-        else if (
-                  (temporal.start === undefined || eventStartAfterTLStart)
-                  && (temporal.end === undefined || eventEndBeforeTLEnd)
-                )
-                { filteredSet.push(feature); }
-
+      return sourceArray.filter(function (feature) {
+        return isInTempExtent(feature, temporal);
       });
-      return filteredSet;
     };
 
     /**
@@ -219,34 +183,20 @@ angular.module('lizard-nxt')
       // leaflet knows nothing, so sends slug and leaflayer
       if (typeof nonLeafLayer === 'string') {
         layerSlug = nonLeafLayer;
-        layer = options.layer;
       } else {
-        layer = nonLeafLayer._leafletLayer;
         layerSlug = nonLeafLayer.slug;
       }
 
-      if (!layer) {
-        deferred.reject();
-        return deferred.promise;
-      }
-
-
-      if (layer.isLoading) {
+      if (!vectorLayers[layerSlug] || vectorLayers[layerSlug].isLoading) {
         getDataAsync(layerSlug, layer, options, deferred);
-      } else if (vectorLayers[layerSlug]) {
+      } else {
         var set = filterSet(vectorLayers[layerSlug].data,
         options.geom, {
           start: options.start,
           end: options.end
         });
+
         deferred.resolve(set);
-      } else if (!vectorLayers[layerSlug]) {
-        // Store that there is no data for this layer
-        vectorLayers[layerSlug] = {
-          data: []
-        };
-      } else {
-        deferred.reject();
       }
 
       return deferred.promise;
@@ -259,7 +209,23 @@ angular.module('lizard-nxt')
      * @param {promise}
      */
     var getDataAsync = function (layerSlug, layer, options, deferred) {
-      layer.on('loadend', function () {
+      if (!vectorLayers[layerSlug]) {
+
+        vectorLayers[layerSlug] = {
+          data: [],
+          isLoading: true,
+          promise: {}
+        };
+
+        vectorLayers[layerSlug].promise = CabinetService.events
+        .get({'event_series__layer__slug': layerSlug}).then(function (response) {
+          vectorLayers[layerSlug].isLoading = false;
+          setData(layerSlug, response.features, 1);
+        });
+
+      }
+
+      vectorLayers[layerSlug].promise.then(function () {
         deferred.resolve(filterSet(vectorLayers[layerSlug].data,
           options.geom, {
             start: options.start,
@@ -267,6 +233,7 @@ angular.module('lizard-nxt')
           }
         ));
       });
+
     };
 
     /**
@@ -304,7 +271,8 @@ angular.module('lizard-nxt')
 
     return {
       getData: getData,
-      setData: setData
+      setData: setData,
+      isInTempExtent: isInTempExtent
     };
   }
 ]);
