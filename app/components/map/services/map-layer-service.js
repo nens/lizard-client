@@ -10,12 +10,13 @@
 angular.module('map')
   .factory('NxtMapLayer', ['$q', '$http', function ($q, $http) {
 
-
       return {
 
         add: function (map) {
           var defer = $q.defer();
           if (this._leafletLayer) {
+            // Vector layers need a timeState when added.
+            this._leafletLayer.timeState = this.timeState;
             this._addLeafletLayer(map, this._leafletLayer);
             this._leafletLayer.on('load', function () {
               defer.resolve();
@@ -60,18 +61,10 @@ angular.module('map')
           }
         },
 
-
         syncTime: function (timeState) {
           if (this.format !== 'Vector') { return; }
           var defer = $q.defer();
-          if (timeState.playing) {
-            this._leafletLayer.syncTime(this, {
-              start: timeState.at,
-              end: timeState.at + timeState.aggWindow
-            });
-          } else {
-            this._leafletLayer.syncTime(this, timeState);
-          }
+          this._leafletLayer.syncTime(timeState);
           defer.resolve();
           return defer.promise;
         },

@@ -31,13 +31,6 @@ module.exports = function (grunt) {
     dist: 'dist',
     // Templates that need to be converted reside in components and core
     templateFileDirs: 'components/**/{,*/}*.html',
-    // TODO:
-    // lib and lizard-nxt.js are still a swamp. Needs to be
-    // * restructured
-    // * refactored.
-    // * Cut up in modules etc.
-    //
-    //
     // Files reside in components, lib and in several subdirectories.
     jsFileDirs: '{,components, lib}/{,*/}*.js'
   };
@@ -321,6 +314,24 @@ module.exports = function (grunt) {
           from: '/images/',
           to: '/static/client/images/'
         }]
+      },
+      ghpages: {
+        src: ['dist/*.html'],
+        overwrite: true,                 // overwrite matched source files
+        replacements: [{
+          from: '/styles/',
+          to: 'styles/'
+        }, {
+          from: '/scripts/',
+          to: 'scripts/'
+        }, {
+          from: '/images/',
+          to: 'images/'
+        },{
+          from: '/lizard-bs.js',
+          to: 'https://nxt.lizard.net/lizard-bs.js'
+        }]
+
       }
     },
 
@@ -492,6 +503,23 @@ module.exports = function (grunt) {
       unit: {
         configFile: 'test/karma.conf.js',
       }
+    },
+
+    releaser: {
+      ghpages: {
+        options: {
+          upstream: 'gh-pages',
+          tag: false,
+          changelog: false
+        }
+      },
+      dist: {
+        options: {
+          upstream: 'dist',
+          changelog: true,
+          tag: true
+        }
+      }
     }
   });
 
@@ -546,19 +574,27 @@ module.exports = function (grunt) {
     'filerev',
     'usemin',
     'htmlmin',
-    'replace',
-    'doxx'
   ]);
 
   grunt.registerTask('release', [
     'test',
     'build',
-    'releaser'
+    'replace:dist',
+    'releaser:dist'
+  ]);
+
+  grunt.registerTask('sandbox', [
+    'test',
+    'build',
+    'replace:ghpages',
+    'releaser:ghpages'
   ]);
 
   grunt.registerTask('default', [
     'newer:jshint',
     'test',
-    'build'
+    'build',
+    'replace:dist',
+    'doxx'
   ]);
 };

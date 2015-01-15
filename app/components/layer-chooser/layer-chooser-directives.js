@@ -9,6 +9,8 @@ angular.module('data-menu')
     // goes into its own NxtMap to always be turned on
     var layerGroup = scope.layergroup;
 
+    scope.showOpacitySlider = true;
+
     var leafletLayers = [];
 
     angular.forEach(layerGroup.mapLayers, function (layer) {
@@ -38,6 +40,7 @@ angular.module('data-menu')
       }
       else if (layer.format === 'Vector') {
         element.find('.layer-img')[0].style.backgroundColor = layer.color;
+        scope.showOpacitySlider = false;
       }
     });
 

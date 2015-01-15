@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('lizard-nxt')
   .service("CabinetService", ["$q", "Restangular",
   function ($q, Restangular) {
@@ -9,12 +11,18 @@ angular.module('lizard-nxt')
       apiLayerGroups,
       timeseriesLocationObjectResource,
       timeseriesResource,
-      flowResource;
+      flowResource,
+      events;
 
+  // for the wizard demo's
+  if (window.location.host === 'nens.github.io') {
+    Restangular.setBaseUrl('https://nxt.lizard.net/');
+  }
   Restangular.setRequestSuffix('?page_size=0');
   geocodeResource = Restangular.one('api/v1/geocode/');
   reverseGeocodeResource = Restangular.one('api/v1/reversegeocode/');
   timeseriesResource = Restangular.one('api/v1/timeseries/');
+  events = Restangular.one('api/v1/events/');
 
   /**
    * Raster resource, last stop to the server
@@ -43,7 +51,7 @@ angular.module('lizard-nxt')
     login: "Inloggen",
     logout: "Uitloggen",
     profile: "Profiel aanpassen",
-    version: "Dubbelklik voor de Lizard versie", // ok, but where is the HTML for it????
+    version: "Dubbelklik voor de Lizard versie",
     openMenu: "Datamenu openen",
     closeMenu: "Datamenu sluiten",
     transparency: "Transparantie aanpassen",
@@ -66,6 +74,7 @@ angular.module('lizard-nxt')
 
   return {
     //eventTypes: eventTypes,
+    events: events,
     tooltips: tooltips,
     geocode: geocodeResource,
     raster: rasterResource,

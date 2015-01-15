@@ -470,19 +470,66 @@ angular.module('map')
       },
 
       Vector: function (nonLeafLayer) {
-        var leafletLayer;
-
-        // Initiate a tiled Vector layer
-        var url = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
-
-        leafletLayer = new LeafletVectorService(url, {
-          minZoom: nonLeafLayer.minZoom,
-          maxZoom: nonLeafLayer.maxZoom,
-          color: nonLeafLayer.color,
+        var leafletLayer = new LeafletVectorService({
           slug: nonLeafLayer.slug,
-          ext: 'geojson'
-        });
+          color: nonLeafLayer.color,
+          showCoverageOnHover: false,  // When you mouse over a cluster it shows
+                                       // the bounds of its markers.
+          zoomToBoundsOnClick: true,   // When you click a cluster we zoom to
+                                       // its bounds.
+          spiderfyOnMaxZoom: false,    // When you click a cluster at the bottom
+                                       // zoom level we  do not spiderfy it
+                                       // so you can see all of its markers.
+          maxClusterRadius: 80,        // The maximum radius that a cluster will
+                                       // cover from the central marker
+                                       // (in pixels). Default 80. Decreasing
+                                       // will make more and smaller clusters.
+                                       // Set to 1 for clustering only when
+                                       // events are on the same spot.
+          animateAddingMarkers: false, // Enable for cool animations but its
+                                       // too slow for > 1000 events.
+          iconCreateFunction: function (cluster) {
+            var size = cluster.getAllChildMarkers().length,
+                pxSize;
 
+            if (size > 1000) {
+              pxSize = 30;
+            } else if (size > 500) {
+              pxSize = 26;
+            } else if (size > 200) {
+              pxSize = 22;
+            } else if (size > 80) {
+              pxSize = 20;
+            } else if (size > 40) {
+              pxSize = 18;
+            } else if (size > 20) {
+              pxSize = 16;
+            } else if (size > 9) {
+              pxSize = 14;
+            } else {
+              pxSize = 12;
+            }
+
+            // Return two circles, an opaque big one with a smaller one on top
+            // and white text in the middle. With radius = pxSize.
+            return L.divIcon({
+              iconAnchor: [pxSize, pxSize],
+              html: '<svg height="' + (pxSize * 2) + '" width="' + (pxSize * 2)
+                    + '">'
+                    + '<circle cx="' + pxSize + '" cy="' + pxSize
+                    + '" r="' + pxSize + '" fill-opacity="0.4" fill="'
+                    + nonLeafLayer.color + '" />'
+                    + '<circle cx="' + pxSize + '" cy="' + pxSize + '" r="'
+                    + (pxSize - 2) + '" fill-opacity="1" fill="'
+                    + nonLeafLayer.color + '" />'
+                    + '<text x="' + pxSize + '" y="' + (pxSize + 5)
+                    + '" style="text-anchor: middle; fill: white;">'
+                    + size + '</text>'
+                    + '</svg>'
+            });
+          }
+
+        });
         return leafletLayer;
       }
 
