@@ -2,7 +2,6 @@
 vendor/
 node_modules/
 node_modules
-npm-debug.log
 .npm-debug.log
 .grunt/
 
@@ -13,8 +12,5 @@ qa/
 tmp/
 tmp
 .tmp/
-dist/
 templates.js
 doc/
-
-
