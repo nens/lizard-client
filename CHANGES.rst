@@ -4,6 +4,18 @@ Changelog of lizard-nxt client
 Unreleased (1.2.2) (XXXX-XX-XX)
 -------------------------------
 
+- Limit timeline min and max zoom.
+
+- Baselayergroups now share a single button in datamenu.
+
+- Dashboard button moved to omnibox.
+
+- Timeline visibility toggle.
+
+- Timeline start end labels zapped.
+
+- Simplified layergroup-menu (rm colors/minimaps)
+
 - Cluster events to get better performance.
 
 - Add stuff for demo branch to be released on gh-pages

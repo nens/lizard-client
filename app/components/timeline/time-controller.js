@@ -57,6 +57,16 @@ angular.module('lizard-nxt')
       UtilService.getCurrentWidth()
     );
 
+
+    // Wytze wants the timeline visibility toggable:
+    // ---------------------------------------------
+    // [WYTZE] start
+    this.displayTimeline = false;
+    this.toggleTimelineVisiblity = function () {
+      this.displayTimeline = !this.displayTimeline;
+    };
+    // [WYTZE] end
+
     this.state = State.temporal;
     this.layerGroups = State.layerGroups;
 
@@ -260,8 +270,10 @@ angular.module('lizard-nxt')
 
       var milliseconds = UtilService.getCurrentWidth() * newResolution;
 
-      State.temporal.start = State.temporal.at - milliseconds;
-      State.temporal.end = State.temporal.at + milliseconds;
+      State.temporal.start = Math.max(State.temporal.at - milliseconds,
+                                      UtilService.MIN_TIME);
+      State.temporal.end = Math.min(State.temporal.at + milliseconds,
+                                    UtilService.MAX_TIME);
       State.temporal.resolution = newResolution;
 
       // Without this $broadcast, timeline will not sync to State.temporal:

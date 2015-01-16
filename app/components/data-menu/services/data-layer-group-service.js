@@ -113,11 +113,25 @@ angular.module('data-menu')
       },
 
       /**
-       * Returns true is the current layerGroup (i.e. "this") is active and false
+       * Returns true if the current layerGroup (i.e. "this") is active and false
        * otherwise.
        */
       isActive: function () {
         return this._active;
+      },
+
+      /**
+       * Returns true iff the current layerGroup (i.e. "this") has only layers
+       * with format 'Vector'.
+       */
+      isEventLayerGroup: function () {
+        return this.mapLayers.every(function (mapLayer) {
+          return mapLayer.format === 'Vector';
+        });
+      },
+
+      getColorForEventLayerGroup: function () {
+        return this.mapLayers[0].color;
       },
 
      /**
@@ -207,6 +221,5 @@ angular.module('data-menu')
     };
 
     return LayerGroup;
-
   }
 ]);

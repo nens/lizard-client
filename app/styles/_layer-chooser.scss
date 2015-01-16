@@ -21,7 +21,20 @@ label.layer-chooser {
     &:hover {
         border: 2px solid $asbestos;
     }
+}
 
+/* [WYTZE] new styling
+*************************/
+label.layer-chooser-wytze {
+    border: solid 2px rgba(0,0,0,0);
+    height: $height15;
+    margin-bottom: 10px;
+    position: relative;
+    transition: .3s ease;
+    width: $width19;
+    &:hover {
+        border: 2px solid $asbestos;
+    }
 }
 
 label.layer-chooser > span.layer-text {
@@ -35,21 +48,51 @@ label.layer-chooser > span.layer-text {
     z-index: 1;
 }
 
+/* [WYTZE] new styling
+*************************/
+label.layer-chooser-wytze > span.layer-text-wytze {
+    background: rgba(239, 239, 239, 0.9);
+    color: $asbestos;
+    height: 24px;
+    padding: 4px 5px;
+    position: absolute;
+    transition: .3s ease;
+    width: 100%;
+    z-index: 1;
+}
+
 label.layer-chooser.active {
     border: solid 2px $midnightblue;
     &:hover > span.layer-text {
         color: $midnightblue;
     }
-
     &:hover {
         border: solid 2px $midnightblue;
     }
-
 }
 
 label.layer-chooser.active > span.layer-text {
     color: $midnightblue;
 }
+
+/* [WYTZE] new styling
+*************************/
+label.layer-chooser-wytze.active {
+    border: solid 2px $midnightblue;
+    &:hover > span.layer-text-wytze {
+        color: $midnightblue;
+    }
+    &:hover {
+        border: solid 2px $midnightblue;
+    }
+}
+
+/* [WYTZE] new styling
+*************************/
+label.layer-chooser-wytze.active > span.layer-text-wytze {
+    color: $midnightblue;
+}
+
 
 label.layer-chooser > div.layer-img {
     background-position: center;
@@ -187,3 +230,10 @@ label.layer-chooser > div.layer-img {
 }
 
 
+.eventLGIndicator {
+    width: 40%;
+    height: 100%;
+    background-color: #000; /* is set dynamically */
+    z-index: 9000;
+    float: right;
+}
