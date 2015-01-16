@@ -23,8 +23,6 @@ label.layer-chooser {
     }
 }
 
-/* [WYTZE] new styling
-*************************/
 label.layer-chooser-wytze {
     border: solid 2px rgba(0,0,0,0);
     height: $height15;
@@ -48,8 +46,6 @@ label.layer-chooser > span.layer-text {
     z-index: 1;
 }
 
-/* [WYTZE] new styling
-*************************/
 label.layer-chooser-wytze > span.layer-text-wytze {
     background: rgba(239, 239, 239, 0.9);
     color: $asbestos;
@@ -75,8 +71,6 @@ label.layer-chooser.active > span.layer-text {
     color: $midnightblue;
 }
 
-/* [WYTZE] new styling
-*************************/
 label.layer-chooser-wytze.active {
     border: solid 2px $midnightblue;
     &:hover > span.layer-text-wytze {
@@ -87,8 +81,6 @@ label.layer-chooser-wytze.active {
     }
 }
 
-/* [WYTZE] new styling
-*************************/
 label.layer-chooser-wytze.active > span.layer-text-wytze {
     color: $midnightblue;
 }

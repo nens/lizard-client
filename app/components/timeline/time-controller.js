@@ -58,14 +58,10 @@ angular.module('lizard-nxt')
     );
 
 
-    // Wytze wants the timeline visibility toggable:
-    // ---------------------------------------------
-    // [WYTZE] start
     this.displayTimeline = false;
     this.toggleTimelineVisiblity = function () {
       this.displayTimeline = !this.displayTimeline;
     };
-    // [WYTZE] end
 
     this.state = State.temporal;
     this.layerGroups = State.layerGroups;

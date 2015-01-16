@@ -41,11 +41,6 @@ angular.module('lizard-nxt')
   lines, // events start - end
   bars; // rain intensity
 
-  // [WYTZE] orig code -------------------------
-  // Space on the xAxis reserved for the start and stop labels
-  // START_STOP_WIDTH = 170;
-  // -----------------------------------------
-
   /**
    * @constructor
    * @memberOf angular.module('lizard-nxt')
@@ -403,23 +398,6 @@ angular.module('lizard-nxt')
     // and transformed to an axis with a restricted range and domain.
     var xAxisScale = xScale.copy();
 
-    // [WYTZE] original code - start
-    // -------------------------------------
-    // xAxisScale
-    //   .domain([
-    //     xScale.invert(START_STOP_WIDTH),
-    //     xScale.invert(width - START_STOP_WIDTH)
-    //   ])
-    //   .range([START_STOP_WIDTH, width - START_STOP_WIDTH]);
-
-    // var xAxis = Timeline.prototype._makeAxis(
-    //   xAxisScale,
-    //   {orientation: "bottom", ticks: 5}
-    // );
-    // [WYTZE] end
-    // ------------------------------------------
-
-    // [WYTZE] replacement code - start ------------------------
     var XAXIS_PADDING = 50;
 
     xAxisScale
@@ -433,14 +411,11 @@ angular.module('lizard-nxt')
       xAxisScale,
       {orientation: "bottom", ticks: 7}
     );
-    // [WYTZE] end ----------------------------------------------
 
     Timeline.prototype._drawAxes(svg, xAxis, dimensions, false, duration);
     var axisEl = svg.select('#xaxis')
         .attr("class", "x axis timeline-axis");
 
-    // [WYTZE] disable: drawing start- & stop-label in timeline
-    // drawStartStop(svg, xScale, dimensions);
   };
 
   /**
