@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.2) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.2.2 (2015-1-16)
+---------------------
 
 - Limit timeline min and max zoom.
 
