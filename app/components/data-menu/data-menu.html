@@ -13,19 +13,8 @@
               </a>
             </li>
 
-            <li ng-if="user.authenticated" class="visible-xs">
-              <a class="user"
-                 href="https://sso.lizard.net/edit_profile/"
-                 title="Edit profile">
-                <div class="" id="username" ng-cloak>
-                  <i id="" class="fa fa-user"></i>
-                  <span ng-bind="user.firstName"></span>
-                </div>
-              </a>
-            </li>
-            <li ng-if="user.authenticated"
-                class="visible-sm visible-md visible-lg">
-              <a class="user"
+            <li class="visible-sm visible-md visible-lg user">
+              <a ng-if="user.authenticated"
                  title="<% tooltips.profile %>"
                  href="http://sso.lizard.net/edit_profile/">
                 <div class="" ng-cloak id="username" >
@@ -33,26 +22,19 @@
                   <span ng-bind="user.firstName"></span>
                 </div>
               </a>
-            </li>
-
-            <li ng-if="user.authenticated"
-                class="visible-xs">
-              <a class="user logout"
-                 href="#"
-                 title="<% tooltips.logout %>"
-                 onclick="return logOut()">
-                  <div class=""
-                       title="<% tooltips.logout %>"
-                       id="username">
-                    <i id=""
-                       class="fa fa-power-off"></i>&nbsp;&nbsp;Uitloggen
-                  </div>
+              <a ng-if="!user.authenticated"
+                 onclick="logIn()"
+                 title="<% tooltips.login %>">
+                <div class="" ng-cloak id="username" >
+                  <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
+                  <span></span>
+                </div>
               </a>
             </li>
 
-            <li ng-if="user.authenticated"
-                class="visible-sm visible-md visible-lg" style="width:63px;">
-              <a class="user logout"
+            <li class="visible-sm visible-md visible-lg user" style="width:63px;">
+              <a ng-if="user.authenticated"
+                 class="logout"
                  href="/accounts/logout/?next=/"
                  title="<% tooltips.logout %>"
                  onclick="return logOut()">
@@ -62,12 +44,6 @@
                   <i id="" style="font-size:1.2em;" class="fa fa-power-off"></i>
                 </div>
               </a>
-            </li>
-
-            <li ng-if="!user.authenticated">
-              <a onclick="logIn()"
-                 title="<% tooltips.login %>">
-              <i id="" class="fa fa-user" style="font-size:1.2em;"></i></a>
             </li>
 
           </ul>
