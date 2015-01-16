@@ -790,7 +790,7 @@ angular.module('lizard-nxt')
       // DATA JOIN
       // Join new data with old elements, based on the id value.
       lines = group.selectAll("line")
-        .data(data, function  (d) { return d.properties.id; });
+        .data(data, function  (d) { return d.id; });
     } else if (data === undefined) {
       // if no data is defined, remove all groups
       var groups = svg.select("g").select("#circle-group").selectAll("g");

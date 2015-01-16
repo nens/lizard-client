@@ -91,8 +91,7 @@ angular.module('omnibox')
       fillArea(State.spatial.bounds);
     });
 
-    $scope.$watch(State.toString('temporal.at'),
-        function (n, o) {
+    $scope.$watch(State.toString('temporal.at'), function (n, o) {
       if (n === o) { return true; }
       fillArea(State.spatial.bounds);
     });

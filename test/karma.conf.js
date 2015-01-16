@@ -32,6 +32,7 @@ module.exports = function(config) {
       'vendor/d3-comparator/d3-comparator.js',
       'vendor/angular-sanitize/angular-sanitize.js',
       'vendor/ng-csv/build/ng-csv.min.js',
+      'vendor/leaflet.markercluster/dist/leaflet.markercluster.js',
       // endbower
 
       // application
@@ -42,6 +43,7 @@ module.exports = function(config) {
       'app/templates.js',
       'app/components/omnibox/omnibox.js',
       'app/components/state/state.js',
+      'app/components/scenarios/scenarios.js',
       'app/components/dashboard/dashboard.js',
       'app/lizard-nxt.js',
       'test/mocks/**/*.js',

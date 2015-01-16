@@ -12,14 +12,14 @@
  *                                                  ooooooooo$$$$$$$$$$$$$$$$!
  *                                                     !  oooooo$$$$$$$$$$ooo
  *         *$     $$  $$$$$    $$$    $$*$¿   $$ $$        ooooooooooooooooo
- *         *$     $$    $$    $$ $*   $$_$$   $   $$             ooooo 
+ *         *$     $$    $$    $$ $*   $$_$$   $   $$             ooooo
  *         *$     $$   $$     $$$$$   $$ $!   $   $$            ooo
  *         $$$$$!!$$$ $$$$$$ $$$ $$$ $$$$ $$ $$$$$$             o o
- *                                                                                  
+ *
  */
 
 
-// START variables 
+// START variables
 
 $font-family: 'Roboto', Helvetica, Arial, sans-serif;
 
@@ -85,6 +85,7 @@ $navbarandtimeline: 50px + 82px;
 @import 'timeline';
 @import 'tools';
 @import 'dashboard';
+@import 'scenarios';
 @import 'leaflet-overrides';
 
 

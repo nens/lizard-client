@@ -1,7 +1,7 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.1.4) (XXXX-XX-XX)
+Unreleased (1.2.2) (XXXX-XX-XX)
 -------------------------------
 
 - Limit timeline min and max zoom.
@@ -16,6 +16,12 @@ Unreleased (1.1.4) (XXXX-XX-XX)
 
 - Simplified layergroup-menu (rm colors/minimaps)
 
+- Cluster events to get better performance.
+
+- Add stuff for demo branch to be released on gh-pages
+
+- Add result scenarios to front-end.
+
 - Fixed bug where API response "message" was treated as "data".
 
 - Improved behaviour of timeline zoom.
@@ -23,6 +29,8 @@ Unreleased (1.1.4) (XXXX-XX-XX)
 
 Release 1.2.1 (2015-1-8)
 ---------------------
+
+- Add ability to show histograms as barchart.
 
 - Zapped patches for display_name vs name.
 

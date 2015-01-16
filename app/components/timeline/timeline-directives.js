@@ -248,7 +248,7 @@ angular.module('lizard-nxt')
         slugs: scope.events.slugs
       };
       // Get data with type === 'Event'
-      DataService.getData({
+      DataService.getData('timeline', {
         geom: State.spatial.bounds,
         start: State.temporal.start,
         end: State.temporal.stop,

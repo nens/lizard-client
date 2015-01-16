@@ -11,17 +11,7 @@ angular.module('lizard-nxt')
   .service('LeafletVectorService', ["LeafletService", "VectorService", "UtilService",
       function (LeafletService, VectorService, UtilService) {
 
-  /**
-   * Leaflet does not have a tiled geojson layer.
-   * So.. we made it.
-   *
-   * It uses the tiling mechanism to retrieve data. Which when loaded
-   * fires a dataCallback (defined in layer options).
-   *
-   * For every tile that comes in it draws data in a geojsonLayer.
-   *
-   */
-  var TileDataLayer = LeafletService.TileLayer.extend({
+  var MarkerClusterLayer = LeafletService.MarkerClusterGroup.extend({
 
     /**
      * @function
@@ -29,47 +19,64 @@ angular.module('lizard-nxt')
      * of Leaflet.
      */
     onAdd: function (map) {
+      LeafletService.MarkerClusterGroup.prototype.onAdd.call(this, map);
+
       this._map = map;
-      this._requests = [];
 
-      this._tilesLoading = {};
-      this.isLoading = false;
+      this.addMarker = this.addLayer;
+      this.removeMarker = this.removeLayer;
+      this.hasMarker = this.hasLayer;
 
-      var color = this.options.color;
+      var color = this.options.color,
+          layer = this;
 
-      this.drawOptions = {
-        pointToLayer: function (feature, latlng) {
-          var geojsonMarkerOptions = {
-            radius: UtilService.lin2log((feature.properties.radius || 6), 6, 16),
-            fillColor: color,
-            color: "#FFF",
-            weight: 2,
-            fillOpacity: 1,
-            opacity: 1
-          };
+      VectorService.getData(this.options.slug, {})
+      .then(function (response) {
+        layer.markers = [];
 
-          var circle = LeafletService.circleMarker(
-            latlng, geojsonMarkerOptions);
-          circle.on('click', function (e) {
-            // simulate click on map instead of this event;
-            this._map.fire('click', {
-              latlng: new LeafletService.LatLng(
-                e.target.feature.geometry.coordinates[1],
-                e.target.feature.geometry.coordinates[0])
+        var pxSize = 4,
+            marker;
+
+        var icon = L.divIcon({
+          iconAnchor: [pxSize, pxSize],
+          html: '<svg height="' + (pxSize * 2) + '" width="' + (pxSize * 2) + '">'
+                + '<circle cx="' + pxSize + '" cy="' + pxSize + '" r="' + pxSize + '" '
+                + 'fill-opacity="0.9" fill="' + color + '" />'
+                + '</svg>'
+        });
+
+        response.forEach(function (f) {
+          marker = L.marker(
+            [f.geometry.coordinates[1], f.geometry.coordinates[0]],
+            {
+              icon: icon,
+              timestamp_start: f.properties.timestamp_start,
+              timestamp_end: f.properties.timestamp_end
             });
-          });
+          layer.addMarker(marker);
+          layer.markers.push(marker);
+        });
 
-          return circle;
-        }
+        layer.syncTime();
+      });
+
+      // simulate click on map instead of this event;
+      var fireMapClick = function (e) {
+        layer._map.fire('click', {
+          latlng: e.latlng,
+        });
       };
 
-      LeafletService.TileLayer.prototype.onAdd.call(this, map);
-      var size = this._map.getPixelBounds().getSize();
+      this.on('clusterclick', function (e) {
+        fireMapClick(e);
+      });
 
-      this.geojsonLayer = LeafletService.geoJson(
-        null, this.drawOptions).addTo(map);
-      this._map.on('moveend', this._onMove, this);
+      this.on('click', function (e) {
+        fireMapClick(e);
+      });
+
     },
+
 
     /**
      * @function
@@ -78,120 +85,9 @@ angular.module('lizard-nxt')
      * @param {object} instance of Leaflet.Map
      */
     onRemove: function (map) {
-      this._reset();
-      this._map.off('moveend', this._onMove, this);
-      map.removeLayer(this.geojsonLayer);
-      this.isLoading = false;
-      LeafletService.TileLayer.prototype.onRemove.call(this, map);
-    },
-
-    /**
-     * @function
-     * @description handler for move events,
-     * triggers a redraw etc.
-     */
-    _onMove: function () {
-      this.redraw();
-    },
-
-    /**
-     * @function
-     * @description Handles what happens with xhr requests.
-     * cancelling and triggering events.
-     * @param {object} request object
-     * @param {object} layer this is a part of
-     * @param {tile} tile this request belongs to
-     * @param {LeafletService.TilePoint} coordinates of tile corner.
-     */
-    _xhrHandler: function (req, layer, tile, tilePoint) {
-      return function () {
-        if (req.readyState !== 4) {
-          return;
-        }
-
-        var s = req.status;
-        if ((s >= 200 && s < 300) || s === 304) {
-          tile.datum = JSON.parse(req.responseText);
-          layer._tileLoaded(tile, tilePoint);
-        } else {
-          layer._tileLoaded(tile, tilePoint);
-        }
-      };
-    },
-
-    /**
-     * @function
-     * @description does the actual request and sets
-     * keys and status.
-     * @param {tile} Tile which is being loaded
-     * @param {LeafletService.TilePoint} coordinates of tile corner.
-     */
-    _loadTile: function (tile, tilePoint) {
-      var self = this;
-
-      this._adjustTilePoint(tilePoint);
-
-      var key = 'key_' + tilePoint.z + '_' + tilePoint.x + '_' + tilePoint.y;
-      this._tilesLoading[key] = 'busy';
-
-      var layer = this;
-      var req = new XMLHttpRequest();
-      this._requests.push(req);
-      req.onreadystatechange = this._xhrHandler(req, layer, tile, tilePoint);
-      req.open('GET', this.getTileUrl(tilePoint), true);
-      req.send();
-    },
-
-    /**
-     * @function
-     * @description aborts requests and triggers reset for geojson layer
-     */
-    _reset: function () {
-      LeafletService.TileLayer.prototype._reset.apply(this, arguments);
-      for (var i in this._requests) {
-        this._requests[i].abort();
-      }
-      this._requests = [];
-      this._tilesLoading = {};
-      if (this.geojsonLayer) {
-        this._resetgeoJson();
-      }
-    },
-
-    /**
-     * @function
-     * @description empties and re-adds geojsonlayer to the map
-     */
-    _resetgeoJson: function () {
-      this._map.removeLayer(this.geojsonLayer);
-      this.geojsonLayer = LeafletService.geoJson(null, this.drawOptions)
-        .addTo(this._map);
-    },
-
-    /**
-     * @function
-     * @description counts all the data for the same point
-     * @param {object} geojson features array
-     */
-    countOverlapping: function (data) {
-      var minimumRadius = 6;
-      var overlapLocations = [];
-      var filteredData = [];
-      data.forEach(function (d, index) {
-        d.properties.radius = minimumRadius;
-        var key = "x:" + d.geometry.coordinates[0] +
-                  "y:" + d.geometry.coordinates[1];
-        var coord = overlapLocations[key];
-        if (coord === undefined) {
-          overlapLocations[key] = index;
-          filteredData.push(d);
-        } else if (!filteredData[overlapLocations[key]]) {
-          return undefined;
-        } else {
-          filteredData[overlapLocations[key]].properties.radius += 1;
-        }
-      });
-      return filteredData;
+      LeafletService.MarkerClusterGroup.prototype.onRemove.call(this, map);
+      this.markers.forEach(function (marker) { this.removeMarker(marker); }, this);
+      this.markers = [];
     },
 
     /**
@@ -212,102 +108,40 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @description Draws the data in the geojsonlayer
-     * @param {data} geojson features object
-     */
-    drawTheThings: function (data, self) {
-      if (!data) { return; }
-
-      var filteredData;
-      if (data.hasOwnProperty('features')) {
-        filteredData = self.countOverlapping(data.features);
-      } else if (data instanceof Array) {
-        filteredData = self.countOverlapping(data);
-      }
-      self.geojsonLayer.addData(filteredData);
-    },
-
-    /**
-     * @function
-     * @description this passes the received data on to the
-     * VectorService
-     */
-    addTileData: function (featureCollection, point) {
-      if (!featureCollection) { return; }
-
-      if (featureCollection.features.length > 0) {
-        VectorService.setData(
-            this.options.slug,
-            featureCollection.features,
-            point.z
-            );
-      }
-    },
-
-
-    /**
-     * @function
      * @description sync the time
      */
-    syncTime: function (layer, timeState) {
-      this.options.start = timeState.start;
-      this.options.end = timeState.end;
-      this.redraw();
+    syncTime: function (timeState) {
+      if (timeState) {
+        this.timeState = timeState;
+      }
+
+      if (this.markers && this.markers.length > 0) {
+        var start = this.timeState.playing ? this.timeState.at : this.timeState.start,
+            end = this.timeState.playing
+            ? this.timeState.at + this.timeState.aggWindow
+            : this.timeState.end,
+          markerTimeObject,
+          mustRemoveMarker;
+
+        this.markers.forEach(function (marker) {
+
+          markerTimeObject = {
+            timestamp_start: marker.options.timestamp_start,
+            timestamp_end: marker.options.timestamp_end
+          };
+
+          mustRemoveMarker = !VectorService.isInTempExtent(markerTimeObject, {start: start, end: end});
+          if (this.hasMarker(marker) && mustRemoveMarker) {
+            this.removeMarker(marker);
+          } else if (!this.hasMarker(marker) && !mustRemoveMarker) {
+            this.addMarker(marker);
+          }
+        }, this);
+      }
+
     },
-
-    /**
-     * @function
-     * @description redraw all the things.
-     */
-    redraw: function () {
-      var self = this;
-      if (self._map !== undefined && self._map !== null) {
-        VectorService.getData(
-          self.options.slug, {
-            layer: self,
-            geom: self._map.getBounds(),
-            start: self.options.start,
-            end: self.options.end
-          }).then(function (response) {
-            if (self._map !== undefined && self._map !== null) {
-              self._resetgeoJson();
-              self.drawTheThings(response, self);
-            }
-          });
-      }
-    },
-
-    /**
-     * @function
-     * @description Triggers after a load of one particular Tile.
-     * @param {Tile} Tile this belongs to.
-     * @param {LeafletService.TilePoint} coordinates of tile corner.
-     */
-    _tileLoaded: function (tile, tilePoint) {
-      var key = 'key_' + tilePoint.z + '_' + tilePoint.x + '_' + tilePoint.y;
-      this._tilesLoading[key] = 'done';
-
-      this.isLoading = false;
-
-      if (tile.datum === null) { return null; }
-
-      this.addTileData(tile.datum, tilePoint);
-
-      for (var tileNr in this._tilesLoading) {
-        if (this._tilesLoading[tileNr] === 'busy') {
-          this.isLoading = true;
-          break;
-        }
-      }
-
-      if (!this.isLoading) {
-        this.fire('loadend');
-      }
-
-      this.redraw();
-    }
   });
 
-  return TileDataLayer;
+  return MarkerClusterLayer;
 
 }]);

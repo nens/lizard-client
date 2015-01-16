@@ -1,5 +1,3 @@
-<!-- [WYTZE] original code - start ----------------------------------------
-
 <li class="noselect">
   <label
     class="ng-class: {active: layergroup.isActive()}; layer-chooser"
@@ -14,29 +12,4 @@
 
 <div ng-if="context === 'map'">
   <opacity-slider title="<% tooltips.transparency %>"></opacity-slider>
-</div>
-
--- [WYTZE] original code - end -------------------------------------------- -->
-
-<li class="noselect">
-  <label
-    class="ng-class: {active: layergroup.isActive()}; layer-chooser-wytze"
-    for="<% layergroup.id %>-layer"
-    single-click="menu.toggleLayerGroup(layergroup)"
-    ng-dblclick="layergroup.dblClick()"
-    title="<% layergroup.name %>">
-    <span class="layer-text-wytze"
-          ng-bind="layergroup.name"
-          style="width: <% layergroup.isEventLayerGroup() ? '60%' : '100%' %>">
-    </span>
-    <div ng-if="layergroup.isEventLayerGroup()"
-         class="layer-img layer-chooser eventLGIndicator"
-         style="background-color: <% layergroup.getColorForEventLayerGroup() %>;">
-    </div>
-  </label>
-</li>
-
-<div ng-if="context === 'map'" style="margin-top: -10px;">
-  <opacity-slider title="<% tooltips.transparency %>">
-  </opacity-slider>
 </div>

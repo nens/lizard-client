@@ -123,16 +123,8 @@ angular.module('lizard-nxt')
           activeTemporalLgs.push(null);
         }
 
-        if (lg.temporal && lg.temporalResolution < timeStep) {
-          var layerRes;
-          lg.mapLayers.forEach(function (layer) {
-            if (layer.hasOwnProperty('_temporalResolution')) {
-              layerRes = layer._temporalResolution;
-            } else { return; }
-          });
-          // if the layer has a temporal resolution
-          // chances are it's more up to date (e.g. rain)
-          timeStep = layerRes || lg.temporalResolution;
+        if (lg.temporal && lg.temporalResolution !== 0 && lg.temporalResolution < timeStep) {
+          timeStep = lg.temporalResolution;
           // equals to 250 ms for 5 minutes, increases for larger timeSteps untill
           // it reaches 1 second between frames for timeSteps of > 20 minutes.
           minLag = timeStep / 1200 > 240 ? timeStep / 1200 : 250;

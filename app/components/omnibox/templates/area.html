@@ -36,6 +36,16 @@
       </graph>
 
       <graph
+        ng-switch-when="histogram"
+        bar-chart
+        quantity="'linear'"
+        ylabel="'[%]'"
+        xlabel="'hoogte [mNAP]'"
+        data="l.data"
+        keys="{x: 0, y: 1}">
+      </graph>
+
+      <graph
         ng-switch-when="counts"
         horizontal-stack
         data="l.data"
