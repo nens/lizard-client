@@ -18,6 +18,7 @@ angular.module('omnibox')
     $scope.box = {
       content: {}
     };
+
     /**
      * @function
      * @memberOf app.omnibox
@@ -30,7 +31,6 @@ angular.module('omnibox')
      * @param  {L.LatLng} here | L.Bounds | [L.LatLng]
      */
     $scope.fillBox = function (options) {
-
       // if geocode query has been used it needs to be destroyed now
       if ($scope.box.content.hasOwnProperty('location')) {
         delete $scope.box.content.location;
@@ -46,10 +46,9 @@ angular.module('omnibox')
 
       var putDataOnScope = function (response) {
         var lGContent = $scope.box.content[response.layerGroupSlug] || {layers: {}};
-          lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
-          lGContent.layerGroupName = DataService.layerGroups[response.layerGroupSlug].name;
-          lGContent.order = DataService.layerGroups[response.layerGroupSlug].order;
-
+        lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
+        lGContent.layerGroupName = DataService.layerGroups[response.layerGroupSlug].name;
+        lGContent.order = DataService.layerGroups[response.layerGroupSlug].order;
         if (UtilService.isSufficientlyRichData(response.data)) {
 
           var sharedKeys = ['aggType', 'format', 'data', 'summary', 'scale',
@@ -94,8 +93,8 @@ angular.module('omnibox')
         // Accomodate chaining in child controllers
         return response;
       };
-
-      return DataService.getData(options).then(doneFn, doneFn, putDataOnScope);
+      var promise = DataService.getData('omnibox', options).then(doneFn, doneFn, putDataOnScope);
+      return promise;
     };
 
     // Make UtilSvc.getIconClass available in Angular templates

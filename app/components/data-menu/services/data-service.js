@@ -77,6 +77,8 @@ angular.module('data-menu')
         }
       });
 
+      this._dataDefers = {};
+
 
       // Methods //////////////////////////////////////////////////////////////
 
@@ -109,24 +111,25 @@ angular.module('data-menu')
        * Gets data from all layergroups.
        *
        * @param  {object} options
+       * @param  {str} callee that gets a seperate defer.
        * @return {promise} notifies with data from layergroup and resolves when
        *                            all layergroups returned data.
        */
-      this.getData = function (options) {
-        this.reject();
-        this._dataDefer = $q.defer();
-        var defer = this._dataDefer;
+      this.getData = function (callee, options) {
+        this.reject(callee);
+        this._dataDefers[callee] = $q.defer();
+        var defer = this._dataDefers[callee];
         var promises = [];
         angular.forEach(this.layerGroups, function (layerGroup) {
           promises.push(
             layerGroup.getData(options).then(null, null, function (response) {
               defer.notify(response);
-            }));
-        }, this);
+            })
+          );
+        });
         $q.all(promises).then(function () {
           State.layerGroups.gettingData = false;
           defer.resolve();
-          return defer.promise;
         });
         State.layerGroups.gettingData = true;
         return defer.promise;
@@ -135,10 +138,10 @@ angular.module('data-menu')
       /**
        * Rejects call for data and sets loading to false.
        */
-      this.reject = function () {
+      this.reject = function (callee) {
         State.layerGroups.gettingData = false;
-        if (this._dataDefer) {
-          this._dataDefer.reject();
+        if (this._dataDefers[callee]) {
+          this._dataDefers[callee].reject();
         }
       };
 
