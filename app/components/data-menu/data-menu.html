@@ -1,9 +1,57 @@
 
-<div id="master" ng-controller="DatamenuController as menu">
+<div ng-controller="DatamenuController as menu">
   <div class="layer-menu-container">
-    <div  class="layer-switcher-wrapper pull-right"
+    <div class="layer-switcher-wrapper pull-right"
          ng-class="{'slide-left': menu.enabled && context === 'map'}">
+
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-collapse collapse">
+         <ul class="nav navbar-nav navbar-right" style="">
+           <li>
+              <a href="https://www.lizard.net/support" title="Vragen en handleiding" target="_blank">
+                <i class="fa fa-question" style="font-size: 1.2em"></i>
+              </a>
+            </li>
+
+            <li class="visible-sm visible-md visible-lg user">
+              <a ng-if="user.authenticated"
+                 title="<% tooltips.profile %>"
+                 href="http://sso.lizard.net/edit_profile/">
+                <div class="" ng-cloak id="username" >
+                  <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
+                  <span ng-bind="user.firstName"></span>
+                </div>
+              </a>
+              <a ng-if="!user.authenticated"
+                 onclick="logIn()"
+                 title="<% tooltips.login %>">
+                <div class="" ng-cloak id="username" >
+                  <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
+                  <span></span>
+                </div>
+              </a>
+            </li>
+
+            <li class="visible-sm visible-md visible-lg user" style="width:63px;">
+              <a ng-if="user.authenticated"
+                 class="logout"
+                 href="/accounts/logout/?next=/"
+                 title="<% tooltips.logout %>"
+                 onclick="return logOut()">
+                <div class="pull-right"
+                     id="username"
+                     title="<% tooltips.logout %>">
+                  <i id="" style="font-size:1.2em;" class="fa fa-power-off"></i>
+                </div>
+              </a>
+            </li>
+
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+
       <div class="layer-switcher slide-left">
+
         <ul class="nav">
           <li class="nav-header">
             <ul class="list-group">

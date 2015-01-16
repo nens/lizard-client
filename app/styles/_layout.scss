@@ -47,9 +47,8 @@ body {
 
 .map {
     height: $height9;
-    height: calc(100% - 50px);
+    height: 100%;
     position: absolute;
-    top: 50px;
     width: $width19;
     z-index: 0;
 }
