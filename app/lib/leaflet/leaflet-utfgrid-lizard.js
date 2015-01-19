@@ -102,10 +102,11 @@
     },
 
     onRemove: function () {
-      var map = this._map;
-      map.off('click', this._click, this);
-      map.off('mousemove', this._move, this);
-      map.off('moveend', this._update, this);
+      this._map.off('click', this._click, this);
+      this._map.off('mousemove', this._move, this);
+      this._map.off('moveend', this._update, this);
+      // I am free, I'm free at last
+      this._cache = {};
       if (this.options.pointerCursor) {
         this._container.style.cursor = '';
       }
