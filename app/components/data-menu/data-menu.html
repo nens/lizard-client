@@ -76,10 +76,12 @@
         </div>
         <div class="arrow arrow-down" ng-click="menu.enabled = !menu.enabled">
 
-          <span class="fa ribbon-icon" ng-class="{
-            'fa-spinner fa-spin': menu.state.gettingData,
-            'fa-compass': !menu.state.gettingData
-          }"></span>
+          <!-- Exclamation marks !!! prevent disappearing label -->
+          <span class="ribbon-icon" ng-class="{
+            'fa fa-spinner fa-spin': !!menu.state.gettingData,
+            'fa fa-compass': !!!menu.state.gettingData
+          }">
+          </span>
 
         </div>
       </div>
