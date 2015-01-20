@@ -34,16 +34,25 @@ angular.module('lizard-nxt')
       .then(function (response) {
         layer.markers = [];
 
-        var pxSize = 4,
+        var pxSize = 10,
             marker;
 
         var icon = L.divIcon({
           iconAnchor: [pxSize, pxSize],
-          html: '<svg height="' + (pxSize * 2) + '" width="' + (pxSize * 2) + '">'
-                + '<circle cx="' + pxSize + '" cy="' + pxSize + '" r="' + pxSize + '" '
-                + 'fill-opacity="0.9" fill="' + color + '" />'
+          html: '<svg height="' + (pxSize * 2) + '" width="' + (pxSize * 2)
+                + '">'
+                + '<circle cx="' + pxSize + '" cy="' + pxSize
+                + '" r="' + pxSize + '" fill-opacity="0.4" fill="'
+                + color + '" />'
+                + '<circle cx="' + pxSize + '" cy="' + pxSize + '" r="'
+                + (pxSize - 2) + '" fill-opacity="1" fill="'
+                + color + '" />'
+                + '<text x="' + pxSize + '" y="' + (pxSize + 5)
+                + '" style="text-anchor: middle; fill: white;">'
+                + 1 + '</text>'
                 + '</svg>'
         });
+
 
         response.forEach(function (f) {
           marker = L.marker(
