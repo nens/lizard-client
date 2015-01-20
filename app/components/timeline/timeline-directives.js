@@ -336,7 +336,7 @@ angular.module('lizard-nxt')
 
     // END HELPER FUNCTIONS
 
-    element.animate({'height': 0}, 300);
+    element[0].style.height = 0;
 
     scope.timeline.toggleTimelineVisiblity = function () {
       if (element[0].style.height !== '0px') {
