@@ -44,19 +44,9 @@ angular.module('omnibox')
           && response.format === 'Store'
           && (response.scale === 'ratio' || response.scale === 'interval')
           && DataService.layerGroups[response.layerGroupSlug].temporal) {
-          // in other words, its rain..
-
-          // console.log("line for rain? will be disabled...");
-          // console.log("-> response.layerGroupSlug:", response.layerGroupSlug);
-
-          // $scope.box.content[response.layerGroupSlug]
-          //   .layers[response.layerSlug]
-          //   .temporalData = UtilService.dataConvertToMeters(response.data);
-
           $scope.box.content[response.layerGroupSlug]
             .layers[response.layerSlug]
             .temporalData = response.data;
-
           $scope.box.content[response.layerGroupSlug]
             .layers[response.layerSlug]
             .data = UtilService.createDataForTimeState(
