@@ -7,7 +7,11 @@
 
   <div class="card active"
        ng-if="box.content.waterchain && box.content.timeseries">
-    <timeseries timeseries="box.content.timeseries" full-details="box.fullDetailCards.timeseries"></timeseries>
+    <timeseries
+      timeseries="box.content.timeseries"
+      full-details="box.fullDetailCards.timeseries"
+      time-state="omnibox.state.temporal">
+    </timeseries>
   </div>
 
   <div ng-if="box.content.rain">

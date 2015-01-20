@@ -44,6 +44,7 @@ module.exports = function(config) {
       'app/components/omnibox/omnibox.js',
       'app/components/state/state.js',
       'app/components/scenarios/scenarios.js',
+      'app/components/user-menu/user-menu.js',
       'app/components/dashboard/dashboard.js',
       'app/lizard-nxt.js',
       'test/mocks/**/*.js',

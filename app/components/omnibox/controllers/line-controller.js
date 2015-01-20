@@ -40,6 +40,9 @@ angular.module('omnibox')
           $scope.box.content[response.layerGroupSlug]
             .layers[response.layerSlug]
             .data = response.data;
+        } else if (response.layerSlug === 'radar/basic') {
+          // We dont wanna show intersect for rain (d.d. 20-01-2015)
+          delete $scope.box.content[response.layerGroupSlug].layers['radar/basic'];
         } else if (response.data && response.data !== 'null'
           && response.format === 'Store'
           && (response.scale === 'ratio' || response.scale === 'interval')
