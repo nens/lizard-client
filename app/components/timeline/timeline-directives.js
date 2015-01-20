@@ -31,11 +31,11 @@ angular.module('lizard-nxt')
 
         dimensions = {
           width: UtilService.getCurrentWidth(),
-          height: 42,
-          events: 20,
+          height: 30,
+          events: 25,
           bars: 35,
           padding: {
-            top: 12,
+            top: 0,
             right: 0,
             bottom: 20,
             left: 0
@@ -137,22 +137,33 @@ angular.module('lizard-nxt')
      * @param {object} dim - object with old timeline dimensions.
      * @param {int} nEventTypes - number of event types (event series).
      */
-    var updateTimelineHeight = function (newDim, dim, nEventTypes) {
-      var eventHeight;
-      if (getTimelineLayers(DataService.layerGroups).rain && nEventTypes > 0) {
-        eventHeight = (nEventTypes) * dim.events;
-        eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
-        newDim.height = dim.height + dim.bars + eventHeight;
-      } else {
-        eventHeight = (nEventTypes) * dim.events;
-        eventHeight = eventHeight > 0 ? eventHeight : 0; // Default to 0px
-        newDim.height = dim.height + eventHeight;
+    var updateTimelineHeight = function (nEventTypes, toShow) {
+      var eventHeight,
+          newDim = angular.copy(timeline.dimensions);
+
+      newDim.height = dimensions.padding.bottom
+        + dimensions.padding.top
+        + nEventTypes * dimensions.events;
+
+      if (getTimelineLayers(DataService.layerGroups).rain) {
+        newDim.height += dimensions.bars;
       }
 
-      timeline.resize(newDim,
-                      State.temporal.at,
-                      State.temporal.aggWindow,
-                      nEventTypes);
+      newDim.height = Math.max(newDim.height, dimensions.height);
+
+      if (newDim.height !== timeline.dimensions.height || toShow) {
+        element[0].style.height = newDim.height + 5 + 'px'; // 5px margins
+      }
+
+      if (newDim.height !== timeline.dimensions.height) {
+        timeline.resize(
+          newDim,
+          State.temporal.at,
+          State.temporal.aggWindow,
+          nEventTypes
+        );
+      }
+
     };
 
     /**
@@ -231,8 +242,7 @@ angular.module('lizard-nxt')
         timeline.removeBars();
       }
 
-      updateTimelineHeight(angular.copy(timeline.dimensions),
-        dimensions, scope.events.nEvents);
+      updateTimelineHeight(scope.events.nEvents);
     };
 
     /**
@@ -325,6 +335,16 @@ angular.module('lizard-nxt')
     };
 
     // END HELPER FUNCTIONS
+
+    element[0].style.height = 0;
+
+    scope.timeline.toggleTimelineVisiblity = function () {
+      if (element[0].style.height !== '0px') {
+        element[0].style.height = 0;
+      } else {
+        updateTimelineHeight(scope.events.nEvents, true);
+      }
+    };
 
     // WATCHES
 

@@ -1,13 +1,13 @@
 <div id="timeline"
      ng-controller="TimeCtrl as timeline">
-  <div class="clock-wrapper">
+  <div class="clock-wrapper noselect">
     <div class="clock-time"
          ng-click="timeline.toggleTimelineVisiblity()"
          ng-bind="timeline.state.at | date: 'dd-MM-yyyy HH:mm'">
     </div>
   </div>
 
-  <div class="timeline-wrapper" ng-class="{'hidden': !timeline.displayTimeline}">
+  <div class="timeline-wrapper">
     <div class="time-controls" ng-if="context === 'map'">
       <div class="btn-group">
         <a ng-click="timeline.playPauseAnimation()"
@@ -27,7 +27,7 @@
       <svg></svg>
     </div>
     <div class="time-controls-right">
-      <div class="btn-group-vertical">
+      <div class="btn-group-horizontal">
           <a class="btn btn-default btn-xss" ng-click="timeline.zoom('in')"
             class="extra-padding timeline-button"
             title="<% tooltips.zoomInTimeline %>"
