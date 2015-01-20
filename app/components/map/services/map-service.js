@@ -492,19 +492,19 @@ angular.module('map')
             var size = cluster.getAllChildMarkers().length,
                 pxSize;
 
-            if (size > 1000) {
+            if (size > 1024) {
               pxSize = 30;
-            } else if (size > 500) {
+            } else if (size > 256) {
               pxSize = 26;
-            } else if (size > 200) {
+            } else if (size > 64) {
               pxSize = 22;
-            } else if (size > 80) {
+            } else if (size > 32) {
               pxSize = 20;
-            } else if (size > 40) {
+            } else if (size > 16) {
               pxSize = 18;
-            } else if (size > 20) {
+            } else if (size > 8) {
               pxSize = 16;
-            } else if (size > 9) {
+            } else if (size > 4) {
               pxSize = 14;
             } else {
               pxSize = 12;
