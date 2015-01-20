@@ -891,12 +891,9 @@ angular.module('lizard-nxt')
    * @param  {object} dims current dimensions of the timeline.
    */
   var makeEventsYscale = function (iniH, dims) {
-    var yScale = function (order) {
-      var padding = dims.events / 2;
-      var fromTop = padding + dims.padding.top + dims.events * (order - 1);
-      return fromTop;
+    return function (order) {
+      return dims.events * order - 10;
     };
-    return yScale;
   };
 
   return Timeline;

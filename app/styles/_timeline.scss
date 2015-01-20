@@ -2,6 +2,10 @@
  * Timeline layout
  */
 
+#timeline {
+    transition: ease .3s;
+}
+
 .timeline {
     background-color: rgba(255, 255, 255, 0.7);
     transition:.3s;
@@ -15,24 +19,25 @@
     }
 }
 
+.timeline-wrapper {
+    position: relative;
+}
+
 .time-controls {
-    bottom: 0;
-    float: left;
-    margin-bottom: 21px;
+    bottom: -4px;
     position: absolute;
+    float: left;
     z-index: 999;
 }
 
 .time-controls-right {
     float: right;
-    margin-bottom: 21px;
-    margin-left: 15px;
     position: absolute;
     right: 0;
-    top: 1px;
+    bottom: 2px;
     z-index: 999;
 
-    .btn-group-vertical {
+    .btn-group-horizontal {
 
         margin: 0px 8px 0 0;
 
@@ -68,8 +73,9 @@
     transition:.3s;
 
     .fa {
-        position: relative;
-        top: 7px;
+        position: absolute;
+        top: 0px;
+        transform: scale(0.7);
     }
 
     &:hover {
