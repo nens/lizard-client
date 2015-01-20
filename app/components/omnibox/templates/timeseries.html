@@ -1,30 +1,17 @@
 <div class="card-content" ng-class="{timeseries: fullDetails}">
 
   <div class="timeseries-header-container">
-     <select ng-class="{hidden: !fullDetails}" class="timeseries"
+     <select ng-class="{hidden: !fullDetails}"
+            class="timeseries"
             ng-model="$parent.box.content.timeseries.selectedTimeseries"
-            ng-options="series.name for series in $parent.box.content.timeseries.data | rmSingleDatumTimeseries">
+            ng-options="series.name for series in $parent.box.content.timeseries.data | rmSingleDatumTimeseries"
+            ng-if="$parent.box.content.timeseries.data.length > 1">
      </select>
-     <span class="card-title-text" ng-class="{hidden: fullDetails}" >Tijdreeksen</span>
+     <span class="card-title-text" ng-class="{hidden: fullDetails}">Tijdreeksen</span>
      <full-details></full-details>
   </div>
 
-
-  <div ng-class="{hidden: !fullDetails}"
-      ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name === 'measuringstation'">
-     <graph
-        bar-chart
-        type="temporal"
-        data="$parent.box.content.timeseries.selectedTimeseries.events"
-        ylabel="$parent.box.content.timeseries.selectedTimeseries.unit"
-        xlabel=""
-        keys="{x: 0, y: 1}"
-        now="$parent.timeState.at">
-      </graph>
-  </div>
-
-  <div ng-class="{hidden: !fullDetails}"
-    ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name !== 'measuringstation'">
+  <div ng-class="{hidden: !fullDetails}">
     <graph
       line
       type="temporal"
@@ -35,4 +22,5 @@
       now="$parent.timeState.at">
     </graph>
   </div>
+
 </div>

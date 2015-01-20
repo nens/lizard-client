@@ -15,7 +15,6 @@ angular.module('lizard-nxt')
     return {
       getTimeseries: getTimeseries
     };
-
   }
 
 ]);
