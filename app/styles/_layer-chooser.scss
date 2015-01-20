@@ -172,10 +172,10 @@ label.layer-chooser > div.layer-img {
 .ribbon-icon {
     color: $pomegranate;
     font-size: 22px;
-    left: 5px;
+    left: -35px;
     margin: auto;
-    position: relative;
-    top: -20px;
+    position: absolute;
+    top: 25px;
     z-index: 10;
 }
 

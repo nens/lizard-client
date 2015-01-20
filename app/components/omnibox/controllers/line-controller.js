@@ -227,7 +227,7 @@ angular.module('omnibox')
       }
       else {
         if (circle !== undefined) {
-          MapService.removeLayer(circle);
+          MapService.removeLeafletLayer(circle);
           circle = undefined;
         }
       }
