@@ -12,6 +12,7 @@
 
 
 .navbar {
+    z-index: 20000;
     border: none !important;
     font-size: 14px !important;
     .nav > li > .inactive {
@@ -129,7 +130,6 @@
 }
 
 .user {
-    z-index: 20000;
     display: inline-block;
     height: $height11;
     transform: translateZ(0);
