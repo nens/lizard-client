@@ -5,11 +5,18 @@
 .layer-switcher-wrapper {
     position: absolute;
     right: -200px;
-    top: $navbarheight;
     transition: .3s ease;
     width: $width6;
     z-index: 15000;
 }
+
+
+.breakout-menu {
+    height: $height11;
+    z-index: -3;
+    background: $turquoise;
+}
+
 
 label.layer-chooser {
     border: solid 2px rgba(0,0,0,0);
@@ -166,7 +173,7 @@ label.layer-chooser > div.layer-img {
     float: right;
     height: $height12;
     left: -60px;
-    top: 16px;
+    top: 66px
 }
 
 .ribbon-icon {
@@ -175,7 +182,7 @@ label.layer-chooser > div.layer-img {
     left: -35px;
     margin: auto;
     position: absolute;
-    top: 25px;
+    top: 75px;
     z-index: 10;
 }
 

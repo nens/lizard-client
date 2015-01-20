@@ -12,6 +12,7 @@
 
 
 .navbar {
+    z-index: 20000;
     border: none !important;
     font-size: 14px !important;
     .nav > li > .inactive {
@@ -31,10 +32,9 @@
     }
 
     .nav > li > a {
-        color: $white;
+        color: $midnightblue;
         float: none;
         text-decoration: none;
-        text-shadow: none;
         transition:.3s;
         &:hover {
             color: $midnightblue;
@@ -89,9 +89,9 @@
 
 .navbar-inverse {
     position: absolute;
-    left: -40px;
-    width: 240px;
-    top: -50px;
+    /*left: -40px;*/
+    /*width: 240px;*/
+    /*top: -50px;*/
     background-color: rgba(255,255,255,0);
     .navbar-toggle {
         background-color: rgba(22, 160, 133, 1.0) !important;
@@ -122,10 +122,19 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 100px;
+    padding: 2px;
 
     span {
         padding-left: $width23;
     }
+}
+
+.user {
+    display: inline-block;
+    height: $height11;
+    transform: translateZ(0);
+    position:relative;
+    text-shadow: 0 0 2px $white, 1px 0 2px $white, -1px 0 2px $white;;
 }
 
 .navbar-collapse {
