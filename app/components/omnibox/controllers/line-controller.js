@@ -35,19 +35,28 @@ angular.module('omnibox')
            // when retrieved data wasn't rich enough for it's initialization:
            && $scope.box.content[response.layerGroupSlug]
         ) {
+          // NB! In the backend, this data is already converted from degrees
+          // to meters.
           $scope.box.content[response.layerGroupSlug]
             .layers[response.layerSlug]
-            // Since the data is not properly formatted in the back
-            // we convert it from degrees to meters here
-            .data = UtilService.dataConvertToMeters(response.data);
+            .data = response.data;
         } else if (response.data && response.data !== 'null'
           && response.format === 'Store'
           && (response.scale === 'ratio' || response.scale === 'interval')
           && DataService.layerGroups[response.layerGroupSlug].temporal) {
           // in other words, its rain..
+
+          // console.log("line for rain? will be disabled...");
+          // console.log("-> response.layerGroupSlug:", response.layerGroupSlug);
+
+          // $scope.box.content[response.layerGroupSlug]
+          //   .layers[response.layerSlug]
+          //   .temporalData = UtilService.dataConvertToMeters(response.data);
+
           $scope.box.content[response.layerGroupSlug]
             .layers[response.layerSlug]
-            .temporalData = UtilService.dataConvertToMeters(response.data);
+            .temporalData = response.data;
+
           $scope.box.content[response.layerGroupSlug]
             .layers[response.layerSlug]
             .data = UtilService.createDataForTimeState(

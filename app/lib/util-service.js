@@ -178,7 +178,7 @@ angular.module('lizard-nxt')
    * @return {float} meters
    */
   this.degToMeters = function (degrees) {
-    return  (degrees * Math.PI) / 180 * 6371 * 1000;
+    return (degrees * Math.PI) / 180 * 6371 * 1000;
   };
 
 
