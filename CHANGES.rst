@@ -3,6 +3,7 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.2) (XXXX-XX-XX)
 -------------------------------
+- Bigger clusters of size one.
 
 - Smaller play button.
 
