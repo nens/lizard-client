@@ -75,14 +75,15 @@
         <div class="arrow arrow-up" ng-click="menu.enabled = !menu.enabled">
         </div>
         <div class="arrow arrow-down" ng-click="menu.enabled = !menu.enabled">
-
-          <span class="fa ribbon-icon" ng-class="{
-            'fa-spinner fa-spin': menu.state.gettingData,
-            'fa-compass': !menu.state.gettingData
-          }"></span>
-
         </div>
       </div>
+
+      <span class="fa ribbon-icon" ng-class="{
+              'fa-spinner fa-spin': menu.state.gettingData,
+              'fa-compass': !menu.state.gettingData
+            }"
+            ng-click="menu.enabled = !menu.enabled">
+      </span>
 
       <div class="button-list-container" id="">
 

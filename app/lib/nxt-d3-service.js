@@ -12,7 +12,7 @@
  * directly by calling NxtD3Service.<method>(<args>).
  */
 angular.module('lizard-nxt')
-  .factory("NxtD3", [ function () {
+  .factory("NxtD3", [function () {
 
   var createCanvas, createElementForAxis, resizeCanvas;
 
@@ -254,9 +254,10 @@ angular.module('lizard-nxt')
      */
     _makeAxis: function (scale, options) {
       // Make an axis for d3 based on a scale
-      var axis = d3.svg.axis()
-        .scale(scale)
-        .orient(options.orientation);
+      var DECIMAL_COUNT = 2,
+          axis = d3.svg.axis()
+            .scale(scale)
+            .orient(options.orientation);
       if (options.ticks) {
         axis.ticks(options.ticks);
       } else {
@@ -276,7 +277,9 @@ angular.module('lizard-nxt')
         if (options.tickFormat) {
           axis.tickFormat(options.tickFormat);
         } else {
-          axis.tickFormat(this._localeFormatter.nl_NL.numberFormat());
+          axis.tickFormat(function (d) {
+            return d3.format("." + DECIMAL_COUNT + "f")(d);
+          });
         }
       }
       return axis;

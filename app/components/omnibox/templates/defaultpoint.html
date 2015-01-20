@@ -3,31 +3,40 @@
     <div ng-switch="l.format">
 
       <div ng-switch-when="Store">
+        <div ng-if="!lg.temporal">
+          <table ng-if="l.scale === 'interval' || l.scale === 'ratio' "
+            class="table table-condensed table-hover single-row-table">
+            <thead>
+              <td class="col-md-4"><% l.quantity %> </td>
+              <td class="col-md-4"><% l.data[0][0] | number : 2 %> <% l.unit %></td>
+              <td class="col-md-4"></td>
+            </thead>
+          </table>
 
-        <table ng-if="l.scale === 'interval' || l.scale === 'ratio' "
-          class="table table-condensed table-hover single-row-table">
-          <thead>
-            <td class="col-md-4"><% l.quantity %> </td>
-            <td class="col-md-4"><% l.data[0][0] | number : 2 %> <% l.unit %></td>
-            <td class="col-md-4"></td>
-          </thead>
-        </table>
+          <table ng-if="l.scale === 'nominal' || l.scale === 'ordinal'"
+                 class="table table-condensed table-hover single-row-table">
+            <thead>
+              <td class="col-md-1">
+                <div class="discrete-raster-color-indicator"
+                     style="background-color: <% l.data[0].color %>;">
+                </div>
+              </td>
+              <td class="col-md-10">
+                <% lg.layerGroupName %>:&nbsp;<% l.data[0].label | discreteRasterType %>
+              </td>
+              <td class="col-md-1"><% l.data[0].label | discreteRasterSource %></td>
+            </thead>
+          </table>
+        </div>
 
-        <table ng-if="l.scale === 'nominal' || l.scale === 'ordinal'"
-               class="table table-condensed table-hover single-row-table">
-          <thead>
-            <td class="col-md-1">
-              <div class="discrete-raster-color-indicator"
-                   style="background-color: <% l.data[0].color %>;">
-              </div>
-            </td>
-            <td class="col-md-10">
-              <% lg.layerGroupName %>:&nbsp;<% l.data[0].label | discreteRasterType %>
-            </td>
-            <td class="col-md-1"><% l.data[0].label | discreteRasterSource %></td>
-          </thead>
-        </table>
-
+        <graph ng-if="lg.temporal"
+               line
+               type="temporal"
+               temporal="state.temporal"
+               data="point.temporalRaster.data"
+               ylabel="'hoogte [mNAP]'"
+               keys="{x: 0, y: 1}">
+        </graph>
       </div>
 
       <div ng-switch-when="Vector">
