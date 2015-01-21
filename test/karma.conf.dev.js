@@ -45,6 +45,7 @@ module.exports = function(config) {
       'app/components/state/state.js',
       'app/components/dashboard/dashboard.js',
       'app/components/scenarios/scenarios.js',
+      'app/components/user-menu/user-menu.js',
       'app/lizard-nxt.js',
       'test/mocks/**/*.js',
       'app/lib/**/*.js',

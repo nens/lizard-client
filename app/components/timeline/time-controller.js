@@ -57,12 +57,6 @@ angular.module('lizard-nxt')
       UtilService.getCurrentWidth()
     );
 
-
-    this.displayTimeline = false;
-    this.toggleTimelineVisiblity = function () {
-      this.displayTimeline = !this.displayTimeline;
-    };
-
     this.state = State.temporal;
     this.layerGroups = State.layerGroups;
 

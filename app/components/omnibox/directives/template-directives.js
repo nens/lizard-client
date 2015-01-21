@@ -19,7 +19,8 @@ angular.module('omnibox')
       restrict: 'E',
       scope: {
         fullDetails: '=',
-        timeseries: '='
+        timeseries: '=',
+        timeState: '='
       },
       // replace: true,
       templateUrl: 'omnibox/templates/timeseries.html'

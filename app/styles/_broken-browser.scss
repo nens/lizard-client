@@ -14,7 +14,13 @@
     z-index: 100;
 }
 
-#timeline, #searchbox, .container-fluid, .navbar, #omnibox, .layer-menu-container, .ribbon  {
+#timeline,
+#searchbox,
+.container-fluid,
+#omnibox,
+.layer-menu-container,
+.ribbon,
+.navbar {
     z-index: 0;
 }
 

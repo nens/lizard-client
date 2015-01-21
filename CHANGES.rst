@@ -6,6 +6,10 @@ Unreleased (1.2.2) (XXXX-XX-XX)
 
 - Fix y-axis labeling for omnibox graph.
 
+- Smaller play button.
+
+- Transition timeline.
+
 
 Release 1.2.2 (2015-1-16)
 ---------------------
