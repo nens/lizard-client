@@ -3,7 +3,10 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
-- Conitionally hide timeseries select box if only 1 series.
+
+- Bigger clusters of size one.
+
+- Conditionally hide timeseries select box if only 1 series.
 
 Release 1.2.3-1.2.6 (2015-1-19)
 -------------------------------
@@ -11,7 +14,7 @@ Release 1.2.3-1.2.6 (2015-1-19)
 
 
 Release 1.2.2 (2015-1-19)
----------------------
+-------------------------
 
 - Limit timeline min and max zoom.
 
@@ -37,7 +40,7 @@ Release 1.2.2 (2015-1-19)
 
 
 Release 1.2.1 (2015-1-8)
----------------------
+------------------------
 
 - Add ability to show histograms as barchart.
 
