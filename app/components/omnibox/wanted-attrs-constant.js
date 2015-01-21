@@ -120,6 +120,14 @@ angular.module('omnibox')
         defaultValue: ""
       },
       {
+        keyName: "Code",
+        attrName: "code",
+        ngBindValue:
+          "waterchain.layers.waterchain_grid.data.code",
+        valueSuffix: "",
+        defaultValue: ""
+      },
+      {
         keyName: "Maaiveldhoogte",
         attrName: "surface_level",
         ngBindValue: "waterchain.layers.waterchain_grid.data.surface_level",
@@ -127,16 +135,16 @@ angular.module('omnibox')
         defaultValue: ""
       },
       {
-        keyName: "Diepte buis",
-        attrName: "depth",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.depth",
+        keyName: "Bovenkant buis",
+        attrName: "height",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.height",
         valueSuffix: "m",
         defaultValue: ""
       },
       {
-        keyName: "Hoogte buis",
-        attrName: "height",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.height",
+        keyName: "Onderkant buis",
+        attrName: "depth",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.depth",
         valueSuffix: "m",
         defaultValue: ""
       },
@@ -152,14 +160,6 @@ angular.module('omnibox')
         attrName: "filter_bottom_level",
         ngBindValue: "waterchain.layers.waterchain_grid.data.filter_bottom_level",
         valueSuffix: "m",
-        defaultValue: ""
-      },
-      {
-        keyName: "Code",
-        attrName: "code",
-        ngBindValue:
-          "waterchain.layers.waterchain_grid.data.code",
-        valueSuffix: "",
         defaultValue: ""
       }
     ]
