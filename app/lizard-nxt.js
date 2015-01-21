@@ -25,6 +25,7 @@ angular.module("lizard-nxt", [
   'restangular',
   'dashboard',
   'scenarios',
+  'user-menu',
   'global-state',
   'ngSanitize',
   'ngCsv'

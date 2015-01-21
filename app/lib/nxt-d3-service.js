@@ -254,7 +254,7 @@ angular.module('lizard-nxt')
      */
     _makeAxis: function (scale, options) {
       // Make an axis for d3 based on a scale
-      var DECIMAL_COUNT = 2,
+      var decimalCount,
           axis = d3.svg.axis()
             .scale(scale)
             .orient(options.orientation);
@@ -277,9 +277,20 @@ angular.module('lizard-nxt')
         if (options.tickFormat) {
           axis.tickFormat(options.tickFormat);
         } else {
-          axis.tickFormat(function (d) {
-            return d3.format("." + DECIMAL_COUNT + "f")(d);
-          });
+          var domainDiff = scale.domain()[1] - scale.domain()[0];
+          if (domainDiff < 0.5) {
+            axis.tickFormat(function (d) {
+              return d3.format(".2f")(d);
+            });
+          } else if (domainDiff < 5.0) {
+            axis.tickFormat(function (d) {
+              return d3.format(".1f")(d);
+            });
+          } else {
+            axis.tickFormat(
+              this._localeFormatter.nl_NL.numberFormat()
+            );
+          }
         }
       }
       return axis;
