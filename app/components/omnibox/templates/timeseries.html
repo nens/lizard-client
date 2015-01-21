@@ -1,8 +1,10 @@
 <div class="card-content" ng-class="{timeseries: fullDetails}">
 
   <div class="timeseries-header-container">
-     <select ng-class="{hidden: !fullDetails}" class="timeseries"
+     <select ng-class="{hidden: !fullDetails}"
+            class="timeseries"
             ng-model="$parent.box.content.timeseries.selectedTimeseries"
+            ng-if="$parent.box.content.timeseries.data.length > 1"
             ng-options="series.name for series in $parent.box.content.timeseries.data | rmSingleDatumTimeseries">
      </select>
      <span class="card-title-text" ng-class="{hidden: fullDetails}" >Tijdreeksen</span>
