@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.2) (XXXX-XX-XX)
 -------------------------------
 
+- Fix y-axis labeling for omnibox graph.
+
 - Smaller play button.
 
 - Transition timeline.
