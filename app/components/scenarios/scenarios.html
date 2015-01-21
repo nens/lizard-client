@@ -1,9 +1,42 @@
 <div class="scenarios-wrapper" ng-controller="ScenariosCtrl">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-7">
         <!--<a ng-click="switchContext('map')" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>-->
         <h4>Resultaten van 3Di</h4>
+      </div>
+      <div class="col-md-5">
+        <div class="pull-right">
+              <a ng-if="user.authenticated"
+                 title="<% tooltips.profile %>"
+                 href="http://sso.lizard.net/edit_profile/">
+                <div class="" ng-cloak id="username" >
+                  <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
+                  <span ng-bind="user.firstName"></span>
+                </div>
+              </a>
+              <a ng-if="!user.authenticated"
+                 onclick="logIn()"
+                 title="<% tooltips.login %>">
+                <div class="" ng-cloak id="username" >
+                  <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
+                  Login
+                  <span></span>
+                </div>
+              </a>
+              <a ng-if="user.authenticated"
+                 class="logout"
+                 href="/accounts/logout/?next=/"
+                 title="<% tooltips.logout %>"
+                 onclick="return logOut()">
+                <div class="pull-right"
+                     id="username"
+                     title="<% tooltips.logout %>">
+                  Uitloggen
+                  <i id="" style="font-size:1.2em;" class="fa fa-power-off"></i>
+                </div>
+              </a>
+        </div>
       </div>
     </div>
     <div class="row">

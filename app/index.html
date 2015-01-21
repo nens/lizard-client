@@ -48,8 +48,10 @@
     <div ng-if="context !== 'scenarios'">
       <datamenu></datamenu>
 
-      <timeline class="navbar timeline navbar-fixed-bottom"></timeline>
+      <timeline class="timeline navbar-fixed-bottom"></timeline>
     </div>
+
+    <user-menu></user-menu>
 
     <div id="dark-overlay">
       <div id="mymodal">
@@ -155,10 +157,14 @@
     <script src="/components/scenarios/scenarios-controller.js"></script>
     <script src="/components/scenarios/scenarios-directive.js"></script>
 
+    <script src="/components/user-menu/user-menu.js"></script>
+    <script src="/components/user-menu/user-menu-directive.js"></script>
+
     <script src="/components/single-click/single-click-directive.js"></script>
     <script src="/components/opacity/opacity-directives.js"></script>
 
     <script src="/components/layer-chooser/baselayer-chooser-directives.js"></script>
+    <script src="/components/layer-chooser/eventlayer-chooser-directives.js"></script>
 
     <script src="/templates.js"></script>
     <!-- endbuild -->

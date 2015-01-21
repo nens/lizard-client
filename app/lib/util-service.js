@@ -148,40 +148,6 @@ angular.module('lizard-nxt')
     }
   };
 
-
-  /**
-   * @function dataConvertToMeters
-   * @memberOf UtilService
-   *
-   * @summary Takes data array with degrees as x-axis. Returns array with
-   * meters as x-axis
-   *
-   * @param  {array} data Array with degrees
-   * @return {array} data Array with meters
-   */
-  this.dataConvertToMeters = function (data) {
-    for (var i = 0; data.length > i; i++) {
-      data[i][0] = this.degToMeters(data[i][0]);
-    }
-    return data;
-  };
-
-
-  /**
-   * @function degToMeters
-   * @memberOf UtilService
-   *
-   * @summary Takes degrees converts to radians, then converts to
-   * "haversine km's approximation", then to meters
-   *
-   * @param  {float} degrees
-   * @return {float} meters
-   */
-  this.degToMeters = function (degrees) {
-    return  (degrees * Math.PI) / 180 * 6371 * 1000;
-  };
-
-
   /**
    * @function metersToDegs
    * @memberOf UtilService
