@@ -3,7 +3,7 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.2) (XXXX-XX-XX)
 -------------------------------
--
+- Conitionally hide timeseries select box if only 1 series.
 
 
 Release 1.2.2 (2015-1-16)
