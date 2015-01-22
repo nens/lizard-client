@@ -80,11 +80,6 @@
     background-color: #48c9b0;
 }
 
-.searchbutton:focus {
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3),inset 0 0 0 1px rgba(255,255,255,0.5);
-    outline: none;
-}
-
 
 .searchbutton::before {
     display: block;
