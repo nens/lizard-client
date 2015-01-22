@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Added groundwaterstations.
+
 - Bigger clusters of size one.
 
 - Conditionally hide timeseries select box if only 1 series.

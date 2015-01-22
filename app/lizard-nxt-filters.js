@@ -349,6 +349,7 @@ angular.module('lizard-nxt')
       'channel_Primair': 'Primaire watergang',
       'crossprofile': 'Kruisprofiel',
       'culvert': 'Duiker',
+      'groundwaterstation': 'Grondwaterstation',
       'manhole': 'Put',
       'measuringstation': 'Meetstation',
       'orifice': 'Doorlaat',
