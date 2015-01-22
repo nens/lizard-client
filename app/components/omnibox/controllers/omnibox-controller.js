@@ -5,13 +5,15 @@ angular.module('omnibox')
   "ClickFeedbackService",
   "State",
   "DataService",
+  "MapService",
 
   function (
     $scope,
     UtilService,
     ClickFeedbackService,
     State,
-    DataService) {
+    DataService,
+    MapService) {
 
     this.state = { temporal: State.temporal };
 
