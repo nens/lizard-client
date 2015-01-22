@@ -136,15 +136,15 @@ angular.module('omnibox')
       },
       {
         keyName: "Bovenkant buis",
-        attrName: "height",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.height",
+        attrName: "top_level",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.top_level",
         valueSuffix: " (mNAP)",
         defaultValue: ""
       },
       {
         keyName: "Onderkant buis",
-        attrName: "depth",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.depth",
+        attrName: "bottom_level",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.bottom_level",
         valueSuffix: " (mNAP)",
         defaultValue: ""
       },
