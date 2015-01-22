@@ -110,6 +110,60 @@ angular.module('omnibox')
       }
     ]
   },
+  groundwaterstation: {
+    rows: [
+      {
+        keyName: "Naam",
+        attrName: "display_name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
+        valueSuffix: "",
+        defaultValue: ""
+      },
+      {
+        keyName: "Code",
+        attrName: "code",
+        ngBindValue:
+          "waterchain.layers.waterchain_grid.data.code",
+        valueSuffix: "",
+        defaultValue: ""
+      },
+      {
+        keyName: "Maaiveldhoogte",
+        attrName: "surface_level",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.surface_level",
+        valueSuffix: " (mNAP)",
+        defaultValue: ""
+      },
+      {
+        keyName: "Bovenkant buis",
+        attrName: "top_level",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.top_level",
+        valueSuffix: " (mNAP)",
+        defaultValue: ""
+      },
+      {
+        keyName: "Onderkant buis",
+        attrName: "bottom_level",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.bottom_level",
+        valueSuffix: " (mNAP)",
+        defaultValue: ""
+      },
+      {
+        keyName: "Bovenkant filter",
+        attrName: "filter_top_level",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.filter_top_level",
+        valueSuffix: " (mNAP)",
+        defaultValue: ""
+      },
+      {
+        keyName: "Onderkant filter",
+        attrName: "filter_bottom_level",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.filter_bottom_level",
+        valueSuffix: " (mNAP)",
+        defaultValue: ""
+      }
+    ]
+  },
   levee: {
     rows: [
       {
