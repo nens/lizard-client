@@ -11,11 +11,30 @@
     title="<% tooltips.resetQuery %>"
     ng-click="cleanInput()"
     id="clear" class="clickable" ></div>
-  <button id="search-button"
-    class="searchbutton clickable"
-    ng-click="search()"
-    aria-label="Search"
-    title="<% tooltips.search %>">
-  </button>
+  <div class="search-button-collection">
+    <button id="search-button"
+      class="searchbutton clickable"
+      ng-click="search()"
+      aria-label="Search"
+      title="<% tooltips.search %>">
+      <i class="fa fa-search"></i>
+    </button>
+    <button
+      class="searchbutton clickable"
+      ng-click="zoomIn()"
+      aria-label="Zoom in"
+      title="<% tooltips.zoomInMap %>">
+
+      <i class="fa fa-plus"></i>
+    </button>
+    <button
+      class="searchbutton clickable"
+      ng-click="zoomOut()"
+      aria-label="Zoom uit"
+      title="<% tooltips.zoomOutMap %>">
+      <i class="fa fa-minus"></i>
+    </button>
+  </div>
+
 </div>
 
