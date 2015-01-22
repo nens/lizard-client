@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix scenario bugs.
 
 
 Release 1.2.9 (2015-1-22)
