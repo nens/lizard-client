@@ -1,14 +1,16 @@
 
 <div ng-controller="DatamenuController as menu">
   <div class="layer-menu-container">
-    <div class="layer-switcher-wrapper pull-right"
-         ng-class="{'slide-left': menu.enabled && context === 'map'}">
+    <div class="layer-switcher-wrapper"
+      ng-class="{'slide-left': menu.enabled}">
 
 
       <div class="breakout-menu"></div>
-      <div class="layer-switcher slide-left">
+
+      <div class="layer-switcher">
 
         <ul class="nav">
+
           <li class="nav-header">
             <ul class="list-group">
               <li>
