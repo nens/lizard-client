@@ -3,11 +3,15 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix zoom buttons map and search box.
+
+- Fix timeline bugs.
 
 
 Release 1.2.8 (2015-1-22)
 ---------------------
+
 -
 
 
