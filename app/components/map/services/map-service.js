@@ -220,6 +220,14 @@ angular.module('map')
         }
       },
 
+      zoomIn: function () {
+        service._map.setZoom(service._map.getZoom() + 1);
+      },
+
+      zoomOut: function () {
+        service._map.setZoom(service._map.getZoom() - 1);
+      }
+
     };
 
 
@@ -386,13 +394,6 @@ angular.module('map')
     var createLeafletMap = function (mapElem, options) { // String or Element.
 
       var leafletMap = LeafletService.map(mapElem, options);
-
-      if (options.addZoomTitles) {
-        LeafletService.control.zoom({
-          zoomInTitle: options.zoomInTitle,
-          zoomOutTitle: options.zoomOutTitle
-        }).addTo(leafletMap);
-      }
 
       return leafletMap;
     };

@@ -29,6 +29,9 @@ angular.module('lizard-nxt')
 
     var timelineSetsTime = false,
 
+        showTimeline = false, // Is set by user clicking data label, when true
+                              // timeline is shown.
+
         dimensions = {
           width: UtilService.getCurrentWidth(),
           height: 30,
@@ -137,7 +140,7 @@ angular.module('lizard-nxt')
      * @param {object} dim - object with old timeline dimensions.
      * @param {int} nEventTypes - number of event types (event series).
      */
-    var updateTimelineHeight = function (nEventTypes, toShow) {
+    var updateTimelineHeight = function (nEventTypes) {
       var eventHeight,
           newDim = angular.copy(timeline.dimensions);
 
@@ -151,18 +154,16 @@ angular.module('lizard-nxt')
 
       newDim.height = Math.max(newDim.height, dimensions.height);
 
-      if (newDim.height !== timeline.dimensions.height || toShow) {
+      if (showTimeline) {
         element[0].style.height = newDim.height + 5 + 'px'; // 5px margins
       }
 
-      if (newDim.height !== timeline.dimensions.height) {
-        timeline.resize(
-          newDim,
-          State.temporal.at,
-          State.temporal.aggWindow,
-          nEventTypes
-        );
-      }
+      timeline.resize(
+        newDim,
+        State.temporal.at,
+        State.temporal.aggWindow,
+        nEventTypes
+      );
 
     };
 
@@ -339,10 +340,11 @@ angular.module('lizard-nxt')
     element[0].style.height = 0;
 
     scope.timeline.toggleTimelineVisiblity = function () {
-      if (element[0].style.height !== '0px') {
+      showTimeline = !showTimeline;
+      if (!showTimeline) {
         element[0].style.height = 0;
       } else {
-        updateTimelineHeight(scope.events.nEvents, true);
+        updateTimelineHeight(scope.events.nEvents);
       }
     };
 

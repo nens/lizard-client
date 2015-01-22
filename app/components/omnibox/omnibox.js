@@ -1,5 +1,6 @@
 angular.module('omnibox', [
   'templates-main',
   'global-state',
-  'data-menu'
+  'data-menu',
+  'map'
 ]);
