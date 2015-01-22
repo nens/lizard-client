@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
--
+
+- Get colormap per aggWindow for rain.
 
 
 Release 1.2.10 (2015-1-22)

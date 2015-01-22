@@ -216,9 +216,14 @@ angular.module('map')
               // for now this is only for the radar stores
               if (this.slug.split('/')[0] === 'radar') {
                 // change image url based on timestate.
+                // TODO: check scope
+                var storeName = this._determineStore(timeState).name;
+                this.options.styles = this.options.styles.split('-')[0] +
+                                      '-' +
+                                      storeName.split('/')[1];
                 this._imageUrlBase = RasterService.buildURLforWMS(
                     this,
-                    this._determineStore(timeState).name
+                    storeName
                     );
                 this._temporalResolution = this._determineStore(timeState).resolution;
               }
