@@ -1,16 +1,17 @@
 <div class="card-content" ng-class="{timeseries: fullDetails}">
-
   <div class="timeseries-header-container">
-     <select ng-class="{hidden: !fullDetails}"
-            class="timeseries"
+     <select class="timeseries"
+            ng-class="{hidden: ($parent.box.content.timeseries.data.length === -1) || !fullDetails}"
             ng-model="$parent.box.content.timeseries.selectedTimeseries"
-            ng-if="$parent.box.content.timeseries.data.length > 1"
             ng-options="series.name for series in $parent.box.content.timeseries.data | rmSingleDatumTimeseries">
      </select>
+     <span class="card-title-text"
+            ng-class="{hidden: ($parent.box.content.timeseries.data.length > 0) || !fullDetails}">
+       <% $parent.box.content.timeseries.data[0].name %>
+     </span>
      <span class="card-title-text" ng-class="{hidden: fullDetails}" >Tijdreeksen</span>
      <full-details></full-details>
   </div>
-
 
   <div ng-class="{hidden: !fullDetails}"
       ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name === 'measuringstation'">
@@ -37,4 +38,5 @@
       temporal="timeState">
     </graph>
   </div>
+  
 </div>
