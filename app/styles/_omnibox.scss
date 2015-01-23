@@ -615,20 +615,26 @@ table tr td:last-child {
   display: inline-block;
   width: 100%;
   min-width: 100%;
-  margin-bottom: -10px;
+  /*margin-bottom: 10px;*/
+  /*background-color: #eef;*/
+  padding-left: 10px;
 }
 
-  .timeseries-header-text {
-    width: 20%;
-    float: left;
-    color: $asbestos;
-  }
+.timeseries-header-container .fa-clock-o {
+  color: #e74c3c;
+  position: relative;
+  left: -5px;
+}
 
-  select.timeseries {
-    width: 90%;
-    margin-bottom: 20px;
-    position: relative;
-  }
+.timeseries-header-text {
+  width: 20%;
+  float: left;
+  color: $asbestos;
+}
+
+.timeseries-graph-container {
+  margin-top: 10px;
+}
 
 .card-title {
   line-height: 33px;
@@ -639,6 +645,11 @@ table tr td:last-child {
   position: relative;
   padding-left: 10px;
   color: $asbestos;
+}
+
+.card-title-text.placeholder {
+  position: relative;
+  left: -10px;
 }
 
 #icon-holder {
