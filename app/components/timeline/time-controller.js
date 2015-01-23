@@ -65,21 +65,21 @@ angular.module('lizard-nxt')
      * with a lower speed so wms requests can keep up and run more smooth if the
      * temporalResolution equals or is a multiplication of  the stepSize.
      */
-    $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
+    $scope.$watch(State.toString('layerGroups.active'), angular.bind(this, function (n, o) {
       if (n === o) { return; }
       configAnimation.call(this);
-    });
+    }));
 
     /**
      * sync data layers to new timestate and redo the animation configuration
      * since currentInterval has changed.
      */
-    $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
+    $scope.$watch(State.toString('temporal.timelineMoving'), angular.bind(this, function (n, o) {
       if (n === o) { return true; }
       if (!State.temporal.timelineMoving) {
-        configAnimation();
+        configAnimation.call(this);
       }
-    });
+    }));
 
     /**
      * Sync to new time and trigger a new step when animation.playing is true.
@@ -129,9 +129,9 @@ angular.module('lizard-nxt')
         }
       });
 
-      $scope.timeline.animatable = activeTemporalLgs;
+      this.animatable = activeTemporalLgs;
       // Do not continue animating when there is nothing to animate.
-      if (!$scope.timeline.animatable) {
+      if (!this.animatable) {
         State.temporal.playing  = false;
       }
 
