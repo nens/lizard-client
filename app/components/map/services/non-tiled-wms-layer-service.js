@@ -11,10 +11,10 @@
  * a buffer of images, fills the buffer with new images or turns one of the
  * images from the buffer on and start loading a new image in the place of the
  * previous.
- * 
+ *
  * Usage: add animation functionality to an instance NxtLayer by using
  * NxtNonTiledWMSLayer.create(<layer>);
- * 
+ *
  */
 angular.module('map')
 .factory('NxtNonTiledWMSLayer', [
@@ -25,23 +25,6 @@ angular.module('map')
   '$http',
   '$q',
   function (NxtLayer, LeafletService, RasterService, UtilService, $http, $q) {
-
-      /**
-       * @description Adds new imageoverlays.
-       * @param  {L.Map} map.
-       * @param  {overlays} overlays current overlays to add to.
-       * @param  {bounds} bounds   bounds of overlays.
-       * @param  {int} buffer   amount of imageOverlays to include.
-       * @return {array} array of L.imageOverlays.
-       */
-      var createImageOverlays = function (map, overlays, bounds, buffer) {
-        for (var i = overlays.length - 1; i < buffer; i++) {
-          overlays.push(
-            addLeafletLayer(map, L.imageOverlay('', bounds))
-          );
-        }
-        return overlays;
-      };
 
       /**
        * @function
@@ -100,14 +83,14 @@ angular.module('map')
             value: [],
             writable: true,
           });
-          // Base of the image url without the time.
-          Object.defineProperty(layer, '_imageUrlBase', {
-            value: RasterService.buildURLforWMS(layer),
-            writable: true,
-          });
           // Formatter used to format a data object.
           Object.defineProperty(layer, '_formatter', {
             value: d3.time.format.utc("%Y-%m-%dT%H:%M:%S"),
+            writable: true,
+          });
+          // Base of the image url without the time.
+          Object.defineProperty(layer, '_imageUrlBase', {
+            value: RasterService.buildURLforWMS(layer),
             writable: true,
           });
           // Lookup to store which data correspond to which imageOverlay.
@@ -142,19 +125,33 @@ angular.module('map')
              * @return a promise that resolves when the image has loaded. Usefull
              *         for sequential loading of layers.
              */
-            add: function (map) {
+            add: function (map, optionalDefer) {
 
-              var defer = $q.defer(),
+              var defer = optionalDefer || $q.defer(),
                   opacity = this._opacity,
                   date = new Date(this._mkTimeStamp(this.timeState.at)),
-                  imageUrl = this._imageUrlBase + this._formatter(date);
+                  store = this._determineStore(this.timeState);
+
+
+              var options = {
+                layers: store.name,
+                format: 'image/png',
+                version: '1.1.1',
+                minZoom: layer.min_zoom || 0,
+                maxZoom: 19,
+                opacity: layer.opacity,
+                zindex: layer.zIndex,
+                time: this._formatter(date)
+              };
+
+              options = angular.extend(options, layer.options);
+
+              this.options.styles = this.options.styles.split('-')[0]
+                + '-'
+                + store.name.split('/')[1];
 
               this._imageOverlays = [
-                LeafletService.imageOverlay(
-                  imageUrl,
-                  this._imageBounds,
-                  {opacity: opacity}
-                )
+                LeafletService.tileLayer.wms(layer.url, options)
               ];
 
               this._addLoadListener(
@@ -214,42 +211,28 @@ angular.module('map')
 
               // this only works for stores with different aggregation levels
               // for now this is only for the radar stores
-              if (this.slug.split('/')[0] === 'radar') {
-                // change image url based on timestate.
-                this._imageUrlBase = RasterService.buildURLforWMS(
-                    this,
-                    this._determineStore(timeState).name
-                    );
-                this._temporalResolution = this._determineStore(timeState).resolution;
-              }
+              // change image url based on timestate.
+              var store = this._determineStore(timeState);
+
+              this._imageUrlBase = RasterService.buildURLforWMS(
+                this,
+                store.name
+              );
+              this._temporalResolution = store.resolution;
+
+              this.options.styles = this.options.styles.split('-')[0]
+                + '-'
+                + store.name.split('/')[1];
 
               var defer = $q.defer(),
-                  currentDate = this._mkTimeStamp(timeState.at),
-                  currentOverlayIndex = this._frameLookup[currentDate];
+                  currentDate = this._mkTimeStamp(timeState.at);
 
-              if (this._imageOverlays.length < this._bufferLength) {
-                // add leaflet layers to fill up the buffer
-                this._imageOverlays = createImageOverlays(
-                  map,
-                  this._imageOverlays,
-                  this._imageBounds,
-                  this._bufferLength
-                );
-              }
-
-              if (currentOverlayIndex === undefined) {
-                // Ran out of buffered frames
-                this._imageOverlays = this._fetchNewFrames(
-                  currentDate,
-                  this._imageOverlays,
-                  defer
-                );
+              if (timeState.playing) {
+                this._animateSyncTime(map, currentDate, defer);
               }
 
               else {
-                this._progressFrame(currentOverlayIndex);
-                // Done!
-                defer.resolve();
+                this._tiledSyncTime(map, currentDate, defer);
               }
 
               return defer.promise;
@@ -268,6 +251,7 @@ angular.module('map')
                   map.removeLayer(this._imageOverlays[i]);
                 }
               }
+              this._nLoadingRasters = 0;
               this._imageOverlays = [];
               this._frameLookup = {};
             },
@@ -290,6 +274,62 @@ angular.module('map')
               return;
             },
 
+            _tiledSyncTime: function (map, currentDate, defer) {
+              this.remove(map);
+              this.add(map, defer);
+            },
+
+            _animateSyncTime: function (map, currentDate, defer) {
+
+              var currentOverlayIndex = this._frameLookup[currentDate];
+
+              if (this._imageOverlays.length < this._bufferLength) {
+                // add leaflet layers to fill up the buffer
+                this._imageOverlays = this._createImageOverlays(
+                  map,
+                  this._imageBounds,
+                  this._bufferLength
+                );
+              }
+
+              if (currentOverlayIndex === undefined) {
+                // Ran out of buffered frames
+                this._imageOverlays = this._fetchNewFrames(
+                  currentDate,
+                  this._imageOverlays,
+                  defer
+                );
+              }
+
+              else {
+                this._progressFrame(currentOverlayIndex);
+                // Done!
+                defer.resolve();
+              }
+
+            },
+
+            /**
+             * @description Adds new imageoverlays.
+             * @param  {L.Map} map.
+             * @param  {overlays} overlays current overlays to add to.
+             * @param  {bounds} bounds   bounds of overlays.
+             * @param  {int} buffer   amount of imageOverlays to include.
+             * @return {array} array of L.imageOverlays.
+             */
+            _createImageOverlays: function (map, bounds, buffer) {
+              // detach all listeners and references to the imageOverlays.
+              this.remove(map);
+              // create new ones.
+              for (var i = this._imageOverlays.length - 1; i < buffer; i++) {
+                this._imageOverlays.push(
+                  addLeafletLayer(map, LeafletService.imageOverlay('', bounds))
+                );
+              }
+              return this._imageOverlays;
+            },
+
+
             /**
              * Local helper that returns a rounded timestamp
              */
@@ -297,7 +337,7 @@ angular.module('map')
               var result = UtilService.roundTimestamp(t, this._temporalResolution, false);
               return result;
             },
-            
+
             /**
              * @description based on the temporal window. The time between
              * timestate.start and timestate.end determines which store is to be used.
@@ -305,6 +345,14 @@ angular.module('map')
              *
              */
             _determineStore: function (timeState) {
+
+              if (this.slug.split('/')[0] !== 'radar') {
+                return {
+                  name: layer.slug,
+                  resolution: layer._temporalResolution
+                };
+              }
+
               var resolutionHours = (timeState.aggWindow) / 60 / 60 / 1000;
 
               var aggType = this.slug.split('/');
@@ -320,12 +368,12 @@ angular.module('map')
                 '5min': 300000,
                 'hour': 3600000,
                 'day': 86400000
-              }; 
+              };
 
               return {
                 name: aggType.join('/'),
-                  resolution: resolutions[aggType[1]]
-              }
+                resolution: resolutions[aggType[1]]
+              };
 
             },
 

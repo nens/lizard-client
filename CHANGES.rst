@@ -18,6 +18,12 @@ Release 1.2.11 (2015-1-23)
 
 - Fix (line-) graph sync to timeline.
 
+- Use tiled wms layer when not animating.
+
+- Fix bug with temporalresolution and animation.
+
+- Get colormap per aggWindow for rain.
+
 - Fix radar/basic slug confusion, store slug is now `rain`.
 
 - Rename weir attribute.
