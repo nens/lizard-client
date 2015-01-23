@@ -100,8 +100,6 @@ angular.module('lizard-nxt')
      */
     scope.$watch('data', function (n, o) {
       if (n === o) { return true; }
-      console.log("[W] scope.$watch('data', ...");
-      console.log("-- scope.temporal =", scope.temporal);
       graphCtrl.setData(scope);
       // Call graph with the new data
       graphCtrl.updateData.call(
@@ -109,7 +107,7 @@ angular.module('lizard-nxt')
         graphCtrl.data,
         graphCtrl.keys,
         graphCtrl.labels,
-        scope.temporal
+        graphCtrl.graph._xDomainInfo
       );
       // Call the graph with the now
       if (scope.temporal && scope.temporal.at) {
@@ -124,8 +122,13 @@ angular.module('lizard-nxt')
       if (n === o) { return true; }
       graphCtrl.setData(scope);
       // Call graph with the new data
-      graphCtrl.updateData.call(graphCtrl.graph, graphCtrl.data,
-                                graphCtrl.keys, graphCtrl.labels);
+      graphCtrl.updateData.call(
+        graphCtrl.graph,
+        graphCtrl.data,
+        graphCtrl.keys,
+        graphCtrl.labels,
+        graphCtrl.graph._xDomainInfo
+      );
       // Call the graph with the now
       if (scope.temporal && scope.temporal.at) {
         graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
