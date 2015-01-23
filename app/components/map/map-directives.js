@@ -109,7 +109,7 @@ angular.module('map')
        *
        * Used to turn maplayers to a none animating state. When animation stops.
        */
-      scope.$watch(State.toString('temporal.playing'), function (newValue) {
+      scope.$watch(function () { return State.temporal.playing; }, function (newValue) {
         if (newValue) { return; }
         MapService.syncTime(State.temporal);
       });
