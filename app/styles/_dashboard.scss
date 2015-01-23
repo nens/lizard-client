@@ -6,7 +6,6 @@
   transition: .3s ease;
   margin-top: $navbarheight;
   padding-left: 10px;
-  z-index: 1000;
   height: 70%;
   // interpolation inside mixin expression of variable
   // apparently not working. 132px is navbar and timeline

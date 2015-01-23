@@ -10,10 +10,26 @@ Unreleased (1.2.7) (XXXX-XX-XX)
 
 - Get colormap per aggWindow for rain.
 
+- Fix radar/basic slug confusion, store slug is now `rain`.
+
+
+Release 1.2.10 (2015-1-22)
+---------------------
+
+- Fix scenario bugs.
+
+
+Release 1.2.9 (2015-1-22)
+---------------------
+
+- Fix zoom buttons map and search box.
+
+- Fix timeline bugs.
 
 
 Release 1.2.8 (2015-1-22)
 ---------------------
+
 -
 
 
