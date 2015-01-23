@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Improve timeseries omnibox card styling.
+
+- Fix (line-) graph sync to timeline.
+
 - Fix radar/basic slug confusion, store slug is now `rain`.
 
 

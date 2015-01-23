@@ -103,9 +103,15 @@ angular.module('lizard-nxt')
             }
           };
           // pass options for time graph or use defaults
-          this._xy = this._createXYGraph(data, keys, labels, temporal ? options : undefined);
+          this._xy = this._createXYGraph(
+            data,
+            keys,
+            labels,
+            temporal ? options : undefined,
+            this._xDomainInfo
+          );
         } else {
-          this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys);
+          this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys, null, this._xDomainInfo);
           drawLabel(this._svg, this.dimensions, labels.y, true);
         }
         var line = this._createLine(this._xy, keys);
@@ -270,8 +276,6 @@ angular.module('lizard-nxt')
      */
     drawNow: {
       value: function (now) {
-        // console.log("[F] drawNow: now =", new Date(now));
-        // console.log("---> now (scaled)", this._xy.x.scale(now));
         this._drawNow(now, this._xy.x.scale);
         // move to the front
         var el = this._svg.select('.now-indicator').node();
