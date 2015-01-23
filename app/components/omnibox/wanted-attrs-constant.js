@@ -660,7 +660,7 @@ angular.module('omnibox')
         defaultValue: "-0.3"
       },
       {
-        keyName: "Controle",
+        keyName: "Bediening",
         attrName: "controlled",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.controlled",

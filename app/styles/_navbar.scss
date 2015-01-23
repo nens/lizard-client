@@ -14,6 +14,7 @@
 .navbar {
     border: none !important;
     font-size: 14px !important;
+    z-index: auto;
     .nav > li > .inactive {
         color: #D9D9D6;
     }

@@ -102,8 +102,13 @@ angular.module('lizard-nxt')
       if (n === o) { return true; }
       graphCtrl.setData(scope);
       // Call graph with the new data
-      graphCtrl.updateData.call(graphCtrl.graph, graphCtrl.data,
-                                graphCtrl.keys, graphCtrl.labels);
+      graphCtrl.updateData.call(
+        graphCtrl.graph,
+        graphCtrl.data,
+        graphCtrl.keys,
+        graphCtrl.labels,
+        graphCtrl.graph._xDomainInfo
+      );
       // Call the graph with the now
       if (scope.temporal && scope.temporal.at) {
         graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
@@ -117,8 +122,13 @@ angular.module('lizard-nxt')
       if (n === o) { return true; }
       graphCtrl.setData(scope);
       // Call graph with the new data
-      graphCtrl.updateData.call(graphCtrl.graph, graphCtrl.data,
-                                graphCtrl.keys, graphCtrl.labels);
+      graphCtrl.updateData.call(
+        graphCtrl.graph,
+        graphCtrl.data,
+        graphCtrl.keys,
+        graphCtrl.labels,
+        graphCtrl.graph._xDomainInfo
+      );
       // Call the graph with the now
       if (scope.temporal && scope.temporal.at) {
         graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
@@ -242,13 +252,12 @@ angular.module('lizard-nxt')
   .directive('line', [function () {
 
   var link = function (scope, element, attrs, graphCtrl) {
-
     var data = graphCtrl.data,
     graph = graphCtrl.graph,
     keys = graphCtrl.keys,
     temporal = graphCtrl.type === 'temporal';
 
-    graph.drawLine(data, keys, graphCtrl.labels, temporal);
+    graph.drawLine(data, keys, graphCtrl.labels, temporal, scope.timeState);
 
     graph.followMouse(function (position) {
       scope.$apply(function () {

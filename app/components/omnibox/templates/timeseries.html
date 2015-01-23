@@ -1,42 +1,51 @@
 <div class="card-content" ng-class="{timeseries: fullDetails}">
+
   <div class="timeseries-header-container">
+     <i class="fa fa-clock-o">
+     </i>
      <select class="timeseries"
-            ng-class="{hidden: ($parent.box.content.timeseries.data.length === -1) || !fullDetails}"
-            ng-model="$parent.box.content.timeseries.selectedTimeseries"
-            ng-options="series.name for series in $parent.box.content.timeseries.data | rmSingleDatumTimeseries">
+            ng-if="$parent.$parent.box.content.timeseries.data.length > 1"
+            ng-class="{hidden: !fullDetails}"
+            ng-model="$parent.$parent.box.content.timeseries.selectedTimeseries"
+            ng-options="series.name for series in $parent.$parent.box.content.timeseries.data | rmSingleDatumTimeseries">
      </select>
-     <span class="card-title-text"
-            ng-class="{hidden: ($parent.box.content.timeseries.data.length > 0) || !fullDetails}">
-       <% $parent.box.content.timeseries.data[0].name %>
+     <span class="card-title-text placeholder"
+           ng-if="$parent.$parent.box.content.timeseries.data.length === 1 && fullDetails">
+           <% $parent.$parent.box.content.timeseries.selectedTimeseries.name %>
      </span>
-     <span class="card-title-text" ng-class="{hidden: fullDetails}" >Tijdreeksen</span>
+     <span class="card-title-text placeholder" ng-class="{hidden: fullDetails}" >Tijdreeksen</span>
      <full-details></full-details>
   </div>
 
-  <div ng-class="{hidden: !fullDetails}"
+  <br>
+
+  <div class="timeseries-graph-container"
+      ng-class="{hidden: !fullDetails}"
       ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name === 'measuringstation'">
      <graph
         bar-chart
         type="temporal"
+        temporal="$parent.omnibox.state.temporal"
         data="$parent.box.content.timeseries.selectedTimeseries.events"
         ylabel="$parent.box.content.timeseries.selectedTimeseries.unit"
         xlabel=""
         keys="{x: 0, y: 1}"
-        temporal="timeState">
+        now="$parent.timeState.at">
       </graph>
   </div>
 
-  <div ng-class="{hidden: !fullDetails}"
+  <div class="timeseries-graph-container"
+    ng-class="{hidden: !fullDetails}"
     ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name !== 'measuringstation'">
     <graph
       line
       type="temporal"
+      temporal="$parent.omnibox.state.temporal"
       data="$parent.box.content.timeseries.selectedTimeseries.events"
       ylabel="$parent.box.content.timeseries.selectedTimeseries.unit"
       xlabel=""
       keys="{x: 0, y: 1}"
-      temporal="timeState">
+      now="$parent.timeState.at">
     </graph>
   </div>
-  
 </div>
