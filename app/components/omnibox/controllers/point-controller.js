@@ -51,7 +51,7 @@ angular.module('omnibox')
             response.data.entity_name + '$' + response.data.id
           );
         }
-        if (response.layerSlug === 'radar/basic' && response.data !== null) {
+        if (response.layerSlug === 'rain' && response.data !== null) {
           // this logs incessant errors.
           if ($scope.box.content[response.layerGroupSlug] === undefined) { return; }
           if (!$scope.box.content[response.layerGroupSlug].layers.hasOwnProperty(response.layerSlug)) { return; }

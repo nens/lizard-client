@@ -10,8 +10,8 @@
        <graph
          bar-chart
          class="xyGraph"
-         data="lg.layers['radar/basic'].data"
-         ylabel="lg.layers['radar/basic'].aggWindow"
+         data="lg.layers['rain'].data"
+         ylabel="lg.layers['rain'].aggWindow"
          yfilter="aggWinToYLabel"
          keys="{x: 0, y: 1}"
          temporal="omnibox.state.temporal">
@@ -25,7 +25,7 @@
          <a
            class="btn btn-default btn-xs"
            title="Data van deze infocard exporteren"
-           ng-csv="formatCSVColumns(lg.layers['radar/basic'].data)"
+           ng-csv="formatCSVColumns(lg.layers['rain'].data)"
            filename="neerslag.csv"
            csv-header="['Datestamp', 'Timestamp', 'Rain (mm)', 'Latitude', 'Longitude']" >
            <i class="fa fa-share-square-o"></i>
