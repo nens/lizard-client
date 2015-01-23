@@ -632,6 +632,11 @@ table tr td:last-child {
   color: $asbestos;
 }
 
+select.timeseries {
+  position: relative;
+  left: 5px;
+}
+
 .timeseries-graph-container {
   margin-top: 10px;
 }
