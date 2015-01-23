@@ -10,6 +10,8 @@ Unreleased (1.2.7) (XXXX-XX-XX)
 
 - Fix radar/basic slug confusion, store slug is now `rain`.
 
+- Rename weir attribute.
+
 
 Release 1.2.10 (2015-1-22)
 ---------------------
