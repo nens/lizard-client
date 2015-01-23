@@ -129,10 +129,12 @@ angular.module('map')
 
               var defer = optionalDefer || $q.defer(),
                   opacity = this._opacity,
-                  date = new Date(this._mkTimeStamp(this.timeState.at));
+                  date = new Date(this._mkTimeStamp(this.timeState.at)),
+                  store = this._determineStore(this.timeState);
+
 
               var options = {
-                layers: this._determineStore(this.timeState).name,
+                layers: store.name,
                 format: 'image/png',
                 version: '1.1.1',
                 minZoom: layer.min_zoom || 0,
@@ -143,6 +145,10 @@ angular.module('map')
               };
 
               options = angular.extend(options, layer.options);
+
+              this.options.styles = this.options.styles.split('-')[0]
+                + '-'
+                + store.name.split('/')[1];
 
               this._imageOverlays = [
                 LeafletService.tileLayer.wms(layer.url, options)
@@ -213,6 +219,10 @@ angular.module('map')
                 store.name
               );
               this._temporalResolution = store.resolution;
+
+              this.options.styles = this.options.styles.split('-')[0]
+                + '-'
+                + store.name.split('/')[1];
 
               var defer = $q.defer(),
                   currentDate = this._mkTimeStamp(timeState.at);

@@ -3,7 +3,13 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
--
+
+- Use tiled wms layer when not animating.
+
+- Fix bug with temporalresolution and animation.
+
+- Get colormap per aggWindow for rain.
+
 
 
 Release 1.2.8 (2015-1-22)
