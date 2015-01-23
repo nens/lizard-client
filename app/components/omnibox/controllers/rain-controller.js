@@ -57,6 +57,11 @@ angular.module('omnibox')
    *
    */
   $scope.formatCSVColumns = function (data) {
+
+    if (data === undefined) {
+      throw new Error("Tried to build a CSV for rain data, but data === undefined!");
+    }
+
     var i,
         formattedDateTime,
         formattedData = [],
@@ -82,7 +87,6 @@ angular.module('omnibox')
         lng
       ]);
     }
-
     return formattedData;
   };
 
