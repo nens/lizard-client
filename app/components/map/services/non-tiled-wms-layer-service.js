@@ -125,9 +125,9 @@ angular.module('map')
              * @return a promise that resolves when the image has loaded. Usefull
              *         for sequential loading of layers.
              */
-            add: function (map) {
+            add: function (map, optionalDefer) {
 
-              var defer = $q.defer(),
+              var defer = optionalDefer || $q.defer(),
                   opacity = this._opacity,
                   date = new Date(this._mkTimeStamp(this.timeState.at));
 
@@ -141,6 +141,7 @@ angular.module('map')
                 zindex: layer.zIndex,
                 time: this._formatter(date)
               };
+
               options = angular.extend(options, layer.options);
 
               this._imageOverlays = [
@@ -201,7 +202,6 @@ angular.module('map')
              */
             syncTime: function (timeState, map) {
               this.timeState = timeState;
-
               // // this only works for stores with different aggregation levels
               // // for now this is only for the radar stores
               // if (this.slug.split('/')[0] === 'radar') {
@@ -214,32 +214,14 @@ angular.module('map')
               // }
 
               var defer = $q.defer(),
-                  currentDate = this._mkTimeStamp(timeState.at),
-                  currentOverlayIndex = this._frameLookup[currentDate];
+                  currentDate = this._mkTimeStamp(timeState.at);
 
-              if (this._imageOverlays.length < this._bufferLength) {
-                // add leaflet layers to fill up the buffer
-                this._imageOverlays = this._createImageOverlays(
-                  map,
-                  this._imageOverlays,
-                  this._imageBounds,
-                  this._bufferLength
-                );
-              }
-
-              if (currentOverlayIndex === undefined) {
-                // Ran out of buffered frames
-                this._imageOverlays = this._fetchNewFrames(
-                  currentDate,
-                  this._imageOverlays,
-                  defer
-                );
+              if (timeState.playing) {
+                this._animateSyncTime(map, currentDate, defer);
               }
 
               else {
-                this._progressFrame(currentOverlayIndex);
-                // Done!
-                defer.resolve();
+                this._tiledSyncTime(map, currentDate, defer);
               }
 
               return defer.promise;
@@ -258,6 +240,7 @@ angular.module('map')
                   map.removeLayer(this._imageOverlays[i]);
                 }
               }
+              this._nLoadingRasters = 0;
               this._imageOverlays = [];
               this._frameLookup = {};
             },
@@ -280,6 +263,41 @@ angular.module('map')
               return;
             },
 
+            _tiledSyncTime: function (map, currentDate, defer) {
+              this.remove(map);
+              this.add(map, defer);
+            },
+
+            _animateSyncTime: function (map, currentDate, defer) {
+
+              var currentOverlayIndex = this._frameLookup[currentDate];
+
+              if (this._imageOverlays.length < this._bufferLength) {
+                // add leaflet layers to fill up the buffer
+                this._imageOverlays = this._createImageOverlays(
+                  map,
+                  this._imageBounds,
+                  this._bufferLength
+                );
+              }
+
+              if (currentOverlayIndex === undefined) {
+                // Ran out of buffered frames
+                this._imageOverlays = this._fetchNewFrames(
+                  currentDate,
+                  this._imageOverlays,
+                  defer
+                );
+              }
+
+              else {
+                this._progressFrame(currentOverlayIndex);
+                // Done!
+                defer.resolve();
+              }
+
+            },
+
             /**
              * @description Adds new imageoverlays.
              * @param  {L.Map} map.
@@ -288,16 +306,16 @@ angular.module('map')
              * @param  {int} buffer   amount of imageOverlays to include.
              * @return {array} array of L.imageOverlays.
              */
-            _createImageOverlays: function (map, overlays, bounds, buffer) {
+            _createImageOverlays: function (map, bounds, buffer) {
               // detach all listeners and references to the imageOverlays.
               this.remove(map);
               // create new ones.
-              for (var i = overlays.length - 1; i < buffer; i++) {
-                overlays.push(
-                  addLeafletLayer(map, L.imageOverlay('', bounds))
+              for (var i = this._imageOverlays.length - 1; i < buffer; i++) {
+                this._imageOverlays.push(
+                  addLeafletLayer(map, LeafletService.imageOverlay('', bounds))
                 );
               }
-              return overlays;
+              return this._imageOverlays;
             },
 
 
