@@ -102,7 +102,7 @@ angular.module('lizard-nxt')
       timeStep = Infinity;
       minLag = 0;
 
-      var activeTemporalLgs = [];
+      var activeTemporalLgs = false;
 
       angular.forEach(State.layerGroups.active, function (lgSlug) {
         var lg = DataService.layerGroups[lgSlug];
@@ -110,11 +110,18 @@ angular.module('lizard-nxt')
         if (lg.temporal) {
           // add some empty stuff to determine
           // whether animation is possible.
-          activeTemporalLgs.push(null);
+          activeTemporalLgs = true;
         }
 
         if (lg.temporal && lg.temporalResolution !== 0 && lg.temporalResolution < timeStep) {
           timeStep = lg.temporalResolution;
+          // To accomadate dynamic temporal resolutions check all maplayers and
+          // switch to coarser resolution if found. This is used by the rain.
+          angular.forEach(lg.mapLayers, function (layer) {
+            if (layer._temporalResolution > timeStep) {
+              timeStep = layer._temporalResolution;
+            }
+          });
           // equals to 250 ms for 5 minutes, increases for larger timeSteps untill
           // it reaches 1 second between frames for timeSteps of > 20 minutes.
           minLag = timeStep / 1200 > 240 ? timeStep / 1200 : 250;
@@ -122,7 +129,7 @@ angular.module('lizard-nxt')
         }
       });
 
-      $scope.timeline.animatable = activeTemporalLgs.length > 0;
+      $scope.timeline.animatable = activeTemporalLgs;
       // Do not continue animating when there is nothing to animate.
       if (!$scope.timeline.animatable) {
         State.temporal.playing  = false;
