@@ -88,6 +88,11 @@ angular.module('map')
             value: d3.time.format.utc("%Y-%m-%dT%H:%M:%S"),
             writable: true,
           });
+          // Base of the image url without the time.
+          Object.defineProperty(layer, '_imageUrlBase', {
+            value: RasterService.buildURLforWMS(layer),
+            writable: true,
+          });
           // Lookup to store which data correspond to which imageOverlay.
           Object.defineProperty(layer, '_frameLookup', {
             value: {},
@@ -284,23 +289,12 @@ angular.module('map')
              * @return {array} array of L.imageOverlays.
              */
             _createImageOverlays: function (map, overlays, bounds, buffer) {
-              var options = {
-                layers: layer.slug,
-                format: 'image/png',
-                version: '1.1.1',
-                minZoom: layer.min_zoom || 0,
-                maxZoom: 19,
-                opacity: layer.opacity,
-                zindex: layer.zIndex,
-              };
-              options = angular.extend(options, layer.options);
-
+              // detach all listeners and references to the imageOverlays.
+              this.remove(map);
+              // create new ones.
               for (var i = overlays.length - 1; i < buffer; i++) {
                 overlays.push(
-                  addLeafletLayer(
-                    map,
-                    LeafletService.tileLayer.wms(layer.url, options)
-                  )
+                  addLeafletLayer(map, L.imageOverlay('', bounds))
                 );
               }
               return overlays;
@@ -385,13 +379,13 @@ angular.module('map')
              *                      and _nLoadingRasters === 0.
              */
             _replaceUrlFromFrame: function (frameIndex, defer) {
-              var time = this._formatter(new Date(this._nxtDate));
+              var url = this._imageUrlBase + this._formatter(new Date(this._nxtDate));
               var frame = this._imageOverlays[frameIndex];
               frame.off('load');
               frame.setOpacity(0);
-              if (time !== frame.wmsParams.time) {
+              if (url !== frame._url) {
                 this._addLoadListener(frame, this._nxtDate, defer);
-                frame.setParams({'TIME': time});
+                frame.setUrl(url);
               }
               else {
                 var index = this._imageOverlays.indexOf(frame);
