@@ -243,12 +243,14 @@ angular.module('lizard-nxt')
 
   var link = function (scope, element, attrs, graphCtrl) {
 
+    console.log("[F] link: scope =", scope);
+
     var data = graphCtrl.data,
     graph = graphCtrl.graph,
     keys = graphCtrl.keys,
     temporal = graphCtrl.type === 'temporal';
 
-    graph.drawLine(data, keys, graphCtrl.labels, temporal);
+    graph.drawLine(data, keys, graphCtrl.labels, temporal, scope.timeState);
 
     graph.followMouse(function (position) {
       scope.$apply(function () {

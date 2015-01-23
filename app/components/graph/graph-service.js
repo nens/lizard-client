@@ -32,6 +32,7 @@ angular.module('lizard-nxt')
    * @param {object} xDomainInfo - override the domain for the graphs.
    */
   function Graph(element, dimensions, xDomainInfo) {
+    console.log("[C] Graph constructor: xDomainInfo =", xDomainInfo)
     if (xDomainInfo && xDomainInfo.start && xDomainInfo.end) {
       NxtD3.call(this, element, dimensions, xDomainInfo.start, xDomainInfo.end);
       this._xDomainInfo = xDomainInfo;
@@ -90,7 +91,8 @@ angular.module('lizard-nxt')
      *                        Currently only a linear scale on the x-axis is supported.
      */
     drawLine: {
-      value: function (data, keys, labels, temporal) {
+      value: function (data, keys, labels, temporal, timeState) {
+        console.log("[F] drawLine; timeState =", timeState);
         if (!this._xy) {
           var options = {
             x: {
@@ -103,7 +105,13 @@ angular.module('lizard-nxt')
             }
           };
           // pass options for time graph or use defaults
-          this._xy = this._createXYGraph(data, keys, labels, temporal ? options : undefined);
+          this._xy = this._createXYGraph(
+            data,
+            keys,
+            labels,
+            temporal ? options : undefined,
+            timeState
+          );
         } else {
           this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys);
           drawLabel(this._svg, this.dimensions, labels.y, true);
@@ -270,8 +278,6 @@ angular.module('lizard-nxt')
      */
     drawNow: {
       value: function (now) {
-        // console.log("[F] drawNow: now =", new Date(now));
-        // console.log("---> now (scaled)", this._xy.x.scale(now));
         this._drawNow(now, this._xy.x.scale);
         // move to the front
         var el = this._svg.select('.now-indicator').node();
@@ -280,7 +286,8 @@ angular.module('lizard-nxt')
     },
 
     _createXYGraph: {
-      value: function (data, keys, labels, options) {
+      value: function (data, keys, labels, options, timeState) {
+        console.log("[F] _createXYGraphs: timeState =", timeState)
         if (!options) {
           options = {
             x: {
