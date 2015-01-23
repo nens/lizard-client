@@ -22,16 +22,16 @@ angular.module('omnibox')
     if (!$scope.$$phase) {
       $scope.$apply(function () {
         $scope.rrc.active = !$scope.rrc.active;
-        $scope.lg.layers['radar/basic'].changed = !$scope.lg.layers['radar/basic'].changed;
+        $scope.lg.layers['rain'].changed = !$scope.lg.layers['rain'].changed;
       });
     } else {
       $scope.rrc.active = !$scope.rrc.active;
-      $scope.lg.layers['radar/basic'].changed = !$scope.lg.layers['radar/basic'].changed;
+      $scope.lg.layers['rain'].changed = !$scope.lg.layers['rain'].changed;
     }
   };
 
 
-  $scope.$watch("lg.layers['radar/basic'].changed", function (n, o) {
+  $scope.$watch("lg.layers['rain'].changed", function (n, o) {
     if (n === o || !$scope.rrc.active) { return; }
     getRecurrenceTime();
   });
@@ -41,7 +41,7 @@ angular.module('omnibox')
 
     // TODO: refactor this shit
     RasterService.getData(
-     {slug: 'radar/basic'}, {
+     {slug: 'rain'}, {
       agg: 'rrc',
       geom: State.spatial.here,
       start: State.temporal.start,

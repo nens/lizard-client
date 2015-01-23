@@ -60,8 +60,8 @@ angular.module('omnibox')
             $scope.box.content.elevation.layers["dem/nl"].data
               = RasterService.handleElevationCurve(response.data);
             break;
-          case "radar/basic":
-            $scope.box.content.rain.layers["radar/basic"].data
+          case "rain":
+            $scope.box.content.rain.layers["rain"].data
               = response.data;
             $scope.filteredRainDataPerKilometer
               = UtilService.getFilteredRainDataPerKM(
