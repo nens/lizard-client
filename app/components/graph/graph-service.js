@@ -32,7 +32,6 @@ angular.module('lizard-nxt')
    * @param {object} xDomainInfo - override the domain for the graphs.
    */
   function Graph(element, dimensions, xDomainInfo) {
-    console.log("[C] Graph constructor: xDomainInfo =", xDomainInfo)
     if (xDomainInfo && xDomainInfo.start && xDomainInfo.end) {
       NxtD3.call(this, element, dimensions, xDomainInfo.start, xDomainInfo.end);
       this._xDomainInfo = xDomainInfo;
@@ -91,8 +90,7 @@ angular.module('lizard-nxt')
      *                        Currently only a linear scale on the x-axis is supported.
      */
     drawLine: {
-      value: function (data, keys, labels, temporal, timeState) {
-        console.log("[F] drawLine; timeState =", timeState);
+      value: function (data, keys, labels, temporal) {
         if (!this._xy) {
           var options = {
             x: {
@@ -110,10 +108,10 @@ angular.module('lizard-nxt')
             keys,
             labels,
             temporal ? options : undefined,
-            timeState
+            this._xDomainInfo
           );
         } else {
-          this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys);
+          this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys, null, this._xDomainInfo);
           drawLabel(this._svg, this.dimensions, labels.y, true);
         }
         var line = this._createLine(this._xy, keys);
@@ -286,8 +284,7 @@ angular.module('lizard-nxt')
     },
 
     _createXYGraph: {
-      value: function (data, keys, labels, options, timeState) {
-        console.log("[F] _createXYGraphs: timeState =", timeState)
+      value: function (data, keys, labels, options) {
         if (!options) {
           options = {
             x: {
