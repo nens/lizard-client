@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.2.11 (2015-1-23)
+---------------------
 
 - Improve timeseries omnibox card styling.
 
