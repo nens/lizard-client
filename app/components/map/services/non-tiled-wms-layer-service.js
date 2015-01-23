@@ -132,7 +132,7 @@ angular.module('map')
                   date = new Date(this._mkTimeStamp(this.timeState.at));
 
               var options = {
-                layers: layer.slug,
+                layers: this._determineStore(this.timeState).name,
                 format: 'image/png',
                 version: '1.1.1',
                 minZoom: layer.min_zoom || 0,
@@ -202,16 +202,17 @@ angular.module('map')
              */
             syncTime: function (timeState, map) {
               this.timeState = timeState;
-              // // this only works for stores with different aggregation levels
-              // // for now this is only for the radar stores
-              // if (this.slug.split('/')[0] === 'radar') {
-              //   // change image url based on timestate.
-              //   this._imageUrlBase = RasterService.buildURLforWMS(
-              //       this,
-              //       this._determineStore(timeState).name
-              //       );
-              //   this._temporalResolution = this._determineStore(timeState).resolution;
-              // }
+
+              // this only works for stores with different aggregation levels
+              // for now this is only for the radar stores
+              // change image url based on timestate.
+              var store = this._determineStore(timeState);
+
+              this._imageUrlBase = RasterService.buildURLforWMS(
+                this,
+                store.name
+              );
+              this._temporalResolution = store.resolution;
 
               var defer = $q.defer(),
                   currentDate = this._mkTimeStamp(timeState.at);
@@ -334,6 +335,14 @@ angular.module('map')
              *
              */
             _determineStore: function (timeState) {
+
+              if (this.slug.split('/')[0] !== 'radar') {
+                return {
+                  name: layer.slug,
+                  resolution: layer._temporalResolution
+                };
+              }
+
               var resolutionHours = (timeState.aggWindow) / 60 / 60 / 1000;
 
               var aggType = this.slug.split('/');
@@ -353,8 +362,8 @@ angular.module('map')
 
               return {
                 name: aggType.join('/'),
-                  resolution: resolutions[aggType[1]]
-              }
+                resolution: resolutions[aggType[1]]
+              };
 
             },
 
