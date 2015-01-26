@@ -824,18 +824,13 @@ angular.module('lizard-nxt')
    */
   var drawRectElements = function (svg, dimensions, data, xScale, yScale) {
 
-    // Fix for attempted draw at init load, when not having enough data:
-    if (!data || !data[0] || !data[1]) {
-      return;
-    }
-
     var height = Timeline.prototype._getHeight(dimensions),
     // Join new data with old elements, based on the timestamp.
     bars = svg.select("g").select('#rain-bar').selectAll('.bar-timeline')
         .data(data, function  (d) { return d[0]; });
 
     var barWidth;
-    if (data.length > 0) {
+    if (data.length > 1) {
       barWidth = xScale(data[1][0]) - xScale(data[0][0]);
     } else {
       barWidth = 0;
