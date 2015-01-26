@@ -570,7 +570,8 @@ angular.module('lizard-nxt')
 
       if (bars) {
         var barData = bars.data();
-        if (barData[0] !== undefined) {
+        // we need at least 2 elements to calc a new width
+        if (barData[1] !== undefined) {
           var newWidth = xScale(barData[1][0]) - xScale(barData[0][0]);
           bars
             .attr("x", function (d) { return xScale(d[0]) - newWidth; })

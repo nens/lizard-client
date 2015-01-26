@@ -42,8 +42,11 @@ angular.module('omnibox')
       }
 
       var doneFn = function () {
+        // This function deletes scope.box.content for specific layergroups; this implies
+        // skippingthe key 'timeseries' since this doesn't denote a layergroup!
         angular.forEach($scope.box.content, function (value, key) {
-          if (State.layerGroups.active.indexOf(key) === -1) {
+          if (State.layerGroups.active.indexOf(key) === -1
+              && key !== 'timeseries') {
             delete $scope.box.content[key];
           }
         });
