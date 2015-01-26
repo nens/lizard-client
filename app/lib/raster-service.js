@@ -71,7 +71,7 @@ angular.module('lizard-nxt')
       ',' + [imgBounds[1][1], imgBounds[0][0]].toString();
   };
 
-  var buildURLforWMS = function (wmsLayer, map, store) {
+  var buildURLforWMS = function (wmsLayer, map, store, singleTile) {
     var layerName = store || wmsLayer.slug;
     var bounds = map.getBounds();
 
@@ -85,6 +85,14 @@ angular.module('lizard-nxt')
       + '&SRS=EPSG%3A4326&LAYERS=' + layerName
       + '&BBOX=' + _buildBbox(imgBounds);
 
+    if (singleTile) {
+      var size = map.getPixelBounds().getSize();
+      opts.height = Math.round(size.y / size.x * 512);
+      opts.width = Math.round(size.x / size.y  * 512);
+    } else {
+      opts.height = 256;
+      opts.width = 256;
+    }
 
     angular.forEach(opts, function (v, k) {
       result += UtilService.buildString('&', k.toUpperCase(), "=", v);

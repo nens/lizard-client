@@ -201,7 +201,8 @@ angular.module('map')
               this._imageUrlBase = RasterService.buildURLforWMS(
                 this,
                 map,
-                store.name
+                store.name,
+                timeState.playing
               );
               this.options.styles = this.options.styles.split('-')[0]
                 + '-'
