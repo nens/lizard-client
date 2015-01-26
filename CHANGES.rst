@@ -3,13 +3,14 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
--
+
+- Change initial temporal extent to -3, +3 hours.
 
 
 Release 1.2.13 (2015-1-26)
 ---------------------
 
-- Fix bug with persisten rain bars
+- Fix bug with persisten rain bars.
 
 
 Release 1.2.12 (2015-1-23)
