@@ -209,12 +209,6 @@ angular.module('map')
             syncTime: function (timeState, map) {
               var defer = $q.defer();
 
-              if (this.timeState.at === timeState.at
-                && this.timeState.aggWindow === timeState.aggWindow) {
-                defer.resolve();
-                return defer.promise;
-              }
-
               this.timeState = timeState;
 
               // this only works for stores with different aggregation levels
