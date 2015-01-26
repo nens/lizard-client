@@ -207,35 +207,30 @@ angular.module('map')
              *         buffer.
              */
             syncTime: function (timeState, map) {
+              var defer = $q.defer();
+
+              if (this.timeState.at === timeState.at
+                && this.timeState.aggWindow === timeState.aggWindow) {
+                defer.resolve();
+                return defer.promise;
+              }
+
               this.timeState = timeState;
 
               // this only works for stores with different aggregation levels
               // for now this is only for the radar stores
               // change image url based on timestate.
               var store = this._determineStore(timeState);
-
+              this._temporalResolution = store.resolution;
               this._imageUrlBase = RasterService.buildURLforWMS(
                 this,
                 store.name
               );
-              this._temporalResolution = store.resolution;
-
               this.options.styles = this.options.styles.split('-')[0]
                 + '-'
                 + store.name.split('/')[1];
 
-              var defer = $q.defer(),
-                  currentDate = this._mkTimeStamp(timeState.at);
-
-              if (timeState.playing) {
-                this._animateSyncTime(map, currentDate, defer);
-              }
-
-              else {
-                this._tiledSyncTime(map, currentDate, defer);
-              }
-
-              return defer.promise;
+              this._syncToNewTime(timeState, map, defer);
             },
 
             /**
@@ -272,6 +267,19 @@ angular.module('map')
                 }
               }, this);
               return;
+            },
+
+            _syncToNewTime: function (timeState, map, defer) {
+              var currentDate = this._mkTimeStamp(timeState.at);
+              if (timeState.playing) {
+                this._animateSyncTime(map, currentDate, defer);
+              }
+
+              else {
+                this._tiledSyncTime(map, currentDate, defer);
+              }
+
+              return defer.promise;
             },
 
             _tiledSyncTime: function (map, currentDate, defer) {
