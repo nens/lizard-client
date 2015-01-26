@@ -40,6 +40,10 @@
       <time-ctx></time-ctx>
     </div>
 
+    <div ng-if="context === 'dashboard'">
+      <dashboard></dashboard>
+    </div>
+
     <div ng-if="context === 'scenarios'">
       <scenarios></scenarios>
     </div>
@@ -150,6 +154,10 @@
 
     <script src="/components/graph/graph-service.js"></script>
     <script src="/components/graph/graph-directives.js"></script>
+
+    <script src="/components/dashboard/dashboard.js"></script>
+    <script src="/components/dashboard/dashboard-controller.js"></script>
+    <script src="/components/dashboard/dashboard-directive.js"></script>
 
     <script src="/components/time-ctx/time-ctx.js"></script>
     <script src="/components/time-ctx/time-ctx-controller.js"></script>

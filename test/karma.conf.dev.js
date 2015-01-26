@@ -43,6 +43,7 @@ module.exports = function(config) {
       'app/templates.js',
       'app/components/omnibox/omnibox.js',
       'app/components/state/state.js',
+      'app/components/dashboard/dashboard.js',
       'app/components/time-ctx/time-ctx.js',
       'app/components/scenarios/scenarios.js',
       'app/components/user-menu/user-menu.js',
