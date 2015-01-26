@@ -6,7 +6,7 @@
   </div>
 
   <div class="card active"
-       ng-if="(box.content.waterchain && box.content.timeseries) || isLoadingTimeseries">
+       ng-if="box.content.waterchain && box.content.timeseries">
     <timeseries
       timeseries="box.content.timeseries"
       full-details="box.fullDetailCards.timeseries"

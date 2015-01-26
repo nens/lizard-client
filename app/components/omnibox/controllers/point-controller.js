@@ -27,7 +27,6 @@ angular.module('omnibox')
 
     var GRAPH_WIDTH = 600;
     $scope.box.content = {};
-    $scope.isLoadingTimeseries = false;
 
     /**
      * @function
@@ -48,7 +47,6 @@ angular.module('omnibox')
       // Draw feedback when all promises resolved
       promise.then(drawFeedback, null, function (response) {
         if (response && response.data && response.data.id && response.data.entity_name) {
-          $scope.isLoadingTimeseries = true;
           getTimeSeriesForObject(
             response.data.entity_name + '$' + response.data.id
           );
@@ -159,7 +157,6 @@ angular.module('omnibox')
       TimeseriesService.getTimeseries(objectId, State.temporal)
       .then(function (result) {
 
-        $scope.isLoadingTimeseries = false;
         $scope.box.content.timeseries = $scope.box.content.timeseries || {};
 
         if (result.length > 0) {
