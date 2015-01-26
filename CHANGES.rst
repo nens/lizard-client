@@ -6,6 +6,12 @@ Unreleased (1.2.7) (XXXX-XX-XX)
 -
 
 
+Release 1.2.13 (2015-1-26)
+---------------------
+
+- Fix bug with persisten rain bars
+
+
 Release 1.2.12 (2015-1-23)
 ---------------------
 -
@@ -17,6 +23,12 @@ Release 1.2.11 (2015-1-23)
 - Improve timeseries omnibox card styling.
 
 - Fix (line-) graph sync to timeline.
+
+- Use tiled wms layer when not animating.
+
+- Fix bug with temporalresolution and animation.
+
+- Get colormap per aggWindow for rain.
 
 - Fix radar/basic slug confusion, store slug is now `rain`.
 

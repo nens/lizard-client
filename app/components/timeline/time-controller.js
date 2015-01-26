@@ -65,21 +65,21 @@ angular.module('lizard-nxt')
      * with a lower speed so wms requests can keep up and run more smooth if the
      * temporalResolution equals or is a multiplication of  the stepSize.
      */
-    $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
+    $scope.$watch(State.toString('layerGroups.active'), angular.bind(this, function (n, o) {
       if (n === o) { return; }
       configAnimation.call(this);
-    });
+    }));
 
     /**
      * sync data layers to new timestate and redo the animation configuration
      * since currentInterval has changed.
      */
-    $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
+    $scope.$watch(State.toString('temporal.timelineMoving'), angular.bind(this, function (n, o) {
       if (n === o) { return true; }
       if (!State.temporal.timelineMoving) {
-        configAnimation();
+        configAnimation.call(this);
       }
-    });
+    }));
 
     /**
      * Sync to new time and trigger a new step when animation.playing is true.
@@ -102,7 +102,7 @@ angular.module('lizard-nxt')
       timeStep = Infinity;
       minLag = 0;
 
-      var activeTemporalLgs = [];
+      var activeTemporalLgs = false;
 
       angular.forEach(State.layerGroups.active, function (lgSlug) {
         var lg = DataService.layerGroups[lgSlug];
@@ -110,11 +110,18 @@ angular.module('lizard-nxt')
         if (lg.temporal) {
           // add some empty stuff to determine
           // whether animation is possible.
-          activeTemporalLgs.push(null);
+          activeTemporalLgs = true;
         }
 
         if (lg.temporal && lg.temporalResolution !== 0 && lg.temporalResolution < timeStep) {
           timeStep = lg.temporalResolution;
+          // To accomadate dynamic temporal resolutions check all maplayers and
+          // switch to coarser resolution if found. This is used by the rain.
+          angular.forEach(lg.mapLayers, function (layer) {
+            if (layer._temporalResolution > timeStep) {
+              timeStep = layer._temporalResolution;
+            }
+          });
           // equals to 250 ms for 5 minutes, increases for larger timeSteps untill
           // it reaches 1 second between frames for timeSteps of > 20 minutes.
           minLag = timeStep / 1200 > 240 ? timeStep / 1200 : 250;
@@ -122,9 +129,9 @@ angular.module('lizard-nxt')
         }
       });
 
-      $scope.timeline.animatable = activeTemporalLgs.length > 0;
+      this.animatable = activeTemporalLgs;
       // Do not continue animating when there is nothing to animate.
-      if (!$scope.timeline.animatable) {
+      if (!this.animatable) {
         State.temporal.playing  = false;
       }
 
