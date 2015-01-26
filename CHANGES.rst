@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.2.14 (2015-1-26)
+---------------------
 
 - Change initial temporal extent to -3, +3 hours.
 
