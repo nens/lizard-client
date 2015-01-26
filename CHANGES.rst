@@ -3,7 +3,10 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
-- Fix bug with persisten rain bars
+
+- Fix bug where timeseries card would be hidden when panning/zooming timeline.
+
+- Fix bug with persistent rain bars
 
 
 Release 1.2.12 (2015-1-23)
