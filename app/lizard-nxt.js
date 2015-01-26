@@ -23,7 +23,7 @@ angular.module("lizard-nxt", [
   'map',
   'omnibox',
   'restangular',
-  'dashboard',
+  'time-ctx',
   'scenarios',
   'user-menu',
   'global-state',

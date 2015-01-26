@@ -1,6 +1,6 @@
 
-angular.module('dashboard')
-  .directive('dashboard',
+angular.module('time-ctx')
+  .directive('timeCtx',
              ["EventAggregateService", "State", "DataService",
               function (EventAggregateService, State, DataService) {
 
@@ -51,7 +51,7 @@ angular.module('dashboard')
     };
 
     /**
-     * Updates dashboard when user pans or zooms map.
+     * Updates time-ctx when user pans or zooms map.
      */
     scope.$watch(State.toString('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
@@ -59,7 +59,7 @@ angular.module('dashboard')
     });
 
     /**
-     * Updates dashboard when layers are added or removed.
+     * Updates time-ctx when layers are added or removed.
      */
     scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return true; }
@@ -67,7 +67,7 @@ angular.module('dashboard')
     });
 
     /**
-     * Updates dashboard when time zoom changes.
+     * Updates time-ctx when time zoom changes.
      */
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
@@ -83,7 +83,7 @@ angular.module('dashboard')
 
   return {
     link: link,
-    templateUrl: 'dashboard/dashboard.html',
+    templateUrl: 'time-ctx/time-ctx.html',
     replace: true,
     restrict: 'E'
   };

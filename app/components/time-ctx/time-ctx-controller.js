@@ -1,5 +1,5 @@
-angular.module('dashboard')
-  .controller("DashboardCtrl", ["$scope", "State", function ($scope, State) {
+angular.module('time-ctx')
+  .controller("TimeCtxCtrl", ["$scope", "State", function ($scope, State) {
 
   $scope.eventAggs = undefined;
 
