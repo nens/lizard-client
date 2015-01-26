@@ -12,6 +12,10 @@ Release 1.2.13 (2015-1-26)
 
 - Fix bug with persisten rain bars.
 
+- Fix bug where timeseries card would be hidden when panning/zooming timeline.
+
+- Fix bug with persistent rain bars.
+
 
 Release 1.2.12 (2015-1-23)
 ---------------------
