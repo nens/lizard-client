@@ -62,19 +62,6 @@ angular.module('map')
         }
       };
 
-      var determineImageBounds = function (bounds) {
-        var southWest = L.latLng(
-          bounds.south,
-          bounds.west
-        ),
-        northEast = L.latLng(
-          bounds.north,
-          bounds.east
-        );
-        return L.latLngBounds(southWest, northEast);
-      };
-
-
       return {
         create: function (layer) {
 
@@ -90,7 +77,7 @@ angular.module('map')
           });
           // Base of the image url without the time.
           Object.defineProperty(layer, '_imageUrlBase', {
-            value: RasterService.buildURLforWMS(layer),
+            value: '',
             writable: true,
           });
           // Lookup to store which data correspond to which imageOverlay.
@@ -105,11 +92,6 @@ angular.module('map')
           // for a big buffer.
           Object.defineProperty(layer, '_bufferLength', {
             value: layer._temporalResolution >= 3600000 ? 2 : 10,
-            writable: true,
-          });
-          // Geographic bounds of the image.
-          Object.defineProperty(layer, '_imageBounds', {
-            value: determineImageBounds(layer.bounds),
             writable: true,
           });
           // Number of rasters currently underway.
@@ -218,6 +200,7 @@ angular.module('map')
               this._temporalResolution = store.resolution;
               this._imageUrlBase = RasterService.buildURLforWMS(
                 this,
+                map,
                 store.name
               );
               this.options.styles = this.options.styles.split('-')[0]
@@ -282,17 +265,19 @@ angular.module('map')
             },
 
             _animateSyncTime: function (map, currentDate, defer) {
+              var newBounds = map.getBounds();
 
-              var currentOverlayIndex = this._frameLookup[currentDate];
-
-              if (this._imageOverlays.length < this._bufferLength) {
+              if (this._imageOverlays.length < this._bufferLength
+                || newBounds.getNorth() !== this._bounds.getNorth()
+                || newBounds.getWest() !== this._bounds.getWest()) {
                 // add leaflet layers to fill up the buffer
                 this._imageOverlays = this._createImageOverlays(
                   map,
-                  this._imageBounds,
                   this._bufferLength
                 );
               }
+
+              var currentOverlayIndex = this._frameLookup[currentDate];
 
               if (currentOverlayIndex === undefined) {
                 // Ran out of buffered frames
@@ -319,15 +304,16 @@ angular.module('map')
              * @param  {int} buffer   amount of imageOverlays to include.
              * @return {array} array of L.imageOverlays.
              */
-            _createImageOverlays: function (map, bounds, buffer) {
+            _createImageOverlays: function (map, buffer) {
               // detach all listeners and references to the imageOverlays.
               this.remove(map);
               // create new ones.
-              for (var i = this._imageOverlays.length - 1; i < buffer; i++) {
+              for (var i = this._imageOverlays.length; i < buffer; i++) {
                 this._imageOverlays.push(
-                  addLeafletLayer(map, LeafletService.imageOverlay('', bounds))
+                  addLeafletLayer(map, LeafletService.imageOverlay('', map.getBounds()))
                 );
               }
+              this._bounds = angular.copy(map.getBounds());
               return this._imageOverlays;
             },
 
@@ -419,6 +405,7 @@ angular.module('map')
              */
             _replaceUrlFromFrame: function (frameIndex, defer) {
               var url = this._imageUrlBase + this._formatter(new Date(this._nxtDate));
+              console.log(url);
               var frame = this._imageOverlays[frameIndex];
               frame.off('load');
               frame.setOpacity(0);

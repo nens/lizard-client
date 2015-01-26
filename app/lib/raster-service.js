@@ -71,12 +71,13 @@ angular.module('lizard-nxt')
       ',' + [imgBounds[1][1], imgBounds[0][0]].toString();
   };
 
-  var buildURLforWMS = function (wmsLayer, store) {
+  var buildURLforWMS = function (wmsLayer, map, store) {
     var layerName = store || wmsLayer.slug;
+    var bounds = map.getBounds();
 
     var imgBounds = [
-      [wmsLayer.bounds.north, wmsLayer.bounds.west],
-      [wmsLayer.bounds.south, wmsLayer.bounds.east]
+      [bounds.getNorth(), bounds.getWest()],
+      [bounds.getSouth(), bounds.getEast()]
     ],
     opts = wmsLayer.options,
     result = wmsLayer.url
