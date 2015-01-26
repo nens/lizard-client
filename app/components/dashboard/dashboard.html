@@ -1,2 +1,15 @@
-<div>
+<div class="dashboard-wrapper container-fluid" ng-controller="DashboardCtrl as dashboard">
+  <div class="row dashboard-row">
+    <div class="col-md-4" ng-repeat="element in dashboard.elements">
+
+      <div ng-if="element.type === 'map'" class="dashboard-widget">
+        <map></map>
+      </div>
+
+      <% element.type %> 
+    </div>
+  </div>
+
+
+
 </div>
