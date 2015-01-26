@@ -4,11 +4,17 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
--
+- Change initial temporal extent to -3, +3 hours.
 
 
 Release 1.2.13 (2015-1-26)
 ---------------------
+
+- Fix bug with persisten rain bars.
+
+- Fix bug where timeseries card would be hidden when panning/zooming timeline.
+
+- Fix bug with persistent rain bars.
 
 - Fix bug where timeseries card would be hidden when panning/zooming timeline.
 
