@@ -148,7 +148,7 @@ angular.module('map')
 
               // This breaks styles with negative values
               // and for the moment only applies to radar.
-              if (this.options.styles.split('-')[0] === 'radar') {
+              if (this.slug.split('/')[0] === 'radar') {
                 this.options.styles = this.options.styles.split('-')[0]
                   + '-'
                   + store.name.split('/')[1];
