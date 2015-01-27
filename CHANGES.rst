@@ -6,20 +6,24 @@ Unreleased (1.2.7) (XXXX-XX-XX)
 -
 
 
-Release 1.2.15 (2015-1-26)
+Release 1.2.16 (2015-1-26)
 ---------------------
--
 
-
-Release 1.2.14 (2015-1-26)
----------------------
--
+- Change initial temporal extent to -3, +3 hours.
 
 
 Release 1.2.13 (2015-1-26)
 ---------------------
 
-- Fix bug with persisten rain bars
+- Fix bug with persisten rain bars.
+
+- Fix bug where timeseries card would be hidden when panning/zooming timeline.
+
+- Fix bug with persistent rain bars.
+
+- Fix bug where timeseries card would be hidden when panning/zooming timeline.
+
+- Fix bug with persistent rain bars
 
 
 Release 1.2.12 (2015-1-23)
