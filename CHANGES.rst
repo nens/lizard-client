@@ -3,7 +3,7 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
--
+- Fix bug for rain layer.
 
 
 Release 1.2.17 (2015-1-27)
