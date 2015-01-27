@@ -122,19 +122,6 @@ angular.module('lizard-nxt')
     scope.$watch('data', function (n, o) {
       if (n === o) { return true; }
       graphUpdateHelper(true, false);
-      // graphCtrl.setData(scope);
-      // // Call graph with the new data
-      // graphCtrl.updateData.call(
-      //   graphCtrl.graph,
-      //   graphCtrl.data,
-      //   graphCtrl.keys,
-      //   graphCtrl.labels,
-      //   graphCtrl.graph._xDomainInfo
-      // );
-      // // Call the graph with the now
-      // if (scope.temporal && scope.temporal.at) {
-      //   graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
-      // }
     });
 
     /**
@@ -143,20 +130,6 @@ angular.module('lizard-nxt')
     scope.$watch('keys', function (n, o) {
       if (n === o) { return true; }
       graphUpdateHelper(true, false);
-
-      // graphCtrl.setData(scope);
-      // // Call graph with the new data
-      // graphCtrl.updateData.call(
-      //   graphCtrl.graph,
-      //   graphCtrl.data,
-      //   graphCtrl.keys,
-      //   graphCtrl.labels,
-      //   graphCtrl.graph._xDomainInfo
-      // );
-      // // Call the graph with the now
-      // if (scope.temporal && scope.temporal.at) {
-      //   graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
-      // }
     });
 
     scope.$watch('temporal.at', function (n, o) {
@@ -168,17 +141,6 @@ angular.module('lizard-nxt')
 
     scope.$on('$timelineZoomSuccess', function () {
       graphUpdateHelper(true, true);
-      // //graphCtrl.setData(scope);
-      // // Call graph with the new xDomainInfo (== scope.temporal)
-      // graphCtrl.updateData.call(
-      //   graphCtrl.graph,
-      //   graphCtrl.data,
-      //   graphCtrl.keys,
-      //   graphCtrl.labels,
-      //   scope.temporal // graphCtrl.graph._xDomainInfo
-      // );
-      // // Call the graph with the now
-      // graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
     });
   };
 

@@ -531,28 +531,11 @@ angular.module('lizard-nxt')
   };
 
   getBarWidth = function (scale, data, keys, dimensions, maxBarCount) {
-
     var firstDatum = data[0],
         lastDatum = data[data.length - 1];
-
-    console.log("[F] getBarWidth()");
-    console.log("-- total amt of data-points:", data.length);
-    console.log("-- first data-point =", firstDatum);
-    console.log("-- last data-point =", lastDatum);
-    console.log("-- start of bars on x-axis: ", scale(firstDatum[0]));
-    console.log("-- end of bars on x-axis: ", scale(lastDatum[0]));
-    console.log("-- total available space (for 1st n-1 datapoints) =",
-      scale(lastDatum[0]) - scale(firstDatum[0]));
-
-    return  Math.floor(
+    return Math.floor(
       (scale(lastDatum[0]) - scale(firstDatum[0])) / (data.length - 1)
     );
-
-    // if (data.length < maxBarCount) {
-    //   return Graph.prototype._getWidth(dimensions) / maxBarCount;
-    // } else {
-    //   return 1;
-    // }
   };
 
   createXGraph = function (svg, dimensions, labels, options) {
