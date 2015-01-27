@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.2.17 (2015-1-27)
+---------------------
 - Fix bug for non-tiled-wms layer. ZVP broken styles.
 
 
