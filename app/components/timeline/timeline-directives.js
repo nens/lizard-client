@@ -376,7 +376,6 @@ angular.module('lizard-nxt')
     });
 
     scope.$on("$timelineZoomSuccess", function () {
-      State.temporal.timelineMoving = !State.temporal.timelineMoving;
       timelineZoomHelper();
     });
 

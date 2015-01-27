@@ -131,5 +131,11 @@ angular.module('global-state')
       set: function (end) { _end = end; }
     });
 
+    window.debug = function () {
+      console.log("[F] debug");
+      console.log("tl start:", new Date(state.temporal.start));
+      console.log("tl end:", new Date(state.temporal.end));
+    };
+
     return state;
   }]);

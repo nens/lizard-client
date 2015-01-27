@@ -16,6 +16,7 @@
 angular.module('lizard-nxt')
 .controller('TimeCtrl', [
 
+  "$rootScope",
   "$scope",
   "$q",
   "RasterService",
@@ -25,6 +26,7 @@ angular.module('lizard-nxt')
 
   function (
 
+    $rootScope,
     $scope,
     $q,
     RasterService,
@@ -244,8 +246,7 @@ angular.module('lizard-nxt')
       State.temporal.at = UtilService.roundTimestamp(now, State.temporal.aggWindow, false);
 
       // Without this $broadcast, timeline will not sync to State.temporal:
-      State.temporal.timelineMoving = !State.temporal.timelineMoving;
-      $scope.$broadcast("$timelineZoomSuccess");
+      $rootScope.$broadcast("$timelineZoomSuccess");
     };
 
     /**
@@ -275,8 +276,7 @@ angular.module('lizard-nxt')
       State.temporal.resolution = newResolution;
 
       // Without this $broadcast, timeline will not sync to State.temporal:
-      State.temporal.timelineMoving = !State.temporal.timelineMoving;
-      $scope.$broadcast("$timelineZoomSuccess");
+      $rootScope.$broadcast("$timelineZoomSuccess");
     };
 
   }

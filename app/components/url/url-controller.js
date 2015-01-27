@@ -141,10 +141,10 @@ angular.module('lizard-nxt')
     });
 
     /**
-     * Set timeState when timeState changed.
+     * Set timeState, when timeState changed. The helper serves eliminating
+     * redundant code, within this file.
      */
-    $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
-      if (n === o) { return true; }
+    var setTimeStateUrlHelper = function () {
       if (!State.temporal.timelineMoving) {
         UrlState.setTimeStateUrl(
           state,
@@ -152,6 +152,24 @@ angular.module('lizard-nxt')
           State.temporal.end
         );
       }
+    };
+
+    /**
+     * Set timeState, when timeState changed in response to panning/zooming the
+     * timeline (in response to user dragging with the mouse in the timeline).
+     */
+    $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
+      if (n === o) { return true; }
+      setTimeStateUrlHelper();
+    });
+
+    /**
+     * Set timeState, when timeState changed in response to panning/zooming the
+     * timeline (in response to user clicking the 3 timeline buttons: the "+",
+     * "clock", and "-" buttons).
+     */
+    $scope.$on("$timelineZoomSuccess", function () {
+      setTimeStateUrlHelper();
     });
 
     /*
