@@ -681,5 +681,8 @@ angular.module('lizard-nxt')
     }
   };
 
-
+  this.round = function (nr, decimalCount) {
+    var multiplier = Math.pow(10, decimalCount || 0);
+    return Math.round(nr * multiplier) / multiplier;
+  };
 }]);
