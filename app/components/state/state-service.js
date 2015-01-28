@@ -102,11 +102,13 @@ angular.module('global-state')
         hour = 60 * 60 * 1000,
         day = 24 * hour,
         MIN_TIME_FOR_EXTENT = (new Date(2010, 0, 0, 0, 0, 0, 0)).getTime(),
-        MAX_TIME_FOR_EXTENT = (new Date(2015, 0, 0, 0, 0, 0, 0)).getTime();
+        MAX_TIME_FOR_EXTENT = (new Date(2015, 0, 0, 0, 0, 0, 0)).getTime(),
+        INITIAL_START_FOR_EXTENT = now - 3 * hour,
+        INITIAL_END_FOR_EXTENT = now + 3 * hour;
 
     state.temporal = {
-      at: Math.round(now - 2.5 * day),
-      aggWindow: 1000 * 60 * 5,
+      at: now,
+      aggWindow: 1000 * 60 * 5,  // 5 minutes
       buffering: false,
       timelineMoving: false,
       resolution: null,
@@ -116,14 +118,14 @@ angular.module('global-state')
     };
 
     // State.temporal.start must be higher than MIN_TIME_FOR_EXTENT
-    var _start = now - 6 * day;
+    var _start = INITIAL_START_FOR_EXTENT;
     Object.defineProperty(state.temporal, 'start', {
       get: function () { return _start; },
       set: function (start) { _start = start; }
     });
 
     // State.temporal.end must be lower than MAX_TIME_FOR_EXTENT
-    var _end = now + day;
+    var _end = INITIAL_END_FOR_EXTENT;
     Object.defineProperty(state.temporal, 'end', {
       get: function () { return _end; },
       set: function (end) { _end = end; }
