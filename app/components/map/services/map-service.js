@@ -56,7 +56,7 @@ angular.module('map')
             });
           } else {
             angular.forEach(layerGroup.mapLayers, function (layer) {
-              layer.timeState = timeState;
+              layer.timeState = angular.copy(timeState);
             });
           }
         });
@@ -445,6 +445,7 @@ angular.module('map')
           version: '1.1.1',
           minZoom: nonLeafLayer.min_zoom || 0,
           maxZoom: 19,
+          crs: LeafletService.CRS.EPSG3857,
           opacity: nonLeafLayer.opacity,
           zIndex: nonLeafLayer.zIndex
         };
