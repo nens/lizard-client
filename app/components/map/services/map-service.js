@@ -56,7 +56,7 @@ angular.module('map')
             });
           } else {
             angular.forEach(layerGroup.mapLayers, function (layer) {
-              layer.timeState = timeState;
+              layer.timeState = angular.copy(timeState);
             });
           }
         });

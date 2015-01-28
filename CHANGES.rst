@@ -3,6 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
+- No redraw of temporal raster when nothing relevant changed.
+
 - Use current spatial bounds for animation.
 
 - Make wms request with EPSG3857 for image overlays.
