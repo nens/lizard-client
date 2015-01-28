@@ -127,9 +127,13 @@ angular.module('map')
 
               options = angular.extend(options, layer.options);
 
-              this.options.styles = this.options.styles.split('-')[0]
-                + '-'
-                + store.name.split('/')[1];
+              // This breaks styles with negative values
+              // and for the moment only applies to radar.
+              if (this.slug.split('/')[0] === 'radar') {
+                this.options.styles = this.options.styles.split('-')[0]
+                  + '-'
+                  + store.name.split('/')[1];
+              }
 
               this._imageOverlays = [
                 LeafletService.tileLayer.wms(layer.url, options)
@@ -204,9 +208,16 @@ angular.module('map')
                 store.name,
                 timeState.playing
               );
-              this.options.styles = this.options.styles.split('-')[0]
-                + '-'
-                + store.name.split('/')[1];
+
+              this._temporalResolution = store.resolution;
+
+              // This breaks styles with negative values
+              // and for the moment only applies to radar.
+              if (this.slug.split('/')[0] === 'radar') {
+                this.options.styles = this.options.styles.split('-')[0]
+                  + '-'
+                  + store.name.split('/')[1];
+              }
 
               this._syncToNewTime(timeState, map, defer);
 
