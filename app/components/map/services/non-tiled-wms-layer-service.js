@@ -239,19 +239,25 @@ angular.module('map')
               return;
             },
 
+            /**
+             * Takes a new timeState and delegates to sync functions for
+             * animation or non-animation.
+             * @param  {object} map         leaflet map
+             * @param  {int}    currentDate ms from epoch
+             * @param  {object} defer       defer to resolve when done
+             */
             _syncToNewTime: function (timeState, map, defer) {
               var currentDate = this._mkTimeStamp(timeState.at);
               if (timeState.playing) {
                 this._animateSyncTime(map, currentDate, defer);
               }
-
               else {
                 this._tiledSyncTime(map, currentDate, defer);
               }
             },
 
             /**
-             * synToTime with a tiled layer. Simpy removes everything and uses
+             * syncToTime with a tiled layer. Simpy removes everything and uses
              * add method to create a new tiled layer
              * @param  {object} map         leaflet map
              * @param  {int}    currentDate ms from epoch
@@ -263,7 +269,7 @@ angular.module('map')
             },
 
             /**
-             * synToTime with imageOverlays for animation. See syncTime docstr
+             * syncToTime with imageOverlays for animation. See syncTime docstr
              * for more info.
              *
              * @decription When there are not enough or the imageOverlays have
