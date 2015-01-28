@@ -445,6 +445,7 @@ angular.module('map')
           version: '1.1.1',
           minZoom: nonLeafLayer.min_zoom || 0,
           maxZoom: 19,
+          crs: LeafletService.CRS.EPSG3857,
           opacity: nonLeafLayer.opacity,
           zIndex: nonLeafLayer.zIndex
         };

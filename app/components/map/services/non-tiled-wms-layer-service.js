@@ -122,6 +122,7 @@ angular.module('map')
                 maxZoom: 19,
                 opacity: layer.opacity,
                 zindex: layer.zIndex,
+                crs: LeafletService.CRS.EPSG3857,
                 time: this._formatter(date)
               };
 
