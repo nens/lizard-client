@@ -3,26 +3,31 @@
  * Directive for dashboard component.
  */
 angular.module('dashboard')
-  .controller('DashboardCtrl', ['Restangular', 'DataService',
-      function (Restangular, DataService) {
+  .controller('DashboardCtrl', [
+      'Restangular',
+      'TimeseriesService',
+      'DataService',
+      function (Restangular, TimeseriesService, DataService) {
 
     
-    this.DataService = DataService;
-    this.elements = []; 
+    var DataService = DataService;
 
     var that = this;
 
     Restangular.one('api/v1/dashboards/1/').get()
       .then(function (dashboard) {
-        that.elements = dashboard.dashboardelements;
-      });
+        that = dashboard;
+        return that.dashboardelements
+      }).then(getDatas);
+    
+    var getDatas = function (elements) {
 
-    this.elements.forEach(function (el, i) {
-      DataService[el.data].getData({
-        geom: 
-      })
-        .then(function (response) {
-          el.data = response;
-        });
-    });
+      elements.forEach(function (el, i) {
+        TimeseriesService.getTimeseries(el.data.timeseries,
+          el.temporal_bounds)
+         .then(function (response) {
+            el.dashboardData = response;
+          });
+      });
+    };
 }]);

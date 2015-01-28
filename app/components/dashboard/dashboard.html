@@ -1,10 +1,19 @@
 <div class="dashboard-wrapper container-fluid" ng-controller="DashboardCtrl as dashboard">
   <div class="row dashboard-row">
-    <div class="col-md-4" ng-repeat="element in dashboard.elements">
+    <div class="col-md-4" ng-repeat="element in dashboard.dashboardelements">
 
       <div ng-if="element.type === 'map'" class="dashboard-widget">
         <map></map>
       </div>
+
+      <div ng-if="element.type === 1">
+        <graph
+          line
+          type="temporal"
+          temporal="element.temporal_bounds"
+          data="element.dashboardData"
+          keys="{x: 0, y: 1}">
+      </div> 
 
       <% element.name %> 
     </div>
