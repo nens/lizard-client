@@ -121,7 +121,7 @@ angular.module('map')
                 minZoom: layer.min_zoom || 0,
                 maxZoom: 19,
                 opacity: layer.opacity,
-                zindex: layer.zIndex,
+                zIndex: layer.zIndex,
                 crs: LeafletService.CRS.EPSG3857,
                 time: this._formatter(date)
               };
@@ -153,37 +153,6 @@ angular.module('map')
             /**
              * @summary    Sets the new timeState on the layer. And updates the layer
              *             to the new time.
-             *
-             * @decription When there are not enough imageOverlays, more overlays
-             *             are added to the map. The curent timeState.at is rounded
-             *             to the nearest date value present on the wms server. The
-             *             currentDate value is used to lookup the index of the
-             *             frame in the _frameLookup. The _frameLookup contains all
-             *             the dates that are present in the buffer and the index
-             *             of the imageoverlay it is stored on:
-             *
-             *               { <date in ms from epoch> : <index on _imageOverlays> }
-             *
-             *               length is 0, 1 or _bufferLength.
-             *
-             *             The date is either: 1. present in the lookup in case the
-             *             index is defined or 2. not present in case this frame is
-             *             not loaded yet.
-             *
-             *             When 1. The imageOverlay with index <currentOverlayIndex>
-             *             is set to _opacity and the defer is resolved. The image
-             *             sources of the _imageOverlays with opacity !== 0 are set
-             *             to the next date not in the _frameLookup, the opacity is
-             *             set to 0 and the reference is removed from the
-             *             _frameLookup. A loadListener adds a new reference to the
-             *             _frameLookup when the layer finishes loading a new frame.
-             *
-             *             When 2. All references are removed and all layers get a
-             *             new source. When the new source is different than the one
-             *             it currently has, the loadListener is removed and a new
-             *             one source and loadlistener are added. When all layers
-             *             have loaded, the first layer's opacity is set to _opacity
-             *             and the defer is resolved.
              *
              * @parameter timeState nxt object containing current time on at.
              * @parameter map leaflet map to add layers to.
@@ -281,11 +250,58 @@ angular.module('map')
               }
             },
 
+            /**
+             * synToTime with a tiled layer. Simpy removes everything and uses
+             * add method to create a new tiled layer
+             * @param  {object} map         leaflet map
+             * @param  {int}    currentDate ms from epoch
+             * @param  {object} defer       defer to resolve when done
+             */
             _tiledSyncTime: function (map, currentDate, defer) {
               this.remove(map);
               this.add(map, defer);
             },
 
+            /**
+             * synToTime with imageOverlays for animation. See syncTime docstr
+             * for more info.
+             *
+             * @decription When there are not enough or the imageOverlays have
+             *             an outdated bounds, more overlays are added to the
+             *             map. The curent timeState.at is rounded
+             *             to the nearest date value present on the wms server. The
+             *             currentDate value is used to lookup the index of the
+             *             frame in the _frameLookup. The _frameLookup contains all
+             *             the dates that are present in the buffer and the index
+             *             of the imageoverlay it is stored on:
+             *
+             *               { <date in ms from epoch> : <index on _imageOverlays> }
+             *
+             *               length is 0, 1 or _bufferLength.
+             *
+             *             The date is either: 1. present in the lookup in case the
+             *             index is defined or 2. not present in case this frame is
+             *             not loaded yet.
+             *
+             *             When 1. The imageOverlay with index <currentOverlayIndex>
+             *             is set to _opacity and the defer is resolved. The image
+             *             sources of the _imageOverlays with opacity !== 0 are set
+             *             to the next date not in the _frameLookup, the opacity is
+             *             set to 0 and the reference is removed from the
+             *             _frameLookup. A loadListener adds a new reference to the
+             *             _frameLookup when the layer finishes loading a new frame.
+             *
+             *             When 2. All references are removed and all layers get a
+             *             new source. When the new source is different than the one
+             *             it currently has, the loadListener is removed and a new
+             *             one source and loadlistener are added. When all layers
+             *             have loaded, the first layer's opacity is set to _opacity
+             *             and the defer is resolved.
+             *
+             * @param  {object} map         leaflet map
+             * @param  {int}    currentDate ms from epoch
+             * @param  {object} defer       defer to resolve when done
+             */
             _animateSyncTime: function (map, currentDate, defer) {
               var newBounds = map.getBounds();
 
