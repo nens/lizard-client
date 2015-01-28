@@ -5,8 +5,9 @@ angular.module('lizard-nxt')
   .service("RasterService", ["Restangular",
                              "UtilService",
                              "CabinetService",
+                             "LeafletService",
                              "$q",
-  function (Restangular, UtilService, CabinetService, $q) {
+  function (Restangular, UtilService, CabinetService, LeafletService, $q) {
 
   var intensityData,
       cancelers = {};
@@ -67,8 +68,8 @@ angular.module('lizard-nxt')
    * Build the bounding box given an imageBounds
    */
   var _buildBbox = function (imgBounds) {
-    return [imgBounds[0][1], imgBounds[1][0]].toString() +
-      ',' + [imgBounds[1][1], imgBounds[0][0]].toString();
+    return [imgBounds[0].x, imgBounds[0].y].toString() +
+      ',' + [imgBounds[1].x, imgBounds[1].y].toString();
   };
 
   var buildURLforWMS = function (wmsLayer, map, store, singleTile) {
@@ -76,20 +77,21 @@ angular.module('lizard-nxt')
     var bounds = map.getBounds();
 
     var imgBounds = [
-      [bounds.getNorth(), bounds.getWest()],
-      [bounds.getSouth(), bounds.getEast()]
+      LeafletService.CRS.EPSG3857.project(bounds.getSouthWest()),
+      LeafletService.CRS.EPSG3857.project(bounds.getNorthEast()),
     ],
     opts = wmsLayer.options,
     result = wmsLayer.url
       + '?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng'
-      + '&SRS=EPSG%3A4326&LAYERS=' + layerName
+      + '&SRS=EPSG%3A3857&LAYERS=' + layerName
       + '&BBOX=' + _buildBbox(imgBounds);
 
     if (singleTile) {
       var size = map.getPixelBounds().getSize();
-      opts.height = Math.round(size.y / size.x * 512);
-      opts.width = Math.round(size.x / size.y  * 512);
+      opts.height = Math.round(size.y / size.x * 256);
+      opts.width = Math.round(size.x / size.y  * 256);
     } else {
+      // Serve square tiles
       opts.height = 256;
       opts.width = 256;
     }
