@@ -23,7 +23,21 @@
           dimensions="{height: 80, padding: {left: 0, right: 0, top: 5, bottom: 50}}">
         </graph> -->
 
+        <div class="card-tools">
+           <a
+             class="btn btn-default btn-xs"
+             title="Data van deze infocard exporteren"
+             ng-csv="formatLineCSV(lg.layerGroupSlug, l)"
+             filename="<% lg.layerGroupSlug %>.csv"
+             csv-header="getLineCSVHeaders(lg.layerGroupSlug, l)">
+             <i class="fa fa-share-square-o"></i>
+             Exporteer
+          </a>
+        </div>
+
       </div>
     </div>
   </div>
+
+
 </div>

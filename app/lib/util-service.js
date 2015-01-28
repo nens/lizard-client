@@ -680,4 +680,6 @@ angular.module('lizard-nxt')
       throw new Error("This aint a valid triple to convert into rgbString: " + rgbTriple);
     }
   };
+
+
 }]);
