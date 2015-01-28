@@ -91,7 +91,7 @@ angular.module('map')
           // resolution, animation will also move slowly, so there is no need
           // for a big buffer.
           Object.defineProperty(layer, '_bufferLength', {
-            value: layer._temporalResolution >= 3600000 ? 2 : 10,
+            value: layer._temporalResolution >= 3600000 ? 2 : 6,
             writable: true,
           });
           // Number of rasters currently underway.
@@ -114,7 +114,6 @@ angular.module('map')
                   date = new Date(this._mkTimeStamp(this.timeState.at)),
                   store = this._determineStore(this.timeState);
 
-
               var options = {
                 layers: store.name,
                 format: 'image/png',
@@ -136,6 +135,7 @@ angular.module('map')
                 LeafletService.tileLayer.wms(layer.url, options)
               ];
 
+              // defer is passed to loadlistener to be resolved when done.
               this._addLoadListener(
                 this._imageOverlays[0].addTo(map),
                 this.timeState.at,
@@ -209,6 +209,8 @@ angular.module('map')
                 + store.name.split('/')[1];
 
               this._syncToNewTime(timeState, map, defer);
+
+              return defer.promise;
             },
 
             /**
@@ -256,8 +258,6 @@ angular.module('map')
               else {
                 this._tiledSyncTime(map, currentDate, defer);
               }
-
-              return defer.promise;
             },
 
             _tiledSyncTime: function (map, currentDate, defer) {
@@ -406,7 +406,6 @@ angular.module('map')
              */
             _replaceUrlFromFrame: function (frameIndex, defer) {
               var url = this._imageUrlBase + this._formatter(new Date(this._nxtDate));
-              console.log(url);
               var frame = this._imageOverlays[frameIndex];
               frame.off('load');
               frame.setOpacity(0);
