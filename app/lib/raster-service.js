@@ -72,6 +72,16 @@ angular.module('lizard-nxt')
       ',' + [imgBounds[1].x, imgBounds[1].y].toString();
   };
 
+  /**
+   * Returns wms url as used by the non-tiled layer for animation.
+   *
+   * @param  {object} wmsLayer   nxt map layer instance with options and slug.
+   * @param  {object} map        current leaflet map
+   * @param  {string} store         name of store rain-5min|rain-hour etc.
+   * @param  {boolean} singleTile when single it returns a proper tilesize
+   *                              otherwise just 256x256px.
+   * @return {string}            url
+   */
   var buildURLforWMS = function (wmsLayer, map, store, singleTile) {
     var layerName = store || wmsLayer.slug;
     var bounds = map.getBounds();

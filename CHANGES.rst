@@ -3,7 +3,9 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
--
+- Use current spatial bounds for animation.
+
+- Make wms request with EPSG3857 for image overlays.
 
 
 Release 1.2.19 (2015-1-27)
