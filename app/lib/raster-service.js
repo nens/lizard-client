@@ -83,8 +83,9 @@ angular.module('lizard-nxt')
    * @return {string}            url
    */
   var buildURLforWMS = function (wmsLayer, map, store, singleTile) {
-    var layerName = store || wmsLayer.slug;
-    var bounds = map.getBounds();
+    var layerName = store || wmsLayer.slug,
+        bounds = map.getBounds(),
+        DEFAULT_TILE_SIZE = 256; // in px
 
     var imgBounds = [
       LeafletService.CRS.EPSG3857.project(bounds.getSouthWest()),
@@ -98,12 +99,12 @@ angular.module('lizard-nxt')
 
     if (singleTile) {
       var size = map.getPixelBounds().getSize();
-      opts.height = Math.round(size.y / size.x * 256);
-      opts.width = Math.round(size.x / size.y  * 256);
+      opts.height = Math.round(size.y / size.x * DEFAULT_TILE_SIZE);
+      opts.width = Math.round(size.x / size.y  * DEFAULT_TILE_SIZE);
     } else {
       // Serve square tiles
-      opts.height = 256;
-      opts.width = 256;
+      opts.height = DEFAULT_TILE_SIZE;
+      opts.width = DEFAULT_TILE_SIZE;
     }
 
     angular.forEach(opts, function (v, k) {
