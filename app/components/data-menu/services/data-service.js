@@ -32,8 +32,33 @@ angular.module('data-menu')
         }
       });
 
-      var layerGroups = createLayerGroups(dataLayers);
-      this.layerGroups = layerGroups;
+
+      /**
+       * Creates a new layerGroup and adds to the layerGroups
+       * @param  {object} lgConfig config of layergroup
+       * @return {layerGroup instance}
+       */
+      this.createLayerGroup = function (lgConfig) {
+        return this.layerGroups[lgConfig.slug] = new DataLayerGroup(lgConfig);
+      },
+
+      /**
+       * @function
+       * @memberof app.NxtMapService
+       * @param  {object} nonLeafLayers object from database
+       * @description Throw in layers as served from the backend
+       */
+      this._createLayerGroups = function (serverSideLayerGroups) {
+        var layerGroups = {};
+        angular.forEach(serverSideLayerGroups, function (sslg) {
+          this.createLayerGroup(sslg);
+        }, this);
+        return this.layerGroups;
+      };
+
+      this.layerGroups = {};
+      var layerGroups = this._createLayerGroups(dataLayers);
+
       this.baselayerGroups = _.filter(layerGroups, function (lgValue, lgKey) {
         return lgValue.baselayer;
       });
@@ -95,16 +120,18 @@ angular.module('data-menu')
         }
       };
 
-      this.createLayerGroup = function (lgConfig) {
-        return this.layerGroups[lgConfig.slug] = new DataLayerGroup(lgConfig);
-      },
-
+      /**
+       * Adds the provided layerGroups to the layerGroups
+       * @param {layerGroup instance}
+       */
       this.addLayergroup = function (layerGroup) {
-
+        return this.layerGroups[layerGroup.slug] = layerGroup;
       },
 
       this.removeLayerGroup = function (layerGroup) {
-
+        delete this.layerGroups[layerGroup.slug];
+        console.log(this.layerGroups);
+        return this.layerGroups;
       },
 
       /**
@@ -160,22 +187,7 @@ angular.module('data-menu')
             this.toggleLayerGroup(layerGroup);
           }
         }, this);
-      },
-
-
-      /**
-       * @function
-       * @memberof app.NxtMapService
-       * @param  {object} nonLeafLayers object from database
-       * @description Throw in layers as served from the backend
-       */
-      this._createLayerGroups = function (serverSideLayerGroups) {
-        var layerGroups = {};
-        angular.forEach(serverSideLayerGroups, function (sslg) {
-          this._createLayerGroups(sslg);
-        }, this);
-        return this.layerGroups;
-      };
+      }
 
     }
   ]);
