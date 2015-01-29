@@ -18,7 +18,7 @@
             <th>Resultaten</th>
           </thead>
           <tbody if="scenarios.length > 0">
-            <tr ng-repeat="scenario in scenarios | filter: search" 
+            <tr ng-repeat="scenario in scenarios | filter: search"
               ng-class="{'selected-scenario': selectedScenario === scenario}">
               <td ng-click="select(scenario)" ><i class="fa clickable"
                   ng-class="{'fa-chevron-right': selectedScenario != scenario,
@@ -26,10 +26,11 @@
               <td ng-click="select(scenario)" class="clickable" ><% scenario.name %></td>
               <td ng-click="select(scenario)" class="clickable" ><% scenario.created | date: 'MMM d, y HH:mm:ss a' %><td>
               <table class="table table-condensed result-table"
-                ng-if="selectedScenario === 
+                ng-if="selectedScenario ===
                     scenario && scenario.result_set.length > 0">
                 <tr ng-repeat="result in scenario.result_set">
                   <td><% result.result_type.name %></td>
+                  <td><button ng-click="preview(scenario)">preview</button></td>
                   <td><a href="<% result.attachment_url %>">Download</a></td>
                 </tr>
 
@@ -39,10 +40,10 @@
               </span>
             </tr>
           </tbody>
-        
+
         </table>
-        
-      
+
+
       </div>
 
     </div>
@@ -50,4 +51,4 @@
   </div>
 </div>
 
- 
+

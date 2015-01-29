@@ -69,7 +69,9 @@ angular.module('data-menu')
       });
 
       this.instantiateLayers(layerGroup.layers, layerGroup.temporal_resolution);
-
+      if (this.callbackFns) {
+        this.callbackFns.onCreateLayerGroup(this);
+      }
     }
 
     LayerGroup.prototype = {
