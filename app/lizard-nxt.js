@@ -19,6 +19,7 @@ if (window.RavenEnvironment) {
  *
  */
 angular.module("lizard-nxt", [
+  'lizard-nxt-filters',
   'data-menu',
   'map',
   'omnibox',

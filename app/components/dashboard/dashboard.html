@@ -5,12 +5,13 @@
   <div class="row dashboard-row">
     <div class="col-md-4" ng-repeat="element in dashboard.dashboardelements | orderBy: dashboard_slot">
 
-      <div ng-if="element.element_type === 2" class="dashboard-widget">
+      <div ng-if="element.element_type === 'map'" class="dashboard-widget">
         <map></map>
       </div>
 
 
-      <div ng-if="element.element_type === 1">
+      <div ng-if="element.element_type === 'graph' && 
+        !element.data.hasOwnProperty('rain')">
         <div class="timeseries-header-container">
            <i class="fa fa-clock-o"></i>
            <select class="timeseries"
@@ -19,19 +20,15 @@
                   ng-options="series.name for series in element.dashboardData | rmSingleDatumTimeseries">
            </select>
            <span class="card-title-text placeholder"
-                 ng-if="element.dashboardData.data.length === 1 && fullDetails">
-                 <% element.selectedTimeseries.name %>
-           </span>
-           <span class="card-title-text placeholder"
                  ng-if="element.dashboardData.length === 1">
                  <% element.selectedTimeseries.name %>
            </span>
 
         </div>
 
-
         <graph
           line
+          class="xyGraph"
           type="temporal"
           temporal="element.temporal_bounds"
           data="element.selectedTimeseries.events"
@@ -42,11 +39,27 @@
           keys="{x: 0, y: 1}"
           now="element.temporal_bounds.start">
         </graph>
+      </div>
+
+      <div ng-if="element.element_type === 'graph' && 
+        element.data.hasOwnProperty('rain')">
+        <graph
+          bar-chart
+          class="xyGraph"
+          type="temporal"
+          temporal="element.temporal_bounds"
+          data="element.selectedTimeseries"
+          ylabel="300000"
+          yfilter="aggWinToYLabel"
+          dimensions="dashboard.dimensions"
+          mouseLoc="false"
+          keys="{x: 0, y: 1}"
+          now="element.temporal_bounds.start">
+        </graph>
 
 
       </div> 
 
-      <% element.name %> 
     </div>
   </div>
 

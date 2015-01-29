@@ -4,5 +4,6 @@
  *
  */
 angular.module('dashboard', [
-    'map'
+    'map',
+    'lizard-nxt-filters',
     ]);

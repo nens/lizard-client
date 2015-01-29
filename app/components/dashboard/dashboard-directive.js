@@ -7,8 +7,6 @@ angular.module('dashboard')
   
   var link = function (scope, element, attr) {
 
-    console.log(scope.dashboard)
-
     var resizePane = function () {
       var PADDINGTOP = 70,
           SELECTORHEIGHT = 50,
@@ -27,7 +25,7 @@ angular.module('dashboard')
           top: 25,
           bottom: 60,
           left: 50,
-          right: 5
+          right: 10
         }
       };      
     };
