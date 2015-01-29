@@ -5,8 +5,9 @@ angular.module('lizard-nxt')
   .service("RasterService", ["Restangular",
                              "UtilService",
                              "CabinetService",
+                             "LeafletService",
                              "$q",
-  function (Restangular, UtilService, CabinetService, $q) {
+  function (Restangular, UtilService, CabinetService, LeafletService, $q) {
 
   var intensityData,
       cancelers = {};
@@ -67,23 +68,44 @@ angular.module('lizard-nxt')
    * Build the bounding box given an imageBounds
    */
   var _buildBbox = function (imgBounds) {
-    return [imgBounds[0][1], imgBounds[1][0]].toString() +
-      ',' + [imgBounds[1][1], imgBounds[0][0]].toString();
+    return [imgBounds[0].x, imgBounds[0].y].toString() +
+      ',' + [imgBounds[1].x, imgBounds[1].y].toString();
   };
 
-  var buildURLforWMS = function (wmsLayer, store) {
-    var layerName = store || wmsLayer.slug;
+  /**
+   * Returns wms url as used by the non-tiled layer for animation.
+   *
+   * @param  {object} wmsLayer   nxt map layer instance with options and slug.
+   * @param  {object} map        current leaflet map
+   * @param  {string} store         name of store rain-5min|rain-hour etc.
+   * @param  {boolean} singleTile when single it returns a proper tilesize
+   *                              otherwise just 256x256px.
+   * @return {string}            url
+   */
+  var buildURLforWMS = function (wmsLayer, map, store, singleTile) {
+    var layerName = store || wmsLayer.slug,
+        bounds = map.getBounds(),
+        DEFAULT_TILE_SIZE = 256; // in px
 
     var imgBounds = [
-      [wmsLayer.bounds.north, wmsLayer.bounds.west],
-      [wmsLayer.bounds.south, wmsLayer.bounds.east]
+      LeafletService.CRS.EPSG3857.project(bounds.getSouthWest()),
+      LeafletService.CRS.EPSG3857.project(bounds.getNorthEast()),
     ],
     opts = wmsLayer.options,
     result = wmsLayer.url
       + '?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng'
-      + '&SRS=EPSG%3A4326&LAYERS=' + layerName
+      + '&SRS=EPSG%3A3857&LAYERS=' + layerName
       + '&BBOX=' + _buildBbox(imgBounds);
 
+    if (singleTile) {
+      var size = map.getPixelBounds().getSize();
+      opts.height = Math.round(size.y / size.x * DEFAULT_TILE_SIZE);
+      opts.width = Math.round(size.x / size.y  * DEFAULT_TILE_SIZE);
+    } else {
+      // Serve square tiles
+      opts.height = DEFAULT_TILE_SIZE;
+      opts.width = DEFAULT_TILE_SIZE;
+    }
 
     angular.forEach(opts, function (v, k) {
       result += UtilService.buildString('&', k.toUpperCase(), "=", v);
