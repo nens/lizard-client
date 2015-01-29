@@ -21,21 +21,6 @@ angular.module('data-menu')
   .service('DataService', ['$q', 'dataLayers', 'DataLayerGroup', 'State',
     function ($q, dataLayers, DataLayerGroup, State) {
 
-
-      /**
-       * @function
-       * @memberof app.NxtMapService
-       * @param  {object} nonLeafLayer object from database
-       * @description Throw in a layer as served from the backend
-       */
-      var createLayerGroups = function (serverSideLayerGroups) {
-        var layerGroups = {};
-        angular.forEach(serverSideLayerGroups, function (sslg) {
-          layerGroups[sslg.slug] = new DataLayerGroup(sslg);
-        });
-        return layerGroups;
-      };
-
       // Attributes ////////////////////////////////////////////////////////////
 
       // Event callbacks are used to performa actions on the map when the
@@ -110,6 +95,18 @@ angular.module('data-menu')
         }
       };
 
+      this.createLayerGroup = function (lgConfig) {
+        return this.layerGroups[lgConfig.slug] = new DataLayerGroup(lgConfig);
+      },
+
+      this.addLayergroup = function (layerGroup) {
+
+      },
+
+      this.removeLayerGroup = function (layerGroup) {
+
+      },
+
       /**
        * Gets data from all layergroups.
        *
@@ -163,6 +160,21 @@ angular.module('data-menu')
             this.toggleLayerGroup(layerGroup);
           }
         }, this);
+      },
+
+
+      /**
+       * @function
+       * @memberof app.NxtMapService
+       * @param  {object} nonLeafLayers object from database
+       * @description Throw in layers as served from the backend
+       */
+      this._createLayerGroups = function (serverSideLayerGroups) {
+        var layerGroups = {};
+        angular.forEach(serverSideLayerGroups, function (sslg) {
+          this._createLayerGroups(sslg);
+        }, this);
+        return this.layerGroups;
       };
 
     }
