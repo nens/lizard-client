@@ -277,5 +277,23 @@ angular.module('lizard-nxt')
       $scope.$broadcast("$timelineZoomSuccess");
     };
 
+    this.formatDatetime = function () {
+      console.log("[f] formatDatetime()");
+      console.log("-- this.state.aggWindow =", this.state.aggWindow);
+
+      switch (this.state.aggWindow) {
+      case 300000:
+        return 'HH:mm'
+      case 3600000:
+        return 'dd MMMM, HH:mm'
+      case 86400000:
+        return 'dd MMMM yyyy'
+      case 2635200000:
+        return 'MMMM yyyy'
+      default:
+        throw new Error("Unknow aggWindow: " + this.state.aggWindow);
+      }
+
+    }
   }
 ]);
