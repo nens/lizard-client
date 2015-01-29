@@ -28,14 +28,13 @@
             </thead>
           </table>
         </div>
-
         <graph ng-if="lg.temporal"
-               line
-               type="temporal"
-               temporal="state.temporal"
-               data="point.temporalRaster.data"
-               ylabel="'hoogte [mNAP]'"
-               keys="{x: 0, y: 1}">
+          line
+          type="temporal"
+          temporal="state.temporal"
+          data="l.data"
+          ylabel="l.unit"
+          keys="{x: 0, y: 1}">
         </graph>
       </div>
 
