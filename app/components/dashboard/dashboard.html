@@ -1,18 +1,49 @@
 <div class="dashboard-wrapper container-fluid" ng-controller="DashboardCtrl as dashboard">
+  <div class="row">
+    <h2>Welkom <% user.firstName %></h2>
+  </div>
   <div class="row dashboard-row">
-    <div class="col-md-4" ng-repeat="element in dashboard.dashboardelements">
+    <div class="col-md-4" ng-repeat="element in dashboard.dashboardelements | orderBy: dashboard_slot">
 
-      <div ng-if="element.type === 'map'" class="dashboard-widget">
+      <div ng-if="element.element_type === 2" class="dashboard-widget">
         <map></map>
       </div>
 
-      <div ng-if="element.type === 1">
+
+      <div ng-if="element.element_type === 1">
+        <div class="timeseries-header-container">
+           <i class="fa fa-clock-o"></i>
+           <select class="timeseries"
+                  ng-if="element.dashboardData.length > 1"
+                  ng-model="element.selectedTimeseries"
+                  ng-options="series.name for series in element.dashboardData | rmSingleDatumTimeseries">
+           </select>
+           <span class="card-title-text placeholder"
+                 ng-if="element.dashboardData.data.length === 1 && fullDetails">
+                 <% element.selectedTimeseries.name %>
+           </span>
+           <span class="card-title-text placeholder"
+                 ng-if="element.dashboardData.length === 1">
+                 <% element.selectedTimeseries.name %>
+           </span>
+
+        </div>
+
+
         <graph
           line
           type="temporal"
           temporal="element.temporal_bounds"
-          data="element.dashboardData"
-          keys="{x: 0, y: 1}">
+          data="element.selectedTimeseries.events"
+          ylabel="element.selectedTimeseries.unit"
+          xlabel=""
+          dimensions="dashboard.dimensions"
+          mouseLoc="false"
+          keys="{x: 0, y: 1}"
+          now="element.temporal_bounds.start">
+        </graph>
+
+
       </div> 
 
       <% element.name %> 

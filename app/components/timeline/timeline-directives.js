@@ -410,14 +410,12 @@ angular.module('lizard-nxt')
      * This evenListener ensures a retrieval of data
      * after the browser is done doing requests.
      */
-    window.addEventListener('load', function () {
-      getTimeLineData();
-    });
+    window.addEventListener('load', getTimeLineData);
 
     /**
      * Update timeline when browser window is resized.
      */
-    window.onresize = function () {
+    window.addEventListener('resize', function () {
 
       timeline.dimensions.width = UtilService.getCurrentWidth();
       timeline.resize(
@@ -426,7 +424,7 @@ angular.module('lizard-nxt')
         State.temporal.aggWindow,
         scope.events.nEvents // TODO: get nEvents from somewhere
       );
-    };
+    });
 
     // END WATCHES
 

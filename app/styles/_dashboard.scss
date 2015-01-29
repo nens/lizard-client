@@ -4,7 +4,6 @@
 
 .dashboard-wrapper {
   transition: .3s ease;
-  margin-top: $navbarheight;
   padding-left: 10px;
   height: 70%;
   // interpolation inside mixin expression of variable
@@ -13,6 +12,10 @@
   width: 100%;
   position: absolute;
   background-color: $white;
+}
+
+.dashboard-wrapper > .row > h2 {
+    margin-left: 15px;
 }
 
 .dashboard-table {
@@ -29,8 +32,6 @@
 
 .dashboard-row > .col-md-4 {
     height: 100%;
-    padding: 1em;
-    border: 1px solid;
 }
 
 /*.dashboard-widget {*/
