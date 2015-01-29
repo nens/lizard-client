@@ -1,6 +1,6 @@
 <div ng-controller="LineCtrl">
 
-  <div ng-repeat="lg in box.content" class="card active" id="card-<% l.name %>">
+  <div ng-repeat="(slug, lg) in box.content" class="card active" id="card-<% l.name %>">
     <div ng-repeat="l in lg.layers"
       id="card-content-<% l.name %>"
       class="card-content"
@@ -27,9 +27,9 @@
            <a
              class="btn btn-default btn-xs"
              title="Data van deze infocard exporteren"
-             ng-csv="formatLineCSV(lg.layerGroupSlug, l)"
-             filename="<% lg.layerGroupSlug %>.csv"
-             csv-header="getLineCSVHeaders(lg.layerGroupSlug, l)">
+             ng-csv="formatLineCSV(slug, l)"
+             filename="<% slug %>.csv"
+             csv-header="getLineCSVHeaders(slug, l)">
              <i class="fa fa-share-square-o"></i>
              Exporteer
           </a>
