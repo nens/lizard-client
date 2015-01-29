@@ -685,4 +685,11 @@ angular.module('lizard-nxt')
     var multiplier = Math.pow(10, decimalCount || 0);
     return Math.round(nr * multiplier) / multiplier;
   };
+
+  /**
+   * @description - "%f-in-javascript", you know the drill
+   */
+  this.formatNumber = function (x, wantedIntCount, wantedFloatCount) {
+    console.log("[F] formatNumber:", arguments);
+  };
 }]);
