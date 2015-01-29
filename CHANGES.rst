@@ -3,7 +3,7 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
--
+- Added generic CSV export service (currently only for line-mode)
 
 
 Release 1.2.19 (2015-1-27)
