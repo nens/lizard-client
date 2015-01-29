@@ -17,7 +17,9 @@ angular.module('lizard-nxt')
 
     // CONSTANTS
 
-    var NO_DATA_MSG = "Geen waarde bekend";
+    var NO_DATA_MSG = "Geen waarde bekend",
+        COORD_DECIMAL_COUNT = 8,
+        DUTCHIFY_TIMESTAMPS = true;
 
     // PUBLIC /////////////////////////////////////////////////////////////////
 
@@ -87,17 +89,82 @@ angular.module('lizard-nxt')
       }
     };
 
+    var _getLineCoordinates = function () {
+
+      return {
+        startLat: UtilService.formatNumber(
+          State.spatial.points[0].lat, 0, COORD_DECIMAL_COUNT, true
+        ),
+        startLng: UtilService.formatNumber(
+          State.spatial.points[0].lng, 0, COORD_DECIMAL_COUNT, true
+        ),
+        endLat: UtilService.formatNumber(
+          State.spatial.points[1].lat, 0, COORD_DECIMAL_COUNT, true
+        ),
+        endLng: UtilService.formatNumber(
+          State.spatial.points[1].lng, 0, COORD_DECIMAL_COUNT, true
+        )
+      };
+    };
+
+    var _dutchifyTimestamp = function (epoch) {
+
+      var d = new Date(epoch),
+          datePart = [
+            d.getDate(),
+            d.getMonth() + 1,
+            d.getFullYear()
+          ].join('-'),
+          timePart = [
+            d.getHours() || "00",
+            d.getMinutes() || "00",
+            d.getSeconds() || "00"
+          ].join(':');
+
+      return timePart + " " + datePart;
+    };
+
+    var _formatLineCSVNonTemporal = function (data) {
+
+      var i,
+          datum,
+          result = [],
+          coords = _getLineCoordinates(),
+          startLat = coords.startLat,
+          startLng = coords.startLng,
+          endLat = coords.endLat,
+          endLng = coords.endLng;
+
+      for (i = 0; i < data.length; i++) {
+        datum = data[i];
+        result.push([
+          typeof data[i][0] === 'number'
+            ? UtilService.formatNumber(UtilService.round(datum[0], 2), 0, 2, true)
+            : NO_DATA_MSG,
+          typeof data[i][1][0] === 'number'
+            ? UtilService.formatNumber(UtilService.round(datum[1][0], 2), 0, 2, true)
+            : NO_DATA_MSG,
+          startLat,
+          startLng,
+          endLat,
+          endLng
+        ]);
+      }
+      return result;
+    };
+
     var _formatLineCSVTemporal = function (data) {
-      // TODO: absolute timestamps mofo!
+
       var t,
           i,
           datum,
           result = [],
           timestamp,
-          startLat = State.spatial.points[0].lat,
-          startLng = State.spatial.points[0].lng,
-          endLat = State.spatial.points[1].lat,
-          endLng = State.spatial.points[1].lng,
+          coords = _getLineCoordinates(),
+          startLat = coords.startLat,
+          startLng = coords.startLng,
+          endLat = coords.endLat,
+          endLng = coords.endLng,
           amountOfTimestamps = data[0][1].length,
           tempExtentInterval = State.temporal.end - State.temporal.start,
           // Assumption which holds when measurements (i) are present for full
@@ -109,16 +176,20 @@ angular.module('lizard-nxt')
       );
 
       for (t = 0; t < amountOfTimestamps; t++) {
-        timestamp = new Date(roundedStartTime + (t * durationPerMeasurement));
+
+        timestamp = DUTCHIFY_TIMESTAMPS
+          ? _dutchifyTimestamp(roundedStartTime + (t * durationPerMeasurement))
+          : roundedStartTime + (t * durationPerMeasurement);
+
         for (i = 0; i < data.length; i++) {
           datum = data[i];
           result.push([
             timestamp,
             typeof data[i][0] === 'number'
-              ? UtilService.round(datum[0], 2)
+              ? UtilService.formatNumber(UtilService.round(datum[0], 2), 0, 2, true)
               : NO_DATA_MSG,
             typeof data[i][1][t] === 'number'
-              ? UtilService.round(datum[1][t], 2)
+              ? UtilService.formatNumber(UtilService.round(datum[1][t], 2), 0, 2, true)
               : NO_DATA_MSG,
             startLat,
             startLng,
@@ -129,33 +200,4 @@ angular.module('lizard-nxt')
       }
       return result;
     };
-
-    var _formatLineCSVNonTemporal = function (data) {
-
-      var i,
-          datum,
-          result = [],
-          startLat = State.spatial.points[0].lat,
-          startLng = State.spatial.points[0].lng,
-          endLat = State.spatial.points[1].lat,
-          endLng = State.spatial.points[1].lng;
-
-      for (i = 0; i < data.length; i++) {
-        datum = data[i];
-        result.push([
-          typeof data[i][0] === 'number'
-            ? UtilService.round(datum[0], 2)
-            : NO_DATA_MSG,
-          typeof data[i][1][0] === 'number'
-            ? UtilService.round(datum[1][0], 2)
-            : NO_DATA_MSG,
-          startLat,
-          startLng,
-          endLat,
-          endLng
-        ]);
-      }
-      return result;
-    };
-
 }]);

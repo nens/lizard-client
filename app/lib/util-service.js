@@ -688,8 +688,34 @@ angular.module('lizard-nxt')
 
   /**
    * @description - "%f-in-javascript", you know the drill
+   *
+   * @param {number} x - The input you want to convert
+   * @param {integer} wantedIntCount - The amount of leading zeros
+   * @param {integer} wantedFloatCount - The amount of trailing zeros
+   * @param {boolean} dutchify - Swap seperators: "." <--> ","
+   *
+   * @return {string} - The formatted number, formatted as string
    */
-  this.formatNumber = function (x, wantedIntCount, wantedFloatCount) {
-    console.log("[F] formatNumber:", arguments);
+  this.formatNumber = function (x, wantedIntCount, wantedFloatCount, dutchify) {
+
+    var i,
+        splitted = x.toString().split("."),
+        prefix = splitted[0],
+        suffix = splitted[1] || "";
+
+    while (prefix.length < wantedIntCount) {
+      prefix = "0" + prefix;
+    }
+
+    while (suffix.length < wantedFloatCount) {
+      suffix += "0";
+    }
+
+    if (dutchify) {
+      prefix.replace(",", ".");
+      suffix.replace(",", ".");
+      return prefix + "," + suffix;
+    }
+    return prefix + "." + suffix;
   };
 }]);
