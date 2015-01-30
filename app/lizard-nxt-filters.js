@@ -386,3 +386,10 @@ angular.module('lizard-nxt')
   };
 });
 
+angular.module('lizard-nxt')
+  .filter('dutchifyDatetime', function () {
+  return function (input) {
+    return input;
+  };
+});
+
