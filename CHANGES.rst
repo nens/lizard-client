@@ -6,6 +6,8 @@ Unreleased (1.2.7) (XXXX-XX-XX)
 
 - Add CNAME file for gh-pages subdomain.
 
+- Update grunt sandbox task to copy CNAME to dist folder.
+
 - Add temporal to box.content and draw graph for temporal point data.
 
 - No redraw of temporal raster when nothing relevant changed.
