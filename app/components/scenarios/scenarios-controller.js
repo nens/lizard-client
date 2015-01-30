@@ -35,41 +35,26 @@ angular.module('scenarios')
           DataService.removeLayerGroup(lg);
         }
       });
-
-      var lgConfig = {
-        "name": "Duivenpolder",
-        "slug": "duifje",
-        "active": true,
-        "temporal": false,
-        "temporal_resolution": 0,
-        "opacity": 1.0,
-        "order": 0,
-        "baselayer": false,
-        "layers": [
-          {
-            "slug": "nelenschuurmans.iaa79205",
-            "type": "Raster",
-            "format": "TMS",
-            "min_zoom": 0,
-            "max_zoom": 31,
-            "z_index": 0,
-            "url": "http://{s}.tiles.mapbox.com/v3",
-            "tiled": true,
-            "rescalable": false,
-            "scale": "nominal",
-            "quantity": null,
-            "unit": null,
-            "aggregation_type": "none",
-            "load_order": null,
-            "options": {},
-            "bounds": {},
-            "color": "",
-            "event_count": 0
-          }
-        ]
-      };
-      var lg = DataService.createLayerGroup(lgConfig);
-      DataService.toggleLayerGroup(lg);
+      angular.forEach(scenario.result_set, function (result) {
+        if (result.layer) {
+          console.log(result)
+          var lgConfig = {
+            'name': scenario.name + ': ' + result.result_type.name,
+            'slug': scenario.name + '_'  + result.result_type.slug,
+            "active": true,
+            "temporal": false,
+            "temporal_resolution": 0,
+            "opacity": 1.0,
+            "order": 0,
+            "baselayer": false,
+            "layers": [
+              result.layer
+            ]
+          };
+          var lg = DataService.createLayerGroup(lgConfig);
+          DataService.toggleLayerGroup(lg);
+        }
+      });
       State.context = 'map';
     };
 

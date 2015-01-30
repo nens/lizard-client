@@ -127,9 +127,14 @@ angular.module('data-menu')
        * with format 'Vector'.
        */
       isEventLayerGroup: function () {
-        return this.mapLayers.every(function (mapLayer) {
-          return mapLayer.format === 'Vector';
-        });
+        if (this.mapLayers.length > 0) {
+          return this.mapLayers.every(function (mapLayer) {
+            return mapLayer.format === 'Vector';
+          });
+        } else {
+          return false;
+        }
+
       },
 
       getColorForEventLayerGroup: function () {
