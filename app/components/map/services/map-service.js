@@ -28,6 +28,9 @@ angular.module('map')
         service._map = createLeafletMap(element, mapOptions);
         this.initializeLayers(State.temporal);
         this._initializeNxtMapEvents(eventCallbackFns);
+        // Map-services is dependant on the dataservice. This is to prevent
+        // a bunch of complicated and slow watches and still keep the data-
+        // service as the data authority.
         DataService.eventCallbacks = {
           onCreateLayerGroup: this.initializeLayer,
           onToggleLayerGroup: this._toggleLayers,

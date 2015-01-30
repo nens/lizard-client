@@ -128,9 +128,12 @@ angular.module('data-menu')
         return this.layerGroups[layerGroup.slug] = layerGroup;
       },
 
+      /**
+       * Removes the provided layerGroups from nxt
+       * @param {layerGroup instance}
+       */
       this.removeLayerGroup = function (layerGroup) {
         delete this.layerGroups[layerGroup.slug];
-        console.log(this.layerGroups);
         return this.layerGroups;
       },
 

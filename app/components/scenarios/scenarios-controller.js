@@ -37,10 +37,9 @@ angular.module('scenarios')
       });
       angular.forEach(scenario.result_set, function (result) {
         if (result.layer) {
-          console.log(result)
           var lgConfig = {
             'name': scenario.name + ': ' + result.result_type.name,
-            'slug': scenario.name + '_'  + result.result_type.slug,
+            'slug': scenario.name + '_'  + result.result_type.code,
             "active": true,
             "temporal": false,
             "temporal_resolution": 0,

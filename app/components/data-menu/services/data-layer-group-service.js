@@ -69,6 +69,8 @@ angular.module('data-menu')
       });
 
       this.instantiateLayers(layerGroup.layers, layerGroup.temporal_resolution);
+
+      // Let the map-service know there is a new layergroup
       if (this.callbackFns) {
         this.callbackFns.onCreateLayerGroup(this);
       }
