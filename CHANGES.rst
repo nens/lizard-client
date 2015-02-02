@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Repair timeline zoom buttons URL and graph updates.
+
 - Add CNAME file for gh-pages subdomain.
 
 - Update grunt sandbox task to copy CNAME to dist folder.
