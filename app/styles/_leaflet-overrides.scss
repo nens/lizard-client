@@ -22,6 +22,10 @@
     position: relative;
 }
 
+.leaflet-container img.leaflet-image-layer {
+    max-width: none !important;
+}
+
 .leaflet-bar {
     a {
         &:last-child {
@@ -72,12 +76,6 @@
             color: $white;
         }
 
-    }
-
-    img.leaflet-image-layer {
-        -webkit-filter: contrast(200%);
-        filter: contrast(200%);
-        max-width: none !important;
     }
 
 }

@@ -62,19 +62,6 @@ angular.module('map')
         }
       };
 
-      var determineImageBounds = function (bounds) {
-        var southWest = L.latLng(
-          bounds.south,
-          bounds.west
-        ),
-        northEast = L.latLng(
-          bounds.north,
-          bounds.east
-        );
-        return L.latLngBounds(southWest, northEast);
-      };
-
-
       return {
         create: function (layer) {
 
@@ -90,7 +77,7 @@ angular.module('map')
           });
           // Base of the image url without the time.
           Object.defineProperty(layer, '_imageUrlBase', {
-            value: RasterService.buildURLforWMS(layer),
+            value: '',
             writable: true,
           });
           // Lookup to store which data correspond to which imageOverlay.
@@ -104,12 +91,7 @@ angular.module('map')
           // resolution, animation will also move slowly, so there is no need
           // for a big buffer.
           Object.defineProperty(layer, '_bufferLength', {
-            value: layer._temporalResolution >= 3600000 ? 2 : 10,
-            writable: true,
-          });
-          // Geographic bounds of the image.
-          Object.defineProperty(layer, '_imageBounds', {
-            value: determineImageBounds(layer.bounds),
+            value: layer._temporalResolution >= 3600000 ? 2 : 6,
             writable: true,
           });
           // Number of rasters currently underway.
@@ -132,7 +114,6 @@ angular.module('map')
                   date = new Date(this._mkTimeStamp(this.timeState.at)),
                   store = this._determineStore(this.timeState);
 
-
               var options = {
                 layers: store.name,
                 format: 'image/png',
@@ -140,20 +121,26 @@ angular.module('map')
                 minZoom: layer.min_zoom || 0,
                 maxZoom: 19,
                 opacity: layer.opacity,
-                zindex: layer.zIndex,
+                zIndex: layer.zIndex,
+                crs: LeafletService.CRS.EPSG3857,
                 time: this._formatter(date)
               };
 
               options = angular.extend(options, layer.options);
 
-              this.options.styles = this.options.styles.split('-')[0]
-                + '-'
-                + store.name.split('/')[1];
+              // This breaks styles with negative values
+              // and for the moment only applies to radar.
+              if (this.slug.split('/')[0] === 'radar') {
+                this.options.styles = this.options.styles.split('-')[0]
+                  + '-'
+                  + store.name.split('/')[1];
+              }
 
               this._imageOverlays = [
                 LeafletService.tileLayer.wms(layer.url, options)
               ];
 
+              // defer is passed to loadlistener to be resolved when done.
               this._addLoadListener(
                 this._imageOverlays[0].addTo(map),
                 this.timeState.at,
@@ -167,37 +154,6 @@ angular.module('map')
              * @summary    Sets the new timeState on the layer. And updates the layer
              *             to the new time.
              *
-             * @decription When there are not enough imageOverlays, more overlays
-             *             are added to the map. The curent timeState.at is rounded
-             *             to the nearest date value present on the wms server. The
-             *             currentDate value is used to lookup the index of the
-             *             frame in the _frameLookup. The _frameLookup contains all
-             *             the dates that are present in the buffer and the index
-             *             of the imageoverlay it is stored on:
-             *
-             *               { <date in ms from epoch> : <index on _imageOverlays> }
-             *
-             *               length is 0, 1 or _bufferLength.
-             *
-             *             The date is either: 1. present in the lookup in case the
-             *             index is defined or 2. not present in case this frame is
-             *             not loaded yet.
-             *
-             *             When 1. The imageOverlay with index <currentOverlayIndex>
-             *             is set to _opacity and the defer is resolved. The image
-             *             sources of the _imageOverlays with opacity !== 0 are set
-             *             to the next date not in the _frameLookup, the opacity is
-             *             set to 0 and the reference is removed from the
-             *             _frameLookup. A loadListener adds a new reference to the
-             *             _frameLookup when the layer finishes loading a new frame.
-             *
-             *             When 2. All references are removed and all layers get a
-             *             new source. When the new source is different than the one
-             *             it currently has, the loadListener is removed and a new
-             *             one source and loadlistener are added. When all layers
-             *             have loaded, the first layer's opacity is set to _opacity
-             *             and the defer is resolved.
-             *
              * @parameter timeState nxt object containing current time on at.
              * @parameter map leaflet map to add layers to.
              *
@@ -207,33 +163,42 @@ angular.module('map')
              *         buffer.
              */
             syncTime: function (timeState, map) {
-              this.timeState = timeState;
+              var defer = $q.defer();
+
+              // Resolve and return when nothing changed.
+              if (timeState.at === this.timeState.at
+                && timeState.aggWindow === this.timeState.aggWindow
+                && timeState.playing === this.timeState.playing) {
+                defer.resolve();
+                return defer.promise;
+              }
+
+              // Store copy no reference.
+              this.timeState = angular.copy(timeState);
 
               // this only works for stores with different aggregation levels
               // for now this is only for the radar stores
               // change image url based on timestate.
               var store = this._determineStore(timeState);
-
+              this._temporalResolution = store.resolution;
               this._imageUrlBase = RasterService.buildURLforWMS(
                 this,
-                store.name
+                map,
+                store.name,
+                timeState.playing
               );
+
               this._temporalResolution = store.resolution;
 
-              this.options.styles = this.options.styles.split('-')[0]
-                + '-'
-                + store.name.split('/')[1];
-
-              var defer = $q.defer(),
-                  currentDate = this._mkTimeStamp(timeState.at);
-
-              if (timeState.playing) {
-                this._animateSyncTime(map, currentDate, defer);
+              // This breaks styles with negative values
+              // and for the moment only applies to radar.
+              if (this.slug.split('/')[0] === 'radar') {
+                this.options.styles = this.options.styles.split('-')[0]
+                  + '-'
+                  + store.name.split('/')[1];
               }
 
-              else {
-                this._tiledSyncTime(map, currentDate, defer);
-              }
+              this._syncToNewTime(timeState, map, defer);
 
               return defer.promise;
             },
@@ -274,23 +239,89 @@ angular.module('map')
               return;
             },
 
+            /**
+             * Takes a new timeState and delegates to sync functions for
+             * animation or non-animation.
+             * @param  {object} map         leaflet map
+             * @param  {int}    currentDate ms from epoch
+             * @param  {object} defer       defer to resolve when done
+             */
+            _syncToNewTime: function (timeState, map, defer) {
+              var currentDate = this._mkTimeStamp(timeState.at);
+              if (timeState.playing) {
+                this._animateSyncTime(map, currentDate, defer);
+              }
+              else {
+                this._tiledSyncTime(map, currentDate, defer);
+              }
+            },
+
+            /**
+             * syncToTime with a tiled layer. Simpy removes everything and uses
+             * add method to create a new tiled layer
+             * @param  {object} map         leaflet map
+             * @param  {int}    currentDate ms from epoch
+             * @param  {object} defer       defer to resolve when done
+             */
             _tiledSyncTime: function (map, currentDate, defer) {
               this.remove(map);
               this.add(map, defer);
             },
 
+            /**
+             * syncToTime with imageOverlays for animation. See syncTime docstr
+             * for more info.
+             *
+             * @decription When there are not enough or the imageOverlays have
+             *             an outdated bounds, more overlays are added to the
+             *             map. The curent timeState.at is rounded
+             *             to the nearest date value present on the wms server. The
+             *             currentDate value is used to lookup the index of the
+             *             frame in the _frameLookup. The _frameLookup contains all
+             *             the dates that are present in the buffer and the index
+             *             of the imageoverlay it is stored on:
+             *
+             *               { <date in ms from epoch> : <index on _imageOverlays> }
+             *
+             *               length is 0, 1 or _bufferLength.
+             *
+             *             The date is either: 1. present in the lookup in case the
+             *             index is defined or 2. not present in case this frame is
+             *             not loaded yet.
+             *
+             *             When 1. The imageOverlay with index <currentOverlayIndex>
+             *             is set to _opacity and the defer is resolved. The image
+             *             sources of the _imageOverlays with opacity !== 0 are set
+             *             to the next date not in the _frameLookup, the opacity is
+             *             set to 0 and the reference is removed from the
+             *             _frameLookup. A loadListener adds a new reference to the
+             *             _frameLookup when the layer finishes loading a new frame.
+             *
+             *             When 2. All references are removed and all layers get a
+             *             new source. When the new source is different than the one
+             *             it currently has, the loadListener is removed and a new
+             *             one source and loadlistener are added. When all layers
+             *             have loaded, the first layer's opacity is set to _opacity
+             *             and the defer is resolved.
+             *
+             * @param  {object} map         leaflet map
+             * @param  {int}    currentDate ms from epoch
+             * @param  {object} defer       defer to resolve when done
+             */
             _animateSyncTime: function (map, currentDate, defer) {
+              var newBounds = map.getBounds();
 
-              var currentOverlayIndex = this._frameLookup[currentDate];
-
-              if (this._imageOverlays.length < this._bufferLength) {
+              if (this._imageOverlays.length < this._bufferLength
+                || newBounds.getNorth() !== this._bounds.getNorth()
+                || newBounds.getWest() !== this._bounds.getWest()) {
                 // add leaflet layers to fill up the buffer
                 this._imageOverlays = this._createImageOverlays(
                   map,
-                  this._imageBounds,
                   this._bufferLength
                 );
               }
+
+              var currentOverlayIndex = this._frameLookup[currentDate];
 
               if (currentOverlayIndex === undefined) {
                 // Ran out of buffered frames
@@ -317,15 +348,16 @@ angular.module('map')
              * @param  {int} buffer   amount of imageOverlays to include.
              * @return {array} array of L.imageOverlays.
              */
-            _createImageOverlays: function (map, bounds, buffer) {
+            _createImageOverlays: function (map, buffer) {
               // detach all listeners and references to the imageOverlays.
               this.remove(map);
               // create new ones.
-              for (var i = this._imageOverlays.length - 1; i < buffer; i++) {
+              for (var i = this._imageOverlays.length; i < buffer; i++) {
                 this._imageOverlays.push(
-                  addLeafletLayer(map, LeafletService.imageOverlay('', bounds))
+                  addLeafletLayer(map, LeafletService.imageOverlay('', map.getBounds()))
                 );
               }
+              this._bounds = angular.copy(map.getBounds());
               return this._imageOverlays;
             },
 

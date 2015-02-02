@@ -258,7 +258,7 @@ angular.module('lizard-nxt')
     keys = graphCtrl.keys,
     temporal = graphCtrl.type === 'temporal';
 
-    graph.drawLine(data, keys, graphCtrl.labels, temporal, scope.timeState);
+    graph.drawLine(data, keys, graphCtrl.labels, temporal, scope.temporal);
 
     graph.followMouse(function (position) {
       scope.$apply(function () {
