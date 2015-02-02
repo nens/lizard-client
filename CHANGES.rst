@@ -8,6 +8,10 @@ Unreleased (1.2.7) (XXXX-XX-XX)
 
 - Added generic CSV export service (currently only for line-mode).
 
+- Kill looking glass button at search box.
+
+- Repair timeline zoom buttons URL and graph updates.
+
 - Add CNAME file for gh-pages subdomain.
 
 - Update grunt sandbox task to copy CNAME to dist folder.
