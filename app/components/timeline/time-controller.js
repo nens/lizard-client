@@ -278,22 +278,18 @@ angular.module('lizard-nxt')
     };
 
     this.formatDatetime = function () {
-      console.log("[f] formatDatetime()");
-      console.log("-- this.state.aggWindow =", this.state.aggWindow);
-
       switch (this.state.aggWindow) {
       case 300000:
-        return 'HH:mm'
+        return 'dd MMMM, HH:mm';
       case 3600000:
-        return 'dd MMMM, HH:mm'
+        return 'dd MMMM, HH:mm';
       case 86400000:
-        return 'dd MMMM yyyy'
+        return 'dd MMMM yyyy';
       case 2635200000:
-        return 'MMMM yyyy'
+        return 'MMMM yyyy';
       default:
-        throw new Error("Unknow aggWindow: " + this.state.aggWindow);
+        throw new Error("Unknown aggWindow: " + this.state.aggWindow);
       }
-
     }
   }
 ]);
