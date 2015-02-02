@@ -18,7 +18,7 @@ angular.module('lizard-nxt')
     // CONSTANTS
 
     var NO_DATA_MSG = "Geen waarde bekend",
-        TOO_MUCH_DATA_MSG = "De door u getrokken lijn is te lang. Er zijn te veel metingen om in een CSV weer te geven: ",
+        TOO_MUCH_DATA_MSG = "De door u getrokken lijn of het temporeel interval is te lang. Er zijn te veel metingen om in een CSV weer te geven: ",
         COORD_DECIMAL_COUNT = 8,
         DUTCHIFY_TIMESTAMPS = true,
         MAX_ROW_COUNT = 15000;
