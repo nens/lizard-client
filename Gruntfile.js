@@ -469,6 +469,13 @@ module.exports = function (grunt) {
         cwd: '<%= yeoman.app %>/styles',
         dest: '.tmp/styles/',
         src: '{,*/}*.css'
+      },
+      CNAME: {
+        expand: true,
+        cwd: './',
+        dest: '<%= yeoman.dist %>',
+        src: 'CNAME'
+         
       }
     },
 
@@ -586,6 +593,7 @@ module.exports = function (grunt) {
   grunt.registerTask('sandbox', [
     'test',
     'build',
+    'copy:CNAME',
     'replace:ghpages',
     'releaser:ghpages'
   ]);

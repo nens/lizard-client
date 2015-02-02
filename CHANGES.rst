@@ -3,20 +3,34 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
--
+
+- Add CNAME file for gh-pages subdomain.
+
+- Update grunt sandbox task to copy CNAME to dist folder.
+
+- Add temporal to box.content and draw graph for temporal point data.
+
+- No redraw of temporal raster when nothing relevant changed.
+
+- Use current spatial bounds for animation.
+
+- Make wms request with EPSG:3857 for image overlays and tiled wms.
 
 
 Release 1.2.19 (2015-1-27)
 ---------------------
+
 - Fix syncTime.
 
 Release 1.2.18 (2015-1-27)
 ---------------------
+
 - Fix bug for rain layer.
 
 
 Release 1.2.17 (2015-1-27)
 ---------------------
+
 - Fix bug for non-tiled-wms layer. ZVP broken styles.
 
 
