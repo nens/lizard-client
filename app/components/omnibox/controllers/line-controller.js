@@ -55,10 +55,9 @@ angular.module('omnibox')
             .data = response.data;
         } else if (response.layerSlug === 'rain') {
           // We dont wanna show intersect for rain (d.d. 20-01-2015)
-          // TEMP:
-          // if ($scope.box.content[response.layerGroupSlug].layers['rain']) {
-          //   delete $scope.box.content[response.layerGroupSlug].layers['rain'];
-          // }
+          if ($scope.box.content[response.layerGroupSlug].layers.rain) {
+            delete $scope.box.content[response.layerGroupSlug].layers.rain;
+          }
         } else if (response.data && response.data !== 'null'
           && response.format === 'Store'
           && (response.scale === 'ratio' || response.scale === 'interval')
