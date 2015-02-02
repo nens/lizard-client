@@ -467,7 +467,7 @@ angular.module('lizard-nxt')
         y = xy.y,
         MIN_BAR_WIDTH = 2,
         maxBarCount = xDomainInfo
-          ? (xDomainInfo.end - xDomainInfo.start) / xDomainInfo.aggWindow
+          ? Math.floor((xDomainInfo.end - xDomainInfo.start) / xDomainInfo.aggWindow)
           : data.length,
         barWidth = Math.max(
           MIN_BAR_WIDTH,
@@ -481,7 +481,6 @@ angular.module('lizard-nxt')
         bar = svg.select('g').select('#feature-group').selectAll(".bar")
           .data(data);
         // duration = Graph.prototype.transTime;
-
 
     // UPDATE
     bar
@@ -532,7 +531,11 @@ angular.module('lizard-nxt')
   };
 
   getBarWidth = function (scale, data, keys, dimensions, maxBarCount) {
-    return Graph.prototype._getWidth(dimensions) / maxBarCount;
+    var firstDatum = data[0],
+        lastDatum = data[data.length - 1];
+    return Math.floor(
+      (scale(lastDatum[0]) - scale(firstDatum[0])) / (data.length - 1)
+    );
   };
 
   createXGraph = function (svg, dimensions, labels, options) {

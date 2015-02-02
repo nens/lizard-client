@@ -95,13 +95,14 @@ angular.module('lizard-nxt')
    */
   link = function (scope, element, attrs, graphCtrl) {
 
-    /**
-     * Calls updateGraph when data changes.
-     */
-    scope.$watch('data', function (n, o) {
-      if (n === o) { return true; }
-      graphCtrl.setData(scope);
-      // Call graph with the new data
+    var graphUpdateHelper = function (useNewData, useNewXDomain) {
+
+      if (useNewData) {
+        graphCtrl.setData(scope);
+      }
+      if (useNewXDomain) {
+        graphCtrl.graph._xDomainInfo = scope.temporal;
+      }
       graphCtrl.updateData.call(
         graphCtrl.graph,
         graphCtrl.data,
@@ -113,6 +114,14 @@ angular.module('lizard-nxt')
       if (scope.temporal && scope.temporal.at) {
         graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
       }
+    };
+
+    /**
+     * Calls updateGraph when data changes.
+     */
+    scope.$watch('data', function (n, o) {
+      if (n === o) { return true; }
+      graphUpdateHelper(true, false);
     });
 
     /**
@@ -120,19 +129,7 @@ angular.module('lizard-nxt')
      */
     scope.$watch('keys', function (n, o) {
       if (n === o) { return true; }
-      graphCtrl.setData(scope);
-      // Call graph with the new data
-      graphCtrl.updateData.call(
-        graphCtrl.graph,
-        graphCtrl.data,
-        graphCtrl.keys,
-        graphCtrl.labels,
-        graphCtrl.graph._xDomainInfo
-      );
-      // Call the graph with the now
-      if (scope.temporal && scope.temporal.at) {
-        graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
-      }
+      graphUpdateHelper(true, false);
     });
 
     scope.$watch('temporal.at', function (n, o) {
@@ -140,6 +137,10 @@ angular.module('lizard-nxt')
       if (scope.temporal && scope.temporal.at) {
         graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
       }
+    });
+
+    scope.$on('$timelineZoomSuccess', function () {
+      graphUpdateHelper(true, true);
     });
   };
 
