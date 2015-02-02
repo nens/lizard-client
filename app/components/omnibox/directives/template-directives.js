@@ -56,9 +56,8 @@ angular.module('omnibox')
   return {
     restrict: 'E',
     scope: {
-      fullDetails: '=',
       lg: '=',
-      mapstate: '='
+      state: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/defaultpoint.html'
