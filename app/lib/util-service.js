@@ -681,6 +681,12 @@ angular.module('lizard-nxt')
     }
   };
 
+  /**
+   * @descriptions - Round numbers, but use specified decimalCount for resolution
+   * @param {number} nr- The number to round.
+   * @param {integer/undefined} - The amount of decimals wanted.
+   * @return {float} - The formatted number
+   */
   this.round = function (nr, decimalCount) {
     var multiplier = Math.pow(10, decimalCount || 0);
     return Math.round(nr * multiplier) / multiplier;
