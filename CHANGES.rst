@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Restricted max. amount of rows per CSV.
+
+- Added generic CSV export service (currently only for line-mode).
+
 - Kill looking glass button at search box.
 
 - Repair timeline zoom buttons URL and graph updates.

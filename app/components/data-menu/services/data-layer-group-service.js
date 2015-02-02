@@ -120,6 +120,10 @@ angular.module('data-menu')
         return this._active;
       },
 
+      isTemporal: function () {
+        return this.temporal;
+      },
+
       /**
        * Returns true iff the current layerGroup (i.e. "this") has only layers
        * with format 'Vector'.
