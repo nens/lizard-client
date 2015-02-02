@@ -57,6 +57,7 @@ angular.module('omnibox')
         lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
         lGContent.layerGroupName = DataService.layerGroups[response.layerGroupSlug].name;
         lGContent.order = DataService.layerGroups[response.layerGroupSlug].order;
+        lGContent.temporal = DataService.layerGroups[response.layerGroupSlug].temporal;
         if (UtilService.isSufficientlyRichData(response.data)) {
 
           var sharedKeys = ['aggType', 'format', 'data', 'summary', 'scale',

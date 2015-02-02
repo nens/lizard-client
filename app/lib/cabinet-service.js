@@ -59,7 +59,6 @@ angular.module('lizard-nxt')
     lineTool: "Lijnselectie",
     areaTool: "Scherm selectie",
     resetQuery: "Resultaatvenster sluiten",
-    search: "Zoeken",
     zoomInMap: "Zoom in op de kaart",
     zoomOutMap: "Zoom uit op de kaart",
     zoomInTimeline: "Zoom in op de tijdlijn",

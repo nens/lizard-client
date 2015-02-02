@@ -680,4 +680,48 @@ angular.module('lizard-nxt')
       throw new Error("This aint a valid triple to convert into rgbString: " + rgbTriple);
     }
   };
+
+  /**
+   * @descriptions - Round numbers, but use specified decimalCount for resolution
+   * @param {number} nr- The number to round.
+   * @param {integer/undefined} - The amount of decimals wanted.
+   * @return {float} - The formatted number
+   */
+  this.round = function (nr, decimalCount) {
+    var multiplier = Math.pow(10, decimalCount || 0);
+    return Math.round(nr * multiplier) / multiplier;
+  };
+
+  /**
+   * @description - "%f-in-javascript", you know the drill
+   *
+   * @param {number} x - The input you want to convert
+   * @param {integer} wantedIntCount - The amount of leading zeros
+   * @param {integer} wantedFloatCount - The amount of trailing zeros
+   * @param {boolean} dutchify - Swap seperators: "." <--> ","
+   *
+   * @return {string} - The formatted number, formatted as string
+   */
+  this.formatNumber = function (x, wantedIntCount, wantedFloatCount, dutchify) {
+
+    var i,
+        splitted = x.toString().split("."),
+        prefix = splitted[0],
+        suffix = splitted[1] || "";
+
+    while (prefix.length < wantedIntCount) {
+      prefix = "0" + prefix;
+    }
+
+    while (suffix.length < wantedFloatCount) {
+      suffix += "0";
+    }
+
+    if (dutchify) {
+      prefix.replace(",", ".");
+      suffix.replace(",", ".");
+      return prefix + "," + suffix;
+    }
+    return prefix + "." + suffix;
+  };
 }]);
