@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Kill looking glass button at search box.
+
 - Repair timeline zoom buttons URL and graph updates.
 
 - Add CNAME file for gh-pages subdomain.
