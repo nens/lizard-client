@@ -25,6 +25,14 @@ angular.module('lizard-nxt')
 
     // PUBLIC /////////////////////////////////////////////////////////////////
 
+    /**
+     * @description - Delegates between the two CSV generating functions, one
+     *                for temporal rasters and on for non-temporal rasters.
+     * @param {string} lgSlug - The slug for the layergroup we want to intersect.
+     * @param {object} layer - The layer we want to intersect.
+     * @return {string/number[][]} - The result, which can be formatted to an
+     *                               actual CSV by the ng-csv directive.
+     */
     this.formatLineCSV = function (lgSlug, layer) {
       if (layer.data && layer.data[0][1]) {
         return _dataIsTemporal(lgSlug)
@@ -35,6 +43,12 @@ angular.module('lizard-nxt')
       }
     };
 
+    /*
+     * @description - Get the column names for CSV
+     * @param {string} lgSlug - The slug for the layergroup we want to intersect.
+     * @param {object} layer - The layer we want to intersect.
+     * @return {string[]} - A list with the column names.
+     */
     this.getLineCSVHeaders = function (lgSlug, layer) {
 
       var DEFAULT_HUMAN_READABLE_X = "Afstand [m]",
@@ -68,6 +82,11 @@ angular.module('lizard-nxt')
 
     // PRIVATE ////////////////////////////////////////////////////////////////
 
+    /**
+     * @description - Throws error because insufficient data.
+     * @param {object} layer - The layer we want to intersect.
+     * @return {void}
+     */
     var _throwDataError = function (layer) {
       throw new Error(
         "Cannot format CSV since the specified layer has not enough data. layer =",
@@ -75,6 +94,11 @@ angular.module('lizard-nxt')
       );
     };
 
+    /**
+     * @description - Throws error because incorrect layergroup slug.
+     * @param {object} lgSlug - The slug for the layergroup we want to intersect.
+     * @return {void}
+     */
     var _throwLayerGroupError = function (lgSlug) {
       throw new Error(
         "No layerGroup retrievable from DataService when using the slug:",
@@ -82,6 +106,11 @@ angular.module('lizard-nxt')
       );
     };
 
+    /**
+     * @description - Check whether a layergroup has a temporal component.
+     * @param {string} lgSlug - The slug for the layergroup we want to intersect.
+     * @return {boolean}
+     */
     var _dataIsTemporal = function (lgSlug) {
       var lg = DataService.layerGroups[lgSlug];
       if (lg !== undefined) {
@@ -91,6 +120,11 @@ angular.module('lizard-nxt')
       }
     };
 
+    /**
+     * @description - Get start-/end coordinates for current line.
+     * @return {float[]} - A list with the 4 floats denoting the start-/end of
+     *                     the line.
+     */
     var _getLineCoordinates = function () {
 
       return {
@@ -113,6 +147,11 @@ angular.module('lizard-nxt')
       };
     };
 
+    /**
+     * @description - Make timestamps readable for dutch-only people
+     * @param {integer} epoch - Seconds since 1970-01-01 00:00:00 .
+     * @return {string} - Timestamp in "horlogetijd"
+     */
     var _dutchifyTimestamp = function (epoch) {
 
       var d = new Date(epoch),
@@ -130,6 +169,11 @@ angular.module('lizard-nxt')
       return timePart + " " + datePart;
     };
 
+    /**
+     * @description - format the CSV data (non-temporal raster data)
+     * @param {number[][]} data - The data to be formatted.
+     * @return {number/string[][]} - the formatted data
+     */
     var _formatLineCSVNonTemporal = function (data) {
 
       var i,
@@ -164,6 +208,11 @@ angular.module('lizard-nxt')
       return result;
     };
 
+    /**
+     * @description - format the CSV data (temporal raster data)
+     * @param {number[][]} data - The data to be formatted.
+     * @return {number/string[][]} - the formatted data
+     */
     var _formatLineCSVTemporal = function (data) {
 
       var t,
