@@ -162,6 +162,8 @@ angular.module('lizard-nxt')
   };
 
 
+  // TODO: rename function to more meaningful name
+  // see also comment in line-controller.js
   /**
    * @function createDataForTimeState
    * @memberOf UtilService
