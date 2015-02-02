@@ -1,10 +1,14 @@
 <div id="timeline"
      ng-controller="TimeCtrl as timeline">
   <div class="clock-wrapper noselect">
+
+    <!-- TODO?: use toLocaleString() for datetime dutchification? -->
+
     <div class="clock-time"
          ng-click="timeline.toggleTimelineVisiblity()"
-         ng-bind="timeline.state.at | date: 'dd-MM-yyyy HH:mm'">
+         ng-bind="timeline.state.at | date: timeline.formatDatetime() ">
     </div>
+
   </div>
 
   <div class="timeline-wrapper">
