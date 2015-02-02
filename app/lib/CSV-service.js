@@ -18,7 +18,7 @@ angular.module('lizard-nxt')
     // CONSTANTS
 
     var NO_DATA_MSG = "Geen waarde bekend",
-        TOO_MUCH_DATA_MSG = "De door u getrokken lijn is te lang. Er zijn te veel metingen om in een CSV weer te geven: ",
+        TOO_MUCH_DATA_MSG = "De door u getrokken lijn of het temporeel interval is te lang. Er zijn te veel metingen om in een CSV weer te geven: ",
         COORD_DECIMAL_COUNT = 8,
         DUTCHIFY_TIMESTAMPS = true,
         MAX_ROW_COUNT = 15000;
@@ -36,7 +36,11 @@ angular.module('lizard-nxt')
     this.formatLineCSV = function (lgSlug, layer) {
       if (layer.data && layer.data[0][1]) {
         return _dataIsTemporal(lgSlug)
-          ? _formatLineCSVTemporal(layer.data)
+          // NB! Sometimes a resolved API call uses layer.data for housing it's
+          // raw response, and sometimes it uses layer.temporalData; in the latter
+          // case layer.data is already needed for the Graph svc, where D3 requires
+          // specifically formatted data:
+          ? _formatLineCSVTemporal(layer.temporalData || layer.data)
           : _formatLineCSVNonTemporal(layer.data);
       } else {
         _throwDataError(layer);
@@ -89,8 +93,7 @@ angular.module('lizard-nxt')
      */
     var _throwDataError = function (layer) {
       throw new Error(
-        "Cannot format CSV since the specified layer has not enough data. layer =",
-        layer
+        "Cannot format CSV since the specified layer has not enough data. layer.slug =" + layer.slug
       );
     };
 
@@ -101,8 +104,7 @@ angular.module('lizard-nxt')
      */
     var _throwLayerGroupError = function (lgSlug) {
       throw new Error(
-        "No layerGroup retrievable from DataService when using the slug:",
-        lgSlug
+        "No layerGroup retrievable from DataService when using the slug: " + lgSlug
       );
     };
 
@@ -184,8 +186,6 @@ angular.module('lizard-nxt')
           startLng = coords.startLng,
           endLat = coords.endLat,
           endLng = coords.endLng;
-
-      console.log("data.length =", data.length);
 
       if (data.length > MAX_ROW_COUNT)
         return [[TOO_MUCH_DATA_MSG + data.length]];

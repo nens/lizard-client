@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix download line intersection for temporal raster data.
 
 
 Release 1.2.21 (2015-2-2)
