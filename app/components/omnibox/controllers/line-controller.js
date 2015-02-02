@@ -62,6 +62,15 @@ angular.module('omnibox')
           && response.format === 'Store'
           && (response.scale === 'ratio' || response.scale === 'interval')
           && DataService.layerGroups[response.layerGroupSlug].temporal) {
+          // TODO: rename .temporalData and .data to meaningful names
+          // make sure data closest to the source doesn't change and give
+          // converted / deducted data a converted / deducted name
+          //
+          // eg: temporalData => rawData
+          //     data => parsedGraphData
+          //
+          // see also function createDataForTimeState in util-service.js
+          //
           $scope.box.content[response.layerGroupSlug]
             .layers[response.layerSlug]
             .temporalData = response.data;
