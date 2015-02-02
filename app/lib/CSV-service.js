@@ -18,8 +18,10 @@ angular.module('lizard-nxt')
     // CONSTANTS
 
     var NO_DATA_MSG = "Geen waarde bekend",
+        TOO_MUCH_DATA_MSG = "De door u getrokken lijn is te lang. Er zijn te veel metingen om in een CSV weer te geven: ",
         COORD_DECIMAL_COUNT = 8,
-        DUTCHIFY_TIMESTAMPS = true;
+        DUTCHIFY_TIMESTAMPS = true,
+        MAX_ROW_COUNT = 15000;
 
     // PUBLIC /////////////////////////////////////////////////////////////////
 
@@ -92,18 +94,22 @@ angular.module('lizard-nxt')
     var _getLineCoordinates = function () {
 
       return {
-        startLat: UtilService.formatNumber(
-          State.spatial.points[0].lat, 0, COORD_DECIMAL_COUNT, true
-        ),
-        startLng: UtilService.formatNumber(
-          State.spatial.points[0].lng, 0, COORD_DECIMAL_COUNT, true
-        ),
-        endLat: UtilService.formatNumber(
-          State.spatial.points[1].lat, 0, COORD_DECIMAL_COUNT, true
-        ),
-        endLng: UtilService.formatNumber(
-          State.spatial.points[1].lng, 0, COORD_DECIMAL_COUNT, true
-        )
+
+        startLat: UtilService.formatNumber(UtilService.round(
+          State.spatial.points[0].lat, COORD_DECIMAL_COUNT
+        ), 0, COORD_DECIMAL_COUNT, true),
+
+        startLng: UtilService.formatNumber(UtilService.round(
+          State.spatial.points[0].lng, COORD_DECIMAL_COUNT
+        ), 0, COORD_DECIMAL_COUNT, true),
+
+        endLat: UtilService.formatNumber(UtilService.round(
+          State.spatial.points[1].lat, COORD_DECIMAL_COUNT
+        ), 0, COORD_DECIMAL_COUNT, true),
+
+        endLng: UtilService.formatNumber(UtilService.round(
+          State.spatial.points[1].lng, COORD_DECIMAL_COUNT
+        ), 0, COORD_DECIMAL_COUNT, true)
       };
     };
 
@@ -134,6 +140,11 @@ angular.module('lizard-nxt')
           startLng = coords.startLng,
           endLat = coords.endLat,
           endLng = coords.endLng;
+
+      console.log("data.length =", data.length);
+
+      if (data.length > MAX_ROW_COUNT)
+        return [[TOO_MUCH_DATA_MSG + data.length]];
 
       for (i = 0; i < data.length; i++) {
         datum = data[i];
@@ -170,6 +181,9 @@ angular.module('lizard-nxt')
           // Assumption which holds when measurements (i) are present for full
           // temp.extent and (ii) are equidistant with distance equal to aggWindow:
           durationPerMeasurement = State.temporal.aggWindow;
+
+      if (amountOfTimestamps * data.length > MAX_ROW_COUNT)
+        return [[TOO_MUCH_DATA_MSG + amountOfTimestamps * data.length]];
 
       var roundedStartTime = State.temporal.start - (
         State.temporal.start % durationPerMeasurement
