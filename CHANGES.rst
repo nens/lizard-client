@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
--
+
+- Update formatting time label.
 
 
 Release 1.2.20 (2015-2-2)
