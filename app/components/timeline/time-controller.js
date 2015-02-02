@@ -290,6 +290,6 @@ angular.module('lizard-nxt')
       default:
         throw new Error("Unknown aggWindow: " + this.state.aggWindow);
       }
-    }
+    };
   }
 ]);
