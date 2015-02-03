@@ -20,7 +20,7 @@ angular.module('dashboard')
       angular.element('.dashboard-row').height(rowHeight);
       scope.dashboard.dimensions = {
         height: rowHeight - SELECTORHEIGHT,
-        width: width - 10,
+        width: width - 20,
         padding: {
           top: 25,
           bottom: 60,

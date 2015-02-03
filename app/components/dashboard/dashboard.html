@@ -10,8 +10,10 @@
       </div>
 
 
-      <div ng-if="element.element_type === 'graph' && 
-        !element.data.hasOwnProperty('rain')">
+      <div
+        ng-if="element.element_type === 'graph' && 
+        !element.data.hasOwnProperty('rain')"
+        class="dashboard-widget">
         <div class="timeseries-header-container">
            <i class="fa fa-clock-o"></i>
            <select class="timeseries"
@@ -41,7 +43,9 @@
         </graph>
       </div>
 
-      <div ng-if="element.element_type === 'graph' && 
+      <div 
+        class="dashboard-widget"
+        ng-if="element.element_type === 'graph' && 
         element.data.hasOwnProperty('rain')">
         <graph
           bar-chart

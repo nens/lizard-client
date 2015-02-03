@@ -18,15 +18,32 @@ angular.module('dashboard')
         RasterService,
         TimeseriesService
         ) {
-  
+
+
+  /**
+   * @function
+   * @description fetches dashboard definitions from REST api.
+   * A dashboard is fetched based on the user name.
+   * A dashboard consists of "dashboardelements". These define
+   * what every seperate slot should show to the user.
+   *
+   */
   var getDashboard = function (id) {
     return Restangular.one('api/v1/dashboards', id).get()
       .then(function (response) {
         return response;
-      })
+      });
   };
 
-
+  /**
+   * @function
+   * @description Every dashboardelement has data to show
+   * not every dashboardelement shows the same kind of data. 
+   * So perhaps in the future this should use the data-service
+   * that is also being used for layergroup-service. At the moment
+   * those two things are still very much dependent on each other.
+   *
+   */
   var getData = function (elements) {
 
     elements.forEach(function (el, i) {
