@@ -71,7 +71,7 @@ angular.module('data-menu')
             var buildSuccesCallback = function (data) {
               deferred.notify({
                 color: color,
-                data: data,
+                data: (data && data.data) || data,
                 format: format,
                 layerGroupSlug: lgSlug,
                 layerSlug: slug,

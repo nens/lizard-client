@@ -46,21 +46,30 @@ angular.module('omnibox')
 
       // Draw feedback when all promises resolved
       promise.then(drawFeedback, null, function (response) {
-        if (response && response.data && response.data.id && response.data.entity_name) {
-          getTimeSeriesForObject(
-            response.data.entity_name + '$' + response.data.id
-          );
-        }
-        if (response.layerSlug === 'rain' && response.data !== null) {
-          // this logs incessant errors.
-          if ($scope.box.content[response.layerGroupSlug] === undefined) { return; }
-          if (!$scope.box.content[response.layerGroupSlug].layers.hasOwnProperty(response.layerSlug)) { return; }
+        // console.log("promise resolved, response.data = " + JSON.stringify(response.data));
+        // Promise resolved for waterchain layer...
 
-          // This could probably be different.
-          $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed =
-            !$scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed;
-          $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
+        // console.log("response.data.reqParams.raster_names = " + response.data.reqParams.raster_names);
+
+        if (response && response.data) {
+          // Apparently, we're dealing with the waterchain:
+          if (response.data.id && response.data.entity_name) {
+            getTimeSeriesForObject(
+              response.data.entity_name + '$' + response.data.id
+            );
+          }
+          // If we deal with raster data....
+          if (response.layerSlug === 'rain' && response.data && response.data.data !== null) {
+            if ($scope.box.content[response.layerGroupSlug] === undefined) { return; }
+            if (!$scope.box.content[response.layerGroupSlug].layers.hasOwnProperty(response.layerSlug)) { return; }
+
+            // This could probably be different..
+            $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed =
+              !$scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed;
+            $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
+          }
         }
+
         $scope.box.minimizeCards();
       });
     };
