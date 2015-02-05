@@ -21,7 +21,6 @@ angular.module('data-menu')
   .service('DataService', ['$q', 'dataLayers', 'DataLayerGroup', 'State',
     function ($q, dataLayers, DataLayerGroup, State) {
 
-
       /**
        * @function
        * @memberof app.NxtMapService
