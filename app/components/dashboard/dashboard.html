@@ -1,9 +1,11 @@
 <div class="dashboard-wrapper container-fluid" ng-controller="DashboardCtrl as dashboard">
   <div class="row">
-    <h2>Welkom <% user.firstName %></h2>
+    <h2>Welkom <% user.firstName %> - <% dashboard.name %></h2>
   </div>
   <div class="row dashboard-row">
     <div class="col-md-4" ng-repeat="element in dashboard.dashboardelements | orderBy: dashboard_slot">
+      <h4 ng-if="element.element_type !== 'graph'">
+        <% element.display_name  %></h4>
 
       <div ng-if="element.element_type === 'map'" class="dashboard-widget">
         <map></map>
@@ -11,10 +13,9 @@
 
 
       <div
-        ng-if="element.element_type === 'graph' && 
-        !element.data.hasOwnProperty('rain')"
+        ng-if="element.element_type === 'graph'"
         class="dashboard-widget">
-        <div class="timeseries-header-container">
+        <h4 class="timeseries-header-container">
            <i class="fa fa-clock-o"></i>
            <select class="timeseries"
                   ng-if="element.dashboardData.length > 1"
@@ -26,13 +27,13 @@
                  <% element.selectedTimeseries.name %>
            </span>
 
-        </div>
+        </h4>
 
         <graph
           line
           class="xyGraph"
           type="temporal"
-          temporal="element.temporal_bounds"
+          temporal="element.timestamp_bounds"
           data="element.selectedTimeseries.events"
           ylabel="element.selectedTimeseries.unit"
           xlabel=""
@@ -45,8 +46,7 @@
 
       <div 
         class="dashboard-widget"
-        ng-if="element.element_type === 'graph' && 
-        element.data.hasOwnProperty('rain')">
+        ng-if="element.element_type === 'rain'">
         <graph
           bar-chart
           class="xyGraph"

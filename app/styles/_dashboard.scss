@@ -8,9 +8,11 @@
   height: 70%;
   // interpolation inside mixin expression of variable
   // apparently not working. 132px is navbar and timeline
-  height: calc(100% - 132px);
+  height: 100%;
   width: 100%;
   position: absolute;
+  overflow-y: auto;
+  overflow-x: hidden;
   background-color: $white;
 }
 
@@ -36,4 +38,5 @@
 
 .dashboard-widget > .map {
     width: 97%;
+    height: calc(100% - 35px);
 }

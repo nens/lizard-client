@@ -12,10 +12,12 @@ angular.module('dashboard')
   .service('DashboardService', [
       'Restangular',
       'RasterService',
+      'MapService',
       'TimeseriesService',
       function (
         Restangular,
         RasterService,
+        MapService,
         TimeseriesService
         ) {
 
@@ -29,7 +31,7 @@ angular.module('dashboard')
    *
    */
   var getDashboard = function (id) {
-    return Restangular.one('api/v1/dashboards', id).get()
+    return Restangular.one('api/v1/dashboards', id + '/').get()
       .then(function (response) {
         return response;
       });
@@ -47,7 +49,8 @@ angular.module('dashboard')
   var getData = function (elements) {
 
     elements.forEach(function (el, i) {
-      if (el.data.hasOwnProperty('timeseries')) {
+      if (el.element_type === 'graph') {
+        el.selectedTimeseries = { unit: 'unit'}
         TimeseriesService.getTimeseries(el.data.timeseries,
           el.temporal_bounds)
          .then(function (response) {
@@ -56,9 +59,9 @@ angular.module('dashboard')
               el.selectedTimeseries = el.dashboardData[0];
             }
           });
-      } else if (el.data.hasOwnProperty('rain')) {
+      } else if (el.element_type === 'rain') {
         var options = angular.extend({
-          geom: L.latLng(el.spatial_bounds[0], el.spatial_bounds[1]),
+          geom: L.latLng(el.latitude, el.longitude),
           agg: 'none'
        }, el.temporal_bounds);
         RasterService.getData({slug: 'rain'}, options)
@@ -66,6 +69,9 @@ angular.module('dashboard')
             el.temporal_bounds.aggWindow = 300000;
             el.selectedTimeseries = response;
           });
+      } else if (el.element_type === 'map') {
+        MapService.setView(L.latLng(el.latitude, el.longitude),
+              el.spatial_zoom);
       }
 
     });

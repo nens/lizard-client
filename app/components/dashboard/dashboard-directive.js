@@ -10,7 +10,8 @@ angular.module('dashboard')
     var resizePane = function () {
       var PADDINGTOP = 70,
           SELECTORHEIGHT = 50,
-          ROWMARGIN = 10;
+          ROWMARGIN = 10,
+          TITLEHEIGHT = 35;
 
       var height = angular.element('body').height();
       // if smaller screen below each other in stead of next to
@@ -19,8 +20,8 @@ angular.module('dashboard')
       var rowHeight = (height - PADDINGTOP) / 2 - ROWMARGIN;
       angular.element('.dashboard-row').height(rowHeight);
       scope.dashboard.dimensions = {
-        height: rowHeight - SELECTORHEIGHT,
-        width: width - 20,
+        height: rowHeight - SELECTORHEIGHT - TITLEHEIGHT,
+        width: width - 120,
         padding: {
           top: 25,
           bottom: 60,
