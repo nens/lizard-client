@@ -124,6 +124,10 @@ angular.module('data-menu')
         return this.temporal;
       },
 
+      getTemporalResolution: function () {
+        return this.temporalResolution;
+      },
+
       /**
        * Returns true iff the current layerGroup (i.e. "this") has only layers
        * with format 'Vector'.
