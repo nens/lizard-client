@@ -6,6 +6,8 @@ Unreleased (1.2.7) (XXXX-XX-XX)
 
 - Changed handling of raster API responses to process metadata.
 
+- Update installation documentation.
+
 
 Release 1.2.22 (2015-2-2)
 ---------------------
