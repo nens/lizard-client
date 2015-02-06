@@ -4,8 +4,8 @@
   </div>
   <div class="row dashboard-row">
     <div class="col-md-4" ng-repeat="element in dashboard.dashboardelements | orderBy: dashboard_slot">
-      <h4 ng-if="element.element_type !== 'graph'">
-        <% element.display_name  %></h4>
+      <h5 class="widget-title" ng-if="element.element_type !== 'graph'">
+        <% element.display_name  %></h5>
 
       <div ng-if="element.element_type === 'map'" class="dashboard-widget">
         <map></map>
@@ -15,7 +15,7 @@
       <div
         ng-if="element.element_type === 'graph'"
         class="dashboard-widget">
-        <h4 class="timeseries-header-container">
+        <h5 class="timeseries-header-container widget-title`">
            <i class="fa fa-clock-o"></i>
            <select class="timeseries"
                   ng-if="element.dashboardData.length > 1"
@@ -27,7 +27,7 @@
                  <% element.selectedTimeseries.name %>
            </span>
 
-        </h4>
+        </h5>
 
         <graph
           line

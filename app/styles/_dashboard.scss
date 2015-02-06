@@ -20,6 +20,10 @@
     margin-left: 15px;
 }
 
+h5.widget-title {
+    height: 25px;
+}
+
 .dashboard-table {
     height: 100%;
     max-height: 100%;
@@ -37,6 +41,6 @@
 }
 
 .dashboard-widget > .map {
-    width: 97%;
-    height: calc(100% - 35px);
+    width: calc(100% - 30px); // minus col-md padding
+    height: calc(100% - 55px); // minus title and margin
 }
