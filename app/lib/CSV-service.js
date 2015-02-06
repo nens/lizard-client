@@ -40,7 +40,7 @@ angular.module('lizard-nxt')
           // raw response, and sometimes it uses layer.temporalData; in the latter
           // case layer.data is already needed for the Graph svc, where D3 requires
           // specifically formatted data:
-          ? _formatLineCSVTemporal(layer.temporalData || layer.data)
+          ? _formatLineCSVTemporal(layer.temporalData || layer.data, lgSlug)
           : _formatLineCSVNonTemporal(layer.data);
       } else {
         _throwDataError(layer);
@@ -117,6 +117,15 @@ angular.module('lizard-nxt')
       var lg = DataService.layerGroups[lgSlug];
       if (lg !== undefined) {
         return lg.isTemporal();
+      } else {
+        _throwLayerGroupError(lgSlug);
+      }
+    };
+
+    var _getStoreResolution = function (lgSlug) {
+      var lg = DataService.layerGroups[lgSlug];
+      if (lg !== undefined && lg.temporalResolution) {
+        return lg.temporalResolution;
       } else {
         _throwLayerGroupError(lgSlug);
       }
@@ -213,7 +222,7 @@ angular.module('lizard-nxt')
      * @param {number[][]} data - The data to be formatted.
      * @return {number/string[][]} - the formatted data
      */
-    var _formatLineCSVTemporal = function (data) {
+    var _formatLineCSVTemporal = function (data, lgSlug) {
 
       var t,
           i,
@@ -229,7 +238,7 @@ angular.module('lizard-nxt')
           tempExtentInterval = State.temporal.end - State.temporal.start,
           // Assumption which holds when measurements (i) are present for full
           // temp.extent and (ii) are equidistant with distance equal to aggWindow:
-          durationPerMeasurement = State.temporal.aggWindow;
+          durationPerMeasurement = _getStoreResolution(lgSlug);
 
       if (amountOfTimestamps * data.length > MAX_ROW_COUNT)
         return [[TOO_MUCH_DATA_MSG + amountOfTimestamps * data.length]];
