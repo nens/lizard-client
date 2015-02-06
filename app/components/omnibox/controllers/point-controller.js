@@ -46,10 +46,6 @@ angular.module('omnibox')
 
       // Draw feedback when all promises resolved
       promise.then(drawFeedback, null, function (response) {
-        // console.log("promise resolved, response.data = " + JSON.stringify(response.data));
-        // Promise resolved for waterchain layer...
-
-        // console.log("response.data.reqParams.raster_names = " + response.data.reqParams.raster_names);
 
         if (response && response.data) {
           // Apparently, we're dealing with the waterchain:
