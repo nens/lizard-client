@@ -29,28 +29,15 @@ angular.module('scenarios')
     };
 
     $scope.preview = function (scenario) {
-      angular.forEach(DataService.layerGroups, function (lg, slug) {
-        if (slug !== 'elevation'
-          && !lg.baselayer) {
-          DataService.removeLayerGroup(lg);
-        }
-      });
+      // angular.forEach(DataService.layerGroups, function (lg, slug) {
+      //   if (slug !== 'elevation'
+      //     && !lg.baselayer) {
+      //     DataService.removeLayerGroup(lg);
+      //   }
+      // });
       angular.forEach(scenario.result_set, function (result) {
-        if (result.layer) {
-          var lgConfig = {
-            'name': scenario.name + ': ' + result.result_type.name,
-            'slug': scenario.name + '_'  + result.result_type.code,
-            "active": true,
-            "temporal": false,
-            "temporal_resolution": 0,
-            "opacity": 1.0,
-            "order": 0,
-            "baselayer": false,
-            "layers": [
-              result.layer
-            ]
-          };
-          var lg = DataService.createLayerGroup(lgConfig);
+        if (result.layer_group) {
+          var lg = DataService.createLayerGroup(result.layer_group);
           DataService.toggleLayerGroup(lg);
         }
       });

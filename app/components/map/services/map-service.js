@@ -243,7 +243,6 @@ angular.module('map')
       },
 
       initializeLayer: function (lg) {
-        console.log('initialize lg');
         sortLayers(lg.mapLayers);
         angular.forEach(lg.mapLayers, function (layer, lSlug) {
           if (layer.tiled) {
