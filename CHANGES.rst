@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Change CNAME for gh-pages.
+
 - Update installation documentation.
 
 
