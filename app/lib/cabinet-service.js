@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('lizard-nxt')
-  .service("CabinetService", ["$q", "Restangular",
-  function ($q, Restangular) {
+  .service("CabinetService", ["$q", "Restangular", "backendDomain",
+  function ($q, Restangular, backendDomain) {
 
   var termSearchResource,
       bboxSearchResource,
@@ -16,7 +16,7 @@ angular.module('lizard-nxt')
 
   // for the wizard demo's
   if (window.location.host === 'nens.github.io') {
-    Restangular.setBaseUrl('https://nxt.lizard.net/');
+    Restangular.setBaseUrl(backendDomain);
   }
   Restangular.setRequestSuffix('?page_size=0');
   geocodeResource = Restangular.one('api/v1/geocode/');
@@ -27,7 +27,8 @@ angular.module('lizard-nxt')
   /**
    * Raster resource, last stop to the server
    * @param  {promise} q             a promise to cancel previous requests
-   *                                 if none is given a local 'abortGet' is used.
+   *                                 if none is given a local 'abortGet' is
+   *                                 used.
    *                                 At the next request without a promise, the
    *                                 abortGet is cancelled.
    * @return {RestangularResource}  a gettable resource
@@ -67,7 +68,7 @@ angular.module('lizard-nxt')
     startAnim: "Start de animatie",
     stopAnim: "Stop de animatie",
     timelineStart: "Het begin van de huidige tijdlijn",
-    timelineAt:"Het 'nu' op de tijdlijn",
+    timelineAt: "Het 'nu' op de tijdlijn",
     timelineEnd: "Het einde van de huidige tijdlijn"
   };
 
