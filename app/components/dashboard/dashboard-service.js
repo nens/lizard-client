@@ -33,7 +33,7 @@ angular.module('dashboard')
    *
    */
   var getDashboard = function (id) {
-    return Restangular.one('api/v1/dashboards', id + '/').get()
+    return Restangular.one('api/v1/dashboards/').getList()
       .then(function (response) {
         return response;
       });

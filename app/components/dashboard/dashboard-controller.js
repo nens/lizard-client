@@ -10,9 +10,9 @@ angular.module('dashboard')
 
     var that = this;
  
-    DashboardService.getDashboard(1) 
+    DashboardService.getDashboard()
       .then(function (dashboard) {
-        angular.extend(that, dashboard);
+        angular.extend(that, dashboard[0]);
           DashboardService.getData(that.dashboardelements);
         });
     
