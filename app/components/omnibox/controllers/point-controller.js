@@ -46,7 +46,6 @@ angular.module('omnibox')
 
       // Draw feedback when all promises resolved
       promise.then(drawFeedback, null, function (response) {
-
         if (response && response.data) {
           // Apparently, we're dealing with the waterchain:
           if (response.data.id && response.data.entity_name) {
