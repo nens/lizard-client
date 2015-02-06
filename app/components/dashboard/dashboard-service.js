@@ -13,11 +13,13 @@ angular.module('dashboard')
       'Restangular',
       'RasterService',
       'MapService',
+      'State',
       'TimeseriesService',
       function (
         Restangular,
         RasterService,
         MapService,
+        State,
         TimeseriesService
         ) {
 
@@ -70,6 +72,7 @@ angular.module('dashboard')
             el.selectedTimeseries = response;
           });
       } else if (el.element_type === 'map') {
+        State.layerGroups.active = el.data.map;
         MapService.setView(L.latLng(el.latitude, el.longitude),
               el.spatial_zoom);
       }
