@@ -41,24 +41,7 @@ Create dist files (optional) and templates (compulsory):
 
 Point you browser to index.html for a client demo
 
-### Using mr. developer
-
-Change dir to lizard nxt and run:
-
-    bin/develop co lizard-client
-    bin/develop up lizard-client
-
-Then cd to src/lizard-client and install Node deps using:
-
-    npm install
-  
-Install vendor files:
-
-    bower install
-
-Create dist files (optional) and templates (compulsory):
-
-    grunt build
+### Django backend
 
 Django serves a REST API which also bootstraps the data for the client. Tiles and stuff also come from Lizard-NXT django site:
     

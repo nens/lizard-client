@@ -6,6 +6,8 @@ Unreleased (1.2.7) (XXXX-XX-XX)
 
 - Make backend domain constant in lizard-nxt module.
 
+- Update installation documentation.
+
 
 Release 1.2.22 (2015-2-2)
 ---------------------
