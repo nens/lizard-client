@@ -21,6 +21,23 @@ angular.module('data-menu')
   .service('DataService', ['$q', 'dataLayers', 'DataLayerGroup', 'State',
     function ($q, dataLayers, DataLayerGroup, State) {
 
+<<<<<<< HEAD
+      /**
+       * @function
+       * @memberof app.NxtMapService
+       * @param  {object} nonLeafLayer object from database
+       * @description Throw in a layer as served from the backend
+       */
+      var createLayerGroups = function (serverSideLayerGroups) {
+        var layerGroups = {};
+        angular.forEach(serverSideLayerGroups, function (sslg) {
+          layerGroups[sslg.slug] = new DataLayerGroup(sslg);
+        });
+        return layerGroups;
+      };
+
+=======
+>>>>>>> 65191d704e04409a7e5f6ef5bef497ad9f07ca96
       // Attributes ////////////////////////////////////////////////////////////
 
       // Event callbacks are used to performa actions on the map when the
