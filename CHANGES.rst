@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.2.23 (2015-2-9)
+---------------------
 
 - Changed handling of raster API responses to process metadata.
 
