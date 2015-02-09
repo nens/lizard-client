@@ -18,6 +18,11 @@ Release 1.2.23 (2015-2-9)
 - Update installation documentation.
 
 
+Release 1.2.24 (2015-2-9)
+---------------------
+- Fixed bug with bar size of events in dashboard graph.
+
+
 Release 1.2.22 (2015-2-2)
 ---------------------
 
