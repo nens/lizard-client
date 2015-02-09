@@ -10,6 +10,10 @@ angular.module('omnibox')
 
   var link = function (scope, element, attrs) {
 
+    scope.zoomIn = MapService.zoomIn;
+    scope.zoomOut = MapService.zoomOut;
+
+
     /**
      * @description event handler for key presses.
      * checks if enter is pressed, does search.
