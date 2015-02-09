@@ -18,3 +18,10 @@ angular.module('global-state')
  */
 angular.module('global-state')
   .constant('dataBounds', window.data_bounds);
+
+angular.module('global-state')
+  .run(function (dataLayers, dataBounds) {
+    if (!dataLayers) {
+      throw new Error('No lizard-bs.js or no data layers in lizard-bs.js');
+    }
+  });
