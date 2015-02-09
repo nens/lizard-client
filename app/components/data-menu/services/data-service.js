@@ -21,6 +21,7 @@ angular.module('data-menu')
   .service('DataService', ['$q', 'dataLayers', 'DataLayerGroup', 'State',
     function ($q, dataLayers, DataLayerGroup, State) {
 
+<<<<<<< HEAD
       /**
        * @function
        * @memberof app.NxtMapService
@@ -35,6 +36,8 @@ angular.module('data-menu')
         return layerGroups;
       };
 
+=======
+>>>>>>> 65191d704e04409a7e5f6ef5bef497ad9f07ca96
       // Attributes ////////////////////////////////////////////////////////////
 
       // Event callbacks are used to performa actions on the map when the
@@ -46,8 +49,33 @@ angular.module('data-menu')
         }
       });
 
-      var layerGroups = createLayerGroups(dataLayers);
-      this.layerGroups = layerGroups;
+
+      /**
+       * Creates a new layerGroup and adds to the layerGroups
+       * @param  {object} lgConfig config of layergroup
+       * @return {layerGroup instance}
+       */
+      this.createLayerGroup = function (lgConfig) {
+        return this.layerGroups[lgConfig.slug] = new DataLayerGroup(lgConfig);
+      },
+
+      /**
+       * @function
+       * @memberof app.NxtMapService
+       * @param  {object} nonLeafLayers object from database
+       * @description Throw in layers as served from the backend
+       */
+      this._createLayerGroups = function (serverSideLayerGroups) {
+        var layerGroups = {};
+        angular.forEach(serverSideLayerGroups, function (sslg) {
+          this.createLayerGroup(sslg);
+        }, this);
+        return this.layerGroups;
+      };
+
+      this.layerGroups = {};
+      var layerGroups = this._createLayerGroups(dataLayers);
+
       this.baselayerGroups = _.filter(layerGroups, function (lgValue, lgKey) {
         return lgValue.baselayer;
       });
@@ -110,6 +138,23 @@ angular.module('data-menu')
       };
 
       /**
+       * Adds the provided layerGroups to the layerGroups
+       * @param {layerGroup instance}
+       */
+      this.addLayergroup = function (layerGroup) {
+        return this.layerGroups[layerGroup.slug] = layerGroup;
+      },
+
+      /**
+       * Removes the provided layerGroups from nxt
+       * @param {layerGroup instance}
+       */
+      this.removeLayerGroup = function (layerGroup) {
+        delete this.layerGroups[layerGroup.slug];
+        return this.layerGroups;
+      },
+
+      /**
        * Gets data from all layergroups.
        *
        * @param  {object} options
@@ -162,7 +207,7 @@ angular.module('data-menu')
             this.toggleLayerGroup(layerGroup);
           }
         }, this);
-      };
+      }
 
     }
   ]);

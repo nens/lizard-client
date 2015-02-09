@@ -6,6 +6,10 @@ Unreleased (1.2.7) (XXXX-XX-XX)
 
 - Changed handling of raster API responses to process metadata.
 
+- Make backend domain constant in lizard-nxt module.
+
+- Change CNAME for gh-pages.
+
 - Update installation documentation.
 
 

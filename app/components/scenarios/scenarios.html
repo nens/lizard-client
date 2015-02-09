@@ -7,7 +7,7 @@
       </div>
    </div>
     <div class="row">
-      <div class="col-md-10 scenarios-inner">
+      <div class="col-md-11 scenarios-inner">
 
         <input type="text" class="form-control" ng-model="search" placeholder="Zoek">
         <table class="table table-hover scenarios-table">
@@ -18,15 +18,15 @@
             <th>Resultaten</th>
           </thead>
           <tbody if="scenarios.length > 0">
-            <tr ng-repeat="scenario in scenarios | filter: search" 
+            <tr ng-repeat="scenario in scenarios | filter: search"
               ng-class="{'selected-scenario': selectedScenario === scenario}">
               <td ng-click="select(scenario)" ><i class="fa clickable"
                   ng-class="{'fa-chevron-right': selectedScenario != scenario,
                              'fa-chevron-down': selectedScenario === scenario}"></i></td>
-              <td ng-click="select(scenario)" class="clickable" ><% scenario.name %></td>
+              <td ng-click="select(scenario)" class="clickable" ><% scenario.name %> <a ng-click="preview(scenario)"> (preview)</a></td>
               <td ng-click="select(scenario)" class="clickable" ><% scenario.created | date: 'MMM d, y HH:mm:ss a' %><td>
               <table class="table table-condensed result-table"
-                ng-if="selectedScenario === 
+                ng-if="selectedScenario ===
                     scenario && scenario.result_set.length > 0">
                 <tr ng-repeat="result in scenario.result_set">
                   <td><% result.result_type.name %></td>
@@ -39,10 +39,10 @@
               </span>
             </tr>
           </tbody>
-        
+
         </table>
-        
-      
+
+
       </div>
 
     </div>
@@ -50,4 +50,4 @@
   </div>
 </div>
 
- 
+
