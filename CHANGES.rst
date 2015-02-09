@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.2.24 (2015-2-9)
+---------------------
 - Fixed bug with bar size of events in dashboard graph.
 
 
