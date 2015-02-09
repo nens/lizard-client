@@ -30,5 +30,4 @@ angular.module('global-state')
       '</div>';
       throw new Error('No lizard-bs.js or no data layers in lizard-bs.js');
     }
-
   });
