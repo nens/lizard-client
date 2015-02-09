@@ -73,6 +73,16 @@ Doing a release for your package is easy. There is a grunt task to tag and push 
 
     grunt release
 
+Workflow::
+
+    git pull origin
+    git checkout staging
+    git merge integration
+    grunt release
+    git checkout integration 
+    git merge staging
+
+
 **NOTE:** grunt release expects:
 
 * There is a CHANGES.rst with `Unreleased ()` as a header.
