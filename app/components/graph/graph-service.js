@@ -534,7 +534,7 @@ angular.module('lizard-nxt')
     var firstDatum = data[0],
         lastDatum = data[data.length - 1];
     return Math.floor(
-      (scale(lastDatum[0]) - scale(firstDatum[0])) / (data.length - 1)
+      (scale(lastDatum[keys.x]) - scale(firstDatum[keys.x])) / (data.length - 1)
     );
   };
 
