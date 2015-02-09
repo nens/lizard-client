@@ -73,8 +73,12 @@ angular.module('dashboard')
           });
       } else if (el.element_type === 'map') {
         State.layerGroups.active = el.data.map;
-        MapService.setView(L.latLng(el.latitude, el.longitude),
-              el.spatial_zoom);
+        State.spatial.bounds(
+            L.latLngBounds(
+              L.latLng(el.latitude, el.longitude),
+              L.latLng(el.latitude, el.longitude))
+            );
+        State.spatial.zoom = el.spatial_zoom;
       }
 
     });
