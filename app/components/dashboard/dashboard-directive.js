@@ -4,7 +4,7 @@
  */
 angular.module('dashboard')
   .directive('dashboard', function () {
-  
+
   var link = function (scope, element, attr) {
 
     var resizePane = function () {
@@ -28,16 +28,16 @@ angular.module('dashboard')
           left: 50,
           right: 10
         }
-      };      
+      };
     };
 
     scope.$on('$destroy', function () {
-      window.removeEventListener('resize', resizePane); 
+      window.removeEventListener('resize', resizePane);
     });
 
     window.addEventListener('resize', resizePane);
     resizePane();
-  
+
   };
 
 

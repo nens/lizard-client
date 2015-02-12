@@ -69,7 +69,7 @@ angular.module('dashboard')
             RasterService.getData({slug: 'rain'}, options)
               .then(function (response) {
                 el.temporal_bounds.aggWindow = 300000;
-                el.selectedTimeseries = response;
+                el.selectedTimeseries = response.data;
               });
           } else if (el.element_type === 'map') {
             State.layerGroups.active = el.data.map;
