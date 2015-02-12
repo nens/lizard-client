@@ -99,11 +99,8 @@ angular.module('lizard-nxt')
       );
 
       if (mapView) {
-        console.log(mapView);
         var view = UrlState.parseMapView(mapView);
-        console.log(view);
         if (view) {
-          console.log('setting view');
           State.spatial.view = {
             lat: view.latLng[0],
             lng: view.latLng[1],
