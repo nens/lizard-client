@@ -58,8 +58,8 @@ angular.module('map')
       var _moveEnded = function (e, map) {
         State.spatial.mapMoving = false;
         mapSetsBounds = true;
-        State.spatial.bounds = map.getBounds();
-        State.spatial.zoom = map.getZoom();
+        State.spatial.bounds = MapService.getBounds();
+        State.spatial.view = MapService.getView();
       };
 
       MapService.initializeMap(element[0], {
@@ -74,11 +74,24 @@ angular.module('map')
         });
 
       /**
+       * Watch state spatial view and update the whole shebang.
+       */
+      scope.$watch(State.toString('spatial.view'), function (n, o) {
+        if (n !== o && !mapSetsBounds) {
+          MapService.setView(State.spatial.view);
+          State.spatial.bounds = MapService.getBounds();
+        } else {
+          mapSetsBounds = false;
+        }
+      });
+
+      /**
        * Watch bounds of state and update map bounds when state is changed.
        */
       scope.$watch(State.toString('spatial.bounds'), function (n, o) {
-        if (!mapSetsBounds) {
+        if (n !== o && !mapSetsBounds) {
           MapService.fitBounds(State.spatial.bounds);
+          State.spatial.view = MapService.getView();
         } else {
           mapSetsBounds = false;
         }

@@ -91,7 +91,7 @@ angular.module('global-state')
       here: {},
       points: [], // History of here for drawing and creating line and polygons
       bounds: {},
-      zoom: {},
+      view: {}, // { lat: <int>, lng:<int>, zoom:<int> }
       userHere: {}, // Geographical location of the users mouse only set by
                     // map-directive when box type is 'line'
       mapMoving: false
