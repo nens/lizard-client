@@ -53,6 +53,17 @@
 
 }
 
+.navbar-inverse .navbar-nav > .open > a,
+.navbar-inverse .navbar-nav > .open > a:hover,
+.navbar-inverse .navbar-nav > .open > a:focus,
+.navbar-inverse .navbar-nav > .open > a:active {
+    background: $turquoise;
+}
+
+.dropdown-menu {
+    z-index: 100;
+}
+
 .navbar-header {
     width: $width6;
 }

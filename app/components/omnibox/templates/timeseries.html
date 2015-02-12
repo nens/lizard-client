@@ -5,14 +5,14 @@
      <i class="fa fa-clock-o">
      </i>
      <select class="timeseries"
-            ng-if="$parent.$parent.box.content.timeseries.data.length > 1"
+            ng-if="timeseries.data.length > 1"
             ng-class="{hidden: !fullDetails}"
-            ng-model="$parent.$parent.box.content.timeseries.selectedTimeseries"
-            ng-options="series.name for series in $parent.$parent.box.content.timeseries.data | rmSingleDatumTimeseries">
+            ng-model="timeseries.selectedTimeseries"
+            ng-options="series.name for series in timeseries.data | rmSingleDatumTimeseries">
      </select>
      <span class="card-title-text placeholder"
-           ng-if="$parent.$parent.box.content.timeseries.data.length === 1 && fullDetails">
-           <% $parent.$parent.box.content.timeseries.selectedTimeseries.name %>
+           ng-if="timeseries.data.length === 1 && fullDetails">
+           <% timeseries.selectedTimeseries.name %>
      </span>
      <span class="card-title-text placeholder" ng-class="{hidden: fullDetails}" >Tijdreeksen</span>
      <full-details></full-details>
@@ -26,9 +26,9 @@
      <graph
         bar-chart
         type="temporal"
-        temporal="$parent.omnibox.state.temporal"
-        data="$parent.box.content.timeseries.selectedTimeseries.events"
-        ylabel="$parent.box.content.timeseries.selectedTimeseries.unit"
+        temporal="timeState"
+        data="timeseries.selectedTimeseries.events"
+        ylabel="timeseries.selectedTimeseries.unit"
         xlabel=""
         keys="{x: 0, y: 1}"
         now="$parent.timeState.at">
@@ -41,12 +41,13 @@
     <graph
       line
       type="temporal"
-      temporal="$parent.omnibox.state.temporal"
-      data="$parent.box.content.timeseries.selectedTimeseries.events"
-      ylabel="$parent.box.content.timeseries.selectedTimeseries.unit"
+      mouseLoc="box.mouseLoc"
+      temporal="timeState"
+      data="timeseries.selectedTimeseries.events"
+      ylabel="timeseries.selectedTimeseries.unit"
       xlabel=""
       keys="{x: 0, y: 1}"
-      now="$parent.timeState.at">
+      now="timeState.at">
     </graph>
   </div>
 </div>
