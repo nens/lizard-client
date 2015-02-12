@@ -24,6 +24,22 @@ angular.module('map')
 
       var mapSetsBounds = false,
           mapSetsView = false;
+
+      /**
+       * Init is called when directive is compiled and listeners are attached
+       * Alligns state with map.
+       */
+      var init = function () {
+        if (Object.keys(State.spatial.view).length !== 0) {
+          mapSetsView = true;
+          MapService.setView(State.spatial.view);
+        }
+        else if (Object.keys(State.spatial.bounds).length !== 0) {
+          mapSetsBounds = true;
+          MapService.fitBounds(State.spatial.bounds);
+        }
+      };
+
        /**
         * @function
         * @memberOf app.map
@@ -135,20 +151,22 @@ angular.module('map')
         if (n === o) { return true; }
         var selector;
         switch (n) {
-          case "point":
-            selector = "";
-            break;
-          case "line":
-            selector = "#map * {cursor: crosshair;}";
-            break;
-          case "area":
-            selector = "#map * {cursor: -webkit-grab; cursor: -moz-grab; cursor: grab; cursor: hand;}";
-            break;
-          default:
-            return;
+        case "point":
+          selector = "";
+          break;
+        case "line":
+          selector = "#map * {cursor: crosshair;}";
+          break;
+        case "area":
+          selector = "#map * {cursor: -webkit-grab; cursor: -moz-grab; cursor: grab; cursor: hand;}";
+          break;
+        default:
+          return;
         }
         UtilService.addNewStyle(selector);
       });
+
+      init();
 
     };
 

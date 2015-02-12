@@ -5,6 +5,12 @@ Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 - Fix bug with bar size when event.
 
+- Renamed current dashboard to 'time'.
+
+- Add new 6-widget-dashboard.
+
+- Add view to state with two-way binding to map and url.
+
 
 Release 1.2.23 (2015-2-9)
 ---------------------

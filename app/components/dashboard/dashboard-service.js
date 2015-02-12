@@ -73,11 +73,11 @@ angular.module('dashboard')
               });
           } else if (el.element_type === 'map') {
             State.layerGroups.active = el.data.map;
-            State.spatial.bounds = L.latLngBounds(
-              L.latLng(el.latitude, el.longitude),
-              L.latLng(el.latitude, el.longitude)
-            );
-            State.spatial.zoom = el.spatial_zoom;
+            State.spatial.view = {
+              lat: el.latitude,
+              lng: el.longitude,
+              zoom: el.spatial_zoom
+            };
           }
 
         });
