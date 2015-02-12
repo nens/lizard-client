@@ -22,7 +22,8 @@ angular.module('map')
 
     var link = function (scope, element, attrs) {
 
-      var mapSetsBounds = false;
+      var mapSetsBounds = false,
+          mapSetsView = false;
        /**
         * @function
         * @memberOf app.map
@@ -58,6 +59,7 @@ angular.module('map')
       var _moveEnded = function (e, map) {
         State.spatial.mapMoving = false;
         mapSetsBounds = true;
+        mapSetsView = true;
         State.spatial.bounds = MapService.getBounds();
         State.spatial.view = MapService.getView();
       };
@@ -78,10 +80,11 @@ angular.module('map')
        */
       scope.$watch(State.toString('spatial.view'), function (n, o) {
         if (n !== o && !mapSetsBounds) {
+          console.log('setting vie', State.spatial.view);
           MapService.setView(State.spatial.view);
           State.spatial.bounds = MapService.getBounds();
         } else {
-          mapSetsBounds = false;
+          mapSetsView = false;
         }
       });
 
@@ -90,6 +93,7 @@ angular.module('map')
        */
       scope.$watch(State.toString('spatial.bounds'), function (n, o) {
         if (n !== o && !mapSetsBounds) {
+          console.log('setting bounds', State.spatial.bounds);
           MapService.fitBounds(State.spatial.bounds);
           State.spatial.view = MapService.getView();
         } else {
