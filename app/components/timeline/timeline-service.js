@@ -314,7 +314,7 @@ angular.module('lizard-nxt')
         /**
          * candidate to replace with Dirk's null checker function.
          */
-        if (data === 'null') {
+        if (data.data === 'null') {
           return false;
         }
 

@@ -70,6 +70,10 @@ angular.module('data-menu')
 
       this.instantiateLayers(layerGroup.layers, layerGroup.temporal_resolution);
 
+      // Let the map-service know there is a new layergroup
+      if (this.callbackFns) {
+        this.callbackFns.onCreateLayerGroup(this);
+      }
     }
 
     LayerGroup.prototype = {
@@ -120,14 +124,23 @@ angular.module('data-menu')
         return this._active;
       },
 
+      isTemporal: function () {
+        return this.temporal;
+      },
+
       /**
        * Returns true iff the current layerGroup (i.e. "this") has only layers
        * with format 'Vector'.
        */
       isEventLayerGroup: function () {
-        return this.mapLayers.every(function (mapLayer) {
-          return mapLayer.format === 'Vector';
-        });
+        if (this.mapLayers.length > 0) {
+          return this.mapLayers.every(function (mapLayer) {
+            return mapLayer.format === 'Vector';
+          });
+        } else {
+          return false;
+        }
+
       },
 
       getColorForEventLayerGroup: function () {

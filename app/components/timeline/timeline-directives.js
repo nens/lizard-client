@@ -311,7 +311,9 @@ angular.module('lizard-nxt')
           }
         }
       ).then(function (response) {
-        timeline.drawBars(response);
+        if (response && response !== 'null') {
+          timeline.drawBars(response.data);
+        }
       });
     };
 

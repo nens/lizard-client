@@ -16,6 +16,7 @@
 angular.module('lizard-nxt')
 .controller('TimeCtrl', [
 
+  "$rootScope",
   "$scope",
   "$q",
   'UtilService',
@@ -24,6 +25,7 @@ angular.module('lizard-nxt')
 
   function (
 
+    $rootScope,
     $scope,
     $q,
     UtilService,
@@ -242,7 +244,7 @@ angular.module('lizard-nxt')
       State.temporal.at = UtilService.roundTimestamp(now, State.temporal.aggWindow, false);
 
       // Without this $broadcast, timeline will not sync to State.temporal:
-      $scope.$broadcast("$timelineZoomSuccess");
+      $rootScope.$broadcast("$timelineZoomSuccess");
     };
 
     /**
@@ -272,8 +274,22 @@ angular.module('lizard-nxt')
       State.temporal.resolution = newResolution;
 
       // Without this $broadcast, timeline will not sync to State.temporal:
-      $scope.$broadcast("$timelineZoomSuccess");
+      $rootScope.$broadcast("$timelineZoomSuccess");
     };
 
+    this.formatDatetime = function () {
+      switch (this.state.aggWindow) {
+      case 300000:
+        return 'yyyy MM dd HH:mm';
+      case 3600000:
+        return 'yyyy MM dd HH:mm';
+      case 86400000:
+        return 'yyyy MM dd';
+      case 2635200000:
+        return 'yyyy MM';
+      default:
+        throw new Error("Unknown aggWindow: " + this.state.aggWindow);
+      }
+    };
   }
 ]);

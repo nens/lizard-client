@@ -80,3 +80,11 @@ angular.module('lizard-nxt')
  */
 angular.module('lizard-nxt')
   .constant('versioning', window.versioning);
+
+/**
+ * @name production backend
+ * @memberOf app
+ * @description subdomain of production backend.
+ */
+angular.module('lizard-nxt')
+  .constant('backendDomain', 'https://demo.lizard.net/');

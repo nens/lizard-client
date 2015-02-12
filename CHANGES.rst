@@ -3,24 +3,78 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
+- Fix bug with bar size when event.
+
+
+Release 1.2.23 (2015-2-9)
+---------------------
+
+- Changed handling of raster API responses to process metadata.
+
+- Make backend domain constant in lizard-nxt module.
+
+- Change CNAME for gh-pages.
+
+- Update installation documentation.
+
+
+Release 1.2.24 (2015-2-9)
+---------------------
+- Fixed bug with bar size of events in dashboard graph.
+
+
+Release 1.2.22 (2015-2-2)
+---------------------
+
+- Fix download line intersection for temporal raster data.
+
+
+Release 1.2.21 (2015-2-2)
+---------------------
+
+- Update formatting time label.
+
+
+Release 1.2.20 (2015-2-2)
+---------------------
+
+- Time label updates precision based on aggWindow.
+
+- Restricted max. amount of rows per CSV.
+
+- Added generic CSV export service (currently only for line-mode).
+
+- Kill looking glass button at search box.
+
+- Repair timeline zoom buttons URL and graph updates.
+
+- Add CNAME file for gh-pages subdomain.
+
+- Update grunt sandbox task to copy CNAME to dist folder.
+
+- Add temporal to box.content and draw graph for temporal point data.
+
 - No redraw of temporal raster when nothing relevant changed.
 
 - Use current spatial bounds for animation.
 
-- Make wms request with EPSG3857 for image overlays and tiled wms.
+- Make wms request with EPSG:3857 for image overlays and tiled wms.
 
 
 Release 1.2.19 (2015-1-27)
 ---------------------
+
 - Fix syncTime.
 
 Release 1.2.18 (2015-1-27)
 ---------------------
+
 - Fix bug for rain layer.
 
 
 Release 1.2.17 (2015-1-27)
 ---------------------
+
 - Fix bug for non-tiled-wms layer. ZVP broken styles.
 
 

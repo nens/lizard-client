@@ -1,7 +1,17 @@
 angular.module('omnibox')
   .controller("rain",
-      ['RasterService', 'State', '$scope',
-  function (RasterService, State, $scope) {
+      [
+        'RasterService',
+        'UtilService',
+        'State',
+        '$scope',
+
+  function (
+
+    RasterService,
+    UtilService,
+    State,
+    $scope) {
 
   /*
    * @description
