@@ -177,7 +177,11 @@ angular.module('omnibox')
             // IF we retrieve at least one timeseries with actual measurements,
             // we put the retrieved data on the $scope:
             $scope.box.content.timeseries.data = filteredResult;
-            $scope.box.content.timeseries.selectedTimeseries = filteredResult[0];
+            if (filteredResult.indexOf(
+              $scope.box.content.timeseries.selectedTimeseries
+            ) === -1) {
+              $scope.box.content.timeseries.selectedTimeseries = filteredResult[0];
+            }
           } else {
             // ELSE, we delete the container object for timeseries:
             delete $scope.box.content.timeseries;

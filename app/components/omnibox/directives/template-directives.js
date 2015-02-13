@@ -28,10 +28,17 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
-  .directive('cardattributes', ['WantedAttributes',
-    function (WantedAttributes) {
+  .directive('cardattributes', ['WantedAttributes', 'UtilService',
+    function (WantedAttributes, UtilService) {
   return {
-    link: function (scope) { scope.wanted = WantedAttributes; },
+    link: function (scope) {
+
+      scope.wanted = WantedAttributes;
+
+      // Make UtilSvc.getIconClass available in Angular templates
+      scope.getIconClass = UtilService.getIconClass;
+
+    },
     restrict: 'E',
     scope: {
       fullDetails: '=',

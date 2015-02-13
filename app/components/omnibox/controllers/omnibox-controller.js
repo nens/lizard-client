@@ -21,9 +21,6 @@ angular.module('omnibox')
       content: {}
     };
 
-    $scope.zoomIn = MapService.zoomIn;
-    $scope.zoomOut = MapService.zoomOut;
-
     /**
      * @function
      * @memberOf app.omnibox
@@ -109,7 +106,5 @@ angular.module('omnibox')
       return promise;
     };
 
-    // Make UtilSvc.getIconClass available in Angular templates
-    $scope.getIconClass = UtilService.getIconClass;
   }
 ]);
