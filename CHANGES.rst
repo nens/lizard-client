@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
+
+- Add credentials to UTFGrid requests.
+
+- Add domains for sandbox rewrites.
+
 - Fix bug with bar size when event.
 
 - Renamed current dashboard to 'time'.
