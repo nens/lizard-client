@@ -88,4 +88,4 @@ angular.module('lizard-nxt')
  * @description subdomain of production backend.
  */
 angular.module('lizard-nxt')
-  .constant('backendDomain', 'https://demo.lizard.net/');
+  .constant('backendDomain', 'https://demo.lizard.net');
