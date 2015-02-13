@@ -21,6 +21,7 @@
     }
     var response, request = new XMLHttpRequest();
     request.open("GET", url, true); // async
+    request.withCredentials = true;
     // request.open("GET", url, false); // sync
     request.onreadystatechange = function () {
       /*jshint evil: true */
