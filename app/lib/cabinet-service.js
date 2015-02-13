@@ -15,7 +15,8 @@ angular.module('lizard-nxt')
       events;
 
   // for the wizard demo's
-  if (window.location.host === 'nens.github.io') {
+  if (window.location.host === 'nens.github.io' ||
+      window.location.host === 'lizard.sandbox.lizard.net') {
     Restangular.setBaseUrl(backendDomain);
   }
   Restangular.setRequestSuffix('?page_size=0');
