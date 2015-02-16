@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Always pass integer timestamp to timeseries endpoint.
+
 - Update release documentation.
 
 - Fix bug with bar size when event.
