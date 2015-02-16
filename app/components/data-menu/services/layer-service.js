@@ -42,7 +42,8 @@ angular.module('data-menu')
         Object.defineProperty(this, 'url', {
           value: layer.url,
           // on github.io it needs to be prepended to
-          writable: (window.location.host === 'nens.github.io'),
+          writable: (window.location.host === 'nens.github.io' ||
+                     window.location.host === 'lizard.sandbox.lizard.net'),
         });
         // Physical time in millieseconds between frames.
         Object.defineProperty(this, '_temporalResolution', {
@@ -95,8 +96,9 @@ angular.module('data-menu')
         });
 
         // this allows for the demo's to be run from github.io
-        if (this.url.indexOf('api/v1') > -1 &&
-            window.location.host === 'nens.github.io') {
+        if ((this.url.indexOf('api/v1') > -1) &&
+            (window.location.host === 'nens.github.io' ||
+             window.location.host === 'lizard.sandbox.lizard.net')) {
           this.url = backendDomain + this.url;
         }
 

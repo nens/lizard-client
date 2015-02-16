@@ -4,15 +4,24 @@
 
 .dashboard-wrapper {
   transition: .3s ease;
-  margin-top: $navbarheight;
   padding-left: 10px;
   height: 70%;
   // interpolation inside mixin expression of variable
   // apparently not working. 132px is navbar and timeline
-  height: calc(100% - 132px);
+  height: 100%;
   width: 100%;
   position: absolute;
+  overflow-y: auto;
+  overflow-x: hidden;
   background-color: $white;
+}
+
+.dashboard-wrapper > .row > h2 {
+    margin-left: 15px;
+}
+
+h5.widget-title {
+    height: 25px;
 }
 
 .dashboard-table {
@@ -25,4 +34,13 @@
 
 .dashboard-wrapper .row {
     margin-top: 10px;
+}
+
+.dashboard-row > .col-md-4 {
+    height: 100%;
+}
+
+.dashboard-widget > .map {
+    width: calc(100% - 30px); // minus col-md padding
+    height: calc(100% - 55px); // minus title and margin
 }

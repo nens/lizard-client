@@ -114,6 +114,18 @@ angular.module('map')
         }
       },
 
+      getView: function () {
+        return {
+          lat: service._map.getCenter().lat,
+          lng: service._map.getCenter().lng,
+          zoom: service._map.getZoom()
+        };
+      },
+
+      getBounds: function () {
+        return service._map.getBounds();
+      },
+
       /**
        * @description legacy function.
        */

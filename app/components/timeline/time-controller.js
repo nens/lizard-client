@@ -19,7 +19,6 @@ angular.module('lizard-nxt')
   "$rootScope",
   "$scope",
   "$q",
-  "RasterService",
   'UtilService',
   'DataService',
   'State',
@@ -29,7 +28,6 @@ angular.module('lizard-nxt')
     $rootScope,
     $scope,
     $q,
-    RasterService,
     UtilService,
     DataService,
     State) {

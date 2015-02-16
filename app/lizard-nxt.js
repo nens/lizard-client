@@ -19,11 +19,13 @@ if (window.RavenEnvironment) {
  *
  */
 angular.module("lizard-nxt", [
+  'lizard-nxt-filters',
   'data-menu',
   'map',
   'omnibox',
   'restangular',
   'dashboard',
+  'time-ctx',
   'scenarios',
   'user-menu',
   'global-state',
@@ -59,7 +61,8 @@ angular.module('lizard-nxt')
   .config(function ($locationProvider) {
   // We want to release to gh-pages for demo purposes or whatever
   // But github.io doesn't rewrite the urls beautifully like we do.
-  var html5Mode = (window.location.host !== 'nens.github.io');
+  var html5Mode = (window.location.host !== 'nens.github.io' &&
+                   window.location.host !== 'lizard.sandbox.lizard.net');
   $locationProvider.html5Mode(html5Mode);
 });
 
@@ -85,4 +88,4 @@ angular.module('lizard-nxt')
  * @description subdomain of production backend.
  */
 angular.module('lizard-nxt')
-  .constant('backendDomain', 'https://demo.lizard.net/');
+  .constant('backendDomain', 'https://demo.lizard.net');
