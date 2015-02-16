@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Update release documentation.
+
 - Fix bug with bar size when event.
 
 - Throw error when no backend is up and running.

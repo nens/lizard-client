@@ -69,9 +69,20 @@ adding the --save option. Always check your bower.json afterwards. e.g.:
 
 ### Release
 
-Doing a release for your package is easy. There is a grunt task to tag and push tags to github:
+Doing a release for your package is easy. There is a grunt task to tag and push tags to github. 
 
+**NOTE: make sure you are not running `grunt serve` in a different session**
+
+Workflow:
+
+    git pull origin
+    git checkout staging
+    git merge integration
     grunt release
+    git checkout integration 
+    git merge staging
+
+This creates a staging release of integration. The release can be pushed to the server by following instructions on https://github.com/nens/lizard-nxt#deployment.
 
 **NOTE:** grunt release expects:
 
