@@ -1,6 +1,9 @@
-
 /**
- * Initialise angular.module('dashboard')
+ *
+ * Initialize dashboard module
  *
  */
-angular.module('dashboard', []);
+angular.module('dashboard', [
+    'map',
+    'lizard-nxt-filters',
+    ]);

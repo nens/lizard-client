@@ -12,7 +12,6 @@
 
 .breakout-menu {
     height: $height11;
-    z-index: -3;
     background: $turquoise;
 }
 
@@ -49,7 +48,6 @@ label.layer-chooser > span.layer-text {
     position: absolute;
     transition: .3s ease;
     width: 60%;
-    z-index: 1;
 }
 
 label.layer-chooser-wytze > span.layer-text-wytze {
@@ -60,7 +58,6 @@ label.layer-chooser-wytze > span.layer-text-wytze {
     position: absolute;
     transition: .3s ease;
     width: 100%;
-    z-index: 1;
 }
 
 label.layer-chooser.active {
@@ -114,7 +111,6 @@ label.layer-chooser > div.layer-img {
     overflow: hidden;
     padding: 15px 15px 0 15px;
     top: 0;
-    z-index: 2;
     label {
         color: $asbestos;
         cursor: pointer;
@@ -165,7 +161,6 @@ label.layer-chooser > div.layer-img {
 .ribbon {
     overflow: hidden;
     position: absolute;
-    z-index: 10;
 }
 
 #ribbon {
@@ -182,14 +177,12 @@ label.layer-chooser > div.layer-img {
     margin: auto;
     position: absolute;
     top: 75px;
-    z-index: 10;
     cursor: pointer;
 }
 
 .arrow {
     cursor: pointer;
     position: relative;
-    z-index: 0;
 }
 
 .arrow-up {
@@ -232,7 +225,6 @@ label.layer-chooser > div.layer-img {
     width: 40%;
     height: 100%;
     background-color: #000; /* is set dynamically */
-    z-index: 9000;
     float: right;
 }
 
