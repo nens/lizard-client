@@ -69,7 +69,11 @@ adding the --save option. Always check your bower.json afterwards. e.g.:
 
 ### Release
 
-Doing a release for your package is easy. There is a grunt task to tag and push tags to github. Workflow:
+Doing a release for your package is easy. There is a grunt task to tag and push tags to github. 
+
+**NOTE: make sure you are not running `grunt serve` in a different session**
+
+Workflow:
 
     git pull origin
     git checkout staging
