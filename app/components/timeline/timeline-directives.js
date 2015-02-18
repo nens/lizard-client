@@ -297,7 +297,6 @@ angular.module('lizard-nxt')
 
       // Has it's own deferrer to not conflict with
       // other deferrers with the same layerSlug
-      console.log(rasterLayer);
       RasterService.getData(
         rasterLayer,
         {
