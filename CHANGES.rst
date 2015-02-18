@@ -6,6 +6,8 @@ Unreleased (1.2.7) (XXXX-XX-XX)
 
 - Always pass integer timestamp to timeseries endpoint.
 
+- Dynamic aggregation type for rain timeline data.
+
 - Update release documentation.
 
 - Fix bug with bar size when event.
