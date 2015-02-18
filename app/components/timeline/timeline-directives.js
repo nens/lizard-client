@@ -303,7 +303,7 @@ angular.module('lizard-nxt')
           geom: bounds,
           start: start,
           end: stop,
-          agg: 'none',
+          agg: rasterLayer.aggregationType,
           aggWindow: State.temporal.aggWindow,
           deferrer: {
             origin: 'timeline_' + rasterLayer,

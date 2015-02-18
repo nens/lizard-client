@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Dynamic aggregation type for rain timeline data.
+
 - Update release documentation.
 
 - Fix bug with bar size when event.
