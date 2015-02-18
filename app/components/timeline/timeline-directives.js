@@ -297,13 +297,14 @@ angular.module('lizard-nxt')
 
       // Has it's own deferrer to not conflict with
       // other deferrers with the same layerSlug
+      console.log(rasterLayer);
       RasterService.getData(
         rasterLayer,
         {
           geom: bounds,
           start: start,
           end: stop,
-          agg: 'none',
+          agg: rasterLayer.aggregationType,
           aggWindow: State.temporal.aggWindow,
           deferrer: {
             origin: 'timeline_' + rasterLayer,
