@@ -89,6 +89,94 @@ angular.module('lizard-nxt-filters')
   };
 });
 
+// lookups: culvert
+
+angular.module('lizard-nxt-filters')
+  .filter('lookupCulvertShape', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case '0':
+      out = 'rond';
+      break;
+    case '1':
+      out = 'eivorm';
+      break;
+    case '2':
+      out = 'rechthoek';
+      break;
+    case '3':
+      out = 'muilvorm';
+      break;
+    case '4':
+      out = 'vierkant';
+      break;
+    case '5':
+      out = 'heul';
+      break;
+    case '6':
+      out = 'trapezium';
+      break;
+    case '98':
+      out = 'Vorm afwijkend';
+      break;
+    case '99':
+      out = 'Vorm onbekend';
+      break;
+    default:
+      out = 'Vorm afwijkend';
+    }
+    return out;
+  };
+});
+
+angular.module('lizard-nxt-filters')
+  .filter('lookupCulvertMaterial', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case '0':
+      out = 'beton';
+      break;
+    case '1':
+      out = 'PVC';
+      break;
+    case '2':
+      out = 'gres';
+      break;
+    default:
+      out = 'Materiaal afwijkend';
+    }
+    return out;
+  };
+});
+
+// lookups: weir
+
+angular.module('lizard-nxt-filters')
+  .filter('lookupWeirControl', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case '1':
+      out = '1';
+      break;
+    case '2':
+      out = '2';
+      break;
+    case '3':
+      out = '3';
+      break;
+    case '4':
+      out = '4';
+      break;
+    default:
+      out = 'Niet bekend';
+    }
+    return out;
+  };
+});
+
 
 // lookups: levee
 
