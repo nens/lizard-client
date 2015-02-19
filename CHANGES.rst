@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Store selected timeseries and move specific code to directive.
+
 - Scenario table without table header and scrollable.
 
 
