@@ -96,7 +96,7 @@ angular.module('omnibox')
         keyName: "Materiaal",
         attrName: "material",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.material | truncate: 20",
+          "waterchain.layers.waterchain_grid.data.material | lookupCulvertMaterial",
         valueSuffix: "",
         defaultValue: "beton"
       },
@@ -104,7 +104,7 @@ angular.module('omnibox')
         keyName: "Vorm",
         attrName: "shape",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.shape | truncate: 20",
+          "waterchain.layers.waterchain_grid.data.shape | lookupCulvertShape",
         valueSuffix: "",
         defaultValue: "rechthoekig"
       }
@@ -663,7 +663,7 @@ angular.module('omnibox')
         keyName: "Bediening",
         attrName: "controlled",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.controlled",
+          "waterchain.layers.waterchain_grid.data.controlled | lookupWeirControl",
         valueSuffix: "",
         defaultValue: "RTC"
       },
