@@ -16,6 +16,33 @@
 angular.module('omnibox')
   .directive('timeseries', [function () {
   return {
+      link: function (scope) {
+
+        /**
+         * Return the currently selected timeseries if it is one of the
+         * available timeseries.
+         * @param  {array} timeseries list of available timeseries.
+         * @param  {object} current   currently selected ts.
+         * @return {object} selected timeseries.
+         */
+        var getSelectedTS = function (timeseries, current) {
+          var selected = {};
+          if (current) {
+            selected = timeseries.filter(function (ts) {
+              return ts.id === current.id;
+            });
+          }
+          return selected.length > 0 ? selected[0] : timeseries[0];
+        };
+
+        scope.$watch('timeseries.data', function () {
+          scope.timeseries.selectedTimeseries = getSelectedTS(
+            scope.timeseries.data,
+            scope.timeseries.selectedTimeseries
+          );
+        });
+
+      },
       restrict: 'E',
       scope: {
         fullDetails: '=',
