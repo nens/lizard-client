@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.2.25 (2015-2-19)
+---------------------
 
 - Always pass integer timestamp to timeseries endpoint.
 
