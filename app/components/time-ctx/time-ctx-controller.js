@@ -13,6 +13,6 @@ angular.module('time-ctx')
   $scope.stats = ['max', 'min', 'mean', 'sum', 'median', 'count'];
 
   // default selection
-  $scope.selectedStat = $scope.stats[2];
+  $scope.selectedStat = $scope.selectedStat || $scope.stats[2];
 
 }]);
