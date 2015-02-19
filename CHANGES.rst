@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
--
+
+- Scenario table without table header and scrollable.
 
 
 Release 1.2.25 (2015-2-19)

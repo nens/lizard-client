@@ -8,6 +8,8 @@ angular.module('scenarios')
     $scope.scenarios = [];
     $scope.selectedScenario = null;
 
+    $scope.tableHeight = window.innerHeight - 150 + 'px';
+
     Restangular.all('api/v1/scenarios/').getList()
       .then(function (scenarios) {
         $scope.scenarios = scenarios;
