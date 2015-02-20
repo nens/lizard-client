@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
+
+- Fix bug with rain card not respecting zoom buttons.
+
+- Remove broadcasts and hard-coupling between graph and timeline.
+
 - Store selected aggregation for events in time ctx.
 
 - Store selected timeseries and move specific code to directive.

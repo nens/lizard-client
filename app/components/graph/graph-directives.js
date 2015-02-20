@@ -140,9 +140,11 @@ angular.module('lizard-nxt')
       }
     });
 
-    scope.$on('$timelineZoomSuccess', function () {
+    scope.$watch('temporal.timelineMoving', function (n, o) {
+      if (n === o || o) { return true; }
       graphUpdateHelper(true, true);
     });
+
   };
 
   /**
