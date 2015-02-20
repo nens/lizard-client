@@ -3,6 +3,9 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
+
+- Add translations for `controlled` attribute of weir.
+
 - Store selected aggregation for events in time ctx.
 
 - Store selected timeseries and move specific code to directive.
