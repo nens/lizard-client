@@ -4,6 +4,16 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Remove dashboard selector dropdown.
+
+- Remove halo shadow.
+
+- Fix indentation in rain controller.
+
+- Fix rain export seperators.
+
+- Fix bug with click on map at top 50 px.
+
 - Fix bug with rain card not respecting zoom buttons.
 
 - Remove broadcasts and hard-coupling between graph and timeline.
