@@ -110,6 +110,10 @@
          */
         pointer-events: none;
         border: none !important;
+
+        li {
+            pointer-events: auto;
+        }
     }
 
     .navbar-form {
