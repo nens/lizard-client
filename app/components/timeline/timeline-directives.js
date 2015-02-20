@@ -90,8 +90,6 @@ angular.module('lizard-nxt')
             State.temporal.end - State.temporal.start) /  UtilService.getCurrentWidth();
           getTimeLineData();
           State.temporal.timelineMoving = false;
-
-          scope.$broadcast("$timelineZoomSuccess");
         });
       },
 
@@ -310,11 +308,14 @@ angular.module('lizard-nxt')
             deferred: $q.defer()
           }
         }
-      ).then(function (response) {
-        if (response && response !== 'null') {
-          timeline.drawBars(response.data);
+      )
+      .then(
+        function (response) {
+          if (response && response !== 'null') {
+            timeline.drawBars(response.data);
+          }
         }
-      });
+      );
     };
 
     var timelineZoomHelper = function () {
@@ -374,10 +375,6 @@ angular.module('lizard-nxt')
      */
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
-      timelineZoomHelper();
-    });
-
-    scope.$on("$timelineZoomSuccess", function () {
       timelineZoomHelper();
     });
 

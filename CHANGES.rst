@@ -6,6 +6,20 @@ Unreleased (1.2.7) (XXXX-XX-XX)
 
 - Add translations for `controlled` attribute of weir.
 
+- Remove dashboard selector dropdown.
+
+- Remove halo shadow.
+
+- Fix indentation in rain controller.
+
+- Fix rain export seperators.
+
+- Fix bug with click on map at top 50 px.
+
+- Fix bug with rain card not respecting zoom buttons.
+
+- Remove broadcasts and hard-coupling between graph and timeline.
+
 - Store selected aggregation for events in time ctx.
 
 - Store selected timeseries and move specific code to directive.

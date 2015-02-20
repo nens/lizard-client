@@ -15,7 +15,8 @@ angular.module('dashboard')
 
       var height = angular.element('body').height();
       // if smaller screen below each other in stead of next to
-      var width = (element.width() < 960) ? element.width() : element.width() / 3;
+      var width = (element.width() < 960) ? element.width() :
+        element.width() / 3;
 
       var rowHeight = (height - PADDINGTOP) / 2 - ROWMARGIN;
       angular.element('.dashboard-row').height(rowHeight);
@@ -46,5 +47,5 @@ angular.module('dashboard')
     replace: true,
     restrict: 'E',
     templateUrl: 'dashboard/dashboard.html'
-  }
+  };
 });
