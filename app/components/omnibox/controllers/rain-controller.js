@@ -74,7 +74,7 @@ angular.module('omnibox')
             lat = State.spatial.here.lat,
             lng = State.spatial.here.lng,
             _formatDate = function (epoch) {
-              var d = new Date(parseInt(epoch));
+              var d = new Date(parseInt(epoch, 10));
               return [
                 [d.getDate(), d.getMonth() + 1, d.getFullYear()].join('-'),
                 [d.getHours() || "00", d.getMinutes() || "00", d.getSeconds() || "00"].join(':')
@@ -92,7 +92,7 @@ angular.module('omnibox')
               Math.floor(100 * data[i][1]) / 100 || 0,
               0,
               2,
-              true // Dutchify seprators
+              true // Dutchify seperators
             ),
             UtilService.formatNumber(lat, 0, 0, true),
             UtilService.formatNumber(lng, 0, 0, true)
