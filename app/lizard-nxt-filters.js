@@ -159,16 +159,19 @@ angular.module('lizard-nxt-filters')
     var out;
     switch (input) {
     case '1':
-      out = '1';
+      out = 'Vast';
       break;
     case '2':
-      out = '2';
+      out = 'Regelbaar, niet auto';
       break;
     case '3':
-      out = '3';
+      out = 'Regelbaar, auto';
       break;
     case '4':
-      out = '4';
+      out = 'Handmatig';
+      break;
+    case '98':
+      out = 'Overig';
       break;
     default:
       out = 'Niet bekend';
