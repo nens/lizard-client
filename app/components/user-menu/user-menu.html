@@ -1,7 +1,7 @@
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="navbar-collapse collapse">
-   <ul class="nav navbar-nav navbar-right" style="">
-     <li>
+    <ul class="nav navbar-nav navbar-right" style="">
+      <li>
         <a class="help" href="https://www.lizard.net/support" title="Vragen en handleiding" target="_blank">
           <i class="fa fa-question" style="font-size: 1.2em"></i>
         </a>
@@ -10,25 +10,12 @@
       <li class="visible-sm visible-md visible-lg user">
         <a ng-if="user.authenticated"
            title="<% tooltips.profile %>"
-           class="dropdown-toggle"
-           data-toggle="dropdown"
-           >
-          <div class="clickable " ng-cloak id="username" >
+           href="http://sso.lizard.net/edit_profile/">
+          <div class="" ng-cloak id="username" >
             <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
             <span ng-bind="user.firstName"></span>
-            <span class="caret"></span>
           </div>
         </a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="http://sso.lizard.net/edit_profile/"i>
-              Profiel aanpassen </a></li>
-            <li ng-if="context !== 'dashboard'">
-              <a ng-click="switchContext('dashboard')">Dashboard</a>
-            </li>
-            <li ng-if="context === 'dashboard'">
-              <a ng-click="switchContext('map')">Kaart</a>
-            </li>
-          </ul>
         <a ng-if="!user.authenticated"
            onclick="logIn()"
            title="<% tooltips.login %>">
