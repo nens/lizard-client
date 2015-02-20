@@ -12,5 +12,5 @@ angular.module('user-menu')
     replace: true,
     link: link,
     templateUrl: 'user-menu/user-menu.html'
-  }
+  };
   });

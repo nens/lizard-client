@@ -37,6 +37,7 @@
         "angular", // Angular JS framework
         "L",       // Leaflet map client
         "app",     // Angular JS custom app
+        "_",       // Underscore utility toolbelt
         "d3"       // d3 JS vector library
     ],
 
