@@ -1,9 +1,14 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.2.7) (XXXX-XX-XX)
+Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix indentation in rain controller.
+
+- Fix rain export seperators.
+
+- Fix bug with click on map at top 50 px.
 
 
 Release 1.2.24 (2015-2-9)

@@ -89,9 +89,10 @@
 
 .navbar-inverse {
     position: absolute;
-    /*left: -40px;*/
-    /*width: 240px;*/
-    /*top: -50px;*/
+    /*
+        Let click bubble through to map
+     */
+    pointer-events: none;
     background-color: rgba(255,255,255,0);
     .navbar-toggle {
         background-color: rgba(22, 160, 133, 1.0) !important;
@@ -104,7 +105,15 @@
     }
 
     .navbar-collapse {
+        /*
+          Let click bubble through to map
+         */
+        pointer-events: none;
         border: none !important;
+
+        li {
+            pointer-events: auto;
+        }
     }
 
     .navbar-form {
