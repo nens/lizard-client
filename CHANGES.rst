@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Adapt to new raster reponse for area.
+
+- Remove elevation curve formatter.
+
 - Add translations for `controlled` attribute of weir.
 
 - Remove dashboard selector dropdown.
