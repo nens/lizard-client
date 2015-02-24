@@ -47,8 +47,11 @@
     </div>
 
     <div ng-if="context !== 'scenarios'">
-      <datamenu></datamenu>
       <timeline class="timeline navbar-fixed-bottom"></timeline>
+    </div>
+
+    <div ng-if="context !== 'scenarios' && context !== 'time'">
+      <datamenu></datamenu>
     </div>
 
     <user-menu></user-menu>
