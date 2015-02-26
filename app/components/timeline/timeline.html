@@ -19,8 +19,8 @@
             title="Toon dashboard."
             style="cursor: pointer;">
             <i class="fa" ng-class="{
-              'fa-compass': timeline.state.context === 'time',
-              'fa-bar-chart-o': timeline.state.context === 'map'
+              'fa-minus-square': timeline.state.context === 'time',
+              'fa-bar-chart': timeline.state.context === 'map'
             }"></i>
           </a>
         </div>
@@ -33,13 +33,16 @@
       <div class="btn-group">
         <a ng-click="timeline.playPauseAnimation()"
            class="extra-padding timeline-button"
-           ng-class="{'active': timeline.state.temporal.playing, 'hidden': !timeline.animatable}"
+           ng-class="{
+            'active': timeline.state.temporal.playing,
+            'hidden': !timeline.animatable
+           }"
            title="<% timeline.state.temporal.playing ? tooltips.stopAnim : tooltips.startAnim %>"
            data-original-title="Afspelen/pauzeren">
           <span class="fa"  ng-class="{
               'fa-play': !timeline.state.temporal.playing,
               'fa-pause active': timeline.state.temporal.playing,
-              'fa-circle-o-notch fa-spin' : timeline.layerGroups.timeIsSyncing
+              'fa-circle-o-notch fa-spin' : timeline.state.layerGroups.timeIsSyncing
               }"></span>
         </a>
       </div>

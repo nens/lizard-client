@@ -60,7 +60,6 @@ angular.module('lizard-nxt')
     );
 
     this.state = State;
-    this.layerGroups = State.layerGroups;
 
     /**
      * Keep an eye out for temporal layers that require the animation to go
