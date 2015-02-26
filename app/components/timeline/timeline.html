@@ -29,7 +29,7 @@
     </div>
 
   <div class="timeline-wrapper">
-    <div class="time-controls" ng-if="context === 'map'">
+    <div class="time-controls" ng-if="timeline.animatable">
       <div class="btn-group">
         <a ng-click="timeline.playPauseAnimation()"
            class="extra-padding timeline-button"
@@ -39,11 +39,17 @@
            }"
            title="<% timeline.state.temporal.playing ? tooltips.stopAnim : tooltips.startAnim %>"
            data-original-title="Afspelen/pauzeren">
-          <span class="fa"  ng-class="{
-              'fa-play': !timeline.state.temporal.playing,
-              'fa-pause active': timeline.state.temporal.playing,
-              'fa-circle-o-notch fa-spin' : timeline.state.layerGroups.timeIsSyncing
-              }"></span>
+          <span
+            ng-if="timeline.state.layerGroups.timeIsSyncing"
+            class="fa fa-circle-o-notch fa-spin">
+          </span>
+          <span
+            ng-if="!timeline.state.layerGroups.timeIsSyncing"
+            ng-class="{
+              'fa fa-pause active': timeline.state.temporal.playing,
+              'fa fa-play': !timeline.state.temporal.playing,
+              }">
+          </span>
         </a>
       </div>
     </div>
