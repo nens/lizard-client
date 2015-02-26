@@ -4,9 +4,21 @@
 
     <!-- TODO?: use toLocaleString() for datetime dutchification? -->
 
-    <div class="clock-time"
+    <div class="clock-time">
+      <div
          ng-click="timeline.toggleTimelineVisiblity()"
-         ng-bind="timeline.state.at | date: timeline.formatDatetime() ">
+         ng-bind="timeline.state.at | date: timeline.formatDatetime()">
+      </div>
+      <div>
+        <a
+          ng-click="timeline.toggleTimeCtx()"
+          class="button-list-link"
+          title="Toon dashboard."
+          ng-if="context === 'map'"
+          style="cursor: pointer;">
+          <i class="fa fa-dashboard"></i>
+        </a>
+      </div>
     </div>
 
   </div>
