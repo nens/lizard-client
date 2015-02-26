@@ -110,7 +110,7 @@ angular.module('omnibox')
 
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
-      DataService.reject();
+      DataService.reject('omnibox');
       $scope.box.content = {};
     });
   }
