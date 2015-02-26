@@ -13,8 +13,9 @@
  *
  */
 angular.module('data-menu')
-  .controller('DatamenuController', ['$scope', 'DataService', 'State',
-    function ($scope, DataService, State) {
+  .controller('DatamenuController',
+              ['$scope', 'DataService', 'State', 'MapService',
+               function ($scope, DataService, State, MapService) {
 
       this.layerGroups = DataService.layerGroups;
 
@@ -25,6 +26,23 @@ angular.module('data-menu')
       this.enabled = false;
 
       this.state = State.layerGroups;
+
+      // move this function to service.
+      this.zoomToBounds = function (spatialBounds, temporalBounds) {
+
+        // zoom to spatial bounds
+        var southWest = new L.LatLng(spatialBounds.south, spatialBounds.west);
+        var northEast = new L.LatLng(spatialBounds.north, spatialBounds.east);
+        var bounds = new L.LatLngBounds(southWest, northEast);
+        MapService.fitBounds(bounds);
+
+        // zoom to temporal bounds
+        if (temporalBounds.start !== temporalBounds.end) {
+          State.temporal.start = temporalBounds.start;
+          State.temporal.end = temporalBounds.end;
+          State.temporal.at = temporalBounds.start;
+        }
+      };
     }
   ]);
 
