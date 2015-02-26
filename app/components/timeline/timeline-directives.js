@@ -11,6 +11,7 @@
 angular.module('lizard-nxt')
   .directive('timeline',
              ["$q",
+              "$timeout",
               "RasterService",
               "UtilService",
               "Timeline",
@@ -18,6 +19,7 @@ angular.module('lizard-nxt')
               "DataService",
               "State",
               function ($q,
+                        $timeout,
                         RasterService,
                         UtilService,
                         Timeline,
@@ -344,10 +346,32 @@ angular.module('lizard-nxt')
 
     scope.timeline.toggleTimelineVisiblity = function () {
       showTimeline = !showTimeline;
-      if (!showTimeline) {
+      if (!showTimeline && State.context !== 'time') {
         element[0].style.height = 0;
       } else {
         updateTimelineHeight(scope.events.nEvents);
+      }
+    };
+
+    scope.timeline.toggleTimeCtx = function () {
+      var overlay = element.find('#timeline-overlay')[0];
+      if (State.context !== 'time') {
+        overlay.style.height = element[0].style.height;
+        overlay.style.transition = 'ease .3s';
+        overlay.style.height = window.innerHeight + 'px';
+        $timeout(function () {
+          overlay.style.opacity = 1;
+          showTimeline = false; // It toggles
+          scope.timeline.toggleTimelineVisiblity();
+        }, 300);
+        $timeout(function () {
+          State.context = 'time';
+        }, 600, true);
+      }
+      else if (State.context === 'time') {
+        State.context = 'map';
+        overlay.style.height = element[0].style.height;
+        overlay.style.opacity = 0;
       }
     };
 
