@@ -15,12 +15,10 @@ angular.module('time-ctx')
     };
 
     Timeline.onresize = function (dimensions) {
-      console.log(dimensions);
-      scope.tctx.dims.height = getHeight() - dimensions.height - 5; // 5 margin.
+      scope.tctx.dims.height = (getHeight() - dimensions.height - 10) / nGraphs; // 5 margin.
     };
 
-    var nGraphs = 1;
-
+    var nGraphs = 2;
     scope.tctx.dims = {
       width: UtilService.getCurrentWidth() + UtilService.TIMELINE_LEFT_MARGIN,
       height: getHeight() / nGraphs,
