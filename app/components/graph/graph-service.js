@@ -48,6 +48,7 @@ angular.module('lizard-nxt')
     resize: {
       value: function (newDim) {
         NxtD3.prototype.resize.call(this, newDim);
+        this._svg = this._createDrawingArea();
         this._svg.selectAll('.axis').remove();
         this._x = null;
         this._xy = null;

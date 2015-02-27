@@ -338,8 +338,6 @@ angular.module('lizard-nxt')
       labels.y = $filter(filter)(labels.y);
     }
 
-    console.log('tering');
-
     graph.drawBars(data, keys, labels, quantity);
     // graph.drawNow(graphCtrl.now);
 
