@@ -39,7 +39,8 @@ angular.module('lizard-nxt')
   futureIndicator,
   aggWindow, // aggregation window
   lines, // events start - end
-  bars; // rain intensity
+  bars, // rain intensity
+  tickmarks; // data availability indicators
 
   /**
    * @constructor
@@ -299,6 +300,12 @@ angular.module('lizard-nxt')
           slug,
           color
         );
+      }
+    },
+
+    drawTickMarks: {
+      value: function(data) {
+        tickmarks = drawTickMarkElements(this._svg, this.dimensions, data);
       }
     },
 
@@ -720,6 +727,60 @@ angular.module('lizard-nxt')
        .duration(Timeline.prototype.transTime)
        .attr('height', height);
     }
+  };
+
+  var drawTickMarkElements = function (svg, dimensions, data) {
+
+    // setup svg container
+    if (data.length > 0) {
+      console.log("draw tickmark elements", data, data.length);
+      var group = svg
+                    .select("g")
+                    .append("g")
+                    .attr("id", "tickmark-group");
+      //console.log(group);
+      // DATA JOIN
+      // Join new data with old elements, based on the id value.
+      tickmarks = group.selectAll("line")
+        .data(data, function  (d) { return d; });
+
+      console.log(tickmarks);
+    } else if (data.length === 0) {
+      // if no data is defined, remove all groups
+      var group_ = svg.select("g").select("#tickmark-group");
+      group_.remove();
+
+      return;
+    }
+
+    //tickmarks.append("g");
+    tickmarks.enter().append("line")
+      .attr("class", "tickmar")
+      .attr("stroke", "#000")
+      .attr("stroke-opacity", 0.8)
+      .attr("stroke-width", 5)
+    .transition()
+      .delay(Timeline.prototype.transTime)
+      .duration(Timeline.prototype.transTime)
+      .attr("x1", function (d) { return xScale(d); } )
+      .attr("x2", function (d) { return xScale(d) + 2; } )
+      .attr("y1", 10)
+      .attr("y2", 10);
+
+    // EXIT
+    // Remove old elements as needed.
+    tickmarks.exit()
+      .transition()
+      .delay(0)
+      .duration(Timeline.prototype.transTime)
+    .transition()
+      .delay(Timeline.prototype.transTime)
+      .duration(Timeline.prototype.transTime)
+      .attr("stroke-width", 0)
+      .remove();
+
+    return tickmarks;
+
   };
 
   /**

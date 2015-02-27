@@ -91,6 +91,7 @@ angular.module('lizard-nxt')
           State.temporal.resolution = (
             State.temporal.end - State.temporal.start)
             /  UtilService.getCurrentWidth();
+          console.log("zoom end");
           getTimeLineData();
           State.temporal.timelineMoving = false;
         });
@@ -185,6 +186,7 @@ angular.module('lizard-nxt')
      */
     var getTimelineLayers = function (layerGroups) {
       var timelineLayers = {events: {layers: [], slugs: []},
+                            rasterNonEqui: {layers: []},
                             rain: undefined};
       angular.forEach(layerGroups, function (layergroup) {
         if (layergroup.isActive()) {
@@ -192,6 +194,8 @@ angular.module('lizard-nxt')
             if (layer.format === "Vector") {
               timelineLayers.events.layers.push(layer);
               timelineLayers.events.slugs.push(layer.slug);
+            } else if (layer.format === "Store") {
+              timelineLayers.rasterNonEqui.layers.push(layer);
             } else if (layer.format === "Store" &&
                        layer.slug === "rain") {
               timelineLayers.rain = layer;
@@ -246,6 +250,12 @@ angular.module('lizard-nxt')
         timeline.removeBars();
       }
 
+      if (timelineLayers.rasterNonEqui.layers.length > 0) {
+        angular.forEach(timelineLayers.rasterNonEqui.layers, function (layer) {
+          getTemporalRasterDates(layer);
+        });
+      }
+
       updateTimelineHeight(scope.events.nEvents);
     };
 
@@ -290,9 +300,8 @@ angular.module('lizard-nxt')
      * timeline height and draws bars in timeline.
      *
      * @param {object} rasterLayer - rasterLayer object.
-     * @param {integer} nEvents - number of events.
      */
-    var getTemporalRasterData = function (rasterLayer, nEvents) {
+    var getTemporalRasterData = function (rasterLayer) {
 
       var start = State.temporal.start,
           stop = State.temporal.end,
@@ -309,7 +318,48 @@ angular.module('lizard-nxt')
           agg: rasterLayer.aggregationType,
           aggWindow: State.temporal.aggWindow,
           deferrer: {
-            origin: 'timeline_' + rasterLayer,
+            origin: 'timeline_' + rasterLayer.name,
+            deferred: $q.defer()
+          }
+        }
+      )
+      .then(
+        function (response) {
+          console.log(response);
+          if (response && response !== 'null') {
+            timeline.drawBars(response.data);
+          }
+        }
+      );
+    };
+
+    /**
+     * @function
+     * @summary get date array for temporal raster layers.
+     * @description  get date array for temporal raster. If it gets a response
+     * plots a tickmark in the timeline for every date.
+     *
+     * @param {object} rasterLayer - rasterLayer object.
+     */
+    var getTemporalRasterDates = function (rasterLayer) {
+
+      var start = State.temporal.start,
+          stop = State.temporal.end,
+          bounds = State.spatial.bounds;
+
+      // Has it's own deferrer to not conflict with
+      // other deferrers with the same layerSlug
+      RasterService.getData(
+        rasterLayer,
+        {
+          geom: bounds,
+          start: start,
+          agg: rasterLayer.aggregationType,
+          end: stop,
+          aggWindow: State.temporal.aggWindow,
+          truncate: true,
+          deferrer: {
+            origin: 'timeline_' + rasterLayer.slug,
             deferred: $q.defer()
           }
         }
@@ -317,7 +367,8 @@ angular.module('lizard-nxt')
       .then(
         function (response) {
           if (response && response !== 'null') {
-            timeline.drawBars(response.data);
+            console.log("draw these dates as something in timeline", response);
+            timeline.drawTickMarks(response);
           }
         }
       );
@@ -363,6 +414,7 @@ angular.module('lizard-nxt')
      */
     scope.$watch(State.toString('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
+      console.log("spatial watch");
       getTimeLineData();
     });
 
@@ -371,6 +423,7 @@ angular.module('lizard-nxt')
      */
     scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return true; }
+      console.log("lg active watch");
       getTimeLineData();
     });
 
@@ -380,6 +433,7 @@ angular.module('lizard-nxt')
      */
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
+      console.log("moving watch");
       timelineZoomHelper();
     });
 
@@ -387,6 +441,7 @@ angular.module('lizard-nxt')
      * Update aggWindow element when timeState.at changes.
      */
     scope.$watch(State.toString('temporal.at'), function (n, o) {
+      console.log("at watch");
       timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
       timelineZoomHelper();
     });
