@@ -31,7 +31,7 @@ angular.module('lizard-nxt')
 
     var timelineSetsTime = false,
 
-        showTimeline = false, // Is set by user clicking data label, when true
+        showTimeline = true, // Is set by user clicking data label, when true
                               // timeline is shown.
 
         dimensions = {
@@ -164,6 +164,10 @@ angular.module('lizard-nxt')
         State.temporal.aggWindow,
         nEventTypes
       );
+
+      if (Timeline.onresize) {
+        Timeline.onresize(newDim);
+      }
 
     };
 
@@ -342,8 +346,6 @@ angular.module('lizard-nxt')
 
     // END HELPER FUNCTIONS
 
-    element[0].style.height = 0;
-
     scope.timeline.toggleTimelineVisiblity = function () {
       showTimeline = !showTimeline;
       if (!showTimeline && State.context !== 'time') {
@@ -353,26 +355,11 @@ angular.module('lizard-nxt')
       }
     };
 
+    scope.timeline.toggleTimelineVisiblity();
+
     scope.timeline.toggleTimeCtx = function () {
-      var overlay = element.find('#timeline-overlay')[0];
-      if (State.context !== 'time') {
-        overlay.style.height = element[0].style.height;
-        overlay.style.transition = 'ease .3s';
-        overlay.style.height = window.innerHeight + 'px';
-        $timeout(function () {
-          overlay.style.opacity = 1;
-          showTimeline = false; // It toggles
-          scope.timeline.toggleTimelineVisiblity();
-        }, 300);
-        $timeout(function () {
-          State.context = 'time';
-        }, 600, true);
-      }
-      else if (State.context === 'time') {
-        State.context = 'map';
-        overlay.style.height = element[0].style.height;
-        overlay.style.opacity = 0;
-      }
+      scope.timeline.toggleTimelineVisiblity();
+      scope.transitionToContext(State.context === 'map' ? 'time' : 'map');
     };
 
     // WATCHES
@@ -419,6 +406,12 @@ angular.module('lizard-nxt')
         State.temporal.aggWindow,
         false
       );
+    });
+
+    scope.$watch(State.toString('context'), function (n, o) {
+      if (n === o) { return; }
+      showTimeline = false; // It toggles
+      scope.timeline.toggleTimelineVisiblity();
     });
 
     /**

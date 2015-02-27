@@ -238,7 +238,7 @@ angular.module('lizard-nxt')
         // Set context after digest loop because we need to enter on 'map'
         $timeout(
           function () {
-            State.context = context;
+            $scope.transitionToContext(context);
           },
           0, // no delay, fire when digest ends
           true // trigger new digest loop
