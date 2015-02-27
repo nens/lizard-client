@@ -145,6 +145,15 @@ angular.module('lizard-nxt')
       graphUpdateHelper(true, true);
     });
 
+    scope.$watch('dimensions.height', function (n, o) {
+      if (!scope.dimensions
+        || scope.dimensions.height === graphCtrl.graph.dimensions.height) {
+        return true;
+      }
+      graphCtrl.graph.resize(scope.dimensions);
+      graphUpdateHelper(false, false);
+    });
+
   };
 
   /**
@@ -329,8 +338,10 @@ angular.module('lizard-nxt')
       labels.y = $filter(filter)(labels.y);
     }
 
+    console.log('tering');
+
     graph.drawBars(data, keys, labels, quantity);
-    graph.drawNow(graphCtrl.now);
+    // graph.drawNow(graphCtrl.now);
 
     // Function to call when data changes
     graphCtrl.updateData = function (data, keys, labels) {
