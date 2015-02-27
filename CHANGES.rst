@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Context aware button to zoom to bounds in layer chooser.
+
+- zoomToBounds function to quickly locate (raster) data.
+
 - Adapt to new raster reponse for area.
 
 - Remove elevation curve formatter.
