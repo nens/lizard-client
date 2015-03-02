@@ -41,6 +41,33 @@ angular.module('time-ctx')
       }
     };
 
+
+    var putDataOnScope = function (response) {
+
+      // if (UtilService.isSufficientlyRichData(
+      //   (response.data && response.data.data) || response.data
+      //   )) {
+
+        scope.tctx.content[response.layerSlug] = {};
+
+        scope.tctx.content[response.layerSlug].data = response.data || response.events;
+
+        var sharedKeys = [
+          'format',
+          'scale',
+          'quantity',
+          'unit',
+          'color',
+          'type'
+        ];
+
+        angular.forEach(sharedKeys, function (key) {
+          scope.tctx.content[response.layerSlug][key] = response[key];
+        });
+      // }
+    };
+
+
     var geom = State.box.type === 'area'
       ? State.spatial.bounds
       : State.box.type === 'line'
@@ -54,34 +81,24 @@ angular.module('time-ctx')
         end: State.temporal.end,
         temporalOnly: true
       }).then(null, null, function (response) {
+        console.log(response);
 
-
-        scope.tctx.content[response.layerSlug] = {};
-        scope.tctx.content[response.layerSlug].data = response.data;
-
-        if (UtilService.isSufficientlyRichData(
-          (response.data && response.data.data) || response.data
-          )) {
-
-          var sharedKeys = [
-            'format',
-            'data',
-            'scale',
-            'quantity',
-            'unit',
-            'color',
-            'type'
-          ];
-
-          angular.forEach(sharedKeys, function (key) {
-            scope.tctx.content[response.layerSlug][key] = response[key];
+        if (response.layerSlug === 'waterchain_grid') {
+          return;
+        } else if (response.layerSlug === 'timeseries') {
+          angular.forEach(response.data, function (ts) {
+            ts.layerSlug = ts.name;
+            putDataOnScope(ts);
           });
-
-
-          if (tlDims) {
-            resize(tlDims);
-          }
+        } else {
+          putDataOnScope(response);
         }
+
+        if (tlDims) {
+          resize(tlDims);
+        }
+
+        console.log(scope.tctx.content);
 
       });
     };
