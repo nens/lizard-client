@@ -259,6 +259,7 @@ angular.module('data-menu')
             defer.notify({
               data: filteredResult,
               layerGroupSlug: 'timeseries',
+              layerSlug: 'timeseries',
             });
           }
         });
