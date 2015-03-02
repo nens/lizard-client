@@ -90,6 +90,11 @@ angular.module("omnibox")
       });
 
       finalizeTemplateRendering();
+
+      scope.$on('$destroy', function () {
+        window.removeEventListener('resize', scope.box.minimizeCards);
+      });
+
     };
 
     return {
