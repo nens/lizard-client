@@ -218,6 +218,7 @@ angular.module('lizard-nxt')
      * That will change later when we set data.
      */
     var getTimeLineData = function () {
+      console.log("getTimeLineData");
       var timelineLayers = getTimelineLayers(DataService.layerGroups),
           context = {eventOrder: 1,
                      nEvents: scope.events.nEvents};
@@ -352,7 +353,8 @@ angular.module('lizard-nxt')
       RasterService.getData(
         rasterLayer,
         {
-          geom: bounds,
+          //geom: bounds,
+          geom: bounds.getCenter(),
           start: start,
           agg: rasterLayer.aggregationType,
           end: stop,
@@ -375,6 +377,7 @@ angular.module('lizard-nxt')
     };
 
     var timelineZoomHelper = function () {
+      console.log("Timeline zoom helper");
       if (!State.temporal.timelineMoving) {
         if (!timelineSetsTime) {
           State.temporal.aggWindow = UtilService.getAggWindow(

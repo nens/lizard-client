@@ -62,6 +62,13 @@ rect.bar {
   stroke: white;
 }
 
+.tickmark {
+  fill: black;
+  stroke-width: 1;
+  fill-opacity: 0.8;
+  stroke: black;
+}
+
 .y1.axis  text {
   fill: crimson;
   stroke: none;
