@@ -168,9 +168,7 @@ angular.module('lizard-nxt')
               .attr("height", height)
               .attr("x", 0)
               .attr("y", 0)
-              .attr("width", width)
-              .attr("opacity", 0.6)
-              .attr("style", "fill: #c0392b;");
+              .attr("width", width);
           aggWindow
             .append('g')
               .attr('class', 'timeline-axis')
@@ -452,19 +450,14 @@ angular.module('lizard-nxt')
           .append('text')
             .attr('y', 9)
             .attr('x', dimensions.padding.left)
-            .attr('dy', '.71em')
-            .style('text-align', 'left')
-            .style('font-weight', 'bold')
-            .style('opacity', '1');
+            .attr('dy', '.71em');
+
       stopEl = svg.select('.timeline-start-stop')
         .append('g')
           .attr('class', 'tick tick-stop')
           .append('text')
             .attr('y', 9)
-            .attr('dy', '.71em')
-            .style('text-align', 'right')
-            .style('font-weight', 'bold')
-            .style('opacity', '1');
+            .attr('dy', '.71em');
     }
 
     startEl
@@ -558,6 +551,7 @@ angular.module('lizard-nxt')
     svg.select('g').select('#circle-group')
       .attr('width', width)
       .attr('height', height);
+
     return svg;
   };
 
@@ -851,9 +845,6 @@ angular.module('lizard-nxt')
     lines.enter().append("line")
       .attr("class", "event selected")
       .attr("stroke", colorFunction)
-      .attr("stroke-linecap", "round")
-      .attr("stroke-opacity", 0.8)
-      .attr("stroke-width", 10)
     .transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)

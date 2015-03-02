@@ -235,3 +235,42 @@
     border-top-right-radius: 2px;
     cursor: pointer;
 }
+
+/* d3 timeline graph elements*/
+.bar-timeline {
+  fill: #95a5a6;
+  stroke-width: 1;
+  fill-opacity: 1;
+  stroke: white;
+}
+
+.tickmark {
+  fill: black;
+  stroke-width: 1;
+  fill-opacity: 0.8;
+  stroke: black;
+}
+
+.aggwindow-rect {
+  fill: #c0392b;
+  opacity: 0.6;
+}
+
+.tick.tick-start {
+  font-weight: bold;
+  opacity: 1;
+}
+
+.tick-start {
+  text-align: left;
+}
+
+.tick-stop {
+  text-align: right;
+}
+
+.event.selected {
+  stroke-linecap: round;
+  stroke-opacity: 0.8;
+  stroke-width: 10;
+}
