@@ -6,29 +6,47 @@ angular.module('time-ctx')
 
   var link = function (scope, element, attrs) {
 
+    var TL_TOP_MARGIN = 10,
+        GRAPH_PADDING = 5,
+        nGraphs = 1;
+
+
     var getWidth = function () {
       return element.find('.dashboard-inner').width();
     };
+
 
     var getHeight = function () {
       return element.height() - 50; // min-height from top row
     };
 
     Timeline.onresize = function (dimensions) {
-      scope.tctx.dims.height = (getHeight() - dimensions.height - 10) / nGraphs; // 5 margin.
+      nGraphs = Object.keys(scope.tctx.content).length;
+
+      scope.tctx.dims.height = (getHeight() - dimensions.height - TL_TOP_MARGIN) / nGraphs  - GRAPH_PADDING;
     };
 
-    var nGraphs = 2;
     scope.tctx.dims = {
       width: UtilService.getCurrentWidth() + UtilService.TIMELINE_LEFT_MARGIN,
       height: getHeight() / nGraphs,
       padding: {
-        top: 5,
+        top: GRAPH_PADDING,
         right: 0,
         bottom: 0,
         left: UtilService.TIMELINE_LEFT_MARGIN
       }
     };
+
+    scope.tctx.content = [];
+
+    for (var i = 15 - 1; i >= 0; i--) {
+      scope.tctx.content[i] = {
+        data: []
+      };
+      scope.tctx.content[i].data = [[2, 0], [0, 1], [4, 3], [7, 0], [8, 1], [9, 3], [10, 0], [11, 1], [15, 3]];
+    }
+
+
 
     // var aggregateEvents = function () {
     //   var eventAgg;
