@@ -31,10 +31,7 @@ angular.module('data-menu')
       this.zoomToBounds = function (spatialBounds, temporalBounds) {
 
         // zoom to spatial bounds
-        var southWest = new L.LatLng(spatialBounds.south, spatialBounds.west);
-        var northEast = new L.LatLng(spatialBounds.north, spatialBounds.east);
-        var bounds = new L.LatLngBounds(southWest, northEast);
-        MapService.fitBounds(bounds);
+        MapService.fitBounds(spatialBounds);
 
         // zoom to temporal bounds
         if (temporalBounds.start !== temporalBounds.end) {
