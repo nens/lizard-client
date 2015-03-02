@@ -186,7 +186,7 @@ angular.module('lizard-nxt')
      */
     var getTimelineLayers = function (layerGroups) {
       var timelineLayers = {events: {layers: [], slugs: []},
-                            rasterNonEqui: {layers: []},
+                            rasterStore: {layers: []},
                             rain: undefined};
       angular.forEach(layerGroups, function (layergroup) {
         if (layergroup.isActive()) {
@@ -195,11 +195,12 @@ angular.module('lizard-nxt')
               timelineLayers.events.layers.push(layer);
               timelineLayers.events.slugs.push(layer.slug);
             } else if (layer.format === "Store") {
-              timelineLayers.rasterNonEqui.layers.push(layer);
-            } else if (layer.format === "Store" &&
-                       layer.slug === "rain") {
-              timelineLayers.rain = layer;
-            }
+              if (layer.slug !== "rain") {
+                timelineLayers.rasterStore.layers.push(layer);
+              } else if (layer.slug === "rain") {
+                timelineLayers.rain = layer;
+              }
+           }
           });
         }
       });
@@ -243,7 +244,6 @@ angular.module('lizard-nxt')
         timeline.drawLines(undefined, scope.events.nEvents);
       }
 
-      // raster data (for now only rain)
       if (timelineLayers.rain !== undefined) {
         getTemporalRasterData(timelineLayers.rain,
                               timelineLayers.events.length);
@@ -251,8 +251,8 @@ angular.module('lizard-nxt')
         timeline.removeBars();
       }
 
-      if (timelineLayers.rasterNonEqui.layers.length > 0) {
-        angular.forEach(timelineLayers.rasterNonEqui.layers, function (layer) {
+      if (timelineLayers.rasterStore.layers.length > 0) {
+        angular.forEach(timelineLayers.rasterStore.layers, function (layer) {
           getTemporalRasterDates(layer);
         });
       }
@@ -326,7 +326,6 @@ angular.module('lizard-nxt')
       )
       .then(
         function (response) {
-          console.log(response);
           if (response && response !== 'null') {
             timeline.drawBars(response.data);
           }
@@ -417,7 +416,7 @@ angular.module('lizard-nxt')
      */
     scope.$watch(State.toString('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
-      console.log("spatial watch");
+      console.log("WATCH: spatial watch");
       getTimeLineData();
     });
 
@@ -426,7 +425,7 @@ angular.module('lizard-nxt')
      */
     scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return true; }
-      console.log("lg active watch");
+      console.log("WATCH: lg active watch");
       getTimeLineData();
     });
 
@@ -436,7 +435,7 @@ angular.module('lizard-nxt')
      */
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
-      console.log("moving watch");
+      console.log("WATCH: moving watch");
       timelineZoomHelper();
     });
 
@@ -444,7 +443,7 @@ angular.module('lizard-nxt')
      * Update aggWindow element when timeState.at changes.
      */
     scope.$watch(State.toString('temporal.at'), function (n, o) {
-      console.log("at watch");
+      console.log("WATCH: at watch");
       timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
       timelineZoomHelper();
     });
@@ -453,6 +452,7 @@ angular.module('lizard-nxt')
      * Round timeState.at when animation stops.
      */
     scope.$watch(State.toString('temporal.playing'), function (n, o) {
+      console.log("WATCH: temporal playing");
       if (n === o || n) { return true; }
       State.temporal.at = UtilService.roundTimestamp(
         State.temporal.at + State.temporal.aggWindow / 2,
