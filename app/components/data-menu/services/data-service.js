@@ -18,8 +18,8 @@
  */
 
 angular.module('data-menu')
-  .service('DataService', ['$q', 'dataLayers', 'DataLayerGroup', 'State',
-    function ($q, dataLayers, DataLayerGroup, State) {
+  .service('DataService', ['$q', 'TimeseriesService', 'dataLayers', 'DataLayerGroup', 'State',
+    function ($q, TimeseriesService, dataLayers, DataLayerGroup, State) {
 
       // Attributes ////////////////////////////////////////////////////////////
 
@@ -40,7 +40,7 @@ angular.module('data-menu')
        */
       this.createLayerGroup = function (lgConfig) {
         return this.layerGroups[lgConfig.slug] = new DataLayerGroup(lgConfig);
-      },
+      };
 
       /**
        * @function
@@ -126,7 +126,7 @@ angular.module('data-menu')
        */
       this.addLayergroup = function (layerGroup) {
         return this.layerGroups[layerGroup.slug] = layerGroup;
-      },
+      };
 
       /**
        * Removes the provided layerGroups from nxt
@@ -135,7 +135,7 @@ angular.module('data-menu')
       this.removeLayerGroup = function (layerGroup) {
         delete this.layerGroups[layerGroup.slug];
         return this.layerGroups;
-      },
+      };
 
       /**
        * Gets data from all layergroups.
@@ -143,24 +143,44 @@ angular.module('data-menu')
        * @param  {object} options
        * @param  {str} callee that gets a seperate defer.
        * @return {promise} notifies with data from layergroup and resolves when
-       *                            all layergroups returned data.
+       *                            all layergroups and the timeseries returned
+       *                            data.
        */
       this.getData = function (callee, options) {
         this.reject(callee);
         this._dataDefers[callee] = $q.defer();
         var defer = this._dataDefers[callee];
         var promises = [];
+        var waitForTimeseries = false;
         angular.forEach(this.layerGroups, function (layerGroup) {
           promises.push(
             layerGroup.getData(options).then(null, null, function (response) {
+
+              // Hacky part to get timeseries. TS are dependant on the
+              // waterchain response. So the waterchain response is checked for
+              // signs of timeseries. If neccessary we will wait for the
+              // timeseries request to finish.
+              waitForTimeseries = getTimeseries(response, options.start, options.end, defer);
+              // End of hacky part
+
               defer.notify(response);
             })
           );
         });
+
         $q.all(promises).then(function () {
+          if (waitForTimeseries) {
+            waitForTimeseries.then(function () {
+              finish();
+            });
+          } else { finish(); }
+        });
+
+        var finish = function () {
           State.layerGroups.gettingData = false;
           defer.resolve();
-        });
+        };
+
         State.layerGroups.gettingData = true;
         return defer.promise;
       };
@@ -190,7 +210,61 @@ angular.module('data-menu')
             this.toggleLayerGroup(layerGroup);
           }
         }, this);
-      }
+      };
+
+      /**
+       * Checks response for id and entity_name and passes this
+       * getTimeSeriesForObject with start and end.
+       * @param  {object} response response from layergroup
+       * @param  {int}    start    time start
+       * @param  {int}    end      time end
+       * @param  {defer}  defer    defer object to notify with timeseries
+       * @return {promise || false} false when no id and entity name or promise
+       *                            when making request to timeseries endpoint.
+       */
+      var getTimeseries = function (response, start, end, defer) {
+        if (response.data.id && response.data.entity_name) {
+          // Apparently, we're dealing with the waterchain:
+          return getTimeSeriesForObject(
+            response.data.entity_name + '$' + response.data.id,
+            start,
+            end,
+            defer
+          );
+        } else { return false; }
+      };
+
+      /**
+       * @function
+       * @memberOf app.pointCtrl
+       * @description gets timeseries from service
+       */
+      var getTimeSeriesForObject = function (objectId, start, end, defer) {
+
+        var promise = TimeseriesService.getTimeseries(objectId, {
+          start: start,
+          end: end
+        }).then(function (result) {
+
+          if (result.length > 0) {
+            // We retrieved data for one-or-more timeseries, but do these actually
+            // contain measurements, or just metadata? We filter out the timeseries
+            // with too little measurements...
+            var filteredResult = [];
+            angular.forEach(result, function (value) {
+              if (value.events.length > 1) {
+                filteredResult.push(value);
+              }
+            });
+            defer.notify({
+              data: filteredResult,
+              layerGroupSlug: 'timeseries',
+            });
+          }
+        });
+
+        return promise;
+      };
 
     }
   ]);
