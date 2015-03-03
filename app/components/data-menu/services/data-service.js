@@ -90,7 +90,9 @@ angular.module('data-menu')
         }
       });
 
-      this._dataDefers = {};
+      this._dataDefers = {}; // Per callee a list with a defer for every time
+                             // getData gets called before the last one
+                             // resolves.
 
 
       // Methods //////////////////////////////////////////////////////////////
@@ -141,27 +143,34 @@ angular.module('data-menu')
        * Gets data from all layergroups.
        *
        * @param  {object} options
-       * @param  {str} callee that gets a seperate defer.
+       * @param  {str} callee that gets a list of defers for every time getdata
+       *                      is called before a request finishes.
        * @return {promise} notifies with data from layergroup and resolves when
-       *                            all layergroups and the timeseries returned
-       *                            data.
+       *                   all layergroups and the timeseries returned data.
        */
       this.getData = function (callee, options) {
         this.reject(callee);
-        this._dataDefers[callee] = $q.defer();
-        var defer = this._dataDefers[callee];
+        if (!this._dataDefers[callee]) {
+          this._dataDefers[callee] = [];
+        }
+        var defers = this._dataDefers[callee];
+        defers.push($q.defer()); // add to list
+        var defer = defers[defers.length - 1]; // get last item
         var promises = [];
         var waitForTimeseries = false;
         angular.forEach(this.layerGroups, function (layerGroup) {
           promises.push(
             layerGroup.getData(options).then(null, null, function (response) {
 
-              // Hacky part to get timeseries. TS are dependant on the
-              // waterchain response. So the waterchain response is checked for
-              // signs of timeseries. If neccessary we will wait for the
-              // timeseries request to finish.
-              waitForTimeseries = getTimeseries(response, options.start, options.end, defer);
-              // End of hacky part
+              // TS are dependant on the waterchain response. So the waterchain
+              // response is checked for signs of timeseries. If neccessary we
+              // will wait for the timeseries request to finish.
+              waitForTimeseries = getTimeseries(
+                response,
+                options.start,
+                options.end,
+                defer
+              );
 
               defer.notify(response);
             })
@@ -177,8 +186,16 @@ angular.module('data-menu')
         });
 
         var finish = function () {
-          State.layerGroups.gettingData = false;
-          defer.resolve();
+          // If this defer is the last one in the list of defers the getData
+          // is truly finished, otherwise the getData is still getting data for
+          // the callee.
+          if (defers.indexOf(defer) === defers.length - 1) {
+            State.layerGroups.gettingData = false;
+            defer.resolve(); // Resolve the last one, the others have been
+                             // rejected.
+            defers.length = 0; // Clear the defers, by using .length = 0 the
+                               // reference to this._dataDefers persists.
+          }
         };
 
         State.layerGroups.gettingData = true;
@@ -191,7 +208,9 @@ angular.module('data-menu')
       this.reject = function (callee) {
         State.layerGroups.gettingData = false;
         if (this._dataDefers[callee]) {
-          this._dataDefers[callee].reject();
+          this._dataDefers[callee].forEach(function (defer) {
+            defer.reject();
+          });
         }
       };
 
