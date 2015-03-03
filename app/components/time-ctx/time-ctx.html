@@ -11,7 +11,19 @@
       <div class="dashboard-inner">
 
         <graph
+          ng-if="item.scale !== 'ratio'"
           line
+          data="item.data"
+          dimensions="tctx.dims"
+          type="temporal"
+          temporal="state.temporal"
+          ylabel="item.unit"
+          keys="{x: 0, y: 1}">
+        </graph>
+
+        <graph
+          ng-if="item.scale === 'ratio'"
+          bar-chart
           data="item.data"
           dimensions="tctx.dims"
           type="temporal"
