@@ -18,7 +18,8 @@
  */
 
 angular.module('data-menu')
-  .service('DataService', ['$q', 'TimeseriesService', 'dataLayers', 'DataLayerGroup', 'State',
+  .service('DataService', ['$q', 'TimeseriesService', 'dataLayers',
+                           'DataLayerGroup', 'State',
     function ($q, TimeseriesService, dataLayers, DataLayerGroup, State) {
 
       // Attributes ////////////////////////////////////////////////////////////
@@ -162,7 +163,7 @@ angular.module('data-menu')
           promises.push(
             layerGroup.getData(options).then(null, null, function (response) {
 
-              // TS are dependant on the waterchain response. So the waterchain
+              // TS are dependent on the waterchain response. So the waterchain
               // response is checked for signs of timeseries. If neccessary we
               // will wait for the timeseries request to finish.
               waitForTimeseries = getTimeseries(
@@ -180,12 +181,20 @@ angular.module('data-menu')
         $q.all(promises).then(function () {
           if (waitForTimeseries) {
             waitForTimeseries.then(function () {
-              finish();
+              finishDefers();
             });
-          } else { finish(); }
+          } else {
+            finishDefers(); 
+          }
         });
 
-        var finish = function () {
+        /**
+         * @function finishDefers
+         * @memberof DataService
+         * @summary Checks if current defer is the last one, if so resolves the
+         * defer and clears the defers
+         */
+        var finishDefers = function () {
           // If this defer is the last one in the list of defers the getData
           // is truly finished, otherwise the getData is still getting data for
           // the callee.
@@ -266,9 +275,9 @@ angular.module('data-menu')
         }).then(function (result) {
 
           if (result.length > 0) {
-            // We retrieved data for one-or-more timeseries, but do these actually
-            // contain measurements, or just metadata? We filter out the timeseries
-            // with too little measurements...
+            // We retrieved data for one-or-more timeseries, but do these
+            // actually contain measurements, or just metadata? We filter out
+            // the timeseries with too little measurements...
             var filteredResult = [];
             angular.forEach(result, function (value) {
               if (value.events.length > 1) {
