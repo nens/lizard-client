@@ -223,7 +223,7 @@ angular.module('data-menu')
        *                            when making request to timeseries endpoint.
        */
       var getTimeseries = function (response, start, end, defer) {
-        if (response.data.id && response.data.entity_name) {
+        if (response.data && response.data.id && response.data.entity_name) {
           // Apparently, we're dealing with the waterchain:
           return getTimeSeriesForObject(
             response.data.entity_name + '$' + response.data.id,
