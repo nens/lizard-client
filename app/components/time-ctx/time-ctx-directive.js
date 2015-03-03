@@ -81,9 +81,9 @@ angular.module('time-ctx')
         end: State.temporal.end,
         temporalOnly: true
       }).then(null, null, function (response) {
-        console.log(response);
 
-        if (response.layerSlug === 'waterchain_grid') {
+        if (response.layerSlug === 'waterchain_grid'
+          || response.layerSlug === 'rrc') {
           return;
         } else if (response.layerSlug === 'timeseries') {
           angular.forEach(response.data, function (ts) {
