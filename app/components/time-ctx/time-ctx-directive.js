@@ -25,7 +25,7 @@ angular.module('time-ctx')
       tlDims = tlDimensions;
       nGraphs = Object.keys(scope.tctx.content).length;
       scope.tctx.dims.height =
-        (getHeight() - tlDimensions.height - TL_TOP_MARGIN) / nGraphs;
+        (getHeight() - tlDimensions.height - TL_TOP_MARGIN) / nGraphs - GRAPH_PADDING;
     };
 
     Timeline.onresize = resize;
@@ -44,10 +44,6 @@ angular.module('time-ctx')
 
     var putDataOnScope = function (response) {
 
-      // if (UtilService.isSufficientlyRichData(
-      //   (response.data && response.data.data) || response.data
-      //   )) {
-
         scope.tctx.content[response.layerSlug] = {};
 
         scope.tctx.content[response.layerSlug].data = response.data || response.events;
@@ -64,7 +60,7 @@ angular.module('time-ctx')
         angular.forEach(sharedKeys, function (key) {
           scope.tctx.content[response.layerSlug][key] = response[key];
         });
-      // }
+
     };
 
 
@@ -104,65 +100,15 @@ angular.module('time-ctx')
     };
 
     getTimeData();
-
-
-    // scope.tctx.content = [];
-
-    // for (var i = 15 - 1; i >= 0; i--) {
-    //   scope.tctx.content[i] = {
-    //     data: []
-    //   };
-    //   scope.tctx.content[i].data = [[2, 0], [0, 1], [4, 3], [7, 0], [8, 1], [9, 3], [10, 0], [11, 1], [15, 3]];
-    // }
-
-
-
-    // // var aggregateEvents = function () {
-    // //   var eventAgg;
-    // //   // reset eventAggs
-    // //   scope.eventAggs = [];
-    // //   angular.forEach(DataService.layerGroups, function (lg) {
-    // //     lg.getData({
-    // //       geom: State.spatial.bounds,
-    // //       start: State.temporal.start,
-    // //       end: State.temporal.end,
-    // //       type: 'Event'
-    // //     }).then(null, null, function (response) {
-
-    // //       if (response && response.data) {
-    // //         // aggregate response
-    // //         eventAgg = {
-    // //           data: EventAggregateService.aggregate(
-    // //                   response.data,
-    // //                   State.temporal.aggWindow,
-    // //                   lg.mapLayers[0].color
-    // //                 ),
-    // //           ylabel: lg.name,
-    // //           baseColor: lg.mapLayers[0].color
-    // //         };
-
-    // //         scope.eventAggs.push(eventAgg);
-    // //         // calculate new dimensions
-    // //         scope.dimensions.height =
-    // //           (getHeight() / scope.eventAggs.length) - 20;
-    // //       }
-    // //     });
-    // //   });
-    // // };
-
     /**
      * Updates time-ctx when time zoom changes.
      */
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
-      if (n === o) { return true; }
-      // aggregateEvents();
+      if (n === o || State.temporal.timelineMoving) { return true; }
+      console.log('new shit');
+      getTimeData();
     });
 
-    // init
-    // aggregateEvents();
-
-    // hack to get color map for legend
-    // scope.getColorMap = EventAggregateService.getColorMap;
   };
 
   return {

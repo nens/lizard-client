@@ -121,7 +121,9 @@ angular.module('lizard-nxt')
      * NOTE: Controller data is set on precompile.
      */
     scope.$watch('data', function (n, o) {
+      console.log('new data');
       if (n === graphCtrl.data) { return true; }
+      console.log('really data');
       graphUpdateHelper(true, false);
     });
 
@@ -140,9 +142,15 @@ angular.module('lizard-nxt')
       }
     });
 
-    scope.$watch('temporal.timelineMoving', function (n, o) {
-      if (n === o || o) { return true; }
-      graphUpdateHelper(true, true);
+    scope.$watch('temporal.start', function (n, o) {
+      if (n === o) { return true; }
+      console.log('new start', scope.temporal.start);
+      graphUpdateHelper(false, true);
+    });
+
+    scope.$watch('temporal.end', function (n, o) {
+      if (n === o) { return true; }
+      graphUpdateHelper(false, true);
     });
 
     scope.$watch('dimensions.height', function (n, o) {

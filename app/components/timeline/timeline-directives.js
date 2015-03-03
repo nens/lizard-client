@@ -64,8 +64,8 @@ angular.module('lizard-nxt')
 
           timelineSetsTime = true;
           State.temporal.timelineMoving = true;
-          State.temporal.start = UtilService.getMinTime( scale.domain()[0].getTime() );
-          State.temporal.end   = UtilService.getMaxTime( scale.domain()[1].getTime() );
+          State.temporal.start = UtilService.getMinTime(scale.domain()[0].getTime());
+          State.temporal.end   = UtilService.getMaxTime(scale.domain()[1].getTime());
 
           State.temporal.aggWindow = UtilService.getAggWindow(
             State.temporal.start,
@@ -187,6 +187,10 @@ angular.module('lizard-nxt')
     var getTimelineLayers = function (layerGroups) {
       var timelineLayers = {events: {layers: [], slugs: []},
                             rain: undefined};
+      if (State.context === 'time') {
+        // When time we do not want to draw anything in the timeline.
+        return timelineLayers;
+      }
       angular.forEach(layerGroups, function (layergroup) {
         if (layergroup.isActive()) {
           angular.forEach(layergroup._dataLayers, function (layer) {
@@ -412,6 +416,7 @@ angular.module('lizard-nxt')
       if (n === o) { return; }
       showTimeline = false; // It toggles
       scope.timeline.toggleTimelineVisiblity();
+      getTimeLineData(); // It also removes data..
     });
 
     /**
