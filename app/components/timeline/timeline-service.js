@@ -312,8 +312,9 @@ angular.module('lizard-nxt')
     },
 
     drawTickMarks: {
-      value: function(data) {
-        tickmarks = drawTickMarkElements(this._svg, this.dimensions, data);
+      value: function(data, slug) {
+        tickmarks = drawTickMarkElements(
+          this._svg, this.dimensions, data, slug);
       }
     },
 
@@ -507,6 +508,11 @@ angular.module('lizard-nxt')
       .attr('height', height)
       .attr('width', width)
       .attr('id', 'circle-group');
+    // Create group for tickmarks
+    svg.select('g').append('g')
+      .attr('height', height)
+      .attr('width', width)
+      .attr('id', 'tickmark-group');
 
     return svg;
 
@@ -744,7 +750,6 @@ angular.module('lizard-nxt')
   };
 
   var updateTickmarks = function (tickmarks, dimensions) {
-    console.log("update tickmarks");
     var height = Timeline.prototype._getHeight(dimensions);
     tickmarks.attr("x", function (d) { return xScale(d); });
     tickmarks.attr("y", height - 5);
@@ -760,19 +765,19 @@ angular.module('lizard-nxt')
    *
    * @returns {object} d3 selection object with tickmarks for each timestamp.
    */
-  var drawTickMarkElements = function (svg, dimensions, data) {
+  var drawTickMarkElements = function (svg, dimensions, data, slug) {
     var height = Timeline.prototype._getHeight(dimensions);
 
     // setup svg group element to hold rects.
+    console.log(data.length, slug);
     if (data.length > 0) {
 
-      var group = svg.select("g").select("#tickmark-group");
+      var group = svg.select("g").select("#tickmark-group").select("#" + slug);
 
       // if group element doesn't exist yet, create one
       if (!group[0][0]) {
-        group = svg.select("g")
-                      .append("g")
-                      .attr("id", "tickmark-group");
+        group = svg.select("g").select("#tickmark-group").append("g")
+                      .attr("id", slug);
       }
 
       // DATA JOIN
@@ -780,9 +785,9 @@ angular.module('lizard-nxt')
       tickmarks = group.selectAll("rect")
         .data(data, function  (d) { return d; });
 
-    } else if (data.length === 0) {
-      // if no data is defined remove group
-      svg.select("g").select("#tickmark-group")
+    } else if (data.length === 0 && slug === undefined) {
+      // if no data and slugs are defined, remove all groups
+      svg.select("g").select("#tickmark-group").selectAll("g")
         .remove();
 
       return;

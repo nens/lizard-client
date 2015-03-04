@@ -91,7 +91,6 @@ angular.module('lizard-nxt')
           State.temporal.resolution = (
             State.temporal.end - State.temporal.start)
             /  UtilService.getCurrentWidth();
-          console.log("zoom end");
           getTimeLineData();
           State.temporal.timelineMoving = false;
         });
@@ -219,7 +218,8 @@ angular.module('lizard-nxt')
      * That will change later when we set data.
      */
     var getTimeLineData = function () {
-      console.log("getTimeLineData");
+      // NOTE: remember which layers *were* active? So we can do stuff with
+      // turning off data (eg tickmarks).
       var timelineLayers = getTimelineLayers(DataService.layerGroups),
           context = {eventOrder: 1,
                      nEvents: scope.events.nEvents};
@@ -354,7 +354,6 @@ angular.module('lizard-nxt')
       RasterService.getData(
         rasterLayer,
         {
-          //geom: bounds,
           geom: bounds.getCenter(),
           start: start,
           agg: rasterLayer.aggregationType,
@@ -370,15 +369,13 @@ angular.module('lizard-nxt')
       .then(
         function (response) {
           if (response && response !== 'null') {
-            console.log("draw these dates as something in timeline", response);
-            timeline.drawTickMarks(response);
+            timeline.drawTickMarks(response, rasterLayer.slug);
           }
         }
       );
     };
 
     var timelineZoomHelper = function () {
-      console.log("Timeline zoom helper");
       if (!State.temporal.timelineMoving) {
         if (!timelineSetsTime) {
           State.temporal.aggWindow = UtilService.getAggWindow(
@@ -435,7 +432,6 @@ angular.module('lizard-nxt')
      */
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
-      console.log("WATCH: moving watch");
       timelineZoomHelper();
     });
 
@@ -443,7 +439,6 @@ angular.module('lizard-nxt')
      * Update aggWindow element when timeState.at changes.
      */
     scope.$watch(State.toString('temporal.at'), function (n, o) {
-      console.log("WATCH: at watch", State.temporal.playing);
       // update timeline when time-controller changes temporal.at state
       timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
       // if temporal.playing don't get new data for each `temporal.at`
@@ -456,7 +451,6 @@ angular.module('lizard-nxt')
      * Round timeState.at when animation stops.
      */
     scope.$watch(State.toString('temporal.playing'), function (n, o) {
-      console.log("WATCH: temporal playing");
       if (n === o || n) { return true; }
       State.temporal.at = UtilService.roundTimestamp(
         State.temporal.at + State.temporal.aggWindow / 2,
