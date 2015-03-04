@@ -615,7 +615,7 @@ angular.module('lizard-nxt')
       }
 
       if (tickmarks) {
-        updateTickmarks(tickmarks);
+        updateTickmarks(tickmarks, dimensions);
       }
 
       if (zoomFn) {
@@ -744,6 +744,7 @@ angular.module('lizard-nxt')
   };
 
   var updateTickmarks = function (tickmarks, dimensions) {
+    console.log("update tickmarks");
     var height = Timeline.prototype._getHeight(dimensions);
     tickmarks.attr("x", function (d) { return xScale(d); });
     tickmarks.attr("y", height - 5);

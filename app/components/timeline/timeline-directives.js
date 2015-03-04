@@ -255,6 +255,8 @@ angular.module('lizard-nxt')
         angular.forEach(timelineLayers.rasterStore.layers, function (layer) {
           getTemporalRasterDates(layer);
         });
+      } else {
+        timeline.drawTickMarks([]);
       }
 
       updateTimelineHeight(scope.events.nEvents);
@@ -416,7 +418,6 @@ angular.module('lizard-nxt')
      */
     scope.$watch(State.toString('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
-      console.log("WATCH: spatial watch");
       getTimeLineData();
     });
 
@@ -425,7 +426,6 @@ angular.module('lizard-nxt')
      */
     scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return true; }
-      console.log("WATCH: lg active watch");
       getTimeLineData();
     });
 
@@ -443,9 +443,13 @@ angular.module('lizard-nxt')
      * Update aggWindow element when timeState.at changes.
      */
     scope.$watch(State.toString('temporal.at'), function (n, o) {
-      console.log("WATCH: at watch");
+      console.log("WATCH: at watch", State.temporal.playing);
+      // update timeline when time-controller changes temporal.at state
       timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
-      timelineZoomHelper();
+      // if temporal.playing don't get new data for each `temporal.at`
+      if (!State.temporal.playing) {
+        timelineZoomHelper();
+      }
     });
 
     /**
