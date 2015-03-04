@@ -387,8 +387,12 @@ angular.module('lizard-nxt')
      * Update aggWindow element when timeState.at changes.
      */
     scope.$watch(State.toString('temporal.at'), function (n, o) {
+      // update timeline when time-controller changes temporal.at state
       timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
-      timelineZoomHelper();
+      // if temporal.playing don't get new data for each `temporal.at`
+      if (!State.temporal.playing) {
+        timelineZoomHelper();
+      }
     });
 
     /**
