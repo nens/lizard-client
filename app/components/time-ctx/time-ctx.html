@@ -11,7 +11,7 @@
       <div class="dashboard-inner">
 
         <graph
-          ng-if="item.scale !== 'ratio'"
+          ng-if="item.scale !== 'ratio' && item.type !== 'Event'"
           line
           data="item.data"
           dimensions="tctx.dims"
@@ -31,6 +31,20 @@
           ylabel="item.unit"
           keys="{x: 0, y: 1}">
         </graph>
+
+        <graph
+          ng-if="item.type === 'Event'"
+          bar-chart
+          class="xyGraph"
+          data="item.data"
+          ylabel="item.unit"
+          keys="{x: 'timestamp',
+                 y: 'count',
+                 color: 'color',
+                 category: 'category'}"
+          dimensions="tctx.dims"
+          temporal="tctx.state.temporal">
+          </graph>
 
       </div>
 

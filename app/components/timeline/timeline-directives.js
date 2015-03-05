@@ -192,18 +192,19 @@ angular.module('lizard-nxt')
     var getTimelineLayers = function (layerGroups) {
       var timelineLayers = {events: {layers: [], slugs: []},
                             rain: undefined};
-      if (State.context === 'time') {
-        // When time we do not want to draw anything in the timeline.
-        return timelineLayers;
-      }
+
       angular.forEach(layerGroups, function (layergroup) {
         if (layergroup.isActive()) {
           angular.forEach(layergroup._dataLayers, function (layer) {
             if (layer.format === "Vector") {
               timelineLayers.events.layers.push(layer);
               timelineLayers.events.slugs.push(layer.slug);
-            } else if (layer.format === "Store" &&
-                       layer.slug === "rain") {
+            } else if (
+                // When time we do not want to draw rain in the timeline when
+                // context is time.
+                State.context !== 'time'
+                && layer.format === "Store"
+                && layer.slug === "rain") {
               timelineLayers.rain = layer;
             }
           });

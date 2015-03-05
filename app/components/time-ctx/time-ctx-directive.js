@@ -18,7 +18,9 @@ angular.module('time-ctx')
 
 
     var getHeight = function () {
-      return element.height() - 50; // min-height from top row
+      return element.height() - 50; // min-height from top row, we need to make
+                                    // this dynamic or bigger when we are going
+                                    // to use the top row for maps etc.
     };
 
     var resize = function (tlDimensions) {
@@ -44,22 +46,48 @@ angular.module('time-ctx')
 
     var putDataOnScope = function (response) {
 
-        scope.tctx.content[response.layerSlug] = {};
+      var item = {};
+      item.data = response.data || response.events;
 
-        scope.tctx.content[response.layerSlug].data = response.data || response.events;
+      var sharedKeys = [
+        'format',
+        'scale',
+        'quantity',
+        'unit',
+        'color',
+        'type'
+      ];
 
-        var sharedKeys = [
-          'format',
-          'scale',
-          'quantity',
-          'unit',
-          'color',
-          'type'
-        ];
+      angular.forEach(sharedKeys, function (key) {
+        item[key] = response[key];
+      });
 
-        angular.forEach(sharedKeys, function (key) {
-          scope.tctx.content[response.layerSlug][key] = response[key];
-        });
+      scope.tctx.content[response.layerSlug] = item;
+
+    };
+
+    var putEventDataOnScope = function (response) {
+
+      if (response.data) {
+        var lg = DataService.layerGroups[response.layerGroupSlug];
+        // aggregate response
+        var eventAgg = {
+          data: EventAggregateService.aggregate(
+            response.data,
+            State.temporal.aggWindow,
+            lg.mapLayers[0].color
+          ),
+          unit: lg.name,
+        };
+
+        // TODO: remove this ifje and do something with the graph to accomadate
+        // datasets smaller than 2.
+        if (eventAgg.data.length > 1) {
+          putDataOnScope(angular.extend(response, eventAgg));
+        }
+
+
+      }
 
     };
 
@@ -75,37 +103,48 @@ angular.module('time-ctx')
         geom: geom,
         start: State.temporal.start,
         end: State.temporal.end,
-        temporalOnly: true
+        temporalOnly: true // TODO: actually implement this in data-service.
       }).then(null, null, function (response) {
 
+        // TODO 1: prune this tree.. We need to request waterchain in order
+        // to get timeseries from dataservice. This needs to change.
+        //
+        // TODO 2: We want to be able to use a filter to request only the
+        // temporal data.
+        //
+        // TODO 3: Remove box filtering, always show all the data
+        //
         if (response.layerSlug === 'waterchain_grid'
           || response.layerSlug === 'rrc') {
           return;
+
         } else if (response.layerSlug === 'timeseries') {
           angular.forEach(response.data, function (ts) {
             ts.layerSlug = ts.name;
             putDataOnScope(ts);
           });
         } else {
-          putDataOnScope(response);
+          if (response.type === 'Event') {
+            putEventDataOnScope(response);
+          } else if (State.box.type === 'point' && response.type !== 'Event') {
+            putDataOnScope(response);
+          }
         }
 
         if (tlDims) {
           resize(tlDims);
         }
 
-        console.log(scope.tctx.content);
-
       });
     };
 
     getTimeData();
+
     /**
      * Updates time-ctx when time zoom changes.
      */
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o || State.temporal.timelineMoving) { return true; }
-      console.log('new shit');
       getTimeData();
     });
 
