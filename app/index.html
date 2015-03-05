@@ -47,8 +47,11 @@
     </div>
 
     <div ng-if="context !== 'scenarios'">
-      <datamenu></datamenu>
       <timeline class="timeline navbar-fixed-bottom"></timeline>
+    </div>
+
+    <div ng-if="context !== 'scenarios' && context !== 'time'">
+      <datamenu></datamenu>
     </div>
 
     <user-menu></user-menu>
@@ -56,6 +59,9 @@
     <div ng-if="context === 'map'">
       <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
     </div>
+
+
+    <div id="context-transition-overlay"></div>
 
     <div id="dark-overlay">
       <div id="mymodal">

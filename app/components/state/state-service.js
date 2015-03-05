@@ -55,7 +55,7 @@ angular.module('global-state')
       active: [],
       isLoading: null, // Either gettingData or syncingTime
       gettingData: false, // Making server requests through DataService
-      syncingTime: false // Getting new layers and so on
+      timeIsSyncing: false // Getting new layers and so on
     };
 
     // Combination of data and time syncing

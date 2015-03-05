@@ -4,7 +4,19 @@
 
 #timeline {
     transition: ease .3s;
+    -webkit-transition: ease .3s;
 }
+
+
+#timeline-overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 0;
+    background-color: white;
+    opacity: 0.7;
+}
+
 
 .timeline {
     background-color: rgba(255, 255, 255, 0.7);
@@ -221,19 +233,36 @@
 
 .clock-wrapper {
     position: absolute;
-    top: -26px;
+    top: -23px;
     left: 16px;
-    background: none;
+    background: white;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
     opacity: 0.7;
 }
 
 .clock-time {
-    background: white;
-    padding: 3px;
+    display: block;
     width: 100%;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
     cursor: pointer;
+    padding: 3px;
+    -webkit-transition: .3s;
+
+    div {
+        cursor: pointer;
+        float: left;
+        padding-left: 9px;
+
+        &:first-child {
+            padding-left: 3px;
+        }
+
+        &:last-child {
+            padding-right: 3px;
+        }
+    }
 }
 
 /* d3 timeline graph elements*/

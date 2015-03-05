@@ -140,9 +140,23 @@ angular.module('lizard-nxt')
       }
     });
 
-    scope.$watch('temporal.timelineMoving', function (n, o) {
-      if (n === o || o) { return true; }
-      graphUpdateHelper(true, true);
+    scope.$watch('temporal.start', function (n, o) {
+      if (n === o) { return true; }
+      graphUpdateHelper(false, true);
+    });
+
+    scope.$watch('temporal.end', function (n, o) {
+      if (n === o) { return true; }
+      graphUpdateHelper(false, true);
+    });
+
+    scope.$watch('dimensions.height', function (n, o) {
+      if (!scope.dimensions
+        || scope.dimensions.height === graphCtrl.graph.dimensions.height) {
+        return true;
+      }
+      graphCtrl.graph.resize(scope.dimensions);
+      graphUpdateHelper(false, false);
     });
 
   };
