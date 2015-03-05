@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.2.26 (2015-3-5)
+---------------------
 
 - Fix indentation in rain controller.
 
