@@ -50,7 +50,7 @@ angular.module('lizard-nxt')
    */
   $scope.transitionToContext = function (context) {
     if (context !== State.context) {
-      var overlay = angular.element('#timeline-overlay')[0];
+      var overlay = angular.element('#context-transition-overlay')[0];
       overlay.style.minHeight = window.innerHeight + 'px';
       overlay.style.transition = 'ease .3s';
       $timeout(function () {
