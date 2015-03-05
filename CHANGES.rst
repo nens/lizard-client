@@ -4,6 +4,12 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Add local cache to utfgridservice so a query can be answered without a map.
+
+- Only set getData state back to false when all calls have been finished.
+
+- Move getTimeseries to Data-service.
+
 - Adapt to new raster reponse for area.
 
 - Remove elevation curve formatter.
