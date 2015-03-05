@@ -8,6 +8,8 @@ angular.module('time-ctx')
 
     var TL_TOP_MARGIN = 10,
         GRAPH_PADDING = 5,
+        GRAPH_5_6th_PADDING_RATIO = 0.83, // The other 6th is used in the css.
+        TOP_ROW_MIN_HEIGHT = 50,
         tlDims = {},
         nGraphs = 1;
 
@@ -18,7 +20,8 @@ angular.module('time-ctx')
 
 
     var getHeight = function () {
-      return element.height() - 50; // min-height from top row, we need to make
+      return element.height() - TOP_ROW_MIN_HEIGHT;
+                                    // min-height from top row, we need to make
                                     // this dynamic or bigger when we are going
                                     // to use the top row for maps etc.
     };
@@ -33,13 +36,14 @@ angular.module('time-ctx')
     Timeline.onresize = resize;
 
     scope.tctx.dims = {
-      width: UtilService.getCurrentWidth() + 0.83 * UtilService.TIMELINE_LEFT_MARGIN,
+      width: UtilService.getCurrentWidth()
+        + GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN,
       height: getHeight() / nGraphs,
       padding: {
         top: GRAPH_PADDING,
         right: 0,
         bottom: 2 * GRAPH_PADDING, // Enough for the line of the axis.
-        left: 0.83 * UtilService.TIMELINE_LEFT_MARGIN
+        left: GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN
       }
     };
 
