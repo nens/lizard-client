@@ -769,7 +769,6 @@ angular.module('lizard-nxt')
     var height = Timeline.prototype._getHeight(dimensions);
 
     // setup svg group element to hold rects.
-    console.log(data.length, slug);
     if (data.length > 0) {
 
       var group = svg.select("g").select("#tickmark-group").select("#" + slug);
