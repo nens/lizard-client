@@ -344,7 +344,7 @@ angular.module('lizard-nxt')
     }
 
     graph.drawBars(data, keys, labels, quantity);
-    // graph.drawNow(graphCtrl.now);
+    graph.drawNow(graphCtrl.now);
 
     // Function to call when data changes
     graphCtrl.updateData = function (data, keys, labels) {
