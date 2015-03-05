@@ -95,16 +95,20 @@ angular.module('lizard-nxt')
       // elevation graph gets clipped by the clippath of the horizontalstack.
       var clip = this._svg.select('g').select("defs");
       if (!clip[0][0]) {
-        this._svg.select('g').append('defs').append("svg:clipPath")
-          .attr("id", "clip" + height)
-          .append("svg:rect")
-          .attr("id", "clip-rect")
-          .attr("x", "0")
-          .attr("y", 0 - 2)
-          .attr("width", width)
-          // give some space to draw full stroke-width.
-          .attr("height", height + 4);
+        clip = this._svg.select('g').append('defs').append("svg:clipPath")
+        .attr('class', 'clip-path');
+        clip.append("svg:rect");
+
       }
+      clip = this._svg.select('g').select("defs").select('.clip-path')
+      .attr("id", "clip" + height)
+      .select('rect')
+        .attr("id", "clip-rect")
+        .attr("x", "0")
+        .attr("y", 0 - 2)
+        .attr("width", width)
+        // give some space to draw full stroke-width.
+        .attr("height", height + 4);
       // Put the data in this group
       var g = this._svg.select('g').select('g');
       if (!g[0][0]) {
@@ -452,7 +456,11 @@ angular.module('lizard-nxt')
       .attr('height', dimensions.height)
       // Create a drawing group that is shifted left side padding to the right
       .select("g")
-        .attr("transform", "translate(" + dimensions.padding.left + ", " + dimensions.padding.top + ")");
+        .attr("transform", "translate(" + dimensions.padding.left + ", " + dimensions.padding.top + ")")
+      .select('rect')
+            .attr('id', 'listeners')
+            .attr('width', width)
+            .attr('height', height);
     return svg;
   };
 

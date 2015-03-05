@@ -32,19 +32,13 @@ angular.module('scenarios')
     };
 
     $scope.preview = function (scenario) {
-      // angular.forEach(DataService.layerGroups, function (lg, slug) {
-      //   if (slug !== 'elevation'
-      //     && !lg.baselayer) {
-      //     DataService.removeLayerGroup(lg);
-      //   }
-      // });
       angular.forEach(scenario.result_set, function (result) {
         if (result.layer_group) {
           var lg = DataService.createLayerGroup(result.layer_group);
           DataService.toggleLayerGroup(lg);
         }
       });
-      State.context = 'map';
+      $scope.transitionToContext('map');
     };
 
   }

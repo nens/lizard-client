@@ -59,8 +59,7 @@ angular.module('lizard-nxt')
       UtilService.getCurrentWidth()
     );
 
-    this.state = State.temporal;
-    this.layerGroups = State.layerGroups;
+    this.state = State;
 
     /**
      * Keep an eye out for temporal layers that require the animation to go
@@ -297,7 +296,7 @@ angular.module('lizard-nxt')
     };
 
     this.formatDatetime = function () {
-      switch (this.state.aggWindow) {
+      switch (State.temporal.aggWindow) {
       case 300000:
         return 'yyyy MM dd HH:mm';
       case 3600000:
