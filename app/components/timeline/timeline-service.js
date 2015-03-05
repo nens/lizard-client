@@ -748,11 +748,8 @@ angular.module('lizard-nxt')
        .attr('height', height);
     }
   };
-
   var updateTickmarks = function (tickmarks, dimensions) {
-    var height = Timeline.prototype._getHeight(dimensions);
     tickmarks.attr("x", function (d) { return xScale(d); });
-    tickmarks.attr("y", height - 5);
   };
 
   /**
@@ -794,8 +791,8 @@ angular.module('lizard-nxt')
 
     // UPDATE
     tickmarks.transition()
-      .delay(Timeline.prototype.transTime)
-      .duration(Timeline.prototype.transTime)
+      //.delay(Timeline.prototype.transTime)
+      //.duration(Timeline.prototype.transTime)
       .attr("y", height - 5)
       .attr("x", function (d) { return xScale(d); } );
 
@@ -803,8 +800,8 @@ angular.module('lizard-nxt')
     tickmarks.enter().append("rect")
       .attr("class", "tickmark")
     .transition()
-      .delay(Timeline.prototype.transTime)
-      .duration(Timeline.prototype.transTime)
+      //.delay(Timeline.prototype.transTime)
+      //.duration(Timeline.prototype.transTime)
       .attr("x", function (d) { return xScale(d); } )
       .attr("y", height - 5)
       .attr("height", 5)

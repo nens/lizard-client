@@ -321,7 +321,7 @@ angular.module('lizard-nxt')
           agg: rasterLayer.aggregationType,
           aggWindow: State.temporal.aggWindow,
           deferrer: {
-            origin: 'timeline_' + rasterLayer.name,
+            origin: 'timeline_' + rasterLayer.slug,
             deferred: $q.defer()
           }
         }
@@ -340,6 +340,9 @@ angular.module('lizard-nxt')
      * @summary get date array for temporal raster layers.
      * @description  get date array for temporal raster. If it gets a response
      * plots a tickmark in the timeline for every date.
+     *
+     * NOTE: refactor this function with getTemporalRasterData to use
+     * dataService.
      *
      * @param {object} rasterLayer - rasterLayer object.
      */
