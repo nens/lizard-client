@@ -18,6 +18,7 @@ angular.module('lizard-nxt')
   if (window.location.host === 'nens.github.io' ||
       window.location.host === 'lizard.sandbox.lizard.net') {
     Restangular.setBaseUrl(backendDomain);
+    Restangular.setDefaultHttpFields({withCredentials: true});
   }
   Restangular.setRequestSuffix('?page_size=0');
   geocodeResource = Restangular.one('api/v1/geocode/');

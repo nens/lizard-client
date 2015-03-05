@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
--
+
+- Add withCredentials to Restangular for ajax calls when on sandbox.
 
 
 Release 1.2.25 (2015-2-19)
