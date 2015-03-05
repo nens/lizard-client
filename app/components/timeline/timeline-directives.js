@@ -62,8 +62,10 @@ angular.module('lizard-nxt')
 
           timelineSetsTime = true;
           State.temporal.timelineMoving = true;
-          State.temporal.start = UtilService.getMinTime( scale.domain()[0].getTime() );
-          State.temporal.end   = UtilService.getMaxTime( scale.domain()[1].getTime() );
+          State.temporal.start = UtilService.getMinTime(
+            scale.domain()[0].getTime());
+          State.temporal.end   = UtilService.getMaxTime(
+             scale.domain()[1].getTime());
 
           State.temporal.aggWindow = UtilService.getAggWindow(
             State.temporal.start,
@@ -87,7 +89,8 @@ angular.module('lizard-nxt')
       zoomEndFn: function () {
         scope.$apply(function () {
           State.temporal.resolution = (
-            State.temporal.end - State.temporal.start) /  UtilService.getCurrentWidth();
+            State.temporal.end - State.temporal.start)
+            /  UtilService.getCurrentWidth();
           getTimeLineData();
           State.temporal.timelineMoving = false;
         });
@@ -106,7 +109,8 @@ angular.module('lizard-nxt')
       clickFn: function (event, scale, dimensions) {
         scope.$apply(function () {
           var timeClicked = +(scale.invert(
-            event.pageX - dimensions.padding.left - UtilService.TIMELINE_LEFT_MARGIN
+            event.pageX - dimensions.padding.left
+              - UtilService.TIMELINE_LEFT_MARGIN
           ));
           State.temporal.at = UtilService.roundTimestamp(
             timeClicked,
@@ -116,7 +120,8 @@ angular.module('lizard-nxt')
       },
     };
 
-    // shift timeline's SVG element using it's CSS - set here by JS too stop stuff becoming unsyncable
+    // shift timeline's SVG element using it's CSS - set here by JS too stop
+    // stuff becoming unsyncable
     angular.element("#timeline-svg-wrapper svg")[0].style.left
       = UtilService.TIMELINE_LEFT_MARGIN + "px";
 
@@ -382,7 +387,12 @@ angular.module('lizard-nxt')
      * Update aggWindow element when timeState.at changes.
      */
     scope.$watch(State.toString('temporal.at'), function (n, o) {
+      // update timeline when time-controller changes temporal.at state
       timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
+      // if temporal.playing don't get new data for each `temporal.at`
+      if (!State.temporal.playing) {
+        timelineZoomHelper();
+      }
     });
 
     /**

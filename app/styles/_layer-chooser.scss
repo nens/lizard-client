@@ -15,23 +15,10 @@
     background: $turquoise;
 }
 
-
 label.layer-chooser {
     border: solid 2px rgba(0,0,0,0);
     height: $height15;
     margin-bottom: 0;
-    position: relative;
-    transition: .3s ease;
-    width: $width19;
-    &:hover {
-        border: 2px solid $asbestos;
-    }
-}
-
-label.layer-chooser-wytze {
-    border: solid 2px rgba(0,0,0,0);
-    height: $height15;
-    margin-bottom: 10px;
     position: relative;
     transition: .3s ease;
     width: $width19;
@@ -48,16 +35,22 @@ label.layer-chooser > span.layer-text {
     position: absolute;
     transition: .3s ease;
     width: 60%;
+    cursor: pointer;
 }
 
-label.layer-chooser-wytze > span.layer-text-wytze {
-    background: rgba(239, 239, 239, 0.9);
+label.layer-chooser > span.layer-icon {
     color: $asbestos;
     height: 24px;
     padding: 4px 5px;
     position: absolute;
+    left: $width19 - 14;
     transition: .3s ease;
-    width: 100%;
+    width: 60%;
+    cursor: pointer;
+}
+
+label.layer-chooser > span.layer-icon:hover {
+    color: $pomegranate;
 }
 
 label.layer-chooser.active {
@@ -74,21 +67,6 @@ label.layer-chooser.active > span.layer-text {
     color: $midnightblue;
 }
 
-label.layer-chooser-wytze.active {
-    border: solid 2px $midnightblue;
-    &:hover > span.layer-text-wytze {
-        color: $midnightblue;
-    }
-    &:hover {
-        border: solid 2px $midnightblue;
-    }
-}
-
-label.layer-chooser-wytze.active > span.layer-text-wytze {
-    color: $midnightblue;
-}
-
-
 label.layer-chooser > div.layer-img {
     background-position: center;
     background-repeat: no-repeat;
@@ -97,10 +75,6 @@ label.layer-chooser > div.layer-img {
     position: absolute;
     right: 0;
     width: $width19;
-    &:hover {
-        cursor: pointer !important;
-    }
-
 }
 
 .layer-switcher {
@@ -113,7 +87,6 @@ label.layer-chooser > div.layer-img {
     top: 0;
     label {
         color: $asbestos;
-        cursor: pointer;
         font-size: 14px;
         font-style: normal;
         line-height: 1;
