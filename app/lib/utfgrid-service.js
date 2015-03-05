@@ -10,7 +10,7 @@ angular.module('lizard-nxt')
     // UtfGridService has a local cache of the last query so the dataservice can
     // get an answer of the utfgrid even if there is no map.
     // NOTE: we use this as a 'poor man's state' of the 'last selected
-    // object'. We might want to include the 'last selected object' in the 
+    // object'. We might want to include the 'last selected object' in the
     // actual state so we can refer to it directly.
     var _cache = {};
 
@@ -23,7 +23,7 @@ angular.module('lizard-nxt')
      * @returns {string} key
      */
     var buildCacheKey = function (layer, options) {
-    
+
       var cacheKey;
 
       cacheKey = layer.slug
@@ -142,36 +142,36 @@ angular.module('lizard-nxt')
     var _isWithinExtent = function (structureGeom, leafletBounds) {
 
       switch (structureGeom.type) {
-        case "Point":
-          return leafletBounds.contains(L.latLng(
-            structureGeom.coordinates[1],
-            structureGeom.coordinates[0]
-          ));
+      case "Point":
+        return leafletBounds.contains(L.latLng(
+          structureGeom.coordinates[1],
+          structureGeom.coordinates[0]
+        ));
 
-        case "LineString":
+      case "LineString":
 
-          // For now (15-01-2015), don't take into account structures with a geom
-          // type other than POINT. Since this will probably be reverted some time
-          // in the foreseeable future, we simply comment the relevant code and
-          // return false.
+        // For now (15-01-2015), don't take into account structures with a geom
+        // type other than POINT. Since this will probably be reverted some time
+        // in the foreseeable future, we simply comment the relevant code and
+        // return false.
 
-          // var lineStart = L.latLng(
-          //       structureGeom.coordinates[0][1],
-          //       structureGeom.coordinates[0][0]
-          //     ),
-          //     lineEnd = L.latLng(
-          //       structureGeom.coordinates[1][1],
-          //       structureGeom.coordinates[1][0]
-          //     );
+        // var lineStart = L.latLng(
+        //       structureGeom.coordinates[0][1],
+        //       structureGeom.coordinates[0][0]
+        //     ),
+        //     lineEnd = L.latLng(
+        //       structureGeom.coordinates[1][1],
+        //       structureGeom.coordinates[1][0]
+        //     );
 
-          // TODO: Fix detection of lines that overlap the extent, but that do
-          // not start nor end within the extent. It negligable for now.
-          //return leafletBounds.contains(lineStart) || leafletBounds.contains(lineEnd);
+        // TODO: Fix detection of lines that overlap the extent, but that do
+        // not start nor end within the extent. It negligable for now.
+        //return leafletBounds.contains(lineStart) || leafletBounds.contains(lineEnd);
 
-          return false;
+        return false;
 
-        default:
-          throw new Error("Did not find valid geom type:", structureGeom.type);
+      default:
+        throw new Error("Did not find valid geom type:", structureGeom.type);
       }
     };
 

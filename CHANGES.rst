@@ -6,6 +6,16 @@ Unreleased (1.2.25) (XXXX-XX-XX)
 
 - Show tickmarks in timeline for available images for dynamic raster stores.
 
+- Create nice button and transition from and to time ctx from timeline.
+
+- Outline graphs with timeline in time ctx.
+
+- Remove listeners to bounds and layergroups in time ctx.
+
+- Nicely stack graphs on top of timeline for 1 to n data layers in time ctx.
+
+- Fill graphs with data for point timeseries, events, rain, and area events.
+
 - Fix tests by staying backwards compatible on layers with no meta object.
 
 - Context aware button to zoom to bounds in layer chooser.

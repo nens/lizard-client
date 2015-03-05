@@ -17,6 +17,7 @@ angular.module('lizard-nxt')
 
   ['$scope',
    '$controller',
+   '$timeout',
    'CabinetService',
    'UtilService',
    'ClickFeedbackService',
@@ -27,6 +28,7 @@ angular.module('lizard-nxt')
 
   function ($scope,
             $controller,
+            $timeout,
             CabinetService,
             UtilService,
             ClickFeedbackService,
@@ -46,17 +48,25 @@ angular.module('lizard-nxt')
    *
    * @param {string} context - Context name to switch to
    */
-  $scope.switchContext = function (context) {
-    State.context = context;
+  $scope.transitionToContext = function (context) {
+    if (context !== State.context) {
+      var overlay = angular.element('#context-transition-overlay')[0];
+      overlay.style.minHeight = window.innerHeight + 'px';
+      overlay.style.transition = 'ease .3s';
+      $timeout(function () {
+        overlay.style.opacity = 1;
+      }, 300);
+      $timeout(function () {
+        State.context = context;
+        $scope.context = State.context;
+        overlay.style.opacity = 0;
+      }, 600, true);
+      $timeout(function () {
+        overlay.style.transition = null;
+        overlay.style.minHeight = 0;
+      }, 900);
+    }
   };
-
-  /*
-   * Set context on scope.
-   */
-  $scope.$watch(State.toString('context'), function (n, o) {
-    if (n === o) { return true; }
-    $scope.context = State.context;
-  });
 
   // initialise context.
   $scope.context = State.context;

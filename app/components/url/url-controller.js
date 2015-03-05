@@ -14,6 +14,7 @@
 angular.module('lizard-nxt')
 .controller('UrlController', [
   '$scope',
+  '$timeout',
   'LocationGetterSetter',
   'UrlState',
   'dataBounds',
@@ -24,6 +25,7 @@ angular.module('lizard-nxt')
   'LeafletService',
   function (
     $scope,
+    $timeout,
     LocationGetterSetter,
     UrlState,
     dataBounds,
@@ -233,7 +235,14 @@ angular.module('lizard-nxt')
         context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
 
       if (context) {
-        State.context = context;
+        // Set context after digest loop because we need to enter on 'map'
+        $timeout(
+          function () {
+            $scope.transitionToContext(context);
+          },
+          0, // no delay, fire when digest ends
+          true // trigger new digest loop
+        );
       } else {
         LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
       }

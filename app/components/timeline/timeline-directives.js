@@ -11,6 +11,7 @@
 angular.module('lizard-nxt')
   .directive('timeline',
              ["$q",
+              "$timeout",
               "RasterService",
               "UtilService",
               "Timeline",
@@ -18,6 +19,7 @@ angular.module('lizard-nxt')
               "DataService",
               "State",
               function ($q,
+                        $timeout,
                         RasterService,
                         UtilService,
                         Timeline,
@@ -29,7 +31,7 @@ angular.module('lizard-nxt')
 
     var timelineSetsTime = false,
 
-        showTimeline = false, // Is set by user clicking data label, when true
+        showTimeline = true, // Is set by user clicking data label, when true
                               // timeline is shown.
 
         dimensions = {
@@ -89,8 +91,8 @@ angular.module('lizard-nxt')
       zoomEndFn: function () {
         scope.$apply(function () {
           State.temporal.resolution = (
-            State.temporal.end - State.temporal.start)
-            /  UtilService.getCurrentWidth();
+            State.temporal.end - State.temporal.start
+            ) /  UtilService.getCurrentWidth();
           getTimeLineData();
           State.temporal.timelineMoving = false;
         });
@@ -168,6 +170,10 @@ angular.module('lizard-nxt')
         nEventTypes
       );
 
+      if (Timeline.onresize) {
+        Timeline.onresize(newDim);
+      }
+
     };
 
     /**
@@ -187,13 +193,14 @@ angular.module('lizard-nxt')
       var timelineLayers = {events: {layers: [], slugs: []},
                             rasterStore: {layers: []},
                             rain: undefined};
+
       angular.forEach(layerGroups, function (layergroup) {
         if (layergroup.isActive()) {
           angular.forEach(layergroup._dataLayers, function (layer) {
             if (layer.format === "Vector") {
               timelineLayers.events.layers.push(layer);
               timelineLayers.events.slugs.push(layer.slug);
-            } else if (layer.format === "Store") {
+            } else if (layer.format === "Store" && State.context !== 'time') {
               if (layer.slug !== "rain") {
                 timelineLayers.rasterStore.layers.push(layer);
               } else if (layer.slug === "rain") {
@@ -400,15 +407,20 @@ angular.module('lizard-nxt')
 
     // END HELPER FUNCTIONS
 
-    element[0].style.height = 0;
-
     scope.timeline.toggleTimelineVisiblity = function () {
       showTimeline = !showTimeline;
-      if (!showTimeline) {
+      if (!showTimeline && State.context !== 'time') {
         element[0].style.height = 0;
       } else {
         updateTimelineHeight(scope.events.nEvents);
       }
+    };
+
+    scope.timeline.toggleTimelineVisiblity();
+
+    scope.timeline.toggleTimeCtx = function () {
+      scope.timeline.toggleTimelineVisiblity();
+      scope.transitionToContext(State.context === 'map' ? 'time' : 'map');
     };
 
     // WATCHES
@@ -460,6 +472,13 @@ angular.module('lizard-nxt')
         State.temporal.aggWindow,
         false
       );
+    });
+
+    scope.$watch(State.toString('context'), function (n, o) {
+      if (n === o) { return; }
+      showTimeline = false; // It toggles
+      scope.timeline.toggleTimelineVisiblity();
+      getTimeLineData(); // It also removes data..
     });
 
     /**

@@ -78,6 +78,7 @@ angular.module('data-menu')
                 aggType: aggType,
                 summary: summary,
                 scale: scale,
+                type: type,
                 quantity: quantity,
                 unit: unit
               });
