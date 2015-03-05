@@ -6,6 +6,8 @@ Unreleased (1.2.25) (XXXX-XX-XX)
 
 - Show tickmarks in timeline for available images for dynamic raster stores.
 
+- Add withCredentials to Restangular for ajax calls when on sandbox.
+
 - Create nice button and transition from and to time ctx from timeline.
 
 - Outline graphs with timeline in time ctx.
@@ -65,6 +67,7 @@ Release 1.2.26 (2015-3-5)
 - Fix rain export seperators.
 
 - Fix bug with click on map at top 50 px.
+>>>>>>> 4b768ab7e60d5b2109fb6a3327c3ec1dd32b5d9c
 
 
 Release 1.2.25 (2015-2-19)
