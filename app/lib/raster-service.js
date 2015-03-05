@@ -52,7 +52,7 @@ angular.module('lizard-nxt')
       canceler = cancelers[layer.slug] = $q.defer();
     }
 
-    return CabinetService.raster(canceler).get({
+    var requestOptions = {
       raster_names: layer.slug,
       geom: wkt,
       srs: srs,
@@ -61,7 +61,13 @@ angular.module('lizard-nxt')
       agg: agg,
       styles: options.styles,
       window: aggWindow
-    });
+    };
+
+    if (options.truncate === true) {
+      requestOptions['truncate'] = options.truncate;
+    }
+
+    return CabinetService.raster(canceler).get(requestOptions);
   };
 
   /**
