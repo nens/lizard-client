@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Move style from d3 to scss.
+
 - Show tickmarks in timeline for available images for dynamic raster stores.
 
 - Add withCredentials to Restangular for ajax calls when on sandbox.
