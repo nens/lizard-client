@@ -165,13 +165,16 @@ angular.module('data-menu')
 
               // TS are dependent on the waterchain response. So the waterchain
               // response is checked for signs of timeseries. If neccessary we
-              // will wait for the timeseries request to finish.
-              waitForTimeseries = getTimeseries(
-                response,
-                options.start,
-                options.end,
-                defer
-              );
+              // will wait for the timeseries request to finish. Else we keep
+              // checking every response.
+              if (!waitForTimeseries) {
+                waitForTimeseries = getTimeseries(
+                  response,
+                  options.start,
+                  options.end,
+                  defer
+                );
+              }
 
               defer.notify(response);
             })
@@ -184,7 +187,7 @@ angular.module('data-menu')
               finishDefers();
             });
           } else {
-            finishDefers(); 
+            finishDefers();
           }
         });
 
@@ -251,7 +254,11 @@ angular.module('data-menu')
        *                            when making request to timeseries endpoint.
        */
       var getTimeseries = function (response, start, end, defer) {
-        if (response.data && response.data.id && response.data.entity_name) {
+        if (response.format === 'UTFGrid'
+          && response.data
+          && response.data.id
+          && response.data.entity_name
+        ) {
           // Apparently, we're dealing with the waterchain:
           return getTimeSeriesForObject(
             response.data.entity_name + '$' + response.data.id,
