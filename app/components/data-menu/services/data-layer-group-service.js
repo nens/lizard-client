@@ -107,8 +107,10 @@ angular.module('data-menu')
           }
           else if (layer.format === 'Store') {
             this._dataLayers.push(new NxtDataLayer(layer, tempRes));
-            this.temporalBounds = layer.meta.temporal_bounds;
-            this.spatialBounds = layer.meta.spatial_bounds;
+            if (layer.meta) {
+              this.temporalBounds = layer.meta.temporal_bounds;
+              this.spatialBounds = layer.meta.spatial_bounds;
+            }
           }
           else if (layer.format === 'TMS'
             || layer.format === 'WMS') {
@@ -131,7 +133,7 @@ angular.module('data-menu')
       },
 
       /**
-       * Returns true if the current layerGroup (i.e. "this") is active and 
+       * Returns true if the current layerGroup (i.e. "this") is active and
        * false otherwise.
        */
       isActive: function () {
