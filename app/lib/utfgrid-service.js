@@ -15,14 +15,14 @@ angular.module('lizard-nxt')
     var _cache = {};
 
     /**
-     * @function getCacheKey
+     * @function buildCacheKey
      * @summary Calculate cache key for layer and options.
      *
      * @param {object} layer    nxt layer to use as key.
      * @param {object} options  options to use as key.
      * @returns {string} key
      */
-    var getCacheKey = function (layer, options) {
+    var buildCacheKey = function (layer, options) {
     
       var cacheKey;
 
@@ -65,7 +65,7 @@ angular.module('lizard-nxt')
           deferred = $q.defer(),
           e = { latlng: options.geom },
           response,
-          cacheKey = getCacheKey(nonLeafLayer, options);
+          cacheKey = buildCacheKey(nonLeafLayer, options);
 
       if (options.geom === undefined || geomType === "LINE") {
         deferred.reject();
@@ -102,7 +102,7 @@ angular.module('lizard-nxt')
                                                 geomType,
                                                 options) {
       var response, leafLayer = nonLeafLayer._leafletLayer,
-          cacheKey = getCacheKey(nonLeafLayer, options);
+          cacheKey = buildCacheKey(nonLeafLayer, options);
 
       leafLayer.on('load', function () {
         response = _getResponseForGeomType(
