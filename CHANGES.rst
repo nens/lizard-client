@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.2.27 (2015-3-5)
+---------------------
 
 - Move style from d3 to scss.
 
