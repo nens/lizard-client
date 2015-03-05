@@ -259,7 +259,9 @@ angular.module('lizard-nxt')
 
       State.temporal.start = now - fourFifthInterval;
       State.temporal.end = now + oneFifthInterval;
-      State.temporal.at = UtilService.roundTimestamp(now, State.temporal.aggWindow, false);
+      State.temporal.at = UtilService.roundTimestamp(now,
+                                                     State.temporal.aggWindow,
+                                                     false);
       announceMovedTimeline();
     };
 

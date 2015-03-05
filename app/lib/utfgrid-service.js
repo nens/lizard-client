@@ -9,34 +9,52 @@ angular.module('lizard-nxt')
 
     // UtfGridService has a local cache of the last query so the dataservice can
     // get an answer of the utfgrid even if there is no map.
+    // NOTE: we use this as a 'poor man's state' of the 'last selected
+    // object'. We might want to include the 'last selected object' in the 
+    // actual state so we can refer to it directly.
     var _cache = {};
 
     /**
-     * Set data to local cache.
-     * @param {object} response utfgrid response to cache.
+     * @function buildCacheKey
+     * @summary Calculate cache key for layer and options.
+     *
      * @param {object} layer    nxt layer to use as key.
      * @param {object} options  options to use as key.
+     * @returns {string} key
      */
-    var setToLocalCache = function (response, layer, options) {
-      var key = layer.slug
+    var buildCacheKey = function (layer, options) {
+    
+      var cacheKey;
+
+      cacheKey = layer.slug
         + options.geom.toString()
         + options.start
         + options.end;
-      _cache = {};
-      _cache[key] = response;
+
+      return cacheKey;
     };
 
     /**
-     * Get data from local cache
-     * @param {object} layer    nxt layer to use as key.
-     * @param {object} options  options to use as key.
-     * @return {object}         response with data or undefined.
+     * @function setToLocalCache
+     * @summary Set data to local cache.
+     *
+     * @param {string} key  key to store data at.
+     * @param {object} data data to cache.
      */
-    var getFromLocalCache = function (layer, options) {
-      var key = layer.slug
-        + options.geom.toString()
-        + options.start
-        + options.end;
+    var setToLocalCache = function (key, data) {
+      _cache = {};  // reset cache because we only need to remember the last
+                    // query.
+      _cache[key] = data;
+    };
+
+    /**
+     * @function getFromLocalCache
+     * @summary Gets data for `key` from local cache. Returns undefined if `key`
+     * doesn't exist.
+     *
+     * @return {object} Cached data or undefined if key doesn't exist.
+     */
+    var getFromLocalCache = function (key) {
       return _cache[key];
     };
 
@@ -46,28 +64,31 @@ angular.module('lizard-nxt')
           geomType = UtilService.getGeomType(options.geom),
           deferred = $q.defer(),
           e = { latlng: options.geom },
-          response;
+          response,
+          cacheKey = buildCacheKey(nonLeafLayer, options);
 
       if (options.geom === undefined || geomType === "LINE") {
         deferred.reject();
         return deferred.promise;
       }
 
-      var cached = getFromLocalCache(nonLeafLayer, options);
+      var cached = getFromLocalCache(cacheKey);
       if (cached) {
         response = cached;
         deferred.resolve(response.data);
       } else {
-        response = _getResponseForGeomType(leafLayer, geomType, e, options.geom);
+        response = _getResponseForGeomType(
+          leafLayer, geomType, e, options.geom);
 
         if (!window.loaded
           || leafLayer.isLoading
           || !leafLayer._map
           || !leafLayer._map.hasLayer(leafLayer)
         ) {
-          _getDataFromUTFAsynchronous(nonLeafLayer, e, deferred, geomType, options);
+          _getDataFromUTFAsynchronous(
+            nonLeafLayer, e, deferred, geomType, options);
         } else {
-          setToLocalCache(response, nonLeafLayer, options);
+          setToLocalCache(cacheKey, response);
           deferred.resolve(response.data);
         }
       }
@@ -75,16 +96,23 @@ angular.module('lizard-nxt')
       return deferred.promise;
     };
 
-    var _getDataFromUTFAsynchronous = function (nonLeafLayer, e, deferred, geomType, options) {
-      var response, leafLayer = nonLeafLayer._leafletLayer;
+    var _getDataFromUTFAsynchronous = function (nonLeafLayer,
+                                                e,
+                                                deferred,
+                                                geomType,
+                                                options) {
+      var response, leafLayer = nonLeafLayer._leafletLayer,
+          cacheKey = buildCacheKey(nonLeafLayer, options);
+
       leafLayer.on('load', function () {
-        response = _getResponseForGeomType(leafLayer, geomType, e, options.geom);
+        response = _getResponseForGeomType(
+          leafLayer, geomType, e, options.geom);
         if ($rootScope.$$phase) {
-          setToLocalCache(response, nonLeafLayer, options);
+          setToLocalCache(cacheKey, response);
           deferred.resolve(response.data);
         } else {
           $rootScope.$apply(function () {
-            setToLocalCache(response, nonLeafLayer, options);
+            setToLocalCache(cacheKey, response);
             deferred.resolve(response.data);
           });
         }
@@ -104,7 +132,8 @@ angular.module('lizard-nxt')
         );
       default:
         throw new Error(
-          "UtfGridService._getResponseForGeomType called with invalid arg 'geomType', which happened to be:",
+          "UtfGridService._getResponseForGeomType called with invalid " +
+          " arg 'geomType', which happened to be:",
           geomType
         );
       }
@@ -152,7 +181,8 @@ angular.module('lizard-nxt')
           currentEntityName,
           structure,
           structureGeom,
-          leafletBounds = L.latLngBounds(geomOpts._southWest, geomOpts._northEast),
+          leafletBounds = L.latLngBounds(
+            geomOpts._southWest, geomOpts._northEast),
           groupedStructures = { data: {} };
 
       for (uniqueId in structures.data) {

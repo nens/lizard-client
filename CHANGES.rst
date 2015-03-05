@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (1.2.7) (XXXX-XX-XX)
 -------------------------------
 
+- Context aware button to zoom to bounds in layer chooser.
+
+- zoomToBounds function to quickly locate (raster) data.
+
 - Add local cache to utfgridservice so a query can be answered without a map.
 
 - Only set getData state back to false when all calls have been finished.
