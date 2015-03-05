@@ -54,7 +54,7 @@ angular.module('omnibox')
       promise.then(null, null, function (response) {
         if (response
           && response.data
-          && response.data !== 'null'
+          && response.data.length > 0
           && response.layerSlug === 'rain') {
           $scope.box.content.rain.layers.rain.data
             = response.data;
