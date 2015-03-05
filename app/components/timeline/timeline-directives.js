@@ -191,6 +191,7 @@ angular.module('lizard-nxt')
      */
     var getTimelineLayers = function (layerGroups) {
       var timelineLayers = {events: {layers: [], slugs: []},
+                            rasterStore: {layers: []},
                             rain: undefined};
 
       angular.forEach(layerGroups, function (layergroup) {
@@ -199,14 +200,13 @@ angular.module('lizard-nxt')
             if (layer.format === "Vector") {
               timelineLayers.events.layers.push(layer);
               timelineLayers.events.slugs.push(layer.slug);
-            } else if (
-                // When time we do not want to draw rain in the timeline when
-                // context is time.
-                State.context !== 'time'
-                && layer.format === "Store"
-                && layer.slug === "rain") {
-              timelineLayers.rain = layer;
-            }
+            } else if (layer.format === "Store" && State.context !== 'time') {
+              if (layer.slug !== "rain") {
+                timelineLayers.rasterStore.layers.push(layer);
+              } else if (layer.slug === "rain") {
+                timelineLayers.rain = layer;
+              }
+           }
           });
         }
       });
@@ -225,6 +225,8 @@ angular.module('lizard-nxt')
      * That will change later when we set data.
      */
     var getTimeLineData = function () {
+      // NOTE: remember which layers *were* active? So we can do stuff with
+      // turning off data (eg tickmarks).
       var timelineLayers = getTimelineLayers(DataService.layerGroups),
           context = {eventOrder: 1,
                      nEvents: scope.events.nEvents};
@@ -249,12 +251,19 @@ angular.module('lizard-nxt')
         timeline.drawLines(undefined, scope.events.nEvents);
       }
 
-      // raster data (for now only rain)
       if (timelineLayers.rain !== undefined) {
         getTemporalRasterData(timelineLayers.rain,
                               timelineLayers.events.length);
       } else {
         timeline.removeBars();
+      }
+
+      if (timelineLayers.rasterStore.layers.length > 0) {
+        angular.forEach(timelineLayers.rasterStore.layers, function (layer) {
+          getTemporalRasterDates(layer);
+        });
+      } else {
+        timeline.drawTickMarks([]);
       }
 
       updateTimelineHeight(scope.events.nEvents);
@@ -301,9 +310,8 @@ angular.module('lizard-nxt')
      * timeline height and draws bars in timeline.
      *
      * @param {object} rasterLayer - rasterLayer object.
-     * @param {integer} nEvents - number of events.
      */
-    var getTemporalRasterData = function (rasterLayer, nEvents) {
+    var getTemporalRasterData = function (rasterLayer) {
 
       var start = State.temporal.start,
           stop = State.temporal.end,
@@ -320,7 +328,7 @@ angular.module('lizard-nxt')
           agg: rasterLayer.aggregationType,
           aggWindow: State.temporal.aggWindow,
           deferrer: {
-            origin: 'timeline_' + rasterLayer,
+            origin: 'timeline_' + rasterLayer.slug,
             deferred: $q.defer()
           }
         }
@@ -329,6 +337,49 @@ angular.module('lizard-nxt')
         function (response) {
           if (response && response !== 'null') {
             timeline.drawBars(response.data);
+          }
+        }
+      );
+    };
+
+    /**
+     * @function
+     * @summary get date array for temporal raster layers.
+     * @description  get date array for temporal raster. If it gets a response
+     * plots a tickmark in the timeline for every date.
+     *
+     * NOTE: refactor this function with getTemporalRasterData to use
+     * dataService.
+     *
+     * @param {object} rasterLayer - rasterLayer object.
+     */
+    var getTemporalRasterDates = function (rasterLayer) {
+
+      var start = State.temporal.start,
+          stop = State.temporal.end,
+          bounds = State.spatial.bounds;
+
+      // Has it's own deferrer to not conflict with
+      // other deferrers with the same layerSlug
+      RasterService.getData(
+        rasterLayer,
+        {
+          geom: bounds.getCenter(),
+          start: start,
+          agg: rasterLayer.aggregationType,
+          end: stop,
+          aggWindow: State.temporal.aggWindow,
+          truncate: true,
+          deferrer: {
+            origin: 'timeline_' + rasterLayer.slug,
+            deferred: $q.defer()
+          }
+        }
+      )
+      .then(
+        function (response) {
+          if (response && response !== 'null') {
+            timeline.drawTickMarks(response, rasterLayer.slug);
           }
         }
       );

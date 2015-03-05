@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Show tickmarks in timeline for available images for dynamic raster stores.
+
 - Add withCredentials to Restangular for ajax calls when on sandbox.
 
 - Create nice button and transition from and to time ctx from timeline.

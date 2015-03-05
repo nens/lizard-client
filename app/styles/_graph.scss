@@ -10,7 +10,7 @@
 
 .axis path, .axis line {
     fill: none;
-    stroke: #bdc3c7;
+    stroke: $silver;
     shape-rendering: crispEdges;
     stroke-width: 2;
 }
@@ -43,7 +43,7 @@
 }
 
 rect {
-fill: #95a5a6;
+fill: $bargrey;
 }
 
 #listeners {
@@ -52,14 +52,21 @@ fill: #95a5a6;
 
 rect.bar {
   stroke: white;
-  fill: #95a5a6;
+  fill: $bargrey;
 }
 
 .bar-timeline {
-  fill: #95a5a6;
+  fill: $bargrey;
   stroke-width: 1;
   fill-opacity: 1;
   stroke: white;
+}
+
+.tickmark {
+  fill: $midnightblue;
+  stroke-width: 1;
+  fill-opacity: 1;
+  stroke: $midnightblue;
 }
 
 .y1.axis  text {
@@ -69,13 +76,13 @@ rect.bar {
 }
 
 text, axis text {
-  fill: #bdc3c7;
+  fill: $silver;
   stroke: none;
   font-size: 13px;
 }
 
 .graph-text {
-  fill: #bdc3c7;
+  fill: $silver;
   stroke: none;
   font-size: 13px;
 }
@@ -131,7 +138,7 @@ text.d3tooltip:after {
   margin-top: -136px;
   opacity: 0.0;
   text-align: center;
-  color: #7f8c8d;
+  color: $asbestos;
   font-weight: 800;
   font-size: 40px;
   padding-top: 15px;
@@ -139,7 +146,7 @@ text.d3tooltip:after {
 
 .donut-title-text {
   text-anchor: middle;
-  fill: #7f8c8d;
+  fill: $asbestos;
   font-size: 14px;
   font-family: 'Roboto', Helvetica, Arial, sans-serif;
 }
