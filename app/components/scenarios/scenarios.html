@@ -11,32 +11,31 @@
 
         <input type="text" class="form-control" ng-model="search" placeholder="Zoek">
         <table class="table table-hover scenarios-table">
-          <thead>
-            <th></th>
-            <th>Naam</th>
-            <th>Datum</th>
-            <th>Resultaten</th>
-          </thead>
-          <tbody if="scenarios.length > 0">
+          <tbody
+            if="scenarios.length > 0"
+            class="scenarios-table-body"
+            ng-style="{'height':tableHeight}">
             <tr ng-repeat="scenario in scenarios | filter: search"
-              ng-class="{'selected-scenario': selectedScenario === scenario}">
+              class="scenarios-table-row"
+              ng-class="{'selected-scenario': selectedScenario === scenario}" >
               <td ng-click="select(scenario)" ><i class="fa clickable"
                   ng-class="{'fa-chevron-right': selectedScenario != scenario,
                              'fa-chevron-down': selectedScenario === scenario}"></i></td>
-              <td ng-click="select(scenario)" class="clickable" ><% scenario.name %> <a ng-click="preview(scenario)"> (preview)</a></td>
-              <td ng-click="select(scenario)" class="clickable" ><% scenario.created | date: 'MMM d, y HH:mm:ss a' %><td>
-              <table class="table table-condensed result-table"
-                ng-if="selectedScenario ===
-                    scenario && scenario.result_set.length > 0">
-                <tr ng-repeat="result in scenario.result_set">
-                  <td><% result.result_type.name %></td>
-                  <td><a href="<% result.attachment_url %>">Download</a></td>
-                </tr>
-
-              </table>
-              <span ng-if="scenario.result_set.length === 0">
-                Geen bijbehorende resultaten
-              </span>
+              <td ng-click="select(scenario)"><% scenario.name %> <a ng-click="preview(scenario)"> (preview)</a></td>
+              <td ng-click="select(scenario)" class="clickable text-right" ><% scenario.created | date: 'MMM d, y HH:mm:ss a' %><td>
+              <td class="text-right">
+                <table class="table table-condensed result-table"
+                  ng-if="selectedScenario ===
+                      scenario && scenario.result_set.length > 0">
+                  <tr ng-repeat="result in scenario.result_set">
+                    <td><% result.result_type.name %></td>
+                    <td><a href="<% result.attachment_url %>">Download</a></td>
+                  </tr>
+                </table>
+                <span ng-if="scenario.result_set.length === 0">
+                  Geen bijbehorende resultaten
+                </span>
+              </td>
             </tr>
           </tbody>
 

@@ -6,41 +6,113 @@ angular.module('lizard-nxt')
 
   function ($q, $rootScope, UtilService) {
 
+
+    // UtfGridService has a local cache of the last query so the dataservice can
+    // get an answer of the utfgrid even if there is no map.
+    // NOTE: we use this as a 'poor man's state' of the 'last selected
+    // object'. We might want to include the 'last selected object' in the
+    // actual state so we can refer to it directly.
+    var _cache = {};
+
+    /**
+     * @function buildCacheKey
+     * @summary Calculate cache key for layer and options.
+     *
+     * @param {object} layer    nxt layer to use as key.
+     * @param {object} options  options to use as key.
+     * @returns {string} key
+     */
+    var buildCacheKey = function (layer, options) {
+
+      var cacheKey;
+
+      cacheKey = layer.slug
+        + options.geom.toString()
+        + options.start
+        + options.end;
+
+      return cacheKey;
+    };
+
+    /**
+     * @function setToLocalCache
+     * @summary Set data to local cache.
+     *
+     * @param {string} key  key to store data at.
+     * @param {object} data data to cache.
+     */
+    var setToLocalCache = function (key, data) {
+      _cache = {};  // reset cache because we only need to remember the last
+                    // query.
+      _cache[key] = data;
+    };
+
+    /**
+     * @function getFromLocalCache
+     * @summary Gets data for `key` from local cache. Returns undefined if `key`
+     * doesn't exist.
+     *
+     * @return {object} Cached data or undefined if key doesn't exist.
+     */
+    var getFromLocalCache = function (key) {
+      return _cache[key];
+    };
+
     var getData = function (nonLeafLayer, options) {
 
       var leafLayer = nonLeafLayer && nonLeafLayer._leafletLayer,
           geomType = UtilService.getGeomType(options.geom),
           deferred = $q.defer(),
           e = { latlng: options.geom },
-          response;
+          response,
+          cacheKey = buildCacheKey(nonLeafLayer, options);
 
       if (options.geom === undefined || geomType === "LINE") {
         deferred.reject();
         return deferred.promise;
       }
 
-      response = _getResponseForGeomType(leafLayer, geomType, e, options.geom);
-      if (!window.loaded
-        || leafLayer.isLoading
-        || !leafLayer._map
-        || !leafLayer._map.hasLayer(leafLayer)
-      ) {
-        _getDataFromUTFAsynchronous(nonLeafLayer, e, deferred, geomType, options.geom);
-      } else {
+      var cached = getFromLocalCache(cacheKey);
+      if (cached) {
+        response = cached;
         deferred.resolve(response.data);
+      } else {
+        response = _getResponseForGeomType(
+          leafLayer, geomType, e, options.geom);
+
+        if (!window.loaded
+          || leafLayer.isLoading
+          || !leafLayer._map
+          || !leafLayer._map.hasLayer(leafLayer)
+        ) {
+          _getDataFromUTFAsynchronous(
+            nonLeafLayer, e, deferred, geomType, options);
+        } else {
+          setToLocalCache(cacheKey, response);
+          deferred.resolve(response.data);
+        }
       }
 
       return deferred.promise;
     };
 
-    var _getDataFromUTFAsynchronous = function (nonLeafLayer, e, deferred, geomType, geomOpts) {
-      var response, leafLayer = nonLeafLayer._leafletLayer;
+    var _getDataFromUTFAsynchronous = function (nonLeafLayer,
+                                                e,
+                                                deferred,
+                                                geomType,
+                                                options) {
+      var response, leafLayer = nonLeafLayer._leafletLayer,
+          cacheKey = buildCacheKey(nonLeafLayer, options);
+
       leafLayer.on('load', function () {
-        response = _getResponseForGeomType(leafLayer, geomType, e, geomOpts);
+        response = _getResponseForGeomType(
+          leafLayer, geomType, e, options.geom);
         if ($rootScope.$$phase) {
+          setToLocalCache(cacheKey, response);
           deferred.resolve(response.data);
         } else {
           $rootScope.$apply(function () {
+            setToLocalCache(cacheKey, response);
             deferred.resolve(response.data);
           });
         }
@@ -60,7 +132,8 @@ angular.module('lizard-nxt')
         );
       default:
         throw new Error(
-          "UtfGridService._getResponseForGeomType called with invalid arg 'geomType', which happened to be:",
+          "UtfGridService._getResponseForGeomType called with invalid " +
+          " arg 'geomType', which happened to be:",
           geomType
         );
       }
@@ -69,36 +142,36 @@ angular.module('lizard-nxt')
     var _isWithinExtent = function (structureGeom, leafletBounds) {
 
       switch (structureGeom.type) {
-        case "Point":
-          return leafletBounds.contains(L.latLng(
-            structureGeom.coordinates[1],
-            structureGeom.coordinates[0]
-          ));
+      case "Point":
+        return leafletBounds.contains(L.latLng(
+          structureGeom.coordinates[1],
+          structureGeom.coordinates[0]
+        ));
 
-        case "LineString":
+      case "LineString":
 
-          // For now (15-01-2015), don't take into account structures with a geom
-          // type other than POINT. Since this will probably be reverted some time
-          // in the foreseeable future, we simply comment the relevant code and
-          // return false.
+        // For now (15-01-2015), don't take into account structures with a geom
+        // type other than POINT. Since this will probably be reverted some time
+        // in the foreseeable future, we simply comment the relevant code and
+        // return false.
 
-          // var lineStart = L.latLng(
-          //       structureGeom.coordinates[0][1],
-          //       structureGeom.coordinates[0][0]
-          //     ),
-          //     lineEnd = L.latLng(
-          //       structureGeom.coordinates[1][1],
-          //       structureGeom.coordinates[1][0]
-          //     );
+        // var lineStart = L.latLng(
+        //       structureGeom.coordinates[0][1],
+        //       structureGeom.coordinates[0][0]
+        //     ),
+        //     lineEnd = L.latLng(
+        //       structureGeom.coordinates[1][1],
+        //       structureGeom.coordinates[1][0]
+        //     );
 
-          // TODO: Fix detection of lines that overlap the extent, but that do
-          // not start nor end within the extent. It negligable for now.
-          //return leafletBounds.contains(lineStart) || leafletBounds.contains(lineEnd);
+        // TODO: Fix detection of lines that overlap the extent, but that do
+        // not start nor end within the extent. It negligable for now.
+        //return leafletBounds.contains(lineStart) || leafletBounds.contains(lineEnd);
 
-          return false;
+        return false;
 
-        default:
-          throw new Error("Did not find valid geom type:", structureGeom.type);
+      default:
+        throw new Error("Did not find valid geom type:", structureGeom.type);
       }
     };
 
@@ -108,7 +181,8 @@ angular.module('lizard-nxt')
           currentEntityName,
           structure,
           structureGeom,
-          leafletBounds = L.latLngBounds(geomOpts._southWest, geomOpts._northEast),
+          leafletBounds = L.latLngBounds(
+            geomOpts._southWest, geomOpts._northEast),
           groupedStructures = { data: {} };
 
       for (uniqueId in structures.data) {

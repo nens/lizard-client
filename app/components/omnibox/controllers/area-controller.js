@@ -52,25 +52,18 @@ angular.module('omnibox')
         aggWindow: State.temporal.aggWindow
       });
       promise.then(null, null, function (response) {
-        if (response && response.data && response.data !== "null") {
-          switch (response.layerSlug) {
-          case "dem/nl":
-            // Since the data is not properly formatted in the back
-            // we convert it from degrees to meters here
-            $scope.box.content.elevation.layers["dem/nl"].data
-              = RasterService.handleElevationCurve(response.data);
-            break;
-          case "rain":
-            $scope.box.content.rain.layers["rain"].data
-              = response.data;
-            $scope.filteredRainDataPerKilometer
-              = UtilService.getFilteredRainDataPerKM(
-                  response.data,
-                  State.spatial.bounds,
-                  State.temporal
-                );
-            break;
-          }
+        if (response
+          && response.data
+          && response.data.length > 0
+          && response.layerSlug === 'rain') {
+          $scope.box.content.rain.layers.rain.data
+            = response.data;
+          $scope.filteredRainDataPerKilometer
+            = UtilService.getFilteredRainDataPerKM(
+                response.data,
+                State.spatial.bounds,
+                State.temporal
+              );
         }
       });
     };
@@ -110,7 +103,7 @@ angular.module('omnibox')
 
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
-      DataService.reject();
+      DataService.reject('omnibox');
       $scope.box.content = {};
     });
   }

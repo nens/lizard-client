@@ -118,18 +118,6 @@ angular.module('lizard-nxt')
     return result;
   };
 
-  var handleElevationCurve = function (data) {
-    var datarow,
-        i,
-        formatted = [];
-
-    for (i in data[0]) {
-      datarow = [data[0][i], data[1][i]];
-      formatted.push(datarow);
-    }
-    return formatted;
-  };
-
   var getMinTimeBetweenFrames = function (layerGroup) {
 
     if (layerGroup.slug === 'rain') {
@@ -144,7 +132,6 @@ angular.module('lizard-nxt')
     getMinTimeBetweenFrames: getMinTimeBetweenFrames,
     buildURLforWMS: buildURLforWMS,
     getData: getData,
-    handleElevationCurve: handleElevationCurve
   };
 
 }]);

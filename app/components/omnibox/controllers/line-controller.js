@@ -256,7 +256,7 @@ angular.module('omnibox')
      * Clean up all drawings on box change and reject data.
      */
     $scope.$on('$destroy', function () {
-      DataService.reject();
+      DataService.reject('omnibox');
       $scope.box.content = {};
       State.spatial.points = [];
       ClickFeedbackService.emptyClickLayer(MapService);

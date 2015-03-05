@@ -1,10 +1,71 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.2.7) (XXXX-XX-XX)
+Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
 - Add withCredentials to Restangular for ajax calls when on sandbox.
+
+- Create nice button and transition from and to time ctx from timeline.
+
+- Outline graphs with timeline in time ctx.
+
+- Remove listeners to bounds and layergroups in time ctx.
+
+- Nicely stack graphs on top of timeline for 1 to n data layers in time ctx.
+
+- Fill graphs with data for point timeseries, events, rain, and area events.
+
+- Fix tests by staying backwards compatible on layers with no meta object.
+
+- Context aware button to zoom to bounds in layer chooser.
+
+- zoomToBounds function to quickly locate (raster) data.
+
+- Add local cache to utfgridservice so a query can be answered without a map.
+
+- Only set getData state back to false when all calls have been finished.
+
+- Move getTimeseries to Data-service.
+
+- Adapt to new raster reponse for area.
+
+- Remove elevation curve formatter.
+
+- Add translations for `controlled` attribute of weir.
+
+- Remove dashboard selector dropdown.
+
+- Remove halo shadow.
+
+- Fix indentation in rain controller.
+
+- Fix rain export seperators.
+
+- Fix bug with click on map at top 50 px.
+
+- Fix bug with rain card not respecting zoom buttons.
+
+- Remove broadcasts and hard-coupling between graph and timeline.
+
+- Store selected aggregation for events in time ctx.
+
+- Store selected timeseries and move specific code to directive.
+
+- Scenario table without table header and scrollable.
+
+- Add lookup filter for culvert and weir attributes.
+
+
+Release 1.2.26 (2015-3-5)
+---------------------
+
+- Fix indentation in rain controller.
+
+- Fix rain export seperators.
+
+- Fix bug with click on map at top 50 px.
+>>>>>>> 4b768ab7e60d5b2109fb6a3327c3ec1dd32b5d9c
 
 
 Release 1.2.25 (2015-2-19)

@@ -19,6 +19,7 @@ angular.module('lizard-nxt')
   "$rootScope",
   "$scope",
   "$q",
+  "$timeout",
   'UtilService',
   'DataService',
   'State',
@@ -28,6 +29,7 @@ angular.module('lizard-nxt')
     $rootScope,
     $scope,
     $q,
+    $timeout,
     UtilService,
     DataService,
     State) {
@@ -57,8 +59,7 @@ angular.module('lizard-nxt')
       UtilService.getCurrentWidth()
     );
 
-    this.state = State.temporal;
-    this.layerGroups = State.layerGroups;
+    this.state = State;
 
     /**
      * Keep an eye out for temporal layers that require the animation to go
@@ -227,6 +228,23 @@ angular.module('lizard-nxt')
       }, minLag);
     };
 
+    /**
+     * Set timeline to moving and back after digest loop to trigger watches
+     * that do something after the timeline moved.
+     */
+    var announceMovedTimeline = function () {
+      State.temporal.timelineMoving = true;
+
+      // Set timeline moving to false after digest loop
+      $timeout(
+        function () {
+          State.temporal.timelineMoving = false;
+        },
+        0, // no delay, fire when digest ends
+        true // trigger new digest loop
+      );
+    };
+
 
     /**
      * @function
@@ -241,10 +259,10 @@ angular.module('lizard-nxt')
 
       State.temporal.start = now - fourFifthInterval;
       State.temporal.end = now + oneFifthInterval;
-      State.temporal.at = UtilService.roundTimestamp(now, State.temporal.aggWindow, false);
-
-      // Without this $broadcast, timeline will not sync to State.temporal:
-      $rootScope.$broadcast("$timelineZoomSuccess");
+      State.temporal.at = UtilService.roundTimestamp(now,
+                                                     State.temporal.aggWindow,
+                                                     false);
+      announceMovedTimeline();
     };
 
     /**
@@ -273,12 +291,12 @@ angular.module('lizard-nxt')
                                     UtilService.MAX_TIME);
       State.temporal.resolution = newResolution;
 
-      // Without this $broadcast, timeline will not sync to State.temporal:
-      $rootScope.$broadcast("$timelineZoomSuccess");
+      announceMovedTimeline();
+
     };
 
     this.formatDatetime = function () {
-      switch (this.state.aggWindow) {
+      switch (State.temporal.aggWindow) {
       case 300000:
         return 'yyyy MM dd HH:mm';
       case 3600000:

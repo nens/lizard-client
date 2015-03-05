@@ -14,6 +14,7 @@
 angular.module('lizard-nxt')
 .controller('UrlController', [
   '$scope',
+  '$timeout',
   'LocationGetterSetter',
   'UrlState',
   'dataBounds',
@@ -24,6 +25,7 @@ angular.module('lizard-nxt')
   'LeafletService',
   function (
     $scope,
+    $timeout,
     LocationGetterSetter,
     UrlState,
     dataBounds,
@@ -128,7 +130,7 @@ angular.module('lizard-nxt')
      * Set location when map moved.
      */
     $scope.$watch(State.toString('spatial.bounds'), function (n, o) {
-      if (n === o) { return true; }
+      if (n === o || !State.spatial.view.lat) { return true; }
       UrlState.setCoordinatesUrl(state,
         State.spatial.view.lat,
         State.spatial.view.lng,
@@ -152,19 +154,10 @@ angular.module('lizard-nxt')
 
     /**
      * Set timeState, when timeState changed in response to panning/zooming the
-     * timeline (in response to user dragging with the mouse in the timeline).
+     * timeline and in response to the user clicking the 3 timeline buttons.
      */
     $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
-      setTimeStateUrlHelper();
-    });
-
-    /**
-     * Set timeState, when timeState changed in response to panning/zooming the
-     * timeline (in response to user clicking the 3 timeline buttons: the "+",
-     * "clock", and "-" buttons).
-     */
-    $scope.$on("$timelineZoomSuccess", function () {
       setTimeStateUrlHelper();
     });
 
@@ -242,7 +235,14 @@ angular.module('lizard-nxt')
         context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
 
       if (context) {
-        State.context = context;
+        // Set context after digest loop because we need to enter on 'map'
+        $timeout(
+          function () {
+            $scope.transitionToContext(context);
+          },
+          0, // no delay, fire when digest ends
+          true // trigger new digest loop
+        );
       } else {
         LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
       }
