@@ -11,6 +11,44 @@ Unreleased (1.2.25) (XXXX-XX-XX)
 - Fix bug with click on map at top 50 px.
 
 
+Release 1.2.25 (2015-2-19)
+---------------------
+
+- Always pass integer timestamp to timeseries endpoint.
+
+- Dynamic aggregation type for rain timeline data.
+
+- Update release documentation.
+
+- Fix bug with bar size when event.
+
+- Throw error when no backend is up and running.
+
+- Add credentials to UTFGrid requests.
+
+- Add domains for sandbox rewrites.
+
+- Fix bug with bar size when event.
+
+- Renamed current dashboard to 'time'.
+
+- Add new 6-widget-dashboard.
+
+- Add view to state with two-way binding to map and url.
+
+
+Release 1.2.23 (2015-2-9)
+---------------------
+
+- Changed handling of raster API responses to process metadata.
+
+- Make backend domain constant in lizard-nxt module.
+
+- Change CNAME for gh-pages.
+
+- Update installation documentation.
+
+
 Release 1.2.24 (2015-2-9)
 ---------------------
 - Fixed bug with bar size of events in dashboard graph.

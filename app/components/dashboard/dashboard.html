@@ -1,69 +1,72 @@
-<div class="dashboard-wrapper" ng-controller="DashboardCtrl">
-  <div class="container-fluid">
-    <div class="row">
-     <div class="col-md-10 dashboard-inner">
-     </div>
-     <div class="col-md-2">
-     </div>
-    </div>
-    <div class="row" ng-repeat="eventAgg in eventAggs">
-     <div class="col-md-10 dashboard-inner">
-       <p> <% eventAgg.color %> </p>
-       <div class="row" ng-if="!eventAgg.data[0].hasOwnProperty('category')">
-         <graph bar-chart
-                class="xyGraph"
-                data="eventAgg.data"
-                ylabel="eventAgg.ylabel"
-                keys="{x: 'timestamp',
-                       y: selectedStat,
-                       color: 'color',
-                       category: 'none'}"
-                dimensions="dimensions"
-                temporal="state.temporal">
-          </graph>
-       </div>
-       <div class="row" ng-if="eventAgg.data[0].hasOwnProperty('category')">
-         <graph bar-chart
-                class="xyGraph"
-                data="eventAgg.data"
-                ylabel="eventAgg.ylabel"
-                keys="{x: 'timestamp',
-                       y: 'count',
-                       color: 'color',
-                       category: 'category'}"
-                dimensions="dimensions"
-                temporal="state.temporal">
-          </graph>
-       </div>
-       <!--<div class="row">-->
-         <!--<graph bar-chart-->
-                <!--class="xyGraph"-->
-                <!--data="eventAgg.data"-->
-                <!--ylabel="Gemiddelde duur"-->
-                <!--keys="{x: 'timestamp',-->
-                           <!--y: 'mean_duration',-->
-                           <!--color: 'color',-->
-                           <!--category: 'category'}"-->
-                <!--dimensions="dimensions"-->
-                <!--temporal="state.temporal">-->
-          <!--</graph>-->
-        <!--</div>-->
+<div class="dashboard-wrapper container-fluid" ng-controller="DashboardCtrl as dashboard">
+  <div class="row">
+    <h2>Welkom <% user.firstName %> - <% dashboard.name %></h2>
+  </div>
+  <div class="row dashboard-row">
+    <div class="col-md-4" ng-repeat="element in dashboard.dashboardelements | orderBy: dashboard_slot">
+      <h5 class="widget-title" ng-if="element.element_type !== 'graph'">
+        <% element.display_name  %></h5>
+
+      <div ng-if="element.element_type === 'map'" class="dashboard-widget">
+        <map></map>
       </div>
-      <div class="col-md-2 dashboard-table">
-        <select ng-model="$parent.selectedStat"
-                ng-options="stat for stat in stats"
-                ng-if="!eventAgg.data[0].hasOwnProperty('category')">
-        </select>
-        <table class="table table-hover table-condensed"
-               ng-if="eventAgg.data[0].hasOwnProperty('category')">
-          <tbody>
-          <tr ng-repeat="(category, color) in getColorMap(eventAgg.baseColor)">
-            <td><i class="fa fa-square" style='color: <% color %> '></i></td>
-            <td><% category %></td>
-          </tr>
-          </tbody>
-        </table>
+
+
+      <div
+        ng-if="element.element_type === 'graph'"
+        class="dashboard-widget">
+        <h5 class="timeseries-header-container widget-title`">
+           <i class="fa fa-clock-o"></i>
+           <select class="timeseries"
+                  ng-if="element.dashboardData.length > 1"
+                  ng-model="element.selectedTimeseries"
+                  ng-options="series.name for series in element.dashboardData | rmSingleDatumTimeseries">
+           </select>
+           <span class="card-title-text placeholder"
+                 ng-if="element.dashboardData.length === 1">
+                 <% element.selectedTimeseries.name %>
+           </span>
+
+        </h5>
+
+        <graph
+          line
+          class="xyGraph"
+          type="temporal"
+          temporal="element.timestamp_bounds"
+          data="element.selectedTimeseries.events"
+          ylabel="element.selectedTimeseries.unit"
+          xlabel=""
+          dimensions="dashboard.dimensions"
+          mouseLoc="false"
+          keys="{x: 0, y: 1}"
+          now="element.temporal_bounds.start">
+        </graph>
       </div>
+
+      <div 
+        class="dashboard-widget"
+        ng-if="element.element_type === 'rain'">
+        <graph
+          bar-chart
+          class="xyGraph"
+          type="temporal"
+          temporal="element.temporal_bounds"
+          data="element.selectedTimeseries"
+          ylabel="300000"
+          yfilter="aggWinToYLabel"
+          dimensions="dashboard.dimensions"
+          mouseLoc="false"
+          keys="{x: 0, y: 1}"
+          now="element.temporal_bounds.start">
+        </graph>
+
+
+      </div> 
+
     </div>
   </div>
+
+
+
 </div>

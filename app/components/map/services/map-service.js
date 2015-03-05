@@ -26,9 +26,13 @@ angular.module('map')
        */
       initializeMap: function (element, mapOptions, eventCallbackFns) {
         service._map = createLeafletMap(element, mapOptions);
-        initializeLayers(State.temporal);
+        this.initializeLayers(State.temporal);
         this._initializeNxtMapEvents(eventCallbackFns);
+        // Map-services is dependant on the dataservice. This is to prevent
+        // a bunch of complicated and slow watches and still keep the data-
+        // service as the data authority.
         DataService.eventCallbacks = {
+          onCreateLayerGroup: this.initializeLayer,
           onToggleLayerGroup: this._toggleLayers,
           onOpacityChange: this._setOpacity,
           onDblClick: this._rescaleContinuousData
@@ -108,6 +112,18 @@ angular.module('map')
               L.latLng(bounds.north, bounds.west)));
           }
         }
+      },
+
+      getView: function () {
+        return {
+          lat: service._map.getCenter().lat,
+          lng: service._map.getCenter().lng,
+          zoom: service._map.getZoom()
+        };
+      },
+
+      getBounds: function () {
+        return service._map.getBounds();
       },
 
       /**
@@ -226,6 +242,29 @@ angular.module('map')
 
       zoomOut: function () {
         service._map.setZoom(service._map.getZoom() - 1);
+      },
+
+      /**
+       * Initializes map layers for every layergroup.mapLayers.
+       * @param  {object} timeState used to set an initial time on layers
+       */
+      initializeLayers: function (timeState) {
+        angular.forEach(DataService.layerGroups, function (lg, lgSlug) {
+          this.initializeLayer(lg, timeState);
+        }, this);
+      },
+
+      initializeLayer: function (lg) {
+        sortLayers(lg.mapLayers);
+        angular.forEach(lg.mapLayers, function (layer, lSlug) {
+          if (layer.tiled) {
+            layer._leafletLayer = initializers[layer.format](layer);
+            angular.extend(layer, NxtMapLayer);
+          } else if (layer.format === 'WMS') {
+            layer = NxtNonTiledWMSLayer.create(layer);
+          }
+          layer.timeState = State.temporal;
+        });
       }
 
     };
@@ -396,25 +435,6 @@ angular.module('map')
       var leafletMap = LeafletService.map(mapElem, options);
 
       return leafletMap;
-    };
-
-    /**
-     * Initializes map layers for every layergroup.mapLayers.
-     * @param  {object} timeState used to set an initial time on layers
-     */
-    var initializeLayers = function (timeState) {
-      angular.forEach(DataService.layerGroups, function (lg, lgSlug) {
-        sortLayers(lg.mapLayers);
-        angular.forEach(lg.mapLayers, function (layer, lSlug) {
-          if (layer.tiled) {
-            layer._leafletLayer = initializers[layer.format](layer);
-            angular.extend(layer, NxtMapLayer);
-          } else if (layer.format === 'WMS') {
-            layer = NxtNonTiledWMSLayer.create(layer);
-          }
-          layer.timeState = timeState;
-        });
-      });
     };
 
     /**

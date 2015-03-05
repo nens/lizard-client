@@ -193,6 +193,7 @@ angular.module('lizard-nxt')
       xlabel: '=',
       ylabel: '=',
       keys: '=',
+      mouseLoc: '=',
       yfilter: '=',
       dimensions: '=',
       temporal: '=',
@@ -260,17 +261,21 @@ angular.module('lizard-nxt')
 
     graph.drawLine(data, keys, graphCtrl.labels, temporal, scope.temporal);
 
-    graph.followMouse(function (position) {
-      scope.$apply(function () {
-        scope.$parent.box.mouseLoc = position;
+    if (scope.mouseLoc === false) {
+      graph.followMouse(function (position) {
+        scope.$apply(function () {
+          scope.mouseLoc = position;
+        });
       });
-    });
 
-    graph.mouseExit(function () {
-      scope.$apply(function () {
-        scope.$parent.box.mouseLoc = undefined;
+      graph.mouseExit(function () {
+        scope.$apply(function () {
+          scope.mouseLoc = undefined;
+        });
       });
-    });
+
+
+    }
 
     if (temporal) {
       graph.drawNow(graphCtrl.now);

@@ -303,7 +303,7 @@ angular.module('lizard-nxt')
           geom: bounds,
           start: start,
           end: stop,
-          agg: 'none',
+          agg: rasterLayer.aggregationType,
           aggWindow: State.temporal.aggWindow,
           deferrer: {
             origin: 'timeline_' + rasterLayer,
@@ -311,7 +311,9 @@ angular.module('lizard-nxt')
           }
         }
       ).then(function (response) {
-        timeline.drawBars(response);
+        if (response && response !== 'null') {
+          timeline.drawBars(response.data);
+        }
       });
     };
 
@@ -410,14 +412,12 @@ angular.module('lizard-nxt')
      * This evenListener ensures a retrieval of data
      * after the browser is done doing requests.
      */
-    window.addEventListener('load', function () {
-      getTimeLineData();
-    });
+    window.addEventListener('load', getTimeLineData);
 
     /**
      * Update timeline when browser window is resized.
      */
-    window.onresize = function () {
+    window.addEventListener('resize', function () {
 
       timeline.dimensions.width = UtilService.getCurrentWidth();
       timeline.resize(
@@ -426,7 +426,7 @@ angular.module('lizard-nxt')
         State.temporal.aggWindow,
         scope.events.nEvents // TODO: get nEvents from somewhere
       );
-    };
+    });
 
     // END WATCHES
 

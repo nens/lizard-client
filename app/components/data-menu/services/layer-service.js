@@ -8,7 +8,7 @@
  * Factory in the lizard-nxt.
  */
 angular.module('data-menu')
-  .factory('NxtLayer', ['$q', function ($q) {
+  .factory('NxtLayer', ['$q', 'backendDomain', function ($q, backendDomain) {
 
       /*
        * @constructor
@@ -41,8 +41,9 @@ angular.module('data-menu')
         });
         Object.defineProperty(this, 'url', {
           value: layer.url,
-          // on github.io it needs to be prepended to nxt.lizard.net
-          writable: (window.location.host === 'nens.github.io'),
+          // on github.io it needs to be prepended to
+          writable: (window.location.host === 'nens.github.io' ||
+                     window.location.host === 'lizard.sandbox.lizard.net'),
         });
         // Physical time in millieseconds between frames.
         Object.defineProperty(this, '_temporalResolution', {
@@ -95,9 +96,10 @@ angular.module('data-menu')
         });
 
         // this allows for the demo's to be run from github.io
-        if (this.url.indexOf('api/v1') > -1 &&
-            window.location.host === 'nens.github.io') {
-          this.url = "https://nxt.lizard.net/".concat(this.url);
+        if ((this.url.indexOf('api/v1') > -1) &&
+            (window.location.host === 'nens.github.io' ||
+             window.location.host === 'lizard.sandbox.lizard.net')) {
+          this.url = backendDomain + this.url;
         }
 
 

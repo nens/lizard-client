@@ -10,11 +10,13 @@
  *
  */
 
+angular.module('lizard-nxt-filters', []);
+
 /**
  * Filter to order objects instead of angulars orderBy
  * that only orders array
  */
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('orderObjectBy', function () {
   return function (items, field, reverse) {
     var filtered = [];
@@ -38,7 +40,7 @@ angular.module('lizard-nxt')
  * @return {string} when input is a number: returns a number
  * rounded to specified decimals else returns '-'
  */
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('niceNumberOrEllipsis', function () {
   return function (input, decimals) {
     var out;
@@ -57,7 +59,7 @@ angular.module('lizard-nxt')
 
 // lookups: manhole
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupManholeShape', function () {
   return function (input) {
     var out;
@@ -78,7 +80,7 @@ angular.module('lizard-nxt')
   };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupManholeMaterial', function () {
   return function (input) {
     var out;
@@ -90,7 +92,7 @@ angular.module('lizard-nxt')
 
 // lookups: levee
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupLeveeType', function () {
   return function (input) {
     var out;
@@ -111,7 +113,7 @@ angular.module('lizard-nxt')
   };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupLeveeReferencePointType', function () {
   return function (input) {
     var out;
@@ -130,7 +132,7 @@ angular.module('lizard-nxt')
 });
 
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('allowedFlowDirection', function () {
   return function (input) {
     var out;
@@ -144,7 +146,7 @@ angular.module('lizard-nxt')
 });
 
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupPumpStationType', function () {
   return function (input) {
       switch (input) {
@@ -168,7 +170,7 @@ angular.module('lizard-nxt')
     };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupPipeType', function () {
   return function (input) {
     var out;
@@ -204,7 +206,7 @@ angular.module('lizard-nxt')
   };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupPipeShape', function () {
   return function (input) {
     var out;
@@ -228,7 +230,7 @@ angular.module('lizard-nxt')
   };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupPressurePipeType', function () {
   return function (input) {
     var out;
@@ -249,7 +251,7 @@ angular.module('lizard-nxt')
   };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('pipeMaterialOrEllipsis', function () {
   return function (input) {
     var out;
@@ -270,7 +272,7 @@ angular.module('lizard-nxt')
   };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('aggWinToYLabel', function () {
   return function (input) {
     var out;
@@ -301,7 +303,7 @@ angular.module('lizard-nxt')
  * @param {integer} maxLength - Length at which string gets truncated.
  * @return {string} The truncated layer name
  */
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('truncate', function () {
 
   return function (input, maxLength) {
@@ -324,7 +326,7 @@ angular.module('lizard-nxt')
  * @param {Object[]} A list of timeseries
  * @return  {Object[]} A list of timeseries with sufficient data
  */
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('rmSingleDatumTimeseries', function () {
 
   return function (input) {
@@ -337,7 +339,7 @@ angular.module('lizard-nxt')
 });
 
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('objectTitle', function () {
 
   return function (input) {
@@ -368,7 +370,7 @@ angular.module('lizard-nxt')
 
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('discreteRasterType', function () {
   return function (input) {
     return input.match(/^.*-.*-.*$/g)
@@ -377,7 +379,7 @@ angular.module('lizard-nxt')
   };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('discreteRasterSource', function () {
   return function (input) {
     return input.match(/^.*-.*-.*$/g)

@@ -531,6 +531,11 @@ angular.module('lizard-nxt')
   };
 
   getBarWidth = function (scale, data, keys, dimensions, maxBarCount) {
+    if (data.length === 0) {
+      // Apparently, no data is present: return a dummy value since nothing
+      // is to be drawn.
+      return 0;
+    }
     var firstDatum = data[0],
         lastDatum = data[data.length - 1];
     return Math.floor(

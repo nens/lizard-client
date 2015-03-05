@@ -31,7 +31,7 @@ angular.module('global-state')
     // Context. State.context returns 'map' or 'db', it can only be set with
     // either one of those values.
     var _context = 'map'; // The default
-    var CONTEXT_VALUES = ['map', 'db', 'scenarios'];
+    var CONTEXT_VALUES = ['map', 'time', 'dashboard', 'scenarios'];
     Object.defineProperty(state, 'context', {
       get: function () { return _context; },
       set: function (context) {
@@ -91,7 +91,7 @@ angular.module('global-state')
       here: {},
       points: [], // History of here for drawing and creating line and polygons
       bounds: {},
-      zoom: {},
+      view: {}, // { lat: <int>, lng:<int>, zoom:<int> }
       userHere: {}, // Geographical location of the users mouse only set by
                     // map-directive when box type is 'line'
       mapMoving: false
