@@ -261,7 +261,7 @@ angular.module('lizard-nxt')
     graph.drawLine(data, keys, graphCtrl.labels, temporal, scope.temporal);
 
     // scope.line is the scope defined by the line controller. Preferably it is
-    // past around more explicitly through the graph directive, but angular is
+    // passed around more explicitly through the graph directive, but angular is
     // being bitchy.
     if (scope.line && scope.line.mouseLocFn) {
       graph.followMouse(scope.line.mouseLocFn);
