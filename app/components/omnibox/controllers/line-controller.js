@@ -208,14 +208,15 @@ angular.module('omnibox')
      * TODO
      */
     var circle;
-
+    
+    // Callback for mousemoved over graphs.
     this.mouseLocFn = function (position) {
       if (State.spatial.points[0] === undefined ||
           State.spatial.points[1] === undefined) {
         return;
       }
 
-      if (position) {
+      if (position !== undefined) {
 
         // local vars declaration.
         var lat1, lat2, lon1, lon2, maxD, d, r, dLat, dLon, posLat, posLon;
