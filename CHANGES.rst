@@ -3,7 +3,9 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
--
+
+- Added maximum number of timeseries events to prevent browser running out of
+  memory.
 
 
 Release 1.2.27 (2015-3-5)
