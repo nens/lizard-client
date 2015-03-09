@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Fix 'bolletje'.
+
+- Fix spatial.points.here undefined.
+
 - Fix indentation in rain controller.
 
 - Fix rain export seperators.
