@@ -254,23 +254,19 @@ angular.module('lizard-nxt')
 
   var link = function (scope, element, attrs, graphCtrl) {
     var data = graphCtrl.data,
-    graph = graphCtrl.graph,
-    keys = graphCtrl.keys,
-    temporal = graphCtrl.type === 'temporal';
+        graph = graphCtrl.graph,
+        keys = graphCtrl.keys,
+        temporal = graphCtrl.type === 'temporal';
 
     graph.drawLine(data, keys, graphCtrl.labels, temporal, scope.temporal);
 
-    graph.followMouse(function (position) {
-      scope.$apply(function () {
-        scope.$parent.box.mouseLoc = position;
-      });
-    });
-
-    graph.mouseExit(function () {
-      scope.$apply(function () {
-        scope.$parent.box.mouseLoc = undefined;
-      });
-    });
+    // scope.line is the scope defined by the line controller. Preferably it is
+    // past around more explicitly through the graph directive, but angular is
+    // being bitchy.
+    if (scope.line && scope.line.mouseLocFn) {
+      graph.followMouse(scope.line.mouseLocFn);
+      graph.mouseExit(scope.line.mouseLocFn);
+    }
 
     if (temporal) {
       graph.drawNow(graphCtrl.now);

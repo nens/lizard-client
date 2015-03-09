@@ -208,14 +208,14 @@ angular.module('omnibox')
      * TODO
      */
     var circle;
-    $scope.$watch('box.mouseLoc', function (n, o) {
-      if (n === o) { return true; }
-      if ($scope.box.mouseLoc) {
 
-        if (State.spatial.points[0] === undefined ||
-            State.spatial.points[1] === undefined) {
-          return;
-        }
+    this.mouseLocFn = function (position) {
+      if (State.spatial.points[0] === undefined ||
+          State.spatial.points[1] === undefined) {
+        return;
+      }
+
+      if (position) {
 
         // local vars declaration.
         var lat1, lat2, lon1, lon2, maxD, d, r, dLat, dLon, posLat, posLon;
@@ -226,7 +226,7 @@ angular.module('omnibox')
         lon2 = State.spatial.points[1].lng;
         maxD = Math.sqrt(Math.pow((lat2 - lat1), 2) +
                          Math.pow((lon2 - lon1), 2));
-        d = UtilService.metersToDegs($scope.box.mouseLoc);
+        d = UtilService.metersToDegs(position);
         r = d / maxD;
         dLat = (lat2 - lat1) * r;
         dLon = (lon2 - lon1) * r;
@@ -243,14 +243,17 @@ angular.module('omnibox')
         } else {
           circle.setLatLng([posLat, posLon]);
         }
+
       }
+
       else {
         if (circle !== undefined) {
           MapService.removeLeafletLayer(circle);
           circle = undefined;
         }
       }
-    });
+
+    };
 
     /**
      * Clean up all drawings on box change and reject data.
