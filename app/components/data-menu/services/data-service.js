@@ -275,7 +275,10 @@ angular.module('data-menu')
        * @description gets timeseries from service
        */
       var getTimeSeriesForObject = function (objectId, start, end, defer) {
-        var MEMORY_LIMIT = 25000;
+
+        // maximum number of timeseries events, more probably results in a 
+        // memory error.
+        var MAX_NR_TIMESERIES_EVENTS = 25000;  
         var promise = TimeseriesService.getTimeseries(objectId, {
           start: start,
           end: end
@@ -287,8 +290,8 @@ angular.module('data-menu')
             // the timeseries with too little measurements...
             var filteredResult = [];
             angular.forEach(result, function (value) {
-              if (value.events.length > 1
-                && value.events.length < MEMORY_LIMIT) {
+              if (value.events.length > 1 && 
+                  value.events.length < MAX_NR_TIMESERIES_EVENTS) {
                 filteredResult.push(value);
               }
             });
