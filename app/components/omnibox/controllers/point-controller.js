@@ -194,14 +194,18 @@ angular.module('omnibox')
     // Update when layergroups have changed
     $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return; }
-      if (State.spatial.here.lat && State.spatial.here.lng) {
+      if (State.spatial.here
+        && State.spatial.here.lat
+        && State.spatial.here.lng) {
         fillPointHere();
       }
     });
 
     $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
-      if (n === "false" && o === "true") {
-        if (State.spatial.here.lat && State.spatial.here.lng) {
+      if (!State.temporal.timelineMoving) {
+        if (State.spatial.here
+          && State.spatial.here.lat
+          && State.spatial.here.lng) {
           fillPointHere();
         }
       }
