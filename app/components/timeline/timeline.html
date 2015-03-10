@@ -10,18 +10,6 @@
            ng-click="timeline.toggleTimelineVisiblity()"
            ng-bind="timeline.state.temporal.at | date: timeline.formatDatetime()">
         </div>
-        <div>
-          <a
-            ng-click="timeline.toggleTimeCtx()"
-            class="button-list-link"
-            title="Toon dashboard."
-            style="cursor: pointer;">
-            <i class="fa" ng-class="{
-              'fa-minus-square': timeline.state.context === 'time',
-              'fa-bar-chart': timeline.state.context === 'map'
-            }"></i>
-          </a>
-        </div>
       </div>
 
     </div>
