@@ -170,18 +170,18 @@ angular.module('lizard-nxt')
           };
           this._xy = this._createXYGraph(data, keys, labels, options);
           this._xy.y.scale.domain([0, this._xy.y.maxMin.max]);
-        } else {
-          this._xy = rescale(
-            this._svg,
-            this.dimensions,
-            this._xy,
-            data,
-            keys,
-            {y: 0},
-            this._xDomainInfo
-          );
-          drawLabel(this._svg, this.dimensions, labels.y, true);
         }
+        this._xy = rescale(
+          this._svg,
+          this.dimensions,
+          this._xy,
+          data,
+          keys,
+          {y: 0},
+          this._xDomainInfo
+        );
+
+        drawLabel(this._svg, this.dimensions, labels.y, true);
 
         drawVerticalRects(
           this._svg,
@@ -373,23 +373,24 @@ angular.module('lizard-nxt')
     // of the y values is smaller than 0.2 (or 20 %) of the max of the scale,
     // update domain of the scale and redraw the axis.
     var limits = {
-        x: 1,
-        y: 0.2
-        },
-        orientation = {
-          x: 'bottom',
-          y: 'left'
-        };
+      x: 1,
+      y: 0.2
+      },
+      orientation = {
+        x: 'bottom',
+        y: 'left'
+      };
     origin = origin || {};
     // Decide to rescale for each axis.
     angular.forEach(xy, function (value, key) {
       if (needToRescale(data, keys[key], limits[key], value.maxMin, xDomainInfo)) {
-
+        if (origin[key] === undefined) {
+          origin[key] = value.maxMin.min;
+        }
         value.maxMin = key === "x" && xDomainInfo
           ? { min: xDomainInfo.start, max: xDomainInfo.end }
           : Graph.prototype._maxMin(data, keys[key]);
-
-        value.scale.domain([origin[key] || value.maxMin.min, value.maxMin.max]);
+        value.scale.domain([origin[key], value.maxMin.max]);
         value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
         drawAxes(svg, value.axis, dimensions, key === 'y' ? true : false, Graph.prototype.transTime);
       }
