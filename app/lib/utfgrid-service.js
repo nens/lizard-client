@@ -27,9 +27,7 @@ angular.module('lizard-nxt')
       var cacheKey;
 
       cacheKey = layer.slug
-        + options.geom.toString()
-        + options.start
-        + options.end;
+        + options.geom.toString();
 
       return cacheKey;
     };
