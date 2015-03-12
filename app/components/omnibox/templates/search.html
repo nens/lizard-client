@@ -7,26 +7,11 @@
     ng-model="geoquery"
     ng-keydown="searchKeyPress($event)"
     spellcheck="false">
-  <div class="searchbox-buttons">
-    <a
-      ng-click="timeline.toggleTimeCtx()"
-      class="context-switch-button button-list-link"
-      title="Toon dashboard."
-      style="cursor: pointer;">
-      <i class="fa" ng-class="{
-        'fa-minus-square': context === 'time',
-        'fa-bar-chart': context === 'map'
-      }"></i>
-    </a>
-</div>
+  <div
+    title="<% tooltips.resetQuery %>"
+    ng-click="cleanInput()"
+    id="clear" class="clickable" ></div>
   <div class="search-button-collection">
-    <button
-      class="searchbutton clickable"
-      ng-click="cleanInput()"
-      aria-label="<% tooltips.resetQuery %>"
-      title="<% tooltips.zoomInMap %>">
-      <i class="fa fa-times"></i>
-    </button>
     <button
       class="searchbutton clickable"
       ng-click="zoomIn()"
