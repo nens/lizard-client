@@ -6,7 +6,7 @@ angular.module('time-ctx')
 
   var link = function (scope, element, attrs) {
 
-    var TL_TOP_MARGIN = 10,
+    var TL_TOP_MARGIN = 20, // margin plus the temporal.at label
         GRAPH_PADDING = 5,
         GRAPH_5_6th_PADDING_RATIO = 0.83, // The other 6th is used in the css.
         TOP_ROW_MIN_HEIGHT = 50,
