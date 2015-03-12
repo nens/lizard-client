@@ -418,6 +418,11 @@ angular.module('lizard-nxt')
 
     scope.timeline.toggleTimelineVisiblity();
 
+    scope.timeline.toggleTimeCtx = function () {
+      scope.timeline.toggleTimelineVisiblity();
+      scope.transitionToContext(State.context === 'map' ? 'time' : 'map');
+    };
+
     // WATCHES
 
     /**
