@@ -6,7 +6,7 @@ angular.module('time-ctx')
 
   var link = function (scope, element, attrs) {
 
-    var TL_TOP_MARGIN = 20, // margin plus the temporal.at label
+    var TL_TOP_MARGIN = 25, // margin plus the temporal.at label
         GRAPH_PADDING = 5,
         GRAPH_5_6th_PADDING_RATIO = 0.83, // The other 6th is used in the css.
         TOP_ROW_MIN_HEIGHT = 50,
@@ -59,7 +59,8 @@ angular.module('time-ctx')
         'quantity',
         'unit',
         'color',
-        'type'
+        'type',
+        'name'
       ];
 
       angular.forEach(sharedKeys, function (key) {
@@ -67,7 +68,6 @@ angular.module('time-ctx')
       });
 
       scope.tctx.content[response.layerSlug] = item;
-
     };
 
     var putEventDataOnScope = function (response) {
@@ -89,7 +89,6 @@ angular.module('time-ctx')
         if (eventAgg.data.length > 1) {
           putDataOnScope(angular.extend(response, eventAgg));
         }
-
 
       }
 

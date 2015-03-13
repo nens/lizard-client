@@ -1,8 +1,12 @@
 /*
- * d3 css stuff 
+ * d3 css stuff
  */
 
-/* tell the SVG path to be a thin blue line without any area fill */
+.graph-svg-wrapper > span {
+  position: absolute;
+  padding: 10px;
+  color: $bargrey;
+}
 
 .plot {
     fill: rgba(250, 250, 255, 0);
