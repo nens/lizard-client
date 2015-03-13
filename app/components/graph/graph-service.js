@@ -126,6 +126,7 @@ angular.module('lizard-nxt')
         }
         var line = this._createLine(this._xy, keys);
         this._path = drawPath(this._svg, line, data, this.transTime, this._path);
+        addInteractionToPath(this._svg, data, keys, this._path, this._xy);
       }
     },
 
@@ -327,8 +328,10 @@ angular.module('lizard-nxt')
     }
   });
 
-  var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale, drawPath, setupLineGraph, createDonut,
-  getBarWidth, drawVerticalRects, drawHorizontalRects, createXGraph, rescale, createYValuesForCumulativeData;
+  var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale,
+      drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,
+      drawVerticalRects, drawHorizontalRects, createXGraph, rescale,
+      createYValuesForCumulativeData;
 
   /**
    * Creates y cumulatie y values for elements on the same x value.
@@ -604,6 +607,27 @@ angular.module('lizard-nxt')
         return line(d) || "M0, 0";
       });
     return path;
+  };
+
+  addInteractionToPath = function (svg, data, keys, path, xy) {
+    var bisect = d3.bisector(function (d) { return d[keys.x]; }).right,
+        fg = svg.select('#feature-group');
+
+    // Move listener rectangle to the front
+    var el = svg.select('#listeners').node();
+    el.parentNode.appendChild(el);
+
+    svg.select('#listeners').on('click', function () {
+      var i = bisect(data, xy.x.scale.invert(d3.mouse(this)[0]));
+      var d = data[i];
+      fg.select('#clickCircle').remove();
+      fg.append('circle')
+        .attr('id', 'clickCircle')
+        .attr('r', 5)
+        .attr('cx', function () { return xy.x.scale(d[keys.x]); })
+        .attr('cy', function () { return xy.y.scale(d[keys.y]); })
+        .attr('fill', 'red');
+    });
   };
 
   drawLabel = function (svg, dimensions, label, y) {
