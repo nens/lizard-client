@@ -96,7 +96,6 @@ angular.module('lizard-nxt')
   link = function (scope, element, attrs, graphCtrl) {
 
     var graphUpdateHelper = function (useNewData, useNewXDomain) {
-
       if (useNewData) {
         graphCtrl.setData(scope);
       }

@@ -154,8 +154,11 @@ angular.module('lizard-nxt')
      */
     drawBars: {
       value: function (data, keys, labels, scale) {
+        var originalKey = keys.y;
         if (keys.category) {
+          // Create data for stacked bars.
           data = createYValuesForCumulativeData(data, keys);
+          keys.y = 'y1';
         }
         if (!this._xy) {
           var options = {
@@ -171,6 +174,7 @@ angular.module('lizard-nxt')
           this._xy = this._createXYGraph(data, keys, labels, options);
           this._xy.y.scale.domain([0, this._xy.y.maxMin.max]);
         }
+
         this._xy = rescale(
           this._svg,
           this.dimensions,
@@ -192,6 +196,8 @@ angular.module('lizard-nxt')
           this.transTime,
           this._xDomainInfo
         );
+        // Object reference, put it back.
+        keys.y = originalKey;
       }
     },
 
@@ -232,7 +238,7 @@ angular.module('lizard-nxt')
         angular.forEach(data, function (value, key) {
           value[keys.x] = value[keys.x] / total;
         });
-        drawHorizontalRectss(this._svg, this.dimensions, this.transTime, this._x.scale, data, keys, labels);
+        drawHorizontalRects(this._svg, this.dimensions, this.transTime, this._x.scale, data, keys, labels);
       }
     },
 
@@ -322,7 +328,7 @@ angular.module('lizard-nxt')
   });
 
   var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale, drawPath, setupLineGraph, createDonut,
-  getBarWidth, drawVerticalRects, drawHorizontalRectss, createXGraph, rescale, createYValuesForCumulativeData;
+  getBarWidth, drawVerticalRects, drawHorizontalRects, createXGraph, rescale, createYValuesForCumulativeData;
 
   /**
    * Creates y cumulatie y values for elements on the same x value.
@@ -343,8 +349,8 @@ angular.module('lizard-nxt')
       var y0 = 0;
       group.values = group.values.map(function (d) {
         d.y0 = y0;
-        d[keys.y] += y0;
-        y0 = d[keys.y];
+        d.y1 = y0 + d[keys.y];
+        y0 = d.y1;
         cumulativeData.push(d);
       });
     });
@@ -375,11 +381,11 @@ angular.module('lizard-nxt')
     var limits = {
       x: 1,
       y: 0.2
-      },
-      orientation = {
-        x: 'bottom',
-        y: 'left'
-      };
+    };
+    var orientation = {
+      x: 'bottom',
+      y: 'left'
+    };
     origin = origin || {};
     // Decide to rescale for each axis.
     angular.forEach(xy, function (value, key) {
@@ -398,7 +404,7 @@ angular.module('lizard-nxt')
     return xy;
   };
 
-  drawHorizontalRectss = function (svg, dimensions, duration, scale, data, keys, labels) {
+  drawHorizontalRects = function (svg, dimensions, duration, scale, data, keys, labels) {
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         DEFAULT_BAR_COLOR = "#7f8c8d", // $asbestos is the default color for bars
@@ -477,13 +483,10 @@ angular.module('lizard-nxt')
         x = xy.x,
         y = xy.y,
         MIN_BAR_WIDTH = 2,
-        maxBarCount = xDomainInfo
-          ? Math.floor((xDomainInfo.end - xDomainInfo.start) / xDomainInfo.aggWindow)
-          : data.length,
         barWidth = Math.max(
           MIN_BAR_WIDTH,
           Math.floor(
-            getBarWidth(xy.x.scale, data, keys, dimensions, maxBarCount)
+            getBarWidth(xy.x.scale, data, keys, dimensions, xDomainInfo)
           )
         ),
         strokeWidth = barWidth === MIN_BAR_WIDTH ? 0 : 1,
@@ -541,17 +544,28 @@ angular.module('lizard-nxt')
       .remove();
   };
 
-  getBarWidth = function (scale, data, keys, dimensions, maxBarCount) {
+  getBarWidth = function (scale, data, keys, dimensions, xDomainInfo) {
     if (data.length === 0) {
       // Apparently, no data is present: return a dummy value since nothing
       // is to be drawn.
       return 0;
     }
+
     var firstDatum = data[0],
         lastDatum = data[data.length - 1];
-    return Math.floor(
+
+    var width = Math.floor(
       (scale(lastDatum[keys.x]) - scale(firstDatum[keys.x])) / (data.length - 1)
     );
+    // If it covers the whole screen.
+    if (width * data.length >= scale.range()[1]) {
+      return width;
+    }
+    // Data is sparse, the best we can do is give the bars the width of
+    // the aggWindow
+    else {
+      return scale(xDomainInfo.aggWindow) - scale(0);
+    }
   };
 
   createXGraph = function (svg, dimensions, labels, options) {
