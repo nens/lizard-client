@@ -313,7 +313,7 @@ angular.module('lizard-nxt')
       value: function (data, slug) {
         if (slug) {
           // Remove invalid selectors
-          slug.replace(/#|:|\//gi, '');
+          slug = slug.replace(/#|:|\//gi, '');
         }
         tickmarks = drawTickMarkElements(
           this._svg, this.dimensions, data, slug);
