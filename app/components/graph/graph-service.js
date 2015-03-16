@@ -126,7 +126,7 @@ angular.module('lizard-nxt')
         }
         var line = this._createLine(this._xy, keys);
         this._path = drawPath(this._svg, line, data, this.transTime, this._path);
-        addInteractionToPath(this._svg, data, keys, labels, this._path, this._xy);
+        addInteractionToPath(this._svg, this.dimensions, data, keys, labels, this._path, this._xy);
       }
     },
 
@@ -609,8 +609,9 @@ angular.module('lizard-nxt')
     return path;
   };
 
-  addInteractionToPath = function (svg, data, keys, labels, path, xy) {
+  addInteractionToPath = function (svg, dimensions, data, keys, labels, path, xy) {
     var bisect = d3.bisector(function (d) { return d[keys.x]; }).right,
+        height = Graph.prototype._getHeight(dimensions),
         fg = svg.select('#feature-group');
 
     // Move listener rectangle to the front
@@ -619,47 +620,56 @@ angular.module('lizard-nxt')
 
     var cb = function () {
       var i = bisect(data, xy.x.scale.invert(d3.mouse(this)[0]));
+      i = i === data.length ? data.length - 1 : i;
       var d = data[i];
+
       fg.select('#interaction-group').remove();
+
+      if (d[keys.x] === null || d[keys.y] === null) { return; }
+
+      var y2 = xy.y.scale(d[keys.y]),
+          x2 = xy.x.scale(d[keys.x]),
+          date = new Date(data[i][keys.x]).toLocaleString(),
+          xText = date.slice(0, date.length - 3);
+
       var g = fg.append('g');
       g.attr('id', 'interaction-group')
       .append('circle')
         .attr('r', 0)
-        .attr('cx', function () { return xy.x.scale(d[keys.x]); })
-        .attr('cy', function () { return xy.y.scale(d[keys.y]); })
-        .attr('fill', 'red')
-        .transition
-        .duration(this.transTime)
+        .attr('cx', x2)
+        .attr('cy', y2)
+        .attr('fill', '#34495e')
+        .transition()
+        .ease('easeInOut')
+        .duration(300)
         .attr('r', 5);
       g.append('line')
-        .attr('y1', function () { return xy.y.scale(d[keys.y]); })
-        .attr('y2', function () { return xy.y.scale(d[keys.y]); })
-        .attr('x1', function () { return xy.x.scale(d[keys.x]); })
-        .attr('x2', function () { return xy.x.scale(d[keys.x]); })
-        .attr('stroke', 'red')
-        .transition
-        .duration(this.transTime)
-        .attr('x1', 0);
+        .attr('stroke-dasharray', '8, 4')
+        .attr('y1', y2)
+        .attr('y2', y2)
+        .attr('x1', 0)
+        .attr('x2', x2)
+        .attr('stroke-width', 2)
+        .attr('stroke', '#34495e');
       g.append('line')
-        .attr('y1', function () { return xy.x.scale(d[keys.x]); })
-        .attr('y2', function () { return xy.y.scale(d[keys.y]); })
-        .attr('x1', function () { return xy.x.scale(d[keys.x]); })
-        .attr('x2', function () { return xy.x.scale(d[keys.x]); })
-        .attr('stroke', 'red')
-        .transition
-        .duration(this.transTime)
-        .attr('y1', 0);
-      g.append('rect')
-        .attr('class', 'tooltip')
-        .attr('x', function () { return xy.x.scale(d[keys.x]); })
-        .attr('y', function () { return xy.x.scale(d[keys.x]); })
-        .width(100)
-        .height(100)
-        .fill('grey');
+        .attr('stroke-dasharray', '8, 4')
+        .attr('y1', height)
+        .attr('y2', y2)
+        .attr('x1', x2)
+        .attr('x2', x2)
+        .attr('stroke-width', 2)
+        .attr('stroke', '#34495e');
+
       g.append('text')
-        .attr('x', function () { return xy.x.scale(d[keys.x]); })
-        .attr('y', function () { return xy.x.scale(d[keys.x]); })
-        .text(data[i][keys.x] + ' ' + data[i][keys.y] + ' ' + labels.y);
+        .text(data[i][keys.y] + ' ' + labels.y)
+        .attr('class', 'graph-tooltip-y')
+        .attr('x', 5)
+        .attr('y', y2 - 5);
+      g.append('text')
+        .text(xText + ' ' + labels.x)
+        .attr('class', 'graph-tooltip-x')
+        .attr('x', x2 + 5)
+        .attr('y', height - 5);
     };
 
     svg.select('#listeners').on('click', cb);
