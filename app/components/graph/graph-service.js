@@ -126,7 +126,7 @@ angular.module('lizard-nxt')
         }
         var line = this._createLine(this._xy, keys);
         this._path = drawPath(this._svg, line, data, this.transTime, this._path);
-        addInteractionToPath(this._svg, data, keys, this._path, this._xy);
+        addInteractionToPath(this._svg, data, keys, labels, this._path, this._xy);
       }
     },
 
@@ -609,7 +609,7 @@ angular.module('lizard-nxt')
     return path;
   };
 
-  addInteractionToPath = function (svg, data, keys, path, xy) {
+  addInteractionToPath = function (svg, data, keys, labels, path, xy) {
     var bisect = d3.bisector(function (d) { return d[keys.x]; }).right,
         fg = svg.select('#feature-group');
 
@@ -617,17 +617,57 @@ angular.module('lizard-nxt')
     var el = svg.select('#listeners').node();
     el.parentNode.appendChild(el);
 
-    svg.select('#listeners').on('click', function () {
+    var cb = function () {
       var i = bisect(data, xy.x.scale.invert(d3.mouse(this)[0]));
       var d = data[i];
-      fg.select('#clickCircle').remove();
-      fg.append('circle')
-        .attr('id', 'clickCircle')
-        .attr('r', 5)
+      fg.select('#interaction-group').remove();
+      var g = fg.append('g');
+      g.attr('id', 'interaction-group')
+      .append('circle')
+        .attr('r', 0)
         .attr('cx', function () { return xy.x.scale(d[keys.x]); })
         .attr('cy', function () { return xy.y.scale(d[keys.y]); })
-        .attr('fill', 'red');
+        .attr('fill', 'red')
+        .transition
+        .duration(this.transTime)
+        .attr('r', 5);
+      g.append('line')
+        .attr('y1', function () { return xy.y.scale(d[keys.y]); })
+        .attr('y2', function () { return xy.y.scale(d[keys.y]); })
+        .attr('x1', function () { return xy.x.scale(d[keys.x]); })
+        .attr('x2', function () { return xy.x.scale(d[keys.x]); })
+        .attr('stroke', 'red')
+        .transition
+        .duration(this.transTime)
+        .attr('x1', 0);
+      g.append('line')
+        .attr('y1', function () { return xy.x.scale(d[keys.x]); })
+        .attr('y2', function () { return xy.y.scale(d[keys.y]); })
+        .attr('x1', function () { return xy.x.scale(d[keys.x]); })
+        .attr('x2', function () { return xy.x.scale(d[keys.x]); })
+        .attr('stroke', 'red')
+        .transition
+        .duration(this.transTime)
+        .attr('y1', 0);
+      g.append('rect')
+        .attr('class', 'tooltip')
+        .attr('x', function () { return xy.x.scale(d[keys.x]); })
+        .attr('y', function () { return xy.x.scale(d[keys.x]); })
+        .width(100)
+        .height(100)
+        .fill('grey');
+      g.append('text')
+        .attr('x', function () { return xy.x.scale(d[keys.x]); })
+        .attr('y', function () { return xy.x.scale(d[keys.x]); })
+        .text(data[i][keys.x] + ' ' + data[i][keys.y] + ' ' + labels.y);
+    };
+
+    svg.select('#listeners').on('click', cb);
+    svg.select('#listeners').on('mousemove', cb);
+    svg.select('#listeners').on('mouseout', function () {
+      fg.select('#interaction-group').remove();
     });
+
   };
 
   drawLabel = function (svg, dimensions, label, y) {
