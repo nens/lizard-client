@@ -10,7 +10,7 @@
            ng-click="timeline.toggleTimelineVisiblity()"
            ng-bind="timeline.state.temporal.at | date: timeline.formatDatetime()">
         </div>
-        <div>
+        <div ng-if="timeline.showContextSwitch">
           <a
             ng-click="timeline.toggleTimeCtx()"
             class="button-list-link"
