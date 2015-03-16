@@ -117,10 +117,11 @@ angular.module('time-ctx')
         //
         // TODO 3: Remove box filtering, always show all the data
         //
-        if (response.layerSlug === 'waterchain_grid'
-          || response.layerSlug === 'rrc') {
+        if (response.layerSlug === 'waterchain_grid') {
           return;
 
+        // Currently events for point and area and timeseries for point are
+        // supported.
         } else if (response.layerSlug === 'timeseries') {
           angular.forEach(response.data, function (ts) {
             ts.layerSlug = ts.name;
