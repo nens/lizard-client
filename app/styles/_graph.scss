@@ -91,6 +91,14 @@ text, axis text {
   font-size: 13px;
 }
 
+.interaction-group {
+  fill: $midnightblue;
+  stroke: $midnightblue;
+  stroke-width: 2px;
+  stroke-dasharray: 8, 4;
+
+}
+
 text.d3tooltip {
       position: absolute;
       width: 100px;

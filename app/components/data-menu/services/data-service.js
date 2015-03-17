@@ -320,14 +320,14 @@ angular.module('data-menu')
         var promise = TimeseriesService.getTimeseries(objectId, {
           start: start,
           end: end
-        }).then(function (result) {
+        }).then(function (response) {
 
-          if (result.length > 0) {
+          if (response.results.length > 0) {
             // We retrieved data for one-or-more timeseries, but do these
             // actually contain measurements, or just metadata? We filter out
             // the timeseries with too little measurements...
             var filteredResult = [];
-            angular.forEach(result, function (value) {
+            angular.forEach(response.results, function (value) {
               if (value.events.length > 1 &&
                   value.events.length < MAX_NR_TIMESERIES_EVENTS) {
                 filteredResult.push(value);

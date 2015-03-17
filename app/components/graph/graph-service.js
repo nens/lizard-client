@@ -126,7 +126,7 @@ angular.module('lizard-nxt')
         }
         var line = this._createLine(this._xy, keys);
         this._path = drawPath(this._svg, line, data, this.transTime, this._path);
-        addInteractionToPath(this._svg, this.dimensions, data, keys, labels, this._path, this._xy);
+        addInteractionToPath(this._svg, this.dimensions, data, keys, labels, this._path, this._xy, this.transTime);
       }
     },
 
@@ -609,7 +609,7 @@ angular.module('lizard-nxt')
     return path;
   };
 
-  addInteractionToPath = function (svg, dimensions, data, keys, labels, path, xy) {
+  addInteractionToPath = function (svg, dimensions, data, keys, labels, path, xy, duration) {
     var bisect = d3.bisector(function (d) { return d[keys.x]; }).right,
         height = Graph.prototype._getHeight(dimensions),
         fg = svg.select('#feature-group');
@@ -619,46 +619,38 @@ angular.module('lizard-nxt')
     el.parentNode.appendChild(el);
 
     var cb = function () {
+      fg.select('.interaction-group').remove();
+
       var i = bisect(data, xy.x.scale.invert(d3.mouse(this)[0]));
       i = i === data.length ? data.length - 1 : i;
       var d = data[i];
-
-      fg.select('#interaction-group').remove();
 
       if (d[keys.x] === null || d[keys.y] === null) { return; }
 
       var y2 = xy.y.scale(d[keys.y]),
           x2 = xy.x.scale(d[keys.x]),
-          date = new Date(data[i][keys.x]).toLocaleString(),
-          xText = date.slice(0, date.length - 3);
+          xText = new Date(data[i][keys.x]).toLocaleString();
 
-      var g = fg.append('g');
-      g.attr('id', 'interaction-group')
-      .append('circle')
+      var g = fg.append('g').attr('class', 'interaction-group');
+
+      g.append('circle')
         .attr('r', 0)
         .attr('cx', x2)
         .attr('cy', y2)
-        .attr('fill', '#34495e')
         .transition()
         .ease('easeInOut')
-        .duration(300)
+        .duration(duration)
         .attr('r', 5);
       g.append('line')
-        .attr('stroke-dasharray', '8, 4')
         .attr('y1', y2)
         .attr('y2', y2)
         .attr('x1', 0)
-        .attr('x2', x2)
-        .attr('stroke-width', 2)
-        .attr('stroke', '#34495e');
+        .attr('x2', x2);
       g.append('line')
-        .attr('stroke-dasharray', '8, 4')
         .attr('y1', height)
         .attr('y2', y2)
         .attr('x1', x2)
-        .attr('x2', x2)
-        .attr('stroke-width', 2)
-        .attr('stroke', '#34495e');
+        .attr('x2', x2);
 
       g.append('text')
         .text(data[i][keys.y] + ' ' + labels.y)
@@ -675,7 +667,7 @@ angular.module('lizard-nxt')
     svg.select('#listeners').on('click', cb);
     svg.select('#listeners').on('mousemove', cb);
     svg.select('#listeners').on('mouseout', function () {
-      fg.select('#interaction-group').remove();
+      fg.select('.interaction-group').remove();
     });
 
   };
