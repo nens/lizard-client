@@ -154,17 +154,42 @@ angular.module('lizard-nxt')
 
       var isString = isNaN(parseFloat(data[0].properties.value)),
           nestedData = {},
-          aggregatedArray = [];
+          aggregatedArray = [],
+          timestampKey = function (d) {
+            return UtilService.roundTimestamp(d.properties.timestamp_start,
+                                              aggWindow);
+          };
+
+      if (baseColor === undefined) {
+
+        nestedData = d3.nest()
+          .key(timestampKey)
+          .rollup(function (leaves) {
+            var stats = {
+              count: leaves.length,
+            };
+
+            return stats;
+          })
+          .map(data, d3.map);
+
+        // rewrite d3 nested map to array of flat objects
+        nestedData
+          .forEach(function (timestamp, value) {
+            var tmpObj = {
+              timestamp: timestamp,
+              count: value.count
+            };
+            aggregatedArray.push(tmpObj);
+          }
+        );
 
       // if value is string, data is nominal or ordinal, calculate counts
       // per cateogry
-      if (isString) {
+      } else if (isString) {
 
         nestedData = d3.nest()
-          .key(function (d) {
-            return UtilService.roundTimestamp(d.properties.timestamp_start,
-                                              aggWindow);
-          })
+          .key(timestampKey)
           .key(function (d) {return d.properties.category; })
           .rollup(function (leaves) {
             var stats = {
@@ -196,10 +221,7 @@ angular.module('lizard-nxt')
       } else {
 
         nestedData = d3.nest()
-          .key(function (d) {
-            return UtilService.roundTimestamp(d.properties.timestamp_start,
-                                              aggWindow);
-          })
+          .key(timestampKey)
           .rollup(function (leaves) {
             var stats = {
               count: leaves.length,
@@ -232,6 +254,7 @@ angular.module('lizard-nxt')
             aggregatedArray.push(tmpObj);
           }
         );
+
       }
 
       return aggregatedArray;
