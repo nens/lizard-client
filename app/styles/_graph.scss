@@ -59,6 +59,15 @@ rect.bar {
   fill: $bargrey;
 }
 
+rect.bar.selected {
+  fill: $pomegranate;
+}
+
+.tooltip-background {
+  stroke-width: 0;
+  fill: rgba(255, 255, 255, 0.8);
+}
+
 .bar-timeline {
   fill: $bargrey;
   stroke-width: 1;
@@ -80,7 +89,7 @@ rect.bar {
 }
 
 text, axis text {
-  fill: $silver;
+  fill: $bargrey;
   stroke: none;
   font-size: 13px;
 }

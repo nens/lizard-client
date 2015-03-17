@@ -19,6 +19,9 @@
 angular.module('lizard-nxt')
   .factory("Graph", ["NxtD3", function (NxtD3) {
 
+  var MIN_WIDTH_INTERACTIVE_GRAPHS = 400; // Only graphs bigger get mouseover
+                                          // and click interaction.
+
   /**
    * @constructor
    * @memberOf angular.module('lizard-nxt')
@@ -126,7 +129,20 @@ angular.module('lizard-nxt')
         }
         var line = this._createLine(this._xy, keys);
         this._path = drawPath(this._svg, line, data, this.transTime, this._path);
-        addInteractionToPath(this._svg, this.dimensions, data, keys, labels, this._path, this._xy, this.transTime);
+
+        if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+          addInteractionToPath(
+            this._svg,
+            this.dimensions,
+            data,
+            keys,
+            labels,
+            this._path,
+            this._xy,
+            this.transTime
+          );
+        }
+
       }
     },
 
@@ -197,6 +213,18 @@ angular.module('lizard-nxt')
           this.transTime,
           this._xDomainInfo
         );
+
+        if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+          addInteractionToRects(
+            this._svg,
+            this.dimensions,
+            this._xy,
+            keys,
+            labels,
+            this.transTime
+          );
+        }
+
         // Object reference, put it back.
         keys.y = originalKey;
       }
@@ -330,8 +358,8 @@ angular.module('lizard-nxt')
 
   var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale,
       drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,
-      drawVerticalRects, drawHorizontalRects, createXGraph, rescale,
-      createYValuesForCumulativeData;
+      drawVerticalRects, addInteractionToRects, drawHorizontalRects,
+      createXGraph, rescale, createYValuesForCumulativeData;
 
   /**
    * Creates y cumulatie y values for elements on the same x value.
@@ -569,6 +597,52 @@ angular.module('lizard-nxt')
     else {
       return scale(xDomainInfo.aggWindow) - scale(0);
     }
+  };
+
+
+  addInteractionToRects = function (svg, dimensions, xy, keys, labels, duration) {
+    var height = Graph.prototype._getHeight(dimensions),
+        fg = svg.select('#feature-group');
+
+    var cb = function (d) {
+      removeAllSelection();
+      d3.select(this).attr('class', 'selected bar');
+      var g = fg.append('g').attr('class', 'interaction-group');
+
+
+      var text = Math.round(d[keys.y] * 100) / 100 + ' ' + labels.y;
+      text = keys.category !== undefined
+        ? text + ' ' + d[keys.category]
+        : text;
+
+      var t  = g.append('text').text(text);
+
+      var tHeight = t.node().getBBox().height,
+          tWidth = t.node().getBBox().width;
+
+      t.attr('x', xy.x.scale(d[keys.x]) + 5)
+        .attr('y', xy.y.scale(d.y1 || d[keys.y]) + tHeight);
+
+      g.append('rect')
+        .attr('class', 'tooltip-background')
+        .attr('x', xy.x.scale(d[keys.x]))
+        .attr('y', xy.y.scale(d.y1 || d[keys.y]))
+        .attr('width', tWidth + 10)
+        .attr('height', tHeight + 5);
+
+      t.node().parentNode.appendChild(t.node());
+    };
+
+    var removeAllSelection = function () {
+      fg.selectAll('.bar').attr('class', 'bar');
+      fg.select('.interaction-group').remove();
+    };
+
+    fg.selectAll('.bar').on('click', cb);
+    fg.selectAll('.bar').on('mousemove', cb);
+    svg.select('#listeners').on('mouseout', function () {
+      removeAllSelection();
+    });
   };
 
   createXGraph = function (svg, dimensions, labels, options) {
