@@ -29,21 +29,21 @@ describe('Testing event aggregate service', function () {
     expect(result[0].count).toBe(1);
   });
 
-  it("should return an array with property 'min' is 2 for the first element", function () {
-    var data = eventsMock.features;
-    var result = EventAggregateService.aggregate(data,
-                                                 timeState.aggWindow,
-                                                 "#f00");
-    expect(result[0].min).toBe(2);
-  });
+  //it("should return an array with property 'min' is 2 for the first element", function () {
+    //var data = eventsMock.features;
+    //var result = EventAggregateService.aggregate(data,
+                                                 //timeState.aggWindow,
+                                                 //"#f00");
+    //expect(result[0].min).toBe(2);
+  //});
 
-  it("should return an array with property 'mean' is 3 for the first element", function () {
-    var data = eventsMock.features;
-    var result = EventAggregateService.aggregate(data,
-                                                timeState.aggWindow,
-                                                "#f00");
-    expect(result[0].mean).toBe(3);
-  });
+  //it("should return an array with property 'mean' is 3 for the first element", function () {
+    //var data = eventsMock.features;
+    //var result = EventAggregateService.aggregate(data,
+                                                //timeState.aggWindow,
+                                                //"#f00");
+    //expect(result[0].mean).toBe(3);
+  //});
 
   it("should return an array with property 'count' is 3 for the first element", function () {
     var data = eventsMock.features;
