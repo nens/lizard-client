@@ -132,22 +132,34 @@ angular.module('lizard-nxt')
      *                          timestamp
      * @return {filteredSet}    Array with points within extent.
      */
-    var filterSet = function (sourceArray, spatial, temporal) {
-      if (!spatial && !temporal) { return sourceArray; }
+    var filterSet = function (filteredSet, spatial, objectFilter, temporal) {
+      if (!spatial && !temporal && !objectFilter) { return filteredSet; }
 
-      var filteredSet = [];
+      // First filter on object
+      if (objectFilter) {
+        filteredSet = filteredSet.filter(function (feature) {
+          if (
+            feature.properties.object
+            && feature.properties.object.type === objectFilter.type
+            && feature.properties.object.id === objectFilter.id
+          ) {
+            return true;
+          }
+          else {
+            return false;
+          }
+        });
+      }
 
-      // First filter spatially.
+      // Second filter spatially.
       if (spatial instanceof LeafletService.LatLngBounds
         || spatial instanceof LeafletService.LatLng) {
-        filteredSet = filterSpatial(sourceArray, spatial);
-      } else if (spatial === undefined) {
-        filteredSet = sourceArray;
+        filteredSet = filterSpatial(filteredSet, spatial);
       } else if (spatial instanceof Array
         && spatial[0] instanceof LeafletService.LatLng) {
         // TODO: implement line intersect with vector data
         filteredSet = [];
-      } else {
+      } else if (spatial) {
         throw new Error(
           spatial + "is an invalid geometry to query VectorService");
       }
@@ -191,7 +203,7 @@ angular.module('lizard-nxt')
         getDataAsync(layerSlug, layer, options, deferred);
       } else {
         var set = filterSet(vectorLayers[layerSlug].data,
-        options.geom, {
+        options.geom, options.objectFilter, {
           start: options.start,
           end: options.end
         });
@@ -227,7 +239,7 @@ angular.module('lizard-nxt')
 
       vectorLayers[layerSlug].promise.then(function () {
         deferred.resolve(filterSet(vectorLayers[layerSlug].data,
-          options.geom, {
+          options.geom, options.objectFilter, {
             start: options.start,
             end: options.end
           }

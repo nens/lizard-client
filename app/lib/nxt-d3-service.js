@@ -183,23 +183,21 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt')
-  .NxtD3
+     * @memberOf angular.module('lizard-nxt').NxtD3
      *
      * @param {array} data        Array of data objects.
-     * @param {int-or-string} key key to the value in the array or object.
+     * @param {int-or-string} key to the value in the array or object.
      * @description returns the maximum and minimum
      * @return {object} containing the max and min
      */
     _maxMin: function (data, key) {
       // min max of d3 does not filter nulls for some reason
       // y axis is way off sometimes.
-      var filtered = data.filter(function (d) { return !isNaN(parseFloat(d[key])); });
-      var max = d3.max(filtered, function (d) {
+      var max = d3.max(data, function (d) {
               return Number(d[key]);
             });
 
-      var min = d3.min(filtered, function (d) {
+      var min = d3.min(data, function (d) {
               return Number(d[key]);
             });
       return {

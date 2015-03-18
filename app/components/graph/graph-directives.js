@@ -67,7 +67,7 @@ angular.module('lizard-nxt')
     // Overwrite anything provided by dimensions attr on element
     angular.extend(dimensions, scope.dimensions);
 
-    el = element[0].firstChild;
+    el = element.find('svg')[0];
 
     graphCtrl.yfilter = attrs.yfilter;
     graphCtrl.type = attrs.type;
@@ -96,7 +96,6 @@ angular.module('lizard-nxt')
   link = function (scope, element, attrs, graphCtrl) {
 
     var graphUpdateHelper = function (useNewData, useNewXDomain) {
-
       if (useNewData) {
         graphCtrl.setData(scope);
       }
@@ -159,6 +158,8 @@ angular.module('lizard-nxt')
       graphUpdateHelper(false, false);
     });
 
+    scope.title = attrs.name;
+
   };
 
   /**
@@ -218,7 +219,7 @@ angular.module('lizard-nxt')
     },
     restrict: 'E',
     replace: true,
-    template: '<div class="graph-svg-wrapper"><svg></svg></div>'
+    templateUrl: 'graph/graph.html'
   };
 
 }]);
