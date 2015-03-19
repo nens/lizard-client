@@ -4,6 +4,17 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Add EventAggregationService to timeline drawLines to reduce number of DOM
+   elements in timeline.
+
+- Add logarithmic scaling to circle size of events.
+
+- Draw circles in middle ofaggWindow.
+
+- Accomodate color === undefined in aggregate function.
+
+- Refactor drawLines to drawCircles.
+
 - Added maximum number of timeseries events to prevent browser running out of
   memory.
 
