@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Add zoom to data bounds for events.
+
 - Added maximum number of timeseries events to prevent browser running out of
   memory.
 

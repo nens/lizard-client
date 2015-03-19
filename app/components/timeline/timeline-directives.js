@@ -17,6 +17,7 @@ angular.module('lizard-nxt')
               "Timeline",
               "VectorService",
               "DataService",
+              "EventAggregateService",
               "State",
               function ($q,
                         $timeout,
@@ -25,6 +26,7 @@ angular.module('lizard-nxt')
                         Timeline,
                         VectorService,
                         DataService,
+                        EventAggregateService,
                         State) {
 
   var link = function (scope, element, attrs, timelineCtrl) {
@@ -239,7 +241,7 @@ angular.module('lizard-nxt')
         // appropriately.
         angular.forEach(scope.events.slugs, function (slug) {
           if (timelineLayers.events.slugs.indexOf(slug) === -1) {
-            timeline.drawLines([], scope.events.nEvents, slug);
+            timeline.drawCircles([], scope.events.nEvents, slug);
           }
         });
 
@@ -248,7 +250,7 @@ angular.module('lizard-nxt')
         getEventData();
       } else {
         scope.events.nEvents = 0;
-        timeline.drawLines(undefined, scope.events.nEvents);
+        timeline.drawCircles(undefined, scope.events.nEvents);
       }
 
       if (timelineLayers.rain !== undefined) {
@@ -291,11 +293,17 @@ angular.module('lizard-nxt')
 
         if (response && response.data) {
           // Add it to the timeline
-          timeline.drawLines(
+          var data = EventAggregateService.aggregate(
             response.data,
+            State.temporal.aggWindow
+          );
+
+          timeline.drawCircles(
+            data,
             context.eventOrder,
             response.layerGroupSlug,
-            response.color
+            response.color,
+            State.temporal.aggWindow
           );
           context.eventOrder++;
         }
