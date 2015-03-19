@@ -7,7 +7,7 @@
  * @summary Service to create and update a timeline. Used by timeline-directive.
  *
  * @description Inject "Timeline" and call new timeline(<args>) to create a
- * timeline. Currently the timeline supports lines (events) and vertical bars
+ * timeline. Currently the timeline supports circles (events) and vertical bars
  * (rain intensity). The user may interact with the timeline through click and
  * zoom functions.
  *
@@ -19,7 +19,7 @@
  * updateCanvas.
  */
 angular.module('lizard-nxt')
-  .factory("Timeline", ["NxtD3", function (NxtD3) {
+  .factory("Timeline", ["NxtD3", "UtilService", function (NxtD3, UtilService) {
 
   // Timeline
   var initialHeight,
@@ -28,7 +28,7 @@ angular.module('lizard-nxt')
   xScale, // The d3 scale for placement on the x axis within the whole
           // timeline. Is only updated when zoomTo is called, or the window
           // resizes.
-  ordinalYScale, // Scale used to place events in lines for each type
+  ordinalYScale, // Scale used to place events in circles for each type
 
   // Interaction functions
   clicked = null,
@@ -38,7 +38,7 @@ angular.module('lizard-nxt')
   // Timeline elements
   futureIndicator,
   aggWindow, // aggregation window
-  lines, // events start - end
+  circles, // events start - end
   bars, // rain intensity
   tickmarks; // data availability indicators
 
@@ -283,7 +283,7 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @summary Updates, adds or removes all lines in the data object.
+     * @summary Updates, adds or removes all circles in the data object.
      *
      * @param {array} data array of objects:
      *   [{properties.timestamp_end: timestamp,
@@ -294,9 +294,9 @@ angular.module('lizard-nxt')
      * @param {string} slug - Slug of event layer.
      * @param {string} color - Hex color code.
      */
-    drawLines: {
-      value: function (data, order, slug, color) {
-        lines = drawLineElements(
+    drawCircles: {
+      value: function (data, order, slug, color, aggWindow) {
+        circles = drawCircleElements(
           this._svg,
           this.dimensions,
           xScale,
@@ -304,7 +304,8 @@ angular.module('lizard-nxt')
           data,
           order,
           slug,
-          color
+          color,
+          aggWindow
         );
       }
     },
@@ -500,7 +501,7 @@ angular.module('lizard-nxt')
       .attr('height', height)
       .attr('width', width)
       .attr('id', 'rain-bar');
-    // Create group for lines
+    // Create group for circles
     svg.select('g').append('g')
       .attr('height', height)
       .attr('width', width)
@@ -605,17 +606,14 @@ angular.module('lizard-nxt')
           });
       }
 
-      if (lines) {
+      if (circles) {
         var xOneFunction = function (d) {
-          return xScale(d.properties.timestamp_end);
-        };
-        var xTwoFunction = function (d) {
-          return xScale(d.properties.timestamp_start);
+          var interval = 0;
+          return xScale(parseFloat(d.timestamp) + (interval / 2));
         };
 
-        d3.select("#circle-group").selectAll("line")
-          .attr("x1", xOneFunction)
-          .attr("x2", xTwoFunction);
+        d3.select("#circle-group").selectAll("circle")
+          .attr("cx", xOneFunction);
       }
 
       if (tickmarks) {
@@ -838,20 +836,20 @@ angular.module('lizard-nxt')
    * @param {string} slug - slug of event series.
    * @param {string} color - Hex color code.
    */
-  var drawLineElements = function (
-    svg, dimensions, xScale, yScale, data, order, slug, color) {
+  var drawCircleElements = function (
+    svg, dimensions, xScale, yScale, data, order, slug, color, aggWindow) {
+
+    var MIN_CIRCLE_SIZE = 2,
+        MAX_CIRCLE_SIZE = 6;
 
     var xOneFunction = function (d) {
-      return xScale(d.properties.timestamp_end);
+      return xScale(parseFloat(d.timestamp) + (aggWindow / 2));
     };
-    var xTwoFunction = function (d) {
-      return xScale(d.properties.timestamp_start);
-    };
+
     var yFunction = function (d) { return yScale(order); };
-    var colorFunction = function (d) { return color; };
 
     // if data exists, check if group is available for this series and create
-    // if no data, remove lines
+    // if no data, remove circles
     if (data !== undefined) {
       var group = svg
                     .select("g")
@@ -864,8 +862,8 @@ angular.module('lizard-nxt')
 
       // DATA JOIN
       // Join new data with old elements, based on the id value.
-      lines = group.selectAll("line")
-        .data(data, function  (d) { return d.id; });
+      circles = group.selectAll("circle")
+        .data(data, function  (d) { return d.timestamp; });
     } else if (data === undefined) {
       // if no data is defined, remove all groups
       var groups = svg.select("g").select("#circle-group").selectAll("g");
@@ -876,32 +874,33 @@ angular.module('lizard-nxt')
 
     // UPDATE
     // Update old elements as needed.
-    lines.transition()
+    circles.transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
-      .attr("stroke", colorFunction)
-      .attr("x1", xOneFunction)
-      .attr("x2", xTwoFunction)
-      .attr("y1", yFunction)
-      .attr("y2", yFunction);
+      .attr("stroke", color)
+      .attr("fill", color)
+      .attr("cx", xOneFunction)
+      .attr("cy", yFunction);
 
     // ENTER
     // Create new elements as needed.
-    lines.append("g");
-    lines.enter().append("line")
-      .attr("class", "event selected")
-      .attr("stroke", colorFunction)
+    circles.append("g");
+    circles.enter().append("circle")
+      .attr("class", "event")
+      .attr("fill", color)
+      .attr("stroke", color)
     .transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
-      .attr("x1", xOneFunction)
-      .attr("x2", xTwoFunction)
-      .attr("y1", yFunction)
-      .attr("y2", yFunction);
+      .attr("cx", xOneFunction)
+      .attr("cy", yFunction)
+      .attr("r", function (d) {
+        return UtilService.lin2log(d.count, MIN_CIRCLE_SIZE, MAX_CIRCLE_SIZE); 
+        });
 
     // EXIT
     // Remove old elements as needed.
-    lines.exit()
+    circles.exit()
       .transition()
       .delay(0)
       .duration(Timeline.prototype.transTime)
@@ -912,7 +911,7 @@ angular.module('lizard-nxt')
       .style("fill-opacity", 0)
       .remove();
 
-    return lines;
+    return circles;
   };
 
   /**
@@ -976,8 +975,8 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @summary Returns a d3 scale to place events vertically in lines above each
-   * other.
+   * @summary Returns a d3 scale to place events vertically in circles above
+   * each other.
    *
    * @param  {int} iniH initial height of the timeline in px.
    * @param  {object} dims current dimensions of the timeline.

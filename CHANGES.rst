@@ -8,6 +8,8 @@ Unreleased (1.2.25) (XXXX-XX-XX)
 
 - Fix spatial.points.here undefined.
 
+- Add zoom to data bounds for events.
+
 - Added maximum number of timeseries events to prevent browser running out of
   memory.
 

@@ -287,8 +287,7 @@
   text-align: right;
 }
 
-.event.selected {
-  stroke-linecap: round;
-  stroke-opacity: 0.8;
-  stroke-width: 10;
+.event {
+  stroke-opacity: 0.95;
+  fill-opacity: 0.75;
 }

@@ -104,6 +104,12 @@ angular.module('data-menu')
             var nxtLayer = new NxtDataLayer(layer, tempRes);
             this._dataLayers.push(nxtLayer);
             this.mapLayers.push(nxtLayer);
+            // NOTE: crappy solution, we should set meta to None or
+            // empty to do better checking.
+            if (typeof layer.meta !== "string") {
+              this.temporalBounds = layer.meta.temporal_bounds;
+              this.spatialBounds = layer.meta.spatial_bounds;
+            }
           }
           else if (layer.format === 'Store') {
             this._dataLayers.push(new NxtDataLayer(layer, tempRes));
