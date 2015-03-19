@@ -18,9 +18,20 @@
  */
 
 angular.module('data-menu')
-  .service('DataService', ['$q', 'TimeseriesService', 'dataLayers',
-                           'DataLayerGroup', 'State',
-    function ($q, TimeseriesService, dataLayers, DataLayerGroup, State) {
+  .service('DataService', [
+    '$q',
+    'TimeseriesService',
+    'dataLayers',
+    'DataLayerGroup',
+    'State',
+
+    function (
+      $q,
+      TimeseriesService,
+      dataLayers,
+      DataLayerGroup,
+      State
+    ) {
 
       // Attributes ////////////////////////////////////////////////////////////
 
@@ -146,29 +157,38 @@ angular.module('data-menu')
        * @param  {object} options
        * @param  {str} callee that gets a list of defers for every time getdata
        *                      is called before a request finishes.
+       * @param  {defer} recursiveDefer optional. When supplied is notified with
+       *                                data. Used for recursively calling get
+       *                                data with data from waterchain of a
+       *                                previous getData call.
        * @return {promise} notifies with data from layergroup and resolves when
        *                   all layergroups and the timeseries returned data.
        */
-      this.getData = function (callee, options) {
-        this.reject(callee);
-        if (!this._dataDefers[callee]) {
-          this._dataDefers[callee] = [];
+      this.getData = function (callee, options, recursiveDefer) {
+        var defer = $q.defer();
+
+        if (recursiveDefer === undefined) {
+          this.reject(callee);
+          if (!this._dataDefers[callee]) {
+            this._dataDefers[callee] = []; // It is a list because $q.all can not
+          }                                // be deregistered.
+          var defers = this._dataDefers[callee];
+          defers.push(defer); // add to list
         }
-        var defers = this._dataDefers[callee];
-        defers.push($q.defer()); // add to list
-        var defer = defers[defers.length - 1]; // get last item
+
         var promises = [];
-        var waitForTimeseries = false;
+        var waitForTimeseriesAndEvents = false;
+        var instance = this;
         angular.forEach(this.layerGroups, function (layerGroup) {
           promises.push(
             layerGroup.getData(options).then(null, null, function (response) {
 
-              // TS are dependent on the waterchain response. So the waterchain
-              // response is checked for signs of timeseries. If neccessary we
-              // will wait for the timeseries request to finish. Else we keep
-              // checking every response.
-              if (!waitForTimeseries) {
-                waitForTimeseries = getTimeseries(
+              // TS and events are dependent on the waterchain response. So the
+              // waterchain response is checked for signs of timeseries. If
+              // neccessary we will wait for the timeseries request to finish.
+              // Else we keep checking every response.
+              if (!waitForTimeseriesAndEvents) {
+                waitForTimeseriesAndEvents = instance.getTimeseriesAndEvents(
                   response,
                   options.start,
                   options.end,
@@ -176,14 +196,19 @@ angular.module('data-menu')
                 );
               }
 
-              defer.notify(response);
+              if (recursiveDefer) {
+                recursiveDefer.notify(response);
+              } else {
+                defer.notify(response);
+              }
+
             })
           );
         });
 
         $q.all(promises).then(function () {
-          if (waitForTimeseries) {
-            waitForTimeseries.then(function () {
+          if (waitForTimeseriesAndEvents) {
+            waitForTimeseriesAndEvents.then(function () {
               finishDefers();
             });
           } else {
@@ -201,7 +226,10 @@ angular.module('data-menu')
           // If this defer is the last one in the list of defers the getData
           // is truly finished, otherwise the getData is still getting data for
           // the callee.
-          if (defers.indexOf(defer) === defers.length - 1) {
+          if (recursiveDefer) {
+            defer.resolve();
+          }
+          else if (defers.indexOf(defer) === defers.length - 1) {
             State.layerGroups.gettingData = false;
             defer.resolve(); // Resolve the last one, the others have been
                              // rejected.
@@ -253,19 +281,29 @@ angular.module('data-menu')
        * @return {promise || false} false when no id and entity name or promise
        *                            when making request to timeseries endpoint.
        */
-      var getTimeseries = function (response, start, end, defer) {
+      this.getTimeseriesAndEvents = function (response, start, end, defer) {
         if (response.format === 'UTFGrid'
           && response.data
           && response.data.id
           && response.data.entity_name
         ) {
           // Apparently, we're dealing with the waterchain:
-          return getTimeSeriesForObject(
+          var tsPromise = getTimeSeriesForObject(
             response.data.entity_name + '$' + response.data.id,
             start,
             end,
             defer
           );
+          var eventsPromsise = this.getData(null, {
+            start: start,
+            end: end,
+            objectFilter: {
+              type: response.data.entity_name,
+              id: response.data.id
+            },
+            type: 'Event'
+          }, defer);
+          return $q.all([tsPromise, eventsPromsise]);
         } else { return false; }
       };
 
@@ -276,18 +314,22 @@ angular.module('data-menu')
        */
       var getTimeSeriesForObject = function (objectId, start, end, defer) {
 
+        // maximum number of timeseries events, more probably results in a
+        // memory error.
+        var MAX_NR_TIMESERIES_EVENTS = 25000;
         var promise = TimeseriesService.getTimeseries(objectId, {
           start: start,
           end: end
-        }).then(function (result) {
+        }).then(function (response) {
 
-          if (result.length > 0) {
+          if (response.results.length > 0) {
             // We retrieved data for one-or-more timeseries, but do these
             // actually contain measurements, or just metadata? We filter out
             // the timeseries with too little measurements...
             var filteredResult = [];
-            angular.forEach(result, function (value) {
-              if (value.events.length > 1) {
+            angular.forEach(response.results, function (value) {
+              if (value.events.length > 1 &&
+                  value.events.length < MAX_NR_TIMESERIES_EVENTS) {
                 filteredResult.push(value);
               }
             });

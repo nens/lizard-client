@@ -61,6 +61,15 @@ angular.module('lizard-nxt')
 
     this.state = State;
 
+    Object.defineProperty(this, 'showContextSwitch', {
+      get: function () {
+        return State.layerGroups.active.some(function (slug) {
+          return DataService.layerGroups[slug].temporal
+            && DataService.layerGroups[slug].isActive();
+        });
+      }
+    });
+
     /**
      * Keep an eye out for temporal layers that require the animation to go
      * with a lower speed so wms requests can keep up and run more smooth if the
@@ -298,13 +307,13 @@ angular.module('lizard-nxt')
     this.formatDatetime = function () {
       switch (State.temporal.aggWindow) {
       case 300000:
-        return 'yyyy MM dd HH:mm';
+        return 'yyyy/MM/dd HH:mm';
       case 3600000:
-        return 'yyyy MM dd HH:mm';
+        return 'yyyy/MM/dd HH:mm';
       case 86400000:
-        return 'yyyy MM dd';
+        return 'yyyy/MM/dd';
       case 2635200000:
-        return 'yyyy MM';
+        return 'yyyy/MM';
       default:
         throw new Error("Unknown aggWindow: " + this.state.aggWindow);
       }

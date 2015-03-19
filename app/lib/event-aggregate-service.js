@@ -152,7 +152,8 @@ angular.module('lizard-nxt')
         return [];
       }
 
-      var isString = isNaN(parseFloat(data[0].properties.value)),
+      var isString = true,
+          // isString = isNaN(parseFloat(data[0].properties.value)),
           nestedData = {},
           aggregatedArray = [];
 
