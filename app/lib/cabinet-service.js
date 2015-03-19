@@ -20,7 +20,7 @@ angular.module('lizard-nxt')
     Restangular.setBaseUrl(backendDomain);
     Restangular.setDefaultHttpFields({withCredentials: true});
   }
-  Restangular.setRequestSuffix('?page_size=0');
+  Restangular.setRequestSuffix('?page_size=25000');
   geocodeResource = Restangular.one('api/v1/geocode/');
   reverseGeocodeResource = Restangular.one('api/v1/reversegeocode/');
   timeseriesResource = Restangular.one('api/v1/timeseries/');
