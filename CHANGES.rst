@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Set pages_size to 25000 to make one big request without hacky page_size=0.
+
 - Add zoom to data bounds for events.
 
 - Added maximum number of timeseries events to prevent browser running out of
