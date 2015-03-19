@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.3.1 (2015-3-19)
+---------------------
 
 - Fix 'bolletje'.
 
