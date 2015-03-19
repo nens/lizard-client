@@ -7,6 +7,14 @@ Unreleased (1.2.25) (XXXX-XX-XX)
 - Added maximum number of timeseries events to prevent browser running out of
   memory.
 
+- Reconnect events per object.
+
+- Fix bar width of events in time context.
+
+- Add data name attribute as graph title.
+
+- Click and hover over graph shows data.
+
 
 Release 1.2.27 (2015-3-5)
 ---------------------

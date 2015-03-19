@@ -19,6 +19,9 @@
 angular.module('lizard-nxt')
   .factory("Graph", ["NxtD3", function (NxtD3) {
 
+  var MIN_WIDTH_INTERACTIVE_GRAPHS = 400; // Only graphs bigger get mouseover
+                                          // and click interaction.
+
   /**
    * @constructor
    * @memberOf angular.module('lizard-nxt')
@@ -126,6 +129,20 @@ angular.module('lizard-nxt')
         }
         var line = this._createLine(this._xy, keys);
         this._path = drawPath(this._svg, line, data, this.transTime, this._path);
+
+        if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+          addInteractionToPath(
+            this._svg,
+            this.dimensions,
+            data,
+            keys,
+            labels,
+            this._path,
+            this._xy,
+            this.transTime
+          );
+        }
+
       }
     },
 
@@ -154,8 +171,11 @@ angular.module('lizard-nxt')
      */
     drawBars: {
       value: function (data, keys, labels, scale) {
+        var originalKey = keys.y;
         if (keys.category) {
+          // Create data for stacked bars.
           data = createYValuesForCumulativeData(data, keys);
+          keys.y = 'y1';
         }
         if (!this._xy) {
           var options = {
@@ -170,18 +190,19 @@ angular.module('lizard-nxt')
           };
           this._xy = this._createXYGraph(data, keys, labels, options);
           this._xy.y.scale.domain([0, this._xy.y.maxMin.max]);
-        } else {
-          this._xy = rescale(
-            this._svg,
-            this.dimensions,
-            this._xy,
-            data,
-            keys,
-            {y: 0},
-            this._xDomainInfo
-          );
-          drawLabel(this._svg, this.dimensions, labels.y, true);
         }
+
+        this._xy = rescale(
+          this._svg,
+          this.dimensions,
+          this._xy,
+          data,
+          keys,
+          {y: 0},
+          this._xDomainInfo
+        );
+
+        drawLabel(this._svg, this.dimensions, labels.y, true);
 
         drawVerticalRects(
           this._svg,
@@ -192,6 +213,20 @@ angular.module('lizard-nxt')
           this.transTime,
           this._xDomainInfo
         );
+
+        if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+          addInteractionToRects(
+            this._svg,
+            this.dimensions,
+            this._xy,
+            keys,
+            labels,
+            this.transTime
+          );
+        }
+
+        // Object reference, put it back.
+        keys.y = originalKey;
       }
     },
 
@@ -232,7 +267,7 @@ angular.module('lizard-nxt')
         angular.forEach(data, function (value, key) {
           value[keys.x] = value[keys.x] / total;
         });
-        drawHorizontalRectss(this._svg, this.dimensions, this.transTime, this._x.scale, data, keys, labels);
+        drawHorizontalRects(this._svg, this.dimensions, this.transTime, this._x.scale, data, keys, labels);
       }
     },
 
@@ -321,8 +356,10 @@ angular.module('lizard-nxt')
     }
   });
 
-  var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale, drawPath, setupLineGraph, createDonut,
-  getBarWidth, drawVerticalRects, drawHorizontalRectss, createXGraph, rescale, createYValuesForCumulativeData;
+  var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale,
+      drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,
+      drawVerticalRects, addInteractionToRects, drawHorizontalRects,
+      createXGraph, rescale, createYValuesForCumulativeData;
 
   /**
    * Creates y cumulatie y values for elements on the same x value.
@@ -343,8 +380,8 @@ angular.module('lizard-nxt')
       var y0 = 0;
       group.values = group.values.map(function (d) {
         d.y0 = y0;
-        d[keys.y] += y0;
-        y0 = d[keys.y];
+        d.y1 = y0 + d[keys.y];
+        y0 = d.y1;
         cumulativeData.push(d);
       });
     });
@@ -373,23 +410,24 @@ angular.module('lizard-nxt')
     // of the y values is smaller than 0.2 (or 20 %) of the max of the scale,
     // update domain of the scale and redraw the axis.
     var limits = {
-        x: 1,
-        y: 0.2
-        },
-        orientation = {
-          x: 'bottom',
-          y: 'left'
-        };
+      x: 1,
+      y: 0.2
+    };
+    var orientation = {
+      x: 'bottom',
+      y: 'left'
+    };
     origin = origin || {};
     // Decide to rescale for each axis.
     angular.forEach(xy, function (value, key) {
       if (needToRescale(data, keys[key], limits[key], value.maxMin, xDomainInfo)) {
-
         value.maxMin = key === "x" && xDomainInfo
           ? { min: xDomainInfo.start, max: xDomainInfo.end }
           : Graph.prototype._maxMin(data, keys[key]);
-
-        value.scale.domain([origin[key] || value.maxMin.min, value.maxMin.max]);
+        if (origin[key] === undefined) {
+          origin[key] = value.maxMin.min;
+        }
+        value.scale.domain([origin[key], value.maxMin.max]);
         value.axis = Graph.prototype._makeAxis(value.scale, {orientation: orientation[key]});
         drawAxes(svg, value.axis, dimensions, key === 'y' ? true : false, Graph.prototype.transTime);
       }
@@ -397,7 +435,7 @@ angular.module('lizard-nxt')
     return xy;
   };
 
-  drawHorizontalRectss = function (svg, dimensions, duration, scale, data, keys, labels) {
+  drawHorizontalRects = function (svg, dimensions, duration, scale, data, keys, labels) {
     var width = Graph.prototype._getWidth(dimensions),
         height = Graph.prototype._getHeight(dimensions),
         DEFAULT_BAR_COLOR = "#7f8c8d", // $asbestos is the default color for bars
@@ -476,13 +514,10 @@ angular.module('lizard-nxt')
         x = xy.x,
         y = xy.y,
         MIN_BAR_WIDTH = 2,
-        maxBarCount = xDomainInfo
-          ? Math.floor((xDomainInfo.end - xDomainInfo.start) / xDomainInfo.aggWindow)
-          : data.length,
         barWidth = Math.max(
           MIN_BAR_WIDTH,
           Math.floor(
-            getBarWidth(xy.x.scale, data, keys, dimensions, maxBarCount)
+            getBarWidth(xy.x.scale, data, keys, dimensions, xDomainInfo)
           )
         ),
         strokeWidth = barWidth === MIN_BAR_WIDTH ? 0 : 1,
@@ -540,17 +575,74 @@ angular.module('lizard-nxt')
       .remove();
   };
 
-  getBarWidth = function (scale, data, keys, dimensions, maxBarCount) {
+  getBarWidth = function (scale, data, keys, dimensions, xDomainInfo) {
     if (data.length === 0) {
       // Apparently, no data is present: return a dummy value since nothing
       // is to be drawn.
       return 0;
     }
+
     var firstDatum = data[0],
         lastDatum = data[data.length - 1];
-    return Math.floor(
+
+    var width = Math.floor(
       (scale(lastDatum[keys.x]) - scale(firstDatum[keys.x])) / (data.length - 1)
     );
+    // If it covers the whole screen.
+    if (width * data.length >= scale.range()[1]) {
+      return width;
+    }
+    // Data is sparse, the best we can do is give the bars the width of
+    // the aggWindow
+    else {
+      return scale(xDomainInfo.aggWindow) - scale(0);
+    }
+  };
+
+
+  addInteractionToRects = function (svg, dimensions, xy, keys, labels, duration) {
+    var height = Graph.prototype._getHeight(dimensions),
+        fg = svg.select('#feature-group');
+
+    var cb = function (d) {
+      removeAllSelection();
+      d3.select(this).attr('class', 'selected bar');
+      var g = fg.append('g').attr('class', 'interaction-group');
+
+
+      var text = Math.round(d[keys.y] * 100) / 100 + ' ' + labels.y;
+      text = keys.category !== undefined
+        ? text + ' ' + d[keys.category]
+        : text;
+
+      var t  = g.append('text').text(text);
+
+      var tHeight = t.node().getBBox().height,
+          tWidth = t.node().getBBox().width;
+
+      t.attr('x', xy.x.scale(d[keys.x]) + 5)
+        .attr('y', xy.y.scale(d.y1 || d[keys.y]) + tHeight);
+
+      g.append('rect')
+        .attr('class', 'tooltip-background')
+        .attr('x', xy.x.scale(d[keys.x]))
+        .attr('y', xy.y.scale(d.y1 || d[keys.y]))
+        .attr('width', tWidth + 10)
+        .attr('height', tHeight + 5);
+
+      t.node().parentNode.appendChild(t.node());
+    };
+
+    var removeAllSelection = function () {
+      fg.selectAll('.bar').attr('class', 'bar');
+      fg.select('.interaction-group').remove();
+    };
+
+    fg.selectAll('.bar').on('click', cb);
+    fg.selectAll('.bar').on('mousemove', cb);
+    svg.select('#listeners').on('mouseout', function () {
+      removeAllSelection();
+    });
   };
 
   createXGraph = function (svg, dimensions, labels, options) {
@@ -589,6 +681,69 @@ angular.module('lizard-nxt')
         return line(d) || "M0, 0";
       });
     return path;
+  };
+
+  addInteractionToPath = function (svg, dimensions, data, keys, labels, path, xy, duration) {
+    var bisect = d3.bisector(function (d) { return d[keys.x]; }).right,
+        height = Graph.prototype._getHeight(dimensions),
+        fg = svg.select('#feature-group');
+
+    // Move listener rectangle to the front
+    var el = svg.select('#listeners').node();
+    el.parentNode.appendChild(el);
+
+    var cb = function () {
+      fg.select('.interaction-group').remove();
+
+      var i = bisect(data, xy.x.scale.invert(d3.mouse(this)[0]));
+      i = i === data.length ? data.length - 1 : i;
+      var d = data[i];
+
+      if (d[keys.x] === null || d[keys.y] === null) { return; }
+
+      var y2 = xy.y.scale(d[keys.y]),
+          x2 = xy.x.scale(d[keys.x]),
+          xText = new Date(data[i][keys.x]).toLocaleString();
+
+      var g = fg.append('g').attr('class', 'interaction-group');
+
+      g.append('circle')
+        .attr('r', 0)
+        .attr('cx', x2)
+        .attr('cy', y2)
+        .transition()
+        .ease('easeInOut')
+        .duration(duration)
+        .attr('r', 5);
+      g.append('line')
+        .attr('y1', y2)
+        .attr('y2', y2)
+        .attr('x1', 0)
+        .attr('x2', x2);
+      g.append('line')
+        .attr('y1', height)
+        .attr('y2', y2)
+        .attr('x1', x2)
+        .attr('x2', x2);
+
+      g.append('text')
+        .text(data[i][keys.y] + ' ' + labels.y)
+        .attr('class', 'graph-tooltip-y')
+        .attr('x', 5)
+        .attr('y', y2 - 5);
+      g.append('text')
+        .text(xText + ' ' + labels.x)
+        .attr('class', 'graph-tooltip-x')
+        .attr('x', x2 + 5)
+        .attr('y', height - 5);
+    };
+
+    svg.select('#listeners').on('click', cb);
+    svg.select('#listeners').on('mousemove', cb);
+    svg.select('#listeners').on('mouseout', function () {
+      fg.select('.interaction-group').remove();
+    });
+
   };
 
   drawLabel = function (svg, dimensions, label, y) {

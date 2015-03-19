@@ -18,7 +18,8 @@
           type="temporal"
           temporal="tctx.state.temporal"
           ylabel="item.unit"
-          keys="{x: 0, y: 1}">
+          keys="{x: 0, y: 1}"
+          name="<% item.name || item.quantity %>">
         </graph>
 
         <graph
@@ -29,13 +30,13 @@
           type="temporal"
           temporal="tctx.state.temporal"
           ylabel="item.unit"
-          keys="{x: 0, y: 1}">
+          keys="{x: 0, y: 1}"
+          name="<% item.name || item.quantity %>">
         </graph>
 
         <graph
           ng-if="item.type === 'Event'"
           bar-chart
-          class="xyGraph"
           data="item.data"
           ylabel="item.unit"
           keys="{x: 'timestamp',
@@ -43,8 +44,9 @@
                  color: 'color',
                  category: 'category'}"
           dimensions="tctx.dims"
-          temporal="tctx.state.temporal">
-          </graph>
+          temporal="tctx.state.temporal"
+          name="<% item.name || item.quantity %>">
+        </graph>
 
       </div>
 

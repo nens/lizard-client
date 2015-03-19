@@ -311,7 +311,11 @@ angular.module('lizard-nxt')
     },
 
     drawTickMarks: {
-      value: function(data, slug) {
+      value: function (data, slug) {
+        if (slug) {
+          // Remove invalid selectors
+          slug = slug.replace(/#|:|\//gi, '');
+        }
         tickmarks = drawTickMarkElements(
           this._svg, this.dimensions, data, slug);
       }
