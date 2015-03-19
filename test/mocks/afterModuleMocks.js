@@ -40,7 +40,8 @@ angular.module('lizard-nxt')
         'options': {},
         'bounds': {},
         'color': '',
-        'event_count': 0
+        'event_count': 0,
+        "meta": "no metadata for this layer format."
       }
       ]
     },
@@ -72,7 +73,8 @@ angular.module('lizard-nxt')
         'options': {},
         'bounds': {},
         'color': '',
-        'event_count': 0
+        'event_count': 0,
+        "meta": "no metadata for this layer format."
       }
       ]
     },
@@ -107,7 +109,8 @@ angular.module('lizard-nxt')
         },
         'bounds': {},
         'color': '',
-        'event_count': 0
+        'event_count': 0,
+        "meta": "no metadata for this layer format."
       },
       {
         'slug': 'dem/nl',
@@ -127,7 +130,8 @@ angular.module('lizard-nxt')
         'options': {},
         'bounds': {},
         'color': '',
-        'event_count': 0
+        'event_count': 0,
+        "meta": "no metadata for this layer format."
       }
       ]
     },
@@ -159,7 +163,8 @@ angular.module('lizard-nxt')
         'options': {},
         'bounds': {},
         'color': '',
-        'event_count': 0
+        'event_count': 0,
+        "meta": "no metadata for this layer format."
       },
       {
         'slug': 'waterchain_grid',
@@ -179,7 +184,8 @@ angular.module('lizard-nxt')
         'options': {},
         'bounds': {},
         'color': '',
-        'event_count': 0
+        'event_count': 0,
+        "meta": "no metadata for this layer format."
       }
       ]
     },
@@ -215,7 +221,8 @@ angular.module('lizard-nxt')
         },
         'bounds': {},
         'color': '',
-        'event_count': 0
+        'event_count': 0,
+        "meta": "no metadata for this layer format."
       }
       ]
     },
@@ -247,7 +254,20 @@ angular.module('lizard-nxt')
         'options': {},
         'bounds': {},
         'color': '#c0392b',
-        'event_count': 6
+        'event_count': 6,
+        "meta": {
+          "temporal_resolution": 0,
+          "temporal_bounds": {
+              "start": 1325458800000.0,
+              "end": 1409781600000.0
+          },
+          "spatial_bounds": {
+              "west": 4.901057753,
+              "east": 5.008115838,
+              "north": 52.58351724,
+              "south": 52.47932247
+          }
+        }
       }
       ]
     }
