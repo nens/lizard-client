@@ -28,6 +28,7 @@ label.layer-chooser {
 }
 
 label.layer-chooser > span.layer-text {
+    background: rgb(239, 239, 239);
     background: rgba(239, 239, 239, 0.9);
     color: $asbestos;
     height: 24px;
@@ -47,6 +48,8 @@ label.layer-chooser > span.layer-icon {
     transition: .3s ease;
     width: 60%;
     cursor: pointer;
+    background: rgb(255, 255, 255);
+    background: rgba(255, 255, 255, 0.6);
 }
 
 label.layer-chooser > span.layer-icon:hover {
