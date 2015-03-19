@@ -232,7 +232,7 @@ angular.module('lizard-nxt')
         vectorLayers[layerSlug].promise = CabinetService.events
         .get({'event_series__layer__slug': layerSlug}).then(function (response) {
           vectorLayers[layerSlug].isLoading = false;
-          setData(layerSlug, response.features, 1);
+          setData(layerSlug, response.results, 1);
         });
 
       }

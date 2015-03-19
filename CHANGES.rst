@@ -17,6 +17,8 @@ Unreleased (1.2.25) (XXXX-XX-XX)
 
 - Click and hover over graph shows data.
 
+- Adapt to new page_size parameter for events.
+
 
 Release 1.2.27 (2015-3-5)
 ---------------------
