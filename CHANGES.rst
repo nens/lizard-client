@@ -8,6 +8,19 @@ Unreleased (1.2.25) (XXXX-XX-XX)
 
 - Fix spatial.points.here undefined.
 
+- Add EventAggregationService to timeline drawLines to reduce number of DOM
+   elements in timeline.
+
+- Add logarithmic scaling to circle size of events.
+
+- Draw circles in middle ofaggWindow.
+
+- Accomodate color === undefined in aggregate function.
+
+- Refactor drawLines to drawCircles.
+
+- Set pages_size to 25000 to make one big request without hacky page_size=0.
+
 - Add zoom to data bounds for events.
 
 - Added maximum number of timeseries events to prevent browser running out of
@@ -20,6 +33,8 @@ Unreleased (1.2.25) (XXXX-XX-XX)
 - Add data name attribute as graph title.
 
 - Click and hover over graph in time ctx shows data.
+
+- Adapt to new page_size parameter for events.
 
 
 Release 1.2.27 (2015-3-5)
@@ -90,8 +105,6 @@ Release 1.2.26 (2015-3-5)
 - Fix rain export seperators.
 
 - Fix bug with click on map at top 50 px.
->>>>>>> 4b768ab7e60d5b2109fb6a3327c3ec1dd32b5d9c
-
 
 Release 1.2.25 (2015-2-19)
 ---------------------
