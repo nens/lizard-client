@@ -182,13 +182,15 @@ angular.module('lizard-nxt')
      * @memberof app.VectorService
      * @function
      * @description gets data from backend
+     * @param  {string} callee string of the callee to keep requests
+     *                         seperate NOTE: not implemented in this service.
      * @param  {layer} layer as defined by layer-service
      * @param  {object} geomortime  geometry or time that it needs to get
      *                  (e.g. bboxs)
      * @param  {object} time  start, stop object
      * @return {promise}
      */
-    var getData = function (nonLeafLayer, options) {
+    var getData = function (callee, nonLeafLayer, options) {
       var deferred = $q.defer(),
           layerSlug, layer;
 

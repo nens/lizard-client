@@ -56,7 +56,7 @@ angular.module('lizard-nxt')
       return _cache[key];
     };
 
-    var getData = function (nonLeafLayer, options) {
+    var getData = function (callee, nonLeafLayer, options) {
 
       var leafLayer = nonLeafLayer && nonLeafLayer._leafletLayer,
           geomType = UtilService.getGeomType(options.geom),

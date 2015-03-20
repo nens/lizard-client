@@ -311,13 +311,8 @@ angular.module('lizard-nxt')
     },
 
     drawTickMarks: {
-      value: function (data, slug) {
-        if (slug) {
-          // Remove invalid selectors
-          slug = slug.replace(/#|:|\//gi, '');
-        }
-        tickmarks = drawTickMarkElements(
-          this._svg, this.dimensions, data, slug);
+      value: function (data) {
+        tickmarks = drawTickMarkElements(this._svg, this.dimensions, data);
       }
     },
 
@@ -758,39 +753,23 @@ angular.module('lizard-nxt')
    *
    * @returns {object} d3 selection object with tickmarks for each timestamp.
    */
-  var drawTickMarkElements = function (svg, dimensions, data, slug) {
+  var drawTickMarkElements = function (svg, dimensions, data) {
     var height = Timeline.prototype._getHeight(dimensions);
+    var group = svg
+      .select("g")
+      .select("#tickmark-group");
 
-    // setup svg group element to hold rects.
-    if (data.length > 0) {
-
-      var group = svg.select("g").select("#tickmark-group").select("#" + slug);
-
-      // if group element doesn't exist yet, create one
-      if (!group[0][0]) {
-        group = svg.select("g").select("#tickmark-group").append("g")
-                      .attr("id", slug);
-      }
-
-      // DATA JOIN
-      // Join new data with old elements, based on the timestamp.
-      tickmarks = group.selectAll("rect")
-        .data(data, function  (d) { return d; });
-
-    } else if (data.length === 0 && slug === undefined) {
-      // if no data and slugs are defined, remove all groups
-      svg.select("g").select("#tickmark-group").selectAll("g")
-        .remove();
-
-      return;
-    }
+    // DATA JOIN
+    // Join new data with old elements, based on the timestamp.
+    tickmarks = group.selectAll("rect")
+      .data(data, function  (d) { return d; });
 
     // UPDATE
     tickmarks.transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
       .attr("y", height - 5)
-      .attr("x", function (d) { return xScale(d); } );
+      .attr("x", function (d) { return xScale(d); });
 
     // ENTER
     tickmarks.enter().append("rect")
@@ -798,7 +777,7 @@ angular.module('lizard-nxt')
     .transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
-      .attr("x", function (d) { return xScale(d); } )
+      .attr("x", function (d) { return xScale(d); })
       .attr("y", height - 5)
       .attr("height", 5)
       .attr("width", 2);
@@ -895,7 +874,7 @@ angular.module('lizard-nxt')
       .attr("cx", xOneFunction)
       .attr("cy", yFunction)
       .attr("r", function (d) {
-        return UtilService.lin2log(d.count, MIN_CIRCLE_SIZE, MAX_CIRCLE_SIZE); 
+        return UtilService.lin2log(d.count, MIN_CIRCLE_SIZE, MAX_CIRCLE_SIZE);
         });
 
     // EXIT

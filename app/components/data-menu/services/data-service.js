@@ -181,7 +181,7 @@ angular.module('data-menu')
         var instance = this;
         angular.forEach(this.layerGroups, function (layerGroup) {
           promises.push(
-            layerGroup.getData(options).then(null, null, function (response) {
+            layerGroup.getData(callee, options).then(null, null, function (response) {
 
               // TS and events are dependent on the waterchain response. So the
               // waterchain response is checked for signs of timeseries. If

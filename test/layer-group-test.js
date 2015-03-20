@@ -79,7 +79,7 @@ describe('Testing LayerGroup', function () {
     var lg = new LayerGroup(dataLayers.waterchain);
     lg.toggle(map); // on and initialized
     lg.toggle(map); // off
-    lg.getData({geom: L.LatLng(51, 6)})
+    lg.getData('spec', {geom: L.LatLng(51, 6)})
       .then(function (response) {
         expect(response.active).toBe(false);
         expect(response.slug).toBe('waterchain');

@@ -328,6 +328,7 @@ angular.module('lizard-nxt')
       // Has it's own deferrer to not conflict with
       // other deferrers with the same layerSlug
       RasterService.getData(
+        'timelineData',
         rasterLayer,
         {
           geom: bounds,
@@ -365,32 +366,25 @@ angular.module('lizard-nxt')
 
       var start = State.temporal.start,
           stop = State.temporal.end,
-          bounds = State.spatial.bounds;
+          bounds = State.spatial.bounds,
+          dates = [];
 
-      // Has it's own deferrer to not conflict with
-      // other deferrers with the same layerSlug
-      RasterService.getData(
-        rasterLayer,
-        {
-          geom: bounds.getCenter(),
-          start: start,
-          agg: rasterLayer.aggregationType,
-          end: stop,
-          aggWindow: State.temporal.aggWindow,
-          truncate: true,
-          deferrer: {
-            origin: 'timeline_' + rasterLayer.slug,
-            deferred: $q.defer()
-          }
+      var draw = function () {
+        timeline.drawTickMarks(dates);
+      };
+
+      DataService.getData('timelineDates', {
+        start: State.temporal.start,
+        end: State.temporal.end,
+        geom: State.spatial.bounds.getCenter(),
+        truncate: true,
+        exclude: 'rain'
+      }).then(draw, null, function (response) {
+        if (response && response !== 'null') {
+          dates = dates.concat(response.data);
         }
-      )
-      .then(
-        function (response) {
-          if (response && response !== 'null') {
-            timeline.drawTickMarks(response, rasterLayer.slug);
-          }
-        }
-      );
+      });
+
     };
 
     var timelineZoomHelper = function () {
