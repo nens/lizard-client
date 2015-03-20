@@ -275,7 +275,7 @@ angular.module('lizard-nxt')
         }
 
         if (tickmarks) {
-          updateTickmarks(tickmarks, this.dimensions);
+          updateTickmarks(tickmarks, this.dimensions, oldDimensions);
         }
 
       }
@@ -739,8 +739,25 @@ angular.module('lizard-nxt')
        .attr('height', height);
     }
   };
-  var updateTickmarks = function (tickmarks, dimensions) {
-    tickmarks.attr("x", function (d) { return xScale(d); });
+  var updateTickmarks = function (tickmarks, dimensions, oldDimensions) {
+    var height = Timeline.prototype._getHeight(dimensions);
+
+    // update horizontal
+    tickmarks.attr("x", function (d) { return xScale(d); })
+
+    // update vertical
+    if (oldDimensions && dimensions.height < oldDimensions.height) {
+      tickmarks.transition()
+        .delay(Timeline.prototype.transTime)
+        .duration(Timeline.prototype.transTime)
+        .attr("y", height - 5);
+    }
+
+    else if (oldDimensions &&  dimensions.height > oldDimensions.height) {
+      tickmarks.transition()
+        .duration(Timeline.prototype.transTime)
+        .attr("y", height - 5);
+    }
   };
 
   /**
@@ -774,24 +791,24 @@ angular.module('lizard-nxt')
     // ENTER
     tickmarks.enter().append("rect")
       .attr("class", "tickmark")
+      .attr("y", height)
+      .attr("height", 0)
+      .attr("width", 2)
     .transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
       .attr("x", function (d) { return xScale(d); })
       .attr("y", height - 5)
-      .attr("height", 5)
-      .attr("width", 2);
+      .attr("height", 5);
 
     // EXIT
     // Remove old elements as needed.
     tickmarks.exit()
       .transition()
-      .delay(0)
-      .duration(Timeline.prototype.transTime)
-    .transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
-      .attr("stroke-width", 0)
+      .attr("y", height)
+      .attr("height", 0)
       .remove();
 
     return tickmarks;
