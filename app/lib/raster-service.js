@@ -12,7 +12,7 @@ angular.module('lizard-nxt')
   var intensityData,
       cancelers = {};
 
-  var getData = function (layer, options) {
+  var getData = function (callee, layer, options) {
 
     // TODO: get this from somewhere
     var GRAPH_WIDTH = UtilService.getCurrentWidth();
@@ -44,12 +44,12 @@ angular.module('lizard-nxt')
     }
     // if it doesn't have a deferrer in the options
     // use the layer slug..
-      else {
-      if (cancelers[layer.slug]) {
-        cancelers[layer.slug].resolve();
+    else {
+      if (cancelers[callee + '_' + layer.slug]) {
+        cancelers[callee + '_' + layer.slug].resolve();
       }
 
-      canceler = cancelers[layer.slug] = $q.defer();
+      canceler = cancelers[callee + '_' + layer.slug] = $q.defer();
     }
 
     var requestOptions = {
@@ -62,9 +62,8 @@ angular.module('lizard-nxt')
       styles: options.styles,
       window: aggWindow
     };
-
     if (options.truncate === true) {
-      requestOptions['truncate'] = options.truncate;
+      requestOptions.truncate = options.truncate;
     }
 
     return CabinetService.raster(canceler).get(requestOptions);

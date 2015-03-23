@@ -40,7 +40,8 @@ angular.module('lizard-nxt')
   aggWindow, // aggregation window
   circles, // events start - end
   bars, // rain intensity
-  tickmarks; // data availability indicators
+  tickmarks,
+  TICKMARK_HEIGHT = 5; // data availability indicators
 
   /**
    * @constructor
@@ -275,7 +276,7 @@ angular.module('lizard-nxt')
         }
 
         if (tickmarks) {
-          updateTickmarks(tickmarks, this.dimensions);
+          updateTickmarks(tickmarks, this.dimensions, oldDimensions);
         }
 
       }
@@ -311,13 +312,8 @@ angular.module('lizard-nxt')
     },
 
     drawTickMarks: {
-      value: function (data, slug) {
-        if (slug) {
-          // Remove invalid selectors
-          slug = slug.replace(/#|:|\//gi, '');
-        }
-        tickmarks = drawTickMarkElements(
-          this._svg, this.dimensions, data, slug);
+      value: function (data) {
+        tickmarks = drawTickMarkElements(this._svg, this.dimensions, data);
       }
     },
 
@@ -744,8 +740,26 @@ angular.module('lizard-nxt')
        .attr('height', height);
     }
   };
-  var updateTickmarks = function (tickmarks, dimensions) {
+  var updateTickmarks = function (tickmarks, dimensions, oldDimensions) {
+    var height = Timeline.prototype._getHeight(dimensions),
+        TICKMARK_HEIGHT = 5;
+
+    // update horizontal
     tickmarks.attr("x", function (d) { return xScale(d); });
+
+    // update vertical
+    if (oldDimensions && dimensions.height < oldDimensions.height) {
+      tickmarks.transition()
+        .delay(Timeline.prototype.transTime)
+        .duration(Timeline.prototype.transTime)
+        .attr("y", height - TICKMARK_HEIGHT);
+    }
+
+    else if (oldDimensions &&  dimensions.height > oldDimensions.height) {
+      tickmarks.transition()
+        .duration(Timeline.prototype.transTime)
+        .attr("y", height - TICKMARK_HEIGHT);
+    }
   };
 
   /**
@@ -758,61 +772,48 @@ angular.module('lizard-nxt')
    *
    * @returns {object} d3 selection object with tickmarks for each timestamp.
    */
-  var drawTickMarkElements = function (svg, dimensions, data, slug) {
-    var height = Timeline.prototype._getHeight(dimensions);
+  var drawTickMarkElements = function (svg, dimensions, data) {
+    var height = Timeline.prototype._getHeight(dimensions),
+        TICKMARK_HEIGHT = 5,
+        TICKMARK_WIDTH = 2;
 
-    // setup svg group element to hold rects.
-    if (data.length > 0) {
+    var group = svg
+      .select("g")
+      .select("#tickmark-group");
 
-      var group = svg.select("g").select("#tickmark-group").select("#" + slug);
-
-      // if group element doesn't exist yet, create one
-      if (!group[0][0]) {
-        group = svg.select("g").select("#tickmark-group").append("g")
-                      .attr("id", slug);
-      }
-
-      // DATA JOIN
-      // Join new data with old elements, based on the timestamp.
-      tickmarks = group.selectAll("rect")
-        .data(data, function  (d) { return d; });
-
-    } else if (data.length === 0 && slug === undefined) {
-      // if no data and slugs are defined, remove all groups
-      svg.select("g").select("#tickmark-group").selectAll("g")
-        .remove();
-
-      return;
-    }
+    // DATA JOIN
+    // Join new data with old elements, based on the timestamp.
+    tickmarks = group.selectAll("rect")
+      .data(data, function  (d) { return d; });
 
     // UPDATE
     tickmarks.transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
-      .attr("y", height - 5)
-      .attr("x", function (d) { return xScale(d); } );
+      .attr("y", height - TICKMARK_HEIGHT)
+      .attr("x", function (d) { return xScale(d); });
 
     // ENTER
     tickmarks.enter().append("rect")
       .attr("class", "tickmark")
+      .attr("y", height)
+      .attr("width", TICKMARK_WIDTH)
+      .attr("height", 0)
     .transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
-      .attr("x", function (d) { return xScale(d); } )
-      .attr("y", height - 5)
-      .attr("height", 5)
-      .attr("width", 2);
+      .attr("x", function (d) { return xScale(d); })
+      .attr("y", height - TICKMARK_HEIGHT)
+      .attr("height", TICKMARK_HEIGHT);
 
     // EXIT
     // Remove old elements as needed.
     tickmarks.exit()
       .transition()
-      .delay(0)
-      .duration(Timeline.prototype.transTime)
-    .transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
-      .attr("stroke-width", 0)
+      .attr("y", height)
+      .attr("height", 0)
       .remove();
 
     return tickmarks;
@@ -895,7 +896,7 @@ angular.module('lizard-nxt')
       .attr("cx", xOneFunction)
       .attr("cy", yFunction)
       .attr("r", function (d) {
-        return UtilService.lin2log(d.count, MIN_CIRCLE_SIZE, MAX_CIRCLE_SIZE); 
+        return UtilService.lin2log(d.count, MIN_CIRCLE_SIZE, MAX_CIRCLE_SIZE);
         });
 
     // EXIT

@@ -175,13 +175,14 @@ angular.module('data-menu')
       * @description Returns a promise that notifies with data for every layer
       *              of the layergroup that is appplicable (i.e: rain and
       *              several vector layers). It resolves when all data is in.
-      * @param  {object} geom latLng object with lat and lng properties or a
-      *                  list of such objects.
+      * @param  {string} callee string of the callee to keep requests seperate.
+      * @param  {object} options with geom, start, end and other properties that
+      *                          are send to the data-services.
       * @return  {promise} notifies with data per layer and resolves with value
       *                    true when layergroup was active, or false when
       *                    layergroup was inactive.
       */
-      getData: function (options) {
+      getData: function (callee, options) {
         var lgSlug = this.slug,
             lgActive = this._active,
             deferred = $q.defer(),
@@ -193,7 +194,7 @@ angular.module('data-menu')
         }
         else {
           angular.forEach(this._dataLayers, function (layer) {
-            promises.push(layer.getData(lgSlug, options, deferred));
+            promises.push(layer.getData(callee, lgSlug, options, deferred));
           });
         }
 

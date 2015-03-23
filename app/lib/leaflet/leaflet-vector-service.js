@@ -30,7 +30,7 @@ angular.module('lizard-nxt')
       var color = this.options.color,
           layer = this;
 
-      VectorService.getData(this.options.slug, {})
+      VectorService.getData('leaflet', this.options.slug, {})
       .then(function (response) {
         layer.markers = [];
 
