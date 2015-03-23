@@ -482,9 +482,9 @@ angular.module('lizard-nxt')
    * @param {number} maxValue - the end of the scale
    * @return {number} - The converted value
    */
-  this.lin2log = function (value, minValue, maxValue) {
+  this.lin2log = function (value, minValue, maxValue, minDomain, maxDomain) {
     var scale = d3.scale.log()
-      .domain([minValue, maxValue])
+      .domain([minDomain, maxDomain])
       .range([minValue, maxValue]);
     return scale(value);
   };
