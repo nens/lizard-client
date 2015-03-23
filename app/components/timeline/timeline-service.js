@@ -40,7 +40,8 @@ angular.module('lizard-nxt')
   aggWindow, // aggregation window
   circles, // events start - end
   bars, // rain intensity
-  tickmarks; // data availability indicators
+  tickmarks,
+  TICKMARK_HEIGHT = 5; // data availability indicators
 
   /**
    * @constructor
@@ -740,23 +741,24 @@ angular.module('lizard-nxt')
     }
   };
   var updateTickmarks = function (tickmarks, dimensions, oldDimensions) {
-    var height = Timeline.prototype._getHeight(dimensions);
+    var height = Timeline.prototype._getHeight(dimensions),
+        TICKMARK_HEIGHT = 5;
 
     // update horizontal
-    tickmarks.attr("x", function (d) { return xScale(d); })
+    tickmarks.attr("x", function (d) { return xScale(d); });
 
     // update vertical
     if (oldDimensions && dimensions.height < oldDimensions.height) {
       tickmarks.transition()
         .delay(Timeline.prototype.transTime)
         .duration(Timeline.prototype.transTime)
-        .attr("y", height - 5);
+        .attr("y", height - TICKMARK_HEIGHT);
     }
 
     else if (oldDimensions &&  dimensions.height > oldDimensions.height) {
       tickmarks.transition()
         .duration(Timeline.prototype.transTime)
-        .attr("y", height - 5);
+        .attr("y", height - TICKMARK_HEIGHT);
     }
   };
 
@@ -771,7 +773,10 @@ angular.module('lizard-nxt')
    * @returns {object} d3 selection object with tickmarks for each timestamp.
    */
   var drawTickMarkElements = function (svg, dimensions, data) {
-    var height = Timeline.prototype._getHeight(dimensions);
+    var height = Timeline.prototype._getHeight(dimensions),
+        TICKMARK_HEIGHT = 5,
+        TICKMARK_WIDTH = 2;
+
     var group = svg
       .select("g")
       .select("#tickmark-group");
@@ -785,21 +790,21 @@ angular.module('lizard-nxt')
     tickmarks.transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
-      .attr("y", height - 5)
+      .attr("y", height - TICKMARK_HEIGHT)
       .attr("x", function (d) { return xScale(d); });
 
     // ENTER
     tickmarks.enter().append("rect")
       .attr("class", "tickmark")
       .attr("y", height)
+      .attr("width", TICKMARK_WIDTH)
       .attr("height", 0)
-      .attr("width", 2)
     .transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
       .attr("x", function (d) { return xScale(d); })
-      .attr("y", height - 5)
-      .attr("height", 5);
+      .attr("y", height - TICKMARK_HEIGHT)
+      .attr("height", TICKMARK_HEIGHT);
 
     // EXIT
     // Remove old elements as needed.
