@@ -839,14 +839,20 @@ angular.module('lizard-nxt')
   var drawCircleElements = function (
     svg, dimensions, xScale, yScale, data, order, slug, color, aggWindow) {
 
-    var MIN_CIRCLE_SIZE = 2,
-        MAX_CIRCLE_SIZE = 6;
+    var MIN_CIRCLE_SIZE = 3,
+        MAX_CIRCLE_SIZE = 18,
+        MAX_COUNT = 100;
 
     var xOneFunction = function (d) {
       return xScale(parseFloat(d.timestamp) + (aggWindow / 2));
     };
 
     var yFunction = function (d) { return yScale(order); };
+
+    var rFunction = function (d) {
+      return UtilService.lin2log(
+        d.count, MIN_CIRCLE_SIZE, MAX_CIRCLE_SIZE, 1, MAX_COUNT);
+    };
 
     // if data exists, check if group is available for this series and create
     // if no data, remove circles
@@ -880,7 +886,8 @@ angular.module('lizard-nxt')
       .attr("stroke", color)
       .attr("fill", color)
       .attr("cx", xOneFunction)
-      .attr("cy", yFunction);
+      .attr("cy", yFunction)
+      .attr("r", rFunction);
 
     // ENTER
     // Create new elements as needed.
@@ -894,9 +901,7 @@ angular.module('lizard-nxt')
       .duration(Timeline.prototype.transTime)
       .attr("cx", xOneFunction)
       .attr("cy", yFunction)
-      .attr("r", function (d) {
-        return UtilService.lin2log(d.count, MIN_CIRCLE_SIZE, MAX_CIRCLE_SIZE); 
-        });
+      .attr("r", rFunction);
 
     // EXIT
     // Remove old elements as needed.
