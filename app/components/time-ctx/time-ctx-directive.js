@@ -68,7 +68,6 @@ angular.module('time-ctx')
       });
 
       scope.tctx.content[response.layerSlug] = item;
-      console.log(item);
     };
 
     var putEventDataOnScope = function (response) {
