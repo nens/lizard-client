@@ -26,6 +26,7 @@ angular.module('lizard-nxt')
       this.addMarker = this.addLayer;
       this.removeMarker = this.removeLayer;
       this.hasMarker = this.hasLayer;
+      this.markers = [];
 
       var color = this.options.color,
           layer = this;
