@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Fixed event count disparity.
+
+- Dynamic axis labels for area.
+
 - Fix draw and update tickmarks for temporal rasters.
 
 
