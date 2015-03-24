@@ -178,7 +178,7 @@ angular.module('lizard-nxt')
         nestedData
           .forEach(function (timestamp, value) {
             var tmpObj = {
-              timestamp: timestamp,
+              timestamp: Number(timestamp) + aggWindow,
               count: value.count
             };
             aggregatedArray.push(tmpObj);
@@ -206,7 +206,7 @@ angular.module('lizard-nxt')
           .forEach(function (timestamp, value) {
             var tmpObj;
             value.forEach(function (category, value) {
-              tmpObj = {timestamp: timestamp,
+              tmpObj = {timestamp: Number(timestamp) + aggWindow,
                         category: category,
                         mean_duration: value.mean_duration,
                         color: _getColor(category,
@@ -243,7 +243,7 @@ angular.module('lizard-nxt')
           .forEach(function (timestamp, value) {
             var tmpObj = {
               color: baseColor,
-              timestamp: timestamp,
+              timestamp: Number(timestamp) + aggWindow,
               mean_duration: value.mean_duration,
               min: value.min,
               max: value.max,
