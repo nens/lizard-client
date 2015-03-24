@@ -41,30 +41,6 @@ body {
     padding: 0;
 }
 
-.help {
-    background-color: rgba(255,255,255,0.7);
-    border-radius: 35px;
-    top: 12px;
-    left: -8px;
-    width: 20px;
-    height: 20px;
-}
-
-.help:hover {
-    background-color: rgba(255,255,255,0.7) !important;
-    border-radius: 35px;
-    transform: rotate(360deg); /* IE 9 */
-    -webkit-transform: rotate(360deg); /* Chrome, Safari, Opera */
-    transform: rotate(360deg);
-}
-
-.help i {
-    color: #2c3e50;
-    position: absolute;
-    top: 7px;
-    left: 10px;
-}
-
 .clickObj {
     -moz-animation: grow .6s linear forwards;
     -ms-animation: grow .6s linear forwards;

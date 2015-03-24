@@ -1,46 +1,42 @@
-<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-  <div class="navbar-collapse collapse">
-    <ul class="nav navbar-nav navbar-right" style="">
-      <li>
-        <a class="help" href="https://www.lizard.net/support" title="Vragen en handleiding" target="_blank">
-          <i class="fa fa-question" style="font-size: 1.2em"></i>
-        </a>
-      </li>
+<div>
 
-      <li class="visible-sm visible-md visible-lg user">
-        <a ng-if="user.authenticated"
-           title="<% tooltips.profile %>"
-           href="http://sso.lizard.net/edit_profile/">
-          <div class="" ng-cloak id="username" >
-            <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
-            <span ng-bind="user.firstName"></span>
-          </div>
-        </a>
-        <a ng-if="!user.authenticated"
-           onclick="logIn()"
-           title="<% tooltips.login %>">
-          <div class="clickable" ng-cloak id="username" >
-            <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
-            <span>Inloggen</span>
-          </div>
-        </a>
-      </li>
+  <div class="user-menu-wrapper">
 
-      <li class="visible-sm visible-md visible-lg user" style="width:63px;">
-        <a ng-if="user.authenticated"
-           class="logout"
-           href="/accounts/logout/?next=/"
-           title="<% tooltips.logout %>"
-           onclick="return logOut()">
-          <div class="pull-right"
-               id="username"
-               title="<% tooltips.logout %>">
-            <i id="" style="font-size:1.2em;" class="fa fa-power-off"></i>
-          </div>
-        </a>
-      </li>
+    <a ng-if="user.authenticated"
+       class="logout user"
+       href="/accounts/logout/?next=/"
+       title="<% tooltips.logout %>"
+       onclick="return logOut()">
+      <div class="pull-right"
+           title="<% tooltips.logout %>">
+        <i id="" style="font-size:1.2em;" class="fa fa-power-off"></i>
+      </div>
+    </a>
 
-    </ul>
-  </div><!--/.nav-collapse -->
+    <a ng-if="!user.authenticated"
+       onclick="logIn()"
+       title="<% tooltips.login %>">
+      <div class="clickable" ng-cloak id="username" >
+        <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
+        <span>Inloggen</span>
+      </div>
+    </a>
+
+
+    <a ng-if="user.authenticated"
+       class="user"
+       title="<% tooltips.profile %>"
+       href="http://sso.lizard.net/edit_profile/">
+      <div class="" ng-cloak id="username" >
+        <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
+        <span ng-bind="user.firstName"></span>
+      </div>
+    </a>
+
+  </div>
+
+  <a class="hidden-xs help" href="https://www.lizard.net/support" title="Vragen en handleiding" target="_blank">
+    <i class="fa fa-question" style="font-size: 1.2em"></i>
+  </a>
+
 </div>
-
