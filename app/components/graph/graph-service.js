@@ -576,27 +576,27 @@ angular.module('lizard-nxt')
   };
 
   getBarWidth = function (scale, data, keys, dimensions, xDomainInfo) {
-    if (data.length === 0) {
+
+    // If aggWindow is passed, use it
+    if (xDomainInfo && xDomainInfo.aggWindow) {
+      return scale(xDomainInfo.aggWindow) - scale(0);
+    }
+
+    else if (data.length === 0) {
       // Apparently, no data is present: return a dummy value since nothing
       // is to be drawn.
       return 0;
     }
 
-    var firstDatum = data[0],
-        lastDatum = data[data.length - 1];
-
-    var width = Math.floor(
-      (scale(lastDatum[keys.x]) - scale(firstDatum[keys.x])) / (data.length - 1)
-    );
-    // If it covers the whole screen.
-    if (width * data.length >= scale.range()[1]) {
-      return width;
-    }
-    // Data is sparse, the best we can do is give the bars the width of
-    // the aggWindow
     else {
-      return scale(xDomainInfo.aggWindow) - scale(0);
+      var firstDatum = data[0],
+          lastDatum = data[data.length - 1];
+
+      return  Math.floor(
+        (scale(lastDatum[keys.x]) - scale(firstDatum[keys.x])) / (data.length - 1)
+      );
     }
+
   };
 
 
