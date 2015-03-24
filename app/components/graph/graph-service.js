@@ -640,7 +640,7 @@ angular.module('lizard-nxt')
 
     fg.selectAll('.bar').on('click', cb);
     fg.selectAll('.bar').on('mousemove', cb);
-    svg.select('#listeners').on('mouseout', function () {
+    fg.selectAll('.bar').on('mouseout', function () {
       removeAllSelection();
     });
   };
