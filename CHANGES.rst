@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Fix position aggregate events in timeline.
+
 - Fixed event count disparity.
 
 - Dynamic axis labels for area.
