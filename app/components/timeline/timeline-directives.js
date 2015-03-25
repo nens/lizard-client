@@ -283,13 +283,8 @@ angular.module('lizard-nxt')
         nEvents: scope.events.nEvents,
         slugs: scope.events.slugs
       };
-      // Get data with type === 'Event'
-      DataService.getData('timeline', {
-        geom: State.spatial.bounds,
-        start: State.temporal.start,
-        end: State.temporal.stop,
-        type: 'Event'
-      }).then(null, null, function (response) {
+
+      var draw = function (response) {
 
         if (response && response.data) {
           // Add it to the timeline
@@ -307,7 +302,14 @@ angular.module('lizard-nxt')
           );
           context.eventOrder++;
         }
-      });
+      };
+      // Get data with type === 'Event'
+      DataService.getData('timeline', {
+        geom: State.spatial.bounds,
+        start: State.temporal.start,
+        end: State.temporal.stop,
+        type: 'Event'
+      }).then(null, null, draw);
     };
 
 

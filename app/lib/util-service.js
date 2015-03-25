@@ -6,7 +6,7 @@
  * @description Generic util functions.
  */
 angular.module('lizard-nxt')
-  .service("UtilService", ["NxtD3", function (NxtD3) {
+  .service("UtilService", ["NxtD3", "$timeout", function (NxtD3, $timeout) {
 
   /**
    * @function roundTimestamp
@@ -274,9 +274,11 @@ angular.module('lizard-nxt')
   /**
    * @function all
    * @memberof UtilService
-   * @description - Checks whether ALL elements of the input satisfy the predicate
+   * @description - Checks whether ALL elements of the input satisfy the
+   *                predicate
    * @param {arr} - An enumerable/iterable datastructure, e.g. Array
-   * @param {predicate_} - A predicate, e.g. 'even': function (x) { x % 2 === 0 };
+   * @param {predicate_} - A predicate, e.g.
+   *                       'even': function (x) { x % 2 === 0 };
    * @return {boolean}
    */
   this.all = function (arr, predicate_) {
@@ -439,7 +441,8 @@ angular.module('lizard-nxt')
 
     } else {
       throw new Error(
-        "getGeomType could not deduce a valid geometry type from the passed in arg: 'geomOpts' =", geomOpts
+        "getGeomType could not deduce a valid geometry type from the passed " +
+        " in arg: 'geomOpts' =", geomOpts
       );
     }
   };
@@ -447,8 +450,10 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @description - Count all keys for an object (we can't do this vanilla.js style in Angular template)
-   * @param {object} obj - The object for which we want to know the amount of keys.
+   * @description - Count all keys for an object (we can't do this vanilla.js
+   *                style in Angular template)
+   * @param {object} obj - The object for which we want to know the amount of 
+   *                       keys.
    * @return {integer} - The amount of keys.
    */
   this.countKeys = function (obj) {
@@ -482,9 +487,9 @@ angular.module('lizard-nxt')
    * @param {number} maxValue - the end of the scale
    * @return {number} - The converted value
    */
-  this.lin2log = function (value, minValue, maxValue) {
+  this.lin2log = function (value, minValue, maxValue, minDomain, maxDomain) {
     var scale = d3.scale.log()
-      .domain([minValue, maxValue])
+      .domain([minDomain, maxDomain])
       .range([minValue, maxValue]);
     return scale(value);
   };
@@ -583,7 +588,8 @@ angular.module('lizard-nxt')
     for (i = 0; i < data.length; i++) {
       currentTimestamp = data[i][0];
       currentVal = data[i][1];
-      if (currentTimestamp > aggWindowStart && currentTimestamp <= aggWindowEnd) {
+      if (currentTimestamp > aggWindowStart &&
+          currentTimestamp <= aggWindowEnd) {
         return  Math.round(
                   (currentVal / squareKilometers) * DECIMAL_RESOLUTION
                 ) / DECIMAL_RESOLUTION || "0.00";
@@ -602,7 +608,7 @@ angular.module('lizard-nxt')
             result;
         while (++i < n) {
           result = cmps[i](accessors[i](a), accessors[i](b));
-          if (result !== 0) return result;
+          if (result !== 0) { return result; }
         }
         return 0;
       };
@@ -642,8 +648,9 @@ angular.module('lizard-nxt')
 
     var rInt, gInt, bInt;
 
-    if (rgbString.charAt(0) === "#")
+    if (rgbString.charAt(0) === "#") {
       rgbString = rgbString.substring(1, rgbString.length);
+    }
 
     if (rgbString.length === 3) {
       rInt = parseInt(rgbString.charAt(0) + rgbString.charAt(0), 16);
@@ -677,12 +684,14 @@ angular.module('lizard-nxt')
       return rgbString;
 
     } else {
-      throw new Error("This aint a valid triple to convert into rgbString: " + rgbTriple);
+      throw new Error("This aint a valid triple to convert into rgbString: " +
+                      rgbTriple);
     }
   };
 
   /**
-   * @descriptions - Round numbers, but use specified decimalCount for resolution
+   * @descriptions - Round numbers, but use specified decimalCount for 
+   *                 resolution
    * @param {number} nr- The number to round.
    * @param {integer/undefined} - The amount of decimals wanted.
    * @return {float} - The formatted number
@@ -724,4 +733,24 @@ angular.module('lizard-nxt')
     }
     return prefix + "." + suffix;
   };
+
+  /**
+   * Set timeline to moving and back after digest loop to trigger watches
+   * that do something after the timeline moved.
+   *
+   * @param {object} State - State object.
+   */
+  this.announceMovedTimeline = function (State) {
+    State.temporal.timelineMoving = true;
+
+    // Set timeline moving to false after digest loop
+    $timeout(
+      function () {
+        State.temporal.timelineMoving = false;
+      },
+      0, // no delay, fire when digest ends
+      true // trigger new digest loop
+    );
+  };
+
 }]);

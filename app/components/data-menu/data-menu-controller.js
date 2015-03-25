@@ -14,8 +14,8 @@
  */
 angular.module('data-menu')
   .controller('DatamenuController',
-              ['$scope', 'DataService', 'State', 'MapService', '$timeout',
-               function ($scope, DataService, State, MapService, $timeout) {
+              ['$scope', 'DataService', 'State', 'MapService', 'UtilService',
+               function ($scope, DataService, State, MapService, UtilService) {
 
     this.layerGroups = DataService.layerGroups;
 
@@ -30,34 +30,17 @@ angular.module('data-menu')
     // move this function to service.
     this.zoomToBounds = function (spatialBounds, temporalBounds) {
 
-    /**
-     * Set timeline to moving and back after digest loop to trigger watches
-     * that do something after the timeline moved.
-     */
-    var announceMovedTimeline = function () {
-      State.temporal.timelineMoving = true;
+      // zoom to spatial bounds
+      MapService.fitBounds(spatialBounds);
 
-      // Set timeline moving to false after digest loop
-      $timeout(
-        function () {
-          State.temporal.timelineMoving = false;
-        },
-        0, // no delay, fire when digest ends
-        true // trigger new digest loop
-      );
+      // zoom to temporal bounds
+      if (temporalBounds.start !== temporalBounds.end) {
+        State.temporal.start = temporalBounds.start;
+        State.temporal.end = temporalBounds.end;
+        State.temporal.at = temporalBounds.start;
+        UtilService.announceMovedTimeline(State);
+      }
     };
-
-    // zoom to spatial bounds
-    MapService.fitBounds(spatialBounds);
-
-    // zoom to temporal bounds
-    if (temporalBounds.start !== temporalBounds.end) {
-      State.temporal.start = temporalBounds.start;
-      State.temporal.end = temporalBounds.end;
-      State.temporal.at = temporalBounds.start;
-      announceMovedTimeline();
-    }
-  };
   }
 ]);
 
