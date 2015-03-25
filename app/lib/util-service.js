@@ -452,7 +452,7 @@ angular.module('lizard-nxt')
    * @function
    * @description - Count all keys for an object (we can't do this vanilla.js
    *                style in Angular template)
-   * @param {object} obj - The object for which we want to know the amount of 
+   * @param {object} obj - The object for which we want to know the amount of
    *                       keys.
    * @return {integer} - The amount of keys.
    */
@@ -690,7 +690,7 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * @descriptions - Round numbers, but use specified decimalCount for 
+   * @descriptions - Round numbers, but use specified decimalCount for
    *                 resolution
    * @param {number} nr- The number to round.
    * @param {integer/undefined} - The amount of decimals wanted.
@@ -738,15 +738,15 @@ angular.module('lizard-nxt')
    * Set timeline to moving and back after digest loop to trigger watches
    * that do something after the timeline moved.
    *
-   * @param {object} State - State object.
+   * @param {object} state - State object.
    */
-  this.announceMovedTimeline = function (State) {
-    State.temporal.timelineMoving = true;
+  this.announceMovedTimeline = function (state) {
+    state.temporal.timelineMoving = true;
 
     // Set timeline moving to false after digest loop
     $timeout(
       function () {
-        State.temporal.timelineMoving = false;
+        state.temporal.timelineMoving = false;
       },
       0, // no delay, fire when digest ends
       true // trigger new digest loop
