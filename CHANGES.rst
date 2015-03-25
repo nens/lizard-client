@@ -4,6 +4,17 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Fix remove label when not hovering bar; prevents bug with label remaining 
+  while zooming
+
+- Fix error when removing event layergroup that has not fully loaded yet.
+
+- Fix barwidth issue for events.
+
+- Fix error in line-controller for rain layer but no rain data.
+
+- Fix export data which starts with null.
+
 - Fix login dissappearance for small screens.
 
 - Fix position aggregate events in timeline.

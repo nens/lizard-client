@@ -34,7 +34,7 @@ angular.module('lizard-nxt')
      *                               actual CSV by the ng-csv directive.
      */
     this.formatLineCSV = function (lgSlug, layer) {
-      if (layer.data && layer.data[0][1]) {
+      if (layer.data) {
         return _dataIsTemporal(lgSlug)
           // NB! Sometimes a resolved API call uses layer.data for housing it's
           // raw response, and sometimes it uses layer.temporalData; in the latter
@@ -61,7 +61,7 @@ angular.module('lizard-nxt')
           }[lgSlug] || DEFAULT_HUMAN_READABLE_X,
           humanReadableY = layer.quantity + ' [' + layer.unit + ']';
 
-      if (layer.data && layer.data[0][1]) {
+      if (layer.data) {
         return _dataIsTemporal(lgSlug)
           ? [ 'Timestamp',
               humanReadableX,
