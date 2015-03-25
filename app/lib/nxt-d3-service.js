@@ -105,10 +105,10 @@ angular.module('lizard-nxt')
       .select('rect')
         .attr("id", "clip-rect")
         .attr("x", "0")
+        // give some space to draw full stroke-width.
         .attr("y", 0 - 2)
         .attr("width", width)
-        // give some space to draw full stroke-width.
-        .attr("height", height + 4);
+        .attr("height", height + 2);
       // Put the data in this group
       var g = this._svg.select('g').select('g');
       if (!g[0][0]) {

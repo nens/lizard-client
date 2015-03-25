@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Fix refresh data when zooming to layer bounds.
+
 - Fix remove label when not hovering bar; prevents bug with label remaining 
   while zooming
 

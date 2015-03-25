@@ -19,7 +19,6 @@ angular.module('lizard-nxt')
   "$rootScope",
   "$scope",
   "$q",
-  "$timeout",
   'UtilService',
   'DataService',
   'State',
@@ -29,7 +28,6 @@ angular.module('lizard-nxt')
     $rootScope,
     $scope,
     $q,
-    $timeout,
     UtilService,
     DataService,
     State) {
@@ -238,24 +236,6 @@ angular.module('lizard-nxt')
     };
 
     /**
-     * Set timeline to moving and back after digest loop to trigger watches
-     * that do something after the timeline moved.
-     */
-    var announceMovedTimeline = function () {
-      State.temporal.timelineMoving = true;
-
-      // Set timeline moving to false after digest loop
-      $timeout(
-        function () {
-          State.temporal.timelineMoving = false;
-        },
-        0, // no delay, fire when digest ends
-        true // trigger new digest loop
-      );
-    };
-
-
-    /**
      * @function
      * @summary Move timeState.end to now.
      */
@@ -271,7 +251,7 @@ angular.module('lizard-nxt')
       State.temporal.at = UtilService.roundTimestamp(now,
                                                      State.temporal.aggWindow,
                                                      false);
-      announceMovedTimeline();
+      UtilService.announceMovedTimeline(State);
     };
 
     /**
