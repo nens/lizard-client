@@ -845,7 +845,7 @@ angular.module('lizard-nxt')
         MAX_COUNT = 100;
 
     var xOneFunction = function (d) {
-      return xScale(parseFloat(d.timestamp) + (aggWindow / 2));
+      return xScale(parseFloat(d.timestamp) - (aggWindow / 2));
     };
 
     var yFunction = function (d) { return yScale(order); };
