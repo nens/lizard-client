@@ -33,6 +33,10 @@ Release 1.3.2 (2015-3-26)
 
 - Fix draw and update tickmarks for temporal rasters.
 
+- Fixed event count disparity.
+
+- Dynamic axis labels for area.
+
 
 Release 1.3.1 (2015-3-19)
 ---------------------
