@@ -841,7 +841,7 @@ angular.module('lizard-nxt')
     svg, dimensions, xScale, yScale, data, order, slug, color, aggWindow) {
 
     var MIN_CIRCLE_SIZE = 3,
-        MAX_CIRCLE_SIZE = 18,
+        MAX_CIRCLE_SIZE = 16,
         MAX_COUNT = 100;
 
     var xOneFunction = function (d) {
