@@ -444,13 +444,18 @@ angular.module('map')
 
       TMS: function (nonLeafLayer) {
 
-        var layerUrl = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
+        var layerUrl = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}{retina}.{ext}';
+
+        // Mapbox layers support retina tiles, our own do not yet.
+        var retinaSupport = nonLeafLayer.url === 'http://{s}.tiles.mapbox.com/v3';
+
         var layer = LeafletService.tileLayer(
           layerUrl, {
+            retina: retinaSupport && L.Browser.retina ? '@2x' : '',
             slug: nonLeafLayer.slug,
             minZoom: nonLeafLayer.min_zoom || 0,
             maxZoom: 19,
-            detectRetina: true,
+            detectRetina: retinaSupport,
             zIndex: nonLeafLayer.zIndex,
             ext: 'png'
           });
