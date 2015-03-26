@@ -280,7 +280,7 @@ angular.module('lizard-nxt')
                                     UtilService.MAX_TIME);
       State.temporal.resolution = newResolution;
 
-      UtilService.announceMovedTimeline();
+      UtilService.announceMovedTimeline(State);
 
     };
 
