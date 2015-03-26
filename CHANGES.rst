@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.3.3 (2015-3-26)
+---------------------
 
 - Fix undefined announMovedTimeline function that moved to UtilService.
 
