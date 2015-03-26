@@ -6,6 +6,10 @@ Unreleased (1.2.25) (XXXX-XX-XX)
 
 - Fix undefined announMovedTimeline in time-controller doesn't pass argument.
 
+- Increase default height of timeline from 30 to 45 pixels.
+
+- Decrease maximum event radius in timeline to prevent clipping.
+
 
 Release 1.3.3 (2015-3-26)
 ---------------------
