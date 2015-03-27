@@ -13,6 +13,7 @@
 
 angular.module('omnibox')
 .controller('PointCtrl', [
+
   '$scope',
   '$q',
   'LeafletService',
@@ -22,7 +23,16 @@ angular.module('omnibox')
   'DataService',
   'State',
 
-  function ($scope, $q, LeafletService, ClickFeedbackService, UtilService, MapService, DataService, State) {
+  function (
+    $scope,
+    $q,
+    LeafletService,
+    ClickFeedbackService,
+    UtilService,
+    MapService,
+    DataService,
+    State
+  ) {
 
     var GRAPH_WIDTH = 600;
     $scope.box.content = {};
@@ -47,8 +57,10 @@ angular.module('omnibox')
       promise.then(drawFeedback, null, function (response) {
         if (response && response.data) {
           // If we deal with raster data....
-          if (response.layerSlug === 'rain' && response.data && response.data.data !== null) {
-            if ($scope.box.content[response.layerGroupSlug] === undefined) { return; }
+          if (response.layerSlug === 'rain' &&
+              response.data && response.data.data !== null) {
+            if ($scope.box.content[
+                  response.layerGroupSlug] === undefined) { return; }
             if (!$scope.box.content[response.layerGroupSlug].layers.hasOwnProperty(response.layerSlug)) { return; }
 
             // This could probably be different..
@@ -142,6 +154,11 @@ angular.module('omnibox')
           coordinates: [State.spatial.here.lng, State.spatial.here.lat]
         });
       }
+    };
+
+    // CSV formatter
+    $scope.formatCSVColumns = function (data) {
+      return UtilService.formatCSVColumns(data, State.spatial.here);
     };
 
     // Update when user clicked again

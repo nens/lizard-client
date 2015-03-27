@@ -1,11 +1,7 @@
 // event-aggregate-service-tests.js
 
-describe('Testing event aggregate service', function () {
-  var $scope, $rootScope, UtilService, timeState;
-
-  timeState = {
-    'aggWindow': 3600000
-  };
+describe('Testing util-service functions', function () {
+  var $scope, $rootScope, UtilService;
 
   beforeEach(module('lizard-nxt'));
 
@@ -26,4 +22,53 @@ describe('Testing event aggregate service', function () {
     expect(result).toBe("#ff0000");
   });
 
+  it("Should return a list formatted data for a list raw input data",
+      function () {
+
+    var inputData = [[1420070400000, 0.58], [1420149600000, 8.2354]],
+        latLng = {lat: 52.7, lng: 5.2},
+        expectedResult = [[ '1-1-2015', '1:00:00', '0,57', '52,7', '5,2' ],
+                          [ '1-1-2015', '23:00:00', '8,23', '52,7', '5,2' ]];
+
+    var result = UtilService.formatCSVColumns(inputData, latLng);
+    expect(result).toEqual(expectedResult);
+  });
+
+  it("Should return a list with formatted date and timestamp for an" +
+     " epoch timestamp in ms", function () {
+
+    var epoch = 1420070400000,
+        expectedResult = ['1-1-2015', '1:00:00'];
+
+    var result = UtilService._formatDate(epoch);
+    expect(result).toEqual(expectedResult);
+  });
+
+  it("Should return a formatted number for a raw number", function () {
+
+    var number = 3.872,
+        leadingDigits = 3,
+        trailingDigits = 4,
+        expectedResult = '003.8720';
+
+    var result = UtilService.formatNumber(number,
+                                          leadingDigits,
+                                          trailingDigits);
+    expect(result).toEqual(expectedResult);
+  });
+
+  it("Should return a Dutchified formatted number for a raw number",
+      function () {
+
+    var number = 3.872,
+        leadingDigits = 3,
+        trailingDigits = 4,
+        expectedResult = '003,8720';
+
+    var result = UtilService.formatNumber(number,
+                                          leadingDigits,
+                                          trailingDigits,
+                                          true);
+    expect(result).toEqual(expectedResult);
+  });
 });
