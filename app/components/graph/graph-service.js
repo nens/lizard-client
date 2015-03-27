@@ -523,15 +523,22 @@ angular.module('lizard-nxt')
         strokeWidth = barWidth === MIN_BAR_WIDTH ? 0 : 1,
 
         // Join new data with old elements, based on the x key.
-        bar = svg.select('g').select('#feature-group').selectAll(".bar")
-          .data(data);
-        // duration = Graph.prototype.transTime;
+        bar = svg.select('#feature-group').selectAll(".bar")
+          .data(
+            data,
+            function (d) {
+              if (d[keys.category]) {
+                return d[keys.x] + d[keys.category];
+              } else {
+                return d[keys.x];
+              }
+            }
+          );
 
     // UPDATE
     bar
       .transition()
-      .duration(1)
-      .delay(duration)
+      .duration(duration)
         // change x when bar is invisible:
         .attr("x", function (d) { return x.scale(d[keys.x]) - barWidth; })
         // change width when bar is invisible:
@@ -556,7 +563,7 @@ angular.module('lizard-nxt')
       .attr("height", 0)
       .style("fill", function (d) { return d[keys.color] || ''; })
       .transition()
-      .duration(duration * 2)
+      .duration(duration)
         // Bring bars in one by one
         // .delay(function (d, i) { return i * 0.1 * duration * 2; })
         .attr("height", function (d) {
