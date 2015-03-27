@@ -95,20 +95,17 @@ angular.module('lizard-nxt')
    */
   link = function (scope, element, attrs, graphCtrl) {
 
-    var graphUpdateHelper = function (useNewData, useNewXDomain) {
-      if (useNewData) {
-        graphCtrl.setData(scope);
-      }
-      if (useNewXDomain) {
-        graphCtrl.graph._xDomainInfo = scope.temporal;
-      }
+    var graphUpdateHelper = function () {
+      graphCtrl.setData(scope);
+
       graphCtrl.updateData.call(
         graphCtrl.graph,
         graphCtrl.data,
         graphCtrl.keys,
         graphCtrl.labels,
-        graphCtrl.graph._xDomainInfo
+        graphCtrl.temporal
       );
+
       // Call the graph with the now
       if (scope.temporal && scope.temporal.at) {
         graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
@@ -121,7 +118,7 @@ angular.module('lizard-nxt')
      */
     scope.$watch('data', function (n, o) {
       if (n === graphCtrl.data) { return true; }
-      graphUpdateHelper(true, false);
+      graphUpdateHelper();
     });
 
     /**
@@ -129,7 +126,7 @@ angular.module('lizard-nxt')
      */
     scope.$watch('keys', function (n, o) {
       if (n === o) { return true; }
-      graphUpdateHelper(true, false);
+      graphUpdateHelper();
     });
 
     scope.$watch('temporal.at', function (n, o) {
@@ -141,12 +138,12 @@ angular.module('lizard-nxt')
 
     scope.$watch('temporal.start', function (n, o) {
       if (n === o) { return true; }
-      graphUpdateHelper(false, true);
+      graphUpdateHelper();
     });
 
     scope.$watch('temporal.end', function (n, o) {
       if (n === o) { return true; }
-      graphUpdateHelper(false, true);
+      graphUpdateHelper();
     });
 
     scope.$watch('dimensions.height', function (n, o) {
@@ -155,7 +152,7 @@ angular.module('lizard-nxt')
         return true;
       }
       graphCtrl.graph.resize(scope.dimensions);
-      graphUpdateHelper(false, false);
+      graphUpdateHelper();
     });
 
     scope.title = attrs.name;
@@ -176,6 +173,7 @@ angular.module('lizard-nxt')
 
       // Provide defaults for backwards compatability
       this.data = scope.data || [];
+      this.temporal = scope.temporal;
       this.keys = scope.keys || { x: 0, y: 1 };
       this.labels = {
         x: scope.xlabel || '',
