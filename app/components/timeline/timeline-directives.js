@@ -39,7 +39,7 @@ angular.module('lizard-nxt')
         dimensions = {
           width: UtilService.getCurrentWidth(),
           height: 45,
-          events: 25,
+          events: 35,
           bars: 35,
           padding: {
             top: 0,
