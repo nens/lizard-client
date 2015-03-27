@@ -4,14 +4,8 @@ angular.module('lizard-nxt')
   .service("CabinetService", ["$q", "Restangular", "backendDomain",
   function ($q, Restangular, backendDomain) {
 
-  var termSearchResource,
-      bboxSearchResource,
-      geocodeResource,
-      reverseGeocodeResource,
-      apiLayerGroups,
-      timeseriesLocationObjectResource,
+  var geocodeResource,
       timeseriesResource,
-      flowResource,
       events;
 
   // for the wizard demo's
@@ -22,7 +16,6 @@ angular.module('lizard-nxt')
   }
   Restangular.setRequestSuffix('?page_size=25000');
   geocodeResource = Restangular.one('api/v1/geocode/');
-  reverseGeocodeResource = Restangular.one('api/v1/reversegeocode/');
   timeseriesResource = Restangular.one('api/v1/timeseries/');
   events = Restangular.one('api/v1/events/');
 
@@ -80,8 +73,6 @@ angular.module('lizard-nxt')
     tooltips: tooltips,
     geocode: geocodeResource,
     raster: rasterResource,
-    reverseGeocode: reverseGeocodeResource,
     timeseries: timeseriesResource,
-    panZoom: null,
   };
 }]);

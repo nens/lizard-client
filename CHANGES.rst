@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Update api request to backend with new filter syntax.
+
 - Fix update stacked bars.
 
 - Truly add retina support.
