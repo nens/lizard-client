@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Fix update stacked bars.
+
 - Truly add retina support.
 
 - Fix undefined announMovedTimeline in time-controller doesn't pass argument.
