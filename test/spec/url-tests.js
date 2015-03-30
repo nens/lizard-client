@@ -194,15 +194,15 @@ describe('Testing UrlState', function () {
 
 describe('Testing hash controller', function () {
   var $scope,
-    $location,
-    $rootScope,
-    $controller,
-    $browser,
-    createController,
-    LocationGetterSetter,
-    DataService,
-    State,
-    $compile;
+      $location,
+      $rootScope,
+      $controller,
+      $browser,
+      createController,
+      LocationGetterSetter,
+      DataService,
+      State,
+      $compile;
 
   beforeEach(module('lizard-nxt'));
 
@@ -212,6 +212,7 @@ describe('Testing hash controller', function () {
     $controller = $injector.get('$controller');
     $scope = $rootScope.$new();
     State = $injector.get('State')
+    DataService = $injector.get('DataService');
     LocationGetterSetter = $injector.get('LocationGetterSetter');
 
     // Mock MapService
@@ -233,6 +234,7 @@ describe('Testing hash controller', function () {
         }
       }
     };
+
     mapState.setView = function (latlng, zoom, options) {
       $scope.mapState.center.lat = latlng.lat;
     };
@@ -251,14 +253,11 @@ describe('Testing hash controller', function () {
     };
   }));
 
-  // Failing test - Ernst has fixed it in some mystery branch, we'll de-comment
-  // this test when (if) that ft.branch is merged:
-  //
-  // it('should activate layer when layer is defined on the url', function () {
-  //   var controller = createController();
-  //   $location.path('/map/satellite');
-  //   $scope.$broadcast('$locationChangeSuccess');
-  //   expect(DataService.layerGroups.satellite._active).toBe(true);
-  // });
+  it('should activate layer when layer is defined on the url', function () {
+    var controller = createController();
+    $location.path('/map/satellite');
+    $scope.$broadcast('$locationChangeSuccess');
+    expect(DataService.layerGroups.satellite.isActive()).toBe(true);
+  });
 
 });
