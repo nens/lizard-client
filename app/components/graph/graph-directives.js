@@ -112,6 +112,16 @@ angular.module('lizard-nxt')
       }
     };
 
+    var dimsChangedCb = function () {
+      if (!scope.dimensions
+        || (scope.dimensions.width === graphCtrl.graph.dimensions.width
+          && scope.dimensions.height === graphCtrl.graph.dimensions.height)) {
+        return;
+      }
+      graphCtrl.graph.resize(scope.dimensions);
+      graphUpdateHelper();
+    };
+
     /**
      * Calls updateGraph when data is different than controller.data.
      * NOTE: Controller data is set on precompile.
@@ -146,14 +156,9 @@ angular.module('lizard-nxt')
       graphUpdateHelper();
     });
 
-    scope.$watch('dimensions.height', function (n, o) {
-      if (!scope.dimensions
-        || scope.dimensions.height === graphCtrl.graph.dimensions.height) {
-        return true;
-      }
-      graphCtrl.graph.resize(scope.dimensions);
-      graphUpdateHelper();
-    });
+    scope.$watch('dimensions.height', dimsChangedCb);
+
+    scope.$watch('dimensions.width', dimsChangedCb);
 
     scope.title = attrs.name;
 

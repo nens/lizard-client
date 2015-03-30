@@ -1,7 +1,12 @@
 
 angular.module('time-ctx')
   .directive('timeCtx',
-             ["EventAggregateService", "State", "DataService", "UtilService", "Timeline",
+             [
+              "EventAggregateService",
+              "State",
+              "DataService",
+              "UtilService",
+              "Timeline",
               function (EventAggregateService, State, DataService, UtilService, Timeline) {
 
   var link = function (scope, element, attrs) {
@@ -31,6 +36,8 @@ angular.module('time-ctx')
       nGraphs = Object.keys(scope.tctx.content).length;
       scope.tctx.dims.height =
         (getHeight() - tlDimensions.height - TL_TOP_MARGIN) / nGraphs - GRAPH_PADDING;
+      scope.tctx.dims.width = UtilService.getCurrentWidth()
+        + GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN;
     };
 
     Timeline.onresize = resize;
@@ -150,6 +157,16 @@ angular.module('time-ctx')
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o || State.temporal.timelineMoving) { return true; }
       getTimeData();
+    });
+
+    var applyResize = function () {
+      scope.$apply(resize(tlDims));
+    };
+
+    window.addEventListener('resize', applyResize);
+
+    scope.$on('$destroy', function () {
+      window.removeEventListener('resize', applyResize);
     });
 
   };

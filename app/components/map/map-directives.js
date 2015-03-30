@@ -74,10 +74,14 @@ angular.module('map')
        */
       var _moveEnded = function (e, map) {
         State.spatial.mapMoving = false;
-        mapSetsBounds = true;
-        mapSetsView = true;
-        State.spatial.bounds = MapService.getBounds();
-        State.spatial.view = MapService.getView();
+        // Moveended is fired on teardown of map and map.getBounds() returns a
+        // bounds object of size zero. We want to keep the bounds.
+        if (State.context === 'map') {
+          mapSetsBounds = true;
+          mapSetsView = true;
+          State.spatial.bounds = map.getBounds();
+          State.spatial.view = MapService.getView();
+        }
       };
 
       MapService.initializeMap(element[0], {

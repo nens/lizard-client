@@ -41,7 +41,8 @@ angular.module('lizard-nxt')
   circles, // events start - end
   bars, // rain intensity
   tickmarks,
-  TICKMARK_HEIGHT = 5; // data availability indicators
+  TICKMARK_HEIGHT = 5, // data availability indicators
+  MAX_CIRCLE_SIZE = 16;
 
   /**
    * @constructor
@@ -841,7 +842,6 @@ angular.module('lizard-nxt')
     svg, dimensions, xScale, yScale, data, order, slug, color, aggWindow) {
 
     var MIN_CIRCLE_SIZE = 3,
-        MAX_CIRCLE_SIZE = 16,
         MAX_COUNT = 100;
 
     var xOneFunction = function (d) {
@@ -989,7 +989,7 @@ angular.module('lizard-nxt')
    */
   var makeEventsYscale = function (iniH, dims) {
     return function (order) {
-      return dims.events * order - 10;
+      return dims.events * order - MAX_CIRCLE_SIZE;
     };
   };
 

@@ -39,7 +39,7 @@ angular.module('lizard-nxt')
         dimensions = {
           width: UtilService.getCurrentWidth(),
           height: 45,
-          events: 25,
+          events: 35,
           bars: 35,
           padding: {
             top: 0,
@@ -307,7 +307,7 @@ angular.module('lizard-nxt')
       DataService.getData('timeline', {
         geom: State.spatial.bounds,
         start: State.temporal.start,
-        end: State.temporal.stop,
+        end: State.temporal.end,
         type: 'Event'
       }).then(null, null, draw);
     };
@@ -499,18 +499,26 @@ angular.module('lizard-nxt')
      */
     window.addEventListener('load', getTimeLineData);
 
+    var resize = function () {
+      scope.$apply(function () {
+        timeline.dimensions.width = UtilService.getCurrentWidth();
+        timeline.resize(
+          timeline.dimensions,
+          State.temporal.at,
+          State.temporal.aggWindow,
+          scope.events.nEvents // TODO: get nEvents from somewhere
+        );
+      });
+    };
+
     /**
      * Update timeline when browser window is resized.
      */
-    window.addEventListener('resize', function () {
+    window.addEventListener('resize', resize);
 
-      timeline.dimensions.width = UtilService.getCurrentWidth();
-      timeline.resize(
-        timeline.dimensions,
-        State.temporal.at,
-        State.temporal.aggWindow,
-        scope.events.nEvents // TODO: get nEvents from somewhere
-      );
+    scope.$on('$destroy', function () {
+      window.remmoveEventListener('resize', resize);
+      window.remmoveEventListener('load', getTimeLineData);
     });
 
     // END WATCHES
