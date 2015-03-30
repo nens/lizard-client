@@ -4,6 +4,11 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Dynamic y-value per event and give events enough space for the whole radius
+  and stroke.
+
+- Resize graphs in time-ctx when width of window changes.
+
 - Update api request to backend with new filter syntax.
 
 - Fix update stacked bars.
