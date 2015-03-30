@@ -2,13 +2,12 @@
 angular.module('time-ctx')
   .directive('timeCtx',
              [
-              "$window",
               "EventAggregateService",
               "State",
               "DataService",
               "UtilService",
               "Timeline",
-              function ($window, EventAggregateService, State, DataService, UtilService, Timeline) {
+              function (EventAggregateService, State, DataService, UtilService, Timeline) {
 
   var link = function (scope, element, attrs) {
 
@@ -160,8 +159,14 @@ angular.module('time-ctx')
       getTimeData();
     });
 
-    angular.element($window).bind('resize', function () {
+    var applyResize = function () {
       scope.$apply(resize(tlDims));
+    };
+
+    window.addEventListener('resize', applyResize);
+
+    scope.$on('$destroy', function () {
+      window.removeEventListener('resize', applyResize);
     });
 
   };
