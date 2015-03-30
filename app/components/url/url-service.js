@@ -227,8 +227,8 @@ angular.module('lizard-nxt')
 
         var msEndTime = Date.parse(times[1]);
         if (isNaN(msEndTime)) { return timeState; }
-        if (msEndTime === timeState.start) {
-          msEndTime += 43200000; // half a day
+        if (msEndTime <= timeState.start) {
+          msEndTime = timeState.start + 43200000; // half a day
         }
         timeState.end = msEndTime;
         timeState.aggWindow = UtilService.getAggWindow(

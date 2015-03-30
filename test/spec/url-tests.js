@@ -190,6 +190,16 @@ describe('Testing UrlState', function () {
     expect(service.update(state)).toBe(false);
   });
 
+  it('should set temporal.end to start plus half a day when end is in the past',
+    function () {
+      var timeStr = 'Mar,30,2015-Mar,30,2014',
+          halfDayMs = 43200000,
+          temporal = {};
+
+      temporal = service.parseTimeState(timeStr, temporal);
+      expect(temporal.end - temporal.start).toEqual(halfDayMs);
+  });
+
 });
 
 describe('Testing hash controller', function () {
