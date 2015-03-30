@@ -371,7 +371,10 @@ angular.module('lizard-nxt')
      * @return {object} line
      */
     _createLine: function (xy, keys) {
-      return d3.svg.line().interpolate('basis')
+      // Monotone line goes through all datapoints. Other options are 'basis'
+      // which looks nice but can give inaccurate results, or 'cardinal' which
+      // results in a line with a bigger domain/amplitute than the data.
+      return d3.svg.line().interpolate('monotone')
         .y(function (d) {
           return xy.y.scale(d[keys.y]);
         })
