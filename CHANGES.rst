@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Fix flipping of start and end date on page reload.
+
 - Dynamic y-value per event and give events enough space for the whole radius
   and stroke.
 
