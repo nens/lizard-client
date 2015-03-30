@@ -63,10 +63,8 @@ angular.module('map')
 
         syncTime: function (timeState) {
           if (this.format !== 'Vector') { return; }
-          var defer = $q.defer();
           this._leafletLayer.syncTime(timeState);
-          defer.resolve();
-          return defer.promise;
+          return;
         },
 
         /**
