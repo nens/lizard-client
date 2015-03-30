@@ -702,6 +702,7 @@ angular.module('lizard-nxt')
   };
 
   /**
+   * @function
    * @description - "%f-in-javascript", you know the drill
    *
    * @param {number} x - The input you want to convert
@@ -751,6 +752,59 @@ angular.module('lizard-nxt')
       0, // no delay, fire when digest ends
       true // trigger new digest loop
     );
+  };
+
+  /**
+   * @function _formatDate
+   * @summmary Format epoch in ms to human readable string.
+   * @description Format epoch in ms to human readable string.
+   *
+   * @param {integer} epoch - time in ms since 1970.
+   * @returns {string} formatted date.
+   */
+  this._formatDate = function (epoch) {
+    var d = new Date(parseInt(epoch, 10));
+    return [
+      [d.getDate(), d.getMonth() + 1,
+       d.getFullYear()].join('-'),
+      [d.getHours() || "00",
+       d.getMinutes() || "00",
+       d.getSeconds() || "00"].join(':')
+    ];
+  };
+
+  /**
+   * Format CSV (exporting rain data for a point in space/interval in
+   * time) in a way that makes it comprehensible for les autres.
+   *
+   * @param {object []} data - list with data objects to parse.
+   * @param {object} latLng - latlng object with location of data.
+   * @returns list of formatted data objects.
+   */
+  this.formatCSVColumns = function (data, latLng) {
+    var i,
+        formattedDateTime,
+        formattedData = [];
+
+    for (i = 0; i < data.length; i++) {
+
+      formattedDateTime = this._formatDate(data[i][0]);
+
+      formattedData.push([
+        formattedDateTime[0],
+        formattedDateTime[1],
+        this.formatNumber(
+          Math.floor(100 * data[i][1]) / 100 || 0,
+          0,
+          2,
+          true // Dutchify seperators
+        ),
+        this.formatNumber(latLng.lat, 0, 0, true),
+        this.formatNumber(latLng.lng, 0, 0, true)
+      ]);
+    }
+
+    return formattedData;
   };
 
 }]);
