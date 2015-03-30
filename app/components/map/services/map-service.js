@@ -56,7 +56,10 @@ angular.module('map')
         angular.forEach(DataService.layerGroups, function (layerGroup) {
           if (layerGroup.isActive()) {
             angular.forEach(layerGroup.mapLayers, function (layer) {
-              promises.push(layer.syncTime(timeState, service._map));
+              var p = layer.syncTime(timeState, service._map);
+              if (p) {
+                promises.push(p);
+              }
             });
           } else {
             angular.forEach(layerGroup.mapLayers, function (layer) {
@@ -70,7 +73,9 @@ angular.module('map')
           defer.resolve();
           return defer.promise;
         });
-        State.layerGroups.timeIsSyncing = true;
+        if (promises.length > 0) {
+          State.layerGroups.timeIsSyncing = true;
+        }
         return defer.promise;
       },
 
