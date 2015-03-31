@@ -1,9 +1,14 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.2.25) (XXXX-XX-XX)
+Unreleased (1.3.5) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix timeseries selection box width > card width.
+
+- Fix undefined graph width.
+
+- Add card-content to temporal point graphs.
 
 
 Release 1.3.4 (2015-3-31)
@@ -48,7 +53,7 @@ Release 1.3.2 (2015-3-26)
 
 - Fix refresh data when zooming to layer bounds.
 
-- Fix remove label when not hovering bar; prevents bug with label remaining 
+- Fix remove label when not hovering bar; prevents bug with label remaining
   while zooming
 
 - Fix error when removing event layergroup that has not fully loaded yet.
