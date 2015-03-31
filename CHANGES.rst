@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Adapted scenarios to new api response.
+
 - Export timeseries as CSV for data in browser.
 
 - Fix graph hover mismatch because of interpolated data.
