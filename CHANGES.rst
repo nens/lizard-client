@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.3.4 (2015-3-31)
+---------------------
 
 - Adapted scenarios to new api response.
 
