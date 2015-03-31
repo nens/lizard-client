@@ -25,7 +25,7 @@ Unreleased (1.2.25) (XXXX-XX-XX)
 
 - Truly add retina support.
 
-- Fix undefined announMovedTimeline in time-controller doesn't pass argument.
+- Fix undefined announMovedTimeline in time-controller.
 
 - Increase default height of timeline from 30 to 45 pixels.
 
