@@ -176,7 +176,7 @@ angular.module('lizard-nxt')
      *              canvas.
      */
     resize: function (dimensions) {
-      this.dimensions = angular.copy(dimensions);
+      this.dimensions = angular.extend(this.dimensions, dimensions);
       this._svg = resizeCanvas(this._svg, this.dimensions);
       this._svg = this._createDrawingArea(this._svg, this.dimensions);
     },
