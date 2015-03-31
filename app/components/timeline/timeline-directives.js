@@ -517,8 +517,8 @@ angular.module('lizard-nxt')
     window.addEventListener('resize', resize);
 
     scope.$on('$destroy', function () {
-      window.remmoveEventListener('resize', resize);
-      window.remmoveEventListener('load', getTimeLineData);
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('load', getTimeLineData);
     });
 
     // END WATCHES
