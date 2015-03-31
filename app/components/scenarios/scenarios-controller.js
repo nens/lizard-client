@@ -11,9 +11,9 @@ angular.module('scenarios')
     // It is pretty imposible to make the table the right length without js.
     $scope.tableHeight = window.innerHeight - 150 + 'px';
 
-    Restangular.all('api/v1/scenarios/').getList()
-      .then(function (scenarios) {
-        $scope.scenarios = scenarios;
+    Restangular.one('api/v1/scenarios/').get()
+      .then(function (response) {
+        $scope.scenarios = response.results;
       });
 
 
