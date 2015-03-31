@@ -4,6 +4,12 @@ Changelog of lizard-nxt client
 Unreleased (1.2.25) (XXXX-XX-XX)
 -------------------------------
 
+- Export timeseries as CSV for data in browser.
+
+- Fix graph hover mismatch because of interpolated data.
+
+- Fix unable press pause button when animating events.
+
 - Fix flipping of start and end date on page reload.
 
 - Dynamic y-value per event and give events enough space for the whole radius

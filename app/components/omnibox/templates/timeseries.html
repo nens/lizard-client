@@ -49,6 +49,19 @@
       now="timeState.at">
     </graph>
   </div>
+
+   <div class="card-tools">
+     <a
+       class="btn btn-default btn-xs"
+       title="Data van deze infocard exporteren"
+       ng-csv="$parent.formatCSVColumns(timeseries.selectedTimeseries.events)"
+       filename="<% timeseries.selectedTimeseries.name %>.csv"
+       csv-header="['Datestamp', 'Timestamp', timeseries.selectedTimeseries.unit, 'Latitude', 'Longitude']" >
+       <i class="fa fa-share-square-o"></i>
+       Exporteer
+     </a>
+   </div>
+
 </div>
 
 
