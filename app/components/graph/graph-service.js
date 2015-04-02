@@ -55,6 +55,9 @@ angular.module('lizard-nxt')
         this._svg.selectAll('.axis').remove();
         this._x = null;
         this._xy = null;
+        // reposition labels
+        drawLabel(this._svg, this.dimensions, undefined, true);
+        drawLabel(this._svg, this.dimensions, undefined, false);
       }
     },
 
@@ -753,6 +756,13 @@ angular.module('lizard-nxt')
 
   };
 
+  /**
+   * Draws or updates graph axis labels.
+   * @param  {d3 selection} svg
+   * @param  {object}       dimensions
+   * @param  {string}       (optional) label, if undefined uupdates current.
+   * @param  {boolean}      draw on y axis, else x-axis.
+   */
   drawLabel = function (svg, dimensions, label, y) {
     var width = Graph.prototype._getWidth(dimensions),
     height = Graph.prototype._getHeight(dimensions),
@@ -761,7 +771,9 @@ angular.module('lizard-nxt')
     PIXEL_CORRECTION = 2;
     var el = svg.select(y ? '#ylabel': '#xlabel');
     if (!el.empty()) {
-      el.text(label);
+      if (label) {
+        el.text(label);
+      }
       el.attr('dy', 0.5 * el.node().getBBox().height + PIXEL_CORRECTION);
    }
     else {
