@@ -55,6 +55,9 @@ angular.module('lizard-nxt')
         this._svg.selectAll('.axis').remove();
         this._x = null;
         this._xy = null;
+        // reposition labels
+        drawLabel(this._svg, this.dimensions, undefined, true);
+        drawLabel(this._svg, this.dimensions, undefined, false);
       }
     },
 
@@ -734,7 +737,7 @@ angular.module('lizard-nxt')
         .attr('x2', x2);
 
       g.append('text')
-        .text(data[i][keys.y] + ' ' + labels.y)
+        .text(Math.round(data[i][keys.y] * 100) / 100 + ' ' + labels.y)
         .attr('class', 'graph-tooltip-y')
         .attr('x', 5)
         .attr('y', y2 - 5);
@@ -753,6 +756,13 @@ angular.module('lizard-nxt')
 
   };
 
+  /**
+   * Draws or updates graph axis labels.
+   * @param  {d3 selection} svg
+   * @param  {object}       dimensions
+   * @param  {string}       (optional) label, if undefined uupdates current.
+   * @param  {boolean}      draw on y axis, else x-axis.
+   */
   drawLabel = function (svg, dimensions, label, y) {
     var width = Graph.prototype._getWidth(dimensions),
     height = Graph.prototype._getHeight(dimensions),
@@ -760,7 +770,12 @@ angular.module('lizard-nxt')
     // completely within the svg
     PIXEL_CORRECTION = 2;
     var el = svg.select(y ? '#ylabel': '#xlabel');
-    if (!el.empty()) { el.text(label); }
+    if (!el.empty()) {
+      if (label) {
+        el.text(label);
+      }
+      el.attr('dy', 0.5 * el.node().getBBox().height + PIXEL_CORRECTION);
+   }
     else {
       el = svg.append("text")
         .attr('class', 'graph-text graph-label')
