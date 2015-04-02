@@ -734,7 +734,7 @@ angular.module('lizard-nxt')
         .attr('x2', x2);
 
       g.append('text')
-        .text(data[i][keys.y] + ' ' + labels.y)
+        .text(Math.round(data[i][keys.y] * 100) / 100 + ' ' + labels.y)
         .attr('class', 'graph-tooltip-y')
         .attr('x', 5)
         .attr('y', y2 - 5);
