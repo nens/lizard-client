@@ -1,18 +1,238 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.2.25) (XXXX-XX-XX)
+Unreleased (1.3.6) (XXXX-XX-XX)
 -------------------------------
+
+- Fix timeseries in box card of previous click.
+
+- Fix label in wrong place of time-ctx when multiple graphs.
+
+- Only show timeseries card when there is timeseries data.
+
+- Round data values on hover in time-ctx graphs.
+
+
+Release 1.3.5 (2015-3-31)
+---------------------
+
+- Fix timeseries selection box width > card width.
+
+- Fix undefined graph width.
+
+- Add card-content to temporal point graphs.
+
+
+Release 1.3.4 (2015-3-31)
+---------------------
+
+- Adapted scenarios to new api response.
+
+- Export timeseries as CSV for data in browser.
+
+- Fix graph hover mismatch because of interpolated data.
+
+- Fix unable press pause button when animating events.
+
+- Fix flipping of start and end date on page reload.
+
+- Dynamic y-value per event and give events enough space for the whole radius
+  and stroke.
+
+- Resize graphs in time-ctx when width of window changes.
+
+- Update api request to backend with new filter syntax.
+
+- Fix update stacked bars.
+
+- Truly add retina support.
+
+- Fix undefined announMovedTimeline in time-controller.
+
+- Increase default height of timeline from 30 to 45 pixels.
+
+- Decrease maximum event radius in timeline to prevent clipping.
+
+
+Release 1.3.3 (2015-3-26)
+---------------------
+
+- Fix undefined announMovedTimeline function that moved to UtilService.
+
+
+Release 1.3.2 (2015-3-26)
+---------------------
+
+- Fix refresh data when zooming to layer bounds.
+
+- Fix remove label when not hovering bar; prevents bug with label remaining
+  while zooming
+
+- Fix error when removing event layergroup that has not fully loaded yet.
+
+- Fix barwidth issue for events.
+
+- Fix error in line-controller for rain layer but no rain data.
+
+- Fix export data which starts with null.
+
+- Fix login dissappearance for small screens.
+
+- Fix position aggregate events in timeline.
+
+- Fixed event count disparity.
+
+- Dynamic axis labels for area.
+
+- Fix draw and update tickmarks for temporal rasters.
+
+- Fixed event count disparity.
+
+- Dynamic axis labels for area.
+
+
+Release 1.3.1 (2015-3-19)
+---------------------
 
 - Fix 'bolletje'.
 
 - Fix spatial.points.here undefined.
+
+- Add EventAggregationService to timeline drawLines to reduce number of DOM
+   elements in timeline.
+
+- Add logarithmic scaling to circle size of events.
+
+- Draw circles in middle ofaggWindow.
+
+- Accomodate color === undefined in aggregate function.
+
+- Refactor drawLines to drawCircles.
+
+- Set pages_size to 25000 to make one big request without hacky page_size=0.
+
+- Add zoom to data bounds for events.
+
+- Added maximum number of timeseries events to prevent browser running out of
+  memory.
+
+- Reconnect events per object.
+
+- Fix bar width of events in time context.
+
+- Add data name attribute as graph title.
+
+- Click and hover over graph in time ctx shows data.
+
+- Adapt to new page_size parameter for events.
+
+
+Release 1.2.27 (2015-3-5)
+---------------------
+
+- Move style from d3 to scss.
+
+- Show tickmarks in timeline for available images for dynamic raster stores.
+
+- Add withCredentials to Restangular for ajax calls when on sandbox.
+
+- Create nice button and transition from and to time ctx from timeline.
+
+- Outline graphs with timeline in time ctx.
+
+- Remove listeners to bounds and layergroups in time ctx.
+
+- Nicely stack graphs on top of timeline for 1 to n data layers in time ctx.
+
+- Fill graphs with data for point timeseries, events, rain, and area events.
+
+- Fix tests by staying backwards compatible on layers with no meta object.
+
+- Context aware button to zoom to bounds in layer chooser.
+
+- zoomToBounds function to quickly locate (raster) data.
+
+- Add local cache to utfgridservice so a query can be answered without a map.
+
+- Only set getData state back to false when all calls have been finished.
+
+- Move getTimeseries to Data-service.
+
+- Adapt to new raster reponse for area.
+
+- Remove elevation curve formatter.
+
+- Add translations for `controlled` attribute of weir.
+
+- Remove dashboard selector dropdown.
+
+- Remove halo shadow.
 
 - Fix indentation in rain controller.
 
 - Fix rain export seperators.
 
 - Fix bug with click on map at top 50 px.
+
+- Fix bug with rain card not respecting zoom buttons.
+
+- Remove broadcasts and hard-coupling between graph and timeline.
+
+- Store selected aggregation for events in time ctx.
+
+- Store selected timeseries and move specific code to directive.
+
+- Scenario table without table header and scrollable.
+
+- Add lookup filter for culvert and weir attributes.
+
+
+Release 1.2.26 (2015-3-5)
+---------------------
+
+>>>>>>> staging
+- Fix indentation in rain controller.
+
+- Fix rain export seperators.
+
+- Fix bug with click on map at top 50 px.
+
+Release 1.2.25 (2015-2-19)
+---------------------
+
+- Always pass integer timestamp to timeseries endpoint.
+
+- Dynamic aggregation type for rain timeline data.
+
+- Update release documentation.
+
+- Fix bug with bar size when event.
+
+- Throw error when no backend is up and running.
+
+- Add credentials to UTFGrid requests.
+
+- Add domains for sandbox rewrites.
+
+- Fix bug with bar size when event.
+
+- Renamed current dashboard to 'time'.
+
+- Add new 6-widget-dashboard.
+
+- Add view to state with two-way binding to map and url.
+
+
+Release 1.2.23 (2015-2-9)
+---------------------
+
+- Changed handling of raster API responses to process metadata.
+
+- Make backend domain constant in lizard-nxt module.
+
+- Change CNAME for gh-pages.
+
+- Update installation documentation.
 
 
 Release 1.2.24 (2015-2-9)

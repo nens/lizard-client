@@ -1,33 +1,29 @@
 'use strict';
 
 angular.module('lizard-nxt')
-  .service("CabinetService", ["$q", "Restangular",
-  function ($q, Restangular) {
+  .service("CabinetService", ["$q", "Restangular", "backendDomain",
+  function ($q, Restangular, backendDomain) {
 
-  var termSearchResource,
-      bboxSearchResource,
-      geocodeResource,
-      reverseGeocodeResource,
-      apiLayerGroups,
-      timeseriesLocationObjectResource,
+  var geocodeResource,
       timeseriesResource,
-      flowResource,
       events;
 
   // for the wizard demo's
-  if (window.location.host === 'nens.github.io') {
-    Restangular.setBaseUrl('https://nxt.lizard.net/');
+  if (window.location.host === 'nens.github.io' ||
+      window.location.host === 'lizard.sandbox.lizard.net') {
+    Restangular.setBaseUrl(backendDomain);
+    Restangular.setDefaultHttpFields({withCredentials: true});
   }
-  Restangular.setRequestSuffix('?page_size=0');
+  Restangular.setRequestSuffix('?page_size=25000');
   geocodeResource = Restangular.one('api/v1/geocode/');
-  reverseGeocodeResource = Restangular.one('api/v1/reversegeocode/');
   timeseriesResource = Restangular.one('api/v1/timeseries/');
   events = Restangular.one('api/v1/events/');
 
   /**
    * Raster resource, last stop to the server
    * @param  {promise} q             a promise to cancel previous requests
-   *                                 if none is given a local 'abortGet' is used.
+   *                                 if none is given a local 'abortGet' is
+   *                                 used.
    *                                 At the next request without a promise, the
    *                                 abortGet is cancelled.
    * @return {RestangularResource}  a gettable resource
@@ -67,7 +63,7 @@ angular.module('lizard-nxt')
     startAnim: "Start de animatie",
     stopAnim: "Stop de animatie",
     timelineStart: "Het begin van de huidige tijdlijn",
-    timelineAt:"Het 'nu' op de tijdlijn",
+    timelineAt: "Het 'nu' op de tijdlijn",
     timelineEnd: "Het einde van de huidige tijdlijn"
   };
 
@@ -77,8 +73,6 @@ angular.module('lizard-nxt')
     tooltips: tooltips,
     geocode: geocodeResource,
     raster: rasterResource,
-    reverseGeocode: reverseGeocodeResource,
     timeseries: timeseriesResource,
-    panZoom: null,
   };
 }]);

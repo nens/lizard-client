@@ -1,91 +1,51 @@
-
+/**
+ *
+ * Directive for dashboard component.
+ */
 angular.module('dashboard')
-  .directive('dashboard',
-             ["EventAggregateService", "State", "DataService",
-              function (EventAggregateService, State, DataService) {
+  .directive('dashboard', function () {
 
-  // draw full screen graph
-  var link = function (scope, element, attrs) {
+  var link = function (scope, element, attr) {
 
-    var getWidth = function () {
-      return element.find('.dashboard-inner').width();
+    var resizePane = function () {
+      var PADDINGTOP = 70,
+          SELECTORHEIGHT = 50,
+          ROWMARGIN = 10,
+          TITLEHEIGHT = 35;
+
+      var height = angular.element('body').height();
+      // if smaller screen below each other in stead of next to
+      var width = (element.width() < 960) ? element.width() :
+        element.width() / 3;
+
+      var rowHeight = (height - PADDINGTOP) / 2 - ROWMARGIN;
+      angular.element('.dashboard-row').height(rowHeight);
+      scope.dashboard.dimensions = {
+        height: rowHeight - SELECTORHEIGHT - TITLEHEIGHT,
+        width: width - 120,
+        padding: {
+          top: 25,
+          bottom: 60,
+          left: 50,
+          right: 10
+        }
+      };
     };
 
-    var getHeight = function () {
-      return element.height();
-    };
-
-    scope.dimensions.width = getWidth() - 10;
-
-    var aggregateEvents = function () {
-      var eventAgg;
-      // reset eventAggs
-      scope.eventAggs = [];
-      angular.forEach(DataService.layerGroups, function (lg) {
-        lg.getData({
-          geom: State.spatial.bounds,
-          start: State.temporal.start,
-          end: State.temporal.end,
-          type: 'Event'
-        }).then(null, null, function (response) {
-
-          if (response && response.data) {
-            // aggregate response
-            eventAgg = {
-              data: EventAggregateService.aggregate(
-                      response.data,
-                      State.temporal.aggWindow,
-                      lg.mapLayers[0].color
-                    ),
-              ylabel: lg.name,
-              baseColor: lg.mapLayers[0].color
-            };
-
-            scope.eventAggs.push(eventAgg);
-            // calculate new dimensions
-            scope.dimensions.height =
-              (getHeight() / scope.eventAggs.length) - 20;
-          }
-        });
-      });
-    };
-
-    /**
-     * Updates dashboard when user pans or zooms map.
-     */
-    scope.$watch(State.toString('spatial.bounds'), function (n, o) {
-      if (n === o) { return true; }
-      aggregateEvents();
+    scope.$on('$destroy', function () {
+      window.removeEventListener('resize', resizePane);
     });
 
-    /**
-     * Updates dashboard when layers are added or removed.
-     */
-    scope.$watch(State.toString('layerGroups.active'), function (n, o) {
-      if (n === o) { return true; }
-      aggregateEvents();
-    });
+    window.addEventListener('resize', resizePane);
+    resizePane();
 
-    /**
-     * Updates dashboard when time zoom changes.
-     */
-    scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
-      if (n === o) { return true; }
-      aggregateEvents();
-    });
-
-    // init
-    aggregateEvents();
-
-    // hack to get color map for legend
-    scope.getColorMap = EventAggregateService.getColorMap;
   };
+
 
   return {
     link: link,
-    templateUrl: 'dashboard/dashboard.html',
     replace: true,
-    restrict: 'E'
+    restrict: 'E',
+    templateUrl: 'dashboard/dashboard.html'
   };
-
-}]);
+});

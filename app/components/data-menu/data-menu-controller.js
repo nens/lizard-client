@@ -13,18 +13,34 @@
  *
  */
 angular.module('data-menu')
-  .controller('DatamenuController', ['$scope', 'DataService', 'State',
-    function ($scope, DataService, State) {
+  .controller('DatamenuController',
+              ['$scope', 'DataService', 'State', 'MapService', 'UtilService',
+               function ($scope, DataService, State, MapService, UtilService) {
 
-      this.layerGroups = DataService.layerGroups;
+    this.layerGroups = DataService.layerGroups;
 
-      this.toggleLayerGroup = DataService.toggleLayerGroup;
+    this.toggleLayerGroup = DataService.toggleLayerGroup;
 
-      this.box = State.box;
+    this.box = State.box;
 
-      this.enabled = false;
+    this.enabled = false;
 
-      this.state = State.layerGroups;
-    }
-  ]);
+    this.state = State.layerGroups;
+
+    // move this function to service.
+    this.zoomToBounds = function (spatialBounds, temporalBounds) {
+
+      // zoom to spatial bounds
+      MapService.fitBounds(spatialBounds);
+
+      // zoom to temporal bounds
+      if (temporalBounds.start !== temporalBounds.end) {
+        State.temporal.start = temporalBounds.start;
+        State.temporal.end = temporalBounds.end;
+        State.temporal.at = temporalBounds.start;
+        UtilService.announceMovedTimeline(State);
+      }
+    };
+  }
+]);
 

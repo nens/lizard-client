@@ -2,10 +2,18 @@
   <label
     class="ng-class: {active: layergroup.isActive()}; layer-chooser"
     for="<% layergroup.id %>-layer"
-    single-click="menu.toggleLayerGroup(layergroup)"
-    ng-dblclick="layergroup.dblClick()"
     title="<% layergroup.name %>">
-    <span class="layer-text" ng-bind="layergroup.name"></span>
     <div class="layer-img" class="layer-chooser" ng-style="layergroup.imageStyle"></div>
+    <span 
+      single-click="menu.toggleLayerGroup(layergroup)"
+      class="layer-text" ng-bind="layergroup.name">
+    </span>
+    <span
+      ng-if="((layergroup.spatialBounds.north - layergroup.spatialBounds.east) !== 0)
+             && layergroup.isActive()"
+      class="layer-icon"
+      single-click="menu.zoomToBounds(layergroup.spatialBounds, layergroup.temporalBounds)">
+        <i class="fa fa-crosshairs"></i>
+    </span>
   </label>
 </li>

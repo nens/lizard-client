@@ -19,7 +19,6 @@ angular.module('lizard-nxt')
   "$rootScope",
   "$scope",
   "$q",
-  "RasterService",
   'UtilService',
   'DataService',
   'State',
@@ -29,7 +28,6 @@ angular.module('lizard-nxt')
     $rootScope,
     $scope,
     $q,
-    RasterService,
     UtilService,
     DataService,
     State) {
@@ -59,8 +57,16 @@ angular.module('lizard-nxt')
       UtilService.getCurrentWidth()
     );
 
-    this.state = State.temporal;
-    this.layerGroups = State.layerGroups;
+    this.state = State;
+
+    Object.defineProperty(this, 'showContextSwitch', {
+      get: function () {
+        return State.layerGroups.active.some(function (slug) {
+          return DataService.layerGroups[slug].temporal
+            && DataService.layerGroups[slug].isActive();
+        });
+      }
+    });
 
     /**
      * Keep an eye out for temporal layers that require the animation to go
@@ -229,7 +235,6 @@ angular.module('lizard-nxt')
       }, minLag);
     };
 
-
     /**
      * @function
      * @summary Move timeState.end to now.
@@ -243,10 +248,10 @@ angular.module('lizard-nxt')
 
       State.temporal.start = now - fourFifthInterval;
       State.temporal.end = now + oneFifthInterval;
-      State.temporal.at = UtilService.roundTimestamp(now, State.temporal.aggWindow, false);
-
-      // Without this $broadcast, timeline will not sync to State.temporal:
-      $rootScope.$broadcast("$timelineZoomSuccess");
+      State.temporal.at = UtilService.roundTimestamp(now,
+                                                     State.temporal.aggWindow,
+                                                     false);
+      UtilService.announceMovedTimeline(State);
     };
 
     /**
@@ -275,20 +280,20 @@ angular.module('lizard-nxt')
                                     UtilService.MAX_TIME);
       State.temporal.resolution = newResolution;
 
-      // Without this $broadcast, timeline will not sync to State.temporal:
-      $rootScope.$broadcast("$timelineZoomSuccess");
+      UtilService.announceMovedTimeline(State);
+
     };
 
     this.formatDatetime = function () {
-      switch (this.state.aggWindow) {
+      switch (State.temporal.aggWindow) {
       case 300000:
-        return 'yyyy MM dd HH:mm';
+        return 'yyyy/MM/dd HH:mm';
       case 3600000:
-        return 'yyyy MM dd HH:mm';
+        return 'yyyy/MM/dd HH:mm';
       case 86400000:
-        return 'yyyy MM dd';
+        return 'yyyy/MM/dd';
       case 2635200000:
-        return 'yyyy MM';
+        return 'yyyy/MM';
       default:
         throw new Error("Unknown aggWindow: " + this.state.aggWindow);
       }

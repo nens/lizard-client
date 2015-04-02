@@ -30,13 +30,15 @@
 
   <body>
 
-    <div id="url-temp-map" class="map"></div>
-
     <div ng-if="context === 'map'">
       <map></map>
     </div>
 
-    <div ng-if="context === 'db'">
+    <div ng-if="context === 'time'">
+      <time-ctx></time-ctx>
+    </div>
+
+    <div ng-if="context === 'dashboard'">
       <dashboard></dashboard>
     </div>
 
@@ -45,8 +47,11 @@
     </div>
 
     <div ng-if="context !== 'scenarios'">
-      <datamenu></datamenu>
       <timeline class="timeline navbar-fixed-bottom"></timeline>
+    </div>
+
+    <div ng-if="context !== 'scenarios' && context !== 'time'">
+      <datamenu></datamenu>
     </div>
 
     <user-menu></user-menu>
@@ -54,6 +59,9 @@
     <div ng-if="context === 'map'">
       <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
     </div>
+
+
+    <div id="context-transition-overlay"></div>
 
     <div id="dark-overlay">
       <div id="mymodal">
@@ -155,7 +163,12 @@
 
     <script src="/components/dashboard/dashboard.js"></script>
     <script src="/components/dashboard/dashboard-controller.js"></script>
+    <script src="/components/dashboard/dashboard-service.js"></script>
     <script src="/components/dashboard/dashboard-directive.js"></script>
+
+    <script src="/components/time-ctx/time-ctx.js"></script>
+    <script src="/components/time-ctx/time-ctx-controller.js"></script>
+    <script src="/components/time-ctx/time-ctx-directive.js"></script>
 
     <script src="/components/scenarios/scenarios.js"></script>
     <script src="/components/scenarios/scenarios-controller.js"></script>

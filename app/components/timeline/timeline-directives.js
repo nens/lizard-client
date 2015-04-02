@@ -11,31 +11,35 @@
 angular.module('lizard-nxt')
   .directive('timeline',
              ["$q",
+              "$timeout",
               "RasterService",
               "UtilService",
               "Timeline",
               "VectorService",
               "DataService",
+              "EventAggregateService",
               "State",
               function ($q,
+                        $timeout,
                         RasterService,
                         UtilService,
                         Timeline,
                         VectorService,
                         DataService,
+                        EventAggregateService,
                         State) {
 
   var link = function (scope, element, attrs, timelineCtrl) {
 
     var timelineSetsTime = false,
 
-        showTimeline = false, // Is set by user clicking data label, when true
+        showTimeline = true, // Is set by user clicking data label, when true
                               // timeline is shown.
 
         dimensions = {
           width: UtilService.getCurrentWidth(),
-          height: 30,
-          events: 25,
+          height: 45,
+          events: 35,
           bars: 35,
           padding: {
             top: 0,
@@ -62,8 +66,10 @@ angular.module('lizard-nxt')
 
           timelineSetsTime = true;
           State.temporal.timelineMoving = true;
-          State.temporal.start = UtilService.getMinTime( scale.domain()[0].getTime() );
-          State.temporal.end   = UtilService.getMaxTime( scale.domain()[1].getTime() );
+          State.temporal.start = UtilService.getMinTime(
+            scale.domain()[0].getTime());
+          State.temporal.end   = UtilService.getMaxTime(
+             scale.domain()[1].getTime());
 
           State.temporal.aggWindow = UtilService.getAggWindow(
             State.temporal.start,
@@ -87,11 +93,10 @@ angular.module('lizard-nxt')
       zoomEndFn: function () {
         scope.$apply(function () {
           State.temporal.resolution = (
-            State.temporal.end - State.temporal.start) /  UtilService.getCurrentWidth();
+            State.temporal.end - State.temporal.start
+            ) /  UtilService.getCurrentWidth();
           getTimeLineData();
           State.temporal.timelineMoving = false;
-
-          scope.$broadcast("$timelineZoomSuccess");
         });
       },
 
@@ -108,7 +113,8 @@ angular.module('lizard-nxt')
       clickFn: function (event, scale, dimensions) {
         scope.$apply(function () {
           var timeClicked = +(scale.invert(
-            event.pageX - dimensions.padding.left - UtilService.TIMELINE_LEFT_MARGIN
+            event.pageX - dimensions.padding.left
+              - UtilService.TIMELINE_LEFT_MARGIN
           ));
           State.temporal.at = UtilService.roundTimestamp(
             timeClicked,
@@ -118,7 +124,8 @@ angular.module('lizard-nxt')
       },
     };
 
-    // shift timeline's SVG element using it's CSS - set here by JS too stop stuff becoming unsyncable
+    // shift timeline's SVG element using it's CSS - set here by JS too stop
+    // stuff becoming unsyncable
     angular.element("#timeline-svg-wrapper svg")[0].style.left
       = UtilService.TIMELINE_LEFT_MARGIN + "px";
 
@@ -165,6 +172,10 @@ angular.module('lizard-nxt')
         nEventTypes
       );
 
+      if (Timeline.onresize) {
+        Timeline.onresize(newDim);
+      }
+
     };
 
     /**
@@ -182,17 +193,22 @@ angular.module('lizard-nxt')
      */
     var getTimelineLayers = function (layerGroups) {
       var timelineLayers = {events: {layers: [], slugs: []},
+                            rasterStore: {layers: []},
                             rain: undefined};
+
       angular.forEach(layerGroups, function (layergroup) {
         if (layergroup.isActive()) {
           angular.forEach(layergroup._dataLayers, function (layer) {
             if (layer.format === "Vector") {
               timelineLayers.events.layers.push(layer);
               timelineLayers.events.slugs.push(layer.slug);
-            } else if (layer.format === "Store" &&
-                       layer.slug === "rain") {
-              timelineLayers.rain = layer;
-            }
+            } else if (layer.format === "Store" && State.context !== 'time') {
+              if (layer.slug !== "rain") {
+                timelineLayers.rasterStore.layers.push(layer);
+              } else if (layer.slug === "rain") {
+                timelineLayers.rain = layer;
+              }
+           }
           });
         }
       });
@@ -211,6 +227,8 @@ angular.module('lizard-nxt')
      * That will change later when we set data.
      */
     var getTimeLineData = function () {
+      // NOTE: remember which layers *were* active? So we can do stuff with
+      // turning off data (eg tickmarks).
       var timelineLayers = getTimelineLayers(DataService.layerGroups),
           context = {eventOrder: 1,
                      nEvents: scope.events.nEvents};
@@ -223,7 +241,7 @@ angular.module('lizard-nxt')
         // appropriately.
         angular.forEach(scope.events.slugs, function (slug) {
           if (timelineLayers.events.slugs.indexOf(slug) === -1) {
-            timeline.drawLines([], scope.events.nEvents, slug);
+            timeline.drawCircles([], scope.events.nEvents, slug);
           }
         });
 
@@ -232,15 +250,22 @@ angular.module('lizard-nxt')
         getEventData();
       } else {
         scope.events.nEvents = 0;
-        timeline.drawLines(undefined, scope.events.nEvents);
+        timeline.drawCircles(undefined, scope.events.nEvents);
       }
 
-      // raster data (for now only rain)
       if (timelineLayers.rain !== undefined) {
         getTemporalRasterData(timelineLayers.rain,
                               timelineLayers.events.length);
       } else {
         timeline.removeBars();
+      }
+
+      if (timelineLayers.rasterStore.layers.length > 0) {
+        angular.forEach(timelineLayers.rasterStore.layers, function (layer) {
+          getTemporalRasterDates(layer);
+        });
+      } else {
+        timeline.drawTickMarks([]);
       }
 
       updateTimelineHeight(scope.events.nEvents);
@@ -258,25 +283,33 @@ angular.module('lizard-nxt')
         nEvents: scope.events.nEvents,
         slugs: scope.events.slugs
       };
+
+      var draw = function (response) {
+
+        if (response && response.data) {
+          // Add it to the timeline
+          var data = EventAggregateService.aggregate(
+            response.data,
+            State.temporal.aggWindow
+          );
+
+          timeline.drawCircles(
+            data,
+            context.eventOrder,
+            response.layerGroupSlug,
+            response.color,
+            State.temporal.aggWindow
+          );
+          context.eventOrder++;
+        }
+      };
       // Get data with type === 'Event'
       DataService.getData('timeline', {
         geom: State.spatial.bounds,
         start: State.temporal.start,
-        end: State.temporal.stop,
+        end: State.temporal.end,
         type: 'Event'
-      }).then(null, null, function (response) {
-
-        if (response && response.data) {
-          // Add it to the timeline
-          timeline.drawLines(
-            response.data,
-            context.eventOrder,
-            response.layerGroupSlug,
-            response.color
-          );
-          context.eventOrder++;
-        }
-      });
+      }).then(null, null, draw);
     };
 
 
@@ -287,9 +320,8 @@ angular.module('lizard-nxt')
      * timeline height and draws bars in timeline.
      *
      * @param {object} rasterLayer - rasterLayer object.
-     * @param {integer} nEvents - number of events.
      */
-    var getTemporalRasterData = function (rasterLayer, nEvents) {
+    var getTemporalRasterData = function (rasterLayer) {
 
       var start = State.temporal.start,
           stop = State.temporal.end,
@@ -298,21 +330,63 @@ angular.module('lizard-nxt')
       // Has it's own deferrer to not conflict with
       // other deferrers with the same layerSlug
       RasterService.getData(
+        'timelineData',
         rasterLayer,
         {
           geom: bounds,
           start: start,
           end: stop,
-          agg: 'none',
+          agg: rasterLayer.aggregationType,
           aggWindow: State.temporal.aggWindow,
           deferrer: {
-            origin: 'timeline_' + rasterLayer,
+            origin: 'timeline_' + rasterLayer.slug,
             deferred: $q.defer()
           }
         }
-      ).then(function (response) {
-        timeline.drawBars(response);
+      )
+      .then(
+        function (response) {
+          if (response && response !== 'null') {
+            timeline.drawBars(response.data);
+          }
+        }
+      );
+    };
+
+    /**
+     * @function
+     * @summary get date array for temporal raster layers.
+     * @description  get date array for temporal raster. If it gets a response
+     * plots a tickmark in the timeline for every date.
+     *
+     * NOTE: refactor this function with getTemporalRasterData to use
+     * dataService.
+     *
+     * @param {object} rasterLayer - rasterLayer object.
+     */
+    var getTemporalRasterDates = function (rasterLayer) {
+
+      var start = State.temporal.start,
+          stop = State.temporal.end,
+          bounds = State.spatial.bounds,
+          dates = [];
+
+      var draw = function () {
+        timeline.drawTickMarks(dates);
+      };
+
+      DataService.getData('timelineDates', {
+        start: State.temporal.start,
+        end: State.temporal.end,
+        geom: State.spatial.bounds.getCenter(),
+        truncate: true,
+        exclude: 'rain'
+      }).then(draw, null, function (response) {
+        if (response && response !== 'null') {
+          dates = dates.concat(response.data);
+        }
       });
+
     };
 
     var timelineZoomHelper = function () {
@@ -337,15 +411,20 @@ angular.module('lizard-nxt')
 
     // END HELPER FUNCTIONS
 
-    element[0].style.height = 0;
-
     scope.timeline.toggleTimelineVisiblity = function () {
       showTimeline = !showTimeline;
-      if (!showTimeline) {
+      if (!showTimeline && State.context !== 'time') {
         element[0].style.height = 0;
       } else {
         updateTimelineHeight(scope.events.nEvents);
       }
+    };
+
+    scope.timeline.toggleTimelineVisiblity();
+
+    scope.timeline.toggleTimeCtx = function () {
+      scope.timeline.toggleTimelineVisiblity();
+      scope.transitionToContext(State.context === 'map' ? 'time' : 'map');
     };
 
     // WATCHES
@@ -375,15 +454,16 @@ angular.module('lizard-nxt')
       timelineZoomHelper();
     });
 
-    scope.$on("$timelineZoomSuccess", function () {
-      timelineZoomHelper();
-    });
-
     /**
      * Update aggWindow element when timeState.at changes.
      */
     scope.$watch(State.toString('temporal.at'), function (n, o) {
+      // update timeline when time-controller changes temporal.at state
       timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
+      // if temporal.playing don't get new data for each `temporal.at`
+      if (!State.temporal.playing) {
+        timelineZoomHelper();
+      }
     });
 
     /**
@@ -398,6 +478,13 @@ angular.module('lizard-nxt')
       );
     });
 
+    scope.$watch(State.toString('context'), function (n, o) {
+      if (n === o) { return; }
+      showTimeline = false; // It toggles
+      scope.timeline.toggleTimelineVisiblity();
+      getTimeLineData(); // It also removes data..
+    });
+
     /**
      * The timeline can be too early on initialization.
      * The leaflet events are not even started loading,
@@ -410,23 +497,29 @@ angular.module('lizard-nxt')
      * This evenListener ensures a retrieval of data
      * after the browser is done doing requests.
      */
-    window.addEventListener('load', function () {
-      getTimeLineData();
-    });
+    window.addEventListener('load', getTimeLineData);
+
+    var resize = function () {
+      scope.$apply(function () {
+        timeline.dimensions.width = UtilService.getCurrentWidth();
+        timeline.resize(
+          timeline.dimensions,
+          State.temporal.at,
+          State.temporal.aggWindow,
+          scope.events.nEvents // TODO: get nEvents from somewhere
+        );
+      });
+    };
 
     /**
      * Update timeline when browser window is resized.
      */
-    window.onresize = function () {
+    window.addEventListener('resize', resize);
 
-      timeline.dimensions.width = UtilService.getCurrentWidth();
-      timeline.resize(
-        timeline.dimensions,
-        State.temporal.at,
-        State.temporal.aggWindow,
-        scope.events.nEvents // TODO: get nEvents from somewhere
-      );
-    };
+    scope.$on('$destroy', function () {
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('load', getTimeLineData);
+    });
 
     // END WATCHES
 

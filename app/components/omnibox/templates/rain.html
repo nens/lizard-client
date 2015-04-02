@@ -4,6 +4,7 @@
     <div class="card-content"
       ng-init="lg = box.content.rain">
 
+      <% aggWinToYLabel %>
      <full-details></full-details>
      <span class="card-title-text" ng-class="{hidden: fullDetails}" >Regen</span>
      <div ng-class="{ hidden: !fullDetails }">
@@ -25,7 +26,7 @@
          <a
            class="btn btn-default btn-xs"
            title="Data van deze infocard exporteren"
-           ng-csv="formatCSVColumns(lg.layers['rain'].data)"
+           ng-csv="$parent.formatCSVColumns(lg.layers['rain'].data)"
            filename="neerslag.csv"
            csv-header="['Datestamp', 'Timestamp', 'Rain (mm)', 'Latitude', 'Longitude']" >
            <i class="fa fa-share-square-o"></i>

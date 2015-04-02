@@ -9,16 +9,16 @@
 
     "globals": {
         "$": false,
-        "jasmine": false,
-        "it": false,
-        "describe": false,
-        "expect": false,
-        "beforeEach": false,
-        "afterEach": false,
+        "jasmine": true,
+        "it": true,
+        "describe": true,
+        "expect": true,
+        "beforeEach": true,
+        "afterEach": true,
         "spyOn": false,
         "runs": false,
-        "module": false,
-        "inject": false
+        "module": true,
+        "inject": true
     },
 
     "node"          : true,
@@ -37,6 +37,7 @@
         "angular", // Angular JS framework
         "L",       // Leaflet map client
         "app",     // Angular JS custom app
+        "_",       // Underscore utility toolbelt
         "d3"       // d3 JS vector library
     ],
 

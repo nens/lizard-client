@@ -55,7 +55,7 @@
 .search-button-collection {
     height: 32px;
     left: 400px;
-    width: 100px;
+    width: 64px;
     position: absolute;
     text-align: center;
     top: 0;
@@ -632,6 +632,7 @@ table tr td:last-child {
 }
 
 select.timeseries {
+  width: 337px;
   position: relative;
   left: 5px;
 }

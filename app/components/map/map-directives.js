@@ -22,7 +22,24 @@ angular.module('map')
 
     var link = function (scope, element, attrs) {
 
-      var mapSetsBounds = false;
+      var mapSetsBounds = false,
+          mapSetsView = false;
+
+      /**
+       * Init is called when directive is compiled and listeners are attached
+       * Alligns state with map.
+       */
+      var init = function () {
+        if (Object.keys(State.spatial.view).length !== 0) {
+          mapSetsView = true;
+          MapService.setView(State.spatial.view);
+        }
+        else if (Object.keys(State.spatial.bounds).length !== 0) {
+          mapSetsBounds = true;
+          MapService.fitBounds(State.spatial.bounds);
+        }
+      };
+
        /**
         * @function
         * @memberOf app.map
@@ -57,13 +74,19 @@ angular.module('map')
        */
       var _moveEnded = function (e, map) {
         State.spatial.mapMoving = false;
-        mapSetsBounds = true;
-        State.spatial.bounds = map.getBounds();
-        State.spatial.zoom = map.getZoom();
+        // Moveended is fired on teardown of map and map.getBounds() returns a
+        // bounds object of size zero. We want to keep the bounds.
+        if (State.context === 'map') {
+          mapSetsBounds = true;
+          mapSetsView = true;
+          State.spatial.bounds = map.getBounds();
+          State.spatial.view = MapService.getView();
+        }
       };
 
       MapService.initializeMap(element[0], {
           attributionControl: false,
+          minZoom: 2,
           zoomControl: false,
           addZoomTitles: true,
         }, {
@@ -74,11 +97,24 @@ angular.module('map')
         });
 
       /**
+       * Watch state spatial view and update the whole shebang.
+       */
+      scope.$watch(State.toString('spatial.view'), function (n, o) {
+        if (n !== o && !mapSetsBounds) {
+          MapService.setView(State.spatial.view);
+          State.spatial.bounds = MapService.getBounds();
+        } else {
+          mapSetsView = false;
+        }
+      });
+
+      /**
        * Watch bounds of state and update map bounds when state is changed.
        */
       scope.$watch(State.toString('spatial.bounds'), function (n, o) {
-        if (!mapSetsBounds) {
+        if (n !== o && !mapSetsBounds) {
           MapService.fitBounds(State.spatial.bounds);
+          State.spatial.view = MapService.getView();
         } else {
           mapSetsBounds = false;
         }
@@ -118,20 +154,22 @@ angular.module('map')
         if (n === o) { return true; }
         var selector;
         switch (n) {
-          case "point":
-            selector = "";
-            break;
-          case "line":
-            selector = "#map * {cursor: crosshair;}";
-            break;
-          case "area":
-            selector = "#map * {cursor: -webkit-grab; cursor: -moz-grab; cursor: grab; cursor: hand;}";
-            break;
-          default:
-            return;
+        case "point":
+          selector = "";
+          break;
+        case "line":
+          selector = "#map * {cursor: crosshair;}";
+          break;
+        case "area":
+          selector = "#map * {cursor: -webkit-grab; cursor: -moz-grab; cursor: grab; cursor: hand;}";
+          break;
+        default:
+          return;
         }
         UtilService.addNewStyle(selector);
       });
+
+      init();
 
     };
 

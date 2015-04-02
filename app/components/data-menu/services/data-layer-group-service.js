@@ -5,10 +5,11 @@
  * @memberof app
  * @name LayerGroup
  * @summary LayerGroup abstracts the notion of layers out of the app.
- * @description Only layergroups are approachable, from the outside world LayerGroup
- *              defines a group of layers which are loaded at initialization of the
- *              page. They can be toggled on/off and queried for data. Layergroup
- *              draws all its layers and returns data for all layers.
+ * @description Only layergroups are approachable, from the outside world
+ *              LayerGroup defines a group of layers which are loaded at
+ *              initialization of the page. They can be toggled on/off and
+ *              queried for data. Layergroup draws all its layers and returns
+ *              data for all layers.
  */
 angular.module('data-menu')
   .factory('DataLayerGroup', [
@@ -67,9 +68,22 @@ angular.module('data-menu')
         value: false,
         writable: true,
       });
+      Object.defineProperty(this, 'spatialBounds', {
+        value: {'east': 0, 'south': 0, 'north': 0, 'west': 0},
+        writable: true,
+      });
+      Object.defineProperty(this, 'temporalBounds', {
+        value: {'start': 0, 'end': 0},
+        writable: true,
+      });
+
 
       this.instantiateLayers(layerGroup.layers, layerGroup.temporal_resolution);
 
+      // Let the map-service know there is a new layergroup
+      if (this.callbackFns) {
+        this.callbackFns.onCreateLayerGroup(this);
+      }
     }
 
     LayerGroup.prototype = {
@@ -82,15 +96,27 @@ angular.module('data-menu')
         // map by the map-servie that go in mapLayers, layers that
         // are just used for data purposes are put in dataLayers
         // and layers that do both.
+
         angular.forEach(layers, function (layer) {
+
           if (layer.format === 'UTFGrid'
             || layer.format === 'Vector') {
             var nxtLayer = new NxtDataLayer(layer, tempRes);
             this._dataLayers.push(nxtLayer);
             this.mapLayers.push(nxtLayer);
+            // NOTE: crappy solution, we should set meta to None or
+            // empty to do better checking.
+            if (typeof layer.meta !== "string") {
+              this.temporalBounds = layer.meta.temporal_bounds;
+              this.spatialBounds = layer.meta.spatial_bounds;
+            }
           }
           else if (layer.format === 'Store') {
             this._dataLayers.push(new NxtDataLayer(layer, tempRes));
+            if (layer.meta) {
+              this.temporalBounds = layer.meta.temporal_bounds;
+              this.spatialBounds = layer.meta.spatial_bounds;
+            }
           }
           else if (layer.format === 'TMS'
             || layer.format === 'WMS') {
@@ -113,8 +139,8 @@ angular.module('data-menu')
       },
 
       /**
-       * Returns true if the current layerGroup (i.e. "this") is active and false
-       * otherwise.
+       * Returns true if the current layerGroup (i.e. "this") is active and
+       * false otherwise.
        */
       isActive: function () {
         return this._active;
@@ -129,9 +155,14 @@ angular.module('data-menu')
        * with format 'Vector'.
        */
       isEventLayerGroup: function () {
-        return this.mapLayers.every(function (mapLayer) {
-          return mapLayer.format === 'Vector';
-        });
+        if (this.mapLayers.length > 0) {
+          return this.mapLayers.every(function (mapLayer) {
+            return mapLayer.format === 'Vector';
+          });
+        } else {
+          return false;
+        }
+
       },
 
       getColorForEventLayerGroup: function () {
@@ -142,15 +173,16 @@ angular.module('data-menu')
       * @function
       * @memberOf app.LayerGroup.prototype
       * @description Returns a promise that notifies with data for every layer
-      *              of the layergroup that is appplicable (i.e: rain and several
-      *              vector layers). It resolves when all data is in.
-      * @param  {object} geom latLng object with lat and lng properties or a list of
-      *                       such objects.
-      * @return  {promise} notifies with data per layer and resolves with value true
-      *                    when layergroup was active, or false when layergroup was
-      *                    inactive.
+      *              of the layergroup that is appplicable (i.e: rain and
+      *              several vector layers). It resolves when all data is in.
+      * @param  {string} callee string of the callee to keep requests seperate.
+      * @param  {object} options with geom, start, end and other properties that
+      *                          are send to the data-services.
+      * @return  {promise} notifies with data per layer and resolves with value
+      *                    true when layergroup was active, or false when
+      *                    layergroup was inactive.
       */
-      getData: function (options) {
+      getData: function (callee, options) {
         var lgSlug = this.slug,
             lgActive = this._active,
             deferred = $q.defer(),
@@ -162,7 +194,7 @@ angular.module('data-menu')
         }
         else {
           angular.forEach(this._dataLayers, function (layer) {
-            promises.push(layer.getData(lgSlug, options, deferred));
+            promises.push(layer.getData(callee, lgSlug, options, deferred));
           });
         }
 

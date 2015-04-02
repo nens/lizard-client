@@ -55,7 +55,8 @@ angular.module('omnibox')
             .data = response.data;
         } else if (response.layerSlug === 'rain') {
           // We dont wanna show intersect for rain (d.d. 20-01-2015)
-          if ($scope.box.content[response.layerGroupSlug].layers.rain) {
+          if ($scope.box.content[response.layerGroupSlug]
+            && $scope.box.content[response.layerGroupSlug].layers.rain) {
             delete $scope.box.content[response.layerGroupSlug].layers.rain;
           }
         } else if (response.data && response.data !== 'null'
@@ -208,7 +209,6 @@ angular.module('omnibox')
      * TODO
      */
     var circle;
-    
     // Callback for mousemoved over graphs.
     this.mouseLocFn = function (position) {
       if (State.spatial.points[0] === undefined ||
@@ -260,7 +260,7 @@ angular.module('omnibox')
      * Clean up all drawings on box change and reject data.
      */
     $scope.$on('$destroy', function () {
-      DataService.reject();
+      DataService.reject('omnibox');
       $scope.box.content = {};
       State.spatial.points = [];
       ClickFeedbackService.emptyClickLayer(MapService);

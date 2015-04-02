@@ -33,7 +33,8 @@ window.data_layers = {
       'options': {},
       'bounds': {},
       'color': '',
-      'event_count': 0
+      'event_count': 0,
+      "meta": "no metadata for this layer format."
     }
     ]
   },
@@ -65,7 +66,8 @@ window.data_layers = {
       'options': {},
       'bounds': {},
       'color': '',
-      'event_count': 0
+      'event_count': 0,
+      "meta": "no metadata for this layer format."
     }
     ]
   },
@@ -100,7 +102,8 @@ window.data_layers = {
       },
       'bounds': {},
       'color': '',
-      'event_count': 0
+      'event_count': 0,
+      "meta": "no metadata for this layer format."
     },
     {
       'slug': 'dem/nl',
@@ -120,7 +123,8 @@ window.data_layers = {
       'options': {},
       'bounds': {},
       'color': '',
-      'event_count': 0
+      'event_count': 0,
+      "meta": "no metadata for this layer format."
     }
     ]
   },
@@ -152,7 +156,8 @@ window.data_layers = {
       'options': {},
       'bounds': {},
       'color': '',
-      'event_count': 0
+      'event_count': 0,
+      "meta": "no metadata for this layer format."
     },
     {
       'slug': 'waterchain_grid',
@@ -172,7 +177,8 @@ window.data_layers = {
       'options': {},
       'bounds': {},
       'color': '',
-      'event_count': 0
+      'event_count': 0,
+      "meta": "no metadata for this layer format."
     }
     ]
   },
@@ -208,7 +214,8 @@ window.data_layers = {
       },
       'bounds': {},
       'color': '',
-      'event_count': 0
+      'event_count': 0,
+      "meta": "no metadata for this layer format."
     }
     ]
   },
@@ -240,8 +247,28 @@ window.data_layers = {
       'options': {},
       'bounds': {},
       'color': '#c0392b',
-      'event_count': 6
+      'event_count': 6,
+      "meta": {
+        "temporal_resolution": 0,
+        "temporal_bounds": {
+            "start": 1325458800000.0,
+            "end": 1409781600000.0
+        },
+        "spatial_bounds": {
+            "west": 4.901057753,
+            "east": 5.008115838,
+            "north": 52.58351724,
+            "south": 52.47932247
+        }
+      }
     }
     ]
   }
+};
+
+window.data_bounds = {
+  "west": 3.3079474029097913,
+  "east": 7.227498515588849,
+  "north": 53.57642326952028,
+  "south": 50.75030108770839
 };

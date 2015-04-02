@@ -26,9 +26,13 @@ angular.module('map')
        */
       initializeMap: function (element, mapOptions, eventCallbackFns) {
         service._map = createLeafletMap(element, mapOptions);
-        initializeLayers(State.temporal);
+        this.initializeLayers(State.temporal);
         this._initializeNxtMapEvents(eventCallbackFns);
+        // Map-services is dependant on the dataservice. This is to prevent
+        // a bunch of complicated and slow watches and still keep the data-
+        // service as the data authority.
         DataService.eventCallbacks = {
+          onCreateLayerGroup: this.initializeLayer,
           onToggleLayerGroup: this._toggleLayers,
           onOpacityChange: this._setOpacity,
           onDblClick: this._rescaleContinuousData
@@ -52,7 +56,10 @@ angular.module('map')
         angular.forEach(DataService.layerGroups, function (layerGroup) {
           if (layerGroup.isActive()) {
             angular.forEach(layerGroup.mapLayers, function (layer) {
-              promises.push(layer.syncTime(timeState, service._map));
+              var p = layer.syncTime(timeState, service._map);
+              if (p) {
+                promises.push(p);
+              }
             });
           } else {
             angular.forEach(layerGroup.mapLayers, function (layer) {
@@ -66,7 +73,9 @@ angular.module('map')
           defer.resolve();
           return defer.promise;
         });
-        State.layerGroups.timeIsSyncing = true;
+        if (promises.length > 0) {
+          State.layerGroups.timeIsSyncing = true;
+        }
         return defer.promise;
       },
 
@@ -108,6 +117,18 @@ angular.module('map')
               L.latLng(bounds.north, bounds.west)));
           }
         }
+      },
+
+      getView: function () {
+        return {
+          lat: service._map.getCenter().lat,
+          lng: service._map.getCenter().lng,
+          zoom: service._map.getZoom()
+        };
+      },
+
+      getBounds: function () {
+        return service._map.getBounds();
       },
 
       /**
@@ -226,6 +247,29 @@ angular.module('map')
 
       zoomOut: function () {
         service._map.setZoom(service._map.getZoom() - 1);
+      },
+
+      /**
+       * Initializes map layers for every layergroup.mapLayers.
+       * @param  {object} timeState used to set an initial time on layers
+       */
+      initializeLayers: function (timeState) {
+        angular.forEach(DataService.layerGroups, function (lg, lgSlug) {
+          this.initializeLayer(lg, timeState);
+        }, this);
+      },
+
+      initializeLayer: function (lg) {
+        sortLayers(lg.mapLayers);
+        angular.forEach(lg.mapLayers, function (layer, lSlug) {
+          if (layer.tiled) {
+            layer._leafletLayer = initializers[layer.format](layer);
+            angular.extend(layer, NxtMapLayer);
+          } else if (layer.format === 'WMS') {
+            layer = NxtNonTiledWMSLayer.create(layer);
+          }
+          layer.timeState = State.temporal;
+        });
       }
 
     };
@@ -399,38 +443,24 @@ angular.module('map')
     };
 
     /**
-     * Initializes map layers for every layergroup.mapLayers.
-     * @param  {object} timeState used to set an initial time on layers
-     */
-    var initializeLayers = function (timeState) {
-      angular.forEach(DataService.layerGroups, function (lg, lgSlug) {
-        sortLayers(lg.mapLayers);
-        angular.forEach(lg.mapLayers, function (layer, lSlug) {
-          if (layer.tiled) {
-            layer._leafletLayer = initializers[layer.format](layer);
-            angular.extend(layer, NxtMapLayer);
-          } else if (layer.format === 'WMS') {
-            layer = NxtNonTiledWMSLayer.create(layer);
-          }
-          layer.timeState = timeState;
-        });
-      });
-    };
-
-    /**
      * Initializers for every layer format
      */
     var initializers = {
 
       TMS: function (nonLeafLayer) {
 
-        var layerUrl = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}.{ext}';
+        var layerUrl = nonLeafLayer.url + '/{slug}/{z}/{x}/{y}{retina}.{ext}';
+
+        // Mapbox layers support retina tiles, our own do not yet.
+        var retinaSupport = nonLeafLayer.url === 'http://{s}.tiles.mapbox.com/v3';
+
         var layer = LeafletService.tileLayer(
           layerUrl, {
+            retina: retinaSupport && L.Browser.retina ? '@2x' : '',
             slug: nonLeafLayer.slug,
             minZoom: nonLeafLayer.min_zoom || 0,
             maxZoom: 19,
-            detectRetina: true,
+            detectRetina: retinaSupport,
             zIndex: nonLeafLayer.zIndex,
             ext: 'png'
           });

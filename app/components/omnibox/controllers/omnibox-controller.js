@@ -55,10 +55,17 @@ angular.module('omnibox')
       var putDataOnScope = function (response) {
         var lGContent = $scope.box.content[response.layerGroupSlug] || {layers: {}};
         lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
-        lGContent.layerGroupName = DataService.layerGroups[response.layerGroupSlug].name;
-        lGContent.order = DataService.layerGroups[response.layerGroupSlug].order;
-        lGContent.temporal = DataService.layerGroups[response.layerGroupSlug].temporal;
-        if (UtilService.isSufficientlyRichData(response.data)) {
+
+        var lg = DataService.layerGroups[response.layerGroupSlug];
+        if (lg) {
+          lGContent.layerGroupName = lg.name;
+          lGContent.order = lg.order;
+          lGContent.temporal = lg.temporal;
+        }
+
+        if (UtilService.isSufficientlyRichData(
+          (response.data && response.data.data) || response.data
+          )) {
 
           var sharedKeys = ['aggType', 'format', 'data', 'summary', 'scale',
             'quantity', 'unit', 'color', 'type'];

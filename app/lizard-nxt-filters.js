@@ -10,11 +10,13 @@
  *
  */
 
+angular.module('lizard-nxt-filters', []);
+
 /**
  * Filter to order objects instead of angulars orderBy
  * that only orders array
  */
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('orderObjectBy', function () {
   return function (items, field, reverse) {
     var filtered = [];
@@ -38,7 +40,7 @@ angular.module('lizard-nxt')
  * @return {string} when input is a number: returns a number
  * rounded to specified decimals else returns '-'
  */
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('niceNumberOrEllipsis', function () {
   return function (input, decimals) {
     var out;
@@ -57,7 +59,7 @@ angular.module('lizard-nxt')
 
 // lookups: manhole
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupManholeShape', function () {
   return function (input) {
     var out;
@@ -78,7 +80,7 @@ angular.module('lizard-nxt')
   };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupManholeMaterial', function () {
   return function (input) {
     var out;
@@ -87,10 +89,101 @@ angular.module('lizard-nxt')
   };
 });
 
+// lookups: culvert
+
+angular.module('lizard-nxt-filters')
+  .filter('lookupCulvertShape', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case '0':
+      out = 'rond';
+      break;
+    case '1':
+      out = 'eivorm';
+      break;
+    case '2':
+      out = 'rechthoek';
+      break;
+    case '3':
+      out = 'muilvorm';
+      break;
+    case '4':
+      out = 'vierkant';
+      break;
+    case '5':
+      out = 'heul';
+      break;
+    case '6':
+      out = 'trapezium';
+      break;
+    case '98':
+      out = 'Vorm afwijkend';
+      break;
+    case '99':
+      out = 'Vorm onbekend';
+      break;
+    default:
+      out = 'Vorm afwijkend';
+    }
+    return out;
+  };
+});
+
+angular.module('lizard-nxt-filters')
+  .filter('lookupCulvertMaterial', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case '0':
+      out = 'beton';
+      break;
+    case '1':
+      out = 'PVC';
+      break;
+    case '2':
+      out = 'gres';
+      break;
+    default:
+      out = 'Materiaal afwijkend';
+    }
+    return out;
+  };
+});
+
+// lookups: weir
+
+angular.module('lizard-nxt-filters')
+  .filter('lookupWeirControl', function () {
+  return function (input) {
+    var out;
+    switch (input) {
+    case '1':
+      out = 'Vast';
+      break;
+    case '2':
+      out = 'Regelbaar, niet auto';
+      break;
+    case '3':
+      out = 'Regelbaar, auto';
+      break;
+    case '4':
+      out = 'Handmatig';
+      break;
+    case '98':
+      out = 'Overig';
+      break;
+    default:
+      out = 'Niet bekend';
+    }
+    return out;
+  };
+});
+
 
 // lookups: levee
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupLeveeType', function () {
   return function (input) {
     var out;
@@ -111,7 +204,7 @@ angular.module('lizard-nxt')
   };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupLeveeReferencePointType', function () {
   return function (input) {
     var out;
@@ -130,7 +223,7 @@ angular.module('lizard-nxt')
 });
 
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('allowedFlowDirection', function () {
   return function (input) {
     var out;
@@ -144,7 +237,7 @@ angular.module('lizard-nxt')
 });
 
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupPumpStationType', function () {
   return function (input) {
       switch (input) {
@@ -168,7 +261,7 @@ angular.module('lizard-nxt')
     };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupPipeType', function () {
   return function (input) {
     var out;
@@ -204,7 +297,7 @@ angular.module('lizard-nxt')
   };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupPipeShape', function () {
   return function (input) {
     var out;
@@ -228,7 +321,7 @@ angular.module('lizard-nxt')
   };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('lookupPressurePipeType', function () {
   return function (input) {
     var out;
@@ -249,7 +342,7 @@ angular.module('lizard-nxt')
   };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('pipeMaterialOrEllipsis', function () {
   return function (input) {
     var out;
@@ -270,7 +363,7 @@ angular.module('lizard-nxt')
   };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('aggWinToYLabel', function () {
   return function (input) {
     var out;
@@ -301,7 +394,7 @@ angular.module('lizard-nxt')
  * @param {integer} maxLength - Length at which string gets truncated.
  * @return {string} The truncated layer name
  */
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('truncate', function () {
 
   return function (input, maxLength) {
@@ -324,7 +417,7 @@ angular.module('lizard-nxt')
  * @param {Object[]} A list of timeseries
  * @return  {Object[]} A list of timeseries with sufficient data
  */
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('rmSingleDatumTimeseries', function () {
 
   return function (input) {
@@ -337,7 +430,7 @@ angular.module('lizard-nxt')
 });
 
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('objectTitle', function () {
 
   return function (input) {
@@ -368,7 +461,7 @@ angular.module('lizard-nxt')
 
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('discreteRasterType', function () {
   return function (input) {
     return input.match(/^.*-.*-.*$/g)
@@ -377,7 +470,7 @@ angular.module('lizard-nxt')
   };
 });
 
-angular.module('lizard-nxt')
+angular.module('lizard-nxt-filters')
   .filter('discreteRasterSource', function () {
   return function (input) {
     return input.match(/^.*-.*-.*$/g)

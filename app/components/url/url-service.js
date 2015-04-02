@@ -227,8 +227,8 @@ angular.module('lizard-nxt')
 
         var msEndTime = Date.parse(times[1]);
         if (isNaN(msEndTime)) { return timeState; }
-        if (msEndTime === timeState.start) {
-          msEndTime += 43200000; // half a day
+        if (msEndTime <= timeState.start) {
+          msEndTime = timeState.start + 43200000; // half a day
         }
         timeState.end = msEndTime;
         timeState.aggWindow = UtilService.getAggWindow(
@@ -287,34 +287,6 @@ angular.module('lizard-nxt')
           });
         }
         return mapState;
-      },
-      setUrlHashWhenEmpty: function (state, type, mapState, timeState) {
-
-        if (!LocationGetterSetter.getUrlValue(state.context.part, state.context.index)) {
-          LocationGetterSetter.setUrlValue(
-            state.context.part,
-            state.context.index,
-            state.context.value);
-        }
-
-        if (!LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index)) {
-          LocationGetterSetter.setUrlValue(
-            state.boxType.part,
-            state.boxType.index,
-            type);
-        }
-        if (!LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index)) {
-          this.setlayerGroupsUrl(mapState.layerGroups);
-        }
-        if (!LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index)) {
-          this.setCoordinatesUrl(state,
-            mapState.center.lat,
-            mapState.center.lng,
-            mapState.zoom);
-        }
-        if (!LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index)) {
-          this.setTimeStateUrl(state, timeState.start, timeState.end);
-        }
       },
       update: function (state) {
         var u = true;

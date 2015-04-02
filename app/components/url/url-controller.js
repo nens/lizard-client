@@ -14,6 +14,7 @@
 angular.module('lizard-nxt')
 .controller('UrlController', [
   '$scope',
+  '$timeout',
   'LocationGetterSetter',
   'UrlState',
   'dataBounds',
@@ -24,6 +25,7 @@ angular.module('lizard-nxt')
   'LeafletService',
   function (
     $scope,
+    $timeout,
     LocationGetterSetter,
     UrlState,
     dataBounds,
@@ -93,29 +95,25 @@ angular.module('lizard-nxt')
     * @param {string} String representation of mapView on url
     */
     var enableMapView = function (mapView) {
-      var map = LeafletService.map('url-temp-map');
-      var fn = function () {
-        map.fitBounds(LeafletService.latLngBounds(
-          L.latLng(dataBounds.south, dataBounds.east),
-          L.latLng(dataBounds.north, dataBounds.west)
-        ));
-      };
+      var defaultBounds = LeafletService.latLngBounds(
+        L.latLng(dataBounds.south, dataBounds.east),
+        L.latLng(dataBounds.north, dataBounds.west)
+      );
 
       if (mapView) {
         var view = UrlState.parseMapView(mapView);
         if (view) {
-          map.setView(view.latLng, view.zoom, {});
+          State.spatial.view = {
+            lat: view.latLng[0],
+            lng: view.latLng[1],
+            zoom: view.zoom
+          };
         } else {
-          fn();
+          State.spatial.bounds = defaultBounds;
         }
       } else {
-        fn();
+        State.spatial.bounds = defaultBounds;
       }
-      State.spatial.bounds =  map.getBounds();
-      State.spatial.zoom =  map.getZoom();
-      map.remove();
-      var tempMap = document.getElementById('url-temp-map');
-      tempMap.parentNode.removeChild(tempMap);
     };
 
     /**
@@ -132,11 +130,11 @@ angular.module('lizard-nxt')
      * Set location when map moved.
      */
     $scope.$watch(State.toString('spatial.bounds'), function (n, o) {
-      if (n === o) { return true; }
+      if (n === o || !State.spatial.view.lat) { return true; }
       UrlState.setCoordinatesUrl(state,
-        State.spatial.bounds.getCenter().lat,
-        State.spatial.bounds.getCenter().lng,
-        State.spatial.zoom
+        State.spatial.view.lat,
+        State.spatial.view.lng,
+        State.spatial.view.zoom
       );
     });
 
@@ -156,19 +154,10 @@ angular.module('lizard-nxt')
 
     /**
      * Set timeState, when timeState changed in response to panning/zooming the
-     * timeline (in response to user dragging with the mouse in the timeline).
+     * timeline and in response to the user clicking the 3 timeline buttons.
      */
     $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
-      setTimeStateUrlHelper();
-    });
-
-    /**
-     * Set timeState, when timeState changed in response to panning/zooming the
-     * timeline (in response to user clicking the 3 timeline buttons: the "+",
-     * "clock", and "-" buttons).
-     */
-    $scope.$on("$timelineZoomSuccess", function () {
       setTimeStateUrlHelper();
     });
 
@@ -246,7 +235,14 @@ angular.module('lizard-nxt')
         context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
 
       if (context) {
-        State.context = context;
+        // Set context after digest loop because we need to enter on 'map'
+        $timeout(
+          function () {
+            $scope.transitionToContext(context);
+          },
+          0, // no delay, fire when digest ends
+          true // trigger new digest loop
+        );
       } else {
         LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
       }

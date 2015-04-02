@@ -13,17 +13,26 @@
 
 angular.module('omnibox')
 .controller('PointCtrl', [
+
   '$scope',
   '$q',
   'LeafletService',
-  'TimeseriesService',
   'ClickFeedbackService',
   'UtilService',
   'MapService',
   'DataService',
   'State',
 
-  function ($scope, $q, LeafletService, TimeseriesService, ClickFeedbackService, UtilService, MapService, DataService, State) {
+  function (
+    $scope,
+    $q,
+    LeafletService,
+    ClickFeedbackService,
+    UtilService,
+    MapService,
+    DataService,
+    State
+  ) {
 
     var GRAPH_WIDTH = 600;
     $scope.box.content = {};
@@ -46,21 +55,21 @@ angular.module('omnibox')
 
       // Draw feedback when all promises resolved
       promise.then(drawFeedback, null, function (response) {
-        if (response && response.data && response.data.id && response.data.entity_name) {
-          getTimeSeriesForObject(
-            response.data.entity_name + '$' + response.data.id
-          );
-        }
-        if (response.layerSlug === 'rain' && response.data !== null) {
-          // this logs incessant errors.
-          if ($scope.box.content[response.layerGroupSlug] === undefined) { return; }
-          if (!$scope.box.content[response.layerGroupSlug].layers.hasOwnProperty(response.layerSlug)) { return; }
+        if (response && response.data) {
+          // If we deal with raster data....
+          if (response.layerSlug === 'rain' &&
+              response.data && response.data.data !== null) {
+            if ($scope.box.content[
+                  response.layerGroupSlug] === undefined) { return; }
+            if (!$scope.box.content[response.layerGroupSlug].layers.hasOwnProperty(response.layerSlug)) { return; }
 
-          // This could probably be different.
-          $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed =
-            !$scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed;
-          $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
+            // This could probably be different..
+            $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed =
+              !$scope.box.content[response.layerGroupSlug].layers[response.layerSlug].changed;
+            $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
+          }
         }
+
         $scope.box.minimizeCards();
       });
     };
@@ -147,42 +156,9 @@ angular.module('omnibox')
       }
     };
 
-    /**
-     * @function
-     * @memberOf app.pointCtrl
-     * @description gets timeseries from service
-     */
-    var getTimeSeriesForObject = function (objectId) {
-
-      TimeseriesService.getTimeseries(objectId, State.temporal)
-      .then(function (result) {
-
-        $scope.box.content.timeseries = $scope.box.content.timeseries || {};
-
-        if (result.length > 0) {
-          // We retrieved data for one-or-more timeseries, but do these actually
-          // contain measurements, or just metadata? We filter out the timeseries
-          // with too little measurements...
-          var filteredResult = [];
-          angular.forEach(result, function (value) {
-            if (value.events.length > 1) {
-              filteredResult.push(value);
-            }
-          });
-          if (filteredResult.length > 0) {
-            // IF we retrieve at least one timeseries with actual measurements,
-            // we put the retrieved data on the $scope:
-            $scope.box.content.timeseries.data = filteredResult;
-            $scope.box.content.timeseries.selectedTimeseries = filteredResult[0];
-          } else {
-            // ELSE, we delete the container object for timeseries:
-            delete $scope.box.content.timeseries;
-          }
-
-        } else {
-          delete $scope.box.content.timeseries;
-        }
-      });
+    // CSV formatter
+    $scope.formatCSVColumns = function (data) {
+      return UtilService.formatCSVColumns(data, State.spatial.here);
     };
 
     // Update when user clicked again
@@ -213,7 +189,7 @@ angular.module('omnibox')
 
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
-      DataService.reject();
+      DataService.reject('omnibox');
       $scope.box.content = {};
       ClickFeedbackService.emptyClickLayer(MapService);
     });

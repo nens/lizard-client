@@ -52,7 +52,7 @@ describe('Testing VectorService', function () {
 
   it('should set and get data', function () {
     VectorService.setData(nonLeaflayer.slug, geoJson, 4);
-    VectorService.getData(nonLeaflayer, {})
+    VectorService.getData('spec', nonLeaflayer, {})
       .then(function (gotthis) {
         expect(gotthis[0].id).toBe(geoJson[0].id);
       });
@@ -61,7 +61,7 @@ describe('Testing VectorService', function () {
 
   it('should get all data that is happening on AND after the start date', function () {
     VectorService.setData('events', geoJson, 4);
-    VectorService.getData(nonLeaflayer, {start: 1358470000000})
+    VectorService.getData('spec', nonLeaflayer, {start: 1358470000000})
       .then(function (gotthis) {
         expect(gotthis.length).toBe(2);
       });
@@ -71,7 +71,7 @@ describe('Testing VectorService', function () {
   it('should get data of latLng', function () {
     VectorService.setData('events', geoJson);
     var latLng = new LeafletService.LatLng(52.36544191276044,5.209040423727382);
-    VectorService.getData(nonLeaflayer, {geom: latLng})
+    VectorService.getData('spec', nonLeaflayer, {geom: latLng})
       .then(function (gotthis) {
         expect(gotthis[0].id).toBe(2844);
       });
@@ -81,7 +81,7 @@ describe('Testing VectorService', function () {
   it('should get data within spatial and temporal extent', function () {
     VectorService.setData('events', geoJson);
     var latLng = new LeafletService.LatLng(52.36544191276044,5.209040423727382);
-    VectorService.getData(nonLeaflayer, {geom: latLng, start: 0})
+    VectorService.getData('spec', nonLeaflayer, {geom: latLng, start: 0})
       .then(function (gotthis) {
         expect(gotthis.length).toBe(0);
       });

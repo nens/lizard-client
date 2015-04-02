@@ -7,8 +7,8 @@ angular.module('lizard-nxt')
     var getTimeseries = function (id, timeState) {
       return CabinetService.timeseries.get({
         object: id,
-        start: timeState.start,
-        end: timeState.end
+        start: parseInt(timeState.start, 10),
+        end: parseInt(timeState.end, 10)
       });
     };
 

@@ -48,4 +48,18 @@ describe('Testing NxtD3', function () {
     expect(objects.axis).toBeDefined();
   });
 
+  it('should set new dimensions when resized', function () {
+    newWidth = 40;
+    nxtD3.resize({width: newWidth});
+    expect(nxtD3.dimensions.width).toEqual(newWidth);
+  });
+
+  it('should not set undefined dimension attributes to undefined when resized',
+    function () {
+      nxtD3.resize({width: 40});
+      expect(nxtD3.dimensions.height).toBeDefined();
+    }
+  );
+
 });
+

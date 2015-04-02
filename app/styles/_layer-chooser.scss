@@ -12,10 +12,8 @@
 
 .breakout-menu {
     height: $height11;
-    z-index: -3;
     background: $turquoise;
 }
-
 
 label.layer-chooser {
     border: solid 2px rgba(0,0,0,0);
@@ -29,19 +27,8 @@ label.layer-chooser {
     }
 }
 
-label.layer-chooser-wytze {
-    border: solid 2px rgba(0,0,0,0);
-    height: $height15;
-    margin-bottom: 10px;
-    position: relative;
-    transition: .3s ease;
-    width: $width19;
-    &:hover {
-        border: 2px solid $asbestos;
-    }
-}
-
 label.layer-chooser > span.layer-text {
+    background: rgb(239, 239, 239);
     background: rgba(239, 239, 239, 0.9);
     color: $asbestos;
     height: 24px;
@@ -49,18 +36,24 @@ label.layer-chooser > span.layer-text {
     position: absolute;
     transition: .3s ease;
     width: 60%;
-    z-index: 1;
+    cursor: pointer;
 }
 
-label.layer-chooser-wytze > span.layer-text-wytze {
-    background: rgba(239, 239, 239, 0.9);
+label.layer-chooser > span.layer-icon {
     color: $asbestos;
     height: 24px;
     padding: 4px 5px;
     position: absolute;
+    left: $width19 - 14;
     transition: .3s ease;
-    width: 100%;
-    z-index: 1;
+    width: 60%;
+    cursor: pointer;
+    background: rgb(255, 255, 255);
+    background: rgba(255, 255, 255, 0.6);
+}
+
+label.layer-chooser > span.layer-icon:hover {
+    color: $pomegranate;
 }
 
 label.layer-chooser.active {
@@ -77,21 +70,6 @@ label.layer-chooser.active > span.layer-text {
     color: $midnightblue;
 }
 
-label.layer-chooser-wytze.active {
-    border: solid 2px $midnightblue;
-    &:hover > span.layer-text-wytze {
-        color: $midnightblue;
-    }
-    &:hover {
-        border: solid 2px $midnightblue;
-    }
-}
-
-label.layer-chooser-wytze.active > span.layer-text-wytze {
-    color: $midnightblue;
-}
-
-
 label.layer-chooser > div.layer-img {
     background-position: center;
     background-repeat: no-repeat;
@@ -100,10 +78,6 @@ label.layer-chooser > div.layer-img {
     position: absolute;
     right: 0;
     width: $width19;
-    &:hover {
-        cursor: pointer !important;
-    }
-
 }
 
 .layer-switcher {
@@ -114,10 +88,8 @@ label.layer-chooser > div.layer-img {
     overflow: hidden;
     padding: 15px 15px 0 15px;
     top: 0;
-    z-index: 2;
     label {
         color: $asbestos;
-        cursor: pointer;
         font-size: 14px;
         font-style: normal;
         line-height: 1;
@@ -165,7 +137,6 @@ label.layer-chooser > div.layer-img {
 .ribbon {
     overflow: hidden;
     position: absolute;
-    z-index: 10;
 }
 
 #ribbon {
@@ -182,14 +153,12 @@ label.layer-chooser > div.layer-img {
     margin: auto;
     position: absolute;
     top: 75px;
-    z-index: 10;
     cursor: pointer;
 }
 
 .arrow {
     cursor: pointer;
     position: relative;
-    z-index: 0;
 }
 
 .arrow-up {
@@ -232,7 +201,6 @@ label.layer-chooser > div.layer-img {
     width: 40%;
     height: 100%;
     background-color: #000; /* is set dynamically */
-    z-index: 9000;
     float: right;
 }
 

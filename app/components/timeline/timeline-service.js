@@ -7,7 +7,7 @@
  * @summary Service to create and update a timeline. Used by timeline-directive.
  *
  * @description Inject "Timeline" and call new timeline(<args>) to create a
- * timeline. Currently the timeline supports lines (events) and vertical bars
+ * timeline. Currently the timeline supports circles (events) and vertical bars
  * (rain intensity). The user may interact with the timeline through click and
  * zoom functions.
  *
@@ -19,7 +19,7 @@
  * updateCanvas.
  */
 angular.module('lizard-nxt')
-  .factory("Timeline", ["NxtD3", function (NxtD3) {
+  .factory("Timeline", ["NxtD3", "UtilService", function (NxtD3, UtilService) {
 
   // Timeline
   var initialHeight,
@@ -28,7 +28,7 @@ angular.module('lizard-nxt')
   xScale, // The d3 scale for placement on the x axis within the whole
           // timeline. Is only updated when zoomTo is called, or the window
           // resizes.
-  ordinalYScale, // Scale used to place events in lines for each type
+  ordinalYScale, // Scale used to place events in circles for each type
 
   // Interaction functions
   clicked = null,
@@ -38,8 +38,11 @@ angular.module('lizard-nxt')
   // Timeline elements
   futureIndicator,
   aggWindow, // aggregation window
-  lines, // events start - end
-  bars; // rain intensity
+  circles, // events start - end
+  bars, // rain intensity
+  tickmarks,
+  TICKMARK_HEIGHT = 5, // data availability indicators
+  MAX_CIRCLE_SIZE = 16;
 
   /**
    * @constructor
@@ -167,9 +170,7 @@ angular.module('lizard-nxt')
               .attr("height", height)
               .attr("x", 0)
               .attr("y", 0)
-              .attr("width", width)
-              .attr("opacity", 0.6)
-              .attr("style", "fill: #c0392b;");
+              .attr("width", width);
           aggWindow
             .append('g')
               .attr('class', 'timeline-axis')
@@ -257,9 +258,11 @@ angular.module('lizard-nxt')
      */
     updateElements: {
       value: function (oldDimensions, timestamp, interval) {
+
         if (bars && oldDimensions) {
           updateRectangleElements(bars, xScale, oldDimensions, this.dimensions);
         }
+
         if (futureIndicator) {
           updateFutureIndicator(
             futureIndicator,
@@ -268,15 +271,21 @@ angular.module('lizard-nxt')
             this.dimensions
           );
         }
+
         if (aggWindow) {
           this.drawAggWindow(timestamp, interval, oldDimensions);
         }
+
+        if (tickmarks) {
+          updateTickmarks(tickmarks, this.dimensions, oldDimensions);
+        }
+
       }
     },
 
     /**
      * @function
-     * @summary Updates, adds or removes all lines in the data object.
+     * @summary Updates, adds or removes all circles in the data object.
      *
      * @param {array} data array of objects:
      *   [{properties.timestamp_end: timestamp,
@@ -287,9 +296,9 @@ angular.module('lizard-nxt')
      * @param {string} slug - Slug of event layer.
      * @param {string} color - Hex color code.
      */
-    drawLines: {
-      value: function (data, order, slug, color) {
-        lines = drawLineElements(
+    drawCircles: {
+      value: function (data, order, slug, color, aggWindow) {
+        circles = drawCircleElements(
           this._svg,
           this.dimensions,
           xScale,
@@ -297,8 +306,15 @@ angular.module('lizard-nxt')
           data,
           order,
           slug,
-          color
+          color,
+          aggWindow
         );
+      }
+    },
+
+    drawTickMarks: {
+      value: function (data) {
+        tickmarks = drawTickMarkElements(this._svg, this.dimensions, data);
       }
     },
 
@@ -314,7 +330,7 @@ angular.module('lizard-nxt')
         /**
          * candidate to replace with Dirk's null checker function.
          */
-        if (data === 'null') {
+        if (data.data === 'null') {
           return false;
         }
 
@@ -445,19 +461,14 @@ angular.module('lizard-nxt')
           .append('text')
             .attr('y', 9)
             .attr('x', dimensions.padding.left)
-            .attr('dy', '.71em')
-            .style('text-align', 'left')
-            .style('font-weight', 'bold')
-            .style('opacity', '1');
+            .attr('dy', '.71em');
+
       stopEl = svg.select('.timeline-start-stop')
         .append('g')
           .attr('class', 'tick tick-stop')
           .append('text')
             .attr('y', 9)
-            .attr('dy', '.71em')
-            .style('text-align', 'right')
-            .style('font-weight', 'bold')
-            .style('opacity', '1');
+            .attr('dy', '.71em');
     }
 
     startEl
@@ -487,11 +498,16 @@ angular.module('lizard-nxt')
       .attr('height', height)
       .attr('width', width)
       .attr('id', 'rain-bar');
-    // Create group for lines
+    // Create group for circles
     svg.select('g').append('g')
       .attr('height', height)
       .attr('width', width)
       .attr('id', 'circle-group');
+    // Create group for tickmarks
+    svg.select('g').append('g')
+      .attr('height', height)
+      .attr('width', width)
+      .attr('id', 'tickmark-group');
 
     return svg;
 
@@ -551,6 +567,7 @@ angular.module('lizard-nxt')
     svg.select('g').select('#circle-group')
       .attr('width', width)
       .attr('height', height);
+
     return svg;
   };
 
@@ -586,22 +603,25 @@ angular.module('lizard-nxt')
           });
       }
 
-      if (lines) {
+      if (circles) {
         var xOneFunction = function (d) {
-          return xScale(d.properties.timestamp_end);
-        };
-        var xTwoFunction = function (d) {
-          return xScale(d.properties.timestamp_start);
+          var interval = 0;
+          return xScale(parseFloat(d.timestamp) + (interval / 2));
         };
 
-        d3.select("#circle-group").selectAll("line")
-          .attr("x1", xOneFunction)
-          .attr("x2", xTwoFunction);
+        d3.select("#circle-group").selectAll("circle")
+          .attr("cx", xOneFunction);
       }
+
+      if (tickmarks) {
+        updateTickmarks(tickmarks, dimensions);
+      }
+
       if (zoomFn) {
         zoomFn(xScale);
       }
     };
+
     return zoomed;
   };
 
@@ -721,6 +741,85 @@ angular.module('lizard-nxt')
        .attr('height', height);
     }
   };
+  var updateTickmarks = function (tickmarks, dimensions, oldDimensions) {
+    var height = Timeline.prototype._getHeight(dimensions),
+        TICKMARK_HEIGHT = 5;
+
+    // update horizontal
+    tickmarks.attr("x", function (d) { return xScale(d); });
+
+    // update vertical
+    if (oldDimensions && dimensions.height < oldDimensions.height) {
+      tickmarks.transition()
+        .delay(Timeline.prototype.transTime)
+        .duration(Timeline.prototype.transTime)
+        .attr("y", height - TICKMARK_HEIGHT);
+    }
+
+    else if (oldDimensions &&  dimensions.height > oldDimensions.height) {
+      tickmarks.transition()
+        .duration(Timeline.prototype.transTime)
+        .attr("y", height - TICKMARK_HEIGHT);
+    }
+  };
+
+  /**
+   * @function
+   * @summary Draws rectangular tickmarks for every timestamp in data array.
+   *
+   * @param {object} svg - timeline svg object.
+   * @param {object} dimensions - timeline dimensions object.
+   * @param {integer []} data - list of timestamps in ms.
+   *
+   * @returns {object} d3 selection object with tickmarks for each timestamp.
+   */
+  var drawTickMarkElements = function (svg, dimensions, data) {
+    var height = Timeline.prototype._getHeight(dimensions),
+        TICKMARK_HEIGHT = 5,
+        TICKMARK_WIDTH = 2;
+
+    var group = svg
+      .select("g")
+      .select("#tickmark-group");
+
+    // DATA JOIN
+    // Join new data with old elements, based on the timestamp.
+    tickmarks = group.selectAll("rect")
+      .data(data, function  (d) { return d; });
+
+    // UPDATE
+    tickmarks.transition()
+      .delay(Timeline.prototype.transTime)
+      .duration(Timeline.prototype.transTime)
+      .attr("y", height - TICKMARK_HEIGHT)
+      .attr("x", function (d) { return xScale(d); });
+
+    // ENTER
+    tickmarks.enter().append("rect")
+      .attr("class", "tickmark")
+      .attr("y", height)
+      .attr("width", TICKMARK_WIDTH)
+      .attr("height", 0)
+    .transition()
+      .delay(Timeline.prototype.transTime)
+      .duration(Timeline.prototype.transTime)
+      .attr("x", function (d) { return xScale(d); })
+      .attr("y", height - TICKMARK_HEIGHT)
+      .attr("height", TICKMARK_HEIGHT);
+
+    // EXIT
+    // Remove old elements as needed.
+    tickmarks.exit()
+      .transition()
+      .delay(Timeline.prototype.transTime)
+      .duration(Timeline.prototype.transTime)
+      .attr("y", height)
+      .attr("height", 0)
+      .remove();
+
+    return tickmarks;
+
+  };
 
   /**
    * @function
@@ -739,20 +838,25 @@ angular.module('lizard-nxt')
    * @param {string} slug - slug of event series.
    * @param {string} color - Hex color code.
    */
-  var drawLineElements = function (
-    svg, dimensions, xScale, yScale, data, order, slug, color) {
+  var drawCircleElements = function (
+    svg, dimensions, xScale, yScale, data, order, slug, color, aggWindow) {
+
+    var MIN_CIRCLE_SIZE = 3,
+        MAX_COUNT = 100;
 
     var xOneFunction = function (d) {
-      return xScale(d.properties.timestamp_end);
+      return xScale(parseFloat(d.timestamp) - (aggWindow / 2));
     };
-    var xTwoFunction = function (d) {
-      return xScale(d.properties.timestamp_start);
-    };
+
     var yFunction = function (d) { return yScale(order); };
-    var colorFunction = function (d) { return color; };
+
+    var rFunction = function (d) {
+      return UtilService.lin2log(
+        d.count, MIN_CIRCLE_SIZE, MAX_CIRCLE_SIZE, 1, MAX_COUNT);
+    };
 
     // if data exists, check if group is available for this series and create
-    // if no data, remove lines
+    // if no data, remove circles
     if (data !== undefined) {
       var group = svg
                     .select("g")
@@ -765,8 +869,8 @@ angular.module('lizard-nxt')
 
       // DATA JOIN
       // Join new data with old elements, based on the id value.
-      lines = group.selectAll("line")
-        .data(data, function  (d) { return d.id; });
+      circles = group.selectAll("circle")
+        .data(data, function  (d) { return d.timestamp; });
     } else if (data === undefined) {
       // if no data is defined, remove all groups
       var groups = svg.select("g").select("#circle-group").selectAll("g");
@@ -777,35 +881,32 @@ angular.module('lizard-nxt')
 
     // UPDATE
     // Update old elements as needed.
-    lines.transition()
+    circles.transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
-      .attr("stroke", colorFunction)
-      .attr("x1", xOneFunction)
-      .attr("x2", xTwoFunction)
-      .attr("y1", yFunction)
-      .attr("y2", yFunction);
+      .attr("stroke", color)
+      .attr("fill", color)
+      .attr("cx", xOneFunction)
+      .attr("cy", yFunction)
+      .attr("r", rFunction);
 
     // ENTER
     // Create new elements as needed.
-    lines.append("g");
-    lines.enter().append("line")
-      .attr("class", "event selected")
-      .attr("stroke", colorFunction)
-      .attr("stroke-linecap", "round")
-      .attr("stroke-opacity", 0.8)
-      .attr("stroke-width", 10)
+    circles.append("g");
+    circles.enter().append("circle")
+      .attr("class", "event")
+      .attr("fill", color)
+      .attr("stroke", color)
     .transition()
       .delay(Timeline.prototype.transTime)
       .duration(Timeline.prototype.transTime)
-      .attr("x1", xOneFunction)
-      .attr("x2", xTwoFunction)
-      .attr("y1", yFunction)
-      .attr("y2", yFunction);
+      .attr("cx", xOneFunction)
+      .attr("cy", yFunction)
+      .attr("r", rFunction);
 
     // EXIT
     // Remove old elements as needed.
-    lines.exit()
+    circles.exit()
       .transition()
       .delay(0)
       .duration(Timeline.prototype.transTime)
@@ -816,7 +917,7 @@ angular.module('lizard-nxt')
       .style("fill-opacity", 0)
       .remove();
 
-    return lines;
+    return circles;
   };
 
   /**
@@ -880,15 +981,15 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @summary Returns a d3 scale to place events vertically in lines above each
-   * other.
+   * @summary Returns a d3 scale to place events vertically in circles above
+   * each other.
    *
    * @param  {int} iniH initial height of the timeline in px.
    * @param  {object} dims current dimensions of the timeline.
    */
   var makeEventsYscale = function (iniH, dims) {
     return function (order) {
-      return dims.events * order - 10;
+      return dims.events * order - MAX_CIRCLE_SIZE;
     };
   };
 

@@ -67,7 +67,7 @@ angular.module('lizard-nxt')
     // Overwrite anything provided by dimensions attr on element
     angular.extend(dimensions, scope.dimensions);
 
-    el = element[0].firstChild;
+    el = element.find('svg')[0];
 
     graphCtrl.yfilter = attrs.yfilter;
     graphCtrl.type = attrs.type;
@@ -95,33 +95,40 @@ angular.module('lizard-nxt')
    */
   link = function (scope, element, attrs, graphCtrl) {
 
-    var graphUpdateHelper = function (useNewData, useNewXDomain) {
+    var graphUpdateHelper = function () {
+      graphCtrl.setData(scope);
 
-      if (useNewData) {
-        graphCtrl.setData(scope);
-      }
-      if (useNewXDomain) {
-        graphCtrl.graph._xDomainInfo = scope.temporal;
-      }
       graphCtrl.updateData.call(
         graphCtrl.graph,
         graphCtrl.data,
         graphCtrl.keys,
         graphCtrl.labels,
-        graphCtrl.graph._xDomainInfo
+        graphCtrl.temporal
       );
+
       // Call the graph with the now
       if (scope.temporal && scope.temporal.at) {
         graphCtrl.updateNow.call(graphCtrl.graph, scope.temporal.at);
       }
     };
 
+    var dimsChangedCb = function () {
+      if (!scope.dimensions
+        || (scope.dimensions.width === graphCtrl.graph.dimensions.width
+          && scope.dimensions.height === graphCtrl.graph.dimensions.height)) {
+        return;
+      }
+      graphCtrl.graph.resize(scope.dimensions);
+      graphUpdateHelper();
+    };
+
     /**
-     * Calls updateGraph when data changes.
+     * Calls updateGraph when data is different than controller.data.
+     * NOTE: Controller data is set on precompile.
      */
     scope.$watch('data', function (n, o) {
-      if (n === o) { return true; }
-      graphUpdateHelper(true, false);
+      if (n === graphCtrl.data) { return true; }
+      graphUpdateHelper();
     });
 
     /**
@@ -129,7 +136,7 @@ angular.module('lizard-nxt')
      */
     scope.$watch('keys', function (n, o) {
       if (n === o) { return true; }
-      graphUpdateHelper(true, false);
+      graphUpdateHelper();
     });
 
     scope.$watch('temporal.at', function (n, o) {
@@ -139,9 +146,22 @@ angular.module('lizard-nxt')
       }
     });
 
-    scope.$on('$timelineZoomSuccess', function () {
-      graphUpdateHelper(true, true);
+    scope.$watch('temporal.start', function (n, o) {
+      if (n === o) { return true; }
+      graphUpdateHelper();
     });
+
+    scope.$watch('temporal.end', function (n, o) {
+      if (n === o) { return true; }
+      graphUpdateHelper();
+    });
+
+    scope.$watch('dimensions.height', dimsChangedCb);
+
+    scope.$watch('dimensions.width', dimsChangedCb);
+
+    scope.title = attrs.name;
+
   };
 
   /**
@@ -158,6 +178,7 @@ angular.module('lizard-nxt')
 
       // Provide defaults for backwards compatability
       this.data = scope.data || [];
+      this.temporal = scope.temporal;
       this.keys = scope.keys || { x: 0, y: 1 };
       this.labels = {
         x: scope.xlabel || '',
@@ -193,6 +214,7 @@ angular.module('lizard-nxt')
       xlabel: '=',
       ylabel: '=',
       keys: '=',
+      mouseLoc: '=',
       yfilter: '=',
       dimensions: '=',
       temporal: '=',
@@ -200,7 +222,7 @@ angular.module('lizard-nxt')
     },
     restrict: 'E',
     replace: true,
-    template: '<div class="graph-svg-wrapper"><svg></svg></div>'
+    templateUrl: 'graph/graph.html'
   };
 
 }]);
