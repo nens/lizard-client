@@ -1,9 +1,16 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.3.5) (XXXX-XX-XX)
+Unreleased (1.3.6) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix timeseries in box card of previous click.
+
+- Fix label in wrong place of time-ctx when multiple graphs.
+
+- Only show timeseries card when there is timeseries data.
+
+- Round data values on hover in time-ctx graphs.
 
 
 Release 1.3.5 (2015-3-31)
