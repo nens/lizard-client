@@ -760,7 +760,10 @@ angular.module('lizard-nxt')
     // completely within the svg
     PIXEL_CORRECTION = 2;
     var el = svg.select(y ? '#ylabel': '#xlabel');
-    if (!el.empty()) { el.text(label); }
+    if (!el.empty()) {
+      el.text(label);
+      el.attr('dy', 0.5 * el.node().getBBox().height + PIXEL_CORRECTION);
+   }
     else {
       el = svg.append("text")
         .attr('class', 'graph-text graph-label')
