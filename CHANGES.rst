@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.3.6) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.3.6 (2015-4-2)
+---------------------
 
 - Fix timeseries in box card of previous click.
 
