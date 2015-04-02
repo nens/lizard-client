@@ -322,23 +322,20 @@ angular.module('data-menu')
           end: end
         }).then(function (response) {
 
-          if (response.results.length > 0) {
-            // We retrieved data for one-or-more timeseries, but do these
-            // actually contain measurements, or just metadata? We filter out
-            // the timeseries with too little measurements...
-            var filteredResult = [];
-            angular.forEach(response.results, function (value) {
-              if (value.events.length > 1 &&
-                  value.events.length < MAX_NR_TIMESERIES_EVENTS) {
-                filteredResult.push(value);
-              }
-            });
-            defer.notify({
-              data: filteredResult,
-              layerGroupSlug: 'timeseries',
-              layerSlug: 'timeseries',
-            });
-          }
+           // Filter out the timeseries with too little measurements.
+          var filteredResult = [];
+          angular.forEach(response.results, function (value) {
+            if (value.events.length > 1 &&
+                value.events.length < MAX_NR_TIMESERIES_EVENTS) {
+              filteredResult.push(value);
+            }
+          });
+          defer.notify({
+            data: filteredResult,
+            layerGroupSlug: 'timeseries',
+            layerSlug: 'timeseries',
+          });
+
         });
 
         return promise;

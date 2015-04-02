@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.3.5) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.3.5 (2015-3-31)
+---------------------
 
 - Fix timeseries selection box width > card width.
 
