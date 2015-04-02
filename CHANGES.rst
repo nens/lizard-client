@@ -1,7 +1,7 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.3.6) (XXXX-XX-XX)
+Unreleased (1.3.7) (XXXX-XX-XX)
 -------------------------------
 -
 
