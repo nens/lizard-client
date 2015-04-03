@@ -195,12 +195,12 @@ Release 1.2.27 (2015-3-5)
 Release 1.2.26 (2015-3-5)
 ---------------------
 
->>>>>>> staging
 - Fix indentation in rain controller.
 
 - Fix rain export seperators.
 
 - Fix bug with click on map at top 50 px.
+
 
 Release 1.2.25 (2015-2-19)
 ---------------------
