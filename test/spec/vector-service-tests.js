@@ -10,33 +10,60 @@ describe('Testing VectorService', function () {
 
   var geoJson = [
     {
-      "id": 2844,
+      "id": 1,
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [5.209040423727382, 52.36544191276044]
+        "coordinates": [4.000, 50.000]
       },
       "properties": {
         "category": "peil laag laag (comp.1)",
         "value": "807361",
-        "timestamp_start": 1389988800000,
-        "timestamp_end": 1389996000000,
+        "timestamp_start": 10,
+        "timestamp_end": 15,
         "event_series": 3,
-        "object": null
+        "object": {
+          "type": "pumpstation",
+          "id": 20,
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              4.968422675147932,
+              52.50403545777337
+            ]
+          },
+          "created": 1383815706774
+        }
       }
     },
     {
-      "id": 3505,
+      "id": 2,
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [4.986668114895552, 52.50079113117614]
+        "coordinates": [4.000, 50.000]
       },
       "properties": {
         "category": "PUTDEKSELWEG",
         "value": "Rioolverstopping",
-        "timestamp_start": 1358460000000,
-        "timestamp_end": 1389996000000,
+        "timestamp_start": 20,
+        "timestamp_end": 25,
+        "event_series": 4,
+        "object": null
+      }
+    },
+    {
+      "id": 3,
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.000, 40.000]
+      },
+      "properties": {
+        "category": "PUTDEKSELWEG",
+        "value": "Rioolverstopping",
+        "timestamp_start": 10,
+        "timestamp_end": 15,
         "event_series": 4,
         "object": null
       }
@@ -59,33 +86,53 @@ describe('Testing VectorService', function () {
     $rootScope.$digest();
   });
 
-  it('should get all data that is happening on AND after the start date', function () {
+  it('should get all data on AND after the start date', function () {
     VectorService.setData('events', geoJson, 4);
-    VectorService.getData('spec', nonLeaflayer, {start: 1358470000000})
+    VectorService.getData('spec', nonLeaflayer, {start: 20})
       .then(function (gotthis) {
-        expect(gotthis.length).toBe(2);
+        expect(gotthis.length).toBe(1);
+        expect(gotthis[0].id).toBe(geoJson[1].id);
       });
     $rootScope.$digest();
   });
 
   it('should get data of latLng', function () {
     VectorService.setData('events', geoJson);
-    var latLng = new LeafletService.LatLng(52.36544191276044,5.209040423727382);
+    var latLng = new LeafletService.LatLng(50.000, 4.000);
     VectorService.getData('spec', nonLeaflayer, {geom: latLng})
       .then(function (gotthis) {
-        expect(gotthis[0].id).toBe(2844);
+        expect(gotthis.length).toBe(2);
       });
     $rootScope.$digest();
   });
 
   it('should get data within spatial and temporal extent', function () {
     VectorService.setData('events', geoJson);
-    var latLng = new LeafletService.LatLng(52.36544191276044,5.209040423727382);
-    VectorService.getData('spec', nonLeaflayer, {geom: latLng, start: 0})
+    var latLng = new LeafletService.LatLng(50.000, 4.000);
+    VectorService.getData('spec', nonLeaflayer, {geom: latLng, start: 20})
       .then(function (gotthis) {
-        expect(gotthis.length).toBe(0);
+        expect(gotthis.length).toBe(1);
       });
     $rootScope.$digest();
   });
+
+  it('should get data within spatial extent and for the related object',
+    function () {
+      VectorService.setData('events', geoJson);
+      var latLng = new LeafletService.LatLng(40.000, 5.000);
+      var objectFilter = {
+        id: 20,
+        type: 'pumpstation'
+      };
+      VectorService.getData('spec', nonLeaflayer, {
+        geom: latLng, object: objectFilter
+      }).then(function (gotthis) {
+          expect(gotthis[0].id).toBe(1); // Because it is related to the object.
+          expect(gotthis[1].id).toBe(3); // Because it matches the specified
+                                         // geom.
+        });
+      $rootScope.$digest();
+    }
+  );
 
 });

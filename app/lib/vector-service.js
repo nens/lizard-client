@@ -19,6 +19,20 @@ angular.module('lizard-nxt')
                              'CabinetService',
   function ($q, $rootScope, LeafletService, UtilService, CabinetService) {
 
+
+    /**
+     * Returns true if feature has the type and id provided by the objectFilter.
+     * @param  {object} objectFilter object with type and id
+     * @param  {object} feature      feature to check for type and id of
+     *                               properties.object.
+     * @return {boolean}              [description]
+     */
+    var checkRelatedToObject = function (objectFilter, feature) {
+      return feature.properties.object
+        && feature.properties.object.type === objectFilter.type
+        && feature.properties.object.id === objectFilter.id;
+    };
+
     /**
      * @function
      * @description filters geojson array on spatial bounds.
@@ -26,33 +40,13 @@ angular.module('lizard-nxt')
      * @param  {featureArray}   sourceArray
      * @return {filteredSet}    filtered set of features.
      */
-    var filterSpatial = function (sourceArray, spatial) {
+    var filterSpatial = function (sourceArray, spatial, objectFilter) {
       var filteredSet = [];
       var query = spatial instanceof LeafletService.LatLngBounds ? 'contains' : 'equals';
       sourceArray.forEach(function (feature) {
-        var withinBounds;
-        // if (feature.geometry.type === "Polygon") {
-        //   var maxLat = feature.geometry.coordinates[0][0][0],
-        //       minLat = feature.geometry.coordinates[0][0][0],
-        //       minLon = feature.geometry.coordinates[0][0][1],
-        //       maxLon = feature.geometry.coordinates[0][0][1];
-        //   window.feature = feature
-        //   feature.geometry.coordinates[0].forEach(function (coordinates) {
-        //     maxLon = Math.max(coordinates[1], maxLon);
-        //     maxLat = Math.max(coordinates[0], maxLat);
-        //     minLon = Math.min(coordinates[1], minLon);
-        //     minLat = Math.min(coordinates[0], minLat);
-        //   });
-        //   // if as much as one point is visible in extent draw it.
-        //   withinBounds = (
-        //     spatial.contains(new LeafletService.LatLng(maxLat, maxLon)) ||
-        //     spatial.contains(new LeafletService.LatLng(maxLat, minLon)) ||
-        //     spatial.contains(new LeafletService.LatLng(minLat, maxLon)) ||
-        //     spatial.contains(new LeafletService.LatLng(minLat, minLon))
-        //     )
-        // } else if (feature.geometry.type === "MultiPolygon") {
-        //   // fuckall
-        // } else
+        var withinBounds,
+            partOfObject;
+
         if (feature.geometry.type === "Point") {
           var latLng = new LeafletService.LatLng(
             feature.geometry.coordinates[1],
@@ -61,9 +55,14 @@ angular.module('lizard-nxt')
           withinBounds = spatial[query](latLng);
         }
 
-        if (withinBounds) {
+        if (objectFilter) {
+          partOfObject = checkRelatedToObject(objectFilter, feature);
+        }
+
+        if (withinBounds || partOfObject) {
           filteredSet.push(feature);
         }
+
       });
       return filteredSet;
     };
@@ -126,35 +125,28 @@ angular.module('lizard-nxt')
     };
 
     /**
-     * @description filters data on time and spatial extent
+     * @description filters data on time, spatial extent and relation to object.
      * @param  {L.LatLngBounds} spatial  Leaflet Bounds object
      * @param  {object}         temporal object with start and end in epoch
      *                          timestamp
+     * @param {object}          objectFilter object with type and id of object.
      * @return {filteredSet}    Array with points within extent.
      */
     var filterSet = function (filteredSet, spatial, objectFilter, temporal) {
       if (!spatial && !temporal && !objectFilter) { return filteredSet; }
 
-      // First filter on object
-      if (objectFilter) {
-        filteredSet = filteredSet.filter(function (feature) {
-          if (
-            feature.properties.object
-            && feature.properties.object.type === objectFilter.type
-            && feature.properties.object.id === objectFilter.id
-          ) {
-            return true;
-          }
-          else {
-            return false;
-          }
-        });
+      // First filter temporal.
+      if (temporal.hasOwnProperty('start') || temporal.hasOwnProperty('end')) {
+        filteredSet = filterTemporal(filteredSet, temporal);
+      } else if (temporal) {
+        throw new Error(temporal + "is an invalid time to query VectorService");
       }
 
-      // Second filter spatially.
+      // Second filter spatially but leave features in the set when related to
+      // object.
       if (spatial instanceof LeafletService.LatLngBounds
         || spatial instanceof LeafletService.LatLng) {
-        filteredSet = filterSpatial(filteredSet, spatial);
+        filteredSet = filterSpatial(filteredSet, spatial, objectFilter);
       } else if (spatial instanceof Array
         && spatial[0] instanceof LeafletService.LatLng) {
         // TODO: implement line intersect with vector data
@@ -162,15 +154,6 @@ angular.module('lizard-nxt')
       } else if (spatial) {
         throw new Error(
           spatial + "is an invalid geometry to query VectorService");
-      }
-
-      // Further refine spatially filtered by temporal filter.
-      if (temporal.hasOwnProperty('start') || temporal.hasOwnProperty('end')) {
-        filteredSet = filterTemporal(filteredSet, temporal);
-      } else if (temporal === undefined) {
-        return filteredSet;
-      } else {
-        throw new Error(temporal + "is an invalid time to query VectorService");
       }
 
       return filteredSet;
@@ -205,7 +188,7 @@ angular.module('lizard-nxt')
         getDataAsync(layerSlug, layer, options, deferred);
       } else {
         var set = filterSet(vectorLayers[layerSlug].data,
-        options.geom, options.objectFilter, {
+        options.geom, options.object, {
           start: options.start,
           end: options.end
         });
