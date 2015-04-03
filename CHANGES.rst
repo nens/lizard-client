@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.3.7) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.3.7 (2015-4-3)
+---------------------
 
 - When clicked add events of the latlng to the events related to an object.
 
