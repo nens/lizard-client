@@ -190,8 +190,7 @@ angular.module('data-menu')
               if (!waitForTimeseriesAndEvents) {
                 waitForTimeseriesAndEvents = instance.getTimeseriesAndEvents(
                   response,
-                  options.start,
-                  options.end,
+                  options,
                   defer
                 );
               }
@@ -281,7 +280,7 @@ angular.module('data-menu')
        * @return {promise || false} false when no id and entity name or promise
        *                            when making request to timeseries endpoint.
        */
-      this.getTimeseriesAndEvents = function (response, start, end, defer) {
+      this.getTimeseriesAndEvents = function (response, options, defer) {
         if (response.format === 'UTFGrid'
           && response.data
           && response.data.id
@@ -290,19 +289,19 @@ angular.module('data-menu')
           // Apparently, we're dealing with the waterchain:
           var tsPromise = getTimeSeriesForObject(
             response.data.entity_name + '$' + response.data.id,
-            start,
-            end,
+            options.start,
+            options.end,
             defer
           );
-          var eventsPromsise = this.getData(null, {
-            start: start,
-            end: end,
-            objectFilter: {
-              type: response.data.entity_name,
-              id: response.data.id
-            },
-            type: 'Event'
-          }, defer);
+          // The defer from getData is recycled, no need to pass a callee param.
+          options.type = 'Event';
+          options.object = {
+            type: response.data.entity_name,
+            id: response.data.id
+          };
+          // Get all events for the provided options and the events belonging to
+          // this object.
+          var eventsPromsise = this.getData(null, options, defer);
           return $q.all([tsPromise, eventsPromsise]);
         } else { return false; }
       };
