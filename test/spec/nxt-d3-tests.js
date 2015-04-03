@@ -48,6 +48,18 @@ describe('Testing NxtD3', function () {
     expect(objects.axis).toBeDefined();
   });
 
+  it('should return maxmin for string values', function () {
+    var data = [[0, '0'], ['1', '3'], ['2', 1]],
+        maxMin = nxtD3._maxMin(data, 1);
+    expect(maxMin.max).toEqual(3);
+  });
+
+  it('should return maxmin while ingnoring null values', function () {
+    var data = [[0, 0], [1, null], [null, 1]],
+        maxMin = nxtD3._maxMin(data, 1);
+    expect(maxMin.max).toEqual(1);
+  });
+
   it('should set new dimensions when resized', function () {
     newWidth = 40;
     nxtD3.resize({width: newWidth});

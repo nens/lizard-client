@@ -191,15 +191,14 @@ angular.module('lizard-nxt')
      * @return {object} containing the max and min
      */
     _maxMin: function (data, key) {
-      // min max of d3 does not filter nulls for some reason
-      // y axis is way off sometimes.
-      var max = d3.max(data, function (d) {
-              return Number(d[key]);
-            });
+      // min max of d3 filters nulls but not if you cast null into 0.
+      var comparator = function (d) {
+         return typeof(d[key]) === 'string' ? Number(d[key]) : d[key];
+      };
 
-      var min = d3.min(data, function (d) {
-              return Number(d[key]);
-            });
+      var max = d3.max(data, comparator);
+      var min = d3.min(data, comparator);
+
       return {
         max: max,
         min: min
