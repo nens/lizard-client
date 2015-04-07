@@ -765,33 +765,39 @@ angular.module('lizard-nxt')
    */
   drawLabel = function (svg, dimensions, label, y) {
     var width = Graph.prototype._getWidth(dimensions),
-    height = Graph.prototype._getHeight(dimensions),
-    // Correct 2 pixels to make sure the labels fall
-    // completely within the svg
-    PIXEL_CORRECTION = 2;
-    var el = svg.select(y ? '#ylabel': '#xlabel');
+        height = Graph.prototype._getHeight(dimensions),
+        mv,
+        // For some reason the x label needs to move a little bit more than
+        // expected and the y label a little bit less.
+        PIXEL_CORRECTION = 2,
+        el = svg.select(y ? '#ylabel': '#xlabel');
     if (!el.empty()) {
       if (label) {
         el.text(label);
       }
-      el.attr('dy', 0.5 * el.node().getBBox().height + PIXEL_CORRECTION);
+      mv = y
+        ? 0.5 * el.node().getBBox().height + PIXEL_CORRECTION
+        : - 0.5 * el.node().getBBox().height + PIXEL_CORRECTION;
+      el.attr('dy', mv);
    }
     else {
       el = svg.append("text")
         .attr('class', 'graph-text graph-label')
         .style("text-anchor", "middle")
         .text(label);
+      mv = y
+        ? 0.5 * el.node().getBBox().height + PIXEL_CORRECTION
+        : - 0.5 * el.node().getBBox().height + PIXEL_CORRECTION;
+      el.attr('dy', mv);
       if (y) {
         el.attr('id', 'ylabel')
           .attr('transform', 'rotate(-90)')
           .attr('y', 0)
           .attr('x', 0 - height / 2);
-        el.attr('dy', 0.5 * el.node().getBBox().height + PIXEL_CORRECTION);
       } else {
         el.attr('id', 'xlabel')
           .attr('x', dimensions.padding.left + width / 2)
-          .attr('y', dimensions.height - PIXEL_CORRECTION);
-        el.attr('dy', - PIXEL_CORRECTION);
+          .attr('y', dimensions.height);
       }
     }
   };
