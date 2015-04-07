@@ -66,10 +66,8 @@ angular.module('lizard-nxt')
 
           timelineSetsTime = true;
           State.temporal.timelineMoving = true;
-          State.temporal.start = UtilService.getMinTime(
-            scale.domain()[0].getTime());
-          State.temporal.end   = UtilService.getMaxTime(
-             scale.domain()[1].getTime());
+          State.temporal.start = scale.domain()[0].getTime();
+          State.temporal.end   = scale.domain()[0].getTime();
 
           State.temporal.aggWindow = UtilService.getAggWindow(
             State.temporal.start,
