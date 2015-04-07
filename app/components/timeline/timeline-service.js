@@ -107,7 +107,7 @@ angular.module('lizard-nxt')
           .attr("width", width)
           .attr('title', 'Het gedeelte van de tijdlijn dat in de toekomst ligt')
           .attr("id", "nodata")
-          .attr("x", function () {return xScale(Date.now()); })
+          .attr("x", xScale(Date.now()))
           .attr("opacity", 0.8)
           .style("fill", "#DDD");
       }
@@ -583,6 +583,22 @@ angular.module('lizard-nxt')
     var zoomed = function () {
       d3.event.sourceEvent.preventDefault();
 
+      var ONE_HOUR = 1000 * 60 * 60;
+
+      var start = UtilService.getMinTime(xScale.domain()[0].getTime()),
+          end = UtilService.getMaxTime(xScale.domain()[1].getTime());
+
+      // Min domain when zooming is ONE_HOUR
+      if (start === UtilService.MIN_TIME && end !== UtilService.MAX_TIME) {
+        end = end >= start + ONE_HOUR  ? end : start + ONE_HOUR;
+      }
+
+      else if (end === UtilService.MAX_TIME && start !== UtilService.MIN_TIME) {
+        start = start <= end - ONE_HOUR ? start : end - ONE_HOUR;
+      }
+
+      xScale.domain([start, end]);
+
       drawTimelineAxes(svg, xScale, dimensions);
 
       if (bars) {
@@ -598,9 +614,7 @@ angular.module('lizard-nxt')
 
       if (futureIndicator) {
         futureIndicator
-          .attr('x', function () {
-            return xScale(Date.now());
-          });
+          .attr('x', xScale(Date.now()));
       }
 
       if (circles) {
@@ -724,9 +738,7 @@ angular.module('lizard-nxt')
     var height = Timeline.prototype._getHeight(dimensions);
 
     futureIndicator
-     .attr('x', function () {
-        return xScale(Date.now());
-      });
+      .attr('x', xScale(Date.now()));
 
     if (dimensions.height < oldDimensions.height) {
       futureIndicator
