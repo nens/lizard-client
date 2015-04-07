@@ -32,6 +32,7 @@ angular.module('lizard-nxt')
   var link = function (scope, element, attrs, timelineCtrl) {
 
     var timelineSetsTime = false,
+        timelineSetsAt = false,
 
         showTimeline = true, // Is set by user clicking data label, when true
                               // timeline is shown.
@@ -63,17 +64,18 @@ angular.module('lizard-nxt')
       zoomFn: function (scale) {
 
         scope.$apply(function () {
-
           timelineSetsTime = true;
+
           State.temporal.timelineMoving = true;
           State.temporal.start = scale.domain()[0].getTime();
-          State.temporal.end   = scale.domain()[0].getTime();
+          State.temporal.end   = scale.domain()[1].getTime();
 
           State.temporal.aggWindow = UtilService.getAggWindow(
             State.temporal.start,
             State.temporal.end,
             UtilService.getCurrentWidth()
           );
+
           State.temporal.at = UtilService.roundTimestamp(
             State.temporal.at,
             State.temporal.aggWindow,
@@ -100,7 +102,6 @@ angular.module('lizard-nxt')
 
       /**
        * @function
-       * @summary Move timeState.at to click location in timebar.
        * @description Update timeState.at to click location in timebar. Snaps
        * time to closest interval.
        *
@@ -108,16 +109,14 @@ angular.module('lizard-nxt')
        * @param {object} scale - D3 scale.
        * @param {object} dimensions - object with timeline dimensions.
        */
-      clickFn: function (event, scale, dimensions) {
+      clickFn: function (timestamp, dimensions) {
         scope.$apply(function () {
-          var timeClicked = +(scale.invert(
-            event.pageX - dimensions.padding.left
-              - UtilService.TIMELINE_LEFT_MARGIN
-          ));
+          timelineSetsAt = true;
           State.temporal.at = UtilService.roundTimestamp(
-            timeClicked,
+            timestamp,
             State.temporal.aggWindow
           );
+          timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
         });
       },
     };
@@ -131,8 +130,7 @@ angular.module('lizard-nxt')
     scope.events = {nEvents: 0, slugs: []};
 
     // Initialise timeline
-    var timeline = new Timeline(
-      el[0], dimensions, start, end, interaction);
+    var timeline = new Timeline(el[0], dimensions, start, end, interaction);
 
     setTimeout(interaction.zoomEndFn, 250);
     // HELPER FUNCTIONS
@@ -387,26 +385,6 @@ angular.module('lizard-nxt')
 
     };
 
-    var timelineZoomHelper = function () {
-      if (!State.temporal.timelineMoving) {
-        if (!timelineSetsTime) {
-          State.temporal.aggWindow = UtilService.getAggWindow(
-            State.temporal.start,
-            State.temporal.end,
-            UtilService.getCurrentWidth()
-          );
-          timeline.zoomTo(
-            State.temporal.start,
-            State.temporal.end,
-            State.temporal.aggWindow
-          );
-          getTimeLineData();
-        } else {
-          timelineSetsTime = false;
-        }
-      }
-    };
-
     // END HELPER FUNCTIONS
 
     scope.timeline.toggleTimelineVisiblity = function () {
@@ -449,19 +427,33 @@ angular.module('lizard-nxt')
      */
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o) { return true; }
-      timelineZoomHelper();
+      if (!timelineSetsTime) {
+
+        State.temporal.aggWindow = UtilService.getAggWindow(
+          State.temporal.start,
+          State.temporal.end,
+          UtilService.getCurrentWidth()
+        );
+
+        timeline.zoomTo(
+          State.temporal.start,
+          State.temporal.end,
+          State.temporal.aggWindow
+        );
+        getTimeLineData();
+      }
+      timelineSetsTime = false;
     });
 
     /**
      * Update aggWindow element when timeState.at changes.
      */
     scope.$watch(State.toString('temporal.at'), function (n, o) {
-      // update timeline when time-controller changes temporal.at state
-      timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
-      // if temporal.playing don't get new data for each `temporal.at`
-      if (!State.temporal.playing) {
-        timelineZoomHelper();
+      if (!timelineSetsAt) {
+        // update timeline when time-controller changes temporal.at state
+        timeline.drawAggWindow(State.temporal.at, State.temporal.aggWindow);
       }
+      timelineSetsAt = false;
     });
 
     /**
