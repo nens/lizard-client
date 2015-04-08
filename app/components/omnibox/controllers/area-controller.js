@@ -34,7 +34,6 @@ angular.module('omnibox')
   ) {
 
     $scope.box.content = {};
-    $scope.filteredRainDataPerKilometer = undefined;
 
     /**
      * @function
@@ -45,26 +44,11 @@ angular.module('omnibox')
      *                                  leaflet bounds.
      */
     var fillArea = function (bounds) {
-      var promise = $scope.fillBox({
+      $scope.fillBox({
         geom: bounds,
         start: State.temporal.start,
         end: State.temporal.end,
         aggWindow: State.temporal.aggWindow
-      });
-      promise.then(null, null, function (response) {
-        if (response
-          && response.data
-          && response.data.length > 0
-          && response.layerSlug === 'rain') {
-          $scope.box.content.rain.layers.rain.data
-            = response.data;
-          $scope.filteredRainDataPerKilometer
-            = UtilService.getFilteredRainDataPerKM(
-                response.data,
-                State.spatial.bounds,
-                State.temporal
-              );
-        }
       });
     };
 
