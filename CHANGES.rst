@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.3.7) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.3.8 (2015-4-8)
+---------------------
 
 - Fix raster response line graphs, take into account values wrapped in arrays.
 
