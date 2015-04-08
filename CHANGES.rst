@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.3.7) (XXXX-XX-XX)
 -------------------------------
 
+- Fix raster response line graphs, take into account values wrapped in arrays.
+
 - Remove area controller rain aggregation code that throws error.
 
 - Limit zooming of timeline to time limits.

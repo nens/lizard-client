@@ -191,9 +191,16 @@ angular.module('lizard-nxt')
      * @return {object} containing the max and min
      */
     _maxMin: function (data, key) {
-      // min max of d3 filters nulls but not if you cast null into 0.
+      if (data.length < 0) {
+        return {max: null, min: null};
+      }
+
+      // min max of d3 filters nulls but not if you cast null into 0. Only cast
+      // strings, and array like [0, [3]].
       var comparator = function (d) {
-         return typeof(d[key]) === 'string' ? Number(d[key]) : d[key];
+        return typeof(d[key]) === 'string' || d[key] instanceof Array
+          ? Number(d[key])
+          : d[key];
       };
 
       var max = d3.max(data, comparator);
