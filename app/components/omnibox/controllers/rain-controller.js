@@ -53,12 +53,15 @@ angular.module('omnibox')
 
         // TODO: refactor this shit
         RasterService.getData(
-         {slug: 'rain'}, {
-          agg: 'rrc',
-          geom: State.spatial.here,
-          start: State.temporal.start,
-          end: State.temporal.end
-        }).then(function (response) {
+          'RainController',
+          {slug: 'rain'},
+          {
+            agg: 'rrc',
+            geom: State.spatial.here,
+            start: State.temporal.start,
+            end: State.temporal.end
+          }
+        ).then(function (response) {
           $scope.rrc.data = response;
         });
       };
