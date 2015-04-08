@@ -97,13 +97,6 @@ describe('Testing line graph attribute directive', function() {
     expect(d3.select(element[0]).select('path')[0][0]).not.toBeNull();
   });
 
-  it('should draw labels inside the padding area', function () {
-    var label = d3.select(element[0]).select('#xlabel');
-    expect(label.attr('x') - label.node().offsetWidth > 0).toBe(true);
-    expect(label.attr('y') < dimensions.height).toBe(true);
-    expect(label.attr('y') > dimensions.height - dimensions.padding.bottom).toBe(true);
-  });
-
 });
 
 describe('Testing barChart attribute directive', function() {
@@ -128,8 +121,6 @@ describe('Testing barChart attribute directive', function() {
     expect(d3.select(element[0]).select('rect')[0][0]).not.toBeNull();
     expect(d3.select(element[0]).select('#feature-group').selectAll('rect')[0].length).toBe(3);
   });
-
-  it
 
 });
 

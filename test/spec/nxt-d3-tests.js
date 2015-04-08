@@ -60,6 +60,13 @@ describe('Testing NxtD3', function () {
     expect(maxMin.max).toEqual(1);
   });
 
+  it('should return correct max min for values wrapped in arrays', function () {
+    var data = [[0, [1]], [1, [40.1]], [2, [2]]];
+        maxMin = nxtD3._maxMin(data, 1);
+    expect(maxMin.max).toEqual(40.1);
+    expect(maxMin.min).toEqual(1);
+  });
+
   it('should set new dimensions when resized', function () {
     newWidth = 40;
     nxtD3.resize({width: newWidth});
