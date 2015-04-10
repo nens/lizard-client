@@ -116,7 +116,12 @@ angular.module('lizard-nxt')
     addClickListener: {
       value: function (clickFn) {
         if (clickFn) {
-          clicked = setClickFunction(xScale, this.dimensions, clickFn);
+          clicked = setClickFunction(
+            xScale,
+            this.dimensions,
+            clickFn,
+            this.drawAggWindow
+          );
         }
         this._svg.on("click", clicked);
       }
@@ -154,14 +159,10 @@ angular.module('lizard-nxt')
      */
     drawAggWindow: {
       value: function (timestamp, interval, oldDimensions) {
-
-        var height = this._getHeight(this.dimensions);
-        var width = xScale(new Date(timestamp + (interval))) -
-          xScale(new Date(timestamp)) - 1; // minus 1 px for visual tightness;
-          // aggWindow should be the *exact* same width as the rain bars drawn
-          // in the timeline.
+        var height;
 
         if (!aggWindow) {
+          height = this._getHeight(this.dimensions);
           aggWindow = this._svg.append("g")
             .attr('class', 'agg-window-group');
           aggWindow
@@ -169,50 +170,33 @@ angular.module('lizard-nxt')
               .attr("class", "aggwindow-rect")
               .attr("height", height)
               .attr("x", 0)
-              .attr("y", 0)
-              .attr("width", width);
-          aggWindow
-            .append('g')
-              .attr('class', 'timeline-axis')
-              .append('text')
-                .attr('class', 'aggwindow-label')
-                .attr('y', 12);
+              .attr("y", 0);
         }
-
-        var bboxWidth,
-            offset = this.dimensions.padding.left;
-
-        // UPDATE
-/*        aggWindow.select('.aggwindow-label')*/
-          //.text(this.format_aggwindow(new Date(timestamp)))
-          //.attr("x", function () {
-            //bboxWidth = aggWindow.select('.aggwindow-label').node()
-              //.getBBox().width;
-            //return offset + xScale(new Date(timestamp)) - bboxWidth - 2;
-          /*});*/
 
         aggWindow.select('.aggwindow-rect')
           .attr("x", function () {
-            return Math.round(offset + xScale(new Date(timestamp)));
-          })
-          .transition()
-          .duration(this.transTime)
-          .attr("height", height)
-          .attr("width", width);
+            return Math.round(xScale(new Date(timestamp)));
+          });
 
         if (oldDimensions && this.dimensions.height < oldDimensions.height) {
-          this._svg.select('.agg-window-group').select('.aggwindow-rect')
+          height = this._getHeight(this.dimensions);
+          aggWindow.select('.aggwindow-rect')
             .transition()
             .delay(this.transTime)
             .duration(this.transTime)
-            .attr("height", height)
-            .attr("width", width);
-        } else {
-          this._svg.select('.agg-window-group').select('.aggwindow-rect')
+            .attr("height", height);
+        } else if (oldDimensions) {
+          height = this._getHeight(this.dimensions);
+          aggWindow.select('.aggwindow-rect')
             .transition()
             .duration(this.transTime)
-            .attr("height", height)
-            .attr("width", width);
+            .attr("height", height);
+        }
+
+        if (interval) {
+          var width = xScale(new Date(timestamp + (interval))) -
+          xScale(new Date(timestamp));
+          aggWindow.select('.aggwindow-rect').attr("width", width);
         }
       }
     },
@@ -613,6 +597,7 @@ angular.module('lizard-nxt')
       }
 
       if (futureIndicator) {
+        var width = Timeline.prototype._getWidth(dimensions);
         futureIndicator
           .attr('x', xScale(Date.now()));
       }
@@ -656,11 +641,12 @@ angular.module('lizard-nxt')
    * @description Creates click function. If default is prevented, the click
    * was a zoom.
    */
-  var setClickFunction = function (xScale, dimensions, clickFn) {
+  var setClickFunction = function (xScale, dimensions, clickFn, drawAggWindow) {
     var clicked = function () {
       // Check whether user is dragging instead of clicking
       if (!d3.event.defaultPrevented) {
-        clickFn(d3.event, xScale, dimensions);
+        var ts = xScale.invert(event.offsetX - dimensions.padding.left)
+        clickFn(ts, dimensions);
       }
     };
     return clicked;
@@ -735,7 +721,8 @@ angular.module('lizard-nxt')
     dimensions
     ) {
 
-    var height = Timeline.prototype._getHeight(dimensions);
+    var height = Timeline.prototype._getHeight(dimensions),
+        width = Timeline.prototype._getWidth(dimensions);
 
     futureIndicator
       .attr('x', xScale(Date.now()));

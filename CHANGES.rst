@@ -3,7 +3,14 @@ Changelog of lizard-nxt client
 
 Unreleased (1.3.7) (XXXX-XX-XX)
 -------------------------------
--
+
+- Limit zooming to 24 hours.
+
+- Limit temporal state to zoom limits.
+
+- Round timestamps in animation.
+
+- Seperate concerns between timeline-service and directive.
 
 
 Release 1.3.8 (2015-4-8)

@@ -2,12 +2,13 @@
 
 
 describe('Testing State service', function () {
-  var State;
+  var State, UtilService;
 
   beforeEach(module('global-state'));
   beforeEach(module('lizard-nxt'));
   beforeEach(inject(function ($injector) {
     State = $injector.get('State');
+    UtilService = $injector.get('UtilService');
   }));
 
   it('should contain global state spatial, temporal, box, layergroups and ' +
@@ -18,6 +19,15 @@ describe('Testing State service', function () {
     expect(State.layerGroups).toBeDefined();
     expect(State.context).toBeDefined();
   });
+
+  it('should set temporal.end to the max when set with a futuristic timestamp',
+    function () {
+      var theVeryFarFuture = new Date();
+      theVeryFarFuture.setYear(3050);
+      State.temporal.end = theVeryFarFuture.getTime();
+      expect(State.temporal.end).toEqual(UtilService.MAX_TIME);
+    }
+  );
 
 });
 
