@@ -3,6 +3,25 @@ Changelog of lizard-nxt client
 
 Unreleased (1.3.7) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.3.8 (2015-4-8)
+---------------------
+
+- Fix raster response line graphs, take into account values wrapped in arrays.
+
+- Remove area controller rain aggregation code that throws error.
+
+- Limit zooming of timeline to time limits.
+
+- Fix rrc getData, include callee parameter.
+
+- Fix invisible labels of horizontal stacked barchart.
+
+
+Release 1.3.7 (2015-4-3)
+---------------------
 
 - When clicked add events of the latlng to the events related to an object.
 
