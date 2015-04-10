@@ -130,8 +130,18 @@ angular.module('lizard-nxt')
           this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys, null, this._xDomainInfo);
           drawLabel(this._svg, this.dimensions, labels.y, true);
         }
-        var line = this._createLine(this._xy, keys);
-        this._path = drawPath(this._svg, line, data, this.transTime, this._path);
+
+        var pathFn = keys.y.hasOwnProperty('y0') && keys.y.hasOwnProperty('y1')
+          ? this._createArea(this._xy, keys)
+          : this._createLine(this._xy, keys);
+
+        this._path = drawPath(
+          this._svg,
+          pathFn,
+          data,
+          this.transTime,
+          this._path
+        );
 
         if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
           addInteractionToPath(
@@ -346,14 +356,13 @@ angular.module('lizard-nxt')
           };
         }
         var xy = {x: {}, y: {}};
-        var self = this;
 
         angular.forEach(xy, function (value, key) {
           var y = key === 'y';
-          xy[key] = self._createD3Objects(data, keys[key], options[key], y);
-          drawAxes(self._svg, xy[key].axis, self.dimensions, y);
-          drawLabel(self._svg, self.dimensions, labels[key], y);
-        });
+          xy[key] = this._createD3Objects(data, keys[key], options[key], y);
+          drawAxes(this._svg, xy[key].axis, this.dimensions, y);
+          drawLabel(this._svg, this.dimensions, labels[key], y);
+        }, this);
         return xy;
       }
     }
@@ -680,8 +689,7 @@ angular.module('lizard-nxt')
       // bring to front
       fg.node().parentNode.appendChild(fg.node());
       path = fg.append("svg:path")
-        .attr("class", "line")
-        .style("stroke-width", 3);
+        .attr("class", "line");
     }
     path.datum(data)
       .transition()

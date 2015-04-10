@@ -24,15 +24,9 @@
 }
 
 .line {
-    fill: none;
-    stroke: darkcyan;
-    stroke-width: 2px;
-}
-
-.line2 {
-    fill: none;
-    stroke: crimson;
-    stroke-width: 2px;
+    fill: $greensea;
+    stroke: $greensea;
+    stroke-width: 3px;
 }
 
 .title {
