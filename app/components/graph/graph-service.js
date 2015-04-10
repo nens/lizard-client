@@ -131,7 +131,10 @@ angular.module('lizard-nxt')
           drawLabel(this._svg, this.dimensions, labels.y, true);
         }
 
-        var pathFn = keys.y.hasOwnProperty('y0') && keys.y.hasOwnProperty('y1')
+        var lineAsArea = keys.y.hasOwnProperty('y0')
+          && keys.y.hasOwnProperty('y1')
+
+        var pathFn = lineAsArea
           ? this._createArea(this._xy, keys)
           : this._createLine(this._xy, keys);
 
@@ -139,8 +142,11 @@ angular.module('lizard-nxt')
           this._svg,
           pathFn,
           data,
-          this.transTime,
-          this._path
+          temporal ? 0 : this.transTime, // Do not transition line graphs
+                                         // when temporal.
+          this._path,
+          lineAsArea ? null : 'none' // Set fill to 'none' for normal
+                                             // lines.
         );
 
         if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
@@ -683,7 +689,7 @@ angular.module('lizard-nxt')
     return x;
   };
 
-  drawPath = function (svg, line, data, duration, path) {
+  drawPath = function (svg, pathFn, data, duration, path, fill) {
     if (!path) {
       var fg = svg.select('g').select('#feature-group');
       // bring to front
@@ -696,8 +702,9 @@ angular.module('lizard-nxt')
       .duration(duration)
       .attr("d", function (d) {
         // Prevent returning invalid values for d
-        return line(d) || "M0, 0";
-      });
+        return pathFn(d) || "M0, 0";
+      })
+      .style('fill', fill);
     return path;
   };
 
@@ -716,10 +723,11 @@ angular.module('lizard-nxt')
       var i = bisect(data, xy.x.scale.invert(d3.mouse(this)[0]));
       i = i === data.length ? data.length - 1 : i;
       var d = data[i];
+      var value = keys.y.hasOwnProperty('y1') ? d[keys.y.y1] : d[keys.y];
 
       if (d[keys.x] === null || d[keys.y] === null) { return; }
 
-      var y2 = xy.y.scale(d[keys.y]),
+      var y2 = xy.y.scale(value),
           x2 = xy.x.scale(d[keys.x]),
           xText = new Date(data[i][keys.x]).toLocaleString();
 
@@ -745,7 +753,7 @@ angular.module('lizard-nxt')
         .attr('x2', x2);
 
       g.append('text')
-        .text(Math.round(data[i][keys.y] * 100) / 100 + ' ' + labels.y)
+        .text(Math.round(value * 100) / 100 + ' ' + labels.y)
         .attr('class', 'graph-tooltip-y')
         .attr('x', 5)
         .attr('y', y2 - 5);

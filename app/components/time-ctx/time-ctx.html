@@ -11,7 +11,7 @@
       <div class="dashboard-inner">
 
         <graph
-          ng-if="item.scale !== 'ratio' && item.type !== 'Event'"
+          ng-if="item.type === 'timeseries'"
           line
           data="item.data"
           dimensions="tctx.dims"
@@ -22,19 +22,21 @@
             x: 'timestamp',
             y: { 'y0': 'min', 'y1': 'max' }
           }"
-          name="<% item.name || item.quantity %>">
+          name="<% item.name %>">
         </graph>
 
         <graph
-          ng-if="item.scale === 'ratio'"
-          bar-chart
+          ng-if="item.type !== 'timeseries'
+            && item.scale !== 'ratio'
+            && item.type !== 'Event'"
+          line
           data="item.data"
           dimensions="tctx.dims"
           type="temporal"
           temporal="tctx.state.temporal"
           ylabel="item.unit"
           keys="{x: 0, y: 1}"
-          name="<% item.name || item.quantity %>">
+          name="<% item.quantity %>">
         </graph>
 
         <graph
@@ -48,7 +50,19 @@
                  category: 'category'}"
           dimensions="tctx.dims"
           temporal="tctx.state.temporal"
-          name="<% item.name || item.quantity %>">
+          name="<% item.quantity %>">
+        </graph>
+
+        <graph
+          ng-if="item.scale === 'ratio'"
+          bar-chart
+          data="item.data"
+          dimensions="tctx.dims"
+          type="temporal"
+          temporal="tctx.state.temporal"
+          ylabel="item.unit"
+          keys="{x: 0, y: 1}"
+          name="<% item.quantity %>">
         </graph>
 
       </div>

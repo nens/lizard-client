@@ -22,7 +22,7 @@
 
   <div class="timeseries-graph-container"
       ng-class="{hidden: !fullDetails}"
-      ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name === 'measuringstation'">
+      ng-if="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name === 'measuringstation'">
      <graph
         bar-chart
         type="temporal"
@@ -31,8 +31,8 @@
         ylabel="timeseries.selectedTimeseries.unit"
         xlabel=""
         keys="{
-          x: 'timestamp',
-          y: { 'y0': 'min', 'y1': 'max' }
+          x: 0,
+          y: 1
         }"
         now="timeState.at">
       </graph>
@@ -40,7 +40,7 @@
 
   <div class="timeseries-graph-container"
     ng-class="{hidden: !fullDetails}"
-    ng-show="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name !== 'measuringstation'">
+    ng-if="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name !== 'measuringstation'">
     <graph
       line
       type="temporal"

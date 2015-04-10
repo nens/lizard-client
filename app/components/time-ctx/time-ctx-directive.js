@@ -71,7 +71,6 @@ angular.module('time-ctx')
       angular.forEach(sharedKeys, function (key) {
         item[key] = response[key];
       });
-
       scope.tctx.content[response.layerSlug] = item;
     };
 
@@ -135,6 +134,7 @@ angular.module('time-ctx')
         } else if (response.layerSlug === 'timeseries') {
           angular.forEach(response.data, function (ts) {
             ts.layerSlug = ts.name;
+            ts.type = response.layerSlug;
             putDataOnScope(ts);
           });
         } else {
