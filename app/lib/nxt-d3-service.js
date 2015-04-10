@@ -389,6 +389,7 @@ angular.module('lizard-nxt')
      * @return {object} d3 path generator for line.
      */
     _createLine: function (xy, keys) {
+      console.info(keys, xy);
       return createPathGenerator(d3.svg.line)
         .y(function (d) { return xy.y.scale(d[keys.y]); })
         .x(function (d) { return xy.x.scale(d[keys.x]); })
@@ -508,6 +509,11 @@ angular.module('lizard-nxt')
       .attr("transform", "translate(0 ," + transform + ")");
   };
 
+  /**
+   * Returns a d3 path with 'monotone' interpolator.
+   * @param  {object} d3Generator d3 [line|area] generator function.
+   * @return {object}             d3 path generator.
+   */
   createPathGenerator = function (d3Generator) {
     // Monotone line goes through all datapoints. Other options are 'basis'
     // which looks nice but can give inaccurate results, or 'cardinal' which
