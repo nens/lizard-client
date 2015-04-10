@@ -50,7 +50,8 @@ angular.module('omnibox')
         geom: here,
         start: State.temporal.start,
         end: State.temporal.end,
-        aggWindow: aggWindow
+        aggWindow: aggWindow,
+        minPoints: 320 // Width of drawing area of box graphs.
       });
 
       // Draw feedback when all promises resolved

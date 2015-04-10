@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * @name NxtD3
  * @class angular.module('lizard-nxt')
@@ -14,7 +16,7 @@
 angular.module('lizard-nxt')
   .factory("NxtD3", [function () {
 
-  var createCanvas, createElementForAxis, resizeCanvas;
+  var createCanvas, createElementForAxis, resizeCanvas, createPathGenerator;
 
   /**
    * @constructor
@@ -195,16 +197,27 @@ angular.module('lizard-nxt')
         return {max: null, min: null};
       }
 
-      // min max of d3 filters nulls but not if you cast null into 0. Only cast
-      // strings, and array like [0, [3]].
-      var comparator = function (d) {
-        return typeof(d[key]) === 'string' || d[key] instanceof Array
-          ? Number(d[key])
-          : d[key];
-      };
+      var min, max;
 
-      var max = d3.max(data, comparator);
-      var min = d3.min(data, comparator);
+      if (key.hasOwnProperty('y0') && key.hasOwnProperty('y1')) {
+        var minComparator = function (d) { return d[key.y0]; };
+        min = d3.min(data, minComparator);
+
+        var maxComparator = function (d) { return d[key.y1]; };
+        max = d3.max(data, maxComparator);
+      }
+
+      else {
+        // min max of d3 filters nulls but not if you cast null into 0. Only cast
+        // strings, and array like [0, [3]].
+        var comparator = function (d) {
+          return typeof(d[key]) === 'string' || d[key] instanceof Array
+            ? Number(d[key])
+            : d[key];
+        };
+        max = d3.max(data, comparator);
+        min = d3.min(data, comparator);
+      }
 
       return {
         max: max,
@@ -368,27 +381,42 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt')
-  .NxtD3
+     * @memberOf angular.module('lizard-nxt').NxtD3
      *
      * @param {object} xy object containing y.scales and x.scale.
      * @param {object} keys object containing y.key and x.key.
      * @description returns a line definition for the provided scales.
-     * @return {object} line
+     * @return {object} d3 path generator for line.
      */
     _createLine: function (xy, keys) {
-      // Monotone line goes through all datapoints. Other options are 'basis'
-      // which looks nice but can give inaccurate results, or 'cardinal' which
-      // results in a line with a bigger domain/amplitute than the data.
-      return d3.svg.line().interpolate('monotone')
-        .y(function (d) {
-          return xy.y.scale(d[keys.y]);
-        })
-        .x(function (d) {
-          return xy.x.scale(d[keys.x]);
-        })
+      return createPathGenerator(d3.svg.line)
+        .y(function (d) { return xy.y.scale(d[keys.y]); })
+        .x(function (d) { return xy.x.scale(d[keys.x]); })
         // interrupt the line when no data
         .defined(function (d) { return !isNaN(parseFloat(d[keys.y])); });
+    },
+
+
+    /**
+     * @function
+     * @memberOf angular.module('lizard-nxt').NxtD3
+     *s
+     * @param {object} xy object containing y.scales and x.scale.
+     * @param {object} keys object containing y.key and x.key.
+     * @description returns an area definition for the provided scales.
+     * @return {object} d3 path generator for area.
+     */
+    _createArea: function (xy, keys) {
+      return createPathGenerator(d3.svg.area)
+        .x(function(d) { return xy.x.scale(d[keys.x]); })
+        .y0(function(d) { return xy.y.scale(d[keys.y.y0]); })
+        .y1(function(d) { return xy.y.scale(d[keys.y.y1]); })
+        // interrupt the line when no data
+        .defined(function (d) {
+          var y0 = !isNaN(parseFloat(d[keys.y.y0]));
+          var y1 = !isNaN(parseFloat(d[keys.y.y1]));
+          return y0 && y1;
+        });
     },
 
     /**
@@ -479,6 +507,19 @@ angular.module('lizard-nxt')
       .attr('id', id)
       .attr("transform", "translate(0 ," + transform + ")");
   };
+
+  /**
+   * Returns a d3 path with 'monotone' interpolator.
+   * @param  {object} d3Generator d3 [line|area] generator function.
+   * @return {object}             d3 path generator.
+   */
+  createPathGenerator = function (d3Generator) {
+    // Monotone line goes through all datapoints. Other options are 'basis'
+    // which looks nice but can give inaccurate results, or 'cardinal' which
+    // results in a line with a bigger domain/amplitute than the data.
+    return d3Generator().interpolate('monotone');
+  };
+
 
   return NxtD3;
 
