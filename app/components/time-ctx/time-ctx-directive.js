@@ -40,8 +40,6 @@ angular.module('time-ctx')
         + GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN;
     };
 
-    Timeline.onresize = resize;
-
     scope.tctx.dims = {
       width: UtilService.getCurrentWidth()
         + GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN,
@@ -109,10 +107,15 @@ angular.module('time-ctx')
         : State.spatial.here;
 
     var getTimeData = function () {
+      var graphWidth = scope.tctx.dims.width -
+        scope.tctx.dims.padding.left -
+        scope.tctx.dims.padding.right;
+
       DataService.getData('time', {
         geom: geom,
         start: State.temporal.start,
         end: State.temporal.end,
+        minPoints: graphWidth,
         temporalOnly: true // TODO: actually implement this in data-service.
       }).then(null, null, function (response) {
 
@@ -161,7 +164,10 @@ angular.module('time-ctx')
 
     var applyResize = function () {
       scope.$apply(resize(tlDims));
+      getTimeData();
     };
+
+    Timeline.onresize = resize;
 
     window.addEventListener('resize', applyResize);
 
