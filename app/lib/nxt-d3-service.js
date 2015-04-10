@@ -389,7 +389,6 @@ angular.module('lizard-nxt')
      * @return {object} d3 path generator for line.
      */
     _createLine: function (xy, keys) {
-      console.info(keys, xy);
       return createPathGenerator(d3.svg.line)
         .y(function (d) { return xy.y.scale(d[keys.y]); })
         .x(function (d) { return xy.x.scale(d[keys.x]); })
