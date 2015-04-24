@@ -15,9 +15,17 @@ angular.module('lizard-nxt')
     Restangular.setDefaultHttpFields({withCredentials: true});
   }
   Restangular.setRequestSuffix('?page_size=25000');
-  geocodeResource = Restangular.one('api/v1/geocode/');
   timeseriesResource = Restangular.one('api/v1/timeseries/');
   events = Restangular.one('api/v1/events/');
+
+  geocodeResource = Restangular
+    // Use a different base url, go directly to our friend at google. They don't
+    // mind.
+    .withConfig(function(RestangularConfigurer) {
+      RestangularConfigurer.setBaseUrl('https://maps.googleapis.com/maps');
+    })
+    .one('api/geocode/json');
+
 
   /**
    * Raster resource, last stop to the server
