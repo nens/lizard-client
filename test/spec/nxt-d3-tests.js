@@ -67,6 +67,32 @@ describe('Testing NxtD3', function () {
     expect(maxMin.min).toEqual(1);
   });
 
+  it('should return correct max min for complex keys', function () {
+    var data = [
+      {
+        max: 1,
+        min: -3,
+        timestamp: 0
+      },
+      {
+        max: 2,
+        min: 0,
+        timestamp: 1
+      },
+      {
+        max: 4,
+        min: -2,
+        timestamp: 3
+      }
+    ],
+      key = {y0: 'min', y1: 'max'},
+      maxMin = nxtD3._maxMin(data, key);
+
+    expect(maxMin.max).toEqual(4);
+    expect(maxMin.min).toEqual(-3);
+  });
+
+
   it('should set new dimensions when resized', function () {
     newWidth = 40;
     nxtD3.resize({width: newWidth});
@@ -79,6 +105,17 @@ describe('Testing NxtD3', function () {
       expect(nxtD3.dimensions.height).toBeDefined();
     }
   );
+
+  it('should return a path generator with monotone interpolator', function () {
+    var keys = {x: 0, y: 1};
+    var xy = {
+      'x': { scale: function () {} },
+      'y': { scale: function () {} }
+    };
+
+    var pathGen = nxtD3._createLine(xy, keys);
+    expect(pathGen.interpolate()).toBe('monotone');
+  });
 
 });
 

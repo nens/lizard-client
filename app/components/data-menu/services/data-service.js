@@ -291,6 +291,7 @@ angular.module('data-menu')
             response.data.entity_name + '$' + response.data.id,
             options.start,
             options.end,
+            options.minPoints,
             defer
           );
           // The defer from getData is recycled, no need to pass a callee param.
@@ -311,15 +312,25 @@ angular.module('data-menu')
        * @memberOf app.pointCtrl
        * @description gets timeseries from service
        */
-      var getTimeSeriesForObject = function (objectId, start, end, defer) {
+      var getTimeSeriesForObject = function (
+          objectId,
+          start,
+          end,
+          minPoints,
+          defer
+        ) {
 
         // maximum number of timeseries events, more probably results in a
         // memory error.
         var MAX_NR_TIMESERIES_EVENTS = 25000;
-        var promise = TimeseriesService.getTimeseries(objectId, {
-          start: start,
-          end: end
-        }).then(function (response) {
+        var promise = TimeseriesService.getTimeseries(
+          objectId,
+          {
+            start: start,
+            end: end
+          },
+          minPoints
+        ).then(function (response) {
 
            // Filter out the timeseries with too little measurements.
           var filteredResult = [];

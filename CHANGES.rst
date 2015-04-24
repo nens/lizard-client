@@ -8,6 +8,14 @@ Unreleased (1.4.0) (XXXX-XX-XX)
 
 - Simulate click on precise geocoding results.
 
+- Limit zooming to 24 hours.
+
+- Limit temporal state to zoom limits.
+
+- Round timestamps in animation.
+
+- Seperate concerns between timeline-service and directive.
+
 
 Release 1.3.8 (2015-4-8)
 ---------------------

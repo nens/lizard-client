@@ -182,7 +182,11 @@ angular.module('lizard-nxt')
       if (State.temporal.at >= State.temporal.end ||
           State.temporal.at < State.temporal.start) {
         $scope.$apply(function () {
-          State.temporal.at = State.temporal.start;
+          State.temporal.at = UtilService.roundTimestamp(
+            State.temporal.start,
+            State.temporal.aggWindow,
+            false
+          );
         });
       }
     };
