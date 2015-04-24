@@ -50,7 +50,11 @@ describe('Directives: Search', function () {
   it('should destroy location model', function () {
     // destroy is a private function so we call the function
     // calling it.
-    scope.zoomTo({boundingbox: null});
+    scope.zoomTo({
+      geometry: {
+        viewport: {}
+      }
+    });
     expect(scope.box.content.hasOwnProperty('location')).toBe(false);
   });
 

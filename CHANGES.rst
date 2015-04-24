@@ -1,9 +1,12 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.3.7) (XXXX-XX-XX)
+Unreleased (1.4.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Use google geocoder instead of mapbox.
+
+- Simulate click on precise geocoding results.
 
 
 Release 1.3.8 (2015-4-8)

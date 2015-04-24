@@ -19,8 +19,8 @@ angular.module('lizard-nxt')
   events = Restangular.one('api/v1/events/');
 
   geocodeResource = Restangular
-    // Use a different base url, go directly to our friend at google. They don't
-    // mind.
+    // Use a different base url, go directly to our friends at google.
+    // They don't mind.
     .withConfig(function(RestangularConfigurer) {
       RestangularConfigurer.setBaseUrl('https://maps.googleapis.com/maps');
     })
