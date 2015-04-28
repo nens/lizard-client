@@ -209,7 +209,6 @@
         -moz-user-select: none;
         -ms-user-select: none;
         -webkit-user-select: none;
-        fill: $midnightblue;
         font-family: 'Roboto', Helvetica, Arial, sans-serif;
         font-size: 13px;
         shape-rendering: crispEdges;
@@ -262,29 +261,31 @@
   stroke: white;
 }
 
-.tickmark {
-  fill: $bargrey;
+.timeline .tick {
   stroke-width: 1;
   fill-opacity: 0.8;
   stroke: $bargrey;
+
+  > text {
+    fill: $midnightblue;
+  }
+
+  > .clickable {
+    font-weight: bold;
+    fill: $belize-hole;
+
+    &:hover {
+        fill: $peter-river;
+    }
+
+  }
+
+
 }
 
 .aggwindow-rect {
   fill: #c0392b;
   opacity: 0.6;
-}
-
-.tick.tick-start {
-  font-weight: bold;
-  opacity: 1;
-}
-
-.tick-start {
-  text-align: left;
-}
-
-.tick-stop {
-  text-align: right;
 }
 
 .event {
