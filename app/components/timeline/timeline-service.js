@@ -416,7 +416,53 @@ angular.module('lizard-nxt')
     var axisEl = svg.select('#xaxis')
         .attr("class", "x axis timeline-axis");
 
+    addClickToAxisTicks(axisEl.selectAll('text'));
   };
+
+  /**
+   * Takes a d3 multiselection of text elements and add click interaction to
+   * zoom to rounded dates.
+   * @param {d3 selections} ticks text elements of tick marks.
+   */
+  var addClickToAxisTicks = function(ticks) {
+    ticks
+      .each(function (d) {
+        if (d.getMinutes() === 0) {
+          d3.select(this).attr('class', 'clickable');
+        }
+      })
+      .on('click', zoomToHourDayMonthOrYear);
+  };
+
+  /**
+   * Gets a date object, typically from a d3 tick mark. If it is a round
+   * year|month|day|hour it zooms the timeline and calls zoom callbacks. It does
+   * not zoom to minutes and seconds.
+   * @param  {date} d
+   */
+  var zoomToHourDayMonthOrYear = function (d) {
+      if (d.getMinutes() === 0) {
+        var end = new Date(d.getTime());
+        if (d.getHours() === 0) {
+          if (d.getDate() === 1) {
+            if (d.getMonth() === 0) {
+              xScale.domain([d, end.setYear(d.getFullYear() + 1)]);
+            }
+            else {
+              xScale.domain([d, end.setMonth(d.getMonth() + 1)]);
+            }
+          }
+          else {
+            xScale.domain([d, end.setDate(d.getDate() + 1)]);
+          }
+        }
+        else {
+          xScale.domain([d, end.setHours(d.getHours() + 1)]);
+        }
+        zoomed();
+        zoomend();
+      }
+    }
 
   /**
    * Draw start stop draws the fixed text labels displaying start and stop of
@@ -565,7 +611,10 @@ angular.module('lizard-nxt')
   var setZoomFunction = function (
     svg, dimensions, xScale, zoomFn) {
     var zoomed = function () {
-      d3.event.sourceEvent.preventDefault();
+      // might not exist when called programmatically
+      if (d3.event.sourceEvent) {
+        d3.event.sourceEvent.preventDefault();
+      }
 
       var ONE_HOUR = 1000 * 60 * 60;
 
