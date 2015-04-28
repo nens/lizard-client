@@ -5,10 +5,18 @@
  * and makes sure the right services are called.
  */
 angular.module('omnibox')
-  .directive('search', ['LocationService', 'ClickFeedbackService', 'MapService', 'State',
-  function (LocationService, ClickFeedbackService, MapService, State) {
+  .directive('search', [
+    'LocationService',
+    'ClickFeedbackService',
+    'MapService',
+    'State',
+    '$timeout',
+  function (LocationService, ClickFeedbackService, MapService, State, $timeout) {
 
   var link = function (scope, element, attrs) {
+
+    // Set focus on search input field.
+    element.children()[0].focus();
 
     /**
      * @description event handler for key presses.
@@ -20,12 +28,15 @@ angular.module('omnibox')
 
       if ($event.target.id === "searchboxinput") {
         // Intercept keyPresses *within* searchbox, do xor prevent stuff from happening
-        if ($event.which === 13) {
-          // User hits [enter] -> do search;
-          scope.search();
+        if ($event.which === 13 && scope.box.content.location) {
+          // User hits [enter];
+          scope.zoomTo(scope.box.content.location[0]);
         } else if ($event.which === 32) {
           // user hits [space] -> prevent anim. start/stop
           $event.originalEvent.stopPropagation();
+        } else if ($event.which === 27) {
+          // user hits [space] -> prevent anim. start/stop
+          scope.cleanInput();
         }
       }
     };
@@ -35,16 +46,18 @@ angular.module('omnibox')
      * with the right query and puts in on the scope.
      */
     scope.search = function () {
-      LocationService.search(scope.geoquery, State.spatial)
-        .then(function (response) {
-          if (response.status === LocationService.ggStatus.ok) {
-            scope.box.content.location = response.results;
+      if (scope.geoquery.length > 1) {
+        LocationService.search(scope.geoquery, State.spatial)
+          .then(function (response) {
+            if (response.status === LocationService.ggStatus.ok) {
+              scope.box.content.location = response.results;
+            }
+            else if (response.status === LocationService.ggStatus.zeroResults) {
+              destroyLocationModel();
+            }
           }
-          else {
-            scope.geoquery = "";
-          }
-        }
-      );
+        );
+      }
     };
 
     /**

@@ -12,18 +12,18 @@ angular.module('omnibox')
     ['LeafletService', 'CabinetService', 'State',
     function LocationService (LeafletService, CabinetService, State) {
 
-    this.search = function (searchString, spatialState) {
-      if (searchString.length > 1) {
-        return CabinetService.geocode.get({
-          address: searchString,
-          language: 'nl',
-          bounds:
-            spatialState.bounds.getSouth() + ',' +
-            spatialState.bounds.getWest() + '|' +
-            spatialState.bounds.getNorth() + ',' +
-            spatialState.bounds.getEast()
-        });
-      }
+  this.search = function (searchString, spatialState) {
+      // TODO: request results in portals language and restrict results based
+      // on portal by adding: components: 'country:NL'.
+      return CabinetService.geocode.get({
+        address: searchString,
+        language: 'nl', // Return results in Dutch
+        bounds: // Prefer results from the current viewport
+          spatialState.bounds.getSouth() + ',' +
+          spatialState.bounds.getWest() + '|' +
+          spatialState.bounds.getNorth() + ',' +
+          spatialState.bounds.getEast()
+      });
     };
 
     /**
