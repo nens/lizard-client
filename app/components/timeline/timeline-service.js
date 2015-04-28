@@ -416,6 +416,36 @@ angular.module('lizard-nxt')
     var axisEl = svg.select('#xaxis')
         .attr("class", "x axis timeline-axis");
 
+    axisEl.selectAll('text').each(function (d) {
+      if (d.getMinutes() === 0) {
+        d3.select(this).attr('class', 'clickable');
+      }
+    })
+
+    axisEl.selectAll('text').on('click', function (d) {
+      if (d.getMinutes() === 0) {
+        var end = new Date(d.getTime());
+        if (d.getHours() === 0) {
+          if (d.getDate() === 1) {
+            if (d.getMonth() === 0) {
+              xScale.domain([d, end.setYear(d.getFullYear() + 1)]);
+            }
+            else {
+              xScale.domain([d, end.setMonth(d.getMonth() + 1)]);
+            }
+          }
+          else {
+            xScale.domain([d, end.setDate(d.getDate() + 1)]);
+          }
+        }
+        else {
+          xScale.domain([d, end.setHours(d.getHours() + 1)]);
+        }
+        zoomed();
+        zoomend();
+      }
+    });
+
   };
 
   /**
@@ -565,7 +595,7 @@ angular.module('lizard-nxt')
   var setZoomFunction = function (
     svg, dimensions, xScale, zoomFn) {
     var zoomed = function () {
-      d3.event.sourceEvent.preventDefault();
+      // d3.event.sourceEvent.preventDefault();
 
       var ONE_HOUR = 1000 * 60 * 60;
 

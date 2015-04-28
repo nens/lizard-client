@@ -34,8 +34,7 @@ angular.module('omnibox')
         } else if ($event.which === 32) {
           // user hits [space] -> prevent anim. start/stop
           $event.originalEvent.stopPropagation();
-        } else if ($event.which === 27) {
-          // user hits [space] -> prevent anim. start/stop
+        } else if ($event.which === 27) { //esc
           scope.cleanInput();
         }
       }
