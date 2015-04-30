@@ -4,9 +4,13 @@ Changelog of lizard-nxt client
 Unreleased (1.4.0) (XXXX-XX-XX)
 -------------------------------
 
+- Timeline click and zoom are registered on listeneres rect.
+
+- Timeline axis labels are clickable and zoom to label timestamp.
+
 - Geocode while typing.
 
-- Move to first result when hitting enter.
+- Move to first result when hitting enter in.
 
 - Use google geocoder instead of mapbox.
 
