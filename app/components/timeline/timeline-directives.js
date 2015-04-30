@@ -65,7 +65,6 @@ angular.module('lizard-nxt')
 
         scope.$apply(function () {
           timelineSetsTime = true;
-
           State.temporal.timelineMoving = true;
           State.temporal.start = scale.domain()[0].getTime();
           State.temporal.end   = scale.domain()[1].getTime();

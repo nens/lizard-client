@@ -2,18 +2,31 @@
 
 describe('Directives: Search', function () {
   var MapService, State;
+
+  module(function($provide) {
+    $provide.service('LocationService', function () {
+      // Mock promise
+      this.search = function (searchString, spatialState) {
+        return {
+          then: function (cb) { cb({status: 'OVER_QUERY_LIMIT'}); }
+        };
+      };
+    });
+  });
+
   // load the service's module
   beforeEach(module('lizard-nxt'));
-
   beforeEach(module('global-state'));
-  // instantiate serviced,
+
   var scope, element;
+
   beforeEach(inject(function ($rootScope, $compile, $injector) {
     scope = $rootScope;
-    element = angular.element('<search></search>');
-    $compile(element)($rootScope);
     MapService = $injector.get('MapService');
     State = $injector.get('State');
+
+    element = angular.element('<search></search>');
+    $compile(element)($rootScope);
     var el = angular.element('<div></div>');
     MapService.initializeMap(el[0], {});
     scope.$digest();
@@ -50,8 +63,21 @@ describe('Directives: Search', function () {
   it('should destroy location model', function () {
     // destroy is a private function so we call the function
     // calling it.
-    scope.zoomTo({boundingbox: null});
+    scope.zoomTo({
+      geometry: {
+        viewport: {}
+      }
+    });
     expect(scope.box.content.hasOwnProperty('location')).toBe(false);
   });
+
+  it(
+    'should throw error when response status other than ZERO_RESULTS or OK',
+    function () {
+      scope.geoquery = 'test';
+      // Mocked locationservice will respond whith status 'OVER_QUERY_LIMIT'
+      expect(scope.search).toThrow();
+    }
+  );
 
 });
