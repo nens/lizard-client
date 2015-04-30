@@ -28,9 +28,14 @@ angular.module('omnibox')
 
       if ($event.target.id === "searchboxinput") {
         // Intercept keyPresses *within* searchbox, do xor prevent stuff from happening
-        if ($event.which === 13 && scope.box.content.location) {
+        if ($event.which === 13) {
           // User hits [enter];
-          scope.zoomTo(scope.box.content.location[0]);
+          if (scope.box.content.location && scope.box.content.location[0]) {
+            scope.zoomTo(scope.box.content.location[0]);
+          }
+          else {
+            scope.search();
+          }
         } else if ($event.which === 32) {
           // user hits [space] -> prevent anim. start/stop
           $event.originalEvent.stopPropagation();
