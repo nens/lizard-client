@@ -48,10 +48,12 @@ angular.module('omnibox')
       if (scope.geoquery.length > 1) {
         LocationService.search(scope.geoquery, State.spatial)
           .then(function (response) {
-            if (response.status === LocationService.ggStatus.ok) {
+            if (response.status === LocationService.ggStatus.OK) {
               scope.box.content.location = response.results;
             }
-            else if (response.status === LocationService.ggStatus.zeroResults) {
+            else if (
+              response.status === LocationService.ggStatus.ZERO_RESULTS
+            ) {
               destroyLocationModel();
             }
           }

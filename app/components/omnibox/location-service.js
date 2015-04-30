@@ -12,7 +12,13 @@ angular.module('omnibox')
     ['LeafletService', 'CabinetService', 'State',
     function LocationService (LeafletService, CabinetService, State) {
 
-  this.search = function (searchString, spatialState) {
+    /**
+     * Sends searchstring to geocoder resource.
+     * @param  {str} searchString used to query geocoder.
+     * @param  {object} spatialState to use in biasing geocoder to current view.
+     * @return {promise}
+     */
+    this.search = function (searchString, spatialState) {
       // TODO: request results in portals language and restrict results based
       // on portal by adding: components: 'country:NL'.
       return CabinetService.geocode.get({
@@ -42,12 +48,12 @@ angular.module('omnibox')
     }
 
     this.ggStatus = {
-        ok: 'OK',
-        zeroResults: 'ZERO_RESULTS',
-        overQueryLimits: 'OVER_QUERY_LIMIT',
-        requestDenied: 'REQUEST_DENIED',
-        invalidRequest: 'INVALID_REQUEST',
-        unknown: 'UNKNOWN_ERROR'
+        OK: 'OK',
+        ZERO_RESULTS: 'ZERO_RESULTS',
+        OVER_QUERY_LIMIT: 'OVER_QUERY_LIMIT',
+        REQUEST_DENIED: 'REQUEST_DENIED',
+        INVALID_REQUEST: 'INVALID_REQUEST',
+        UNKNOWN_ERROR: 'UNKNOWN_ERROR'
     };
 
   }
