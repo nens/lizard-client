@@ -694,7 +694,10 @@ angular.module('lizard-nxt')
     var clicked = function () {
       // Check whether user is dragging instead of clicking
       if (!d3.event.defaultPrevented) {
-        var ts = xScale.invert(event.offsetX - dimensions.padding.left)
+        var x = d3.event.clientX
+          - UtilService.TIMELINE_LEFT_MARGIN
+          - dimensions.padding.left;
+        var ts = xScale.invert(x);
         clickFn(ts, dimensions);
       }
     };
