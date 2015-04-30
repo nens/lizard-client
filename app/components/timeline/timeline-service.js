@@ -123,13 +123,13 @@ angular.module('lizard-nxt')
             this.drawAggWindow
           );
         }
-        this._svg.on("click", clicked);
+        this._svg.select('#listeners').on("click", clicked);
       }
     },
 
     removeClickListener: {
       value: function () {
-        this._svg.on("click", null);
+        this._svg.select('#listeners').on("click", null);
       }
     },
 
@@ -373,7 +373,7 @@ angular.module('lizard-nxt')
         if (zoomEndFn) {
           zoomend = setZoomEndFunction(zoomEndFn);
         }
-        this._svg.call(d3.behavior.zoom()
+        this._svg.select('#listeners').call(d3.behavior.zoom()
           .x(xScale)
           .on("zoom", zoomed)
           .on("zoomend", zoomend)
@@ -441,28 +441,26 @@ angular.module('lizard-nxt')
    * @param  {date} d
    */
   var zoomToHourDayMonthOrYear = function (d) {
-      if (d.getMinutes() === 0) {
-        var end = new Date(d.getTime());
-        if (d.getHours() === 0) {
-          if (d.getDate() === 1) {
-            if (d.getMonth() === 0) {
-              xScale.domain([d, end.setYear(d.getFullYear() + 1)]);
-            }
-            else {
-              xScale.domain([d, end.setMonth(d.getMonth() + 1)]);
-            }
-          }
-          else {
-            xScale.domain([d, end.setDate(d.getDate() + 1)]);
-          }
+    var end = new Date(d.getTime());
+    if (d.getHours() === 0) {
+      if (d.getDate() === 1) {
+        if (d.getMonth() === 0) {
+          xScale.domain([d, end.setYear(d.getFullYear() + 1)]);
         }
         else {
-          xScale.domain([d, end.setHours(d.getHours() + 1)]);
+          xScale.domain([d, end.setMonth(d.getMonth() + 1)]);
         }
-        zoomed();
-        zoomend();
+      }
+      else {
+        xScale.domain([d, end.setDate(d.getDate() + 1)]);
       }
     }
+    else {
+      xScale.domain([d, end.setHours(d.getHours() + 1)]);
+    }
+    zoomed();
+    zoomend();
+  };
 
   /**
    * Draw start stop draws the fixed text labels displaying start and stop of
