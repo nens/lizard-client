@@ -163,7 +163,7 @@ angular.module('lizard-nxt')
 
         if (!aggWindow) {
           height = this._getHeight(this.dimensions);
-          aggWindow = this._svg.append("g")
+          aggWindow = this._svg.select('g').append("g")
             .attr('class', 'agg-window-group');
           aggWindow
             .append("rect")
@@ -378,6 +378,10 @@ angular.module('lizard-nxt')
           .on("zoom", zoomed)
           .on("zoomend", zoomend)
         );
+
+        // Move listener rectangle to the front
+        var el = this._svg.select('#listeners').node();
+        el.parentNode.appendChild(el);
       }
     }
   });
