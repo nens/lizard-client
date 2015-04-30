@@ -45,7 +45,7 @@ angular.module('omnibox')
       if (result.geometry.location_type === 'ROOFTOP') { // Precise location
         State.spatial.here = LeafletService.latLng(result.geometry.location);
       }
-    }
+    };
 
     this.ggStatus = {
         OK: 'OK',

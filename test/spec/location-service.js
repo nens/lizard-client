@@ -53,7 +53,7 @@ describe('Service: LocationService', function () {
   });
 
   it('should contain the google geocoder statuses', function () {
-    expect(LocationService.ggStatus.ok).toBe('OK');
+    expect(LocationService.ggStatus.OK).toBe('OK');
   });
 
   it('should set bounds of search result on State', function () {

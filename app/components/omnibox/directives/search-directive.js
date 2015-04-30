@@ -55,6 +55,12 @@ angular.module('omnibox')
               response.status === LocationService.ggStatus.ZERO_RESULTS
             ) {
               destroyLocationModel();
+            } else {
+              destroyLocationModel();
+              // Throw error so we can find out about it through sentry.
+              throw new Error(
+                'Geocoder returned with status: ' + resonse.status
+              );
             }
           }
         );
