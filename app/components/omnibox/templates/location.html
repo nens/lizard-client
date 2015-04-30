@@ -1,10 +1,9 @@
 <div ng-cloak
-  ng-repeat="location in box.content.location.data"
+  ng-repeat="location in box.content.location"
   class="cluster location">
   <i class="fa fa-map-marker"></i>&nbsp;
   <a ng-click="zoomTo(location)"
-    title="<% location.display_name %>"
     class="pointer clickable">
-    <span><% location.display_name %></span></a>
+    <span><% location.formatted_address %></span></a>
 </div>
 

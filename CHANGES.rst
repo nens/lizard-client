@@ -1,8 +1,16 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.3.7) (XXXX-XX-XX)
+Unreleased (1.4.0) (XXXX-XX-XX)
 -------------------------------
+
+- Geocode while typing.
+
+- Move to first result when hitting enter.
+
+- Use google geocoder instead of mapbox.
+
+- Simulate click on precise geocoding results.
 
 - Limit zooming to 24 hours.
 
