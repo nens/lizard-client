@@ -37,18 +37,20 @@ describe('Service: LocationService', function () {
   beforeEach(inject(function ($injector) {
     LocationService = $injector.get('LocationService');
     State = $injector.get('State');
-  }));
 
-  it('should return a CabinetService promise ', function () {
-    var spatialState = {
+    State.spatial = {
+      here: {},
       bounds : {
         getNorth: function () {},
         getSouth: function () {},
         getWest: function () {},
-        getEast: function () {}
+        getEast: function () {},
       }
     };
-    var result = LocationService.search('testQuery', spatialState);
+  }));
+
+  it('should return a CabinetService promise ', function () {
+    var result = LocationService.search('testQuery', State);
     expect(result.hasOwnProperty('then')).toBe(true);
   });
 
@@ -57,15 +59,17 @@ describe('Service: LocationService', function () {
   });
 
   it('should set bounds of search result on State', function () {
-    LocationService.zoomToResult(ggResult.results[0]);
+    LocationService.zoomToResult(ggResult.results[0], State);
     expect(State.spatial.bounds._southWest.lat)
       .toBe(ggResult.results[0].geometry.viewport.southwest.lat);
   });
 
   it('should set spatial.here when location_type is ROOFTOP', function () {
-    LocationService.zoomToResult(ggResult.results[0]);
+    LocationService.zoomToResult(ggResult.results[0], State);
     expect(State.spatial.here.lat)
       .toBe(ggResult.results[0].geometry.location.lat);
   });
+
+
 
 });

@@ -51,7 +51,7 @@ angular.module('omnibox')
      */
     scope.search = function () {
       if (scope.query.length > 1) {
-        LocationService.search(scope.query, State.spatial)
+        LocationService.search(scope.query, State)
           .then(function (response) {
             if (response.status === LocationService.ggStatus.OK) {
               scope.box.content.location = response.results;
@@ -108,7 +108,7 @@ angular.module('omnibox')
     scope.zoomTo = function (location) {
       destroyLocationModel();
       scope.cleanInput();
-      LocationService.zoomToResult(location);
+      State = LocationService.zoomToResult(location, State);
     };
 
   };
