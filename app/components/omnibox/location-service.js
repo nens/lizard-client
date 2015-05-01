@@ -12,7 +12,7 @@ angular.module('omnibox')
     ['LeafletService', 'CabinetService',
     function LocationService (LeafletService, CabinetService) {
 
-    this.ggStatus = {
+    this.responseStatus = {
         OK: 'OK',
         ZERO_RESULTS: 'ZERO_RESULTS',
         OVER_QUERY_LIMIT: 'OVER_QUERY_LIMIT',

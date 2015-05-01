@@ -53,11 +53,11 @@ angular.module('omnibox')
       if (scope.query.length > 1) {
         LocationService.search(scope.query, State)
           .then(function (response) {
-            if (response.status === LocationService.ggStatus.OK) {
+            if (response.status === LocationService.responseStatus.OK) {
               scope.box.content.location = response.results;
             }
             else if (
-              response.status === LocationService.ggStatus.ZERO_RESULTS
+              response.status === LocationService.responseStatus.ZERO_RESULTS
             ) {
               destroyLocationModel();
             } else {
