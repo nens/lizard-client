@@ -50,8 +50,8 @@ angular.module('omnibox')
      * with the right query and puts in on the scope.
      */
     scope.search = function () {
-      if (scope.geoquery.length > 1) {
-        LocationService.search(scope.geoquery, State.spatial)
+      if (scope.query.length > 1) {
+        LocationService.search(scope.query, State.spatial)
           .then(function (response) {
             if (response.status === LocationService.ggStatus.OK) {
               scope.box.content.location = response.results;
@@ -94,7 +94,7 @@ angular.module('omnibox')
      */
     scope.cleanInput = function () {
       State.box.type = "point";
-      scope.geoquery = "";
+      scope.query = "";
       scope.box.content = {};
       State.spatial.points = [];
       State.spatial.here = undefined;

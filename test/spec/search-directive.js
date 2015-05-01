@@ -40,7 +40,7 @@ describe('Directives: Search', function () {
   }));
 
   it('should build query from input field', function () {
-    scope.geoquery = "Amsterdam";
+    scope.query = "Amsterdam";
     scope.$digest();
     expect(element[0].querySelector('#searchboxinput').value).toBe("Amsterdam");
   });
@@ -74,7 +74,7 @@ describe('Directives: Search', function () {
   it(
     'should throw error when response status other than ZERO_RESULTS or OK',
     function () {
-      scope.geoquery = 'test';
+      scope.query = 'test';
       // Mocked locationservice will respond whith status 'OVER_QUERY_LIMIT'
       expect(scope.search).toThrow();
     }
