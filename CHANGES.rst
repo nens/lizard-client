@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.4.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.4.1 (2015-5-1)
+---------------------
 
 - Timeline click and zoom are registered on listeneres rect.
 
