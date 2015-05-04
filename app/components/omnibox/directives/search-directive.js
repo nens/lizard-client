@@ -10,8 +10,8 @@ angular.module('omnibox')
     'ClickFeedbackService',
     'MapService',
     'State',
-    '$timeout',
-  function (LocationService, ClickFeedbackService, MapService, State, $timeout) {
+    'UtilService',
+  function (LocationService, ClickFeedbackService, MapService, State, UtilService) {
 
   var link = function (scope, element, attrs) {
 
@@ -29,9 +29,13 @@ angular.module('omnibox')
       if ($event.target.id === "searchboxinput") {
         // Intercept keyPresses *within* searchbox, do xor prevent stuff from happening
         if ($event.which === 13) {
+          var loc = scope.box.content.location;
           // User hits [enter];
-          if (scope.box.content.location && scope.box.content.location[0]) {
-            scope.zoomTo(scope.box.content.location[0]);
+          if (loc && loc.spatial && loc.spatial[0]) {
+            scope.zoomTo(scope.box.content.location.spatial[0]);
+          }
+          else if (loc && loc.temporal) {
+            scope.zoomTemporal(scope.box.content.location.temporal);
           }
           else {
             scope.search();
@@ -50,25 +54,37 @@ angular.module('omnibox')
      * with the right query and puts in on the scope.
      */
     scope.search = function () {
-      if (scope.query.length > 1) {
-        LocationService.search(scope.query, State)
-          .then(function (response) {
-            if (response.status === LocationService.responseStatus.OK) {
-              scope.box.content.location = response.results;
+      scope.box.content.location = {};
+      if (scope.query.length > 0) {
+
+        var search = LocationService.search(scope.query, State);
+        if (
+          search.time.isValid()
+          && search.time.valueOf() > UtilService.MIN_TIME
+          && search.time.valueOf() < UtilService.MAX_TIME
+          ) {
+          scope.box.content.location.temporal = search.time;
+        } else {
+          delete scope.box.content.location.temporal;
+          search.geocode
+            .then(function (response) {
+              if (response.status === LocationService.responseStatus.OK) {
+                scope.box.content.location.spatial = response.results;
+              }
+              else {
+                destroyLocationModel();
+                if (
+                response.status !== LocationService.responseStatus.ZERO_RESULTS
+                ) {
+                  // Throw error so we can find out about it through sentry.
+                  throw new Error(
+                    'Geocoder returned with status: ' + response.status
+                  );
+                }
+              }
             }
-            else if (
-              response.status === LocationService.responseStatus.ZERO_RESULTS
-            ) {
-              destroyLocationModel();
-            } else {
-              destroyLocationModel();
-              // Throw error so we can find out about it through sentry.
-              throw new Error(
-                'Geocoder returned with status: ' + resonse.status
-              );
-            }
-          }
-        );
+          );
+        }
       }
     };
 
@@ -109,6 +125,14 @@ angular.module('omnibox')
       destroyLocationModel();
       scope.cleanInput();
       State = LocationService.zoomToResult(location, State);
+    };
+
+    scope.zoomTemporal = function(m) {
+      destroyLocationModel();
+      scope.cleanInput();
+      State.temporal.start = m.valueOf();
+      State.temporal.end = m.valueOf() + m.nxtInterval.valueOf();
+      UtilService.announceMovedTimeline(State);
     };
 
   };

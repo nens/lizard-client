@@ -9,8 +9,8 @@
  */
 angular.module('omnibox')
   .service('LocationService',
-    ['LeafletService', 'CabinetService',
-    function LocationService (LeafletService, CabinetService) {
+    ['LeafletService', 'CabinetService', 'DateParser',
+    function LocationService (LeafletService, CabinetService, dateParser) {
 
     this.responseStatus = {
         OK: 'OK',
@@ -30,7 +30,7 @@ angular.module('omnibox')
     this.search = function (searchString, state) {
       // TODO: request results in portals language and restrict results based
       // on portal by adding: components: 'country:NL'.
-      return CabinetService.geocode.get({
+      var prom = CabinetService.geocode.get({
         address: searchString,
         language: 'nl', // Return results in Dutch
         bounds: // Prefer results from the current viewport
@@ -39,6 +39,11 @@ angular.module('omnibox')
           state.spatial.bounds.getNorth() + ',' +
           state.spatial.bounds.getEast()
       });
+      var moment = dateParser(searchString);
+      return {
+        geocode: prom,
+        time: moment
+      };
     };
 
     /**

@@ -51,7 +51,7 @@ describe('Service: LocationService', function () {
 
   it('should return a CabinetService promise ', function () {
     var result = LocationService.search('testQuery', State);
-    expect(result.hasOwnProperty('then')).toBe(true);
+    expect(result.geocode.hasOwnProperty('then')).toBe(true);
   });
 
   it('should contain the google geocoder statuses', function () {
