@@ -6,12 +6,12 @@
  */
 angular.module('omnibox')
   .directive('search', [
-    'LocationService',
+    'SearchService',
     'ClickFeedbackService',
     'MapService',
     'State',
     'UtilService',
-  function (LocationService, ClickFeedbackService, MapService, State, UtilService) {
+  function (SearchService, ClickFeedbackService, MapService, State, UtilService) {
 
   var link = function (scope, element, attrs) {
 
@@ -29,13 +29,13 @@ angular.module('omnibox')
       if ($event.target.id === "searchboxinput") {
         // Intercept keyPresses *within* searchbox, do xor prevent stuff from happening
         if ($event.which === 13) {
-          var loc = scope.box.content.location;
+          var loc = scope.box.content.searchResults;
           // User hits [enter];
           if (loc && loc.spatial && loc.spatial[0]) {
-            scope.zoomTo(scope.box.content.location.spatial[0]);
+            scope.zoomTo(scope.box.content.searchResults.spatial[0]);
           }
           else if (loc && loc.temporal) {
-            scope.zoomTemporal(scope.box.content.location.temporal);
+            scope.zoomTemporal(scope.box.content.searchResults.temporal);
           }
           else {
             scope.search();
@@ -50,37 +50,36 @@ angular.module('omnibox')
     };
 
     /**
-     * @description calls LocationService with scope.query and either sets
-     * temporal or spatial result on the results on box.content.location.
+     *
      */
     scope.search = function () {
-      scope.box.content.location = {};
+      scope.box.content.searchResults = {};
       if (scope.query.length > 0) {
-        var search = LocationService.search(scope.query, State);
+        var search = SearchService.search(scope.query, State);
 
         if (
           search.time.isValid()
           && search.time.valueOf() > UtilService.MIN_TIME
           && search.time.valueOf() < UtilService.MAX_TIME
           ) {
-          scope.box.content.location.temporal = search.time; // moment object.
+          scope.box.content.searchResults.temporal = search.time; // moment object.
         }
 
         else {
           search.geocode
             .then(function (response) {
               // Asynchronous.
-              if (scope.box.content.location === undefined) { return; }
-              scope.box.content.location.spatial = {};
-              if (response.status === LocationService.responseStatus.OK) {
-                scope.box.content.location.spatial = response.results;
+              if (scope.box.content.searchResults === undefined) { return; }
+              scope.box.content.searchResults.spatial = {};
+              if (response.status === SearchService.responseStatus.OK) {
+                scope.box.content.searchResults.spatial = response.results;
               }
               // Only destroy asynchronous when following searches did not find
               // a date either.
-              else if (scope.box.content.location.temporal === undefined) {
-                destroyLocationModel();
+              else if (scope.box.content.searchResults.temporal === undefined) {
+                destroySearchResultsModel();
                 if (
-                response.status !== LocationService.responseStatus.ZERO_RESULTS
+                response.status !== SearchService.responseStatus.ZERO_RESULTS
                 ) {
                   // Throw error so we can find out about it through sentry.
                   throw new Error(
@@ -98,8 +97,8 @@ angular.module('omnibox')
     /**
      * @description removes location model from box content
      */
-    var destroyLocationModel = function () {
-      delete scope.box.content.location;
+    var destroySearchResultsModel = function () {
+      delete scope.box.content.searchResults;
     };
 
     /**
@@ -129,13 +128,13 @@ angular.module('omnibox')
      * @param {object} one search result.
      */
     scope.zoomTo = function (location) {
-      destroyLocationModel();
+      destroySearchResultsModel();
       scope.cleanInput();
-      State = LocationService.zoomToResult(location, State);
+      State = SearchService.zoomToResult(location, State);
     };
 
     scope.zoomTemporal = function(m) {
-      destroyLocationModel();
+      destroySearchResultsModel();
       scope.cleanInput();
       State.temporal.start = m.valueOf();
       State.temporal.end = m.valueOf() + m.nxtInterval.valueOf();

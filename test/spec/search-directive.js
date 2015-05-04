@@ -128,7 +128,7 @@ describe('Directives: Search with real LocationService', function () {
   it('should set moment on scope when queried with time', function () {
     scope.query = '23-10-2014';
     scope.search();
-    expect(moment.isMoment(scope.box.content.location.temporal)).toBe(true);
+    expect(moment.isMoment(scope.box.content.searchResults.temporal)).toBe(true);
   });
 
   it(
@@ -136,14 +136,14 @@ describe('Directives: Search with real LocationService', function () {
     function () {
       scope.query = moment().year(moment().year() + 1).toISOString();
       scope.search();
-      expect(scope.box.content.location.temporal).not.toBeDefined();
+      expect(scope.box.content.searchResults.temporal).not.toBeDefined();
     }
   );
 
   it('should zoom to temporal result', function () {
     scope.query = '2014-10-23';
     scope.search();
-    var m = scope.box.content.location.temporal
+    var m = scope.box.content.searchResults.temporal
     scope.zoomTemporal(m);
     expect(State.temporal.start).toBe(m.valueOf());
     expect(State.temporal.end).toBe(m.valueOf() + m.nxtInterval.valueOf());

@@ -2,15 +2,15 @@
 
 /**
  * @ngdoc service
- * @name lizardClientApp.locationService
+ * @name lizardClientApp.SearchService
  * @description
- * # locationService
+ * # SearchService
  * Service in the lizardClientApp.
  */
 angular.module('omnibox')
-  .service('LocationService',
+  .service('SearchService',
     ['LeafletService', 'CabinetService', 'DateParser',
-    function LocationService (LeafletService, CabinetService, dateParser) {
+    function SearchService (LeafletService, CabinetService, dateParser) {
 
     this.responseStatus = {
         OK: 'OK',
