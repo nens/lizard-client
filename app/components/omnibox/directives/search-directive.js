@@ -50,27 +50,38 @@ angular.module('omnibox')
     };
 
     /**
+     * Uses scope.query to search for results through SearchService. Response
+     * from SearchService.search is an object with various results and promises.
      *
+     * Currently searches for time and addresses. When time is a valid moment it
+     * is synchronously put on scope.box.content.searchResults.temporal. If time
+     * is not valid it waits for spatial results and puts those result on
+     * scope.box.content.searchResults.spatial. Prefers temporal results to
+     * spatial results.
+     *
+     * scope.box.content.searchResults is used by search-results template.
      */
     scope.search = function () {
       scope.box.content.searchResults = {};
       if (scope.query.length > 0) {
-        var search = SearchService.search(scope.query, State);
+        var results = SearchService.search(scope.query, State);
 
         if (
-          search.time.isValid()
-          && search.time.valueOf() > UtilService.MIN_TIME
-          && search.time.valueOf() < UtilService.MAX_TIME
+          results.temporal.isValid()
+          && results.temporal.valueOf() > UtilService.MIN_TIME
+          && results.temporal.valueOf() < UtilService.MAX_TIME
           ) {
-          scope.box.content.searchResults.temporal = search.time; // moment object.
+          scope.box.content.searchResults.temporal = results.temporal;
+          // moment object.
         }
 
         else {
-          search.geocode
+          results.spatial
             .then(function (response) {
-              // Asynchronous.
+              // Asynchronous so check whether still relevant.
               if (scope.box.content.searchResults === undefined) { return; }
-              scope.box.content.searchResults.spatial = {};
+
+              // Either put results on scope or remove model.
               if (response.status === SearchService.responseStatus.OK) {
                 scope.box.content.searchResults.spatial = response.results;
               }
@@ -78,14 +89,16 @@ angular.module('omnibox')
               // a date either.
               else if (scope.box.content.searchResults.temporal === undefined) {
                 destroySearchResultsModel();
+
                 if (
-                response.status !== SearchService.responseStatus.ZERO_RESULTS
+                  response.status !== SearchService.responseStatus.ZERO_RESULTS
                 ) {
                   // Throw error so we can find out about it through sentry.
                   throw new Error(
                     'Geocoder returned with status: ' + response.status
                   );
                 }
+
               }
             }
           );

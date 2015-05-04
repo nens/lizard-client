@@ -22,10 +22,13 @@ angular.module('omnibox')
     };
 
     /**
-     * Sends searchstring to geocoder resource.
-     * @param  {str} searchString used to query geocoder.
+     * Sends searchstring to date parser and geocoder resource.
+     *
+     * @param  {str} searchString used to query geocoder and parse date.
      * @param  {object} spatialState to use in biasing geocoder to current view.
-     * @return {promise}
+     * @return {object.promise and object.moment} moment is a moment.js object
+     *                                            promise resolves with response
+     *                                            from geocoder.
      */
     this.search = function (searchString, state) {
       // TODO: request results in portals language and restrict results based
@@ -41,8 +44,8 @@ angular.module('omnibox')
       });
       var moment = dateParser(searchString);
       return {
-        geocode: prom,
-        time: moment
+        spatial: prom,
+        temporal: moment
       };
     };
 
