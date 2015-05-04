@@ -1,0 +1,26 @@
+<div>
+
+	<div
+		ng-if="box.content.searchResults.temporal"
+		class="cluster location">
+	  <i class="fa fa-clock-o"></i>&nbsp;
+	  <a ng-click="zoomToTemporalResult(box.content.searchResults.temporal)"
+	    class="pointer clickable">
+	    <span><% box.content.searchResults.temporal.format(
+	    	box.content.searchResults.temporal.nxtFormatString
+	    ) %></span>
+	  </a>
+	</div>
+
+	<div ng-cloak
+	  ng-repeat="result in box.content.searchResults.spatial"
+	  class="cluster location">
+	  <i class="fa fa-map-marker"></i>&nbsp;
+	  <a ng-click="zoomToSpatialResult(result)"
+	    class="pointer clickable">
+	    <span><% result.formatted_address %></span>
+	  </a>
+	</div>
+
+</div>
+

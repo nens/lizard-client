@@ -1,9 +1,14 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.4.2) (XXXX-XX-XX)
+Unreleased (1.5.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Refactor box.location to box.searchResults.
+
+- Refactor location-service to search-service.
+
+- Add date parsing to search bar.
 
 
 Release 1.4.1 (2015-5-1)

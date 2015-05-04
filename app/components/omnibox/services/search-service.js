@@ -2,15 +2,15 @@
 
 /**
  * @ngdoc service
- * @name lizardClientApp.locationService
+ * @name lizardClientApp.SearchService
  * @description
- * # locationService
+ * # SearchService
  * Service in the lizardClientApp.
  */
 angular.module('omnibox')
-  .service('LocationService',
+  .service('SearchService',
     ['LeafletService', 'CabinetService', 'DateParser',
-    function LocationService (LeafletService, CabinetService, dateParser) {
+    function SearchService (LeafletService, CabinetService, dateParser) {
 
     this.responseStatus = {
         OK: 'OK',
@@ -22,10 +22,13 @@ angular.module('omnibox')
     };
 
     /**
-     * Sends searchstring to geocoder resource.
-     * @param  {str} searchString used to query geocoder.
+     * Sends searchstring to date parser and geocoder resource.
+     *
+     * @param  {str} searchString used to query geocoder and parse date.
      * @param  {object} spatialState to use in biasing geocoder to current view.
-     * @return {promise}
+     * @return {object.promise and object.moment} moment is a moment.js object
+     *                                            promise resolves with response
+     *                                            from geocoder.
      */
     this.search = function (searchString, state) {
       // TODO: request results in portals language and restrict results based
@@ -41,8 +44,8 @@ angular.module('omnibox')
       });
       var moment = dateParser(searchString);
       return {
-        geocode: prom,
-        time: moment
+        spatial: prom,
+        temporal: moment
       };
     };
 
@@ -51,7 +54,7 @@ angular.module('omnibox')
      * click on the result.
      * @param  {object} result google geocoder result.
      */
-    this.zoomToResult = function (result, state) {
+    this.zoomToGoogleGeocoderResult = function (result, state) {
       state.spatial.bounds = LeafletService.latLngBounds(
         LeafletService.latLng(result.geometry.viewport.southwest),
         LeafletService.latLng(result.geometry.viewport.northeast)
