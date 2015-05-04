@@ -50,8 +50,8 @@ angular.module('omnibox')
     };
 
     /**
-     * @description calls LocationService
-     * with the right query and puts in on the scope.
+     * @description calls LocationService with scope.query and either sets
+     * temporal or spatial result on the results on box.content.location.
      */
     scope.search = function () {
       scope.box.content.location = {};
@@ -63,21 +63,21 @@ angular.module('omnibox')
           && search.time.valueOf() > UtilService.MIN_TIME
           && search.time.valueOf() < UtilService.MAX_TIME
           ) {
-          scope.box.content.location.temporal = search.time;
+          scope.box.content.location.temporal = search.time; // moment object.
         }
 
         else {
           search.geocode
             .then(function (response) {
-              // Certain things have come to light. Asynchronous.
-              if (scope.box.content.location === undefined) {
-                return;
-              }
+              // Asynchronous.
+              if (scope.box.content.location === undefined) { return; }
               scope.box.content.location.spatial = {};
               if (response.status === LocationService.responseStatus.OK) {
                 scope.box.content.location.spatial = response.results;
               }
-              else {
+              // Only destroy asynchronous when following searches did not find
+              // a date either.
+              else if (scope.box.content.location.temporal === undefined) {
                 destroyLocationModel();
                 if (
                 response.status !== LocationService.responseStatus.ZERO_RESULTS
