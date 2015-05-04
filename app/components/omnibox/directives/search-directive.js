@@ -56,18 +56,23 @@ angular.module('omnibox')
     scope.search = function () {
       scope.box.content.location = {};
       if (scope.query.length > 0) {
-
         var search = LocationService.search(scope.query, State);
+
         if (
           search.time.isValid()
           && search.time.valueOf() > UtilService.MIN_TIME
           && search.time.valueOf() < UtilService.MAX_TIME
           ) {
           scope.box.content.location.temporal = search.time;
-        } else {
-          delete scope.box.content.location.temporal;
+        }
+
+        else {
           search.geocode
             .then(function (response) {
+              // Certain things have come to light. Asynchronous.
+              if (scope.box.content.location === undefined) {
+                return;
+              }
               scope.box.content.location.spatial = {};
               if (response.status === LocationService.responseStatus.OK) {
                 scope.box.content.location.spatial = response.results;
@@ -86,6 +91,7 @@ angular.module('omnibox')
             }
           );
         }
+
       }
     };
 
