@@ -68,6 +68,7 @@ angular.module('omnibox')
           delete scope.box.content.location.temporal;
           search.geocode
             .then(function (response) {
+              scope.box.content.location.spatial = {};
               if (response.status === LocationService.responseStatus.OK) {
                 scope.box.content.location.spatial = response.results;
               }
