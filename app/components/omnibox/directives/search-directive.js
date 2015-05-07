@@ -25,25 +25,34 @@ angular.module('omnibox')
      * 13 refers to the RETURN key.
      */
     scope.searchKeyPress = function ($event) {
+      var KEYPRESS = {
+        ENTER: 13,
+        SPACE: 32,
+        ESC: 27
+      };
 
       if ($event.target.id === "searchboxinput") {
-        // Intercept keyPresses *within* searchbox, do xor prevent stuff from happening
-        if ($event.which === 13) {
+        // Intercept keyPresses *within* searchbox,do xor prevent animation
+        // from happening when typing.
+        if ($event.which === KEYPRESS.ENTER) {
           var loc = scope.box.content.searchResults;
-          // User hits [enter];
           if (loc && loc.spatial && loc.spatial[0]) {
-            scope.zoomTo(scope.box.content.searchResults.spatial[0]);
+            scope.zoomToSpatialResult(
+              scope.box.content.searchResults.spatial[0]
+            );
           }
           else if (loc && loc.temporal) {
-            scope.zoomTemporal(scope.box.content.searchResults.temporal);
+            scope.zoomToTemporalResult(
+              scope.box.content.searchResults.temporal
+            );
           }
           else {
             scope.search();
           }
-        } else if ($event.which === 32) {
-          // user hits [space] -> prevent anim. start/stop
+        } else if ($event.which === KEYPRESS.SPACE) {
+          // prevent anim. start/stop
           $event.originalEvent.stopPropagation();
-        } else if ($event.which === 27) { //esc
+        } else if ($event.which === KEYPRESS.ESC) { //esc
           scope.cleanInput();
         }
       }
@@ -53,11 +62,7 @@ angular.module('omnibox')
      * Uses scope.query to search for results through SearchService. Response
      * from SearchService.search is an object with various results and promises.
      *
-     * Currently searches for time and addresses. When time is a valid moment it
-     * is synchronously put on scope.box.content.searchResults.temporal. If time
-     * is not valid it waits for spatial results and puts those result on
-     * scope.box.content.searchResults.spatial. Prefers temporal results to
-     * spatial results.
+     * Currently searches for time and addresses.
      *
      * scope.box.content.searchResults is used by search-results template.
      */
@@ -65,45 +70,61 @@ angular.module('omnibox')
       scope.box.content.searchResults = {};
       if (scope.query.length > 0) {
         var results = SearchService.search(scope.query, State);
+        setResultsOnBox(results);
+      }
+    };
 
-        if (
-          results.temporal.isValid()
-          && results.temporal.valueOf() > UtilService.MIN_TIME
-          && results.temporal.valueOf() < UtilService.MAX_TIME
-          ) {
-          scope.box.content.searchResults.temporal = results.temporal;
-          // moment object.
-        }
+    /**
+     * Contains the logic to go through search result and puts relevant parts on
+     * box scope.
+     *
+     * When time is a valid moment it is synchronously put on
+     * scope.box.content.searchResults.temporal. If time is not valid it waits
+     * for spatial results and puts those result on
+     * scope.box.content.searchResults.spatial. Prefers temporal results to
+     * spatial results.
+     *
+     * @param {object.promise and object.moment} results
+     * moment is a moment.js object
+     * promise resolves with response from geocoder.
+     */
+    var setResultsOnBox = function (results) {
+      if (
+        results.temporal.isValid()
+        && results.temporal.valueOf() > UtilService.MIN_TIME
+        && results.temporal.valueOf() < UtilService.MAX_TIME
+        ) {
+        scope.box.content.searchResults.temporal = results.temporal;
+        // moment object.
+      }
 
-        else {
-          results.spatial
-            .then(function (response) {
-              // Asynchronous so check whether still relevant.
-              if (scope.box.content.searchResults === undefined) { return; }
+      else {
+        results.spatial
+          .then(function (response) {
+            // Asynchronous so check whether still relevant.
+            if (scope.box.content.searchResults === undefined) { return; }
 
-              // Either put results on scope or remove model.
-              if (response.status === SearchService.responseStatus.OK) {
-                scope.box.content.searchResults.spatial = response.results;
-              }
-              // Only destroy asynchronous when following searches did not find
-              // a date either.
-              else if (scope.box.content.searchResults.temporal === undefined) {
-                destroySearchResultsModel();
-
-                if (
-                  response.status !== SearchService.responseStatus.ZERO_RESULTS
-                ) {
-                  // Throw error so we can find out about it through sentry.
-                  throw new Error(
-                    'Geocoder returned with status: ' + response.status
-                  );
-                }
-
-              }
+            // Either put results on scope or remove model.
+            if (response.status === SearchService.responseStatus.OK) {
+              scope.box.content.searchResults.spatial = response.results;
             }
-          );
-        }
+            // Only destroy asynchronous when following searches did not find
+            // a date either.
+            else if (scope.box.content.searchResults.temporal === undefined) {
+              destroySearchResultsModel();
 
+              if (
+                response.status !== SearchService.responseStatus.ZERO_RESULTS
+              ) {
+                // Throw error so we can find out about it through sentry.
+                throw new Error(
+                  'Geocoder returned with status: ' + response.status
+                );
+              }
+
+            }
+          }
+        );
       }
     };
 
@@ -140,13 +161,13 @@ angular.module('omnibox')
      * @description zooms to search result
      * @param {object} one search result.
      */
-    scope.zoomTo = function (location) {
+    scope.zoomToSpatialResult = function (location) {
       destroySearchResultsModel();
       scope.cleanInput();
-      State = SearchService.zoomToResult(location, State);
+      State = SearchService.zoomToGoogleGeocoderResult(location, State);
     };
 
-    scope.zoomTemporal = function(m) {
+    scope.zoomToTemporalResult = function(m) {
       destroySearchResultsModel();
       scope.cleanInput();
       State.temporal.start = m.valueOf();
