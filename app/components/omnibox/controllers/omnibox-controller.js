@@ -37,8 +37,8 @@ angular.module('omnibox')
      */
     $scope.fillBox = function (options) {
       // if geocode query has been used it needs to be destroyed now
-      if ($scope.box.content.hasOwnProperty('location')) {
-        delete $scope.box.content.location;
+      if ($scope.box.content.hasOwnProperty('searchResults')) {
+        delete $scope.box.content.searchResults;
       }
 
       var doneFn = function () {

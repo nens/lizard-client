@@ -90,10 +90,13 @@
     <script src="/vendor/angular-sanitize/angular-sanitize.js"></script>
     <script src="/vendor/ng-csv/build/ng-csv.min.js"></script>
     <script src="/vendor/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <script src="/vendor/moment/moment.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
     <!-- build:js({.tmp,app}) /scripts/scripts.js -->
+
+    <script src="/vendor/moment/locale/nl.js"></script>
 
     <script src="/lib/utils.js"></script>
 
@@ -144,7 +147,8 @@
     <script src="/components/omnibox/controllers/omnibox-controller.js"></script>
     <script src="/components/omnibox/wanted-attrs-constant.js"></script>
 
-    <script src="/components/omnibox/location-service.js"></script>
+    <script src="/components/omnibox/services/date-parse-service.js"></script>
+    <script src="/components/omnibox/services/search-service.js"></script>
     <script src="/components/omnibox/controllers/point-controller.js"></script>
     <script src="/components/omnibox/controllers/rain-controller.js"></script>
     <script src="/components/omnibox/controllers/line-controller.js"></script>
