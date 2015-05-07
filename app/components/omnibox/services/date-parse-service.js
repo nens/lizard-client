@@ -39,7 +39,8 @@ angular.module('omnibox')
     };
 
     /**
-     * Lookup for display formats from ISO duration representations.
+     * Lookup for display formats from ISO duration representations to display
+     * format strings.
      */
     var FORMAT_STRINGS = {
       'PT1H': 'DD MMMM YYYY, HH uur',
@@ -52,6 +53,21 @@ angular.module('omnibox')
     var formatters = Object.keys(FORMATS_INTERVALS);
     formatters.push(moment.ISO_8601);
 
+    /**
+     * Takes a string and attempts to parse it using a list of formatter
+     * strings. Return a moment.js moment and adds a nxt specific nxtInterval
+     * containing the interval beloning to the matched format as a moment.js
+     * duration and a nxtFormatString containing the format stirng that should
+     * be used for display.
+     *
+     * Example: dString 'maa 2015' gets a moment.js duration of 1 month. And
+     * a format string of 'MMMM YYYY' which will parse the moment as
+     * 'Maart 2015'.
+     *
+     * @param  {string} dString string to match a date to.
+     * @return {moment} moment with a moment duration under nxtInterval and a
+     *                         display format under nxtFormatString.
+     */
     var parser = function (dString) {
       var m = moment(dString, formatters);
       m.nxtInterval = FORMATS_INTERVALS[m._f] || HOUR;
