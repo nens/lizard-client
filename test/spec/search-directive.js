@@ -65,12 +65,12 @@ describe('Directives: Search with mocked LocationService', function () {
   it('should destroy location model', function () {
     // destroy is a private function so we call the function
     // calling it.
-    scope.zoomTo({
+    scope.zoomToSpatialResult({
       geometry: {
         viewport: {}
       }
     });
-    expect(scope.box.content.hasOwnProperty('location')).toBe(false);
+    expect(scope.box.content.hasOwnProperty('searchResults')).toBe(false);
   });
 
   it(
@@ -144,7 +144,7 @@ describe('Directives: Search with real LocationService', function () {
     scope.query = '2014-10-23';
     scope.search();
     var m = scope.box.content.searchResults.temporal
-    scope.zoomTemporal(m);
+    scope.zoomToTemporalResult(m);
     expect(State.temporal.start).toBe(m.valueOf());
     expect(State.temporal.end).toBe(m.valueOf() + m.nxtInterval.valueOf());
   });

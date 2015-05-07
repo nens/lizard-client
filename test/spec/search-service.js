@@ -49,9 +49,9 @@ describe('Service: SearchService', function () {
     };
   }));
 
-  it('should return a CabinetService promise ', function () {
+  it('should return an object with a CabinetService promise ', function () {
     var result = SearchService.search('testQuery', State);
-    expect(result.geocode.hasOwnProperty('then')).toBe(true);
+    expect(result.spatial.hasOwnProperty('then')).toBe(true);
   });
 
   it('should contain the google geocoder statuses', function () {
@@ -59,13 +59,13 @@ describe('Service: SearchService', function () {
   });
 
   it('should set bounds of search result on State', function () {
-    SearchService.zoomToResult(ggResult.results[0], State);
+    SearchService.zoomToGoogleGeocoderResult(ggResult.results[0], State);
     expect(State.spatial.bounds._southWest.lat)
       .toBe(ggResult.results[0].geometry.viewport.southwest.lat);
   });
 
   it('should set spatial.here when location_type is ROOFTOP', function () {
-    SearchService.zoomToResult(ggResult.results[0], State);
+    SearchService.zoomToGoogleGeocoderResult(ggResult.results[0], State);
     expect(State.spatial.here.lat)
       .toBe(ggResult.results[0].geometry.location.lat);
   });

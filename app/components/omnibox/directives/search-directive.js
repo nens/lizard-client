@@ -19,6 +19,68 @@ angular.module('omnibox')
     element.children()[0].focus();
 
     /**
+     * Uses scope.query to search for results through SearchService. Response
+     * from SearchService.search is an object with various results and promises.
+     *
+     * Currently searches for time and addresses.
+     *
+     * scope.box.content.searchResults is used by search-results template.
+     */
+    scope.search = function () {
+      scope.box.content.searchResults = {};
+      if (scope.query.length > 0) {
+        var results = SearchService.search(scope.query, State);
+        setResultsOnBox(results);
+      }
+    };
+
+    /**
+     * @description resets input field
+     * on scope, because also needs to trigger on reset button,
+     * not just on succesful search/zoom.
+     *
+     * @description - This does the following:
+     *
+     * (1) - Reset box.type to it's default value, "point";
+     * (2) - Reset the search query to the empty string;
+     * (3) - Reset box.content to an empty object;
+     * (4) - Clear mapState.points arr (used for updating the Url);
+     * (5) - Clear the click feedback.
+     */
+    scope.cleanInput = function () {
+      State.box.type = "point";
+      scope.query = "";
+      scope.box.content = {};
+      State.spatial.points = [];
+      State.spatial.here = undefined;
+      ClickFeedbackService.emptyClickLayer(MapService);
+    };
+
+    /**
+     * @description zooms to geocoder search result
+     * @param {object} one search result.
+     */
+    scope.zoomToSpatialResult = function (location) {
+      destroySearchResultsModel();
+      scope.cleanInput();
+      State = SearchService.zoomToGoogleGeocoderResult(location, State);
+    };
+
+    /**
+     * Called by click on temporal result. Cleans results and search box and
+     * Zooms to moment.js moment with nxtInterval.
+     * @param  {moment} m moment.js moment with nxtInterval as a moment
+     *                              duration.
+     */
+    scope.zoomToTemporalResult = function(m) {
+      destroySearchResultsModel();
+      scope.cleanInput();
+      State.temporal.start = m.valueOf();
+      State.temporal.end = m.valueOf() + m.nxtInterval.valueOf();
+      UtilService.announceMovedTimeline(State);
+    };
+
+    /**
      * @description event handler for key presses.
      * checks if enter is pressed, does search.
      * @param {event} event that is fired.
@@ -55,22 +117,6 @@ angular.module('omnibox')
         } else if ($event.which === KEYPRESS.ESC) { //esc
           scope.cleanInput();
         }
-      }
-    };
-
-    /**
-     * Uses scope.query to search for results through SearchService. Response
-     * from SearchService.search is an object with various results and promises.
-     *
-     * Currently searches for time and addresses.
-     *
-     * scope.box.content.searchResults is used by search-results template.
-     */
-    scope.search = function () {
-      scope.box.content.searchResults = {};
-      if (scope.query.length > 0) {
-        var results = SearchService.search(scope.query, State);
-        setResultsOnBox(results);
       }
     };
 
@@ -133,46 +179,6 @@ angular.module('omnibox')
      */
     var destroySearchResultsModel = function () {
       delete scope.box.content.searchResults;
-    };
-
-    /**
-     * @description resets input field
-     * on scope, because also needs to trigger on reset button,
-     * not just on succesful search/zoom.
-     *
-     * @description - This does the following:
-     *
-     * (1) - Reset box.type to it's default value, "point";
-     * (2) - Reset the search query to the empty string;
-     * (3) - Reset box.content to an empty object;
-     * (4) - Clear mapState.points arr (used for updating the Url);
-     * (5) - Clear the click feedback.
-     */
-    scope.cleanInput = function () {
-      State.box.type = "point";
-      scope.query = "";
-      scope.box.content = {};
-      State.spatial.points = [];
-      State.spatial.here = undefined;
-      ClickFeedbackService.emptyClickLayer(MapService);
-    };
-
-    /**
-     * @description zooms to search result
-     * @param {object} one search result.
-     */
-    scope.zoomToSpatialResult = function (location) {
-      destroySearchResultsModel();
-      scope.cleanInput();
-      State = SearchService.zoomToGoogleGeocoderResult(location, State);
-    };
-
-    scope.zoomToTemporalResult = function(m) {
-      destroySearchResultsModel();
-      scope.cleanInput();
-      State.temporal.start = m.valueOf();
-      State.temporal.end = m.valueOf() + m.nxtInterval.valueOf();
-      UtilService.announceMovedTimeline(State);
     };
 
   };
