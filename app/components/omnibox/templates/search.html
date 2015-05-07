@@ -2,10 +2,10 @@
   <input id="searchboxinput"
     ng-change="search()"
     tabindex="-1"
-    placeholder="Zoeken op plaats, stad, ..."
+    placeholder="Zoeken op plaats, of datum (bv. 23-10-2013)"
     autocomplete="off"
     dir="ltr"
-    ng-model="geoquery"
+    ng-model="query"
     ng-keydown="searchKeyPress($event)"
     spellcheck="false">
   <div
