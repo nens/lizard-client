@@ -98,12 +98,15 @@ angular.module('lizard-nxt')
     var graphUpdateHelper = function () {
       graphCtrl.setData(scope);
 
+      // UpdateData is called with temporal.timelineMoving to draw subset for
+      // performance reasons.
       graphCtrl.updateData.call(
         graphCtrl.graph,
         graphCtrl.data,
         graphCtrl.keys,
         graphCtrl.labels,
-        graphCtrl.temporal
+        graphCtrl.temporal,
+        scope.temporal && scope.temporal.timelineMoving
       );
 
       // Call the graph with the now
@@ -278,9 +281,10 @@ angular.module('lizard-nxt')
     var data = graphCtrl.data,
         graph = graphCtrl.graph,
         keys = graphCtrl.keys,
-        temporal = graphCtrl.type === 'temporal';
+        temporal = graphCtrl.type === 'temporal',
+        drawSubset = false;
 
-    graph.drawLine(data, keys, graphCtrl.labels, temporal, scope.temporal);
+    graph.drawLine(data, keys, graphCtrl.labels, temporal, drawSubset);
 
     // scope.line is the scope defined by the line controller. Preferably it is
     // passed around more explicitly through the graph directive, but angular is
