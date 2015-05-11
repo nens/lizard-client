@@ -100,10 +100,10 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
-  .directive('location', [function () {
+  .directive('searchResults', [function () {
   return {
     restrict: 'E',
-    templateUrl: 'omnibox/templates/location.html'
+    templateUrl: 'omnibox/templates/search-results.html'
   };
 }]);
 

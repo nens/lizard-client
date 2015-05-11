@@ -33,7 +33,10 @@ module.exports = function(config) {
       'vendor/angular-sanitize/angular-sanitize.js',
       'vendor/ng-csv/build/ng-csv.min.js',
       'vendor/leaflet.markercluster/dist/leaflet.markercluster.js',
+      'vendor/moment/moment.js',
       // endbower
+
+      'vendor/moment/locale/nl.js',
       // application
       'test/mocks/beforeModuleMocks.js',
       'app/components/state/state.js', // Load these first to prevent dep clash

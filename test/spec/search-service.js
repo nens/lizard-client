@@ -1,12 +1,12 @@
 'use strict';
 
-describe('Service: LocationService', function () {
+describe('Service: SearchService', function () {
 
   // load the service's module
   beforeEach(module('lizard-nxt'));
 
   // instantiate service
-  var LocationService,
+  var SearchService,
       State,
       ggResult = {
         'results' : [
@@ -35,35 +35,37 @@ describe('Service: LocationService', function () {
       };
 
   beforeEach(inject(function ($injector) {
-    LocationService = $injector.get('LocationService');
+    SearchService = $injector.get('SearchService');
     State = $injector.get('State');
-  }));
 
-  it('should return a CabinetService promise ', function () {
-    var spatialState = {
+    State.spatial = {
+      here: {},
       bounds : {
         getNorth: function () {},
         getSouth: function () {},
         getWest: function () {},
-        getEast: function () {}
+        getEast: function () {},
       }
     };
-    var result = LocationService.search('testQuery', spatialState);
-    expect(result.hasOwnProperty('then')).toBe(true);
+  }));
+
+  it('should return an object with a CabinetService promise ', function () {
+    var result = SearchService.search('testQuery', State);
+    expect(result.spatial.hasOwnProperty('then')).toBe(true);
   });
 
   it('should contain the google geocoder statuses', function () {
-    expect(LocationService.ggStatus.OK).toBe('OK');
+    expect(SearchService.responseStatus.OK).toBe('OK');
   });
 
   it('should set bounds of search result on State', function () {
-    LocationService.zoomToResult(ggResult.results[0]);
+    SearchService.zoomToGoogleGeocoderResult(ggResult.results[0], State);
     expect(State.spatial.bounds._southWest.lat)
       .toBe(ggResult.results[0].geometry.viewport.southwest.lat);
   });
 
   it('should set spatial.here when location_type is ROOFTOP', function () {
-    LocationService.zoomToResult(ggResult.results[0]);
+    SearchService.zoomToGoogleGeocoderResult(ggResult.results[0], State);
     expect(State.spatial.here.lat)
       .toBe(ggResult.results[0].geometry.location.lat);
   });

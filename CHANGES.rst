@@ -6,6 +6,12 @@ Unreleased (1.5.0) (XXXX-XX-XX)
 
 - Use subset of data for drawing graphs when zooming.
 
+- Refactor box.location to box.searchResults.
+
+- Refactor location-service to search-service.
+
+- Add date parsing to search bar.
+
 
 Release 1.4.1 (2015-5-1)
 ---------------------
@@ -16,7 +22,7 @@ Release 1.4.1 (2015-5-1)
 
 - Geocode while typing.
 
-- Move to first result when hitting enter in.
+- Move to first result when hitting enter in search.
 
 - Use google geocoder instead of mapbox.
 
