@@ -969,7 +969,7 @@ angular.module('lizard-nxt')
    * input.
    *
    * It uses modulo to remove but every subsetFactor item in the array. As such
-   * the result depents on the order of the input and it does not attempt to
+   * the result depends on the order of the input and it does not attempt to
    * simplify in a least intrusive way as e.g. douglas-peucker would. This is
    * probably faster though, which is the whole point.
    *
