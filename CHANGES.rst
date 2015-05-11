@@ -4,6 +4,11 @@ Changelog of lizard-nxt client
 Unreleased (1.5.0) (XXXX-XX-XX)
 -------------------------------
 
+- Fix bug due to new timeseries response selectedTS was lost in omnibox when
+  zooming time.
+
+- Use subset of data for drawing graphs when zooming.
+
 - Refactor box.location to box.searchResults.
 
 - Refactor location-service to search-service.

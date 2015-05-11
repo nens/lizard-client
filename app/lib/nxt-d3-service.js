@@ -408,9 +408,9 @@ angular.module('lizard-nxt')
      */
     _createArea: function (xy, keys) {
       return createPathGenerator(d3.svg.area)
-        .x(function(d) { return xy.x.scale(d[keys.x]); })
-        .y0(function(d) { return xy.y.scale(d[keys.y.y0]); })
-        .y1(function(d) { return xy.y.scale(d[keys.y.y1]); })
+        .x(function(d) { return Math.round(xy.x.scale(d[keys.x]), 10); })
+        .y0(function(d) { return Math.round(xy.y.scale(d[keys.y.y0]), 10); })
+        .y1(function(d) { return Math.round(xy.y.scale(d[keys.y.y1]), 10); })
         // interrupt the line when no data
         .defined(function (d) {
           var y0 = !isNaN(parseFloat(d[keys.y.y0]));
