@@ -29,7 +29,7 @@ angular.module('omnibox')
           var selected = {};
           if (current) {
             selected = timeseries.filter(function (ts) {
-              return ts.id === current.id;
+              return ts.uuid === current.uuid;
             });
           }
           return selected.length > 0 ? selected[0] : timeseries[0];
