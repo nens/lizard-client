@@ -1,9 +1,10 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.4.0) (XXXX-XX-XX)
+Unreleased (1.5.0) (XXXX-XX-XX)
 -------------------------------
--
+
+- Use subset of data for drawing graphs when zooming.
 
 
 Release 1.4.1 (2015-5-1)

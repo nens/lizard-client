@@ -334,4 +334,33 @@ describe('Testing graph', function () {
     expect(indicator.attr('x1')).toEqual(String(graph._xy.x.scale(data[1][0])));
   });
 
+  it('should draw a line with a subset of the data when useSubset', function () {
+    var data = [[1,1], [2,4], [3,2], [4,0], [5,4], [6,2], [7,0], [8,4], [9,2],
+                [10,0], [11,4], [12,2], [13,0], [14,4], [15,2], [16,0],
+                [17,4], [18,2], [19,0], [20,4], [21,2], [22,0], [23,4], [24,2]],
+        keys = {x: 0, y: 1},
+        labels = {x: 'afstand', y: 'elevation'},
+        temporal = false,
+        useSubset = true;
+    graph.drawLine(data, keys, labels, temporal, useSubset);
+    var path = graph._svg.select('#feature-group').select('path');
+    expect(path.data()[0].length).toBe(5);
+  });
+
+  it('should draw a line with full dataset when useSubset = false',
+    function () {
+      var data = [[1,1], [2,4], [3,2], [4,0], [5,4], [6,2], [7,0], [8,4], [9,2],
+                  [10,0], [11,4], [12,2], [13,0], [14,4], [15,2], [16,0],
+                  [17,4], [18,2], [19,0], [20,4], [21,2], [22,0], [23,4], [24,2]],
+          keys = {x: 0, y: 1},
+          labels = {x: 'afstand', y: 'elevation'},
+          temporal = false,
+          useSubset = false;
+      graph.drawLine(data, keys, labels, temporal, useSubset);
+      var path = graph._svg.select('#feature-group').select('path');
+      expect(path.data()[0].length).toBe(data.length);
+    }
+  );
+
+
 });

@@ -17,7 +17,7 @@
  * Everything in the graphs is animated according to NxtD3.transTime.
  */
 angular.module('lizard-nxt')
-  .factory("Graph", ["NxtD3", function (NxtD3) {
+  .factory("Graph", ["$timeout", "NxtD3", function ($timeout, NxtD3) {
 
   var MIN_WIDTH_INTERACTIVE_GRAPHS = 400; // Only graphs bigger get mouseover
                                           // and click interaction.
@@ -88,8 +88,7 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt')
-  .Graph
+     * @memberOf angular.module('lizard-nxt').Graph
      * @param {object} data   Currently supports the format:
      *                        [
      *                          [value, value],
@@ -99,14 +98,21 @@ angular.module('lizard-nxt')
      *                        example: {x: 0, y: 1}
      * @param {object} labels Object {x: 'x label', y: 'y label'} will be
      *                        mapped to axis labels of the graph
-     * @param {boolean} temporal to draw an time axis or not
+     * @param {boolean} temporal to draw an time axis or not.
+     * @param {boolean} transitioning to draw a subset of data now, and the full
+     *                                set after a timeout if drawline is not
+     *                                called again before the timeout finishes.
+     *                                Use transitioning = true when callig this
+     *                                function many times as a result of a user
+     *                                induced action.
      * @description           Draws a line, if necessary sets up the graph,
      *                        if necessary modifies domain and redraws axis,
      *                        and draws the line according to the data object.
-     *                        Currently only a linear scale on the x-axis is supported.
+     *                        Currently only a linear scale on the x-axis is
+     *                        supported.
      */
     drawLine: {
-      value: function (data, keys, labels, temporal) {
+      value: function (data, keys, labels, temporal, transitioning) {
         if (!this._xy) {
           var options = {
             x: {
@@ -127,16 +133,46 @@ angular.module('lizard-nxt')
             this._xDomainInfo
           );
         } else {
-          this._xy = rescale(this._svg, this.dimensions, this._xy, data, keys, null, this._xDomainInfo);
+          this._xy = rescale(
+            this._svg,
+            this.dimensions,
+            this._xy,
+            data,
+            keys,
+            null,
+            this._xDomainInfo
+          );
           drawLabel(this._svg, this.dimensions, labels.y, true);
         }
 
         var lineAsArea = keys.y.hasOwnProperty('y0')
-          && keys.y.hasOwnProperty('y1')
+          && keys.y.hasOwnProperty('y1');
 
         var pathFn = lineAsArea
           ? this._createArea(this._xy, keys)
           : this._createLine(this._xy, keys);
+
+        var MIN_POINTS_FOR_SUBSET = 15,
+            DELAY = 10, // ms
+            DATA_REDUCTION_FACTOR = 5;
+
+        if (transitioning && data.length > MIN_POINTS_FOR_SUBSET) {
+          this._registerTimeout(
+            function () {
+              this._path = drawPath(
+                this._svg,
+                pathFn,
+                data,
+                0, // transition 0 ms when drawing while zooming.
+                this._path,
+                lineAsArea ? null : 'none'
+              );
+            },
+            DELAY // delay with 30 ms
+          );
+
+          data = getDataSubset(data, DATA_REDUCTION_FACTOR);
+        }
 
         this._path = drawPath(
           this._svg,
@@ -146,7 +182,7 @@ angular.module('lizard-nxt')
                                          // when temporal.
           this._path,
           lineAsArea ? null : 'none' // Set fill to 'none' for normal
-                                             // lines.
+                                     // lines.
         );
 
         if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
@@ -371,13 +407,39 @@ angular.module('lizard-nxt')
         }, this);
         return xy;
       }
+    },
+
+    /**
+     * Registers a timeout with a cb and a delay. Calls the cb on the instance
+     * of Graph after delay.
+     *
+     * @param {function} cb function to call on graph instance when timeout
+     *                      resolves.
+     * @param {int} delay in ms of the cb execution.
+     */
+    _registerTimeout: {
+      value: function(cb, delay) {
+        if (this.timeout) {
+          $timeout.cancel(this.timeout);
+        }
+
+        var graph = this;
+
+        this.timeout = $timeout(
+          function () {
+            cb.call(graph); },
+          delay,
+          false // Do not trigger unnecessary digest loop
+        );
+      }
     }
+
   });
 
   var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale,
       drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,
       drawVerticalRects, addInteractionToRects, drawHorizontalRects,
-      createXGraph, rescale, createYValuesForCumulativeData;
+      createXGraph, rescale, createYValuesForCumulativeData, getDataSubset;
 
   /**
    * Creates y cumulatie y values for elements on the same x value.
@@ -702,7 +764,8 @@ angular.module('lizard-nxt')
       .duration(duration)
       .attr("d", function (d) {
         // Prevent returning invalid values for d
-        return pathFn(d) || "M0, 0";
+        var p = pathFn(d) || "M0, 0";
+        return p;
       })
       .style('fill', fill);
     return path;
@@ -899,6 +962,28 @@ angular.module('lizard-nxt')
       .each(function (d) { this._current = d; }) // store the initial angles
       .attr("transform", "translate(" +
         donutHeight / 2 + ", " + donutHeight / 2 + ")");
+  };
+
+  /**
+   * Takes a data array and returns an array with length one/subsetFactor of the
+   * input.
+   *
+   * It uses modulo to remove but every subsetFactor item in the array. As such
+   * the result depents on the order of the input and it does not attempt to
+   * simplify in a least intrusive way as e.g. douglas-peucker would. This is
+   * probably faster though, which is the whole point.
+   *
+   * @param  {array}  data         array of data points to subset.
+   * @param  {int}    subsetFactor describing how much smaller the subset should
+   *                               be.
+   * @return {array}               subset of data with lenght data.length /
+   *                               subsetFactor.
+   */
+  getDataSubset = function (data, subsetFactor) {
+    return data.filter(function (item, index) {
+      return index % subsetFactor === 0; // returns true for every subsetFactor
+                                         // th item;
+    });
   };
 
   return Graph;
