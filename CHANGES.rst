@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.5.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.5.1 (2015-5-12)
+---------------------
 
 - Fix bug due to new timeseries response selectedTS was lost in omnibox when
   zooming time.
