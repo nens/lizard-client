@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.5.2) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.5.2 (2015-5-15)
+---------------------
 
 - Adapt to renamed raster endpoint, to raster-aggregates.
 
