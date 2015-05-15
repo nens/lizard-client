@@ -15,6 +15,7 @@ angular.module('lizard-nxt')
     Restangular.setDefaultHttpFields({withCredentials: true});
   }
   Restangular.setRequestSuffix('?page_size=25000');
+
   timeseriesResource = Restangular.one('api/v1/timeseries/');
   events = Restangular.one('api/v1/events/');
 
@@ -47,7 +48,7 @@ angular.module('lizard-nxt')
       localPromise = abortGet;
     }
     return Restangular
-      .one('api/v1/rasters/')
+      .one('api/v1/raster-aggregates/')
       .withHttpConfig({timeout: localPromise.promise});
   };
 
@@ -76,7 +77,6 @@ angular.module('lizard-nxt')
   };
 
   return {
-    //eventTypes: eventTypes,
     events: events,
     tooltips: tooltips,
     geocode: geocodeResource,
