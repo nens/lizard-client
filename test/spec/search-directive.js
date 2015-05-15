@@ -35,7 +35,7 @@ describe('Directives: Search with mocked LocationService', function () {
     // create empty object to destroy
     scope.box = {
       content: {
-        location: {}
+        searchResults: {}
       }
     };
 
@@ -100,7 +100,7 @@ describe('Directives: Search with real LocationService', function () {
     State = $injector.get('State');
 
     element = angular.element('<search></search>');
-    $compile(element)($rootScope);
+    $compile(element)(scope);
     var el = angular.element('<div></div>');
     MapService.initializeMap(el[0], {});
     scope.$digest();
@@ -147,6 +147,28 @@ describe('Directives: Search with real LocationService', function () {
     scope.zoomToTemporalResult(m);
     expect(State.temporal.start).toBe(m.valueOf());
     expect(State.temporal.end).toBe(m.valueOf() + m.nxtInterval.valueOf());
+  });
+
+
+  it('should prefer temporal results when hitting enter', function () {
+    var ENTER = 13;
+
+    var e = $.Event('keydown');
+    e.which = ENTER;
+
+    scope.box.content.searchResults = {
+      temporal: window.moment(),
+
+      spatial: [
+        "Novemberstraat 201, 1335 GD Almere, Nederland"
+      ]
+    };
+
+    spyOn(scope, 'zoomToTemporalResult'); // pure magic, makes haveBeenCalled
+                                          // work.
+
+    element.find('#searchboxinput').triggerHandler(e);
+    expect(scope.zoomToTemporalResult).toHaveBeenCalled();
   });
 
 });
