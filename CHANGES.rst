@@ -6,6 +6,8 @@ Unreleased (1.5.2) (XXXX-XX-XX)
 
 - Prefer temporal to spatial search results.
 
+- Fi bug timeline only draggable from the top.
+
 
 Release 1.5.2 (2015-5-15)
 ---------------------
