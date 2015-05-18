@@ -194,6 +194,13 @@ angular.module('map')
 
       _toggleLayers: function (lg) {
         if (lg.isActive() && lg.mapLayers.length > 0) {
+          if (lg.temporal) {
+            // copy timeState to layers so when added they will respect the
+            // current timestate.
+            angular.forEach(lg.mapLayers, function (layer) {
+              layer.timeState = State.temporal;
+            });
+          }
           addLayersRecursively(service._map, lg.mapLayers, 0);
         }
         else {
@@ -255,7 +262,7 @@ angular.module('map')
        */
       initializeLayers: function (timeState) {
         angular.forEach(DataService.layerGroups, function (lg, lgSlug) {
-          this.initializeLayer(lg, timeState);
+          this.initializeLayer(lg);
         }, this);
       },
 
@@ -268,7 +275,6 @@ angular.module('map')
           } else if (layer.format === 'WMS') {
             layer = NxtNonTiledWMSLayer.create(layer);
           }
-          layer.timeState = State.temporal;
         });
       }
 

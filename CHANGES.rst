@@ -8,8 +8,9 @@ Unreleased (1.5.2) (XXXX-XX-XX)
 
 - Fix bug timeline only draggable from the top.
 
-- fix bug getting stuck at temporal.start when animating.
+- Fix bug getting stuck at temporal.start when animating.
 
+- Fix bug not respecting time when adding vector layer.
 
 Release 1.5.2 (2015-5-15)
 ---------------------
