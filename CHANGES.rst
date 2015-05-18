@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (1.5.2) (XXXX-XX-XX)
 -------------------------------
--
+
+- Prefer temporal to spatial search results.
 
 
 Release 1.5.2 (2015-5-15)
