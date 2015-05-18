@@ -185,7 +185,7 @@ angular.module('lizard-nxt')
           State.temporal.at = UtilService.roundTimestamp(
             State.temporal.start,
             State.temporal.aggWindow,
-            false
+            true // round up to prevent getting stuck at the start.
           );
         });
       }
