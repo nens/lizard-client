@@ -492,6 +492,13 @@ angular.module('omnibox')
   pressurepipe: {
     rows: [
       {
+        keyName: "Naam",
+        attrName: "display_name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
+        valueSuffix: "",
+        defaultValue: "onbekend"
+      },
+      {
         keyName: "Type",
         attrName: "type",
         ngBindValue:
@@ -531,13 +538,6 @@ angular.module('omnibox')
         valueSuffix: "",
         defaultValue: "rond"
       },
-      // {
-      //   keyName: "Naam",
-      //   attrName: "display_name",
-      //   ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
-      //   valueSuffix: "",
-      //   defaultValue: "persleiding"
-      // },
       {
         keyName: "Lengte",
         attrName: "length",

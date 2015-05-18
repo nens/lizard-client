@@ -6,6 +6,8 @@ Unreleased (1.5.2) (XXXX-XX-XX)
 
 - Prefer temporal to spatial search results.
 
+- Add display_name for pressure pipes.
+
 
 Release 1.5.2 (2015-5-15)
 ---------------------
