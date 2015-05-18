@@ -98,14 +98,14 @@ angular.module('omnibox')
         // from happening when typing.
         if ($event.which === KEYPRESS.ENTER) {
           var loc = scope.box.content.searchResults;
-          if (loc && loc.spatial && loc.spatial[0]) {
-            scope.zoomToSpatialResult(
-              scope.box.content.searchResults.spatial[0]
-            );
-          }
-          else if (loc && loc.temporal) {
+          if (loc && loc.temporal) {
             scope.zoomToTemporalResult(
               scope.box.content.searchResults.temporal
+            );
+          }
+          else if (loc && loc.spatial && loc.spatial[0]) {
+            scope.zoomToSpatialResult(
+              scope.box.content.searchResults.spatial[0]
             );
           }
           else {
