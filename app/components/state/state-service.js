@@ -109,7 +109,6 @@ angular.module('global-state')
       aggWindow: 1000 * 60 * 5,  // 5 minutes
       buffering: false,
       timelineMoving: false,
-      resolution: null,
       playing: false,
       start: null, // defined below
       end: null // defined below
