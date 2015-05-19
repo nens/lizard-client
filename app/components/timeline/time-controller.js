@@ -265,24 +265,21 @@ angular.module('lizard-nxt')
      * ZOOMFACTOR depending on zooming in or out. Updates start and end
      * of timeState accordingly and sets new resolution on timeState.
      *
-     * @param {string} action - 'in' or 'out'.
+     * @param {string} action - 'in' or not 'in'.
      */
     this.zoom = function (action) {
 
       var ZOOMFACTOR = 2,
-          newResolution;
+          diff = (State.temporal.end - State.temporal.start) / ZOOMFACTOR / 2,
 
-      newResolution = action === "in"
-        ? State.temporal.resolution / ZOOMFACTOR
-        : State.temporal.resolution * ZOOMFACTOR;
+          change = action === 'in' ? diff : - diff;
 
-      var milliseconds = UtilService.getCurrentWidth() * newResolution;
-
-      State.temporal.start = Math.max(State.temporal.at - milliseconds,
-                                      UtilService.MIN_TIME);
-      State.temporal.end = Math.min(State.temporal.at + milliseconds,
-                                    UtilService.MAX_TIME);
-      State.temporal.resolution = newResolution;
+      State.temporal.start = UtilService.getMinTime(
+        State.temporal.start + change
+      );
+      State.temporal.end = UtilService.getMaxTime(
+        State.temporal.end - change
+      );
 
       UtilService.announceMovedTimeline(State);
 
