@@ -51,7 +51,7 @@ describe('Testing State toString', function () {
     State = $injector.get('State');
   }));
 
-  it('shou ld return a function that returns a string of state attribute',
+  it('should return a function that returns a string of state attribute',
     function () {
     expect(State.toString('spatial.mapMoving')()).toEqual('false');
   });
