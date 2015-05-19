@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.5.2) (XXXX-XX-XX)
 -------------------------------
 
+- Keep at within time extent.
+
 - Fix bug timeseries download include min max.
 
 - Timeline zoom buttons zoom relative to time extent, not relative to temporal.at.
