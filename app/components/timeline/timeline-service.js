@@ -16,7 +16,7 @@
  * and resize. The timeline resizes *before* elements are added and *after*
  * elements are removed. Therefore resize transitions should be delayed with
  * NxtD3.transTime when the timeline is shrinking, as is happening in
- * updateCanvas.
+ * resizeTimelineCanvas.
  */
 angular.module('lizard-nxt')
   .factory("Timeline", ["NxtD3", "UtilService", function (NxtD3, UtilService) {
@@ -63,6 +63,7 @@ angular.module('lizard-nxt')
   function Timeline(element, dimensions, start, end, interaction) {
     NxtD3.call(this, element, dimensions);
     initialHeight = dimensions.height;
+    this._svg = this._createDrawingArea();
     this._svg = addElementGroupsToCanvas(this._svg, this.dimensions);
     this._initDimensions = dimensions;
     xScale = this._makeScale(
@@ -102,7 +103,7 @@ angular.module('lizard-nxt')
         var width = 20000,
             height = this._getHeight(this.dimensions);
 
-        futureIndicator = this._svg.select("g").append("rect")
+        futureIndicator = this._svg.select("#feature-group").append("rect")
           .attr("height", height)
           .attr("width", width)
           .attr('title', 'Het gedeelte van de tijdlijn dat in de toekomst ligt')
@@ -163,7 +164,7 @@ angular.module('lizard-nxt')
 
         if (!aggWindow) {
           height = this._getHeight(this.dimensions);
-          aggWindow = this._svg.select('g').append("g")
+          aggWindow = this._svg.select('#feature-group').append("g")
             .attr('class', 'agg-window-group');
           aggWindow
             .append("rect")
@@ -217,18 +218,14 @@ angular.module('lizard-nxt')
      */
     resize: {
       value: function (newDimensions, timestamp, interval, nEvents) {
-
         var oldDimensions = angular.copy(this.dimensions);
-        this.dimensions = newDimensions;
-        this._svg = updateCanvas(this._svg, oldDimensions, this.dimensions);
+        NxtD3.prototype.resize.call(this, newDimensions);
+        this.updateElements(oldDimensions, timestamp, interval);
+        this._svg = resizeTimelineCanvas(this._svg, oldDimensions, this.dimensions);
 
         ordinalYScale = makeEventsYscale(initialHeight, this.dimensions);
-
         xScale.range([0, newDimensions.width - newDimensions.padding.right]);
-
         drawTimelineAxes(this._svg, xScale, newDimensions);
-        this.updateElements(
-          oldDimensions, timestamp, interval);
       }
     },
 
@@ -526,17 +523,17 @@ angular.module('lizard-nxt')
     var width = Timeline.prototype._getWidth(dimensions),
     height = Timeline.prototype._getHeight(dimensions);
     // Create group for rain bars
-    svg.select('g').append('g')
+    svg.select('#feature-group').append('g')
       .attr('height', height)
       .attr('width', width)
       .attr('id', 'rain-bar');
     // Create group for circles
-    svg.select('g').append('g')
+    svg.select('#feature-group').append('g')
       .attr('height', height)
       .attr('width', width)
       .attr('id', 'circle-group');
     // Create group for tickmarks
-    svg.select('g').append('g')
+    svg.select('#feature-group').append('g')
       .attr('height', height)
       .attr('width', width)
       .attr('id', 'tickmark-group');
@@ -556,50 +553,28 @@ angular.module('lizard-nxt')
    *  bottom, left and right padding. All values in px.
    *  @param {object} newDims - new dimensions, same structure as oldDims.
    */
-  var updateCanvas = function (svg, oldDims, newDims) {
+  var resizeTimelineCanvas = function (svg, oldDims, newDims) {
     var width = Timeline.prototype._getWidth(newDims),
     height = Timeline.prototype._getHeight(newDims);
     if (newDims.height < oldDims.height) {
       svg.transition()
         .delay(Timeline.prototype.transTime)
         .duration(Timeline.prototype.transTime)
-        .attr('height', newDims.height)
-        .attr('width', newDims.width)
         .select("g")
         .attr("transform", "translate(" + newDims.padding.left + ", 0)")
         .select('#xaxis')
         .attr("transform", "translate(0 ," + height + ")");
-      svg.select('.timeline-start-stop')
-        .transition()
-        .delay(Timeline.prototype.transTime)
-        .duration(Timeline.prototype.transTime)
-        .attr("transform", "translate(0, " + height + ")");
     } else {
       svg.transition()
         .duration(Timeline.prototype.transTime)
-        .attr('height', newDims.height)
-        .attr('width', newDims.width)
         .select("g")
         .attr("transform", "translate(" + newDims.padding.left + ", 0)")
         .select('#xaxis')
         .attr("transform", "translate(0 ," + height + ")");
-      svg.select('.timeline-start-stop')
-        .transition()
-        .duration(Timeline.prototype.transTime)
-        .attr("transform", "translate(0, " + height + ")");
     }
-    svg.select("g").select(".plot-temporal")
+    svg.select("#feature-group").selectAll("g")
       .attr("height", height)
       .attr("width", width);
-    // Update rain bar group
-    svg.select('g').select('#rain-bar')
-      .attr('width', width)
-      .attr('height', height);
-    // Update circle group
-    svg.select('g').select('#circle-group')
-      .attr('width', width)
-      .attr('height', height);
-
     return svg;
   };
 

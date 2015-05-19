@@ -29,6 +29,17 @@ describe('Testing State service', function () {
     }
   );
 
+  it('should keep at within time extent', function () {
+    State.temporal.start = 10 * 24 * 60 * 60 * 1000; // 01-1970
+    State.temporal.end = 100 * 24 * 60 * 60 * 1000; // later
+    expect(State.temporal.at).toBe(UtilService.roundTimestamp(
+        State.temporal.end,
+        State.temporal.aggWindow,
+        true
+      ) - State.temporal.aggWindow
+    );
+  });
+
 });
 
 describe('Testing State toString', function () {
@@ -40,7 +51,7 @@ describe('Testing State toString', function () {
     State = $injector.get('State');
   }));
 
-  it('should return a function that returns a string of state attribute',
+  it('shou ld return a function that returns a string of state attribute',
     function () {
     expect(State.toString('spatial.mapMoving')()).toEqual('false');
   });

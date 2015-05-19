@@ -492,10 +492,9 @@ angular.module('lizard-nxt')
       // Create a drawing group that is shifted left side padding to the right
       .select("g")
         .attr("transform", "translate(" + dimensions.padding.left + ", " + dimensions.padding.top + ")")
-      .select('rect')
-            .attr('id', 'listeners')
-            .attr('width', width)
-            .attr('height', height);
+        .select('#listeners')
+          .attr('width', width)
+          .attr('height', height);
     return svg;
   };
 
