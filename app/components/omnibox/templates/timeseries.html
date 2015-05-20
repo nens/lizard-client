@@ -62,7 +62,14 @@
        title="Data van deze infocard exporteren"
        ng-csv="$parent.formatCSVColumns(timeseries.selectedTimeseries.events)"
        filename="<% timeseries.selectedTimeseries.name %>.csv"
-       csv-header="['Datestamp', 'Timestamp', timeseries.selectedTimeseries.unit, 'Latitude', 'Longitude']" >
+       csv-header="[
+         'Latitude',
+         'Longitude',
+         'Datestamp',
+         'Timestamp',
+         timeseries.parameter_referenced_unit.referenced_unit_short_display_name + 'min',
+         timeseries.parameter_referenced_unit.referenced_unit_short_display_name + 'max'
+       ]">
        <i class="fa fa-share-square-o"></i>
        Exporteer
      </a>
