@@ -179,8 +179,7 @@ angular.module('lizard-nxt')
       });
 
       // reset timeState.at if out of temporal bounds
-      if (State.temporal.at >= State.temporal.end ||
-          State.temporal.at < State.temporal.start) {
+      if (State.temporal.at >= State.temporal.end) {
         $scope.$apply(function () {
           State.temporal.at = UtilService.roundTimestamp(
             State.temporal.start,

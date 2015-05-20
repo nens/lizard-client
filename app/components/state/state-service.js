@@ -118,15 +118,47 @@ angular.module('global-state')
     var _start = INITIAL_START_FOR_EXTENT;
     Object.defineProperty(state.temporal, 'start', {
       get: function () { return _start; },
-      set: function (start) { _start = UtilService.getMinTime(start); }
+      set: function (start) {
+        _start = UtilService.getMinTime(start);
+        state.temporal.at = _moveAtInTemporalExtent(state.temporal);
+      }
     });
 
     // State.temporal.end must be lower than MAX_TIME_FOR_EXTENT
     var _end = INITIAL_END_FOR_EXTENT;
     Object.defineProperty(state.temporal, 'end', {
       get: function () { return _end; },
-      set: function (end) { _end = UtilService.getMaxTime(end); }
+      set: function (end) {
+        _end = UtilService.getMaxTime(end);
+        state.temporal.at = _moveAtInTemporalExtent(state.temporal);
+      }
     });
+
+    /**
+     * Checks given temporal state object whether `at` is within extent. If not
+     * returns rounded `at` at start or end of time extent depending on
+     * location of original `at`
+     *
+     * @param  {object} ts temporal state
+     * @return {int}    at in ms from epoch.
+     */
+    var _moveAtInTemporalExtent = function (ts) {
+      var _at = ts.at;
+      if ((ts.at + ts.aggWindow) > ts.end) {
+        _at = UtilService.roundTimestamp(
+          ts.end,
+          ts.aggWindow,
+          true
+        ) - ts.aggWindow;
+      } else if (ts.at < ts.start) {
+        _at = UtilService.roundTimestamp(
+          ts.start,
+          ts.aggWindow,
+          true // round up.
+        );
+      }
+      return _at;
+    };
 
     return state;
   }]);
