@@ -135,8 +135,9 @@ angular.module('global-state')
     });
 
     /**
-     * Checks givens temporla state object whether at is within extent. If not
-     * returns an adapted at, nicely rounded, to the closest part of the extent.
+     * Checks given temporal state object whether `at` is within extent. If not
+     * returns rounded `at` at start or end of time extent depending on
+     * location of original `at`
      *
      * @param  {object} ts temporal state
      * @return {int}    at in ms from epoch.
