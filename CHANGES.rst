@@ -14,6 +14,8 @@ Unreleased (1.5.2) (XXXX-XX-XX)
 
 - Prefer temporal to spatial search results.
 
+- Add display_name for pressure pipes.
+
 - Fix bug timeline only draggable from the top.
 
 - Fix bug getting stuck at temporal.start when animating.
