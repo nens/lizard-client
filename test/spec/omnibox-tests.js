@@ -10,7 +10,6 @@ describe('Testing omniboxCtrl', function () {
   beforeEach(inject(function ($injector) {
     $controller = $injector.get('$controller');
     var $rootScope = $injector.get('$rootScope');
-    $injector.get('$controller');
     boxScope = $rootScope.$new();
 
     boxScope.box = {

@@ -27,8 +27,31 @@ describe('Testing util-service functions', function () {
 
     var inputData = [[1420070400000, 0.58], [1420149600000, 8.2354]],
         latLng = {lat: 52.7, lng: 5.2},
-        expectedResult = [[ '1-1-2015', '1:00:00', '0,57', '52,7', '5,2' ],
-                          [ '1-1-2015', '23:00:00', '8,23', '52,7', '5,2' ]];
+        expectedResult = [[ '52,7', '5,2', '1-1-2015', '1:00:00', '0,58' ],
+                          [ '52,7', '5,2', '1-1-2015', '23:00:00', '8,24' ]];
+
+    var result = UtilService.formatCSVColumns(inputData, latLng);
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('should be able to format ts data with min max', function () {
+    var inputData = [
+      {
+        timestamp: 1420070400000,
+        min: 0.58,
+        max: 0.59
+      },
+      {
+        timestamp: 1420149600000,
+        min: 8.2354,
+        max: 8.2354
+      }
+    ],
+    latLng = {lat: 52.7, lng: 5.2},
+    expectedResult = [
+      [ '52,7', '5,2', '1-1-2015', '1:00:00', '0,58', '0,59' ],
+      [ '52,7', '5,2', '1-1-2015', '23:00:00', '8,24', '8,24' ]
+    ];
 
     var result = UtilService.formatCSVColumns(inputData, latLng);
     expect(result).toEqual(expectedResult);

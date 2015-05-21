@@ -756,20 +756,45 @@ angular.module('lizard-nxt')
 
     for (i = 0; i < data.length; i++) {
 
-      formattedDateTime = this._formatDate(data[i][0]);
+      formattedDateTime = this._formatDate(data[i]['timestamp'] || data[i][0]);
 
-      formattedData.push([
-        formattedDateTime[0],
-        formattedDateTime[1],
-        this.formatNumber(
-          Math.floor(100 * data[i][1]) / 100 || 0,
-          0,
-          2,
-          true // Dutchify seperators
-        ),
+      var formattedDatum = [
         this.formatNumber(latLng.lat, 0, 0, true),
-        this.formatNumber(latLng.lng, 0, 0, true)
-      ]);
+        this.formatNumber(latLng.lng, 0, 0, true),
+        formattedDateTime[0],
+        formattedDateTime[1]
+      ];
+
+      if (data[i].max !== undefined && data[i].min !== undefined) {
+        formattedDatum.push(
+          this.formatNumber(
+            Math.round(100 * data[i]['min']) / 100 || 0,
+            0,
+            2,
+            true // Dutchify seperators
+          )
+        );
+        formattedDatum.push(
+          this.formatNumber(
+            Math.round(100 * data[i]['max']) / 100 || 0,
+            0,
+            2,
+            true
+          )
+        );
+      } else {
+        formattedDatum.push(
+          this.formatNumber(
+            Math.round(100 * data[i][1]) / 100 || 0,
+            0,
+            2,
+            true // Dutchify seperators
+          )
+        );
+      }
+
+      formattedData.push(formattedDatum);
+
     }
 
     return formattedData;

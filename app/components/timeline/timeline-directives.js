@@ -91,9 +91,6 @@ angular.module('lizard-nxt')
        */
       zoomEndFn: function () {
         scope.$apply(function () {
-          State.temporal.resolution = (
-            State.temporal.end - State.temporal.start
-            ) /  UtilService.getCurrentWidth();
           getTimeLineData();
           State.temporal.timelineMoving = false;
         });
