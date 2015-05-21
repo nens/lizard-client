@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.5.2) (XXXX-XX-XX)
 -------------------------------
 
+- Remove unused utils.js.
+
 - Keep at within time extent.
 
 - Fix bug timeseries download include min max.
@@ -17,6 +19,7 @@ Unreleased (1.5.2) (XXXX-XX-XX)
 - Fix bug getting stuck at temporal.start when animating.
 
 - Fix bug not respecting time when adding vector layer.
+
 
 Release 1.5.2 (2015-5-15)
 ---------------------
