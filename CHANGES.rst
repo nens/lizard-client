@@ -6,6 +6,8 @@ Unreleased (1.5.2) (XXXX-XX-XX)
 
 - Fix returning the same area aggregation for every utfgrid area.
 
+- Fix appending options of other layers to raster-aggregate requests.
+
 
 Release 1.5.3 (2015-5-27)
 ---------------------
