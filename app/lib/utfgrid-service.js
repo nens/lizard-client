@@ -24,12 +24,18 @@ angular.module('lizard-nxt')
      */
     var buildCacheKey = function (layer, options) {
 
-      var cacheKey;
+      var geomString;
 
-      cacheKey = layer.slug
-        + options.geom.toString();
+      try {
+        // bounds have a bbox string method
+        geomString = options.geom.toBBoxString();
+      }
+      catch (e) {
+        // latlngs have a tostring method
+        geomString = options.geom.toString();
+      }
 
-      return cacheKey;
+      return  layer.slug + geomString;
     };
 
     /**
