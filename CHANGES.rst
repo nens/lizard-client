@@ -8,6 +8,8 @@ Unreleased (1.5.2) (XXXX-XX-XX)
 
 - Fix appending options of other layers to raster-aggregate requests.
 
+- Fix temporal wms layers not respecting temporal state changes.
+
 
 Release 1.5.3 (2015-5-27)
 ---------------------
