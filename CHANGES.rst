@@ -3,7 +3,10 @@ Changelog of lizard-nxt client
 
 Unreleased (1.5.2) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix appending the extended options to raster-aggregate requests.
+
+- Fix use ng-style instead of dynamic style attribute.
 
 
 Release 1.5.4 (2015-5-29)
