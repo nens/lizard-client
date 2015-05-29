@@ -137,7 +137,7 @@ angular.module('data-menu')
             var extendedOpts = angular.extend({}, options, this.options);
             extendedOpts.agg = this.aggregationType;
 
-            return wantedService.getData(callee, this, options)
+            return wantedService.getData(callee, this, extendedOpts)
               .then(buildSuccesCallback, buildErrorCallback);
           }
         }
