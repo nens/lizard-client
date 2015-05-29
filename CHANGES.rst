@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.5.2) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.5.4 (2015-5-29)
+---------------------
 
 - Fix returning the same area aggregation for every utfgrid area.
 
