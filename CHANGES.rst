@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.5.2) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.5.5 (2015-5-29)
+---------------------
 
 - Fix appending the extended options to raster-aggregate requests.
 
