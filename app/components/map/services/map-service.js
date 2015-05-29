@@ -196,9 +196,10 @@ angular.module('map')
         if (lg.isActive() && lg.mapLayers.length > 0) {
           if (lg.temporal) {
             // copy timeState to layers so when added they will respect the
-            // current timestate.
+            // current timestate and can make independent descisions about when
+            // to sync to new timestate.
             angular.forEach(lg.mapLayers, function (layer) {
-              layer.timeState = State.temporal;
+              layer.timeState = angular.copy(State.temporal);
             });
           }
           addLayersRecursively(service._map, lg.mapLayers, 0);
