@@ -6,6 +6,22 @@ Unreleased (1.5.2) (XXXX-XX-XX)
 -
 
 
+Release 1.5.8 (2015-6-1)
+---------------------
+-
+
+
+Release 1.5.7 (2015-6-1)
+---------------------
+-
+
+
+Release 1.5.6 (2015-6-1)
+---------------------
+
+- Fix bug in swapped keys for rain data bar graphs.
+
+
 Release 1.5.5 (2015-5-29)
 ---------------------
 
