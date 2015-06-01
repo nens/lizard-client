@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.5.2) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.5.6 (2015-6-1)
+---------------------
 
 - Fix bug in swapped keys for rain data bar graphs.
 
