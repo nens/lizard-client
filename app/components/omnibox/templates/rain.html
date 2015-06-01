@@ -14,7 +14,10 @@
          data="lg.layers['rain'].data"
          ylabel="lg.layers['rain'].aggWindow"
          yfilter="aggWinToYLabel"
-         keys="{x: 1, y: 0}"
+         keys="{
+           x: 'timestamp',
+           y: 'min'
+         }"
          temporal="omnibox.state.temporal">
        </graph>
        <div class="card-tools">
