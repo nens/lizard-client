@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.5.9) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.5.9 (2015-6-5)
+---------------------
 
 - Fix bug changed filter keyword in events api.
 
