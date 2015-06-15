@@ -8,7 +8,11 @@
             ng-if="timeseries.data.length > 1"
             ng-class="{hidden: !fullDetails}"
             ng-model="timeseries.selectedTimeseries"
-            ng-options="series.name for series in timeseries.data | rmSingleDatumTimeseries">
+            ng-options="ts.location.name
+              + ', '
+              + ts.parameter_referenced_unit.parameter_short_display_name
+              for ts in timeseries.data | rmSingleDatumTimeseries
+            ">
      </select>
      <span class="card-title-text placeholder"
            ng-if="timeseries.data.length === 1 && fullDetails">
@@ -28,7 +32,10 @@
         type="temporal"
         temporal="timeState"
         data="timeseries.selectedTimeseries.events"
-        ylabel="timeseries.selectedTimeseries.unit"
+        ylabel="timeseries
+          .selectedTimeseries
+          .parameter_referenced_unit
+          .referenced_unit_short_display_name"
         xlabel=""
         keys="{
           x: 'timestamp',
@@ -46,7 +53,10 @@
       type="temporal"
       temporal="timeState"
       data="timeseries.selectedTimeseries.events"
-      ylabel="timeseries.selectedTimeseries.unit"
+      ylabel="timeseries
+        .selectedTimeseries
+        .parameter_referenced_unit
+        .referenced_unit_short_display_name"
       xlabel=""
       keys="{
         x: 'timestamp',
