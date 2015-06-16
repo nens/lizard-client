@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (1.5.9) (XXXX-XX-XX)
 -------------------------------
 
+- Fix bug no retina when https or v4 mapbox tile source.
+
 - Fix bug timeseries name and axis labels incorrect fields.
 
 
