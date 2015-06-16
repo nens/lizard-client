@@ -332,11 +332,13 @@ angular.module('data-menu')
           minPoints
         ).then(function (response) {
 
-           // Filter out the timeseries with too little measurements.
+           // Filter out the timeseries with too little measurements. And ts
+           // without parameter unit info.
           var filteredResult = [];
-          angular.forEach(response.results, function (value) {
-            if (value.events.length > 1 &&
-                value.events.length < MAX_NR_TIMESERIES_EVENTS) {
+          angular.forEach(response.results, function (ts) {
+            if (ts.events.length > 1 &&
+                ts.events.length < MAX_NR_TIMESERIES_EVENTS &&
+                ts.parameter_referenced_unit) {
               filteredResult.push(value);
             }
           });
