@@ -460,7 +460,7 @@ angular.module('map')
 
         // Mapbox layers support retina tiles, our own do not yet. Check whether
         // tiles are from mapbox source.
-        var retinaSupport = /mapbox.tiles/g.test(nonLeafLayer.url);
+        var retinaSupport = /tiles.mapbox/g.test(nonLeafLayer.url);
 
         var layer = LeafletService.tileLayer(
           layerUrl, {

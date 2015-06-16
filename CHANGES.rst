@@ -1,9 +1,10 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.5.9) (XXXX-XX-XX)
+Unreleased (1.5.11) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fix bug no retina for real.
 
 
 Release 1.5.10 (2015-6-16)
