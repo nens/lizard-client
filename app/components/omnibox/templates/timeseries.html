@@ -2,24 +2,27 @@
      ng-class="{timeseries: fullDetails}">
 
   <div class="timeseries-header-container">
-     <i class="fa fa-clock-o">
-     </i>
-     <select class="timeseries"
-            ng-if="timeseries.data.length > 1"
-            ng-class="{hidden: !fullDetails}"
-            ng-model="timeseries.selectedTimeseries"
-            ng-options="ts.location.name
-              + ', '
-              + ts.parameter_referenced_unit.parameter_short_display_name
-              for ts in timeseries.data | rmSingleDatumTimeseries
-            ">
-     </select>
-     <span class="card-title-text placeholder"
-           ng-if="timeseries.data.length === 1 && fullDetails">
-           <% timeseries.selectedTimeseries.name %>
-     </span>
-     <span class="card-title-text placeholder" ng-class="{hidden: fullDetails}" >Tijdreeksen</span>
-     <full-details></full-details>
+    <i class="fa fa-clock-o"></i>
+    <select
+      class="timeseries"
+      ng-if="timeseries.data.length > 1"
+      ng-class="{hidden: !fullDetails}"
+      ng-model="timeseries.selectedTimeseries"
+      ng-options="ts.location.name
+        + ', '
+        + ts.parameter_referenced_unit.parameter_short_display_name
+        for ts in timeseries.data | rmSingleDatumTimeseries
+      ">
+    </select>
+    <span
+      class="card-title-text placeholder"
+      ng-if="timeseries.data.length === 1 && fullDetails">
+      <% timeseries.selectedTimeseries.location.name
+        + ', '
+        + timeseries.selectedTimeseries.parameter_referenced_unit.parameter_short_display_name %>
+    </span>
+    <span class="card-title-text placeholder" ng-class="{hidden: fullDetails}" >Tijdreeksen</span>
+    <full-details></full-details>
   </div>
 
   <br>
@@ -71,14 +74,18 @@
        class="btn btn-default btn-xs"
        title="Data van deze infocard exporteren"
        ng-csv="$parent.formatCSVColumns(timeseries.selectedTimeseries.events)"
-       filename="<% timeseries.selectedTimeseries.name %>.csv"
+       filename="<%
+         timeseries.selectedTimeseries.location.name
+         + ', '
+         + timeseries.selectedTimeseries.parameter_referenced_unit.parameter_short_display_name
+         %>.csv"
        csv-header="[
          'Latitude',
          'Longitude',
          'Datestamp',
          'Timestamp',
-         timeseries.parameter_referenced_unit.referenced_unit_short_display_name + 'min',
-         timeseries.parameter_referenced_unit.referenced_unit_short_display_name + 'max'
+         timeseries.selectedTimeseries.parameter_referenced_unit.referenced_unit_short_display_name + ' min',
+         timeseries.selectedTimeseries.parameter_referenced_unit.referenced_unit_short_display_name + ' max'
        ]">
        <i class="fa fa-share-square-o"></i>
        Exporteer
