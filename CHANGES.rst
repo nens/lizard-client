@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (1.5.11) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.5.12 (2015-6-25)
+---------------------
 
 - Fix bug timeseries name when only one and in csv.
 
