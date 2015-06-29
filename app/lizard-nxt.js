@@ -30,7 +30,8 @@ angular.module("lizard-nxt", [
   'user-menu',
   'global-state',
   'ngSanitize',
-  'ngCsv'
+  'ngCsv',
+  'gettext'
 ])
 // Decorator for ngExceptionHandler to log exceptions to sentry
   .config(function ($provide) {
