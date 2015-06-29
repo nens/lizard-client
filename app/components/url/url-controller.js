@@ -249,6 +249,16 @@ angular.module('lizard-nxt')
     });
 
     /**
+     * Set region when State.spatial.region changed and box.type is region.
+     */
+    $scope.$watch(State.toString('spatial.region'), function (n, o) {
+      if (n === o || State.box.type !== 'region') { return true; }
+      LocationGetterSetter.setUrlValue(
+        state.geom.part, state.geom.index, State.spatial.region.properties.name
+      );
+    });
+
+    /**
      * Listener to update map view when user changes url
      *
      * $locationChangeSucces is broadcasted by angular
