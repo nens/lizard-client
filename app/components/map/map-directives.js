@@ -17,8 +17,16 @@ angular.module('map')
   'MapService',
   'DataService',
   'UtilService',
+  'CabinetService',
   'State',
-  function ($controller, MapService, DataService, UtilService, State) {
+  function (
+    $controller,
+    MapService,
+    DataService,
+    UtilService,
+    CabinetService,
+    State
+  ) {
 
     var link = function (scope, element, attrs) {
 
@@ -94,7 +102,27 @@ angular.module('map')
           onMoveStart: _moveStarted,
           onMoveEnd: _moveEnded,
           onMouseMove: _mouseMove
+        }
+      );
+
+
+      var regionsLayer;
+
+      var addRegions = function (z, bounds) {
+        CabinetService.regions.get({
+          z: z,
+          bounds: bounds
+        }).then(function (regions) {
+          var regionsLayer = LeafletService.geojson(regions,
+            {
+              onEachFeature: function (d, layer) {
+                layer.on('mousemove', function () {
+                 implement
+              });
+            }
+          });
         });
+      };
 
       /**
        * Watch state spatial view and update the whole shebang.
@@ -105,6 +133,9 @@ angular.module('map')
           State.spatial.bounds = MapService.getBounds();
         } else {
           mapSetsView = false;
+          if (State.box.type === 'region') {
+            addRegions(State.spatial.view.zoom, State.spatial.bounds);
+          }
         }
       });
 
@@ -160,6 +191,9 @@ angular.module('map')
         case "line":
           selector = "#map * {cursor: crosshair;}";
           break;
+        case "region":
+          selector = "";
+          break;
         case "area":
           selector = "#map * {cursor: -webkit-grab; cursor: -moz-grab; cursor: grab; cursor: hand;}";
           break;
@@ -167,6 +201,11 @@ angular.module('map')
           return;
         }
         UtilService.addNewStyle(selector);
+
+        if (State.box.type === 'region') {
+          addRegions(State.spatial.view.zoom, State.spatial.bounds);
+        }
+
       });
 
       init();

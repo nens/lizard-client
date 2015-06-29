@@ -40,6 +40,11 @@ describe('Testing State service', function () {
     );
   });
 
+  it('should have a box type that can have the value region', function () {
+    State.box.type = 'region';
+    expect(State.box.type).toBe('region');
+  });
+
 });
 
 describe('Testing State toString', function () {
