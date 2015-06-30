@@ -23,6 +23,7 @@ angular.module('lizard-nxt')
   'State',
   '$rootScope',
   'LeafletService',
+  'gettextCatalog',
   function (
     $scope,
     $timeout,
@@ -33,27 +34,32 @@ angular.module('lizard-nxt')
     MapService,
     State,
     $rootScope,
-    LeafletService
+    LeafletService,
+    gettextCatalog
   ) {
 
     // Configuration object for url state.
     var state = {
+      language: {
+        part: 'path',
+        index: 0
+      },
       context: { // Locally used name for the state
         value: 'map', // default
         part: 'path', // Part of the url where this state is stored,
-        index: 0, // Position of the state in the part
+        index: 1, // Position of the state in the part
       },
       layerGroups: {
         part: 'path',
-        index: 1,
+        index: 2,
       },
       boxType: {
         part: 'path',
-        index: 2,
+        index: 3,
       },
       geom: {
         part: 'path',
-        index: 3,
+        index: 4,
       },
       mapView: {
         part: 'at',
@@ -227,12 +233,20 @@ angular.module('lizard-nxt')
     State.temporal.timelineMoving = true;
 
     var listener = $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-      var boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
+      var language = LocationGetterSetter.getUrlValue(state.language.part, state.language.index),
+        boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
         geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
         layerGroupsFromURL = LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index),
         mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
         time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
         context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
+
+      if (language) {
+        gettextCatalog.setCurrentLanguage(language);
+      } else {
+        // for now set default to Dutch.
+        LocationGetterSetter.setUrlValue(state.language.part, state.language.index, 'nl');
+      }
 
       if (context) {
         // Set context after digest loop because we need to enter on 'map'
@@ -246,14 +260,17 @@ angular.module('lizard-nxt')
       } else {
         LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
       }
+
       if (boxType) {
         State.box.type = boxType;
       } else {
         LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, State.box.type);
       }
+
       if (geom) {
         State.spatial = UrlState.parseGeom(State.box.type, geom, State.spatial);
       }
+
       enablelayerGroups(layerGroupsFromURL);
       enableMapView(mapView);
 
@@ -263,6 +280,7 @@ angular.module('lizard-nxt')
         state.timeState.update = false;
         UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
       }
+
       State.temporal.timelineMoving = false;
 
       listener(); // remove this listener
