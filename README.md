@@ -109,11 +109,11 @@ The components can include other components and should be used by a *core* modul
 ## Internationalization
 Lizard-client uses angular-gettext to translate and pluralize texts. See the [docs](https://angular-gettext.rocketeer.be/dev-guide/). The workflow is currently setup in its simplest form. All the translation strings are in `app/translations.js`. In the future we might move to support multiple languages in seperate files and lazy loading, see: https://angular-gettext.rocketeer.be/dev-guide/lazy-loading/ .
 
-To include translation just run `grunt nggettext_compile` which creates a `translations.js` that is included in the app. Make sure you have all the dependencies by calling `npm install`.
+To include translation, make sure you have all the dependencies by calling `npm install` and just run `grunt nggettext_compile` which creates a `translations.js` that is included in the app.
 
 To create a new string that requires translation:
 
-1. Use `<span translate>Hallo daar!</span>`, or for more complicated cases check the docs: [on html elements](https://angular-gettext.rocketeer.be/dev-guide/annotate/), [or in the source code](https://angular-gettext.rocketeer.be/dev-guide/annotate-js/). For now all text is in Dutch and is translated to other languages.
+1. Use `<span translate>Hi!</span>`, or for more complicated cases check the docs: [on html elements](https://angular-gettext.rocketeer.be/dev-guide/annotate/), [or in the source code](https://angular-gettext.rocketeer.be/dev-guide/annotate-js/). The app is in English which is translated to other languages.
 2. Extract the text that requires translation by calling `grunt nggettext_extract`.
 3. Upload the translation template in `po/template.pot` to [transifex](https://translations.lizard.net/projects/p/lizard6/) or your favourite translation tool.
 4. Get yourself a language wizard and get some coffee or go on a trip.
