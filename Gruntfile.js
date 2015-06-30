@@ -25,6 +25,10 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-connect-proxy');
 
+  // Add task to extract and compile translation strings. Use nggettext_extract
+  // to extract all translatable strings from the app. And use nggettext_compile
+  // to compile the translations to use in the app.
+  grunt.loadNpmTasks('grunt-angular-gettext');
 
   var appConfig = {
     app: require('./bower.json').appPath,
@@ -149,6 +153,28 @@ module.exports = function (grunt) {
       main: {
         src: ['<%= yeoman.app %>/<%= yeoman.templateFileDirs %>'],
         dest: '<%= yeoman.app %>/templates.js'
+      },
+    },
+
+    // Config for angular-gettext
+    nggettext_extract: {
+      pot: {
+        options: {
+          startDelim: '<%',
+          endDelim: '%>'
+        },
+        files: {
+          'po/template.pot': ['app/*.html']
+        }
+      },
+    },
+
+    nggettext_compile: {
+      all: {
+        files: {
+          // dest : src
+          'app/translations.js': ['po/*.po']
+        }
       },
     },
 
@@ -475,7 +501,7 @@ module.exports = function (grunt) {
         cwd: './',
         dest: '<%= yeoman.dist %>',
         src: 'CNAME'
-         
+
       }
     },
 
