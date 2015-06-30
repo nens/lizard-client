@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('lizard-nxt')
-  .service("CabinetService", ["$q", "Restangular", "backendDomain",
-  function ($q, Restangular, backendDomain) {
+  .service("CabinetService", ["$q", "Restangular", "backendDomain", "gettextCatalog",
+  function ($q, Restangular, backendDomain, gettextCatalog) {
 
   var geocodeResource,
       timeseriesResource,
@@ -53,27 +53,27 @@ angular.module('lizard-nxt')
   };
 
   var tooltips = {
-    login: "Inloggen",
-    logout: "Uitloggen",
-    profile: "Profiel aanpassen",
-    version: "Dubbelklik voor de Lizard versie",
-    openMenu: "Datamenu openen",
-    closeMenu: "Datamenu sluiten",
-    transparency: "Transparantie aanpassen",
-    pointTool: "Puntselectie",
-    lineTool: "Lijnselectie",
-    areaTool: "Scherm selectie",
-    resetQuery: "Resultaatvenster sluiten",
-    zoomInMap: "Zoom in op de kaart",
-    zoomOutMap: "Zoom uit op de kaart",
-    zoomInTimeline: "Zoom in op de tijdlijn",
-    goToNow: "Ga naar het heden op de tijdlijn",
-    zoomOutTimeline: "Zoom uit op de tijdlijn",
-    startAnim: "Start de animatie",
-    stopAnim: "Stop de animatie",
-    timelineStart: "Het begin van de huidige tijdlijn",
-    timelineAt: "Het 'nu' op de tijdlijn",
-    timelineEnd: "Het einde van de huidige tijdlijn"
+    login: gettextCatalog.getString("Inloggen"),
+    logout: gettextCatalog.getString("Uitloggen"),
+    profile: gettextCatalog.getString("Profiel aanpassen"),
+    version: gettextCatalog.getString("Dubbelklik voor de Lizard versie"),
+    openMenu: gettextCatalog.getString("Datamenu openen"),
+    closeMenu: gettextCatalog.getString("Datamenu sluiten"),
+    transparency: gettextCatalog.getString("Transparantie aanpassen"),
+    pointTool: gettextCatalog.getString("Puntselectie"),
+    lineTool: gettextCatalog.getString("Lijnselectie"),
+    areaTool: gettextCatalog.getString("Scherm selectie"),
+    resetQuery: gettextCatalog.getString("Resultaatvenster sluiten"),
+    zoomInMap: gettextCatalog.getString("Zoom in op de kaart"),
+    zoomOutMap: gettextCatalog.getString("Zoom uit op de kaart"),
+    zoomInTimeline: gettextCatalog.getString("Zoom in op de tijdlijn"),
+    goToNow: gettextCatalog.getString("Ga naar het heden op de tijdlijn"),
+    zoomOutTimeline: gettextCatalog.getString("Zoom uit op de tijdlijn"),
+    startAnim: gettextCatalog.getString("Start de animatie"),
+    stopAnim: gettextCatalog.getString("Stop de animatie"),
+    timelineStart: gettextCatalog.getString("Het begin van de huidige tijdlijn"),
+    timelineAt: gettextCatalog.getString("Het 'nu' op de tijdlijn"),
+    timelineEnd: gettextCatalog.getString("Het einde van de huidige tijdlijn")
   };
 
   return {
