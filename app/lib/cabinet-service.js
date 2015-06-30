@@ -52,33 +52,43 @@ angular.module('lizard-nxt')
       .withHttpConfig({timeout: localPromise.promise});
   };
 
-  var tooltips = {
-    login: gettextCatalog.getString("Log in"),
-    logout: gettextCatalog.getString("Log out"),
-    profile: gettextCatalog.getString("Modify profile"),
-    version: gettextCatalog.getString("Double click for lizard version number"),
-    openMenu: gettextCatalog.getString("Open data menu"),
-    closeMenu: gettextCatalog.getString("Close data menu"),
-    transparency: gettextCatalog.getString("Adjust opacity"),
-    pointTool: gettextCatalog.getString("Point selection"),
-    lineTool: gettextCatalog.getString("Line selection"),
-    areaTool: gettextCatalog.getString("View selection"),
-    resetQuery: gettextCatalog.getString("Close result window"),
-    zoomInMap: gettextCatalog.getString("Zoom in on the map"),
-    zoomOutMap: gettextCatalog.getString("Zoom out on the map"),
-    zoomInTimeline: gettextCatalog.getString("Zoom in on timeline"),
-    goToNow: gettextCatalog.getString("Go to the present in timeline"),
-    zoomOutTimeline: gettextCatalog.getString("Zoom out of timeline"),
-    startAnim: gettextCatalog.getString("Start animation"),
-    stopAnim: gettextCatalog.getString("Stop animation"),
-    timelineStart: gettextCatalog.getString("Start of current timeline"),
-    timelineAt: gettextCatalog.getString("The 'now' of the timeline"),
-    timelineEnd: gettextCatalog.getString("End of current timeline")
+  /**
+   * Create tooltips for the current language.
+   *
+   * Tooltips are dynamic. When the language changes they have to update. This
+   * function fetches the correct values from gettext and return a tooltip
+   * object.
+   * @return {tooltips} tooltip object with translated tooltips.
+   */
+  var createTooltips = function () {
+    return {
+      login: gettextCatalog.getString("Log in"),
+      logout: gettextCatalog.getString("Log out"),
+      profile: gettextCatalog.getString("Modify profile"),
+      version: gettextCatalog.getString("Double click for lizard version number"),
+      openMenu: gettextCatalog.getString("Open data menu"),
+      closeMenu: gettextCatalog.getString("Close data menu"),
+      transparency: gettextCatalog.getString("Adjust opacity"),
+      pointTool: gettextCatalog.getString("Point selection"),
+      lineTool: gettextCatalog.getString("Line selection"),
+      areaTool: gettextCatalog.getString("View selection"),
+      resetQuery: gettextCatalog.getString("Close result window"),
+      zoomInMap: gettextCatalog.getString("Zoom in on the map"),
+      zoomOutMap: gettextCatalog.getString("Zoom out on the map"),
+      zoomInTimeline: gettextCatalog.getString("Zoom in on timeline"),
+      goToNow: gettextCatalog.getString("Go to the present in timeline"),
+      zoomOutTimeline: gettextCatalog.getString("Zoom out of timeline"),
+      startAnim: gettextCatalog.getString("Start animation"),
+      stopAnim: gettextCatalog.getString("Stop animation"),
+      timelineStart: gettextCatalog.getString("Start of current timeline"),
+      timelineAt: gettextCatalog.getString("The 'now' of the timeline"),
+      timelineEnd: gettextCatalog.getString("End of current timeline")
+    };
   };
 
   return {
     events: events,
-    tooltips: tooltips,
+    createTooltips: createTooltips,
     geocode: geocodeResource,
     raster: rasterResource,
     timeseries: timeseriesResource,
