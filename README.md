@@ -107,7 +107,7 @@ The components can include other components and should be used by a *core* modul
 `app/lib` contains low level services and non-angular files. These do not make up a component but contain individual pieces of logic that are used by components or *core* modules.
 
 ## Internationalization
-Lizard-client uses angular-gettext to translate and pluralize texts. See the [docs](https://angular-gettext.rocketeer.be/dev-guide/). The workflow is currently setup in its simplest form.
+Lizard-client uses angular-gettext to translate and pluralize texts. See the [docs](https://angular-gettext.rocketeer.be/dev-guide/). The workflow is currently setup in its simplest form. All the translation strings are in `app/translations.js`. In the future we might move to support multiple languages in seperate files and lazy loading, see: https://angular-gettext.rocketeer.be/dev-guide/lazy-loading/ .
 
 To include translation just run `grunt nggettext_compile` which creates a `translations.js` that is included in the app. Make sure you have all the dependencies by calling `npm install`.
 
@@ -117,12 +117,10 @@ To create a new string that requires translation:
 2. Extract the text that requires translation by calling `grunt nggettext_extract`.
 3. Upload the translation template in `po/template.pot` to [transifex](https://translations.lizard.net/projects/p/lizard6/) or your favourite translation tool.
 4. Get yourself a language wizard and get some coffee or go on a trip.
-5. Download a `.po` file to `po/` in the project root.
+5. Download the finished translation from transifex as a `.po` file to `po/` in the project root.
 5. Run `grunt nggettext_compile` and bob's your uncle!
 
 The template.pot and the translations.js are ingored by git. The translated `.po` files are versioned.
-
-In the future we might move to support multiple languages in seperate files and lazy loading, see: https://angular-gettext.rocketeer.be/dev-guide/lazy-loading/ .
 
 ## Browser compatibility chart
 
