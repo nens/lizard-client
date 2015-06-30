@@ -53,27 +53,27 @@ angular.module('lizard-nxt')
   };
 
   var tooltips = {
-    login: gettextCatalog.getString("Inloggen"),
-    logout: gettextCatalog.getString("Uitloggen"),
-    profile: gettextCatalog.getString("Profiel aanpassen"),
-    version: gettextCatalog.getString("Dubbelklik voor de Lizard versie"),
-    openMenu: gettextCatalog.getString("Datamenu openen"),
-    closeMenu: gettextCatalog.getString("Datamenu sluiten"),
-    transparency: gettextCatalog.getString("Transparantie aanpassen"),
-    pointTool: gettextCatalog.getString("Puntselectie"),
-    lineTool: gettextCatalog.getString("Lijnselectie"),
-    areaTool: gettextCatalog.getString("Scherm selectie"),
-    resetQuery: gettextCatalog.getString("Resultaatvenster sluiten"),
-    zoomInMap: gettextCatalog.getString("Zoom in op de kaart"),
-    zoomOutMap: gettextCatalog.getString("Zoom uit op de kaart"),
-    zoomInTimeline: gettextCatalog.getString("Zoom in op de tijdlijn"),
-    goToNow: gettextCatalog.getString("Ga naar het heden op de tijdlijn"),
-    zoomOutTimeline: gettextCatalog.getString("Zoom uit op de tijdlijn"),
-    startAnim: gettextCatalog.getString("Start de animatie"),
-    stopAnim: gettextCatalog.getString("Stop de animatie"),
-    timelineStart: gettextCatalog.getString("Het begin van de huidige tijdlijn"),
-    timelineAt: gettextCatalog.getString("Het 'nu' op de tijdlijn"),
-    timelineEnd: gettextCatalog.getString("Het einde van de huidige tijdlijn")
+    login: gettextCatalog.getString("Log in"),
+    logout: gettextCatalog.getString("Log out"),
+    profile: gettextCatalog.getString("Modify profile"),
+    version: gettextCatalog.getString("Double click for lizard version number"),
+    openMenu: gettextCatalog.getString("Open data menu"),
+    closeMenu: gettextCatalog.getString("Close data menu"),
+    transparency: gettextCatalog.getString("Adjust opacity"),
+    pointTool: gettextCatalog.getString("Point selection"),
+    lineTool: gettextCatalog.getString("Line selection"),
+    areaTool: gettextCatalog.getString("View selection"),
+    resetQuery: gettextCatalog.getString("Close result window"),
+    zoomInMap: gettextCatalog.getString("Zoom in on the map"),
+    zoomOutMap: gettextCatalog.getString("Zoom out on the map"),
+    zoomInTimeline: gettextCatalog.getString("Zoom in on timeline"),
+    goToNow: gettextCatalog.getString("Go to the present in timeline"),
+    zoomOutTimeline: gettextCatalog.getString("Zoom out of timeline"),
+    startAnim: gettextCatalog.getString("Start animation"),
+    stopAnim: gettextCatalog.getString("Stop animation"),
+    timelineStart: gettextCatalog.getString("Start of current timeline"),
+    timelineAt: gettextCatalog.getString("The 'now' of the timeline"),
+    timelineEnd: gettextCatalog.getString("End of current timeline")
   };
 
   return {

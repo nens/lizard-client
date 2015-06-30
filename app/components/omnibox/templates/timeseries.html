@@ -21,7 +21,7 @@
         + ', '
         + timeseries.selectedTimeseries.parameter_referenced_unit.parameter_short_display_name %>
     </span>
-    <span class="card-title-text placeholder" ng-class="{hidden: fullDetails}" translate>Tijdreeksen</span>
+    <span class="card-title-text placeholder" ng-class="{hidden: fullDetails}" translate>Timeseries</span>
     <full-details></full-details>
   </div>
 
@@ -72,7 +72,7 @@
    <div class="card-tools">
      <a
        class="btn btn-default btn-xs"
-       title="<% 'Data van deze infocard exporteren' | translate %>"
+       title="<% 'Export info card data' | translate %>"
        ng-csv="$parent.formatCSVColumns(timeseries.selectedTimeseries.events)"
        filename="<%
          timeseries.selectedTimeseries.location.name

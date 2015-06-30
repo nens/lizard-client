@@ -6,7 +6,7 @@
 
       <% aggWinToYLabel %>
      <full-details></full-details>
-     <span class="card-title-text" ng-class="{hidden: fullDetails}" translate>Regen</span>
+     <span class="card-title-text" ng-class="{hidden: fullDetails}" translate>Rain</span>
      <div ng-class="{ hidden: !fullDetails }">
        <graph
          bar-chart
@@ -22,7 +22,7 @@
             ng-class="{'active': rrc.active}" class="btn btn-default btn-xs"
             title="Extra statistieken, herhalingstijden"
             translate>
-            Statistiek
+            Statistics
           </a>
          <a
            class="btn btn-default btn-xs"
@@ -31,7 +31,7 @@
            filename="neerslag.csv"
            csv-header="['Latitude', 'Longitude', 'Datestamp', 'Timestamp', 'Rain (mm)']">
            <i class="fa fa-share-square-o"></i>
-           <div translate>Exporteer</div>
+           <div translate>Export</div>
          </a>
        </div>
      </div>
@@ -44,13 +44,13 @@
       <div class="recurrence-time-container">
         <div ng-if="!rrc.data.message">
           <table class="table table-hover table-condensed">
-            <caption translate>Herhalingstijden (HT)</caption>
+            <caption translate>Recurrence times (RT)</caption>
             <thead>
               <tr>
-                <td class="larger-font-card-table">Start</th>
-                <td class="larger-font-card-table">Duur</th>
-                <td class="larger-font-card-table text-right">mm</th>
-                <td class="larger-font-card-table">HT</th>
+                <td class="larger-font-card-table" translate>Start</th>
+                <td class="larger-font-card-table" translate>Duration</th>
+                <td class="larger-font-card-table text-right" translate translate-comment="millimeters">mm</th>
+                <td class="larger-font-card-table" translate translate-comment="Recurrence Time">RT</th>
               </tr>
             </thead>
             <tbody>

@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-7">
         <!--<a ng-click="switchContext('map')" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>-->
-        <h4 translate>Resultaten van 3Di</h4>
+        <h4 translate>3Di results</h4>
       </div>
    </div>
     <div class="row">
@@ -29,11 +29,11 @@
                       scenario && scenario.result_set.length > 0">
                   <tr ng-repeat="result in scenario.result_set">
                     <td><% result.result_type.name %></td>
-                    <td><a href="<% result.attachment_url %>">Download</a></td>
+                    <td><a href="<% result.attachment_url %>" translate>Download</a></td>
                   </tr>
                 </table>
                 <span ng-if="scenario.result_set.length === 0" translate>
-                  Geen bijbehorende resultaten
+                  No results
                 </span>
               </td>
             </tr>
