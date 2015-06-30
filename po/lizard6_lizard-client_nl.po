@@ -1,0 +1,189 @@
+# 
+# Translators:
+#   <>, 2015.
+msgid ""
+msgstr ""
+"Project-Id-Version: Lizard 6\n"
+"PO-Revision-Date: 2015-06-30 13:42+0000\n"
+"Last-Translator: ernst <>\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: nl\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: app/components/scenarios/scenarios.html:6
+msgid "3Di results"
+msgstr "3Di resultaten"
+
+#: app/lib/cabinet-service.js:62
+msgid "Adjust opacity"
+msgstr "Transparantie aanpassen"
+
+#: app/components/layer-chooser/baselayer-chooser.html:7
+msgid "Baselayer"
+msgstr "Basislaag"
+
+#: app/lib/cabinet-service.js:61
+msgid "Close data menu"
+msgstr "Sluit het datamenu"
+
+#: app/lib/cabinet-service.js:66
+msgid "Close result window"
+msgstr "Sluit het resultatenvenster"
+
+#: app/lib/cabinet-service.js:59
+msgid "Double click for lizard version number"
+msgstr "Dubbelklikken voor lizard versienummer"
+
+#: app/components/scenarios/scenarios.html:32
+msgid "Download"
+msgstr "Download"
+
+#: app/components/omnibox/templates/rain.html:51
+msgid "Duration"
+msgstr "Duur"
+
+#: app/components/omnibox/templates/defaultpoint.html:61
+msgid "End"
+msgstr "Einde"
+
+#: app/lib/cabinet-service.js:76
+msgid "End of current timeline"
+msgstr "Einde van de huidige tijdlijn"
+
+#: app/components/omnibox/templates/line.html:34
+#: app/components/omnibox/templates/rain.html:34
+msgid "Export"
+msgstr "Exporteer"
+
+#: app/components/omnibox/templates/line.html:29
+#: app/components/omnibox/templates/timeseries.html:75
+msgid "Export info card data"
+msgstr "Exporteer infocard data"
+
+#: app/lib/cabinet-service.js:70
+msgid "Go to the present in timeline"
+msgstr "Ga naar het heden in de tijdlijn"
+
+#: app/components/data-menu/data-menu.html:68 app/lib/cabinet-service.js:64
+msgid "Line selection"
+msgstr "Lijnselectie"
+
+#: app/components/user-menu/user-menu.html:21 app/lib/cabinet-service.js:56
+msgid "Log in"
+msgstr "Inloggen"
+
+#: app/lib/cabinet-service.js:57
+msgid "Log out"
+msgstr "Uitloggen"
+
+#: app/lib/cabinet-service.js:58
+msgid "Modify profile"
+msgstr "Profiel aanpassen"
+
+#: app/components/scenarios/scenarios.html:35
+msgid "No results"
+msgstr "Geen resultaten"
+
+#: app/lib/cabinet-service.js:60
+msgid "Open data menu"
+msgstr "Open het datamenu"
+
+#: app/components/timeline/timeline.html:39
+msgid "Play/pause"
+msgstr "Play/pauze"
+
+#: app/components/data-menu/data-menu.html:58 app/lib/cabinet-service.js:63
+msgid "Point selection"
+msgstr "Puntselectie"
+
+#: app/components/user-menu/user-menu.html:38
+msgid "Question and manual"
+msgstr "Vragen en handleiding"
+
+#. Recurrence Time
+#: app/components/omnibox/templates/rain.html:53
+msgid "RT"
+msgstr "HT"
+
+#: app/components/omnibox/templates/rain.html:9
+msgid "Rain"
+msgstr "Regen"
+
+#: app/components/omnibox/templates/rain.html:47
+msgid "Recurrence times (RT)"
+msgstr "Herhalingstijden (HT)"
+
+#: app/components/omnibox/templates/search.html:5
+msgid "Search for places, or dates (i.e. 23-10-2013)"
+msgstr "Zoek naar plaatsen of data (bv. 23-10-2013)"
+
+#: app/components/timeline/timeline.html:17
+msgid "Show dashboard"
+msgstr "Toon het dashboard"
+
+#: app/components/data-menu/data-menu.html:92
+msgid "Show map"
+msgstr "Toon de kaart"
+
+#: app/components/omnibox/templates/defaultpoint.html:60
+#: app/components/omnibox/templates/rain.html:50
+msgid "Start"
+msgstr "Start"
+
+#: app/lib/cabinet-service.js:72
+msgid "Start animation"
+msgstr "Start animatie"
+
+#: app/lib/cabinet-service.js:74
+msgid "Start of current timeline"
+msgstr "Start van de huidige tijdlijn"
+
+#: app/components/omnibox/templates/rain.html:21
+msgid "Statistics"
+msgstr "Statistieken"
+
+#: app/lib/cabinet-service.js:73
+msgid "Stop animation"
+msgstr "Stop animatie"
+
+#: app/lib/cabinet-service.js:75
+msgid "The 'now' of the timeline"
+msgstr "Het 'nu' van de tijdlijn"
+
+#: app/components/omnibox/templates/timeseries.html:24
+msgid "Timeseries"
+msgstr "Tijdreeksen"
+
+#: app/components/data-menu/data-menu.html:78 app/lib/cabinet-service.js:65
+msgid "View selection"
+msgstr "Schermselectie"
+
+#: app/components/dashboard/dashboard.html:3
+msgid "Welcome <% user.firstname=\"\" %=\"\"> - <% dashboard.name=\"\" %=\"\"></%></%>"
+msgstr ""
+"Welkom <% user.firstname=\"\" %=\"\"> - <% dashboard.name=\"\" %=\"\"></%></%>\n"
+" "
+
+#: app/lib/cabinet-service.js:67
+msgid "Zoom in on the map"
+msgstr "Zoom in op de kaart"
+
+#: app/lib/cabinet-service.js:69
+msgid "Zoom in on timeline"
+msgstr "Zoom in op de tijdlijn"
+
+#: app/lib/cabinet-service.js:71
+msgid "Zoom out of timeline"
+msgstr "Zoom uit van de tijdlijn"
+
+#: app/lib/cabinet-service.js:68
+msgid "Zoom out on the map"
+msgstr "Zoom uit van de kaart"
+
+#. millimeters
+#: app/components/omnibox/templates/rain.html:52
+msgid "mm"
+msgstr "mm"
+
+

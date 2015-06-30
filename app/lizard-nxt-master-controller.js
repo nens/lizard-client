@@ -25,6 +25,7 @@ angular.module('lizard-nxt')
    'versioning',
    'State',
    'MapService',
+   'gettextCatalog',
 
   function ($scope,
             $controller,
@@ -35,11 +36,14 @@ angular.module('lizard-nxt')
             user,
             versioning,
             State,
-            MapService) {
+            MapService,
+            gettextCatalog) {
 
   $scope.user = user;
   $scope.versioning = versioning;
   $scope.tooltips = CabinetService.tooltips;
+
+  gettextCatalog.setCurrentLanguage('nl');
 
   // CONTEXT
 
