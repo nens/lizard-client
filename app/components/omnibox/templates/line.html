@@ -26,12 +26,12 @@
         <div class="card-tools">
            <a
              class="btn btn-default btn-xs"
-             title="<% 'Data van deze infocard exporteren' | translate %>"
+             title="<% 'Export info card data' | translate %>"
              ng-csv="formatLineCSV(slug, l)"
              filename="<% slug %>.csv"
              csv-header="getLineCSVHeaders(slug, l)">
              <i class="fa fa-share-square-o"></i>
-             Exporteer
+             <span translate>Export</span>
           </a>
         </div>
 
