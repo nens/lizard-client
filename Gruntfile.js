@@ -164,7 +164,7 @@ module.exports = function (grunt) {
           endDelim: '%>'
         },
         files: {
-          'po/template.pot': ['app/*.html']
+          'po/template.pot': ['<%= yeoman.app %>/<%= yeoman.jsFileDirs %>', '<%= yeoman.app %>/<%= yeoman.templateFileDirs %>']
         }
       },
     },
