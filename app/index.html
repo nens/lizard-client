@@ -65,14 +65,15 @@
 
     <div id="dark-overlay">
       <div id="mymodal">
-        <p>U gebruikt een verouderde browser die niet meer door Lizard wordt ondersteund.</p>
-        <p> U dient Internet Explorer versie 10 of nieuwer te gebruiken,
+        <p translate>U gebruikt een verouderde browser die niet meer door Lizard wordt ondersteund.</p>
+        <p translate> U dient Internet Explorer versie 10 of nieuwer te gebruiken,
         of een van de hieronder genoemde alternatieven.</p>
         <ul>
           <li><a href="http://www.google.com/chrome/">Google Chrome</a></li>
           <li><a href="https://www.mozilla.org/nl/firefox/new/">Mozilla Firefox</a></li>
       </div>
     </div>
+
 
     <!-- build:js(.) /scripts/vendor.js -->
     <!-- bower:js -->
@@ -96,6 +97,9 @@
     <!-- endbuild -->
 
     <!-- build:js({.tmp,app}) /scripts/scripts.js -->
+
+    <!-- optional translations, create by calling grunt nggettext_compile -->
+    <script src="/translations.js"></script>
 
     <script src="/vendor/moment/locale/nl.js"></script>
 
@@ -197,7 +201,7 @@
         // front-end in a minimal fashion.
         window.JS_DEBUG = "True" === "True";
         if (window.gauges) {
-          gauges();
+          window.gauges();
         }
 
         if (!window.JS_DEBUG) {

@@ -14,7 +14,7 @@
           <a
             ng-click="timeline.toggleTimeCtx()"
             class="button-list-link"
-            title="Toon dashboard."
+            title="<% 'Toon dashboard' | translate %>"
             style="cursor: pointer;">
             <i class="fa" ng-class="{
               'fa-minus-square': timeline.state.context === 'time',
@@ -36,7 +36,7 @@
             'hidden': !timeline.animatable
            }"
            title="<% timeline.state.temporal.playing ? tooltips.stopAnim : tooltips.startAnim %>"
-           data-original-title="Afspelen/pauzeren">
+           data-original-title="<% 'Afspelen/pauzeren' | translate %>">
           <span
             ng-if="timeline.state.layerGroups.timeIsSyncing"
             class="fa fa-circle-o-notch fa-spin">

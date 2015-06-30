@@ -6,7 +6,7 @@
 
       <% aggWinToYLabel %>
      <full-details></full-details>
-     <span class="card-title-text" ng-class="{hidden: fullDetails}" >Regen</span>
+     <span class="card-title-text" ng-class="{hidden: fullDetails}" translate>Regen</span>
      <div ng-class="{ hidden: !fullDetails }">
        <graph
          bar-chart
@@ -20,7 +20,8 @@
        <div class="card-tools">
          <a ng-click="recurrenceTimeToggle()"
             ng-class="{'active': rrc.active}" class="btn btn-default btn-xs"
-            title="Extra statistieken, herhalingstijden">
+            title="Extra statistieken, herhalingstijden"
+            translate>
             Statistiek
           </a>
          <a
@@ -28,9 +29,9 @@
            title="Data van deze infocard exporteren"
            ng-csv="$parent.formatCSVColumns(lg.layers['rain'].data)"
            filename="neerslag.csv"
-           csv-header="['Latitude', 'Longitude', 'Datestamp', 'Timestamp', 'Rain (mm)']" >
+           csv-header="['Latitude', 'Longitude', 'Datestamp', 'Timestamp', 'Rain (mm)']">
            <i class="fa fa-share-square-o"></i>
-           Exporteer
+           <div translate>Exporteer</div>
          </a>
        </div>
      </div>
@@ -43,7 +44,7 @@
       <div class="recurrence-time-container">
         <div ng-if="!rrc.data.message">
           <table class="table table-hover table-condensed">
-            <caption>Herhalingstijden (HT)</caption>
+            <caption translate>Herhalingstijden (HT)</caption>
             <thead>
               <tr>
                 <td class="larger-font-card-table">Start</th>
