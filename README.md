@@ -28,7 +28,7 @@ Run NPM install (see [Node Package Manager]( https://www.npmjs.org/ )):
     npm install
 
 If you don't have the bower and grunt-cli do this too:
-    
+
     (sudo) npm install -g bower grunt-cli
 
 Install vendor files:
@@ -44,14 +44,14 @@ Point you browser to index.html for a client demo
 ### Django backend
 
 Django serves a REST API which also bootstraps the data for the client. Tiles and stuff also come from Lizard-NXT django site:
-    
+
     cd to/wherever/this/may/be/lizard-nxt
     bin/django runserver <ip>:<port>
 
 ## Use
 
 Use Grunt to simplify development in the client. When developing the client the easiest way to test and watch your files is by running:
-  
+
     bin/grunt serve
 
 Whenever files change, grunt triggers the `test` and the `compile` scripts that compile all the html templates to a js file and run the jasmine tests. The failing tests show up in your notification area.
@@ -69,7 +69,7 @@ adding the --save option. Always check your bower.json afterwards. e.g.:
 
 ### Release
 
-Doing a release for your package is easy. There is a grunt task to tag and push tags to github. 
+Doing a release for your package is easy. There is a grunt task to tag and push tags to github.
 
 **NOTE: make sure you are not running `grunt serve` in a different session**
 
@@ -79,7 +79,7 @@ Workflow:
     git checkout staging
     git merge integration
     grunt release
-    git checkout integration 
+    git checkout integration
     git merge staging
 
 This creates a staging release of integration. The release can be pushed to the server by following instructions on https://github.com/nens/lizard-nxt#deployment.
@@ -105,6 +105,24 @@ There are still 3 todo's for this example:
 The components can include other components and should be used by a *core* module. NOTE: this is a major todo, even the term *core* is under debate. But what is agreed on is that components should be grouped in modules (like mapView and dashboardView modules). Core modules are included by the app's module which resides in the root of `/app`.
 
 `app/lib` contains low level services and non-angular files. These do not make up a component but contain individual pieces of logic that are used by components or *core* modules.
+
+## Internationalization
+Lizard-client uses angular-gettext to translate and pluralize texts. See the [docs](https://angular-gettext.rocketeer.be/dev-guide/). The workflow is currently setup in its simplest form.
+
+To include translation just run `grunt nggettext_compile` which creates a `translations.js` that is included in the app. Make sure you have all the dependencies by calling `npm install`.
+
+To create a new string that requires translation:
+
+1. Use `<span translate>Hallo daar!</span>`, or for more complicated cases check the docs: [on html elements](https://angular-gettext.rocketeer.be/dev-guide/annotate/), [or in the source code](https://angular-gettext.rocketeer.be/dev-guide/annotate-js/). For now all text is in Dutch and is translated to other languages.
+2. Extract the text that requires translation by calling `grunt nggettext_extract`.
+3. Upload the translation template in `po/template.pot` to [transifex](https://translations.lizard.net/projects/p/lizard6/) or your favourite translation tool.
+4. Get yourself a language wizard and get some coffee or go on a trip.
+5. Download a `.po` file to `po/` in the project root.
+5. Run `grunt nggettext_compile` and bob's your uncle!
+
+The template.pot and the translations.js are ingored by git. The translated `.po` files are versioned.
+
+In the future we might move to support multiple languages in seperate files and lazy loading, see: https://angular-gettext.rocketeer.be/dev-guide/lazy-loading/ .
 
 ## Browser compatibility chart
 
