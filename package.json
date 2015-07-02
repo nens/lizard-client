@@ -24,6 +24,7 @@
   "devDependencies": {
     "connect-modrewrite": "~0.7.9",
     "grunt": "^0.4.1",
+    "grunt-angular-gettext": "^2.1.0",
     "grunt-autoprefixer": "^0.7.3",
     "grunt-concurrent": "^0.5.0",
     "grunt-connect-proxy": "~0.1.11",

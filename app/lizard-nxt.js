@@ -30,7 +30,8 @@ angular.module("lizard-nxt", [
   'user-menu',
   'global-state',
   'ngSanitize',
-  'ngCsv'
+  'ngCsv',
+  'gettext'
 ])
 // Decorator for ngExceptionHandler to log exceptions to sentry
   .config(function ($provide) {
@@ -89,3 +90,11 @@ angular.module('lizard-nxt')
  */
 angular.module('lizard-nxt')
   .constant('backendDomain', 'https://demo.lizard.net');
+
+/**
+ * @name locale
+ * @memberOf app
+ * @description Portal's default locale.
+ */
+angular.module('lizard-nxt')
+  .constant('defaultLocale', window.locale);

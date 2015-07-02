@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('lizard-nxt')
-  .service("CabinetService", ["$q", "Restangular", "backendDomain",
-  function ($q, Restangular, backendDomain) {
+  .service("CabinetService", ["$q", "Restangular", "backendDomain", "gettextCatalog",
+  function ($q, Restangular, backendDomain, gettextCatalog) {
 
   var geocodeResource,
       timeseriesResource,
@@ -52,33 +52,43 @@ angular.module('lizard-nxt')
       .withHttpConfig({timeout: localPromise.promise});
   };
 
-  var tooltips = {
-    login: "Inloggen",
-    logout: "Uitloggen",
-    profile: "Profiel aanpassen",
-    version: "Dubbelklik voor de Lizard versie",
-    openMenu: "Datamenu openen",
-    closeMenu: "Datamenu sluiten",
-    transparency: "Transparantie aanpassen",
-    pointTool: "Puntselectie",
-    lineTool: "Lijnselectie",
-    areaTool: "Scherm selectie",
-    resetQuery: "Resultaatvenster sluiten",
-    zoomInMap: "Zoom in op de kaart",
-    zoomOutMap: "Zoom uit op de kaart",
-    zoomInTimeline: "Zoom in op de tijdlijn",
-    goToNow: "Ga naar het heden op de tijdlijn",
-    zoomOutTimeline: "Zoom uit op de tijdlijn",
-    startAnim: "Start de animatie",
-    stopAnim: "Stop de animatie",
-    timelineStart: "Het begin van de huidige tijdlijn",
-    timelineAt: "Het 'nu' op de tijdlijn",
-    timelineEnd: "Het einde van de huidige tijdlijn"
+  /**
+   * Create tooltips for the current language.
+   *
+   * Tooltips are dynamic. When the language changes they have to update. This
+   * function fetches the correct values from gettext and return a tooltip
+   * object.
+   * @return {tooltips} tooltip object with translated tooltips.
+   */
+  var createTooltips = function () {
+    return {
+      login: gettextCatalog.getString("Log in"),
+      logout: gettextCatalog.getString("Log out"),
+      profile: gettextCatalog.getString("Modify profile"),
+      version: gettextCatalog.getString("Double click for lizard version number"),
+      openMenu: gettextCatalog.getString("Open data menu"),
+      closeMenu: gettextCatalog.getString("Close data menu"),
+      transparency: gettextCatalog.getString("Adjust opacity"),
+      pointTool: gettextCatalog.getString("Point selection"),
+      lineTool: gettextCatalog.getString("Line selection"),
+      areaTool: gettextCatalog.getString("View selection"),
+      resetQuery: gettextCatalog.getString("Close result window"),
+      zoomInMap: gettextCatalog.getString("Zoom in on the map"),
+      zoomOutMap: gettextCatalog.getString("Zoom out on the map"),
+      zoomInTimeline: gettextCatalog.getString("Zoom in on timeline"),
+      goToNow: gettextCatalog.getString("Go to the present in timeline"),
+      zoomOutTimeline: gettextCatalog.getString("Zoom out of timeline"),
+      startAnim: gettextCatalog.getString("Start animation"),
+      stopAnim: gettextCatalog.getString("Stop animation"),
+      timelineStart: gettextCatalog.getString("Start of current timeline"),
+      timelineAt: gettextCatalog.getString("The 'now' of the timeline"),
+      timelineEnd: gettextCatalog.getString("End of current timeline")
+    };
   };
 
   return {
     events: events,
-    tooltips: tooltips,
+    createTooltips: createTooltips,
     geocode: geocodeResource,
     raster: rasterResource,
     timeseries: timeseriesResource,

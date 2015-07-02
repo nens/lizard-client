@@ -18,42 +18,50 @@ angular.module('lizard-nxt')
   'LocationGetterSetter',
   'UrlState',
   'dataBounds',
+  'defaultLocale',
   'DataService',
   'MapService',
   'State',
   '$rootScope',
   'LeafletService',
+  'gettextCatalog',
   function (
     $scope,
     $timeout,
     LocationGetterSetter,
     UrlState,
     dataBounds,
+    defaultLocale,
     DataService,
     MapService,
     State,
     $rootScope,
-    LeafletService
+    LeafletService,
+    gettextCatalog
   ) {
 
     // Configuration object for url state.
     var state = {
+      language: {
+        part: 'path',
+        index: 0
+      },
       context: { // Locally used name for the state
         value: 'map', // default
         part: 'path', // Part of the url where this state is stored,
-        index: 0, // Position of the state in the part
+        index: 1, // Position of the state in the part
       },
       layerGroups: {
         part: 'path',
-        index: 1,
+        index: 2,
       },
       boxType: {
         part: 'path',
-        index: 2,
+        index: 3,
       },
       geom: {
         part: 'path',
-        index: 3,
+        index: 4,
       },
       mapView: {
         part: 'at',
@@ -114,6 +122,33 @@ angular.module('lizard-nxt')
       } else {
         State.spatial.bounds = defaultBounds;
       }
+    };
+
+    /**
+     * Attempts to set the language based on what is provided, what is the
+     * Injected default value or the hardcoded value in this function.
+     *
+     * If all fails, their will be no translation and all text will be in
+     * English.
+     *
+     * @param {str} lang language code according to ISO-639-1.
+     */
+    var setLanguage = function (lang) {
+      var defaultLang = 'nl';
+
+      if (lang === undefined && defaultLocale) {
+        lang = defaultLocale.slice(0,2); // language is the first 2 places of
+                                         // locale e.g.: nl_NL;
+      } else if (lang === undefined) {
+        lang = defaultLang;
+      }
+
+      // Check if this language exists, otherwise use the default.
+      if (!gettextCatalog.strings[lang]) {
+        lang = defaultLang;
+      }
+
+      gettextCatalog.setCurrentLanguage(lang);
     };
 
     /**
@@ -227,12 +262,21 @@ angular.module('lizard-nxt')
     State.temporal.timelineMoving = true;
 
     var listener = $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
-      var boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
+      var language = LocationGetterSetter.getUrlValue(state.language.part, state.language.index),
+        boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
         geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
         layerGroupsFromURL = LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index),
         mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
         time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
         context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
+
+      setLanguage(language);
+
+      LocationGetterSetter.setUrlValue(
+        state.language.part,
+        state.language.index,
+        gettextCatalog.getCurrentLanguage()
+      );
 
       if (context) {
         // Set context after digest loop because we need to enter on 'map'
@@ -246,14 +290,17 @@ angular.module('lizard-nxt')
       } else {
         LocationGetterSetter.setUrlValue(state.context.part, state.context.index, state.context.value);
       }
+
       if (boxType) {
         State.box.type = boxType;
       } else {
         LocationGetterSetter.setUrlValue(state.boxType.part, state.boxType.index, State.box.type);
       }
+
       if (geom) {
         State.spatial = UrlState.parseGeom(State.box.type, geom, State.spatial);
       }
+
       enablelayerGroups(layerGroupsFromURL);
       enableMapView(mapView);
 
@@ -263,6 +310,7 @@ angular.module('lizard-nxt')
         state.timeState.update = false;
         UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
       }
+
       State.temporal.timelineMoving = false;
 
       listener(); // remove this listener

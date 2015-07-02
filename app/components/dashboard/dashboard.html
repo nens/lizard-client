@@ -1,6 +1,6 @@
 <div class="dashboard-wrapper container-fluid" ng-controller="DashboardCtrl as dashboard">
   <div class="row">
-    <h2>Welkom <% user.firstName %> - <% dashboard.name %></h2>
+    <h2 translate>Welcome <% user.firstName %> - <% dashboard.name %></h2>
   </div>
   <div class="row dashboard-row">
     <div class="col-md-4" ng-repeat="element in dashboard.dashboardelements | orderBy: dashboard_slot">
@@ -44,7 +44,7 @@
         </graph>
       </div>
 
-      <div 
+      <div
         class="dashboard-widget"
         ng-if="element.element_type === 'rain'">
         <graph
@@ -62,7 +62,7 @@
         </graph>
 
 
-      </div> 
+      </div>
 
     </div>
   </div>
