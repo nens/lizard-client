@@ -57,8 +57,8 @@
                 </td>
                 <td rel="tooltip"
                     data-placement="left"
-                    title="start: <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
-                           eind: <% event.properties.timestamp_end | date:'dd/MM/yyyy' %>">
+                    title="<% 'Start' | translate %>: <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
+                           <% 'End' | translate %>: <% event.properties.timestamp_end | date:'dd/MM/yyyy' %>">
                     <% event.properties.timestamp_start | date:'dd/MM/yyyy' %>
                 </td>
                 <td rel="tooltip"

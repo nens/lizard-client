@@ -55,7 +55,7 @@
                style="cursor: pointer">
             <a ng-click="menu.box.type = 'point'"
                class="button-list-link"
-               title="punt selectie"
+               title="<% 'Point selection' | translate %>"
                ng-class="{'active': menu.box.type === 'point'}">
                <i class="fa fa-dot-circle-o"></i>
             </a>
@@ -65,7 +65,7 @@
                style="cursor: pointer">
             <a ng-click="menu.box.type = 'line'"
                class="button-list-link"
-               title="lijn selectie"
+               title="<% 'Line selection' | translate %>"
                ng-class="{'active': menu.box.type === 'line'}">
                <i class="fa fa-expand"></i>
             </a>
@@ -75,7 +75,7 @@
                style="cursor: pointer">
             <a ng-click="menu.box.type = 'area'"
                class="button-list-link"
-               title="scherm selectie"
+               title="<% 'View selection' | translate %>"
                ng-class="{'active': menu.box.type === 'area'}">
                <i class="fa fa-square-o"></i>
             </a>
@@ -89,7 +89,7 @@
 
           <a ng-click="switchContext('map')"
              class="button-list-link"
-             title="Toon kaart.">
+             title="<% 'Show map' | translate %>">
              <i class="fa fa-close"></i>
           </a>
         </div>

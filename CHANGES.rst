@@ -1,14 +1,27 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.5.11) (XXXX-XX-XX)
+Unreleased (2.0.0) (XXXX-XX-XX)
 -------------------------------
 
-- Fix bug timeseries name when only one and in csv.
+- Add angular-gettext for translations.
+
+- Add grunt tasks to extract and compile translations.
+
+- Translate app to English.
+
+- Add initial translation for gettext to Dutch.
+
+- Add functionality to switch language from url. This breaks current urls, the
+  first path element is language and all the others have moved one step.
+
+- Use the locale from lizard-bs.js when no language specified on url.
 
 
 Release 1.5.11 (2015-6-16)
 ---------------------
+
+- Fix bug timeseries name when only one and in csv.
 
 - Fix bug no retina for real.
 
