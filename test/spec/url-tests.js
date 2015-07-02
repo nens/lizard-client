@@ -212,7 +212,7 @@ describe('Testing hash controller', function () {
       LocationGetterSetter,
       DataService,
       State,
-      $compile;
+      gettextCatalog;
 
   beforeEach(module('lizard-nxt'));
 
@@ -224,6 +224,7 @@ describe('Testing hash controller', function () {
     State = $injector.get('State')
     DataService = $injector.get('DataService');
     LocationGetterSetter = $injector.get('LocationGetterSetter');
+    gettextCatalog = $injector.get('gettextCatalog');
 
     // Mock MapService
     var mapState = {
@@ -269,5 +270,26 @@ describe('Testing hash controller', function () {
     $scope.$broadcast('$locationChangeSuccess');
     expect(DataService.layerGroups.satellite.isActive()).toBe(true);
   });
+
+  it(
+    'should set language on url to nl when no language is specified',
+    function () {
+      var controller = createController();
+      $location.path('');
+      $scope.$broadcast('$locationChangeSuccess');
+      expect($location.path().slice(0, 3)).toBe('/nl');
+    }
+  );
+
+  it(
+    'should set language to nl when no language is specified',
+    function () {
+      var controller = createController();
+      $location.path('');
+      $scope.$broadcast('$locationChangeSuccess');
+      expect(gettextCatalog.getCurrentLanguage()).toBe('nl');
+    }
+  );
+
 
 });

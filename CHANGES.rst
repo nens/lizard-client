@@ -15,6 +15,8 @@ Unreleased (2.0.0) (XXXX-XX-XX)
 - Add functionality to switch language from url. This breaks current urls, the
   first path element is language and all the others have moved one step.
 
+- Use the locale from lizard-bs.js when no language specified on url.
+
 
 Release 1.5.11 (2015-6-16)
 ---------------------

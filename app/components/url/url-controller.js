@@ -18,6 +18,7 @@ angular.module('lizard-nxt')
   'LocationGetterSetter',
   'UrlState',
   'dataBounds',
+  'defaultLocale',
   'DataService',
   'MapService',
   'State',
@@ -30,6 +31,7 @@ angular.module('lizard-nxt')
     LocationGetterSetter,
     UrlState,
     dataBounds,
+    defaultLocale,
     DataService,
     MapService,
     State,
@@ -120,6 +122,33 @@ angular.module('lizard-nxt')
       } else {
         State.spatial.bounds = defaultBounds;
       }
+    };
+
+    /**
+     * Attempts to set the language based on what is provided, what is the
+     * Injected default value or the hardcoded value in this function.
+     *
+     * If all fails, their will be no translation and all text will be in
+     * English.
+     *
+     * @param {str} lang language code according to ISO-639-1.
+     */
+    var setLanguage = function (lang) {
+      var defaultLang = 'nl';
+
+      if (lang === undefined && defaultLocale) {
+        lang = defaultLocale.slice(0,2); // language is the first 2 places of
+                                         // locale e.g.: nl_NL;
+      } else if (lang === undefined) {
+        lang = defaultLang;
+      }
+
+      // Check if this language exists, otherwise use the default.
+      if (!gettextCatalog.strings[lang]) {
+        lang = defaultLang;
+      }
+
+      gettextCatalog.setCurrentLanguage(lang);
     };
 
     /**
@@ -241,12 +270,13 @@ angular.module('lizard-nxt')
         time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
         context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
 
-      if (language) {
-        gettextCatalog.setCurrentLanguage(language);
-      } else {
-        // for now set default to Dutch.
-        LocationGetterSetter.setUrlValue(state.language.part, state.language.index, 'nl');
-      }
+      setLanguage(language);
+
+      LocationGetterSetter.setUrlValue(
+        state.language.part,
+        state.language.index,
+        gettextCatalog.getCurrentLanguage()
+      );
 
       if (context) {
         // Set context after digest loop because we need to enter on 'map'
