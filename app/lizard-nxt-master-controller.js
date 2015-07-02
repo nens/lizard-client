@@ -39,7 +39,12 @@ angular.module('lizard-nxt')
 
   $scope.user = user;
   $scope.versioning = versioning;
-  $scope.tooltips = CabinetService.tooltips;
+  $scope.tooltips = CabinetService.createTooltips();
+
+  // When the language changes we remake the tooltips for the current language.
+  $scope.$on('gettextLanguageChanged', function () {
+    $scope.tooltips = CabinetService.createTooltips();
+  });
 
   // CONTEXT
 

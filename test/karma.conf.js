@@ -34,6 +34,7 @@ module.exports = function(config) {
       'vendor/ng-csv/build/ng-csv.min.js',
       'vendor/leaflet.markercluster/dist/leaflet.markercluster.js',
       'vendor/moment/moment.js',
+      'vendor/angular-gettext/dist/angular-gettext.js',
       // endbower
 
       'vendor/moment/locale/nl.js',
