@@ -607,6 +607,7 @@ module.exports = function (grunt) {
     'filerev',
     'usemin',
     'htmlmin',
+    'nggettext_compile' // create translations
   ]);
 
   grunt.registerTask('release', [
