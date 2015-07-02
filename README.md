@@ -107,6 +107,11 @@ The components can include other components and should be used by a *core* modul
 `app/lib` contains low level services and non-angular files. These do not make up a component but contain individual pieces of logic that are used by components or *core* modules.
 
 ## Internationalization
+Supported languages:
+
+* Nederlands nl_NL
+* Engels en_GB
+
 Lizard-client uses angular-gettext to translate and pluralize texts. See the [docs](https://angular-gettext.rocketeer.be/dev-guide/). The workflow is currently setup in its simplest form. All the translation strings are in `app/translations.js`. In the future we might move to support multiple languages in seperate files and lazy loading, see: https://angular-gettext.rocketeer.be/dev-guide/lazy-loading/ .
 
 To include translation, make sure you have all the dependencies by calling `npm install` and just run `grunt nggettext_compile` which creates a `translations.js` that is included in the app.
