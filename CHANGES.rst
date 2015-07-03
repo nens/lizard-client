@@ -2,11 +2,6 @@ Changelog of lizard-nxt client
 ==============================
 
 Unreleased (2.0.0) (XXXX-XX-XX)
--------------------------------
--
-
-
-Release 1.5.12 (2015-6-25)
 ---------------------
 
 - Add angular-gettext for translations.
@@ -21,6 +16,11 @@ Release 1.5.12 (2015-6-25)
   first path element is language and all the others have moved one step.
 
 - Use the locale from lizard-bs.js when no language specified on url.
+
+
+Release 1.5.13 (2015-7-3)
+---------------------
+- Fix bug wopping spline interpolation bubbles in ts graphs.
 
 
 Release 1.5.11 (2015-6-16)

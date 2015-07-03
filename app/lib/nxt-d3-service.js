@@ -508,7 +508,12 @@ angular.module('lizard-nxt')
   };
 
   /**
-   * Returns a d3 path with 'monotone' interpolator.
+   * Returns a d3 path.
+   * 
+   * The path used to have .interpolate('monotone') to create a smoothed
+   * line through datapoints, but it makes lines messy when data is missing.
+   * Currently no interpolation is used.
+   * 
    * @param  {object} d3Generator d3 [line|area] generator function.
    * @return {object}             d3 path generator.
    */
@@ -516,7 +521,7 @@ angular.module('lizard-nxt')
     // Monotone line goes through all datapoints. Other options are 'basis'
     // which looks nice but can give inaccurate results, or 'cardinal' which
     // results in a line with a bigger domain/amplitute than the data.
-    return d3Generator().interpolate('monotone');
+    return d3Generator();
   };
 
 
