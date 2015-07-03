@@ -17,6 +17,7 @@ angular.module('map')
   'MapService',
   'DataService',
   'UtilService',
+  'LeafletService',
   'CabinetService',
   'State',
   function (
@@ -24,6 +25,7 @@ angular.module('map')
     MapService,
     DataService,
     UtilService,
+    LeafletService,
     CabinetService,
     State
   ) {
@@ -111,16 +113,42 @@ angular.module('map')
       var addRegions = function (z, bounds) {
         CabinetService.regions.get({
           z: z,
-          bounds: bounds
+          in_bbox: bounds.getWest()
+            + ','
+            + bounds.getNorth()
+            + ','
+            + bounds.getEast()
+            + ','
+            + bounds.getSouth()
         }).then(function (regions) {
-          var regionsLayer = LeafletService.geojson(regions,
-            {
-              onEachFeature: function (d, layer) {
-                layer.on('mousemove', function () {
-                 implement
+          MapService.removeLeafletLayer(regionsLayer);
+          regionsLayer = LeafletService.geoJson(regions.results, {
+            style: function (feature) {
+              return {
+                  // fillColor: 'blue',
+                  // weight: 2,
+                  // opacity: 1,
+                  // color: 'white',
+                  // dashArray: '3',
+                  // fillOpacity: 0.7
+              };
+            },
+            onEachFeature: function (d, layer) {
+              layer.on('mouseover', function (e) {
+                var l = e.target;
+                l.setStyle({
+                    weight: 5,
+                    color: 'red',
+                    dashArray: '',
+                    fillOpacity: 0.7
+                });
+              });
+              layer.on('mouseout', function (e) {
+                regionsLayer.resetStyle(e.target);
               });
             }
           });
+          MapService.addLeafletLayer(regionsLayer);
         });
       };
 

@@ -18,7 +18,7 @@ angular.module('lizard-nxt')
 
   timeseriesResource = Restangular.one('api/v1/timeseries/');
   events = Restangular.one('api/v1/events/');
-  regions = Restangular.one('api/v1/regions/')
+  var regions = Restangular.one('api/v1/regions/');
 
   geocodeResource = Restangular
     // Use a different base url, go directly to our friends at google.
