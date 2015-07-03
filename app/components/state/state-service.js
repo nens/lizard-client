@@ -90,6 +90,8 @@ angular.module('global-state')
     state.spatial = {
       here: {},
       points: [], // History of here for drawing and creating line and polygons
+      region: {},// geojson feature describing region, with name and type in
+              // properties
       bounds: {},
       view: {}, // { lat: <int>, lng:<int>, zoom:<int> }
       userHere: {}, // Geographical location of the users mouse only set by

@@ -17,16 +17,12 @@ angular.module('map')
   'MapService',
   'DataService',
   'UtilService',
-  'LeafletService',
-  'CabinetService',
   'State',
   function (
     $controller,
     MapService,
     DataService,
     UtilService,
-    LeafletService,
-    CabinetService,
     State
   ) {
 
@@ -107,51 +103,6 @@ angular.module('map')
         }
       );
 
-
-      var regionsLayer;
-
-      var addRegions = function (z, bounds) {
-        CabinetService.regions.get({
-          z: z,
-          in_bbox: bounds.getWest()
-            + ','
-            + bounds.getNorth()
-            + ','
-            + bounds.getEast()
-            + ','
-            + bounds.getSouth()
-        }).then(function (regions) {
-          MapService.removeLeafletLayer(regionsLayer);
-          regionsLayer = LeafletService.geoJson(regions.results, {
-            style: function (feature) {
-              return {
-                  // fillColor: 'blue',
-                  // weight: 2,
-                  // opacity: 1,
-                  // color: 'white',
-                  // dashArray: '3',
-                  // fillOpacity: 0.7
-              };
-            },
-            onEachFeature: function (d, layer) {
-              layer.on('mouseover', function (e) {
-                var l = e.target;
-                l.setStyle({
-                    weight: 5,
-                    color: 'red',
-                    dashArray: '',
-                    fillOpacity: 0.7
-                });
-              });
-              layer.on('mouseout', function (e) {
-                regionsLayer.resetStyle(e.target);
-              });
-            }
-          });
-          MapService.addLeafletLayer(regionsLayer);
-        });
-      };
-
       /**
        * Watch state spatial view and update the whole shebang.
        */
@@ -161,9 +112,6 @@ angular.module('map')
           State.spatial.bounds = MapService.getBounds();
         } else {
           mapSetsView = false;
-          if (State.box.type === 'region') {
-            addRegions(State.spatial.view.zoom, State.spatial.bounds);
-          }
         }
       });
 
@@ -229,10 +177,6 @@ angular.module('map')
           return;
         }
         UtilService.addNewStyle(selector);
-
-        if (State.box.type === 'region') {
-          addRegions(State.spatial.view.zoom, State.spatial.bounds);
-        }
 
       });
 

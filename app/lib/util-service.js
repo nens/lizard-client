@@ -237,14 +237,31 @@ angular.module('lizard-nxt')
     if (geom instanceof L.LatLng) {
       // geom is a L.LatLng object
       return "POINT(" + geom.lng + " " + geom.lat + ")";
-    } else if (checkForLine(geom)) {
+    }
+
+    else if (checkForLine(geom)) {
       // geom represents a line
       var coords = [];
       angular.forEach(geom, function (latLng) {
         coords.push(latLng.lng + " " + latLng.lat);
       });
       return "LINESTRING(" + coords.join(',') + ")";
-    } else {
+    }
+
+    else if (geom.type === 'Polygon') {
+      var lng, lat, coords = [];
+      var cs = geom.coordinates[0];
+      for (var i = 0; i < cs.length; i++) {
+        coords.push(cs[i][0] + " " + cs[i][1]);
+        if (i === 0) {
+          lng = cs[i][0];
+          lat = cs[i][1];
+        }
+      }
+      return "POLYGON((" + coords.join(",") + "," + lng + " " + lat + "))";
+    }
+
+    else {
       // geom is a L.Bounds object
       return "POLYGON(("
             + geom.getWest() + " " + geom.getSouth() + ", "
@@ -255,7 +272,6 @@ angular.module('lizard-nxt')
             + "))";
     }
   };
-
 
   /**
    * @function buildString
