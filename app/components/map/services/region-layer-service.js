@@ -16,6 +16,8 @@ angular.module('map')
 
     var regionsLayer;
 
+    var l;
+
     var addRegions = function (z, bounds, clickCb) {
       CabinetService.regions.get({
         z: z,
@@ -41,18 +43,20 @@ angular.module('map')
           },
           onEachFeature: function (d, layer) {
             layer.on('mouseover', function (e) {
-              var l = e.target;
+            });
+            layer.on('mouseout', function (e) {
+            });
+            layer.on('click', function (e) {
+              if (l) {
+                regionsLayer.resetStyle(l);
+              }
+              l = e.target;
               l.setStyle({
                   weight: 5,
                   color: 'red',
                   dashArray: '',
                   fillOpacity: 0.7
               });
-            });
-            layer.on('mouseout', function (e) {
-              regionsLayer.resetStyle(e.target);
-            });
-            layer.on('click', function () {
               clickCb(this);
             });
           }
@@ -63,6 +67,7 @@ angular.module('map')
 
     return {
       add: addRegions,
+      remove: function () { MapService.removeLeafletLayer(regionsLayer); }
     };
 
   }]

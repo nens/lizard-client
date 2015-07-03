@@ -28,7 +28,9 @@ angular.module('omnibox')
   ) {
 
     var clickCb = function (layer) {
-      State.spatial.region = layer.feature.geometry;
+      $scope.$apply(function () {
+        State.spatial.region = layer.feature;
+      });
     };
 
     NxtRegionsLayer.add(State.spatial.view.zoom, State.spatial.bounds, clickCb);
@@ -50,7 +52,7 @@ angular.module('omnibox')
       console.log('new', State.spatial.region);
       if (n === o) { return true; }
       $scope.fillBox({
-        geom: State.spatial.region,
+        geom: State.spatial.region.geometry,
         start: State.temporal.start,
         end: State.temporal.end,
         aggWindow: State.temporal.aggWindow
@@ -59,7 +61,8 @@ angular.module('omnibox')
 
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
-
+      NxtRegionsLayer.remove();
+      $scope.box.content = {};
     });
 
   }]);
