@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.0.0) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 1.5.12 (2015-6-25)
+---------------------
 
 - Add angular-gettext for translations.
 
