@@ -106,7 +106,7 @@ describe('Testing NxtD3', function () {
     }
   );
 
-  it('should return a path generator with monotone interpolator', function () {
+  it('should return a path generator with linear interpolator', function () {
     var keys = {x: 0, y: 1};
     var xy = {
       'x': { scale: function () {} },
@@ -114,7 +114,7 @@ describe('Testing NxtD3', function () {
     };
 
     var pathGen = nxtD3._createLine(xy, keys);
-    expect(pathGen.interpolate()).toBe('monotone');
+    expect(pathGen.interpolate()).toBe('linear');
   });
 
 });
