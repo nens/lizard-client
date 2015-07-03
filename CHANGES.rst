@@ -1,9 +1,9 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (1.5.11) (XXXX-XX-XX)
+Unreleased (1.5.12) (XXXX-XX-XX)
 -------------------------------
--
+- Fix bug wopping spline interpolation bubbles in ts graphs.
 
 
 Release 1.5.11 (2015-6-16)
