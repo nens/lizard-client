@@ -11,6 +11,12 @@ Release 1.5.11 (2015-7-3)
 - Fix bug wopping spline interpolation bubbles in ts graphs.
 
 
+Release 1.5.12 (2015-6-25)
+---------------------
+
+- Fix bug timeseries name when only one and in csv.
+
+
 Release 1.5.11 (2015-6-16)
 ---------------------
 
