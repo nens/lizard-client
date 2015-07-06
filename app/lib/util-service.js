@@ -438,9 +438,7 @@ angular.module('lizard-nxt')
    * @param {object} geomOpts - the options.geom object
    * @return {string} - "POINT" | "LINE" | "AREA" | throw new Error!
    *
-   * NB! In the foreseeable future, we need to take care of non-rectangle
-   *     polygons, and we'll need to adjust this code accordingly.
-   *     When will then be now? soon.
+   * TODO: get rid of this maniacal reverse engineering of our own code.
    */
   this.getGeomType = function (geomOpts) {
 
@@ -454,6 +452,9 @@ angular.module('lizard-nxt')
       && geomOpts[0] instanceof L.LatLng
       && geomOpts[1] instanceof L.LatLng) {
       return "LINE";
+
+    } else if (geomOpts.coordinates) { // geojson
+      return "REGION"
 
     } else {
       throw new Error(

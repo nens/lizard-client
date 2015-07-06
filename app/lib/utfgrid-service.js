@@ -71,7 +71,10 @@ angular.module('lizard-nxt')
           response,
           cacheKey = buildCacheKey(nonLeafLayer, options);
 
-      if (options.geom === undefined || geomType === "LINE") {
+      if (
+        options.geom === undefined
+        || geomType === "LINE"
+        || geomType === "REGION") {
         deferred.reject();
         return deferred.promise;
       }
