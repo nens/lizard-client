@@ -607,6 +607,7 @@ module.exports = function (grunt) {
     'filerev',
     'usemin',
     'htmlmin',
+    'doxx',
     'nggettext_compile' // create translations
   ]);
 
