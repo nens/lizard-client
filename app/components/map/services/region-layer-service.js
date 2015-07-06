@@ -97,6 +97,7 @@ angular.module('map')
           region = layer;
         }
       });
+      return region;
     };
 
     return {

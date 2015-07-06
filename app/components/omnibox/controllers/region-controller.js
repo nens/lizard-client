@@ -1,9 +1,20 @@
 /**
  * @ngdoc
+<<<<<<< HEAD
  * @class regionCtrl
  * @memberOf omnibox
  * @name RegionCtrl
  * @description
+=======
+ * @class areaCtrl
+ * @memberOf app
+ * @name RegionCtrl
+ * @description
+ *
+ * Reguests data for the active region When box.type is region. Region are
+ * spatial areas such as administrative boundaries or watersheds.
+ *
+>>>>>>> 2c3b4e0... make url and box.content and box.type consistentently work
  *
  * Reguests data for the active region When box.type is region. Regions are
  * spatial areas such as administrative boundaries or watersheds.
@@ -16,16 +27,16 @@ angular.module('omnibox')
 
   '$scope',
   'CabinetService',
-  'DataService',
   'NxtRegionsLayer',
+  'DataService',
   'State',
 
   function (
 
     $scope,
     CabinetService,
-    DataService,
     NxtRegionsLayer,
+    DataService,
     State
 
   ) {
@@ -39,11 +50,10 @@ angular.module('omnibox')
      */
     var clickCb = function (layer) {
       $scope.fillBox({
-        geom: State.spatial.region.geometry,
+        geom: layer.feature.geometry,
         start: State.temporal.start,
         end: State.temporal.end,
-        aggWindow: State.temporal.aggWindow,
-        type: 'Raster' // Regions only get data for rasters.
+        aggWindow: State.temporal.aggWindow
       });
 
       State.spatial.region = layer.feature;
@@ -73,19 +83,22 @@ angular.module('omnibox')
     // init
     createRegions();
 
-
     /**
-     * Updates area when user moves map.
+     * Updates regions when user moves map.
      */
     $scope.$watch(State.toString('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
       createRegions();
     });
 
-    $scope.$watch(State.toString('spatial.region'), function (n, o) {
+    /**
+     * Updates region data when users changes layers.
+     */
+    $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return true; }
       createRegions();
     });
+
 
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
