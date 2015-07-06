@@ -16,7 +16,9 @@ angular.module('map')
 
     var regionsLayer;
 
-    var l;
+    var previousActiveLayer;
+
+    var activeRegionString;
 
     var addRegions = function (z, bounds, clickCb) {
       CabinetService.regions.get({
@@ -47,27 +49,53 @@ angular.module('map')
             layer.on('mouseout', function (e) {
             });
             layer.on('click', function (e) {
-              if (l) {
-                regionsLayer.resetStyle(l);
+              if (previousActiveLayer) {
+                regionsLayer.resetStyle(previousActiveLayer);
               }
-              l = e.target;
-              l.setStyle({
+              var newActiveLayer = e.target;
+              newActiveLayer.setStyle({
                   weight: 5,
                   color: 'red',
                   dashArray: '',
                   fillOpacity: 0.7
               });
               clickCb(this);
+
+              activeRegionString = newActiveLayer.feature.properties.name;
+              previousActiveLayer = newActiveLayer;
             });
           }
         });
         MapService.addLeafletLayer(regionsLayer);
+        if (activeRegionString) { setActiveRegion(activeRegionString); }
       });
+    };
+
+    var setActiveRegion = function (region) {
+      if (regionsLayer) {
+        var layer = _getRegion(regionsLayer, region);
+        if (layer) {
+          layer.fire('click');
+        }
+      } else {
+        activeRegionString = region;
+      }
+    };
+
+    var _getRegion = function (Lgeo, regionName) {
+      var region;
+      Lgeo.eachLayer(function (layer) {
+        if (layer.feature.properties.name === regionName) {
+          region = layer;
+        }
+      });
+      return region;
     };
 
     return {
       add: addRegions,
-      remove: function () { MapService.removeLeafletLayer(regionsLayer); }
+      remove: function () { MapService.removeLeafletLayer(regionsLayer); },
+      setActiveRegion: setActiveRegion
     };
 
   }]
