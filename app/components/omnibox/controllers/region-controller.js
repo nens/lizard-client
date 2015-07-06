@@ -29,12 +29,20 @@ angular.module('omnibox')
 
   ) {
 
+
+    /**
+     * Callback for clicks on regions. Calls fillbox of omnibox scope. Sets the
+     * clicked region on the State and the name of the region on the scope.
+     *
+     * @param  {leaflet ILayer} layer that recieved the click
+     */
     var clickCb = function (layer) {
       $scope.fillBox({
         geom: layer.feature.geometry,
         start: State.temporal.start,
         end: State.temporal.end,
-        aggWindow: State.temporal.aggWindow
+        aggWindow: State.temporal.aggWindow,
+        type: 'Raster' // Regions only get data for rasters.
       });
 
       State.spatial.region = layer.feature;
