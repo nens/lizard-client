@@ -71,6 +71,11 @@ angular.module('map')
       });
     };
 
+    var removeRegions = function () {
+      activeRegionString = null;
+      MapService.removeLeafletLayer(regionsLayer);
+    };
+
     var setActiveRegion = function (region) {
       if (regionsLayer) {
         var layer = _getRegion(regionsLayer, region);
@@ -94,7 +99,7 @@ angular.module('map')
 
     return {
       add: addRegions,
-      remove: function () { MapService.removeLeafletLayer(regionsLayer); },
+      remove: removeRegions,
       setActiveRegion: setActiveRegion
     };
 

@@ -38,9 +38,14 @@ angular.module('omnibox')
       });
 
       State.spatial.region = layer.feature;
+      $scope.activeName = layer.feature.properties.name;
     };
 
-    NxtRegionsLayer.add(State.spatial.view.zoom, State.spatial.bounds, clickCb);
+    NxtRegionsLayer.add(
+      State.spatial.view.zoom,
+      State.spatial.bounds,
+      clickCb
+    );
 
     /**
      * Updates regions when user moves map.
