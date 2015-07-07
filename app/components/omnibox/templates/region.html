@@ -1,8 +1,8 @@
 <div ng-controller="RegionCtrl">
 
-	<div class="card active" id="card-<% slug %>">
+	<div ng-if="activeName" class="card active" id="card-<% slug %>">
     <div class="card-content">
-			<% activeName || currentName %>
+			<% activeName %>
 		</div>
 	</div>
 

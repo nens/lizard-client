@@ -16,6 +16,7 @@ angular.module('omnibox')
 .controller('RegionCtrl', [
 
   '$scope',
+  'CabinetService',
   'NxtRegionsLayer',
   'DataService',
   'State',
@@ -23,6 +24,7 @@ angular.module('omnibox')
   function (
 
     $scope,
+    CabinetService,
     NxtRegionsLayer,
     DataService,
     State
@@ -34,7 +36,7 @@ angular.module('omnibox')
      * Callback for clicks on regions. Calls fillbox of omnibox scope. Sets the
      * clicked region on the State and the name of the region on the scope.
      *
-     * @param  {leaflet ILayer} layer that recieved the click
+     * @param  {leaflet ILayer} layer that recieved the click.
      */
     var clickCb = function (layer) {
       $scope.fillBox({
@@ -49,22 +51,35 @@ angular.module('omnibox')
       $scope.activeName = layer.feature.properties.name;
     };
 
-    NxtRegionsLayer.add(
-      State.spatial.view.zoom,
-      State.spatial.bounds,
-      clickCb
-    );
+    /**
+     * Makes call to api for regions of the given bounds and zoom and calls
+     * NxtRegionsLayer.add function with  response.
+     */
+    var createRegions = function () {
+      CabinetService.regions.get({
+        z: State.spatial.view.zoom,
+        in_bbox: State.spatial.bounds.getWest()
+          + ','
+          + State.spatial.bounds.getNorth()
+          + ','
+          + State.spatial.bounds.getEast()
+          + ','
+          + State.spatial.bounds.getSouth()
+      })
+      .then(function (regions) {
+        NxtRegionsLayer.add(regions.results, clickCb);
+      });
+    };
+
+    // init
+    createRegions();
 
     /**
      * Updates regions when user moves map.
      */
     $scope.$watch(State.toString('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
-      NxtRegionsLayer.add(
-        State.spatial.view.zoom,
-        State.spatial.bounds,
-        clickCb
-      );
+      createRegions();
     });
 
 
@@ -73,11 +88,7 @@ angular.module('omnibox')
      */
     $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return true; }
-      NxtRegionsLayer.add(
-        State.spatial.view.zoom,
-        State.spatial.bounds,
-        clickCb
-      );
+      createRegions();
     });
 
 
@@ -85,7 +96,7 @@ angular.module('omnibox')
     $scope.$on('$destroy', function () {
       DataService.reject('omnibox');
       $scope.box.content = {};
-      State.spatial.region = '';
+      State.spatial.region = {};
       NxtRegionsLayer.remove();
     });
 

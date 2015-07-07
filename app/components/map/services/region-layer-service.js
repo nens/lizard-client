@@ -24,60 +24,14 @@ angular.module('map')
     var previousActiveLayer;
 
     /**
-     * Makes call to api for regions of the given bounds and zoom and calls
-     * _drawRegions function.
-     *
-     * @param {int} z          zoomlevel to get regions.
-     * @param {L.LatLngBounds} bounds of current map view.
-     * @param {function}       clickCb callback to call when user clicks region.
-     */
-    var addRegions = function (z, bounds, clickCb) {
-      CabinetService.regions.get({
-        z: z,
-        in_bbox: bounds.getWest()
-          + ','
-          + bounds.getNorth()
-          + ','
-          + bounds.getEast()
-          + ','
-          + bounds.getSouth()
-      }).then(_drawRegions);
-    };
-
-    /**
-     * Removes the regions from the map and sets activeRegioString to null.
-     */
-    var removeRegions = function () {
-      activeRegionString = null;
-      MapService.removeLeafletLayer(regionsLayer);
-    };
-
-    /**
-     * Sets the activeRegion, by firing a click when regionsLayer exists, or
-     * sets activeRegionString that triggers a call of this function onload.
-     *
-     * @param {string} region properties.name of region.
-     */
-    var setActiveRegion = function (region) {
-      if (regionsLayer) {
-        var layer = _getRegion(regionsLayer, region);
-        if (layer) {
-          layer.fire('click');
-        }
-      } else {
-        activeRegionString = region;
-      }
-    };
-
-    /**
      * Draws regions as a L.geoJson layer on the map. Sets click function. And
      * Fires click if ActiveRegionString is not falsy.
      *
      * @param  {geojson} regions
      */
-    var _drawRegions = function (regions) {
+    var addRegions = function (regions, clickCb) {
       MapService.removeLeafletLayer(regionsLayer);
-      regionsLayer = LeafletService.geoJson(regions.results, {
+      regionsLayer = LeafletService.geoJson(regions, {
         // Style function must be included in order to overwrite style on click.
         style: function (feature) {
           return {
@@ -117,16 +71,41 @@ angular.module('map')
     };
 
     /**
+     * Removes the regions from the map and sets activeRegioString to null.
+     */
+    var removeRegions = function () {
+      activeRegionString = null;
+      MapService.removeLeafletLayer(regionsLayer);
+    };
+
+    /**
+     * Sets the activeRegion, by firing a click when regionsLayer exists, or
+     * sets activeRegionString that triggers a call of this function onload.
+     *
+     * @param {string} region properties.name of region.
+     */
+    var setActiveRegion = function (region) {
+      if (regionsLayer) {
+        var layer = _getRegion(regionsLayer, region);
+        if (layer) {
+          layer.fire('click');
+        }
+      } else {
+        activeRegionString = region;
+      }
+    };
+
+    /**
      * Gets region layer with properties.name === regionName of the currently drawn
      * regions.
      *
-     * @param  {L.GeoJson} Lgeo        Leaflet L.GeoJson instance.
+     * @param  {L.GeoJson} lGeo        Leaflet L.GeoJson instance.
      * @param  {string} regionName     Properties.name of region
      * @return {L.ILayer || undefined} Region layer.
      */
-    var _getRegion = function (Lgeo, regionName) {
+    var _getRegion = function (lGeo, regionName) {
       var region;
-      Lgeo.eachLayer(function (layer) {
+      lGeo.eachLayer(function (layer) {
         if (layer.feature.properties.name === regionName) {
           region = layer;
         }
