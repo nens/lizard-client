@@ -33,23 +33,55 @@ angular.module('map')
       MapService.removeLeafletLayer(regionsLayer);
       regionsLayer = LeafletService.geoJson(regions, {
         // Style function must be included in order to overwrite style on click.
-        style: function (feature) { return {}; },
+        style: function (feature) {
+          return {
+            weight: 2,
+            opacity: 0.6,
+            color: '#7f8c8d',
+            fillOpacity: 0
+          };
+        },
         onEachFeature: function (d, layer) {
-          layer.on('click', function (e) {
-            if (previousActiveLayer) {
-              regionsLayer.resetStyle(previousActiveLayer);
-            }
-            var newActiveLayer = e.target;
-            newActiveLayer.setStyle({
-                weight: 5,
-                color: 'red',
-                dashArray: '',
-                fillOpacity: 0.7
-            });
-            clickCb(this);
+          layer.on({
+            mouseover: function (e) {
+              var layer = e.target;
 
-            activeRegionString = newActiveLayer.feature.properties.name;
-            previousActiveLayer = newActiveLayer;
+              layer.setStyle({
+                  fillColor: '#e74c3c',
+                  fillOpacity: 0.1
+              });
+
+            },
+            mouseout: function (e) {
+              if (e.target.feature.properties.name !== activeRegionString) {
+                regionsLayer.resetStyle(e.target);
+              }
+            },
+            click: function (e) {
+
+              if (previousActiveLayer) {
+                regionsLayer.resetStyle(previousActiveLayer);
+              }
+
+
+              if (!L.Browser.ie && !L.Browser.opera) {
+                layer.bringToFront();
+              }
+
+              var newActiveLayer = e.target;
+              newActiveLayer.setStyle({
+                  weight: 4,
+                  fillColor: '#e74c3c',
+                  color: '#c0392b',
+                  dashArray: '6',
+                  fillOpacity: 0.1
+              });
+
+              clickCb(this);
+
+              activeRegionString = newActiveLayer.feature.properties.name;
+              previousActiveLayer = newActiveLayer;
+            }
           });
         }
       });
