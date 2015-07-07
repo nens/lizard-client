@@ -16,10 +16,10 @@ angular.module('map')
     // Leaflet geojson layer.
     var regionsLayer;
 
-    // ILayer of last region that recieved click.
+    // String of feature.properties.name that should be active.
     var activeRegionString;
 
-    // ILayer of 2nd to last region that recieved click.
+    // ILayer of last region that recieved click.
     var previousActiveLayer;
 
     /**
