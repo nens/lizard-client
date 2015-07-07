@@ -21,6 +21,7 @@ angular.module('lizard-nxt')
   'defaultLocale',
   'DataService',
   'MapService',
+  'NxtRegionsLayer',
   'State',
   '$rootScope',
   'LeafletService',
@@ -34,6 +35,7 @@ angular.module('lizard-nxt')
     defaultLocale,
     DataService,
     MapService,
+    NxtRegionsLayer,
     State,
     $rootScope,
     LeafletService,
@@ -205,12 +207,13 @@ angular.module('lizard-nxt')
         state.boxType.part, state.boxType.index, State.box.type
       );
 
-      if (old === 'point' || old === 'line') {
+      if (old === 'point' || old === 'line' || old === 'region') {
         // Remove geometry from url
         state.boxType.update = false;
         LocationGetterSetter.setUrlValue(
           state.geom.part, state.geom.index, undefined);
       }
+
     });
 
     /*
@@ -230,10 +233,12 @@ angular.module('lizard-nxt')
     $scope.$watch(State.toString('spatial.here'), function (n, o) {
       if (n === o || State.box.type !== 'point') { return true; }
       state.geom.update = false;
-      UrlState.setgeomUrl(state,
-                          State.box.type,
-                          State.spatial.here,
-                          State.spatial.points);
+      UrlState.setgeomUrl(
+        state,
+        State.box.type,
+        State.spatial.here,
+        State.spatial.points
+      );
     });
 
     /**
@@ -245,6 +250,16 @@ angular.module('lizard-nxt')
         State.box.type,
         State.spatial.here,
         State.spatial.points
+      );
+    });
+
+    /**
+     * Set region when State.spatial.region changed and box.type is region.
+     */
+    $scope.$watch(State.toString('spatial.region'), function (n, o) {
+      if (n === o || State.box.type !== 'region') { return true; }
+      LocationGetterSetter.setUrlValue(
+        state.geom.part, state.geom.index, State.spatial.region.properties.name
       );
     });
 
@@ -298,7 +313,11 @@ angular.module('lizard-nxt')
       }
 
       if (geom) {
-        State.spatial = UrlState.parseGeom(State.box.type, geom, State.spatial);
+        if (/\d/.test(geom)) {
+          State.spatial = UrlState.parseGeom(State.box.type, geom, State.spatial);
+        } else {
+          NxtRegionsLayer.setActiveRegion(geom);
+        }
       }
 
       enablelayerGroups(layerGroupsFromURL);

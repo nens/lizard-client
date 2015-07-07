@@ -6,6 +6,9 @@ Unreleased (2.0.0) (XXXX-XX-XX)
 
 - Add doxx to build task.
 
+- Add region aggregation as a fourth aggregation tool. Draw regions and get
+  raster aggregations when clicked.
+
 - Add angular-gettext for translations.
 
 - Add grunt tasks to extract and compile translations.

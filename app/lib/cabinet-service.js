@@ -18,6 +18,7 @@ angular.module('lizard-nxt')
 
   timeseriesResource = Restangular.one('api/v1/timeseries/');
   events = Restangular.one('api/v1/events/');
+  var regions = Restangular.one('api/v1/regions/');
 
   geocodeResource = Restangular
     // Use a different base url, go directly to our friends at google.
@@ -92,5 +93,6 @@ angular.module('lizard-nxt')
     geocode: geocodeResource,
     raster: rasterResource,
     timeseries: timeseriesResource,
+    regions: regions
   };
 }]);

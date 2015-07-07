@@ -57,7 +57,7 @@
                class="button-list-link"
                title="<% 'Point selection' | translate %>"
                ng-class="{'active': menu.box.type === 'point'}">
-               <i class="fa fa-dot-circle-o"></i>
+               <i class="fa fa-map-marker"></i>
             </a>
           </div>
 
@@ -68,6 +68,16 @@
                title="<% 'Line selection' | translate %>"
                ng-class="{'active': menu.box.type === 'line'}">
                <i class="fa fa-expand"></i>
+            </a>
+          </div>
+
+          <div class="button-list-item"
+               style="cursor: pointer">
+            <a ng-click="menu.box.type = 'region'"
+               class="button-list-link"
+               title="<% 'Region selection' | translate %>"
+               ng-class="{'active': menu.box.type === 'region'}">
+               <i class="fa fa-square"></i>
             </a>
           </div>
 

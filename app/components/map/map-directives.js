@@ -18,7 +18,13 @@ angular.module('map')
   'DataService',
   'UtilService',
   'State',
-  function ($controller, MapService, DataService, UtilService, State) {
+  function (
+    $controller,
+    MapService,
+    DataService,
+    UtilService,
+    State
+  ) {
 
     var link = function (scope, element, attrs) {
 
@@ -94,7 +100,8 @@ angular.module('map')
           onMoveStart: _moveStarted,
           onMoveEnd: _moveEnded,
           onMouseMove: _mouseMove
-        });
+        }
+      );
 
       /**
        * Watch state spatial view and update the whole shebang.
@@ -160,6 +167,9 @@ angular.module('map')
         case "line":
           selector = "#map * {cursor: crosshair;}";
           break;
+        case "region":
+          selector = "";
+          break;
         case "area":
           selector = "#map * {cursor: -webkit-grab; cursor: -moz-grab; cursor: grab; cursor: hand;}";
           break;
@@ -167,6 +177,7 @@ angular.module('map')
           return;
         }
         UtilService.addNewStyle(selector);
+
       });
 
       init();
