@@ -1,20 +1,9 @@
 /**
  * @ngdoc
-<<<<<<< HEAD
  * @class regionCtrl
  * @memberOf omnibox
  * @name RegionCtrl
  * @description
-=======
- * @class areaCtrl
- * @memberOf app
- * @name RegionCtrl
- * @description
- *
- * Reguests data for the active region When box.type is region. Region are
- * spatial areas such as administrative boundaries or watersheds.
- *
->>>>>>> 2c3b4e0... make url and box.content and box.type consistentently work
  *
  * Reguests data for the active region When box.type is region. Regions are
  * spatial areas such as administrative boundaries or watersheds.
