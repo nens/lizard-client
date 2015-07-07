@@ -1,15 +1,14 @@
 /**
  * @ngdoc
- * @class areaCtrl
- * @memberOf app
+ * @class regionCtrl
+ * @memberOf omnibox
  * @name RegionCtrl
  * @description
  *
- * Reguests data for the active region When box.type is region. Region are
+ * Reguests data for the active region When box.type is region. Regions are
  * spatial areas such as administrative boundaries or watersheds.
  *
- *
- * Contains data of all active layers with an aggregation_type
+ * Contains data of all active raster layers with an aggregation_type
  *
  */
 angular.module('omnibox')

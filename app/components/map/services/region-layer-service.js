@@ -2,10 +2,9 @@
 
 /**
  * @ngdoc service
- * @name map.Layer
+ * @name map.NxtRegionsLayer
  * @description
- * # NxtLayer
- * Additional methods used to extend nxtLayer with leaflet/map specific methods.
+ * Adds a leaflet geojson layer to draw regions.
  */
 angular.module('map')
 .factory('NxtRegionsLayer', [
@@ -27,27 +26,15 @@ angular.module('map')
      * Draws regions as a L.geoJson layer on the map. Sets click function. And
      * Fires click if ActiveRegionString is not falsy.
      *
-     * @param  {geojson} regions
+     * @param  {geojson}  regions
+     * @param  {funciton} clickCb callback fires when layer is clicked.
      */
     var addRegions = function (regions, clickCb) {
       MapService.removeLeafletLayer(regionsLayer);
       regionsLayer = LeafletService.geoJson(regions, {
         // Style function must be included in order to overwrite style on click.
-        style: function (feature) {
-          return {
-              // fillColor: 'blue',
-              // weight: 2,
-              // opacity: 1,
-              // color: 'white',
-              // dashArray: '3',
-              // fillOpacity: 0.7
-          };
-        },
+        style: function (feature) { return {}; },
         onEachFeature: function (d, layer) {
-          layer.on('mouseover', function (e) {
-          });
-          layer.on('mouseout', function (e) {
-          });
           layer.on('click', function (e) {
             if (previousActiveLayer) {
               regionsLayer.resetStyle(previousActiveLayer);
@@ -96,8 +83,8 @@ angular.module('map')
     };
 
     /**
-     * Gets region layer with properties.name === regionName of the currently drawn
-     * regions.
+     * Gets region layer with properties.name === regionName of the currently
+     * drawn regions.
      *
      * @param  {L.GeoJson} lGeo        Leaflet L.GeoJson instance.
      * @param  {string} regionName     Properties.name of region
