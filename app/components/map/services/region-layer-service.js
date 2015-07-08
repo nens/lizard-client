@@ -63,11 +63,6 @@ angular.module('map')
                 regionsLayer.resetStyle(previousActiveLayer);
               }
 
-
-              if (!L.Browser.ie && !L.Browser.opera) {
-                layer.bringToFront();
-              }
-
               var newActiveLayer = e.target;
               newActiveLayer.setStyle({
                   weight: 4,
