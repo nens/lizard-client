@@ -6,7 +6,8 @@ angular.module('lizard-nxt')
 
   var geocodeResource,
       timeseriesResource,
-      events;
+      events,
+      wmsGetFeatureInfo;
 
   // for the wizard demo's
   if (window.location.host === 'nens.github.io' ||
@@ -18,6 +19,9 @@ angular.module('lizard-nxt')
 
   timeseriesResource = Restangular.one('api/v1/timeseries/');
   events = Restangular.one('api/v1/events/');
+
+  // Wms getFeatureInfo goes through a proxy. Specify url as a param.
+  wmsGetFeatureInfo = Restangular.one('proxy/');
 
   geocodeResource = Restangular
     // Use a different base url, go directly to our friends at google.
@@ -92,5 +96,6 @@ angular.module('lizard-nxt')
     geocode: geocodeResource,
     raster: rasterResource,
     timeseries: timeseriesResource,
+    wmsGetFeatureInfo: wmsGetFeatureInfo
   };
 }]);

@@ -14,7 +14,8 @@ angular.module('data-menu')
       var SERVICES = {
         Store: 'RasterService',
         Vector: 'VectorService',
-        UTFGrid: 'UtfGridService'
+        UTFGrid: 'UtfGridService',
+        WMS: 'WmsGetFeatureInfoService'
       };
 
       function NxtDataLayer(layer, tempRes) {

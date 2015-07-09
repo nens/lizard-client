@@ -100,7 +100,8 @@ angular.module('data-menu')
         angular.forEach(layers, function (layer) {
 
           if (layer.format === 'UTFGrid'
-            || layer.format === 'Vector') {
+            || layer.format === 'Vector'
+            || layer.format === 'WMS') {
             var nxtLayer = new NxtDataLayer(layer, tempRes);
             this._dataLayers.push(nxtLayer);
             this.mapLayers.push(nxtLayer);
@@ -118,8 +119,7 @@ angular.module('data-menu')
               this.spatialBounds = layer.meta.spatial_bounds;
             }
           }
-          else if (layer.format === 'TMS'
-            || layer.format === 'WMS') {
+          else if (layer.format === 'TMS') {
             this.mapLayers.push(new NxtLayer(layer, tempRes));
           }
         }, this);
