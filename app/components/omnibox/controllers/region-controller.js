@@ -30,6 +30,16 @@ angular.module('omnibox')
 
   ) {
 
+    /**
+     * Removes data from scope, cancels requests and removes active region from
+     * State.
+     */
+    var rmDataAndRequest = function () {
+      DataService.reject('omnibox');
+      $scope.box.content = {};
+      State.spatial.region = {};
+    };
+
 
     /**
      * Callback for clicks on regions. Calls fillbox of omnibox scope. Sets the
@@ -53,7 +63,7 @@ angular.module('omnibox')
      * Makes call to api for regions of the given bounds and zoom and calls
      * NxtRegionsLayer.add function with  response.
      */
-    var createRegions = function () {
+    var getRegions = function () {
       CabinetService.regions.get({
         z: State.spatial.view.zoom,
         in_bbox: State.spatial.bounds.getWest()
@@ -66,18 +76,25 @@ angular.module('omnibox')
       })
       .then(function (regions) {
         NxtRegionsLayer.add(regions.results, clickCb);
+
+        // If the new regions do not contain the current active region, rm the
+        // data  and the references to it.
+        console.log(NxtRegionsLayer.getActiveRegion(), $scope.activeName);
+        if (NxtRegionsLayer.getActiveRegion() !== $scope.activeName) {
+          rmDataAndRequest();
+        }
       });
     };
 
     // init
-    createRegions();
+    getRegions();
 
     /**
      * Updates regions when user moves map.
      */
     $scope.$watch(State.toString('spatial.bounds'), function (n, o) {
       if (n === o) { return true; }
-      createRegions();
+      getRegions();
     });
 
     /**
@@ -85,15 +102,13 @@ angular.module('omnibox')
      */
     $scope.$watch(State.toString('layerGroups.active'), function (n, o) {
       if (n === o) { return true; }
-      createRegions();
+      getRegions();
     });
 
 
     // Clean up stuff when controller is destroyed
     $scope.$on('$destroy', function () {
-      DataService.reject('omnibox');
-      $scope.box.content = {};
-      State.spatial.region = {};
+      rmDataAndRequest();
       NxtRegionsLayer.remove();
     });
 

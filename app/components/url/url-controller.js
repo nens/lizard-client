@@ -258,9 +258,15 @@ angular.module('lizard-nxt')
      */
     $scope.$watch(State.toString('spatial.region'), function (n, o) {
       if (n === o || State.box.type !== 'region') { return true; }
-      LocationGetterSetter.setUrlValue(
-        state.geom.part, state.geom.index, State.spatial.region.properties.name
-      );
+      if (State.spatial.region.properties) {
+        LocationGetterSetter.setUrlValue(
+          state.geom.part, state.geom.index, State.spatial.region.properties.name
+        );
+      } else {
+        LocationGetterSetter.setUrlValue(
+          state.geom.part, state.geom.index, ''
+        );
+      }
     });
 
     /**

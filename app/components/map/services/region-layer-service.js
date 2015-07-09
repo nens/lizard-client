@@ -22,6 +22,26 @@ angular.module('map')
     // ILayer of last region that recieved click.
     var previousActiveLayer;
 
+    var deafaultRegionStyle = {
+      weight: 2,
+      opacity: 0.6,
+      color: '#7f8c8d', // asbestos
+      fillOpacity: 0
+    };
+
+    var mouseOverStyle = {
+      fillColor: '#e74c3c', // alizarin
+      fillOpacity: 0.1
+    };
+
+    var activeRegionStyle = {
+      weight: 4,
+      fillColor: '#e74c3c', // alizarin
+      color: '#c0392b', // pomegranate
+      dashArray: '6',
+      fillOpacity: 0.1
+    };
+
     /**
      * Draws regions as a L.geoJson layer on the map. Sets click function. And
      * Fires click if ActiveRegionString is not falsy.
@@ -34,22 +54,14 @@ angular.module('map')
       regionsLayer = LeafletService.geoJson(regions, {
         // Style function must be included in order to overwrite style on click.
         style: function (feature) {
-          return {
-            weight: 2,
-            opacity: 0.6,
-            color: '#7f8c8d',
-            fillOpacity: 0
-          };
+          return deafaultRegionStyle;
         },
         onEachFeature: function (d, layer) {
           layer.on({
             mouseover: function (e) {
               var layer = e.target;
 
-              layer.setStyle({
-                  fillColor: '#e74c3c',
-                  fillOpacity: 0.1
-              });
+              layer.setStyle(mouseOverStyle);
 
             },
             mouseout: function (e) {
@@ -64,13 +76,7 @@ angular.module('map')
               }
 
               var newActiveLayer = e.target;
-              newActiveLayer.setStyle({
-                  weight: 4,
-                  fillColor: '#e74c3c',
-                  color: '#c0392b',
-                  dashArray: '6',
-                  fillOpacity: 0.1
-              });
+              newActiveLayer.setStyle(activeRegionStyle);
 
               clickCb(this);
 
@@ -104,9 +110,16 @@ angular.module('map')
         if (layer) {
           layer.fire('click');
         }
+        else {
+          activeRegionString = null;
+        }
       } else {
         activeRegionString = region;
       }
+    };
+
+    var getActiveRegion = function () {
+      return activeRegionString;
     };
 
     /**
@@ -130,7 +143,8 @@ angular.module('map')
     return {
       add: addRegions,
       remove: removeRegions,
-      setActiveRegion: setActiveRegion
+      setActiveRegion: setActiveRegion,
+      getActiveRegion: getActiveRegion
     };
 
   }]
