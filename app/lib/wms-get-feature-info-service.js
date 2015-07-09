@@ -10,29 +10,43 @@ angular.module('lizard-nxt')
 
   function (CabinetService, $q, State) {
 
+  /**
+   * Gets data from wmsGetFeatureInfo resource of cabinetService.
+   *
+   * It creates a small bbox around options.geom and gets data of that bbox. This
+   * is how wms getFeatureInfo works.
+   *
+   * @param  {string}   callee  optional string indicating the origin of the call.
+   * @param  {NxtLayer} layer   nxt layer.
+   * @param  {object}   options options that contain geom.
+   * @return {[type]}           promise that resolves with wms response object.
+   */
   var getData = function (callee, layer, options) {
+
+    var BOUNDING_BOX_PADDING = 0.001,
+        BOUNDING_BOX_PIXEL_SIZE = 2,
+        PIXEL_SPACE_COORD = 1;
 
     var params = {
       SERVICE: 'WMS',
       VERSION: '1.1.1',
       REQUEST: 'GetFeatureInfo',
-      FORMAT: 'image/png',
       INFO_FORMAT: 'application/json',
       LAYERS: layer.slug,
       QUERY_LAYERS: layer.slug,
-      STYLES: '', // required..
+      STYLES: '', // required.
       SRS: "EPSG:4326",
       BBOX: options.geom.lng
         + ','
         + options.geom.lat
         + ','
-        + (options.geom.lng + 0.001)
+        + (options.geom.lng + BOUNDING_BOX_PADDING)
         + ','
-        + (options.geom.lat + 0.001),
-      WIDTH: 2,
-      HEIGHT: 2,
-      X: 1,
-      Y: 1
+        + (options.geom.lat + BOUNDING_BOX_PADDING),
+      WIDTH: BOUNDING_BOX_PIXEL_SIZE,
+      HEIGHT: BOUNDING_BOX_PIXEL_SIZE,
+      X: PIXEL_SPACE_COORD,
+      Y: PIXEL_SPACE_COORD
     };
 
     var url = layer.url + '/?';
@@ -42,7 +56,6 @@ angular.module('lizard-nxt')
         }
         url += key + "=" + params[key];
     }
-    console.log(url);
 
     return CabinetService.wmsGetFeatureInfo.get({url:url});
   };

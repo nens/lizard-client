@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.0.0) (XXXX-XX-XX)
 ---------------------
 
+- Add getFeatureInfo via backend proxy for wms layers.
+
 - Add doxx to build task.
 
 - Add angular-gettext for translations.
