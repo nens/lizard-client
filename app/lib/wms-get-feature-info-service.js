@@ -4,11 +4,12 @@
 angular.module('lizard-nxt')
 .service("WmsGetFeatureInfoService", [
 
+  "LeafletService",
   "CabinetService",
   "$q",
   'State',
 
-  function (CabinetService, $q, State) {
+  function (LeafletService, CabinetService, $q, State) {
 
   /**
    * Gets data from wmsGetFeatureInfo resource of cabinetService.
@@ -19,9 +20,20 @@ angular.module('lizard-nxt')
    * @param  {string}   callee  optional string indicating the origin of the call.
    * @param  {NxtLayer} layer   nxt layer.
    * @param  {object}   options options that contain geom.
-   * @return {[type]}           promise that resolves with wms response object.
+   * @return {promise}          promise that resolves with wms response object.
+   *                            Or promise that gets rejected when geometry is
+   *                            not a leaflet LatLng or undefined.
+   *
    */
   var getData = function (callee, layer, options) {
+
+
+    if (options.geom === undefined
+      || !(options.geom instanceof LeafletService.LatLng)) {
+      var defer = $q.defer();
+      defer.reject();
+      return defer.promise;
+    }
 
     var BOUNDING_BOX_PADDING = 0.001,
         BOUNDING_BOX_PIXEL_SIZE = 2,
