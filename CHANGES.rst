@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.0.0) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 1.5.14 (2015-7-10)
+---------------------
 
 - Add getFeatureInfo via backend proxy for wms layers.
 
