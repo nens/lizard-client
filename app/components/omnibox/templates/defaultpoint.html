@@ -70,6 +70,29 @@
           </tbody>
         </table>
       </div>
+
+      <div ng-switch-when="WMS" ng-if="l.data.features">
+        <table class="table table-condensed table-hover">
+
+          <tr class="attr-row"
+              ng-repeat="(key, val) in l.data.features[0].properties">
+
+            <td class="fixed-width-card-table">
+              <div class="attr-row-content">
+                <% key %>
+              </div>
+            </td>
+
+            <td class="lineout">
+              <div class="attr-row-content">
+                <% val %>
+              </div>
+            </td>
+
+          </tr>
+        </table>
+      </div>
+
     </div>
   </div>
 </div>

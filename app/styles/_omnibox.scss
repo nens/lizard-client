@@ -161,12 +161,16 @@
 }
 
 .card table, .card-events {
+    table-layout: fixed;
     margin: 6px 0 6px 11px;
     line-height: 15px;
     font-size: 0.9em;
     list-style: none;
     color: #777;
-    max-width: 350px;
+    max-width: 370px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 

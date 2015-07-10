@@ -6,7 +6,8 @@ angular.module('lizard-nxt')
 
   var geocodeResource,
       timeseriesResource,
-      events;
+      events,
+      wmsGetFeatureInfo;
 
   // for the wizard demo's
   if (window.location.host === 'nens.github.io' ||
@@ -19,6 +20,9 @@ angular.module('lizard-nxt')
   timeseriesResource = Restangular.one('api/v1/timeseries/');
   events = Restangular.one('api/v1/events/');
   var regions = Restangular.one('api/v1/regions/');
+
+  // Wms getFeatureInfo goes through a proxy. Specify url as a param.
+  wmsGetFeatureInfo = Restangular.one('proxy/');
 
   geocodeResource = Restangular
     // Use a different base url, go directly to our friends at google.
@@ -66,7 +70,8 @@ angular.module('lizard-nxt')
       login: gettextCatalog.getString("Log in"),
       logout: gettextCatalog.getString("Log out"),
       profile: gettextCatalog.getString("Modify profile"),
-      version: gettextCatalog.getString("Double click for lizard version number"),
+      version: gettextCatalog.getString(
+        "Double click for lizard version number"),
       openMenu: gettextCatalog.getString("Open data menu"),
       closeMenu: gettextCatalog.getString("Close data menu"),
       transparency: gettextCatalog.getString("Adjust opacity"),
@@ -93,6 +98,7 @@ angular.module('lizard-nxt')
     geocode: geocodeResource,
     raster: rasterResource,
     timeseries: timeseriesResource,
+    wmsGetFeatureInfo: wmsGetFeatureInfo,
     regions: regions
   };
 }]);
