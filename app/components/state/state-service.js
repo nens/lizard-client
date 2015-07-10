@@ -69,7 +69,7 @@ angular.module('global-state')
     state.box = {};
 
     var _type = 'point'; // Default box type
-    var TYPE_VALUES = ["point", "line", "area"];
+    var TYPE_VALUES = ["point", "line", "region", "area"];
     Object.defineProperty(state.box, 'type', {
       get: function () { return _type; },
       set: function (type) {
@@ -90,6 +90,8 @@ angular.module('global-state')
     state.spatial = {
       here: {},
       points: [], // History of here for drawing and creating line and polygons
+      region: {},// geojson feature describing region, with name and type in
+              // properties
       bounds: {},
       view: {}, // { lat: <int>, lng:<int>, zoom:<int> }
       userHere: {}, // Geographical location of the users mouse only set by

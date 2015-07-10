@@ -237,14 +237,31 @@ angular.module('lizard-nxt')
     if (geom instanceof L.LatLng) {
       // geom is a L.LatLng object
       return "POINT(" + geom.lng + " " + geom.lat + ")";
-    } else if (checkForLine(geom)) {
+    }
+
+    else if (checkForLine(geom)) {
       // geom represents a line
       var coords = [];
       angular.forEach(geom, function (latLng) {
         coords.push(latLng.lng + " " + latLng.lat);
       });
       return "LINESTRING(" + coords.join(',') + ")";
-    } else {
+    }
+
+    else if (geom.type === 'Polygon') {
+      var lng, lat, coords = [];
+      var cs = geom.coordinates[0];
+      for (var i = 0; i < cs.length; i++) {
+        coords.push(cs[i][0] + " " + cs[i][1]);
+        if (i === 0) {
+          lng = cs[i][0];
+          lat = cs[i][1];
+        }
+      }
+      return "POLYGON((" + coords.join(",") + "," + lng + " " + lat + "))";
+    }
+
+    else {
       // geom is a L.Bounds object
       return "POLYGON(("
             + geom.getWest() + " " + geom.getSouth() + ", "
@@ -255,7 +272,6 @@ angular.module('lizard-nxt')
             + "))";
     }
   };
-
 
   /**
    * @function buildString
@@ -422,9 +438,7 @@ angular.module('lizard-nxt')
    * @param {object} geomOpts - the options.geom object
    * @return {string} - "POINT" | "LINE" | "AREA" | throw new Error!
    *
-   * NB! In the foreseeable future, we need to take care of non-rectangle
-   *     polygons, and we'll need to adjust this code accordingly.
-   *     When will then be now? soon.
+   * TODO: get rid of this maniacal reverse engineering of our own code.
    */
   this.getGeomType = function (geomOpts) {
 
@@ -438,6 +452,9 @@ angular.module('lizard-nxt')
       && geomOpts[0] instanceof L.LatLng
       && geomOpts[1] instanceof L.LatLng) {
       return "LINE";
+
+    } else if (geomOpts.coordinates) { // geojson
+      return "REGION"
 
     } else {
       throw new Error(
