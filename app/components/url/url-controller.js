@@ -146,7 +146,8 @@ angular.module('lizard-nxt')
       }
 
       // Check if this language exists, otherwise use the default.
-      if (!gettextCatalog.strings[lang]) {
+      if (!gettextCatalog.strings[lang]
+        && lang !==gettextCatalog.baseLanguage) {
         lang = defaultLang;
       }
 
