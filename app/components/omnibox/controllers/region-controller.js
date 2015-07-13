@@ -79,7 +79,6 @@ angular.module('omnibox')
 
         // If the new regions do not contain the current active region, rm the
         // data  and the references to it.
-        console.log(NxtRegionsLayer.getActiveRegion(), $scope.activeName);
         if (NxtRegionsLayer.getActiveRegion() !== $scope.activeName) {
           rmDataAndRequest();
         }

@@ -6,6 +6,8 @@ Unreleased (2.0.0) (XXXX-XX-XX)
 
 - Fix baselanguage not an option from url.
 
+- Change region icon to lemon.
+
 
 Release 1.5.14 (2015-7-10)
 ---------------------
