@@ -49,6 +49,8 @@ angular.module('omnibox')
      */
     var clickCb = function (layer) {
       $scope.fillBox({
+        geom_id: layer.feature.id,
+        // apparantly this cannnot be left out because of some type check.
         geom: layer.feature.geometry,
         start: State.temporal.start,
         end: State.temporal.end,
@@ -57,6 +59,9 @@ angular.module('omnibox')
 
       State.spatial.region = layer.feature;
       $scope.activeName = layer.feature.properties.name;
+      //$scope.regionArea = layer.features.geometry;
+      $scope.regionArea = 128;
+      console.log(layer.feature.geometry);
     };
 
     /**

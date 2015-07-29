@@ -22,3 +22,6 @@ doc/
 po/template.pot
 # generate using grunt nggettext_compile
 app/translations.js
+
+# vi
+*.swp
