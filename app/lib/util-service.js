@@ -439,6 +439,8 @@ angular.module('lizard-nxt')
    * @return {string} - "POINT" | "LINE" | "AREA" | throw new Error!
    *
    * TODO: get rid of this maniacal reverse engineering of our own code.
+   * NOTE: geojson features have a `type` property on their geometry.
+   * could be as easy as `feature.geometry.type`.
    */
   this.getGeomType = function (geomOpts) {
 

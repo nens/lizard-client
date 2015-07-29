@@ -48,6 +48,9 @@ angular.module('omnibox')
      * @param  {leaflet ILayer} layer that recieved the click.
      */
     var clickCb = function (layer) {
+      // NOTE: is this the proper place to convert m2 to ha?
+      var HECTARE_IN_M2 = 10000;
+
       $scope.fillBox({
         geom_id: layer.feature.id,
         // apparantly this cannnot be left out because of some type check.
@@ -59,9 +62,8 @@ angular.module('omnibox')
 
       State.spatial.region = layer.feature;
       $scope.activeName = layer.feature.properties.name;
-      //$scope.regionArea = layer.features.geometry;
-      $scope.regionArea = 128;
-      console.log(layer.feature.geometry);
+      $scope.regionArea = Math.round(layer.feature.properties.area /
+                                     HECTARE_IN_M2);
     };
 
     /**
