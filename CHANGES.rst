@@ -4,6 +4,12 @@ Changelog of lizard-nxt client
 Unreleased (2.0.0) (XXXX-XX-XX)
 ---------------------
 
+- Get raster aggregates for polygons by geometry id instead of WKT polygon.
+
+- Region name **strong** in card title.
+
+- Display area of region in card title for region aggregates.
+
 - Fix baselanguage not an option from url.
 
 - Change region icon to lemon.

@@ -48,7 +48,11 @@ angular.module('omnibox')
      * @param  {leaflet ILayer} layer that recieved the click.
      */
     var clickCb = function (layer) {
+      var HECTARE_IN_M2 = 10000;
+
       $scope.fillBox({
+        geom_id: layer.feature.id,
+        // apparantly this cannnot be left out because of some type check.
         geom: layer.feature.geometry,
         start: State.temporal.start,
         end: State.temporal.end,
@@ -57,6 +61,8 @@ angular.module('omnibox')
 
       State.spatial.region = layer.feature;
       $scope.activeName = layer.feature.properties.name;
+      $scope.regionArea = Math.round(layer.feature.properties.area /
+                                     HECTARE_IN_M2);
     };
 
     /**

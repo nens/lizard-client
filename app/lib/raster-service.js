@@ -19,7 +19,6 @@ angular.module('lizard-nxt')
 
     var srs = 'EPSG:4326',
         agg = options.agg || '',
-        wkt = UtilService.geomToWkt(options.geom),
         startString,
         endString,
         aggWindow;
@@ -54,7 +53,6 @@ angular.module('lizard-nxt')
 
     var requestOptions = {
       raster_names: layer.slug,
-      geom: wkt,
       srs: srs,
       start: startString,
       stop: endString,
@@ -62,6 +60,13 @@ angular.module('lizard-nxt')
       styles: options.styles,
       window: aggWindow
     };
+
+    if (options.geom_id) {
+      requestOptions.geom_id = options.geom_id; 
+    } else {
+      requestOptions.geom = UtilService.geomToWkt(options.geom); 
+    }
+
     if (options.truncate === true) {
       requestOptions.truncate = options.truncate;
     }
