@@ -48,7 +48,6 @@ angular.module('omnibox')
      * @param  {leaflet ILayer} layer that recieved the click.
      */
     var clickCb = function (layer) {
-      // NOTE: is this the proper place to convert m2 to ha?
       var HECTARE_IN_M2 = 10000;
 
       $scope.fillBox({
