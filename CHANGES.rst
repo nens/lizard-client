@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.0.0) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 1.5.15 (2015-8-3)
+---------------------
 
 - Get raster aggregates for polygons by geometry id instead of WKT polygon.
 
