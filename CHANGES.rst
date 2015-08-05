@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.0.0) (XXXX-XX-XX)
 ---------------------
--
+
+- Consume new format of raster-aggregate responses.
 
 
 Release 1.5.15 (2015-8-3)

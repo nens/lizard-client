@@ -224,6 +224,7 @@ angular.module('lizard-nxt')
      */
     var _formatLineCSVTemporal = function (data, lgSlug) {
 
+      console.log(data);
       var t,
           i,
           datum,

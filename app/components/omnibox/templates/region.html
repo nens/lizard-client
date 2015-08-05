@@ -7,7 +7,7 @@
 	</div>
 
   <div ng-repeat="(slug, lg) in box.content"
-       ng-if="slug !== 'rain' && slug !== 'waterchain'"
+       ng-if="slug !== 'waterchain'"
        class="card active" id="card-<% slug %>">
 
     <div
@@ -31,6 +31,17 @@
         quantity="'linear'"
         ylabel="'[%]'"
         xlabel="l.unit"
+        data="l.data"
+        keys="{x: 0, y: 1}">
+      </graph>
+
+      <!-- Rain -->
+      <graph
+        ng-switch-when="sum"
+        bar-chart
+        quantity="'time'"
+        ylabel="l.unit"
+        xlabel="Time"
         data="l.data"
         keys="{x: 0, y: 1}">
       </graph>

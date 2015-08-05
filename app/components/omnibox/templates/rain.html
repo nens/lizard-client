@@ -55,7 +55,7 @@
             </thead>
             <tbody>
             <tr class="recurrence_time"
-              ng-repeat="recurTime in rrc.data">
+              ng-repeat="recurTime in rrc.data.data">
               <td class="larger-font-card-table"><% recurTime.start | date : 'dd-MM-yyyy HH:mm' %></td>
               <td class="larger-font-card-table"><% recurTime.td_window %></td>
               <td class="larger-font-card-table text-right"><% recurTime.max | number: 1 %></td>
