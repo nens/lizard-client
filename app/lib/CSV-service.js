@@ -21,7 +21,7 @@ angular.module('lizard-nxt')
         TOO_MUCH_DATA_MSG = "De door u getrokken lijn of het temporeel interval is te lang. Er zijn te veel metingen om in een CSV weer te geven: ",
         COORD_DECIMAL_COUNT = 8,
         DUTCHIFY_TIMESTAMPS = true,
-        MAX_ROW_COUNT = 15000;
+        MAX_ROW_COUNT = 50000;
 
     // PUBLIC /////////////////////////////////////////////////////////////////
 
@@ -196,8 +196,9 @@ angular.module('lizard-nxt')
           endLat = coords.endLat,
           endLng = coords.endLng;
 
-      if (data.length > MAX_ROW_COUNT)
+      if (data.length > MAX_ROW_COUNT) {
         return [[TOO_MUCH_DATA_MSG + data.length]];
+      }
 
       for (i = 0; i < data.length; i++) {
         datum = data[i];
@@ -224,7 +225,6 @@ angular.module('lizard-nxt')
      */
     var _formatLineCSVTemporal = function (data, lgSlug) {
 
-      console.log(data);
       var t,
           i,
           datum,
@@ -235,14 +235,15 @@ angular.module('lizard-nxt')
           startLng = coords.startLng,
           endLat = coords.endLat,
           endLng = coords.endLng,
-          amountOfTimestamps = data[0][1].length,
+          amountOfTimestamps = data.length,
           tempExtentInterval = State.temporal.end - State.temporal.start,
           // Assumption which holds when measurements (i) are present for full
           // temp.extent and (ii) are equidistant with distance equal to aggWindow:
           durationPerMeasurement = _getStoreResolution(lgSlug);
 
-      if (amountOfTimestamps * data.length > MAX_ROW_COUNT)
+      if (amountOfTimestamps * data[0][1].length > MAX_ROW_COUNT) {
         return [[TOO_MUCH_DATA_MSG + amountOfTimestamps * data.length]];
+      }
 
       var roundedStartTime = State.temporal.start - (
         State.temporal.start % durationPerMeasurement
@@ -254,15 +255,16 @@ angular.module('lizard-nxt')
           ? _dutchifyTimestamp(roundedStartTime + (t * durationPerMeasurement))
           : roundedStartTime + (t * durationPerMeasurement);
 
-        for (i = 0; i < data.length; i++) {
-          datum = data[i];
+        datum = data[t];
+        for (i = 0; i < datum[1].length; i++) {
+          var datum_ = datum[1][i];
           result.push([
             timestamp,
-            typeof data[i][0] === 'number'
-              ? UtilService.formatNumber(UtilService.round(datum[0], 2), 0, 2, true)
+            typeof datum_[0] === 'number'
+              ? UtilService.formatNumber(UtilService.round(datum_[0], 2), 0, 2, true)
               : NO_DATA_MSG,
-            typeof data[i][1][t] === 'number'
-              ? UtilService.formatNumber(UtilService.round(datum[1][t], 2), 0, 2, true)
+            typeof datum_[1] === 'number'
+              ? UtilService.formatNumber(UtilService.round(datum_[1], 2), 0, 2, true)
               : NO_DATA_MSG,
             startLat,
             startLng,
