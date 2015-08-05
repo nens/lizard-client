@@ -96,7 +96,7 @@ angular.module('data-menu')
         });
 
         // this allows for the demo's to be run from github.io
-        if ((this.url.indexOf('api/v1') > -1) &&
+        if ((this.url.indexOf('api/v2') > -1) &&
             (window.location.host === 'nens.github.io' ||
              window.location.host === 'lizard.sandbox.lizard.net')) {
           this.url = backendDomain + this.url;

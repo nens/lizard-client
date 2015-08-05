@@ -17,9 +17,9 @@ angular.module('lizard-nxt')
   }
   Restangular.setRequestSuffix('?page_size=25000');
 
-  timeseriesResource = Restangular.one('api/v1/timeseries/');
-  events = Restangular.one('api/v1/events/');
-  var regions = Restangular.one('api/v1/regions/');
+  timeseriesResource = Restangular.one('api/v2/timeseries/');
+  events = Restangular.one('api/v2/events/');
+  var regions = Restangular.one('api/v2/regions/');
 
   // Wms getFeatureInfo goes through a proxy. Specify url as a param.
   wmsGetFeatureInfo = Restangular.one('proxy/');
@@ -53,7 +53,7 @@ angular.module('lizard-nxt')
       localPromise = abortGet;
     }
     return Restangular
-      .one('api/v1/raster-aggregates/')
+      .one('api/v2/raster-aggregates/')
       .withHttpConfig({timeout: localPromise.promise});
   };
 

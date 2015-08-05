@@ -3,7 +3,7 @@ Changelog of lizard-nxt client
 
 Unreleased (2.0.0) (XXXX-XX-XX)
 ---------------------
--
+- API is now at v2.
 
 
 Release 1.5.15 (2015-8-3)
