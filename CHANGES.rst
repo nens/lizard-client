@@ -6,6 +6,7 @@ Unreleased (2.0.0) (XXXX-XX-XX)
 
 - Consume new format of raster-aggregate responses.
 
+- API is now at v2.
 
 Release 1.5.15 (2015-8-3)
 ---------------------
