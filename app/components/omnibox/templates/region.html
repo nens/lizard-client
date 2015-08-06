@@ -1,8 +1,14 @@
 <div ng-controller="RegionCtrl">
 
-	<div ng-if="activeName" class="card active" id="card-<% slug %>">
+  <div class="card active" id="card-beta-warning">
     <div class="card-content">
-          <strong><% activeName %></strong> <% regionArea %> ha.
+      <strong>Regio aggregatie is momenteel in Bèta</strong>
+    </div>
+  </div>
+
+  <div ng-if="activeName" class="card active" id="card-<% slug %>">
+    <div class="card-content">
+      <strong><% activeName %></strong> <% regionArea %> ha.
 		</div>
 	</div>
 
@@ -41,9 +47,9 @@
         bar-chart
         quantity="'time'"
         ylabel="l.unit"
-        xlabel="Time"
         data="l.data"
-        keys="{x: 0, y: 1}">
+        keys="{x: 0, y: 1}"
+        temporal="omnibox.state.temporal">
       </graph>
 
       <graph
