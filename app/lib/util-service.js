@@ -170,10 +170,10 @@ angular.module('lizard-nxt')
    *
    * @param  {array} data      array of shape:
    *                           [
-   *                             [x0, [y0_1, y0_2, ..., y0_n]],
-   *                             [x1, [y1_1, y1_2, ..., y1_n]],
+   *                             [t0, [[x0, y0], [x1, y1], ..., [xn, yn]],
+   *                             [t1, [[x0, y0], [x1, y1], ..., [xn, yn]],
    *                             ...
-   *                             [xm, [ym_1, ym_2, ..., ym_n]]
+   *                             [tm, [[x0, y0], [x1, y1], ..., [xn, yn]],
    *                           ]
    * @param  {object} timeState nxt timeState object
    * @return {array}           array (for timestep 1) of shape:
@@ -182,11 +182,13 @@ angular.module('lizard-nxt')
   this.createDataForTimeState = function (data, timeState) {
     var interval = timeState.end - timeState.start;
     var cur = timeState.at - timeState.start;
-    var i = Math.round(data[0][1].length * cur / interval);
+    var i = Math.round(data.length * cur / interval);
     var dataForTimeState = [];
-    angular.forEach(data, function (value) {
-      dataForTimeState.push([value[0], value[1][i]]);
+
+    angular.forEach(data[i][1], function (value) {
+      dataForTimeState.push([value[0], value[1]]);
     });
+
     return dataForTimeState;
   };
 
@@ -234,6 +236,7 @@ angular.module('lizard-nxt')
    * @memberOf UtilService
    */
   this.geomToWkt = function (geom) {
+    var coords = [];
     if (geom instanceof L.LatLng) {
       // geom is a L.LatLng object
       return "POINT(" + geom.lng + " " + geom.lat + ")";
@@ -241,7 +244,6 @@ angular.module('lizard-nxt')
 
     else if (checkForLine(geom)) {
       // geom represents a line
-      var coords = [];
       angular.forEach(geom, function (latLng) {
         coords.push(latLng.lng + " " + latLng.lat);
       });
@@ -249,7 +251,7 @@ angular.module('lizard-nxt')
     }
 
     else if (geom.type === 'Polygon') {
-      var lng, lat, coords = [];
+      var lng, lat;
       var cs = geom.coordinates[0];
       for (var i = 0; i < cs.length; i++) {
         coords.push(cs[i][0] + " " + cs[i][1]);
@@ -455,7 +457,7 @@ angular.module('lizard-nxt')
       return "LINE";
 
     } else if (geomOpts.coordinates) { // geojson
-      return "REGION"
+      return "REGION";
 
     } else {
       throw new Error(

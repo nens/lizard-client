@@ -42,27 +42,50 @@ angular.module('omnibox')
 
 
     /**
-     * Callback for clicks on regions. Calls fillbox of omnibox scope. Sets the
-     * clicked region on the State and the name of the region on the scope.
+     * Callback for clicks on regions. Calls fillRegion.
      *
      * @param  {leaflet ILayer} layer that recieved the click.
      */
     var clickCb = function (layer) {
-      var HECTARE_IN_M2 = 10000;
+      State.spatial.region = layer.feature;
+      fillRegion(State.spatial.region);
+    };
+
+    /**
+     * Calls fillbox of omnibox scope and sets the name of the region on thes
+     * scope.
+     *
+     * @param  {geojson feature object} feature describing the region.
+     */
+    var fillRegion = function (feature) {
+      var HECTARE_IN_M2 = 10000,
+      KM2_IN_HECTARE = 100;
+
+      $scope.activeName = feature.properties.name;
+      $scope.regionArea = Math.round(feature.properties.area /
+                                     HECTARE_IN_M2);
 
       $scope.fillBox({
-        geom_id: layer.feature.id,
+        geom_id: feature.id,
         // apparantly this cannnot be left out because of some type check.
-        geom: layer.feature.geometry,
+        geom: feature.geometry,
         start: State.temporal.start,
         end: State.temporal.end,
         aggWindow: State.temporal.aggWindow
+      })
+      // Rain sums are returned as the sum of all pixels. Its is assumed here
+      // that pixels are 1 km^2. So we normalize the data to get one dimensional
+      // values, rain in mm.
+      .then(null, null, function (response) {
+        var rain = response.layerSlug === 'rain'
+          && $scope.box.content.rain
+          && $scope.box.content.rain.layers.rain;
+        if (rain) {
+          angular.forEach(rain.data, function (value) {
+            value[1] = value[1] / $scope.regionArea * KM2_IN_HECTARE;
+          });
+        }
       });
-
-      State.spatial.region = layer.feature;
-      $scope.activeName = layer.feature.properties.name;
-      $scope.regionArea = Math.round(layer.feature.properties.area /
-                                     HECTARE_IN_M2);
     };
 
     /**
@@ -109,6 +132,18 @@ angular.module('omnibox')
       if (n === o) { return true; }
       getRegions();
     });
+
+    /**
+     * Update box.content when time changed.
+     */
+    $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
+      if (!State.temporal.timelineMoving) {
+        if (State.spatial.region) {
+          fillRegion(State.spatial.region);
+        }
+      }
+    });
+
 
 
     // Clean up stuff when controller is destroyed
