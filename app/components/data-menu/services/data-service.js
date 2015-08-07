@@ -340,6 +340,24 @@ angular.module('data-menu')
                 ts.events.length < MAX_NR_TIMESERIES_EVENTS &&
                 ts.parameter_referenced_unit) {
               filteredResult.push(ts);
+
+            // Else: output a message to the console and an error to sentry.
+            } else if (ts.events.length > MAX_NR_TIMESERIES_EVENTS) {
+              var msg = 'Timeseries: '
+                + ts.uuid
+                + ' has: '
+                + ts.events.length
+                + ' events, while '
+                + MAX_NR_TIMESERIES_EVENTS
+                + ' is the maximum supported amount';
+              window.Raven.captureException(new Error(msg));
+              console.info(msg);
+            } else if (!ts.parameter_referenced_unit) {
+              var msg = 'Timeseries: '
+                + ts.uuid
+                + ' has no valid parameter_referenced_unit';
+              window.Raven.captureException(new Error(msg));
+              console.info(msg);
             }
           });
           defer.notify({

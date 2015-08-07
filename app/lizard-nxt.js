@@ -5,13 +5,14 @@
  * Raven is responsible for logging to https://sentry.lizard.net
  */
 if (window.RavenEnvironment) {
-  window.Raven.config(window.RavenEnvironment,
-  {
-    // limits logging to staging and prd
-    whitelistUrls: [/integration\.nxt\.lizard\.net/,
-                    /nxt\.lizard\.net/,
-                    /staging\.nxt\.lizard\.net/]
+  window.Raven.config(window.RavenEnvironment, {
+    ignoreUrls: [/localhost/]
   }).install();
+  if (window.user.authenticated) {
+    window.Raven.setUserContext({
+      username: window.user.userName
+    });
+  }
 }
 
 /**
