@@ -1,17 +1,16 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.0.0) (XXXX-XX-XX)
----------------------
--
-
-
-Release 2.0.2 (2015-8-6)
+Unreleased (2.0.3) (XXXX-XX-XX)
 ---------------------
 
 - Add username to sentry.
 
 - Send errors from all lizard portals to sentry projects.
+
+
+Release 2.0.2 (2015-8-6)
+---------------------
 
 - Consume new format of raster-aggregate responses.
 
