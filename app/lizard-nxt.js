@@ -10,7 +10,7 @@ if (window.RavenEnvironment) {
   }).install();
   if (window.user.authenticated) {
     window.Raven.setUserContext({
-      user: window.user.userName
+      username: window.user.userName
     });
   }
 }
