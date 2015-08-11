@@ -55,7 +55,7 @@ module.exports = function(config) {
       'test/mocks/**/*.js',
       'app/lib/**/*.js',
       'app/*.js',
-      'app/components/**/{controllers/,directives/,services/,*}.js',
+      'app/components/**/**/*.js',
       // end application
 
       // tests
