@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.0.3) (XXXX-XX-XX)
 ---------------------
 
+- Only create a data layer for wms if get_feature_info is true.
+
 - Add username to sentry.
 
 - Send errors from all lizard portals to sentry projects.
