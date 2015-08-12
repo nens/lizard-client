@@ -101,7 +101,7 @@ angular.module('data-menu')
 
           if (layer.format === 'UTFGrid'
             || layer.format === 'Vector'
-            || layer.format === 'WMS') {
+            || (layer.format === 'WMS' && layer.get_feature_info)) {
             var nxtLayer = new NxtDataLayer(layer, tempRes);
             this._dataLayers.push(nxtLayer);
             this.mapLayers.push(nxtLayer);
@@ -119,7 +119,8 @@ angular.module('data-menu')
               this.spatialBounds = layer.meta.spatial_bounds;
             }
           }
-          else if (layer.format === 'TMS') {
+          else if (layer.format === 'TMS'
+            || (layer.format === 'WMS' && !layer.get_feature_info)) {
             this.mapLayers.push(new NxtLayer(layer, tempRes));
           }
         }, this);
