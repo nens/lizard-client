@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.0.0) (XXXX-XX-XX)
 ---------------------
--
+
+- Typo in timeseries bar / line graph template.
 
 
 Release 2.0.4 (2015-8-13)

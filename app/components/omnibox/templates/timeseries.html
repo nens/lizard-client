@@ -50,7 +50,7 @@
 
   <div class="timeseries-graph-container"
     ng-class="{hidden: !fullDetails}"
-    ng-if="$parent.box.content.waterchain.layers.waterchain_grid.data.station_type !== 1">
+    ng-if="$parent.box.content.waterchain.layers.waterchain_grid.data.entity_name !== 'measuringstation'">
     <graph
       line
       type="temporal"
