@@ -11,6 +11,28 @@ Unreleased (2.0.3) (XXXX-XX-XX)
 - Send errors from all lizard portals to sentry projects.
 
 
+Release 2.0.6 (2015-8-13)
+---------------------
+-
+
+
+Release 2.0.5 (2015-8-13)
+---------------------
+
+- Typo in timeseries bar / line graph template.
+
+
+Release 2.0.4 (2015-8-13)
+---------------------
+-
+
+
+Release 2.0.3 (2015-8-13)
+---------------------
+
+- Only station_type = 1 displays as bar chart.
+
+
 Release 2.0.2 (2015-8-6)
 ---------------------
 
