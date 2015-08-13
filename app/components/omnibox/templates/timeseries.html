@@ -29,7 +29,6 @@
 
   <div class="timeseries-graph-container"
       ng-class="{hidden: !fullDetails}"
-    <!-- station_type = 1 is rain station; for now we only want rain station data as bars  -->
       ng-if="$parent.box.content.waterchain.layers.waterchain_grid.data.station_type === 1">
      <graph
         bar-chart
@@ -51,7 +50,6 @@
 
   <div class="timeseries-graph-container"
     ng-class="{hidden: !fullDetails}"
-    <!-- station_type = 1 is rain station; for now we only want rain station data as bars  -->
     ng-if="$parent.box.content.waterchain.layers.waterchain_grid.data.station_type !== 1">
     <graph
       line
