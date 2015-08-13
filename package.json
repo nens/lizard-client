@@ -1,6 +1,6 @@
 {
   "name": "lizard-client",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Front-end of lizard-nxt, a Geographic Web Application that connects water data to locations",
   "main": "",
   "directories": {
