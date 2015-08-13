@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.0.0) (XXXX-XX-XX)
 ---------------------
--
+
+- Only station_type = 1 displays as bar chart.
 
 
 Release 2.0.2 (2015-8-6)
