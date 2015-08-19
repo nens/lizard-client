@@ -1,0 +1,65 @@
+<div class="card" ng-controller="ScenariosCtrl">
+  
+  <div ng-if="loading">
+    <i class="fa fa-refresh fa-spin"></i> 
+  </div>
+
+  <div ng-if="selectedScenario === null">
+    <table class="table table-hover scenarios-table">
+      <tbody
+        if="scenarios.length > 0"
+        class="scenarios-table-body"
+        ng-style="{'height':tableHeight}">
+        <tr ng-repeat="scenario in scenarios | filter: searchScenarios"
+          class="scenarios-table-row"
+          ng-class="{'selected-scenario': selectedScenario === scenario}" >
+          <td ng-click="select(scenario)" ><i class="fa clickable"
+              ng-class="{'fa-chevron-right': selectedScenario != scenario,
+                         'fa-chevron-down': selectedScenario === scenario}"></i></td>
+          <td ng-click="select(scenario)"><% scenario.name %> <a ng-click="preview(scenario)"> (preview)</a></td>
+          <td ng-click="select(scenario)" class="clickable text-right" ><% scenario.created | date: 'MMM d, y HH:mm:ss a' %><td>
+          <td class="text-right">
+            <table class="table table-condensed result-table"
+              ng-if="selectedScenario ===
+                  scenario && scenario.result_set.length > 0">
+              <tr ng-repeat="result in scenario.result_set">
+                <td><% result.result_type.name %></td>
+                <td><a href="<% result.attachment_url %>" translate>Download</a></td>
+              </tr>
+            </table>
+            <span ng-if="scenario.result_set.length === 0" translate>
+              No results
+            </span>
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+
+    <nav>
+      <ul class="pagination">
+        <li>
+        <a ng-click="getPage(page - 1)" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+        </li>
+        <li ng-repeat="_page in pages"><a ng-click="getPage(_page)"><% _page %></a></li>
+        <li>
+        <a ng-click="getPage(page + 1)" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+        </li>
+      </ul>
+    </nav>
+
+  </div>
+
+  <div ng-if="selectedScenario">
+    <% selectedScenario.name %>
+
+    <a ng-click="select(selectedScenario)">BACK</a>
+  </div>
+
+</div>
+
+
