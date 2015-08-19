@@ -30,7 +30,7 @@
 
   <body>
 
-    <div ng-if="context === 'map'">
+    <div ng-if="context === 'map' || context === 'scenarios'">
       <map></map>
     </div>
 
@@ -42,21 +42,15 @@
       <dashboard></dashboard>
     </div>
 
-    <div ng-if="context === 'scenarios'">
-      <scenarios></scenarios>
-    </div>
+    <timeline class="timeline navbar-fixed-bottom"></timeline>
 
-    <div ng-if="context !== 'scenarios'">
-      <timeline class="timeline navbar-fixed-bottom"></timeline>
-    </div>
-
-    <div ng-if="context !== 'scenarios' && context !== 'time'">
+    <div ng-if="context !== 'time'">
       <datamenu></datamenu>
     </div>
 
     <user-menu></user-menu>
 
-    <div ng-if="context === 'map'">
+    <div ng-if="context === 'map' || context === 'scenarios'">
       <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
     </div>
 
@@ -158,10 +152,12 @@
     <script src="/components/omnibox/controllers/line-controller.js"></script>
     <script src="/components/omnibox/controllers/region-controller.js"></script>
     <script src="/components/omnibox/controllers/area-controller.js"></script>
+    <script src="/components/omnibox/controllers/scenarios-controller.js"></script>
     <script src="/components/omnibox/directives/template-directives.js"></script>
     <script src="/components/omnibox/directives/search-directive.js"></script>
     <script src="/components/omnibox/directives/omnibox-directives.js"></script>
     <script src="/components/omnibox/directives/full-details-directive.js"></script>
+    <script src="/components/omnibox/directives/scenarios-directive.js"></script>
 
     <script src="/components/timeline/timeline-service.js"></script>
     <script src="/components/timeline/timeline-directives.js"></script>
@@ -178,10 +174,6 @@
     <script src="/components/time-ctx/time-ctx.js"></script>
     <script src="/components/time-ctx/time-ctx-controller.js"></script>
     <script src="/components/time-ctx/time-ctx-directive.js"></script>
-
-    <script src="/components/scenarios/scenarios.js"></script>
-    <script src="/components/scenarios/scenarios-controller.js"></script>
-    <script src="/components/scenarios/scenarios-directive.js"></script>
 
     <script src="/components/user-menu/user-menu.js"></script>
     <script src="/components/user-menu/user-menu-directive.js"></script>

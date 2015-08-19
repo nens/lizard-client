@@ -15,7 +15,7 @@ angular.module('lizard-nxt')
     Restangular.setBaseUrl(backendDomain);
     Restangular.setDefaultHttpFields({withCredentials: true});
   }
-  Restangular.setRequestSuffix('?page_size=25000');
+  //Restangular.setRequestSuffix('?page_size=25000');
 
   timeseriesResource = Restangular.one('api/v2/timeseries/');
   events = Restangular.one('api/v2/events/');
