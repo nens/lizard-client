@@ -24,6 +24,7 @@ angular.module("lizard-nxt", [
   'data-menu',
   'map',
   'omnibox',
+  'scenarios',
   'restangular',
   'dashboard',
   'time-ctx',

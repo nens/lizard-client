@@ -13,24 +13,8 @@
         <tr ng-repeat="scenario in scenarios | filter: searchScenarios"
           class="scenarios-table-row"
           ng-class="{'selected-scenario': selectedScenario === scenario}" >
-          <td ng-click="select(scenario)" ><i class="fa clickable"
-              ng-class="{'fa-chevron-right': selectedScenario != scenario,
-                         'fa-chevron-down': selectedScenario === scenario}"></i></td>
-          <td ng-click="select(scenario)"><% scenario.name %> <a ng-click="preview(scenario)"> (preview)</a></td>
+          <td ng-click="select(scenario)"><% scenario.name %> </td>
           <td ng-click="select(scenario)" class="clickable text-right" ><% scenario.created | date: 'MMM d, y HH:mm:ss a' %><td>
-          <td class="text-right">
-            <table class="table table-condensed result-table"
-              ng-if="selectedScenario ===
-                  scenario && scenario.result_set.length > 0">
-              <tr ng-repeat="result in scenario.result_set">
-                <td><% result.result_type.name %></td>
-                <td><a href="<% result.attachment_url %>" translate>Download</a></td>
-              </tr>
-            </table>
-            <span ng-if="scenario.result_set.length === 0" translate>
-              No results
-            </span>
-          </td>
         </tr>
       </tbody>
 
@@ -57,6 +41,16 @@
   <div ng-if="selectedScenario">
     <% selectedScenario.name %>
 
+    <table class="table table-condensed result-table">
+      <tr ng-repeat="result in selectedScenario.result_set">
+        <td><% result.result_type.name %></td>
+        <td><a ng-click="preview(result)"> (preview)</a></td>
+        <td><a href="<% result.attachment_url %>" translate>Download</a></td>
+      </tr>
+    </table>
+    <span ng-if="selectedScenario.result_set.length === 0" translate>
+      No results
+    </span>
     <a ng-click="select(selectedScenario)">BACK</a>
   </div>
 

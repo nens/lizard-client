@@ -49,7 +49,7 @@
 
       <div class="button-list-container" id="">
 
-        <div ng-if="context === 'map'">
+        <div ng-if="context === 'map' || context === 'scenarios'">
 
           <div class="button-list-item"
                style="cursor: pointer">
@@ -88,16 +88,6 @@
                title="<% 'View selection' | translate %>"
                ng-class="{'active': menu.box.type === 'area'}">
                <i class="fa fa-square-o"></i>
-            </a>
-          </div>
-
-          <div class="button-list-item"
-               style="cursor: pointer">
-            <a ng-click="menu.box.type = 'scenarios'"
-               class="button-list-link"
-               title="<% 'View selection' | translate %>"
-               ng-class="{'active': menu.box.type === 'area'}">
-               <i class="fa fa-car"></i>
             </a>
           </div>
 

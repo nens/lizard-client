@@ -48,13 +48,11 @@ angular.module('omnibox')
       }
     };
 
-    $scope.preview = function (scenario) {
-      angular.forEach(scenario.result_set, function (result) {
-        if (result.layer_group) {
-          var lg = DataService.createLayerGroup(result.layer_group);
-          DataService.toggleLayerGroup(lg);
-        }
-      });
+    $scope.preview = function (result) {
+      if (result.layer_group) {
+        var lg = DataService.createLayerGroup(result.layer_group);
+        DataService.toggleLayerGroup(lg);
+      }
     };
 
   }
