@@ -21,8 +21,8 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "1.2.27",
-    "angular-mocks": "1.2.27",
+    "angular": "1.4.3",
+    "angular-mocks": "1.4.3",
     "bootstrap": "~3.1.1",
     "d3": "~3.4.11",
     "leaflet-dist": "git@github.com:Leaflet/Leaflet.git",
@@ -38,7 +38,7 @@
     "angular-gettext": "~2.1.0"
   },
   "resolutions": {
-    "angular": "1.2.27"
+    "angular": "1.4.3"
   },
   "overrides": {
     "leaflet.markercluster": {

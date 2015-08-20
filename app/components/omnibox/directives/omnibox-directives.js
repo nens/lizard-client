@@ -30,7 +30,6 @@ angular.module("omnibox")
         // of the directive's element and the first child of that element is
         // transformed into an element and replaced by the point/line/area
         // template. Please replace if you know a nicer way..
-        console.log(angular.element(element.children()[1]).children()[0]);
         var boxTypeCards = angular.element(
           angular.element(element.children()[1]).children()[0]
         ).replaceWith(template);

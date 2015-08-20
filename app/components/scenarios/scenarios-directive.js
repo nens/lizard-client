@@ -2,7 +2,8 @@
 
 angular.module('omnibox')
   .directive('scenarios', function () {
-    var link =  function () {
+    var link =  function (scope) {
+      console.log('i \'m getting another caller: ', scope.$$id)
     };
 
   return {

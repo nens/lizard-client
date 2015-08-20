@@ -4,8 +4,9 @@ angular.module('omnibox')
 .controller("ScenariosCtrl", [
   "$scope",
   "Restangular",
+  "MapService",
   "DataService",
-  "State", function ($scope, Restangular, DataService, State) {
+  "State", function ($scope, Restangular, MapService, DataService, State) {
 
     $scope.scenarios = [];
     $scope.selectedScenario = null;
@@ -49,9 +50,12 @@ angular.module('omnibox')
     };
 
     $scope.preview = function (result) {
-      if (result.layer_group) {
-        var lg = DataService.createLayerGroup(result.layer_group);
-        DataService.toggleLayerGroup(lg);
+      if (result.layer_group && !result.lg) {
+        result.lg = DataService.createLayerGroup(result.layer_group);
+        MapService.fitBounds(result.lg.spatialBounds);
+      }
+      if (result.lg) {
+        DataService.toggleLayerGroup(result.lg);
       }
     };
 
