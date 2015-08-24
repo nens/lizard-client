@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('omnibox')
+angular.module('scenarios')
   .directive('scenarios', function () {
     var link =  function (scope) {
     };

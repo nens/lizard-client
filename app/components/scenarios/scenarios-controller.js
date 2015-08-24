@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('omnibox')
+angular.module('scenarios')
 .controller("ScenariosCtrl", [
   "$scope",
   "Restangular",
