@@ -49,8 +49,8 @@
       </span>
 
       <table class="table table-condensed result-table">
-        <tr class="clickable"
-          ng-class="{'selected-result': result.lg._active}"
+        <tr
+          ng-class="{'selected-result': result.lg._active, clickable: result.layer_group}"
           ng-repeat="result in selectedScenario.result_set">
           <td ng-click="preview(result)"><% result.result_type.name %> <a ng-if="result.layer_group">(preview)</a></td>
           <td><a href="<% result.attachment_url %>" translate>Download</a></td>
