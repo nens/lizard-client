@@ -15,8 +15,7 @@
           class="scenarios-table-body"
           ng-style="{'height':tableHeight}">
           <tr ng-repeat="scenario in scenarios | filter: query"
-            class="scenarios-table-row"
-            ng-class="{'selected-scenario': selectedScenario === scenario}" >
+            class="scenarios-table-row">
             <td ng-click="select(scenario)"><% scenario.name %> </td>
             <td ng-click="select(scenario)" class="clickable text-right" ><% scenario.created | date: 'MMM d, y HH:mm:ss a' %><td>
           </tr>
@@ -50,8 +49,10 @@
       </span>
 
       <table class="table table-condensed result-table">
-        <tr class="clickable" ng-repeat="result in selectedScenario.result_set">
-          <td ng-click="preview(result)"><% result.result_type.name %> <a>(preview)</a></td>
+        <tr class="clickable"
+          ng-class="{'selected-result': result.lg._active}"
+          ng-repeat="result in selectedScenario.result_set">
+          <td ng-click="preview(result)"><% result.result_type.name %> <a ng-if="result.layer_group">(preview)</a></td>
           <td><a href="<% result.attachment_url %>" translate>Download</a></td>
         </tr>
       </table>
