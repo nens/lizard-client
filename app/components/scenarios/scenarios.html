@@ -11,13 +11,13 @@
 
       <table class="table table-hover scenarios-table">
         <tbody
-          if="scenarios.length > 0"
+          ng-if="scenarios.length > 0"
           class="scenarios-table-body"
-          ng-style="{'height':tableHeight}">
+          >
           <tr ng-repeat="scenario in scenarios | filter: query"
-            class="scenarios-table-row">
-            <td ng-click="select(scenario)"><% scenario.name %> </td>
-            <td ng-click="select(scenario)" class="clickable text-right" ><% scenario.created | date: 'MMM d, y HH:mm:ss a' %><td>
+            class="scenarios-table-row clickable">
+            <td ng-click="select(scenario)" title="<% scenario.model_name %>"><% scenario.name %> </td>
+            <td ng-click="select(scenario)" class="clickable text-right" ><% scenario.created | date: 'M/d/y HH:mm:ss' %></td>
           </tr>
         </tbody>
 
@@ -45,10 +45,19 @@
       <a ng-click="select(selectedScenario)" class="clickable" title="Terug"><i class="fa fa-arrow-left"></i></a>
 
       <span id="title-holder" class="card-title-text ng-binding">
-        <% selectedScenario.name %>
+        <% selectedScenario.name %> - 
+        <a href="https://models.lizard.net/model_databank/models/<% selectedScenario.model_name %>/commits/" target="_blank" title="Go to the Model database"><% selectedScenario.model_name %></a> #<% selectedScenario.model_revision %>
       </span>
 
       <table class="table table-condensed result-table">
+        <tr>
+          <td>Started (simulation time)</td>
+          <td><% selectedScenario.start_time_sim | date: 'M/d/y HH:mm:ss' %></td>
+        </tr>
+        <tr>
+          <td>Ended (simulation time)</td>
+          <td><% selectedScenario.end_time_sim | date: 'M/d/y HH:mm:ss' %></td>
+        </tr>
         <tr
           ng-class="{'selected-result': result.lg._active, clickable: result.layer_group}"
           ng-repeat="result in selectedScenario.result_set">
