@@ -1,4 +1,3 @@
-
 /**
  * Initialise angular.module('scenarios')
  *

@@ -1,52 +1,75 @@
-<div class="scenarios-wrapper" ng-controller="ScenariosCtrl">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-7">
-        <!--<a ng-click="switchContext('map')" class="btn btn-default"><i class="fa fa-arrow-left"></i></a>-->
-        <h4 translate>3Di results</h4>
-      </div>
-   </div>
-    <div class="row">
-      <div class="col-md-11 scenarios-inner">
+<div class="card" ng-controller="ScenariosCtrl">
+  <div class="card-content">
+    <div ng-if="loading">
+      <i class="fa fa-refresh fa-spin"></i>
+    </div>
 
-        <input type="text" class="form-control" ng-model="search" placeholder="Zoek">
-        <table class="table table-hover scenarios-table">
-          <tbody
-            if="scenarios.length > 0"
-            class="scenarios-table-body"
-            ng-style="{'height':tableHeight}">
-            <tr ng-repeat="scenario in scenarios | filter: search"
-              class="scenarios-table-row"
-              ng-class="{'selected-scenario': selectedScenario === scenario}" >
-              <td ng-click="select(scenario)" ><i class="fa clickable"
-                  ng-class="{'fa-chevron-right': selectedScenario != scenario,
-                             'fa-chevron-down': selectedScenario === scenario}"></i></td>
-              <td ng-click="select(scenario)"><% scenario.name %> <a ng-click="preview(scenario)"> (preview)</a></td>
-              <td ng-click="select(scenario)" class="clickable text-right" ><% scenario.created | date: 'MMM d, y HH:mm:ss a' %><td>
-              <td class="text-right">
-                <table class="table table-condensed result-table"
-                  ng-if="selectedScenario ===
-                      scenario && scenario.result_set.length > 0">
-                  <tr ng-repeat="result in scenario.result_set">
-                    <td><% result.result_type.name %></td>
-                    <td><a href="<% result.attachment_url %>" translate>Download</a></td>
-                  </tr>
-                </table>
-                <span ng-if="scenario.result_set.length === 0" translate>
-                  No results
-                </span>
-              </td>
-            </tr>
-          </tbody>
+    <div ng-if="selectedScenario === null">
+      <span id="title-holder" class="card-title-text ng-binding" translate>
+        3di resultaten
+      </span>
 
-        </table>
+      <table class="table table-hover scenarios-table">
+        <tbody
+          ng-if="scenarios.length > 0"
+          class="scenarios-table-body"
+          >
+          <tr ng-repeat="scenario in scenarios | filter: query"
+            class="scenarios-table-row clickable">
+            <td ng-click="select(scenario)" title="<% scenario.model_name %>"><% scenario.name %> </td>
+            <td ng-click="select(scenario)" class="clickable text-right" ><% scenario.created | date: 'M/d/y HH:mm:ss' %></td>
+          </tr>
+        </tbody>
 
+      </table>
 
-      </div>
+      <nav>
+        <ul class="pagination">
+          <li>
+          <a ng-click="getPage(page - 1)" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+          </li>
+          <li ng-repeat="_page in pages"><a ng-click="getPage(_page)"><% _page %></a></li>
+          <li>
+          <a ng-click="getPage(page + 1)" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+          </li>
+        </ul>
+      </nav>
 
     </div>
 
-  </div>
+    <div ng-if="selectedScenario">
+      <a ng-click="select(selectedScenario)" class="clickable" title="Terug"><i class="fa fa-arrow-left"></i></a>
+
+      <span id="title-holder" class="card-title-text ng-binding">
+        <% selectedScenario.name %> - 
+        <a href="https://models.lizard.net/model_databank/models/<% selectedScenario.model_name %>/commits/" target="_blank" title="Go to the Model database"><% selectedScenario.model_name %></a> #<% selectedScenario.model_revision %>
+      </span>
+
+      <table class="table table-condensed result-table">
+        <tr>
+          <td><span translate>Started (simulation time)</span></td>
+          <td><% selectedScenario.start_time_sim | date: 'M/d/y HH:mm:ss' %></td>
+        </tr>
+        <tr>
+          <td><span translate>Ended (simulation time)</span></td>
+          <td><% selectedScenario.end_time_sim | date: 'M/d/y HH:mm:ss' %></td>
+        </tr>
+        <tr
+          ng-class="{'selected-result': result.lg._active, clickable: result.layer_group}"
+          ng-repeat="result in selectedScenario.result_set">
+          <td ng-click="preview(result)"><% result.result_type.name %> <a ng-if="result.layer_group" translate>(preview)</a></td>
+          <td><a href="<% result.attachment_url %>" translate>Download</a></td>
+        </tr>
+      </table>
+      <span ng-if="selectedScenario.result_set.length === 0" translate>
+        No results
+      </span>
+    </div>
+
+  </div><!-- card-content-->
+
 </div>
-
-

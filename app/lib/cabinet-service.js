@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('lizard-nxt')
-  .service("CabinetService", ["$q", "Restangular", "backendDomain", "gettextCatalog",
+  .service("CabinetService", [
+           "$q", "Restangular", "backendDomain", "gettextCatalog",
   function ($q, Restangular, backendDomain, gettextCatalog) {
 
   var geocodeResource,
@@ -15,10 +16,9 @@ angular.module('lizard-nxt')
     Restangular.setBaseUrl(backendDomain);
     Restangular.setDefaultHttpFields({withCredentials: true});
   }
-  Restangular.setRequestSuffix('?page_size=25000');
 
   timeseriesResource = Restangular.one('api/v2/timeseries/');
-  events = Restangular.one('api/v2/events/');
+  events = Restangular.one('api/v2/events/?page_size=25000');
   var regions = Restangular.one('api/v2/regions/');
 
   // Wms getFeatureInfo goes through a proxy. Specify url as a param.

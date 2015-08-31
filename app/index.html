@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html ng-app="lizard-nxt" ng-controller="MasterCtrl" ng-keydown="keyPress($event)" >
   <head>
+
+    <base href="/">
+
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -30,7 +33,7 @@
 
   <body>
 
-    <div ng-if="context === 'map'">
+    <div ng-if="context === 'map' || context === 'scenarios'">
       <map></map>
     </div>
 
@@ -42,21 +45,15 @@
       <dashboard></dashboard>
     </div>
 
-    <div ng-if="context === 'scenarios'">
-      <scenarios></scenarios>
-    </div>
+    <timeline class="timeline navbar-fixed-bottom"></timeline>
 
-    <div ng-if="context !== 'scenarios'">
-      <timeline class="timeline navbar-fixed-bottom"></timeline>
-    </div>
-
-    <div ng-if="context !== 'scenarios' && context !== 'time'">
+    <div ng-if="context !== 'time'">
       <datamenu></datamenu>
     </div>
 
     <user-menu></user-menu>
 
-    <div ng-if="context === 'map'">
+    <div ng-if="context === 'map' || context === 'scenarios'">
       <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
     </div>
 
@@ -180,8 +177,8 @@
     <script src="/components/time-ctx/time-ctx-directive.js"></script>
 
     <script src="/components/scenarios/scenarios.js"></script>
-    <script src="/components/scenarios/scenarios-controller.js"></script>
     <script src="/components/scenarios/scenarios-directive.js"></script>
+    <script src="/components/scenarios/scenarios-controller.js"></script>
 
     <script src="/components/user-menu/user-menu.js"></script>
     <script src="/components/user-menu/user-menu-directive.js"></script>
