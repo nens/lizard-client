@@ -5,7 +5,7 @@
     </div>
 
     <div ng-if="selectedScenario === null">
-      <span id="title-holder" class="card-title-text ng-binding">
+      <span id="title-holder" class="card-title-text ng-binding" translate>
         3di resultaten
       </span>
 
@@ -51,17 +51,17 @@
 
       <table class="table table-condensed result-table">
         <tr>
-          <td>Started (simulation time)</td>
+          <td><span translate>Started (simulation time)</span></td>
           <td><% selectedScenario.start_time_sim | date: 'M/d/y HH:mm:ss' %></td>
         </tr>
         <tr>
-          <td>Ended (simulation time)</td>
+          <td><span translate>Ended (simulation time)</span></td>
           <td><% selectedScenario.end_time_sim | date: 'M/d/y HH:mm:ss' %></td>
         </tr>
         <tr
           ng-class="{'selected-result': result.lg._active, clickable: result.layer_group}"
           ng-repeat="result in selectedScenario.result_set">
-          <td ng-click="preview(result)"><% result.result_type.name %> <a ng-if="result.layer_group">(preview)</a></td>
+          <td ng-click="preview(result)"><% result.result_type.name %> <a ng-if="result.layer_group" translate>(preview)</a></td>
           <td><a href="<% result.attachment_url %>" translate>Download</a></td>
         </tr>
       </table>

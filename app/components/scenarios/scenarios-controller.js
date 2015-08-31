@@ -8,11 +8,14 @@ angular.module('scenarios')
   "DataService",
   "State", function ($scope, Restangular, MapService, DataService, State) {
 
+    var PAGE_SIZE = 10.0,
+        TABLE_MARGIN = 150;
+
     $scope.scenarios = [];
     $scope.selectedScenario = null;
 
     // It is pretty imposible to make the table the right length without js.
-    $scope.tableHeight = window.innerHeight - 150 + 'px';
+    $scope.tableHeight = window.innerHeight - TABLE_MARGIN + 'px';
 
     $scope.page = 1;
 
@@ -25,10 +28,8 @@ angular.module('scenarios')
         .then(function (response) {
           $scope.loading = false;
           // get the amount of pages for the ng-repeater
-          var pages = Math.ceil(response.count / 10.0);
-          $scope.pages = Array
-                          .apply(null, new Array(pages))
-                          .map(function (_, i) {return i + 1;});
+          var pages = Math.ceil(response.count / PAGE_SIZE);
+          $scope.pages = _.range(1, pages + 1);
           $scope.scenarios = response.results;
         });
     };
