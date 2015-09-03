@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.0.3) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 2.0.7 (2015-9-3)
+---------------------
 
 - Change scenarios page to omnibox.
 
