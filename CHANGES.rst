@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.0.3) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 2.0.8 (2015-9-4)
+---------------------
 
 - Aggregation tool cannot handle paged responses; cap page_size at 100.
 
