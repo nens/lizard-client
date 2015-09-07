@@ -8,6 +8,8 @@ Unreleased (2.0.3) (XXXX-XX-XX)
 
 - Fix ludicrous rain export button.
 
+- Fix column width of rain statistics.
+
 - Aggregation tool cannot handle paged responses; cap page_size at 100.
 
 
