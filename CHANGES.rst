@@ -6,6 +6,8 @@ Unreleased (2.0.3) (XXXX-XX-XX)
 
 - Fix buttons showing when card is minimized.
 
+- Fix ludicrous rain export button.
+
 - Aggregation tool cannot handle paged responses; cap page_size at 100.
 
 
