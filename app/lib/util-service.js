@@ -613,7 +613,7 @@ angular.module('lizard-nxt')
     function identity(d) { return d; }
   })();
 
-  this.MIN_TIME = (new Date("Jan 01, 1970")).getTime();
+  this.MIN_TIME = (new Date("Jan 01, 1900")).getTime();
   this.MAX_TIME = (new Date()).getTime() + 24 * 60 * 60 * 1000;
   this.TIMELINE_LEFT_MARGIN = 60;
   this.TIMELINE_RIGHT_MARGIN = 40;

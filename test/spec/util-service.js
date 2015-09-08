@@ -94,4 +94,10 @@ describe('Testing util-service functions', function () {
                                           true);
     expect(result).toEqual(expectedResult);
   });
+
+  it('should return MIN_TIME for times earlier than MIN_TIME', function () {
+    var early = UtilService.MIN_TIME - 1;
+    var min = UtilService.getMinTime(early);
+    expect(min).toBe(UtilService.MIN_TIME);
+  });
 });
