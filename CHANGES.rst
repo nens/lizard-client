@@ -6,6 +6,8 @@ Unreleased (2.0.3) (XXXX-XX-XX)
 
 - Aggregation tool cannot handle paged responses; cap page_size at 100.
 
+- Widen time extent to include data from as early as 1900.
+
 
 Release 2.0.7 (2015-9-3)
 ---------------------
