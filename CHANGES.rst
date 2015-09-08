@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.1.0) (XXXX-XX-XX)
 ---------------------
--
+
+- Handle new and old landuse labels in filters.
 
 
 Release 2.0.7 (2015-9-3)

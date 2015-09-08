@@ -461,21 +461,30 @@ angular.module('lizard-nxt-filters')
 
 });
 
+/**
+ * Expects a string of '<anything - ...> - <source> - <value>' or only '<value>'
+ * Return the last part (value).
+ */
 angular.module('lizard-nxt-filters')
   .filter('discreteRasterType', function () {
   return function (input) {
-    return input.match(/^.*-.*-.*$/g)
-      ? input.split(' - ')[2]
-      : input; // return full label for non-verbose labeling (e.g 'soil')
+    var labelParts = input.split(' - ');
+    return labelParts[labelParts.length - 1];
   };
 });
 
+/**
+ * Expects a string of '<anything - ...> - <source> - <value>' or only '<value>'
+ * Try to return the 2nd to last part (source), if it does not have so many
+ * parts, return empty string.
+ */
 angular.module('lizard-nxt-filters')
   .filter('discreteRasterSource', function () {
   return function (input) {
-    return input.match(/^.*-.*-.*$/g)
-      ? input.split(' - ')[1]
-      : ""; // if no source is given, return empty string
+    var labelParts = input.split(' - ');
+    var output = labelParts[labelParts.length - 2];
+    if (output === undefined) { output = ''; }
+    return output;
   };
 });
 
