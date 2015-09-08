@@ -17,7 +17,8 @@
          keys="{x: 0, y: 1}"
          temporal="omnibox.state.temporal">
        </graph>
-       <div class="card-tools">
+       <div class="card-tools"
+        ng-class="{hidden: !fullDetails}">
          <a ng-click="recurrenceTimeToggle()"
             ng-class="{'active': rrc.active}" class="btn btn-default btn-xs"
             title="<% 'Extra statistieken, herhalingstijden' | translate %>"
@@ -31,7 +32,7 @@
            filename="neerslag.csv"
            csv-header="['Latitude', 'Longitude', 'Datestamp', 'Timestamp', 'Rain (mm)']">
            <i class="fa fa-share-square-o"></i>
-           <div translate>Export</div>
+           <span translate>Export</span>
          </a>
        </div>
      </div>
@@ -47,7 +48,7 @@
             <caption translate>Recurrence times (RT)</caption>
             <thead>
               <tr>
-                <td class="larger-font-card-table" translate>Start</th>
+                <td class="col-md-4 larger-font-card-table" translate>Start</th>
                 <td class="larger-font-card-table" translate>Duration</th>
                 <td class="larger-font-card-table text-right" translate translate-comment="millimeters">mm</th>
                 <td class="larger-font-card-table" translate translate-comment="Recurrence Time">RT</th>
