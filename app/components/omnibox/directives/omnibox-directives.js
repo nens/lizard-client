@@ -51,7 +51,7 @@ angular.module("omnibox")
         scope.box.fullDetailCards = {};
         angular.forEach(Object.keys(scope.box.content), function (key) {
           scope.box.fullDetailCards[key] = true;
-          if (key === 'waterchain') {
+          if (key.indexOf('waterchain') !== -1) {
             scope.box.fullDetailCards.timeseries = true;
           }
         });

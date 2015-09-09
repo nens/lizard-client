@@ -13,7 +13,7 @@
 	</div>
 
   <div ng-repeat="(slug, lg) in box.content"
-       ng-if="slug !== 'waterchain'"
+       ng-if="slug.indexOf('waterchain') === -1"
        class="card active" id="card-<% slug %>">
 
     <div

@@ -45,6 +45,12 @@ angular.module('omnibox')
         // This function deletes scope.box.content for specific layergroups; this implies
         // skippingthe key 'timeseries' since this doesn't denote a layergroup!
         angular.forEach($scope.box.content, function (value, key) {
+          if (key === 'waterchain') {
+            var newkey = _.find(State.layerGroups.active, function (val) {return val.indexOf('waterchain') !== -1; });
+            if (newkey !== undefined) {
+              key = newkey;
+            }
+          }
           if (State.layerGroups.active.indexOf(key) === -1
               && key !== 'timeseries') {
             delete $scope.box.content[key];
@@ -92,12 +98,22 @@ angular.module('omnibox')
            */
 
           $scope.box.content[response.layerGroupSlug] = lGContent;
+          // hack to allow for different asset layers as long as their name
+          // contains 'waterchain'
+          // do the same trick for waterchain_grid utfgrid layer
+          // the grid layer should have to same slug as the groupLayer + '_grid'
+          if (response.layerGroupSlug.indexOf('waterchain') !== -1) {
+            $scope.box.content['waterchain'] = lGContent;
+            var gridKey = response.layerGroupSlug + '_grid';
+            $scope.box.content.waterchain.layers['waterchain_grid'] = lGContent.layers[gridKey];
+          }
 
         } else {
 
           if ($scope.box.content[response.layerGroupSlug]) {
 
-            if (response.layerGroupSlug === 'waterchain') {
+            if (response.layerGroupSlug.indexOf('waterchain') !== -1) {
+              delete $scope.box.content[response.layerGroupSlug];
               delete $scope.box.content.waterchain;
               delete $scope.box.content.timeseries;
 

@@ -112,13 +112,17 @@ angular.module('omnibox')
       };
 
       var drawUTFGridFeedback = function (content) {
-        if (content.waterchain && content.waterchain.layers.waterchain_grid) {
+        var waterchainKey = false;
+        if (content !== undefined && _.keys(content)[0].indexOf('waterchain') !== -1) {
+          waterchainKey = _.keys(content)[0];
+        }
+        if (waterchainKey && content[waterchainKey].layers.waterchain_grid) {
           var feature = {
             type: 'Feature',
-            geometry: angular.fromJson(content.waterchain.layers.waterchain_grid.data.geom),
+            geometry: angular.fromJson(content[waterchainKey].layers.waterchain_grid.data.geom),
             properties: {
-              entity_name: content.waterchain.layers.waterchain_grid.data.entity_name,
-              type: content.waterchain.layers.waterchain_grid.data.type || ''
+              entity_name: content[waterchainKey].layers.waterchain_grid.data.entity_name,
+              type: content[waterchainKey].layers.waterchain_grid.data.type || ''
             }
           };
           ClickFeedbackService.drawGeometry(
