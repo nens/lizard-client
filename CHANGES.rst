@@ -7,6 +7,26 @@ Unreleased (2.1.0) (XXXX-XX-XX)
 - Handle new and old landuse labels in filters.
 
 
+Release 2.0.9 (2015-9-11)
+---------------------
+
+- Allow asset layers to have different name than 'waterchain', as long as 'waterchain' is in the layergroup slug, it should work. Grid layers should be named <layergroup_slug>_grid.
+
+- Fix buttons showing when card is minimized.
+
+- Fix ludicrous rain export button.
+
+- Fix column width of rain statistics.
+
+- Widen time extent to include data from as early as 1900.
+
+
+Release 2.0.8 (2015-9-4)
+---------------------
+
+- Aggregation tool cannot handle paged responses; cap page_size at 100.
+
+
 Release 2.0.7 (2015-9-3)
 ---------------------
 
@@ -21,6 +41,7 @@ Release 2.0.7 (2015-9-3)
 
 Release 2.0.6 (2015-8-13)
 ---------------------
+
 -
 
 
@@ -32,6 +53,7 @@ Release 2.0.5 (2015-8-13)
 
 Release 2.0.4 (2015-8-13)
 ---------------------
+
 -
 
 
@@ -48,8 +70,10 @@ Release 2.0.2 (2015-8-6)
 
 - API is now at v2.
 
+
 Release 2.0.1 (2015-8-6)
 ---------------------
+
 -
 
 
@@ -93,6 +117,7 @@ Release 1.5.14 (2015-7-10)
 
 Release 1.5.13 (2015-7-3)
 ---------------------
+
 - Fix bug wopping spline interpolation bubbles in ts graphs.
 
 
@@ -120,11 +145,13 @@ Release 1.5.9 (2015-6-5)
 
 Release 1.5.8 (2015-6-1)
 ---------------------
+
 -
 
 
 Release 1.5.7 (2015-6-1)
 ---------------------
+
 -
 
 
