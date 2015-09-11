@@ -1,14 +1,10 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.0.3) (XXXX-XX-XX)
+Unreleased (2.0.9) (XXXX-XX-XX)
 ---------------------
 
 - Allow asset layers to have different name than 'waterchain', as long as 'waterchain' is in the layergroup slug, it should work. Grid layers should be named <layergroup_slug>_grid.
-
-
-Release 2.0.8 (2015-9-4)
----------------------
 
 - Fix buttons showing when card is minimized.
 
@@ -16,9 +12,14 @@ Release 2.0.8 (2015-9-4)
 
 - Fix column width of rain statistics.
 
+- Widen time extent to include data from as early as 1900.
+
+
+Release 2.0.8 (2015-9-4)
+---------------------
+
 - Aggregation tool cannot handle paged responses; cap page_size at 100.
 
-- Widen time extent to include data from as early as 1900.
 
 
 Release 2.0.7 (2015-9-3)
