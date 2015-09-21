@@ -35,7 +35,7 @@ angular.module('omnibox')
       // on portal by adding: components: 'country:NL'.
       var prom = CabinetService.geocode.get({
         address: searchString,
-        language: 'nl', // Return results in Dutch
+        language: state.language, // Preferred language of search results.
         bounds: // Prefer results from the current viewport
           state.spatial.bounds.getSouth() + ',' +
           state.spatial.bounds.getWest() + '|' +

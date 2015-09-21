@@ -8,6 +8,8 @@ Unreleased (2.1.0) (XXXX-XX-XX)
 
 - Download timeseries as csv directly from server by using format=csv.
 
+- Use the current language of portal or url in search results.
+
 
 Release 2.0.9 (2015-9-11)
 ---------------------
