@@ -6,6 +6,8 @@ Unreleased (2.1.0) (XXXX-XX-XX)
 
 - Handle new and old landuse labels in filters.
 
+- Use the current language of portal or url in search results.
+
 
 Release 2.0.9 (2015-9-11)
 ---------------------

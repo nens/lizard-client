@@ -136,7 +136,7 @@ angular.module('lizard-nxt')
      * @param {str} lang language code according to ISO-639-1.
      */
     var setLanguage = function (lang) {
-      var defaultLang = 'nl';
+      var defaultLang = State.language;
 
       if (lang === undefined && defaultLocale) {
         lang = defaultLocale.slice(0,2); // language is the first 2 places of
@@ -152,6 +152,10 @@ angular.module('lizard-nxt')
       }
 
       gettextCatalog.setCurrentLanguage(lang);
+
+      // Store language in global state object. Among other, it is used for
+      // searchresults.
+      State.language = lang;
     };
 
     /**

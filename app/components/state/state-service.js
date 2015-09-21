@@ -48,6 +48,9 @@ angular.module('global-state')
       }
     });
 
+    // Default language.
+    state.language = 'nl';
+
     // State of data layer groups, stores slugs of all layergroups and the
     // active layergroups.
     state.layerGroups = {
