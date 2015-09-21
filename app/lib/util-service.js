@@ -43,6 +43,20 @@ angular.module('lizard-nxt')
 
 
   /**
+   * Returns true for <protocol>:<domain>.
+   * Or www with a domain. Both options might include paths, query params
+   * and anchors. It does not return true for 'henkie.com' but basically
+   * everything else is matched.
+   *
+   * @param  {str}  string string to test
+   * @return {Boolean} true for urls, false otherwise.
+   */
+  this.isUrl = function (string) {
+    return /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/.test(string);
+  };
+
+
+  /**
    * @function fixTouch
    * @memberOf UtilService
    * @summary sets x and y for touch event.

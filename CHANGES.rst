@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.1.0) (XXXX-XX-XX)
 ---------------------
 
+- Create hyperlink elements for urls in getFeatureInfo response.
+
 - Handle new and old landuse labels in filters.
 
 

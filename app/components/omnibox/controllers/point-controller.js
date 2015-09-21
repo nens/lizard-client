@@ -157,6 +157,8 @@ angular.module('omnibox')
       }
     };
 
+    $scope.isUrl = UtilService.isUrl;
+
     // CSV formatter
     $scope.formatCSVColumns = function (data) {
       return UtilService.formatCSVColumns(data, State.spatial.here);
