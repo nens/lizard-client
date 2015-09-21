@@ -6,6 +6,8 @@ Unreleased (2.1.0) (XXXX-XX-XX)
 
 - Handle new and old landuse labels in filters.
 
+- Download timeseries as csv directly from server by using format=csv.
+
 
 Release 2.0.9 (2015-9-11)
 ---------------------

@@ -93,22 +93,10 @@
    <div class="card-tools"
     ng-class="{hidden: !fullDetails}">
      <a
+       href="<% timeseries.selectedTimeseries.url
+       + 'data/?format=csv&start=' + timeState.start + '&end=' + timeState.end %>"
        class="btn btn-default btn-xs"
-       title="<% 'Export info card data' | translate %>"
-       ng-csv="$parent.formatCSVColumns(timeseries.selectedTimeseries.events)"
-       filename="<%
-         timeseries.selectedTimeseries.location.name
-         + ', '
-         + timeseries.selectedTimeseries.parameter_referenced_unit.parameter_short_display_name
-         %>.csv"
-       csv-header="[
-         'Latitude',
-         'Longitude',
-         'Datestamp',
-         'Timestamp',
-         timeseries.selectedTimeseries.parameter_referenced_unit.referenced_unit_short_display_name + ' min',
-         timeseries.selectedTimeseries.parameter_referenced_unit.referenced_unit_short_display_name + ' max'
-       ]">
+       title="<% 'Export info card data' | translate %>">
        <i class="fa fa-share-square-o"></i>
        Exporteer
      </a>
