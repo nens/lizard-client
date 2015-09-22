@@ -24,6 +24,7 @@ module.exports = function (grunt) {
   require('time-grunt')(grunt);
 
   grunt.loadNpmTasks('grunt-connect-proxy');
+  grunt.loadNpmTasks('grunt-tx-source-upload');
 
   // Add task to extract and compile translation strings. Use nggettext_extract
   // to extract all translatable strings from the app. And use nggettext_compile
@@ -398,17 +399,6 @@ module.exports = function (grunt) {
     //   dist: {}
     // },
 
-    imagemin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.{png,jpg,jpeg,gif}',
-          dest: '<%= yeoman.dist %>/images'
-        }]
-      }
-    },
-
     svgmin: {
       dist: {
         files: [{
@@ -524,7 +514,6 @@ module.exports = function (grunt) {
       ],
       dist: [
         'copy:styles',
-        'imagemin',
         'svgmin'
       ]
     },
@@ -554,6 +543,17 @@ module.exports = function (grunt) {
           tag: true
         }
       }
+    },
+
+    'tx-source-upload': {
+      options: {
+        username: grunt.option('txusername'),
+        password: grunt.option('txpassword'),
+        project: 'lizard-client',
+        resource: 'core',
+        i18nType: 'pot'
+      },
+      src: 'po/template.pot'
     }
   });
 
@@ -608,8 +608,15 @@ module.exports = function (grunt) {
     'filerev',
     'usemin',
     'htmlmin',
-    'doxx',
+    'doxx'
+  ]);
+
+  grunt.registerTask('internationalize', [
+    'nggettext_extract', // extract strings from code
+    'tx-source-upload', // upload to transifex
+    'download-po-files',
     'nggettext_compile' // create translations
+
   ]);
 
   grunt.registerTask('release', [
@@ -634,4 +641,37 @@ module.exports = function (grunt) {
     'replace:dist',
     'doxx'
   ]);
+
+  grunt.registerTask('download-po-files',
+    'Task to get languages and po files for each language from transifex',
+    function () {
+      var done = this.async();
+      grunt.log.writeln('Getting available languages');
+      var request = require('request');
+      var fs = require('fs');
+
+      request.get('http://www.transifex.com/api/2/project/lizard-client/resource/core/?details')
+      .auth(grunt.option('txusername'), grunt.option('txpassword'))
+      .on('data', function (response) {
+        getLanguages(JSON.parse(response).available_languages);
+      });
+
+      var getLanguages = function (languages) {
+        var completed_request = 0;
+        languages.forEach(function (lang) {
+          request.get('http://www.transifex.com/api/2/project/lizard-client/resource/core/translation/' + lang.code + '?file')
+          .auth(grunt.option('txusername'), grunt.option('txpassword'))
+          .on('response', function (res) {
+            completed_request++;
+            grunt.log.writeln('Recieved: ' + lang.name);
+            if (completed_request === languages.length) {
+                done();
+            }
+          })
+          .pipe(fs.createWriteStream('po/lizard6_lizard-client_' + lang.code + '.po'));
+        });
+      };
+    }
+  );
+
 };
