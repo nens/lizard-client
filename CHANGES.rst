@@ -4,6 +4,9 @@ Changelog of lizard-nxt client
 Unreleased (2.1.0) (XXXX-XX-XX)
 ---------------------
 
+- Annotate waterchain attributes for translation and use translation filter in
+template.
+
 - Handle new and old landuse labels in filters.
 
 - Download timeseries as csv directly from server by using format=csv.
