@@ -592,6 +592,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'internationalize',
     'clean:dist',
     'wiredep',
     'useminPrepare',
