@@ -6,6 +6,8 @@ Unreleased (2.1.0) (XXXX-XX-XX)
 
 - Handle new and old landuse labels in filters.
 
+- Download timeseries as csv directly from server by using format=csv.
+
 - Use the current language of portal or url in search results.
 
 
