@@ -17,11 +17,14 @@
 */
 
 module.exports = function (grunt) {
-  // loads all the grunt dependencies found in package.json
-  require('load-grunt-tasks')(grunt);
-  require('time-grunt')(grunt);
-
   var modRewrite = require('connect-modrewrite');
+
+  grunt.loadNpmTasks('grunt-html2js');
+  grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-newer');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-wiredep');
+  grunt.loadNpmTasks('grunt-sass');
 
   var appConfig = {
     app: require('./bower.json').appPath,
@@ -508,6 +511,10 @@ module.exports = function (grunt) {
 
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
+    grunt.loadNpmTasks('grunt-autoprefixer');
+    grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+
     if (target === 'dist') {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
     }
@@ -528,62 +535,93 @@ module.exports = function (grunt) {
     'newer:jshint:dev'
   ]);
 
-  grunt.registerTask('build', [
-    'internationalize',
-    'clean:dist',
-    'html2js',
-    'wiredep',
-    'useminPrepare',
-    'sass',
-    'copy:styles',
-    'autoprefixer',
-    'svgmin',
-    'concat',
-    'ngAnnotate',
-    'copy:dist',
-    'cdnify',
-    'cssmin',
-    'filerev',
-    'usemin',
-    'htmlmin',
-    'doxx'
-  ]);
+  grunt.registerTask('build', function () {
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-autoprefixer');
+    grunt.loadNpmTasks('grunt-usemin');
+    grunt.loadNpmTasks('grunt-svgmin');
+    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-ng-annotate');
+    grunt.loadNpmTasks('grunt-google-cdn');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-filerev');
+    grunt.loadNpmTasks('grunt-contrib-htmlmin');
+    grunt.loadNpmTasks('grunt-doxx');
 
-  grunt.registerTask('internationalize', [
-    'nggettext_extract', // extract strings from code
-    'tx-source-upload', // upload to transifex
-    'download-po-files',
-    'nggettext_compile' // create translations
+    grunt.task.run([
+      'internationalize',
+      'clean:dist',
+      'html2js',
+      'wiredep',
+      'useminPrepare',
+      'sass',
+      'copy:styles',
+      'autoprefixer',
+      'svgmin',
+      'concat',
+      'ngAnnotate',
+      'copy:dist',
+      'cdnify',
+      'cssmin',
+      'filerev',
+      'usemin',
+      'htmlmin',
+      'doxx'
+    ]);
+  });
 
-  ]);
+  grunt.registerTask('internationalize', function () {
+    grunt.loadNpmTasks('grunt-angular-gettext');
+    grunt.loadNpmTasks('grunt-tx-source-upload');
 
-  grunt.registerTask('release', [
-    'test',
-    'build',
-    'replace:dist',
-    'releaser:dist'
-  ]);
+    grunt.task.run([
+      'nggettext_extract', // extract strings from code
+      'tx-source-upload', // upload to transifex
+      'download-po-files',
+      'nggettext_compile' // create translations
+    ]);
+  });
 
-  grunt.registerTask('sandbox', [
-    'test',
-    'build',
-    'copy:CNAME',
-    'replace:ghpages',
-    'releaser:ghpages'
-  ]);
+  grunt.registerTask('release', function () {
+    grunt.loadNpmTasks('grunt-text-replace');
 
-  grunt.registerTask('default', [
-    'test',
-    'build',
-    'replace:dist',
-  ]);
+    grunt.task.run([
+      'test',
+      'build',
+      'replace:dist',
+      'releaser:dist'
+    ]);
+  });
+
+  grunt.registerTask('sandbox', function () {
+    grunt.loadNpmTasks('grunt-text-replace');
+
+    grunt.task.run([
+      'test',
+      'build',
+      'copy:CNAME',
+      'replace:ghpages',
+      'releaser:ghpages'
+    ]);
+  });
+
+  grunt.registerTask('default', function () {
+    grunt.loadNpmTasks('grunt-text-replace');
+
+    grunt.task.run([
+      'test',
+      'build',
+      'replace:dist',
+    ]);
+  });
 
   grunt.registerTask('download-po-files',
     'Task to get languages and po files for each language from transifex',
     function () {
+      var request = require('request');
       var done = this.async();
       grunt.log.writeln('Getting available languages');
-      var request = require('request');
       var fs = require('fs');
 
       request.get('http://www.transifex.com/api/2/project/lizard-client/resource/core/?details')

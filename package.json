@@ -26,7 +26,6 @@
     "grunt": "^0.4.1",
     "grunt-angular-gettext": "^2.1.0",
     "grunt-autoprefixer": "^0.7.3",
-    "grunt-connect-proxy": "~0.2",
     "grunt-contrib-clean": "^0.5.0",
     "grunt-contrib-concat": "^0.4.0",
     "grunt-contrib-connect": "^0.7.1",
@@ -56,6 +55,7 @@
     "karma-phantomjs-launcher": "~0.1.4",
     "load-grunt-tasks": "^0.4.0",
     "time-grunt": "^0.3.1"
+    "grunt-tx-source-upload": "^1.0.1"
   },
   "engines": {
     "node": ">=0.10.0"
@@ -64,6 +64,5 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "grunt-tx-source-upload": "^1.0.1"
   }
 }
