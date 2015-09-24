@@ -24,7 +24,7 @@ angular.module('scenarios')
         page = $scope.page;
       }
       $scope.loading = true;
-      Restangular.one('api/v2/scenarios/?page=' + page).get()
+      Restangular.one('api/v2/scenario/?page=' + page).get()
         .then(function (response) {
           $scope.loading = false;
           // get the amount of pages for the ng-repeater
@@ -43,6 +43,10 @@ angular.module('scenarios')
     $scope.select = function (scenario) {
       if ($scope.selectedScenario === null) {
         $scope.selectedScenario = scenario;
+        Restangular.one('api/v2/scenario/' + scenario.id + '/').get()
+          .then(function (response) {
+            angular.extend(scenario, response);
+          });
       } else if (scenario.id === $scope.selectedScenario.id) {
         $scope.selectedScenario = null;
       } else {
