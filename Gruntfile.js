@@ -554,7 +554,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-doxx');
 
     grunt.task.run([
-      'internationalize',
+      'translate',
       'clean:dist',
       'html2js',
       'wiredep',
@@ -577,14 +577,22 @@ module.exports = function (grunt) {
 
   grunt.registerTask('internationalize', function () {
     grunt.loadNpmTasks('grunt-angular-gettext');
-    grunt.loadNpmTasks('grunt-tx-source-upload');
 
     grunt.task.run([
+      'translate',
       'nggettext_extract', // extract strings from code
       'tx-source-upload', // upload to transifex
+    ]);
+  });
+
+  grunt.registerTask('translate', function () {
+    grunt.loadNpmTasks('grunt-angular-gettext');
+    grunt.loadNpmTasks('grunt-tx-source-upload');
+    grunt.task.run([
       'download-po-files',
       'nggettext_compile' // create translations
     ]);
+
   });
 
   grunt.registerTask('release', function () {
@@ -615,6 +623,7 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'test',
+      'internationalize',
       'build',
       'replace:dist',
     ]);
