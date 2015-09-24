@@ -46,16 +46,17 @@
     "grunt-sass": "^0.16.1",
     "grunt-svgmin": "^0.4.0",
     "grunt-text-replace": "~0.3.12",
+    "grunt-tx-source-upload": "^1.0.1",
     "grunt-usemin": "^2.1.1",
     "grunt-wiredep": "^1.7.0",
     "jshint-stylish": "^0.2.0",
     "karma": "0.13",
     "karma-coverage": "~0.2.6",
     "karma-jasmine": "~0.2.0",
+    "karma-junit-reporter": "^0.3.4",
     "karma-phantomjs-launcher": "~0.1.4",
     "load-grunt-tasks": "^0.4.0",
-    "time-grunt": "^0.3.1"
-    "grunt-tx-source-upload": "^1.0.1"
+    "request": "^2.63.0"
   },
   "engines": {
     "node": ">=0.10.0"
@@ -63,6 +64,5 @@
   "scripts": {
     "test": "grunt test"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
