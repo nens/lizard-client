@@ -47,7 +47,10 @@ module.exports = function (grunt) {
         tasks: ['wiredep']
       },
       js: {
-        files: ['<%= yeoman.app %>/<%= yeoman.jsFileDirs %>'],
+        files: [
+        '<%= yeoman.app %>/<%= yeoman.jsFileDirs %>',
+        '!<%= yeoman.app %>/templates.js'
+      ],
         tasks: ['karma:dev', 'newer:jshint:dev'],
       },
       jstemplates: {
