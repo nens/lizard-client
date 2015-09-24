@@ -19,6 +19,7 @@
 module.exports = function (grunt) {
   var modRewrite = require('connect-modrewrite');
 
+  // Load tasks used by grunt watch
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-newer');
