@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.0.10) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 2.0.10 (2015-9-29)
+---------------------
 
 - Go to detail view when needed.
 
