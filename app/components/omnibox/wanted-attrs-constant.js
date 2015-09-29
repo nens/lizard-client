@@ -1,16 +1,19 @@
+'use strict;'
+
 angular.module('omnibox')
-  .constant("WantedAttributes", {
-  bridge: {
+.service("WantedAttributes", ["gettext", function (gettext) {
+
+  this.bridge = {
     rows: [
       {
-        keyName: "Type",
+        keyName: gettext("Type"),
         attrName: "type",
         ngBindValue: "waterchain.layers.waterchain_grid.data.type",
         valueSuffix: "",
         defaultValue: "Liggerbrug"
       },
       {
-        keyName: "Breedte",
+        keyName: gettext("Width"),
         attrName: "width",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.width | niceNumberOrEllipsis: 2",
@@ -18,7 +21,7 @@ angular.module('omnibox')
         defaultValue: 8
       },
       {
-        keyName: "Lengte",
+        keyName: gettext("Length"),
         attrName: "length",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.length | niceNumberOrEllipsis: 2",
@@ -26,7 +29,7 @@ angular.module('omnibox')
         defaultValue: 17
       },
       {
-        keyName: "Hoogte",
+        keyName: gettext("Height"),
         attrName: "height",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.height | niceNumberOrEllipsis: 2",
@@ -34,18 +37,19 @@ angular.module('omnibox')
         defaultValue: 2
       }
     ]
-  },
-  channel_Boezem: {
+  };
+
+  this.channel_Boezem = {
     rows: [
       {
-        keyName: "Naam",
+        keyName: gettext("Name"),
         attrName: "display_name",
         ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "Watergang"
       },
       {
-        keyName: "Type",
+        keyName: gettext("Type"),
         attrName: "type",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.type",
@@ -53,11 +57,12 @@ angular.module('omnibox')
         defaultValue: "Boezem"
       }
     ]
-  },
-  crossprofile: {
+  };
+
+  this.crossprofile = {
     rows: [
       {
-        keyName: "Type",
+        keyName: gettext("Type"),
         attrName: "type",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.type | niceNumberOrEllipsis: 2",
@@ -65,11 +70,12 @@ angular.module('omnibox')
         defaultValue: "Dwarsdoorsnede"
       }
     ]
-  },
-  culvert: {
+  };
+
+  this.culvert = {
     rows: [
       {
-        keyName: "Breedte",
+        keyName: gettext("Width"),
         attrName: "width",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.width | niceNumberOrEllipsis: 2",
@@ -77,7 +83,7 @@ angular.module('omnibox')
         defaultValue: "2"
       },
       {
-        keyName: "Lengte",
+        keyName: gettext("Length"),
         attrName: "length",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.length | niceNumberOrEllipsis: 2",
@@ -85,7 +91,7 @@ angular.module('omnibox')
         defaultValue: "8"
       },
       {
-        keyName: "Hoogte",
+        keyName: gettext("Height"),
         attrName: "height",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.height | niceNumberOrEllipsis: 2",
@@ -93,7 +99,7 @@ angular.module('omnibox')
         defaultValue: "1.5"
       },
       {
-        keyName: "Materiaal",
+        keyName: gettext("Material"),
         attrName: "material",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.material | lookupCulvertMaterial",
@@ -101,7 +107,7 @@ angular.module('omnibox')
         defaultValue: "beton"
       },
       {
-        keyName: "Vorm",
+        keyName: gettext("Shape"),
         attrName: "shape",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.shape | lookupCulvertShape",
@@ -109,18 +115,19 @@ angular.module('omnibox')
         defaultValue: "rechthoekig"
       }
     ]
-  },
-  groundwaterstation: {
+  };
+
+  this.groundwaterstation = {
     rows: [
       {
-        keyName: "Naam",
+        keyName: gettext("Name"),
         attrName: "display_name",
         ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: ""
       },
       {
-        keyName: "Code",
+        keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.code",
@@ -128,46 +135,52 @@ angular.module('omnibox')
         defaultValue: ""
       },
       {
-        keyName: "Maaiveldhoogte",
+        keyName: gettext("Surface level"),
         attrName: "surface_level",
         ngBindValue: "waterchain.layers.waterchain_grid.data.surface_level",
         valueSuffix: " (mNAP)",
         defaultValue: ""
       },
       {
-        keyName: "Bovenkant buis",
+        /// Bovenkant buis
+        keyName: gettext("Top level"),
         attrName: "top_level",
         ngBindValue: "waterchain.layers.waterchain_grid.data.top_level",
         valueSuffix: " (mNAP)",
         defaultValue: ""
       },
       {
-        keyName: "Onderkant buis",
+        /// Onderkan buis
+        keyName: gettext("Bottom level"),
         attrName: "bottom_level",
         ngBindValue: "waterchain.layers.waterchain_grid.data.bottom_level",
         valueSuffix: " (mNAP)",
         defaultValue: ""
       },
       {
-        keyName: "Bovenkant filter",
+        /// Bovenkant filter
+        keyName: gettext("Filter top level"),
         attrName: "filter_top_level",
         ngBindValue: "waterchain.layers.waterchain_grid.data.filter_top_level",
         valueSuffix: " (mNAP)",
         defaultValue: ""
       },
       {
-        keyName: "Onderkant filter",
+        /// Onderkant filter
+        keyName: gettext("Filter bottom level"),
         attrName: "filter_bottom_level",
         ngBindValue: "waterchain.layers.waterchain_grid.data.filter_bottom_level",
         valueSuffix: " (mNAP)",
         defaultValue: ""
       }
     ]
-  },
-  levee: {
+  };
+
+  this.levee = {
     rows: [
       {
-        keyName: "Kruinhoogte",
+        /// Kruinhoogte
+        keyName: gettext("Crest height"),
         attrName: "crest_height",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.crest_height | niceNumberOrEllipsis: 2",
@@ -175,7 +188,8 @@ angular.module('omnibox')
         defaultValue: "2"
       },
       {
-        keyName: "Bekleding",
+        /// Bekleding
+        keyName: gettext("Coating"),
         attrName: "coating",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.coating",
@@ -183,7 +197,7 @@ angular.module('omnibox')
         defaultValue: "gras"
       },
       {
-        keyName: "Materiaal",
+        keyName: gettext("Material"),
         attrName: "material",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.material",
@@ -191,11 +205,12 @@ angular.module('omnibox')
         defaultValue: "zand"
       }
     ]
-  },
-  leveereferencepoint: {
+  };
+
+  this.leveereferencepoint = {
     rows: [
       {
-        keyName: "Type",
+        keyName: gettext("Type"),
         attrName: "type",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.type",
@@ -203,11 +218,12 @@ angular.module('omnibox')
         defaultValue: "Referentiemeetpunt"
       }
     ]
-  },
-  manhole: {
+  };
+
+  this.manhole = {
     rows: [
       {
-        keyName: "Code",
+        keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.code",
@@ -215,7 +231,7 @@ angular.module('omnibox')
         defaultValue: "0-7361"
       },
       {
-        keyName: "Maaiveld",
+        keyName: gettext("Surface level"),
         attrName: "surface_level",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.surface_level | niceNumberOrEllipsis: 2",
@@ -223,7 +239,7 @@ angular.module('omnibox')
         defaultValue: "0.42"
       },
       {
-        keyName: "Materiaal",
+        keyName: gettext("Material"),
         attrName: "material",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.material",
@@ -231,7 +247,7 @@ angular.module('omnibox')
         defaultValue: "beton"
       },
       {
-        keyName: "Breedte",
+        keyName: gettext("Widht"),
         attrName: "width",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.width | niceNumberOrEllipsis: 2",
@@ -239,7 +255,7 @@ angular.module('omnibox')
         defaultValue: "0.8"
       },
       {
-        keyName: "Vorm",
+        keyName: gettext("Shape"),
         attrName: "shape",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.shape | lookupManholeShape",
@@ -247,7 +263,8 @@ angular.module('omnibox')
         defaultValue: "vierkant"
       },
       {
-        keyName: "Putbodem",
+        /// Putbodem
+        keyName: gettext("Bottom level manhole"),
         attrName: "bottom_level",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.bottom_level | niceNumberOrEllipsis: 2",
@@ -255,32 +272,33 @@ angular.module('omnibox')
         defaultValue: "-1.6"
       }
     ],
-  },
-  measuringstation: {
+  };
+
+  this.measuringstation = {
     rows: [
       {
-        keyName: "Naam",
+        keyName: gettext("Name"),
         attrName: "display_name",
         ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "KNMI"
       },
       {
-        keyName: "Categorie",
+        keyName: gettext("Category"),
         attrName: "category",
         ngBindValue: "waterchain.layers.waterchain_grid.data.category",
         valueSuffix: "",
         defaultValue: "KNMI-AWS"
       },
       {
-        keyName: "Frequentie",
+        keyName: gettext("Frequency"),
         attrName: "frequency",
         ngBindValue: "waterchain.layers.waterchain_grid.data.frequency",
         valueSuffix: "",
         defaultValue: "1x per uur"
       },
       {
-        keyName: "Code",
+        keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.code",
@@ -288,11 +306,12 @@ angular.module('omnibox')
         defaultValue: "6278"
       }
     ]
-  },
-  orifice: {
+  };
+
+  this.orifice = {
     rows: [
       {
-        keyName: "Code",
+        keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.code",
@@ -300,7 +319,8 @@ angular.module('omnibox')
         defaultValue: "3105"
       },
       {
-        keyName: "Overstortbreedte",
+        /// Overstortbreedte
+        keyName: gettext("Crest width"),
         attrName: "crest_width",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.crest_width | niceNumberOrEllipsis: 2",
@@ -308,7 +328,8 @@ angular.module('omnibox')
         defaultValue: "1"
       },
       {
-        keyName: "Overstorthoogte",
+        /// Overstorthoogte
+        keyName: gettext("Crest level"),
         attrName: "crest_level",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.crest_level | niceNumberOrEllipsis: 2",
@@ -316,7 +337,7 @@ angular.module('omnibox')
         defaultValue: "0.2"
       },
       {
-        keyName: "Vorm",
+        keyName: gettext("Shape"),
         attrName: "shape",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.shape | truncate: 20",
@@ -324,11 +345,12 @@ angular.module('omnibox')
         defaultValue: "rechthoekig"
       }
     ]
-  },
-  outlet: {
+  };
+
+  this.outlet = {
     rows: [
       {
-        keyName: "Put ID",
+        keyName: gettext("Manhole id"),
         attrName: "manhole_id",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.manhole_id | niceNumberOrEllipsis: 2",
@@ -336,35 +358,21 @@ angular.module('omnibox')
         defaultValue: "6-549"
       },
       {
-        keyName: "Buitenwaterstand (gemiddeld)",
+        /// Buitenwaterstand (gemiddeld)
+        keyName: gettext("Open water level (average)"),
         attrName: "open_water_level_average",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.open_water_level_average | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
         defaultValue: "-0.1"
-      }//,
-      // {
-      //   keyName: "Buitenwaterstand (zomer)",
-      //   attrName: "open_water_level_summer",
-      //   ngBindValue:
-      //     "waterchain.layers.waterchain_grid.data.open_water_level_summer | niceNumberOrEllipsis: 2",
-      //   valueSuffix: " (mNAP)",
-      //   defaultValue: "-0.05"
-      // },
-      // {
-      //   keyName: "Buitenwaterstand (winter)",
-      //   attrName: "open_water_level_winter",
-      //   ngBindValue:
-      //     "waterchain.layers.waterchain_grid.data.open_water_level_winter | niceNumberOrEllipsis: 2",
-      //   valueSuffix: " (mNAP)",
-      //   defaultValue: "-0.15"
-      // }
+      }
     ]
-  },
-  overflow: {
+  };
+
+  this.overflow = {
     rows: [
       {
-        keyName: "Code",
+        keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.code",
@@ -372,7 +380,8 @@ angular.module('omnibox')
         defaultValue: "12-72297"
       },
       {
-        keyName: "Overstortbreedte",
+        /// Overstortbreedte
+        keyName: gettext("Crest width"),
         attrName: "crest_width",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.crest_width",
@@ -380,7 +389,8 @@ angular.module('omnibox')
         defaultValue: "1"
       },
       {
-        keyName: "Overstorthoogte",
+        /// Overstorthoogte
+        keyName: gettext("Crest level"),
         attrName: "crest_level",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.crest_level",
@@ -388,11 +398,12 @@ angular.module('omnibox')
         defaultValue: "0.2"
       }
     ]
-  },
-  pipe: {
+  };
+
+  this.pipe = {
     rows: [
       {
-        keyName: "Type",
+        keyName: gettext("Type"),
         attrName: "type",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.type | lookupPipeType",
@@ -400,7 +411,8 @@ angular.module('omnibox')
         defaultValue: "gemengd stelsel"
       },
       {
-        keyName: "BOB beginpunt",
+        /// BOB beginpunt
+        keyName: gettext("Invert level start point"),
         attrName: "invert_level_start_point",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.invert_level_start_point | niceNumberOrEllipsis: 2",
@@ -408,7 +420,8 @@ angular.module('omnibox')
         defaultValue: "-3.1"
       },
       {
-        keyName: "BOB eindpunt",
+        /// BOB eindpunt
+        keyName: gettext("Invert level end point"),
         attrName: "invert_level_end_point",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.invert_level_end_point | niceNumberOrEllipsis: 2",
@@ -416,7 +429,7 @@ angular.module('omnibox')
         defaultValue: "-3.12"
       },
       {
-        keyName: "Lengte",
+        keyName: gettext("Length"),
         attrName: "length",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.length | niceNumberOrEllipsis: 2",
@@ -424,7 +437,7 @@ angular.module('omnibox')
         defaultValue: "28"
       },
       {
-        keyName: "Materiaal",
+        keyName: gettext("Material"),
         attrName: "material",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.material | pipeMaterialOrEllipsis",
@@ -432,7 +445,7 @@ angular.module('omnibox')
         defaultValue: "beton"
       },
       {
-        keyName: "Breedte",
+        keyName: gettext("Width"),
         attrName: "width",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.width | niceNumberOrEllipsis: 2",
@@ -440,7 +453,7 @@ angular.module('omnibox')
         defaultValue: "0.8"
       },
       {
-        keyName: "Vorm",
+        keyName: gettext("Shape"),
         attrName: "shape",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.shape | lookupPipeShape",
@@ -448,58 +461,27 @@ angular.module('omnibox')
         defaultValue: "rond"
       },
       {
-        keyName: "Code",
+        keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.code",
         valueSuffix: "",
         defaultValue: "0-985-0-986"
-      }//,
-      // {
-      //   keyName: "Beginpunt",
-      //   attrName: "start_point",
-      //   ngBindValue:
-      //     "waterchain.layers.waterchain_grid.data.start_point",
-      //   valueSuffix: "",
-      //   defaultValue: "onbekend"
-      // },
-      // {
-      //   keyName: "Eindpunt",
-      //   attrName: "end_point",
-      //   ngBindValue:
-      //     "waterchain.layers.waterchain_grid.data.end_point",
-      //   valueSuffix: "",
-      //   defaultValue: "onbekend"
-      // },
-      // {
-      //   keyName: "Aantal inwoners",
-      //   attrName: "number_of_inhabitants",
-      //   ngBindValue:
-      //     "waterchain.layers.waterchain_grid.data.number_of_inhabitants",
-      //   valueSuffix: "",
-      //   defaultValue: "7"
-      // },
-      // {
-      //   keyName: "DWA definitie",
-      //   attrName: "dwa_definition",
-      //   ngBindValue:
-      //     "waterchain.layers.waterchain_grid.data.dwa_definition",
-      //   valueSuffix: "",
-      //   defaultValue: "DWA"
-      // }
+      }
     ]
-  },
-  pressurepipe: {
+  };
+
+  this.pressurepipe = {
     rows: [
       {
-        keyName: "Naam",
+        keyName: gettext("Name"),
         attrName: "display_name",
         ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "onbekend"
       },
       {
-        keyName: "Type",
+        keyName: gettext("Type"),
         attrName: "type",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.type | lookupPressurePipeType",
@@ -507,7 +489,7 @@ angular.module('omnibox')
         defaultValue: "transportleiding"
       },
       {
-        keyName: "Bouwjaar",
+        keyName: gettext("Construction year"),
         attrName: "year_of_construction",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.year_of_construction",
@@ -515,7 +497,7 @@ angular.module('omnibox')
         defaultValue: "2006"
       },
       {
-        keyName: "Code",
+        keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.code",
@@ -523,7 +505,7 @@ angular.module('omnibox')
         defaultValue: "776"
       },
       {
-        keyName: "Diameter",
+        keyName: gettext("Diameter"),
         attrName: "diameter",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.diameter | niceNumberOrEllipsis: 2",
@@ -531,7 +513,7 @@ angular.module('omnibox')
         defaultValue: "1.6"
       },
       {
-        keyName: "Vorm",
+        keyName: gettext("Shape"),
         attrName: "shape",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.shape",
@@ -539,7 +521,7 @@ angular.module('omnibox')
         defaultValue: "rond"
       },
       {
-        keyName: "Lengte",
+        keyName: gettext("Length"),
         attrName: "length",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.length",
@@ -547,7 +529,7 @@ angular.module('omnibox')
         defaultValue: "154"
       },
       {
-        keyName: "Materiaal",
+        keyName: gettext("Material"),
         attrName: "material",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.material | pipeMaterialOrEllipsis",
@@ -555,18 +537,19 @@ angular.module('omnibox')
         defaultValue: "HDPE"
       }
     ]
-  },
-  pumpstation: {
+  };
+
+  this.pumpstation = {
     rows: [
       {
-        keyName: "Type",
+        keyName: gettext("Type"),
         attrName: "type",
         ngBindValue: "waterchain.layers.waterchain_grid.data.type",
         valueSuffix: "",
         defaultValue: "gemaal"
       },
       {
-        keyName: "Capaciteit",
+        keyName: gettext("Capacity"),
         attrName: "capacity",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.capacity * 3.6 | niceNumberOrEllipsis: 2",
@@ -574,14 +557,14 @@ angular.module('omnibox')
         defaultValue: "54"
       },
       {
-        keyName: "Naam",
+        keyName: gettext("Name"),
         attrName: "display_name",
         ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "onbekend"
       },
       {
-        keyName: "Code",
+        keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.code",
@@ -589,7 +572,8 @@ angular.module('omnibox')
         defaultValue: "127"
       },
       {
-        keyName: "Aanslagpeil",
+        /// Aanslagpeil
+        keyName: gettext("Start level"),
         attrName: "start_level",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.start_level | niceNumberOrEllipsis: 2",
@@ -597,7 +581,8 @@ angular.module('omnibox')
         defaultValue: "-2.2"
       },
       {
-        keyName: "Afslagpeil",
+        /// Afslagpeil
+        keyName: gettext("Stop level"),
         attrName: "stop_level",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.stop_level | niceNumberOrEllipsis: 2",
@@ -605,15 +590,17 @@ angular.module('omnibox')
         defaultValue: "-2.8"
       }
     ]
-  },
-  pumped_drainage_area: {
+  };
+
+  this.pumped_drainage_area = {
     rows: [
     ]
-  },
-  sluice: {
+  };
+
+  this.sluice = {
     rows: [
       {
-        keyName: "Naam",
+        keyName: gettext("Name"),
         attrName: "display_name",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.display_name",
@@ -621,22 +608,24 @@ angular.module('omnibox')
         defaultValue: 'onbekend'
       }
     ]
-  },
-  wastewatertreatmentplant: {
+  };
+
+  this.wastewatertreatmentplant = {
     rows: [ //Afvalwaterzuiveringsinstallatie
       {
-        keyName: "Naam",
+        keyName: gettext("Name"),
         attrName: "display_name",
         ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
         valueSuffix: "",
         defaultValue: "onbekend"
       },
     ]
-  },
-  weir: {
+  };
+
+  this.weir = {
     rows: [
       {
-        keyName: "Code",
+        keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.code",
@@ -644,7 +633,7 @@ angular.module('omnibox')
         defaultValue: "473"
       },
       {
-        keyName: "Breedte",
+        keyName: gettext("Width"),
         attrName: "crest_width",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.crest_width | niceNumberOrEllipsis: 2",
@@ -652,7 +641,8 @@ angular.module('omnibox')
         defaultValue: "1.6"
       },
       {
-        keyName: "Niveau",
+        /// Niveau
+        keyName: gettext("Crest Level"),
         attrName: "crest_level",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.crest_level | niceNumberOrEllipsis: 2",
@@ -660,7 +650,8 @@ angular.module('omnibox')
         defaultValue: "-0.3"
       },
       {
-        keyName: "Bediening",
+        /// Bediening
+        keyName: gettext("Control"),
         attrName: "controlled",
         ngBindValue:
           "waterchain.layers.waterchain_grid.data.controlled | lookupWeirControl",
@@ -668,5 +659,6 @@ angular.module('omnibox')
         defaultValue: "RTC"
       },
     ]
-  }
-});
+  };
+
+}]);

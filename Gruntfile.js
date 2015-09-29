@@ -16,19 +16,16 @@
 
 */
 
-var modRewrite = require('connect-modrewrite');
-
 module.exports = function (grunt) {
-  // loads all the grunt dependencies found in package.json
-  require('load-grunt-tasks')(grunt);
-  require('time-grunt')(grunt);
+  var modRewrite = require('connect-modrewrite');
 
-  grunt.loadNpmTasks('grunt-connect-proxy');
-
-  // Add task to extract and compile translation strings. Use nggettext_extract
-  // to extract all translatable strings from the app. And use nggettext_compile
-  // to compile the translations to use in the app.
-  grunt.loadNpmTasks('grunt-angular-gettext');
+  // Load tasks used by grunt watch
+  grunt.loadNpmTasks('grunt-html2js');
+  grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-newer');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-wiredep');
+  grunt.loadNpmTasks('grunt-sass');
 
   var appConfig = {
     app: require('./bower.json').appPath,
@@ -51,8 +48,11 @@ module.exports = function (grunt) {
         tasks: ['wiredep']
       },
       js: {
-        files: ['<%= yeoman.app %>/<%= yeoman.jsFileDirs %>'],
-        tasks: ['newer:jshint:dev', 'karma:dev'],
+        files: [
+        '<%= yeoman.app %>/<%= yeoman.jsFileDirs %>',
+        '!<%= yeoman.app %>/templates.js'
+      ],
+        tasks: ['karma:dev', 'newer:jshint:dev'],
       },
       jstemplates: {
         files: ['<%= yeoman.app %>/<%= yeoman.templateFileDirs %>'],
@@ -60,7 +60,7 @@ module.exports = function (grunt) {
       },
       jsTest: {
         files: ['test/spec/{,*/}*.js'],
-        tasks: ['newer:jshint', 'karma:dev']
+        tasks: ['karma:dev', 'newer:jshint:dev'],
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.scss'],
@@ -79,8 +79,6 @@ module.exports = function (grunt) {
           '<%= yeoman.app %>/{,*/}*.html',
           // CSS created from sass files
           '.tmp/styles/{,*/}*.css',
-          // All images
-          '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
           // All js files
           '<%= yeoman.app %>/<%= yeoman.jsFileDirs %>'
         ]
@@ -145,7 +143,7 @@ module.exports = function (grunt) {
     html2js: {
       options: {
         rename: function (moduleName) {
-          // Rename templates to just the name of the componente with the
+          // Rename templates to just the the component name with the
           // file, so <componentName>/<templateName>.html or
           // <componentName>/templates/<templateName>.html.
           return moduleName.split('components/')[1];
@@ -371,44 +369,6 @@ module.exports = function (grunt) {
       }
     },
 
-
-    // The following *-min tasks will produce minified files in the dist folder
-    // By default, your `index.html`'s <!-- Usemin block --> will take care of
-    // minification. These next options are pre-configured if you do not wish
-    // to use the Usemin blocks.
-    // cssmin: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/styles/main.css': [
-    //         '.tmp/styles/{,*/}*.css'
-    //       ]
-    //     }
-    //   }
-    // },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/scripts/scripts.js': [
-    //         '<%= yeoman.dist %>/scripts/scripts.js'
-    //       ]
-    //     }
-    //   }
-    // },
-    // concat: {
-    //   dist: {}
-    // },
-
-    imagemin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.{png,jpg,jpeg,gif}',
-          dest: '<%= yeoman.dist %>/images'
-        }]
-      }
-    },
-
     svgmin: {
       dist: {
         files: [{
@@ -514,21 +474,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // Run some tasks in parallel to speed up the build process
-    concurrent: {
-      server: [
-        'copy:styles'
-      ],
-      test: [
-        'copy:styles'
-      ],
-      dist: [
-        'copy:styles',
-        'imagemin',
-        'svgmin'
-      ]
-    },
-
     // Test settings
     karma: {
       dev: {
@@ -554,84 +499,166 @@ module.exports = function (grunt) {
           tag: true
         }
       }
+    },
+
+    'tx-source-upload': {
+      options: {
+        username: grunt.option('txusername'),
+        password: grunt.option('txpassword'),
+        project: 'lizard-client',
+        resource: 'core',
+        i18nType: 'pot'
+      },
+      src: 'po/template.pot'
     }
   });
 
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
+    grunt.loadNpmTasks('grunt-autoprefixer');
+    grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+
     if (target === 'dist') {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
     }
 
     grunt.task.run([
-      'clean:server',
-      'html2js',
-      'wiredep',
-      'configureProxies',
-      'concurrent:server',
-      'sass:watch',
-      'autoprefixer',
-      'connect:livereload',
-      'watch'
+      'html2js', // Convert html omnibox templates to js files.
+      'wiredep', // Add bower files as script tags to index.html
+      'sass:watch', // Create .tmp/main.css from sass files.
+      'autoprefixer', // Add vendor prefixes to .tmp/main.css.
+      'connect:livereload', // Connect browser window.
+      'watch' // Watch for changes to reload.
     ]);
-  });
-
-
-  grunt.registerTask('server', 'DEPRECATED TASK. Use the "serve" task instead', function (target) {
-    grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
-    grunt.task.run(['serve:' + target]);
   });
 
   grunt.registerTask('test', [
     'html2js',
-    'clean:server',
-    'concurrent:test',
-    'autoprefixer',
-    'connect:test',
-    'karma:unit'
+    'karma:unit',
+    'newer:jshint:dev'
   ]);
 
-  grunt.registerTask('build', [
-    'clean:dist',
-    'wiredep',
-    'useminPrepare',
-    'html2js',
-    'sass',
-    'concurrent:dist',
-    'autoprefixer',
-    'concat',
-    'ngAnnotate',
-    'copy:dist',
-    'cdnify',
-    'cssmin',
-    // 'uglify',
-    'filerev',
-    'usemin',
-    'htmlmin',
-    'doxx',
-    'nggettext_compile' // create translations
-  ]);
+  grunt.registerTask('build', function () {
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-autoprefixer');
+    grunt.loadNpmTasks('grunt-usemin');
+    grunt.loadNpmTasks('grunt-svgmin');
+    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-ng-annotate');
+    grunt.loadNpmTasks('grunt-google-cdn');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-filerev');
+    grunt.loadNpmTasks('grunt-contrib-htmlmin');
+    grunt.loadNpmTasks('grunt-doxx');
 
-  grunt.registerTask('release', [
-    'test',
-    'build',
-    'replace:dist',
-    'releaser:dist'
-  ]);
+    grunt.task.run([
+      'translate',
+      'clean:dist',
+      'html2js',
+      'wiredep',
+      'useminPrepare',
+      'sass',
+      'copy:styles',
+      'autoprefixer',
+      'svgmin',
+      'concat',
+      'ngAnnotate',
+      'copy:dist',
+      'cdnify',
+      'cssmin',
+      'filerev',
+      'usemin',
+      'htmlmin',
+      'doxx'
+    ]);
+  });
 
-  grunt.registerTask('sandbox', [
-    'test',
-    'build',
-    'copy:CNAME',
-    'replace:ghpages',
-    'releaser:ghpages'
-  ]);
+  grunt.registerTask('internationalize', function () {
+    grunt.loadNpmTasks('grunt-angular-gettext');
 
-  grunt.registerTask('default', [
-    'newer:jshint',
-    'test',
-    'build',
-    'replace:dist',
-    'doxx'
-  ]);
+    grunt.task.run([
+      'translate',
+      'nggettext_extract', // extract strings from code
+      'tx-source-upload', // upload to transifex
+    ]);
+  });
+
+  grunt.registerTask('translate', function () {
+    grunt.loadNpmTasks('grunt-angular-gettext');
+    grunt.loadNpmTasks('grunt-tx-source-upload');
+    grunt.task.run([
+      'download-po-files',
+      'nggettext_compile' // create translations
+    ]);
+
+  });
+
+  grunt.registerTask('release', function () {
+    grunt.loadNpmTasks('grunt-text-replace');
+
+    grunt.task.run([
+      'test',
+      'build',
+      'replace:dist',
+      'releaser:dist'
+    ]);
+  });
+
+  grunt.registerTask('sandbox', function () {
+    grunt.loadNpmTasks('grunt-text-replace');
+
+    grunt.task.run([
+      'test',
+      'build',
+      'copy:CNAME',
+      'replace:ghpages',
+      'releaser:ghpages'
+    ]);
+  });
+
+  grunt.registerTask('default', function () {
+    grunt.loadNpmTasks('grunt-text-replace');
+
+    grunt.task.run([
+      'test',
+      'internationalize',
+      'build',
+      'replace:dist',
+    ]);
+  });
+
+  grunt.registerTask('download-po-files',
+    'Task to get languages and po files for each language from transifex',
+    function () {
+      var request = require('request');
+      var done = this.async();
+      grunt.log.writeln('Getting available languages');
+      var fs = require('fs');
+
+      request.get('http://www.transifex.com/api/2/project/lizard-client/resource/core/?details')
+      .auth(grunt.option('txusername'), grunt.option('txpassword'))
+      .on('data', function (response) {
+        getLanguages(JSON.parse(response).available_languages);
+      });
+
+      var getLanguages = function (languages) {
+        var completed_request = 0;
+        languages.forEach(function (lang) {
+          request.get('http://www.transifex.com/api/2/project/lizard-client/resource/core/translation/' + lang.code + '?file')
+          .auth(grunt.option('txusername'), grunt.option('txpassword'))
+          .on('response', function (res) {
+            completed_request++;
+            grunt.log.writeln('Recieved: ' + lang.name);
+            if (completed_request === languages.length) {
+                done();
+            }
+          })
+          .pipe(fs.createWriteStream('po/lizard6_lizard-client_' + lang.code + '.po'));
+        });
+      };
+    }
+  );
+
 };

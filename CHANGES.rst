@@ -4,6 +4,13 @@ Changelog of lizard-nxt client
 Unreleased (2.1.0) (XXXX-XX-XX)
 ---------------------
 
+- Use transifex.com/api/2/lizard-client for translations. Push annotated
+and pull translated strings from transifex on grunt:build. Jenkins will keep
+transifex up to date while every release will use the newest strings.
+
+- Annotate waterchain attributes for translation and use translation filter in
+template.
+
 - Create hyperlink elements for urls in getFeatureInfo response.
 
 - Handle new and old landuse labels in filters.
@@ -11,6 +18,12 @@ Unreleased (2.1.0) (XXXX-XX-XX)
 - Download timeseries as csv directly from server by using format=csv.
 
 - Use the current language of portal or url in search results.
+
+
+Unreleased (2.0.10) (XXXX-XX-XX)
+-------------------------------
+
+- Fix graph hover label falling outside of y range of graph.
 
 
 Release 2.0.9 (2015-9-11)
