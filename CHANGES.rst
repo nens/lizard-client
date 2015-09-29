@@ -20,6 +20,12 @@ template.
 - Use the current language of portal or url in search results.
 
 
+Unreleased (2.0.10) (XXXX-XX-XX)
+-------------------------------
+
+- Fix graph hover label falling outside of y range of graph.
+
+
 Release 2.0.9 (2015-9-11)
 ---------------------
 
