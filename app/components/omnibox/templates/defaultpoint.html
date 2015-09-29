@@ -84,7 +84,10 @@
             </td>
 
             <td class="lineout">
-              <div class="attr-row-content">
+              <div ng-if="isUrl(val)" class="attr-row-content">
+                <a href="<% val %>" target="_blank"><% val %></a>
+              </div>
+              <div ng-if="!isUrl(val)" class="attr-row-content">
                 <% val %>
               </div>
             </td>

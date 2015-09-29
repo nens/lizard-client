@@ -84,7 +84,8 @@ angular.module('omnibox')
     restrict: 'E',
     scope: {
       lg: '=',
-      state: '='
+      state: '=',
+      isUrl: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/defaultpoint.html'

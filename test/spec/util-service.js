@@ -100,4 +100,12 @@ describe('Testing util-service functions', function () {
     var min = UtilService.getMinTime(early);
     expect(min).toBe(UtilService.MIN_TIME);
   });
+
+  it('should identify urls', function () {
+    expect(UtilService.isUrl('http://demo.lizard.net')).toBe(true);
+    expect(UtilService.isUrl('ftp:gekkegerrit')).toBe(true);
+    expect(UtilService.isUrl('mailto:henkie@gekkegerrit')).toBe(true);
+    expect(UtilService.isUrl('myownnewprotocol:ditkanechtniet')).toBe(true);
+    expect(UtilService.isUrl('demo.lizard.net')).toBe(false);
+  })
 });

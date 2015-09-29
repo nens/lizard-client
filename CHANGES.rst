@@ -11,6 +11,8 @@ transifex up to date while every release will use the newest strings.
 - Annotate waterchain attributes for translation and use translation filter in
 template.
 
+- Create hyperlink elements for urls in getFeatureInfo response.
+
 - Handle new and old landuse labels in filters.
 
 - Download timeseries as csv directly from server by using format=csv.
