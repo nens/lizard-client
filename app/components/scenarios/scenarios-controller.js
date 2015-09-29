@@ -43,6 +43,10 @@ angular.module('scenarios')
     $scope.select = function (scenario) {
       if ($scope.selectedScenario === null) {
         $scope.selectedScenario = scenario;
+        Restangular.one('api/v2/scenarios/' + scenario.id + '/').get()
+          .then(function (response) {
+            angular.extend(scenario, response);
+          });
       } else if (scenario.id === $scope.selectedScenario.id) {
         $scope.selectedScenario = null;
       } else {

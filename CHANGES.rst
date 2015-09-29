@@ -13,6 +13,16 @@ Unreleased (2.1.0) (XXXX-XX-XX)
 - Use the current language of portal or url in search results.
 
 
+Release 2.0.10 (2015-9-29)
+---------------------
+
+- Go to detail view when needed.
+
+- Fix graph hover label falling outside of y range of graph.
+
+- Fix ribbon title for compass image.
+
+
 Release 2.0.9 (2015-9-11)
 ---------------------
 

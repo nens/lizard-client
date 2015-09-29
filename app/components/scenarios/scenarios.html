@@ -30,7 +30,9 @@
             <span aria-hidden="true">&laquo;</span>
           </a>
           </li>
-          <li ng-repeat="_page in pages"><a ng-click="getPage(_page)"><% _page %></a></li>
+          <li ng-repeat="_page in pages" ng-class="{active: page === _page}">
+            <a ng-click="getPage(_page)"><% _page %></a>
+          </li>
           <li>
           <a ng-click="getPage(page + 1)" aria-label="Next">
             <span aria-hidden="true">&raquo;</span>
