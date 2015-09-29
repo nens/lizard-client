@@ -44,7 +44,8 @@
               'fa-spinner fa-spin': menu.state.gettingData,
               'fa-compass': !menu.state.gettingData
             }"
-            ng-click="menu.enabled = !menu.enabled">
+            ng-click="menu.enabled = !menu.enabled"
+            title="<% menu.enabled ? tooltips.closeMenu : tooltips.openMenu %>">
       </span>
 
       <div class="button-list-container" id="">
