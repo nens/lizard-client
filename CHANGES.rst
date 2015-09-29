@@ -1,7 +1,13 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.0.9) (XXXX-XX-XX)
+Unreleased (2.0.10) (XXXX-XX-XX)
+-------------------------------
+
+- Fix graph hover label falling outside of y range of graph.
+
+
+Release 2.0.9 (2015-9-11)
 ---------------------
 
 - Fix ribbon title for compass image.

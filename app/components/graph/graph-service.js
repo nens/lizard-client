@@ -774,7 +774,10 @@ angular.module('lizard-nxt')
   addInteractionToPath = function (svg, dimensions, data, keys, labels, path, xy, duration) {
     var bisect = d3.bisector(function (d) { return d[keys.x]; }).right,
         height = Graph.prototype._getHeight(dimensions),
-        fg = svg.select('#feature-group');
+        fg = svg.select('#feature-group'),
+        MIN_LABEL_Y = 50,
+        LABEL_PADDING_X = 10,
+        LABEL_PADDING_Y = 5;
 
     // Move listener rectangle to the front
     var el = svg.select('#listeners').node();
@@ -815,16 +818,18 @@ angular.module('lizard-nxt')
         .attr('x1', x2)
         .attr('x2', x2);
 
+      var texty2 = Math.max(y2 - LABEL_PADDING_Y, MIN_LABEL_Y);
+
       g.append('text')
         .text(Math.round(value * 100) / 100 + ' ' + labels.y)
         .attr('class', 'graph-tooltip-y')
-        .attr('x', 5)
-        .attr('y', y2 - 5);
+        .attr('x', LABEL_PADDING_X)
+        .attr('y', texty2 - LABEL_PADDING_Y);
       g.append('text')
         .text(xText + ' ' + labels.x)
         .attr('class', 'graph-tooltip-x')
-        .attr('x', x2 + 5)
-        .attr('y', height - 5);
+        .attr('x', x2 + LABEL_PADDING_X)
+        .attr('y', height - LABEL_PADDING_Y);
     };
 
     svg.select('#listeners').on('click', cb);
