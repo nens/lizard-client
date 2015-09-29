@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.0.9) (XXXX-XX-XX)
 ---------------------
 
+- Fix ribbon title for compass image.
+
 - Allow asset layers to have different name than 'waterchain', as long as 'waterchain' is in the layergroup slug, it should work. Grid layers should be named <layergroup_slug>_grid.
 
 - Fix buttons showing when card is minimized.
