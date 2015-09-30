@@ -37,9 +37,12 @@ Install vendor files:
 
 Create dist files (optional) and templates (compulsory):
 
-    grunt build
+    grunt serve
 
-Point you browser to index.html for a client demo
+Point you browser to index.html for a client demo. By deafult lizard is in
+English to enable other language run:
+
+    grunt translate --txusername=<transifex username> --txpassword=<transifex password>
 
 ### Django backend
 
@@ -112,20 +115,25 @@ Supported languages:
 * Nederlands nl_NL
 * Engels en_GB
 
-Lizard-client uses angular-gettext to translate and pluralize texts. See the [docs](https://angular-gettext.rocketeer.be/dev-guide/). The workflow is currently setup in its simplest form. All the translation strings are in `app/translations.js`. In the future we might move to support multiple languages in seperate files and lazy loading, see: https://angular-gettext.rocketeer.be/dev-guide/lazy-loading/ .
+Lizard-client uses angular-gettext to translate and pluralize texts. See the [docs](https://angular-gettext.rocketeer.be/dev-guide/). All the translation strings are in `app/translations.js`. In the future we might move to support multiple languages in seperate files and lazy loading, see: https://angular-gettext.rocketeer.be/dev-guide/lazy-loading/ .
 
-To include translation, make sure you have all the dependencies by calling `npm install` and just run `grunt nggettext_compile` which creates a `translations.js` that is included in the app.
+To include translation, make sure you have all the dependencies by calling `npm install` and run `grunt translate --txusername=<transifex username> --txpassword=<transifex password>` which downloads our translations from transifex and creates a `translations.js` that is included in the app.
+
+The first part of the url's path indicates the lanuage. When requesting `/en`
+the app should be in English. Strings still appearing in Dutch need to be
+annotated for translation, this is a bug. When requesting `/nl` all strings
+should be in Dutch, when string are still in English, the text is either not
+translated or the text is in English but not properly annotated, the latter is a
+[bug](https://github.com/nens/lizard-nxt/issues), the first requires translation
+on [transifex](https://www.transifex.com/nens/lizard-client/) and a new release.
+
 
 To create a new string that requires translation:
 
 1. Use `<span translate>Hi!</span>`, or for more complicated cases check the docs: [on html elements](https://angular-gettext.rocketeer.be/dev-guide/annotate/), [or in the source code](https://angular-gettext.rocketeer.be/dev-guide/annotate-js/). The app is in English which is translated to other languages.
-2. Extract the text that requires translation by calling `grunt nggettext_extract`.
-3. Upload the translation template in `po/template.pot` to [transifex](https://translations.lizard.net/projects/p/lizard6/) or your favourite translation tool.
-4. Get yourself a language wizard and get some coffee or go on a trip.
-5. Download the finished translation from transifex as a `.po` file to `po/` in the project root.
-5. Run `grunt nggettext_compile` and bob's your uncle!
-
-The template.pot and the translations.js are ingored by git. The translated `.po` files are versioned.
+2. Create a PR to merge to master and let buildbot do the heavy lifting or call `grunt translate --txusername=<transifex username> --txpassword=<transifex password>` as administrator of transifex to upload strings for translation.
+4. Get yourself a language wizard and get some coffee.
+5. Run `grunt translate --txusername=<transifex username> --txpassword=<transifex password>` to get the newest translations or run `grunt release --txusername=<transifex username> --txpassword=<transifex password>` to make a release with the newest translations.
 
 ## Browser compatibility chart
 
