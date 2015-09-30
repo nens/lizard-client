@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.0.9) (XXXX-XX-XX)
 ---------------------
 
+- Data-menu titles wrap with elipsis.
+
 - Fix ribbon title for compass image.
 
 - Allow asset layers to have different name than 'waterchain', as long as 'waterchain' is in the layergroup slug, it should work. Grid layers should be named <layergroup_slug>_grid.
@@ -26,8 +28,6 @@ Release 2.0.8 (2015-9-4)
 
 Release 2.0.7 (2015-9-3)
 ---------------------
-
-- Data-menu titles wrap with elipsis.
 
 - Change scenarios page to omnibox.
 
