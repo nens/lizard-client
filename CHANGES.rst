@@ -27,6 +27,8 @@ Release 2.0.8 (2015-9-4)
 Release 2.0.7 (2015-9-3)
 ---------------------
 
+- Data-menu titles wrap with elipsis.
+
 - Change scenarios page to omnibox.
 
 - Only create a data layer for wms if get_feature_info is true.
