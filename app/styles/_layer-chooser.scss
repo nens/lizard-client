@@ -37,6 +37,9 @@ label.layer-chooser > span.layer-text {
     transition: .3s ease;
     width: 60%;
     cursor: pointer;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 label.layer-chooser > span.layer-icon {
