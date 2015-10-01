@@ -27,6 +27,7 @@
              class="btn btn-default btn-xs"
              title="<% 'Export info card data' | translate %>"
              ng-csv="formatLineCSV(slug, l)"
+             field-separator=";"
              filename="<% slug %>.csv"
              csv-header="getLineCSVHeaders(slug, l)">
              <i class="fa fa-share-square-o"></i>
