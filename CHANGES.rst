@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.1.0) (XXXX-XX-XX)
 ---------------------
 
+- Fix line export, adapt to api change.
+
 - CSV export for line and point use ; seperator instead of ,.
 
 - Use transifex.com/api/2/lizard-client for translations. Push annotated
