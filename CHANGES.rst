@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.1.0) (XXXX-XX-XX)
 ---------------------
 
+- Fix inconsistency between time labels in search bar and timeline.
+
 - Fix drawing bars from null data.
 
 - Fix getting center of bounds that do not exist yet in digest loop.
