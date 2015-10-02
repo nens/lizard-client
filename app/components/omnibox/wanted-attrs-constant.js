@@ -43,8 +43,8 @@ angular.module('omnibox')
     rows: [
       {
         keyName: gettext("Name"),
-        attrName: "display_name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
+        attrName: "name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
         defaultValue: "Watergang"
       },
@@ -121,8 +121,8 @@ angular.module('omnibox')
     rows: [
       {
         keyName: gettext("Name"),
-        attrName: "display_name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
+        attrName: "name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
         defaultValue: ""
       },
@@ -278,8 +278,8 @@ angular.module('omnibox')
     rows: [
       {
         keyName: gettext("Name"),
-        attrName: "display_name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
+        attrName: "name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
         defaultValue: "KNMI"
       },
@@ -475,8 +475,8 @@ angular.module('omnibox')
     rows: [
       {
         keyName: gettext("Name"),
-        attrName: "display_name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
+        attrName: "name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
         defaultValue: "onbekend"
       },
@@ -558,8 +558,8 @@ angular.module('omnibox')
       },
       {
         keyName: gettext("Name"),
-        attrName: "display_name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
+        attrName: "name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
         defaultValue: "onbekend"
       },
@@ -601,9 +601,9 @@ angular.module('omnibox')
     rows: [
       {
         keyName: gettext("Name"),
-        attrName: "display_name",
+        attrName: "name",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.display_name",
+          "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
         defaultValue: 'onbekend'
       }
@@ -614,8 +614,8 @@ angular.module('omnibox')
     rows: [ //Afvalwaterzuiveringsinstallatie
       {
         keyName: gettext("Name"),
-        attrName: "display_name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.display_name",
+        attrName: "name",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
         valueSuffix: "",
         defaultValue: "onbekend"
       },
