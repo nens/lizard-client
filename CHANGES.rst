@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.1.0) (XXXX-XX-XX)
 ---------------------
 
+- Fix getting center of bounds that do not exist yet in digest loop.
+
 - Fix line export, adapt to api change.
 
 - CSV export for line and point use ; seperator instead of ,.

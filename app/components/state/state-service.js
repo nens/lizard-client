@@ -95,7 +95,9 @@ angular.module('global-state')
       points: [], // History of here for drawing and creating line and polygons
       region: {},// geojson feature describing region, with name and type in
               // properties
-      bounds: {},
+      bounds: { // leaflet bounds object, initialized with as invalid.
+        isValid: function () { return false; }
+      },
       view: {}, // { lat: <int>, lng:<int>, zoom:<int> }
       userHere: {}, // Geographical location of the users mouse only set by
                     // map-directive when box type is 'line'
