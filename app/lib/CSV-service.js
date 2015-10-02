@@ -202,12 +202,13 @@ angular.module('lizard-nxt')
 
       for (i = 0; i < data.length; i++) {
         datum = data[i];
+        if (datum[1] === null) { continue; }
         result.push([
           typeof data[i][0] === 'number'
             ? UtilService.formatNumber(UtilService.round(datum[0], 2), 0, 2, true)
             : NO_DATA_MSG,
-          typeof data[i][1][0] === 'number'
-            ? UtilService.formatNumber(UtilService.round(datum[1][0], 2), 0, 2, true)
+          typeof data[i][1] === 'number'
+            ? UtilService.formatNumber(UtilService.round(datum[1], 2), 0, 2, true)
             : NO_DATA_MSG,
           startLat,
           startLng,

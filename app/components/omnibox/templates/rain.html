@@ -29,6 +29,7 @@
            class="btn btn-default btn-xs"
            title="Data van deze infocard exporteren"
            ng-csv="$parent.formatCSVColumns(lg.layers['rain'].data)"
+           field-separator=";"
            filename="neerslag.csv"
            csv-header="['Latitude', 'Longitude', 'Datestamp', 'Timestamp', 'Rain (mm)']">
            <i class="fa fa-share-square-o"></i>
