@@ -342,7 +342,7 @@ angular.module('lizard-nxt')
       )
       .then(
         function (response) {
-          if (response && response !== 'null') {
+          if (response && response !== 'null' && response.data !== null) {
             timeline.drawBars(response.data);
           }
         }
