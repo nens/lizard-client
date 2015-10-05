@@ -287,13 +287,13 @@ angular.module('lizard-nxt')
     this.formatDatetime = function () {
       switch (State.temporal.aggWindow) {
       case 300000:
-        return 'yyyy/MM/dd HH:mm';
+        return 'dd-MM-yyyy HH:mm';
       case 3600000:
-        return 'yyyy/MM/dd HH:mm';
+        return 'dd-MM-yyyy HH:mm';
       case 86400000:
-        return 'yyyy/MM/dd';
+        return 'dd-MM-yyyy';
       case 2635200000:
-        return 'yyyy/MM';
+        return 'MM-yyyy';
       default:
         throw new Error("Unknown aggWindow: " + this.state.aggWindow);
       }

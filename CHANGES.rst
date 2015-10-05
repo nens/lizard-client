@@ -4,6 +4,17 @@ Changelog of lizard-nxt client
 Unreleased (2.1.0) (XXXX-XX-XX)
 ---------------------
 
+- Fix overlapping data-menu titles wrap with elipsis.
+
+- Fix scenario download overwriting app url, set target=_blank to force a
+download.
+
+- Fix inconsistency between time labels in search bar and timeline.
+
+- Fix drawing bars from null data.
+
+- Fix getting center of bounds that do not exist yet in digest loop.
+
 - Fix line export, adapt to api change.
 
 - CSV export for line and point use ; seperator instead of ,.

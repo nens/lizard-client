@@ -245,19 +245,23 @@ angular.module('lizard-nxt')
         timeline.drawCircles(undefined, scope.events.nEvents);
       }
 
-      if (timelineLayers.rain !== undefined) {
-        getTemporalRasterData(timelineLayers.rain,
-                              timelineLayers.events.length);
-      } else {
-        timeline.removeBars();
-      }
+      if (State.spatial.bounds.isValid()) { // no business here when invalid
+                                            // bounds.
 
-      if (timelineLayers.rasterStore.layers.length > 0) {
-        angular.forEach(timelineLayers.rasterStore.layers, function (layer) {
-          getTemporalRasterDates(layer);
-        });
-      } else {
-        timeline.drawTickMarks([]);
+        if (timelineLayers.rain !== undefined) {
+          getTemporalRasterData(timelineLayers.rain,
+                                timelineLayers.events.length);
+        } else {
+          timeline.removeBars();
+        }
+        if (timelineLayers.rasterStore.layers.length > 0) {
+          angular.forEach(timelineLayers.rasterStore.layers, function (layer) {
+            getTemporalRasterDates(layer);
+          });
+        } else {
+          timeline.drawTickMarks([]);
+        }
+
       }
 
       updateTimelineHeight(scope.events.nEvents);
@@ -338,7 +342,7 @@ angular.module('lizard-nxt')
       )
       .then(
         function (response) {
-          if (response && response !== 'null') {
+          if (response && response !== 'null' && response.data !== null) {
             timeline.drawBars(response.data);
           }
         }
