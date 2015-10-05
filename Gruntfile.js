@@ -577,6 +577,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('internationalize', function () {
     grunt.loadNpmTasks('grunt-angular-gettext');
+    grunt.loadNpmTasks('grunt-tx-source-upload');
 
     grunt.task.run([
       'translate',
@@ -587,7 +588,6 @@ module.exports = function (grunt) {
 
   grunt.registerTask('translate', function () {
     grunt.loadNpmTasks('grunt-angular-gettext');
-    grunt.loadNpmTasks('grunt-tx-source-upload');
     grunt.task.run([
       'download-po-files',
       'nggettext_compile' // create translations
