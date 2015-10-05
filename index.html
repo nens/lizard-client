@@ -1,0 +1,34 @@
+<!DOCTYPE html> <html ng-app="lizard-nxt" ng-controller="MasterCtrl" ng-keydown="keyPress($event)"> <head> <base href="/"> <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0"> <meta name="apple-mobile-web-app-capable" content="yes"> <title>Lizard</title> <link rel="icon" href="/static/client/images/favicon.png"> <link rel="stylesheet" href="/static/client/styles/vendor.0a1eb574.css"> <link href="//fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css"> <link rel="stylesheet" href="/static/client/styles/main.e5f62697.css"> <script type="text/javascript" src="/lizard-bs.js"></script>  <body> <div ng-if="context === 'map' || context === 'scenarios'"> <map></map> </div> <div ng-if="context === 'time'"> <time-ctx></time-ctx> </div> <div ng-if="context === 'dashboard'"> <dashboard></dashboard> </div> <timeline class="timeline navbar-fixed-bottom"></timeline> <div ng-if="context !== 'time'"> <datamenu></datamenu> </div> <user-menu></user-menu> <div ng-if="context === 'map' || context === 'scenarios'"> <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox> </div> <div id="context-transition-overlay"></div> <div id="dark-overlay"> <div id="mymodal"> <p translate>You are using an obsolete browser which is no longer supported by Lizard.</p> <p translate>To view lizard you have to use Internet explorer 10 or up, or use one of the below mentioned alternatives.</p> <ul> <li><a href="http://www.google.com/chrome/">Google Chrome</a></li> <li><a href="https://www.mozilla.org/nl/firefox/new/">Mozilla Firefox</a></li> </ul></div> </div> <script src="/static/client/scripts/vendor.b3dde953.js"></script> <script src="/static/client/scripts/scripts.5e46fc14.js"></script> <script>// Set global constant "JS_DEBUG", to prevent debug info from reaching
+        // the client when the current environment shouldn't allow it.
+
+        // NB! This is a proper illustration of passing data from back-end to
+        // front-end in a minimal fashion.
+        window.JS_DEBUG = "True" === "True";
+        if (window.gauges) {
+          window.gauges();
+        }
+
+        if (!window.JS_DEBUG) {
+          var asciiArray = [
+            "                                       o$o    o$$                   ",
+            "                                      *          *$                 ",
+            "                                     o           o$$                ",
+            "                                                 o$$$               ",
+            "                                               o$$$$                ",
+            "                                              oo$$   $$$*$          ",
+            "                                              o*$$     $ !          ",
+            "                                           o  oo$$$$$$$$ $$$ *      ",
+            "                                         !oo!oooo$$$$$  $$$$$       ",
+            "                                          ooooooooo$$$$$$$$$$$$$$$$!",
+            "                                             !  oooooo$$$$$$$$$$ooo ",
+            " *$     $$  $$$$$    $$$    $$*$¿   $$ $$        ooooooooooooooooo  ",
+            " *$     $$    $$    $$ $*   $$_$$   $   $$             ooooo        ",
+            " *$     $$   $$     $$$$$   $$ $!   $   $$            ooo           ",
+            " $$$$$!!$$$ $$$$$$ $$$ $$$ $$$$ $$ $$$$$$             o o           ",
+            "",
+            "Interesse?                                                  ",
+            "https://www.nelen-schuurmans.nl/wie.html "
+            ];
+            var hiring = asciiArray.join('\n');
+            console.log(hiring);
+          }</script>  
