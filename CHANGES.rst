@@ -6,8 +6,8 @@ Unreleased (2.1.0) (XXXX-XX-XX)
 
 - Fix overlapping data-menu titles wrap with elipsis.
 
-- Fix scenario download overwriting app url, set target=_blank to loading
-the url.
+- Fix scenario download overwriting app url, set target=_blank to force a
+download.
 
 - Fix inconsistency between time labels in search bar and timeline.
 
