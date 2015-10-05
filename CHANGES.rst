@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (2.1.0) (XXXX-XX-XX)
 ---------------------
 
+- Fix truncate event values.
+
+- Fix recurrence time has unit years.
+
 - Fix overlapping data-menu titles wrap with elipsis.
 
 - Fix scenario download overwriting app url, set target=_blank to force a
