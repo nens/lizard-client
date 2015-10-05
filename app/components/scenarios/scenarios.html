@@ -47,7 +47,7 @@
       <a ng-click="select(selectedScenario)" class="clickable" title="Terug"><i class="fa fa-arrow-left"></i></a>
 
       <span id="title-holder" class="card-title-text ng-binding">
-        <% selectedScenario.name %> - 
+        <% selectedScenario.name %> -
         <a href="https://models.lizard.net/model_databank/models/<% selectedScenario.model_name %>/commits/" target="_blank" title="Go to the Model database"><% selectedScenario.model_name %></a> #<% selectedScenario.model_revision %>
       </span>
 
@@ -64,7 +64,7 @@
           ng-class="{'selected-result': result.lg._active, clickable: result.layer_group}"
           ng-repeat="result in selectedScenario.result_set">
           <td ng-click="preview(result)"><% result.result_type.name %> <a ng-if="result.layer_group" translate>(preview)</a></td>
-          <td><a href="<% result.attachment_url %>" translate>Download</a></td>
+          <td><a href="<% result.attachment_url %>" target="_blank" translate>Download</a></td>
         </tr>
       </table>
       <span ng-if="selectedScenario.result_set.length === 0" translate>

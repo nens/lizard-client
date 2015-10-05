@@ -4,6 +4,9 @@ Changelog of lizard-nxt client
 Unreleased (2.1.0) (XXXX-XX-XX)
 ---------------------
 
+- Fix scenario download overwriting app url, set target=_blank to loading
+the url.
+
 - Fix inconsistency between time labels in search bar and timeline.
 
 - Fix drawing bars from null data.
