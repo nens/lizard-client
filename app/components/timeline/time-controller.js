@@ -287,9 +287,9 @@ angular.module('lizard-nxt')
     this.formatDatetime = function () {
       switch (State.temporal.aggWindow) {
       case 300000:
-        return 'HH:mm dd-MM-yyyy ';
+        return 'dd-MM-yyyy HH:mm';
       case 3600000:
-        return 'HH:mm dd-MM-yyyy ';
+        return 'dd-MM-yyyy HH:mm';
       case 86400000:
         return 'dd-MM-yyyy';
       case 2635200000:
