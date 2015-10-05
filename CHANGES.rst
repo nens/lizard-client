@@ -4,6 +4,9 @@ Changelog of lizard-nxt client
 Unreleased (2.1.0) (XXXX-XX-XX)
 ---------------------
 
+- Fix code messing up wanted attr table. Show default when undefined, null or
+empty string.
+
 - Fix truncate event values.
 
 - Fix recurrence time has unit years.
