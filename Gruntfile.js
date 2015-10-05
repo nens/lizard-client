@@ -597,6 +597,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('release', function () {
     grunt.loadNpmTasks('grunt-text-replace');
+    grunt.loadNpmTasks('grunt-lizard-release');
 
     grunt.task.run([
       'test',

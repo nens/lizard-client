@@ -1,7 +1,12 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.1.0) (XXXX-XX-XX)
+Unreleased (2.1.1) (XXXX-XX-XX)
+---------------------
+-
+
+
+Release 2.1.1 (2015-10-5)
 ---------------------
 
 - Fix code messing up wanted attr table. Show default when undefined, null or
