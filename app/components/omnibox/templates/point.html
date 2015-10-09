@@ -14,6 +14,24 @@
     </timeseries>
   </div>
 
+  <div class="card active"
+       ng-if="box.content.waterchain.layers.waterchain_grid.data.filters">
+    <nestedasset
+      asset-list="box.content.waterchain.layers.waterchain_grid.data.filters"
+      full-details="box.fullDetailCards.waterchain"
+      attr="'filter'">
+    </nestedasset>
+  </div>
+
+  <div class="card active"
+       ng-if="box.content.waterchain.layers.waterchain_grid.data.pumps">
+    <nestedasset
+      asset-list="box.content.waterchain.layers.waterchain_grid.data.pumps"
+      full-details="box.fullDetailCards.waterchain"
+      attr="'pump'">
+    </nestedasset>
+  </div>
+
   <div ng-if="box.content.rain">
     <rain></rain>
   </div>

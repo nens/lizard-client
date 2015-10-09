@@ -70,6 +70,37 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
+  .directive('nestedasset', ['WantedAttributes', 'DataService',
+    function (WantedAttributes, DataService) {
+  return {
+    link: function (scope) {
+
+      scope.wanted = WantedAttributes;
+
+      scope.$watch('assetList', function () {
+        if (typeof(scope.assetList) === 'string') {
+          scope.assetList = JSON.parse(scope.assetList);
+        }
+        if (scope.assetList.length < 2) {
+          scope.asset = scope.assetList[0];
+        }
+      });
+
+      scope.getTimeseries = DataService.getTimeseries;
+
+    },
+    restrict: 'E',
+    scope: {
+      fullDetails: '=',
+      assetList: '=',
+      attr: '='
+    },
+    replace: true,
+    templateUrl: 'omnibox/templates/nestedasset.html'
+  };
+}]);
+
+angular.module('omnibox')
   .directive('rain', [function () {
   return {
     restrict: 'E',

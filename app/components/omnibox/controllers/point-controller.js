@@ -93,7 +93,7 @@ angular.module('omnibox')
      */
     var drawFeedback = function () {
       var feedbackDrawn = false;
-
+      console.log($scope.box.content.waterchain);
       var drawVectorFeedback = function (content) {
         angular.forEach(content, function (lg) {
           if (lg && lg.layers) {
