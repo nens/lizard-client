@@ -1,0 +1,56 @@
+<div class="card-content">
+
+  <span class="kunstwerk-title" ng-class="{'sm-icon': !fullDetails};">
+
+    <i id="icon-holder"
+      ng-class="$parent.getIconClass(attr)">
+    </i>
+    <select
+      class="timeseries"
+      ng-if="assetList.length > 1"
+      ng-class="{hidden: !fullDetails}"
+      ng-model="$parent.currentNestedAsset"
+      ng-options="a.id for a in assetList">
+    </select>
+    <span
+      class="card-title-text placeholder"
+      ng-if="assetList.length === 1 && fullDetails">
+      <% $parent.currentNestedAsset.id %>
+    </span>
+    <span class="card-title-text placeholder" ng-class="{hidden: fullDetails}" ng-bind="attr"></span>
+  </span>
+
+  <table ng-if="fullDetails" id="kunstwerk-table" class="table table-condensed table-hover">
+
+    <tr class="attr-row"
+        ng-repeat="obj in wanted[attr].rows"
+        >
+
+      <td class="fixed-width-card-table">
+        <div class="attr-row-content">
+          <% obj.keyName | translate %>
+        </div>
+      </td>
+
+      <td class="lineout"
+          ng-if="$parent.currentNestedAsset[obj.attrName] !== undefined
+            && $parent.currentNestedAsset[obj.attrName] !== null
+            && $parent.currentNestedAsset[obj.attrName] !== ''">
+        <div class="attr-row-content" ng-bind-html="$eval(obj.ngBindValue) + obj.valueSuffix">
+        </div>
+      </td>
+
+      <td class="lineout"
+          ng-if="$parent.currentNestedAsset[obj.attrName] === undefined
+            || $parent.currentNestedAsset[obj.attrName] === null
+            || $parent.currentNestedAsset[obj.attrName] === ''"
+          rel="tooltip"
+          data-toggle="tooltip"
+          title="<% 'Example value' | translate %>">
+        <div class="attr-row-content dummy-attr-value" ng-bind-html="obj.defaultValue + obj.valueSuffix">
+        </div>
+      </td>
+    </tr>
+  </table>
+
+</div>

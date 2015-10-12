@@ -1,14 +1,30 @@
 <div ng-controller="PointCtrl">
 
-  <div class="card active"
-      ng-if="box.content.waterchain">
-    <cardattributes waterchain="box.content.waterchain" full-details="box.fullDetailCards.waterchain"></cardattributes>
+  <div ng-if="box.content.waterchain">
+    <div class="card active">
+      <cardattributes waterchain="box.content.waterchain" full-details="box.fullDetailCards.waterchain"></cardattributes>
+    </div>
+
+    <timeseries
+      ng-if="box.content.waterchain.layers.waterchain_grid.data.num_timeseries"
+      asset="box.content.waterchain.layers.waterchain_grid.data"
+      full-details="box.fullDetailCards.timeseries"
+      time-state="omnibox.state.temporal">
+    </timeseries>
   </div>
 
-  <div class="card active"
-       ng-if="box.content.waterchain && box.content.timeseries.layers.timeseries">
+  <div ng-if="box.content.waterchain.layers.waterchain_grid.data.filters
+    || box.content.waterchain.layers.waterchain_grid.data.pumps">
+    <div class="card active">
+      <nestedasset
+        asset="box.content.waterchain.layers.waterchain_grid.data"
+        full-details="box.fullDetailCards.waterchain">
+      </nestedasset>
+    </div>
+
     <timeseries
-      timeseries="box.content.timeseries.layers.timeseries"
+      ng-if="box.currentNestedAsset.num_timeseries"
+      asset="box.currentNestedAsset"
       full-details="box.fullDetailCards.timeseries"
       time-state="omnibox.state.temporal">
     </timeseries>

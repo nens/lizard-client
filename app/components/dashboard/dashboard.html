@@ -20,7 +20,7 @@
            <select class="timeseries"
                   ng-if="element.dashboardData.length > 1"
                   ng-model="element.selectedTimeseries"
-                  ng-options="series.name for series in element.dashboardData | rmSingleDatumTimeseries">
+                  ng-options="series.name for series in element.dashboardData | rmZeroDatumTimeseries">
            </select>
            <span class="card-title-text placeholder"
                  ng-if="element.dashboardData.length === 1">

@@ -135,10 +135,6 @@
 }
 
 @media screen and (-webkit-min-device-pixel-ratio:0) {
-    /** UGLY hack because browsers don't do stuff in the same way **/
-   .card i[class*='icon-'] {
-       top:10px;
-   }
 
    /* this is for the area aggregation */
    .card table i[class*='icon-'] {
@@ -625,6 +621,8 @@ table tr td:last-child {
 
 .timeseries-header-container .fa-clock-o {
   color: #e74c3c;
+  font-size: 1.5em;
+  top: 2px;
   position: relative;
   left: -5px;
 }
@@ -636,7 +634,7 @@ table tr td:last-child {
 }
 
 select.timeseries {
-  width: 337px;
+  width: 320px;
   position: relative;
   left: 5px;
 }

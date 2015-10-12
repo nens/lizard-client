@@ -29,7 +29,9 @@
       <td class="lineout"
           ng-if="waterchain.layers.waterchain_grid.data[obj.attrName] !== undefined
             && waterchain.layers.waterchain_grid.data[obj.attrName] !== null
-            && waterchain.layers.waterchain_grid.data[obj.attrName] !== ''">
+            && waterchain.layers.waterchain_grid.data[obj.attrName] !== ''
+            && waterchain.layers.waterchain_grid.data[obj.attrName] !== 'pumps'
+            && waterchain.layers.waterchain_grid.data[obj.attrName] !== 'filters'">
         <div class="attr-row-content" ng-bind-html="$eval(obj.ngBindValue) + obj.valueSuffix">
         </div>
       </td>
