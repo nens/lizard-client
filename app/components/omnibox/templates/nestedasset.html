@@ -9,13 +9,13 @@
       class="timeseries"
       ng-if="assetList.length > 1"
       ng-class="{hidden: !fullDetails}"
-      ng-model="asset"
+      ng-model="$parent.currentNestedAsset"
       ng-options="a.id for a in assetList">
     </select>
     <span
       class="card-title-text placeholder"
       ng-if="assetList.length === 1 && fullDetails">
-      <% asset.id %>
+      <% $parent.currentNestedAsset.id %>
     </span>
     <span class="card-title-text placeholder" ng-class="{hidden: fullDetails}" ng-bind="attr"></span>
   </span>
@@ -33,17 +33,17 @@
       </td>
 
       <td class="lineout"
-          ng-if="asset[obj.attrName] !== undefined
-            && asset[obj.attrName] !== null
-            && asset[obj.attrName] !== ''">
+          ng-if="$parent.currentNestedAsset[obj.attrName] !== undefined
+            && $parent.currentNestedAsset[obj.attrName] !== null
+            && $parent.currentNestedAsset[obj.attrName] !== ''">
         <div class="attr-row-content" ng-bind-html="$eval(obj.ngBindValue) + obj.valueSuffix">
         </div>
       </td>
 
       <td class="lineout"
-          ng-if="asset[obj.attrName] === undefined
-            || asset[obj.attrName] === null
-            || asset[obj.attrName] === ''"
+          ng-if="$parent.currentNestedAsset[obj.attrName] === undefined
+            || $parent.currentNestedAsset[obj.attrName] === null
+            || $parent.currentNestedAsset[obj.attrName] === ''"
           rel="tooltip"
           data-toggle="tooltip"
           title="<% 'Example value' | translate %>">

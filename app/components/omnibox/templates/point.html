@@ -1,35 +1,33 @@
 <div ng-controller="PointCtrl">
 
-  <div class="card active"
-      ng-if="box.content.waterchain">
-    <cardattributes waterchain="box.content.waterchain" full-details="box.fullDetailCards.waterchain"></cardattributes>
-  </div>
+  <div ng-if="box.content.waterchain">
+    <div class="card active">
+      <cardattributes waterchain="box.content.waterchain" full-details="box.fullDetailCards.waterchain"></cardattributes>
+    </div>
 
-  <div class="card active"
-       ng-if="box.content.waterchain && box.content.timeseries.layers.timeseries">
     <timeseries
-      timeseries="box.content.timeseries.layers.timeseries"
+      ng-if="box.content.waterchain.layers.waterchain_grid.data.num_timeseries"
+      asset="box.content.waterchain.layers.waterchain_grid.data"
       full-details="box.fullDetailCards.timeseries"
       time-state="omnibox.state.temporal">
     </timeseries>
   </div>
 
-  <div class="card active"
-       ng-if="box.content.waterchain.layers.waterchain_grid.data.filters">
-    <nestedasset
-      asset-list="box.content.waterchain.layers.waterchain_grid.data.filters"
-      full-details="box.fullDetailCards.waterchain"
-      attr="'filter'">
-    </nestedasset>
-  </div>
+  <div ng-if="box.content.waterchain.layers.waterchain_grid.data.filters
+    || box.content.waterchain.layers.waterchain_grid.data.pumps">
+    <div class="card active">
+      <nestedasset
+        asset="box.content.waterchain.layers.waterchain_grid.data"
+        full-details="box.fullDetailCards.waterchain">
+      </nestedasset>
+    </div>
 
-  <div class="card active"
-       ng-if="box.content.waterchain.layers.waterchain_grid.data.pumps">
-    <nestedasset
-      asset-list="box.content.waterchain.layers.waterchain_grid.data.pumps"
-      full-details="box.fullDetailCards.waterchain"
-      attr="'pump'">
-    </nestedasset>
+    <timeseries
+      ng-if="box.currentNestedAsset.num_timeseries"
+      asset="box.currentNestedAsset"
+      full-details="box.fullDetailCards.timeseries"
+      time-state="omnibox.state.temporal">
+    </timeseries>
   </div>
 
   <div ng-if="box.content.rain">
