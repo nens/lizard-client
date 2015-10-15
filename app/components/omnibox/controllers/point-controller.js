@@ -69,8 +69,6 @@ angular.module('omnibox')
             $scope.box.content[response.layerGroupSlug].layers[response.layerSlug].aggWindow = aggWindow;
           }
         }
-
-        $scope.box.minimizeCards();
       });
     };
 

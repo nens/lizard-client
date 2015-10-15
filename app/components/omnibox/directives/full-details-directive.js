@@ -2,6 +2,11 @@
  *
  * Toggle directive for omnibox cards
  *
+ * TODO: this directive or an attribute directive should be responsible for
+ * making the card small when there is not enough space.
+ *
+ * TODO 2: use ng-click so we do not have to worry about running a digest cycle
+ * manually.
  */
 angular.module('lizard-nxt')
   .directive('fullDetails', [function () {
@@ -23,8 +28,8 @@ angular.module('lizard-nxt')
         }
       };
 
-      //scope.$parent.box.minimizeCards();
       element.bind('click', toggleDetails);
+
 
     };
 

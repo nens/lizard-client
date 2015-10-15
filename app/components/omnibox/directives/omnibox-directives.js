@@ -44,32 +44,12 @@ angular.module("omnibox")
         scope.box.showCards = State.box.type !== 'empty';
       };
 
-      /**
-       * Resizes if cards, navbar and timeline are larger
-       * then the window size.
-       */
-      scope.box.minimizeCards = function () {
-        // height of search and nav combined
-        var searchNav = $('#searchboxinput').offset().top + $('#searchboxinput').height();
-        var cardsTooHigh = $('#cards').height() + searchNav +
-          $('#timeline').height() > $('body').height();
-        // jquery is good at this stuff alternative version would be:
-        // document.querySelector('#cards').clientHeight etc...
-
-      };
-
-      window.addEventListener('resize', scope.box.minimizeCards);
-
       scope.$watch(State.toString('box.type'), function (n, o) {
         if (n === o) { return true; }
         finalizeTemplateRendering();
       });
 
       finalizeTemplateRendering();
-
-      scope.$on('$destroy', function () {
-        window.removeEventListener('resize', scope.box.minimizeCards);
-      });
 
     };
 
