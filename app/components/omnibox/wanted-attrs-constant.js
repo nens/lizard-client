@@ -3,6 +3,37 @@
 angular.module('omnibox')
 .service("WantedAttributes", ["gettext", function (gettext) {
 
+  this.pump = {
+    rows: [
+      {
+        keyName: gettext("Capacity"),
+        attrName: "capacity",
+        ngBindValue:
+          "asset.selectedAsset.capacity * 3.6 | niceNumberOrEllipsis: 2",
+        valueSuffix: "  (m<sup>3</sup> / uur)",
+        defaultValue: "12"
+      },
+      {
+        /// Aanslagpeil
+        keyName: gettext("Start level"),
+        attrName: "start_level",
+        ngBindValue:
+          "asset.selectedAsset.start_level | niceNumberOrEllipsis: 2",
+        valueSuffix: " (mNAP)",
+        defaultValue: "-2.2"
+      },
+      {
+        /// Afslagpeil
+        keyName: gettext("Stop level"),
+        attrName: "stop_level",
+        ngBindValue:
+          "asset.selectedAsset.stop_level | niceNumberOrEllipsis: 2",
+        valueSuffix: " (mNAP)",
+        defaultValue: "-2.8"
+      }
+    ]
+  };
+
   this.bridge = {
     rows: [
       {

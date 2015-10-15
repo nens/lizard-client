@@ -191,7 +191,8 @@ angular.module('data-menu')
                 waitForTimeseriesAndEvents = instance.getTimeseriesAndEvents(
                   response,
                   options,
-                  defer
+                  defer,
+                  callee
                 );
               }
 
@@ -273,27 +274,34 @@ angular.module('data-menu')
       /**
        * Checks response for id and entity_name and passes this
        * getTimeSeriesForObject with start and end.
+       *
+       * NOTE, TODO: Since now (october 2015) getting timeseries is a job of the
+       * timeseries module with a dedicated directive. This code is legacey,
+       * used by the time context and for events. This will change when we
+       * implement the livedijk xl features.
+       *
        * @param  {object} response response from layergroup
        * @param  {int}    start    time start
        * @param  {int}    end      time end
        * @param  {defer}  defer    defer object to notify with timeseries
+       * @param  {string} callee   the origin of the data request, specified by
+       *                           the function calling DataService.getData.
+       *
        * @return {promise || false} false when no id and entity name or promise
        *                            when making request to timeseries endpoint.
        */
-      this.getTimeseriesAndEvents = function (response, options, defer) {
+      this.getTimeseriesAndEvents = function (
+        response,
+        options,
+        defer,
+        callee
+      ) {
         if (response.format === 'UTFGrid'
           && response.data
           && response.data.id
           && response.data.entity_name
         ) {
           // Apparently, we're dealing with the waterchain:
-          var tsPromise = getTimeSeriesForObject(
-            response.data.entity_name + '$' + response.data.id,
-            options.start,
-            options.end,
-            options.minPoints,
-            defer
-          );
           // The defer from getData is recycled, no need to pass a callee param.
           options.type = 'Event';
           options.object = {
@@ -302,73 +310,22 @@ angular.module('data-menu')
           };
           // Get all events for the provided options and the events belonging to
           // this object.
-          var eventsPromsise = this.getData(null, options, defer);
-          return $q.all([tsPromise, eventsPromsise]);
+          var promises = [this.getData(null, options, defer)];
+
+          // LEGACY: getting timeseries is only done for legacy time context.
+          // Omnibox uses the timeseries module for this.
+          if (callee === 'time') {
+            promises.push(TimeseriesService.getTimeSeriesForObject(
+              response.data.entity_name + '$' + response.data.id,
+              options.start,
+              options.end,
+              options.minPoints,
+              defer
+            ));
+          }
+
+          return $q.all(promises);
         } else { return false; }
-      };
-
-      /**
-       * @function
-       * @memberOf app.pointCtrl
-       * @description gets timeseries from service
-       */
-      var getTimeSeriesForObject = function (
-          objectId,
-          start,
-          end,
-          minPoints,
-          defer
-        ) {
-
-        // maximum number of timeseries events, more probably results in a
-        // memory error.
-        var MAX_NR_TIMESERIES_EVENTS = 25000;
-        var promise = TimeseriesService.getTimeseries(
-          objectId,
-          {
-            start: start,
-            end: end
-          },
-          minPoints
-        ).then(function (response) {
-
-           // Filter out the timeseries with too little measurements. And ts
-           // without parameter unit info.
-          var filteredResult = [];
-          angular.forEach(response.results, function (ts) {
-            if (ts.events.length > 1 &&
-                ts.events.length < MAX_NR_TIMESERIES_EVENTS &&
-                ts.parameter_referenced_unit) {
-              filteredResult.push(ts);
-
-            // Else: output a message to the console and an error to sentry.
-            } else if (ts.events.length > MAX_NR_TIMESERIES_EVENTS) {
-              var msg = 'Timeseries: '
-                + ts.uuid
-                + ' has: '
-                + ts.events.length
-                + ' events, while '
-                + MAX_NR_TIMESERIES_EVENTS
-                + ' is the maximum supported amount';
-              window.Raven.captureException(new Error(msg));
-              console.info(msg);
-            } else if (!ts.parameter_referenced_unit) {
-              var msg = 'Timeseries: '
-                + ts.uuid
-                + ' has no valid parameter_referenced_unit';
-              window.Raven.captureException(new Error(msg));
-              console.info(msg);
-            }
-          });
-          defer.notify({
-            data: filteredResult,
-            layerGroupSlug: 'timeseries',
-            layerSlug: 'timeseries',
-          });
-
-        });
-
-        return promise;
       };
 
     }

@@ -50,8 +50,7 @@ angular.module('omnibox')
         geom: here,
         start: State.temporal.start,
         end: State.temporal.end,
-        aggWindow: aggWindow,
-        minPoints: 320 // Width of drawing area of box graphs.
+        aggWindow: aggWindow
       });
 
       // Draw feedback when all promises resolved
@@ -93,7 +92,6 @@ angular.module('omnibox')
      */
     var drawFeedback = function () {
       var feedbackDrawn = false;
-
       var drawVectorFeedback = function (content) {
         angular.forEach(content, function (lg) {
           if (lg && lg.layers) {

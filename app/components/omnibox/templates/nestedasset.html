@@ -1,0 +1,80 @@
+<div class="card-content">
+
+  <div class="timeseries-header-container">
+
+
+    <i id="icon-holder"
+      ng-class="$parent.getIconClass(attr)">
+    </i>
+
+    <!-- <span class="kunstwerk-title" ng-class="{'sm-icon': !fullDetails};"> -->
+      <span id="title-holder"
+            class="card-title-text kunstwerk-title-text"
+            ng-bind="attr | objectTitle">
+      </span>
+    <!-- </span> -->
+
+    <select
+      class="timeseries nested-asset"
+      ng-if="list.length > 1"
+      ng-class="{hidden: !fullDetails}"
+      ng-model="asset.selectedAsset"
+      ng-options="a.code for a in list track by a.id">
+    </select>
+
+    <full-details></full-details>
+  </div>
+
+
+  <table ng-if="fullDetails" id="kunstwerk-table" class="table table-condensed table-hover">
+
+    <tr class="attr-row"
+        ng-if="list.length === 1
+          && asset.selectedAsset.code !== undefined
+          && asset.selectedAsset.code !== null
+          && asset.selectedAsset.code !== ''">
+      <td class="fixed-width-card-table">
+        <div class="attr-row-content">
+          <% 'code' | translate %>
+        </div>
+      </td>
+
+      <td class="lineout">
+        <div class="attr-row-content" ng-bind="asset.selectedAsset.code">
+        </div>
+      </td>
+    </tr>
+
+
+    <tr class="attr-row"
+        ng-repeat="obj in wanted[attr].rows"
+        >
+
+      <td class="fixed-width-card-table">
+        <div class="attr-row-content">
+          <% obj.keyName | translate %>
+        </div>
+      </td>
+
+      <td class="lineout"
+          ng-if="asset.selectedAsset[obj.attrName] !== undefined
+            && asset.selectedAsset[obj.attrName] !== null
+            && asset.selectedAsset[obj.attrName] !== ''">
+        <div class="attr-row-content" ng-bind-html="$eval(obj.ngBindValue) + obj.valueSuffix">
+        </div>
+      </td>
+
+      <td class="lineout"
+          ng-if="asset.selectedAsset[obj.attrName] === undefined
+            || asset.selectedAsset[obj.attrName] === null
+            || asset.selectedAsset[obj.attrName] === ''"
+          rel="tooltip"
+          data-toggle="tooltip"
+          title="<% 'Example value' | translate %>">
+        <div class="attr-row-content dummy-attr-value" ng-bind-html="obj.defaultValue + obj.valueSuffix">
+        </div>
+      </td>
+    </tr>
+  </table>
+
+</div>

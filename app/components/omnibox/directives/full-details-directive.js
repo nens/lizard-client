@@ -5,13 +5,13 @@
  */
 angular.module('lizard-nxt')
   .directive('fullDetails', [function () {
-    
+
     var link = function (scope, element, attrs) {
 
       if (scope.fullDetails === undefined) {
         scope.fullDetails = true;
       }
-      
+
       // does the actual toggling.
       var toggleDetails = function () {
         if (scope.$$phase) {
@@ -27,7 +27,7 @@ angular.module('lizard-nxt')
       element.bind('click', toggleDetails);
 
     };
-    
+
 
     return {
       link: link,
