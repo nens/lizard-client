@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.2.1) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 2.2.1 (2015-10-16)
+---------------------
 
 - Add autoprefixer to default loaded grunt tasks.
 

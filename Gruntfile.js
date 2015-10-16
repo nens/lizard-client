@@ -570,8 +570,7 @@ module.exports = function (grunt) {
       'cssmin',
       'filerev',
       'usemin',
-      'htmlmin',
-      'doxx'
+      'htmlmin'
     ]);
   });
 
