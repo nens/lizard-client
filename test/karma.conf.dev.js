@@ -49,6 +49,7 @@ module.exports = function(config) {
       'app/components/state/state.js',
       'app/components/dashboard/dashboard.js',
       'app/components/time-ctx/time-ctx.js',
+      'app/components/timeseries/timeseries.js',
       'app/components/scenarios/scenarios.js',
       'app/components/user-menu/user-menu.js',
       'app/lizard-nxt.js',

@@ -17,7 +17,9 @@ angular.module('omnibox')
 
     this.state = { temporal: State.temporal };
 
-    $scope.box = {};
+    $scope.box = {
+      content: {}
+    };
 
     $scope.zoomIn = MapService.zoomIn;
     $scope.zoomOut = MapService.zoomOut;
