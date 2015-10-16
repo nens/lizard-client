@@ -3,7 +3,15 @@ Changelog of lizard-nxt client
 
 Unreleased (2.1.1) (XXXX-XX-XX)
 ---------------------
--
+
+- Add autoprefixer to default loaded grunt tasks.
+
+- Split timeseries logic from DataService and omnibox directive into one
+timeseries component with a directive and service as interface. Refactor point
+template to use new timeseries directive.
+
+- Add nestedasset as an omnibox template directive. Parsing the nested JSON in
+the utfgrid and showing the nested assets in a select box.
 
 
 Release 2.1.1 (2015-10-5)

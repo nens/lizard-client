@@ -412,18 +412,19 @@ angular.module('lizard-nxt-filters')
 
 /**
  * For the n timeseries related to a structure, remove the ones with an
- * insufficient amount of measurements to be able draw a graph.
+ * insufficient amount of measurements to be able draw a graph. Since ts events
+ * have a max and a min, it is possible to draw a line between 1 data point.
  *
  * @param {Object[]} A list of timeseries
  * @return  {Object[]} A list of timeseries with sufficient data
  */
 angular.module('lizard-nxt-filters')
-  .filter('rmSingleDatumTimeseries', function () {
+  .filter('rmZeroDatumTimeseries', function () {
 
   return function (input) {
     var result = [];
     angular.forEach(input, function (datum) {
-      if (datum.events.length > 1) { result.push(datum); }
+      if (datum.events.length > 0) { result.push(datum); }
     });
     return result;
   };
@@ -455,7 +456,9 @@ angular.module('lizard-nxt-filters')
       'sluice': 'Sluis',
       'wastewatertreatmentplant': 'Rioolwaterzuiveringsinstallatie',
       'levee': 'Kering',
-      'leveereferencepoint': 'Referentiepunt kering'
+      'leveereferencepoint': 'Referentiepunt kering',
+      'pump': 'Pump',
+      'filter': 'Filter'
     }[input] || input;
   };
 

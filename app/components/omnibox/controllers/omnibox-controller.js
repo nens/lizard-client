@@ -17,9 +17,7 @@ angular.module('omnibox')
 
     this.state = { temporal: State.temporal };
 
-    $scope.box = {
-      content: {}
-    };
+    $scope.box = {};
 
     $scope.zoomIn = MapService.zoomIn;
     $scope.zoomOut = MapService.zoomOut;
@@ -51,8 +49,7 @@ angular.module('omnibox')
               key = newkey;
             }
           }
-          if (State.layerGroups.active.indexOf(key) === -1
-              && key !== 'timeseries') {
+          if (State.layerGroups.active.indexOf(key) === -1) {
             delete $scope.box.content[key];
           }
         });
@@ -115,7 +112,6 @@ angular.module('omnibox')
             if (response.layerGroupSlug.indexOf('waterchain') !== -1) {
               delete $scope.box.content[response.layerGroupSlug];
               delete $scope.box.content.waterchain;
-              delete $scope.box.content.timeseries;
 
             } else {
               delete $scope.box.content[response.layerGroupSlug].layers[response.layerSlug];

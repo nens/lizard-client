@@ -9,51 +9,6 @@
  * * Detailswitch
  *
  */
-
-/**
- * Timeseries directive.
- */
-angular.module('omnibox')
-  .directive('timeseries', [function () {
-  return {
-      link: function (scope) {
-
-        /**
-         * Return the currently selected timeseries if it is one of the
-         * available timeseries.
-         * @param  {array} timeseries list of available timeseries.
-         * @param  {object} current   currently selected ts.
-         * @return {object} selected timeseries.
-         */
-        var getSelectedTS = function (timeseries, current) {
-          var selected = {};
-          if (current) {
-            selected = timeseries.filter(function (ts) {
-              return ts.uuid === current.uuid;
-            });
-          }
-          return selected.length > 0 ? selected[0] : timeseries[0];
-        };
-
-        scope.$watch('timeseries.data', function () {
-          scope.timeseries.selectedTimeseries = getSelectedTS(
-            scope.timeseries.data,
-            scope.timeseries.selectedTimeseries
-          );
-        });
-
-      },
-      restrict: 'E',
-      scope: {
-        fullDetails: '=',
-        timeseries: '=',
-        timeState: '='
-      },
-      // replace: true,
-      templateUrl: 'omnibox/templates/timeseries.html'
-    };
-}]);
-
 angular.module('omnibox')
   .directive('cardattributes', ['WantedAttributes',
     function (WantedAttributes) {
@@ -61,11 +16,41 @@ angular.module('omnibox')
     link: function (scope) { scope.wanted = WantedAttributes; },
     restrict: 'E',
     scope: {
-      fullDetails: '=',
       waterchain: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/cardattributes.html'
+  };
+}]);
+
+angular.module('omnibox')
+  .directive('nestedasset', ['WantedAttributes', 'DataService',
+    function (WantedAttributes, DataService) {
+  return {
+    link: function (scope) {
+
+      scope.wanted = WantedAttributes;
+
+      /**
+       * Watch asset unpack json string, add entity name and select first child
+       * asset.
+       */
+      scope.$watch('asset', function () {
+        scope.attr = scope.asset.pumps ? 'pump' : 'filter';
+        scope.list = JSON.parse(scope.asset[scope.attr + 's']);
+        angular.forEach(scope.list, function (asset) {
+          asset.entity_name = scope.attr;
+        });
+        scope.asset.selectedAsset = scope.list[0];
+      });
+
+    },
+    restrict: 'E',
+    scope: {
+      asset: '=',
+    },
+    replace: true,
+    templateUrl: 'omnibox/templates/nestedasset.html'
   };
 }]);
 
