@@ -57,6 +57,26 @@ angular.module('omnibox')
         });
       };
 
+      /**
+       * Error callback
+       *
+       * Many omnibox calls are rejected when making multiple calls in a row.
+       * By explicitly passing the reason it is possible to throw an error and
+       * give user feedback further downstream.
+       *
+       * @param  {string} reason why getData was rejected.
+       * @return {string} reason
+       */
+      var errorFn = function (reason) {
+        if (reason !== 'overridden') {
+          throw new Error(
+            'Getting omnibox data rejected: '
+            + JSON.stringify({'reason': reason})
+          );
+        }
+        return reason;
+      };
+
       var putDataOnScope = function (response) {
         var lGContent = $scope.box.content[response.layerGroupSlug] || {layers: {}};
         lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
@@ -123,7 +143,7 @@ angular.module('omnibox')
         // Accomodate chaining in child controllers
         return response;
       };
-      var promise = DataService.getData('omnibox', options).then(doneFn, doneFn, putDataOnScope);
+      var promise = DataService.getData('omnibox', options).then(doneFn, errorFn, putDataOnScope);
       return promise;
     };
 

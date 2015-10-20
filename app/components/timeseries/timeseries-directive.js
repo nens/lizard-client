@@ -39,12 +39,15 @@ angular.module('timeseries')
 
           var assetId = asset.entity_name + '$' + asset.id;
 
-          TimeseriesService.getTimeSeriesForObject(
+          // Attach promise to local variable, otherwise the .then is attached to a singular in TimeseriesService.
+          var promise = TimeseriesService.getTimeSeriesForObject(
             assetId,
             scope.timeState.start,
             scope.timeState.end,
             GRAPH_WIDTH
-          ).then(function (response) {
+          );
+
+          promise.then(function (response) {
             scope.timeseries.data = $filter('rmZeroDatumTimeseries')(response.results);
 
             scope.timeseries.selectedTimeseries = getSelectedTS(
