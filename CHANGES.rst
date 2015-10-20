@@ -6,6 +6,8 @@ Unreleased (2.2.1) (XXXX-XX-XX)
 
 - Fix transitioning empty selection when clicking while loading previous click.
 
+- Fix vibration of click layer when loading data on init.
+
 
 Release 2.2.1 (2015-10-16)
 ---------------------

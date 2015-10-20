@@ -88,7 +88,9 @@ angular.module('omnibox')
      * @memberOf app.pointCtrl
      * @description Draw visual feedback after client clicked on the map
      */
-    var drawFeedback = function () {
+    var drawFeedback = function (reason) {
+      if (reason === 'overridden') { return; } // keep vibrating, other calls
+                                               // will finish.
       var feedbackDrawn = false;
       var drawVectorFeedback = function (content) {
         angular.forEach(content, function (lg) {
