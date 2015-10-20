@@ -8,6 +8,8 @@ Unreleased (2.2.1) (XXXX-XX-XX)
 
 - Fix vibration of click layer when loading data on init.
 
+- Fix empty select box for nested assets, use serial whem code is not available
+  and use id when serial is not available either.
 
 Release 2.2.1 (2015-10-16)
 ---------------------
