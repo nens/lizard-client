@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.2.1) (XXXX-XX-XX)
 ---------------------
--
+
+- Fix transitioning empty selection when clicking while loading previous click.
 
 
 Release 2.2.1 (2015-10-16)
