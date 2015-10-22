@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.2.1) (XXXX-XX-XX)
 ---------------------
 
+- Fix empty unit label in time-ctx. Pass aggwindow and use filter in graph.
+
 - Fix transitioning empty selection when clicking while loading previous click.
 
 - Fix vibration of click layer when loading data on init.
