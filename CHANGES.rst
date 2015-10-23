@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (2.2.1) (XXXX-XX-XX)
 ---------------------
 
+- Fix reference NAP for groundwaterstations and filter, just do not show it.
+
+- Show filter attributes in filter card.
+
 - Do not request timeline data when bounds are not set.
 
 - Fix empty unit label in time-ctx. Pass aggwindow and use filter in graph.
