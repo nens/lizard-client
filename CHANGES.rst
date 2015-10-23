@@ -6,6 +6,10 @@ Unreleased (2.2.1) (XXXX-XX-XX)
 
 - Add command line host + port options for grunt serve.
 
+- Add translations for entity names and units.
+
+- Fix empty unit label in time-ctx. Pass aggwindow and use filter in graph.
+
 
 Release 2.2.1 (2015-10-16)
 ---------------------
