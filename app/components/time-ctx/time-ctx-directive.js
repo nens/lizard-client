@@ -71,6 +71,7 @@ angular.module('time-ctx')
       angular.forEach(sharedKeys, function (key) {
         item[key] = response[key];
       });
+      item.aggWindow = State.temporal.aggWindow;
       scope.tctx.content[response.layerSlug] = item;
     };
 

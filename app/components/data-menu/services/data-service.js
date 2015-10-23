@@ -83,6 +83,14 @@ angular.module('data-menu')
         configurable: false
       });
 
+      this.REJECTION_REASONS = {};
+
+      Object.defineProperty(this.REJECTION_REASONS, 'OVERRIDDEN', {
+        value: 'overridden',
+        writeable: false,
+        configurable: false
+      });
+
       // List of slugs of active layerGroups, two-way.
       var instance = this;
       Object.defineProperty(State.layerGroups, 'active', {
@@ -168,7 +176,7 @@ angular.module('data-menu')
         var defer = $q.defer();
 
         if (recursiveDefer === undefined) {
-          this.reject(callee);
+          this.reject(callee, this.REJECTION_REASONS.OVERRIDDEN);
           if (!this._dataDefers[callee]) {
             this._dataDefers[callee] = []; // It is a list because $q.all can not
           }                                // be deregistered.
@@ -245,11 +253,11 @@ angular.module('data-menu')
       /**
        * Rejects call for data and sets loading to false.
        */
-      this.reject = function (callee) {
+      this.reject = function (callee, reason) {
         State.layerGroups.gettingData = false;
         if (this._dataDefers[callee]) {
           this._dataDefers[callee].forEach(function (defer) {
-            defer.reject();
+            defer.reject(reason);
           });
         }
       };

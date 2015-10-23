@@ -148,6 +148,43 @@ angular.module('omnibox')
     ]
   };
 
+  this.filter = {
+    rows: [
+      {
+        /// Bovenkant filter
+        keyName: gettext("Filter top level"),
+        attrName: "filter_top_level",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.filter_top_level",
+        valueSuffix: " (m)",
+        defaultValue: ""
+      },
+      {
+        /// Onderkant filter
+        keyName: gettext("Filter bottom level"),
+        attrName: "filter_bottom_level",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.filter_bottom_level",
+        valueSuffix: " (m)",
+        defaultValue: ""
+      },
+      {
+        keyName: gettext("Aquifer confinement"),
+        attrName: "aquifer_confiment",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.aquifer_confiment",
+        valueSuffix: " (m)",
+        defaultValue: ""
+      },
+      {
+        /// bodemsoort
+        keyName: gettext("Litology"),
+        attrName: "litology",
+        ngBindValue: "waterchain.layers.waterchain_grid.data.litology",
+        valueSuffix: " (m)",
+        defaultValue: ""
+      },
+
+    ]
+  };
+
   this.groundwaterstation = {
     rows: [
       {
@@ -169,7 +206,7 @@ angular.module('omnibox')
         keyName: gettext("Surface level"),
         attrName: "surface_level",
         ngBindValue: "waterchain.layers.waterchain_grid.data.surface_level",
-        valueSuffix: " (mNAP)",
+        valueSuffix: " (m)",
         defaultValue: ""
       },
       {
@@ -177,7 +214,7 @@ angular.module('omnibox')
         keyName: gettext("Top level"),
         attrName: "top_level",
         ngBindValue: "waterchain.layers.waterchain_grid.data.top_level",
-        valueSuffix: " (mNAP)",
+        valueSuffix: " (m)",
         defaultValue: ""
       },
       {
@@ -185,23 +222,7 @@ angular.module('omnibox')
         keyName: gettext("Bottom level"),
         attrName: "bottom_level",
         ngBindValue: "waterchain.layers.waterchain_grid.data.bottom_level",
-        valueSuffix: " (mNAP)",
-        defaultValue: ""
-      },
-      {
-        /// Bovenkant filter
-        keyName: gettext("Filter top level"),
-        attrName: "filter_top_level",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.filter_top_level",
-        valueSuffix: " (mNAP)",
-        defaultValue: ""
-      },
-      {
-        /// Onderkant filter
-        keyName: gettext("Filter bottom level"),
-        attrName: "filter_bottom_level",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.filter_bottom_level",
-        valueSuffix: " (mNAP)",
+        valueSuffix: " (m)",
         defaultValue: ""
       }
     ]
