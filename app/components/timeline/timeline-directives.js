@@ -226,7 +226,8 @@ angular.module('lizard-nxt')
                      nEvents: scope.events.nEvents};
 
       // vector data (for now only events)
-      if (timelineLayers.events.layers.length > 0) {
+      if (timelineLayers.events.layers.length > 0 &&
+        State.spatial.bounds.isValid()) {
         scope.events.nEvents = timelineLayers.events.layers.length;
 
         // update inactive groups with nodata so update function is called

@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (2.2.1) (XXXX-XX-XX)
 ---------------------
 
+- Do not request timeline data when bounds are not set.
+
+- Add translations for entity names and units.
+
 - Fix empty unit label in time-ctx. Pass aggwindow and use filter in graph.
 
 - Fix transitioning empty selection when clicking while loading previous click.
