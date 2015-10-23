@@ -68,7 +68,7 @@ angular.module('omnibox')
        * @return {string} reason
        */
       var errorFn = function (reason) {
-        if (reason !== 'overridden') {
+        if (reason !== DataService.REJECTION_REASONS.OVERRIDDEN) {
           throw new Error(
             'Getting omnibox data rejected: '
             + JSON.stringify({'reason': reason})
