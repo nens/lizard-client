@@ -67,6 +67,7 @@ angular.module('omnibox')
 
       $scope.fillBox({
         geom_id: feature.id,
+        boundary_type: feature.properties.type,
         // apparantly this cannnot be left out because of some type check.
         geom: feature.geometry,
         start: State.temporal.start,

@@ -3,7 +3,10 @@ Changelog of lizard-nxt client
 
 Unreleased (2.0.10) (XXXX-XX-XX)
 -------------------------------
--
+
+- Send boundary_type to server in region selection to be able to not only select
+  admin bounds regions but "pumped drainage area", "fixed drainage level area"
+  and "polder" as well.
 
 
 Release 2.0.10 (2015-9-29)
