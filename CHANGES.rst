@@ -19,6 +19,11 @@ Unreleased (2.2.1) (XXXX-XX-XX)
 - Fix empty select box for nested assets, use serial whem code is not available
   and use id when serial is not available either.
 
+- Send boundary_type to server in region selection to be able to not only select
+  admin bounds regions but "pumped drainage area", "fixed drainage level area"
+  and "polder" as well.
+
+
 Release 2.2.1 (2015-10-16)
 ---------------------
 
