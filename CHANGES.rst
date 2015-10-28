@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.2.1) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 2.2.2 (2015-10-28)
+---------------------
 
 - Fix reference NAP for groundwaterstations and filter, just do not show it.
 
