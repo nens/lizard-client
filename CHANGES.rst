@@ -1,9 +1,10 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.2.1) (XXXX-XX-XX)
+Unreleased (2.2.3) (XXXX-XX-XX)
 ---------------------
--
+
+- Show total damage value in template for scenarios.
 
 
 Release 2.2.2 (2015-10-28)
