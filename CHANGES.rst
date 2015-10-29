@@ -9,8 +9,13 @@ Unreleased (2.3.1) (XXXX-XX-XX)
 - Add translations for entity names and units.
 
 
+Release 2.2.3 (2015-10-29)
+---------------------
 
-Unreleased (2.2.2) (XXXX-XX-XX)
+- Show total damage value in template for scenarios.
+
+
+Release 2.2.2 (2015-10-28)
 ---------------------
 
 - Fix reference NAP for groundwaterstations and filter, just do not show it.
@@ -27,6 +32,11 @@ Unreleased (2.2.2) (XXXX-XX-XX)
 
 - Fix empty select box for nested assets, use serial whem code is not available
   and use id when serial is not available either.
+
+- Send boundary_type to server in region selection to be able to not only select
+  admin bounds regions but "pumped drainage area", "fixed drainage level area"
+  and "polder" as well.
+
 
 Release 2.2.1 (2015-10-16)
 ---------------------

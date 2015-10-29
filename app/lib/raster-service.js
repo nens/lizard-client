@@ -63,6 +63,7 @@ angular.module('lizard-nxt')
 
     if (options.geom_id) {
       requestOptions.geom_id = options.geom_id; 
+      requestOptions.boundary_type = options.boundary_type;
     } else {
       requestOptions.geom = UtilService.geomToWkt(options.geom); 
     }

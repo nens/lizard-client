@@ -63,8 +63,19 @@
         <tr
           ng-class="{'selected-result': result.lg._active, clickable: result.layer_group}"
           ng-repeat="result in selectedScenario.result_set">
-          <td ng-click="preview(result)"><% result.result_type.name %> <a ng-if="result.layer_group" translate>(preview)</a></td>
-          <td><a href="<% result.attachment_url %>" target="_blank" translate>Download</a></td>
+          <td ng-click="preview(result)"><% result.result_type.name %>
+            <a ng-if="result.layer_group" translate>(preview)</a>
+         </td>
+          <td>
+            <a ng-if="result.result_type.code !== 'damage_estimation_json'"
+               href="<% result.attachment_url %>" target="_blank" translate>Download</a>
+            <a ng-if="result.result_type.code === 'damage_estimation_json'"
+               href="<% result.attachment_url %>" target="_blank" translate>
+              <span translate>
+                €<% result.value | number: 2%> | Download
+              </span>
+            </a>
+          </td>
         </tr>
       </table>
       <span ng-if="selectedScenario.result_set.length === 0" translate>
