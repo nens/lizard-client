@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.3.1) (XXXX-XX-XX)
 ---------------------
 
+- Fix timeseries overriding eachother in time-ctx.
+
 - Add command line host + port options for grunt serve.
 
 - Add translations for entity names and units.
