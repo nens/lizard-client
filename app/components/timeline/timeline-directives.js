@@ -507,9 +507,13 @@ angular.module('lizard-nxt')
      */
     window.addEventListener('resize', resize);
 
+    /**
+     * Remove listeners.
+     */
     scope.$on('$destroy', function () {
       window.removeEventListener('resize', resize);
       window.removeEventListener('load', getTimeLineData);
+      timeline.destroy();
     });
 
     // END WATCHES

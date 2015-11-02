@@ -10,6 +10,9 @@ Release 2.2.3 (2015-10-29)
 
 - Remove beta warning for region aggregation.
 
+- Fix clip path not clipping. Use absolute url to refer to clippath and keep
+track of the url for nxt-d3 instances.
+
 Release 2.2.2 (2015-10-28)
 ---------------------
 
