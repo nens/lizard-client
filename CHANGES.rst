@@ -12,6 +12,8 @@ Unreleased (2.3.1) (XXXX-XX-XX)
 
 - Remove location listenere from url controller, only set url on init.
 
+- Fix clip path not clipping. Use absolute url to refer to clippath and keep
+track of the url for nxt-d3 instances.
 
 Release 2.2.3 (2015-10-29)
 ---------------------
