@@ -17,6 +17,7 @@ angular.module('lizard-nxt')
   '$timeout',
   'LocationGetterSetter',
   'UrlState',
+  'UtilService',
   'dataBounds',
   'defaultLocale',
   'DataService',
@@ -31,6 +32,7 @@ angular.module('lizard-nxt')
     $timeout,
     LocationGetterSetter,
     UrlState,
+    UtilService,
     dataBounds,
     defaultLocale,
     DataService,
@@ -93,6 +95,7 @@ angular.module('lizard-nxt')
       } else {
         DataService.setLayerGoupsToDefault();
       }
+      UrlState.setlayerGroupsUrl(state, State.layerGroups.active);
     };
 
    /**
@@ -275,19 +278,10 @@ angular.module('lizard-nxt')
     });
 
     /**
-     * Listener to update map view when user changes url
-     *
-     * $locationChangeSucces is broadcasted by angular
-     * when the hashSyncHelper in util-service changes the url
+     * Set the state from the url on init or set the url from the default state
+     * when the url is empty.
      */
-
-    // $locationChangeSuccess is fired once when this controller is initialized.
-    // We might move the time, so we set it to true, and the $on
-    // $locationChangeSuccess sets it back to false to trigger the the rest of
-    // the app to update to the time of the url.
-    State.temporal.timelineMoving = true;
-
-    var listener = $scope.$on('$locationChangeSuccess', function (e, oldurl, newurl) {
+    var setStateFromUrl = function () {
       var language = LocationGetterSetter.getUrlValue(state.language.part, state.language.index),
         boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
         geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
@@ -341,10 +335,11 @@ angular.module('lizard-nxt')
         UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
       }
 
-      State.temporal.timelineMoving = false;
+      UtilService.announceMovedTimeline(State);
 
-      listener(); // remove this listener
-    });
+    };
+
+    setStateFromUrl();
 
   }
 ]);

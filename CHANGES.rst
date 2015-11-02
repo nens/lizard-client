@@ -10,6 +10,8 @@ Unreleased (2.3.1) (XXXX-XX-XX)
 
 - Add translations for entity names and units.
 
+- Remove location listenere from url controller, only set url on init.
+
 
 Release 2.2.3 (2015-10-29)
 ---------------------
