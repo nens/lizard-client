@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.3.1) (XXXX-XX-XX)
 ---------------------
 
+- Fix timeseries download button not working, add target= _blank.
+
 - Show total damage values in results card
 
 - Fix timeseries overriding eachother in time-ctx.
