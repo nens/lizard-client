@@ -60,10 +60,14 @@ angular.module('omnibox')
      * @description zooms to geocoder search result
      * @param {object} one search result.
      */
-    scope.zoomToSpatialResult = function (location) {
-      destroySearchResultsModel();
-      scope.cleanInput();
-      State = SearchService.zoomToGoogleGeocoderResult(location, State);
+    scope.zoomToSpatialResult = function (location, origin) {
+      if (origin === 'timeseries') {
+        State = SearchService.zoomToResult(location, State);
+      } else {
+        destroySearchResultsModel();
+        scope.cleanInput();
+        State = SearchService.zoomToGoogleGeocoderResult(location, State);
+      }
     };
 
     /**
@@ -152,12 +156,17 @@ angular.module('omnibox')
 
             // Either put results on scope or remove model.
             if (response.status === SearchService.responseStatus.OK) {
-              scope.box.content.searchResults.spatial = response.results;
+              var results = response.results;
+              // limit to 5 results
+              if (results.length > 5) {
+                results = results.splice(0, 5)
+              }
+              scope.box.content.searchResults.spatial = results;
             }
             // Only destroy asynchronous when following searches did not find
             // a date either.
             else if (scope.box.content.searchResults.temporal === undefined) {
-              destroySearchResultsModel();
+              //destroySearchResultsModel();
 
               if (
                 response.status !== SearchService.responseStatus.ZERO_RESULTS
@@ -172,6 +181,13 @@ angular.module('omnibox')
           }
         );
       }
+      results.search
+        .then(function (response) {
+          // Asynchronous so check whether still relevant.
+          if (scope.box.content.searchResults === undefined) { return; }
+          scope.box.content.searchResults.search = response.results;
+        }
+      );
     };
 
     /**
