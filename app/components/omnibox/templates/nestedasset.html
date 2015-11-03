@@ -10,7 +10,7 @@
     <!-- <span class="kunstwerk-title" ng-class="{'sm-icon': !fullDetails};"> -->
       <span id="title-holder"
             class="card-title-text kunstwerk-title-text"
-            ng-bind="attr | objectTitle">
+            ng-bind="attr | objectTitle | translate">
       </span>
     <!-- </span> -->
 
@@ -19,7 +19,11 @@
       ng-if="list.length > 1"
       ng-class="{hidden: !fullDetails}"
       ng-model="asset.selectedAsset"
-      ng-options="a.code for a in list track by a.id">
+      ng-options="
+        a.code !== '' ? a.code
+        : a.serial !== '' ? a.serial
+        : a.id
+        for a in list track by a.id">
     </select>
 
     <full-details></full-details>

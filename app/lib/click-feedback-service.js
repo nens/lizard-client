@@ -184,6 +184,7 @@ angular.module('lizard-nxt')
        *                          is set to 0 at the end the vibration.
        */
       this.vibrate = function (sel, remove) {
+        if (sel.empty()) { return; } // bail when empty
         var width = this.strokeWidth;
 
         sel.selectAll("path")

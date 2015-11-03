@@ -14,7 +14,7 @@ For more than demo purposes Lizard client depends on:
 
 ## Install
 
-Lizard client can be installed independent of the lizard-nxt ecosystem or from within lizard-nxt using mr. developer
+Lizard client can be installed independent of the lizard-nxt ecosystem.
 
 ### Independent
 

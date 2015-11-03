@@ -71,6 +71,7 @@ angular.module('time-ctx')
       angular.forEach(sharedKeys, function (key) {
         item[key] = response[key];
       });
+      item.aggWindow = State.temporal.aggWindow;
       scope.tctx.content[response.layerSlug] = item;
     };
 
@@ -133,7 +134,7 @@ angular.module('time-ctx')
         // supported.
         } else if (response.layerSlug === 'timeseries') {
           angular.forEach(response.data, function (ts) {
-            ts.layerSlug = ts.name;
+            ts.layerSlug = ts.uuid;
             ts.name = ts.location.name
               + ', '
               + ts.parameter_referenced_unit.parameter_short_display_name;
