@@ -281,7 +281,7 @@ angular.module('lizard-nxt')
      * Set the state from the url on init or set the url from the default state
      * when the url is empty.
      */
-    var setStateFromUrl = function () {
+    $scope.setStateFromUrl = function () {
       var language = LocationGetterSetter.getUrlValue(state.language.part, state.language.index),
         boxType = LocationGetterSetter.getUrlValue(state.boxType.part, state.boxType.index),
         geom = LocationGetterSetter.getUrlValue(state.geom.part, state.geom.index),
@@ -339,7 +339,7 @@ angular.module('lizard-nxt')
 
     };
 
-    setStateFromUrl();
+    $scope.setStateFromUrl();
 
   }
 ]);
