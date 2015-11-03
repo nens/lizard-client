@@ -43,11 +43,49 @@ angular.module('omnibox')
           state.spatial.bounds.getEast()
       });
       var moment = dateParser(searchString);
+
+      var search = CabinetService.search.get({
+        search: searchString
+      });
+
       return {
+        search: search,
         spatial: prom,
         temporal: moment
       };
     };
+
+    /**
+     * Zooms to result of geocoder. If result is precise it also simulates a
+     * click on the result.
+     * @param  {object} result google geocoder result.
+     */
+    this.zoomToResult = function (result, state) {
+      // TODO: temporary shizzle because search endpoint is not yet here
+
+      var locationResource = CabinetService.locations.one(result.location.uuid + '/')
+      locationResource.get(result.location.uuid).then(function (response) {
+        if (response.hasOwnProperty('object')) {
+          state.spatial.here = LeafletService.latLng(
+              response.object.geometry.coordinates[1],
+              response.object.geometry.coordinates[0]
+              );
+          state.spatial.bounds = LeafletService.latLngBounds(
+              LeafletService.latLng([
+                response.object.geometry.coordinates[1],
+                response.object.geometry.coordinates[0]
+                ]),
+              LeafletService.latLng([
+                response.object.geometry.coordinates[1],
+                response.object.geometry.coordinates[0]
+                ])
+          );
+        }
+      })
+
+      return state;
+    };
+
 
     /**
      * Zooms to result of geocoder. If result is precise it also simulates a
