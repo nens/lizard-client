@@ -267,7 +267,7 @@ describe('Testing hash controller', function () {
   it('should activate layer when layer is defined on the url', function () {
     var controller = createController();
     $location.path('/en/map/satellite');
-    $scope.$broadcast('$locationChangeSuccess');
+    $scope.setStateFromUrl();
     expect(DataService.layerGroups.satellite.isActive()).toBe(true);
   });
 
@@ -276,7 +276,7 @@ describe('Testing hash controller', function () {
     function () {
       var controller = createController();
       $location.path('');
-      $scope.$broadcast('$locationChangeSuccess');
+      $scope.setStateFromUrl();
       expect($location.path().slice(0, 3)).toBe('/nl');
     }
   );

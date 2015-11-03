@@ -14,7 +14,7 @@
  * directly by calling NxtD3Service.<method>(<args>).
  */
 angular.module('lizard-nxt')
-  .factory("NxtD3", [function () {
+  .factory("NxtD3", ["$rootScope", "$location", function ($rootScope, $location) {
 
   var createCanvas, createElementForAxis, resizeCanvas, createPathGenerator;
 
@@ -87,8 +87,8 @@ angular.module('lizard-nxt')
      * @return {object} svg with clip-area and feature-group
      */
     _createDrawingArea: function () {
-      var width = NxtD3.prototype._getWidth(this.dimensions),
-      height = NxtD3.prototype._getHeight(this.dimensions);
+      var width = this._getWidth(this.dimensions),
+      height = this._getHeight(this.dimensions);
       // Add clippath to limit the drawing area to inside the graph
       // See: http://bost.ocks.org/mike/path/
       //
@@ -116,9 +116,36 @@ angular.module('lizard-nxt')
       if (!g[0][0]) {
         g = this._svg.select('g').append('g');
       }
-      g.attr("clip-path", "url(#clip" + height + ")")
+
+      // Since html5 url is used we need to refer to the absolute url of the
+      // clip rect
+      g.attr("clip-path", "url(" + $location.absUrl() + "#clip" + height + ")")
         .attr('id', 'feature-group');
+      // This url changes constantly so we set a watch.
+      this._addLocationWatch(this);
       return this._svg;
+    },
+
+    /**
+     * Set location watch to update absolute reference to clip-path.
+     * @param {NxtD3} instance of NxtD3
+     */
+    _addLocationWatch: function (instance) {
+      instance._locationWatch = $rootScope.$on('$locationChangeSuccess', function (e, newUrl, optOldUrl) {
+        if (newUrl === optOldUrl) { return; }
+        var height = instance._getHeight(instance.dimensions);
+        instance._svg.select('#feature-group')
+        .attr("clip-path", "url(" + newUrl + "#clip" + height + ")");
+      });
+    },
+
+    /**
+     * Removes listener to update absolute reference to clip-path.
+     */
+    destroy: function () {
+      if (this._locationWatch) {
+        this._locationWatch();
+      }
     },
 
     /**
@@ -509,11 +536,11 @@ angular.module('lizard-nxt')
 
   /**
    * Returns a d3 path.
-   * 
+   *
    * The path used to have .interpolate('monotone') to create a smoothed
    * line through datapoints, but it makes lines messy when data is missing.
    * Currently no interpolation is used.
-   * 
+   *
    * @param  {object} d3Generator d3 [line|area] generator function.
    * @return {object}             d3 path generator.
    */

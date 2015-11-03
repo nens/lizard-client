@@ -163,6 +163,11 @@ angular.module('lizard-nxt')
 
     scope.$watch('dimensions.width', dimsChangedCb);
 
+    /**
+     * Destroy graph to remove listeners when scope is erased.
+     */
+    scope.$on('$destroy' , function () { graphCtrl.graph.destroy(); });
+
     scope.title = attrs.name;
 
   };
