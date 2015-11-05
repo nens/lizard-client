@@ -24,7 +24,6 @@ module.exports = function(config) {
       'vendor/angular-mocks/angular-mocks.js',
       'vendor/bootstrap/dist/js/bootstrap.js',
       'vendor/d3/d3.js',
-      'vendor/leaflet-dist/dist/leaflet.js',
       'vendor/leaflet-dist/dist/leaflet-src.js',
       'vendor/lodash/dist/lodash.compat.js',
       'vendor/restangular/dist/restangular.js',

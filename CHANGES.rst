@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.3.1) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 2.3.1 (2015-11-5)
+---------------------
 
 - Fix timeseries download button not working, add target= _blank.
 
