@@ -26,8 +26,7 @@ angular.module('lizard-nxt')
   // Wms getFeatureInfo goes through a proxy. Specify url as a param.
   wmsGetFeatureInfo = Restangular.one('proxy/');
 
-  searchResource = Restangular.one('api/v2/timeseries/');
-  locationsResource = Restangular.one('api/v2/locations/');
+  searchResource = Restangular.one('api/v2/search/');
 
   geocodeResource = Restangular
     // Use a different base url, go directly to our friends at google.
@@ -101,7 +100,6 @@ angular.module('lizard-nxt')
     events: events,
     createTooltips: createTooltips,
     geocode: geocodeResource,
-    locations: locationsResource,
     raster: rasterResource,
     search: searchResource,
     timeseries: timeseriesResource,
