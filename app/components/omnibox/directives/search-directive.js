@@ -15,6 +15,8 @@ angular.module('omnibox')
 
   var link = function (scope, element, attrs) {
 
+    var ZOOM_FOR_OBJECT = 16;
+
     // Set focus on search input field.
     element.children()[0].focus();
 
@@ -56,18 +58,37 @@ angular.module('omnibox')
       ClickFeedbackService.emptyClickLayer(MapService);
     };
 
+
+
+    /**
+     * @description opens layergroup belonging to result
+     * @param {object} search result with layergroup.
+     * simple pointer to SearchService functio
+     */
+    scope.openLayerGroup = SearchService.openLayerGroup;
+
+    /**
+     * @description zooms to search resulit
+     * @param {object} one search result.
+     */
+    scope.zoomToSearchResult = function (result, origin) {
+      State = SearchService.zoomToResult(result, State);
+      var object = result.location.object;
+      MapService.setView({
+        lat: object.geometry.coordinates[1],
+        lng: object.geometry.coordinates[0],
+        zoom: ZOOM_FOR_OBJECT
+      });
+    };
+
     /**
      * @description zooms to geocoder search result
      * @param {object} one search result.
      */
-    scope.zoomToSpatialResult = function (location, origin) {
-      if (origin === 'timeseries') {
-        State = SearchService.zoomToResult(location, State);
-      } else {
+    scope.zoomToSpatialResult = function (result, origin) {
         destroySearchResultsModel();
         scope.cleanInput();
-        State = SearchService.zoomToGoogleGeocoderResult(location, State);
-      }
+        State = SearchService.zoomToGoogleGeocoderResult(result, State);
     };
 
     /**
@@ -139,6 +160,7 @@ angular.module('omnibox')
      * promise resolves with response from geocoder.
      */
     var setResultsOnBox = function (results) {
+      var MAX_RESULTS = 3;
       if (
         results.temporal.isValid()
         && results.temporal.valueOf() > UtilService.MIN_TIME
@@ -157,9 +179,9 @@ angular.module('omnibox')
             // Either put results on scope or remove model.
             if (response.status === SearchService.responseStatus.OK) {
               var results = response.results;
-              // limit to 5 results
-              if (results.length > 5) {
-                results = results.splice(0, 5)
+              // limit to MAX_RESULTS results
+              if (results.length >  MAX_RESULTS) {
+                results = results.splice(0, MAX_RESULTS);
               }
               scope.box.content.searchResults.spatial = results;
             }
@@ -185,7 +207,10 @@ angular.module('omnibox')
         .then(function (response) {
           // Asynchronous so check whether still relevant.
           if (scope.box.content.searchResults === undefined) { return; }
-          scope.box.content.searchResults.search = response.results;
+          scope.box.content.searchResults.timeseries = SearchService
+            .filter(response.results, 'timeseries');
+          scope.box.content.searchResults.layergroups = SearchService
+            .filter(response.results, 'layergroup'); 
         }
       );
     };

@@ -9,8 +9,19 @@
  */
 angular.module('omnibox')
   .service('SearchService',
-    ['LeafletService', 'CabinetService', 'DateParser',
-    function SearchService (LeafletService, CabinetService, dateParser) {
+    [
+    'LeafletService',
+    'CabinetService',
+    'DateParser',
+    'DataService',
+    'MapService',
+    function SearchService (
+      LeafletService,
+      CabinetService,
+      dateParser,
+      DataService,
+      MapService
+      ) {
 
     this.responseStatus = {
         OK: 'OK',
@@ -45,7 +56,7 @@ angular.module('omnibox')
       var moment = dateParser(searchString);
 
       var search = CabinetService.search.get({
-        search: searchString
+        q: searchString
       });
 
       return {
@@ -55,37 +66,43 @@ angular.module('omnibox')
       };
     };
 
+
     /**
-     * Zooms to result of geocoder. If result is precise it also simulates a
+     * Zooms to result of API searchendpoint. It also simulates a
      * click on the result.
-     * @param  {object} result google geocoder result.
+     * @param  {object} result search result.
      */
     this.zoomToResult = function (result, state) {
-      // TODO: temporary shizzle because search endpoint is not yet here
 
-      var locationResource = CabinetService.locations.one(result.location.uuid + '/')
-      locationResource.get(result.location.uuid).then(function (response) {
-        if (response.hasOwnProperty('object')) {
-          state.spatial.here = LeafletService.latLng(
-              response.object.geometry.coordinates[1],
-              response.object.geometry.coordinates[0]
-              );
-          state.spatial.bounds = LeafletService.latLngBounds(
-              LeafletService.latLng([
-                response.object.geometry.coordinates[1],
-                response.object.geometry.coordinates[0]
-                ]),
-              LeafletService.latLng([
-                response.object.geometry.coordinates[1],
-                response.object.geometry.coordinates[0]
-                ])
-          );
-        }
-      })
+      var object = result.location.object;
+
+      state.spatial.here = LeafletService.latLng(
+        object.geometry.coordinates[1],
+        object.geometry.coordinates[0]
+      );
 
       return state;
     };
 
+    this.filter = function (results, filterKey) {
+      return results.filter(function (item) {
+        return item.search_result_type === filterKey;
+      });
+    };
+
+
+    this.openLayerGroup = function (result) {
+      if (!result.lg) {
+        result.lg = DataService.createLayerGroup(result);
+      }
+      if (result.lg) {
+        DataService.toggleLayerGroup(result.lg);
+        if (result.lg.spatialBounds) {
+          MapService.fitBounds(result.lg.spatialBounds);
+        }
+
+      }
+    };
 
     /**
      * Zooms to result of geocoder. If result is precise it also simulates a
