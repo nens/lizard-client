@@ -3,7 +3,10 @@ Changelog of lizard-nxt client
 
 Unreleased (2.3.1) (XXXX-XX-XX)
 ---------------------
--
+
+- Check for error when getting translations, check for credentials when calling
+internationalization tasks, put temp translation files in .tmp and give proper
+feedback to grunt user.
 
 
 Release 2.3.1 (2015-11-5)
