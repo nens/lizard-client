@@ -13,8 +13,11 @@
  */
 angular.module('data-menu')
   .factory('DataLayerGroup', [
-  'NxtLayer', 'NxtDataLayer', 'UtilService', '$q', '$http',
-  function (NxtLayer, NxtDataLayer, UtilService, $q, $http) {
+  'NxtLayer', 'NxtDataLayer', 'UtilService', '$q', '$http', 'Lodash',
+  function (NxtLayer, NxtDataLayer, UtilService, $q, $http, _) {
+
+    // this is the 0 Lat and 0 Long, and should never be zoomed to
+    var NULL_ISLAND = {'east': 0, 'south': 0, 'north': 0, 'west': 0};
 
     /*
      * @constructor
@@ -69,7 +72,7 @@ angular.module('data-menu')
         writable: true,
       });
       Object.defineProperty(this, 'spatialBounds', {
-        value: {'east': 0, 'south': 0, 'north': 0, 'west': 0},
+        value: undefined,
         writable: true,
       });
       Object.defineProperty(this, 'temporalBounds', {
@@ -123,6 +126,13 @@ angular.module('data-menu')
             || (layer.format === 'WMS' && !layer.get_feature_info)) {
             this.mapLayers.push(new NxtLayer(layer, tempRes));
           }
+
+          // This layergroup solemnly swears to never visit NULL_ISLAND
+          // https://en.wikipedia.org/wiki/Null_Island
+          if (_.isEqual(this.spatialBounds, NULL_ISLAND)) {
+            this.spatialBounds = undefined;
+          }
+
         }, this);
       },
 
