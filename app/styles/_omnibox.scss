@@ -263,7 +263,7 @@
     margin: 0;
 }
 
-.search-results > ul > li:nth-child(odd) {
+.search-results > ul > li:hover {
     background-color: $clouds;
 }
 
