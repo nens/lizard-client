@@ -1,24 +1,10 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.2.3) (XXXX-XX-XX)
----------------------
-
-- Show total damage values in results card
-
-- Fix timeseries overriding eachother in time-ctx.
-
-- Add command line host + port options for grunt serve.
-
-- Add translations for entity names and units.
-
-- Remove location listenere from url controller, only set url on init.
-
-- Fix clip path not clipping. Use absolute url to refer to clippath and keep
-track of the url for nxt-d3 instances.
-
 Release 2.2.3 (2015-10-29)
 ---------------------
+
+- Fix region to point transition throwing error on getting data for no region.
 
 - Fix timeseries download button not working, add target= _blank.
 
