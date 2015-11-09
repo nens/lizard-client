@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.2.5) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 2.2.5 (2015-11-9)
+---------------------
 
 - Remove location listenere from url controller, only set url on init.
 
