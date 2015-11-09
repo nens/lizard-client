@@ -185,24 +185,19 @@ angular.module('omnibox')
               }
               scope.box.content.searchResults.spatial = results;
             }
-            // Only destroy asynchronous when following searches did not find
-            // a date either.
-            else if (scope.box.content.searchResults.temporal === undefined) {
-              //destroySearchResultsModel();
-
-              if (
+            else if (
                 response.status !== SearchService.responseStatus.ZERO_RESULTS
-              ) {
-                // Throw error so we can find out about it through sentry.
-                throw new Error(
+                ) {
+              // Throw error so we can find out about it through sentry.
+              throw new Error(
                   'Geocoder returned with status: ' + response.status
-                );
-              }
-
+                  );
             }
+
           }
         );
       }
+
       results.search
         .then(function (response) {
           // Asynchronous so check whether still relevant.
