@@ -22,6 +22,7 @@ Release 2.2.3 (2015-10-29)
 
 - Fix timeseries download button not working, add target= _blank.
 
+- Remove beta warning for region aggregation.
 
 Release 2.2.2 (2015-10-28)
 ---------------------
