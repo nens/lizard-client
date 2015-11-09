@@ -265,18 +265,16 @@ describe('Testing hash controller', function () {
   }));
 
   it('should activate layer when layer is defined on the url', function () {
-    var controller = createController();
     $location.path('/en/map/satellite');
-    $scope.$broadcast('$locationChangeSuccess');
+    var controller = createController();
     expect(DataService.layerGroups.satellite.isActive()).toBe(true);
   });
 
   it(
     'should set language on url to nl when no language is specified',
     function () {
-      var controller = createController();
       $location.path('');
-      $scope.$broadcast('$locationChangeSuccess');
+      var controller = createController();
       expect($location.path().slice(0, 3)).toBe('/nl');
     }
   );
@@ -284,9 +282,8 @@ describe('Testing hash controller', function () {
   it(
     'should set language to nl when no language is specified',
     function () {
-      var controller = createController();
       $location.path('');
-      $scope.$broadcast('$locationChangeSuccess');
+      var controller = createController();
       expect(gettextCatalog.getCurrentLanguage()).toBe('nl');
     }
   );
