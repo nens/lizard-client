@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.2.3) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 2.2.4 (2015-11-9)
+---------------------
 
 - Fix region to point transition throwing error on getting data for no region.
 
