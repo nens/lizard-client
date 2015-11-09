@@ -1,9 +1,10 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.2.3) (XXXX-XX-XX)
+Unreleased (2.2.5 (XXXX-XX-XX)
 ---------------------
--
+
+- Remove location listenere from url controller, only set url on init.
 
 
 Release 2.2.4 (2015-11-9)
@@ -11,12 +12,9 @@ Release 2.2.4 (2015-11-9)
 
 - Fix region to point transition throwing error on getting data for no region.
 
-<<<<<<< HEAD
 - Fix timeseries download button not working, add target= _blank.
-=======
-- Remove location listenere from url controller, only set url on init.
 
->>>>>>> e6e7d9b... Remove location listenere from url controller, only set url on init
+- Remove location listenere from url controller, only set url on init.
 
 - Remove beta warning for region aggregation.
 
