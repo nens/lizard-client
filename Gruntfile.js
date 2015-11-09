@@ -679,7 +679,7 @@ module.exports = function (grunt) {
 
           writeStream.on('finish', function () {
             if (completed_request === languages.length) {
-              grunt.log.verbose.ok('Recieved all languages');
+              grunt.log.verbose.ok('Received all languages');
               done();
             }
           });
@@ -696,7 +696,7 @@ module.exports = function (grunt) {
           var cb = function (err, res, body) {
             completed_request++;
             if (!err && res.statusCode === 200) {
-              grunt.log.writeln(chalk.green('✔ ') + 'Recieved: ' + lang.name);
+              grunt.log.writeln(chalk.green('✔ ') + 'Received: ' + lang.name);
             } else {
               grunt.log.writeln(chalk.red('X ') +
                 'Something went wrong, missing: ' + lang.name +
