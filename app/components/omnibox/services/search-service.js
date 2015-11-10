@@ -9,8 +9,19 @@
  */
 angular.module('omnibox')
   .service('SearchService',
-    ['LeafletService', 'CabinetService', 'DateParser',
-    function SearchService (LeafletService, CabinetService, dateParser) {
+    [
+    'LeafletService',
+    'CabinetService',
+    'DateParser',
+    'DataService',
+    'MapService',
+    function SearchService (
+      LeafletService,
+      CabinetService,
+      dateParser,
+      DataService,
+      MapService
+      ) {
 
     this.responseStatus = {
         OK: 'OK',
@@ -43,10 +54,54 @@ angular.module('omnibox')
           state.spatial.bounds.getEast()
       });
       var moment = dateParser(searchString);
+
+      var search = CabinetService.search.get({
+        q: searchString
+      });
+
       return {
+        search: search,
         spatial: prom,
         temporal: moment
       };
+    };
+
+
+    /**
+     * Zooms to result of API searchendpoint. It also simulates a
+     * click on the result.
+     * @param  {object} result search result.
+     */
+    this.zoomToResult = function (result, state) {
+
+      var object = result.location.object;
+
+      state.spatial.here = LeafletService.latLng(
+        object.geometry.coordinates[1],
+        object.geometry.coordinates[0]
+      );
+
+      return state;
+    };
+
+    this.filter = function (results, filterKey) {
+      return results.filter(function (item) {
+        return item.search_result_type === filterKey;
+      });
+    };
+
+
+    this.openLayerGroup = function (result) {
+      if (!result.lg) {
+        result.lg = DataService.createLayerGroup(result);
+      }
+      if (result.lg) {
+        DataService.toggleLayerGroup(result.lg);
+        if (result.lg.spatialBounds) {
+          MapService.fitBounds(result.lg.spatialBounds);
+        }
+
+      }
     };
 
     /**

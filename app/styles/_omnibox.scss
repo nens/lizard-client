@@ -258,6 +258,27 @@
     padding-left:20px;
 }
 
+.search-results > ul {
+    padding: 0;
+    margin: 0;
+}
+
+.search-results > ul > li:hover {
+    background-color: $clouds;
+}
+
+.search-results > ul > li:last {
+    margin-bottom: 5px;    
+}
+
+.search-results > h3 {
+    background-color: $turquoise;
+    font-size: 14px;
+    padding: 10px;
+    color: white;
+    margin: 0;
+}
+
 .clickable{
     cursor: pointer;
 }

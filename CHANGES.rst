@@ -5,8 +5,11 @@ Unreleased (2.4.1) (XXXX-XX-XX)
 ---------------------
 
 - Check for error when getting translations, check for credentials when calling
-internationalization tasks, put temp translation files in .tmp and give proper
-feedback to grunt user.
+  internationalization tasks, put temp translation files in .tmp and give proper
+  feedback to grunt user.
+
+- Added search cards for omnibox for timeseries, layergroups which also include
+  dates and geolocations.
 
 
 Release 2.3.1 (2015-11-5)
