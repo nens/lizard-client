@@ -631,6 +631,7 @@ angular.module('lizard-nxt')
   this.MAX_TIME = (new Date()).getTime() + 24 * 60 * 60 * 1000;
   this.TIMELINE_LEFT_MARGIN = 60;
   this.TIMELINE_RIGHT_MARGIN = 40;
+  this.OMNIBOX_WIDTH = 420;
 
   this.getMinTime = function (currentTime) {
     return Math.max(this.MIN_TIME, currentTime);
@@ -640,9 +641,19 @@ angular.module('lizard-nxt')
     return Math.min(this.MAX_TIME, currentTime);
   };
 
-  this.getCurrentWidth = function () {
+  this.getLeftMargin = function (context) {
+    var leftMargin = this.TIMELINE_LEFT_MARGIN;
+    if (context === 'dashboard') {
+      leftMargin += this.OMNIBOX_WIDTH;
+    }
+    return leftMargin;
+  };
+
+  this.getCurrentWidth = function (context) {
+    var leftMargin = this.getLeftMargin(context);
+
     return window.innerWidth - (
-      this.TIMELINE_LEFT_MARGIN + this.TIMELINE_RIGHT_MARGIN
+      leftMargin + this.TIMELINE_RIGHT_MARGIN
     );
   };
 

@@ -1,5 +1,5 @@
-angular.module('time-ctx')
-  .controller("TimeCtxCtrl", ["$scope", "State", function ($scope, State) {
+angular.module('dashboard')
+  .controller("DashboardCtrl", ["$scope", "State", function ($scope, State) {
 
   this.state = State;
 

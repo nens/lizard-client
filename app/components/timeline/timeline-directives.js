@@ -38,7 +38,7 @@ angular.module('lizard-nxt')
                               // timeline is shown.
 
         dimensions = {
-          width: UtilService.getCurrentWidth(),
+          width: UtilService.getCurrentWidth(State.context),
           height: 45,
           events: 35,
           bars: 35,
@@ -72,7 +72,7 @@ angular.module('lizard-nxt')
           State.temporal.aggWindow = UtilService.getAggWindow(
             State.temporal.start,
             State.temporal.end,
-            UtilService.getCurrentWidth()
+            UtilService.getCurrentWidth(State.context)
           );
 
           State.temporal.at = UtilService.roundTimestamp(
@@ -120,7 +120,7 @@ angular.module('lizard-nxt')
     // shift timeline's SVG element using it's CSS - set here by JS too stop
     // stuff becoming unsyncable
     angular.element("#timeline-svg-wrapper svg")[0].style.left
-      = UtilService.TIMELINE_LEFT_MARGIN + "px";
+      = UtilService.getLeftMargin(State.context) + "px";
 
     // keep track of events in this scope
     scope.events = {nEvents: 0, slugs: []};
@@ -194,7 +194,7 @@ angular.module('lizard-nxt')
             if (layer.format === "Vector") {
               timelineLayers.events.layers.push(layer);
               timelineLayers.events.slugs.push(layer.slug);
-            } else if (layer.format === "Store" && State.context !== 'time') {
+            } else if (layer.format === "Store" && State.context !== 'dashboard') {
               if (layer.slug !== "rain") {
                 timelineLayers.rasterStore.layers.push(layer);
               } else if (layer.slug === "rain") {
@@ -390,7 +390,7 @@ angular.module('lizard-nxt')
 
     scope.timeline.toggleTimelineVisiblity = function () {
       showTimeline = !showTimeline;
-      if (!showTimeline && State.context !== 'time') {
+      if (!showTimeline && State.context !== 'dashboard') {
         element[0].style.height = 0;
       } else {
         updateTimelineHeight(scope.events.nEvents);
@@ -401,7 +401,7 @@ angular.module('lizard-nxt')
 
     scope.timeline.toggleTimeCtx = function () {
       scope.timeline.toggleTimelineVisiblity();
-      scope.transitionToContext(State.context === 'map' ? 'time' : 'map');
+      scope.transitionToContext(State.context === 'map' ? 'dashboard' : 'map');
     };
 
     // WATCHES
@@ -433,7 +433,7 @@ angular.module('lizard-nxt')
         State.temporal.aggWindow = UtilService.getAggWindow(
           State.temporal.start,
           State.temporal.end,
-          UtilService.getCurrentWidth()
+          UtilService.getCurrentWidth(State.context)
         );
 
         timeline.zoomTo(
@@ -491,8 +491,11 @@ angular.module('lizard-nxt')
     window.addEventListener('load', getTimeLineData);
 
     var resize = function () {
+      var newWidth = UtilService.getCurrentWidth(State.context);
+      console.log(State.context, newWidth)
+      
       scope.$apply(function () {
-        timeline.dimensions.width = UtilService.getCurrentWidth();
+        timeline.dimensions.width = newWidth; 
         timeline.resize(
           timeline.dimensions,
           State.temporal.at,

@@ -19,7 +19,8 @@
  * resizeTimelineCanvas.
  */
 angular.module('lizard-nxt')
-  .factory("Timeline", ["NxtD3", "UtilService", function (NxtD3, UtilService) {
+  .factory("Timeline", ["NxtD3", "UtilService", "State",
+      function (NxtD3, UtilService, State) {
 
   // Timeline
   var initialHeight,
@@ -672,7 +673,7 @@ angular.module('lizard-nxt')
       // Check whether user is dragging instead of clicking
       if (!d3.event.defaultPrevented) {
         var x = d3.event.clientX
-          - UtilService.TIMELINE_LEFT_MARGIN
+          - UtilService.getLeftMargin(State.context)
           - dimensions.padding.left;
         var ts = xScale.invert(x);
         clickFn(ts, dimensions);

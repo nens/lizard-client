@@ -1,12 +1,12 @@
-<div class="dashboard-wrapper" ng-controller="TimeCtxCtrl as tctx">
+<div class="dashboard-wrapper" ng-controller="DashboardCtrl as dashboard">
   <div class="container-fluid">
 
     <div class="row">
 
-      <div id="time-ctx-top-row-place-holder" class="col-md-10 dashboard-inner"></div>
+      <div id="dashboard-top-row-place-holder" class="col-md-10 dashboard-inner"></div>
 
     </div>
-    <div class="row" ng-repeat="item in tctx.content">
+    <div class="row" ng-repeat="item in dashboard.content">
 
       <div class="dashboard-inner">
 
@@ -14,9 +14,9 @@
           ng-if="item.type === 'timeseries'"
           line
           data="item.data"
-          dimensions="tctx.dims"
+          dimensions="dashboard.dims"
           type="temporal"
-          temporal="tctx.state.temporal"
+          temporal="dashboard.state.temporal"
           ylabel="item.parameter_referenced_unit.referenced_unit_short_display_name"
           keys="{
             x: 'timestamp',
@@ -31,9 +31,9 @@
             && item.type !== 'Event'"
           line
           data="item.data"
-          dimensions="tctx.dims"
+          dimensions="dashboard.dims"
           type="temporal"
-          temporal="tctx.state.temporal"
+          temporal="dashboard.state.temporal"
           ylabel="item.unit"
           keys="{x: 0, y: 1}"
           name="<% item.quantity %>">
@@ -48,8 +48,8 @@
                  y: 'count',
                  color: 'color',
                  category: 'category'}"
-          dimensions="tctx.dims"
-          temporal="tctx.state.temporal"
+          dimensions="dashboard.dims"
+          temporal="dashboard.state.temporal"
           name="<% item.quantity %>">
         </graph>
 
@@ -57,9 +57,9 @@
           ng-if="item.scale === 'ratio'"
           bar-chart
           data="item.data"
-          dimensions="tctx.dims"
+          dimensions="dashboard.dims"
           type="temporal"
-          temporal="tctx.state.temporal"
+          temporal="dashboard.state.temporal"
           ylabel="item.aggWindow"
           yfilter="aggWinToYLabel"
           keys="{x: 0, y: 1}"

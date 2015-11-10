@@ -49,7 +49,6 @@ module.exports = function(config) {
       'app/components/timeseries/timeseries.js',
       'app/components/user-menu/user-menu.js',
       'app/components/dashboard/dashboard.js',
-      'app/components/time-ctx/time-ctx.js',
       'app/lizard-nxt.js',
       'test/mocks/**/*.js',
       'app/lib/**/*.js',

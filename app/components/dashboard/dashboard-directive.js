@@ -1,6 +1,6 @@
 
-angular.module('time-ctx')
-  .directive('timeCtx',
+angular.module('dashboard')
+  .directive('dashboard',
              [
               "EventAggregateService",
               "State",
@@ -33,15 +33,15 @@ angular.module('time-ctx')
 
     var resize = function (tlDimensions) {
       tlDims = tlDimensions;
-      nGraphs = Object.keys(scope.tctx.content).length;
-      scope.tctx.dims.height =
+      nGraphs = Object.keys(scope.dashboard.content).length;
+      scope.dashboard.dims.height =
         (getHeight() - tlDimensions.height - TL_TOP_MARGIN) / nGraphs - GRAPH_PADDING;
-      scope.tctx.dims.width = UtilService.getCurrentWidth()
+      scope.dashboard.dims.width = UtilService.getCurrentWidth('dashboard') 
         + GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN;
     };
 
-    scope.tctx.dims = {
-      width: UtilService.getCurrentWidth()
+    scope.dashboard.dims = {
+      width: UtilService.getCurrentWidth('dashboard') 
         + GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN,
       height: getHeight() / nGraphs,
       padding: {
@@ -49,6 +49,7 @@ angular.module('time-ctx')
         right: 0,
         bottom: 2 * GRAPH_PADDING, // Enough for the line of the axis.
         left: GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN
+          + UtilService.OMNIBOX_WIDTH
       }
     };
 
@@ -72,7 +73,7 @@ angular.module('time-ctx')
         item[key] = response[key];
       });
       item.aggWindow = State.temporal.aggWindow;
-      scope.tctx.content[response.layerSlug] = item;
+      scope.dashboard.content[response.layerSlug] = item;
     };
 
     var putEventDataOnScope = function (response) {
@@ -107,9 +108,9 @@ angular.module('time-ctx')
         : State.spatial.here;
 
     var getTimeData = function () {
-      var graphWidth = scope.tctx.dims.width -
-        scope.tctx.dims.padding.left -
-        scope.tctx.dims.padding.right;
+      var graphWidth = scope.dashboard.dims.width -
+        scope.dashboard.dims.padding.left -
+        scope.dashboard.dims.padding.right;
 
       DataService.getData('time', {
         geom: geom,
@@ -159,7 +160,7 @@ angular.module('time-ctx')
     getTimeData();
 
     /**
-     * Updates time-ctx when time zoom changes.
+     * Updates dashboard when time zoom changes.
      */
     scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (n === o || State.temporal.timelineMoving) { return true; }
@@ -183,7 +184,7 @@ angular.module('time-ctx')
 
   return {
     link: link,
-    templateUrl: 'time-ctx/time-ctx.html',
+    templateUrl: 'dashboard/dashboard.html',
     replace: true,
     restrict: 'E'
   };

@@ -551,7 +551,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-filerev');
     grunt.loadNpmTasks('grunt-contrib-htmlmin');
-    grunt.loadNpmTasks('grunt-doxx');
 
     grunt.task.run([
       'clean:dist',
@@ -572,6 +571,11 @@ module.exports = function (grunt) {
       'usemin',
       'htmlmin'
     ]);
+  });
+
+  grunt.registerTask('docs', function () {
+    grunt.loadNpmTasks('grunt-doxx');
+    grunt.task.run(['doxx']);
   });
 
   grunt.registerTask('internationalize', function () {
