@@ -18,8 +18,6 @@ templates.js
 doc/
 
 # internationalization
-# generate using grunt nggettext_extract
-po/
 # generate using grunt nggettext_compile
 app/translations.js
 

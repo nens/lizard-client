@@ -54,7 +54,7 @@ module.exports = function (grunt) {
         '<%= yeoman.app %>/<%= yeoman.jsFileDirs %>',
         '!<%= yeoman.app %>/templates.js'
       ],
-        tasks: ['karma:dev', 'newer:jshint:dev'],
+        tasks: ['karma:unit', 'newer:jshint:dev'],
       },
       jstemplates: {
         files: ['<%= yeoman.app %>/<%= yeoman.templateFileDirs %>'],
@@ -62,7 +62,7 @@ module.exports = function (grunt) {
       },
       jsTest: {
         files: ['test/spec/{,*/}*.js'],
-        tasks: ['karma:dev', 'newer:jshint:dev'],
+        tasks: ['karma:unit', 'newer:jshint:dev'],
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.scss'],
@@ -165,7 +165,7 @@ module.exports = function (grunt) {
           endDelim: '%>'
         },
         files: {
-          'po/template.pot': ['<%= yeoman.app %>/<%= yeoman.jsFileDirs %>', '<%= yeoman.app %>/<%= yeoman.templateFileDirs %>']
+          '.tmp/po/template.pot': ['<%= yeoman.app %>/<%= yeoman.jsFileDirs %>', '<%= yeoman.app %>/<%= yeoman.templateFileDirs %>']
         }
       },
     },
@@ -174,7 +174,7 @@ module.exports = function (grunt) {
       all: {
         files: {
           // dest : src
-          'app/translations.js': ['po/*.po']
+          'app/translations.js': ['.tmp/po*.po']
         }
       },
     },
@@ -511,7 +511,7 @@ module.exports = function (grunt) {
         resource: 'core',
         i18nType: 'pot'
       },
-      src: 'po/template.pot'
+      src: '.tmp/po/template.pot'
     }
   });
 
@@ -554,8 +554,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-doxx');
 
     grunt.task.run([
-      'translate',
       'clean:dist',
+      'translate',
       'html2js',
       'wiredep',
       'useminPrepare',
@@ -575,23 +575,42 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('internationalize', function () {
-    grunt.loadNpmTasks('grunt-angular-gettext');
-    grunt.loadNpmTasks('grunt-tx-source-upload');
+    if (grunt.option('txusername') && grunt.option('txpassword')) {
 
-    grunt.task.run([
-      'translate',
-      'nggettext_extract', // extract strings from code
-      'tx-source-upload', // upload to transifex
-    ]);
+      grunt.log.ok('Got transifex credentials,' +
+        ' extracting and uploading translations.');
+
+      grunt.loadNpmTasks('grunt-angular-gettext');
+      grunt.loadNpmTasks('grunt-tx-source-upload');
+
+      grunt.task.run([
+        'translate',
+        'nggettext_extract', // extract strings from code
+        'tx-source-upload', // upload to transifex
+      ]);
+
+    } else {
+      grunt.log.writeln('Missing transifex credentials, '['red'].bold +
+        'newly annotated strings will not be uploaded to transifex'['red'].bold);
+      grunt.log.ok('Specify --txusername=<transifex username> and '+
+        '--txpassword=<transifex password> to upload strings to transifex.');
+    }
   });
 
   grunt.registerTask('translate', function () {
-    grunt.loadNpmTasks('grunt-angular-gettext');
-    grunt.task.run([
-      'download-po-files',
-      'nggettext_compile' // create translations
-    ]);
-
+    if (grunt.option('txusername') && grunt.option('txpassword')) {
+      grunt.log.ok('Got transifex credentials, getting translations.')
+      grunt.loadNpmTasks('grunt-angular-gettext');
+      grunt.task.run([
+        'download-po-files',
+        'nggettext_compile',
+      ]);
+    } else {
+      grunt.log.writeln('Missing transifex credentials, '['red'].bold +
+        'build will be in English.'['red'].bold);
+      grunt.log.ok('Specify --txusername=<transifex username> and '+
+        '--txpassword=<transifex password> to include translations.');
+    }
   });
 
   grunt.registerTask('release', function () {
@@ -633,9 +652,12 @@ module.exports = function (grunt) {
     'Task to get languages and po files for each language from transifex',
     function () {
       var request = require('request');
+      var chalk = require('chalk');
+
       var done = this.async();
-      grunt.log.writeln('Getting available languages');
       var fs = require('fs');
+
+      grunt.log.verbose.ok('Getting available languages');
 
       request.get('http://www.transifex.com/api/2/project/lizard-client/resource/core/?details')
       .auth(grunt.option('txusername'), grunt.option('txpassword'))
@@ -645,17 +667,48 @@ module.exports = function (grunt) {
 
       var getLanguages = function (languages) {
         var completed_request = 0;
+        grunt.file.mkdir('.tmp/po');
+
         languages.forEach(function (lang) {
-          request.get('http://www.transifex.com/api/2/project/lizard-client/resource/core/translation/' + lang.code + '?file')
-          .auth(grunt.option('txusername'), grunt.option('txpassword'))
-          .on('response', function (res) {
-            completed_request++;
-            grunt.log.writeln('Recieved: ' + lang.name);
+
+          var writeStream = fs.createWriteStream(
+            '.tmp/po/lizard6_lizard-client_' +
+            lang.code +
+            '.po'
+          );
+
+          writeStream.on('finish', function () {
             if (completed_request === languages.length) {
-                done();
+              grunt.log.verbose.ok('Received all languages');
+              done();
             }
-          })
-          .pipe(fs.createWriteStream('po/lizard6_lizard-client_' + lang.code + '.po'));
+          });
+
+          var options = {
+            url: 'http://www.transifex.com/api/2/project/lizard-client/resource/core/translation/' +
+              lang.code + '?file',
+            auth: {
+              user: grunt.option('txusername'),
+              password: grunt.option('txpassword')
+            }
+          };
+
+          var cb = function (err, res, body) {
+            completed_request++;
+            if (!err && res.statusCode === 200) {
+              grunt.log.writeln(chalk.green('✔ ') + 'Received: ' + lang.name);
+            } else {
+              grunt.log.writeln(chalk.red('X ') +
+                'Something went wrong, missing: ' + lang.name +
+                ' status: ', res.statusCode, +
+                ' error: ', err
+                );
+            }
+          };
+
+          var req = request(options, cb);
+
+          var stream = req.pipe(writeStream);
         });
       };
     }
