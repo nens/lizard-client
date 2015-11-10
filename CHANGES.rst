@@ -1,7 +1,7 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.3.1) (XXXX-XX-XX)
+Unreleased (2.4.1) (XXXX-XX-XX)
 ---------------------
 
 - Check for error when getting translations, check for credentials when calling
@@ -25,10 +25,32 @@ Release 2.3.1 (2015-11-5)
 - Remove location listenere from url controller, only set url on init.
 
 - Fix clip path not clipping. Use absolute url to refer to clippath and keep
-track of the url for nxt-d3 instances.
+  track of the url for nxt-d3 instances.
+
+
+Release 2.2.5 (2015-11-9)
+-------------------------
+
+- Remove location listener from url controller, only set state from url on init.
+
+
+Release 2.2.4 (2015-11-9)
+---------------------
+
+- Fix region to point transition throwing error on getting data for no region.
+
+- Fix timeseries download button not working, add target= _blank.
+
+- Remove location listenere from url controller, only set url on init.
+
+- Remove beta warning for region aggregation.
+
+- Fix clip path not clipping. Use absolute url to refer to clippath and keep
+  track of the url for nxt-d3 instances.
+
 
 Release 2.2.3 (2015-10-29)
----------------------
+--------------------------
 
 - Show total damage value in template for scenarios.
 
@@ -62,18 +84,18 @@ Release 2.2.1 (2015-10-16)
 - Add autoprefixer to default loaded grunt tasks.
 
 - Split timeseries logic from DataService and omnibox directive into one
-timeseries component with a directive and service as interface. Refactor point
-template to use new timeseries directive.
+  timeseries component with a directive and service as interface. Refactor point
+  template to use new timeseries directive.
 
 - Add nestedasset as an omnibox template directive. Parsing the nested JSON in
-the utfgrid and showing the nested assets in a select box.
+  the utfgrid and showing the nested assets in a select box.
 
 
 Release 2.1.1 (2015-10-5)
 ---------------------
 
 - Fix code messing up wanted attr table. Show default when undefined, null or
-empty string.
+  empty string.
 
 - Fix truncate event values.
 
@@ -82,7 +104,7 @@ empty string.
 - Fix overlapping data-menu titles wrap with elipsis.
 
 - Fix scenario download overwriting app url, set target=_blank to force a
-download.
+  download.
 
 - Fix inconsistency between time labels in search bar and timeline.
 
@@ -95,11 +117,11 @@ download.
 - CSV export for line and point use ; seperator instead of ,.
 
 - Use transifex.com/api/2/lizard-client for translations. Push annotated
-and pull translated strings from transifex on grunt:build. Jenkins will keep
-transifex up to date while every release will use the newest strings.
+  and pull translated strings from transifex on grunt:build. Jenkins will keep
+  transifex up to date while every release will use the newest strings.
 
 - Annotate waterchain attributes for translation and use translation filter in
-template.
+  template.
 
 - Create hyperlink elements for urls in getFeatureInfo response.
 

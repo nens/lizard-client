@@ -54,7 +54,7 @@ module.exports = function (grunt) {
         '<%= yeoman.app %>/<%= yeoman.jsFileDirs %>',
         '!<%= yeoman.app %>/templates.js'
       ],
-        tasks: ['karma:dev', 'newer:jshint:dev'],
+        tasks: ['karma:unit', 'newer:jshint:dev'],
       },
       jstemplates: {
         files: ['<%= yeoman.app %>/<%= yeoman.templateFileDirs %>'],
@@ -62,7 +62,7 @@ module.exports = function (grunt) {
       },
       jsTest: {
         files: ['test/spec/{,*/}*.js'],
-        tasks: ['karma:dev', 'newer:jshint:dev'],
+        tasks: ['karma:unit', 'newer:jshint:dev'],
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.scss'],
