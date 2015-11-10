@@ -364,28 +364,28 @@ angular.module('lizard-nxt-filters')
 });
 
 angular.module('lizard-nxt-filters')
-  .filter('aggWinToYLabel', function () {
+  .filter('aggWinToYLabel', ['gettext', function (gettext) {
   return function (input) {
     var out;
     switch (input) {
     case 300000:
-      out = 'mm / 5 min';
+      out = gettext('mm / 5 min');
       break;
     case 3600000:
-      out = 'mm / uur';
+      out = gettext('mm / hour');
       break;
     case 86400000:
-      out = 'mm / dag';
+      out = gettext('mm / day');
       break;
     case 2635200000:
-      out = 'mm / maand';
+      out = gettext('mm / month');
       break;
     default:
       out = '...';
     }
     return out;
   };
-});
+}]);
 
 /**
  * Truncates a string to have no more than maxLength characters.
@@ -432,37 +432,38 @@ angular.module('lizard-nxt-filters')
 
 
 angular.module('lizard-nxt-filters')
-  .filter('objectTitle', function () {
+  .filter('objectTitle', ['gettext', function (gettext) {
 
   return function (input) {
 
     return {
-      'bridge': 'Brug',
-      'channel': 'Watergang',
-      'channel_Boezem': 'Boezemkanaal',
-      'channel_Primair': 'Primaire watergang',
-      'crossprofile': 'Kruisprofiel',
-      'culvert': 'Duiker',
-      'groundwaterstation': 'Grondwaterstation',
-      'manhole': 'Put',
-      'measuringstation': 'Meetstation',
-      'orifice': 'Doorlaat',
-      'outlet': 'Uitlaat',
-      'overflow': 'Overstort',
-      'pipe': 'Rioolleiding',
-      'pumpstation': 'Gemaal',
-      'weir': 'Stuw',
-      'pressurepipe': 'Persleiding',
-      'sluice': 'Sluis',
-      'wastewatertreatmentplant': 'Rioolwaterzuiveringsinstallatie',
-      'levee': 'Kering',
-      'leveereferencepoint': 'Referentiepunt kering',
-      'pump': 'Pump',
-      'filter': 'Filter'
+      'bridge': gettext('Bridge'),
+      'channel': gettext('Channel'),
+      /// Boezemkanaal
+      'channel_Boezem': gettext('Bosom channel'),
+      'channel_Primair': gettext('Primary channel'),
+      'crossprofile': gettext('Crossprofile'),
+      'culvert': gettext('Culvert'),
+      'groundwaterstation': gettext('Groundwater station'),
+      'manhole': gettext('Manhole'),
+      'measuringstation': gettext('Measuring station'),
+      'orifice': gettext('Orifice'),
+      'outlet': gettext('Outlet'),
+      'overflow': gettext('Overflow'),
+      'pipe': gettext('Pipe'),
+      'pumpstation': gettext('Pump station'),
+      'weir': gettext('Weir'),
+      'pressurepipe': gettext('Pressure pipe'),
+      'sluice':gettext('Sluice'),
+      'wastewatertreatmentplant': gettext('Wastewater treatment plant'),
+      'levee': gettext('Levee'),
+      'leveereferencepoint': gettext('Levee reference point'),
+      'pump': gettext('Pump'),
+      'filter': gettext('Filter')
     }[input] || input;
   };
 
-});
+}]);
 
 /**
  * Expects a string of '<anything - ...> - <source> - <value>' or only '<value>'

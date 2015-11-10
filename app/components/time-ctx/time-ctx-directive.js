@@ -134,7 +134,7 @@ angular.module('time-ctx')
         // supported.
         } else if (response.layerSlug === 'timeseries') {
           angular.forEach(response.data, function (ts) {
-            ts.layerSlug = ts.name;
+            ts.layerSlug = ts.uuid;
             ts.name = ts.location.name
               + ', '
               + ts.parameter_referenced_unit.parameter_short_display_name;
