@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.4.1) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 2.3.2 (2015-11-11)
+---------------------
 
 - Check for error when getting translations, check for credentials when calling
   internationalization tasks, put temp translation files in .tmp and give proper
