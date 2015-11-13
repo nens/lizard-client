@@ -174,7 +174,7 @@ module.exports = function (grunt) {
       all: {
         files: {
           // dest : src
-          'app/translations.js': ['po/*.po']
+          'app/translations.js': ['.tmp/po/*.po']
         }
       },
     },
