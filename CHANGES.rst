@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.2.5) (XXXX-XX-XX)
 ---------------------
--
+
+- Fix not compiling any translations.
 
 
 Release 2.2.6 (2015-11-13)
