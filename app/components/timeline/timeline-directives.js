@@ -117,10 +117,31 @@ angular.module('lizard-nxt')
       },
     };
 
+
+    /**
+     * @function
+     * @description Helper to shift/unshift the timeline based on which
+     * view the user is in
+     * @param {string} context - e.g. 'dashboard' or 'map'
+     */
+    var reshift = function (context) {
+      var toShift = UtilService.TIMELINE_LEFT_MARGIN;
+      var buttonShift = 0;
+      if (context === 'dashboard') {
+        toShift += UtilService.OMNIBOX_WIDTH;
+        buttonShift = UtilService.OMNIBOX_WIDTH;
+      }
+      angular.element("#timeline-svg-wrapper svg")[0].style.left
+      = toShift + "px";
+      var timelinecontrols = angular.element("#time-controls");
+      if (timelinecontrols.length > 0) {
+        timelinecontrols[0].style.left = buttonShift + "px";
+      }
+    };
+
     // shift timeline's SVG element using it's CSS - set here by JS too stop
     // stuff becoming unsyncable
-    angular.element("#timeline-svg-wrapper svg")[0].style.left
-      = UtilService.getLeftMargin(State.context) + "px";
+    reshift(State.context);
 
     // keep track of events in this scope
     scope.events = {nEvents: 0, slugs: []};
@@ -433,7 +454,7 @@ angular.module('lizard-nxt')
         State.temporal.aggWindow = UtilService.getAggWindow(
           State.temporal.start,
           State.temporal.end,
-          UtilService.getCurrentWidth(State.context)
+          UtilService.getCurrentWidth()
         );
 
         timeline.zoomTo(
@@ -474,6 +495,7 @@ angular.module('lizard-nxt')
       showTimeline = false; // It toggles
       scope.timeline.toggleTimelineVisiblity();
       getTimeLineData(); // It also removes data..
+      reshift(State.context);
     });
 
     /**
@@ -491,11 +513,9 @@ angular.module('lizard-nxt')
     window.addEventListener('load', getTimeLineData);
 
     var resize = function () {
-      var newWidth = UtilService.getCurrentWidth(State.context);
-      console.log(State.context, newWidth)
-      
+      reshift(State.context);
       scope.$apply(function () {
-        timeline.dimensions.width = newWidth; 
+        timeline.dimensions.width = UtilService.getCurrentWidth();
         timeline.resize(
           timeline.dimensions,
           State.temporal.at,

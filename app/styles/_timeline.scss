@@ -14,6 +14,9 @@
 }
 
 .timeline-svg-wrapper {
+    -moz-box-shadow: 1px -1px 2px $silver;
+    -webkit-box-shadow: 1px -1px 2px $silver;
+    box-shadow: 1px -1px 2px $silver;
     margin-top: 2px;
     svg {
         position: relative;

@@ -641,19 +641,10 @@ angular.module('lizard-nxt')
     return Math.min(this.MAX_TIME, currentTime);
   };
 
-  this.getLeftMargin = function (context) {
-    var leftMargin = this.TIMELINE_LEFT_MARGIN;
-    if (context === 'dashboard') {
-      leftMargin += this.OMNIBOX_WIDTH;
-    }
-    return leftMargin;
-  };
-
-  this.getCurrentWidth = function (context) {
-    var leftMargin = this.getLeftMargin(context);
+  this.getCurrentWidth = function () {
 
     return window.innerWidth - (
-      leftMargin + this.TIMELINE_RIGHT_MARGIN
+      this.TIMELINE_LEFT_MARGIN + this.TIMELINE_RIGHT_MARGIN
     );
   };
 
