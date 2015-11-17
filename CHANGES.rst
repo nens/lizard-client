@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.4.1) (XXXX-XX-XX)
 ---------------------
 
+- Dashboard replaces time-ctx and shows omnibox cards in dashboard
+
 - Check for error when getting translations, check for credentials when calling
 internationalization tasks, put temp translation files in .tmp and give proper
 feedback to grunt user.

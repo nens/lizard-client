@@ -26,7 +26,7 @@
 }
 
 .searchbox:hover {
-    @include material-shadow:hover();
+    @include material-shadow-hover();
 }
 
 .cards-minimized .searchbox-shadow {

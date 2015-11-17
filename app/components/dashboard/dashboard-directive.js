@@ -112,7 +112,7 @@ angular.module('dashboard')
         scope.dashboard.dims.padding.left -
         scope.dashboard.dims.padding.right;
 
-      DataService.getData('time', {
+      DataService.getData('dashboard', {
         geom: geom,
         start: State.temporal.start,
         end: State.temporal.end,
