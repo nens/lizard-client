@@ -72,7 +72,7 @@ angular.module('global-state')
     state.box = {};
 
     var _type = 'point'; // Default box type
-    var TYPE_VALUES = ["point", "line", "region", "area"];
+    var TYPE_VALUES = ["point", "line", "region", "area", "omnibox-dashboard"];
     Object.defineProperty(state.box, 'type', {
       get: function () { return _type; },
       set: function (type) {

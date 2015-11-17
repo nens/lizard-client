@@ -3,6 +3,8 @@ angular.module('dashboard')
 
   this.state = State;
 
+  State.box.type = 'omnibox-dashboard';
+
   // dimensions are dependent on screen size.
   // this is calculated in directive.
   this.dims = {};
