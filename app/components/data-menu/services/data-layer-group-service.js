@@ -127,13 +127,14 @@ angular.module('data-menu')
             this.mapLayers.push(new NxtLayer(layer, tempRes));
           }
 
-          // This layergroup solemnly swears to never visit NULL_ISLAND
-          // https://en.wikipedia.org/wiki/Null_Island
-          if (_.isEqual(this.spatialBounds, NULL_ISLAND)) {
-            this.spatialBounds = undefined;
-          }
-
         }, this);
+
+        // This layergroup solemnly swears to never visit NULL_ISLAND
+        // https://en.wikipedia.org/wiki/Null_Island
+        if (_.isEqual(this.spatialBounds, NULL_ISLAND)) {
+          this.spatialBounds = undefined;
+        }
+
       },
 
      /**
