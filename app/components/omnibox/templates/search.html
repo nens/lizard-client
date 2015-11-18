@@ -9,22 +9,22 @@
     ng-keydown="searchKeyPress($event)"
     spellcheck="false">
   <div
-    title="<% tooltips.resetQuery %>"
+    data-tooltip="<% tooltips.resetQuery %>"
     ng-click="cleanInput()"
-    id="clear" class="clickable" ></div>
+    id="clear" class="clickable tooltip-bottom" ></div>
   <div class="search-button-collection">
     <button
-      class="searchbutton clickable"
+      class="searchbutton clickable tooltip-bottom"
       ng-click="zoomIn()"
       aria-label="Zoom in"
-      title="<% tooltips.zoomInMap %>">
+      data-tooltip="<% tooltips.zoomInMap %>">
       <i class="fa fa-plus"></i>
     </button>
     <button
-      class="searchbutton clickable"
+      class="searchbutton clickable tooltip-bottom"
       ng-click="zoomOut()"
       aria-label="Zoom uit"
-      title="<% tooltips.zoomOutMap %>">
+      data-tooltip="<% tooltips.zoomOutMap %>">
       <i class="fa fa-minus"></i>
     </button>
   </div>
