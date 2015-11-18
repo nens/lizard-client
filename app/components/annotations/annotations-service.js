@@ -7,11 +7,11 @@ angular.module('annotations')
 
       var annotationsResource = Restangular.withConfig(
         function(RestangularConfigurer) {
-          // RestangularConfigurer.setRequestSuffix('/');
+          RestangularConfigurer.setRequestSuffix('/');
           RestangularConfigurer.addResponseInterceptor(function(response, operation) {
             return response.results;
           });
-        }).all('api/v2/annotations/');
+        }).all('api/v2/annotations');
 
       this.getAnnotationsForObject = function (model, id) {
         return annotationsResource.getList({
