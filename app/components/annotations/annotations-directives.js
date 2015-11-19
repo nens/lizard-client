@@ -76,14 +76,42 @@ angular.module('annotations')
     };
   }]);
 
-  /**
-   * @module
-   * @description Create asset annotations.
-   */
+/**
+ * @module
+ * @description Create asset annotations.
+ */
 angular.module('annotations')
-  .directive('annotationsMake', [function () {
+  .directive('annotationsMake',
+             ['AnnotationsService', '$window', 'gettext',
+              function (AnnotationsService, $window, gettext) {
+
+    var link = function (scope, element, attrs) {
+
+      scope.createAnnotation = function (text) {
+        AnnotationsService.addAnnotationToObject(
+          scope.asset, text
+        ).then(function (response) {
+          scope.annotations.splice(0, 0, response.data);
+        }, function (response) {
+          $window.alert(
+            gettext(
+              "Oops! Something went wrong while creating the annotation."));
+          throw new Error(
+            response.status + " - "
+            + gettext(
+              "Could not create annotation."));
+        });
+      };
+    };
+
     return {
+      link: link,
       restrict: 'E',
+      scope: {
+        asset: '=',
+        annotations: '='
+      },
       templateUrl: 'annotations/templates/annotations-make.html'
     };
+
   }]);

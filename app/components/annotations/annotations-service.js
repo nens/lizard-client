@@ -2,8 +2,10 @@
  * Service to handle annotations retrieval and creation.
  */
 angular.module('annotations')
-  .service("AnnotationsService", ['Restangular',
-    function (Restangular) {
+  .service("AnnotationsService", ['Restangular', '$http',
+    function (Restangular, $http) {
+
+      var annotationsURL = 'api/v2/annotations';
 
       var annotationsResource = Restangular.withConfig(
         function(RestangularConfigurer) {
@@ -11,7 +13,7 @@ angular.module('annotations')
           RestangularConfigurer.addResponseInterceptor(function(response, operation) {
             return response.results;
           });
-        }).all('api/v2/annotations');
+        }).all(annotationsURL);
 
       this.getAnnotationsForObject = function (model, id) {
         return annotationsResource.getList({
@@ -22,6 +24,18 @@ angular.module('annotations')
 
       this.deleteAnnotation = function (annotation) {
         return annotation.remove();
+      };
+
+      this.addAnnotationToObject = function (asset, text) {
+        var newAnnotation = {
+          object_type: asset.entity_name,
+          object_id: asset.id,
+          text: text,
+          datetime_from: new Date().toISOString(),
+          datetime_until: new Date().toISOString()
+          // picture_url
+        };
+        return $http.post(annotationsURL + '/', newAnnotation);
       };
 
       return this;
