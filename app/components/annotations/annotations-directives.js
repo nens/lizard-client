@@ -28,11 +28,9 @@ angular.module('annotations')
     var link = function (scope, element, attrs) {
 
       var fetchAnnotations = function(asset) {
-        AnnotationsService.getAnnotationsForObject(
+        scope.annotations = AnnotationsService.getAnnotationsForObject(
           asset.entity_name, asset.id
-        ).then(function (response) {
-          scope.annotations = response;
-        });
+        );
       };
 
       /**
@@ -44,24 +42,33 @@ angular.module('annotations')
 
       /**
        * Remove annotation from database when delete icon is clicked.
-       * Update the front-end to reflect a successful delete.
+       * Update the front-end to reflect a successful delete or throw an alert
+       * on error.
        */
+
+      var deleteAnnotationSuccess = function(
+          annotation, value, responseHeaders) {
+        scope.annotations.splice(scope.annotations.indexOf(annotation), 1);
+      };
+
+      var deleteAnnotationError = function(httpResponse) {
+        console.log(httpResponse);
+        $window.alert(
+          gettext(
+            "Oops! Something went wrong while deleting the annotation."));
+        throw new Error(
+          httpResponse.status + " - "
+          + gettext(
+            "Could not delete previously retrieved annotation:")
+          + " " + httpResponse.config.url
+          + ".");
+      };
+
       scope.deleteAnnotation = function (annotation) {
         AnnotationsService.deleteAnnotation(
-          annotation
-        ).then(function (response) {
-          scope.annotations.splice(scope.annotations.indexOf(annotation), 1);
-        }, function (response) {
-          $window.alert(
-            gettext(
-              "Oops! Something went wrong while deleting the annotation."));
-          throw new Error(
-            response.status + " - "
-            + gettext(
-              "Could not delete previously retrieved annotation with id:")
-            + " " + annotation.id
-            + ".");
-        });
+          annotation,
+          deleteAnnotationSuccess.bind(undefined, annotation),
+          deleteAnnotationError);
       };
     };
 
@@ -87,20 +94,24 @@ angular.module('annotations')
 
     var link = function (scope, element, attrs) {
 
+      var createAnnotationSuccess = function(value, responseHeaders){
+        scope.annotations.splice(0, 0, value);
+      };
+
+      var createAnnotationError = function(httpResponse){
+        $window.alert(
+          gettext(
+            "Oops! Something went wrong while creating the annotation."));
+        throw new Error(
+          httpResponse.status + " - "
+          + gettext(
+            "Could not create annotation."));
+      };
+
       scope.createAnnotation = function (text) {
         AnnotationsService.addAnnotationToObject(
-          scope.asset, text
-        ).then(function (response) {
-          scope.annotations.splice(0, 0, response.data);
-        }, function (response) {
-          $window.alert(
-            gettext(
-              "Oops! Something went wrong while creating the annotation."));
-          throw new Error(
-            response.status + " - "
-            + gettext(
-              "Could not create annotation."));
-        });
+          scope.asset, text, createAnnotationSuccess, createAnnotationError
+        );
       };
     };
 
