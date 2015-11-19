@@ -5,8 +5,13 @@
  */
 angular.module('annotations')
   .directive('annotations', [function () {
+    var link = function (scope, element, attrs) {
+      scope.annotations = {};
+    };
+
     return {
       restrict: 'E',
+      link: link,
       templateUrl: 'annotations/templates/annotations.html'
     };
   }]);
@@ -21,7 +26,6 @@ angular.module('annotations')
               function (AnnotationsService, $window, gettext) {
 
     var link = function (scope, element, attrs) {
-      scope.annotations = {};
 
       var fetchAnnotations = function(asset) {
         AnnotationsService.getAnnotationsForObject(
@@ -66,7 +70,7 @@ angular.module('annotations')
       restrict: 'E',
       scope: {
         asset: '=',
-        annotations: '@'
+        annotations: '='
       },
       templateUrl: 'annotations/templates/annotations-view.html'
     };
