@@ -684,6 +684,10 @@ select.nested-asset {
   left: -10px;
 }
 
+.card table tr:first-child td {
+    border-top: none;
+}
+
 #icon-holder {
   left: 5px;
 }
@@ -694,10 +698,6 @@ select.nested-asset {
 
 td.lineout {
   color: $asbestos !important;
-}
-
-.attr-row:first-of-type td {
-  border-top: 0 !important;
 }
 
 .kunstwerk-title-suffix {

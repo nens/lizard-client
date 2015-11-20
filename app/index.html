@@ -76,6 +76,7 @@
     <script src="/vendor/jquery/dist/jquery.js"></script>
     <script src="/vendor/angular/angular.js"></script>
     <script src="/vendor/angular-mocks/angular-mocks.js"></script>
+    <script src="/vendor/angular-resource/angular-resource.js"></script>
     <script src="/vendor/bootstrap/dist/js/bootstrap.js"></script>
     <script src="/vendor/d3/d3.js"></script>
     <script src="/vendor/leaflet-dist/dist/leaflet.js"></script>
@@ -98,6 +99,9 @@
     <script src="/translations.js"></script>
 
     <script src="/vendor/moment/locale/nl.js"></script>
+
+    <!-- Patch for ngResource, fixes stripped trailing slashes. -->
+    <script src="/lib/resource-patch.js"></script>
 
     <script src="/lizard-nxt.js"></script>
     <script src="/lizard-nxt-master-controller.js"></script>
@@ -149,6 +153,9 @@
     <script src="/components/timeseries/timeseries-service.js"></script>
     <script src="/components/timeseries/timeseries-directive.js"></script>
 
+    <script src="/components/annotations/annotations.js"></script>
+    <script src="/components/annotations/annotations-service.js"></script>
+    <script src="/components/annotations/annotations-directives.js"></script>
 
     <script src="/components/omnibox/omnibox.js"></script>
     <script src="/components/omnibox/controllers/omnibox-controller.js"></script>

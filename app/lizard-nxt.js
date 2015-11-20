@@ -21,6 +21,7 @@ if (window.RavenEnvironment) {
  */
 angular.module("lizard-nxt", [
   'lizard-nxt-filters',
+  'annotations',
   'data-menu',
   'map',
   'omnibox',
