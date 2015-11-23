@@ -2,8 +2,8 @@
 
 angular.module('lizard-nxt')
   .service("CabinetService", [
-           "$q", "Restangular", "backendDomain", "gettextCatalog",
-  function ($q, Restangular, backendDomain, gettextCatalog) {
+           "$q", "Restangular", "backendDomain", "gettextCatalog", "ResourceModel",
+  function ($q, Restangular, backendDomain, gettextCatalog, ResourceModel) {
 
   var geocodeResource,
       searchResource,
@@ -26,8 +26,7 @@ angular.module('lizard-nxt')
   // Wms getFeatureInfo goes through a proxy. Specify url as a param.
   wmsGetFeatureInfo = Restangular.one('proxy/');
 
-  searchResource = Restangular.one('api/v2/search/');
-
+  searchResource = new ResourceModel('api/v2/search/');
   geocodeResource = Restangular
     // Use a different base url, go directly to our friends at google.
     // They don't mind.
@@ -56,9 +55,7 @@ angular.module('lizard-nxt')
       abortGet = $q.defer();
       localPromise = abortGet;
     }
-    return Restangular
-      .one('api/v2/raster-aggregates/')
-      .withHttpConfig({timeout: localPromise.promise});
+    return new ResourceModel('api/v2/raster-aggregates/');
   };
 
   /**
