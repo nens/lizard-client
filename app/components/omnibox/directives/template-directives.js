@@ -92,4 +92,3 @@ angular.module('omnibox')
     templateUrl: 'omnibox/templates/search-results.html'
   };
 }]);
-
