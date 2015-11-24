@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('lizard-nxt')
-  .service('ResourceModel', ['$http', function ($http) {
+  .service('Resource', ['$http', function ($http) {
 
-    function ResourceModel (url, resourceOptions) {
+    function Resource (url, resourceOptions) {
       this.get = function (params) {
         var options = {
           url: url,
@@ -23,6 +23,6 @@ angular.module('lizard-nxt')
       return this;
     }
 
-    return ResourceModel;
+    return Resource;
   }
 ]);
