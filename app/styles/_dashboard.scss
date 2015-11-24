@@ -8,11 +8,16 @@
   width: 100%;
   position: absolute;
   overflow: hidden;
-  background-color: $white;
+  background-color: $clouds;
 }
 
 .dashboard-wrapper .row {
   min-height: 50px;
   margin: 0;
   padding-left: 10px
+}
+
+.dashboard-inner {
+  position: absolute;
+  left: $omnibox-width; /* graph starts next to omnibox */
 }

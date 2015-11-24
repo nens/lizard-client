@@ -20,13 +20,14 @@
     height: 32px;
     outline: none;
     padding: 0 11px 0 13px;
-    width: 400px;
+    width: 462px; // width plus zoom buttons
     transition: all 200ms cubic-bezier(0.52,0,0.48,1);
     @include material-shadow();
-}
 
-.searchbox:hover {
-    @include material-shadow-hover();
+    &:hover {
+        @include material-shadow-hover();
+    }
+
 }
 
 .cards-minimized .searchbox-shadow {
@@ -53,7 +54,7 @@
 .search-button-collection {
     height: 32px;
     left: 400px;
-    width: 64px;
+    width: 62px;
     position: absolute;
     text-align: center;
     top: 0;
@@ -71,10 +72,10 @@
     -moz-user-select: none;     /* Firefox all */
     -ms-user-select: none;
     user-select: none;
-}
-
-.searchbutton:hover {
-    background-color: #48c9b0;
+    &:hover {
+        background-color: #48c9b0;
+        @include material-shadow-hover();
+    }
 }
 
 
