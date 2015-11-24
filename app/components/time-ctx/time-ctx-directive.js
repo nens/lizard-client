@@ -144,7 +144,10 @@ angular.module('time-ctx')
         } else {
           if (response.type === 'Event') {
             putEventDataOnScope(response);
-          } else if (State.box.type === 'point' && response.type !== 'Event') {
+          } else if (
+              State.box.type === 'point' &&
+              response.type !== 'Event' &&
+              response.data.length > 1) {
             putDataOnScope(response);
           }
         }
