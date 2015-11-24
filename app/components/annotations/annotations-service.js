@@ -13,6 +13,11 @@ angular.module('annotations')
             function (data, headers) {
               return angular.fromJson(data).results;
             }
+        },
+        'save': {
+          method: 'POST',
+          transformRequest: angular.identity,
+          headers: { 'Content-Type': undefined }
         }
       });
 
@@ -27,15 +32,16 @@ angular.module('annotations')
         return Annotations.delete({id: annotation.id}, success, error);
       };
 
-      this.addAnnotationToObject = function (asset, text, success, error) {
-        return Annotations.save({
-          object_type: asset.entity_name,
-          object_id: asset.id,
-          text: text,
-          datetime_from: new Date().toISOString(),
-          datetime_until: new Date().toISOString()
-          // picture_url
-        }, success, error);
+      this.addAnnotationToObject = function (
+          asset, text, file, success, error) {
+        var fd = new FormData();
+        fd.append('attachment', file);
+        fd.append('object_type', asset.entity_name);
+        fd.append('object_id', asset.id);
+        fd.append('text', text);
+        fd.append('datetime_from', new Date().toISOString());
+        fd.append('datetime_until', new Date().toISOString());
+        return Annotations.save(fd, success, error);
       };
 
       return this;

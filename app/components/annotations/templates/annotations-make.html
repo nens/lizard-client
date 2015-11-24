@@ -23,6 +23,21 @@
           Annotation text cannot be longer than 256 characters.
         </small>
       </div>
+      <input class="input-sm"
+             name="attachment"
+             max-size=10000000
+             file-model="attachment"
+             ng:model="fileupload"
+             type="file" >
+      <div
+        ng-show="annotationform.attachment.$invalid">
+        <small
+          class="text-danger"
+          ng-show="annotationform.attachment.$dirty && annotationform.attachment.$error.maxsize"
+          translate>
+          Annotation attachment size cannot be bigger than 10MB.
+        </small>
+      </div>
       <button type="submit"
               ng-disabled="annotationform.$invalid"
               class="btn btn-default btn-sm"

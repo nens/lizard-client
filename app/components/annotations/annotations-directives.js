@@ -85,6 +85,53 @@ angular.module('annotations')
 
 /**
  * @module
+ * @description Directive for a file field.
+ */
+angular.module('annotations')
+.directive('fileModel', ['$parse', function ($parse) {
+
+  var link = function(scope, element, attrs) {
+    var model = $parse(attrs.fileModel);
+    var modelSetter = model.assign;
+
+    element.bind('change', function(){
+      var file = element[0].files[0];
+      scope.$apply(function(){
+        modelSetter(scope, file);
+        scope.annotationform.attachment.$dirty = true;
+        scope.annotationform.attachment.$pristine = false;
+        // use .$setDirty() when angular > 1.3.4?
+      });
+    });
+  };
+
+  return {
+    restrict: 'A',
+    link: link
+  };
+}]);
+
+/**
+ * @module
+ * @description Max size validation on file field.
+ */
+angular.module('annotations')
+  .directive('maxSize', [function() {
+
+    var link = function(scope, element, attrs, ngModel) {
+      scope.$watch(attrs.fileModel, function() {
+        var file = element[0].files[0];
+        ngModel.$setValidity('maxsize', !(file && file.size > attrs.maxSize));
+      });
+    };
+
+    return {
+      require: 'ngModel',
+      link: link
+    };
+}]);
+/**
+ * @module
  * @description Create asset annotations.
  */
 angular.module('annotations')
@@ -112,6 +159,7 @@ angular.module('annotations')
         AnnotationsService.addAnnotationToObject(
           scope.asset,
           scope.text,
+          scope.attachment,
           createAnnotationSuccess,
           createAnnotationError
         );
