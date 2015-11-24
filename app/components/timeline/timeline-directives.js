@@ -38,7 +38,7 @@ angular.module('lizard-nxt')
                               // timeline is shown.
 
         dimensions = {
-          width: UtilService.getCurrentWidth(State.context),
+          width: UtilService.getCurrentWidth(),
           height: 45,
           events: 35,
           bars: 35,
@@ -72,7 +72,7 @@ angular.module('lizard-nxt')
           State.temporal.aggWindow = UtilService.getAggWindow(
             State.temporal.start,
             State.temporal.end,
-            UtilService.getCurrentWidth(State.context)
+            UtilService.getCurrentWidth()
           );
 
           State.temporal.at = UtilService.roundTimestamp(
@@ -127,16 +127,17 @@ angular.module('lizard-nxt')
     var reshift = function (context) {
       var toShift = UtilService.TIMELINE_LEFT_MARGIN;
       var buttonShift = 0;
+      var timelinecontrols = angular.element("#time-controls");
+
       if (context === 'dashboard') {
         toShift += UtilService.OMNIBOX_WIDTH;
-        buttonShift = UtilService.OMNIBOX_WIDTH;
+        timelinecontrols.addClass('hidden');
+      } else {
+        timelinecontrols.removeClass('hidden');
       }
+
       angular.element("#timeline-svg-wrapper svg")[0].style.left
       = toShift + "px";
-      var timelinecontrols = angular.element("#time-controls");
-      if (timelinecontrols.length > 0) {
-        timelinecontrols[0].style.left = buttonShift + "px";
-      }
     };
 
     // shift timeline's SVG element using it's CSS - set here by JS too stop
@@ -160,7 +161,7 @@ angular.module('lizard-nxt')
      * @param {object} dim - object with old timeline dimensions.
      * @param {int} nEventTypes - number of event types (event series).
      */
-    var updateTimelineHeight = function (nEventTypes) {
+    var updateTimelineSize = function (nEventTypes) {
       var eventHeight,
           newDim = angular.copy(timeline.dimensions);
 
@@ -176,6 +177,10 @@ angular.module('lizard-nxt')
 
       if (showTimeline) {
         element[0].style.height = newDim.height + 5 + 'px'; // 5px margins
+      }
+
+      if (State.context === 'dashboard') {
+        newDim.width = UtilService.getCurrentWidth() - UtilService.OMNIBOX_WIDTH;
       }
 
       timeline.resize(
@@ -286,7 +291,7 @@ angular.module('lizard-nxt')
 
       }
 
-      updateTimelineHeight(scope.events.nEvents);
+      updateTimelineSize(scope.events.nEvents);
     };
 
     /**
@@ -414,7 +419,7 @@ angular.module('lizard-nxt')
       if (!showTimeline && State.context !== 'dashboard') {
         element[0].style.height = 0;
       } else {
-        updateTimelineHeight(scope.events.nEvents);
+        updateTimelineSize(scope.events.nEvents);
       }
     };
 
@@ -514,8 +519,13 @@ angular.module('lizard-nxt')
 
     var resize = function () {
       reshift(State.context);
+      var newWidth = UtilService.getCurrentWidth();
+      if (State.context === 'dashboard') {
+        newWidth = UtilService.getCurrentWidth() - UtilService.OMNIBOX_WIDTH;
+      }
+
       scope.$apply(function () {
-        timeline.dimensions.width = UtilService.getCurrentWidth();
+        timeline.dimensions.width = newWidth;
         timeline.resize(
           timeline.dimensions,
           State.temporal.at,

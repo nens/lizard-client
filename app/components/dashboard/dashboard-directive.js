@@ -36,12 +36,12 @@ angular.module('dashboard')
       nGraphs = Object.keys(scope.dashboard.content).length;
       scope.dashboard.dims.height =
         (getHeight() - tlDimensions.height - TL_TOP_MARGIN) / nGraphs - GRAPH_PADDING;
-      scope.dashboard.dims.width = UtilService.getCurrentWidth('dashboard') 
+      scope.dashboard.dims.width = UtilService.getCurrentWidth() - UtilService.OMNIBOX_WIDTH 
         + GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN;
     };
 
     scope.dashboard.dims = {
-      width: UtilService.getCurrentWidth('dashboard') 
+      width: UtilService.getCurrentWidth() - UtilService.OMNIBOX_WIDTH
         + GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN,
       height: getHeight() / nGraphs,
       padding: {
@@ -49,7 +49,6 @@ angular.module('dashboard')
         right: 0,
         bottom: 2 * GRAPH_PADDING, // Enough for the line of the axis.
         left: GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN
-          + UtilService.OMNIBOX_WIDTH
       }
     };
 
