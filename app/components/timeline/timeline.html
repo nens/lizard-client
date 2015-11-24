@@ -17,7 +17,7 @@
             title="<% 'Show dashboard' | translate %>"
             style="cursor: pointer;">
             <i class="fa" ng-class="{
-              'fa-minus-square': timeline.state.context === 'time',
+              'fa-minus-square': timeline.state.context === 'dashboard',
               'fa-bar-chart': timeline.state.context === 'map'
             }"></i>
           </a>
@@ -27,7 +27,7 @@
     </div>
 
   <div class="timeline-wrapper">
-    <div class="time-controls" ng-if="timeline.animatable">
+    <div class="time-controls" id="time-controls" ng-if="timeline.animatable">
       <div class="btn-group">
         <a ng-click="timeline.playPauseAnimation()"
            class="extra-padding timeline-button"

@@ -6,7 +6,8 @@
     </div>
 
     <timeseries
-      ng-if="box.content.waterchain.layers.waterchain_grid.data.num_timeseries"
+      ng-if="box.content.waterchain.layers.waterchain_grid.data.num_timeseries &&
+             context !== 'dashboard'"
       asset="box.content.waterchain.layers.waterchain_grid.data"
       time-state="omnibox.state.temporal">
     </timeseries>
@@ -23,7 +24,8 @@
     </div>
 
     <timeseries
-      ng-if="box.content.waterchain.layers.waterchain_grid.data.selectedAsset"
+      ng-if="box.content.waterchain.layers.waterchain_grid.data.selectedAsset &&
+             context !== 'dashboard'"
       asset="box.content.waterchain.layers.waterchain_grid.data.selectedAsset"
       time-state="omnibox.state.temporal">
     </timeseries>

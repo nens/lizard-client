@@ -322,7 +322,7 @@ angular.module('data-menu')
 
           // LEGACY: getting timeseries is only done for legacy time context.
           // Omnibox uses the timeseries module for this.
-          if (callee === 'time') {
+          if (callee === 'dashboard') {
             promises.push(TimeseriesService.getTimeSeriesForObject(
               response.data.entity_name + '$' + response.data.id,
               options.start,

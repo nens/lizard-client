@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.4.1) (XXXX-XX-XX)
 ---------------------
 
+- Dashboard replaces time-ctx and shows omnibox cards in dashboard
+
 - Fix not compiling any translations.
 
 - Add support for viewing, adding and deleting annotations on assets.
