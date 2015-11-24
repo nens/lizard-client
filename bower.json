@@ -25,7 +25,7 @@
     "angular-mocks": "1.2.27",
     "bootstrap": "~3.1.1",
     "d3": "~3.4.11",
-    "leaflet-dist": "git@github.com:Leaflet/Leaflet.git",
+    "leaflet": "0.7.7",
     "lizard-iconfont": "0.1",
     "restangular": "~1.4.0",
     "raven-js": "~1.1.16",
