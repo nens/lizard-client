@@ -1,14 +1,10 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.2.5) (XXXX-XX-XX)
+Unreleased (2.2.6) (XXXX-XX-XX)
 ---------------------
--
 
-
-Release 2.2.6 (2015-11-13)
----------------------
--
+- Fix not updating region data on time change.
 
 
 Release 2.2.5 (2015-11-9)

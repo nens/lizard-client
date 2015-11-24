@@ -35,9 +35,18 @@ describe('Testing RegionController', function () {
 
   it('should not get data for no region', function () {
     var ctrl = $controller('RegionCtrl', {$scope: $scope, CabinetService: mockedCabinetService});
-    $scope.fillBox = function () {}; // mock fillbox to not try to get data.
+    $scope.fillBox = function () {return {then: function () {}}; }; // mock fillbox to not try to get data.
     $scope.$digest();
     expect($scope.activeName).toBeUndefined();
+  });
+
+  it('should get data when region is defined', function () {
+    var ctrl = $controller('RegionCtrl', {$scope: $scope, CabinetService: mockedCabinetService});
+    $scope.fillBox = function () {return {then: function () {}}; }; // mock fillbox to not try to get data.
+    State.spatial.region = {id: 1, properties: {name: 'district name'}};
+    $scope.$digest();
+    expect($scope.activeName).toBeDefined();
+
   });
 
 });
