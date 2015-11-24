@@ -8,6 +8,8 @@ Unreleased (2.2.6) (XXXX-XX-XX)
 
 - Fix showing a subset of regions, set regions limit to 500.
 
+- Fix not showing a full-details switch in wms getfeatureinfo card. Als include title.
+
 
 Release 2.2.5 (2015-11-9)
 ---------------------
