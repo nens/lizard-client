@@ -108,9 +108,12 @@ angular.module('annotations')
             "Could not create annotation."));
       };
 
-      scope.createAnnotation = function (text) {
+      scope.createAnnotation = function () {
         AnnotationsService.addAnnotationToObject(
-          scope.asset, text, createAnnotationSuccess, createAnnotationError
+          scope.asset,
+          scope.text,
+          createAnnotationSuccess,
+          createAnnotationError
         );
       };
     };
