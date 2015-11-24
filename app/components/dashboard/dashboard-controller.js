@@ -1,19 +1,19 @@
-/**
- *
- * Directive for dashboard component.
- *
- */
 angular.module('dashboard')
-  .controller('DashboardCtrl', [
-      'DashboardService',
-      function (DashboardService) {
+  .controller("DashboardCtrl", ["$scope", "State", function ($scope, State) {
 
-    var that = this;
- 
-    DashboardService.getDashboard()
-      .then(function (dashboard) {
-        angular.extend(that, dashboard[0]);
-          DashboardService.getData(that.dashboardelements);
-        });
-    
+  this.state = State;
+
+  // dimensions are dependent on screen size.
+  // this is calculated in directive.
+  this.dims = {};
+
+  this.content = {};
+
+  // statistics (maybe get dynamically from event aggregation service?)
+  this.stats = ['max', 'min', 'mean', 'sum', 'median', 'count'];
+
+  this.eventAggs = undefined;
+
+  // default selection
+  this.selectedStat = this.selectedStat || this.stats[2];
 }]);

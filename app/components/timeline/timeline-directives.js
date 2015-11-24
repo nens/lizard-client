@@ -117,10 +117,32 @@ angular.module('lizard-nxt')
       },
     };
 
+
+    /**
+     * @function
+     * @description Helper to shift/unshift the timeline based on which
+     * view the user is in
+     * @param {string} context - e.g. 'dashboard' or 'map'
+     */
+    var reshift = function (context) {
+      var toShift = UtilService.TIMELINE_LEFT_MARGIN;
+      var buttonShift = 0;
+      var timelinecontrols = angular.element("#time-controls");
+
+      if (context === 'dashboard') {
+        toShift += UtilService.OMNIBOX_WIDTH;
+        timelinecontrols.addClass('hidden');
+      } else {
+        timelinecontrols.removeClass('hidden');
+      }
+
+      angular.element("#timeline-svg-wrapper svg")[0].style.left
+      = toShift + "px";
+    };
+
     // shift timeline's SVG element using it's CSS - set here by JS too stop
     // stuff becoming unsyncable
-    angular.element("#timeline-svg-wrapper svg")[0].style.left
-      = UtilService.TIMELINE_LEFT_MARGIN + "px";
+    reshift(State.context);
 
     // keep track of events in this scope
     scope.events = {nEvents: 0, slugs: []};
@@ -139,7 +161,7 @@ angular.module('lizard-nxt')
      * @param {object} dim - object with old timeline dimensions.
      * @param {int} nEventTypes - number of event types (event series).
      */
-    var updateTimelineHeight = function (nEventTypes) {
+    var updateTimelineSize = function (nEventTypes) {
       var eventHeight,
           newDim = angular.copy(timeline.dimensions);
 
@@ -155,6 +177,10 @@ angular.module('lizard-nxt')
 
       if (showTimeline) {
         element[0].style.height = newDim.height + 5 + 'px'; // 5px margins
+      }
+
+      if (State.context === 'dashboard') {
+        newDim.width = UtilService.getCurrentWidth() - UtilService.OMNIBOX_WIDTH;
       }
 
       timeline.resize(
@@ -194,7 +220,7 @@ angular.module('lizard-nxt')
             if (layer.format === "Vector") {
               timelineLayers.events.layers.push(layer);
               timelineLayers.events.slugs.push(layer.slug);
-            } else if (layer.format === "Store" && State.context !== 'time') {
+            } else if (layer.format === "Store" && State.context !== 'dashboard') {
               if (layer.slug !== "rain") {
                 timelineLayers.rasterStore.layers.push(layer);
               } else if (layer.slug === "rain") {
@@ -265,7 +291,7 @@ angular.module('lizard-nxt')
 
       }
 
-      updateTimelineHeight(scope.events.nEvents);
+      updateTimelineSize(scope.events.nEvents);
     };
 
     /**
@@ -390,10 +416,10 @@ angular.module('lizard-nxt')
 
     scope.timeline.toggleTimelineVisiblity = function () {
       showTimeline = !showTimeline;
-      if (!showTimeline && State.context !== 'time') {
+      if (!showTimeline && State.context !== 'dashboard') {
         element[0].style.height = 0;
       } else {
-        updateTimelineHeight(scope.events.nEvents);
+        updateTimelineSize(scope.events.nEvents);
       }
     };
 
@@ -401,7 +427,7 @@ angular.module('lizard-nxt')
 
     scope.timeline.toggleTimeCtx = function () {
       scope.timeline.toggleTimelineVisiblity();
-      scope.transitionToContext(State.context === 'map' ? 'time' : 'map');
+      scope.transitionToContext(State.context === 'map' ? 'dashboard' : 'map');
     };
 
     // WATCHES
@@ -474,6 +500,7 @@ angular.module('lizard-nxt')
       showTimeline = false; // It toggles
       scope.timeline.toggleTimelineVisiblity();
       getTimeLineData(); // It also removes data..
+      reshift(State.context);
     });
 
     /**
@@ -491,8 +518,14 @@ angular.module('lizard-nxt')
     window.addEventListener('load', getTimeLineData);
 
     var resize = function () {
+      reshift(State.context);
+      var newWidth = UtilService.getCurrentWidth();
+      if (State.context === 'dashboard') {
+        newWidth = UtilService.getCurrentWidth() - UtilService.OMNIBOX_WIDTH;
+      }
+
       scope.$apply(function () {
-        timeline.dimensions.width = UtilService.getCurrentWidth();
+        timeline.dimensions.width = newWidth;
         timeline.resize(
           timeline.dimensions,
           State.temporal.at,
