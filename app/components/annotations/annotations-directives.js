@@ -141,6 +141,17 @@ angular.module('annotations')
 
     var link = function (scope, element, attrs) {
 
+      scope.resetForm = function() {
+        scope.text = angular.copy({});
+        scope.attachment = angular.copy({});
+        angular.forEach(
+          angular.element("input[type='file']"),
+            function(inputElem) {
+            angular.element(inputElem).val(null);
+        });
+        scope.annotationform.$setPristine();
+      };
+
       var createAnnotationSuccess = function(value, responseHeaders){
         scope.annotations.splice(0, 0, value);
       };

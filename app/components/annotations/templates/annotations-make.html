@@ -42,6 +42,9 @@
               ng-disabled="annotationform.$invalid"
               class="btn btn-default btn-sm"
               ng-click="createAnnotation()" translate>Add</button>
+      <button class="btn btn-danger btn-sm"
+              ng-disabled="annotationform.$pristine"
+              ng-click="resetForm()" translate>Clear</button>
     </form>
   </div>
 </div>
