@@ -6,6 +6,8 @@ Unreleased (2.2.6) (XXXX-XX-XX)
 
 - Fix not updating region data on time change.
 
+- Fix showing a subset of regions, set regions limit to 500.
+
 
 Release 2.2.5 (2015-11-9)
 ---------------------
