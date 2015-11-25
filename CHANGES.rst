@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.2.7) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 2.2.7 (2015-11-25)
+---------------------
 
 - Fix showing empty graphs in time-ctx.
 
