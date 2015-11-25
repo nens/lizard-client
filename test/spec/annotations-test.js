@@ -16,6 +16,6 @@ describe('testing lizard nxt annotations', function () {
 
   it('should return a promise', function () {
     var annotations = annotationsService.getAnnotationsForObject();
-    expect(annotations.hasOwnProperty('then')).toBe(true);
+    expect(annotations.hasOwnProperty('$promise')).toBe(true);
   });
 });

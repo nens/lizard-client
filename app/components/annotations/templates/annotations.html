@@ -1,5 +1,11 @@
 <div class="annotations">
-  <annotations-make></annotations-make>
-  <annotations-view asset="box.content.waterchain.layers.waterchain_grid.data">
+  <annotations-view
+    asset="box.content.waterchain.layers.waterchain_grid.data"
+    annotations="annotations">
   </annotations-view>
+  <annotations-make
+    ng-if="box.content.waterchain.layers.waterchain_grid.data"
+    asset="box.content.waterchain.layers.waterchain_grid.data"
+    annotations="annotations">
+  </annotations-make>
 </div>

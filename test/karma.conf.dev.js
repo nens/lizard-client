@@ -22,6 +22,7 @@ module.exports = function(config) {
       'vendor/jquery/dist/jquery.js',
       'vendor/angular/angular.js',
       'vendor/angular-mocks/angular-mocks.js',
+      'vendor/angular-resource/angular-resource.js',
       'vendor/bootstrap/dist/js/bootstrap.js',
       'vendor/d3/d3.js',
       'vendor/leaflet-dist/dist/leaflet-src.js',

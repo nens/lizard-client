@@ -18,7 +18,7 @@ Unreleased (2.4.1) (XXXX-XX-XX)
 
 - Fix not compiling any translations.
 
-- Add support for viewing and deleting annotations on assets.
+- Add support for viewing, adding and deleting annotations on assets.
 
 
 Release 2.3.2 (2015-11-11)

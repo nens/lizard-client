@@ -16,6 +16,15 @@ if (window.RavenEnvironment) {
 }
 
 /**
+ * Configure Angular's $resource to not strip trailing slashes.
+ */
+angular.module('ngResource').config([
+  '$resourceProvider', function($resourceProvider) {
+    $resourceProvider.defaults.stripTrailingSlashes = false;
+  }
+]);
+
+/**
  * Initialise angular.module('lizard-nxt')
  *
  */
