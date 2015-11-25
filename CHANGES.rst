@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.4.1) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 2.4.1 (2015-11-25)
+---------------------
 
 - Bump Angular to 1.4.7
 
