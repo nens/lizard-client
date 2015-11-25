@@ -39,6 +39,12 @@ angular.module('omnibox')
 
     /**
      * @function
+     * @summary Fills box content data for point.
+     * @description Fills the point data based on the data layers that are
+     * active (e.g. timeseries and waterchain information.
+     *
+     * Scope is inherited from OmniboxCtrl. Fillbox function from that controller
+     * is called here.
      * @memberOf app.pointCtrl
      * @param  {L.LatLng} here
      */
