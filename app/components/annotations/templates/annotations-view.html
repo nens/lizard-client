@@ -18,7 +18,8 @@
           <td><% obj.text %></td>
           <td class="text-right"><% obj.created_at | date : 'd MMM' %></td>
           <td class="text-right">
-            <a href="<% obj.picture_url %>"
+            <a target="_blank"
+               href="<% obj.picture_url %>"
                title="<% 'Download attachment.'|translate %>"
                ng-if="obj.picture_url">
               <i class="fa fa-download"></i>
