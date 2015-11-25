@@ -37,26 +37,19 @@
       <map></map>
     </div>
 
-    <div ng-if="context === 'time'">
-      <time-ctx></time-ctx>
-    </div>
-
     <div ng-if="context === 'dashboard'">
       <dashboard></dashboard>
     </div>
 
     <timeline class="timeline navbar-fixed-bottom"></timeline>
 
-    <div ng-if="context !== 'time'">
+    <div ng-if="context !== 'dashboard'">
       <datamenu></datamenu>
     </div>
 
     <user-menu></user-menu>
 
-    <div ng-if="context === 'map' || context === 'scenarios'">
-      <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
-    </div>
-
+    <omnibox id="omnibox" ng-controller="OmniboxCtrl as omnibox"></omnibox>
 
     <div id="context-transition-overlay"></div>
 
@@ -78,7 +71,6 @@
     <script src="/vendor/angular-mocks/angular-mocks.js"></script>
     <script src="/vendor/bootstrap/dist/js/bootstrap.js"></script>
     <script src="/vendor/d3/d3.js"></script>
-    <script src="/vendor/leaflet-dist/dist/leaflet.js"></script>
     <script src="/vendor/leaflet-dist/dist/leaflet-src.js"></script>
     <script src="/vendor/lodash/dist/lodash.compat.js"></script>
     <script src="/vendor/restangular/dist/restangular.js"></script>
@@ -149,6 +141,9 @@
     <script src="/components/timeseries/timeseries-service.js"></script>
     <script src="/components/timeseries/timeseries-directive.js"></script>
 
+    <script src="/components/annotations/annotations.js"></script>
+    <script src="/components/annotations/annotations-service.js"></script>
+    <script src="/components/annotations/annotations-directives.js"></script>
 
     <script src="/components/omnibox/omnibox.js"></script>
     <script src="/components/omnibox/controllers/omnibox-controller.js"></script>
@@ -175,12 +170,7 @@
 
     <script src="/components/dashboard/dashboard.js"></script>
     <script src="/components/dashboard/dashboard-controller.js"></script>
-    <script src="/components/dashboard/dashboard-service.js"></script>
     <script src="/components/dashboard/dashboard-directive.js"></script>
-
-    <script src="/components/time-ctx/time-ctx.js"></script>
-    <script src="/components/time-ctx/time-ctx-controller.js"></script>
-    <script src="/components/time-ctx/time-ctx-directive.js"></script>
 
     <script src="/components/scenarios/scenarios.js"></script>
     <script src="/components/scenarios/scenarios-directive.js"></script>

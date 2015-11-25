@@ -127,7 +127,6 @@ angular.module('data-menu')
             this.mapLayers.push(new NxtLayer(layer, tempRes));
           }
 
-
         }, this);
 
         // This layergroup solemnly swears to never visit NULL_ISLAND

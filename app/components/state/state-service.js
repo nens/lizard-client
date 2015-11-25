@@ -31,7 +31,7 @@ angular.module('global-state')
     // Context. State.context returns 'map' or 'db', it can only be set with
     // either one of those values.
     var _context = 'map'; // The default
-    var CONTEXT_VALUES = ['map', 'time', 'dashboard', 'scenarios'];
+    var CONTEXT_VALUES = ['map', 'dashboard', 'scenarios'];
     Object.defineProperty(state, 'context', {
       get: function () { return _context; },
       set: function (context) {
@@ -72,7 +72,7 @@ angular.module('global-state')
     state.box = {};
 
     var _type = 'point'; // Default box type
-    var TYPE_VALUES = ["point", "line", "region", "area"];
+    var TYPE_VALUES = ["point", "line", "region", "area", "omnibox-dashboard"];
     Object.defineProperty(state.box, 'type', {
       get: function () { return _type; },
       set: function (type) {

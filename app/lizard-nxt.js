@@ -21,12 +21,12 @@ if (window.RavenEnvironment) {
  */
 angular.module("lizard-nxt", [
   'lizard-nxt-filters',
+  'annotations',
   'data-menu',
   'map',
   'omnibox',
   'restangular',
   'dashboard',
-  'time-ctx',
   'scenarios',
   'user-menu',
   'global-state',
