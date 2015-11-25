@@ -116,7 +116,7 @@ describe('Service: SearchService', function () {
 
   it('should return an object with a CabinetService promise ', function () {
     var result = SearchService.search('testQuery', State);
-    expect(result.spatial.hasOwnProperty('then')).toBe(true);
+    expect(!!result.spatial.then).toBe(true);
   });
 
   it('should contain the google geocoder statuses', function () {

@@ -3,10 +3,10 @@
 angular.module('scenarios')
 .controller("ScenariosCtrl", [
   "$scope",
-  "Restangular",
+  "Resource",
   "MapService",
   "DataService",
-  "State", function ($scope, Restangular, MapService, DataService, State) {
+  "State", function ($scope, Resource, MapService, DataService, State) {
 
     var PAGE_SIZE = 10.0,
         TABLE_MARGIN = 150;
@@ -24,7 +24,7 @@ angular.module('scenarios')
         page = $scope.page;
       }
       $scope.loading = true;
-      Restangular.one('api/v2/scenarios/?page=' + page).get()
+      new Resource.Endpoint('api/v2/scenarios/?page=' + page).get()
         .then(function (response) {
           $scope.loading = false;
           // get the amount of pages for the ng-repeater
@@ -43,7 +43,7 @@ angular.module('scenarios')
     $scope.select = function (scenario) {
       if ($scope.selectedScenario === null) {
         $scope.selectedScenario = scenario;
-        Restangular.one('api/v2/scenarios/' + scenario.id + '/').get()
+        new Resource.Endpoint('api/v2/scenarios/' + scenario.id + '/').get()
           .then(function (response) {
             angular.extend(scenario, response);
           });

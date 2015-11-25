@@ -15,12 +15,12 @@ angular.module('timeseries')
       localPromises[id] = $q.defer();
       return CabinetService
       .timeseries
-      .withHttpConfig({timeout: localPromises[id].promise})
       .get({
         object: id,
         min_points: minPoints,
         start: parseInt(timeState.start, 10),
-        end: parseInt(timeState.end, 10)
+        end: parseInt(timeState.end, 10),
+        timeout: localPromises[id].promise
       });
     };
 
