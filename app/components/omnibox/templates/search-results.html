@@ -1,6 +1,6 @@
 <div class="search-results">
 
-  <h3 ng-if="box.content.searchResults.spatial">
+  <h3 ng-if="box.content.searchResults.spatial.length > 0">
     <i class="fa fa-map-marker">&nbsp;</i>
     <span translate>Locations</span>&nbsp;(<% box.content.searchResults.spatial.length %>)
   </h3>
@@ -15,7 +15,7 @@
     </li>
   </ul>
 
-  <h3 ng-if="box.content.searchResults.timeseries">
+  <h3 ng-if="box.content.searchResults.timeseries.length > 0">
     <i class="fa fa-clock-o">&nbsp;</i>
     <span translate>Timeseries</span>&nbsp;(<% box.content.searchResults.timeseries.length %>)
   </h3>
@@ -30,7 +30,7 @@
     </li>
   </ul>
 
-  <h3 ng-if="box.content.searchResults.layergroups">
+  <h3 ng-if="box.content.searchResults.layergroups.length > 0">
     <i class="fa fa-clock-o">&nbsp;</i>
     <span translate>Map</span>&nbsp;(<% box.content.searchResults.layergroups.length %>)
   </h3>
@@ -45,7 +45,7 @@
     </li>
   </ul>
 
-  <h3 ng-if="box.content.searchResults.temporal" translate>Time</h3>
+  <h3 ng-if="box.content.searchResults.temporal.length > 0" translate>Time</h3>
 	<div
 		ng-if="box.content.searchResults.temporal"
 		class="cluster location">

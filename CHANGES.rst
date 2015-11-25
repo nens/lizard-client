@@ -4,11 +4,21 @@ Changelog of lizard-nxt client
 Unreleased (2.4.1) (XXXX-XX-XX)
 ---------------------
 
+- Bump Angular to 1.4.7
+
+- Remove Restangular.
+
+- Resource service that gets stuff from rest api.
+
+- Add tooltips that are more responsive.
+
+- Add material design shadows.
+
 - Dashboard replaces time-ctx and shows omnibox cards in dashboard
 
 - Fix not compiling any translations.
 
-- Add support for viewing and deleting annotations on assets.
+- Add support for viewing, adding and deleting annotations on assets.
 
 
 Release 2.3.2 (2015-11-11)

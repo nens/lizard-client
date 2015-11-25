@@ -2,12 +2,11 @@
  * Service to handle raster requests.
  */
 angular.module('lizard-nxt')
-  .service("RasterService", ["Restangular",
-                             "UtilService",
+  .service("RasterService", ["UtilService",
                              "CabinetService",
                              "LeafletService",
                              "$q",
-  function (Restangular, UtilService, CabinetService, LeafletService, $q) {
+  function (UtilService, CabinetService, LeafletService, $q) {
 
   var intensityData,
       cancelers = {};

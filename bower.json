@@ -21,13 +21,13 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "1.2.27",
-    "angular-mocks": "1.2.27",
+    "angular": "1.4.7",
+    "angular-mocks": "1.4.7",
+    "angular-resource": "1.4.7",
     "bootstrap": "~3.1.1",
     "d3": "~3.4.11",
     "leaflet": "0.7.7",
     "lizard-iconfont": "0.1",
-    "restangular": "~1.4.0",
     "raven-js": "~1.1.16",
     "components-font-awesome": "~4.2.0",
     "d3-comparator": "~0.1.0",
@@ -38,7 +38,7 @@
     "angular-gettext": "~2.1.0"
   },
   "resolutions": {
-    "angular": "1.2.27"
+    "angular": "1.4.7"
   },
   "overrides": {
     "leaflet.markercluster": {
