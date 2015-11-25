@@ -4,6 +4,10 @@ Changelog of lizard-nxt client
 Unreleased (2.4.1) (XXXX-XX-XX)
 ---------------------
 
+- Add tooltips that are more responsive.
+
+- Add material design shadows.
+
 - Dashboard replaces time-ctx and shows omnibox cards in dashboard
 
 - Fix not compiling any translations.

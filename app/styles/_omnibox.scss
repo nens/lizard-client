@@ -66,12 +66,13 @@
     padding: 6px 10px;
     background-color: #16a085; /*#20b2aa*/
     border: 0;
-   color: $white;
+    color: $white;
     -webkit-user-select: none;  /* Chrome all / Safari all */
     -moz-user-select: none;     /* Firefox all */
     -ms-user-select: none;
     user-select: none;
     &:hover {
+        color: $white;
         background-color: #48c9b0;
         @include material-shadow-hover();
     }
