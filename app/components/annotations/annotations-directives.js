@@ -120,9 +120,7 @@ angular.module('annotations')
       var file = element[0].files[0];
       scope.$apply(function(){
         modelSetter(scope, file);
-        scope.annotationform.attachment.$dirty = true;
-        scope.annotationform.attachment.$pristine = false;
-        // use .$setDirty() when angular > 1.3.4?
+        scope.annotationform.attachment.$setDirty();
       });
     });
   };
@@ -178,8 +176,8 @@ angular.module('annotations')
        * attachment.
        */
       scope.resetForm = function() {
-        scope.text = angular.copy({});
-        scope.attachment = angular.copy({});
+        scope.text = angular.copy(null);
+        scope.attachment = angular.copy(null);
         angular.forEach(
           angular.element("input[type='file']"),
             function(inputElem) {
