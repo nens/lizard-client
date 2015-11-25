@@ -4,6 +4,12 @@ Changelog of lizard-nxt client
 Unreleased (2.4.1) (XXXX-XX-XX)
 ---------------------
 
+- Bump Angular to 1.4.7
+
+- Remove Restangular.
+
+- Resource service that gets stuff from rest api.
+
 - Fix not compiling any translations.
 
 

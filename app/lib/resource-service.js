@@ -10,10 +10,21 @@ angular.module('lizard-nxt')
 
   this.baseUrl = '';
 
+  /**
+   * @function
+   * @description sets Base url of resource (application wide)
+   * @params {string} baseurl e.g. https://demo.lizard.net/
+   */
   this.setBaseUrl = function (baseUrl) {
     this.baseUrl = baseUrl;
   };
 
+  /**
+   * @functtion
+   * @description makes an url based on base url and the url param
+   * @params {string} url e.g. api/v2/search/
+   * @params {string} baseurl - optional e.g. https://demo.lizard.net/
+   */
   this.makeUrl = function (url, baseUrl) {
     if (baseUrl) {
       return baseUrl + url;
@@ -24,10 +35,22 @@ angular.module('lizard-nxt')
 
   this.options = {};
   
+  /**
+   * @function
+   * @description sets $http settings application wide like default Headers
+   * @params {object} - options object e.g. {withCredentials: true}
+   */
   this.setDefaultHttpFields = function (options) {
     this.options = angular.extend(this.options, options);
   };
 
+  /**
+   * @function
+   * @description helper function for options that $http uses
+   * @params {string} url - e.g. 'api/v2/timeseries/'
+   * @params {object} params - url parameters e.g. {q: 'this-is-a-query-param'}
+   * @params {string} method - HTTP method e.g. 'PUT'
+   */
   this.buildOptions = function (url, params, method) {
     var options = angular.copy(this.options);
     angular.extend(options, {
