@@ -10,6 +10,10 @@ Unreleased (2.4.1) (XXXX-XX-XX)
 
 - Resource service that gets stuff from rest api.
 
+- Add tooltips that are more responsive.
+
+- Add material design shadows.
+
 - Dashboard replaces time-ctx and shows omnibox cards in dashboard
 
 - Fix not compiling any translations.
