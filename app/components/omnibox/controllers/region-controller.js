@@ -139,7 +139,8 @@ angular.module('omnibox')
      */
     $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
       if (!State.temporal.timelineMoving) {
-        if (State.spatial.region && State.spatial.region.name) {
+        region = State.spatial.region;
+        if (region && region.properties && region.properties.name) {
           fillRegion(State.spatial.region);
         }
       }
