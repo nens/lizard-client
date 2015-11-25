@@ -6,6 +6,12 @@ Unreleased (2.2.7) (XXXX-XX-XX)
 
 - Fix showing empty graphs in time-ctx.
 
+- Fix not updating region data on time change.
+
+- Fix showing a subset of regions, set regions limit to 500.
+
+- Fix not showing a full-details switch in wms getfeatureinfo card. Als include title.
+
 
 Release 2.2.6 (2015-11-13)
 ---------------------
