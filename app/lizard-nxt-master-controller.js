@@ -76,6 +76,10 @@ angular.module('lizard-nxt')
   // initialise context.
   $scope.context = State.context;
 
+  $scope.toggleDashboard = function () {
+    $scope.transitionToContext(($scope.context === 'map') ? 'dashboard' : 'map');
+  };
+
   // END CONTEXT
 
   $scope.toggleVersionVisibility = function () {
