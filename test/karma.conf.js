@@ -25,7 +25,7 @@ module.exports = function(config) {
       'vendor/angular-resource/angular-resource.js',
       'vendor/bootstrap/dist/js/bootstrap.js',
       'vendor/d3/d3.js',
-      'vendor/leaflet-dist/dist/leaflet-src.js',
+      'vendor/leaflet/dist/leaflet-src.js',
       'vendor/raven-js/dist/raven.js',
       'vendor/d3-comparator/d3-comparator.js',
       'vendor/lodash/dist/lodash.compat.js',
