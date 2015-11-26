@@ -15,7 +15,7 @@
     <tbody>
       <tr ng-repeat="obj in annotations">
         <td><% obj.text %></td>
-        <td class="text-right"><% obj.created_at | date : 'd MMM' %></td>
+        <td class="text-right"><% obj.datetime_from | date : 'd MMM' %></td>
         <td class="text-right">
           <a target="_blank"
              href="<% obj.picture_url %>"

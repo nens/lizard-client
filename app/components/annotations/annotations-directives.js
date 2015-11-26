@@ -220,6 +220,7 @@ angular.module('annotations')
           scope.asset,
           scope.text,
           scope.attachment,
+          scope.timelineat,
           createAnnotationSuccess,
           createAnnotationError
         );
@@ -231,7 +232,8 @@ angular.module('annotations')
       restrict: 'E',
       scope: {
         asset: '=',
-        annotations: '='
+        annotations: '=',
+        timelineat: '='
       },
       templateUrl: 'annotations/templates/annotations-make.html'
     };

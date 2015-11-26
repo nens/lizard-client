@@ -59,6 +59,8 @@ angular.module('annotations')
        * @param {object} asset - The asset to which the annotation is related.
        * @param {string} text - The actual annotation message.
        * @param {string} file - An optional attachment for the annotation.
+       * @param {Date} timelineat - A date to use for datetime_from and
+       *                            datetime_until.
        * @param {function} success - Execute this function on a successful
        *                             POST.
        * @param {function} error - Execute this function when something goes
@@ -66,14 +68,15 @@ angular.module('annotations')
        * @returns {object} - The new annotation.
        */
       this.addAnnotationToObject = function (
-          asset, text, file, success, error) {
+          asset, text, file, timelineat, success, error) {
         var fd = new FormData();
         fd.append('attachment', file);
         fd.append('object_type', asset.entity_name);
         fd.append('object_id', asset.id);
         fd.append('text', text);
-        fd.append('datetime_from', new Date().toISOString());
-        fd.append('datetime_until', new Date().toISOString());
+        var datetime = new Date(timelineat).toISOString();
+        fd.append('datetime_from', datetime);
+        fd.append('datetime_until', datetime);
         return Annotations.save(fd, success, error);
       };
 
