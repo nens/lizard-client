@@ -11,11 +11,16 @@
             ng-if="annotations.length == 0"
             translate>Add an annotation</span>
     </span>
+
+    <full-details></full-details>
+
     <annotations-view
+      ng-class="{ hidden: !fullDetails }"
       asset="box.content.waterchain.layers.waterchain_grid.data"
       annotations="annotations">
     </annotations-view>
     <annotations-make
+      ng-class="{ hidden: !fullDetails }"
       ng-if="box.content.waterchain.layers.waterchain_grid.data"
       asset="box.content.waterchain.layers.waterchain_grid.data"
       timelineat="timeline.state.temporal.at"
