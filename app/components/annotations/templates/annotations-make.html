@@ -48,7 +48,7 @@
           </div>
         </td>
         <td class="text-right">
-          <% timelineat | date : 'd MMM' %>
+          <span ng-bind="timelineat | date: formatDatetime()"></span>
         </td>
         <td>
           <button

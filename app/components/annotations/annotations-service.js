@@ -2,8 +2,22 @@
  * Service to handle annotations retrieval and creation.
  */
 angular.module('annotations')
-  .service("AnnotationsService", ['$resource',
-    function ($resource) {
+  .service("AnnotationsService", ['$resource', 'State',
+    function ($resource, State) {
+
+      /**
+       * Date formatter that formats the date based on the timeline window.
+       */
+      this.formatDatetime = function () {
+        var range = State.temporal.end - State.temporal.start;
+        if (range > 31536000000) {  // more than a year
+          return "d MMM ''''yy";
+        } else if (range > 86400000) {  // more than a day
+          return "d MMM";
+        } else {  // less than a day
+          return "H:mm:ss";
+        }
+      };
 
       /* Create a resource for interacting with the annotations endpoint of the
        * API.

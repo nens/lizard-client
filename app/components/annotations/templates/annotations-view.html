@@ -8,7 +8,9 @@
     <tbody>
       <tr ng-repeat="obj in annotations">
         <td><% obj.text %></td>
-        <td class="text-right"><% obj.datetime_from | date : 'd MMM' %></td>
+        <td class="text-right">
+          <span ng-bind="obj.datetime_from | date: formatDatetime()"></span>
+        </td>
         <td class="text-right">
           <a target="_blank"
              href="<% obj.picture_url %>"

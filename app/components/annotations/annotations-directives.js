@@ -28,6 +28,13 @@ angular.module('annotations')
     var link = function (scope, element, attrs) {
 
       /**
+       * Provide a date time formatter for the annotations templates.
+       */
+      scope.formatDatetime = function() {
+        return AnnotationsService.formatDatetime();
+      };
+
+      /**
        * Update front-end upon successful GET of the annotations.
        * @param {array} value - annotations returned by the request.
        * @param {dict} responseHeaders - Not actually used but required
@@ -191,6 +198,13 @@ angular.module('annotations')
               function (AnnotationsService, $window, gettext) {
 
     var link = function (scope, element, attrs) {
+
+      /**
+       * Provide a date time formatter for the annotations templates.
+       */
+      scope.formatDatetime = function() {
+        return AnnotationsService.formatDatetime();
+      };
 
       /**
        * Reset (empty) the annotation form.
