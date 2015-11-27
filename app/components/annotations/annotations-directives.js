@@ -28,13 +28,27 @@ angular.module('annotations')
     var link = function (scope, element, attrs) {
 
       /**
+       * Update front-end upon successful GET of the annotations.
+       * @param {array} value - annotations returned by the request.
+       * @param {dict} responseHeaders - Not actually used but required
+       *                                       by $resource.
+       */
+      var fetchAnnotationsSuccess = function(value, responseHeaders) {
+        scope.annotations = value;
+      };
+
+      /**
        * Get all annotations for an asset.
-       * @param {object} asset - The asset to get the annotations for.
        * @returns {array} - An array of annotations.
        */
-      var fetchAnnotations = function(asset) {
-        scope.annotations = AnnotationsService.getAnnotationsForObject(
-          asset.entity_name, asset.id
+      var fetchAnnotations = function() {
+        AnnotationsService.getAnnotationsForObject(
+          scope.asset.entity_name,
+          scope.asset.id,
+          5,
+          scope.timeState.start,
+          scope.timeState.end,
+          fetchAnnotationsSuccess
         );
       };
 
@@ -42,9 +56,17 @@ angular.module('annotations')
        * Get annotations when asset changes.
        */
       scope.$watch('asset', function () {
-        fetchAnnotations(scope.asset);
+        fetchAnnotations();
       });
 
+      /**
+       * Update annotations when timeline has moved.
+       */
+      scope.$watch('timeState.timelineMoving', function (off) {
+        if (!off) {
+          fetchAnnotations();
+        }
+      });
       /**
        * Update the front-end to reflect a successful delete of an annotation.
        * @param {object} id - The ID of the asset.
@@ -95,7 +117,8 @@ angular.module('annotations')
       restrict: 'E',
       scope: {
         asset: '=',
-        annotations: '='
+        annotations: '=',
+        timeState: '='
       },
       templateUrl: 'annotations/templates/annotations-view.html'
     };

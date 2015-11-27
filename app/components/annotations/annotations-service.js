@@ -32,13 +32,24 @@ angular.module('annotations')
        * Get all annotations for an asset.
        * @param {string} model - The model name of the asset (e.g. manhole).
        * @param {integer} id - The ID of the asset.
+       * @param {integer} limit - Limit the number of returned annotations.
+       * @param {Date} start - Filter the annotations on a start-end date
+       *                       range.
+       * @param {Date} end - Filter the annotations on a start-end date range.
+       * @param {function} success - Execute this function on a successful
+       *                             GET.
        * @returns {array} - An array of annotations.
        */
-      this.getAnnotationsForObject = function (model, id) {
+      this.getAnnotationsForObject = function (
+          model, id, limit, start, end, success) {
         return Annotations.query({
           object_type__model: model,
-          object_id: id
-        });
+          object_id: id,
+          limit: limit,
+          start: new Date(start).toISOString(),
+          end: new Date(end).toISOString(),
+          ordering: '-timestamp_start'
+        }, success);
       };
 
       /**
