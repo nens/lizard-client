@@ -8,6 +8,9 @@ Unreleased (2.4.1) (XXXX-XX-XX)
 
 - Add support for viewing and deleting annotations on assets.
 
+- Remove htmlmin from build it messes up the html and is not necessary with
+  gzip.
+
 
 Release 2.3.2 (2015-11-11)
 ---------------------
