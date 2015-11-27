@@ -72,7 +72,16 @@
       </div>
 
       <div ng-switch-when="WMS" ng-if="l.data.features">
-        <table class="table table-condensed table-hover">
+        <div class="card-content">
+
+          <span id="title-holder"
+                class="card-title-text kunstwerk-title-text">
+            <% lg.layerGroupName %>
+          </span>
+          <full-details></full-details>
+        </div>
+
+        <table ng-if="fullDetails" class="table table-condensed table-hover">
 
           <tr class="attr-row"
               ng-repeat="(key, val) in l.data.features[0].properties">

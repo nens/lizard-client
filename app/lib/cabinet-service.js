@@ -2,40 +2,36 @@
 
 angular.module('lizard-nxt')
   .service("CabinetService", [
-           "$q", "Restangular", "backendDomain", "gettextCatalog",
-  function ($q, Restangular, backendDomain, gettextCatalog) {
+           "$q", "Resource", "backendDomain", "gettextCatalog",
+  function ($q, Resource, backendDomain, gettextCatalog) {
 
   var geocodeResource,
       searchResource,
       timeseriesResource,
       locationsResource,
       events,
+      regions,
       wmsGetFeatureInfo;
 
   // for the wizard demo's
   if (window.location.host === 'nens.github.io' ||
       window.location.host === 'lizard.sandbox.lizard.net') {
-    Restangular.setBaseUrl(backendDomain);
-    Restangular.setDefaultHttpFields({withCredentials: true});
+    Resource.setBaseUrl(backendDomain);
+    Resource.setDefaultHttpFields({withCredentials: true});
   }
 
-  timeseriesResource = Restangular.one('api/v2/timeseries/');
-  events = Restangular.one('api/v2/events/?page_size=25000');
-  var regions = Restangular.one('api/v2/regions/?page_size=100');
+  timeseriesResource = new Resource.Endpoint('api/v2/timeseries/');
+  events = new Resource.Endpoint('api/v2/events/?page_size=25000');
+  var regions = new Resource.Endpoint('api/v2/regions/?page_size=500');
 
   // Wms getFeatureInfo goes through a proxy. Specify url as a param.
-  wmsGetFeatureInfo = Restangular.one('proxy/');
+  wmsGetFeatureInfo = new Resource.Endpoint('proxy/');
 
-  searchResource = Restangular.one('api/v2/search/');
-
-  geocodeResource = Restangular
+  searchResource = new Resource.Endpoint('api/v2/search/');
+  geocodeResource = new Resource.Endpoint('api/geocode/json')
     // Use a different base url, go directly to our friends at google.
     // They don't mind.
-    .withConfig(function(RestangularConfigurer) {
-      RestangularConfigurer.setBaseUrl('https://maps.googleapis.com/maps');
-    })
-    .one('api/geocode/json');
-
+    .setBaseUrl('https://maps.googleapis.com/maps/');
 
   /**
    * Raster resource, last stop to the server
@@ -44,7 +40,7 @@ angular.module('lizard-nxt')
    *                                 used.
    *                                 At the next request without a promise, the
    *                                 abortGet is cancelled.
-   * @return {RestangularResource}  a gettable resource
+   * @return {Resource}  a gettable resource
    */
   var abortGet;
   var rasterResource = function (q) {
@@ -56,9 +52,7 @@ angular.module('lizard-nxt')
       abortGet = $q.defer();
       localPromise = abortGet;
     }
-    return Restangular
-      .one('api/v2/raster-aggregates/')
-      .withHttpConfig({timeout: localPromise.promise});
+    return new Resource.Endpoint('api/v2/raster-aggregates/');
   };
 
   /**

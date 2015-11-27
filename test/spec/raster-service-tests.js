@@ -20,7 +20,7 @@ describe('Testing raster service', function () {
   it('should return a CabinetService get promise', function () {
     var geom = new L.LatLng(52.50995268098114, 4.961357116699219);
     var result = RasterService.getData('spec', {'layer': 'layer'}, {'geom': geom});
-    expect(result.hasOwnProperty('then')).toBe(true);
+    expect(!!result.then).toBe(true);
   });
 
   it('should create an image url with height and witdh of 256 when tiled', function () {

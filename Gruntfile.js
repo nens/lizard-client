@@ -554,6 +554,11 @@ module.exports = function (grunt) {
     ]);
   });
 
+  grunt.registerTask('docs', function () {
+    grunt.loadNpmTasks('grunt-doxx');
+    grunt.task.run(['doxx']);
+  });
+
   grunt.registerTask('internationalize', function () {
     if (grunt.option('txusername') && grunt.option('txpassword')) {
 

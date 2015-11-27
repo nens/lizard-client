@@ -3,40 +3,45 @@
   <div class="user-menu-wrapper">
 
     <a ng-if="user.authenticated"
-       class="logout user"
+       class="logout user tooltip-bottom"
        href="/accounts/logout/?next=/"
-       title="<% tooltips.logout %>"
+       data-tooltip="<% tooltips.logout %>"
        onclick="return logOut()">
-      <div class="pull-right"
-           title="<% tooltips.logout %>">
-        <i id="" style="font-size:1.2em;" class="fa fa-power-off"></i>
+      <div class="pull-right">
+        <i id="" class="fa fa-power-off"></i>
       </div>
     </a>
 
     <a ng-if="!user.authenticated"
-       onclick="logIn()"
-       title="<% tooltips.login %>">
-      <div class="clickable" ng-cloak id="username" >
-        <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
+       onclick="logIn()" data-tooltip="<% tooltips.login %>"
+        class="clickable tooltip-bottom" 
+       >
+      <div ng-cloak id="username" >
+        <i id="" class="fa fa-user"></i>
         <span translate>Log in</span>
       </div>
     </a>
 
 
     <a ng-if="user.authenticated"
-       class="user"
-       title="<% tooltips.profile %>"
+        data-tooltip="<% tooltips.profile %>"
+        class="tooltip-bottom user" 
        href="http://sso.lizard.net/edit_profile/">
-      <div class="" ng-cloak id="username" >
-        <i id="" class="fa fa-user" style="font-size:1.2em;"></i>
+      <div 
+        ng-cloak id="username" >
+        <i id="" class="fa fa-user"></i>
         <span ng-bind="user.firstName"></span>
       </div>
     </a>
 
   </div>
 
-  <a class="hidden-xs help" href="https://www.lizard.net/support" title="<% 'Question and manual' | translate %>" target="_blank">
-    <i class="fa fa-question" style="font-size: 1.2em"></i>
-  </a>
-
+  <nav>
+    <a class="hidden-xs material-shadow tooltip-bottom" ng-click="toggleDashboard()" data-tooltip="<% 'Switch to ' + context | translate %>" target="_blank">
+      <i class="fa fa-refresh"></i>
+    </a>
+    <a class="hidden-xs material-shadow tooltip-bottom" href="https://www.lizard.net/support" data-tooltip="<% 'Question and manual' | translate %>" target="_blank">
+      <i class="fa fa-question"></i>
+    </a>
+  </nav>
 </div>

@@ -3,10 +3,27 @@ Changelog of lizard-nxt client
 
 Unreleased (2.4.1) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 2.4.1 (2015-11-25)
+---------------------
+
+- Bump Angular to 1.4.7
+
+- Remove Restangular.
+
+- Resource service that gets stuff from rest api.
+
+- Add tooltips that are more responsive.
+
+- Add material design shadows.
+
+- Dashboard replaces time-ctx and shows omnibox cards in dashboard
 
 - Fix not compiling any translations.
 
-- Add support for viewing and deleting annotations on assets.
+- Add support for viewing, adding and deleting annotations on assets.
 
 - Remove htmlmin from build it messes up the html and is not necessary with
   gzip.
@@ -40,6 +57,24 @@ Release 2.3.1 (2015-11-5)
 
 - Fix clip path not clipping. Use absolute url to refer to clippath and keep
   track of the url for nxt-d3 instances.
+
+
+Release 2.2.7 (2015-11-25)
+---------------------
+
+- Fix showing empty graphs in time-ctx.
+
+- Fix not updating region data on time change.
+
+- Fix showing a subset of regions, set regions limit to 500.
+
+- Fix not showing a full-details switch in wms getfeatureinfo card. Als include title.
+
+
+Release 2.2.6 (2015-11-13)
+---------------------
+
+- Fix not compiling any translations.
 
 
 Release 2.2.5 (2015-11-9)
