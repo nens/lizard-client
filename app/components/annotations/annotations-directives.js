@@ -217,7 +217,7 @@ angular.module('annotations')
         scope.attachment = angular.copy(null);
         angular.forEach(
           angular.element("input[type='file']"),
-            function(inputElem) {
+          function(inputElem) {
             angular.element(inputElem).val(null);
         });
         scope.annotationform.$setPristine();
