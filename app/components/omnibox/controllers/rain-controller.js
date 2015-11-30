@@ -62,7 +62,7 @@ angular.module('omnibox')
             end: State.temporal.end
           }
         ).then(function (response) {
-          $scope.rrc.data = response.data;
+          $scope.rrc.data = response;
         });
       };
     }
