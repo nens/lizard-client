@@ -168,6 +168,11 @@
     text-overflow: ellipsis;
 }
 
+.card table td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 .card .left{
     float: left;
@@ -768,4 +773,18 @@ td.lineout {
 
 input[type=file] {
     height: auto;
+    transition: 0.7s ease;
+    opacity: 1;
+    visibility: visible;
+
+    &.ng-hide {
+        display: block !important;
+        visibility: hidden;
+        top: -30px;
+        opacity: 0;
+    }
+}
+
+.btn-link {
+    padding: 0;
 }

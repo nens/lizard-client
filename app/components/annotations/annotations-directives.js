@@ -28,13 +28,34 @@ angular.module('annotations')
     var link = function (scope, element, attrs) {
 
       /**
+       * Provide a date time formatter for the annotations templates.
+       */
+      scope.formatDatetime = function() {
+        return AnnotationsService.formatDatetime();
+      };
+
+      /**
+       * Update front-end upon successful GET of the annotations.
+       * @param {array} value - annotations returned by the request.
+       * @param {dict} responseHeaders - Not actually used but required
+       *                                       by $resource.
+       */
+      var fetchAnnotationsSuccess = function(value, responseHeaders) {
+        scope.annotations = value;
+      };
+
+      /**
        * Get all annotations for an asset.
-       * @param {object} asset - The asset to get the annotations for.
        * @returns {array} - An array of annotations.
        */
-      var fetchAnnotations = function(asset) {
-        scope.annotations = AnnotationsService.getAnnotationsForObject(
-          asset.entity_name, asset.id
+      var fetchAnnotations = function() {
+        AnnotationsService.getAnnotationsForObject(
+          scope.asset.entity_name,
+          scope.asset.id,
+          5,
+          scope.timeState.start,
+          scope.timeState.end,
+          fetchAnnotationsSuccess
         );
       };
 
@@ -42,9 +63,17 @@ angular.module('annotations')
        * Get annotations when asset changes.
        */
       scope.$watch('asset', function () {
-        fetchAnnotations(scope.asset);
+        fetchAnnotations();
       });
 
+      /**
+       * Update annotations when timeline has moved.
+       */
+      scope.$watch('timeState.timelineMoving', function (off) {
+        if (!off) {
+          fetchAnnotations();
+        }
+      });
       /**
        * Update the front-end to reflect a successful delete of an annotation.
        * @param {object} id - The ID of the asset.
@@ -95,7 +124,8 @@ angular.module('annotations')
       restrict: 'E',
       scope: {
         asset: '=',
-        annotations: '='
+        annotations: '=',
+        timeState: '='
       },
       templateUrl: 'annotations/templates/annotations-view.html'
     };
@@ -170,6 +200,13 @@ angular.module('annotations')
     var link = function (scope, element, attrs) {
 
       /**
+       * Provide a date time formatter for the annotations templates.
+       */
+      scope.formatDatetime = function() {
+        return AnnotationsService.formatDatetime();
+      };
+
+      /**
        * Reset (empty) the annotation form.
        * Otherwise if a user has once selected a file to upload and decides he
        * no longer wants an attachment he won't be able to remove the
@@ -180,7 +217,7 @@ angular.module('annotations')
         scope.attachment = angular.copy(null);
         angular.forEach(
           angular.element("input[type='file']"),
-            function(inputElem) {
+          function(inputElem) {
             angular.element(inputElem).val(null);
         });
         scope.annotationform.$setPristine();
@@ -220,6 +257,7 @@ angular.module('annotations')
           scope.asset,
           scope.text,
           scope.attachment,
+          scope.timelineat,
           createAnnotationSuccess,
           createAnnotationError
         );
@@ -231,7 +269,8 @@ angular.module('annotations')
       restrict: 'E',
       scope: {
         asset: '=',
-        annotations: '='
+        annotations: '=',
+        timelineat: '='
       },
       templateUrl: 'annotations/templates/annotations-make.html'
     };

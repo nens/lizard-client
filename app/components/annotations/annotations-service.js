@@ -2,8 +2,22 @@
  * Service to handle annotations retrieval and creation.
  */
 angular.module('annotations')
-  .service("AnnotationsService", ['$resource',
-    function ($resource) {
+  .service("AnnotationsService", ['$resource', 'State',
+    function ($resource, State) {
+
+      /**
+       * Date formatter that formats the date based on the timeline window.
+       */
+      this.formatDatetime = function () {
+        var range = State.temporal.end - State.temporal.start;
+        if (range > 31536000000) {  // more than a year
+          return "d MMM ''''yy";
+        } else if (range > 86400000) {  // more than a day
+          return "d MMM";
+        } else {  // less than a day
+          return "H:mm:ss";
+        }
+      };
 
       /* Create a resource for interacting with the annotations endpoint of the
        * API.
@@ -32,13 +46,24 @@ angular.module('annotations')
        * Get all annotations for an asset.
        * @param {string} model - The model name of the asset (e.g. manhole).
        * @param {integer} id - The ID of the asset.
+       * @param {integer} limit - Limit the number of returned annotations.
+       * @param {Date} start - Filter the annotations on a start-end date
+       *                       range.
+       * @param {Date} end - Filter the annotations on a start-end date range.
+       * @param {function} success - Execute this function on a successful
+       *                             GET.
        * @returns {array} - An array of annotations.
        */
-      this.getAnnotationsForObject = function (model, id) {
+      this.getAnnotationsForObject = function (
+          model, id, limit, start, end, success) {
         return Annotations.query({
           object_type__model: model,
-          object_id: id
-        });
+          object_id: id,
+          limit: limit,
+          start: new Date(start).toISOString(),
+          end: new Date(end).toISOString(),
+          ordering: '-timestamp_start'
+        }, success);
       };
 
       /**
@@ -59,6 +84,8 @@ angular.module('annotations')
        * @param {object} asset - The asset to which the annotation is related.
        * @param {string} text - The actual annotation message.
        * @param {string} file - An optional attachment for the annotation.
+       * @param {Date} timelineat - A date to use for datetime_from and
+       *                            datetime_until.
        * @param {function} success - Execute this function on a successful
        *                             POST.
        * @param {function} error - Execute this function when something goes
@@ -66,14 +93,15 @@ angular.module('annotations')
        * @returns {object} - The new annotation.
        */
       this.addAnnotationToObject = function (
-          asset, text, file, success, error) {
+          asset, text, file, timelineat, success, error) {
         var fd = new FormData();
         fd.append('attachment', file);
         fd.append('object_type', asset.entity_name);
         fd.append('object_id', asset.id);
         fd.append('text', text);
-        fd.append('datetime_from', new Date().toISOString());
-        fd.append('datetime_until', new Date().toISOString());
+        var datetime = new Date(timelineat).toISOString();
+        fd.append('datetime_from', datetime);
+        fd.append('datetime_until', datetime);
         return Annotations.save(fd, success, error);
       };
 

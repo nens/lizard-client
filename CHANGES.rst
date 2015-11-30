@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.4.1) (XXXX-XX-XX)
 ---------------------
--
+
+- Improve and fix annotations initial bugs.
 
 
 Release 2.4.1 (2015-11-25)
