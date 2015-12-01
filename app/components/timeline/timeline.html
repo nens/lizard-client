@@ -38,14 +38,11 @@
            title="<% timeline.state.temporal.playing ? tooltips.stopAnim : tooltips.startAnim %>"
            data-original-title="<% 'Play/pause' | translate %>">
           <span
-            ng-if="timeline.state.layerGroups.timeIsSyncing"
-            class="fa fa-circle-o-notch fa-spin">
-          </span>
-          <span
-            ng-if="!timeline.state.layerGroups.timeIsSyncing"
+            class="fa"
             ng-class="{
-              'fa fa-pause active': timeline.state.temporal.playing,
-              'fa fa-play': !timeline.state.temporal.playing,
+              'fa-circle-o-notch fa-spin': timeline.state.layerGroups.timeIsSyncing,
+              'fa-pause active': timeline.state.temporal.playing,
+              'fa-play': !timeline.state.temporal.playing && !timeline.state.layerGroups.timeIsSyncing,
               }">
           </span>
         </a>

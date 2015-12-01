@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.2.5) (XXXX-XX-XX)
 ---------------------
 
+- Fix click on animation pause button not registered.
+
 - Animate only the intersection of map bounds and layer bounds, to have more
   resolution with less data.
 
