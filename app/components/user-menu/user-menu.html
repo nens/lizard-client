@@ -3,9 +3,9 @@
   <div class="user-menu-wrapper">
 
     <a ng-if="user.authenticated"
-       class="logout user tooltip-bottom"
+       class="logout user"
        href="/accounts/logout/?next=/"
-       data-tooltip="<% tooltips.logout %>"
+       title="<% tooltips.logout %>"
        onclick="return logOut()">
       <div class="pull-right">
         <i id="" class="fa fa-power-off"></i>
@@ -13,9 +13,8 @@
     </a>
 
     <a ng-if="!user.authenticated"
-       onclick="logIn()" data-tooltip="<% tooltips.login %>"
-        class="clickable tooltip-bottom" 
-       >
+       onclick="logIn()" title="<% tooltips.login %>"
+      class="clickable" >
       <div ng-cloak id="username" >
         <i id="" class="fa fa-user"></i>
         <span translate>Log in</span>
@@ -24,8 +23,8 @@
 
 
     <a ng-if="user.authenticated"
-        data-tooltip="<% tooltips.profile %>"
-        class="tooltip-bottom user" 
+       title="<% tooltips.profile %>"
+       class="user"
        href="http://sso.lizard.net/edit_profile/">
       <div 
         ng-cloak id="username" >
@@ -37,10 +36,10 @@
   </div>
 
   <nav>
-    <a class="hidden-xs material-shadow tooltip-bottom" ng-click="toggleDashboard()" data-tooltip="<% 'Switch to ' + context | translate %>" target="_blank">
+    <a class="hidden-xs material-shadow" ng-click="toggleDashboard()" title="<% 'Switch to ' + context | translate %>" target="_blank">
       <i class="fa fa-refresh"></i>
     </a>
-    <a class="hidden-xs material-shadow tooltip-bottom" href="https://www.lizard.net/support" data-tooltip="<% 'Question and manual' | translate %>" target="_blank">
+    <a class="hidden-xs material-shadow" href="https://www.lizard.net/support" title="<% 'Question and manual' | translate %>" target="_blank">
       <i class="fa fa-question"></i>
     </a>
   </nav>
