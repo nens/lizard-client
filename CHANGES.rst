@@ -4,6 +4,9 @@ Changelog of lizard-nxt client
 Unreleased (2.2.5) (XXXX-XX-XX)
 ---------------------
 
+- Animate only the intersection of map bounds and layer bounds, to have more
+  resolution with less data.
+
 - Store bounds of layer on group and layer for zooming to lg and animating wms.
 
 
