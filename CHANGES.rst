@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.2.5) (XXXX-XX-XX)
 ---------------------
--
+
+- Store bounds of layer on group and layer for zooming to lg and animating wms.
 
 
 Release 2.2.6 (2015-11-13)
