@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.4.1) (XXXX-XX-XX)
 ---------------------
 
+- RRC is back!
+
 - Improve and fix annotations initial bugs.
 
 
