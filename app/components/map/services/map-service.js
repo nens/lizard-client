@@ -274,6 +274,7 @@ angular.module('map')
             layer._leafletLayer = initializers[layer.format](layer);
             angular.extend(layer, NxtMapLayer);
           } else if (layer.format === 'WMS') {
+            if (!layer.bounds) { layer.bounds = lg.spatialBounds; }
             layer = NxtNonTiledWMSLayer.create(layer);
           }
         });

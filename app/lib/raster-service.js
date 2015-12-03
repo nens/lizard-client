@@ -62,10 +62,10 @@ angular.module('lizard-nxt')
     };
 
     if (options.geom_id) {
-      requestOptions.geom_id = options.geom_id; 
+      requestOptions.geom_id = options.geom_id;
       requestOptions.boundary_type = options.boundary_type;
     } else {
-      requestOptions.geom = UtilService.geomToWkt(options.geom); 
+      requestOptions.geom = UtilService.geomToWkt(options.geom);
     }
 
     if (options.truncate === true) {
@@ -93,32 +93,36 @@ angular.module('lizard-nxt')
    *                              otherwise just 256x256px.
    * @return {string}            url
    */
-  var buildURLforWMS = function (wmsLayer, map, store, singleTile) {
-    var layerName = store || wmsLayer.slug,
-        bounds = map.getBounds(),
+  var buildURLforWMS = function (wmsLayer, map, store, singleTile, options) {
+    var options = options || {},
+        layerName = store || wmsLayer.slug,
+        bounds = options.bounds || map.getBounds(),
         DEFAULT_TILE_SIZE = 256; // in px
 
     var imgBounds = [
       LeafletService.CRS.EPSG3857.project(bounds.getSouthWest()),
       LeafletService.CRS.EPSG3857.project(bounds.getNorthEast()),
     ],
-    opts = wmsLayer.options,
+
+    wmsOpts = wmsLayer.options,
+
     result = wmsLayer.url
       + '?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&FORMAT=image%2Fpng'
       + '&SRS=EPSG%3A3857&LAYERS=' + layerName
       + '&BBOX=' + _buildBbox(imgBounds);
 
     if (singleTile) {
-      var size = map.getPixelBounds().getSize();
-      opts.height = Math.round(size.y / size.x * DEFAULT_TILE_SIZE);
-      opts.width = Math.round(size.x / size.y  * DEFAULT_TILE_SIZE);
+      var size = options.size || map.getPixelBounds().getSize();
+      wmsOpts.height = Math.round(size.y / size.x * DEFAULT_TILE_SIZE);
+      wmsOpts.width = Math.round(size.x / size.y  * DEFAULT_TILE_SIZE);
     } else {
       // Serve square tiles
-      opts.height = DEFAULT_TILE_SIZE;
-      opts.width = DEFAULT_TILE_SIZE;
+      wmsOpts.height = DEFAULT_TILE_SIZE;
+      wmsOpts.width = DEFAULT_TILE_SIZE;
     }
 
-    angular.forEach(opts, function (v, k) {
+
+    angular.forEach(wmsOpts, function (v, k) {
       result += UtilService.buildString('&', k.toUpperCase(), "=", v);
     });
 
@@ -129,18 +133,7 @@ angular.module('lizard-nxt')
     return result;
   };
 
-  var getMinTimeBetweenFrames = function (layerGroup) {
-
-    if (layerGroup.slug === 'rain') {
-      return 100;
-    } else {
-      return 1000;
-    }
-
-  };
-
   return {
-    getMinTimeBetweenFrames: getMinTimeBetweenFrames,
     buildURLforWMS: buildURLforWMS,
     getData: getData,
   };
