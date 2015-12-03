@@ -382,24 +382,6 @@ module.exports = function (grunt) {
       }
     },
 
-    htmlmin: {
-      dist: {
-        options: {
-          collapseWhitespace: true,
-          conservativeCollapse: true,
-          collapseBooleanAttributes: true,
-          removeCommentsFromCDATA: true,
-          removeOptionalTags: true
-        },
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.dist %>',
-          src: ['*.html', 'views/{,*/}*.html'],
-          dest: '<%= yeoman.dist %>'
-        }]
-      }
-    },
-
     // ng-annotate tries to make the code safe for minification automatically
     // by using the Angular long form for dependency injection.
     ngAnnotate: {
@@ -550,7 +532,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-google-cdn');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-filerev');
-    grunt.loadNpmTasks('grunt-contrib-htmlmin');
 
     grunt.task.run([
       'clean:dist',
@@ -568,8 +549,7 @@ module.exports = function (grunt) {
       'cdnify',
       'cssmin',
       'filerev',
-      'usemin',
-      'htmlmin'
+      'usemin'
     ]);
   });
 

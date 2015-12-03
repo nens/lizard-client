@@ -189,41 +189,5 @@
     <script src="/templates.js"></script>
     <!-- endbuild -->
 
-    <script>
-        // Set global constant "JS_DEBUG", to prevent debug info from reaching
-        // the client when the current environment shouldn't allow it.
-
-        // NB! This is a proper illustration of passing data from back-end to
-        // front-end in a minimal fashion.
-        window.JS_DEBUG = "True" === "True";
-        if (window.gauges) {
-          window.gauges();
-        }
-
-        if (!window.JS_DEBUG) {
-          var asciiArray = [
-            "                                       o$o    o$$                   ",
-            "                                      *          *$                 ",
-            "                                     o           o$$                ",
-            "                                                 o$$$               ",
-            "                                               o$$$$                ",
-            "                                              oo$$   $$$*$          ",
-            "                                              o*$$     $ !          ",
-            "                                           o  oo$$$$$$$$ $$$ *      ",
-            "                                         !oo!oooo$$$$$  $$$$$       ",
-            "                                          ooooooooo$$$$$$$$$$$$$$$$!",
-            "                                             !  oooooo$$$$$$$$$$ooo ",
-            " *$     $$  $$$$$    $$$    $$*$¿   $$ $$        ooooooooooooooooo  ",
-            " *$     $$    $$    $$ $*   $$_$$   $   $$             ooooo        ",
-            " *$     $$   $$     $$$$$   $$ $!   $   $$            ooo           ",
-            " $$$$$!!$$$ $$$$$$ $$$ $$$ $$$$ $$ $$$$$$             o o           ",
-            "",
-            "Interesse?                                                  ",
-            "https://www.nelen-schuurmans.nl/wie.html "
-            ];
-            var hiring = asciiArray.join('\n');
-            console.log(hiring);
-          }
-    </script>
   </body>
 </html>
