@@ -532,7 +532,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-google-cdn');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-filerev');
-    grunt.loadNpmTasks('grunt-doxx');
 
     grunt.task.run([
       'clean:dist',
