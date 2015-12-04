@@ -7,33 +7,45 @@ angular.module('timeseries')
 
     var localPromises = {};
 
-    this._getTimeseries = function (id, timeState, minPoints) {
+    this._getTimeseries = function (id, timeState, minPoints, aggWindow) {
       // Cancel consecutive calls for the same ts.
       if (localPromises[id]) {
         localPromises[id].resolve();
       }
       localPromises[id] = $q.defer();
-      return CabinetService
-      .timeseries
-      .get({
+      var params = {
         object: id,
-        min_points: minPoints,
         start: parseInt(timeState.start, 10),
         end: parseInt(timeState.end, 10),
         timeout: localPromises[id].promise
-      });
+      };
+
+      minPoints ? params.min_points = minPoints : params.window = aggWindow;
+
+      return CabinetService.timeseries.get(params);
     };
 
     /**
      * @function
      * @memberOf timeseries.TimeseriesService
      * @description gets timeseries from service
+     *
+     * @param {str} objectID asset identifyer. <entityname>$<id>
+     * @param {int} start get timeserie data from in epoch ms
+     * @param {int} end get timeserie data till in epoch ms
+     * @param {int} minPoints mutual exlcusive with aggWindow, for lines, ask
+     *                        for minimally the graphs width amount of pixels.
+     * @param {int} aggWindow mutual exclusive with minPoints, for barcharts,
+     *                        as for timestate.aggWindow so timeseries are
+     *                        aggregated to a sensible size.
+     *
      */
     this.getTimeSeriesForObject = function (
         objectId,
         start,
         end,
         minPoints,
+        aggWindow,
         defer
       ) {
 
@@ -46,7 +58,8 @@ angular.module('timeseries')
           start: start,
           end: end
         },
-        minPoints
+        minPoints,
+        aggWindow
       ).then(function (response) {
 
          // Filter out the timeseries with too little measurements. And ts
@@ -81,6 +94,9 @@ angular.module('timeseries')
 
         // Legacy dataservice calls this function with a defer which is not used
         // by the timeseries directive.
+        //
+        // TODO: when we refactored the dashboard/time-ctx we can strip
+        // timeseries from the data-service and remove this.
         if (defer) {
           defer.notify({
             data: filteredResult,

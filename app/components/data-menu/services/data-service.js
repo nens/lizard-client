@@ -328,6 +328,7 @@ angular.module('data-menu')
               options.start,
               options.end,
               options.minPoints,
+              false,
               defer
             ));
           }
