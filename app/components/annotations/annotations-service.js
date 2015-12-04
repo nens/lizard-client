@@ -60,8 +60,8 @@ angular.module('annotations')
           object_type__model: model,
           object_id: id,
           limit: limit,
-          start: new Date(start).toISOString(),
-          end: new Date(end).toISOString(),
+          start: start,
+          end: end,
           ordering: '-timestamp_start'
         }, success);
       };
@@ -84,8 +84,8 @@ angular.module('annotations')
        * @param {object} asset - The asset to which the annotation is related.
        * @param {string} text - The actual annotation message.
        * @param {string} file - An optional attachment for the annotation.
-       * @param {Date} timelineat - A date to use for datetime_from and
-       *                            datetime_until.
+       * @param {Date} timelineat - A date to use for timestamp_start and
+       *                            timestamp_end.
        * @param {function} success - Execute this function on a successful
        *                             POST.
        * @param {function} error - Execute this function when something goes
@@ -99,9 +99,8 @@ angular.module('annotations')
         fd.append('object_type', asset.entity_name);
         fd.append('object_id', asset.id);
         fd.append('text', text);
-        var datetime = new Date(timelineat).toISOString();
-        fd.append('datetime_from', datetime);
-        fd.append('datetime_until', datetime);
+        fd.append('timestamp_start', timelineat);
+        fd.append('timestamp_end', timelineat);
         return Annotations.save(fd, success, error);
       };
 
