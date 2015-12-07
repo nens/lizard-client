@@ -8,6 +8,8 @@ Unreleased (2.4.1) (XXXX-XX-XX)
 
 - Improve and fix annotations initial bugs.
 
+- Add title to timeline toggle.
+
 
 Release 2.4.1 (2015-11-25)
 ---------------------
