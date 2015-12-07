@@ -73,6 +73,15 @@ angular.module('lizard-nxt-filters')
     case '2.0':
       out = 'rechthoekig';
       break;
+    case '00':
+      out = 'vierkant';
+      break;
+    case '01':
+      out = 'rond';
+      break;
+    case '02':
+      out = 'rechthoekig';
+      break;
     default:
       out = 'Afwijkende vorm';
     }
@@ -84,7 +93,28 @@ angular.module('lizard-nxt-filters')
   .filter('lookupManholeMaterial', function () {
   return function (input) {
     var out;
-    out = '...';
+    switch (input) {
+    case '0.0':
+      out = 'beton';
+      break;
+    case '1.0':
+      out = 'PVC';
+      break;
+    case '2.0':
+      out = 'gres';
+      break;
+    case '00':
+      out = 'beton';
+      break;
+    case '01':
+      out = 'PVC';
+      break;
+    case '02':
+      out = 'gres';
+      break;
+    default:
+      out = 'Materiaal afwijkend';
+    }
     return out;
   };
 });
@@ -314,6 +344,18 @@ angular.module('lizard-nxt-filters')
     case '4.0':
       out = 'vierkant';
       break;
+    case '00':
+      out = 'rond';
+      break;
+    case '01':
+      out = 'eivorm';
+      break;
+    case '02':
+      out = 'rechthoek';
+      break;
+    case '04':
+      out = 'vierkant';
+      break;
     default:
       out = 'Vorm afwijkend';
     }
@@ -354,6 +396,15 @@ angular.module('lizard-nxt-filters')
       out = 'PVC';
       break;
     case '2.0':
+      out = 'gres';
+      break;
+    case '00':
+      out = 'beton';
+      break;
+    case '01':
+      out = 'PVC';
+      break;
+    case '02':
       out = 'gres';
       break;
     default:
