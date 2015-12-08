@@ -8,6 +8,8 @@ Unreleased (2.4.1) (XXXX-XX-XX)
 
 - Improve and fix annotations initial bugs.
 
+- Add translations of codes in filters.
+
 
 Release 2.4.1 (2015-11-25)
 ---------------------
