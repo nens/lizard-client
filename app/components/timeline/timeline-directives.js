@@ -418,8 +418,10 @@ angular.module('lizard-nxt')
       showTimeline = !showTimeline;
       if (!showTimeline && State.context !== 'dashboard') {
         element[0].style.height = 0;
+        scope.timelineVisible = false;
       } else {
         updateTimelineSize(scope.events.nEvents);
+        scope.timelineVisible = true;
       }
     };
 
