@@ -3,7 +3,8 @@
  * Timeseries directive.
  */
 angular.module('timeseries')
-  .directive('timeseries', ['TimeseriesService', '$filter', function (TimeseriesService, $filter) {
+  .directive('timeseries', ['TimeseriesService', 'UtilService', '$filter',
+    function (TimeseriesService, UtilService, $filter) {
   return {
       link: function (scope) {
 
@@ -37,15 +38,37 @@ angular.module('timeseries')
         var fetchTS = function(asset) {
           scope.fetching = true;
 
+          var prom = {};
+
           var assetId = asset.entity_name + '$' + asset.id;
 
-          TimeseriesService.getTimeSeriesForObject(
-            assetId,
-            scope.timeState.start,
-            scope.timeState.end,
-            GRAPH_WIDTH
-          ).then(function (response) {
-            scope.timeseries.data = $filter('rmZeroDatumTimeseries')(response.results);
+          // Get aggregation the size of the aggWindow when drawing bars for
+          // rain stations.
+          if (
+            asset.entity_name === 'measuringstation' &&
+            asset.station_type === 1
+          ) {
+            prom = TimeseriesService.getTimeSeriesForObject(
+              assetId,
+              scope.timeState.start,
+              scope.timeState.end,
+              false,
+              UtilService.getAggWindowAsText(scope.timeState.aggWindow)
+            );
+          }
+          else {
+            prom = TimeseriesService.getTimeSeriesForObject(
+              assetId,
+              scope.timeState.start,
+              scope.timeState.end,
+              GRAPH_WIDTH,
+              false
+            );
+          }
+
+          prom.then(function (response) {
+            scope.timeseries.data =
+              $filter('rmZeroDatumTimeseries')(response.results);
 
             scope.timeseries.selectedTimeseries = getSelectedTS(
               scope.timeseries.data,

@@ -90,6 +90,14 @@ angular.module('lizard-nxt')
   };
 
 
+  // Available zoomlevels
+  this._zoomLvls = {
+    '5min': 300000,
+    'hour': 3600000,
+    'day': 86400000,
+    'month': 2635200000
+  }; // Month equals 30.5 days
+
   /**
    * @function getAggWindow
    * @memberOf UtilService
@@ -111,21 +119,31 @@ angular.module('lizard-nxt')
 
     var aggWindow;
     var MIN_PX = 4; // Minimum width of a bar
-    // Available zoomlevels
-    var zoomLvls = {fiveMinutes: 300000,
-                    hour: 3600000,
-                    day: 86400000,
-                    month: 2635200000}; // Month equals 30.5 days
+
     // ms per pixel
     var msPerPx = (stop - start) / drawingWidth;
-    for (var zoomLvl in zoomLvls) {
-      aggWindow = zoomLvls[zoomLvl];
+    for (var zoomLvl in this._zoomLvls) {
+      aggWindow = this._zoomLvls[zoomLvl];
       if (aggWindow > MIN_PX * msPerPx) {
         break; // If zoomlevel is sufficient to get enough width in the bars
       }
     }
 
     return aggWindow;
+  };
+
+
+  this.getAggWindowAsString = function (aggWindow) {
+    var text = '';
+
+    for (var zoomLvl in this._zoomLvls) {
+      text = zoomLvl;
+      if (this._zoomLvls[zoomLvl] === aggWindow) {
+        break;
+      }
+    }
+
+    return text;
   };
 
 

@@ -4,6 +4,9 @@ Changelog of lizard-nxt client
 Unreleased (2.4.1) (XXXX-XX-XX)
 ---------------------
 
+- When rain station request timeseries for a specific aggregation window instead
+of a minimum amount of data points.
+
 - RRC is back!
 
 - Improve and fix annotations initial bugs.
