@@ -8,6 +8,8 @@ Unreleased (2.4.1) (XXXX-XX-XX)
 
 - Improve and fix annotations initial bugs.
 
+- Add translations of codes in filters.
+
 - Add title to timeline toggle.
 
 
