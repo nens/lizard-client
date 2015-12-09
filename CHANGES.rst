@@ -15,6 +15,8 @@ of a minimum amount of data points.
 
 - Add title to timeline toggle.
 
+- Download rain data directly from 5minute raster endpoint.
+
 
 Release 2.4.1 (2015-11-25)
 ---------------------
