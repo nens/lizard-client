@@ -8,7 +8,8 @@
       <div class="clock-time">
         <div
            ng-click="timeline.toggleTimelineVisiblity()"
-           ng-bind="timeline.state.temporal.at | date: timeline.formatDatetime()">
+           ng-bind="timeline.state.temporal.at | date: timeline.formatDatetime()"
+           title="<% timelineVisible ? tooltips.closeTimeline : tooltips.openTimeline %>">
         </div>
         <div ng-if="timeline.showContextSwitch">
           <a

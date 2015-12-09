@@ -86,7 +86,9 @@ angular.module('lizard-nxt')
       stopAnim: gettextCatalog.getString("Stop animation"),
       timelineStart: gettextCatalog.getString("Start of current timeline"),
       timelineAt: gettextCatalog.getString("The 'now' of the timeline"),
-      timelineEnd: gettextCatalog.getString("End of current timeline")
+      timelineEnd: gettextCatalog.getString("End of current timeline"),
+      openTimeline: gettextCatalog.getString("Open timeline"),
+      closeTimeline: gettextCatalog.getString("Close timeline")
     };
   };
 
