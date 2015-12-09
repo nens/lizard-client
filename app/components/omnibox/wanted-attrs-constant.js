@@ -1,4 +1,4 @@
-'use strict;'
+'use strict;';
 
 angular.module('omnibox')
 .service("WantedAttributes", ["gettext", function (gettext) {

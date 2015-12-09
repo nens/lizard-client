@@ -14,10 +14,11 @@ angular.module('lizard-nxt')
   /**
    * Gets data from wmsGetFeatureInfo resource of cabinetService.
    *
-   * It creates a small bbox around options.geom and gets data of that bbox. This
-   * is how wms getFeatureInfo works.
+   * It creates a small bbox around options.geom and gets data of that bbox.
+   * This is how wms getFeatureInfo works.
    *
-   * @param  {string}   callee  optional string indicating the origin of the call.
+   * @param  {string}   callee  optional string indicating the origin of the
+   *                            call.
    * @param  {NxtLayer} layer   nxt layer.
    * @param  {object}   options options that contain geom.
    * @return {promise}          promise that resolves with wms response object.
@@ -63,7 +64,7 @@ angular.module('lizard-nxt')
 
     var url = layer.url + '/?';
     for (var key in params) {
-        if (url != "") {
+        if (url !== "") {
             url += "&";
         }
         url += key + "=" + params[key];
