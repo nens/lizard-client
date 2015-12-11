@@ -18,21 +18,24 @@
          temporal="omnibox.state.temporal">
        </graph>
        <div class="card-tools"
-        ng-class="{hidden: !fullDetails}">
+            ng-mouseover="checkTempInterval()"
+            ng-attr-title="{{ !exportActive && 'Export regendata > 1 maand wordt niet ondersteund' || '' }}"
+            ng-class="{hidden: !fullDetails}">
          <a ng-click="recurrenceTimeToggle()"
-            ng-class="{'active': rrc.active}" class="btn btn-default btn-xs"
+            ng-class="{'active': rrc.active}"
+            class="btn btn-default btn-xs"
             title="<% 'Extra statistieken, herhalingstijden' | translate %>"
             translate>
             Statistics
-          </a>
-         <a
-           target="_blank"
-           href="<% rawDataUrl %>"
-           class="btn btn-default btn-xs"
-           title="<% 'Export info card data' | translate %>">
-           <i class="fa fa-share-square-o"></i>
-           <span translate>Export</span>
          </a>
+           <a target="_blank"
+              href="<% rawDataUrl %>"
+              ng-class="{disabled: !exportActive}"
+              class="btn btn-default btn-xs"
+              title="<% 'Export info card data' | translate %>">
+               <i class="fa fa-share-square-o"></i>
+               <span translate>Export</span>
+           </a>
        </div>
      </div>
    </div>

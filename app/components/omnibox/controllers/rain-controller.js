@@ -17,25 +17,31 @@ angular.module('omnibox')
     // Hack to get raw rain data when hitting Export
     // Gets data directly from raster endpoint of raster RAW_RAIN_RASTER_UUID
     // limited to MAX_TIME_INTERVAL in ms
-    $scope.$watch(State.toString('temporal.timelineMoving'), function (n, o) {
-      var RAW_RAIN_RASTER_UUID = '827dfde3-e3eb-46ee-b671-ca36e922dbb6',
-          MAX_TIME_INTERVAL = 86400000 * 365.2425 / 12;  // 1 month
+    var RAW_RAIN_RASTER_UUID = '730d6675-35dd-4a35-aa9b-bfb8155f9ca7',
+        MAX_TIME_INTERVAL = 86400000 * 365.2425 / 12;  // 1 month
 
+    $scope.rawDataUrl =
+      window.location.origin + '/api/v2/rasters/' +
+      RAW_RAIN_RASTER_UUID + '/data/' +
+      '?format=csv' +
+      '&start=' + new Date(State.temporal.start).toISOString().split('.')[0] +
+      '&stop=' + new Date(State.temporal.end).toISOString().split('.')[0] +
+      '&geom=' + UtilService.geomToWkt(State.spatial.here) +
+      '&srs=EPSG:4326';
+
+    // export button is active by default
+    $scope.exportActive = true;
+
+    // disable export button when interval is bigger than MAX_TIME_INTERVAL
+    $scope.checkTempInterval = function () {
       if (State.temporal.end - State.temporal.start < MAX_TIME_INTERVAL) {
-        $scope.rawDataUrl =
-          'http://localhost:8000/api/v2/rasters/' +
-          RAW_RAIN_RASTER_UUID + '/' +
-          'data/?format=csv' +
-          '&start=' + 
-          new Date(State.temporal.start).toISOString().split('.')[0] +
-          '&stop=' +
-          new Date(State.temporal.end).toISOString().split('.')[0] +
-          '&geom=' + UtilService.geomToWkt(State.spatial.here) +
-          '&srs=EPSG:4326';
+        $scope.exportActive = true;
       } else {
-        $scope.rawDataUrl = '.';
+        $scope.exportActive = false;
       }
-    });
+    };
+    // ENDHACK
+
 
       /*
        * @description
