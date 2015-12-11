@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.4.1) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 2.4.2 (2015-12-11)
+---------------------
 
 - When rain station request timeseries for a specific aggregation window instead
 of a minimum amount of data points.
