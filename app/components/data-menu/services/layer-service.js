@@ -50,9 +50,11 @@ angular.module('data-menu')
           value: temporalResolution,
           writable: true,
         });
+        // Bounds are set from the layer config in lizard-bs or set from the
+        // layergroup when data-layer-group-service initiates layergroups.
         Object.defineProperty(this, 'bounds', {
-          value: layer.bounds,
-          writable: false,
+          value: layer.meta && layer.meta.spatial_bounds,
+          writable: true,
         });
         Object.defineProperty(this, 'color', {
           value: layer.color,
