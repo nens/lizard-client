@@ -52,6 +52,7 @@ angular.module('omnibox')
             }
           }
           if (State.layerGroups.active.indexOf(key) === -1) {
+            console.log(key)
             delete $scope.box.content[key];
           }
         });
@@ -124,7 +125,9 @@ angular.module('omnibox')
           if (response.layerGroupSlug.indexOf('waterchain') !== -1) {
             $scope.box.content['waterchain'] = lGContent;
             var gridKey = response.layerGroupSlug + '_grid';
-            $scope.box.content.waterchain.layers['waterchain_grid'] = lGContent.layers[gridKey];
+            var content = lGContent.layers[gridKey]
+            $scope.box.content.waterchain.layers['waterchain_grid'] = content;
+            State.selected.assets = [content.data.entity_name + '$' + content.data.id];
           }
 
         } else {
@@ -132,9 +135,10 @@ angular.module('omnibox')
           if ($scope.box.content[response.layerGroupSlug]) {
 
             if (response.layerGroupSlug.indexOf('waterchain') !== -1) {
-              delete $scope.box.content[response.layerGroupSlug];
-              delete $scope.box.content.waterchain;
-
+              if (!$scope.box.content.waterchain.assets) {
+                delete $scope.box.content[response.layerGroupSlug];
+                delete $scope.box.content.waterchain;
+              }
             } else {
               delete $scope.box.content[response.layerGroupSlug].layers[response.layerSlug];
             }

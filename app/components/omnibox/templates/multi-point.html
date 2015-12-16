@@ -1,0 +1,8 @@
+<div ng-controller="MultiPointCtrl">
+  <div ng-if="box.content.assets">
+    <div class="card card-active" ng-repeat="asset in box.content.assets">
+      <summary-card asset="asset"></summary-card>
+    </div>
+  </div>
+
+</div>

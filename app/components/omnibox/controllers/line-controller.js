@@ -32,7 +32,7 @@ angular.module('omnibox')
      * @param  array of L.LatLng objects describing the line.
      */
     var fillLine = function (line) {
-      ClickFeedbackService.startVibration(MapService);
+      ClickFeedbackService.startVibration();
       //TODO draw feedback when loading data
       var promise = $scope.fillBox({
         geom: line,

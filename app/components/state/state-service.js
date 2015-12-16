@@ -72,7 +72,7 @@ angular.module('global-state')
     state.box = {};
 
     var _type = 'point'; // Default box type
-    var TYPE_VALUES = ["point", "line", "region", "area", "omnibox-dashboard"];
+    var TYPE_VALUES = ["point", "line", "region", "area", "multi-point"];
     Object.defineProperty(state.box, 'type', {
       get: function () { return _type; },
       set: function (type) {
@@ -104,6 +104,16 @@ angular.module('global-state')
                     // map-directive when box type is 'line'
       mapMoving: false
     };
+
+    state.selected = {
+      reset: function () {
+        // Selected items
+        state.selected.assets = [];
+        state.selected.geometries = [state.spatial.here];
+      }
+    };
+
+    state.selected.reset();
 
     // Temporal
     var now = Date.now(),
