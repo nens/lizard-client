@@ -1,7 +1,19 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.2.7) (XXXX-XX-XX)
+Unreleased (2.2.9) (XXXX-XX-XX)
+---------------------
+
+- Fix wms getfeatureinfo getting info of features not being clicked on.
+
+- Fix rescale layer on doubleclick when initial domain is set.
+
+- Fix no units on y-axes in time-ctx.
+
+- Fix labelling of rectangles in tim-ctx out of drawing area.
+
+
+Release 2.2.8 (2015-12-7)
 ---------------------
 
 - Fix click on animation pause button not registered.
@@ -10,9 +22,6 @@ Unreleased (2.2.7) (XXXX-XX-XX)
   resolution with less data.
 
 - Store bounds of layer on group and layer for zooming to lg and animating wms.
-
-- Fix rescale layer on doubleclick when initial domain is set.
-
 
 
 Release 2.2.7 (2015-11-25)
