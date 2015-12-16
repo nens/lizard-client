@@ -56,21 +56,11 @@ angular.module('time-ctx')
     var putDataOnScope = function (response) {
 
       var item = {};
+
+      item = response;
+
       item.data = response.data || response.events;
 
-      var sharedKeys = [
-        'format',
-        'scale',
-        'quantity',
-        'unit',
-        'color',
-        'type',
-        'name'
-      ];
-
-      angular.forEach(sharedKeys, function (key) {
-        item[key] = response[key];
-      });
       item.aggWindow = State.temporal.aggWindow;
       scope.tctx.content[response.layerSlug] = item;
     };
@@ -139,6 +129,9 @@ angular.module('time-ctx')
               + ', '
               + ts.parameter_referenced_unit.parameter_short_display_name;
             ts.type = response.layerSlug;
+            ts.unit = ts
+              .parameter_referenced_unit
+              .referenced_unit_short_display_name;
             putDataOnScope(ts);
           });
         } else {
