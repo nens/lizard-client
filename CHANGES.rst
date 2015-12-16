@@ -10,6 +10,8 @@ Unreleased (2.2.9) (XXXX-XX-XX)
 
 - Fix no units on y-axes in time-ctx.
 
+- Fix labelling of rectangles in tim-ctx out of drawing area.
+
 
 Release 2.2.8 (2015-12-7)
 ---------------------
