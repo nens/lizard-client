@@ -203,8 +203,8 @@ angular.module('lizard-nxt')
           newHash.push(asset);
         });
         LocationGetterSetter.setUrlValue(
-          state.selected.part,
-          state.selected.index,
+          state.geom.part,
+          state.geom.index,
           newHash.join(',')
         );
       },
@@ -299,6 +299,9 @@ angular.module('lizard-nxt')
               mapState.points[key] = L.latLng(point[0], point[1]);
             }
           });
+        } else if (type === 'multi-point') {
+          var items = geom.split(',');
+          mapState.assets = items;
         }
         return mapState;
       },

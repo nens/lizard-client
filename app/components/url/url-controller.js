@@ -75,10 +75,6 @@ angular.module('lizard-nxt')
         part: 'at',
         index: 1,
       },
-      selected: {
-        part: 'at',
-        index: 2
-      }
     };
 
    /**
@@ -219,8 +215,9 @@ angular.module('lizard-nxt')
         state.boxType.part, state.boxType.index, State.box.type
       );
 
-      if (old === 'point' || old === 'line' || old === 'region') {
+      if (old === 'point' || old === 'line' || old === 'region' || old === 'multi-point') {
         // Remove geometry from url
+        State.selected.reset();
         state.boxType.update = false;
         LocationGetterSetter.setUrlValue(
           state.geom.part, state.geom.index, undefined);
@@ -297,8 +294,7 @@ angular.module('lizard-nxt')
         layerGroupsFromURL = LocationGetterSetter.getUrlValue(state.layerGroups.part, state.layerGroups.index),
         mapView = LocationGetterSetter.getUrlValue(state.mapView.part, state.mapView.index),
         time = LocationGetterSetter.getUrlValue(state.timeState.part, state.timeState.index),
-        context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index),
-        selected = LocationGetterSetter.getUrlValue(state.selected.part, state.selected.index);
+        context = LocationGetterSetter.getUrlValue(state.context.part, state.context.index);
 
       setLanguage(language);
 
@@ -328,7 +324,9 @@ angular.module('lizard-nxt')
       }
 
       if (geom) {
-        if (/\d/.test(geom)) {
+        if (boxType === 'multi-point') {
+          State.selected = UrlState.parseGeom(State.box.type, geom, State.selected);
+        } else if (/\d/.test(geom)) {
           State.spatial = UrlState.parseGeom(State.box.type, geom, State.spatial);
         } else {
           NxtRegionsLayer.setActiveRegion(geom);
@@ -343,15 +341,6 @@ angular.module('lizard-nxt')
       } else {
         state.timeState.update = false;
         UrlState.setTimeStateUrl(state, State.temporal.start, State.temporal.end);
-      }
-
-      if (selected) {
-        var assets = selected.split(',');
-        assets.forEach(function (asset, index) {
-          if (asset.length > 0) {
-            State.selected.assets[index] = asset;
-          }
-        });
       }
 
       UtilService.announceMovedTimeline(State);

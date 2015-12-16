@@ -109,7 +109,7 @@ angular.module('global-state')
       reset: function () {
         // Selected items
         state.selected.assets = [];
-        state.selected.geometries = [state.spatial.here];
+        state.selected.geometries = [];
       }
     };
 
