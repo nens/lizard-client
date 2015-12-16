@@ -1,9 +1,10 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.2.7) (XXXX-XX-XX)
+Unreleased (2.2.9) (XXXX-XX-XX)
 ---------------------
--
+
+- Fix wms getfeatureinfo getting info of features not being clicked on.
 
 
 Release 2.2.8 (2015-12-7)
