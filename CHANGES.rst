@@ -73,7 +73,7 @@ Release 2.3.1 (2015-11-5)
   track of the url for nxt-d3 instances.
 
 
-Release (2.2.9) (2015-12-16)
+Release 2.2.9 (2015-12-16)
 ---------------------
 
 - Fix wms getfeatureinfo getting info of features not being clicked on.
