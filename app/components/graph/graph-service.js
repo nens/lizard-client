@@ -707,15 +707,28 @@ angular.module('lizard-nxt')
       var tHeight = t.node().getBBox().height,
           tWidth = t.node().getBBox().width;
 
-      t.attr('x', xy.x.scale(d[keys.x]) + 5)
-        .attr('y', xy.y.scale(d.y1 || d[keys.y]) + tHeight);
+      var BOX_PADDING_WIDTH = 10,
+          BOX_PADDING_HEIGHT = 5;
+
+      var bgHeight = Math.min(
+        height - tHeight - BOX_PADDING_HEIGHT,
+        xy.y.scale(d.y1 || d[keys.y])
+      );
+
+      var textHeight = Math.min(
+        height - 0.5 * tHeight,
+        xy.y.scale(d.y1 || d[keys.y]) + tHeight
+      );
 
       g.append('rect')
         .attr('class', 'tooltip-background')
         .attr('x', xy.x.scale(d[keys.x]))
-        .attr('y', xy.y.scale(d.y1 || d[keys.y]))
-        .attr('width', tWidth + 10)
-        .attr('height', tHeight + 5);
+        .attr('y', bgHeight)
+        .attr('width', tWidth + BOX_PADDING_WIDTH)
+        .attr('height', tHeight + BOX_PADDING_HEIGHT);
+
+      t.attr('x', xy.x.scale(d[keys.x]) + 5)
+        .attr('y', textHeight);
 
       t.node().parentNode.appendChild(t.node());
     };
