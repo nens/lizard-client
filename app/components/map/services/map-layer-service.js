@@ -47,6 +47,8 @@ angular.module('map')
             var self = this;
             $http.get(url).success(function (data) {
               self.limits = ':' + data[0][0] + ':' + data[0][1];
+              // strip existing domain if already present.
+              self.options.styles = self.options.styles.split(':')[0];
               self._leafletLayer.setParams({
                 styles: self.options.styles + self.limits
               });

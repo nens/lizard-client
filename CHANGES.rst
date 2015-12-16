@@ -17,6 +17,9 @@ Release 2.2.8 (2015-12-7)
 
 - Store bounds of layer on group and layer for zooming to lg and animating wms.
 
+- Fix rescale layer on doubleclick when initial domain is set.
+
+
 
 Release 2.2.7 (2015-11-25)
 ---------------------
