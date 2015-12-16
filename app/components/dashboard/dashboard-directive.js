@@ -36,7 +36,7 @@ angular.module('dashboard')
       nGraphs = Object.keys(scope.dashboard.content).length;
       scope.dashboard.dims.height =
         (getHeight() - tlDimensions.height - TL_TOP_MARGIN) / nGraphs - GRAPH_PADDING;
-      scope.dashboard.dims.width = UtilService.getCurrentWidth() - UtilService.OMNIBOX_WIDTH 
+      scope.dashboard.dims.width = UtilService.getCurrentWidth() - UtilService.OMNIBOX_WIDTH
         + GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN;
     };
 
@@ -56,23 +56,13 @@ angular.module('dashboard')
     var putDataOnScope = function (response) {
 
       var item = {};
+
+      item = response;
+
       item.data = response.data || response.events;
 
-      var sharedKeys = [
-        'format',
-        'scale',
-        'quantity',
-        'unit',
-        'color',
-        'type',
-        'name'
-      ];
-
-      angular.forEach(sharedKeys, function (key) {
-        item[key] = response[key];
-      });
       item.aggWindow = State.temporal.aggWindow;
-      scope.dashboard.content[response.layerSlug] = item;
+      scope.tctx.content[response.layerSlug] = item;
     };
 
     var putEventDataOnScope = function (response) {
@@ -139,6 +129,9 @@ angular.module('dashboard')
               + ', '
               + ts.parameter_referenced_unit.parameter_short_display_name;
             ts.type = response.layerSlug;
+            ts.unit = ts
+              .parameter_referenced_unit
+              .referenced_unit_short_display_name;
             putDataOnScope(ts);
           });
         } else {

@@ -689,6 +689,7 @@ angular.module('lizard-nxt')
 
   addInteractionToRects = function (svg, dimensions, xy, keys, labels, duration) {
     var height = Graph.prototype._getHeight(dimensions),
+      width = Graph.prototype._getWidth(dimensions),
         fg = svg.select('#feature-group');
 
     var cb = function (d) {
@@ -707,15 +708,38 @@ angular.module('lizard-nxt')
       var tHeight = t.node().getBBox().height,
           tWidth = t.node().getBBox().width;
 
-      t.attr('x', xy.x.scale(d[keys.x]) + 5)
-        .attr('y', xy.y.scale(d.y1 || d[keys.y]) + tHeight);
+      var BOX_PADDING_WIDTH = 10,
+          BOX_PADDING_HEIGHT = TEXY_PADDING_WIDTH = 5;
+
+      var bgY = Math.min(
+        height - tHeight - BOX_PADDING_HEIGHT,
+        xy.y.scale(d.y1 || d[keys.y])
+      );
+
+      var textY = Math.min(
+        height - 0.5 * tHeight,
+        xy.y.scale(d.y1 || d[keys.y]) + tHeight
+      );
+
+      var bgX = Math.min(
+        width - tWidth - BOX_PADDING_WIDTH,
+        xy.x.scale(d[keys.x])
+      );
+
+      var textX = Math.min(
+        width - tWidth,
+        xy.x.scale(d[keys.x]) + TEXY_PADDING_WIDTH
+      );
 
       g.append('rect')
         .attr('class', 'tooltip-background')
-        .attr('x', xy.x.scale(d[keys.x]))
-        .attr('y', xy.y.scale(d.y1 || d[keys.y]))
-        .attr('width', tWidth + 10)
-        .attr('height', tHeight + 5);
+        .attr('x', bgX)
+        .attr('y', bgY)
+        .attr('width', tWidth + BOX_PADDING_WIDTH)
+        .attr('height', tHeight + BOX_PADDING_HEIGHT);
+
+      t.attr('x', textX)
+        .attr('y', textY);
 
       t.node().parentNode.appendChild(t.node());
     };

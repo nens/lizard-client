@@ -2,8 +2,7 @@ Changelog of lizard-nxt client
 ==============================
 
 Unreleased (2.4.1) (XXXX-XX-XX)
----------------------
--
+-------------------------------
 
 
 Release 2.5.1 (2015-12-11)
@@ -72,6 +71,18 @@ Release 2.3.1 (2015-11-5)
 
 - Fix clip path not clipping. Use absolute url to refer to clippath and keep
   track of the url for nxt-d3 instances.
+
+
+Release (2.2.9) (2015-12-16)
+---------------------
+
+- Fix wms getfeatureinfo getting info of features not being clicked on.
+
+- Fix rescale layer on doubleclick when initial domain is set.
+
+- Fix no units on y-axes in time-ctx.
+
+- Fix labelling of rectangles in tim-ctx out of drawing area.
 
 
 Release 2.2.8 (2015-12-7)

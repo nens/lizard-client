@@ -14,10 +14,14 @@ angular.module('lizard-nxt')
   /**
    * Gets data from wmsGetFeatureInfo resource of cabinetService.
    *
-   * It creates a small bbox around options.geom and gets data of that bbox. This
-   * is how wms getFeatureInfo works.
+   * It takes the private _map leaflet map from the private _leafletLayer to
+   * provide the wms server with a clue of what the user clicked on. It is a
+   * nasty technique that will bite us when we ask for a featureInfo of a latLng
+   * without having a map. This is the way wms works. It works if the layer has
+   * a _leafletLayer._map otherwise it rejects the promise.
    *
-   * @param  {string}   callee  optional string indicating the origin of the call.
+   * @param  {string}   callee  optional string indicating the origin of the
+   *                            call.
    * @param  {NxtLayer} layer   nxt layer.
    * @param  {object}   options options that contain geom.
    * @return {promise}          promise that resolves with wms response object.
@@ -27,17 +31,21 @@ angular.module('lizard-nxt')
    */
   var getData = function (callee, layer, options) {
 
-
     if (options.geom === undefined
-      || !(options.geom instanceof LeafletService.LatLng)) {
+      || !(options.geom instanceof LeafletService.LatLng)
+      || !(layer._leafletLayer)
+      || !(layer._leafletLayer._map)) {
       var defer = $q.defer();
       defer.reject();
       return defer.promise;
     }
 
-    var BOUNDING_BOX_PADDING = 0.001,
-        BOUNDING_BOX_PIXEL_SIZE = 2,
-        PIXEL_SPACE_COORD = 1;
+    // NOTE: its ugly we know. See description above.
+    var map = layer._leafletLayer._map;
+
+    var size = map.getSize(),
+        bbox = map.getBounds().toBBoxString(),
+        point = map.latLngToLayerPoint(options.geom);
 
     var params = {
       SERVICE: 'WMS',
@@ -48,17 +56,11 @@ angular.module('lizard-nxt')
       QUERY_LAYERS: layer.slug,
       STYLES: '', // required.
       SRS: "EPSG:4326",
-      BBOX: options.geom.lng
-        + ','
-        + options.geom.lat
-        + ','
-        + (options.geom.lng + BOUNDING_BOX_PADDING)
-        + ','
-        + (options.geom.lat + BOUNDING_BOX_PADDING),
-      WIDTH: BOUNDING_BOX_PIXEL_SIZE,
-      HEIGHT: BOUNDING_BOX_PIXEL_SIZE,
-      X: PIXEL_SPACE_COORD,
-      Y: PIXEL_SPACE_COORD
+      BBOX: bbox,
+      WIDTH: size.x,
+      HEIGHT: size.y,
+      X: point.x,
+      Y: point.y
     };
 
     var url = layer.url + '/?';
