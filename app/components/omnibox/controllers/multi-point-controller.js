@@ -34,6 +34,12 @@ angular.module('omnibox')
     var layerId;
     var clicks = {};
 
+
+    /**
+     * @memberOf MultiPointCtrl
+     * @function
+     * @description gets point data based on clicks. Spatial.here
+     */
     var getPointData = function () {
       lastClick = State.spatial.here;
 
@@ -53,6 +59,13 @@ angular.module('omnibox')
 
     };
 
+     /**
+     * @memberOf MultiPointCtrl
+     * @function
+     * @description response function for the Data is being retrieved
+     * works for a click, as well as a refresh
+     * @params {object} response from api, grid or store
+     */
     var fillCards = function (response) {
       var lGContent = {layers: {}};
       lGContent.layers[response.layerSlug] = lGContent.layers[response.layerSlug] || {};
