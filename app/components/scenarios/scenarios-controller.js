@@ -23,9 +23,12 @@ angular.module('scenarios')
       if (!page) {
         page = $scope.page;
       }
+      $scope.page = page;
       $scope.loading = true;
       Restangular.one('api/v2/scenarios/?page=' + page).get()
         .then(function (response) {
+          $scope.next = (!!response.next);
+          $scope.previous = (!!response.previous);
           $scope.loading = false;
           // get the amount of pages for the ng-repeater
           var pages = Math.ceil(response.count / PAGE_SIZE);

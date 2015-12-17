@@ -26,16 +26,20 @@
       <nav>
         <ul class="pagination">
           <li>
-          <a ng-click="getPage(page - 1)" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
+          <a ng-if="previous"
+            title="Previous"
+            ng-click="getPage(page - 1)" aria-label="Previous">
+            <span aria-hidden="true" translate>&laquo; Previous</span>
           </a>
           </li>
           <li ng-repeat="_page in pages" ng-class="{active: page === _page}">
             <a ng-click="getPage(_page)"><% _page %></a>
           </li>
           <li>
-          <a ng-click="getPage(page + 1)" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
+          <a ng-if="next"
+            title="Next"
+            ng-click="getPage(page + 1)" aria-label="Next">
+            <span aria-hidden="true" translate>Next &raquo;</span>
           </a>
           </li>
         </ul>
