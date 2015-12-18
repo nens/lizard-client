@@ -5,7 +5,7 @@
 .graph-svg-wrapper > span {
   position: absolute;
   padding: 10px;
-  color: $bargrey;
+  color: $concrete;
 }
 
 .plot {
@@ -41,7 +41,7 @@
 }
 
 rect {
-fill: $bargrey;
+fill: $concrete;
 }
 
 #listeners {
@@ -50,7 +50,7 @@ fill: $bargrey;
 
 rect.bar {
   stroke: white;
-  fill: $bargrey;
+  fill: $concrete;
 }
 
 rect.bar.selected {
@@ -63,7 +63,7 @@ rect.bar.selected {
 }
 
 .bar-timeline {
-  fill: $bargrey;
+  fill: $concrete;
   stroke-width: 1;
   fill-opacity: 1;
   stroke: white;
@@ -83,7 +83,7 @@ rect.bar.selected {
 }
 
 text, axis text {
-  fill: $bargrey;
+  fill: $concrete;
   stroke: none;
   font-size: 13px;
 }
