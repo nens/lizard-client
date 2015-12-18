@@ -64,7 +64,7 @@
     position: relative;
     float: left;
     padding: 6px 10px;
-    background-color: #16a085; /*#20b2aa*/
+    background-color: $greenSea;
     border: 0;
     color: $white;
     -webkit-user-select: none;  /* Chrome all / Safari all */
@@ -73,7 +73,7 @@
     user-select: none;
     &:hover {
         color: $white;
-        background-color: #48c9b0;
+        background-color: $turquoise;
         @include material-shadow-hover();
     }
 }
@@ -268,7 +268,7 @@
     background-color: $turquoise;
     font-size: 14px;
     padding: 10px;
-    color: white;
+    color: $white;
     margin: 0;
 }
 
@@ -304,7 +304,7 @@
     width: 370px;
     outline: none;
     position: absolute;
-    background: #FFF;
+    background: $white;
     margin-top: 11px;
     margin-left: 16px;
     transition: opacity 200ms cubic-bezier(0.52,0,0.48,1);
@@ -342,11 +342,11 @@
     display: inline-block;
     vertical-align: middle;
     width: 3em; height: 1em;
-    border: 1px solid #000;
+    border: 1px solid $black;
     border: 1px solid rgba(0, 0, 0, .3);
     border-radius: 999px;
     margin: 0 .5em;
-    background: white;
+    background: $white;
     background-image: linear-gradient(rgba(0,0,0,.1), transparent),
                       linear-gradient(90deg, hsl(210, 90%, 60%) 50%, transparent 50%);
     background-size: 200% 100%;
@@ -373,14 +373,14 @@
     width: 1.65em;
     height: 1.65em;
     margin: -.1em;
-    border: 1px solid #000;
+    border: 1px solid $black;
     border: 1px solid rgba(0,0,0,.35);
     border-radius: inherit;
-    background: white;
+    background: $white;
     background-image: linear-gradient(rgba(0,0,0,.2), transparent);
     box-shadow: 0 .1em .1em .1em hsla(0,0%,100%,.8) inset,
                 0 0 .5em rgba(0,0,0,.3);
-    color: white;
+    color: $white;
     text-shadow: 0 -1px 1px rgba(0,0,0,.3);
     text-indent: -2.5em;
 }
@@ -405,7 +405,7 @@
     content: 'Off';
     float: left;
     text-indent: .5em;
-    color: #000;
+    color: $black;
     color: rgba(0,0,0,.45);
     text-shadow: none;
 
@@ -447,7 +447,7 @@
     border: 0;
     border-radius: 0 2px 2px 0;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    color: white;
+    color: $white;
 }
 
 #box-awesome-inner {
@@ -457,7 +457,7 @@
     border-radius: 10px;
     width: 400px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 4px 15px -5px transparent;
-    background: #FFF;
+    background: $white;
 }
 
 #box-awesome-results {
@@ -466,7 +466,7 @@
     width: 400px;
     height: 150px;
     overflow-x: hidden;
-    background-color: #FFF;
+    background-color: $white;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 4px 15px -5px transparent;
 }
 
@@ -534,7 +534,7 @@ table tr td:last-child {
     margin-bottom: 5px;
     width: 98%;
     height: 98%;
-    background-color: #fff;
+    background-color: $white;
     z-index: 999999 !important;
     opacity: 0.95;
     transition: all .3s ease;
@@ -578,7 +578,7 @@ table tr td:last-child {
   position: relative;
   overflow: hidden;
   white-space: normal;
-  background: #FFF;
+  background: $white;
   background: rgba(255,255,255, 0.95);
   border-radius: 2px;
   -webkit-backface-visibility: hidden;
@@ -691,7 +691,7 @@ table tr td:last-child {
 }
 
 .card-tools a.btn-default {
-  color: #95a5a6;
+  color: $concrete;
 }
 
 .timeseries-header-container {
@@ -704,7 +704,7 @@ table tr td:last-child {
 }
 
 .timeseries-header-container .fa-clock-o {
-  color: #e74c3c;
+  color: $alizarin;
   font-size: 1.5em;
   top: 2px;
   position: relative;
@@ -761,7 +761,7 @@ td.lineout {
 .show-structure-attrs-text {
   font-size: 12px;
   cursor: pointer;
-  color: #bdc3c7;
+  color: $silver;
 }
 
 .show-structure-attrs-text:hover {
@@ -770,7 +770,7 @@ td.lineout {
 
 .table-toggler {
   font-size: 18px;
-  color: #bdc3c7;
+  color: $silver;
 }
 
 .message {
