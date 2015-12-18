@@ -44,13 +44,13 @@
 
         .btn-xss {
             @include material-shadow();
-            color: #2c3e50;
-            background-color: #fff;
+            color: $midnightBlue;
+            background-color: $white;
             &:hover {
                 @include material-shadow-hover();
-                color: rgba(127, 140, 141,1.0);
+                color: $asbestos;
                 text-decoration: none;
-                background-color: #fff;
+                background-color: $white;
             }
         }
 
@@ -67,7 +67,7 @@
 }
 
 .timeline-button {
-    color: rgba(44, 62, 80,1.0);
+    color: $midnightBlue;
     cursor: pointer;
     float: none;
     font-size: 35px;
@@ -82,7 +82,7 @@
     }
 
     &:hover {
-        color: rgba(127, 140, 141,1.0);
+        color: $asbestos;
         text-decoration: none;
     }
 
@@ -90,7 +90,7 @@
 
 .timeline-button-active {
     &:active {
-        color: rgba(231, 76, 60,1.0);
+        color: $alizarin;
         text-decoration: none;
     }
 
@@ -124,7 +124,6 @@
 
 .indicator {
     border-color: $darkgray2 transparent transparent transparent;
-    border-color: rgba(130, 130, 130, 1) transparent transparent transparent;
     border-style: solid;
     border-width: 10px;
     content: "";
@@ -136,21 +135,19 @@
 }
 
 .plot-temporal {
-    fill: $white;
-    fill: rgba(255, 255, 255, 0.0);
+    fill: $$white;
+    fill-opacity: 0;
     stroke: none;
 }
 
 .hover-line {
-    stroke: #aaaaaa;
+    stroke: $darkgray5;
 }
 
 .reference-line {
     fill: $darkgray2;
-    fill: rgba(130, 130, 130, 1);
     stroke-width: $width23;
     stroke: $darkgray2;
-    stroke: rgba(130, 130, 130, 1);
 }
 
 .selected {
@@ -169,7 +166,8 @@
 }
 
 .extent {
-    fill: rgba(30,30,30,0.1);
+    fill: $darkgray4;
+    fill-opacity: 0.1;
 }
 
 .resize {
@@ -189,7 +187,8 @@
     circle {
         fill-opacity: 0.8;
         stroke-width: 10px;
-        stroke: rgba(240, 50, 60, 0.6);
+        stroke: $alizarin;
+        stroke-opacity: 0.6;
     }
 
 }
@@ -225,7 +224,7 @@
     position: absolute;
     top: -23px;
     left: 16px;
-    background: white;
+    background: $white;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
     opacity: 0.7;
@@ -257,10 +256,10 @@
 
 /* d3 timeline graph elements*/
 .bar-timeline {
-  fill: #95a5a6;
+  fill: $concrete;
   stroke-width: 1;
   fill-opacity: 1;
-  stroke: white;
+  stroke: $white;
 }
 
 .timeline .tick {
@@ -286,7 +285,7 @@
 }
 
 .aggwindow-rect {
-  fill: #c0392b;
+  fill: $pomegranate;
   opacity: 0.6;
 }
 
