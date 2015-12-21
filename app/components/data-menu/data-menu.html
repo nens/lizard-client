@@ -52,47 +52,26 @@
 
         <div ng-if="context === 'map' || context === 'scenarios'">
 
-          <div class="button-list-item"
-               style="cursor: pointer">
-            <a ng-click="menu.box.type = 'point'"
-               class="button-list-link"
-               title="<% 'Point selection' | translate %>"
-               ng-class="{'active': menu.box.type === 'point'}">
-               <i class="fa fa-map-marker"></i>
-            </a>
-          </div>
-
-          <div class="button-list-item"
-               style="cursor: pointer">
-            <a ng-click="menu.box.type = 'line'"
-               class="button-list-link"
-               title="<% 'Line selection' | translate %>"
-               ng-class="{'active': menu.box.type === 'line'}">
-               <i class="fa fa-expand"></i>
-            </a>
-          </div>
-
-          <div class="button-list-item"
-               style="cursor: pointer">
-            <a ng-click="menu.box.type = 'region'"
-               class="button-list-link"
-               title="<% 'Region selection' | translate %>"
-               ng-class="{'active': menu.box.type === 'region'}">
-               <i class="fa fa-lemon-o"></i>
-            </a>
-          </div>
-
-          <div class="button-list-item"
-               style="cursor: pointer">
-            <a ng-click="menu.box.type = 'area'"
-               class="button-list-link"
-               title="<% 'View selection' | translate %>"
-               ng-class="{'active': menu.box.type === 'area'}">
-               <i class="fa fa-square-o"></i>
-            </a>
-          </div>
-
-        </div>
+          <datamenu-item
+            title="<% 'Point selection' | translate %>"
+            box-type="menu.box.type"
+            type="point" icon="map-marker"></datamenu-item>
+          <datamenu-item
+            title="<% 'Select Multiple Points' | translate %>"
+            box-type="menu.box.type"
+            type="multi-point" icon="th"></datamenu-item>
+          <datamenu-item
+            title="<% 'Line selection' | translate %>"
+            box-type="menu.box.type"
+            type="line" icon="expand"></datamenu-item>
+          <datamenu-item
+            title="<% 'Region selection' | translate %>"
+            box-type="menu.box.type"
+            type="region" icon="lemon-o"></datamenu-item>
+          <datamenu-item
+            title="<% 'View selection' | translate %>"
+            box-type="menu.box.type"
+            type="area" icon="square-o"></datamenu-item>
 
       </div>
     </div>

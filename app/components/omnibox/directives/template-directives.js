@@ -24,6 +24,21 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
+  .directive('summaryCard', ['WantedAttributes',
+    function (WantedAttributes) {
+  return {
+    link: function (scope) { scope.wanted = WantedAttributes; },
+    restrict: 'E',
+    scope: {
+      asset: '='
+    },
+    replace: true,
+    templateUrl: 'omnibox/templates/summary-card.html'
+  };
+}]);
+
+
+angular.module('omnibox')
   .directive('nestedasset', ['WantedAttributes', 'DataService',
     function (WantedAttributes, DataService) {
   return {

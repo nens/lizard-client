@@ -113,6 +113,7 @@ angular.module('data-menu')
                 color: color,
                 data: (data && data.data) || data, // data or if exists data.data
                 format: format,
+                id: options.id,
                 layerGroupSlug: lgSlug,
                 layerSlug: slug,
                 aggType: aggType,

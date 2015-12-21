@@ -50,7 +50,8 @@ angular.module('omnibox')
      * (5) - Clear the click feedback.
      */
     scope.cleanInput = function () {
-      State.box.type = "point";
+      State.selected.reset();
+      State.box.type = State.box.type ? State.box.type : "point";
       scope.query = "";
       scope.box.content = {};
       State.spatial.points = [];

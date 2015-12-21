@@ -74,7 +74,7 @@ angular.module('lizard-nxt')
       timeState: {
         part: 'at',
         index: 1,
-      }
+      },
     };
 
    /**
@@ -215,8 +215,9 @@ angular.module('lizard-nxt')
         state.boxType.part, state.boxType.index, State.box.type
       );
 
-      if (old === 'point' || old === 'line' || old === 'region') {
+      if (old === 'point' || old === 'line' || old === 'region' || old === 'multi-point') {
         // Remove geometry from url
+        State.selected.reset();
         state.boxType.update = false;
         LocationGetterSetter.setUrlValue(
           state.geom.part, state.geom.index, undefined);
@@ -247,6 +248,11 @@ angular.module('lizard-nxt')
         State.spatial.here,
         State.spatial.points
       );
+    });
+
+    $scope.$watch(State.toString('selected'), function (n, o) {
+      if (n === o) { return true; }
+      UrlState.setSelectedUrl(state, State.selected);
     });
 
     /**
@@ -318,7 +324,9 @@ angular.module('lizard-nxt')
       }
 
       if (geom) {
-        if (/\d/.test(geom)) {
+        if (boxType === 'multi-point') {
+          State.selected = UrlState.parseGeom(State.box.type, geom, State.selected);
+        } else if (/\d/.test(geom)) {
           State.spatial = UrlState.parseGeom(State.box.type, geom, State.spatial);
         } else {
           NxtRegionsLayer.setActiveRegion(geom);

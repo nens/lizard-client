@@ -50,7 +50,7 @@ angular.module('omnibox')
      */
     var fillpoint = function (here) {
       ClickFeedbackService.drawCircle(MapService, here);
-      ClickFeedbackService.startVibration(MapService);
+      ClickFeedbackService.startVibration();
       var aggWindow = State.temporal.aggWindow;
       var promise = $scope.fillBox({
         geom: here,

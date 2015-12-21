@@ -2,12 +2,19 @@
 angular.module('dashboard')
   .directive('dashboard',
              [
-              "EventAggregateService",
-              "State",
-              "DataService",
-              "UtilService",
-              "Timeline",
-              function (EventAggregateService, State, DataService, UtilService, Timeline) {
+              'EventAggregateService',
+              'State',
+              'DataService',
+              'UtilService',
+              'Timeline',
+              'TimeseriesService',
+              function (
+                EventAggregateService,
+                State,
+                DataService,
+                UtilService,
+                Timeline,
+                TimeseriesService) {
 
   var link = function (scope, element, attrs) {
 
@@ -101,51 +108,59 @@ angular.module('dashboard')
         scope.dashboard.dims.padding.left -
         scope.dashboard.dims.padding.right;
 
-      DataService.getData('dashboard', {
-        geom: geom,
-        start: State.temporal.start,
-        end: State.temporal.end,
-        minPoints: graphWidth,
-        temporalOnly: true // TODO: actually implement this in data-service.
-      }).then(null, null, function (response) {
-
-        // TODO 1: prune this tree.. We need to request waterchain in order
-        // to get timeseries from dataservice. This needs to change.
-        //
-        // TODO 2: We want to be able to use a filter to request only the
-        // temporal data.
-        //
-        // TODO 3: Remove box filtering, always show all the data
-        //
-        if (response.layerSlug === 'waterchain_grid') {
-          return;
-
-        // Currently events for point and area and timeseries for point are
-        // supported.
-        } else if (response.layerSlug === 'timeseries') {
-          angular.forEach(response.data, function (ts) {
+      State.selected.assets.forEach(function (item) {
+        TimeseriesService.getTimeSeriesForObject(
+              item,
+              State.temporal.start,
+              State.temporal.end,
+              graphWidth // last arg was defer... is that important?
+              ).then(function (response) {
+          angular.forEach(response.results, function (ts) {
             ts.layerSlug = ts.uuid;
             ts.name = ts.location.name
               + ', '
               + ts.parameter_referenced_unit.parameter_short_display_name;
-            ts.type = response.layerSlug;
-            ts.unit = ts
-              .parameter_referenced_unit
-              .referenced_unit_short_display_name;
+            ts.type = 'timeseries';
             putDataOnScope(ts);
           });
-        } else {
-          if (response.type === 'Event') {
-            putEventDataOnScope(response);
-          } else if (State.box.type === 'point' && response.type !== 'Event') {
-            putDataOnScope(response);
+        });
+      });
+
+      State.selected.geometries.forEach(function (geom) {
+        DataService.getData('dashboard', {
+          geom: geom,
+          start: State.temporal.start,
+          end: State.temporal.end,
+          minPoints: graphWidth,
+          temporalOnly: true // TODO: actually implement this in data-service.
+        }).then(null, null, function (response) {
+
+          // TODO 1: prune this tree.. We need to request waterchain in order
+          // to get timeseries from dataservice. This needs to change.
+          //
+          // TODO 2: We want to be able to use a filter to request only the
+          // temporal data.
+          //
+          // TODO 3: Remove box filtering, always show all the data
+          //
+          if (response.layerSlug === 'waterchain_grid') {
+            return;
+
+            // Currently events for point and area and timeseries for point are
+            // supported.
+          } else {
+            if (response.type === 'Event') {
+              putEventDataOnScope(response);
+            } else if (State.box.type === 'point' && response.type !== 'Event') {
+              putDataOnScope(response);
+            }
           }
-        }
 
-        if (tlDims) {
-          resize(tlDims);
-        }
+          if (tlDims) {
+            resize(tlDims);
+          }
 
+        });
       });
     };
 

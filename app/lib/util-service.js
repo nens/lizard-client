@@ -146,6 +146,7 @@ angular.module('lizard-nxt')
     return text;
   };
 
+  this.getAggWindowAsText = this.getAggWindowAsString;
 
   /**
    * @function fadeCurrentCards

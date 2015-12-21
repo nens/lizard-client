@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Data menu directive
+ * Data menu directives
  *
  * Overview
  * ========
@@ -24,3 +24,30 @@ angular.module('data-menu')
 
   }
 ]);
+
+/**
+ * @memberof datamenu
+ * @description Makes the data menu items
+ */
+angular.module('data-menu')
+  .directive('datamenuItem', [function () {
+
+  var link = function (scope, elem, attrs) {
+    scope.changeBoxType = function () {
+      scope.boxType = scope.type; 
+    };
+
+  };
+
+  return {
+    link: link,
+    restrict: 'E',
+    replace: true,
+    scope: {
+      boxType: '=',
+      type: '@',
+      icon: '@'
+    },
+    templateUrl: 'data-menu/data-menu-item.html'
+  };
+}]);

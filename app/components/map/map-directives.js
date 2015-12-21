@@ -164,6 +164,9 @@ angular.module('map')
         case "point":
           selector = "";
           break;
+        case "multi-point":
+          selector = "";
+          break;
         case "line":
           selector = "#map * {cursor: crosshair;}";
           break;

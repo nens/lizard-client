@@ -120,7 +120,7 @@ angular.module('lizard-nxt')
 
      /**
       * @function
-      * @memberOf angular.module('lizard-nxt').UrlState
+      * @memberOf UrlState
       * @description Sets the points or the here on the url when
       *              respectively point or line is specified as type.
       * @param {object} state config object
@@ -145,8 +145,7 @@ angular.module('lizard-nxt')
 
      /**
       * @function
-      * @memberOf angular.module('lizard-nxt')
-  .UrlState
+      * @memberOf UrlState
       * @description Sets the start and end epoch ms on the url
       * @param {object} state config object
       * @param {int} start time in ms
@@ -171,8 +170,7 @@ angular.module('lizard-nxt')
 
      /**
       * @function
-      * @memberOf angular.module('lizard-nxt')
-  .UrlState
+      * @memberOf UrlState
       * @description Sets the mapView coordinates on the url.
       * @param {object} state config object
       * @param {object} lat leaflet Latitude object
@@ -194,8 +192,26 @@ angular.module('lizard-nxt')
 
       /**
        * @function
-       * @memberOf angular.module('lizard-nxt')
-  .UrlState
+       * @memberOf UrlState
+       * @description Sets the selected items part of the url
+       * @param {object} state config object
+       * @param {object} selected object (containing, assets, and geoms)
+       */
+      setSelectedUrl: function (state, selected) {
+        var newHash = [];
+        angular.forEach(selected.assets, function (asset) {
+          newHash.push(asset);
+        });
+        LocationGetterSetter.setUrlValue(
+          state.geom.part,
+          state.geom.index,
+          newHash.join(',')
+        );
+      },
+
+      /**
+       * @function
+       * @memberOf UrlState
        * @description Sets the layer slugs on the url.
        * @param {object} state config object
        * @param {object} layerGroups list
@@ -210,8 +226,7 @@ angular.module('lizard-nxt')
       },
       /**
        * @function
-       * @memberOf angular.module('lizard-nxt')
-  .UrlState
+       * @memberOf UrlState
        * @description Sets the layer slugs on the url.
        * @param  {str} time time value of the url
        * @param  {object} timeState nxt timeState
@@ -246,8 +261,7 @@ angular.module('lizard-nxt')
       },
       /**
        * @function
-       * @memberOf angular.module('lizard-nxt')
-  .UrlState
+       * @memberOf UrlState
        * @description returns the mapview value parsed to
        *              latlonzoom
        * @param  {str} mapView
@@ -285,6 +299,9 @@ angular.module('lizard-nxt')
               mapState.points[key] = L.latLng(point[0], point[1]);
             }
           });
+        } else if (type === 'multi-point') {
+          var items = geom.split(',');
+          mapState.assets = items;
         }
         return mapState;
       },
