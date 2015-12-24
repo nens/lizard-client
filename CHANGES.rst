@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.4.1) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 2.5.2 (2015-12-24)
+---------------------
 
 
 Release 2.5.1 (2015-12-11)
