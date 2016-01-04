@@ -12,7 +12,7 @@
 
 .searchbox {
     background: $white;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba($white, 0.95);
     border: 1px solid transparent;
     border-right: 0;
     border-radius: 2px 0 0 2px;
@@ -31,7 +31,7 @@
 }
 
 .cards-minimized .searchbox-shadow {
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3),0 4px 15px -5px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 6px rgba($black, 0.3),0 4px 15px -5px rgba($black, 0.3);
 }
 
 .searchboxinput {
@@ -294,7 +294,7 @@
 }
 
 .results-shadow {
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3),0 4px 15px -5px rgba(0,0,0,0.0);
+    box-shadow: 0 2px 6px rgba($black, 0.3),0 4px 15px -5px rgba($black, 0.0);
     transition: all 200ms cubic-bezier(0.52,0,0.48,1);
 }
 
@@ -347,11 +347,11 @@
     vertical-align: middle;
     width: 3em; height: 1em;
     border: 1px solid $black;
-    border: 1px solid rgba(0, 0, 0, .3);
+    border: 1px solid rgba($black, 0.3);
     border-radius: 999px;
     margin: 0 .5em;
     background: $white;
-    background-image: linear-gradient(rgba(0,0,0,.1), transparent),
+    background-image: linear-gradient(rgba($black, 0.1), transparent),
                       linear-gradient(90deg, hsl(210, 90%, 60%) 50%, transparent 50%);
     background-size: 200% 100%;
     background-position: 100% 0;
@@ -360,8 +360,8 @@
     overflow: hidden;
     transition-duration: .4s;
     transition-property: padding, width, background-position, text-indent;
-    box-shadow: 0 .1em .1em rgba(0,0,0,.2) inset,
-                0 .45em 0 .1em rgba(0,0,0,.05) inset;
+    box-shadow: 0 .1em .1em rgba($black, 0.2) inset,
+                0 .45em 0 .1em rgba($black, 0.05) inset;
     font-size: 150%; /* change this and see how they adjust! */
 }
 
@@ -378,14 +378,14 @@
     height: 1.65em;
     margin: -.1em;
     border: 1px solid $black;
-    border: 1px solid rgba(0,0,0,.35);
+    border: 1px solid rgba($black, 0.35);
     border-radius: inherit;
     background: $white;
-    background-image: linear-gradient(rgba(0,0,0,.2), transparent);
-    box-shadow: 0 .1em .1em .1em hsla(0,0%,100%,.8) inset,
-                0 0 .5em rgba(0,0,0,.3);
+    background-image: linear-gradient(rgba($black, 0.2), transparent);
+    box-shadow: 0 .1em .1em .1em rgba($white, 0.8) inset,
+                0 0 .5em rgba($black, 0.3);
     color: $white;
-    text-shadow: 0 -1px 1px rgba(0,0,0,.3);
+    text-shadow: 0 -1px 1px rgba($black, 0.3);
     text-indent: -2.5em;
 }
 
@@ -394,9 +394,9 @@
 }
 
 :root input[type="checkbox"].ios-switch:focus + div {
-    box-shadow: 0 .1em .1em rgba(0,0,0,.2) inset,
-                0 .45em 0 .1em rgba(0,0,0,.05) inset,
-                0 0 .4em 1px rgba(255,0,0,.5);
+    box-shadow: 0 .1em .1em rgba($black, 0.2) inset,
+                0 .45em 0 .1em rgba($black, 0.05) inset,
+                0 0 .4em 1px rgba(#ff0000, 0.5);
 }
 
 :root input[type="checkbox"].ios-switch + div:before,
@@ -410,7 +410,7 @@
     float: left;
     text-indent: .5em;
     color: $black;
-    color: rgba(0,0,0,.45);
+    color: rgba($black, 0.45);
     text-shadow: none;
 
 }
@@ -437,7 +437,7 @@
     outline: 0;
     border: 0;
     border-radius: 0;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3),0 4px 15px -5px rgba(0,0,0,0.0);
+    box-shadow: 0 2px 6px rgba($black, 0.3),0 4px 15px -5px rgba($black,0.0);
     transition: all 200ms cubic-bezier(0.52,0,0.48,1);
 }
 
@@ -450,7 +450,7 @@
     background-image: linear-gradient(to bottom, #177d89, #115e67);
     border: 0;
     border-radius: 0 2px 2px 0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 6px rgba($black, 0.3);
     color: $white;
 }
 
@@ -460,7 +460,7 @@
     padding: 1em 2em 3em 2em;
     border-radius: 10px;
     width: 400px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 4px 15px -5px transparent;
+    box-shadow: 0 2px 6px rgba($black, 0.3), 0 4px 15px -5px transparent;
     background: $white;
 }
 
@@ -471,7 +471,7 @@
     height: 150px;
     overflow-x: hidden;
     background-color: $white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 4px 15px -5px transparent;
+    box-shadow: 0 2px 6px rgba($black, 0.3), 0 4px 15px -5px transparent;
 }
 
 #box-awesome-results ul {
@@ -583,7 +583,7 @@ table tr td:last-child {
   overflow: hidden;
   white-space: normal;
   background: $white;
-  background: rgba(255,255,255, 0.95);
+  background: rgba($white, 0.95);
   border-radius: 2px;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
