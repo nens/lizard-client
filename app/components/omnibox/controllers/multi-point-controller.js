@@ -289,7 +289,7 @@ angular.module('omnibox')
         $scope.box.content.assets.forEach(function (asset) {
           var feature = {
             type: 'Feature',
-            geometry: angular.fromJson(asset.data.geom),
+            geometry: angular.fromJson(asset.data.geometry),
             properties: {
               entity_name: asset.data.entity_name,
               type: asset.data.type || ''
