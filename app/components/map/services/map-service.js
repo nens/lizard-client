@@ -47,8 +47,8 @@ angular.module('map')
        * Syncs all layer groups to provided timeState object.
        * @param  {object} timeState   State.temporal object, containing start,
        *                              end, at and aggwindow.
-       * @param  {leaflet map} optionalMap map object to sync the data to.
-       * @return {promise}             promise that resolves layergroups synced.
+       * @param  {object} optionalMap map object to sync the data to.
+       * @return {object}             promise that resolves layergroups synced.
        */
       syncTime: function (timeState) {
         var defer = $q.defer();
@@ -163,8 +163,8 @@ angular.module('map')
       /**
        * @function
        * @memberOf map.MapService
-       * @param  {L.Class} Leaflet map
-       * @param  {L.Class} Leaflet layer
+       * @param  {object} Leaflet map
+       * @param  {object} Leaflet layer
        * @description Removes layer from map
        */
       addLeafletLayer: function (leafletLayer) {
@@ -181,8 +181,8 @@ angular.module('map')
       /**
        * @function
        * @memberOf map.MapService
-       * @param  {L.Class} Leaflet map
-       * @param  {L.Class} Leaflet layer
+       * @param  {object} Leaflet map
+       * @param  {object} Leaflet layer
        * @description Removes layer from map
        */
       removeLeafletLayer: function (leafletLayer) { // Leaflet NxtLayer
@@ -344,7 +344,7 @@ angular.module('map')
      * @param  {object} map Leaflet map to add layers to.
      * @param  {array} layers Array of nxt layers.
      * @param  {int} i index to start from.
-     * @param  {inte} loadOrder Current load order to add layers.
+     * @param  {int} loadOrder Current load order to add layers.
      * @return {object} next index and list of promises that resolve when layer
      *                       is fully loaded.
      * @description Adds the layers from index i with the given loadorder to the

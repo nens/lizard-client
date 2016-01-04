@@ -424,7 +424,7 @@ angular.module('lizard-nxt')
   /**
    * Takes a d3 multiselection of text elements and add click interaction to
    * zoom to rounded dates.
-   * @param {d3 selections} ticks text elements of tick marks.
+   * @param {object} d3 selection ticks text elements of tick marks.
    */
   var addClickToAxisTicks = function(ticks) {
     ticks

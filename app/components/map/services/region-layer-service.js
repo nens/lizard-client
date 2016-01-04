@@ -128,7 +128,7 @@ angular.module('map')
      *
      * @param  {L.GeoJson} lGeo        Leaflet L.GeoJson instance.
      * @param  {string} regionName     Properties.name of region
-     * @return {L.ILayer || undefined} Region layer.
+     * @return {L.ILayer} Region layer or undefined if not found
      */
     var _getRegion = function (lGeo, regionName) {
       var region;

@@ -199,7 +199,7 @@ angular.module('lizard-nxt')
 
       /**
        * @descriptions vibretes a selection.paths by varying the stroke-width
-       * @param  {d3 selection} sel selection contaning a path.
+       * @param  {object} sel selection contaning a path.
        * @param  {boolean} remove to remove or not. When true, stroke-widh
        *                          is set to 0 at the end the vibration.
        */
@@ -219,7 +219,7 @@ angular.module('lizard-nxt')
       /**
        * @description returns specific radius for water-objects coming from
        *              the utfGrid
-       * @param  {geojson feature} feature containing the entity_name of the
+       * @param  {object} geojson feature containing the entity_name of the
        *                           water-object
        * @return {int}             radius
        */
