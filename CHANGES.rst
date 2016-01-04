@@ -3,7 +3,10 @@ Changelog of lizard-nxt client
 
 Unreleased (2.2.9) (XXXX-XX-XX)
 ---------------------
+
 - Fix pagination for scenarios page.
+
+- Fix WMSGetFeatureInfo bug wrong relative pixel coordinates.
 
 
 Release 2.2.9 (2015-12-16)
