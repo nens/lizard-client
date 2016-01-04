@@ -12,6 +12,10 @@ For more than demo purposes Lizard client depends on:
 * [Hydra-core]( https://github.com/nens/hydra-core ), a django app with hydrological models and utils
 * [Lizard-nxt]( https://github.com/nens/lizard-nxt ), a django site that provides an api for hydra-core
 
+## Requirements
+
+    sudo apt-get install git npm nodejs-legacy
+
 ## Install
 
 Lizard client can be installed independent of the lizard-nxt ecosystem.
