@@ -324,11 +324,11 @@ angular.module('lizard-nxt')
       }
 
       if (geom) {
-        if (boxType === 'multi-point') {
-          State.selected = UrlState.parseGeom(State.box.type, geom, State.selected);
-        } else if (/\d/.test(geom)) {
+        if (geom.split('$').length === 1) {
           State.spatial = UrlState.parseGeom(State.box.type, geom, State.spatial);
-        } else {
+        } else if (boxType === 'point' || boxType === 'multi-point') {
+          State.selected = UrlState.parseGeom(State.box.type, geom, State.selected);
+        } else if (boxType === 'region') {
           NxtRegionsLayer.setActiveRegion(geom);
         }
       }
