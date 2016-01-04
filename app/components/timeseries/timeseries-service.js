@@ -104,6 +104,8 @@ angular.module('timeseries')
             layerSlug: 'timeseries',
           });
         }
+
+        response.results = filteredResult;
         return response; // accomadate chaining.
       });
 
