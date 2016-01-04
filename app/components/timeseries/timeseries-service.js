@@ -68,8 +68,12 @@ angular.module('timeseries')
         angular.forEach(response.results, function (ts) {
           var msg = '';
           if (ts.events.length > 1 &&
-              ts.events.length < MAX_NR_TIMESERIES_EVENTS &&
-              ts.parameter_referenced_unit) {
+              ts.events.length < MAX_NR_TIMESERIES_EVENTS) {
+
+            if (ts.parameter_referenced_unit === null) {
+              ts.parameter_referenced_unit = {};
+            }
+
             filteredResult.push(ts);
 
           // Else: output a message to the console and an error to sentry.
