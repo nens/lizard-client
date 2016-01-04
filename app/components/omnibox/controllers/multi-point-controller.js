@@ -251,9 +251,9 @@ angular.module('omnibox')
 
     /**
      * @function
-     * @description Looks at urlState and fills boxes accordingly
+     * @description Looks at State and fills boxes accordingly
      */
-    var changeUrlState = function () {
+    var stateChangeFn = function () {
       $scope.box.content.assets = ($scope.box.content.assets) ? $scope.box.content.assets : [];
       angular.forEach(State.selected.assets, function (asset, i) {
         var entity = asset.split('$')[0];
@@ -277,10 +277,8 @@ angular.module('omnibox')
 
     $scope.$watch(State.toString('selected'), function (n, o) {
       var assetAmount = ($scope.box.content.assets) ? $scope.box.content.assets.length : 0;
-      if (n === o ||
-          (State.selected.assets.length === assetAmount)
-          ) { return ;}
-      changeUrlState();
+      if (State.selected.assets.length === assetAmount) { return ;}
+      stateChangeFn();
     });
 
     $scope.$watch(State.toString('context'), function (n, o) {
@@ -305,8 +303,14 @@ angular.module('omnibox')
       }
     });
 
-    // initially look up from url
-    changeUrlState();
+
+    // Clean up stuff when controller is destroyed
+    $scope.$on('$destroy', function () {
+      DataService.reject('omnibox');
+      $scope.box.content = {};
+      State.selected.reset();
+      ClickFeedbackService.emptyClickLayer(MapService);
+    });
 
   }
 ]);
