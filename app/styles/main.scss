@@ -90,6 +90,20 @@ $navbarandtimeline: 50px + 82px;
         #{$cssProperty}: #{$value};
 }
 
+@mixin keyframe ($animation_name) {
+    @-webkit-keyframes $animation_name {
+        @content;
+    }
+
+    @-moz-keyframes $animation_name {
+        @content;
+    }
+
+    @keyframes $animation_name {
+        @content;
+    }
+}
+
 .material-shadow {
     @include material-shadow();
     &:hover {
