@@ -69,7 +69,7 @@ angular.module('dashboard')
       item.data = response.data || response.events;
 
       item.aggWindow = State.temporal.aggWindow;
-      scope.tctx.content[response.layerSlug] = item;
+      scope.dashboard.content[response.layerSlug] = item;
     };
 
     var putEventDataOnScope = function (response) {
