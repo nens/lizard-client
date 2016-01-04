@@ -22,8 +22,7 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @memberOf angular.module('lizard-nxt')
-  .graph
+   * @memberOf graph
    * @param {scope}     scope     local scope
    * @param {object}    element
    * @param {object}    attrs     data, keys, labels and now
@@ -82,8 +81,7 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @memberOf angular.module('lizard-nxt')
-  .graph
+   * @memberOf graph
    * @param {scope}     scope     local scope
    * @param {object}    element
    * @param {object}    attrs     data, keys, labels and now
@@ -97,6 +95,19 @@ angular.module('lizard-nxt')
 
     var graphUpdateHelper = function () {
       graphCtrl.setData(scope);
+
+      graphCtrl.data = [{
+      keys: {x :0, y: 1},
+      labels: {y: 'jh'},
+      values: [[0,2],[2,4], [3,5], [4, 3], [2.5, 3.1]]
+    }, 
+      {
+      keys: {x :0, y: 1},
+      labels: {y: 'jh'},
+      values: [[1,3],[0,4], [3,1]]
+    }]
+
+
 
       // UpdateData is called with temporal.timelineMoving to draw subset for
       // performance reasons.
@@ -174,8 +185,7 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @memberOf angular.module('lizard-nxt')
-  .graph
+   * @memberOf graph
    * @param {scope}     $scope    local scope
    * @param {Graph}     Graph     graph service
    * @description       Stores the graph directives data and update functions
@@ -239,8 +249,7 @@ angular.module('lizard-nxt')
 /**
  * @ngdoc directive
  * @class graph
- * @memberof angular.module('lizard-nxt')
-  .graph
+ * @memberOf graph
  * @name donut
  * @requires graph
  * @description       Draws a donut graph. Currently not in use by nxt.
@@ -269,8 +278,7 @@ angular.module('lizard-nxt')
 /**
  * @ngdoc directive
  * @class graph
- * @memberof angular.module('lizard-nxt')
-  .graph
+ * @memberOf graph
  * @name line
  * @requires graph
  * @description       Draws a line. Additionally it sets the
@@ -317,12 +325,77 @@ angular.module('lizard-nxt')
   };
 }]);
 
+/**
+ * @ngdoc directive
+ * @class graph
+ * @memberOf graph
+ * @name multiLine
+ * @requires graph
+ * @description       Draws a multiLine. Additionally it sets the
+ *                    location of the users mouse on the parent
+ *                    scope. It was initially written for the
+ *                    interction and maaiveldcurve.
+ */
+angular.module('lizard-nxt')
+  .directive('multiline', [function () {
+
+  var link = function (scope, element, attrs, graphCtrl) {
+    var data = graphCtrl.data,
+        graph = graphCtrl.graph,
+        //keys = graphCtrl.keys,
+        temporal = graphCtrl.type === 'temporal',
+        drawSubset = false;
+
+    data = [{
+      keys: {x :0, y: 1},
+      labels: {y: 'jh'},
+      values: [[0,2],[2,4], [2.5, 3.1], [3,5], [4, 3], ]
+    }]
+
+    graphCtrl.data = data;
+
+    /** 
+     * data is expected to be 'self-contained'
+     * e.g. data = [{
+     *    keys: {x: 'time', y: 'value'},
+     *    label: {y: 'Temperature'},
+     *    values: [[1, 2]....]}
+     *    ]
+     *  
+     */
+    graph.drawMultiLine(data, temporal);
+
+    // scope.line is the scope defined by the line controller. Preferably it is
+    // passed around more explicitly through the graph directive, but angular is
+    // being bitchy.
+    if (scope.line && scope.line.mouseLocFn) {
+      graph.followMouse(scope.line.mouseLocFn);
+      graph.mouseExit(scope.line.mouseLocFn);
+    }
+
+    if (temporal) {
+      graph.drawNow(graphCtrl.now);
+      // Function to call when timeState.at changes
+      graphCtrl.updateNow = graph.drawNow;
+    }
+
+    // Function to call when data changes
+    graphCtrl.updateData = graph.drawMultiLine;
+
+  };
+
+  return {
+    require: 'graph',
+    link: link,
+    restrict: 'A'
+  };
+}]);
+
 
 /**
  * @ngdoc directive
  * @class graph
- * @memberof angular.module('lizard-nxt')
-  .graph
+ * @memberOf graph
  * @name barChart
  * @requires graph
  * @description       Draws a barchart. With dynamic axis label.
@@ -376,8 +449,7 @@ angular.module('lizard-nxt')
 /**
  * @ngdoc directive
  * @class graph
- * @memberof angular.module('lizard-nxt')
-  .graph
+ * @memberOf graph
  * @name horizontal stack
  * @requires graph
  * @description       Draws a barchart. With dynamic axis label.

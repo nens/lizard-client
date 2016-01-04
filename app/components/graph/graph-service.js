@@ -24,8 +24,7 @@ angular.module('lizard-nxt')
 
   /**
    * @constructor
-   * @memberOf angular.module('lizard-nxt')
-  .Graph
+   * @memberOf Graph
    *
    * @param {object} element    svg element for the graph.
    * @param {object} dimensions object containing, width, height and
@@ -63,8 +62,7 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt')
-  .Graph
+     * @memberOf Graph
      * @param {object}    data object. Currently supports the format:
      *                    [
      *                      {
@@ -88,7 +86,7 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt').Graph
+     * @memberOf Graph
      * @param {object} data   Currently supports the format:
      *                        [
      *                          [value, value],
@@ -185,6 +183,8 @@ angular.module('lizard-nxt')
                                      // lines.
         );
 
+      this._path.attr("class", "line");
+
         if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
           addInteractionToPath(
             this._svg,
@@ -203,7 +203,156 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt').Graph
+     * @memberOf Graph
+     * @param {object} data   Currently supports the format:
+     *                        [
+     *                          [value, value],
+     *                          ...,
+     *                        ]
+     * @param {object} keys   Mapping between x and y values of data object:
+     *                        example: {x: 0, y: 1}
+     * @param {object} labels Object {x: 'x label', y: 'y label'} will be
+     *                        mapped to axis labels of the graph
+     * @param {boolean} temporal to draw an time axis or not.
+     * @param {boolean} transitioning to draw a subset of data now, and the full
+     *                                set after a timeout if drawline is not
+     *                                called again before the timeout finishes.
+     *                                Use transitioning = true when callig this
+     *                                function many times as a result of a user
+     *                                induced action.
+     * @description           Draws a line, if necessary sets up the graph,
+     *                        if necessary modifies domain and redraws axis,
+     *                        and draws the line according to the data object.
+     *                        Currently only a linear scale on the x-axis is
+     *                        supported.
+     */
+    drawMultiLine: {
+      value: function (data, temporal, transitioning) {
+        // default take the first as initialization
+        var keys = data[0].keys;
+        var values = data[0].values
+        var labels = data[0].labels
+        if (!this._xy) {
+          var options = {
+            x: {
+              scale: 'time',
+              orientation: 'bottom'
+            },
+            y: {
+              scale: 'linear',
+              orientation: 'left'
+            }
+          };
+          // pass options for time graph or use defaults
+          this._xy = this._createXYGraph(
+            values,
+            keys,
+            labels,
+            temporal ? options : undefined,
+            this._xDomainInfo
+          );
+        } else {
+          this._xy = rescale(
+            this._svg,
+            this.dimensions,
+            this._xy,
+            values,
+            keys,
+            null,
+            this._xDomainInfo
+          );
+          drawLabel(this._svg, this.dimensions, labels.y, true);
+        }
+
+        var lineAsArea = keys.y.hasOwnProperty('y0')
+          && keys.y.hasOwnProperty('y1');
+
+        var pathFn = lineAsArea
+          ? this._createArea(this._xy, keys)
+          : this._createLine(this._xy, keys);
+
+        var MIN_POINTS_FOR_SUBSET = 15,
+            DELAY = 10, // ms
+            DATA_REDUCTION_FACTOR = 5;
+
+        if (transitioning && values.length > MIN_POINTS_FOR_SUBSET) {
+          this._registerTimeout(
+            function () {
+              this._path = drawPath(
+                this._svg,
+                pathFn,
+                data,
+                0, // transition 0 ms when drawing while zooming.
+                this._path,
+                lineAsArea ? null : 'none'
+              );
+            },
+            DELAY // delay with 30 ms
+          );
+
+          data = getDataSubset(data, DATA_REDUCTION_FACTOR);
+        }
+
+       var colors = [
+         '#e74c3c',
+         '#7f8c8d',
+         '#1abc9c',
+         '#2980b9',
+         '#3498db',
+         '#c0392b',
+         '#16a085',
+        ];
+       var path = this._path;
+
+        //if (!path) {
+       var fg = this._svg.select('g').select('#feature-group');
+       // bring to front
+       fg.node().parentNode.appendChild(fg.node());
+       path = fg.selectAll("path");
+        //}
+
+        path = path
+          .data(data);
+
+        path.enter()
+            .append("path")
+            .classed('graph-lines', true)
+            .transition()
+            .duration('30ms')
+            .attr("d", function (d) {
+              // Prevent returning invalid values for d
+              var p = pathFn(d.values) || "M0, 0";
+              return p;
+            })
+            .attr('style', function (d) {
+              return 'stroke: ' + colors.pop() + '; fill:none;';
+            })
+        
+         path.exit().remove();
+        //.style('fill', fill)
+        //.attr('style', 'stroke: #000');
+
+        this._path = path;
+
+        if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+          addInteractionToPath(
+            this._svg,
+            this.dimensions,
+            data,
+            keys,
+            labels,
+            this._path,
+            this._xy,
+            this.transTime
+          );
+        }
+
+      }
+    },
+
+    /**
+     * @function
+     * @memberOf Graph
      * @param {object} data   Currently supports arrays of arrays or objects
      *                        with x value, y value, <optional> color and
      *                        <optional> category.
@@ -287,7 +436,7 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt').Graph
+     * @memberOf Graph
      * @param {object}    data object. Currently supports the format:
      *                    [
      *                      {
@@ -328,8 +477,7 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt')
-  .Graph
+     * @memberOf Graph
      * @param {function} callback
      * @description      Sets a listener on the drawing rectangle
      *                   and on mousemove calls the callback with
@@ -351,8 +499,7 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt')
-  .Graph
+     * @memberOf Graph
      * @param {function} callback
      * @description      Sets a listener on the drawing rectangle
      *                   and on mouseout calls the callback.
@@ -368,8 +515,7 @@ angular.module('lizard-nxt')
 
     /**
      * @function
-     * @memberOf angular.module('lizard-nxt')
-  .Graph
+     * @memberOf Graph
      * @param {int}    draw   Timestamp in ms from epoch
      * @description           draws the now according the
      *                        current active scale.
@@ -781,7 +927,6 @@ angular.module('lizard-nxt')
       // bring to front
       fg.node().parentNode.appendChild(fg.node());
       path = fg.append("svg:path")
-        .attr("class", "line");
     }
     path.datum(data)
       .transition()
