@@ -35,7 +35,7 @@
 
 .axis {
   fill: none;
-  stroke: darkgray;
+  stroke: #A9A9A9;
   stroke-width: 1;
   shape-rendering: crispEdges;
 }
@@ -49,7 +49,7 @@ fill: $concrete;
 }
 
 rect.bar {
-  stroke: white;
+  stroke: $white;
   fill: $concrete;
 }
 
@@ -66,7 +66,7 @@ rect.bar.selected {
   fill: $concrete;
   stroke-width: 1;
   fill-opacity: 1;
-  stroke: white;
+  stroke: $white;
 }
 
 .tickmark {
@@ -77,7 +77,7 @@ rect.bar.selected {
 }
 
 .y1.axis  text {
-  fill: crimson;
+  fill: #DC143C;
   stroke: none;
   font-size: 0.8em;
 }
@@ -110,9 +110,9 @@ text.d3tooltip {
       padding: 10px;
       font-size: 14px;
       text-align: center;
-      color: rgb(113, 157, 171);
-      background: rgb(255, 255, 255);
-      border: 4px solid rgb(255, 255, 255);
+      color: #719dab;
+      background: $white;
+      border: 4px solid $white;
       border-radius: 5px;
       text-shadow: rgba(0, 0, 0, 0.1) 1px 1px 1px;
       box-shadow: rgba(0, 0, 0, 0.1) 1px 1px 2px 0px;
@@ -125,7 +125,7 @@ text.d3tooltip:after {
       height: 0;
       border-width: 10px;
       border-style: solid;
-      border-color: #FFFFFF transparent transparent transparent;
+      border-color: $white transparent transparent transparent;
       top: 44px;
       left: 50px;
 }
@@ -133,7 +133,7 @@ text.d3tooltip:after {
 .donut-underline {
   width: 195px;
   height: 1px;
-  background-color: #222;
+  background-color: #222222;
   float: right;
   opacity: 0.0;
 }

@@ -11,7 +11,7 @@
 }
 
 .searchbox {
-    background: rgb(255, 255, 255);
+    background: $white;
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid transparent;
     border-right: 0;
@@ -138,10 +138,10 @@
     position: absolute;
     bottom: 5px;
     right: 5px;
-    color: lightgray;
+    color: #D3D3D3;
 }
 .card .flip-button a:hover{
-    color: gray;
+    color: #808080;
 }
 
 .card table, .card-events {
@@ -150,7 +150,7 @@
     line-height: 15px;
     font-size: 0.9em;
     list-style: none;
-    color: #777;
+    color: #777777;
     max-width: 370px;
     white-space: nowrap;
     overflow: hidden;
@@ -179,7 +179,7 @@
     list-style: none;
     width: 100%;
     margin-left: 37px;
-    color: #777;
+    color: #777777;
     margin-bottom: 16px;
 }
 
@@ -198,11 +198,11 @@
 
 .card .actions ul li a {
     cursor: pointer;
-    color: lightgray;
+    color: #D3D3D3;
 }
 
 .card .actions ul li a:hover {
-    color: gray;
+    color: #808080;
 }
 
 .card .nxt-box-overflow {
@@ -232,11 +232,15 @@
 }
 
 .card .location ul li {
-    border-bottom:1px solid #eee;padding:0;margin:0;
+    border-bottom:1px solid #eeeeee;
+    padding:0;
+    margin:0;
 }
 
 .card .location ul li ul {
-    list-style:none;padding:0;margin:0;
+    list-style:none;
+    padding:0;
+    margin:0;
 }
 
 .card .location ul li ul li {
@@ -324,13 +328,13 @@
 }
 
 .gridStyle {
-    border: 1px solid rgb(212,212,212);
+    border: 1px solid #d4d4d4;
     width: 400px;
     height: 300px
 }
 
 .ui-match {
-    background: yellow;
+    background: #FFFF00;
 }
 
 /**
@@ -386,7 +390,7 @@
 }
 
 :root input[type="checkbox"].ios-switch:active + div:before {
-    background-color: #eee;
+    background-color: #eeeeee;
 }
 
 :root input[type="checkbox"].ios-switch:focus + div {
@@ -512,7 +516,7 @@ table tr td:last-child {
 }
 
 .card-details{
-    color: #777;
+    color: #777777;
     font-size: 13px;
 }
 
@@ -560,7 +564,7 @@ table tr td:last-child {
 }
 
 .close-ancestor-card {
-  color: lightgray;
+  color: #d3d3d3;
   float: right;
   position: relative;
   top: -42px;
@@ -568,7 +572,7 @@ table tr td:last-child {
 }
 
 .close-ancestor-card:hover {
-  color: darkgrey;
+  color: #A9A9A9;
   cursor: pointer;
 }
 
@@ -776,7 +780,7 @@ td.lineout {
 .message {
   vertical-align: middle;
   font-size: 0.95em;
-  color: #777;
+  color: #777777;
 }
 
 .card .single-row-table {
@@ -794,7 +798,7 @@ td.lineout {
 
 .discrete-raster-color-indicator {
 
-  background-color: #0f0; /* to be set dynamically */
+  background-color: #0f00f0; /* to be set dynamically */
   border-radius: 2px;
   position: relative;
   width: 46px;
