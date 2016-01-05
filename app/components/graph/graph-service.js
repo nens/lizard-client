@@ -294,13 +294,13 @@ angular.module('lizard-nxt')
         }
 
        var colors = [
-         '#e74c3c',
-         '#7f8c8d',
-         '#1abc9c',
-         '#2980b9',
+         '#16a085',
          '#3498db',
          '#c0392b',
-         '#16a085',
+         '#2980b9',
+         '#1abc9c',
+         '#7f8c8d',
+         '#e74c3c',
         ];
        var path = this._path;
 
@@ -324,8 +324,8 @@ angular.module('lizard-nxt')
               var p = pathFn(d.values) || "M0, 0";
               return p;
             })
-            .attr('style', function (d) {
-              return 'stroke: ' + colors.pop() + '; fill:none;';
+            .attr('style', function (d, i) {
+              return 'stroke: ' + colors[i] + '; fill:none;';
             })
         
          path.exit().remove();
@@ -927,6 +927,7 @@ angular.module('lizard-nxt')
       // bring to front
       fg.node().parentNode.appendChild(fg.node());
       path = fg.append("svg:path")
+        .attr("class", "line");
     }
     path.datum(data)
       .transition()
@@ -936,6 +937,7 @@ angular.module('lizard-nxt')
         var p = pathFn(d) || "M0, 0";
         return p;
       })
+      .attr("class", "line")
       .style('fill', fill);
     return path;
   };
