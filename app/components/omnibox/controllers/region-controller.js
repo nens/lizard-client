@@ -44,7 +44,7 @@ angular.module('omnibox')
     /**
      * Callback for clicks on regions. Calls fillRegion.
      *
-     * @param  {leaflet ILayer} layer that recieved the click.
+     * @param  {object} leaflet ILayer that recieved the click.
      */
     var clickCb = function (layer) {
       State.spatial.region = layer.feature;
@@ -55,7 +55,7 @@ angular.module('omnibox')
      * Calls fillbox of omnibox scope and sets the name of the region on thes
      * scope.
      *
-     * @param  {geojson feature object} feature describing the region.
+     * @param  {object} geojson feature describing the region.
      */
     var fillRegion = function (feature) {
       var HECTARE_IN_M2 = 10000,

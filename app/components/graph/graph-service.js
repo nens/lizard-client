@@ -866,7 +866,7 @@ angular.module('lizard-nxt')
 
   /**
    * Draws or updates graph axis labels.
-   * @param  {d3 selection} svg
+   * @param  {object}       d3 selection svg
    * @param  {object}       dimensions
    * @param  {string}       (optional) label, if undefined uupdates current.
    * @param  {boolean}      draw on y axis, else x-axis.

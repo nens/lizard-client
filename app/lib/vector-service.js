@@ -171,7 +171,7 @@ angular.module('lizard-nxt')
      * @param  {object} geomortime  geometry or time that it needs to get
      *                  (e.g. bboxs)
      * @param  {object} time  start, stop object
-     * @return {promise}
+     * @return {object}
      */
     var getData = function (callee, nonLeafLayer, options) {
       var deferred = $q.defer(),
@@ -203,7 +203,7 @@ angular.module('lizard-nxt')
      * @description Triggers resolve callback on loaded data.
      * @param {layer}
      * @param {options}
-     * @param {promise}
+     * @param {object}
      */
     var getDataAsync = function (layerSlug, layer, options, deferred) {
       if (!vectorLayers[layerSlug]) {

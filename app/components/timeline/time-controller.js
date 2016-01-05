@@ -220,7 +220,7 @@ angular.module('lizard-nxt')
      * @description progresses animation when provided promiss finishes and the
      *              minLag has passed. Sets buffering when he promise is not re-
      *              solved after minLag.
-     * @param  {promise} finish
+     * @param  {object} finish
      */
     var progressAnimation = function (finish) {
       // Remove any old timeout

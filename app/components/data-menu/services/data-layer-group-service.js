@@ -190,7 +190,7 @@ angular.module('data-menu')
       * @param  {string} callee string of the callee to keep requests seperate.
       * @param  {object} options with geom, start, end and other properties that
       *                          are send to the data-services.
-      * @return  {promise} notifies with data per layer and resolves with value
+      * @return  {object} notifies with data per layer and resolves with value
       *                    true when layergroup was active, or false when
       *                    layergroup was inactive.
       */

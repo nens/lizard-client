@@ -41,22 +41,6 @@ body {
     padding: 0;
 }
 
-.clickObj {
-    -moz-animation: grow .6s linear forwards;
-    -ms-animation: grow .6s linear forwards;
-    -o-animation: grow .6s linear forwards;
-    -webkit-animation: grow .6s linear forwards;
-    -webkit-transform-origin: 0 0;
-    animation: grow .6s linear forwards;
-    background: white;
-    border-radius: 50%;
-    height:2$height19;
-    margin-left: -2.5px;
-    margin-top: -2.5px;
-    transform-origin: 0 0;
-    width:2$width22;
-}
-
 #context-transition-overlay {
     position: absolute;
     bottom: 0;
@@ -89,93 +73,6 @@ a {
     }
 
 }
-
-@keyframes {
-    grow {
-        0% { width: $width22;
-            height: $height19;
-            margin-left: -2.5px;
-            margin-top: -2.5px;
-        }
-
-    }
-        bounce {
-            animation-timing-function: ease-out;
-            from { -webkit-animation-timing-function: ease-out;
-                right: 0;
-            }
-
-
-        50% {
-            bottom: 90%;
-            bottom: 90%;
-            height: $height16;
-            height: $height16;
-            height: $height16;
-            margin-left: -7.5px;
-            margin-left: -7.5px;
-            margin-left: -7.5px;
-            margin-top:-7.5px;
-            margin-top:-7.5px;
-            margin-top:-7.5px;
-            opacity: 1;
-            opacity: 1;
-            opacity: 1;
-            width: $width16;
-            width: $width16;
-            width: $width16;
-        }
-
-        100% {
-            height: $height11;
-            height: $height11;
-            height: $height11;
-            margin-left: -25px;
-            margin-left: -25px;
-            margin-left: -25px;
-            margin-top:-25px;
-            margin-top:-25px;
-            margin-top:-25px;
-            opacity: 0;
-            opacity: 0;
-            opacity: 0;
-            width: $width21;
-            width: $width21;
-            width: $width21;
-        }
-    }
-}
-
-@-webkit-keyframes {
-    grow {
-        0% { width: $width22;
-            height: $height19;
-            margin-left: -2.5px;
-            margin-top: -2.5px;
-        }
-
-        bounce {
-            from { -webkit-animation-timing-function: ease-out;
-                right: 0;
-            }
-
-        }
-    }
-}
-
-@-ms-keyframes {
-    grow {
-        0% { width: $width22;
-            height: $height19;
-            margin-left: -2.5px;
-            margin-top: -2.5px;
-        }
-
-    }
-}
-
-
-
 
 .list-group {
     margin-bottom: 0;
