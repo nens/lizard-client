@@ -1,0 +1,11 @@
+<div ng-controller="DashboardCardCtrl as db">
+
+	<div class="card active" ng-repeat="asset in db.selected.assets">
+		<db-asset-card id="asset"></db-asset-card>
+	</div>
+
+	<div class="card active" ng-repeat="geom in db.selected.geometries">
+		<db-geom-card geom="geom"></db-geom-card>
+	</div>
+
+</div>

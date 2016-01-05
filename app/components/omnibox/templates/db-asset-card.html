@@ -1,0 +1,16 @@
+<div class="card-content">
+
+  <span class="kunstwerk-title" ng-class="{'sm-icon': !fullDetails};">
+
+    <i id="icon-holder"
+      ng-class="$parent.getIconClass(entity_name)">
+    </i>
+
+    <span id="title-holder"
+          class="card-title-text kunstwerk-title-text" translate>
+      <% asset.data.entity_name | objectTitle %>
+    </span>
+  </span>
+
+</div>
+
