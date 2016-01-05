@@ -34,13 +34,8 @@ $concrete:      #95a5a6;
 $asbestos:      #7f8c8d;
 
 
-/// Extra colours, trying to deprecate the grays
+/// Extra colours
 $white:         #ffffff;
-$darkgray5:     #aaaaaa;
-$darkgray2:     #828282;  // only used on _timeline.scss
-$darkgray3:     #666666;  // only used on _timeline.scss
-$darkgray:      #333333;  // only used on _errorpage.scss
-$darkgray4:     #1e1e1e;
 $black:         #000000;
 
 
@@ -50,3 +45,45 @@ $peter-river:   $peterRiver;
 $greensea:      $greenSea;
 $midnightblue:  $midnightBlue;
 $wet-asphalt:   $wetAsphalt;
+
+
+/// Deprecated colours
+$deprecated-color1:     #115e67;  // _omnibox.scss
+$deprecated-color2:     #ffff00;  // _omnibox.scss
+$deprecated-color3:     #0f00f0;  // _omnibox.scss
+$deprecated-color4:     #001135;  // _errorpage.scss
+$deprecated-color5:     #dc143c;  // _graph.scss
+$deprecated-color6:     #719dab;  // _graph.scss
+$deprecated-color7:     #ff565d;  // _omnibox.scss
+$deprecated-color8:     #ff0000;  // _omnibox.scss
+$deprecated-color9:     #177d89;  // _omnibox.scss
+
+$deprecated-gray1:      #f0f0f0;  // _errorpage.scss
+$deprecated-gray2:      #fdfdfd;  // _errorpage.scss
+$deprecated-gray3:      #efefef;  // _leaflet-overrides.scss & _layer-chooser.scss
+$deprecated-gray4:      #eefeef;  // _omnibox.scss
+$deprecated-gray5:      #eeeeee;  // _omnibox.scss
+$deprecated-gray6:      #d4d4d4;  // _omnibox.scss
+$deprecated-gray7:      #d3d3d3;  // _omnibox.scss
+$deprecated-gray8:      #a9a9a9;  // _omnibox.scss & _graph.scss
+$deprecated-gray9:      #808080;  // _omnibox.scss
+$deprecated-gray10:     #777777;  // _omnibox.scss & _errorpage.scss
+$deprecated-gray11:     #222222;  // _graph.scss
+$deprecated-gray12:     #ebf2fe;  // _omnibox.scss
+$deprecated-gray13:     #999999;  // _errorpage.scss
+$deprecated-gray14:     #888888;  // _errorpage.scss
+$deprecated-gray15:     #666666;  // _errorpage.scss
+$deprecated-gray16:     #555555;  // _errorpage.scss
+$deprecated-gray17:     #444444;  // _errorpage.scss
+$deprecated-gray18:     #fafaff;  // _graph.scss
+$deprecated-gray19:     #aaaaaa;  // only used on _timeline.scss
+$deprecated-gray20:     #828282;  // only used on _timeline.scss
+$deprecated-gray21:     #666666;  // only used on _timeline.scss
+$deprecated-gray22:     #333333;  // only used on _errorpage.scss
+$deprecated-gray23:     #1e1e1e;  // only used on _timeline.scss
+
+$darkgray5: $deprecated-gray19;  // only used on _timeline.scss
+$darkgray2: $deprecated-gray20;  // only used on _timeline.scss
+$darkgray3: $deprecated-gray21;  // only used on _timeline.scss
+$darkgray:  $deprecated-gray22;  // only used on _errorpage.scss
+$darkgray4: $deprecated-gray23;  // only used on _timeline.scss

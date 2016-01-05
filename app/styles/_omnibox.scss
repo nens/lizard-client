@@ -138,10 +138,10 @@
     position: absolute;
     bottom: 5px;
     right: 5px;
-    color: #D3D3D3;
+    color: $deprecated-gray7;
 }
 .card .flip-button a:hover{
-    color: #808080;
+    color: $deprecated-gray9;
 }
 
 .card table, .card-events {
@@ -150,7 +150,7 @@
     line-height: 15px;
     font-size: 0.9em;
     list-style: none;
-    color: #777777;
+    color: $deprecated-gray10;
     max-width: 370px;
     white-space: nowrap;
     overflow: hidden;
@@ -179,7 +179,7 @@
     list-style: none;
     width: 100%;
     margin-left: 37px;
-    color: #777777;
+    color: $deprecated-gray10;
     margin-bottom: 16px;
 }
 
@@ -198,11 +198,11 @@
 
 .card .actions ul li a {
     cursor: pointer;
-    color: #D3D3D3;
+    color: $deprecated-gray7;
 }
 
 .card .actions ul li a:hover {
-    color: #808080;
+    color: $deprecated-gray9;
 }
 
 .card .nxt-box-overflow {
@@ -218,13 +218,13 @@
     font-size: .9em;
 }
 .location:focus {
-    background-color: #ebf2fe !important;
+    background-color: $deprecated-gray12 !important;
     outline: 0;
     outline: thin dotted \9;
     font-weight: bold;
 }
 .location:focus > i {
-    color: #FF565D !important;
+    color: $deprecated-color7 !important;
 }
 
 .card .location ul {
@@ -232,7 +232,7 @@
 }
 
 .card .location ul li {
-    border-bottom:1px solid #eeeeee;
+    border-bottom:1px solid $deprecated-gray5;
     padding:0;
     margin:0;
 }
@@ -299,7 +299,7 @@
 }
 
 #results {
-    color: #115e67;
+    color: $deprecated-color1;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     padding: 15px;
@@ -320,7 +320,7 @@
 }
 
 .nav a{
-    color: #115e67;
+    color: $deprecated-color1;
 }
 
 .tab-content {
@@ -328,13 +328,13 @@
 }
 
 .gridStyle {
-    border: 1px solid #d4d4d4;
+    border: 1px solid $deprecated-gray6;
     width: 400px;
     height: 300px
 }
 
 .ui-match {
-    background: #FFFF00;
+    background: $deprecated-color2;
 }
 
 /**
@@ -390,13 +390,13 @@
 }
 
 :root input[type="checkbox"].ios-switch:active + div:before {
-    background-color: #eeeeee;
+    background-color: $deprecated-gray5;
 }
 
 :root input[type="checkbox"].ios-switch:focus + div {
     box-shadow: 0 .1em .1em rgba($black, 0.2) inset,
                 0 .45em 0 .1em rgba($black, 0.05) inset,
-                0 0 .4em 1px rgba(#ff0000, 0.5);
+                0 0 .4em 1px rgba($deprecated-color8, 0.5);
 }
 
 :root input[type="checkbox"].ios-switch + div:before,
@@ -431,7 +431,7 @@
 #box-awesome-search input {
     padding-left: 10px !important;
     font-size: 1em;
-    font-family: 'Roboto', Helvetica, Arial, sans-serif !important;
+    font-family: $font-family !important;
     padding-right: 0;
     width: 100%;
     outline: 0;
@@ -447,7 +447,7 @@
     left: 400px;
     width: 72px;
     height: 27px;
-    background-image: linear-gradient(to bottom, #177d89, #115e67);
+    background-image: linear-gradient(to bottom, $deprecated-color9, $deprecated-color1);
     border: 0;
     border-radius: 0 2px 2px 0;
     box-shadow: 0 2px 6px rgba($black, 0.3);
@@ -516,7 +516,7 @@ table tr td:last-child {
 }
 
 .card-details{
-    color: #777777;
+    color: $deprecated-gray10;
     font-size: 13px;
 }
 
@@ -564,7 +564,7 @@ table tr td:last-child {
 }
 
 .close-ancestor-card {
-  color: #d3d3d3;
+  color: $deprecated-gray7;
   float: right;
   position: relative;
   top: -42px;
@@ -572,7 +572,7 @@ table tr td:last-child {
 }
 
 .close-ancestor-card:hover {
-  color: #A9A9A9;
+  color: $deprecated-gray8;
   cursor: pointer;
 }
 
@@ -703,7 +703,7 @@ table tr td:last-child {
   width: 100%;
   min-width: 100%;
   /*margin-bottom: 10px;*/
-  /*background-color: #eef;*/
+  /*background-color: $deprecated-gray4;*/
   padding-left: 10px;
 }
 
@@ -780,7 +780,7 @@ td.lineout {
 .message {
   vertical-align: middle;
   font-size: 0.95em;
-  color: #777777;
+  color: $deprecated-gray10;
 }
 
 .card .single-row-table {
@@ -798,7 +798,7 @@ td.lineout {
 
 .discrete-raster-color-indicator {
 
-  background-color: #0f00f0; /* to be set dynamically */
+  background-color: $deprecated-color3; /* to be set dynamically */
   border-radius: 2px;
   position: relative;
   width: 46px;

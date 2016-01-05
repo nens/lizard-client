@@ -18,8 +18,8 @@
     background-color: $greenSea;
     border-color: $turquoise;
     border-color: rgba($turquoise, 0.6);
-    color: #fdfdfd;
-    font-family: 'Roboto', Helvetica, Arial, sans-serif;
+    color: $deprecated-gray2;
+    font-family: $font-family;
     font-size: 1.5em;
     padding: 1em;
     text-shadow: none;
@@ -31,7 +31,7 @@
 }
 
 .error-bg {
-    background-color: #f0f0f0;
+    background-color: $deprecated-gray1;
 }
 
 .bg-text {
@@ -43,7 +43,7 @@
     padding: 10px;
     position:absolute;
     text-align: center;
-    text-shadow: 0px 1px 0px #999999, 0px 2px 0px #888888, 0px 3px 0px #777777, 0px 4px 0px #666666, 0px 5px 0px #555555, 0px 6px 0px #444444, 0px 7px 0px $darkgray, 0px 8px 7px #001135;
+    text-shadow: 0px 1px 0px $deprecated-gray13, 0px 2px 0px $deprecated-gray14, 0px 3px 0px $deprecated-gray10, 0px 4px 0px $deprecated-gray15, 0px 5px 0px $deprecated-gray16, 0px 6px 0px $deprecated-gray17, 0px 7px 0px $darkgray, 0px 8px 7px $deprecated-color4;
 }
 
 to {
@@ -78,8 +78,8 @@ to {
     background-color: $greenSea;
     border-color: $turquoise;
     border-color: rgba($turquoise, 0.6);
-    font-family: 'Roboto', Helvetica, Arial, sans-serif;
-    color: #fdfdfd;
+    color: $deprecated-gray2;
+    font-family: $font-family;
     font-size: 1.5em;
     padding: 1em;
     text-shadow: none;
@@ -91,7 +91,7 @@ to {
 }
 
 .error-bg {
-    background-color: #f0f0f0;
+    background-color: $deprecated-gray1;
 }
 
 .bg-text {
@@ -103,7 +103,7 @@ to {
     padding: 10px;
     position:absolute;
     text-align: center;
-    text-shadow: 0px 1px 0px #999999, 0px 2px 0px #888888, 0px 3px 0px #777777, 0px 4px 0px #666666, 0px 5px 0px #555555, 0px 6px 0px #444444, 0px 7px 0px $darkgray, 0px 8px 7px #001135;
+    text-shadow: 0px 1px 0px $deprecated-gray13, 0px 2px 0px $deprecated-gray14, 0px 3px 0px $deprecated-gray10, 0px 4px 0px $deprecated-gray15, 0px 5px 0px $deprecated-gray16, 0px 6px 0px $deprecated-gray17, 0px 7px 0px $darkgray, 0px 8px 7px $deprecated-color4;
 }
 
 to {

@@ -32,8 +32,8 @@ label.layer-chooser {
 }
 
 label.layer-chooser > span.layer-text {
-    background: #efefef;
-    background: rgba(#efefef, 0.9);
+    background: $deprecated-gray3;
+    background: rgba($deprecated-gray3, 0.9);
     color: $asbestos;
     height: 24px;
     padding: 4px 5px;
