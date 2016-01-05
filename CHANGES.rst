@@ -3,7 +3,20 @@ Changelog of lizard-nxt client
 
 Unreleased (2.4.1) (XXXX-XX-XX)
 -------------------------------
--
+
+- Fixed a regression bug in dashboard, tctx is now dashboard.
+
+- Fixed missing parameter referenced unit error in dashboard. It is consistent with the rest, no ts when when the pru is missing.
+
+- Dashboard graphs have a shadow around them and are placed under each other correctly.
+
+- Url sets state for point and multipoint.
+
+- Fixed a bug with spatial.here not cleaned on point scope destroy.
+
+- Fixed a bug with geometry not drawn in multipolygon.
+
+- Sped up the context switch since we no longer need the map to create a dashboard on init.
 
 
 Release 2.5.2 (2015-12-24)

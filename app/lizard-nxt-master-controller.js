@@ -56,20 +56,21 @@ angular.module('lizard-nxt')
   $scope.transitionToContext = function (context) {
     if (context !== State.context) {
       var overlay = angular.element('#context-transition-overlay')[0];
+      overlay.style.transition = null;
       overlay.style.minHeight = window.innerHeight + 'px';
-      overlay.style.transition = 'ease .3s';
       $timeout(function () {
+        overlay.style.transition = 'ease .3s';
         overlay.style.opacity = 1;
-      }, 300);
+      }, 10);
       $timeout(function () {
         State.context = context;
         $scope.context = State.context;
         overlay.style.opacity = 0;
-      }, 600, true);
+      }, 300);
       $timeout(function () {
         overlay.style.transition = null;
         overlay.style.minHeight = 0;
-      }, 900);
+      }, 600, true);
     }
   };
 
