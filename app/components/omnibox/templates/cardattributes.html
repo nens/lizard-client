@@ -1,18 +1,6 @@
-<div class="card-content">
+<div>
 
-  <span class="kunstwerk-title" ng-class="{'sm-icon': !fullDetails};">
-
-    <i id="icon-holder"
-      ng-class="$parent.getIconClass(waterchain.layers.waterchain_grid.data.entity_name)">
-    </i>
-
-    <span id="title-holder"
-          class="card-title-text kunstwerk-title-text" translate>
-      <% waterchain.layers.waterchain_grid.data.entity_name | objectTitle %>
-    </span>
-    <full-details></full-details>
-  </span>
-
+  <cardheader asset="waterchain.layers.waterchain_grid.data"></cardheader>
 
   <table ng-if="fullDetails" id="kunstwerk-table" class="table table-condensed table-hover">
 

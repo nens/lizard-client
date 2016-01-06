@@ -1,16 +1,19 @@
-<div class="card-content">
+<div>
 
-  <span class="kunstwerk-title" ng-class="{'sm-icon': !fullDetails};">
+  <cardheader asset="asset"></cardheader>
 
-    <i id="icon-holder"
-      ng-class="$parent.getIconClass(entity_name)">
-    </i>
+  <div class="card-content">
 
-    <span id="title-holder"
-          class="card-title-text kunstwerk-title-text" translate>
-      <% asset.data.entity_name | objectTitle %>
-    </span>
-  </span>
+    <em ng-if="ts.length === 0" translate>No data available for this asset</em>
+
+    <div ng-repeat="s in ts">
+      <div class="card-content-list">
+        <i class="fa fa-clock-o"></i>
+        <span><% s.location.name %>, <% s.parameter_referenced_unit.parameter_short_display_name %></span>
+      </div>
+      <div class="circle pull-right"></div>
+    </div>
+
+  </div>
 
 </div>
-
