@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.4.1) (XXXX-XX-XX)
 -------------------------------
 
+- Kee[ global stat when destroying omnibox controllers so other controllers can draw cards for the same assets.
+
 - Enable timeseries service to only request meta data.
 
 - Fixed a regression bug in dashboard, tctx is now dashboard.
