@@ -4,8 +4,12 @@ angular.module("omnibox")
   .directive("omnibox", ["$compile", "$templateCache", "UtilService", "State",
     function ($compile, $templateCache, UtilService, State) {
 
-    var getTemplate = function (scope, contentType) {
-      if (contentType === undefined) {
+    var getTemplate = function (scope, contentType, context) {
+      console.log(context);
+      if (context === 'dashboard') {
+        contentType = 'dashboard-cards';
+      }
+      else if (contentType === undefined) {
         contentType = 'area';
       }
 
@@ -18,7 +22,7 @@ angular.module("omnibox")
       var oldScope;
 
       var replaceTemplate = function () {
-        var template = getTemplate(scope, State.box.type);
+        var template = getTemplate(scope, State.box.type, State.context);
         // We need to manually destroy scopes here when switching templates.
         // It is necessary to do this *before* withching templates. Otherwise
         // the new scope is active while the previous on is to and they affect
@@ -45,6 +49,11 @@ angular.module("omnibox")
       };
 
       scope.$watch(State.toString('box.type'), function (n, o) {
+        if (n === o) { return true; }
+        finalizeTemplateRendering();
+      });
+
+      scope.$watch(State.toString('context'), function (n, o) {
         if (n === o) { return true; }
         finalizeTemplateRendering();
       });

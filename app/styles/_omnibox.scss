@@ -109,22 +109,11 @@
     color: $asbestos;
 }
 
-
-
-
-
 #cards {
     margin-top: 0;
     position: absolute;
     top: 30px;
     clip: rect(0px,400px,1000px,0px);
-}
-
-.card i[class*='icon-'] {
-    color: #E74C3C;
-    font-size: 1.5em;
-    position: relative;
-    left: 0;
 }
 
 .card table i[class*='icon-'] {
@@ -272,7 +261,7 @@
 }
 
 .search-results > ul > li:last {
-    margin-bottom: 5px;    
+    margin-bottom: 5px;
 }
 
 .search-results > h3 {
@@ -607,8 +596,73 @@ table tr td:last-child {
     @include material-shadow-hover();
 }
 
+.card-header {
+    position: relative;
+    height: 60px;
+    margin: auto;
+    top: 50%;
+    background-color: $greensea;
+}
+
+.card-header-center {
+    position: absolute;
+    top: 9px;
+    width: 390px;
+    padding-left: 9px;
+    color: white;
+    line-height: 1;
+
+    .icons {
+        font-size: 0.8em;
+        padding-left: 3px;
+        padding-top: 10px;
+    }
+
+    .asset-icon {
+        top: -4px;
+        left: 5px;
+        color: $midnightblue;
+    }
+
+    .asset-title {
+        padding-left: 5px;
+        padding-top: 5px;
+        font-size: 1em;
+    }
+
+    em {
+        font-size: 15px;
+        padding-left: 40px;
+    }
+}
+
 .card-content {
-  padding: 8px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  color: $asbestos;
+
+  .card-content-list {
+    display: inline-block;
+    width: 350px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  i {
+    font-size: 15px;
+    position: relative;
+  }
+
+  .circle {
+    margin-top: 2px;
+    height: 15px;
+    width: 15px;
+    border-radius: 10px;
+    background-color: $greensea;
+  }
 }
 
 .card-content-message {
@@ -685,7 +739,6 @@ select.nested-asset {
 .card-title-text {
   position: relative;
   padding-left: 10px;
-  color: $asbestos;
 }
 
 .card-title-text.placeholder {

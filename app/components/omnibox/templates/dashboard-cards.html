@@ -1,0 +1,7 @@
+<div ng-controller="DashboardCardCtrl as db">
+
+  <div class="card active" ng-repeat="asset in db.selected.assets">
+    <db-asset-card asset-id="asset"></db-asset-card>
+  </div>
+
+</div>

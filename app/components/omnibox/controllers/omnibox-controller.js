@@ -151,7 +151,5 @@ angular.module('omnibox')
       return promise;
     };
 
-    // Make UtilSvc.getIconClass available in Angular templates
-    $scope.getIconClass = UtilService.getIconClass;
   }
 ]);

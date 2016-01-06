@@ -1,0 +1,23 @@
+<header class="card-header">
+
+  <div class="card-header-center">
+    <full-details class="pull-right"></full-details>
+
+      <span class="icons fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i
+          class="asset-icon fa fa-stack"
+          ng-class="getIconClass(asset.entity_name)">
+        </i>
+      </span>
+
+      <span class="asset-title" translate>
+        <% asset.entity_name | objectTitle %>
+      </span>
+
+      <br>
+
+      <em><% asset.code %></em>
+
+  </div>
+</header>
