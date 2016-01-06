@@ -24,6 +24,24 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
+  .directive('cardheader', ['UtilService',
+    function (UtilService) {
+  return {
+    link: function (scope) {
+      scope.getIconClass = UtilService.getIconClass;
+    },
+    restrict: 'E',
+    scope: {
+      asset: '='
+    },
+    replace: true,
+    templateUrl: 'omnibox/templates/card-header.html'
+  };
+}]);
+
+
+
+angular.module('omnibox')
   .directive('summaryCard', ['WantedAttributes',
     function (WantedAttributes) {
   return {
