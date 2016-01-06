@@ -15,8 +15,8 @@ angular.module('timeseries')
       localPromises[id] = $q.defer();
       var params = {
         object: id,
-        start: parseInt(timeState.start, 10),
-        end: parseInt(timeState.end, 10),
+        start: timeState.start ? parseInt(timeState.start, 10): undefined,
+        end: timeState.end ? parseInt(timeState.end, 10): undefined,
         timeout: localPromises[id].promise
       };
 
@@ -67,7 +67,9 @@ angular.module('timeseries')
         var filteredResult = [];
         angular.forEach(response.results, function (ts) {
           var msg = '';
-          if (ts.events.length > 1 &&
+          if (ts.events === null) {
+            filteredResult.push(ts);
+          } else if (ts.events.length > 1 &&
               ts.events.length < MAX_NR_TIMESERIES_EVENTS) {
 
             if (ts.parameter_referenced_unit === null) {

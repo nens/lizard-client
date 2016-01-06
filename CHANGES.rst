@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.4.1) (XXXX-XX-XX)
 -------------------------------
 
+- Enable timeseries service to only request meta data.
+
 - Fixed a regression bug in dashboard, tctx is now dashboard.
 
 - Fixed missing parameter referenced unit error in dashboard. It is consistent with the rest, no ts when when the pru is missing.
