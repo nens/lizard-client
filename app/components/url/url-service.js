@@ -283,27 +283,33 @@ angular.module('lizard-nxt')
           return false;
         }
       },
-      parseGeom: function (type, geom, mapState) {
-        if (type === 'point') {
-          var point = geom.split(',');
-          if (parseFloat(point[0]) &&
-              parseFloat(point[1])) {
-            mapState.here = L.latLng(point[0], point[1]);
-          }
-        } else if (type === 'line') {
+
+      parseGeom: function (type, geom, state) {
+        var point = geom.split(',');
+        if (type === 'point'
+          && point.length > 1
+          && parseFloat(point[0])
+          && parseFloat(point[1])) {
+          state.here = L.latLng(point[0], point[1]);
+        }
+
+        else if (type === 'line') {
           var points = geom.split('-');
           angular.forEach(points, function (pointStr, key) {
             var point = pointStr.split(',');
             if (parseFloat(point[0]) &&
                 parseFloat(point[1])) {
-              mapState.points[key] = L.latLng(point[0], point[1]);
+              state.points[key] = L.latLng(point[0], point[1]);
             }
           });
-        } else if (type === 'multi-point') {
-          var items = geom.split(',');
-          mapState.assets = items;
         }
-        return mapState;
+
+        else if (type === 'multi-point' || 'point') {
+          var items = geom.split(',');
+          state.assets = items;
+        }
+
+        return state;
       },
       update: function (state) {
         var u = true;

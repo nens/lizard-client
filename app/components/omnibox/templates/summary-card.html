@@ -1,60 +1,52 @@
-<div class="card-content">
+<div>
 
-  <span class="kunstwerk-title" ng-class="{'sm-icon': !fullDetails};">
+<cardheader asset="asset.data"></cardheader>
 
-    <i id="icon-holder"
-      ng-class="$parent.getIconClass(entity_name)">
-    </i>
+  <div class="card-content">
 
-    <span id="title-holder"
-          class="card-title-text kunstwerk-title-text" translate>
-      <% asset.data.entity_name | objectTitle %>
-    </span>
-    <full-details></full-details>
-  </span>
+    <!-- this used to be hidden when !fullDetails -->
+    <table id="kunstwerk-table" class="table table-condensed table-hover">
 
+      <tr class="attr-row"
+          ng-repeat="obj in wanted[asset.data.entity_name].rows"
+          >
 
-  <table ng-if="fullDetails" id="kunstwerk-table" class="table table-condensed table-hover">
+        <td class="fixed-width-card-table">
+          <div class="attr-row-content">
+            <% obj.keyName | translate %>
+          </div>
+        </td>
 
-    <tr class="attr-row"
-        ng-repeat="obj in wanted[asset.data.entity_name].rows"
-        >
+        <td class="lineout"
+            ng-if="asset.data[obj.attrName] !== undefined
+              && asset.data[obj.attrName] !== null
+              && asset.data[obj.attrName] !== ''
+              && asset.data[obj.attrName] !== 'pumps'
+              && asset.data[obj.attrName] !== 'filters'">
+          <div class="attr-row-content" ng-bind="asset.data[obj.attrName]">
+          </div>
+        </td>
 
-      <td class="fixed-width-card-table">
-        <div class="attr-row-content">
-          <% obj.keyName | translate %>
-        </div>
-      </td>
+        <td class="lineout"
+            ng-if="asset.data[obj.attrName] === undefined
+              || asset.data[obj.attrName] === null
+              || asset.data[obj.attrName] === ''"
+            rel="tooltip"
+            asset.data-toggle="tooltip"
+            title="<% 'Example value' | translate %>">
+          <div class="attr-row-content dummy-attr-value" ng-bind-html="obj.defaultValue + obj.valueSuffix">
+          </div>
+        </td>
+      </tr>
+    </table>
 
-      <td class="lineout"
-          ng-if="asset.data[obj.attrName] !== undefined
-            && asset.data[obj.attrName] !== null
-            && asset.data[obj.attrName] !== ''
-            && asset.data[obj.attrName] !== 'pumps'
-            && asset.data[obj.attrName] !== 'filters'">
-        <div class="attr-row-content" ng-bind="asset.data[obj.attrName]">
-        </div>
-      </td>
+    <div class="structure-image-wrapper text-center"
+         ng-if="!!asset.data.image_url && fullDetails">
 
-      <td class="lineout"
-          ng-if="asset.data[obj.attrName] === undefined
-            || asset.data[obj.attrName] === null
-            || asset.data[obj.attrName] === ''"
-          rel="tooltip"
-          asset.data-toggle="tooltip"
-          title="<% 'Example value' | translate %>">
-        <div class="attr-row-content dummy-attr-value" ng-bind-html="obj.defaultValue + obj.valueSuffix">
-        </div>
-      </td>
-    </tr>
-  </table>
+        <img class="structure-image"
+             ng-src="<% asset.data.image_url %>" />
 
-  <div class="structure-image-wrapper text-center"
-       ng-if="!!asset.data.image_url && fullDetails">
-
-      <img class="structure-image"
-           ng-src="<% asset.data.image_url %>" />
-
+    </div>
   </div>
-</div>
 
+</div>

@@ -48,7 +48,7 @@ angular.module('data-menu')
       /**
        * Creates a new layerGroup and adds to the layerGroups
        * @param  {object} lgConfig config of layergroup
-       * @return {layerGroup instance}
+       * @return {object} layerGroup instance
        */
       this.createLayerGroup = function (lgConfig) {
         return this.layerGroups[lgConfig.slug] = new DataLayerGroup(lgConfig);
@@ -144,7 +144,7 @@ angular.module('data-menu')
 
       /**
        * Adds the provided layerGroups to the layerGroups
-       * @param {layerGroup instance}
+       * @param {object} layerGroup instance
        */
       this.addLayergroup = function (layerGroup) {
         return this.layerGroups[layerGroup.slug] = layerGroup;
@@ -152,7 +152,7 @@ angular.module('data-menu')
 
       /**
        * Removes the provided layerGroups from nxt
-       * @param {layerGroup instance}
+       * @param {object} layerGroup instance
        */
       this.removeLayerGroup = function (layerGroup) {
         delete this.layerGroups[layerGroup.slug];
@@ -169,7 +169,7 @@ angular.module('data-menu')
        *                                data. Used for recursively calling get
        *                                data with data from waterchain of a
        *                                previous getData call.
-       * @return {promise} notifies with data from layergroup and resolves when
+       * @return {object} notifies with data from layergroup and resolves when
        *                   all layergroups and the timeseries returned data.
        */
       this.getData = function (callee, options, recursiveDefer) {
@@ -295,7 +295,7 @@ angular.module('data-menu')
        * @param  {string} callee   the origin of the data request, specified by
        *                           the function calling DataService.getData.
        *
-       * @return {promise || false} false when no id and entity name or promise
+       * @return {object} false when no id and entity name or promise
        *                            when making request to timeseries endpoint.
        */
       this.getTimeseriesAndEvents = function (

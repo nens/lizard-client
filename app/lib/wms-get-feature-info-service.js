@@ -24,7 +24,7 @@ angular.module('lizard-nxt')
    *                            call.
    * @param  {NxtLayer} layer   nxt layer.
    * @param  {object}   options options that contain geom.
-   * @return {promise}          promise that resolves with wms response object.
+   * @return {object}          promise that resolves with wms response object.
    *                            Or promise that gets rejected when geometry is
    *                            not a leaflet LatLng or undefined.
    *

@@ -35,7 +35,7 @@ angular.module('lizard-nxt')
 
   /**
    * Raster resource, last stop to the server
-   * @param  {promise} q             a promise to cancel previous requests
+   * @param  {object} q             a promise to cancel previous requests
    *                                 if none is given a local 'abortGet' is
    *                                 used.
    *                                 At the next request without a promise, the

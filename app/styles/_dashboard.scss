@@ -3,21 +3,32 @@
  */
 
 .dashboard-wrapper {
-  transition: .3s ease;
-  height: 100%;
-  width: 100%;
   position: absolute;
+  top: $navbarheight;
+  left: $omnibox-width;
+  bottom: 0;
   overflow: hidden;
-  background-color: $clouds;
+  transition: .3s ease;
 }
 
 .dashboard-wrapper .row {
   min-height: 50px;
-  margin: 0;
-  padding-left: 10px
+  margin: 3px;
+  padding: 5px;
+  @include material-shadow();
+
+  &:hover {
+    @include material-shadow-hover();
+  }
+
+  &:first-child {
+    /*
+      We probably want to increase this to have it nicely under the navbar
+      alligning with the cards.
+    */
+    margin-top: 1px;
+  }
 }
 
 .dashboard-inner {
-  position: absolute;
-  left: $omnibox-width; /* graph starts next to omnibox */
 }

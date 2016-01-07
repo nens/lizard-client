@@ -408,7 +408,7 @@ angular.module('map')
              * @param  {L.LatLngBounds} animationBounds intersection of map
              *                          bounds and layer bounds.
              *
-             * @return {object with x and y} size in horizontal (x) and
+             * @return {object}  object with x and y size in horizontal (x) and
              *                               vertical (y) direction.
              */
             _getImageSize: function (map, animationBounds) {

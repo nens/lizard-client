@@ -156,7 +156,7 @@ angular.module('omnibox')
      * scope.box.content.searchResults.spatial. Prefers temporal results to
      * spatial results.
      *
-     * @param {object.promise and object.moment} results
+     * @param {object} results object, with moment and promise
      * moment is a moment.js object
      * promise resolves with response from geocoder.
      */

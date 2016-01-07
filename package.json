@@ -17,7 +17,7 @@
     "geo-information"
   ],
   "author": "Nelen & Schuurmans",
-  "license": "GPLv3",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/nens/lizard-nxt/issues"
   },
@@ -33,12 +33,12 @@
     "grunt-contrib-cssmin": "^0.9.0",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-doxx": "~0.1.1",
     "grunt-filerev": "^0.2.1",
     "grunt-google-cdn": "^0.4.0",
     "grunt-html2js": "~0.2.9",
     "grunt-karma": "~0.12",
     "grunt-lizard-release": "git://github.com/fritzvd/grunt-lizard-release",
+    "grunt-mrdoc": "~0.1.9",
     "grunt-newer": "^0.7.0",
     "grunt-ng-annotate": "^0.3.0",
     "grunt-sass": "^1.1.0",

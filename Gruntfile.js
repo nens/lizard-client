@@ -438,10 +438,13 @@ module.exports = function (grunt) {
     },
 
     // produces docs
-    doxx: {
+    mrdoc: {
       all: {
-        src: 'app/',
-        target: 'doc'
+        src: 'app',
+        target: 'doc',
+        options: {
+          title: require('./bower.json').name
+        }
       }
     },
 
@@ -541,8 +544,8 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('docs', function () {
-    grunt.loadNpmTasks('grunt-doxx');
-    grunt.task.run(['doxx']);
+    grunt.loadNpmTasks('grunt-mrdoc');
+    grunt.task.run(['mrdoc']);
   });
 
   grunt.registerTask('internationalize', function () {

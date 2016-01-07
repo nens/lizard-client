@@ -159,7 +159,7 @@ angular.module('lizard-nxt')
      *                            bottom, left and right padding.
      *                            All values in px.
      * @param {array} data        Array of data objects.
-     * @param {int-or-string} key key to the values for the scale and
+     * @param {string} key (int or string) key to the values for the scale and
      *                            axis in the data element
      * @param {object} options    options object that will be passed
      *                            to the d3 scale and axis.
@@ -215,7 +215,7 @@ angular.module('lizard-nxt')
      * @memberOf angular.module('lizard-nxt').NxtD3
      *
      * @param {array} data        Array of data objects.
-     * @param {int-or-string} key to the value in the array or object.
+     * @param {string} key to the value in the array or object.
      * @description returns the maximum and minimum
      * @return {object} containing the max and min
      */

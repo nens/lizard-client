@@ -725,7 +725,7 @@ angular.module('lizard-nxt')
    * @descriptions - Round numbers, but use specified decimalCount for
    *                 resolution
    * @param {number} nr- The number to round.
-   * @param {integer/undefined} - The amount of decimals wanted.
+   * @param {integer} - The amount of decimals wanted. Integer of undefined
    * @return {float} - The formatted number
    */
   this.round = function (nr, decimalCount) {

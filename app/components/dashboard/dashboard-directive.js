@@ -19,9 +19,8 @@ angular.module('dashboard')
   var link = function (scope, element, attrs) {
 
     var TL_TOP_MARGIN = 25, // margin plus the temporal.at label
-        GRAPH_PADDING = 5,
+        GRAPH_PADDING = 8,
         GRAPH_5_6th_PADDING_RATIO = 0.83, // The other 6th is used in the css.
-        TOP_ROW_MIN_HEIGHT = 50,
         tlDims = {},
         nGraphs = 1;
 
@@ -32,7 +31,7 @@ angular.module('dashboard')
 
 
     var getHeight = function () {
-      return element.height() - TOP_ROW_MIN_HEIGHT;
+      return element.height();
                                     // min-height from top row, we need to make
                                     // this dynamic or bigger when we are going
                                     // to use the top row for maps etc.
@@ -43,6 +42,7 @@ angular.module('dashboard')
       nGraphs = Object.keys(scope.dashboard.content).length;
       scope.dashboard.dims.height =
         (getHeight() - tlDimensions.height - TL_TOP_MARGIN) / nGraphs - GRAPH_PADDING;
+
       scope.dashboard.dims.width = UtilService.getCurrentWidth() - UtilService.OMNIBOX_WIDTH
         + GRAPH_5_6th_PADDING_RATIO * UtilService.TIMELINE_LEFT_MARGIN;
     };
@@ -69,7 +69,10 @@ angular.module('dashboard')
       item.data = response.data || response.events;
 
       item.aggWindow = State.temporal.aggWindow;
-      scope.tctx.content[response.layerSlug] = item;
+      scope.dashboard.content[response.layerSlug] = item;
+
+      resize(tlDims);
+
     };
 
     var putEventDataOnScope = function (response) {
@@ -120,6 +123,9 @@ angular.module('dashboard')
             ts.name = ts.location.name
               + ', '
               + ts.parameter_referenced_unit.parameter_short_display_name;
+            ts.unit = ts
+              .parameter_referenced_unit
+              .referenced_unit_short_display_name;
             ts.type = 'timeseries';
             putDataOnScope(ts);
           });
@@ -154,10 +160,6 @@ angular.module('dashboard')
             } else if (State.box.type === 'point' && response.type !== 'Event') {
               putDataOnScope(response);
             }
-          }
-
-          if (tlDims) {
-            resize(tlDims);
           }
 
         });
