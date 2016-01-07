@@ -358,6 +358,18 @@ module.exports = function (grunt) {
       }
     },
 
+    imagemin: {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.app %>/images',
+          src: '{,*/}*.{png,jpg,jpeg,gif}',
+          dest: '<%= yeoman.dist %>/images'
+        }]
+      }
+    },
+
+
     svgmin: {
       dist: {
         files: [{
@@ -516,6 +528,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-usemin');
+    grunt.loadNpmTasks('grunt-contrib-imagemin');
     grunt.loadNpmTasks('grunt-svgmin');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-ng-annotate');
@@ -530,6 +543,7 @@ module.exports = function (grunt) {
       'wiredep',
       'useminPrepare',
       'sass',
+      'imagemin',
       'copy:styles',
       'autoprefixer',
       'svgmin',
