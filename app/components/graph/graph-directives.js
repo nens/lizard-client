@@ -96,19 +96,6 @@ angular.module('lizard-nxt')
     var graphUpdateHelper = function () {
       graphCtrl.setData(scope);
 
-      graphCtrl.data = [{
-      keys: {x :0, y: 1},
-      labels: {y: 'jh'},
-      values: [[0,2],[2,4], [3,5], [4, 3], [2.5, 3.1]]
-    }, 
-      {
-      keys: {x :0, y: 1},
-      labels: {y: 'jh'},
-      values: [[1,3],[0,4], [3,1]]
-    }]
-
-
-
       // UpdateData is called with temporal.timelineMoving to draw subset for
       // performance reasons.
       graphCtrl.updateData.call(
@@ -342,17 +329,8 @@ angular.module('lizard-nxt')
   var link = function (scope, element, attrs, graphCtrl) {
     var data = graphCtrl.data,
         graph = graphCtrl.graph,
-        //keys = graphCtrl.keys,
         temporal = graphCtrl.type === 'temporal',
         drawSubset = false;
-
-    data = [{
-      keys: {x :0, y: 1},
-      labels: {y: 'jh'},
-      values: [[0,2],[2,4], [2.5, 3.1], [3,5], [4, 3], ]
-    }]
-
-    graphCtrl.data = data;
 
     /** 
      * data is expected to be 'self-contained'

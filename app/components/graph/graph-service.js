@@ -206,21 +206,23 @@ angular.module('lizard-nxt')
      * @memberOf Graph
      * @param {object} data   Currently supports the format:
      *                        [
-     *                          [value, value],
+     *                          {
+     *                            keys: {x: 'bla', y: 'blo'},
+     *                            values: [value, value]},
+     *                            labels: {y: 'Water', x: 'Time'}
+     *                          },
+     *                          {
+     *                            keys ......
      *                          ...,
      *                        ]
-     * @param {object} keys   Mapping between x and y values of data object:
-     *                        example: {x: 0, y: 1}
-     * @param {object} labels Object {x: 'x label', y: 'y label'} will be
-     *                        mapped to axis labels of the graph
-     * @param {boolean} temporal to draw an time axis or not.
+    * @param {boolean} temporal to draw an time axis or not.
      * @param {boolean} transitioning to draw a subset of data now, and the full
      *                                set after a timeout if drawline is not
      *                                called again before the timeout finishes.
      *                                Use transitioning = true when callig this
      *                                function many times as a result of a user
      *                                induced action.
-     * @description           Draws a line, if necessary sets up the graph,
+     * @description           Draws lines, if necessary sets up the graph,
      *                        if necessary modifies domain and redraws axis,
      *                        and draws the line according to the data object.
      *                        Currently only a linear scale on the x-axis is
@@ -230,8 +232,8 @@ angular.module('lizard-nxt')
       value: function (data, temporal, transitioning) {
         // default take the first as initialization
         var keys = data[0].keys;
-        var values = data[0].values
-        var labels = data[0].labels
+        var values = data[0].values;
+        var labels = data[0].labels;
         if (!this._xy) {
           var options = {
             x: {
