@@ -37,7 +37,6 @@ angular.module('omnibox')
     var rmDataAndRequest = function () {
       DataService.reject('omnibox');
       $scope.box.content = {};
-      State.spatial.region = {};
     };
 
 
