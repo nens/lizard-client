@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.2.9) (XXXX-XX-XX)
 ---------------------
+-
+
+
+Release 2.2.10 (2016-1-8)
+---------------------
 
 - Fix pagination for scenarios page.
 
