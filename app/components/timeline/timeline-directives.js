@@ -414,19 +414,6 @@ angular.module('lizard-nxt')
 
     // END HELPER FUNCTIONS
 
-    scope.timeline.toggleTimelineVisiblity = function () {
-      showTimeline = !showTimeline;
-      if (!showTimeline && State.context !== 'dashboard') {
-        element[0].style.height = 0;
-        scope.timelineVisible = false;
-      } else {
-        updateTimelineSize(scope.events.nEvents);
-        scope.timelineVisible = true;
-      }
-    };
-
-    scope.timeline.toggleTimelineVisiblity();
-
     scope.timeline.toggleTimeCtx = function () {
       scope.timeline.toggleTimelineVisiblity();
       scope.transitionToContext(State.context === 'map' ? 'dashboard' : 'map');
@@ -499,7 +486,6 @@ angular.module('lizard-nxt')
 
     scope.$watch(State.toString('context'), function (n, o) {
       if (n === o) { return; }
-      showTimeline = false; // It toggles
       scope.timeline.toggleTimelineVisiblity();
       getTimeLineData(); // It also removes data..
       reshift(State.context);
