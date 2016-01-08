@@ -1,0 +1,19 @@
+<div>
+
+  <cardheader asset="asset"></cardheader>
+
+  <div class="card-content">
+
+    <em ng-if="ts.length === 0" translate>No data available for this asset</em>
+
+    <div ng-repeat="s in ts">
+      <div class="card-content-list">
+        <i class="fa fa-clock-o"></i>
+        <span><% s.location.name %>, <% s.parameter_referenced_unit.parameter_short_display_name %></span>
+      </div>
+      <div class="circle pull-right"></div>
+    </div>
+
+  </div>
+
+</div>

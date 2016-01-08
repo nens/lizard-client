@@ -198,7 +198,6 @@ angular.module('omnibox')
     $scope.$on('$destroy', function () {
       DataService.reject('omnibox');
       $scope.box.content = {};
-      State.spatial.here = [];
       ClickFeedbackService.emptyClickLayer(MapService);
     });
   }
