@@ -91,6 +91,14 @@ Release 2.3.1 (2015-11-5)
   track of the url for nxt-d3 instances.
 
 
+Release 2.2.10 (2016-1-8)
+---------------------
+
+- Fix pagination for scenarios page.
+
+- Fix WMSGetFeatureInfo bug wrong relative pixel coordinates.
+
+
 Release 2.2.9 (2015-12-16)
 ---------------------
 

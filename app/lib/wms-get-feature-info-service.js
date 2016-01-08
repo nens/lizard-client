@@ -45,7 +45,7 @@ angular.module('lizard-nxt')
 
     var size = map.getSize(),
         bbox = map.getBounds().toBBoxString(),
-        point = map.latLngToLayerPoint(options.geom);
+        point = map.latLngToContainerPoint(options.geom);
 
     var params = {
       SERVICE: 'WMS',
@@ -65,7 +65,7 @@ angular.module('lizard-nxt')
 
     var url = layer.url + '/?';
     for (var key in params) {
-        if (url != "") {
+        if (url !== "") {
             url += "&";
         }
         url += key + "=" + params[key];
