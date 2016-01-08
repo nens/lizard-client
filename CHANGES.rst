@@ -4,6 +4,8 @@ Changelog of lizard-nxt client
 Unreleased (2.4.1) (XXXX-XX-XX)
 -------------------------------
 
+- Added close-card directive to remove assets from selection.
+
 - Created specific omnibox dashboard card for dashboard.
 
 - Keep global state when destroying omnibox controller so other controllers can use draw cards for the same assets.
