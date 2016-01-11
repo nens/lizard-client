@@ -30,6 +30,7 @@ angular.module('ngResource').config([
  */
 angular.module("lizard-nxt", [
   'lizard-nxt-filters',
+  'ngAnimate',
   'annotations',
   'data-menu',
   'map',

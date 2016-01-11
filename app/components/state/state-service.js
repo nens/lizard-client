@@ -91,10 +91,6 @@ angular.module('global-state')
 
     // Spatial
     state.spatial = {
-      here: {},
-      points: [], // History of here for drawing and creating line and polygons
-      region: {},// geojson feature describing region, with name and type in
-              // properties
       bounds: { // leaflet bounds object, initialized with a validity check
                 // function.
         isValid: function () { return false; }
@@ -106,6 +102,10 @@ angular.module('global-state')
     };
 
     state.selected = {
+      assets: [], // hydra-core asset id <entity>$<id>
+      geometries: [], // points, lines, polygons
+      timeseries: [], // <uuid>
+      events: [], // <id>
       reset: function () {
         // Selected items
         state.selected.assets = [];

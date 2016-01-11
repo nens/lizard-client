@@ -10,8 +10,8 @@
  */
 
 angular.module('map')
-.service('MapService', ['$rootScope', '$q', 'LeafletService', 'LeafletVectorService', 'DataService', 'NxtNonTiledWMSLayer', 'NxtMapLayer', 'State',
-  function ($rootScope, $q, LeafletService, LeafletVectorService, DataService, NxtNonTiledWMSLayer, NxtMapLayer, State) {
+.service('MapService', ['$rootScope', '$q', 'LeafletService', 'LeafletVectorService','CabinetService', 'DataService', 'NxtNonTiledWMSLayer', 'NxtRegionsLayer', 'NxtMapLayer', 'State',
+  function ($rootScope, $q, LeafletService, LeafletVectorService, CabinetService, DataService, NxtNonTiledWMSLayer, NxtRegionsLayer, NxtMapLayer, State) {
 
     var service = {
 
@@ -131,11 +131,172 @@ angular.module('map')
         return service._map.getBounds();
       },
 
+      line: {
+        geometry: {
+          type: 'LineString',
+          coordinates: []
+        }
+      },
+
       /**
        * @description legacy function.
        */
       latLngToLayerPoint: function (latlng) {
         return service._map.latLngToLayerPoint(latlng);
+      },
+
+      _setAssetOrGeomFromUtfOnState: function (latLng) {
+        State.selected.assets = [];
+        State.selected.geometries = [];
+        DataService.utfLayerGroup.getData('dataService', {'geom': latLng})
+        .then(null, null, function (response) {
+
+          var data = response.data;
+          if (response.data) {
+            // Create one entry in selected.assets.
+            var assetId = data.entity_name + '$' + data.id;
+            State.selected.assets = [assetId];
+            State.selected.geometries = [];
+          }
+
+          else {
+            State.selected.assets = [];
+            service._setGeomFromUtfToState(latLng);
+          }
+        });
+      },
+
+      _setGeomFromUtfToState: function (latLng) {
+        // Create one entry in selected.geometries.
+        State.selected.geometries = [{
+          geometry: {
+            type: 'Point',
+            coordinates: [latLng.lng, latLng.lat]
+          }
+        }];
+      },
+
+
+      /**
+       * @function
+       * @description Checks whether asset is already in the assets container
+       * @params {array} list of assets
+       * @params {number} id of asset that you want to append
+       */
+      _isUniqueAssetId: function (assets, assetId) {
+        // dedupe the shiz
+        var unique = true;
+        assets.filter(function (item, index) {
+          if (item === assetId) {
+            unique = false;
+            return item;
+          }
+        });
+        return unique;
+      },
+
+      _addAssetOrGeomFromUtfOnState: function (latLng) {
+
+        DataService.utfLayerGroup.getData('dataService', {'geom': latLng})
+        .then(null, null, function (response) {
+
+          var data = response.data;
+          if (data) {
+            // Create one entry in selected.assets.
+            var assetId = data.entity_name + '$' + data.id;
+            if (service._isUniqueAssetId(State.selected.assets, assetId)) {
+              State.selected.assets.addAsset(assetId);
+            }
+          }
+
+          else {
+            service._addGeomFromUtfToState(latLng);
+          }
+        });
+      },
+
+      _addGeomFromUtfToState: function (latLng) {
+        // Create one entry in selected.geometries.
+        State.selected.geometries.addGeometry({
+          geometry: {
+            type: 'Point',
+            coordinates: [latLng.lng, latLng.lat]
+          }
+        });
+      },
+
+      /**
+       * Callback for the map when clicked.
+       * @param  {[type]} latLng [description]
+       * @return {[type]}        [description]
+       */
+      spatialSelect: function (latLng) {
+        var utfSlug = DataService.utfLayerGroup.slug;
+        if (State.box.type === 'point') {
+          if (State.layerGroups.active.indexOf(utfSlug) !== -1) {
+            this._setAssetOrGeomFromUtfOnState(latLng);
+          }
+          else {
+            this._setGeomFromUtfToState(latLng);
+          }
+        }
+
+        else if (State.box.type === 'multi-point') {
+          if (State.layerGroups.active.indexOf(utfSlug) !== -1) {
+            service._addAssetOrGeomFromUtfOnState(latLng);
+          }
+          else {
+            this._addGeomFromUtfToState(latLng);
+          }
+        }
+        else if (State.box.type === 'line') {
+          if (this.line.geometry.coordinates.length === 2
+            || State.selected.geometries.length > 0) {
+            State.selected.geometries = [];
+            this.line.geometry.coordinates = [];
+          }
+          if (this.line.geometry.coordinates.length < 2) {
+            this.line.geometry.coordinates.push([latLng.lng, latLng.lat]);
+          }
+          if (this.line.geometry.coordinates.length === 2) {
+            State.selected.geometries.addGeometry(this.line);
+          }
+        }
+      },
+
+      getRegions: function () {
+
+        /**
+         * Callback for clicks on regions. Calls fillRegion.
+         *
+         * @param  {object} leaflet ILayer that recieved the click.
+         */
+        var clickCb = function (layer) {
+          for (var key in layer.feature.properties) {
+            var newkey = key === 'type' ? 'regionType' : key;
+            layer.feature[newkey] = layer.feature.properties[key];
+          }
+          layer.feature.properties = {};
+          State.selected.geometries = [layer.feature];
+        };
+
+       CabinetService.regions.get({
+          z: State.spatial.view.zoom,
+          in_bbox: State.spatial.bounds.getWest()
+            + ','
+            + State.spatial.bounds.getNorth()
+            + ','
+            + State.spatial.bounds.getEast()
+            + ','
+            + State.spatial.bounds.getSouth()
+        })
+        .then(function (regions) {
+          NxtRegionsLayer.add(service, regions.results, clickCb);
+        });
+      },
+
+      removeRegions: function () {
+        NxtRegionsLayer.remove(this);
       },
 
       /**

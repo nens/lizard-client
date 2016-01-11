@@ -6,6 +6,14 @@ Unreleased (2.4.1) (XXXX-XX-XX)
 
 - Added close-card directive to remove assets from selection.
 
+- Added state.assets.selection and state.geometries.selection to store ids of
+  selected assets or geometry.
+
+- Migrate data-fetch logic from box to data-service. DataService.assets and
+  DataService.geometries contains data of the selection.
+
+- Added ng-animate to omnibox.
+
 - Created specific omnibox dashboard card for dashboard.
 
 - Keep global state when destroying omnibox controller so other controllers can use draw cards for the same assets.
