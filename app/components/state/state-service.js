@@ -106,6 +106,10 @@ angular.module('global-state')
     };
 
     state.selected = {
+      assets: [], // hydra-core asset id <entity>$<id>
+      geometries: [], // points, lines, polygons
+      timeseries: [], // <uuid>
+      events: [], // <id>
       reset: function () {
         // Selected items
         state.selected.assets = [];

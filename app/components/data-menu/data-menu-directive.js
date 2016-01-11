@@ -30,11 +30,17 @@ angular.module('data-menu')
  * @description Makes the data menu items
  */
 angular.module('data-menu')
-  .directive('datamenuItem', [function () {
+  .directive('datamenuItem', ['State', function (State) {
 
   var link = function (scope, elem, attrs) {
     scope.changeBoxType = function () {
-      scope.boxType = scope.type; 
+      scope.boxType = scope.type;
+      if (scope.type === 'point') {
+        var lastGeom = State.selected.geometries.length -1;
+        State.selected.geometries = [State.selected.geometries[lastGeom]];
+        var lastAsset = State.selected.assets.length -1;
+        State.selected.assets = [State.selected.assets[lastAsset]];
+      }
     };
 
   };

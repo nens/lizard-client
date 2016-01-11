@@ -53,7 +53,7 @@ angular.module('map')
         * @param  {event}  e Leaflet event object
         */
       var _clicked = function (e) {
-        State.spatial.here = e.latlng;
+        MapService.spatialSelect(e.latlng);
       };
 
       /**

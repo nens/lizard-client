@@ -20,6 +20,7 @@
 angular.module('data-menu')
   .service('DataService', [
     '$q',
+    'AssetService',
     'TimeseriesService',
     'dataLayers',
     'DataLayerGroup',
@@ -27,6 +28,7 @@ angular.module('data-menu')
 
     function (
       $q,
+      AssetService,
       TimeseriesService,
       dataLayers,
       DataLayerGroup,
@@ -44,6 +46,7 @@ angular.module('data-menu')
         }
       });
 
+      var instance = this;
 
       /**
        * Creates a new layerGroup and adds to the layerGroups
@@ -63,7 +66,23 @@ angular.module('data-menu')
       this._createLayerGroups = function (serverSideLayerGroups) {
         var layerGroups = {};
         angular.forEach(serverSideLayerGroups, function (sslg) {
-          this.createLayerGroup(sslg);
+
+          var utf = false;
+
+          angular.forEach(sslg.layers, function (layer) {
+            if (layer.format === 'UTFGrid') {
+              utf = true;
+            }
+          }, this);
+
+          var lg = new DataLayerGroup(sslg);
+
+          if (utf) { this.utfLayerGroup = lg; }
+
+          this.layerGroups[lg.slug] = lg;
+
+          // utf ? this.utfLayerGroup = lg :
+
         }, this);
         return this.layerGroups;
       };
@@ -83,6 +102,60 @@ angular.module('data-menu')
         configurable: false
       });
 
+      // Define assets on State and update DataService.assets.
+      instance.assets = [];
+      var _assets = [];
+      Object.defineProperty(State.selected, 'assets', {
+        get: function () { return _assets; },
+        set: function (assets) {
+          var oldAssets = angular.copy(instance.assets);
+          AssetService.updateAssets(instance.assets, _assets, assets)
+          .then(function (assets) {
+            instance.assets = assets;
+            instance.getGeomDataForAssets(oldAssets, instance.assets);
+          });
+          _assets = assets;
+        }
+      });
+
+      // Define geometries on State and update DataService.geometries.
+      var _geometries = [];
+      Object.defineProperty(State.selected, 'geometries', {
+        get: function () { return _geometries; },
+        set: function (geometries) {
+          // instance._updateGeometries(_geometries, geometries);
+          _geometries = geometries;
+          console.log(geometries);
+        }
+      });
+
+      // Define timeseries on State and update DataService.timeseries.
+      var _timeseries = [];
+      Object.defineProperty(State.selected, 'timeseries', {
+        get: function () { return _timeseries; },
+        set: function (timeseries) {
+          instance._updateTimeseries(_timeseries, timeseries);
+          _timeseries = timeseries;
+        }
+      });
+
+      // Define events on State and update DataService.events.
+      var _events = [];
+      Object.defineProperty(State.selected, 'events', {
+        get: function () { return _events; },
+        set: function (events) {
+          instance._updateEvents(_events, events);
+          _events = events;
+        }
+      });
+
+      // Immutable representation of all layergroups set on State.layerGroups
+      Object.defineProperty(State.layerGroups, 'all', {
+        value: Object.keys(layerGroups),
+        writeable: false,
+        configurable: false
+      });
+
       this.REJECTION_REASONS = {};
 
       Object.defineProperty(this.REJECTION_REASONS, 'OVERRIDDEN', {
@@ -92,7 +165,6 @@ angular.module('data-menu')
       });
 
       // List of slugs of active layerGroups, two-way.
-      var instance = this;
       Object.defineProperty(State.layerGroups, 'active', {
         get: function () {
           return Object.keys(layerGroups).filter(function (layerGroup) {
@@ -248,6 +320,19 @@ angular.module('data-menu')
 
         State.layerGroups.gettingData = true;
         return defer.promise;
+      };
+
+      this.getGeomDataForAssets = function (oldAssets, assets) {
+        console.log(oldAssets, assets);
+        var newAssets = assets.filter(function (asset) {
+          return !oldAssets.filter(function (oldAsset) {
+            return oldAsset.entity_name === asset.entity_name && oldAsset.id === asset.id;
+          }).length;
+        });
+
+        newAssets.forEach(function (asset) {
+          getGeomData(asset);
+        });
       };
 
       /**
