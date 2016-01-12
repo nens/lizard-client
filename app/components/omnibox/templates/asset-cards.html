@@ -1,0 +1,35 @@
+<div>
+
+    <div class="card active">
+      <cardattributes waterchain="asset"></cardattributes>
+    </div>
+    <timeseries
+      ng-if="asset.num_timeseries &&
+             context !== 'dashboard'"
+      asset="asset"
+      time-state="timeState">
+    </timeseries>
+
+    <annotations asset="asset" time-state="timeState"></annotations>
+
+  <div ng-if="asset.filters
+    || asset.pumps">
+    <div class="card active">
+      <nestedasset
+        asset="asset">
+      </nestedasset>
+    </div>
+
+    <timeseries
+      ng-if="asset.selectedAsset &&
+             context !== 'dashboard'"
+      asset="asset.selectedAsset"
+      time-state="timeState">
+    </timeseries>
+
+  </div>
+
+  <geometry-cards geom="asset" header="false"></geometry-cards>
+
+</div>
+

@@ -1,0 +1,16 @@
+
+<div>
+
+  <cardheader ng-if="header" geom="geom"></cardheader>
+
+  <div ng-if="geom.properties.rain">
+    <rain></rain>
+  </div>
+
+  <div ng-repeat="(slug, lg) in geom.properties"
+       class="card active"
+       ng-if="slug !== 'rain'">
+    <defaultpoint lg="lg" name="slug" state="omnibox.state" is-url="isUrl"></defaultpoint>
+  </div>
+
+</div>
