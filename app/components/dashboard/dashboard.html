@@ -7,16 +7,11 @@
 
         <graph
           ng-if="item.type === 'timeseries'"
-          line
+          multiline
           data="item.data"
           dimensions="dashboard.dims"
           type="temporal"
           temporal="dashboard.state.temporal"
-          ylabel="item.unit"
-          keys="{
-            x: 'timestamp',
-            y: { 'y0': 'min', 'y1': 'max' }
-          }"
           name="<% item.name %>">
         </graph>
 

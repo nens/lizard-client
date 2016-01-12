@@ -31,7 +31,7 @@ angular.module('lizard-nxt')
    *                    the controller's instantiation, but before
    *                    the link. Dimensions have sensible defaults
    *                    that may be partially overwritten by setting
-   *                    the dimensions attribute of the graph.
+   *                    the dimensions a/ttribute of the graph.
    */
   preCompile = function (scope, element, attrs, graphCtrl) {
     /*
@@ -332,16 +332,16 @@ angular.module('lizard-nxt')
         temporal = graphCtrl.type === 'temporal',
         drawSubset = false;
 
-    /** 
+    /**
      * data is expected to be 'self-contained'
      * e.g. data = [{
      *    keys: {x: 'time', y: 'value'},
      *    label: {y: 'Temperature'},
      *    values: [[1, 2]....]}
      *    ]
-     *  
+     *
      */
-    graph.drawMultiLine(data, temporal);
+    graph.drawMultiLine(data, null, null, temporal);
 
     // scope.line is the scope defined by the line controller. Preferably it is
     // passed around more explicitly through the graph directive, but angular is

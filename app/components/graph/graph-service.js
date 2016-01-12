@@ -229,7 +229,7 @@ angular.module('lizard-nxt')
      *                        supported.
      */
     drawMultiLine: {
-      value: function (data, temporal, transitioning) {
+      value: function (data, keysdummy, labelsdummy, temporal, transitioning) {
         // default take the first as initialization
         var keys = data[0].keys;
         var values = data[0].values;
@@ -292,7 +292,9 @@ angular.module('lizard-nxt')
             DELAY // delay with 30 ms
           );
 
-          data = getDataSubset(data, DATA_REDUCTION_FACTOR);
+          data.forEach(function (item) {
+            item.values = getDataSubset(item.values, DATA_REDUCTION_FACTOR);
+          });
         }
 
        var colors = [
@@ -306,21 +308,22 @@ angular.module('lizard-nxt')
         ];
        var path = this._path;
 
-        //if (!path) {
-       var fg = this._svg.select('g').select('#feature-group');
-       // bring to front
-       fg.node().parentNode.appendChild(fg.node());
-       path = fg.selectAll("path");
-        //}
+      //  if (!path) {
+         var fg = this._svg.select('g').select('#feature-group');
+         // bring to front
+         fg.node().parentNode.appendChild(fg.node());
+         path = fg.selectAll("path").remove();
+         path = fg.selectAll('path')
 
+        // }
         path = path
-          .data(data);
+          .data([].concat(data));
 
         path.enter()
             .append("path")
             .classed('graph-lines', true)
             .transition()
-            .duration('30ms')
+            .duration('30')
             .attr("d", function (d) {
               // Prevent returning invalid values for d
               var p = pathFn(d.values) || "M0, 0";
@@ -328,25 +331,25 @@ angular.module('lizard-nxt')
             })
             .attr('style', function (d, i) {
               return 'stroke: ' + colors[i] + '; fill:none;';
-            })
-        
-         path.exit().remove();
+            });
+
+        path.exit().remove();
         //.style('fill', fill)
         //.attr('style', 'stroke: #000');
 
         this._path = path;
 
         if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-          addInteractionToPath(
-            this._svg,
-            this.dimensions,
-            data,
-            keys,
-            labels,
-            this._path,
-            this._xy,
-            this.transTime
-          );
+          // addInteractionToPath(
+          //   this._svg,
+          //   this.dimensions,
+          //   data,
+          //   keys,
+          //   labels,
+          //   this._path,
+          //   this._xy,
+          //   this.transTime
+          // );
         }
 
       }

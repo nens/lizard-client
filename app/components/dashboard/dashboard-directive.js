@@ -1,6 +1,6 @@
-
 angular.module('dashboard')
   .directive('dashboard',
+
              [
               'EventAggregateService',
               'State',
@@ -8,13 +8,15 @@ angular.module('dashboard')
               'UtilService',
               'Timeline',
               'TimeseriesService',
+              '$q',
               function (
                 EventAggregateService,
                 State,
                 DataService,
                 UtilService,
                 Timeline,
-                TimeseriesService) {
+                TimeseriesService,
+                $q) {
 
   var link = function (scope, element, attrs) {
 
@@ -111,13 +113,19 @@ angular.module('dashboard')
         scope.dashboard.dims.padding.left -
         scope.dashboard.dims.padding.right;
 
+      var fauxResponse = {data: [], type: 'timeseries'};
+      var promises = [];
+
       State.selected.assets.forEach(function (item) {
+        var defer = $q.defer();
+        promises.push(defer.promise);
         TimeseriesService.getTimeSeriesForObject(
               item,
               State.temporal.start,
               State.temporal.end,
               graphWidth // last arg was defer... is that important?
               ).then(function (response) {
+
           angular.forEach(response.results, function (ts) {
             ts.layerSlug = ts.uuid;
             ts.name = ts.location.name
@@ -127,9 +135,25 @@ angular.module('dashboard')
               .parameter_referenced_unit
               .referenced_unit_short_display_name;
             ts.type = 'timeseries';
-            putDataOnScope(ts);
+            ts.data = {
+              labels: {
+                y: ts.unit,
+                x: 'Time'
+              },
+              keys: {
+                x: 'timestamp',
+                y: {y0: 'min', y1: 'max'}
+              },
+              values: ts.events
+            };
+            defer.resolve();
+            fauxResponse.data.push(ts.data);
           });
         });
+      });
+
+      $q.all(promises).then(function () {
+        putDataOnScope(fauxResponse);
       });
 
       State.selected.geometries.forEach(function (geom) {
