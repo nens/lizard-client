@@ -1,6 +1,6 @@
 <header class="card-header">
 
-  <div class="card-header-center">
+  <div ng-if="asset" class="card-header-center">
     <close-card entity="asset.entity_name" id="asset.id"></close-card>
 
       <span class="icons fa-stack fa-lg">
@@ -20,4 +20,27 @@
       <em><% asset.code %></em>
 
   </div>
+
+  <div ng-if="geom" class="card-header-center">
+    <close-card geometry="geom"></close-card>
+
+<!--       <span class="icons fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i
+          class="asset-icon fa fa-stack"
+          ng-class="getIconClass(asset.entity_name)">
+        </i>
+      </span>
+ -->
+      <span class="asset-title" translate>
+        <% geom.geometry.coordinates[1] | number : 3 %> - <% geom.geometry.coordinates[0] | number : 3 %>
+      </span>
+
+      <br>
+
+      <em><% asset.code %></em>
+
+
+  </div>
+
 </header>

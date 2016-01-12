@@ -114,11 +114,18 @@ angular.module('data-menu')
         _assets = assets;
         console.log('State.selected.assets:', State.selected.assets);
         State.selected.assets.addAsset = addAsset;
+        State.selected.assets.removeAsset = removeAsset;
       };
 
       var addAsset = function (asset) {
         var newAssets = angular.copy(_assets);
         newAssets.push(asset);
+        setAssets(newAssets);
+      };
+
+      var removeAsset = function (asset) {
+        var newAssets = angular.copy(_assets);
+        newAssets.splice(_assets.indexOf(asset), 1);
         setAssets(newAssets);
       };
 
@@ -130,6 +137,7 @@ angular.module('data-menu')
       });
 
       State.selected.assets.addAsset = addAsset;
+      State.selected.assets.removeAsset = removeAsset;
 
       // Define geometries on State and update DataService.geometries.
       var setGeometries = function (geometries) {
@@ -142,6 +150,7 @@ angular.module('data-menu')
         _geometries = geometries;
         console.log('State.selected.geometries:', State.selected.geometries);
         State.selected.geometries.addGeometry = addGeometry;
+        State.selected.geometries.removeGeometry = removeGeometry;
       };
 
       var addGeometry = function (geometry) {
@@ -149,6 +158,21 @@ angular.module('data-menu')
         newGeoms.push(geometry);
         setGeometries(newGeoms);
       };
+
+      var removeGeometry = function (geometry) {
+        var newGeometries = angular.copy(_geometries);
+        var index = -1;
+        _geometries.forEach(function(geom, i) {
+          if (geom.geometry.coordinates[0] === geometry.geometry.coordinates[0]
+          && geom.geometry.coordinates[1] === geometry.geometry.coordinates[1]
+          && geom.geometry.coordinates[2] === geometry.geometry.coordinates[2]) {
+            index = i;
+          }
+        });
+        newGeometries.splice(index, 1);
+        setGeometries(newGeometries);
+      };
+
 
       instance.geometries = [];
       var _geometries = [];
@@ -158,6 +182,7 @@ angular.module('data-menu')
       });
 
       State.selected.geometries.addGeometry = addGeometry;
+      State.selected.geometries.removeGeometry = removeGeometry;
 
       // Define timeseries on State and update DataService.timeseries.
       var _timeseries = [];
@@ -387,8 +412,8 @@ angular.module('data-menu')
 
           promises.push(
             this.getGeomData(geom)
-            .then(function(geometry) {
-              instance.geometries.push(geometry);
+            .then(function(geo) {
+              instance.geometries.push(geo);
             })
           );
 
@@ -407,13 +432,14 @@ angular.module('data-menu')
 
         newAssets.forEach(function (asset) {
           this.getGeomData(asset)
-          .then(function(geometry) {
-            asset.geometry = geometry;
+          .then(function(geo) {
+            asset.geometry = geo.geometry;
+            asset.properties = geo.properties;
           });
         }, this);
       };
 
-      this.getGeomData = function (geom) {
+      this.getGeomData = function (geo) {
         if (this._defer) {
           this._defer.reject(this.REJECTION_REASONS.OVERRIDDEN); // It is a list because $q.all can not
         }                                // be deregistered.
@@ -424,8 +450,8 @@ angular.module('data-menu')
         var instance = this;
         var g = {};
 
-        if (geom.geometry.type === 'Point') {
-          g = L.latLng(geom.geometry.coordinates[0], geom.geometry.coordinates[1]);
+        if (geo.geometry.type === 'Point') {
+          g = L.latLng(geo.geometry.coordinates[0], geo.geometry.coordinates[1]);
         }
         else {
           throw Error(); // implement
@@ -434,15 +460,15 @@ angular.module('data-menu')
           if (layerGroup.slug === instance.utfLayerGroup.slug) { return; }
           promises.push(
             layerGroup.getData('DataService', {'geom': g}).then(null, null, function (response) {
-              geom.properties = geom.properties || {};
-              geom.properties[response.layerGroupSlug] = response;
+              geo.properties = geo.properties || {};
+              geo.properties[response.layerGroupSlug] = response;
             })
           );
         });
 
         $q.all(promises).then(function () {
             State.layerGroups.gettingData = false;
-            defer.resolve(geom);
+            defer.resolve(geo);
             defer = undefined; // Clear the defer
         });
 

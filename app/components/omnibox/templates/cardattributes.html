@@ -1,12 +1,12 @@
 <div>
 
-  <cardheader asset="waterchain.layers.waterchain_grid.data"></cardheader>
+  <cardheader asset="waterchain"></cardheader>
 
   <!-- this used to be hidden when !fullDetails -->
   <table id="kunstwerk-table" class="table table-condensed table-hover">
 
     <tr class="attr-row"
-        ng-repeat="obj in wanted[waterchain.layers.waterchain_grid.data.entity_name].rows"
+        ng-repeat="obj in wanted[waterchain.entity_name].rows"
         >
 
       <td class="fixed-width-card-table">
@@ -16,19 +16,19 @@
       </td>
 
       <td class="lineout"
-          ng-if="waterchain.layers.waterchain_grid.data[obj.attrName] !== undefined
-            && waterchain.layers.waterchain_grid.data[obj.attrName] !== null
-            && waterchain.layers.waterchain_grid.data[obj.attrName] !== ''
-            && waterchain.layers.waterchain_grid.data[obj.attrName] !== 'pumps'
-            && waterchain.layers.waterchain_grid.data[obj.attrName] !== 'filters'">
+          ng-if="waterchain[obj.attrName] !== undefined
+            && waterchain[obj.attrName] !== null
+            && waterchain[obj.attrName] !== ''
+            && waterchain[obj.attrName] !== 'pumps'
+            && waterchain[obj.attrName] !== 'filters'">
         <div class="attr-row-content" ng-bind-html="$eval(obj.ngBindValue) + obj.valueSuffix">
         </div>
       </td>
 
       <td class="lineout"
-          ng-if="waterchain.layers.waterchain_grid.data[obj.attrName] === undefined
-            || waterchain.layers.waterchain_grid.data[obj.attrName] === null
-            || waterchain.layers.waterchain_grid.data[obj.attrName] === ''"
+          ng-if="waterchain[obj.attrName] === undefined
+            || waterchain[obj.attrName] === null
+            || waterchain[obj.attrName] === ''"
           rel="tooltip"
           data-toggle="tooltip"
           title="<% 'Example value' | translate %>">
@@ -39,10 +39,10 @@
   </table>
 
   <div class="structure-image-wrapper text-center"
-       ng-if="!!waterchain.layers.waterchain_grid.data.image_url && fullDetails">
+       ng-if="!!waterchain.image_url && fullDetails">
 
       <img class="structure-image"
-           ng-src="{{waterchain.layers.waterchain_grid.data.image_url}}" />
+           ng-src="{{waterchain.image_url}}" />
 
   </div>
 </div>

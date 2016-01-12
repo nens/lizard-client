@@ -18,22 +18,17 @@ angular.module('omnibox')
        *
        * Requires entity and id of asset on scope.
        */
-      scope.rmAsset = function () {
-        if (scope.entity === undefined || scope.id === undefined) {
-          throw new Error(
-            'Cannot remove asset from selection. Asset '
-            + 'entity_name: '
-            + scope.entity
-            + '. asset id: '
-            + scope.id
-          );
+      scope.rmAssetOrGeometry = function () {
+        if (scope.geometry) {
+          State.selected.geometries.removeGeometry(scope.geometry);
         }
 
-        var assetId = scope.entity + '$' + scope.id;
-        var selectedAssets = State.selected.assets;
-        var i = State.selected.assets.indexOf(assetId);
-        if (i >= 0) {
-          selectedAssets.splice(i, 1);
+        else if (scope.entity && scope.id) {
+          var assetId = scope.entity + '$' + scope.id;
+          var selectedAssets = State.selected.assets;
+          if (State.selected.assets.indexOf(assetId) >= 0) {
+            selectedAssets.removeAsset(assetId);
+          }
         }
       };
 
@@ -45,7 +40,8 @@ angular.module('omnibox')
       restrict: 'E',
       scope: {
         entity: '=',
-        id: '='
+        id: '=',
+        geometry: '='
       },
       replace: true,
       templateUrl: 'omnibox/templates/close-card.html'

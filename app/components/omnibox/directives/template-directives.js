@@ -9,6 +9,43 @@
  * * Detailswitch
  *
  */
+
+angular.module('omnibox')
+  .directive('assetCards', [
+    function () {
+  return {
+    link: function (scope) {
+    },
+    restrict: 'E',
+    scope: {
+      asset: '=',
+      timeState: '='
+    },
+    replace: true,
+    templateUrl: 'omnibox/templates/asset-cards.html'
+  };
+}]);
+
+
+angular.module('omnibox')
+  .directive('geometryCards', [
+    function () {
+  return {
+    link: function (scope) {
+      console.log(scope.header);
+    },
+    restrict: 'E',
+    scope: {
+      geom: '=',
+      timeState: '=',
+      header: '='
+    },
+    replace: true,
+    templateUrl: 'omnibox/templates/geometry-cards.html'
+  };
+}]);
+
+
 angular.module('omnibox')
   .directive('cardattributes', ['WantedAttributes',
     function (WantedAttributes) {
@@ -32,12 +69,14 @@ angular.module('omnibox')
     },
     restrict: 'E',
     scope: {
-      asset: '='
+      asset: '=',
+      geom: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/card-header.html'
   };
 }]);
+
 
 
 
