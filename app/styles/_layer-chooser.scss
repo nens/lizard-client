@@ -20,7 +20,7 @@
 }
 
 label.layer-chooser {
-    border: solid 2px rgba(0,0,0,0);
+    border: solid 2px rgba($black, 0);
     height: $height15;
     margin-bottom: 0;
     position: relative;
@@ -32,8 +32,8 @@ label.layer-chooser {
 }
 
 label.layer-chooser > span.layer-text {
-    background: rgb(239, 239, 239);
-    background: rgba(239, 239, 239, 0.9);
+    background: $deprecated-gray3;
+    background: rgba($deprecated-gray3, 0.9);
     color: $asbestos;
     height: 24px;
     padding: 4px 5px;
@@ -55,8 +55,8 @@ label.layer-chooser > span.layer-icon {
     transition: .3s ease;
     width: 60%;
     cursor: pointer;
-    background: rgb(255, 255, 255);
-    background: rgba(255, 255, 255, 0.6);
+    background: $white;
+    background: rgba($white, 0.6);
 }
 
 label.layer-chooser > span.layer-icon:hover {
@@ -89,7 +89,7 @@ label.layer-chooser > div.layer-img {
 
 .layer-switcher {
     background: $white;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba($white, 0.9);
     border-bottom-left-radius: 2px;
     list-style-type: none;
     overflow: hidden;
@@ -178,7 +178,7 @@ label.layer-chooser > div.layer-img {
 }
 
 .arrow-down {
-    border-left: 20px solid rgba(231, 76, 60, 0);
+    border-left: 20px solid rgba($alizarin, 0);
     border-right: 0 solid transparent;
     border-top: 30px solid $alizarin;
     height: $height7;
@@ -207,7 +207,7 @@ label.layer-chooser > div.layer-img {
 .eventLGIndicator {
     width: 40%;
     height: 100%;
-    background-color: #000; /* is set dynamically */
+    background-color: $black; /* is set dynamically */
     float: right;
 }
 
