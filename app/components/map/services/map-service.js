@@ -148,6 +148,7 @@ angular.module('map')
             // Create one entry in selected.assets.
             var assetId = data.entity_name + '$' + data.id;
             State.selected.assets = [assetId];
+            State.selected.geometries = [];
           }
 
           else {
@@ -193,11 +194,11 @@ angular.module('map')
         .then(null, null, function (response) {
 
           var data = response.data;
-          if (response.data) {
+          if (data) {
             // Create one entry in selected.assets.
             var assetId = data.entity_name + '$' + data.id;
             if (service._isUniqueAssetId(State.selected.assets, assetId)) {
-              State.selected.assets.push(assetId);
+              State.selected.assets.addAsset(assetId);
             }
           }
 
@@ -209,7 +210,7 @@ angular.module('map')
 
       _addGeomFromUtfToState: function (latLng) {
         // Create one entry in selected.geometries.
-        State.selected.geometries.push({
+        State.selected.geometries.addGeometry({
           geometry: {
             type: 'Point',
             coordinates: [latLng.lng, latLng.lat]

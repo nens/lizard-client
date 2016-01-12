@@ -103,31 +103,61 @@ angular.module('data-menu')
       });
 
       // Define assets on State and update DataService.assets.
+      var setAssets = function (assets) {
+        var oldAssets = angular.copy(instance.assets);
+        AssetService.updateAssets(instance.assets, _assets, assets)
+        .then(function (assets) {
+          instance.assets = assets;
+          instance.getGeomDataForAssets(oldAssets, instance.assets);
+          console.log('DataService.assets:', instance.assets);
+        });
+        _assets = assets;
+        console.log('State.selected.assets:', State.selected.assets);
+        State.selected.assets.addAsset = addAsset;
+      };
+
+      var addAsset = function (asset) {
+        var newAssets = angular.copy(_assets);
+        newAssets.push(asset);
+        setAssets(newAssets);
+      };
+
       instance.assets = [];
       var _assets = [];
       Object.defineProperty(State.selected, 'assets', {
         get: function () { return _assets; },
-        set: function (assets) {
-          var oldAssets = angular.copy(instance.assets);
-          AssetService.updateAssets(instance.assets, _assets, assets)
-          .then(function (assets) {
-            instance.assets = assets;
-            instance.getGeomDataForAssets(oldAssets, instance.assets);
-          });
-          _assets = assets;
-        }
+        set: setAssets
       });
 
+      State.selected.assets.addAsset = addAsset;
+
       // Define geometries on State and update DataService.geometries.
+      var setGeometries = function (geometries) {
+        instance._updateGeometries(_geometries, geometries)
+        .then(function (geometries) {
+          instance.geometries = geometries;
+          console.log('DataService.geometries:', instance.geometries);
+
+        });
+        _geometries = geometries;
+        console.log('State.selected.geometries:', State.selected.geometries);
+        State.selected.geometries.addGeometry = addGeometry;
+      };
+
+      var addGeometry = function (geometry) {
+        var newGeoms = angular.copy(_geometries);
+        newGeoms.push(geometry);
+        setGeometries(newGeoms);
+      };
+
+      instance.geometries = [];
       var _geometries = [];
       Object.defineProperty(State.selected, 'geometries', {
         get: function () { return _geometries; },
-        set: function (geometries) {
-          // instance._updateGeometries(_geometries, geometries);
-          _geometries = geometries;
-          console.log(geometries);
-        }
+        set: setGeometries
       });
+
+      State.selected.geometries.addGeometry = addGeometry;
 
       // Define timeseries on State and update DataService.timeseries.
       var _timeseries = [];
@@ -322,19 +352,6 @@ angular.module('data-menu')
         return defer.promise;
       };
 
-      this.getGeomDataForAssets = function (oldAssets, assets) {
-        console.log(oldAssets, assets);
-        var newAssets = assets.filter(function (asset) {
-          return !oldAssets.filter(function (oldAsset) {
-            return oldAsset.entity_name === asset.entity_name && oldAsset.id === asset.id;
-          }).length;
-        });
-
-        newAssets.forEach(function (asset) {
-          getGeomData(asset);
-        });
-      };
-
       /**
        * Rejects call for data and sets loading to false.
        */
@@ -345,6 +362,92 @@ angular.module('data-menu')
             defer.reject(reason);
           });
         }
+      };
+
+      this._updateGeometries = function (oldGeoms, newGeoms) {
+        var freshGeometries = newGeoms.filter(function (geom) {
+          return !oldGeoms.filter(function (oldGeom) {
+            var oC = oldGeom.geometry.coordinates;
+            var nC = geom.geometry.coordinates;
+            return oC[0] === nC[0] && oC[1] === nC[1] && oC[2] === nC[2];
+          }).length;
+        });
+
+        instance.geometries = instance.geometries.filter(function (geom) {
+          return newGeoms.filter(function (oldGeom) {
+            var oC = oldGeom.geometry.coordinates;
+            var nC = geom.geometry.coordinates;
+            return oC[0] === nC[0] && oC[1] === nC[1] && oC[2] === nC[2];
+          }).length;
+        });
+
+        var promises = [];
+
+        freshGeometries.forEach(function (geom) {
+
+          promises.push(
+            this.getGeomData(geom)
+            .then(function(geometry) {
+              instance.geometries.push(geometry);
+            })
+          );
+
+        }, this);
+
+        return $q.all(promises).then(function () {
+          return instance.geometries; });
+      };
+
+      this.getGeomDataForAssets = function (oldAssets, assets) {
+        var newAssets = assets.filter(function (asset) {
+          return !oldAssets.filter(function (oldAsset) {
+            return oldAsset.entity_name === asset.entity_name && oldAsset.id === asset.id;
+          }).length;
+        });
+
+        newAssets.forEach(function (asset) {
+          this.getGeomData(asset)
+          .then(function(geometry) {
+            asset.geometry = geometry;
+          });
+        }, this);
+      };
+
+      this.getGeomData = function (geom) {
+        if (this._defer) {
+          this._defer.reject(this.REJECTION_REASONS.OVERRIDDEN); // It is a list because $q.all can not
+        }                                // be deregistered.
+        this._defer = $q.defer();
+        var defer = this._defer;
+
+        var promises = [];
+        var instance = this;
+        var g = {};
+
+        if (geom.geometry.type === 'Point') {
+          g = L.latLng(geom.geometry.coordinates[0], geom.geometry.coordinates[1]);
+        }
+        else {
+          throw Error(); // implement
+        }
+        angular.forEach(this.layerGroups, function (layerGroup) {
+          if (layerGroup.slug === instance.utfLayerGroup.slug) { return; }
+          promises.push(
+            layerGroup.getData('DataService', {'geom': g}).then(null, null, function (response) {
+              geom.properties = geom.properties || {};
+              geom.properties[response.layerGroupSlug] = response;
+            })
+          );
+        });
+
+        $q.all(promises).then(function () {
+            State.layerGroups.gettingData = false;
+            defer.resolve(geom);
+            defer = undefined; // Clear the defer
+        });
+
+        State.layerGroups.gettingData = true;
+        return defer.promise;
       };
 
       /**
