@@ -5,34 +5,19 @@ angular.module('omnibox')
   return {
     link: function (scope) {
       scope.wanted = WantedAttributes;
-      scope.asset = {};
 
-      scope.$watch('assetId', function () {
-        var entity = scope.assetId.split('$')[0];
-        var id = scope.assetId.split('$')[1];
+      var assetId = scope.asset.entity_name + '$' + scope.asset.id;
 
-        $http({
-          url: 'api/v2/' + entity + 's' + '/' + id + '/',
-          method: 'GET'
-        })
+      TimeseriesService.getTimeSeriesForObject(assetId)
 
-        .then(function (response) {
-          response.data.entity_name = entity;
-          scope.asset = response.data;
-        });
-
-        TimeseriesService.getTimeSeriesForObject(scope.assetId)
-
-        .then(function(response) {
-          scope.ts = response.results;
-        });
-
-     });
+      .then(function(response) {
+        scope.ts = response.results;
+      });
 
     },
     restrict: 'E',
     scope: {
-      assetId: '='
+      asset: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/db-asset-card.html'

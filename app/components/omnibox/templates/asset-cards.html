@@ -3,17 +3,17 @@
     <div class="card active">
       <cardattributes waterchain="asset"></cardattributes>
     </div>
-    <timeseries
+    <timeseries ng-if="longFormat"
       ng-if="asset.num_timeseries &&
              context !== 'dashboard'"
       asset="asset"
       time-state="timeState">
     </timeseries>
 
-    <annotations asset="asset" time-state="timeState"></annotations>
+    <annotations ng-if="longFormat" asset="asset" time-state="timeState"></annotations>
 
-  <div ng-if="asset.filters
-    || asset.pumps">
+  <div ng-if="longFormat && (asset.filters
+    || asset.pumps)">
     <div class="card active">
       <nestedasset
         asset="asset">

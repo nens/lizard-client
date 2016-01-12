@@ -19,7 +19,8 @@ angular.module('omnibox')
     restrict: 'E',
     scope: {
       asset: '=',
-      timeState: '='
+      timeState: '=',
+      longFormat: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/asset-cards.html'
