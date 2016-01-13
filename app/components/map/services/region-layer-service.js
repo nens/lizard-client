@@ -8,10 +8,9 @@
  */
 angular.module('map')
 .factory('NxtRegionsLayer', [
-  'MapService',
   'CabinetService',
   'LeafletService',
-  function (MapService, CabinetService, LeafletService) {
+  function (CabinetService, LeafletService) {
 
     // Leaflet geojson layer.
     var regionsLayer;
@@ -49,7 +48,7 @@ angular.module('map')
      * @param  {geojson}  regions
      * @param  {funciton} clickCb callback fires when layer is clicked.
      */
-    var addRegions = function (regions, clickCb) {
+    var addRegions = function (MapService, regions, clickCb) {
       MapService.removeLeafletLayer(regionsLayer);
       regionsLayer = LeafletService.geoJson(regions, {
         // Style function must be included in order to overwrite style on click.
@@ -93,7 +92,7 @@ angular.module('map')
     /**
      * Removes the regions from the map and sets activeRegioString to null.
      */
-    var removeRegions = function () {
+    var removeRegions = function (MapService) {
       activeRegionString = null;
       MapService.removeLeafletLayer(regionsLayer);
     };

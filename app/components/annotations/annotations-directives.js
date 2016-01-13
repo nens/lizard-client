@@ -7,7 +7,6 @@ angular.module('annotations')
   .directive('annotations', [function () {
     var link = function (scope, element, attrs) {
       scope.annotations = {};
-      console.log(scope.timeState);
     };
 
     return {

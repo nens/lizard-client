@@ -10,8 +10,8 @@
  */
 
 angular.module('map')
-.service('MapService', ['$rootScope', '$q', 'LeafletService', 'LeafletVectorService', 'DataService', 'NxtNonTiledWMSLayer', 'NxtMapLayer', 'State',
-  function ($rootScope, $q, LeafletService, LeafletVectorService, DataService, NxtNonTiledWMSLayer, NxtMapLayer, State) {
+.service('MapService', ['$rootScope', '$q', 'LeafletService', 'LeafletVectorService','CabinetService', 'DataService', 'NxtNonTiledWMSLayer', 'NxtRegionsLayer', 'NxtMapLayer', 'State',
+  function ($rootScope, $q, LeafletService, LeafletVectorService, CabinetService, DataService, NxtNonTiledWMSLayer, NxtRegionsLayer, NxtMapLayer, State) {
 
     var service = {
 
@@ -131,6 +131,13 @@ angular.module('map')
         return service._map.getBounds();
       },
 
+      line: {
+        geometry: {
+          type: 'LineString',
+          coordinates: []
+        }
+      },
+
       /**
        * @description legacy function.
        */
@@ -164,8 +171,7 @@ angular.module('map')
           geometry: {
             type: 'Point',
             coordinates: [latLng.lng, latLng.lat]
-          },
-          properties: {}
+          }
         }];
       },
 
@@ -214,8 +220,7 @@ angular.module('map')
           geometry: {
             type: 'Point',
             coordinates: [latLng.lng, latLng.lat]
-          },
-          properties: {}
+          }
         });
       },
 
@@ -245,14 +250,53 @@ angular.module('map')
           }
         }
         else if (State.box.type === 'line') {
-
+          if (this.line.geometry.coordinates.length === 2) {
+            State.selected.geometries.removeGeometry(this.line);
+            this.line.geometry.coordinates = [];
+          }
+          if (this.line.geometry.coordinates.length < 2) {
+            this.line.geometry.coordinates.push([latLng.lng, latLng.lat]);
+          }
+          if (this.line.geometry.coordinates.length === 2) {
+            State.selected.geometries.addGeometry(this.line);
+          }
         }
-        else if (State.box.type === 'region') {
+      },
 
-        }
-        else if (State.box.type === 'area') {
+      getRegions: function () {
 
-        }
+        /**
+         * Callback for clicks on regions. Calls fillRegion.
+         *
+         * @param  {object} leaflet ILayer that recieved the click.
+         */
+        var clickCb = function (layer) {
+          State.selected.geometries = [layer.feature];
+        };
+
+       CabinetService.regions.get({
+          z: State.spatial.view.zoom,
+          in_bbox: State.spatial.bounds.getWest()
+            + ','
+            + State.spatial.bounds.getNorth()
+            + ','
+            + State.spatial.bounds.getEast()
+            + ','
+            + State.spatial.bounds.getSouth()
+        })
+        .then(function (regions) {
+          NxtRegionsLayer.add(service, regions.results, clickCb);
+
+          // If the new regions do not contain the current active region, rm the
+          // data  and the references to it.
+          // if (NxtRegionsLayer.getActiveRegion() !== State.selected.geometries[0].id) {
+          //   State.selected.geometries.length = 0;
+          // }
+        });
+      },
+
+      removeRegions: function () {
+        NxtRegionsLayer.remove(this);
       },
 
       /**

@@ -33,14 +33,28 @@ angular.module('data-menu')
   .directive('datamenuItem', ['State', function (State) {
 
   var link = function (scope, elem, attrs) {
+
+    var rmAllButLastAsset = function () {
+      State.selected.assets.forEach(function (asset) {
+        if (State.selected.assets.length > 1) {
+          State.selected.assets.removeAsset(asset);
+        }
+      });
+    };
+
     scope.changeBoxType = function () {
-      scope.boxType = scope.type;
-      if (scope.type === 'point') {
-        var lastGeom = State.selected.geometries.length -1;
-        State.selected.geometries = [State.selected.geometries[lastGeom]];
-        var lastAsset = State.selected.assets.length -1;
-        State.selected.assets = [State.selected.assets[lastAsset]];
+      if (scope.type === 'point'
+        || scope.type === 'region'
+        || scope.type === 'area') {
+        State.selected.geometries = [];
+        rmAllButLastAsset();
       }
+      // TODO: enable line with others, only clicklayer is bitching.
+      else if (scope.type === 'line') {
+        State.selected.geometries = [];
+        State.selected.assets = [];
+      }
+      scope.boxType = scope.type;
     };
 
   };

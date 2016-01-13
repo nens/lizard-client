@@ -11,10 +11,34 @@
  */
 
 angular.module('omnibox')
-  .directive('assetCards', [
-    function () {
+  .directive('assetCards', ['ClickFeedbackService', 'MapService',
+    function (ClickFeedbackService, MapService) {
   return {
-    link: function (scope) {
+    link: function (scope, element) {
+
+      var asset = scope.asset;
+
+      var feature = {
+        type: 'Feature',
+        geometry: asset.geometry,
+        properties: {
+          entity_name: asset.entity_name,
+          type: asset.type || ''
+        }
+      };
+
+      var clickId = ClickFeedbackService.drawGeometry(
+        MapService,
+        feature
+      );
+
+      ClickFeedbackService.vibrateOnce(feature);
+
+      element.on('$destroy', function () {
+        ClickFeedbackService.removeClickFromClickLayer(clickId);
+      });
+
+
     },
     restrict: 'E',
     scope: {
@@ -29,11 +53,44 @@ angular.module('omnibox')
 
 
 angular.module('omnibox')
-  .directive('geometryCards', [
-    function () {
+  .directive('geometryCards', ['MapService', 'ClickFeedbackService',
+    function (MapService, ClickFeedbackService) {
   return {
-    link: function (scope) {
-      console.log(scope.header);
+    link: function (scope, element) {
+
+      var geom = scope.geom;
+      var clickId = 0;
+
+      if (scope.header && geom.geometry.type === 'Point') {
+        var latLng = L.latLng(
+          geom.geometry.coordinates[1],
+          geom.geometry.coordinates[0]
+        );
+        clickId = ClickFeedbackService.drawArrow(MapService, latLng);
+      }
+
+      else if (scope.header && geom.geometry.type === 'LineString') {
+        var feature = {
+          type: 'Feature',
+          geometry: geom.geometry,
+          properties: {}
+        };
+
+        clickId = ClickFeedbackService.drawGeometry(
+          MapService,
+          feature
+        );
+
+        ClickFeedbackService.vibrateOnce(feature);
+      }
+
+      element.on('$destroy', function () {
+        if (clickId) {
+          ClickFeedbackService.removeClickFromClickLayer(clickId);
+        }
+      });
+
+
     },
     restrict: 'E',
     scope: {

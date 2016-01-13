@@ -51,12 +51,7 @@ angular.module('omnibox')
      */
     scope.cleanInput = function () {
       State.selected.reset();
-      State.box.type = State.box.type ? State.box.type : "point";
       scope.query = "";
-      scope.box.content = {};
-      State.spatial.points = [];
-      State.spatial.here = undefined;
-      ClickFeedbackService.emptyClickLayer(MapService);
     };
 
 
@@ -206,7 +201,7 @@ angular.module('omnibox')
           scope.box.content.searchResults.timeseries = SearchService
             .filter(response.results, 'timeseries');
           scope.box.content.searchResults.layergroups = SearchService
-            .filter(response.results, 'layergroup'); 
+            .filter(response.results, 'layergroup');
         }
       );
     };

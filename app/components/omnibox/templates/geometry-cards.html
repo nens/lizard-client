@@ -7,10 +7,45 @@
     <rain></rain>
   </div>
 
-  <div ng-repeat="(slug, lg) in geom.properties"
+  <div ng-repeat="(slug, content) in geom.properties"
        class="card active"
        ng-if="slug !== 'rain'">
-    <defaultpoint lg="lg" name="slug" state="omnibox.state" is-url="isUrl"></defaultpoint>
+    <defaultpoint ng-if="geom.geometry.type === 'Point'" lg="content" name="slug" state="omnibox.state" is-url="isUrl"></defaultpoint>
+
+	<div ng-if="geom.geometry.type === 'LineString'"  class="card-content" id="card-content-<% agg.name %>">
+		<graph ng-if="content.scale === 'interval' || content.scale === 'ratio'"
+		  line
+		  data="content.data"
+		  ylabel="content.quantity + ' [' + content.unit + ']'"
+		  xlabel="'Afstand in [m]'">
+		</graph>
+		<!--    TODO: get proper response from the server when requesting a line of
+		nominal dat and decomment this line
+		<graph ng-if="l.scale === 'nominal'"
+		  horizontal-stack
+		  data="l.data"
+		  keys="{x: 'data', y: 'label'}"
+		  xlabel="'[%]'"
+		  dimensions="{height: 80, padding: {left: 0, right: 0, top: 5, bottom: 50}}">
+		</graph> -->
+
+		<div class="card-tools">
+		   <a
+		     class="btn btn-default btn-xs"
+		     title="<% 'Export info card data' | translate %>"
+		     ng-csv="formatLineCSV(slug, content)"
+		     field-separator=";"
+		     filename="<% slug %>.csv"
+		     csv-header="getLineCSVHeaders(slug, content)">
+		     <i class="fa fa-share-square-o"></i>
+		     <span translate>Export</span>
+		  </a>
+		</div>
+
+</div>
+
+
+
   </div>
 
 </div>

@@ -141,7 +141,7 @@ angular.module('data-menu')
 
       // Define geometries on State and update DataService.geometries.
       var setGeometries = function (geometries) {
-        instance._updateGeometries(_geometries, geometries)
+        instance._updateGeometries(_geometries, angular.copy(geometries))
         .then(function (geometries) {
           instance.geometries = geometries;
           console.log('DataService.geometries:', instance.geometries);
@@ -394,7 +394,7 @@ angular.module('data-menu')
           return !oldGeoms.filter(function (oldGeom) {
             var oC = oldGeom.geometry.coordinates;
             var nC = geom.geometry.coordinates;
-            return oC[0] === nC[0] && oC[1] === nC[1] && oC[2] === nC[2];
+            return _.isEqual(oC, nC);
           }).length;
         });
 
@@ -402,7 +402,7 @@ angular.module('data-menu')
           return newGeoms.filter(function (oldGeom) {
             var oC = oldGeom.geometry.coordinates;
             var nC = geom.geometry.coordinates;
-            return oC[0] === nC[0] && oC[1] === nC[1] && oC[2] === nC[2];
+            return _.isEqual(oC, nC);
           }).length;
         });
 
@@ -448,18 +448,29 @@ angular.module('data-menu')
 
         var promises = [];
         var instance = this;
-        var g = {};
+        var options = {};
+
 
         if (geo.geometry.type === 'Point') {
-          g = L.latLng(geo.geometry.coordinates[0], geo.geometry.coordinates[1]);
+          options.geom = L.latLng(geo.geometry.coordinates[0], geo.geometry.coordinates[1]);
         }
-        else {
-          throw Error(); // implement
+        else if (geo.geometry.type === 'LineString') {
+          var coords = geo.geometry.coordinates;
+          options.geom = [
+            L.latLng(coords[0][0], coords[0][1]),
+            L.latLng(coords[1][0], coords[1][1])
+          ];
+        }
+        else if (geo.geometry.type === 'Polygon' && geo.id) {
+          options.id = geo.id;
+        }
+        if (geo.geometry.type === 'Polygon') {
+          options.geom = L.geoJson(geo).getBounds();
         }
         angular.forEach(this.layerGroups, function (layerGroup) {
           if (layerGroup.slug === instance.utfLayerGroup.slug) { return; }
           promises.push(
-            layerGroup.getData('DataService', {'geom': g}).then(null, null, function (response) {
+            layerGroup.getData('DataService', options).then(null, null, function (response) {
               geo.properties = geo.properties || {};
               geo.properties[response.layerGroupSlug] = response;
             })

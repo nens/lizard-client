@@ -217,8 +217,6 @@ angular.module('lizard-nxt')
 
       if (old === 'point' || old === 'line' || old === 'region' || old === 'multi-point') {
         // Remove geometry from url
-        State.selected.reset();
-        state.boxType.update = false;
         LocationGetterSetter.setUrlValue(
           state.geom.part, state.geom.index, undefined);
       }
