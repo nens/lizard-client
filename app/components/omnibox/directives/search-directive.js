@@ -15,6 +15,8 @@ angular.module('omnibox')
 
   var link = function (scope, element, attrs) {
 
+    scope.omnibox.searchResults = {};
+
     var ZOOM_FOR_OBJECT = 16;
 
     // Set focus on search input field.
@@ -26,10 +28,10 @@ angular.module('omnibox')
      *
      * Currently searches for time and addresses.
      *
-     * scope.box.content.searchResults is used by search-results template.
+     * scope.omnibox.searchResults is used by search-results template.
      */
     scope.search = function () {
-      scope.box.content.searchResults = {};
+      scope.omnibox.searchResults = {};
       if (scope.query.length > 0) {
         var results = SearchService.search(scope.query, State);
         setResultsOnBox(results);
@@ -51,7 +53,8 @@ angular.module('omnibox')
      */
     scope.cleanInput = function () {
       State.selected.reset();
-      scope.query = "";
+      scope.omnibox.query = "";
+      scope.omnibox.searchResults = {};
     };
 
 
@@ -61,7 +64,11 @@ angular.module('omnibox')
      * @param {object} search result with layergroup.
      * simple pointer to SearchService functio
      */
-    scope.openLayerGroup = SearchService.openLayerGroup;
+    scope.openLayerGroup = function () {
+      scope.omnibox.query = "";
+      scope.omnibox.searchResults = {};
+      SearchService.openLayerGroup
+    };
 
     /**
      * @description zooms to search resulit
@@ -75,6 +82,8 @@ angular.module('omnibox')
         lng: object.geometry.coordinates[0],
         zoom: ZOOM_FOR_OBJECT
       });
+      scope.omnibox.searchResults = {};
+      scope.omnibox.query = "";
     };
 
     /**
@@ -82,9 +91,9 @@ angular.module('omnibox')
      * @param {object} one search result.
      */
     scope.zoomToSpatialResult = function (result, origin) {
-        destroySearchResultsModel();
-        scope.cleanInput();
-        State = SearchService.zoomToGoogleGeocoderResult(result, State);
+      scope.omnibox.searchResults = {};
+      scope.omnibox.query = "";
+      State = SearchService.zoomToGoogleGeocoderResult(result, State);
     };
 
     /**
@@ -94,8 +103,8 @@ angular.module('omnibox')
      *                              duration.
      */
     scope.zoomToTemporalResult = function(m) {
-      destroySearchResultsModel();
-      scope.cleanInput();
+      scope.omnibox.searchResults = {};
+      scope.omnibox.query = "";
       State.temporal.start = m.valueOf();
       State.temporal.end = m.valueOf() + m.nxtInterval.valueOf();
       UtilService.announceMovedTimeline(State);
@@ -118,15 +127,15 @@ angular.module('omnibox')
         // Intercept keyPresses *within* searchbox,do xor prevent animation
         // from happening when typing.
         if ($event.which === KEYPRESS.ENTER) {
-          var loc = scope.box.content.searchResults;
+          var loc = scope.omnibox.searchResults;
           if (loc && loc.temporal) {
             scope.zoomToTemporalResult(
-              scope.box.content.searchResults.temporal
+              scope.omnibox.searchResults.temporal
             );
           }
           else if (loc && loc.spatial && loc.spatial[0]) {
             scope.zoomToSpatialResult(
-              scope.box.content.searchResults.spatial[0]
+              scope.omnibox.searchResults.spatial[0]
             );
           }
           else {
@@ -146,9 +155,9 @@ angular.module('omnibox')
      * box scope.
      *
      * When time is a valid moment it is synchronously put on
-     * scope.box.content.searchResults.temporal. If time is not valid it waits
+     * scope.omnibox.searchResults.temporal. If time is not valid it waits
      * for spatial results and puts those result on
-     * scope.box.content.searchResults.spatial. Prefers temporal results to
+     * scope.omnibox.searchResults.spatial. Prefers temporal results to
      * spatial results.
      *
      * @param {object} results object, with moment and promise
@@ -162,7 +171,7 @@ angular.module('omnibox')
         && results.temporal.valueOf() > UtilService.MIN_TIME
         && results.temporal.valueOf() < UtilService.MAX_TIME
         ) {
-        scope.box.content.searchResults.temporal = results.temporal;
+        scope.omnibox.searchResults.temporal = results.temporal;
         // moment object.
       }
 
@@ -170,7 +179,7 @@ angular.module('omnibox')
         results.spatial
           .then(function (response) {
             // Asynchronous so check whether still relevant.
-            if (scope.box.content.searchResults === undefined) { return; }
+            if (scope.omnibox.searchResults === undefined) { return; }
 
             // Either put results on scope or remove model.
             if (response.status === SearchService.responseStatus.OK) {
@@ -179,7 +188,7 @@ angular.module('omnibox')
               if (results.length >  MAX_RESULTS) {
                 results = results.splice(0, MAX_RESULTS);
               }
-              scope.box.content.searchResults.spatial = results;
+              scope.omnibox.searchResults.spatial = results;
             }
             else if (
                 response.status !== SearchService.responseStatus.ZERO_RESULTS
@@ -197,10 +206,10 @@ angular.module('omnibox')
       results.search
         .then(function (response) {
           // Asynchronous so check whether still relevant.
-          if (scope.box.content.searchResults === undefined) { return; }
-          scope.box.content.searchResults.timeseries = SearchService
+          if (scope.omnibox.searchResults === undefined) { return; }
+          scope.omnibox.searchResults.timeseries = SearchService
             .filter(response.results, 'timeseries');
-          scope.box.content.searchResults.layergroups = SearchService
+          scope.omnibox.searchResults.layergroups = SearchService
             .filter(response.results, 'layergroup');
         }
       );
@@ -210,7 +219,7 @@ angular.module('omnibox')
      * @description removes location model from box content
      */
     var destroySearchResultsModel = function () {
-      delete scope.box.content.searchResults;
+      delete scope.omnibox.searchResults;
     };
 
   };
