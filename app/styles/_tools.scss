@@ -13,7 +13,7 @@
 }
 
 .button-list-item {
-    background-color: rgba(255, 255 ,255 , 0.9);
+    background-color: rgba($white, 0.9);
     cursor: pointer !important;
     padding: 5px;
     &:first-child {
@@ -27,7 +27,7 @@
 }
 
 .button-list-link {
-    color: #95a5a6;
+    color: $concrete;
     transition:.3s;
     &:hover {
         color: $pomegranate;
@@ -38,6 +38,3 @@
 .button-list-link.active {
     color: $pomegranate;
 }
-
-
-
