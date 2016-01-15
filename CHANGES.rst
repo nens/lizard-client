@@ -1,9 +1,10 @@
 Changelog of lizard-nxt client
 ==============================
 
-Unreleased (2.4.1) (XXXX-XX-XX)
+Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
--
+
+- Bump MAX_TIME (future) from 1 to 20 days.
 
 
 Release 2.6.1 (2016-1-18)
@@ -36,10 +37,6 @@ Release 2.6.1 (2016-1-18)
 - Fixed a bug with geometry not drawn in multipolygon.
 
 - Sped up the context switch since we no longer need the map to create a dashboard on init.
-
-
-Release 2.5.2 (2015-12-24)
----------------------
 
 
 Release 2.5.1 (2015-12-11)

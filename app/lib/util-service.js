@@ -647,7 +647,7 @@ angular.module('lizard-nxt')
   })();
 
   this.MIN_TIME = (new Date("Jan 01, 1900")).getTime();
-  this.MAX_TIME = (new Date()).getTime() + 24 * 60 * 60 * 1000;
+  this.MAX_TIME = (new Date()).getTime() + 20 * 24 * 60 * 60 * 1000; // 20 Days
   this.TIMELINE_LEFT_MARGIN = 60;
   this.TIMELINE_RIGHT_MARGIN = 40;
   this.OMNIBOX_WIDTH = 420;
