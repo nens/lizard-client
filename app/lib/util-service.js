@@ -775,11 +775,13 @@ angular.module('lizard-nxt')
    */
   this.announceMovedTimeline = function (state) {
     state.temporal.timelineMoving = true;
+    console.log('true',state.temporal.timelineMoving);
 
     // Set timeline moving to false after digest loop
     $timeout(
       function () {
         state.temporal.timelineMoving = false;
+        console.log('false', state.temporal.timelineMoving);
       },
       0, // no delay, fire when digest ends
       true // trigger new digest loop

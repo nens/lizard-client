@@ -2,20 +2,18 @@
 
   <div class="card active">
     <div class="card-content"
-      ng-init="lg = box.content.rain">
-
-      <% aggWinToYLabel %>
+      ng-init="lg = geom.properties.rain">
      <full-details></full-details>
      <span class="card-title-text" ng-class="{hidden: fullDetails}" translate>Rain</span>
      <div ng-class="{ hidden: !fullDetails }">
        <graph
          bar-chart
          class="xyGraph"
-         data="lg.layers['rain'].data"
-         ylabel="lg.layers['rain'].aggWindow"
+         data="lg.data"
+         ylabel="lg.aggWindow"
          yfilter="aggWinToYLabel"
          keys="{x: 0, y: 1}"
-         temporal="omnibox.state.temporal">
+         temporal="timeState">
        </graph>
        <div class="card-tools"
         ng-class="{hidden: !fullDetails}">
@@ -28,7 +26,7 @@
          <a
            class="btn btn-default btn-xs"
            title="Data van deze infocard exporteren"
-           ng-csv="$parent.formatCSVColumns(lg.layers['rain'].data)"
+           ng-csv="$parent.formatCSVColumns(lg.data)"
            field-separator=";"
            filename="neerslag.csv"
            csv-header="['Latitude', 'Longitude', 'Datestamp', 'Timestamp', 'Rain (mm)']">

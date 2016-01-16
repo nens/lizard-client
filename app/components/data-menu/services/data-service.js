@@ -237,6 +237,19 @@ angular.module('data-menu')
         }
       });
 
+      // Define temporal here so DataService can update assets, geometries etc.
+      var _timelineMoving = State.temporal.timelineMoving;
+      Object.defineProperty(State.temporal, 'timelineMoving', {
+        get: function () { return _timelineMoving; },
+        set: function (value) {
+          _timelineMoving = value;
+          if (!value) {
+            console.log('refreshing');
+            instance.refreshSelected();
+          }
+        }
+      });
+
       this._dataDefers = {}; // Per callee a list with a defer for every time
                              // getData gets called before the last one
                              // resolves.
@@ -255,6 +268,7 @@ angular.module('data-menu')
         // turn layer group on
         if (!(layerGroup.baselayer && layerGroup.isActive())) {
           layerGroup.toggle();
+          instance.refreshSelected();
         }
         if (layerGroup.baselayer) {
           angular.forEach(this.layerGroups, function (_layerGroup) {
@@ -389,6 +403,42 @@ angular.module('data-menu')
         }
       };
 
+      this.refreshSelected = function () {
+        this.geometries.forEach(function (geom) {
+
+          angular.forEach(geom.properties, function (v, s) {
+            if (!this.layerGroups[s].isActive()) {
+              delete geom.properties[s];
+            }
+          }, this);
+
+          this.getGeomData(geom)
+          .then(function(newGeo) {
+            instance.geometries.forEach(function (old, i) {
+              if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
+                instance.geometries[i] = newGeo;
+                console.log('DataService.geometries:', instance.geometries);
+              }
+            });
+          });
+
+        }, this);
+
+        this.assets.forEach(function (asset) {
+
+          this.getGeomData(asset)
+          .then(function(newAsset) {
+            instance.assets.forEach(function (old, i) {
+              if (old.entity_name === newAsset.entity_name && old.id === newAsset.id) {
+                instance.assets[i] = newAsset;
+              }
+            });
+          });
+
+        }, this);
+
+      };
+
       this._updateGeometries = function (oldGeoms, newGeoms) {
         var freshGeometries = newGeoms.filter(function (geom) {
           return !oldGeoms.filter(function (oldGeom) {
@@ -448,17 +498,19 @@ angular.module('data-menu')
 
         var promises = [];
         var instance = this;
-        var options = {};
-
+        var options = {
+          start: State.temporal.start,
+          end: State.temporal.end
+        };
 
         if (geo.geometry.type === 'Point') {
-          options.geom = L.latLng(geo.geometry.coordinates[0], geo.geometry.coordinates[1]);
+          options.geom = L.latLng(geo.geometry.coordinates[1], geo.geometry.coordinates[0]);
         }
         else if (geo.geometry.type === 'LineString') {
           var coords = geo.geometry.coordinates;
           options.geom = [
-            L.latLng(coords[0][0], coords[0][1]),
-            L.latLng(coords[1][0], coords[1][1])
+            L.latLng(coords[0][1], coords[0][0]),
+            L.latLng(coords[1][1], coords[1][0])
           ];
         }
         else if (geo.geometry.type === 'Polygon' && geo.id) {
@@ -469,10 +521,17 @@ angular.module('data-menu')
         }
         angular.forEach(this.layerGroups, function (layerGroup) {
           if (layerGroup.slug === instance.utfLayerGroup.slug) { return; }
+
           promises.push(
             layerGroup.getData('DataService', options).then(null, null, function (response) {
               geo.properties = geo.properties || {};
               geo.properties[response.layerGroupSlug] = response;
+              // async so remove anything obsolete.
+              if (
+                !instance.layerGroups[response.layerGroupSlug].isActive()
+                && layerGroup.slug in Object.keys(geo.properties)) {
+                delete geo.properties[layerGroup.slug];
+              }
             })
           );
         });

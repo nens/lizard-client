@@ -33,10 +33,10 @@
       </span>
  -->
       <span ng-if="geom.geometry.type === 'Point'" class="asset-title" translate>
-        <% geom.geometry.coordinates[1] | number : 3 %>, <% geom.geometry.coordinates[0] | number : 3 %>
+        <% geom.geometry.coordinates[1] | number : 2 %>, <% geom.geometry.coordinates[0] | number : 2 %>
       </span>
       <span ng-if="geom.geometry.type === 'LineString'">
-      <% geom.geometry.coordinates[0][1] | number : 3 %>, <% geom.geometry.coordinates[0][0] | number : 3 %> - <% geom.geometry.coordinates[1][1] | number : 3 %>, <% geom.geometry.coordinates[0][1] | number : 3 %></span>
+      <% geom.geometry.coordinates[0][1] | number : 2 %>, <% geom.geometry.coordinates[0][0] | number : 2 %> - <% geom.geometry.coordinates[1][1] | number : 2 %>, <% geom.geometry.coordinates[0][1] | number : 2 %></span>
       <br>
 
       <em><% asset.code %></em>

@@ -231,13 +231,12 @@ angular.module('map')
        */
       spatialSelect: function (latLng) {
         var utfSlug = DataService.utfLayerGroup.slug;
-
         if (State.box.type === 'point') {
           if (State.layerGroups.active.indexOf(utfSlug) !== -1) {
             this._setAssetOrGeomFromUtfOnState(latLng);
           }
           else {
-            this._addGeomFromUtfToState(latLng);
+            this._setGeomFromUtfToState(latLng);
           }
         }
 

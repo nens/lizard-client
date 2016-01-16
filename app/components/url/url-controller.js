@@ -322,11 +322,8 @@ angular.module('lizard-nxt')
       }
 
       if (geom) {
-        if (geom.split('$').length === 1) {
-          State.spatial = UrlState.parseGeom(State.box.type, geom, State.spatial);
-        } else if (boxType === 'point' || boxType === 'multi-point') {
-          State.selected = UrlState.parseGeom(State.box.type, geom, State.selected);
-        } else if (boxType === 'region') {
+        State.selected = UrlState.parseSelection(geom, State.selected);
+        if (boxType === 'region') {
           NxtRegionsLayer.setActiveRegion(geom);
         }
       }

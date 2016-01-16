@@ -14,17 +14,6 @@ angular.module('omnibox')
 
   ) {
 
-      /*
-       * @description
-       * angular isolate scope is messed with
-       * when you using ng-if. This looks to parent
-       * model and sets the local fullDetails.
-       */
-      $scope.$watch('box.fullDetails.rain', function (n) {
-        $scope.fullDetails = n;
-      });
-
-
       $scope.rrc = {
         active: false
       };
@@ -33,17 +22,17 @@ angular.module('omnibox')
         if (!$scope.$$phase) {
           $scope.$apply(function () {
             $scope.rrc.active = !$scope.rrc.active;
-            $scope.lg.layers['rain'].changed =
-             !$scope.lg.layers['rain'].changed;
+            $scope.lg.changed =
+              !$scope.lg.changed;
           });
         } else {
           $scope.rrc.active = !$scope.rrc.active;
-          $scope.lg.layers['rain'].changed = !$scope.lg.layers['rain'].changed;
+          $scope.lg.changed = !$scope.lg.changed;
         }
       };
 
 
-      $scope.$watch("lg.layers['rain'].changed", function (n, o) {
+      $scope.$watch("lg.changed", function (n, o) {
         if (n === o || !$scope.rrc.active) { return; }
         getRecurrenceTime();
       });
@@ -57,7 +46,7 @@ angular.module('omnibox')
           {slug: 'rain'},
           {
             agg: 'rrc',
-            geom: State.spatial.here,
+            geom: L.Latlng($scope.geom.geomtry.coordinates[1], $scope.geom.geomtry.coordinates[0]),
             start: State.temporal.start,
             end: State.temporal.end
           }

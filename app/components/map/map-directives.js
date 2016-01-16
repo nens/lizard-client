@@ -145,9 +145,14 @@ angular.module('map')
           mapSetsBounds = false;
         }
         if (State.box.type === 'area') {
-          State.selected.geometries = [];
           var b = State.spatial.bounds;
-          State.selected.geometries.addGeometry(L.rectangle(b).toGeoJSON());
+          if (State.selected.geometries.length > 0) {
+            State.selected.geometries[0].geometry.coordinates = L.rectangle(b).toGeoJSON();
+            DataService.refreshSelected();
+          } else {
+            State.selected.geometries = [];
+            State.selected.geometries.addGeometry(L.rectangle(b).toGeoJSON());
+          }
         }
         else if (State.box.type === 'region') {
           MapService.getRegions(State.spatial.bounds);
