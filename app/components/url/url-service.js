@@ -200,9 +200,10 @@ angular.module('lizard-nxt')
       setSelectedUrl: function (state, selected) {
         var newHash = angular.copy(selected.assets);
         var n = Math.pow(10, COORD_PRECISION);
+        var coords;
         angular.forEach(selected.geometries, function (geom) {
           if (geom.geometry.type === 'Point') {
-            var coords = geom.geometry.coordinates;
+            coords = angular.copy(geom.geometry.coordinates);
             coords.forEach(function (point, i) {
               coords[i] = Math.round(point * n) / n;
             });
@@ -210,7 +211,8 @@ angular.module('lizard-nxt')
           }
           if (geom.geometry.type === 'LineString') {
             var points = [];
-            angular.forEach(geom.geometry.coordinates, function (point) {
+            coords = angular.copy(geom.geometry.coordinates);
+            angular.forEach(coords, function (point) {
               point.forEach(function (pos, i) {
                 point[i] = Math.round(pos * n) / n;
               });
