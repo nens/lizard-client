@@ -220,6 +220,9 @@ angular.module('lizard-nxt')
             });
             newHash.push(points.join('-'));
           }
+          if (geom.geometry.type === 'Polygon' && geom.id) {
+            newHash.push(geom.id);
+          }
         });
 
         LocationGetterSetter.setUrlValue(

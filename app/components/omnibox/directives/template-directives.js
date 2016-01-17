@@ -59,28 +59,39 @@ angular.module('omnibox')
     link: function (scope, element) {
 
       scope.showNoData = false;
-      var geom = scope.geom;
       var clickId = 0;
 
-      if (scope.header && geom.geometry.type === 'Point') {
-        var latLng = L.latLng(
-          geom.geometry.coordinates[1],
-          geom.geometry.coordinates[0]
-        );
-        clickId = ClickFeedbackService.drawArrow(MapService, latLng);
-      }
+      var destroy = function () {
+        if (clickId) {
+          ClickFeedbackService.removeClickFromClickLayer(clickId);
+        }
+      };
 
-      else if (scope.header && geom.geometry.type === 'LineString') {
-        var coords = geom.geometry.coordinates;
-        var start = L.latLng(coords[0][1], coords[0][0]);
-        var end = L.latLng(coords[1][1], coords[1][0]);
-        clickId = ClickFeedbackService.drawLine(
-          MapService,
-          start,
-          end
-        );
+      scope.$watchCollection('geom.geometry.coordinates', function () {
+        destroy();
 
-      }
+        var geom = scope.geom;
+
+        if (scope.header && geom.geometry.type === 'Point') {
+          var latLng = L.latLng(
+            geom.geometry.coordinates[1],
+            geom.geometry.coordinates[0]
+          );
+          clickId = ClickFeedbackService.drawArrow(MapService, latLng);
+        }
+
+        else if (scope.header && geom.geometry.type === 'LineString') {
+          var coords = geom.geometry.coordinates;
+          var start = L.latLng(coords[0][1], coords[0][0]);
+          var end = L.latLng(coords[1][1], coords[1][0]);
+          clickId = ClickFeedbackService.drawLine(
+            MapService,
+            start,
+            end
+          );
+
+        }
+      });
 
       scope.$watchCollection('geom.properties', function (newProps, oldProps) {
         if (newProps) {
@@ -89,9 +100,7 @@ angular.module('omnibox')
       });
 
       element.on('$destroy', function () {
-        if (clickId) {
-          ClickFeedbackService.removeClickFromClickLayer(clickId);
-        }
+        destroy();
       });
 
 

@@ -234,51 +234,9 @@ angular.module('lizard-nxt')
       );
     });
 
-    /**
-     * Set geom when mapState.here changed and box.type is point.
-     */
-    $scope.$watch(State.toString('spatial.here'), function (n, o) {
-      if (n === o || State.box.type !== 'point') { return true; }
-      state.geom.update = false;
-      UrlState.setgeomUrl(
-        state,
-        State.box.type,
-        State.spatial.here,
-        State.spatial.points
-      );
-    });
-
     $scope.$watch(State.toString('selected'), function (n, o) {
       if (n === o) { return true; }
       UrlState.setSelectedUrl(state, State.selected);
-    });
-
-    /**
-     * Set geom when mapState.points changed and box.type is line.
-     */
-    $scope.$watch(State.toString('spatial.points'), function (n, o) {
-      if (n === o || State.box.type !== 'line') { return true; }
-      UrlState.setgeomUrl(state,
-        State.box.type,
-        State.spatial.here,
-        State.spatial.points
-      );
-    });
-
-    /**
-     * Set region when State.spatial.region changed and box.type is region.
-     */
-    $scope.$watch(State.toString('spatial.region'), function (n, o) {
-      if (n === o || State.box.type !== 'region') { return true; }
-      if (State.spatial.region.properties) {
-        LocationGetterSetter.setUrlValue(
-          state.geom.part, state.geom.index, State.spatial.region.properties.name
-        );
-      } else {
-        LocationGetterSetter.setUrlValue(
-          state.geom.part, state.geom.index, ''
-        );
-      }
     });
 
     /**
@@ -324,7 +282,7 @@ angular.module('lizard-nxt')
       if (geom) {
         State.selected = UrlState.parseSelection(geom, State.selected);
         if (boxType === 'region') {
-          NxtRegionsLayer.setActiveRegion(geom);
+          NxtRegionsLayer.setActiveRegion(parseInt(geom));
         }
       }
 

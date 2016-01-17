@@ -16,7 +16,7 @@ angular.module('map')
     var regionsLayer;
 
     // String of feature.properties.name that should be active.
-    var activeRegionString;
+    var activeRegionId;
 
     // ILayer of last region that recieved click.
     var previousActiveLayer;
@@ -43,7 +43,7 @@ angular.module('map')
 
     /**
      * Draws regions as a L.geoJson layer on the map. Sets click function. And
-     * Fires click if ActiveRegionString is not falsy.
+     * Fires click if activeRegionId is not falsy.
      *
      * @param  {geojson}  regions
      * @param  {funciton} clickCb callback fires when layer is clicked.
@@ -64,7 +64,7 @@ angular.module('map')
 
             },
             mouseout: function (e) {
-              if (e.target.feature.properties.name !== activeRegionString) {
+              if (e.target.feature.id !== activeRegionId) {
                 regionsLayer.resetStyle(e.target);
               }
             },
@@ -79,29 +79,29 @@ angular.module('map')
 
               clickCb(this);
 
-              activeRegionString = newActiveLayer.feature.properties.name;
+              activeRegionId = newActiveLayer.feature.id;
               previousActiveLayer = newActiveLayer;
             }
           });
         }
       });
       MapService.addLeafletLayer(regionsLayer);
-      if (activeRegionString) { setActiveRegion(activeRegionString); }
+      if (activeRegionId) { setActiveRegion(activeRegionId); }
     };
 
     /**
      * Removes the regions from the map and sets activeRegioString to null.
      */
     var removeRegions = function (MapService) {
-      activeRegionString = null;
+      activeRegionId = null;
       MapService.removeLeafletLayer(regionsLayer);
     };
 
     /**
      * Sets the activeRegion, by firing a click when regionsLayer exists, or
-     * sets activeRegionString that triggers a call of this function onload.
+     * sets activeRegionId that triggers a call of this function onload.
      *
-     * @param {string} region properties.name of region.
+     * @param {string} region feature.id of region.
      */
     var setActiveRegion = function (region) {
       if (regionsLayer) {
@@ -110,15 +110,15 @@ angular.module('map')
           layer.fire('click');
         }
         else {
-          activeRegionString = null;
+          activeRegionId = null;
         }
       } else {
-        activeRegionString = region;
+        activeRegionId = region;
       }
     };
 
     var getActiveRegion = function () {
-      return activeRegionString;
+      return activeRegionId;
     };
 
     /**
@@ -129,10 +129,10 @@ angular.module('map')
      * @param  {string} regionName     Properties.name of region
      * @return {L.ILayer} Region layer or undefined if not found
      */
-    var _getRegion = function (lGeo, regionName) {
+    var _getRegion = function (lGeo, regionId) {
       var region;
       lGeo.eachLayer(function (layer) {
-        if (layer.feature.properties.name === regionName) {
+        if (layer.feature.id === regionId) {
           region = layer;
         }
       });

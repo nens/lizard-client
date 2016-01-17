@@ -104,7 +104,6 @@ describe('Service: SearchService', function () {
     State = $injector.get('State');
 
     State.spatial = {
-      here: {},
       bounds : {
         getNorth: function () {},
         getSouth: function () {},
@@ -155,9 +154,4 @@ describe('Service: SearchService', function () {
       .toBe(layergroupResult.layers[0].meta.spatial_bounds.south); // jshint ignore:line
   });
 
-  it('should simulate click on timeseries search result', function () {
-    var newState = SearchService.zoomToResult(endpointResult.results[0], State);
-    expect(newState.spatial.here.lat)
-      .toEqual(endpointResult.results[0].location.object.geometry.coordinates[1]);
-  });
 });

@@ -146,7 +146,8 @@ angular.module('map')
       },
 
       _setAssetOrGeomFromUtfOnState: function (latLng) {
-
+        State.selected.assets = [];
+        State.selected.geometries = [];
         DataService.utfLayerGroup.getData('dataService', {'geom': latLng})
         .then(null, null, function (response) {
 
@@ -291,12 +292,6 @@ angular.module('map')
         })
         .then(function (regions) {
           NxtRegionsLayer.add(service, regions.results, clickCb);
-
-          // If the new regions do not contain the current active region, rm the
-          // data  and the references to it.
-          // if (NxtRegionsLayer.getActiveRegion() !== State.selected.geometries[0].id) {
-          //   State.selected.geometries.length = 0;
-          // }
         });
       },
 
