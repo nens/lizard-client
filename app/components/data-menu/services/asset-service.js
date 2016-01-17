@@ -20,31 +20,31 @@ angular.module('data-menu')
           return newSelection.indexOf(assetId) !== -1;
         });
 
-        var newAssets = newSelection.filter(function (assetId) {
+        var newAsset = newSelection.filter(function (assetId) {
           return oldSelection.indexOf(assetId) === -1;
-        });
+        })[0];
 
-        var promises = [];
+        if (newAsset) {
+          var entity = newAsset.split('$')[0];
+          var id = newAsset.split('$')[1];
 
-        newAssets.forEach(function (assetId) {
+          return $http({
+            url: 'api/v2/' + entity + 's' + '/' + id + '/',
+            method: 'GET'
+          })
 
-          var entity = assetId.split('$')[0];
-          var id = assetId.split('$')[1];
+          .then(function (response) {
+            response.data.entity_name = entity;
+            return response.data;
+          });
+        }
 
-          promises.push(
-            $http({
-              url: 'api/v2/' + entity + 's' + '/' + id + '/',
-              method: 'GET'
-            })
+        else {
+          var defer = $q.defer();
+          defer.resolve();
+          return defer.promise;
+        }
 
-            .then(function (response) {
-              response.data.entity_name = entity;
-              assets.push(response.data);
-            })
-          );
-        });
-
-        return $q.all(promises).then(function () { return assets; });
       };
 
   }

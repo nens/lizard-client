@@ -34,6 +34,7 @@ module.exports = function(config) {
       'vendor/leaflet.markercluster/dist/leaflet.markercluster.js',
       'vendor/moment/moment.js',
       'vendor/angular-gettext/dist/angular-gettext.js',
+      'vendor/angular-animate/angular-animate.js',
       // endbower
 
       'vendor/moment/locale/nl.js',

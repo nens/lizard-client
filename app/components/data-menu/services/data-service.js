@@ -106,8 +106,14 @@ angular.module('data-menu')
       var setAssets = function (assets) {
         var oldAssets = angular.copy(instance.assets);
         AssetService.updateAssets(instance.assets, _assets, assets)
-        .then(function (assets) {
-          instance.assets = assets;
+        .then(function (asset) {
+          if (asset) {
+            instance.assets.push(asset);
+          }
+          instance.assets = instance.assets.filter(function (asset) {
+            var assetId = asset.entity_name + '$' + asset.id;
+            return _assets.indexOf(assetId) !== -1;
+          });
           instance.getGeomDataForAssets(oldAssets, instance.assets);
           console.log('DataService.assets:', instance.assets);
         });

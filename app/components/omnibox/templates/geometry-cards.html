@@ -1,6 +1,12 @@
-<div>
+<div class="animate-repeat">
 
   <cardheader ng-if="header" geom="geom"></cardheader>
+
+  <div
+    ng-if="showNoData && header"
+    class="card active card-content">
+    <em translate>No data available for this location</em>
+  </div>
 
   <rain ng-if="geom.properties.rain"></rain>
 

@@ -58,6 +58,7 @@ angular.module('omnibox')
   return {
     link: function (scope, element) {
 
+      scope.showNoData = false;
       var geom = scope.geom;
       var clickId = 0;
 
@@ -80,6 +81,12 @@ angular.module('omnibox')
         );
 
       }
+
+      scope.$watchCollection('geom.properties', function (newProps, oldProps) {
+        if (newProps) {
+          scope.showNoData = !Object.keys(newProps).length;
+        }
+      });
 
       element.on('$destroy', function () {
         if (clickId) {
