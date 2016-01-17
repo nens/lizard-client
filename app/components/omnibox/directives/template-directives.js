@@ -70,18 +70,15 @@ angular.module('omnibox')
       }
 
       else if (scope.header && geom.geometry.type === 'LineString') {
-        var feature = {
-          type: 'Feature',
-          geometry: geom.geometry,
-          properties: {}
-        };
-
-        clickId = ClickFeedbackService.drawGeometry(
+        var coords = geom.geometry.coordinates;
+        var start = L.latLng(coords[0][1], coords[0][0]);
+        var end = L.latLng(coords[1][1], coords[1][0]);
+        clickId = ClickFeedbackService.drawLine(
           MapService,
-          feature
+          start,
+          end
         );
 
-        ClickFeedbackService.vibrateOnce(feature);
       }
 
       element.on('$destroy', function () {
@@ -194,13 +191,15 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
-  .directive('defaultpoint', [function () {
+  .directive('defaultpoint', ['UtilService', function (UtilService) {
   return {
+    link: function (scope) {
+      scope.isUrl = UtilService.isUrl;
+    },
     restrict: 'E',
     scope: {
-      lg: '=',
+      content: '=',
       state: '=',
-      isUrl: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/defaultpoint.html'

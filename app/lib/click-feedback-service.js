@@ -126,6 +126,8 @@ angular.module('lizard-nxt')
           return;
         }
 
+        var oldIds = Object.keys(this.clickLayer._layers);
+
         this.strokeWidth = 2;
 
         var geojsonFeature = { "type": "Feature" };
@@ -143,6 +145,18 @@ angular.module('lizard-nxt')
           this.clickLayer.options.style.dashArray = "5, 5";
         }
         this.clickLayer.addData(geojsonFeature);
+
+        // check id.
+        var newIds = Object.keys(this.clickLayer._layers);
+        var newId;
+        angular.forEach(newIds, function (item) {
+          if (oldIds.indexOf(item) < 0) {
+            newId = item;
+          }
+        });
+        var sel = this._selection = this._getSelection(this.clickLayer, newId);
+        this.vibrate(sel);
+        return newId;
       };
 
       /**
@@ -331,8 +345,11 @@ angular.module('lizard-nxt')
       return clickLayer.drawFeature(geometry);
     };
 
-    drawLine = function (first, second, dashed) {
-      clickLayer.drawLineElement(first, second, dashed);
+    drawLine = function (mapState, first, second, dashed) {
+      if (!clickLayer.clickLayer) {
+        clickLayer.emptyClickLayer(mapState);
+      }
+      return clickLayer.drawLineElement(first, second, dashed);
     };
 
     startVibration = function (id) {

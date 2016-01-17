@@ -249,8 +249,9 @@ angular.module('map')
           }
         }
         else if (State.box.type === 'line') {
-          if (this.line.geometry.coordinates.length === 2) {
-            State.selected.geometries.removeGeometry(this.line);
+          if (this.line.geometry.coordinates.length === 2
+            || State.selected.geometries.length > 0) {
+            State.selected.geometries = [];
             this.line.geometry.coordinates = [];
           }
           if (this.line.geometry.coordinates.length < 2) {
@@ -270,6 +271,11 @@ angular.module('map')
          * @param  {object} leaflet ILayer that recieved the click.
          */
         var clickCb = function (layer) {
+          for (var key in layer.feature.properties) {
+            var newkey = key === 'type' ? 'regionType' : key;
+            layer.feature[newkey] = layer.feature.properties[key];
+          }
+          layer.feature.properties = {};
           State.selected.geometries = [layer.feature];
         };
 

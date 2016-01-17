@@ -23,11 +23,13 @@
 
     </div>
 
-    <div ng-if="omnibox.state.context === 'dashboard'">
 
-      <db-asset-card asset="asset" ng-repeat="asset in omnibox.data.assets"></db-asset-card>
+    <db-asset-card
+      ng-if="omnibox.state.context === 'dashboard'"
+      ng-repeat="asset in omnibox.data.assets"
+      asset="asset" >
+    </db-asset-card>
 
-    </div>
 
     <scenarios ng-if="omnibox.state.context === 'scenarios'"></scenarios>
 

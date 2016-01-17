@@ -86,6 +86,7 @@ angular.module('map')
             var end = e.latlng;
             ClickFeedbackService.emptyClickLayer(MapService);
             ClickFeedbackService.drawLine(
+              MapService,
               start,
               end
             );
@@ -146,13 +147,8 @@ angular.module('map')
         }
         if (State.box.type === 'area') {
           var b = State.spatial.bounds;
-          if (State.selected.geometries.length > 0) {
-            State.selected.geometries[0].geometry.coordinates = L.rectangle(b).toGeoJSON();
-            DataService.refreshSelected();
-          } else {
-            State.selected.geometries = [];
-            State.selected.geometries.addGeometry(L.rectangle(b).toGeoJSON());
-          }
+          State.selected.geometries = [];
+          State.selected.geometries.addGeometry(L.rectangle(b).toGeoJSON());
         }
         else if (State.box.type === 'region') {
           MapService.getRegions(State.spatial.bounds);
@@ -207,7 +203,7 @@ angular.module('map')
           break;
         case "region":
           selector = "";
-          MapService.getRegions(State.spatial.bounds)
+          MapService.getRegions(State.spatial.bounds);
           break;
         case "area":
           selector = "#map * {cursor: -webkit-grab; cursor: -moz-grab; cursor: grab; cursor: hand;}";

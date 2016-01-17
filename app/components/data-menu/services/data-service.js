@@ -244,7 +244,6 @@ angular.module('data-menu')
         set: function (value) {
           _timelineMoving = value;
           if (!value) {
-            console.log('refreshing');
             instance.refreshSelected();
           }
         }
@@ -440,13 +439,6 @@ angular.module('data-menu')
       };
 
       this._updateGeometries = function (oldGeoms, newGeoms) {
-        var freshGeometries = newGeoms.filter(function (geom) {
-          return !oldGeoms.filter(function (oldGeom) {
-            var oC = oldGeom.geometry.coordinates;
-            var nC = geom.geometry.coordinates;
-            return _.isEqual(oC, nC);
-          }).length;
-        });
 
         instance.geometries = instance.geometries.filter(function (geom) {
           return newGeoms.filter(function (oldGeom) {
@@ -456,21 +448,28 @@ angular.module('data-menu')
           }).length;
         });
 
-        var promises = [];
+        if (newGeoms.length > 0) {
+          return this.getGeomData(newGeoms[newGeoms.length -1])
+          .then(function(newGeo) {
+            var dupe = false;
+            instance.geometries.forEach(function (old, i) {
+              if (_.isEqual(old.geometry.coordinates, newGeo.geometry.coordinates)) {
+                dupe = true;
+                instance.geometries[i] = newGeo;
+              }
+            });
+            if (!dupe) {
+              instance.geometries.push(newGeo);
+            }
+            return instance.geometries;
+          });
+        }
+        else {
+          var defer = $q.defer();
+          defer.resolve(instance.geometries);
+          return defer.promise;
+        }
 
-        freshGeometries.forEach(function (geom) {
-
-          promises.push(
-            this.getGeomData(geom)
-            .then(function(geo) {
-              instance.geometries.push(geo);
-            })
-          );
-
-        }, this);
-
-        return $q.all(promises).then(function () {
-          return instance.geometries; });
       };
 
       this.getGeomDataForAssets = function (oldAssets, assets) {
@@ -490,14 +489,11 @@ angular.module('data-menu')
       };
 
       this.getGeomData = function (geo) {
-        if (this._defer) {
-          this._defer.reject(this.REJECTION_REASONS.OVERRIDDEN); // It is a list because $q.all can not
-        }                                // be deregistered.
-        this._defer = $q.defer();
-        var defer = this._defer;
+        var defer = $q.defer();;
 
         var promises = [];
         var instance = this;
+
         var options = {
           start: State.temporal.start,
           end: State.temporal.end
@@ -506,6 +502,7 @@ angular.module('data-menu')
         if (geo.geometry.type === 'Point') {
           options.geom = L.latLng(geo.geometry.coordinates[1], geo.geometry.coordinates[0]);
         }
+
         else if (geo.geometry.type === 'LineString') {
           var coords = geo.geometry.coordinates;
           options.geom = [
@@ -513,23 +510,38 @@ angular.module('data-menu')
             L.latLng(coords[1][1], coords[1][0])
           ];
         }
+
         else if (geo.geometry.type === 'Polygon' && geo.id) {
           options.id = geo.id;
         }
+
         if (geo.geometry.type === 'Polygon') {
           options.geom = L.geoJson(geo).getBounds();
         }
+
         angular.forEach(this.layerGroups, function (layerGroup) {
           if (layerGroup.slug === instance.utfLayerGroup.slug) { return; }
 
           promises.push(
             layerGroup.getData('DataService', options).then(null, null, function (response) {
+              // async so remove anything obsolete.
               geo.properties = geo.properties || {};
               geo.properties[response.layerGroupSlug] = response;
-              // async so remove anything obsolete.
               if (
-                !instance.layerGroups[response.layerGroupSlug].isActive()
-                && layerGroup.slug in Object.keys(geo.properties)) {
+                (!instance.layerGroups[response.layerGroupSlug].isActive()
+                && layerGroup.slug in Object.keys(geo.properties))
+                || !response.data
+                || !response.data.filter(function (val) {
+                  var rich = true;
+                  if (val === null) {
+                    rich = false;
+                  }
+                  else if (val.hasOwnProperty && val.hasOwnProperty(1)) {
+                    rich = val[1] !== null;
+                  }
+                  return rich;
+                }).length
+                ) {
                 delete geo.properties[layerGroup.slug];
               }
             })
@@ -537,6 +549,7 @@ angular.module('data-menu')
         });
 
         $q.all(promises).then(function () {
+            geo.properties = geo.properties || {};
             State.layerGroups.gettingData = false;
             defer.resolve(geo);
             defer = undefined; // Clear the defer

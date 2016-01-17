@@ -1,18 +1,21 @@
-
 <div>
 
   <cardheader ng-if="header" geom="geom"></cardheader>
 
-  <div ng-if="geom.properties.rain">
-    <rain></rain>
-  </div>
+  <rain ng-if="geom.properties.rain"></rain>
 
-  <div ng-repeat="(slug, content) in geom.properties"
-       class="card active"
-       ng-if="slug !== 'rain'">
-    <defaultpoint ng-if="geom.geometry.type === 'Point'" lg="content" name="slug" state="omnibox.state" is-url="isUrl"></defaultpoint>
+  <defaultpoint
+    ng-if="geom.geometry.type === 'Point' && !geom.properties.rain "
+    ng-repeat="(slug, content) in geom.properties"
+    content="content"
+    name="slug"
+    state="omnibox.state">
+  </defaultpoint>
 
-  <div ng-if="geom.geometry.type === 'LineString'"  class="card-content" id="card-content-<% agg.name %>">
+  <div
+    ng-if="geom.geometry.type === 'LineString'"
+    class="card active card-content"
+    ng-repeat="(slug, content) in geom.properties">
     <graph ng-if="content.scale === 'interval' || content.scale === 'ratio'"
       line
       data="content.data"
@@ -43,56 +46,53 @@
     </div>
   </div>
 
-  <div ng-if="geom.geometry.type === 'Polygon'">
-
-    <div ng-repeat="(slug, lg) in geom.properties"
-         ng-if="slug !== 'rain'"
-         class="card active" id="card-<% slug %>">
+  <div
+    ng-if="geom.geometry.type === 'Polygon' && slug !== 'rain'"
+    class="card active">
+    <div ng-repeat="(slug, content) in geom.properties">
 
       <div
-        ng-if="!!lg && lg.data"
-        ng-switch="lg.aggType"
-        class="card-content"
-        id="card-content-<% lg.name %>">
+        class="card-content">
 
         <graph
-          ng-switch-when="curve"
+          ng-if="geom.properties.elevation.aggType === 'curve'"
           line xlabel="'[%]'"
-          ylabel="lg.unit"
-          data="lg.data"
+          ylabel="geom.properties.elevation.unit"
+          data="geom.properties.elevation.data"
           keys="{x: 0, y: 1}">
         </graph>
 
         <graph
-          ng-switch-when="histogram"
+          ng-if="content.aggType === 'histogram'"
           bar-chart
           quantity="'linear'"
           ylabel="'[%]'"
-          xlabel="lg.unit"
-          data="lg.data"
+          xlabel="content.unit"
+          data="content.data"
           keys="{x: 0, y: 1}">
         </graph>
 
         <graph
-          ng-switch-when="counts"
+          ng-if="content.aggType === 'counts'"
           horizontal-stack
-          data="lg.data"
+          data="content.data"
           keys="{x: 'data', y: 'label'}"
           xlabel="'[%]'"
           dimensions="{height: 80, padding: {left: 0, right: 0, top: 5, bottom: 50}}">
         </graph>
 
-        <div ng-switch-default ng-switch="lg.format">
+        <div ng-if="content.aggType !== 'histogram' && content.aggType !== 'curve' && content.aggType !== 'counts'">
 
           <graph
-            ng-switch-when="Store"
+            ng-if="content.format === Store"
             line
-            data="lg.data">
+            data="content.data">
           </graph>
 
         </div>
 
       </div>
+
     </div>
   </div>
 </div>
