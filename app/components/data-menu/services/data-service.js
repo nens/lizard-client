@@ -582,50 +582,5 @@ angular.module('data-menu')
         }, this);
       };
 
-      /**
-       * Checks response for id and entity_name and passes this
-       * getTimeSeriesForObject with start and end.
-       *
-       * NOTE, TODO: Since now (october 2015) getting timeseries is a job of the
-       * timeseries module with a dedicated directive. This code is legacey,
-       * used by the time context and for events. This will change when we
-       * implement the livedijk xl features.
-       *
-       * @param  {object} response response from layergroup
-       * @param  {int}    start    time start
-       * @param  {int}    end      time end
-       * @param  {defer}  defer    defer object to notify with timeseries
-       * @param  {string} callee   the origin of the data request, specified by
-       *                           the function calling DataService.getData.
-       *
-       * @return {object} false when no id and entity name or promise
-       *                            when making request to timeseries endpoint.
-       */
-      this.getTimeseriesAndEvents = function (
-        response,
-        options,
-        defer,
-        callee
-      ) {
-        if (response.format === 'UTFGrid'
-          && response.data
-          && response.data.id
-          && response.data.entity_name
-        ) {
-          // Apparently, we're dealing with the waterchain:
-          // The defer from getData is recycled, no need to pass a callee param.
-          options.type = 'Event';
-          options.object = {
-            type: response.data.entity_name,
-            id: response.data.id
-          };
-          // Get all events for the provided options and the events belonging to
-          // this object.
-          var promises = [this.getData(null, options, defer)];
-
-          return $q.all(promises);
-        } else { return false; }
-      };
-
     }
   ]);

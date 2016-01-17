@@ -8,7 +8,11 @@
     <em translate>No data available for this location</em>
   </div>
 
-  <rain ng-if="geom.properties.rain"></rain>
+  <rain
+    ng-if="geom.properties.rain"
+    rain="geom.properties.rain"
+    state="omnibox.state">
+  </rain>
 
   <defaultpoint
     ng-if="geom.geometry.type === 'Point' && !geom.properties.rain "

@@ -189,9 +189,57 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
-  .directive('rain', [function () {
+  .directive('rain', ['State', 'RasterService', function (State, RasterService) {
   return {
+    link: function (scope) {
+
+      scope.rrc = {
+        active: false
+      };
+
+      scope.recurrenceTimeToggle = function () {
+        if (!scope.$$phase) {
+          scope.$apply(function () {
+            scope.rrc.active = !scope.rrc.active;
+            scope.lg.changed =
+              !scope.lg.changed;
+          });
+        } else {
+          scope.rrc.active = !scope.rrc.active;
+          scope.lg.changed = !scope.lg.changed;
+        }
+      };
+
+
+      scope.$watchCollection("lg.data", function (n, o) {
+        if (n === o || !scope.rrc.active) { return; }
+        getRecurrenceTime();
+      });
+
+      var getRecurrenceTime = function () {
+        scope.rrc.data = null;
+
+        // TODO: refactor this shit
+        RasterService.getData(
+          'RainController',
+          {slug: 'rain'},
+          {
+            agg: 'rrc',
+            geom: L.Latlng(scope.geom.geomtry.coordinates[1], scope.geom.geomtry.coordinates[0]),
+            start: State.temporal.start,
+            end: State.temporal.end
+          }
+        ).then(function (response) {
+          scope.rrc.data = response;
+        });
+      };
+
+    },
     restrict: 'E',
+    scope: {
+      rain: '=',
+      state: '='
+    },
     replace: true,
     templateUrl: 'omnibox/templates/rain.html'
   };
@@ -210,14 +258,6 @@ angular.module('omnibox')
     },
     replace: true,
     templateUrl: 'omnibox/templates/defaultpoint.html'
-  };
-}]);
-
-angular.module('omnibox')
-  .directive('detailswitch', [function () {
-  return {
-    restrict: 'E',
-    templateUrl: 'omnibox/templates/detailswitch.html'
   };
 }]);
 

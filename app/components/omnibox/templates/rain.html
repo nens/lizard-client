@@ -1,19 +1,18 @@
-<div ng-controller="rain">
+<div>
 
   <div class="card active">
-    <div class="card-content"
-      ng-init="lg = geom.properties.rain">
+    <div class="card-content">
      <full-details></full-details>
      <span class="card-title-text" ng-class="{hidden: fullDetails}" translate>Rain</span>
      <div ng-class="{ hidden: !fullDetails }">
        <graph
          bar-chart
          class="xyGraph"
-         data="lg.data"
-         ylabel="lg.aggWindow"
+         data="rain.data"
+         ylabel="rain.aggWindow"
          yfilter="aggWinToYLabel"
          keys="{x: 0, y: 1}"
-         temporal="timeState">
+         temporal="state.temporal">
        </graph>
        <div class="card-tools"
         ng-class="{hidden: !fullDetails}">
@@ -26,7 +25,7 @@
          <a
            class="btn btn-default btn-xs"
            title="Data van deze infocard exporteren"
-           ng-csv="$parent.formatCSVColumns(lg.data)"
+           ng-csv="$parent.formatCSVColumns(rain.data)"
            field-separator=";"
            filename="neerslag.csv"
            csv-header="['Latitude', 'Longitude', 'Datestamp', 'Timestamp', 'Rain (mm)']">
@@ -39,8 +38,7 @@
   </div>
 
   <div class="card active ng-class: {hidden: !fullDetails}" ng-if="rrc.active">
-    <div class="card-content-message"
-      ng-init="lg = box.content.rain">
+    <div class="card-content-message">
       <div class="recurrence-time-container">
         <div ng-if="!rrc.data.message">
           <table class="table table-hover table-condensed">
