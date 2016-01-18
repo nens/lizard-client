@@ -1,32 +1,6 @@
 <div id="timeline"
      ng-controller="TimeCtrl as timeline">
 
-    <div class="clock-wrapper noselect">
-
-      <!-- TODO?: use toLocaleString() for datetime dutchification? -->
-
-      <div class="clock-time">
-        <div
-           ng-click="timeline.toggleTimelineVisiblity()"
-           ng-bind="timeline.state.temporal.at | date: timeline.formatDatetime()"
-           title="<% timelineVisible ? tooltips.closeTimeline : tooltips.openTimeline %>">
-        </div>
-        <div ng-if="timeline.showContextSwitch">
-          <a
-            ng-click="timeline.toggleTimeCtx()"
-            class="button-list-link"
-            title="<% 'Show dashboard' | translate %>"
-            style="cursor: pointer;">
-            <i class="fa" ng-class="{
-              'fa-minus-square': timeline.state.context === 'dashboard',
-              'fa-bar-chart': timeline.state.context === 'map'
-            }"></i>
-          </a>
-        </div>
-      </div>
-
-    </div>
-
   <div class="timeline-wrapper">
     <div class="time-controls" id="time-controls" ng-if="timeline.animatable">
       <div class="btn-group">
