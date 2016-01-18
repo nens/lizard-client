@@ -68,18 +68,16 @@ angular.module('omnibox')
 
 
     /**
-     * Zooms to result of API searchendpoint. It also simulates a
-     * click on the result.
+     * Add result of API searchendpoint to selection.
      * @param  {object} result search result.
      */
     this.zoomToResult = function (result, state) {
 
-      var object = result.location.object;
+      var asset = result.location.object;
 
-      state.spatial.here = LeafletService.latLng(
-        object.geometry.coordinates[1],
-        object.geometry.coordinates[0]
-      );
+      if (asset.type && asset.id) {
+        state.selected.assets.addAsset(asset.type + '$' + asset.id);
+      }
 
       return state;
     };

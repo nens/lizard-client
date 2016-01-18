@@ -217,8 +217,6 @@ angular.module('lizard-nxt')
 
       if (old === 'point' || old === 'line' || old === 'region' || old === 'multi-point') {
         // Remove geometry from url
-        State.selected.reset();
-        state.boxType.update = false;
         LocationGetterSetter.setUrlValue(
           state.geom.part, state.geom.index, undefined);
       }
@@ -236,51 +234,9 @@ angular.module('lizard-nxt')
       );
     });
 
-    /**
-     * Set geom when mapState.here changed and box.type is point.
-     */
-    $scope.$watch(State.toString('spatial.here'), function (n, o) {
-      if (n === o || State.box.type !== 'point') { return true; }
-      state.geom.update = false;
-      UrlState.setgeomUrl(
-        state,
-        State.box.type,
-        State.spatial.here,
-        State.spatial.points
-      );
-    });
-
     $scope.$watch(State.toString('selected'), function (n, o) {
       if (n === o) { return true; }
       UrlState.setSelectedUrl(state, State.selected);
-    });
-
-    /**
-     * Set geom when mapState.points changed and box.type is line.
-     */
-    $scope.$watch(State.toString('spatial.points'), function (n, o) {
-      if (n === o || State.box.type !== 'line') { return true; }
-      UrlState.setgeomUrl(state,
-        State.box.type,
-        State.spatial.here,
-        State.spatial.points
-      );
-    });
-
-    /**
-     * Set region when State.spatial.region changed and box.type is region.
-     */
-    $scope.$watch(State.toString('spatial.region'), function (n, o) {
-      if (n === o || State.box.type !== 'region') { return true; }
-      if (State.spatial.region.properties) {
-        LocationGetterSetter.setUrlValue(
-          state.geom.part, state.geom.index, State.spatial.region.properties.name
-        );
-      } else {
-        LocationGetterSetter.setUrlValue(
-          state.geom.part, state.geom.index, ''
-        );
-      }
     });
 
     /**
@@ -324,12 +280,9 @@ angular.module('lizard-nxt')
       }
 
       if (geom) {
-        if (geom.split('$').length === 1) {
-          State.spatial = UrlState.parseGeom(State.box.type, geom, State.spatial);
-        } else if (boxType === 'point' || boxType === 'multi-point') {
-          State.selected = UrlState.parseGeom(State.box.type, geom, State.selected);
-        } else if (boxType === 'region') {
-          NxtRegionsLayer.setActiveRegion(geom);
+        State.selected = UrlState.parseSelection(geom, State.selected);
+        if (boxType === 'region') {
+          NxtRegionsLayer.setActiveRegion(parseInt(geom));
         }
       }
 
