@@ -1,7 +1,6 @@
 /**
  * @name Graph
- * @class angular.module('lizard-nxt')
-  .Graph
+ * @class Graph
  * @memberOf app
  *
  * @summary Service to create and update a graph
@@ -24,9 +23,8 @@ angular.module('lizard-nxt')
 
   /**
    * @constructor
-   * @memberOf angular.module('lizard-nxt')
-  .Graph
    *
+   * @memberOf Graph
    * @param {object} element    svg element for the graph.
    * @param {object} dimensions object containing, width, height and
    *                            an object containing top,
@@ -47,394 +45,379 @@ angular.module('lizard-nxt')
   Graph.prototype = Object.create(NxtD3.prototype, {
 
     constructor: Graph,
+  });
 
-    resize: {
-      value: function (newDim) {
-        NxtD3.prototype.resize.call(this, newDim);
-        this._svg = this._createDrawingArea();
-        this._svg.selectAll('.axis').remove();
-        this._x = null;
-        this._xy = null;
-        // reposition labels
-        drawLabel(this._svg, this.dimensions, undefined, true);
-        drawLabel(this._svg, this.dimensions, undefined, false);
+  Graph.prototype.resize = function (newDim) {
+      NxtD3.prototype.resize.call(this, newDim);
+      this._svg = this._createDrawingArea();
+      this._svg.selectAll('.axis').remove();
+      this._x = null;
+      this._xys = null;
+      // reposition labels
+      drawLabel(this._svg, this.dimensions, undefined, true);
+      drawLabel(this._svg, this.dimensions, undefined, false);
+  };
+
+  /**
+   * @function
+   * @memberOf Graph
+   * @param {object}    data object. Currently supports the format:
+   *                    [
+   *                      {
+   *                        "<key to color>": "<color str>",
+   *                        "<value key": <value int>,
+   *                        "<label key>": "<label>"
+   *                      },
+   *                      ...,
+   *                    ]
+   * @description       If necessary creates a d3 pie and arc and
+   *                    draws the features in the data element.
+   */
+  Graph.prototype.drawDonut = function (data) {
+      if (!this.dimensions.r || this._arc || this._pie) {
+        this._donut = createDonut(this.dimensions);
       }
-    },
+      drawPie(this._svg, this.dimensions, this._donut, data);
+  };
 
-    /**
-     * @function
-     * @memberOf angular.module('lizard-nxt')
-  .Graph
-     * @param {object}    data object. Currently supports the format:
-     *                    [
-     *                      {
-     *                        "<key to color>": "<color str>",
-     *                        "<value key": <value int>,
-     *                        "<label key>": "<label>"
-     *                      },
-     *                      ...,
-     *                    ]
-     * @description       If necessary creates a d3 pie and arc and
-     *                    draws the features in the data element.
-     */
-    drawDonut: {
-      value: function (data) {
-        if (!this.dimensions.r || this._arc || this._pie) {
-          this._donut = createDonut(this.dimensions);
-        }
-        drawPie(this._svg, this.dimensions, this._donut, data);
-      }
-    },
-
-    /**
-     * @function
-     * @memberOf angular.module('lizard-nxt').Graph
-     * @param {object} data   Currently supports the format:
-     *                        [
-     *                          [value, value],
-     *                          ...,
-     *                        ]
-     * @param {object} keys   Mapping between x and y values of data object:
-     *                        example: {x: 0, y: 1}
-     * @param {object} labels Object {x: 'x label', y: 'y label'} will be
-     *                        mapped to axis labels of the graph
-     * @param {boolean} temporal to draw an time axis or not.
-     * @param {boolean} transitioning to draw a subset of data now, and the full
-     *                                set after a timeout if drawline is not
-     *                                called again before the timeout finishes.
-     *                                Use transitioning = true when callig this
-     *                                function many times as a result of a user
-     *                                induced action.
-     * @description           Draws a line, if necessary sets up the graph,
-     *                        if necessary modifies domain and redraws axis,
-     *                        and draws the line according to the data object.
-     *                        Currently only a linear scale on the x-axis is
-     *                        supported.
-     */
-    drawLine: {
-      value: function (data, keys, labels, temporal, transitioning) {
-        if (!this._xy) {
-          var options = {
-            x: {
-              scale: 'time',
-              orientation: 'bottom'
-            },
-            y: {
-              scale: 'linear',
-              orientation: 'left'
-            }
-          };
-          // pass options for time graph or use defaults
-          this._xy = this._createXYGraph(
-            data,
-            keys,
-            labels,
-            temporal ? options : undefined,
-            this._xDomainInfo
-          );
-        } else {
-          this._xy = rescale(
-            this._svg,
-            this.dimensions,
-            this._xy,
-            data,
-            keys,
-            null,
-            this._xDomainInfo
-          );
-          drawLabel(this._svg, this.dimensions, labels.y, true);
-        }
-
-        var lineAsArea = keys.y.hasOwnProperty('y0')
-          && keys.y.hasOwnProperty('y1');
-
-        var pathFn = lineAsArea
-          ? this._createArea(this._xy, keys)
-          : this._createLine(this._xy, keys);
-
-        var MIN_POINTS_FOR_SUBSET = 15,
-            DELAY = 10, // ms
-            DATA_REDUCTION_FACTOR = 5;
-
-        if (transitioning && data.length > MIN_POINTS_FOR_SUBSET) {
-          this._registerTimeout(
-            function () {
-              this._path = drawPath(
-                this._svg,
-                pathFn,
-                data,
-                0, // transition 0 ms when drawing while zooming.
-                this._path,
-                lineAsArea ? null : 'none'
-              );
-            },
-            DELAY // delay with 30 ms
-          );
-
-          data = getDataSubset(data, DATA_REDUCTION_FACTOR);
-        }
-
-        this._path = drawPath(
-          this._svg,
-          pathFn,
+  /**
+   * @function
+   * @memberOf Graph
+   * @param {object} data   Currently supports the format:
+   *                        [
+   *                          [value, value],
+   *                          ...,
+   *                        ]
+   * @param {object} keys   Mapping between x and y values of data object:
+   *                        example: {x: 0, y: 1}
+   * @param {object} labels Object {x: 'x label', y: 'y label'} will be
+   *                        mapped to axis labels of the graph
+   * @param {boolean} temporal to draw an time axis or not.
+   * @param {boolean} transitioning to draw a subset of data now, and the full
+   *                                set after a timeout if drawline is not
+   *                                called again before the timeout finishes.
+   *                                Use transitioning = true when callig this
+   *                                function many times as a result of a user
+   *                                induced action.
+   * @description           Draws a line, if necessary sets up the graph,
+   *                        if necessary modifies domain and redraws axis,
+   *                        and draws the line according to the data object.
+   *                        Currently only a linear scale on the x-axis is
+   *                        supported.
+   */
+  Graph.prototype.drawLine = function (content, temporal, transitioning) {
+    var data, labels, keys;
+    angular.forEach(content, function (item) {
+      data = item.data;
+      keys = {
+        x: 'timestamp',
+        y: { 'y0': 'min', 'y1': 'max' }
+      };
+      labels = item.labels || {x: '', y:''};
+    });
+      if (!this._xy) {
+        var options = {
+          x: {
+            scale: 'time',
+            orientation: 'bottom'
+          },
+          y: {
+            scale: 'linear',
+            orientation: 'left'
+          }
+        };
+        // pass options for time graph or use defaults
+        this._xy = this._createXYGraph(
           data,
-          temporal ? 0 : this.transTime, // Do not transition line graphs
-                                         // when temporal.
-          this._path,
-          lineAsArea ? null : 'none' // Set fill to 'none' for normal
-                                     // lines.
+          keys,
+          labels,
+          temporal ? options : undefined,
+          this._xDomainInfo
         );
-
-        if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-          addInteractionToPath(
-            this._svg,
-            this.dimensions,
-            data,
-            keys,
-            labels,
-            this._path,
-            this._xy,
-            this.transTime
-          );
-        }
-
-      }
-    },
-
-    /**
-     * @function
-     * @memberOf angular.module('lizard-nxt').Graph
-     * @param {object} data   Currently supports arrays of arrays or objects
-     *                        with x value, y value, <optional> color and
-     *                        <optional> category.
-     * @param {object} keys   Mapping between x, y and optional color, and
-     *                        category values of data object: example:
-     *                        {x: 0, y: 1} or:
-     *                        {x: 'xValue', y: 'yValue', color: 'eventColor',
-     *                        categoy: 'cat'};
-     * @param {object} labels Object {x: 'x label', y: 'y label'} will be
-     *                        mapped to axis labels of the graph
-     * @param {string} scale  Whether the graph has a scale other than temporal.
-     *                        If it is of a temporal nature the x-axis will by
-     *                        default be the temporal axis.
-     * @description           Draws a barchart, if necessary sets up the graph,
-     *                        if necessary modifies domain and redraws axis,
-     *                        and draws the line according to the data object.
-     *                        Currently only a time scale on the x-axis is
-     *                        supported. It assumes that every segment has a
-     *                        data element.
-     */
-    drawBars: {
-      value: function (data, keys, labels, scale) {
-        var originalKey = keys.y;
-        if (keys.category) {
-          // Create data for stacked bars.
-          data = createYValuesForCumulativeData(data, keys);
-          keys.y = 'y1';
-        }
-        if (!this._xy) {
-          var options = {
-            x: {
-              scale: scale,
-              orientation: 'bottom'
-            },
-            y: {
-              scale: 'linear',
-              orientation: 'left'
-            }
-          };
-          this._xy = this._createXYGraph(data, keys, labels, options);
-          this._xy.y.scale.domain([0, this._xy.y.maxMin.max]);
-        }
-
+      } else {
         this._xy = rescale(
           this._svg,
           this.dimensions,
           this._xy,
           data,
           keys,
-          {y: 0},
+          null,
           this._xDomainInfo
         );
-
         drawLabel(this._svg, this.dimensions, labels.y, true);
+      }
 
-        drawVerticalRects(
+      var lineAsArea = keys.y.hasOwnProperty('y0')
+        && keys.y.hasOwnProperty('y1');
+
+      var pathFn = lineAsArea
+        ? this._createArea(this._xy, keys)
+        : this._createLine(this._xy, keys);
+
+      var MIN_POINTS_FOR_SUBSET = 15,
+          DELAY = 10, // ms
+          DATA_REDUCTION_FACTOR = 5;
+
+      if (transitioning && data.length > MIN_POINTS_FOR_SUBSET) {
+        this._registerTimeout(
+          function () {
+            this._path = drawPath(
+              this._svg,
+              pathFn,
+              data,
+              0, // transition 0 ms when drawing while zooming.
+              this._path,
+              lineAsArea ? null : 'none'
+            );
+          },
+          DELAY // delay with 30 ms
+        );
+
+        data = getDataSubset(data, DATA_REDUCTION_FACTOR);
+      }
+
+      this._path = drawPath(
+        this._svg,
+        pathFn,
+        data,
+        temporal ? 0 : this.transTime, // Do not transition line graphs
+                                       // when temporal.
+        this._path,
+        lineAsArea ? null : 'none' // Set fill to 'none' for normal
+                                   // lines.
+      );
+
+      if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+        addInteractionToPath(
+          this._svg,
+          this.dimensions,
+          data,
+          keys,
+          labels,
+          this._path,
+          this._xy,
+          this.transTime
+        );
+      }
+  };
+
+  /**
+   * @function
+   * @memberOf Graph
+   * @param {object} data   Currently supports arrays of arrays or objects
+   *                        with x value, y value, <optional> color and
+   *                        <optional> category.
+   * @param {object} keys   Mapping between x, y and optional color, and
+   *                        category values of data object: example:
+   *                        {x: 0, y: 1} or:
+   *                        {x: 'xValue', y: 'yValue', color: 'eventColor',
+   *                        categoy: 'cat'};
+   * @param {object} labels Object {x: 'x label', y: 'y label'} will be
+   *                        mapped to axis labels of the graph
+   * @param {string} scale  Whether the graph has a scale other than temporal.
+   *                        If it is of a temporal nature the x-axis will by
+   *                        default be the temporal axis.
+   * @description           Draws a barchart, if necessary sets up the graph,
+   *                        if necessary modifies domain and redraws axis,
+   *                        and draws the line according to the data object.
+   *                        Currently only a time scale on the x-axis is
+   *                        supported. It assumes that every segment has a
+   *                        data element.
+   */
+  Graph.prototype.drawBars = function (data, keys, labels, scale) {
+      var originalKey = keys.y;
+      if (keys.category) {
+        // Create data for stacked bars.
+        data = createYValuesForCumulativeData(data, keys);
+        keys.y = 'y1';
+      }
+      if (!this._xy) {
+        var options = {
+          x: {
+            scale: scale,
+            orientation: 'bottom'
+          },
+          y: {
+            scale: 'linear',
+            orientation: 'left'
+          }
+        };
+        this._xy = this._createXYGraph(data, keys, labels, options);
+        this._xy.y.scale.domain([0, this._xy.y.maxMin.max]);
+      }
+
+      this._xy = rescale(
+        this._svg,
+        this.dimensions,
+        this._xy,
+        data,
+        keys,
+        {y: 0},
+        this._xDomainInfo
+      );
+
+      drawLabel(this._svg, this.dimensions, labels.y, true);
+
+      drawVerticalRects(
+        this._svg,
+        this.dimensions,
+        this._xy,
+        keys,
+        data,
+        this.transTime,
+        this._xDomainInfo
+      );
+
+      if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
+        addInteractionToRects(
           this._svg,
           this.dimensions,
           this._xy,
           keys,
-          data,
-          this.transTime,
-          this._xDomainInfo
+          labels,
+          this.transTime
         );
-
-        if (this.dimensions.width > MIN_WIDTH_INTERACTIVE_GRAPHS) {
-          addInteractionToRects(
-            this._svg,
-            this.dimensions,
-            this._xy,
-            keys,
-            labels,
-            this.transTime
-          );
-        }
-
-        // Object reference, put it back.
-        keys.y = originalKey;
       }
-    },
 
-    /**
-     * @function
-     * @memberOf angular.module('lizard-nxt').Graph
-     * @param {object}    data object. Currently supports the format:
-     *                    [
-     *                      {
-     *                        "<key to color>": "<color str>",
-     *                        "<value key": <value int>,
-     *                        "<label key>": "<label>"
-     *                      },
-     *                      ...,
-     *                    ]
-     * @param {object} keys   Mapping between x values of data object:
-     *                        example: {x: 'color'}
-     * @param {object} labels Object {x: 'x label'} will be
-     *                        mapped to axis labels of the graph
-     * @description           If necessary an x-scale, axis, draws the
-     *                        label and sets up a mousemove listener.
-     *                        It draws the rectangles.
-     */
-    drawHorizontalStack: {
-      value: function (data, keys, labels) {
-        if (!this._x) {
-          var options = {
+      // Object reference, put it back.
+      keys.y = originalKey;
+  };
+
+  /**
+   * @function
+   * @memberOf Graph
+   * @param {object}    data object. Currently supports the format:
+   *                    [
+   *                      {
+   *                        "<key to color>": "<color str>",
+   *                        "<value key": <value int>,
+   *                        "<label key>": "<label>"
+   *                      },
+   *                      ...,
+   *                    ]
+   * @param {object} keys   Mapping between x values of data object:
+   *                        example: {x: 'color'}
+   * @param {object} labels Object {x: 'x label'} will be
+   *                        mapped to axis labels of the graph
+   * @description           If necessary an x-scale, axis, draws the
+   *                        label and sets up a mousemove listener.
+   *                        It draws the rectangles.
+   */
+  Graph.prototype.drawHorizontalStack = function (content) {
+      var data = content[0].values,
+          keys = content[0].keys,
+          labels = content[0].labels;
+      if (!this._x) {
+        var options = {
+          scale: 'linear',
+          orientation: 'bottom',
+          tickFormat: d3.format(".0%") // Custom tickFomat in percentages
+        };
+        this._x = createXGraph(this._svg, this.dimensions, labels, options);
+      }
+      // normalize data
+      var total = d3.sum(data, function (d) {
+        return Number(d[keys.x]);
+      });
+      angular.forEach(data, function (value, key) {
+        value[keys.x] = value[keys.x] / total;
+      });
+      drawHorizontalRects(this._svg, this.dimensions, this.transTime, this._x.scale, data, keys, labels);
+  };
+
+  /**
+   * @function
+   * @memberOf Graph
+   * @param {function} callback
+   * @description      Sets a listener on the drawing rectangle
+   *                   and on mousemove calls the callback with
+   *                   the current position on the drawing area.
+   */
+  Graph.prototype.followMouse = function (callback) {
+       // Move listener rectangle to the front
+      var el = this._svg.select('g').select('#listeners').node();
+      el.parentNode.appendChild(el);
+      var scale = this._xy.x.scale;
+      this._svg.select('g').select('#listeners')
+        .on('mousemove', function () {
+          var pos = scale.invert(d3.mouse(this)[0]);
+          callback(pos);
+        });
+  };
+  /**
+   * @function
+   * @memberOf Graph
+   * @param {function} callback
+   * @description      Sets a listener on the drawing rectangle
+   *                   and on mouseout calls the callback.
+   */
+  Graph.prototype.mouseExit = function (callback) {
+      this._svg.select('g').select('#listeners')
+        .on('mouseout', function () {
+          callback();
+        });
+  };
+
+  /**
+   * @function
+   * @memberOf Graph
+   * @param {int}    draw   Timestamp in ms from epoch
+   * @description           draws the now according the
+   *                        current active scale.
+   */
+  Graph.prototype.drawNow = function (now) {
+      this._drawNow(now, this._xy.x.scale);
+      // move to the front
+      var el = this._svg.select('.now-indicator').node();
+      el.parentNode.appendChild(el);
+  };
+
+  Graph.prototype._createXYGraph = function (data, keys, labels, options) {
+      if (!options) {
+        options = {
+          x: {
             scale: 'linear',
-            orientation: 'bottom',
-            tickFormat: d3.format(".0%") // Custom tickFomat in percentages
-          };
-          this._x = createXGraph(this._svg, this.dimensions, labels, options);
-        }
-        // normalize data
-        var total = d3.sum(data, function (d) {
-          return Number(d[keys.x]);
-        });
-        angular.forEach(data, function (value, key) {
-          value[keys.x] = value[keys.x] / total;
-        });
-        drawHorizontalRects(this._svg, this.dimensions, this.transTime, this._x.scale, data, keys, labels);
+            orientation: 'bottom'
+          },
+          y: {
+            scale: 'linear',
+            orientation: 'left'
+          }
+        };
       }
-    },
+      var xy = {x: {}, y: {}};
 
-    /**
-     * @function
-     * @memberOf angular.module('lizard-nxt')
-  .Graph
-     * @param {function} callback
-     * @description      Sets a listener on the drawing rectangle
-     *                   and on mousemove calls the callback with
-     *                   the current position on the drawing area.
-     */
-    followMouse: {
-      value: function (callback) {
-         // Move listener rectangle to the front
-        var el = this._svg.select('g').select('#listeners').node();
-        el.parentNode.appendChild(el);
-        var scale = this._xy.x.scale;
-        this._svg.select('g').select('#listeners')
-          .on('mousemove', function () {
-            var pos = scale.invert(d3.mouse(this)[0]);
-            callback(pos);
-          });
+      angular.forEach(xy, function (value, key) {
+        var y = key === 'y';
+        xy[key] = this._createD3Objects(data, keys[key], options[key], y);
+        drawAxes(this._svg, xy[key].axis, this.dimensions, y);
+        drawLabel(this._svg, this.dimensions, labels[key], y);
+      }, this);
+      return xy;
+  };
+
+  /**
+   * Registers a timeout with a cb and a delay. Calls the cb on the instance
+   * of Graph after delay.
+   *
+   * @param {function} cb function to call on graph instance when timeout
+   *                      resolves.
+   * @param {int} delay in ms of the cb execution.
+   */
+  Graph.prototype._registerTimeout = function(cb, delay) {
+      if (this.timeout) {
+        $timeout.cancel(this.timeout);
       }
-    },
 
-    /**
-     * @function
-     * @memberOf angular.module('lizard-nxt')
-  .Graph
-     * @param {function} callback
-     * @description      Sets a listener on the drawing rectangle
-     *                   and on mouseout calls the callback.
-     */
-    mouseExit: {
-      value: function (callback) {
-        this._svg.select('g').select('#listeners')
-          .on('mouseout', function () {
-            callback();
-          });
-      }
-    },
+      var graph = this;
 
-    /**
-     * @function
-     * @memberOf angular.module('lizard-nxt')
-  .Graph
-     * @param {int}    draw   Timestamp in ms from epoch
-     * @description           draws the now according the
-     *                        current active scale.
-     */
-    drawNow: {
-      value: function (now) {
-        this._drawNow(now, this._xy.x.scale);
-        // move to the front
-        var el = this._svg.select('.now-indicator').node();
-        el.parentNode.appendChild(el);
-      }
-    },
-
-    _createXYGraph: {
-      value: function (data, keys, labels, options) {
-        if (!options) {
-          options = {
-            x: {
-              scale: 'linear',
-              orientation: 'bottom'
-            },
-            y: {
-              scale: 'linear',
-              orientation: 'left'
-            }
-          };
-        }
-        var xy = {x: {}, y: {}};
-
-        angular.forEach(xy, function (value, key) {
-          var y = key === 'y';
-          xy[key] = this._createD3Objects(data, keys[key], options[key], y);
-          drawAxes(this._svg, xy[key].axis, this.dimensions, y);
-          drawLabel(this._svg, this.dimensions, labels[key], y);
-        }, this);
-        return xy;
-      }
-    },
-
-    /**
-     * Registers a timeout with a cb and a delay. Calls the cb on the instance
-     * of Graph after delay.
-     *
-     * @param {function} cb function to call on graph instance when timeout
-     *                      resolves.
-     * @param {int} delay in ms of the cb execution.
-     */
-    _registerTimeout: {
-      value: function(cb, delay) {
-        if (this.timeout) {
-          $timeout.cancel(this.timeout);
-        }
-
-        var graph = this;
-
-        this.timeout = $timeout(
-          function () {
-            cb.call(graph); },
-          delay,
-          false // Do not trigger unnecessary digest loop
-        );
-      }
-    }
-
-  });
+      this.timeout = $timeout(
+        function () {
+          cb.call(graph); },
+        delay,
+        false // Do not trigger unnecessary digest loop
+      );
+  };
 
   var createPie, createArc, drawPie, drawAxes, drawLabel, needToRescale,
       drawPath, setupLineGraph, createDonut, addInteractionToPath, getBarWidth,

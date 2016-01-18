@@ -22,8 +22,7 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @memberOf angular.module('lizard-nxt')
-  .graph
+   * @memberOf graph
    * @param {scope}     scope     local scope
    * @param {object}    element
    * @param {object}    attrs     data, keys, labels and now
@@ -82,8 +81,7 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @memberOf angular.module('lizard-nxt')
-  .graph
+   * @memberOf graph
    * @param {scope}     scope     local scope
    * @param {object}    element
    * @param {object}    attrs     data, keys, labels and now
@@ -102,9 +100,7 @@ angular.module('lizard-nxt')
       // performance reasons.
       graphCtrl.updateData.call(
         graphCtrl.graph,
-        graphCtrl.data,
-        graphCtrl.keys,
-        graphCtrl.labels,
+        graphCtrl.content,
         graphCtrl.temporal,
         scope.temporal && scope.temporal.timelineMoving
       );
@@ -126,19 +122,11 @@ angular.module('lizard-nxt')
     };
 
     /**
-     * Calls updateGraph when data is different than controller.data.
+     * Calls updateGraph when data is different than controller.content.
      * NOTE: Controller data is set on precompile.
      */
-    scope.$watch('data', function (n, o) {
-      if (n === graphCtrl.data) { return true; }
-      graphUpdateHelper();
-    });
-
-    /**
-     * Calls updateGraph when keys changes.
-     */
-    scope.$watch('keys', function (n, o) {
-      if (n === o) { return true; }
+    scope.$watch('content', function (n, o) {
+      if (n === graphCtrl.content) { return true; }
       graphUpdateHelper();
     });
 
@@ -174,8 +162,7 @@ angular.module('lizard-nxt')
 
   /**
    * @function
-   * @memberOf angular.module('lizard-nxt')
-  .graph
+   * @memberOf graph
    * @param {scope}     $scope    local scope
    * @param {Graph}     Graph     graph service
    * @description       Stores the graph directives data and update functions
@@ -185,13 +172,8 @@ angular.module('lizard-nxt')
     this.setData = function (scope) {
 
       // Provide defaults for backwards compatability
-      this.data = scope.data || [];
+      this.content = scope.content || [];
       this.temporal = scope.temporal;
-      this.keys = scope.keys || { x: 0, y: 1 };
-      this.labels = {
-        x: scope.xlabel || '',
-        y: scope.ylabel || ''
-      };
     };
 
     this.setData($scope);
@@ -200,7 +182,6 @@ angular.module('lizard-nxt')
     this.yfilter = '';
     this.now = $scope.temporal ? $scope.temporal.at : undefined;
     this.type = '';
-    this.quantity = $scope.quantity || 'time';
 
     // Define data update function in attribute directives
     this.updateData = function () {};
@@ -218,15 +199,11 @@ angular.module('lizard-nxt')
       };
     },
     scope: {
-      data: '=',
-      xlabel: '=',
-      ylabel: '=',
-      keys: '=',
+      content: '=',
       mouseLoc: '=',
       yfilter: '=',
       dimensions: '=',
       temporal: '=',
-      quantity: '='
     },
     restrict: 'E',
     replace: true,
@@ -239,8 +216,7 @@ angular.module('lizard-nxt')
 /**
  * @ngdoc directive
  * @class graph
- * @memberof angular.module('lizard-nxt')
-  .graph
+ * @memberof graph
  * @name donut
  * @requires graph
  * @description       Draws a donut graph. Currently not in use by nxt.
@@ -252,7 +228,8 @@ angular.module('lizard-nxt')
 
     var graph = graphCtrl.graph;
 
-    graph.drawDonut(graphCtrl.data);
+    var data = graphCtrl.content[0].data; // backwards compatability
+    graph.drawDonut(data);
     // Function to call when data changes
     graphCtrl.updateData = graph.drawDonut;
 
@@ -269,8 +246,7 @@ angular.module('lizard-nxt')
 /**
  * @ngdoc directive
  * @class graph
- * @memberof angular.module('lizard-nxt')
-  .graph
+ * @memberof graph
  * @name line
  * @requires graph
  * @description       Draws a line. Additionally it sets the
@@ -283,13 +259,13 @@ angular.module('lizard-nxt')
   .directive('line', [function () {
 
   var link = function (scope, element, attrs, graphCtrl) {
-    var data = graphCtrl.data,
+    var content = graphCtrl.content,
         graph = graphCtrl.graph,
-        keys = graphCtrl.keys,
         temporal = graphCtrl.type === 'temporal',
         drawSubset = false;
 
-    graph.drawLine(data, keys, graphCtrl.labels, temporal, drawSubset);
+    console.log(content);
+    graph.drawLine(content, temporal, drawSubset);
 
     // scope.line is the scope defined by the line controller. Preferably it is
     // passed around more explicitly through the graph directive, but angular is
@@ -321,8 +297,7 @@ angular.module('lizard-nxt')
 /**
  * @ngdoc directive
  * @class graph
- * @memberof angular.module('lizard-nxt')
-  .graph
+ * @memberof graph
  * @name barChart
  * @requires graph
  * @description       Draws a barchart. With dynamic axis label.
@@ -333,30 +308,29 @@ angular.module('lizard-nxt')
 
   var link = function (scope, element, attrs, graphCtrl) {
 
-    var data = graphCtrl.data,
-        labels = graphCtrl.labels,
+    var content = graphCtrl.content,
         filter = graphCtrl.yfilter,
-        graph = graphCtrl.graph,
-        keys = graphCtrl.keys,
-        quantity = graphCtrl.quantity;
+        graph = graphCtrl.graph;
 
     // Apply the filter on the ylabel to go from aggWindow
     // in ms to a nice 'mm/dag' label. This could be migrated
     // to the html, but filtering from the DOM is expensive
     // in angular.
     if (filter) {
-      labels.y = $filter(filter)(labels.y);
+      console.log('TODO: filter label on bar chart');
+      // TODO: labels.y = $filter(filter)(labels.y);
     }
 
-    graph.drawBars(data, keys, labels, quantity);
+    graph.drawBars(content);
     graph.drawNow(graphCtrl.now);
 
     // Function to call when data changes
-    graphCtrl.updateData = function (data, keys, labels) {
+    graphCtrl.updateData = function (graph, content) {
       if (filter) {
-        labels.y = $filter(filter)(labels.y);
+        console.log('TODO: filter label on bar chart');
+        // TODO: labels.y = $filter(filter)(labels.y);
       }
-      this.drawBars(data, keys, labels, quantity);
+      this.drawBars(content);
     };
 
     // Function to call when timeState.at changes
@@ -376,8 +350,7 @@ angular.module('lizard-nxt')
 /**
  * @ngdoc directive
  * @class graph
- * @memberof angular.module('lizard-nxt')
-  .graph
+ * @memberof graph
  * @name horizontal stack
  * @requires graph
  * @description       Draws a barchart. With dynamic axis label.
@@ -390,7 +363,7 @@ angular.module('lizard-nxt')
 
     var graph = graphCtrl.graph;
 
-    graph.drawHorizontalStack(graphCtrl.data, graphCtrl.keys, graphCtrl.labels);
+    graph.drawHorizontalStack(graphCtrl.content);
 
     // Function to call when data changes
     graphCtrl.updateData = graph.drawHorizontalStack;
