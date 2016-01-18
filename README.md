@@ -76,27 +76,27 @@ adding the --save option. Always check your bower.json afterwards. e.g.:
 
 ### Release
 
-Doing a release for your package is easy. There is a grunt task to tag and push tags to github.
+Doing a release for your package is easy(-ish). There is a grunt task to tag and push tags to github.
 
 **NOTE: make sure you are not running `grunt serve` in a different session**
+
+Change the package.json / bower.json for a major version release. Check for a fixes branch.
 
 Workflow:
 
     git pull origin
-    git checkout staging
-    git merge integration
-    grunt release
-    git checkout integration
-    git merge staging
+    git checkout master
+    
+    grunt release --txusername=<transifex username> --txpassword=<transifex password>
 
-This creates a staging release of integration. The release can be pushed to the server by following instructions on https://github.com/nens/lizard-nxt#deployment.
+This creates a staging release of master. The release can be pushed to the server by following instructions on https://github.com/nens/lizard-nxt#deployment.
 
 **NOTE:** grunt release expects:
 
 * There is a CHANGES.rst with `Unreleased ()` as a header.
 * There is a package.json.
 * There is a bower.json.
-* You release from `integration` branch.
+* You release from `master` branch.
 * There is a `dist` folder where the build will be released.
 
 
