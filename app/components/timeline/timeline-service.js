@@ -163,7 +163,7 @@ angular.module('lizard-nxt')
       value: function (timestamp, interval, oldDimensions) {
         var height;
 
-        if (!aggWindow) {
+        if (this._svg.select('#feature-group').select(".agg-window-group").empty()) {
           height = this._getHeight(this.dimensions);
           aggWindow = this._svg.select('#feature-group').append("g")
             .attr('class', 'agg-window-group');
@@ -672,9 +672,7 @@ angular.module('lizard-nxt')
     var clicked = function () {
       // Check whether user is dragging instead of clicking
       if (!d3.event.defaultPrevented) {
-        var x = d3.event.clientX
-          - UtilService.getLeftMargin(State.context)
-          - dimensions.padding.left;
+        var x = d3.mouse(this)[0] - dimensions.padding.left;
         var ts = xScale.invert(x);
         clickFn(ts, dimensions);
       }

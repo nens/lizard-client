@@ -3,7 +3,8 @@ Changelog of lizard-nxt client
 
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
--
+
+- Restyle & resize timeline.
 
 
 Release 2.6.2 (2016-1-18)

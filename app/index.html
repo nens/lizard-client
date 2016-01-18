@@ -39,9 +39,21 @@
 
     <div ng-if="context === 'dashboard'">
       <dashboard></dashboard>
+      <timeline
+        class="
+          timeline
+          timeline-dashboard
+          navbar-fixed-bottom
+          material-shadow"></timeline>
     </div>
 
-    <timeline class="timeline navbar-fixed-bottom"></timeline>
+    <timeline
+      class="
+        timeline
+        timeline-map
+        navbar-fixed-bottom
+        material-shadow"
+      ng-if="context !== 'dashboard'"></timeline>
 
     <div ng-if="context !== 'dashboard'">
       <datamenu></datamenu>

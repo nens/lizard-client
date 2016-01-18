@@ -8,15 +8,28 @@
 }
 
 .timeline {
-    background-color: rgba($white, 0.7);
+    background-color: rgba($silver, 0.9);
     transition:.3s;
-    width: $width19;
+    margin-bottom: 15px;
+
+    &.timeline-map {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    &.timeline-dashboard {
+        right: 0;
+        margin-right: 10px;
+        margin-left: $omnibox-width;
+        float: left;
+    }
 }
 
 .timeline-svg-wrapper {
     margin-top: 2px;
     svg {
         position: relative;
+        left: 60px;
     }
 }
 
@@ -32,28 +45,22 @@
 }
 
 .time-controls-right {
-    float: right;
     position: absolute;
     right: 0;
-    bottom: 2px;
-    z-index: 999;
+    bottom: 0;
 
-    .btn-group-horizontal {
+    .btn-group-vertical {
+    }
 
-        margin: 0px 8px 0 0;
+    .btn-xss {
+        color: $midnightBlue;
+        background-color: transparent;
+        font-size: 14px;
 
-        .btn-xss {
-            @include material-shadow();
-            color: $midnightBlue;
-            background-color: $white;
-            &:hover {
-                @include material-shadow-hover();
-                color: $asbestos;
-                text-decoration: none;
-                background-color: $white;
-            }
+        &:hover {
+            color: $asbestos;
+            text-decoration: none;
         }
-
     }
 }
 
@@ -232,12 +239,10 @@
     width: 100%;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
-    cursor: pointer;
     padding: 3px;
     -webkit-transition: .3s;
 
     div {
-        cursor: pointer;
         float: left;
         padding-left: 9px;
 

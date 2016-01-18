@@ -269,17 +269,6 @@ angular.module('lizard-nxt')
           msEndTime = timeState.start + 43200000; // half a day
         }
         timeState.end = msEndTime;
-        timeState.aggWindow = UtilService.getAggWindow(
-          timeState.start,
-          timeState.end,
-          UtilService.getCurrentWidth()
-        );
-        var timeAt = timeState.start + (timeState.end - timeState.start) / 2;
-        timeState.at = UtilService.roundTimestamp(
-          timeAt,
-          timeState.aggWindow,
-          true
-        );
         return timeState;
       },
       /**
