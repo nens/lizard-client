@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.4.1) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 2.6.1 (2016-1-18)
+---------------------
 
 - Created specific omnibox dashboard card for dashboard.
 
