@@ -10,19 +10,20 @@ angular.module('timeseries')
     this._getTimeseries = function (id, timeState, minPoints, aggWindow) {
       // Cancel consecutive calls for the same ts.
       if (localPromises[id]) {
-        localPromises[id].resolve();
+        localPromises[id].reject('consecutive');
       }
       localPromises[id] = $q.defer();
       var params = {
         object: id,
         start: timeState.start ? parseInt(timeState.start, 10): undefined,
         end: timeState.end ? parseInt(timeState.end, 10): undefined,
-        timeout: localPromises[id].promise
       };
 
       minPoints ? params.min_points = minPoints : params.window = aggWindow;
 
-      return CabinetService.timeseries.get(params);
+      return CabinetService.timeseries.get(params, {
+        timeout: localPromises[id].promise
+      });
     };
 
     /**
@@ -61,7 +62,9 @@ angular.module('timeseries')
         minPoints,
         aggWindow
       ).then(function (response) {
-
+        if (!response) {
+          return {};
+        }
          // Filter out the timeseries with too little measurements. And ts
          // without parameter unit info.
         var filteredResult = [];
@@ -121,4 +124,3 @@ angular.module('timeseries')
   }
 
 ]);
-
