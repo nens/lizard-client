@@ -198,14 +198,37 @@ angular.module('lizard-nxt')
        * @param {object} selected object (containing, assets, and geoms)
        */
       setSelectedUrl: function (state, selected) {
-        var newHash = [];
-        angular.forEach(selected.assets, function (asset) {
-          newHash.push(asset);
+        var newHash = angular.copy(selected.assets);
+        var n = Math.pow(10, COORD_PRECISION);
+        var coords;
+        angular.forEach(selected.geometries, function (geom) {
+          if (geom.geometry.type === 'Point') {
+            coords = angular.copy(geom.geometry.coordinates);
+            coords.forEach(function (point, i) {
+              coords[i] = Math.round(point * n) / n;
+            });
+            newHash.push(coords.join(','));
+          }
+          if (geom.geometry.type === 'LineString') {
+            var points = [];
+            coords = angular.copy(geom.geometry.coordinates);
+            angular.forEach(coords, function (point) {
+              point.forEach(function (pos, i) {
+                point[i] = Math.round(pos * n) / n;
+              });
+              points.push(point.join(','));
+            });
+            newHash.push(points.join('-'));
+          }
+          if (geom.geometry.type === 'Polygon' && geom.id) {
+            newHash.push(geom.id);
+          }
         });
+
         LocationGetterSetter.setUrlValue(
           state.geom.part,
           state.geom.index,
-          newHash.join(',')
+          newHash.join('+')
         );
       },
 
@@ -246,17 +269,6 @@ angular.module('lizard-nxt')
           msEndTime = timeState.start + 43200000; // half a day
         }
         timeState.end = msEndTime;
-        timeState.aggWindow = UtilService.getAggWindow(
-          timeState.start,
-          timeState.end,
-          UtilService.getCurrentWidth()
-        );
-        var timeAt = timeState.start + (timeState.end - timeState.start) / 2;
-        timeState.at = UtilService.roundTimestamp(
-          timeAt,
-          timeState.aggWindow,
-          true
-        );
         return timeState;
       },
       /**
@@ -284,32 +296,82 @@ angular.module('lizard-nxt')
         }
       },
 
-      parseGeom: function (type, geom, state) {
-        var point = geom.split(',');
-        if (type === 'point'
-          && point.length > 1
-          && parseFloat(point[0])
-          && parseFloat(point[1])) {
-          state.here = L.latLng(point[0], point[1]);
-        }
+      parseSelection: function (geom, selection) {
+        var selections = geom.split('+');
+        selections.forEach(function (selected) {
+          if (selected.split('$').length === 2) {
+            selection.assets.addAsset(selected);
+          }
 
-        else if (type === 'line') {
-          var points = geom.split('-');
-          angular.forEach(points, function (pointStr, key) {
-            var point = pointStr.split(',');
-            if (parseFloat(point[0]) &&
-                parseFloat(point[1])) {
-              state.points[key] = L.latLng(point[0], point[1]);
+          else {
+            var geometry = {
+              geometry: {
+                type: 'LineString'
+              }
+            };
+
+            if (selected.split('-').length > 1) {
+              // Line
+              var points = selected.split('-');
+              var coordinates = [];
+              angular.forEach(points, function (pointStr) {
+                var point = pointStr.split(',');
+                if (parseFloat(point[0]) &&
+                    parseFloat(point[1])) {
+                  coordinates.push([Number(point[0]), Number(point[1])]);
+                }
+              });
+              geometry.geometry.coordinates = coordinates;
+              selection.geometries.addGeometry(geometry);
             }
-          });
-        }
 
-        else if (type === 'multi-point' || 'point') {
-          var items = geom.split(',');
-          state.assets = items;
-        }
+            else if (selected.split(',').length > 1) {
+              var geometry = {
+                geometry: {
+                  type: 'Point'
+                }
+              };
+              var point = selected.split(',');
+              if (parseFloat(point[0]) &&
+                  parseFloat(point[1])) {
+                var coordinates = [Number(point[0]), Number(point[1])];
+                geometry.geometry.coordinates = coordinates;
+                selection.geometries.addGeometry(geometry);
+              }
+            }
 
-        return state;
+          }
+        });
+
+
+
+
+
+        // })
+        // if (type === 'point'
+        //   && point.length > 1
+        //   && parseFloat(point[0])
+        //   && parseFloat(point[1])) {
+        //   state.here = L.latLng(point[0], point[1]);
+        // }
+
+        // else if (type === 'line') {
+        //   var points = geom.split('-');
+        //   angular.forEach(points, function (pointStr, key) {
+        //     var point = pointStr.split(',');
+        //     if (parseFloat(point[0]) &&
+        //         parseFloat(point[1])) {
+        //       state.points[key] = L.latLng(point[0], point[1]);
+        //     }
+        //   });
+        // }
+
+        // else if (type === 'multi-point' || 'point') {
+        //   var items = geom.split(',');
+        //   state.assets = items;
+        // }
+
+        return selection;
       },
       update: function (state) {
         var u = true;

@@ -11,6 +11,10 @@ angular.module('annotations')
 
     return {
       restrict: 'E',
+      scope: {
+        asset: '=',
+        timeState: '='
+      },
       link: link,
       templateUrl: 'annotations/templates/annotations.html'
     };

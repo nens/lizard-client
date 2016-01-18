@@ -39,7 +39,7 @@ angular.module('omnibox')
       {
         keyName: gettext("Type"),
         attrName: "type",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.type",
+        ngBindValue: "waterchain.type",
         valueSuffix: "",
         defaultValue: "Liggerbrug"
       },
@@ -47,7 +47,7 @@ angular.module('omnibox')
         keyName: gettext("Width"),
         attrName: "width",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.width | niceNumberOrEllipsis: 2",
+          "waterchain.width | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
         defaultValue: 8
       },
@@ -55,7 +55,7 @@ angular.module('omnibox')
         keyName: gettext("Length"),
         attrName: "length",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.length | niceNumberOrEllipsis: 2",
+          "waterchain.length | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
         defaultValue: 17
       },
@@ -63,7 +63,7 @@ angular.module('omnibox')
         keyName: gettext("Height"),
         attrName: "height",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.height | niceNumberOrEllipsis: 2",
+          "waterchain.height | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
         defaultValue: 2
       }
@@ -75,7 +75,7 @@ angular.module('omnibox')
       {
         keyName: gettext("Name"),
         attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        ngBindValue: "waterchain.name",
         valueSuffix: "",
         defaultValue: "Watergang"
       },
@@ -83,7 +83,7 @@ angular.module('omnibox')
         keyName: gettext("Type"),
         attrName: "type",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.type",
+          "waterchain.type",
         valueSuffix: "",
         defaultValue: "Boezem"
       }
@@ -96,7 +96,7 @@ angular.module('omnibox')
         keyName: gettext("Type"),
         attrName: "type",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.type | niceNumberOrEllipsis: 2",
+          "waterchain.type | niceNumberOrEllipsis: 2",
         valueSuffix: "",
         defaultValue: "Dwarsdoorsnede"
       }
@@ -109,7 +109,7 @@ angular.module('omnibox')
         keyName: gettext("Width"),
         attrName: "width",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.width | niceNumberOrEllipsis: 2",
+          "waterchain.width | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
         defaultValue: "2"
       },
@@ -117,7 +117,7 @@ angular.module('omnibox')
         keyName: gettext("Length"),
         attrName: "length",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.length | niceNumberOrEllipsis: 2",
+          "waterchain.length | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
         defaultValue: "8"
       },
@@ -125,7 +125,7 @@ angular.module('omnibox')
         keyName: gettext("Height"),
         attrName: "height",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.height | niceNumberOrEllipsis: 2",
+          "waterchain.height | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
         defaultValue: "1.5"
       },
@@ -133,7 +133,7 @@ angular.module('omnibox')
         keyName: gettext("Material"),
         attrName: "material",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.material | lookupCulvertMaterial",
+          "waterchain.material | lookupCulvertMaterial",
         valueSuffix: "",
         defaultValue: "beton"
       },
@@ -141,7 +141,7 @@ angular.module('omnibox')
         keyName: gettext("Shape"),
         attrName: "shape",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.shape | lookupCulvertShape",
+          "waterchain.shape | lookupCulvertShape",
         valueSuffix: "",
         defaultValue: "rechthoekig"
       }
@@ -154,7 +154,7 @@ angular.module('omnibox')
         /// Bovenkant filter
         keyName: gettext("Filter top level"),
         attrName: "filter_top_level",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.filter_top_level",
+        ngBindValue: "waterchain.filter_top_level",
         valueSuffix: " (m)",
         defaultValue: ""
       },
@@ -162,14 +162,14 @@ angular.module('omnibox')
         /// Onderkant filter
         keyName: gettext("Filter bottom level"),
         attrName: "filter_bottom_level",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.filter_bottom_level",
+        ngBindValue: "waterchain.filter_bottom_level",
         valueSuffix: " (m)",
         defaultValue: ""
       },
       {
         keyName: gettext("Aquifer confinement"),
         attrName: "aquifer_confiment",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.aquifer_confiment",
+        ngBindValue: "waterchain.aquifer_confiment",
         valueSuffix: " (m)",
         defaultValue: ""
       },
@@ -177,7 +177,7 @@ angular.module('omnibox')
         /// bodemsoort
         keyName: gettext("Litology"),
         attrName: "litology",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.litology",
+        ngBindValue: "waterchain.litology",
         valueSuffix: " (m)",
         defaultValue: ""
       },
@@ -190,7 +190,7 @@ angular.module('omnibox')
       {
         keyName: gettext("Name"),
         attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        ngBindValue: "waterchain.name",
         valueSuffix: "",
         defaultValue: ""
       },
@@ -198,14 +198,14 @@ angular.module('omnibox')
         keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.code",
+          "waterchain.code",
         valueSuffix: "",
         defaultValue: ""
       },
       {
         keyName: gettext("Surface level"),
         attrName: "surface_level",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.surface_level",
+        ngBindValue: "waterchain.surface_level",
         valueSuffix: " (m)",
         defaultValue: ""
       },
@@ -213,7 +213,7 @@ angular.module('omnibox')
         /// Bovenkant buis
         keyName: gettext("Top level"),
         attrName: "top_level",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.top_level",
+        ngBindValue: "waterchain.top_level",
         valueSuffix: " (m)",
         defaultValue: ""
       },
@@ -221,7 +221,7 @@ angular.module('omnibox')
         /// Onderkan buis
         keyName: gettext("Bottom level"),
         attrName: "bottom_level",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.bottom_level",
+        ngBindValue: "waterchain.bottom_level",
         valueSuffix: " (m)",
         defaultValue: ""
       }
@@ -235,7 +235,7 @@ angular.module('omnibox')
         keyName: gettext("Crest height"),
         attrName: "crest_height",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.crest_height | niceNumberOrEllipsis: 2",
+          "waterchain.crest_height | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
         defaultValue: "2"
       },
@@ -244,7 +244,7 @@ angular.module('omnibox')
         keyName: gettext("Coating"),
         attrName: "coating",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.coating",
+          "waterchain.coating",
         valueSuffix: "",
         defaultValue: "gras"
       },
@@ -252,7 +252,7 @@ angular.module('omnibox')
         keyName: gettext("Material"),
         attrName: "material",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.material",
+          "waterchain.material",
         valueSuffix: "",
         defaultValue: "zand"
       }
@@ -265,7 +265,7 @@ angular.module('omnibox')
         keyName: gettext("Type"),
         attrName: "type",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.type",
+          "waterchain.type",
         valueSuffix: "",
         defaultValue: "Referentiemeetpunt"
       }
@@ -278,7 +278,7 @@ angular.module('omnibox')
         keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.code",
+          "waterchain.code",
         valueSuffix: "",
         defaultValue: "0-7361"
       },
@@ -286,7 +286,7 @@ angular.module('omnibox')
         keyName: gettext("Surface level"),
         attrName: "surface_level",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.surface_level | niceNumberOrEllipsis: 2",
+          "waterchain.surface_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
         defaultValue: "0.42"
       },
@@ -294,7 +294,7 @@ angular.module('omnibox')
         keyName: gettext("Material"),
         attrName: "material",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.material",
+          "waterchain.material",
         valueSuffix: "",
         defaultValue: "beton"
       },
@@ -302,7 +302,7 @@ angular.module('omnibox')
         keyName: gettext("Widht"),
         attrName: "width",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.width | niceNumberOrEllipsis: 2",
+          "waterchain.width | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
         defaultValue: "0.8"
       },
@@ -310,7 +310,7 @@ angular.module('omnibox')
         keyName: gettext("Shape"),
         attrName: "shape",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.shape | lookupManholeShape",
+          "waterchain.shape | lookupManholeShape",
         valueSuffix: "",
         defaultValue: "vierkant"
       },
@@ -319,7 +319,7 @@ angular.module('omnibox')
         keyName: gettext("Bottom level manhole"),
         attrName: "bottom_level",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.bottom_level | niceNumberOrEllipsis: 2",
+          "waterchain.bottom_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
         defaultValue: "-1.6"
       }
@@ -331,21 +331,21 @@ angular.module('omnibox')
       {
         keyName: gettext("Name"),
         attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        ngBindValue: "waterchain.name",
         valueSuffix: "",
         defaultValue: "KNMI"
       },
       {
         keyName: gettext("Category"),
         attrName: "category",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.category",
+        ngBindValue: "waterchain.category",
         valueSuffix: "",
         defaultValue: "KNMI-AWS"
       },
       {
         keyName: gettext("Frequency"),
         attrName: "frequency",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.frequency",
+        ngBindValue: "waterchain.frequency",
         valueSuffix: "",
         defaultValue: "1x per uur"
       },
@@ -353,7 +353,7 @@ angular.module('omnibox')
         keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.code",
+          "waterchain.code",
         valueSuffix: "",
         defaultValue: "6278"
       }
@@ -366,7 +366,7 @@ angular.module('omnibox')
         keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.code",
+          "waterchain.code",
         valueSuffix: "",
         defaultValue: "3105"
       },
@@ -375,7 +375,7 @@ angular.module('omnibox')
         keyName: gettext("Crest width"),
         attrName: "crest_width",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.crest_width | niceNumberOrEllipsis: 2",
+          "waterchain.crest_width | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
         defaultValue: "1"
       },
@@ -384,7 +384,7 @@ angular.module('omnibox')
         keyName: gettext("Crest level"),
         attrName: "crest_level",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.crest_level | niceNumberOrEllipsis: 2",
+          "waterchain.crest_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
         defaultValue: "0.2"
       },
@@ -392,7 +392,7 @@ angular.module('omnibox')
         keyName: gettext("Shape"),
         attrName: "shape",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.shape | truncate: 20",
+          "waterchain.shape | truncate: 20",
         valueSuffix: "",
         defaultValue: "rechthoekig"
       }
@@ -405,7 +405,7 @@ angular.module('omnibox')
         keyName: gettext("Manhole id"),
         attrName: "manhole_id",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.manhole_id | niceNumberOrEllipsis: 2",
+          "waterchain.manhole_id | niceNumberOrEllipsis: 2",
         valueSuffix: "",
         defaultValue: "6-549"
       },
@@ -414,7 +414,7 @@ angular.module('omnibox')
         keyName: gettext("Open water level (average)"),
         attrName: "open_water_level_average",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.open_water_level_average | niceNumberOrEllipsis: 2",
+          "waterchain.open_water_level_average | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
         defaultValue: "-0.1"
       }
@@ -427,7 +427,7 @@ angular.module('omnibox')
         keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.code",
+          "waterchain.code",
         valueSuffix: "",
         defaultValue: "12-72297"
       },
@@ -436,7 +436,7 @@ angular.module('omnibox')
         keyName: gettext("Crest width"),
         attrName: "crest_width",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.crest_width",
+          "waterchain.crest_width",
         valueSuffix: " (m)",
         defaultValue: "1"
       },
@@ -445,7 +445,7 @@ angular.module('omnibox')
         keyName: gettext("Crest level"),
         attrName: "crest_level",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.crest_level",
+          "waterchain.crest_level",
         valueSuffix: " (mNAP)",
         defaultValue: "0.2"
       }
@@ -458,7 +458,7 @@ angular.module('omnibox')
         keyName: gettext("Type"),
         attrName: "type",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.type | lookupPipeType",
+          "waterchain.type | lookupPipeType",
         valueSuffix: "",
         defaultValue: "gemengd stelsel"
       },
@@ -467,7 +467,7 @@ angular.module('omnibox')
         keyName: gettext("Invert level start point"),
         attrName: "invert_level_start_point",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.invert_level_start_point | niceNumberOrEllipsis: 2",
+          "waterchain.invert_level_start_point | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
         defaultValue: "-3.1"
       },
@@ -476,7 +476,7 @@ angular.module('omnibox')
         keyName: gettext("Invert level end point"),
         attrName: "invert_level_end_point",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.invert_level_end_point | niceNumberOrEllipsis: 2",
+          "waterchain.invert_level_end_point | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
         defaultValue: "-3.12"
       },
@@ -484,7 +484,7 @@ angular.module('omnibox')
         keyName: gettext("Length"),
         attrName: "length",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.length | niceNumberOrEllipsis: 2",
+          "waterchain.length | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
         defaultValue: "28"
       },
@@ -492,7 +492,7 @@ angular.module('omnibox')
         keyName: gettext("Material"),
         attrName: "material",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.material | pipeMaterialOrEllipsis",
+          "waterchain.material | pipeMaterialOrEllipsis",
         valueSuffix: "",
         defaultValue: "beton"
       },
@@ -500,7 +500,7 @@ angular.module('omnibox')
         keyName: gettext("Width"),
         attrName: "width",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.width | niceNumberOrEllipsis: 2",
+          "waterchain.width | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
         defaultValue: "0.8"
       },
@@ -508,7 +508,7 @@ angular.module('omnibox')
         keyName: gettext("Shape"),
         attrName: "shape",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.shape | lookupPipeShape",
+          "waterchain.shape | lookupPipeShape",
         valueSuffix: "",
         defaultValue: "rond"
       },
@@ -516,7 +516,7 @@ angular.module('omnibox')
         keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.code",
+          "waterchain.code",
         valueSuffix: "",
         defaultValue: "0-985-0-986"
       }
@@ -528,7 +528,7 @@ angular.module('omnibox')
       {
         keyName: gettext("Name"),
         attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        ngBindValue: "waterchain.name",
         valueSuffix: "",
         defaultValue: "onbekend"
       },
@@ -536,7 +536,7 @@ angular.module('omnibox')
         keyName: gettext("Type"),
         attrName: "type",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.type | lookupPressurePipeType",
+          "waterchain.type | lookupPressurePipeType",
         valueSuffix: "",
         defaultValue: "transportleiding"
       },
@@ -544,7 +544,7 @@ angular.module('omnibox')
         keyName: gettext("Construction year"),
         attrName: "year_of_construction",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.year_of_construction",
+          "waterchain.year_of_construction",
         valueSuffix: "",
         defaultValue: "2006"
       },
@@ -552,7 +552,7 @@ angular.module('omnibox')
         keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.code",
+          "waterchain.code",
         valueSuffix: "",
         defaultValue: "776"
       },
@@ -560,7 +560,7 @@ angular.module('omnibox')
         keyName: gettext("Diameter"),
         attrName: "diameter",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.diameter | niceNumberOrEllipsis: 2",
+          "waterchain.diameter | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
         defaultValue: "1.6"
       },
@@ -568,7 +568,7 @@ angular.module('omnibox')
         keyName: gettext("Shape"),
         attrName: "shape",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.shape",
+          "waterchain.shape",
         valueSuffix: "",
         defaultValue: "rond"
       },
@@ -576,7 +576,7 @@ angular.module('omnibox')
         keyName: gettext("Length"),
         attrName: "length",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.length",
+          "waterchain.length",
         valueSuffix: " (m)",
         defaultValue: "154"
       },
@@ -584,7 +584,7 @@ angular.module('omnibox')
         keyName: gettext("Material"),
         attrName: "material",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.material | pipeMaterialOrEllipsis",
+          "waterchain.material | pipeMaterialOrEllipsis",
         valueSuffix: "",
         defaultValue: "HDPE"
       }
@@ -596,7 +596,7 @@ angular.module('omnibox')
       {
         keyName: gettext("Type"),
         attrName: "type",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.type",
+        ngBindValue: "waterchain.type",
         valueSuffix: "",
         defaultValue: "gemaal"
       },
@@ -604,14 +604,14 @@ angular.module('omnibox')
         keyName: gettext("Capacity"),
         attrName: "capacity",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.capacity * 3.6 | niceNumberOrEllipsis: 2",
+          "waterchain.capacity * 3.6 | niceNumberOrEllipsis: 2",
         valueSuffix: "  (m<sup>3</sup> / uur)",
         defaultValue: "54"
       },
       {
         keyName: gettext("Name"),
         attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        ngBindValue: "waterchain.name",
         valueSuffix: "",
         defaultValue: "onbekend"
       },
@@ -619,7 +619,7 @@ angular.module('omnibox')
         keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.code",
+          "waterchain.code",
         valueSuffix: "",
         defaultValue: "127"
       },
@@ -628,7 +628,7 @@ angular.module('omnibox')
         keyName: gettext("Start level"),
         attrName: "start_level",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.start_level | niceNumberOrEllipsis: 2",
+          "waterchain.start_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
         defaultValue: "-2.2"
       },
@@ -637,7 +637,7 @@ angular.module('omnibox')
         keyName: gettext("Stop level"),
         attrName: "stop_level",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.stop_level | niceNumberOrEllipsis: 2",
+          "waterchain.stop_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
         defaultValue: "-2.8"
       }
@@ -655,7 +655,7 @@ angular.module('omnibox')
         keyName: gettext("Name"),
         attrName: "name",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.name",
+          "waterchain.name",
         valueSuffix: "",
         defaultValue: 'onbekend'
       }
@@ -667,7 +667,7 @@ angular.module('omnibox')
       {
         keyName: gettext("Name"),
         attrName: "name",
-        ngBindValue: "waterchain.layers.waterchain_grid.data.name",
+        ngBindValue: "waterchain.name",
         valueSuffix: "",
         defaultValue: "onbekend"
       },
@@ -680,7 +680,7 @@ angular.module('omnibox')
         keyName: gettext("Code"),
         attrName: "code",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.code",
+          "waterchain.code",
         valueSuffix: "",
         defaultValue: "473"
       },
@@ -688,7 +688,7 @@ angular.module('omnibox')
         keyName: gettext("Width"),
         attrName: "crest_width",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.crest_width | niceNumberOrEllipsis: 2",
+          "waterchain.crest_width | niceNumberOrEllipsis: 2",
         valueSuffix: " (m)",
         defaultValue: "1.6"
       },
@@ -697,7 +697,7 @@ angular.module('omnibox')
         keyName: gettext("Crest Level"),
         attrName: "crest_level",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.crest_level | niceNumberOrEllipsis: 2",
+          "waterchain.crest_level | niceNumberOrEllipsis: 2",
         valueSuffix: " (mNAP)",
         defaultValue: "-0.3"
       },
@@ -706,7 +706,7 @@ angular.module('omnibox')
         keyName: gettext("Control"),
         attrName: "controlled",
         ngBindValue:
-          "waterchain.layers.waterchain_grid.data.controlled | lookupWeirControl",
+          "waterchain.controlled | lookupWeirControl",
         valueSuffix: "",
         defaultValue: "RTC"
       },

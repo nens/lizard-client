@@ -6,6 +6,18 @@ Unreleased (2.6.2) (XXXX-XX-XX)
 
 - Improve the dashboard/map toggle.
 
+- Restyle & resize timeline.
+
+- Added close-card directive to remove assets from selection.
+
+- Added state.assets.selection and state.geometries.selection to store ids of
+  selected assets or geometry.
+
+- Migrate data-fetch logic from box to data-service. DataService.assets and
+  DataService.geometries contains data of the selection.
+
+- Added ng-animate to omnibox.
+
 
 Release 2.6.2 (2016-1-18)
 ---------------------

@@ -6,6 +6,8 @@
   position: absolute;
   top: $navbarheight;
   left: $omnibox-width;
+  right: 0px;
+  margin-right: 10px;
   bottom: 0;
   overflow: hidden;
   transition: .3s ease;
@@ -14,7 +16,7 @@
 .dashboard-wrapper .row {
   min-height: 50px;
   margin: 3px;
-  padding: 5px;
+  padding: 3px;
   @include material-shadow();
 
   &:hover {

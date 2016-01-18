@@ -51,11 +51,6 @@ angular.module('lizard-nxt')
                  // to resolve and re-syncing the data layers to the new time and
                  // making a new step when animation is playing.
 
-    State.temporal.aggWindow = UtilService.getAggWindow(
-      State.temporal.start,
-      State.temporal.end,
-      UtilService.getCurrentWidth()
-    );
 
     this.state = State;
 

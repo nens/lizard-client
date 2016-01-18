@@ -670,8 +670,8 @@ angular.module('lizard-nxt')
     return leftMargin;
   };
 
-  this.getCurrentWidth = function () {
-    return window.innerWidth - (
+  this.getCurrentWidth = function (element) {
+    return element[0].clientWidth - (
       this.TIMELINE_LEFT_MARGIN + this.TIMELINE_RIGHT_MARGIN
     );
   };

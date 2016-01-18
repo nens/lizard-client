@@ -9,6 +9,114 @@
  * * Detailswitch
  *
  */
+
+angular.module('omnibox')
+  .directive('assetCards', ['ClickFeedbackService', 'MapService',
+    function (ClickFeedbackService, MapService) {
+  return {
+    link: function (scope, element) {
+
+      var asset = scope.asset;
+
+      var feature = {
+        type: 'Feature',
+        geometry: asset.geometry,
+        properties: {
+          entity_name: asset.entity_name,
+          type: asset.type || ''
+        }
+      };
+
+      var clickId = ClickFeedbackService.drawGeometry(
+        MapService,
+        feature
+      );
+
+      ClickFeedbackService.vibrateOnce(feature);
+
+      element.on('$destroy', function () {
+        ClickFeedbackService.removeClickFromClickLayer(clickId);
+      });
+
+
+    },
+    restrict: 'E',
+    scope: {
+      asset: '=',
+      timeState: '=',
+      longFormat: '='
+    },
+    replace: true,
+    templateUrl: 'omnibox/templates/asset-cards.html'
+  };
+}]);
+
+
+angular.module('omnibox')
+  .directive('geometryCards', ['MapService', 'ClickFeedbackService',
+    function (MapService, ClickFeedbackService) {
+  return {
+    link: function (scope, element) {
+
+      scope.showNoData = false;
+      var clickId = 0;
+
+      var destroy = function () {
+        if (clickId) {
+          ClickFeedbackService.removeClickFromClickLayer(clickId);
+        }
+      };
+
+      scope.$watchCollection('geom.geometry.coordinates', function () {
+        destroy();
+
+        var geom = scope.geom;
+
+        if (scope.header && geom.geometry.type === 'Point') {
+          var latLng = L.latLng(
+            geom.geometry.coordinates[1],
+            geom.geometry.coordinates[0]
+          );
+          clickId = ClickFeedbackService.drawArrow(MapService, latLng);
+        }
+
+        else if (scope.header && geom.geometry.type === 'LineString') {
+          var coords = geom.geometry.coordinates;
+          var start = L.latLng(coords[0][1], coords[0][0]);
+          var end = L.latLng(coords[1][1], coords[1][0]);
+          clickId = ClickFeedbackService.drawLine(
+            MapService,
+            start,
+            end
+          );
+
+        }
+      });
+
+      scope.$watchCollection('geom.properties', function (newProps, oldProps) {
+        if (newProps) {
+          scope.showNoData = !Object.keys(newProps).length;
+        }
+      });
+
+      element.on('$destroy', function () {
+        destroy();
+      });
+
+
+    },
+    restrict: 'E',
+    scope: {
+      geom: '=',
+      timeState: '=',
+      header: '='
+    },
+    replace: true,
+    templateUrl: 'omnibox/templates/geometry-cards.html'
+  };
+}]);
+
+
 angular.module('omnibox')
   .directive('cardattributes', ['WantedAttributes',
     function (WantedAttributes) {
@@ -32,12 +140,14 @@ angular.module('omnibox')
     },
     restrict: 'E',
     scope: {
-      asset: '='
+      asset: '=',
+      geom: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/card-header.html'
   };
 }]);
+
 
 
 
@@ -88,33 +198,75 @@ angular.module('omnibox')
 }]);
 
 angular.module('omnibox')
-  .directive('rain', [function () {
+  .directive('rain', ['State', 'RasterService', function (State, RasterService) {
   return {
+    link: function (scope) {
+
+      scope.rrc = {
+        active: false
+      };
+
+      scope.recurrenceTimeToggle = function () {
+        if (!scope.$$phase) {
+          scope.$apply(function () {
+            scope.rrc.active = !scope.rrc.active;
+            scope.lg.changed =
+              !scope.lg.changed;
+          });
+        } else {
+          scope.rrc.active = !scope.rrc.active;
+          scope.lg.changed = !scope.lg.changed;
+        }
+      };
+
+
+      scope.$watchCollection("lg.data", function (n, o) {
+        if (n === o || !scope.rrc.active) { return; }
+        getRecurrenceTime();
+      });
+
+      var getRecurrenceTime = function () {
+        scope.rrc.data = null;
+
+        // TODO: refactor this shit
+        RasterService.getData(
+          'RainController',
+          {slug: 'rain'},
+          {
+            agg: 'rrc',
+            geom: L.Latlng(scope.geom.geomtry.coordinates[1], scope.geom.geomtry.coordinates[0]),
+            start: State.temporal.start,
+            end: State.temporal.end
+          }
+        ).then(function (response) {
+          scope.rrc.data = response;
+        });
+      };
+
+    },
     restrict: 'E',
+    scope: {
+      rain: '=',
+      state: '='
+    },
     replace: true,
     templateUrl: 'omnibox/templates/rain.html'
   };
 }]);
 
 angular.module('omnibox')
-  .directive('defaultpoint', [function () {
+  .directive('defaultpoint', ['UtilService', function (UtilService) {
   return {
+    link: function (scope) {
+      scope.isUrl = UtilService.isUrl;
+    },
     restrict: 'E',
     scope: {
-      lg: '=',
+      content: '=',
       state: '=',
-      isUrl: '='
     },
     replace: true,
     templateUrl: 'omnibox/templates/defaultpoint.html'
-  };
-}]);
-
-angular.module('omnibox')
-  .directive('detailswitch', [function () {
-  return {
-    restrict: 'E',
-    templateUrl: 'omnibox/templates/detailswitch.html'
   };
 }]);
 
