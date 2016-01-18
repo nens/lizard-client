@@ -3,6 +3,11 @@ Changelog of lizard-nxt client
 
 Unreleased (2.6.2) (XXXX-XX-XX)
 -------------------------------
+-
+
+
+Release 2.6.2 (2016-1-18)
+---------------------
 
 - Bump MAX_TIME (future) from 1 to 20 days.
 
