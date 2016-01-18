@@ -2,14 +2,14 @@
   <div class="container-fluid">
 
     <div class="row" ng-repeat="item in dashboard.content">
-      <graph
-       line
-       content="dashboard.content"
-       temporal="true"
-       dimensions="dashboard.dims"
-       >
-       <graph/>
       <div class="dashboard-inner">
+        <graph
+         line
+         content="dashboard.content"
+         temporal="temporal"
+         dimensions="dashboard.dims"
+         >
+         <graph/>
 
         <graph
           ng-if="item.type === 'timeseries'"
