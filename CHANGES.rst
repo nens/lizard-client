@@ -9,6 +9,12 @@ Unreleased (2.2.9) (XXXX-XX-XX)
 Release 2.2.10 (2016-1-8)
 ---------------------
 
+- Bump MAX_TIME (future) from 1 to 20 days.
+
+
+Release 2.2.10 (2016-1-8)
+---------------------
+
 - Fix pagination for scenarios page.
 
 - Fix WMSGetFeatureInfo bug wrong relative pixel coordinates.
