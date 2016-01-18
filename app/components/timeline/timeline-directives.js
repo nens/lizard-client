@@ -38,7 +38,7 @@ angular.module('lizard-nxt')
                               // timeline is shown.
 
         dimensions = {
-          width: UtilService.getCurrentWidth(),
+          width: UtilService.getCurrentWidth(element),
           height: 45,
           events: 35,
           bars: 35,
@@ -72,7 +72,7 @@ angular.module('lizard-nxt')
           State.temporal.aggWindow = UtilService.getAggWindow(
             State.temporal.start,
             State.temporal.end,
-            UtilService.getCurrentWidth()
+            UtilService.getCurrentWidth(element)
           );
 
           State.temporal.at = UtilService.roundTimestamp(
@@ -118,32 +118,6 @@ angular.module('lizard-nxt')
     };
 
 
-    /**
-     * @function
-     * @description Helper to shift/unshift the timeline based on which
-     * view the user is in
-     * @param {string} context - e.g. 'dashboard' or 'map'
-     */
-    var reshift = function (context) {
-      var toShift = UtilService.TIMELINE_LEFT_MARGIN;
-      var buttonShift = 0;
-      var timelinecontrols = angular.element("#time-controls");
-
-      if (context === 'dashboard') {
-        toShift += UtilService.OMNIBOX_WIDTH;
-        timelinecontrols.addClass('hidden');
-      } else {
-        timelinecontrols.removeClass('hidden');
-      }
-
-      angular.element("#timeline-svg-wrapper svg")[0].style.left
-      = toShift + "px";
-    };
-
-    // shift timeline's SVG element using it's CSS - set here by JS too stop
-    // stuff becoming unsyncable
-    reshift(State.context);
-
     // keep track of events in this scope
     scope.events = {nEvents: 0, slugs: []};
 
@@ -179,9 +153,6 @@ angular.module('lizard-nxt')
         element[0].style.height = newDim.height + 5 + 'px'; // 5px margins
       }
 
-      if (State.context === 'dashboard') {
-        newDim.width = UtilService.getCurrentWidth() - UtilService.OMNIBOX_WIDTH;
-      }
 
       timeline.resize(
         newDim,
@@ -448,7 +419,7 @@ angular.module('lizard-nxt')
         State.temporal.aggWindow = UtilService.getAggWindow(
           State.temporal.start,
           State.temporal.end,
-          UtilService.getCurrentWidth()
+          UtilService.getCurrentWidth(element)
         );
 
         timeline.zoomTo(
@@ -484,12 +455,6 @@ angular.module('lizard-nxt')
       );
     });
 
-    scope.$watch(State.toString('context'), function (n, o) {
-      if (n === o) { return; }
-      scope.timeline.toggleTimelineVisiblity();
-      getTimeLineData(); // It also removes data..
-      reshift(State.context);
-    });
 
     /**
      * The timeline can be too early on initialization.
@@ -506,11 +471,8 @@ angular.module('lizard-nxt')
     window.addEventListener('load', getTimeLineData);
 
     var resize = function () {
-      reshift(State.context);
-      var newWidth = UtilService.getCurrentWidth();
-      if (State.context === 'dashboard') {
-        newWidth = UtilService.getCurrentWidth() - UtilService.OMNIBOX_WIDTH;
-      }
+
+      var newWidth = UtilService.getCurrentWidth(element);
 
       scope.$apply(function () {
         timeline.dimensions.width = newWidth;
