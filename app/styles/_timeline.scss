@@ -10,13 +10,25 @@
 .timeline {
     background-color: rgba($silver, 0.9);
     transition:.3s;
-    margin: auto 15px 15px 15px;
+    margin-bottom: 15px;
+
+    &.timeline-map {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+
+    &.timeline-dashboard {
+        width: 60%;
+        margin-left: 39%;
+        float: left;
+    }
 }
 
 .timeline-svg-wrapper {
     margin-top: 2px;
     svg {
         position: relative;
+        left: 60px;
     }
 }
 
@@ -226,12 +238,10 @@
     width: 100%;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
-    cursor: pointer;
     padding: 3px;
     -webkit-transition: .3s;
 
     div {
-        cursor: pointer;
         float: left;
         padding-left: 9px;
 
